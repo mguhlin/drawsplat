@@ -102,6 +102,14 @@ dialog::backdrop{background:#0f172a88}
 .graph-data-label{font-size:12px;color:var(--muted);font-weight:700}
 .graph-preview{min-height:330px;border:1px solid var(--line);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:auto;padding:8px}
 .graph-preview svg{max-width:100%;height:auto}
+.picture-symbol-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center}
+.picture-symbol-actions .value-chip{text-align:center;min-width:46px}
+.picture-row-picture-head{font-size:12px;color:var(--muted);font-weight:800;margin-top:2px}
+.picture-row-pictures{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px;background:#f8fafc}
+.picture-row-picture{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center}
+.picture-row-label{font-weight:800;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picture-row-state{font-size:11px;color:var(--muted);font-weight:800}
+.picture-row-picture button{min-height:30px;padding:5px 8px;font-size:12px}
 .emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px;margin-top:12px}
 .emoji-tile{min-height:52px;font-size:28px;background:#fff;border:1px solid var(--line);border-radius:8px;cursor:pointer}
 .emoji-tile:hover{background:#f8fafc;transform:translateY(-1px);box-shadow:0 4px 10px #0001}
@@ -289,6 +297,13 @@ body[data-view="simple"] #toolButtons [data-tool="callout"]{color:#ea580c}
 body[data-view="simple"] #toolButtons [data-tool="speech"]{color:#0284c7}
 body[data-view="simple"] #toolButtons [data-tool="comment"]{color:#db2777}
 body[data-view="simple"] #toolButtons [data-tool="audio"]{color:#4f46e5}
+body[data-view="simple"] #toolButtons .tool-group-nav{background:#eff6ff;border-color:#bfdbfe}
+body[data-view="simple"] #toolButtons .tool-group-draw{background:#faf5ff;border-color:#ddd6fe}
+body[data-view="simple"] #toolButtons .tool-group-dot{background:#ecfdf5;border-color:#bbf7d0}
+body[data-view="simple"] #toolButtons .tool-group-shapes{background:#f0f9ff;border-color:#bae6fd}
+body[data-view="simple"] #toolButtons .tool-group-text{background:#fff7ed;border-color:#fed7aa}
+body[data-view="simple"] #toolButtons [data-tool="dotpaint"]{border-style:dashed}
+body[data-view="simple"] #toolButtons [data-tool="dotpaint"]::before{content:'';position:absolute;right:7px;top:7px;width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px #fff}
 body[data-view="simple"] #simpleImageBtn{color:#2563eb}
 body[data-view="simple"] #simpleMermaidBtn{color:#0f766e}
 body[data-view="simple"] #simpleWordCloudBtn{color:#9333ea}
@@ -394,6 +409,17 @@ html[dir="rtl"] .inspector-close{right:auto;left:8px}
 .sidebar .grid .icon-btn,.inspector .grid .icon-btn{width:100%}
 .tool-palette-condensed #toolButtons{grid-template-columns:repeat(4,1fr)}
 .tool-palette-condensed #toolButtons .icon-btn{min-width:0}
+.tool-popover-group{position:relative;min-width:0}
+.tool-popover-group>summary{list-style:none}
+.tool-popover-group>summary::-webkit-details-marker{display:none}
+.tool-popover-group.active>summary{background:#fff7e6!important;border-color:#f59e0b!important;box-shadow:0 0 0 3px #faa63433!important}
+.tool-popover-panel{position:absolute;left:0;top:calc(100% + 6px);z-index:35;display:grid;grid-template-columns:repeat(3,44px);gap:6px;padding:8px;background:#fff;border:1px solid #bae6fd;border-radius:10px;box-shadow:0 14px 30px #11182730}
+.tool-popover-panel .icon-btn{width:44px!important;min-width:44px}
+.tool-popover-panel .icon-btn::after{bottom:auto;top:calc(100% + 8px)}
+body[data-view="simple"] #toolButtons .tool-popover-group{width:100%}
+body[data-view="simple"] #toolButtons .tool-popover-group>summary{width:100%;background:#f0f9ff;border-color:#bae6fd;color:#0f766e}
+body[data-view="simple"] #toolButtons .tool-popover-panel{left:calc(100% + 8px);top:0;grid-template-columns:repeat(3,44px)}
+body[data-view="simple"] #toolButtons .tool-popover-group::before{content:'';display:block;height:1px;background:#d8e1ee;margin:3px 0 6px}
 .canvas-toolbar .icon-btn,header .icon-btn{min-width:44px;min-height:44px}
 .toolbar-note{font-size:11px;color:var(--muted);margin-top:6px}
 html[dir="rtl"] .icon-btn::after{direction:rtl}

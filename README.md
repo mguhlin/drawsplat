@@ -94,6 +94,9 @@ timeline
 - Locked per-panel background images (Jamboard-style) — teacher loads a reference image, students see and work on top of it without being able to alter or remove it
 - Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
 - Custom sticker / stamp tools, including teacher-uploaded image stickers
+- Graph makers for bar, line, area, pie, and picture graphs from simple label/value rows
+- Picture Graphs support vertical or horizontal stacks, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
+- Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
 - Teacher mode and student mode
@@ -340,6 +343,37 @@ Related behavior:
 ## Detailed version history
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
+
+## Version 3.0.5 changes
+
+v3.0.5 improves Picture Graphs for category-specific images.
+
+- Picture Graph rows can now each have their own uploaded image, such as pizza for Pizza, tacos for Tacos, and salad for Salad.
+- The original typed/uploaded fallback symbol remains available for rows that do not have a custom image.
+- Double-click re-editing preserves per-category image assignments.
+- The homepage and README feature lists now describe per-category picture graph images.
+- v3.0.6 translates the dynamic Picture Graph row-image labels across supported interface languages.
+- Service-worker cache key bumped to `drawsplat-v3.0.6`.
+
+## Version 3.0.4 changes
+
+v3.0.4 adds a classroom picture graph maker.
+
+- Added a **Picture Graph** builder that turns label/value rows into a pictograph-style bar graph.
+- Supports vertical or horizontal picture bars, a custom typed symbol or uploaded picture symbol, configurable scale (`each picture =`), and optional number labels.
+- Inserted picture graphs behave like normal DrawSplat image objects: move, resize, duplicate, export, and double-click to edit the graph settings later.
+- Added Picture Graph access in the Insert menu, advanced Insert / Arrange panel, and simple-mode extras.
+- Service-worker cache key bumped to `drawsplat-v3.0.4`.
+
+## Version 3.0.3 changes
+
+v3.0.3 improves tool palette clarity.
+
+- Added example-style icons for Dot Pictures, Dot Paint, Mermaid Diagram, and the grouped Shapes/Lines control.
+- Grouped line, arrow, rectangle, ellipse, connector, diamond, triangle, callout, and speech tools behind a Shapes/Lines pop-up.
+- Added visual color grouping around navigation, drawing, dot-picture, shape, and text/comment tools.
+- Clarified Dot Paint status text so users know it works on inserted Dot Picture dots.
+- Service-worker cache key bumped to `drawsplat-v3.0.3`.
 
 ## Version 3.0.2 changes
 

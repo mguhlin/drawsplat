@@ -101,6 +101,37 @@ uh: {
   const L = window.DRAWSPLAT_LOCALES || {};
   const add = {
     es: {
+      texts: {'Shapes and Lines':'Formas y líneas'},
+      runtime: {'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Pintar puntos: haz clic o arrastra sobre los puntos de un dibujo con puntos, luego elige un color de la paleta.','Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.':'Pintar puntos funciona después de insertar un dibujo con puntos. Abre Dibujos con puntos primero y luego pinta sus puntos.','Dot Paint colors dot-picture dots only.':'Pintar puntos solo colorea puntos de Dibujos con puntos.','Dot Paint: drag across dots or click a dot to choose a color.':'Pintar puntos: arrastra sobre puntos o haz clic en un punto para elegir un color.'}
+    },
+    vi: {
+      texts: {'Shapes and Lines':'Hình dạng và đường'},
+      runtime: {'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Tô chấm: nhấp hoặc kéo qua các chấm trong Tranh chấm, rồi chọn màu từ bảng màu.','Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.':'Tô chấm hoạt động sau khi bạn chèn Tranh chấm. Mở Tranh chấm trước, rồi tô các chấm.','Dot Paint colors dot-picture dots only.':'Tô chấm chỉ tô các chấm trong Tranh chấm.','Dot Paint: drag across dots or click a dot to choose a color.':'Tô chấm: kéo qua các chấm hoặc nhấp một chấm để chọn màu.'}
+    },
+    ar: {
+      texts: {'Shapes and Lines':'الأشكال والخطوط'},
+      runtime: {'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'تلوين النقاط: انقر أو اسحب فوق نقاط صورة النقاط، ثم اختر لونًا من اللوحة.','Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.':'يعمل تلوين النقاط بعد إدراج صورة نقاط. افتح صور النقاط أولاً، ثم لوّن نقاطها.','Dot Paint colors dot-picture dots only.':'تلوين النقاط يلوّن نقاط صور النقاط فقط.','Dot Paint: drag across dots or click a dot to choose a color.':'تلوين النقاط: اسحب فوق النقاط أو انقر نقطة لاختيار لون.'}
+    },
+    zh: {
+      texts: {'Shapes and Lines':'形状和线条'},
+      runtime: {'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'点阵涂色：点击或拖过点阵图片中的圆点，然后从调色板选择颜色。','Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.':'点阵涂色需要先插入点阵图片。请先打开点阵图片，再给圆点涂色。','Dot Paint colors dot-picture dots only.':'点阵涂色只会给点阵图片中的圆点上色。','Dot Paint: drag across dots or click a dot to choose a color.':'点阵涂色：拖过圆点或点击圆点来选择颜色。'}
+    },
+    uh: {
+      texts: {'Shapes and Lines':'आकार और रेखाएँ / اشکال اور لکیریں'},
+      runtime: {'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'डॉट पेंट: डॉट चित्र के डॉट पर क्लिक या ड्रैग करें, फिर पैलेट से रंग चुनें।','Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.':'डॉट पेंट डॉट चित्र डालने के बाद काम करता है। पहले डॉट चित्र खोलें, फिर उसके डॉट रंगें।','Dot Paint colors dot-picture dots only.':'डॉट पेंट केवल डॉट चित्र के डॉट रंगता है।','Dot Paint: drag across dots or click a dot to choose a color.':'डॉट पेंट: रंग चुनने के लिए डॉट पर क्लिक करें या डॉट्स पर ड्रैग करें।'}
+    }
+  };
+  Object.entries(add).forEach(([lang,parts])=>{
+    if(!L[lang]) return;
+    L[lang].texts = Object.assign(L[lang].texts || {}, parts.texts || {});
+    L[lang].runtime = Object.assign(L[lang].runtime || {}, parts.runtime || {});
+  });
+})();
+
+(function(){
+  const L = window.DRAWSPLAT_LOCALES || {};
+  const add = {
+    es: {
       'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'Haz clic en una herramienta de la barra lateral: lápiz, nota adhesiva, formas o texto. Luego haz clic en el lienzo para usarla.',
       'Click a sticky or text box and start typing. Click outside to save.':'Haz clic en una nota adhesiva o cuadro de texto y empieza a escribir. Haz clic fuera para guardar.',
       'Use the':'Usa el',
