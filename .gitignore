@@ -137,6 +137,18 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
+.env
+  .env.*
+  !.env.example
+  .DS_Store
+  Thumbs.db
+  *.drawsplat.json
+  credentials.json
+  token.json
+  service-account*.json
+  client_secret*.json
+
+
 # Vite files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
