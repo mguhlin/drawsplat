@@ -341,6 +341,15 @@ Related behavior:
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
 
+## Version 3.0.1 changes
+
+v3.0.1 improves multilingual coverage for the whiteboard app.
+
+- Added runtime translation coverage for dynamically created menus, dialogs, option labels, placeholders, status chips, and custom confirmation dialogs.
+- Added supplemental Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi strings for newer v3 tools such as Dot Pictures, Mosaic Images, Collage, Emoji Mixer, GIF creation, object alignment, and import dialogs.
+- Prevented the translation walker from touching user-created board content inside the SVG canvas.
+- Service-worker cache key bumped to `drawsplat-v3.0.1`.
+
 ## Version 3.0 changes
 
 v3.0 adds the public site, pricing, teacher/admin separation, PROTECT-aligned privacy language, and MySQL self-hosting foundation.
