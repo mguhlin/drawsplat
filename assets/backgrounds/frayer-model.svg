@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Frayer model panel background</title>
+  <desc id="desc">Vocabulary organizer with definition, characteristics, examples, and non-examples.</desc>
+  <rect width="1600" height="900" fill="#f8fbff"/>
+  <rect x="80" y="70" width="1440" height="760" rx="30" fill="#ffffff" stroke="#bfdbfe" stroke-width="6"/>
+  <line x1="800" y1="90" x2="800" y2="810" stroke="#bfdbfe" stroke-width="5"/>
+  <line x1="100" y1="450" x2="1500" y2="450" stroke="#bfdbfe" stroke-width="5"/>
+  <rect x="555" y="350" width="490" height="200" rx="24" fill="#eff6ff" stroke="#3b82f6" stroke-width="5"/>
+  <text x="800" y="430" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#1e3a8a">Word / Concept</text>
+  <path d="M610 480H990" stroke="#93c5fd" stroke-width="4"/>
+  <text x="180" y="145" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" fill="#1f2937">Definition</text>
+  <text x="880" y="145" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" fill="#1f2937">Characteristics</text>
+  <text x="180" y="525" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" fill="#1f2937">Examples</text>
+  <text x="880" y="525" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" fill="#1f2937">Non-Examples</text>
+  <g stroke="#e5e7eb" stroke-width="3">
+    <path d="M180 205H710M180 275H710M180 345H520"/>
+    <path d="M880 205H1420M880 275H1420M1080 345H1420"/>
+    <path d="M180 585H710M180 655H710M180 725H710"/>
+    <path d="M880 585H1420M880 655H1420M880 725H1420"/>
+  </g>
+</svg>

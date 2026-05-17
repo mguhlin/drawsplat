@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">KWL chart panel background</title>
+  <desc id="desc">Three-column classroom organizer for know, want to know, and learned.</desc>
+  <rect width="1600" height="900" fill="#fffdf7"/>
+  <rect x="70" y="70" width="1460" height="760" rx="28" fill="#ffffff" stroke="#cbd5e1" stroke-width="6"/>
+  <rect x="70" y="70" width="1460" height="120" rx="28" fill="#f6f2ff"/>
+  <text x="800" y="145" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800" fill="#4c1d95">KWL Chart</text>
+  <line x1="556" y1="190" x2="556" y2="830" stroke="#cbd5e1" stroke-width="5"/>
+  <line x1="1044" y1="190" x2="1044" y2="830" stroke="#cbd5e1" stroke-width="5"/>
+  <text x="313" y="260" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#1f2937">Know</text>
+  <text x="800" y="260" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#1f2937">Want to Know</text>
+  <text x="1287" y="260" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#1f2937">Learned</text>
+  <g stroke="#e5e7eb" stroke-width="3">
+    <path d="M110 330H516M110 415H516M110 500H516M110 585H516M110 670H516M110 755H516"/>
+    <path d="M596 330H1004M596 415H1004M596 500H1004M596 585H1004M596 670H1004M596 755H1004"/>
+    <path d="M1084 330H1490M1084 415H1490M1084 500H1490M1084 585H1490M1084 670H1490M1084 755H1490"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Venn diagram panel background</title>
+  <desc id="desc">Two-circle comparison organizer.</desc>
+  <rect width="1600" height="900" fill="#f0fdf4"/>
+  <text x="800" y="110" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="800" fill="#166534">Venn Diagram</text>
+  <circle cx="650" cy="485" r="300" fill="#bfdbfe" fill-opacity=".45" stroke="#2563eb" stroke-width="7"/>
+  <circle cx="950" cy="485" r="300" fill="#bbf7d0" fill-opacity=".5" stroke="#16a34a" stroke-width="7"/>
+  <text x="475" y="215" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#1f2937">A</text>
+  <text x="1125" y="215" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#1f2937">B</text>
+  <text x="800" y="490" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#334155">Both</text>
+  <g stroke="#dcfce7" stroke-width="3">
+    <path d="M165 805H1435M165 840H1435"/>
+  </g>
+</svg>

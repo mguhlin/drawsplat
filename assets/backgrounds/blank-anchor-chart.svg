@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Blank anchor chart panel background</title>
+  <desc id="desc">Open anchor chart with title band and subtle note lines.</desc>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <rect x="120" y="70" width="1360" height="760" rx="28" fill="#ffffff" stroke="#cbd5e1" stroke-width="6"/>
+  <rect x="120" y="70" width="1360" height="120" rx="28" fill="#e0f2fe"/>
+  <text x="800" y="145" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="50" font-weight="800" fill="#075985">Anchor Chart Title</text>
+  <g stroke="#e2e8f0" stroke-width="4">
+    <path d="M180 265H1420M180 340H1420M180 415H1420M180 490H1420M180 565H1420M180 640H1420M180 715H1420"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Choice board panel background</title>
+  <desc id="desc">Nine-cell choice board for classroom activities.</desc>
+  <rect width="1600" height="900" fill="#f7fee7"/>
+  <text x="800" y="95" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800" fill="#3f6212">Choice Board</text>
+  <g fill="#ffffff" stroke="#bef264" stroke-width="5">
+    <rect x="100" y="140" width="430" height="205" rx="18"/><rect x="585" y="140" width="430" height="205" rx="18"/><rect x="1070" y="140" width="430" height="205" rx="18"/>
+    <rect x="100" y="375" width="430" height="205" rx="18"/><rect x="585" y="375" width="430" height="205" rx="18"/><rect x="1070" y="375" width="430" height="205" rx="18"/>
+    <rect x="100" y="610" width="430" height="205" rx="18"/><rect x="585" y="610" width="430" height="205" rx="18"/><rect x="1070" y="610" width="430" height="205" rx="18"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#4d7c0f" text-anchor="middle">
+    <text x="315" y="250">Option 1</text><text x="800" y="250">Option 2</text><text x="1285" y="250">Option 3</text>
+    <text x="315" y="485">Option 4</text><text x="800" y="485">Option 5</text><text x="1285" y="485">Option 6</text>
+    <text x="315" y="720">Option 7</text><text x="800" y="720">Option 8</text><text x="1285" y="720">Option 9</text>
+  </g>
+</svg>

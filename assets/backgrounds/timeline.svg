@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Timeline panel background</title>
+  <desc id="desc">Horizontal timeline organizer with six milestones.</desc>
+  <rect width="1600" height="900" fill="#fbfbff"/>
+  <text x="800" y="120" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="800" fill="#4c1d95">Timeline</text>
+  <line x1="150" y1="440" x2="1450" y2="440" stroke="#7c3aed" stroke-width="9" stroke-linecap="round"/>
+  <g fill="#ffffff" stroke="#7c3aed" stroke-width="6">
+    <circle cx="200" cy="440" r="34"/><circle cx="450" cy="440" r="34"/><circle cx="700" cy="440" r="34"/>
+    <circle cx="950" cy="440" r="34"/><circle cx="1200" cy="440" r="34"/><circle cx="1450" cy="440" r="34"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1f2937" text-anchor="middle">
+    <text x="200" y="535">Event 1</text><text x="450" y="350">Event 2</text><text x="700" y="535">Event 3</text>
+    <text x="950" y="350">Event 4</text><text x="1200" y="535">Event 5</text><text x="1450" y="350">Event 6</text>
+  </g>
+  <g stroke="#ddd6fe" stroke-width="3">
+    <path d="M120 620H1480M120 685H1480M120 750H1480"/>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Lab notes panel background</title>
+  <desc id="desc">Science lab organizer with question, hypothesis, evidence, and conclusion.</desc>
+  <rect width="1600" height="900" fill="#ecfeff"/>
+  <text x="800" y="95" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800" fill="#155e75">Lab Notes</text>
+  <g fill="#ffffff" stroke="#67e8f9" stroke-width="5">
+    <rect x="90" y="140" width="680" height="250" rx="22"/>
+    <rect x="830" y="140" width="680" height="250" rx="22"/>
+    <rect x="90" y="455" width="680" height="330" rx="22"/>
+    <rect x="830" y="455" width="680" height="330" rx="22"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#164e63">
+    <text x="135" y="205">Question</text>
+    <text x="875" y="205">Hypothesis</text>
+    <text x="135" y="520">Evidence / Data</text>
+    <text x="875" y="520">Conclusion</text>
+  </g>
+  <g stroke="#cffafe" stroke-width="4">
+    <path d="M135 270H725M135 330H725M875 270H1465M875 330H1465"/>
+    <path d="M135 585H725M135 645H725M135 705H725M875 585H1465M875 645H1465M875 705H1465"/>
+  </g>
+</svg>

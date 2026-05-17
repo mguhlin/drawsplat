@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">T-chart panel background</title>
+  <desc id="desc">Two-column comparison organizer.</desc>
+  <rect width="1600" height="900" fill="#fff7ed"/>
+  <rect x="90" y="70" width="1420" height="760" rx="26" fill="#ffffff" stroke="#fed7aa" stroke-width="6"/>
+  <text x="800" y="150" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="800" fill="#9a3412">T-Chart</text>
+  <line x1="800" y1="200" x2="800" y2="815" stroke="#fb923c" stroke-width="7"/>
+  <line x1="130" y1="200" x2="1470" y2="200" stroke="#fb923c" stroke-width="7"/>
+  <text x="465" y="270" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800" fill="#1f2937">Side A</text>
+  <text x="1135" y="270" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800" fill="#1f2937">Side B</text>
+  <g stroke="#fed7aa" stroke-width="3">
+    <path d="M150 345H760M150 430H760M150 515H760M150 600H760M150 685H760M150 770H760"/>
+    <path d="M840 345H1450M840 430H1450M840 515H1450M840 600H1450M840 685H1450M840 770H1450"/>
+  </g>
+</svg>

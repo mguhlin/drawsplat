@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Storyboard panel background</title>
+  <desc id="desc">Six-frame storyboard organizer with note lines.</desc>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="800" y="75" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="800" fill="#334155">Storyboard</text>
+  <g fill="#ffffff" stroke="#cbd5e1" stroke-width="5">
+    <rect x="80" y="120" width="450" height="300" rx="18"/>
+    <rect x="575" y="120" width="450" height="300" rx="18"/>
+    <rect x="1070" y="120" width="450" height="300" rx="18"/>
+    <rect x="80" y="500" width="450" height="300" rx="18"/>
+    <rect x="575" y="500" width="450" height="300" rx="18"/>
+    <rect x="1070" y="500" width="450" height="300" rx="18"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#475569">
+    <text x="105" y="160">1</text><text x="600" y="160">2</text><text x="1095" y="160">3</text>
+    <text x="105" y="540">4</text><text x="600" y="540">5</text><text x="1095" y="540">6</text>
+  </g>
+  <g stroke="#e2e8f0" stroke-width="3">
+    <path d="M120 355H490M120 385H490"/>
+    <path d="M615 355H985M615 385H985"/>
+    <path d="M1110 355H1480M1110 385H1480"/>
+    <path d="M120 735H490M120 765H490"/>
+    <path d="M615 735H985M615 765H985"/>
+    <path d="M1110 735H1480M1110 765H1480"/>
+  </g>
+</svg>

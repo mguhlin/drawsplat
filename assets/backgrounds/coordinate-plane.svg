@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Coordinate plane panel background</title>
+  <desc id="desc">Math coordinate plane with grid and labeled axes.</desc>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <defs>
+    <pattern id="small" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#e5e7eb" stroke-width="2"/></pattern>
+    <pattern id="large" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" fill="url(#small)"/><path d="M200 0H0V200" fill="none" stroke="#cbd5e1" stroke-width="3"/></pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#large)"/>
+  <line x1="800" y1="40" x2="800" y2="860" stroke="#111827" stroke-width="5"/>
+  <line x1="60" y1="450" x2="1540" y2="450" stroke="#111827" stroke-width="5"/>
+  <path d="M800 40l-15 28h30zM1540 450l-28-15v30z" fill="#111827"/>
+  <text x="1515" y="420" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827">x</text>
+  <text x="825" y="75" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827">y</text>
+</svg>

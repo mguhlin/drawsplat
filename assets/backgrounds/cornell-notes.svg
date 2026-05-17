@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Cornell notes panel background</title>
+  <desc id="desc">Cornell notes layout with cue, notes, and summary areas.</desc>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <rect x="80" y="60" width="1440" height="780" rx="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="5"/>
+  <line x1="455" y1="150" x2="455" y2="700" stroke="#94a3b8" stroke-width="5"/>
+  <line x1="80" y1="150" x2="1520" y2="150" stroke="#94a3b8" stroke-width="5"/>
+  <line x1="80" y1="700" x2="1520" y2="700" stroke="#94a3b8" stroke-width="5"/>
+  <text x="800" y="115" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800" fill="#334155">Cornell Notes</text>
+  <text x="160" y="210" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#475569">Cues / Questions</text>
+  <text x="520" y="210" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#475569">Notes</text>
+  <text x="140" y="760" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#475569">Summary</text>
+  <g stroke="#e2e8f0" stroke-width="3">
+    <path d="M130 275H405M130 345H405M130 415H405M130 485H405M130 555H405M130 625H405"/>
+    <path d="M515 275H1465M515 345H1465M515 415H1465M515 485H1465M515 555H1465M515 625H1465"/>
+    <path d="M270 760H1465M140 810H1465"/>
+  </g>
+</svg>

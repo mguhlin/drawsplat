@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Exit ticket panel background</title>
+  <desc id="desc">Exit ticket with reflection prompts.</desc>
+  <rect width="1600" height="900" fill="#fefce8"/>
+  <rect x="110" y="70" width="1380" height="760" rx="32" fill="#ffffff" stroke="#fde68a" stroke-width="7"/>
+  <text x="800" y="150" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800" fill="#854d0e">Exit Ticket</text>
+  <g font-family="Inter, Arial, sans-serif" fill="#1f2937">
+    <text x="170" y="245" font-size="34" font-weight="800">One thing I learned:</text>
+    <text x="170" y="440" font-size="34" font-weight="800">One question I still have:</text>
+    <text x="170" y="635" font-size="34" font-weight="800">How I feel about today's learning:</text>
+  </g>
+  <g stroke="#fde68a" stroke-width="4">
+    <path d="M170 305H1430M170 365H1430"/>
+    <path d="M170 500H1430M170 560H1430"/>
+    <path d="M170 695H1430M170 755H1430"/>
+  </g>
+</svg>
