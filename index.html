@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat | Interactive Whiteboard for Classrooms and Teams</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body class="admin-page start-page">
+<header class="landing-header">
+  <a class="landing-brand" href="index.html" aria-label="DrawSplat start">
+    <img src="DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat</span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplat sections">
+    <a href="#features">Features</a>
+    <a href="background-templates.html">Templates</a>
+    <a href="#paths">Choose a Path</a>
+    <a href="#storage">Storage</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="terms-privacy.html">Privacy</a>
+    <a href="admin.html">Teacher Admin</a>
+  </nav>
+  <a class="landing-signin" href="whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell">
+  <section class="landing-hero">
+    <div class="landing-hero-copy">
+      <p class="landing-eyebrow">Static-first whiteboard for learning, planning, and visual work</p>
+      <h1>Interactive whiteboarding without putting admin controls in front of students.</h1>
+      <p class="landing-lede">DrawSplat is a self-contained interactive whiteboard for K-16 educators and students. It runs in the browser, supports classroom and productivity workflows, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.</p>
+      <div class="landing-actions">
+        <a class="landing-cta primary" href="whiteboard.html">Launch Whiteboard</a>
+        <a class="landing-cta" href="admin.html">Open Teacher Admin</a>
+      </div>
+      <a class="landing-coffee" href="https://paypal.me/mguhlin" target="_blank" rel="noopener noreferrer">Get the Developer a Cup of Coffee?</a>
+    </div>
+    <div class="landing-hero-art" aria-label="DrawSplat feature preview">
+      <img src="DrawSplat_logo.png" class="landing-hero-logo" alt="DrawSplat logo">
+      <div class="landing-board-preview">
+        <div class="preview-panel preview-panel-wide">
+          <span class="preview-dot blue"></span>
+          <strong>Teacher Layer</strong>
+          <p>Directions, diagrams, locked objects, and answer-key items.</p>
+        </div>
+        <div class="preview-panel sticky-yellow">
+          <strong>Student Ideas</strong>
+          <p>Sticky notes, sketches, media, comments, and reflections.</p>
+        </div>
+        <div class="preview-panel sticky-green">
+          <strong>Panels</strong>
+          <p>Move between boards for stations, groups, or project stages.</p>
+        </div>
+        <div class="preview-card">
+          <span>Room link ready</span>
+          <b>Share with class</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-trust" aria-label="DrawSplat use cases">
+    <span>Classrooms</span>
+    <span>Workshops</span>
+    <span>Faculty PLCs</span>
+    <span>Small Teams</span>
+    <span>Browser-Only Sessions</span>
+  </section>
+
+  <section class="language-strip" aria-label="DrawSplat language entry pages">
+    <p>DrawSplat interface entry pages are available where possible in English, Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi.</p>
+    <div class="language-links">
+      <a href="whiteboard.html">English</a>
+      <a href="index-sp.html">Spanish</a>
+      <a href="index-vn.html">Vietnamese</a>
+      <a href="index-ab.html">Arabic</a>
+      <a href="index-cn.html">Chinese</a>
+      <a href="index.uh.html">Urdu/Hindi</a>
+    </div>
+  </section>
+
+  <section id="features" class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Feature Set</p>
+      <h2>Built for active whiteboard work</h2>
+      <p>DrawSplat combines everyday whiteboard tools with classroom controls, media support, and flexible save options.</p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-card">
+        <span class="feature-icon">Pen</span>
+        <h3>Drawing and Annotation</h3>
+        <p>Use pen, shapes, arrows, text, sticky notes, selection tools, image crop, and object styling for live visual thinking.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon green">Panels</span>
+        <h3>Multi-Panel Boards</h3>
+        <p>Organize lessons, stations, brainstorming rounds, or project phases across multiple board panels.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon orange">Class</span>
+        <h3>Education Mode</h3>
+        <p>Reveal class, student, assignment, answer-key, moderation, and turn-in tools only when they are needed.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon blue">Media</span>
+        <h3>Rich Content</h3>
+        <p>Add images, audio notes, emojis, GIFs, mosaics, collages, word clouds, and Mermaid diagrams.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon gold">Save</span>
+        <h3>Flexible Persistence</h3>
+        <p>Autosave locally, use Google Apps Script with Drive and Sheets, or prepare for a MySQL or standalone storage backend.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon red">Reset</span>
+        <h3>Session Cleanup</h3>
+        <p>Use reset controls or browser-session expiration to clear temporary work after a set window, such as 24 hours.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="paths" class="landing-section path-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Choose Your Path</p>
+      <h2>One front door, separate workspaces</h2>
+      <p>Students get the whiteboard. Teachers and facilitators get setup, share links, and storage controls.</p>
+    </div>
+    <div class="path-grid">
+      <a class="path-card" href="whiteboard.html">
+        <span class="path-kicker">Students and collaborators</span>
+        <strong>Open Whiteboard</strong>
+        <p>Draw, add content, interact with panels, and work in the room or assignment configured by the teacher.</p>
+      </a>
+      <a class="path-card teacher" href="admin.html">
+        <span class="path-kicker">Teachers and facilitators</span>
+        <strong>Open Teacher Admin</strong>
+        <p>Configure Google, choose storage behavior, test the backend, create share links, and keep settings off the student screen.</p>
+      </a>
+      <a class="path-card adult" href="whiteboard.html?workspace=productivity">
+        <span class="path-kicker">Single users and small teams</span>
+        <strong>Use Productivity Mode</strong>
+        <p>Work without classroom-specific controls for planning, diagrams, notes, facilitation, and shared visual work.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="storage" class="landing-section storage-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Storage Choices</p>
+      <h2>Pick the level of persistence you need</h2>
+    </div>
+    <div class="storage-grid">
+      <article class="storage-card">
+        <h3>Google Apps Script + Drive</h3>
+        <p>Saves boards, rooms, templates, and turn-ins through Google Drive and Sheets. This is the current cloud-backed classroom path.</p>
+      </article>
+      <article class="storage-card">
+        <h3>Browser-Only Timed Session</h3>
+        <p>Keeps autosave in the browser and expires it after the selected time. It works now, but it is local to each browser profile.</p>
+      </article>
+      <article class="storage-card">
+        <h3>MySQL Backend</h3>
+        <p>Planned self-hosted option for schools that want SQL-backed rooms, users, submissions, and session expiration while keeping Google Apps available.</p>
+      </article>
+      <article class="storage-card">
+        <h3>Standalone Folder Storage</h3>
+        <p>Requires a small backend API because static pages cannot write files into a server folder. The admin UI is ready for that future endpoint.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat is available under AGPL-3.0-or-later or a separate commercial license.</span>
+  <a href="README.md">Read the README</a>
+  <a href="background-templates.html">Background Templates</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="terms-privacy.html">Terms & Privacy</a>
+</footer>
+</body>
+</html>

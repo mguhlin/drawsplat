@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat Teacher Admin</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body class="admin-page admin-locked">
+<header>
+  <a class="logo-link" href="index.html" aria-label="DrawSplat home"><img src="DrawSplat_logo.png" class="header-logo" alt=""></a>
+  <h1>DrawSplat <span class="app-version">Teacher Admin</span></h1>
+  <span class="badge">Setup</span>
+  <span class="spacer"></span>
+  <a class="admin-header-link" href="terms-privacy.html">Terms & Privacy</a>
+  <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button">Lock Admin</button>
+  <a class="admin-header-link" href="whiteboard.html">Open Board</a>
+</header>
+
+<section class="admin-gate" aria-label="Admin password required">
+  <div class="admin-gate-card">
+    <img src="DrawSplat_logo.png" alt="" class="access-logo">
+    <h2>Admin Access Required</h2>
+    <p>Enter the DrawSplat admin password to manage Google Apps Script, MySQL, storage modes, and classroom links.</p>
+    <label class="admin-label" for="adminGatePassword">Admin password</label>
+    <input id="adminGatePassword" type="password" autocomplete="current-password">
+    <div class="admin-actions">
+      <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
+      <a class="admin-button" href="admin-access.html">Request Access</a>
+    </div>
+    <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<main class="admin-shell">
+  <section class="admin-hero">
+    <h2>Teacher and Integration Management</h2>
+    <p>Use this page for Google setup, classroom room links, and deployment notes. Students should work from the board page and should not need to see provider URLs or setup instructions.</p>
+  </section>
+
+  <section class="admin-grid">
+    <article class="admin-panel">
+      <h3>Google Drive + Sheets</h3>
+      <p class="hint">Paste the deployed Google Apps Script Web App URL here. It is stored in this browser and used by the board page for Save to Google, Load from Google, Cloud Sync, templates, and turn-ins.</p>
+      <label class="admin-label" for="adminScriptUrl">Apps Script Web App URL</label>
+      <input id="adminScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+      <div class="admin-actions">
+        <button id="saveScriptUrlBtn" class="primary" type="button">Save URL</button>
+        <button id="testScriptUrlBtn" type="button">Test Connection</button>
+        <button id="clearScriptUrlBtn" type="button">Clear</button>
+      </div>
+      <p id="adminStatus" class="hint" role="status" aria-live="polite"></p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>MySQL Backend</h3>
+      <p class="hint">Use this option for a self-hosted SQL-backed deployment. The browser stores only the public API endpoint. Database host, username, and password stay on the backend server in an environment file.</p>
+      <label class="admin-label" for="mysqlAdminEndpoint">Configured MySQL API endpoint</label>
+      <input id="mysqlAdminEndpoint" type="url" placeholder="/api/drawsplat/mysql" autocomplete="off" disabled>
+      <div class="admin-actions">
+        <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
+        <a class="admin-button" href="server/mysql-backend/README.md">Backend Guide</a>
+      </div>
+      <p class="hint">Google Apps Script and MySQL are separate provider choices. You do not have to remove Google to prepare a MySQL backend.</p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Storage Mode</h3>
+      <p class="hint">Choose how this browser-backed deployment should preserve work. Google is best for cross-device classroom rooms. Browser-only timed sessions are useful for simple shared devices or temporary workshops.</p>
+      <label class="admin-label" for="storageMode">Mode</label>
+      <select id="storageMode">
+        <option value="google">Google Apps Script + Drive</option>
+        <option value="browser-session">Browser-only timed session</option>
+        <option value="mysql">MySQL backend (requires API)</option>
+        <option value="standalone-folder">Standalone server folder (requires backend)</option>
+      </select>
+      <label class="admin-label" for="sessionHours">Browser session expiration</label>
+      <select id="sessionHours">
+        <option value="1">1 hour</option>
+        <option value="4">4 hours</option>
+        <option value="8">8 hours</option>
+        <option value="24">24 hours</option>
+        <option value="72">72 hours</option>
+        <option value="168">7 days</option>
+      </select>
+      <label class="admin-label" for="folderEndpoint">Standalone folder API endpoint</label>
+      <input id="folderEndpoint" type="url" placeholder="/api/drawsplat/session or /api/drawsplat/mysql" autocomplete="off">
+      <div class="admin-actions">
+        <button id="saveStorageBtn" class="primary" type="button">Save Storage Mode</button>
+        <button id="resetSessionBtn" type="button">Reset Session Timer</button>
+        <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
+      </div>
+      <p class="hint">MySQL and standalone folder options are forward-compatible settings for future backend endpoints. They are not used by static hosting until that API exists.</p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Classroom Links</h3>
+      <p class="hint">Create room-specific links after the teacher has configured the backend. Student links open in student mode and hide teacher/admin controls.</p>
+      <label class="admin-label" for="adminRoom">Room name</label>
+      <input id="adminRoom" type="text" placeholder="algebra-team-a" autocomplete="off">
+      <label class="admin-label" for="adminStudentName">Optional student name</label>
+      <input id="adminStudentName" type="text" placeholder="Student name">
+      <div class="admin-actions">
+        <button id="copyStudentLinkBtn" class="primary" type="button">Copy Student Link</button>
+        <button id="copyTeacherLinkBtn" type="button">Copy Teacher Link</button>
+      </div>
+      <p class="hint">Room passwords are still entered on the board page. Do not place shared passwords in links.</p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Setup Checklist</h3>
+      <ol class="admin-checklist">
+        <li>Create a Google Sheet named <b>DrawSplat Saves</b>.</li>
+        <li>Open <span class="kbd">Extensions -> Apps Script</span>.</li>
+        <li>Paste the code from <span class="kbd">apps-script/Code.gs</span>.</li>
+        <li>Run <span class="kbd">setup()</span> once and approve permissions.</li>
+        <li>Deploy as a Web App, running as the teacher/admin account.</li>
+        <li>Paste the Web App URL in this admin page.</li>
+      </ol>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Standalone Direction</h3>
+      <p class="hint">The static admin page is an interim separation. The standalone target is a real admin dashboard with SSO, server-side permissions, realtime rooms, and provider integrations hidden from students.</p>
+      <div class="admin-actions">
+        <a class="admin-button" href="docs/standalone-architecture.md">Read Architecture Plan</a>
+        <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
+        <a class="admin-button" href="README.md">Read README</a>
+        <a class="admin-button" href="terms-privacy.html">Read Terms & Privacy</a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script src="admin-gate.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

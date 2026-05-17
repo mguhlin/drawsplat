@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat MySQL Setup Wizard</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body class="admin-page admin-locked">
+<header>
+  <a class="logo-link" href="admin.html" aria-label="Open Teacher Admin"><img src="DrawSplat_logo.png" class="header-logo" alt=""></a>
+  <h1>DrawSplat <span class="app-version">MySQL Setup</span></h1>
+  <span class="badge">Wizard</span>
+  <span class="spacer"></span>
+  <a class="admin-header-link" href="admin.html">Teacher Admin</a>
+  <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button">Lock Admin</button>
+  <a class="admin-header-link" href="whiteboard.html">Open Board</a>
+</header>
+
+<section class="admin-gate" aria-label="Admin password required">
+  <div class="admin-gate-card">
+    <img src="DrawSplat_logo.png" alt="" class="access-logo">
+    <h2>Admin Access Required</h2>
+    <p>Enter the DrawSplat admin password to use the MySQL setup wizard.</p>
+    <label class="admin-label" for="adminGatePassword">Admin password</label>
+    <input id="adminGatePassword" type="password" autocomplete="current-password">
+    <div class="admin-actions">
+      <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
+      <a class="admin-button" href="admin-access.html">Request Access</a>
+    </div>
+    <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<main class="admin-shell mysql-wizard">
+  <section class="admin-hero">
+    <h2>MySQL Backend Setup Wizard</h2>
+    <p>Use this page to prepare a self-hosted DrawSplat backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
+  </section>
+
+  <section class="wizard-steps" aria-label="MySQL setup steps">
+    <article class="wizard-step">
+      <span>1</span>
+      <h3>Install Backend</h3>
+      <p>Deploy the starter backend in <code>server/mysql-backend</code> on a server that can reach MySQL.</p>
+    </article>
+    <article class="wizard-step">
+      <span>2</span>
+      <h3>Create Database</h3>
+      <p>Run <code>schema.sql</code>, then put the database credentials in the server-side <code>.env</code> file.</p>
+    </article>
+    <article class="wizard-step">
+      <span>3</span>
+      <h3>Connect DrawSplat</h3>
+      <p>Save the public API endpoint here. Do not put the MySQL password in this browser page.</p>
+    </article>
+  </section>
+
+  <section class="admin-grid">
+    <article class="admin-panel">
+      <h3>Public API Endpoint</h3>
+      <p class="hint">This is the URL DrawSplat can call. It should point to the backend API, not directly to MySQL.</p>
+      <label class="admin-label" for="mysqlEndpoint">MySQL backend API endpoint</label>
+      <input id="mysqlEndpoint" type="url" placeholder="https://drawsplat.example.org/api/drawsplat/mysql" autocomplete="off">
+      <div class="admin-actions">
+        <button id="saveMysqlEndpointBtn" class="primary" type="button">Save Endpoint</button>
+        <button id="testMysqlEndpointBtn" type="button">Test Endpoint</button>
+      </div>
+      <p id="mysqlWizardStatus" class="hint" role="status" aria-live="polite"></p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Server-Side Database Settings</h3>
+      <p class="hint">Use these fields to generate a server-only <code>.env</code> template. The password is not saved in the browser.</p>
+      <label class="admin-label" for="mysqlHost">Database host</label>
+      <input id="mysqlHost" type="text" placeholder="127.0.0.1" autocomplete="off">
+      <label class="admin-label" for="mysqlPort">Port</label>
+      <input id="mysqlPort" type="number" min="1" max="65535" placeholder="3306" autocomplete="off">
+      <label class="admin-label" for="mysqlDatabase">Database name</label>
+      <input id="mysqlDatabase" type="text" placeholder="drawsplat" autocomplete="off">
+      <label class="admin-label" for="mysqlUser">Database user</label>
+      <input id="mysqlUser" type="text" placeholder="drawsplat_app" autocomplete="off">
+      <label class="admin-label" for="mysqlPassword">Database password</label>
+      <input id="mysqlPassword" type="password" placeholder="Not saved by this page" autocomplete="off">
+      <label class="admin-label" for="mysqlSsl">TLS mode</label>
+      <select id="mysqlSsl">
+        <option value="false">Off / local trusted network</option>
+        <option value="true">On / require TLS</option>
+      </select>
+      <div class="admin-actions">
+        <button id="generateEnvBtn" class="primary" type="button">Generate .env Template</button>
+        <button id="copyEnvBtn" type="button">Copy Template</button>
+      </div>
+    </article>
+
+    <article class="admin-panel mysql-output-panel">
+      <h3>Generated .env Template</h3>
+      <textarea id="mysqlEnvOutput" readonly spellcheck="false" aria-label="Generated environment configuration"></textarea>
+      <p class="hint">Put this on the backend server as <code>server/mysql-backend/.env</code>. Keep it out of Git and away from students.</p>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Backend Endpoint Contract</h3>
+      <ol class="admin-checklist">
+        <li><code>GET /health</code> verifies the backend is alive.</li>
+        <li><code>GET /rooms/:roomId/board</code> loads the current room board.</li>
+        <li><code>PUT /rooms/:roomId/board</code> saves board JSON.</li>
+        <li><code>POST /templates</code> saves reusable templates.</li>
+        <li><code>POST /turnins</code> stores student submissions.</li>
+        <li><code>DELETE /sessions/:sessionId</code> clears temporary sessions.</li>
+      </ol>
+      <div class="admin-actions">
+        <a class="admin-button" href="server/mysql-backend/README.md">Read Backend Guide</a>
+        <a class="admin-button" href="server/mysql-backend/schema.sql">View Schema</a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script src="admin-gate.js"></script>
+<script src="mysql-setup.js"></script>
+</body>
+</html>
