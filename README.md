@@ -2,6 +2,8 @@
 
 DrawSplat is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.
 
+Official website: [https://drawsplat.org](https://drawsplat.org)
+
 Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguhlin)
 
 ## Current build
@@ -117,9 +119,12 @@ Open `index.html` in a modern browser to see the public DrawSplat information pa
 You can host DrawSplat on:
 
 - GitHub Pages
+- Cloudflare Pages
 - a district or campus web server
 - a static website host
 - any simple file server that serves HTML, CSS, and JavaScript
+
+The public project site is intended to run at [https://drawsplat.org](https://drawsplat.org) from the GitHub repository through Cloudflare Pages. Local testing still works from any static file server, such as `http://localhost:8000/`.
 
 ## Storage modes
 

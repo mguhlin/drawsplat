@@ -2,6 +2,8 @@
 
 DrawSplat is created by Miguel Guhlin.
 
+Official website: https://drawsplat.org
+
 ## License Summary
 
 DrawSplat is available in two ways:

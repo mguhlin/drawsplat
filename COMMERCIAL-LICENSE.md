@@ -20,3 +20,5 @@ Custom hosting, SSO, realtime collaboration, backend deployment, privacy/legal r
 For commercial licensing, contact Miguel Guhlin:
 
 mguhlin@gmail.com
+
+Official website: https://drawsplat.org
