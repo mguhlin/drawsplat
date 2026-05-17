@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.6';
+const CACHE = 'drawsplat-v3.0.7';
 const SHELL = [
   './',
   './index.html',
@@ -12,7 +12,7 @@ const SHELL = [
   './mysql-setup.html',
   './whiteboard.html','./index-sp.html','./index-vn.html','./index-ab.html','./index-cn.html','./index.uh.html',
   './admin.html','./admin.js','./admin-gate.js','./mysql-setup.js',
-  './app.js','./app.css','./i18n.js','./locales.js','./DrawSplat_logo.png',
+  './app.js','./app.css','./i18n.js','./locales.js','./template-gallery.js','./DrawSplat_logo.png',
   './assets/backgrounds/kwl-chart.svg',
   './assets/backgrounds/frayer-model.svg',
   './assets/backgrounds/t-chart.svg',
@@ -42,7 +42,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/app.js','/app.css','/locales.js','/i18n.js'];
+const NETWORK_FIRST_PATHS = ['/app.js','/app.css','/locales.js','/i18n.js','/template-gallery.js'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;

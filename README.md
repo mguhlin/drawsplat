@@ -69,6 +69,7 @@ timeline
 - `app.js` — shared application code (extracted in v2.5)
 - `i18n.js` — runtime translation applicator (new in v2.5)
 - `locales.js` — single source of truth for every UI translation (new in v2.5)
+- `template-gallery.js` — keeps public template-gallery links aligned with the selected language
 - `sw.js` — service worker for offline shell (new in v2.5)
 - `apps-script/Code.gs` — optional Google Apps Script backend for Drive + Sheets saving, cloud sync, templates, and student turn-ins
 - `server/mysql-backend/` — starter Express + MySQL backend scaffold, schema, and setup guide
@@ -343,6 +344,16 @@ Related behavior:
 ## Detailed version history
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
+
+## Version 3.0.7 changes
+
+v3.0.7 improves multilingual template behavior.
+
+- Public background-template gallery text now follows the selected language from `?lang=`, saved language choice, or browser preference.
+- Template gallery links pass the language into DrawSplat when opening a template.
+- Built-in editable templates now insert localized labels for Frayer, KWL, T-chart, storyboard, Venn, brainstorm, and timeline templates.
+- SVG panel backgrounds opened from the gallery now replace common embedded template labels with localized text when possible.
+- Service-worker cache key bumped to `drawsplat-v3.0.7`.
 
 ## Version 3.0.5 changes
 

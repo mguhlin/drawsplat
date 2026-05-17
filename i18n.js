@@ -3,15 +3,35 @@
    confirm, alert, prompt with a runtime translation pass.
    Loads before app.js so that document.title/lang/dir are correct on first paint. */
 (function(){
-  /* Resolve language from explicit window var, else from <html lang>. */
+  /* Resolve language from explicit window var, translated page filename, query
+     string, saved preference, then browser preference. English pages stay
+     flexible so the shared template gallery can follow the user's selection. */
   const explicit = window.DRAWSPLAT_LOCALE;
   const fromTag = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
-  const LANG = explicit || fromTag;
+  const tagLang = fromTag.split('-')[0];
+  const tagIsTranslatedPage = tagLang && tagLang !== 'en';
+  const params = new URLSearchParams(location.search || '');
+  const fromQuery = (params.get('lang') || '').toLowerCase();
+  let fromStorage = '';
+  try{fromStorage = (localStorage.getItem('drawsplat.language') || '').toLowerCase()}catch(_){}
+  const fromBrowser = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+  function normalizeLang(lang){
+    if(!lang) return '';
+    if(lang.startsWith('es')) return 'es';
+    if(lang.startsWith('vi')) return 'vi';
+    if(lang.startsWith('ar')) return 'ar';
+    if(lang.startsWith('zh')) return 'zh';
+    if(lang === 'uh' || lang.startsWith('ur') || lang.startsWith('hi')) return 'uh';
+    if(lang.startsWith('en')) return 'en';
+    return '';
+  }
+  const LANG = normalizeLang(explicit) || (tagIsTranslatedPage ? normalizeLang(tagLang) : '') || normalizeLang(fromQuery) || normalizeLang(fromStorage) || normalizeLang(fromBrowser) || normalizeLang(tagLang) || 'en';
   const LOCS = window.DRAWSPLAT_LOCALES || {};
   const cfg = LOCS[LANG] || LOCS.en || {lang:'en',dir:'ltr',texts:{},placeholders:{},selects:{},runtime:{}};
   document.documentElement.lang = cfg.lang || 'en';
   document.documentElement.dir = cfg.dir || 'ltr';
   if(cfg.title) document.title = cfg.title;
+  window.DRAWSPLAT_LANG = cfg.lang || LANG;
 
   const texts = cfg.texts || {};
   const runtime = cfg.runtime || {};
