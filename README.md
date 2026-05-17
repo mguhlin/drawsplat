@@ -88,7 +88,7 @@ timeline
 - Multiple panels/pages for stations, lesson steps, group work, and collaborative activities
 - Pen, line, arrow, connector, rectangle, ellipse, diamond, triangle, callout, speech bubble, text, sticky note, comment pin, and audio note tools
 - Type inside shapes with wrapped text, alignment controls, rotation, auto-scaling, and double-click inline editing
-- Load images, drag them, resize them, and include them on any panel
+- Load images, drag them, resize them, crop them, and mask them into classroom-friendly shapes such as circles, triangles, stars, and hearts
 - sticky notes with optional image attachments
 - Adjustable line color, fill color, fill patterns, opacity, and line thickness
 - Background choices: blank, grid, dots, graph, ruled, and isometric
@@ -96,7 +96,7 @@ timeline
 - Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
 - Custom sticker / stamp tools, including teacher-uploaded image stickers
 - Graph makers for bar, line, area, pie, and picture graphs from simple label/value rows
-- Picture Graphs support vertical or horizontal stacks, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
+- Picture Graphs support vertical or horizontal stacks, a built-in sample icon catalog, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
 - Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
@@ -344,6 +344,97 @@ Related behavior:
 ## Detailed version history
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
+
+## Version 3.0.17 changes
+
+v3.0.17 improves public feature-page illustration layout.
+
+- Feature preview illustrations now use `object-fit: contain` with internal padding so the full interface illustration stays visible inside each card.
+- Service-worker cache key bumped to `drawsplat-v3.0.17`.
+
+## Version 3.0.16 changes
+
+v3.0.16 fixes large GIF creation.
+
+- GIF creation no longer pushes large encoded frames into arrays in a single spread operation, which could trigger browser argument-limit errors such as "Too many functions" or similar runtime failures.
+- GIF frames are capped to a practical maximum dimension so large selected images still produce manageable classroom GIFs.
+- Service-worker cache key bumped to `drawsplat-v3.0.16`.
+
+## Version 3.0.15 changes
+
+v3.0.15 adds public website feature illustrations.
+
+- Added a dedicated `features.html` page for DrawSplat’s visual creation tools.
+- Added local SVG illustrations for Graph Creator, Picture Graph, Mermaid Diagram, Dot Pictures, Sticker Library, and Collage.
+- The main landing page now includes a tool preview section using those illustrations.
+- Pricing and landing navigation now point to the dedicated features page.
+- Service-worker cache key bumped to `drawsplat-v3.0.15`.
+
+## Version 3.0.14 changes
+
+v3.0.14 expands Crop Image shape masks.
+
+- The Crop Image shape selector now includes grouped silhouette masks for animals, household items, hearts/arrows, and transport.
+- New masks include bird, butterfly, cat, dog, fish, dolphin, shark, turtle, rabbit, frog, horse, dinosaur, house, birdhouse, drop, plug, key, phone, cup, pan, lamp, faucet, wrench, gamepad, heart variants, arrow variants, airplane, car, bike, submarine, and hot air balloon.
+- The new masks are built-in vector silhouettes so DrawSplat stays self-contained.
+- Service-worker cache key bumped to `drawsplat-v3.0.14`.
+
+## Version 3.0.13 changes
+
+v3.0.13 improves image masks for classroom photos and graphics.
+
+- Star, heart, diamond, triangle, and pentagon image masks now use a safer centered content fit so important photo content is less likely to be clipped away by sharp or narrow parts of the shape.
+- The Crop Image preview now uses the same safer fit as the whiteboard rendering, so the preview better matches what appears on the board.
+- Service-worker cache key bumped to `drawsplat-v3.0.13`.
+
+## Version 3.0.12 changes
+
+v3.0.12 simplifies Picture Graph for picture-first use.
+
+- The Picture Graph dialog no longer shows the raw data editor or the row-picture list during normal use.
+- The graph preview is now the main workspace, with a much wider visual area.
+- Click the category picture on the bottom or side of the graph to choose a preset icon, upload an image, or remove the custom picture.
+- Drag inside the graph area to increase or decrease the count without typing.
+- Service-worker cache key bumped to `drawsplat-v3.0.12`.
+
+## Version 3.0.11 changes
+
+v3.0.11 makes Picture Graph editing more visual for early readers and picture-first use.
+
+- The Picture Graph preview can now be edited directly: drag up or down in a vertical category, or left and right in a horizontal category, to change the count.
+- Category labels on the rendered graph are now shown as the row picture/icon instead of text words like Pizza or Tacos.
+- Row controls include plus/minus count buttons for precise changes without typing data.
+- The raw data box remains available for keyboard entry and exact edits, but it uses less space in the Picture Graph dialog.
+- The Picture Graph preview area is larger so students can work mainly from pictures.
+- Service-worker cache key bumped to `drawsplat-v3.0.11`.
+
+## Version 3.0.10 changes
+
+v3.0.10 improves the Picture Graph row editor layout.
+
+- Picture Graphs now use a wider builder panel than standard charts.
+- Row picture controls have more vertical room and wider preset dropdowns.
+- On small screens, each row stacks its preset, upload, and remove controls so labels stay readable.
+- Service-worker cache key bumped to `drawsplat-v3.0.10`.
+
+## Version 3.0.9 changes
+
+v3.0.9 makes the Picture Graph preset catalog usable per row.
+
+- Each Picture Graph row now has its own preset icon selector, so categories like Pizza, Tacos, and Salad can each use a different built-in symbol without uploading images.
+- Uploaded per-row images still work and continue to override the fallback image or typed fallback symbol.
+- The row picture controls were widened so the preset selector, upload button, and remove button fit together more clearly.
+- Service-worker cache key bumped to `drawsplat-v3.0.9`.
+
+## Version 3.0.8 changes
+
+v3.0.8 adds classroom image-shape masking and picture graph sample icons.
+
+- The Crop Image dialog can now apply photo masks: circle, oval, triangle, diamond, pentagon, hexagon, octagon, star, and heart.
+- Masked photos stay editable DrawSplat image objects, so they can still be moved, resized, duplicated, exported, and re-cropped.
+- Picture Graphs now include a built-in sample icon catalog with food, animals, life science, colored candies, school, and weather symbols.
+- Colored candy presets are generic colored circles without M&M branding or logos.
+- Service-worker cache key bumped to `drawsplat-v3.0.8`.
 
 ## Version 3.0.7 changes
 

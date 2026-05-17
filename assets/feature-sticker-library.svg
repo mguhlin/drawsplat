@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">Sticker Library illustration</title>
+  <desc id="desc">A sticker library with tiles for star, check, idea, question, smile, book, pencil, pin, search, and globe.</desc>
+  <rect width="960" height="300" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="298" rx="24" fill="none" stroke="#d7ddea"/>
+  <text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800">Sticker Library</text>
+  <g transform="translate(24 70)" font-family="Inter,Arial,sans-serif" font-size="17" text-anchor="middle" fill="#111827">
+    <g><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#fde68a"/><text x="54" y="48" font-size="30">⭐</text><text x="54" y="86">Star</text></g>
+    <g transform="translate(124 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#bbf7d0"/><text x="54" y="48" font-size="30">✅</text><text x="54" y="86">Check</text></g>
+    <g transform="translate(248 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#fde68a"/><text x="54" y="48" font-size="30">💡</text><text x="54" y="86">Idea</text></g>
+    <g transform="translate(372 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#dbeafe"/><text x="54" y="48" font-size="30">❓</text><text x="54" y="86">Question</text></g>
+    <g transform="translate(496 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#fecdd3"/><text x="54" y="48" font-size="30">😀</text><text x="54" y="86">Smile</text></g>
+    <g transform="translate(620 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#ddd6fe"/><text x="54" y="48" font-size="30">📚</text><text x="54" y="86">Book</text></g>
+    <g transform="translate(744 0)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#fed7aa"/><text x="54" y="48" font-size="30">✏️</text><text x="54" y="86">Pencil</text></g>
+    <g transform="translate(0 120)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#fecaca"/><text x="54" y="48" font-size="30">📌</text><text x="54" y="86">Pin</text></g>
+    <g transform="translate(124 120)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#cffafe"/><text x="54" y="48" font-size="30">🔍</text><text x="54" y="86">Search</text></g>
+    <g transform="translate(248 120)"><rect width="108" height="104" rx="14" fill="#fbfcff" stroke="#d3d9e8"/><rect x="28" y="12" width="52" height="52" rx="12" fill="#bfdbfe"/><text x="54" y="48" font-size="30">🌎</text><text x="54" y="86">Globe</text></g>
+  </g>
+</svg>

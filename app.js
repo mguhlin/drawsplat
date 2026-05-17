@@ -128,6 +128,7 @@ function setButtonChrome(elOrId,label,icon){
 }
 function graphLang(){const lang=(window.DRAWSPLAT_LOCALE||document.documentElement.lang||'en').toLowerCase(); return lang.startsWith('es')?'es':lang.startsWith('vi')?'vi':lang.startsWith('ar')?'ar':lang.startsWith('zh')?'zh':(lang==='uh'||lang.includes('ur')||lang.includes('hi'))?'uh':'en'}
 function gt(key){return (GRAPH_I18N[graphLang()]||GRAPH_I18N.en)[key]||GRAPH_I18N.en[key]||key}
+function gtf(key,fallback){const v=gt(key); return v===key?fallback:v}
 const TEMPLATE_I18N={
   en:{frayerTitle:'Frayer Model',definition:'Definition',characteristics:'Characteristics',examples:'Examples',nonExamples:'Non-Examples',kwlKnow:'Know',kwlWant:'Want to Know',kwlLearned:'Learned',sideA:'Side A',sideB:'Side B',caption:'Caption',both:'Both',mainIdea:'Main Idea',idea:'Idea',event:'Event'},
   es:{frayerTitle:'Modelo Frayer',definition:'Definición',characteristics:'Características',examples:'Ejemplos',nonExamples:'No ejemplos',kwlKnow:'Sé',kwlWant:'Quiero saber',kwlLearned:'Aprendí',sideA:'Lado A',sideB:'Lado B',caption:'Subtítulo',both:'Ambos',mainIdea:'Idea principal',idea:'Idea',event:'Evento'},
@@ -725,10 +726,105 @@ function render(){
 
 function drawLiveCursors(g){const now=Date.now(); let count=0; Object.values(liveCursors).forEach(c=>{if(!c||c.panel!==board.active||now-c.ts>12000) return; count++; const x=c.x||0,y=c.y||0,color=c.color||'#2563eb'; g.appendChild(svgEl(`<g class="cursor-tag" opacity="0.98"><path d="M ${x} ${y} L ${x+10} ${y+24} L ${x+14} ${y+14} L ${x+28} ${y+14} Z" fill="${color}"/><rect x="${x+14}" y="${y+14}" rx="9" ry="9" width="${Math.max(74,(c.name||'User').length*8)}" height="24" fill="${color}"/><text x="${x+24}" y="${y+30}" font-size="12" font-weight="700" fill="white">${esc(c.name||'User')}</text></g>`))}); if(ui.cursorStatus) ui.cursorStatus.textContent=count?`${count} collaborator cursor${count===1?'':'s'} visible.`:'No live collaborator cursors yet.'}
 
-function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="8" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){if(o.crop&&o.naturalW&&o.naturalH){const c=o.crop, vbX=c.x*o.naturalW, vbY=c.y*o.naturalH, vbW=c.w*o.naturalW, vbH=c.h*o.naturalH; node=svgEl(`<svg x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" viewBox="${vbX} ${vbY} ${vbW} ${vbH}" preserveAspectRatio="xMidYMid meet" opacity="${o.opacity}"><image href="${esc(o.src)}" width="${o.naturalW}" height="${o.naturalH}" preserveAspectRatio="none"/></svg>`)} else {node=svgEl(`<image x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" href="${esc(o.src)}" preserveAspectRatio="xMidYMid meet" opacity="${o.opacity}"/>`); if(!o.naturalW){const probe=new Image(); probe.onload=()=>{o.naturalW=probe.width; o.naturalH=probe.height; requestRender()}; probe.src=o.src}}}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b); if(node)el.appendChild(node); if(SHAPE_TEXT_TYPES.includes(o.type)) el.appendChild(createShapeTextObject(o,b)); if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
+function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="8" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b); if(node)el.appendChild(node); if(SHAPE_TEXT_TYPES.includes(o.type)) el.appendChild(createShapeTextObject(o,b)); if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
 
 function calloutPath(b){const r=Math.min(16,b.w/8,b.h/8),tx=b.x+Math.min(40,b.w*.3),ty=b.y+b.h,n=Math.min(26,b.h*.22);return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${tx+18} L ${tx} ${ty} L ${tx+8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
 function speechPath(b){const r=Math.min(18,b.w/8,b.h/8),n=Math.min(28,b.h*.22),cx=b.x+b.w*.55;return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${cx+18} L ${cx-2} ${b.y+b.h} L ${cx-8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
+function regularPolygonPoints(cx,cy,rx,ry,n,rot=-Math.PI/2){return Array.from({length:n},(_,i)=>`${cx+Math.cos(rot+i*Math.PI*2/n)*rx},${cy+Math.sin(rot+i*Math.PI*2/n)*ry}`).join(' ')}
+function starPoints(cx,cy,rx,ry,inner=.46,points=5){return Array.from({length:points*2},(_,i)=>{const r=i%2?inner:1,a=-Math.PI/2+i*Math.PI/points;return`${cx+Math.cos(a)*rx*r},${cy+Math.sin(a)*ry*r}`}).join(' ')}
+function heartPath(b){const x=b.x,y=b.y,w=b.w,h=b.h;return`M ${x+w/2} ${y+h*.88} C ${x+w*.1} ${y+h*.58} ${x} ${y+h*.34} ${x+w*.18} ${y+h*.16} C ${x+w*.32} ${y} ${x+w*.48} ${y+h*.08} ${x+w/2} ${y+h*.23} C ${x+w*.52} ${y+h*.08} ${x+w*.68} ${y} ${x+w*.82} ${y+h*.16} C ${x+w} ${y+h*.34} ${x+w*.9} ${y+h*.58} ${x+w/2} ${y+h*.88} Z`}
+const CROP_CUSTOM_MASKS={
+  bird:'M12 55 C28 22 58 24 88 18 C62 38 50 58 36 78 C32 66 22 60 12 55 Z',
+  butterfly:'M50 50 C22 12 2 12 12 48 C-4 82 28 90 50 58 C72 90 104 82 88 48 C98 12 78 12 50 50 Z',
+  cat:'M20 90 L20 32 L34 46 L50 18 L66 46 L80 32 L80 90 Z M36 62 L42 62 M58 62 L64 62',
+  dog:'M12 70 C20 42 40 36 60 46 L78 32 L88 42 L74 56 C80 74 64 88 40 86 C22 84 10 80 12 70 Z',
+  fish:'M8 50 L28 32 C54 16 82 28 92 50 C82 72 54 84 28 68 Z M14 50 L2 34 L2 66 Z',
+  dolphin:'M8 58 C28 24 62 18 92 34 C66 36 54 52 40 76 L32 58 Z',
+  shark:'M6 56 C28 24 64 24 94 48 L66 62 L94 76 C64 80 30 78 6 56 Z',
+  turtle:'M14 56 C20 28 80 28 86 56 C78 82 22 82 14 56 Z M84 52 C94 48 98 58 88 64 Z',
+  rabbit:'M22 86 C8 58 28 42 50 52 C72 42 92 58 78 86 Z M40 50 C24 18 28 4 48 40 Z M56 50 C72 18 68 4 52 40 Z',
+  frog:'M14 62 C18 34 82 34 86 62 C72 86 28 86 14 62 Z M26 34 A10 10 0 1 1 46 34 M54 34 A10 10 0 1 1 74 34',
+  horse:'M16 78 L24 44 L46 30 L70 42 L84 70 L72 88 L56 64 L34 76 Z',
+  dinosaur:'M10 74 C22 42 54 36 72 50 L92 42 L78 64 L84 82 L58 76 L36 88 Z',
+  birdhouse:'M18 46 L50 14 L82 46 L74 46 L74 88 L26 88 L26 46 Z M42 52 A8 8 0 1 1 58 52',
+  house:'M14 48 L50 14 L86 48 L76 48 L76 88 L24 88 L24 48 Z',
+  drop:'M50 8 C74 42 86 60 72 80 C58 100 22 88 22 62 C22 44 36 28 50 8 Z',
+  plug:'M32 8 H44 V34 H56 V8 H68 V36 C68 52 58 60 50 64 V92 H42 V64 C34 60 32 52 32 36 Z',
+  key:'M28 56 A18 18 0 1 1 56 36 L94 36 L94 48 L82 48 L82 60 L68 60 L68 72 L56 72 L48 64 A18 18 0 0 1 28 56 Z',
+  phone:'M18 32 C36 14 64 14 82 32 V80 C64 96 36 96 18 80 Z M30 40 H70 V72 H30 Z',
+  cup:'M22 36 H68 V70 C62 88 30 88 24 70 Z M68 42 H84 C88 54 78 68 68 66 Z',
+  pan:'M14 54 H64 C78 54 82 72 68 82 H28 C16 80 8 66 14 54 Z M64 60 H96 V70 H64 Z',
+  lamp:'M34 20 H66 L80 54 H20 Z M46 54 H54 V86 H72 V94 H28 V86 H46 Z',
+  faucet:'M24 70 V52 H52 V38 H42 V26 H70 V38 H60 V52 H82 C94 52 96 70 82 74 H66 C66 64 58 60 50 60 H34 V70 Z',
+  wrench:'M76 12 C86 24 82 42 68 48 L34 82 C28 88 18 82 24 74 L58 40 C52 26 62 12 76 12 Z',
+  gamepad:'M16 60 C20 36 36 34 50 46 C64 34 80 36 84 60 C88 82 72 88 58 70 H42 C28 88 12 82 16 60 Z',
+  heartArrow:'M50 90 C10 62 2 34 22 20 C36 10 48 20 50 34 C52 20 64 10 78 20 C98 34 90 62 50 90 Z M6 16 H30 M22 8 L30 16 L22 24',
+  brokenHeart:'M50 90 C12 62 4 34 24 20 C38 10 48 22 50 34 L42 50 L54 54 L44 72 L58 54 L48 50 L56 34 C58 22 70 10 84 20 C104 34 88 62 50 90 Z',
+  pixelHeart:'M20 20 H40 V30 H50 V20 H80 V50 H70 V70 H60 V80 H50 V90 H40 V80 H30 V70 H20 V50 H10 V30 H20 Z',
+  heartLock:'M50 90 C10 62 2 34 22 20 C36 10 48 20 50 34 C52 20 64 10 78 20 C98 34 90 62 50 90 Z M38 54 H62 V76 H38 Z M44 54 V46 C44 36 56 36 56 46 V54',
+  arrowDown:'M36 4 H64 V52 H88 L50 94 L12 52 H36 Z',
+  arrowUp:'M50 6 L88 48 H64 V96 H36 V48 H12 Z',
+  arrowLeft:'M6 50 L48 12 V36 H96 V64 H48 V88 Z',
+  arrowRight:'M94 50 L52 12 V36 H4 V64 H52 V88 Z',
+  arrowRefresh:'M78 24 L94 24 L94 8 M88 24 C76 8 48 6 30 22 C10 40 12 70 32 84 C52 98 80 90 90 66 H74 C66 78 48 80 36 70 C24 58 26 40 38 30 C50 20 66 18 78 24 Z',
+  airplane:'M6 54 L94 16 L76 50 L94 84 L58 68 L38 94 L30 76 L42 60 Z',
+  car:'M10 66 L22 42 H74 L90 66 V82 H10 Z M24 82 A8 8 0 1 1 40 82 M60 82 A8 8 0 1 1 76 82',
+  bike:'M22 76 A16 16 0 1 1 54 76 M62 76 A16 16 0 1 1 94 76 M38 76 L52 48 L66 76 M52 48 H72 M52 48 L42 34',
+  submarine:'M8 62 C24 38 76 38 92 62 C76 86 24 86 8 62 Z M36 42 V24 H52 V42 M28 62 A5 5 0 1 1 38 62 M48 62 A5 5 0 1 1 58 62 M68 62 A5 5 0 1 1 78 62',
+  hotAirBalloon:'M50 10 C76 10 88 34 78 58 C70 74 60 82 50 82 C40 82 30 74 22 58 C12 34 24 10 50 10 Z M38 82 H62 L58 96 H42 Z'
+};
+const CROP_SHAPE_GROUPS=[
+  ['Basic',[['none','Original rectangle'],['circle','Circle'],['oval','Oval'],['triangle','Triangle'],['diamond','Diamond'],['pentagon','Pentagon'],['hexagon','Hexagon'],['octagon','Octagon'],['star','Star'],['heart','Heart']]],
+  ['Animals',[['bird','Bird'],['butterfly','Butterfly'],['cat','Cat'],['dog','Dog'],['fish','Fish'],['dolphin','Dolphin'],['shark','Shark'],['turtle','Turtle'],['rabbit','Rabbit'],['frog','Frog'],['horse','Horse'],['dinosaur','Dinosaur']]],
+  ['Household',[['house','House'],['birdhouse','Birdhouse'],['drop','Drop'],['plug','Plug'],['key','Key'],['phone','Phone'],['cup','Cup'],['pan','Pan'],['lamp','Lamp'],['faucet','Faucet'],['wrench','Wrench'],['gamepad','Gamepad']]],
+  ['Hearts and arrows',[['heartArrow','Heart with arrow'],['brokenHeart','Broken heart'],['pixelHeart','Pixel heart'],['heartLock','Heart lock'],['arrowDown','Arrow down'],['arrowUp','Arrow up'],['arrowLeft','Arrow left'],['arrowRight','Arrow right'],['arrowRefresh','Refresh arrow']]],
+  ['Transport',[['airplane','Airplane'],['car','Car'],['bike','Bike'],['submarine','Submarine'],['hotAirBalloon','Hot air balloon']]]
+];
+function cropShapeOptionsHtml(){
+  return CROP_SHAPE_GROUPS.map(([group,items])=>`<optgroup label="${esc(group)}">${items.map(([value,label])=>`<option value="${esc(value)}">${esc(label)}</option>`).join('')}</optgroup>`).join('');
+}
+function customMaskPath(shape,b){
+  const d=CROP_CUSTOM_MASKS[shape]; if(!d) return '';
+  return `<path d="${d}" transform="translate(${b.x} ${b.y}) scale(${b.w/100} ${b.h/100})"/>`;
+}
+function imageMaskContentBox(shape,b){
+  const fits={star:.64,heart:.76,diamond:.74,triangle:.72,pentagon:.84,butterfly:.82,heartArrow:.76,brokenHeart:.76,pixelHeart:.82,heartLock:.76,arrowDown:.78,arrowUp:.78,arrowLeft:.78,arrowRight:.78,arrowRefresh:.84};
+  const f=fits[shape]||1;
+  if(f>=1) return b;
+  const w=b.w*f,h=b.h*f;
+  let x=b.x+(b.w-w)/2,y=b.y+(b.h-h)/2;
+  if(shape==='triangle') y=b.y+b.h*.23;
+  if(shape==='heart') y=b.y+b.h*.16;
+  return {x,y,w,h};
+}
+function imageMaskClipSvg(shape,b){
+  if(!shape||shape==='none') return '';
+  const custom=customMaskPath(shape,b); if(custom) return custom;
+  if(shape==='circle') return `<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${Math.min(b.w,b.h)/2}" ry="${Math.min(b.w,b.h)/2}"/>`;
+  if(shape==='oval') return `<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}"/>`;
+  if(shape==='triangle') return `<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}"/>`;
+  if(shape==='diamond') return `<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}"/>`;
+  if(shape==='pentagon') return `<polygon points="${regularPolygonPoints(b.x+b.w/2,b.y+b.h/2,b.w/2,b.h/2,5)}"/>`;
+  if(shape==='hexagon') return `<polygon points="${regularPolygonPoints(b.x+b.w/2,b.y+b.h/2,b.w/2,b.h/2,6,0)}"/>`;
+  if(shape==='octagon') return `<polygon points="${regularPolygonPoints(b.x+b.w/2,b.y+b.h/2,b.w/2,b.h/2,8,Math.PI/8)}"/>`;
+  if(shape==='star') return `<polygon points="${starPoints(b.x+b.w/2,b.y+b.h/2,b.w/2,b.h/2)}"/>`;
+  if(shape==='heart') return `<path d="${heartPath(b)}"/>`;
+  return '';
+}
+function createImageObject(o,b){
+  const ib=o.maskShape&&o.maskShape!=='none'?imageMaskContentBox(o.maskShape,b):b;
+  let inner;
+  if(o.crop&&o.naturalW&&o.naturalH){
+    const c=o.crop, vbX=c.x*o.naturalW, vbY=c.y*o.naturalH, vbW=c.w*o.naturalW, vbH=c.h*o.naturalH;
+    inner=`<svg x="${ib.x}" y="${ib.y}" width="${ib.w}" height="${ib.h}" viewBox="${vbX} ${vbY} ${vbW} ${vbH}" preserveAspectRatio="xMidYMid meet"><image href="${esc(o.src)}" width="${o.naturalW}" height="${o.naturalH}" preserveAspectRatio="none"/></svg>`;
+  } else {
+    inner=`<image x="${ib.x}" y="${ib.y}" width="${ib.w}" height="${ib.h}" href="${esc(o.src)}" preserveAspectRatio="xMidYMid meet"/>`;
+    if(!o.naturalW){const probe=new Image(); probe.onload=()=>{o.naturalW=probe.width; o.naturalH=probe.height; requestRender()}; probe.src=o.src}
+  }
+  const clip=imageMaskClipSvg(o.maskShape,b);
+  if(!clip) return svgEl(`<g opacity="${o.opacity}">${inner}</g>`);
+  return svgEl(`<g opacity="${o.opacity}"><defs><clipPath id="imgmask_${o.id}">${clip}</clipPath></defs><g clip-path="url(#imgmask_${o.id})">${inner}</g></g>`);
+}
 function shapeClipNode(type,b){if(type==='rect')return svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="8"/>`);if(type==='ellipse')return svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}"/>`);if(type==='diamond')return svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}"/>`);if(type==='triangle')return svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}"/>`);if(type==='callout')return svgEl(`<path d="${calloutPath(b)}"/>`);return svgEl(`<path d="${speechPath(b)}"/>`)}
 function textBoxFor(type,b){if(type==='ellipse')return{x:b.x+b.w*.18,y:b.y+b.h*.18,w:b.w*.64,h:b.h*.64};if(type==='diamond')return{x:b.x+b.w*.21,y:b.y+b.h*.21,w:b.w*.58,h:b.h*.58};if(type==='triangle')return{x:b.x+b.w*.19,y:b.y+b.h*.16,w:b.w*.62,h:b.h*.68};if(type==='callout'||type==='speech')return{x:b.x+14,y:b.y+12,w:b.w-28,h:b.h-Math.min(30,b.h*.24)-16};if(type==='sticky')return{x:b.x+12,y:b.y+12,w:b.w-24,h:b.h-24};if(type==='text')return{x:b.x,y:b.y,w:b.w,h:b.h};return{x:b.x+12,y:b.y+12,w:b.w-24,h:b.h-24}}
 
@@ -842,14 +938,46 @@ function parseGraphRows(text){
     return Number.isFinite(value)?{label:parts.join(',').trim()||'Item',value}:null;
   }).filter(Boolean);
 }
+const PICTURE_GRAPH_ICON_CATALOG=[
+  ['Food',[['pizza','Pizza','🍕'],['taco','Taco','🌮'],['salad','Salad','🥗'],['sandwich','Sandwich','🥪'],['apple','Apple','🍎'],['banana','Banana','🍌'],['carrot','Carrot','🥕']]],
+  ['Animals',[['dog','Dog','🐕'],['cat','Cat','🐈'],['dolphin','Dolphin','🐬'],['whale','Whale','🐋'],['shark','Shark','🦈'],['parrot','Parrot','🦜'],['bird','Bird','🐦'],['toucan','Toucan','🦜'],['fish','Fish','🐟'],['turtle','Turtle','🐢'],['frog','Frog','🐸'],['butterfly','Butterfly','🦋']]],
+  ['Life Science',[['vertebrate','Vertebrate','🦴'],['invertebrate','Invertebrate','🪱'],['mammal','Mammal','🐾'],['reptile','Reptile','🦎'],['amphibian','Amphibian','🐸'],['insect','Insect','🐞'],['plant','Plant','🌱']]],
+  ['Colored Candies',[['red-candy','Red candy','🔴'],['orange-candy','Orange candy','🟠'],['yellow-candy','Yellow candy','🟡'],['green-candy','Green candy','🟢'],['blue-candy','Blue candy','🔵'],['purple-candy','Purple candy','🟣'],['brown-candy','Brown candy','🟤']]],
+  ['School',[['book','Book','📚'],['pencil','Pencil','✏️'],['backpack','Backpack','🎒'],['calculator','Calculator','🧮'],['star','Star','⭐'],['check','Check','✅']]],
+  ['Weather',[['sun','Sun','☀️'],['cloud','Cloud','☁️'],['rain','Rain','🌧️'],['snow','Snow','❄️'],['storm','Storm','⛈️'],['rainbow','Rainbow','🌈']]]
+];
+function pictureGraphIconOptions(selected=''){
+  return '<option value="">'+esc(gtf('choosePreset','Choose preset'))+'</option>'+PICTURE_GRAPH_ICON_CATALOG.map(([group,items])=>`<optgroup label="${esc(group)}">${items.map(([idv,label,icon])=>`<option value="${esc(icon)}" ${icon===selected?'selected':''}>${esc(icon+' '+label)}</option>`).join('')}</optgroup>`).join('');
+}
+function pictureGraphSymbolKind(value){
+  if(!value) return 'fallback';
+  if(typeof value==='object') return value.kind||value.type||'icon';
+  return /^(data:image\/|blob:|https?:\/\/)/i.test(String(value))?'image':'icon';
+}
+function pictureGraphSymbolValue(value){
+  if(!value) return '';
+  if(typeof value==='object') return value.value||value.src||value.icon||'';
+  return String(value);
+}
+function pictureGraphLayoutMetrics(config,data){
+  const W=720,H=460,left=86,right=42,top=64,bottom=80,cw=W-left-right,ch=H-top-bottom, scale=Math.max(1,+config.scale||1);
+  const maxIcons=Math.max(...data.map(d=>Math.ceil(Math.max(0,d.value)/scale)),1), visibleMaxIcons=Math.min(maxIcons,80);
+  if(config.direction==='horizontal'){
+    const rowH=ch/data.length, iconSize=Math.min(30,Math.max(8,(cw-86)/Math.max(visibleMaxIcons,1)-5)), gap=Math.max(2,iconSize*.32), startX=left+84;
+    return {W,H,left,right,top,bottom,cw,ch,scale,maxIcons,visibleMaxIcons,rowH,iconSize,gap,startX};
+  }
+  const slot=cw/data.length, iconSize=Math.min(30,Math.max(8,Math.min(slot*.72,ch/Math.max(visibleMaxIcons,1)*.78))), gap=Math.max(2,iconSize*.18), baseY=top+ch-6;
+  return {W,H,left,right,top,bottom,cw,ch,scale,maxIcons,visibleMaxIcons,slot,iconSize,gap,baseY};
+}
 function niceMax(v){if(v<=0)return 10; const p=Math.pow(10,Math.floor(Math.log10(v))), n=v/p; return (n<=2?2:n<=5?5:10)*p}
 function ensurePictureGraphDialog(){
   if(gid('pictureGraphDialog')) return;
   const dlg=document.createElement('dialog');
   dlg.id='pictureGraphDialog';
   dlg.className='graph-dialog picture-graph-dialog';
-  dlg.innerHTML=`<div class="modal-head"><h2>${esc(gt('pictureGraph'))}</h2><button class="close" id="pictureGraphCancelBtn" aria-label="${esc(gt('close'))}">${esc(gt('close'))}</button></div><div class="graph-builder picture-graph-builder"><div class="graph-form"><div class="row"><label>${esc(gt('title'))}</label><input id="pictureGraphTitle" placeholder="${esc(gt('pictureTitle'))}"></div><div class="row"><label>${esc(gt('direction'))}</label><select id="pictureGraphDirection"><option value="vertical">${esc(gt('vertical'))}</option><option value="horizontal">${esc(gt('horizontal'))}</option></select></div><div class="row"><label>${esc(gt('icon'))}</label><input id="pictureGraphIcon" value="⭐" maxlength="8"></div><div class="picture-symbol-actions"><button id="pictureGraphLoadSymbolBtn" type="button">${esc(gt('loadPicture'))}</button><button id="pictureGraphClearSymbolBtn" type="button">${esc(gt('clearPicture'))}</button><span id="pictureGraphSymbolState" class="value-chip"></span></div><input id="pictureGraphSymbolInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden><div class="row"><label>${esc(gt('scale'))}</label><input id="pictureGraphScale" type="number" min="1" max="100" step="1" value="1"></div><div class="checkrow"><input id="pictureGraphShowNumbers" type="checkbox" checked><label for="pictureGraphShowNumbers">${esc(gt('showNumbers'))}</label></div><label class="graph-data-label" for="pictureGraphData">${esc(gt('data'))}</label><textarea id="pictureGraphData" spellcheck="false" placeholder="${esc(gt('placeholder'))}"></textarea><p class="hint">${esc(gt('pictureHint'))}</p><div class="picture-row-picture-head">${esc(gt('rowPictures'))}</div><div id="pictureGraphRowPictures" class="picture-row-pictures"></div><input id="pictureGraphRowImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden><div class="confirm-actions"><button id="pictureGraphInsertBtn" type="button" class="primary">${esc(gt('insertPictureGraph'))}</button></div></div><div id="pictureGraphPreview" class="graph-preview picture-graph-preview" aria-label="${esc(gt('pictureGraph'))}"></div></div>`;
+  dlg.innerHTML=`<div class="modal-head"><h2>${esc(gt('pictureGraph'))}</h2><button class="close" id="pictureGraphCancelBtn" aria-label="${esc(gt('close'))}">${esc(gt('close'))}</button></div><div class="graph-builder picture-graph-builder"><div class="graph-form"><div class="row"><label>${esc(gt('title'))}</label><input id="pictureGraphTitle" placeholder="${esc(gt('pictureTitle'))}"></div><div class="row"><label>${esc(gt('direction'))}</label><select id="pictureGraphDirection"><option value="vertical">${esc(gt('vertical'))}</option><option value="horizontal">${esc(gt('horizontal'))}</option></select></div><div class="row picture-fallback-control"><label>${esc(gtf('presetIcon','Preset icon'))}</label><select id="pictureGraphIconPreset">${pictureGraphIconOptions()}</select></div><div class="row picture-fallback-control"><label>${esc(gt('icon'))}</label><input id="pictureGraphIcon" value="⭐" maxlength="8"></div><div class="picture-symbol-actions picture-fallback-control"><button id="pictureGraphLoadSymbolBtn" type="button">${esc(gt('loadPicture'))}</button><button id="pictureGraphClearSymbolBtn" type="button">${esc(gt('clearPicture'))}</button><span id="pictureGraphSymbolState" class="value-chip"></span></div><input id="pictureGraphSymbolInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden><div class="row"><label>${esc(gt('scale'))}</label><input id="pictureGraphScale" type="number" min="1" max="100" step="1" value="1"></div><div class="checkrow"><input id="pictureGraphShowNumbers" type="checkbox" checked><label for="pictureGraphShowNumbers">${esc(gt('showNumbers'))}</label></div><label class="graph-data-label" for="pictureGraphData">${esc(gt('data'))}</label><textarea id="pictureGraphData" spellcheck="false" placeholder="${esc(gt('placeholder'))}"></textarea><p class="hint">${esc(gt('pictureHint'))}</p><div id="pictureGraphPicker" class="picture-graph-picker" hidden><div class="picture-picker-title">${esc(gtf('selectedPicture','Selected picture'))}</div><select id="pictureGraphSelectedPreset">${pictureGraphIconOptions()}</select><div class="picture-picker-actions"><button id="pictureGraphSelectedLoadBtn" type="button">${esc(gt('chooseRowPicture'))}</button><button id="pictureGraphSelectedRemoveBtn" type="button">${esc(gt('removeRowPicture'))}</button></div></div><div class="picture-row-picture-head">${esc(gt('rowPictures'))}</div><div id="pictureGraphRowPictures" class="picture-row-pictures"></div><input id="pictureGraphRowImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden><div class="confirm-actions"><button id="pictureGraphInsertBtn" type="button" class="primary">${esc(gt('insertPictureGraph'))}</button></div></div><div id="pictureGraphPreview" class="graph-preview picture-graph-preview" aria-label="${esc(gt('pictureGraph'))}"></div></div>`;
   document.body.appendChild(dlg);
+  gid('pictureGraphIconPreset')?.addEventListener('change',e=>{if(!e.target.value) return; gid('pictureGraphIcon').value=e.target.value; dlg.dataset.symbolSrc=''; const state=gid('pictureGraphSymbolState'); if(state) state.textContent=gt('textState'); updatePictureGraphPreview()});
   applyI18n(dlg);
 }
 function applyGraphLocale(){
@@ -936,52 +1064,111 @@ function updatePictureGraphRowPictures(){
   const rows=parseGraphRows(gid('pictureGraphData')?.value||'');
   const symbols=syncPictureGraphItemSymbols();
   wrap.innerHTML=rows.length?rows.map(row=>{
-    const key=pictureGraphLabelKey(row.label), has=!!symbols[key];
-    return `<div class="picture-row-picture" data-label-key="${esc(key)}"><span class="picture-row-label">${esc(row.label)}</span><span class="picture-row-state">${esc(has?gt('imageState'):gt('fallback'))}</span><button type="button" data-picture-row-choose="${esc(key)}">${esc(gt('chooseRowPicture'))}</button><button type="button" data-picture-row-remove="${esc(key)}" ${has?'':'disabled'}>${esc(gt('removeRowPicture'))}</button></div>`;
+    const key=pictureGraphLabelKey(row.label), rowSymbol=symbols[key], kind=pictureGraphSymbolKind(rowSymbol), value=pictureGraphSymbolValue(rowSymbol), has=!!rowSymbol;
+    const state=kind==='image'?gt('imageState'):(kind==='icon'&&value?value:gt('fallback'));
+    return `<div class="picture-row-picture" data-label-key="${esc(key)}"><span class="picture-row-label">${esc(row.label)}</span><span class="picture-row-state">${esc(state)}</span><select data-picture-row-preset="${esc(key)}" aria-label="${esc(gtf('rowPreset','Row preset'))}">${pictureGraphIconOptions(kind==='icon'?value:'')}</select><div class="picture-row-count" aria-label="${esc(gtf('count','Count'))}"><button type="button" data-picture-row-minus="${esc(key)}" aria-label="${esc(gtf('decrease','Decrease'))}">−</button><strong>${esc(String(row.value))}</strong><button type="button" data-picture-row-plus="${esc(key)}" aria-label="${esc(gtf('increase','Increase'))}">+</button></div><button type="button" data-picture-row-choose="${esc(key)}">${esc(gt('chooseRowPicture'))}</button><button type="button" data-picture-row-remove="${esc(key)}" ${has?'':'disabled'}>${esc(gt('removeRowPicture'))}</button></div>`;
   }).join(''):`<p class="hint">${esc(gt('empty'))}</p>`;
 }
 function pictureGraphSvg(config){
   const data=parseGraphRows(config.dataText), W=720,H=460,left=86,right=42,top=64,bottom=80,cw=W-left-right,ch=H-top-bottom;
   const title=esc(config.title||gt('pictureTitle')), icon=esc((config.icon||'⭐').trim()||'⭐'), symbolSrc=config.symbolSrc||'', itemSymbols=config.itemSymbols||{}, scale=Math.max(1,+config.scale||1), showNumbers=config.showNumbers!==false;
-  const drawSymbol=(x,y,size,row)=>{const rowSrc=itemSymbols[pictureGraphLabelKey(row?.label)]||symbolSrc; return rowSrc?`<image href="${esc(rowSrc)}" x="${x-size/2}" y="${y-size*.82}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`:`<text x="${x}" y="${y+size*.36}" font-family="Arial, sans-serif" font-size="${size}" text-anchor="middle">${icon}</text>`};
+  const drawSymbol=(x,y,size,row)=>{const rowSymbol=itemSymbols[pictureGraphLabelKey(row?.label)], kind=pictureGraphSymbolKind(rowSymbol), value=pictureGraphSymbolValue(rowSymbol); if(kind==='image'&&value) return `<image href="${esc(value)}" x="${x-size/2}" y="${y-size*.82}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`; if(kind==='icon'&&value) return `<text x="${x}" y="${y+size*.36}" font-family="Arial, sans-serif" font-size="${size}" text-anchor="middle">${esc(value)}</text>`; return symbolSrc?`<image href="${esc(symbolSrc)}" x="${x-size/2}" y="${y-size*.82}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`:`<text x="${x}" y="${y+size*.36}" font-family="Arial, sans-serif" font-size="${size}" text-anchor="middle">${icon}</text>`};
   if(!data.length) return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#fff"/><text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Arial" font-size="22" fill="#64748b">${esc(gt('empty'))}</text></svg>`;
-  const maxIcons=Math.max(...data.map(d=>Math.ceil(Math.max(0,d.value)/scale)),1), visibleMaxIcons=Math.min(maxIcons,80), gridStroke='#e2e8f0';
+  const metrics=pictureGraphLayoutMetrics(config,data), gridStroke='#e2e8f0';
   let body='';
   if(config.direction==='horizontal'){
-    const rowH=ch/data.length, iconSize=Math.min(30,Math.max(8,(cw-86)/Math.max(visibleMaxIcons,1)-5)), gap=Math.max(2,iconSize*.32), startX=left+84;
+    const {rowH,iconSize,gap,startX}=metrics;
     body+=`<line x1="${startX-10}" y1="${top}" x2="${startX-10}" y2="${top+ch}" stroke="#334155" stroke-width="2"/>`;
     data.forEach((d,i)=>{
-      const y=top+i*rowH+rowH/2, n=Math.ceil(Math.max(0,d.value)/scale), label=esc(d.label).slice(0,18);
-      body+=`<line x1="${startX-10}" y1="${y+rowH/2-5}" x2="${left+cw}" y2="${y+rowH/2-5}" stroke="${gridStroke}"/><text x="${left+72}" y="${y+5}" text-anchor="end" font-family="Arial" font-size="14" font-weight="700" fill="#334155">${label}</text>`;
+      const y=top+i*rowH+rowH/2, n=Math.ceil(Math.max(0,d.value)/scale);
+      body+=`<line x1="${startX-10}" y1="${y+rowH/2-5}" x2="${left+cw}" y2="${y+rowH/2-5}" stroke="${gridStroke}"/>`;
+      body+=drawSymbol(left+48,y,28,d);
       const drawN=Math.min(n,80);
       for(let j=0;j<drawN;j++) body+=drawSymbol(startX+j*(iconSize+gap),y,iconSize,d);
       if(n>drawN) body+=`<text x="${Math.min(left+cw-18,startX+drawN*(iconSize+gap)+6)}" y="${y+5}" font-family="Arial" font-size="14" font-weight="800" fill="#64748b">+</text>`;
       if(showNumbers) body+=`<text x="${left+cw-4}" y="${y+5}" text-anchor="end" font-family="Arial" font-size="14" font-weight="700" fill="#111827">${esc(String(d.value))}</text>`;
     });
   } else {
-    const slot=cw/data.length, iconSize=Math.min(30,Math.max(8,Math.min(slot*.72,ch/Math.max(visibleMaxIcons,1)*.78))), gap=Math.max(2,iconSize*.18), baseY=top+ch-6;
+    const {slot,iconSize,gap,baseY}=metrics;
     body+=`<line x1="${left}" y1="${baseY+8}" x2="${left+cw}" y2="${baseY+8}" stroke="#334155" stroke-width="2"/>`;
     data.forEach((d,i)=>{
-      const cx=left+i*slot+slot/2, n=Math.ceil(Math.max(0,d.value)/scale), label=esc(d.label).slice(0,16);
+      const cx=left+i*slot+slot/2, n=Math.ceil(Math.max(0,d.value)/scale);
       body+=`<line x1="${cx}" y1="${top}" x2="${cx}" y2="${baseY+8}" stroke="${gridStroke}"/>`;
       const drawN=Math.min(n,80);
       for(let j=0;j<drawN;j++) body+=drawSymbol(cx,baseY-j*(iconSize+gap),iconSize,d);
       if(n>drawN) body+=`<text x="${cx}" y="${Math.max(top+32,baseY-drawN*(iconSize+gap)-4)}" text-anchor="middle" font-family="Arial" font-size="14" font-weight="800" fill="#64748b">+</text>`;
       if(showNumbers) body+=`<text x="${cx}" y="${Math.max(top+18,baseY-drawN*(iconSize+gap)-20)}" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#111827">${esc(String(d.value))}</text>`;
-      body+=`<text x="${cx}" y="${H-46}" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700" fill="#334155">${label}</text>`;
+      body+=drawSymbol(cx,H-48,28,d);
     });
   }
   const key=`${esc(gt('scale'))} ${esc(String(scale))}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#fff"/><text x="${W/2}" y="34" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700" fill="#111827">${title}</text>${body}<text x="${W-18}" y="${H-16}" text-anchor="end" font-family="Arial" font-size="12" fill="#64748b">${key}</text></svg>`;
 }
 function pictureGraphDataUrl(config){return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(pictureGraphSvg(config))))}
-function updatePictureGraphPreview(){updatePictureGraphRowPictures(); const p=gid('pictureGraphPreview'); if(p) p.innerHTML=pictureGraphSvg(pictureGraphConfigFromDialog())}
+function updatePictureGraphPreview(){updatePictureGraphRowPictures(); const p=gid('pictureGraphPreview'); if(p) p.innerHTML=pictureGraphSvg(pictureGraphConfigFromDialog()); refreshPictureGraphPicker()}
+function setPictureGraphRowValueByKey(key,value){
+  const data=gid('pictureGraphData'), rows=parseGraphRows(data?.value||''); if(!data||!rows.length) return;
+  const idx=rows.findIndex(row=>pictureGraphLabelKey(row.label)===key); if(idx<0) return;
+  const nextValue=Math.max(0,Math.round(+value||0));
+  rows[idx].value=nextValue;
+  data.value=rows.map(row=>`${row.label},${row.value}`).join('\n');
+  updatePictureGraphPreview();
+}
+function pictureGraphPreviewPoint(ev){
+  const svgNode=gid('pictureGraphPreview')?.querySelector('svg'); if(!svgNode) return null;
+  const rect=svgNode.getBoundingClientRect(); if(!rect.width||!rect.height) return null;
+  const vb=(svgNode.getAttribute('viewBox')||'0 0 720 460').split(/\s+/).map(Number), W=vb[2]||720,H=vb[3]||460;
+  return {x:((ev.clientX-rect.left)/rect.width)*W,y:((ev.clientY-rect.top)/rect.height)*H};
+}
+function pictureGraphHitFromEvent(ev){
+  const cfg=pictureGraphConfigFromDialog(), rows=parseGraphRows(cfg.dataText), pt=pictureGraphPreviewPoint(ev); if(!rows.length||!pt) return null;
+  const m=pictureGraphLayoutMetrics(cfg,rows);
+  if(cfg.direction==='horizontal'){
+    const idx=Math.max(0,Math.min(rows.length-1,Math.floor((pt.y-m.top)/m.rowH)));
+    const icons=pt.x<m.startX?0:Math.max(0,Math.round((pt.x-m.startX)/(m.iconSize+m.gap))+1);
+    return {key:pictureGraphLabelKey(rows[idx].label), value:icons*m.scale};
+  }
+  const idx=Math.max(0,Math.min(rows.length-1,Math.floor((pt.x-m.left)/m.slot)));
+  const icons=pt.y>m.baseY+m.iconSize*.6?0:Math.max(0,Math.round((m.baseY-pt.y)/(m.iconSize+m.gap))+1);
+  return {key:pictureGraphLabelKey(rows[idx].label), value:icons*m.scale};
+}
+function pictureGraphMarkerHitFromEvent(ev){
+  const cfg=pictureGraphConfigFromDialog(), rows=parseGraphRows(cfg.dataText), pt=pictureGraphPreviewPoint(ev); if(!rows.length||!pt) return null;
+  const m=pictureGraphLayoutMetrics(cfg,rows);
+  if(cfg.direction==='horizontal'){
+    if(pt.x>m.left+76) return null;
+    const idx=Math.max(0,Math.min(rows.length-1,Math.floor((pt.y-m.top)/m.rowH)));
+    const y=m.top+idx*m.rowH+m.rowH/2;
+    return Math.abs(pt.y-y)<=Math.max(24,m.rowH/2)?pictureGraphLabelKey(rows[idx].label):null;
+  }
+  if(pt.y<m.H-76) return null;
+  const idx=Math.max(0,Math.min(rows.length-1,Math.floor((pt.x-m.left)/m.slot)));
+  const x=m.left+idx*m.slot+m.slot/2;
+  return Math.abs(pt.x-x)<=Math.max(24,m.slot/2)?pictureGraphLabelKey(rows[idx].label):null;
+}
+function updatePictureGraphFromPointer(ev){
+  const hit=pictureGraphHitFromEvent(ev); if(hit) setPictureGraphRowValueByKey(hit.key,hit.value);
+}
+function selectedPictureGraphKey(){
+  return gid('pictureGraphDialog')?.dataset.selectedPictureKey||'';
+}
+function openPictureGraphPicker(key){
+  const dlg=gid('pictureGraphDialog'), picker=gid('pictureGraphPicker'), preset=gid('pictureGraphSelectedPreset'); if(!dlg||!picker||!preset||!key) return;
+  dlg.dataset.selectedPictureKey=key;
+  const value=dlg._itemSymbols?.[key], kind=pictureGraphSymbolKind(value), symbol=pictureGraphSymbolValue(value);
+  preset.value=kind==='icon'?symbol:'';
+  picker.hidden=false;
+}
+function refreshPictureGraphPicker(){
+  const key=selectedPictureGraphKey();
+  if(key) openPictureGraphPicker(key);
+}
 function applyPictureGraphLocale(){
   ensurePictureGraphDialog();
   const dlg=gid('pictureGraphDialog'); if(!dlg) return;
   const title=dlg.querySelector('.modal-head h2'); if(title) title.textContent=gt('pictureGraph');
-  const labelFor={pictureGraphTitle:'title',pictureGraphDirection:'direction',pictureGraphIcon:'icon',pictureGraphScale:'scale'};
-  Object.entries(labelFor).forEach(([idv,key])=>{const lab=gid(idv)?.closest('.row')?.querySelector('label'); if(lab) lab.textContent=gt(key)});
+  const labelFor={pictureGraphTitle:'title',pictureGraphDirection:'direction',pictureGraphIconPreset:'presetIcon',pictureGraphIcon:'icon',pictureGraphScale:'scale'};
+  Object.entries(labelFor).forEach(([idv,key])=>{const lab=gid(idv)?.closest('.row')?.querySelector('label'); if(lab) lab.textContent=gtf(key,key==='presetIcon'?'Preset icon':key)});
   const dataLabel=dlg.querySelector('.graph-data-label'); if(dataLabel) dataLabel.textContent=gt('data');
   const rowHead=dlg.querySelector('.picture-row-picture-head'); if(rowHead) rowHead.textContent=gt('rowPictures');
   const hint=dlg.querySelector('.hint'); if(hint) hint.textContent=gt('pictureHint');
@@ -999,7 +1186,7 @@ function openPictureGraphDialog(existingId){
   applyPictureGraphLocale();
   const dlg=gid('pictureGraphDialog'), obj=existingId?findObj(existingId):null;
   const cfg=obj?.pictureGraphConfig||{title:gt('pictureTitle'),direction:'vertical',icon:'⭐',symbolSrc:'',itemSymbols:{},scale:1,showNumbers:true,dataText:gt('sample')};
-  gid('pictureGraphTitle').value=cfg.title||''; gid('pictureGraphDirection').value=cfg.direction||'vertical'; gid('pictureGraphIcon').value=cfg.icon||'⭐'; gid('pictureGraphScale').value=cfg.scale||1; gid('pictureGraphShowNumbers').checked=cfg.showNumbers!==false; gid('pictureGraphData').value=cfg.dataText||''; dlg.dataset.editId=obj?obj.id:''; dlg.dataset.symbolSrc=cfg.symbolSrc||''; dlg._itemSymbols={...(cfg.itemSymbols||{})}; gid('pictureGraphSymbolState').textContent=cfg.symbolSrc?gt('imageState'):gt('textState'); updatePictureGraphPreview(); dlg.showModal();
+  gid('pictureGraphTitle').value=cfg.title||''; gid('pictureGraphDirection').value=cfg.direction||'vertical'; gid('pictureGraphIcon').value=cfg.icon||'⭐'; if(gid('pictureGraphIconPreset')) gid('pictureGraphIconPreset').value=''; gid('pictureGraphScale').value=cfg.scale||1; gid('pictureGraphShowNumbers').checked=cfg.showNumbers!==false; gid('pictureGraphData').value=cfg.dataText||''; dlg.dataset.editId=obj?obj.id:''; dlg.dataset.symbolSrc=cfg.symbolSrc||''; dlg.dataset.selectedPictureKey=''; dlg._itemSymbols={...(cfg.itemSymbols||{})}; const picker=gid('pictureGraphPicker'); if(picker) picker.hidden=true; gid('pictureGraphSymbolState').textContent=cfg.symbolSrc?gt('imageState'):gt('textState'); updatePictureGraphPreview(); dlg.showModal();
 }
 function insertPictureGraphFromDialog(){
   const cfg=pictureGraphConfigFromDialog(), rows=parseGraphRows(cfg.dataText); if(!rows.length) return setStatus(gt('needData'),'danger');
@@ -1016,8 +1203,16 @@ ensurePictureGraphDialog();
 gid('pictureGraphLoadSymbolBtn')?.addEventListener('click',()=>gid('pictureGraphSymbolInput')?.click());
 gid('pictureGraphClearSymbolBtn')?.addEventListener('click',()=>{const dlg=gid('pictureGraphDialog'); if(dlg) dlg.dataset.symbolSrc=''; const state=gid('pictureGraphSymbolState'); if(state) state.textContent=gt('textState'); updatePictureGraphPreview()});
 gid('pictureGraphSymbolInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0]; if(!f) return; if(!(await validateImageDeep(f))){e.target.value=''; return} const r=new FileReader(); r.onload=()=>{const dlg=gid('pictureGraphDialog'); if(dlg) dlg.dataset.symbolSrc=r.result; const state=gid('pictureGraphSymbolState'); if(state) state.textContent=gt('imageState'); updatePictureGraphPreview(); e.target.value=''}; r.onerror=()=>{setStatus('Image upload failed.','danger'); e.target.value=''}; r.readAsDataURL(f)});
-gid('pictureGraphRowPictures')?.addEventListener('click',e=>{const choose=e.target.closest('[data-picture-row-choose]'), remove=e.target.closest('[data-picture-row-remove]'), dlg=gid('pictureGraphDialog'); if(!dlg) return; if(choose){dlg.dataset.pendingRowKey=choose.dataset.pictureRowChoose; gid('pictureGraphRowImageInput')?.click()} if(remove){delete (dlg._itemSymbols||{})[remove.dataset.pictureRowRemove]; updatePictureGraphPreview()}});
+gid('pictureGraphRowPictures')?.addEventListener('click',e=>{const choose=e.target.closest('[data-picture-row-choose]'), remove=e.target.closest('[data-picture-row-remove]'), plus=e.target.closest('[data-picture-row-plus]'), minus=e.target.closest('[data-picture-row-minus]'), dlg=gid('pictureGraphDialog'); if(!dlg) return; if(choose){dlg.dataset.pendingRowKey=choose.dataset.pictureRowChoose; gid('pictureGraphRowImageInput')?.click()} if(remove){delete (dlg._itemSymbols||{})[remove.dataset.pictureRowRemove]; updatePictureGraphPreview()} if(plus||minus){const key=(plus||minus).dataset.pictureRowPlus||(plus||minus).dataset.pictureRowMinus, rows=parseGraphRows(gid('pictureGraphData')?.value||''), row=rows.find(r=>pictureGraphLabelKey(r.label)===key), step=Math.max(1,+gid('pictureGraphScale')?.value||1); if(row) setPictureGraphRowValueByKey(key,row.value+(plus?step:-step))}});
+gid('pictureGraphRowPictures')?.addEventListener('change',e=>{const preset=e.target.closest('[data-picture-row-preset]'), dlg=gid('pictureGraphDialog'); if(!preset||!dlg) return; dlg._itemSymbols=dlg._itemSymbols||{}; if(preset.value) dlg._itemSymbols[preset.dataset.pictureRowPreset]=preset.value; else delete dlg._itemSymbols[preset.dataset.pictureRowPreset]; updatePictureGraphPreview()});
 gid('pictureGraphRowImageInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0], dlg=gid('pictureGraphDialog'), key=dlg?.dataset.pendingRowKey; if(!f||!dlg||!key) return; if(!(await validateImageDeep(f))){e.target.value=''; return} const r=new FileReader(); r.onload=()=>{dlg._itemSymbols=dlg._itemSymbols||{}; dlg._itemSymbols[key]=r.result; dlg.dataset.pendingRowKey=''; updatePictureGraphPreview(); e.target.value=''}; r.onerror=()=>{setStatus('Image upload failed.','danger'); e.target.value=''}; r.readAsDataURL(f)});
+gid('pictureGraphSelectedPreset')?.addEventListener('change',e=>{const dlg=gid('pictureGraphDialog'), key=selectedPictureGraphKey(); if(!dlg||!key) return; dlg._itemSymbols=dlg._itemSymbols||{}; if(e.target.value) dlg._itemSymbols[key]=e.target.value; else delete dlg._itemSymbols[key]; updatePictureGraphPreview()});
+gid('pictureGraphSelectedLoadBtn')?.addEventListener('click',()=>{const dlg=gid('pictureGraphDialog'), key=selectedPictureGraphKey(); if(!dlg||!key) return; dlg.dataset.pendingRowKey=key; gid('pictureGraphRowImageInput')?.click()});
+gid('pictureGraphSelectedRemoveBtn')?.addEventListener('click',()=>{const dlg=gid('pictureGraphDialog'), key=selectedPictureGraphKey(); if(!dlg||!key) return; delete (dlg._itemSymbols||{})[key]; updatePictureGraphPreview()});
+gid('pictureGraphPreview')?.addEventListener('pointerdown',e=>{const p=gid('pictureGraphPreview'); if(!p?.querySelector('svg')) return; const markerKey=pictureGraphMarkerHitFromEvent(e); if(markerKey){e.preventDefault(); openPictureGraphPicker(markerKey); return} e.preventDefault(); p.dataset.dragging='1'; p.setPointerCapture?.(e.pointerId); updatePictureGraphFromPointer(e)});
+gid('pictureGraphPreview')?.addEventListener('pointermove',e=>{if(gid('pictureGraphPreview')?.dataset.dragging==='1') updatePictureGraphFromPointer(e)});
+gid('pictureGraphPreview')?.addEventListener('pointerup',e=>{const p=gid('pictureGraphPreview'); if(p) p.dataset.dragging=''; p?.releasePointerCapture?.(e.pointerId)});
+gid('pictureGraphPreview')?.addEventListener('pointercancel',()=>{const p=gid('pictureGraphPreview'); if(p) p.dataset.dragging=''});
 gid('pictureGraphInsertBtn')?.addEventListener('click',insertPictureGraphFromDialog);
 gid('pictureGraphCancelBtn')?.addEventListener('click',()=>gid('pictureGraphDialog')?.close());
 
@@ -1532,12 +1727,46 @@ gid('wcInsert')?.addEventListener('click',()=>{const target=gid('wcPreview'); co
 gid('wcCopyPng')?.addEventListener('click',async()=>{const target=gid('wcPreview'); const svg=target&&target.querySelector('svg'); if(!svg){setStatus('Generate a word cloud first.','danger'); return} if(!navigator.clipboard||!navigator.clipboard.write||typeof ClipboardItem==='undefined'){setStatus('Clipboard write is not supported in this browser.','danger'); return} try{const xml=new XMLSerializer().serializeToString(svg); const dataUrl='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml))); const blob=await svgUrlToPngBlob(dataUrl); await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); setStatus('Word cloud copied to clipboard as PNG.','success')}catch(err){setStatus('Copy failed: '+(err&&err.message?err.message:String(err)),'danger')}});
 gid('mermaidCopyPng')?.addEventListener('click',async()=>{const source=gid('mermaidSource').value; if(!source.trim()){setStatus('Mermaid source is empty.','danger'); return} ensureMermaidInit(); if(typeof window.mermaid==='undefined'){setStatus('Mermaid library not loaded.','danger'); return} if(!navigator.clipboard||!navigator.clipboard.write||typeof ClipboardItem==='undefined'){setStatus('Clipboard write is not supported in this browser. Try Ctrl/Cmd+C after inserting.','danger'); return} try{const svg=await renderMermaidColoredSvg(source); const dataUrl='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg))); const blob=await svgUrlToPngBlob(dataUrl); await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); setStatus('Diagram copied to clipboard as PNG.','success')}catch(err){setStatus('Copy failed: '+(err&&err.message?err.message:String(err)),'danger')}});
 gid('mermaidInsert')?.addEventListener('click',async()=>{const dlg=gid('mermaidDialog'); const source=gid('mermaidSource').value; if(!source.trim()){setStatus('Mermaid source is empty.','danger'); return} ensureMermaidInit(); if(typeof window.mermaid==='undefined'){setStatus('Mermaid library not loaded.','danger'); return} try{const svg=await renderMermaidColoredSvg(source); const dataUrl='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg))); const probe=new Image(); probe.onload=()=>{const naturalW=probe.width||640, naturalH=probe.height||480; let w=Math.min(480,naturalW), h=Math.round(w*(naturalH/naturalW)); const editId=dlg.dataset.editId; if(editId){const obj=findObj(editId); if(obj){obj.src=dataUrl; obj.mermaidSource=source; obj.naturalW=naturalW; obj.naturalH=naturalH; delete obj.crop; render(); saveState(); setStatus('Diagram updated.','success'); dlg.close(); return}} addObj(makeObj('image',120,120,w,h,{src:dataUrl,mermaidSource:source,naturalW,naturalH,fill:'none',stroke:'none',strokeWidth:0})); setStatus('Diagram inserted.','success'); dlg.close()}; probe.onerror=()=>{setStatus('Could not render diagram preview.','danger')}; probe.src=dataUrl}catch(err){setStatus('Mermaid error: '+(err&&err.message?err.message:String(err)),'danger')}});
-function openCropDialog(){const o=currentObj(); if(!o||o.type!=='image'||!o.src){setStatus('Select an image first.','danger'); return} const ensureNatural=()=>new Promise(resolve=>{if(o.naturalW&&o.naturalH) return resolve(true); const probe=new Image(); probe.onload=()=>{o.naturalW=probe.width; o.naturalH=probe.height; resolve(true)}; probe.onerror=()=>resolve(false); probe.src=o.src}); ensureNatural().then(ok=>{if(!ok){setStatus('Could not read image dimensions.','danger'); return} const c=o.crop||{x:0,y:0,w:1,h:1}; gid('cropTop').value=Math.round(c.y*100); gid('cropBottom').value=Math.round((1-c.y-c.h)*100); gid('cropLeft').value=Math.round(c.x*100); gid('cropRight').value=Math.round((1-c.x-c.w)*100); gid('cropDialog').dataset.objectId=o.id; updateCropPreview(); gid('cropDialog').showModal()})}
-function updateCropPreview(){const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o) return; const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value; gid('cropTopValue').textContent=top+'%'; gid('cropRightValue').textContent=right+'%'; gid('cropBottomValue').textContent=bottom+'%'; gid('cropLeftValue').textContent=left+'%'; const totalH=top+bottom, totalW=left+right; if(totalH>=95||totalW>=95){gid('cropApply').disabled=true; return} else {gid('cropApply').disabled=false} const img=new Image(); img.onload=()=>{const cw=img.width, ch=img.height; const cx=(left/100)*cw, cy=(top/100)*ch; const cropW=((100-left-right)/100)*cw, cropH=((100-top-bottom)/100)*ch; const cv=gid('cropPreviewCanvas'); const previewMax=320; const scale=Math.min(previewMax/cropW,previewMax/cropH,1); cv.width=Math.max(20,Math.round(cropW*scale)); cv.height=Math.max(20,Math.round(cropH*scale)); const ctx=cv.getContext('2d'); ctx.fillStyle='#f5f7fb'; ctx.fillRect(0,0,cv.width,cv.height); try{ctx.drawImage(img,cx,cy,cropW,cropH,0,0,cv.width,cv.height)}catch(_){}}; img.src=o.src}
+function ensureCropShapeControls(){
+  if(gid('cropShape')) return;
+  const actions=gid('cropDialog')?.querySelector('.confirm-actions');
+  if(!actions) return;
+  const row=document.createElement('div');
+  row.className='crop-row';
+  row.innerHTML='<label>Shape</label><select id="cropShape">'+cropShapeOptionsHtml()+'</select>';
+  actions.parentElement.insertBefore(row,actions);
+  gid('cropShape')?.addEventListener('change',updateCropPreview);
+}
+function openCropDialog(){const o=currentObj(); if(!o||o.type!=='image'||!o.src){setStatus('Select an image first.','danger'); return} const ensureNatural=()=>new Promise(resolve=>{if(o.naturalW&&o.naturalH) return resolve(true); const probe=new Image(); probe.onload=()=>{o.naturalW=probe.width; o.naturalH=probe.height; resolve(true)}; probe.onerror=()=>resolve(false); probe.src=o.src}); ensureNatural().then(ok=>{if(!ok){setStatus('Could not read image dimensions.','danger'); return} ensureCropShapeControls(); const c=o.crop||{x:0,y:0,w:1,h:1}; gid('cropTop').value=Math.round(c.y*100); gid('cropBottom').value=Math.round((1-c.y-c.h)*100); gid('cropLeft').value=Math.round(c.x*100); gid('cropRight').value=Math.round((1-c.x-c.w)*100); if(gid('cropShape')) gid('cropShape').value=o.maskShape||'none'; gid('cropDialog').dataset.objectId=o.id; updateCropPreview(); gid('cropDialog').showModal()})}
+function canvasMaskContentBox(shape,w,h){
+  const fits={star:.64,heart:.76,diamond:.74,triangle:.72,pentagon:.84};
+  const f=fits[shape]||1;
+  if(f>=1) return {x:0,y:0,w,h};
+  const bw=w*f,bh=h*f;
+  let x=(w-bw)/2,y=(h-bh)/2;
+  if(shape==='triangle') y=h*.23;
+  if(shape==='heart') y=h*.16;
+  return {x,y,w:bw,h:bh};
+}
+function canvasMaskPath(ctx,shape,w,h){
+  if(!shape||shape==='none'){ctx.rect(0,0,w,h);return}
+  const cx=w/2,cy=h/2,rx=w/2,ry=h/2;
+  if(CROP_CUSTOM_MASKS[shape]){ctx.rect(0,0,w,h);return}
+  if(shape==='circle'){const r=Math.min(w,h)/2; ctx.arc(cx,cy,r,0,Math.PI*2); return}
+  if(shape==='oval'){ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2); return}
+  if(shape==='triangle'){ctx.moveTo(cx,0);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();return}
+  if(shape==='diamond'){ctx.moveTo(cx,0);ctx.lineTo(w,cy);ctx.lineTo(cx,h);ctx.lineTo(0,cy);ctx.closePath();return}
+  if(shape==='heart'){ctx.moveTo(cx,h*.88);ctx.bezierCurveTo(w*.1,h*.58,0,h*.34,w*.18,h*.16);ctx.bezierCurveTo(w*.32,0,w*.48,h*.08,cx,h*.23);ctx.bezierCurveTo(w*.52,h*.08,w*.68,0,w*.82,h*.16);ctx.bezierCurveTo(w,h*.34,w*.9,h*.58,cx,h*.88);ctx.closePath();return}
+  const n=shape==='pentagon'?5:shape==='hexagon'?6:shape==='octagon'?8:0;
+  if(n){const rot=shape==='hexagon'?0:shape==='octagon'?Math.PI/8:-Math.PI/2; for(let i=0;i<n;i++){const a=rot+i*Math.PI*2/n,x=cx+Math.cos(a)*rx,y=cy+Math.sin(a)*ry; i?ctx.lineTo(x,y):ctx.moveTo(x,y)} ctx.closePath(); return}
+  if(shape==='star'){for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?.46:1,x=cx+Math.cos(a)*rx*r,y=cy+Math.sin(a)*ry*r; i?ctx.lineTo(x,y):ctx.moveTo(x,y)} ctx.closePath(); return}
+  ctx.rect(0,0,w,h);
+}
+function updateCropPreview(){const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o) return; const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value; gid('cropTopValue').textContent=top+'%'; gid('cropRightValue').textContent=right+'%'; gid('cropBottomValue').textContent=bottom+'%'; gid('cropLeftValue').textContent=left+'%'; const totalH=top+bottom, totalW=left+right; if(totalH>=95||totalW>=95){gid('cropApply').disabled=true; return} else {gid('cropApply').disabled=false} const img=new Image(); img.onload=()=>{const cw=img.width, ch=img.height; const cx=(left/100)*cw, cy=(top/100)*ch; const cropW=((100-left-right)/100)*cw, cropH=((100-top-bottom)/100)*ch; const cv=gid('cropPreviewCanvas'); const previewMax=320; const scale=Math.min(previewMax/cropW,previewMax/cropH,1); cv.width=Math.max(20,Math.round(cropW*scale)); cv.height=Math.max(20,Math.round(cropH*scale)); const ctx=cv.getContext('2d'), shape=gid('cropShape')?.value||'none', ib=canvasMaskContentBox(shape,cv.width,cv.height); ctx.fillStyle='#f5f7fb'; ctx.fillRect(0,0,cv.width,cv.height); try{ctx.save(); if(CROP_CUSTOM_MASKS[shape]&&typeof Path2D!=='undefined'){ctx.scale(cv.width/100,cv.height/100);ctx.clip(new Path2D(CROP_CUSTOM_MASKS[shape]));ctx.setTransform(1,0,0,1,0,0)}else{ctx.beginPath();canvasMaskPath(ctx,shape,cv.width,cv.height);ctx.clip()} ctx.drawImage(img,cx,cy,cropW,cropH,ib.x,ib.y,ib.w,ib.h);ctx.restore()}catch(_){}}; img.src=o.src}
 ['cropTop','cropRight','cropBottom','cropLeft'].forEach(id=>gid(id)?.addEventListener('input',updateCropPreview));
 gid('cropCancel')?.addEventListener('click',()=>gid('cropDialog').close());
-gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cropRight').value=0; gid('cropBottom').value=0; gid('cropLeft').value=0; updateCropPreview()});
-gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} render(); saveState(); setStatus('Image cropped.','success'); gid('cropDialog').close()});
+gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cropRight').value=0; gid('cropBottom').value=0; gid('cropLeft').value=0; if(gid('cropShape')) gid('cropShape').value='none'; updateCropPreview()});
+gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value, shape=gid('cropShape')?.value||'none'; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} if(shape==='none') delete o.maskShape; else o.maskShape=shape; render(); saveState(); setStatus(shape==='none'?'Image cropped.':'Image shape applied.','success'); gid('cropDialog').close()});
 gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close()});
 gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else if(ui.strokeColor){ui.strokeColor.value=v; ui.strokeColor.dispatchEvent(new Event('input',{bubbles:true}))}});
 function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='simple'?'Simple':'Advanced'; const tip=m==='simple'?'Switch to Advanced view':'Switch to Simple view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
@@ -1600,12 +1829,13 @@ async function selectedObjectsToGifCanvases(){
     render();
   }
   const maxW=Math.max(...images.map(i=>i.naturalWidth||i.width)), maxH=Math.max(...images.map(i=>i.naturalHeight||i.height));
-  const w=Math.max(40,Math.round(maxW)), h=Math.max(40,Math.round(maxH));
-  return images.map(img=>{const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h); const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height; ctx.drawImage(img,(w-iw)/2,(h-ih)/2,iw,ih); return c});
+  const maxGifSize=960, fit=Math.min(1,maxGifSize/Math.max(maxW,maxH)), w=Math.max(40,Math.round(maxW*fit)), h=Math.max(40,Math.round(maxH*fit));
+  return images.map(img=>{const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h); const iw=(img.naturalWidth||img.width)*fit, ih=(img.naturalHeight||img.height)*fit; ctx.drawImage(img,(w-iw)/2,(h-ih)/2,iw,ih); return c});
 }
 function gifPalette(){const p=[]; for(let r=0;r<8;r++)for(let g=0;g<8;g++)for(let b=0;b<4;b++)p.push(Math.round(r*255/7),Math.round(g*255/7),Math.round(b*255/3)); return p}
 function canvasToGifIndices(c){const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data, out=new Uint8Array(c.width*c.height); for(let i=0,j=0;i<d.length;i+=4,j++){const a=d[i+3]; if(a<80){out[j]=255; continue} const r=d[i]>>5,g=d[i+1]>>5,b=d[i+2]>>6; out[j]=(r<<5)|(g<<2)|b} return out}
 function packGifSubBlocks(bytes){const out=[]; for(let i=0;i<bytes.length;i+=255){const chunk=bytes.slice(i,i+255); out.push(chunk.length,...chunk)} out.push(0); return out}
+function appendBytes(target,bytes){for(let i=0;i<bytes.length;i+=8192) target.push(...bytes.slice(i,i+8192))}
 function lzwGifEncode(indices,minCodeSize=8){
   const clear=1<<minCodeSize, end=clear+1, out=[]; let cur=0,bits=0,codeCount=0;
   const write=code=>{cur|=code<<bits; bits+=minCodeSize+1; while(bits>=8){out.push(cur&255); cur>>=8; bits-=8}};
@@ -1621,7 +1851,7 @@ function encodeGif(canvases,delayMs=450){
   out.push(w&255,w>>8,h&255,h>>8,0xF7,0,255,...pal);
   out.push(0x21,0xFF,11); text('NETSCAPE2.0'); out.push(3,1,0,0,0);
   const delay=Math.max(2,Math.round(delayMs/10));
-  canvases.forEach(c=>{out.push(0x21,0xF9,4,0x00,delay&255,delay>>8,0,0,0x2C,0,0,0,0,w&255,w>>8,h&255,h>>8,0,8); out.push(...packGifSubBlocks(lzwGifEncode(canvasToGifIndices(c),8)))});
+  canvases.forEach(c=>{out.push(0x21,0xF9,4,0x00,delay&255,delay>>8,0,0,0x2C,0,0,0,0,w&255,w>>8,h&255,h>>8,0,8); appendBytes(out,packGifSubBlocks(lzwGifEncode(canvasToGifIndices(c),8)))});
   out.push(0x3B); return new Blob([new Uint8Array(out)],{type:'image/gif'});
 }
 async function createGifFromSelection(){

@@ -1,8 +1,9 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.7';
+const CACHE = 'drawsplat-v3.0.17';
 const SHELL = [
   './',
   './index.html',
+  './features.html',
   './start.html',
   './background-templates.html',
   './pricing.html',
@@ -26,7 +27,13 @@ const SHELL = [
   './assets/backgrounds/coordinate-plane.svg',
   './assets/backgrounds/reading-response.svg',
   './assets/backgrounds/choice-board.svg',
-  './assets/backgrounds/blank-anchor-chart.svg'
+  './assets/backgrounds/blank-anchor-chart.svg',
+  './assets/feature-graph-creator.svg',
+  './assets/feature-picture-graph.svg',
+  './assets/feature-mermaid.svg',
+  './assets/feature-dot-pictures.svg',
+  './assets/feature-sticker-library.svg',
+  './assets/feature-collage.svg'
   /* './mermaid.min.js' — add manually after downloading; not in SHELL by default so the SW install doesn't fail when it's absent */
 ];
 

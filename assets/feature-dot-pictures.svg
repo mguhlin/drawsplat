@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Dot Pictures illustration</title>
+  <desc id="desc">A gallery of dot picture tiles including heart, flower, rocket, butterfly, apple, ten frame, and more.</desc>
+  <rect width="960" height="360" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="358" rx="24" fill="none" stroke="#d7ddea"/>
+  <text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800">Dot Pictures</text>
+  <g transform="translate(24 72)" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#111827">
+    <g><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Heart</text><text x="64" y="50" font-size="44" fill="#f9a8d4">♥</text></g>
+    <g transform="translate(144 0)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Flower</text><text x="64" y="54" font-size="44" fill="#fde047">✿</text></g>
+    <g transform="translate(288 0)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Rocket</text><text x="64" y="54" font-size="42" fill="#93c5fd">▲</text></g>
+    <g transform="translate(432 0)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Butterfly</text><text x="64" y="54" font-size="44" fill="#c4b5fd">✕</text></g>
+    <g transform="translate(576 0)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Apple</text><text x="64" y="54" font-size="44" fill="#fca5a5">●</text></g>
+    <g transform="translate(720 0)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Ten Frame</text><text x="64" y="54" font-size="40" fill="#86efac">•••••</text></g>
+    <g transform="translate(0 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Smile</text><text x="64" y="54" font-size="44" fill="#fde047">☺</text></g>
+    <g transform="translate(144 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">House</text><text x="64" y="54" font-size="44" fill="#fdba74">⌂</text></g>
+    <g transform="translate(288 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Tree</text><text x="64" y="54" font-size="44" fill="#6ee7b7">♣</text></g>
+    <g transform="translate(432 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Fish</text><text x="64" y="54" font-size="44" fill="#7dd3fc">●●●</text></g>
+    <g transform="translate(576 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Sun</text><text x="64" y="54" font-size="44" fill="#fde047">☼</text></g>
+    <g transform="translate(720 132)"><rect width="128" height="110" rx="12" fill="#fbfcff" stroke="#d3d9e8"/><text x="64" y="94">Boat</text><text x="64" y="54" font-size="44" fill="#93c5fd">◆</text></g>
+  </g>
+</svg>

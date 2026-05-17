@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">Picture Graph illustration</title>
+  <desc id="desc">A picture graph dialog with picture-only categories and stacked picture counts.</desc>
+  <rect width="960" height="520" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="518" rx="24" fill="none" stroke="#d7ddea"/>
+  <text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800">Picture Graph</text>
+  <g font-family="Inter,Arial,sans-serif" font-size="13" fill="#667085">
+    <text x="30" y="86">Title</text><text x="30" y="136">Direction</text><text x="30" y="186">Each picture =</text>
+  </g>
+  <g fill="#fff" stroke="#d3d9e8">
+    <rect x="112" y="62" width="210" height="40" rx="8"/>
+    <rect x="112" y="112" width="210" height="40" rx="8"/>
+    <rect x="112" y="162" width="120" height="40" rx="8"/>
+    <rect x="24" y="242" width="292" height="152" rx="12" fill="#f8fafc"/>
+  </g>
+  <text x="128" y="88" font-family="Inter,Arial,sans-serif" font-size="16" fill="#111827">Class Picture Graph</text>
+  <text x="128" y="138" font-family="Inter,Arial,sans-serif" font-size="16" fill="#111827">Vertical</text>
+  <text x="128" y="188" font-family="Inter,Arial,sans-serif" font-size="16" fill="#111827">1</text>
+  <text x="42" y="268" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" fill="#667085">Selected picture</text>
+  <rect x="42" y="284" width="252" height="38" rx="8" fill="#fff" stroke="#d3d9e8"/>
+  <text x="58" y="309" font-family="Inter,Arial,sans-serif" font-size="16" fill="#111827">🐟 Fish</text>
+  <rect x="42" y="334" width="110" height="44" rx="8" fill="#fff" stroke="#d3d9e8"/>
+  <rect x="166" y="334" width="128" height="44" rx="8" fill="#fff" stroke="#d3d9e8"/>
+  <text x="97" y="362" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="15" fill="#111827">Choose</text>
+  <text x="230" y="362" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="15" fill="#111827">Remove</text>
+  <rect x="352" y="62" width="576" height="390" rx="10" fill="#fff" stroke="#d3d9e8"/>
+  <text x="640" y="104" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="800" fill="#111827">Class Picture Graph</text>
+  <g stroke="#e6ebf3"><line x1="470" y1="134" x2="470" y2="392"/><line x1="610" y1="134" x2="610" y2="392"/><line x1="750" y1="134" x2="750" y2="392"/><line x1="890" y1="134" x2="890" y2="392"/></g>
+  <path d="M430 392h472" stroke="#334155" stroke-width="3"/>
+  <g font-family="Inter,Arial,sans-serif" font-size="21" text-anchor="middle">
+    <text x="470" y="384">🐬</text><text x="470" y="360">🐬</text><text x="470" y="336">🐬</text><text x="470" y="312">🐬</text><text x="470" y="288">🐬</text><text x="470" y="264">🐬</text><text x="470" y="240">🐬</text><text x="470" y="216">🐬</text><text x="470" y="192">🐬</text><text x="470" y="168">🐬</text><text x="470" y="144">🐬</text>
+    <text x="610" y="384">🦈</text><text x="610" y="360">🦈</text><text x="610" y="336">🦈</text><text x="610" y="312">🦈</text><text x="610" y="288">🦈</text><text x="610" y="264">🦈</text><text x="610" y="240">🦈</text>
+    <text x="750" y="384">🐟</text><text x="750" y="360">🐟</text><text x="750" y="336">🐟</text><text x="750" y="312">🐟</text><text x="750" y="288">🐟</text>
+    <text x="890" y="384">🐢</text><text x="890" y="360">🐢</text><text x="890" y="336">🐢</text><text x="890" y="312">🐢</text><text x="890" y="288">🐢</text><text x="890" y="264">🐢</text><text x="890" y="240">🐢</text>
+    <text x="470" y="432">🐬</text><text x="610" y="432">🦈</text><text x="750" y="432">🐟</text><text x="890" y="432">🐢</text>
+  </g>
+  <g font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="#111827" text-anchor="middle">
+    <text x="470" y="132">12</text><text x="610" y="204">8</text><text x="750" y="276">5</text><text x="890" y="228">7</text>
+  </g>
+</svg>

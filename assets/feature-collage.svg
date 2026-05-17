@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Collage illustration</title>
+  <desc id="desc">A collage builder dialog with layout, title, banner, background, banner color, and create button.</desc>
+  <rect width="960" height="360" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="358" rx="24" fill="none" stroke="#d7ddea"/>
+  <text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800">Collage</text>
+  <text x="24" y="88" font-family="Inter,Arial,sans-serif" font-size="17" fill="#111827">Select two or more images, then choose a collage layout with a text banner.</text>
+  <g font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" fill="#667085">
+    <text x="24" y="134">Layout</text><text x="24" y="184">Title</text><text x="24" y="234">Banner</text><text x="24" y="284">Background</text><text x="24" y="326">Banner Color</text>
+  </g>
+  <g fill="#fff" stroke="#d3d9e8">
+    <rect x="120" y="110" width="770" height="40" rx="8" fill="#e7e7ec"/>
+    <rect x="120" y="160" width="770" height="40" rx="8"/>
+    <rect x="120" y="210" width="770" height="40" rx="8"/>
+    <rect x="120" y="266" width="70" height="32" rx="8" fill="#eef0f6"/>
+    <rect x="120" y="308" width="70" height="32" rx="8" fill="#eef0f6"/>
+  </g>
+  <text x="136" y="136" font-family="Inter,Arial,sans-serif" font-size="16" fill="#111827">Four Grid</text>
+  <rect x="132" y="274" width="44" height="16" fill="#fff" stroke="#888"/>
+  <rect x="132" y="316" width="44" height="16" fill="#123c69"/>
+  <rect x="24" y="344" width="866" height="48" rx="10" fill="#faa634" transform="translate(0 -42)"/>
+  <text x="457" y="332" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="28" fill="#111827">+</text>
+</svg>
