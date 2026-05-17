@@ -153,7 +153,7 @@ function askConfirm(msg,opts={}){return new Promise(resolve=>{const dlg=document
 let _savedAt=null,_saveStateTimer=null;
 function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved'); chip.className='save-state saved'} else if(state==='error'){chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved'):sec<60?tr('Saved ') + sec + tr('s ago'):sec<3600?tr('Saved ') + Math.round(sec/60) + tr('m ago'):tr('Saved ') + Math.round(sec/3600) + tr('h ago')}}
 if(!_saveStateTimer) _saveStateTimer=setInterval(()=>setSaveState('tick'),30000);
-function refreshSelectionToolbar(){const tb=document.getElementById('selectionToolbar'); if(!tb) return; const visible=selectedIds.length>0&&!inlineEditId; tb.classList.toggle('show',visible); if(visible){const o=currentObj(); const editable=o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o); const cropable=o&&o.type==='image'&&canEditObject(o); const editBtn=document.getElementById('floatEditBtn'); if(editBtn) editBtn.style.display=editable?'inline-flex':'none'; const cropBtn=document.getElementById('floatCropBtn'); if(cropBtn) cropBtn.style.display=cropable?'inline-flex':'none'}}
+function refreshSelectionToolbar(){const tb=document.getElementById('selectionToolbar'); if(!tb) return; const visible=selectedIds.length>0&&!inlineEditId; tb.classList.toggle('show',visible); if(visible){const o=currentObj(); const editable=o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o); const cropable=o&&o.type==='image'&&canEditObject(o); const concept=o&&o.conceptNode&&canEditObject(o); const editBtn=document.getElementById('floatEditBtn'); if(editBtn) editBtn.style.display=editable?'inline-flex':'none'; const cropBtn=document.getElementById('floatCropBtn'); if(cropBtn) cropBtn.style.display=cropable?'inline-flex':'none'; const childBtn=document.getElementById('floatConceptChildBtn'); if(childBtn) childBtn.style.display=concept?'inline-flex':'none'; const linkBtn=document.getElementById('floatConceptLinkBtn'); if(linkBtn) linkBtn.style.display=concept?'inline-flex':'none'} refreshConceptCanvasControls?.()}
 function syncSimpleColor(){const inp=document.getElementById('simpleColorInput'); if(!inp) return; inp.value=tool==='sticky'?(ui.stickyColor?.value||'#fff59d'):(ui.strokeColor?.value||'#1E398D')}
 function paintColor(){return ui.strokeColor?.value||gid('simpleColorInput')?.value||'#7c3aed'}
 function setPaintColor(color){
@@ -260,6 +260,7 @@ function ensureSimpleExtras(){
   const dots=document.createElement('button'); dots.id='simpleDotPicturesBtn'; dots.type='button'; dots.textContent='Dot Pictures'; dots.addEventListener('click',()=>gid('openDotPictureLibraryBtn')?.click());
   const emoji=document.createElement('button'); emoji.id='simpleEmojiBtn'; emoji.type='button'; emoji.textContent='Emoji Mixer'; emoji.addEventListener('click',()=>gid('openEmojiDialogBtn')?.click());
   const gif=document.createElement('button'); gif.id='simpleGifBtn'; gif.type='button'; gif.textContent='Create GIF'; gif.addEventListener('click',()=>gid('openGifDialogBtn')?.click());
+  const concept=document.createElement('button'); concept.id='simpleConceptMapBtn'; concept.type='button'; concept.textContent='Concept Map'; concept.addEventListener('click',()=>insertNativeConceptMap());
   const palette=buildStickyPalette('simple-sticky-palette');
   palette.id='simpleStickyPalette';
   const stickyTool=document.querySelector('#toolButtons [data-tool="sticky"]');
@@ -271,6 +272,7 @@ function ensureSimpleExtras(){
   grid.insertBefore(collage,ref);
   grid.insertBefore(mer,ref);
   grid.insertBefore(wc,ref);
+  grid.insertBefore(concept,ref);
   grid.insertBefore(dots,ref);
   grid.insertBefore(emoji,ref);
   grid.insertBefore(gif,ref);
@@ -286,6 +288,18 @@ function ensurePictureGraphButton(){
   btn.textContent=gt('pictureGraph');
   btn.addEventListener('click',()=>openPictureGraphDialog());
   graph.insertAdjacentElement('afterend',btn);
+}
+function ensureConceptMapButton(){
+  if(gid('openConceptMapDialogBtn')) return;
+  const anchor=gid('insertWordCloudBtn')||gid('insertMermaidBtn')||gid('openCollageDialogBtn');
+  if(!anchor||!anchor.parentElement) return;
+  const btn=document.createElement('button');
+  btn.id='openConceptMapDialogBtn';
+  btn.type='button';
+  btn.textContent='Concept Map';
+  btn.dataset.ui='advanced';
+  btn.addEventListener('click',()=>insertNativeConceptMap());
+  anchor.insertAdjacentElement('afterend',btn);
 }
 function ensureAdvancedStickyPalette(){
   const stickySelect=gid('stickyColor');
@@ -303,7 +317,7 @@ function ensureTopMenus(){
   const menuDefs=[
     ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],['Save to Google','saveDriveBtn'],['Load from Google','loadDriveBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
-    ['Insert',[['Load Image','imageBtn'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['Emoji Mixer','openEmojiDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['Paint Dots','activateDotPaintBtn'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
+    ['Insert',[['Load Image','imageBtn'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['Emoji Mixer','openEmojiDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['Paint Dots','activateDotPaintBtn'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn'],['Keyboard Shortcuts','shortcutsBtn'],['TNT Reset','tntBtn']]],
     ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Mode','optionsBtn'],['About','aboutBtn']]]
   ];
@@ -726,7 +740,7 @@ function render(){
 
 function drawLiveCursors(g){const now=Date.now(); let count=0; Object.values(liveCursors).forEach(c=>{if(!c||c.panel!==board.active||now-c.ts>12000) return; count++; const x=c.x||0,y=c.y||0,color=c.color||'#2563eb'; g.appendChild(svgEl(`<g class="cursor-tag" opacity="0.98"><path d="M ${x} ${y} L ${x+10} ${y+24} L ${x+14} ${y+14} L ${x+28} ${y+14} Z" fill="${color}"/><rect x="${x+14}" y="${y+14}" rx="9" ry="9" width="${Math.max(74,(c.name||'User').length*8)}" height="24" fill="${color}"/><text x="${x+24}" y="${y+30}" font-size="12" font-weight="700" fill="white">${esc(c.name||'User')}</text></g>`))}); if(ui.cursorStatus) ui.cursorStatus.textContent=count?`${count} collaborator cursor${count===1?'':'s'} visible.`:'No live collaborator cursors yet.'}
 
-function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="8" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b); if(node)el.appendChild(node); if(SHAPE_TEXT_TYPES.includes(o.type)) el.appendChild(createShapeTextObject(o,b)); if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
+function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${o.conceptNode?18:8}" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b); if(node)el.appendChild(node); if(SHAPE_TEXT_TYPES.includes(o.type)) {if(o.conceptNode) el.appendChild(createConceptNodeExtras(o,b)); el.appendChild(createShapeTextObject(o,b))} if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
 
 function calloutPath(b){const r=Math.min(16,b.w/8,b.h/8),tx=b.x+Math.min(40,b.w*.3),ty=b.y+b.h,n=Math.min(26,b.h*.22);return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${tx+18} L ${tx} ${ty} L ${tx+8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
 function speechPath(b){const r=Math.min(18,b.w/8,b.h/8),n=Math.min(28,b.h*.22),cx=b.x+b.w*.55;return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${cx+18} L ${cx-2} ${b.y+b.h} L ${cx-8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
@@ -829,7 +843,13 @@ function shapeClipNode(type,b){if(type==='rect')return svgEl(`<rect x="${b.x}" y
 function textBoxFor(type,b){if(type==='ellipse')return{x:b.x+b.w*.18,y:b.y+b.h*.18,w:b.w*.64,h:b.h*.64};if(type==='diamond')return{x:b.x+b.w*.21,y:b.y+b.h*.21,w:b.w*.58,h:b.h*.58};if(type==='triangle')return{x:b.x+b.w*.19,y:b.y+b.h*.16,w:b.w*.62,h:b.h*.68};if(type==='callout'||type==='speech')return{x:b.x+14,y:b.y+12,w:b.w-28,h:b.h-Math.min(30,b.h*.24)-16};if(type==='sticky')return{x:b.x+12,y:b.y+12,w:b.w-24,h:b.h-24};if(type==='text')return{x:b.x,y:b.y,w:b.w,h:b.h};return{x:b.x+12,y:b.y+12,w:b.w-24,h:b.h-24}}
 
 function createStyledDiv(o){const d=document.createElementNS(XHTML,'div'),h=o.hAlign||'left',v=o.vAlign||'top';d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',boxSizing:'border-box',display:'flex',flexDirection:'column',justifyContent:v==='top'?'flex-start':(v==='middle'?'center':'flex-end'),alignItems:h==='left'?'flex-start':(h==='center'?'center':'flex-end'),textAlign:h,padding:'2px',color:o.textColor||'#111827',fontFamily:'Inter, Arial, sans-serif',fontSize:(o.fontSize||20)+'px',lineHeight:'1.25',transform:`rotate(${o.textRotation||0}deg)`,transformOrigin:'center center',wordBreak:'break-word',overflow:'hidden'});d.innerHTML=objectHtml(o,o.type==='sticky'?'Add note...':(o.type==='text'?'Text':''));return d}
-function createShapeTextObject(o,b){const g=document.createElementNS(NS,'g'),defs=document.createElementNS(NS,'defs'),clip=document.createElementNS(NS,'clipPath');clip.id='clip_'+o.id;clip.appendChild(shapeClipNode(o.type,b));defs.appendChild(clip);g.appendChild(defs);const fo=document.createElementNS(NS,'foreignObject'),box=textBoxFor(o.type,b);fo.setAttribute('x',box.x);fo.setAttribute('y',box.y);fo.setAttribute('width',Math.max(10,box.w));fo.setAttribute('height',Math.max(10,box.h));fo.setAttribute('clip-path',`url(#clip_${o.id})`);fo.setAttribute('pointer-events','none');fo.appendChild(createStyledDiv(o));g.appendChild(fo);return g}
+function createShapeTextObject(o,b){const g=document.createElementNS(NS,'g'),defs=document.createElementNS(NS,'defs'),clip=document.createElementNS(NS,'clipPath');clip.id='clip_'+o.id;clip.appendChild(shapeClipNode(o.type,b));defs.appendChild(clip);g.appendChild(defs);const fo=document.createElementNS(NS,'foreignObject'),box=textBoxFor(o.type,b);if(o.conceptNode&&o.conceptImageSrc){const inset=Math.min(58,b.w*.34);box.x+=inset;box.w=Math.max(24,box.w-inset)}fo.setAttribute('x',box.x);fo.setAttribute('y',box.y);fo.setAttribute('width',Math.max(10,box.w));fo.setAttribute('height',Math.max(10,box.h));fo.setAttribute('clip-path',`url(#clip_${o.id})`);fo.setAttribute('pointer-events','none');fo.appendChild(createStyledDiv(o));g.appendChild(fo);return g}
+function createConceptNodeExtras(o,b){
+  const g=document.createElementNS(NS,'g');
+  if(o.conceptImageSrc) g.appendChild(svgEl(`<image x="${b.x+10}" y="${b.y+10}" width="${Math.min(46,b.w*.28)}" height="${Math.min(46,b.h-20)}" href="${esc(o.conceptImageSrc)}" preserveAspectRatio="xMidYMid meet" opacity="${o.opacity}"/>`));
+  if(o.conceptLink) g.appendChild(svgEl(`<g opacity="${o.opacity}"><circle cx="${b.x+b.w-18}" cy="${b.y+18}" r="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/><text x="${b.x+b.w-18}" y="${b.y+23}" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="800">↗</text></g>`));
+  return g;
+}
 function createTextObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);fo.appendChild(createStyledDiv(o));return fo}
 function createStickyObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);d.className='postit';Object.assign(d.style,{background:o.fill,width:'100%',height:'100%',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:(o.vAlign||'top')==='top'?'flex-start':((o.vAlign||'top')==='middle'?'center':'flex-end'),textAlign:o.hAlign||'left',alignItems:(o.hAlign||'left')==='left'?'flex-start':((o.hAlign||'left')==='center'?'center':'flex-end'),transform:`rotate(${o.textRotation||0}deg)`,transformOrigin:'center center',gap:'8px'});if(o.imageSrc){const img=document.createElementNS(XHTML,'img');img.setAttribute('src',o.imageSrc);Object.assign(img.style,{width:'100%',maxHeight:'45%',objectFit:'cover',borderRadius:'8px',border:'1px solid rgba(0,0,0,.12)'});d.appendChild(img)}const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add note...');content.style.width='100%';d.appendChild(content);fo.appendChild(d);return fo}
 function createCommentObject(o,b){const g=document.createElementNS(NS,'g');const pinFill=o.resolved?'#9ca3af':'#ef4444';g.appendChild(svgEl(`<line x1="${b.x+14}" y1="${b.y+16}" x2="${b.x+14}" y2="${b.y+b.h}" stroke="${pinFill}" stroke-width="3" opacity="${o.opacity}"/>`));g.appendChild(svgEl(`<circle cx="${b.x+14}" cy="${b.y+14}" r="10" fill="${pinFill}" opacity="${o.opacity}"/>`));const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x+24);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(120,b.w-24));fo.setAttribute('height',Math.max(50,b.h));const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',background:o.resolved?'#f3f4f6':'#fff7e6',border:'1px solid '+(o.resolved?'#d1d5db':'#f59e0b'),borderRadius:'10px',padding:'10px',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:'space-between'});const badge=document.createElementNS(XHTML,'div');badge.textContent=o.resolved?'Resolved Comment':'Feedback Pin';badge.style.fontWeight='700';badge.style.fontSize='12px';badge.style.marginBottom='6px';const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add feedback...');content.style.flex='1';content.style.wordBreak='break-word';d.appendChild(badge);d.appendChild(content);fo.appendChild(d);g.appendChild(fo);return g}
@@ -1246,6 +1266,185 @@ gid('pictureGraphPreview')?.addEventListener('pointercancel',()=>{const p=gid('p
 gid('pictureGraphInsertBtn')?.addEventListener('click',insertPictureGraphFromDialog);
 gid('pictureGraphCancelBtn')?.addEventListener('click',()=>gid('pictureGraphDialog')?.close());
 
+/* Concept Map creates a lightweight Inspiration/FreeMind-style organizer from
+   indented text. It is inserted as an image with editable source metadata. */
+const CONCEPT_MAP_SAMPLE='Ecosystems | https://education.nationalgeographic.org/\n- Producers | | 🌱\n-- Plants make food\n- Consumers | | 🐇\n-- Herbivores\n-- Carnivores\n- Decomposers | | 🍄\n- Energy Flow | https://www.si.edu/ | ⚡';
+function conceptMapSafeUrl(url){const u=String(url||'').trim(); return /^(https?:\/\/|mailto:)/i.test(u)?u:''}
+function parseConceptMapRows(text){
+  const nodes=[], stack=[];
+  String(text||'').split(/\n+/).forEach((raw,lineIndex)=>{
+    if(!raw.trim()) return;
+    const indent=(raw.match(/^\s*/)||[''])[0].length, dash=(raw.trim().match(/^-+/)||[''])[0].length;
+    const depth=dash?dash:Math.floor(indent/2);
+    const body=raw.trim().replace(/^-+\s*/,'');
+    const [label='',link='',image='']=body.split('|').map(s=>s.trim());
+    if(!label) return;
+    const node={id:nodes.length,label,link:conceptMapSafeUrl(link),image,depth:Math.max(0,depth),children:[],lineIndex};
+    while(stack.length&&stack[stack.length-1].depth>=node.depth) stack.pop();
+    if(stack.length){node.parent=stack[stack.length-1].id; stack[stack.length-1].children.push(node.id)}
+    nodes.push(node); stack.push(node);
+  });
+  return nodes;
+}
+function conceptMapLayout(nodes,layout){
+  const W=900,H=560,pad=70,levels={};
+  nodes.forEach(n=>(levels[n.depth]||(levels[n.depth]=[])).push(n));
+  if(layout==='tree'){
+    const maxDepth=Math.max(...nodes.map(n=>n.depth),1);
+    Object.entries(levels).forEach(([depth,list])=>{
+      const x=pad+(W-pad*2)*(+depth/Math.max(1,maxDepth));
+      list.forEach((n,i)=>{n.x=x;n.y=pad+(H-pad*2)*((i+1)/(list.length+1))});
+    });
+  } else {
+    const root=nodes.find(n=>!n.parent)||nodes[0];
+    if(root){root.x=W/2;root.y=H/2}
+    const branches=nodes.filter(n=>n.parent===root?.id);
+    branches.forEach((n,i)=>{
+      const a=(Math.PI*2*i/Math.max(1,branches.length))-Math.PI/2,r=170;
+      n.x=W/2+Math.cos(a)*r;n.y=H/2+Math.sin(a)*r;
+      const kids=nodes.filter(k=>k.parent===n.id);
+      kids.forEach((k,j)=>{const spread=(kids.length-1)*0.34, aa=a-spread/2+j*.34, rr=300; k.x=W/2+Math.cos(aa)*rr; k.y=H/2+Math.sin(aa)*rr});
+    });
+    nodes.filter(n=>typeof n.x!=='number').forEach((n,i)=>{const a=(Math.PI*2*i/Math.max(1,nodes.length))-Math.PI/2,r=235;n.x=W/2+Math.cos(a)*r;n.y=H/2+Math.sin(a)*r});
+  }
+  nodes.forEach(n=>{n.x=Math.max(80,Math.min(W-80,n.x));n.y=Math.max(58,Math.min(H-58,n.y))});
+  return {W,H,nodes};
+}
+function conceptMapImageMarkup(value,x,y,size){
+  if(!value) return '';
+  if(/^(data:image\/|\.?\/?assets\/|blob:)/i.test(value)) return `<image href="${esc(value)}" x="${x-size/2}" y="${y-size/2}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
+  return `<text x="${x}" y="${y+size*.34}" font-family="Arial, sans-serif" font-size="${size}" text-anchor="middle">${esc(value.slice(0,4))}</text>`;
+}
+function conceptMapSvg(config){
+  const parsed=parseConceptMapRows(config.source), layout=conceptMapLayout(parsed,config.layout||'radial'), nodes=layout.nodes, W=layout.W,H=layout.H;
+  if(!nodes.length) return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#fff"/><text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Arial" font-size="22" fill="#64748b">Add one node per line.</text></svg>`;
+  const colors=['#dbeafe','#fce7f3','#d1fae5','#ffedd5','#fef3c7','#e9d5ff'];
+  let body='<rect width="100%" height="100%" rx="18" fill="#ffffff"/>';
+  nodes.filter(n=>typeof n.parent==='number').forEach(n=>{const p=nodes[n.parent]; if(p) body+=`<path d="M ${p.x} ${p.y} C ${(p.x+n.x)/2} ${p.y}, ${(p.x+n.x)/2} ${n.y}, ${n.x} ${n.y}" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>`});
+  nodes.forEach((n,i)=>{
+    const isRoot=typeof n.parent!=='number', w=Math.min(210,Math.max(118,n.label.length*8+52+(n.image?34:0))), h=n.image?74:58, x=n.x-w/2,y=n.y-h/2, fill=isRoot?'#7c3aed':colors[n.depth%colors.length], stroke=isRoot?'#5b21b6':'#cbd5e1', text=isRoot?'#fff':'#111827';
+    const labelX=x+(n.image?58:w/2), anchor=n.image?'start':'middle', image=conceptMapImageMarkup(n.image,x+32,n.y,30);
+    const link=n.link?`<text x="${x+w-24}" y="${y+20}" font-family="Arial" font-size="17" fill="${isRoot?'#fef3c7':'#2563eb'}">↗</text><text x="${x+w/2}" y="${y+h-9}" text-anchor="middle" font-family="Arial" font-size="9" fill="${isRoot?'#ede9fe':'#64748b'}">${esc(n.link.replace(/^https?:\/\//,'').slice(0,32))}</text>`:'';
+    body+=`<g>${n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">`:''}<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="${fill}" stroke="${stroke}" stroke-width="2"/><title>${esc(n.link||n.label)}</title>${image}<text x="${labelX}" y="${y+(n.image?32:35)}" text-anchor="${anchor}" font-family="Arial" font-size="${isRoot?18:15}" font-weight="800" fill="${text}">${esc(n.label).slice(0,30)}</text>${link}${n.link?'</a>':''}</g>`;
+  });
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${body}</svg>`;
+}
+function conceptMapNodeBounds(n){
+  const w=Math.min(210,Math.max(118,n.label.length*8+52+(n.image?34:0))), h=n.image?74:58;
+  return {x:n.x-w/2,y:n.y-h/2,w,h};
+}
+function conceptMapHitLink(obj,boardPoint){
+  const b=normBox(obj), layout=conceptMapLayout(parseConceptMapRows(obj.conceptMapConfig?.source||''),obj.conceptMapConfig?.layout||'radial');
+  const s=Math.min(b.w/layout.W,b.h/layout.H), ox=b.x+(b.w-layout.W*s)/2, oy=b.y+(b.h-layout.H*s)/2;
+  const x=(boardPoint.x-ox)/s, y=(boardPoint.y-oy)/s;
+  for(let i=layout.nodes.length-1;i>=0;i--){const n=layout.nodes[i], nb=conceptMapNodeBounds(n); if(n.link&&x>=nb.x&&x<=nb.x+nb.w&&y>=nb.y&&y<=nb.y+nb.h) return n.link}
+  return '';
+}
+function conceptMapConfigFromDialog(){return{layout:gid('conceptMapLayout')?.value||'radial',source:gid('conceptMapSource')?.value||''}}
+function conceptMapDataUrl(config){return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(conceptMapSvg(config))))}
+function updateConceptMapPreview(){const p=gid('conceptMapPreview'); if(p) p.innerHTML=conceptMapSvg(conceptMapConfigFromDialog())}
+function ensureConceptMapDialog(){
+  if(gid('conceptMapDialog')) return;
+  const dlg=document.createElement('dialog'); dlg.id='conceptMapDialog'; dlg.className='graph-dialog concept-map-dialog';
+  dlg.innerHTML=`<div class="modal-head"><h2>Concept Map</h2><button class="close" id="conceptMapCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Use one node per line. Add hyphens for child ideas. Optional format: label | https://link | emoji or image. Use the image button to attach an image to the current line. On the board, Ctrl/Cmd-click a linked node to open its link.</p><div class="graph-builder concept-map-builder"><div class="graph-form"><div class="row"><label>Layout</label><select id="conceptMapLayout"><option value="radial">Radial mind map</option><option value="tree">Left-to-right concept map</option></select></div><label class="graph-data-label" for="conceptMapSource">Nodes</label><textarea id="conceptMapSource" spellcheck="false"></textarea><div class="concept-map-actions"><button id="conceptMapSampleBtn" type="button">Sample</button><button id="conceptMapImageBtn" type="button">Add image to line</button><button id="conceptMapInsertBtn" type="button" class="primary">Insert Concept Map</button></div><input id="conceptMapImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></div><div id="conceptMapPreview" class="graph-preview concept-map-preview" aria-label="Concept map preview"></div></div>`;
+  document.body.appendChild(dlg);
+  gid('conceptMapLayout')?.addEventListener('input',updateConceptMapPreview);
+  gid('conceptMapSource')?.addEventListener('input',updateConceptMapPreview);
+  gid('conceptMapSampleBtn')?.addEventListener('click',()=>{gid('conceptMapSource').value=CONCEPT_MAP_SAMPLE; updateConceptMapPreview()});
+  gid('conceptMapImageBtn')?.addEventListener('click',()=>gid('conceptMapImageInput')?.click());
+  gid('conceptMapImageInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0], ta=gid('conceptMapSource'); if(!f||!ta) return; if(!(await validateImageDeep(f))){e.target.value=''; return} const r=new FileReader(); r.onload=()=>{const start=ta.selectionStart||0, lines=ta.value.split('\n'); let pos=0, idx=0; for(;idx<lines.length;idx++){if(start<=pos+lines[idx].length) break; pos+=lines[idx].length+1} const parts=(lines[idx]||'New idea').split('|').map(s=>s.trim()); while(parts.length<3) parts.push(''); parts[2]=r.result; lines[idx]=parts.join(' | '); ta.value=lines.join('\n'); updateConceptMapPreview(); e.target.value=''}; r.readAsDataURL(f)});
+  gid('conceptMapInsertBtn')?.addEventListener('click',insertConceptMapFromDialog);
+  gid('conceptMapCancelBtn')?.addEventListener('click',()=>dlg.close());
+}
+function openConceptMapDialog(existingId){
+  ensureConceptMapDialog();
+  const dlg=gid('conceptMapDialog'), obj=existingId?findObj(existingId):null, cfg=obj?.conceptMapConfig||{layout:'radial',source:CONCEPT_MAP_SAMPLE};
+  gid('conceptMapLayout').value=cfg.layout||'radial'; gid('conceptMapSource').value=cfg.source||CONCEPT_MAP_SAMPLE; dlg.dataset.editId=obj?obj.id:''; updateConceptMapPreview(); dlg.showModal();
+}
+function insertConceptMapFromDialog(){
+  const cfg=conceptMapConfigFromDialog(), nodes=parseConceptMapRows(cfg.source); if(!nodes.length) return setStatus('Add at least one concept map node.','danger');
+  const meta={src:conceptMapDataUrl(cfg),naturalW:900,naturalH:560,conceptMapConfig:cfg,fill:'none',stroke:'none',strokeWidth:0}, dlg=gid('conceptMapDialog'), editId=dlg?.dataset.editId;
+  if(editId){const obj=findObj(editId); if(obj){Object.assign(obj,meta); delete obj.crop; render(); saveState(); setStatus('Concept map updated.','success'); dlg.close(); return}}
+  addObj(makeObj('image',110,100,540,336,meta)); setStatus('Concept map inserted.','success'); dlg?.close();
+}
+svg.addEventListener('dblclick',e=>{const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(o?.type==='image'&&o.conceptMapConfig){e.stopPropagation(); openConceptMapDialog(o.id)}},true);
+svg.addEventListener('click',e=>{if(!(e.ctrlKey||e.metaKey)) return; const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(!(o?.type==='image'&&o.conceptMapConfig)) return; const url=conceptMapHitLink(o,pt(e)); if(url){e.preventDefault(); e.stopPropagation(); window.open(url,'_blank','noopener,noreferrer')}},true);
+
+function makeConceptNode(x,y,label,extra={}){
+  return makeObj('rect',x,y,180,78,{conceptNode:true,conceptMapId:extra.conceptMapId||id(),html:plainTextToHtml(label||'Idea'),text:label||'Idea',fill:extra.fill||'#eff6ff',stroke:extra.stroke||'#7c3aed',strokeWidth:2,textColor:extra.textColor||'#111827',fontSize:extra.fontSize||18,hAlign:'center',vAlign:'middle',autoScaleText:true,...extra});
+}
+function connectConceptNodes(fromId,toId){
+  return makeObj('connector',0,0,0,0,{fromId,toId,conceptConnector:true,fill:'none',stroke:'#94a3b8',strokeWidth:3,opacity:1});
+}
+function insertNativeConceptMap(){
+  const mapId=id(), cx=260, cy=170;
+  const root=makeConceptNode(cx,cy,'Main Idea',{conceptMapId:mapId,fill:'#7c3aed',stroke:'#5b21b6',textColor:'#ffffff',fontSize:20});
+  const ideas=[
+    makeConceptNode(cx-230,cy-105,'Idea 1',{conceptMapId:mapId,fill:'#dbeafe',stroke:'#2563eb'}),
+    makeConceptNode(cx+230,cy-105,'Idea 2',{conceptMapId:mapId,fill:'#d1fae5',stroke:'#059669'}),
+    makeConceptNode(cx-230,cy+125,'Idea 3',{conceptMapId:mapId,fill:'#fef3c7',stroke:'#ca8a04'}),
+    makeConceptNode(cx+230,cy+125,'Idea 4',{conceptMapId:mapId,fill:'#fce7f3',stroke:'#db2777'})
+  ];
+  panel().objects.push(root,...ideas,...ideas.map(n=>connectConceptNodes(root.id,n.id)));
+  selectedIds=[root.id];
+  render(); saveState();
+  setStatus('Editable concept map added. Drag nodes, double-click text, or use Add Child on a selected node.','success');
+}
+function selectedConceptNode(){
+  const o=currentObj();
+  return selectedIds.length===1&&o&&o.conceptNode&&canEditObject(o)?o:null;
+}
+function addConceptChildNode(parent=selectedConceptNode()){
+  if(!parent) return setStatus('Select a concept-map node first.','danger');
+  const siblings=panel().objects.filter(o=>o.conceptNode&&panel().objects.some(c=>c.type==='connector'&&c.fromId===parent.id&&c.toId===o.id)).length;
+  const angle=-Math.PI/2+siblings*(Math.PI/4), b=normBox(parent), distance=190;
+  const child=makeConceptNode(b.cx+Math.cos(angle)*distance-90,b.cy+Math.sin(angle)*distance-39,'New Idea',{conceptMapId:parent.conceptMapId||id(),fill:'#ffffff',stroke:parent.stroke||'#7c3aed'});
+  panel().objects.push(child,connectConceptNodes(parent.id,child.id));
+  selectedIds=[child.id];
+  render(); saveState();
+  openInlineTextEditor(child.id);
+}
+function setConceptLink(){
+  const o=selectedConceptNode();
+  if(!o) return setStatus('Select a concept-map node first.','danger');
+  const value=prompt('Link for this node. Use https:// or mailto:',o.conceptLink||'');
+  if(value===null) return;
+  const cleaned=conceptMapSafeUrl(value);
+  if(value.trim()&&!cleaned) return setStatus('Use a link that starts with https://, http://, or mailto:.','danger');
+  o.conceptLink=cleaned;
+  render(); saveState();
+  setStatus(cleaned?'Node link saved. Ctrl/Cmd-click the node to open it.':'Node link removed.','success');
+}
+function attachConceptImageFile(file){
+  const o=selectedConceptNode();
+  if(!o||!file) return;
+  const r=new FileReader();
+  r.onload=()=>{o.conceptImageSrc=r.result; render(); saveState(); setStatus('Image attached to concept node.','success')};
+  r.onerror=()=>setStatus('Image upload failed.','danger');
+  r.readAsDataURL(file);
+}
+function ensureConceptCanvasControls(){
+  if(gid('conceptNodeControls')) return;
+  const alignPanel=document.querySelector('.object-align-panel');
+  if(!alignPanel) return;
+  const wrap=document.createElement('div');
+  wrap.id='conceptNodeControls';
+  wrap.className='concept-node-controls';
+  wrap.innerHTML='<div class="hint">Concept map node</div><div class="grid"><button id="conceptAddChildBtn" type="button">Add Child</button><button id="conceptSetLinkBtn" type="button">Set Link</button><button id="conceptOpenLinkBtn" type="button">Open Link</button><button id="conceptAttachImageBtn" type="button">Attach Image</button></div><input id="conceptNodeImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>';
+  alignPanel.insertAdjacentElement('beforebegin',wrap);
+  gid('conceptAddChildBtn')?.addEventListener('click',()=>addConceptChildNode());
+  gid('conceptSetLinkBtn')?.addEventListener('click',setConceptLink);
+  gid('conceptOpenLinkBtn')?.addEventListener('click',()=>{const o=selectedConceptNode(); if(o?.conceptLink) window.open(o.conceptLink,'_blank','noopener,noreferrer'); else setStatus('This concept node has no link yet.','danger')});
+  gid('conceptAttachImageBtn')?.addEventListener('click',()=>gid('conceptNodeImageInput')?.click());
+  gid('conceptNodeImageInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0]; if(!f) return; if(await validateImageDeep(f)) attachConceptImageFile(f); e.target.value=''});
+}
+function refreshConceptCanvasControls(){
+  ensureConceptCanvasControls();
+  const wrap=gid('conceptNodeControls');
+  if(wrap) wrap.hidden=!selectedConceptNode();
+}
+svg.addEventListener('click',e=>{if(!(e.ctrlKey||e.metaKey)) return; const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(o?.conceptNode&&o.conceptLink){e.preventDefault(); e.stopPropagation(); window.open(o.conceptLink,'_blank','noopener,noreferrer')}},true);
+
 function emojiStamp(label,parts,x=100,y=100,w=118,h=118){
   return makeObj('stamp',x,y,w,h,{stampId:'emoji_'+id(),stampIcon:parts.join(''),emojiParts:parts,stampLabel:label,stampBg:'#f8fafc',fill:'none',stroke:'none',strokeWidth:0});
 }
@@ -1552,6 +1751,8 @@ gid('floatDeleteBtn')?.addEventListener('click',()=>{if(selectedIds.length) dele
 gid('floatDuplicateBtn')?.addEventListener('click',()=>{if(selectedIds.length) duplicateSelected()});
 gid('floatEditBtn')?.addEventListener('click',()=>{const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)) openInlineTextEditor(o.id)});
 gid('floatCropBtn')?.addEventListener('click',()=>openCropDialog());
+gid('floatConceptChildBtn')?.addEventListener('click',()=>addConceptChildNode());
+gid('floatConceptLinkBtn')?.addEventListener('click',setConceptLink);
 
 /* Mermaid and word-cloud tools render diagrams locally, then insert them as
    ordinary image objects with source metadata so they can be re-edited later. */
@@ -2536,6 +2737,8 @@ function registerServiceWorker(){
     mermaid:svg(`<rect ${S} x="3.5" y="5" width="5" height="4" rx="1"/><rect ${S} x="15.5" y="5" width="5" height="4" rx="1"/><rect ${S} x="9.5" y="15" width="5" height="4" rx="1"/><path ${S} d="M8.5 7h7M18 9v3a3 3 0 0 1-3 3h-.5M6 9v3a3 3 0 0 0 3 3h.5"/>`),
     shapeGroup:svg(`<path ${S} d="M4 18L10 8"/><path ${S} d="M13 6h7v7"/><path ${S} d="M13 13l7-7"/><rect ${S} x="4" y="13" width="6" height="6" rx="1.5"/><ellipse ${S} cx="17" cy="17" rx="4" ry="2.7"/>`),
     wordcloud:svg(`<path ${S} d="M7 17h10a4 4 0 0 0 .3-8 5.5 5.5 0 0 0-10.5 1.4A3.4 3.4 0 0 0 7 17z"/><path ${S} d="M8 13h8M10 10h4"/>`),
+    concept:svg(`<circle ${S} cx="6" cy="12" r="3"/><circle ${S} cx="18" cy="7" r="3"/><circle ${S} cx="18" cy="17" r="3"/><path ${S} d="M8.8 10.8l6.4-2.7M8.8 13.2l6.4 2.7"/>`),
+    openLink:svg(`<path ${S} d="M14 4h6v6"/><path ${S} d="M20 4l-9 9"/><path ${S} d="M10 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-4"/>`),
     noFill:svg(`<rect ${S} x="5" y="5" width="14" height="14" rx="2"/><path ${S} d="M5 19L19 5"/>`),
     blank:svg(`<rect ${S} x="5" y="5" width="14" height="14" rx="2"/>`),
     grid:svg(`<rect ${S} x="4" y="4" width="16" height="16" rx="1"/><path ${S} d="M4 10h16M4 15h16M10 4v16M15 4v16"/>`),
@@ -2562,16 +2765,16 @@ function registerServiceWorker(){
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
     frameNavAdd:['plus','Add Frame'],clearFrameBtn:['clear','Clear Frame'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
-    simpleImageBtn:['image','Add Image'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleMosaicBtn:['grid','Mosaic Images'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
-    removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],
-    insertMermaidBtn:['mermaid','Mermaid Diagram'],insertWordCloudBtn:['wordcloud','Word Cloud'],resetBoardBtn:['reset','Reset Board'],
+    simpleImageBtn:['image','Add Image'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleMosaicBtn:['grid','Mosaic Images'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
+    removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
+    insertMermaidBtn:['mermaid','Mermaid Diagram'],insertWordCloudBtn:['wordcloud','Word Cloud'],openConceptMapDialogBtn:['concept','Concept Map'],resetBoardBtn:['reset','Reset Board'],
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
     closeOptions:['close','Close'],closeAbout:['close','Close'],closeMoreOptions:['close','Close'],closeMermaid:['close','Close'],closeWordCloud:['close','Close'],
     more_saveLocalBtn:['save','Save File'],more_loadLocalBtn:['folder','Load File'],more_importPanelsBtn:['import','Import Panels'],more_exportBtn:['image','Export PNG'],more_exportPdfBtn:['pdf','Export PDF'],
     more_saveDriveBtn:['cloudUp','Save to Google'],more_loadDriveBtn:['cloudDown','Load from Google'],more_deletePanelBtn:['trash','Delete Frame'],more_tntBtn:['tnt','TNT Reset'],
     graphInsertBtn:['plus','Insert Graph'],graphCancelBtn:['close','Close'],pictureGraphInsertBtn:['plus','Insert Picture Graph'],pictureGraphCancelBtn:['close','Close'],mosaicCreateBtn:['plus','Create Mosaic'],mosaicCancelBtn:['close','Cancel'],collageCreateBtn:['plus','Create Collage'],collageCancelBtn:['close','Cancel'],touchMultiSelectBtn:['check','Multi-Select'],insertEmojiMixBtn:['plus','Insert Mix'],mixSelectedEmojiBtn:['magic','Mix Selected Emojis'],createGifBtn:['play','Create GIF'],downloadGifBtn:['download','Download GIF'],
     pictureGraphLoadSymbolBtn:['image','Load picture symbol'],pictureGraphClearSymbolBtn:['text','Use typed symbol'],
-    wcGenerate:['wordcloud','Generate'],wcCopyPng:['image','Copy PNG'],wcCancel:['close','Cancel'],wcInsert:['check','Insert'],mermaidCopyPng:['image','Copy PNG'],mermaidCancel:['close','Cancel'],mermaidInsert:['check','Insert'],
+    wcGenerate:['wordcloud','Generate'],wcCopyPng:['image','Copy PNG'],wcCancel:['close','Cancel'],wcInsert:['check','Insert'],conceptAddChildBtn:['plus','Add Child'],conceptSetLinkBtn:['concept','Set Link'],conceptOpenLinkBtn:['openLink','Open Link'],conceptAttachImageBtn:['image','Attach Image'],conceptMapSampleBtn:['file','Sample'],conceptMapImageBtn:['image','Add image to line'],conceptMapCancelBtn:['close','Cancel'],conceptMapInsertBtn:['check','Insert Concept Map'],mermaidCopyPng:['image','Copy PNG'],mermaidCancel:['close','Cancel'],mermaidInsert:['check','Insert'],
     cropReset:['reset','Reset'],cropCancel:['close','Cancel'],cropApply:['crop','Apply'],bgRemoveCancel:['close','Cancel'],bgRemoveApply:['magic','Apply'],confirmDialogCancel:['close','Cancel'],confirmDialogOk:['check','OK'],welcomeDismiss:['check','Got it']
   };
   const keepTextIds=new Set(['saveDriveBtn','exportBtn','exportPdfBtn','tntBtn','submitTurnInBtn','reviewTurnInsBtn','openModerationBtn','refreshModerationBtn','settingsBtn','loadDriveBtn','saveLocalBtn','loadLocalBtn','importPanelsBtn','inlineTextSaveBtn','inlineTextCancelBtn','optionsBtn','aboutBtn','viewToggleBtn','zoomResetBtn','confirmDialogOk','confirmDialogCancel','welcomeDismiss']);
@@ -2609,6 +2812,7 @@ function registerServiceWorker(){
   function applyIcons(){
     ensureSimpleExtras?.();
     ensurePictureGraphButton?.();
+    ensureConceptMapButton?.();
     ensureAdvancedStickyPalette?.();
     ensureTopMenus?.();
     groupToolPalette();

@@ -95,8 +95,9 @@ timeline
 - Locked per-panel background images (Jamboard-style) — teacher loads a reference image, students see and work on top of it without being able to alter or remove it
 - Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
 - Custom sticker / stamp tools, including teacher-uploaded image stickers
-- Graph makers for bar, line, area, pie, and picture graphs from simple label/value rows
+- Graph makers for bar, line, area, pie, and picture graphs, plus canvas-native concept maps
 - Picture Graphs support vertical or horizontal stacks, a built-in sample icon catalog, locally bundled Smithsonian Open Access animal photos, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
+- Concept Maps use draggable editable nodes, live connectors, one-click child nodes, optional node images, visible node links, and Ctrl/Cmd-click link opening on the board
 - Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
@@ -344,6 +345,24 @@ Related behavior:
 ## Detailed version history
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
+
+## Version 3.0.21 changes
+
+v3.0.21 makes concept mapping work directly on the whiteboard canvas.
+
+- The Concept Map button now inserts editable nodes and live connectors instead of requiring typed outline text first.
+- Select a concept node to add a child, set or open a link, or attach an image from the inspector controls.
+- Concept nodes can be dragged, resized, double-clicked for text editing, duplicated, aligned, grouped, and styled like other DrawSplat objects.
+- Ctrl/Cmd-click opens a linked concept node in a new tab.
+- Service-worker cache key bumped to `drawsplat-v3.0.21`.
+
+## Version 3.0.20 changes
+
+v3.0.20 added the first concept map / mind map renderer.
+
+- Added a Concept Map renderer for radial mind maps and left-to-right concept maps.
+- Added support for child ideas, optional node images, visible node links, and Ctrl/Cmd-click link opening on the board.
+- Service-worker cache key bumped to `drawsplat-v3.0.20`.
 
 ## Version 3.0.19 changes
 
