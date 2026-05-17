@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.17';
+const CACHE = 'drawsplat-v3.0.19';
 const SHELL = [
   './',
   './index.html',
@@ -33,7 +33,17 @@ const SHELL = [
   './assets/feature-mermaid.svg',
   './assets/feature-dot-pictures.svg',
   './assets/feature-sticker-library.svg',
-  './assets/feature-collage.svg'
+  './assets/feature-collage.svg',
+  './assets/smithsonian-animals/clouded-leopard-cub.jpg',
+  './assets/smithsonian-animals/african-lion-cub.jpg',
+  './assets/smithsonian-animals/asian-elephant.jpg',
+  './assets/smithsonian-animals/cheetah.jpg',
+  './assets/smithsonian-animals/california-sea-lion.jpg',
+  './assets/smithsonian-animals/alpaca.jpg',
+  './assets/smithsonian-animals/giant-panda.jpg',
+  './assets/smithsonian-animals/grevys-zebra.jpg',
+  './assets/smithsonian-animals/elds-deer.jpg',
+  './assets/smithsonian-animals/fennec-fox.jpg'
   /* './mermaid.min.js' — add manually after downloading; not in SHELL by default so the SW install doesn't fail when it's absent */
 ];
 

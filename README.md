@@ -96,7 +96,7 @@ timeline
 - Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
 - Custom sticker / stamp tools, including teacher-uploaded image stickers
 - Graph makers for bar, line, area, pie, and picture graphs from simple label/value rows
-- Picture Graphs support vertical or horizontal stacks, a built-in sample icon catalog, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
+- Picture Graphs support vertical or horizontal stacks, a built-in sample icon catalog, locally bundled Smithsonian Open Access animal photos, a different uploaded image for each category, a fallback typed/uploaded symbol, configurable scale, optional value labels, and double-click re-editing after insertion
 - Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
@@ -345,20 +345,30 @@ Related behavior:
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
 
+## Version 3.0.19 changes
+
+v3.0.19 adds a local Smithsonian Open Access animal image library for Picture Graphs.
+
+- Added ten classroom-sized Smithsonian Open Access animal photos under `assets/smithsonian-animals/`.
+- Picture Graph preset selectors can now use local image assets as well as emoji symbols.
+- Selected local image presets are embedded into the generated graph so inserted graphs continue to work offline and in exports.
+- Added visible Smithsonian Open Access Animal Images credit inside the Picture Graph dialog.
+- Service-worker cache key bumped to `drawsplat-v3.0.19`.
+
+## Version 3.0.18 changes
+
+v3.0.18 fixes large GIF creation.
+
+- GIF creation no longer pushes large encoded frames into arrays in a single spread operation, which could trigger browser argument-limit errors such as "Too many functions" or similar runtime failures.
+- GIF frames are capped to a practical maximum dimension so large selected images still produce manageable classroom GIFs.
+- Service-worker cache key bumped to `drawsplat-v3.0.18`.
+
 ## Version 3.0.17 changes
 
 v3.0.17 improves public feature-page illustration layout.
 
 - Feature preview illustrations now use `object-fit: contain` with internal padding so the full interface illustration stays visible inside each card.
 - Service-worker cache key bumped to `drawsplat-v3.0.17`.
-
-## Version 3.0.16 changes
-
-v3.0.16 fixes large GIF creation.
-
-- GIF creation no longer pushes large encoded frames into arrays in a single spread operation, which could trigger browser argument-limit errors such as "Too many functions" or similar runtime failures.
-- GIF frames are capped to a practical maximum dimension so large selected images still produce manageable classroom GIFs.
-- Service-worker cache key bumped to `drawsplat-v3.0.16`.
 
 ## Version 3.0.15 changes
 
