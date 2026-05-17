@@ -100,6 +100,56 @@ uh: {
 (function(){
   const L = window.DRAWSPLAT_LOCALES || {};
   const add = {
+    es: {
+      'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'Haz clic en una herramienta de la barra lateral: lápiz, nota adhesiva, formas o texto. Luego haz clic en el lienzo para usarla.',
+      'Click a sticky or text box and start typing. Click outside to save.':'Haz clic en una nota adhesiva o cuadro de texto y empieza a escribir. Haz clic fuera para guardar.',
+      'Use the':'Usa el',
+      'Simple ⇄ Advanced':'Simple ⇄ Avanzado',
+      'button in the header to reveal more tools.':'de la cabecera para mostrar más herramientas.',
+      'Your work auto-saves locally. Use Save to Google in the ⋮ menu for cloud backup.':'Tu trabajo se guarda localmente de forma automática. Usa Guardar en Google en el menú ⋮ para crear una copia en la nube.'
+    },
+    vi: {
+      'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'Nhấp một công cụ ở thanh bên: Bút, Ghi chú, Hình dạng hoặc Văn bản. Sau đó nhấp lên bảng để dùng.',
+      'Click a sticky or text box and start typing. Click outside to save.':'Nhấp vào ghi chú hoặc hộp văn bản rồi bắt đầu gõ. Nhấp ra ngoài để lưu.',
+      'Use the':'Dùng nút',
+      'Simple ⇄ Advanced':'Đơn giản ⇄ Nâng cao',
+      'button in the header to reveal more tools.':'trên thanh đầu trang để hiện thêm công cụ.',
+      'Your work auto-saves locally. Use Save to Google in the ⋮ menu for cloud backup.':'Bài làm tự lưu cục bộ. Dùng Lưu vào Google trong menu ⋮ để sao lưu lên đám mây.'
+    },
+    ar: {
+      'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'انقر أداة في الشريط الجانبي: قلم، ملاحظة لاصقة، أشكال، نص. ثم انقر اللوحة لاستخدامها.',
+      'Click a sticky or text box and start typing. Click outside to save.':'انقر ملاحظة لاصقة أو مربع نص وابدأ الكتابة. انقر خارجها للحفظ.',
+      'Use the':'استخدم زر',
+      'Simple ⇄ Advanced':'بسيط ⇄ متقدم',
+      'button in the header to reveal more tools.':'في الرأس لإظهار المزيد من الأدوات.',
+      'Your work auto-saves locally. Use Save to Google in the ⋮ menu for cloud backup.':'يتم حفظ عملك تلقائيا محليا. استخدم الحفظ في Google من قائمة ⋮ للنسخ الاحتياطي السحابي.'
+    },
+    zh: {
+      'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'点击侧边栏中的工具：画笔、便签、形状或文本。然后点击画布使用它。',
+      'Click a sticky or text box and start typing. Click outside to save.':'点击便签或文本框并开始输入。点击外部即可保存。',
+      'Use the':'使用页眉中的',
+      'Simple ⇄ Advanced':'简单 ⇄ 高级',
+      'button in the header to reveal more tools.':'按钮显示更多工具。',
+      'Your work auto-saves locally. Use Save to Google in the ⋮ menu for cloud backup.':'你的作品会自动保存在本地。使用 ⋮ 菜单中的保存到 Google 进行云备份。'
+    },
+    uh: {
+      'Click a tool in the side toolbar — Pen, Sticky Note, Shapes, Text. Then click the canvas to use it.':'साइड टूलबार में उपकरण चुनें: पेन, स्टिकी नोट, आकार, पाठ। फिर कैनवस पर क्लिक करें।',
+      'Click a sticky or text box and start typing. Click outside to save.':'स्टिकी या टेक्स्ट बॉक्स पर क्लिक करें और लिखना शुरू करें। सहेजने के लिए बाहर क्लिक करें।',
+      'Use the':'इसका उपयोग करें / استعمال کریں',
+      'Simple ⇄ Advanced':'सरल ⇄ उन्नत / سادہ ⇄ اعلی',
+      'button in the header to reveal more tools.':'हेडर में अधिक उपकरण दिखाने के लिए।',
+      'Your work auto-saves locally. Use Save to Google in the ⋮ menu for cloud backup.':'आपका काम स्थानीय रूप से स्वतः सहेजता है। क्लाउड बैकअप के लिए ⋮ मेनू में Google में सहेजें उपयोग करें।'
+    }
+  };
+  Object.entries(add).forEach(([lang,texts])=>{
+    if(!L[lang]) return;
+    L[lang].texts = Object.assign(L[lang].texts || {}, texts);
+  });
+})();
+
+(function(){
+  const L = window.DRAWSPLAT_LOCALES || {};
+  const add = {
     es: {'Import Panels...':'Importar paneles...','Custom Sticker':'Pegatina personalizada','Simple View':'Vista simple','Advanced View':'Vista avanzada','Switch to Advanced view':'Cambiar a vista avanzada','Switch to Simple view':'Cambiar a vista simple','Open Builder':'Abrir constructor','Butterfly':'Mariposa','Ten Frame':'Marco de diez','Smile':'Sonrisa','Fish':'Pez','Boat':'Barco','Check':'Marca','Idea':'Idea','Question':'Pregunta','Book':'Libro','Pencil':'Lápiz','Pin':'Marcador','Search':'Buscar','Mix':'Mezclar','Graph preview':'Vista previa del gráfico','Animated GIF preview':'Vista previa de GIF animado','Select two or more objects or images on the board. Each selected item becomes one GIF frame.':'Selecciona dos o más objetos o imágenes del tablero. Cada elemento seleccionado se convierte en un fotograma GIF.'},
     vi: {'Import Panels...':'Nhập bảng...','Custom Sticker':'Nhãn dán tùy chỉnh','Simple View':'Chế độ đơn giản','Advanced View':'Chế độ nâng cao','Switch to Advanced view':'Chuyển sang chế độ nâng cao','Switch to Simple view':'Chuyển sang chế độ đơn giản','Open Builder':'Mở trình tạo','Butterfly':'Bướm','Ten Frame':'Khung mười','Smile':'Mặt cười','Fish':'Cá','Boat':'Thuyền','Check':'Dấu chọn','Idea':'Ý tưởng','Question':'Câu hỏi','Book':'Sách','Pencil':'Bút chì','Pin':'Ghim','Search':'Tìm kiếm','Mix':'Trộn','Graph preview':'Xem trước biểu đồ','Animated GIF preview':'Xem trước GIF động','Select two or more objects or images on the board. Each selected item becomes one GIF frame.':'Chọn hai hoặc nhiều đối tượng hay ảnh trên bảng. Mỗi mục được chọn sẽ trở thành một khung GIF.'},
     ar: {'Import Panels...':'استيراد لوحات...','Custom Sticker':'ملصق مخصص','Simple View':'عرض بسيط','Advanced View':'عرض متقدم','Switch to Advanced view':'التبديل إلى العرض المتقدم','Switch to Simple view':'التبديل إلى العرض البسيط','Open Builder':'فتح المنشئ','Butterfly':'فراشة','Ten Frame':'إطار عشرة','Smile':'ابتسامة','Fish':'سمكة','Boat':'قارب','Check':'علامة صح','Idea':'فكرة','Question':'سؤال','Book':'كتاب','Pencil':'قلم رصاص','Pin':'دبوس','Search':'بحث','Mix':'مزج','Graph preview':'معاينة الرسم','Animated GIF preview':'معاينة GIF متحرك','Select two or more objects or images on the board. Each selected item becomes one GIF frame.':'حدد عنصرين أو صورتين أو أكثر على اللوحة. يصبح كل عنصر محدد إطارا في GIF.'},
@@ -109,6 +159,5 @@ uh: {
   Object.entries(add).forEach(([lang,texts])=>{
     if(!L[lang]) return;
     L[lang].texts = Object.assign(L[lang].texts || {}, texts);
-    L[lang].runtime = Object.assign(L[lang].runtime || {}, texts);
   });
 })();

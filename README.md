@@ -341,6 +341,14 @@ Related behavior:
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
 
+## Version 3.0.2 changes
+
+v3.0.2 fixes remaining welcome-dialog translation gaps.
+
+- Added exact split-node translations for the welcome dialog tip body text in Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi.
+- Kept the translation merge scoped to visible DOM text only, avoiding risky prefix matches in runtime status messages.
+- Service-worker cache key bumped to `drawsplat-v3.0.2`.
+
 ## Version 3.0.1 changes
 
 v3.0.1 improves multilingual coverage for the whiteboard app.
