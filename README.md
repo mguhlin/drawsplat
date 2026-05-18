@@ -346,6 +346,13 @@ Related behavior:
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
 
+## Version 3.0.22 changes
+
+v3.0.22 fixes the website Picture Graph preview image.
+
+- Replaced the emoji-based Picture Graph website illustration with embedded bundled animal photos so systems without color emoji fonts do not show small placeholder boxes.
+- Service-worker cache key bumped to `drawsplat-v3.0.22`.
+
 ## Version 3.0.21 changes
 
 v3.0.21 makes concept mapping work directly on the whiteboard canvas.
