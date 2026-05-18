@@ -328,6 +328,7 @@ body[data-view="simple"] #toolButtons .tool-group-text{background:#fff7ed;border
 body[data-view="simple"] #toolButtons [data-tool="dotpaint"]{border-style:dashed}
 body[data-view="simple"] #toolButtons [data-tool="dotpaint"]::before{content:'';position:absolute;right:7px;top:7px;width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px #fff}
 body[data-view="simple"] #simpleImageBtn{color:#2563eb}
+body[data-view="simple"] #simpleClassroomWidgetsBtn{color:#7c3aed}
 body[data-view="simple"] #simpleMermaidBtn{color:#0f766e}
 body[data-view="simple"] #simpleWordCloudBtn{color:#9333ea}
 body[data-view="simple"] #simpleBgImageBtn{color:#0f766e}
@@ -359,6 +360,26 @@ body[data-view="simple"] #bgSelectSimple{border:1px solid var(--line);border-rad
 .image-gallery-tile img{width:100%;height:104px;object-fit:cover;border-radius:6px;background:#f1f5f9;border:1px solid var(--line)}
 .image-gallery-tile span{font-size:12px;font-weight:700;line-height:1.25;color:var(--ink)}
 @media(max-width:640px){.image-source-actions{grid-template-columns:1fr}.image-gallery-grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}}
+.classroom-widget-dialog{max-width:760px;width:calc(100% - 40px);padding:18px}
+.classroom-widget-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.classroom-widget-picker button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:96px;text-align:left;padding:14px}
+.classroom-widget-picker strong{font-size:15px;color:var(--ink)}
+.classroom-widget-picker span{font-size:12px;line-height:1.35;color:var(--muted)}
+.widget-form{display:grid;gap:10px}
+.widget-form label{display:grid;gap:5px;font-size:12px;font-weight:800;color:var(--muted)}
+.widget-form input,.widget-form select,.widget-form textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;color:var(--ink)}
+.widget-form textarea{min-height:150px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.45}
+.widget-action-row,.score-control-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.poll-tally-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.poll-tally-controls button{justify-content:flex-start}
+.score-control-row{border:1px solid var(--line);border-radius:12px;padding:8px;background:#f8fafc}
+.score-control-row b{min-width:96px}
+.widget-traffic-controls{grid-template-columns:1fr 1fr 1fr}
+.widget-traffic-controls button{font-weight:900;color:#111827}
+.widget-traffic-controls .traffic-red{background:#fecaca;border-color:#dc2626}
+.widget-traffic-controls .traffic-yellow{background:#fef3c7;border-color:#f59e0b}
+.widget-traffic-controls .traffic-green{background:#bbf7d0;border-color:#16a34a}
+@media(max-width:640px){.classroom-widget-picker,.widget-traffic-controls{grid-template-columns:1fr}.score-control-row b{width:100%}}
 .audio-card{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px}
 .audio-pill{display:inline-block;background:#7c3aed;color:#fff;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700}
 .shape-pattern-note{font-size:11px;color:var(--muted)}
