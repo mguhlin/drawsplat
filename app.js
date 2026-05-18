@@ -153,7 +153,94 @@ function askConfirm(msg,opts={}){return new Promise(resolve=>{const dlg=document
 let _savedAt=null,_saveStateTimer=null;
 function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved'); chip.className='save-state saved'} else if(state==='error'){chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved'):sec<60?tr('Saved ') + sec + tr('s ago'):sec<3600?tr('Saved ') + Math.round(sec/60) + tr('m ago'):tr('Saved ') + Math.round(sec/3600) + tr('h ago')}}
 if(!_saveStateTimer) _saveStateTimer=setInterval(()=>setSaveState('tick'),30000);
-function refreshSelectionToolbar(){const tb=document.getElementById('selectionToolbar'); if(!tb) return; const visible=selectedIds.length>0&&!inlineEditId; tb.classList.toggle('show',visible); if(visible){const o=currentObj(); const editable=o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o); const cropable=o&&o.type==='image'&&canEditObject(o); const concept=o&&o.conceptNode&&canEditObject(o); const editBtn=document.getElementById('floatEditBtn'); if(editBtn) editBtn.style.display=editable?'inline-flex':'none'; const cropBtn=document.getElementById('floatCropBtn'); if(cropBtn) cropBtn.style.display=cropable?'inline-flex':'none'; const childBtn=document.getElementById('floatConceptChildBtn'); if(childBtn) childBtn.style.display=concept?'inline-flex':'none'; const linkBtn=document.getElementById('floatConceptLinkBtn'); if(linkBtn) linkBtn.style.display=concept?'inline-flex':'none'} refreshConceptCanvasControls?.()}
+function ensureConnectorLabelToolbarButton(){
+  const tb=document.getElementById('selectionToolbar');
+  if(!tb) return null;
+  let btn=document.getElementById('floatConnectorLabelBtn');
+  if(btn) return btn;
+  btn=document.createElement('button');
+  btn.id='floatConnectorLabelBtn';
+  btn.type='button';
+  btn.textContent='Label';
+  btn.addEventListener('click',openConnectorLabelDialog);
+  setButtonChrome(btn,'Connector Label');
+  const dup=document.getElementById('floatDuplicateBtn');
+  tb.insertBefore(btn,dup||null);
+  return btn;
+}
+function ensureConceptImageToolbarButton(){
+  const tb=document.getElementById('selectionToolbar');
+  if(!tb) return null;
+  let btn=document.getElementById('floatConceptImageBtn');
+  if(btn) return btn;
+  btn=document.createElement('button');
+  btn.id='floatConceptImageBtn';
+  btn.type='button';
+  btn.textContent='Image';
+  btn.addEventListener('click',openConceptImagePicker);
+  setButtonChrome(btn,'Attach Image');
+  const label=document.getElementById('floatConnectorLabelBtn')||document.getElementById('floatDuplicateBtn');
+  tb.insertBefore(btn,label||null);
+  return btn;
+}
+function ensureConceptImagePicker(){
+  let dlg=document.getElementById('conceptImagePickerDialog');
+  if(dlg) return dlg;
+  dlg=document.createElement('dialog');
+  dlg.id='conceptImagePickerDialog';
+  dlg.className='confirm-dialog concept-image-picker-dialog';
+  dlg.innerHTML=`<div class="modal-head"><h2>Concept Node Image</h2><button class="close" id="conceptImagePickerClose" aria-label="Close">Close</button></div><p class="confirm-msg">Choose a Picture Graph preset or upload your own image for the selected concept-map node.</p><div class="row"><label>Preset</label><select id="conceptImagePickerPreset">${pictureGraphIconOptions()}</select></div><div class="confirm-actions"><button id="conceptImagePickerClear" type="button">Clear</button><button id="conceptImagePickerUpload" type="button">Upload</button><button id="conceptImagePickerUse" type="button" class="primary">Use Preset</button></div>`;
+  document.body.appendChild(dlg);
+  dlg.querySelector('#conceptImagePickerClose').addEventListener('click',()=>dlg.close());
+  dlg.querySelector('#conceptImagePickerUpload').addEventListener('click',()=>{ensureConceptCanvasControls?.(); gid('conceptNodeImageInput')?.click(); dlg.close()});
+  dlg.querySelector('#conceptImagePickerClear').addEventListener('click',()=>{clearConceptNodeImage(); dlg.close()});
+  dlg.querySelector('#conceptImagePickerUse').addEventListener('click',async()=>{await applyConceptPresetImage(dlg.querySelector('#conceptImagePickerPreset')?.value||''); dlg.close()});
+  return dlg;
+}
+function openConceptImagePicker(){
+  if(!selectedConceptNode()) return setStatus('Select a concept-map node first.','danger');
+  const dlg=ensureConceptImagePicker(), preset=dlg.querySelector('#conceptImagePickerPreset');
+  if(preset) preset.value='';
+  if(typeof dlg.showModal==='function') dlg.showModal(); else dlg.show();
+}
+function ensureConnectorLabelDialog(){
+  let dlg=document.getElementById('connectorLabelDialog');
+  if(dlg) return dlg;
+  dlg=document.createElement('dialog');
+  dlg.id='connectorLabelDialog';
+  dlg.className='confirm-dialog connector-label-dialog';
+  dlg.innerHTML='<div class="modal-head"><h2>Connector Label</h2><button class="close" id="connectorLabelDialogClose" aria-label="Close">Close</button></div><p class="confirm-msg">Add a relationship phrase for the selected connector.</p><div class="row connector-label-row"><label>Label</label><textarea id="connectorLabelDialogText" rows="3" placeholder="focus on"></textarea></div><div class="row"><label>Position</label><input id="connectorLabelDialogPosition" type="range" min="8" max="92" value="50"><span id="connectorLabelDialogPositionValue" class="value-chip">50%</span></div><div class="confirm-actions"><button id="connectorLabelDialogClear" type="button">Clear</button><button id="connectorLabelDialogDone" type="button" class="primary">Done</button></div>';
+  document.body.appendChild(dlg);
+  const text=dlg.querySelector('#connectorLabelDialogText'), pos=dlg.querySelector('#connectorLabelDialogPosition'), value=dlg.querySelector('#connectorLabelDialogPositionValue');
+  const sync=()=>{const o=selectedConnector(); if(!o) return; o.connectorLabel=text.value; o.connectorLabelT=+pos.value; if(value) value.textContent=pos.value+'%'; render(); saveState(false)};
+  text.addEventListener('input',sync);
+  pos.addEventListener('input',sync);
+  dlg.querySelector('#connectorLabelDialogClear').addEventListener('click',()=>{text.value=''; sync(); saveState();});
+  dlg.querySelector('#connectorLabelDialogDone').addEventListener('click',()=>{saveState(); dlg.close()});
+  dlg.querySelector('#connectorLabelDialogClose').addEventListener('click',()=>{saveState(); dlg.close()});
+  return dlg;
+}
+function openConnectorLabelDialog(){
+  const o=selectedConnector();
+  if(!o){setStatus('Select a connector first.','danger'); return}
+  openInlineTextEditor(o.id);
+}
+function refreshSelectionToolbar(){
+  const tb=document.getElementById('selectionToolbar');
+  if(!tb) return;
+  const visible=selectedIds.length>0&&!inlineEditId;
+  tb.classList.toggle('show',visible);
+  if(visible){
+    const o=currentObj(), editable=o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o), cropable=o&&o.type==='image'&&canEditObject(o), concept=o&&o.conceptNode&&canEditObject(o), connector=o&&o.type==='connector'&&canEditObject(o);
+    const editBtn=document.getElementById('floatEditBtn'); if(editBtn) editBtn.style.display=editable?'inline-flex':'none';
+    const cropBtn=document.getElementById('floatCropBtn'); if(cropBtn) cropBtn.style.display=cropable?'inline-flex':'none';
+    const childBtn=document.getElementById('floatConceptChildBtn'); if(childBtn) childBtn.style.display=concept?'inline-flex':'none';
+    const linkBtn=document.getElementById('floatConceptLinkBtn'); if(linkBtn) linkBtn.style.display=concept?'inline-flex':'none';
+    const imageBtn=ensureConceptImageToolbarButton(); if(imageBtn) imageBtn.style.display=concept?'inline-flex':'none';
+    const labelBtn=ensureConnectorLabelToolbarButton(); if(labelBtn) labelBtn.style.display=connector?'inline-flex':'none';
+  }
+  refreshConceptCanvasControls?.();
+}
 function syncSimpleColor(){const inp=document.getElementById('simpleColorInput'); if(!inp) return; inp.value=tool==='sticky'?(ui.stickyColor?.value||'#fff59d'):(ui.strokeColor?.value||'#1E398D')}
 function paintColor(){return ui.strokeColor?.value||gid('simpleColorInput')?.value||'#7c3aed'}
 function setPaintColor(color){
@@ -661,7 +748,22 @@ function cleanEditorHtml(h){
 }
 function objectHtml(o,f=''){if(o.id===inlineEditId) return ''; return cleanEditorHtml(o.html||plainTextToHtml(o.text||f||''))}
 
-function objectTextEditBox(o){const b=normBox(o); if(SHAPE_TEXT_TYPES.includes(o.type)) return textBoxFor(o.type,b); if(o.type==='comment') return {x:b.x+24,y:b.y,w:Math.max(120,b.w-24),h:Math.max(50,b.h)}; if(o.type==='sticky'){const imageH=o.imageSrc?Math.min(b.h*0.45,110):0; return {x:b.x+12,y:b.y+12+(imageH?imageH+8:0),w:Math.max(40,b.w-24),h:Math.max(36,b.h-24-(imageH?imageH+8:0))}} return {x:b.x+8,y:b.y+8,w:Math.max(40,b.w-16),h:Math.max(36,b.h-16)}}
+function connectorLabelLayout(o){
+  const p=connectorEndpoints(o), t=clamp((+o.connectorLabelT||50)/100,0.08,0.92), x=p.x1+(p.x2-p.x1)*t, y=p.y1+(p.y2-p.y1)*t, fs=Math.max(10,+o.connectorLabelSize||14), label=String(o.connectorLabel||'');
+  const lines=(label.trim()?label:'relationship').split(/\n/).flatMap(line=>{
+    const words=line.trim().split(/\s+/).filter(Boolean), out=[];
+    let cur='';
+    words.forEach(word=>{const next=cur?cur+' '+word:word; if(next.length>22&&cur){out.push(cur); cur=word}else cur=next});
+    if(cur) out.push(cur);
+    return out;
+  }).slice(0,4);
+  const lineH=fs*1.14, maxLen=Math.max(10,...lines.map(line=>line.length)), w=Math.max(96,Math.min(230,maxLen*fs*.58+18)), h=Math.max(34,lines.length*lineH+10);
+  let angle=Math.atan2(p.y2-p.y1,p.x2-p.x1)*180/Math.PI;
+  if(angle>90) angle-=180;
+  if(angle<-90) angle+=180;
+  return {x,y,w,h,fs,angle};
+}
+function objectTextEditBox(o){const b=normBox(o); if(o.type==='connector'){const l=connectorLabelLayout(o); return {x:l.x-l.w/2,y:l.y-l.h/2,w:l.w,h:l.h,angle:l.angle,fontSize:l.fs}} if(SHAPE_TEXT_TYPES.includes(o.type)) return textBoxFor(o.type,b); if(o.type==='comment') return {x:b.x+24,y:b.y,w:Math.max(120,b.w-24),h:Math.max(50,b.h)}; if(o.type==='sticky'){const imageH=o.imageSrc?Math.min(b.h*0.45,110):0; return {x:b.x+12,y:b.y+12+(imageH?imageH+8:0),w:Math.max(40,b.w-24),h:Math.max(36,b.h-24-(imageH?imageH+8:0))}} return {x:b.x+8,y:b.y+8,w:Math.max(40,b.w-16),h:Math.max(36,b.h-16)}}
 function measureTextLine(text,fontSize){
   const cv=measureTextLine._canvas||(measureTextLine._canvas=document.createElement('canvas'));
   const ctx=cv.getContext('2d');
@@ -683,10 +785,10 @@ function fitPlainTextBoxToContent(o){
   o.w=Math.max(80,Math.round(desiredW));
   o.h=Math.max(Math.round(fontSize*1.25+padY),Math.round(visualLineCount*fontSize*1.25+padY));
 }
-function positionInlineTextEditor(){if(!inlineEditId) return; const o=findObj(inlineEditId); const wrap=gid('inlineTextEditorWrap'); if(!o||!wrap) return commitInlineTextEditor(false); const box=objectTextEditBox(o); const left=Math.max(0,box.x*zoom), top=Math.max(0,box.y*zoom), width=Math.max(60,box.w*zoom), height=Math.max(40,box.h*zoom); wrap.style.left=left+'px'; wrap.style.top=top+'px'; wrap.style.width=width+'px'; wrap.style.height=height+'px'; const ta=gid('inlineTextEditor'); ta.style.minHeight='0'; ta.style.height=height+'px'}
-function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o||!TEXTABLE_TYPES.includes(o.type)) return; if(inlineEditId&&inlineEditId!==objId) commitInlineTextEditor(); inlineEditId=objId; inlineEditOriginal={html:o.html||'',text:o.text||''}; setSingleSelection(objId); const wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); const startVal=starter!==null?starter:(o.text||''); ta.value=startVal; ta.style.fontSize=(o.fontSize||16)+'px'; ta.style.color=o.textColor||'#111827'; ta.style.fontFamily='Inter, Arial, sans-serif'; ta.placeholder=o.type==='sticky'?'Add note...':(o.type==='audio'?'Voice note':(o.type==='comment'?'Add feedback...':(o.type==='text'?'Type here...':'Type here...'))); wrap.classList.add('show'); updateInlineTextObject(false); render(); setTimeout(()=>{ta.focus(); ta.select()},0)}
-function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o); positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id) ui.richEditor.innerHTML=o.html}
-function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'); if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html} inlineEditId=null; inlineEditOriginal=null; if(wrap) wrap.classList.remove('show'); render(); if(save) saveState()}
+function positionInlineTextEditor(){if(!inlineEditId) return; const o=findObj(inlineEditId); const wrap=gid('inlineTextEditorWrap'); if(!o||!wrap) return commitInlineTextEditor(false); const box=objectTextEditBox(o); const left=Math.max(0,box.x*zoom), top=Math.max(0,box.y*zoom), width=Math.max(60,box.w*zoom), height=Math.max(34,box.h*zoom); wrap.style.left=left+'px'; wrap.style.top=top+'px'; wrap.style.width=width+'px'; wrap.style.height=height+'px'; wrap.style.transform=o.type==='connector'?`rotate(${box.angle||0}deg)`:''; wrap.style.transformOrigin='center center'; wrap.classList.toggle('connector-label-edit',o.type==='connector'); const ta=gid('inlineTextEditor'); ta.style.minHeight='0'; ta.style.height=height+'px'}
+function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o||!(TEXTABLE_TYPES.includes(o.type)||o.type==='connector')) return; if(inlineEditId&&inlineEditId!==objId) commitInlineTextEditor(); inlineEditId=objId; inlineEditOriginal={html:o.html||'',text:o.text||'',connectorLabel:o.connectorLabel||''}; setSingleSelection(objId); const wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); const startVal=starter!==null?starter:(o.type==='connector'?(o.connectorLabel||''):(o.text||'')); ta.value=startVal; ta.style.fontSize=(o.type==='connector'?(o.connectorLabelSize||14):(o.fontSize||16))+'px'; ta.style.color=o.type==='connector'?(o.connectorLabelColor||o.stroke||'#334155'):(o.textColor||'#111827'); ta.style.fontFamily='Inter, Arial, sans-serif'; ta.style.textAlign=o.type==='connector'?'center':''; ta.style.fontWeight=o.type==='connector'?'700':''; ta.placeholder=o.type==='connector'?'relationship phrase':(o.type==='sticky'?'Add note...':(o.type==='audio'?'Voice note':(o.type==='comment'?'Add feedback...':(o.type==='text'?'Type here...':'Type here...')))); wrap.classList.add('show'); updateInlineTextObject(false); render(); setTimeout(()=>{ta.focus(); ta.select()},0)}
+function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; if(o.type==='connector'){o.connectorLabel=ta.value}else{o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o)} positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id&&o.type!=='connector') ui.richEditor.innerHTML=o.html}
+function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){if(o.type==='connector') o.connectorLabel=inlineEditOriginal.connectorLabel; else{o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html}} inlineEditId=null; inlineEditOriginal=null; if(wrap){wrap.classList.remove('show','connector-label-edit'); wrap.style.transform=''} if(ta){ta.style.textAlign=''; ta.style.fontWeight=''} render(); if(save) saveState()}
 
 function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
@@ -742,7 +844,7 @@ function render(){
 
 function drawLiveCursors(g){const now=Date.now(); let count=0; Object.values(liveCursors).forEach(c=>{if(!c||c.panel!==board.active||now-c.ts>12000) return; count++; const x=c.x||0,y=c.y||0,color=c.color||'#2563eb'; g.appendChild(svgEl(`<g class="cursor-tag" opacity="0.98"><path d="M ${x} ${y} L ${x+10} ${y+24} L ${x+14} ${y+14} L ${x+28} ${y+14} Z" fill="${color}"/><rect x="${x+14}" y="${y+14}" rx="9" ry="9" width="${Math.max(74,(c.name||'User').length*8)}" height="24" fill="${color}"/><text x="${x+24}" y="${y+30}" font-size="12" font-weight="700" fill="white">${esc(c.name||'User')}</text></g>`))}); if(ui.cursorStatus) ui.cursorStatus.textContent=count?`${count} collaborator cursor${count===1?'':'s'} visible.`:'No live collaborator cursors yet.'}
 
-function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${o.conceptNode?18:8}" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b);if(o.type==='widget')node=createClassroomWidgetObject(o,b); if(node)el.appendChild(node); if(SHAPE_TEXT_TYPES.includes(o.type)) {if(o.conceptNode) el.appendChild(createConceptNodeExtras(o,b)); el.appendChild(createShapeTextObject(o,b))} if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='widget'){openClassroomWidgetDialog(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
+function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${o.conceptNode?18:8}" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=svgEl(`<path d="${o.d}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round" stroke-linejoin="round"/>`);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b);if(o.type==='widget')node=createClassroomWidgetObject(o,b); if(node)el.appendChild(node); if(o.type==='connector'){const labelNode=createConnectorLabelObject(o); if(labelNode) el.appendChild(labelNode)} if(SHAPE_TEXT_TYPES.includes(o.type)) {if(o.conceptNode) el.appendChild(createConceptNodeExtras(o,b)); el.appendChild(createShapeTextObject(o,b))} if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='widget'){openClassroomWidgetDialog(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
 
 function calloutPath(b){const r=Math.min(16,b.w/8,b.h/8),tx=b.x+Math.min(40,b.w*.3),ty=b.y+b.h,n=Math.min(26,b.h*.22);return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${tx+18} L ${tx} ${ty} L ${tx+8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
 function speechPath(b){const r=Math.min(18,b.w/8,b.h/8),n=Math.min(28,b.h*.22),cx=b.x+b.w*.55;return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${cx+18} L ${cx-2} ${b.y+b.h} L ${cx-8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
@@ -848,9 +950,34 @@ function createStyledDiv(o){const d=document.createElementNS(XHTML,'div'),h=o.hA
 function createShapeTextObject(o,b){const g=document.createElementNS(NS,'g'),defs=document.createElementNS(NS,'defs'),clip=document.createElementNS(NS,'clipPath');clip.id='clip_'+o.id;clip.appendChild(shapeClipNode(o.type,b));defs.appendChild(clip);g.appendChild(defs);const fo=document.createElementNS(NS,'foreignObject'),box=textBoxFor(o.type,b);if(o.conceptNode&&o.conceptImageSrc){const inset=Math.min(58,b.w*.34);box.x+=inset;box.w=Math.max(24,box.w-inset)}fo.setAttribute('x',box.x);fo.setAttribute('y',box.y);fo.setAttribute('width',Math.max(10,box.w));fo.setAttribute('height',Math.max(10,box.h));fo.setAttribute('clip-path',`url(#clip_${o.id})`);fo.setAttribute('pointer-events','none');fo.appendChild(createStyledDiv(o));g.appendChild(fo);return g}
 function createConceptNodeExtras(o,b){
   const g=document.createElementNS(NS,'g');
-  if(o.conceptImageSrc) g.appendChild(svgEl(`<image x="${b.x+10}" y="${b.y+10}" width="${Math.min(46,b.w*.28)}" height="${Math.min(46,b.h-20)}" href="${esc(o.conceptImageSrc)}" preserveAspectRatio="xMidYMid meet" opacity="${o.opacity}"/>`));
+  if(o.conceptImageSrc){
+    const x=b.x+10,y=b.y+10,w=Math.min(46,b.w*.28),h=Math.min(46,b.h-20),cx=x+w/2,cy=y+h/2,kind=o.conceptImageKind||pictureGraphSymbolKind(o.conceptImageSrc);
+    if(kind==='image') g.appendChild(svgEl(`<image x="${x}" y="${y}" width="${w}" height="${h}" href="${esc(o.conceptImageSrc)}" preserveAspectRatio="xMidYMid meet" opacity="${o.opacity}"/>`));
+    else g.appendChild(svgEl(`<text x="${cx}" y="${cy+Math.min(w,h)*.32}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${Math.min(w,h)}" opacity="${o.opacity}">${esc(o.conceptImageSrc).slice(0,4)}</text>`));
+  }
   if(o.conceptLink) g.appendChild(svgEl(`<g opacity="${o.opacity}"><circle cx="${b.x+b.w-18}" cy="${b.y+18}" r="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/><text x="${b.x+b.w-18}" y="${b.y+23}" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="800">↗</text></g>`));
   return g;
+}
+function createConnectorLabelObject(o){
+  if(o.id===inlineEditId) return null;
+  const label=String(o.connectorLabel||'').trim();
+  if(!label) return null;
+  const layout=connectorLabelLayout(o), fs=layout.fs, lineH=fs*1.14;
+  const rawLines=label.split(/\n/).flatMap(line=>{
+    const words=line.trim().split(/\s+/).filter(Boolean), lines=[];
+    let cur='';
+    words.forEach(word=>{
+      const next=cur?cur+' '+word:word;
+      if(next.length>22&&cur){lines.push(cur); cur=word}else cur=next;
+    });
+    if(cur) lines.push(cur);
+    return lines;
+  }).slice(0,4);
+  if(!rawLines.length) return null;
+  const w=layout.w, h=rawLines.length*lineH+8, angle=layout.angle;
+  const text=rawLines.map((line,i)=>`<tspan x="0" dy="${i?lineH:0}">${esc(line)}</tspan>`).join('');
+  const y0=-(rawLines.length-1)*lineH/2+fs*.34;
+  return svgEl(`<g opacity="${o.opacity}" pointer-events="none" transform="translate(${layout.x} ${layout.y}) rotate(${angle})"><rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" fill="${esc(o.connectorLabelFill||'#ffffff')}" opacity="0.92"/><text x="0" y="${y0}" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="${fs}" font-weight="700" fill="${esc(o.connectorLabelColor||o.stroke||'#334155')}">${text}</text></g>`);
 }
 function createTextObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);fo.appendChild(createStyledDiv(o));return fo}
 function createStickyObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);d.className='postit';Object.assign(d.style,{background:o.fill,width:'100%',height:'100%',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:(o.vAlign||'top')==='top'?'flex-start':((o.vAlign||'top')==='middle'?'center':'flex-end'),textAlign:o.hAlign||'left',alignItems:(o.hAlign||'left')==='left'?'flex-start':((o.hAlign||'left')==='center'?'center':'flex-end'),transform:`rotate(${o.textRotation||0}deg)`,transformOrigin:'center center',gap:'8px'});if(o.imageSrc){const img=document.createElementNS(XHTML,'img');img.setAttribute('src',o.imageSrc);Object.assign(img.style,{width:'100%',maxHeight:'45%',objectFit:'cover',borderRadius:'8px',border:'1px solid rgba(0,0,0,.12)'});d.appendChild(img)}const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add note...');content.style.width='100%';d.appendChild(content);fo.appendChild(d);return fo}
@@ -867,7 +994,16 @@ function groupMembers(o){if(!o||!o.groupId)return[o?.id].filter(Boolean);return 
 let _lastObjClick={id:null,t:0};
 function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); const p=pt(e); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
   const multi=e.shiftKey||touchMultiSelect;
-  const ids=multi?(toggleSelection(o.id),selectedIds):((o.groupId&&!e.altKey)?groupMembers(o):[o.id]); if(!multi) selectedIds=ids; if(o.locked||o.type==='connector'||(touchMultiSelect&&e.pointerType==='touch')){render();return} const p=pt(e); drag={resize:false,ids:[...selectedIds],startX:p.x,startY:p.y,starts:selectedIds.map(idv=>{const s=findObj(idv);return{id:s.id,x:s.x,y:s.y,w:s.w,h:s.h,fontSize:s.fontSize||20}})}; if(['sticky','text','comment'].includes(o.type)&&canEditObject(o)&&!multi) drag.candidateEdit=o.id; render()}
+  const keepCurrentSelection=!multi&&selectedIds.length>1&&isSelected(o.id);
+  const ids=multi?(toggleSelection(o.id),selectedIds):(keepCurrentSelection?selectedIds:((o.groupId&&!e.altKey)?groupMembers(o):[o.id]));
+  if(!multi) selectedIds=ids;
+  if(o.locked||o.type==='connector'||(touchMultiSelect&&e.pointerType==='touch')){render();return}
+  const p=pt(e);
+  const dragIds=selectedIds.filter(idv=>{const s=findObj(idv);return s&&s.type!=='connector'&&canEditObject(s)&&!s.locked});
+  if(!dragIds.length){render();return}
+  drag={resize:false,ids:[...dragIds],startX:p.x,startY:p.y,starts:dragIds.map(idv=>{const s=findObj(idv);return{id:s.id,x:s.x,y:s.y,w:s.w,h:s.h,fontSize:s.fontSize||20}})};
+  if(['sticky','text','comment'].includes(o.type)&&canEditObject(o)&&!multi&&!keepCurrentSelection) drag.candidateEdit=o.id;
+  render()}
 function resizeDown(e){e.stopPropagation();const ids=selectedResizableIds();if(!ids.length)return;ids.forEach(idv=>{const o=findObj(idv); if(o?.type==='text') o.textAutoFitBox=false});const b=selectionBounds(ids),p=pt(e);if(!b)return;drag={resize:true,ids,sx:p.x,sy:p.y,ox:b.x,oy:b.y,ow:b.w,oh:b.h,starts:ids.map(idv=>{const s=findObj(idv);return{id:s.id,x:s.x,y:s.y,w:s.w,h:s.h,fontSize:s.fontSize||20}})}}
 
 svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='dotpaint'){if(e.target.closest('.object')) return; const o=dotAtPoint(p.x,p.y); if(o){dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set}; paintDotAtPoint(p.x,p.y); return} setStatus('Dot Paint: drag across dots or click a dot to choose a color.','danger'); return} if(tool==='eraser'){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o&&canEditObject(o)&&!o.locked){cleanupConnectors([o.id]); panel().objects=panel().objects.filter(x=>x.id!==o.id); clearSelection(); render(); saveState(); setStatus('Erased.','success')} else if(o&&o.locked) setStatus('That item is locked.','danger')} else setStatus('Click an object to erase it.','danger'); return} if(tool==='laser'){drawing={id:'laser_'+id(),type:'laser',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1}; const path=svgEl(`<path class="laser-trail" d="${drawing.d}" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>`); svg.appendChild(path); drawing._laserPath=path; return} if(tool==='select'){if(!e.target.closest('.object')){clearSelection(); connectorPendingFrom=null; marquee={active:true,x1:p.x,y1:p.y,x2:p.x,y2:p.y}; render()} return} if(['rect','ellipse','line','arrow','diamond','triangle','callout','speech'].includes(tool)){const extra=TEXTABLE_TYPES.includes(tool)?{html:'',text:'',textColor:ui.textColor.value,fontSize:+ui.fontSize.value||20,hAlign:'center',vAlign:'middle',textRotation:0,autoScaleText:true}:{}; drawing=makeObj(tool,p.x,p.y,1,1,extra); panel().objects.push(drawing); setSingleSelection(drawing.id); render(); return} if(tool==='pen'){drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,...style()}; panel().objects.push(drawing); setSingleSelection(drawing.id); return} if(tool==='text'){const fontSize=+ui.fontSize.value||24; const obj=makeObj('text',p.x,p.y,Math.max(96,fontSize*4),Math.round(fontSize*1.25+12),{fill:'none',stroke:'none',html:'',text:'',fontSize,textColor:ui.textColor.value,hAlign:'left',vAlign:'top',autoScaleText:true,textAutoFitBox:true}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='sticky'){const obj=makeObj('sticky',p.x,p.y,180,160,{fill:ui.stickyColor.value,stroke:'#111827',strokeWidth:1,html:'',text:'',fontSize:+ui.fontSize.value||16,textColor:ui.textColor.value,autoScaleText:true,imageSrc:''}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='comment'){const obj=makeObj('comment',p.x,p.y,220,120,{fill:'#fff7e6',stroke:'#f59e0b',strokeWidth:2,html:'',text:'',fontSize:16,textColor:'#111827',resolved:false}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='audio'){addObj(makeObj('audio',p.x,p.y,220,100,{fill:'#eff6ff',stroke:'#93c5fd',strokeWidth:2,html:'',text:'',fontSize:18,textColor:'#111827',audioSrc:'',audioName:''})); return} if(tool==='connector'){connectorPendingFrom=null; setStatus('Connector: click first shape, then second shape.'); return}});
@@ -878,7 +1014,7 @@ svg.addEventListener('pointermove',e=>{const p=pt(e); const now=performance.now(
 
 window.addEventListener('pointerup',e=>{if(dotPaintDrag?.active){const wasMoved=dotPaintDrag.moved, painted=dotPaintDrag.painted?.size||0, targetId=selectedIds[0]; dotPaintDrag=null; if(wasMoved){if(painted) saveState(); render(); return} const o=findObj(targetId); if(o&&o.type==='dot') openDotPaintPalette(o.id,e); return} if(tool==='eraser'){saveState(false); return} if(marquee&&marquee.active){const m={x:Math.min(marquee.x1,marquee.x2),y:Math.min(marquee.y1,marquee.y2),w:Math.abs(marquee.x2-marquee.x1),h:Math.abs(marquee.y2-marquee.y1)}; selectedIds=panel().objects.filter(o=>{const b=normBox(o); return !(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher') && b.x<=m.x+m.w && b.x+b.w>=m.x && b.y<=m.y+m.h && b.y+b.h>=m.y}).map(o=>o.id); marquee=null; render(); return} if(drawing&&drawing.type==='laser'){const path=drawing._laserPath; if(path){setTimeout(()=>{path.style.transition='opacity 1.2s ease-out'; path.style.opacity='0'; setTimeout(()=>path.remove(),1300)},1500)} drawing=null; return} if(drag&&drag.candidateEdit&&!drag.resize){const editId=drag.candidateEdit; drag=null; openInlineTextEditor(editId); return} if(drawing)normalizeObject(drawing); if(drag) drag.ids.forEach(i=>normalizeObject(findObj(i))); if(drag||drawing)saveState(); drag=null; drawing=null; render()});
 
-svg.addEventListener('dblclick',e=>{const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(!o) return; if(o.type==='image'&&o.pictureGraphConfig){e.stopPropagation(); openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){e.stopPropagation(); openGraphDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){e.stopPropagation(); openWordCloudDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){e.stopPropagation(); openMermaidDialog(o.id); return} if(TEXTABLE_TYPES.includes(o.type)&&canEditObject(o)){e.stopPropagation(); openInlineTextEditor(o.id)}});
+svg.addEventListener('dblclick',e=>{const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(!o) return; if(o.type==='image'&&o.pictureGraphConfig){e.stopPropagation(); openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){e.stopPropagation(); openGraphDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){e.stopPropagation(); openWordCloudDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){e.stopPropagation(); openMermaidDialog(o.id); return} if((TEXTABLE_TYPES.includes(o.type)||o.type==='connector')&&canEditObject(o)){e.stopPropagation(); openInlineTextEditor(o.id)}});
 document.addEventListener('pointerdown',e=>{const pop=gid('dotPaintPalette'); if(pop?.classList.contains('show')&&!pop.contains(e.target)&&!e.target.closest('.object')) closeDotPaintPalette()});
 function addObj(o){panel().objects.push(o); setSingleSelection(o.id); render(); saveState()}
 function cleanupConnectors(ids){panel().objects=panel().objects.filter(o=>o.type!=='connector'||(!ids.includes(o.id)&&!ids.includes(o.fromId)&&!ids.includes(o.toId)))}
@@ -930,7 +1066,7 @@ document.addEventListener('keydown',e=>{const tag=(e.target&&e.target.tagName?e.
   if(!meta&&e.altKey&&e.shiftKey&&e.key.toLowerCase()==='h'){e.preventDefault(); alignSelectedObjects('centerH'); return}
   if(!meta&&e.altKey&&e.shiftKey&&e.key.toLowerCase()==='v'){e.preventDefault(); alignSelectedObjects('middleV'); return}
   if(!meta&&!e.altKey&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&selectedIds.length){const amount=e.shiftKey?10:1; const map={ArrowLeft:[-amount,0],ArrowRight:[amount,0],ArrowUp:[0,-amount],ArrowDown:[0,amount]}; if(nudgeSelected(...map[e.key])) e.preventDefault(); return}
-  if(!meta&&!e.altKey&&selectedIds.length===1&&o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o)){if(e.key==='Enter'){e.preventDefault(); openInlineTextEditor(o.id); return} if(e.key.length===1){e.preventDefault(); openInlineTextEditor(o.id,e.key); return}}
+  if(!meta&&!e.altKey&&selectedIds.length===1&&o&&(TEXTABLE_TYPES.includes(o.type)||o.type==='connector')&&canEditObject(o)){if(e.key==='Enter'){e.preventDefault(); openInlineTextEditor(o.id); return} if(e.key.length===1){e.preventDefault(); openInlineTextEditor(o.id,e.key); return}}
   if(e.key==='Delete'||e.key==='Backspace')deleteSelected();
   if(meta&&e.key.toLowerCase()==='a'){e.preventDefault(); selectAllObjects()}
   if(meta&&e.key.toLowerCase()==='d'){e.preventDefault(); duplicateSelected()}
@@ -1583,6 +1719,39 @@ function selectedConceptNode(){
   const o=currentObj();
   return selectedIds.length===1&&o&&o.conceptNode&&canEditObject(o)?o:null;
 }
+function selectedConnector(){
+  const o=currentObj();
+  return selectedIds.length===1&&o&&o.type==='connector'&&canEditObject(o)?o:null;
+}
+function applyConceptNodeShape(shape){
+  const o=selectedConceptNode();
+  if(!o) return;
+  const previous=o.type;
+  if(shape==='square'||shape==='circle'){
+    const b=normBox(o), size=Math.max(64,Math.max(b.w,b.h));
+    o.x=b.cx-size/2; o.y=b.cy-size/2; o.w=size; o.h=size;
+    o.type=shape==='circle'?'ellipse':'rect';
+  } else {
+    o.type=shape||'rect';
+  }
+  if(TEXTABLE_TYPES.includes(o.type)){
+    const d=defaultTextProps(o.type);
+    ['hAlign','vAlign','autoScaleText'].forEach(k=>{if(o[k]===undefined||!TEXTABLE_TYPES.includes(previous)) o[k]=d[k]});
+  }
+  render(); saveState();
+}
+function conceptNodeShapeValue(o){
+  if(!o) return 'rect';
+  if(o.type==='ellipse'){
+    const b=normBox(o);
+    return Math.abs(b.w-b.h)<2?'circle':'ellipse';
+  }
+  if(o.type==='rect'){
+    const b=normBox(o);
+    return Math.abs(b.w-b.h)<2?'square':'rect';
+  }
+  return SHAPE_TEXT_TYPES.includes(o.type)?o.type:'rect';
+}
 function addConceptChildNode(parent=selectedConceptNode()){
   if(!parent) return setStatus('Select a concept-map node first.','danger');
   const siblings=panel().objects.filter(o=>o.conceptNode&&panel().objects.some(c=>c.type==='connector'&&c.fromId===parent.id&&c.toId===o.id)).length;
@@ -1608,29 +1777,74 @@ function attachConceptImageFile(file){
   const o=selectedConceptNode();
   if(!o||!file) return;
   const r=new FileReader();
-  r.onload=()=>{o.conceptImageSrc=r.result; render(); saveState(); setStatus('Image attached to concept node.','success')};
+  r.onload=()=>{o.conceptImageSrc=r.result; o.conceptImageKind='image'; render(); saveState(); setStatus('Image attached to concept node.','success')};
   r.onerror=()=>setStatus('Image upload failed.','danger');
   r.readAsDataURL(file);
 }
+async function applyConceptPresetImage(value){
+  const o=selectedConceptNode();
+  if(!o) return setStatus('Select a concept-map node first.','danger');
+  if(!value) return;
+  try{
+    const symbol=await pictureGraphPresetSymbol(value);
+    o.conceptImageSrc=symbol;
+    o.conceptImageKind=pictureGraphSymbolKind(symbol);
+    render(); saveState();
+    setStatus('Preset image attached to concept node.','success');
+  }catch(_){
+    setStatus('Preset image could not be loaded.','danger');
+  }
+}
+function clearConceptNodeImage(){
+  const o=selectedConceptNode();
+  if(!o) return setStatus('Select a concept-map node first.','danger');
+  delete o.conceptImageSrc;
+  delete o.conceptImageKind;
+  render(); saveState();
+  setStatus('Concept node image removed.','success');
+}
 function ensureConceptCanvasControls(){
-  if(gid('conceptNodeControls')) return;
+  if(gid('conceptNodeControls')&&gid('connectorControls')) return;
   const alignPanel=document.querySelector('.object-align-panel');
   if(!alignPanel) return;
-  const wrap=document.createElement('div');
-  wrap.id='conceptNodeControls';
-  wrap.className='concept-node-controls';
-  wrap.innerHTML='<div class="hint">Concept map node</div><div class="grid"><button id="conceptAddChildBtn" type="button">Add Child</button><button id="conceptSetLinkBtn" type="button">Set Link</button><button id="conceptOpenLinkBtn" type="button">Open Link</button><button id="conceptAttachImageBtn" type="button">Attach Image</button></div><input id="conceptNodeImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>';
-  alignPanel.insertAdjacentElement('beforebegin',wrap);
+  if(!gid('conceptNodeControls')){
+    const wrap=document.createElement('div');
+    wrap.id='conceptNodeControls';
+    wrap.className='concept-node-controls';
+    wrap.innerHTML=`<div class="hint">Concept map node</div><div class="row"><label>Shape</label><select id="conceptNodeShape"><option value="rect">Rectangle</option><option value="square">Square</option><option value="ellipse">Ellipse</option><option value="circle">Circle</option><option value="diamond">Diamond</option><option value="triangle">Triangle</option><option value="callout">Callout</option><option value="speech">Speech Bubble</option></select></div><div class="row"><label>Image</label><select id="conceptNodePresetImage">${pictureGraphIconOptions()}</select></div><div class="grid"><button id="conceptAddChildBtn" type="button">Add Child</button><button id="conceptSetLinkBtn" type="button">Set Link</button><button id="conceptOpenLinkBtn" type="button">Open Link</button><button id="conceptAttachImageBtn" type="button">Upload Image</button><button id="conceptUsePresetImageBtn" type="button">Use Preset</button><button id="conceptClearImageBtn" type="button">Clear Image</button></div><input id="conceptNodeImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
+    alignPanel.insertAdjacentElement('beforebegin',wrap);
+  }
+  if(!gid('connectorControls')){
+    const wrap=document.createElement('div');
+    wrap.id='connectorControls';
+    wrap.className='concept-node-controls';
+    wrap.innerHTML='<div class="hint">Connector</div><div class="row connector-label-row"><label>Label</label><textarea id="connectorLabelInput" rows="2" placeholder="focus on"></textarea></div><div class="row"><label>Position</label><input id="connectorLabelPosition" type="range" min="8" max="92" value="50"><span id="connectorLabelPositionValue" class="value-chip">50%</span></div><p class="hint">Use the main Stroke color and Stroke width controls for connector color and line thickness.</p>';
+    alignPanel.insertAdjacentElement('beforebegin',wrap);
+  }
+  gid('conceptNodeShape')?.addEventListener('change',e=>applyConceptNodeShape(e.target.value));
   gid('conceptAddChildBtn')?.addEventListener('click',()=>addConceptChildNode());
   gid('conceptSetLinkBtn')?.addEventListener('click',setConceptLink);
   gid('conceptOpenLinkBtn')?.addEventListener('click',()=>{const o=selectedConceptNode(); if(o?.conceptLink) window.open(o.conceptLink,'_blank','noopener,noreferrer'); else setStatus('This concept node has no link yet.','danger')});
   gid('conceptAttachImageBtn')?.addEventListener('click',()=>gid('conceptNodeImageInput')?.click());
+  gid('conceptUsePresetImageBtn')?.addEventListener('click',()=>applyConceptPresetImage(gid('conceptNodePresetImage')?.value||''));
+  gid('conceptClearImageBtn')?.addEventListener('click',clearConceptNodeImage);
   gid('conceptNodeImageInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0]; if(!f) return; if(await validateImageDeep(f)) attachConceptImageFile(f); e.target.value=''});
+  gid('connectorLabelInput')?.addEventListener('input',e=>{const o=selectedConnector(); if(!o) return; o.connectorLabel=e.target.value; render(); saveState(false)});
+  gid('connectorLabelPosition')?.addEventListener('input',e=>{const o=selectedConnector(); if(!o) return; o.connectorLabelT=+e.target.value; const v=gid('connectorLabelPositionValue'); if(v) v.textContent=e.target.value+'%'; render(); saveState(false)});
+  gid('connectorLabelInput')?.addEventListener('change',()=>saveState());
+  gid('connectorLabelPosition')?.addEventListener('change',()=>saveState());
 }
 function refreshConceptCanvasControls(){
   ensureConceptCanvasControls();
-  const wrap=gid('conceptNodeControls');
-  if(wrap) wrap.hidden=!selectedConceptNode();
+  const node=selectedConceptNode(), connector=selectedConnector(), nodeWrap=gid('conceptNodeControls'), connectorWrap=gid('connectorControls');
+  if(nodeWrap) nodeWrap.hidden=!node;
+  if(connectorWrap) connectorWrap.hidden=!connector;
+  if(node&&gid('conceptNodeShape')) gid('conceptNodeShape').value=conceptNodeShapeValue(node);
+  if(connector){
+    setInputIfIdle(gid('connectorLabelInput'),connector.connectorLabel||'');
+    setInputIfIdle(gid('connectorLabelPosition'),String(connector.connectorLabelT||50));
+    const v=gid('connectorLabelPositionValue'); if(v) v.textContent=(connector.connectorLabelT||50)+'%';
+  }
 }
 svg.addEventListener('click',e=>{if(!(e.ctrlKey||e.metaKey)) return; const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(o?.conceptNode&&o.conceptLink){e.preventDefault(); e.stopPropagation(); window.open(o.conceptLink,'_blank','noopener,noreferrer')}},true);
 
@@ -1969,7 +2183,19 @@ gid('unlockBtn').onclick=()=>{selectedIds.forEach(i=>{const o=findObj(i); if(o) 
 gid('noFillBtn').onclick=()=>{fillEnabled=!fillEnabled; setButtonChrome('noFillBtn',fillEnabled?'No fill':'Use fill')};
 gid('createCustomStickerBtn').onclick=()=>gid('customStickerInput').click();
 
-['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{selectedIds.forEach(idv=>{const o=findObj(idv); if(o&&!o.locked&&o.type!=='connector') Object.assign(o,style())}); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
+function applyStyleToSelectedObject(o){
+  if(!o||o.locked||!canEditObject(o)) return;
+  const st=style();
+  if(o.type==='connector'){
+    o.stroke=st.stroke;
+    o.strokeWidth=st.strokeWidth;
+    o.opacity=st.opacity;
+    o.connectorLabelColor=st.stroke;
+    return;
+  }
+  Object.assign(o,st);
+}
+['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{selectedIds.forEach(idv=>applyStyleToSelectedObject(findObj(idv))); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
 ui.stickyColor.addEventListener('change',()=>{selectedIds.forEach(idv=>{const o=findObj(idv); if(o&&o.type==='sticky') o.fill=ui.stickyColor.value}); syncSimpleStickyPalette(); syncSimpleColor(); render(); saveState()});
 ui.fontSize.addEventListener('input',()=>{ui.fontSizeValue.textContent=ui.fontSize.value+'px'; const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.fontSize=+ui.fontSize.value; fitPlainTextBoxToContent(o); render(); saveState()}});
 ui.textColor.addEventListener('input',()=>{const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.textColor=ui.textColor.value; render(); saveState()}});
@@ -1984,7 +2210,7 @@ function markAlignButtons(){const o=currentObj(); document.querySelectorAll('[da
 
 /* Inspector and board-settings bindings. These functions mirror selected
    object data into the right panel and persist board-level metadata changes. */
-function updateInspector(){const info=gid('selectedInfo'), wrap=gid('textEditorWrap'); if(!selectedIds.length){info.textContent='No object selected.'; wrap.hidden=true; setButtonChrome('answerKeyBtn','Toggle Answer Key'); return} if(selectedIds.length>1){info.innerHTML=`<b>${esc(selectedIds.length)} items selected</b><br>${esc('Use group drag, group/ungroup, delete, duplicate, and front/back ordering.')}`; wrap.hidden=true; setButtonChrome('answerKeyBtn','Toggle Answer Key'); return} const o=currentObj(), b=normBox(o); info.innerHTML=`<b>${esc(o.type)}</b><br>${Math.round(b.x)}, ${Math.round(b.y)} · ${Math.round(b.w)} × ${Math.round(b.h)}${o.groupId?' · grouped':''}${o.locked?' · locked':''}${o.layer?' · layer: '+esc(o.layer):''}${o.answerKey?' · answer key':''}${o.audioSrc?' · has audio':''}`; if(ui.fillPattern && typeof o.fillPattern!=='undefined') ui.fillPattern.value=o.fillPattern||''; setButtonChrome('answerKeyBtn',o.answerKey?'Remove Answer Key':'Mark Answer Key'); wrap.hidden=!TEXTABLE_TYPES.includes(o.type); if(!wrap.hidden){const ph=o.type==='sticky'?'Add note...':(o.type==='audio'?'Voice note':(o.type==='comment'?'Add feedback...':(o.type==='text'?'Type here':'Type text'))); ui.richEditor.dataset.placeholder=ph; if(document.activeElement!==ui.richEditor){const desired=o.html||''; if(ui.richEditor.innerHTML!==desired) ui.richEditor.innerHTML=desired} refreshRichEditorEmpty(); setInputIfIdle(ui.textColor,o.textColor||'#111827'); setInputIfIdle(ui.fontSize,String(o.fontSize||20)); ui.fontSizeValue.textContent=(o.fontSize||20)+'px'; setInputIfIdle(ui.textRotation,String(o.textRotation||0)); ui.textRotationValue.textContent=(o.textRotation||0)+'°'; ui.autoScaleText.checked=!!o.autoScaleText; markAlignButtons()}}
+function updateInspector(){const info=gid('selectedInfo'), wrap=gid('textEditorWrap'); if(!selectedIds.length){info.textContent='No object selected.'; wrap.hidden=true; setButtonChrome('answerKeyBtn','Toggle Answer Key'); return} if(selectedIds.length>1){info.innerHTML=`<b>${esc(selectedIds.length)} items selected</b><br>${esc('Use group drag, group/ungroup, delete, duplicate, and front/back ordering.')}`; wrap.hidden=true; setButtonChrome('answerKeyBtn','Toggle Answer Key'); return} const o=currentObj(), b=normBox(o); info.innerHTML=`<b>${esc(o.type)}</b><br>${Math.round(b.x)}, ${Math.round(b.y)} · ${Math.round(b.w)} × ${Math.round(b.h)}${o.groupId?' · grouped':''}${o.locked?' · locked':''}${o.layer?' · layer: '+esc(o.layer):''}${o.answerKey?' · answer key':''}${o.audioSrc?' · has audio':''}`; setInputIfIdle(ui.strokeColor,o.stroke||'#1E398D'); setInputIfIdle(ui.strokeWidth,String(o.strokeWidth||1)); setInputIfIdle(ui.opacity,String(Math.round((o.opacity??1)*100))); if(o.type!=='connector') setInputIfIdle(ui.fillColor,o.fill&&o.fill!=='none'?o.fill:'#ffffff'); if(ui.fillPattern && typeof o.fillPattern!=='undefined') ui.fillPattern.value=o.fillPattern||''; setButtonChrome('answerKeyBtn',o.answerKey?'Remove Answer Key':'Mark Answer Key'); wrap.hidden=!TEXTABLE_TYPES.includes(o.type); if(!wrap.hidden){const ph=o.type==='sticky'?'Add note...':(o.type==='audio'?'Voice note':(o.type==='comment'?'Add feedback...':(o.type==='text'?'Type here':'Type text'))); ui.richEditor.dataset.placeholder=ph; if(document.activeElement!==ui.richEditor){const desired=o.html||''; if(ui.richEditor.innerHTML!==desired) ui.richEditor.innerHTML=desired} refreshRichEditorEmpty(); setInputIfIdle(ui.textColor,o.textColor||'#111827'); setInputIfIdle(ui.fontSize,String(o.fontSize||20)); ui.fontSizeValue.textContent=(o.fontSize||20)+'px'; setInputIfIdle(ui.textRotation,String(o.textRotation||0)); ui.textRotationValue.textContent=(o.textRotation||0)+'°'; ui.autoScaleText.checked=!!o.autoScaleText; markAlignButtons()}}
 function refreshRichEditorEmpty(){if(!ui.richEditor) return; const txt=(ui.richEditor.textContent||'').replace(/ /g,' ').trim(); ui.richEditor.dataset.empty=txt===''?'true':'false'}
 
 gid('applyTextBtn').onclick=()=>{const o=currentObj(); if(o&&selectedIds.length===1){o.html=cleanEditorHtml(ui.richEditor.innerHTML); o.text=htmlToPlainText(o.html); o.textColor=ui.textColor.value; o.fontSize=+ui.fontSize.value; o.textRotation=+ui.textRotation.value; o.autoScaleText=ui.autoScaleText.checked; fitPlainTextBoxToContent(o); render(); saveState()}};

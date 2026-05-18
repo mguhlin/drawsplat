@@ -346,6 +346,72 @@ Related behavior:
 
 The notes below preserve the implementation history. Newest releases are listed first where practical; older v2.2/v2.3 notes are retained at the end because they predate the consolidated changelog structure.
 
+## Version 3.0.30 changes
+
+v3.0.30 shares Picture Graph presets with concept-map node images.
+
+- Concept-map nodes can now use Picture Graph presets, including animal emojis and Smithsonian photo presets.
+- The Simple-view floating Image button opens a small picker with preset, upload, and clear options.
+- Advanced concept-map node controls now include a Picture Graph preset dropdown plus Use Preset and Clear Image buttons.
+- Service-worker cache key bumped to `drawsplat-v3.0.30`.
+
+## Version 3.0.29 changes
+
+v3.0.29 makes concept-map node images easier to add in Simple view.
+
+- Selecting a concept-map node now shows a floating Image button in the selection toolbar.
+- The Image button attaches an uploaded picture directly to the selected concept-map node.
+- Service-worker cache key bumped to `drawsplat-v3.0.29`.
+
+## Version 3.0.28 changes
+
+v3.0.28 makes concept-map connector labels editable directly on the connector line.
+
+- The Simple-view floating Label button now opens an inline editor on the connector instead of a dialog.
+- Double-clicking a connector, pressing Enter with a connector selected, or typing while it is selected starts direct label editing.
+- Service-worker cache key bumped to `drawsplat-v3.0.28`.
+
+## Version 3.0.27 changes
+
+v3.0.27 makes connector labels available in Simple view.
+
+- Selecting a connector now shows a floating Label button in the selection toolbar.
+- The Label button opens a compact connector-label dialog with label text and position controls.
+- Service-worker cache key bumped to `drawsplat-v3.0.27`.
+
+## Version 3.0.26 changes
+
+v3.0.26 refines concept-map connector labels to match relationship-phrase diagrams.
+
+- Connector labels now render inline with the connector angle using a subtle white backing.
+- Connector labels support short multi-line phrases from the inspector textarea.
+- Service-worker cache key bumped to `drawsplat-v3.0.26`.
+
+## Version 3.0.25 changes
+
+v3.0.25 adds concept-map connector and node-shape controls.
+
+- Selecting a concept-map connector now shows connector label controls in the inspector.
+- Connector labels can be typed and moved along the connector with a position slider.
+- Selected connectors now use the main Stroke color, Stroke width, and Opacity controls.
+- Selecting a concept-map node now shows a Shape selector for rectangle, square, ellipse, circle, diamond, triangle, callout, and speech bubble.
+- Service-worker cache key bumped to `drawsplat-v3.0.25`.
+
+## Version 3.0.24 changes
+
+v3.0.24 fixes group dragging for multi-selected concept-map nodes and other ungrouped objects.
+
+- Pressing an already-selected item no longer collapses a multi-selection before drag starts.
+- Multi-object drag now moves only editable, unlocked, non-connector objects while selected connectors continue to follow linked node endpoints.
+- Service-worker cache key bumped to `drawsplat-v3.0.24`.
+
+## Version 3.0.23 changes
+
+v3.0.23 fixes the public Features page Concept Maps preview.
+
+- Added `assets/feature-concept-map.svg` so Concept Maps no longer reuse the Mermaid Diagrams preview.
+- Service-worker cache key bumped to `drawsplat-v3.0.23`.
+
 ## Version 3.0.22 changes
 
 v3.0.22 fixes the website Picture Graph preview image.
