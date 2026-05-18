@@ -1620,25 +1620,104 @@ gid('closeDotPictureDialog')?.addEventListener('click',()=>gid('dotPictureDialog
 buildDotPaintInlinePalette();
 buildDotPictureUI();
 
-gid('imageBtn').onclick=()=>gid('imageInput').click();
+const IMAGE_GALLERY_CATALOG=[
+  ['Smithsonian Open Access Animals',[
+    ['smithsonian-clouded-leopard-cub','Clouded leopard cub','./assets/smithsonian-animals/clouded-leopard-cub.jpg'],
+    ['smithsonian-african-lion-cub','African lion cub','./assets/smithsonian-animals/african-lion-cub.jpg'],
+    ['smithsonian-asian-elephant','Asian elephant','./assets/smithsonian-animals/asian-elephant.jpg'],
+    ['smithsonian-cheetah','Cheetah','./assets/smithsonian-animals/cheetah.jpg'],
+    ['smithsonian-california-sea-lion','California sea lion','./assets/smithsonian-animals/california-sea-lion.jpg'],
+    ['smithsonian-alpaca','Alpaca','./assets/smithsonian-animals/alpaca.jpg'],
+    ['smithsonian-giant-panda','Giant panda','./assets/smithsonian-animals/giant-panda.jpg'],
+    ['smithsonian-grevys-zebra',"Grevy's zebra",'./assets/smithsonian-animals/grevys-zebra.jpg'],
+    ['smithsonian-elds-deer',"Eld's deer",'./assets/smithsonian-animals/elds-deer.jpg'],
+    ['smithsonian-fennec-fox','Fennec fox','./assets/smithsonian-animals/fennec-fox.jpg']
+  ]]
+];
+function openImageUpload(){
+  gid('imageInput')?.click();
+}
+function ensureImageSourceDialog(){
+  if(gid('imageSourceDialog')) return;
+  const dlg=document.createElement('dialog');
+  dlg.id='imageSourceDialog';
+  dlg.className='image-source-dialog';
+  dlg.innerHTML=`<div class="modal-head"><h2>Load Image</h2><button class="close" id="imageSourceCancelBtn" aria-label="Close">Close</button></div><div class="image-source-actions"><button id="imageSourceUploadBtn" type="button"><strong>Upload from device</strong><span>Use PNG, JPG, WEBP, GIF, PDF, PPTX, or ODP.</span></button><button id="imageSourceGalleryBtn" type="button"><strong>Image gallery</strong><span>Choose a built-in classroom image.</span></button></div>`;
+  document.body.appendChild(dlg);
+  gid('imageSourceUploadBtn')?.addEventListener('click',()=>{dlg.close(); openImageUpload()});
+  gid('imageSourceGalleryBtn')?.addEventListener('click',()=>{dlg.close(); openImageGalleryDialog()});
+  gid('imageSourceCancelBtn')?.addEventListener('click',()=>dlg.close());
+}
+function openImageSourceDialog(){
+  ensureImageSourceDialog();
+  gid('imageSourceDialog')?.showModal();
+}
+function ensureImageGalleryDialog(){
+  if(gid('imageGalleryDialog')) return;
+  const dlg=document.createElement('dialog');
+  dlg.id='imageGalleryDialog';
+  dlg.className='image-gallery-dialog';
+  const groups=IMAGE_GALLERY_CATALOG.map(([group,items])=>`<section class="image-gallery-group"><h3>${esc(group)}</h3><div class="image-gallery-grid">${items.map(([idv,label,src])=>`<button class="image-gallery-tile" type="button" data-gallery-src="${esc(src)}" data-gallery-label="${esc(label)}" aria-label="${esc(label)}"><img src="${esc(src)}" alt="" loading="lazy"><span>${esc(label)}</span></button>`).join('')}</div></section>`).join('');
+  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. Smithsonian Open Access animal photos are included locally.</p>${groups}`;
+  document.body.appendChild(dlg);
+  gid('imageGalleryCancelBtn')?.addEventListener('click',()=>dlg.close());
+  dlg.addEventListener('click',e=>{
+    const tile=e.target.closest('.image-gallery-tile');
+    if(!tile) return;
+    insertGalleryImage(tile.dataset.gallerySrc,tile.dataset.galleryLabel||'Gallery image');
+  });
+}
+function openImageGalleryDialog(){
+  ensureImageGalleryDialog();
+  gid('imageGalleryDialog')?.showModal();
+}
+gid('imageBtn').onclick=openImageSourceDialog;
 function batchImagePosition(index,w,h){
   const cols=3, gap=28, startX=80, startY=80, col=index%cols, row=Math.floor(index/cols);
   return {x:startX+col*(Math.min(w,220)+gap), y:startY+row*(Math.min(h,170)+gap)};
 }
+async function addImageDataUrlToBoard(src,offset=0,batch=false){
+  const meta=await transparentContentCrop(src);
+  let naturalW=meta.naturalW||0,naturalH=meta.naturalH||0,w=320,h=220;
+  if(naturalW&&naturalH){const visibleW=meta.crop?meta.crop.w*naturalW:naturalW, visibleH=meta.crop?meta.crop.h*naturalH:naturalH; const s=Math.min(1,480/Math.max(visibleW,visibleH)); w=Math.max(40,Math.round(visibleW*s)); h=Math.max(40,Math.round(visibleH*s))}
+  const pos=batch?batchImagePosition(offset,w,h):{x:80+offset*28,y:80+offset*28};
+  panel().objects.push(makeObj('image',pos.x,pos.y,w,h,{src,fill:'none',stroke:'#000',strokeWidth:1,naturalW,naturalH,...(meta.crop?{crop:meta.crop}: {})}));
+  return true;
+}
 function addImageFileToBoard(f,offset=0,batch=false){
   return new Promise(resolve=>{
     const r=new FileReader();
-    r.onload=async()=>{
-      const src=r.result, meta=await transparentContentCrop(src);
-      let naturalW=meta.naturalW||0,naturalH=meta.naturalH||0,w=320,h=220;
-      if(naturalW&&naturalH){const visibleW=meta.crop?meta.crop.w*naturalW:naturalW, visibleH=meta.crop?meta.crop.h*naturalH:naturalH; const s=Math.min(1,480/Math.max(visibleW,visibleH)); w=Math.max(40,Math.round(visibleW*s)); h=Math.max(40,Math.round(visibleH*s))}
-      const pos=batch?batchImagePosition(offset,w,h):{x:80+offset*28,y:80+offset*28};
-      panel().objects.push(makeObj('image',pos.x,pos.y,w,h,{src,fill:'none',stroke:'#000',strokeWidth:1,naturalW,naturalH,...(meta.crop?{crop:meta.crop}: {})}));
-      resolve(true);
-    };
+    r.onload=async()=>resolve(await addImageDataUrlToBoard(r.result,offset,batch));
     r.onerror=()=>resolve(false);
     r.readAsDataURL(f);
   });
+}
+async function imageUrlToDataUrl(src){
+  const res=await fetch(src);
+  if(!res.ok) throw new Error('Could not load gallery image.');
+  const blob=await res.blob();
+  return await new Promise((resolve,reject)=>{const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=()=>reject(new Error('Could not read gallery image.')); r.readAsDataURL(blob)});
+}
+async function insertGalleryImage(src,label){
+  if(!src) return;
+  const dlg=gid('imageGalleryDialog');
+  try{
+    setStatus('Loading gallery image...','success');
+    const dataUrl=await imageUrlToDataUrl(src);
+    const before=panel().objects.length;
+    if(await addImageDataUrlToBoard(dataUrl,0,false)){
+      const obj=panel().objects[panel().objects.length-1];
+      selectedIds=obj?[obj.id]:[];
+      render();
+      saveState();
+      setStatus((label||'Gallery image')+' added.','success');
+      dlg?.close();
+    }else if(panel().objects.length===before){
+      setStatus('Gallery image could not be added.','danger');
+    }
+  }catch(err){
+    setStatus((err&&err.message)||'Gallery image could not be loaded.','danger');
+  }
 }
 gid('imageInput').onchange=async e=>{
   const files=[...e.target.files]; if(!files.length)return;
