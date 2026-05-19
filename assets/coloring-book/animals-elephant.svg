@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
-  <title id="title">elephant coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <title id="title">Elephant coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
-  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
-    <ellipse cx="450" cy="632" rx="206" ry="246"/><circle cx="450" cy="350" r="154"/>
-    <circle cx="336" cy="228" r="64"/><circle cx="564" cy="228" r="64"/>
-    <path d="M390 354 h.1 M510 354 h.1 M450 386 C420 430 480 430 450 386 Z M386 470 C430 512 488 512 528 470"/>
-    <path d="M288 734 C210 792 178 876 184 980 M612 734 C690 792 722 876 716 980"/>
-    <path d="M364 866 v126 M536 866 v126"/>
+    <ellipse cx="450" cy="646" rx="230" ry="238"/><circle cx="450" cy="380" r="150"/><path d="M310 372 C190 250 126 340 170 502 C254 506 304 456 310 372 Z"/><path d="M590 372 C710 250 774 340 730 502 C646 506 596 456 590 372 Z"/><path d="M450 434 C392 554 418 690 500 760 C558 664 522 542 450 434 Z"/><path d="M386 398 h.1 M514 398 h.1"/><path d="M360 498 C324 558 290 590 242 610 M540 498 C576 558 610 590 658 610"/><path d="M308 820 v150 M430 862 v130 M560 862 v130 M682 820 v150"/>
   </g>
-  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
-    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M96 1080 C230 1038 350 1112 482 1076 S704 1038 812 1090"/>
   </g>
-  <metadata>DrawSplat original procedural SVG line art; category=animals; license=CC0-1.0/public-domain-dedicated.</metadata>
+  <metadata>DrawSplat original SVG line art; category=animals; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>

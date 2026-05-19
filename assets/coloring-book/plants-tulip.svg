@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
-  <title id="title">tulip coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <title id="title">Tulip coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
-  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(-90 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(-54 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(-18 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(18 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(54 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(90 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(126 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(162 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(198 450 390)"/>
-    <ellipse cx="450" cy="390" rx="60" ry="106" transform="rotate(234 450 390)"/><circle cx="450" cy="390" r="82"/><path d="M450 472 V976"/><path d="M450 570 C545 498 620 530 650 604 C568 634 508 608 450 570 Z"/>
-    <path d="M450 642 C355 570 280 602 250 676 C332 706 392 680 450 642 Z"/>
-    <path d="M450 714 C545 642 620 674 650 748 C568 778 508 752 450 714 Z"/>
-    <path d="M450 786 C355 714 280 746 250 820 C332 850 392 824 450 786 Z"/>
-    <path d="M450 858 C545 786 620 818 650 892 C568 922 508 896 450 858 Z"/>
-    <path d="M450 930 C355 858 280 890 250 964 C332 994 392 968 450 930 Z"/><path d="M450 1028 V670"/>
-    <path d="M450 730 C330 610 292 470 364 354 C484 418 512 568 450 730 Z"/>
-    <path d="M450 780 C590 650 632 510 558 392 C430 482 400 634 450 780 Z"/>
-    <circle cx="450" cy="348" r="74"/>
-    <path d="M304 972 H596 L552 1090 H348 Z"/><path d="M278 930 H622 V972 H278 Z"/>
+    <path d="M450 512 C340 438 330 294 388 232 C426 292 450 338 450 410 C450 338 474 292 512 232 C570 294 560 438 450 512 Z"/><path d="M388 232 C384 360 414 450 450 512 M512 232 C516 360 486 450 450 512"/><path d="M450 515 C430 680 438 832 450 1014"/><path d="M450 690 C391.59 595.4 300.73 612.428 265.68399999999997 678.648 C346.15999999999997 723.11 417.55 716.488 450 690 Z"/><path d="M450 690 C385.1 665.404 320.2 665.404 276.068 678.648" stroke-width="5"/><path d="M452 824 C505.1 738 587.7 753.48 619.56 813.68 C546.4 854.1 481.5 848.08 452 824 Z"/><path d="M452 824 C511 801.64 570 801.64 610.12 813.68" stroke-width="5"/><path d="M290 966 H610 L560 1092 H340 Z"/><path d="M262 918 H638 V966 H262 Z"/>
   </g>
-  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
-    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M112 1078 C180 1040 262 1112 344 1078 S510 1044 598 1088 S748 1118 808 1070"/>
   </g>
-  <metadata>DrawSplat original procedural SVG line art; category=plants; license=CC0-1.0/public-domain-dedicated.</metadata>
+  <metadata>DrawSplat original SVG line art; category=plants; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>

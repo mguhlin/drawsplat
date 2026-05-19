@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
-  <title id="title">mosasaurus coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <title id="title">Mosasaurus coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
-  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
-    <path d="M204 742 C248 562 410 462 596 502 C734 532 776 640 708 730 C632 832 416 826 278 782 Z"/>
-    <path d="M594 508 C660 412 764 408 812 492 C770 526 704 532 630 520"/>
-    <path d="M300 780 L228 958 M458 812 L504 966 M606 758 L680 924"/>
-    <path d="M324 630 C264 644 222 628 190 592 M650 610 l62 38 M732 484 h.1"/>
-    <path d="M220 750 C150 762 110 720 86 666"/>
+    <path d="M96 620 C276 420 610 436 780 628 C606 824 282 814 96 620 Z"/><path d="M780 628 L850 518 L850 740 Z"/><path d="M470 452 C528 340 640 316 722 380 C644 454 562 478 470 452 Z"/><path d="M500 794 C570 900 690 936 770 872 C686 800 596 780 500 794 Z"/><path d="M636 602 h.1"/><path d="M644 676 C704 656 742 636 778 604"/><path d="M250 700 C344 650 452 648 540 700"/>
   </g>
-  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
-    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M86 1008 C190 960 302 1024 410 990 S610 956 738 1010 S814 1048 846 1014"/>
   </g>
-  <metadata>DrawSplat original procedural SVG line art; category=dinosaurs; license=CC0-1.0/public-domain-dedicated.</metadata>
+  <metadata>DrawSplat original SVG line art; category=dinosaurs; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>

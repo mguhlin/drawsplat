@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
-  <title id="title">bamboo coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <title id="title">Bamboo coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
-  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
-    <path d="M450 1030 C420 810 450 600 520 360"/>
-    <path d="M450 910 C355 885 335 822 342.5 792"/>
-      <path d="M450 910 C545 870 565 808 567.5 780"/>
-    <path d="M457 862 C348 837 328 774 339 744"/>
-      <path d="M457 862 C552 822 572 760 571 732"/>
-    <path d="M464 814 C341 789 321 726 335.5 696"/>
-      <path d="M464 814 C559 774 579 712 574.5 684"/>
-    <path d="M471 766 C334 741 314 678 332 648"/>
-      <path d="M471 766 C566 726 586 664 578 636"/>
-    <path d="M478 718 C327 693 307 630 328.5 600"/>
-      <path d="M478 718 C573 678 593 616 581.5 588"/>
-    <path d="M485 670 C320 645 300 582 325 552"/>
-      <path d="M485 670 C580 630 600 568 585 540"/>
-    <path d="M492 622 C313 597 293 534 321.5 504"/>
-      <path d="M492 622 C587 582 607 520 588.5 492"/>
-    <path d="M499 574 C306 549 286 486 318 456"/>
-      <path d="M499 574 C594 534 614 472 592 444"/>
-    <path d="M506 526 C299 501 279 438 314.5 408"/>
-      <path d="M506 526 C601 486 621 424 595.5 396"/>
-    <path d="M513 478 C292 453 272 390 311 360"/>
-      <path d="M513 478 C608 438 628 376 599 348"/>
-    <path d="M520 430 C285 405 265 342 307.5 312"/>
-      <path d="M520 430 C615 390 635 328 602.5 300"/>
+    <path d="M338 1030 C318 760 326 520 354 250"/><path d="M454 1030 C432 760 442 500 468 214"/><path d="M570 1030 C548 770 560 560 590 304"/><path d="M302 362 H386"/>
+    <path d="M302 500 H386"/>
+    <path d="M302 642 H386"/>
+    <path d="M302 784 H386"/>
+    <path d="M302 910 H386"/>
+    <path d="M418 362 H502"/>
+    <path d="M418 500 H502"/>
+    <path d="M418 642 H502"/>
+    <path d="M418 784 H502"/>
+    <path d="M418 910 H502"/>
+    <path d="M536 362 H620"/>
+    <path d="M536 500 H620"/>
+    <path d="M536 642 H620"/>
+    <path d="M536 784 H620"/>
+    <path d="M536 910 H620"/><path d="M468 390 C505.17 329.8 562.99 340.636 585.292 382.776 C534.08 411.07 488.65 406.856 468 390 Z"/><path d="M468 390 C509.3 374.348 550.6 374.348 578.684 382.776" stroke-width="5"/><path d="M454 530 C417.892 471.52 361.724 482.0464 340.0592 522.9824 C389.808 550.468 433.94 546.3744 454 530 Z"/><path d="M454 530 C413.88 514.7952 373.76 514.7952 346.47839999999997 522.9824" stroke-width="5"/><path d="M590 604 C627.17 543.8 684.99 554.636 707.292 596.776 C656.08 625.07 610.65 620.856 590 604 Z"/><path d="M590 604 C631.3 588.348 672.6 588.348 700.684 596.776" stroke-width="5"/><path d="M350 710 C314.954 653.24 260.438 663.4568 239.41039999999998 703.1888 C287.69599999999997 729.866 330.53 725.8928 350 710 Z"/><path d="M350 710 C311.06 695.2424 272.12 695.2424 245.64079999999998 703.1888" stroke-width="5"/>
   </g>
-  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
-    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M120 1090 H804"/>
   </g>
-  <metadata>DrawSplat original procedural SVG line art; category=plants; license=CC0-1.0/public-domain-dedicated.</metadata>
+  <metadata>DrawSplat original SVG line art; category=plants; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>

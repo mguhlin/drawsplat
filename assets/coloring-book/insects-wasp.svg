@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
-  <title id="title">wasp coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <title id="title">Wasp coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
-  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
-    <ellipse cx="450" cy="620" rx="178" ry="248"/><path d="M308 496 H592 M282 604 H618 M308 712 H592"/>
-    <ellipse cx="340" cy="384" rx="112" ry="160" transform="rotate(-28 340 384)"/>
-    <ellipse cx="560" cy="384" rx="112" ry="160" transform="rotate(28 560 384)"/>
-    <circle cx="450" cy="332" r="62"/><path d="M430 316 h.1 M470 316 h.1"/><path d="M450 868 l-36 84 M450 868 l36 84"/>
-    <path d="M400 282 C356 216 302 206 262 232 M500 282 C544 216 598 206 638 232"/>
+    <ellipse cx="450" cy="626" rx="174" ry="252"/><circle cx="450" cy="332" r="66"/><ellipse cx="334" cy="404" rx="110" ry="170" transform="rotate(-28 334 404)"/><ellipse cx="566" cy="404" rx="110" ry="170" transform="rotate(28 566 404)"/><path d="M304 502 H596 M282 608 H618 M306 720 H594"/><path d="M450 878 l-44 86 M450 878 l44 86"/><path d="M418 314 h.1 M482 314 h.1"/><path d="M406 286 C360 222 300 212 254 242 M494 286 C540 222 600 212 646 242"/>
   </g>
-  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
-    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M120 1098 C170 1042 218 1080 256 1020 M650 1092 C692 1022 762 1048 812 1004"/>
   </g>
-  <metadata>DrawSplat original procedural SVG line art; category=insects; license=CC0-1.0/public-domain-dedicated.</metadata>
+  <metadata>DrawSplat original SVG line art; category=insects; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>
