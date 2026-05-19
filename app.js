@@ -3625,6 +3625,12 @@ function registerServiceWorker(){
         if(el){el.classList.add(className||groupId); panelEl.appendChild(el)}
       });
       details.append(summary,panelEl);
+      details.addEventListener('toggle',()=>{
+        if(!details.open) return;
+        tools.querySelectorAll('.tool-popover-group[open]').forEach(other=>{
+          if(other!==details) other.open=false;
+        });
+      });
       panelEl.addEventListener('click',event=>{if(event.target.closest('button')) details.open=false});
       return details;
     }
