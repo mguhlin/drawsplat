@@ -52,7 +52,7 @@ timeline
 - `start.html` — backwards-compatible redirect to `index.html`
 - `background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
 - `pricing.html` — pricing page with the free version and one-time as-is license option
-- `terms-privacy.html` — combined Terms of Service and Privacy Policy organized around TCEA PROTECT review areas
+- `terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
 - `district-addendum.html` — signature-ready district data privacy addendum template
 - `admin-access.html` — admin-access request page with the Miguel Guhlin contact link
 - `index-sp.html` — Spanish entry page
@@ -598,11 +598,11 @@ v3.0.1 improves multilingual coverage for the whiteboard app.
 
 ## Version 3.0 changes
 
-v3.0 adds the public site, pricing, teacher/admin separation, PROTECT-aligned privacy language, and MySQL self-hosting foundation.
+v3.0 adds the public site, pricing, teacher/admin separation, student privacy language, and MySQL self-hosting foundation.
 
 - Promoted the product-style front door to `index.html`, moved the English whiteboard app to `whiteboard.html`, and kept `start.html` as a redirect.
 - Added `pricing.html` with free, one-time, and school/district self-hosted site license options.
-- Added `terms-privacy.html` with TCEA PROTECT-aligned terms, privacy, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
+- Added `terms-privacy.html` with student privacy terms, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
 - Added `admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
 - Added `mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.
 - Added `server/mysql-backend/` with an Express/MySQL starter API, schema, `.env.example`, and setup guide.
