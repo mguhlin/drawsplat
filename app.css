@@ -235,6 +235,14 @@ dialog::backdrop{background:#0f172a88}
 .selection-toolbar button{min-height:36px;padding:6px 10px;border:0;background:transparent}
 .selection-toolbar button:hover{background:#eef2ff}
 .selection-toolbar button.danger{color:#991b1b}
+.coloring-paint-toolbar{display:none;align-items:center;gap:5px;border-left:1px solid var(--line);margin-left:2px;padding-left:6px}
+.coloring-swatch{width:28px;min-width:28px;height:28px;min-height:28px;padding:0;border:1px solid #cbd5e1!important;border-radius:999px!important;background:var(--swatch)!important}
+.coloring-swatch.active{outline:3px solid #2563eb55}
+.coloring-paint-toolbar input[type=color]{width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:999px;background:#fff}
+.coloring-paint-toolbar select{height:30px;min-width:76px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12px}
+.coloring-paint-toolbar #coloringPaintModeBtn{min-height:30px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:800}
+.coloring-paint-toolbar #coloringPaintModeBtn.active{background:#eef2ff;border-color:#2563eb;color:#1d4ed8}
+@media(max-width:820px){.coloring-paint-toolbar{max-width:calc(100vw - 160px);overflow-x:auto}.coloring-swatch{width:34px;min-width:34px;height:34px;min-height:34px}}
 
 @media (pointer:coarse){
   button{min-height:44px;padding:10px 12px}
