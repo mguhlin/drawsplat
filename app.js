@@ -54,6 +54,14 @@ const DOT_PICTURES=[
   {id:'sun',label:'Sun',rows:['X..X..X','..XXX..','XXXXXXX','.XXXXX.','XXXXXXX','..XXX..','X..X..X'],color:'#fde68a'},
   {id:'boat',label:'Boat',rows:['...X...','..XX...','.XXX...','XXXXXXX','.XXXXX.','..XXX..'],color:'#bfdbfe'}
 ];
+const COLORING_BOOK_CATEGORIES={
+  plants:['Sunflower','Rose','Tulip','Cactus','Fern','Oak Leaf','Maple Leaf','Pine Cone','Mushroom','Water Lily','Orchid','Daisy','Bamboo','Aloe','Seaweed','Acorn Sprout','Pumpkin Vine','Clover','Palm Frond','Succulent'],
+  insects:['Butterfly','Honeybee','Ladybug','Dragonfly','Ant','Grasshopper','Beetle','Moth','Cicada','Praying Mantis','Firefly','Caterpillar','Cricket','Walking Stick','Damselfly','Weevil','Leafhopper','Termite','Wasp','Scarab'],
+  dinosaurs:['Tyrannosaurus','Triceratops','Stegosaurus','Brachiosaurus','Velociraptor','Ankylosaurus','Parasaurolophus','Spinosaurus','Pteranodon','Allosaurus','Diplodocus','Iguanodon','Pachycephalosaurus','Carnotaurus','Apatosaurus','Oviraptor','Compsognathus','Dimetrodon','Mosasaurus','Plesiosaurus'],
+  animals:['Lion','Elephant','Giraffe','Zebra','Panda','Koala','Dolphin','Sea Turtle','Owl','Fox','Rabbit','Horse','Frog','Penguin','Bear','Kangaroo','Whale','Octopus','Deer','Cheetah']
+};
+function assetSlug(label){return String(label).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function coloringBookItems(){return Object.entries(COLORING_BOOK_CATEGORIES).flatMap(([category,labels])=>labels.map(label=>({id:category+'-'+assetSlug(label),category,label,path:'assets/coloring-book/'+category+'-'+assetSlug(label)+'.svg'})))}
 
 let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null;
@@ -341,6 +349,7 @@ function ensureSimpleExtras(){
   const graph=document.createElement('button'); graph.id='simpleGraphBtn'; graph.type='button'; graph.textContent=gt('creator'); graph.addEventListener('click',()=>gid('openGraphDialogBtn')?.click());
   const pictureGraph=document.createElement('button'); pictureGraph.id='simplePictureGraphBtn'; pictureGraph.type='button'; pictureGraph.textContent=gt('pictureGraph'); pictureGraph.addEventListener('click',()=>openPictureGraphDialog());
   const widgets=document.createElement('button'); widgets.id='simpleClassroomWidgetsBtn'; widgets.type='button'; widgets.textContent='Classroom Widgets'; widgets.addEventListener('click',()=>openClassroomWidgetPicker());
+  const coloring=document.createElement('button'); coloring.id='simpleColoringBookBtn'; coloring.type='button'; coloring.textContent='Coloring Book'; coloring.addEventListener('click',()=>openColoringBookDialog());
   const mosaic=document.createElement('button'); mosaic.id='simpleMosaicBtn'; mosaic.type='button'; mosaic.textContent='Mosaic'; mosaic.addEventListener('click',()=>gid('openMosaicDialogBtn')?.click());
   const collage=document.createElement('button'); collage.id='simpleCollageBtn'; collage.type='button'; collage.textContent='Collage'; collage.addEventListener('click',()=>gid('openCollageDialogBtn')?.click());
   const mer=document.createElement('button'); mer.id='simpleMermaidBtn'; mer.type='button'; mer.textContent='Mermaid Diagram'; mer.addEventListener('click',()=>gid('insertMermaidBtn')?.click());
@@ -357,6 +366,7 @@ function ensureSimpleExtras(){
   grid.insertBefore(graph,ref);
   grid.insertBefore(pictureGraph,ref);
   grid.insertBefore(widgets,ref);
+  grid.insertBefore(coloring,ref);
   grid.insertBefore(mosaic,ref);
   grid.insertBefore(collage,ref);
   grid.insertBefore(mer,ref);
@@ -366,6 +376,17 @@ function ensureSimpleExtras(){
   grid.insertBefore(emoji,ref);
   grid.insertBefore(gif,ref);
   syncSimpleStickyPalette();
+}
+function ensureColoringBookButton(){
+  if(gid('openColoringBookDialogBtn')) return;
+  const anchor=gid('imageBtn')||gid('openGraphDialogBtn');
+  if(!anchor||!anchor.parentElement) return;
+  const btn=document.createElement('button');
+  btn.id='openColoringBookDialogBtn';
+  btn.type='button';
+  btn.textContent='Coloring Book';
+  btn.addEventListener('click',()=>openColoringBookDialog());
+  anchor.insertAdjacentElement('afterend',btn);
 }
 function ensurePictureGraphButton(){
   if(gid('openPictureGraphDialogBtn')) return;
@@ -406,7 +427,7 @@ function ensureTopMenus(){
   const menuDefs=[
     ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],['Save to Google','saveDriveBtn'],['Load from Google','loadDriveBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
-    ['Insert',[['Load Image','imageBtn'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Classroom Widgets','openClassroomWidgetsBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['Emoji Mixer','openEmojiDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['Paint Dots','activateDotPaintBtn'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
+    ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Classroom Widgets','openClassroomWidgetsBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['Emoji Mixer','openEmojiDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['Paint Dots','activateDotPaintBtn'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn'],['Keyboard Shortcuts','shortcutsBtn'],['TNT Reset','tntBtn']]],
     ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Mode','optionsBtn'],['About','aboutBtn']]]
   ];
@@ -1099,6 +1120,50 @@ gid('openStickerLibraryBtn').onclick=()=>gid('stickerDialog').showModal();
 gid('insertStickerBtn').onclick=()=>insertSticker(ui.stickerSelect.value);
 gid('closeStickerDialog').onclick=()=>gid('stickerDialog').close();
 buildStickerUI();
+
+function ensureColoringBookDialog(){
+  let dlg=gid('coloringBookDialog');
+  if(dlg) return dlg;
+  dlg=document.createElement('dialog');
+  dlg.id='coloringBookDialog';
+  dlg.className='coloring-book-dialog';
+  dlg.innerHTML='<div class="modal-head"><h2>Coloring Book</h2><button class="close" id="closeColoringBookDialog" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an original copyright-free line-art page, then insert it on the board for coloring, annotation, or download.</p><div class="coloring-book-tabs" id="coloringBookTabs"></div><div class="coloring-book-grid" id="coloringBookGrid"></div>';
+  document.body.appendChild(dlg);
+  gid('closeColoringBookDialog')?.addEventListener('click',()=>dlg.close());
+  const tabs=gid('coloringBookTabs');
+  const filters=[['all','All'],...Object.keys(COLORING_BOOK_CATEGORIES).map(k=>[k,k[0].toUpperCase()+k.slice(1)])];
+  tabs.innerHTML=filters.map(([key,label])=>`<button type="button" data-coloring-category="${esc(key)}">${esc(label)}</button>`).join('');
+  tabs.querySelectorAll('[data-coloring-category]').forEach(btn=>btn.addEventListener('click',()=>renderColoringBookGrid(btn.dataset.coloringCategory)));
+  renderColoringBookGrid('all');
+  return dlg;
+}
+function renderColoringBookGrid(category='all'){
+  const grid=gid('coloringBookGrid'), tabs=gid('coloringBookTabs');
+  if(!grid) return;
+  tabs?.querySelectorAll('[data-coloring-category]').forEach(btn=>btn.classList.toggle('active',btn.dataset.coloringCategory===category));
+  const items=coloringBookItems().filter(item=>category==='all'||item.category===category);
+  grid.innerHTML=items.map(item=>`<button type="button" class="coloring-book-tile" data-coloring-id="${esc(item.id)}"><img src="${esc(item.path)}" alt=""><span>${esc(item.label)}</span><small>${esc(item.category)}</small></button>`).join('');
+  grid.querySelectorAll('[data-coloring-id]').forEach(btn=>btn.addEventListener('click',()=>insertColoringBookPage(btn.dataset.coloringId)));
+}
+function openColoringBookDialog(){
+  const dlg=ensureColoringBookDialog();
+  if(typeof dlg.showModal==='function') dlg.showModal(); else dlg.show();
+}
+async function insertColoringBookPage(itemId){
+  const item=coloringBookItems().find(x=>x.id===itemId);
+  if(!item) return setStatus('Coloring page not found.','danger');
+  try{
+    const res=await fetch(item.path);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const svgText=await res.text();
+    const src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgText);
+    addObj(makeObj('image',140,70,420,560,{src,naturalW:900,naturalH:1200,fill:'none',stroke:'none',strokeWidth:0,coloringBookId:item.id,coloringBookLabel:item.label,coloringBookCategory:item.category}));
+    gid('coloringBookDialog')?.close();
+    setStatus('Coloring page inserted: '+item.label+'.','success');
+  }catch(err){
+    setStatus('Could not load coloring page. '+(err&&err.message?err.message:String(err)),'danger');
+  }
+}
 
 const GRAPH_COLORS=['#2563eb','#dc2626','#16a34a','#f59e0b','#7c3aed','#0891b2','#db2777','#475569'];
 function parseGraphRows(text){
@@ -3193,6 +3258,7 @@ function registerServiceWorker(){
     cloudDown:svg(`<path ${S} d="M7 18h10a4 4 0 0 0 .4-8 6 6 0 0 0-11.3 1.7A3.5 3.5 0 0 0 7 18z"/><path ${S} d="M12 9v7M9 13l3 3 3-3"/>`),
     image:svg(`<rect ${S} x="4" y="5" width="16" height="14" rx="2"/><circle ${S} cx="9" cy="10" r="1.5"/><path ${S} d="M5 17l5-5 4 4 2-2 3 3"/>`),
     file:svg(`<path ${S} d="M7 3h7l5 5v13H7V3z"/><path ${S} d="M14 3v6h5"/><path ${S} d="M9 14h6M9 17h4"/>`),
+    coloringBook:svg(`<path ${S} d="M6 3h10l4 4v14H6V3z"/><path ${S} d="M16 3v5h4"/><circle ${S} cx="13" cy="13" r="2.2"/><path ${S} d="M13 10V7M13 16v3M10 13H7M16 13h3M10.9 10.9l-2-2M15.1 15.1l2 2M15.1 10.9l2-2M10.9 15.1l-2 2"/>`),
     pdf:svg(`<path ${S} d="M7 3h7l5 5v13H7V3z"/><path ${S} d="M14 3v6h5"/><path ${S} d="M8.5 16h7"/>`),
     tnt:svg(`<g transform="rotate(-8 12 12)"><rect x="4.5" y="9" width="5.2" height="10" rx="1.5" fill="#ef4444" stroke="#7f1d1d" stroke-width="1.4"/><rect x="9.4" y="7" width="5.2" height="12" rx="1.5" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.4"/><rect x="14.3" y="9" width="5.2" height="10" rx="1.5" fill="#ef4444" stroke="#7f1d1d" stroke-width="1.4"/><path d="M5.3 12h13.4M5.3 16h13.4" stroke="#fee2e2" stroke-width="1.2" stroke-linecap="round"/><path d="M12 7c.2-2.5 2.8-4.3 5.2-3" fill="none" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/><path d="M17.4 3.8l1-1.8M18.1 4.8h2M17.2 5.5l1.3 1.5" stroke="#facc15" stroke-width="1.4" stroke-linecap="round"/></g>`),
     duplicate:svg(`<rect ${S} x="8" y="8" width="11" height="11" rx="2"/><path ${S} d="M5 16V5h11"/>`),
@@ -3261,7 +3327,7 @@ function registerServiceWorker(){
   const toolIcons={select:['select','Select'],pen:['pen','Pen'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
     undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp','Save to Google'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['tnt','TNT Reset'],
-    imageBtn:['image','Load Image'],openGraphDialogBtn:['chart','Graph Creator'],openPictureGraphDialogBtn:['pictureGraph','Picture Graph'],openClassroomWidgetsBtn:['library','Classroom Widgets'],openMosaicDialogBtn:['grid','Mosaic Images'],openCollageDialogBtn:['grid','Collage'],openEmojiDialogBtn:['star','Emoji Mixer'],openGifDialogBtn:['play','Create GIF'],duplicateBtn:['duplicate','Duplicate'],frontBtn:['front','Bring Front'],backBtn:['back','Send Back'],groupBtn:['group','Group'],ungroupBtn:['ungroup','Ungroup'],
+    imageBtn:['image','Load Image'],openColoringBookDialogBtn:['coloringBook','Coloring Book'],openGraphDialogBtn:['chart','Graph Creator'],openPictureGraphDialogBtn:['pictureGraph','Picture Graph'],openClassroomWidgetsBtn:['library','Classroom Widgets'],openMosaicDialogBtn:['grid','Mosaic Images'],openCollageDialogBtn:['grid','Collage'],openEmojiDialogBtn:['star','Emoji Mixer'],openGifDialogBtn:['play','Create GIF'],duplicateBtn:['duplicate','Duplicate'],frontBtn:['front','Bring Front'],backBtn:['back','Send Back'],groupBtn:['group','Group'],ungroupBtn:['ungroup','Ungroup'],
     dotPictureToolBtn:['dotheart','Dot Pictures'],openDotPictureLibraryBtn:['dotheart','Open Dot Picture Library'],insertDotPictureBtn:['plus','Insert Dot Picture'],activateDotPaintBtn:['dotpaint','Paint Dots'],resetDotPictureBtn:['reset','Reset Dot Picture Colors'],simpleDotPicturesBtn:['dotheart','Dot Pictures'],
     openStickerLibraryBtn:['star','Open Sticker Library'],insertStickerBtn:['plus','Insert Sticker'],createCustomStickerBtn:['image','Create Custom Sticker'],
     insertTemplateBtn:['template','Insert Template'],newTemplatePanelBtn:['panel','New Template Panel'],saveTemplateBtn:['save','Save as Template'],loadTemplateGalleryBtn:['library','Load Gallery'],
@@ -3275,7 +3341,7 @@ function registerServiceWorker(){
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
     frameNavAdd:['plus','Add Frame'],clearFrameBtn:['clear','Clear Frame'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
-    simpleImageBtn:['image','Add Image'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleClassroomWidgetsBtn:['library','Classroom Widgets'],simpleMosaicBtn:['grid','Mosaic Images'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
+    simpleImageBtn:['image','Add Image'],simpleColoringBookBtn:['coloringBook','Coloring Book'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleClassroomWidgetsBtn:['library','Classroom Widgets'],simpleMosaicBtn:['grid','Mosaic Images'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
     removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatSaveBtn:['save','Download selected content'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
     insertMermaidBtn:['mermaid','Mermaid Diagram'],insertWordCloudBtn:['wordcloud','Word Cloud'],openConceptMapDialogBtn:['concept','Concept Map'],resetBoardBtn:['reset','Reset Board'],
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
@@ -3321,6 +3387,7 @@ function registerServiceWorker(){
   }
   function applyIcons(){
     ensureSimpleExtras?.();
+    ensureColoringBookButton?.();
     ensurePictureGraphButton?.();
     ensureClassroomWidgetButton?.();
     ensureConceptMapButton?.();
