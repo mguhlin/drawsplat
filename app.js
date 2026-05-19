@@ -488,6 +488,7 @@ function ensureSimpleExtras(){
   const graph=document.createElement('button'); graph.id='simpleGraphBtn'; graph.type='button'; graph.textContent=gt('creator'); graph.addEventListener('click',()=>gid('openGraphDialogBtn')?.click());
   const pictureGraph=document.createElement('button'); pictureGraph.id='simplePictureGraphBtn'; pictureGraph.type='button'; pictureGraph.textContent=gt('pictureGraph'); pictureGraph.addEventListener('click',()=>openPictureGraphDialog());
   const widgets=document.createElement('button'); widgets.id='simpleClassroomWidgetsBtn'; widgets.type='button'; widgets.textContent='Classroom Widgets'; widgets.addEventListener('click',()=>openClassroomWidgetPicker());
+  const spinner=document.createElement('button'); spinner.id='simpleWheelSpinnerBtn'; spinner.type='button'; spinner.textContent='Wheel Spinner'; spinner.addEventListener('click',()=>insertClassroomWidget('wheelspinner'));
   const coloring=document.createElement('button'); coloring.id='simpleColoringBookBtn'; coloring.type='button'; coloring.textContent='Coloring Book'; coloring.addEventListener('click',()=>openColoringBookDialog());
   const mosaic=document.createElement('button'); mosaic.id='simpleMosaicBtn'; mosaic.type='button'; mosaic.textContent='Mosaic'; mosaic.addEventListener('click',()=>gid('openMosaicDialogBtn')?.click());
   const collage=document.createElement('button'); collage.id='simpleCollageBtn'; collage.type='button'; collage.textContent='Collage'; collage.addEventListener('click',()=>gid('openCollageDialogBtn')?.click());
@@ -505,6 +506,7 @@ function ensureSimpleExtras(){
   grid.insertBefore(graph,ref);
   grid.insertBefore(pictureGraph,ref);
   grid.insertBefore(widgets,ref);
+  grid.insertBefore(spinner,ref);
   grid.insertBefore(coloring,ref);
   grid.insertBefore(mosaic,ref);
   grid.insertBefore(collage,ref);
@@ -1668,6 +1670,7 @@ gid('pictureGraphCancelBtn')?.addEventListener('click',()=>gid('pictureGraphDial
 const CLASSROOM_WIDGETS=[
   {kind:'poll',title:'Poll',w:480,h:320},
   {kind:'randomizer',title:'Random Student',w:440,h:270},
+  {kind:'wheelspinner',title:'Wheel Spinner',w:520,h:520},
   {kind:'biglink',title:'Big Link',w:520,h:260},
   {kind:'workmode',title:'Work Mode',w:360,h:260},
   {kind:'traffic',title:'Traffic Light',w:280,h:420},
@@ -1679,6 +1682,7 @@ function defaultWidgetConfig(kind){
   const base={widgetKind:kind,widgetConfig:{}};
   if(kind==='poll') base.widgetConfig={question:'Quick Poll',options:['Yes','No','Not sure'],counts:[0,0,0],showTotal:true};
   if(kind==='randomizer') base.widgetConfig={title:'Random Pick',names:'Ava\nBen\nCarlos\nDana',picked:'',history:[]};
+  if(kind==='wheelspinner') base.widgetConfig={title:'Wheel Spinner',items:'Ava\nBen\nCarlos\nDana',activeItems:['Ava','Ben','Carlos','Dana'],picked:'Ready',history:[],removeMode:'keep',theme:'drawsplat'};
   if(kind==='biglink') base.widgetConfig={title:'Join Here',url:'drawsplat.org',note:'Type this address into your browser'};
   if(kind==='workmode') base.widgetConfig={mode:'focus'};
   if(kind==='traffic') base.widgetConfig={state:'green'};
@@ -1698,6 +1702,42 @@ function widgetWrapText(text,max=22,lines=3){
   if(cur) out.push(cur);
   return out.slice(0,lines);
 }
+const WHEEL_SPINNER_PALETTE=['#7c3aed','#a855f7','#ede9fe','#ffffff','#c084fc','#6d28d9','#f5f3ff','#8b5cf6'];
+function parseWheelItems(text){
+  const seen=new Set(), unique=[];
+  String(text||'').split(/[\n,]+/).map(s=>s.trim()).filter(Boolean).forEach(item=>{
+    const key=item.toLowerCase();
+    if(!seen.has(key)){seen.add(key); unique.push(item)}
+  });
+  return unique;
+}
+function wheelSpinnerItems(cfg){
+  const parsed=parseWheelItems(cfg.items||'');
+  const active=(cfg.activeItems||[]).filter(item=>parsed.some(p=>p.toLowerCase()===String(item).toLowerCase()));
+  return active.length?active:parsed;
+}
+function wheelSpinnerSlicePath(cx,cy,r,start,end){
+  const x1=cx+Math.cos(start)*r,y1=cy+Math.sin(start)*r,x2=cx+Math.cos(end)*r,y2=cy+Math.sin(end)*r,large=end-start>Math.PI?1:0;
+  return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+}
+function wheelSpinnerTextColor(hex){
+  if(hex==='#ffffff'||hex==='#ede9fe'||hex==='#f5f3ff') return '#312e81';
+  return '#ffffff';
+}
+function wheelSpinnerSvgParts(cfg,x,y,W,H){
+  const items=wheelSpinnerItems(cfg), cx=x+W/2, cy=y+H*.49, r=Math.min(W,H)*.32, angle=Math.PI*2/Math.max(1,items.length), picked=cfg.picked&&cfg.picked!=='Ready'?cfg.picked:'Ready to spin', colors=WHEEL_SPINNER_PALETTE;
+  if(!items.length){
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#f5f3ff" stroke="#7c3aed" stroke-width="4"/><text x="${cx}" y="${cy-5}" font-size="${Math.max(20,W/14)}" font-weight="900" fill="#7c3aed" text-anchor="middle">Add items</text><text x="${cx}" y="${cy+24}" font-size="${Math.max(12,W/28)}" font-weight="800" fill="#6b7280" text-anchor="middle">Double-click to edit</text>`;
+  }
+  let body='';
+  items.forEach((item,i)=>{
+    const start=-Math.PI/2+i*angle, end=start+angle, mid=start+angle/2, color=colors[i%colors.length], tx=cx+Math.cos(mid)*r*.68, ty=cy+Math.sin(mid)*r*.68, rot=mid*180/Math.PI;
+    body+=`<path d="${wheelSpinnerSlicePath(cx,cy,r,start,end)}" fill="${color}" stroke="#ffffff" stroke-width="3"/>`;
+    body+=`<text x="${tx}" y="${ty+4}" transform="rotate(${rot} ${tx} ${ty})" font-size="${Math.max(10,Math.min(18,W/28,220/Math.max(5,item.length)))}" font-weight="900" fill="${wheelSpinnerTextColor(color)}" text-anchor="middle">${esc(item).slice(0,22)}</text>`;
+  });
+  body+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#4c1d95" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${Math.max(22,r*.14)}" fill="#ffffff" stroke="#7c3aed" stroke-width="4"/><path d="M ${cx+r+20} ${cy} L ${cx+r-12} ${cy-14} L ${cx+r-12} ${cy+14} Z" fill="#7c3aed"/><rect x="${x+20}" y="${y+H-78}" width="${W-40}" height="52" rx="14" fill="#f5f3ff" stroke="#ddd6fe"/><text x="${cx}" y="${y+H-47}" font-size="${Math.max(16,W/24)}" font-weight="900" fill="#4c1d95" text-anchor="middle">${esc(String(picked).slice(0,34))}</text>`;
+  return body;
+}
 function timerRemainingSec(cfg){
   if(cfg.running&&cfg.endAt) return Math.max(0,Math.ceil((cfg.endAt-Date.now())/1000));
   return Math.max(0,Math.round(+cfg.remainingSec||(+cfg.minutes||0)*60||0));
@@ -1713,6 +1753,10 @@ function createClassroomWidgetObject(o,b){
   }
   if(kind==='randomizer'){
     const picked=cfg.picked||'Tap Pick'; body+=`<text x="${x+W/2}" y="${y+H*.53}" font-size="${Math.max(34,Math.min(68,W/8))}" font-weight="900" font-family="Inter,Arial" fill="#7c3aed" text-anchor="middle">${esc(picked)}</text><text x="${x+W/2}" y="${y+H-32}" font-size="15" font-weight="800" fill="#64748b" text-anchor="middle">${esc((cfg.history||[]).slice(-3).join('  •  '))}</text>`;
+  }
+  if(kind==='wheelspinner'){
+    const items=wheelSpinnerItems(cfg);
+    body=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${rx}" fill="#ffffff" stroke="#ddd6fe" stroke-width="2"/><rect x="${x}" y="${y}" width="${W}" height="${Math.min(58,H*.16)}" rx="${rx}" fill="#7c3aed"/><text x="${x+18}" y="${y+36}" font-size="18" font-weight="900" font-family="Inter,Arial" fill="#ffffff">${esc(cfg.title||'Wheel Spinner')}</text><text x="${x+W-18}" y="${y+36}" font-size="13" font-weight="900" fill="#ede9fe" text-anchor="end">${items.length} on wheel</text>${wheelSpinnerSvgParts(cfg,x,y+48,W,H-48)}`;
   }
   if(kind==='biglink'){
     const lines=widgetWrapText(cfg.url||'drawsplat.org',Math.max(16,Math.floor(W/17)),3); body+=widgetLinesText(lines,x+W/2,y+H*.48,Math.max(26,Math.min(52,W/12)),'#1d4ed8',900,'middle',1.15); body+=`<text x="${x+W/2}" y="${y+H-30}" font-size="16" font-weight="800" fill="#64748b" text-anchor="middle">${esc(cfg.note||'')}</text>`;
@@ -1766,7 +1810,7 @@ function openClassroomWidgetPicker(){
   dlg.showModal();
 }
 function widgetSummary(kind){
-  return {poll:'Ask and tally quick answers.',randomizer:'Pick from a student list.',biglink:'Display a URL in large text.',workmode:'Show the current collaboration mode.',traffic:'Show begin, wrap up, or stop.',timer:'Digital or hourglass countdown.',scoreboard:'Home and visitor points.',race:'Two-team progress race.'}[kind]||'Classroom tool.';
+  return {poll:'Ask and tally quick answers.',randomizer:'Pick from a student list.',wheelspinner:'Spin a wheel of names or choices.',biglink:'Display a URL in large text.',workmode:'Show the current collaboration mode.',traffic:'Show begin, wrap up, or stop.',timer:'Digital or hourglass countdown.',scoreboard:'Home and visitor points.',race:'Two-team progress race.'}[kind]||'Classroom tool.';
 }
 function insertClassroomWidget(kind){
   const def=CLASSROOM_WIDGETS.find(w=>w.kind===kind)||CLASSROOM_WIDGETS[0], cfg=defaultWidgetConfig(def.kind);
@@ -1803,6 +1847,7 @@ function openClassroomWidgetDialog(idv){
 function widgetEditorHtml(kind,cfg){
   if(kind==='poll') return `<div class="widget-form"><label>Question<input data-widget-field="question" value="${esc(cfg.question||'')}"></label><label>Options and counts<textarea data-widget-field="pollRows">${esc((cfg.options||[]).map((o,i)=>`${o},${(cfg.counts||[])[i]||0}`).join('\n'))}</textarea></label><div class="poll-tally-controls">${(cfg.options||[]).map((opt,i)=>`<button type="button" data-widget-action="pollVote" data-index="${i}">+ ${esc(opt)}</button>`).join('')}</div><div class="widget-action-row"><button type="button" data-widget-action="pollReset">Reset Counts</button></div></div>`;
   if(kind==='randomizer') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>Names<textarea data-widget-field="names">${esc(cfg.names||'')}</textarea></label><div class="widget-action-row"><button type="button" class="primary" data-widget-action="pickName">Pick</button><button type="button" data-widget-action="clearPick">Clear</button></div><p class="hint">Current pick: ${esc(cfg.picked||'none')}</p></div>`;
+  if(kind==='wheelspinner') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'Wheel Spinner')}"></label><label>Names or choices<textarea data-widget-field="items" placeholder="Ava&#10;Ben&#10;Carlos&#10;Dana">${esc(cfg.items||'')}</textarea></label><label>After a spin<select data-widget-field="removeMode"><option value="keep" ${cfg.removeMode!=='remove'?'selected':''}>Keep selected item on the wheel</option><option value="remove" ${cfg.removeMode==='remove'?'selected':''}>Remove selected item from the wheel</option></select></label><div class="widget-action-row"><button type="button" class="primary" data-widget-action="spinWheel">Spin</button><button type="button" data-widget-action="buildWheel">Build Wheel</button><button type="button" data-widget-action="resetWheel">Reset Wheel</button><button type="button" data-widget-action="clearWheelHistory">Clear History</button></div><p class="hint">Selected: ${esc(cfg.picked&&cfg.picked!=='Ready'?cfg.picked:'none')}</p><p class="hint">Picked so far: ${esc((cfg.history||[]).join(', ')||'none')}</p></div>`;
   if(kind==='biglink') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>URL<input data-widget-field="url" value="${esc(cfg.url||'')}"></label><label>Note<input data-widget-field="note" value="${esc(cfg.note||'')}"></label></div>`;
   if(kind==='workmode') return `<div class="widget-form"><label>Mode<select data-widget-field="mode"><option value="focus" ${cfg.mode==='focus'?'selected':''}>Quiet Focus</option><option value="partner" ${cfg.mode==='partner'?'selected':''}>Partner Check</option><option value="table" ${cfg.mode==='table'?'selected':''}>Table Talk</option><option value="team" ${cfg.mode==='team'?'selected':''}>Team Task</option><option value="help" ${cfg.mode==='help'?'selected':''}>Teacher Help</option></select></label></div>`;
   if(kind==='traffic') return `<div class="widget-form widget-traffic-controls"><button type="button" class="traffic-red" data-widget-action="traffic" data-index="red">Stop</button><button type="button" class="traffic-yellow" data-widget-action="traffic" data-index="yellow">Wrap Up</button><button type="button" class="traffic-green" data-widget-action="traffic" data-index="green">Begin</button></div>`;
@@ -1820,6 +1865,7 @@ function applyWidgetDialogFields(saveNow=false){
     if(k==='minutes'){cfg.minutes=Math.max(1,+v||1); if(!cfg.running) cfg.remainingSec=cfg.minutes*60}
     else if(k==='target') cfg.target=Math.max(1,+v||1);
     else if(k==='pollRows'){const rows=parseGraphRows(v); cfg.options=rows.map(r=>r.label); cfg.counts=rows.map(r=>Math.max(0,Math.round(r.value)))}
+    else if(k==='items'){cfg.items=v; const parsed=parseWheelItems(v), active=(cfg.activeItems||[]).filter(item=>parsed.some(p=>p.toLowerCase()===String(item).toLowerCase())); cfg.activeItems=active.length?active:parsed}
     else cfg[k]=v;
   });
   render(); if(saveNow) saveState();
@@ -1832,6 +1878,20 @@ function handleWidgetDialogAction(action,index){
   if(action==='pollVote'){const i=Math.max(0,parseInt(index||'0',10)); cfg.counts=cfg.counts||[]; cfg.counts[i]=Math.max(0,(+cfg.counts[i]||0)+1)}
   if(action==='pickName'){const names=String(cfg.names||'').split(/\n+/).map(s=>s.trim()).filter(Boolean); if(names.length){cfg.picked=names[Math.floor(Math.random()*names.length)]; cfg.history=[...(cfg.history||[]),cfg.picked].slice(-8)}}
   if(action==='clearPick'){cfg.picked=''; cfg.history=[]}
+  if(action==='buildWheel'){const items=parseWheelItems(cfg.items||''); cfg.activeItems=[...items]; cfg.picked='Ready'; cfg.history=[]}
+  if(action==='spinWheel'){
+    const items=wheelSpinnerItems(cfg);
+    if(!items.length){cfg.picked='Add items first'}
+    else{
+      const pick=items[Math.floor(Math.random()*items.length)];
+      cfg.picked=pick;
+      cfg.history=[...(cfg.history||[]),pick].slice(-20);
+      if(cfg.removeMode==='remove') cfg.activeItems=items.filter(item=>item!==pick);
+      else cfg.activeItems=items;
+    }
+  }
+  if(action==='resetWheel'){cfg.activeItems=parseWheelItems(cfg.items||''); cfg.picked='Ready'}
+  if(action==='clearWheelHistory'){cfg.history=[]}
   if(action==='traffic') cfg.state=index||'green';
   if(action==='timerStart'){const sec=timerRemainingSec(cfg)||Math.max(1,+cfg.minutes||1)*60; cfg.remainingSec=sec; cfg.endAt=Date.now()+sec*1000; cfg.running=true; ensureWidgetTimerTick()}
   if(action==='timerPause'){cfg.remainingSec=timerRemainingSec(cfg); cfg.running=false; cfg.endAt=0}
@@ -3526,7 +3586,7 @@ function registerServiceWorker(){
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
     frameNavAdd:['plus','Add Frame'],clearFrameBtn:['clear','Clear Frame'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
-    simpleImageBtn:['image','Add Image'],simpleColoringBookBtn:['coloringBook','Coloring Book'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleClassroomWidgetsBtn:['library','Classroom Widgets'],simpleMosaicBtn:['grid','Mosaic Images'],simpleCollageBtn:['grid','Collage'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],scratchCoverBtn:['eraser','Scratch Cover'],simpleScratchCoverBtn:['eraser','Scratch Cover'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
+    simpleImageBtn:['image','Add Image'],simpleColoringBookBtn:['coloringBook','Coloring Book'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleClassroomWidgetsBtn:['library','Classroom Widgets'],simpleWheelSpinnerBtn:['refresh','Wheel Spinner'],simpleMosaicBtn:['grid','Mosaic Images'],simpleCollageBtn:['grid','Collage'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],scratchCoverBtn:['eraser','Scratch Cover'],simpleScratchCoverBtn:['eraser','Scratch Cover'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
     removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatSaveBtn:['save','Download selected content'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
     insertMermaidBtn:['mermaid','Mermaid Diagram'],insertWordCloudBtn:['wordcloud','Word Cloud'],openConceptMapDialogBtn:['concept','Concept Map'],resetBoardBtn:['reset','Reset Board'],
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
@@ -3568,7 +3628,7 @@ function registerServiceWorker(){
     const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','connector','diamond','triangle','callout','speech'],className:'tool-group-shapes'});
     const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'sticky',items:['text','sticky','comment','audio'],className:'tool-group-text'});
-    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'image',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});
+    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'image',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleWheelSpinnerBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});
     const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
     const moreGroup=makeGroup({id:'moreToolGroup',label:'More Actions',icon:'options',items:['#simpleDeleteBtn','#simpleTntBtn'],className:'tool-group-more'});
     tools.append(drawGroup,shapeGroup,textGroup,insertGroup,bgGroup,moreGroup);
