@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">whale coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <rect width="900" height="1200" fill="#fff"/>
+  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
+    <path d="M128 626 C284 430 596 432 754 626 C596 820 284 822 128 626 Z"/>
+    <path d="M754 626 L842 520 L842 732 Z"/><path d="M328 546 C382 500 470 500 530 548"/>
+    <path d="M610 616 h.1"/><path d="M250 710 C318 676 382 676 450 710"/>
+    <path d="M388 438 C420 348 512 310 578 364 C526 430 456 454 388 438 Z"/>
+  </g>
+  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
+    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  </g>
+  <metadata>DrawSplat original procedural SVG line art; category=animals; license=CC0-1.0/public-domain-dedicated.</metadata>
+</svg>

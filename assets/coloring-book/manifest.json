@@ -1,0 +1,482 @@
+[
+  {
+    "id": "plants-sunflower",
+    "category": "plants",
+    "label": "Sunflower",
+    "path": "assets/coloring-book/plants-sunflower.svg"
+  },
+  {
+    "id": "plants-rose",
+    "category": "plants",
+    "label": "Rose",
+    "path": "assets/coloring-book/plants-rose.svg"
+  },
+  {
+    "id": "plants-tulip",
+    "category": "plants",
+    "label": "Tulip",
+    "path": "assets/coloring-book/plants-tulip.svg"
+  },
+  {
+    "id": "plants-cactus",
+    "category": "plants",
+    "label": "Cactus",
+    "path": "assets/coloring-book/plants-cactus.svg"
+  },
+  {
+    "id": "plants-fern",
+    "category": "plants",
+    "label": "Fern",
+    "path": "assets/coloring-book/plants-fern.svg"
+  },
+  {
+    "id": "plants-oak-leaf",
+    "category": "plants",
+    "label": "Oak Leaf",
+    "path": "assets/coloring-book/plants-oak-leaf.svg"
+  },
+  {
+    "id": "plants-maple-leaf",
+    "category": "plants",
+    "label": "Maple Leaf",
+    "path": "assets/coloring-book/plants-maple-leaf.svg"
+  },
+  {
+    "id": "plants-pine-cone",
+    "category": "plants",
+    "label": "Pine Cone",
+    "path": "assets/coloring-book/plants-pine-cone.svg"
+  },
+  {
+    "id": "plants-mushroom",
+    "category": "plants",
+    "label": "Mushroom",
+    "path": "assets/coloring-book/plants-mushroom.svg"
+  },
+  {
+    "id": "plants-water-lily",
+    "category": "plants",
+    "label": "Water Lily",
+    "path": "assets/coloring-book/plants-water-lily.svg"
+  },
+  {
+    "id": "plants-orchid",
+    "category": "plants",
+    "label": "Orchid",
+    "path": "assets/coloring-book/plants-orchid.svg"
+  },
+  {
+    "id": "plants-daisy",
+    "category": "plants",
+    "label": "Daisy",
+    "path": "assets/coloring-book/plants-daisy.svg"
+  },
+  {
+    "id": "plants-bamboo",
+    "category": "plants",
+    "label": "Bamboo",
+    "path": "assets/coloring-book/plants-bamboo.svg"
+  },
+  {
+    "id": "plants-aloe",
+    "category": "plants",
+    "label": "Aloe",
+    "path": "assets/coloring-book/plants-aloe.svg"
+  },
+  {
+    "id": "plants-seaweed",
+    "category": "plants",
+    "label": "Seaweed",
+    "path": "assets/coloring-book/plants-seaweed.svg"
+  },
+  {
+    "id": "plants-acorn-sprout",
+    "category": "plants",
+    "label": "Acorn Sprout",
+    "path": "assets/coloring-book/plants-acorn-sprout.svg"
+  },
+  {
+    "id": "plants-pumpkin-vine",
+    "category": "plants",
+    "label": "Pumpkin Vine",
+    "path": "assets/coloring-book/plants-pumpkin-vine.svg"
+  },
+  {
+    "id": "plants-clover",
+    "category": "plants",
+    "label": "Clover",
+    "path": "assets/coloring-book/plants-clover.svg"
+  },
+  {
+    "id": "plants-palm-frond",
+    "category": "plants",
+    "label": "Palm Frond",
+    "path": "assets/coloring-book/plants-palm-frond.svg"
+  },
+  {
+    "id": "plants-succulent",
+    "category": "plants",
+    "label": "Succulent",
+    "path": "assets/coloring-book/plants-succulent.svg"
+  },
+  {
+    "id": "insects-butterfly",
+    "category": "insects",
+    "label": "Butterfly",
+    "path": "assets/coloring-book/insects-butterfly.svg"
+  },
+  {
+    "id": "insects-honeybee",
+    "category": "insects",
+    "label": "Honeybee",
+    "path": "assets/coloring-book/insects-honeybee.svg"
+  },
+  {
+    "id": "insects-ladybug",
+    "category": "insects",
+    "label": "Ladybug",
+    "path": "assets/coloring-book/insects-ladybug.svg"
+  },
+  {
+    "id": "insects-dragonfly",
+    "category": "insects",
+    "label": "Dragonfly",
+    "path": "assets/coloring-book/insects-dragonfly.svg"
+  },
+  {
+    "id": "insects-ant",
+    "category": "insects",
+    "label": "Ant",
+    "path": "assets/coloring-book/insects-ant.svg"
+  },
+  {
+    "id": "insects-grasshopper",
+    "category": "insects",
+    "label": "Grasshopper",
+    "path": "assets/coloring-book/insects-grasshopper.svg"
+  },
+  {
+    "id": "insects-beetle",
+    "category": "insects",
+    "label": "Beetle",
+    "path": "assets/coloring-book/insects-beetle.svg"
+  },
+  {
+    "id": "insects-moth",
+    "category": "insects",
+    "label": "Moth",
+    "path": "assets/coloring-book/insects-moth.svg"
+  },
+  {
+    "id": "insects-cicada",
+    "category": "insects",
+    "label": "Cicada",
+    "path": "assets/coloring-book/insects-cicada.svg"
+  },
+  {
+    "id": "insects-praying-mantis",
+    "category": "insects",
+    "label": "Praying Mantis",
+    "path": "assets/coloring-book/insects-praying-mantis.svg"
+  },
+  {
+    "id": "insects-firefly",
+    "category": "insects",
+    "label": "Firefly",
+    "path": "assets/coloring-book/insects-firefly.svg"
+  },
+  {
+    "id": "insects-caterpillar",
+    "category": "insects",
+    "label": "Caterpillar",
+    "path": "assets/coloring-book/insects-caterpillar.svg"
+  },
+  {
+    "id": "insects-cricket",
+    "category": "insects",
+    "label": "Cricket",
+    "path": "assets/coloring-book/insects-cricket.svg"
+  },
+  {
+    "id": "insects-walking-stick",
+    "category": "insects",
+    "label": "Walking Stick",
+    "path": "assets/coloring-book/insects-walking-stick.svg"
+  },
+  {
+    "id": "insects-damselfly",
+    "category": "insects",
+    "label": "Damselfly",
+    "path": "assets/coloring-book/insects-damselfly.svg"
+  },
+  {
+    "id": "insects-weevil",
+    "category": "insects",
+    "label": "Weevil",
+    "path": "assets/coloring-book/insects-weevil.svg"
+  },
+  {
+    "id": "insects-leafhopper",
+    "category": "insects",
+    "label": "Leafhopper",
+    "path": "assets/coloring-book/insects-leafhopper.svg"
+  },
+  {
+    "id": "insects-termite",
+    "category": "insects",
+    "label": "Termite",
+    "path": "assets/coloring-book/insects-termite.svg"
+  },
+  {
+    "id": "insects-wasp",
+    "category": "insects",
+    "label": "Wasp",
+    "path": "assets/coloring-book/insects-wasp.svg"
+  },
+  {
+    "id": "insects-scarab",
+    "category": "insects",
+    "label": "Scarab",
+    "path": "assets/coloring-book/insects-scarab.svg"
+  },
+  {
+    "id": "dinosaurs-tyrannosaurus",
+    "category": "dinosaurs",
+    "label": "Tyrannosaurus",
+    "path": "assets/coloring-book/dinosaurs-tyrannosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-triceratops",
+    "category": "dinosaurs",
+    "label": "Triceratops",
+    "path": "assets/coloring-book/dinosaurs-triceratops.svg"
+  },
+  {
+    "id": "dinosaurs-stegosaurus",
+    "category": "dinosaurs",
+    "label": "Stegosaurus",
+    "path": "assets/coloring-book/dinosaurs-stegosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-brachiosaurus",
+    "category": "dinosaurs",
+    "label": "Brachiosaurus",
+    "path": "assets/coloring-book/dinosaurs-brachiosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-velociraptor",
+    "category": "dinosaurs",
+    "label": "Velociraptor",
+    "path": "assets/coloring-book/dinosaurs-velociraptor.svg"
+  },
+  {
+    "id": "dinosaurs-ankylosaurus",
+    "category": "dinosaurs",
+    "label": "Ankylosaurus",
+    "path": "assets/coloring-book/dinosaurs-ankylosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-parasaurolophus",
+    "category": "dinosaurs",
+    "label": "Parasaurolophus",
+    "path": "assets/coloring-book/dinosaurs-parasaurolophus.svg"
+  },
+  {
+    "id": "dinosaurs-spinosaurus",
+    "category": "dinosaurs",
+    "label": "Spinosaurus",
+    "path": "assets/coloring-book/dinosaurs-spinosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-pteranodon",
+    "category": "dinosaurs",
+    "label": "Pteranodon",
+    "path": "assets/coloring-book/dinosaurs-pteranodon.svg"
+  },
+  {
+    "id": "dinosaurs-allosaurus",
+    "category": "dinosaurs",
+    "label": "Allosaurus",
+    "path": "assets/coloring-book/dinosaurs-allosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-diplodocus",
+    "category": "dinosaurs",
+    "label": "Diplodocus",
+    "path": "assets/coloring-book/dinosaurs-diplodocus.svg"
+  },
+  {
+    "id": "dinosaurs-iguanodon",
+    "category": "dinosaurs",
+    "label": "Iguanodon",
+    "path": "assets/coloring-book/dinosaurs-iguanodon.svg"
+  },
+  {
+    "id": "dinosaurs-pachycephalosaurus",
+    "category": "dinosaurs",
+    "label": "Pachycephalosaurus",
+    "path": "assets/coloring-book/dinosaurs-pachycephalosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-carnotaurus",
+    "category": "dinosaurs",
+    "label": "Carnotaurus",
+    "path": "assets/coloring-book/dinosaurs-carnotaurus.svg"
+  },
+  {
+    "id": "dinosaurs-apatosaurus",
+    "category": "dinosaurs",
+    "label": "Apatosaurus",
+    "path": "assets/coloring-book/dinosaurs-apatosaurus.svg"
+  },
+  {
+    "id": "dinosaurs-oviraptor",
+    "category": "dinosaurs",
+    "label": "Oviraptor",
+    "path": "assets/coloring-book/dinosaurs-oviraptor.svg"
+  },
+  {
+    "id": "dinosaurs-compsognathus",
+    "category": "dinosaurs",
+    "label": "Compsognathus",
+    "path": "assets/coloring-book/dinosaurs-compsognathus.svg"
+  },
+  {
+    "id": "dinosaurs-dimetrodon",
+    "category": "dinosaurs",
+    "label": "Dimetrodon",
+    "path": "assets/coloring-book/dinosaurs-dimetrodon.svg"
+  },
+  {
+    "id": "dinosaurs-mosasaurus",
+    "category": "dinosaurs",
+    "label": "Mosasaurus",
+    "path": "assets/coloring-book/dinosaurs-mosasaurus.svg"
+  },
+  {
+    "id": "dinosaurs-plesiosaurus",
+    "category": "dinosaurs",
+    "label": "Plesiosaurus",
+    "path": "assets/coloring-book/dinosaurs-plesiosaurus.svg"
+  },
+  {
+    "id": "animals-lion",
+    "category": "animals",
+    "label": "Lion",
+    "path": "assets/coloring-book/animals-lion.svg"
+  },
+  {
+    "id": "animals-elephant",
+    "category": "animals",
+    "label": "Elephant",
+    "path": "assets/coloring-book/animals-elephant.svg"
+  },
+  {
+    "id": "animals-giraffe",
+    "category": "animals",
+    "label": "Giraffe",
+    "path": "assets/coloring-book/animals-giraffe.svg"
+  },
+  {
+    "id": "animals-zebra",
+    "category": "animals",
+    "label": "Zebra",
+    "path": "assets/coloring-book/animals-zebra.svg"
+  },
+  {
+    "id": "animals-panda",
+    "category": "animals",
+    "label": "Panda",
+    "path": "assets/coloring-book/animals-panda.svg"
+  },
+  {
+    "id": "animals-koala",
+    "category": "animals",
+    "label": "Koala",
+    "path": "assets/coloring-book/animals-koala.svg"
+  },
+  {
+    "id": "animals-dolphin",
+    "category": "animals",
+    "label": "Dolphin",
+    "path": "assets/coloring-book/animals-dolphin.svg"
+  },
+  {
+    "id": "animals-sea-turtle",
+    "category": "animals",
+    "label": "Sea Turtle",
+    "path": "assets/coloring-book/animals-sea-turtle.svg"
+  },
+  {
+    "id": "animals-owl",
+    "category": "animals",
+    "label": "Owl",
+    "path": "assets/coloring-book/animals-owl.svg"
+  },
+  {
+    "id": "animals-fox",
+    "category": "animals",
+    "label": "Fox",
+    "path": "assets/coloring-book/animals-fox.svg"
+  },
+  {
+    "id": "animals-rabbit",
+    "category": "animals",
+    "label": "Rabbit",
+    "path": "assets/coloring-book/animals-rabbit.svg"
+  },
+  {
+    "id": "animals-horse",
+    "category": "animals",
+    "label": "Horse",
+    "path": "assets/coloring-book/animals-horse.svg"
+  },
+  {
+    "id": "animals-frog",
+    "category": "animals",
+    "label": "Frog",
+    "path": "assets/coloring-book/animals-frog.svg"
+  },
+  {
+    "id": "animals-penguin",
+    "category": "animals",
+    "label": "Penguin",
+    "path": "assets/coloring-book/animals-penguin.svg"
+  },
+  {
+    "id": "animals-bear",
+    "category": "animals",
+    "label": "Bear",
+    "path": "assets/coloring-book/animals-bear.svg"
+  },
+  {
+    "id": "animals-kangaroo",
+    "category": "animals",
+    "label": "Kangaroo",
+    "path": "assets/coloring-book/animals-kangaroo.svg"
+  },
+  {
+    "id": "animals-whale",
+    "category": "animals",
+    "label": "Whale",
+    "path": "assets/coloring-book/animals-whale.svg"
+  },
+  {
+    "id": "animals-octopus",
+    "category": "animals",
+    "label": "Octopus",
+    "path": "assets/coloring-book/animals-octopus.svg"
+  },
+  {
+    "id": "animals-deer",
+    "category": "animals",
+    "label": "Deer",
+    "path": "assets/coloring-book/animals-deer.svg"
+  },
+  {
+    "id": "animals-cheetah",
+    "category": "animals",
+    "label": "Cheetah",
+    "path": "assets/coloring-book/animals-cheetah.svg"
+  }
+]

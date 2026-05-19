@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">damselfly coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <rect width="900" height="1200" fill="#fff"/>
+  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
+    <ellipse cx="450" cy="620" rx="190" ry="280"/><path d="M450 342 V900"/><circle cx="450" cy="282" r="72"/>
+    <path d="M330 428 C232 372 168 370 112 438 M570 428 C668 372 732 370 788 438"/>
+    <path d="M306 600 C216 592 156 626 104 710 M594 600 C684 592 744 626 796 710"/>
+    <path d="M332 790 C256 832 220 896 198 990 M568 790 C644 832 680 896 702 990"/>
+    <path d="M382 242 C340 172 284 148 232 170 M518 242 C560 172 616 148 668 170"/>
+    <path d="M334 520 C386 488 414 488 450 520 C486 488 514 488 566 520"/>
+  </g>
+  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
+    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  </g>
+  <metadata>DrawSplat original procedural SVG line art; category=insects; license=CC0-1.0/public-domain-dedicated.</metadata>
+</svg>

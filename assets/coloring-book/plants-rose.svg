@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">rose coloring page</title>
+  <desc id="desc">Original copyright-free DrawSplat line art for classroom coloring use.</desc>
+  <rect width="900" height="1200" fill="#fff"/>
+  <g fill="none" stroke="#111827" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(-90 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(-50 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(-10 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(30 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(70 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(110 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(150 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(190 450 390)"/>
+    <ellipse cx="450" cy="390" rx="52" ry="106" transform="rotate(230 450 390)"/><circle cx="450" cy="390" r="82"/><path d="M450 472 V976"/><path d="M450 570 C545 498 620 530 650 604 C568 634 508 608 450 570 Z"/>
+    <path d="M450 642 C355 570 280 602 250 676 C332 706 392 680 450 642 Z"/>
+    <path d="M450 714 C545 642 620 674 650 748 C568 778 508 752 450 714 Z"/>
+    <path d="M450 786 C355 714 280 746 250 820 C332 850 392 824 450 786 Z"/>
+    <path d="M450 858 C545 786 620 818 650 892 C568 922 508 896 450 858 Z"/><path d="M450 1028 V670"/>
+    <path d="M450 730 C330 610 292 470 364 354 C484 418 512 568 450 730 Z"/>
+    <path d="M450 780 C590 650 632 510 558 392 C430 482 400 634 450 780 Z"/>
+    <circle cx="450" cy="348" r="74"/>
+    <path d="M304 972 H596 L552 1090 H348 Z"/><path d="M278 930 H622 V972 H278 Z"/>
+  </g>
+  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" opacity=".45">
+    <path d="M90 1110 C180 1080 250 1140 350 1112 S540 1088 650 1118 S790 1138 830 1100"/>
+  </g>
+  <metadata>DrawSplat original procedural SVG line art; category=plants; license=CC0-1.0/public-domain-dedicated.</metadata>
+</svg>
