@@ -1903,10 +1903,11 @@ function ensureClassroomWidgetDialog(){
   const dlg=document.createElement('dialog');
   dlg.id='classroomWidgetDialog';
   dlg.className='classroom-widget-dialog';
-  dlg.innerHTML='<div class="modal-head"><h2 id="classroomWidgetTitle">Classroom Widgets</h2><button class="close" id="classroomWidgetCancelBtn" aria-label="Close">Close</button></div><div id="classroomWidgetBody"></div>';
+  dlg.innerHTML='<div class="modal-head"><h2 id="classroomWidgetTitle">Classroom Widgets</h2><button class="close widget-editor-close" id="classroomWidgetCancelBtn" aria-label="Close controls">Done</button></div><div id="classroomWidgetBody"></div>';
   document.body.appendChild(dlg);
   gid('classroomWidgetCancelBtn')?.addEventListener('click',()=>dlg.close());
   dlg.addEventListener('click',e=>{
+    if(e.target.closest('[data-widget-close]')){dlg.close(); return}
     const pick=e.target.closest('[data-widget-kind]');
     if(pick){insertClassroomWidget(pick.dataset.widgetKind); return}
     const action=e.target.closest('[data-widget-action]');
@@ -1923,7 +1924,7 @@ function openClassroomWidgetDialog(idv){
   dlg.classList.add('widget-editor-dialog');
   dlg.dataset.editId=o.id; dlg.dataset.kind=kind;
   gid('classroomWidgetTitle').textContent=widgetTitle(kind);
-  gid('classroomWidgetBody').innerHTML=widgetEditorHtml(kind,cfg);
+  gid('classroomWidgetBody').innerHTML=widgetEditorHtml(kind,cfg)+'<div class="widget-close-row"><button type="button" class="primary" data-widget-close>Done</button></div>';
   if(!dlg.open) dlg.show();
 }
 function widgetEditorHtml(kind,cfg){
