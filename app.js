@@ -67,7 +67,7 @@ let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',a
 let tool='select', selectedIds=[], drawing=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null;
 let dotPaintTargetId=null;
 let touchMultiSelect=false;
-let coloringPaintColor='#f97316', coloringPaintWidth=28;
+let coloringPaintColor='#f97316', coloringPaintWidth=28, coloringPaintMode='brush';
 let history=[], future=[], lastSnapshot=''; let localChannel=null, cloudTimer=null, collabRoom='', instanceId=id(), lastCloudTs='', roleLock=''; let liveCursors={}, mediaRecorder=null, recordChunks=[]; let inlineEditId=null, inlineEditOriginal=null;
 
 /* v2.5: O(1) object lookup. Rebuilt every render. */
@@ -251,6 +251,7 @@ function ensureColoringPaintToolbar(){
   bar.innerHTML=colors.map(color=>`<button type="button" class="coloring-swatch" data-coloring-color="${color}" aria-label="Paint ${color}" style="--swatch:${color}"></button>`).join('')+
     '<input id="coloringCustomColor" type="color" aria-label="Custom coloring color" title="Custom color">'+
     '<select id="coloringBrushSize" aria-label="Brush size"><option value="14">Small</option><option value="28" selected>Medium</option><option value="46">Large</option></select>'+
+    '<select id="coloringPaintMode" aria-label="Coloring tool"><option value="brush">Brush</option><option value="bucket">Bucket</option><option value="spray">Spray</option></select>'+
     '<button type="button" id="coloringPaintModeBtn">Paint</button>';
   bar.addEventListener('pointerdown',e=>e.stopPropagation());
   bar.querySelectorAll('[data-coloring-color]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -261,6 +262,7 @@ function ensureColoringPaintToolbar(){
   }));
   bar.querySelector('#coloringCustomColor').addEventListener('input',e=>{coloringPaintColor=e.target.value; setTool('coloringpaint'); refreshColoringPaintToolbar()});
   bar.querySelector('#coloringBrushSize').addEventListener('change',e=>{coloringPaintWidth=+e.target.value||28; setTool('coloringpaint'); refreshColoringPaintToolbar()});
+  bar.querySelector('#coloringPaintMode').addEventListener('change',e=>{coloringPaintMode=e.target.value||'brush'; setTool('coloringpaint'); refreshColoringPaintToolbar()});
   bar.querySelector('#coloringPaintModeBtn').addEventListener('click',()=>{setTool('coloringpaint'); refreshColoringPaintToolbar()});
   const dup=document.getElementById('floatDuplicateBtn');
   tb.insertBefore(bar,dup||null);
@@ -274,7 +276,9 @@ function refreshColoringPaintToolbar(){
   bar.querySelectorAll('[data-coloring-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.coloringColor.toLowerCase()===coloringPaintColor.toLowerCase()));
   const custom=bar.querySelector('#coloringCustomColor'); if(custom) custom.value=coloringPaintColor;
   const size=bar.querySelector('#coloringBrushSize'); if(size) size.value=String(coloringPaintWidth);
+  const mode=bar.querySelector('#coloringPaintMode'); if(mode) mode.value=coloringPaintMode;
   bar.querySelector('#coloringPaintModeBtn')?.classList.toggle('active',tool==='coloringpaint');
+  bar.querySelector('#coloringPaintModeBtn').textContent=coloringPaintMode==='bucket'?'Pour':(coloringPaintMode==='spray'?'Spray':'Paint');
 }
 function pointInBox(p,b){return p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h}
 function transformPathData(d,fn){
@@ -287,12 +291,81 @@ function transformPathData(d,fn){
 }
 function translatedPathData(d,dx,dy){return transformPathData(d,(v,axis)=>v+(axis==='x'?dx:dy))}
 function scaledPathData(d,ox,oy,sx,sy){return transformPathData(d,(v,axis)=>axis==='x'?ox+(v-ox)*sx:oy+(v-oy)*sy)}
+function coloringImageRect(o,b){
+  const nw=o.naturalW||900, nh=o.naturalH||1200, imageRatio=nw/nh, boxRatio=b.w/b.h;
+  if(boxRatio>imageRatio){const w=b.h*imageRatio; return{x:b.x+(b.w-w)/2,y:b.y,w,h:b.h,naturalW:nw,naturalH:nh}}
+  const h=b.w/imageRatio; return{x:b.x,y:b.y+(b.h-h)/2,w:b.w,h,naturalW:nw,naturalH:nh};
+}
+function coloringCanvasPoint(target,p){
+  const b=normBox(target), ib=coloringImageRect(target,b);
+  if(!pointInBox(p,ib)) return null;
+  return {x:Math.floor((p.x-ib.x)/ib.w*ib.naturalW),y:Math.floor((p.y-ib.y)/ib.h*ib.naturalH),rect:ib};
+}
+function loadImageForCanvas(src){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>resolve(img); img.onerror=()=>reject(new Error('Could not read coloring page.')); img.src=src})}
+function hexToRgb(hex){const h=String(hex||'#000000').replace('#','');return{r:parseInt(h.slice(0,2),16)||0,g:parseInt(h.slice(2,4),16)||0,b:parseInt(h.slice(4,6),16)||0}}
+function isColoringBoundary(data,idx){
+  const a=data[idx+3], r=data[idx], g=data[idx+1], b=data[idx+2];
+  return a>32 && (r+g+b)<500;
+}
+async function startColoringBucketFill(p,target){
+  const hit=coloringCanvasPoint(target,p);
+  if(!hit) return setStatus('Click inside the coloring page to pour color.','danger');
+  try{
+    const img=await loadImageForCanvas(target.src), w=hit.rect.naturalW, h=hit.rect.naturalH, sx=clamp(hit.x,0,w-1), sy=clamp(hit.y,0,h-1);
+    const source=document.createElement('canvas'); source.width=w; source.height=h;
+    const sctx=source.getContext('2d',{willReadFrequently:true}); sctx.drawImage(img,0,0,w,h);
+    const src=sctx.getImageData(0,0,w,h), srcData=src.data, seed=(sy*w+sx)*4;
+    if(isColoringBoundary(srcData,seed)) return setStatus('Bucket fill starts in white space, not on a line.','danger');
+    const out=document.createElement('canvas'); out.width=w; out.height=h;
+    const octx=out.getContext('2d'), outImg=octx.createImageData(w,h), outData=outImg.data, seen=new Uint8Array(w*h), stack=[sy*w+sx], rgb=hexToRgb(coloringPaintColor);
+    let filled=0;
+    while(stack.length){
+      const pos=stack.pop();
+      if(seen[pos]) continue;
+      seen[pos]=1;
+      const idx=pos*4;
+      if(isColoringBoundary(srcData,idx)) continue;
+      outData[idx]=rgb.r; outData[idx+1]=rgb.g; outData[idx+2]=rgb.b; outData[idx+3]=205;
+      filled++;
+      const x=pos%w, y=(pos-x)/w;
+      if(x>0) stack.push(pos-1);
+      if(x<w-1) stack.push(pos+1);
+      if(y>0) stack.push(pos-w);
+      if(y<h-1) stack.push(pos+w);
+    }
+    if(!filled) return setStatus('No fillable space found there.','danger');
+    octx.putImageData(outImg,0,0);
+    const b=normBox(target);
+    panel().objects.push(makeObj('image',b.x,b.y,b.w,b.h,{src:out.toDataURL('image/png'),naturalW:w,naturalH:h,fill:'none',stroke:'none',strokeWidth:0,opacity:1,coloringPaintFor:target.id,clipBox:{x:b.x,y:b.y,w:b.w,h:b.h}}));
+    selectedIds=[target.id];
+    render();
+    saveState();
+    setStatus('Color poured into the selected space.','success');
+  }catch(err){
+    setStatus((err&&err.message)||'Bucket fill failed.','danger');
+  }
+}
+function appendSprayDots(o,p,count=18){
+  const radius=Math.max(8,coloringPaintWidth*.72);
+  let d=o.d||'';
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2, rr=radius*Math.sqrt(Math.random()), x=p.x+Math.cos(a)*rr, y=p.y+Math.sin(a)*rr, dx=0.01;
+    d+=` M ${Math.round(x*100)/100} ${Math.round(y*100)/100} L ${Math.round((x+dx)*100)/100} ${Math.round(y*100)/100}`;
+  }
+  o.d=d;
+}
 function startColoringStroke(p){
   const target=selectedColoringPage();
   if(!target) return false;
   const b=normBox(target);
   if(!pointInBox(p,b)) return false;
-  drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,stroke:coloringPaintColor,strokeWidth:coloringPaintWidth,fill:'none',fillPattern:'',opacity:.72,coloringPaintFor:target.id,clipBox:{x:b.x,y:b.y,w:b.w,h:b.h}};
+  if(coloringPaintMode==='bucket'){startColoringBucketFill(p,target); return true}
+  if(coloringPaintMode==='spray'){
+    drawing={id:id(),type:'path',d:'',x:p.x,y:p.y,w:1,h:1,locked:false,stroke:coloringPaintColor,strokeWidth:Math.max(2,coloringPaintWidth/5),fill:'none',fillPattern:'',opacity:.62,coloringPaintFor:target.id,coloringSpray:true,clipBox:{x:b.x,y:b.y,w:b.w,h:b.h}};
+    appendSprayDots(drawing,p,24);
+  } else {
+    drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,stroke:coloringPaintColor,strokeWidth:coloringPaintWidth,fill:'none',fillPattern:'',opacity:.72,coloringPaintFor:target.id,clipBox:{x:b.x,y:b.y,w:b.w,h:b.h}};
+  }
   panel().objects.push(drawing);
   selectedIds=[target.id];
   requestRender();
@@ -790,7 +863,7 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 
 /* Tool, workspace, and selection primitives. These are intentionally small
    because drawing, editing, grouping, and inspector code all depend on them. */
-function setTool(next){tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); const shapeGroup=gid('shapeToolGroup'); if(shapeGroup) shapeGroup.classList.toggle('active',!!shapeGroup.querySelector(`[data-tool="${tool}"]`)); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); if(next==='eraser') setStatus('Eraser: click any object to delete it. Drag over pen strokes to wipe them.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus('Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.','success')}
+function setTool(next){tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); const shapeGroup=gid('shapeToolGroup'); if(shapeGroup) shapeGroup.classList.toggle('active',!!shapeGroup.querySelector(`[data-tool="${tool}"]`)); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); if(next==='eraser') setStatus('Eraser: click any object to delete it. Drag over pen strokes to wipe them.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')}
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
 function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||localStorage.getItem('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; localStorage.setItem('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
@@ -937,7 +1010,7 @@ function createPathObject(o){
   const b=o.clipBox,cid=`clip_${o.id}`;
   return svgEl(`<g><defs><clipPath id="${esc(cid)}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}"/></clipPath></defs><g clip-path="url(#${esc(cid)})">${path}</g></g>`);
 }
-function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${o.conceptNode?18:8}" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=createPathObject(o);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b);if(o.type==='widget')node=createClassroomWidgetObject(o,b); if(node)el.appendChild(node); if(o.type==='connector'){const labelNode=createConnectorLabelObject(o); if(labelNode) el.appendChild(labelNode)} if(SHAPE_TEXT_TYPES.includes(o.type)) {if(o.conceptNode) el.appendChild(createConceptNodeExtras(o,b)); el.appendChild(createShapeTextObject(o,b))} if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='widget'){openClassroomWidgetDialog(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
+function drawObject(o){const el=document.createElementNS(NS,'g');el.classList.add('object');if(o.coloringPaintFor){el.classList.add('coloring-paint-object');el.style.pointerEvents='none'}if(isSelected(o.id))el.classList.add('selected');el.dataset.id=o.id;el.style.cursor=o.locked?'not-allowed':(tool==='dotpaint'&&o.type==='dot'?'copy':(o.type==='connector'?'pointer':'move'));const b=normBox(o);let node=null;const common=`stroke="${o.stroke}" stroke-width="${o.strokeWidth}" fill="${objectFill(o)}" opacity="${o.opacity}"`; if(o.type==='dot')node=svgEl(`<circle cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" r="${Math.max(3,Math.min(b.w,b.h)/2)}" ${common}/>`); if(o.type==='rect')node=svgEl(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${o.conceptNode?18:8}" ${common}/>`);if(o.type==='ellipse')node=svgEl(`<ellipse cx="${b.x+b.w/2}" cy="${b.y+b.h/2}" rx="${b.w/2}" ry="${b.h/2}" ${common}/>`);if(o.type==='line')node=svgEl(`<line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" opacity="${o.opacity}" stroke-linecap="round"/>`);if(o.type==='arrow')node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="m_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><line x1="${o.x}" y1="${o.y}" x2="${o.x+o.w}" y2="${o.y+o.h}" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#m_${o.id})"/></g>`);if(o.type==='connector'){const p=connectorEndpoints(o);node=svgEl(`<g opacity="${o.opacity}"><defs><marker id="cm_${o.id}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="${o.stroke}"/></marker></defs><path d="M ${p.x1} ${p.y1} L ${p.x2} ${p.y2}" fill="none" stroke="${o.stroke}" stroke-width="${o.strokeWidth}" stroke-linecap="round" marker-end="url(#cm_${o.id})"/></g>`)} if(o.type==='diamond')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h/2} ${b.x+b.w/2},${b.y+b.h} ${b.x},${b.y+b.h/2}" ${common}/>`);if(o.type==='triangle')node=svgEl(`<polygon points="${b.x+b.w/2},${b.y} ${b.x+b.w},${b.y+b.h} ${b.x},${b.y+b.h}" ${common}/>`);if(o.type==='callout')node=svgEl(`<path d="${calloutPath(b)}" ${common}/>`);if(o.type==='speech')node=svgEl(`<path d="${speechPath(b)}" ${common}/>`);if(o.type==='path')node=createPathObject(o);if(o.type==='image'){node=createImageObject(o,b)}if(o.type==='text')node=createTextObject(o,b);if(o.type==='sticky')node=createStickyObject(o,b);if(o.type==='comment')node=createCommentObject(o,b);if(o.type==='stamp')node=createStampObject(o,b);if(o.type==='audio')node=createAudioObject(o,b);if(o.type==='widget')node=createClassroomWidgetObject(o,b); if(node)el.appendChild(node); if(o.type==='connector'){const labelNode=createConnectorLabelObject(o); if(labelNode) el.appendChild(labelNode)} if(SHAPE_TEXT_TYPES.includes(o.type)) {if(o.conceptNode) el.appendChild(createConceptNodeExtras(o,b)); el.appendChild(createShapeTextObject(o,b))} if(o.answerKey&&board.showAnswerKey){el.appendChild(svgEl(`<g><rect x="${b.x+6}" y="${b.y+6}" rx="8" ry="8" width="76" height="20" fill="#FAA634" opacity="0.95"/><text x="${b.x+16}" y="${b.y+20}" font-size="11" font-weight="800" fill="#111827">ANSWER KEY</text></g>`))} el.addEventListener('pointerdown',objectDown); el.addEventListener('dblclick',ev=>{ev.stopPropagation(); if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id)} else if(o.type==='widget'){openClassroomWidgetDialog(o.id)} else if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id)} else if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id)} else if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id)} else if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id)}}); return el}
 
 function calloutPath(b){const r=Math.min(16,b.w/8,b.h/8),tx=b.x+Math.min(40,b.w*.3),ty=b.y+b.h,n=Math.min(26,b.h*.22);return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${tx+18} L ${tx} ${ty} L ${tx+8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
 function speechPath(b){const r=Math.min(18,b.w/8,b.h/8),n=Math.min(28,b.h*.22),cx=b.x+b.w*.55;return`M ${b.x+r} ${b.y} H ${b.x+b.w-r} Q ${b.x+b.w} ${b.y} ${b.x+b.w} ${b.y+r} V ${b.y+b.h-n-r} Q ${b.x+b.w} ${b.y+b.h-n} ${b.x+b.w-r} ${b.y+b.h-n} H ${cx+18} L ${cx-2} ${b.y+b.h} L ${cx-8} ${b.y+b.h-n} H ${b.x+r} Q ${b.x} ${b.y+b.h-n} ${b.x} ${b.y+b.h-n-r} V ${b.y+r} Q ${b.x} ${b.y} ${b.x+r} ${b.y} Z`}
@@ -1104,7 +1177,7 @@ svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint')
 
 /* v2.5: pointermove uses requestRender (RAF coalescing). */
 let lastCursorBroadcast=0;
-svg.addEventListener('pointermove',e=>{const p=pt(e); const now=performance.now(); if(localChannel && now-lastCursorBroadcast>50){ broadcastCursor(p.x,p.y); lastCursorBroadcast=now } if(dotPaintDrag?.active&&e.buttons>0){if(Math.hypot(p.x-dotPaintDrag.startX,p.y-dotPaintDrag.startY)>4) dotPaintDrag.moved=true; paintDotAtPoint(p.x,p.y); return} if(tool==='eraser'&&e.buttons>0){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o&&o.type==='path'&&canEditObject(o)&&!o.locked){panel().objects=panel().objects.filter(x=>x.id!==o.id); requestRender()}} return} if(marquee&&marquee.active){marquee.x2=p.x; marquee.y2=p.y; requestRender(); return} if(drag){if(drag.candidateEdit&&Math.hypot(p.x-drag.startX,p.y-drag.startY)>4) drag.candidateEdit=null; if(drag.resize){const nextW=Math.max(20,drag.ow+(p.x-drag.sx)),nextH=Math.max(20,drag.oh+(p.y-drag.sy)),scaleX=nextW/Math.max(1,drag.ow),scaleY=nextH/Math.max(1,drag.oh),fontScale=Math.min(scaleX,scaleY);drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=drag.ox+(s.x-drag.ox)*scaleX; o.y=drag.oy+(s.y-drag.oy)*scaleY; o.w=Math.max(20,s.w*scaleX); o.h=Math.max(20,s.h*scaleY); if(o.type==='path'&&s.d){o.d=scaledPathData(s.d,drag.ox,drag.oy,scaleX,scaleY); if(s.clipBox)o.clipBox={x:drag.ox+(s.clipBox.x-drag.ox)*scaleX,y:drag.oy+(s.clipBox.y-drag.oy)*scaleY,w:s.clipBox.w*scaleX,h:s.clipBox.h*scaleY}} if(TEXTABLE_TYPES.includes(o.type)&&o.autoScaleText) o.fontSize=clamp(Math.round(s.fontSize*fontScale),8,96)}); requestRender(); return}else{const dx=p.x-drag.startX,dy=p.y-drag.startY; drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=s.x+dx; o.y=s.y+dy; if(o.type==='path'&&s.d){o.d=translatedPathData(s.d,dx,dy); if(s.clipBox)o.clipBox={x:s.clipBox.x+dx,y:s.clipBox.y+dy,w:s.clipBox.w,h:s.clipBox.h}}}); requestRender(); return}} if(drawing){if(drawing.type==='laser'){drawing.d+=` L ${p.x} ${p.y}`; if(drawing._laserPath) drawing._laserPath.setAttribute('d',drawing.d); return} if(drawing.type==='path'){drawing.d+=` L ${p.x} ${p.y}`; drawing.w=Math.max(drawing.w,p.x-drawing.x); drawing.h=Math.max(drawing.h,p.y-drawing.y)} else {drawing.w=p.x-drawing.x; drawing.h=p.y-drawing.y} requestRender()}});
+svg.addEventListener('pointermove',e=>{const p=pt(e); const now=performance.now(); if(localChannel && now-lastCursorBroadcast>50){ broadcastCursor(p.x,p.y); lastCursorBroadcast=now } if(dotPaintDrag?.active&&e.buttons>0){if(Math.hypot(p.x-dotPaintDrag.startX,p.y-dotPaintDrag.startY)>4) dotPaintDrag.moved=true; paintDotAtPoint(p.x,p.y); return} if(tool==='eraser'&&e.buttons>0){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o&&o.type==='path'&&canEditObject(o)&&!o.locked){panel().objects=panel().objects.filter(x=>x.id!==o.id); requestRender()}} return} if(marquee&&marquee.active){marquee.x2=p.x; marquee.y2=p.y; requestRender(); return} if(drag){if(drag.candidateEdit&&Math.hypot(p.x-drag.startX,p.y-drag.startY)>4) drag.candidateEdit=null; if(drag.resize){const nextW=Math.max(20,drag.ow+(p.x-drag.sx)),nextH=Math.max(20,drag.oh+(p.y-drag.sy)),scaleX=nextW/Math.max(1,drag.ow),scaleY=nextH/Math.max(1,drag.oh),fontScale=Math.min(scaleX,scaleY);drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=drag.ox+(s.x-drag.ox)*scaleX; o.y=drag.oy+(s.y-drag.oy)*scaleY; o.w=Math.max(20,s.w*scaleX); o.h=Math.max(20,s.h*scaleY); if(o.type==='path'&&s.d){o.d=scaledPathData(s.d,drag.ox,drag.oy,scaleX,scaleY); if(s.clipBox)o.clipBox={x:drag.ox+(s.clipBox.x-drag.ox)*scaleX,y:drag.oy+(s.clipBox.y-drag.oy)*scaleY,w:s.clipBox.w*scaleX,h:s.clipBox.h*scaleY}} if(TEXTABLE_TYPES.includes(o.type)&&o.autoScaleText) o.fontSize=clamp(Math.round(s.fontSize*fontScale),8,96)}); requestRender(); return}else{const dx=p.x-drag.startX,dy=p.y-drag.startY; drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=s.x+dx; o.y=s.y+dy; if(o.type==='path'&&s.d){o.d=translatedPathData(s.d,dx,dy); if(s.clipBox)o.clipBox={x:s.clipBox.x+dx,y:s.clipBox.y+dy,w:s.clipBox.w,h:s.clipBox.h}}}); requestRender(); return}} if(drawing){if(drawing.type==='laser'){drawing.d+=` L ${p.x} ${p.y}`; if(drawing._laserPath) drawing._laserPath.setAttribute('d',drawing.d); return} if(drawing.type==='path'){if(drawing.coloringSpray) appendSprayDots(drawing,p); else drawing.d+=` L ${p.x} ${p.y}`; drawing.w=Math.max(drawing.w,p.x-drawing.x); drawing.h=Math.max(drawing.h,p.y-drawing.y)} else {drawing.w=p.x-drawing.x; drawing.h=p.y-drawing.y} requestRender()}});
 
 window.addEventListener('pointerup',e=>{if(dotPaintDrag?.active){const wasMoved=dotPaintDrag.moved, painted=dotPaintDrag.painted?.size||0, targetId=selectedIds[0]; dotPaintDrag=null; if(wasMoved){if(painted) saveState(); render(); return} const o=findObj(targetId); if(o&&o.type==='dot') openDotPaintPalette(o.id,e); return} if(tool==='eraser'){saveState(false); return} if(marquee&&marquee.active){const m={x:Math.min(marquee.x1,marquee.x2),y:Math.min(marquee.y1,marquee.y2),w:Math.abs(marquee.x2-marquee.x1),h:Math.abs(marquee.y2-marquee.y1)}; selectedIds=panel().objects.filter(o=>{const b=normBox(o); return !(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher') && b.x<=m.x+m.w && b.x+b.w>=m.x && b.y<=m.y+m.h && b.y+b.h>=m.y}).map(o=>o.id); marquee=null; render(); return} if(drawing&&drawing.type==='laser'){const path=drawing._laserPath; if(path){setTimeout(()=>{path.style.transition='opacity 1.2s ease-out'; path.style.opacity='0'; setTimeout(()=>path.remove(),1300)},1500)} drawing=null; return} if(drag&&drag.candidateEdit&&!drag.resize){const editId=drag.candidateEdit; drag=null; openInlineTextEditor(editId); return} if(drawing)normalizeObject(drawing); if(drag) drag.ids.forEach(i=>normalizeObject(findObj(i))); if(drag||drawing)saveState(); drag=null; drawing=null; render()});
 
