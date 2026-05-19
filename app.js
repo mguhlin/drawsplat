@@ -1053,6 +1053,19 @@ function pasteBlobAsImage(blob,label){return new Promise(async resolve=>{if(!blo
 async function smartPaste(){if(navigator.clipboard&&navigator.clipboard.read){try{const items=await navigator.clipboard.read(); for(const item of items){const imgType=item.types.find(t=>t.startsWith('image/')); if(imgType){const blob=await item.getType(imgType); if(await pasteBlobAsImage(blob,'Image pasted from clipboard.')) return}}}catch(_){}} pasteClipboard()}
 function svgUrlToPngBlob(svgDataUrl,bgFill='#ffffff',minWidth=1600){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>{const naturalW=img.naturalWidth||img.width||800, naturalH=img.naturalHeight||img.height||600; const aspect=naturalH/naturalW; const w=Math.max(minWidth,naturalW*2); const h=Math.max(40,Math.round(w*aspect)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const cx=cv.getContext('2d'); if(bgFill){cx.fillStyle=bgFill; cx.fillRect(0,0,w,h)} try{cx.drawImage(img,0,0,w,h)}catch(err){reject(err); return} cv.toBlob(b=>{if(b) resolve(b); else reject(new Error('PNG encode failed'))},'image/png')}; img.onerror=()=>reject(new Error('SVG decode failed')); img.src=svgDataUrl})}
 async function copySelectionAsPngBlob(){if(!selectedIds.length) throw new Error('No selection.'); const objs=selectedIds.map(findObj).filter(Boolean); if(!objs.length) throw new Error('No selection.'); const pad=20; let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity; for(const o of objs){const b=normBox(o); if(b.w<=0||b.h<=0) continue; minX=Math.min(minX,b.x); minY=Math.min(minY,b.y); maxX=Math.max(maxX,b.x+b.w); maxY=Math.max(maxY,b.y+b.h)} if(!isFinite(minX)) throw new Error('Selection has no extent.'); minX-=pad; minY-=pad; maxX+=pad; maxY+=pad; const bbox={x:minX,y:minY,w:maxX-minX,h:maxY-minY}; const fullCv=await exportCanvas(); const scaleX=fullCv.width/svg.clientWidth; const scaleY=fullCv.height/svg.clientHeight; const cx=Math.max(0,bbox.x*zoom*scaleX), cy=Math.max(0,bbox.y*zoom*scaleY); const cw=Math.min(fullCv.width-cx,bbox.w*zoom*scaleX), ch=Math.min(fullCv.height-cy,bbox.h*zoom*scaleY); const cv=document.createElement('canvas'); cv.width=Math.max(20,Math.round(cw)); cv.height=Math.max(20,Math.round(ch)); const ctx=cv.getContext('2d'); ctx.drawImage(fullCv,cx,cy,cw,ch,0,0,cv.width,cv.height); return new Promise((resolve,reject)=>{cv.toBlob(b=>b?resolve(b):reject(new Error('PNG encode failed')),'image/png')})}
+async function downloadSelectionPng(){
+  if(!selectedIds.length){setStatus('Select content to download first.','danger'); return}
+  try{
+    setStatus('Preparing download...');
+    const blob=await copySelectionAsPngBlob();
+    const url=URL.createObjectURL(blob);
+    const safeTitle=(board.title||'drawsplat').replace(/\W+/g,'-');
+    download(url,safeTitle+'-selection.png',true);
+    setStatus('Selection downloaded as PNG.','success');
+  }catch(err){
+    setStatus('Download failed: '+(err&&err.message?err.message:String(err)),'danger');
+  }
+}
 async function smartCopy(){copySelection(); if(!selectedIds.length) return; if(!navigator.clipboard||!navigator.clipboard.write||typeof ClipboardItem==='undefined') return; if(selectedIds.length===1){const o=currentObj(); if(o&&o.type==='image'&&o.src){try{let blob; const isSvg=typeof o.src==='string'&&o.src.startsWith('data:image/svg'); if(isSvg) blob=await svgUrlToPngBlob(o.src); else {const res=await fetch(o.src); blob=await res.blob()} await navigator.clipboard.write([new ClipboardItem({[blob.type||'image/png']:blob})]); setStatus(isSvg?'Diagram copied to clipboard as PNG.':'Image copied to clipboard.','success'); return}catch(_){}}} try{const blob=await copySelectionAsPngBlob(); await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); setStatus('Selection copied to clipboard as PNG.','success')}catch(_){}}
 function groupSelected(){const ids=selectedIds.filter(idv=>findObj(idv)?.type!=='connector'); if(ids.length<2)return; const gidv='grp_'+id(); ids.forEach(i=>{const o=findObj(i); if(o) o.groupId=gidv}); render(); saveState(); setStatus('Grouped '+ids.length+' items.','success')}
 function ungroupSelected(){const gids=[...new Set(selectedIds.map(i=>findObj(i)?.groupId).filter(Boolean))]; if(!gids.length)return; panel().objects.forEach(o=>{if(gids.includes(o.groupId)) delete o.groupId}); render(); saveState(); setStatus('Ungrouped selection.','success')}
@@ -2243,6 +2256,7 @@ gid('simpleClearBgBtn')?.addEventListener('click',()=>gid('clearBgImageBtn').cli
 gid('simpleDeleteBtn')?.addEventListener('click',()=>{if(!selectedIds.length){setStatus('Select an item first.','danger'); return} deleteSelected()});
 gid('floatDeleteBtn')?.addEventListener('click',()=>{if(selectedIds.length) deleteSelected()});
 gid('floatDuplicateBtn')?.addEventListener('click',()=>{if(selectedIds.length) duplicateSelected()});
+gid('floatSaveBtn')?.addEventListener('click',()=>downloadSelectionPng());
 gid('floatEditBtn')?.addEventListener('click',()=>{const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)) openInlineTextEditor(o.id)});
 gid('floatCropBtn')?.addEventListener('click',()=>openCropDialog());
 gid('floatConceptChildBtn')?.addEventListener('click',()=>addConceptChildNode());
@@ -3190,7 +3204,7 @@ function registerServiceWorker(){
     plus:svg(`<path ${S} d="M12 5v14M5 12h14"/>`),
     template:svg(`<rect ${S} x="4" y="5" width="16" height="14" rx="2"/><path ${S} d="M4 11h16M10 5v14"/>`),
     panel:svg(`<rect ${S} x="4" y="5" width="16" height="14" rx="2"/><path ${S} d="M8 9h8M8 13h5"/>`),
-    save:svg(`<path ${S} d="M5 4h12l2 2v14H5V4z"/><path ${S} d="M8 4v6h8V4M8 20v-6h8v6"/>`),
+    save:svg(`<path ${S} d="M4 4h13l3 3v13H4V4z"/><path ${S} d="M7 4v6h9V4"/><path ${S} d="M8 16h8v4H8z"/><path ${S} d="M14 6v2"/><path ${S} d="M8 13h8"/>`),
     library:svg(`<path ${S} d="M5 5h4v15H5zM10 4h4v16h-4zM15 7h4v13h-4z"/><path ${S} d="M16 10h2"/>`),
     edit:svg(`<path ${S} d="M4 20l4-1 10-10-3-3L5 16l-1 4z"/><path ${S} d="M13.5 7.5l3 3"/>`),
     trash:svg(`<path ${S} d="M5 7h14M10 11v6M14 11v6M8 7l1-3h6l1 3M7 7l1 13h8l1-13"/>`),
@@ -3262,7 +3276,7 @@ function registerServiceWorker(){
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
     frameNavAdd:['plus','Add Frame'],clearFrameBtn:['clear','Clear Frame'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
     simpleImageBtn:['image','Add Image'],simpleGraphBtn:['chart','Graph Creator'],simplePictureGraphBtn:['pictureGraph','Picture Graph'],simpleClassroomWidgetsBtn:['library','Classroom Widgets'],simpleMosaicBtn:['grid','Mosaic Images'],simpleMermaidBtn:['mermaid','Mermaid Diagram'],simpleWordCloudBtn:['wordcloud','Word Cloud'],simpleConceptMapBtn:['concept','Concept Map'],simpleEmojiBtn:['star','Emoji Mixer'],simpleGifBtn:['play','Create GIF'],simpleTntBtn:['tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
-    removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
+    removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['trash','Delete Selected'],floatDeleteBtn:['trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatSaveBtn:['save','Download selected content'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
     insertMermaidBtn:['mermaid','Mermaid Diagram'],insertWordCloudBtn:['wordcloud','Word Cloud'],openConceptMapDialogBtn:['concept','Concept Map'],resetBoardBtn:['reset','Reset Board'],
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
     closeOptions:['close','Close'],closeAbout:['close','Close'],closeMoreOptions:['close','Close'],closeMermaid:['close','Close'],closeWordCloud:['close','Close'],
