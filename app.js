@@ -388,12 +388,14 @@ function refreshSelectionToolbar(){
   refreshColoringPaintToolbar();
   refreshConceptCanvasControls?.();
 }
-function syncSimpleColor(){const inp=document.getElementById('simpleColorInput'); if(!inp) return; inp.value=tool==='sticky'?(ui.stickyColor?.value||'#fff59d'):(ui.strokeColor?.value||'#1E398D')}
+function syncSimpleColor(){const inp=document.getElementById('simpleColorInput'); const color=tool==='sticky'?(ui.stickyColor?.value||'#fff59d'):(ui.strokeColor?.value||'#1E398D'); if(inp) inp.value=color; updateToolColorPaletteActive(color)}
 function paintColor(){return ui.strokeColor?.value||gid('simpleColorInput')?.value||'#7c3aed'}
 function setPaintColor(color){
   if(ui.strokeColor) ui.strokeColor.value=color;
+  if(ui.fillColor) ui.fillColor.value=color;
   const simple=gid('simpleColorInput'); if(simple) simple.value=color;
   updateDotPaintPaletteActive(color);
+  updateToolColorPaletteActive(color);
 }
 function updateDotPaintPaletteActive(color=paintColor()){
   document.querySelectorAll('[data-dot-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.dotColor?.toLowerCase()===String(color).toLowerCase()));
@@ -475,6 +477,20 @@ function syncSimpleStickyPalette(){document.querySelectorAll('.sticky-color-swat
 function buildStickyPalette(className){
   const palette=document.createElement('div'); palette.className=className; palette.setAttribute('aria-label','Sticky note colors');
   [['#fff59d','Yellow'],['#bae6fd','Blue'],['#bbf7d0','Green'],['#fecdd3','Pink'],['#fed7aa','Orange']].forEach(([color,label])=>{const b=document.createElement('button'); b.type='button'; b.className='sticky-color-swatch'; b.dataset.stickyColor=color; b.style.setProperty('--swatch',color); b.setAttribute('aria-label',label+' sticky note'); b.setAttribute('title',label+' sticky note'); b.addEventListener('click',()=>{if(ui.stickyColor){ui.stickyColor.value=color; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))} setTool('sticky'); syncSimpleColor(); syncSimpleStickyPalette()}); palette.appendChild(b)});
+  return palette;
+}
+function updateToolColorPaletteActive(color=paintColor()){
+  document.querySelectorAll('[data-tool-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.toolColor?.toLowerCase()===String(color).toLowerCase()));
+}
+function buildToolColorPalette(){
+  const palette=document.createElement('div');
+  palette.className='tool-color-palette';
+  palette.setAttribute('aria-label','Drawing colors');
+  palette.innerHTML=DOT_PALETTE.map(color=>`<button type="button" class="tool-color-swatch" data-tool-color="${color}" aria-label="Use ${color}" style="--tool-color:${color}"></button>`).join('')+'<input type="color" class="tool-color-custom" id="toolCustomColor" aria-label="Custom drawing color" title="Custom color">';
+  const choose=color=>{setPaintColor(color); if(selectedIds.length) ui.strokeColor?.dispatchEvent(new Event('input',{bubbles:true}))};
+  palette.querySelectorAll('[data-tool-color]').forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.toolColor)));
+  palette.querySelector('#toolCustomColor')?.addEventListener('input',e=>choose(e.target.value));
+  updateToolColorPaletteActive();
   return palette;
 }
 
@@ -568,7 +584,7 @@ function ensureTopMenus(){
   const menuDefs=[
     ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],['Save to Google','saveDriveBtn'],['Load from Google','loadDriveBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
-    ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Classroom Widgets','openClassroomWidgetsBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['Emoji Mixer','openEmojiDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['Paint Dots','activateDotPaintBtn'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
+    ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['divider'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['divider'],['Classroom Widgets','openClassroomWidgetsBtn'],['Emoji Mixer','openEmojiDialogBtn'],['Create GIF','openGifDialogBtn'],['divider'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['divider'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['divider'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn'],['Keyboard Shortcuts','shortcutsBtn'],['TNT Reset','tntBtn']]],
     ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Mode','optionsBtn'],['About','aboutBtn']]]
   ];
@@ -586,6 +602,13 @@ function ensureTopMenus(){
     const list=document.createElement('div');
     list.className='top-menu-list';
     items.forEach(([label,target,submenu])=>{
+      if(label==='divider'){
+        const divider=document.createElement('div');
+        divider.className='top-menu-divider';
+        divider.setAttribute('role','separator');
+        list.appendChild(divider);
+        return;
+      }
       if(submenu==='viewSubmenu'){
         const row=document.createElement('div');
         row.className='top-menu-submenu';
@@ -649,6 +672,15 @@ function ensureTopMenus(){
         open.textContent='Open Library';
         open.addEventListener('click',()=>{nav.querySelectorAll('details[open]').forEach(d=>d.open=false); gid(target)?.click()});
         panel.appendChild(open);
+        const paint=document.createElement('button');
+        paint.type='button';
+        paint.textContent='Paint Dots';
+        paint.addEventListener('click',()=>{nav.querySelectorAll('details[open]').forEach(d=>d.open=false); gid('activateDotPaintBtn')?.click()});
+        panel.appendChild(paint);
+        const divider=document.createElement('div');
+        divider.className='top-menu-divider';
+        divider.setAttribute('role','separator');
+        panel.appendChild(divider);
         DOT_PICTURES.forEach(tpl=>{
           const choice=document.createElement('button');
           choice.type='button';
@@ -866,7 +898,7 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 /* Tool, workspace, and selection primitives. These are intentionally small
    because drawing, editing, grouping, and inspector code all depend on them. */
 function refreshToolGroupsActive(){document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>group.classList.toggle('active',!!group.querySelector(`button.active,[data-tool="${tool}"]`)))}
-function setTool(next){tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); if(next==='eraser') setStatus('Eraser: drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')}
+function setTool(next){tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); if(next==='eraser') setStatus('Eraser: drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='bucket') setStatus('Paint Bucket: click a shape, note, dot, or line to apply the selected color.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')}
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
 function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||localStorage.getItem('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; localStorage.setItem('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
@@ -877,6 +909,36 @@ function style(){return{stroke:ui.strokeColor.value,strokeWidth:+ui.strokeWidth.
 function defaultTextProps(type){const shape=SHAPE_TEXT_TYPES.includes(type);return{html:'',text:'',textColor:'#111827',fontSize:type==='sticky'?16:(type==='text'?24:20),hAlign:shape?'center':'left',vAlign:shape?'middle':'top',textRotation:0,autoScaleText:shape}}
 function activeInsertLayer(){if(!board.assignmentMode) return 'shared'; if(board.mode==='student') return 'student'; return board.currentLayer||'teacher'}
 function canEditObject(o){return !!o && !o.locked && !(board.assignmentMode && board.mode==='student' && o.layer==='teacher')}
+function bucketFillObject(o,color=paintColor()){
+  if(!o||!canEditObject(o)) return false;
+  if(['rect','ellipse','diamond','triangle','callout','speech','sticky','dot'].includes(o.type)){
+    o.fill=color;
+    o.fillPattern='';
+    return true;
+  }
+  if(o.type==='path'||o.type==='line'||o.type==='arrow'||o.type==='connector'){
+    o.stroke=color;
+    if(o.type==='connector') o.connectorLabelColor=color;
+    return true;
+  }
+  return false;
+}
+function applyBucketFill(o){
+  if(!o) return false;
+  if(!canEditObject(o)){
+    setStatus(o.locked?'That item is locked.':'Teacher-layer items are protected in assignment mode.','danger');
+    return true;
+  }
+  if(!bucketFillObject(o)){
+    setStatus('Paint Bucket fills shapes, notes, dots, and lines.','danger');
+    return true;
+  }
+  selectedIds=[o.id];
+  render();
+  saveState();
+  setStatus('Filled with the selected color.','success');
+  return true;
+}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c))}
 window.esc=esc;
 
@@ -1187,7 +1249,7 @@ function appendScratchErasePoint(p){
   requestRender();
   return true;
 }
-function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
+function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='bucket'){applyBucketFill(o); return} if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
   const multi=e.shiftKey||touchMultiSelect;
   const keepCurrentSelection=!multi&&selectedIds.length>1&&isSelected(o.id);
   const ids=multi?(toggleSelection(o.id),selectedIds):(keepCurrentSelection?selectedIds:((o.groupId&&!e.altKey)?groupMembers(o):[o.id]));
@@ -1200,7 +1262,7 @@ function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=f
   render()}
 function resizeDown(e){e.stopPropagation();const ids=selectedResizableIds();if(!ids.length)return;ids.forEach(idv=>{const o=findObj(idv); if(o?.type==='text') o.textAutoFitBox=false});const b=selectionBounds(ids),p=pt(e);if(!b)return;const dragIds=idsWithColoringPaint(ids);drag={resize:true,ids:dragIds,sx:p.x,sy:p.y,ox:b.x,oy:b.y,ow:b.w,oh:b.h,starts:dragIds.map(idv=>{const s=findObj(idv);return{id:s.id,x:s.x,y:s.y,w:s.w,h:s.h,fontSize:s.fontSize||20,d:s.d,clipBox:s.clipBox?{...s.clipBox}:null}})}}
 
-svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(tool==='dotpaint'){if(e.target.closest('.object')) return; const o=dotAtPoint(p.x,p.y); if(o){dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set}; paintDotAtPoint(p.x,p.y); return} setStatus('Dot Paint: drag across dots or click a dot to choose a color.','danger'); return} if(tool==='eraser'){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o?.type==='scratch'){startScratchErase(o,p); return} if(o&&canEditObject(o)&&!o.locked){cleanupConnectors([o.id]); cleanupColoringPaint([o.id]); panel().objects=panel().objects.filter(x=>x.id!==o.id); clearSelection(); render(); saveState(); setStatus('Erased.','success')} else if(o&&o.locked) setStatus('That item is locked.','danger')} else setStatus('Drag on a Scratch Cover, or click an object to erase it.','danger'); return} if(tool==='laser'){drawing={id:'laser_'+id(),type:'laser',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1}; const path=svgEl(`<path class="laser-trail" d="${drawing.d}" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>`); svg.appendChild(path); drawing._laserPath=path; return} if(tool==='select'){if(!e.target.closest('.object')){clearSelection(); connectorPendingFrom=null; marquee={active:true,x1:p.x,y1:p.y,x2:p.x,y2:p.y}; render()} return} if(['rect','ellipse','line','arrow','diamond','triangle','callout','speech'].includes(tool)){const extra=TEXTABLE_TYPES.includes(tool)?{html:'',text:'',textColor:ui.textColor.value,fontSize:+ui.fontSize.value||20,hAlign:'center',vAlign:'middle',textRotation:0,autoScaleText:true}:{}; drawing=makeObj(tool,p.x,p.y,1,1,extra); panel().objects.push(drawing); setSingleSelection(drawing.id); render(); return} if(tool==='pen'){drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,...style()}; panel().objects.push(drawing); setSingleSelection(drawing.id); return} if(tool==='text'){const fontSize=+ui.fontSize.value||24; const obj=makeObj('text',p.x,p.y,Math.max(96,fontSize*4),Math.round(fontSize*1.25+12),{fill:'none',stroke:'none',html:'',text:'',fontSize,textColor:ui.textColor.value,hAlign:'left',vAlign:'top',autoScaleText:true,textAutoFitBox:true}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='sticky'){const obj=makeObj('sticky',p.x,p.y,180,160,{fill:ui.stickyColor.value,stroke:'#111827',strokeWidth:1,html:'',text:'',fontSize:+ui.fontSize.value||16,textColor:ui.textColor.value,autoScaleText:true,imageSrc:''}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='comment'){const obj=makeObj('comment',p.x,p.y,220,120,{fill:'#fff7e6',stroke:'#f59e0b',strokeWidth:2,html:'',text:'',fontSize:16,textColor:'#111827',resolved:false}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='audio'){addObj(makeObj('audio',p.x,p.y,220,100,{fill:'#eff6ff',stroke:'#93c5fd',strokeWidth:2,html:'',text:'',fontSize:18,textColor:'#111827',audioSrc:'',audioName:''})); return} if(tool==='connector'){connectorPendingFrom=null; setStatus('Connector: click first shape, then second shape.'); return}});
+svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(tool==='dotpaint'){if(e.target.closest('.object')) return; const o=dotAtPoint(p.x,p.y); if(o){dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set}; paintDotAtPoint(p.x,p.y); return} setStatus('Dot Paint: drag across dots or click a dot to choose a color.','danger'); return} if(tool==='bucket'){const objEl=e.target.closest('.object'); if(objEl){applyBucketFill(findObj(objEl.dataset.id)); return} setStatus('Paint Bucket: click a shape, note, dot, or line to apply the selected color.','danger'); return} if(tool==='eraser'){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o?.type==='scratch'){startScratchErase(o,p); return} if(o&&canEditObject(o)&&!o.locked){cleanupConnectors([o.id]); cleanupColoringPaint([o.id]); panel().objects=panel().objects.filter(x=>x.id!==o.id); clearSelection(); render(); saveState(); setStatus('Erased.','success')} else if(o&&o.locked) setStatus('That item is locked.','danger')} else setStatus('Drag on a Scratch Cover, or click an object to erase it.','danger'); return} if(tool==='laser'){drawing={id:'laser_'+id(),type:'laser',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1}; const path=svgEl(`<path class="laser-trail" d="${drawing.d}" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>`); svg.appendChild(path); drawing._laserPath=path; return} if(tool==='select'){if(!e.target.closest('.object')){clearSelection(); connectorPendingFrom=null; marquee={active:true,x1:p.x,y1:p.y,x2:p.x,y2:p.y}; render()} return} if(['rect','ellipse','line','arrow','diamond','triangle','callout','speech'].includes(tool)){const extra=TEXTABLE_TYPES.includes(tool)?{html:'',text:'',textColor:ui.textColor.value,fontSize:+ui.fontSize.value||20,hAlign:'center',vAlign:'middle',textRotation:0,autoScaleText:true}:{}; drawing=makeObj(tool,p.x,p.y,1,1,extra); panel().objects.push(drawing); setSingleSelection(drawing.id); render(); return} if(tool==='pen'){drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,...style()}; panel().objects.push(drawing); setSingleSelection(drawing.id); return} if(tool==='text'){const fontSize=+ui.fontSize.value||24; const obj=makeObj('text',p.x,p.y,Math.max(96,fontSize*4),Math.round(fontSize*1.25+12),{fill:'none',stroke:'none',html:'',text:'',fontSize,textColor:ui.textColor.value,hAlign:'left',vAlign:'top',autoScaleText:true,textAutoFitBox:true}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='sticky'){const obj=makeObj('sticky',p.x,p.y,180,160,{fill:ui.stickyColor.value,stroke:'#111827',strokeWidth:1,html:'',text:'',fontSize:+ui.fontSize.value||16,textColor:ui.textColor.value,autoScaleText:true,imageSrc:''}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='comment'){const obj=makeObj('comment',p.x,p.y,220,120,{fill:'#fff7e6',stroke:'#f59e0b',strokeWidth:2,html:'',text:'',fontSize:16,textColor:'#111827',resolved:false}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='audio'){addObj(makeObj('audio',p.x,p.y,220,100,{fill:'#eff6ff',stroke:'#93c5fd',strokeWidth:2,html:'',text:'',fontSize:18,textColor:'#111827',audioSrc:'',audioName:''})); return} if(tool==='connector'){connectorPendingFrom=null; setStatus('Connector: click first shape, then second shape.'); return}});
 
 /* v2.5: pointermove uses requestRender (RAF coalescing). */
 let lastCursorBroadcast=0;
@@ -2603,7 +2665,7 @@ function applyStyleToSelectedObject(o){
   }
   Object.assign(o,st);
 }
-['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{selectedIds.forEach(idv=>applyStyleToSelectedObject(findObj(idv))); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
+['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{if(k==='strokeColor') updateToolColorPaletteActive(ui.strokeColor.value); selectedIds.forEach(idv=>applyStyleToSelectedObject(findObj(idv))); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
 ui.stickyColor.addEventListener('change',()=>{selectedIds.forEach(idv=>{const o=findObj(idv); if(o&&o.type==='sticky') o.fill=ui.stickyColor.value}); syncSimpleStickyPalette(); syncSimpleColor(); render(); saveState()});
 ui.fontSize.addEventListener('input',()=>{ui.fontSizeValue.textContent=ui.fontSize.value+'px'; const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.fontSize=+ui.fontSize.value; fitPlainTextBoxToContent(o); render(); saveState()}});
 ui.textColor.addEventListener('input',()=>{const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.textColor=ui.textColor.value; render(); saveState()}});
@@ -2904,7 +2966,7 @@ gid('cropCancel')?.addEventListener('click',()=>gid('cropDialog').close());
 gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cropRight').value=0; gid('cropBottom').value=0; gid('cropLeft').value=0; if(gid('cropShape')) gid('cropShape').value='none'; updateCropPreview()});
 gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value, shape=gid('cropShape')?.value||'none'; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} if(shape==='none') delete o.maskShape; else o.maskShape=shape; render(); saveState(); setStatus(shape==='none'?'Image cropped.':'Image shape applied.','success'); gid('cropDialog').close()});
 gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close()});
-gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else if(ui.strokeColor){ui.strokeColor.value=v; ui.strokeColor.dispatchEvent(new Event('input',{bubbles:true}))}});
+gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else {setPaintColor(v); ui.strokeColor?.dispatchEvent(new Event('input',{bubbles:true}))}});
 function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='simple'?'Simple':'Advanced'; const tip=m==='simple'?'Switch to Advanced view':'Switch to Simple view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
 gid('viewToggleBtn')?.addEventListener('click',()=>{const next=(ui.interfaceMode?.value||'simple')==='simple'?'advanced':'simple'; if(ui.interfaceMode) ui.interfaceMode.value=next; applyInterfaceMode(next); refreshViewToggle()});
 function refreshFrameNav(){const c=gid('frameCounter'); if(c){const p=panel(); const name=p?.name||('Panel '+(board.active+1)); c.textContent=name+' · '+(board.active+1)+'/'+board.panels.length; c.title=name+' ('+(board.active+1)+' of '+board.panels.length+')'} const bs=gid('bgSelectSimple'); if(bs) bs.value=panel().bg||'grid'}
@@ -3567,6 +3629,7 @@ function registerServiceWorker(){
   const icons={
     select:svg(`<path ${S} d="M5 3l12 8-5 1.5 3.5 6-3 1.7-3.4-5.9L5 18V3z"/>`),
     pen:svg(`<path ${S} d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3L5.5 16 4 20z"/><path ${S} d="M13.5 7.5l3 3"/>`),
+    bucket:svg(`<path ${S} d="M4 13l7-7 7 7-7 7-7-7z"/><path ${S} d="M8 9l6 6"/><path ${S} d="M19 16c1.4 1.6 2 2.8 2 3.7a2 2 0 0 1-4 0c0-.9.6-2.1 2-3.7z"/>`),
     dotpaint:svg(`<circle cx="7" cy="8" r="2.1" fill="#bbf7d0" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="6" r="2.1" fill="#bfdbfe" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="13" r="2.1" fill="#fecdd3" stroke="currentColor" stroke-width="1.4"/><path ${S} d="M15 12l5 5"/><path ${S} d="M16.5 10.5l4 4-2.8 2.8-4-4z"/><path d="M14 16l-2 4 4-2" fill="currentColor"/>`),
     dotheart:svg(`<circle cx="9" cy="7" r="1.7" fill="#ef4444"/><circle cx="15" cy="7" r="1.7" fill="#ef4444"/><circle cx="7" cy="11" r="1.7" fill="#ef4444"/><circle cx="12" cy="11" r="1.7" fill="#ef4444"/><circle cx="17" cy="11" r="1.7" fill="#ef4444"/><circle cx="9" cy="15" r="1.7" fill="#ef4444"/><circle cx="15" cy="15" r="1.7" fill="#ef4444"/><circle cx="12" cy="18" r="1.7" fill="#ef4444"/><path ${S} d="M12 21C7 17.5 4.5 14.6 4.5 10.6A4.4 4.4 0 0 1 12 7.5a4.4 4.4 0 0 1 7.5 3.1c0 4-2.5 6.9-7.5 10.4z" opacity=".45"/>`),
     eraser:svg(`<path ${S} d="M4 15l8-8a3 3 0 0 1 4.2 0l2.8 2.8a3 3 0 0 1 0 4.2l-6 6H8l-4-4z"/><path ${S} d="M9 10l6 6"/><path ${S} d="M13 20h7"/>`),
@@ -3656,7 +3719,7 @@ function registerServiceWorker(){
     isometric:svg(`<path ${S} d="M12 3v18M4 8l8 4 8-4M4 16l8-4 8 4"/>`),
     reset:svg(`<path ${S} d="M9 5H5v4"/><path ${S} d="M5 9a8 8 0 1 0 2.3-5.7L5 6"/><path ${S} d="M9 12h6M12 9v6"/>`)
   };
-  const toolIcons={select:['select','Select'],pen:['pen','Pen'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
+  const toolIcons={select:['select','Select'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
     undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp','Save to Google'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['tnt','TNT Reset'],
     imageBtn:['image','Load Image'],openColoringBookDialogBtn:['coloringBook','Coloring Book'],openGraphDialogBtn:['chart','Graph Creator'],openPictureGraphDialogBtn:['pictureGraph','Picture Graph'],openClassroomWidgetsBtn:['library','Classroom Widgets'],openMosaicDialogBtn:['grid','Mosaic Images'],openCollageDialogBtn:['grid','Collage'],openEmojiDialogBtn:['star','Emoji Mixer'],openGifDialogBtn:['play','Create GIF'],duplicateBtn:['duplicate','Duplicate'],frontBtn:['front','Bring Front'],backBtn:['back','Send Back'],groupBtn:['group','Group'],ungroupBtn:['ungroup','Ungroup'],
@@ -3707,6 +3770,7 @@ function registerServiceWorker(){
         const el=typeof item==='string'&&item.startsWith('#')?gid(item.slice(1)):tools.querySelector(`[data-tool="${item}"]`)||gid(item);
         if(el){el.classList.add(className||groupId); panelEl.appendChild(el)}
       });
+      if(groupId==='drawToolGroup') panelEl.appendChild(buildToolColorPalette());
       details.append(summary,panelEl);
       details.addEventListener('toggle',()=>{
         if(!details.open) return;
@@ -3718,7 +3782,7 @@ function registerServiceWorker(){
       return details;
     }
     const selectBtn=tools.querySelector('[data-tool="select"]');
-    const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
+    const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','connector','diamond','triangle','callout','speech'],className:'tool-group-shapes'});
     const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'sticky',items:['text','sticky','comment','audio'],className:'tool-group-text'});
     const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'image',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleWheelSpinnerBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});

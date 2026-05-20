@@ -55,6 +55,7 @@ body[data-tool="eraser"] #boardSvg{cursor:crosshair}
 body[data-tool="laser"] #boardSvg{cursor:crosshair}
 body[data-tool="pen"] #boardSvg{cursor:crosshair}
 body[data-tool="dotpaint"] #boardSvg{cursor:copy}
+body[data-tool="bucket"] #boardSvg{cursor:cell}
 body[data-tool="line"] #boardSvg,body[data-tool="arrow"] #boardSvg,body[data-tool="rect"] #boardSvg,body[data-tool="ellipse"] #boardSvg,body[data-tool="diamond"] #boardSvg,body[data-tool="triangle"] #boardSvg,body[data-tool="callout"] #boardSvg,body[data-tool="speech"] #boardSvg,body[data-tool="text"] #boardSvg,body[data-tool="sticky"] #boardSvg,body[data-tool="comment"] #boardSvg,body[data-tool="audio"] #boardSvg{cursor:crosshair}
 .selection{fill:none;stroke:#2563eb;stroke-width:1.5;stroke-dasharray:6 4;pointer-events:none}
 .handle{fill:#fff;stroke:#2563eb;stroke-width:2;cursor:nwse-resize}
@@ -175,6 +176,10 @@ dialog::backdrop{background:#0f172a88}
 .dot-paint-swatch.active{box-shadow:0 0 0 3px var(--navy)}
 #dotPaintCustomColor{width:32px;height:32px;padding:2px;border:1px solid var(--line);border-radius:999px;background:#fff}
 #dotPaintInlineColor{width:28px;height:28px;padding:2px;border:1px solid var(--line);border-radius:999px;background:#fff}
+.tool-color-palette{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,28px);gap:7px;margin-top:4px;padding-top:8px;border-top:1px solid var(--line)}
+.tool-color-swatch{width:28px;height:28px;min-width:28px;min-height:28px;padding:0;border-radius:999px;border:2px solid #fff;background:var(--tool-color);box-shadow:0 0 0 1px #11182733;cursor:pointer}
+.tool-color-swatch.active{box-shadow:0 0 0 3px var(--navy)}
+.tool-color-custom{width:28px;height:28px;padding:2px;border:1px solid var(--line);border-radius:999px;background:#fff}
 .restore-list,.moderation-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto}
 .list-item{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
 .list-item h4{margin:0 0 4px;font-size:14px}
@@ -222,6 +227,7 @@ dialog::backdrop{background:#0f172a88}
 .top-menu-list{position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:flex;flex-direction:column;gap:2px;min-width:210px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 18px 45px #11182733}
 .top-menu-list button{display:flex;width:100%;justify-content:flex-start;align-items:center;text-align:left;border:0;background:transparent;border-radius:7px;min-height:32px;padding:7px 9px;color:var(--ink);box-shadow:none}
 .top-menu-list button:hover,.top-menu-list button:focus-visible{background:#f3f4f8;filter:none}
+.top-menu-divider{height:1px;background:var(--line);margin:5px 4px}
 .top-menu-submenu{position:relative}
 .top-menu-submenu>button::after{content:'›';margin-left:auto;color:var(--muted);font-size:16px;line-height:1}
 .top-submenu-list{display:none;position:absolute;left:calc(100% + 7px);top:-6px;z-index:70;flex-direction:column;gap:2px;min-width:210px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 18px 45px #11182733}
