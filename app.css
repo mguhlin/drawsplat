@@ -607,6 +607,9 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .landing-coffee{display:inline-flex;color:#7c3aed;font-weight:800;text-decoration:underline;text-underline-offset:3px}
 .landing-hero-art{position:relative;min-height:520px;border-radius:30px;background:linear-gradient(145deg,#ffffff,#f3efff 58%,#fff7e6);border:1px solid #e3def9;box-shadow:0 28px 70px #7c3aed24;overflow:hidden;padding:26px}
 .landing-hero-art::before{content:'';position:absolute;inset:24px;border:1px solid #ffffffcc;border-radius:24px;pointer-events:none}
+.landing-hero-art.image-hero{display:flex;align-items:center;justify-content:center;width:min(100%,560px);min-height:0;aspect-ratio:1/1;margin:0 auto;padding:0;background:#fff;border:0;box-shadow:none;overflow:hidden}
+.landing-hero-art.image-hero::before{display:none}
+.landing-hero-preview-image{display:block;width:100%;height:100%;object-fit:contain}
 .landing-hero-logo{position:absolute;right:26px;top:22px;width:116px;height:auto;filter:drop-shadow(0 14px 22px #7c3aed33)}
 .landing-board-preview{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-content:end;height:100%;padding-top:120px}
 .preview-panel,.preview-card{background:#fff;border:1px solid #e4e7f1;border-radius:14px;padding:16px;box-shadow:0 14px 34px #17203317}
@@ -770,6 +773,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .landing-hero{grid-template-columns:1fr;min-height:0}
   .landing-hero-copy h1{font-size:42px}
   .landing-hero-art{min-height:440px}
+  .landing-hero-art.image-hero{min-height:0}
   .language-strip{grid-template-columns:1fr}
   .language-links{justify-content:flex-start}
   .feature-grid,.path-grid,.storage-grid{grid-template-columns:1fr 1fr}
@@ -794,6 +798,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .landing-actions{display:grid}
   .landing-cta{width:100%}
   .landing-hero-art{min-height:520px;padding:18px;border-radius:22px}
+  .landing-hero-art.image-hero{min-height:0;padding:0}
   .landing-board-preview{grid-template-columns:1fr;padding-top:110px}
   .preview-panel-wide,.preview-card{grid-column:auto}
   .feature-grid,.path-grid,.storage-grid{grid-template-columns:1fr}
