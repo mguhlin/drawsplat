@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat Google Drive and Sheets Setup</title>
+<meta name="description" content="Set up the optional Google Apps Script backend for DrawSplat Drive saves, cloud rooms, templates, and student turn-ins." />
+<link rel="canonical" href="https://drawsplat.org/guides/google-setup.html" />
+<link rel="stylesheet" href="../app.css" />
+</head>
+<body class="admin-page start-page support-page guide-article-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplat home">
+    <img src="../DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat</span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplat guide navigation">
+    <a href="../index.html">Home</a>
+    <a href="../support.html">Support</a>
+    <a href="index.html">Guides</a>
+    <a href="../admin.html">Teacher Admin</a>
+    <a href="../whiteboard.html">Whiteboard</a>
+  </nav>
+  <a class="landing-signin" href="../whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell article-shell">
+  <nav class="article-breadcrumb" aria-label="Guide breadcrumb">
+    <a href="../support.html">Support</a>
+    <span>/</span>
+    <a href="index.html">Guides and Classroom Activities</a>
+  </nav>
+
+  <article class="guide-article">
+    <p class="landing-eyebrow">Setup Guide</p>
+    <h1>DrawSplat Google Drive and Sheets Setup</h1>
+    <p class="article-lede">These steps configure the optional Google Apps Script backend for Drive saves, cloud rooms, templates, and turn-ins.</p>
+
+    <h2>1. Create the Google Backend</h2>
+    <ol>
+      <li>Create a Google Sheet named <strong>DrawSplat Saves</strong>.</li>
+      <li>Open <strong>Extensions &gt; Apps Script</strong>.</li>
+      <li>Paste the contents of <code>apps-script/Code.gs</code> into Apps Script.</li>
+      <li>Save the project.</li>
+      <li>Run the <code>setup()</code> function once.</li>
+      <li>Approve the requested Google Drive and Google Sheets permissions.</li>
+    </ol>
+    <p>The setup function creates or prepares:</p>
+    <ul>
+      <li>a Drive folder named <strong>DrawSplat Saves</strong></li>
+      <li>a <code>Boards</code> sheet</li>
+      <li>a <code>Rooms</code> sheet</li>
+      <li>a <code>Templates</code> sheet</li>
+      <li>a <code>TurnIns</code> sheet</li>
+    </ul>
+
+    <h2>2. Deploy the Web App</h2>
+    <ol>
+      <li>In Apps Script, choose <strong>Deploy &gt; New deployment</strong>.</li>
+      <li>Select <strong>Web app</strong>.</li>
+      <li>Set <strong>Execute as</strong> to <strong>Me</strong>.</li>
+      <li>Set <strong>Who has access</strong> to the narrowest option that works for your class or district.</li>
+      <li>Deploy.</li>
+      <li>Copy the Web App URL.</li>
+      <li>Paste the URL into DrawSplat under <strong>Options &gt; Google integration &gt; Script URL</strong>.</li>
+    </ol>
+    <p>For a hosted classroom deployment, you can place that URL in <code>DEFAULT_GOOGLE_SCRIPT_URL</code> near the top of <code>app.js</code>. That keeps students from needing a <code>script=</code> value in shared links.</p>
+
+    <h2>3. Teacher Classroom Workflow</h2>
+    <ol>
+      <li>Open DrawSplat.</li>
+      <li>Switch to <strong>Education Tools</strong>.</li>
+      <li>Enable assignment mode.</li>
+      <li>Create the panels needed for table groups.</li>
+      <li>Add backgrounds, templates, prompts, or teacher-layer content.</li>
+      <li>Enter a unique room name in <strong>Collaboration</strong>.</li>
+      <li>Optionally enter a room password.</li>
+      <li>Start <strong>Cloud Sync</strong>.</li>
+      <li>Click <strong>Copy Student Link</strong>. DrawSplat generates the student URL for the current room and copies it to the clipboard.</li>
+      <li>Share the copied link with students.</li>
+    </ol>
+    <p>Each room name acts as a unique shared whiteboard instance. The generated student link includes <code>role=student</code> and the room name so students open directly into the correct shared board.</p>
+
+    <h2>4. Student Workflow</h2>
+    <p>Students open the copied link. The link uses <code>role=student</code>, which locks DrawSplat into student mode.</p>
+    <p>Students can add:</p>
+    <ul>
+      <li>sticky notes</li>
+      <li>images</li>
+      <li>drawings</li>
+      <li>text</li>
+      <li>Mermaid diagrams</li>
+      <li>word clouds</li>
+    </ul>
+    <p>Students cannot use the student link to:</p>
+    <ul>
+      <li>edit the Google Apps Script URL</li>
+      <li>change panel backgrounds</li>
+      <li>clear panels</li>
+      <li>add panels</li>
+      <li>edit teacher-layer objects</li>
+    </ul>
+
+    <h2>5. How Saving Works</h2>
+    <p>Teacher saves initialize or update the full room board.</p>
+    <p>Student saves are merged by the Apps Script backend. The backend preserves:</p>
+    <ul>
+      <li>teacher panel backgrounds</li>
+      <li>teacher-layer objects</li>
+      <li>existing student-layer objects from other students</li>
+    </ul>
+    <p>Room passwords are stored as salted SHA-256 hashes in the Google Sheet, not as plain text.</p>
+
+    <h2>6. Security Notes</h2>
+    <p>The room password is a classroom access gate, not a full identity system.</p>
+    <p>Google login and account-level access are controlled by the Apps Script deployment setting. For real student authentication, deploy the Web App using the narrowest access setting allowed by your school or district.</p>
+
+    <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
+  </article>
+</main>
+
+<footer class="landing-footer">
+  <img src="../DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat Google setup guide.</span>
+  <a href="index.html">Guides</a>
+  <a href="../support.html">Support</a>
+</footer>
+</body>
+</html>

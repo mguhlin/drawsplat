@@ -1,15 +1,24 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.38';
+const CACHE = 'drawsplat-v3.0.41';
 const SHELL = [
   './',
   './index.html',
   './features.html',
   './start.html',
   './background-templates.html',
+  './support.html',
+  './guides/',
+  './guides/index.html',
+  './guides/scratchart.html',
+  './guides/google-setup.html',
+  './guides/project-reference.html',
+  './guides/scratchart-in-drawsplat.png',
   './pricing.html',
   './terms-privacy.html',
   './district-addendum.html',
   './admin-access.html',
+  './setup.md',
+  './README.md',
   './mysql-setup.html',
   './whiteboard.html','./index-sp.html','./index-vn.html','./index-ab.html','./index-cn.html','./index.uh.html',
   './admin.html','./admin.js','./admin-gate.js','./mysql-setup.js',

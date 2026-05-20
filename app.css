@@ -651,6 +651,36 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .features-hero h1{font-size:50px;line-height:1.03;margin:10px 0 14px;color:#101827;letter-spacing:0}
 .features-hero p{color:#5f6776;font-size:18px;line-height:1.6;margin:0 auto}
 .feature-page-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.support-shell{max-width:1120px}
+.support-hero{max-width:860px;margin:0 auto;padding:50px 0 12px;text-align:center}
+.support-hero h1{font-size:50px;line-height:1.03;margin:10px 0 14px;color:#101827;letter-spacing:0}
+.support-hero p{color:#5f6776;font-size:18px;line-height:1.6;margin:0 auto}
+.support-section{padding-top:34px}
+.support-empty-video{display:flex;min-height:220px;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px dashed #c7d2fe;border-radius:18px;box-shadow:0 12px 34px #1720330d;padding:28px}
+.support-empty-video strong{font-size:22px;color:#172033}
+.support-empty-video p{max-width:520px;margin:8px 0 0;color:#5f6776;line-height:1.55}
+.support-resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.support-resource-card{display:flex;min-height:260px;flex-direction:column;align-items:flex-start;background:#fff;border:1px solid #e4e7f1;border-radius:16px;box-shadow:0 12px 34px #17203310;padding:22px}
+.support-resource-card.featured{border-color:#7c3aed;box-shadow:0 18px 48px #7c3aed1f}
+.support-resource-card h3{font-size:24px;line-height:1.12;margin:12px 0 10px;color:#172033}
+.support-resource-card p{margin:0 0 18px;color:#5f6776;line-height:1.55}
+.support-resource-card .landing-cta{margin-top:auto}
+.support-resource-type{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;background:#f0e9ff;color:#6d28d9;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.article-shell{max-width:980px}
+.article-breadcrumb{display:flex;align-items:center;gap:8px;margin:26px 0 18px;color:#64748b;font-size:14px;font-weight:800}
+.article-breadcrumb a{color:#6d28d9;text-decoration:none}
+.article-breadcrumb a:hover{text-decoration:underline}
+.guide-article{background:#fff;border:1px solid #e4e7f1;border-radius:18px;box-shadow:0 18px 50px #17203312;padding:28px;margin-bottom:48px}
+.guide-hero-image{display:block;width:100%;height:auto;max-height:420px;object-fit:contain;background:#fff;border:1px solid #e4e7f1;border-radius:14px;margin:0 0 28px}
+.guide-article h1{max-width:820px;font-size:48px;line-height:1.04;margin:10px 0 14px;color:#101827;letter-spacing:0}
+.article-lede{font-size:19px;line-height:1.65;color:#334155}
+.guide-article h2{font-size:28px;line-height:1.15;margin:34px 0 12px;color:#172033}
+.guide-article p,.guide-article li{color:#4b5563;line-height:1.65}
+.guide-article p{margin:12px 0}
+.guide-article ul,.guide-article ol{padding-left:24px;margin:10px 0 18px}
+.guide-article li{margin:7px 0}
+.guide-article a{color:#6d28d9;font-weight:800}
+.article-return{margin-top:32px}
 .path-section{padding-top:34px}
 .path-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .path-card{display:flex;flex-direction:column;min-height:260px;color:#172033;text-decoration:none}
@@ -745,6 +775,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .tool-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tool-preview-card.wide{grid-column:span 1}
   .feature-page-grid{grid-template-columns:1fr}
+  .support-resource-grid{grid-template-columns:1fr}
   .pricing-hero h1{font-size:40px}
   .pricing-grid{grid-template-columns:1fr}
   .pricing-notes{grid-template-columns:1fr}
@@ -769,6 +800,14 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .features-hero{text-align:left;padding-top:34px}
   .features-hero h1{font-size:34px}
   .features-hero p{font-size:16px}
+  .support-hero{text-align:left;padding-top:34px}
+  .support-hero h1{font-size:34px}
+  .support-hero p{font-size:16px}
+  .guide-article{padding:18px;border-radius:14px}
+  .guide-article h1{font-size:34px}
+  .guide-article h2{font-size:23px}
+  .guide-hero-image{max-height:none}
+  .article-breadcrumb{flex-wrap:wrap;margin-top:8px}
   .landing-section-head h2{font-size:30px}
   .landing-footer{align-items:flex-start;flex-direction:column}
   .landing-footer a{margin-left:0}
