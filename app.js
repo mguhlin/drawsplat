@@ -584,7 +584,7 @@ function ensureTopMenus(){
   const menuDefs=[
     ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],['Save to Google','saveDriveBtn'],['Load from Google','loadDriveBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
-    ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['divider'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['divider'],['Classroom Widgets','openClassroomWidgetsBtn'],['Emoji Mixer','openEmojiDialogBtn'],['Create GIF','openGifDialogBtn'],['divider'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['divider'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['divider'],['Template: add to current frame','insertTemplateBtn','templateSubmenu'],['Template: new frame','newTemplatePanelBtn','templateSubmenu'],['Save Current Frame as Template','saveTemplateBtn'],['Load Saved Template Gallery','loadTemplateGalleryBtn']]],
+    ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['divider'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['divider'],['Classroom Widgets','openClassroomWidgetsBtn'],['Emoji Mixer','openEmojiDialogBtn'],['Create GIF','openGifDialogBtn'],['divider'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['divider'],['Sticker Library','openStickerLibraryBtn'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn'],['divider'],['Built-in Layouts','insertTemplateBtn','layoutSubmenu'],['divider'],['Save Frame as Reusable Template','saveTemplateBtn'],['Open Saved Templates','loadTemplateGalleryBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn'],['Keyboard Shortcuts','shortcutsBtn'],['TNT Reset','tntBtn']]],
     ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Mode','optionsBtn'],['About','aboutBtn']]]
   ];
@@ -635,7 +635,7 @@ function ensureTopMenus(){
         list.appendChild(row);
         return;
       }
-      if(submenu==='templateSubmenu'){
+      if(submenu==='layoutSubmenu'){
         const row=document.createElement('div');
         row.className='top-menu-submenu';
         const btn=document.createElement('button');
@@ -647,11 +647,23 @@ function ensureTopMenus(){
         const sel=gid('templateSelect');
         const options=sel?[...sel.options]:[];
         options.forEach(opt=>{
-          const choice=document.createElement('button');
-          choice.type='button';
-          choice.textContent=opt.textContent;
-          choice.addEventListener('click',()=>{if(sel) sel.value=opt.value; nav.querySelectorAll('details[open]').forEach(d=>d.open=false); gid(target)?.click()});
-          panel.appendChild(choice);
+          const layoutRow=document.createElement('div');
+          layoutRow.className='top-menu-submenu';
+          const layoutBtn=document.createElement('button');
+          layoutBtn.type='button';
+          layoutBtn.textContent=opt.textContent;
+          const actionPanel=document.createElement('div');
+          actionPanel.className='top-submenu-list';
+          [['Add to Current Frame','insertTemplateBtn'],['New Frame from Layout','newTemplatePanelBtn']].forEach(([actionLabel,actionTarget])=>{
+            const action=document.createElement('button');
+            action.type='button';
+            action.textContent=actionLabel;
+            action.addEventListener('click',()=>{if(sel) sel.value=opt.value; nav.querySelectorAll('details[open]').forEach(d=>d.open=false); gid(actionTarget)?.click()});
+            actionPanel.appendChild(action);
+          });
+          layoutRow.appendChild(layoutBtn);
+          layoutRow.appendChild(actionPanel);
+          panel.appendChild(layoutRow);
         });
         row.appendChild(btn);
         row.appendChild(panel);
