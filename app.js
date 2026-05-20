@@ -510,7 +510,7 @@ function setEraserWidth(width,label){
   if(ui.strokeWidth) ui.strokeWidth.value=String(width);
   refreshEraserSizeControls();
   setTool('eraser');
-  setStatus('Eraser thickness: '+(label||eraserWidthLabel())+'.','success');
+  setStatus('Eraser thickness updated.','success');
 }
 function buildEraserSizeControls(){
   const wrap=document.createElement('div');
@@ -518,7 +518,7 @@ function buildEraserSizeControls(){
   wrap.className='eraser-size-controls';
   wrap.hidden=true;
   wrap.setAttribute('aria-label','Eraser thickness');
-  wrap.innerHTML='<span>Eraser</span>'+ERASER_SIZE_CHOICES.map(([label,width])=>`<button type="button" data-eraser-width="${width}" aria-label="${label} eraser">${label}</button>`).join('');
+  wrap.innerHTML='<span>Eraser</span>'+ERASER_SIZE_CHOICES.map(([label,width],index)=>`<button type="button" data-eraser-width="${width}" aria-label="${label} eraser"><span class="eraser-size-dot eraser-size-dot-${index+1}" aria-hidden="true"></span></button>`).join('');
   wrap.querySelectorAll('[data-eraser-width]').forEach(btn=>btn.addEventListener('click',event=>{
     event.stopPropagation();
     setEraserWidth(+btn.dataset.eraserWidth,btn.textContent);
