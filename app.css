@@ -373,11 +373,15 @@ body[data-view="simple"] #simpleTntBtn:hover{background:#991b1b}
 .advanced-sticky-palette{margin:4px 0 6px 92px;max-width:190px}
 .sticky-color-swatch{min-width:0;min-height:28px;height:28px;padding:0;border-radius:8px;background:var(--swatch);border:1px solid #0002}
 .sticky-color-swatch.active{outline:3px solid #faa63477;border-color:#92400e}
-.eraser-size-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr repeat(3,auto);gap:6px;align-items:center;padding:7px;border:1px solid #fecaca;border-radius:10px;background:#fff7f7}
+.eraser-size-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr repeat(3,34px);gap:6px;align-items:center;padding:7px;border:1px solid #fecaca;border-radius:10px;background:#fff7f7}
 .eraser-size-controls[hidden]{display:none!important}
 .eraser-size-controls span{font-size:12px;font-weight:800;color:#991b1b}
-.eraser-size-controls button{min-height:30px;padding:5px 8px;border-color:#fecaca;background:#fff;color:#991b1b;font-size:12px;font-weight:800}
+.eraser-size-controls button{min-width:34px;min-height:34px;padding:0;border-color:#fecaca;background:#fff;color:#991b1b}
 .eraser-size-controls button.active{background:#ef4444;color:#fff;border-color:#dc2626}
+.eraser-size-dot{display:block;margin:auto;border-radius:999px;background:currentColor}
+.eraser-size-dot-1{width:8px;height:8px}
+.eraser-size-dot-2{width:15px;height:15px}
+.eraser-size-dot-3{width:23px;height:23px}
 body[data-view="simple"] .header-panels{display:none}
 body[data-view="simple"] .frame-nav{display:flex;align-items:center;gap:4px;background:#ffffff1a;border:1px solid #ffffff33;border-radius:12px;padding:4px 8px}
 body[data-view="simple"] .frame-nav #frameCounter{color:#fff;font-size:12px;font-weight:600;min-width:60px;max-width:180px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
