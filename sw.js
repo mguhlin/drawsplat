@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.45';
+const CACHE = 'drawsplat-v3.0.48';
 const SHELL = [
   './',
   './index.html',
@@ -16,6 +16,8 @@ const SHELL = [
   './guides/images/scratchart-in-drawsplat.png',
   './guides/images/google-drive-sheets-setup.png',
   './guides/images/panel-background-templates.png',
+  './guides/images/home-feature-preview.png',
+  './guides/images/mysql-setup-guide.png',
   './pricing.html',
   './terms-privacy.html',
   './district-addendum.html',
