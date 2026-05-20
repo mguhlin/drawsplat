@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat MySQL Setup Guide</title>
+<meta name="description" content="Set up the DrawSplat starter MySQL backend for self-hosted room, board, template, turn-in, and retention storage." />
+<link rel="canonical" href="https://drawsplat.org/guides/mysql-setup.html" />
+<link rel="stylesheet" href="../app.css" />
+</head>
+<body class="admin-page start-page support-page guide-article-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplat home">
+    <img src="../DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat</span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplat guide navigation">
+    <a href="../index.html">Home</a>
+    <a href="../support.html">Support</a>
+    <a href="index.html">Guides</a>
+    <a href="../admin.html">Teacher Admin</a>
+    <a href="../mysql-setup.html">MySQL Wizard</a>
+  </nav>
+  <a class="landing-signin" href="../whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell article-shell">
+  <nav class="article-breadcrumb" aria-label="Guide breadcrumb">
+    <a href="../support.html">Support</a>
+    <span>/</span>
+    <a href="index.html">Guides and Classroom Activities</a>
+  </nav>
+
+  <article class="guide-article">
+    <p class="landing-eyebrow">Setup Guide</p>
+    <h1>DrawSplat MySQL Setup and How It Works</h1>
+    <p class="article-lede">The MySQL backend is for self-hosted DrawSplat deployments that want local database storage for rooms, boards, templates, student turn-ins, retention metadata, and audit-ready server records.</p>
+
+    <h2>How the MySQL Option Works</h2>
+    <p>The DrawSplat browser app never connects directly to MySQL. The browser talks to a backend API over HTTP or HTTPS, and the backend talks to the database.</p>
+    <pre><code>DrawSplat browser app -> HTTPS backend API -> MySQL</code></pre>
+    <p>This matters because database hostnames, usernames, and passwords must stay on the server. Students and teachers should only receive the public backend API endpoint.</p>
+
+    <h2>What the Starter Backend Provides</h2>
+    <p>The starter backend in <code>server/mysql-backend/</code> includes API routes for:</p>
+    <ul>
+      <li>health checks</li>
+      <li>room creation</li>
+      <li>board load and save</li>
+      <li>reusable templates</li>
+      <li>student turn-ins</li>
+      <li>temporary session deletes</li>
+      <li>expired-session maintenance</li>
+    </ul>
+    <p>The starter stores board JSON in MySQL. For large image or audio uploads, a production deployment should add object storage or a protected filesystem location and store only metadata or file pointers in MySQL.</p>
+
+    <h2>1. Create the Database</h2>
+    <p>Create a MySQL database and application user on the database server:</p>
+    <pre><code>CREATE DATABASE drawsplat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'drawsplat_app'@'%' IDENTIFIED BY 'CHANGE_ME';
+GRANT SELECT, INSERT, UPDATE, DELETE ON drawsplat.* TO 'drawsplat_app'@'%';
+FLUSH PRIVILEGES;</code></pre>
+    <p>Use a strong password and restrict the database host permissions for your deployment.</p>
+
+    <h2>2. Run the Schema</h2>
+    <p>From the backend folder, load the schema into the database:</p>
+    <pre><code>mysql -u drawsplat_app -p drawsplat &lt; schema.sql</code></pre>
+    <p>The schema prepares the tables needed for rooms, boards, templates, turn-ins, retention metadata, and audit records.</p>
+
+    <h2>3. Install and Configure the Backend</h2>
+    <p>Install the Node backend dependencies in <code>server/mysql-backend/</code>:</p>
+    <pre><code>npm install</code></pre>
+    <p>Create the server-only environment file:</p>
+    <pre><code>cp .env.example .env</code></pre>
+    <p>Edit <code>.env</code> with the real database host, port, database name, user, password, TLS setting, and allowed DrawSplat origin. Keep this file out of Git and do not share it with students.</p>
+
+    <h2>4. Start and Test the Backend</h2>
+    <p>Start the backend server:</p>
+    <pre><code>npm start</code></pre>
+    <p>Then test the health route:</p>
+    <pre><code>curl http://localhost:8787/api/drawsplat/mysql/health</code></pre>
+    <p>A healthy backend returns JSON similar to:</p>
+    <pre><code>{"ok":true,"provider":"mysql","time":"2026-05-16T00:00:00.000Z"}</code></pre>
+
+    <h2>5. Connect DrawSplat to the Backend</h2>
+    <ol>
+      <li>Open <a href="../mysql-setup.html">DrawSplat MySQL Setup Wizard</a>.</li>
+      <li>Enter the public backend API endpoint, such as <code>https://drawsplat.example.org/api/drawsplat/mysql</code>.</li>
+      <li>Use <strong>Test Endpoint</strong> to verify the backend responds.</li>
+      <li>Use <strong>Save Endpoint</strong> to store the endpoint in the current browser.</li>
+    </ol>
+    <p>The wizard saves the endpoint and can generate a server-side <code>.env</code> template. It does not save the MySQL password in the browser.</p>
+
+    <h2>Current Integration Status</h2>
+    <p>The MySQL backend and setup wizard are the foundation for a self-hosted storage provider. The current static app can save the MySQL endpoint setting without breaking Google Apps Script. Full board sync through the MySQL API requires wiring the board save, load, cloud-sync, template, and turn-in calls to the MySQL provider.</p>
+
+    <h2>Production Checklist</h2>
+    <ul>
+      <li>Serve the backend over HTTPS.</li>
+      <li>Keep <code>.env</code> out of Git.</li>
+      <li>Do not expose MySQL directly to browsers.</li>
+      <li>Add authentication before public use.</li>
+      <li>Add role checks for teacher, student, and admin actions.</li>
+      <li>Set request-size limits appropriate for your deployment.</li>
+      <li>Put media files in object storage or a protected filesystem path.</li>
+      <li>Run expired-session cleanup as a scheduled job.</li>
+      <li>Log administrative deletes and exports in audit records.</li>
+    </ul>
+
+    <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
+  </article>
+</main>
+
+<footer class="landing-footer">
+  <img src="../DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat MySQL setup guide.</span>
+  <a href="index.html">Guides</a>
+  <a href="../support.html">Support</a>
+</footer>
+</body>
+</html>
