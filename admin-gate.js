@@ -2,7 +2,7 @@
   const ACCESS_KEY='drawsplat.adminAccess';
   // Public builds do not include a working admin password. Set this to the
   // SHA-256 hash of your deployment password, or use server-side auth/SSO.
-  const PASSWORD_HASH='';
+  const PASSWORD_HASH='042f36d69b1b5ffec86e7edbf04d8fda1ffda2a54e5a8d383f951939c34198fd';
   const $=id=>document.getElementById(id);
 
   function toHex(buffer){
