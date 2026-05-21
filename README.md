@@ -168,6 +168,8 @@ You can host DrawSplat on:
 
 The public project site is intended to run at [https://drawsplat.org](https://drawsplat.org) from the GitHub repository through Cloudflare Pages. Local testing still works from any static file server, such as `http://localhost:8000/`.
 
+For Cloudflare Workers/Pages static asset deploys, keep `.assetsignore` in the repository root. The deploy asset directory is the project root, so Git metadata and local-only folders such as `.git/`, `.codex/`, `server/`, and `node_modules/` must be excluded from the asset upload.
+
 ## Storage modes
 
 Teacher Admin supports four storage choices:
