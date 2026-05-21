@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplat Privacy Notice Builder</title>
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplat start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat</span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplat privacy builder navigation">
+    <a href="../index.html">Home</a>
+    <a href="terms-privacy.html">Terms & Privacy</a>
+    <a href="district-addendum.html">District Addendum</a>
+    <a href="../pages/support.html">Support</a>
+    <a href="../app/whiteboard.html">Whiteboard</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Privacy Notice Builder</p>
+    <h1>Create a deployment-specific DrawSplat privacy Markdown file.</h1>
+    <p>Fill in the local contact, storage mode, retention schedule, and consent basis for a school or organization deployment. The form generates a Markdown file in the browser; it does not send the information to DrawSplat.</p>
+  </section>
+
+  <section class="policy-builder-shell">
+    <form id="privacyBuilderForm" class="policy-builder-form">
+      <div class="policy-builder-section">
+        <h2>Deployment Details</h2>
+        <label>School, district, or organization
+          <input name="organization" type="text" placeholder="Example ISD">
+        </label>
+        <label>Deployment owner
+          <input name="owner" type="text" placeholder="Technology Department">
+        </label>
+        <label>Deployment URL
+          <input name="deploymentUrl" type="url" placeholder="https://drawsplat.example.org">
+        </label>
+        <label>Effective date
+          <input name="effectiveDate" type="date">
+        </label>
+      </div>
+
+      <div class="policy-builder-section">
+        <h2>Privacy Contacts</h2>
+        <label>Privacy/security contact name
+          <input name="privacyContact" type="text" placeholder="Privacy Officer or Technology Director">
+        </label>
+        <label>Privacy/security email
+          <input name="privacyEmail" type="email" placeholder="privacy@example.org">
+        </label>
+        <label>Breach notice contact method
+          <input name="breachContact" type="text" placeholder="Email, ticket system, phone, or district process">
+        </label>
+      </div>
+
+      <div class="policy-builder-section">
+        <h2>Configuration</h2>
+        <label>Storage mode
+          <select name="storageMode">
+            <option value="Browser-only">Browser-only</option>
+            <option value="Google Apps Script">Google Apps Script</option>
+            <option value="MySQL">MySQL</option>
+            <option value="Standalone backend">Standalone backend</option>
+            <option value="Hosted or managed service">Hosted or managed service</option>
+            <option value="Mixed configuration">Mixed configuration</option>
+          </select>
+        </label>
+        <label>Hosting or data location
+          <input name="hostingLocation" type="text" placeholder="District server, Google Drive, cloud region, or data center">
+        </label>
+        <label>Approved educational purpose
+          <textarea name="purpose" placeholder="Describe the classroom or instructional use."></textarea>
+        </label>
+        <label>Approved age or grade bands
+          <input name="ageBands" type="text" placeholder="Grades 3-12, staff only, workshop participants, etc.">
+        </label>
+      </div>
+
+      <div class="policy-builder-section">
+        <h2>Retention and Consent</h2>
+        <label>Retention schedule
+          <textarea name="retention" placeholder="Example: Browser-only work remains in the browser until cleared. Google Drive files remain until deleted by the teacher or district."></textarea>
+        </label>
+        <label>Consent or legal basis
+          <textarea name="consentBasis" placeholder="Example: School-authorized educational use under district policy, FERPA school official basis, parent notice, or local consent process."></textarea>
+        </label>
+        <label>Student uploads enabled?
+          <select name="studentUploads">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </label>
+        <label>Audio recording enabled?
+          <select name="audioRecording">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </label>
+        <label>Turn-ins enabled?
+          <select name="turnIns">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="policy-builder-actions">
+        <button class="landing-cta primary" type="submit">Download Markdown</button>
+        <button class="landing-cta" type="button" id="copyPrivacyMarkdownBtn">Copy Markdown</button>
+        <button class="landing-cta" type="button" id="clearPrivacyBuilderBtn">Clear Draft</button>
+      </div>
+      <p class="policy-builder-status" id="privacyBuilderStatus" role="status" aria-live="polite"></p>
+    </form>
+
+    <aside class="policy-builder-preview" aria-labelledby="privacyPreviewTitle">
+      <h2 id="privacyPreviewTitle">Markdown Preview</h2>
+      <pre id="privacyMarkdownPreview"></pre>
+    </aside>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat privacy notice builder.</span>
+  <a href="terms-privacy.html">Terms & Privacy</a>
+  <a href="district-addendum.html">District Addendum</a>
+</footer>
+<script src="../assets/js/privacy-builder.js"></script>
+</body>
+</html>

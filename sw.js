@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.72';
+const CACHE = 'drawsplat-v3.0.74';
 const SHELL = [
   './',
   './index.html',
@@ -30,12 +30,13 @@ const SHELL = [
   './pages/pricing.html',
   './legal/terms-privacy.html',
   './legal/district-addendum.html',
+  './legal/privacy-builder.html',
   './admin/access.html',
   './README.md',
   './admin/mysql-setup.html',
   './app/whiteboard.html','./languages/index-sp.html','./languages/index-vn.html','./languages/index-ab.html','./languages/index-cn.html','./languages/index.uh.html',
   './admin/admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
-  './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/brand/DrawSplat_logo.png',
+  './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/js/privacy-builder.js','./assets/brand/DrawSplat_logo.png','./assets/brand/DrawSplat_Terms_Privacy.png',
   './solutions/coinflipping/index.html',
   './solutions/coinflipping/assets/coin-heads.png',
   './solutions/coinflipping/assets/coin-tails.png',
