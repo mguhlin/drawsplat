@@ -8,7 +8,7 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 
 ## Current build
 
-**DrawSplat v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, and Support Guides**
+**DrawSplat v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, and Classroom Tool Widgets**
 
 ## Recent improvements
 
@@ -24,6 +24,9 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 - Expanded the Paint Bucket so clicking blank canvas can add a color layer above the panel background image, useful for quickly covering a background for ScratchArt.
 - Improved Simple toolbar tooltip positioning so long group tooltips stay readable near the left edge of the screen.
 - Added public setup guides for Google Drive + Sheets and the starter MySQL backend, including the important boundary that browsers call an HTTPS API and do not connect directly to MySQL.
+- Added classroom solution tools to **Tools → Classroom Widgets** as new-tab activities: Coin Flipper, Dice Roller, Meme Puzzle, Word Search Maker, Story Wheel, and Dicebreaker Creator.
+- Restyled the classroom solution tools to use DrawSplat colors and removed prior third-party branding references.
+- Updated Coin Flipper with local Heads/Tails image assets and a stylized classroom preset.
 
 ## Version evolution
 
@@ -59,7 +62,7 @@ timeline
   v3.0 : Admin and privacy foundation
        : Landing page, pricing, PROTECT-aligned policy, MySQL wizard
   v3.1 : Support and ScratchArt workflow
-       : Support page, guide hub, ScratchArt guide, menu cleanup, eraser sizes, incremental ScratchArt undo
+       : Support page, guide hub, ScratchArt guide, menu cleanup, eraser sizes, incremental ScratchArt undo, Classroom Widget tool links
 ```
 
 ## Included files
@@ -94,6 +97,8 @@ timeline
 - `apps-script/Code.gs` — optional Google Apps Script backend for Drive + Sheets saving, cloud sync, templates, and student turn-ins
 - `server/mysql-backend/` — starter Express + MySQL backend scaffold, schema, and setup guide
 - `assets/backgrounds/` — original DrawSplat SVG panel backgrounds for education templates
+- `solutions/` — standalone classroom tools opened from Classroom Widgets, including Coin Flipper, Dice Roller, Meme Puzzle, Word Search Maker, Story Wheel, and Dicebreaker Creator
+- `solutions/coinflipping/assets/` — local Heads/Tails coin images used by the Coin Flipper preset
 
 ## Core features
 
@@ -130,6 +135,8 @@ timeline
 - Dot Pictures and Dot Paint for countable classroom visuals that students can color by clicking or dragging across dots
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
+- Classroom Widgets include embedded board controls such as Poll, Random Pick, Wheel Spinner, Big Link, Work Mode, Traffic Light, Timer, Scoreboard, and Progress Race.
+- Classroom Widgets also open standalone classroom activity tools in new tabs: Coin Flipper, Dice Roller, Meme Puzzle, Word Search Maker, Story Wheel, and Dicebreaker Creator.
 - Teacher mode and student mode
 - Assignment mode with protected teacher layer and editable student layer
 - Answer key tagging and show/hide toggle
