@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "drawsplat",
+  "compatibility_date": "2026-05-21",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "exclude": [
+      "**/.git/**",
+      "**/node_modules/**"
+    ]
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
