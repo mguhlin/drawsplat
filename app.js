@@ -2269,7 +2269,7 @@ function openClassroomWidgetPicker(){
   dlg.dataset.editId='';
   dlg.dataset.kind='';
   gid('classroomWidgetTitle').textContent='Classroom Widgets';
-  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${CLASSROOM_WIDGETS.map(w=>`<button type="button" data-widget-kind="${w.kind}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`).join('')}${CLASSROOM_TOOL_LINKS.map(t=>`<button type="button" data-widget-tool-url="${esc(t.url)}"><strong>${esc(t.title)}</strong><span>${esc(t.summary)} Opens in a new tab.</span></button>`).join('')}</div>`;
+  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${CLASSROOM_WIDGETS.map(w=>`<button type="button" data-widget-kind="${w.kind}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`).join('')}${[...CLASSROOM_TOOL_LINKS].sort((a,b)=>a.title.localeCompare(b.title)).map(t=>`<button type="button" data-widget-tool-url="${esc(t.url)}"><strong>${esc(t.title)}</strong><span>${esc(t.summary)} Opens in a new tab.</span></button>`).join('')}</div>`;
   dlg.showModal();
 }
 function widgetSummary(kind){
