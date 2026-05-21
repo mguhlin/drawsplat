@@ -1,0 +1,244 @@
+[
+  {
+    "id": "allosaurus",
+    "category": "dinosaurs",
+    "label": "Allosaurus",
+    "path": "assets/coloring-book/allosaurus.jpg",
+    "paths": [
+      "assets/coloring-book/allosaurus.jpg",
+      "assets/coloring-book/allosaurus.jpeg",
+      "assets/coloring-book/allosaurus.png"
+    ]
+  },
+  {
+    "id": "anteater",
+    "category": "animals",
+    "label": "Anteater",
+    "path": "assets/coloring-book/anteater.png",
+    "paths": [
+      "assets/coloring-book/anteater.png",
+      "assets/coloring-book/anteater.jpg",
+      "assets/coloring-book/anteater.jpeg"
+    ]
+  },
+  {
+    "id": "apatosaurus",
+    "category": "dinosaurs",
+    "label": "Apatosaurus",
+    "path": "assets/coloring-book/apatosaurus.jpg",
+    "paths": [
+      "assets/coloring-book/apatosaurus.jpg",
+      "assets/coloring-book/apatosaurus.jpeg",
+      "assets/coloring-book/apatosaurus.png"
+    ]
+  },
+  {
+    "id": "archaopteryx",
+    "category": "dinosaurs",
+    "label": "Archaeopteryx",
+    "path": "assets/coloring-book/archaopteryx.jpg",
+    "paths": [
+      "assets/coloring-book/archaopteryx.jpg",
+      "assets/coloring-book/archaopteryx.jpeg",
+      "assets/coloring-book/archaopteryx.png"
+    ]
+  },
+  {
+    "id": "bear",
+    "category": "animals",
+    "label": "Bear",
+    "path": "assets/coloring-book/bear.jpg",
+    "paths": [
+      "assets/coloring-book/bear.jpg",
+      "assets/coloring-book/bear.jpeg",
+      "assets/coloring-book/bear.png"
+    ]
+  },
+  {
+    "id": "beaver",
+    "category": "animals",
+    "label": "Beaver",
+    "path": "assets/coloring-book/beaver.png",
+    "paths": [
+      "assets/coloring-book/beaver.png",
+      "assets/coloring-book/beaver.jpg",
+      "assets/coloring-book/beaver.jpeg"
+    ]
+  },
+  {
+    "id": "beaverpup",
+    "category": "animals",
+    "label": "Beaverpup",
+    "path": "assets/coloring-book/beaverpup.png",
+    "paths": [
+      "assets/coloring-book/beaverpup.png",
+      "assets/coloring-book/beaverpup.jpg",
+      "assets/coloring-book/beaverpup.jpeg"
+    ]
+  },
+  {
+    "id": "brachiosaurus",
+    "category": "dinosaurs",
+    "label": "Brachiosaurus",
+    "path": "assets/coloring-book/brachiosaurus.jpg",
+    "paths": [
+      "assets/coloring-book/brachiosaurus.jpg",
+      "assets/coloring-book/brachiosaurus.jpeg",
+      "assets/coloring-book/brachiosaurus.png"
+    ]
+  },
+  {
+    "id": "ceratosaurus",
+    "category": "dinosaurs",
+    "label": "Ceratosaurus",
+    "path": "assets/coloring-book/ceratosaurus.jpg",
+    "paths": [
+      "assets/coloring-book/ceratosaurus.jpg",
+      "assets/coloring-book/ceratosaurus.jpeg",
+      "assets/coloring-book/ceratosaurus.png"
+    ]
+  },
+  {
+    "id": "copsognathus",
+    "category": "dinosaurs",
+    "label": "Compsognathus",
+    "path": "assets/coloring-book/copsognathus.jpg",
+    "paths": [
+      "assets/coloring-book/copsognathus.jpg",
+      "assets/coloring-book/copsognathus.jpeg",
+      "assets/coloring-book/copsognathus.png"
+    ]
+  },
+  {
+    "id": "diplodocus",
+    "category": "dinosaurs",
+    "label": "Diplodocus",
+    "path": "assets/coloring-book/diplodocus.jpg",
+    "paths": [
+      "assets/coloring-book/diplodocus.jpg",
+      "assets/coloring-book/diplodocus.jpeg",
+      "assets/coloring-book/diplodocus.png"
+    ]
+  },
+  {
+    "id": "elephant",
+    "category": "animals",
+    "label": "Elephant",
+    "path": "assets/coloring-book/elephant.jpg",
+    "paths": [
+      "assets/coloring-book/elephant.jpg",
+      "assets/coloring-book/elephant.jpeg",
+      "assets/coloring-book/elephant.png"
+    ]
+  },
+  {
+    "id": "giraffe",
+    "category": "animals",
+    "label": "Giraffe",
+    "path": "assets/coloring-book/giraffe.png",
+    "paths": [
+      "assets/coloring-book/giraffe.png",
+      "assets/coloring-book/giraffe.jpg",
+      "assets/coloring-book/giraffe.jpeg"
+    ]
+  },
+  {
+    "id": "goat",
+    "category": "animals",
+    "label": "Goat",
+    "path": "assets/coloring-book/goat.png",
+    "paths": [
+      "assets/coloring-book/goat.png",
+      "assets/coloring-book/goat.jpg",
+      "assets/coloring-book/goat.jpeg"
+    ]
+  },
+  {
+    "id": "leopard",
+    "category": "animals",
+    "label": "Leopard",
+    "path": "assets/coloring-book/leopard.png",
+    "paths": [
+      "assets/coloring-book/leopard.png",
+      "assets/coloring-book/leopard.jpg",
+      "assets/coloring-book/leopard.jpeg"
+    ]
+  },
+  {
+    "id": "meerkats",
+    "category": "animals",
+    "label": "Meerkats",
+    "path": "assets/coloring-book/meerkats.png",
+    "paths": [
+      "assets/coloring-book/meerkats.png",
+      "assets/coloring-book/meerkats.jpg",
+      "assets/coloring-book/meerkats.jpeg"
+    ]
+  },
+  {
+    "id": "platypus",
+    "category": "animals",
+    "label": "Platypus",
+    "path": "assets/coloring-book/platypus.png",
+    "paths": [
+      "assets/coloring-book/platypus.png",
+      "assets/coloring-book/platypus.jpg",
+      "assets/coloring-book/platypus.jpeg"
+    ]
+  },
+  {
+    "id": "pterosaur",
+    "category": "dinosaurs",
+    "label": "Pterosaur",
+    "path": "assets/coloring-book/pterosaur.jpg",
+    "paths": [
+      "assets/coloring-book/pterosaur.jpg",
+      "assets/coloring-book/pterosaur.jpeg",
+      "assets/coloring-book/pterosaur.png"
+    ]
+  },
+  {
+    "id": "raccoon",
+    "category": "animals",
+    "label": "Raccoon",
+    "path": "assets/coloring-book/raccoon.png",
+    "paths": [
+      "assets/coloring-book/raccoon.png",
+      "assets/coloring-book/raccoon.jpg",
+      "assets/coloring-book/raccoon.jpeg"
+    ]
+  },
+  {
+    "id": "sauropod-eggs",
+    "category": "dinosaurs",
+    "label": "Sauropod Eggs",
+    "path": "assets/coloring-book/sauropod_eggs.jpg",
+    "paths": [
+      "assets/coloring-book/sauropod_eggs.jpg",
+      "assets/coloring-book/sauropod_eggs.jpeg",
+      "assets/coloring-book/sauropod_eggs.png"
+    ]
+  },
+  {
+    "id": "stegosaurus",
+    "category": "dinosaurs",
+    "label": "Stegosaurus",
+    "path": "assets/coloring-book/stegosaurus.jpg",
+    "paths": [
+      "assets/coloring-book/stegosaurus.jpg",
+      "assets/coloring-book/stegosaurus.jpeg",
+      "assets/coloring-book/stegosaurus.png"
+    ]
+  },
+  {
+    "id": "wolves",
+    "category": "animals",
+    "label": "Wolves",
+    "path": "assets/coloring-book/wolves.png",
+    "paths": [
+      "assets/coloring-book/wolves.png",
+      "assets/coloring-book/wolves.jpg",
+      "assets/coloring-book/wolves.jpeg"
+    ]
+  }
+]
