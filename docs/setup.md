@@ -29,7 +29,7 @@ The setup function creates or prepares:
 6. Copy the Web App URL.
 7. Paste the URL into DrawSplat under **Options > Google integration > Script URL**.
 
-For a hosted classroom deployment, you can place that URL in `DEFAULT_GOOGLE_SCRIPT_URL` near the top of `app.js`. That keeps students from needing a `script=` value in shared links.
+For a hosted classroom deployment, you can place that URL in `DEFAULT_GOOGLE_SCRIPT_URL` near the top of `assets/js/app.js`. That keeps students from needing a `script=` value in shared links.
 
 ## 3. Teacher Classroom Workflow
 

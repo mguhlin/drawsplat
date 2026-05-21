@@ -84,15 +84,16 @@ timeline
 - `index-cn.html` — Chinese entry page
 - `index.uh.html` — Urdu / Hindi entry page
 - `admin.html` — teacher/admin setup page for Google integration and classroom links
-- `admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
-- `admin.js` — admin-page settings, backend ping, and link generation
+- `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
+- `assets/js/admin.js` — admin-page settings, backend ping, and link generation
 - `mysql-setup.html` — Moodle-style MySQL setup wizard for endpoint testing and server `.env` template generation
-- `mysql-setup.js` — MySQL wizard behavior
-- `app.css` — shared stylesheet (extracted in v2.5)
-- `app.js` — shared application code (extracted in v2.5)
-- `i18n.js` — runtime translation applicator (new in v2.5)
-- `locales.js` — single source of truth for every UI translation (new in v2.5)
-- `template-gallery.js` — keeps public template-gallery links aligned with the selected language
+- `assets/js/mysql-setup.js` — MySQL wizard behavior
+- `assets/css/app.css` — shared stylesheet (extracted in v2.5)
+- `assets/js/app.js` — shared application code (extracted in v2.5)
+- `assets/js/i18n.js` — runtime translation applicator (new in v2.5)
+- `assets/js/locales.js` — single source of truth for every UI translation (new in v2.5)
+- `assets/js/template-gallery.js` — keeps public template-gallery links aligned with the selected language
+- `assets/brand/` — logo and cover artwork used by the public pages
 - `sw.js` — service worker for offline shell (new in v2.5)
 - `apps-script/Code.gs` — optional Google Apps Script backend for Drive + Sheets saving, cloud sync, templates, and student turn-ins
 - `server/mysql-backend/` — starter Express + MySQL backend scaffold, schema, and setup guide
@@ -183,7 +184,7 @@ Teacher Admin supports four storage choices:
 
 The MySQL wizard is available at `mysql-setup.html`. It saves the public API endpoint and generates a server-side `.env` template. Do not store MySQL passwords in the browser; credentials belong on the backend server.
 
-The public repository does not ship a working Teacher Admin password. To use the static gate, set `PASSWORD_HASH` in `admin-gate.js` to the SHA-256 hash of your deployment password. This browser-side gate is only a deterrent; production deployments should protect admin pages with server-side authentication or SSO.
+The public repository does not ship a working Teacher Admin password. To use the static gate, set `PASSWORD_HASH` in `assets/js/admin-gate.js` to the SHA-256 hash of your deployment password. This browser-side gate is only a deterrent; production deployments should protect admin pages with server-side authentication or SSO.
 
 The starter backend is in `server/mysql-backend/`:
 
@@ -207,7 +208,7 @@ The current static app can save the MySQL endpoint setting without breaking Goog
 8. Copy the Web App URL.
 9. Open `admin.html` and paste the URL into the **Apps Script Web App URL** field.
 
-For a hosted classroom deployment, you can also place the Web App URL in `DEFAULT_GOOGLE_SCRIPT_URL` in `app.js`. That lets student links omit the script URL query parameter while still joining the same backend.
+For a hosted classroom deployment, you can also place the Web App URL in `DEFAULT_GOOGLE_SCRIPT_URL` in `assets/js/app.js`. That lets student links omit the script URL query parameter while still joining the same backend.
 
 Google setup now lives on `admin.html` instead of the student-facing board. The board still reads the saved Apps Script URL from the same browser storage key, but students joining through a `role=student` link do not see provider settings.
 
@@ -818,9 +819,9 @@ How it works
 - Each render gets the natural width/height of the SVG probed and stored, so the existing v2.8 crop tool also works on Mermaid diagrams.
 
 Setup (one-time)
-- DrawSplat does not bundle Mermaid because the library is sizeable (~2.5 MB). Download `mermaid.min.js` (the standalone build) from npm or a release archive, place it at the project root next to `app.js`, and reload.
-- The HTML files load it via `<script src="mermaid.min.js" defer onerror="window.__mermaidMissing=true">`. If it's missing, the dialog still opens but the preview shows: *"Mermaid library not loaded. Drop mermaid.min.js into the project root and reload — see README."*
-- The service worker `SHELL` list includes a commented-out reference to `./mermaid.min.js`. Once you've added the file, uncomment that line so it pre-caches for offline use.
+- DrawSplat keeps Mermaid in `vendor/mermaid.min.js` because the library is sizeable (~2.5 MB).
+- The HTML files load it via `<script src="vendor/mermaid.min.js" defer onerror="window.__mermaidMissing=true">`. If it's missing, the dialog still opens but the preview shows: *"Mermaid library not loaded. Add vendor/mermaid.min.js and reload — see README."*
+- The service worker `SHELL` list includes a commented-out reference to `./vendor/mermaid.min.js`. Once you've added the file, uncomment that line so it pre-caches for offline use.
 - Mermaid is initialized lazily with `securityLevel: 'strict'` (no inline JavaScript in diagrams) and `startOnLoad: false` (DrawSplat controls when rendering happens).
 
 Compatibility

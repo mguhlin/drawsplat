@@ -23,12 +23,11 @@ const SHELL = [
   './terms-privacy.html',
   './district-addendum.html',
   './admin-access.html',
-  './setup.md',
   './README.md',
   './mysql-setup.html',
   './whiteboard.html','./index-sp.html','./index-vn.html','./index-ab.html','./index-cn.html','./index.uh.html',
-  './admin.html','./admin.js','./admin-gate.js','./mysql-setup.js',
-  './app.js','./app.css','./i18n.js','./locales.js','./template-gallery.js','./DrawSplat_logo.png',
+  './admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
+  './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/brand/DrawSplat_logo.png',
   './solutions/coinflipping/index.html',
   './solutions/coinflipping/assets/coin-heads.png',
   './solutions/coinflipping/assets/coin-tails.png',
@@ -85,7 +84,7 @@ const SHELL = [
   './assets/smithsonian-animals/grevys-zebra.jpg',
   './assets/smithsonian-animals/elds-deer.jpg',
   './assets/smithsonian-animals/fennec-fox.jpg'
-  /* './mermaid.min.js' — add manually after downloading; not in SHELL by default so the SW install doesn't fail when it's absent */
+  /* './vendor/mermaid.min.js' — add manually after downloading; not in SHELL by default so the SW install doesn't fail when it's absent */
 ];
 
 self.addEventListener('install', e => {
@@ -100,7 +99,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/app.js','/app.css','/locales.js','/i18n.js','/template-gallery.js'];
+const NETWORK_FIRST_PATHS = ['/assets/js/app.js','/assets/css/app.css','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;

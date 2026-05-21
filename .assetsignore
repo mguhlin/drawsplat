@@ -12,6 +12,8 @@ node_modules/
 node_modules/**
 server/
 server/**
+assets/scratch-art/originals/
+assets/scratch-art/originals/**
 docs/
 docs/**
 *.log
