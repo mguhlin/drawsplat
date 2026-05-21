@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.67';
+const CACHE = 'drawsplat-v3.0.68';
 const SHELL = [
   './',
   './index.html',
@@ -39,6 +39,7 @@ const SHELL = [
   './solutions/storywheel/index.html',
   './solutions/dicebreakers/index.html',
   './solutions/dicebreakers/play.html',
+  './solutions/rubric-builder/index.html',
   './assets/backgrounds/kwl-chart.svg',
   './assets/backgrounds/frayer-model.svg',
   './assets/backgrounds/t-chart.svg',

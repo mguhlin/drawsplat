@@ -1957,7 +1957,8 @@ const CLASSROOM_TOOL_LINKS=[
   {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:'solutions/memepuzzle/index.html'},
   {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:'solutions/wordsearch/index.html'},
   {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:'solutions/storywheel/index.html'},
-  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'}
+  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'},
+  {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:'solutions/rubric-builder/index.html'}
 ];
 function defaultWidgetConfig(kind){
   const base={widgetKind:kind,widgetConfig:{}};
