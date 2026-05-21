@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rubric Builder</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --red: #ef4444;
+      --orange: #f97316;
+      --green: #22c55e;
+      --blue: #2563eb;
+      --ink: #111827;
+      --muted: #64748b;
+      --line: #ddd6fe;
+      --soft: #eef2ff;
+      --panel: #ffffff;
+      --bg: #ffffff;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 100%);
+    }
+
+    .page {
+      width: min(1400px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--soft);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 820px;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: #fff;
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .panel, .preview {
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 18px; }
+    .preview { padding: 18px; overflow: auto; }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: #000;
+      font-size: 1.2rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 13px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px;
+    }
+
+    textarea { min-height: 86px; resize: vertical; line-height: 1.35; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    button {
+      min-height: 38px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 800;
+    }
+
+    button.primary {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    button.danger { color: #991b1b; border-color: #fecaca; }
+
+    .criteria-list {
+      display: grid;
+      gap: 10px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .criteria-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fafbff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .criteria-head {
+      display: grid;
+      grid-template-columns: 1fr 74px auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .small-input { padding: 8px; }
+
+    .status {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.35;
+    }
+
+    .rubric-meta {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .rubric-meta h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1;
+    }
+
+    .rubric-meta p { margin: 0; color: var(--muted); line-height: 1.35; }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: #fff;
+    }
+
+    th, td {
+      border: 2px solid #e5e7eb;
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f5f3ff;
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    th:first-child, td:first-child { width: 190px; }
+
+    .criterion-name {
+      display: block;
+      color: #000;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .criterion-points {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--navy);
+      padding: 3px 8px;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .descriptor {
+      min-height: 72px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 960px) {
+      header, .app-grid { grid-template-columns: 1fr; }
+      header { align-items: flex-start; flex-direction: column; }
+      .app-grid { display: block; }
+      .preview { margin-top: 18px; }
+    }
+
+    @media print {
+      .top-bar, header, .panel { display: none !important; }
+      .page { width: 100%; padding: 0; }
+      .app-grid { display: block; padding: 0; }
+      .preview { border: 0; box-shadow: none; padding: 0; overflow: visible; }
+      table { min-width: 0; font-size: 10.5pt; }
+      th, td { padding: 7px; border-color: #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+  <main class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow">DrawSplat Classroom Widget</p>
+        <h1>Rubric Builder</h1>
+        <p class="subtitle">Create a classroom rubric with editable criteria, performance levels, point values, and ready-to-print descriptors.</p>
+      </div>
+      <a class="home-link" href="../../whiteboard.html">Open DrawSplat</a>
+    </header>
+
+    <section class="app-grid">
+      <aside class="panel">
+        <h2>Rubric setup</h2>
+
+        <div class="field">
+          <label for="rubricTitle">Title</label>
+          <input id="rubricTitle" value="Project Rubric">
+        </div>
+
+        <div class="field">
+          <label for="rubricDescription">Description</label>
+          <textarea id="rubricDescription">Use this rubric to guide feedback and scoring.</textarea>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="templateSelect">Template</label>
+            <select id="templateSelect">
+              <option value="project">Project</option>
+              <option value="writing">Writing</option>
+              <option value="presentation">Presentation</option>
+              <option value="collaboration">Collaboration</option>
+              <option value="blank">Blank</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="levelPreset">Levels</label>
+            <select id="levelPreset">
+              <option value="4">4 levels</option>
+              <option value="3">3 levels</option>
+              <option value="5">5 levels</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="primary" id="applyTemplateBtn">Apply Template</button>
+          <button id="addCriterionBtn">Add Criterion</button>
+          <button id="addLevelBtn">Add Level</button>
+        </div>
+
+        <div class="field">
+          <label>Performance levels</label>
+          <div id="levelsList" class="criteria-list"></div>
+        </div>
+
+        <div class="field">
+          <label>Criteria</label>
+          <div id="criteriaList" class="criteria-list"></div>
+        </div>
+
+        <div class="button-row">
+          <button id="copyBtn">Copy Text</button>
+          <button id="downloadCsvBtn">Download CSV</button>
+          <button id="printBtn">Print</button>
+          <button class="danger" id="resetBtn">Reset</button>
+        </div>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </aside>
+
+      <section class="preview" aria-label="Rubric preview">
+        <div class="rubric-meta">
+          <h2 id="previewTitle"></h2>
+          <p id="previewDescription"></p>
+          <p id="previewTotal"></p>
+        </div>
+        <div id="rubricTableWrap"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const templates = {
+      project: {
+        title: 'Project Rubric',
+        description: 'Use this rubric to evaluate planning, content, design, and reflection.',
+        criteria: [
+          ['Content Accuracy', 4],
+          ['Organization', 4],
+          ['Visual Design', 4],
+          ['Reflection', 4]
+        ]
+      },
+      writing: {
+        title: 'Writing Rubric',
+        description: 'Use this rubric to evaluate ideas, organization, voice, conventions, and revision.',
+        criteria: [
+          ['Ideas and Evidence', 4],
+          ['Organization', 4],
+          ['Voice and Word Choice', 4],
+          ['Conventions', 4]
+        ]
+      },
+      presentation: {
+        title: 'Presentation Rubric',
+        description: 'Use this rubric to evaluate content, delivery, visuals, and audience engagement.',
+        criteria: [
+          ['Content', 4],
+          ['Delivery', 4],
+          ['Visuals', 4],
+          ['Audience Engagement', 4]
+        ]
+      },
+      collaboration: {
+        title: 'Collaboration Rubric',
+        description: 'Use this rubric to evaluate teamwork, participation, communication, and follow-through.',
+        criteria: [
+          ['Participation', 4],
+          ['Communication', 4],
+          ['Problem Solving', 4],
+          ['Follow-through', 4]
+        ]
+      },
+      blank: {
+        title: 'Rubric',
+        description: '',
+        criteria: [['Criterion 1', 4], ['Criterion 2', 4], ['Criterion 3', 4]]
+      }
+    };
+
+    const levelSets = {
+      3: ['Meets Expectations', 'Developing', 'Beginning'],
+      4: ['Exceeds Expectations', 'Meets Expectations', 'Developing', 'Beginning'],
+      5: ['Advanced', 'Proficient', 'Developing', 'Beginning', 'Not Yet']
+    };
+
+    let state = {
+      title: 'Project Rubric',
+      description: 'Use this rubric to guide feedback and scoring.',
+      levels: [...levelSets[4]],
+      criteria: []
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function descriptor(criterion, level, index) {
+      const stems = [
+        `Shows strong, consistent evidence of ${criterion.toLowerCase()}.`,
+        `Shows clear evidence of ${criterion.toLowerCase()}.`,
+        `Shows partial evidence of ${criterion.toLowerCase()}.`,
+        `Shows limited evidence of ${criterion.toLowerCase()}.`,
+        `Does not yet show enough evidence of ${criterion.toLowerCase()}.`
+      ];
+      return stems[index] || stems[stems.length - 1];
+    }
+
+    function applyTemplate(name = $('templateSelect').value) {
+      const t = templates[name] || templates.project;
+      const levels = [...levelSets[$('levelPreset').value] || levelSets[4]];
+      state = {
+        title: t.title,
+        description: t.description,
+        levels,
+        criteria: t.criteria.map(([name, points]) => ({
+          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+          name,
+          points,
+          descriptions: levels.map((level, i) => descriptor(name, level, i))
+        }))
+      };
+      syncFields();
+      render();
+      setStatus('Template applied.');
+    }
+
+    function syncFields() {
+      $('rubricTitle').value = state.title;
+      $('rubricDescription').value = state.description;
+    }
+
+    function updateStateFromFields() {
+      state.title = $('rubricTitle').value.trim() || 'Rubric';
+      state.description = $('rubricDescription').value.trim();
+    }
+
+    function setStatus(text) {
+      $('status').textContent = text || '';
+      if (text) setTimeout(() => { if ($('status').textContent === text) $('status').textContent = ''; }, 2400);
+    }
+
+    function renderLevels() {
+      $('levelsList').innerHTML = state.levels.map((level, index) => `
+        <div class="criteria-card">
+          <div class="criteria-head">
+            <input class="small-input" value="${escapeAttr(level)}" data-level-name="${index}" aria-label="Level name">
+            <span></span>
+            <button class="danger" data-remove-level="${index}" ${state.levels.length <= 2 ? 'disabled' : ''}>Remove</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCriteriaEditor() {
+      $('criteriaList').innerHTML = state.criteria.map((criterion, index) => `
+        <div class="criteria-card">
+          <div class="criteria-head">
+            <input class="small-input" value="${escapeAttr(criterion.name)}" data-criterion-name="${index}" aria-label="Criterion name">
+            <input class="small-input" type="number" min="0" max="100" value="${criterion.points}" data-criterion-points="${index}" aria-label="Points">
+            <button class="danger" data-remove-criterion="${index}">Remove</button>
+          </div>
+          ${state.levels.map((level, levelIndex) => `
+            <textarea data-description="${index}:${levelIndex}" aria-label="${escapeAttr(criterion.name)} ${escapeAttr(level)}">${escapeHtml(criterion.descriptions[levelIndex] || '')}</textarea>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderPreview() {
+      updateStateFromFields();
+      $('previewTitle').textContent = state.title;
+      $('previewDescription').textContent = state.description;
+      const total = state.criteria.reduce((sum, c) => sum + (+c.points || 0), 0);
+      $('previewTotal').textContent = `${total} total points`;
+      const table = `
+        <table>
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              ${state.levels.map(level => `<th>${escapeHtml(level)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${state.criteria.map(criterion => `
+              <tr>
+                <td><span class="criterion-name">${escapeHtml(criterion.name)}</span><span class="criterion-points">${+criterion.points || 0} pts</span></td>
+                ${state.levels.map((level, i) => `<td><div class="descriptor">${escapeHtml(criterion.descriptions[i] || '')}</div></td>`).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      $('rubricTableWrap').innerHTML = table;
+    }
+
+    function render() {
+      renderLevels();
+      renderCriteriaEditor();
+      renderPreview();
+    }
+
+    function addCriterion() {
+      const name = `Criterion ${state.criteria.length + 1}`;
+      state.criteria.push({
+        id: String(Date.now() + Math.random()),
+        name,
+        points: 4,
+        descriptions: state.levels.map((level, i) => descriptor(name, level, i))
+      });
+      render();
+    }
+
+    function addLevel() {
+      state.levels.push(`Level ${state.levels.length + 1}`);
+      state.criteria.forEach(c => c.descriptions.push(descriptor(c.name, '', state.levels.length - 1)));
+      render();
+    }
+
+    function normalizeDescriptions() {
+      state.criteria.forEach(c => {
+        while (c.descriptions.length < state.levels.length) c.descriptions.push('');
+        c.descriptions = c.descriptions.slice(0, state.levels.length);
+      });
+    }
+
+    function rubricText() {
+      updateStateFromFields();
+      const lines = [state.title, state.description, '', `Total points: ${state.criteria.reduce((sum, c) => sum + (+c.points || 0), 0)}`, ''];
+      state.criteria.forEach(c => {
+        lines.push(`${c.name} (${+c.points || 0} pts)`);
+        state.levels.forEach((level, i) => lines.push(`- ${level}: ${c.descriptions[i] || ''}`));
+        lines.push('');
+      });
+      return lines.join('\n');
+    }
+
+    function downloadCsv() {
+      updateStateFromFields();
+      const rows = [['Criteria', 'Points', ...state.levels]];
+      state.criteria.forEach(c => rows.push([c.name, c.points, ...state.levels.map((_, i) => c.descriptions[i] || '')]));
+      const csv = rows.map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (state.title || 'rubric').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function escapeAttr(value) { return escapeHtml(value).replaceAll('\n', '&#10;'); }
+
+    document.addEventListener('input', event => {
+      const el = event.target;
+      if (el.id === 'rubricTitle' || el.id === 'rubricDescription') renderPreview();
+      if (el.dataset.levelName !== undefined) {
+        state.levels[+el.dataset.levelName] = el.value;
+        renderPreview();
+      }
+      if (el.dataset.criterionName !== undefined) {
+        state.criteria[+el.dataset.criterionName].name = el.value;
+        renderPreview();
+      }
+      if (el.dataset.criterionPoints !== undefined) {
+        state.criteria[+el.dataset.criterionPoints].points = +el.value || 0;
+        renderPreview();
+      }
+      if (el.dataset.description) {
+        const [criterionIndex, levelIndex] = el.dataset.description.split(':').map(Number);
+        state.criteria[criterionIndex].descriptions[levelIndex] = el.value;
+        renderPreview();
+      }
+    });
+
+    document.addEventListener('click', async event => {
+      const removeCriterion = event.target.closest('[data-remove-criterion]');
+      const removeLevel = event.target.closest('[data-remove-level]');
+      if (removeCriterion) {
+        state.criteria.splice(+removeCriterion.dataset.removeCriterion, 1);
+        render();
+      }
+      if (removeLevel && state.levels.length > 2) {
+        const index = +removeLevel.dataset.removeLevel;
+        state.levels.splice(index, 1);
+        state.criteria.forEach(c => c.descriptions.splice(index, 1));
+        normalizeDescriptions();
+        render();
+      }
+    });
+
+    $('applyTemplateBtn').addEventListener('click', () => applyTemplate());
+    $('addCriterionBtn').addEventListener('click', addCriterion);
+    $('addLevelBtn').addEventListener('click', addLevel);
+    $('levelPreset').addEventListener('change', () => applyTemplate());
+    $('printBtn').addEventListener('click', () => window.print());
+    $('downloadCsvBtn').addEventListener('click', downloadCsv);
+    $('copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(rubricText());
+        setStatus('Rubric copied.');
+      } catch (_) {
+        setStatus('Copy unavailable in this browser.');
+      }
+    });
+    $('resetBtn').addEventListener('click', () => applyTemplate('project'));
+
+    applyTemplate('project');
+  </script>
+</body>
+</html>
