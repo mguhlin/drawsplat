@@ -8,7 +8,22 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 
 ## Current build
 
-**DrawSplat v3.0 — Admin, Privacy, Pricing, and Self-Hosted Storage Foundations**
+**DrawSplat v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, and Support Guides**
+
+## Recent improvements
+
+- Added a public `support.html` page with an empty Videos section and Resource Articles.
+- Added `guides/` as a classroom guide hub with HTML guide pages for ScratchArt, Google Drive + Sheets setup, MySQL setup, and the project reference.
+- Added guide banner images in `guides/images/` and updated the public home, guide, and template pages to use those visual assets.
+- Reorganized the whiteboard top menus so **Insert** is focused on insertable content, **Tools** holds tool workflows, **File** holds restore points, and **Options** holds Keyboard Shortcuts.
+- Added **ScratchArt** to the Insert menu while keeping it available from the Simple toolbar.
+- Removed the duplicate Create GIF entry from Insert so it only appears under Tools.
+- Added ScratchArt classroom documentation with a full HTML guide and links to free rainbow-background image sources.
+- Improved ScratchArt undo behavior so each completed eraser stroke is undoable without losing the background setup.
+- Added circle-based eraser thickness controls for small, larger, and largest erasing without text labels in the buttons.
+- Expanded the Paint Bucket so clicking blank canvas can add a color layer above the panel background image, useful for quickly covering a background for ScratchArt.
+- Improved Simple toolbar tooltip positioning so long group tooltips stay readable near the left edge of the screen.
+- Added public setup guides for Google Drive + Sheets and the starter MySQL backend, including the important boundary that browsers call an HTTPS API and do not connect directly to MySQL.
 
 ## Version evolution
 
@@ -43,6 +58,8 @@ timeline
         : Improved mosaics and new collage tool
   v3.0 : Admin and privacy foundation
        : Landing page, pricing, PROTECT-aligned policy, MySQL wizard
+  v3.1 : Support and ScratchArt workflow
+       : Support page, guide hub, ScratchArt guide, menu cleanup, eraser sizes, incremental ScratchArt undo
 ```
 
 ## Included files
@@ -51,6 +68,9 @@ timeline
 - `whiteboard.html` — English whiteboard app
 - `start.html` — backwards-compatible redirect to `index.html`
 - `background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
+- `support.html` — support landing page with Videos and Resource Articles sections
+- `guides/` — HTML guide hub with classroom activity, setup, and project-reference articles
+- `guides/images/` — banner and guide images used by public pages and guides
 - `pricing.html` — pricing page with the free version and one-time as-is license option
 - `terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
 - `district-addendum.html` — signature-ready district data privacy addendum template
@@ -82,6 +102,11 @@ timeline
 - Simple / Advanced interface modes
   - **Simple** focuses on core classroom tools: select, pen, line, arrow, rectangle, ellipse, text, sticky notes, image upload, duplicate, basic styling, panels, and save/load.
   - **Advanced** reveals the full toolkit: connectors, additional shapes, comments, audio notes, stickers, templates, fill patterns, restore points, collaboration, assignment mode, answer keys, moderation, and advanced arrangement tools.
+- Organized top menus
+  - **File** contains save/load/import/export actions plus Save Restore Point and Restore Point.
+  - **Insert** is focused on insertable content such as images, graphs, diagrams, word clouds, concept maps, stickers, dot pictures, and ScratchArt.
+  - **Tools** contains workflows such as Create GIF, Classroom Widgets, background tools, built-in layouts, reusable frame templates, and TNT Reset.
+  - **Options** contains view, inspector, keyboard shortcuts, mode, and about controls.
 - Direct shape text editing
   - Click a text-capable shape and start typing, or double-click rectangles, circles/ellipses, diamonds, triangles, callouts, speech bubbles, text boxes, notes, comments, or audio-note labels to edit text directly on the canvas.
   - The inline editor appears directly over the selected shape. Type on the canvas, choose **Done** when finished, use **Ctrl/Cmd + Enter** to close, or **Escape** to cancel.
@@ -93,6 +118,10 @@ timeline
 - Adjustable line color, fill color, fill patterns, opacity, and line thickness
 - Background choices: blank, grid, dots, graph, ruled, and isometric
 - Locked per-panel background images (Jamboard-style) — teacher loads a reference image, students see and work on top of it without being able to alter or remove it
+- Paint Bucket can fill editable objects or place a canvas color layer above the panel background image.
+- ScratchArt creates a cover over the current panel so students can use the Eraser to reveal a hidden background image.
+- ScratchArt eraser strokes are committed as incremental undo steps, so Undo removes the latest reveal stroke without losing the background.
+- Eraser thickness controls use three circle-size buttons for fast ScratchArt reveal work.
 - Multi-select, marquee select, copy/paste, duplicate, group, ungroup, and bring-front/send-back tools
 - Custom sticker / stamp tools, including teacher-uploaded image stickers
 - Graph makers for bar, line, area, pie, and picture graphs, plus canvas-native concept maps
@@ -114,6 +143,7 @@ timeline
 - PNG export and PDF export
 - Local `.drawsplat.json` save/load
 - Playful TNT reset effect to clear the current panel and start over
+- Public Support and Guides pages for setup help, classroom activities, and visual reference articles
 
 ## Local use
 
@@ -137,7 +167,7 @@ Teacher Admin supports four storage choices:
 
 - **Google Apps Script + Drive**: current cross-device classroom option. Save/load, cloud sync, templates, and turn-ins use the Apps Script backend.
 - **Browser-only timed session**: stores work in the browser autosave and refreshes an expiration timer on each save. When the timer expires, the next board load clears the local autosave. This is useful for temporary sessions such as workshops, labs, or shared devices.
-- **MySQL backend**: planned self-hosted database option for schools or districts that want SQL-backed rooms, users, submissions, audit records, and scheduled retention while keeping Google Apps Script available as another provider.
+- **MySQL backend**: starter self-hosted database option for schools or districts that want SQL-backed rooms, boards, templates, turn-ins, audit records, and scheduled retention while keeping Google Apps Script available as another provider. The browser calls an HTTPS backend API; it never connects directly to MySQL.
 - **Standalone server folder**: planned backend mode for self-hosted deployments. Static HTML cannot write into a server sub-folder by itself; this mode needs an API endpoint such as `/api/drawsplat/session` to accept board JSON/media and expire it after 24 hours or another configured TTL.
 
 ## MySQL backend setup

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dicebreaker — Roll</title>
+<style>
+  :root {
+    --navy: #7c3aed;
+    --gold: #a855f7;
+    --black: #000000;
+    --white: #FFFFFF;
+    --red: #ef4444;
+    --blue: #6d28d9;
+    --yellow: #facc15;
+    --orange: #f97316;
+    --green: #22c55e;
+    --gray-90: #111827;
+    --gray-50: #64748b;
+    --gray-30: #cbd5e1;
+    --gray-10: #eef2ff;
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --ink: #404041;
+    --muted: #6b7280;
+    --line: #ddd6fe;
+    --accent: #7c3aed;
+    --accent-ink: #ffffff;
+    --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  .top-bar {
+    height: 12px;
+    background: linear-gradient(
+      90deg,
+      var(--navy) 0 32%,
+      var(--gold) 32% 52%,
+      var(--orange) 52% 64%,
+      var(--red) 64% 76%,
+      var(--blue) 76% 88%,
+      var(--green) 88% 96%,
+      var(--yellow) 96% 100%
+    );
+  }
+  header.top {
+    padding: 22px 24px 16px;
+    text-align: center;
+    border-bottom: 2px solid var(--line);
+    background: var(--panel);
+  }
+  header.top h1 {
+    color: var(--navy);
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 4.2rem);
+    line-height: .95;
+  }
+  header.top p { margin: 8px 0 0; color: var(--gray-90); font-size: 1rem; }
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 24px 16px 24px;
+    gap: 24px;
+  }
+  .stage {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 28px;
+    min-height: 380px;
+  }
+  .scene {
+    width: 280px; height: 280px;
+    perspective: 1400px;
+  }
+  @media (min-width: 720px) {
+    .scene { width: 340px; height: 340px; perspective: 1700px; }
+  }
+  .cube {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(20deg);
+    transition: transform 2.2s cubic-bezier(.22, .8, .28, 1);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cube.rolling { cursor: progress; }
+  .face {
+    position: absolute; inset: 0;
+    background: #fff;
+    border: 4px solid var(--accent);
+    border-radius: 28px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 14%;
+    gap: 6%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+    backface-visibility: hidden;
+  }
+  .face .dot {
+    border-radius: 50%;
+    background: var(--accent);
+    align-self: center; justify-self: center;
+    width: 70%; height: 70%;
+  }
+  .face .slot { width: 100%; height: 100%; }
+  /* cube assembly: half = 50% of cube width = 140px or 170px */
+  .face[data-n="1"] { transform: translateZ(140px); }
+  .face[data-n="6"] { transform: rotateY(180deg) translateZ(140px); }
+  .face[data-n="3"] { transform: rotateY(90deg)  translateZ(140px); }
+  .face[data-n="4"] { transform: rotateY(-90deg) translateZ(140px); }
+  .face[data-n="5"] { transform: rotateX(90deg)  translateZ(140px); }
+  .face[data-n="2"] { transform: rotateX(-90deg) translateZ(140px); }
+  @media (min-width: 720px) {
+    .face[data-n="1"] { transform: translateZ(170px); }
+    .face[data-n="6"] { transform: rotateY(180deg) translateZ(170px); }
+    .face[data-n="3"] { transform: rotateY(90deg)  translateZ(170px); }
+    .face[data-n="4"] { transform: rotateY(-90deg) translateZ(170px); }
+    .face[data-n="5"] { transform: rotateX(90deg)  translateZ(170px); }
+    .face[data-n="2"] { transform: rotateX(-90deg) translateZ(170px); }
+  }
+  .hint {
+    color: var(--muted); font-size: 14px;
+  }
+  .result {
+    max-width: 720px; margin: 0 auto;
+    background: var(--panel); border: 2px solid var(--line);
+    border-radius: 8px; box-shadow: var(--shadow);
+    padding: 22px 24px;
+    text-align: center;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .3s, transform .3s;
+    pointer-events: none;
+  }
+  .result.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .result .num {
+    display: inline-block; min-width: 44px; padding: 4px 12px;
+    background: var(--accent); color: var(--accent-ink);
+    border-radius: 999px; font-weight: 600; font-size: 14px;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .result .text {
+    margin: 14px 0 6px;
+    font-size: clamp(20px, 4vw, 30px);
+    font-weight: 500; line-height: 1.35;
+  }
+  .controls {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  button.btn {
+    appearance: none; border: 1px solid var(--line); background: #fff;
+    padding: 10px 16px; border-radius: 8px; font: inherit; cursor: pointer;
+    color: var(--ink); transition: all .15s;
+  }
+  button.btn:hover { background: #f3f4f6; }
+  button.btn.primary {
+    background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+  }
+  button.btn.primary:hover { filter: brightness(.95); }
+  footer.bottom {
+    text-align: center; padding: 14px; font-size: 13px; color: var(--muted);
+    border-top: 2px solid var(--line); background: var(--panel);
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; align-items: center;
+  }
+footer.bottom a { color: var(--accent); text-decoration: none; }
+  .empty {
+    max-width: 520px; margin: 60px auto; text-align: center; color: var(--muted);
+  }
+  .empty h2 { color: var(--ink); margin-bottom: 8px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%);
+    background: #1f2937; color: #fff; padding: 10px 16px; border-radius: 8px;
+    font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+
+<header class="top">
+  <h1 id="title">Dicebreaker</h1>
+  <p id="subtitle">Tap the die to roll.</p>
+</header>
+
+<main>
+  <section class="stage" id="stage">
+    <div class="scene">
+      <div class="cube" id="cube" role="button" aria-label="Roll the die" tabindex="0">
+        <!-- six faces injected here -->
+      </div>
+    </div>
+    <div class="hint" id="hint">Tap or press Space to roll</div>
+
+    <div class="result" id="result" aria-live="polite">
+      <span class="num"><span id="resultNum">—</span></span>
+      <p class="text" id="resultText"></p>
+    </div>
+
+    <div class="controls">
+      <button class="btn primary" id="rollBtn">Roll the die</button>
+      <button class="btn" id="rollAgain" hidden>Roll again</button>
+    </div>
+  </section>
+
+  <section class="empty" id="empty" hidden>
+    <h2>No dicebreaker loaded</h2>
+    <p>Load a <code>.json</code> file exported from the creator, or open a share link.</p>
+    <p>
+      <button class="btn primary" id="loadBtn">Load file&hellip;</button>
+      <a class="btn" href="index.html" style="text-decoration:none;display:inline-block;">Create one</a>
+    </p>
+    <input id="fileInput" type="file" accept="application/json,.json" hidden>
+  </section>
+</main>
+
+<footer class="bottom">
+  <span id="footerTitle"></span>
+  <a href="index.html">Create or edit &rarr;</a>
+  <a href="../../whiteboard.html">Tool Menu</a>
+  <button class="btn" id="loadBtn2" style="padding:4px 10px;font-size:13px;">Load file</button>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+
+function toast(msg, ms = 2200) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+//=== URL-safe base64 (Unicode) ======================================
+function b64urlDecode(s) {
+  const pad = s.length % 4 === 0 ? '' : '='.repeat(4 - (s.length % 4));
+  const norm = s.replace(/-/g, '+').replace(/_/g, '/') + pad;
+  const bin = atob(norm);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+//=== Die face dot positions ==========================================
+// 3x3 grid slots numbered 1..9 left-to-right, top-to-bottom.
+const DOTS = {
+  1: [5],
+  2: [1, 9],
+  3: [1, 5, 9],
+  4: [1, 3, 7, 9],
+  5: [1, 3, 5, 7, 9],
+  6: [1, 3, 4, 6, 7, 9]
+};
+
+function buildFace(n) {
+  const face = document.createElement('div');
+  face.className = 'face';
+  face.dataset.n = n;
+  const dots = new Set(DOTS[n]);
+  for (let i = 1; i <= 9; i++) {
+    const cell = document.createElement('div');
+    cell.className = dots.has(i) ? 'dot' : 'slot';
+    face.appendChild(cell);
+  }
+  return face;
+}
+
+function buildCube() {
+  const cube = $('#cube');
+  cube.innerHTML = '';
+  for (let n = 1; n <= 6; n++) cube.appendChild(buildFace(n));
+}
+
+//=== Rotation targeting ==============================================
+// Each face's "home" rotation matches its CSS transform; to show face N,
+// the cube must rotate to the inverse. These angles bring face N to the
+// front (toward +Z, toward the viewer).
+const SHOW_ROT = {
+  1: { x:   0, y:   0 },
+  2: { x:  90, y:   0 },   // 2 sits on the top in our build (rotateX(-90))
+  3: { x:   0, y: -90 },
+  4: { x:   0, y:  90 },
+  5: { x: -90, y:   0 },
+  6: { x:   0, y: 180 }
+};
+
+let curX = -20, curY = 20;        // matches initial transform
+let rolling = false;
+let lastResult = null;
+
+function roll() {
+  if (rolling) return;
+  rolling = true;
+  $('#cube').classList.add('rolling');
+  $('#result').classList.remove('show');
+  $('#hint').textContent = 'Rolling…';
+  $('#rollBtn').disabled = true;
+
+  const n = 1 + Math.floor(Math.random() * 6);
+  const target = SHOW_ROT[n];
+
+  // Always spin forward at least 2 full turns on each axis, plus a random
+  // extra half-spin so consecutive rolls feel different.
+  const extraX = 720 + Math.floor(Math.random() * 360);
+  const extraY = 720 + Math.floor(Math.random() * 360);
+  // Snap to the nearest target offset above current + extra.
+  let nextX = Math.round((curX + extraX - target.x) / 360) * 360 + target.x;
+  let nextY = Math.round((curY + extraY - target.y) / 360) * 360 + target.y;
+  // Guarantee we always rotate forward.
+  if (nextX <= curX) nextX += 360;
+  if (nextY <= curY) nextY += 360;
+
+  curX = nextX; curY = nextY;
+  $('#cube').style.transform = `rotateX(${curX}deg) rotateY(${curY}deg)`;
+
+  const onEnd = () => {
+    $('#cube').removeEventListener('transitionend', onEnd);
+    showResult(n);
+    rolling = false;
+    $('#cube').classList.remove('rolling');
+    $('#rollBtn').disabled = false;
+  };
+  $('#cube').addEventListener('transitionend', onEnd, { once: true });
+  // Fallback in case transitionend doesn't fire
+  setTimeout(() => { if (rolling) onEnd(); }, 2600);
+}
+
+function showResult(n) {
+  lastResult = n;
+  $('#resultNum').textContent = n;
+  $('#resultText').textContent = (state.prompts?.[n - 1] || '').trim() || '(no prompt set for this face)';
+  $('#result').classList.add('show');
+  $('#rollBtn').hidden = true;
+  $('#rollAgain').hidden = false;
+  $('#hint').textContent = 'You rolled a ' + n;
+}
+
+function resetRoll() {
+  $('#result').classList.remove('show');
+  $('#rollBtn').hidden = false;
+  $('#rollAgain').hidden = true;
+  $('#hint').textContent = 'Tap or press Space to roll';
+}
+
+//=== State / loading =================================================
+const state = {
+  title: '', subtitle: '',
+  prompts: ['', '', '', '', '', ''],
+  accent: '#7c3aed', layout: 'grid'
+};
+
+function applyState(s) {
+  state.title = s.title || state.title;
+  state.subtitle = s.subtitle || state.subtitle;
+  if (Array.isArray(s.prompts)) {
+    state.prompts = [0,1,2,3,4,5].map(i => s.prompts[i] ?? '');
+  }
+  if (s.accent) state.accent = s.accent;
+  if (s.layout) state.layout = s.layout;
+  paintChrome();
+}
+
+function paintChrome() {
+  document.documentElement.style.setProperty('--accent', state.accent);
+  $('#title').textContent = state.title || 'Dicebreaker';
+  $('#subtitle').textContent = state.subtitle || 'Tap the die to roll.';
+  $('#footerTitle').textContent = state.title || '';
+  document.title = (state.title || 'Dicebreaker') + ' — Roll';
+}
+
+function loadFromHash() {
+  const h = window.location.hash || '';
+  // accepted forms: #d=<base64>, #<base64>
+  let payload = '';
+  if (h.startsWith('#d=')) payload = h.slice(3);
+  else if (h.length > 1) payload = h.slice(1);
+  if (!payload) return false;
+  try {
+    const obj = JSON.parse(b64urlDecode(payload));
+    // Compact form uses short keys; long form uses full names.
+    applyState({
+      title: obj.title ?? obj.t,
+      subtitle: obj.subtitle ?? obj.s,
+      prompts: obj.prompts ?? obj.p,
+      accent: obj.accent ?? obj.c,
+      layout: obj.layout ?? obj.l
+    });
+    return true;
+  } catch (e) {
+    console.warn('Could not decode hash payload:', e);
+    return false;
+  }
+}
+
+async function loadFromFile(file) {
+  try {
+    const text = await file.text();
+    const obj = JSON.parse(text);
+    applyState(obj);
+    showStage();
+    toast('Loaded ' + file.name);
+  } catch (e) {
+    toast('Could not read file: ' + e.message, 3500);
+  }
+}
+
+function showEmpty() {
+  $('#stage').hidden = true;
+  $('#empty').hidden = false;
+}
+function showStage() {
+  $('#stage').hidden = false;
+  $('#empty').hidden = true;
+}
+
+//=== Wire up =========================================================
+function init() {
+  buildCube();
+  const ok = loadFromHash();
+  if (!ok) {
+    paintChrome();
+    showEmpty();
+  } else {
+    showStage();
+  }
+
+  $('#cube').addEventListener('click', roll);
+  $('#cube').addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); roll(); }
+  });
+  $('#rollBtn').addEventListener('click', roll);
+  $('#rollAgain').addEventListener('click', () => { resetRoll(); roll(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); roll(); }
+  });
+
+  // File loading
+  const fileInput = $('#fileInput');
+  $('#loadBtn').addEventListener('click', () => fileInput.click());
+  $('#loadBtn2').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files?.[0];
+    if (f) loadFromFile(f);
+    e.target.value = '';
+  });
+  // Drag-and-drop a JSON file anywhere on the page
+  ['dragenter','dragover'].forEach(ev =>
+    document.addEventListener(ev, e => { e.preventDefault(); }));
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    const f = e.dataTransfer?.files?.[0];
+    if (f) loadFromFile(f);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

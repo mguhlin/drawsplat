@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.48';
+const CACHE = 'drawsplat-v3.0.58';
 const SHELL = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const SHELL = [
   './guides/images/panel-background-templates.png',
   './guides/images/home-feature-preview.png',
   './guides/images/mysql-setup-guide.png',
+  './guides/images/project-reference-guide.png',
   './pricing.html',
   './terms-privacy.html',
   './district-addendum.html',
@@ -28,6 +29,16 @@ const SHELL = [
   './whiteboard.html','./index-sp.html','./index-vn.html','./index-ab.html','./index-cn.html','./index.uh.html',
   './admin.html','./admin.js','./admin-gate.js','./mysql-setup.js',
   './app.js','./app.css','./i18n.js','./locales.js','./template-gallery.js','./DrawSplat_logo.png',
+  './solutions/coinflipping/index.html',
+  './solutions/coinflipping/assets/coin-heads.png',
+  './solutions/coinflipping/assets/coin-tails.png',
+  './solutions/dice/index.html',
+  './solutions/memepuzzle/index.html',
+  './solutions/memepuzzle/student.html',
+  './solutions/wordsearch/index.html',
+  './solutions/storywheel/index.html',
+  './solutions/dicebreakers/index.html',
+  './solutions/dicebreakers/play.html',
   './assets/backgrounds/kwl-chart.svg',
   './assets/backgrounds/frayer-model.svg',
   './assets/backgrounds/t-chart.svg',

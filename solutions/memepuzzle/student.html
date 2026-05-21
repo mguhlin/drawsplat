@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meme Puzzle Student</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-10: #eef2ff;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--white); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%);
+    }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header { display: grid; gap: 8px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(2rem, 5vw, 4rem); line-height: .95; }
+    .subtitle { margin: 0; color: var(--gray-90); line-height: 1.45; }
+    main { display: grid; grid-template-columns: 1fr minmax(280px, 360px); gap: 18px; align-items: start; padding-top: 20px; }
+    .panel, .board-card { border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); padding: 18px; }
+    .image-board { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 2px solid var(--navy); border-radius: var(--radius); background: var(--gray-10); }
+    .image-board img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .tile-grid { position: absolute; inset: 0; display: grid; gap: 2px; padding: 2px; }
+    .cover-tile { display: grid; place-items: center; color: var(--white); background: linear-gradient(135deg, var(--navy), var(--blue)); border: 1px solid rgba(255,255,255,.35); font-weight: 900; font-size: clamp(.85rem, 2vw, 1.4rem); transition: opacity 240ms ease, transform 240ms ease; }
+    .cover-tile.open { opacity: 0; transform: scale(.92); pointer-events: none; }
+    .question { color: var(--navy); font-size: 1.25rem; font-weight: 900; line-height: 1.25; }
+    .field { display: grid; gap: 8px; margin-top: 14px; }
+    label { font-size: .86rem; font-weight: 800; }
+    input { width: 100%; border: 2px solid var(--border); border-radius: var(--radius); padding: 10px 12px; outline: none; }
+    input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,112,185,.18); }
+    .btn { min-height: 42px; border: 2px solid var(--navy); border-radius: var(--radius); padding: 9px 12px; color: var(--white); background: var(--navy); font-weight: 800; }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+    .progress { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat { border: 2px solid var(--border); border-radius: var(--radius); padding: 12px; }
+    .stat span { display: block; color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .stat strong { display: block; margin-top: 4px; color: var(--navy); font-size: 1.7rem; }
+    .message { min-height: 1.4em; margin-top: 12px; color: var(--navy); font-weight: 800; line-height: 1.4; }
+    .empty { color: var(--gray-50); line-height: 1.45; }
+    @media (max-width: 920px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <p class="eyebrow">DrawSplat Tools</p>
+      <h1 id="title">Meme Puzzle</h1>
+      <p class="subtitle">Answer each question correctly to reveal the hidden image.</p>
+    </header>
+    <main id="app">
+      <section class="board-card">
+        <div class="image-board">
+          <img id="puzzleImage" alt="Hidden meme puzzle image">
+          <div class="tile-grid" id="tileGrid"></div>
+        </div>
+      </section>
+      <aside class="panel">
+        <div class="progress">
+          <div class="stat"><span>Correct</span><strong id="correctCount">0</strong></div>
+          <div class="stat"><span>Total</span><strong id="totalCount">0</strong></div>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="field">
+          <label for="answerInput">Answer</label>
+          <input id="answerInput" type="text" autocomplete="off">
+          <button class="btn gold" id="submitBtn">Submit Answer</button>
+        </div>
+        <div class="message" id="message" role="status" aria-live="polite"></div>
+      </aside>
+    </main>
+  </div>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const state = { title: "Meme Puzzle", image: "", questions: [], index: 0, correct: 0, opened: 0 };
+
+    function b64urlDecode(s) {
+      const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+      const norm = s.replace(/-/g, "+").replace(/_/g, "/") + pad;
+      const bin = atob(norm);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function normalize(text) {
+      return String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function gridShape(count) {
+      const cols = Math.ceil(Math.sqrt(count * 1.6));
+      const rows = Math.ceil(count / cols);
+      return { rows, cols };
+    }
+
+    function loadConfig() {
+      const hash = window.location.hash || "";
+      if (!hash.startsWith("#p=")) return false;
+      try {
+        const cfg = JSON.parse(b64urlDecode(hash.slice(3)));
+        state.title = cfg.title || state.title;
+        state.image = cfg.image || "";
+        state.questions = Array.isArray(cfg.questions) ? cfg.questions : [];
+        return state.questions.length > 0 && state.image;
+      } catch {
+        return false;
+      }
+    }
+
+    function renderTiles() {
+      const count = state.questions.length || 1;
+      const shape = gridShape(count);
+      $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
+      $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
+      $("#tileGrid").innerHTML = Array.from({ length: count }, (_, i) => `<div class="cover-tile${i < state.opened ? " open" : ""}">${i + 1}</div>`).join("");
+    }
+
+    function render() {
+      $("#title").textContent = state.title;
+      $("#puzzleImage").src = state.image;
+      $("#correctCount").textContent = state.correct;
+      $("#totalCount").textContent = state.questions.length;
+      renderTiles();
+      if (state.index >= state.questions.length) {
+        $("#questionText").textContent = "Puzzle complete.";
+        $("#answerInput").disabled = true;
+        $("#submitBtn").disabled = true;
+        $("#message").textContent = "All tiles are open.";
+      } else {
+        $("#questionText").textContent = state.questions[state.index].question;
+      }
+    }
+
+    function submit() {
+      if (state.index >= state.questions.length) return;
+      const expected = normalize(state.questions[state.index].answer);
+      const actual = normalize($("#answerInput").value);
+      if (actual && actual === expected) {
+        state.correct += 1;
+        state.opened += 1;
+        state.index += 1;
+        $("#answerInput").value = "";
+        $("#message").textContent = "Correct. One tile removed.";
+        render();
+      } else {
+        $("#message").textContent = "Try again.";
+        $("#answerInput").select();
+      }
+    }
+
+    function init() {
+      if (!loadConfig()) {
+        $("#app").innerHTML = '<section class="panel"><p class="empty">No puzzle is loaded. Ask your teacher for the student link.</p></section>';
+        return;
+      }
+      $("#submitBtn").addEventListener("click", submit);
+      $("#answerInput").addEventListener("keydown", event => {
+        if (event.key === "Enter") submit();
+      });
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dicebreaker Creator</title>
+<style>
+  :root {
+    --navy: #7c3aed;
+    --gold: #a855f7;
+    --black: #000000;
+    --white: #FFFFFF;
+    --red: #ef4444;
+    --blue: #6d28d9;
+    --yellow: #facc15;
+    --orange: #f97316;
+    --green: #22c55e;
+    --gray-90: #111827;
+    --gray-50: #64748b;
+    --gray-30: #cbd5e1;
+    --gray-10: #eef2ff;
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --ink: #404041;
+    --muted: #6b7280;
+    --line: #ddd6fe;
+    --accent: #7c3aed;
+    --accent-ink: #ffffff;
+    --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.45;
+  }
+  .top-bar {
+    height: 12px;
+    background: linear-gradient(
+      90deg,
+      var(--navy) 0 32%,
+      var(--gold) 32% 52%,
+      var(--orange) 52% 64%,
+      var(--red) 64% 76%,
+      var(--blue) 76% 88%,
+      var(--green) 88% 96%,
+      var(--yellow) 96% 100%
+    );
+  }
+  header.top {
+    padding: 22px 24px;
+    border-bottom: 2px solid var(--line);
+    background: var(--panel);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  header.top h1 {
+    color: var(--navy);
+    font-size: clamp(1.8rem, 4vw, 3.4rem);
+    line-height: .95;
+    margin: 0;
+  }
+  header.top .tag { color: var(--gray-90); font-size: 1rem; }
+  header.top .spacer { flex: 1; }
+  header.top a { color: var(--navy); text-decoration: none; font-size: 13px; font-weight: 800; }
+  header.top a.menu-link {
+    color: var(--white);
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 20px;
+    padding: 20px;
+    align-items: start;
+  }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--panel);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+  .panel h2 {
+    font-size: 14px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--navy); margin: 0 0 12px;
+  }
+  .field { display: block; margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .field input[type=text],
+  .field input[type=password],
+  .field textarea,
+  .field select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 8px; font: inherit; background: #fff; color: var(--ink);
+  }
+  .field textarea { resize: vertical; min-height: 56px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row > * { flex: 1; }
+  .prompt-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px; margin-bottom: 10px; align-items: start;
+  }
+  .face-mini {
+    width: 44px; height: 44px; border-radius: 8px;
+    display: grid; place-items: center;
+    background: #f3f4f6; border: 1px solid var(--line);
+  }
+  .face-mini svg { width: 32px; height: 32px; }
+  button.btn {
+    appearance: none; border: 1px solid var(--line); background: #fff;
+    padding: 8px 12px; border-radius: 8px; font: inherit; cursor: pointer;
+    color: var(--ink); transition: all .15s;
+  }
+  button.btn:hover { background: #f3f4f6; }
+  button.btn.primary {
+    background: var(--navy); color: var(--accent-ink); border-color: var(--navy);
+  }
+  button.btn.primary:hover { filter: brightness(.95); }
+  button.btn[disabled] { opacity: .5; cursor: not-allowed; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .actions h3 { width: 100%; margin: 8px 0 4px; font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: .06em; }
+  details.settings { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  details.settings summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  details.settings p { font-size: 12px; color: var(--muted); }
+  .preview-wrap {
+    background: var(--gray-10); border-radius: var(--radius);
+    padding: 18px; display: grid; place-items: center;
+    border: 1px solid var(--line);
+  }
+  .preview-wrap canvas {
+    max-width: 100%; height: auto; background: #fff;
+    box-shadow: 0 6px 24px rgba(0,0,0,.08); border-radius: 8px;
+  }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: #1f2937; color: #fff; padding: 10px 16px; border-radius: 8px;
+    box-shadow: var(--shadow); font-size: 14px; opacity: 0;
+    transition: opacity .2s; z-index: 9999; pointer-events: none;
+    max-width: 80vw;
+  }
+  .toast.show { opacity: 1; }
+  .inline-help { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .inline-help code {
+    background: #f3f4f6; padding: 1px 4px; border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+  }
+  .pill-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill {
+    border: 1px solid var(--line); background: #fff;
+    padding: 4px 10px; border-radius: 999px; font-size: 12px; cursor: pointer;
+  }
+  .pill:hover { background: #f3f4f6; }
+</style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+
+<header class="top">
+  <h1>Dicebreaker Creator</h1>
+  <span class="tag">Roll a die, answer a prompt. Make your own template in seconds.</span>
+  <div class="spacer"></div>
+  <a class="menu-link" href="../../whiteboard.html">Tool Menu</a>
+</header>
+
+<main>
+  <!-- Editor panel -->
+  <section class="panel" id="editor">
+    <h2>Your dicebreaker</h2>
+
+    <div class="field">
+      <label for="title">Title</label>
+      <input id="title" type="text" maxlength="80" placeholder="Today's Debrief">
+    </div>
+    <div class="field">
+      <label for="subtitle">Subtitle / instructions</label>
+      <input id="subtitle" type="text" maxlength="120" placeholder="Roll the die and answer the matching prompt.">
+    </div>
+
+    <div class="field">
+      <label>Prompts (one per face)</label>
+      <div id="prompts"></div>
+    </div>
+
+    <div class="row">
+      <div class="field" style="margin-bottom:0;">
+        <label for="accent">Accent color</label>
+        <input id="accent" type="color" value="#7c3aed" style="width:100%; height:38px; padding:2px; border:1px solid var(--line); border-radius:8px; background:#fff;">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label for="layout">Layout</label>
+        <select id="layout">
+          <option value="grid">Grid (3 &times; 2)</option>
+          <option value="strip">Strip (6 &times; 1)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top: 12px;">
+      <label>Quick starts</label>
+      <div class="pill-group">
+        <button class="pill" data-preset="debrief">Debrief</button>
+        <button class="pill" data-preset="entry">Entry ticket</button>
+        <button class="pill" data-preset="story">Roll-a-story</button>
+        <button class="pill" data-preset="getknow">Get-to-know-you</button>
+        <button class="pill" data-preset="blank">Clear</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <h3>Download</h3>
+      <button class="btn primary" id="dl-png">PNG</button>
+      <button class="btn primary" id="dl-pdf">PDF</button>
+      <button class="btn primary" id="dl-pptx">PPTX</button>
+      <button class="btn" id="dl-json">JSON</button>
+      <button class="btn" id="load-json">Load JSON&hellip;</button>
+      <input id="json-file-input" type="file" accept="application/json,.json" hidden>
+    </div>
+
+    <div class="actions">
+      <h3>For students</h3>
+      <button class="btn primary" id="open-play">Open student view</button>
+      <button class="btn" id="copy-link">Copy share link</button>
+    </div>
+    <div class="inline-help">
+      The student view (<code>play.html</code>) shows a 3D die students click to roll &mdash; the chosen prompt appears below.
+      The share link encodes your dicebreaker in the URL, so no server is needed.
+    </div>
+
+    <div class="actions">
+      <h3>Save to cloud</h3>
+      <button class="btn" id="save-gdrive">Google Drive</button>
+      <button class="btn" id="save-onedrive">OneDrive</button>
+      <button class="btn" id="save-dropbox">Dropbox</button>
+    </div>
+    <div class="inline-help">
+      Cloud save uploads the PDF. You'll be asked once which OAuth client to use; keys are stored only in your browser.
+    </div>
+
+    <details class="settings">
+      <summary>Cloud API keys (one-time setup)</summary>
+      <p>
+        To upload directly, register a client app with each service and paste its public client ID below.
+        Add this page's URL as an allowed JavaScript origin / redirect URI.
+        Keys are saved to <code>localStorage</code> in your browser only.
+      </p>
+      <div class="field">
+        <label for="key-gdrive">Google OAuth Client ID</label>
+        <input id="key-gdrive" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
+        <div class="inline-help">Enable the Drive API; scope <code>drive.file</code>.</div>
+      </div>
+      <div class="field">
+        <label for="key-onedrive">Microsoft (Azure AD) Application (client) ID</label>
+        <input id="key-onedrive" type="text" placeholder="00000000-0000-0000-0000-000000000000" autocomplete="off">
+        <div class="inline-help">Register an SPA in Entra ID; delegated scope <code>Files.ReadWrite</code>.</div>
+      </div>
+      <div class="field">
+        <label for="key-dropbox">Dropbox App Key</label>
+        <input id="key-dropbox" type="text" placeholder="abcdefghijklmno" autocomplete="off">
+        <div class="inline-help">Create a "scoped app" with <code>files.content.write</code> and add this page as a redirect URI.</div>
+      </div>
+    </details>
+  </section>
+
+  <!-- Preview panel -->
+  <section class="panel">
+    <h2>Preview</h2>
+    <div class="preview-wrap">
+      <canvas id="preview" width="1600" height="1200" aria-label="Dicebreaker preview"></canvas>
+    </div>
+    <div class="inline-help" style="margin-top:10px;">
+      The preview re-renders as you edit. Downloads use this exact image at full resolution.
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Libraries (loaded lazily on first use to keep first paint fast) -->
+<script>
+//=== Tiny helpers ====================================================
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => [...document.querySelectorAll(sel)];
+
+function toast(msg, ms = 2400) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if ([...document.scripts].some(s => s.src === src)) return resolve();
+    const s = document.createElement('script');
+    s.src = src; s.onload = () => resolve(); s.onerror = () => reject(new Error('Failed to load ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+//=== State ===========================================================
+const PRESETS = {
+  debrief: {
+    title: "Today's Debrief",
+    subtitle: "Roll the die and answer the matching prompt.",
+    prompts: [
+      "What did you learn today?",
+      "Why does what you learned matter?",
+      "List three big ideas from today's lesson.",
+      "What would you change or do differently?",
+      "How do you feel about your work today? Why?",
+      "What question do you still have?"
+    ]
+  },
+  entry: {
+    title: "Entry Ticket",
+    subtitle: "Roll, then share with your group.",
+    prompts: [
+      "What do you already know about this topic?",
+      "What's one question you have going in?",
+      "What word or phrase comes to mind?",
+      "Where might you need help today?",
+      "What prediction can you make about today's lesson?",
+      "Connect today's topic to something you already know."
+    ]
+  },
+  story: {
+    title: "Roll-a-Story",
+    subtitle: "Roll once for each element; write the story.",
+    prompts: [
+      "Setting: a quiet library after midnight",
+      "Character: an inventor who has lost their notebook",
+      "Object: a brass key that hums",
+      "Problem: the doors won't stay closed",
+      "Twist: the clocks all run backwards",
+      "Ending: someone finally tells the truth"
+    ]
+  },
+  getknow: {
+    title: "Get to Know You",
+    subtitle: "Roll the die, answer the prompt out loud.",
+    prompts: [
+      "Share one thing on your mind today.",
+      "What's a small win from this week?",
+      "Pick a song that matches your mood.",
+      "What's a hobby you'd try if time were free?",
+      "Describe your perfect Saturday.",
+      "Who's someone you're grateful for and why?"
+    ]
+  },
+  blank: {
+    title: "",
+    subtitle: "",
+    prompts: ["", "", "", "", "", ""]
+  }
+};
+
+const state = {
+  title: PRESETS.debrief.title,
+  subtitle: PRESETS.debrief.subtitle,
+  prompts: [...PRESETS.debrief.prompts],
+  accent: '#7c3aed',
+  layout: 'grid'
+};
+
+//=== Build the editor ================================================
+function buildPromptInputs() {
+  const wrap = $('#prompts');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const row = document.createElement('div');
+    row.className = 'prompt-row';
+    row.innerHTML = `
+      <div class="face-mini">${dieFaceSVG(i + 1, state.accent)}</div>
+      <textarea data-idx="${i}" rows="2" maxlength="240" placeholder="Prompt for face ${i + 1}"></textarea>
+    `;
+    wrap.appendChild(row);
+  }
+  // wire up
+  $$('#prompts textarea').forEach((ta, i) => {
+    ta.value = state.prompts[i] || '';
+    ta.addEventListener('input', () => {
+      state.prompts[i] = ta.value;
+      render();
+    });
+  });
+}
+
+function refreshFaceMinis() {
+  $$('#prompts .face-mini').forEach((el, i) => {
+    el.innerHTML = dieFaceSVG(i + 1, state.accent);
+  });
+}
+
+function dieFaceSVG(n, color) {
+  const pos = {
+    1: [[.5,.5]],
+    2: [[.25,.25],[.75,.75]],
+    3: [[.25,.25],[.5,.5],[.75,.75]],
+    4: [[.25,.25],[.75,.25],[.25,.75],[.75,.75]],
+    5: [[.25,.25],[.75,.25],[.5,.5],[.25,.75],[.75,.75]],
+    6: [[.25,.25],[.75,.25],[.25,.5],[.75,.5],[.25,.75],[.75,.75]]
+  };
+  const dots = (pos[n] || []).map(([x,y]) =>
+    `<circle cx="${x*100}" cy="${y*100}" r="8" fill="${color}"/>`
+  ).join('');
+  return `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="4" width="92" height="92" rx="14" ry="14"
+            fill="#fff" stroke="${color}" stroke-width="4"/>
+      ${dots}
+    </svg>`;
+}
+
+//=== Canvas renderer =================================================
+function render() {
+  const c = $('#preview');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  const accent = state.accent;
+  const ink = '#1a1d23';
+  const muted = '#6b7280';
+
+  // top accent bar
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, W, 18);
+
+  // title
+  ctx.fillStyle = ink;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const title = state.title?.trim() || 'Untitled dicebreaker';
+  ctx.font = '700 76px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  ctx.fillText(title, W / 2, 60);
+
+  // subtitle
+  if (state.subtitle?.trim()) {
+    ctx.fillStyle = muted;
+    ctx.font = '400 32px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    ctx.fillText(state.subtitle.trim(), W / 2, 160);
+  }
+
+  const headerH = state.subtitle?.trim() ? 230 : 170;
+  const footerH = 40;
+  const gridTop = headerH;
+  const gridBottom = H - footerH;
+
+  if (state.layout === 'strip') {
+    drawStrip(ctx, 60, gridTop, W - 120, gridBottom - gridTop, accent, ink);
+  } else {
+    drawGrid(ctx, 60, gridTop, W - 120, gridBottom - gridTop, accent, ink);
+  }
+
+  // footer
+  ctx.fillStyle = muted;
+  ctx.font = '400 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Made with DrawSplat Dicebreaker', W - 40, H - 28);
+}
+
+function drawGrid(ctx, x, y, w, h, accent, ink) {
+  const cols = 3, rows = 2, gap = 28;
+  const cw = (w - gap * (cols - 1)) / cols;
+  const ch = (h - gap * (rows - 1)) / rows;
+  for (let i = 0; i < 6; i++) {
+    const r = Math.floor(i / cols), c = i % cols;
+    drawCard(ctx, x + c * (cw + gap), y + r * (ch + gap), cw, ch, i + 1, state.prompts[i], accent, ink);
+  }
+}
+
+function drawStrip(ctx, x, y, w, h, accent, ink) {
+  const cols = 6, gap = 18;
+  const cw = (w - gap * (cols - 1)) / cols;
+  for (let i = 0; i < 6; i++) {
+    drawCard(ctx, x + i * (cw + gap), y, cw, h, i + 1, state.prompts[i], accent, ink, true);
+  }
+}
+
+function drawCard(ctx, x, y, w, h, face, text, accent, ink, vertical = false) {
+  // card body
+  ctx.fillStyle = '#fff';
+  roundRect(ctx, x, y, w, h, 16);
+  ctx.fill();
+
+  // border
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 4;
+  roundRect(ctx, x, y, w, h, 16);
+  ctx.stroke();
+
+  // accent stripe top
+  ctx.fillStyle = accent;
+  roundRect(ctx, x, y, w, 10, { tl: 16, tr: 16, br: 0, bl: 0 });
+  ctx.fill();
+
+  // die face
+  const dieSize = Math.min(w, h) * (vertical ? 0.55 : 0.32);
+  const dieX = x + w / 2 - dieSize / 2;
+  const dieY = y + 36;
+  drawDieFace(ctx, dieX, dieY, dieSize, face, accent);
+
+  // prompt
+  const textTop = dieY + dieSize + 28;
+  const textBottom = y + h - 24;
+  const textLeft = x + 24;
+  const textRight = x + w - 24;
+
+  ctx.fillStyle = ink;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const promptText = (text || '').trim() || '(empty)';
+
+  // shrink-to-fit
+  let fontSize = vertical ? 22 : 38;
+  let lines;
+  while (fontSize >= 14) {
+    ctx.font = `500 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+    lines = wrapText(ctx, promptText, textRight - textLeft);
+    const totalH = lines.length * fontSize * 1.25;
+    if (totalH <= textBottom - textTop) break;
+    fontSize -= 2;
+  }
+  let cy = textTop;
+  for (const ln of lines) {
+    ctx.fillText(ln, (textLeft + textRight) / 2, cy);
+    cy += fontSize * 1.25;
+  }
+
+  // empty styling
+  if (!(text || '').trim()) {
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = `italic 500 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+    ctx.fillText('(empty)', (textLeft + textRight) / 2, textTop);
+  }
+}
+
+function drawDieFace(ctx, x, y, size, n, accent) {
+  // outer rounded square
+  ctx.fillStyle = '#fff';
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = Math.max(3, size * 0.04);
+  roundRect(ctx, x, y, size, size, size * 0.18);
+  ctx.fill();
+  ctx.stroke();
+
+  const pos = {
+    1: [[.5,.5]],
+    2: [[.28,.28],[.72,.72]],
+    3: [[.28,.28],[.5,.5],[.72,.72]],
+    4: [[.28,.28],[.72,.28],[.28,.72],[.72,.72]],
+    5: [[.28,.28],[.72,.28],[.5,.5],[.28,.72],[.72,.72]],
+    6: [[.28,.28],[.72,.28],[.28,.5],[.72,.5],[.28,.72],[.72,.72]]
+  };
+  ctx.fillStyle = accent;
+  for (const [px, py] of pos[n]) {
+    ctx.beginPath();
+    ctx.arc(x + px * size, y + py * size, size * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  let tl, tr, br, bl;
+  if (typeof r === 'number') { tl = tr = br = bl = r; }
+  else { tl = r.tl||0; tr = r.tr||0; br = r.br||0; bl = r.bl||0; }
+  ctx.beginPath();
+  ctx.moveTo(x + tl, y);
+  ctx.lineTo(x + w - tr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + tr);
+  ctx.lineTo(x + w, y + h - br);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+  ctx.lineTo(x + bl, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
+  ctx.lineTo(x, y + tl);
+  ctx.quadraticCurveTo(x, y, x + tl, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const out = [];
+  for (const paragraph of text.split(/\n+/)) {
+    const words = paragraph.split(/\s+/);
+    let line = '';
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        out.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
+    }
+    if (line) out.push(line);
+  }
+  return out;
+}
+
+//=== Export helpers ==================================================
+function safeFilename() {
+  const base = (state.title || 'dicebreaker')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '') || 'dicebreaker';
+  return base.slice(0, 60);
+}
+
+function canvasToBlob(type = 'image/png', quality) {
+  return new Promise((resolve) => {
+    $('#preview').toBlob(resolve, type, quality);
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function exportPNG() {
+  const blob = await canvasToBlob('image/png');
+  return { blob, filename: safeFilename() + '.png', mime: 'image/png' };
+}
+
+async function exportJSON() {
+  const data = {
+    type: 'dicebreaker',
+    version: 1,
+    title: state.title,
+    subtitle: state.subtitle,
+    prompts: state.prompts,
+    accent: state.accent,
+    layout: state.layout,
+    createdAt: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  return { blob, filename: safeFilename() + '.json', mime: 'application/json' };
+}
+
+// URL-safe base64 encoder for unicode strings (matches play.html decoder).
+function b64urlEncode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function buildShareUrl() {
+  const payload = JSON.stringify({
+    t: state.title,
+    s: state.subtitle,
+    p: state.prompts,
+    c: state.accent,
+    l: state.layout
+  });
+  const encoded = b64urlEncode(payload);
+  const playUrl = new URL('play.html', window.location.href);
+  playUrl.hash = 'd=' + encoded;
+  return playUrl.toString();
+}
+
+async function exportPDF() {
+  await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+  const { jsPDF } = window.jspdf;
+  const c = $('#preview');
+  const imgData = c.toDataURL('image/png');
+  // Letter landscape, fit the canvas centered.
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+  const pw = pdf.internal.pageSize.getWidth();   // 792
+  const ph = pdf.internal.pageSize.getHeight();  // 612
+  const margin = 24;
+  const aw = pw - margin * 2;
+  const ah = ph - margin * 2;
+  const ratio = Math.min(aw / c.width, ah / c.height);
+  const w = c.width * ratio, h = c.height * ratio;
+  const x = (pw - w) / 2, y = (ph - h) / 2;
+  pdf.addImage(imgData, 'PNG', x, y, w, h);
+  const blob = pdf.output('blob');
+  return { blob, filename: safeFilename() + '.pdf', mime: 'application/pdf' };
+}
+
+async function exportPPTX() {
+  await loadScript('https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js');
+  const PptxGenJS = window.PptxGenJS;
+  const pres = new PptxGenJS();
+  pres.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5 in
+  const slideW = 13.333, slideH = 7.5;
+  const slide = pres.addSlide();
+  slide.background = { color: 'FFFFFF' };
+
+  const accentHex = state.accent.replace('#', '');
+  const ink = '1A1D23';
+  const muted = '6B7280';
+
+  // top accent bar
+  slide.addShape(pres.shapes.RECTANGLE, {
+    x: 0, y: 0, w: slideW, h: 0.12, fill: { color: accentHex }, line: { color: accentHex }
+  });
+
+  // title
+  slide.addText(state.title || 'Untitled dicebreaker', {
+    x: 0.3, y: 0.25, w: slideW - 0.6, h: 0.8,
+    fontFace: 'Calibri', fontSize: 36, bold: true, color: ink, align: 'center'
+  });
+  if (state.subtitle?.trim()) {
+    slide.addText(state.subtitle.trim(), {
+      x: 0.3, y: 1.05, w: slideW - 0.6, h: 0.4,
+      fontFace: 'Calibri', fontSize: 16, color: muted, align: 'center'
+    });
+  }
+
+  const headerOffset = state.subtitle?.trim() ? 1.55 : 1.15;
+  const gridTop = headerOffset;
+  const gridBottom = slideH - 0.4;
+  const gridH = gridBottom - gridTop;
+  const gridLeft = 0.4, gridRight = slideW - 0.4;
+  const gridW = gridRight - gridLeft;
+
+  const cols = state.layout === 'strip' ? 6 : 3;
+  const rows = state.layout === 'strip' ? 1 : 2;
+  const gap = 0.15;
+  const cw = (gridW - gap * (cols - 1)) / cols;
+  const ch = (gridH - gap * (rows - 1)) / rows;
+
+  // We embed the rendered die face as PNG so it stays crisp.
+  for (let i = 0; i < 6; i++) {
+    const r = Math.floor(i / cols), c = i % cols;
+    const x = gridLeft + c * (cw + gap);
+    const y = gridTop + r * (ch + gap);
+
+    // card
+    slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+      x, y, w: cw, h: ch,
+      fill: { color: 'FFFFFF' },
+      line: { color: accentHex, width: 2 },
+      rectRadius: 0.12
+    });
+    // accent stripe on top
+    slide.addShape(pres.shapes.RECTANGLE, {
+      x, y, w: cw, h: 0.08, fill: { color: accentHex }, line: { color: accentHex }
+    });
+
+    // die face image (generated off-screen canvas)
+    const dieSize = Math.min(cw, ch) * (state.layout === 'strip' ? 0.55 : 0.4);
+    const dieDataUrl = generateDieFaceDataURL(i + 1, state.accent, 256);
+    slide.addImage({
+      data: dieDataUrl,
+      x: x + (cw - dieSize) / 2,
+      y: y + 0.2,
+      w: dieSize, h: dieSize
+    });
+
+    // prompt text
+    const textY = y + 0.2 + dieSize + 0.15;
+    const textH = (y + ch - 0.2) - textY;
+    slide.addText(state.prompts[i] || '', {
+      x: x + 0.18, y: textY, w: cw - 0.36, h: textH,
+      fontFace: 'Calibri',
+      fontSize: state.layout === 'strip' ? 11 : 16,
+      color: ink, align: 'center', valign: 'top', shrinkText: true
+    });
+  }
+
+  // PptxGenJS returns a Promise<ArrayBuffer> with outputType: 'arraybuffer'
+  const ab = await pres.write({ outputType: 'arraybuffer' });
+  const blob = new Blob([ab], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+  return { blob, filename: safeFilename() + '.pptx', mime: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' };
+}
+
+function generateDieFaceDataURL(n, color, size) {
+  const pad = Math.ceil(size * 0.06);
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  drawDieFace(ctx, pad, pad, size - pad * 2, n, color);
+  return c.toDataURL('image/png');
+}
+
+//=== Loading from JSON ===============================================
+function applyState(s) {
+  state.title = s.title ?? state.title;
+  state.subtitle = s.subtitle ?? state.subtitle;
+  if (Array.isArray(s.prompts)) {
+    state.prompts = [0,1,2,3,4,5].map(i => s.prompts[i] ?? '');
+  }
+  if (s.accent) state.accent = s.accent;
+  if (s.layout) state.layout = s.layout;
+  syncEditorToState();
+  render();
+}
+
+function syncEditorToState() {
+  $('#title').value = state.title;
+  $('#subtitle').value = state.subtitle;
+  $('#accent').value = state.accent;
+  $('#layout').value = state.layout;
+  $$('#prompts textarea').forEach((ta, i) => ta.value = state.prompts[i] || '');
+  refreshFaceMinis();
+}
+
+//=== Cloud OAuth (implicit-flow popup, generic) ======================
+// Opens a popup that performs token-flow OAuth and posts the token back.
+// Works with services that support response_type=token and a redirect_uri
+// pointing back at this page.
+function oauthPopup({ authUrl, name = 'oauth' }) {
+  return new Promise((resolve, reject) => {
+    const w = 540, h = 640;
+    const left = window.screenX + (window.outerWidth - w) / 2;
+    const top  = window.screenY + (window.outerHeight - h) / 2;
+    const popup = window.open(authUrl, name, `width=${w},height=${h},left=${left},top=${top}`);
+    if (!popup) return reject(new Error('Popup blocked. Allow popups and try again.'));
+
+    const timer = setInterval(() => {
+      try {
+        if (popup.closed) {
+          clearInterval(timer);
+          reject(new Error('Window closed before authorization completed.'));
+          return;
+        }
+        // Same-origin check — works once Dropbox/Google/MS redirects back here.
+        const url = popup.location.href;
+        if (!url || url === 'about:blank') return;
+        const hash = popup.location.hash || '';
+        const search = popup.location.search || '';
+        if (hash.includes('access_token') || search.includes('access_token') ||
+            hash.includes('error') || search.includes('error')) {
+          const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : search.slice(1));
+          clearInterval(timer);
+          popup.close();
+          const err = params.get('error');
+          if (err) return reject(new Error(err + ': ' + (params.get('error_description') || '')));
+          resolve({
+            access_token: params.get('access_token'),
+            token_type: params.get('token_type'),
+            expires_in: params.get('expires_in')
+          });
+        }
+      } catch (_) {
+        // cross-origin while user is on provider's site — ignore
+      }
+    }, 400);
+  });
+}
+
+const tokenCache = { google: null, microsoft: null, dropbox: null };
+
+function getKey(name) {
+  return localStorage.getItem('dicebreaker.key.' + name) || '';
+}
+function setKey(name, val) {
+  if (val) localStorage.setItem('dicebreaker.key.' + name, val);
+  else localStorage.removeItem('dicebreaker.key.' + name);
+}
+
+async function ensureToken(service) {
+  const cached = tokenCache[service];
+  if (cached && cached.expiresAt > Date.now() + 30_000) return cached.access_token;
+
+  const redirect = window.location.origin + window.location.pathname;
+  let authUrl;
+  if (service === 'google') {
+    const id = getKey('gdrive');
+    if (!id) throw new Error('Add your Google OAuth Client ID in Settings first.');
+    const params = new URLSearchParams({
+      client_id: id,
+      redirect_uri: redirect,
+      response_type: 'token',
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      include_granted_scopes: 'true',
+      prompt: 'consent'
+    });
+    authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+  } else if (service === 'microsoft') {
+    const id = getKey('onedrive');
+    if (!id) throw new Error('Add your Microsoft Application (client) ID in Settings first.');
+    const params = new URLSearchParams({
+      client_id: id,
+      redirect_uri: redirect,
+      response_type: 'token',
+      scope: 'Files.ReadWrite offline_access openid profile'
+    });
+    authUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?' + params.toString();
+  } else if (service === 'dropbox') {
+    const id = getKey('dropbox');
+    if (!id) throw new Error('Add your Dropbox App Key in Settings first.');
+    const params = new URLSearchParams({
+      client_id: id,
+      redirect_uri: redirect,
+      response_type: 'token'
+    });
+    authUrl = 'https://www.dropbox.com/oauth2/authorize?' + params.toString();
+  } else {
+    throw new Error('Unknown service');
+  }
+
+  const { access_token, expires_in } = await oauthPopup({ authUrl, name: 'oauth_' + service });
+  if (!access_token) throw new Error('No access token returned.');
+  tokenCache[service] = {
+    access_token,
+    expiresAt: Date.now() + (parseInt(expires_in || '3600', 10) * 1000)
+  };
+  return access_token;
+}
+
+async function uploadGoogleDrive(blob, filename, mime) {
+  const token = await ensureToken('google');
+  const metadata = { name: filename, mimeType: mime };
+  const fd = new FormData();
+  fd.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  fd.append('file', blob);
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
+    body: fd
+  });
+  if (!res.ok) throw new Error('Google Drive upload failed: ' + res.status + ' ' + await res.text());
+  return res.json();
+}
+
+async function uploadOneDrive(blob, filename, mime) {
+  const token = await ensureToken('microsoft');
+  const url = `https://graph.microsoft.com/v1.0/me/drive/root:/${encodeURIComponent(filename)}:/content`;
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': mime },
+    body: blob
+  });
+  if (!res.ok) throw new Error('OneDrive upload failed: ' + res.status + ' ' + await res.text());
+  return res.json();
+}
+
+async function uploadDropbox(blob, filename, mime) {
+  const token = await ensureToken('dropbox');
+  const res = await fetch('https://content.dropboxapi.com/2/files/upload', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify({
+        path: '/' + filename, mode: 'add', autorename: true, mute: false
+      })
+    },
+    body: blob
+  });
+  if (!res.ok) throw new Error('Dropbox upload failed: ' + res.status + ' ' + await res.text());
+  return res.json();
+}
+
+//=== If we are loaded as the OAuth redirect target ===================
+// (provider returns to this same URL with #access_token=...). We post the
+// token via location.hash so the opener picks it up — no extra code needed
+// since the opener reads popup.location.hash via the polling loop above.
+// We close ourselves so it feels seamless.
+(function maybeOAuthCallback() {
+  const h = window.location.hash || '';
+  if (h.includes('access_token') || window.location.search.includes('access_token')) {
+    if (window.opener) {
+      document.body && (document.body.innerHTML =
+        '<p style="font:14px system-ui;padding:30px;color:#374151">Authorization complete. You can close this window.</p>');
+      // The opener's poll will fire shortly; close as a fallback after a moment.
+      setTimeout(() => { try { window.close(); } catch(_){} }, 1500);
+    }
+  }
+})();
+
+//=== Wire up =========================================================
+function init() {
+  // Editor bindings
+  buildPromptInputs();
+  $('#title').value = state.title;
+  $('#subtitle').value = state.subtitle;
+  $('#accent').value = state.accent;
+  $('#layout').value = state.layout;
+
+  $('#title').addEventListener('input', e => { state.title = e.target.value; render(); });
+  $('#subtitle').addEventListener('input', e => { state.subtitle = e.target.value; render(); });
+  $('#accent').addEventListener('input', e => { state.accent = e.target.value; refreshFaceMinis(); render(); });
+  $('#layout').addEventListener('change', e => { state.layout = e.target.value; render(); });
+
+  // Presets
+  $$('.pill[data-preset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = PRESETS[btn.dataset.preset];
+      if (!p) return;
+      applyState({ ...state, ...p });
+    });
+  });
+
+  // Downloads
+  $('#dl-png').addEventListener('click', async () => {
+    try { const { blob, filename } = await exportPNG(); downloadBlob(blob, filename); }
+    catch (e) { toast('PNG export failed: ' + e.message); }
+  });
+  $('#dl-pdf').addEventListener('click', async () => {
+    try { toast('Building PDF…'); const { blob, filename } = await exportPDF(); downloadBlob(blob, filename); toast('PDF ready'); }
+    catch (e) { toast('PDF export failed: ' + e.message); }
+  });
+  $('#dl-pptx').addEventListener('click', async () => {
+    try { toast('Building PPTX…'); const { blob, filename } = await exportPPTX(); downloadBlob(blob, filename); toast('PPTX ready'); }
+    catch (e) { toast('PPTX export failed: ' + e.message); }
+  });
+  $('#dl-json').addEventListener('click', async () => {
+    try { const { blob, filename } = await exportJSON(); downloadBlob(blob, filename); }
+    catch (e) { toast('JSON export failed: ' + e.message); }
+  });
+
+  // Load JSON
+  $('#load-json').addEventListener('click', () => $('#json-file-input').click());
+  $('#json-file-input').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (data.type && data.type !== 'dicebreaker') {
+        if (!confirm('That file does not look like a dicebreaker. Load it anyway?')) return;
+      }
+      applyState(data);
+      toast('Loaded ' + file.name);
+    } catch (err) {
+      toast('Could not load JSON: ' + err.message);
+    }
+    e.target.value = '';
+  });
+
+  // Cloud save
+  const cloudSave = async (label, uploader) => {
+    try {
+      toast('Building PDF for ' + label + '…');
+      const { blob, filename, mime } = await exportPDF();
+      toast('Uploading to ' + label + '…', 6000);
+      const result = await uploader(blob, filename, mime);
+      const link = result.webViewLink || result.webUrl || result.path_display || filename;
+      toast('Saved to ' + label + ': ' + link, 5000);
+    } catch (err) {
+      toast(label + ' save failed: ' + err.message, 5000);
+    }
+  };
+  // Student view
+  $('#open-play').addEventListener('click', () => {
+    window.open(buildShareUrl(), '_blank', 'noopener');
+  });
+  $('#copy-link').addEventListener('click', async () => {
+    const url = buildShareUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Share link copied');
+    } catch {
+      // Fallback for non-secure contexts (file://) — show a prompt.
+      window.prompt('Copy this link and share it with students:', url);
+    }
+  });
+
+  $('#save-gdrive').addEventListener('click', () => cloudSave('Google Drive', uploadGoogleDrive));
+  $('#save-onedrive').addEventListener('click', () => cloudSave('OneDrive', uploadOneDrive));
+  $('#save-dropbox').addEventListener('click', () => cloudSave('Dropbox', uploadDropbox));
+
+  // Settings keys
+  ['gdrive', 'onedrive', 'dropbox'].forEach(k => {
+    const el = $('#key-' + k);
+    el.value = getKey(k);
+    el.addEventListener('change', () => setKey(k, el.value.trim()));
+  });
+
+  render();
+}
+
+// Don't initialize the editor if we're acting as an OAuth callback popup.
+if (!(window.opener && (window.location.hash.includes('access_token') ||
+                        window.location.search.includes('access_token')))) {
+  init();
+}
+</script>
+</body>
+</html>

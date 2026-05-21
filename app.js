@@ -1309,7 +1309,7 @@ function appendScratchErasePoint(p){
   requestRender();
   return true;
 }
-function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='bucket'){applyBucketFill(o); return} if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
+function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='bucket'){applyBucketFill(o); return} if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} if(tool==='select'&&handleWheelSpinnerScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
   const multi=e.shiftKey||touchMultiSelect;
   const keepCurrentSelection=!multi&&selectedIds.length>1&&isSelected(o.id);
   const ids=multi?(toggleSelection(o.id),selectedIds):(keepCurrentSelection?selectedIds:((o.groupId&&!e.altKey)?groupMembers(o):[o.id]));
@@ -1802,6 +1802,14 @@ const CLASSROOM_WIDGETS=[
   {kind:'scoreboard',title:'Scoreboard',w:520,h:300},
   {kind:'race',title:'Race Progress',w:560,h:320}
 ];
+const CLASSROOM_TOOL_LINKS=[
+  {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:'solutions/coinflipping/index.html'},
+  {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:'solutions/dice/index.html'},
+  {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:'solutions/memepuzzle/index.html'},
+  {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:'solutions/wordsearch/index.html'},
+  {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:'solutions/storywheel/index.html'},
+  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'}
+];
 function defaultWidgetConfig(kind){
   const base={widgetKind:kind,widgetConfig:{}};
   if(kind==='poll') base.widgetConfig={question:'Quick Poll',options:['Yes','No','Not sure'],counts:[0,0,0],showTotal:true};
@@ -1825,6 +1833,48 @@ function widgetWrapText(text,max=22,lines=3){
   words.forEach(w=>{if((cur+' '+w).trim().length>max&&cur){out.push(cur); cur=w}else cur=(cur+' '+w).trim()});
   if(cur) out.push(cur);
   return out.slice(0,lines);
+}
+function bigLinkWrapText(text,max=22,lines=3){
+  const chunks=[];
+  String(text||'').split(/\s+/).filter(Boolean).forEach(word=>{
+    let rest=word;
+    while(rest.length>max){chunks.push(rest.slice(0,max)); rest=rest.slice(max)}
+    if(rest) chunks.push(rest);
+  });
+  const out=[]; let cur='';
+  chunks.forEach(chunk=>{
+    const next=(cur+' '+chunk).trim();
+    if(next.length>max&&cur){out.push(cur); cur=chunk}
+    else cur=next;
+  });
+  if(cur) out.push(cur);
+  if(out.length>lines){
+    const clipped=out.slice(0,lines);
+    clipped[clipped.length-1]=clipped[clipped.length-1].slice(0,Math.max(1,max-3))+'...';
+    return clipped;
+  }
+  return out;
+}
+function bigLinkScale(cfg){return clamp(+(cfg?.textScale||cfg?.scale||1),.65,2.6)}
+function bigLinkTextFit(url,W,H,scale=1){
+  const text=String(url||'drawsplat.org').trim()||'drawsplat.org';
+  const headerH=clamp(60*scale,48,128), footerH=clamp(50*scale,42,112);
+  const maxLines=Math.max(1,Math.min(5,Math.floor((H-headerH-footerH)/Math.max(28,38*scale))));
+  const maxSize=Math.max(24,Math.min(140*scale,W/4.8,H/2.15));
+  for(let size=Math.floor(maxSize);size>=18;size-=2){
+    const maxChars=Math.max(8,Math.floor((W-44)/(size*.56)));
+    const lines=bigLinkWrapText(text,maxChars,maxLines);
+    const longest=Math.max(1,...lines.map(line=>line.length));
+    if(longest*size*.56<=W-44 && lines.length*size*1.12<=H-headerH-footerH) return {lines,size,headerH,footerH};
+  }
+  return {lines:bigLinkWrapText(text,Math.max(8,Math.floor((W-44)/(18*.56))),maxLines),size:18,headerH,footerH};
+}
+function autosizeBigLinkWidget(o){
+  if(!o||o.type!=='widget'||o.widgetKind!=='biglink') return;
+  const cfg=o.widgetConfig||{}, url=String(cfg.url||'drawsplat.org').trim()||'drawsplat.org', note=String(cfg.note||'').trim(), title=String(cfg.title||'Join Here').trim();
+  const scale=bigLinkScale(cfg), longest=Math.max(url.length,note.length,title.length,14);
+  o.w=clamp(Math.round(longest*14*scale+110*scale),360,1200);
+  o.h=clamp(Math.round((220+(url.length>30?54:0)+(note?22:0))*scale),220,680);
 }
 const WHEEL_SPINNER_PALETTES={
   bright:{label:'Bright classroom',colors:['#ef4444','#f97316','#facc15','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899'],accent:'#7c3aed',soft:'#f5f3ff'},
@@ -1855,6 +1905,14 @@ function wheelSpinnerItems(cfg){
   const active=(cfg.activeItems||[]).filter(item=>parsed.some(p=>p.toLowerCase()===String(item).toLowerCase()));
   return active.length?active:parsed;
 }
+function wheelSpinnerRotation(cfg){
+  const now=Date.now(), start=+cfg.spinStartAt||0, until=+cfg.spinUntil||0, duration=Math.max(1,(+cfg.spinDuration||0)||(until-start)||1);
+  if(until&&now<until){
+    const t=clamp((now-start)/duration,0,1), eased=1-Math.pow(1-t,3);
+    return (+cfg.spinStartRotation||0)+((+cfg.spinEndRotation||0)-(+cfg.spinStartRotation||0))*eased;
+  }
+  return +cfg.spinRotation||0;
+}
 function wheelSpinnerSlicePath(cx,cy,r,start,end){
   const x1=cx+Math.cos(start)*r,y1=cy+Math.sin(start)*r,x2=cx+Math.cos(end)*r,y2=cy+Math.sin(end)*r,large=end-start>Math.PI?1:0;
   return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
@@ -1868,7 +1926,7 @@ function wheelSpinnerTextColor(hex){
   return '#ffffff';
 }
 function wheelSpinnerSvgParts(cfg,x,y,W,H){
-  const palette=wheelSpinnerPalette(cfg), items=wheelSpinnerItems(cfg), cx=x+W/2, cy=y+H*.49, r=Math.min(W,H)*.32, angle=Math.PI*2/Math.max(1,items.length), picked=cfg.picked&&cfg.picked!=='Ready'?cfg.picked:'Ready to spin', colors=palette.colors;
+  const palette=wheelSpinnerPalette(cfg), items=wheelSpinnerItems(cfg), cx=x+W/2, cy=y+H*.49, r=Math.min(W,H)*.32, angle=Math.PI*2/Math.max(1,items.length), spinning=(+cfg.spinUntil||0)>Date.now(), picked=spinning?'Spinning...':(cfg.picked&&cfg.picked!=='Ready'?cfg.picked:'Ready to spin'), colors=palette.colors, rotation=wheelSpinnerRotation(cfg);
   if(!items.length){
     return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${palette.soft}" stroke="${palette.accent}" stroke-width="4"/><text x="${cx}" y="${cy-5}" font-size="${Math.max(20,W/14)}" font-weight="900" fill="${palette.accent}" text-anchor="middle">Add items</text><text x="${cx}" y="${cy+24}" font-size="${Math.max(12,W/28)}" font-weight="800" fill="#6b7280" text-anchor="middle">Double-click to edit</text>`;
   }
@@ -1878,8 +1936,8 @@ function wheelSpinnerSvgParts(cfg,x,y,W,H){
     body+=`<path d="${wheelSpinnerSlicePath(cx,cy,r,start,end)}" fill="${color}" stroke="#ffffff" stroke-width="3"/>`;
     body+=`<text x="${tx}" y="${ty+4}" transform="rotate(${rot} ${tx} ${ty})" font-size="${Math.max(10,Math.min(18,W/28,220/Math.max(5,item.length)))}" font-weight="900" fill="${wheelSpinnerTextColor(color)}" text-anchor="middle">${esc(item).slice(0,22)}</text>`;
   });
-  body+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${palette.accent}" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${Math.max(22,r*.14)}" fill="#ffffff" stroke="${palette.accent}" stroke-width="4"/><path d="M ${cx+r+20} ${cy} L ${cx+r-12} ${cy-14} L ${cx+r-12} ${cy+14} Z" fill="${palette.accent}"/><rect x="${x+20}" y="${y+H-78}" width="${W-40}" height="52" rx="14" fill="${palette.soft}" stroke="${palette.accent}" opacity=".96"/><text x="${cx}" y="${y+H-47}" font-size="${Math.max(16,W/24)}" font-weight="900" fill="${palette.accent}" text-anchor="middle">${esc(String(picked).slice(0,34))}</text>`;
-  return body;
+  body+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${palette.accent}" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${Math.max(22,r*.14)}" fill="#ffffff" stroke="${palette.accent}" stroke-width="4"/>`;
+  return `<g transform="rotate(${rotation} ${cx} ${cy})">${body}</g><path d="M ${cx+r+20} ${cy} L ${cx+r-12} ${cy-14} L ${cx+r-12} ${cy+14} Z" fill="${palette.accent}"/><rect x="${x+20}" y="${y+H-78}" width="${W-40}" height="52" rx="14" fill="${palette.soft}" stroke="${palette.accent}" opacity=".96"/><text x="${cx}" y="${y+H-47}" font-size="${Math.max(16,W/24)}" font-weight="900" fill="${palette.accent}" text-anchor="middle">${esc(String(picked).slice(0,34))}</text>`;
 }
 function wheelSpinnerEditorPreview(cfg){
   return `<svg viewBox="0 0 360 330" role="img" aria-label="Wheel spinner preview">${wheelSpinnerSvgParts(cfg,0,0,360,330)}</svg>`;
@@ -1933,6 +1991,57 @@ function handleScoreboardScreenAction(o,p){
   }
   return false;
 }
+function wheelSpinnerHitZones(b){
+  const spinY=b.y+b.h-78, cx=b.x+b.w/2, cy=b.y+48+(b.h-48)*.49, r=Math.min(b.w,b.h-48)*.32;
+  return {
+    wheel:{cx,cy,r},
+    button:{x:b.x+20,y:spinY,w:b.w-40,h:52}
+  };
+}
+function pointInCircle(p,c){return Math.hypot(p.x-c.cx,p.y-c.cy)<=c.r}
+function finishWheelSpin(o,saveNow=false){
+  const cfg=o?.widgetConfig;
+  if(!cfg||!cfg.pendingPick) return false;
+  const pick=cfg.pendingPick, items=Array.isArray(cfg.pendingItems)?cfg.pendingItems:wheelSpinnerItems(cfg);
+  cfg.picked=pick;
+  cfg.history=[...(cfg.history||[]),pick].slice(-20);
+  cfg.activeItems=cfg.removeMode==='remove'?items.filter(item=>item!==pick):items;
+  cfg.spinRotation=((+cfg.spinEndRotation||0)%360+360)%360;
+  delete cfg.pendingPick; delete cfg.pendingItems; delete cfg.pendingPickIndex;
+  cfg.spinUntil=0; cfg.spinStartAt=0; cfg.spinDuration=0;
+  if(saveNow) setStatus('Wheel picked '+pick+'.','success');
+  if(saveNow) saveState();
+  return true;
+}
+function startWheelSpin(o){
+  if(!o||o.type!=='widget'||o.widgetKind!=='wheelspinner'||!canEditObject(o)||o.locked) return false;
+  const cfg=o.widgetConfig=o.widgetConfig||{};
+  if((+cfg.spinUntil||0)>Date.now()) return true;
+  const items=wheelSpinnerItems(cfg);
+  if(!items.length){cfg.picked='Add items first'; render(); refreshOpenWheelSpinnerPreview(); saveState(); setStatus('Add names or choices before spinning.','danger'); return true}
+  const pickIndex=Math.floor(Math.random()*items.length), pick=items[pickIndex], slice=Math.PI*2/items.length, mid=-Math.PI/2+pickIndex*slice+slice/2;
+  const startRot=wheelSpinnerRotation(cfg), target=(((-mid*180/Math.PI)%360)+360)%360, delta=(target-((startRot%360+360)%360)+360)%360;
+  cfg.pendingPick=pick;
+  cfg.pendingItems=[...items];
+  cfg.pendingPickIndex=pickIndex;
+  cfg.picked='Spinning...';
+  cfg.spinStartAt=Date.now();
+  cfg.spinDuration=1800;
+  cfg.spinUntil=cfg.spinStartAt+cfg.spinDuration;
+  cfg.spinStartRotation=startRot;
+  cfg.spinEndRotation=startRot+1440+delta;
+  ensureWidgetSpinTick();
+  render();
+  refreshOpenWheelSpinnerPreview();
+  setStatus('Wheel spinning...','success');
+  return true;
+}
+function handleWheelSpinnerScreenAction(o,p){
+  if(!o||o.type!=='widget'||o.widgetKind!=='wheelspinner') return false;
+  const zones=wheelSpinnerHitZones(normBox(o));
+  if(pointInRect(p,zones.button)||pointInCircle(p,zones.wheel)) return startWheelSpin(o);
+  return false;
+}
 function createClassroomWidgetObject(o,b){
   const cfg=o.widgetConfig||{}, kind=o.widgetKind||'traffic', W=b.w, H=b.h, x=b.x, y=b.y, rx=Math.min(22,W*.06,H*.08);
   let body=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${rx}" fill="#fff" stroke="#d7dce8" stroke-width="2"/><rect x="${x}" y="${y}" width="${W}" height="${Math.min(54,H*.18)}" rx="${rx}" fill="#f8fafc"/><text x="${x+18}" y="${y+34}" font-size="18" font-weight="900" font-family="Inter,Arial" fill="#111827">${esc(cfg.title||cfg.question||widgetTitle(kind))}</text>`;
@@ -1949,7 +2058,10 @@ function createClassroomWidgetObject(o,b){
     body=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${rx}" fill="#ffffff" stroke="${palette.accent}" stroke-width="2"/><rect x="${x}" y="${y}" width="${W}" height="${Math.min(58,H*.16)}" rx="${rx}" fill="${palette.accent}"/><text x="${x+18}" y="${y+36}" font-size="18" font-weight="900" font-family="Inter,Arial" fill="#ffffff">${esc(cfg.title||'Wheel Spinner')}</text><text x="${x+W-18}" y="${y+36}" font-size="13" font-weight="900" fill="#ffffff" text-anchor="end">${items.length} on wheel</text>${wheelSpinnerSvgParts(cfg,x,y+48,W,H-48)}`;
   }
   if(kind==='biglink'){
-    const lines=widgetWrapText(cfg.url||'drawsplat.org',Math.max(16,Math.floor(W/17)),3); body+=widgetLinesText(lines,x+W/2,y+H*.48,Math.max(26,Math.min(52,W/12)),'#1d4ed8',900,'middle',1.15); body+=`<text x="${x+W/2}" y="${y+H-30}" font-size="16" font-weight="800" fill="#64748b" text-anchor="middle">${esc(cfg.note||'')}</text>`;
+    const scale=bigLinkScale(cfg), fit=bigLinkTextFit(cfg.url||'drawsplat.org',W,H,scale), titleSize=clamp(22*scale,18,58), noteSize=clamp(16*scale,13,42), blockH=fit.lines.length*fit.size*1.12, startY=y+fit.headerH+(H-fit.headerH-fit.footerH)/2-blockH/2+fit.size*.72;
+    body=`<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${rx}" fill="#fff" stroke="#d7dce8" stroke-width="2"/><rect x="${x}" y="${y}" width="${W}" height="${fit.headerH}" rx="${rx}" fill="#f8fafc"/><text x="${x+W/2}" y="${y+fit.headerH*.63}" font-size="${titleSize}" font-weight="900" font-family="Inter,Arial" fill="#111827" text-anchor="middle">${esc(cfg.title||'Join Here')}</text>`;
+    body+=widgetLinesText(fit.lines,x+W/2,startY,fit.size,'#6d28d9',900,'middle',1.12);
+    body+=`<text x="${x+W/2}" y="${y+H-fit.footerH*.42}" font-size="${noteSize}" font-weight="800" fill="#64748b" text-anchor="middle">${esc(cfg.note||'')}</text>`;
   }
   if(kind==='workmode'){
     const modes={focus:['Quiet Focus','Work on your own','#4f46e5','M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z'],partner:['Partner Check','Check with one person','#0f766e','M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],table:['Table Talk','Share at your table','#f59e0b','M4 8h16v8H4z'],team:['Team Task','Build together','#db2777','M12 3l9 5-9 5-9-5 9-5z M3 13l9 5 9-5'],help:['Teacher Help','Raise a hand or ask','#dc2626','M8 20V8a2 2 0 0 1 4 0v5-1a2 2 0 0 1 4 0v3']}[cfg.mode||'focus'];
@@ -2002,11 +2114,12 @@ function ensureClassroomWidgetButton(){
 function openClassroomWidgetPicker(){
   ensureClassroomWidgetDialog();
   const dlg=gid('classroomWidgetDialog');
+  if(dlg.open) dlg.close();
   dlg.classList.remove('widget-editor-dialog');
   dlg.dataset.editId='';
   dlg.dataset.kind='';
   gid('classroomWidgetTitle').textContent='Classroom Widgets';
-  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${CLASSROOM_WIDGETS.map(w=>`<button type="button" data-widget-kind="${w.kind}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`).join('')}</div>`;
+  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${CLASSROOM_WIDGETS.map(w=>`<button type="button" data-widget-kind="${w.kind}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`).join('')}${CLASSROOM_TOOL_LINKS.map(t=>`<button type="button" data-widget-tool-url="${esc(t.url)}"><strong>${esc(t.title)}</strong><span>${esc(t.summary)} Opens in a new tab.</span></button>`).join('')}</div>`;
   dlg.showModal();
 }
 function widgetSummary(kind){
@@ -2032,6 +2145,8 @@ function ensureClassroomWidgetDialog(){
     if(e.target.closest('[data-widget-close]')){dlg.close(); return}
     const pick=e.target.closest('[data-widget-kind]');
     if(pick){insertClassroomWidget(pick.dataset.widgetKind); return}
+    const tool=e.target.closest('[data-widget-tool-url]');
+    if(tool){window.open(tool.dataset.widgetToolUrl,'_blank','noopener,noreferrer'); return}
     const action=e.target.closest('[data-widget-action]');
     if(action) handleWidgetDialogAction(action.dataset.widgetAction,action.dataset.index);
   });
@@ -2053,7 +2168,7 @@ function widgetEditorHtml(kind,cfg){
   if(kind==='poll') return `<div class="widget-form"><label>Question<input data-widget-field="question" value="${esc(cfg.question||'')}"></label><label>Options and counts<textarea data-widget-field="pollRows">${esc((cfg.options||[]).map((o,i)=>`${o},${(cfg.counts||[])[i]||0}`).join('\n'))}</textarea></label><div class="poll-tally-controls">${(cfg.options||[]).map((opt,i)=>`<button type="button" data-widget-action="pollVote" data-index="${i}">+ ${esc(opt)}</button>`).join('')}</div><div class="widget-action-row"><button type="button" data-widget-action="pollReset">Reset Counts</button></div></div>`;
   if(kind==='randomizer') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>Names<textarea data-widget-field="names">${esc(cfg.names||'')}</textarea></label><div class="widget-action-row"><button type="button" class="primary" data-widget-action="pickName">Pick</button><button type="button" data-widget-action="clearPick">Clear</button></div><p class="hint">Current pick: ${esc(cfg.picked||'none')}</p></div>`;
   if(kind==='wheelspinner') return `<div class="widget-form wheel-widget-form"><div class="wheel-editor-preview" id="wheelSpinnerEditorPreview">${wheelSpinnerEditorPreview(cfg)}</div><label>Title<input data-widget-field="title" value="${esc(cfg.title||'Wheel Spinner')}"></label><label>Color palette<select data-widget-field="palette">${wheelSpinnerPaletteOptions(cfg.palette||cfg.theme)}</select></label><label>Names or choices<textarea data-widget-field="items" placeholder="Ava&#10;Ben&#10;Carlos&#10;Dana">${esc(cfg.items||'')}</textarea></label><label>After a spin<select data-widget-field="removeMode"><option value="keep" ${cfg.removeMode!=='remove'?'selected':''}>Keep selected item on the wheel</option><option value="remove" ${cfg.removeMode==='remove'?'selected':''}>Remove selected item from the wheel</option></select></label><div class="widget-action-row"><button type="button" class="primary" data-widget-action="spinWheel">Spin</button><button type="button" data-widget-action="buildWheel">Build Wheel</button><button type="button" data-widget-action="resetWheel">Reset Wheel</button><button type="button" data-widget-action="clearWheelHistory">Clear History</button></div><p class="hint">Selected: ${esc(cfg.picked&&cfg.picked!=='Ready'?cfg.picked:'none')}</p><p class="hint">Picked so far: ${esc((cfg.history||[]).join(', ')||'none')}</p></div>`;
-  if(kind==='biglink') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>URL<input data-widget-field="url" value="${esc(cfg.url||'')}"></label><label>Note<input data-widget-field="note" value="${esc(cfg.note||'')}"></label></div>`;
+  if(kind==='biglink') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>URL<input data-widget-field="url" value="${esc(cfg.url||'')}"></label><label>Note<input data-widget-field="note" value="${esc(cfg.note||'')}"></label><div class="widget-action-row"><button type="button" data-widget-action="bigLinkSmaller" aria-label="Make Big Link text smaller">-</button><button type="button" class="primary" data-widget-action="bigLinkLarger" aria-label="Make Big Link text bigger">+</button><button type="button" data-widget-action="bigLinkResetSize">Reset size</button></div><p class="hint">Text size: ${Math.round(bigLinkScale(cfg)*100)}%</p></div>`;
   if(kind==='workmode') return `<div class="widget-form"><label>Mode<select data-widget-field="mode"><option value="focus" ${cfg.mode==='focus'?'selected':''}>Quiet Focus</option><option value="partner" ${cfg.mode==='partner'?'selected':''}>Partner Check</option><option value="table" ${cfg.mode==='table'?'selected':''}>Table Talk</option><option value="team" ${cfg.mode==='team'?'selected':''}>Team Task</option><option value="help" ${cfg.mode==='help'?'selected':''}>Teacher Help</option></select></label></div>`;
   if(kind==='traffic') return `<div class="widget-form widget-traffic-controls"><button type="button" class="traffic-red" data-widget-action="traffic" data-index="red">Stop</button><button type="button" class="traffic-yellow" data-widget-action="traffic" data-index="yellow">Wrap Up</button><button type="button" class="traffic-green" data-widget-action="traffic" data-index="green">Begin</button></div>`;
   if(kind==='timer') return `<div class="widget-form"><label>Title<input data-widget-field="title" value="${esc(cfg.title||'')}"></label><label>Minutes<input data-widget-field="minutes" type="number" min="1" max="240" value="${esc(cfg.minutes||5)}"></label><label>Style<select data-widget-field="style"><option value="digital" ${cfg.style!=='hourglass'?'selected':''}>Digital</option><option value="hourglass" ${cfg.style==='hourglass'?'selected':''}>Hourglass</option></select></label><div class="widget-action-row"><button type="button" class="primary" data-widget-action="timerStart">Start</button><button type="button" data-widget-action="timerPause">Pause</button><button type="button" data-widget-action="timerReset">Reset</button></div><p class="hint">Remaining: ${timerText(timerRemainingSec(cfg))}</p></div>`;
@@ -2073,6 +2188,7 @@ function applyWidgetDialogFields(saveNow=false){
     else if(k==='items'){cfg.items=v; const parsed=parseWheelItems(v), active=(cfg.activeItems||[]).filter(item=>parsed.some(p=>p.toLowerCase()===String(item).toLowerCase())); cfg.activeItems=active.length?active:parsed}
     else cfg[k]=v;
   });
+  if(o.widgetKind==='biglink') autosizeBigLinkWidget(o);
   if(o.widgetKind==='wheelspinner'){
     const preview=gid('wheelSpinnerEditorPreview');
     if(preview) preview.innerHTML=wheelSpinnerEditorPreview(cfg);
@@ -2087,19 +2203,14 @@ function handleWidgetDialogAction(action,index){
   if(action==='pollVote'){const i=Math.max(0,parseInt(index||'0',10)); cfg.counts=cfg.counts||[]; cfg.counts[i]=Math.max(0,(+cfg.counts[i]||0)+1)}
   if(action==='pickName'){const names=String(cfg.names||'').split(/\n+/).map(s=>s.trim()).filter(Boolean); if(names.length){cfg.picked=names[Math.floor(Math.random()*names.length)]; cfg.history=[...(cfg.history||[]),cfg.picked].slice(-8)}}
   if(action==='clearPick'){cfg.picked=''; cfg.history=[]}
-  if(action==='buildWheel'){const items=parseWheelItems(cfg.items||''); cfg.activeItems=[...items]; cfg.picked='Ready'; cfg.history=[]}
-  if(action==='spinWheel'){
-    const items=wheelSpinnerItems(cfg);
-    if(!items.length){cfg.picked='Add items first'}
-    else{
-      const pick=items[Math.floor(Math.random()*items.length)];
-      cfg.picked=pick;
-      cfg.history=[...(cfg.history||[]),pick].slice(-20);
-      if(cfg.removeMode==='remove') cfg.activeItems=items.filter(item=>item!==pick);
-      else cfg.activeItems=items;
-    }
+  if(action==='bigLinkSmaller'||action==='bigLinkLarger'||action==='bigLinkResetSize'){
+    if(action==='bigLinkResetSize') cfg.textScale=1;
+    else cfg.textScale=clamp(bigLinkScale(cfg)+(action==='bigLinkLarger' ? .18 : -.18),.65,2.6);
+    autosizeBigLinkWidget(o);
   }
-  if(action==='resetWheel'){cfg.activeItems=parseWheelItems(cfg.items||''); cfg.picked='Ready'}
+  if(action==='buildWheel'){const items=parseWheelItems(cfg.items||''); cfg.activeItems=[...items]; cfg.picked='Ready'; cfg.history=[]; delete cfg.pendingPick; cfg.spinUntil=0}
+  if(action==='spinWheel'){startWheelSpin(o); return}
+  if(action==='resetWheel'){cfg.activeItems=parseWheelItems(cfg.items||''); cfg.picked='Ready'; delete cfg.pendingPick; cfg.spinUntil=0}
   if(action==='clearWheelHistory'){cfg.history=[]}
   if(action==='traffic') cfg.state=index||'green';
   if(action==='timerStart'){const sec=timerRemainingSec(cfg)||Math.max(1,+cfg.minutes||1)*60; cfg.remainingSec=sec; cfg.endAt=Date.now()+sec*1000; cfg.running=true; ensureWidgetTimerTick()}
@@ -2111,6 +2222,25 @@ function handleWidgetDialogAction(action,index){
   render(); saveState(); openClassroomWidgetDialog(o.id);
 }
 let widgetTimerTick=null;
+let widgetSpinTick=null;
+function refreshOpenWheelSpinnerPreview(){
+  const dlg=gid('classroomWidgetDialog'), preview=gid('wheelSpinnerEditorPreview'), o=widgetDialogObj();
+  if(dlg?.open&&preview&&o?.widgetKind==='wheelspinner') preview.innerHTML=wheelSpinnerEditorPreview(o.widgetConfig||{});
+}
+function ensureWidgetSpinTick(){
+  if(widgetSpinTick) return;
+  widgetSpinTick=setInterval(()=>{
+    let active=false, finished=false;
+    board.panels.forEach(p=>p.objects.forEach(o=>{
+      const cfg=o.type==='widget'&&o.widgetKind==='wheelspinner'?o.widgetConfig:null;
+      if(!cfg) return;
+      if((+cfg.spinUntil||0)>Date.now()) active=true;
+      else if(cfg.pendingPick){finished=finishWheelSpin(o,true)||finished}
+    }));
+    if(active||finished){render(); refreshOpenWheelSpinnerPreview()}
+    else {clearInterval(widgetSpinTick); widgetSpinTick=null}
+  },33);
+}
 function ensureWidgetTimerTick(){
   if(widgetTimerTick) return;
   widgetTimerTick=setInterval(()=>{
@@ -2120,6 +2250,7 @@ function ensureWidgetTimerTick(){
   },1000);
 }
 ensureWidgetTimerTick();
+ensureWidgetSpinTick();
 
 /* Concept Map creates a lightweight Inspiration/FreeMind-style organizer from
    indented text. It is inserted as an image with editable source metadata. */

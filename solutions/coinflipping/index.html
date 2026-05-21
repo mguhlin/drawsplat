@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Coin Flipper</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --side-a: #a855f7;
+      --side-b: #7c3aed;
+      --coin-text-a: #FFFFFF;
+      --coin-text-b: #FFFFFF;
+      --radius: 8px;
+      --shadow: 0 16px 34px rgba(64, 64, 65, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 28%,
+        var(--gold) 28% 46%,
+        var(--orange) 46% 58%,
+        var(--red) 58% 70%,
+        var(--blue) 70% 84%,
+        var(--green) 84% 94%,
+        var(--yellow) 94% 100%
+      );
+    }
+
+    .page {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block {
+      display: grid;
+      gap: 8px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 760px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .toggle-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-10);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .toggle-control input {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--gray-30);
+      transition: background 160ms ease;
+    }
+
+    .toggle-switch::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.24);
+      transition: transform 160ms ease;
+    }
+
+    .toggle-control input:checked + .toggle-switch {
+      background: var(--green);
+    }
+
+    .toggle-control input:checked + .toggle-switch::after {
+      transform: translateX(24px);
+    }
+
+    .toggle-control input:focus-visible + .toggle-switch {
+      outline: 4px solid rgba(0, 112, 185, 0.28);
+      outline-offset: 2px;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr minmax(260px, 330px);
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    body.simple-mode .app-grid {
+      grid-template-columns: minmax(0, 920px);
+      justify-content: center;
+    }
+
+    body.simple-mode .left-panel,
+    body.simple-mode .stats-panel,
+    body.simple-mode .advanced-action,
+    body.simple-mode .guess-box {
+      display: none;
+    }
+
+    body.simple-mode .stage {
+      min-height: min(760px, calc(100vh - 150px));
+      display: grid;
+      align-content: center;
+    }
+
+    body.simple-mode .coin-area {
+      min-height: 420px;
+    }
+
+    body.simple-mode .coin-button {
+      width: min(68vw, 410px);
+    }
+
+    .panel,
+    .stage {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    label,
+    .field-title {
+      color: var(--gray-90);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      color: var(--black);
+      background: var(--white);
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+    }
+
+    input[type="color"] {
+      height: 44px;
+      padding: 4px;
+    }
+
+    input[type="file"] {
+      min-height: auto;
+      padding: 8px;
+      font-size: 0.86rem;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .button {
+      min-height: 44px;
+      padding: 9px 12px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+    }
+
+    .button.primary {
+      color: var(--white);
+      background: var(--navy);
+    }
+
+    .button.gold {
+      color: var(--black);
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .button.red {
+      color: var(--white);
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    .home-link:focus-visible,
+    .coin-button:focus-visible {
+      outline: 4px solid rgba(0, 112, 185, 0.28);
+      outline-offset: 2px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 42px;
+      margin-bottom: 12px;
+    }
+
+    .switch-row input {
+      width: 22px;
+      min-height: 22px;
+      accent-color: var(--navy);
+    }
+
+    .small-note {
+      margin: 6px 0 0;
+      color: var(--gray-50);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .image-previews {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 8px 0 14px;
+    }
+
+    .image-preview {
+      display: grid;
+      gap: 6px;
+      align-items: center;
+      justify-items: center;
+      min-height: 118px;
+      padding: 10px;
+      border: 2px dashed var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--gray-10);
+      color: var(--gray-50);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .image-preview img {
+      display: none;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 6px 16px rgba(64, 64, 65, 0.16);
+    }
+
+    .image-preview.has-image img {
+      display: block;
+    }
+
+    .stage {
+      min-height: 700px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .mode-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--gray-90);
+      font-weight: 800;
+    }
+
+    .mode-pill {
+      color: var(--white);
+      background: var(--blue);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.86rem;
+    }
+
+    .coin-area {
+      display: grid;
+      place-items: center;
+      min-height: 360px;
+      padding: 10px 0;
+    }
+
+    .coin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 16px;
+      width: min(100%, 760px);
+      align-items: center;
+      justify-items: center;
+    }
+
+    .coin-grid.single {
+      grid-template-columns: minmax(220px, 360px);
+      justify-content: center;
+    }
+
+    .coin-button {
+      display: grid;
+      place-items: center;
+      width: min(58vw, 340px);
+      aspect-ratio: 1;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      perspective: 1000px;
+    }
+
+    .coin-grid:not(.single) .coin-button {
+      width: min(30vw, 150px);
+    }
+
+    .coin {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 600ms ease;
+    }
+
+    .coin.flipping {
+      animation: flipSpin 1500ms cubic-bezier(0.16, 0.78, 0.22, 1);
+    }
+
+    .coin.show-b {
+      transform: rotateY(180deg);
+    }
+
+    .coin-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 10px solid rgba(255, 255, 255, 0.42);
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0 0 8px rgba(0, 0, 0, 0.08),
+        inset 0 -18px 40px rgba(0, 0, 0, 0.14),
+        0 18px 36px rgba(64, 64, 65, 0.2);
+      backface-visibility: hidden;
+    }
+
+    .coin.style-flat .coin-face {
+      border-width: 5px;
+      box-shadow: 0 10px 22px rgba(64, 64, 65, 0.16);
+    }
+
+    .coin.style-ringed .coin-face::after,
+    .coin.style-seal .coin-face::after {
+      content: "";
+      position: absolute;
+      inset: 13%;
+      border: 4px solid rgba(255, 255, 255, 0.38);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .coin.style-token .coin-face,
+    .coin.style-token .coin-label {
+      border-radius: 18%;
+    }
+
+    .coin.style-seal .coin-face {
+      border-width: 14px;
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 255, 255, 0.28),
+        inset 0 0 0 14px rgba(0, 0, 0, 0.08),
+        inset 0 -18px 40px rgba(0, 0, 0, 0.16),
+        0 18px 36px rgba(64, 64, 65, 0.2);
+    }
+
+    .face-a {
+      color: var(--coin-text-a);
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.5), transparent 18%),
+        var(--side-a);
+    }
+
+    .face-b {
+      color: var(--coin-text-b);
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.28), transparent 18%),
+        var(--side-b);
+      transform: rotateY(180deg);
+    }
+
+    .coin-label {
+      display: grid;
+      place-items: center;
+      width: 74%;
+      min-height: 42%;
+      padding: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: clamp(1.05rem, 5vw, 3rem);
+      font-weight: 900;
+      line-height: 1.05;
+      text-align: center;
+      overflow-wrap: anywhere;
+      text-transform: uppercase;
+    }
+
+    .coin-grid:not(.single) .coin-label {
+      font-size: clamp(0.9rem, 2.3vw, 1.25rem);
+    }
+
+    .coin-face.has-image .coin-label {
+      width: 100%;
+      height: 100%;
+      color: transparent;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .result {
+      margin: 12px 0 6px;
+      color: var(--black);
+      font-size: clamp(2rem, 6vw, 4.3rem);
+      font-weight: 900;
+      line-height: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .sub-result {
+      margin: 0 auto;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .stage-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .guess-box {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 440px;
+      margin: 16px auto 0;
+    }
+
+    .guess-box.show {
+      display: grid;
+    }
+
+    .guess-button.selected {
+      color: var(--white);
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 12px;
+      border: 2px solid var(--gray-10);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--gray-50);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--navy);
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .bar-wrap {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      overflow: hidden;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--gray-10);
+      border: 1px solid var(--gray-30);
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--side-a), var(--side-b));
+      transition: width 180ms ease;
+    }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--gray-90);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .history {
+      display: grid;
+      gap: 8px;
+      max-height: 270px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      display: grid;
+      gap: 3px;
+      padding: 10px;
+      text-align: left;
+      border-left: 6px solid var(--gold);
+      border-radius: var(--radius);
+      background: var(--gray-10);
+      color: var(--gray-90);
+      font-size: 0.9rem;
+    }
+
+    .history-item strong {
+      color: var(--black);
+    }
+
+    .saved-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .saved-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid var(--gray-10);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .saved-row span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .mini-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mini {
+      min-height: 32px;
+      padding: 5px 8px;
+      border: 1px solid var(--navy);
+      border-radius: 6px;
+      color: var(--navy);
+      background: var(--white);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .mini.danger {
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    @keyframes flipSpin {
+      0% { transform: rotateY(0) rotateX(0) scale(1); }
+      20% { transform: rotateY(540deg) rotateX(18deg) scale(1.04); }
+      48% { transform: rotateY(1260deg) rotateX(-14deg) scale(1.08); }
+      76% { transform: rotateY(1980deg) rotateX(10deg) scale(1.04); }
+      100% { transform: rotateY(2520deg) rotateX(0) scale(1); }
+    }
+
+    @media (max-width: 1040px) {
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 660px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .home-link {
+        width: 100%;
+      }
+
+      .toggle-control {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .split,
+      .actions,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .coin-area {
+        min-height: 280px;
+      }
+    }
+
+    @media print {
+      body {
+        background: var(--white);
+      }
+
+      header,
+      .left-panel,
+      .stage-actions,
+      .home-link,
+      .top-bar {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .app-grid {
+        display: block;
+      }
+
+      .stage,
+      .panel {
+        box-shadow: none;
+        border-color: var(--gray-30);
+        margin-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow">DrawSplat Tools</p>
+        <h1>Classroom Coin Flipper</h1>
+        <p class="subtitle">Flip one coin, flip many coins, track probability, customize both sides, and save classroom-ready setups.</p>
+      </div>
+      <div class="header-actions">
+        <label class="toggle-control" for="simpleModeToggle">
+          <input id="simpleModeToggle" type="checkbox" role="switch" aria-label="Simple mode" checked />
+          <span class="toggle-switch" aria-hidden="true"></span>
+          <span>Simple Mode</span>
+        </label>
+        <a class="home-link" href="../../whiteboard.html">Tool Menu</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel left-panel" aria-label="Coin settings">
+        <h2>Setup</h2>
+
+        <div class="field">
+          <label for="modeSelect">Activity Mode</label>
+          <select id="modeSelect">
+            <option value="standard">Standard Coin Flip</option>
+            <option value="decision">Fast Decision Maker</option>
+            <option value="intuition">Test Your Intuition</option>
+            <option value="luck">Test Your Luck</option>
+            <option value="best">Best 2 out of 3</option>
+            <option value="team">Team Chooser</option>
+            <option value="tie">Tie Breaker</option>
+            <option value="yesno">Yes/No Decision</option>
+          </select>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="headsLabel">Side A Label</label>
+            <input id="headsLabel" type="text" value="Heads" maxlength="24" />
+          </div>
+          <div class="field">
+            <label for="tailsLabel">Side B Label</label>
+            <input id="tailsLabel" type="text" value="Tails" maxlength="24" />
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="coinCount">Coins per Flip</label>
+            <input id="coinCount" type="number" min="1" max="20" value="1" />
+          </div>
+          <div class="field">
+            <label for="runCount">Number of Flips</label>
+            <input id="runCount" type="number" min="1" max="200" value="1" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="themeSelect">Preset Theme</label>
+          <select id="themeSelect">
+            <option value="drawsplat">DrawSplat Purple</option>
+            <option value="redblue">Red / Blue</option>
+            <option value="orangegreen">Orange / Green</option>
+            <option value="yellownavy">Yellow / Navy</option>
+            <option value="gray">Classic Gray</option>
+            <option value="contrast">High Contrast</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="coinStyle">Coin Style</label>
+          <select id="coinStyle">
+            <option value="classic">Classic Coin</option>
+            <option value="ringed">Ringed Coin</option>
+            <option value="flat">Flat Token</option>
+            <option value="token">Square Token</option>
+            <option value="seal">Classroom Seal</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="coinPicturePreset">Coin Picture Preset</label>
+          <select id="coinPicturePreset">
+            <option value="">Use custom images or colors</option>
+            <option value="heads-tails">Heads / Tails</option>
+            <option value="canadian-loonie">Canadian Loonie</option>
+            <option value="uk-pound">UK Coin</option>
+            <option value="dutch-euro">Dutch Coin</option>
+            <option value="mexican-peso">Mexican Coin</option>
+          </select>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="headsColor">Side A Color</label>
+            <input id="headsColor" type="color" value="#a855f7" />
+          </div>
+          <div class="field">
+            <label for="tailsColor">Side B Color</label>
+            <input id="tailsColor" type="color" value="#7c3aed" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="backgroundColor">Background Color</label>
+          <input id="backgroundColor" type="color" value="#FFFFFF" />
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="headsImage">Heads / Side A Image</label>
+            <input id="headsImage" type="file" accept="image/*" />
+          </div>
+          <div class="field">
+            <label for="tailsImage">Tails / Side B Image</label>
+            <input id="tailsImage" type="file" accept="image/*" />
+          </div>
+        </div>
+        <div class="image-previews" aria-label="Loaded coin images">
+          <div class="image-preview" id="headsPreview">
+            <img alt="Heads image preview" id="headsPreviewImg" />
+            <span>Heads image</span>
+          </div>
+          <div class="image-preview" id="tailsPreview">
+            <img alt="Tails image preview" id="tailsPreviewImg" />
+            <span>Tails image</span>
+          </div>
+        </div>
+        <p class="small-note">Images stay in this browser. Use save setup if you want to reuse them later.</p>
+
+        <div class="switch-row">
+          <label for="soundToggle">Flip Sound</label>
+          <input id="soundToggle" type="checkbox" checked />
+        </div>
+
+        <div class="switch-row">
+          <label for="fullscreenToggle">Full Screen on Flip</label>
+          <input id="fullscreenToggle" type="checkbox" />
+        </div>
+
+        <div class="actions">
+          <button class="button primary" id="flipBtn" type="button">Flip</button>
+          <button class="button" id="resetStatsBtn" type="button">Reset Stats</button>
+          <button class="button" id="clearImagesBtn" type="button">Clear Images</button>
+          <button class="button gold" id="saveSetupBtn" type="button">Save Setup</button>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="Coin flipper">
+        <div class="mode-line">
+          <span class="mode-pill" id="modePill">Standard Coin Flip</span>
+          <span id="modeHint">Click the coin or press Flip.</span>
+        </div>
+
+        <div class="coin-area">
+          <div class="coin-grid single" id="coinGrid" aria-live="polite"></div>
+        </div>
+
+        <div class="result" id="resultText">Ready to Flip</div>
+        <p class="sub-result" id="subResult">Choose your setup, then flip the coin.</p>
+
+        <div class="guess-box" id="guessBox">
+          <button class="button guess-button" id="guessHeadsBtn" type="button">Guess Heads</button>
+          <button class="button guess-button" id="guessTailsBtn" type="button">Guess Tails</button>
+        </div>
+
+        <div class="stage-actions">
+          <button class="button primary" id="flipAgainBtn" type="button">Flip Again</button>
+          <button class="button" id="fullscreenBtn" type="button">Full Screen</button>
+          <button class="button advanced-action" id="copyResultBtn" type="button">Copy Result</button>
+          <button class="button advanced-action" id="shareResultBtn" type="button">Share Result</button>
+          <button class="button advanced-action" id="shareSetupBtn" type="button">Share Setup</button>
+          <button class="button advanced-action" id="printBtn" type="button">Print</button>
+        </div>
+      </section>
+
+      <aside class="panel stats-panel" aria-label="Results and saved setups">
+        <h2>Stats</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Total Flips</span>
+            <strong id="totalStat">0</strong>
+          </div>
+          <div class="stat">
+            <span id="headsStatLabel">Side A</span>
+            <strong id="headsStat">0</strong>
+          </div>
+          <div class="stat">
+            <span id="tailsStatLabel">Side B</span>
+            <strong id="tailsStat">0</strong>
+          </div>
+          <div class="stat">
+            <span id="extraLabel">History</span>
+            <strong id="extraStat">0</strong>
+          </div>
+        </div>
+
+        <div class="bar-wrap">
+          <div class="bar" aria-hidden="true"><div class="bar-fill" id="headsBar"></div></div>
+          <div class="bar-labels">
+            <span id="headsPercent">Side A 0%</span>
+            <span id="tailsPercent">Side B 0%</span>
+          </div>
+        </div>
+
+        <h2>History</h2>
+        <div class="history" id="historyList">
+          <div class="history-item">No flips yet.</div>
+        </div>
+
+        <h2 style="margin-top:18px;">Saved Setups</h2>
+        <div class="field">
+          <label for="setupName">Setup Name</label>
+          <input id="setupName" type="text" placeholder="Example: Yes or No" maxlength="40" />
+        </div>
+        <div class="saved-list" id="savedSetups"></div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const themes = {
+      drawsplat: { a: "#a855f7", b: "#7c3aed", bg: "#FFFFFF", textA: "#FFFFFF", textB: "#FFFFFF" },
+      redblue: { a: "#ef4444", b: "#6d28d9", bg: "#FFFFFF", textA: "#FFFFFF", textB: "#FFFFFF" },
+      orangegreen: { a: "#f97316", b: "#22c55e", bg: "#FFFFFF", textA: "#000000", textB: "#FFFFFF" },
+      yellownavy: { a: "#facc15", b: "#7c3aed", bg: "#FFFFFF", textA: "#000000", textB: "#FFFFFF" },
+      gray: { a: "#E6E7E8", b: "#404041", bg: "#FFFFFF", textA: "#000000", textB: "#FFFFFF" },
+      contrast: { a: "#000000", b: "#FFFFFF", bg: "#E6E7E8", textA: "#FFFFFF", textB: "#000000" }
+    };
+
+    const modeDefaults = {
+      standard: { title: "Standard Coin Flip", hint: "Click the coin or press Flip.", a: "Heads", b: "Tails" },
+      decision: { title: "Fast Decision Maker", hint: "Use custom labels for a quick choice.", a: "Option A", b: "Option B" },
+      intuition: { title: "Test Your Intuition", hint: "Pick your guess before each flip.", a: "Heads", b: "Tails" },
+      luck: { title: "Test Your Luck", hint: "Try to build the longest same-side streak.", a: "Heads", b: "Tails" },
+      best: { title: "Best 2 out of 3", hint: "One click runs three flips and declares a winner.", a: "Heads", b: "Tails" },
+      team: { title: "Team Chooser", hint: "Let the coin choose which team goes first.", a: "Team A", b: "Team B" },
+      tie: { title: "Tie Breaker", hint: "A quick fair choice for a close call.", a: "Choice A", b: "Choice B" },
+      yesno: { title: "Yes/No Decision", hint: "A simple yes or no result.", a: "Yes", b: "No" }
+    };
+
+    const coinPicturePresets = {
+      "heads-tails": {
+        name: "Heads / Tails",
+        a: "Heads",
+        b: "Tails",
+        theme: "drawsplat",
+        style: "classic",
+        headsColor: "#a855f7",
+        tailsColor: "#7c3aed",
+        images: {
+          a: "assets/coin-heads.png?v=indigenous-heritage-heads-20260520",
+          b: "assets/coin-tails.png?v=majestic-wilderness-tails-20260520"
+        }
+      },
+      "canadian-loonie": {
+        name: "Canadian Loonie",
+        a: "Loon",
+        b: "Maple",
+        theme: "drawsplat",
+        style: "classic",
+        headsColor: "#D9A441",
+        tailsColor: "#C9972F",
+        art: {
+          a: { country: "CANADA", value: "$1", title: "LOONIE", center: "loon", primary: "#D9A441", secondary: "#FFF4BF", accent: "#7c3aed" },
+          b: { country: "CANADA", value: "1 DOLLAR", title: "MAPLE", center: "maple", primary: "#C9972F", secondary: "#FFF0B0", accent: "#ef4444" }
+        }
+      },
+      "uk-pound": {
+        name: "UK Coin",
+        a: "Crown",
+        b: "Pound",
+        theme: "gray",
+        style: "ringed",
+        headsColor: "#D7D9DA",
+        tailsColor: "#B8A56C",
+        art: {
+          a: { country: "UNITED KINGDOM", value: "GBP 1", title: "CROWN", center: "crown", primary: "#D7D9DA", secondary: "#FFFFFF", accent: "#7c3aed" },
+          b: { country: "ONE POUND", value: "GBP", title: "THISTLE ROSE", center: "rose", primary: "#B8A56C", secondary: "#F7E2A0", accent: "#404041" }
+        }
+      },
+      "dutch-euro": {
+        name: "Dutch Coin",
+        a: "Lion",
+        b: "Euro",
+        theme: "orangegreen",
+        style: "ringed",
+        headsColor: "#f97316",
+        tailsColor: "#D6B55D",
+        art: {
+          a: { country: "NEDERLAND", value: "1 EURO", title: "LION", center: "lion", primary: "#f97316", secondary: "#FFD19E", accent: "#7c3aed" },
+          b: { country: "EURO", value: "EUR 1", title: "NETHERLANDS", center: "euro", primary: "#D6B55D", secondary: "#F7E2A0", accent: "#6d28d9" }
+        }
+      },
+      "mexican-peso": {
+        name: "Mexican Coin",
+        a: "Eagle",
+        b: "Peso",
+        theme: "contrast",
+        style: "ringed",
+        headsColor: "#C7C9CC",
+        tailsColor: "#B9933F",
+        art: {
+          a: { country: "MEXICO", value: "$10", title: "EAGLE", center: "eagle", primary: "#C7C9CC", secondary: "#FFFFFF", accent: "#22c55e" },
+          b: { country: "PESOS", value: "$10", title: "CALENDAR", center: "sun", primary: "#B9933F", secondary: "#F0D18B", accent: "#ef4444" }
+        }
+      }
+    };
+
+    const els = {
+      simpleModeToggle: document.getElementById("simpleModeToggle"),
+      modeSelect: document.getElementById("modeSelect"),
+      headsLabel: document.getElementById("headsLabel"),
+      tailsLabel: document.getElementById("tailsLabel"),
+      coinCount: document.getElementById("coinCount"),
+      runCount: document.getElementById("runCount"),
+      themeSelect: document.getElementById("themeSelect"),
+      coinStyle: document.getElementById("coinStyle"),
+      coinPicturePreset: document.getElementById("coinPicturePreset"),
+      headsColor: document.getElementById("headsColor"),
+      tailsColor: document.getElementById("tailsColor"),
+      backgroundColor: document.getElementById("backgroundColor"),
+      headsImage: document.getElementById("headsImage"),
+      tailsImage: document.getElementById("tailsImage"),
+      headsPreview: document.getElementById("headsPreview"),
+      tailsPreview: document.getElementById("tailsPreview"),
+      headsPreviewImg: document.getElementById("headsPreviewImg"),
+      tailsPreviewImg: document.getElementById("tailsPreviewImg"),
+      soundToggle: document.getElementById("soundToggle"),
+      fullscreenToggle: document.getElementById("fullscreenToggle"),
+      flipBtn: document.getElementById("flipBtn"),
+      flipAgainBtn: document.getElementById("flipAgainBtn"),
+      resetStatsBtn: document.getElementById("resetStatsBtn"),
+      clearImagesBtn: document.getElementById("clearImagesBtn"),
+      saveSetupBtn: document.getElementById("saveSetupBtn"),
+      fullscreenBtn: document.getElementById("fullscreenBtn"),
+      copyResultBtn: document.getElementById("copyResultBtn"),
+      shareResultBtn: document.getElementById("shareResultBtn"),
+      shareSetupBtn: document.getElementById("shareSetupBtn"),
+      printBtn: document.getElementById("printBtn"),
+      modePill: document.getElementById("modePill"),
+      modeHint: document.getElementById("modeHint"),
+      coinGrid: document.getElementById("coinGrid"),
+      resultText: document.getElementById("resultText"),
+      subResult: document.getElementById("subResult"),
+      guessBox: document.getElementById("guessBox"),
+      guessHeadsBtn: document.getElementById("guessHeadsBtn"),
+      guessTailsBtn: document.getElementById("guessTailsBtn"),
+      totalStat: document.getElementById("totalStat"),
+      headsStatLabel: document.getElementById("headsStatLabel"),
+      headsStat: document.getElementById("headsStat"),
+      tailsStatLabel: document.getElementById("tailsStatLabel"),
+      tailsStat: document.getElementById("tailsStat"),
+      extraLabel: document.getElementById("extraLabel"),
+      extraStat: document.getElementById("extraStat"),
+      headsBar: document.getElementById("headsBar"),
+      headsPercent: document.getElementById("headsPercent"),
+      tailsPercent: document.getElementById("tailsPercent"),
+      historyList: document.getElementById("historyList"),
+      setupName: document.getElementById("setupName"),
+      savedSetups: document.getElementById("savedSetups")
+    };
+
+    const state = {
+      total: 0,
+      heads: 0,
+      tails: 0,
+      history: [],
+      currentSide: "a",
+      selectedGuess: "",
+      correctGuesses: 0,
+      guessTotal: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      lastSide: "",
+      headsImageData: "",
+      tailsImageData: "",
+      lastResult: "No result yet."
+    };
+
+    function clampNumber(value, min, max) {
+      const number = Number.parseInt(value, 10);
+      if (Number.isNaN(number)) return min;
+      return Math.max(min, Math.min(max, number));
+    }
+
+    function labels() {
+      return {
+        a: els.headsLabel.value.trim() || "Side A",
+        b: els.tailsLabel.value.trim() || "Side B"
+      };
+    }
+
+    function randomSide() {
+      return Math.random() < 0.5 ? "a" : "b";
+    }
+
+    function resultName(side) {
+      const current = labels();
+      return side === "a" ? current.a : current.b;
+    }
+
+    function isSimpleMode() {
+      return els.simpleModeToggle.checked;
+    }
+
+    function coinSymbol(type, accent) {
+      const symbols = {
+        loon: '<path d="M76 136c31-32 75-25 97 4 14 18 38 16 57 6-14 29-45 42-83 38-28-3-52-17-71-48Z" fill="' + accent + '"/><circle cx="117" cy="124" r="7" fill="#fff"/><path d="M71 139c-20-5-34-15-44-31 23 2 42 9 58 22Z" fill="' + accent + '"/><path d="M125 187c-7 17-16 30-28 41" stroke="' + accent + '" stroke-width="9" stroke-linecap="round"/><path d="M157 188c2 18-1 32-10 45" stroke="' + accent + '" stroke-width="9" stroke-linecap="round"/>',
+        maple: '<path d="M150 45l17 42 37-23-16 44 48 5-40 28 32 34-48-2 5 48-35-31-35 31 5-48-48 2 32-34-40-28 48-5-16-44 37 23Z" fill="' + accent + '"/><path d="M150 185v48" stroke="' + accent + '" stroke-width="11" stroke-linecap="round"/>',
+        crown: '<path d="M72 179h156l-16 42H88Z" fill="' + accent + '"/><path d="M91 164L70 91l54 42 26-61 27 61 53-42-21 73Z" fill="' + accent + '"/><circle cx="70" cy="91" r="12" fill="' + accent + '"/><circle cx="150" cy="72" r="12" fill="' + accent + '"/><circle cx="230" cy="91" r="12" fill="' + accent + '"/>',
+        rose: '<circle cx="150" cy="150" r="34" fill="' + accent + '"/><path d="M150 83c19 22 19 44 0 67-19-23-19-45 0-67ZM150 217c-19-22-19-44 0-67 19 23 19 45 0 67ZM83 150c22-19 44-19 67 0-23 19-45 19-67 0ZM217 150c-22 19-44 19-67 0 23-19 45-19 67 0Z" fill="' + accent + '" opacity=".82"/>',
+        lion: '<path d="M78 99c36-28 85-23 111 10 25 2 42 16 50 42-17-9-32-9-46 2-4 35-26 59-61 69 7-22 6-41-3-58-18 12-37 16-59 12 15-15 23-33 24-54-8-6-13-14-16-23Z" fill="' + accent + '"/><circle cx="130" cy="111" r="7" fill="#fff"/><path d="M195 98c17-28 38-34 63-19-22 4-36 18-42 43Z" fill="' + accent + '"/>',
+        euro: '<text x="150" y="189" text-anchor="middle" font-size="78" font-weight="900" fill="' + accent + '">EUR</text><circle cx="150" cy="150" r="78" fill="none" stroke="' + accent + '" stroke-width="12"/>',
+        eagle: '<path d="M74 151c30-38 68-55 114-50-22 13-34 30-36 51 20-18 45-26 74-24-22 14-38 32-48 55 25-5 47 0 66 15-43 12-81 5-114-21-18 9-37 12-56 9 12-10 21-22 27-35-10 1-19 1-27 0Z" fill="' + accent + '"/><path d="M123 195c-8 20-21 34-39 43 35 3 64-7 88-31" stroke="' + accent + '" stroke-width="10" stroke-linecap="round"/><circle cx="145" cy="121" r="6" fill="#fff"/>',
+        sun: '<circle cx="150" cy="150" r="48" fill="' + accent + '"/><g stroke="' + accent + '" stroke-width="12" stroke-linecap="round"><path d="M150 66v28"/><path d="M150 206v28"/><path d="M66 150h28"/><path d="M206 150h28"/><path d="M91 91l20 20"/><path d="M209 91l-20 20"/><path d="M91 209l20-20"/><path d="M209 209l-20-20"/></g>',
+        star: '<path d="M150 62l24 56 61 6-46 40 14 60-53-32-53 32 14-60-46-40 61-6Z" fill="' + accent + '"/>',
+        spark: '<path d="M150 50l26 72 74 28-74 28-26 72-26-72-74-28 74-28Z" fill="' + accent + '"/><circle cx="218" cy="82" r="14" fill="' + accent + '"/><circle cx="86" cy="218" r="10" fill="' + accent + '"/>'
+      };
+      return symbols[type] || symbols.euro;
+    }
+
+    function coinPictureDataUri(options) {
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">' +
+        '<defs><radialGradient id="coinGlow" cx="34%" cy="28%"><stop offset="0" stop-color="' + options.secondary + '"/><stop offset=".56" stop-color="' + options.primary + '"/><stop offset="1" stop-color="#6b5a2a"/></radialGradient></defs>' +
+        '<rect width="300" height="300" fill="transparent"/>' +
+        '<circle cx="150" cy="150" r="143" fill="url(#coinGlow)"/>' +
+        '<circle cx="150" cy="150" r="126" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="9"/>' +
+        '<circle cx="150" cy="150" r="105" fill="rgba(255,255,255,.18)"/>' +
+        '<text x="150" y="36" text-anchor="middle" font-size="19" font-weight="900" fill="' + options.accent + '" font-family="Arial, Helvetica, sans-serif">' + options.country + '</text>' +
+        '<text x="150" y="272" text-anchor="middle" font-size="21" font-weight="900" fill="' + options.accent + '" font-family="Arial, Helvetica, sans-serif">' + options.value + '</text>' +
+        coinSymbol(options.center, options.accent) +
+        '<text x="150" y="250" text-anchor="middle" font-size="15" font-weight="800" fill="rgba(0,0,0,.55)" font-family="Arial, Helvetica, sans-serif">' + options.title + '</text>' +
+        '</svg>';
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    function applyVisuals() {
+      const theme = themes[els.themeSelect.value] || themes.drawsplat;
+      document.documentElement.style.setProperty("--side-a", els.headsColor.value);
+      document.documentElement.style.setProperty("--side-b", els.tailsColor.value);
+      document.documentElement.style.setProperty("--bg", els.backgroundColor.value);
+      document.documentElement.style.setProperty("--coin-text-a", theme.textA);
+      document.documentElement.style.setProperty("--coin-text-b", theme.textB);
+      updateImagePreviews();
+      renderCoins();
+      updateStats();
+    }
+
+    function setTheme(name) {
+      const theme = themes[name] || themes.drawsplat;
+      els.headsColor.value = theme.a;
+      els.tailsColor.value = theme.b;
+      els.backgroundColor.value = theme.bg;
+      applyVisuals();
+    }
+
+    function updateImagePreviews() {
+      const previews = [
+        { wrap: els.headsPreview, img: els.headsPreviewImg, src: state.headsImageData },
+        { wrap: els.tailsPreview, img: els.tailsPreviewImg, src: state.tailsImageData }
+      ];
+      previews.forEach((preview) => {
+        preview.wrap.classList.toggle("has-image", Boolean(preview.src));
+        if (preview.src) {
+          preview.img.src = preview.src;
+        } else {
+          preview.img.removeAttribute("src");
+        }
+      });
+    }
+
+    function applyCoinPicturePreset(name) {
+      const preset = coinPicturePresets[name];
+      if (!preset) return;
+      els.headsLabel.value = preset.a;
+      els.tailsLabel.value = preset.b;
+      els.themeSelect.value = preset.theme;
+      els.coinStyle.value = preset.style;
+      els.headsColor.value = preset.headsColor;
+      els.tailsColor.value = preset.tailsColor;
+      els.backgroundColor.value = "#FFFFFF";
+      els.headsImage.value = "";
+      els.tailsImage.value = "";
+      state.headsImageData = preset.images ? preset.images.a : coinPictureDataUri(preset.art.a);
+      state.tailsImageData = preset.images ? preset.images.b : coinPictureDataUri(preset.art.b);
+      els.subResult.textContent = "Loaded " + preset.name + " pictures.";
+      applyVisuals();
+    }
+
+    function renderCoins(results = [state.currentSide]) {
+      const coinCount = Math.max(1, results.length);
+      els.coinGrid.classList.toggle("single", coinCount === 1);
+      els.coinGrid.innerHTML = "";
+
+      results.forEach((side, index) => {
+        const button = document.createElement("button");
+        button.className = "coin-button";
+        button.type = "button";
+        button.setAttribute("aria-label", "Flip coin " + (index + 1));
+        button.addEventListener("click", flip);
+
+        const coin = document.createElement("span");
+        coin.className = "coin style-" + els.coinStyle.value + (side === "b" ? " show-b" : "");
+
+        const faceA = document.createElement("span");
+        faceA.className = "coin-face face-a" + (state.headsImageData ? " has-image" : "");
+        const labelA = document.createElement("span");
+        labelA.className = "coin-label";
+        labelA.textContent = labels().a;
+        if (state.headsImageData) labelA.style.backgroundImage = "url(" + state.headsImageData + ")";
+        faceA.appendChild(labelA);
+
+        const faceB = document.createElement("span");
+        faceB.className = "coin-face face-b" + (state.tailsImageData ? " has-image" : "");
+        const labelB = document.createElement("span");
+        labelB.className = "coin-label";
+        labelB.textContent = labels().b;
+        if (state.tailsImageData) labelB.style.backgroundImage = "url(" + state.tailsImageData + ")";
+        faceB.appendChild(labelB);
+
+        coin.append(faceA, faceB);
+        button.appendChild(coin);
+        els.coinGrid.appendChild(button);
+      });
+    }
+
+    function animateCoins(results) {
+      renderCoins(results);
+      const coins = els.coinGrid.querySelectorAll(".coin");
+      coins.forEach((coin) => {
+        coin.classList.add("flipping");
+        coin.addEventListener("animationend", () => coin.classList.remove("flipping"), { once: true });
+      });
+    }
+
+    function playSound() {
+      if (!els.soundToggle.checked) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.type = "triangle";
+        oscillator.frequency.setValueAtTime(520, ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.18);
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.24);
+      } catch (error) {
+        els.soundToggle.checked = false;
+      }
+    }
+
+    function addResults(results, summary) {
+      results.forEach((side) => {
+        state.total += 1;
+        if (side === "a") state.heads += 1;
+        if (side === "b") state.tails += 1;
+      });
+
+      state.history.unshift({
+        time: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" }),
+        summary,
+        results: results.map(resultName).join(", ")
+      });
+      state.history = state.history.slice(0, 60);
+    }
+
+    function updateModeExtras(results) {
+      const mode = els.modeSelect.value;
+      if (mode === "intuition" && results.length === 1 && state.selectedGuess) {
+        state.guessTotal += 1;
+        if (results[0] === state.selectedGuess) state.correctGuesses += 1;
+        state.selectedGuess = "";
+        els.guessHeadsBtn.classList.remove("selected");
+        els.guessTailsBtn.classList.remove("selected");
+      }
+
+      if (mode === "luck" && results.length === 1) {
+        if (results[0] === state.lastSide) {
+          state.currentStreak += 1;
+        } else {
+          state.currentStreak = 1;
+          state.lastSide = results[0];
+        }
+        state.bestStreak = Math.max(state.bestStreak, state.currentStreak);
+      }
+    }
+
+    function updateStats() {
+      const total = state.total || 0;
+      const headsPct = total ? Math.round((state.heads / total) * 100) : 0;
+      const tailsPct = total ? 100 - headsPct : 0;
+      const current = labels();
+      els.totalStat.textContent = total;
+      els.headsStatLabel.textContent = current.a;
+      els.headsStat.textContent = state.heads;
+      els.tailsStatLabel.textContent = current.b;
+      els.tailsStat.textContent = state.tails;
+      els.headsBar.style.width = headsPct + "%";
+      els.headsPercent.textContent = current.a + " " + headsPct + "%";
+      els.tailsPercent.textContent = current.b + " " + tailsPct + "%";
+
+      if (els.modeSelect.value === "intuition") {
+        els.extraLabel.textContent = "Guesses";
+        els.extraStat.textContent = state.correctGuesses + "/" + state.guessTotal;
+      } else if (els.modeSelect.value === "luck") {
+        els.extraLabel.textContent = "Best Streak";
+        els.extraStat.textContent = state.bestStreak;
+      } else {
+        els.extraLabel.textContent = "History";
+        els.extraStat.textContent = state.history.length;
+      }
+
+      if (!state.history.length) {
+        els.historyList.innerHTML = '<div class="history-item">No flips yet.</div>';
+        return;
+      }
+
+      els.historyList.innerHTML = state.history.map((item, index) => (
+        '<div class="history-item"><strong>#' + (state.history.length - index) + ' ' + item.summary + '</strong><span>' + item.results + '</span><span>' + item.time + '</span></div>'
+      )).join("");
+    }
+
+    function updateModeText() {
+      if (isSimpleMode()) {
+        els.modePill.textContent = "Simple Coin Flip";
+        els.modeHint.textContent = "Click the coin or press Flip.";
+        els.guessBox.classList.remove("show");
+        return;
+      }
+      const mode = modeDefaults[els.modeSelect.value] || modeDefaults.standard;
+      els.modePill.textContent = mode.title;
+      els.modeHint.textContent = mode.hint;
+      els.guessBox.classList.toggle("show", els.modeSelect.value === "intuition");
+      updateStats();
+    }
+
+    function updateSimpleMode() {
+      document.body.classList.toggle("simple-mode", isSimpleMode());
+      els.simpleModeToggle.setAttribute("aria-checked", String(isSimpleMode()));
+      els.flipAgainBtn.textContent = isSimpleMode() ? "Flip" : "Flip Again";
+      updateModeText();
+      renderCoins([state.currentSide]);
+    }
+
+    function flip() {
+      const mode = isSimpleMode() ? "standard" : els.modeSelect.value;
+      if (mode === "intuition" && !state.selectedGuess) {
+        els.resultText.textContent = "Choose a Guess";
+        els.subResult.textContent = "Pick " + labels().a + " or " + labels().b + " before flipping.";
+        return;
+      }
+
+      if (els.fullscreenToggle.checked && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+      }
+
+      playSound();
+      let rounds = clampNumber(els.runCount.value, 1, 200);
+      let coinCount = clampNumber(els.coinCount.value, 1, 20);
+      let results = [];
+      let summary = "";
+      const singleFlipModes = ["decision", "intuition", "luck", "team", "tie", "yesno"];
+      if (isSimpleMode() || singleFlipModes.includes(mode)) {
+        rounds = 1;
+        coinCount = 1;
+      }
+
+      if (mode === "best") {
+        rounds = 3;
+        coinCount = 1;
+        results = Array.from({ length: 3 }, randomSide);
+        const aWins = results.filter((side) => side === "a").length;
+        const winner = aWins >= 2 ? "a" : "b";
+        state.currentSide = winner;
+        summary = "Best 2 out of 3";
+        state.lastResult = resultName(winner) + " wins, " + results.map(resultName).join(" / ");
+        els.resultText.textContent = resultName(winner) + " Wins";
+        els.subResult.textContent = results.map(resultName).join(" / ");
+      } else {
+        results = Array.from({ length: rounds * coinCount }, randomSide);
+        state.currentSide = results[results.length - 1];
+        const aCount = results.filter((side) => side === "a").length;
+        const bCount = results.length - aCount;
+        summary = rounds === 1 && coinCount === 1 ? "Single flip" : rounds + " round(s), " + coinCount + " coin(s)";
+        state.lastResult = results.length === 1 ? resultName(results[0]) : labels().a + ": " + aCount + ", " + labels().b + ": " + bCount;
+        els.resultText.textContent = results.length === 1 ? resultName(results[0]) : labels().a + " " + aCount + " / " + labels().b + " " + bCount;
+        els.subResult.textContent = results.length === 1 ? "Result: " + resultName(results[0]) : "Results: " + results.map(resultName).join(", ");
+      }
+
+      addResults(results, summary);
+      updateModeExtras(results);
+      animateCoins(results.slice(0, 20));
+      updateStats();
+    }
+
+    function resetStats() {
+      state.total = 0;
+      state.heads = 0;
+      state.tails = 0;
+      state.history = [];
+      state.correctGuesses = 0;
+      state.guessTotal = 0;
+      state.currentStreak = 0;
+      state.bestStreak = 0;
+      state.lastSide = "";
+      state.lastResult = "No result yet.";
+      els.resultText.textContent = "Ready to Flip";
+      els.subResult.textContent = "Stats and history have been reset.";
+      updateStats();
+    }
+
+    function readImage(file, side) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (side === "a") state.headsImageData = reader.result;
+        if (side === "b") state.tailsImageData = reader.result;
+        els.coinPicturePreset.value = "";
+        updateImagePreviews();
+        renderCoins();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function currentSetup() {
+      return {
+        simpleMode: els.simpleModeToggle.checked,
+        mode: els.modeSelect.value,
+        headsLabel: els.headsLabel.value,
+        tailsLabel: els.tailsLabel.value,
+        coinCount: els.coinCount.value,
+        runCount: els.runCount.value,
+        theme: els.themeSelect.value,
+        coinStyle: els.coinStyle.value,
+        coinPicturePreset: els.coinPicturePreset.value,
+        headsColor: els.headsColor.value,
+        tailsColor: els.tailsColor.value,
+        backgroundColor: els.backgroundColor.value,
+        sound: els.soundToggle.checked,
+        fullscreen: els.fullscreenToggle.checked,
+        headsImageData: state.headsImageData,
+        tailsImageData: state.tailsImageData
+      };
+    }
+
+    function applySetup(setup) {
+      els.simpleModeToggle.checked = Boolean(setup.simpleMode);
+      els.modeSelect.value = setup.mode || "standard";
+      els.headsLabel.value = setup.headsLabel || "Heads";
+      els.tailsLabel.value = setup.tailsLabel || "Tails";
+      els.coinCount.value = setup.coinCount || "1";
+      els.runCount.value = setup.runCount || "1";
+      els.themeSelect.value = setup.theme || "drawsplat";
+      els.coinStyle.value = setup.coinStyle || "classic";
+      els.coinPicturePreset.value = setup.coinPicturePreset || "";
+      els.headsColor.value = setup.headsColor || "#a855f7";
+      els.tailsColor.value = setup.tailsColor || "#7c3aed";
+      els.backgroundColor.value = setup.backgroundColor || "#FFFFFF";
+      els.soundToggle.checked = setup.sound !== false;
+      els.fullscreenToggle.checked = Boolean(setup.fullscreen);
+      state.headsImageData = setup.headsImageData || "";
+      state.tailsImageData = setup.tailsImageData || "";
+      if (setup.coinPicturePreset && coinPicturePresets[setup.coinPicturePreset] && !state.headsImageData && !state.tailsImageData) {
+        const preset = coinPicturePresets[setup.coinPicturePreset];
+        state.headsImageData = preset.images ? preset.images.a : coinPictureDataUri(preset.art.a);
+        state.tailsImageData = preset.images ? preset.images.b : coinPictureDataUri(preset.art.b);
+      }
+      updateSimpleMode();
+      updateModeText();
+      applyVisuals();
+    }
+
+    function savedSetups() {
+      try {
+        return JSON.parse(localStorage.getItem("drawsplatCoinSetups") || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function storeSetups(setups) {
+      localStorage.setItem("drawsplatCoinSetups", JSON.stringify(setups.slice(0, 12)));
+      renderSavedSetups();
+    }
+
+    function saveSetup() {
+      const name = els.setupName.value.trim() || modeDefaults[els.modeSelect.value].title;
+      const setups = savedSetups().filter((setup) => setup.name !== name);
+      setups.unshift({ name, setup: currentSetup() });
+      storeSetups(setups);
+      els.setupName.value = "";
+      els.subResult.textContent = "Saved setup: " + name;
+    }
+
+    function renderSavedSetups() {
+      const setups = savedSetups();
+      if (!setups.length) {
+        els.savedSetups.innerHTML = '<p class="small-note">No saved setups yet.</p>';
+        return;
+      }
+      els.savedSetups.innerHTML = "";
+      setups.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "saved-row";
+        const name = document.createElement("span");
+        name.textContent = item.name;
+        const actions = document.createElement("div");
+        actions.className = "mini-actions";
+        const load = document.createElement("button");
+        load.className = "mini";
+        load.type = "button";
+        load.textContent = "Load";
+        load.addEventListener("click", () => applySetup(item.setup));
+        const remove = document.createElement("button");
+        remove.className = "mini danger";
+        remove.type = "button";
+        remove.textContent = "Delete";
+        remove.addEventListener("click", () => {
+          const next = savedSetups();
+          next.splice(index, 1);
+          storeSetups(next);
+        });
+        actions.append(load, remove);
+        row.append(name, actions);
+        els.savedSetups.appendChild(row);
+      });
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        els.subResult.textContent = "Copied to clipboard.";
+      } catch (error) {
+        els.subResult.textContent = text;
+      }
+    }
+
+    function resultShareText() {
+      return "Classroom Coin Flipper result: " + state.lastResult;
+    }
+
+    async function shareResult() {
+      const text = resultShareText();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "Classroom Coin Flipper", text });
+          els.subResult.textContent = "Result shared.";
+          return;
+        } catch (error) {
+          if (error.name === "AbortError") return;
+        }
+      }
+      copyText(text);
+    }
+
+    function shareSetup() {
+      const setup = currentSetup();
+      setup.headsImageData = "";
+      setup.tailsImageData = "";
+      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(setup))));
+      const url = location.origin === "null"
+        ? location.href.split("?")[0] + "?setup=" + encoded
+        : location.origin + location.pathname + "?setup=" + encoded;
+      copyText(url);
+    }
+
+    function loadSetupFromUrl() {
+      const params = new URLSearchParams(location.search);
+      const encoded = params.get("setup");
+      if (!encoded) return false;
+      try {
+        const setup = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+        applySetup(setup);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    els.simpleModeToggle.addEventListener("change", updateSimpleMode);
+    els.modeSelect.addEventListener("change", () => {
+      const mode = modeDefaults[els.modeSelect.value] || modeDefaults.standard;
+      els.headsLabel.value = mode.a;
+      els.tailsLabel.value = mode.b;
+      updateModeText();
+      renderCoins();
+    });
+
+    els.themeSelect.addEventListener("change", () => setTheme(els.themeSelect.value));
+    els.coinStyle.addEventListener("change", renderCoins);
+    els.coinPicturePreset.addEventListener("change", () => applyCoinPicturePreset(els.coinPicturePreset.value));
+    [els.headsLabel, els.tailsLabel].forEach((input) => input.addEventListener("input", () => {
+      renderCoins();
+      updateStats();
+    }));
+    [els.headsColor, els.tailsColor, els.backgroundColor].forEach((input) => input.addEventListener("input", applyVisuals));
+    els.headsImage.addEventListener("change", () => readImage(els.headsImage.files[0], "a"));
+    els.tailsImage.addEventListener("change", () => readImage(els.tailsImage.files[0], "b"));
+    els.clearImagesBtn.addEventListener("click", () => {
+      state.headsImageData = "";
+      state.tailsImageData = "";
+      els.headsImage.value = "";
+      els.tailsImage.value = "";
+      els.coinPicturePreset.value = "";
+      updateImagePreviews();
+      renderCoins();
+    });
+    els.flipBtn.addEventListener("click", flip);
+    els.flipAgainBtn.addEventListener("click", flip);
+    els.resetStatsBtn.addEventListener("click", resetStats);
+    els.saveSetupBtn.addEventListener("click", saveSetup);
+    els.fullscreenBtn.addEventListener("click", () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen?.();
+      } else {
+        document.documentElement.requestFullscreen?.();
+      }
+    });
+    els.copyResultBtn.addEventListener("click", () => copyText(state.lastResult));
+    els.shareResultBtn.addEventListener("click", shareResult);
+    els.shareSetupBtn.addEventListener("click", shareSetup);
+    els.printBtn.addEventListener("click", () => window.print());
+    els.guessHeadsBtn.addEventListener("click", () => {
+      state.selectedGuess = "a";
+      els.guessHeadsBtn.classList.add("selected");
+      els.guessTailsBtn.classList.remove("selected");
+    });
+    els.guessTailsBtn.addEventListener("click", () => {
+      state.selectedGuess = "b";
+      els.guessTailsBtn.classList.add("selected");
+      els.guessHeadsBtn.classList.remove("selected");
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space" && !["INPUT", "SELECT", "TEXTAREA", "BUTTON"].includes(document.activeElement.tagName)) {
+        event.preventDefault();
+        flip();
+      }
+    });
+
+    if (!loadSetupFromUrl()) {
+      setTheme("drawsplat");
+      els.coinPicturePreset.value = "heads-tails";
+      applyCoinPicturePreset("heads-tails");
+      els.simpleModeToggle.checked = true;
+      updateSimpleMode();
+      renderCoins();
+    }
+    renderSavedSetups();
+    updateStats();
+  </script>
+</body>
+</html>

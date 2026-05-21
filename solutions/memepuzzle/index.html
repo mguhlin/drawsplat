@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meme Puzzle Maker</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--gray-90);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 32%,
+        var(--gold) 32% 52%,
+        var(--orange) 52% 64%,
+        var(--red) 64% 76%,
+        var(--blue) 76% 88%,
+        var(--green) 88% 96%,
+        var(--yellow) 96% 100%
+      );
+    }
+
+    .page {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .panel, .preview {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel, .preview { padding: 18px; }
+
+    .panel h2, .preview h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label, .field-title { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--gray-90);
+      background: var(--white);
+      outline: none;
+    }
+
+    textarea { min-height: 170px; resize: vertical; line-height: 1.45; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 112, 185, .18);
+    }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .help {
+      margin: 0;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.4;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 2px solid rgba(30, 57, 141, .22);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(64, 64, 65, .08);
+    }
+
+    .btn.primary { color: var(--white); background: var(--navy); border-color: var(--navy); }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+
+    .puzzle-wrap {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) minmax(220px, 320px);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .image-board {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      background: var(--gray-10);
+    }
+
+    .image-board img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tile-grid {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .cover-tile {
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      border: 1px solid rgba(255, 255, 255, .35);
+      font-weight: 900;
+      font-size: clamp(.85rem, 2vw, 1.4rem);
+    }
+
+    .cover-tile.open {
+      opacity: 0;
+      transform: scale(.92);
+      transition: opacity 240ms ease, transform 240ms ease;
+      pointer-events: none;
+    }
+
+    .summary {
+      display: grid;
+      gap: 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .summary strong {
+      display: block;
+      color: var(--navy);
+      font-size: 1.6rem;
+    }
+
+    .question-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin-top: 12px;
+      color: var(--navy);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1080px) {
+      .app-grid, .puzzle-wrap { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1320px); padding-top: 18px; }
+      header { align-items: flex-start; flex-direction: column; }
+      .split, .button-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow">DrawSplat Tools</p>
+        <h1>Meme Puzzle Maker</h1>
+        <p class="subtitle">Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.</p>
+      </div>
+      <a class="home-link" href="../../whiteboard.html">Tool Menu</a>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel" aria-label="Teacher setup">
+        <h2>Teacher Setup</h2>
+
+        <div class="field">
+          <label for="titleInput">Activity Title</label>
+          <input id="titleInput" type="text" value="Meme Puzzle Practice" maxlength="90">
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="questionCount">Number of Questions</label>
+            <input id="questionCount" type="number" min="1" max="30" value="10">
+          </div>
+          <div class="field">
+            <label for="imageSelect">Cute Cat Image</label>
+            <select id="imageSelect">
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg">Cute Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Tabby-cat.jpg">Tabby Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cat-1046544.jpg">Orange Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cute_cat_in_the_bed.jpg">Cat in Bed</option>
+              <option value="custom">Custom Image URL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="imageUrl">Image URL</label>
+          <input id="imageUrl" type="text" value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg">
+        </div>
+
+        <div class="field">
+          <label for="imageUpload">Or Upload an Image</label>
+          <input id="imageUpload" type="file" accept="image/*">
+          <p class="help">Uploaded images work best for local classroom use. Very large images can make shared links long.</p>
+        </div>
+
+        <div class="field">
+          <label for="qaInput">Questions and Answers</label>
+          <textarea id="qaInput" spellcheck="true">What do plants need to make food?,sunlight
+What force pulls objects toward Earth?,gravity
+What is the bottom number of a fraction called?,denominator
+What is the main idea of a text called?,theme
+What do we call a living thing?,organism
+What type of source comes from the time being studied?,primary source
+What is water as a gas called?,vapor
+What operation finds the total?,addition
+What is an educated guess called?,hypothesis
+What is the place where an organism lives?,habitat</textarea>
+          <p class="help">Use one line per item: <strong>question,answer</strong>. You can also use <strong>question | answer</strong> or tab-separated text.</p>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn primary" id="previewBtn">Update Preview</button>
+          <button class="btn gold" id="copyLinkBtn">Copy Student Link</button>
+          <button class="btn" id="openStudentBtn">Open Student Page</button>
+          <button class="btn" id="downloadBtn">Download Setup</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="preview" aria-label="Puzzle preview">
+        <h2>Preview</h2>
+        <div class="puzzle-wrap">
+          <div class="image-board">
+            <img id="previewImage" alt="Hidden puzzle image">
+            <div class="tile-grid" id="tileGrid"></div>
+          </div>
+          <aside class="summary">
+            <div>
+              <span class="field-title">Questions</span>
+              <strong id="questionTotal">10</strong>
+            </div>
+            <div>
+              <span class="field-title">Student Link</span>
+              <p class="help">Share links work like Dicebreaker links: the activity setup is encoded in the URL.</p>
+            </div>
+            <ol class="question-list" id="questionList"></ol>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    let uploadedImage = "";
+
+    function parseQA(text, limit) {
+      const rows = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+      const out = [];
+      for (const row of rows) {
+        let parts = row.split("\t");
+        if (parts.length < 2) parts = row.split("|");
+        if (parts.length < 2) parts = row.split(",");
+        const question = (parts.shift() || "").trim();
+        const answer = parts.join(" ").trim();
+        if (question && answer) out.push({ question, answer });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    function normalizeAnswer(text) {
+      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function config() {
+      const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 10));
+      const questions = parseQA($("#qaInput").value, total);
+      return {
+        title: $("#titleInput").value.trim() || "Meme Puzzle Practice",
+        image: uploadedImage || $("#imageUrl").value.trim(),
+        questions
+      };
+    }
+
+    function gridShape(count) {
+      const cols = Math.ceil(Math.sqrt(count * 1.6));
+      const rows = Math.ceil(count / cols);
+      return { rows, cols };
+    }
+
+    function renderPreview(openCount = 0) {
+      const data = config();
+      const count = data.questions.length || 1;
+      const shape = gridShape(count);
+      $("#previewImage").src = data.image;
+      $("#questionTotal").textContent = data.questions.length;
+      $("#questionList").innerHTML = data.questions.map(item => `<li>${escapeHTML(item.question)}</li>`).join("");
+      $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
+      $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
+      $("#tileGrid").innerHTML = Array.from({ length: count }, (_, i) => `<div class="cover-tile${i < openCount ? " open" : ""}">${i + 1}</div>`).join("");
+      $("#status").textContent = data.questions.length + " questions ready.";
+    }
+
+    function b64urlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function studentUrl() {
+      const url = new URL("student.html", window.location.href);
+      url.hash = "p=" + b64urlEncode(JSON.stringify(config()));
+      return url.toString();
+    }
+
+    function copyLink() {
+      const url = studentUrl();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => $("#status").textContent = "Student link copied.");
+      } else {
+        window.prompt("Copy this student link:", url);
+      }
+    }
+
+    function downloadSetup() {
+      const blob = new Blob([JSON.stringify(config(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "meme-puzzle.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    $("#imageSelect").addEventListener("change", event => {
+      if (event.target.value !== "custom") {
+        uploadedImage = "";
+        $("#imageUrl").value = event.target.value;
+      }
+      renderPreview();
+    });
+    $("#imageUpload").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        uploadedImage = reader.result;
+        $("#imageUrl").value = "Uploaded image";
+        renderPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+    $("#previewBtn").addEventListener("click", () => renderPreview());
+    $("#copyLinkBtn").addEventListener("click", copyLink);
+    $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
+    $("#downloadBtn").addEventListener("click", downloadSetup);
+
+    renderPreview();
+  </script>
+</body>
+</html>

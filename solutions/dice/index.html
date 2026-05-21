@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Dice Roller</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 32%,
+        var(--gold) 32% 52%,
+        var(--orange) 52% 64%,
+        var(--red) 64% 76%,
+        var(--blue) 76% 88%,
+        var(--green) 88% 96%,
+        var(--yellow) 96% 100%
+      );
+    }
+
+    .page {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 760px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .toggle-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-10);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .toggle-control input {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--gray-30);
+      transition: background 160ms ease;
+    }
+
+    .toggle-switch::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .24);
+      transition: transform 160ms ease;
+    }
+
+    .toggle-control input:checked + .toggle-switch { background: var(--green); }
+    .toggle-control input:checked + .toggle-switch::after { transform: translateX(24px); }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) 1fr minmax(260px, 330px);
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    body.simple-mode .app-grid {
+      grid-template-columns: minmax(0, 900px);
+      justify-content: center;
+    }
+
+    body.simple-mode .advanced-panel,
+    body.simple-mode .stats-panel,
+    body.simple-mode .advanced-stat {
+      display: none;
+    }
+
+    body.hide-product .product-card {
+      display: none;
+    }
+
+    body:not(.simple-mode) .simple-controls {
+      display: none;
+    }
+
+    body.simple-mode .stage {
+      min-height: min(760px, calc(100vh - 150px));
+      align-content: center;
+    }
+
+    .panel, .stage {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 18px; }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label, .field-title { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+
+    input, select {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 112, 185, .18);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .template-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      min-height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--navy);
+      background: var(--white);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-weight: 800;
+    }
+
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--navy);
+    }
+
+    .stage {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+      text-align: center;
+    }
+
+    .dice-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      align-items: center;
+      justify-items: center;
+      min-height: 290px;
+      padding: 12px;
+      perspective: 900px;
+    }
+
+    body.simple-mode .dice-board {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      min-height: 360px;
+    }
+
+    .die {
+      width: min(100%, 150px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: var(--white);
+      background: var(--navy);
+      border: 6px solid var(--white);
+      border-radius: 18px;
+      box-shadow: 0 14px 28px rgba(30, 57, 141, .22), 0 0 0 2px var(--border);
+      font-size: clamp(2.6rem, 8vw, 4.8rem);
+      font-weight: 900;
+      line-height: 1;
+      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+      transform-style: preserve-3d;
+      transition: transform 260ms ease;
+    }
+
+    body.simple-mode .die {
+      width: min(64vw, 280px);
+      border-radius: 26px;
+      font-size: clamp(5rem, 18vw, 9rem);
+    }
+
+    .die-scene {
+      --die-half: 75px;
+      width: min(100%, 150px);
+      aspect-ratio: 1 / 1;
+      perspective: 900px;
+      transform: rotateX(-12deg) rotateY(14deg);
+      transform-style: preserve-3d;
+      transition: transform 260ms ease;
+    }
+
+    body.simple-mode .die-scene {
+      --die-half: 140px;
+      width: min(64vw, 280px);
+      perspective: 1400px;
+    }
+
+    .die-cube {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(20deg);
+      transition: transform 220ms ease;
+    }
+
+    .die-scene.rolling .die-cube {
+      cursor: progress;
+    }
+
+    .die-scene.rolling {
+      animation: cubeRollPath 680ms ease-in-out infinite;
+    }
+
+    .cube-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 6%;
+      padding: 14%;
+      background: var(--white);
+      border: 6px solid var(--navy);
+      border-radius: 18px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .04), 0 14px 28px rgba(30, 57, 141, .18);
+      backface-visibility: hidden;
+    }
+
+    body.simple-mode .cube-face {
+      border-radius: 26px;
+    }
+
+    .cube-face .pip {
+      width: 70%;
+      height: 70%;
+      align-self: center;
+      justify-self: center;
+      border-radius: 50%;
+      background: var(--navy);
+    }
+
+    .cube-face .slot {
+      width: 100%;
+      height: 100%;
+    }
+
+    .cube-face[data-n="1"] { transform: translateZ(var(--die-half)); }
+    .cube-face[data-n="6"] { transform: rotateY(180deg) translateZ(var(--die-half)); }
+    .cube-face[data-n="3"] { transform: rotateY(90deg) translateZ(var(--die-half)); }
+    .cube-face[data-n="4"] { transform: rotateY(-90deg) translateZ(var(--die-half)); }
+    .cube-face[data-n="5"] { transform: rotateX(90deg) translateZ(var(--die-half)); }
+    .cube-face[data-n="2"] { transform: rotateX(-90deg) translateZ(var(--die-half)); }
+
+    @keyframes cubeRollPath {
+      0% { transform: rotateX(-12deg) rotateY(14deg) rotateZ(0deg) translateY(0); }
+      25% { transform: rotateX(-24deg) rotateY(26deg) rotateZ(4deg) translateY(-8px); }
+      50% { transform: rotateX(-8deg) rotateY(-18deg) rotateZ(-5deg) translateY(3px); }
+      75% { transform: rotateX(-22deg) rotateY(22deg) rotateZ(3deg) translateY(-5px); }
+      100% { transform: rotateX(-12deg) rotateY(14deg) rotateZ(0deg) translateY(0); }
+    }
+
+    .die.rolling {
+      animation: tumble 1200ms ease-in-out infinite;
+    }
+
+    @keyframes tumble {
+      0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); }
+      50% { transform: rotateX(185deg) rotateY(110deg) rotateZ(-8deg) scale(1.05); }
+      100% { transform: rotateX(360deg) rotateY(300deg) rotateZ(0deg) scale(1); }
+    }
+
+    .pip-grid {
+      width: 76%;
+      height: 76%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+
+    .pip {
+      width: 52%;
+      height: 52%;
+      align-self: center;
+      justify-self: center;
+      border-radius: 50%;
+      background: var(--white);
+    }
+
+    .pip.hide { visibility: hidden; }
+
+    .summary {
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .total {
+      color: var(--navy);
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .formula {
+      color: var(--gray-50);
+      font-size: 1rem;
+      font-weight: 800;
+      min-height: 1.3em;
+    }
+
+    .roll-btn {
+      min-height: 62px;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 14px 22px;
+      color: var(--black);
+      background: var(--gold);
+      font-size: 1.35rem;
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(250, 166, 52, .24);
+    }
+
+    body.simple-mode .roll-btn {
+      width: min(100%, 520px);
+      justify-self: center;
+      min-height: 72px;
+      font-size: 1.6rem;
+    }
+
+    .simple-controls {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      justify-self: center;
+      width: min(100%, 360px);
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 2px solid rgba(30, 57, 141, .22);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: var(--white);
+    }
+
+    .small-label {
+      color: var(--gray-50);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--navy);
+      font-size: 1.7rem;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 8px;
+      min-height: 42px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      background: #fbfcff;
+      font-weight: 700;
+    }
+
+    .empty { color: var(--gray-50); font-size: .92rem; }
+
+    @media (max-width: 1040px) {
+      .app-grid { grid-template-columns: 1fr; }
+      .stage { order: -1; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1280px); padding-top: 18px; }
+      header { align-items: flex-start; flex-direction: column; }
+      .header-actions { justify-content: flex-start; }
+      .split, .button-grid, .stat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="simple-mode">
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow">DrawSplat Tools</p>
+        <h1>Classroom Dice Roller</h1>
+        <p class="subtitle">Roll clean classroom dice with a simple default view, then switch on advanced options for multiple dice, die types, modifiers, sound, totals, products, and history.</p>
+      </div>
+      <div class="header-actions">
+        <label class="toggle-control" for="advancedToggle">
+          <input id="advancedToggle" type="checkbox" role="switch" aria-label="Advanced mode">
+          <span class="toggle-switch" aria-hidden="true"></span>
+          <span>Advanced</span>
+        </label>
+        <a class="home-link" href="../../whiteboard.html">Tool Menu</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel advanced-panel" aria-label="Dice settings">
+        <h2>Setup</h2>
+
+        <div class="field">
+          <label>Quick Starts</label>
+          <div class="template-row">
+            <button class="pill" data-preset="single">One d6</button>
+            <button class="pill" data-preset="pair">Two d6</button>
+            <button class="pill" data-preset="math">Math d6</button>
+            <button class="pill" data-preset="twenty">d20 + Modifier</button>
+            <button class="pill" data-preset="assorted">Assorted Set</button>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="diceCount">Number of Dice</label>
+            <input id="diceCount" type="number" min="1" max="100" value="1">
+          </div>
+          <div class="field">
+            <label for="dieType">Die Type</label>
+            <select id="dieType">
+              <option value="4">d4</option>
+              <option value="6" selected>d6</option>
+              <option value="8">d8</option>
+              <option value="10">d10</option>
+              <option value="12">d12</option>
+              <option value="20">d20</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="modifier">Modifier</label>
+            <input id="modifier" type="number" min="-100" max="100" value="0">
+          </div>
+          <div class="field">
+            <label for="rollSpeed">Roll Animation</label>
+            <select id="rollSpeed">
+              <option value="quick">Quick</option>
+              <option value="standard" selected>Standard</option>
+              <option value="dramatic">Dramatic</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="check-row" for="soundToggle">
+          <span>Sound Effects</span>
+          <input id="soundToggle" type="checkbox" checked>
+        </label>
+        <label class="check-row" for="productToggle" style="margin-top:10px;">
+          <span>Show Product</span>
+          <input id="productToggle" type="checkbox" checked>
+        </label>
+
+        <div class="button-grid" style="margin-top:14px;">
+          <button class="btn" id="copyLinkBtn">Copy Setup Link</button>
+          <button class="btn" id="clearHistoryBtn">Clear History</button>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="Dice roller">
+        <div class="dice-board" id="diceBoard"></div>
+        <div class="summary">
+          <div class="small-label">Total</div>
+          <div class="total" id="totalText">1</div>
+          <div class="formula" id="formulaText">1d6</div>
+        </div>
+        <button class="roll-btn" id="rollBtn">Roll Dice</button>
+        <div class="simple-controls" aria-label="Simple dice count">
+          <button class="btn" id="oneDieBtn">1 Die</button>
+          <button class="btn" id="twoDiceBtn">2 Dice</button>
+        </div>
+      </section>
+
+      <aside class="panel stats-panel" aria-label="Roll results">
+        <h2>Results</h2>
+        <div class="stat-grid">
+          <div class="stat">
+            <span class="small-label">Dice</span>
+            <strong id="diceStat">1d6</strong>
+          </div>
+          <div class="stat">
+            <span class="small-label">Rolls</span>
+            <strong id="rollCount">0</strong>
+          </div>
+          <div class="stat">
+            <span class="small-label">Raw Sum</span>
+            <strong id="sumStat">1</strong>
+          </div>
+          <div class="stat advanced-stat product-card">
+            <span class="small-label">Product</span>
+            <strong id="productStat">1</strong>
+          </div>
+        </div>
+
+        <h2 style="margin-top:18px;">History</h2>
+        <div class="history-list" id="historyList">
+          <div class="empty">No rolls yet.</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+
+    const pipMap = {
+      1: [5],
+      2: [1, 9],
+      3: [1, 5, 9],
+      4: [1, 3, 7, 9],
+      5: [1, 3, 5, 7, 9],
+      6: [1, 3, 4, 6, 7, 9]
+    };
+
+    const showRot = {
+      1: { x: 0, y: 0 },
+      2: { x: 90, y: 0 },
+      3: { x: 0, y: -90 },
+      4: { x: 0, y: 90 },
+      5: { x: -90, y: 0 },
+      6: { x: 0, y: 180 }
+    };
+
+    const presets = {
+      single: { count: 1, sides: 6, modifier: 0 },
+      pair: { count: 2, sides: 6, modifier: 0 },
+      math: { count: 5, sides: 6, modifier: 0 },
+      twenty: { count: 1, sides: 20, modifier: 2 },
+      assorted: { count: 6, sides: 6, modifier: 0, sidesList: [4, 6, 8, 10, 12, 20] }
+    };
+
+    const state = {
+      count: 1,
+      sides: 6,
+      mixed: false,
+      sidesList: [],
+      modifier: 0,
+      values: [1],
+      rotations: [{ x: -20, y: 20 }],
+      history: [],
+      rolling: false,
+      rolls: 0
+    };
+
+    let audioContext = null;
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, Number(num) || 0));
+    }
+
+    function randomRoll(sides) {
+      return 1 + Math.floor(Math.random() * sides);
+    }
+
+    function readSettings(options = {}) {
+      if (!options.keepMixed) {
+        state.mixed = false;
+        state.sidesList = [];
+      }
+      state.count = state.mixed ? state.sidesList.length : clamp($("#diceCount").value, 1, 100);
+      state.sides = clamp($("#dieType").value, 4, 20);
+      state.modifier = clamp($("#modifier").value, -100, 100);
+      $("#diceCount").value = state.count;
+      $("#modifier").value = state.modifier;
+    }
+
+    function sideForIndex(index) {
+      return state.mixed ? state.sidesList[index] || 6 : state.sides;
+    }
+
+    function ensureRotations() {
+      while (state.rotations.length < state.count) {
+        state.rotations.push({ x: -20, y: 20 });
+      }
+      state.rotations = state.rotations.slice(0, state.count);
+    }
+
+    function rollAll() {
+      if (state.rolling) return;
+      readSettings({ keepMixed: true });
+      ensureRotations();
+      state.rolling = true;
+      $("#rollBtn").disabled = true;
+      playClick();
+
+      const duration = { quick: 1400, standard: 2400, dramatic: 3800 }[$("#rollSpeed").value] || 2400;
+      const dice = [];
+      for (let i = 0; i < state.count; i++) dice.push(randomRoll(sideForIndex(i)));
+      renderDice(true);
+
+      requestAnimationFrame(() => {
+        $$(".die-cube").forEach(cube => {
+          const index = Number(cube.dataset.index);
+          const result = dice[index];
+          rollCube(cube, index, result, duration);
+        });
+      });
+
+      setTimeout(() => {
+        state.values = dice;
+        state.rolling = false;
+        state.rolls += 1;
+        $("#rollBtn").disabled = false;
+        addHistory();
+        playFinish();
+        render();
+      }, duration + 120);
+    }
+
+    function rollCube(cube, index, result, duration) {
+      const current = state.rotations[index] || { x: -20, y: 20, z: 0 };
+      const target = showRot[result] || showRot[1];
+      const sign = index % 2 === 0 ? 1 : -1;
+      const next = {
+        x: target.x + 360 * 4 + sign * 18,
+        y: target.y + 360 * 5 - sign * 14,
+        z: 360 * 2
+      };
+      state.rotations[index] = next;
+
+      const start = `rotateX(${current.x}deg) rotateY(${current.y}deg) rotateZ(${current.z || 0}deg)`;
+      const finish = `rotateX(${next.x}deg) rotateY(${next.y}deg) rotateZ(${next.z}deg)`;
+      cube.style.transition = "none";
+      cube.style.transform = start;
+      cube.animate([
+        { transform: start, offset: 0 },
+        { transform: `rotateX(${current.x + 170 * sign}deg) rotateY(${current.y + 260}deg) rotateZ(${90 * sign}deg)`, offset: .18 },
+        { transform: `rotateX(${current.x + 470}deg) rotateY(${current.y + 620 * sign}deg) rotateZ(${-160 * sign}deg)`, offset: .38 },
+        { transform: `rotateX(${current.x + 920 * sign}deg) rotateY(${current.y + 980}deg) rotateZ(${240 * sign}deg)`, offset: .62 },
+        { transform: `rotateX(${current.x + 1280}deg) rotateY(${current.y + 1460 * sign}deg) rotateZ(${-300 * sign}deg)`, offset: .82 },
+        { transform: finish, offset: 1 }
+      ], {
+        duration,
+        easing: "cubic-bezier(.18,.78,.22,1)",
+        fill: "forwards"
+      }).onfinish = () => {
+        cube.style.transform = finish;
+        cube.style.transition = "";
+      };
+    }
+
+    function addHistory() {
+      const raw = rawSum();
+      const total = raw + state.modifier;
+      state.history.unshift({
+        values: [...state.values],
+        raw,
+        total,
+        product: product(),
+        label: diceLabel()
+      });
+      state.history = state.history.slice(0, 12);
+    }
+
+    function rawSum() {
+      return state.values.reduce((sum, n) => sum + n, 0);
+    }
+
+    function product() {
+      return state.values.reduce((prod, n) => prod * n, 1);
+    }
+
+    function diceLabel() {
+      const mod = state.modifier === 0 ? "" : state.modifier > 0 ? " +" + state.modifier : " " + state.modifier;
+      if (state.mixed) return state.sidesList.map(sides => "d" + sides).join(" + ") + mod;
+      return state.count + "d" + state.sides + mod;
+    }
+
+    function render() {
+      renderDice(false);
+      const raw = rawSum();
+      const total = raw + state.modifier;
+      $("#totalText").textContent = total;
+      $("#formulaText").textContent = state.values.join(" + ") + (state.modifier ? (state.modifier > 0 ? " + " : " - ") + Math.abs(state.modifier) : "") + " = " + total;
+      $("#diceStat").textContent = diceLabel();
+      $("#rollCount").textContent = state.rolls;
+      $("#sumStat").textContent = raw;
+      $("#productStat").textContent = product();
+      document.body.classList.toggle("hide-product", !$("#productToggle").checked);
+      $("#historyList").innerHTML = state.history.length
+        ? state.history.map((item, i) => `<div class="history-item"><span>${escapeHTML(item.label)}: ${item.values.join(", ")}</span><span>${item.total}</span></div>`).join("")
+        : '<div class="empty">No rolls yet.</div>';
+    }
+
+    function renderDice(isRolling) {
+      const board = $("#diceBoard");
+      board.innerHTML = "";
+      ensureRotations();
+      const maxShown = state.count > 36 ? 36 : state.count;
+      for (let i = 0; i < maxShown; i++) {
+        const sides = sideForIndex(i);
+        board.appendChild(sides === 6
+          ? createCubeDie(state.values[i] || 1, isRolling, i)
+          : createDie(state.values[i] || 1, isRolling, sides));
+      }
+      if (state.count > maxShown) {
+        const more = document.createElement("div");
+        more.className = "die";
+        more.textContent = "+" + (state.count - maxShown);
+        board.appendChild(more);
+      }
+    }
+
+    function createCubeDie(value, isRolling, index) {
+      const scene = document.createElement("div");
+      scene.className = "die-scene" + (isRolling ? " rolling" : "");
+      scene.setAttribute("aria-label", "Rolled " + value + " on a d6");
+
+      const cube = document.createElement("div");
+      cube.className = "die-cube";
+      cube.dataset.index = index;
+      const rotation = state.rotations[index] || { x: -20, y: 20 };
+      cube.style.transform = `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) rotateZ(${rotation.z || 0}deg)`;
+      for (let n = 1; n <= 6; n++) cube.appendChild(createCubeFace(n));
+      scene.appendChild(cube);
+      return scene;
+    }
+
+    function createCubeFace(n) {
+      const face = document.createElement("div");
+      face.className = "cube-face";
+      face.dataset.n = n;
+      const active = new Set(pipMap[n]);
+      for (let i = 1; i <= 9; i++) {
+        const cell = document.createElement("span");
+        cell.className = active.has(i) ? "pip" : "slot";
+        face.appendChild(cell);
+      }
+      return face;
+    }
+
+    function createDie(value, isRolling, sides) {
+      const die = document.createElement("div");
+      die.className = "die" + (isRolling ? " rolling" : "");
+      die.setAttribute("aria-label", "Rolled " + value + " on a d" + sides);
+      if (sides === 6 && value <= 6) {
+        const grid = document.createElement("div");
+        grid.className = "pip-grid";
+        const active = new Set(pipMap[value]);
+        for (let i = 1; i <= 9; i++) {
+          const pip = document.createElement("span");
+          pip.className = "pip" + (active.has(i) ? "" : " hide");
+          grid.appendChild(pip);
+        }
+        die.appendChild(grid);
+      } else {
+        die.textContent = value;
+        die.title = "d" + sides;
+        die.style.borderRadius = sides === 4 ? "26px 26px 8px 8px" : sides >= 20 ? "50%" : "18px";
+      }
+      return die;
+    }
+
+    function playTone(freq, duration, gain) {
+      if (!$("#soundToggle").checked) return;
+      audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioContext.createOscillator();
+      const vol = audioContext.createGain();
+      osc.frequency.value = freq;
+      vol.gain.value = gain;
+      osc.connect(vol);
+      vol.connect(audioContext.destination);
+      osc.start();
+      osc.stop(audioContext.currentTime + duration);
+    }
+
+    function playClick() {
+      try { playTone(180, .045, .05); } catch {}
+    }
+
+    function playFinish() {
+      try { playTone(520, .08, .06); } catch {}
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    function b64urlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function b64urlDecode(s) {
+      const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+      const norm = s.replace(/-/g, "+").replace(/_/g, "/") + pad;
+      const bin = atob(norm);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function copySetupLink() {
+      const url = new URL(window.location.href);
+      const payload = {
+        c: $("#diceCount").value,
+        s: $("#dieType").value,
+        m: $("#modifier").value,
+        mixed: state.mixed,
+        sidesList: state.sidesList,
+        p: $("#productToggle").checked,
+        sound: $("#soundToggle").checked
+      };
+      url.hash = "d=" + b64urlEncode(JSON.stringify(payload));
+      if (navigator.clipboard) navigator.clipboard.writeText(url.toString());
+      else window.prompt("Copy this setup link:", url.toString());
+    }
+
+    function loadFromHash() {
+      const hash = window.location.hash || "";
+      if (!hash.startsWith("#d=")) return;
+      try {
+        const data = JSON.parse(b64urlDecode(hash.slice(3)));
+        $("#diceCount").value = data.c || 1;
+        $("#dieType").value = data.s || 6;
+        $("#modifier").value = data.m || 0;
+        state.mixed = Boolean(data.mixed);
+        state.sidesList = Array.isArray(data.sidesList) ? data.sidesList : [];
+        $("#productToggle").checked = data.p !== false;
+        $("#soundToggle").checked = data.sound !== false;
+      } catch {}
+    }
+
+    function applyPreset(name) {
+      const p = presets[name];
+      if (!p) return;
+      $("#diceCount").value = p.count;
+      $("#dieType").value = p.sides;
+      $("#modifier").value = p.modifier;
+      state.mixed = Array.isArray(p.sidesList);
+      state.sidesList = p.sidesList ? [...p.sidesList] : [];
+      readSettings({ keepMixed: state.mixed });
+      state.values = Array.from({ length: state.count }, () => 1);
+      state.rotations = Array.from({ length: state.count }, () => ({ x: -20, y: 20 }));
+      render();
+    }
+
+    function init() {
+      loadFromHash();
+      readSettings({ keepMixed: state.mixed });
+      state.values = Array.from({ length: state.count }, () => 1);
+      state.rotations = Array.from({ length: state.count }, () => ({ x: -20, y: 20 }));
+      render();
+
+      $("#advancedToggle").addEventListener("change", (event) => {
+        document.body.classList.toggle("simple-mode", !event.target.checked);
+      });
+      $("#rollBtn").addEventListener("click", rollAll);
+      ["diceCount", "dieType", "modifier"].forEach(id => {
+        $("#" + id).addEventListener("change", () => {
+          readSettings();
+          state.values = Array.from({ length: state.count }, () => 1);
+          state.rotations = Array.from({ length: state.count }, () => ({ x: -20, y: 20 }));
+          render();
+        });
+      });
+      $("#productToggle").addEventListener("change", render);
+      $("#oneDieBtn").addEventListener("click", () => applyPreset("single"));
+      $("#twoDiceBtn").addEventListener("click", () => applyPreset("pair"));
+      $("#copyLinkBtn").addEventListener("click", copySetupLink);
+      $("#clearHistoryBtn").addEventListener("click", () => {
+        state.history = [];
+        state.rolls = 0;
+        render();
+      });
+      $$(".pill[data-preset]").forEach(btn => {
+        btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.target.tagName === "INPUT" || event.target.tagName === "SELECT") return;
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          rollAll();
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

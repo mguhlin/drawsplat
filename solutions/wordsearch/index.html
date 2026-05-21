@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Word Search Maker</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 32%,
+        var(--gold) 32% 52%,
+        var(--orange) 52% 64%,
+        var(--red) 64% 76%,
+        var(--blue) 76% 88%,
+        var(--green) 88% 96%,
+        var(--yellow) 96% 100%
+      );
+    }
+
+    .page {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 820px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(310px, 400px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .panel, .preview {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 18px; }
+    .preview { padding: 22px; }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    label, .field-title {
+      color: var(--gray-90);
+      font-size: .86rem;
+      font-weight: 800;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 190px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 112, 185, .18);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .help {
+      margin: 0;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.4;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--gray-90);
+      font-size: .9rem;
+      font-weight: 800;
+    }
+
+    .check-row input {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--navy);
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 2px solid rgba(30, 57, 141, .22);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(64, 64, 65, .08);
+    }
+
+    .btn.primary {
+      color: var(--white);
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .btn.gold {
+      color: var(--black);
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--gray-10);
+      padding-bottom: 14px;
+    }
+
+    .preview-title h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+    }
+
+    .preview-title p {
+      margin: 6px 0 0;
+      color: var(--gray-50);
+      font-weight: 800;
+    }
+
+    .status {
+      min-height: 1.4em;
+      color: var(--gray-50);
+      font-size: .9rem;
+      line-height: 1.4;
+    }
+
+    .worksheet {
+      display: grid;
+      grid-template-columns: minmax(320px, max-content) minmax(210px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .grid {
+      display: grid;
+      gap: 0;
+      border: 2px solid var(--navy);
+      background: var(--navy);
+      width: min(100%, 720px);
+      aspect-ratio: 1 / 1;
+    }
+
+    .cell {
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      border: 1px solid var(--gray-10);
+      color: var(--black);
+      font-size: clamp(.72rem, 2vw, 1.35rem);
+      font-weight: 800;
+      line-height: 1;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .cell.solution {
+      background: rgba(250, 166, 52, .28);
+      color: var(--navy);
+    }
+
+    .word-bank {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .word-bank h3 {
+      margin: 0 0 10px;
+      color: var(--black);
+      font-size: 1rem;
+    }
+
+    .word-list {
+      columns: 2;
+      column-gap: 22px;
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    .word-list li {
+      break-inside: avoid;
+      margin: 0;
+    }
+
+    .empty {
+      color: var(--gray-50);
+      font-size: .95rem;
+      line-height: 1.45;
+    }
+
+    @media print {
+      .top-bar, header, .panel, .preview-head .button-grid, .status {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .app-grid, .worksheet {
+        display: block;
+      }
+
+      .preview {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .preview-head {
+        display: block;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .grid {
+        width: 7.2in;
+        margin: 0 auto 18px;
+      }
+
+      .cell {
+        font-size: 13pt;
+      }
+    }
+
+    @media (max-width: 1040px) {
+      .app-grid, .worksheet {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 18px, 1320px);
+        padding-top: 18px;
+      }
+
+      header, .preview-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .split, .button-grid, .check-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .word-list {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow">DrawSplat Tools</p>
+        <h1>Word Search Maker</h1>
+        <p class="subtitle">Build printable word searches from TEKS-inspired vocabulary banks or paste your own classroom terms.</p>
+      </div>
+      <a class="home-link" href="../../whiteboard.html">Tool Menu</a>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel" aria-label="Word search setup">
+        <h2>Setup</h2>
+
+        <div class="field">
+          <label for="presetSelect">TEKS-Inspired Vocabulary</label>
+          <select id="presetSelect"></select>
+          <p class="help">Starter banks are organized by grade band and content area. Edit the word list after loading any preset.</p>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="titleInput">Title</label>
+            <input id="titleInput" type="text" maxlength="80" value="Science Vocabulary">
+          </div>
+          <div class="field">
+            <label for="gridSize">Grid Size</label>
+            <select id="gridSize">
+              <option value="10">10 x 10</option>
+              <option value="12" selected>12 x 12</option>
+              <option value="15">15 x 15</option>
+              <option value="18">18 x 18</option>
+              <option value="20">20 x 20</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="wordInput">Words or Phrases</label>
+          <textarea id="wordInput" spellcheck="true"></textarea>
+          <p class="help">Paste one term per line or separate terms with commas. Spaces and punctuation are removed in the puzzle but kept in the word bank.</p>
+        </div>
+
+        <div class="field">
+          <span class="field-title">Directions</span>
+          <div class="check-grid">
+            <label class="check-row" for="forwardDir">Forward <input id="forwardDir" type="checkbox" checked></label>
+            <label class="check-row" for="backwardDir">Backward <input id="backwardDir" type="checkbox" checked></label>
+            <label class="check-row" for="verticalDir">Vertical <input id="verticalDir" type="checkbox" checked></label>
+            <label class="check-row" for="diagonalDir">Diagonal <input id="diagonalDir" type="checkbox"></label>
+          </div>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn primary" id="generateBtn">Generate</button>
+          <button class="btn gold" id="newVersionBtn">New Layout</button>
+          <button class="btn" id="solutionBtn">Show Key</button>
+          <button class="btn" id="printBtn">Print</button>
+          <button class="btn" id="copyLinkBtn">Copy Link</button>
+          <button class="btn" id="clearBtn">Clear Words</button>
+        </div>
+      </section>
+
+      <section class="preview" aria-label="Word search preview">
+        <div class="preview-head">
+          <div class="preview-title">
+            <h2 id="previewTitle">Science Vocabulary</h2>
+            <p id="previewMeta">12 x 12 puzzle</p>
+          </div>
+          <div class="status" id="status" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="worksheet">
+          <div class="grid" id="grid" aria-label="Generated word search grid"></div>
+          <aside class="word-bank">
+            <h3>Word Bank</h3>
+            <ol class="word-list" id="wordList"></ol>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    const presets = [
+      {
+        id: "k2-science-earth",
+        label: "K-2 Science: Weather and Earth",
+        title: "Weather and Earth",
+        words: ["cloud", "rain", "wind", "sun", "moon", "star", "soil", "rock", "water", "plant", "animal", "season"]
+      },
+      {
+        id: "k2-math-foundations",
+        label: "K-2 Math: Number and Geometry",
+        title: "Number and Geometry",
+        words: ["number", "count", "add", "subtract", "equal", "more", "less", "circle", "square", "triangle", "pattern", "measure"]
+      },
+      {
+        id: "k2-elar-reading",
+        label: "K-2 ELAR: Reading Foundations",
+        title: "Reading Foundations",
+        words: ["letter", "sound", "word", "sentence", "story", "author", "title", "picture", "rhyme", "vowel", "beginning", "ending"]
+      },
+      {
+        id: "k2-sla-basics",
+        label: "K-2 Spanish Language Arts: Lectura",
+        title: "Lectura en Espanol",
+        words: ["letra", "sonido", "palabra", "cuento", "autor", "titulo", "rima", "vocal", "silaba", "imagen", "leer", "escribir"]
+      },
+      {
+        id: "k2-social-community",
+        label: "K-2 Social Studies: Community",
+        title: "Community Vocabulary",
+        words: ["family", "school", "city", "state", "map", "rule", "leader", "holiday", "custom", "citizen", "goods", "services"]
+      },
+      {
+        id: "35-science-life",
+        label: "3-5 Science: Life Science",
+        title: "Life Science",
+        words: ["organism", "habitat", "ecosystem", "producer", "consumer", "decomposer", "adaptation", "trait", "inherit", "life cycle", "energy", "survival"]
+      },
+      {
+        id: "35-science-matter",
+        label: "3-5 Science: Matter and Energy",
+        title: "Matter and Energy",
+        words: ["matter", "mass", "volume", "mixture", "solution", "solid", "liquid", "gas", "conductor", "insulator", "force", "energy"]
+      },
+      {
+        id: "35-math-problem",
+        label: "3-5 Math: Operations and Fractions",
+        title: "Operations and Fractions",
+        words: ["factor", "multiple", "product", "quotient", "fraction", "decimal", "numerator", "denominator", "equivalent", "area", "perimeter", "volume"]
+      },
+      {
+        id: "35-elar-comprehension",
+        label: "3-5 ELAR: Comprehension",
+        title: "Comprehension Skills",
+        words: ["theme", "summary", "inference", "evidence", "context", "genre", "poetry", "drama", "fiction", "nonfiction", "revise", "edit"]
+      },
+      {
+        id: "35-social-texas",
+        label: "3-5 Social Studies: Texas and U.S. History",
+        title: "Texas and U.S. History",
+        words: ["region", "settlement", "mission", "colony", "republic", "constitution", "industry", "migration", "culture", "government", "economy", "landmark"]
+      },
+      {
+        id: "35-sla-literatura",
+        label: "3-5 Spanish Language Arts: Literatura",
+        title: "Literatura en Espanol",
+        words: ["tema", "resumen", "inferencia", "evidencia", "contexto", "genero", "poesia", "drama", "ficcion", "texto informativo", "revisar", "editar"]
+      },
+      {
+        id: "68-science-systems",
+        label: "6-8 Science: Systems and Interactions",
+        title: "Systems and Interactions",
+        words: ["system", "variable", "model", "gravity", "friction", "density", "element", "compound", "photosynthesis", "cell", "organ", "ecosystem", "plate tectonics", "watershed"]
+      },
+      {
+        id: "68-math-algebra",
+        label: "6-8 Math: Ratios and Algebra",
+        title: "Ratios and Algebra",
+        words: ["ratio", "proportion", "integer", "coordinate", "expression", "equation", "inequality", "function", "slope", "percent", "probability", "scatterplot", "linear", "constant"]
+      },
+      {
+        id: "68-elar-analysis",
+        label: "6-8 ELAR: Text Analysis",
+        title: "Text Analysis",
+        words: ["claim", "argument", "evidence", "thesis", "structure", "point of view", "figurative", "symbolism", "allusion", "central idea", "paraphrase", "citation"]
+      },
+      {
+        id: "68-social-civics",
+        label: "6-8 Social Studies: Civics and History",
+        title: "Civics and History",
+        words: ["civilization", "democracy", "republic", "federalism", "amendment", "rights", "responsibility", "geography", "trade", "revolution", "reform", "primary source"]
+      },
+      {
+        id: "68-sla-analisis",
+        label: "6-8 Spanish Language Arts: Analisis de Textos",
+        title: "Analisis de Textos",
+        words: ["argumento", "evidencia", "tesis", "estructura", "punto de vista", "lenguaje figurado", "simbolo", "idea central", "parafrasis", "cita", "ensayo", "revision"]
+      },
+      {
+        id: "912-biology",
+        label: "9-12 Science: Biology",
+        title: "Biology Vocabulary",
+        words: ["homeostasis", "metabolism", "enzyme", "protein", "nucleus", "mitosis", "meiosis", "genotype", "phenotype", "mutation", "evolution", "biodiversity", "classification", "ecology"]
+      },
+      {
+        id: "912-chemistry-physics",
+        label: "9-12 Science: Chemistry and Physics",
+        title: "Chemistry and Physics",
+        words: ["atom", "molecule", "isotope", "electron", "reaction", "equilibrium", "stoichiometry", "velocity", "acceleration", "momentum", "wave", "frequency", "circuit", "energy"]
+      },
+      {
+        id: "912-math-functions",
+        label: "9-12 Math: Algebra and Functions",
+        title: "Algebra and Functions",
+        words: ["domain", "range", "function", "quadratic", "exponential", "logarithm", "polynomial", "matrix", "sequence", "transformation", "regression", "asymptote", "vertex", "inverse"]
+      },
+      {
+        id: "912-elar-rhetoric",
+        label: "9-12 ELAR: Rhetoric and Research",
+        title: "Rhetoric and Research",
+        words: ["rhetoric", "audience", "purpose", "tone", "syntax", "diction", "theme", "motif", "credible", "source", "synthesis", "plagiarism", "annotation", "counterclaim"]
+      },
+      {
+        id: "912-social-history",
+        label: "9-12 Social Studies: U.S. and World History",
+        title: "History and Government",
+        words: ["industrialization", "imperialism", "nationalism", "globalization", "constitution", "federalism", "judicial review", "suffrage", "civil rights", "cold war", "reconstruction", "urbanization"]
+      },
+      {
+        id: "912-sla-retorica",
+        label: "9-12 Spanish Language Arts: Retorica e Investigacion",
+        title: "Retorica e Investigacion",
+        words: ["retorica", "audiencia", "proposito", "tono", "sintaxis", "diccion", "tema", "motivo", "fuente", "sintesis", "plagio", "anotacion", "contraargumento"]
+      },
+      {
+        id: "all-health-finearts",
+        label: "K-12 Other Areas: Health, Arts, and Technology",
+        title: "Health Arts and Technology",
+        words: ["wellness", "nutrition", "safety", "rhythm", "melody", "texture", "contrast", "composition", "algorithm", "data", "digital", "career", "collaboration", "creativity"]
+      },
+      {
+        id: "custom",
+        label: "Make Your Own Word Search",
+        title: "Custom Word Search",
+        words: ["paste", "your", "own", "words", "here"]
+      }
+    ];
+
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let current = { grid: [], words: [], placed: [], failed: [] };
+    let showSolution = false;
+
+    function cleanWord(term) {
+      return term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    }
+
+    function displayWord(term) {
+      return term.trim().replace(/\s+/g, " ");
+    }
+
+    function parseWords(text) {
+      const seen = new Set();
+      const out = [];
+      text.split(/[\n,;]+/).map(displayWord).filter(Boolean).forEach(original => {
+        const clean = cleanWord(original);
+        if (clean.length >= 2 && !seen.has(clean)) {
+          seen.add(clean);
+          out.push({ original, clean });
+        }
+      });
+      return out.sort((a, b) => b.clean.length - a.clean.length).slice(0, 40);
+    }
+
+    function directions() {
+      const dirs = [];
+      if ($("#forwardDir").checked) dirs.push([1, 0], [0, 1]);
+      if ($("#backwardDir").checked) dirs.push([-1, 0], [0, -1]);
+      if ($("#verticalDir").checked) dirs.push([0, 1], [0, -1]);
+      if ($("#diagonalDir").checked) dirs.push([1, 1], [-1, -1], [1, -1], [-1, 1]);
+      return dirs.length ? dirs : [[1, 0], [0, 1]];
+    }
+
+    function shuffled(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function canPlace(grid, word, row, col, dx, dy) {
+      const size = grid.length;
+      const endRow = row + dy * (word.length - 1);
+      const endCol = col + dx * (word.length - 1);
+      if (endRow < 0 || endRow >= size || endCol < 0 || endCol >= size) return false;
+      for (let i = 0; i < word.length; i++) {
+        const r = row + dy * i;
+        const c = col + dx * i;
+        if (grid[r][c] && grid[r][c] !== word[i]) return false;
+      }
+      return true;
+    }
+
+    function placeWord(grid, item, dirs) {
+      const size = grid.length;
+      const spots = [];
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          for (const [dx, dy] of dirs) spots.push({ row, col, dx, dy });
+        }
+      }
+      for (const spot of shuffled(spots)) {
+        if (!canPlace(grid, item.clean, spot.row, spot.col, spot.dx, spot.dy)) continue;
+        const cells = [];
+        for (let i = 0; i < item.clean.length; i++) {
+          const row = spot.row + spot.dy * i;
+          const col = spot.col + spot.dx * i;
+          grid[row][col] = item.clean[i];
+          cells.push(row + "," + col);
+        }
+        return { ...item, cells };
+      }
+      return null;
+    }
+
+    function generate() {
+      showSolution = false;
+      $("#solutionBtn").textContent = "Show Key";
+      const size = Number($("#gridSize").value);
+      const words = parseWords($("#wordInput").value);
+      const grid = Array.from({ length: size }, () => Array.from({ length: size }, () => ""));
+      const placed = [];
+      const failed = [];
+      const dirs = directions();
+
+      for (const item of words) {
+        if (item.clean.length > size) {
+          failed.push(item.original);
+          continue;
+        }
+        const result = placeWord(grid, item, dirs);
+        if (result) placed.push(result);
+        else failed.push(item.original);
+      }
+
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          if (!grid[r][c]) grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+      }
+
+      current = { grid, words, placed, failed };
+      render();
+    }
+
+    function render() {
+      const size = current.grid.length || Number($("#gridSize").value);
+      const solutionCells = new Set(showSolution ? current.placed.flatMap(word => word.cells) : []);
+      $("#previewTitle").textContent = $("#titleInput").value.trim() || "Word Search";
+      $("#previewMeta").textContent = size + " x " + size + " puzzle";
+      $("#grid").style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      $("#grid").innerHTML = current.grid.flatMap((row, r) => row.map((letter, c) => {
+        const cls = solutionCells.has(r + "," + c) ? "cell solution" : "cell";
+        return `<div class="${cls}">${letter}</div>`;
+      })).join("");
+      $("#wordList").innerHTML = current.placed
+        .sort((a, b) => a.original.localeCompare(b.original))
+        .map(word => `<li>${escapeHTML(word.original)}</li>`)
+        .join("");
+
+      const status = [];
+      status.push(current.placed.length + " words placed");
+      if (current.failed.length) status.push("Skipped: " + current.failed.join(", "));
+      $("#status").textContent = status.join(". ");
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    function loadPreset(id) {
+      const preset = presets.find(item => item.id === id) || presets[0];
+      $("#titleInput").value = preset.title;
+      $("#wordInput").value = preset.words.join("\n");
+      generate();
+    }
+
+    function b64urlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function b64urlDecode(s) {
+      const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+      const norm = s.replace(/-/g, "+").replace(/_/g, "/") + pad;
+      const bin = atob(norm);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function copyLink() {
+      const url = new URL(window.location.href);
+      url.hash = "w=" + b64urlEncode(JSON.stringify({
+        title: $("#titleInput").value,
+        words: $("#wordInput").value,
+        size: $("#gridSize").value,
+        forward: $("#forwardDir").checked,
+        backward: $("#backwardDir").checked,
+        vertical: $("#verticalDir").checked,
+        diagonal: $("#diagonalDir").checked
+      }));
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url.toString()).then(() => $("#status").textContent = "Share link copied.");
+      } else {
+        window.prompt("Copy this word search link:", url.toString());
+      }
+    }
+
+    function loadHash() {
+      const hash = window.location.hash || "";
+      if (!hash.startsWith("#w=")) return false;
+      try {
+        const data = JSON.parse(b64urlDecode(hash.slice(3)));
+        $("#titleInput").value = data.title || "Word Search";
+        $("#wordInput").value = data.words || "";
+        $("#gridSize").value = data.size || "12";
+        $("#forwardDir").checked = data.forward !== false;
+        $("#backwardDir").checked = data.backward !== false;
+        $("#verticalDir").checked = data.vertical !== false;
+        $("#diagonalDir").checked = Boolean(data.diagonal);
+        generate();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function init() {
+      $("#presetSelect").innerHTML = presets.map(item => `<option value="${item.id}">${escapeHTML(item.label)}</option>`).join("");
+      $("#presetSelect").addEventListener("change", event => loadPreset(event.target.value));
+      $("#generateBtn").addEventListener("click", generate);
+      $("#newVersionBtn").addEventListener("click", generate);
+      $("#solutionBtn").addEventListener("click", () => {
+        showSolution = !showSolution;
+        $("#solutionBtn").textContent = showSolution ? "Hide Key" : "Show Key";
+        render();
+      });
+      $("#printBtn").addEventListener("click", () => window.print());
+      $("#copyLinkBtn").addEventListener("click", copyLink);
+      $("#clearBtn").addEventListener("click", () => {
+        $("#presetSelect").value = "custom";
+        $("#titleInput").value = "Custom Word Search";
+        $("#wordInput").value = "";
+        current = { grid: [], words: [], placed: [], failed: [] };
+        $("#grid").innerHTML = "";
+        $("#wordList").innerHTML = "";
+        $("#status").textContent = "Paste your own words, then generate.";
+      });
+      if (!loadHash()) loadPreset("35-science-life");
+    }
+
+    init();
+  </script>
+</body>
+</html>
