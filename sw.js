@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.58';
+const CACHE = 'drawsplat-v3.0.60';
 const SHELL = [
   './',
   './index.html',
@@ -53,6 +53,12 @@ const SHELL = [
   './assets/backgrounds/reading-response.svg',
   './assets/backgrounds/choice-board.svg',
   './assets/backgrounds/blank-anchor-chart.svg',
+  './assets/scratch-art/manifest.json',
+  './assets/scratch-art/scratch_bkgrnd1.png',
+  './assets/scratch-art/scratch_bkgrnd2.png',
+  './assets/scratch-art/scratch_bkgrnd3.png',
+  './assets/scratch-art/scratch_bkgrnd4.png',
+  './assets/scratch-art/scratch_bkgrnd5.png',
   './assets/feature-graph-creator.svg',
   './assets/feature-picture-graph.svg',
   './assets/feature-mermaid.svg',

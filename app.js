@@ -372,6 +372,49 @@ function startColoringStroke(p){
   requestRender();
   return true;
 }
+function ensureSelectionAlignPopover(){
+  let pop=document.getElementById('selectionAlignPopover');
+  if(pop) return pop;
+  const shell=document.querySelector('.canvas-shell');
+  if(!shell) return null;
+  pop=document.createElement('div');
+  pop.id='selectionAlignPopover';
+  pop.className='selection-align-popover';
+  pop.setAttribute('role','toolbar');
+  pop.setAttribute('aria-label','Object alignment');
+  pop.innerHTML='<div class="selection-align-title">Object align</div><div class="selection-align-grid"><button type="button" data-align-mode="left" aria-label="Align left">Left</button><button type="button" data-align-mode="centerH" aria-label="Align horizontal centers">Center H</button><button type="button" data-align-mode="right" aria-label="Align right">Right</button><button type="button" data-align-mode="top" aria-label="Align top">Top</button><button type="button" data-align-mode="middleV" aria-label="Align vertical centers">Middle V</button><button type="button" data-align-mode="bottom" aria-label="Align bottom">Bottom</button></div>';
+  pop.addEventListener('pointerdown',e=>e.stopPropagation());
+  pop.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-align-mode]');
+    if(!btn) return;
+    alignSelectedObjects(btn.dataset.alignMode);
+  });
+  shell.appendChild(pop);
+  return pop;
+}
+function refreshSelectionAlignPopover(){
+  const pop=ensureSelectionAlignPopover();
+  if(!pop) return;
+  const ids=selectedResizableIds();
+  const visible=ids.length>1&&!inlineEditId&&!drag&&!drawing&&!marquee;
+  pop.classList.toggle('show',visible);
+  if(!visible) return;
+  const shell=document.querySelector('.canvas-shell'), b=selectionBounds(ids);
+  if(!shell||!b) return;
+  const shellRect=shell.getBoundingClientRect();
+  const svgRect=svg.getBoundingClientRect();
+  const popRect=pop.getBoundingClientRect();
+  const centerX=svgRect.left-shellRect.left+(b.x+b.w/2)*zoom;
+  const selectionTop=svgRect.top-shellRect.top+b.y*zoom;
+  const selectionBottom=svgRect.top-shellRect.top+(b.y+b.h)*zoom;
+  const w=popRect.width||330, h=popRect.height||120, margin=10;
+  const maxLeft=Math.max(margin,shellRect.width-w-margin);
+  const left=Math.min(maxLeft,Math.max(margin,centerX-w/2));
+  const topAbove=selectionTop-h-margin;
+  const top=topAbove>=margin?topAbove:Math.min(shellRect.height-h-margin,selectionBottom+margin);
+  pop.style.left=left+'px';
+  pop.style.top=Math.max(margin,top)+'px';
+}
 function refreshSelectionToolbar(){
   const tb=document.getElementById('selectionToolbar');
   if(!tb) return;
@@ -386,6 +429,7 @@ function refreshSelectionToolbar(){
     const imageBtn=ensureConceptImageToolbarButton(); if(imageBtn) imageBtn.style.display=concept?'inline-flex':'none';
     const labelBtn=ensureConnectorLabelToolbarButton(); if(labelBtn) labelBtn.style.display=connector?'inline-flex':'none';
   }
+  refreshSelectionAlignPopover();
   refreshColoringPaintToolbar();
   refreshConceptCanvasControls?.();
 }
@@ -1342,16 +1386,82 @@ function selectAllObjects(){commitInlineTextEditor(); selectedIds=panel().object
 function pasteClipboard(){if(!clipboard||!clipboard.objects?.length)return; const idMap={}, items=[]; clipboard.objects.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); idMap[o.id]=id(); c.id=idMap[o.id]; c.x+=28; c.y+=28; if(c.type==='path'&&c.d)c.d=translatedPathData(c.d,28,28); if(c.clipBox)c.clipBox={x:c.clipBox.x+28,y:c.clipBox.y+28,w:c.clipBox.w,h:c.clipBox.h}; if(board.assignmentMode&&board.mode==='student') c.layer='student'; items.push(c)}); items.forEach(c=>{if(c.coloringPaintFor&&idMap[c.coloringPaintFor]) c.coloringPaintFor=idMap[c.coloringPaintFor]}); clipboard.connectors?.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); c.id=id(); c.fromId=idMap[o.fromId]; c.toId=idMap[o.toId]; if(c.fromId&&c.toId) items.push(c)}); panel().objects.push(...items); selectedIds=items.filter(o=>o.type!=='connector'&&!o.coloringPaintFor).map(o=>o.id); render(); saveState()}
 function selectedMovableObjects(){return selectedIds.map(findObj).filter(o=>o&&o.type!=='connector'&&canEditObject(o)&&!o.locked)}
 function frameBounds(){return{x:0,y:0,w:Math.max(1,(svg?.clientWidth||900)/zoom),h:Math.max(1,(svg?.clientHeight||600)/zoom)}}
-function addScratchCover(){
+const SCRATCH_ART_DIR='assets/scratch-art/';
+const SCRATCH_ART_FALLBACKS=['scratch_bkgrnd1.png','scratch_bkgrnd2.png','scratch_bkgrnd3.png','scratch_bkgrnd4.png','scratch_bkgrnd5.png'];
+let scratchArtImageCache=null;
+let pendingScratchCoverColor=null;
+function scratchArtUrl(name){return SCRATCH_ART_DIR+String(name||'').replace(/^\.?\/*/,'')}
+function normalizeScratchArtList(list){
+  return [...new Set((Array.isArray(list)?list:[]).map(item=>typeof item==='string'?item:(item&&item.src)).filter(Boolean).filter(src=>/\.(png|jpe?g|webp|gif|svg)$/i.test(src)).map(src=>src.startsWith('http')||src.startsWith('data:')||src.includes('/')?src:scratchArtUrl(src)))];
+}
+async function loadScratchArtImages(){
+  if(scratchArtImageCache?.length) return scratchArtImageCache;
+  let images=[];
+  try{
+    const res=await fetch(SCRATCH_ART_DIR+'manifest.json',{cache:'no-cache'});
+    if(res.ok) images=normalizeScratchArtList(await res.json());
+  }catch(_){}
+  if(!images.length){
+    try{
+      const res=await fetch(SCRATCH_ART_DIR,{cache:'no-cache'});
+      if(res.ok){
+        const html=await res.text();
+        const matches=[...html.matchAll(/href=["']([^"']+\.(?:png|jpe?g|webp|gif|svg))["']/gi)].map(m=>decodeURIComponent(m[1]).split('/').pop());
+        images=normalizeScratchArtList(matches);
+      }
+    }catch(_){}
+  }
+  scratchArtImageCache=images.length?images:normalizeScratchArtList(SCRATCH_ART_FALLBACKS);
+  return scratchArtImageCache;
+}
+async function chooseScratchArtWallpaper(){
+  const images=await loadScratchArtImages();
+  return images[Math.floor(Math.random()*images.length)]||'';
+}
+function hasPanelWallpaper(p=panel()){return !!(p&&p.bgImage)}
+function ensureScratchArtDialog(){
+  let dlg=gid('scratchArtDialog');
+  if(dlg) return dlg;
+  dlg=document.createElement('dialog');
+  dlg.id='scratchArtDialog';
+  dlg.className='confirm-dialog scratch-art-dialog';
+  dlg.innerHTML='<div class="modal-head"><h2>ScratchArt</h2></div><p class="confirm-msg">Choose the cover color. If this panel has no background image, DrawSplat will add a random ScratchArt wallpaper first.</p><div class="row"><label for="scratchCoverColorInput">Cover color</label><input type="color" id="scratchCoverColorInput" value="#ffffff" style="width:60px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px"></div><div class="confirm-actions"><button id="scratchArtCancelBtn" type="button">Cancel</button><button id="scratchArtChooseBgBtn" type="button">Choose Background Image</button><button id="scratchArtAddBtn" type="button" class="primary">Add ScratchArt</button></div>';
+  document.body.appendChild(dlg);
+  gid('scratchArtCancelBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=null; dlg.close()});
+  gid('scratchArtChooseBgBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=gid('scratchCoverColorInput')?.value||'#ffffff'; dlg.close(); gid('bgImageInput')?.click()});
+  gid('scratchArtAddBtn')?.addEventListener('click',()=>{const color=gid('scratchCoverColorInput')?.value||'#ffffff'; dlg.close(); addScratchCover(color)});
+  return dlg;
+}
+function openScratchArtDialog(){
   if(board.mode==='student') return setStatus('Students cannot add scratch covers to this shared board.','danger');
+  const dlg=ensureScratchArtDialog();
+  const color=paintColor();
+  const input=gid('scratchCoverColorInput');
+  if(input) input.value=/^#[0-9a-f]{6}$/i.test(color)?color:'#ffffff';
+  dlg.showModal();
+}
+async function addScratchCover(coverColor){
+  if(board.mode==='student') return setStatus('Students cannot add scratch covers to this shared board.','danger');
+  const p=panel();
+  let usedRandomWallpaper=false;
+  if(!hasPanelWallpaper(p)){
+    try{
+      const wallpaper=await chooseScratchArtWallpaper();
+      if(wallpaper){
+        p.bg='blank';
+        p.bgImage=wallpaper;
+        usedRandomWallpaper=true;
+      }
+    }catch(_){}
+  }
   const b=frameBounds();
-  const cover=makeObj('scratch',0,0,b.w,b.h,{fill:'#ffffff',stroke:'none',strokeWidth:0,opacity:1,fillPattern:'',scratchErasePaths:[]});
-  panel().objects.push(cover);
+  const cover=makeObj('scratch',0,0,b.w,b.h,{fill:coverColor||'#ffffff',stroke:'none',strokeWidth:0,opacity:1,fillPattern:'',scratchErasePaths:[]});
+  p.objects.push(cover);
   clearSelection();
   render();
   saveState();
   setTool('eraser');
-  setStatus('Scratch Cover added. Use the Eraser to reveal the background underneath.','success');
+  setStatus((usedRandomWallpaper?'ScratchArt wallpaper and cover added.':'Scratch Cover added.')+' Use the Eraser to reveal the background underneath.','success');
 }
 function alignSelectedObjects(mode){
   const objs=selectedMovableObjects();
@@ -2800,7 +2910,7 @@ function removeColorFromImage(dataUrl,hexColor,tolerance=40){return new Promise(
 function sampleCornerColor(dataUrl){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>{try{const cv=document.createElement('canvas'); cv.width=img.width; cv.height=img.height; const cx=cv.getContext('2d'); cx.drawImage(img,0,0); const px=cx.getImageData(0,0,1,1).data; resolve('#'+[px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join(''))}catch(err){reject(err)}}; img.onerror=()=>reject(new Error('decode failed')); img.src=dataUrl})}
 gid('loadBgImageBtn').onclick=()=>gid('bgImageInput').click();
 gid('clearBgImageBtn').onclick=()=>{const p=panel(); if(!p.bgImage&&!p.canvasFill) return; p.bgImage=''; p.canvasFill=null; render(); saveState(); setStatus('Background cleared.','success')};
-gid('bgImageInput').onchange=async e=>{const f=e.target.files[0]; if(!f) return; const importFmt=(typeof detectPanelImportFormat==='function')?detectPanelImportFormat(f):null; if(importFmt){ e.target.value=''; await importPanelsFromFile(f); return } if(!(await validateImageDeep(f))){e.target.value=''; return} try{const data=await compressImageForBg(f); panel().bgImage=data; render(); saveState(); setStatus('Background image set.','success')}catch(err){setStatus('Background image failed. '+err.message,'danger')} e.target.value=''};
+gid('bgImageInput').onchange=async e=>{const f=e.target.files[0], scratchColor=pendingScratchCoverColor; pendingScratchCoverColor=null; if(!f) return; const importFmt=(typeof detectPanelImportFormat==='function')?detectPanelImportFormat(f):null; if(importFmt){ e.target.value=''; await importPanelsFromFile(f); return } if(!(await validateImageDeep(f))){e.target.value=''; return} try{const data=await compressImageForBg(f); panel().bgImage=data; render(); saveState(); if(scratchColor){await addScratchCover(scratchColor)}else setStatus('Background image set.','success')}catch(err){setStatus('Background image failed. '+err.message,'danger')} e.target.value=''};
 gid('removeBgColorBtn')?.addEventListener('click',async()=>{const sel=selectedIds.length===1?currentObj():null; const isImage=sel&&sel.type==='image'&&sel.src; const p=panel(); const sourceUrl=isImage?sel.src:p.bgImage; if(!sourceUrl){setStatus(isImage?'Selected image has no source.':'Select an image or set a panel background first.','danger'); return} try{const corner=await sampleCornerColor(sourceUrl); gid('bgRemoveColorInput').value=corner; const tolEl=gid('bgRemoveTolerance'); if(tolEl) gid('bgRemoveToleranceValue').textContent=tolEl.value; const dlg=gid('bgRemoveDialog'); const titleEl=dlg.querySelector('h2'); const msgEl=dlg.querySelector('.confirm-msg'); if(titleEl) titleEl.textContent=isImage?'Remove Color from Image':'Remove Background Color'; if(msgEl) msgEl.textContent=isImage?'Pick the color in the selected image to make transparent. The starting color is sampled from the top-left corner of the image.':'Pick the color in the panel background to make transparent. The starting color is sampled from the top-left corner.'; dlg.dataset.target=isImage?'image':'bg'; dlg.dataset.objectId=isImage?sel.id:''; dlg.showModal()}catch(err){setStatus('Could not read image. '+err.message,'danger')}});
 gid('simpleRemoveBgColorBtn')?.addEventListener('click',()=>gid('removeBgColorBtn').click());
 gid('bgRemoveTolerance')?.addEventListener('input',e=>{const v=gid('bgRemoveToleranceValue'); if(v) v.textContent=e.target.value});
@@ -2900,8 +3010,8 @@ gid('closeMoreOptions')?.addEventListener('click',()=>gid('moreOptionsDialog').c
 gid('simpleImageBtn')?.addEventListener('click',()=>gid('imageBtn').click());
 gid('simpleTntBtn')?.addEventListener('click',()=>gid('tntBtn').click());
 gid('simpleBgImageBtn')?.addEventListener('click',()=>gid('loadBgImageBtn').click());
-gid('scratchCoverBtn')?.addEventListener('click',addScratchCover);
-gid('simpleScratchCoverBtn')?.addEventListener('click',addScratchCover);
+gid('scratchCoverBtn')?.addEventListener('click',openScratchArtDialog);
+gid('simpleScratchCoverBtn')?.addEventListener('click',openScratchArtDialog);
 gid('simpleClearBgBtn')?.addEventListener('click',()=>gid('clearBgImageBtn').click());
 gid('simpleDeleteBtn')?.addEventListener('click',()=>{if(!selectedIds.length){setStatus('Select an item first.','danger'); return} deleteSelected()});
 gid('floatDeleteBtn')?.addEventListener('click',()=>{if(selectedIds.length) deleteSelected()});
