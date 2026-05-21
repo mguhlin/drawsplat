@@ -1941,24 +1941,24 @@ gid('pictureGraphInsertBtn')?.addEventListener('click',insertPictureGraphFromDia
 gid('pictureGraphCancelBtn')?.addEventListener('click',()=>gid('pictureGraphDialog')?.close());
 
 const CLASSROOM_WIDGETS=[
-  {kind:'poll',title:'Poll',w:480,h:320},
-  {kind:'randomizer',title:'Random Student',w:440,h:270},
-  {kind:'wheelspinner',title:'Wheel Spinner',w:520,h:520},
   {kind:'biglink',title:'Big Link',w:520,h:260},
-  {kind:'workmode',title:'Work Mode',w:360,h:260},
-  {kind:'traffic',title:'Traffic Light',w:280,h:420},
-  {kind:'timer',title:'Timer',w:420,h:280},
+  {kind:'poll',title:'Poll',w:480,h:320},
+  {kind:'race',title:'Race Progress',w:560,h:320},
+  {kind:'randomizer',title:'Random Pick',w:440,h:270},
   {kind:'scoreboard',title:'Scoreboard',w:520,h:300},
-  {kind:'race',title:'Race Progress',w:560,h:320}
+  {kind:'timer',title:'Timer',w:420,h:280},
+  {kind:'traffic',title:'Traffic Light',w:280,h:420},
+  {kind:'wheelspinner',title:'Wheel Spinner',w:520,h:520},
+  {kind:'workmode',title:'Work Mode',w:360,h:260}
 ];
 const CLASSROOM_TOOL_LINKS=[
   {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:'solutions/coinflipping/index.html'},
+  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'},
   {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:'solutions/dice/index.html'},
   {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:'solutions/memepuzzle/index.html'},
-  {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:'solutions/wordsearch/index.html'},
+  {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:'solutions/rubric-builder/index.html'},
   {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:'solutions/storywheel/index.html'},
-  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'},
-  {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:'solutions/rubric-builder/index.html'}
+  {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:'solutions/wordsearch/index.html'}
 ];
 function defaultWidgetConfig(kind){
   const base={widgetKind:kind,widgetConfig:{}};
@@ -2269,7 +2269,11 @@ function openClassroomWidgetPicker(){
   dlg.dataset.editId='';
   dlg.dataset.kind='';
   gid('classroomWidgetTitle').textContent='Classroom Widgets';
-  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${CLASSROOM_WIDGETS.map(w=>`<button type="button" data-widget-kind="${w.kind}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`).join('')}${[...CLASSROOM_TOOL_LINKS].sort((a,b)=>a.title.localeCompare(b.title)).map(t=>`<button type="button" data-widget-tool-url="${esc(t.url)}"><strong>${esc(t.title)}</strong><span>${esc(t.summary)} Opens in a new tab.</span></button>`).join('')}</div>`;
+  const items=[
+    ...CLASSROOM_WIDGETS.map(w=>({title:w.title,html:`<button type="button" data-widget-kind="${esc(w.kind)}"><strong>${esc(w.title)}</strong><span>${esc(widgetSummary(w.kind))}</span></button>`})),
+    ...CLASSROOM_TOOL_LINKS.map(t=>({title:t.title,html:`<button type="button" data-widget-tool-url="${esc(t.url)}"><strong>${esc(t.title)}</strong><span>${esc(t.summary)} Opens in a new tab.</span></button>`}))
+  ].sort((a,b)=>a.title.localeCompare(b.title));
+  gid('classroomWidgetBody').innerHTML=`<div class="classroom-widget-picker">${items.map(item=>item.html).join('')}</div>`;
   dlg.showModal();
 }
 function widgetSummary(kind){
