@@ -32,6 +32,7 @@ const SHELL = [
   './solutions/coinflipping/assets/coin-heads.png',
   './solutions/coinflipping/assets/coin-tails.png',
   './solutions/dice/index.html',
+  './solutions/markdown-studio/index.html',
   './solutions/memepuzzle/index.html',
   './solutions/memepuzzle/student.html',
   './solutions/wordsearch/index.html',

@@ -1957,6 +1957,7 @@ const CLASSROOM_TOOL_LINKS=[
   {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:appPath('solutions/coinflipping/index.html')},
   {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:appPath('solutions/dicebreakers/index.html')},
   {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:appPath('solutions/dice/index.html')},
+  {title:'Markdown Studio',summary:'Clean, preview, convert, and export Markdown for classroom publishing.',url:appPath('solutions/markdown-studio/index.html')},
   {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:appPath('solutions/memepuzzle/index.html')},
   {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:appPath('solutions/rubric-builder/index.html')},
   {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:appPath('solutions/storywheel/index.html')},

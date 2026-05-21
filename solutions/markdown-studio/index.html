@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Studio — DrawSplat</title>
+<meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML or WordPress block code. Strip AI writing tells. Save .md or .html.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M7 9h3l3 6 3-6h3v14h-3v-9l-2.5 5h-1L10 13v10H7z'/%3E%3C/svg%3E">
+<style>
+:root {
+  --navy:        #7c3aed;
+  --navy-dark:   #4c1d95;
+  --navy-mid:    #6d28d9;
+  --gold:        #FAA634;
+  --gold-light:  #ffd166;
+  --gold-pale:   #fff7e6;
+  --pale-navy:   #ede9fe;
+  --white:       #ffffff;
+  --off-white:   #f5f7fb;
+  --text:        #1f2937;
+  --text-muted:  #6b7280;
+  --border:      #d7dce8;
+  --teal:        #0891b2;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  background: var(--off-white);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+main, header, footer { position: relative; z-index: 1; }
+
+/* ---------- Topnav ---------- */
+.topnav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 56px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+}
+.topnav-brand {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--navy);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.topnav-brand em {
+  color: var(--gold);
+  font-style: italic;
+}
+.topnav-spacer { flex: 1; }
+.topnav-link {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--navy);
+  text-decoration: none;
+  padding: 7px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+.topnav-link:hover { background: var(--pale-navy); border-color: var(--navy); }
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 96px 24px 36px;
+  position: relative;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 30%, rgba(252,176,64,0.12) 0%, transparent 65%),
+    linear-gradient(180deg, var(--navy-dark) 0%, var(--navy) 100%);
+  overflow: hidden;
+  color: var(--white);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(252,176,64,0.18);
+  border: 1px solid rgba(252,176,64,0.4);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 2.5s ease infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+.hero h1 {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+  color: var(--white);
+}
+.hero h1 em { color: var(--gold); font-style: italic; }
+.hero p {
+  max-width: 760px;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  margin: 0 0 8px;
+  font-weight: 300;
+}
+.hero kbd {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--white);
+}
+
+/* ---------- Tool ---------- */
+.tool-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 40px;
+}
+.toolbar {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+.toolbar-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.btn {
+  appearance: none;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--navy);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.btn:hover { background: var(--pale-navy); border-color: var(--navy); }
+.btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.btn-primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-dark);
+}
+.btn-primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
+.btn-warn {
+  background: var(--gold-pale);
+  border-color: var(--gold);
+  color: var(--navy-dark);
+}
+.btn-warn:hover { background: var(--gold-light); border-color: var(--gold-light); }
+
+/* ---------- Find bar ---------- */
+.findbar {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: none;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+.findbar.open { display: block; }
+.findbar-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+.field label {
+  display: block;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 5px;
+}
+.field input[type="text"] {
+  width: 100%;
+  background: var(--off-white);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.92rem;
+}
+.field input[type="text"]:focus {
+  outline: none;
+  border-color: var(--navy);
+  background: var(--white);
+}
+.find-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.find-opts {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.find-opts label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.find-opts input { accent-color: var(--navy); }
+.find-status {
+  margin-top: 10px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--navy);
+  min-height: 1.1em;
+}
+
+/* ---------- Editor grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.panel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--navy);
+  border-bottom: 3px solid var(--gold);
+}
+.panel-head h3 {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.panel-head .panel-actions { display: flex; gap: 6px; }
+.panel-head .btn {
+  padding: 5px 11px;
+  font-size: 0.7rem;
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.25);
+  color: var(--white);
+}
+.panel-head .btn:hover { background: rgba(255,255,255,0.22); border-color: var(--white); }
+
+textarea.editor {
+  width: 100%;
+  min-height: 540px;
+  border: 0;
+  padding: 18px;
+  resize: vertical;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  background: var(--white);
+  color: var(--text);
+}
+textarea.raw {
+  width: 100%;
+  min-height: 220px;
+  border: 0;
+  padding: 18px;
+  resize: vertical;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: var(--navy-dark);
+  color: var(--gold-light);
+}
+
+.preview {
+  min-height: 540px;
+  padding: 20px 24px;
+  overflow: auto;
+  background: var(--white);
+  color: var(--text);
+  line-height: 1.7;
+}
+.preview h1, .preview h2, .preview h3, .preview h4 {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  color: var(--navy);
+  line-height: 1.2;
+  margin: 1.2em 0 0.4em;
+}
+.preview h1 { font-size: 2rem; border-bottom: 3px solid var(--gold); padding-bottom: 0.3em; }
+.preview h2 { font-size: 1.5rem; }
+.preview h3 { font-size: 1.2rem; }
+.preview p { margin: 0.7em 0; }
+.preview a { color: var(--navy); font-weight: 600; }
+.preview a:hover { color: var(--navy-mid); }
+.preview code {
+  background: var(--gold-pale);
+  color: var(--navy-dark);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.92em;
+}
+.preview pre {
+  background: var(--navy-dark);
+  color: var(--gold-light);
+  padding: 14px 16px;
+  border-radius: 10px;
+  overflow: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.preview pre code { background: transparent; color: inherit; padding: 0; }
+.preview blockquote {
+  border-left: 4px solid var(--gold);
+  background: var(--gold-pale);
+  margin: 1em 0;
+  padding: 0.7em 1.1em;
+  border-radius: 0 8px 8px 0;
+  color: var(--navy-dark);
+}
+.preview table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+.preview th, .preview td { border: 1px solid var(--border); padding: 9px 11px; text-align: left; }
+.preview th { background: var(--pale-navy); color: var(--navy); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-weight: 600; }
+.preview img { max-width: 100%; height: auto; border-radius: 6px; }
+.preview hr { border: 0; border-top: 1px solid var(--border); margin: 1.5em 0; }
+.preview ul, .preview ol { padding-left: 1.4em; }
+.preview li { margin: 0.3em 0; }
+.preview del { color: var(--text-muted); }
+
+/* ---------- Status bar ---------- */
+.statusbar {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.statusbar strong { color: var(--navy); font-weight: 700; }
+.statusbar .savestate { margin-left: auto; font-weight: 500; }
+.statusbar .savestate.saved { color: var(--navy); }
+.statusbar .savestate.dirty { color: var(--gold); }
+
+/* ---------- Drop overlay ---------- */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(76,29,149,0.85);
+  z-index: 400;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 2rem;
+  color: var(--white);
+  text-align: center;
+  padding: 40px;
+}
+.drop-overlay.active { display: flex; }
+.drop-overlay span {
+  border: 2px dashed var(--gold);
+  padding: 60px 80px;
+  border-radius: 16px;
+  background: rgba(76,29,149,0.6);
+}
+
+/* ---------- Help/Reference (collapsed) ---------- */
+.help {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+.help-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+.help-summary {
+  cursor: pointer;
+  padding: 16px 20px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.help-summary::-webkit-details-marker { display: none; }
+.help-summary::after {
+  content: '+';
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  transition: transform 0.2s;
+  line-height: 1;
+}
+details[open] .help-summary::after { content: '−'; }
+details[open] .help-summary { border-bottom: 1px solid var(--border); }
+.help-body {
+  padding: 0 22px 22px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.help-body h4 {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  color: var(--navy);
+  margin: 22px 0 10px;
+  font-size: 1.15rem;
+}
+.help-body p { margin: 8px 0; }
+.help-body ul, .help-body ol { padding-left: 1.4em; }
+.help-body li { margin: 5px 0; }
+.help-body code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  background: var(--gold-pale);
+  color: var(--navy-dark);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+}
+.help-body pre {
+  background: var(--navy-dark);
+  border: 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.84rem;
+  color: var(--gold-light);
+}
+.help-body table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.88rem; }
+.help-body th, .help-body td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+.help-body th { color: var(--navy); background: var(--pale-navy); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.help-body kbd {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82em;
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--navy);
+}
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--navy-dark);
+  border-top: 4px solid var(--gold);
+  padding: 28px 24px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+footer .brand {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: var(--white);
+  justify-self: start;
+}
+footer .brand span { color: var(--gold); font-style: italic; }
+footer .credit {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+  justify-self: center;
+  text-align: center;
+}
+footer .credit a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.18s, color 0.18s;
+}
+footer .credit a:hover {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold-light);
+}
+@media (max-width: 700px) {
+  footer { grid-template-columns: 1fr; text-align: center; }
+  footer .brand, footer .credit { justify-self: center; }
+}
+
+/* ---------- Back to top ---------- */
+#back-to-top {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 300;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--navy-dark);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.3s, transform 0.3s, background 0.2s;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.25);
+}
+#back-to-top.visible { opacity: 1; transform: translateY(0); }
+#back-to-top:hover { background: var(--gold-light); border-color: var(--gold-light); }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 500;
+  background: var(--navy);
+  border: 2px solid var(--gold);
+  color: var(--white);
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.25);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .grid { grid-template-columns: 1fr; }
+  .findbar-row { grid-template-columns: 1fr; }
+  .topnav { padding: 0 14px; }
+  .hero { padding: 88px 16px 28px; }
+  .tool-wrap, .help { padding-left: 14px; padding-right: 14px; }
+  .panel-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  textarea.editor, .preview { min-height: 380px; }
+}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="../../index.html" class="topnav-brand">DrawSplat <em>Markdown Studio</em></a>
+  <div class="topnav-spacer"></div>
+  <a href="../../app/whiteboard.html" class="topnav-link">Open DrawSplat</a>
+  <a href="#help" class="topnav-link">Help</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Markdown · Cleaner · Converter</div>
+    <h1>Markdown <em>Studio</em></h1>
+    <p>Paste Markdown. Clean common formatting bugs. Strip AI writing 
+tells. Find and replace. Preview the rendered HTML, copy plain HTML, or 
+copy WordPress block code that pastes into Gutenberg without needing the 
+Custom HTML block.</p>
+    <p style="margin-top:14px;font-size:0.88rem;color:rgba(255,255,255,0.7)">Shortcuts: <kbd>Ctrl/⌘ F</kbd> find · <kbd>Ctrl/⌘ S</kbd> save .md · <kbd>Ctrl/⌘ K</kbd> clean · drop a <code style="font-family:'Courier New',monospace;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;color:var(--white);border:1px solid rgba(255,255,255,0.2)">.md</code> file anywhere</p>
+  </div>
+</header>
+
+<main class="tool-wrap">
+  <!-- Toolbar -->
+  <div class="toolbar" role="toolbar" aria-label="Markdown actions">
+    <div class="toolbar-group">
+      <button class="btn btn-primary" id="btn-clean" title="Normalize headings, bullets, checkboxes, blank lines (Ctrl+K)">Clean Markdown</button>
+      <button class="btn btn-warn" id="btn-strip-ai" title="Strip common AI writing tells">Strip AI Tells</button>
+      <button class="btn" id="btn-find" title="Find and replace (Ctrl+F)">Find / Replace</button>
+    </div>
+    <div class="toolbar-divider"></div>
+    <div class="toolbar-group">
+      <button class="btn" id="btn-import" title="Open a .md or .txt file">Import File</button>
+      <input type="file" id="file-input" accept=".md,.markdown,.txt" hidden="">
+      <button class="btn" id="btn-save-md" title="Download as .md (Ctrl+S)">Save .md</button>
+      <button class="btn" id="btn-save-html" title="Download as .html">Save .html</button>
+    </div>
+    <div class="toolbar-divider"></div>
+    <div class="toolbar-group">
+      <button class="btn" id="btn-sample" title="Load a sample document">Sample</button>
+      <button class="btn" id="btn-clear-all" title="Clear everything">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Find bar (toggled) -->
+  <div class="findbar" id="findbar" role="region" aria-label="Find and replace">
+    <div class="findbar-row">
+      <div class="field">
+        <label for="find-input">Find</label>
+        <input type="text" id="find-input" placeholder="Text to find" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="replace-input">Replace</label>
+        <input type="text" id="replace-input" placeholder="Replacement text" autocomplete="off">
+      </div>
+      <div class="find-actions">
+        <button class="btn" id="btn-find-prev" title="Find previous">◀ Prev</button>
+        <button class="btn" id="btn-find-next" title="Find next">Next ▶</button>
+        <button class="btn" id="btn-replace-one" title="Replace this match">Replace</button>
+        <button class="btn btn-primary" id="btn-replace-all" title="Replace all matches">Replace All</button>
+        <button class="btn" id="btn-find-close" title="Close (Esc)">✕</button>
+      </div>
+    </div>
+    <div class="find-opts">
+      <label><input type="checkbox" id="opt-case"> Match case</label>
+      <label><input type="checkbox" id="opt-word"> Whole word</label>
+      <label><input type="checkbox" id="opt-regex"> Regex</label>
+    </div>
+    <div class="find-status" id="find-status" aria-live="polite"></div>
+  </div>
+
+  <!-- Editor + Preview -->
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Markdown Input</h3>
+        <div class="panel-actions">
+          <button class="btn" id="btn-copy-md">Copy</button>
+        </div>
+      </div>
+      <textarea class="editor" id="md-input" spellcheck="false" aria-label="Markdown input"># GenAI Prompt Writing Checklist
+
+## Purpose
+Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.
+
+### ### Key Takeaways for Districts
+
+### ## Broader Context &amp; Historical Parallel
+
+## Strong Prompt Elements
+
+* Clear task
+* Specific audience
+* Required format
+* Source material separated in a code block
+* Desired tone or reading level
+
+## Example Prompt
+
+```text
+Create a 5th-grade reading activity about ecosystems.
+Use short paragraphs, a vocabulary table, and five comprehension questions.
+```
+
+## Vocabulary Table
+
+| Term | Student-Friendly Meaning | Example |
+|---|---|---|
+| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |
+| Habitat | Where an organism lives | A frog lives near water. |
+| Adaptation | A trait that helps survival | A cactus stores water. |
+
+## Student Checklist
+
+-[ ] I explained my task clearly.
+-[ ] I named my audience.
+-[ ] I gave the AI a format to follow.
+-[x] I included source text when needed.
+
+&gt; Tip: Better structure usually leads to better GenAI output.
+
+![Sample image](https://mguhlin.github.io/creations/markdown/md.png)</textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Rendered Preview</h3>
+        <div class="panel-actions">
+          <button class="btn" id="btn-copy-formatted" title="Copy as rich text (paste into Word, Docs, WordPress visual)">Copy Formatted</button>
+        </div>
+      </div>
+      <div id="md-preview" class="preview" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Raw HTML -->
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Raw HTML Output</h3>
+      <div class="panel-actions">
+        <button class="btn" id="btn-copy-html">Copy HTML</button>
+      </div>
+    </div>
+    <textarea class="raw" id="html-output" readonly="readonly" spellcheck="false" aria-label="Raw HTML output"></textarea>
+  </div>
+
+  <!-- WordPress Block Code -->
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-head">
+      <h3>WordPress Block Code</h3>
+      <div class="panel-actions">
+        <button class="btn" id="btn-copy-wp" title="Copy Gutenberg block markup — paste into the WordPress block editor">Copy WP Code</button>
+        <button class="btn" id="btn-save-wp" title="Download as .html (Gutenberg block markup)">Save .html</button>
+      </div>
+    </div>
+    <textarea class="raw" id="wp-output" readonly="readonly" spellcheck="false" aria-label="WordPress block code output"></textarea>
+  </div>
+
+  <!-- Status bar -->
+  <div class="statusbar" style="margin-top:14px">
+    <span><strong id="stat-words">130</strong> words</span>
+    <span><strong id="stat-chars">1,153</strong> chars</span>
+    <span><strong id="stat-read">1</strong> min read</span>
+    <span class="savestate saved" id="savestate">Saved · 11:18 AM</span>
+  </div>
+</main>
+
+<!-- Help (collapsed) -->
+<section class="help" id="help">
+  <details class="help-card">
+    <summary class="help-summary">WordPress Block Code — when to use it</summary>
+    <div class="help-body">
+      <p>The <strong>WordPress Block Code</strong> output produces Gutenberg block markup (those <code>&lt;!-- wp:paragraph --&gt;</code> comments). Paste it into the WordPress block editor and it converts to native blocks — no Custom HTML block needed.</p>
+      <h4>How to use it</h4>
+      <ol>
+        <li>Click <strong>Copy WP Code</strong>.</li>
+        <li>In WordPress, open the block editor and switch to <strong>Code editor</strong> view (top-right menu → <em>Code editor</em>, or <kbd>Ctrl/⌘ Shift Alt M</kbd>).</li>
+        <li>Paste. Switch back to <strong>Visual editor</strong>. WordPress parses the comments into real blocks (paragraphs, headings, lists, tables, images, quotes, code).</li>
+      </ol>
+      <h4>Why this works on WordPress.com</h4>
+      <p>Hosted WordPress.com plans (and many managed hosts) strip arbitrary HTML and disable the Custom HTML block. Gutenberg block markup isn't treated as custom HTML — it's the editor's native serialization format, so it's accepted on every plan.</p>
+      <h4>What converts cleanly</h4>
+      <ul>
+        <li>Paragraphs, H1–H4 headings, bullet and numbered lists, blockquotes, separators, code blocks, tables, images.</li>
+        <li>Inline bold, italic, strikethrough, links, and inline code stay as standard HTML inside the blocks.</li>
+        <li>Task lists render as <code>☐</code> / <code>☑</code> prefixes (Gutenberg has no native task list block).</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="help-card">
+    <summary class="help-summary">Markdown Quick Reference</summary>
+    <div class="help-body">
+      <h4>Headings</h4>
+      <pre># H1
+## H2
+### H3</pre>
+
+      <h4>Emphasis</h4>
+      <pre>**bold**   __also bold__
+*italic*   _also italic_
+***bold italic***
+~~strikethrough~~
+`inline code`</pre>
+
+      <h4>Lists</h4>
+      <pre>- bullet
+* also a bullet
++ also a bullet
+
+1. ordered
+2. ordered
+
+- [ ] task to do
+- [x] task done</pre>
+
+      <h4>Links and Images</h4>
+      <pre>[text](https://example.com)
+![alt text](image.png)</pre>
+
+      <h4>Code Block (with language)</h4>
+      <pre>```python
+def hello():
+    print("hi")
+```</pre>
+
+      <h4>Tables</h4>
+      <pre>| Term | Meaning |
+|------|---------|
+| MD   | Markdown |
+| HTML | HyperText Markup |</pre>
+
+      <h4>Blockquote and Rule</h4>
+      <pre>&gt; Quoted line.
+
+---</pre>
+    </div>
+  </details>
+
+  <details class="help-card">
+    <summary class="help-summary">What "Clean Markdown" Fixes</summary>
+    <div class="help-body">
+      <ul>
+        <li>Normalizes Windows line endings (<code>\r\n</code> → <code>\n</code>).</li>
+        <li>Trims trailing spaces on every line.</li>
+        <li>Collapses duplicate heading markers like <code>### ## Title</code> down to a single level.</li>
+        <li>Adds the missing space after heading hashes (<code>##Title</code> → <code>## Title</code>).</li>
+        <li>Converts <code>•</code> and <code>*</code> bullets to <code>-</code>.</li>
+        <li>Normalizes checkboxes (<code>-[ ]</code>, <code>- [  ]</code> → <code>- [ ]</code>).</li>
+        <li>Forces ordered list markers to <code>N. </code> form.</li>
+        <li>Adds blank lines around headings and code fences so renderers parse them correctly.</li>
+        <li>Normalizes table separator rows.</li>
+        <li>Collapses 3+ blank lines down to 2.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="help-card">
+    <summary class="help-summary">What "Strip AI Tells" Removes</summary>
+    <div class="help-body">
+      <p>One click cleanup for the typical fingerprints of LLM-generated prose. Run this <em>after</em> Clean Markdown for best results.</p>
+      <ul>
+        <li>Curly quotes ("" '') → straight quotes (" ').</li>
+        <li>Em-dashes used as parentheticals (<code>word — word</code>) → comma-comma.</li>
+        <li>Non-breaking spaces and zero-width characters → regular space / removed.</li>
+        <li>Decorative emoji bullets (✨ 🚀 ✅ etc. at start of bullet) → removed.</li>
+        <li>Trailing colons after headings (<code>## Overview:</code> → <code>## Overview</code>).</li>
+        <li>Common stock phrases removed where they begin a sentence: 
+"It's important to note that", "It's worth noting that", "In 
+conclusion,", "In summary,", "Furthermore,", "Moreover,", "As we 
+navigate", "In today's fast-paced world,", "In the ever-evolving 
+landscape of".</li>
+        <li>"Delve into" → "explore". "Leverage" → "use". "Utilize" → "use".</li>
+      </ul>
+      <p>This is opinionated. Skim the diff in your editor before publishing — sometimes you actually want an em-dash.</p>
+    </div>
+  </details>
+
+  <details class="help-card">
+    <summary class="help-summary">Keyboard Shortcuts</summary>
+    <div class="help-body">
+      <table>
+        <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+        <tbody>
+          <tr><td>Open Find / Replace</td><td><kbd>Ctrl</kbd>+<kbd>F</kbd> · <kbd>⌘</kbd>+<kbd>F</kbd></td></tr>
+          <tr><td>Find next match</td><td><kbd>Enter</kbd> in Find field</td></tr>
+          <tr><td>Find previous</td><td><kbd>Shift</kbd>+<kbd>Enter</kbd> in Find field</td></tr>
+          <tr><td>Close Find bar</td><td><kbd>Esc</kbd></td></tr>
+          <tr><td>Save .md</td><td><kbd>Ctrl</kbd>+<kbd>S</kbd> · <kbd>⌘</kbd>+<kbd>S</kbd></td></tr>
+          <tr><td>Clean Markdown</td><td><kbd>Ctrl</kbd>+<kbd>K</kbd> · <kbd>⌘</kbd>+<kbd>K</kbd></td></tr>
+          <tr><td>Drop a file</td><td>Drag a <code>.md</code> or <code>.txt</code> file onto the page</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="help-card">
+    <summary class="help-summary">Privacy and Storage</summary>
+    <div class="help-body">
+      <p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>
+    </div>
+  </details>
+</section>
+
+<footer>
+  <div class="brand">DrawSplat <span>Markdown Studio</span></div>
+  <div class="credit">Vibe-coded by <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a></div>
+  <div></div>
+</footer>
+
+<a href="#" id="back-to-top" aria-label="Back to top">↑</a>
+<div class="drop-overlay" id="drop-overlay"><span>Drop your .md file to import</span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Elements ----------
+  const $ = (id) => document.getElementById(id);
+  const input        = $('md-input');
+  const preview      = $('md-preview');
+  const rawOutput    = $('html-output');
+  const wpOutput     = $('wp-output');
+  const findbar      = $('findbar');
+  const findInput    = $('find-input');
+  const replaceInput = $('replace-input');
+  const optCase      = $('opt-case');
+  const optWord      = $('opt-word');
+  const optRegex     = $('opt-regex');
+  const findStatus   = $('find-status');
+  const savestate    = $('savestate');
+  const toast        = $('toast');
+  const dropOverlay  = $('drop-overlay');
+
+  // ---------- Sample (intentionally messy to demo the cleaner) ----------
+  const sample = [
+    '# GenAI Prompt Writing Checklist',
+    '',
+    '## Purpose',
+    'Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.',
+    '',
+    '### ### Key Takeaways for Districts',
+    '',
+    '### ## Broader Context & Historical Parallel',
+    '',
+    '## Strong Prompt Elements',
+    '',
+    '* Clear task',
+    '* Specific audience',
+    '* Required format',
+    '* Source material separated in a code block',
+    '* Desired tone or reading level',
+    '',
+    '## Example Prompt',
+    '',
+    '```text',
+    'Create a 5th-grade reading activity about ecosystems.',
+    'Use short paragraphs, a vocabulary table, and five comprehension questions.',
+    '```',
+    '',
+    '## Vocabulary Table',
+    '',
+    '| Term | Student-Friendly Meaning | Example |',
+    '|---|---|---|',
+    '| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |',
+    '| Habitat | Where an organism lives | A frog lives near water. |',
+    '| Adaptation | A trait that helps survival | A cactus stores water. |',
+    '',
+    '## Student Checklist',
+    '',
+    '-[ ] I explained my task clearly.',
+    '-[ ] I named my audience.',
+    '-[ ] I gave the AI a format to follow.',
+    '-[x] I included source text when needed.',
+    '',
+    '> Tip: Better structure usually leads to better GenAI output.',
+    '',
+    '![Sample image](https://mguhlin.github.io/creations/markdown/md.png)'
+  ].join('\n');
+
+  // ---------- Markdown parser ----------
+  function escapeHtml(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function inlineFormat(text) {
+    let s = escapeHtml(text);
+    // Images first (must come before links)
+    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy">');
+    // Links
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // Inline code (do before emphasis so we don't process inside it; minimal version)
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Bold + italic combos
+    s = s.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/___([^_]+)___/g, '<strong><em>$1</em></strong>');
+    // Bold
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+    // Italic
+    s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    s = s.replace(/(?<!\w)_([^_]+)_(?!\w)/g, '<em>$1</em>');
+    // Strikethrough
+    s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+    return s;
+  }
+
+  function isTableDivider(row) {
+    return /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(row.trim());
+  }
+
+  function parseTable(lines, start) {
+    const rows = [];
+    let i = start;
+    while (i < lines.length && /^\|.*\|\s*$/.test(lines[i].trim())) {
+      rows.push(lines[i].trim());
+      i++;
+    }
+    if (rows.length < 2 || !isTableDivider(rows[1])) return null;
+    const headers = rows[0].split('|').slice(1, -1).map(c => inlineFormat(c.trim()));
+    const body = rows.slice(2).map(r =>
+      r.split('|').slice(1, -1).map(c => inlineFormat(c.trim()))
+    );
+    let html = '<table><thead><tr>';
+    html += headers.map(h => '<th>' + h + '</th>').join('');
+    html += '</tr></thead><tbody>';
+    html += body.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('');
+    html += '</tbody></table>';
+    return { html, next: i };
+  }
+
+  function markdownToHtml(md) {
+    const lines = String(md || '').split('\n');
+    let html = '';
+    let inUL = false, inOL = false, inCode = false;
+    let codeBuf = [], codeLang = '';
+
+    function closeLists() {
+      if (inUL) { html += '</ul>'; inUL = false; }
+      if (inOL) { html += '</ol>'; inOL = false; }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Collapse repeated heading markers (e.g. "### ### Title" → "### Title")
+      // so the renderer treats them as a single heading instead of stuffing
+      // literal "### " into the heading text.
+      const t = fixDuplicateHeadingMarkers(line.trim());
+
+      // Code fence toggle
+      if (/^```/.test(t)) {
+        closeLists();
+        if (!inCode) {
+          inCode = true;
+          codeLang = t.replace(/^```/, '').trim();
+          codeBuf = [];
+        } else {
+          html += '<pre><code' + (codeLang ? ' class="language-' + escapeHtml(codeLang) + '"' : '') + '>' +
+                  escapeHtml(codeBuf.join('\n')) + '</code></pre>';
+          inCode = false;
+          codeLang = '';
+        }
+        continue;
+      }
+      if (inCode) { codeBuf.push(line); continue; }
+
+      // Tables
+      if (/^\|.*\|\s*$/.test(t) && i + 1 < lines.length && isTableDivider(lines[i + 1])) {
+        closeLists();
+        const tbl = parseTable(lines, i);
+        if (tbl) { html += tbl.html; i = tbl.next - 1; continue; }
+      }
+
+      // Blank
+      if (t === '') { closeLists(); continue; }
+
+      // Headings
+      if (/^### /.test(t))      { closeLists(); html += '<h3>' + inlineFormat(t.slice(4)) + '</h3>'; continue; }
+      if (/^## /.test(t))       { closeLists(); html += '<h2>' + inlineFormat(t.slice(3)) + '</h2>'; continue; }
+      if (/^# /.test(t))        { closeLists(); html += '<h1>' + inlineFormat(t.slice(2)) + '</h1>'; continue; }
+
+      // Blockquote
+      if (/^> /.test(t))        { closeLists(); html += '<blockquote>' + inlineFormat(t.slice(2)) + '</blockquote>'; continue; }
+
+      // HR
+      if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) { closeLists(); html += '<hr>'; continue; }
+
+      // Task list (with or without space after dash)
+      const taskMatch = t.match(/^[-*+]\s*\[([ xX])\]\s+(.*)$/);
+      if (taskMatch) {
+        if (!inUL) { closeLists(); html += '<ul>'; inUL = true; }
+        const checked = /[xX]/.test(taskMatch[1]) ? ' checked' : '';
+        html += '<li><input type="checkbox" disabled' + checked + '> ' + inlineFormat(taskMatch[2]) + '</li>';
+        continue;
+      }
+
+      // Unordered list (-, *, + all valid)
+      if (/^[-*+]\s+/.test(t)) {
+        if (!inUL) { closeLists(); html += '<ul>'; inUL = true; }
+        html += '<li>' + inlineFormat(t.replace(/^[-*+]\s+/, '')) + '</li>';
+        continue;
+      }
+
+      // Ordered list
+      if (/^\d+\.\s+/.test(t)) {
+        if (!inOL) { closeLists(); html += '<ol>'; inOL = true; }
+        html += '<li>' + inlineFormat(t.replace(/^\d+\.\s+/, '')) + '</li>';
+        continue;
+      }
+
+      // Paragraph
+      closeLists();
+      html += '<p>' + inlineFormat(t) + '</p>';
+    }
+
+    closeLists();
+    if (inCode) { html += '<pre><code>' + escapeHtml(codeBuf.join('\n')) + '</code></pre>'; }
+    return html;
+  }
+
+  // ---------- Markdown → WordPress (Gutenberg block markup) ----------
+  // Produces block markup that pastes directly into the WordPress block
+  // editor and is parsed as native blocks. Works on hosted WordPress.com
+  // sites where the Custom HTML block is restricted.
+  function markdownToWordPress(md) {
+    const lines = String(md || '').split('\n');
+    const out = [];
+    let listType = null;     // 'ul' | 'ol' | null
+    let listItems = [];
+    let inCode = false, codeBuf = [], codeLang = '';
+
+    function flushList() {
+      if (!listType) return;
+      const ordered = listType === 'ol';
+      const wrapAttr = ordered ? ' {"ordered":true}' : '';
+      const tag = ordered ? 'ol' : 'ul';
+      out.push('<!-- wp:list' + wrapAttr + ' -->');
+      out.push('<' + tag + (ordered ? '' : ' class="wp-block-list"') + '>');
+      for (const item of listItems) {
+        out.push('<!-- wp:list-item --><li>' + item + '</li><!-- /wp:list-item -->');
+      }
+      out.push('</' + tag + '>');
+      out.push('<!-- /wp:list -->');
+      out.push('');
+      listType = null;
+      listItems = [];
+    }
+
+    function pushParagraph(text) {
+      flushList();
+      out.push('<!-- wp:paragraph -->');
+      out.push('<p>' + text + '</p>');
+      out.push('<!-- /wp:paragraph -->');
+      out.push('');
+    }
+
+    function pushHeading(level, text) {
+      flushList();
+      const attr = level === 2 ? '' : ' {"level":' + level + '}';
+      out.push('<!-- wp:heading' + attr + ' -->');
+      out.push('<h' + level + ' class="wp-block-heading">' + text + '</h' + level + '>');
+      out.push('<!-- /wp:heading -->');
+      out.push('');
+    }
+
+    function pushQuote(text) {
+      flushList();
+      out.push('<!-- wp:quote -->');
+      out.push('<blockquote class="wp-block-quote"><p>' + text + '</p></blockquote>');
+      out.push('<!-- /wp:quote -->');
+      out.push('');
+    }
+
+    function pushSeparator() {
+      flushList();
+      out.push('<!-- wp:separator -->');
+      out.push('<hr class="wp-block-separator has-alpha-channel-opacity"/>');
+      out.push('<!-- /wp:separator -->');
+      out.push('');
+    }
+
+    function pushCode(code, lang) {
+      flushList();
+      // WordPress core/code block. Language is preserved via class for highlighters.
+      const cls = lang ? ' class="language-' + escapeHtml(lang) + '"' : '';
+      out.push('<!-- wp:code -->');
+      out.push('<pre class="wp-block-code"><code' + cls + '>' + escapeHtml(code) + '</code></pre>');
+      out.push('<!-- /wp:code -->');
+      out.push('');
+    }
+
+    function pushImage(alt, src) {
+      flushList();
+      out.push('<!-- wp:image -->');
+      out.push('<figure class="wp-block-image"><img src="' + src + '" alt="' + alt + '"/></figure>');
+      out.push('<!-- /wp:image -->');
+      out.push('');
+    }
+
+    function pushTable(headers, body) {
+      flushList();
+      let tbl = '<figure class="wp-block-table"><table><thead><tr>';
+      tbl += headers.map(h => '<th>' + h + '</th>').join('');
+      tbl += '</tr></thead><tbody>';
+      tbl += body.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('');
+      tbl += '</tbody></table></figure>';
+      out.push('<!-- wp:table -->');
+      out.push(tbl);
+      out.push('<!-- /wp:table -->');
+      out.push('');
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Collapse repeated heading markers before processing.
+      const t = fixDuplicateHeadingMarkers(line.trim());
+
+      // Code fence
+      if (/^```/.test(t)) {
+        if (!inCode) {
+          inCode = true;
+          codeLang = t.replace(/^```/, '').trim();
+          codeBuf = [];
+        } else {
+          pushCode(codeBuf.join('\n'), codeLang);
+          inCode = false; codeLang = '';
+        }
+        continue;
+      }
+      if (inCode) { codeBuf.push(line); continue; }
+
+      // Tables
+      if (/^\|.*\|\s*$/.test(t) && i + 1 < lines.length && isTableDivider(lines[i + 1])) {
+        const tbl = parseTable(lines, i);
+        if (tbl) {
+          // parseTable returns rendered HTML, but we need raw rows for the WP wrapper.
+          // Re-parse rows directly here for cleanliness.
+          const rows = [];
+          let j = i;
+          while (j < lines.length && /^\|.*\|\s*$/.test(lines[j].trim())) {
+            rows.push(lines[j].trim()); j++;
+          }
+          const headers = rows[0].split('|').slice(1, -1).map(c => inlineFormat(c.trim()));
+          const body = rows.slice(2).map(r =>
+            r.split('|').slice(1, -1).map(c => inlineFormat(c.trim()))
+          );
+          pushTable(headers, body);
+          i = j - 1;
+          continue;
+        }
+      }
+
+      // Blank line
+      if (t === '') { flushList(); continue; }
+
+      // Image-only line: ![alt](src)
+      const imgOnly = t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imgOnly) { pushImage(imgOnly[1], imgOnly[2]); continue; }
+
+      // Headings
+      if (/^### /.test(t)) { pushHeading(3, inlineFormat(t.slice(4))); continue; }
+      if (/^## /.test(t))  { pushHeading(2, inlineFormat(t.slice(3))); continue; }
+      if (/^# /.test(t))   { pushHeading(1, inlineFormat(t.slice(2))); continue; }
+      if (/^#### /.test(t))  { pushHeading(4, inlineFormat(t.slice(5))); continue; }
+
+      // Blockquote
+      if (/^> /.test(t)) { pushQuote(inlineFormat(t.slice(2))); continue; }
+
+      // HR
+      if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) { pushSeparator(); continue; }
+
+      // Task list — WP doesn't render checkbox HTML inside list blocks the
+      // way Gutenberg expects, so we render as plain list items with [ ] / [x]
+      // prefix text. This survives the paste cleanly.
+      const taskMatch = t.match(/^[-*+]\s*\[([ xX])\]\s+(.*)$/);
+      if (taskMatch) {
+        if (listType !== 'ul') { flushList(); listType = 'ul'; }
+        const mark = /[xX]/.test(taskMatch[1]) ? '☑ ' : '☐ ';
+        listItems.push(mark + inlineFormat(taskMatch[2]));
+        continue;
+      }
+
+      // Unordered list
+      if (/^[-*+]\s+/.test(t)) {
+        if (listType !== 'ul') { flushList(); listType = 'ul'; }
+        listItems.push(inlineFormat(t.replace(/^[-*+]\s+/, '')));
+        continue;
+      }
+
+      // Ordered list
+      if (/^\d+\.\s+/.test(t)) {
+        if (listType !== 'ol') { flushList(); listType = 'ol'; }
+        listItems.push(inlineFormat(t.replace(/^\d+\.\s+/, '')));
+        continue;
+      }
+
+      // Paragraph
+      pushParagraph(inlineFormat(t));
+    }
+
+    flushList();
+    if (inCode) pushCode(codeBuf.join('\n'), codeLang);
+
+    return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+  }
+
+  // ---------- Cleaner ----------
+  function fixDuplicateHeadingMarkers(line) {
+    const m = line.match(/^(\s*)((?:#{1,6}\s+){2,})(.*)$/);
+    if (!m) return line;
+    const markers = m[2].trim().split(/\s+/).filter(x => /^#{1,6}$/.test(x));
+    if (markers.length < 2) return line;
+    return m[1] + markers[markers.length - 1] + ' ' + m[3].trim();
+  }
+
+  function cleanMarkdownText(md) {
+    let t = String(md || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    let lines = t.split('\n').map(l => fixDuplicateHeadingMarkers(l.replace(/[ \t]+$/g, '')));
+    t = lines.join('\n');
+
+    // Bullet normalization
+    t = t.replace(/^[ \t]*[•·]\s+/gm, '- ');
+    t = t.replace(/^[ \t]*\*\s+(?!\*)/gm, '- ');           // * bullets, not ** bold
+    t = t.replace(/^[ \t]*\+\s+/gm, '- ');
+
+    // Checkbox normalization (handles -[ ], -[x], etc., with or without spaces)
+    t = t.replace(/^([ \t]*)[-*+]\s*\[\s*\]\s*/gm, '$1- [ ] ');
+    t = t.replace(/^([ \t]*)[-*+]\s*\[\s*[xX]\s*\]\s*/gm, '$1- [x] ');
+
+    // Ordered list normalization: "1)" or "1." with messy spacing → "1. "
+    t = t.replace(/^(\s*\d+)[\)\.]\s*/gm, '$1. ');
+
+    // Heading hash spacing: "##Title" → "## Title"
+    t = t.replace(/^(#{1,6})([^\s#])/gm, '$1 $2');
+
+    // Re-run duplicate marker cleanup after bullet/heading edits
+    lines = t.split('\n').map(fixDuplicateHeadingMarkers);
+    t = lines.join('\n');
+
+    // Ensure blank line before headings
+    t = t.replace(/([^\n])\n(#{1,6}\s)/g, '$1\n\n$2');
+    // Blank line after headings if next line is regular text
+    t = t.replace(/^(#{1,6}\s.+)\n([^\n#>\-\d`\|])/gm, '$1\n\n$2');
+
+    // Blank lines around code fences
+    t = t.replace(/([^\n])\n```/g, '$1\n\n```');
+    t = t.replace(/```\n([^\n])/g, '```\n\n$1');
+
+    // Normalize table separator rows
+    t = t.replace(/^\|?[\s\-:|]+\|?$/gm, function (line) {
+      if (line.indexOf('|') === -1 || line.indexOf('-') === -1) return line;
+      const cells = line.split('|').filter(c => c.trim() !== '');
+      if (cells.length < 2) return line;
+      return '|' + cells.map(() => '---').join('|') + '|';
+    });
+
+    // Collapse 3+ blank lines
+    t = t.replace(/\n{3,}/g, '\n\n');
+    return t.trim() + '\n';
+  }
+
+  // ---------- AI Tells stripper ----------
+  function stripAITells(md) {
+    let t = String(md || '');
+
+    // Smart quotes → straight
+    t = t.replace(/[\u201C\u201D\u201E\u201F]/g, '"');
+    t = t.replace(/[\u2018\u2019\u201A\u201B]/g, "'");
+
+    // Non-breaking spaces and zero-width chars
+    t = t.replace(/\u00A0/g, ' ');
+    t = t.replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+    // Em-dash used as parenthetical: " — " → ", " (commonly overused by LLMs)
+    t = t.replace(/\s+—\s+/g, ', ');
+    t = t.replace(/\s+–\s+/g, ', '); // en-dash too
+
+    // Trailing colons after headings: "## Overview:" → "## Overview"
+    t = t.replace(/^(#{1,6}\s.+?):\s*$/gm, '$1');
+
+    // Decorative emoji at start of bullets
+    t = t.replace(/^(\s*[-*+]\s+)(?:[\u{1F300}-\u{1FAFF}]|[\u2600-\u27BF]|[\u2700-\u27BF]|✨|🚀|✅|🔑|💡|🎯|📌|⭐|🌟|🔥|👉|✔|✓)\s*/gmu, '$1');
+
+    // Common stock openers — remove when they begin a sentence/line
+    const openers = [
+      /\b(?:It'?s|It is) important to note that\s+/gi,
+      /\b(?:It'?s|It is) worth noting that\s+/gi,
+      /\b(?:It'?s|It is) worth mentioning that\s+/gi,
+      /(^|\n)In conclusion,\s+/gi,
+      /(^|\n)In summary,\s+/gi,
+      /(^|\n)Furthermore,\s+/gi,
+      /(^|\n)Moreover,\s+/gi,
+      /(^|\n)Additionally,\s+/gi,
+      /\bAs we navigate\s+/gi,
+      /\bIn today'?s fast-paced world,\s+/gi,
+      /\bIn the ever-evolving landscape of\s+/gi,
+      /\bWhen it comes to\s+/gi
+    ];
+    for (const re of openers) t = t.replace(re, '$1');
+
+    // Word swaps (case-preserving, simple)
+    const swaps = [
+      [/\bdelve into\b/gi, 'explore'],
+      [/\bdelving into\b/gi, 'exploring'],
+      [/\bdelves into\b/gi, 'explores'],
+      [/\bleverage\b/gi, 'use'],
+      [/\bleveraged\b/gi, 'used'],
+      [/\bleveraging\b/gi, 'using'],
+      [/\butilize\b/gi, 'use'],
+      [/\butilized\b/gi, 'used'],
+      [/\butilizing\b/gi, 'using'],
+      [/\bplethora of\b/gi, 'many'],
+      [/\bmyriad of\b/gi, 'many']
+    ];
+    for (const [re, rep] of swaps) {
+      t = t.replace(re, function (match) {
+        // Preserve title case if first letter was uppercase
+        if (match[0] === match[0].toUpperCase()) {
+          return rep[0].toUpperCase() + rep.slice(1);
+        }
+        return rep;
+      });
+    }
+
+    // Collapse double spaces left behind
+    t = t.replace(/[ \t]{2,}/g, ' ');
+    // Re-collapse blank lines
+    t = t.replace(/\n{3,}/g, '\n\n');
+    return t;
+  }
+
+  // ---------- Render & stats ----------
+  let renderTimer = null;
+  function scheduleRender() {
+    if (renderTimer) cancelAnimationFrame(renderTimer);
+    renderTimer = requestAnimationFrame(render);
+  }
+  function render() {
+    const md = input.value;
+    const html = markdownToHtml(md);
+    preview.innerHTML = html;
+    rawOutput.value = html;
+    wpOutput.value = markdownToWordPress(md);
+    updateStats(md);
+    scheduleSave();
+  }
+
+  function updateStats(md) {
+    const text = md.replace(/```[\s\S]*?```/g, '').replace(/[#>*_`~\-\[\]\(\)\|]/g, ' ');
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    $('stat-words').textContent = words.toLocaleString();
+    $('stat-chars').textContent = md.length.toLocaleString();
+    $('stat-read').textContent = Math.max(1, Math.round(words / 220));
+  }
+
+  // ---------- Autosave ----------
+  const STORAGE_KEY = 'drawsplat.markdownStudio.draft.v1';
+  let saveTimer = null;
+  function scheduleSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    setSaveState('dirty', 'Saving…');
+    saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, input.value);
+        setSaveState('saved', 'Saved · ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));
+      } catch (e) {
+        setSaveState('dirty', 'Save failed (storage full?)');
+      }
+    }, 600);
+  }
+  function setSaveState(cls, text) {
+    savestate.className = 'savestate ' + cls;
+    savestate.textContent = text;
+  }
+  function loadDraft() {
+    try {
+      const v = localStorage.getItem(STORAGE_KEY);
+      if (v != null && v.length > 0) {
+        input.value = v;
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  // ---------- Find / Replace ----------
+  function buildFindRegex() {
+    const q = findInput.value;
+    if (!q) return null;
+    const flags = optCase.checked ? 'g' : 'gi';
+    let pattern;
+    if (optRegex.checked) {
+      try { pattern = q; new RegExp(pattern, flags); }
+      catch (e) { setFindStatus('Invalid regex.'); return null; }
+    } else {
+      pattern = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (optWord.checked) pattern = '\\b' + pattern + '\\b';
+    }
+    return new RegExp(pattern, flags);
+  }
+
+  function findNext(direction) {
+    const re = buildFindRegex();
+    if (!re) return;
+    const text = input.value;
+    const start = direction === 'prev' ? input.selectionStart : input.selectionEnd;
+    if (direction === 'prev') {
+      // Iterate matches up to start
+      let last = -1, lastLen = 0, m;
+      const reAll = new RegExp(re.source, re.flags);
+      while ((m = reAll.exec(text)) !== null && m.index < start) {
+        last = m.index; lastLen = m[0].length;
+        if (m.index === reAll.lastIndex) reAll.lastIndex++;
+      }
+      if (last === -1) {
+        // wrap: last match in document
+        let lm = null;
+        const re2 = new RegExp(re.source, re.flags);
+        while ((m = re2.exec(text)) !== null) {
+          lm = { i: m.index, l: m[0].length };
+          if (m.index === re2.lastIndex) re2.lastIndex++;
+        }
+        if (!lm) { setFindStatus('No match.'); return; }
+        select(lm.i, lm.l); setFindStatus('Wrapped to last match.'); return;
+      }
+      select(last, lastLen); setFindStatus('Match found.');
+    } else {
+      re.lastIndex = start;
+      let m = re.exec(text);
+      if (!m) {
+        re.lastIndex = 0;
+        m = re.exec(text);
+        if (!m) { setFindStatus('No match.'); return; }
+        select(m.index, m[0].length); setFindStatus('Wrapped to first match.'); return;
+      }
+      select(m.index, m[0].length); setFindStatus('Match found.');
+    }
+  }
+
+  function select(start, len) {
+    input.focus();
+    input.setSelectionRange(start, start + len);
+    // Scroll selection into view-ish
+    const before = input.value.substring(0, start);
+    const lines = before.split('\n').length;
+    input.scrollTop = Math.max(0, (lines - 5) * 20);
+  }
+
+  function replaceOne() {
+    const re = buildFindRegex();
+    if (!re) return;
+    const sel = input.value.substring(input.selectionStart, input.selectionEnd);
+    const matchHere = sel && new RegExp('^' + re.source + '$', re.flags.replace('g','')).test(sel);
+    if (!matchHere) { findNext('next'); return; }
+    const start = input.selectionStart, end = input.selectionEnd;
+    input.value = input.value.substring(0, start) + replaceInput.value + input.value.substring(end);
+    input.setSelectionRange(start, start + replaceInput.value.length);
+    render();
+    setFindStatus('Replaced one.');
+    findNext('next');
+  }
+
+  function replaceAll() {
+    const re = buildFindRegex();
+    if (!re) return;
+    let count = 0;
+    input.value = input.value.replace(re, () => { count++; return replaceInput.value; });
+    render();
+    setFindStatus(count + ' replacement' + (count === 1 ? '' : 's') + ' made.');
+  }
+
+  function setFindStatus(msg) { findStatus.textContent = msg || ''; }
+
+  function toggleFindbar(open) {
+    if (open === undefined) open = !findbar.classList.contains('open');
+    findbar.classList.toggle('open', open);
+    if (open) { findInput.focus(); findInput.select(); }
+  }
+
+  // ---------- Copy / Save / Import ----------
+  function flashBtn(btn, label) {
+    const orig = btn.textContent;
+    btn.textContent = label;
+    setTimeout(() => { btn.textContent = orig; }, 1100);
+  }
+
+  async function copyText(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text);
+      flashBtn(btn, 'Copied!');
+      showToast('Copied to clipboard');
+    } catch (e) {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      flashBtn(btn, 'Copied!');
+    }
+  }
+
+  async function copyFormatted(btn) {
+    const html = preview.innerHTML;
+    const plain = preview.innerText || preview.textContent || '';
+    if (navigator.clipboard && window.ClipboardItem) {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([plain], { type: 'text/plain' })
+        })]);
+        flashBtn(btn, 'Copied!');
+        showToast('Copied as rich text');
+        return;
+      } catch (e) { /* fall through */ }
+    }
+    // Fallback: select preview and exec copy
+    const r = document.createRange(); r.selectNodeContents(preview);
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    try { document.execCommand('copy'); } catch (_) {}
+    s.removeAllRanges();
+    flashBtn(btn, 'Copied!');
+  }
+
+  function downloadFile(filename, content, mime) {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  }
+
+  function suggestFilename(ext) {
+    const firstHeading = (input.value.match(/^#\s+(.+)$/m) || [, ''])[1];
+    const slug = firstHeading
+      ? firstHeading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)
+      : 'document';
+    return (slug || 'document') + '.' + ext;
+  }
+
+  function saveMd() {
+    downloadFile(suggestFilename('md'), input.value, 'text/markdown');
+    showToast('Downloaded .md');
+  }
+  function saveHtml() {
+    const wrapped = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>' +
+      escapeHtml(suggestFilename('').replace(/\.$/, '')) + '</title>\n</head>\n<body>\n' +
+      rawOutput.value + '\n</body>\n</html>\n';
+    downloadFile(suggestFilename('html'), wrapped, 'text/html');
+    showToast('Downloaded .html');
+  }
+
+  function importFile(file) {
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = (e) => {
+      input.value = String(e.target.result || '');
+      render();
+      showToast('Imported ' + file.name);
+    };
+    r.readAsText(file);
+  }
+
+  // ---------- Toast ----------
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1700);
+  }
+
+  // ---------- Wire up ----------
+  $('btn-clean').addEventListener('click', () => {
+    input.value = cleanMarkdownText(input.value);
+    render();
+    showToast('Markdown cleaned');
+  });
+  $('btn-strip-ai').addEventListener('click', () => {
+    if (!confirm('Strip common AI writing tells (em-dashes, smart quotes, "delve into", "in conclusion", emoji bullets, etc.)?\n\nReview the changes after — sometimes you actually want an em-dash.')) return;
+    input.value = stripAITells(input.value);
+    render();
+    showToast('AI tells stripped');
+  });
+  $('btn-find').addEventListener('click', () => toggleFindbar());
+  $('btn-find-close').addEventListener('click', () => toggleFindbar(false));
+  $('btn-find-next').addEventListener('click', () => findNext('next'));
+  $('btn-find-prev').addEventListener('click', () => findNext('prev'));
+  $('btn-replace-one').addEventListener('click', replaceOne);
+  $('btn-replace-all').addEventListener('click', replaceAll);
+
+  $('btn-import').addEventListener('click', () => $('file-input').click());
+  $('file-input').addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) importFile(e.target.files[0]);
+    e.target.value = '';
+  });
+  $('btn-save-md').addEventListener('click', saveMd);
+  $('btn-save-html').addEventListener('click', saveHtml);
+  $('btn-sample').addEventListener('click', () => {
+    if (input.value.trim() && !confirm('Replace current content with the sample document?')) return;
+    input.value = sample; render();
+  });
+  $('btn-clear-all').addEventListener('click', () => {
+    if (!confirm('Clear the editor and remove the saved draft?')) return;
+    input.value = ''; render();
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    showToast('Cleared');
+  });
+
+  $('btn-copy-md').addEventListener('click', (e) => copyText(input.value, e.currentTarget));
+  $('btn-copy-formatted').addEventListener('click', (e) => copyFormatted(e.currentTarget));
+  $('btn-copy-html').addEventListener('click', (e) => copyText(rawOutput.value, e.currentTarget));
+  $('btn-copy-wp').addEventListener('click', (e) => copyText(wpOutput.value, e.currentTarget));
+  $('btn-save-wp').addEventListener('click', () => {
+    downloadFile(suggestFilename('html').replace(/\.html$/, '-wp.html'), wpOutput.value, 'text/html');
+    showToast('Downloaded WordPress block code');
+  });
+
+  input.addEventListener('input', scheduleRender);
+
+  // Find input keys
+  findInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      findNext(e.shiftKey ? 'prev' : 'next');
+    } else if (e.key === 'Escape') {
+      toggleFindbar(false);
+      input.focus();
+    }
+  });
+  replaceInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); replaceOne(); }
+    else if (e.key === 'Escape') { toggleFindbar(false); input.focus(); }
+  });
+
+  // Global shortcuts
+  document.addEventListener('keydown', (e) => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFindbar(true); }
+    else if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); saveMd(); }
+    else if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); $('btn-clean').click(); }
+    else if (e.key === 'Escape' && findbar.classList.contains('open')) { toggleFindbar(false); }
+  });
+
+  // Drag & drop
+  let dragDepth = 0;
+  window.addEventListener('dragenter', (e) => {
+    if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+      dragDepth++;
+      dropOverlay.classList.add('active');
+    }
+  });
+  window.addEventListener('dragleave', () => {
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) dropOverlay.classList.remove('active');
+  });
+  window.addEventListener('dragover', (e) => {
+    if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+      e.preventDefault();
+    }
+  });
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragDepth = 0; dropOverlay.classList.remove('active');
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) importFile(f);
+  });
+
+  // Back to top
+  const btt = $('back-to-top');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', window.scrollY > 500);
+  }, { passive: true });
+  btt.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---------- Boot ----------
+  if (!loadDraft()) {
+    input.value = sample;
+  }
+  render();
+  setSaveState('saved', 'Idle');
+})();
+</script>
+
+
+</body></html>
