@@ -25,7 +25,7 @@ const SHELL = [
   './admin-access.html',
   './README.md',
   './mysql-setup.html',
-  './whiteboard.html','./index-sp.html','./index-vn.html','./index-ab.html','./index-cn.html','./index.uh.html',
+  './whiteboard.html','./languages/index-sp.html','./languages/index-vn.html','./languages/index-ab.html','./languages/index-cn.html','./languages/index.uh.html',
   './admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
   './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/brand/DrawSplat_logo.png',
   './solutions/coinflipping/index.html',

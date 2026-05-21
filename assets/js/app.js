@@ -22,6 +22,8 @@
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const VERSION='3.0';
+const APP_ROOT=location.pathname.includes('/languages/')?'../':'';
+const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
 const STORAGE_MODE_KEY='drawsplat.storageMode';
 const SESSION_HOURS_KEY='drawsplat.sessionHours';
@@ -82,7 +84,7 @@ const COLORING_BOOK_ITEMS=[
   ['wolves','animals','Wolves','wolves']
 ];
 const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
-function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,fileBase])=>{const base='assets/coloring-book/'+fileBase, paths=COLORING_BOOK_EXTENSIONS.map(ext=>base+'.'+ext); return {id:idv,category,label,path:paths[0],paths}})}
+function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,fileBase])=>{const base=appPath('assets/coloring-book/'+fileBase), paths=COLORING_BOOK_EXTENSIONS.map(ext=>base+'.'+ext); return {id:idv,category,label,path:paths[0],paths}})}
 
 let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
@@ -926,20 +928,20 @@ function ensureCloudClassroomControls(){
   gid('createStudentLinkBtn')?.addEventListener('click',copyStudentShareLink);
 }
 const BACKGROUND_TEMPLATES={
-  'kwl-chart':'assets/backgrounds/kwl-chart.svg',
-  'frayer-model':'assets/backgrounds/frayer-model.svg',
-  't-chart':'assets/backgrounds/t-chart.svg',
-  'storyboard':'assets/backgrounds/storyboard.svg',
-  'venn-diagram':'assets/backgrounds/venn-diagram.svg',
-  'timeline':'assets/backgrounds/timeline.svg',
-  'cornell-notes':'assets/backgrounds/cornell-notes.svg',
-  'exit-ticket':'assets/backgrounds/exit-ticket.svg',
-  'lab-notes':'assets/backgrounds/lab-notes.svg',
-  'vocabulary-builder':'assets/backgrounds/vocabulary-builder.svg',
-  'coordinate-plane':'assets/backgrounds/coordinate-plane.svg',
-  'reading-response':'assets/backgrounds/reading-response.svg',
-  'choice-board':'assets/backgrounds/choice-board.svg',
-  'blank-anchor-chart':'assets/backgrounds/blank-anchor-chart.svg'
+  'kwl-chart':appPath('assets/backgrounds/kwl-chart.svg'),
+  'frayer-model':appPath('assets/backgrounds/frayer-model.svg'),
+  't-chart':appPath('assets/backgrounds/t-chart.svg'),
+  'storyboard':appPath('assets/backgrounds/storyboard.svg'),
+  'venn-diagram':appPath('assets/backgrounds/venn-diagram.svg'),
+  'timeline':appPath('assets/backgrounds/timeline.svg'),
+  'cornell-notes':appPath('assets/backgrounds/cornell-notes.svg'),
+  'exit-ticket':appPath('assets/backgrounds/exit-ticket.svg'),
+  'lab-notes':appPath('assets/backgrounds/lab-notes.svg'),
+  'vocabulary-builder':appPath('assets/backgrounds/vocabulary-builder.svg'),
+  'coordinate-plane':appPath('assets/backgrounds/coordinate-plane.svg'),
+  'reading-response':appPath('assets/backgrounds/reading-response.svg'),
+  'choice-board':appPath('assets/backgrounds/choice-board.svg'),
+  'blank-anchor-chart':appPath('assets/backgrounds/blank-anchor-chart.svg')
 };
 const BACKGROUND_TEMPLATE_TEXT={
   es:{'Know':'Sé','Want to Know':'Quiero saber','Learned':'Aprendí','Side A':'Lado A','Side B':'Lado B','Lab Notes':'Notas de laboratorio','Question':'Pregunta','Hypothesis':'Hipótesis','Evidence / Data':'Evidencia / Datos','Conclusion':'Conclusión','Word':'Palabra','Summary':'Resumen','Text Evidence':'Evidencia del texto','Cornell Notes':'Notas Cornell','Cues / Questions':'Pistas / Preguntas','Notes':'Notas','Exit Ticket':'Boleto de salida',"How I feel about today's learning:":'Cómo me siento sobre el aprendizaje de hoy:','Anchor Chart Title':'Título del cartel','Choice Board':'Tablero de opciones','Word / Concept':'Palabra / Concepto','Definition':'Definición','Characteristics':'Características','Examples':'Ejemplos','Non-Examples':'No ejemplos','Event 1':'Evento 1','Event 2':'Evento 2','Event 3':'Evento 3','Event 4':'Evento 4','Event 5':'Evento 5','Event 6':'Evento 6'},
@@ -1407,7 +1409,7 @@ function selectAllObjects(){commitInlineTextEditor(); selectedIds=panel().object
 function pasteClipboard(){if(!clipboard||!clipboard.objects?.length)return; const idMap={}, items=[]; clipboard.objects.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); idMap[o.id]=id(); c.id=idMap[o.id]; c.x+=28; c.y+=28; if(c.type==='path'&&c.d)c.d=translatedPathData(c.d,28,28); if(c.clipBox)c.clipBox={x:c.clipBox.x+28,y:c.clipBox.y+28,w:c.clipBox.w,h:c.clipBox.h}; if(board.assignmentMode&&board.mode==='student') c.layer='student'; items.push(c)}); items.forEach(c=>{if(c.coloringPaintFor&&idMap[c.coloringPaintFor]) c.coloringPaintFor=idMap[c.coloringPaintFor]}); clipboard.connectors?.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); c.id=id(); c.fromId=idMap[o.fromId]; c.toId=idMap[o.toId]; if(c.fromId&&c.toId) items.push(c)}); panel().objects.push(...items); selectedIds=items.filter(o=>o.type!=='connector'&&!o.coloringPaintFor).map(o=>o.id); render(); saveState()}
 function selectedMovableObjects(){return selectedIds.map(findObj).filter(o=>o&&o.type!=='connector'&&canEditObject(o)&&!o.locked)}
 function frameBounds(){return{x:0,y:0,w:Math.max(1,(svg?.clientWidth||900)/zoom),h:Math.max(1,(svg?.clientHeight||600)/zoom)}}
-const SCRATCH_ART_DIR='assets/scratch-art/';
+const SCRATCH_ART_DIR=appPath('assets/scratch-art/');
 const SCRATCH_ART_FALLBACKS=['scratch_bkgrnd1.png','scratch_bkgrnd2.png','scratch_bkgrnd3.png','scratch_bkgrnd4.png','scratch_bkgrnd5.png'];
 let scratchArtImageCache=null;
 let pendingScratchCoverColor=null;
@@ -1952,13 +1954,13 @@ const CLASSROOM_WIDGETS=[
   {kind:'workmode',title:'Work Mode',w:360,h:260}
 ];
 const CLASSROOM_TOOL_LINKS=[
-  {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:'solutions/coinflipping/index.html'},
-  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:'solutions/dicebreakers/index.html'},
-  {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:'solutions/dice/index.html'},
-  {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:'solutions/memepuzzle/index.html'},
-  {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:'solutions/rubric-builder/index.html'},
-  {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:'solutions/storywheel/index.html'},
-  {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:'solutions/wordsearch/index.html'}
+  {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:appPath('solutions/coinflipping/index.html')},
+  {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:appPath('solutions/dicebreakers/index.html')},
+  {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:appPath('solutions/dice/index.html')},
+  {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:appPath('solutions/memepuzzle/index.html')},
+  {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:appPath('solutions/rubric-builder/index.html')},
+  {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:appPath('solutions/storywheel/index.html')},
+  {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:appPath('solutions/wordsearch/index.html')}
 ];
 function defaultWidgetConfig(kind){
   const base={widgetKind:kind,widgetConfig:{}};
@@ -3610,7 +3612,7 @@ async function importPanelsFromFile(file){
   }
 }
 async function importPdfAsPanels(file,progress){
-  pdfjsLib.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc=appPath('vendor/pdf.worker.min.js');
   const buf=await fileToArrayBuffer(file);
   const pdf=await pdfjsLib.getDocument({data:buf,disableFontFace:false,useSystemFonts:false,isEvalSupported:false}).promise;
   const total=Math.min(pdf.numPages,PANEL_IMPORT_MAX_PAGES);
@@ -3918,7 +3920,7 @@ gid('loadTemplateGalleryBtn').onclick=loadTemplateGallery;
 gid('submitTurnInBtn').onclick=submitTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
 gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplat boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
-gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href='admin.html'});
+gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
   askConfirm('Wipe every panel and start with a blank board? This can\'t be undone.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
     if(!ok) return;
@@ -4049,14 +4051,14 @@ function registerServiceWorker(){
 
 /* v2.5: language switcher (kept here so it works without i18n.js). */
 (function(){
-  const pages={en:'whiteboard.html',es:'index-sp.html',vi:'index-vn.html',ar:'index-ab.html',zh:'index-cn.html',uh:'index.uh.html'};
+  const pages={en:appPath('whiteboard.html'),es:appPath('languages/index-sp.html'),vi:appPath('languages/index-vn.html'),ar:appPath('languages/index-ab.html'),zh:appPath('languages/index-cn.html'),uh:appPath('languages/index.uh.html')};
   const currentFile=(location.pathname.split('/').pop()||'whiteboard.html').toLowerCase();
   const fileLang=currentFile.includes('index-sp')?'es':currentFile.includes('index-vn')?'vi':currentFile.includes('index-ab')?'ar':currentFile.includes('index-cn')?'zh':currentFile.includes('index.uh')?'uh':'en';
   const rawLang=(window.DRAWSPLAT_LANG||document.documentElement.lang||fileLang||'en').toLowerCase();
   const current=rawLang.startsWith('es')?'es':rawLang.startsWith('vi')?'vi':rawLang.startsWith('ar')?'ar':rawLang.startsWith('zh')?'zh':(rawLang==='uh'||rawLang.startsWith('ur')||rawLang.startsWith('hi'))?'uh':'en';
   const sel=document.getElementById('languageSwitcher');
   try{localStorage.setItem('drawsplat.language',current)}catch(_){}
-  if(sel){ sel.value=current; sel.addEventListener('change',()=>{try{localStorage.setItem('drawsplat.language',sel.value)}catch(_){} location.href=pages[sel.value]||'whiteboard.html' }) }
+  if(sel){ sel.value=current; sel.addEventListener('change',()=>{try{localStorage.setItem('drawsplat.language',sel.value)}catch(_){} location.href=pages[sel.value]||appPath('whiteboard.html') }) }
 })();
 
 /* v2.12: modern inline SVG icon system for every core toolbar/control button. */

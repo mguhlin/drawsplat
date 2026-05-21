@@ -78,11 +78,7 @@ timeline
 - `terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
 - `district-addendum.html` — signature-ready district data privacy addendum template
 - `admin-access.html` — admin-access request page with the Miguel Guhlin contact link
-- `index-sp.html` — Spanish entry page
-- `index-vn.html` — Vietnamese entry page
-- `index-ab.html` — Arabic entry page (RTL)
-- `index-cn.html` — Chinese entry page
-- `index.uh.html` — Urdu / Hindi entry page
+- `languages/` — translated whiteboard entry pages for Spanish, Vietnamese, Arabic, Chinese, and Urdu / Hindi
 - `admin.html` — teacher/admin setup page for Google integration and classroom links
 - `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
 - `assets/js/admin.js` — admin-page settings, backend ping, and link generation
@@ -155,7 +151,7 @@ timeline
 
 ## Local use
 
-Open `index.html` in a modern browser to see the public DrawSplat information page and choose between the Whiteboard and Teacher Admin. Open `whiteboard.html` for the English whiteboard app, or use one of the translated `index-*.html` whiteboard files directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
+Open `index.html` in a modern browser to see the public DrawSplat information page and choose between the Whiteboard and Teacher Admin. Open `whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
 
 ## Hosting
 
@@ -319,11 +315,11 @@ Boards, drawings, and student work created by users belong to their respective a
 DrawSplat includes multiple entry pages so schools can share the interface in different languages:
 
 - `whiteboard.html` — English
-- `index-sp.html` — Spanish
-- `index-vn.html` — Vietnamese
-- `index-ab.html` — Arabic
-- `index-cn.html` — Chinese
-- `index.uh.html` — Urdu / Hindi
+- `languages/index-sp.html` — Spanish
+- `languages/index-vn.html` — Vietnamese
+- `languages/index-ab.html` — Arabic
+- `languages/index-cn.html` — Chinese
+- `languages/index.uh.html` — Urdu / Hindi
 
 ## Version notes for this build
 
