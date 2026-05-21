@@ -55,14 +55,34 @@ const DOT_PICTURES=[
   {id:'sun',label:'Sun',rows:['X..X..X','..XXX..','XXXXXXX','.XXXXX.','XXXXXXX','..XXX..','X..X..X'],color:'#fde68a'},
   {id:'boat',label:'Boat',rows:['...X...','..XX...','.XXX...','XXXXXXX','.XXXXX.','..XXX..'],color:'#bfdbfe'}
 ];
-const COLORING_BOOK_CATEGORIES={
-  plants:['Sunflower','Rose','Tulip','Cactus','Fern','Oak Leaf','Maple Leaf','Pine Cone','Mushroom','Water Lily','Orchid','Daisy','Bamboo','Aloe','Seaweed','Acorn Sprout','Pumpkin Vine','Clover','Palm Frond','Succulent'],
-  insects:['Butterfly','Honeybee','Ladybug','Dragonfly','Ant','Grasshopper','Beetle','Moth','Cicada','Praying Mantis','Firefly','Caterpillar','Cricket','Walking Stick','Damselfly','Weevil','Leafhopper','Termite','Wasp','Scarab'],
-  dinosaurs:['Tyrannosaurus','Triceratops','Stegosaurus','Brachiosaurus','Velociraptor','Ankylosaurus','Parasaurolophus','Spinosaurus','Pteranodon','Allosaurus','Diplodocus','Iguanodon','Pachycephalosaurus','Carnotaurus','Apatosaurus','Oviraptor','Compsognathus','Dimetrodon','Mosasaurus','Plesiosaurus'],
-  animals:['Lion','Elephant','Giraffe','Zebra','Panda','Koala','Dolphin','Sea Turtle','Owl','Fox','Rabbit','Horse','Frog','Penguin','Bear','Kangaroo','Whale','Octopus','Deer','Cheetah']
-};
+const COLORING_BOOK_EXTENSIONS=['jpg','jpeg','png'];
 function assetSlug(label){return String(label).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
-function coloringBookItems(){return Object.entries(COLORING_BOOK_CATEGORIES).flatMap(([category,labels])=>labels.map(label=>({id:category+'-'+assetSlug(label),category,label,path:'assets/coloring-book/'+category+'-'+assetSlug(label)+'.svg'})))}
+const COLORING_BOOK_ITEMS=[
+  ['allosaurus','dinosaurs','Allosaurus','allosaurus'],
+  ['anteater','animals','Anteater','anteater'],
+  ['apatosaurus','dinosaurs','Apatosaurus','apatosaurus'],
+  ['archaopteryx','dinosaurs','Archaeopteryx','archaopteryx'],
+  ['bear','animals','Bear','bear'],
+  ['beaver','animals','Beaver','beaver'],
+  ['beaverpup','animals','Beaver Pup','beaverpup'],
+  ['brachiosaurus','dinosaurs','Brachiosaurus','brachiosaurus'],
+  ['ceratosaurus','dinosaurs','Ceratosaurus','ceratosaurus'],
+  ['copsognathus','dinosaurs','Compsognathus','copsognathus'],
+  ['diplodocus','dinosaurs','Diplodocus','diplodocus'],
+  ['elephant','animals','Elephant','elephant'],
+  ['giraffe','animals','Giraffe','giraffe'],
+  ['goat','animals','Goat','goat'],
+  ['leopard','animals','Leopard','leopard'],
+  ['meerkats','animals','Meerkats','meerkats'],
+  ['platypus','animals','Platypus','platypus'],
+  ['pterosaur','dinosaurs','Pterosaur','pterosaur'],
+  ['raccoon','animals','Raccoon','raccoon'],
+  ['sauropod-eggs','dinosaurs','Sauropod Eggs','sauropod_eggs'],
+  ['stegosaurus','dinosaurs','Stegosaurus','stegosaurus'],
+  ['wolves','animals','Wolves','wolves']
+];
+const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
+function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,fileBase])=>{const base='assets/coloring-book/'+fileBase, paths=COLORING_BOOK_EXTENSIONS.map(ext=>base+'.'+ext); return {id:idv,category,label,path:paths[0],paths}})}
 
 let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
@@ -1561,22 +1581,40 @@ function renderColoringBookGrid(category='all'){
   if(!grid) return;
   tabs?.querySelectorAll('[data-coloring-category]').forEach(btn=>btn.classList.toggle('active',btn.dataset.coloringCategory===category));
   const items=coloringBookItems().filter(item=>category==='all'||item.category===category);
-  grid.innerHTML=items.map(item=>`<button type="button" class="coloring-book-tile" data-coloring-id="${esc(item.id)}"><img src="${esc(item.path)}" alt=""><span>${esc(item.label)}</span><small>${esc(item.category)}</small></button>`).join('');
+  grid.innerHTML=items.map(item=>`<button type="button" class="coloring-book-tile" data-coloring-id="${esc(item.id)}" data-coloring-paths="${esc(item.paths.join('|'))}"><img src="${esc(item.path)}" alt="" data-path-index="0"><span>${esc(item.label)}</span><small>${esc(item.category)}</small></button>`).join('');
+  grid.querySelectorAll('.coloring-book-tile img').forEach(img=>img.addEventListener('error',()=>{
+    const tile=img.closest('[data-coloring-paths]'), paths=(tile?.dataset.coloringPaths||'').split('|').filter(Boolean);
+    const next=(+img.dataset.pathIndex||0)+1;
+    if(next<paths.length){img.dataset.pathIndex=String(next); img.src=paths[next]}
+  }));
   grid.querySelectorAll('[data-coloring-id]').forEach(btn=>btn.addEventListener('click',()=>insertColoringBookPage(btn.dataset.coloringId)));
 }
 function openColoringBookDialog(){
   const dlg=ensureColoringBookDialog();
   if(typeof dlg.showModal==='function') dlg.showModal(); else dlg.show();
 }
+function imageDimensions(src){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>resolve({w:img.naturalWidth||img.width||0,h:img.naturalHeight||img.height||0});
+    img.onerror=()=>resolve({w:0,h:0});
+    img.src=src;
+  });
+}
 async function insertColoringBookPage(itemId){
   const item=coloringBookItems().find(x=>x.id===itemId);
   if(!item) return setStatus('Coloring page not found.','danger');
   try{
-    const res=await fetch(item.path);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const svgText=await res.text();
-    const src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgText);
-    addObj(makeObj('image',140,70,420,560,{src,naturalW:900,naturalH:1200,fill:'none',stroke:'none',strokeWidth:0,coloringBookId:item.id,coloringBookLabel:item.label,coloringBookCategory:item.category}));
+    let src='', loadedPath='';
+    for(const path of item.paths){
+      try{src=await imageUrlToDataUrl(path); loadedPath=path; break}catch(_){}
+    }
+    if(!src) throw new Error('No PNG or JPG file found for '+item.label+'.');
+    const meta=await imageDimensions(src);
+    const naturalW=meta.w||900, naturalH=meta.h||1200;
+    const maxW=520, maxH=560, scale=Math.min(1,maxW/naturalW,maxH/naturalH);
+    const w=Math.max(80,Math.round(naturalW*scale)), h=Math.max(80,Math.round(naturalH*scale));
+    addObj(makeObj('image',140,70,w,h,{src,naturalW,naturalH,fill:'none',stroke:'none',strokeWidth:0,coloringBookId:item.id,coloringBookLabel:item.label,coloringBookCategory:item.category,coloringBookPath:loadedPath}));
     gid('coloringBookDialog')?.close();
     setStatus('Coloring page inserted: '+item.label+'.','success');
   }catch(err){
@@ -2809,7 +2847,11 @@ const IMAGE_GALLERY_CATALOG=[
   ]]
 ];
 function imageGalleryGroupHtml(group,items){
-  return `<section class="image-gallery-group"><h3>${esc(group)}</h3><div class="image-gallery-grid">${items.map(([idv,label,src])=>`<button class="image-gallery-tile" type="button" data-gallery-src="${esc(src)}" data-gallery-label="${esc(label)}" aria-label="${esc(label)}"><img src="${esc(src)}" alt="" loading="lazy"><span>${esc(label)}</span></button>`).join('')}</div></section>`;
+  return `<section class="image-gallery-group"><h3>${esc(group)}</h3><div class="image-gallery-grid">${items.map(item=>{
+    const [idv,label,src,paths,kind]=item;
+    const pathList=(paths&&paths.length?paths:[src]).filter(Boolean);
+    return `<button class="image-gallery-tile" type="button" data-gallery-src="${esc(src)}" data-gallery-paths="${esc(pathList.join('|'))}" data-gallery-label="${esc(label)}" data-gallery-kind="${esc(kind||'image')}" data-coloring-id="${esc(kind==='coloring-book'?idv:'')}" aria-label="${esc(label)}"><img src="${esc(src)}" alt="" loading="lazy" data-path-index="0"><span>${esc(label)}</span></button>`;
+  }).join('')}</div></section>`;
 }
 async function scratchArtGalleryItems(){
   const images=await loadScratchArtImages();
@@ -2818,6 +2860,9 @@ async function scratchArtGalleryItems(){
     const n=match?match[1]:(i+1);
     return ['scratch-art-'+n,'ScratchArt Background '+n,src];
   });
+}
+function coloringBookGalleryItems(){
+  return coloringBookItems().map(item=>[item.id,item.label,item.path,item.paths,'coloring-book']);
 }
 function openImageUpload(){
   gid('imageInput')?.click();
@@ -2847,15 +2892,25 @@ async function ensureImageGalleryDialog(){
     dlg.addEventListener('click',e=>{
       const tile=e.target.closest('.image-gallery-tile');
       if(!tile) return;
+      if(tile.dataset.galleryKind==='coloring-book'&&tile.dataset.coloringId){
+        insertColoringBookPage(tile.dataset.coloringId);
+        return;
+      }
       insertGalleryImage(tile.dataset.gallerySrc,tile.dataset.galleryLabel||'Gallery image');
     });
   }
   let scratchItems=[];
   try{scratchItems=await scratchArtGalleryItems()}catch(_){}
-  const catalog=scratchItems.length?[['ScratchArt Backgrounds',scratchItems],...IMAGE_GALLERY_CATALOG]:IMAGE_GALLERY_CATALOG;
+  const coloringItems=coloringBookGalleryItems();
+  const catalog=[...(scratchItems.length?[['ScratchArt Backgrounds',scratchItems]]:[]),...(coloringItems.length?[['Coloring Book Pages',coloringItems]]:[]),...IMAGE_GALLERY_CATALOG];
   const groups=catalog.map(([group,items])=>imageGalleryGroupHtml(group,items)).join('');
-  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. ScratchArt backgrounds and Smithsonian Open Access animal photos are included locally.</p>${groups}`;
+  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. ScratchArt backgrounds, coloring book pages, and Smithsonian Open Access animal photos are included locally.</p>${groups}`;
   gid('imageGalleryCancelBtn')?.addEventListener('click',()=>dlg.close());
+  dlg.querySelectorAll('.image-gallery-tile img').forEach(img=>img.addEventListener('error',()=>{
+    const tile=img.closest('[data-gallery-paths]'), paths=(tile?.dataset.galleryPaths||'').split('|').filter(Boolean);
+    const next=(+img.dataset.pathIndex||0)+1;
+    if(next<paths.length){img.dataset.pathIndex=String(next); img.src=paths[next]}
+  }));
 }
 async function openImageGalleryDialog(){
   await ensureImageGalleryDialog();
