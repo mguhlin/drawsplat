@@ -12,7 +12,7 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 
 ## Recent improvements
 
-- Added a public `support.html` page with an empty Videos section and Resource Articles.
+- Added a public `pages/support.html` page with an empty Videos section and Resource Articles.
 - Added `guides/` as a classroom guide hub with HTML guide pages for ScratchArt, Google Drive + Sheets setup, MySQL setup, and the project reference.
 - Added guide banner images in `guides/images/` and updated the public home, guide, and template pages to use those visual assets.
 - Reorganized the whiteboard top menus so **Insert** is focused on insertable content, **Tools** holds tool workflows, **File** holds restore points, and **Options** holds Keyboard Shortcuts.
@@ -68,21 +68,21 @@ timeline
 ## Included files
 
 - `index.html` — public landing page that explains DrawSplat, pricing, privacy, templates, Whiteboard, and Teacher Admin
-- `whiteboard.html` — English whiteboard app
-- `start.html` — backwards-compatible redirect to `index.html`
-- `background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
-- `support.html` — support landing page with Videos and Resource Articles sections
+- `app/whiteboard.html` — English whiteboard app
+- `pages/start.html` — backwards-compatible redirect to `index.html`
+- `pages/background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
+- `pages/support.html` — support landing page with Videos and Resource Articles sections
 - `guides/` — HTML guide hub with classroom activity, setup, and project-reference articles
 - `guides/images/` — banner and guide images used by public pages and guides
-- `pricing.html` — pricing page with the free version and one-time as-is license option
-- `terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
-- `district-addendum.html` — signature-ready district data privacy addendum template
-- `admin-access.html` — admin-access request page with the Miguel Guhlin contact link
+- `pages/pricing.html` — pricing page with the free version and one-time as-is license option
+- `legal/terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
+- `legal/district-addendum.html` — signature-ready district data privacy addendum template
+- `admin/access.html` — admin-access request page with the Miguel Guhlin contact link
 - `languages/` — translated whiteboard entry pages for Spanish, Vietnamese, Arabic, Chinese, and Urdu / Hindi
-- `admin.html` — teacher/admin setup page for Google integration and classroom links
+- `admin/admin.html` — teacher/admin setup page for Google integration and classroom links
 - `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
 - `assets/js/admin.js` — admin-page settings, backend ping, and link generation
-- `mysql-setup.html` — Moodle-style MySQL setup wizard for endpoint testing and server `.env` template generation
+- `admin/mysql-setup.html` — Moodle-style MySQL setup wizard for endpoint testing and server `.env` template generation
 - `assets/js/mysql-setup.js` — MySQL wizard behavior
 - `assets/css/app.css` — shared stylesheet (extracted in v2.5)
 - `assets/js/app.js` — shared application code (extracted in v2.5)
@@ -151,7 +151,7 @@ timeline
 
 ## Local use
 
-Open `index.html` in a modern browser to see the public DrawSplat information page and choose between the Whiteboard and Teacher Admin. Open `whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
+Open `index.html` in a modern browser to see the public DrawSplat information page and choose between the Whiteboard and Teacher Admin. Open `app/whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
 
 ## Hosting
 
@@ -178,7 +178,7 @@ Teacher Admin supports four storage choices:
 
 ## MySQL backend setup
 
-The MySQL wizard is available at `mysql-setup.html`. It saves the public API endpoint and generates a server-side `.env` template. Do not store MySQL passwords in the browser; credentials belong on the backend server.
+The MySQL wizard is available at `admin/mysql-setup.html`. It saves the public API endpoint and generates a server-side `.env` template. Do not store MySQL passwords in the browser; credentials belong on the backend server.
 
 The public repository does not ship a working Teacher Admin password. To use the static gate, set `PASSWORD_HASH` in `assets/js/admin-gate.js` to the SHA-256 hash of your deployment password. This browser-side gate is only a deterrent; production deployments should protect admin pages with server-side authentication or SSO.
 
@@ -188,7 +188,7 @@ The starter backend is in `server/mysql-backend/`:
 2. Run `server/mysql-backend/schema.sql`.
 3. Copy `.env.example` to `.env` and fill in the database settings.
 4. Run `npm install` and `npm start` inside `server/mysql-backend/`.
-5. Open `mysql-setup.html` and test the endpoint, such as `http://localhost:8787/api/drawsplat/mysql`.
+5. Open `admin/mysql-setup.html` and test the endpoint, such as `http://localhost:8787/api/drawsplat/mysql`.
 
 The current static app can save the MySQL endpoint setting without breaking Google Apps Script. Full board sync through MySQL requires wiring the board save/load/cloud-sync calls to the new API provider.
 
@@ -202,18 +202,18 @@ The current static app can save the MySQL endpoint setting without breaking Goog
 6. Set **Execute as** to yourself.
 7. Set access according to your classroom or district needs.
 8. Copy the Web App URL.
-9. Open `admin.html` and paste the URL into the **Apps Script Web App URL** field.
+9. Open `admin/admin.html` and paste the URL into the **Apps Script Web App URL** field.
 
 For a hosted classroom deployment, you can also place the Web App URL in `DEFAULT_GOOGLE_SCRIPT_URL` in `assets/js/app.js`. That lets student links omit the script URL query parameter while still joining the same backend.
 
-Google setup now lives on `admin.html` instead of the student-facing board. The board still reads the saved Apps Script URL from the same browser storage key, but students joining through a `role=student` link do not see provider settings.
+Google setup now lives on `admin/admin.html` instead of the student-facing board. The board still reads the saved Apps Script URL from the same browser storage key, but students joining through a `role=student` link do not see provider settings.
 
 ### Shared classroom board workflow
 
 1. Teacher opens DrawSplat, switches to **Education Tools**, and enables assignment mode.
 2. Teacher creates the panels needed for table groups, adds backgrounds/templates/prompts, and starts **Cloud Sync** with a unique room name.
 3. Optional but recommended: teacher enters a room password before starting Cloud Sync.
-4. Teacher uses `admin.html` or **Copy Student Link** in the Collaboration section. DrawSplat generates the student URL for the current room and copies it to the clipboard.
+4. Teacher uses `admin/admin.html` or **Copy Student Link** in the Collaboration section. DrawSplat generates the student URL for the current room and copies it to the clipboard.
 5. Students open that link, enter the room password, and join in student mode.
 6. Students can add student-layer work such as images, sticky notes, Mermaid diagrams, word clouds, text, and drawings.
 7. Student saves are merged into the room state in Google Drive. The Apps Script backend preserves teacher panel backgrounds and teacher-layer objects when a student client saves.
@@ -298,7 +298,7 @@ Data model to plan for:
 - `integrations`: Google/Microsoft/storage configuration visible only to admins
 - `audit_events`: room creation, joins, deletes, exports, permission changes, and moderation actions
 
-The first static step toward that split is included in this build: `admin.html` now owns Google setup and classroom link generation, while the board Options dialog links teachers to admin instead of showing the raw Apps Script URL field.
+The first static step toward that split is included in this build: `admin/admin.html` now owns Google setup and classroom link generation, while the board Options dialog links teachers to admin instead of showing the raw Apps Script URL field.
 
 ## License
 
@@ -314,7 +314,7 @@ Boards, drawings, and student work created by users belong to their respective a
 
 DrawSplat includes multiple entry pages so schools can share the interface in different languages:
 
-- `whiteboard.html` — English
+- `app/whiteboard.html` — English
 - `languages/index-sp.html` — Spanish
 - `languages/index-vn.html` — Vietnamese
 - `languages/index-ab.html` — Arabic
@@ -636,13 +636,13 @@ v3.0.1 improves multilingual coverage for the whiteboard app.
 
 v3.0 adds the public site, pricing, teacher/admin separation, student privacy language, and MySQL self-hosting foundation.
 
-- Promoted the product-style front door to `index.html`, moved the English whiteboard app to `whiteboard.html`, and kept `start.html` as a redirect.
-- Added `pricing.html` with free, one-time, and school/district self-hosted site license options.
-- Added `terms-privacy.html` with student privacy terms, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
-- Added `admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
-- Added `mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.
+- Promoted the product-style front door to `index.html`, moved the English whiteboard app to `app/whiteboard.html`, and kept `pages/start.html` as a redirect.
+- Added `pages/pricing.html` with free, one-time, and school/district self-hosted site license options.
+- Added `legal/terms-privacy.html` with student privacy terms, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
+- Added `admin/admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
+- Added `admin/mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.
 - Added `server/mysql-backend/` with an Express/MySQL starter API, schema, `.env.example`, and setup guide.
-- Added `background-templates.html` and original education SVG panel backgrounds that can launch directly in DrawSplat with `?bgTemplate=...`.
+- Added `pages/background-templates.html` and original education SVG panel backgrounds that can launch directly in DrawSplat with `?bgTemplate=...`.
 - Added standalone architecture documentation for SSO, teacher/student split, realtime collaboration, and provider-backed storage.
 - Service-worker cache key bumped to `drawsplat-v3.0.0`.
 

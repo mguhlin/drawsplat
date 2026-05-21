@@ -22,7 +22,7 @@
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const VERSION='3.0';
-const APP_ROOT=location.pathname.includes('/languages/')?'../':'';
+const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
 const STORAGE_MODE_KEY='drawsplat.storageMode';
@@ -3920,7 +3920,7 @@ gid('loadTemplateGalleryBtn').onclick=loadTemplateGallery;
 gid('submitTurnInBtn').onclick=submitTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
 gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplat boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
-gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin.html')});
+gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin/admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
   askConfirm('Wipe every panel and start with a blank board? This can\'t be undone.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
     if(!ok) return;
@@ -4018,7 +4018,7 @@ async function loadAutosnapshot(){
 function registerServiceWorker(){
   if(!('serviceWorker' in navigator)) return;
   if(location.protocol!=='http:'&&location.protocol!=='https:') return;
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register(appPath('sw.js')).catch(()=>{});
 }
 
 (async function init(){
@@ -4051,14 +4051,14 @@ function registerServiceWorker(){
 
 /* v2.5: language switcher (kept here so it works without i18n.js). */
 (function(){
-  const pages={en:appPath('whiteboard.html'),es:appPath('languages/index-sp.html'),vi:appPath('languages/index-vn.html'),ar:appPath('languages/index-ab.html'),zh:appPath('languages/index-cn.html'),uh:appPath('languages/index.uh.html')};
+  const pages={en:appPath('app/whiteboard.html'),es:appPath('languages/index-sp.html'),vi:appPath('languages/index-vn.html'),ar:appPath('languages/index-ab.html'),zh:appPath('languages/index-cn.html'),uh:appPath('languages/index.uh.html')};
   const currentFile=(location.pathname.split('/').pop()||'whiteboard.html').toLowerCase();
   const fileLang=currentFile.includes('index-sp')?'es':currentFile.includes('index-vn')?'vi':currentFile.includes('index-ab')?'ar':currentFile.includes('index-cn')?'zh':currentFile.includes('index.uh')?'uh':'en';
   const rawLang=(window.DRAWSPLAT_LANG||document.documentElement.lang||fileLang||'en').toLowerCase();
   const current=rawLang.startsWith('es')?'es':rawLang.startsWith('vi')?'vi':rawLang.startsWith('ar')?'ar':rawLang.startsWith('zh')?'zh':(rawLang==='uh'||rawLang.startsWith('ur')||rawLang.startsWith('hi'))?'uh':'en';
   const sel=document.getElementById('languageSwitcher');
   try{localStorage.setItem('drawsplat.language',current)}catch(_){}
-  if(sel){ sel.value=current; sel.addEventListener('change',()=>{try{localStorage.setItem('drawsplat.language',sel.value)}catch(_){} location.href=pages[sel.value]||appPath('whiteboard.html') }) }
+  if(sel){ sel.value=current; sel.addEventListener('change',()=>{try{localStorage.setItem('drawsplat.language',sel.value)}catch(_){} location.href=pages[sel.value]||appPath('app/whiteboard.html') }) }
 })();
 
 /* v2.12: modern inline SVG icon system for every core toolbar/control button. */

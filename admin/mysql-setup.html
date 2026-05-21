@@ -6,29 +6,29 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>DrawSplat MySQL Setup Wizard</title>
-<link rel="stylesheet" href="assets/css/app.css" />
+<link rel="stylesheet" href="../assets/css/app.css" />
 </head>
 <body class="admin-page admin-locked">
 <header>
-  <a class="logo-link" href="admin.html" aria-label="Open Teacher Admin"><img src="assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
+  <a class="logo-link" href="admin.html" aria-label="Open Teacher Admin"><img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
   <h1>DrawSplat <span class="app-version">MySQL Setup</span></h1>
   <span class="badge">Wizard</span>
   <span class="spacer"></span>
   <a class="admin-header-link" href="admin.html">Teacher Admin</a>
   <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button">Lock Admin</button>
-  <a class="admin-header-link" href="whiteboard.html">Open Board</a>
+  <a class="admin-header-link" href="../app/whiteboard.html">Open Board</a>
 </header>
 
 <section class="admin-gate" aria-label="Admin password required">
   <div class="admin-gate-card">
-    <img src="assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
+    <img src="../assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
     <h2>Admin Access Required</h2>
     <p>Enter the DrawSplat admin password to use the MySQL setup wizard.</p>
     <label class="admin-label" for="adminGatePassword">Admin password</label>
     <input id="adminGatePassword" type="password" autocomplete="current-password">
     <div class="admin-actions">
       <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
-      <a class="admin-button" href="admin-access.html">Request Access</a>
+      <a class="admin-button" href="access.html">Request Access</a>
     </div>
     <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
   </div>
@@ -112,14 +112,14 @@
         <li><code>DELETE /sessions/:sessionId</code> clears temporary sessions.</li>
       </ol>
       <div class="admin-actions">
-        <a class="admin-button" href="server/mysql-backend/README.md">Read Backend Guide</a>
-        <a class="admin-button" href="server/mysql-backend/schema.sql">View Schema</a>
+        <a class="admin-button" href="../server/mysql-backend/README.md">Read Backend Guide</a>
+        <a class="admin-button" href="../server/mysql-backend/schema.sql">View Schema</a>
       </div>
     </article>
   </section>
 </main>
 
-<script src="assets/js/admin-gate.js"></script>
-<script src="assets/js/mysql-setup.js"></script>
+<script src="../assets/js/admin-gate.js"></script>
+<script src="../assets/js/mysql-setup.js"></script>
 </body>
 </html>

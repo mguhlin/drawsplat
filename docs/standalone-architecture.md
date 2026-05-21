@@ -2,7 +2,7 @@
 
 This document turns the standalone roadmap into an implementation plan. The current DrawSplat build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.
 
-The current static build now uses `index.html` as the public landing page and `whiteboard.html` as the English whiteboard app. The landing page explains the split between the Whiteboard and Teacher Admin. `admin.html` moves Google Apps Script setup, storage-mode choice, and classroom link generation out of the board Options dialog while keeping the existing localStorage compatibility that the board uses for Save to Google and Cloud Sync.
+The current static build now uses `index.html` as the public landing page and `app/whiteboard.html` as the English whiteboard app. The landing page explains the split between the Whiteboard and Teacher Admin. `admin/admin.html` moves Google Apps Script setup, storage-mode choice, and classroom link generation out of the board Options dialog while keeping the existing localStorage compatibility that the board uses for Save to Google and Cloud Sync.
 
 ## Product Targets
 
@@ -462,5 +462,5 @@ flowchart TD
 2. Create a `src/` app structure in a future branch and move code out of `app.js` gradually.
 3. Define a TypeScript `Board`, `Panel`, `BoardObject`, and `Operation` schema before writing the server.
 4. Build permission checks as pure functions first, then reuse them on the backend.
-5. Expand the new static `admin.html` into the real teacher dashboard once a backend exists.
+5. Expand the new static `admin/admin.html` into the real teacher dashboard once a backend exists.
 6. Add automated tests before changing collaboration behavior.

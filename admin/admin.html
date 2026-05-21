@@ -6,29 +6,29 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>DrawSplat Teacher Admin</title>
-<link rel="stylesheet" href="assets/css/app.css" />
+<link rel="stylesheet" href="../assets/css/app.css" />
 </head>
 <body class="admin-page admin-locked">
 <header>
-  <a class="logo-link" href="index.html" aria-label="DrawSplat home"><img src="assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
+  <a class="logo-link" href="../index.html" aria-label="DrawSplat home"><img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
   <h1>DrawSplat <span class="app-version">Teacher Admin</span></h1>
   <span class="badge">Setup</span>
   <span class="spacer"></span>
-  <a class="admin-header-link" href="terms-privacy.html">Terms & Privacy</a>
+  <a class="admin-header-link" href="../legal/terms-privacy.html">Terms & Privacy</a>
   <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button">Lock Admin</button>
-  <a class="admin-header-link" href="whiteboard.html">Open Board</a>
+  <a class="admin-header-link" href="../app/whiteboard.html">Open Board</a>
 </header>
 
 <section class="admin-gate" aria-label="Admin password required">
   <div class="admin-gate-card">
-    <img src="assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
+    <img src="../assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
     <h2>Admin Access Required</h2>
     <p>Enter the DrawSplat admin password to manage Google Apps Script, MySQL, storage modes, and classroom links.</p>
     <label class="admin-label" for="adminGatePassword">Admin password</label>
     <input id="adminGatePassword" type="password" autocomplete="current-password">
     <div class="admin-actions">
       <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
-      <a class="admin-button" href="admin-access.html">Request Access</a>
+      <a class="admin-button" href="access.html">Request Access</a>
     </div>
     <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
   </div>
@@ -61,7 +61,7 @@
       <input id="mysqlAdminEndpoint" type="url" placeholder="/api/drawsplat/mysql" autocomplete="off" disabled>
       <div class="admin-actions">
         <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
-        <a class="admin-button" href="server/mysql-backend/README.md">Backend Guide</a>
+        <a class="admin-button" href="../server/mysql-backend/README.md">Backend Guide</a>
       </div>
       <p class="hint">Google Apps Script and MySQL are separate provider choices. You do not have to remove Google to prepare a MySQL backend.</p>
     </article>
@@ -125,16 +125,16 @@
       <h3>Standalone Direction</h3>
       <p class="hint">The static admin page is an interim separation. The standalone target is a real admin dashboard with SSO, server-side permissions, realtime rooms, and provider integrations hidden from students.</p>
       <div class="admin-actions">
-        <a class="admin-button" href="docs/standalone-architecture.md">Read Architecture Plan</a>
+        <a class="admin-button" href="../docs/standalone-architecture.md">Read Architecture Plan</a>
         <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
-        <a class="admin-button" href="README.md">Read README</a>
-        <a class="admin-button" href="terms-privacy.html">Read Terms & Privacy</a>
+        <a class="admin-button" href="../README.md">Read README</a>
+        <a class="admin-button" href="../legal/terms-privacy.html">Read Terms & Privacy</a>
       </div>
     </article>
   </section>
 </main>
 
-<script src="assets/js/admin-gate.js"></script>
-<script src="assets/js/admin.js"></script>
+<script src="../assets/js/admin-gate.js"></script>
+<script src="../assets/js/admin.js"></script>
 </body>
 </html>

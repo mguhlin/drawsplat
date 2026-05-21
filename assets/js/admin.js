@@ -108,7 +108,7 @@
   }
 
   function boardUrl(params={}){
-    const url=new URL('whiteboard.html',location.href);
+    const url=new URL('../app/whiteboard.html',location.href);
     Object.entries(params).forEach(([k,v])=>{if(v) url.searchParams.set(k,v)});
     return url.toString();
   }
