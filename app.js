@@ -89,6 +89,7 @@ let tool='select', selectedIds=[], drawing=null, drag=null, zoom=1, fillEnabled=
 let dotPaintTargetId=null;
 let touchMultiSelect=false;
 let coloringPaintColor='#f97316', coloringPaintWidth=28, coloringPaintMode='brush';
+let imageGalleryMode='insert';
 let history=[], future=[], lastSnapshot=''; let localChannel=null, cloudTimer=null, collabRoom='', instanceId=id(), lastCloudTs='', roleLock=''; let liveCursors={}, mediaRecorder=null, recordChunks=[]; let inlineEditId=null, inlineEditOriginal=null;
 
 /* v2.5: O(1) object lookup. Rebuilt every render. */
@@ -2882,6 +2883,24 @@ function openImageSourceDialog(){
   ensureImageSourceDialog();
   gid('imageSourceDialog')?.showModal();
 }
+function openBackgroundUpload(){
+  gid('bgImageInput')?.click();
+}
+function ensureBackgroundSourceDialog(){
+  if(gid('backgroundSourceDialog')) return;
+  const dlg=document.createElement('dialog');
+  dlg.id='backgroundSourceDialog';
+  dlg.className='image-source-dialog';
+  dlg.innerHTML=`<div class="modal-head"><h2>Set Background</h2><button class="close" id="backgroundSourceCancelBtn" aria-label="Close">Close</button></div><div class="image-source-actions"><button id="backgroundSourceUploadBtn" type="button"><strong>Upload from device</strong><span>Use PNG, JPG, WEBP, PDF, PPTX, or ODP.</span></button><button id="backgroundSourceGalleryBtn" type="button"><strong>Image gallery</strong><span>Choose a built-in image as the panel background.</span></button></div>`;
+  document.body.appendChild(dlg);
+  gid('backgroundSourceUploadBtn')?.addEventListener('click',()=>{dlg.close(); openBackgroundUpload()});
+  gid('backgroundSourceGalleryBtn')?.addEventListener('click',()=>{dlg.close(); openImageGalleryDialog('background')});
+  gid('backgroundSourceCancelBtn')?.addEventListener('click',()=>dlg.close());
+}
+function openBackgroundSourceDialog(){
+  ensureBackgroundSourceDialog();
+  gid('backgroundSourceDialog')?.showModal();
+}
 async function ensureImageGalleryDialog(){
   let dlg=gid('imageGalleryDialog');
   if(!dlg){
@@ -2892,6 +2911,10 @@ async function ensureImageGalleryDialog(){
     dlg.addEventListener('click',e=>{
       const tile=e.target.closest('.image-gallery-tile');
       if(!tile) return;
+      if(imageGalleryMode==='background'){
+        setBackgroundFromGalleryTile(tile);
+        return;
+      }
       if(tile.dataset.galleryKind==='coloring-book'&&tile.dataset.coloringId){
         insertColoringBookPage(tile.dataset.coloringId);
         return;
@@ -2904,7 +2927,8 @@ async function ensureImageGalleryDialog(){
   const coloringItems=coloringBookGalleryItems();
   const catalog=[...(scratchItems.length?[['ScratchArt Backgrounds',scratchItems]]:[]),...(coloringItems.length?[['Coloring Book Pages',coloringItems]]:[]),...IMAGE_GALLERY_CATALOG];
   const groups=catalog.map(([group,items])=>imageGalleryGroupHtml(group,items)).join('');
-  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. ScratchArt backgrounds, coloring book pages, and Smithsonian Open Access animal photos are included locally.</p>${groups}`;
+  const backgroundMode=imageGalleryMode==='background';
+  dlg.innerHTML=`<div class="modal-head"><h2>${backgroundMode?'Set Background from Gallery':'Image Gallery'}</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">${backgroundMode?'Choose an image to use as the current panel background.':'Choose an image to place it on the board.'} ScratchArt backgrounds, coloring book pages, and Smithsonian Open Access animal photos are included locally.</p>${groups}`;
   gid('imageGalleryCancelBtn')?.addEventListener('click',()=>dlg.close());
   dlg.querySelectorAll('.image-gallery-tile img').forEach(img=>img.addEventListener('error',()=>{
     const tile=img.closest('[data-gallery-paths]'), paths=(tile?.dataset.galleryPaths||'').split('|').filter(Boolean);
@@ -2912,7 +2936,8 @@ async function ensureImageGalleryDialog(){
     if(next<paths.length){img.dataset.pathIndex=String(next); img.src=paths[next]}
   }));
 }
-async function openImageGalleryDialog(){
+async function openImageGalleryDialog(mode='insert'){
+  imageGalleryMode=mode||'insert';
   await ensureImageGalleryDialog();
   gid('imageGalleryDialog')?.showModal();
 }
@@ -2964,6 +2989,34 @@ async function insertGalleryImage(src,label){
     setStatus((err&&err.message)||'Gallery image could not be loaded.','danger');
   }
 }
+async function galleryTileSource(tile){
+  const paths=(tile?.dataset.galleryPaths||tile?.dataset.gallerySrc||'').split('|').filter(Boolean);
+  for(const src of paths){
+    try{
+      const dataUrl=await imageUrlToDataUrl(src);
+      return {src,dataUrl};
+    }catch(_){}
+  }
+  throw new Error('Gallery image could not be loaded.');
+}
+async function setBackgroundFromGalleryTile(tile){
+  if(board.mode==='student') return setStatus('Students cannot change the panel background.','danger');
+  try{
+    setStatus('Loading gallery background...','success');
+    const {dataUrl}=await galleryTileSource(tile);
+    const p=panel();
+    p.bg='blank';
+    p.bgImage=dataUrl;
+    p.canvasFill=null;
+    clearSelection();
+    render();
+    saveState();
+    gid('imageGalleryDialog')?.close();
+    setStatus((tile.dataset.galleryLabel||'Gallery image')+' set as background.','success');
+  }catch(err){
+    setStatus((err&&err.message)||'Gallery background could not be loaded.','danger');
+  }
+}
 gid('imageInput').onchange=async e=>{
   const files=[...e.target.files]; if(!files.length)return;
   if(files.length===1){const importFmt=(typeof detectPanelImportFormat==='function')?detectPanelImportFormat(files[0]):null; if(importFmt){ e.target.value=''; await importPanelsFromFile(files[0]); return }}
@@ -2979,7 +3032,7 @@ function compressImageForBg(file,maxDim=1600,quality=0.85){return new Promise((r
 function transparentContentCrop(dataUrl){return new Promise(resolve=>{const img=new Image(); img.onload=()=>{try{const w=img.width,h=img.height;if(!w||!h||w*h>12000000)return resolve({naturalW:w,naturalH:h});const cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);const px=cx.getImageData(0,0,w,h).data;let minX=w,minY=h,maxX=-1,maxY=-1,hasAlpha=false;for(let y=0;y<h;y++){for(let x=0;x<w;x++){const a=px[(y*w+x)*4+3];if(a<250)hasAlpha=true;if(a>12){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}}}if(!hasAlpha||maxX<0)return resolve({naturalW:w,naturalH:h});const pad=Math.max(2,Math.round(Math.min(w,h)*0.01));minX=Math.max(0,minX-pad);minY=Math.max(0,minY-pad);maxX=Math.min(w-1,maxX+pad);maxY=Math.min(h-1,maxY+pad);const cropW=maxX-minX+1,cropH=maxY-minY+1;if(cropW>w*0.96&&cropH>h*0.96)return resolve({naturalW:w,naturalH:h});resolve({naturalW:w,naturalH:h,crop:{x:minX/w,y:minY/h,w:cropW/w,h:cropH/h}})}catch(_){resolve({naturalW:img.width||0,naturalH:img.height||0})}};img.onerror=()=>resolve({});img.src=dataUrl})}
 function removeColorFromImage(dataUrl,hexColor,tolerance=40){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>{try{const cv=document.createElement('canvas'); cv.width=img.width; cv.height=img.height; const cx=cv.getContext('2d'); cx.drawImage(img,0,0); const data=cx.getImageData(0,0,cv.width,cv.height); const p=data.data; const tR=parseInt(hexColor.slice(1,3),16),tG=parseInt(hexColor.slice(3,5),16),tB=parseInt(hexColor.slice(5,7),16); const tol2=tolerance*tolerance*3; for(let i=0;i<p.length;i+=4){const dr=p[i]-tR,dg=p[i+1]-tG,db=p[i+2]-tB; if(dr*dr+dg*dg+db*db<=tol2) p[i+3]=0} cx.putImageData(data,0,0); resolve(cv.toDataURL('image/png'))}catch(err){reject(err)}}; img.onerror=()=>reject(new Error('decode failed')); img.src=dataUrl})}
 function sampleCornerColor(dataUrl){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>{try{const cv=document.createElement('canvas'); cv.width=img.width; cv.height=img.height; const cx=cv.getContext('2d'); cx.drawImage(img,0,0); const px=cx.getImageData(0,0,1,1).data; resolve('#'+[px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join(''))}catch(err){reject(err)}}; img.onerror=()=>reject(new Error('decode failed')); img.src=dataUrl})}
-gid('loadBgImageBtn').onclick=()=>gid('bgImageInput').click();
+gid('loadBgImageBtn').onclick=openBackgroundSourceDialog;
 gid('clearBgImageBtn').onclick=()=>{const p=panel(); if(!p.bgImage&&!p.canvasFill) return; p.bgImage=''; p.canvasFill=null; render(); saveState(); setStatus('Background cleared.','success')};
 gid('bgImageInput').onchange=async e=>{const f=e.target.files[0], scratchColor=pendingScratchCoverColor; pendingScratchCoverColor=null; if(!f) return; const importFmt=(typeof detectPanelImportFormat==='function')?detectPanelImportFormat(f):null; if(importFmt){ e.target.value=''; await importPanelsFromFile(f); return } if(!(await validateImageDeep(f))){e.target.value=''; return} try{const data=await compressImageForBg(f); panel().bgImage=data; render(); saveState(); if(scratchColor){await addScratchCover(scratchColor)}else setStatus('Background image set.','success')}catch(err){setStatus('Background image failed. '+err.message,'danger')} e.target.value=''};
 gid('removeBgColorBtn')?.addEventListener('click',async()=>{const sel=selectedIds.length===1?currentObj():null; const isImage=sel&&sel.type==='image'&&sel.src; const p=panel(); const sourceUrl=isImage?sel.src:p.bgImage; if(!sourceUrl){setStatus(isImage?'Selected image has no source.':'Select an image or set a panel background first.','danger'); return} try{const corner=await sampleCornerColor(sourceUrl); gid('bgRemoveColorInput').value=corner; const tolEl=gid('bgRemoveTolerance'); if(tolEl) gid('bgRemoveToleranceValue').textContent=tolEl.value; const dlg=gid('bgRemoveDialog'); const titleEl=dlg.querySelector('h2'); const msgEl=dlg.querySelector('.confirm-msg'); if(titleEl) titleEl.textContent=isImage?'Remove Color from Image':'Remove Background Color'; if(msgEl) msgEl.textContent=isImage?'Pick the color in the selected image to make transparent. The starting color is sampled from the top-left corner of the image.':'Pick the color in the panel background to make transparent. The starting color is sampled from the top-left corner.'; dlg.dataset.target=isImage?'image':'bg'; dlg.dataset.objectId=isImage?sel.id:''; dlg.showModal()}catch(err){setStatus('Could not read image. '+err.message,'danger')}});
