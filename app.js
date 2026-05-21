@@ -2808,6 +2808,17 @@ const IMAGE_GALLERY_CATALOG=[
     ['smithsonian-fennec-fox','Fennec fox','./assets/smithsonian-animals/fennec-fox.jpg']
   ]]
 ];
+function imageGalleryGroupHtml(group,items){
+  return `<section class="image-gallery-group"><h3>${esc(group)}</h3><div class="image-gallery-grid">${items.map(([idv,label,src])=>`<button class="image-gallery-tile" type="button" data-gallery-src="${esc(src)}" data-gallery-label="${esc(label)}" aria-label="${esc(label)}"><img src="${esc(src)}" alt="" loading="lazy"><span>${esc(label)}</span></button>`).join('')}</div></section>`;
+}
+async function scratchArtGalleryItems(){
+  const images=await loadScratchArtImages();
+  return images.map((src,i)=>{
+    const match=String(src).match(/scratch_bkgrnd(\d+)/i);
+    const n=match?match[1]:(i+1);
+    return ['scratch-art-'+n,'ScratchArt Background '+n,src];
+  });
+}
 function openImageUpload(){
   gid('imageInput')?.click();
 }
@@ -2826,23 +2837,28 @@ function openImageSourceDialog(){
   ensureImageSourceDialog();
   gid('imageSourceDialog')?.showModal();
 }
-function ensureImageGalleryDialog(){
-  if(gid('imageGalleryDialog')) return;
-  const dlg=document.createElement('dialog');
-  dlg.id='imageGalleryDialog';
-  dlg.className='image-gallery-dialog';
-  const groups=IMAGE_GALLERY_CATALOG.map(([group,items])=>`<section class="image-gallery-group"><h3>${esc(group)}</h3><div class="image-gallery-grid">${items.map(([idv,label,src])=>`<button class="image-gallery-tile" type="button" data-gallery-src="${esc(src)}" data-gallery-label="${esc(label)}" aria-label="${esc(label)}"><img src="${esc(src)}" alt="" loading="lazy"><span>${esc(label)}</span></button>`).join('')}</div></section>`).join('');
-  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. Smithsonian Open Access animal photos are included locally.</p>${groups}`;
-  document.body.appendChild(dlg);
+async function ensureImageGalleryDialog(){
+  let dlg=gid('imageGalleryDialog');
+  if(!dlg){
+    dlg=document.createElement('dialog');
+    dlg.id='imageGalleryDialog';
+    dlg.className='image-gallery-dialog';
+    document.body.appendChild(dlg);
+    dlg.addEventListener('click',e=>{
+      const tile=e.target.closest('.image-gallery-tile');
+      if(!tile) return;
+      insertGalleryImage(tile.dataset.gallerySrc,tile.dataset.galleryLabel||'Gallery image');
+    });
+  }
+  let scratchItems=[];
+  try{scratchItems=await scratchArtGalleryItems()}catch(_){}
+  const catalog=scratchItems.length?[['ScratchArt Backgrounds',scratchItems],...IMAGE_GALLERY_CATALOG]:IMAGE_GALLERY_CATALOG;
+  const groups=catalog.map(([group,items])=>imageGalleryGroupHtml(group,items)).join('');
+  dlg.innerHTML=`<div class="modal-head"><h2>Image Gallery</h2><button class="close" id="imageGalleryCancelBtn" aria-label="Close">Close</button></div><p class="confirm-msg">Choose an image to place it on the board. ScratchArt backgrounds and Smithsonian Open Access animal photos are included locally.</p>${groups}`;
   gid('imageGalleryCancelBtn')?.addEventListener('click',()=>dlg.close());
-  dlg.addEventListener('click',e=>{
-    const tile=e.target.closest('.image-gallery-tile');
-    if(!tile) return;
-    insertGalleryImage(tile.dataset.gallerySrc,tile.dataset.galleryLabel||'Gallery image');
-  });
 }
-function openImageGalleryDialog(){
-  ensureImageGalleryDialog();
+async function openImageGalleryDialog(){
+  await ensureImageGalleryDialog();
   gid('imageGalleryDialog')?.showModal();
 }
 gid('imageBtn').onclick=openImageSourceDialog;

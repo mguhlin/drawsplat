@@ -1,5 +1,5 @@
 /* DrawSplat v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.61';
+const CACHE = 'drawsplat-v3.0.63';
 const SHELL = [
   './',
   './index.html',
@@ -59,6 +59,14 @@ const SHELL = [
   './assets/scratch-art/scratch_bkgrnd3.png',
   './assets/scratch-art/scratch_bkgrnd4.png',
   './assets/scratch-art/scratch_bkgrnd5.png',
+  './assets/scratch-art/scratch_bkgrnd6.png',
+  './assets/scratch-art/scratch_bkgrnd7.png',
+  './assets/scratch-art/scratch_bkgrnd8.png',
+  './assets/scratch-art/scratch_bkgrnd9.png',
+  './assets/scratch-art/scratch_bkgrnd10.png',
+  './assets/scratch-art/scratch_bkgrnd11.png',
+  './assets/scratch-art/scratch_bkgrnd12.png',
+  './assets/scratch-art/scratch_bkgrnd13.png',
   './assets/feature-graph-creator.svg',
   './assets/feature-picture-graph.svg',
   './assets/feature-mermaid.svg',
