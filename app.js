@@ -3826,7 +3826,15 @@ function playCanvasDetonation(){
   shell.classList.add('tnt-detonating');
   setTimeout(()=>shell.classList.remove('tnt-detonating'),1700);
 }
-function runTntReset(){askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{panel().objects=[]; clearSelection(); render(); saveState(); setStatus('Boom! Panel cleared.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
+function clearCurrentPanelCompletely(){
+  const p=panel();
+  p.objects=[];
+  p.bg='blank';
+  p.bgImage='';
+  p.canvasFill=null;
+  clearSelection();
+}
+function runTntReset(){askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{clearCurrentPanelCompletely(); render(); saveState(); setStatus('Boom! Panel cleared completely.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
 
 function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name; render(); saveState(); setStatus('Audio attached.','success')}
 async function startAudioRecording(){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return} if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger'); try{const stream=await navigator.mediaDevices.getUserMedia({audio:true}); recordChunks=[]; mediaRecorder=new MediaRecorder(stream); mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size) recordChunks.push(e.data)}; mediaRecorder.onstop=()=>{const blob=new Blob(recordChunks,{type:mediaRecorder.mimeType||'audio/webm'}); const r=new FileReader(); r.onload=()=>setAudioOnCurrent(r.result,'Recorded audio'); r.readAsDataURL(blob); stream.getTracks().forEach(t=>t.stop()); setButtonChrome('recordAudioBtn','Record Audio')}; mediaRecorder.start(); setButtonChrome('recordAudioBtn','Stop Recording'); setStatus('Recording audio... click again to stop.','success')}catch(err){setStatus('Audio recording failed. '+err.message,'danger')}}
