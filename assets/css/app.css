@@ -537,7 +537,7 @@ html[dir="rtl"] .inspector-close{right:auto;left:8px}
 .tool-popover-group>summary{list-style:none}
 .tool-popover-group>summary::-webkit-details-marker{display:none}
 .tool-popover-group.active>summary{background:#fff7e6!important;border-color:#f59e0b!important;box-shadow:0 0 0 3px #faa63433!important}
-.tool-popover-panel{position:absolute;left:0;top:calc(100% + 6px);z-index:35;display:grid;grid-template-columns:repeat(3,44px);gap:6px;padding:8px;background:#fff;border:1px solid #bae6fd;border-radius:10px;box-shadow:0 14px 30px #11182730;overflow:visible}
+.tool-popover-panel{position:absolute;left:0;top:calc(100% + 6px);z-index:35;display:grid;grid-template-columns:repeat(3,44px);gap:6px;width:220px;padding:8px;background:#fff;border:1px solid #bae6fd;border-radius:10px;box-shadow:0 14px 30px #11182730;overflow:visible}
 .tool-popover-panel .icon-btn{width:44px!important;min-width:44px;height:44px!important;min-height:44px;z-index:0;padding:8px}
 .tool-popover-panel .icon-btn:hover,.tool-popover-panel .icon-btn:focus-visible{z-index:80}
 .tool-popover-panel .icon-btn::after{left:calc(100% + 10px);top:50%;bottom:auto;transform:translateY(-50%);z-index:5000}

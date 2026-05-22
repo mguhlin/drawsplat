@@ -21,7 +21,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.82';
+const VERSION='3.0.83';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
