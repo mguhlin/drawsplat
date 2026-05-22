@@ -10,8 +10,9 @@ This file is a summary placeholder, not a complete sales agreement. A signed agr
 ## Current Pricing Reference
 
 - Individual/free use: $0.
-- One-time current-build license: $49.
-- Self-hosted school or district site license for the current as-is build: $499.
+- One-time individual license for users who want to support the project and use the Google Apps Script version: $33.
+- Self-hosted site license for one campus using the current as-is build: $77.
+- Per district license with MySQL and Google Apps Script options: $199.
 
 Custom hosting, SSO, realtime collaboration, backend deployment, privacy/legal review, support, training, or future upgrades are not included unless agreed separately in writing.
 
