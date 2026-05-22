@@ -15,6 +15,8 @@ header h1{font-size:20px;margin:0;font-weight:800}
 button,input,select,textarea{font:inherit}
 button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;color:#111827;min-height:36px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:hover{filter:brightness(.97)}
+button:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.35)}
+button:disabled:hover{filter:grayscale(.35)}
 button.primary{background:var(--gold);border-color:#df8c00;font-weight:800}
 button.dark{background:var(--navy);color:#fff;border-color:var(--navy)}
 button.active{outline:3px solid #faa63477;border-color:#d78400}
@@ -392,6 +394,7 @@ body[data-view="simple"] .header-panels{display:none}
 body[data-view="simple"] .frame-nav{display:flex;align-items:center;gap:4px;background:#ffffff1a;border:1px solid #ffffff33;border-radius:12px;padding:4px 8px}
 body[data-view="simple"] .frame-nav #frameCounter{color:#fff;font-size:12px;font-weight:600;min-width:60px;max-width:180px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body[data-view="simple"] .frame-nav button{min-height:32px;padding:6px 9px}
+body[data-view="simple"] .frame-nav button:disabled{background:#e5e7eb;color:#6b7280;border-color:#d1d5db;opacity:.7}
 body[data-view="simple"] #bgSelectSimple{border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:#fff;min-height:32px}
 .more-options-list{display:flex;flex-direction:column;gap:8px;padding:8px 0}
 .more-options-list button{justify-content:flex-start;text-align:left;padding:10px 12px}
