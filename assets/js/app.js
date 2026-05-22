@@ -21,7 +21,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0';
+const VERSION='3.0.78';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -1954,6 +1954,8 @@ const CLASSROOM_WIDGETS=[
   {kind:'workmode',title:'Work Mode',w:360,h:260}
 ];
 const CLASSROOM_TOOL_LINKS=[
+  {title:'Bingo Card Generator',summary:'Create printable bingo cards from vocabulary, questions, names, or B-I-N-G-O numbers.',url:appPath('solutions/bingo-card-generator/index.html')},
+  {title:'Live Bingo Caller',summary:'Run a classroom bingo caller with animated picks and a same-device player card.',url:appPath('solutions/bingo-caller/index.html')},
   {title:'Coin Flipper',summary:'Flip one or many stylized coins for choices, probability, or teams.',url:appPath('solutions/coinflipping/index.html')},
   {title:'Dicebreaker Creator',summary:'Create roll-and-discuss dicebreaker activities.',url:appPath('solutions/dicebreakers/index.html')},
   {title:'Dice Roller',summary:'Roll classroom dice with simple or advanced display modes.',url:appPath('solutions/dice/index.html')},

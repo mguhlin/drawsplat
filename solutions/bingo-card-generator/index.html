@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
+<title>DrawSplat Bingo Card Generator</title>
+<style>
+:root{--purple:#7c3aed;--purple-dark:#4c1d95;--teal:#0f766e;--gold:#f59e0b;--ink:#172033;--muted:#5f6776;--line:#e4e7f1;--soft:#f8fafc}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff 0,#faf7ff 42%,#f8fafc 100%);color:var(--ink)}button,input,select,textarea{font:inherit}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.landing-header{min-height:72px;padding:14px 24px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--line);background:#ffffffd9;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5}.landing-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:900}.header-logo{width:42px;height:auto}.landing-nav{display:flex;gap:18px;flex:1;justify-content:center;flex-wrap:wrap}.landing-nav a{color:#475569;text-decoration:none;font-weight:800}.landing-nav a:hover{color:var(--purple)}.landing-signin,.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border:1px solid #d9ddec;border-radius:10px;background:#fff;color:var(--ink);padding:10px 14px;text-decoration:none;font-weight:900;cursor:pointer}.landing-signin,.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}.btn.gold{background:var(--gold);border-color:var(--gold);color:#111827}.btn.dark{background:#172033;border-color:#172033;color:#fff}
+.shell{max-width:1400px;margin:0 auto;padding:30px 22px 42px}.hero{text-align:center;max-width:900px;margin:0 auto 22px}.eyebrow{margin:0;color:var(--purple);font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:10px 0 12px}.hero p{color:var(--muted);font-size:18px;line-height:1.6;margin:0 auto}.workspace{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}.panel,.preview{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 34px #17203310}.panel{padding:18px;align-self:start;position:sticky;top:92px}.preview{padding:18px;min-height:70vh}label{display:block;font-weight:900;color:#334155;margin:14px 0 6px}input,select,textarea{width:100%;border:1px solid #d9ddec;border-radius:10px;padding:10px;background:#fff;color:var(--ink)}textarea{min-height:210px;resize:vertical;line-height:1.4}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check{display:flex;gap:9px;align-items:center;margin:12px 0}.check input{width:auto}.hint{font-size:13px;color:var(--muted);line-height:1.45}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.buttons .wide{grid-column:1/-1}.notice{padding:12px;border-left:5px solid var(--gold);background:#fffbeb;border-radius:10px;margin:0 0 16px;line-height:1.45}.call-list{font-size:14px;background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:10px;max-height:160px;overflow:auto;line-height:1.5}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}.card-wrap{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.card-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.card-tools .btn{font-size:13px;padding:8px 10px;min-height:36px}canvas{width:100%;height:auto;border:1px solid #111827;border-radius:6px;background:white;display:block}.footer{max-width:1400px;margin:0 auto;padding:26px 22px 38px;display:flex;align-items:center;gap:12px;color:var(--muted);border-top:1px solid var(--line)}.footer img{width:34px}.footer a{margin-left:auto;color:var(--purple);font-weight:900}
+@media(max-width:900px){.landing-header{height:auto;flex-wrap:wrap}.landing-nav{order:3;width:100%;justify-content:flex-start}.landing-signin{width:100%}.workspace{grid-template-columns:1fr}.panel{position:static}.footer{align-items:flex-start;flex-direction:column}.footer a{margin-left:0}}@media print{.landing-header,.panel,.card-tools,.notice,.footer{display:none}.shell{padding:0}.preview{box-shadow:none;border:0}.cards{grid-template-columns:repeat(2,1fr)}body{background:white}.workspace{display:block}}
+</style>
+</head>
+<body>
+<header class="landing-header">
+  <a class="landing-brand" href="../../index.html" aria-label="DrawSplat home"><img src="../../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat</span></a>
+  <nav class="landing-nav" aria-label="Bingo card generator navigation"><a href="../../pages/features.html">Features</a><a href="../../pages/support.html">Support</a><a href="../bingo-caller/">Live Bingo Caller</a><a href="../../app/whiteboard.html">Whiteboard</a></nav>
+  <a class="landing-signin" href="../../app/whiteboard.html">Open Whiteboard</a>
+</header>
+<main class="shell">
+  <section class="hero"><p class="eyebrow">Classroom Widget</p><h1>Bingo Card Generator</h1><p>Create printable bingo cards from words, questions, vocabulary, names, concepts, or traditional B-I-N-G-O numbers.</p></section>
+  <div class="workspace">
+    <section class="panel">
+      <label for="title">Card Title</label><input id="title" value="Classroom Bingo">
+      <div class="row"><div><label for="size">Grid Size</label><select id="size"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option></select></div><div><label for="count">Cards</label><input id="count" type="number" min="1" max="60" value="12"></div></div>
+      <div class="row"><div><label for="bg">Background</label><input id="bg" type="color" value="#ffffff"></div><div><label for="accent">Header Color</label><input id="accent" type="color" value="#7c3aed"></div></div>
+      <div class="check"><input id="free" type="checkbox" checked><label for="free" style="margin:0">Use center FREE space when possible</label></div>
+      <div class="check"><input id="columns" type="checkbox"><label for="columns" style="margin:0">Shuffle only within columns</label></div>
+      <label for="items">Items / Words / Phrases</label>
+      <textarea id="items">Metaphor
+Simile
+Theme
+Main Idea
+Evidence
+Inference
+Context Clues
+Point of View
+Summary
+Claim
+Reasoning
+Counterclaim
+Vocabulary
+Setting
+Character
+Conflict
+Resolution
+Text Structure
+Cause and Effect
+Compare and Contrast
+Figurative Language
+Tone
+Mood
+Author's Purpose
+FREE</textarea>
+      <p class="hint">Use one item per line. For traditional number bingo, click "Load B-I-N-G-O Numbers."</p>
+      <div class="buttons"><button id="generate" class="btn gold" type="button">Generate Cards</button><button id="loadNums" class="btn dark" type="button">Load B-I-N-G-O Numbers</button><button id="exportPdf" class="btn primary wide" type="button">Export All to PDF</button><button id="print" class="btn" type="button">Print</button><button id="clear" class="btn" type="button">Clear</button></div>
+    </section>
+    <section class="preview">
+      <div class="notice"><strong>Tip:</strong> Paste vocabulary, review questions, names, or concepts. PNG exports download one card at a time; PDF export places one card per page.</div>
+      <div id="status" class="hint"></div>
+      <div id="callList" class="call-list" hidden></div>
+      <div id="cards" class="cards"></div>
+    </section>
+  </div>
+</main>
+<footer class="footer"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat Bingo Card Generator.</span><a href="../bingo-caller/">Open Live Bingo Caller</a></footer>
+<script>
+const $=id=>document.getElementById(id); let cardData=[];
+function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function wrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines){const words=String(text).split(/\s+/);let line='',lines=[];for(const w of words){let test=line?line+' '+w:w;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=w}else line=test}if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);lines[lines.length-1]=lines[lines.length-1].replace(/\.*$/,'')+'...'}const start=y-(lines.length-1)*lineHeight/2;lines.forEach((ln,i)=>ctx.fillText(ln,x,start+i*lineHeight))}
+function makeTraditional(){let out=[];[['B',1,15],['I',16,30],['N',31,45],['G',46,60],['O',61,75]].forEach(([l,a,b])=>{for(let n=a;n<=b;n++)out.push(l+'-'+n)});$('items').value=out.join('\n');$('size').value='5';$('columns').checked=true;$('free').checked=true;generate()}
+function buildGrid(items,size,useFree,columnMode){const total=size*size, center=Math.floor(total/2);let grid=Array(total).fill('');if(columnMode){for(let c=0;c<size;c++){let colItems=items.filter((_,i)=>i%size===c); if(colItems.length<size) colItems=items; colItems=shuffle(colItems); for(let r=0;r<size;r++) grid[r*size+c]=colItems[r%colItems.length]||''}}else{let pool=shuffle(items);for(let i=0;i<total;i++)grid[i]=pool[i%pool.length]||''}if(useFree && size%2===1) grid[center]='FREE'; return grid}
+function drawCard(title,grid,size,accent,bg,index){const W=900,H=1080,head=160,margin=36;const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);ctx.fillStyle=accent;ctx.fillRect(0,0,W,head);ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 54px system-ui,Arial';wrapText(ctx,title,W/2,70,W-90,54,2);ctx.font='bold 30px system-ui,Arial';ctx.fillText('Card '+index,W/2,128);const top=head+margin,cell=(W-2*margin)/size;ctx.strokeStyle='#111';ctx.lineWidth=4;for(let r=0;r<size;r++){for(let c=0;c<size;c++){const x=margin+c*cell,y=top+r*cell;ctx.fillStyle=(grid[r*size+c]==='FREE')?'#fff4d0':'#fff';ctx.fillRect(x,y,cell,cell);ctx.strokeRect(x,y,cell,cell);ctx.fillStyle='#111';ctx.font=(grid[r*size+c]==='FREE')?'bold 40px system-ui,Arial':'bold 30px system-ui,Arial';wrapText(ctx,grid[r*size+c],x+cell/2,y+cell/2,cell-28,34,4)}}ctx.fillStyle='#53616b';ctx.font='18px system-ui,Arial';ctx.fillText('Generated with DrawSplat',W/2,H-28);return canvas}
+function generate(){const size=+$('size').value,count=Math.min(60,Math.max(1,+$('count').value||1));let items=$('items').value.split(/\n+/).map(s=>s.trim()).filter(Boolean);if(!items.length){alert('Add at least one bingo item.');return}const total=size*size, free=$('free').checked && size%2===1;if(free)items=items.filter(x=>x.toUpperCase()!=='FREE');if(!items.length){alert('Add at least one bingo item besides FREE.');return}if(items.length<total-(free?1:0)) $('status').textContent='Note: You entered fewer items than squares, so some items may repeat.'; else $('status').textContent='Generated '+count+' card(s).';cardData=[];$('cards').innerHTML='';const call=[...new Set(items)];$('callList').hidden=false;$('callList').innerHTML='<strong>Call List:</strong><br>'+shuffle(call).map(esc).join(', ');for(let i=1;i<=count;i++){const grid=buildGrid(items,size,free,$('columns').checked);const canvas=drawCard($('title').value||'Bingo',grid,size,$('accent').value,$('bg').value,i);cardData.push(canvas);const wrap=document.createElement('div');wrap.className='card-wrap';wrap.appendChild(canvas);const tools=document.createElement('div');tools.className='card-tools';tools.innerHTML='<button class="btn" type="button">Download PNG</button>';tools.querySelector('button').onclick=()=>downloadPNG(canvas,'bingo-card-'+i+'.png');wrap.appendChild(tools);$('cards').appendChild(wrap)}}
+function downloadPNG(canvas,name){const a=document.createElement('a');a.download=name;a.href=canvas.toDataURL('image/png');a.click()}
+function makePDF(canvases){let objects=[],offsets=[];const enc=new TextEncoder(),dec=new TextDecoder();function add(s){objects.push(typeof s==='string'?enc.encode(s):s);return objects.length}function concat(...arrs){let n=arrs.reduce((s,a)=>s+a.length,0),o=new Uint8Array(n),p=0;for(const a of arrs){o.set(a,p);p+=a.length}return o}function pngObj(bytes,w,h){return add(concat(enc.encode('<< /Type /XObject /Subtype /Image /Width '+w+' /Height '+h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+bytes.length+' >>\nstream\n'),bytes,enc.encode('\nendstream')))}let pages=[];canvases.forEach((cv,i)=>{let jpgData=cv.toDataURL('image/jpeg',.92).split(',')[1],bin=atob(jpgData),bytes=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)bytes[j]=bin.charCodeAt(j);let img=pngObj(bytes,cv.width,cv.height);let content=add('<< /Length 45 >>\nstream\nq 540 0 0 648 36 72 cm /Im'+i+' Do Q\nendstream');let page=add('<< /Type /Page /Parent 0 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im'+i+' '+img+' 0 R >> >> /Contents '+content+' 0 R >>');pages.push(page)});let kids=pages.map(p=>p+' 0 R').join(' ');let pagesObj=add('<< /Type /Pages /Kids ['+kids+'] /Count '+pages.length+' >>');let catalog=add('<< /Type /Catalog /Pages '+pagesObj+' 0 R >>');pages.forEach(pageNo=>{let s=dec.decode(objects[pageNo-1]);objects[pageNo-1]=enc.encode(s.replace('/Parent 0 0 R','/Parent '+pagesObj+' 0 R'))});let chunks=[enc.encode('%PDF-1.4\n')],pos=chunks[0].length;objects.forEach((o,i)=>{offsets[i+1]=pos;let head=enc.encode((i+1)+' 0 obj\n');let tail=enc.encode('\nendobj\n');chunks.push(head,o,tail);pos+=head.length+o.length+tail.length});let xref=pos;let table='xref\n0 '+(objects.length+1)+'\n0000000000 65535 f \n';for(let i=1;i<=objects.length;i++)table+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';table+='trailer << /Size '+(objects.length+1)+' /Root '+catalog+' 0 R >>\nstartxref\n'+xref+'\n%%EOF';chunks.push(enc.encode(table));return new Blob(chunks,{type:'application/pdf'})}
+function exportPDF(){if(!cardData.length)generate();const blob=makePDF(cardData);const a=document.createElement('a');a.download='bingo-cards.pdf';a.href=URL.createObjectURL(blob);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+$('generate').onclick=generate;$('loadNums').onclick=makeTraditional;$('exportPdf').onclick=exportPDF;$('print').onclick=()=>window.print();$('clear').onclick=()=>{$('items').value='';$('cards').innerHTML='';$('callList').hidden=true;$('status').textContent=''};generate();
+</script>
+</body>
+</html>

@@ -658,6 +658,8 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .feature-menu-card ul{display:grid;gap:8px;margin:0;padding:0;list-style:none;color:#4b5563;line-height:1.45}
 .feature-menu-card li{position:relative;padding-left:23px}
 .feature-menu-card li::before{content:'✓';position:absolute;left:0;top:0;color:#16a34a;font-weight:900}
+.feature-menu-card li a{color:inherit;text-decoration:none;border-bottom:1px solid #c4b5fd;font-weight:700}
+.feature-menu-card li a:hover,.feature-menu-card li a:focus-visible{color:#6d28d9;border-bottom-color:#6d28d9}
 .standalone-tools-section{padding-top:24px}
 .standalone-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .standalone-tool-card{display:flex;min-height:150px;flex-direction:column;gap:10px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:18px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}

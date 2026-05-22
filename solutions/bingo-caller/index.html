@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
+<title>DrawSplat Bingo Caller</title>
+<style>
+:root{--purple:#7c3aed;--purple-dark:#4c1d95;--teal:#0f766e;--gold:#f59e0b;--ink:#172033;--muted:#5f6776;--line:#e4e7f1;--soft:#f8fafc;--success:#16a34a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff 0,#faf7ff 42%,#f8fafc 100%);color:var(--ink)}
+button,input,select,textarea{font:inherit}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.landing-header{min-height:72px;padding:14px 24px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--line);background:#ffffffd9;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5}
+.landing-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:900}.header-logo{width:42px;height:auto}.landing-nav{display:flex;gap:18px;flex:1;justify-content:center;flex-wrap:wrap}.landing-nav a{color:#475569;text-decoration:none;font-weight:800}.landing-nav a:hover{color:var(--purple)}.landing-signin,.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border:1px solid #d9ddec;border-radius:10px;background:#fff;color:var(--ink);padding:10px 14px;text-decoration:none;font-weight:900;cursor:pointer}.landing-signin,.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}.btn.gold{background:var(--gold);border-color:var(--gold);color:#111827}.btn.dark{background:#172033;border-color:#172033;color:#fff}.btn.block{width:100%}
+.shell{max-width:1240px;margin:0 auto;padding:30px 22px 42px}.hero{text-align:center;max-width:900px;margin:0 auto 22px}.eyebrow{margin:0;color:var(--purple);font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:10px 0 12px;letter-spacing:0}.hero p{color:var(--muted);font-size:18px;line-height:1.6;margin:0 auto}
+.workspace{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.panel,.stage,.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 34px #17203310}.panel{padding:18px;align-self:start}.stage{padding:18px;text-align:center;overflow:hidden}label{display:block;font-weight:900;color:#334155;margin:14px 0 6px}input,textarea,select{width:100%;border:1px solid #d9ddec;border-radius:10px;padding:10px;background:#fff;color:var(--ink)}textarea{min-height:135px;resize:vertical;line-height:1.45}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint,.limit{font-size:13px;color:var(--muted);line-height:1.45}.limit{border-left:5px solid var(--gold);padding:12px;background:#fffbeb;border-radius:10px;margin:14px 0}.machine{height:330px;position:relative;background:radial-gradient(circle at 50% 38%,#fff,#ede9fe 55%,#ddd6fe 100%);border-radius:18px;border:2px solid #ddd6fe;display:flex;align-items:center;justify-content:center;overflow:hidden}.blower{position:absolute;bottom:0;width:180px;height:70px;background:#172033;border-radius:70px 70px 0 0}.tube{position:absolute;bottom:55px;width:85px;height:155px;background:#ffffff99;border:3px solid #8b5cf655;border-radius:50px}.ball{position:absolute;bottom:58px;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#fde68a 35%,var(--gold) 70%);border:4px solid #b45309;display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:1000;color:#111827;box-shadow:0 14px 26px #17203340;transform:translateY(140px) scale(.65);opacity:0}.ball.show{animation:rise 1.2s ease-out forwards}.paddles{position:absolute;right:12%;bottom:78px;width:120px;height:92px;filter:drop-shadow(0 8px 12px #17203340);opacity:.95}.paddles:before,.paddles:after{content:'';position:absolute;bottom:0;width:64px;height:82px;background:#f8c47f;border:4px solid #b45309;border-radius:48px 48px 24px 24px}.paddles:before{left:5px;transform:rotate(-28deg)}.paddles:after{right:5px;transform:rotate(28deg)}@keyframes rise{0%{transform:translateY(150px) scale(.55);opacity:0}60%{transform:translateY(-18px) scale(1.05);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+.current{font-size:clamp(40px,8vw,86px);font-weight:1000;margin:14px 0;color:var(--purple-dark)}.called{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:18px}.chip{padding:9px;border-radius:999px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900}.player-area{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:18px}.card{padding:14px}.card h2{margin:0 0 10px}.letters{display:grid;grid-template-columns:repeat(5,1fr);background:var(--purple);color:white;font-weight:1000}.letters div{padding:8px}.bcard{display:grid;grid-template-columns:repeat(5,1fr);border:3px solid #111827}.cell{aspect-ratio:1/1;border:1px solid #111827;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;padding:4px;background:white;cursor:pointer}.cell.marked{background:#fef3c7;position:relative}.cell.marked:after{content:'✓';position:absolute;font-size:35px;color:var(--teal)}.winner{background:#dcfce7;border:1px solid #86efac;color:#14532d;padding:10px;border-radius:10px;margin:10px 0;font-weight:900}.hidden{display:none}.footer{max-width:1240px;margin:0 auto;padding:26px 22px 38px;display:flex;align-items:center;gap:12px;color:var(--muted);border-top:1px solid var(--line)}.footer img{width:34px}.footer a{margin-left:auto;color:var(--purple);font-weight:900}
+@media(max-width:850px){.landing-header{height:auto;flex-wrap:wrap}.landing-nav{order:3;width:100%;justify-content:flex-start}.landing-signin{width:100%}.workspace{grid-template-columns:1fr}.machine{height:280px}.footer{align-items:flex-start;flex-direction:column}.footer a{margin-left:0}}@media print{.landing-header,.panel,.footer{display:none}.shell{padding:0}.workspace{display:block}.stage{box-shadow:none;border:0}}
+</style>
+</head>
+<body>
+<header class="landing-header">
+  <a class="landing-brand" href="../../index.html" aria-label="DrawSplat home"><img src="../../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat</span></a>
+  <nav class="landing-nav" aria-label="Bingo navigation"><a href="../../pages/features.html">Features</a><a href="../../pages/support.html">Support</a><a href="../bingo-card-generator/">Bingo Card Generator</a><a href="../../app/whiteboard.html">Whiteboard</a></nav>
+  <a class="landing-signin" href="../../app/whiteboard.html">Open Whiteboard</a>
+</header>
+<main class="shell">
+  <section class="hero">
+    <p class="eyebrow">Classroom Widget</p>
+    <h1>Live Bingo Caller</h1>
+    <p>Run a bingo-style call board with an animated ball picker. Players can generate a card and mark spaces on the same device or same-browser tabs.</p>
+  </section>
+  <div class="workspace">
+    <section class="panel">
+      <label for="mode">Mode</label><select id="mode"><option value="caller">Caller / Host</option><option value="player">Player Card</option></select>
+      <div class="grid2"><button id="newGame" class="btn gold" type="button">New Game</button><button id="next" class="btn dark" type="button">Pick Ball</button></div>
+      <label for="room">Room Name</label><input id="room" value="classroom-bingo">
+      <p class="hint">Same-device tabs sync through this room name. Remote internet play requires a small relay service such as Firebase, Supabase, or a WebSocket server.</p>
+      <label for="playerName">Player Name</label><input id="playerName" placeholder="Student name">
+      <button id="join" class="btn primary block" type="button">Create / Refresh Player Card</button>
+      <div class="limit"><strong>Online note:</strong> This standalone page is self-contained. For 50 remote players, connect <code>saveState()</code> and <code>loadState()</code> to a hosted database.</div>
+      <label for="customCalls">Custom Call Items</label><textarea id="customCalls" placeholder="Optional: one call item per line. Leave blank for traditional B-I-N-G-O numbers."></textarea>
+      <button id="useCustom" class="btn block" type="button">Use Custom Call List</button>
+    </section>
+    <section class="stage">
+      <div class="machine"><div class="tube"></div><div class="blower"></div><div class="paddles" aria-hidden="true"></div><div id="ball" class="ball">B-1</div></div>
+      <div id="current" class="current">Ready</div>
+      <div class="grid2" style="max-width:460px;margin:auto"><button id="announce" class="btn gold" type="button">Repeat Current</button><button id="resetMarks" class="btn dark" type="button">Clear Player Marks</button></div>
+      <div id="winner" class="winner hidden"></div>
+      <div id="called" class="called"></div>
+      <div class="player-area"><div class="card"><h2>Player Card</h2><div class="letters"><div>B</div><div>I</div><div>N</div><div>G</div><div>O</div></div><div id="bcard" class="bcard"></div></div></div>
+    </section>
+  </div>
+</main>
+<footer class="footer"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat Live Bingo Caller.</span><a href="../bingo-card-generator/">Create printable cards</a></footer>
+<script>
+const $=id=>document.getElementById(id), roomKey=()=> 'bingo-live-'+$('room').value.trim(); let state={pool:[],called:[],current:null,started:Date.now()}, card=[];
+function nums(){let out=[];[['B',1,15],['I',16,30],['N',31,45],['G',46,60],['O',61,75]].forEach(([l,a,b])=>{for(let i=a;i<=b;i++)out.push(l+'-'+i)});return out}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function saveState(){localStorage.setItem(roomKey(),JSON.stringify(state)); try{new BroadcastChannel(roomKey()).postMessage(state)}catch(e){}}
+function loadState(){let raw=localStorage.getItem(roomKey()); if(raw) state=JSON.parse(raw); render()}
+function initGame(pool=nums()){state={pool:shuffle(pool),called:[],current:null,started:Date.now()};saveState();render()}
+function pick(){if(!state.pool.length){$('current').textContent='All balls called';return}state.current=state.pool.shift();state.called.push(state.current);saveState();render(true);speak(state.current)}
+function render(animate=false){$('current').textContent=state.current||'Ready';$('ball').textContent=state.current||'--';$('ball').classList.remove('show'); if(animate){void $('ball').offsetWidth;$('ball').classList.add('show')} $('called').innerHTML=state.called.slice().reverse().map(x=>'<div class="chip">'+esc(x)+'</div>').join(''); renderCard(); checkWin()}
+function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function makeCard(){let columns=[[],[],[],[],[]]; for(let n=1;n<=15;n++)columns[0].push('B-'+n);for(let n=16;n<=30;n++)columns[1].push('I-'+n);for(let n=31;n<=45;n++)columns[2].push('N-'+n);for(let n=46;n<=60;n++)columns[3].push('G-'+n);for(let n=61;n<=75;n++)columns[4].push('O-'+n);let grid=[];for(let r=0;r<5;r++){for(let c=0;c<5;c++){grid.push(shuffle(columns[c])[r])}}grid[12]='FREE';card=grid.map((v,i)=>({v,marked:i===12}));localStorage.setItem(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard()}
+function renderCard(){if(!card.length){let raw=localStorage.getItem(roomKey()+'-card-'+$('playerName').value); if(raw) card=JSON.parse(raw); else makeCard()}$('bcard').innerHTML=card.map((c,i)=>'<div class="cell '+(c.marked?'marked':'')+'" data-i="'+i+'">'+esc(c.v)+'</div>').join('')}
+$('bcard').onclick=e=>{let cell=e.target.closest('.cell');if(!cell)return;let i=+cell.dataset.i;card[i].marked=!card[i].marked;localStorage.setItem(roomKey()+'-card-'+$('playerName').value,JSON.stringify(card));renderCard();checkWin()}
+function checkWin(){if(!card.length)return;let wins=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],[0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],[0,6,12,18,24],[4,8,12,16,20]];let ok=wins.some(w=>w.every(i=>card[i].marked));$('winner').classList.toggle('hidden',!ok);$('winner').textContent=ok?'BINGO! Check this card with the caller.':''}
+function speak(t){if(!('speechSynthesis'in window))return;let u=new SpeechSynthesisUtterance(t.replace('-',' '));u.rate=.85; speechSynthesis.cancel(); speechSynthesis.speak(u)}
+function custom(){let arr=$('customCalls').value.split(/\n+/).map(s=>s.trim()).filter(Boolean); if(arr.length<1){alert('Add custom call items or leave blank for traditional numbers.');return}initGame(arr)}
+$('newGame').onclick=()=>initGame(nums());$('next').onclick=pick;$('join').onclick=makeCard;$('useCustom').onclick=custom;$('announce').onclick=()=>state.current&&speak(state.current);$('resetMarks').onclick=()=>{card.forEach((c,i)=>c.marked=i===12);renderCard();checkWin()};$('room').onchange=loadState;
+try{const bc=new BroadcastChannel(roomKey());bc.onmessage=e=>{state=e.data;render(true)}}catch(e){}
+if(!localStorage.getItem(roomKey())) initGame(nums()); else loadState();
+</script>
+</body>
+</html>
