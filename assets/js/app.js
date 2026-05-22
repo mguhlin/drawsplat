@@ -21,7 +21,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.81';
+const VERSION='3.0.82';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -179,6 +179,44 @@ function applyI18n(root=document.body){if(window.DRAWSPLAT_APPLY_I18N) window.DR
 function setStatus(msg,cls=''){msg=tr(msg); if(ui.status){ui.status.className='hint '+cls;ui.status.textContent=msg} const toast=document.getElementById('statusToast'); if(toast){clearTimeout(_statusToastTimer); if(msg){toast.textContent=msg; toast.className='status-toast show'+(cls?' '+cls:''); _statusToastTimer=setTimeout(()=>toast.classList.remove('show'),3500)} else {toast.classList.remove('show')}}}
 function setSyncStatus(msg,cls=''){msg=tr(msg); if(ui.syncStatus){ui.syncStatus.className='hint '+cls;ui.syncStatus.textContent=msg}}
 window.setStatus=setStatus; window.setSyncStatus=setSyncStatus;
+let _floatingTipTimer=null;
+function hideFloatingTip(persistKey=''){
+  const tip=gid('floatingTip');
+  if(tip) tip.classList.remove('show');
+  clearTimeout(_floatingTipTimer);
+  if(persistKey){try{localStorage.setItem(persistKey,'1')}catch(_){}}
+}
+function showFloatingTip(title,text,opts={}){
+  const tip=gid('floatingTip'), titleEl=gid('floatingTipTitle'), textEl=gid('floatingTipText'), close=gid('floatingTipClose');
+  if(!tip||!titleEl||!textEl) return;
+  if(opts.persistKey){try{if(localStorage.getItem(opts.persistKey)) return}catch(_){}}
+  clearTimeout(_floatingTipTimer);
+  titleEl.textContent=tr(title||'Tip');
+  textEl.textContent=tr(text||'');
+  if(close) close.onclick=()=>hideFloatingTip(opts.persistKey||'');
+  tip.classList.add('show');
+  const duration=opts.duration===0?0:(opts.duration||12000);
+  if(duration) _floatingTipTimer=setTimeout(()=>hideFloatingTip(),duration);
+}
+const STARTUP_TIPS=[
+  ['ScratchArt','Use Scratch Cover to load a random gallery background, then erase the cover to reveal it.'],
+  ['Frames','Use the + button near the frame arrows to add a new screen. Grey arrows mean there is no previous or next screen yet.'],
+  ['Selection','When something is selected, use the X button in the floating toolbar to deselect it.'],
+  ['Widgets','Open Tools, then Classroom Widgets, to add timers, dice, bingo cards, polls, and more.'],
+  ['Backgrounds','Use the background menu or Set Background to switch between grids, templates, images, and ScratchArt.']
+];
+function showStartupTip(){
+  try{
+    const key='drawsplat.startupTipDate', today=new Date().toISOString().slice(0,10);
+    if(localStorage.getItem(key)===today) return;
+    const idx=(parseInt(localStorage.getItem('drawsplat.startupTipIndex')||'0',10)||0)%STARTUP_TIPS.length;
+    localStorage.setItem('drawsplat.startupTipIndex',String((idx+1)%STARTUP_TIPS.length));
+    localStorage.setItem(key,today);
+    showFloatingTip(STARTUP_TIPS[idx][0],STARTUP_TIPS[idx][1],{duration:14000});
+  }catch(_){
+    showFloatingTip(STARTUP_TIPS[0][0],STARTUP_TIPS[0][1],{duration:14000});
+  }
+}
 
 /* Modal and header feedback helpers used by destructive actions, autosave,
    collaboration status, and short-lived toast messages. */
@@ -1460,15 +1498,34 @@ async function chooseScratchArtWallpaper(){
   return images[Math.floor(Math.random()*images.length)]||'';
 }
 function hasPanelWallpaper(p=panel()){return !!(p&&p.bgImage)}
+async function setRandomScratchArtBackground(showTip=true){
+  if(board.mode==='student') return setStatus('Students cannot change the panel background.','danger');
+  try{
+    const wallpaper=await chooseScratchArtWallpaper();
+    if(!wallpaper) return setStatus('No ScratchArt backgrounds found.','danger');
+    const p=panel();
+    p.bg='blank';
+    p.bgImage=wallpaper;
+    render();
+    saveState();
+    setStatus('Random ScratchArt background loaded.','success');
+    if(showTip) showFloatingTip('ScratchArt Background','Use Scratch Cover to hide it, then erase to reveal. To remove the background later, use Clear Background in the background tools.',{duration:0});
+    return true;
+  }catch(err){
+    setStatus('ScratchArt background failed. '+(err&&err.message?err.message:String(err)),'danger');
+    return false;
+  }
+}
 function ensureScratchArtDialog(){
   let dlg=gid('scratchArtDialog');
   if(dlg) return dlg;
   dlg=document.createElement('dialog');
   dlg.id='scratchArtDialog';
   dlg.className='confirm-dialog scratch-art-dialog';
-  dlg.innerHTML='<div class="modal-head"><h2>ScratchArt</h2></div><p class="confirm-msg">Choose the cover color. If this panel has no background image, DrawSplatTM will add a random ScratchArt wallpaper first.</p><div class="row"><label for="scratchCoverColorInput">Cover color</label><input type="color" id="scratchCoverColorInput" value="#ffffff" style="width:60px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px"></div><div class="confirm-actions"><button id="scratchArtCancelBtn" type="button">Cancel</button><button id="scratchArtChooseBgBtn" type="button">Choose Background Image</button><button id="scratchArtAddBtn" type="button" class="primary">Add ScratchArt</button></div>';
+  dlg.innerHTML='<div class="modal-head"><h2>ScratchArt</h2></div><p class="confirm-msg">Choose the cover color. If this panel has no background image, DrawSplatTM will add a random ScratchArt wallpaper first.</p><div class="row"><label for="scratchCoverColorInput">Cover color</label><input type="color" id="scratchCoverColorInput" value="#ffffff" style="width:60px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px"></div><div class="confirm-actions"><button id="scratchArtCancelBtn" type="button">Cancel</button><button id="scratchArtRandomBgBtn" type="button">Random Background</button><button id="scratchArtChooseBgBtn" type="button">Choose Background Image</button><button id="scratchArtAddBtn" type="button" class="primary">Add ScratchArt</button></div>';
   document.body.appendChild(dlg);
   gid('scratchArtCancelBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=null; dlg.close()});
+  gid('scratchArtRandomBgBtn')?.addEventListener('click',async()=>{await setRandomScratchArtBackground(true);});
   gid('scratchArtChooseBgBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=gid('scratchCoverColorInput')?.value||'#ffffff'; dlg.close(); gid('bgImageInput')?.click()});
   gid('scratchArtAddBtn')?.addEventListener('click',()=>{const color=gid('scratchCoverColorInput')?.value||'#ffffff'; dlg.close(); addScratchCover(color)});
   return dlg;
@@ -1503,6 +1560,7 @@ async function addScratchCover(coverColor){
   saveState();
   setTool('eraser');
   setStatus((usedRandomWallpaper?'ScratchArt wallpaper and cover added.':'Scratch Cover added.')+' Use the Eraser to reveal the background underneath.','success');
+  showFloatingTip('ScratchArt Cover','Erase the cover to reveal the background. To remove everything later, select the cover and delete it, then use Clear Background to remove the wallpaper.',{duration:0});
 }
 function alignSelectedObjects(mode){
   const objs=selectedMovableObjects();
@@ -3419,7 +3477,7 @@ function updateCropPreview(){const id=gid('cropDialog').dataset.objectId; const 
 gid('cropCancel')?.addEventListener('click',()=>gid('cropDialog').close());
 gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cropRight').value=0; gid('cropBottom').value=0; gid('cropLeft').value=0; if(gid('cropShape')) gid('cropShape').value='none'; updateCropPreview()});
 gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value, shape=gid('cropShape')?.value||'none'; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} if(shape==='none') delete o.maskShape; else o.maskShape=shape; render(); saveState(); setStatus(shape==='none'?'Image cropped.':'Image shape applied.','success'); gid('cropDialog').close()});
-gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close()});
+gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close(); setTimeout(showStartupTip,500)});
 gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else {setPaintColor(v); ui.strokeColor?.dispatchEvent(new Event('input',{bubbles:true}))}});
 function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='simple'?'Simple':'Advanced'; const tip=m==='simple'?'Switch to Advanced view':'Switch to Simple view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
 gid('viewToggleBtn')?.addEventListener('click',()=>{const next=(ui.interfaceMode?.value||'simple')==='simple'?'advanced':'simple'; if(ui.interfaceMode) ui.interfaceMode.value=next; applyInterfaceMode(next); refreshViewToggle()});
@@ -4059,8 +4117,8 @@ function registerServiceWorker(){
   refreshViewToggle?.();
   syncSimpleStickyPalette();
   syncSimpleColor();
-  try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)}}catch(_){}
   render();
+  try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)}else setTimeout(showStartupTip,900)}catch(_){setTimeout(showStartupTip,900)}
   ensureWidgetTimerTick();
   registerServiceWorker();
   if(shouldAutoCloudJoin()) setTimeout(()=>startCloudSync(),500);

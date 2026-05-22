@@ -315,7 +315,12 @@ dialog::backdrop{background:#0f172a88}
 .status-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .status-toast.success{background:#166534}
 .status-toast.danger{background:#991b1b}
-@media (prefers-reduced-motion: reduce){.status-toast{transition:none}}
+.floating-tip{position:fixed;right:18px;bottom:18px;z-index:70;display:flex;align-items:flex-start;gap:12px;width:min(360px,calc(100vw - 32px));padding:14px 14px 14px 16px;background:#111827;color:#fff;border:1px solid #ffffff22;border-radius:14px;box-shadow:0 18px 46px #1118273d;opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .22s ease,transform .22s ease}
+.floating-tip.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.floating-tip b{display:block;margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#fbbf24}
+.floating-tip p{margin:0;color:#f8fafc;font-size:14px;line-height:1.45}
+.floating-tip button{flex:0 0 auto;width:30px;min-width:30px;min-height:30px;height:30px;padding:0;border-radius:999px;border-color:#ffffff33;background:#ffffff12;color:#fff;font-size:18px;line-height:1}
+@media (prefers-reduced-motion: reduce){.status-toast,.floating-tip{transition:none}}
 
 /* Simple mode — Jamboard-style minimal layout */
 .simple-only{display:none}
