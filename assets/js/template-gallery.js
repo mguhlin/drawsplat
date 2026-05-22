@@ -1,4 +1,4 @@
-/* Keeps the public template gallery aligned with the selected DrawSplat
+/* Keeps the public template gallery aligned with the selected DrawSplatTM
    language, then passes that language into the whiteboard launch URL. */
 (function(){
   function ready(fn){if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn()}

@@ -1,4 +1,4 @@
-/* DrawSplat v2.10 — translation applicator. Reads window.DRAWSPLAT_LOCALE
+/* DrawSplatTM v2.10 — translation applicator. Reads window.DRAWSPLAT_LOCALE
    and applies window.DRAWSPLAT_LOCALES[lang] to the page. Wraps setStatus,
    confirm, alert, prompt with a runtime translation pass.
    Loads before app.js so that document.title/lang/dir are correct on first paint. */

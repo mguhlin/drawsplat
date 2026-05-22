@@ -1,10 +1,10 @@
-# DrawSplat Google Setup
+# DrawSplatTM Google Setup
 
 These steps configure the optional Google Apps Script backend for Drive saves, cloud rooms, templates, and turn-ins.
 
 ## 1. Create The Google Backend
 
-1. Create a Google Sheet named **DrawSplat Saves**.
+1. Create a Google Sheet named **DrawSplatTM Saves**.
 2. Open **Extensions > Apps Script**.
 3. Paste the contents of `apps-script/Code.gs` into Apps Script.
 4. Save the project.
@@ -13,7 +13,7 @@ These steps configure the optional Google Apps Script backend for Drive saves, c
 
 The setup function creates or prepares:
 
-- a Drive folder named **DrawSplat Saves**
+- a Drive folder named **DrawSplatTM Saves**
 - a `Boards` sheet
 - a `Rooms` sheet
 - a `Templates` sheet
@@ -27,13 +27,13 @@ The setup function creates or prepares:
 4. Set **Who has access** to the narrowest option that works for your class or district.
 5. Deploy.
 6. Copy the Web App URL.
-7. Paste the URL into DrawSplat under **Options > Google integration > Script URL**.
+7. Paste the URL into DrawSplatTM under **Options > Google integration > Script URL**.
 
 For a hosted classroom deployment, you can place that URL in `DEFAULT_GOOGLE_SCRIPT_URL` near the top of `assets/js/app.js`. That keeps students from needing a `script=` value in shared links.
 
 ## 3. Teacher Classroom Workflow
 
-1. Open DrawSplat.
+1. Open DrawSplatTM.
 2. Switch to **Education Tools**.
 3. Enable assignment mode.
 4. Create the panels needed for table groups.
@@ -41,14 +41,14 @@ For a hosted classroom deployment, you can place that URL in `DEFAULT_GOOGLE_SCR
 6. Enter a unique room name in **Collaboration**.
 7. Optionally enter a room password.
 8. Start **Cloud Sync**.
-9. Click **Copy Student Link**. DrawSplat generates the student URL for the current room and copies it to the clipboard.
+9. Click **Copy Student Link**. DrawSplatTM generates the student URL for the current room and copies it to the clipboard.
 10. Share the copied link with students.
 
 Each room name acts as a unique shared whiteboard instance. The generated student link includes `role=student` and the room name so students open directly into the correct shared board.
 
 ## 4. Student Workflow
 
-Students open the copied link. The link uses `role=student`, which locks DrawSplat into student mode.
+Students open the copied link. The link uses `role=student`, which locks DrawSplatTM into student mode.
 
 Students can add:
 

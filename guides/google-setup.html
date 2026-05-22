@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplat Google Drive and Sheets Setup</title>
-<meta name="description" content="Set up the optional Google Apps Script backend for DrawSplat Drive saves, cloud rooms, templates, and student turn-ins." />
+<title>DrawSplatTM Google Drive and Sheets Setup</title>
+<meta name="description" content="Set up the optional Google Apps Script backend for DrawSplatTM Drive saves, cloud rooms, templates, and student turn-ins." />
 <link rel="canonical" href="https://drawsplat.org/guides/google-setup.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
 <body class="admin-page start-page support-page guide-article-page">
 <header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplat home">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
     <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat</span>
+    <span>DrawSplat<sup class="tm">TM</sup></span>
   </a>
-  <nav class="landing-nav" aria-label="DrawSplat guide navigation">
+  <nav class="landing-nav" aria-label="DrawSplatTM guide navigation">
     <a href="../index.html">Home</a>
     <a href="../pages/support.html">Support</a>
     <a href="index.html">Guides</a>
@@ -34,14 +34,14 @@
   </nav>
 
   <article class="guide-article">
-    <img class="guide-hero-image" src="images/google-drive-sheets-setup.png" alt="Google Drive and Sheets setup in DrawSplat with Google Drive, Google Sheets, and DrawSplat logos">
+    <img class="guide-hero-image" src="images/google-drive-sheets-setup.png" alt="Google Drive and Sheets setup in DrawSplatTM with Google Drive, Google Sheets, and DrawSplatTM logos">
     <p class="landing-eyebrow">Setup Guide</p>
-    <h1>DrawSplat Google Drive and Sheets Setup</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> Google Drive and Sheets Setup</h1>
     <p class="article-lede">These steps configure the optional Google Apps Script backend for Drive saves, cloud rooms, templates, and turn-ins.</p>
 
     <h2>1. Create the Google Backend</h2>
     <ol>
-      <li>Create a Google Sheet named <strong>DrawSplat Saves</strong>.</li>
+      <li>Create a Google Sheet named <strong>DrawSplat<sup class="tm">TM</sup> Saves</strong>.</li>
       <li>Open <strong>Extensions &gt; Apps Script</strong>.</li>
       <li>Paste the contents of <code>apps-script/Code.gs</code> into Apps Script.</li>
       <li>Save the project.</li>
@@ -50,7 +50,7 @@
     </ol>
     <p>The setup function creates or prepares:</p>
     <ul>
-      <li>a Drive folder named <strong>DrawSplat Saves</strong></li>
+      <li>a Drive folder named <strong>DrawSplat<sup class="tm">TM</sup> Saves</strong></li>
       <li>a <code>Boards</code> sheet</li>
       <li>a <code>Rooms</code> sheet</li>
       <li>a <code>Templates</code> sheet</li>
@@ -65,13 +65,13 @@
       <li>Set <strong>Who has access</strong> to the narrowest option that works for your class or district.</li>
       <li>Deploy.</li>
       <li>Copy the Web App URL.</li>
-      <li>Paste the URL into DrawSplat under <strong>Options &gt; Google integration &gt; Script URL</strong>.</li>
+      <li>Paste the URL into DrawSplat<sup class="tm">TM</sup> under <strong>Options &gt; Google integration &gt; Script URL</strong>.</li>
     </ol>
     <p>For a hosted classroom deployment, you can place that URL in <code>DEFAULT_GOOGLE_SCRIPT_URL</code> near the top of <code>assets/js/app.js</code>. That keeps students from needing a <code>script=</code> value in shared links.</p>
 
     <h2>3. Teacher Classroom Workflow</h2>
     <ol>
-      <li>Open DrawSplat.</li>
+      <li>Open DrawSplat<sup class="tm">TM</sup>.</li>
       <li>Switch to <strong>Education Tools</strong>.</li>
       <li>Enable assignment mode.</li>
       <li>Create the panels needed for table groups.</li>
@@ -79,13 +79,13 @@
       <li>Enter a unique room name in <strong>Collaboration</strong>.</li>
       <li>Optionally enter a room password.</li>
       <li>Start <strong>Cloud Sync</strong>.</li>
-      <li>Click <strong>Copy Student Link</strong>. DrawSplat generates the student URL for the current room and copies it to the clipboard.</li>
+      <li>Click <strong>Copy Student Link</strong>. DrawSplat<sup class="tm">TM</sup> generates the student URL for the current room and copies it to the clipboard.</li>
       <li>Share the copied link with students.</li>
     </ol>
     <p>Each room name acts as a unique shared whiteboard instance. The generated student link includes <code>role=student</code> and the room name so students open directly into the correct shared board.</p>
 
     <h2>4. Student Workflow</h2>
-    <p>Students open the copied link. The link uses <code>role=student</code>, which locks DrawSplat into student mode.</p>
+    <p>Students open the copied link. The link uses <code>role=student</code>, which locks DrawSplat<sup class="tm">TM</sup> into student mode.</p>
     <p>Students can add:</p>
     <ul>
       <li>sticky notes</li>
@@ -124,7 +124,7 @@
 
 <footer class="landing-footer">
   <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat Google setup guide.</span>
+  <span>DrawSplat<sup class="tm">TM</sup> Google setup guide.</span>
   <a href="index.html">Guides</a>
   <a href="../pages/support.html">Support</a>
 </footer>

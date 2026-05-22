@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplat MySQL Setup Wizard</title>
+<title>DrawSplatTM MySQL Setup Wizard</title>
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
 <body class="admin-page admin-locked">
 <header>
   <a class="logo-link" href="admin.html" aria-label="Open Teacher Admin"><img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
-  <h1>DrawSplat <span class="app-version">MySQL Setup</span></h1>
+  <h1>DrawSplat<sup class="tm">TM</sup> <span class="app-version">MySQL Setup</span></h1>
   <span class="badge">Wizard</span>
   <span class="spacer"></span>
   <a class="admin-header-link" href="admin.html">Teacher Admin</a>
@@ -23,7 +23,7 @@
   <div class="admin-gate-card">
     <img src="../assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
     <h2>Admin Access Required</h2>
-    <p>Enter the DrawSplat admin password to use the MySQL setup wizard.</p>
+    <p>Enter the DrawSplat<sup class="tm">TM</sup> admin password to use the MySQL setup wizard.</p>
     <label class="admin-label" for="adminGatePassword">Admin password</label>
     <input id="adminGatePassword" type="password" autocomplete="current-password">
     <div class="admin-actions">
@@ -37,7 +37,7 @@
 <main class="admin-shell mysql-wizard">
   <section class="admin-hero">
     <h2>MySQL Backend Setup Wizard</h2>
-    <p>Use this page to prepare a self-hosted DrawSplat backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
+    <p>Use this page to prepare a self-hosted DrawSplat<sup class="tm">TM</sup> backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
   </section>
 
   <section class="wizard-steps" aria-label="MySQL setup steps">
@@ -53,7 +53,7 @@
     </article>
     <article class="wizard-step">
       <span>3</span>
-      <h3>Connect DrawSplat</h3>
+      <h3>Connect DrawSplat<sup class="tm">TM</sup></h3>
       <p>Save the public API endpoint here. Do not put the MySQL password in this browser page.</p>
     </article>
   </section>
@@ -61,7 +61,7 @@
   <section class="admin-grid">
     <article class="admin-panel">
       <h3>Public API Endpoint</h3>
-      <p class="hint">This is the URL DrawSplat can call. It should point to the backend API, not directly to MySQL.</p>
+      <p class="hint">This is the URL DrawSplat<sup class="tm">TM</sup> can call. It should point to the backend API, not directly to MySQL.</p>
       <label class="admin-label" for="mysqlEndpoint">MySQL backend API endpoint</label>
       <input id="mysqlEndpoint" type="url" placeholder="https://drawsplat.example.org/api/drawsplat/mysql" autocomplete="off">
       <div class="admin-actions">

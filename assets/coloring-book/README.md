@@ -1,6 +1,6 @@
-# DrawSplat Coloring Book Assets
+# DrawSplatTM Coloring Book Assets
 
-These coloring pages are original DrawSplat line-art assets for classroom coloring. The app supports PNG, JPG, and JPEG files for each listed page.
+These coloring pages are original DrawSplatTM line-art assets for classroom coloring. The app supports PNG, JPG, and JPEG files for each listed page.
 
 - Count: 80 pages
 - Categories: plants, insects, dinosaurs, animals

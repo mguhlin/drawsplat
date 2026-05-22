@@ -1,6 +1,6 @@
-# DrawSplat
+# DrawSplatTM
 
-DrawSplat is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.
+DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.
 
 Official website: [https://drawsplat.org](https://drawsplat.org)
 
@@ -8,7 +8,7 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 
 ## Current build
 
-**DrawSplat v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, and Classroom Tool Widgets**
+**DrawSplatTM v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, and Classroom Tool Widgets**
 
 ## Recent improvements
 
@@ -25,14 +25,14 @@ Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguh
 - Improved Simple toolbar tooltip positioning so long group tooltips stay readable near the left edge of the screen.
 - Added public setup guides for Google Drive + Sheets and the starter MySQL backend, including the important boundary that browsers call an HTTPS API and do not connect directly to MySQL.
 - Added classroom solution tools to **Tools → Classroom Widgets** as new-tab activities: Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder.
-- Restyled the classroom solution tools to use DrawSplat colors and removed prior third-party branding references.
+- Restyled the classroom solution tools to use DrawSplatTM colors and removed prior third-party branding references.
 - Updated Coin Flipper with local Heads/Tails image assets and a stylized classroom preset.
 
 ## Version evolution
 
 ```mermaid
 timeline
-  title DrawSplat change over time
+  title DrawSplatTM change over time
   v1 : Browser-based whiteboard foundation
      : Drawing, panels, classroom-oriented board work
   v2.2 : Panel reliability hotfix
@@ -67,7 +67,7 @@ timeline
 
 ## Included files
 
-- `index.html` — public landing page that explains DrawSplat, pricing, privacy, templates, Whiteboard, and Teacher Admin
+- `index.html` — public landing page that explains DrawSplatTM, pricing, privacy, templates, Whiteboard, and Teacher Admin
 - `app/whiteboard.html` — English whiteboard app
 - `pages/start.html` — backwards-compatible redirect to `index.html`
 - `pages/background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
@@ -93,7 +93,7 @@ timeline
 - `sw.js` — service worker for offline shell (new in v2.5)
 - `apps-script/Code.gs` — optional Google Apps Script backend for Drive + Sheets saving, cloud sync, templates, and student turn-ins
 - `server/mysql-backend/` — starter Express + MySQL backend scaffold, schema, and setup guide
-- `assets/backgrounds/` — original DrawSplat SVG panel backgrounds for education templates
+- `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
 - `solutions/` — standalone classroom tools opened from Classroom Widgets, including Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder
 - `solutions/coinflipping/assets/` — local Heads/Tails coin images used by the Coin Flipper preset
 
@@ -151,11 +151,11 @@ timeline
 
 ## Local use
 
-Open `index.html` in a modern browser to see the public DrawSplat information page and choose between the Whiteboard and Teacher Admin. Open `app/whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
+Open `index.html` in a modern browser to see the public DrawSplatTM information page and choose between the Whiteboard and Teacher Admin. Open `app/whiteboard.html` for the English whiteboard app, or use one of the translated whiteboard files in `languages/` directly. The app autosaves to local browser storage unless Teacher Admin is configured for Google-backed storage.
 
 ## Hosting
 
-You can host DrawSplat on:
+You can host DrawSplatTM on:
 
 - GitHub Pages
 - Cloudflare Pages
@@ -194,7 +194,7 @@ The current static app can save the MySQL endpoint setting without breaking Goog
 
 ## Google Drive + Sheets setup
 
-1. Create a Google Sheet named **DrawSplat Saves**.
+1. Create a Google Sheet named **DrawSplatTM Saves**.
 2. Open **Extensions → Apps Script**.
 3. Paste in the code from `apps-script/Code.gs`.
 4. Run the `setup()` function once and approve the requested Drive/Sheets permissions.
@@ -210,15 +210,15 @@ Google setup now lives on `admin/admin.html` instead of the student-facing board
 
 ### Shared classroom board workflow
 
-1. Teacher opens DrawSplat, switches to **Education Tools**, and enables assignment mode.
+1. Teacher opens DrawSplatTM, switches to **Education Tools**, and enables assignment mode.
 2. Teacher creates the panels needed for table groups, adds backgrounds/templates/prompts, and starts **Cloud Sync** with a unique room name.
 3. Optional but recommended: teacher enters a room password before starting Cloud Sync.
-4. Teacher uses `admin/admin.html` or **Copy Student Link** in the Collaboration section. DrawSplat generates the student URL for the current room and copies it to the clipboard.
+4. Teacher uses `admin/admin.html` or **Copy Student Link** in the Collaboration section. DrawSplatTM generates the student URL for the current room and copies it to the clipboard.
 5. Students open that link, enter the room password, and join in student mode.
 6. Students can add student-layer work such as images, sticky notes, Mermaid diagrams, word clouds, text, and drawings.
 7. Student saves are merged into the room state in Google Drive. The Apps Script backend preserves teacher panel backgrounds and teacher-layer objects when a student client saves.
 
-This is designed for small-group whiteboards where each shared DrawSplat room is a unique whiteboard instance. The generated student link includes `role=student` and the room name so students open directly into the correct shared board.
+This is designed for small-group whiteboards where each shared DrawSplatTM room is a unique whiteboard instance. The generated student link includes `role=student` and the room name so students open directly into the correct shared board.
 
 The Apps Script backend can store:
 
@@ -267,7 +267,7 @@ Students can enter their name and submit a board. Teachers can review turn-ins f
 
 ## Standalone multi-user roadmap
 
-DrawSplat is currently a static app with optional Google Apps Script persistence. To make it a true standalone whiteboard where multiple people can add content, move objects, and interact with panels at the same time, the clean next step is to split the product into a front end plus a real application backend.
+DrawSplatTM is currently a static app with optional Google Apps Script persistence. To make it a true standalone whiteboard where multiple people can add content, move objects, and interact with panels at the same time, the clean next step is to split the product into a front end plus a real application backend.
 
 Recommended architecture:
 
@@ -302,17 +302,17 @@ The first static step toward that split is included in this build: `admin/admin.
 
 ## License
 
-DrawSplat uses a dual-license model.
+DrawSplatTM uses a dual-license model.
 
 - Free/open source use is covered by **AGPL-3.0-or-later**. See `LICENSE`.
 - Paid school, district, hosted, embedded, closed-source, or site-license use can be covered by a separate commercial license. See `COMMERCIAL-LICENSE.md`.
-- The DrawSplat name, logo, splash artwork, and visual identity are project branding. See `NOTICE.md`.
+- The DrawSplatTM name, logo, splash artwork, and visual identity are project branding. See `NOTICE.md`.
 
 Boards, drawings, and student work created by users belong to their respective authors and are not covered by this license.
 
 ## Language entry pages
 
-DrawSplat includes multiple entry pages so schools can share the interface in different languages:
+DrawSplatTM includes multiple entry pages so schools can share the interface in different languages:
 
 - `app/whiteboard.html` — English
 - `languages/index-sp.html` — Spanish
@@ -461,7 +461,7 @@ v3.0.21 makes concept mapping work directly on the whiteboard canvas.
 
 - The Concept Map button now inserts editable nodes and live connectors instead of requiring typed outline text first.
 - Select a concept node to add a child, set or open a link, or attach an image from the inspector controls.
-- Concept nodes can be dragged, resized, double-clicked for text editing, duplicated, aligned, grouped, and styled like other DrawSplat objects.
+- Concept nodes can be dragged, resized, double-clicked for text editing, duplicated, aligned, grouped, and styled like other DrawSplatTM objects.
 - Ctrl/Cmd-click opens a linked concept node in a new tab.
 - Service-worker cache key bumped to `drawsplat-v3.0.21`.
 
@@ -502,7 +502,7 @@ v3.0.17 improves public feature-page illustration layout.
 
 v3.0.15 adds public website feature illustrations.
 
-- Added a dedicated `features.html` page for DrawSplat’s visual creation tools.
+- Added a dedicated `features.html` page for DrawSplatTM’s visual creation tools.
 - Added local SVG illustrations for Graph Creator, Picture Graph, Mermaid Diagram, Dot Pictures, Sticker Library, and Collage.
 - The main landing page now includes a tool preview section using those illustrations.
 - Pricing and landing navigation now point to the dedicated features page.
@@ -514,7 +514,7 @@ v3.0.14 expands Crop Image shape masks.
 
 - The Crop Image shape selector now includes grouped silhouette masks for animals, household items, hearts/arrows, and transport.
 - New masks include bird, butterfly, cat, dog, fish, dolphin, shark, turtle, rabbit, frog, horse, dinosaur, house, birdhouse, drop, plug, key, phone, cup, pan, lamp, faucet, wrench, gamepad, heart variants, arrow variants, airplane, car, bike, submarine, and hot air balloon.
-- The new masks are built-in vector silhouettes so DrawSplat stays self-contained.
+- The new masks are built-in vector silhouettes so DrawSplatTM stays self-contained.
 - Service-worker cache key bumped to `drawsplat-v3.0.14`.
 
 ## Version 3.0.13 changes
@@ -569,7 +569,7 @@ v3.0.9 makes the Picture Graph preset catalog usable per row.
 v3.0.8 adds classroom image-shape masking and picture graph sample icons.
 
 - The Crop Image dialog can now apply photo masks: circle, oval, triangle, diamond, pentagon, hexagon, octagon, star, and heart.
-- Masked photos stay editable DrawSplat image objects, so they can still be moved, resized, duplicated, exported, and re-cropped.
+- Masked photos stay editable DrawSplatTM image objects, so they can still be moved, resized, duplicated, exported, and re-cropped.
 - Picture Graphs now include a built-in sample icon catalog with food, animals, life science, colored candies, school, and weather symbols.
 - Colored candy presets are generic colored circles without M&M branding or logos.
 - Service-worker cache key bumped to `drawsplat-v3.0.8`.
@@ -579,7 +579,7 @@ v3.0.8 adds classroom image-shape masking and picture graph sample icons.
 v3.0.7 improves multilingual template behavior.
 
 - Public background-template gallery text now follows the selected language from `?lang=`, saved language choice, or browser preference.
-- Template gallery links pass the language into DrawSplat when opening a template.
+- Template gallery links pass the language into DrawSplatTM when opening a template.
 - Built-in editable templates now insert localized labels for Frayer, KWL, T-chart, storyboard, Venn, brainstorm, and timeline templates.
 - SVG panel backgrounds opened from the gallery now replace common embedded template labels with localized text when possible.
 - Service-worker cache key bumped to `drawsplat-v3.0.7`.
@@ -601,7 +601,7 @@ v3.0.4 adds a classroom picture graph maker.
 
 - Added a **Picture Graph** builder that turns label/value rows into a pictograph-style bar graph.
 - Supports vertical or horizontal picture bars, a custom typed symbol or uploaded picture symbol, configurable scale (`each picture =`), and optional number labels.
-- Inserted picture graphs behave like normal DrawSplat image objects: move, resize, duplicate, export, and double-click to edit the graph settings later.
+- Inserted picture graphs behave like normal DrawSplatTM image objects: move, resize, duplicate, export, and double-click to edit the graph settings later.
 - Added Picture Graph access in the Insert menu, advanced Insert / Arrange panel, and simple-mode extras.
 - Service-worker cache key bumped to `drawsplat-v3.0.4`.
 
@@ -642,7 +642,7 @@ v3.0 adds the public site, pricing, teacher/admin separation, student privacy la
 - Added `admin/admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
 - Added `admin/mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.
 - Added `server/mysql-backend/` with an Express/MySQL starter API, schema, `.env.example`, and setup guide.
-- Added `pages/background-templates.html` and original education SVG panel backgrounds that can launch directly in DrawSplat with `?bgTemplate=...`.
+- Added `pages/background-templates.html` and original education SVG panel backgrounds that can launch directly in DrawSplatTM with `?bgTemplate=...`.
 - Added standalone architecture documentation for SSO, teacher/student split, realtime collaboration, and provider-backed storage.
 - Service-worker cache key bumped to `drawsplat-v3.0.0`.
 
@@ -742,7 +742,7 @@ Compatibility
   - **Animals** — Dog, Cat, Bird, Fish, Whale, Dolphin, Horse, Pig, Cow, Butterfly, Bear, Mouse, Lion, Tiger, Rabbit, Turtle, Panda, Monkey, Frog, Penguin, Owl, Unicorn, Dragon, Octopus, Snail, Ladybug
 - **How the masks are built.** Two paths:
   - Geometric / Symbols / Things have hand-authored SVG path data (eight `Path2D` strings on a 100×100 viewBox, scaled into the canvas at 92% to leave a safe margin). Filled black on an offscreen canvas; the alpha channel becomes the mask.
-  - Animals and many of the Things use the system **emoji font** rendered to canvas at ~88% size. The pixel data is alpha-thresholded (any non-near-white pixel becomes "inside the mask"). This gives DrawSplat ~30 free silhouettes without shipping more SVG path data — the OS supplies the artwork.
+  - Animals and many of the Things use the system **emoji font** rendered to canvas at ~88% size. The pixel data is alpha-thresholded (any non-near-white pixel becomes "inside the mask"). This gives DrawSplatTM ~30 free silhouettes without shipping more SVG path data — the OS supplies the artwork.
   - Caveat: emoji rendering varies by OS. Modern macOS, iOS, Windows 10+, Android, and major Linux desktops with Noto Color Emoji all produce recognizable silhouettes. Old Linux installs without an emoji font may show empty boxes — fallback in that case is to choose a geometric or symbol shape instead.
 - **Spiral iteration cap raised to 1500** for shape-masked layouts (vs. 800 for rect) to give odd shapes — narrow/concave like Lightning, Octopus — enough attempts to find valid placements.
 - **Pixel-mask placement test:** for each candidate position, nine sample points are tested against the mask (4 corners + 4 edge midpoints + center). All nine must be inside the opaque region or the position is rejected.
@@ -804,7 +804,7 @@ What's NOT in this release (deliberate)
 
 ## Version 2.9 changes
 
-v2.9 adds [Mermaid](https://mermaid.js.org/) diagram support — flowcharts, sequence diagrams, ER, gantt, mind maps, and the rest of the Mermaid syntax — rendered locally inside DrawSplat.
+v2.9 adds [Mermaid](https://mermaid.js.org/) diagram support — flowcharts, sequence diagrams, ER, gantt, mind maps, and the rest of the Mermaid syntax — rendered locally inside DrawSplatTM.
 
 How it works
 - A new **Mermaid Diagram** button appears in the **Insert / Arrange** sidebar section in **Advanced view** (`data-ui="advanced"`, hidden in Simple). Click it to open a side-by-side editor: textarea on the left for Mermaid source, live SVG preview on the right.
@@ -815,10 +815,10 @@ How it works
 - Each render gets the natural width/height of the SVG probed and stored, so the existing v2.8 crop tool also works on Mermaid diagrams.
 
 Setup (one-time)
-- DrawSplat keeps Mermaid in `vendor/mermaid.min.js` because the library is sizeable (~2.5 MB).
+- DrawSplatTM keeps Mermaid in `vendor/mermaid.min.js` because the library is sizeable (~2.5 MB).
 - The HTML files load it via `<script src="vendor/mermaid.min.js" defer onerror="window.__mermaidMissing=true">`. If it's missing, the dialog still opens but the preview shows: *"Mermaid library not loaded. Add vendor/mermaid.min.js and reload — see README."*
 - The service worker `SHELL` list includes a commented-out reference to `./vendor/mermaid.min.js`. Once you've added the file, uncomment that line so it pre-caches for offline use.
-- Mermaid is initialized lazily with `securityLevel: 'strict'` (no inline JavaScript in diagrams) and `startOnLoad: false` (DrawSplat controls when rendering happens).
+- Mermaid is initialized lazily with `securityLevel: 'strict'` (no inline JavaScript in diagrams) and `startOnLoad: false` (DrawSplatTM controls when rendering happens).
 
 Compatibility
 - Existing image objects without `mermaidSource` are unaffected — they double-click to nothing, just like before.
@@ -829,7 +829,7 @@ Compatibility
 ### v2.9.1 follow-ups
 
 - **Copy PNG button** added to the Mermaid dialog footer. One click rasterizes the rendered SVG to PNG via canvas and writes it to the system clipboard via `ClipboardItem`. Paste the result into Slides, Word, email, chat — anywhere that accepts a PNG. No need to insert the diagram first.
-- **Auto-rasterize on copy** — when you Ctrl/Cmd+C with a single image object selected and its `src` is an SVG data URL (Mermaid output, or any other SVG), DrawSplat now automatically converts it to PNG before writing to the clipboard. Most consumer apps reject SVG paste; this makes paste "just work" while leaving the original SVG intact on the canvas (no quality loss for the displayed/saved version). Non-SVG images (JPEG/PNG/WebP) still copy as their original blob — no re-encoding.
+- **Auto-rasterize on copy** — when you Ctrl/Cmd+C with a single image object selected and its `src` is an SVG data URL (Mermaid output, or any other SVG), DrawSplatTM now automatically converts it to PNG before writing to the clipboard. Most consumer apps reject SVG paste; this makes paste "just work" while leaving the original SVG intact on the canvas (no quality loss for the displayed/saved version). Non-SVG images (JPEG/PNG/WebP) still copy as their original blob — no re-encoding.
 - Service-worker cache bumped to `drawsplat-v2.9.1`.
 
 ### v2.9.2 follow-ups
@@ -846,13 +846,13 @@ Compatibility
 
 ### v2.9.4 follow-ups
 
-- **Colored diagrams by default** — after Mermaid renders an SVG, DrawSplat post-processes it: locates each `g.node` element and assigns it a fill/stroke/text color from a 6-color rotating palette (blue → pink → green → orange → amber → purple). Lighter pastel fills with darker matching strokes for contrast. Plain `graph TD` syntax now produces colorful flowcharts without any explicit `classDef`. Sequence/gantt/pie/timeline diagrams keep their built-in palettes (no `g.node` elements to recolor).
+- **Colored diagrams by default** — after Mermaid renders an SVG, DrawSplatTM post-processes it: locates each `g.node` element and assigns it a fill/stroke/text color from a 6-color rotating palette (blue → pink → green → orange → amber → purple). Lighter pastel fills with darker matching strokes for contrast. Plain `graph TD` syntax now produces colorful flowcharts without any explicit `classDef`. Sequence/gantt/pie/timeline diagrams keep their built-in palettes (no `g.node` elements to recolor).
 - **Custom styling still wins** — if your source contains `classDef` or `:::` the auto-palette is skipped entirely, so hand-authored colored diagrams render as you specified. Same palette is applied across live preview, Insert, and Copy PNG so previews match exports.
 - **Template starter buttons** — a new "Templates:" row above the editor with eight one-click starters: Flowchart, Pie Chart, Sequence, Mind Map, Gantt, Timeline, Class, State. Click a button → the textarea is replaced with a working template that you can tweak before Insert.
 - Service-worker cache bumped to `drawsplat-v2.9.4`.
 
 Note on diagrams.net / drawio import-export
-- Considered but not added: the drawio editor and mxGraph engine are far too large to ship inside DrawSplat, and writing a partial XML converter would be lossy. The clipboard paste flow already lets users design diagrams externally and paste a PNG/SVG export onto the board, which is the intended workflow for that use case.
+- Considered but not added: the drawio editor and mxGraph engine are far too large to ship inside DrawSplatTM, and writing a partial XML converter would be lossy. The clipboard paste flow already lets users design diagrams externally and paste a PNG/SVG export onto the board, which is the intended workflow for that use case.
 
 ## Version 2.8 changes
 
@@ -931,7 +931,7 @@ Migration notes
 v2.6 is a classroom-UX pass. Existing v2.5 boards open without conversion; the migration shim updates `board.version` to `2.6` automatically.
 
 Layout & navigation
-- Header version badge — `DrawSplat v2.6` is shown in the title bar so teachers can see at a glance which build is running.
+- Header version badge — `DrawSplatTM v2.6` is shown in the title bar so teachers can see at a glance which build is running.
 - Panels controls (current panel, add, rename, delete, clear) moved from the sidebar into the top header.
 - Workspace and View selectors moved into a new **Options** dialog opened from the header.
 - New **About** dialog with creator info and links.
@@ -1009,11 +1009,11 @@ Updated panel behavior:
 
 ## Version 2.3 productivity workspace update
 
-This build adds a **Workspace** selector so DrawSplat can be used as a general-purpose visual productivity board without showing classroom-specific tools by default.
+This build adds a **Workspace** selector so DrawSplatTM can be used as a general-purpose visual productivity board without showing classroom-specific tools by default.
 
 Workspace options:
 
-- **Productivity** — default mode. Hides education-only controls and keeps DrawSplat focused on visual work, planning, brainstorming, diagrams, notes, panels, export, and save/load.
+- **Productivity** — default mode. Hides education-only controls and keeps DrawSplatTM focused on visual work, planning, brainstorming, diagrams, notes, panels, export, and save/load.
 - **Education Tools** — reveals classroom features such as class/student fields, teacher/student mode, assignment mode, answer keys, moderation, student turn-ins, and classroom-use guidance.
 
 The Workspace setting is separate from the existing **Simple / Advanced** interface setting. This gives four practical combinations:
@@ -1025,16 +1025,16 @@ The Workspace setting is separate from the existing **Simple / Advanced** interf
 
 ## Security and Internet-Facing Deployment Warning
 
-DrawSplat can be hosted as a static web app, but a public internet-facing deployment should be treated as a user-generated-content application, not just a simple HTML page.
+DrawSplatTM can be hosted as a static web app, but a public internet-facing deployment should be treated as a user-generated-content application, not just a simple HTML page.
 
-Before using DrawSplat on a public server, review these risks:
+Before using DrawSplatTM on a public server, review these risks:
 
 - **Do not store secrets in the front-end.** Public HTML, JavaScript, Apps Script URLs, and client-side settings can be viewed by users.
-- **Rich text and imported board files can carry unsafe content.** DrawSplat includes basic cleanup, but public deployments should add stronger server-side validation and a strict Content Security Policy.
+- **Rich text and imported board files can carry unsafe content.** DrawSplatTM includes basic cleanup, but public deployments should add stronger server-side validation and a strict Content Security Policy.
 - **Uploads can be abused.** This build blocks SVG uploads, limits common image/audio types, and adds file-size checks, but public deployments should also enforce server-side limits.
 - **Google Apps Script endpoints can be misused if deployed to “anyone.”** Use the narrowest permissions possible, keep Drive data in a dedicated folder, and do not expose administrative actions without additional protection.
 - **Front-end hiding is not security.** Productivity/Education mode, Teacher/Student mode, and hidden buttons are convenience controls only. Anything sensitive must be enforced by the backend.
-- **Avoid confidential student records.** Do not use public DrawSplat boards for protected student data unless your hosting, authentication, retention, and access controls have been reviewed.
+- **Avoid confidential student records.** Do not use public DrawSplatTM boards for protected student data unless your hosting, authentication, retention, and access controls have been reviewed.
 
 Recommended public-hosting protections:
 

@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplat MySQL Setup Guide</title>
-<meta name="description" content="Set up the DrawSplat starter MySQL backend for self-hosted room, board, template, turn-in, and retention storage." />
+<title>DrawSplatTM MySQL Setup Guide</title>
+<meta name="description" content="Set up the DrawSplatTM starter MySQL backend for self-hosted room, board, template, turn-in, and retention storage." />
 <link rel="canonical" href="https://drawsplat.org/guides/mysql-setup.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
 <body class="admin-page start-page support-page guide-article-page">
 <header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplat home">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
     <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat</span>
+    <span>DrawSplat<sup class="tm">TM</sup></span>
   </a>
-  <nav class="landing-nav" aria-label="DrawSplat guide navigation">
+  <nav class="landing-nav" aria-label="DrawSplatTM guide navigation">
     <a href="../index.html">Home</a>
     <a href="../pages/support.html">Support</a>
     <a href="index.html">Guides</a>
@@ -34,14 +34,14 @@
   </nav>
 
   <article class="guide-article">
-    <img class="guide-hero-image" src="images/mysql-setup-guide.png" alt="MySQL setup in DrawSplat showing browser app, secure API server, MySQL database, and safe server-side credentials">
+    <img class="guide-hero-image" src="images/mysql-setup-guide.png" alt="MySQL setup in DrawSplatTM showing browser app, secure API server, MySQL database, and safe server-side credentials">
     <p class="landing-eyebrow">Setup Guide</p>
-    <h1>DrawSplat MySQL Setup and How It Works</h1>
-    <p class="article-lede">The MySQL backend is for self-hosted DrawSplat deployments that want local database storage for rooms, boards, templates, student turn-ins, retention metadata, and audit-ready server records.</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> MySQL Setup and How It Works</h1>
+    <p class="article-lede">The MySQL backend is for self-hosted DrawSplat<sup class="tm">TM</sup> deployments that want local database storage for rooms, boards, templates, student turn-ins, retention metadata, and audit-ready server records.</p>
 
     <h2>How the MySQL Option Works</h2>
-    <p>The DrawSplat browser app never connects directly to MySQL. The browser talks to a backend API over HTTP or HTTPS, and the backend talks to the database.</p>
-    <pre><code>DrawSplat browser app -> HTTPS backend API -> MySQL</code></pre>
+    <p>The DrawSplat<sup class="tm">TM</sup> browser app never connects directly to MySQL. The browser talks to a backend API over HTTP or HTTPS, and the backend talks to the database.</p>
+    <pre><code>DrawSplat<sup class="tm">TM</sup> browser app -> HTTPS backend API -> MySQL</code></pre>
     <p>This matters because database hostnames, usernames, and passwords must stay on the server. Students and teachers should only receive the public backend API endpoint.</p>
 
     <h2>What the Starter Backend Provides</h2>
@@ -75,7 +75,7 @@ FLUSH PRIVILEGES;</code></pre>
     <pre><code>npm install</code></pre>
     <p>Create the server-only environment file:</p>
     <pre><code>cp .env.example .env</code></pre>
-    <p>Edit <code>.env</code> with the real database host, port, database name, user, password, TLS setting, and allowed DrawSplat origin. Keep this file out of Git and do not share it with students.</p>
+    <p>Edit <code>.env</code> with the real database host, port, database name, user, password, TLS setting, and allowed DrawSplat<sup class="tm">TM</sup> origin. Keep this file out of Git and do not share it with students.</p>
 
     <h2>4. Start and Test the Backend</h2>
     <p>Start the backend server:</p>
@@ -85,9 +85,9 @@ FLUSH PRIVILEGES;</code></pre>
     <p>A healthy backend returns JSON similar to:</p>
     <pre><code>{"ok":true,"provider":"mysql","time":"2026-05-16T00:00:00.000Z"}</code></pre>
 
-    <h2>5. Connect DrawSplat to the Backend</h2>
+    <h2>5. Connect DrawSplat<sup class="tm">TM</sup> to the Backend</h2>
     <ol>
-      <li>Open <a href="../admin/mysql-setup.html">DrawSplat MySQL Setup Wizard</a>.</li>
+      <li>Open <a href="../admin/mysql-setup.html">DrawSplat<sup class="tm">TM</sup> MySQL Setup Wizard</a>.</li>
       <li>Enter the public backend API endpoint, such as <code>https://drawsplat.example.org/api/drawsplat/mysql</code>.</li>
       <li>Use <strong>Test Endpoint</strong> to verify the backend responds.</li>
       <li>Use <strong>Save Endpoint</strong> to store the endpoint in the current browser.</li>
@@ -116,7 +116,7 @@ FLUSH PRIVILEGES;</code></pre>
 
 <footer class="landing-footer">
   <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat MySQL setup guide.</span>
+  <span>DrawSplat<sup class="tm">TM</sup> MySQL setup guide.</span>
   <a href="index.html">Guides</a>
   <a href="../pages/support.html">Support</a>
 </footer>

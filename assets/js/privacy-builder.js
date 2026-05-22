@@ -19,7 +19,7 @@
 
   function makeMarkdown() {
     const org = value('organization', 'School, district, or organization name');
-    return `# DrawSplat Deployment Privacy Notice
+    return `# DrawSplatTM Deployment Privacy Notice
 
 ## Deployment
 
@@ -55,18 +55,18 @@ ${value('retention')}
 
 ${value('consentBasis')}
 
-## Baseline DrawSplat Commitments
+## Baseline DrawSplatTM Commitments
 
-- DrawSplat does not require student accounts in the static app.
-- DrawSplat does not sell student data or use targeted advertising.
-- DrawSplat does not use student data for AI model training, behavioral profiling, or cross-context advertising.
+- DrawSplatTM does not require student accounts in the static app.
+- DrawSplatTM does not sell student data or use targeted advertising.
+- DrawSplatTM does not use student data for AI model training, behavioral profiling, or cross-context advertising.
 - Browser-only work stays in the user's browser unless exported or sent to a configured backend.
 - Google storage uses the teacher or school's Google Apps Script, Drive, and Sheets deployment.
 - MySQL, standalone, hosted, or managed deployments must define their own access controls, retention schedule, backups, and deletion process.
 
 ## Local Review
 
-This Markdown file is a deployment-specific notice generated from the DrawSplat privacy builder. ${org} should review it against local policy, student privacy laws, procurement rules, and any required district data privacy agreement before student use.
+This Markdown file is a deployment-specific notice generated from the DrawSplatTM privacy builder. ${org} should review it against local policy, student privacy laws, procurement rules, and any required district data privacy agreement before student use.
 `;
   }
 

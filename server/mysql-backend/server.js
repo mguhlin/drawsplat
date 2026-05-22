@@ -137,5 +137,5 @@ app.use((err, _req, res, _next) => {
 });
 
 app.listen(port, () => {
-  console.log(`DrawSplat MySQL backend listening on http://localhost:${port}${apiBasePath}`);
+  console.log(`DrawSplatTM MySQL backend listening on http://localhost:${port}${apiBasePath}`);
 });

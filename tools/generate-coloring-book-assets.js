@@ -42,7 +42,7 @@ function shell(title, category, body, scene = '') {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
   <title id="title">${esc(title)} coloring page</title>
-  <desc id="desc">Original copyright-free DrawSplat printable line art for classroom coloring use.</desc>
+  <desc id="desc">Original copyright-free DrawSplatTM printable line art for classroom coloring use.</desc>
   <rect width="900" height="1200" fill="#fff"/>
   <g fill="none" stroke="#111827" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <rect x="42" y="42" width="816" height="1116" rx="34" stroke-width="5"/>
@@ -51,7 +51,7 @@ function shell(title, category, body, scene = '') {
   <g fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
     ${scene || '<path d="M92 1088 C170 1050 262 1128 360 1090 S560 1052 646 1098 S764 1134 820 1080"/>'}
   </g>
-  <metadata>DrawSplat original SVG line art; category=${esc(category)}; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
+  <metadata>DrawSplatTM original SVG line art; category=${esc(category)}; license=CC0-1.0/public-domain-dedicated; generated=subject-specific-v2.</metadata>
 </svg>
 `;
 }
@@ -175,9 +175,9 @@ Object.entries(categories).forEach(([category, items]) => {
 });
 
 fs.writeFileSync(path.join(outDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
-fs.writeFileSync(path.join(outDir, 'README.md'), `# DrawSplat Coloring Book Assets
+fs.writeFileSync(path.join(outDir, 'README.md'), `# DrawSplatTM Coloring Book Assets
 
-These SVG coloring pages are original DrawSplat line-art assets generated for classroom coloring.
+These SVG coloring pages are original DrawSplatTM line-art assets generated for classroom coloring.
 
 - Count: ${manifest.length} pages
 - Categories: plants, insects, dinosaurs, animals

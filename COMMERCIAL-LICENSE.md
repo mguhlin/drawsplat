@@ -1,6 +1,6 @@
-# DrawSplat Commercial License Summary
+# DrawSplatTM Commercial License Summary
 
-DrawSplat is available under a dual-license model:
+DrawSplatTM is available under a dual-license model:
 
 - Open source use: AGPL-3.0-or-later.
 - Commercial, school, district, managed-hosting, closed-source, embedded, or site-license use: separate written commercial license.

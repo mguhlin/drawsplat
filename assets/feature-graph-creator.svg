@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
   <title id="title">Graph Creator illustration</title>
-  <desc id="desc">A DrawSplat graph creator dialog with data fields and a bar chart preview.</desc>
+  <desc id="desc">A DrawSplatTM graph creator dialog with data fields and a bar chart preview.</desc>
   <rect width="960" height="520" rx="24" fill="#ffffff"/>
   <rect x="1" y="1" width="958" height="518" rx="24" fill="none" stroke="#d7ddea"/>
   <text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800">Graph Creator</text>

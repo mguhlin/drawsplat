@@ -1,11 +1,11 @@
-# DrawSplat MySQL Backend
+# DrawSplatTM MySQL Backend
 
-This is a starter backend for a self-hosted DrawSplat deployment. It lets DrawSplat keep Google Apps Script as one storage option while adding a MySQL-backed provider for schools or districts that want local database storage.
+This is a starter backend for a self-hosted DrawSplatTM deployment. It lets DrawSplatTM keep Google Apps Script as one storage option while adding a MySQL-backed provider for schools or districts that want local database storage.
 
 The browser never connects directly to MySQL. The flow is:
 
 ```text
-DrawSplat browser app -> HTTPS backend API -> MySQL
+DrawSplatTM browser app -> HTTPS backend API -> MySQL
 ```
 
 ## What This Backend Provides
@@ -52,7 +52,7 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` with the real host, database, user, password, TLS setting, and allowed DrawSplat origin.
+Edit `.env` with the real host, database, user, password, TLS setting, and allowed DrawSplatTM origin.
 
 5. Start the backend.
 

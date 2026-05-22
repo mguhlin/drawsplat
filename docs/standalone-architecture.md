@@ -1,18 +1,18 @@
 # Standalone Multi-User Architecture Plan
 
-This document turns the standalone roadmap into an implementation plan. The current DrawSplat build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.
+This document turns the standalone roadmap into an implementation plan. The current DrawSplatTM build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.
 
 The current static build now uses `index.html` as the public landing page and `app/whiteboard.html` as the English whiteboard app. The landing page explains the split between the Whiteboard and Teacher Admin. `admin/admin.html` moves Google Apps Script setup, storage-mode choice, and classroom link generation out of the board Options dialog while keeping the existing localStorage compatibility that the board uses for Save to Google and Cloud Sync.
 
 ## Product Targets
 
-DrawSplat should support three clear entry paths:
+DrawSplatTM should support three clear entry paths:
 
 - **Student classroom board**: students join a teacher-created room, authenticate through school SSO or a class join link, and work only with approved board tools and student-layer permissions.
 - **Teacher/admin workspace**: teachers manage classes, boards, rosters, templates, Google integrations, moderation, turn-ins, exports, and room settings away from the active student board.
-- **Adult/small-team workspace**: individual users and small adult teams use DrawSplat as a productivity whiteboard without classroom language by default.
+- **Adult/small-team workspace**: individual users and small adult teams use DrawSplatTM as a productivity whiteboard without classroom language by default.
 
-The current front-end hiding of `.teacher-only` controls is still useful for clarity, but standalone DrawSplat must treat it as presentation only. The backend must enforce every role, object-layer, admin, and integration permission.
+The current front-end hiding of `.teacher-only` controls is still useful for clarity, but standalone DrawSplatTM must treat it as presentation only. The backend must enforce every role, object-layer, admin, and integration permission.
 
 ## Recommended Application Shape
 
@@ -247,7 +247,7 @@ audit_events
   id, organization_id, actor_id, event_type, target_type, target_id, payload_json, created_at
 ```
 
-Keep object payloads flexible in `data_json` so current DrawSplat object fields can move over without a large migration:
+Keep object payloads flexible in `data_json` so current DrawSplatTM object fields can move over without a large migration:
 
 - geometry: `x`, `y`, `w`, `h`
 - style: `stroke`, `strokeWidth`, `fill`, `fillPattern`, `opacity`
@@ -257,12 +257,12 @@ Keep object payloads flexible in `data_json` so current DrawSplat object fields 
 
 ## Google Integration Boundary
 
-The current app exposes a Google Apps Script URL field in Options for teacher users. In standalone DrawSplat, replace that with an admin-only integration provider:
+The current app exposes a Google Apps Script URL field in Options for teacher users. In standalone DrawSplatTM, replace that with an admin-only integration provider:
 
 - Teachers connect Google Drive/Sheets from `/admin/integrations/google`.
 - OAuth tokens are stored server-side and encrypted.
 - Students never receive raw tokens, Apps Script URLs, Drive folder IDs, or Sheets IDs.
-- The board API calls DrawSplat's backend; the backend decides whether to write to Google, local storage, or another provider.
+- The board API calls DrawSplatTM's backend; the backend decides whether to write to Google, local storage, or another provider.
 - Integration status is shown on the board as a simple teacher-only status: connected, disconnected, sync failed.
 
 Provider interface:
@@ -438,7 +438,7 @@ WS     /boards/:boardId/realtime
 
 ```mermaid
 flowchart TD
-  A[DrawSplat Login] --> B{Choose workspace}
+  A[DrawSplatTM Login] --> B{Choose workspace}
   B --> C[Student]
   B --> D[Teacher]
   B --> E[Single user / small team]

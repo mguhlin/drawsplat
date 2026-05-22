@@ -1,4 +1,4 @@
-/* DrawSplat v3.0 — single source of app behaviour.
+/* DrawSplatTM v3.0 — single source of app behaviour.
    v2.5 changes vs v2.4:
    - Object lookup is O(1) via a per-render Map.
    - render() is RAF-coalesced; pointermove no longer triggers a synchronous redraw per event.
@@ -21,7 +21,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.78';
+const VERSION='3.0.79';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -1140,7 +1140,7 @@ function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o|
 function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; if(o.type==='connector'){o.connectorLabel=ta.value}else{o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o)} positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id&&o.type!=='connector') ui.richEditor.innerHTML=o.html}
 function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){if(o.type==='connector') o.connectorLabel=inlineEditOriginal.connectorLabel; else{o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html}} inlineEditId=null; inlineEditOriginal=null; if(wrap){wrap.classList.remove('show','connector-label-edit'); wrap.style.transform=''} if(ta){ta.style.textAlign=''; ta.style.fontWeight=''} render(); if(save) saveState()}
 
-function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel()}
+function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
 function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=Math.abs(o.w),h=Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
@@ -1177,6 +1177,7 @@ function render(){
   ui.layerBadge.textContent='Layer: '+((board.assignmentMode?(board.mode==='student'?'Student':'Teacher: '+(board.currentLayer||'shared')):'Shared').replace(/^Teacher: shared$/,'Shared'));
   refreshRestorePoints(); applyModeUI(); refreshFrameNav(); setButtonChrome('zoomResetBtn',Math.round(zoom*100)+'%'); gid('zoomResetBtn')?.setAttribute('aria-label','Reset Zoom'); gid('zoomResetBtn')?.setAttribute('title','Reset Zoom'); gid('zoomResetBtn')?.setAttribute('data-tooltip','Reset Zoom');
   const p=panel();
+  syncScratchCoversToFrame(p);
   const bgImageSvg=p.bgImage?`<image x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" href="${esc(p.bgImage)}"/>`:'';
   const canvasFillSvg=p.canvasFill?`<rect width="100%" height="100%" fill="${esc(p.canvasFill.color||'#ffffff')}" opacity="${clamp(+(p.canvasFill.opacity??1),0,1)}"/>`:'';
   svg.innerHTML='<defs>'+bgDefs(p.bg)+fillPatternDefs()+'</defs>'+(p.bg==='blank'?'<rect width="100%" height="100%" fill="#fff"/>':'<rect width="100%" height="100%" fill="url(#bgp)"/>')+bgImageSvg+canvasFillSvg+'<g id="viewport" transform="scale('+zoom+')"></g>';
@@ -1409,6 +1410,16 @@ function selectAllObjects(){commitInlineTextEditor(); selectedIds=panel().object
 function pasteClipboard(){if(!clipboard||!clipboard.objects?.length)return; const idMap={}, items=[]; clipboard.objects.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); idMap[o.id]=id(); c.id=idMap[o.id]; c.x+=28; c.y+=28; if(c.type==='path'&&c.d)c.d=translatedPathData(c.d,28,28); if(c.clipBox)c.clipBox={x:c.clipBox.x+28,y:c.clipBox.y+28,w:c.clipBox.w,h:c.clipBox.h}; if(board.assignmentMode&&board.mode==='student') c.layer='student'; items.push(c)}); items.forEach(c=>{if(c.coloringPaintFor&&idMap[c.coloringPaintFor]) c.coloringPaintFor=idMap[c.coloringPaintFor]}); clipboard.connectors?.forEach(o=>{const c=JSON.parse(JSON.stringify(o)); c.id=id(); c.fromId=idMap[o.fromId]; c.toId=idMap[o.toId]; if(c.fromId&&c.toId) items.push(c)}); panel().objects.push(...items); selectedIds=items.filter(o=>o.type!=='connector'&&!o.coloringPaintFor).map(o=>o.id); render(); saveState()}
 function selectedMovableObjects(){return selectedIds.map(findObj).filter(o=>o&&o.type!=='connector'&&canEditObject(o)&&!o.locked)}
 function frameBounds(){return{x:0,y:0,w:Math.max(1,(svg?.clientWidth||900)/zoom),h:Math.max(1,(svg?.clientHeight||600)/zoom)}}
+function syncScratchCoversToFrame(p=panel()){
+  const b=frameBounds();
+  (p.objects||[]).forEach(o=>{
+    if(o.type!=='scratch') return;
+    o.x=0;
+    o.y=0;
+    o.w=Math.max(Math.abs(+o.w||0),b.w);
+    o.h=Math.max(Math.abs(+o.h||0),b.h);
+  });
+}
 const SCRATCH_ART_DIR=appPath('assets/scratch-art/');
 const SCRATCH_ART_FALLBACKS=['scratch_bkgrnd1.png','scratch_bkgrnd2.png','scratch_bkgrnd3.png','scratch_bkgrnd4.png','scratch_bkgrnd5.png'];
 let scratchArtImageCache=null;
@@ -1448,7 +1459,7 @@ function ensureScratchArtDialog(){
   dlg=document.createElement('dialog');
   dlg.id='scratchArtDialog';
   dlg.className='confirm-dialog scratch-art-dialog';
-  dlg.innerHTML='<div class="modal-head"><h2>ScratchArt</h2></div><p class="confirm-msg">Choose the cover color. If this panel has no background image, DrawSplat will add a random ScratchArt wallpaper first.</p><div class="row"><label for="scratchCoverColorInput">Cover color</label><input type="color" id="scratchCoverColorInput" value="#ffffff" style="width:60px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px"></div><div class="confirm-actions"><button id="scratchArtCancelBtn" type="button">Cancel</button><button id="scratchArtChooseBgBtn" type="button">Choose Background Image</button><button id="scratchArtAddBtn" type="button" class="primary">Add ScratchArt</button></div>';
+  dlg.innerHTML='<div class="modal-head"><h2>ScratchArt</h2></div><p class="confirm-msg">Choose the cover color. If this panel has no background image, DrawSplatTM will add a random ScratchArt wallpaper first.</p><div class="row"><label for="scratchCoverColorInput">Cover color</label><input type="color" id="scratchCoverColorInput" value="#ffffff" style="width:60px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px"></div><div class="confirm-actions"><button id="scratchArtCancelBtn" type="button">Cancel</button><button id="scratchArtChooseBgBtn" type="button">Choose Background Image</button><button id="scratchArtAddBtn" type="button" class="primary">Add ScratchArt</button></div>';
   document.body.appendChild(dlg);
   gid('scratchArtCancelBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=null; dlg.close()});
   gid('scratchArtChooseBgBtn')?.addEventListener('click',()=>{pendingScratchCoverColor=gid('scratchCoverColorInput')?.value||'#ffffff'; dlg.close(); gid('bgImageInput')?.click()});
@@ -2039,7 +2050,7 @@ const WHEEL_SPINNER_PALETTES={
   jewel:{label:'Jewel tones',colors:['#be123c','#7c2d12','#047857','#0f766e','#1d4ed8','#6d28d9','#a21caf'],accent:'#6d28d9',soft:'#f5f3ff'},
   cool:{label:'Cool colors',colors:['#0ea5e9','#06b6d4','#14b8a6','#22c55e','#6366f1','#8b5cf6'],accent:'#0f766e',soft:'#ecfeff'},
   warm:{label:'Warm colors',colors:['#dc2626','#f97316','#f59e0b','#facc15','#fb7185','#e11d48'],accent:'#dc2626',soft:'#fff7ed'},
-  drawsplat:{label:'DrawSplat purple',colors:['#7c3aed','#a855f7','#ede9fe','#ffffff','#c084fc','#6d28d9','#f5f3ff','#8b5cf6'],accent:'#7c3aed',soft:'#f5f3ff'}
+  drawsplat:{label:'DrawSplatTM purple',colors:['#7c3aed','#a855f7','#ede9fe','#ffffff','#c084fc','#6d28d9','#f5f3ff','#8b5cf6'],accent:'#7c3aed',soft:'#f5f3ff'}
 };
 function wheelSpinnerPalette(cfg){
   return WHEEL_SPINNER_PALETTES[cfg.palette||cfg.theme]||WHEEL_SPINNER_PALETTES.bright;
@@ -3544,11 +3555,11 @@ gid('restorePointBtn').onclick=restoreSelectedPoint;
 gid('undoBtn').onclick=undo;
 gid('redoBtn').onclick=redo;
 
-/* Local file save/load keeps DrawSplat usable without a backend. Imported JSON
+/* Local file save/load keeps DrawSplatTM usable without a backend. Imported JSON
    is migrated immediately so old boards pick up new default fields. */
 gid('saveLocalBtn').onclick=()=>download('data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(board,null,2)),(board.title||'drawsplat').replace(/\W+/g,'-')+'.drawsplat.json');
 gid('loadLocalBtn').onclick=()=>gid('jsonInput').click();
-gid('jsonInput').onchange=e=>{const f=e.target.files[0]; if(!f)return; if(f.size>MAX_BOARD_BYTES){setStatus('Board import blocked. Maximum board file size is '+Math.round(MAX_BOARD_BYTES/1024/1024)+' MB.','danger'); e.target.value=''; return} const r=new FileReader(); r.onload=()=>{try{const loaded=JSON.parse(r.result); board=loaded; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Board loaded.','success')}catch(err){setStatus('Board import failed. The file is not valid DrawSplat JSON.','danger')}}; r.readAsText(f); e.target.value=''};
+gid('jsonInput').onchange=e=>{const f=e.target.files[0]; if(!f)return; if(f.size>MAX_BOARD_BYTES){setStatus('Board import blocked. Maximum board file size is '+Math.round(MAX_BOARD_BYTES/1024/1024)+' MB.','danger'); e.target.value=''; return} const r=new FileReader(); r.onload=()=>{try{const loaded=JSON.parse(r.result); board=loaded; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Board loaded.','success')}catch(err){setStatus('Board import failed. The file is not valid DrawSplatTM JSON.','danger')}}; r.readAsText(f); e.target.value=''};
 
 /* Panel import: PDF (rendered to bgImage per page), PPTX/ODP (text + images extracted per slide). */
 const PANEL_IMPORT_MAX_PAGES=100;
@@ -3801,7 +3812,7 @@ async function importPptxAsPanels(file,progress){
     added++;
   }
   if(added>0) board.active=board.panels.length-added;
-  console.info('[DrawSplat import] PPTX summary:',{slides:added,imagesExtracted:totalImgs,skipped:_PPTX_IMG_DIAG.skipped,unsupportedFormat:_PPTX_IMG_DIAG.warned});
+  console.info('[DrawSplatTM import] PPTX summary:',{slides:added,imagesExtracted:totalImgs,skipped:_PPTX_IMG_DIAG.skipped,unsupportedFormat:_PPTX_IMG_DIAG.warned});
   if(_PPTX_IMG_DIAG.warned.length){
     const fmts=[...new Set(_PPTX_IMG_DIAG.warned.map(w=>w.ext.toUpperCase()))].join(', ');
     setStatus('Imported '+added+' slides. '+_PPTX_IMG_DIAG.warned.length+' image(s) in '+fmts+' format were skipped — browsers can\'t render those. Re-export images as PNG/JPEG.','danger');
@@ -3922,7 +3933,7 @@ gid('saveTemplateBtn').onclick=saveCurrentAsTemplate;
 gid('loadTemplateGalleryBtn').onclick=loadTemplateGallery;
 gid('submitTurnInBtn').onclick=submitTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
-gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplat boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
+gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplatTM boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
 gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin/admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
   askConfirm('Wipe every panel and start with a blank board? This can\'t be undone.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
@@ -4048,8 +4059,8 @@ function registerServiceWorker(){
   /* v2.5: replay-friendly version stamp the user can read in DevTools. */
   const verEl=document.getElementById('appVersion'); if(verEl) verEl.textContent='v'+VERSION;
   const aboutVerEl=document.getElementById('aboutVersion'); if(aboutVerEl) aboutVerEl.textContent='v'+VERSION;
-  document.title=(document.title||'DrawSplat').replace(/^DrawSplat(\s+v[\d.]+)?/, 'DrawSplat v'+VERSION);
-  console.info('[DrawSplat] v'+VERSION+' ready');
+  document.title=(document.title||'DrawSplatTM').replace(/^DrawSplatTM(\s+v[\d.]+)?/, 'DrawSplatTM v'+VERSION);
+  console.info('[DrawSplatTM] v'+VERSION+' ready');
 })();
 
 /* v2.5: language switcher (kept here so it works without i18n.js). */

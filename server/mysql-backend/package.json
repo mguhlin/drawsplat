@@ -2,7 +2,7 @@
   "name": "drawsplat-mysql-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Starter MySQL backend API for DrawSplat self-hosted deployments.",
+  "description": "Starter MySQL backend API for DrawSplatTM self-hosted deployments.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

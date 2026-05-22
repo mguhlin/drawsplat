@@ -1,4 +1,4 @@
-/* DrawSplat Google Apps Script backend.
+/* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
  *   Execute as: Me
@@ -7,7 +7,7 @@
  * Run setup() once before using the web app.
  */
 
-const DS_FOLDER_NAME = 'DrawSplat Saves';
+const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
 const DS_SHEETS = {
   boards: 'Boards',
@@ -26,12 +26,12 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.templates, ['templateId', 'name', 'updatedAt', 'jsonFileId']);
   ensureSheet_(ss, DS_SHEETS.turnins, ['turninId', 'studentName', 'className', 'title', 'updatedAt', 'jsonFileId', 'pngFileId']);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
-  return 'DrawSplat setup complete.';
+  return 'DrawSplatTM setup complete.';
 }
 
 /* Read endpoints for board loads, room polling, template gallery, and turn-in
  * review. All responses are JSON so the static front end can call them with
- * fetch() from any hosted DrawSplat page. */
+ * fetch() from any hosted DrawSplatTM page. */
 function doGet(e) {
   try {
     const p = (e && e.parameter) || {};
@@ -42,8 +42,8 @@ function doGet(e) {
       case 'templateLoad': return json_(loadTemplate_(p.templateId));
       case 'turnInList': return json_(listTurnIns_());
       case 'turnInLoad': return json_(loadTurnIn_(p.turninId));
-      case 'ping': return json_({ ok: true, app: 'DrawSplat', time: now_() });
-      default: return json_({ ok: true, app: 'DrawSplat' });
+      case 'ping': return json_({ ok: true, app: 'DrawSplatTM', time: now_() });
+      default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message ? err.message : err) });
@@ -72,7 +72,7 @@ function saveBoard_(board, png) {
   if (!board) throw new Error('Missing board.');
   const folder = getFolder_();
   const boardId = 'board_' + Utilities.getUuid();
-  const title = cleanName_(board.title || 'DrawSplat Board');
+  const title = cleanName_(board.title || 'DrawSplatTM Board');
   const jsonFile = writeJsonFile_(folder, boardId + '.drawsplat.json', board);
   let pngFile = null;
   if (png) pngFile = writeDataUrlFile_(folder, boardId + '.png', png);
@@ -263,13 +263,13 @@ function requireRoomPassword_(row, password) {
 }
 
 function hashPassword_(password) {
-  const salt = DS_PROPS.getProperty('PASSWORD_SALT') || 'DrawSplat';
+  const salt = DS_PROPS.getProperty('PASSWORD_SALT') || 'DrawSplatTM';
   const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ':' + password);
   return bytes.map(b => ('0' + ((b < 0 ? b + 256 : b).toString(16))).slice(-2)).join('');
 }
 
 /* Storage primitives. These wrap Drive, Sheets, JSON serialization, and data
- * URL decoding so the endpoint handlers stay focused on DrawSplat concepts. */
+ * URL decoding so the endpoint handlers stay focused on DrawSplatTM concepts. */
 function parseBody_(e) {
   const raw = e && e.postData && e.postData.contents;
   if (!raw) return {};
@@ -288,7 +288,7 @@ function getSpreadsheet_() {
     DS_PROPS.setProperty('SPREADSHEET_ID', active.getId());
     return active;
   }
-  const ss = SpreadsheetApp.create('DrawSplat Saves');
+  const ss = SpreadsheetApp.create('DrawSplatTM Saves');
   DS_PROPS.setProperty('SPREADSHEET_ID', ss.getId());
   return ss;
 }
@@ -373,7 +373,7 @@ function writeDataUrlFile_(folder, name, dataUrl) {
 }
 
 function cleanName_(name) {
-  return String(name || 'DrawSplat').replace(/[\\/:*?"<>|#%{}^~[\]`]+/g, '-').slice(0, 120);
+  return String(name || 'DrawSplatTM').replace(/[\\/:*?"<>|#%{}^~[\]`]+/g, '-').slice(0, 120);
 }
 
 function now_() {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
-<title>DrawSplat Bingo Caller</title>
+<title>DrawSplatTM Bingo Caller</title>
 <style>
 :root{--purple:#7c3aed;--purple-dark:#4c1d95;--teal:#0f766e;--gold:#f59e0b;--ink:#172033;--muted:#5f6776;--line:#e4e7f1;--soft:#f8fafc;--success:#16a34a}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff 0,#faf7ff 42%,#f8fafc 100%);color:var(--ink)}
@@ -20,7 +20,7 @@ button,input,select,textarea{font:inherit}button:focus-visible,input:focus-visib
 </head>
 <body>
 <header class="landing-header">
-  <a class="landing-brand" href="../../index.html" aria-label="DrawSplat home"><img src="../../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat</span></a>
+  <a class="landing-brand" href="../../index.html" aria-label="DrawSplatTM home"><img src="../../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat<sup class="tm">TM</sup></span></a>
   <nav class="landing-nav" aria-label="Bingo navigation"><a href="../../pages/features.html">Features</a><a href="../../pages/support.html">Support</a><a href="../bingo-card-generator/">Bingo Card Generator</a><a href="../../app/whiteboard.html">Whiteboard</a></nav>
   <a class="landing-signin" href="../../app/whiteboard.html">Open Whiteboard</a>
 </header>
@@ -52,7 +52,7 @@ button,input,select,textarea{font:inherit}button:focus-visible,input:focus-visib
     </section>
   </div>
 </main>
-<footer class="footer"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat Live Bingo Caller.</span><a href="../bingo-card-generator/">Create printable cards</a></footer>
+<footer class="footer"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup class="tm">TM</sup> Live Bingo Caller.</span><a href="../bingo-card-generator/">Create printable cards</a></footer>
 <script>
 const $=id=>document.getElementById(id), roomKey=()=> 'bingo-live-'+$('room').value.trim(); let state={pool:[],called:[],current:null,started:Date.now()}, card=[];
 function nums(){let out=[];[['B',1,15],['I',16,30],['N',31,45],['G',46,60],['O',61,75]].forEach(([l,a,b])=>{for(let i=a;i<=b;i++)out.push(l+'-'+i)});return out}

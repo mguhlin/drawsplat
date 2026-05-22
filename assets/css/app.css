@@ -1,4 +1,4 @@
-/* DrawSplat v3.0 — extracted shared styles. */
+/* DrawSplatTM v3.0 — extracted shared styles. */
 :root{--navy:#7c3aed;--gold:#FAA634;--ink:#1f2937;--muted:#6b7280;--bg:#f5f7fb;--panel:#fff;--line:#d7dce8;--focus:#a855f7}
 *{box-sizing:border-box} html{-webkit-text-size-adjust:100%} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);overscroll-behavior:none}
 header{position:relative;z-index:120;height:58px;background:linear-gradient(90deg,#7c3aed,#a855f7);color:#fff;display:flex;align-items:center;gap:10px;padding:0 18px;box-shadow:0 2px 10px #0002}
@@ -593,7 +593,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .start-choice span:last-child{color:var(--muted);line-height:1.45}
 @media(max-width:760px){.start-choice-grid{grid-template-columns:1fr}.start-choice{min-height:0}}
 
-/* DrawSplat start page: product landing page and role split. */
+/* DrawSplatTM start page: product landing page and role split. */
 .start-page{background:#f7f7fb;color:#172033;overscroll-behavior:auto}
 .landing-header{position:sticky;top:0;height:72px;background:#fff;color:#172033;border-bottom:1px solid #e6e8f1;box-shadow:0 8px 30px #1720330f;padding:0 28px}
 .landing-brand{display:inline-flex;align-items:center;gap:10px;color:#172033;text-decoration:none;font-weight:900;font-size:20px}
@@ -660,6 +660,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .feature-menu-card li::before{content:'✓';position:absolute;left:0;top:0;color:#16a34a;font-weight:900}
 .feature-menu-card li a{color:inherit;text-decoration:none;border-bottom:1px solid #c4b5fd;font-weight:700}
 .feature-menu-card li a:hover,.feature-menu-card li a:focus-visible{color:#6d28d9;border-bottom-color:#6d28d9}
+sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter-spacing:.02em}
 .standalone-tools-section{padding-top:24px}
 .standalone-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .standalone-tool-card{display:flex;min-height:150px;flex-direction:column;gap:10px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:18px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
