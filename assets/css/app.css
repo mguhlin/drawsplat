@@ -658,6 +658,12 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .feature-menu-card ul{display:grid;gap:8px;margin:0;padding:0;list-style:none;color:#4b5563;line-height:1.45}
 .feature-menu-card li{position:relative;padding-left:23px}
 .feature-menu-card li::before{content:'✓';position:absolute;left:0;top:0;color:#16a34a;font-weight:900}
+.standalone-tools-section{padding-top:24px}
+.standalone-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.standalone-tool-card{display:flex;min-height:150px;flex-direction:column;gap:10px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:18px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.standalone-tool-card:hover,.standalone-tool-card:focus-visible{transform:translateY(-2px);border-color:#7c3aed;box-shadow:0 16px 42px #7c3aed1c}
+.standalone-tool-card span{color:#172033;font-size:20px;font-weight:900;line-height:1.15}
+.standalone-tool-card p{margin:0;color:#5f6776;line-height:1.45}
 .tool-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .tool-preview-card{background:#fff;border:1px solid #e4e7f1;border-radius:16px;box-shadow:0 12px 34px #17203310;padding:14px;display:flex;flex-direction:column;gap:10px}
 .tool-preview-card.wide{grid-column:span 2}
@@ -819,6 +825,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .pricing-hero h1{font-size:40px}
   .pricing-grid{grid-template-columns:1fr}
   .pricing-notes{grid-template-columns:1fr}
+  .standalone-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .policy-summary,.protect-grid{grid-template-columns:1fr}
   .policy-builder-shell{grid-template-columns:1fr}
   .policy-builder-preview{position:static}
@@ -839,6 +846,7 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
   .landing-board-preview{grid-template-columns:1fr;padding-top:110px}
   .preview-panel-wide,.preview-card{grid-column:auto}
   .feature-grid,.path-grid,.storage-grid{grid-template-columns:1fr}
+  .standalone-tool-grid{grid-template-columns:1fr}
   .tool-preview-grid{grid-template-columns:1fr}
   .features-hero{text-align:left;padding-top:34px}
   .features-hero h1{font-size:34px}
