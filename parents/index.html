@@ -53,6 +53,14 @@
       <label class="admin-label" for="studentId">Student ID (optional)</label>
       <input id="studentId" type="text" autocomplete="off" maxlength="80">
 
+      <label class="admin-label" for="className">Class or teacher (optional)</label>
+      <input id="className" type="text" autocomplete="off" maxlength="120">
+      <p class="hint">Including the class helps the school find your student faster.</p>
+
+      <label class="admin-label" for="verificationCode">Verification code (optional)</label>
+      <input id="verificationCode" type="text" autocomplete="off" maxlength="16" style="text-transform:uppercase">
+      <p class="hint">If your student&rsquo;s teacher gave you an 8-character code, enter it here. Verified requests are routed faster.</p>
+
       <label class="admin-label" for="requestType">Request type <span aria-hidden="true" style="color:#b91c1c">*</span></label>
       <select id="requestType" required>
         <option value="">Choose…</option>
@@ -111,6 +119,6 @@
   <a href="../index.html">Back to Start</a>
 </footer>
 
-<script src="../assets/js/parents.js?v=0.1"></script>
+<script src="../assets/js/parents.js?v=0.2"></script>
 </body>
 </html>

@@ -89,6 +89,39 @@ Use `logEvent_(action, payload)` from anywhere in the Apps Script when you add a
 | Invalidate all stored admin passcodes in the browser | Have the operator clear `localStorage` for `drawsplat.complianceAdminPasscode` |
 | Rotate the admin passcode | Apps Script &gt; Project Settings &gt; Script Properties &gt; edit `ADMIN_PASSCODE`. Re-deploy. |
 
+## Student Age Band Lock (Days 2.1 / 2.2)
+
+A new `Users` sheet tracks one row per (student, class) pair. Columns: `id, studentName, className, email, ageBand, ageSource, ageLocked, ageChangedBy, ageChangedAt, ageChangeReason, parentCodeHash, parentCodeExpiresAt, lastSeen, createdAt, notes`.
+
+- Rows auto-populate when a student submits a turn-in (`upsertUserFromTurnIn_`).
+- Allowed bands: `under_13`, `13_to_17`, `18_plus`, `unknown_minor`. Default for new rows is `unknown_minor`.
+- `ageLocked` defaults to `true` and only the admin can change `ageBand`. Every change requires a reason and emits an `AGE_BAND_CHANGED` audit event.
+- The Teacher Admin &rarr; Compliance Console &rarr; **Student Age Band Lock** section lists students, shows current band, and offers a dropdown to change it (prompts for a reason on submit).
+
+## Teacher-Issued Parent Verification Code (Day 2.5)
+
+Each student row can carry a single-use 8-character verification code. Workflow:
+
+1. In Teacher Admin &rarr; Compliance Console &rarr; Student Age Band Lock, click **Issue Parent Code** next to a student.
+2. The browser shows the cleartext code in a one-time prompt. The server stores only a SHA-256 hash (with `PASSWORD_SALT`) and an expiry 14 days out.
+3. The teacher shares the code with the parent through the school's existing parent-communications channel (email, paper, etc.).
+4. The parent enters the code in the **Verification code** field on `/parents/index.html` when submitting a request.
+5. On submission, if the code matches and is unexpired, the ticket starts in `verified` status (skipping `pending_verification`). The code is then cleared so it cannot be reused.
+6. The `PARENT_CODE_ISSUED` event is logged when issued; the request itself logs `verified: true` on successful match.
+
+If a code is lost or compromised, click **Issue Parent Code** again — the new code replaces the old one.
+
+## Data Deletion (Day 2.7)
+
+Clicking **Delete Data** next to a student in the Age Band Lock section:
+
+1. Confirms the action (twice &mdash; once for the warning, once for a reason that goes into Activity Records).
+2. Trashes Drive files for every matching turn-in and (if a class is supplied) every matching board.
+3. Removes the user row and all matching turn-in / board rows.
+4. Emits a `DATA_DELETED` audit event with counts of items removed and the supplied reason.
+
+This action is permanent from the DrawSplat side. Drive files go to the trash and stay recoverable from Drive for the standard 30-day window.
+
 ## What is intentionally not built yet
 
 This file documents what ships in the current commits. The roadmap lists everything else, with day-sized work items and acceptance criteria. Do not assume any feature works just because it is mentioned in the roadmap &mdash; check the **Status** column in COMPLIANCE-ROADMAP.md for ticked boxes.

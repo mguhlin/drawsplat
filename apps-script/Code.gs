@@ -15,11 +15,14 @@ const DS_SHEETS = {
   templates: 'Templates',
   turnins: 'TurnIns',
   audit: 'Audit',
-  parentRequests: 'ParentRequests'
+  parentRequests: 'ParentRequests',
+  users: 'Users'
 };
 
 const DS_AUDIT_HEADERS = ['id', 'timestamp', 'actor', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'userAgent'];
 const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'studentId', 'requestType', 'details', 'status', 'assignedTo', 'createdAt', 'decidedAt', 'decisionNote'];
+const DS_USER_HEADERS = ['id', 'studentName', 'className', 'email', 'ageBand', 'ageSource', 'ageLocked', 'ageChangedBy', 'ageChangedAt', 'ageChangeReason', 'parentCodeHash', 'parentCodeExpiresAt', 'lastSeen', 'createdAt', 'notes'];
+const ALLOWED_AGE_BANDS = ['under_13', '13_to_17', '18_plus', 'unknown_minor'];
 
 /* One-time initializer. Creates or repairs the spreadsheet tabs and the Drive
  * folder used by every backend action below. */
@@ -32,6 +35,7 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.turnins, ['turninId', 'studentName', 'className', 'title', 'updatedAt', 'jsonFileId', 'pngFileId']);
   ensureSheet_(ss, DS_SHEETS.audit, DS_AUDIT_HEADERS);
   ensureSheet_(ss, DS_SHEETS.parentRequests, DS_PARENT_HEADERS);
+  ensureSheet_(ss, DS_SHEETS.users, DS_USER_HEADERS);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
   return 'DrawSplatTM setup complete.';
 }
@@ -54,6 +58,7 @@ function doGet(e) {
       case 'parentRequestList': return json_(adminParentRequestList_(p));
       case 'privacyPacket': return privacyPacketResponse_(p);
       case 'boardList': return json_(adminBoardList_(p));
+      case 'userList': return json_(adminUserList_(p));
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -75,6 +80,10 @@ function doPost(e) {
       case 'parentRequestDecide': return json_(decideParentRequest_(body));
       case 'freezeBoard': return json_(freezeBoard_(body));
       case 'freezeRoom': return json_(freezeRoom_(body));
+      case 'setAgeBand': return json_(setAgeBand_(body));
+      case 'userUpsert': return json_(adminUserUpsert_(body));
+      case 'issueParentCode': return json_(issueParentCode_(body));
+      case 'deleteStudentData': return json_(deleteStudentData_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -234,6 +243,7 @@ function saveTurnIn_(turnin, png) {
     jsonFileId: jsonFile.getId(),
     pngFileId: pngFile ? pngFile.getId() : ''
   });
+  upsertUserFromTurnIn_(turnin);
   return { ok: true, turninId, fileUrl: jsonFile.getUrl(), pngUrl: pngFile ? pngFile.getUrl() : '' };
 }
 
@@ -480,6 +490,13 @@ function createParentRequest_(body) {
   if (!parentName) throw new Error('Parent name is required.');
   if (!studentName) throw new Error('Student name is required.');
   const id = 'req_' + Utilities.getUuid();
+  const code = String((body && body.verificationCode) || '').trim().toUpperCase();
+  const className = String((body && body.className) || '').trim();
+  let verified = false;
+  if (code) {
+    const matchedUser = verifyParentCode_(studentName, className, code);
+    if (matchedUser) verified = true;
+  }
   const row = {
     id: id,
     parentName: parentName,
@@ -488,11 +505,11 @@ function createParentRequest_(body) {
     studentId: String((body && body.studentId) || '').trim(),
     requestType: requestType,
     details: String((body && body.details) || '').slice(0, 2000),
-    status: 'pending_verification',
+    status: verified ? 'verified' : 'pending_verification',
     assignedTo: '',
     createdAt: now_(),
     decidedAt: '',
-    decisionNote: ''
+    decisionNote: verified ? 'Verified via teacher-issued code.' : ''
   };
   upsertRow_(DS_SHEETS.parentRequests, 'id', id, row);
   logEvent_('PARENT_REQUEST_CREATED', {
@@ -500,7 +517,7 @@ function createParentRequest_(body) {
     actorRole: 'parent',
     entityType: 'parent_request',
     entityId: id,
-    after: { requestType: requestType, studentName: studentName }
+    after: { requestType: requestType, studentName: studentName, verified: verified }
   });
   notifyComplianceAdmin_('New parent request: ' + requestType,
     'Ticket ' + id + ' from ' + parentName + ' <' + parentEmail + '> for student ' + studentName + '.\n\nDetails:\n' + (row.details || '(none)'));
@@ -818,4 +835,253 @@ function adminBoardList_(p) {
     fileUrl: b.jsonFileId ? 'https://drive.google.com/file/d/' + b.jsonFileId + '/view' : ''
   }));
   return { ok: true, boards: boardSlim, rooms: rooms };
+}
+
+/* --- Compliance: Users + Age Band Lock (Days 2.1 / 2.2) -------------------- */
+
+function userKey_(studentName, className) {
+  return cleanName_(String(studentName || '')).toLowerCase() + '||' + cleanName_(String(className || '')).toLowerCase();
+}
+
+function findUserByStudent_(studentName, className) {
+  if (!studentName) return null;
+  const target = userKey_(studentName, className);
+  const rows = readRows_(DS_SHEETS.users);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (userKey_(r.studentName, r.className) === target) return r;
+  }
+  return null;
+}
+
+function upsertUserFromTurnIn_(turnin) {
+  try {
+    const studentName = String(turnin.studentName || '').trim();
+    if (!studentName) return null;
+    const className = String(turnin.className || '').trim();
+    const existing = findUserByStudent_(studentName, className);
+    const now = now_();
+    if (existing) {
+      upsertRow_(DS_SHEETS.users, 'id', existing.id, Object.assign({}, existing, { lastSeen: now }));
+      return existing.id;
+    }
+    const id = 'user_' + Utilities.getUuid();
+    upsertRow_(DS_SHEETS.users, 'id', id, {
+      id: id,
+      studentName: studentName,
+      className: className,
+      email: '',
+      ageBand: 'unknown_minor',
+      ageSource: 'turnin',
+      ageLocked: 'true',
+      ageChangedBy: '',
+      ageChangedAt: '',
+      ageChangeReason: '',
+      parentCodeHash: '',
+      parentCodeExpiresAt: '',
+      lastSeen: now,
+      createdAt: now,
+      notes: ''
+    });
+    return id;
+  } catch (err) {
+    return null;
+  }
+}
+
+function adminUserList_(p) {
+  requireAdmin_(p);
+  const rows = readRows_(DS_SHEETS.users);
+  // Hide the password-style fields from the wire response.
+  const slim = rows.map(r => ({
+    id: r.id,
+    studentName: r.studentName,
+    className: r.className,
+    email: r.email,
+    ageBand: r.ageBand || 'unknown_minor',
+    ageSource: r.ageSource || '',
+    ageLocked: String(r.ageLocked) !== 'false',
+    ageChangedBy: r.ageChangedBy || '',
+    ageChangedAt: r.ageChangedAt || '',
+    ageChangeReason: r.ageChangeReason || '',
+    hasParentCode: !!r.parentCodeHash,
+    parentCodeExpiresAt: r.parentCodeExpiresAt || '',
+    lastSeen: r.lastSeen || '',
+    createdAt: r.createdAt || '',
+    notes: r.notes || ''
+  }));
+  slim.sort((a, b) => String(a.studentName || '').localeCompare(String(b.studentName || '')));
+  return { ok: true, users: slim };
+}
+
+function adminUserUpsert_(p) {
+  requireAdmin_(p);
+  const studentName = clean_(p.studentName || '');
+  if (!studentName) throw new Error('Student name is required.');
+  const className = clean_(p.className || '');
+  const existing = findUserByStudent_(studentName, className);
+  const now = now_();
+  const id = existing ? existing.id : ('user_' + Utilities.getUuid());
+  const before = existing ? { ageBand: existing.ageBand, email: existing.email, notes: existing.notes } : null;
+  const ageBand = ALLOWED_AGE_BANDS.indexOf(p.ageBand) !== -1 ? p.ageBand : (existing && existing.ageBand) || 'unknown_minor';
+  const row = {
+    id: id,
+    studentName: studentName,
+    className: className,
+    email: clean_(p.email || (existing && existing.email) || ''),
+    ageBand: ageBand,
+    ageSource: clean_(p.ageSource || (existing && existing.ageSource) || (existing ? existing.ageSource : 'admin')),
+    ageLocked: existing ? existing.ageLocked : 'true',
+    ageChangedBy: existing ? existing.ageChangedBy : '',
+    ageChangedAt: existing ? existing.ageChangedAt : '',
+    ageChangeReason: existing ? existing.ageChangeReason : '',
+    parentCodeHash: existing ? existing.parentCodeHash : '',
+    parentCodeExpiresAt: existing ? existing.parentCodeExpiresAt : '',
+    lastSeen: existing ? existing.lastSeen : now,
+    createdAt: existing ? existing.createdAt : now,
+    notes: clean_(p.notes || (existing && existing.notes) || '')
+  };
+  upsertRow_(DS_SHEETS.users, 'id', id, row);
+  logEvent_(existing ? 'USER_UPDATED' : 'USER_CREATED', {
+    actor: String((p && p.actor) || 'admin'), actorRole: 'admin',
+    entityType: 'user', entityId: id,
+    before: before, after: { ageBand: ageBand, studentName: studentName, className: className }
+  });
+  return { ok: true, id: id };
+}
+
+function setAgeBand_(p) {
+  requireAdmin_(p);
+  const id = clean_(p.id || '');
+  const newBand = String(p.ageBand || '');
+  const reason = clean_(p.reason || '');
+  const actor = String((p && p.actor) || 'admin');
+  if (ALLOWED_AGE_BANDS.indexOf(newBand) === -1) throw new Error('Invalid age band.');
+  if (!reason) throw new Error('A reason is required for age-band changes.');
+  const existing = findRow_(DS_SHEETS.users, 'id', id);
+  if (!existing) throw new Error('User not found.');
+  // Server is the gatekeeper for the lock even when called by admin: allow only
+  // when the caller is the admin (already validated by requireAdmin_).
+  const updated = Object.assign({}, existing, {
+    ageBand: newBand,
+    ageSource: 'admin',
+    ageLocked: 'true',
+    ageChangedBy: actor,
+    ageChangedAt: now_(),
+    ageChangeReason: reason
+  });
+  upsertRow_(DS_SHEETS.users, 'id', id, updated);
+  logEvent_('AGE_BAND_CHANGED', {
+    actor: actor, actorRole: 'admin',
+    entityType: 'user', entityId: id,
+    before: { ageBand: existing.ageBand || '' },
+    after: { ageBand: newBand, reason: reason }
+  });
+  return { ok: true, id: id, ageBand: newBand };
+}
+
+/* --- Compliance: Teacher-issued parent verification code (Day 2.5) --------- */
+
+function issueParentCode_(p) {
+  requireAdmin_(p);
+  const id = clean_(p.id || '');
+  const actor = String((p && p.actor) || 'admin');
+  const existing = findRow_(DS_SHEETS.users, 'id', id);
+  if (!existing) throw new Error('User not found.');
+  // 8-char alphanumeric code, unambiguous (no 0/O/1/I).
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  const salt = String(DS_PROPS.getProperty('PASSWORD_SALT') || 'drawsplat-default-salt');
+  const hash = hashCode_(code, salt);
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+  const updated = Object.assign({}, existing, {
+    parentCodeHash: hash,
+    parentCodeExpiresAt: expiresAt
+  });
+  upsertRow_(DS_SHEETS.users, 'id', id, updated);
+  logEvent_('PARENT_CODE_ISSUED', {
+    actor: actor, actorRole: 'admin',
+    entityType: 'user', entityId: id,
+    after: { expiresAt: expiresAt }
+  });
+  return { ok: true, id: id, code: code, expiresAt: expiresAt };
+}
+
+function verifyParentCode_(studentName, className, code) {
+  if (!code) return null;
+  const existing = findUserByStudent_(studentName, className);
+  if (!existing) return null;
+  const hash = existing.parentCodeHash;
+  if (!hash) return null;
+  if (existing.parentCodeExpiresAt && existing.parentCodeExpiresAt < now_()) return null;
+  const salt = String(DS_PROPS.getProperty('PASSWORD_SALT') || 'drawsplat-default-salt');
+  const supplied = hashCode_(String(code || '').toUpperCase(), salt);
+  if (supplied !== hash) return null;
+  // Single-use code: clear after successful verification.
+  upsertRow_(DS_SHEETS.users, 'id', existing.id, Object.assign({}, existing, { parentCodeHash: '', parentCodeExpiresAt: '' }));
+  return existing;
+}
+
+function hashCode_(value, salt) {
+  const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(salt) + ':' + String(value));
+  return Utilities.base64Encode(bytes);
+}
+
+/* --- Compliance: Data deletion (Day 2.7) ----------------------------------- */
+
+function deleteStudentData_(p) {
+  requireAdmin_(p);
+  const studentName = clean_(p.studentName || '');
+  const className = clean_(p.className || '');
+  if (!studentName) throw new Error('Student name is required.');
+  const actor = String((p && p.actor) || 'admin');
+  let boardsDeleted = 0, turninsDeleted = 0, userDeleted = 0;
+  const matches = function(row) {
+    const sn = String(row.studentName || '').trim().toLowerCase();
+    const cn = String(row.className || '').trim().toLowerCase();
+    if (className) return sn === studentName.toLowerCase() && cn === className.toLowerCase();
+    return sn === studentName.toLowerCase();
+  };
+  // Trash and remove turn-in files matching the student.
+  const turninSheet = sheet_(DS_SHEETS.turnins);
+  const turninValues = turninSheet.getDataRange().getValues();
+  for (let i = turninValues.length - 1; i >= 1; i--) {
+    const row = rowObject_(turninValues[0], turninValues[i]);
+    if (matches(row)) {
+      try { if (row.jsonFileId) DriveApp.getFileById(row.jsonFileId).setTrashed(true); } catch (e) {}
+      try { if (row.pngFileId) DriveApp.getFileById(row.pngFileId).setTrashed(true); } catch (e) {}
+      turninSheet.deleteRow(i + 1);
+      turninsDeleted++;
+    }
+  }
+  // Boards keyed by className — limited to className match if provided.
+  const boardSheet = sheet_(DS_SHEETS.boards);
+  const boardValues = boardSheet.getDataRange().getValues();
+  if (className) {
+    for (let i = boardValues.length - 1; i >= 1; i--) {
+      const row = rowObject_(boardValues[0], boardValues[i]);
+      if (String(row.className || '').trim().toLowerCase() === className.toLowerCase()
+          && String(row.title || '').toLowerCase().indexOf(studentName.toLowerCase()) !== -1) {
+        try { if (row.jsonFileId) DriveApp.getFileById(row.jsonFileId).setTrashed(true); } catch (e) {}
+        try { if (row.pngFileId) DriveApp.getFileById(row.pngFileId).setTrashed(true); } catch (e) {}
+        boardSheet.deleteRow(i + 1);
+        boardsDeleted++;
+      }
+    }
+  }
+  // Remove the user row.
+  const userSheet = sheet_(DS_SHEETS.users);
+  const userValues = userSheet.getDataRange().getValues();
+  for (let i = userValues.length - 1; i >= 1; i--) {
+    const row = rowObject_(userValues[0], userValues[i]);
+    if (matches(row)) { userSheet.deleteRow(i + 1); userDeleted++; }
+  }
+  logEvent_('DATA_DELETED', {
+    actor: actor, actorRole: 'admin',
+    entityType: 'student_data',
+    entityId: studentName + '|' + className,
+    after: { boardsDeleted: boardsDeleted, turninsDeleted: turninsDeleted, userDeleted: userDeleted, reason: clean_(p.reason || '') }
+  });
+  return { ok: true, boardsDeleted: boardsDeleted, turninsDeleted: turninsDeleted, userDeleted: userDeleted };
 }

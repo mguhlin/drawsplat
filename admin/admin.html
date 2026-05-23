@@ -141,8 +141,8 @@
         <a class="admin-button" href="../parents/index.html">Parent Request Center</a>
       </div>
       <details class="compliance-section" id="complianceSafetyReview"><summary>Safety Review (text filter, link control, board freeze)</summary><div class="compliance-body"><p class="hint">Text keyword filter and link allowlist are enforced server-side on every Save to Google and Cloud Sync. Hits are recorded as <code>TEXT_FILTER_HIT</code> in Activity Records. Freeze a board to block all future writes until you unfreeze it.</p><div class="admin-actions"><button id="loadSafetyBoardsBtn" type="button" class="primary">Load Boards &amp; Rooms</button><button id="filterSafetyAuditBtn" type="button">View Safety Events</button></div><div id="safetyBoardsList" style="margin-top:12px"></div></div></details>
-      <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, time limits)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.3–2.10. Parents can submit requests, receive a teacher-issued verification code, download a student data export, or request deletion / account pause.</p></div></details>
-      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Configured in Days 2.1–2.2. Each student carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only district admin can override, with audit trail.</p></div></details>
+      <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, deletion)</summary><div class="compliance-body"><p class="hint">Parents submit requests at <a href="../parents/index.html">/parents/</a>. Verified requests appear here. Click <strong>Issue Parent Code</strong> on a student in Age Lock below to give a parent a one-time verification code (valid 14 days).</p><div class="admin-actions"><button id="loadParentRequestsBtn" type="button" class="primary">Load Requests</button></div><div id="parentRequestsList" style="margin-top:12px"></div></div></details>
+      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Each student record carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only the admin can override, with reason + audit trail. Rows auto-populate when students submit turn-ins; you can also add students manually below.</p><div class="admin-actions"><button id="loadUsersBtn" type="button" class="primary">Load Students</button><button id="addUserBtn" type="button">Add Student</button></div><div id="usersList" style="margin-top:12px"></div></div></details>
       <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.8–2.9. Browser timer provides UX; Apps Script gate provides the authoritative cutoff for compliance.</p></div></details>
       <details class="compliance-section" id="complianceRetention"><summary>Retention Policy &amp; Cleanup</summary><div class="compliance-body"><p class="hint">Configured in Days 3.7–3.8. Boards archive after N days, delete after M days. Activity Records prune to the configured retention window via a nightly Apps Script trigger.</p></div></details>
       <details class="compliance-section" id="complianceAudit"><summary>Activity Records (audit log)</summary><div class="compliance-body" id="complianceAuditBody"><p class="hint">Last 200 events. Filter by action and actor. Download as CSV for reviewer evidence.</p><div id="complianceAuditViewer">Connect a Web App URL above to load Activity Records.</div></div></details>
@@ -164,7 +164,7 @@
   </form>
 </dialog>
 
-<script src="../assets/js/admin-gate.js?v=0.5"></script>
-<script src="../assets/js/admin.js?v=0.5"></script>
+<script src="../assets/js/admin-gate.js?v=0.6"></script>
+<script src="../assets/js/admin.js?v=0.6"></script>
 </body>
 </html>

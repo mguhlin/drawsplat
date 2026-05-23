@@ -322,5 +322,107 @@
     await loadAuditEvents();
   });
 
+  /* --- Compliance: Age Band Lock (Days 2.1/2.2) + Parent Code (2.5) ------- */
+  const AGE_BANDS=['under_13','13_to_17','18_plus','unknown_minor'];
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  async function adminCall(action,extra,method){
+    const url=cleanUrl();
+    if(!url) throw new Error('Save a Web App URL above first.');
+    const pc=await getAdminPasscode();
+    if(!pc) throw new Error('Admin passcode required.');
+    const payload={action,passcode:pc,actor:'admin',...(extra||{})};
+    if((method||'GET')==='GET'){
+      const params=new URLSearchParams(payload);
+      const res=await fetch(url+'?'+params.toString());
+      const data=await res.json();
+      if(!data.ok) throw new Error(data.error||'Request failed.');
+      return data;
+    }
+    const body=new URLSearchParams(payload);
+    const res=await fetch(url,{method:'POST',body});
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.error||'Request failed.');
+    return data;
+  }
+  async function loadUsers(){
+    const host=document.getElementById('usersList');
+    if(!host) return;
+    host.textContent='Loading…';
+    try{
+      const data=await adminCall('userList',{});
+      renderUsers(host,data.users||[]);
+    }catch(err){ host.textContent=String(err.message||err); }
+  }
+  function renderUsers(host,users){
+    if(!users.length){ host.innerHTML='<p class="hint">No student records yet. They auto-populate from turn-ins, or click <strong>Add Student</strong>.</p>'; return; }
+    const rows=users.map(u=>{
+      const banner=u.hasParentCode?'<div class="hint" style="color:#0f766e;margin-top:4px">Parent code active until '+esc(u.parentCodeExpiresAt||'')+'</div>':'';
+      const select='<select class="user-age-select" data-id="'+esc(u.id)+'">'+
+        AGE_BANDS.map(b=>'<option value="'+b+'"'+(b===u.ageBand?' selected':'')+'>'+b+'</option>').join('')+
+        '</select>';
+      return `<tr><td><strong>${esc(u.studentName)}</strong>${u.className?' &middot; '+esc(u.className):''}<br><small style="color:var(--muted)">${esc(u.id)} &middot; last seen ${esc(u.lastSeen||'never')}${u.ageChangedBy?' &middot; changed by '+esc(u.ageChangedBy)+' ('+esc(u.ageChangeReason||'')+')':''}</small>${banner}</td><td>${select}</td><td style="text-align:right;white-space:nowrap"><button type="button" class="user-issue-code" data-id="${esc(u.id)}">Issue Parent Code</button> <button type="button" class="user-delete-data" data-id="${esc(u.id)}" data-name="${esc(u.studentName)}" data-class="${esc(u.className)}">Delete Data</button></td></tr>`;
+    }).join('');
+    host.innerHTML='<div class="compliance-table-wrap"><table class="compliance-table"><thead><tr><th>Student</th><th>Age Band</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    host.querySelectorAll('.user-age-select').forEach(sel=>{
+      sel.addEventListener('change',async()=>{
+        const reason=(window.prompt('Reason for changing this age band? (required, logged in Activity Records)')||'').trim();
+        if(!reason){ await loadUsers(); return; }
+        try{ await adminCall('setAgeBand',{id:sel.dataset.id,ageBand:sel.value,reason},'POST'); await loadUsers(); }
+        catch(err){ alert(err.message||err); await loadUsers(); }
+      });
+    });
+    host.querySelectorAll('.user-issue-code').forEach(btn=>{
+      btn.addEventListener('click',async()=>{
+        try{ const data=await adminCall('issueParentCode',{id:btn.dataset.id},'POST');
+          window.prompt('One-time parent verification code (valid 14 days). Share with the parent via your school’s parent-comms channel:',data.code);
+          await loadUsers();
+        }catch(err){ alert(err.message||err); }
+      });
+    });
+    host.querySelectorAll('.user-delete-data').forEach(btn=>{
+      btn.addEventListener('click',async()=>{
+        const name=btn.dataset.name; const cls=btn.dataset.class||'';
+        if(!confirm('Delete ALL data for '+name+(cls?' in '+cls:'')+'?\n\nThis trashes Drive files for boards/turn-ins and removes the student row. It is logged in Activity Records but cannot be undone from here.')) return;
+        const reason=(window.prompt('Reason (logged in Activity Records):')||'').trim();
+        try{ const data=await adminCall('deleteStudentData',{studentName:name,className:cls,reason},'POST');
+          alert('Deleted: '+data.boardsDeleted+' boards, '+data.turninsDeleted+' turn-ins, '+data.userDeleted+' user row.');
+          await loadUsers();
+        }catch(err){ alert(err.message||err); }
+      });
+    });
+  }
+  async function addUserDialog(){
+    const studentName=(window.prompt('Student name:')||'').trim();
+    if(!studentName) return;
+    const className=(window.prompt('Class (optional):')||'').trim();
+    const ageBand=(window.prompt('Age band: under_13, 13_to_17, 18_plus, or unknown_minor','unknown_minor')||'').trim();
+    if(AGE_BANDS.indexOf(ageBand)===-1){ alert('Invalid age band.'); return; }
+    try{ await adminCall('userUpsert',{studentName,className,ageBand,ageSource:'admin'},'POST'); await loadUsers(); }
+    catch(err){ alert(err.message||err); }
+  }
+  async function loadParentRequests(){
+    const host=document.getElementById('parentRequestsList');
+    if(!host) return;
+    host.textContent='Loading…';
+    try{
+      const data=await adminCall('parentRequestList',{});
+      const rows=(data.requests||[]).slice(0,100);
+      if(!rows.length){ host.innerHTML='<p class="hint">No requests yet.</p>'; return; }
+      host.innerHTML='<div class="compliance-table-wrap"><table class="compliance-table"><thead><tr><th>Ticket</th><th>Type</th><th>Status</th><th>Created</th><th style="text-align:right">Decide</th></tr></thead><tbody>'+
+        rows.map(r=>`<tr><td><strong>${esc(r.parentName)}</strong> &lt;${esc(r.parentEmail)}&gt;<br><small>Student: ${esc(r.studentName)} ${r.className?'&middot; '+esc(r.className):''}<br>${esc(r.details||'')}</small></td><td>${esc(r.requestType)}</td><td>${esc(r.status)}</td><td>${esc(r.createdAt||'')}</td><td style="text-align:right;white-space:nowrap"><button type="button" class="parent-decide" data-id="${esc(r.id)}" data-decision="approved">Approve</button> <button type="button" class="parent-decide" data-id="${esc(r.id)}" data-decision="denied">Deny</button> <button type="button" class="parent-decide" data-id="${esc(r.id)}" data-decision="completed">Done</button></td></tr>`).join('')+
+        '</tbody></table></div>';
+      host.querySelectorAll('.parent-decide').forEach(btn=>{
+        btn.addEventListener('click',async()=>{
+          const note=(window.prompt('Decision note (optional):')||'').trim();
+          try{ await adminCall('parentRequestDecide',{id:btn.dataset.id,decision:btn.dataset.decision,decisionNote:note},'POST'); await loadParentRequests(); }
+          catch(err){ alert(err.message||err); }
+        });
+      });
+    }catch(err){ host.textContent=String(err.message||err); }
+  }
+  document.getElementById('loadUsersBtn')?.addEventListener('click',loadUsers);
+  document.getElementById('addUserBtn')?.addEventListener('click',addUserDialog);
+  document.getElementById('loadParentRequestsBtn')?.addEventListener('click',loadParentRequests);
+
   loadSettings();
 })();

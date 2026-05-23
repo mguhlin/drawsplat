@@ -31,6 +31,8 @@
       parentEmail:document.getElementById('parentEmail').value.trim(),
       studentName:document.getElementById('studentName').value.trim(),
       studentId:document.getElementById('studentId').value.trim(),
+      className:(document.getElementById('className')?.value||'').trim(),
+      verificationCode:(document.getElementById('verificationCode')?.value||'').trim().toUpperCase(),
       requestType:document.getElementById('requestType').value,
       details:document.getElementById('requestDetails').value.trim()
     };
