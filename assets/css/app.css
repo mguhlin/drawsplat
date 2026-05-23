@@ -595,6 +595,13 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .compliance-table th,.compliance-table td{padding:6px 8px;border-bottom:1px solid #eef2fa;text-align:left;vertical-align:top;white-space:nowrap}
 .compliance-table th{background:#f5f7fb;position:sticky;top:0;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:11px}
 .compliance-table tr:hover td{background:#fafbff}
+.admin-passcode-dialog{border:0;border-radius:14px;padding:0;width:min(420px,calc(100vw - 32px));box-shadow:0 30px 80px #11182740}
+.admin-passcode-dialog::backdrop{background:rgba(15,23,42,.55)}
+.admin-passcode-dialog form{padding:20px}
+.admin-passcode-dialog h3{margin:0 0 8px;font-size:18px;color:var(--ink-dark)}
+.admin-passcode-dialog .hint{font-size:13px;color:var(--muted);margin:0 0 14px}
+.admin-passcode-dialog input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:#fff}
+.admin-passcode-dialog .admin-actions{justify-content:flex-end;margin-top:14px}
 .admin-checklist{margin:8px 0 0;padding-left:22px;color:var(--ink);line-height:1.55}
 .admin-checklist li{margin:5px 0}
 .admin-gate{display:none;min-height:calc(100vh - 58px);align-items:center;justify-content:center;padding:24px}

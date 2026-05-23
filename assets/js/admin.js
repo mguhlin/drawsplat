@@ -147,19 +147,44 @@
   /* --- Compliance: Activity Records viewer (Day 1.8) + Privacy Packet (3.6) - */
   const ADMIN_PASSCODE_KEY='drawsplat.complianceAdminPasscode';
   function getAdminPasscode(){
-    let pc=localStorage.getItem(ADMIN_PASSCODE_KEY)||'';
-    if(!pc){
-      pc=(window.prompt('Enter the ADMIN_PASSCODE set in the Apps Script project (saved in this browser only):')||'').trim();
-      if(pc) localStorage.setItem(ADMIN_PASSCODE_KEY,pc);
+    const pc=(localStorage.getItem(ADMIN_PASSCODE_KEY)||'').trim();
+    if(pc) return Promise.resolve(pc);
+    const dialog=document.getElementById('adminPasscodeDialog');
+    const form=document.getElementById('adminPasscodeForm');
+    const input=document.getElementById('adminPasscodeInput');
+    if(!dialog||!dialog.showModal||!form||!input){
+      const fallback=(window.prompt('Enter the ADMIN_PASSCODE set in the Apps Script project (saved in this browser only). Note: this prompt is not masked.')||'').trim();
+      if(fallback) localStorage.setItem(ADMIN_PASSCODE_KEY,fallback);
+      return Promise.resolve(fallback);
     }
-    return pc;
+    input.value='';
+    return new Promise(resolve=>{
+      function onSubmit(ev){
+        ev.preventDefault();
+        const decision=(ev.submitter&&ev.submitter.value)||'cancel';
+        const value=input.value.trim();
+        dialog.close(decision);
+        if(decision==='ok'&&value){
+          localStorage.setItem(ADMIN_PASSCODE_KEY,value);
+          resolve(value);
+        }else{
+          resolve('');
+        }
+        form.removeEventListener('submit',onSubmit);
+        input.value='';
+      }
+      form.addEventListener('submit',onSubmit);
+      dialog.showModal();
+      try{ input.focus(); }catch(e){}
+    });
   }
+  function clearAdminPasscode(){ try{ localStorage.removeItem(ADMIN_PASSCODE_KEY); }catch(e){} }
   async function loadAuditEvents(){
     const url=cleanUrl();
     const target=document.getElementById('complianceAuditViewer');
     if(!target) return;
     if(!url){ target.textContent='Save a Web App URL above first.'; return; }
-    const pc=getAdminPasscode();
+    const pc=await getAdminPasscode();
     if(!pc){ target.textContent='Admin passcode required.'; return; }
     target.textContent='Loading…';
     try{
@@ -190,7 +215,7 @@
     const status=document.getElementById('privacyPacketStatus');
     const url=cleanUrl();
     if(!url){ if(status) status.textContent='Save a Web App URL above first.'; return; }
-    const pc=getAdminPasscode();
+    const pc=await getAdminPasscode();
     if(!pc){ if(status) status.textContent='Admin passcode required.'; return; }
     if(status) status.textContent='Generating packet…';
     try{

@@ -151,7 +151,20 @@
   </section>
 </main>
 
-<script src="../assets/js/admin-gate.js?v=0.3"></script>
-<script src="../assets/js/admin.js?v=0.3"></script>
+<dialog id="adminPasscodeDialog" class="admin-passcode-dialog">
+  <form method="dialog" id="adminPasscodeForm">
+    <h3>Admin passcode</h3>
+    <p class="hint">Enter the <code>ADMIN_PASSCODE</code> set in your Apps Script Script Properties. It's stored in this browser only (localStorage) and used for Activity Records and the District Privacy Packet.</p>
+    <label class="admin-label" for="adminPasscodeInput">Passcode</label>
+    <input id="adminPasscodeInput" type="password" autocomplete="current-password" autofocus>
+    <div class="admin-actions">
+      <button type="submit" value="cancel">Cancel</button>
+      <button type="submit" value="ok" class="primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="../assets/js/admin-gate.js?v=0.4"></script>
+<script src="../assets/js/admin.js?v=0.4"></script>
 </body>
 </html>
