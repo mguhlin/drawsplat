@@ -66,15 +66,15 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 1.1 | Text keyword filter &mdash; config + client-side pre-check | [ ] | |
-| 1.2 | Text keyword filter &mdash; Apps Script server-side enforcement | [ ] | |
-| 1.3 | Image upload approval queue &mdash; data model + Apps Script | [ ] | |
-| 1.4 | Image upload approval queue &mdash; teacher review UI | [ ] | |
-| 1.5 | Link allow/blocklist | [ ] | |
-| 1.6 | Board freeze + write-blocked enforcement | [ ] | |
+| 1.1 | Text keyword filter &mdash; config + client-side pre-check | [x] | pending |
+| 1.2 | Text keyword filter &mdash; Apps Script server-side enforcement | [x] | pending |
+| 1.3 | Image upload approval queue &mdash; data model + Apps Script | [ ] | deferred |
+| 1.4 | Image upload approval queue &mdash; teacher review UI | [ ] | deferred |
+| 1.5 | Link allow/blocklist | [x] | pending |
+| 1.6 | Board freeze + write-blocked enforcement | [x] | pending |
 | 1.7 | Activity Records (audit log) &mdash; schema + write helpers | [x] | 021c657 |
 | 1.8 | Activity Records &mdash; viewer UI in Teacher Admin | [x] | 021c657 |
-| 1.9 | Safety Review &mdash; rename moderation + merged queue | [ ] | |
+| 1.9 | Safety Review &mdash; rename moderation + merged queue | [x] | pending |
 
 ### Phase 2 &mdash; Age + Parent (10 days)
 
@@ -582,4 +582,5 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-23  Days 1.1, 1.2, 1.5, 1.6, 1.9  Safety filters live: client-side text + link scan in assets/js/safety.js wired to inline text commit and board title; server-side scan in Apps Script saveBoard_ / saveRoom_ logs TEXT_FILTER_HIT and rejects when blockOnMatch is true. Board/room freeze adds frozen/frozenBy/frozenAt/frozenReason columns; freezeBoard / freezeRoom endpoints; Safety Review section in Teacher Admin lists recent boards + rooms with freeze/unfreeze toggle. Days 1.3/1.4 deferred (whiteboard images embed in board JSON; explicit upload endpoint doesn't exist yet). Pending commit/push.
 2026-05-23  Days 0.1, 0.2, 1.7, 1.8, 2.3, 2.4, 3.6  Visible-trust items shipped: config schema + loader, Compliance Console scaffolding, Activity Records (Apps Script helpers + Teacher Admin viewer + CSV export), Family Access Tools page + Apps Script ticket endpoint + admin decide endpoint, District Privacy Packet generator + download button. New files: compliance.config.json, parents/index.html, assets/js/parents.js, docs/COMPLIANCE.md. Pending commit/push.

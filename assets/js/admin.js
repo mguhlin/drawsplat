@@ -262,5 +262,65 @@
   document.getElementById('complianceAudit')?.addEventListener('toggle',function(){ if(this.open) loadAuditEvents(); });
   document.getElementById('downloadPrivacyPacketBtn')?.addEventListener('click',downloadPrivacyPacket);
 
+  /* --- Compliance: Safety Review boards + freeze (Day 1.6/1.9) ------------ */
+  async function loadSafetyBoards(){
+    const host=document.getElementById('safetyBoardsList');
+    const url=cleanUrl();
+    if(!host) return;
+    if(!url){ host.textContent='Save a Web App URL above first.'; return; }
+    const pc=await getAdminPasscode();
+    if(!pc){ host.textContent='Admin passcode required.'; return; }
+    host.textContent='Loading…';
+    try{
+      const params=new URLSearchParams({action:'boardList',passcode:pc,limit:'100'});
+      const res=await fetch(url+'?'+params.toString());
+      const data=await res.json();
+      if(!data.ok) throw new Error(data.error||'Could not load boards.');
+      renderSafetyBoards(host,data.boards||[],data.rooms||[]);
+    }catch(err){ host.textContent=String(err.message||err); }
+  }
+  function renderSafetyBoards(host,boards,rooms){
+    const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const rowFor=(item,kind)=>{
+      const cls=item.frozen?' frozen':'';
+      const status=item.frozen?'<span class="badge-freeze">Frozen</span> by '+esc(item.frozenBy||'')+' &middot; '+esc(item.frozenReason||'no reason'):'';
+      const action=item.frozen?
+        `<button type="button" data-kind="${kind}" data-id="${esc(item.id)}" data-act="unfreeze">Unfreeze</button>`:
+        `<button type="button" data-kind="${kind}" data-id="${esc(item.id)}" data-act="freeze" class="primary">Freeze</button>`;
+      return `<tr class="safety-row${cls}"><td><strong>${esc(item.title||item.id)}</strong>${kind==='board'&&item.className?' &middot; '+esc(item.className):''}<br><small style="color:var(--muted)">${kind}: ${esc(item.id)} &middot; updated ${esc(item.updatedAt||'')}</small>${item.frozen?'<div class="hint" style="color:#b91c1c;margin-top:4px">'+status+'</div>':''}</td><td style="text-align:right">${action}</td></tr>`;
+    };
+    if(!boards.length && !rooms.length){ host.textContent='No saved boards or rooms.'; return; }
+    host.innerHTML='<div class="compliance-table-wrap"><table class="compliance-table"><thead><tr><th>Item</th><th style="text-align:right">Action</th></tr></thead><tbody>'+
+      boards.map(b=>rowFor(b,'board')).join('')+
+      rooms.map(r=>rowFor(r,'room')).join('')+
+      '</tbody></table></div><div class="admin-actions"><button id="refreshSafetyBoardsBtn" type="button">Refresh</button></div>';
+    document.getElementById('refreshSafetyBoardsBtn')?.addEventListener('click',loadSafetyBoards);
+    host.querySelectorAll('button[data-act]').forEach(btn=>{
+      btn.addEventListener('click',async()=>{
+        const id=btn.dataset.id, kind=btn.dataset.kind, act=btn.dataset.act;
+        let reason='';
+        if(act==='freeze'){ reason=(window.prompt('Reason for freezing this '+kind+'?')||'').trim(); if(reason==='') return; }
+        btn.disabled=true; btn.textContent='Working…';
+        try{
+          const url=cleanUrl(); const pc=await getAdminPasscode();
+          const body=new URLSearchParams({action:kind==='room'?'freezeRoom':'freezeBoard',passcode:pc,actor:'admin',frozen:act==='freeze'?'true':'false',reason:reason});
+          if(kind==='room') body.set('room',id); else body.set('boardId',id);
+          const res=await fetch(url,{method:'POST',body});
+          const data=await res.json();
+          if(!data.ok) throw new Error(data.error||'Action failed.');
+          await loadSafetyBoards();
+        }catch(err){
+          alert(err.message||err);
+          btn.disabled=false; btn.textContent=act==='freeze'?'Freeze':'Unfreeze';
+        }
+      });
+    });
+  }
+  document.getElementById('loadSafetyBoardsBtn')?.addEventListener('click',loadSafetyBoards);
+  document.getElementById('filterSafetyAuditBtn')?.addEventListener('click',async()=>{
+    document.getElementById('complianceAudit')?.setAttribute('open','');
+    await loadAuditEvents();
+  });
+
   loadSettings();
 })();

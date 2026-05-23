@@ -26,8 +26,8 @@ const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'st
 function setup() {
   const ss = getSpreadsheet_();
   getFolder_();
-  ensureSheet_(ss, DS_SHEETS.boards, ['boardId', 'title', 'className', 'updatedAt', 'jsonFileId', 'pngFileId', 'folderUrl']);
-  ensureSheet_(ss, DS_SHEETS.rooms, ['room', 'updatedAt', 'jsonFileId', 'instanceId', 'passwordHash']);
+  ensureSheet_(ss, DS_SHEETS.boards, ['boardId', 'title', 'className', 'updatedAt', 'jsonFileId', 'pngFileId', 'folderUrl', 'frozen', 'frozenBy', 'frozenAt', 'frozenReason']);
+  ensureSheet_(ss, DS_SHEETS.rooms, ['room', 'updatedAt', 'jsonFileId', 'instanceId', 'passwordHash', 'frozen', 'frozenBy', 'frozenAt', 'frozenReason']);
   ensureSheet_(ss, DS_SHEETS.templates, ['templateId', 'name', 'updatedAt', 'jsonFileId']);
   ensureSheet_(ss, DS_SHEETS.turnins, ['turninId', 'studentName', 'className', 'title', 'updatedAt', 'jsonFileId', 'pngFileId']);
   ensureSheet_(ss, DS_SHEETS.audit, DS_AUDIT_HEADERS);
@@ -53,6 +53,7 @@ function doGet(e) {
       case 'auditList': return json_(adminAuditList_(p));
       case 'parentRequestList': return json_(adminParentRequestList_(p));
       case 'privacyPacket': return privacyPacketResponse_(p);
+      case 'boardList': return json_(adminBoardList_(p));
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -72,6 +73,8 @@ function doPost(e) {
       case 'turnInSave': return json_(saveTurnIn_(body.turnin, body.png));
       case 'parentRequest': return json_(createParentRequest_(body));
       case 'parentRequestDecide': return json_(decideParentRequest_(body));
+      case 'freezeBoard': return json_(freezeBoard_(body));
+      case 'freezeRoom': return json_(freezeRoom_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -82,8 +85,20 @@ function doPost(e) {
 /* Board save/load persists full board JSON plus an optional PNG preview. */
 function saveBoard_(board, png) {
   if (!board) throw new Error('Missing board.');
+  const incomingId = String(board.boardId || '');
+  if (incomingId) {
+    const existing = findRow_(DS_SHEETS.boards, 'boardId', incomingId);
+    if (existing && String(existing.frozen) === 'true') {
+      throw new Error('This board is frozen. Saves are blocked: ' + (existing.frozenReason || 'no reason given'));
+    }
+  }
+  const violations = scanBoardForSafety_(board);
+  if (violations.length) {
+    logEvent_('TEXT_FILTER_HIT', { actor: board.studentName || '', actorRole: board.mode === 'student' ? 'student' : 'teacher', entityType: 'board', entityId: incomingId || 'pending', after: { violations: violations } });
+    if (safetyConfigBlocks_()) throw new Error('Content blocked by safety filter: ' + violations[0].reason);
+  }
   const folder = getFolder_();
-  const boardId = 'board_' + Utilities.getUuid();
+  const boardId = incomingId || ('board_' + Utilities.getUuid());
   const title = cleanName_(board.title || 'DrawSplatTM Board');
   const jsonFile = writeJsonFile_(folder, boardId + '.drawsplat.json', board);
   let pngFile = null;
@@ -95,9 +110,14 @@ function saveBoard_(board, png) {
     updatedAt: now_(),
     jsonFileId: jsonFile.getId(),
     pngFileId: pngFile ? pngFile.getId() : '',
-    folderUrl: folder.getUrl()
+    folderUrl: folder.getUrl(),
+    frozen: '',
+    frozenBy: '',
+    frozenAt: '',
+    frozenReason: ''
   });
-  return { ok: true, boardId, fileUrl: jsonFile.getUrl(), folderUrl: folder.getUrl(), pngUrl: pngFile ? pngFile.getUrl() : '' };
+  logEvent_('BOARD_SAVE', { actor: board.studentName || '', actorRole: board.mode === 'student' ? 'student' : 'teacher', entityType: 'board', entityId: boardId, after: { title: title, hasViolations: violations.length > 0 } });
+  return { ok: true, boardId, fileUrl: jsonFile.getUrl(), folderUrl: folder.getUrl(), pngUrl: pngFile ? pngFile.getUrl() : '', violations: violations };
 }
 
 function loadBoard_(boardId) {
@@ -119,7 +139,15 @@ function saveRoom_(room, password, role, instanceId, board) {
     const existing = findRow_(DS_SHEETS.rooms, 'room', room);
     const isStudent = role === 'student' || board.mode === 'student';
     if (!existing && isStudent) throw new Error('Room not found. Ask the teacher to start the room first.');
+    if (existing && String(existing.frozen) === 'true') {
+      throw new Error('This room is frozen. Saves are blocked: ' + (existing.frozenReason || 'no reason given'));
+    }
     if (existing) requireRoomPassword_(existing, password);
+    const violations = scanBoardForSafety_(board);
+    if (violations.length) {
+      logEvent_('TEXT_FILTER_HIT', { actor: board.studentName || '', actorRole: isStudent ? 'student' : 'teacher', entityType: 'room', entityId: room, after: { violations: violations } });
+      if (safetyConfigBlocks_()) throw new Error('Content blocked by safety filter: ' + violations[0].reason);
+    }
 
     const folder = getFolder_();
     const updatedAt = now_();
@@ -617,4 +645,177 @@ function notifyComplianceAdmin_(subject, body) {
   } catch (err) {
     // Notification failures are non-fatal.
   }
+}
+
+/* --- Compliance: Safety filters (Days 1.1 / 1.2 / 1.5) -------------------- */
+
+/* safetyConfig_() returns the active text + link safety configuration. If a
+ * COMPLIANCE_CONFIG Script Property is set (typically pushed from Teacher
+ * Admin in Day 3.2), that config wins. Otherwise we use the same defaults
+ * that ship in compliance.config.json. */
+function safetyConfig_() {
+  const stored = DS_PROPS.getProperty('COMPLIANCE_CONFIG');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed && parsed.safety) return parsed.safety;
+    } catch (e) {}
+  }
+  return {
+    text: {
+      enabled: true,
+      patterns: [
+        '\\b(kill myself|suicide|self harm|self-harm)\\b',
+        '\\b(nude|porn|sexually explicit)\\b',
+        '\\b(cocaine|meth|fentanyl|heroin)\\b',
+        '\\b(harass|stalk|doxx|doxxing)\\b'
+      ],
+      words: [],
+      blockOnMatch: true,
+      logOnMatch: true,
+      appliesTo: ['sticky', 'text', 'comment', 'boardTitle']
+    },
+    links: {
+      enabled: true,
+      blockUnapproved: true,
+      allowedDomains: ['tcea.org', 'edu.google.com', 'khanacademy.org', 'loc.gov', 'nasa.gov', 'smithsonian.org', 'drawsplat.org']
+    }
+  };
+}
+
+function safetyConfigBlocks_() {
+  const cfg = safetyConfig_();
+  if (!cfg || !cfg.text) return false;
+  return cfg.text.blockOnMatch !== false;
+}
+
+/* scanBoardForSafety_(board) walks every panel.objects[] and the board
+ * title, checks each text field against the active safety config, and
+ * returns a list of {surface, type, sample, reason} violations. Returns
+ * an empty array if nothing is flagged. */
+function scanBoardForSafety_(board) {
+  const cfg = safetyConfig_();
+  const text = cfg && cfg.text && cfg.text.enabled !== false ? cfg.text : null;
+  const links = cfg && cfg.links && cfg.links.enabled !== false ? cfg.links : null;
+  const violations = [];
+  if (!text && !links) return violations;
+  const textPatterns = text ? compilePatterns_(text.patterns || []) : [];
+  const wordsPattern = text ? wordsToPattern_(text.words || []) : null;
+  const allowedDomains = links ? (links.allowedDomains || []).map(d => String(d).toLowerCase()) : [];
+  const checkOne = (val, surface, type, entityId) => {
+    const s = String(val == null ? '' : val);
+    if (!s) return;
+    if (text && text.appliesTo && text.appliesTo.indexOf(surface) === -1) {
+      // skip text-pattern check for surfaces opted out
+    } else if (text) {
+      for (let i = 0; i < textPatterns.length; i++) {
+        const m = s.match(textPatterns[i]);
+        if (m) { violations.push({ surface: surface, type: type, entityId: entityId, sample: m[0], reason: 'flagged-text' }); break; }
+      }
+      if (wordsPattern) {
+        const m = s.match(wordsPattern);
+        if (m) violations.push({ surface: surface, type: type, entityId: entityId, sample: m[0], reason: 'flagged-word' });
+      }
+    }
+    if (links && links.blockUnapproved) {
+      const urls = (s.match(/\bhttps?:\/\/[^\s<>"')]+/gi) || []);
+      urls.forEach(u => {
+        let host = '';
+        try { host = u.split('/')[2].toLowerCase(); } catch (e) { host = ''; }
+        if (!host) return;
+        const ok = allowedDomains.some(d => host === d || host.indexOf('.' + d) !== -1);
+        if (!ok) violations.push({ surface: surface, type: type, entityId: entityId, sample: host, reason: 'blocked-link' });
+      });
+    }
+  };
+  if (board && board.title) checkOne(board.title, 'boardTitle', 'board', '');
+  (board && board.panels ? board.panels : []).forEach(panel => {
+    (panel.objects || []).forEach(obj => {
+      const surface = obj.type === 'sticky' ? 'sticky' : (obj.type === 'text' ? 'text' : (obj.type === 'comment' ? 'comment' : (obj.type === 'connector' ? 'connectorLabel' : obj.type)));
+      const value = obj.type === 'connector' ? (obj.connectorLabel || '') : (obj.text || '');
+      checkOne(value, surface, obj.type || 'unknown', obj.id || '');
+    });
+  });
+  return violations;
+}
+
+function compilePatterns_(list) {
+  const out = [];
+  (list || []).forEach(src => {
+    try { out.push(new RegExp(src, 'i')); } catch (e) {}
+  });
+  return out;
+}
+
+function wordsToPattern_(words) {
+  if (!words || !words.length) return null;
+  const escaped = words.map(w => String(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  try { return new RegExp('\\b(' + escaped.join('|') + ')\\b', 'i'); } catch (e) { return null; }
+}
+
+/* --- Compliance: Board freeze (Day 1.6) ----------------------------------- */
+
+function freezeBoard_(body) {
+  requireAdmin_(body);
+  const id = String((body && body.boardId) || '');
+  const frozen = String((body && body.frozen) || 'true').toLowerCase() !== 'false';
+  const reason = String((body && body.reason) || '').slice(0, 500);
+  const actor = String((body && body.actor) || 'admin');
+  const existing = findRow_(DS_SHEETS.boards, 'boardId', id);
+  if (!existing) throw new Error('Board not found.');
+  upsertRow_(DS_SHEETS.boards, 'boardId', id, {
+    boardId: id,
+    title: existing.title || '',
+    className: existing.className || '',
+    updatedAt: existing.updatedAt || '',
+    jsonFileId: existing.jsonFileId || '',
+    pngFileId: existing.pngFileId || '',
+    folderUrl: existing.folderUrl || '',
+    frozen: frozen ? 'true' : '',
+    frozenBy: frozen ? actor : '',
+    frozenAt: frozen ? now_() : '',
+    frozenReason: frozen ? reason : ''
+  });
+  logEvent_(frozen ? 'BOARD_FREEZE' : 'BOARD_UNFREEZE', { actor: actor, actorRole: 'admin', entityType: 'board', entityId: id, after: { frozen: frozen, reason: reason } });
+  return { ok: true, boardId: id, frozen: frozen };
+}
+
+function freezeRoom_(body) {
+  requireAdmin_(body);
+  const room = String((body && body.room) || '');
+  const frozen = String((body && body.frozen) || 'true').toLowerCase() !== 'false';
+  const reason = String((body && body.reason) || '').slice(0, 500);
+  const actor = String((body && body.actor) || 'admin');
+  const existing = findRow_(DS_SHEETS.rooms, 'room', room);
+  if (!existing) throw new Error('Room not found.');
+  upsertRow_(DS_SHEETS.rooms, 'room', room, {
+    room: room,
+    updatedAt: existing.updatedAt || '',
+    jsonFileId: existing.jsonFileId || '',
+    instanceId: existing.instanceId || '',
+    passwordHash: existing.passwordHash || '',
+    frozen: frozen ? 'true' : '',
+    frozenBy: frozen ? actor : '',
+    frozenAt: frozen ? now_() : '',
+    frozenReason: frozen ? reason : ''
+  });
+  logEvent_(frozen ? 'BOARD_FREEZE' : 'BOARD_UNFREEZE', { actor: actor, actorRole: 'admin', entityType: 'room', entityId: room, after: { frozen: frozen, reason: reason } });
+  return { ok: true, room: room, frozen: frozen };
+}
+
+function adminBoardList_(p) {
+  requireAdmin_(p);
+  const limit = Math.max(1, Math.min(parseInt((p && p.limit) || '100', 10), 500));
+  const boards = readRows_(DS_SHEETS.boards);
+  boards.sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+  const rooms = readRows_(DS_SHEETS.rooms).map(r => ({
+    kind: 'room', id: r.room, title: r.room, updatedAt: r.updatedAt || '',
+    frozen: String(r.frozen) === 'true', frozenBy: r.frozenBy || '', frozenAt: r.frozenAt || '', frozenReason: r.frozenReason || ''
+  }));
+  const boardSlim = boards.slice(0, limit).map(b => ({
+    kind: 'board', id: b.boardId, title: b.title || '(untitled)', className: b.className || '', updatedAt: b.updatedAt || '',
+    frozen: String(b.frozen) === 'true', frozenBy: b.frozenBy || '', frozenAt: b.frozenAt || '', frozenReason: b.frozenReason || '',
+    fileUrl: b.jsonFileId ? 'https://drive.google.com/file/d/' + b.jsonFileId + '/view' : ''
+  }));
+  return { ok: true, boards: boardSlim, rooms: rooms };
 }

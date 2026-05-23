@@ -140,7 +140,7 @@
         <a class="admin-button" href="../docs/COMPLIANCE.md">Open Compliance Docs</a>
         <a class="admin-button" href="../parents/index.html">Parent Request Center</a>
       </div>
-      <details class="compliance-section" id="complianceSafetyReview"><summary>Safety Review (text filter, image queue, link control, board freeze)</summary><div class="compliance-body"><p class="hint">Configured in Days 1.1–1.9. Once enabled, flagged text, pending image uploads, blocked links, and frozen boards appear in a single chronological queue.</p></div></details>
+      <details class="compliance-section" id="complianceSafetyReview"><summary>Safety Review (text filter, link control, board freeze)</summary><div class="compliance-body"><p class="hint">Text keyword filter and link allowlist are enforced server-side on every Save to Google and Cloud Sync. Hits are recorded as <code>TEXT_FILTER_HIT</code> in Activity Records. Freeze a board to block all future writes until you unfreeze it.</p><div class="admin-actions"><button id="loadSafetyBoardsBtn" type="button" class="primary">Load Boards &amp; Rooms</button><button id="filterSafetyAuditBtn" type="button">View Safety Events</button></div><div id="safetyBoardsList" style="margin-top:12px"></div></div></details>
       <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, time limits)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.3–2.10. Parents can submit requests, receive a teacher-issued verification code, download a student data export, or request deletion / account pause.</p></div></details>
       <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Configured in Days 2.1–2.2. Each student carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only district admin can override, with audit trail.</p></div></details>
       <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.8–2.9. Browser timer provides UX; Apps Script gate provides the authoritative cutoff for compliance.</p></div></details>
@@ -164,7 +164,7 @@
   </form>
 </dialog>
 
-<script src="../assets/js/admin-gate.js?v=0.4"></script>
-<script src="../assets/js/admin.js?v=0.4"></script>
+<script src="../assets/js/admin-gate.js?v=0.5"></script>
+<script src="../assets/js/admin.js?v=0.5"></script>
 </body>
 </html>
