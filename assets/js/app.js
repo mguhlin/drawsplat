@@ -4216,6 +4216,8 @@ function registerServiceWorker(){
     info:svg(`<circle ${S} cx="12" cy="12" r="9"/><path ${S} d="M12 11v6M12 7h.01"/>`),
     switch:svg(`<path ${S} d="M7 7h13l-4-4M17 17H4l4 4"/>`),
     bg:'<img src="../assets/icons/tools/bg.png" alt="">',
+    textgroup:'<img src="../assets/icons/tools/textgroup.png" alt="">',
+    imagegroup:'<img src="../assets/icons/tools/imagegroup.png" alt="">',
     clearBg:svg(`<rect ${S} x="4" y="5" width="16" height="14" rx="2"/><path ${S} d="M6 18L18 6"/>`),
     prev:svg(`<path ${S} d="M15 6l-6 6 6 6"/>`),
     next:svg(`<path ${S} d="M9 6l6 6-6 6"/>`),
@@ -4312,8 +4314,8 @@ function registerServiceWorker(){
     const selectBtn=tools.querySelector('[data-tool="select"]');
     const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','connector','diamond','triangle','callout','speech'],className:'tool-group-shapes'});
-    const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'sticky',items:['text','sticky','comment','audio'],className:'tool-group-text'});
-    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'image',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleWheelSpinnerBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});
+    const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'textgroup',items:['text','sticky','comment','audio'],className:'tool-group-text'});
+    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleWheelSpinnerBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});
     const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
     const moreGroup=makeGroup({id:'moreToolGroup',label:'More Actions',icon:'options',items:['#simpleDeleteBtn','#simpleTntBtn'],className:'tool-group-more'});
     tools.append(drawGroup,shapeGroup,textGroup,insertGroup,bgGroup,moreGroup);
