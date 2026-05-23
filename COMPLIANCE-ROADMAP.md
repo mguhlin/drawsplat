@@ -66,15 +66,15 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 1.1 | Text keyword filter &mdash; config + client-side pre-check | [x] | pending |
-| 1.2 | Text keyword filter &mdash; Apps Script server-side enforcement | [x] | pending |
+| 1.1 | Text keyword filter &mdash; config + client-side pre-check | [x] | 26adb18 |
+| 1.2 | Text keyword filter &mdash; Apps Script server-side enforcement | [x] | 26adb18 |
 | 1.3 | Image upload approval queue &mdash; data model + Apps Script | [ ] | deferred |
 | 1.4 | Image upload approval queue &mdash; teacher review UI | [ ] | deferred |
-| 1.5 | Link allow/blocklist | [x] | pending |
-| 1.6 | Board freeze + write-blocked enforcement | [x] | pending |
+| 1.5 | Link allow/blocklist | [x] | 26adb18 |
+| 1.6 | Board freeze + write-blocked enforcement | [x] | 26adb18 |
 | 1.7 | Activity Records (audit log) &mdash; schema + write helpers | [x] | 021c657 |
 | 1.8 | Activity Records &mdash; viewer UI in Teacher Admin | [x] | 021c657 |
-| 1.9 | Safety Review &mdash; rename moderation + merged queue | [x] | pending |
+| 1.9 | Safety Review &mdash; rename moderation + merged queue | [x] | 26adb18 |
 
 ### Phase 2 &mdash; Age + Parent (10 days)
 
