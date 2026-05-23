@@ -80,13 +80,13 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 2.1 | Age band schema + lock field + audit on change | [x] | pending |
-| 2.2 | Age band admin UI in Teacher Admin | [x] | pending |
+| 2.1 | Age band schema + lock field + audit on change | [x] | f40279f |
+| 2.2 | Age band admin UI in Teacher Admin | [x] | f40279f |
 | 2.3 | Parent Request Center &mdash; static page scaffold | [x] | 021c657 |
 | 2.4 | Parent Request Center &mdash; Apps Script ticket endpoint | [x] | 021c657 |
-| 2.5 | Teacher-issued parent verification code | [x] | pending |
+| 2.5 | Teacher-issued parent verification code | [x] | f40279f |
 | 2.6 | Data export &mdash; download student work as ZIP | [ ] | |
-| 2.7 | Data deletion request &mdash; ticket + admin action | [x] | pending |
+| 2.7 | Data deletion request &mdash; ticket + admin action | [x] | f40279f |
 | 2.8 | Time-limit controls &mdash; browser timer + lock UX | [ ] | |
 | 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [ ] | |
 | 2.10 | Phase 2 documentation pass | [ ] | |
