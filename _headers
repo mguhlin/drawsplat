@@ -1,0 +1,11 @@
+# Cloudflare Pages headers
+# Rules below apply ONLY to /community/* paths. Other sections of the site
+# are not affected.
+
+/community/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://accounts.google.com https://*.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://accounts.google.com https://login.microsoftonline.com https://login.live.com https://graph.microsoft.com; frame-src https://accounts.google.com https://login.microsoftonline.com https://login.live.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin-allow-popups

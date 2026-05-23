@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moderator | DrawSplat&trade; Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#7c3aed;--navy-dark:#5b21b6;--gold:#FAA634;--gold-pale:#FFF1D6;--ink:#1f2937;--ink-dark:#101827;--muted:#6b7280;--bg:#f5f7fb;--panel:#fff;--line:#e2e6f0;--soft:#f3efff;--green:#1f7a3a;--red:#b3261e;--focus:#a855f7}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--navy);font-weight:700;text-decoration:none}
+sup.tm{font-size:.55em;vertical-align:super;font-weight:700}
+.topbar{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 8px 30px #1720330f;padding:14px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink-dark);font-weight:900;font-size:18px}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--navy-dark));display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px}
+.topbar nav{display:flex;flex-wrap:wrap;gap:14px;margin-left:auto;align-items:center}
+.topbar nav a{color:#4b5563;font-size:14px}
+.topbar nav a:hover{color:var(--navy)}
+.hero{background:linear-gradient(145deg,#fff,var(--soft) 58%,#fff7e6);border-bottom:1px solid var(--line);padding:32px 24px}
+.hero-inner{max-width:1180px;margin:0 auto}
+.eyebrow{margin:0 0 6px;color:var(--navy);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}
+h1{margin:0;font-size:clamp(28px,3.6vw,40px);line-height:1.04;color:var(--ink-dark);font-weight:900;letter-spacing:-0.01em}
+h1 em{color:var(--navy);font-style:normal}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
+.panel{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 14px #7c3aed0e}
+.login{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.login input{flex:1;min-width:240px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit}
+.btn{border:0;border-radius:999px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:40px;font-family:inherit;text-decoration:none}
+.btn:hover{background:var(--navy-dark)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#151515}.btn.gold:hover{background:#e4920d}
+.btn.ghost{background:#eef2fa;color:var(--navy)}.btn.ghost:hover{background:#e1e7f5}
+.btn.green{background:var(--green)}.btn.green:hover{filter:brightness(.92)}
+.btn.red{background:var(--red)}.btn.red:hover{filter:brightness(.92)}
+.btn.sm{padding:6px 12px;min-height:32px;font-size:13px}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filters input,.filters select{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;min-width:180px}
+.summary{color:var(--muted);font-size:13px;font-weight:700;margin-top:4px}
+.summary strong{color:var(--ink)}
+.queue{display:grid;gap:12px}
+.item{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px;position:relative}
+.item.pending{border-left:8px solid var(--gold)}
+.item.approved{border-left:8px solid var(--green)}
+.item.hidden{border-left:8px solid var(--red);opacity:.92}
+.item .type{position:absolute;top:14px;right:14px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:var(--muted)}
+.item .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.badge{display:inline-flex;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;background:#eef2fa;color:var(--navy);letter-spacing:.04em;text-transform:uppercase}
+.badge.pending{background:var(--gold-pale);color:#7a4a00}
+.badge.approved{background:#eaf7ee;color:var(--green)}
+.badge.hidden{background:#fdecea;color:var(--red)}
+.badge.cat{background:var(--soft);color:var(--navy)}
+.item h3{margin:6px 0;color:var(--ink-dark);font-size:18px}
+.item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
+.item .meta strong{color:var(--ink)}
+.item .body{white-space:pre-wrap;color:#303a4f;word-break:break-word;margin:8px 0 0;padding:10px 12px;background:#fafbff;border:1px solid var(--line);border-radius:10px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.editbox{display:none;margin-top:12px;padding:12px;background:#fafbff;border:1px solid var(--line);border-radius:12px}
+.editbox.open{display:block}
+.editbox .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+@media(max-width:700px){.editbox .grid{grid-template-columns:1fr}}
+.editbox input,.editbox select,.editbox textarea{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;width:100%}
+.editbox textarea{min-height:90px;resize:vertical;width:100%}
+.msg{display:none;margin-top:10px;padding:12px;border-radius:10px;font-weight:700;font-size:14px}
+.msg.ok{display:block;background:#eaf7ee;color:var(--green);border:1px solid #bde5c8}
+.msg.err{display:block;background:#fdecea;color:var(--red);border:1px solid #f6c9c5}
+.toggle-state{display:inline-flex;background:var(--gold-pale);color:#7a4a00;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;border:1px solid #f6d28a}
+.toggle-state.off{background:#eef2fa;color:var(--muted);border-color:var(--line)}
+@media(max-width:640px){.topbar{padding:12px 16px}.wrap{padding:18px 16px 40px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html" aria-label="DrawSplat home">
+    <span class="brand-mark">DS</span>
+    <span>DrawSplat<sup class="tm">TM</sup> Community</span>
+  </a>
+  <nav>
+    <a href="index.html">Board</a>
+    <a href="../index.html">DrawSplat home</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Centralized moderation</p>
+    <h1>Moderator <em>Console</em></h1>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="login">
+      <input id="passcode" type="password" placeholder="Moderator passcode" autocomplete="current-password">
+      <button class="btn gold" id="loginBtn" type="button">Load console</button>
+      <a class="btn ghost" href="index.html">View Board</a>
+    </div>
+    <div id="msg" class="msg"></div>
+  </section>
+
+  <section class="panel" id="statusPanel" style="display:none">
+    <div class="toolbar">
+      <div>
+        <strong style="color:var(--ink-dark)">Moderation</strong>
+        <span class="toggle-state" id="toggleState">ON</span>
+        <div class="summary" id="counts">No items loaded.</div>
+      </div>
+      <div class="actions" style="margin:0">
+        <button class="btn" id="toggleMod" type="button">Toggle moderation</button>
+        <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="filtersPanel" style="display:none">
+    <div class="filters">
+      <input id="search" type="search" placeholder="Search title, body, author">
+      <select id="statusFilter">
+        <option value="pending">Pending only</option>
+        <option value="all">All statuses</option>
+        <option value="approved">Approved</option>
+        <option value="hidden">Hidden</option>
+      </select>
+      <select id="categoryFilter">
+        <option value="all">All categories</option>
+      </select>
+      <select id="typeFilter">
+        <option value="all">Posts + Replies</option>
+        <option value="post">Posts only</option>
+        <option value="reply">Replies only</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="queue" id="queue"></section>
+</main>
+
+<script src="admin.js" defer></script>
+</body>
+</html>

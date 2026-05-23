@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrawSplat&trade; Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3/lib/msal-browser.min.js" defer></script>
+<style>
+:root{--navy:#7c3aed;--navy-dark:#5b21b6;--gold:#FAA634;--gold-pale:#FFF1D6;--ink:#1f2937;--ink-dark:#101827;--muted:#6b7280;--bg:#f5f7fb;--panel:#fff;--line:#e2e6f0;--soft:#f3efff;--green:#1f7a3a;--red:#b3261e;--focus:#a855f7}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--navy);font-weight:700;text-decoration:none}
+a:hover{text-decoration:underline}
+sup.tm{font-size:.55em;vertical-align:super;font-weight:700;letter-spacing:0}
+.topbar{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 8px 30px #1720330f;padding:14px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink-dark);font-weight:900;font-size:18px}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--navy-dark));display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-family:Inter;font-size:16px;letter-spacing:.05em}
+.topbar nav{display:flex;flex-wrap:wrap;gap:14px;margin-left:auto;align-items:center}
+.topbar nav a{color:#4b5563;font-size:14px}
+.topbar nav a:hover{color:var(--navy);text-decoration:none}
+.topbar .cta{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:999px;background:var(--navy);color:#fff;font-weight:800;font-size:14px}
+.topbar .cta:hover{text-decoration:none;background:var(--navy-dark)}
+.hero{background:linear-gradient(145deg,#fff,var(--soft) 58%,#fff7e6);border-bottom:1px solid var(--line);padding:38px 24px}
+.hero-inner{max-width:1180px;margin:0 auto}
+.eyebrow{margin:0 0 8px;color:var(--navy);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}
+h1.hero-title{margin:0;font-size:clamp(32px,4.4vw,46px);line-height:1.02;color:var(--ink-dark);font-weight:900;letter-spacing:-0.01em}
+h1.hero-title em{color:var(--navy);font-style:normal}
+.hero p.lede{max-width:780px;color:#4b5563;font-size:16px;line-height:1.6;margin:14px 0 0}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tab{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;transition:all .15s ease}
+.tab:hover{border-color:var(--navy);color:var(--navy)}
+.tab.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.tab .count{background:rgba(255,255,255,.22);color:inherit;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:800;min-width:22px;text-align:center}
+.tab:not(.active) .count{background:var(--soft);color:var(--navy)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:flex-start}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 18px #7c3aed0e}
+.panel h2{font-size:18px;margin:0 0 12px;color:var(--ink-dark);font-weight:800}
+.panel h3{font-size:14px;color:var(--muted);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--focus);outline-offset:2px;border-color:var(--navy)}
+textarea{resize:vertical;min-height:90px}
+.controls input{flex:1;min-width:180px;width:auto}
+.controls select{min-width:180px;width:auto}
+.btn{border:0;border-radius:999px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:40px;font-family:inherit}
+.btn:hover{background:var(--navy-dark)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#151515}
+.btn.gold:hover{background:#e4920d}
+.btn.ghost{background:#eef2fa;color:var(--navy)}
+.btn.ghost:hover{background:#e1e7f5}
+.btn.sm{padding:6px 12px;min-height:32px;font-size:13px}
+.posts{display:flex;flex-direction:column;gap:12px}
+.post{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px;transition:border-color .15s ease}
+.post.open{border-color:var(--navy)}
+.post-head{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.post-head .meta{flex:1;min-width:0}
+.post-cat{display:inline-flex;background:var(--soft);color:var(--navy);border-radius:999px;padding:3px 10px;font-weight:800;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.post-title{font-size:18px;color:var(--ink-dark);font-weight:800;margin:6px 0 4px;line-height:1.3;word-break:break-word}
+.post-sub{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px}
+.post-sub strong{color:var(--ink);font-weight:700}
+.replies-pill{display:inline-flex;align-items:center;gap:5px;background:var(--gold-pale);color:#7a4a00;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;border:1px solid #f6d28a}
+.post-body{margin:12px 0 4px;color:#303a4f;white-space:pre-wrap;word-break:break-word}
+.replies{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.reply{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.reply-meta{font-size:12px;color:var(--muted);margin-bottom:5px}
+.reply-meta strong{color:var(--ink)}
+.reply-body{white-space:pre-wrap;color:var(--ink);word-break:break-word}
+.reply-form{margin-top:6px;display:flex;flex-direction:column;gap:8px}
+.empty{background:#fff;border:1.5px dashed var(--line);border-radius:14px;padding:40px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.signin .who{padding:10px 12px;background:var(--soft);border-radius:10px;color:var(--navy);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.signin .who small{display:block;color:var(--muted);font-size:11px;margin-top:3px;font-weight:600}
+.signin .who button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:12px;font-weight:700}
+.signin .who button:hover{color:var(--navy)}
+.sso-buttons{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
+.sso-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:42px;padding:9px 14px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.sso-btn:hover{border-color:var(--navy);background:#fafbff}
+.sso-btn[disabled]{opacity:.55;cursor:not-allowed}
+.sso-btn .ico{width:18px;height:18px;flex:none}
+.sso-btn.microsoft{background:#2F2F2F;border-color:#2F2F2F;color:#fff}
+.sso-btn.microsoft:hover{background:#1f1f1f;border-color:#1f1f1f}
+.sso-google-host{display:flex;justify-content:center;min-height:40px}
+.sso-google-host:empty+.sso-google-fallback{display:inline-flex}
+.sso-google-fallback{display:none}
+.sso-divider{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;font-weight:800;margin:4px 0;display:flex;align-items:center;gap:8px}
+.sso-divider:before,.sso-divider:after{content:'';flex:1;height:1px;background:var(--line)}
+details.email-auth-wrap{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:#fafbff}
+details.email-auth-wrap[open]{padding-bottom:12px}
+details.email-auth-wrap summary{padding:10px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--navy);list-style:none;user-select:none}
+details.email-auth-wrap summary::-webkit-details-marker{display:none}
+details.email-auth-wrap summary::before{content:'▸';display:inline-block;margin-right:6px;transition:transform .15s ease}
+details.email-auth-wrap[open] summary::before{transform:rotate(90deg)}
+.email-auth{padding:4px 14px 0;display:flex;flex-direction:column;gap:10px}
+.email-auth .field{display:flex;flex-direction:column;gap:4px}
+.email-auth .field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.email-actions{display:flex;gap:8px;align-items:stretch;margin-top:2px}
+.email-actions .btn{flex:1;min-height:38px;justify-content:center}
+.email-actions .btn.ghost{flex:none;padding:8px 12px}
+.status-line{font-size:13px;color:var(--muted);margin:6px 0 0;font-weight:600}
+.msg{display:none;margin:10px 0 0;padding:10px 12px;border-radius:10px;font-weight:700;font-size:13px}
+.msg.ok{display:block;background:#eaf7ee;color:var(--green);border:1px solid #bde5c8}
+.msg.err{display:block;background:#fdecea;color:var(--red);border:1px solid #f6c9c5}
+.msg.info{display:block;background:var(--gold-pale);color:#7a4a00;border:1px solid #f6d28a}
+.guide{margin-top:24px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:18px}
+.guide ul{margin:8px 0 0;padding-left:22px;color:#4b5563;font-size:14px}
+.guide li{margin-bottom:4px}
+.footer{max-width:1180px;margin:0 auto;padding:18px 24px 36px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.footer a{margin-left:auto;color:var(--navy)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.compose-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.compose-row .left strong{display:block;color:var(--ink-dark);font-size:16px}
+.compose-row .left small{color:var(--muted)}
+.modal-back{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal-back.open{display:flex}
+.modal{background:#fff;border-radius:18px;border:1.5px solid var(--line);box-shadow:0 30px 80px #1720333a;width:min(640px,100%);max-height:90vh;overflow:auto;padding:22px}
+.modal h2{margin:0 0 14px;color:var(--ink-dark);font-size:20px}
+.modal .field{margin-bottom:14px}
+.modal .field label{display:block;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.modal .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}
+@media(max-width:640px){.topbar{padding:12px 16px}.topbar nav{order:3;width:100%;justify-content:flex-start;gap:10px}.hero{padding:28px 16px}.wrap{padding:18px 16px 40px}.btn{width:100%;justify-content:center}.controls input,.controls select{width:100%;min-width:0}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html" aria-label="DrawSplat home">
+    <span class="brand-mark">DS</span>
+    <span>DrawSplat<sup class="tm">TM</sup> Community</span>
+  </a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../app/whiteboard.html">Whiteboard</a>
+    <a href="../pages/support.html">Support</a>
+    <a href="Admin.html">Moderator</a>
+  </nav>
+  <a class="cta" id="newPostBtnTop" href="#">New Post</a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">A bulletin board for the DrawSplat&trade; community</p>
+    <h1 class="hero-title">DrawSplat<sup class="tm">TM</sup> <em>Community</em></h1>
+    <p class="lede">Share classroom ideas, ask questions about pedagogy, swap tool tips, talk shop with fellow administrators, or drop a suggestion in the box. Pick a category to see what's posted, then jump in with a reply.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="layout">
+    <section>
+      <div class="panel">
+        <div class="compose-row">
+          <div class="left">
+            <strong id="catTitle">All posts</strong>
+            <small id="statusText">Loading...</small>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn ghost sm" id="refreshBtn" type="button">Refresh</button>
+            <button class="btn gold sm" id="newPostBtn" type="button">+ New Post</button>
+          </div>
+        </div>
+        <div class="controls">
+          <input id="searchInput" type="search" placeholder="Search posts and replies">
+          <select id="sortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="busiest">Most replies</option>
+          </select>
+        </div>
+        <div id="posts" class="posts" aria-live="polite"></div>
+      </div>
+    </section>
+    <aside>
+      <div class="panel signin" id="signinPanel">
+        <h3>Your account</h3>
+        <div id="whoBox"></div>
+        <div id="signinForm">
+          <div class="sso-buttons" id="ssoButtons">
+            <div class="sso-google-host" id="googleBtnHost"></div>
+            <button class="sso-btn sso-google-fallback" id="googleBtnFallback" type="button">
+              <svg class="ico" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#EA4335" d="M9 3.48c1.69 0 2.84.73 3.49 1.34l2.55-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/><path fill="#4285F4" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#FBBC05" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/></svg>
+              Continue with Google
+            </button>
+            <button class="sso-btn microsoft" id="microsoftBtn" type="button">
+              <svg class="ico" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+              Continue with Microsoft
+            </button>
+          </div>
+          <p class="hint" id="ssoHint">Sign in with the account you already use. We never see your password &mdash; your provider verifies you and shares only your name and email.</p>
+          <p class="hint" id="ssoUnavailable" style="display:none;color:var(--red)">Sign-in is not configured yet. Ask the site host to set up Google or Microsoft sign-in.</p>
+          <details class="email-auth-wrap" id="emailAuthDetails">
+            <summary>Or use email and password</summary>
+            <div class="email-auth">
+              <div class="field">
+                <label for="emailField">Email</label>
+                <input id="emailField" type="email" autocomplete="email" maxlength="120">
+              </div>
+              <div class="field">
+                <label for="passwordField">Password</label>
+                <input id="passwordField" type="password" autocomplete="current-password" minlength="8" maxlength="200">
+              </div>
+              <div class="field" id="nameFieldWrap" hidden>
+                <label for="nameField">Display name</label>
+                <input id="nameField" autocomplete="name" maxlength="60">
+              </div>
+              <div class="email-actions">
+                <button class="btn" type="button" id="emailSubmitBtn">Sign in</button>
+                <button class="btn ghost sm" type="button" id="emailModeBtn">Create account</button>
+              </div>
+              <p class="hint">Minimum 8 characters. No automatic password reset &mdash; if you forget, a moderator can clear your row so you can re-register.</p>
+            </div>
+          </details>
+        </div>
+        <div id="signinMsg" class="msg"></div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <h3>Community guidelines</h3>
+        <p style="margin:0;color:#4b5563;font-size:14px">Posts and replies are moderated before they appear. Keep it kind, on-topic, and don't share personal info about students or staff. Moderators may edit or remove posts.</p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="guide" id="about">
+    <h2 style="margin:0 0 6px;color:var(--ink-dark);font-size:18px">About this board</h2>
+    <ul>
+      <li><strong>General</strong> — introductions, announcements, general DrawSplat&trade; chat.</li>
+      <li><strong>Classroom and Pedagogy</strong> — share lessons, strategies, and student work ideas.</li>
+      <li><strong>Tools</strong> — talk about DrawSplat&trade; tools, integrations, and workflows.</li>
+      <li><strong>Administration</strong> — for school and district leaders working with rollouts.</li>
+      <li><strong>Suggestion Box</strong> — feature ideas, feedback, and wish-list items.</li>
+    </ul>
+  </section>
+</main>
+
+<div class="modal-back" id="postModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2>New post</h2>
+    <div class="field">
+      <label for="newCategory">Category</label>
+      <select id="newCategory"></select>
+    </div>
+    <div class="field">
+      <label for="newTitle">Title</label>
+      <input id="newTitle" maxlength="120" placeholder="Give your post a short, descriptive title">
+    </div>
+    <div class="field">
+      <label for="newBody">Message</label>
+      <textarea id="newBody" maxlength="2000" placeholder="What would you like to share or ask?"></textarea>
+      <p class="hint"><span id="newCount">0</span>/2000 characters</p>
+    </div>
+    <div id="postMsg" class="msg"></div>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="cancelPost">Cancel</button>
+      <button class="btn gold" type="button" id="submitPost">Submit post</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>DrawSplat<sup class="tm">TM</sup> Community is part of the DrawSplat<sup class="tm">TM</sup> project.</span>
+  <a href="../index.html">Back to DrawSplat<sup class="tm">TM</sup></a>
+</footer>
+
+<script src="community.js" defer></script>
+</body>
+</html>
