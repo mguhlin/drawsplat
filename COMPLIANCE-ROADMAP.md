@@ -59,8 +59,8 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 0.1 | Compliance config schema (`compliance.config.json`) | [x] | pending |
-| 0.2 | Compliance UI scaffolding in Teacher Admin | [x] | pending |
+| 0.1 | Compliance config schema (`compliance.config.json`) | [x] | 021c657 |
+| 0.2 | Compliance UI scaffolding in Teacher Admin | [x] | 021c657 |
 
 ### Phase 1 &mdash; Safety Foundation (9 days)
 
@@ -72,8 +72,8 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 1.4 | Image upload approval queue &mdash; teacher review UI | [ ] | |
 | 1.5 | Link allow/blocklist | [ ] | |
 | 1.6 | Board freeze + write-blocked enforcement | [ ] | |
-| 1.7 | Activity Records (audit log) &mdash; schema + write helpers | [x] | pending |
-| 1.8 | Activity Records &mdash; viewer UI in Teacher Admin | [x] | pending |
+| 1.7 | Activity Records (audit log) &mdash; schema + write helpers | [x] | 021c657 |
+| 1.8 | Activity Records &mdash; viewer UI in Teacher Admin | [x] | 021c657 |
 | 1.9 | Safety Review &mdash; rename moderation + merged queue | [ ] | |
 
 ### Phase 2 &mdash; Age + Parent (10 days)
@@ -82,8 +82,8 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 |---|---|---|---|
 | 2.1 | Age band schema + lock field + audit on change | [ ] | |
 | 2.2 | Age band admin UI in Teacher Admin | [ ] | |
-| 2.3 | Parent Request Center &mdash; static page scaffold | [x] | pending |
-| 2.4 | Parent Request Center &mdash; Apps Script ticket endpoint | [x] | pending |
+| 2.3 | Parent Request Center &mdash; static page scaffold | [x] | 021c657 |
+| 2.4 | Parent Request Center &mdash; Apps Script ticket endpoint | [x] | 021c657 |
 | 2.5 | Teacher-issued parent verification code | [ ] | |
 | 2.6 | Data export &mdash; download student work as ZIP | [ ] | |
 | 2.7 | Data deletion request &mdash; ticket + admin action | [ ] | |
@@ -100,7 +100,7 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 3.3 | Student Safety panel | [ ] | |
 | 3.4 | Parent Controls panel | [ ] | |
 | 3.5 | Audit Logs panel (extends Day 1.8) | [ ] | |
-| 3.6 | District Privacy Packet generator | [x] | pending |
+| 3.6 | District Privacy Packet generator | [x] | 021c657 |
 | 3.7 | Retention policy settings | [ ] | |
 | 3.8 | Scheduled cleanup script | [ ] | |
 | 3.9 | District-wide safety defaults propagation | [ ] | |
