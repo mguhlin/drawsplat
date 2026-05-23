@@ -146,6 +146,20 @@ The moderator console is intentionally one combined queue:
 - Deleting a post also removes its replies.
 - The **Toggle moderation** button flips the global moderation switch.
 
+## Languages
+
+The public board (`index.html` + `community.js`) ships with translations for English, Spanish (es), Vietnamese (vi), Chinese (zh), Arabic (ar), Urdu (ur), and Hindi (hi), matching the languages DrawSplat&trade; supports on its landing entry pages.
+
+- A selector in the page header lets users switch.
+- The page detects the browser's preferred language on first load (`navigator.languages`) and falls back to English if no match.
+- The user's choice is stored in `localStorage` under `drawsplat-community-locale`.
+- Arabic and Urdu automatically flip the page to `dir="rtl"`.
+- Category labels are translated for display, but the stored sheet value stays English so the schema and admin console stay consistent.
+- Only the UI chrome is translated &mdash; posts and replies appear in whatever language the user wrote them in.
+- `Admin.html` is intentionally English-only since the moderator console is for your team, not end users.
+
+To update or add a translation, edit the `I18N` object near the top of `community.js`. Adding a new language only requires (1) a new key in `I18N`, (2) an `<option>` in the header `<select id="localeSwitch">` in `index.html`, and (3) listing the code in `SUPPORTED_LOCALES` (plus `RTL_LOCALES` if right-to-left).
+
 ## Security hardening
 
 The community pages ship with the following baseline. Most of it is automatic; one item (the moderator passcode) is on you.

@@ -124,29 +124,45 @@ details.email-auth-wrap[open] summary::before{transform:rotate(90deg)}
 .modal .field label{display:block;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
 .modal .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .hint{font-size:12px;color:var(--muted);margin-top:5px}
-@media(max-width:640px){.topbar{padding:12px 16px}.topbar nav{order:3;width:100%;justify-content:flex-start;gap:10px}.hero{padding:28px 16px}.wrap{padding:18px 16px 40px}.btn{width:100%;justify-content:center}.controls input,.controls select{width:100%;min-width:0}}
+.locale-select{border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-height:36px;width:auto}
+.locale-select:focus{outline:3px solid var(--focus);outline-offset:2px;border-color:var(--navy)}
+html[dir="rtl"] .post-head .meta,html[dir="rtl"] .post-sub,html[dir="rtl"] .post-body,html[dir="rtl"] .reply-body{text-align:right}
+html[dir="rtl"] .topbar nav{margin-left:0;margin-right:auto}
+html[dir="rtl"] .footer a{margin-left:0;margin-right:auto}
+html[dir="rtl"] details.email-auth-wrap summary::before{margin-right:0;margin-left:6px;transform:rotate(180deg)}
+html[dir="rtl"] details.email-auth-wrap[open] summary::before{transform:rotate(90deg)}
+@media(max-width:640px){.topbar{padding:12px 16px}.topbar nav{order:3;width:100%;justify-content:flex-start;gap:10px}.hero{padding:28px 16px}.wrap{padding:18px 16px 40px}.btn{width:100%;justify-content:center}.controls input,.controls select{width:100%;min-width:0}.locale-select{width:auto}}
 </style>
 </head>
 <body>
 <header class="topbar">
   <a class="brand" href="../index.html" aria-label="DrawSplat home">
     <span class="brand-mark">DS</span>
-    <span>DrawSplat<sup class="tm">TM</sup> Community</span>
+    <span>DrawSplat<sup class="tm">TM</sup> <span data-i18n="brand_community">Community</span></span>
   </a>
   <nav>
-    <a href="../index.html">Home</a>
-    <a href="../app/whiteboard.html">Whiteboard</a>
-    <a href="../pages/support.html">Support</a>
-    <a href="Admin.html">Moderator</a>
+    <a href="../index.html" data-i18n="nav_home">Home</a>
+    <a href="../app/whiteboard.html" data-i18n="nav_whiteboard">Whiteboard</a>
+    <a href="../pages/support.html" data-i18n="nav_support">Support</a>
+    <a href="Admin.html" data-i18n="nav_moderator">Moderator</a>
   </nav>
-  <a class="cta" id="newPostBtnTop" href="#">New Post</a>
+  <select class="locale-select" id="localeSwitch" aria-label="Language">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="zh">中文</option>
+    <option value="ar">العربية</option>
+    <option value="ur">اردو</option>
+    <option value="hi">हिन्दी</option>
+  </select>
+  <a class="cta" id="newPostBtnTop" href="#" data-i18n="nav_new_post">New Post</a>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">A bulletin board for the DrawSplat&trade; community</p>
-    <h1 class="hero-title">DrawSplat<sup class="tm">TM</sup> <em>Community</em></h1>
-    <p class="lede">Share classroom ideas, ask questions about pedagogy, swap tool tips, talk shop with fellow administrators, or drop a suggestion in the box. Pick a category to see what's posted, then jump in with a reply.</p>
+    <p class="eyebrow" data-i18n="hero_eyebrow">A bulletin board for the DrawSplat&trade; community</p>
+    <h1 class="hero-title">DrawSplat<sup class="tm">TM</sup> <em data-i18n="hero_title_em">Community</em></h1>
+    <p class="lede" data-i18n="hero_lede">Share classroom ideas, ask questions about pedagogy, swap tool tips, talk shop with fellow administrators, or drop a suggestion in the box. Pick a category to see what's posted, then jump in with a reply.</p>
   </div>
 </section>
 
@@ -157,20 +173,20 @@ details.email-auth-wrap[open] summary::before{transform:rotate(90deg)}
       <div class="panel">
         <div class="compose-row">
           <div class="left">
-            <strong id="catTitle">All posts</strong>
-            <small id="statusText">Loading...</small>
+            <strong id="catTitle" data-i18n="cat_general">General</strong>
+            <small id="statusText" data-i18n="status_loading">Loading...</small>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn ghost sm" id="refreshBtn" type="button">Refresh</button>
-            <button class="btn gold sm" id="newPostBtn" type="button">+ New Post</button>
+            <button class="btn ghost sm" id="refreshBtn" type="button" data-i18n="action_refresh">Refresh</button>
+            <button class="btn gold sm" id="newPostBtn" type="button" data-i18n="action_new_post_plus">+ New Post</button>
           </div>
         </div>
         <div class="controls">
-          <input id="searchInput" type="search" placeholder="Search posts and replies">
+          <input id="searchInput" type="search" data-i18n-placeholder="search_placeholder" placeholder="Search posts and replies">
           <select id="sortSelect">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="busiest">Most replies</option>
+            <option value="newest" data-i18n="sort_newest">Newest first</option>
+            <option value="oldest" data-i18n="sort_oldest">Oldest first</option>
+            <option value="busiest" data-i18n="sort_busiest">Most replies</option>
           </select>
         </div>
         <div id="posts" class="posts" aria-live="polite"></div>
@@ -178,93 +194,93 @@ details.email-auth-wrap[open] summary::before{transform:rotate(90deg)}
     </section>
     <aside>
       <div class="panel signin" id="signinPanel">
-        <h3>Your account</h3>
+        <h3 data-i18n="signin_title">Your account</h3>
         <div id="whoBox"></div>
         <div id="signinForm">
           <div class="sso-buttons" id="ssoButtons">
             <div class="sso-google-host" id="googleBtnHost"></div>
             <button class="sso-btn sso-google-fallback" id="googleBtnFallback" type="button">
               <svg class="ico" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#EA4335" d="M9 3.48c1.69 0 2.84.73 3.49 1.34l2.55-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/><path fill="#4285F4" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#FBBC05" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/></svg>
-              Continue with Google
+              <span data-i18n="signin_google">Continue with Google</span>
             </button>
             <button class="sso-btn microsoft" id="microsoftBtn" type="button">
               <svg class="ico" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-              Continue with Microsoft
+              <span data-i18n="signin_microsoft">Continue with Microsoft</span>
             </button>
           </div>
-          <p class="hint" id="ssoHint">Sign in with the account you already use. We never see your password &mdash; your provider verifies you and shares only your name and email.</p>
-          <p class="hint" id="ssoUnavailable" style="display:none;color:var(--red)">Sign-in is not configured yet. Ask the site host to set up Google or Microsoft sign-in.</p>
+          <p class="hint" id="ssoHint" data-i18n="signin_hint">Sign in with the account you already use. We never see your password &mdash; your provider verifies you and shares only your name and email.</p>
+          <p class="hint" id="ssoUnavailable" style="display:none;color:var(--red)" data-i18n="signin_unavailable">Sign-in is not configured yet. Ask the site host to set up Google or Microsoft sign-in.</p>
           <details class="email-auth-wrap" id="emailAuthDetails">
-            <summary>Or use email and password</summary>
+            <summary data-i18n="signin_or_email">Or use email and password</summary>
             <div class="email-auth">
               <div class="field">
-                <label for="emailField">Email</label>
+                <label for="emailField" data-i18n="signin_email_label">Email</label>
                 <input id="emailField" type="email" autocomplete="email" maxlength="120">
               </div>
               <div class="field">
-                <label for="passwordField">Password</label>
+                <label for="passwordField" data-i18n="signin_password_label">Password</label>
                 <input id="passwordField" type="password" autocomplete="current-password" minlength="8" maxlength="200">
               </div>
               <div class="field" id="nameFieldWrap" hidden>
-                <label for="nameField">Display name</label>
+                <label for="nameField" data-i18n="signin_name_label">Display name</label>
                 <input id="nameField" autocomplete="name" maxlength="60">
               </div>
               <div class="email-actions">
-                <button class="btn" type="button" id="emailSubmitBtn">Sign in</button>
-                <button class="btn ghost sm" type="button" id="emailModeBtn">Create account</button>
+                <button class="btn" type="button" id="emailSubmitBtn" data-i18n="signin_email_submit">Sign in</button>
+                <button class="btn ghost sm" type="button" id="emailModeBtn" data-i18n="signin_email_signup">Create account</button>
               </div>
-              <p class="hint">Minimum 8 characters. No automatic password reset &mdash; if you forget, a moderator can clear your row so you can re-register.</p>
+              <p class="hint" data-i18n="signin_email_hint">Minimum 8 characters. No automatic password reset &mdash; if you forget, a moderator can clear your row so you can re-register.</p>
             </div>
           </details>
         </div>
         <div id="signinMsg" class="msg"></div>
       </div>
       <div class="panel" style="margin-top:14px">
-        <h3>Community guidelines</h3>
-        <p style="margin:0;color:#4b5563;font-size:14px">Posts and replies are moderated before they appear. Keep it kind, on-topic, and don't share personal info about students or staff. Moderators may edit or remove posts.</p>
+        <h3 data-i18n="guidelines_title">Community guidelines</h3>
+        <p style="margin:0;color:#4b5563;font-size:14px" data-i18n="guidelines_body">Posts and replies are moderated before they appear. Keep it kind, on-topic, and don't share personal info about students or staff. Moderators may edit or remove posts.</p>
       </div>
     </aside>
   </div>
 
   <section class="guide" id="about">
-    <h2 style="margin:0 0 6px;color:var(--ink-dark);font-size:18px">About this board</h2>
+    <h2 style="margin:0 0 6px;color:var(--ink-dark);font-size:18px" data-i18n="about_title">About this board</h2>
     <ul>
-      <li><strong>General</strong> — introductions, announcements, general DrawSplat&trade; chat.</li>
-      <li><strong>Classroom and Pedagogy</strong> — share lessons, strategies, and student work ideas.</li>
-      <li><strong>Tools</strong> — talk about DrawSplat&trade; tools, integrations, and workflows.</li>
-      <li><strong>Administration</strong> — for school and district leaders working with rollouts.</li>
-      <li><strong>Suggestion Box</strong> — feature ideas, feedback, and wish-list items.</li>
+      <li data-i18n-html="about_general"><strong>General</strong> — introductions, announcements, general DrawSplat&trade; chat.</li>
+      <li data-i18n-html="about_classroom"><strong>Classroom and Pedagogy</strong> — share lessons, strategies, and student work ideas.</li>
+      <li data-i18n-html="about_tools"><strong>Tools</strong> — talk about DrawSplat&trade; tools, integrations, and workflows.</li>
+      <li data-i18n-html="about_admin"><strong>Administration</strong> — for school and district leaders working with rollouts.</li>
+      <li data-i18n-html="about_suggestions"><strong>Suggestion Box</strong> — feature ideas, feedback, and wish-list items.</li>
     </ul>
   </section>
 </main>
 
 <div class="modal-back" id="postModal" role="dialog" aria-modal="true">
   <div class="modal">
-    <h2>New post</h2>
+    <h2 data-i18n="modal_new_post">New post</h2>
     <div class="field">
-      <label for="newCategory">Category</label>
+      <label for="newCategory" data-i18n="modal_category_label">Category</label>
       <select id="newCategory"></select>
     </div>
     <div class="field">
-      <label for="newTitle">Title</label>
-      <input id="newTitle" maxlength="120" placeholder="Give your post a short, descriptive title">
+      <label for="newTitle" data-i18n="modal_title_label">Title</label>
+      <input id="newTitle" maxlength="120" data-i18n-placeholder="modal_title_placeholder" placeholder="Give your post a short, descriptive title">
     </div>
     <div class="field">
-      <label for="newBody">Message</label>
-      <textarea id="newBody" maxlength="2000" placeholder="What would you like to share or ask?"></textarea>
-      <p class="hint"><span id="newCount">0</span>/2000 characters</p>
+      <label for="newBody" data-i18n="modal_message_label">Message</label>
+      <textarea id="newBody" maxlength="2000" data-i18n-placeholder="modal_message_placeholder" placeholder="What would you like to share or ask?"></textarea>
+      <p class="hint"><span id="newCount">0</span><span data-i18n="modal_char_suffix">/2000 characters</span></p>
     </div>
     <div id="postMsg" class="msg"></div>
     <div class="actions">
-      <button class="btn ghost" type="button" id="cancelPost">Cancel</button>
-      <button class="btn gold" type="button" id="submitPost">Submit post</button>
+      <button class="btn ghost" type="button" id="cancelPost" data-i18n="action_cancel">Cancel</button>
+      <button class="btn gold" type="button" id="submitPost" data-i18n="modal_submit">Submit post</button>
     </div>
   </div>
 </div>
 
 <footer class="footer">
-  <span>DrawSplat<sup class="tm">TM</sup> Community is part of the DrawSplat<sup class="tm">TM</sup> project.</span>
-  <a href="../index.html">Back to DrawSplat<sup class="tm">TM</sup></a>
+  <span data-i18n-html="footer_text">DrawSplat<sup class="tm">TM</sup> Community is part of the DrawSplat<sup class="tm">TM</sup> project.</span>
+  <a href="../index.html" data-i18n-html="footer_back">Back to DrawSplat<sup class="tm">TM</sup></a>
 </footer>
 
 <script src="community.js" defer></script>
