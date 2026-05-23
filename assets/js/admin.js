@@ -195,14 +195,44 @@
     if(status) status.textContent='Generating packet…';
     try{
       const params=new URLSearchParams({action:'privacyPacket',passcode:pc,actor:'admin'});
-      const res=await fetch(url+'?'+params.toString());
+      const fetchUrl=url+'?'+params.toString();
+      console.log('[Privacy Packet] requesting', fetchUrl);
+      const res=await fetch(fetchUrl);
       const text=await res.text();
-      try{ const j=JSON.parse(text); if(j&&j.ok===false) throw new Error(j.error||'Generation failed.'); }catch(e){ if(!(e instanceof SyntaxError)) throw e; }
-      const bytes=Uint8Array.from(atob(text.trim()),c=>c.charCodeAt(0));
+      console.log('[Privacy Packet] response length', text.length, 'first 60 chars:', text.slice(0,60));
+      let data;
+      try{ data=JSON.parse(text); }catch(e){ throw new Error('Server did not return JSON. First 120 chars: '+text.slice(0,120)); }
+      if(!data.ok) throw new Error(data.error||'Generation failed.');
+      if(!data.contentBase64) throw new Error('Response missing contentBase64 field.');
+      const filename=data.filename||('DrawSplat-District-Privacy-Packet-'+new Date().toISOString().slice(0,10)+'.zip');
+      const bytes=Uint8Array.from(atob(data.contentBase64),c=>c.charCodeAt(0));
+      console.log('[Privacy Packet] decoded bytes:', bytes.length, 'filename:', filename);
       const blob=new Blob([bytes],{type:'application/zip'});
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='DrawSplat-District-Privacy-Packet-'+new Date().toISOString().slice(0,10)+'.zip';document.body.appendChild(a);a.click();a.remove();
-      if(status) status.textContent='Packet downloaded.';
-    }catch(err){ if(status) status.textContent=String(err.message||err); }
+      const blobUrl=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=blobUrl;
+      a.download=filename;
+      a.rel='noopener';
+      a.style.display='none';
+      document.body.appendChild(a);
+      a.click();
+      // Delay cleanup so the browser's download pipeline finishes.
+      setTimeout(()=>{ try{ document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }catch(e){} }, 4000);
+      if(status){
+        const note=document.createElement('span');
+        note.textContent='Packet downloaded ('+bytes.length+' bytes, '+(data.auditRowsIncluded||0)+' audit rows, '+(data.parentRowsIncluded||0)+' parent requests). ';
+        const fallback=document.createElement('a');
+        fallback.href=blobUrl;
+        fallback.download=filename;
+        fallback.textContent='Click here if the download did not start.';
+        status.textContent='';
+        status.appendChild(note);
+        status.appendChild(fallback);
+      }
+    }catch(err){
+      console.error('[Privacy Packet] error', err);
+      if(status) status.textContent=String(err.message||err);
+    }
   }
   document.getElementById('complianceAudit')?.addEventListener('toggle',function(){ if(this.open) loadAuditEvents(); });
   document.getElementById('downloadPrivacyPacketBtn')?.addEventListener('click',downloadPrivacyPacket);

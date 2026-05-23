@@ -529,48 +529,57 @@ function adminParentRequestList_(p) {
  * documents (Terms & Privacy, District Addendum, Compliance Roadmap) are
  * referenced by URL because they live with the site, not the script. */
 function privacyPacketResponse_(p) {
-  requireAdmin_(p);
-  const zipName = 'DrawSplat-District-Privacy-Packet-' + new Date().toISOString().slice(0, 10) + '.zip';
-  const cfg = readComplianceConfig_();
-  const auditSince = Utilities.formatDate(new Date(Date.now() - 90 * 86400000), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'");
-  const auditRows = readRows_(DS_SHEETS.audit).filter(r => String(r.timestamp || '') >= auditSince);
-  const parentRows = readRows_(DS_SHEETS.parentRequests);
-  const readme = [
-    'DrawSplat District Privacy Packet',
-    'Generated: ' + now_(),
-    '',
-    'Contents:',
-    '  compliance-config.json   Current compliance configuration snapshot.',
-    '  activity-records.csv     Activity Records (audit log) for the last 90 days.',
-    '  parent-requests.csv      Parent Request Center tickets (all statuses).',
-    '  README.txt               This file.',
-    '',
-    'Companion documents (hosted on the DrawSplat site):',
-    '  Terms & Privacy          https://drawsplat.org/legal/terms-privacy.html',
-    '  District Addendum        https://drawsplat.org/legal/district-addendum.html',
-    '  Compliance Roadmap       https://drawsplat.org/COMPLIANCE-ROADMAP.md',
-    '',
-    'How to use:',
-    '  Open the CSV files in any spreadsheet. The config JSON is the source',
-    '  of truth for what safety, parent-access, age-lock, time-limit, and',
-    '  retention controls are active. Review the Activity Records to spot',
-    '  unusual patterns. Track parent requests for SLA compliance.'
-  ].join('\n');
-  const blobs = [
-    Utilities.newBlob(JSON.stringify(cfg, null, 2), 'application/json', 'compliance-config.json'),
-    Utilities.newBlob(rowsToCsv_(DS_AUDIT_HEADERS, auditRows), 'text/csv', 'activity-records.csv'),
-    Utilities.newBlob(rowsToCsv_(DS_PARENT_HEADERS, parentRows), 'text/csv', 'parent-requests.csv'),
-    Utilities.newBlob(readme, 'text/plain', 'README.txt')
-  ];
-  const zip = Utilities.zip(blobs, zipName);
-  logEvent_('DATA_EXPORT', {
-    actor: String((p && p.actor) || 'admin'),
-    actorRole: 'admin',
-    entityType: 'privacy_packet',
-    after: { auditRowsIncluded: auditRows.length, parentRowsIncluded: parentRows.length }
-  });
-  return ContentService.createTextOutput(Utilities.base64Encode(zip.getBytes()))
-    .setMimeType(ContentService.MimeType.TEXT);
+  try {
+    requireAdmin_(p);
+    const zipName = 'DrawSplat-District-Privacy-Packet-' + new Date().toISOString().slice(0, 10) + '.zip';
+    const cfg = readComplianceConfig_();
+    const auditSince = Utilities.formatDate(new Date(Date.now() - 90 * 86400000), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'");
+    const auditRows = readRows_(DS_SHEETS.audit).filter(r => String(r.timestamp || '') >= auditSince);
+    const parentRows = readRows_(DS_SHEETS.parentRequests);
+    const readme = [
+      'DrawSplat District Privacy Packet',
+      'Generated: ' + now_(),
+      '',
+      'Contents:',
+      '  compliance-config.json   Current compliance configuration snapshot.',
+      '  activity-records.csv     Activity Records (audit log) for the last 90 days.',
+      '  parent-requests.csv      Parent Request Center tickets (all statuses).',
+      '  README.txt               This file.',
+      '',
+      'Companion documents (hosted on the DrawSplat site):',
+      '  Terms & Privacy          https://drawsplat.org/legal/terms-privacy.html',
+      '  District Addendum        https://drawsplat.org/legal/district-addendum.html',
+      '  Compliance Roadmap       https://drawsplat.org/COMPLIANCE-ROADMAP.md',
+      '',
+      'How to use:',
+      '  Open the CSV files in any spreadsheet. The config JSON is the source',
+      '  of truth for what safety, parent-access, age-lock, time-limit, and',
+      '  retention controls are active. Review the Activity Records to spot',
+      '  unusual patterns. Track parent requests for SLA compliance.'
+    ].join('\n');
+    const blobs = [
+      Utilities.newBlob(JSON.stringify(cfg, null, 2), 'application/json', 'compliance-config.json'),
+      Utilities.newBlob(rowsToCsv_(DS_AUDIT_HEADERS, auditRows), 'text/csv', 'activity-records.csv'),
+      Utilities.newBlob(rowsToCsv_(DS_PARENT_HEADERS, parentRows), 'text/csv', 'parent-requests.csv'),
+      Utilities.newBlob(readme, 'text/plain', 'README.txt')
+    ];
+    const zip = Utilities.zip(blobs, zipName);
+    logEvent_('DATA_EXPORT', {
+      actor: String((p && p.actor) || 'admin'),
+      actorRole: 'admin',
+      entityType: 'privacy_packet',
+      after: { auditRowsIncluded: auditRows.length, parentRowsIncluded: parentRows.length }
+    });
+    return json_({
+      ok: true,
+      filename: zipName,
+      contentBase64: Utilities.base64Encode(zip.getBytes()),
+      auditRowsIncluded: auditRows.length,
+      parentRowsIncluded: parentRows.length
+    });
+  } catch (err) {
+    return json_({ ok: false, error: String(err && err.message ? err.message : err) });
+  }
 }
 
 function readComplianceConfig_() {
