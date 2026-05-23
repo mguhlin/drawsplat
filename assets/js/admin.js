@@ -155,7 +155,7 @@
     return pc;
   }
   async function loadAuditEvents(){
-    const url=getScriptUrl();
+    const url=cleanUrl();
     const target=document.getElementById('complianceAuditViewer');
     if(!target) return;
     if(!url){ target.textContent='Save a Web App URL above first.'; return; }
@@ -188,7 +188,7 @@
   }
   async function downloadPrivacyPacket(){
     const status=document.getElementById('privacyPacketStatus');
-    const url=getScriptUrl();
+    const url=cleanUrl();
     if(!url){ if(status) status.textContent='Save a Web App URL above first.'; return; }
     const pc=getAdminPasscode();
     if(!pc){ if(status) status.textContent='Admin passcode required.'; return; }
