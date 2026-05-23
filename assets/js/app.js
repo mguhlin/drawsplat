@@ -1,3 +1,17 @@
+/* Compliance configuration loader. Reads /compliance.config.json on boot
+   and exposes window.complianceConfig. Safe default returns null while
+   loading so callers fall back to permissive behavior until ready. */
+(function loadComplianceConfig(){
+  window.complianceConfig = window.complianceConfig || null;
+  try{
+    const base = (location.pathname.indexOf('/app/')===0 || location.pathname.indexOf('/admin/')===0 || location.pathname.indexOf('/parents/')===0) ? '../compliance.config.json' : 'compliance.config.json';
+    fetch(base, { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : null)
+      .then(cfg => { if (cfg) { window.complianceConfig = cfg; window.dispatchEvent(new CustomEvent('compliance-config-ready', { detail: cfg })); } })
+      .catch(() => {});
+  }catch(e){}
+})();
+
 /* DrawSplatTM v3.0 — single source of app behaviour.
    v2.5 changes vs v2.4:
    - Object lookup is O(1) via a per-render Map.

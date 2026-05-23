@@ -143,5 +143,69 @@
   $('saveStorageBtn')?.addEventListener('click',saveStorageSettings);
   $('resetSessionBtn')?.addEventListener('click',resetSessionTimer);
   storageMode?.addEventListener('change',syncStorageModeUi);
+
+  /* --- Compliance: Activity Records viewer (Day 1.8) + Privacy Packet (3.6) - */
+  const ADMIN_PASSCODE_KEY='drawsplat.complianceAdminPasscode';
+  function getAdminPasscode(){
+    let pc=localStorage.getItem(ADMIN_PASSCODE_KEY)||'';
+    if(!pc){
+      pc=(window.prompt('Enter the ADMIN_PASSCODE set in the Apps Script project (saved in this browser only):')||'').trim();
+      if(pc) localStorage.setItem(ADMIN_PASSCODE_KEY,pc);
+    }
+    return pc;
+  }
+  async function loadAuditEvents(){
+    const url=getScriptUrl();
+    const target=document.getElementById('complianceAuditViewer');
+    if(!target) return;
+    if(!url){ target.textContent='Save a Web App URL above first.'; return; }
+    const pc=getAdminPasscode();
+    if(!pc){ target.textContent='Admin passcode required.'; return; }
+    target.textContent='Loading…';
+    try{
+      const params=new URLSearchParams({action:'auditList',passcode:pc,limit:'200'});
+      const res=await fetch(url+'?'+params.toString());
+      const data=await res.json();
+      if(!data.ok) throw new Error(data.error||'Could not load Activity Records.');
+      renderAuditTable(target,data.events||[]);
+    }catch(err){ target.textContent=String(err.message||err); }
+  }
+  function renderAuditTable(host,events){
+    if(!events.length){ host.textContent='No matching events.'; return; }
+    const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const rows=events.map(e=>`<tr><td>${esc(e.timestamp)}</td><td>${esc(e.action)}</td><td>${esc(e.actor)}</td><td>${esc(e.actorRole)}</td><td>${esc(e.entityType)}</td><td>${esc(e.entityId)}</td></tr>`).join('');
+    host.innerHTML=`<div class="compliance-table-wrap"><table class="compliance-table"><thead><tr><th>Timestamp</th><th>Action</th><th>Actor</th><th>Role</th><th>Entity</th><th>ID</th></tr></thead><tbody>${rows}</tbody></table></div><div class="admin-actions"><button id="downloadAuditCsvBtn" type="button">Download CSV</button><button id="refreshAuditBtn" type="button">Refresh</button></div>`;
+    document.getElementById('refreshAuditBtn')?.addEventListener('click',loadAuditEvents);
+    document.getElementById('downloadAuditCsvBtn')?.addEventListener('click',()=>downloadAuditCsv(events));
+  }
+  function downloadAuditCsv(events){
+    const headers=['timestamp','action','actor','actorRole','entityType','entityId','before','after','userAgent'];
+    const esc=v=>{const s=v==null?'':String(v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+    const lines=[headers.join(',')];
+    events.forEach(e=>lines.push(headers.map(h=>esc(e[h])).join(',')));
+    const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='drawsplat-activity-records-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();
+  }
+  async function downloadPrivacyPacket(){
+    const status=document.getElementById('privacyPacketStatus');
+    const url=getScriptUrl();
+    if(!url){ if(status) status.textContent='Save a Web App URL above first.'; return; }
+    const pc=getAdminPasscode();
+    if(!pc){ if(status) status.textContent='Admin passcode required.'; return; }
+    if(status) status.textContent='Generating packet…';
+    try{
+      const params=new URLSearchParams({action:'privacyPacket',passcode:pc,actor:'admin'});
+      const res=await fetch(url+'?'+params.toString());
+      const text=await res.text();
+      try{ const j=JSON.parse(text); if(j&&j.ok===false) throw new Error(j.error||'Generation failed.'); }catch(e){ if(!(e instanceof SyntaxError)) throw e; }
+      const bytes=Uint8Array.from(atob(text.trim()),c=>c.charCodeAt(0));
+      const blob=new Blob([bytes],{type:'application/zip'});
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='DrawSplat-District-Privacy-Packet-'+new Date().toISOString().slice(0,10)+'.zip';document.body.appendChild(a);a.click();a.remove();
+      if(status) status.textContent='Packet downloaded.';
+    }catch(err){ if(status) status.textContent=String(err.message||err); }
+  }
+  document.getElementById('complianceAudit')?.addEventListener('toggle',function(){ if(this.open) loadAuditEvents(); });
+  document.getElementById('downloadPrivacyPacketBtn')?.addEventListener('click',downloadPrivacyPacket);
+
   loadSettings();
 })();

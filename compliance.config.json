@@ -1,0 +1,123 @@
+{
+  "$schema": "./compliance.schema.json",
+  "version": 1,
+  "lastReviewed": "",
+  "safety": {
+    "text": {
+      "enabled": true,
+      "patterns": [
+        "\\b(kill myself|suicide|self harm|self-harm)\\b",
+        "\\b(nude|porn|sexually explicit)\\b",
+        "\\b(cocaine|meth|fentanyl|heroin)\\b",
+        "\\b(harass|stalk|doxx|doxxing)\\b"
+      ],
+      "words": [],
+      "blockOnMatch": true,
+      "logOnMatch": true,
+      "appliesTo": ["sticky", "text", "comment", "boardTitle", "imageCaption", "fileName"]
+    },
+    "links": {
+      "enabled": true,
+      "blockUnapproved": true,
+      "allowedDomains": [
+        "tcea.org",
+        "edu.google.com",
+        "khanacademy.org",
+        "loc.gov",
+        "nasa.gov",
+        "smithsonian.org",
+        "drawsplat.org"
+      ]
+    },
+    "images": {
+      "enabled": true,
+      "allowedMimeTypes": ["image/png", "image/jpeg", "image/webp"],
+      "blockedMimeTypes": ["image/svg+xml"],
+      "maxBytes": 5242880,
+      "teacherApprovalRequired": true,
+      "stripMetadata": true
+    },
+    "anonymousPosting": false,
+    "publicSharing": false
+  },
+  "parentAccess": {
+    "portalEnabled": true,
+    "requestFormEnabled": true,
+    "verificationMethod": "teacher_code",
+    "complianceAdminEmail": "",
+    "verificationCodeExpiryDays": 14
+  },
+  "ageLock": {
+    "enabled": true,
+    "defaultBand": "unknown_minor",
+    "studentCanEdit": false,
+    "teacherCanEdit": true,
+    "teacherChangeRequiresReason": true,
+    "districtAdminCanEdit": true
+  },
+  "timeLimits": {
+    "enabled": false,
+    "dailySeconds": 1800,
+    "sessionSeconds": 0,
+    "allowedHoursStart": "07:30",
+    "allowedHoursEnd": "17:00",
+    "weekendAllowed": false,
+    "idleTimeoutSeconds": 60
+  },
+  "retention": {
+    "boards": {
+      "archiveAfterDays": 90,
+      "deleteAfterDays": 365
+    },
+    "audit": {
+      "keepDays": 365
+    },
+    "parentRequests": {
+      "keepDays": 1095
+    }
+  },
+  "audit": {
+    "enabled": true,
+    "actions": [
+      "LOGIN",
+      "BOARD_CREATE",
+      "BOARD_SAVE",
+      "BOARD_SHARE",
+      "BOARD_FREEZE",
+      "BOARD_UNFREEZE",
+      "IMAGE_UPLOAD",
+      "IMAGE_APPROVE",
+      "IMAGE_REJECT",
+      "TEXT_FILTER_HIT",
+      "LINK_FILTER_HIT",
+      "AGE_BAND_CHANGED",
+      "PARENT_REQUEST_CREATED",
+      "PARENT_REQUEST_DECIDED",
+      "DATA_EXPORT",
+      "DATA_DELETED",
+      "ADMIN_SETTING_CHANGED",
+      "TIME_LIMIT_HIT",
+      "RETENTION_ACTION"
+    ]
+  },
+  "privacy": {
+    "storageLocation": "google-drive-and-sheets",
+    "encryptionInTransit": "tls-1.2-or-newer",
+    "thirdPartyServices": [
+      "Google Workspace (Drive, Sheets, Apps Script)",
+      "Google Identity Services (sign-in)",
+      "Microsoft Identity Platform (sign-in)",
+      "Cloudflare Pages (static hosting)"
+    ],
+    "studentDataTrainsAiModels": false,
+    "advertising": false,
+    "dataSold": false,
+    "districtPrivacyPacketIncludes": [
+      "Terms & Privacy",
+      "District Addendum",
+      "Current compliance configuration snapshot",
+      "Activity Records export (last 90 days)",
+      "Compliance Roadmap"
+    ]
+  }
+}

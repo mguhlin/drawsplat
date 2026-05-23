@@ -13,8 +13,13 @@ const DS_SHEETS = {
   boards: 'Boards',
   rooms: 'Rooms',
   templates: 'Templates',
-  turnins: 'TurnIns'
+  turnins: 'TurnIns',
+  audit: 'Audit',
+  parentRequests: 'ParentRequests'
 };
+
+const DS_AUDIT_HEADERS = ['id', 'timestamp', 'actor', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'userAgent'];
+const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'studentId', 'requestType', 'details', 'status', 'assignedTo', 'createdAt', 'decidedAt', 'decisionNote'];
 
 /* One-time initializer. Creates or repairs the spreadsheet tabs and the Drive
  * folder used by every backend action below. */
@@ -25,6 +30,8 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.rooms, ['room', 'updatedAt', 'jsonFileId', 'instanceId', 'passwordHash']);
   ensureSheet_(ss, DS_SHEETS.templates, ['templateId', 'name', 'updatedAt', 'jsonFileId']);
   ensureSheet_(ss, DS_SHEETS.turnins, ['turninId', 'studentName', 'className', 'title', 'updatedAt', 'jsonFileId', 'pngFileId']);
+  ensureSheet_(ss, DS_SHEETS.audit, DS_AUDIT_HEADERS);
+  ensureSheet_(ss, DS_SHEETS.parentRequests, DS_PARENT_HEADERS);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
   return 'DrawSplatTM setup complete.';
 }
@@ -43,6 +50,9 @@ function doGet(e) {
       case 'turnInList': return json_(listTurnIns_());
       case 'turnInLoad': return json_(loadTurnIn_(p.turninId));
       case 'ping': return json_({ ok: true, app: 'DrawSplatTM', time: now_() });
+      case 'auditList': return json_(adminAuditList_(p));
+      case 'parentRequestList': return json_(adminParentRequestList_(p));
+      case 'privacyPacket': return privacyPacketResponse_(p);
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -60,6 +70,8 @@ function doPost(e) {
       case 'roomSave': return json_(saveRoom_(body.room, body.password, body.role, body.instanceId, body.board));
       case 'templateSave': return json_(saveTemplate_(body.template));
       case 'turnInSave': return json_(saveTurnIn_(body.turnin, body.png));
+      case 'parentRequest': return json_(createParentRequest_(body));
+      case 'parentRequestDecide': return json_(decideParentRequest_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -378,4 +390,222 @@ function cleanName_(name) {
 
 function now_() {
   return new Date().toISOString();
+}
+
+/* --- Compliance: Activity Records (Day 1.7) --------------------------------- */
+
+/* logEvent_(action, payload) appends an audit row. Call from any endpoint that
+ * needs to leave a trail. `payload` accepts actor, actorRole, entityType,
+ * entityId, before, after, userAgent (optional). */
+function logEvent_(action, payload) {
+  try {
+    const p = payload || {};
+    const row = {
+      id: 'evt_' + Utilities.getUuid(),
+      timestamp: now_(),
+      actor: String(p.actor || ''),
+      actorRole: String(p.actorRole || ''),
+      action: String(action || ''),
+      entityType: String(p.entityType || ''),
+      entityId: String(p.entityId || ''),
+      before: typeof p.before === 'string' ? p.before : (p.before == null ? '' : JSON.stringify(p.before)),
+      after: typeof p.after === 'string' ? p.after : (p.after == null ? '' : JSON.stringify(p.after)),
+      userAgent: String(p.userAgent || '')
+    };
+    upsertRow_(DS_SHEETS.audit, 'id', row.id, row);
+  } catch (err) {
+    // Auditing must never break the calling endpoint.
+  }
+}
+
+/* adminAuditList_ returns recent audit rows for the Activity Records viewer.
+ * Requires the ADMIN_PASSCODE script property (same passcode used by the
+ * Teacher Admin page). Supports filters: action, actor, since, limit. */
+function adminAuditList_(p) {
+  requireAdmin_(p);
+  const rows = readRows_(DS_SHEETS.audit);
+  const action = String((p && p.actionFilter) || '').trim();
+  const actor = String((p && p.actor) || '').trim().toLowerCase();
+  const since = String((p && p.since) || '').trim();
+  const limit = Math.max(1, Math.min(parseInt((p && p.limit) || '200', 10), 1000));
+  let filtered = rows;
+  if (action) filtered = filtered.filter(r => String(r.action) === action);
+  if (actor) filtered = filtered.filter(r => String(r.actor || '').toLowerCase().indexOf(actor) !== -1);
+  if (since) filtered = filtered.filter(r => String(r.timestamp || '') >= since);
+  filtered.sort((a, b) => String(b.timestamp).localeCompare(String(a.timestamp)));
+  return { ok: true, events: filtered.slice(0, limit), totalMatched: filtered.length };
+}
+
+/* --- Compliance: Parent Request Center (Days 2.3 / 2.4) -------------------- */
+
+/* Creates a parent request ticket. Open endpoint (anyone can submit); details
+ * are stored as `pending_verification` until a teacher-issued code matches
+ * (verification flow added in Day 2.5). */
+function createParentRequest_(body) {
+  const allowedTypes = ['view', 'export', 'correct', 'delete', 'pause', 'safety_report', 'privacy_question'];
+  const requestType = String((body && body.requestType) || '');
+  if (allowedTypes.indexOf(requestType) === -1) throw new Error('Unsupported request type.');
+  const parentEmail = String((body && body.parentEmail) || '').trim().toLowerCase();
+  const parentName = String((body && body.parentName) || '').trim();
+  const studentName = String((body && body.studentName) || '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail)) throw new Error('Valid parent email is required.');
+  if (!parentName) throw new Error('Parent name is required.');
+  if (!studentName) throw new Error('Student name is required.');
+  const id = 'req_' + Utilities.getUuid();
+  const row = {
+    id: id,
+    parentName: parentName,
+    parentEmail: parentEmail,
+    studentName: studentName,
+    studentId: String((body && body.studentId) || '').trim(),
+    requestType: requestType,
+    details: String((body && body.details) || '').slice(0, 2000),
+    status: 'pending_verification',
+    assignedTo: '',
+    createdAt: now_(),
+    decidedAt: '',
+    decisionNote: ''
+  };
+  upsertRow_(DS_SHEETS.parentRequests, 'id', id, row);
+  logEvent_('PARENT_REQUEST_CREATED', {
+    actor: parentEmail,
+    actorRole: 'parent',
+    entityType: 'parent_request',
+    entityId: id,
+    after: { requestType: requestType, studentName: studentName }
+  });
+  notifyComplianceAdmin_('New parent request: ' + requestType,
+    'Ticket ' + id + ' from ' + parentName + ' <' + parentEmail + '> for student ' + studentName + '.\n\nDetails:\n' + (row.details || '(none)'));
+  return { ok: true, id: id, status: row.status };
+}
+
+/* Teacher / district admin decides a parent request. Requires ADMIN_PASSCODE. */
+function decideParentRequest_(body) {
+  requireAdmin_(body);
+  const id = String((body && body.id) || '');
+  const decision = String((body && body.decision) || '');
+  if (['approved', 'denied', 'completed'].indexOf(decision) === -1) throw new Error('Invalid decision.');
+  const existing = findRow_(DS_SHEETS.parentRequests, 'id', id);
+  if (!existing) throw new Error('Request not found.');
+  const patch = {
+    id: id,
+    parentName: existing.parentName,
+    parentEmail: existing.parentEmail,
+    studentName: existing.studentName,
+    studentId: existing.studentId,
+    requestType: existing.requestType,
+    details: existing.details,
+    status: decision,
+    assignedTo: String((body && body.assignedTo) || existing.assignedTo || ''),
+    createdAt: existing.createdAt,
+    decidedAt: now_(),
+    decisionNote: String((body && body.decisionNote) || '').slice(0, 2000)
+  };
+  upsertRow_(DS_SHEETS.parentRequests, 'id', id, patch);
+  logEvent_('PARENT_REQUEST_DECIDED', {
+    actor: String((body && body.actor) || 'admin'),
+    actorRole: 'admin',
+    entityType: 'parent_request',
+    entityId: id,
+    before: { status: existing.status },
+    after: { status: decision, decisionNote: patch.decisionNote }
+  });
+  return { ok: true, id: id, status: decision };
+}
+
+function adminParentRequestList_(p) {
+  requireAdmin_(p);
+  const rows = readRows_(DS_SHEETS.parentRequests);
+  rows.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return { ok: true, requests: rows };
+}
+
+/* --- Compliance: District Privacy Packet (Day 3.6) -------------------------- */
+
+/* Returns a downloadable ZIP file via Apps Script ContentService. Bundle
+ * contents: the current compliance config snapshot, the last 90 days of
+ * Activity Records as CSV, the parent-requests roster as CSV, and a
+ * generated README listing what's inside and how to read it. Static legal
+ * documents (Terms & Privacy, District Addendum, Compliance Roadmap) are
+ * referenced by URL because they live with the site, not the script. */
+function privacyPacketResponse_(p) {
+  requireAdmin_(p);
+  const zipName = 'DrawSplat-District-Privacy-Packet-' + new Date().toISOString().slice(0, 10) + '.zip';
+  const cfg = readComplianceConfig_();
+  const auditSince = Utilities.formatDate(new Date(Date.now() - 90 * 86400000), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'");
+  const auditRows = readRows_(DS_SHEETS.audit).filter(r => String(r.timestamp || '') >= auditSince);
+  const parentRows = readRows_(DS_SHEETS.parentRequests);
+  const readme = [
+    'DrawSplat District Privacy Packet',
+    'Generated: ' + now_(),
+    '',
+    'Contents:',
+    '  compliance-config.json   Current compliance configuration snapshot.',
+    '  activity-records.csv     Activity Records (audit log) for the last 90 days.',
+    '  parent-requests.csv      Parent Request Center tickets (all statuses).',
+    '  README.txt               This file.',
+    '',
+    'Companion documents (hosted on the DrawSplat site):',
+    '  Terms & Privacy          https://drawsplat.org/legal/terms-privacy.html',
+    '  District Addendum        https://drawsplat.org/legal/district-addendum.html',
+    '  Compliance Roadmap       https://drawsplat.org/COMPLIANCE-ROADMAP.md',
+    '',
+    'How to use:',
+    '  Open the CSV files in any spreadsheet. The config JSON is the source',
+    '  of truth for what safety, parent-access, age-lock, time-limit, and',
+    '  retention controls are active. Review the Activity Records to spot',
+    '  unusual patterns. Track parent requests for SLA compliance.'
+  ].join('\n');
+  const blobs = [
+    Utilities.newBlob(JSON.stringify(cfg, null, 2), 'application/json', 'compliance-config.json'),
+    Utilities.newBlob(rowsToCsv_(DS_AUDIT_HEADERS, auditRows), 'text/csv', 'activity-records.csv'),
+    Utilities.newBlob(rowsToCsv_(DS_PARENT_HEADERS, parentRows), 'text/csv', 'parent-requests.csv'),
+    Utilities.newBlob(readme, 'text/plain', 'README.txt')
+  ];
+  const zip = Utilities.zip(blobs, zipName);
+  logEvent_('DATA_EXPORT', {
+    actor: String((p && p.actor) || 'admin'),
+    actorRole: 'admin',
+    entityType: 'privacy_packet',
+    after: { auditRowsIncluded: auditRows.length, parentRowsIncluded: parentRows.length }
+  });
+  return ContentService.createTextOutput(Utilities.base64Encode(zip.getBytes()))
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function readComplianceConfig_() {
+  const stored = DS_PROPS.getProperty('COMPLIANCE_CONFIG');
+  if (stored) {
+    try { return JSON.parse(stored); } catch (e) {}
+  }
+  return { note: 'No server-side compliance configuration set. Default ships in compliance.config.json at the repo root.' };
+}
+
+function rowsToCsv_(headers, rows) {
+  const escape = v => {
+    const s = v == null ? '' : String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lines = [headers.join(',')];
+  rows.forEach(r => lines.push(headers.map(h => escape(r[h])).join(',')));
+  return lines.join('\n');
+}
+
+/* --- Compliance: shared admin guard and notifier --------------------------- */
+
+function requireAdmin_(p) {
+  const configured = String(DS_PROPS.getProperty('ADMIN_PASSCODE') || '').trim();
+  if (!configured) throw new Error('ADMIN_PASSCODE script property is not set.');
+  const supplied = String((p && p.passcode) || '').trim();
+  if (supplied !== configured) throw new Error('Invalid admin passcode.');
+}
+
+function notifyComplianceAdmin_(subject, body) {
+  const to = String(DS_PROPS.getProperty('COMPLIANCE_ADMIN_EMAIL') || '').trim();
+  if (!to) return;
+  try {
+    MailApp.sendEmail({ to: to, subject: '[DrawSplat] ' + subject, body: body });
+  } catch (err) {
+    // Notification failures are non-fatal.
+  }
 }

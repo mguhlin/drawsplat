@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Family Access Tools | DrawSplatTM</title>
+<meta name="description" content="DrawSplatTM Family Access Tools: parents can view, export, correct, or delete student data, request a pause, or report a safety concern." />
+<link rel="canonical" href="https://drawsplat.org/parents/" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM family navigation">
+    <a href="../index.html">Home</a>
+    <a href="../pages/support.html">Support</a>
+    <a href="../legal/terms-privacy.html">Privacy</a>
+  </nav>
+  <a class="landing-signin" href="../index.html">Back to DrawSplat</a>
+</header>
+
+<main class="landing-shell">
+  <section class="landing-hero">
+    <div class="landing-hero-copy">
+      <p class="landing-eyebrow">Family Access Tools</p>
+      <h1>Submit a request about your student&rsquo;s DrawSplat<sup class="tm">TM</sup> data.</h1>
+      <p class="landing-lede">Use this form to ask the school to view, export, correct, or delete your student&rsquo;s work, to pause an account, to report a safety concern, or to ask a privacy question. You will receive an email confirmation, and the school will respond after verifying your relationship to the student.</p>
+    </div>
+  </section>
+
+  <section class="landing-section" aria-label="Parent request form">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Request</p>
+      <h2>Family request form</h2>
+      <p>Fields marked with <span aria-hidden="true" style="color:#b91c1c">*</span> are required. Your information goes only to the school&rsquo;s designated compliance contact.</p>
+    </div>
+    <form id="parentRequestForm" class="admin-panel" style="max-width:720px;margin:0 auto">
+      <label class="admin-label" for="parentName">Your name <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <input id="parentName" type="text" autocomplete="name" maxlength="120" required>
+
+      <label class="admin-label" for="parentEmail">Your email <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <input id="parentEmail" type="email" autocomplete="email" maxlength="160" required>
+      <p class="hint">We will email the response and any verification code to this address.</p>
+
+      <label class="admin-label" for="studentName">Student name <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <input id="studentName" type="text" autocomplete="off" maxlength="120" required>
+
+      <label class="admin-label" for="studentId">Student ID (optional)</label>
+      <input id="studentId" type="text" autocomplete="off" maxlength="80">
+
+      <label class="admin-label" for="requestType">Request type <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <select id="requestType" required>
+        <option value="">Choose…</option>
+        <option value="view">View my student&rsquo;s data</option>
+        <option value="export">Download my student&rsquo;s work</option>
+        <option value="correct">Correct account information</option>
+        <option value="delete">Delete stored work</option>
+        <option value="pause">Pause account access</option>
+        <option value="safety_report">Report a safety concern</option>
+        <option value="privacy_question">Ask a privacy question</option>
+      </select>
+
+      <label class="admin-label" for="requestDetails">Details</label>
+      <textarea id="requestDetails" rows="6" maxlength="2000" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff;font-family:inherit"></textarea>
+      <p class="hint"><span id="parentDetailsCount">0</span>/2000 characters</p>
+
+      <div class="admin-actions">
+        <button id="parentSubmitBtn" type="submit" class="primary">Submit request</button>
+        <a class="admin-button" href="../index.html">Cancel</a>
+      </div>
+      <p id="parentRequestStatus" class="hint" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">What happens next</p>
+      <h2>How requests are handled</h2>
+    </div>
+    <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
+      <li>You receive an email confirmation with a ticket number.</li>
+      <li>The school&rsquo;s compliance contact is notified.</li>
+      <li>The school verifies your relationship to the student. The simplest method is a one-time code your student&rsquo;s teacher can issue through the school&rsquo;s normal parent-communications channel.</li>
+      <li>Verified requests are approved, denied, or escalated. Every step is recorded.</li>
+      <li>You receive a response by email. Data exports and deletions are completed by a school administrator.</li>
+    </ol>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Where to read more</p>
+      <h2>Privacy and safety documents</h2>
+    </div>
+    <ul class="admin-checklist" style="max-width:760px;margin:0 auto">
+      <li><a href="../legal/terms-privacy.html">Terms &amp; Privacy</a></li>
+      <li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li>
+      <li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a> (for schools)</li>
+      <li><a href="../COMPLIANCE-ROADMAP.md">Compliance Roadmap</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> Family Access Tools.</span>
+  <a href="../index.html">Back to Start</a>
+</footer>
+
+<script src="../assets/js/parents.js?v=0.1"></script>
+</body>
+</html>

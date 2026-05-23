@@ -131,6 +131,23 @@
         <a class="admin-button" href="../legal/terms-privacy.html">Read Terms & Privacy</a>
       </div>
     </article>
+
+    <article class="admin-panel admin-compliance" id="complianceConsole">
+      <h3>Compliance Console</h3>
+      <p class="hint">Phased rollout of safety, parent-access, age-lock, and district-readiness features. Each subsection is filled in as the corresponding day in <a href="../COMPLIANCE-ROADMAP.md">COMPLIANCE-ROADMAP.md</a> is completed.</p>
+      <div class="admin-actions">
+        <a class="admin-button" href="../COMPLIANCE-ROADMAP.md">Open Roadmap</a>
+        <a class="admin-button" href="../docs/COMPLIANCE.md">Open Compliance Docs</a>
+        <a class="admin-button" href="../parents/index.html">Parent Request Center</a>
+      </div>
+      <details class="compliance-section" id="complianceSafetyReview"><summary>Safety Review (text filter, image queue, link control, board freeze)</summary><div class="compliance-body"><p class="hint">Configured in Days 1.1–1.9. Once enabled, flagged text, pending image uploads, blocked links, and frozen boards appear in a single chronological queue.</p></div></details>
+      <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, time limits)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.3–2.10. Parents can submit requests, receive a teacher-issued verification code, download a student data export, or request deletion / account pause.</p></div></details>
+      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Configured in Days 2.1–2.2. Each student carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only district admin can override, with audit trail.</p></div></details>
+      <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.8–2.9. Browser timer provides UX; Apps Script gate provides the authoritative cutoff for compliance.</p></div></details>
+      <details class="compliance-section" id="complianceRetention"><summary>Retention Policy &amp; Cleanup</summary><div class="compliance-body"><p class="hint">Configured in Days 3.7–3.8. Boards archive after N days, delete after M days. Activity Records prune to the configured retention window via a nightly Apps Script trigger.</p></div></details>
+      <details class="compliance-section" id="complianceAudit"><summary>Activity Records (audit log)</summary><div class="compliance-body" id="complianceAuditBody"><p class="hint">Last 200 events. Filter by action and actor. Download as CSV for reviewer evidence.</p><div id="complianceAuditViewer">Connect a Web App URL above to load Activity Records.</div></div></details>
+      <details class="compliance-section" id="compliancePrivacyPacket"><summary>District Privacy Packet</summary><div class="compliance-body"><p class="hint">One-click ZIP with Terms &amp; Privacy, District Addendum, the current compliance config, the last 90 days of Activity Records, and the Compliance Roadmap.</p><div class="admin-actions"><button id="downloadPrivacyPacketBtn" type="button" class="primary">Download District Privacy Packet</button></div><p id="privacyPacketStatus" class="hint" role="status" aria-live="polite"></p></div></details>
+    </article>
   </section>
 </main>
 
