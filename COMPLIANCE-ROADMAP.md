@@ -85,7 +85,7 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 2.3 | Parent Request Center &mdash; static page scaffold | [x] | 021c657 |
 | 2.4 | Parent Request Center &mdash; Apps Script ticket endpoint | [x] | 021c657 |
 | 2.5 | Teacher-issued parent verification code | [x] | f40279f |
-| 2.6 | Data export &mdash; download student work as ZIP | [x] | pending |
+| 2.6 | Data export &mdash; download student work as ZIP | [x] | ac2cd84 |
 | 2.7 | Data deletion request &mdash; ticket + admin action | [x] | f40279f |
 | 2.8 | Time-limit controls &mdash; browser timer + lock UX | [ ] | |
 | 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [ ] | |
