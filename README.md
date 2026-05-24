@@ -28,25 +28,20 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, Classroom Tool Widgets, and a complete Compliance Console (Phases 1–3).**
+**DrawSplatTM v3.1.0 — Phase 4 MySQL backend (OAuth, RBAC, SSE, cron, Clever roster sync, Family Access Portal, server-side Privacy Packet), self-host download bundle, Texas plain-language compliance explainer, contact form, free pricing model.** Pinned as a GitHub release: [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0).
 
-## Recent improvements
+## Recent improvements (v3.1.0)
 
-- Added a public `pages/support.html` page with an empty Videos section and Resource Articles.
-- Added `guides/` as a classroom guide hub with HTML guide pages for ScratchArt, Google Drive + Sheets setup, MySQL setup, and the project reference.
-- Added guide banner images in `guides/images/` and updated the public home, guide, and template pages to use those visual assets.
-- Reorganized the whiteboard top menus so **Insert** is focused on insertable content, **Tools** holds tool workflows, **File** holds restore points, and **Options** holds Keyboard Shortcuts.
-- Added **ScratchArt** to the Insert menu while keeping it available from the Simple toolbar.
-- Removed the duplicate Create GIF entry from Insert so it only appears under Tools.
-- Added ScratchArt classroom documentation with a full HTML guide and links to free rainbow-background image sources.
-- Improved ScratchArt undo behavior so each completed eraser stroke is undoable without losing the background setup.
-- Added circle-based eraser thickness controls for small, larger, and largest erasing without text labels in the buttons.
-- Expanded the Paint Bucket so clicking blank canvas can add a color layer above the panel background image, useful for quickly covering a background for ScratchArt.
-- Improved Simple toolbar tooltip positioning so long group tooltips stay readable near the left edge of the screen.
-- Added public setup guides for Google Drive + Sheets and the starter MySQL backend, including the important boundary that browsers call an HTTPS API and do not connect directly to MySQL.
-- Added classroom solution tools to **Tools → Classroom Widgets** as new-tab activities: Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder.
-- Restyled the classroom solution tools to use DrawSplatTM colors and removed prior third-party branding references.
-- Updated Coin Flipper with local Heads/Tails image assets and a stylized classroom preset.
+- **Phase 4 MySQL backend closed end-to-end.** New modules in `server/mysql-backend/`: `oauth-routes.js` (Google + Microsoft token verification), `rbac.js` (five-role permission matrix), `safety.js` (shared board safety scan), `realtime.js` (SSE channel for `session-lock` + `board.updated`), `sis-clever.js` (district token + roster sync), `cron-jobs.js` (retention + per-minute time-limit enforcement), `privacy-packet.js` (hand-rolled ZIP generator with zero new dependencies). `server.js` rewires the room/board endpoints with freeze + safety gates and a `board.updated` SSE broadcast. `compliance-routes.js` gains age-band lock, parent-code issuance, freeze/unfreeze, full data delete, student data export, and a parent's own request list.
+- **Self-host bundle.** `scripts/make-selfhost-bundle.sh` produces `dist/drawsplat-selfhost-<label>.zip` (~86 MB) excluding `.git`, `node_modules`, `.env`, and build artifacts. Stamped with a `SELFHOST-README.txt`. New `pages/download.html` walks through the three deployment paths and links the GitHub release.
+- **Apps-Script → MySQL migration CLI** at `server/mysql-backend/migrate-from-apps-script.mjs` reads Sheet-tab CSV exports plus a folder of board JSONs.
+- **Family Access Portal** (`server/mysql-backend/static/parent-portal.html` + `.js`) served at `/parent-portal/` on the self-hosted backend.
+- **Texas plain-language compliance explainer** at `legal/texas-compliance.html` maps SCOPE / FERPA / COPPA / TEC 32.151+ to shipped features. Hero infographic, ten numbered sections, cross-links to terms / district addendum / privacy builder.
+- **Compliance Console operator guide** at `guides/compliance-guide.html` walks through the eight Console sections.
+- **Contact / Information Request form** at `pages/contact.html` replaces every `mailto:` on the site. Posts to a new `ContactRequests` Google Sheet tab via `apps-script/Code.gs` v1.8.0; admin gets an email notification.
+- **Free pricing model.** `pages/pricing.html` is now three cards: Everyone (free), Coffee (optional [Buy Me a Coffee](https://buymeacoffee.com/drawsplat) donation), Support & PD (optional paid). New pricing hero infographic. PayPal links retired.
+- **Navigation overhaul.** Four dropdowns — For Teachers, For Families, Privacy & Terms, Support — plus top-level Pricing. **Download for Self-Hosting** lives in the Support dropdown on all 24+ top-nav pages.
+- **24 top-nav pages** (index, pages/*, legal/*, guides/*) refreshed with the consistent dropdown nav, accessible `<details name="landing-topnav">` pattern (only one menu open at a time).
 
 ## Version evolution
 
@@ -81,41 +76,58 @@ timeline
         : Improved mosaics and new collage tool
   v3.0 : Admin and privacy foundation
        : Landing page, pricing, PROTECT-aligned policy, MySQL wizard
-  v3.1 : Support and ScratchArt workflow
-       : Support page, guide hub, ScratchArt guide, menu cleanup, eraser sizes, incremental ScratchArt undo, Classroom Widget tool links
+  v3.1 : Support, ScratchArt, and self-hosted compliance
+       : Support page + guide hub, ScratchArt guide, eraser sizes, incremental ScratchArt undo, Classroom Widget tool links
+       : Compliance Phases 1–3 closed on the Apps Script path
+  v3.1.0 : Phase 4 MySQL backend + self-host bundle
+         : OAuth (Google + Microsoft), RBAC, SSE, cron, Clever connector, Family Access Portal, server-side Privacy Packet
+         : Texas plain-language compliance explainer, contact form, free pricing model, Download for Self-Hosting page
 ```
 
 ## Included files
 
-- `index.html` — public landing page that explains DrawSplatTM, pricing, privacy, templates, Whiteboard, and Teacher Admin
+- `index.html` — public landing page with the four-dropdown nav (For Teachers, For Families, Privacy & Terms, Support) plus top-level Pricing
 - `app/whiteboard.html` — English whiteboard app
 - `pages/start.html` — backwards-compatible redirect to `index.html`
 - `pages/background-templates.html` — education panel background template gallery with original open-source SVG backgrounds
-- `pages/support.html` — support landing page with Videos and Resource Articles sections
-- `guides/` — HTML guide hub with classroom activity, setup, and project-reference articles
+- `pages/support.html` — support landing page with featured Compliance Console Guide + Texas Compliance Explainer cards
+- `pages/download.html` — self-host download page (three deployment paths + GitHub release link + SHA-256)
+- `pages/contact.html` — Contact / Information Request form (replaces every mailto on the site)
+- `assets/js/contact.js` — posts contact submissions to the Apps Script `contactRequest` endpoint
+- `guides/` — HTML guide hub: ScratchArt, Google Drive + Sheets setup, MySQL setup, Compliance Console guide, project reference, classroom widgets, collaboration, saving/exporting, etc.
+- `guides/compliance-guide.html` — operator walkthrough of the eight Compliance Console sections
 - `guides/images/` — banner and guide images used by public pages and guides
-- `pages/pricing.html` — pricing page with the free version and one-time as-is license option
+- `pages/pricing.html` — free pricing model (Everyone / Coffee / Support & PD)
 - `legal/terms-privacy.html` — combined Terms of Service and Privacy Policy organized around student privacy review areas
 - `legal/district-addendum.html` — signature-ready district data privacy addendum template
-- `admin/access.html` — admin-access request page with the Miguel Guhlin contact link
-- `languages/` — translated whiteboard entry pages for Spanish, Vietnamese, Arabic, Chinese, and Urdu / Hindi
-- `admin/admin.html` — teacher/admin setup page for Google integration and classroom links
+- `legal/texas-compliance.html` — plain-language Texas SCOPE / FERPA / COPPA / TEC 32.151+ explainer
+- `legal/privacy-builder.html` — district-local privacy notice generator
+- `parents/` — Family Access Tools (parent request form + endpoint client)
+- `community/` — Community bulletin board (Google + Microsoft SSO, email/pw fallback, multi-language UI)
+- `admin/admin.html` — Teacher Admin with the Compliance Console (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
+- `admin/access.html` — admin-access request page
+- `admin/mysql-setup.html` — MySQL backend setup wizard for endpoint testing and `.env` template generation
+- `languages/` — translated whiteboard entry pages (Spanish, Vietnamese, Arabic, Chinese, Urdu / Hindi)
 - `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
-- `assets/js/admin.js` — admin-page settings, backend ping, and link generation
-- `admin/mysql-setup.html` — Moodle-style MySQL setup wizard for endpoint testing and server `.env` template generation
+- `assets/js/admin.js` — admin-page settings, backend ping, link generation, Compliance Console wiring
 - `assets/js/mysql-setup.js` — MySQL wizard behavior
-- `assets/css/app.css` — shared stylesheet (extracted in v2.5)
-- `assets/js/app.js` — shared application code (extracted in v2.5)
-- `assets/js/i18n.js` — runtime translation applicator (new in v2.5)
-- `assets/js/locales.js` — single source of truth for every UI translation (new in v2.5)
+- `assets/js/safety.js` — client-side text + link safety pre-check
+- `assets/js/timelimits.js` — client-side active-time tracker + workspace lock
+- `assets/js/parents.js` — Family Access Tools client
+- `assets/js/i18n.js` — runtime translation applicator
+- `assets/js/locales.js` — single source of truth for every UI translation
 - `assets/js/template-gallery.js` — keeps public template-gallery links aligned with the selected language
-- `assets/brand/` — logo and cover artwork used by the public pages
-- `sw.js` — service worker for offline shell (new in v2.5)
-- `apps-script/Code.gs` — optional Google Apps Script backend for Drive + Sheets saving, cloud sync, templates, and student turn-ins
-- `server/mysql-backend/` — starter Express + MySQL backend scaffold, schema, and setup guide
+- `assets/js/app.js` — shared application code
+- `assets/css/app.css` — shared stylesheet
+- `assets/brand/` — logo and cover artwork, including the new pricing + Texas Privacy hero infographics + Buy Me a Coffee QR
+- `sw.js` — service worker for offline shell
+- `apps-script/Code.gs` — Google Apps Script backend (v1.8.0): boards, rooms, turn-ins, parent requests, compliance config, audit, retention, contact requests
+- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes `server.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
 - `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
-- `solutions/` — standalone classroom tools opened from Classroom Widgets, including Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder
-- `solutions/coinflipping/assets/` — local Heads/Tails coin images used by the Coin Flipper preset
+- `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller)
+- `compliance.config.json` — default safety / retention / privacy configuration (client baseline; server-authoritative copy lives in Apps Script Script Property or the MySQL `compliance_config` table)
+- `scripts/make-selfhost-bundle.sh` — produces `dist/drawsplat-selfhost-<label>.zip` for districts to download
+- `COMPLIANCE-ROADMAP.md` — every compliance day-module with status + commit references
 
 ## Compliance
 
@@ -134,7 +146,19 @@ What is built today (Phases 1&ndash;3 of the roadmap, on the Apps Script backend
 - **Compliance Console** &mdash; single Teacher Admin surface (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
 - **District Privacy Packet** &mdash; one-click ZIP bundling config snapshot, 90 days of Activity Records, parent-request log, and a README pointing at Terms &amp; Privacy + the District Addendum.
 
-Phase 4 (MySQL / district) is parked until a district triggers it &mdash; the items there require a real backend (live SSO/roster sync, real-time session enforcement, true RBAC, a parent portal). The roadmap documents the split between what fits on the Apps Script path and what needs a server.
+Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend/`:
+
+- **OAuth** (Google ID tokens + Microsoft Graph access tokens) issuing the same HMAC bearer session as the email/password path.
+- **RBAC tree** (district / campus / teacher / student / parent) via a permission matrix and `requireRoles` / `requirePermission` middleware applied across compliance, SIS, and realtime routes.
+- **Server-enforced safety scan** on every `PUT /rooms/:roomKey/board` and `POST /turnins`, with the same rules the Apps Script side uses.
+- **Board freeze + write-block** (`rooms.frozen` columns, HTTP 423 on writes to frozen rooms).
+- **Real-time session enforcement and cross-device board sync** via SSE (`/events?boards=...`).
+- **Clever SIS connector** — district token storage + roster sync (`/sis/clever/connect|sync|status`).
+- **In-process retention cron** prunes audit / parent_requests / sessions / rate_limits per the configured `keepDays`.
+- **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
+- **Apps-Script → MySQL migration CLI** for districts switching paths.
+
+Districts that want to deploy this path can grab the v3.1.0 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Production hardening (integration test suite, multi-instance Redis pub/sub for SSE) is still TODO.
 
 ## Core features
 
