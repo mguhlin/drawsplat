@@ -13,6 +13,7 @@ services:
       - db-data:/var/lib/mysql
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./migrations/002_compliance.sql:/docker-entrypoint-initdb.d/02-compliance.sql:ro
+      - ./migrations/003_freeze_and_polish.sql:/docker-entrypoint-initdb.d/03-freeze.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-change-me-root}"]
       interval: 10s
@@ -37,6 +38,8 @@ services:
       API_BASE_PATH: ${API_BASE_PATH:-/api/drawsplat/mysql}
       SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-24}
       DRAWSPLAT_PEPPER: ${DRAWSPLAT_PEPPER:-change-this-pepper}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      DRAWSPLAT_CRON: ${DRAWSPLAT_CRON:-1}
       PORT: 8787
     ports:
       - "${API_HOST_PORT:-8787}:8787"

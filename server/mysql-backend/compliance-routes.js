@@ -13,11 +13,14 @@
  */
 
 const crypto = require('crypto');
+const { buildAuth } = require('./rbac');
+const { checkBoardSafety } = require('./safety');
 
 function attachComplianceRoutes(app, pool, options = {}) {
   const basePath = (options.basePath || '/api/drawsplat/mysql').replace(/\/+$/, '');
   const sessionTtlHours = Number(options.sessionTtlHours || 24);
   const pepper = String(options.pepper || process.env.DRAWSPLAT_PEPPER || 'change-this-pepper');
+  const sharedAuth = buildAuth(pool);
 
   /* --- Auth helpers ----------------------------------------------------- */
 
@@ -285,7 +288,158 @@ function attachComplianceRoutes(app, pool, options = {}) {
     }
   });
 
-  return { basePath };
+  /* --- Age band lock --------------------------------------------------- */
+
+  app.put(basePath + '/admin/users/:id/age-band', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const newBand = String(req.body && req.body.ageBand || '');
+      const reason = String(req.body && req.body.reason || '').trim();
+      const allowed = ['under_13','13_to_17','18_plus','unknown_minor'];
+      if (allowed.indexOf(newBand) === -1) return res.status(400).json({ ok: false, error: 'invalid_age_band' });
+      if (!reason) return res.status(400).json({ ok: false, error: 'reason_required' });
+      const [before] = await pool.query('SELECT id, age_band, age_locked FROM users WHERE id = ? LIMIT 1', [id]);
+      if (!before[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
+      if (before[0].age_locked && req.dsUser.role !== 'district_admin' && req.dsUser.role !== 'campus_admin') {
+        return res.status(403).json({ ok: false, error: 'age_band_locked' });
+      }
+      await pool.execute(
+        `UPDATE users SET age_band = ?, age_changed_by = ?, age_changed_at = NOW(), age_change_reason = ? WHERE id = ?`,
+        [newBand, req.dsUser.email, reason.slice(0, 500), id]
+      );
+      await logEvent(pool, 'AGE_BAND_CHANGED', {
+        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
+        targetType: 'user', targetId: String(id),
+        metadata: { from: before[0].age_band, to: newBand, reason }
+      });
+      res.json({ ok: true });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  /* --- Teacher-issued parent verification code ------------------------- */
+
+  app.post(basePath + '/admin/users/:id/parent-code', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const code = generateParentCode();
+      const hash = sha256(code);
+      const expires = new Date(Date.now() + 14 * 24 * 3600 * 1000);
+      const [r] = await pool.execute('UPDATE users SET parent_code_hash = ?, parent_code_expires_at = ? WHERE id = ? AND role = "student"', [hash, expires, id]);
+      if (r.affectedRows === 0) return res.status(404).json({ ok: false, error: 'student_not_found' });
+      await logEvent(pool, 'PARENT_CODE_ISSUED', {
+        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
+        targetType: 'user', targetId: String(id),
+        metadata: { expiresAt: expires.toISOString() }
+      });
+      res.json({ ok: true, code, expiresAt: expires.toISOString() });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  /* --- Board freeze / unfreeze ----------------------------------------- */
+
+  app.post(basePath + '/admin/boards/:roomKey/freeze', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+    try {
+      const reason = String(req.body && req.body.reason || '').slice(0, 500);
+      const [r] = await pool.execute(
+        `UPDATE rooms SET frozen = 1, frozen_by = ?, frozen_at = NOW(), frozen_reason = ? WHERE room_key = ?`,
+        [req.dsUser.id, reason, String(req.params.roomKey)]
+      );
+      if (r.affectedRows === 0) return res.status(404).json({ ok: false, error: 'room_not_found' });
+      await logEvent(pool, 'BOARD_FROZEN', { actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role, targetType: 'room', targetId: String(req.params.roomKey), metadata: { reason } });
+      res.json({ ok: true });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  app.post(basePath + '/admin/boards/:roomKey/unfreeze', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+    try {
+      const [r] = await pool.execute(
+        `UPDATE rooms SET frozen = 0, frozen_by = NULL, frozen_at = NULL, frozen_reason = NULL WHERE room_key = ?`,
+        [String(req.params.roomKey)]
+      );
+      if (r.affectedRows === 0) return res.status(404).json({ ok: false, error: 'room_not_found' });
+      await logEvent(pool, 'BOARD_UNFROZEN', { actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role, targetType: 'room', targetId: String(req.params.roomKey) });
+      res.json({ ok: true });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  /* --- Student data delete / export ------------------------------------ */
+
+  app.post(basePath + '/admin/users/:id/delete-data', requireRole(['district_admin','campus_admin']), async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const reason = String(req.body && req.body.reason || '').slice(0, 500);
+      const [user] = await pool.query('SELECT id, email, student_name FROM users WHERE id = ? LIMIT 1', [id]);
+      if (!user[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
+      const [turnins] = await pool.execute('DELETE FROM turnins WHERE student_name = ?', [user[0].student_name]);
+      const [sessions] = await pool.execute('DELETE FROM sessions WHERE user_id = ?', [id]);
+      const [usage] = await pool.execute('DELETE FROM time_usage WHERE user_id = ?', [id]);
+      await pool.execute('UPDATE users SET deleted_at = NOW(), email = NULL, student_name = NULL, password_hash = NULL, password_salt = NULL, parent_code_hash = NULL WHERE id = ?', [id]);
+      await logEvent(pool, 'DATA_DELETED', {
+        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
+        targetType: 'user', targetId: String(id),
+        metadata: { reason, turninsDeleted: turnins.affectedRows, sessionsDeleted: sessions.affectedRows, usageDeleted: usage.affectedRows }
+      });
+      res.json({ ok: true, deleted: { turnins: turnins.affectedRows, sessions: sessions.affectedRows, usage: usage.affectedRows } });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  app.get(basePath + '/admin/users/:id/export-data', requireRole(['district_admin','campus_admin','teacher']), async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const [user] = await pool.query('SELECT id, email, student_name, class_name, role, age_band, created_at FROM users WHERE id = ? LIMIT 1', [id]);
+      if (!user[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
+      const [turnins] = await pool.query('SELECT id, title, board_json, status, created_at FROM turnins WHERE student_name = ? ORDER BY created_at DESC', [user[0].student_name]);
+      await logEvent(pool, 'DATA_EXPORT', {
+        actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
+        targetType: 'user', targetId: String(id),
+        metadata: { turninsExported: turnins.length }
+      });
+      res.json({ ok: true, user: user[0], turnins });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  /* --- Parent's view of their own requests ----------------------------- */
+
+  app.get(basePath + '/parent/requests', async (req, res) => {
+    try {
+      const email = String(req.query.email || '').trim().toLowerCase();
+      if (!email) return res.status(400).json({ ok: false, error: 'email_required' });
+      const [rows] = await pool.query('SELECT id, request_type, status, created_at, decided_at FROM parent_requests WHERE LOWER(parent_email) = ? ORDER BY created_at DESC LIMIT 50', [email]);
+      res.json({ ok: true, requests: rows });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+
+  /* --- Returns -------------------------------------------------------- */
+
+  return {
+    basePath,
+    auth: sharedAuth,
+    logEvent: async (action, payload) => logEvent(pool, action, payload),
+    sessionUserFromRequest,
+    checkBoardSafety
+  };
+}
+
+function generateParentCode() {
+  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const buf = crypto.randomBytes(8);
+  let out = '';
+  for (let i = 0; i < 8; i++) out += alphabet[buf[i] % alphabet.length];
+  return out;
 }
 
 module.exports = { attachComplianceRoutes };

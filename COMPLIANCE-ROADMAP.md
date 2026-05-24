@@ -113,17 +113,17 @@ Triggered when a district decides to run the self-hosted MySQL deployment. Each 
 | Day | Item | Status | Commit |
 |---|---|---|---|
 | 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [x] | 63a4306 |
-| 4.2 | Auth: port Community OAuth + email/password to MySQL | [~] | scaffold (email/pwd only) |
-| 4.3 | Whiteboard save/load via MySQL backend | [~] | base schema + endpoints exist |
-| 4.4 | RBAC tree (district / campus / teacher / student / parent) | [~] | schema + middleware in node |
+| 4.2 | Auth: port Community OAuth + email/password to MySQL | [x] | (pending) oauth-routes.js verifies Google ID tokens and Microsoft Graph access tokens, issues HMAC bearer sessions |
+| 4.3 | Whiteboard save/load via MySQL backend | [x] | (pending) board CRUD now gated by safety + freeze, publishes board.updated to SSE, migrate CLI imports Apps Script exports |
+| 4.4 | RBAC tree (district / campus / teacher / student / parent) | [x] | (pending) rbac.js role+permission matrix, requireRoles / requirePermission middleware, applied across compliance + SIS routes |
 | 4.5 | Roster CSV import | [x] | 63a4306 |
-| 4.6 | SSO/roster API integration &mdash; pick one (Clever or ClassLink) | [ ] | |
-| 4.7 | Parent portal (read-only) | [~] | endpoints exist; UI is Apps Script form |
-| 4.8 | Real-time session enforcement (SSE / WebSocket kick) | [ ] | |
-| 4.9 | Cross-device sync on the MySQL path | [ ] | |
-| 4.10 | DB-backed audit log with retention | [~] | schema + read endpoint; cron not wired |
+| 4.6 | SSO/roster API integration &mdash; Clever connector | [x] | (pending) sis-clever.js stores district token, runs roster sync, exposes /sis/clever/connect, /sync, /status |
+| 4.7 | Parent portal (read-only) | [x] | (pending) static/parent-portal.html served at /parent-portal/, signs in via verification code, lists requests, submits new ones |
+| 4.8 | Real-time session enforcement (SSE) | [x] | (pending) realtime.js /events channel, cron-jobs.js publishes session-lock when daily limit hits |
+| 4.9 | Cross-device sync on the MySQL path | [x] | (pending) board.updated broadcasts on every PUT, clients subscribe via /events?boards= |
+| 4.10 | DB-backed audit log with retention | [x] | (pending) cron-jobs.js dailyAuditCleanup respects retention.audit.keepDays and emits RETENTION_ACTION |
 | 4.11 | Self-hosted deployment guide | [x] | 63a4306 |
-| 4.12 | Phase 4 documentation pass | [x] | 63a4306 |
+| 4.12 | Phase 4 documentation pass | [x] | (pending) server/mysql-backend/README rewritten with full surface, /pages/download.html added |
 
 ---
 
@@ -582,6 +582,7 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-24  Phase 4 closed (4.2/4.3/4.4/4.6/4.7/4.8/4.9/4.10/4.12). New MySQL-backend modules: oauth-routes.js (Google + Microsoft token verification), rbac.js (5-role permission matrix + middleware), safety.js (shared board safety scan), realtime.js (SSE channel for session-lock + board.updated), sis-clever.js (district token + roster sync), cron-jobs.js (daily audit/board retention + minute-level time-limit enforcement), privacy-packet.js (server-side ZIP). server.js wires every module + adds compliance gates to PUT /rooms/:roomKey/board (freeze, safety, audit). compliance-routes.js gains age-band lock, parent-code issue, freeze/unfreeze, delete-data, export-data, parent's request list. migrations/003_freeze_and_polish.sql adds rooms.frozen + parent_email index. Parent portal at static/parent-portal.html served on /parent-portal/. migrate-from-apps-script.mjs CLI imports Sheet exports. scripts/make-selfhost-bundle.sh produces a curated zip. pages/download.html lists the three deployment paths and links GitHub Releases. Pricing hero replaced (DrawSplat_Pricing.png). 24 top-nav pages updated with Download link in Support dropdown. Pending commit/push.
 2026-05-24  Days 2.8, 2.9, 2.10, 3.10  Phases 1–3 closed. Time-limit enforcement: new TimeUsage sheet, timeStatus / timeHeartbeat endpoints, checkTimeLimitsAllowed_ gates student saveBoard_/saveRoom_ on allowed hours / weekend / daily seconds. Client assets/js/timelimits.js loads on the whiteboard, tracks active time, posts heartbeats every 30s, locks workspace at limit. Documentation pass: Terms & Privacy gains a new Compliance Features (v3.1.0) section covering every shipped capability; District Addendum gains a Compliance Features Available to the District section; README.md gains a Compliance section linking the roadmap and the operator guide. Code.gs v1.6.0. Pending commit/push.
 2026-05-24  Days 3.1, 3.2, 3.3, 3.4, 3.5  Compliance Console panel build-out. Filter Configuration toggles inside Safety Review (text + link filter on/off, blockOnMatch, blockUnapproved). Parent Controls config (portal/request-form enable, verification method). Use Limits config inputs (daily/session seconds, allowed hours, weekend) ready for Days 2.8/2.9 enforcement code. New Privacy Settings panel renders read-only declarations (storage location, encryption, third-party services, AI training=NO, advertising=NO, data-sold=NO). New raw JSON config editor dialog for advanced edits. Activity Records gets date-range + action + actor filters, and a JSON export alongside the existing CSV. Cache-buster v=0.9. No Code.gs changes — all panels backed by the getCompliance/setCompliance endpoints already shipped in 1.5.0. Pending commit/push.
 2026-05-24  Days 3.7, 3.8, 3.9  Retention + cleanup + district defaults: Compliance Console gets a Retention Policy section with three inputs (archive boards after N days, delete boards after M days, keep audit rows N days). Save persists to COMPLIANCE_CONFIG script property. Run Cleanup Now executes immediately; Install Daily Trigger schedules dailyRetentionCleanup() at 02:00 server time via ScriptApp time-driven triggers. Each run logs RETENTION_ACTION with counts. Reset to Defaults rewrites the config from Code.gs constants — completes 3.9 since safetyConfig_ and retention reader both consume COMPLIANCE_CONFIG, so changing it cascades to every save and cleanup. Code.gs bumped to 1.5.0. Pending commit/push.

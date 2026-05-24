@@ -1,147 +1,139 @@
-# DrawSplatTM MySQL Backend (Phase 4 scaffold)
+# DrawSplatTM MySQL Backend (Phase 4)
 
-> ⚠️ **Status:** scaffolded but **not yet exercised against a live database**. The Apps Script backend in `apps-script/Code.gs` is the supported production path today. This MySQL backend is here so a self-hosted district deployment can swap in without re-implementing every endpoint from scratch — but expect bugs until someone runs it end-to-end against MySQL.
+Self-hosted Node.js + MySQL backend for districts that want a local database, real-time session enforcement, OAuth, SIS roster sync, and a parent portal. Pairs with the same static DrawSplatTM frontend as the Apps Script path.
+
+> **Status:** scaffold built end-to-end (auth, OAuth, roster import, parent flow, time limits, SSE, retention cron, privacy packet, Clever connector). Has not yet been exercised against a live database in production. Run the integration test suite (TODO) before relying on it for a real district deployment.
 
 ## One-command deployment
 
 ```
 cp .env.example .env
-# edit .env — at minimum change MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD,
-# and DRAWSPLAT_PEPPER to long random values.
+# Edit .env — at minimum change MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD,
+# DRAWSPLAT_PEPPER, GOOGLE_CLIENT_ID, CORS_ORIGIN to real values.
 docker compose up -d
 ```
 
-That brings up MySQL 8.4 with `schema.sql` and `migrations/002_compliance.sql` applied on first boot, plus the Node API on port 8787 (override with `API_HOST_PORT`).
+That brings up MySQL 8.4 with `schema.sql` + `migrations/002_compliance.sql` + `migrations/003_freeze_and_polish.sql` applied on first boot, plus the Node API on port 8787 (override with `API_HOST_PORT`).
+
+Sanity check:
+
+```
+curl http://localhost:8787/api/drawsplat/mysql/health
+# {"ok":true,"provider":"mysql","time":"..."}
+```
 
 ## What's included
 
-- **schema.sql** — base room / board / template / turn-in tables.
-- **migrations/002_compliance.sql** — Phase 4 compliance tables: `users`, `sessions`, `parent_requests`, `time_usage`, `image_queue`, `compliance_config`, `rate_limits`, plus columns added to `audit_events`.
-- **server.js** — existing room/board endpoints; loads `compliance-routes.js` on boot.
-- **compliance-routes.js** — Phase 4 compliance endpoints (auth, roster import, parent requests, time limits, compliance config, audit read).
-- **Dockerfile + docker-compose.yml + .env.example** — one-command deployment.
+| File | Purpose |
+|---|---|
+| `schema.sql` | Original rooms / boards / templates / turnins / media / audit tables |
+| `migrations/002_compliance.sql` | Users, sessions, parent_requests, time_usage, image_queue, compliance_config, rate_limits |
+| `migrations/003_freeze_and_polish.sql` | Board freeze columns, parent_email index |
+| `server.js` | Express app, wires every module below and adds compliance gates to board save/load |
+| `compliance-routes.js` | Auth (email/pw), roster, parent flow, age-band lock, freeze, time limits, audit, data export/delete |
+| `oauth-routes.js` | Google + Microsoft token verification → MySQL session |
+| `rbac.js` | Five-role permission matrix + `requireRoles` / `requirePermission` middleware |
+| `safety.js` | Shared text + link safety scan used by board save and turnin POST |
+| `realtime.js` | SSE channel for session-lock and board.updated events |
+| `sis-clever.js` | Clever district-token storage + roster sync endpoint |
+| `cron-jobs.js` | Daily audit / board retention + minute-level time-limit enforcement |
+| `privacy-packet.js` | Server-side District Privacy Packet ZIP generator |
+| `static/parent-portal.html` + `parent-portal.js` | Family Access Portal at `/parent-portal/` |
+| `migrate-from-apps-script.mjs` | CLI to import Apps Script Sheet exports into MySQL |
+| `Dockerfile` + `docker-compose.yml` + `.env.example` | One-command deployment |
 
-## API surface (Phase 4 compliance endpoints)
+## API surface
 
-All paths are prefixed with `API_BASE_PATH` (default `/api/drawsplat/mysql`).
+All paths prefixed with `API_BASE_PATH` (default `/api/drawsplat/mysql`).
 
-| Method | Path | Auth | Purpose |
+### Public
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET  | `/health` | Liveness check |
+| POST | `/auth/register` | Email + password account |
+| POST | `/auth/login` | Email + password → bearer token |
+| POST | `/auth/google` | Google ID token → bearer token |
+| POST | `/auth/microsoft` | Microsoft Graph access token → bearer token |
+| POST | `/parent/request` | Submit Family Access Tools ticket (with optional verification code) |
+| GET  | `/parent/requests` | List a parent's own request history (by email) |
+| POST | `/rooms` / `GET /rooms/:roomKey/board` / `PUT /rooms/:roomKey/board` | Board CRUD (compliance-gated) |
+| GET / POST | `/templates` | Template CRUD |
+| GET / POST | `/turnins` | Turn-in CRUD (compliance-gated) |
+| POST | `/maintenance/delete-expired` | Manual expiry sweep |
+
+### Authenticated (bearer)
+
+| Method | Path | Min role | Purpose |
 |---|---|---|---|
-| POST | `/auth/register` | none | Create an email / password account |
-| POST | `/auth/login` | none | Returns bearer token + profile |
-| POST | `/auth/logout` | bearer | Revoke the current session |
-| POST | `/admin/roster-import` | district_admin / campus_admin | Bulk-import student rows |
-| POST | `/parent/request` | none | Submit a Family Access Tools request (optional verification code) |
-| GET  | `/admin/parent-requests` | district_admin / campus_admin / teacher | List parent tickets |
-| POST | `/time/heartbeat` | bearer | Record active time delta (capped 90s/beat) |
-| GET  | `/time/status` | bearer | Today's usage + active time-limit config |
-| GET  | `/admin/compliance-config` | district_admin / campus_admin | Read live config blob |
-| PUT  | `/admin/compliance-config` | district_admin | Replace live config blob |
-| GET  | `/admin/audit` | district_admin / campus_admin | Read recent audit events |
+| POST | `/auth/logout` | any | Revoke current session |
+| POST | `/time/heartbeat` | student / teacher | Record active time |
+| GET  | `/time/status` | any | Today's usage + active time-limit config |
+| GET  | `/events?boards=room1,room2` | any | SSE channel: `session-lock`, `board.updated` |
 
-## Known gaps before this can replace the Apps Script backend
+### Admin (bearer + role check)
 
-Pull requests welcome. These are intentionally not yet implemented:
+| Method | Path | Allowed roles | Purpose |
+|---|---|---|---|
+| POST | `/admin/roster-import` | district_admin, campus_admin | Bulk-import students |
+| GET  | `/admin/parent-requests` | district_admin, campus_admin, teacher | List parent tickets |
+| GET / PUT | `/admin/compliance-config` | district_admin (PUT), district_admin/campus_admin (GET) | Read / write live config |
+| GET  | `/admin/audit` | district_admin, campus_admin | Recent audit events |
+| GET  | `/admin/privacy-packet` | district_admin, campus_admin | Download District Privacy Packet ZIP |
+| PUT  | `/admin/users/:id/age-band` | district_admin, campus_admin, teacher | Change age band (with reason, audited) |
+| POST | `/admin/users/:id/parent-code` | district_admin, campus_admin, teacher | Issue one-time verification code |
+| POST | `/admin/users/:id/delete-data` | district_admin, campus_admin | Full student deletion |
+| GET  | `/admin/users/:id/export-data` | district_admin, campus_admin, teacher | Export student work + row |
+| POST | `/admin/boards/:roomKey/freeze` | district_admin, campus_admin, teacher | Freeze board (writes blocked) |
+| POST | `/admin/boards/:roomKey/unfreeze` | district_admin, campus_admin, teacher | Lift the freeze |
+| POST | `/sis/clever/connect` | district_admin | Store the Clever district token |
+| POST | `/sis/clever/sync` | district_admin, campus_admin | Run a roster sync now |
+| GET  | `/sis/clever/status` | district_admin | Returns whether a district token is connected |
 
-- **Google / Microsoft OAuth.** Only email/password is wired; port the Community-side verification (calls Google `tokeninfo` and Microsoft Graph `/me`) into a node module.
-- **Per-board / per-room save endpoints with compliance gates.** The legacy room/board endpoints below don't yet enforce age-band, freeze, time-limits, or text filter the way Apps Script's `saveBoard_` does.
-- **Scheduled retention cleanup.** Schema has the columns; the cron equivalent of `dailyRetentionCleanup` isn't wired.
-- **District Privacy Packet generator.** Replicate `privacyPacketResponse_` server-side and return a ZIP.
-- **SSE / WebSocket for real-time session enforcement.** The Apps Script path only polls. Doing this properly is the main reason the MySQL path exists.
-- **Integration tests.** Docker-compose harness with mysql + supertest before relying on this in production.
+## Family Access Portal
 
-## Original room/board surface
+`http://localhost:8787/parent-portal/parent-portal.html` (override `DRAWSPLAT_API_BASE` on `window` if the API is on another origin). Parents sign in with the one-time verification code their teacher issued; the portal then renders the student's account snapshot and any existing requests, and lets the parent submit additional requests.
 
-This is a starter backend for a self-hosted DrawSplatTM deployment. It lets DrawSplatTM keep Google Apps Script as one storage option while adding a MySQL-backed provider for schools or districts that want local database storage.
+## Migrating from Apps Script
 
-The browser never connects directly to MySQL. The flow is:
-
-```text
-DrawSplatTM browser app -> HTTPS backend API -> MySQL
+```
+node migrate-from-apps-script.mjs --src ./apps-script-export --dry-run
+node migrate-from-apps-script.mjs --src ./apps-script-export
 ```
 
-## What This Backend Provides
+Drop the Sheet tabs into a folder as `Users.csv`, `ParentRequests.csv`, `Audit.csv`, `TimeUsage.csv`, plus an optional `boards/` directory of per-board JSON files. The CLI upserts everything into MySQL using the same schema.
 
-- `GET /api/drawsplat/mysql/health`
-- `POST /api/drawsplat/mysql/rooms`
-- `GET /api/drawsplat/mysql/rooms/:roomKey/board`
-- `PUT /api/drawsplat/mysql/rooms/:roomKey/board`
-- `GET /api/drawsplat/mysql/templates`
-- `POST /api/drawsplat/mysql/templates`
-- `GET /api/drawsplat/mysql/turnins`
-- `POST /api/drawsplat/mysql/turnins`
-- `DELETE /api/drawsplat/mysql/sessions/:roomKey`
-- `POST /api/drawsplat/mysql/maintenance/delete-expired`
+## Compliance feature parity vs Apps Script
 
-This starter stores board JSON in MySQL. For large image/audio uploads, production deployments should add filesystem or object storage and store only metadata/pointers in MySQL.
+| Capability | Apps Script | MySQL |
+|---|---|---|
+| Text keyword filter (client + server enforcement) | ✅ | ✅ (server uses `safety.js`) |
+| Link allow/blocklist | ✅ | ✅ |
+| Board freeze | ✅ | ✅ (rooms.frozen, write rejected with 423) |
+| Age band schema + lock + audit | ✅ | ✅ |
+| Activity Records (audit log) | ✅ Sheet | ✅ `audit_events` table |
+| Parent Request Center | ✅ Apps Script | ✅ Endpoints + parent portal HTML |
+| Parent verification code | ✅ | ✅ |
+| Data export | ✅ ZIP | ✅ JSON (turnins + user row); ZIP via privacy-packet for districts |
+| Data deletion | ✅ | ✅ |
+| Time-limit controls (UX + server gate) | ✅ poll | ✅ poll + **SSE push** |
+| District Privacy Packet | ✅ | ✅ |
+| Retention cleanup | ✅ Apps Script trigger | ✅ in-process cron |
+| Compliance Console config | ✅ Script properties | ✅ `compliance_config` table |
+| OAuth (Google + Microsoft) | Community only | ✅ |
+| Roster CSV import | ⚠️ clunky | ✅ |
+| SSO / SIS sync | ❌ | ✅ Clever connector |
+| RBAC tree (district / campus / teacher / student / parent) | ⚠️ ad-hoc | ✅ enforced via `rbac.js` |
+| Parent portal (read-only data view) | ⚠️ form only | ✅ HTML + endpoints |
+| Real-time session enforcement | ❌ | ✅ SSE |
+| Cross-device board sync | ❌ | ✅ SSE `board.updated` |
 
-## Setup
+## Production checklist
 
-1. Create a MySQL database.
-
-```sql
-CREATE DATABASE drawsplat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'drawsplat_app'@'%' IDENTIFIED BY 'CHANGE_ME';
-GRANT SELECT, INSERT, UPDATE, DELETE ON drawsplat.* TO 'drawsplat_app'@'%';
-FLUSH PRIVILEGES;
-```
-
-2. Run the schema.
-
-```bash
-mysql -u drawsplat_app -p drawsplat < schema.sql
-```
-
-3. Install backend dependencies.
-
-```bash
-npm install
-```
-
-4. Create `.env`.
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with the real host, database, user, password, TLS setting, and allowed DrawSplatTM origin.
-
-5. Start the backend.
-
-```bash
-npm start
-```
-
-6. Test the backend.
-
-```bash
-curl http://localhost:8787/api/drawsplat/mysql/health
-```
-
-Expected response:
-
-```json
-{"ok":true,"provider":"mysql","time":"2026-05-16T00:00:00.000Z"}
-```
-
-## Connect the Static App
-
-Open `mysql-setup.html`, enter the public backend endpoint, and test it:
-
-```text
-http://localhost:8787/api/drawsplat/mysql
-```
-
-The wizard saves the endpoint in this browser and switches storage mode to `mysql`. The current static app does not yet sync boards through the MySQL API automatically; the endpoint and backend are the foundation for that next integration step.
-
-## Production Notes
-
-- Serve the backend over HTTPS.
-- Keep `.env` out of Git.
-- Do not expose MySQL directly to browsers.
-- Add authentication before public use.
-- Add role checks for teacher, student, and admin actions.
-- Add request size limits appropriate for your deployment.
-- Put media files in object storage or a protected filesystem path.
-- Run `POST /maintenance/delete-expired` from a scheduled job, or convert that cleanup into a server-side cron task.
-- Log administrative deletes and exports in `audit_events`.
+- Serve the API over HTTPS (terminate TLS at a reverse proxy or use a managed PaaS).
+- Set `CORS_ORIGIN` to your frontend domain.
+- Rotate `DRAWSPLAT_PEPPER` only when you intend to invalidate every stored password.
+- Run automated backups of the MySQL volume.
+- Verify the Clever district token is stored as encrypted-at-rest (managed MySQL providers handle this; bare-metal installs need disk encryption).
+- Hand the OAuth Google client ID to the frontend; the backend audience-checks it.
+- For multi-instance deployments, set `DRAWSPLAT_CRON=0` on every instance except one, and front the SSE endpoint with a sticky-session load balancer (or swap `realtime.js` for Redis pub/sub).

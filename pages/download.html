@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Download DrawSplatTM (self-hosting)</title>
+<meta name="description" content="Download a complete, zipped DrawSplatTM bundle for self-hosting by a school, organization, or district. Includes static site, Google Apps Script backend, and MySQL backend." />
+<link rel="canonical" href="https://drawsplat.org/pages/download.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page support-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown" open>
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../pages/download.html"><strong>Download for Self-Hosting</strong></a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell support-shell">
+  <section class="support-hero">
+    <p class="landing-eyebrow">Download</p>
+    <h1>Self-host DrawSplat<sup class="tm">TM</sup> for your school, organization, or district.</h1>
+    <p>DrawSplat<sup class="tm">TM</sup> is free under the AGPL-3.0-or-later. Schools, districts, and organizations can host the whole thing on their own infrastructure &mdash; static site, Google Apps Script backend, or self-hosted MySQL backend. Download a complete zipped bundle, deploy it, and you&rsquo;re running.</p>
+    <p>
+      <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/latest" target="_blank" rel="noopener noreferrer">Get the latest release (GitHub)</a>
+      &nbsp; <a class="landing-cta" href="https://github.com/mguhlin/drawsplat" target="_blank" rel="noopener noreferrer">Browse the source</a>
+    </p>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">What you get</p>
+      <h2>One zip, three deployment paths</h2>
+      <p>The bundle is one self-contained directory. Pick the deployment that matches your needs and follow the matching setup guide.</p>
+    </div>
+    <div class="support-resource-grid">
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">Path 1</span>
+        <h3>Browser-only (no accounts)</h3>
+        <p>Open <code>index.html</code> in any browser or upload the whole folder to a static host (Cloudflare Pages, GitHub Pages, Netlify, S3, the district&rsquo;s own web server). No backend, no data leaves the browser.</p>
+        <ul class="admin-checklist">
+          <li>Best for individual teachers, demos, single-classroom use.</li>
+          <li>Filtering still runs client-side from <code>compliance.config.json</code>.</li>
+        </ul>
+      </article>
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">Path 2</span>
+        <h3>Google Apps Script (recommended for most districts)</h3>
+        <p>Paste <code>apps-script/Code.gs</code> into a new Apps Script project bound to a Google Sheet, deploy as Web App, paste the deployment URL into Teacher Admin. Storage stays inside the district&rsquo;s Google Workspace tenant.</p>
+        <ul class="admin-checklist">
+          <li>Best for K&ndash;12 districts already on Google Workspace.</li>
+          <li>Full Compliance Console + Family Access Tools + District Privacy Packet.</li>
+          <li>Follow <a href="../guides/google-setup.html">Apps Script Setup Guide</a>.</li>
+        </ul>
+      </article>
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">Path 3</span>
+        <h3>Self-hosted MySQL (Phase 4)</h3>
+        <p>For districts that need a local database, real-time session enforcement, SSO/SIS sync (Clever scaffold included), and a parent portal. One <code>docker compose up</code> brings up MySQL + Node API.</p>
+        <ul class="admin-checklist">
+          <li>Requires Docker (or Node 20+ &amp; MySQL 8+).</li>
+          <li>OAuth (Google + Microsoft), RBAC tree (district/campus/teacher/student/parent).</li>
+          <li>Server-side safety filter, board freeze, age-band lock, time-limit enforcement (SSE push), retention cron, privacy packet generator.</li>
+          <li>Follow <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">What&rsquo;s inside the zip</p>
+      <h2>Bundle contents</h2>
+    </div>
+    <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
+      <li>The complete static site (<code>index.html</code>, <code>app/</code>, <code>pages/</code>, <code>legal/</code>, <code>guides/</code>, <code>parents/</code>, <code>community/</code>, <code>languages/</code>, <code>admin/</code>, <code>solutions/</code>).</li>
+      <li><code>apps-script/Code.gs</code> &mdash; single-file Apps Script backend.</li>
+      <li><code>server/mysql-backend/</code> &mdash; Node.js + MySQL backend with Docker compose, OAuth, RBAC, SSE, cron, Clever connector, privacy packet generator, migration CLI.</li>
+      <li><code>compliance.config.json</code> &mdash; default safety / retention / privacy config.</li>
+      <li><code>docs/</code>, <code>guides/</code> &mdash; operator and setup documentation.</li>
+      <li><code>COMPLIANCE-ROADMAP.md</code>, <code>LICENSE</code>, <code>README.md</code>, <code>SELFHOST-README.txt</code>.</li>
+    </ol>
+    <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundle: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files. Build your own from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">License &amp; support</p>
+      <h2>Free, plus optional paid services</h2>
+    </div>
+    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later. Schools, organizations, and districts may use, host, modify, and redistribute it. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="../README.md">README</a>
+  <a href="../community/index.html">Community</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+</body>
+</html>

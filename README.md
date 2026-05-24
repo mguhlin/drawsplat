@@ -7,7 +7,8 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.0, Compliance Phases 1–3 complete, Phase 4 (MySQL) scaffolded
+- **Status:** v3.1, Compliance Phases 1–3 complete on the Apps Script path, Phase 4 (MySQL) scaffolded end-to-end (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI)
+- **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
 
 ## Getting started
 

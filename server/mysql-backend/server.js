@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -24,13 +25,65 @@ const pool = mysql.createPool({
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use(express.json({ limit: '25mb' }));
 
+// Serve the bundled parent portal HTML + JS so districts get the family-facing
+// surface alongside the API. Static assets are mounted under /parent-portal/.
+app.use('/parent-portal', express.static(path.join(__dirname, 'static')));
+
+let dsAuth = null;
+let dsLogEvent = async () => {};
+let dsCheckBoardSafety = () => ({ ok: true });
+
 // Phase 4b compliance routes (auth, parent requests, time limits, audit, config).
-// Lives in compliance-routes.js so the legacy room/board surface here stays untouched.
 try {
   const { attachComplianceRoutes } = require('./compliance-routes');
-  attachComplianceRoutes(app, pool, { basePath: apiBasePath, sessionTtlHours, pepper: process.env.DRAWSPLAT_PEPPER });
+  const handle = attachComplianceRoutes(app, pool, { basePath: apiBasePath, sessionTtlHours, pepper: process.env.DRAWSPLAT_PEPPER });
+  dsAuth = handle.auth;
+  dsLogEvent = handle.logEvent;
+  dsCheckBoardSafety = handle.checkBoardSafety;
 } catch (err) {
   console.error('Failed to attach compliance routes:', err.message);
+}
+
+// OAuth (Google + Microsoft).
+try {
+  const { attachOAuthRoutes } = require('./oauth-routes');
+  attachOAuthRoutes(app, pool, {
+    basePath: apiBasePath,
+    sessionTtlHours,
+    googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+    logEvent: dsLogEvent
+  });
+} catch (err) {
+  console.error('Failed to attach OAuth routes:', err.message);
+}
+
+// Realtime SSE channel.
+let realtime = { publishUser: () => 0, publishBoard: () => 0 };
+try {
+  realtime = require('./realtime');
+  if (dsAuth) realtime.attach(app, apiBasePath, dsAuth);
+} catch (err) {
+  console.error('Failed to attach realtime routes:', err.message);
+}
+
+// SIS / Clever connector (admin-only).
+try {
+  if (dsAuth) {
+    const { attachSisRoutes } = require('./sis-clever');
+    attachSisRoutes(app, pool, { basePath: apiBasePath, auth: dsAuth, logEvent: dsLogEvent });
+  }
+} catch (err) {
+  console.error('Failed to attach SIS routes:', err.message);
+}
+
+// District Privacy Packet generator.
+try {
+  if (dsAuth) {
+    const { attachPrivacyPacketRoute } = require('./privacy-packet');
+    attachPrivacyPacketRoute(app, pool, { basePath: apiBasePath, auth: dsAuth, logEvent: dsLogEvent });
+  }
+} catch (err) {
+  console.error('Failed to attach privacy packet route:', err.message);
 }
 
 function expiresAt(hours = sessionTtlHours){
@@ -45,8 +98,15 @@ async function ensureRoom(roomKey, title = null){
     'INSERT INTO rooms (room_key, title, expires_at) VALUES (:roomKey, :title, :expiresAt) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP',
     { roomKey: key, title, expiresAt: expiresAt() }
   );
-  const [rows] = await pool.execute('SELECT id, room_key AS roomKey, title FROM rooms WHERE room_key = :roomKey', { roomKey: key });
+  const [rows] = await pool.execute('SELECT id, room_key AS roomKey, title, frozen FROM rooms WHERE room_key = :roomKey', { roomKey: key });
   return rows[0];
+}
+
+async function loadComplianceConfig() {
+  try {
+    const [rows] = await pool.query("SELECT config_json FROM compliance_config WHERE config_key = 'main' LIMIT 1");
+    return rows[0] ? rows[0].config_json : {};
+  } catch (e) { return {}; }
 }
 
 function asyncRoute(handler){
@@ -75,6 +135,19 @@ app.get(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
 app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
   const room = await ensureRoom(req.params.roomKey, req.body.title || null);
   if(!req.body.board) return res.status(400).json({ ok: false, error: 'board is required' });
+
+  if (room.frozen) {
+    await dsLogEvent('BOARD_WRITE_BLOCKED', { actor: req.body.createdBy || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { reason: 'frozen' } });
+    return res.status(423).json({ ok: false, error: 'board_frozen' });
+  }
+
+  const config = await loadComplianceConfig();
+  const safety = dsCheckBoardSafety(req.body.board, config);
+  if (!safety.ok) {
+    await dsLogEvent('TEXT_FILTER_HIT', { actor: req.body.createdBy || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { hits: safety.hits.slice(0, 10) } });
+    return res.status(422).json({ ok: false, error: safety.reason || 'safety_block', hits: safety.hits });
+  }
+
   await pool.execute(
     'INSERT INTO board_snapshots (room_id, board_json, created_by, expires_at) VALUES (:roomId, CAST(:boardJson AS JSON), :createdBy, :expiresAt)',
     {
@@ -84,6 +157,7 @@ app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
       expiresAt: req.body.expiresAt || expiresAt()
     }
   );
+  realtime.publishBoard(req.params.roomKey, 'board.updated', { roomKey: req.params.roomKey, createdBy: req.body.createdBy || null, at: new Date().toISOString() });
   res.json({ ok: true, room });
 }));
 
@@ -112,6 +186,12 @@ app.post(apiBasePath + '/turnins', asyncRoute(async (req, res) => {
   if(!req.body.board) return res.status(400).json({ ok: false, error: 'board is required' });
   let roomId = null;
   if(req.body.roomKey) roomId = (await ensureRoom(req.body.roomKey)).id;
+  const config = await loadComplianceConfig();
+  const safety = dsCheckBoardSafety(req.body.board, config);
+  if (!safety.ok) {
+    await dsLogEvent('TEXT_FILTER_HIT', { actor: req.body.studentName || null, targetType: 'turnin', metadata: { hits: safety.hits.slice(0, 10) } });
+    return res.status(422).json({ ok: false, error: safety.reason || 'safety_block', hits: safety.hits });
+  }
   const [result] = await pool.execute(
     'INSERT INTO turnins (room_id, student_name, class_name, title, board_json, expires_at) VALUES (:roomId, :studentName, :className, :title, CAST(:boardJson AS JSON), :expiresAt)',
     {
@@ -144,6 +224,17 @@ app.use((err, _req, res, _next) => {
   const status = err.status || 500;
   res.status(status).json({ ok: false, error: status === 500 ? 'Server error' : err.message });
 });
+
+// Cron-style retention + time-limit enforcement.
+if (process.env.DRAWSPLAT_CRON !== '0') {
+  try {
+    const cron = require('./cron-jobs');
+    cron.start(pool, { logEvent: dsLogEvent, publishUser: realtime.publishUser });
+    console.log('DrawSplatTM cron jobs scheduled (retention + time-limit enforcement).');
+  } catch (err) {
+    console.error('Failed to start cron jobs:', err.message);
+  }
+}
 
 app.listen(port, () => {
   console.log(`DrawSplatTM MySQL backend listening on http://localhost:${port}${apiBasePath}`);
