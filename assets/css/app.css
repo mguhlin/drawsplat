@@ -343,6 +343,11 @@ body[data-view="simple"] #toolButtons .icon-btn,
 body[data-view="simple"] .sidebar .grid.simple-only .icon-btn{background:#fff;border-color:transparent;box-shadow:none}
 body[data-view="simple"] #toolButtons .icon-btn.active,
 body[data-view="simple"] #toolButtons .tool-popover-group.active>summary{background:#374151!important;color:#fff!important;border-color:#374151!important;box-shadow:none!important}
+/* Inside an open popover panel, never paint the active tool dark — the colored
+   PNG icons need to remain visible. Use the same amber ring the popover
+   trigger uses to indicate the selected tool. */
+body[data-view="simple"] #toolButtons .tool-popover-panel .icon-btn.active,
+#toolButtons .tool-popover-panel .icon-btn.active{background:#fff7e6!important;color:inherit!important;border-color:#f59e0b!important;box-shadow:0 0 0 3px #faa63433!important}
 body[data-view="simple"] #toolButtons [data-tool="select"]{color:#2563eb}
 body[data-view="simple"] #toolButtons [data-tool="pen"]{color:#7c3aed}
 body[data-view="simple"] #toolButtons [data-tool="dotpaint"]{color:#16a34a}
@@ -386,15 +391,15 @@ body[data-view="simple"] #simpleTntBtn:hover{background:#991b1b}
 .advanced-sticky-palette{margin:4px 0 6px 92px;max-width:190px}
 .sticky-color-swatch{min-width:0;min-height:28px;height:28px;padding:0;border-radius:8px;background:var(--swatch);border:1px solid #0002}
 .sticky-color-swatch.active{outline:3px solid #faa63477;border-color:#92400e}
-.eraser-size-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr repeat(3,34px);gap:6px;align-items:center;padding:7px;border:1px solid #fecaca;border-radius:10px;background:#fff7f7}
+.eraser-size-controls{grid-column:1 / -1;display:grid;grid-template-columns:auto repeat(3,1fr);gap:8px;align-items:center;padding:10px 12px;border:1px solid #fecaca;border-radius:12px;background:#fff1f1}
 .eraser-size-controls[hidden]{display:none!important}
-.eraser-size-controls span{font-size:12px;font-weight:800;color:#991b1b}
-.eraser-size-controls button{min-width:34px;min-height:34px;padding:0;border-color:#fecaca;background:#fff;color:#991b1b}
+.eraser-size-controls span{font-size:13px;font-weight:800;color:#991b1b;padding-right:2px}
+.eraser-size-controls button{min-width:38px;min-height:38px;padding:0;border-color:#fecaca;background:#fff;color:#991b1b}
 .eraser-size-controls button.active{background:#ef4444;color:#fff;border-color:#dc2626}
 .eraser-size-dot{display:block;margin:auto;border-radius:999px;background:currentColor}
-.eraser-size-dot-1{width:8px;height:8px}
-.eraser-size-dot-2{width:15px;height:15px}
-.eraser-size-dot-3{width:23px;height:23px}
+.eraser-size-dot-1{width:10px;height:10px}
+.eraser-size-dot-2{width:17px;height:17px}
+.eraser-size-dot-3{width:25px;height:25px}
 body[data-view="simple"] .header-panels{display:none}
 body[data-view="simple"] .frame-nav{display:flex;align-items:center;gap:4px;background:#ffffff1a;border:1px solid #ffffff33;border-radius:12px;padding:4px 8px}
 body[data-view="simple"] .frame-nav #frameCounter{color:#fff;font-size:12px;font-weight:600;min-width:60px;max-width:180px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
