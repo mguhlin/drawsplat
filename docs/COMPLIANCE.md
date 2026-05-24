@@ -137,6 +137,28 @@ Clicking **Delete Data** next to a student in the Age Band Lock section:
 
 This action is permanent from the DrawSplat side. Drive files go to the trash and stay recoverable from Drive for the standard 30-day window.
 
+## Retention Policy &amp; Cleanup (Days 3.7 / 3.8)
+
+The Compliance Console &rarr; **Retention Policy &amp; Cleanup** section drives three thresholds:
+
+- `retention.boards.archiveAfterDays` &mdash; boards untouched longer than this move to an `Archive` Drive subfolder.
+- `retention.boards.deleteAfterDays` &mdash; boards untouched longer than this are trashed and removed from the `Boards` sheet.
+- `retention.audit.keepDays` &mdash; rows in the `Audit` sheet older than this are pruned.
+
+The settings are stored in the `COMPLIANCE_CONFIG` Script Property. **Save Settings** writes them; **Load Current** re-reads from the server.
+
+**Manual run.** Click **Run Cleanup Now** to execute the pass immediately. Returns counts and writes a `RETENTION_ACTION` audit event.
+
+**Daily trigger.** Click **Install Daily Trigger** to schedule `dailyRetentionCleanup()` via Apps Script time-driven triggers (runs at 02:00 server time). Click **Remove Trigger** to stop the schedule. Manual runs still work without the trigger.
+
+The status line below the buttons shows the last run's summary and whether the trigger is currently installed.
+
+## District-Wide Safety Defaults (Day 3.9)
+
+The single `COMPLIANCE_CONFIG` Script Property is the authoritative server-side configuration. Every save through `saveBoard_` / `saveRoom_` reads `safetyConfig_()` which consults this property; the retention cleanup reads it on each run. So once an admin changes the config through the Console, every subsequent teacher's save (and every nightly cleanup pass) honors the new settings &mdash; there is no per-teacher override layer to keep in sync.
+
+**Reset to Defaults** rewrites the property with the built-in defaults baked into `Code.gs` (`DS_DEFAULT_COMPLIANCE`). Useful if a previous edit landed in a bad state.
+
 ## What is intentionally not built yet
 
 This file documents what ships in the current commits. The roadmap lists everything else, with day-sized work items and acceptance criteria. Do not assume any feature works just because it is mentioned in the roadmap &mdash; check the **Status** column in COMPLIANCE-ROADMAP.md for ticked boxes.

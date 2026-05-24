@@ -101,9 +101,9 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 3.4 | Parent Controls panel | [ ] | |
 | 3.5 | Audit Logs panel (extends Day 1.8) | [ ] | |
 | 3.6 | District Privacy Packet generator | [x] | 021c657 |
-| 3.7 | Retention policy settings | [ ] | |
-| 3.8 | Scheduled cleanup script | [ ] | |
-| 3.9 | District-wide safety defaults propagation | [ ] | |
+| 3.7 | Retention policy settings | [x] | pending |
+| 3.8 | Scheduled cleanup script | [x] | pending |
+| 3.9 | District-wide safety defaults propagation | [x] | pending |
 | 3.10 | Phase 3 documentation pass + Terms & Privacy update | [ ] | |
 
 ### Phase 4 &mdash; MySQL / District (deferred)
@@ -582,6 +582,7 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-24  Days 3.7, 3.8, 3.9  Retention + cleanup + district defaults: Compliance Console gets a Retention Policy section with three inputs (archive boards after N days, delete boards after M days, keep audit rows N days). Save persists to COMPLIANCE_CONFIG script property. Run Cleanup Now executes immediately; Install Daily Trigger schedules dailyRetentionCleanup() at 02:00 server time via ScriptApp time-driven triggers. Each run logs RETENTION_ACTION with counts. Reset to Defaults rewrites the config from Code.gs constants — completes 3.9 since safetyConfig_ and retention reader both consume COMPLIANCE_CONFIG, so changing it cascades to every save and cleanup. Code.gs bumped to 1.5.0. Pending commit/push.
 2026-05-23  Day 2.6  Student data export: Apps Script exportStudentData action builds a ZIP containing JSON+PNG copies of every board and turn-in matching the student, plus a manifest.json with their user row (no hashed credentials), plus a README. Admin gets an Export button next to Issue Parent Code / Delete in the user table; downloads directly to browser. Logs DATA_EXPORT audit event. Pending commit/push.
 2026-05-23  Days 2.1, 2.2, 2.5, 2.7  Phase 2 trust additions: Users sheet with age band columns + lock; auto-populated from turn-ins. Admin UI in Compliance Console lists students with age band dropdown (change requires reason; emits AGE_BAND_CHANGED audit event). Teacher-issued one-time parent verification code (8-char alphanumeric, hashed with SHA-256+salt, 14-day expiry, single-use) shown to admin via one-time prompt. Parent form on /parents/ accepts the code; verified requests skip pending_verification. Admin Delete Data action trashes Drive files and removes rows for boards/turnins/user; logs DATA_DELETED audit. Day 2.6 (data export ZIP) still open. Pending commit/push.
 2026-05-23  Days 1.1, 1.2, 1.5, 1.6, 1.9  Safety filters live: client-side text + link scan in assets/js/safety.js wired to inline text commit and board title; server-side scan in Apps Script saveBoard_ / saveRoom_ logs TEXT_FILTER_HIT and rejects when blockOnMatch is true. Board/room freeze adds frozen/frozenBy/frozenAt/frozenReason columns; freezeBoard / freezeRoom endpoints; Safety Review section in Teacher Admin lists recent boards + rooms with freeze/unfreeze toggle. Days 1.3/1.4 deferred (whiteboard images embed in board JSON; explicit upload endpoint doesn't exist yet). Pending commit/push.

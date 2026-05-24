@@ -446,5 +446,78 @@
   document.getElementById('addUserBtn')?.addEventListener('click',addUserDialog);
   document.getElementById('loadParentRequestsBtn')?.addEventListener('click',loadParentRequests);
 
+  /* --- Compliance: Retention + Cleanup (Days 3.7/3.8/3.9) --------------- */
+  function retentionStatus(txt,kind){
+    const el=document.getElementById('retentionStatus'); if(!el) return;
+    el.textContent=txt; el.style.color = kind==='error'?'#b91c1c':(kind==='ok'?'#16a34a':'');
+  }
+  async function loadRetention(){
+    try{
+      const data=await adminCall('getCompliance',{});
+      const r=(data.config && data.config.retention) || data.defaults.retention;
+      const v=(k1,k2,def)=>{ const top=r[k1]; if(top && top[k2]!=null) return top[k2]; return def; };
+      const a=document.getElementById('retArchiveDays');
+      const d=document.getElementById('retDeleteDays');
+      const au=document.getElementById('retAuditDays');
+      if(a) a.value=v('boards','archiveAfterDays',90);
+      if(d) d.value=v('boards','deleteAfterDays',365);
+      if(au) au.value=v('audit','keepDays',365);
+      const trig=data.triggerInstalled?'Daily trigger: INSTALLED':'Daily trigger: NOT installed';
+      retentionStatus((data.hasStoredConfig?'Settings loaded from server. ':'Showing defaults (no server config yet). ')+trig,'');
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  async function saveRetention(){
+    try{
+      // Load existing config first so we don't overwrite other top-level keys.
+      const data=await adminCall('getCompliance',{});
+      const cfg=data.config || JSON.parse(JSON.stringify(data.defaults));
+      cfg.retention=cfg.retention||{};
+      cfg.retention.boards=cfg.retention.boards||{};
+      cfg.retention.audit=cfg.retention.audit||{};
+      cfg.retention.boards.archiveAfterDays=parseInt(document.getElementById('retArchiveDays').value||'90',10);
+      cfg.retention.boards.deleteAfterDays=parseInt(document.getElementById('retDeleteDays').value||'365',10);
+      cfg.retention.audit.keepDays=parseInt(document.getElementById('retAuditDays').value||'365',10);
+      const saved=await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      retentionStatus('Saved. Keys persisted: '+(saved.savedKeys||[]).join(', '),'ok');
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  async function runCleanup(){
+    if(!confirm('Run retention cleanup now? This will archive and delete boards/audit rows older than the configured thresholds.')) return;
+    retentionStatus('Running cleanup…','');
+    try{
+      const r=await adminCall('runRetentionCleanup',{},'POST');
+      retentionStatus('Cleanup complete: '+r.boardsArchived+' archived, '+r.boardsDeleted+' deleted, '+r.auditDeleted+' audit rows pruned.','ok');
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  async function installTrigger(){
+    try{
+      const r=await adminCall('installCleanupTrigger',{},'POST');
+      retentionStatus(r.alreadyInstalled?'Daily trigger already installed.':'Daily trigger installed (runs at 02:00 server time).','ok');
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  async function removeTrigger(){
+    if(!confirm('Remove the daily cleanup trigger? Boards and audit rows will no longer be pruned automatically.')) return;
+    try{
+      const r=await adminCall('removeCleanupTrigger',{},'POST');
+      retentionStatus('Trigger removed. You can still run cleanup manually.','ok');
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  async function resetDefaults(){
+    if(!confirm('Reset district safety + retention config to defaults?\n\nThis clears the server\'s COMPLIANCE_CONFIG override. The Apps Script will fall back to the built-in defaults baked into Code.gs.')) return;
+    try{
+      const data=await adminCall('getCompliance',{});
+      const cfg=JSON.parse(JSON.stringify(data.defaults));
+      const saved=await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      retentionStatus('Reset to defaults. Persisted: '+(saved.savedKeys||[]).join(', '),'ok');
+      await loadRetention();
+    }catch(err){ retentionStatus(String(err.message||err),'error'); }
+  }
+  document.getElementById('loadRetentionBtn')?.addEventListener('click',loadRetention);
+  document.getElementById('saveRetentionBtn')?.addEventListener('click',saveRetention);
+  document.getElementById('runCleanupBtn')?.addEventListener('click',runCleanup);
+  document.getElementById('installTriggerBtn')?.addEventListener('click',installTrigger);
+  document.getElementById('removeTriggerBtn')?.addEventListener('click',removeTrigger);
+  document.getElementById('resetDefaultsBtn')?.addEventListener('click',resetDefaults);
+
   loadSettings();
 })();

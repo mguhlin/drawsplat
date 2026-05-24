@@ -144,7 +144,26 @@
       <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, deletion)</summary><div class="compliance-body"><p class="hint">Parents submit requests at <a href="../parents/index.html">/parents/</a>. Verified requests appear here. Click <strong>Issue Parent Code</strong> on a student in Age Lock below to give a parent a one-time verification code (valid 14 days).</p><div class="admin-actions"><button id="loadParentRequestsBtn" type="button" class="primary">Load Requests</button></div><div id="parentRequestsList" style="margin-top:12px"></div></div></details>
       <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Each student record carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only the admin can override, with reason + audit trail. Rows auto-populate when students submit turn-ins; you can also add students manually below.</p><div class="admin-actions"><button id="loadUsersBtn" type="button" class="primary">Load Students</button><button id="addUserBtn" type="button">Add Student</button></div><div id="usersList" style="margin-top:12px"></div></div></details>
       <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body"><p class="hint">Configured in Days 2.8–2.9. Browser timer provides UX; Apps Script gate provides the authoritative cutoff for compliance.</p></div></details>
-      <details class="compliance-section" id="complianceRetention"><summary>Retention Policy &amp; Cleanup</summary><div class="compliance-body"><p class="hint">Configured in Days 3.7–3.8. Boards archive after N days, delete after M days. Activity Records prune to the configured retention window via a nightly Apps Script trigger.</p></div></details>
+      <details class="compliance-section" id="complianceRetention"><summary>Retention Policy &amp; Cleanup</summary><div class="compliance-body">
+        <p class="hint">Boards older than the archive threshold are moved to an <code>Archive</code> folder. Boards older than the delete threshold are trashed and the row removed. Activity Records older than the keep window are pruned. A daily Apps Script trigger runs the cleanup at 02:00 server time; you can also run it on demand.</p>
+        <div class="grid retention-grid">
+          <label class="admin-label" for="retArchiveDays">Archive boards after (days)</label>
+          <input id="retArchiveDays" type="number" min="1" max="3650" value="90" style="max-width:140px">
+          <label class="admin-label" for="retDeleteDays">Delete boards after (days)</label>
+          <input id="retDeleteDays" type="number" min="1" max="3650" value="365" style="max-width:140px">
+          <label class="admin-label" for="retAuditDays">Keep Activity Records (days)</label>
+          <input id="retAuditDays" type="number" min="1" max="3650" value="365" style="max-width:140px">
+        </div>
+        <div class="admin-actions">
+          <button id="loadRetentionBtn" type="button">Load Current</button>
+          <button id="saveRetentionBtn" type="button" class="primary">Save Settings</button>
+          <button id="runCleanupBtn" type="button">Run Cleanup Now</button>
+          <button id="installTriggerBtn" type="button">Install Daily Trigger</button>
+          <button id="removeTriggerBtn" type="button">Remove Trigger</button>
+          <button id="resetDefaultsBtn" type="button" class="danger">Reset to Defaults</button>
+        </div>
+        <p id="retentionStatus" class="hint" role="status" aria-live="polite"></p>
+      </div></details>
       <details class="compliance-section" id="complianceAudit"><summary>Activity Records (audit log)</summary><div class="compliance-body" id="complianceAuditBody"><p class="hint">Last 200 events. Filter by action and actor. Download as CSV for reviewer evidence.</p><div id="complianceAuditViewer">Connect a Web App URL above to load Activity Records.</div></div></details>
       <details class="compliance-section" id="compliancePrivacyPacket"><summary>District Privacy Packet</summary><div class="compliance-body"><p class="hint">One-click ZIP with Terms &amp; Privacy, District Addendum, the current compliance config, the last 90 days of Activity Records, and the Compliance Roadmap.</p><div class="admin-actions"><button id="downloadPrivacyPacketBtn" type="button" class="primary">Download District Privacy Packet</button></div><p id="privacyPacketStatus" class="hint" role="status" aria-live="polite"></p></div></details>
     </article>
@@ -164,7 +183,7 @@
   </form>
 </dialog>
 
-<script src="../assets/js/admin-gate.js?v=0.7"></script>
-<script src="../assets/js/admin.js?v=0.7"></script>
+<script src="../assets/js/admin-gate.js?v=0.8"></script>
+<script src="../assets/js/admin.js?v=0.8"></script>
 </body>
 </html>

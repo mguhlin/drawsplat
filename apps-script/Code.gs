@@ -1,4 +1,4 @@
-// DS_VERSION = '1.4.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.5.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,8 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.5.0  Days 3.7/3.8/3.9 — retention policy settings, scheduled
+ *          cleanup trigger, district safety-defaults config push.
  *   1.4.0  Day 2.6 — student data export (ZIP of boards + turn-ins).
  *   1.3.0  Days 2.1/2.2/2.5/2.7 — Users sheet, age band + lock, parent
  *          verification code, data deletion.
@@ -19,7 +21,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.4.0';
+const DS_VERSION = '1.5.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -74,6 +76,8 @@ function doGet(e) {
       case 'boardList': return json_(adminBoardList_(p));
       case 'userList': return json_(adminUserList_(p));
       case 'exportStudentData': return json_(exportStudentData_(p));
+      case 'getCompliance': return json_(getCompliance_(p));
+      case 'cleanupStatus': return json_(getCleanupStatus_(p));
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -99,6 +103,10 @@ function doPost(e) {
       case 'userUpsert': return json_(adminUserUpsert_(body));
       case 'issueParentCode': return json_(issueParentCode_(body));
       case 'deleteStudentData': return json_(deleteStudentData_(body));
+      case 'setCompliance': return json_(setCompliance_(body));
+      case 'runRetentionCleanup': return json_(runRetentionCleanup_(body));
+      case 'installCleanupTrigger': return json_(installCleanupTrigger_(body));
+      case 'removeCleanupTrigger': return json_(removeCleanupTrigger_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -1220,4 +1228,203 @@ function deleteStudentData_(p) {
     after: { boardsDeleted: boardsDeleted, turninsDeleted: turninsDeleted, userDeleted: userDeleted, reason: clean_(p.reason || '') }
   });
   return { ok: true, boardsDeleted: boardsDeleted, turninsDeleted: turninsDeleted, userDeleted: userDeleted };
+}
+
+/* --- Compliance: Retention + District Safety Defaults (Days 3.7 / 3.8 / 3.9) - */
+
+const DS_DEFAULT_COMPLIANCE = {
+  safety: {
+    text: {
+      enabled: true,
+      patterns: [
+        '\\b(kill myself|suicide|self harm|self-harm)\\b',
+        '\\b(nude|porn|sexually explicit)\\b',
+        '\\b(cocaine|meth|fentanyl|heroin)\\b',
+        '\\b(harass|stalk|doxx|doxxing)\\b'
+      ],
+      words: [],
+      blockOnMatch: true,
+      logOnMatch: true,
+      appliesTo: ['sticky', 'text', 'comment', 'boardTitle']
+    },
+    links: {
+      enabled: true,
+      blockUnapproved: true,
+      allowedDomains: ['tcea.org', 'edu.google.com', 'khanacademy.org', 'loc.gov', 'nasa.gov', 'smithsonian.org', 'drawsplat.org']
+    }
+  },
+  retention: {
+    boards: { archiveAfterDays: 90, deleteAfterDays: 365 },
+    audit: { keepDays: 365 },
+    parentRequests: { keepDays: 1095 }
+  }
+};
+
+function getCompliance_(p) {
+  requireAdmin_(p);
+  const stored = DS_PROPS.getProperty('COMPLIANCE_CONFIG');
+  let parsed = null;
+  if (stored) { try { parsed = JSON.parse(stored); } catch (e) {} }
+  const effective = parsed || DS_DEFAULT_COMPLIANCE;
+  return {
+    ok: true,
+    hasStoredConfig: !!parsed,
+    config: effective,
+    defaults: DS_DEFAULT_COMPLIANCE,
+    triggerInstalled: !!findCleanupTrigger_(),
+    version: DS_VERSION
+  };
+}
+
+function setCompliance_(p) {
+  requireAdmin_(p);
+  const raw = String((p && p.config) || '');
+  if (!raw) throw new Error('Missing config payload.');
+  let parsed;
+  try { parsed = JSON.parse(raw); } catch (e) { throw new Error('Config is not valid JSON.'); }
+  // Only persist known top-level sections so a bad payload can't junk the property.
+  const filtered = {};
+  ['safety', 'parentAccess', 'ageLock', 'timeLimits', 'retention', 'audit', 'privacy'].forEach(k => {
+    if (parsed[k] !== undefined) filtered[k] = parsed[k];
+  });
+  const before = DS_PROPS.getProperty('COMPLIANCE_CONFIG') || '';
+  DS_PROPS.setProperty('COMPLIANCE_CONFIG', JSON.stringify(filtered));
+  logEvent_('ADMIN_SETTING_CHANGED', {
+    actor: String((p && p.actor) || 'admin'),
+    actorRole: 'admin',
+    entityType: 'compliance_config',
+    before: before ? 'set' : 'unset',
+    after: { keys: Object.keys(filtered) }
+  });
+  return { ok: true, savedKeys: Object.keys(filtered) };
+}
+
+function runRetentionCleanup_(p) {
+  requireAdmin_(p);
+  const actor = String((p && p.actor) || 'admin');
+  const cfg = (function(){ try { return JSON.parse(DS_PROPS.getProperty('COMPLIANCE_CONFIG') || '{}'); } catch (e) { return {}; } })();
+  const ret = (cfg.retention) || DS_DEFAULT_COMPLIANCE.retention;
+  const archiveAfter = parseInt((ret.boards && ret.boards.archiveAfterDays) || DS_DEFAULT_COMPLIANCE.retention.boards.archiveAfterDays, 10);
+  const deleteAfter = parseInt((ret.boards && ret.boards.deleteAfterDays) || DS_DEFAULT_COMPLIANCE.retention.boards.deleteAfterDays, 10);
+  const auditKeep = parseInt((ret.audit && ret.audit.keepDays) || DS_DEFAULT_COMPLIANCE.retention.audit.keepDays, 10);
+  const now = Date.now();
+  const archiveCutoff = new Date(now - archiveAfter * 86400000).toISOString();
+  const deleteCutoff = new Date(now - deleteAfter * 86400000).toISOString();
+  const auditCutoff = new Date(now - auditKeep * 86400000).toISOString();
+
+  let boardsArchived = 0, boardsDeleted = 0, auditDeleted = 0;
+  const archiveFolder = getOrCreateArchiveFolder_();
+
+  // Walk Boards sheet from bottom up so deletions are safe.
+  const bSheet = sheet_(DS_SHEETS.boards);
+  const bValues = bSheet.getDataRange().getValues();
+  const bHeaders = bValues[0];
+  for (let i = bValues.length - 1; i >= 1; i--) {
+    const r = rowObject_(bHeaders, bValues[i]);
+    const updated = String(r.updatedAt || '');
+    if (!updated) continue;
+    if (updated < deleteCutoff) {
+      // Delete: trash both files and remove row.
+      try { if (r.jsonFileId) DriveApp.getFileById(r.jsonFileId).setTrashed(true); } catch (e) {}
+      try { if (r.pngFileId) DriveApp.getFileById(r.pngFileId).setTrashed(true); } catch (e) {}
+      bSheet.deleteRow(i + 1);
+      boardsDeleted++;
+    } else if (updated < archiveCutoff && r.jsonFileId) {
+      // Archive: move file into archive folder (best-effort).
+      try {
+        const file = DriveApp.getFileById(r.jsonFileId);
+        const parents = file.getParents();
+        while (parents.hasNext()) { const par = parents.next(); if (par.getId() !== archiveFolder.getId()) par.removeFile(file); }
+        archiveFolder.addFile(file);
+        boardsArchived++;
+      } catch (e) {}
+    }
+  }
+
+  // Audit rows older than keep window.
+  const aSheet = sheet_(DS_SHEETS.audit);
+  const aValues = aSheet.getDataRange().getValues();
+  const aHeaders = aValues[0];
+  for (let i = aValues.length - 1; i >= 1; i--) {
+    const r = rowObject_(aHeaders, aValues[i]);
+    if (String(r.timestamp || '') < auditCutoff) {
+      aSheet.deleteRow(i + 1);
+      auditDeleted++;
+    }
+  }
+
+  DS_PROPS.setProperty('LAST_CLEANUP_AT', new Date().toISOString());
+  DS_PROPS.setProperty('LAST_CLEANUP_SUMMARY', JSON.stringify({ boardsArchived: boardsArchived, boardsDeleted: boardsDeleted, auditDeleted: auditDeleted }));
+  logEvent_('RETENTION_ACTION', {
+    actor: actor, actorRole: 'admin', entityType: 'retention_cleanup',
+    after: { boardsArchived: boardsArchived, boardsDeleted: boardsDeleted, auditDeleted: auditDeleted, archiveAfter: archiveAfter, deleteAfter: deleteAfter, auditKeep: auditKeep }
+  });
+  return { ok: true, boardsArchived: boardsArchived, boardsDeleted: boardsDeleted, auditDeleted: auditDeleted };
+}
+
+/* Time-driven trigger entry point. Apps Script ScriptApp calls this on the
+ * daily schedule installed via installCleanupTrigger_. Bypasses the admin
+ * passcode because it is invoked by the project, not a user. */
+function dailyRetentionCleanup() {
+  try {
+    runRetentionCleanup_({ passcode: DS_PROPS.getProperty('ADMIN_PASSCODE') || '', actor: 'scheduled-trigger' });
+  } catch (err) {
+    logEvent_('RETENTION_ACTION', {
+      actor: 'scheduled-trigger', actorRole: 'system', entityType: 'retention_cleanup',
+      after: { error: String(err && err.message ? err.message : err) }
+    });
+  }
+}
+
+function findCleanupTrigger_() {
+  const triggers = ScriptApp.getProjectTriggers();
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'dailyRetentionCleanup') return triggers[i];
+  }
+  return null;
+}
+
+function installCleanupTrigger_(p) {
+  requireAdmin_(p);
+  if (findCleanupTrigger_()) return { ok: true, installed: true, alreadyInstalled: true };
+  ScriptApp.newTrigger('dailyRetentionCleanup').timeBased().everyDays(1).atHour(2).create();
+  logEvent_('ADMIN_SETTING_CHANGED', {
+    actor: String((p && p.actor) || 'admin'), actorRole: 'admin',
+    entityType: 'cleanup_trigger', after: { state: 'installed' }
+  });
+  return { ok: true, installed: true };
+}
+
+function removeCleanupTrigger_(p) {
+  requireAdmin_(p);
+  const existing = findCleanupTrigger_();
+  if (!existing) return { ok: true, installed: false };
+  ScriptApp.deleteTrigger(existing);
+  logEvent_('ADMIN_SETTING_CHANGED', {
+    actor: String((p && p.actor) || 'admin'), actorRole: 'admin',
+    entityType: 'cleanup_trigger', after: { state: 'removed' }
+  });
+  return { ok: true, installed: false };
+}
+
+function getCleanupStatus_(p) {
+  requireAdmin_(p);
+  return {
+    ok: true,
+    triggerInstalled: !!findCleanupTrigger_(),
+    lastRunAt: DS_PROPS.getProperty('LAST_CLEANUP_AT') || '',
+    lastSummary: (function(){ try { return JSON.parse(DS_PROPS.getProperty('LAST_CLEANUP_SUMMARY') || 'null'); } catch (e) { return null; } })()
+  };
+}
+
+function getOrCreateArchiveFolder_() {
+  const id = DS_PROPS.getProperty('ARCHIVE_FOLDER_ID');
+  if (id) {
+    try { return DriveApp.getFolderById(id); } catch (e) {}
+  }
+  const root = getFolder_();
+  const it = root.getFoldersByName('Archive');
+  const folder = it.hasNext() ? it.next() : root.createFolder('Archive');
+  DS_PROPS.setProperty('ARCHIVE_FOLDER_ID', folder.getId());
+  return folder;
 }
