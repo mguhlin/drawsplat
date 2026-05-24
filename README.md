@@ -2,7 +2,7 @@
 
 DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets — or to your own MySQL-backed server.
 
-**Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://paypal.me/mguhlin).
+**Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://buymeacoffee.com/drawsplat).
 
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)

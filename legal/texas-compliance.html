@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Texas Compliance | DrawSplatTM</title>
+<meta name="description" content="Plain-language explanation of how DrawSplatTM aligns with the Texas SCOPE Act, FERPA, COPPA, and related student-privacy laws." />
+<link rel="canonical" href="https://drawsplat.org/legal/texas-compliance.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Plain-Language Explainer</p>
+    <h1>How DrawSplat<sup class="tm">TM</sup> complies with Texas student-privacy law.</h1>
+    <p>This page is written in plain language for school administrators, teachers, and parents who want to understand what DrawSplat<sup class="tm">TM</sup> does to align with Texas laws and federal rules that apply to K&ndash;12 students. It is not legal advice. Your district counsel should review specific obligations against your data sharing agreement (DPA).</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>The laws this page covers</h2>
+    <ul class="admin-checklist">
+      <li><strong>Texas SCOPE Act</strong> (Securing Children Online through Parental Empowerment Act) &mdash; protects Texas minors under 18 with rules on age registration, parental controls, harmful-content strategies, and data-use limits. The Texas Attorney General publishes an overview at <a href="https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint/consumer-privacy-rights/securing-children-online-through-parental-empowerment" target="_blank" rel="noopener noreferrer">texasattorneygeneral.gov</a>. Parts have been challenged in court; we implement what is currently in force, not what has been enjoined.</li>
+      <li><strong>FERPA</strong> (Family Educational Rights and Privacy Act) &mdash; federal law giving parents and eligible students rights over education records, including the right to inspect, correct, and control disclosure.</li>
+      <li><strong>COPPA</strong> (Children's Online Privacy Protection Act) &mdash; federal law about collecting personal information from children under 13. In school deployments the district typically acts as the parent's agent for consent.</li>
+      <li><strong>Texas Education Code 32.151&ndash;32.156</strong> &mdash; framework for student data agreements between districts and online service providers.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>What this looks like in DrawSplat<sup class="tm">TM</sup></h2>
+    <p>Every requirement below maps to a feature in the app you can demonstrate to a district reviewer, not just a paragraph in the terms.</p>
+
+    <h3>1. Age registration and locking</h3>
+    <p>SCOPE requires providers to register the age of a person creating an account and prevent that person from later changing it. DrawSplat<sup class="tm">TM</sup> assigns each student record an <strong>age band</strong> &mdash; one of <code>under_13</code>, <code>13_to_17</code>, <code>18_plus</code>, or <code>unknown_minor</code>. The band:</p>
+    <ul class="admin-checklist">
+      <li>Is server-locked. Students cannot change it.</li>
+      <li>Can only be changed by an administrator, and only with a written reason.</li>
+      <li>Records every change in the Activity Records audit log (<code>AGE_BAND_CHANGED</code>) with the old value, new value, who changed it, and why.</li>
+      <li>Defaults to <code>unknown_minor</code> &mdash; the safest assumption &mdash; until a roster import or admin entry provides the actual value.</li>
+    </ul>
+    <p>This is configured in <strong>Teacher Admin &rarr; Compliance Console &rarr; Student Age Band Lock</strong>.</p>
+
+    <h3>2. Strategies to limit harmful content reaching minors</h3>
+    <p>SCOPE expects providers to have <em>strategies</em> (not perfect filtering) to keep harmful content away from known minors. We layer multiple safeguards:</p>
+    <ul class="admin-checklist">
+      <li><strong>Server-enforced text keyword filter.</strong> Every save scans sticky notes, text boxes, comments, and board titles. Hits write a <code>TEXT_FILTER_HIT</code> event and (by default) reject the save.</li>
+      <li><strong>Link allowlist.</strong> Pasted URLs are checked against a district-managed allowlist before save.</li>
+      <li><strong>Manual moderation queue.</strong> Teachers freeze boards or remove items they find unsafe.</li>
+      <li><strong>Audit visibility.</strong> Every safety event is logged, so a district can prove ongoing review.</li>
+    </ul>
+    <p>Notable scope limitation: some content-filtering provisions of SCOPE were enjoined by federal court. We do not implement parts that are not currently in force.</p>
+
+    <h3>3. Parental empowerment</h3>
+    <p>SCOPE and FERPA both give parents tools to oversee their child's online services. DrawSplat<sup class="tm">TM</sup>'s <strong>Family Access Tools</strong> at <code>/parents/</code> give parents one place to:</p>
+    <ul class="admin-checklist">
+      <li><strong>View</strong> what data is stored about their student.</li>
+      <li><strong>Download</strong> a complete ZIP export of their student's boards, turn-ins, and account row (machine-readable manifest + human-readable README).</li>
+      <li><strong>Correct</strong> account information.</li>
+      <li><strong>Delete</strong> stored work.</li>
+      <li><strong>Pause</strong> account access.</li>
+      <li><strong>Report</strong> a safety concern.</li>
+      <li><strong>Ask</strong> a privacy question.</li>
+    </ul>
+    <p>Parents are verified through a <strong>teacher-issued one-time code</strong> &mdash; an 8-character alphanumeric value the school passes through its existing parent-communications channel. The code is stored only as a SHA-256 hash, expires in 14 days, and is single-use.</p>
+
+    <h3>4. Data-use and data-sharing limits</h3>
+    <p>SCOPE and FERPA both restrict how minor-data is used and shared. DrawSplat<sup class="tm">TM</sup>'s declarations:</p>
+    <ul class="admin-checklist">
+      <li><strong>No advertising.</strong> The product has no ad system, no tracking pixels, no third-party analytics scripts.</li>
+      <li><strong>No sale of data.</strong> Student data is never sold or licensed to third parties for any purpose.</li>
+      <li><strong>No AI training on student data.</strong> Student boards and submissions are never used to train AI models &mdash; ours or anyone else's.</li>
+      <li><strong>Storage stays where you put it.</strong> If your district configures the Google Apps Script backend, your data lives in <em>your</em> Google Drive and Sheets. If you self-host with the MySQL backend, the data is on your servers. We don't operate the storage.</li>
+      <li><strong>Sub-processors are limited.</strong> The only third parties involved are: Google Workspace (if you use the Google backend), Microsoft Identity (if you enable Microsoft sign-in on the Community board), and your static-host CDN (Cloudflare Pages by default).</li>
+    </ul>
+
+    <h3>5. Right to inspect and correct (FERPA)</h3>
+    <p>FERPA gives parents and eligible students the right to inspect education records. The <strong>Family Access Tools</strong> request workflow and the admin-initiated <strong>Export Data</strong> button satisfy this end-to-end. Every export logs a <code>DATA_EXPORT</code> event with counts and the supplied reason.</p>
+
+    <h3>6. Right to consent / withdraw consent</h3>
+    <p>Under FERPA the district controls disclosure of education records. Under COPPA the district acts as the parent's agent for the under-13 cohort. DrawSplat<sup class="tm">TM</sup> defers to district policy &mdash; we don't disclose student data to anyone outside the district's own deployment.</p>
+
+    <h3>7. Right to deletion</h3>
+    <p>The <strong>Family Access Tools &rarr; Delete</strong> workflow lets a parent request and an administrator execute a complete deletion of a student's boards, turn-ins, and account row. Drive files go to trash (recoverable for 30 days at the file owner's discretion); sheet rows are removed. A <code>DATA_DELETED</code> event records counts and the supplied reason.</p>
+
+    <h3>8. Time-of-use and limits</h3>
+    <p>When enabled, the Compliance Console's <strong>Use Limits</strong> section enforces daily-minutes caps, session limits, allowed hours of day, and weekend restrictions. The browser locks the workspace at the limit; the server gates save requests so a student cannot bypass the lock by reloading the page.</p>
+
+    <h3>9. Audit and accountability</h3>
+    <p>The <strong>Activity Records</strong> log writes a row for every compliance-relevant action: logins, board saves, board freezes, image uploads, parent requests, age-band changes, data exports, data deletions, admin setting changes, retention runs, time-limit hits. Records are filterable, exportable as CSV or JSON, and included in the <strong>District Privacy Packet</strong> download.</p>
+
+    <h3>10. Retention and disposal</h3>
+    <p>Districts configure how long boards and audit records persist via the Compliance Console's <strong>Retention Policy &amp; Cleanup</strong> section. A nightly Apps Script trigger (installable from the same panel) archives boards older than the archive threshold, deletes boards older than the delete threshold, and prunes audit rows older than the keep window. Every run logs a <code>RETENTION_ACTION</code> event.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>The "show me everything in one click" answer</h2>
+    <p>For a district reviewer, signature-ready compliance evidence is one click in <strong>Teacher Admin &rarr; Compliance Console &rarr; District Privacy Packet &rarr; Download District Privacy Packet</strong>. The ZIP contains:</p>
+    <ul class="admin-checklist">
+      <li>The current compliance configuration (every setting that is on, off, or set to a specific value).</li>
+      <li>The last 90 days of Activity Records as CSV.</li>
+      <li>All parent-request tickets and their dispositions.</li>
+      <li>A README pointing back at Terms &amp; Privacy and the District Addendum.</li>
+    </ul>
+    <p>This is the artifact that goes with your data sharing agreement (DPA) submission.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>What this page does not promise</h2>
+    <ul class="admin-checklist">
+      <li>This page is not legal advice. Specific obligations under your local data sharing agreement or any individual state law require review by your district's counsel.</li>
+      <li>Feature parity is not guaranteed across the three deployment modes (browser-only / Apps Script / MySQL). The browser-only mode has no server, so server-side enforcement features do not exist there. See the <a href="../docs/setup.md">setup docs</a> for the per-mode capability matrix.</li>
+      <li>Some Texas SCOPE Act provisions have been blocked by federal court. We do not implement requirements that are not currently in force.</li>
+      <li>Independent audit (SOC 2, ISO 27001, etc.) is not in scope for a free open-source project. Districts that require certified audits should engage paid services or use the self-hosted MySQL backend on infrastructure their existing audits already cover.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Where to read more</h2>
+    <ul class="admin-checklist">
+      <li><a href="terms-privacy.html">Terms &amp; Privacy</a> &mdash; the formal terms-of-service and privacy policy.</li>
+      <li><a href="district-addendum.html">District Privacy Addendum</a> &mdash; a signature-ready template districts can attach to their DSA.</li>
+      <li><a href="privacy-builder.html">Privacy Notice Builder</a> &mdash; a customizable per-deployment privacy notice generator.</li>
+      <li><a href="../docs/COMPLIANCE.md">Compliance Operator Guide</a> &mdash; how to actually use the Compliance Console day-to-day.</li>
+      <li><a href="../COMPLIANCE-ROADMAP.md">Compliance Roadmap</a> &mdash; the full implementation history and what is still on the horizon.</li>
+      <li><a href="https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint/consumer-privacy-rights/securing-children-online-through-parental-empowerment" target="_blank" rel="noopener noreferrer">Texas AG SCOPE Act overview</a> (external).</li>
+      <li><a href="https://studentprivacy.ed.gov/ferpa" target="_blank" rel="noopener noreferrer">U.S. Department of Education FERPA reference</a> (external).</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> compliance summary &mdash; plain language, not legal advice.</span>
+  <a href="../index.html">Home</a>
+  <a href="terms-privacy.html">Terms &amp; Privacy</a>
+  <a href="../pages/support.html">Support</a>
+</footer>
+</body>
+</html>

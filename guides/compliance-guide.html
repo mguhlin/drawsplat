@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Compliance Console Guide | DrawSplatTM</title>
+<meta name="description" content="Operator guide for the DrawSplatTM Compliance Console — Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy, Activity Records, and District Privacy Packet." />
+<link rel="canonical" href="https://drawsplat.org/guides/compliance-guide.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page guide-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../admin/admin.html">Teacher Admin</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Operator Guide</p>
+    <h1>Run the Compliance Console.</h1>
+    <p>Day-to-day guide for the eight sections inside <strong>Teacher Admin &rarr; Compliance Console</strong>. Pair this with <a href="../legal/texas-compliance.html">Texas Compliance</a> for the legal-language version and <a href="../docs/setup-google-apps-script.md">Google Apps Script setup</a> for first-time installation.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Before you open the Console</h2>
+    <ol class="admin-checklist">
+      <li>Set <code>ADMIN_PASSCODE</code> in your Apps Script project's <strong>Project Settings &rarr; Script Properties</strong>. Use 16+ random characters.</li>
+      <li>Open Teacher Admin, unlock with the admin gate password, paste the Web App URL into <strong>Google Drive + Sheets</strong>, click <strong>Save URL</strong>.</li>
+      <li>Click <strong>Test Connection</strong>. You want a green success message.</li>
+      <li>Scroll to <strong>Compliance Console</strong>. First time you click into a section, the browser will ask for your <code>ADMIN_PASSCODE</code> &mdash; it's cached in <code>localStorage</code> after that.</li>
+    </ol>
+  </section>
+
+  <section class="policy-section">
+    <h2>Safety Review</h2>
+    <h3>What it does</h3>
+    <p>Server-enforces the text keyword filter and link allowlist on every board save. Frozen boards reject all writes.</p>
+    <h3>Daily use</h3>
+    <ul class="admin-checklist">
+      <li><strong>Filter configuration</strong> &mdash; toggles for text filter, blockOnMatch (otherwise log-only), link allowlist, blockUnapproved. Click Load Config, edit, Save Filter Settings.</li>
+      <li><strong>Board / room freeze</strong> &mdash; Load Boards &amp; Rooms shows a sortable table. Click Freeze, type a reason; the board's saves are rejected until you Unfreeze it.</li>
+      <li><strong>View Safety Events</strong> &mdash; jumps to Activity Records with a pre-applied filter for safety-related actions.</li>
+    </ul>
+    <h3>Edge cases</h3>
+    <p>The default block-list catches a small set of obvious harm keywords. Add your own in <code>compliance.config.json</code> under <code>safety.text.patterns</code> (regex strings) or <code>safety.text.words</code>. Use the <strong>Open Raw Config Editor</strong> button in Privacy Settings for live editing.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Family Access Tools</h2>
+    <h3>What it does</h3>
+    <p>Parents submit requests at <a href="../parents/index.html">/parents/</a>. Verified requests appear in the Console; you Approve, Deny, or mark Done.</p>
+    <h3>Verification workflow</h3>
+    <ol class="admin-checklist">
+      <li>In <strong>Student Age Band Lock</strong>, click <strong>Issue Parent Code</strong> next to a student. The browser shows the 8-character code <em>once</em>.</li>
+      <li>Share the code with the parent through your existing parent-communications channel (email, paper note, SIS message, etc.). The server stores only a SHA-256 hash.</li>
+      <li>Parent enters the code on <code>/parents/</code>. The ticket arrives in the Console as <code>verified</code> instead of <code>pending_verification</code>.</li>
+      <li>Approve, Deny, or Done; the disposition is audit-logged.</li>
+    </ol>
+    <p>Codes are 14-day single-use. Generate a new one if the parent didn't act in time.</p>
+    <h3>Export &amp; deletion</h3>
+    <p>For verified <code>export</code> requests, click <strong>Export</strong> on that student's row in Age Lock. The browser downloads a ZIP with every board and turn-in plus a manifest. Email it to the verified parent through your normal channel.</p>
+    <p>For verified <code>delete</code> requests, click <strong>Delete</strong>. Two confirmations required. Drive files go to trash; sheet rows are removed; <code>DATA_DELETED</code> event is logged.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Student Age Band Lock</h2>
+    <h3>What it does</h3>
+    <p>Assigns each student record one of <code>under_13</code>, <code>13_to_17</code>, <code>18_plus</code>, or <code>unknown_minor</code>. Server-locked.</p>
+    <h3>Populating the roster</h3>
+    <ol class="admin-checklist">
+      <li>Click <strong>Load Students</strong> &mdash; rows auto-populate from turn-ins. If you haven't run any turn-ins yet, the table is empty.</li>
+      <li><strong>Add Student</strong> &mdash; manual entry for one student at a time.</li>
+      <li><strong>Import Roster CSV</strong> &mdash; upload a CSV with header <code>studentName, className, email, ageBand, ageSource, notes</code>. Idempotent &mdash; re-uploading the same file updates rather than duplicates. Useful for first-day-of-school setup.</li>
+    </ol>
+    <h3>Changing a band</h3>
+    <p>Use the dropdown next to the student. The browser prompts for a reason &mdash; required, logged in Activity Records as <code>AGE_BAND_CHANGED</code> with the old value, new value, and your reason.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Use Limits</h2>
+    <h3>What it does</h3>
+    <p>Caps daily and per-session minutes for students. Enforces allowed-hours-of-day and weekend restrictions. Browser locks the workspace; server rejects saves outside the window so a reload can't bypass the lock.</p>
+    <h3>Setup</h3>
+    <ol class="admin-checklist">
+      <li>Toggle <strong>Enforce daily / session limits</strong> on.</li>
+      <li>Set <strong>Daily seconds</strong> (e.g. 1800 = 30 min). Set <strong>Session seconds</strong> to 0 for "no per-session limit".</li>
+      <li>Set <strong>Allowed hours start</strong> and <strong>end</strong>. Toggle <strong>Allow weekend access</strong>.</li>
+      <li>Save Use Limits.</li>
+    </ol>
+    <p>Affects students only; teachers bypass the cap when they're in teacher mode. A remaining-time chip appears at the bottom-right of the whiteboard for affected students.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Retention Policy &amp; Cleanup</h2>
+    <h3>What it does</h3>
+    <p>Archives or deletes boards based on age; prunes old audit rows. Available manually or on a nightly Apps Script trigger.</p>
+    <h3>Setup</h3>
+    <ol class="admin-checklist">
+      <li>Click <strong>Load Current</strong> to see the active thresholds.</li>
+      <li>Set <strong>Archive boards after</strong> (e.g. 90 days) &mdash; older boards move to an <code>Archive</code> Drive subfolder.</li>
+      <li>Set <strong>Delete boards after</strong> (e.g. 365 days) &mdash; older boards are trashed and the sheet row removed.</li>
+      <li>Set <strong>Keep Activity Records</strong> (e.g. 365 days) &mdash; older audit rows are pruned.</li>
+      <li>Save Settings.</li>
+      <li>Click <strong>Install Daily Trigger</strong> once. From then on the cleanup runs nightly at 02:00 server time.</li>
+    </ol>
+    <p>Manual <strong>Run Cleanup Now</strong> available any time. Each run writes a <code>RETENTION_ACTION</code> audit event with counts.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Privacy Settings</h2>
+    <h3>What it does</h3>
+    <p>Read-only declarations the District Privacy Packet reports: storage location, encryption, third-party services, AI-training=NO, advertising=NO, data-sold=NO. Plus the <strong>Open Raw Config Editor</strong> dialog for advanced edits.</p>
+    <h3>When to use it</h3>
+    <p>Before a DPA review or compliance audit. Open the section, confirm everything looks accurate, then click <strong>Download District Privacy Packet</strong> at the bottom of the Console &mdash; that ZIP plus the policy pages is the artifact you hand over.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Activity Records</h2>
+    <h3>What it does</h3>
+    <p>Append-only audit log of every compliance-relevant action. Filterable by action, actor, date. Exportable as CSV or JSON.</p>
+    <h3>Common queries</h3>
+    <ul class="admin-checklist">
+      <li><strong>What happened today?</strong> &mdash; set <em>Since</em> to today's date, leave the rest blank.</li>
+      <li><strong>What did this teacher do this week?</strong> &mdash; <em>Actor contains</em> = their email, <em>Since</em> = 7 days ago.</li>
+      <li><strong>Where was content blocked?</strong> &mdash; <em>Action filter</em> = <code>TEXT_FILTER_HIT</code>.</li>
+      <li><strong>Who made age-band changes?</strong> &mdash; <em>Action filter</em> = <code>AGE_BAND_CHANGED</code>.</li>
+      <li><strong>What did the nightly retention run touch?</strong> &mdash; <em>Action filter</em> = <code>RETENTION_ACTION</code>.</li>
+    </ul>
+    <p>Click Apply Filter, then Download CSV (spreadsheet-friendly) or Download JSON (machine-readable).</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>District Privacy Packet</h2>
+    <h3>What it does</h3>
+    <p>One-click ZIP containing the current compliance configuration, the last 90 days of Activity Records as CSV, all parent-request tickets, and a README pointing at Terms &amp; Privacy and the District Addendum.</p>
+    <h3>When to use it</h3>
+    <p>Any time a district reviewer, parent committee, or compliance auditor asks "what does DrawSplat actually do with our students' data?" One click in the Console; emails are unnecessary.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Where to read more</h2>
+    <ul class="admin-checklist">
+      <li><a href="../legal/texas-compliance.html">Texas Compliance</a> &mdash; plain-language overview of SCOPE Act, FERPA, COPPA alignment.</li>
+      <li><a href="../legal/terms-privacy.html">Terms &amp; Privacy</a> &mdash; formal policy.</li>
+      <li><a href="../legal/district-addendum.html">District Privacy Addendum</a> &mdash; signature-ready DPA template.</li>
+      <li><a href="../docs/setup-google-apps-script.md">Apps Script Setup</a> &mdash; first-time install.</li>
+      <li><a href="../docs/COMPLIANCE.md">Compliance technical reference</a> &mdash; for IT staff editing the config directly.</li>
+      <li><a href="../COMPLIANCE-ROADMAP.md">Compliance Roadmap</a> &mdash; what is built, deferred, and planned.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> Compliance Console operator guide.</span>
+  <a href="../index.html">Home</a>
+  <a href="../admin/admin.html">Open Compliance Console</a>
+  <a href="../pages/support.html">Support</a>
+</footer>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// DS_VERSION = '1.7.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.8.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,9 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.8.0  Contact / Information Request form — new ContactRequests
+ *          sheet tab + createContactRequest endpoint. Replaces the
+ *          mailto link that used to live on the Pricing page.
  *   1.7.0  Day 4.5 (Phase 4a) — roster CSV import endpoint.
  *   1.6.0  Days 2.8/2.9 — time-limit enforcement: TimeUsage sheet,
  *          checkTimeLimitsAllowed_, heartbeat / timeStatus endpoints,
@@ -26,7 +29,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.7.0';
+const DS_VERSION = '1.8.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -38,10 +41,12 @@ const DS_SHEETS = {
   audit: 'Audit',
   parentRequests: 'ParentRequests',
   users: 'Users',
-  timeUsage: 'TimeUsage'
+  timeUsage: 'TimeUsage',
+  contactRequests: 'ContactRequests'
 };
 
 const DS_TIME_HEADERS = ['key', 'studentName', 'className', 'date', 'secondsToday', 'sessionStart', 'lastBeat'];
+const DS_CONTACT_HEADERS = ['id', 'createdAt', 'name', 'email', 'organization', 'role', 'topic', 'details', 'sourcePage', 'status', 'decidedAt', 'decisionNote'];
 
 const DS_AUDIT_HEADERS = ['id', 'timestamp', 'actor', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'userAgent'];
 const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'studentId', 'requestType', 'details', 'status', 'assignedTo', 'createdAt', 'decidedAt', 'decisionNote'];
@@ -61,6 +66,7 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.parentRequests, DS_PARENT_HEADERS);
   ensureSheet_(ss, DS_SHEETS.users, DS_USER_HEADERS);
   ensureSheet_(ss, DS_SHEETS.timeUsage, DS_TIME_HEADERS);
+  ensureSheet_(ss, DS_SHEETS.contactRequests, DS_CONTACT_HEADERS);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
   return 'DrawSplatTM setup complete.';
 }
@@ -88,6 +94,7 @@ function doGet(e) {
       case 'getCompliance': return json_(getCompliance_(p));
       case 'cleanupStatus': return json_(getCleanupStatus_(p));
       case 'timeStatus': return json_(getTimeStatus_(p));
+      case 'contactRequestList': return json_(adminContactRequestList_(p));
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -119,6 +126,8 @@ function doPost(e) {
       case 'removeCleanupTrigger': return json_(removeCleanupTrigger_(body));
       case 'timeHeartbeat': return json_(recordTimeHeartbeat_(body));
       case 'rosterImport': return json_(rosterImport_(body));
+      case 'contactRequest': return json_(createContactRequest_(body));
+      case 'contactRequestDecide': return json_(decideContactRequest_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -1655,4 +1664,77 @@ function parseCsv_(text) {
   // Flush trailing field/row.
   if (field !== '' || row.length) { row.push(field); out.push(row); }
   return out.filter(r => r.length > 1 || (r.length === 1 && String(r[0] || '').trim() !== ''));
+}
+
+/* --- Contact / Information Request form (replaces mailto) ----------------- */
+
+function createContactRequest_(body) {
+  const allowedTopics = ['setup_help','professional_learning','compliance_review','admin_training','custom_development','bug_report','feature_idea','general_question'];
+  const topic = String((body && body.topic) || '');
+  if (allowedTopics.indexOf(topic) === -1) throw new Error('Unsupported topic.');
+  const name = clean_((body && body.name) || '').slice(0, 120);
+  const email = clean_((body && body.email) || '').toLowerCase();
+  if (!name) throw new Error('Name is required.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Valid email is required.');
+  const details = clean_((body && body.details) || '').slice(0, 3000);
+  if (!details) throw new Error('Details are required.');
+  const id = 'contact_' + Utilities.getUuid();
+  const row = {
+    id: id,
+    createdAt: now_(),
+    name: name,
+    email: email,
+    organization: clean_((body && body.organization) || '').slice(0, 160),
+    role: clean_((body && body.role) || '').slice(0, 120),
+    topic: topic,
+    details: details,
+    sourcePage: clean_((body && body.sourcePage) || '').slice(0, 250),
+    status: 'new',
+    decidedAt: '',
+    decisionNote: ''
+  };
+  upsertRow_(DS_SHEETS.contactRequests, 'id', id, row);
+  logEvent_('CONTACT_REQUEST_CREATED', {
+    actor: email,
+    actorRole: 'public',
+    entityType: 'contact_request',
+    entityId: id,
+    after: { topic: topic, organization: row.organization }
+  });
+  notifyComplianceAdmin_(
+    'New contact request: ' + topic,
+    'Ticket ' + id + ' from ' + name + ' <' + email + '>' + (row.organization ? ' at ' + row.organization : '') + '.\n\nTopic: ' + topic + '\n\nDetails:\n' + details
+  );
+  return { ok: true, id: id, status: 'new' };
+}
+
+function adminContactRequestList_(p) {
+  requireAdmin_(p);
+  const rows = readRows_(DS_SHEETS.contactRequests);
+  rows.sort(function(a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+  return { ok: true, requests: rows };
+}
+
+function decideContactRequest_(body) {
+  requireAdmin_(body);
+  const id = clean_((body && body.id) || '');
+  const decision = clean_((body && body.decision) || '');
+  if (['in_progress', 'replied', 'closed'].indexOf(decision) === -1) throw new Error('Invalid decision.');
+  const existing = findRow_(DS_SHEETS.contactRequests, 'id', id);
+  if (!existing) throw new Error('Request not found.');
+  const patch = Object.assign({}, existing, {
+    status: decision,
+    decidedAt: now_(),
+    decisionNote: clean_((body && body.decisionNote) || '').slice(0, 2000)
+  });
+  upsertRow_(DS_SHEETS.contactRequests, 'id', id, patch);
+  logEvent_('CONTACT_REQUEST_DECIDED', {
+    actor: String((body && body.actor) || 'admin'),
+    actorRole: 'admin',
+    entityType: 'contact_request',
+    entityId: id,
+    before: { status: existing.status || '' },
+    after: { status: decision }
+  });
+  return { ok: true, id: id, status: decision };
 }

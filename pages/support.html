@@ -16,14 +16,44 @@
     <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
     <span>DrawSplat<sup class="tm">TM</sup></span>
   </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM support navigation">
-    <a href="../index.html">Home</a>
-    <a href="features.html">Features</a>
-    <a href="background-templates.html">Templates</a>
-    <a href="pricing.html">Pricing</a>
-    <a href="../community/index.html">Community</a>
-    <a href="../legal/terms-privacy.html">Privacy</a>
-    <a href="../admin/admin.html">Teacher Admin</a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
   </nav>
   <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
 </header>
@@ -56,10 +86,24 @@
     </div>
     <div class="support-resource-grid">
       <article class="support-resource-card featured">
+        <span class="support-resource-type">Compliance</span>
+        <h3>Compliance Console Guide</h3>
+        <p>Day-to-day walkthrough of the eight Compliance Console sections: Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy, Activity Records, District Privacy Packet.</p>
+        <a class="landing-cta primary" href="../guides/compliance-guide.html">Open Compliance Guide</a>
+      </article>
+
+      <article class="support-resource-card">
+        <span class="support-resource-type">Compliance</span>
+        <h3>Texas Compliance Explainer</h3>
+        <p>Plain-language summary of how DrawSplat<sup class="tm">TM</sup> aligns with the Texas SCOPE Act, FERPA, and COPPA &mdash; the document to share with a district reviewer.</p>
+        <a class="landing-cta" href="../legal/texas-compliance.html">Read Explainer</a>
+      </article>
+
+      <article class="support-resource-card">
         <span class="support-resource-type">Feature Guide</span>
         <h3>ScratchArt Feature Guide</h3>
         <p>Learn how to place a colorful background, add a ScratchArt cover, and let students reveal the hidden image with the Eraser tool.</p>
-        <a class="landing-cta primary" href="../guides/scratchart.html">Read ScratchArt Guide</a>
+        <a class="landing-cta" href="../guides/scratchart.html">Read ScratchArt Guide</a>
       </article>
 
       <article class="support-resource-card">

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Contact / Information Request | DrawSplatTM</title>
+<meta name="description" content="Send a question, request information, or ask for a quote for DrawSplatTM setup, professional learning, compliance review, or custom development. Submissions land directly in the project's request tracker — no email required." />
+<link rel="canonical" href="https://drawsplat.org/pages/contact.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page support-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell">
+  <section class="landing-hero">
+    <div class="landing-hero-copy" style="max-width:760px">
+      <p class="landing-eyebrow">Contact / Information Request</p>
+      <h1>Ask a question or request a quote.</h1>
+      <p class="landing-lede">Use this form for anything that isn&rsquo;t a parent data request (those go to <a href="../parents/index.html">Family Access Tools</a>). Submissions land in the DrawSplat<sup class="tm">TM</sup> request tracker. No email is required &mdash; the school&rsquo;s designated admin reviews the request and replies.</p>
+    </div>
+  </section>
+
+  <section class="landing-section" aria-label="Contact form">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Request form</p>
+      <h2>What can we help with?</h2>
+      <p>Fields marked with <span aria-hidden="true" style="color:#b91c1c">*</span> are required.</p>
+    </div>
+    <form id="contactForm" class="admin-panel" style="max-width:760px;margin:0 auto">
+      <label class="admin-label" for="contactName">Your name <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <input id="contactName" type="text" autocomplete="name" maxlength="120" required>
+
+      <label class="admin-label" for="contactEmail">Your email <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <input id="contactEmail" type="email" autocomplete="email" maxlength="160" required>
+
+      <label class="admin-label" for="contactOrg">Organization (school / district / company)</label>
+      <input id="contactOrg" type="text" autocomplete="organization" maxlength="160">
+
+      <label class="admin-label" for="contactRole">Your role (optional)</label>
+      <input id="contactRole" type="text" autocomplete="organization-title" maxlength="120">
+
+      <label class="admin-label" for="contactTopic">What is this about? <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <select id="contactTopic" required>
+        <option value="">Choose&hellip;</option>
+        <option value="setup_help">Setup help (Apps Script, MySQL, hosting)</option>
+        <option value="professional_learning">Professional learning quote</option>
+        <option value="compliance_review">Compliance review / DPA support</option>
+        <option value="admin_training">Admin training / Compliance Console walkthrough</option>
+        <option value="custom_development">Custom development (SSO, SIS, custom dashboards)</option>
+        <option value="bug_report">Bug report / issue</option>
+        <option value="feature_idea">Feature idea</option>
+        <option value="general_question">General question</option>
+      </select>
+
+      <label class="admin-label" for="contactDetails">Details <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+      <textarea id="contactDetails" rows="7" maxlength="3000" required style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff;font-family:inherit"></textarea>
+      <p class="hint"><span id="contactCount">0</span>/3000 characters</p>
+
+      <div class="admin-actions">
+        <button id="contactSubmit" type="submit" class="primary">Submit request</button>
+        <a class="admin-button" href="../index.html">Cancel</a>
+      </div>
+      <p id="contactStatus" class="hint" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">What happens next</p>
+      <h2>How requests are handled</h2>
+    </div>
+    <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
+      <li>Your request is written to the project&rsquo;s Google Sheet (the same data store every other DrawSplat<sup class="tm">TM</sup> compliance form uses).</li>
+      <li>The configured compliance admin gets an email notification.</li>
+      <li>A real person reads it and replies at the email you provided.</li>
+      <li>If you asked for a quote on Support &amp; Professional Learning, you&rsquo;ll get a scope outline plus pricing options.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> contact / information request.</span>
+  <a href="../index.html">Home</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+
+<script src="../assets/js/contact.js?v=0.1"></script>
+</body>
+</html>
