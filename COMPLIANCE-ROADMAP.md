@@ -95,11 +95,11 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 3.1 | Admin Compliance Console &mdash; page scaffolding | [ ] | |
-| 3.2 | Privacy Settings panel | [ ] | |
-| 3.3 | Student Safety panel | [ ] | |
-| 3.4 | Parent Controls panel | [ ] | |
-| 3.5 | Audit Logs panel (extends Day 1.8) | [ ] | |
+| 3.1 | Admin Compliance Console &mdash; page scaffolding | [x] | pending |
+| 3.2 | Privacy Settings panel | [x] | pending |
+| 3.3 | Student Safety panel | [x] | pending |
+| 3.4 | Parent Controls panel | [x] | pending |
+| 3.5 | Audit Logs panel (extends Day 1.8) | [x] | pending |
 | 3.6 | District Privacy Packet generator | [x] | 021c657 |
 | 3.7 | Retention policy settings | [x] | 032dcbe |
 | 3.8 | Scheduled cleanup script | [x] | 032dcbe |
@@ -582,6 +582,7 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-24  Days 3.1, 3.2, 3.3, 3.4, 3.5  Compliance Console panel build-out. Filter Configuration toggles inside Safety Review (text + link filter on/off, blockOnMatch, blockUnapproved). Parent Controls config (portal/request-form enable, verification method). Use Limits config inputs (daily/session seconds, allowed hours, weekend) ready for Days 2.8/2.9 enforcement code. New Privacy Settings panel renders read-only declarations (storage location, encryption, third-party services, AI training=NO, advertising=NO, data-sold=NO). New raw JSON config editor dialog for advanced edits. Activity Records gets date-range + action + actor filters, and a JSON export alongside the existing CSV. Cache-buster v=0.9. No Code.gs changes — all panels backed by the getCompliance/setCompliance endpoints already shipped in 1.5.0. Pending commit/push.
 2026-05-24  Days 3.7, 3.8, 3.9  Retention + cleanup + district defaults: Compliance Console gets a Retention Policy section with three inputs (archive boards after N days, delete boards after M days, keep audit rows N days). Save persists to COMPLIANCE_CONFIG script property. Run Cleanup Now executes immediately; Install Daily Trigger schedules dailyRetentionCleanup() at 02:00 server time via ScriptApp time-driven triggers. Each run logs RETENTION_ACTION with counts. Reset to Defaults rewrites the config from Code.gs constants — completes 3.9 since safetyConfig_ and retention reader both consume COMPLIANCE_CONFIG, so changing it cascades to every save and cleanup. Code.gs bumped to 1.5.0. Pending commit/push.
 2026-05-23  Day 2.6  Student data export: Apps Script exportStudentData action builds a ZIP containing JSON+PNG copies of every board and turn-in matching the student, plus a manifest.json with their user row (no hashed credentials), plus a README. Admin gets an Export button next to Issue Parent Code / Delete in the user table; downloads directly to browser. Logs DATA_EXPORT audit event. Pending commit/push.
 2026-05-23  Days 2.1, 2.2, 2.5, 2.7  Phase 2 trust additions: Users sheet with age band columns + lock; auto-populated from turn-ins. Admin UI in Compliance Console lists students with age band dropdown (change requires reason; emits AGE_BAND_CHANGED audit event). Teacher-issued one-time parent verification code (8-char alphanumeric, hashed with SHA-256+salt, 14-day expiry, single-use) shown to admin via one-time prompt. Parent form on /parents/ accepts the code; verified requests skip pending_verification. Admin Delete Data action trashes Drive files and removes rows for boards/turnins/user; logs DATA_DELETED audit. Day 2.6 (data export ZIP) still open. Pending commit/push.

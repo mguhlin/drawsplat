@@ -605,6 +605,12 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .admin-passcode-dialog .admin-actions{justify-content:flex-end;margin-top:14px}
 .badge-freeze{display:inline-block;background:#fdecea;color:#b91c1c;border:1px solid #fecaca;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
 .safety-row.frozen td{background:#fef7f5}
+.config-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:6px 0 10px}
+@media(min-width:560px){.config-grid{grid-template-columns:1fr 1fr}}
+.config-row{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink)}
+.config-row input[type="checkbox"]{margin-right:6px}
+.config-row input[type="number"],.config-row input[type="time"],.config-row input[type="text"]{padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+.config-row select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
 .admin-checklist{margin:8px 0 0;padding-left:22px;color:var(--ink);line-height:1.55}
 .admin-checklist li{margin:5px 0}
 .admin-gate{display:none;min-height:calc(100vh - 58px);align-items:center;justify-content:center;padding:24px}

@@ -519,5 +519,183 @@
   document.getElementById('removeTriggerBtn')?.addEventListener('click',removeTrigger);
   document.getElementById('resetDefaultsBtn')?.addEventListener('click',resetDefaults);
 
+  /* --- Compliance: panel build-out (Days 3.2/3.3/3.4) --------------------- */
+  function panelStatus(id,txt,kind){
+    const el=document.getElementById(id); if(!el) return;
+    el.textContent=txt; el.style.color = kind==='error'?'#b91c1c':(kind==='ok'?'#16a34a':'');
+  }
+  async function fetchConfig(){
+    const d=await adminCall('getCompliance',{});
+    return d.config || JSON.parse(JSON.stringify(d.defaults));
+  }
+  function bool(el){ return !!(el && el.checked); }
+  function setBool(el,v){ if(el) el.checked=!!v; }
+  function val(el,fallback){ if(!el) return fallback; const v=el.value; return v===''||v==null?fallback:v; }
+
+  async function loadSafetyConfig(){
+    try{
+      const cfg=await fetchConfig();
+      const t=(cfg.safety && cfg.safety.text) || {};
+      const l=(cfg.safety && cfg.safety.links) || {};
+      setBool(document.getElementById('cfgSafetyTextEnabled'),t.enabled!==false);
+      setBool(document.getElementById('cfgSafetyTextBlock'),t.blockOnMatch!==false);
+      setBool(document.getElementById('cfgSafetyLinksEnabled'),l.enabled!==false);
+      setBool(document.getElementById('cfgSafetyLinksBlock'),l.blockUnapproved!==false);
+      panelStatus('safetyConfigStatus','Loaded from server.','ok');
+    }catch(err){ panelStatus('safetyConfigStatus',String(err.message||err),'error'); }
+  }
+  async function saveSafetyConfig(){
+    try{
+      const cfg=await fetchConfig();
+      cfg.safety=cfg.safety||{}; cfg.safety.text=cfg.safety.text||{}; cfg.safety.links=cfg.safety.links||{};
+      cfg.safety.text.enabled=bool(document.getElementById('cfgSafetyTextEnabled'));
+      cfg.safety.text.blockOnMatch=bool(document.getElementById('cfgSafetyTextBlock'));
+      cfg.safety.links.enabled=bool(document.getElementById('cfgSafetyLinksEnabled'));
+      cfg.safety.links.blockUnapproved=bool(document.getElementById('cfgSafetyLinksBlock'));
+      await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      panelStatus('safetyConfigStatus','Saved.','ok');
+    }catch(err){ panelStatus('safetyConfigStatus',String(err.message||err),'error'); }
+  }
+  async function loadParentConfig(){
+    try{
+      const cfg=await fetchConfig();
+      const p=cfg.parentAccess||{};
+      setBool(document.getElementById('cfgParentPortal'),p.portalEnabled!==false);
+      setBool(document.getElementById('cfgParentRequestForm'),p.requestFormEnabled!==false);
+      const sel=document.getElementById('cfgParentVerify');
+      if(sel) sel.value=p.verificationMethod||'teacher_code';
+      panelStatus('parentConfigStatus','Loaded from server.','ok');
+    }catch(err){ panelStatus('parentConfigStatus',String(err.message||err),'error'); }
+  }
+  async function saveParentConfig(){
+    try{
+      const cfg=await fetchConfig();
+      cfg.parentAccess=cfg.parentAccess||{};
+      cfg.parentAccess.portalEnabled=bool(document.getElementById('cfgParentPortal'));
+      cfg.parentAccess.requestFormEnabled=bool(document.getElementById('cfgParentRequestForm'));
+      cfg.parentAccess.verificationMethod=document.getElementById('cfgParentVerify').value;
+      await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      panelStatus('parentConfigStatus','Saved.','ok');
+    }catch(err){ panelStatus('parentConfigStatus',String(err.message||err),'error'); }
+  }
+  async function loadLimitsConfig(){
+    try{
+      const cfg=await fetchConfig();
+      const t=cfg.timeLimits||{};
+      setBool(document.getElementById('cfgLimitsEnabled'),!!t.enabled);
+      setBool(document.getElementById('cfgLimitsWeekend'),!!t.weekendAllowed);
+      const d=document.getElementById('cfgLimitsDaily'); if(d) d.value=t.dailySeconds||1800;
+      const s=document.getElementById('cfgLimitsSession'); if(s) s.value=t.sessionSeconds||0;
+      const a=document.getElementById('cfgLimitsStart'); if(a) a.value=t.allowedHoursStart||'07:30';
+      const b=document.getElementById('cfgLimitsEnd'); if(b) b.value=t.allowedHoursEnd||'17:00';
+      panelStatus('limitsConfigStatus','Loaded from server.','ok');
+    }catch(err){ panelStatus('limitsConfigStatus',String(err.message||err),'error'); }
+  }
+  async function saveLimitsConfig(){
+    try{
+      const cfg=await fetchConfig();
+      cfg.timeLimits=cfg.timeLimits||{};
+      cfg.timeLimits.enabled=bool(document.getElementById('cfgLimitsEnabled'));
+      cfg.timeLimits.weekendAllowed=bool(document.getElementById('cfgLimitsWeekend'));
+      cfg.timeLimits.dailySeconds=parseInt(val(document.getElementById('cfgLimitsDaily'),'1800'),10);
+      cfg.timeLimits.sessionSeconds=parseInt(val(document.getElementById('cfgLimitsSession'),'0'),10);
+      cfg.timeLimits.allowedHoursStart=val(document.getElementById('cfgLimitsStart'),'07:30');
+      cfg.timeLimits.allowedHoursEnd=val(document.getElementById('cfgLimitsEnd'),'17:00');
+      await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      panelStatus('limitsConfigStatus','Saved.','ok');
+    }catch(err){ panelStatus('limitsConfigStatus',String(err.message||err),'error'); }
+  }
+  async function loadPrivacyConfig(){
+    const host=document.getElementById('privacyDeclarations');
+    if(!host) return;
+    host.textContent='Loading…';
+    try{
+      const cfg=await fetchConfig();
+      const p=cfg.privacy||{};
+      const e=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const services=Array.isArray(p.thirdPartyServices)?p.thirdPartyServices:[];
+      const packetIncludes=Array.isArray(p.districtPrivacyPacketIncludes)?p.districtPrivacyPacketIncludes:[];
+      const yesno=v=>v?'<span style="color:#16a34a;font-weight:700">YES</span>':'<span style="color:#b91c1c;font-weight:700">NO</span>';
+      host.innerHTML='<dl style="display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0">'+
+        '<dt><strong>Storage location</strong></dt><dd>'+e(p.storageLocation||'—')+'</dd>'+
+        '<dt><strong>Encryption in transit</strong></dt><dd>'+e(p.encryptionInTransit||'—')+'</dd>'+
+        '<dt><strong>Student data trains AI models</strong></dt><dd>'+yesno(!!p.studentDataTrainsAiModels)+'</dd>'+
+        '<dt><strong>Advertising</strong></dt><dd>'+yesno(!!p.advertising)+'</dd>'+
+        '<dt><strong>Data sold</strong></dt><dd>'+yesno(!!p.dataSold)+'</dd>'+
+        '<dt><strong>Third-party services</strong></dt><dd>'+(services.length?'<ul style="margin:0;padding-left:18px">'+services.map(s=>'<li>'+e(s)+'</li>').join('')+'</ul>':'—')+'</dd>'+
+        '<dt><strong>Privacy Packet includes</strong></dt><dd>'+(packetIncludes.length?'<ul style="margin:0;padding-left:18px">'+packetIncludes.map(s=>'<li>'+e(s)+'</li>').join('')+'</ul>':'—')+'</dd>'+
+        '</dl>';
+    }catch(err){ host.textContent=String(err.message||err); }
+  }
+  function openConfigEditor(){
+    const dialog=document.getElementById('rawConfigDialog');
+    const text=document.getElementById('rawConfigText');
+    const form=document.getElementById('rawConfigForm');
+    const status=document.getElementById('rawConfigStatus');
+    if(!dialog||!text||!form) return;
+    status.textContent='Loading…';
+    fetchConfig().then(cfg=>{
+      text.value=JSON.stringify(cfg,null,2);
+      status.textContent='';
+      dialog.showModal();
+    }).catch(err=>{ status.textContent=String(err.message||err); dialog.showModal(); });
+    function onSubmit(ev){
+      ev.preventDefault();
+      const decision=(ev.submitter&&ev.submitter.value)||'cancel';
+      if(decision!=='save'){ dialog.close(); form.removeEventListener('submit',onSubmit); return; }
+      try{
+        const parsed=JSON.parse(text.value);
+        adminCall('setCompliance',{config:JSON.stringify(parsed)},'POST').then(saved=>{
+          status.textContent='Saved. Keys: '+(saved.savedKeys||[]).join(', ');
+          setTimeout(()=>{ dialog.close(); form.removeEventListener('submit',onSubmit); },800);
+        }).catch(err=>{ status.textContent=String(err.message||err); });
+      }catch(e){ status.textContent='Invalid JSON: '+e.message; }
+    }
+    form.addEventListener('submit',onSubmit);
+  }
+  /* --- Audit Logs date-range + JSON export (Day 3.5 extension) ----------- */
+  async function applyAuditFilter(){
+    const target=document.getElementById('complianceAuditViewer');
+    const url=cleanUrl();
+    if(!url){ target.textContent='Save a Web App URL above first.'; return; }
+    const pc=await getAdminPasscode();
+    if(!pc){ target.textContent='Admin passcode required.'; return; }
+    target.textContent='Loading…';
+    try{
+      const params=new URLSearchParams({action:'auditList',passcode:pc});
+      const actionFilter=(document.getElementById('auditActionFilter')?.value||'').trim();
+      const actor=(document.getElementById('auditActorFilter')?.value||'').trim();
+      const since=(document.getElementById('auditSinceFilter')?.value||'').trim();
+      const limit=(document.getElementById('auditLimitFilter')?.value||'200').trim();
+      if(actionFilter) params.set('actionFilter',actionFilter);
+      if(actor) params.set('actor',actor);
+      if(since) params.set('since',new Date(since).toISOString());
+      params.set('limit',limit);
+      const res=await fetch(url+'?'+params.toString());
+      const data=await res.json();
+      if(!data.ok) throw new Error(data.error||'Could not load.');
+      renderAuditTable(target,data.events||[]);
+      const wrap=document.createElement('div');
+      wrap.className='admin-actions';
+      wrap.innerHTML='<button id="downloadAuditJsonBtn" type="button">Download JSON</button>';
+      target.appendChild(wrap);
+      document.getElementById('downloadAuditJsonBtn').addEventListener('click',()=>{
+        const blob=new Blob([JSON.stringify(data.events||[],null,2)],{type:'application/json'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+        a.download='drawsplat-activity-records-'+new Date().toISOString().slice(0,10)+'.json';
+        document.body.appendChild(a);a.click();a.remove();
+      });
+    }catch(err){ target.textContent=String(err.message||err); }
+  }
+  document.getElementById('loadSafetyConfigBtn')?.addEventListener('click',loadSafetyConfig);
+  document.getElementById('saveSafetyConfigBtn')?.addEventListener('click',saveSafetyConfig);
+  document.getElementById('loadParentConfigBtn')?.addEventListener('click',loadParentConfig);
+  document.getElementById('saveParentConfigBtn')?.addEventListener('click',saveParentConfig);
+  document.getElementById('loadLimitsConfigBtn')?.addEventListener('click',loadLimitsConfig);
+  document.getElementById('saveLimitsConfigBtn')?.addEventListener('click',saveLimitsConfig);
+  document.getElementById('loadPrivacyConfigBtn')?.addEventListener('click',loadPrivacyConfig);
+  document.getElementById('openConfigEditorBtn')?.addEventListener('click',openConfigEditor);
+  document.getElementById('applyAuditFilterBtn')?.addEventListener('click',applyAuditFilter);
+
   loadSettings();
 })();

@@ -159,6 +159,23 @@ The single `COMPLIANCE_CONFIG` Script Property is the authoritative server-side 
 
 **Reset to Defaults** rewrites the property with the built-in defaults baked into `Code.gs` (`DS_DEFAULT_COMPLIANCE`). Useful if a previous edit landed in a bad state.
 
+## Compliance Console Panels (Days 3.1–3.5)
+
+The Teacher Admin &rarr; Compliance Console is split into seven collapsible sections. Each section reads from and writes to the same `COMPLIANCE_CONFIG` Script Property via `getCompliance` / `setCompliance`. Saved changes propagate to every subsequent `saveBoard_` / `saveRoom_` call automatically.
+
+| Section | What it controls |
+|---|---|
+| **Safety Review** | Text filter on/off, blockOnMatch, link allowlist on/off, blockUnapproved. Plus the existing board/room freeze controls. |
+| **Family Access Tools** | Parent portal enabled, request form enabled, verification method (`teacher_code`, `district_roster`, `admin_approval`). Plus the existing request queue. |
+| **Student Age Band Lock** | Per-student age band table (see Day 2.1 / 2.2 section above). |
+| **Use Limits** | Daily seconds, session seconds, allowed hours, weekend toggle, enabled flag. Enforcement code lands in Days 2.8&ndash;2.9; the config is pre-stageable now. |
+| **Retention Policy &amp; Cleanup** | Archive / delete / audit-keep thresholds + manual run + daily trigger install (see retention section above). |
+| **Privacy Settings** | Read-only declarations from the privacy section of the config: storage location, encryption, third-party services, "AI training" / advertising / data-sold flags, and what the District Privacy Packet includes. |
+| **Activity Records** | Filter by action, actor, and date range. Download as CSV or JSON. |
+| **District Privacy Packet** | One-click ZIP download (see Day 3.6 section above). |
+
+For advanced edits (anything not exposed as a checkbox or input), use **Open Raw Config Editor** in the Privacy Settings panel. The dialog shows the entire merged config as JSON; saving runs through the same `setCompliance` filter, so only the known top-level sections persist.
+
 ## What is intentionally not built yet
 
 This file documents what ships in the current commits. The roadmap lists everything else, with day-sized work items and acceptance criteria. Do not assume any feature works just because it is mentioned in the roadmap &mdash; check the **Status** column in COMPLIANCE-ROADMAP.md for ticked boxes.
