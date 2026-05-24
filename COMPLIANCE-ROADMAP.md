@@ -101,9 +101,9 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 3.4 | Parent Controls panel | [ ] | |
 | 3.5 | Audit Logs panel (extends Day 1.8) | [ ] | |
 | 3.6 | District Privacy Packet generator | [x] | 021c657 |
-| 3.7 | Retention policy settings | [x] | pending |
-| 3.8 | Scheduled cleanup script | [x] | pending |
-| 3.9 | District-wide safety defaults propagation | [x] | pending |
+| 3.7 | Retention policy settings | [x] | 032dcbe |
+| 3.8 | Scheduled cleanup script | [x] | 032dcbe |
+| 3.9 | District-wide safety defaults propagation | [x] | 032dcbe |
 | 3.10 | Phase 3 documentation pass + Terms & Privacy update | [ ] | |
 
 ### Phase 4 &mdash; MySQL / District (deferred)
