@@ -87,9 +87,9 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 2.5 | Teacher-issued parent verification code | [x] | f40279f |
 | 2.6 | Data export &mdash; download student work as ZIP | [x] | ac2cd84 |
 | 2.7 | Data deletion request &mdash; ticket + admin action | [x] | f40279f |
-| 2.8 | Time-limit controls &mdash; browser timer + lock UX | [x] | pending |
-| 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [x] | pending |
-| 2.10 | Phase 2 documentation pass | [x] | pending |
+| 2.8 | Time-limit controls &mdash; browser timer + lock UX | [x] | 7bcc8e6 |
+| 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [x] | 7bcc8e6 |
+| 2.10 | Phase 2 documentation pass | [x] | 7bcc8e6 |
 
 ### Phase 3 &mdash; District Admin Console (9 days)
 
@@ -104,7 +104,7 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 3.7 | Retention policy settings | [x] | 032dcbe |
 | 3.8 | Scheduled cleanup script | [x] | 032dcbe |
 | 3.9 | District-wide safety defaults propagation | [x] | 032dcbe |
-| 3.10 | Phase 3 documentation pass + Terms & Privacy update | [x] | pending |
+| 3.10 | Phase 3 documentation pass + Terms & Privacy update | [x] | 7bcc8e6 |
 
 ### Phase 4 &mdash; MySQL / District (deferred)
 
