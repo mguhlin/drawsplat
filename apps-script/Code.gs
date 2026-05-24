@@ -1,3 +1,4 @@
+// DS_VERSION = '1.4.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -5,7 +6,20 @@
  *   Who has access: your classroom/district setting
  *
  * Run setup() once before using the web app.
+ *
+ * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.4.0  Day 2.6 — student data export (ZIP of boards + turn-ins).
+ *   1.3.0  Days 2.1/2.2/2.5/2.7 — Users sheet, age band + lock, parent
+ *          verification code, data deletion.
+ *   1.2.0  Days 1.1/1.2/1.5/1.6/1.9 — text + link safety filters,
+ *          board / room freeze, scanBoardForSafety_.
+ *   1.1.0  Days 0.1/0.2/1.7/1.8/2.3/2.4/3.6 — Audit + ParentRequests
+ *          sheets, requireAdmin_, logEvent_, parent request endpoints,
+ *          District Privacy Packet generator.
+ *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
+ *          turn-ins).
  */
+const DS_VERSION = '1.4.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -53,7 +67,7 @@ function doGet(e) {
       case 'templateLoad': return json_(loadTemplate_(p.templateId));
       case 'turnInList': return json_(listTurnIns_());
       case 'turnInLoad': return json_(loadTurnIn_(p.turninId));
-      case 'ping': return json_({ ok: true, app: 'DrawSplatTM', time: now_() });
+      case 'ping': return json_({ ok: true, app: 'DrawSplatTM', version: DS_VERSION, time: now_() });
       case 'auditList': return json_(adminAuditList_(p));
       case 'parentRequestList': return json_(adminParentRequestList_(p));
       case 'privacyPacket': return privacyPacketResponse_(p);
