@@ -183,7 +183,7 @@
         <div class="admin-actions"><button id="loadParentRequestsBtn" type="button" class="primary">Load Requests</button></div>
         <div id="parentRequestsList" style="margin-top:12px"></div>
       </div></details>
-      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Each student record carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only the admin can override, with reason + audit trail. Rows auto-populate when students submit turn-ins; you can also add students manually below.</p><div class="admin-actions"><button id="loadUsersBtn" type="button" class="primary">Load Students</button><button id="addUserBtn" type="button">Add Student</button></div><div id="usersList" style="margin-top:12px"></div></div></details>
+      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Each student record carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only the admin can override, with reason + audit trail. Rows auto-populate when students submit turn-ins; you can also add students manually below.</p><div class="admin-actions"><button id="loadUsersBtn" type="button" class="primary">Load Students</button><button id="addUserBtn" type="button">Add Student</button><button id="rosterImportBtn" type="button">Import Roster CSV</button></div><p class="hint" style="margin-top:6px">Roster CSV columns (header row required): <code>studentName</code> (required), <code>className</code>, <code>email</code>, <code>ageBand</code> (under_13 / 13_to_17 / 18_plus / unknown_minor), <code>ageSource</code>, <code>notes</code>. Existing students (same name + class) are updated; new ones are created. Idempotent.</p><input id="rosterCsvInput" type="file" accept=".csv,text/csv" hidden><div id="usersList" style="margin-top:12px"></div></div></details>
       <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body">
         <p class="hint">Enforcement code (browser timer + Apps Script save/load gate) ships in Days 2.8 &ndash; 2.9. The configuration switches below are read by both the client and the server, so you can pre-stage values now.</p>
         <div class="config-grid">
@@ -272,7 +272,7 @@
   </form>
 </dialog>
 
-<script src="../assets/js/admin-gate.js?v=0.9"></script>
-<script src="../assets/js/admin.js?v=0.9"></script>
+<script src="../assets/js/admin-gate.js?v=1.0"></script>
+<script src="../assets/js/admin.js?v=1.0"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// DS_VERSION = '1.6.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.7.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,7 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.7.0  Day 4.5 (Phase 4a) — roster CSV import endpoint.
  *   1.6.0  Days 2.8/2.9 — time-limit enforcement: TimeUsage sheet,
  *          checkTimeLimitsAllowed_, heartbeat / timeStatus endpoints,
  *          saveBoard_ / saveRoom_ gated on allowed hours + weekend +
@@ -25,7 +26,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.6.0';
+const DS_VERSION = '1.7.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -117,6 +118,7 @@ function doPost(e) {
       case 'installCleanupTrigger': return json_(installCleanupTrigger_(body));
       case 'removeCleanupTrigger': return json_(removeCleanupTrigger_(body));
       case 'timeHeartbeat': return json_(recordTimeHeartbeat_(body));
+      case 'rosterImport': return json_(rosterImport_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -1545,4 +1547,112 @@ function getTimeStatus_(p) {
   const className = clean_(p.className || '');
   const limit = checkTimeLimitsAllowed_(studentName, className);
   return { ok: true, enabled: limit.config.enabled, allowed: limit.allowed, reason: limit.reason || '', config: limit.config, secondsUsedToday: limit.secondsUsedToday || 0, remaining: limit.remaining || 0 };
+}
+
+/* --- Compliance: Roster CSV import (Day 4.5 — Phase 4a) --------------------- */
+
+/* Accepts CSV body text. Expected headers (case-insensitive, order-independent):
+ *   studentName  (required)
+ *   className    (optional)
+ *   email        (optional)
+ *   ageBand      (optional — one of under_13 / 13_to_17 / 18_plus / unknown_minor)
+ *   ageSource    (optional — defaults to "roster")
+ *   notes        (optional)
+ * Returns {created, updated, skipped, errors[]} so the admin UI can summarise.
+ * Idempotent: existing students (matched on studentName + className) are updated,
+ * not duplicated. Age band changes go through the normal AGE_BAND_CHANGED audit. */
+function rosterImport_(p) {
+  requireAdmin_(p);
+  const csv = String((p && p.csv) || '');
+  if (!csv) throw new Error('Missing CSV body.');
+  const actor = String((p && p.actor) || 'admin');
+  const rows = parseCsv_(csv);
+  if (!rows.length) throw new Error('CSV had no rows.');
+  const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
+  const idx = name => headers.indexOf(name);
+  if (idx('studentname') === -1) throw new Error('CSV must include a studentName column.');
+
+  let created = 0, updated = 0, skipped = 0;
+  const errors = [];
+  const now = now_();
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const studentName = clean_((row[idx('studentname')] || '').trim());
+    if (!studentName) { skipped++; continue; }
+    const className = idx('classname') !== -1 ? clean_(row[idx('classname')] || '') : '';
+    const email = idx('email') !== -1 ? clean_(row[idx('email')] || '').toLowerCase() : '';
+    const ageBandRaw = idx('ageband') !== -1 ? String(row[idx('ageband')] || '').trim() : '';
+    const ageBand = ALLOWED_AGE_BANDS.indexOf(ageBandRaw) !== -1 ? ageBandRaw : '';
+    const ageSource = idx('agesource') !== -1 ? clean_(row[idx('agesource')] || '') : 'roster';
+    const notes = idx('notes') !== -1 ? clean_(row[idx('notes')] || '') : '';
+
+    const existing = findUserByStudent_(studentName, className);
+    if (existing) {
+      const patch = Object.assign({}, existing, {
+        email: email || existing.email,
+        ageSource: ageSource || existing.ageSource || 'roster',
+        notes: notes || existing.notes,
+        lastSeen: existing.lastSeen || now
+      });
+      let bandChanged = false;
+      if (ageBand && ageBand !== existing.ageBand) {
+        patch.ageBand = ageBand;
+        patch.ageChangedBy = actor;
+        patch.ageChangedAt = now;
+        patch.ageChangeReason = 'Roster import';
+        bandChanged = true;
+      }
+      upsertRow_(DS_SHEETS.users, 'id', existing.id, patch);
+      updated++;
+      if (bandChanged) {
+        logEvent_('AGE_BAND_CHANGED', { actor: actor, actorRole: 'admin', entityType: 'user', entityId: existing.id, before: { ageBand: existing.ageBand || '' }, after: { ageBand: ageBand, reason: 'Roster import' } });
+      }
+    } else {
+      const id = 'user_' + Utilities.getUuid();
+      upsertRow_(DS_SHEETS.users, 'id', id, {
+        id: id, studentName: studentName, className: className, email: email,
+        ageBand: ageBand || 'unknown_minor',
+        ageSource: ageSource || 'roster',
+        ageLocked: 'true',
+        ageChangedBy: ageBand ? actor : '', ageChangedAt: ageBand ? now : '', ageChangeReason: ageBand ? 'Roster import' : '',
+        parentCodeHash: '', parentCodeExpiresAt: '',
+        lastSeen: '', createdAt: now, notes: notes
+      });
+      created++;
+      logEvent_('USER_CREATED', { actor: actor, actorRole: 'admin', entityType: 'user', entityId: id, after: { source: 'roster_import', ageBand: ageBand || 'unknown_minor' } });
+    }
+  }
+
+  logEvent_('ROSTER_IMPORT', {
+    actor: actor, actorRole: 'admin', entityType: 'roster',
+    after: { created: created, updated: updated, skipped: skipped, totalRows: rows.length - 1, errors: errors.length }
+  });
+  return { ok: true, created: created, updated: updated, skipped: skipped, errors: errors };
+}
+
+function parseCsv_(text) {
+  const out = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  const src = String(text || '');
+  for (let i = 0; i < src.length; i++) {
+    const c = src.charAt(i);
+    if (inQuotes) {
+      if (c === '"') {
+        if (src.charAt(i + 1) === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else { field += c; }
+    } else {
+      if (c === '"') { inQuotes = true; }
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\r') { /* ignore */ }
+      else if (c === '\n') { row.push(field); out.push(row); row = []; field = ''; }
+      else { field += c; }
+    }
+  }
+  // Flush trailing field/row.
+  if (field !== '' || row.length) { row.push(field); out.push(row); }
+  return out.filter(r => r.length > 1 || (r.length === 1 && String(r[0] || '').trim() !== ''));
 }

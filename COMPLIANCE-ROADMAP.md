@@ -108,22 +108,22 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 ### Phase 4 &mdash; MySQL / District (deferred)
 
-Triggered by a paying district. Each item assumes the MySQL backend exists.
+Triggered when a district decides to run the self-hosted MySQL deployment. Each item assumes the MySQL backend exists.
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [ ] | |
-| 4.2 | Auth: port Community OAuth + email/password to MySQL | [ ] | |
-| 4.3 | Whiteboard save/load via MySQL backend | [ ] | |
-| 4.4 | RBAC tree (district / campus / teacher / student / parent) | [ ] | |
-| 4.5 | Roster CSV import | [ ] | |
+| 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [x] | pending |
+| 4.2 | Auth: port Community OAuth + email/password to MySQL | [~] | scaffold (email/pwd only) |
+| 4.3 | Whiteboard save/load via MySQL backend | [~] | base schema + endpoints exist |
+| 4.4 | RBAC tree (district / campus / teacher / student / parent) | [~] | schema + middleware in node |
+| 4.5 | Roster CSV import | [x] | pending |
 | 4.6 | SSO/roster API integration &mdash; pick one (Clever or ClassLink) | [ ] | |
-| 4.7 | Parent portal (read-only) | [ ] | |
+| 4.7 | Parent portal (read-only) | [~] | endpoints exist; UI is Apps Script form |
 | 4.8 | Real-time session enforcement (SSE / WebSocket kick) | [ ] | |
 | 4.9 | Cross-device sync on the MySQL path | [ ] | |
-| 4.10 | DB-backed audit log with retention | [ ] | |
-| 4.11 | Self-hosted deployment guide | [ ] | |
-| 4.12 | Phase 4 documentation pass | [ ] | |
+| 4.10 | DB-backed audit log with retention | [~] | schema + read endpoint; cron not wired |
+| 4.11 | Self-hosted deployment guide | [x] | pending |
+| 4.12 | Phase 4 documentation pass | [x] | pending |
 
 ---
 
@@ -491,7 +491,7 @@ Triggered by a paying district. Each item assumes the MySQL backend exists.
 
 # Phase 4 &mdash; MySQL / District (deferred)
 
-This phase doesn't start until a paying district triggers it. Items here all assume a real backend with a relational store, a session layer, and the ability to run long-lived processes.
+This phase doesn't start until a district decides to spin up the MySQL deployment. Items here all assume a real backend with a relational store, a session layer, and the ability to run long-lived processes.
 
 ### Day 4.1 &mdash; MySQL schema
 
@@ -526,7 +526,7 @@ This phase doesn't start until a paying district triggers it. Items here all ass
 ### Day 4.6 &mdash; SSO/roster API integration (pick one)
 
 - **Deliverables**
-  - First integration with either Clever or ClassLink (pick whichever the first paying district uses).
+  - First integration with either Clever or ClassLink (pick whichever the first district customer uses).
   - Roster sync runs nightly; teacher/student/guardian rows mirror the SIS.
 
 ### Day 4.7 &mdash; Parent portal (read-only)

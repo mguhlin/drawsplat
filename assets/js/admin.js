@@ -446,6 +446,23 @@
   document.getElementById('addUserBtn')?.addEventListener('click',addUserDialog);
   document.getElementById('loadParentRequestsBtn')?.addEventListener('click',loadParentRequests);
 
+  /* --- Compliance: Roster CSV import (Day 4.5 — Phase 4a) ---------------- */
+  const rosterImportBtn=document.getElementById('rosterImportBtn');
+  const rosterCsvInput=document.getElementById('rosterCsvInput');
+  rosterImportBtn?.addEventListener('click',()=>rosterCsvInput?.click());
+  rosterCsvInput?.addEventListener('change',async ev=>{
+    const file=ev.target.files&&ev.target.files[0];
+    if(!file){ return; }
+    if(!confirm('Import roster from '+file.name+'? Existing students (matched by name + class) will be updated; new ones added.')) { ev.target.value=''; return; }
+    try{
+      const text=await file.text();
+      const data=await adminCall('rosterImport',{csv:text},'POST');
+      alert('Roster import complete: '+data.created+' created, '+data.updated+' updated, '+data.skipped+' skipped.');
+      await loadUsers();
+    }catch(err){ alert('Roster import failed: '+(err.message||err)); }
+    finally{ ev.target.value=''; }
+  });
+
   /* --- Compliance: Retention + Cleanup (Days 3.7/3.8/3.9) --------------- */
   function retentionStatus(txt,kind){
     const el=document.getElementById('retentionStatus'); if(!el) return;

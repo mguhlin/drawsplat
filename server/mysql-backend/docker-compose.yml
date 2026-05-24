@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-drawsplat}
+      MYSQL_USER: ${MYSQL_USER:-drawsplat_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change-me-app}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change-me-root}
+    ports:
+      - "${MYSQL_HOST_PORT:-3306}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./migrations/002_compliance.sql:/docker-entrypoint-initdb.d/02-compliance.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-change-me-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-drawsplat}
+      MYSQL_USER: ${MYSQL_USER:-drawsplat_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change-me-app}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      API_BASE_PATH: ${API_BASE_PATH:-/api/drawsplat/mysql}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-24}
+      DRAWSPLAT_PEPPER: ${DRAWSPLAT_PEPPER:-change-this-pepper}
+      PORT: 8787
+    ports:
+      - "${API_HOST_PORT:-8787}:8787"
+
+volumes:
+  db-data:

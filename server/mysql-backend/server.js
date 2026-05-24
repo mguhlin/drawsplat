@@ -24,6 +24,15 @@ const pool = mysql.createPool({
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use(express.json({ limit: '25mb' }));
 
+// Phase 4b compliance routes (auth, parent requests, time limits, audit, config).
+// Lives in compliance-routes.js so the legacy room/board surface here stays untouched.
+try {
+  const { attachComplianceRoutes } = require('./compliance-routes');
+  attachComplianceRoutes(app, pool, { basePath: apiBasePath, sessionTtlHours, pepper: process.env.DRAWSPLAT_PEPPER });
+} catch (err) {
+  console.error('Failed to attach compliance routes:', err.message);
+}
+
 function expiresAt(hours = sessionTtlHours){
   const date = new Date(Date.now() + Math.max(1, Number(hours || sessionTtlHours)) * 60 * 60 * 1000);
   return date.toISOString().slice(0, 19).replace('T', ' ');
