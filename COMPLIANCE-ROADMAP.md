@@ -112,18 +112,18 @@ Triggered when a district decides to run the self-hosted MySQL deployment. Each 
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [x] | pending |
+| 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [x] | 63a4306 |
 | 4.2 | Auth: port Community OAuth + email/password to MySQL | [~] | scaffold (email/pwd only) |
 | 4.3 | Whiteboard save/load via MySQL backend | [~] | base schema + endpoints exist |
 | 4.4 | RBAC tree (district / campus / teacher / student / parent) | [~] | schema + middleware in node |
-| 4.5 | Roster CSV import | [x] | pending |
+| 4.5 | Roster CSV import | [x] | 63a4306 |
 | 4.6 | SSO/roster API integration &mdash; pick one (Clever or ClassLink) | [ ] | |
 | 4.7 | Parent portal (read-only) | [~] | endpoints exist; UI is Apps Script form |
 | 4.8 | Real-time session enforcement (SSE / WebSocket kick) | [ ] | |
 | 4.9 | Cross-device sync on the MySQL path | [ ] | |
 | 4.10 | DB-backed audit log with retention | [~] | schema + read endpoint; cron not wired |
-| 4.11 | Self-hosted deployment guide | [x] | pending |
-| 4.12 | Phase 4 documentation pass | [x] | pending |
+| 4.11 | Self-hosted deployment guide | [x] | 63a4306 |
+| 4.12 | Phase 4 documentation pass | [x] | 63a4306 |
 
 ---
 
