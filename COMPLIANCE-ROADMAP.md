@@ -95,11 +95,11 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
-| 3.1 | Admin Compliance Console &mdash; page scaffolding | [x] | pending |
-| 3.2 | Privacy Settings panel | [x] | pending |
-| 3.3 | Student Safety panel | [x] | pending |
-| 3.4 | Parent Controls panel | [x] | pending |
-| 3.5 | Audit Logs panel (extends Day 1.8) | [x] | pending |
+| 3.1 | Admin Compliance Console &mdash; page scaffolding | [x] | f04d047 |
+| 3.2 | Privacy Settings panel | [x] | f04d047 |
+| 3.3 | Student Safety panel | [x] | f04d047 |
+| 3.4 | Parent Controls panel | [x] | f04d047 |
+| 3.5 | Audit Logs panel (extends Day 1.8) | [x] | f04d047 |
 | 3.6 | District Privacy Packet generator | [x] | 021c657 |
 | 3.7 | Retention policy settings | [x] | 032dcbe |
 | 3.8 | Scheduled cleanup script | [x] | 032dcbe |
