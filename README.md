@@ -1,14 +1,33 @@
 # DrawSplatTM
 
-DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.
+DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets — or to your own MySQL-backed server.
 
-Official website: [https://drawsplat.org](https://drawsplat.org)
+**Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://paypal.me/mguhlin).
 
-Support development: [Get the Developer a Cup of Coffee?](https://paypal.me/mguhlin)
+- **Official site:** [https://drawsplat.org](https://drawsplat.org)
+- **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
+- **Source:** this repository (AGPL-3.0-or-later)
+- **Status:** v3.0, Compliance Phases 1–3 complete, Phase 4 (MySQL) scaffolded
+
+## Getting started
+
+Pick the scenario that fits and skip the others:
+
+| Scenario | Setup doc | Roughly |
+|---|---|---|
+| **Browser-only** — a teacher demo, single user, no accounts, no backend. | [`docs/setup-browser.md`](docs/setup-browser.md) | 1 minute |
+| **Google Apps Script** — cloud saves, classroom rooms, full Compliance Console, parent request center. *The supported production path.* | [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md) | 10–15 minutes |
+| **MySQL backend** — self-hosted, district-scale, true RBAC. *Scaffolded; production hardening still TODO.* | [`docs/setup-mysql.md`](docs/setup-mysql.md) | 15–30 minutes |
+
+Other docs that pair with setup:
+
+- [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) — operator guide for the Compliance Console.
+- [`community/Setup.md`](community/Setup.md) — stand up the `/community/` board with Google + Microsoft sign-in.
+- [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
 
 ## Current build
 
-**DrawSplatTM v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, and Classroom Tool Widgets**
+**DrawSplatTM v3.0 — Admin, Privacy, Pricing, Self-Hosted Storage, ScratchArt, Support Guides, Classroom Tool Widgets, and a complete Compliance Console (Phases 1–3).**
 
 ## Recent improvements
 
@@ -195,37 +214,17 @@ Teacher Admin supports four storage choices:
 - **MySQL backend**: starter self-hosted database option for schools or districts that want SQL-backed rooms, boards, templates, turn-ins, audit records, and scheduled retention while keeping Google Apps Script available as another provider. The browser calls an HTTPS backend API; it never connects directly to MySQL.
 - **Standalone server folder**: planned backend mode for self-hosted deployments. Static HTML cannot write into a server sub-folder by itself; this mode needs an API endpoint such as `/api/drawsplat/session` to accept board JSON/media and expire it after 24 hours or another configured TTL.
 
-## MySQL backend setup
+## Backend setup
 
-The MySQL wizard is available at `admin/mysql-setup.html`. It saves the public API endpoint and generates a server-side `.env` template. Do not store MySQL passwords in the browser; credentials belong on the backend server.
+Setup instructions live in scenario-specific docs so you only read what's relevant:
 
-The public repository does not ship a working Teacher Admin password. To use the static gate, set `PASSWORD_HASH` in `assets/js/admin-gate.js` to the SHA-256 hash of your deployment password. This browser-side gate is only a deterrent; production deployments should protect admin pages with server-side authentication or SSO.
+- **Browser-only** &mdash; [`docs/setup-browser.md`](docs/setup-browser.md). No backend, no accounts. Boards autosave to `localStorage`.
+- **Google Apps Script** &mdash; [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md). Cloud saves, collaboration rooms, full Compliance Console, Family Access Tools. The supported production path today.
+- **MySQL** &mdash; [`docs/setup-mysql.md`](docs/setup-mysql.md). Self-hosted, district-scale. Scaffolded but not yet exercised against a live database; the Apps Script path remains the recommended option until this is hardened.
 
-The starter backend is in `server/mysql-backend/`:
+A side-by-side capability comparison and a quick "which one are you?" router lives in [`docs/setup.md`](docs/setup.md).
 
-1. Create a MySQL database and user.
-2. Run `server/mysql-backend/schema.sql`.
-3. Copy `.env.example` to `.env` and fill in the database settings.
-4. Run `npm install` and `npm start` inside `server/mysql-backend/`.
-5. Open `admin/mysql-setup.html` and test the endpoint, such as `http://localhost:8787/api/drawsplat/mysql`.
-
-The current static app can save the MySQL endpoint setting without breaking Google Apps Script. Full board sync through MySQL requires wiring the board save/load/cloud-sync calls to the new API provider.
-
-## Google Drive + Sheets setup
-
-1. Create a Google Sheet named **DrawSplatTM Saves**.
-2. Open **Extensions → Apps Script**.
-3. Paste in the code from `apps-script/Code.gs`.
-4. Run the `setup()` function once and approve the requested Drive/Sheets permissions.
-5. Deploy it as a **Web app**.
-6. Set **Execute as** to yourself.
-7. Set access according to your classroom or district needs.
-8. Copy the Web App URL.
-9. Open `admin/admin.html` and paste the URL into the **Apps Script Web App URL** field.
-
-For a hosted classroom deployment, you can also place the Web App URL in `DEFAULT_GOOGLE_SCRIPT_URL` in `assets/js/app.js`. That lets student links omit the script URL query parameter while still joining the same backend.
-
-Google setup now lives on `admin/admin.html` instead of the student-facing board. The board still reads the saved Apps Script URL from the same browser storage key, but students joining through a `role=student` link do not see provider settings.
+The Teacher Admin page (`admin/admin.html`) is the single configuration surface once you've finished any of the three setups. It hides provider URLs from students &mdash; the board page (`app/whiteboard.html`) reads the saved settings without exposing them in the student URL.
 
 ### Shared classroom board workflow
 
