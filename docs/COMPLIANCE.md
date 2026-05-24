@@ -176,6 +176,28 @@ The Teacher Admin &rarr; Compliance Console is split into seven collapsible sect
 
 For advanced edits (anything not exposed as a checkbox or input), use **Open Raw Config Editor** in the Privacy Settings panel. The dialog shows the entire merged config as JSON; saving runs through the same `setCompliance` filter, so only the known top-level sections persist.
 
+## Time Limits (Days 2.8 / 2.9)
+
+When `compliance.config.json` (or the `COMPLIANCE_CONFIG` Script Property) has `timeLimits.enabled = true`, the system enforces three checks on student writes:
+
+- **Allowed hours.** If the current local hour falls outside `allowedHoursStart`&ndash;`allowedHoursEnd`, saves are rejected with a clear message.
+- **Weekend access.** If `weekendAllowed` is false and the current day is Saturday or Sunday, saves are rejected.
+- **Daily limit.** Once `secondsToday` reaches `dailySeconds`, saves are rejected and the browser locks the workspace.
+
+**Client (browser)** &mdash; `assets/js/timelimits.js`:
+- Tracks active interaction time (counts only when the user has typed / moved the mouse / clicked within the last 60 seconds).
+- Persists per-day total in `localStorage` so a reload resumes the counter.
+- Posts a heartbeat to `?action=timeHeartbeat` every 30 seconds with the delta; the server records it in a `TimeUsage` sheet keyed by `(student, class, date)`.
+- Displays a remaining-time chip at the bottom-right of the whiteboard.
+- Locks the workspace (full-screen overlay, disables all inputs) when the limit is reached or the server responds with `allowed: false`.
+
+**Server (Apps Script)**:
+- `checkTimeLimitsAllowed_(studentName, className)` gates `saveBoard_` / `saveRoom_` for students (teachers bypass). Hits write a `TIME_LIMIT_HIT` audit event before throwing.
+- `?action=timeStatus` is an open endpoint returning the active configuration and the student&rsquo;s `secondsToday` / `remaining`. Used by the client on load.
+- `?action=timeHeartbeat` (POST) accepts a delta (capped at 90 seconds per beat to prevent inflated counters) and returns the updated counter.
+
+Operators configure the limits in **Teacher Admin &rarr; Compliance Console &rarr; Use Limits**. Disable by toggling `enabled` off &mdash; the chip disappears and saves are no longer gated.
+
 ## What is intentionally not built yet
 
 This file documents what ships in the current commits. The roadmap lists everything else, with day-sized work items and acceptance criteria. Do not assume any feature works just because it is mentioned in the roadmap &mdash; check the **Status** column in COMPLIANCE-ROADMAP.md for ticked boxes.

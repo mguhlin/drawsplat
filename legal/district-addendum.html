@@ -135,6 +135,22 @@
       </tbody>
     </table>
   </section>
+
+  <section class="policy-section">
+    <h2>Compliance Features Available to the District</h2>
+    <p>The deployment owner configures the following controls through the Compliance Console (Teacher Admin &rarr; Compliance Console). The District Privacy Packet download bundles the live configuration, the last 90 days of Activity Records, and the parent-request log in a single ZIP for review.</p>
+    <ol>
+      <li><strong>Activity Records (audit log)</strong> &mdash; immutable Sheet tab tracking every compliance-relevant action.</li>
+      <li><strong>Safety Review</strong> &mdash; text keyword filter and link allowlist, server-enforced on every save. Board / room freeze blocks further writes.</li>
+      <li><strong>Student Age Band Lock</strong> &mdash; <code>under_13</code> / <code>13_to_17</code> / <code>18_plus</code> / <code>unknown_minor</code>. Server-locked, admin-only changes, reason required, audited. Aligned with Texas SCOPE Act age-registration provisions.</li>
+      <li><strong>Family Access Tools</strong> &mdash; parent request form, teacher-issued one-time verification code, admin Approve / Deny / Done queue.</li>
+      <li><strong>Student data rights</strong> &mdash; one-click ZIP export of a student&rsquo;s boards and turn-ins; one-click data deletion of the same.</li>
+      <li><strong>Retention policy</strong> &mdash; archive boards after N days, delete after M days, prune Activity Records after K days. Daily Apps Script trigger or manual run.</li>
+      <li><strong>Time limits</strong> &mdash; daily seconds, session seconds, allowed hours, weekend toggle. Browser locks; server gate on save.</li>
+      <li><strong>District Privacy Packet</strong> &mdash; one-click ZIP for reviewers.</li>
+    </ol>
+    <p>Configuration is server-side via the <code>COMPLIANCE_CONFIG</code> Script Property and cascades to every classroom on the deployment. See <a href="../docs/COMPLIANCE.md">docs/COMPLIANCE.md</a> for the operator guide.</p>
+  </section>
 </main>
 
 <footer class="landing-footer">

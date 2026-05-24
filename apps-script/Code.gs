@@ -1,4 +1,4 @@
-// DS_VERSION = '1.5.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.6.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,10 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.6.0  Days 2.8/2.9 — time-limit enforcement: TimeUsage sheet,
+ *          checkTimeLimitsAllowed_, heartbeat / timeStatus endpoints,
+ *          saveBoard_ / saveRoom_ gated on allowed hours + weekend +
+ *          daily seconds.
  *   1.5.0  Days 3.7/3.8/3.9 — retention policy settings, scheduled
  *          cleanup trigger, district safety-defaults config push.
  *   1.4.0  Day 2.6 — student data export (ZIP of boards + turn-ins).
@@ -21,7 +25,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.5.0';
+const DS_VERSION = '1.6.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -32,8 +36,11 @@ const DS_SHEETS = {
   turnins: 'TurnIns',
   audit: 'Audit',
   parentRequests: 'ParentRequests',
-  users: 'Users'
+  users: 'Users',
+  timeUsage: 'TimeUsage'
 };
+
+const DS_TIME_HEADERS = ['key', 'studentName', 'className', 'date', 'secondsToday', 'sessionStart', 'lastBeat'];
 
 const DS_AUDIT_HEADERS = ['id', 'timestamp', 'actor', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'userAgent'];
 const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'studentId', 'requestType', 'details', 'status', 'assignedTo', 'createdAt', 'decidedAt', 'decisionNote'];
@@ -52,6 +59,7 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.audit, DS_AUDIT_HEADERS);
   ensureSheet_(ss, DS_SHEETS.parentRequests, DS_PARENT_HEADERS);
   ensureSheet_(ss, DS_SHEETS.users, DS_USER_HEADERS);
+  ensureSheet_(ss, DS_SHEETS.timeUsage, DS_TIME_HEADERS);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
   return 'DrawSplatTM setup complete.';
 }
@@ -78,6 +86,7 @@ function doGet(e) {
       case 'exportStudentData': return json_(exportStudentData_(p));
       case 'getCompliance': return json_(getCompliance_(p));
       case 'cleanupStatus': return json_(getCleanupStatus_(p));
+      case 'timeStatus': return json_(getTimeStatus_(p));
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -107,6 +116,7 @@ function doPost(e) {
       case 'runRetentionCleanup': return json_(runRetentionCleanup_(body));
       case 'installCleanupTrigger': return json_(installCleanupTrigger_(body));
       case 'removeCleanupTrigger': return json_(removeCleanupTrigger_(body));
+      case 'timeHeartbeat': return json_(recordTimeHeartbeat_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -128,6 +138,14 @@ function saveBoard_(board, png) {
   if (violations.length) {
     logEvent_('TEXT_FILTER_HIT', { actor: board.studentName || '', actorRole: board.mode === 'student' ? 'student' : 'teacher', entityType: 'board', entityId: incomingId || 'pending', after: { violations: violations } });
     if (safetyConfigBlocks_()) throw new Error('Content blocked by safety filter: ' + violations[0].reason);
+  }
+  // Time-limit gate (Day 2.9). Only enforced for students; teachers bypass.
+  if (board.mode === 'student') {
+    const limit = checkTimeLimitsAllowed_(board.studentName, board.className);
+    if (!limit.allowed) {
+      logEvent_('TIME_LIMIT_HIT', { actor: board.studentName || '', actorRole: 'student', entityType: 'board', entityId: incomingId || 'pending', after: { reason: limit.reason } });
+      throw new Error(limit.reason);
+    }
   }
   const folder = getFolder_();
   const boardId = incomingId || ('board_' + Utilities.getUuid());
@@ -179,6 +197,13 @@ function saveRoom_(room, password, role, instanceId, board) {
     if (violations.length) {
       logEvent_('TEXT_FILTER_HIT', { actor: board.studentName || '', actorRole: isStudent ? 'student' : 'teacher', entityType: 'room', entityId: room, after: { violations: violations } });
       if (safetyConfigBlocks_()) throw new Error('Content blocked by safety filter: ' + violations[0].reason);
+    }
+    if (isStudent) {
+      const limit = checkTimeLimitsAllowed_(board.studentName, board.className);
+      if (!limit.allowed) {
+        logEvent_('TIME_LIMIT_HIT', { actor: board.studentName || '', actorRole: 'student', entityType: 'room', entityId: room, after: { reason: limit.reason } });
+        throw new Error(limit.reason);
+      }
     }
 
     const folder = getFolder_();
@@ -1427,4 +1452,97 @@ function getOrCreateArchiveFolder_() {
   const folder = it.hasNext() ? it.next() : root.createFolder('Archive');
   DS_PROPS.setProperty('ARCHIVE_FOLDER_ID', folder.getId());
   return folder;
+}
+
+/* --- Compliance: Time Limits (Days 2.8 / 2.9) ------------------------------ */
+
+function timeLimitsConfig_() {
+  const stored = DS_PROPS.getProperty('COMPLIANCE_CONFIG');
+  if (stored) {
+    try {
+      const p = JSON.parse(stored);
+      if (p && p.timeLimits) return p.timeLimits;
+    } catch (e) {}
+  }
+  return { enabled: false, dailySeconds: 1800, sessionSeconds: 0, allowedHoursStart: '07:30', allowedHoursEnd: '17:00', weekendAllowed: false, idleTimeoutSeconds: 60 };
+}
+
+/* Returns { allowed, reason, dailySeconds, secondsUsedToday, remaining }.
+ * Always allows if config.enabled is false. Used by saveBoard_/saveRoom_
+ * to gate student writes, and by getTimeStatus_ to inform the client. */
+function checkTimeLimitsAllowed_(studentName, className) {
+  const cfg = timeLimitsConfig_();
+  if (!cfg.enabled) return { allowed: true, reason: '', config: cfg, secondsUsedToday: 0, remaining: Number.MAX_SAFE_INTEGER };
+  const now = new Date();
+  const day = now.getUTCDay();
+  if (!cfg.weekendAllowed && (day === 0 || day === 6)) {
+    return { allowed: false, reason: 'Use is not allowed on weekends.', config: cfg };
+  }
+  const localHours = now.getHours();
+  const localMins = now.getMinutes();
+  const nowMinutes = localHours * 60 + localMins;
+  const start = parseClockMinutes_(cfg.allowedHoursStart);
+  const end = parseClockMinutes_(cfg.allowedHoursEnd);
+  if (start != null && end != null && (nowMinutes < start || nowMinutes >= end)) {
+    return { allowed: false, reason: 'Outside allowed hours (' + cfg.allowedHoursStart + '–' + cfg.allowedHoursEnd + ').', config: cfg };
+  }
+  const usage = readTimeUsageRow_(studentName, className);
+  if (cfg.dailySeconds && usage.secondsToday >= cfg.dailySeconds) {
+    return { allowed: false, reason: 'Daily time limit reached (' + Math.round(cfg.dailySeconds / 60) + ' min).', config: cfg, secondsUsedToday: usage.secondsToday, remaining: 0 };
+  }
+  return { allowed: true, reason: '', config: cfg, secondsUsedToday: usage.secondsToday, remaining: (cfg.dailySeconds || 0) - usage.secondsToday };
+}
+
+function parseClockMinutes_(s) {
+  const m = String(s || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+}
+
+function timeUsageKey_(studentName, className) {
+  const dateStr = Utilities.formatDate(new Date(), 'UTC', 'yyyy-MM-dd');
+  return userKey_(studentName, className) + '||' + dateStr;
+}
+
+function readTimeUsageRow_(studentName, className) {
+  if (!studentName) return { secondsToday: 0, sessionStart: '', lastBeat: '' };
+  const key = timeUsageKey_(studentName, className);
+  const row = findRow_(DS_SHEETS.timeUsage, 'key', key);
+  if (!row) return { secondsToday: 0, sessionStart: '', lastBeat: '' };
+  return { secondsToday: parseInt(row.secondsToday || '0', 10) || 0, sessionStart: row.sessionStart || '', lastBeat: row.lastBeat || '' };
+}
+
+/* Heartbeat: client posts every ~30s while the user is active. Server adds
+ * the delta to today's secondsToday (capped at 90 seconds per beat to prevent
+ * inflated counters). Returns updated remaining time. */
+function recordTimeHeartbeat_(p) {
+  const studentName = clean_(p.studentName || '');
+  const className = clean_(p.className || '');
+  if (!studentName) return { ok: false, error: 'Missing studentName.' };
+  const delta = Math.max(1, Math.min(90, parseInt(p.deltaSeconds || '30', 10) || 30));
+  const cfg = timeLimitsConfig_();
+  const key = timeUsageKey_(studentName, className);
+  const existing = findRow_(DS_SHEETS.timeUsage, 'key', key);
+  const now = now_();
+  const todaySec = (existing ? parseInt(existing.secondsToday || '0', 10) || 0 : 0) + delta;
+  upsertRow_(DS_SHEETS.timeUsage, 'key', key, {
+    key: key,
+    studentName: studentName,
+    className: className,
+    date: Utilities.formatDate(new Date(), 'UTC', 'yyyy-MM-dd'),
+    secondsToday: todaySec,
+    sessionStart: existing && existing.sessionStart ? existing.sessionStart : now,
+    lastBeat: now
+  });
+  const allowed = !cfg.enabled || !cfg.dailySeconds || todaySec < cfg.dailySeconds;
+  return { ok: true, secondsToday: todaySec, remaining: Math.max(0, (cfg.dailySeconds || 0) - todaySec), allowed: allowed, enabled: !!cfg.enabled };
+}
+
+function getTimeStatus_(p) {
+  // Open endpoint: used by the whiteboard client on load. Does not require admin
+  // because it returns only the requesting student's own data plus public config.
+  const studentName = clean_(p.studentName || '');
+  const className = clean_(p.className || '');
+  const limit = checkTimeLimitsAllowed_(studentName, className);
+  return { ok: true, enabled: limit.config.enabled, allowed: limit.allowed, reason: limit.reason || '', config: limit.config, secondsUsedToday: limit.secondsUsedToday || 0, remaining: limit.remaining || 0 };
 }

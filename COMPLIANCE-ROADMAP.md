@@ -87,9 +87,9 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 2.5 | Teacher-issued parent verification code | [x] | f40279f |
 | 2.6 | Data export &mdash; download student work as ZIP | [x] | ac2cd84 |
 | 2.7 | Data deletion request &mdash; ticket + admin action | [x] | f40279f |
-| 2.8 | Time-limit controls &mdash; browser timer + lock UX | [ ] | |
-| 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [ ] | |
-| 2.10 | Phase 2 documentation pass | [ ] | |
+| 2.8 | Time-limit controls &mdash; browser timer + lock UX | [x] | pending |
+| 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [x] | pending |
+| 2.10 | Phase 2 documentation pass | [x] | pending |
 
 ### Phase 3 &mdash; District Admin Console (9 days)
 
@@ -104,7 +104,7 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 3.7 | Retention policy settings | [x] | 032dcbe |
 | 3.8 | Scheduled cleanup script | [x] | 032dcbe |
 | 3.9 | District-wide safety defaults propagation | [x] | 032dcbe |
-| 3.10 | Phase 3 documentation pass + Terms & Privacy update | [ ] | |
+| 3.10 | Phase 3 documentation pass + Terms & Privacy update | [x] | pending |
 
 ### Phase 4 &mdash; MySQL / District (deferred)
 
@@ -582,6 +582,7 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-24  Days 2.8, 2.9, 2.10, 3.10  Phases 1–3 closed. Time-limit enforcement: new TimeUsage sheet, timeStatus / timeHeartbeat endpoints, checkTimeLimitsAllowed_ gates student saveBoard_/saveRoom_ on allowed hours / weekend / daily seconds. Client assets/js/timelimits.js loads on the whiteboard, tracks active time, posts heartbeats every 30s, locks workspace at limit. Documentation pass: Terms & Privacy gains a new Compliance Features (v3.1.0) section covering every shipped capability; District Addendum gains a Compliance Features Available to the District section; README.md gains a Compliance section linking the roadmap and the operator guide. Code.gs v1.6.0. Pending commit/push.
 2026-05-24  Days 3.1, 3.2, 3.3, 3.4, 3.5  Compliance Console panel build-out. Filter Configuration toggles inside Safety Review (text + link filter on/off, blockOnMatch, blockUnapproved). Parent Controls config (portal/request-form enable, verification method). Use Limits config inputs (daily/session seconds, allowed hours, weekend) ready for Days 2.8/2.9 enforcement code. New Privacy Settings panel renders read-only declarations (storage location, encryption, third-party services, AI training=NO, advertising=NO, data-sold=NO). New raw JSON config editor dialog for advanced edits. Activity Records gets date-range + action + actor filters, and a JSON export alongside the existing CSV. Cache-buster v=0.9. No Code.gs changes — all panels backed by the getCompliance/setCompliance endpoints already shipped in 1.5.0. Pending commit/push.
 2026-05-24  Days 3.7, 3.8, 3.9  Retention + cleanup + district defaults: Compliance Console gets a Retention Policy section with three inputs (archive boards after N days, delete boards after M days, keep audit rows N days). Save persists to COMPLIANCE_CONFIG script property. Run Cleanup Now executes immediately; Install Daily Trigger schedules dailyRetentionCleanup() at 02:00 server time via ScriptApp time-driven triggers. Each run logs RETENTION_ACTION with counts. Reset to Defaults rewrites the config from Code.gs constants — completes 3.9 since safetyConfig_ and retention reader both consume COMPLIANCE_CONFIG, so changing it cascades to every save and cleanup. Code.gs bumped to 1.5.0. Pending commit/push.
 2026-05-23  Day 2.6  Student data export: Apps Script exportStudentData action builds a ZIP containing JSON+PNG copies of every board and turn-in matching the student, plus a manifest.json with their user row (no hashed credentials), plus a README. Admin gets an Export button next to Issue Parent Code / Delete in the user table; downloads directly to browser. Logs DATA_EXPORT audit event. Pending commit/push.

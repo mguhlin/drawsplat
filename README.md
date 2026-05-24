@@ -97,6 +97,25 @@ timeline
 - `solutions/` — standalone classroom tools opened from Classroom Widgets, including Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder
 - `solutions/coinflipping/assets/` — local Heads/Tails coin images used by the Coin Flipper preset
 
+## Compliance
+
+DrawSplat&trade; ships with a configurable compliance posture aimed at K&ndash;12 districts. See [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) for the implementation status of every item and [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) for the operator guide.
+
+What is built today (Phases 1&ndash;3 of the roadmap, on the Apps Script backend path):
+
+- **Activity Records (audit log)** &mdash; immutable Sheet tab; filterable in Teacher Admin; downloadable as CSV or JSON.
+- **Safety filters** &mdash; text keyword filter, link allowlist (server-enforced on every save), board / room freeze.
+- **Student Age Band Lock** &mdash; SCOPE-aligned: `under_13`, `13_to_17`, `18_plus`, `unknown_minor`. Server-locked, admin-only, reason required, audited.
+- **Family Access Tools** &mdash; parent request form at `/parents/`, teacher-issued one-time verification code, admin Approve / Deny / Done queue.
+- **Student data export** &mdash; one-click ZIP of a student&rsquo;s boards, turn-ins, and user row (sans credentials).
+- **Student data deletion** &mdash; one-click trash + row removal for a student&rsquo;s artifacts; logged.
+- **Retention policy + scheduled cleanup** &mdash; configurable archive / delete / audit-keep windows; daily Apps Script trigger.
+- **Time limits** &mdash; browser timer + Apps Script save gate; daily seconds, session seconds, allowed hours, weekend toggle.
+- **Compliance Console** &mdash; single Teacher Admin surface (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
+- **District Privacy Packet** &mdash; one-click ZIP bundling config snapshot, 90 days of Activity Records, parent-request log, and a README pointing at Terms &amp; Privacy + the District Addendum.
+
+Phase 4 (MySQL / district) is parked until a district triggers it &mdash; the items there require a real backend (live SSO/roster sync, real-time session enforcement, true RBAC, a parent portal). The roadmap documents the split between what fits on the Apps Script path and what needs a server.
+
 ## Core features
 
 - Fast icon-tool switching

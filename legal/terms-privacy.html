@@ -260,8 +260,28 @@
       <tbody>
         <tr><td>May 16, 2026</td><td>v3.0</td><td>Initial PROTECT-aligned terms and privacy policy for DrawSplat<sup class="tm">TM</sup> v3.0.</td></tr>
         <tr><td>May 17, 2026</td><td>v3.0.1</td><td>Added request timelines, subprocessors notice, breach contact method, return/destruction, de-identified data, hosted-service boundary, hosting location, state privacy sale/share language, FERPA/COPPA school official language, and district addendum template.</td></tr>
+        <tr><td>May 24, 2026</td><td>v3.1.0</td><td>Compliance features released: Activity Records (audit log), text + link safety filters, board freeze, student age band lock, teacher-issued parent verification code, student data export and deletion endpoints, retention policy + scheduled cleanup, time-limit enforcement (browser + server), Compliance Console panels, District Privacy Packet generator, Texas SCOPE Act alignment for age registration.</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="policy-section">
+    <h2 id="compliance-features">Compliance Features (v3.1.0)</h2>
+    <p>The DrawSplat<sup class="tm">TM</sup> service includes the following compliance-focused capabilities. The Compliance Console (inside Teacher Admin) is the single surface for configuring them, and the District Privacy Packet is the artifact a district reviewer can download to inspect the current configuration plus the last 90 days of Activity Records.</p>
+    <ul>
+      <li><strong>Activity Records (audit log).</strong> Every compliance-relevant action — board saves, image uploads, moderation decisions, parent requests, age-band changes, data exports, data deletions, admin setting changes, retention runs — writes an immutable row to a dedicated <em>Audit</em> sheet tab in your Google Sheet. Filterable in the Compliance Console; downloadable as CSV or JSON.</li>
+      <li><strong>Safety filters.</strong> Server-enforced text keyword filter and link allowlist run on every board save. Hits are logged as <code>TEXT_FILTER_HIT</code> events; blocked text is rejected before reaching storage.</li>
+      <li><strong>Board / room freeze.</strong> A teacher or administrator can freeze a board, blocking all future writes until unfrozen. Frozen state is enforced server-side.</li>
+      <li><strong>Student Age Band Lock.</strong> Each student record carries one of <code>under_13</code>, <code>13_to_17</code>, <code>18_plus</code>, or <code>unknown_minor</code>. The band is server-locked; only an administrator can change it, every change requires a reason and emits an <code>AGE_BAND_CHANGED</code> audit event. Aligned with the Texas Securing Children Online Through Parental Empowerment Act&rsquo;s age-registration provision.</li>
+      <li><strong>Teacher-issued parent verification.</strong> An administrator can generate a one-time 8-character verification code for a student. The code (SHA-256-hashed with a server-side salt) lets a parent verify their relationship through the school&rsquo;s existing parent-communications channel and skip the manual identity-confirmation step.</li>
+      <li><strong>Family Access Tools.</strong> Parents submit requests (view / export / correct / delete / pause / safety report / privacy question) at <a href="../parents/index.html">/parents/</a>. Verified requests appear in the Compliance Console with Approve / Deny / Done controls. Each transition is audited.</li>
+      <li><strong>Student data export.</strong> An administrator can download a ZIP of every board and turn-in tied to a student, plus the user row (sans credentials), a machine-readable <code>manifest.json</code>, and a human-readable README. Logged as <code>DATA_EXPORT</code>.</li>
+      <li><strong>Student data deletion.</strong> An administrator can delete a student&rsquo;s boards and turn-ins (Drive files moved to trash; sheet rows removed) and the user row. Logged as <code>DATA_DELETED</code> with counts.</li>
+      <li><strong>Retention policy and scheduled cleanup.</strong> District-configurable thresholds for archive-after, delete-after, and audit-keep windows. A daily Apps Script trigger prunes accordingly; manual runs are also available. Each pass writes a <code>RETENTION_ACTION</code> event.</li>
+      <li><strong>Time-limit enforcement.</strong> When enabled, students see a remaining-time chip in the corner of the whiteboard; the browser locks the workspace at the daily limit and outside allowed hours. The Apps Script save endpoint enforces the same limits as the authoritative gate.</li>
+      <li><strong>District Privacy Packet.</strong> One-click ZIP containing the current compliance configuration snapshot, the last 90 days of Activity Records as CSV, all parent-request tickets, and a README pointing at Terms &amp; Privacy and District Addendum. Surfaceable to district reviewers without involving DrawSplat<sup class="tm">TM</sup>.</li>
+    </ul>
+    <p>Operator notes for school IT staff and district administrators live in <a href="../docs/COMPLIANCE.md">docs/COMPLIANCE.md</a> in the repository.</p>
   </section>
 </main>
 
