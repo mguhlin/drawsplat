@@ -111,6 +111,21 @@ Each student row can carry a single-use 8-character verification code. Workflow:
 
 If a code is lost or compromised, click **Issue Parent Code** again — the new code replaces the old one.
 
+## Data Export (Day 2.6)
+
+Clicking **Export** next to a student in the Age Band Lock section:
+
+1. Prompts the admin for a reason (logged in Activity Records).
+2. Calls `exportStudentData` on the Apps Script backend. The server gathers:
+   - Every board in the `Boards` sheet whose `className` matches and whose `title` contains the student's name, including JSON and PNG.
+   - Every turn-in in `TurnIns` keyed by (student, class).
+   - The student's `Users` row, minus any hashed credentials.
+3. Builds a ZIP with `boards/`, `turnins/`, `manifest.json` (machine-readable summary), and a `README.txt` (human-readable).
+4. Returns it as base64; the browser saves it to your Downloads folder.
+5. Logs `DATA_EXPORT` with counts and the supplied reason.
+
+The export is admin-initiated. For verified parent requests, the typical workflow is: parent submits a request with their verification code → request shows up in Family Access Tools as `verified` → admin clicks **Export** on that student → emails the ZIP to the parent through the school's normal channel.
+
 ## Data Deletion (Day 2.7)
 
 Clicking **Delete Data** next to a student in the Age Band Lock section:

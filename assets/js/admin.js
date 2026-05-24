@@ -360,7 +360,7 @@
       const select='<select class="user-age-select" data-id="'+esc(u.id)+'">'+
         AGE_BANDS.map(b=>'<option value="'+b+'"'+(b===u.ageBand?' selected':'')+'>'+b+'</option>').join('')+
         '</select>';
-      return `<tr><td><strong>${esc(u.studentName)}</strong>${u.className?' &middot; '+esc(u.className):''}<br><small style="color:var(--muted)">${esc(u.id)} &middot; last seen ${esc(u.lastSeen||'never')}${u.ageChangedBy?' &middot; changed by '+esc(u.ageChangedBy)+' ('+esc(u.ageChangeReason||'')+')':''}</small>${banner}</td><td>${select}</td><td style="text-align:right;white-space:nowrap"><button type="button" class="user-issue-code" data-id="${esc(u.id)}">Issue Parent Code</button> <button type="button" class="user-delete-data" data-id="${esc(u.id)}" data-name="${esc(u.studentName)}" data-class="${esc(u.className)}">Delete Data</button></td></tr>`;
+      return `<tr><td><strong>${esc(u.studentName)}</strong>${u.className?' &middot; '+esc(u.className):''}<br><small style="color:var(--muted)">${esc(u.id)} &middot; last seen ${esc(u.lastSeen||'never')}${u.ageChangedBy?' &middot; changed by '+esc(u.ageChangedBy)+' ('+esc(u.ageChangeReason||'')+')':''}</small>${banner}</td><td>${select}</td><td style="text-align:right;white-space:nowrap"><button type="button" class="user-issue-code" data-id="${esc(u.id)}">Issue Parent Code</button> <button type="button" class="user-export-data" data-name="${esc(u.studentName)}" data-class="${esc(u.className)}">Export</button> <button type="button" class="user-delete-data" data-id="${esc(u.id)}" data-name="${esc(u.studentName)}" data-class="${esc(u.className)}">Delete</button></td></tr>`;
     }).join('');
     host.innerHTML='<div class="compliance-table-wrap"><table class="compliance-table"><thead><tr><th>Student</th><th>Age Band</th><th style="text-align:right">Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
     host.querySelectorAll('.user-age-select').forEach(sel=>{
@@ -377,6 +377,28 @@
           window.prompt('One-time parent verification code (valid 14 days). Share with the parent via your school’s parent-comms channel:',data.code);
           await loadUsers();
         }catch(err){ alert(err.message||err); }
+      });
+    });
+    host.querySelectorAll('.user-export-data').forEach(btn=>{
+      btn.addEventListener('click',async()=>{
+        const name=btn.dataset.name; const cls=btn.dataset.class||'';
+        const reason=(window.prompt('Reason for this export (logged in Activity Records):','Verified parent request')||'').trim();
+        if(!reason) return;
+        btn.disabled=true; const orig=btn.textContent; btn.textContent='Exporting…';
+        try{
+          const data=await adminCall('exportStudentData',{studentName:name,className:cls,reason},'POST');
+          if(!data.contentBase64){ alert('No data returned.'); return; }
+          const bytes=Uint8Array.from(atob(data.contentBase64),c=>c.charCodeAt(0));
+          const blob=new Blob([bytes],{type:'application/zip'});
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a');
+          a.href=url; a.download=data.filename||('DrawSplat-Student-Export-'+name+'.zip');
+          a.rel='noopener'; a.style.display='none';
+          document.body.appendChild(a); a.click();
+          setTimeout(()=>{try{document.body.removeChild(a);URL.revokeObjectURL(url);}catch(e){}},4000);
+          alert('Export downloaded: '+data.boardsExported+' boards, '+data.turninsExported+' turn-ins.');
+        }catch(err){ alert(err.message||err); }
+        finally{ btn.disabled=false; btn.textContent=orig; }
       });
     });
     host.querySelectorAll('.user-delete-data').forEach(btn=>{

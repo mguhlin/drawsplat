@@ -85,7 +85,7 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 | 2.3 | Parent Request Center &mdash; static page scaffold | [x] | 021c657 |
 | 2.4 | Parent Request Center &mdash; Apps Script ticket endpoint | [x] | 021c657 |
 | 2.5 | Teacher-issued parent verification code | [x] | f40279f |
-| 2.6 | Data export &mdash; download student work as ZIP | [ ] | |
+| 2.6 | Data export &mdash; download student work as ZIP | [x] | pending |
 | 2.7 | Data deletion request &mdash; ticket + admin action | [x] | f40279f |
 | 2.8 | Time-limit controls &mdash; browser timer + lock UX | [ ] | |
 | 2.9 | Time-limit controls &mdash; Apps Script gate on save/load | [ ] | |
@@ -582,6 +582,7 @@ One line per session, newest first.
 YYYY-MM-DD  Day X.Y  <one-line summary>  <commit>
 ```
 
+2026-05-23  Day 2.6  Student data export: Apps Script exportStudentData action builds a ZIP containing JSON+PNG copies of every board and turn-in matching the student, plus a manifest.json with their user row (no hashed credentials), plus a README. Admin gets an Export button next to Issue Parent Code / Delete in the user table; downloads directly to browser. Logs DATA_EXPORT audit event. Pending commit/push.
 2026-05-23  Days 2.1, 2.2, 2.5, 2.7  Phase 2 trust additions: Users sheet with age band columns + lock; auto-populated from turn-ins. Admin UI in Compliance Console lists students with age band dropdown (change requires reason; emits AGE_BAND_CHANGED audit event). Teacher-issued one-time parent verification code (8-char alphanumeric, hashed with SHA-256+salt, 14-day expiry, single-use) shown to admin via one-time prompt. Parent form on /parents/ accepts the code; verified requests skip pending_verification. Admin Delete Data action trashes Drive files and removes rows for boards/turnins/user; logs DATA_DELETED audit. Day 2.6 (data export ZIP) still open. Pending commit/push.
 2026-05-23  Days 1.1, 1.2, 1.5, 1.6, 1.9  Safety filters live: client-side text + link scan in assets/js/safety.js wired to inline text commit and board title; server-side scan in Apps Script saveBoard_ / saveRoom_ logs TEXT_FILTER_HIT and rejects when blockOnMatch is true. Board/room freeze adds frozen/frozenBy/frozenAt/frozenReason columns; freezeBoard / freezeRoom endpoints; Safety Review section in Teacher Admin lists recent boards + rooms with freeze/unfreeze toggle. Days 1.3/1.4 deferred (whiteboard images embed in board JSON; explicit upload endpoint doesn't exist yet). Pending commit/push.
 2026-05-23  Days 0.1, 0.2, 1.7, 1.8, 2.3, 2.4, 3.6  Visible-trust items shipped: config schema + loader, Compliance Console scaffolding, Activity Records (Apps Script helpers + Teacher Admin viewer + CSV export), Family Access Tools page + Apps Script ticket endpoint + admin decide endpoint, District Privacy Packet generator + download button. New files: compliance.config.json, parents/index.html, assets/js/parents.js, docs/COMPLIANCE.md. Pending commit/push.
