@@ -1,4 +1,4 @@
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw684Y2tv6htx7Dy4sERiMwHMQOkCXWtHmUyrruVgyCuDPJE9eDZ_A9CP3BXt0Efmea/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwH_tYTRSwetnMJjQPg0RNG8SYTGBDmi8uuewSY8HXZ5DghXdwWiJvCkngaU9hsRJRn/exec';
 const CATEGORIES=['General','Classroom and Pedagogy','Tools','Administration','Suggestion Box'];
 
 let posts=[],replies=[],postIndex={};
