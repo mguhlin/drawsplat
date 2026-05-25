@@ -706,22 +706,51 @@ function handleAuthError(err){
   return err.message;
 }
 
+const CACHE_KEY='drawsplat-community-list-cache';
+const CACHE_MAX_AGE_MS=7*24*3600*1000;
+function applyListData(data){
+  posts=data.posts||[];
+  counts={};
+  posts.forEach(p=>counts[p.category]=(counts[p.category]||0)+1);
+  moderationEnabled=!!data.moderationEnabled;
+  loadedOnce=true;
+  updateStatusText();
+  renderTabs();
+  render();
+}
+function readCachedList(){
+  try{
+    const raw=localStorage.getItem(CACHE_KEY);
+    if(!raw) return null;
+    const cached=JSON.parse(raw);
+    if(!cached||!cached.data||!cached.ts) return null;
+    if(Date.now()-cached.ts>CACHE_MAX_AGE_MS) return null;
+    return cached;
+  }catch(e){return null}
+}
+function writeCachedList(data){
+  try{localStorage.setItem(CACHE_KEY,JSON.stringify({ts:Date.now(),data}))}catch(e){}
+}
 async function load(){
+  /* Stale-while-revalidate: render any cached payload immediately so the
+   * board doesn't sit blank during the Apps Script round-trip. The fresh
+   * fetch below runs in parallel and re-renders when it lands. */
+  const cached=readCachedList();
+  if(cached){
+    applyListData(cached.data);
+    statusText.textContent=t('status_loading_fresh')||'Refreshing…';
+  }
   try{
     const data=await api('list',{});
-    posts=data.posts||[];
-    counts={};
-    posts.forEach(p=>counts[p.category]=(counts[p.category]||0)+1);
-    const total=posts.length;
-    moderationEnabled=!!data.moderationEnabled;
-    loadedOnce=true;
-    updateStatusText();
-    renderTabs();
-    render();
+    applyListData(data);
+    writeCachedList(data);
     markCurrentVisit();
   }catch(err){
     statusText.textContent=t('status_connection_issue');
-    postsEl.innerHTML=`<div class="empty"><strong>${escapeHtml(err.message)}</strong>${escapeHtml(t('status_backend_unconfigured'))}</div>`;
+    /* Only wipe the list with an error if there's nothing cached to show. */
+    if(!cached){
+      postsEl.innerHTML=`<div class="empty"><strong>${escapeHtml(err.message)}</strong>${escapeHtml(t('status_backend_unconfigured'))}</div>`;
+    }
   }
 }
 
