@@ -476,38 +476,58 @@ function setStatus_(p) {
 }
 
 function updateItem_(p) {
-  const auth = checkAdmin_(p);
-  if (auth) return jsonResponse({ ok: false, error: auth });
   const type = String(p.type || '');
   const id = clean_(p.id || '');
   const now = new Date().toISOString();
+  const adminErr = checkAdmin_(p);
+  const isAdmin = !adminErr;
+  let session = null;
+  if (!isAdmin) {
+    try { session = verifySession_(String(p.sessionToken || '')); } catch (e) {}
+    if (!session) return jsonResponse({ ok: false, error: adminErr || 'Sign in or admin passcode required to edit.' });
+  }
   if (type === 'post') {
-    const category = clean_(p.category || '');
-    const title = clean_(p.title || '').slice(0, MAX_TITLE_CHARS);
-    const body = clean_(p.body || '').slice(0, MAX_BODY_CHARS);
-    if (ALLOWED_CATEGORIES.indexOf(category) === -1) return jsonResponse({ ok: false, error: 'Invalid category.' });
-    if (!title) return jsonResponse({ ok: false, error: 'Title required.' });
     const sheet = getSheet_(SHEET_POSTS);
     const info = findRowInfo_(sheet, POST_HEADERS, 'id', id);
     if (!info) return jsonResponse({ ok: false, error: 'Post not found.' });
+    const ownerEmail = String(info.item.authorEmail || '').toLowerCase();
+    if (!isAdmin && (!ownerEmail || ownerEmail !== String(session.email).toLowerCase())) {
+      return jsonResponse({ ok: false, error: 'Only the original author or an admin can edit this post.' });
+    }
+    /* Admin can rewrite category/title/author; authors keep them locked. */
+    const category = isAdmin ? clean_(p.category || info.item.category) : info.item.category;
+    const title = isAdmin
+      ? clean_(p.title || info.item.title).slice(0, MAX_TITLE_CHARS)
+      : info.item.title;
+    const body = clean_(p.body || '').slice(0, MAX_BODY_CHARS);
+    if (ALLOWED_CATEGORIES.indexOf(category) === -1) return jsonResponse({ ok: false, error: 'Invalid category.' });
+    if (!title) return jsonResponse({ ok: false, error: 'Title required.' });
+    if (!body) return jsonResponse({ ok: false, error: 'Body required.' });
+    const authorName = isAdmin ? (clean_(p.authorName || info.item.authorName).slice(0, MAX_NAME_CHARS) || 'Anonymous') : info.item.authorName;
+    const authorEmail = isAdmin ? (clean_(p.authorEmail || info.item.authorEmail).toLowerCase()) : info.item.authorEmail;
     updateRow_(sheet, POST_HEADERS, info.rowNumber, {
       category: category, title: title, body: body,
-      authorName: clean_(p.authorName || 'Anonymous').slice(0, MAX_NAME_CHARS) || 'Anonymous',
-      authorEmail: clean_(p.authorEmail || '').toLowerCase(),
+      authorName: authorName, authorEmail: authorEmail,
       updatedAt: now
     });
     return jsonResponse({ ok: true });
   }
   if (type === 'reply') {
-    const body = clean_(p.body || '').slice(0, MAX_REPLY_CHARS);
-    if (!body) return jsonResponse({ ok: false, error: 'Reply body required.' });
     const sheet = getSheet_(SHEET_REPLIES);
     const info = findRowInfo_(sheet, REPLY_HEADERS, 'id', id);
     if (!info) return jsonResponse({ ok: false, error: 'Reply not found.' });
+    const ownerEmail = String(info.item.authorEmail || '').toLowerCase();
+    if (!isAdmin && (!ownerEmail || ownerEmail !== String(session.email).toLowerCase())) {
+      return jsonResponse({ ok: false, error: 'Only the original author or an admin can edit this reply.' });
+    }
+    const body = clean_(p.body || '').slice(0, MAX_REPLY_CHARS);
+    if (!body) return jsonResponse({ ok: false, error: 'Reply body required.' });
+    const authorName = isAdmin ? (clean_(p.authorName || info.item.authorName).slice(0, MAX_NAME_CHARS) || 'Anonymous') : info.item.authorName;
+    const authorEmail = isAdmin ? (clean_(p.authorEmail || info.item.authorEmail).toLowerCase()) : info.item.authorEmail;
     updateRow_(sheet, REPLY_HEADERS, info.rowNumber, {
       body: body,
-      authorName: clean_(p.authorName || 'Anonymous').slice(0, MAX_NAME_CHARS) || 'Anonymous',
-      authorEmail: clean_(p.authorEmail || '').toLowerCase(),
+      authorName: authorName,
+      authorEmail: authorEmail,
       updatedAt: now
     });
     return jsonResponse({ ok: true });

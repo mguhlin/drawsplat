@@ -467,6 +467,10 @@ populateNewCategorySelect();
 
 function escapeHtml(s){return String(s==null?'':s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 /* renderMarkdown is defined in markdown.js, loaded before this script. */
+function isAuthor(item){
+  if(!user||!user.email||!item||!item.authorEmail) return false;
+  return String(user.email).toLowerCase()===String(item.authorEmail).toLowerCase();
+}
 function timeLabel(v){const d=new Date(v);return isNaN(d)?'':d.toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
 function showMsg(el,text,kind){el.className='msg '+kind;el.textContent=text}
 function clearMsg(el){el.className='msg';el.textContent=''}
@@ -558,9 +562,10 @@ function render(){
       </div>
       ${open?`
         <div class="post-body markdown-body">${renderMarkdown(p.body)}</div>
+        ${isAuthor(p)?`<div class="edit-row"><button type="button" class="edit-btn" data-edit="post" data-edit-id="${escapeHtml(p.id)}">&#x270e; Edit</button></div>`:''}
         <div class="replies">
-          ${replies.length?replies.map(r=>`<div class="reply">
-            <div class="reply-meta"><strong>${escapeHtml(r.authorName||'Anonymous')}</strong> · ${timeLabel(r.timestamp)}</div>
+          ${replies.length?replies.map(r=>`<div class="reply" data-reply-id="${escapeHtml(r.id)}">
+            <div class="reply-meta"><strong>${escapeHtml(r.authorName||'Anonymous')}</strong> · ${timeLabel(r.timestamp)}${isAuthor(r)?` · <button type="button" class="edit-btn small" data-edit="reply" data-edit-id="${escapeHtml(r.id)}">&#x270e; Edit</button>`:''}</div>
             <div class="reply-body markdown-body">${renderMarkdown(r.body)}</div>
           </div>`).join(''):`<p style="color:var(--muted);margin:0;font-size:14px">${escapeHtml(t('reply_empty'))}</p>`}
           <form class="reply-form" data-postid="${escapeHtml(p.id)}">
@@ -579,6 +584,62 @@ function render(){
   });
   postsEl.querySelectorAll('.reply-form').forEach(f=>{
     f.addEventListener('submit',e=>{e.preventDefault();submitReply(f)});
+  });
+  postsEl.querySelectorAll('[data-edit]').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();startEdit(btn)});
+  });
+}
+
+function startEdit(btn){
+  if(!user||!user.sessionToken) return;
+  const type=btn.dataset.edit;
+  const id=btn.dataset.editId;
+  const article=btn.closest('article.post');
+  if(!article) return;
+  const postId=article.dataset.id;
+  const post=posts.find(p=>p.id===postId);
+  if(!post) return;
+  const item=type==='post'?post:(post.replies||[]).find(r=>r.id===id);
+  if(!item) return;
+  const container=type==='post'
+    ? article.querySelector('.post-body')
+    : article.querySelector(`.reply[data-reply-id="${CSS.escape(id)}"] .reply-body`);
+  if(!container) return;
+  const editRow=type==='post'?article.querySelector('.edit-row'):null;
+  if(editRow) editRow.style.display='none';
+  const maxLen=type==='post'?2000:1500;
+  const editor=document.createElement('div');
+  editor.className='edit-form';
+  editor.innerHTML=`
+    <textarea class="edit-ta" maxlength="${maxLen}" rows="6" style="width:100%;min-height:130px;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff;font-family:inherit;font-size:14px;line-height:1.45;resize:vertical">${escapeHtml(item.body||'')}</textarea>
+    <p class="hint" style="margin:4px 0 6px">Markdown supported. <span class="edit-count">0</span>/${maxLen} characters</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <button type="button" class="btn ghost sm" data-edit-cancel>Cancel</button>
+      <button type="button" class="btn gold sm" data-edit-save>Save</button>
+    </div>
+    <div class="msg edit-msg"></div>
+  `;
+  container.style.display='none';
+  container.parentNode.insertBefore(editor,container.nextSibling);
+  const ta=editor.querySelector('.edit-ta');
+  const counter=editor.querySelector('.edit-count');
+  const updateCount=()=>{counter.textContent=String(ta.value.length)};
+  ta.addEventListener('input',updateCount); updateCount();
+  ta.focus();
+  ta.setSelectionRange(ta.value.length,ta.value.length);
+  editor.querySelector('[data-edit-cancel]').addEventListener('click',()=>render());
+  editor.querySelector('[data-edit-save]').addEventListener('click',async()=>{
+    const newBody=ta.value.trim();
+    const msgEl=editor.querySelector('.edit-msg');
+    if(!newBody){showMsg(msgEl,'Body cannot be empty.','err');return}
+    msgEl.className='msg';msgEl.textContent='Saving…';
+    try{
+      const payload={type:type,id:type==='post'?postId:id,body:newBody,sessionToken:user.sessionToken};
+      await api('update',payload,'POST');
+      if(type==='post') post.body=newBody;
+      else{const r=(post.replies||[]).find(r=>r.id===id);if(r) r.body=newBody}
+      render();
+    }catch(err){showMsg(msgEl,err.message||'Save failed.','err')}
   });
 }
 
