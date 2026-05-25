@@ -25,6 +25,7 @@ Other docs that pair with setup:
 - [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) — operator guide for the Compliance Console.
 - [`community/Setup.md`](community/Setup.md) — stand up the `/community/` board with Google + Microsoft sign-in.
 - [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
+- [`docs/HANDOFF-v3.1.0.md`](docs/HANDOFF-v3.1.0.md) — portable handoff for any AI assistant (Codex, Cursor, etc.) picking up the repo; covers what shipped at v3.1.0 and known gaps.
 
 ## Current build
 
@@ -42,6 +43,8 @@ Other docs that pair with setup:
 - **Free pricing model.** `pages/pricing.html` is now three cards: Everyone (free), Coffee (optional [Buy Me a Coffee](https://buymeacoffee.com/drawsplat) donation), Support & PD (optional paid). New pricing hero infographic. PayPal links retired.
 - **Navigation overhaul.** Four dropdowns — For Teachers, For Families, Privacy & Terms, Support — plus top-level Pricing. **Download for Self-Hosting** lives in the Support dropdown on all 24+ top-nav pages.
 - **24 top-nav pages** (index, pages/*, legal/*, guides/*) refreshed with the consistent dropdown nav, accessible `<details name="landing-topnav">` pattern (only one menu open at a time).
+- **Community board polish.** Markdown rendering in posts and replies (`**bold**`, `` `inline code` ``, ```` ```code blocks``` ````, links, lists, blockquotes — escape-first, no third-party deps). Authors edit their own posts/replies directly from the board view (server-enforced via session token); admins continue to edit any item from `Admin.html`. Each post card shows a two-line excerpt with markdown stripped, and posts created since the visitor's previous session display a small `NEW` badge.
+- **Community speed.** Client-side stale-while-revalidate cache paints the board instantly on repeat visits, then revalidates against `/exec` in the background and reconciles. Apps Script `CacheService` caches the public list response for 30 seconds server-side and is explicitly invalidated by every mutation endpoint (createPost, createReply, setStatus, updateItem, deleteItem, setModeration). Preconnect hints (`script.google.com`, `script.googleusercontent.com`, fonts hosts) plus lazy-loaded MSAL trim ~100–300 ms off cold loads and skip the ~70 KB Microsoft auth library entirely for visitors who never click Microsoft sign-in. Apps Script's own runtime overhead is the remaining floor (~1.3 s warm).
 
 ## Version evolution
 
@@ -103,7 +106,8 @@ timeline
 - `legal/texas-compliance.html` — plain-language Texas SCOPE / FERPA / COPPA / TEC 32.151+ explainer
 - `legal/privacy-builder.html` — district-local privacy notice generator
 - `parents/` — Family Access Tools (parent request form + endpoint client)
-- `community/` — Community bulletin board (Google + Microsoft SSO, email/pw fallback, multi-language UI)
+- `community/` — Community bulletin board (Google + Microsoft SSO, email/pw fallback, multi-language UI, markdown-rendered posts/replies, author-editable from the board, stale-while-revalidate cache)
+- `community/markdown.js` — minimal CommonMark-subset renderer shared by `community/index.html` and `community/Admin.html`. Escapes HTML first; `href` allowlist limits links to `http://`, `https://`, and `mailto:`
 - `admin/admin.html` — Teacher Admin with the Compliance Console (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
 - `admin/access.html` — admin-access request page
 - `admin/mysql-setup.html` — MySQL backend setup wizard for endpoint testing and `.env` template generation
