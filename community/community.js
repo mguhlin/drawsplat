@@ -41,6 +41,8 @@ const I18N={
     signin_email_hint:'Minimum 8 characters. No automatic password reset — if you forget, a moderator can clear your row so you can re-register.',
     guidelines_title:'Community guidelines',
     guidelines_body:'Posts and replies are moderated before they appear. Keep it kind, on-topic, and don’t share personal info about students or staff. Moderators may edit or remove posts.',
+    guidelines_markdown_body:'Markdown is supported in posts and replies — use **bold**, *italic*, `inline code`, ```code blocks```, [links](https://example.com), > quotes, and - or 1. lists.',
+    post_new_badge:'NEW',
     modal_new_post:'New post',modal_category_label:'Category',modal_title_label:'Title',
     modal_title_placeholder:'Give your post a short, descriptive title',modal_message_label:'Message',
     modal_message_placeholder:'What would you like to share or ask?',modal_char_suffix:'/2000 characters',
@@ -471,6 +473,33 @@ function isAuthor(item){
   if(!user||!user.email||!item||!item.authorEmail) return false;
   return String(user.email).toLowerCase()===String(item.authorEmail).toLowerCase();
 }
+function excerpt(body,max){
+  if(!body) return '';
+  const plain=String(body)
+    .replace(/```[\s\S]*?```/g,' ')
+    .replace(/`([^`\n]+)`/g,'$1')
+    .replace(/!\[[^\]]*\]\([^)]+\)/g,' ')
+    .replace(/\[([^\]\n]+)\]\([^)\s]+\)/g,'$1')
+    .replace(/^\s*>+\s?/gm,'')
+    .replace(/^\s*#{1,6}\s+/gm,'')
+    .replace(/[*_~`]+/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+  const cap=max||160;
+  return plain.length>cap?plain.slice(0,cap).trim()+'…':plain;
+}
+let lastSeenAt='';
+try{lastSeenAt=localStorage.getItem('drawsplat-community-lastSeen')||''}catch(e){}
+let didMarkVisit=false;
+function isNewSinceLastVisit(p){
+  if(!p||!p.timestamp||!lastSeenAt) return false;
+  return String(p.timestamp)>lastSeenAt;
+}
+function markCurrentVisit(){
+  if(didMarkVisit) return;
+  try{localStorage.setItem('drawsplat-community-lastSeen',new Date().toISOString())}catch(e){}
+  didMarkVisit=true;
+}
 function timeLabel(v){const d=new Date(v);return isNaN(d)?'':d.toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
 function showMsg(el,text,kind){el.className='msg '+kind;el.textContent=text}
 function clearMsg(el){el.className='msg';el.textContent=''}
@@ -548,16 +577,18 @@ function render(){
     const replies=p.replies||[];
     const open=p.id===openPostId;
     const replyCountTpl=replies.length===1?'post_reply_one':'post_reply_many';
+    const isNew=isNewSinceLastVisit(p);
     return `<article class="post${open?' open':''}" data-id="${escapeHtml(p.id)}">
       <div class="post-head" data-toggle="${escapeHtml(p.id)}">
         <div class="meta">
           <span class="post-cat">${escapeHtml(catLabel(p.category))}</span>
-          <h3 class="post-title">${escapeHtml(p.title)}</h3>
+          <h3 class="post-title">${escapeHtml(p.title)}${isNew?` <span class="post-new" title="New since your last visit">${escapeHtml(t('post_new_badge'))}</span>`:''}</h3>
           <div class="post-sub">
             <span>${escapeHtml(t('post_by'))} <strong>${escapeHtml(p.authorName||'Anonymous')}</strong></span>
             <span>${timeLabel(p.timestamp)}</span>
             <span class="replies-pill">${escapeHtml(t(replyCountTpl,{n:replies.length}))}</span>
           </div>
+          ${open?'':`<p class="post-excerpt">${escapeHtml(excerpt(p.body))}</p>`}
         </div>
       </div>
       ${open?`
@@ -687,6 +718,7 @@ async function load(){
     updateStatusText();
     renderTabs();
     render();
+    markCurrentVisit();
   }catch(err){
     statusText.textContent=t('status_connection_issue');
     postsEl.innerHTML=`<div class="empty"><strong>${escapeHtml(err.message)}</strong>${escapeHtml(t('status_backend_unconfigured'))}</div>`;
