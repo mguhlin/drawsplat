@@ -29,7 +29,17 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.0 — Phase 4 MySQL backend (OAuth, RBAC, SSE, cron, Clever roster sync, Family Access Portal, server-side Privacy Packet), self-host download bundle, Texas plain-language compliance explainer, contact form, free pricing model.** Pinned as a GitHub release: [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0).
+**DrawSplatTM v3.1.2 — Advanced-view icon overhaul: every Insert / Arrange / Sync menu item now renders the new colour PNG + SVG set instead of the flat monochrome icons.** Pinned as a GitHub release: [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2). Previous milestones: [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.2)
+
+- **Advanced-view icon overhaul.** Every flat SVG in the Advanced view's Insert, Edit (Arrange), and sync rows now renders a colour PNG or cleaner-stroke SVG. Twenty-one new `adv-*.svg` files in `assets/icons/tools/` cover Insert / Arrange targets (image, library, graph, picture graph, mosaic, collage, emoji-as-star, GIF-as-play, mermaid, word cloud, concept, ScratchArt eraser, set/clear background, magic wand, duplicate, ungroup, group, sticker stamp, custom-sticker share, plus a chart variant). Six PNGs (`adv-front.png`, `adv-back.png`, `adv-lock.png`, `adv-unlock.png`, `adv-sync.png`, `adv-cloud-sync.png`, `adv-stop.png`, `adv-cloud-down.png`) cover Edit-menu stacking + selection-toolbar lock state + the four sync-row buttons. Simple-view `simple*` buttons still use their existing `pop_*` PNGs so the popover look is untouched.
+- Eighteen Advanced-view auxiliary buttons that already had a Simple-view PNG (TNT, all delete variants, the Insert-dialog launchers, Concept Map, etc.) were also rewired to reuse those PNGs in commit `7df14a4` so both views share a single colour vocabulary.
+
+## Recent improvements (v3.1.1)
+
+- **Community board polish.** Markdown rendering in posts and replies (`**bold**`, `` `inline code` ``, ```` ```code blocks``` ````, links, lists, blockquotes — escape-first, no third-party deps). Authors edit their own posts/replies directly from the board view (server-enforced via session token); admins continue to edit any item from `Admin.html`. Each post card shows a two-line excerpt with markdown stripped, and posts created since the visitor's previous session display a small `NEW` badge.
+- **Community speed.** Client-side stale-while-revalidate cache paints the board instantly on repeat visits, then revalidates against `/exec` in the background and reconciles. Apps Script `CacheService` caches the public list response for 30 seconds server-side and is explicitly invalidated by every mutation endpoint (createPost, createReply, setStatus, updateItem, deleteItem, setModeration). Preconnect hints (`script.google.com`, `script.googleusercontent.com`, fonts hosts) plus lazy-loaded MSAL trim ~100–300 ms off cold loads and skip the ~70 KB Microsoft auth library entirely for visitors who never click Microsoft sign-in. Apps Script's own runtime overhead is the remaining floor (~1.3 s warm).
 
 ## Recent improvements (v3.1.0)
 
@@ -43,9 +53,6 @@ Other docs that pair with setup:
 - **Free pricing model.** `pages/pricing.html` is now three cards: Everyone (free), Coffee (optional [Buy Me a Coffee](https://buymeacoffee.com/drawsplat) donation), Support & PD (optional paid). New pricing hero infographic. PayPal links retired.
 - **Navigation overhaul.** Four dropdowns — For Teachers, For Families, Privacy & Terms, Support — plus top-level Pricing. **Download for Self-Hosting** lives in the Support dropdown on all 24+ top-nav pages.
 - **24 top-nav pages** (index, pages/*, legal/*, guides/*) refreshed with the consistent dropdown nav, accessible `<details name="landing-topnav">` pattern (only one menu open at a time).
-- **Community board polish.** Markdown rendering in posts and replies (`**bold**`, `` `inline code` ``, ```` ```code blocks``` ````, links, lists, blockquotes — escape-first, no third-party deps). Authors edit their own posts/replies directly from the board view (server-enforced via session token); admins continue to edit any item from `Admin.html`. Each post card shows a two-line excerpt with markdown stripped, and posts created since the visitor's previous session display a small `NEW` badge.
-- **Community speed.** Client-side stale-while-revalidate cache paints the board instantly on repeat visits, then revalidates against `/exec` in the background and reconciles. Apps Script `CacheService` caches the public list response for 30 seconds server-side and is explicitly invalidated by every mutation endpoint (createPost, createReply, setStatus, updateItem, deleteItem, setModeration). Preconnect hints (`script.google.com`, `script.googleusercontent.com`, fonts hosts) plus lazy-loaded MSAL trim ~100–300 ms off cold loads and skip the ~70 KB Microsoft auth library entirely for visitors who never click Microsoft sign-in. Apps Script's own runtime overhead is the remaining floor (~1.3 s warm).
-
 ## Version evolution
 
 ```mermaid
@@ -85,6 +92,12 @@ timeline
   v3.1.0 : Phase 4 MySQL backend + self-host bundle
          : OAuth (Google + Microsoft), RBAC, SSE, cron, Clever connector, Family Access Portal, server-side Privacy Packet
          : Texas plain-language compliance explainer, contact form, free pricing model, Download for Self-Hosting page
+  v3.1.1 : Community board polish + speed work
+         : Markdown rendering, author-edit-from-board, post excerpts, NEW-since-last-visit badge
+         : Client SWR cache + Apps Script CacheService + preconnect + lazy MSAL
+  v3.1.2 : Advanced-view icon overhaul
+         : Insert / Arrange / Sync menus swap flat SVGs for colour PNGs and cleaner SVGs
+         : New adv-*.svg + adv-*.png set in assets/icons/tools/
 ```
 
 ## Included files
