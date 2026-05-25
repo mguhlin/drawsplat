@@ -1,4 +1,4 @@
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbysCu4OvMWr1G4ZswXHf1-x-qTEdQENRVUgcVWWQaF8BD_K1K9_D05SAWsgK8LdBvU5/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw684Y2tv6htx7Dy4sERiMwHMQOkCXWtHmUyrruVgyCuDPJE9eDZ_A9CP3BXt0Efmea/exec';
 const GOOGLE_CLIENT_ID='963195660019-rk8867orle2cs0kk6si705en68t55cos.apps.googleusercontent.com';
 const MICROSOFT_CLIENT_ID='PASTE_MICROSOFT_OAUTH_CLIENT_ID_HERE';
 const MICROSOFT_TENANT='common';
