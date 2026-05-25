@@ -8,6 +8,9 @@ const PROJECT_NAME = 'DrawSplat Community';
 const SHEET_NAME = 'DrawSplat Community';
 const SHEET_POSTS = 'Posts';
 const SHEET_REPLIES = 'Replies';
+const LIST_CACHE_KEY = 'community:list:v1';
+const LIST_CACHE_TTL_SECONDS = 30;
+const LIST_CACHE_MAX_BYTES = 95000; /* CacheService caps values at ~100 KB. */
 const SHEET_USERS = 'Users';
 
 const MAX_TITLE_CHARS = 120;
@@ -109,6 +112,13 @@ function ping_() {
 }
 
 function publicList_(p) {
+  /* Try cache first — the public list endpoint is by far the hottest read
+   * on the board and re-reading two sheet tabs on every visit was the main
+   * source of the 1-3 second cold-load delay. */
+  const cached = getCachedListPayload_();
+  if (cached) {
+    return ContentService.createTextOutput(cached).setMimeType(ContentService.MimeType.JSON);
+  }
   const posts = readSheet_(SHEET_POSTS).filter(function(x) { return x.status === 'approved'; });
   const replies = readSheet_(SHEET_REPLIES).filter(function(x) { return x.status === 'approved'; });
   const repliesByPost = {};
@@ -125,7 +135,29 @@ function publicList_(p) {
     out.replies = repliesByPost[post.id] || [];
     return out;
   });
-  return jsonResponse({ ok: true, moderationEnabled: isModerationEnabled_(), categories: ALLOWED_CATEGORIES, posts: shaped });
+  const payload = JSON.stringify({ ok: true, moderationEnabled: isModerationEnabled_(), categories: ALLOWED_CATEGORIES, posts: shaped });
+  setCachedListPayload_(payload);
+  return ContentService.createTextOutput(payload).setMimeType(ContentService.MimeType.JSON);
+}
+
+function getCachedListPayload_() {
+  try {
+    return CacheService.getScriptCache().get(LIST_CACHE_KEY);
+  } catch (e) { return null; }
+}
+
+function setCachedListPayload_(payload) {
+  if (!payload) return;
+  /* Apps Script CacheService rejects values larger than ~100 KB; skip
+   * caching huge payloads rather than throwing. */
+  if (payload.length > LIST_CACHE_MAX_BYTES) return;
+  try {
+    CacheService.getScriptCache().put(LIST_CACHE_KEY, payload, LIST_CACHE_TTL_SECONDS);
+  } catch (e) { /* non-fatal */ }
+}
+
+function invalidateListCache_() {
+  try { CacheService.getScriptCache().remove(LIST_CACHE_KEY); } catch (e) {}
 }
 
 function signIn_(p) {
@@ -420,6 +452,7 @@ function createPost_(p) {
   };
   appendRow_(getSheet_(SHEET_POSTS), POST_HEADERS, item);
   touchUserCount_(session.email, session.name, 'postCount');
+  invalidateListCache_();
   return jsonResponse({ ok: true, status: status, id: item.id });
 }
 
@@ -439,6 +472,7 @@ function createReply_(p) {
   };
   appendRow_(getSheet_(SHEET_REPLIES), REPLY_HEADERS, item);
   touchUserCount_(session.email, session.name, 'replyCount');
+  invalidateListCache_();
   return jsonResponse({ ok: true, status: status, id: item.id });
 }
 
@@ -472,6 +506,7 @@ function setStatus_(p) {
   const info = findRowInfo_(sheet, headers, 'id', id);
   if (!info) return jsonResponse({ ok: false, error: 'Item not found.' });
   updateRow_(sheet, headers, info.rowNumber, { status: status, updatedAt: new Date().toISOString() });
+  invalidateListCache_();
   return jsonResponse({ ok: true });
 }
 
@@ -510,6 +545,7 @@ function updateItem_(p) {
       authorName: authorName, authorEmail: authorEmail,
       updatedAt: now
     });
+    invalidateListCache_();
     return jsonResponse({ ok: true });
   }
   if (type === 'reply') {
@@ -530,6 +566,7 @@ function updateItem_(p) {
       authorEmail: authorEmail,
       updatedAt: now
     });
+    invalidateListCache_();
     return jsonResponse({ ok: true });
   }
   return jsonResponse({ ok: false, error: 'Invalid type.' });
@@ -546,6 +583,7 @@ function deleteItem_(p) {
     if (!info) return jsonResponse({ ok: false, error: 'Post not found.' });
     sheet.deleteRow(info.rowNumber);
     deleteRepliesForPost_(id);
+    invalidateListCache_();
     return jsonResponse({ ok: true });
   }
   if (type === 'reply') {
@@ -553,6 +591,7 @@ function deleteItem_(p) {
     const info = findRowInfo_(sheet, REPLY_HEADERS, 'id', id);
     if (!info) return jsonResponse({ ok: false, error: 'Reply not found.' });
     sheet.deleteRow(info.rowNumber);
+    invalidateListCache_();
     return jsonResponse({ ok: true });
   }
   return jsonResponse({ ok: false, error: 'Invalid type.' });
@@ -575,6 +614,7 @@ function setModeration_(p) {
   if (auth) return jsonResponse({ ok: false, error: auth });
   const enabled = String(p.enabled || '').toLowerCase() === 'true';
   PropertiesService.getScriptProperties().setProperty('MODERATION_ENABLED', String(enabled));
+  invalidateListCache_();
   return jsonResponse({ ok: true, moderationEnabled: enabled });
 }
 
