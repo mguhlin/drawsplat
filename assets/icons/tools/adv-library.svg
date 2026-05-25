@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="512" height="512">
+<defs>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000000" flood-opacity="0.22"/></filter>
+<linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4fc3ff"/><stop offset="1" stop-color="#0b66d8"/></linearGradient>
+<linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a7ef2b"/><stop offset="1" stop-color="#21a43b"/></linearGradient>
+<linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffbf22"/><stop offset="1" stop-color="#ff5b1a"/></linearGradient>
+<linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b889ff"/><stop offset="1" stop-color="#5e2ee8"/></linearGradient>
+<linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#45efe6"/><stop offset="1" stop-color="#0794a8"/></linearGradient>
+<linearGradient id="pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff86a6"/><stop offset="1" stop-color="#e01761"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe45d"/><stop offset="1" stop-color="#f59e00"/></linearGradient>
+<linearGradient id="gray" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eef4fb"/><stop offset="1" stop-color="#8da0b9"/></linearGradient>
+
+</defs>
+<g transform="translate(28,18) rotate(7 120 100)"><rect x="64" y="40" width="150" height="116" rx="16" fill="url(#purple)" filter="url(#shadow)"/></g><g filter="url(#shadow)">
+<rect x="46" y="70" width="150" height="110" rx="16" fill="#fff"/>
+<clipPath id="clip4670"><rect x="54" y="78" width="134" height="94" rx="10"/></clipPath>
+<g clip-path="url(#clip4670)">
+<rect x="54" y="78" width="134" height="94" fill="url(#blue)"/>
+<circle cx="160" cy="104" r="18" fill="url(#gold)"/>
+<path d="M54,152 C86,148 111,152 136,152 Z" fill="#0a5e91"/>
+<path d="M66,162 C106,150 158,148 188,158 L188,172 L54,172 Z" fill="url(#green)"/>
+<path d="M71,108 q15,-20 31,0 q12,-8 24,12 h-78 q8,-12 23,-12" fill="#fff" opacity=".95"/>
+
+</g></g>
+</svg>
