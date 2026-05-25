@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://www.freevisitorcounters.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>Texas Compliance | DrawSplatTM</title>
 <meta name="description" content="Plain-language explanation of how DrawSplatTM aligns with the Texas SCOPE Act, FERPA, COPPA, and related student-privacy laws." />
 <link rel="canonical" href="https://drawsplat.org/legal/texas-compliance.html" />
@@ -119,7 +119,7 @@
     <h3>4. Data-use and data-sharing limits</h3>
     <p>SCOPE and FERPA both restrict how minor-data is used and shared. DrawSplat<sup class="tm">TM</sup>'s declarations:</p>
     <ul class="admin-checklist">
-      <li><strong>No advertising.</strong> The product has no ad system. The site does load one third-party counter image from <code>freevisitorcounters.com</code> in the footer of each page; loading that image is what increments the visit count. As with any external image the browser fetches, the counter&rsquo;s server receives the standard HTTP request data (IP address, browser type, referring page). It does <strong>not</strong> set persistent identifiers, build visitor profiles, share data with advertisers, or follow visitors across sites. No third-party JavaScript is loaded.</li>
+      <li><strong>No advertising.</strong> The product has no ad system, no tracking pixels, no third-party analytics scripts. Visit counts come from Cloudflare Pages&rsquo; server-side analytics on the static-host CDN, which never adds a beacon or any other request to the visitor&rsquo;s browser.</li>
       <li><strong>No sale of data.</strong> Student data is never sold or licensed to third parties for any purpose.</li>
       <li><strong>No AI training on student data.</strong> Student boards and submissions are never used to train AI models &mdash; ours or anyone else's.</li>
       <li><strong>Storage stays where you put it.</strong> If your district configures the Google Apps Script backend, your data lives in <em>your</em> Google Drive and Sheets. If you self-host with the MySQL backend, the data is on your servers. We don't operate the storage.</li>
@@ -187,10 +187,5 @@
   <a href="../index.html">Home</a>
   <a href="terms-privacy.html">Terms &amp; Privacy</a>
   <a href="../pages/support.html">Support</a>
-</footer>
-<div class="hit-counter" style="text-align:center;padding:14px 8px 18px;font-size:11px;color:#9ca3af;letter-spacing:.02em;line-height:1.4">
-  <a href="https://www.freevisitorcounters.com/en/home/stats/id/1558495" target="_blank" rel="noopener noreferrer"><img src="https://www.freevisitorcounters.com/en/counter/render/1558495/t/0" alt="Visit counter" border="0" style="display:block;margin:0 auto"></a>
-  <div style="opacity:.7;margin-top:4px"><a href="https://free-hit-counters.net/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none">freehitcounters</a></div>
-</div>
-</body>
+</footer></body>
 </html>
