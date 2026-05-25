@@ -827,9 +827,23 @@ function initGoogle(){
   });
 }
 
+let msalLibLoading=null;
+function ensureMsalLib(){
+  if(window.msal&&msal.PublicClientApplication) return Promise.resolve();
+  if(msalLibLoading) return msalLibLoading;
+  msalLibLoading=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/@azure/msal-browser@3/lib/msal-browser.min.js';
+    s.async=true;
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error('Microsoft library failed to load.'));
+    document.head.appendChild(s);
+  });
+  return msalLibLoading;
+}
 function initMicrosoft(){
   if(!microsoftEnabled())return;
-  whenReady(()=>window.msal&&msal.PublicClientApplication,()=>{
+  ensureMsalLib().then(()=>{
     try{
       msalApp=new msal.PublicClientApplication({
         auth:{
@@ -851,7 +865,10 @@ async function microsoftSignIn(){
   const btn=$('microsoftBtn');
   btn.disabled=true;
   try{
-    if(!msalApp)initMicrosoft();
+    if(!msalApp){
+      try{await ensureMsalLib();}catch(e){throw new Error(t('msg_microsoft_lib_failed'));}
+      initMicrosoft();
+    }
     let tries=30;while((!msalApp||!msalApp.loginPopup)&&tries-->0){await new Promise(r=>setTimeout(r,120))}
     if(!msalApp||!msalApp.loginPopup)throw new Error(t('msg_microsoft_lib_failed'));
     const result=await msalApp.loginPopup({scopes:['User.Read'],prompt:'select_account'});
