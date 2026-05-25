@@ -64,12 +64,25 @@ textarea{resize:vertical;min-height:90px}
 .post-sub{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px}
 .post-sub strong{color:var(--ink);font-weight:700}
 .replies-pill{display:inline-flex;align-items:center;gap:5px;background:var(--gold-pale);color:#7a4a00;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;border:1px solid #f6d28a}
-.post-body{margin:12px 0 4px;color:#303a4f;white-space:pre-wrap;word-break:break-word}
+.post-body{margin:12px 0 4px;color:#303a4f;word-break:break-word}
+.markdown-body p{margin:0 0 10px}
+.markdown-body p:last-child{margin-bottom:0}
+.markdown-body h2,.markdown-body h3,.markdown-body h4{margin:14px 0 6px;color:var(--ink-dark);line-height:1.3}
+.markdown-body h2{font-size:20px}
+.markdown-body h3{font-size:17px}
+.markdown-body h4{font-size:15px}
+.markdown-body ul,.markdown-body ol{margin:6px 0 10px;padding-left:24px}
+.markdown-body li{margin:3px 0}
+.markdown-body blockquote{margin:8px 0;padding:6px 12px;border-left:3px solid var(--gold,#f59e0b);background:#fff8e6;color:#5a4416;border-radius:0 8px 8px 0}
+.markdown-body code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.92em;background:#f1f3fa;color:#222a44;padding:1px 6px;border-radius:5px;border:1px solid #e3e7f3}
+.markdown-body pre{margin:8px 0;background:#0f172a;color:#e2e8f0;padding:10px 12px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.5}
+.markdown-body pre code{background:transparent;color:inherit;border:0;padding:0;border-radius:0;font-size:inherit;display:block;white-space:pre}
+.markdown-body a{color:var(--navy);text-decoration:underline;word-break:break-word}
 .replies{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
 .reply{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .reply-meta{font-size:12px;color:var(--muted);margin-bottom:5px}
 .reply-meta strong{color:var(--ink)}
-.reply-body{white-space:pre-wrap;color:var(--ink);word-break:break-word}
+.reply-body{color:var(--ink);word-break:break-word}
 .reply-form{margin-top:6px;display:flex;flex-direction:column;gap:8px}
 .empty{background:#fff;border:1.5px dashed var(--line);border-radius:14px;padding:40px 18px;text-align:center;color:var(--muted)}
 .empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
@@ -268,7 +281,7 @@ html[dir="rtl"] details.email-auth-wrap[open] summary::before{transform:rotate(9
     <div class="field">
       <label for="newBody" data-i18n="modal_message_label">Message</label>
       <textarea id="newBody" maxlength="2000" data-i18n-placeholder="modal_message_placeholder" placeholder="What would you like to share or ask?"></textarea>
-      <p class="hint"><span id="newCount">0</span><span data-i18n="modal_char_suffix">/2000 characters</span></p>
+      <p class="hint"><span id="newCount">0</span><span data-i18n="modal_char_suffix">/2000 characters</span> &middot; <span data-i18n="modal_markdown_hint">Markdown supported: <code>**bold**</code> <code>*italic*</code> <code>`code`</code> <code>```code block```</code> <code>[link](url)</code> <code>- list</code> <code>&gt; quote</code></span></p>
     </div>
     <div id="postMsg" class="msg"></div>
     <div class="actions">
@@ -283,5 +296,6 @@ html[dir="rtl"] details.email-auth-wrap[open] summary::before{transform:rotate(9
   <a href="../index.html" data-i18n-html="footer_back">Back to DrawSplat<sup class="tm">TM</sup></a>
 </footer>
 
+<script src="markdown.js" defer></script>
 <script src="community.js" defer></script></body>
 </html>

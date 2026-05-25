@@ -116,7 +116,7 @@ function render(){
       </div>
       <h3>${escapeHtml(title)}</h3>
       <div class="meta"><strong>${escapeHtml(x.authorName||'Anonymous')}</strong> · ${escapeHtml(x.authorEmail||'no email')} · ${timeLabel(x.timestamp)}</div>
-      <div class="body">${escapeHtml(x.body)}</div>
+      <div class="body markdown-body">${renderMarkdown(x.body)}</div>
       <div class="actions">
         <button class="btn green sm" data-act="setStatus" data-status="approved" ${x.status==='approved'?'disabled':''}>Approve</button>
         <button class="btn sm" data-act="setStatus" data-status="pending" ${x.status==='pending'?'disabled':''}>Mark pending</button>

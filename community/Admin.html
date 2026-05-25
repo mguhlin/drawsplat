@@ -54,7 +54,15 @@ h1 em{color:var(--navy);font-style:normal}
 .item h3{margin:6px 0;color:var(--ink-dark);font-size:18px}
 .item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
 .item .meta strong{color:var(--ink)}
-.item .body{white-space:pre-wrap;color:#303a4f;word-break:break-word;margin:8px 0 0;padding:10px 12px;background:#fafbff;border:1px solid var(--line);border-radius:10px}
+.item .body{color:#303a4f;word-break:break-word;margin:8px 0 0;padding:10px 12px;background:#fafbff;border:1px solid var(--line);border-radius:10px}
+.markdown-body p{margin:0 0 8px}
+.markdown-body p:last-child{margin-bottom:0}
+.markdown-body code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.92em;background:#eef1f9;padding:1px 6px;border-radius:5px;border:1px solid #dee3ef}
+.markdown-body pre{margin:6px 0;background:#0f172a;color:#e2e8f0;padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:13px}
+.markdown-body pre code{background:transparent;color:inherit;border:0;padding:0;border-radius:0;display:block;white-space:pre}
+.markdown-body blockquote{margin:6px 0;padding:6px 12px;border-left:3px solid #f59e0b;background:#fff8e6;border-radius:0 8px 8px 0}
+.markdown-body ul,.markdown-body ol{margin:4px 0 8px;padding-left:24px}
+.markdown-body a{color:var(--navy);text-decoration:underline}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .editbox{display:none;margin-top:12px;padding:12px;background:#fafbff;border:1px solid var(--line);border-radius:12px}
 .editbox.open{display:block}
@@ -136,5 +144,6 @@ h1 em{color:var(--navy);font-style:normal}
   <section class="queue" id="queue"></section>
 </main>
 
+<script src="markdown.js" defer></script>
 <script src="admin.js" defer></script></body>
 </html>

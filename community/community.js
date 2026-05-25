@@ -466,6 +466,7 @@ const postModal=$('postModal'),signinPanel=$('signinPanel'),whoBox=$('whoBox'),s
 populateNewCategorySelect();
 
 function escapeHtml(s){return String(s==null?'':s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+/* renderMarkdown is defined in markdown.js, loaded before this script. */
 function timeLabel(v){const d=new Date(v);return isNaN(d)?'':d.toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
 function showMsg(el,text,kind){el.className='msg '+kind;el.textContent=text}
 function clearMsg(el){el.className='msg';el.textContent=''}
@@ -556,11 +557,11 @@ function render(){
         </div>
       </div>
       ${open?`
-        <div class="post-body">${escapeHtml(p.body)}</div>
+        <div class="post-body markdown-body">${renderMarkdown(p.body)}</div>
         <div class="replies">
           ${replies.length?replies.map(r=>`<div class="reply">
             <div class="reply-meta"><strong>${escapeHtml(r.authorName||'Anonymous')}</strong> · ${timeLabel(r.timestamp)}</div>
-            <div class="reply-body">${escapeHtml(r.body)}</div>
+            <div class="reply-body markdown-body">${renderMarkdown(r.body)}</div>
           </div>`).join(''):`<p style="color:var(--muted);margin:0;font-size:14px">${escapeHtml(t('reply_empty'))}</p>`}
           <form class="reply-form" data-postid="${escapeHtml(p.id)}">
             <textarea name="body" maxlength="1500" placeholder="${escapeHtml(user?t('reply_placeholder'):t('reply_placeholder_signedout'))}" ${user?'':'disabled'}></textarea>
