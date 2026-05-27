@@ -697,7 +697,7 @@ v3.0.1 improves multilingual coverage for the whiteboard app.
 v3.0 adds the public site, pricing, teacher/admin separation, student privacy language, and MySQL self-hosting foundation.
 
 - Promoted the product-style front door to `index.html`, moved the English whiteboard app to `app/whiteboard.html`, and kept `pages/start.html` as a redirect.
-- Added `pages/pricing.html` with free, one-time, and school/district self-hosted site license options.
+- Added `pages/pricing.html`. (Note: the v3.0 build originally listed individual / campus / district paid tiers. From v3.1.0 the model is free software + optional paid Support & Professional Learning services — see `COMMERCIAL-LICENSE.md`.)
 - Added `legal/terms-privacy.html` with student privacy terms, retention, subprocessors, breach notice, encryption-at-rest, audit logging, and district deployment checklist language.
 - Added `admin/admin.html` and `admin.js` so Google Apps Script, MySQL, storage mode, and classroom links are managed away from the student whiteboard.
 - Added `admin/mysql-setup.html` and `mysql-setup.js` for a Moodle-style MySQL setup wizard.

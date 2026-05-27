@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>NDPA / DPA Review Packet | DrawSplatTM</title>
+<meta name="description" content="Everything a K-12 district reviewer typically asks for in one place — product description, data elements, data flow, subprocessors, security controls, breach SOP, retention, parent workflow, FERPA / COPPA / SCOPE / CIPA crosswalks, and the District Data Privacy Addendum." />
+<link rel="canonical" href="https://drawsplat.org/legal/ndpa-packet.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <a href="../index.html">Home</a>
+    <a href="terms-privacy.html">Privacy</a>
+    <a href="district-addendum.html">District Addendum</a>
+    <a href="widgets-security.html">Widget Security</a>
+    <a href="accessibility.html">Accessibility</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">For District Reviewers</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> NDPA / DPA Review Packet</h1>
+    <p>Everything a K&ndash;12 district reviewer typically asks for in one place. The Student Data Privacy Consortium&rsquo;s National Data Privacy Agreement (NDPA) is a standardized contracting framework whose standard clauses are not meant to be redlined &mdash; changes belong in exhibits. This page is the exhibit packet: product description, data elements by deployment mode, data flow, subprocessor list, security controls, breach SOP, retention, parent workflow, accessibility, and the FERPA / COPPA / SCOPE / CIPA crosswalks.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>1. Product description &amp; approved educational purpose</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> is a self-contained interactive whiteboard for K&ndash;16 classrooms. It runs as a static web app and can optionally save boards, templates, collaboration rooms, and student turn-ins to a Google Apps Script + Sheets backend the district controls, or to a self-hosted Node + MySQL backend the district runs on its own infrastructure.</p>
+    <p>Approved educational purpose: classroom drawing, notes, diagrams, charts, sticky notes, audio notes, collaboration, turn-in workflows, and supporting classroom activities. DrawSplat<sup class="tm">TM</sup> is not used for advertising, behavioural profiling, or AI training. <a href="../pages/features.html">Full feature list</a>.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>2. Three deployment modes and what each collects</h2>
+    <table class="policy-table">
+      <thead><tr><th>Mode</th><th>Where data lives</th><th>Student identifiers collected</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Browser-only</strong></td>
+          <td>The visitor&rsquo;s browser. Optional local <code>.drawsplat.json</code> file the user explicitly saves.</td>
+          <td>None. No account, no upload, no server-side storage.</td>
+        </tr>
+        <tr>
+          <td><strong>Google Apps Script (supported production)</strong></td>
+          <td>The teacher or district&rsquo;s own Google Workspace tenant &mdash; Drive folders and a Sheet that the script creates inside the operator&rsquo;s account.</td>
+          <td>What a teacher chooses to enter: student name on a turn-in, class section name, age band the admin assigns. No password storage, no biometric data, no precise location, no advertising identifiers.</td>
+        </tr>
+        <tr>
+          <td><strong>Self-hosted MySQL (district pilot)</strong></td>
+          <td>A MySQL database running on the district&rsquo;s own infrastructure, fronted by a Node + Express API the district hosts.</td>
+          <td>Same as the Apps Script row. Email + scrypt+pepper hashed password if the district opts into local email/password accounts. OAuth subjects if Google or Microsoft SSO is enabled. Optional Clever roster sync if the district connects it.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>3. Data flow diagram</h2>
+    <pre style="background:#0f172a;color:#e2e8f0;padding:14px;border-radius:10px;overflow:auto;font-size:.86rem;line-height:1.5">Browser-only mode:
+  [Student browser] <-- everything stays here. No external requests by default.
+
+Google Apps Script mode:
+  [Student / teacher browser]
+      |
+      |  HTTPS POST/GET, only when the teacher has configured a script URL
+      v
+  [script.google.com /macros/s/.../exec]  (the district's own Apps Script project)
+      |
+      v
+  [Google Sheet]  (Boards / Rooms / TurnIns / Audit / ParentRequests / Users etc.)
+      and
+  [Google Drive]  (per-board JSON + PNG files in the district's Drive)
+
+Self-hosted MySQL mode:
+  [Student / teacher browser]
+      |
+      |  HTTPS to the district's own domain
+      v
+  [district.example.org/api/drawsplat/mysql]  (Node + Express in the district's infra)
+      |
+      v
+  [MySQL]  (users, sessions, boards, audit_events, parent_requests, time_usage, ...)</pre>
+  </section>
+
+  <section class="policy-section">
+    <h2>4. Subprocessors</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> as a product has <strong>no required subprocessors</strong>. Subprocessors only enter the picture when a district opts into a feature that needs them, and the relationship is between the district and that subprocessor &mdash; not between the vendor and that subprocessor:</p>
+    <table class="policy-table">
+      <thead><tr><th>Subprocessor</th><th>Used when</th><th>Data exposed</th><th>Whose contract</th></tr></thead>
+      <tbody>
+        <tr><td>Google Workspace (Drive, Sheets, Apps Script)</td><td>District chooses the Google Apps Script storage mode</td><td>Board JSON, sheet rows, audit log &mdash; lives in the district&rsquo;s own Workspace tenant</td><td>District&rsquo;s existing Google Workspace agreement</td></tr>
+        <tr><td>Google Identity Services</td><td>District enables Google sign-in on the Community Board or self-hosted backend</td><td>Google ID token verification (email, sub, display name)</td><td>District&rsquo;s existing Google identity agreement</td></tr>
+        <tr><td>Microsoft Identity (MSAL)</td><td>District enables Microsoft sign-in</td><td>Microsoft Graph <code>/me</code> token verification (email, oid, display name)</td><td>District&rsquo;s existing Microsoft tenant agreement</td></tr>
+        <tr><td>Clever / ClassLink</td><td>District wires the self-hosted backend&rsquo;s Clever connector</td><td>Roster pull (teacher / student / section) under the district&rsquo;s own SIS agreement</td><td>District&rsquo;s existing Clever / ClassLink contract</td></tr>
+        <tr><td>Static-host CDN (Cloudflare Pages by default; can be any static host)</td><td>Always &mdash; the static site has to live somewhere</td><td>Standard HTTP request metadata (IP, UA, URL) at the edge</td><td>Whoever the district / operator picks</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>5. Security controls matrix</h2>
+    <table class="policy-table">
+      <thead><tr><th>Control</th><th>Implementation</th><th>Where to verify</th></tr></thead>
+      <tbody>
+        <tr><td>Transport encryption</td><td>HTTPS required for all production deployments. <code>referrer</code> meta set to <code>no-referrer</code>.</td><td>Inline <code>&lt;meta&gt;</code> tags on every public page</td></tr>
+        <tr><td>Content Security Policy</td><td><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' [+ optional backend host]; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'</code></td><td>Inline CSP meta on every page</td></tr>
+        <tr><td>Authentication</td><td>Email + scrypt-with-pepper passwords (self-hosted backend), or Google / Microsoft OAuth with HMAC-bearer sessions. Apps Script Web App uses Google&rsquo;s own auth.</td><td><code>server/mysql-backend/oauth-routes.js</code> and <code>compliance-routes.js</code></td></tr>
+        <tr><td>Authorization (RBAC)</td><td>Five-role tree: district admin, campus admin, teacher, student, parent. Enforced via <code>requireRoles</code> / <code>requirePermission</code> middleware on every protected endpoint (self-hosted backend); admin-passcode gate on the Apps Script endpoints.</td><td><code>server/mysql-backend/rbac.js</code> and <code>apps-script/Code.gs requireAdmin_</code></td></tr>
+        <tr><td>Server-side safety scan</td><td>Text keyword filter + link allowlist run on every board save and turn-in. Hits write a <code>TEXT_FILTER_HIT</code> audit row and (by default) reject the save.</td><td><code>safety.js</code> / <code>scanBoardForSafety_</code></td></tr>
+        <tr><td>Board / room freeze</td><td>Frozen flag on rooms / boards blocks all writes (HTTP 423 on the self-hosted backend; rejected save in Apps Script).</td><td><code>freezeBoard_</code> / <code>compliance-routes.js</code></td></tr>
+        <tr><td>Audit log</td><td>Append-only sheet tab (Apps Script) or <code>audit_events</code> table (MySQL). Includes actor, role, action, entity, before/after, timestamp.</td><td>Activity Records in Teacher Admin</td></tr>
+        <tr><td>Retention</td><td>Configurable archive / delete / audit-keep windows. Scheduled trigger (Apps Script) or in-process cron (Node) prunes data and writes a <code>RETENTION_ACTION</code> audit row.</td><td><code>runRetentionCleanup_</code> / <code>cron-jobs.js</code></td></tr>
+        <tr><td>Data export</td><td>Per-student ZIP of every board + turn-in + the user row (no hashed credentials). Logs <code>DATA_EXPORT</code>.</td><td><code>exportStudentData_</code></td></tr>
+        <tr><td>Data deletion</td><td>Admin button trashes Drive files and removes rows. Logs <code>DATA_DELETED</code>.</td><td><code>deleteStudentData_</code></td></tr>
+        <tr><td>Image upload approval queue</td><td>Phase 1.3 / 1.4 — not yet shipped. Student image uploads default to disabled until the queue is live.</td><td><code>COMPLIANCE-ROADMAP.md</code> Phase 1.3 / 1.4 rows</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>6. Breach notification SOP</h2>
+    <ol class="admin-checklist">
+      <li><strong>Discovery.</strong> A teacher, admin, parent, or external researcher reports a suspected breach via <a href="../pages/contact.html">Contact / Information Request</a> or the audit log surfaces an anomaly.</li>
+      <li><strong>Triage within 24 hours.</strong> Operator confirms scope: which deployment mode, which records, which audit trail rows are affected.</li>
+      <li><strong>Contain.</strong> Freeze affected boards / rooms (server-enforced write block). Revoke active sessions on the self-hosted backend. Disable affected Apps Script deployment if necessary.</li>
+      <li><strong>Notify within 72 hours.</strong> Operator notifies the named district Privacy / Security Contact from the District Data Privacy Addendum using the breach notice contact method declared there. Notice includes: what happened, what data was involved, what containment was done, what the district should do next.</li>
+      <li><strong>Investigate &amp; remediate.</strong> Operator investigates root cause, patches, re-tests. The Activity Records audit log is preserved for the investigation.</li>
+      <li><strong>Post-incident report.</strong> Written summary delivered within 30 days, including timeline, scope, remediation, and any changes to security controls.</li>
+    </ol>
+  </section>
+
+  <section class="policy-section">
+    <h2>7. Retention schedule</h2>
+    <table class="policy-table">
+      <thead><tr><th>Mode</th><th>Boards archive</th><th>Boards delete</th><th>Audit log</th><th>Parent requests</th></tr></thead>
+      <tbody>
+        <tr><td>Browser-only</td><td>n/a &mdash; user-managed files</td><td>n/a</td><td>n/a</td><td>n/a</td></tr>
+        <tr><td>Apps Script</td><td>Default 90 days &mdash; configurable in Compliance Console</td><td>Default 365 days &mdash; configurable</td><td>Default 365 days &mdash; configurable</td><td>Default 3 years &mdash; configurable</td></tr>
+        <tr><td>Self-hosted MySQL</td><td>Same defaults; cron in <code>server/mysql-backend/cron-jobs.js</code></td><td>Same</td><td>Same</td><td>Same</td></tr>
+      </tbody>
+    </table>
+    <p>All retention windows are district-configurable from Teacher Admin &rarr; Compliance Console &rarr; Retention. Every cleanup writes a <code>RETENTION_ACTION</code> audit row with counts.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>8. Parent / student request workflow</h2>
+    <ol class="admin-checklist">
+      <li>Parent visits <a href="../parents/index.html">Family Access Tools</a> and submits a request (view, export, correct, delete, pause, safety report, privacy question).</li>
+      <li>Request lands in the <code>ParentRequests</code> sheet tab / DB table as <code>pending_verification</code>.</li>
+      <li>Compliance admin gets an email notification (Apps Script <code>MailApp.sendEmail</code>) and reviews the request in Teacher Admin.</li>
+      <li>Identity verified via teacher-issued one-time 8-character code (SHA-256 hashed, 14-day expiry, single-use).</li>
+      <li>Verified request transitions to <code>verified</code>, then <code>approved</code> / <code>denied</code> / <code>completed</code> by an admin click.</li>
+      <li>Export: one-click ZIP of the student&rsquo;s boards + turn-ins + user row (no hashed credentials), emailed as a 15-minute download link.</li>
+      <li>Delete: admin button trashes Drive files, removes rows, logs <code>DATA_DELETED</code>.</li>
+      <li>Acknowledged within 10 school days; completed within 30 calendar days when feasible.</li>
+    </ol>
+  </section>
+
+  <section class="policy-section">
+    <h2>9. FERPA / COPPA / SCOPE / CIPA crosswalks</h2>
+
+    <h3>FERPA school-official crosswalk</h3>
+    <p>When DrawSplat<sup class="tm">TM</sup> is engaged as a service provider, the district designates the vendor as a school official under FERPA&rsquo;s school-official exception. Conditions:</p>
+    <ul class="admin-checklist">
+      <li><strong>Performs an institutional service or function.</strong> The product is operated as part of classroom instruction (the district&rsquo;s approved educational purpose stated in section 1).</li>
+      <li><strong>Under direct control of the school.</strong> The district controls the deployment mode (browser-only / Apps Script / MySQL), storage location, retention windows, and access rules; the District Data Privacy Addendum names the controlling district and the privacy contact.</li>
+      <li><strong>Use / redisclosure limits.</strong> Student data is used only for the school-authorized educational purpose. No advertising, behavioural profiling, AI training, or sale of data. No redisclosure outside the district&rsquo;s subprocessors.</li>
+      <li><strong>Inspect / correct / delete rights.</strong> Parents and eligible students can submit a request via Family Access Tools; the District&rsquo;s admin verifies and acts on the request from Teacher Admin.</li>
+    </ul>
+
+    <h3>COPPA school-consent notice (for under-13 users)</h3>
+    <p>Under COPPA the district may provide consent on behalf of parents when the service is for an educational purpose and the district retains direct control. The district&rsquo;s notice to parents typically says, in plain language:</p>
+    <blockquote style="border-left:4px solid var(--gold,#f59e0b);padding-left:14px;color:var(--ink,#1f2937);">
+      <p>Our school uses DrawSplat<sup class="tm">TM</sup>, a free interactive whiteboard for classroom drawing, notes, and collaboration. The school controls all storage and access. DrawSplat<sup class="tm">TM</sup> does not show ads, does not sell student data, does not use student work to train AI, and does not require student accounts in browser-only use. If you would like to view, correct, export, or delete your child&rsquo;s data, use Family Access Tools at <code>/parents/</code> on the school&rsquo;s DrawSplat<sup class="tm">TM</sup> site.</p>
+    </blockquote>
+
+    <h3>Texas SCOPE / TEC 32.151+</h3>
+    <p>See <a href="texas-compliance.html">legal/texas-compliance.html</a> for the plain-language explainer.</p>
+
+    <h3>CIPA</h3>
+    <p>CIPA is a school / library E-rate internet-safety and filtering obligation, not a vendor privacy law. DrawSplat<sup class="tm">TM</sup> supports CIPA via link allowlists, board freeze, text filtering, moderation, audit logs, and the under-development image-upload approval queue, but does <strong>not</strong> replace the district&rsquo;s network-level filter or its internet safety policy. Full statement: <a href="texas-compliance.html#cipa">CIPA support statement</a>.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>10. District contracting documents</h2>
+    <ul>
+      <li><a href="terms-privacy.html">Terms &amp; Privacy</a></li>
+      <li><a href="district-addendum.html">District Data Privacy Addendum</a> (signature-ready)</li>
+      <li><a href="privacy-builder.html">Privacy Notice Builder</a> (generate a local notice)</li>
+      <li><a href="widgets-security.html">Widget Security Boundary &amp; Data Inventory</a></li>
+      <li><a href="accessibility.html">Accessibility Statement</a></li>
+      <li><a href="texas-compliance.html">Texas Compliance Explainer</a></li>
+      <li><a href="../COMPLIANCE-ROADMAP.md">Compliance Roadmap</a></li>
+      <li><a href="../guides/compliance-guide.html">Compliance Console Operator Guide</a></li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>11. Recommended production posture</h2>
+    <p>For classroom production use today, the supported path is <strong>Google Apps Script + Sheets + Drive</strong> in the district&rsquo;s own Google Workspace tenant. The MySQL self-hosted path is feature-complete in code but has not yet been exercised against a live database in production. Districts that want to pilot the MySQL path should run a technical review (integration test against a non-production database, single-instance only, manual cron monitoring) before student production use. See <a href="../server/mysql-backend/README.md">server/mysql-backend/README.md</a> for the production checklist.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Working with us</h2>
+    <p>This packet plus the District Data Privacy Addendum is the contracting surface. If your district&rsquo;s review process needs a specific format, screenshot evidence, or a custom exhibit, send the request through the <a href="../pages/contact.html">Contact / Information Request</a> form and we&rsquo;ll respond within five business days.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> &mdash; NDPA / DPA Review Packet.</span>
+  <a href="../index.html">Home</a>
+  <a href="terms-privacy.html">Privacy</a>
+  <a href="district-addendum.html">District Addendum</a>
+</footer>
+</body>
+</html>

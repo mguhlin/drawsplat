@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Widget Security Boundary &amp; Data Inventory | DrawSplatTM</title>
+<meta name="description" content="Per-widget security boundary, network-request inventory, and local-storage usage for every DrawSplatTM standalone widget and game." />
+<link rel="canonical" href="https://drawsplat.org/legal/widgets-security.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <a href="../index.html">Home</a>
+    <a href="terms-privacy.html">Privacy</a>
+    <a href="district-addendum.html">District Addendum</a>
+    <a href="texas-compliance.html">Texas Compliance</a>
+    <a href="ndpa-packet.html">NDPA Packet</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Widget Security Boundary</p>
+    <h1>Per-widget security boundary and data inventory</h1>
+    <p>Districts and reviewers asked for a single page that answers: "What does each DrawSplat<sup class="tm">TM</sup> widget actually do with student data?" This page lists every widget and game served from the DrawSplat<sup class="tm">TM</sup> static site, what it stores, what external requests it makes, and what student data (if any) it collects.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Widget Security Boundary &mdash; the short version</h2>
+    <ul class="admin-checklist">
+      <li><strong>Same origin, same project.</strong> Every standalone widget under <code>/solutions/</code> and every game under <code>/games/</code> is served from the same origin as the DrawSplat<sup class="tm">TM</sup> static site. They are not iframed third parties.</li>
+      <li><strong>No third-party advertising, analytics, or trackers.</strong> Visit counts come from Cloudflare Pages&rsquo; server-side metrics on the static-host CDN; no beacon, no tracking pixel, no third-party JS is loaded on widget pages.</li>
+      <li><strong>Strict Content Security Policy.</strong> Pages declare <code>default-src 'self'</code>, <code>script-src 'self'</code>, <code>style-src 'self' 'unsafe-inline'</code>, <code>img-src 'self' data:</code>, <code>connect-src 'self'</code>, <code>object-src 'none'</code>, <code>frame-ancestors 'none'</code>. Widgets that need an outbound request (e.g. Apps Script) extend <code>connect-src</code> with the specific host.</li>
+      <li><strong>No student data leaves the browser unless a backend is configured.</strong> Standalone widgets run entirely in the visitor&rsquo;s browser. Only the whiteboard at <code>/app/whiteboard.html</code> talks to a backend, and only if the district has set up the Google Apps Script or MySQL backend.</li>
+      <li><strong>Local storage is per-widget and disclosed.</strong> Some widgets save the user&rsquo;s last setup in <code>localStorage</code> for convenience. None store student-identifying data.</li>
+      <li><strong>Permissions Policy default-off.</strong> No widget requests <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, or <code>payment</code>. The whiteboard&rsquo;s audio-note feature is the single exception &mdash; it requests microphone access only when the user explicitly clicks Record.</li>
+      <li><strong>Image uploads.</strong> Until the Phase 1.3 / 1.4 image-upload approval queue ships, student image uploads on the whiteboard are <strong>disabled by default</strong> in the supported Apps Script deployment. Teachers and admins can still attach images; student-side uploads stay off until the moderation queue lands.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Per-widget data inventory</h2>
+    <p>Every widget and game served from this site is listed below. Columns: where the widget runs, what local storage it uses, what external network requests it makes during normal play, and whether it touches student-identifying data.</p>
+
+    <h3>Classroom widgets (<code>/solutions/</code>)</h3>
+    <table class="policy-table">
+      <thead><tr><th>Widget</th><th>localStorage / sessionStorage</th><th>External requests</th><th>Student-identifying data</th></tr></thead>
+      <tbody>
+        <tr><td>Bingo Card Generator</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Bingo Caller</td><td>None</td><td>None</td><td>None &mdash; player names typed at runtime stay in memory</td></tr>
+        <tr><td>Coin Flipper</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Dice Roller</td><td>None</td><td>None</td><td>None &mdash; optional player names typed at runtime stay in memory</td></tr>
+        <tr><td>Dicebreaker Creator</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Draw &amp; Sketch</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Fortune Wheel (teacher)</td><td>Saved setup blobs (no student data)</td><td>None</td><td>None</td></tr>
+        <tr><td>Fortune Wheel (student)</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Markdown Studio</td><td>Auto-save of the current document only</td><td>None</td><td>None unless the user pastes such data into their own document</td></tr>
+        <tr><td>Meme Puzzle</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Rubric Builder</td><td>Saved rubrics drafted by the user</td><td>None</td><td>Only if the user types student names into a rubric; stays in their browser</td></tr>
+        <tr><td>Story Wheel</td><td>Saved prompt sets</td><td>None</td><td>None</td></tr>
+        <tr><td>Wheel Spinner</td><td>None</td><td>None</td><td>None &mdash; entries typed at runtime stay in memory</td></tr>
+        <tr><td>Word Search Maker</td><td>None</td><td>None</td><td>None</td></tr>
+      </tbody>
+    </table>
+
+    <h3>DrawSplat<sup class="tm">TM</sup> Games (<code>/games/</code> and <code>/solutions/dotsboxes/</code>)</h3>
+    <table class="policy-table">
+      <thead><tr><th>Game</th><th>localStorage / sessionStorage</th><th>External requests</th><th>Student-identifying data</th></tr></thead>
+      <tbody>
+        <tr><td>Castles &amp; Catapults</td><td>None</td><td>None</td><td>None &mdash; optional player names typed at runtime stay in memory</td></tr>
+        <tr><td>Dots and Boxes</td><td>None</td><td>None</td><td>None &mdash; optional player names typed at runtime stay in memory</td></tr>
+        <tr><td>Flood Fill</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Flow Free</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Fun Quiz</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Lights Out</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Tangram Packing</td><td>None</td><td>None</td><td>None</td></tr>
+        <tr><td>Untangle</td><td>None</td><td>None</td><td>None</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Whiteboard and admin pages</h3>
+    <table class="policy-table">
+      <thead><tr><th>Page</th><th>Storage</th><th>External requests</th><th>Student-identifying data</th></tr></thead>
+      <tbody>
+        <tr><td><code>/app/whiteboard.html</code></td><td>Local <code>.drawsplat.json</code> save format; optional <code>localStorage</code> for preferences</td><td>Only the configured Apps Script <code>/exec</code> URL (if a teacher has set one) or the self-hosted MySQL backend URL</td><td>Only the data the school or district explicitly entered &mdash; e.g. student name on a turn-in. No data leaves the browser unless a backend is configured.</td></tr>
+        <tr><td><code>/admin/admin.html</code> (Teacher Admin)</td><td>Local admin preferences; admin passcode prompt held in memory only</td><td>Configured Apps Script <code>/exec</code> URL only</td><td>Admin reads / writes age band, parent requests, audit log, etc. — only when explicitly invoked by the admin.</td></tr>
+        <tr><td><code>/parents/index.html</code> (Family Access Tools)</td><td>None</td><td>Configured Apps Script <code>/exec</code> URL only, when a parent submits a request</td><td>The parent submits their own name/email plus the student name they request data for. Used only to route the ticket to the school admin.</td></tr>
+        <tr><td><code>/community/</code> (Community Board)</td><td>Sign-in token (HMAC bearer) and "last visited" timestamp</td><td>The Community Apps Script <code>/exec</code> URL configured by the site operator</td><td>Author name + email on posts that the user voluntarily submitted to the board. Used for moderation routing.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>Network egress declaration</h2>
+    <p>By default a fresh install of DrawSplat<sup class="tm">TM</sup> makes <strong>zero</strong> outbound network requests from a widget page. Outbound requests happen only when:</p>
+    <ul class="admin-checklist">
+      <li>A teacher has pasted an Apps Script <code>/exec</code> URL into Teacher Admin. The whiteboard, Family Access Tools, and Community pages then call that URL only (<code>connect-src 'self' https://script.google.com https://*.googleusercontent.com</code> on the relevant pages).</li>
+      <li>A district has stood up the self-hosted Node + MySQL backend and pointed the whiteboard at it. In that case the whiteboard calls <code>https://&lt;district-domain&gt;/api/drawsplat/mysql</code>.</li>
+      <li>The visitor signs in with Google or Microsoft on the Community Board. The browser then talks to <code>accounts.google.com</code> (Google Identity Services) or, for the Microsoft path, the lazy-loaded MSAL CDN script and Microsoft Graph.</li>
+    </ul>
+    <p>No widget calls advertising, analytics, third-party-tracker, or social-network domains. The repository commit history and the inline <code>&lt;meta http-equiv="Content-Security-Policy"&gt;</code> on every page are the verifiable record.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>iframe / embed posture</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> pages set <code>frame-ancestors 'none'</code> in CSP. A school portal that wants to embed a DrawSplat<sup class="tm">TM</sup> widget should run the embed in an <code>&lt;iframe sandbox="allow-scripts allow-same-origin"&gt;</code> with only the permissions the widget actually needs &mdash; never enable <code>allow-modals</code>, <code>allow-popups</code>, or <code>allow-top-navigation</code> unless the specific widget documents that it requires them. The portal&rsquo;s own Permissions Policy should also disable <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, <code>payment</code>, and <code>usb</code> on the embed unless the specific widget needs them.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Where this fits in the privacy story</h2>
+    <ul>
+      <li><a href="terms-privacy.html">Terms &amp; Privacy</a> &mdash; the overall policy and the legal commitments.</li>
+      <li><a href="district-addendum.html">District Data Privacy Addendum</a> &mdash; signature-ready template for school / district contracting.</li>
+      <li><a href="texas-compliance.html">Texas Compliance</a> &mdash; plain-language SCOPE / FERPA / COPPA / CIPA explainer.</li>
+      <li><a href="ndpa-packet.html">NDPA / DPA Review Packet</a> &mdash; the bundle every reviewer typically asks for.</li>
+      <li><a href="privacy-builder.html">Privacy Notice Builder</a> &mdash; generate a local privacy notice for your school.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> &mdash; Widget Security Boundary &amp; Data Inventory.</span>
+  <a href="../index.html">Home</a>
+  <a href="terms-privacy.html">Privacy</a>
+  <a href="district-addendum.html">District Addendum</a>
+</footer>
+</body>
+</html>

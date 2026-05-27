@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Accessibility Statement | DrawSplatTM</title>
+<meta name="description" content="DrawSplatTM accessibility statement covering keyboard navigation, screen-reader labelling, contrast, motion, and known gaps. VPAT-lite for K-12 procurement review." />
+<link rel="canonical" href="https://drawsplat.org/legal/accessibility.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <a href="../index.html">Home</a>
+    <a href="terms-privacy.html">Privacy</a>
+    <a href="ndpa-packet.html">NDPA Packet</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Accessibility &amp; VPAT-lite</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> Accessibility Statement</h1>
+    <p>Plain-language summary of how DrawSplat<sup class="tm">TM</sup> approaches keyboard navigation, screen readers, contrast, motion, and reduced-bandwidth use, plus the known gaps. Written for district procurement reviewers who want a VPAT-style document but don&rsquo;t need the full ITI VPAT 2.5 form filled out.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Commitment</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> aims to follow the <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener noreferrer">WCAG 2.1 Level AA</a> baseline. We treat accessibility as a constraint on every new feature rather than a separate workstream, and we welcome reports of gaps through <a href="../pages/contact.html">Contact / Information Request</a>.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Conformance summary</h2>
+    <table class="policy-table">
+      <thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Static marketing &amp; legal pages</td><td>Supports</td><td>Semantic HTML, contrast &ge; 4.5:1 for body text, focus-visible outlines, no auto-playing media.</td></tr>
+        <tr><td>Whiteboard core tools</td><td>Partially supports</td><td>Keyboard shortcuts documented under Options &rarr; Keyboard Shortcuts. Tool buttons have <code>aria-label</code>, tooltips, and visible focus rings. Drawing on the canvas is mouse / touch / stylus driven; full keyboard-only board editing is a known gap.</td></tr>
+        <tr><td>Classroom widgets &amp; games</td><td>Partially supports</td><td>Each standalone widget exposes labelled controls. Canvas-driven games (Tangram, Untangle, Flow Free, Castles) require pointer input today; pointer events route through <code>pointerdown</code> / <code>pointermove</code> / <code>pointerup</code> so touch and stylus work.</td></tr>
+        <tr><td>Compliance Console</td><td>Supports</td><td>Forms, dialogs, and tables use native semantics. Filter inputs accept keyboard.</td></tr>
+        <tr><td>Family Access Tools</td><td>Supports</td><td>Form fields have visible labels and <code>aria-label</code>. Required fields use both colour and a symbol.</td></tr>
+        <tr><td>Community Board</td><td>Supports</td><td>Posts and replies render plain prose with semantic headings; the Markdown renderer strips dangerous HTML and never auto-embeds external media.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>Specific features</h2>
+    <h3>Keyboard navigation</h3>
+    <ul class="admin-checklist">
+      <li>Tab / Shift+Tab cycles every focusable control on every page; no positive <code>tabindex</code> values are used.</li>
+      <li>Tool and action buttons activate with Enter / Space.</li>
+      <li>Top-nav dropdowns use the native <code>&lt;details name="landing-topnav"&gt;</code> pattern so Enter / Space opens them and Escape closes them.</li>
+      <li>The Wheel Spinner canvas is a focusable <code>role="button"</code> &mdash; Space / Enter starts the spin.</li>
+      <li>Known gap: drawing strokes, sticky-note repositioning, and shape resizing on the whiteboard canvas are not yet keyboard-driven.</li>
+    </ul>
+
+    <h3>Screen readers</h3>
+    <ul class="admin-checklist">
+      <li>All interactive controls carry an <code>aria-label</code> matching their visible text or icon meaning.</li>
+      <li>Icon-only buttons fall back to text via the <code>.icon-label</code> screen-reader-only span and a visible tooltip on focus.</li>
+      <li>Live regions: status text in widgets and the Wheel Spinner result use <code>aria-live="polite"</code>.</li>
+      <li>Decorative images (illustrated heroes, brand logos in headers) use empty <code>alt=""</code>; informational hero images describe their content in <code>alt</code>.</li>
+      <li>Known gap: the whiteboard canvas itself is not announced as a structured drawing surface; screen-reader users hear "DrawSplat whiteboard region" but not individual shapes.</li>
+    </ul>
+
+    <h3>Contrast &amp; colour</h3>
+    <ul class="admin-checklist">
+      <li>Body text against background tested at WCAG AA (4.5:1 or better) on every legal and marketing page.</li>
+      <li>Status / result colours never rely on colour alone &mdash; e.g. the Untangle "intersection" indicator uses a count + a colour, and required form fields use a label + an asterisk.</li>
+      <li>The Lights Out game offers three themes (Cyber Neon, Terminal Amber, Minimal Slate) so users can pick the contrast that works for them.</li>
+    </ul>
+
+    <h3>Motion &amp; animation</h3>
+    <ul class="admin-checklist">
+      <li>Wheel Spinner uses an ease-out spin animation. Decorative confetti respects screen size and decays in under three seconds.</li>
+      <li>No game uses parallax or strobing effects.</li>
+      <li>Planned: honor <code>prefers-reduced-motion: reduce</code> on the Wheel Spinner and confetti.</li>
+    </ul>
+
+    <h3>Font scaling &amp; zoom</h3>
+    <ul class="admin-checklist">
+      <li>All pages set <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code> with no <code>user-scalable=no</code> &mdash; pinch-zoom and browser zoom work everywhere.</li>
+      <li>Layouts use CSS Grid / Flexbox with <code>minmax()</code>, <code>clamp()</code>, and percentage widths so zooming to 200% does not introduce horizontal scrollbars on the main content column.</li>
+    </ul>
+
+    <h3>Audio</h3>
+    <ul class="admin-checklist">
+      <li>Every game with sound has a 🔊 / 🔇 mute toggle in the controls bar.</li>
+      <li>Sounds are Web Audio synthesised &mdash; short blips and arpeggios &mdash; not narration. No essential information is conveyed only via audio.</li>
+    </ul>
+
+    <h3>Forms</h3>
+    <ul class="admin-checklist">
+      <li>Every form field has a visible <code>&lt;label&gt;</code> tied via <code>for</code>.</li>
+      <li>Error messages render in a <code>role="status"</code> live region close to the field.</li>
+      <li>The Contact form, Family Access Tools form, and post-composer all use semantic <code>&lt;form&gt;</code>, <code>&lt;input&gt;</code>, and <code>&lt;textarea&gt;</code> &mdash; no custom widgets impersonating fields.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Assistive-tech tested with</h2>
+    <p>Spot-tested with macOS VoiceOver in Safari and Chrome and with Windows NVDA in Firefox and Chrome. We have <em>not</em> yet completed a full structured audit. If your district&rsquo;s VPAT process needs a specific assistive-tech matrix, send a request via <a href="../pages/contact.html">Contact / Information Request</a>.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Known gaps</h2>
+    <ul class="admin-checklist">
+      <li><strong>Canvas-driven keyboard drawing.</strong> Whiteboard shape creation, repositioning, and erasing require pointer input. Keyboard-only users can navigate the menubar and dialogs but cannot draw freehand strokes.</li>
+      <li><strong>Untangle / Flow Free / Tangram on keyboard only.</strong> These games require pointer drag. Mouse / touch / stylus input works; a keyboard-only fallback is on the roadmap.</li>
+      <li><strong>Reduced-motion preference.</strong> Some game spin / confetti animations don&rsquo;t yet honour <code>prefers-reduced-motion</code>; planned for the next minor release.</li>
+      <li><strong>Localized screen-reader labels.</strong> Most UI strings are English; <code>data-i18n</code> labels in the Community Board are translated, but admin tooling is English-only.</li>
+      <li><strong>Structured VPAT 2.5 document.</strong> The ITI VPAT form has not been completed in full. Available on request as a separately scoped service.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Report a barrier</h2>
+    <p>If you hit an accessibility barrier, please file a report through <a href="../pages/contact.html">Contact / Information Request</a>. Include the page URL, the assistive tech (if any), and a short description of what didn&rsquo;t work. We aim to acknowledge within five business days and to prioritise blockers that prevent a student from completing a classroom task.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> Accessibility Statement.</span>
+  <a href="../index.html">Home</a>
+  <a href="terms-privacy.html">Privacy</a>
+  <a href="ndpa-packet.html">NDPA Packet</a>
+</footer>
+</body>
+</html>

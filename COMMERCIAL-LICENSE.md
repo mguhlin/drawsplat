@@ -1,25 +1,39 @@
-# DrawSplatTM Commercial License Summary
+# DrawSplatTM Licensing Summary
 
-DrawSplatTM is available under a dual-license model:
+**The DrawSplatTM software and every compliance feature shipped in it are free for all users — teachers, students, classrooms, campuses, districts, and self-hosting organizations. No individual or per-seat license is required to run DrawSplatTM on district devices.**
 
-- Open source use: AGPL-3.0-or-later.
-- Commercial, school, district, managed-hosting, closed-source, embedded, or site-license use: separate written commercial license.
+DrawSplatTM is published under the **GNU AGPL-3.0-or-later**. Any school, district, or organization may use, host, modify, and redistribute the software under those terms. The full text of the licence ships in the repository at `LICENSE`.
 
-This file is a summary placeholder, not a complete sales agreement. A signed agreement, invoice, purchase order, or written license grant from Miguel Guhlin controls the commercial terms for a paid deployment.
+## What is free
 
-## Current Pricing Reference
+- The complete static web app, all classroom widgets, the Compliance Console, Family Access Tools, District Privacy Packet, and every feature listed in `README.md` and `pages/features.html`.
+- The Google Apps Script backend (`apps-script/Code.gs`) and the self-hosted Node + MySQL backend (`server/mysql-backend/`).
+- Updates, bug fixes, and new features pushed to the public repository.
 
-- Individual/free use: $0.
-- One-time individual license for users who want to support the project and use the Google Apps Script version: $33.
-- Self-hosted site license for one campus using the current as-is build: $77.
-- Per district license with MySQL and Google Apps Script options: $199.
+## Optional paid services
 
-Custom hosting, SSO, realtime collaboration, backend deployment, privacy/legal review, support, training, or future upgrades are not included unless agreed separately in writing.
+Districts that want hands-on help can engage Miguel Guhlin for **separately scoped professional services** rather than a product license. Services are billed under a services agreement, not as a product fee, so they do not put a "paid license" on student devices.
+
+Examples:
+
+- Implementation support / deployment review
+- Compliance review and DPA / NDPA preparation
+- Professional learning and admin training
+- Custom development, SSO, SIS integration, custom hosting
+
+These are described in plain language at `pages/pricing.html` and quoted on request through the [Contact / Information Request](https://drawsplat.org/pages/contact.html) form. **No service engagement is required to use the product.**
+
+## What this means for procurement
+
+- DrawSplatTM does not sell, require, or check individual or per-seat licences.
+- A district can deploy DrawSplatTM to any number of students and teachers at no cost.
+- A district may purchase support, PD, or compliance review under a separate services agreement; the product itself remains AGPL-licensed and free.
+- The District Data Privacy Addendum at `legal/district-addendum.html` and the NDPA / DPA review packet at `legal/ndpa-packet.html` cover the contracting language districts typically need.
 
 ## Contact
 
-For commercial licensing, contact Miguel Guhlin:
+For services quotes, compliance review, or licensing questions:
 
-mguhlin@gmail.com
-
-Official website: https://drawsplat.org
+- Contact form: <https://drawsplat.org/pages/contact.html>
+- Email: mguhlin@gmail.com
+- Official site: <https://drawsplat.org>
