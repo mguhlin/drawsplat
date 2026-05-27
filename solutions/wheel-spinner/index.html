@@ -36,7 +36,6 @@
     .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .eyebrow a { color: inherit; text-decoration: none; }
     h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
-    .subtitle { margin: 0; color: var(--gray-90); font-size: 1rem; line-height: 1.45; max-width: 720px; }
     .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
 
     .layout { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
@@ -49,6 +48,9 @@
     textarea { width: 100%; min-height: 220px; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; resize: vertical; line-height: 1.4; }
     textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
 
+    select { width: 100%; padding: 9px 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; }
+    select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+
     .btn { min-height: 44px; padding: 9px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 8px 18px rgba(64, 64, 65, .08); }
     .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
     .btn.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
@@ -56,30 +58,44 @@
     .btn:disabled { opacity: .5; cursor: not-allowed; }
     .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 
-    .stage { display: grid; grid-template-rows: 1fr auto; gap: 16px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-    .wheel-wrap { position: relative; width: min(580px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; }
-    canvas { width: 100%; height: 100%; display: block; }
-    .pointer { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid var(--navy); filter: drop-shadow(0 4px 6px rgba(124, 58, 237, .35)); z-index: 2; pointer-events: none; }
+    .palette-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .palette-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .8rem; cursor: pointer; }
+    .palette-chip.active { border-color: var(--navy); background: var(--gray-10); color: var(--navy); }
+    .palette-swatches { display: inline-flex; gap: 2px; }
+    .palette-swatch { width: 9px; height: 9px; border-radius: 2px; }
 
-    .result { text-align: center; padding: 14px 16px; border: 2px solid var(--border); border-radius: var(--radius); background: linear-gradient(180deg, #f8f6ff, #eef2ff); }
+    .stage { display: grid; grid-template-rows: auto auto 1fr; gap: 14px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); position: relative; }
+
+    .result { text-align: center; padding: 14px 16px; border: 2px solid var(--border); border-radius: var(--radius); background: linear-gradient(180deg, #f8f6ff, #eef2ff); position: relative; }
     .result-eyebrow { color: var(--gold); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    .result-text { margin: 4px 0 0; color: var(--navy); font-size: clamp(1.4rem, 4vw, 2.4rem); font-weight: 900; line-height: 1.1; min-height: 1.4em; word-break: break-word; }
+    .result-text { margin: 4px 0 0; color: var(--navy); font-size: clamp(1.4rem, 4.6vw, 2.6rem); font-weight: 900; line-height: 1.1; min-height: 1.4em; word-break: break-word; }
+    .result.celebrating { animation: result-pop .55s cubic-bezier(.18,1.2,.4,1); }
+    @keyframes result-pop { 0% { transform: scale(.92); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
 
-    .spin-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding-top: 4px; }
-    .spin-btn { min-height: 56px; padding: 0 28px; font-size: 1.1rem; }
+    .action-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .action-row .btn { min-height: 40px; padding: 6px 14px; font-size: .92rem; }
+
+    .wheel-wrap { position: relative; width: min(580px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; }
+    canvas#wheel { width: 100%; height: 100%; display: block; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+    canvas#wheel.spinning { cursor: wait; }
+    .pointer { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid var(--navy); filter: drop-shadow(0 4px 6px rgba(124, 58, 237, .35)); z-index: 2; pointer-events: none; }
+    .click-hint { position: absolute; left: 50%; bottom: -2px; transform: translate(-50%, 0); padding: 4px 12px; background: rgba(124, 58, 237, .12); color: var(--navy); border-radius: 999px; font-size: .78rem; font-weight: 800; pointer-events: none; letter-spacing: .04em; }
+    .wheel-wrap.spinning .click-hint { opacity: 0; }
+
+    #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 99; }
 
     footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
     footer.foot a { color: var(--navy); font-weight: 800; }
   </style>
 </head>
 <body>
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
   <div class="top-bar"></div>
   <div class="page">
     <header class="site">
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
         <h1>Wheel Spinner</h1>
-        <p class="subtitle">Drop a list of names, prompts, or random picks on the wheel and give it a spin. Standalone — no whiteboard required.</p>
       </div>
       <a class="home-link" href="../../index.html">Home</a>
     </header>
@@ -93,24 +109,32 @@
         </div>
         <div class="btn-row">
           <button type="button" class="btn primary" id="applyBtn">Apply Entries</button>
+          <button type="button" class="btn" id="importBtn">Import…</button>
           <button type="button" class="btn" id="shuffleBtn">Shuffle</button>
           <button type="button" class="btn danger" id="clearBtn">Clear</button>
         </div>
-        <p class="subtitle" style="margin-top:14px;font-size:.85rem;color:var(--gray-50)">Tip: paste a roster, list of prompts, or random options. Up to 50 entries fit comfortably on the wheel.</p>
+        <input type="file" id="importFile" accept=".txt,.csv,.md,text/plain,text/csv" hidden>
+
+        <div class="field" style="margin-top:18px">
+          <label>Color Palette</label>
+          <div class="palette-row" id="paletteRow" role="radiogroup" aria-label="Wheel color palette"></div>
+        </div>
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.4">Tip: paste a roster, list of prompts, or random options. Click the wheel — or hit Spin — to roll. Up to 50 entries fit comfortably.</p>
       </section>
 
       <section class="stage" aria-label="Spinner stage">
-        <div class="wheel-wrap">
-          <div class="pointer" aria-hidden="true"></div>
-          <canvas id="wheel" width="1100" height="1100" aria-label="Spinner wheel"></canvas>
-        </div>
-        <div class="result" aria-live="polite">
+        <div class="result" id="resultBox" aria-live="polite">
           <div class="result-eyebrow">Result</div>
-          <p class="result-text" id="resultText">Press Spin</p>
+          <p class="result-text" id="resultText">Click the wheel to spin</p>
         </div>
-        <div class="spin-row">
-          <button type="button" class="btn primary spin-btn" id="spinBtn">Spin the Wheel</button>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="spinBtn">Spin</button>
           <button type="button" class="btn" id="removeWinnerBtn">Remove Winner</button>
+        </div>
+        <div class="wheel-wrap" id="wheelWrap">
+          <div class="pointer" aria-hidden="true"></div>
+          <canvas id="wheel" width="1100" height="1100" aria-label="Spinner wheel — click to spin"></canvas>
+          <div class="click-hint">Click to spin</div>
         </div>
       </section>
     </div>
@@ -124,14 +148,54 @@
     const $ = (id) => document.getElementById(id);
     const canvas = $("wheel");
     const ctx = canvas.getContext("2d");
+    const wheelWrap = $("wheelWrap");
     const entriesInput = $("entriesInput");
+    const resultBox = $("resultBox");
     const resultText = $("resultText");
     const spinBtn = $("spinBtn");
+    const importFile = $("importFile");
+    const paletteRow = $("paletteRow");
 
-    const COLORS = ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e", "#0ea5e9"];
+    const PALETTES = {
+      vibrant: { label: "Vibrant", colors: ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e", "#0ea5e9"] },
+      pastel:  { label: "Pastel",  colors: ["#d8b4fe", "#fbcfe8", "#fecaca", "#ddd6fe", "#fde68a", "#fed7aa", "#bbf7d0", "#bae6fd"] },
+      earth:   { label: "Earth",   colors: ["#8b5e3c", "#b08968", "#a0522d", "#6f4e37", "#c89f8c", "#d4a373", "#7c6f5b", "#a98467"] },
+      ocean:   { label: "Ocean",   colors: ["#0ea5e9", "#06b6d4", "#14b8a6", "#22d3ee", "#38bdf8", "#67e8f9", "#5eead4", "#2dd4bf"] },
+      sunset:  { label: "Sunset",  colors: ["#f97316", "#ea580c", "#dc2626", "#f59e0b", "#fb923c", "#fbbf24", "#f472b6", "#e879f9"] },
+      forest:  { label: "Forest",  colors: ["#166534", "#15803d", "#16a34a", "#22c55e", "#4d7c0f", "#65a30d", "#84cc16", "#365314"] },
+      mono:    { label: "Mono",    colors: ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0"] },
+    };
+
+    let activePalette = "vibrant";
     let entries = ["Ada", "Bao", "Camila", "Diego", "Emma", "Faisal"];
     let rotation = 0;
     let spinning = false;
+
+    function colors() { return PALETTES[activePalette].colors; }
+
+    // Pastel + Mono need dark text so the labels stay readable. Everything else uses white.
+    function labelColor() {
+      return (activePalette === "pastel" || activePalette === "mono") ? "#111827" : "#ffffff";
+    }
+    function labelShadow() {
+      return (activePalette === "pastel" || activePalette === "mono") ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.35)";
+    }
+
+    function renderPaletteChips() {
+      paletteRow.innerHTML = Object.entries(PALETTES).map(([id, p]) => {
+        const swatches = p.colors.slice(0, 5).map(c => `<span class="palette-swatch" style="background:${c}"></span>`).join("");
+        return `<button type="button" class="palette-chip${id === activePalette ? " active" : ""}" data-palette="${id}" role="radio" aria-checked="${id === activePalette}">
+          <span class="palette-swatches">${swatches}</span> ${p.label}
+        </button>`;
+      }).join("");
+      paletteRow.querySelectorAll("[data-palette]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activePalette = btn.dataset.palette;
+          renderPaletteChips();
+          drawWheel();
+        });
+      });
+    }
 
     function readEntries() {
       const lines = entriesInput.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
@@ -146,7 +210,7 @@
       }
       entries = list;
       drawWheel();
-      resultText.textContent = "Press Spin";
+      resultText.textContent = "Click the wheel to spin";
     }
 
     function drawWheel() {
@@ -160,7 +224,9 @@
       ctx.translate(cx, cy);
       ctx.rotate(rotation);
       const n = entries.length;
+      if (n < 1) { ctx.restore(); return; }
       const slice = (Math.PI * 2) / n;
+      const palette = colors();
       for (let i = 0; i < n; i++) {
         const start = i * slice;
         const end = start + slice;
@@ -168,32 +234,29 @@
         ctx.moveTo(0, 0);
         ctx.arc(0, 0, r, start, end);
         ctx.closePath();
-        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.fillStyle = palette[i % palette.length];
         ctx.fill();
         ctx.lineWidth = 4;
         ctx.strokeStyle = "rgba(255,255,255,0.7)";
         ctx.stroke();
-        // Label
         ctx.save();
         ctx.rotate(start + slice / 2);
         ctx.textAlign = "right";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = labelColor();
         const label = entries[i].length > 22 ? entries[i].slice(0, 21) + "…" : entries[i];
         const size = n > 24 ? 22 : n > 16 ? 30 : n > 10 ? 40 : 52;
         ctx.font = `900 ${size}px Arial, Helvetica, sans-serif`;
-        ctx.shadowColor = "rgba(0,0,0,0.35)";
+        ctx.shadowColor = labelShadow();
         ctx.shadowBlur = 4;
         ctx.fillText(label, r - 18, 0);
         ctx.restore();
       }
-      // Outer ring
       ctx.beginPath();
       ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.lineWidth = 12;
       ctx.strokeStyle = "#7c3aed";
       ctx.stroke();
-      // Hub
       ctx.beginPath();
       ctx.arc(0, 0, r * 0.12, 0, Math.PI * 2);
       ctx.fillStyle = "#fff";
@@ -205,12 +268,13 @@
     }
 
     function spin() {
-      if (spinning) return;
+      if (spinning || entries.length < 2) return;
       spinning = true;
       spinBtn.disabled = true;
+      wheelWrap.classList.add("spinning");
+      canvas.classList.add("spinning");
       const targetIndex = Math.floor(Math.random() * entries.length);
       const slice = (Math.PI * 2) / entries.length;
-      // We want the pointer (top, -PI/2 from canvas perspective) to land on the centre of targetIndex.
       const sliceCentre = targetIndex * slice + slice / 2;
       const turns = 5 + Math.random() * 3;
       const finalRotation = (-Math.PI / 2) - sliceCentre + turns * Math.PI * 2;
@@ -229,13 +293,107 @@
           rotation = ((rotation % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
           drawWheel();
           resultText.textContent = entries[targetIndex];
+          resultBox.classList.remove("celebrating");
+          // restart animation
+          void resultBox.offsetWidth;
+          resultBox.classList.add("celebrating");
+          launchConfetti();
           spinning = false;
           spinBtn.disabled = false;
+          wheelWrap.classList.remove("spinning");
+          canvas.classList.remove("spinning");
         }
       }
       requestAnimationFrame(frame);
     }
 
+    /* --- Confetti ----------------------------------------------------- */
+    const confettiCanvas = $("confettiCanvas");
+    const confettiCtx = confettiCanvas.getContext("2d");
+    let confettiParticles = [];
+    let confettiRunning = false;
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    resizeConfetti();
+    window.addEventListener("resize", resizeConfetti);
+
+    function launchConfetti() {
+      // Launch around the result text element so it visually celebrates the chosen name.
+      const rect = resultText.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const palette = colors();
+      const particles = 140;
+      for (let i = 0; i < particles; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 6 + Math.random() * 10;
+        confettiParticles.push({
+          x: cx + (Math.random() - 0.5) * rect.width * 0.6,
+          y: cy + (Math.random() - 0.5) * rect.height * 0.4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 4,
+          rot: Math.random() * Math.PI,
+          vr: (Math.random() - 0.5) * 0.4,
+          color: palette[(Math.random() * palette.length) | 0],
+          size: 6 + Math.random() * 8,
+          life: 1,
+          shape: Math.random() < 0.5 ? "rect" : "circle",
+        });
+      }
+      if (!confettiRunning) {
+        confettiRunning = true;
+        requestAnimationFrame(stepConfetti);
+      }
+    }
+
+    function stepConfetti() {
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      const gravity = 0.34;
+      const drag = 0.992;
+      for (const p of confettiParticles) {
+        p.vy += gravity;
+        p.vx *= drag;
+        p.vy *= drag;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.life -= 0.008;
+        if (p.life <= 0 || p.y > confettiCanvas.height + 60) continue;
+        confettiCtx.save();
+        confettiCtx.globalAlpha = Math.max(0, p.life);
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate(p.rot);
+        confettiCtx.fillStyle = p.color;
+        if (p.shape === "rect") {
+          confettiCtx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size / 1.6);
+        } else {
+          confettiCtx.beginPath();
+          confettiCtx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          confettiCtx.fill();
+        }
+        confettiCtx.restore();
+      }
+      confettiParticles = confettiParticles.filter(p => p.life > 0 && p.y < confettiCanvas.height + 60);
+      if (confettiParticles.length > 0) {
+        requestAnimationFrame(stepConfetti);
+      } else {
+        confettiRunning = false;
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+
+    /* --- Wiring ------------------------------------------------------- */
+    canvas.addEventListener("click", spin);
+    canvas.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") { e.preventDefault(); spin(); }
+    });
+    canvas.tabIndex = 0;
+    canvas.setAttribute("role", "button");
+
+    spinBtn.addEventListener("click", spin);
     $("applyBtn").addEventListener("click", applyEntries);
     $("shuffleBtn").addEventListener("click", () => {
       const list = readEntries();
@@ -264,10 +422,31 @@
       }
       drawWheel();
     });
-    spinBtn.addEventListener("click", spin);
+
+    $("importBtn").addEventListener("click", () => importFile.click());
+    importFile.addEventListener("change", () => {
+      const file = importFile.files && importFile.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = String(reader.result || "");
+        // Split on newlines, commas, semicolons, or tabs so CSV / TSV / plain lists all work.
+        const list = text.split(/[\r\n,;\t]+/).map(s => s.trim()).filter(Boolean);
+        if (!list.length) {
+          resultText.textContent = "Nothing to import.";
+          return;
+        }
+        entriesInput.value = list.join("\n");
+        applyEntries();
+        resultText.textContent = `Imported ${list.length} entries`;
+      };
+      reader.readAsText(file);
+      importFile.value = "";
+    });
 
     // Seed
     entriesInput.value = entries.join("\n");
+    renderPaletteChips();
     drawWheel();
   </script>
 </body>
