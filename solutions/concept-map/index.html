@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Concept Map Studio — DrawSplatTM</title>
-  <meta name="description" content="Interactive concept map and mind map editor. Drag nodes, click to connect, label connectors, attach images and links. Export as SVG or PNG.">
+  <meta name="description" content="Interactive concept map and graphic organizer studio. Start from a template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence chain, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Drag nodes, click to connect, label connectors. Export as SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -291,6 +291,18 @@
       line-height: 1.45;
     }
     .footer-note a { color: var(--navy); }
+    .template-select {
+      width: 100%;
+      min-height: 40px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 700;
+      font-size: .88rem;
+    }
+    .template-select:focus { border-color: var(--navy); outline: none; }
   </style>
 </head>
 <body>
@@ -300,7 +312,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1>Concept Map Studio</h1>
-        <p class="subtitle">Drag nodes, click to connect, label every link, attach images, and set web links. Export the finished map as SVG or PNG. Works the same way as the concept map in the DrawSplat<sup>TM</sup> whiteboard.</p>
+        <p class="subtitle">Drag nodes, click to connect, label every connector, attach images, and set web links. Start from a classroom template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Export as SVG or PNG.</p>
       </div>
       <div class="header-actions">
         <a class="secondary-link" href="../../pages/features.html">All Tools</a>
@@ -310,7 +322,29 @@
 
     <main class="app-grid">
       <aside class="panel" aria-label="Tools">
-        <h2>Mode</h2>
+        <h2>Templates</h2>
+        <div class="tool-row full">
+          <select class="template-select" id="templateSelect" aria-label="Graphic organizer template">
+            <option value="concept-map">Concept Map (starter)</option>
+            <option value="mind-map">Mind Map (6 spokes)</option>
+            <option value="fishbone">Fishbone / Ishikawa</option>
+            <option value="frayer">Frayer Model</option>
+            <option value="kwl">KWL Chart</option>
+            <option value="5ws">5 Ws (and How)</option>
+            <option value="cycle">Cycle (4 steps)</option>
+            <option value="sequence">Sequence Chain (5 steps)</option>
+            <option value="cause-effect">Cause &amp; Effect</option>
+            <option value="compare-contrast">Compare &amp; Contrast</option>
+            <option value="hierarchy">Hierarchy / Tree</option>
+            <option value="story-map">Story Map</option>
+          </select>
+        </div>
+        <div class="tool-row">
+          <button class="tool-btn" id="applyTemplateBtn" type="button">Apply Template</button>
+          <button class="tool-btn danger" id="clearMapBtn" type="button">Clear All</button>
+        </div>
+
+        <h3>Mode</h3>
         <div class="tool-row">
           <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button">Select / Drag</button>
           <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button">Connect Nodes</button>
@@ -344,12 +378,6 @@
 
         <h3>Selection</h3>
         <div class="selection-info" id="selectionInfo">Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.</div>
-
-        <h3>Map</h3>
-        <div class="tool-row">
-          <button class="tool-btn" id="resetBtn" type="button">Reset Map</button>
-          <button class="tool-btn" id="clearMapBtn" type="button">Clear All</button>
-        </div>
 
         <p class="footer-note">Concept maps render and stay in your browser only. Nothing is uploaded. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
       </aside>
@@ -450,29 +478,261 @@
   function nodeById(id){ return state.nodes.find(n => n.id === id); }
   function connectorById(id){ return state.connectors.find(c => c.id === id); }
 
-  function defaultMap(){
+  /* Each template returns a spec:
+     { nodes: { key: {label, x, y, isRoot?} }, connectors: [{from, to, label?}], rootKey? }
+     Keys are template-local; loader maps them to fresh node ids. */
+  const TEMPLATES = {
+    'concept-map': {
+      title: 'Concept Map',
+      build: () => ({
+        rootKey: 'root',
+        nodes: {
+          root: {label: 'Main Idea', x: 600, y: 360, isRoot: true},
+          a:    {label: 'Idea 1',    x: 290, y: 200},
+          b:    {label: 'Idea 2',    x: 910, y: 200},
+          c:    {label: 'Idea 3',    x: 290, y: 520},
+          d:    {label: 'Idea 4',    x: 910, y: 520}
+        },
+        connectors: [
+          {from: 'root', to: 'a'},
+          {from: 'root', to: 'b'},
+          {from: 'root', to: 'c'},
+          {from: 'root', to: 'd'}
+        ]
+      })
+    },
+    'mind-map': {
+      title: 'Mind Map',
+      build: () => ({
+        rootKey: 'root',
+        nodes: {
+          root: {label: 'Topic',         x: 600, y: 360, isRoot: true},
+          n1:   {label: 'Subtopic 1',    x: 600, y: 140},
+          n2:   {label: 'Subtopic 2',    x: 980, y: 240},
+          n3:   {label: 'Subtopic 3',    x: 980, y: 480},
+          n4:   {label: 'Subtopic 4',    x: 600, y: 580},
+          n5:   {label: 'Subtopic 5',    x: 220, y: 480},
+          n6:   {label: 'Subtopic 6',    x: 220, y: 240}
+        },
+        connectors: ['n1','n2','n3','n4','n5','n6'].map(k => ({from: 'root', to: k}))
+      })
+    },
+    'fishbone': {
+      title: 'Fishbone (Cause Analysis)',
+      build: () => ({
+        rootKey: 'effect',
+        nodes: {
+          effect:    {label: 'Effect / Problem', x: 1020, y: 360, isRoot: true},
+          people:    {label: 'People',           x: 240,  y: 130},
+          process:   {label: 'Process',          x: 540,  y: 130},
+          equipment: {label: 'Equipment',        x: 800,  y: 200},
+          environment:{label: 'Environment',     x: 800,  y: 520},
+          materials: {label: 'Materials',        x: 540,  y: 590},
+          methods:   {label: 'Methods',          x: 240,  y: 590}
+        },
+        connectors: ['people','process','equipment','environment','materials','methods']
+          .map(k => ({from: k, to: 'effect', label: 'contributes to'}))
+      })
+    },
+    'frayer': {
+      title: 'Frayer Model',
+      build: () => ({
+        rootKey: 'word',
+        nodes: {
+          word:    {label: 'Word / Concept',   x: 600, y: 360, isRoot: true},
+          def:     {label: 'Definition',       x: 290, y: 180},
+          char:    {label: 'Characteristics',  x: 910, y: 180},
+          ex:      {label: 'Examples',         x: 290, y: 540},
+          nonex:   {label: 'Non-Examples',     x: 910, y: 540}
+        },
+        connectors: [
+          {from: 'word', to: 'def'},
+          {from: 'word', to: 'char'},
+          {from: 'word', to: 'ex'},
+          {from: 'word', to: 'nonex'}
+        ]
+      })
+    },
+    'kwl': {
+      title: 'KWL Chart',
+      build: () => ({
+        rootKey: 'w',
+        nodes: {
+          k: {label: 'What I Know',          x: 260, y: 360},
+          w: {label: 'What I Want to Know',  x: 600, y: 360, isRoot: true},
+          l: {label: 'What I Learned',       x: 940, y: 360}
+        },
+        connectors: [
+          {from: 'k', to: 'w', label: 'leads to'},
+          {from: 'w', to: 'l', label: 'becomes'}
+        ]
+      })
+    },
+    '5ws': {
+      title: '5 Ws (and How)',
+      build: () => ({
+        rootKey: 'topic',
+        nodes: {
+          topic: {label: 'Topic / Event', x: 600, y: 360, isRoot: true},
+          who:   {label: 'Who?',          x: 260, y: 180},
+          what:  {label: 'What?',         x: 600, y: 130},
+          when:  {label: 'When?',         x: 940, y: 180},
+          where: {label: 'Where?',        x: 940, y: 540},
+          why:   {label: 'Why?',          x: 600, y: 590},
+          how:   {label: 'How?',          x: 260, y: 540}
+        },
+        connectors: ['who','what','when','where','why','how'].map(k => ({from: 'topic', to: k}))
+      })
+    },
+    'cycle': {
+      title: 'Cycle (4 steps)',
+      build: () => ({
+        rootKey: 's1',
+        nodes: {
+          s1: {label: 'Step 1', x: 600, y: 140, isRoot: true},
+          s2: {label: 'Step 2', x: 980, y: 360},
+          s3: {label: 'Step 3', x: 600, y: 580},
+          s4: {label: 'Step 4', x: 220, y: 360}
+        },
+        connectors: [
+          {from: 's1', to: 's2', label: 'then'},
+          {from: 's2', to: 's3', label: 'then'},
+          {from: 's3', to: 's4', label: 'then'},
+          {from: 's4', to: 's1', label: 'repeats'}
+        ]
+      })
+    },
+    'sequence': {
+      title: 'Sequence Chain (5 steps)',
+      build: () => ({
+        rootKey: 's1',
+        nodes: {
+          s1: {label: 'Step 1', x: 180, y: 360, isRoot: true},
+          s2: {label: 'Step 2', x: 390, y: 360},
+          s3: {label: 'Step 3', x: 600, y: 360},
+          s4: {label: 'Step 4', x: 810, y: 360},
+          s5: {label: 'Step 5', x: 1020, y: 360}
+        },
+        connectors: [
+          {from: 's1', to: 's2', label: 'then'},
+          {from: 's2', to: 's3', label: 'then'},
+          {from: 's3', to: 's4', label: 'then'},
+          {from: 's4', to: 's5', label: 'then'}
+        ]
+      })
+    },
+    'cause-effect': {
+      title: 'Cause & Effect',
+      build: () => ({
+        rootKey: 'effect',
+        nodes: {
+          effect: {label: 'Effect',  x: 940, y: 360, isRoot: true},
+          c1:     {label: 'Cause 1', x: 240, y: 180},
+          c2:     {label: 'Cause 2', x: 240, y: 360},
+          c3:     {label: 'Cause 3', x: 240, y: 540}
+        },
+        connectors: ['c1','c2','c3'].map(k => ({from: k, to: 'effect', label: 'causes'}))
+      })
+    },
+    'compare-contrast': {
+      title: 'Compare & Contrast',
+      build: () => ({
+        rootKey: 'topic',
+        nodes: {
+          topic:  {label: 'Topic',        x: 600, y: 130, isRoot: true},
+          a:      {label: 'Subject A',    x: 290, y: 340},
+          b:      {label: 'Subject B',    x: 910, y: 340},
+          aOnly:  {label: 'A Only',       x: 180, y: 560},
+          shared: {label: 'Both Share',   x: 600, y: 560},
+          bOnly:  {label: 'B Only',       x: 1020,y: 560}
+        },
+        connectors: [
+          {from: 'topic', to: 'a'},
+          {from: 'topic', to: 'b'},
+          {from: 'a', to: 'aOnly',  label: 'unique'},
+          {from: 'a', to: 'shared', label: 'shares'},
+          {from: 'b', to: 'shared', label: 'shares'},
+          {from: 'b', to: 'bOnly',  label: 'unique'}
+        ]
+      })
+    },
+    'hierarchy': {
+      title: 'Hierarchy / Tree',
+      build: () => ({
+        rootKey: 'root',
+        nodes: {
+          root: {label: 'Top',       x: 600, y: 130, isRoot: true},
+          b1:   {label: 'Branch A',  x: 320, y: 320},
+          b2:   {label: 'Branch B',  x: 880, y: 320},
+          l1:   {label: 'Leaf A1',   x: 180, y: 540},
+          l2:   {label: 'Leaf A2',   x: 460, y: 540},
+          l3:   {label: 'Leaf B1',   x: 740, y: 540},
+          l4:   {label: 'Leaf B2',   x: 1020,y: 540}
+        },
+        connectors: [
+          {from: 'root', to: 'b1'},
+          {from: 'root', to: 'b2'},
+          {from: 'b1', to: 'l1'},
+          {from: 'b1', to: 'l2'},
+          {from: 'b2', to: 'l3'},
+          {from: 'b2', to: 'l4'}
+        ]
+      })
+    },
+    'story-map': {
+      title: 'Story Map',
+      build: () => ({
+        rootKey: 'problem',
+        nodes: {
+          problem:  {label: 'Problem',     x: 600, y: 360, isRoot: true},
+          setting:  {label: 'Setting',     x: 260, y: 160},
+          chars:    {label: 'Characters',  x: 940, y: 160},
+          events:   {label: 'Events',      x: 260, y: 560},
+          solution: {label: 'Solution',    x: 940, y: 560}
+        },
+        connectors: [
+          {from: 'problem', to: 'setting'},
+          {from: 'problem', to: 'chars'},
+          {from: 'problem', to: 'events'},
+          {from: 'problem', to: 'solution'}
+        ]
+      })
+    }
+  };
+
+  function loadTemplate(key){
+    const tpl = TEMPLATES[key];
+    if (!tpl) return;
+    const spec = tpl.build();
     state.nodes = [];
     state.connectors = [];
     state.nextId = 1;
     state.selectedId = null;
     state.selectedKind = null;
     state.pendingFrom = null;
-    const root = makeNode({label: 'Main Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
-    state.nodes.push(root);
-    const positions = [
-      {label: 'Idea 1', x: CANVAS_W/2 - 320, y: CANVAS_H/2 - 170},
-      {label: 'Idea 2', x: CANVAS_W/2 + 320, y: CANVAS_H/2 - 170},
-      {label: 'Idea 3', x: CANVAS_W/2 - 320, y: CANVAS_H/2 + 170},
-      {label: 'Idea 4', x: CANVAS_W/2 + 320, y: CANVAS_H/2 + 170}
-    ];
-    positions.forEach(p => {
-      const n = makeNode(p);
-      state.nodes.push(n);
-      state.connectors.push(makeConnector(root.id, n.id));
+    const idByKey = {};
+    // Create root first (if any) so its color comes from ROOT_STYLE
+    const rootKey = spec.rootKey;
+    const keys = Object.keys(spec.nodes);
+    const ordered = rootKey && spec.nodes[rootKey]
+      ? [rootKey].concat(keys.filter(k => k !== rootKey))
+      : keys;
+    ordered.forEach(k => {
+      const n = spec.nodes[k];
+      const node = makeNode(n);
+      state.nodes.push(node);
+      idByKey[k] = node.id;
     });
-    state.selectedId = root.id;
-    state.selectedKind = 'node';
+    (spec.connectors || []).forEach(c => {
+      const fromId = idByKey[c.from], toId = idByKey[c.to];
+      if (!fromId || !toId) return;
+      state.connectors.push(makeConnector(fromId, toId, c.label || ''));
+    });
+    const rootId = rootKey ? idByKey[rootKey] : (state.nodes[0] && state.nodes[0].id);
+    if (rootId) { state.selectedId = rootId; state.selectedKind = 'node'; }
   }
+
+  function defaultMap(){ loadTemplate('concept-map'); }
 
   function anchorPoint(from, to){
     const dx = to.x - from.x, dy = to.y - from.y;
@@ -955,11 +1215,16 @@
     }
   });
 
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    if (!window.confirm('Reset the map back to the four-idea starter?')) return;
-    defaultMap();
+  document.getElementById('applyTemplateBtn').addEventListener('click', () => {
+    const sel = document.getElementById('templateSelect');
+    const key = sel ? sel.value : 'concept-map';
+    const tpl = TEMPLATES[key];
+    if (!tpl) return;
+    const hasContent = state.nodes.length > 0;
+    if (hasContent && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone.')) return;
+    loadTemplate(key);
     render();
-    setStatus('Map reset.', 'info');
+    setStatus('Loaded template: ' + tpl.title + '.', 'success');
   });
   document.getElementById('clearMapBtn').addEventListener('click', () => {
     if (!window.confirm('Clear the entire map? This cannot be undone.')) return;
