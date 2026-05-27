@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Egg Carton Personality Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:       #fdf6e3;
+  --warm-white:  #fffcf2;
+  --kraft:       #c4916a;
+  --kraft-dark:  #8c5a2c;
+  --cardboard:   #d4b896;
+  --egg:         #c07838;
+  --egg-light:   #e8c49a;
+  --slot:        #7a4818;
+  --red:         #c0392b;
+  --text:        #2b1a08;
+  --text-mid:    #6b4020;
+  --text-light:  #9a7050;
+  --gold:        #e09020;
+  --shadow:      rgba(90, 50, 10, 0.18);
+}
+
+body {
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%,   rgba(196,145,106,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 100%,  rgba(196,145,106,0.12) 0%, transparent 60%);
+}
+
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 24px 60px;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  background: var(--cardboard);
+  background: linear-gradient(90deg, #e2c9a8, #c9a880, #e2c9a8);
+  padding: 5px 16px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 6vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--kraft-dark);
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-mid);
+  max-width: 460px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ── QUIZ GRID ───────────────────────────────────── */
+.quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-bottom: 44px;
+}
+
+@media (max-width: 520px) {
+  .quiz-grid { grid-template-columns: 1fr; }
+}
+
+.quiz-card {
+  background: var(--warm-white);
+  border: 2px solid var(--cardboard);
+  border-radius: 18px;
+  padding: 22px 18px 16px;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  box-shadow: 0 3px 10px var(--shadow);
+}
+
+.quiz-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--kraft);
+  box-shadow: 0 10px 28px var(--shadow);
+}
+
+.quiz-card.selected {
+  border-color: var(--egg);
+  background: #fffbf0;
+  box-shadow: 0 0 0 3px rgba(192,120,56,0.22), 0 10px 28px var(--shadow);
+}
+
+.quiz-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 18px;
+  color: var(--egg);
+  font-weight: 700;
+}
+
+.badge {
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  width: 38px;
+  height: 38px;
+  background: var(--red);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 17px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  border: 2px solid white;
+}
+
+.carton-wrap {
+  width: 100%;
+  aspect-ratio: 2.6 / 1;
+  margin-bottom: 10px;
+}
+
+.carton-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.card-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── RESULT ──────────────────────────────────────── */
+.result-wrap {
+  opacity: 0;
+  transform: translateY(28px);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.result-wrap.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.result-card {
+  background: var(--warm-white);
+  border: 2px solid var(--cardboard);
+  border-radius: 22px;
+  padding: 40px 36px 36px;
+  text-align: center;
+  box-shadow: 0 10px 40px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--egg), var(--gold), var(--kraft), var(--gold), var(--egg));
+  background-size: 200%;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% }
+  100% { background-position: 200% }
+}
+
+.result-emoji {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+  animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes bounceIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.result-type-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.result-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+
+.result-desc {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-mid);
+  max-width: 520px;
+  margin: 0 auto 26px;
+}
+
+.traits {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.trait {
+  background: var(--cream);
+  border: 1.5px solid #d4b896;
+  border-radius: 24px;
+  padding: 6px 15px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+}
+
+.reset-btn {
+  background: var(--kraft-dark);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 30px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.reset-btn:hover {
+  background: var(--text);
+  transform: translateY(-2px);
+}
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer {
+  text-align: center;
+  margin-top: 44px;
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<style id="ds-games-header-style">
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; box-sizing: border-box; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+</style>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">The Egg Carton Personality Quiz</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">The Great Egg Debate</div>
+    <h1>Let's settle this...<br><em>what kind of person are you?</em></h1>
+    <p class="subtitle">How you organize your egg carton reveals everything. Pick the one that matches your method.</p>
+  </header>
+
+  <div class="quiz-grid" id="quizGrid"></div>
+
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-card" id="resultCard"></div>
+  </div>
+
+  <footer>Peer-reviewed by chickens. Results are 100% accurate. Mostly.</footer>
+
+</div>
+
+<script>
+/* ── DATA ────────────────────────────────────────── */
+// Each pattern: [backRow[6], frontRow[6]]  1 = egg, 0 = empty
+const QUIZ = [
+  {
+    id: 1,
+    pattern: [
+      [0, 0, 0, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1]
+    ],
+    label: "Pack from the right",
+    emoji: "🎯",
+    title: "The Strategist",
+    desc: "You have a system, and you stick to it. Eggs go from one end — always. No wasted motion, no chaos. You have probably optimized your morning routine, your pantry, and at least one spreadsheet this week.",
+    traits: ["Methodical", "Efficient", "Quietly judges everyone else's carton"]
+  },
+  {
+    id: 2,
+    pattern: [
+      [0, 0, 1, 1, 1, 1],
+      [0, 1, 1, 1, 1, 1]
+    ],
+    label: "Right-heavy, some gaps",
+    emoji: "🤷",
+    title: "The Pragmatist",
+    desc: "You grab what is convenient and keep moving. No grand system, no philosophy — just eggs when you need them. You have never once thought about carton balance and you are doing just fine.",
+    traits: ["Decisive", "Unbothered", "Has strong opinions about other things"]
+  },
+  {
+    id: 3,
+    pattern: [
+      [0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1]
+    ],
+    label: "Front row only",
+    emoji: "✨",
+    title: "The Minimalist",
+    desc: "Front row, all day. Why reach further than necessary? You value simplicity, obvious solutions, and clean counters. You probably finish one task before starting the next. Probably.",
+    traits: ["Straightforward", "Clean thinker", "Finishes tasks before starting new ones"]
+  },
+  {
+    id: 4,
+    pattern: [
+      [0, 1, 1, 1, 1, 0],
+      [1, 1, 1, 1, 0, 0]
+    ],
+    label: "Center cluster, no rules",
+    emoji: "🌀",
+    title: "The Free Spirit",
+    desc: "No rules. No pattern. Just vibes. You live in the moment, the eggs go where they go, and at least one drawer in your kitchen is pure chaos that only you understand. You call it organized.",
+    traits: ["Creative", "Spontaneous", "The carton 'balances itself eventually'"]
+  }
+];
+
+/* ── SVG EGG CARTON ──────────────────────────────── */
+function makeCartonSVG(pattern, uid) {
+  // 6 columns × 2 rows within a 300×116 viewbox
+  const colX  = [30, 76, 122, 168, 214, 260];
+  const rowY  = [33, 83]; // back, front
+  const W = 300, H = 116;
+
+  const eId    = `eg${uid}`;
+  const sId    = `sl${uid}`;
+  const cId    = `ct${uid}`;
+  const shId   = `sh${uid}`;
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${cId}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#d9b07a"/>
+    <stop offset="100%" stop-color="#b07838"/>
+  </linearGradient>
+  <radialGradient id="${sId}" cx="50%" cy="45%" r="60%">
+    <stop offset="0%"   stop-color="#8a4818"/>
+    <stop offset="100%" stop-color="#5a2800"/>
+  </radialGradient>
+  <radialGradient id="${eId}" cx="36%" cy="30%" r="65%">
+    <stop offset="0%"   stop-color="#f2d8a8"/>
+    <stop offset="55%"  stop-color="#c07838"/>
+    <stop offset="100%" stop-color="#7a3c10"/>
+  </radialGradient>
+  <filter id="${shId}" x="-10%" y="-10%" width="120%" height="130%">
+    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#5a2800" flood-opacity="0.35"/>
+  </filter>
+</defs>`;
+
+  // Carton body
+  s += `<rect x="1" y="1" width="${W-2}" height="${H-2}" rx="11" fill="url(#${cId})"/>`;
+
+  // Subtle grain lines
+  for (let x = 24; x < W; x += 14) {
+    s += `<line x1="${x}" y1="1" x2="${x}" y2="${H-1}" stroke="#9a6020" stroke-width="0.6" opacity="0.25"/>`;
+  }
+
+  // Divider between rows
+  s += `<line x1="12" y1="${(rowY[0]+rowY[1])/2}" x2="${W-12}" y2="${(rowY[0]+rowY[1])/2}" stroke="#9a6020" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>`;
+
+  // Border
+  s += `<rect x="1" y="1" width="${W-2}" height="${H-2}" rx="11" fill="none" stroke="#8c4c18" stroke-width="2"/>`;
+
+  // Slots & eggs
+  pattern.forEach((row, r) => {
+    row.forEach((hasEgg, c) => {
+      const cx = colX[c];
+      const cy = rowY[r];
+
+      // Slot
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="21" ry="24" fill="url(#${sId})" opacity="0.85"/>`;
+      s += `<ellipse cx="${cx}" cy="${cy+2}" rx="19" ry="21" fill="#3e1800" opacity="0.3"/>`;
+
+      if (hasEgg) {
+        s += `<ellipse cx="${cx}" cy="${cy-2}" rx="17" ry="19" fill="url(#${eId})" filter="url(#${shId})"/>`;
+        // specular highlight
+        s += `<ellipse cx="${cx-5}" cy="${cy-9}" rx="5" ry="4" fill="white" opacity="0.22" transform="rotate(-22,${cx-5},${cy-9})"/>`;
+      }
+    });
+  });
+
+  s += `</svg>`;
+  return s;
+}
+
+/* ── BUILD QUIZ ──────────────────────────────────── */
+function buildQuiz() {
+  const grid = document.getElementById('quizGrid');
+  QUIZ.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.dataset.id = item.id;
+    card.innerHTML = `
+      <div class="badge">${item.id}</div>
+      <div class="carton-wrap">${makeCartonSVG(item.pattern, item.id)}</div>
+      <div class="card-label">${item.label}</div>
+    `;
+    card.addEventListener('click', () => selectOption(item.id));
+    grid.appendChild(card);
+  });
+}
+
+/* ── REVEAL RESULT ───────────────────────────────── */
+function selectOption(id) {
+  document.querySelectorAll('.quiz-card').forEach(c => {
+    c.classList.toggle('selected', +c.dataset.id === id);
+  });
+
+  const item    = QUIZ.find(d => d.id === id);
+  const wrap    = document.getElementById('resultWrap');
+  const card    = document.getElementById('resultCard');
+
+  // Remove visible so transition re-fires
+  wrap.classList.remove('visible');
+
+  setTimeout(() => {
+    card.innerHTML = `
+      <span class="result-emoji">${item.emoji}</span>
+      <div class="result-type-label">Your personality type</div>
+      <div class="result-title">${item.title}</div>
+      <p class="result-desc">${item.desc}</p>
+      <div class="traits">${item.traits.map(t => `<span class="trait">${t}</span>`).join('')}</div>
+      <button class="reset-btn" onclick="resetQuiz()">Try again</button>
+    `;
+    wrap.classList.add('visible');
+    setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+  }, 80);
+}
+
+function resetQuiz() {
+  document.querySelectorAll('.quiz-card').forEach(c => c.classList.remove('selected'));
+  const wrap = document.getElementById('resultWrap');
+  wrap.classList.remove('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>

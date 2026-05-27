@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduSynth Hub — TCEA Ed Tech Tools for Schools</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue:       #003865;
+    --blue-mid:   #005499;
+    --blue-light: #1a6eb5;
+    --gold:       #F0A500;
+    --gold-light: #FFD166;
+    --gold-pale:  #FFF8E7;
+    --white:      #FFFFFF;
+    --off-white:  #F7F9FC;
+    --gray-100:   #EEF2F7;
+    --gray-300:   #C5D0DE;
+    --gray-600:   #5A6A7E;
+    --gray-800:   #1E2A38;
+    --radius:     10px;
+    --shadow:     0 4px 24px rgba(0,56,101,0.12);
+    --shadow-lg:  0 8px 40px rgba(0,56,101,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--off-white);
+    color: var(--gray-800);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /* ── TOP NAV ─────────────────────────────────── */
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--blue);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+  .topnav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .topnav-links {
+    display: flex; gap: 0.25rem; list-style: none; flex-wrap: wrap;
+  }
+  .topnav-links a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .topnav-links a:hover { background: var(--gold); color: var(--blue); }
+
+  /* ── HERO ────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 60%, #1a4a7a 100%);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.02) 40px,
+      rgba(255,255,255,0.02) 80px
+    );
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--blue);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    color: var(--white);
+    line-height: 1.15;
+    max-width: 780px;
+    margin: 0 auto 1.25rem;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    color: rgba(255,255,255,0.82);
+    font-size: 1.1rem;
+    max-width: 620px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+  }
+  .hero-cards {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+    max-width: 860px; margin: 0 auto;
+  }
+  .hero-card {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(240,165,0,0.4);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .hero-card:hover {
+    background: var(--gold);
+    color: var(--blue);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .hero-card .icon { font-size: 1.2rem; }
+
+  /* ── SECTION WRAPPER ─────────────────────────── */
+  .section {
+    max-width: 1100px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+  }
+  .section-header {
+    display: flex; align-items: flex-start; gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 3px solid var(--gold);
+  }
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--gold);
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.4;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    color: var(--blue);
+    line-height: 1.2;
+  }
+  .section-title .tag {
+    display: inline-block;
+    background: var(--blue);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.4rem;
+  }
+  .section-title p {
+    color: var(--gray-600);
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+  }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    text-decoration: none;
+    margin-top: 2.5rem;
+    padding: 0.4rem 0.9rem;
+    border: 1.5px solid var(--blue-light);
+    border-radius: 20px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .back-link:hover { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+  /* ── EXIT TICKET GENERATOR ───────────────────── */
+  .et-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .et-controls {
+    padding: 1.75rem 2rem;
+    background: var(--blue);
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;
+  }
+  .et-controls label {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .et-controls input, .et-controls select {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.9rem;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    color: var(--white);
+    outline: none;
+    min-width: 200px;
+  }
+  .et-controls input::placeholder { color: rgba(255,255,255,0.5); }
+  .et-controls input:focus, .et-controls select:focus {
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+  .et-controls select option { background: var(--blue); color: var(--white); }
+  .btn-generate {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
+    background: var(--gold);
+    color: var(--blue);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+    align-self: flex-end;
+  }
+  .btn-generate:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .et-output {
+    padding: 2rem;
+    min-height: 220px;
+  }
+  .et-placeholder {
+    text-align: center;
+    color: var(--gray-300);
+    font-size: 1rem;
+    padding: 2rem 0;
+  }
+  .et-result {
+    animation: fadeUp 0.35s ease;
+  }
+  .et-result .solo-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .solo-1 { background: #E8F4FD; color: #1565C0; }
+  .solo-2 { background: #E8F5E9; color: #2E7D32; }
+  .solo-3 { background: #FFF3E0; color: #E65100; }
+  .solo-4 { background: #F3E5F5; color: #6A1B9A; }
+  .et-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--blue);
+    line-height: 1.45;
+    margin-bottom: 1rem;
+  }
+  .et-meta {
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    border-top: 1px solid var(--gray-100);
+    padding-top: 0.75rem;
+    display: flex; gap: 1.5rem;
+  }
+  .et-history {
+    margin-top: 1.5rem;
+    border-top: 2px dashed var(--gray-100);
+    padding-top: 1.25rem;
+  }
+  .et-history h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 0.75rem;
+  }
+  .et-history-item {
+    background: var(--gray-100);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.88rem;
+    color: var(--gray-800);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  }
+  .et-history-item .ht { font-size: 0.7rem; color: var(--gray-600); flex-shrink: 0; }
+  .solo-legend {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-top: 1rem; padding-top: 1rem;
+    border-top: 1px solid var(--gray-100);
+  }
+  .solo-legend-item {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .solo-legend-item:hover { opacity: 0.75; transform: scale(1.05); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── PORTFOLIO ───────────────────────────────── */
+  .portfolio-wrap {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .portfolio-hero {
+    background: linear-gradient(120deg, var(--blue) 0%, var(--blue-mid) 100%);
+    padding: 2.5rem 2rem 2rem;
+    display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+  }
+  .portfolio-avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--blue);
+    flex-shrink: 0;
+    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .portfolio-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--white);
+  }
+  .portfolio-info p { color: rgba(255,255,255,0.75); font-size: 0.95rem; margin-top: 0.3rem; }
+  .portfolio-info .pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+  .pill {
+    background: rgba(240,165,0,0.2);
+    border: 1px solid rgba(240,165,0,0.5);
+    color: var(--gold-light);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+  }
+  .portfolio-tabs {
+    display: flex; border-bottom: 2px solid var(--gray-100);
+    background: var(--off-white);
+  }
+  .ptab {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    user-select: none;
+    margin-bottom: -2px;
+  }
+  .ptab:hover { color: var(--blue); }
+  .ptab.active { color: var(--blue); border-bottom-color: var(--gold); }
+  .ptab-content { display: none; padding: 2rem; }
+  .ptab-content.active { display: block; animation: fadeUp 0.3s ease; }
+
+  .work-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;
+  }
+  .work-card {
+    border: 1.5px solid var(--gray-100);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .work-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+  .work-thumb {
+    height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+  }
+  .work-body { padding: 1rem; }
+  .work-body h4 { font-size: 0.9rem; font-weight: 700; color: var(--blue); margin-bottom: 0.25rem; }
+  .work-body p { font-size: 0.8rem; color: var(--gray-600); }
+  .work-body .chip {
+    display: inline-block;
+    background: var(--gold-pale);
+    color: var(--blue);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+
+  .reflection-card {
+    background: var(--gold-pale);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: var(--gray-800);
+  }
+  .reflection-card .rc-meta {
+    font-style: normal;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .goals-list { list-style: none; }
+  .goals-list li {
+    display: flex; align-items: flex-start; gap: 0.9rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .goal-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .goal-text h5 { font-size: 0.9rem; font-weight: 700; color: var(--blue); }
+  .goal-text p { font-size: 0.82rem; color: var(--gray-600); margin-top: 0.2rem; }
+  .goal-bar { height: 5px; background: var(--gray-100); border-radius: 3px; margin-top: 0.5rem; overflow: hidden; }
+  .goal-progress { height: 100%; background: linear-gradient(90deg, var(--blue-light), var(--gold)); border-radius: 3px; }
+  .github-note {
+    background: var(--blue);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.82rem;
+    padding: 0.75rem 1.5rem;
+    text-align: center;
+  }
+  .github-note a { color: var(--gold); font-weight: 700; }
+
+  /* ── PD LIBRARY ──────────────────────────────── */
+  .pd-controls {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+  }
+  .pd-search {
+    flex: 1; min-width: 220px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    border: 2px solid var(--gray-300);
+    border-radius: 6px;
+    outline: none;
+    background: var(--off-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%235A6A7E' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E") no-repeat 0.75rem center;
+    transition: border-color 0.2s;
+    color: var(--gray-800);
+  }
+  .pd-search:focus { border-color: var(--blue); }
+  .pd-filter-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .filter-btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.9rem;
+    border: 2px solid var(--gray-300);
+    border-radius: 20px;
+    background: var(--white);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: var(--white);
+  }
+  .filter-btn.active-gold {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--blue);
+  }
+  .pd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .pd-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0,56,101,0.07);
+    border: 1.5px solid var(--gray-100);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .pd-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+  .pd-card-top {
+    padding: 1.1rem 1.25rem 0.75rem;
+  }
+  .pd-type-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+  .type-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+  .type-article { background: #E3F2FD; color: #1565C0; }
+  .type-video   { background: #FCE4EC; color: #C62828; }
+  .type-onepager{ background: #E8F5E9; color: #2E7D32; }
+  .type-course  { background: #FFF3E0; color: #E65100; }
+  .pd-date { font-size: 0.72rem; color: var(--gray-600); }
+  .pd-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--blue);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    display: block;
+  }
+  .pd-card-title:hover { color: var(--gold); }
+  .pd-card-desc {
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    line-height: 1.55;
+  }
+  .pd-card-bottom {
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .pd-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .pd-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+  .pd-link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--blue-light);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 0.3rem;
+    transition: color 0.2s;
+  }
+  .pd-link:hover { color: var(--gold); }
+  .pd-count {
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    margin-bottom: 0.75rem;
+  }
+  #pd-no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--gray-600);
+    display: none;
+  }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  footer {
+    background: var(--blue);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    font-size: 0.82rem;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  /* ── DIVIDER ─────────────────────────────────── */
+  .stripe-divider {
+    height: 5px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--gold) 50%, var(--blue) 100%);
+  }
+
+  @media (max-width: 640px) {
+    .topnav-links a { font-size: 0.72rem; padding: 0.35rem 0.5rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .et-controls { flex-direction: column; }
+    .et-controls input, .et-controls select { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<style id="ds-games-header-style">
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; box-sizing: border-box; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+</style>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">EduSynth Hub — TCEA Ed Tech Tools for Schools</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+
+
+<!-- TOP NAVIGATION -->
+<nav class="topnav" id="top">
+  <a href="#top" class="topnav-brand">EduSynth Hub</a>
+  <ul class="topnav-links">
+    <li><a href="#exit-ticket">🎟 Exit Ticket</a></li>
+    <li><a href="#portfolio">🎓 Portfolio</a></li>
+    <li><a href="#pd-library">📚 PD Library</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">TCEA Ed Tech Tools for Schools</div>
+  <h1>Vibe Coding in <span>Action</span></h1>
+  <p>Three free, browser-based tools built with nothing but HTML, CSS, and JavaScript — hosted on any web server or GitHub Pages at zero cost. Practical. Shareable. Ready now.</p>
+  <div class="hero-cards">
+    <a href="#exit-ticket" class="hero-card"><span class="icon">🎟</span> Exit Ticket Generator — For Teachers</a>
+    <a href="#portfolio" class="hero-card"><span class="icon">🎓</span> Student Portfolio — Holly Laringíla</a>
+    <a href="#pd-library" class="hero-card"><span class="icon">📚</span> PD Resource Library — Campus/Dept</a>
+  </div>
+</header>
+
+<div class="stripe-divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 1 — EXIT TICKET GENERATOR
+════════════════════════════════════════ -->
+<section class="section" id="exit-ticket">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-title">
+      <span class="tag">For Teachers</span>
+      <h2>Exit Ticket Generator</h2>
+      <p>Enter a topic, choose a SOLO Taxonomy level, and generate a research-aligned exit question for any core content area. Your last five questions are saved below.</p>
+    </div>
+  </div>
+
+  <div class="et-card">
+    <div class="et-controls">
+      <div>
+        <label for="et-topic">Topic or Unit</label>
+        <input type="text" id="et-topic" placeholder="e.g., photosynthesis, fractions, Civil War…" />
+      </div>
+      <div>
+        <label for="et-subject">Content Area</label>
+        <select id="et-subject">
+          <option value="any">Any / Cross-Curricular</option>
+          <option value="ela">ELA / Reading</option>
+          <option value="math">Math</option>
+          <option value="science">Science</option>
+          <option value="social">Social Studies</option>
+        </select>
+      </div>
+      <div>
+        <label for="et-solo">SOLO Level</label>
+        <select id="et-solo">
+          <option value="random">Random</option>
+          <option value="1">Unistructural — Recall</option>
+          <option value="2">Multistructural — List/Describe</option>
+          <option value="3">Relational — Explain/Connect</option>
+          <option value="4">Extended Abstract — Apply/Evaluate</option>
+        </select>
+      </div>
+      <button class="btn-generate" onclick="generateTicket()">Generate ➜</button>
+    </div>
+
+    <div class="et-output" id="et-output">
+      <p class="et-placeholder">👆 Enter a topic above and click <strong>Generate</strong> to create your exit ticket question.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:1.25rem; background:var(--white); border-radius:var(--radius); padding:1.25rem 1.5rem; box-shadow:var(--shadow);">
+    <h4 style="font-size:0.78rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--gray-600);margin-bottom:0.75rem;">SOLO Taxonomy Quick Reference</h4>
+    <div class="solo-legend">
+      <span class="solo-legend-item solo-1">Unistructural — Name / Identify / Define</span>
+      <span class="solo-legend-item solo-2">Multistructural — List / Describe / Outline</span>
+      <span class="solo-legend-item solo-3">Relational — Explain / Compare / Analyze</span>
+      <span class="solo-legend-item solo-4">Extended Abstract — Predict / Evaluate / Create</span>
+    </div>
+  </div>
+
+  <a href="#top" class="back-link">↑ Back to Top</a>
+</section>
+
+<div class="stripe-divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 2 — STUDENT PORTFOLIO
+════════════════════════════════════════ -->
+<section class="section" id="portfolio">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-title">
+      <span class="tag">For Students</span>
+      <h2>Student Portfolio Landing Page</h2>
+      <p>A free, shareable portfolio hosted on GitHub Pages. No app required — just a single HTML file with a real audience.</p>
+    </div>
+  </div>
+
+  <div class="portfolio-wrap">
+    <div class="portfolio-hero">
+      <div class="portfolio-avatar">HL</div>
+      <div class="portfolio-info">
+        <h3>Holly Laringíla</h3>
+        <p>11th Grade · Westfield High School · Class of 2027</p>
+        <div class="pills">
+          <span class="pill">🎨 Digital Art</span>
+          <span class="pill">📖 AP Literature</span>
+          <span class="pill">🔬 Biology</span>
+          <span class="pill">🌍 Spanish III</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="portfolio-tabs">
+      <div class="ptab active" onclick="switchTab('work', this)">Work Samples</div>
+      <div class="ptab" onclick="switchTab('reflections', this)">Reflections</div>
+      <div class="ptab" onclick="switchTab('goals', this)">Goals</div>
+    </div>
+
+    <!-- WORK SAMPLES -->
+    <div class="ptab-content active" id="tab-work">
+      <div class="work-grid">
+        <div class="work-card">
+          <div class="work-thumb" style="background:#E3F2FD;">🖼</div>
+          <div class="work-body">
+            <h4>Digital Watercolor — "Río Quieto"</h4>
+            <p>An original digital piece exploring cultural memory through color and texture, created in Adobe Fresco.</p>
+            <span class="chip">Digital Art · Fall 2025</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb" style="background:#FFF3E0;">📝</div>
+          <div class="work-body">
+            <h4>AP Lit Essay — "The Weight of Silence in <em>Beloved</em>"</h4>
+            <p>Close reading analysis of Morrison's use of silence as a structural and emotional device. Earned a 5 on the AP exam practice rubric.</p>
+            <span class="chip">AP Literature · Spring 2025</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb" style="background:#E8F5E9;">🔬</div>
+          <div class="work-body">
+            <h4>Lab Report — Enzyme Activity and pH</h4>
+            <p>Independent investigation into catalase reaction rates across pH levels. Data visualized with Google Sheets.</p>
+            <span class="chip">Biology · Fall 2025</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb" style="background:#F3E5F5;">🌍</div>
+          <div class="work-body">
+            <h4>Spanish Oral Presentation — "Mi Identidad Cultural"</h4>
+            <p>Five-minute recorded oral presentation about family heritage delivered entirely in Spanish.</p>
+            <span class="chip">Spanish III · Spring 2025</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb" style="background:#FCE4EC;">💻</div>
+          <div class="work-body">
+            <h4>This Portfolio Page</h4>
+            <p>Built as part of a class coding project — HTML, CSS, and JavaScript, hosted free on GitHub Pages.</p>
+            <span class="chip">Computer Applications · Fall 2025</span>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb" style="background:#FFF8E7;">🏆</div>
+          <div class="work-body">
+            <h4>UIL Journalism — Feature Writing, 2nd Place Region</h4>
+            <p>Feature article on first-generation college students in the district, published in the school newspaper.</p>
+            <span class="chip">UIL · Winter 2025</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFLECTIONS -->
+    <div class="ptab-content" id="tab-reflections">
+      <div class="reflection-card">
+        <div class="rc-meta">End of Year Reflection · May 2025</div>
+        "This year I learned that struggle is part of the process — not a sign that I don't belong here. The AP essay I almost didn't turn in became my best piece of writing. I'm keeping that lesson."
+      </div>
+      <div class="reflection-card">
+        <div class="rc-meta">Biology Lab Reflection · November 2025</div>
+        "The enzyme lab taught me that small variables — like temperature — change everything. That idea applies way beyond biology. I want to be someone who pays attention to the small things."
+      </div>
+      <div class="reflection-card">
+        <div class="rc-meta">Spanish Oral Presentation · April 2025</div>
+        "Speaking about my family in Spanish felt vulnerable in a way I didn't expect. But the discomfort meant I was saying something real. Ms. Fuentes said that's what language is for."
+      </div>
+      <div class="reflection-card">
+        <div class="rc-meta">Portfolio Creation Reflection · December 2025</div>
+        "Building this page showed me that code is a creative tool, not just a technical one. I made something I'm proud to share — and anyone in the world can see it for free."
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="ptab-content" id="tab-goals">
+      <ul class="goals-list">
+        <li>
+          <div class="goal-icon">📚</div>
+          <div class="goal-text">
+            <h5>Score a 4 or 5 on the AP Literature Exam</h5>
+            <p>Continue reading challenging texts independently and practicing timed essay writing each week.</p>
+            <div class="goal-bar"><div class="goal-progress" style="width:75%"></div></div>
+          </div>
+        </li>
+        <li>
+          <div class="goal-icon">🌍</div>
+          <div class="goal-text">
+            <h5>Complete a summer language immersion program</h5>
+            <p>Researching programs in Texas and online options through UT Austin's continuing education division.</p>
+            <div class="goal-bar"><div class="goal-progress" style="width:40%"></div></div>
+          </div>
+        </li>
+        <li>
+          <div class="goal-icon">🎨</div>
+          <div class="goal-text">
+            <h5>Submit artwork to the Scholastic Art and Writing Awards</h5>
+            <p>Complete three finished digital pieces to submit in the fall 2026 cycle.</p>
+            <div class="goal-bar"><div class="goal-progress" style="width:55%"></div></div>
+          </div>
+        </li>
+        <li>
+          <div class="goal-icon">💻</div>
+          <div class="goal-text">
+            <h5>Build and publish a second HTML project</h5>
+            <p>Create a digital zine using only HTML and CSS — no frameworks — and host it on GitHub Pages.</p>
+            <div class="goal-bar"><div class="goal-progress" style="width:20%"></div></div>
+          </div>
+        </li>
+        <li>
+          <div class="goal-icon">🏫</div>
+          <div class="goal-text">
+            <h5>Apply to five colleges by November 2026</h5>
+            <p>Targeting programs in journalism, visual arts, or bilingual education.</p>
+            <div class="goal-bar"><div class="goal-progress" style="width:10%"></div></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="github-note">
+      This portfolio is hosted free on <a href="https://pages.github.com" target="_blank">GitHub Pages</a> — one HTML file, zero cost, real audience. <a href="https://docs.github.com/en/pages/getting-started-with-github-pages" target="_blank">Learn how to publish yours →</a>
+    </div>
+  </div>
+
+  <a href="#top" class="back-link">↑ Back to Top</a>
+</section>
+
+<div class="stripe-divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 3 — PD RESOURCE LIBRARY
+════════════════════════════════════════ -->
+<section class="section" id="pd-library">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-title">
+      <span class="tag">For Campus / Department Use</span>
+      <h2>Professional Development Resource Library</h2>
+      <p>A searchable, filterable library of resources from the <a href="https://blog.tcea.org" target="_blank" style="color:var(--blue-light);font-weight:600;">TCEA TechNotes Blog</a>. Search by keyword or filter by topic. No LMS login required.</p>
+    </div>
+  </div>
+
+  <div class="pd-controls">
+    <input type="text" class="pd-search" id="pd-search" placeholder="Search by title, topic, or keyword…" oninput="filterPD()" />
+    <div class="pd-filter-group" id="pd-filters">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('AI', this)">Artificial Intelligence</button>
+      <button class="filter-btn" onclick="setFilter('Good Teaching', this)">Good Teaching</button>
+      <button class="filter-btn" onclick="setFilter('Assessment', this)">Assessment</button>
+      <button class="filter-btn" onclick="setFilter('Coaching', this)">Coaching</button>
+      <button class="filter-btn" onclick="setFilter('Google', this)">Google</button>
+      <button class="filter-btn" onclick="setFilter('Writing', this)">Writing</button>
+    </div>
+  </div>
+
+  <p class="pd-count" id="pd-count"></p>
+  <div class="pd-grid" id="pd-grid"></div>
+  <div id="pd-no-results"><p style="font-size:1.1rem;">No resources match your search. Try a different keyword or filter.</p></div>
+
+  <a href="#top" class="back-link">↑ Back to Top</a>
+</section>
+
+<footer>
+  Built with plain HTML, CSS, and JavaScript. Hosted free.
+  Resources sourced from <a href="https://blog.tcea.org" target="_blank">blog.tcea.org</a> — Texas Computer Education Association.
+  <br>EduSynth Hub · Powered by evidence-based design.
+</footer>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+// ─── EXIT TICKET GENERATOR ───────────────────────────────────────────────────
+
+const ET_BANK = {
+  1: { // Unistructural
+    any: [
+      "What is one key term from today's lesson on [TOPIC]? Write its definition in your own words.",
+      "Name one fact you learned about [TOPIC] today.",
+      "Complete this sentence: '[TOPIC] is ___________.'",
+      "What is one thing [TOPIC] is used for?",
+      "Identify one example of [TOPIC] from today's lesson."
+    ],
+    ela: [
+      "Identify one literary device used in the passage about [TOPIC] and name it.",
+      "What does the word '[TOPIC]' mean in the context of today's reading?",
+      "Name one character or element connected to [TOPIC] in today's text."
+    ],
+    math: [
+      "Write the formula or rule we used today for [TOPIC].",
+      "Solve one practice problem involving [TOPIC] and show your answer.",
+      "What is one vocabulary term essential to understanding [TOPIC]?"
+    ],
+    science: [
+      "Name one organism, structure, or process related to [TOPIC].",
+      "What does the term '[TOPIC]' mean in science?",
+      "Identify one tool or measurement used when studying [TOPIC]."
+    ],
+    social: [
+      "Name one person, place, or event connected to [TOPIC].",
+      "When or where did [TOPIC] occur?",
+      "What is one cause or effect you can name for [TOPIC]?"
+    ]
+  },
+  2: { // Multistructural
+    any: [
+      "List three important facts about [TOPIC] from today's lesson.",
+      "Describe the steps or stages involved in [TOPIC].",
+      "What are two similarities and two differences between [TOPIC] and something you already knew?",
+      "Outline what we learned about [TOPIC] using at least three details.",
+      "List the most important ideas about [TOPIC] in order of importance."
+    ],
+    ela: [
+      "Describe three ways the author develops the theme of [TOPIC] in the text.",
+      "List the main events related to [TOPIC] in the order they occurred.",
+      "What are two examples and one non-example of [TOPIC] in this passage?"
+    ],
+    math: [
+      "Describe the steps you would take to solve a problem involving [TOPIC].",
+      "List three types of problems where you would use [TOPIC].",
+      "Give two examples and two non-examples of [TOPIC]."
+    ],
+    science: [
+      "Describe three things that happen during [TOPIC]. Put them in sequence.",
+      "List the key variables involved in [TOPIC] and what each one does.",
+      "What are two conditions that affect [TOPIC]? Describe each briefly."
+    ],
+    social: [
+      "Describe three key events related to [TOPIC] in chronological order.",
+      "List two causes and two effects associated with [TOPIC].",
+      "Who were three people involved in [TOPIC], and what was each one's role?"
+    ]
+  },
+  3: { // Relational
+    any: [
+      "Explain how [TOPIC] connects to something you learned earlier this year.",
+      "How does [TOPIC] relate to [TOPIC]? Use evidence from today's lesson.",
+      "Explain the cause-and-effect relationship involved in [TOPIC].",
+      "Compare [TOPIC] with another concept you know. What are the key similarities and differences?",
+      "Why does [TOPIC] matter? Explain using at least two details from the lesson."
+    ],
+    ela: [
+      "How does [TOPIC] develop the central idea of the text? Use evidence from at least two parts.",
+      "Explain how the author's choice to include [TOPIC] affects the reader's understanding.",
+      "Compare how two characters or speakers respond to [TOPIC]. What does this reveal?"
+    ],
+    math: [
+      "Explain why [TOPIC] works mathematically. Connect it to a related concept we've studied.",
+      "How would changing one part of [TOPIC] affect the outcome? Explain your reasoning.",
+      "Describe a real-world situation where [TOPIC] is used and why it applies."
+    ],
+    science: [
+      "Explain how [TOPIC] supports or disrupts a larger system (e.g., ecosystem, body system).",
+      "How does what you know about [TOPIC] help explain another phenomenon you've studied?",
+      "Analyze the relationship between two variables in [TOPIC]. Why does this relationship exist?"
+    ],
+    social: [
+      "Explain how [TOPIC] influenced later events. Use specific evidence.",
+      "How does [TOPIC] connect to a current event or issue in today's world?",
+      "Compare the perspectives of two groups on [TOPIC]. What explains the difference?"
+    ]
+  },
+  4: { // Extended Abstract
+    any: [
+      "If [TOPIC] changed or disappeared, what would the impact be? Predict and justify.",
+      "Design a solution to a problem using your knowledge of [TOPIC]. Explain your reasoning.",
+      "Evaluate: Is [TOPIC] more of a benefit or a problem? Support your position with evidence.",
+      "Create an analogy that explains [TOPIC] to someone who has never heard of it. Justify your analogy.",
+      "What question about [TOPIC] is still unanswered for you? Why does it matter?"
+    ],
+    ela: [
+      "How could the theme of [TOPIC] apply to a challenge people face today? Argue your case.",
+      "If you were the author, what would you change about how [TOPIC] is presented and why?",
+      "Create a new ending or continuation that stays true to the theme of [TOPIC]. Justify your choices."
+    ],
+    math: [
+      "Create your own word problem that requires [TOPIC] to solve. Solve it and explain each step.",
+      "When would [TOPIC] fail to work or give a misleading result? Explain the conditions.",
+      "How could [TOPIC] be applied to solve a real problem in your school or community?"
+    ],
+    science: [
+      "Design an experiment to test one aspect of [TOPIC]. What would you measure and why?",
+      "Predict what would happen to a system if [TOPIC] were removed or disrupted. Justify with science.",
+      "Evaluate a real-world claim about [TOPIC] — is it supported by what you learned today?"
+    ],
+    social: [
+      "Should we judge [TOPIC] by the standards of its time or by today's values? Argue your position.",
+      "Design a policy that responds to the lessons of [TOPIC]. What trade-offs would you have to make?",
+      "How might the outcome of [TOPIC] have been different if one key factor had changed? Explain."
+    ]
+  }
+};
+
+const SOLO_LABELS = {
+  1: { label: "Unistructural", desc: "Recall / Identify", css: "solo-1", emoji: "🔵" },
+  2: { label: "Multistructural", desc: "List / Describe", css: "solo-2", emoji: "🟢" },
+  3: { label: "Relational", desc: "Explain / Connect", css: "solo-3", emoji: "🟠" },
+  4: { label: "Extended Abstract", desc: "Evaluate / Create", css: "solo-4", emoji: "🟣" }
+};
+
+const ET_PHASES = {
+  1: "Surface Learning",
+  2: "Surface → Deep",
+  3: "Deep Learning",
+  4: "Transfer Learning"
+};
+
+let etHistory = [];
+
+function generateTicket() {
+  const topic = document.getElementById('et-topic').value.trim() || "this concept";
+  const subject = document.getElementById('et-subject').value;
+  let soloLevel = document.getElementById('et-solo').value;
+
+  if (soloLevel === 'random') {
+    soloLevel = String(Math.floor(Math.random() * 4) + 1);
+  }
+
+  const lvl = parseInt(soloLevel);
+  const bank = ET_BANK[lvl];
+  const pool = (bank[subject] && bank[subject].length) ? bank[subject] : bank['any'];
+  const template = pool[Math.floor(Math.random() * pool.length)];
+  const question = template.replace(/\[TOPIC\]/g, `<em>${topic}</em>`);
+  const meta = SOLO_LABELS[lvl];
+
+  // Add to history
+  etHistory.unshift({ q: template.replace(/\[TOPIC\]/g, topic), lvl, ts: new Date().toLocaleTimeString() });
+  if (etHistory.length > 5) etHistory.pop();
+
+  const historyHTML = etHistory.length > 1 ? `
+    <div class="et-history">
+      <h4>Recent Questions</h4>
+      ${etHistory.slice(1).map(h => `
+        <div class="et-history-item">
+          <span>${SOLO_LABELS[h.lvl].emoji} ${h.q}</span>
+          <span class="ht">${h.ts}</span>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
+  document.getElementById('et-output').innerHTML = `
+    <div class="et-result">
+      <span class="solo-badge ${meta.css}">${meta.emoji} ${meta.label} — ${meta.desc}</span>
+      <p class="et-question">${question}</p>
+      <div class="et-meta">
+        <span>📖 Learning Phase: ${ET_PHASES[lvl]}</span>
+        <span>📝 Subject: ${document.getElementById('et-subject').options[document.getElementById('et-subject').selectedIndex].text}</span>
+      </div>
+      ${historyHTML}
+    </div>
+  `;
+}
+
+// Allow Enter key to generate
+document.getElementById('et-topic').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generateTicket();
+});
+
+// ─── PORTFOLIO TABS ───────────────────────────────────────────────────────────
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ptab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+}
+
+// ─── PD RESOURCE LIBRARY ──────────────────────────────────────────────────────
+
+const PD_RESOURCES = [
+  {
+    title: "Bellringer Strategies to Capture Student Attention",
+    type: "article",
+    tags: ["Good Teaching", "Classroom Management"],
+    date: "Mar 11, 2026",
+    author: "Lori Gracey",
+    desc: "Practical strategies for the first few minutes of class to hook student attention before the day's learning begins.",
+    url: "https://blog.tcea.org/bellringer-strategies-to-capture-student-attention/"
+  },
+  {
+    title: "AI Maker Magic, Part 2: A Fun Personality Quiz Webpage",
+    type: "article",
+    tags: ["AI", "Good Teaching"],
+    date: "Mar 10, 2026",
+    author: "Miguel Guhlin",
+    desc: "How to turn a custom GPT into an accessible webpage — no ChatGPT account required for end users.",
+    url: "https://blog.tcea.org/ai-maker-magic-part-2-a-fun-personality-quiz-webpage/"
+  },
+  {
+    title: "Talk the Talk: Authenticating Student Voice in a Generative AI Era",
+    type: "article",
+    tags: ["AI", "Assessment", "Writing"],
+    date: "Mar 9, 2026",
+    author: "Lori Gracey",
+    desc: "Explores the authenticity crisis in writing assessment and practical approaches to verify student voice when AI can write essays instantly.",
+    url: "https://blog.tcea.org/talk-the-talk-authenticating-student-voice-in-a-generative-ai-era/"
+  },
+  {
+    title: "Four Micro PD Strategies that Actually Stick",
+    type: "article",
+    tags: ["Coaching", "Good Teaching"],
+    date: "Mar 5, 2026",
+    author: "Dr. Bruce Ellis",
+    desc: "Four practical Micro PD strategies that build instructional momentum without overwhelming staff or adding to coaching workload.",
+    url: "https://blog.tcea.org/four-micro-pd-strategies-that-actually-stick/"
+  },
+  {
+    title: "More Hidden Google Easter Eggs",
+    type: "article",
+    tags: ["Google", "Good Teaching"],
+    date: "Mar 4, 2026",
+    author: "Diana Benner",
+    desc: "Interactive games, sound tools, and curiosity-sparking searches that make perfect brain breaks and engaging classroom lesson hooks.",
+    url: "https://blog.tcea.org/more-hidden-google-easter-eggs/"
+  },
+  {
+    title: "Using Human Bingo for Formative Assessment",
+    type: "article",
+    tags: ["Assessment", "Good Teaching"],
+    date: "Mar 3, 2026",
+    author: "Diana Benner",
+    desc: "Turn a simple icebreaker into a powerful formative assessment tool — students talk, think, and reflect while you gather real-time data.",
+    url: "https://blog.tcea.org/using-human-bingo-for-formative-assessment/"
+  },
+  {
+    title: "Help Students Break Free from Learned Helplessness",
+    type: "article",
+    tags: ["Good Teaching", "Coaching"],
+    date: "Feb 26, 2026",
+    author: "Dr. Bruce Ellis",
+    desc: "Recognize learned helplessness and use practical classroom strategies to rebuild student confidence, ownership, and motivation.",
+    url: "https://blog.tcea.org/help-students-break-free-from-learned-helplessness/"
+  },
+  {
+    title: "10 Fresh Think-Pair-Share Variations to Energize Your Classroom",
+    type: "article",
+    tags: ["Good Teaching", "Assessment"],
+    date: "Feb 25, 2026",
+    author: "Diana Benner",
+    desc: "Ten simple variations that add structure, energy, and depth to Think-Pair-Share while increasing engagement and discussion.",
+    url: "https://blog.tcea.org/10-fresh-think-pair-share-variations-to-energize-your-classroom/"
+  },
+  {
+    title: "Five Free Newspaper Generators for the Classroom",
+    type: "article",
+    tags: ["Writing", "Good Teaching"],
+    date: "Feb 24, 2026",
+    author: "Peggy Reimers",
+    desc: "Student-created newspapers for social studies simulations, book reports, digital breakouts, and science discoveries.",
+    url: "https://blog.tcea.org/five-free-newspaper-generators-for-the-classroom/"
+  },
+  {
+    title: "Three Engaging Activities for Outlining and Summarizing",
+    type: "article",
+    tags: ["Writing", "Good Teaching", "Assessment"],
+    date: "Feb 2026",
+    author: "TCEA",
+    desc: "Practical, student-centered activities for helping learners organize and condense information — a high-leverage academic skill.",
+    url: "https://blog.tcea.org/activities-outlining-summarizing/"
+  },
+  {
+    title: "Why It May Be Time to Dump Bloom's Taxonomy",
+    type: "article",
+    tags: ["Good Teaching", "Coaching"],
+    date: "Feb 2026",
+    author: "TCEA",
+    desc: "A research-based argument for moving beyond Bloom's — and what to use instead for designing rigorous learning experiences.",
+    url: "https://blog.tcea.org/why-it-may-be-time-to-dump-blooms-taxonomy/"
+  },
+  {
+    title: "Create AI-Powered YouTube Quizzes in Seconds",
+    type: "video",
+    tags: ["AI", "Assessment"],
+    date: "Feb 2026",
+    author: "TCEA",
+    desc: "Step-by-step guide to using AI tools to auto-generate quiz questions from any YouTube video — saves significant prep time.",
+    url: "https://blog.tcea.org/create-ai-powered-youtube-quizzes-in-seconds/"
+  },
+  {
+    title: "Proven Classroom Discussion Strategies for Deeper Learning",
+    type: "article",
+    tags: ["Good Teaching", "Assessment"],
+    date: "Feb 2026",
+    author: "TCEA",
+    desc: "Research-backed discussion protocols that push students past surface recall into analysis, argumentation, and synthesis.",
+    url: "https://blog.tcea.org/discussion-strategies/"
+  },
+  {
+    title: "Quadrant Outlining: Simplify Learning and Writing",
+    type: "onepager",
+    tags: ["Writing", "Good Teaching"],
+    date: "Jan 2026",
+    author: "TCEA",
+    desc: "A visual outlining strategy that helps students organize complex ideas into a four-quadrant structure before writing.",
+    url: "https://blog.tcea.org/quadrant-outlining-simplify-learning-and-writing/"
+  },
+  {
+    title: "Three Empowering Activities for Summarization",
+    type: "onepager",
+    tags: ["Writing", "Assessment"],
+    date: "Jan 2026",
+    author: "TCEA",
+    desc: "Structured student activities that build the critical skill of identifying essential information and condensing it accurately.",
+    url: "https://blog.tcea.org/summarization-empowers-student-learning/"
+  },
+  {
+    title: "Human Bingo: A Fun and Effective Icebreaker",
+    type: "article",
+    tags: ["Good Teaching", "Coaching"],
+    date: "Jan 2026",
+    author: "TCEA",
+    desc: "How Human Bingo builds community, breaks down barriers, and gives teachers a low-stakes window into student prior knowledge.",
+    url: "https://blog.tcea.org/human-bingo-a-fun-and-effective-icebreaker/"
+  },
+  {
+    title: "Discover Google's Easter Eggs",
+    type: "article",
+    tags: ["Google", "Good Teaching"],
+    date: "Jan 2026",
+    author: "TCEA",
+    desc: "The original collection of Google hidden features teachers can use as curiosity-sparkers, brain breaks, and engagement hooks.",
+    url: "https://blog.tcea.org/discover-googles-easter-eggs/"
+  },
+  {
+    title: "TCEA AI for Educators Conference",
+    type: "course",
+    tags: ["AI"],
+    date: "Upcoming",
+    author: "TCEA Events",
+    desc: "Professional learning event focused on practical AI integration in K-12 classrooms and campus leadership.",
+    url: "https://tcea.org/events/ai/"
+  }
+];
+
+const TYPE_META = {
+  article:   { label: "Article",    css: "type-article" },
+  video:     { label: "Video",      css: "type-video" },
+  onepager:  { label: "One-Pager",  css: "type-onepager" },
+  course:    { label: "Course/Event",css: "type-course" }
+};
+
+let activeFilter = 'all';
+
+function renderPD(resources) {
+  const grid = document.getElementById('pd-grid');
+  const noRes = document.getElementById('pd-no-results');
+  document.getElementById('pd-count').textContent = `Showing ${resources.length} resource${resources.length !== 1 ? 's' : ''}`;
+
+  if (resources.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+  grid.innerHTML = resources.map(r => {
+    const tm = TYPE_META[r.type] || TYPE_META.article;
+    return `
+      <div class="pd-card" data-tags="${r.tags.join(',')}" data-title="${r.title.toLowerCase()}">
+        <div class="pd-card-top">
+          <div class="pd-type-bar">
+            <span class="type-badge ${tm.css}">${tm.label}</span>
+            <span class="pd-date">${r.date} · ${r.author}</span>
+          </div>
+          <a href="${r.url}" target="_blank" rel="noopener" class="pd-card-title">${r.title}</a>
+          <p class="pd-card-desc">${r.desc}</p>
+        </div>
+        <div class="pd-card-bottom">
+          <div class="pd-tags">${r.tags.map(t => `<span class="pd-tag">${t}</span>`).join('')}</div>
+          <a href="${r.url}" target="_blank" rel="noopener" class="pd-link">Read →</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterPD() {
+  const q = document.getElementById('pd-search').value.toLowerCase().trim();
+  const filtered = PD_RESOURCES.filter(r => {
+    const matchFilter = activeFilter === 'all' || r.tags.some(t => t.toLowerCase().includes(activeFilter.toLowerCase()));
+    const matchSearch = !q || r.title.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.tags.some(t => t.toLowerCase().includes(q)) || r.author.toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+  renderPD(filtered);
+}
+
+function setFilter(tag, el) {
+  activeFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  filterPD();
+}
+
+// Init
+renderPD(PD_RESOURCES);
+document.getElementById('pd-count').textContent = `Showing ${PD_RESOURCES.length} resources`;
+</script>
+</body>
+</html>

@@ -1,0 +1,2107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Castles & Catapults</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5e9c8;
+      --muted: #b6a983;
+      --panel: #1c2230;
+      --panel-2: #111722;
+      --gold: #f5c44f;
+      --red: #e65d49;
+      --blue: #58a6d6;
+      --green: #72b26a;
+      --line: #3a455b;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 15% 18%, rgba(245, 196, 79, 0.12), transparent 18rem),
+        linear-gradient(180deg, #111722 0%, #0c1018 100%);
+      color: var(--ink);
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    main {
+      width: 100%;
+      max-width: 980px;
+      padding: 16px;
+    }
+
+    .shell {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      max-height: min(70vh, 490px);
+      margin-inline: auto;
+      background: #080c14;
+      border: 2px solid #46536c;
+      box-shadow: 0 18px 40px var(--shadow);
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      background: #101a2b;
+    }
+
+    .splash {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-items: end;
+      padding: clamp(16px, 5vw, 42px);
+      background:
+        linear-gradient(180deg, rgba(5, 8, 14, 0.08), rgba(5, 8, 14, 0.86)),
+        var(--splash-image, url("assets/splash.jpg")) center / cover no-repeat;
+      transition: opacity 180ms ease;
+    }
+
+    .splash.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .titleBlock {
+      width: min(560px, 100%);
+      text-shadow: 0 3px 0 #10131b, 0 6px 18px rgba(0, 0, 0, 0.75);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: #ffe09b;
+      font-size: clamp(2rem, 8vw, 4.6rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      max-width: 38rem;
+      margin: 0 0 18px;
+      color: #fff2cd;
+      font-size: clamp(0.92rem, 2.4vw, 1.12rem);
+      line-height: 1.35;
+    }
+
+    .setup {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .setupPanel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(10, 14, 22, 0.76);
+      border: 1px solid rgba(255, 224, 155, 0.38);
+    }
+
+    .setupPanel .label {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: #ffe09b;
+    }
+
+    input[type="text"] {
+      min-width: 0;
+      height: 34px;
+      border: 1px solid #4c5e78;
+      background: #121927;
+      color: var(--ink);
+      padding: 0 9px;
+      font: 700 0.9rem "Courier New", Courier, monospace;
+    }
+
+    input[type="color"] {
+      width: 42px;
+      height: 34px;
+      padding: 2px;
+      border: 1px solid #4c5e78;
+      background: #121927;
+      cursor: pointer;
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .readout,
+    .controls {
+      min-width: 0;
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+    }
+
+    .readout {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    .value {
+      display: block;
+      min-height: 1.3rem;
+      overflow-wrap: anywhere;
+      color: var(--ink);
+      font-size: clamp(0.78rem, 1.7vw, 0.95rem);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 116px 116px 160px auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .diplomacy {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    select {
+      min-width: 0;
+      height: 38px;
+      border: 1px solid #4c5e78;
+      background: #121927;
+      color: var(--ink);
+      padding: 0 9px;
+      font: 700 0.82rem "Courier New", Courier, monospace;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--gold);
+    }
+
+    button {
+      height: 38px;
+      border: 1px solid #785f24;
+      background: linear-gradient(180deg, #ffd66e, #c98325);
+      color: #1b1308;
+      font: 700 0.9rem "Courier New", Courier, monospace;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    button.secondary {
+      border-color: #4c5e78;
+      background: linear-gradient(180deg, #465975, #283346);
+      color: var(--ink);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.8) brightness(0.58);
+    }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 10px;
+      }
+
+      .hud {
+        grid-template-columns: 1fr;
+      }
+
+      .readout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .diplomacy {
+        grid-template-columns: 1fr;
+      }
+
+      .setup {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<style id="ds-games-header-style">
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; box-sizing: border-box; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+</style>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Castles & Catapults</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+
+  <main>
+    <div class="shell">
+      <section class="stage" aria-label="Castles & Catapults game">
+        <canvas id="game" width="800" height="400"></canvas>
+        <div class="splash" id="splash">
+          <div class="titleBlock">
+            <h1>Castles & Catapults</h1>
+            <p class="subtitle">Break the opposing fortress before their catapult finds your walls.</p>
+            <button id="startButton" type="button">Start</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="setup" aria-label="Player setup">
+        <label class="setupPanel">
+          <span class="label">Left Commander</span>
+          <input id="leftNameInput" type="text" maxlength="14" value="Player 1">
+          <input id="leftColorInput" type="color" value="#58a6d6" aria-label="Left heraldry color">
+        </label>
+        <label class="setupPanel">
+          <span class="label">Right Commander</span>
+          <input id="rightNameInput" type="text" maxlength="14" value="CPU">
+          <input id="rightColorInput" type="color" value="#e65d49" aria-label="Right heraldry color">
+        </label>
+        <label class="setupPanel">
+          <span class="label">Opponent</span>
+          <select id="opponentModeInput">
+            <option value="cpu">Computer / CPU</option>
+            <option value="human">Person / Local 2P</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="hud" aria-label="Game controls">
+        <div class="readout">
+          <div class="metric">
+            <span class="label">Turn</span>
+            <span class="value" id="turnText">Player 1</span>
+          </div>
+          <div class="metric">
+            <span class="label">Wind</span>
+            <span class="value" id="windText">0</span>
+          </div>
+          <div class="metric">
+            <span class="label">Left Castle</span>
+            <span class="value" id="leftHealth">100%</span>
+          </div>
+          <div class="metric">
+            <span class="label">Right Castle</span>
+            <span class="value" id="rightHealth">100%</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label class="field">
+            <span class="label">Angle <span id="angleValue">45</span></span>
+            <input id="angle" type="range" min="12" max="82" value="45">
+          </label>
+          <label class="field">
+            <span class="label">Power <span id="powerValue">62</span></span>
+            <input id="power" type="range" min="28" max="100" value="62">
+          </label>
+          <label class="field">
+            <span class="label">Missile</span>
+            <select id="munitionSelect">
+              <option value="rock">Stone Shot</option>
+              <option value="fireball">Flaming Ball</option>
+              <option value="oil">Clay Oil Jar</option>
+              <option value="tar">Sealed Tar Pot</option>
+              <option value="bolt">Ballista Bolt</option>
+            </select>
+          </label>
+          <button id="fireButton" type="button">Fire</button>
+          <button id="resetButton" class="secondary" type="button">Reset</button>
+        </div>
+      </section>
+
+      <section class="diplomacy" aria-label="Diplomacy and taunts">
+        <select id="insultSelect">
+          <option value="Your merlons are ornamental.">Your merlons are ornamental.</option>
+          <option value="That gatehouse could not stop a parade.">That gatehouse could not stop a parade.</option>
+          <option value="Your donjon leans like a tired bannerman.">Your donjon leans like a tired bannerman.</option>
+          <option value="Strike your colors before we redecorate.">Strike your colors before we redecorate.</option>
+        </select>
+        <button id="insultButton" class="secondary" type="button">Insult</button>
+        <button id="requestSurrenderButton" class="secondary" type="button">Request Surrender</button>
+        <button id="offerSurrenderButton" type="button">Offer Surrender</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("game");
+      const ctx = canvas.getContext("2d");
+      const angleInput = document.getElementById("angle");
+      const powerInput = document.getElementById("power");
+      const munitionSelect = document.getElementById("munitionSelect");
+      const angleValue = document.getElementById("angleValue");
+      const powerValue = document.getElementById("powerValue");
+      const fireButton = document.getElementById("fireButton");
+      const resetButton = document.getElementById("resetButton");
+      const startButton = document.getElementById("startButton");
+      const insultSelect = document.getElementById("insultSelect");
+      const insultButton = document.getElementById("insultButton");
+      const requestSurrenderButton = document.getElementById("requestSurrenderButton");
+      const offerSurrenderButton = document.getElementById("offerSurrenderButton");
+      const leftNameInput = document.getElementById("leftNameInput");
+      const rightNameInput = document.getElementById("rightNameInput");
+      const opponentModeInput = document.getElementById("opponentModeInput");
+      const leftColorInput = document.getElementById("leftColorInput");
+      const rightColorInput = document.getElementById("rightColorInput");
+      const splash = document.getElementById("splash");
+      const turnText = document.getElementById("turnText");
+      const windText = document.getElementById("windText");
+      const leftHealth = document.getElementById("leftHealth");
+      const rightHealth = document.getElementById("rightHealth");
+
+      const WIDTH = canvas.width;
+      const HEIGHT = canvas.height;
+      const GRAVITY = 180;
+      const PROJECTILE_RADIUS = 8;
+      const BLAST_RADIUS = 26;
+      const TURN_DELAY = 820;
+      const AI_DELAY = 1050;
+
+      let terrain = [];
+      let castles = [];
+      let soldiers = [];
+      let scenery = [];
+      let skyMode = null;
+      let projectile = null;
+      let currentPlayer = 0;
+      let wind = 0;
+      let phase = "splash";
+      let lastTime = performance.now();
+      let shotTrail = [];
+      let particles = [];
+      let impactMarks = [];
+      let message = "";
+      let messageUntil = 0;
+      let skyComment = null;
+      let aiTimer = null;
+      let aiShots = 0;
+      let opponentMode = "cpu";
+      let audioCtx = null;
+      let flightSound = null;
+
+      const players = [
+        { name: "Player 1", color: "#58a6d6", side: 1 },
+        { name: "CPU", color: "#e65d49", side: -1 }
+      ];
+
+      const splashImages = [
+        "assets/splash.jpg",
+        "assets/splash-2.jpg",
+        "assets/splash-3.jpg"
+      ];
+
+      const skies = [
+        { name: "day", top: "#79a9d8", mid: "#b7d4e9", ground: "#d6b16a", body: "sun" },
+        { name: "dawn", top: "#3f5d83", mid: "#d89068", ground: "#dfb56d", body: "sunrise" },
+        { name: "sunset", top: "#273c64", mid: "#b5605f", ground: "#75543e", body: "lowSun" },
+        { name: "moon", top: "#101b31", mid: "#1b2f4a", ground: "#4b4a4a", body: "moon" },
+        { name: "stars", top: "#081224", mid: "#14243d", ground: "#3c4147", body: "constellations" }
+      ];
+
+      const munitions = {
+        rock: { label: "Stone shot", radius: 8, blast: 24, damage: 1, color: "#6c6155", speed: 1 },
+        fireball: { label: "flaming ball", radius: 9, blast: 31, damage: 1.25, color: "#f05a28", speed: 0.94 },
+        oil: { label: "clay oil jar", radius: 10, blast: 34, damage: 1.12, color: "#d7b36a", speed: 0.9 },
+        tar: { label: "sealed tar pot", radius: 10, blast: 29, damage: 1.35, color: "#18120f", speed: 0.86 },
+        bolt: { label: "ballista bolt", radius: 6, blast: 16, damage: 1.8, color: "#c8b28a", speed: 1.18 }
+      };
+
+      const insults = [
+        "Your merlons are ornamental.",
+        "That gatehouse could not stop a parade.",
+        "Your donjon leans like a tired bannerman.",
+        "Strike your colors before we redecorate.",
+        "Your moat is mostly decorative soup.",
+        "I have seen sturdier walls on a pie crust.",
+        "Your keep is one sneeze from becoming gravel.",
+        "Your trebuchet appears to be assembled from furniture.",
+        "Even your flag is trying to escape.",
+        "Your battlements have the courage of damp cheese.",
+        "That tower was clearly built on a dare.",
+        "Your ballista squints before it fires.",
+        "We shall catalog your rubble by lunchtime.",
+        "Your masons owe everyone an apology.",
+        "Your gatehouse is making surrender faces.",
+        "Your shield looks nervous.",
+        "Your courtyard smells of boiled panic.",
+        "Your archers are waving goodbye to themselves.",
+        "I admire how bravely your wall is already cracking.",
+        "Your castle has the posture of a tired mule.",
+        "Our stones asked for a better target.",
+        "Your hoardings look like rented scaffolds.",
+        "That tower is not tall, it is merely ambitious.",
+        "Your moat has more discipline than your army.",
+        "Prepare to become a historical footnote."
+      ];
+
+      const replies = [
+        "Your stones throw straighter than your wit.",
+        "We have heard fiercer words from a damp herald.",
+        "Keep shouting. It helps us judge the range.",
+        "Our gatehouse remains unmoved by poetry.",
+        "Your insult hit harder than your last shot, barely.",
+        "A fine speech. Shame about the aim.",
+        "We would reply, but our jester is busy loading tar.",
+        "Your heraldry is doing most of the work.",
+        "Send that line again, we need kindling.",
+        "Your confidence is admirably unburdened by evidence.",
+        "The moat laughed. We cannot stop it.",
+        "Your army just asked to stand farther away from you.",
+        "Our walls have survived worse grammar.",
+        "You talk like a siege engine with a loose wheel.",
+        "A bold taunt from a future crater.",
+        "We accept your words as surrender practice.",
+        "Your mother was a portcullis and your father smelt of pitch.",
+        "Your missile budget appears mostly theoretical.",
+        "We shall carve that insult into your surrender table.",
+        "The tower heard you and chose to remain standing.",
+        "That was almost rude enough to damage masonry.",
+        "Our cooks throw hotter things than that.",
+        "Your diplomacy has excellent range and poor accuracy.",
+        "Do keep talking. It masks the creaking of your trebuchet.",
+        "Your finest weapon remains wishful thinking."
+      ];
+
+      const soldierLaments = [
+        "Tell my boots I died upright.",
+        "I regret joining the scenic infantry.",
+        "That was not in the recruitment song.",
+        "Mother warned me about horizontal rocks.",
+        "I appear to have been promoted to crater.",
+        "Save my helmet, it had plans.",
+        "At least the moat did not get me.",
+        "I knew I should have chosen accounting.",
+        "My spear was decorative anyway.",
+        "I request a transfer to the back row.",
+        "That cloud is shaped like unemployment.",
+        "Medic! Or carpenter! Either works.",
+        "My knees have surrendered independently.",
+        "Please avenge me with better math.",
+        "I have become battlefield confetti.",
+        "This is why I distrust flying pottery.",
+        "Who stores oil in throwable jars?",
+        "I saw the bolt and chose denial.",
+        "A heroic end would have had more warning.",
+        "Please tell the bard to exaggerate.",
+        "I am now one with no-man's land.",
+        "The ground and I are negotiating terms.",
+        "I was promised light marching.",
+        "That flaming ball had opinions.",
+        "My shield filed a complaint.",
+        "The captain said stand here, specifically.",
+        "I leave my rations to the least flattened.",
+        "This armor is mostly emotional support."
+      ];
+
+      const launchQuips = [
+        "A bold experiment in gravity begins.",
+        "Someone checked the angle, probably.",
+        "The castle requests everyone look busy.",
+        "Physics has been notified.",
+        "Stand back, the math is decorative.",
+        "A missile with opinions prepares to depart.",
+        "The quartermaster denies all responsibility.",
+        "Trajectory: hopeful.",
+        "The wind says this should be funny.",
+        "Another perfectly reasonable workplace incident.",
+        "Loose helmets are now officially airborne hazards.",
+        "The launch crew nods with false confidence.",
+        "Someone yell 'incoming' in advance.",
+        "This is why castles need insurance.",
+        "The projectile has entered negotiations.",
+        "A brief silence for the target area.",
+        "The moat refuses to be a witness.",
+        "All calculations rounded to the nearest panic.",
+        "The stone would like to speak to a wall.",
+        "A brave arc is about to be drawn."
+      ];
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function rand(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function cleanName(value, fallback) {
+        const cleaned = value.trim().replace(/\s+/g, " ").slice(0, 14);
+        return cleaned || fallback;
+      }
+
+      function shadeColor(hex, amount) {
+        const value = hex.replace("#", "");
+        const num = Number.parseInt(value, 16);
+        const r = clamp((num >> 16) + amount, 0, 255);
+        const g = clamp(((num >> 8) & 255) + amount, 0, 255);
+        const b = clamp((num & 255) + amount, 0, 255);
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      function applyPlayerSettings() {
+        opponentMode = opponentModeInput.value;
+        players[0].name = cleanName(leftNameInput.value, "Player 1");
+        players[1].name = cleanName(rightNameInput.value, opponentMode === "cpu" ? "CPU" : "Player 2");
+        players[0].color = leftColorInput.value;
+        players[1].color = rightColorInput.value;
+      }
+
+      function setRandomSplash() {
+        const choice = splashImages[Math.floor(Math.random() * splashImages.length)];
+        const tester = new Image();
+        tester.onload = () => {
+          splash.style.setProperty("--splash-image", `url("${choice}")`);
+        };
+        tester.onerror = () => {
+          splash.style.setProperty("--splash-image", 'url("assets/splash.jpg")');
+        };
+        tester.src = choice;
+      }
+
+      function ensureAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playTone({ type = "square", start = 220, end = 80, duration = 0.25, gain = 0.08 }) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const volume = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(start, now);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(1, end), now + duration);
+        volume.gain.setValueAtTime(gain, now);
+        volume.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(volume);
+        volume.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      function playLaunchSound(type) {
+        const voices = {
+          rock: [{ type: "triangle", start: 90, end: 170, duration: 0.22, gain: 0.055 }],
+          fireball: [{ type: "sawtooth", start: 130, end: 620, duration: 0.35, gain: 0.06 }],
+          oil: [{ type: "triangle", start: 180, end: 260, duration: 0.24, gain: 0.04 }],
+          tar: [{ type: "square", start: 105, end: 155, duration: 0.3, gain: 0.04 }],
+          bolt: [{ type: "sawtooth", start: 360, end: 820, duration: 0.14, gain: 0.045 }]
+        };
+        voices[type].forEach(playTone);
+        startFlightSound(type);
+      }
+
+      function startFlightSound(type) {
+        if (!audioCtx) return;
+        stopFlightSound();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const wave = type === "bolt" ? "sawtooth" : type === "fireball" ? "square" : "triangle";
+        osc.type = wave;
+        osc.frequency.setValueAtTime(type === "bolt" ? 520 : 170, now);
+        gain.gain.setValueAtTime(type === "fireball" ? 0.026 : 0.018, now);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        flightSound = { osc, gain, type };
+      }
+
+      function updateFlightSound() {
+        if (!audioCtx || !flightSound || !projectile) return;
+        const target = castles[1 - currentPlayer].catapult;
+        const targetDistance = Math.hypot(projectile.x - target.x, projectile.y - target.y);
+        const groundY = terrain[Math.floor(clamp(projectile.x, 0, WIDTH - 1))];
+        const groundDistance = Math.max(0, groundY - projectile.y);
+        const proximity = clamp(1 - Math.min(targetDistance, groundDistance * 1.8) / 360, 0, 1);
+        const base = flightSound.type === "bolt" ? 460 : flightSound.type === "fireball" ? 210 : 135;
+        const peak = flightSound.type === "bolt" ? 980 : flightSound.type === "fireball" ? 720 : 420;
+        const wobble = Math.sin(projectile.age * 18) * (flightSound.type === "fireball" ? 28 : 10);
+        const freq = base + (peak - base) * proximity + wobble;
+        const now = audioCtx.currentTime;
+        flightSound.osc.frequency.setTargetAtTime(freq, now, 0.035);
+        flightSound.gain.gain.setTargetAtTime(0.012 + proximity * 0.045, now, 0.04);
+      }
+
+      function stopFlightSound() {
+        if (!flightSound || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        flightSound.gain.gain.setTargetAtTime(0.0001, now, 0.025);
+        flightSound.osc.stop(now + 0.08);
+        flightSound = null;
+      }
+
+      function playImpactSound(type) {
+        const impacts = {
+          rock: [{ type: "square", start: 95, end: 28, duration: 0.36, gain: 0.11 }],
+          fireball: [{ type: "sawtooth", start: 420, end: 55, duration: 0.45, gain: 0.12 }],
+          oil: [{ type: "triangle", start: 260, end: 70, duration: 0.32, gain: 0.085 }],
+          tar: [{ type: "square", start: 170, end: 38, duration: 0.42, gain: 0.09 }],
+          bolt: [{ type: "sawtooth", start: 760, end: 110, duration: 0.18, gain: 0.08 }]
+        };
+        impacts[type].forEach(playTone);
+      }
+
+      function makeTerrain() {
+        terrain = new Array(WIDTH);
+        for (let x = 0; x < WIDTH; x += 1) {
+          const hill = 42 * Math.sin(x * 0.011 + 0.6) + 22 * Math.sin(x * 0.031);
+          const centerRise = 84 * Math.exp(-Math.pow((x - WIDTH / 2) / 145, 2));
+          const rough = 10 * Math.sin(x * 0.113 + rand(-0.04, 0.04));
+          terrain[x] = clamp(314 - hill - centerRise - rough, 188, 342);
+        }
+
+        flattenTerrain(28, 250, 318);
+        flattenTerrain(586, 788, 318);
+      }
+
+      function chooseSky() {
+        return skies[Math.floor(Math.random() * skies.length)];
+      }
+
+      function flattenTerrain(x1, x2, y) {
+        for (let x = x1; x <= x2; x += 1) {
+          const blend = Math.min(1, (x - x1) / 30, (x2 - x) / 30);
+          terrain[x] = terrain[x] * (1 - blend) + y * blend;
+        }
+      }
+
+      function makeScenery() {
+        const items = [];
+        const lakeCount = Math.random() < 0.65 ? 1 : 2;
+        for (let i = 0; i < lakeCount; i += 1) {
+          const x = rand(300, 500);
+          items.push({ type: "lake", x, y: terrain[Math.floor(x)] + 4, w: rand(52, 90), h: rand(10, 18) });
+        }
+        for (let i = 0; i < 9; i += 1) {
+          const x = rand(260, 540);
+          items.push({ type: "tree", x, y: terrain[Math.floor(x)], h: rand(18, 36), lean: rand(-4, 4) });
+        }
+        for (let i = 0; i < 14; i += 1) {
+          const x = rand(285, 520);
+          items.push({ type: "stakes", x, y: terrain[Math.floor(x)], count: Math.floor(rand(2, 5)) });
+        }
+        return items;
+      }
+
+      function makeCastle(side) {
+        const isLeft = side === "left";
+        const baseX = isLeft ? 42 : 604;
+        const baseY = 318;
+        const brickW = 10;
+        const brickH = 10;
+        const bricks = [];
+        const features = [];
+
+        function addBlock(name, x, y, cols, rows, zone, hp = 2) {
+          features.push({ name, x, y, w: cols * brickW, h: rows * brickH, zone });
+          for (let row = 0; row < rows; row += 1) {
+            for (let col = 0; col < cols; col += 1) {
+              const structural = zone === "wood" || zone === "bartizan" || name.includes("merlon");
+              const shell = row === 0 || row === rows - 1 || col === 0 || col === cols - 1;
+              const cobbleBase = row >= rows - 2 && (zone === "keep" || zone === "gate" || zone === "flank");
+              if (!structural && !shell && !cobbleBase) continue;
+              bricks.push({
+                x: x + col * brickW,
+                y: y + row * brickH,
+                w: brickW - 1,
+                h: brickH - 1,
+                hp,
+                maxHp: hp,
+                zone,
+                feature: name
+              });
+            }
+          }
+        }
+
+        function addMerlons(name, x, y, cols, zone) {
+          for (let col = 0; col < cols; col += 2) {
+            addBlock(`${name}-${col}`, x + col * brickW, y, 1, 1, zone, 2);
+          }
+        }
+
+        if (isLeft) {
+          addBlock("motte-left", baseX - 2, baseY - 86, 4, 9, "flank", 3);
+          addBlock("keep", baseX + 32, baseY - 176, 5, 18, "keep", 3);
+          addBlock("gatehouse", baseX + 80, baseY - 98, 6, 10, "gate", 3);
+          addBlock("flank-right", baseX + 142, baseY - 126, 4, 13, "flank", 3);
+          addBlock("curtain", baseX + 36, baseY - 66, 13, 5, "wall", 2);
+          addBlock("hoarding", baseX + 28, baseY - 104, 15, 2, "wood", 1);
+          addBlock("bartizan-l", baseX + 20, baseY - 146, 2, 3, "bartizan", 2);
+          addBlock("bartizan-r", baseX + 168, baseY - 154, 2, 3, "bartizan", 2);
+          addMerlons("keep-merlon", baseX + 32, baseY - 186, 5, "keep");
+          addMerlons("gate-merlon", baseX + 80, baseY - 108, 6, "gate");
+          addMerlons("right-tower-merlon", baseX + 142, baseY - 136, 4, "flank");
+        } else {
+          addBlock("curtain", baseX + 16, baseY - 66, 14, 5, "wall", 2);
+          addBlock("donjon", baseX + 62, baseY - 186, 6, 19, "keep", 3);
+          addBlock("gatehouse", baseX + 20, baseY - 106, 5, 11, "gate", 3);
+          addBlock("round-tower", baseX + 138, baseY - 154, 5, 16, "flank", 3);
+          addBlock("hoarding", baseX + 52, baseY - 116, 9, 2, "wood", 1);
+          addBlock("bartizan-l", baseX + 50, baseY - 166, 2, 3, "bartizan", 2);
+          addBlock("bartizan-r", baseX + 122, baseY - 168, 2, 3, "bartizan", 2);
+          addBlock("motte-tower", baseX + 2, baseY - 96, 3, 10, "flank", 3);
+          addMerlons("curtain-merlon", baseX + 16, baseY - 76, 14, "wall");
+          addMerlons("donjon-merlon", baseX + 62, baseY - 196, 6, "keep");
+          addMerlons("round-merlon", baseX + 138, baseY - 164, 5, "flank");
+        }
+
+        return {
+          side,
+          color: "#8f969a",
+          dark: "#596166",
+          light: "#b7bec1",
+          wood: "#8a623c",
+          trim: "#c5c9c9",
+          heraldry: players[isLeft ? 0 : 1].color,
+          heraldryDark: shadeColor(players[isLeft ? 0 : 1].color, -45),
+          bricks,
+          features,
+          catapult: {
+            x: isLeft ? baseX + 116 : baseX + 56,
+            y: isLeft ? baseY - 118 : baseY - 132,
+            alive: true
+          }
+        };
+      }
+
+      function newWind() {
+        wind = Math.round(rand(-38, 38));
+        if (Math.abs(wind) < 8) wind = 0;
+      }
+
+      function resetGame(showSplash) {
+        window.clearTimeout(aiTimer);
+        applyPlayerSettings();
+        skyMode = chooseSky();
+        makeTerrain();
+        scenery = makeScenery();
+        castles = [makeCastle("left"), makeCastle("right")];
+        soldiers = makeArmies();
+        projectile = null;
+        currentPlayer = 0;
+        shotTrail = [];
+        particles = [];
+        impactMarks = [];
+        message = "";
+        skyComment = null;
+        aiShots = 0;
+        newWind();
+        phase = showSplash ? "splash" : "input";
+        splash.classList.toggle("hidden", !showSplash);
+        setControls();
+        updateHud();
+      }
+
+      function castleHealth(castle) {
+        const total = castle.bricks.reduce((sum, brick) => sum + brick.maxHp, 0);
+        const live = castle.bricks.reduce((sum, brick) => sum + Math.max(0, brick.hp), 0);
+        return Math.round((live / total) * 100);
+      }
+
+      function castleHp(castle) {
+        const total = castle.bricks.reduce((sum, brick) => sum + brick.maxHp, 0);
+        const live = castle.bricks.reduce((sum, brick) => sum + Math.max(0, brick.hp), 0);
+        return { live, total, pct: Math.round((live / total) * 100) };
+      }
+
+      function makeArmies() {
+        const rows = [
+          { side: "left", startX: 230, dir: 1, color: players[0].color, shield: "buckler", formation: "loose" },
+          { side: "right", startX: 574, dir: -1, color: players[1].color, shield: "tower", formation: "testudo" }
+        ];
+        const army = [];
+        rows.forEach((group) => {
+          for (let row = 0; row < 3; row += 1) {
+            for (let col = 0; col < 5; col += 1) {
+              const spacing = group.formation === "testudo" ? 13 : 17;
+              const stagger = group.formation === "testudo" ? row * 2 : (row % 2) * 5;
+              const x = group.startX + group.dir * (col * spacing + stagger);
+              army.push({
+                side: group.side,
+                x,
+                y: terrain[Math.floor(x)] - 2 - row * (group.formation === "testudo" ? 7 : 9),
+                alive: true,
+                color: group.color,
+                dir: group.dir,
+                shield: group.shield,
+                formation: group.formation,
+                tunic: group.side === "left" ? "#d9e6ec" : "#f0d3c4"
+              });
+            }
+          }
+        });
+        return army;
+      }
+
+      function setControls() {
+        const isHumanTurn = phase === "input" && (currentPlayer === 0 || opponentMode === "human");
+        angleInput.disabled = !isHumanTurn;
+        powerInput.disabled = !isHumanTurn;
+        munitionSelect.disabled = !isHumanTurn;
+        fireButton.disabled = !isHumanTurn;
+        insultButton.disabled = !isHumanTurn || currentPlayer !== 0;
+        requestSurrenderButton.disabled = !isHumanTurn || currentPlayer !== 0;
+        offerSurrenderButton.disabled = !isHumanTurn;
+      }
+
+      function updateHud() {
+        const leftHp = castleHp(castles[0]);
+        const rightHp = castleHp(castles[1]);
+        angleValue.textContent = angleInput.value;
+        powerValue.textContent = powerInput.value;
+        turnText.textContent = phase === "gameover" ? "Done" : players[currentPlayer].name;
+        windText.textContent = wind === 0 ? "Calm" : `${Math.abs(wind)} ${wind > 0 ? ">" : "<"}`;
+        leftHealth.textContent = `${leftHp.live}/${leftHp.total} HP (${leftHp.pct}%)`;
+        rightHealth.textContent = `${rightHp.live}/${rightHp.total} HP (${rightHp.pct}%)`;
+      }
+
+      function fire(angleDeg, power) {
+        if (phase !== "input") return;
+
+        const player = players[currentPlayer];
+        const castle = castles[currentPlayer];
+        const catapult = castle.catapult;
+        const type = currentPlayer === 0 || opponentMode === "human" ? munitionSelect.value : chooseAiMunition();
+        const munition = munitions[type];
+        const angle = angleDeg * Math.PI / 180;
+        const speed = (120 + power * 2.45) * munition.speed;
+
+        skyComment = {
+          text: randomFrom(launchQuips),
+          x: currentPlayer === 0 ? 235 : 565,
+          y: 72,
+          until: performance.now() + 1900
+        };
+        phase = "taunting";
+        setControls();
+        window.setTimeout(() => {
+          if (phase !== "taunting") return;
+          projectile = {
+            x: catapult.x + player.side * 25,
+            y: catapult.y - 8,
+            vx: player.side * Math.cos(angle) * speed,
+            vy: -Math.sin(angle) * speed,
+            angle: player.side === 1 ? -angle : Math.PI + angle,
+            type,
+            radius: munition.radius,
+            age: 0
+          };
+
+          shotTrail = [];
+          playLaunchSound(type);
+          phase = "firing";
+        }, 1550);
+      }
+
+      function fireHuman() {
+        ensureAudio();
+        fire(Number(angleInput.value), Number(powerInput.value));
+      }
+
+      function fireAi() {
+        if (phase !== "input" || currentPlayer !== 1) return;
+        const leftCat = castles[0].catapult;
+        const rightCat = castles[1].catapult;
+        const distance = rightCat.x - leftCat.x;
+        const firstShot = aiShots === 0;
+        const angle = firstShot
+          ? clamp(39 + rand(-15, 17) - wind * 0.05, 24, 70)
+          : clamp(42 + rand(-11, 15) - wind * 0.08, 26, 74);
+        const power = firstShot
+          ? clamp((distance / 9.8) + rand(-18, 8), 46, 74)
+          : clamp((distance / 8.8) + rand(-14, 13), 50, 88);
+        aiShots += 1;
+        fire(angle, power);
+      }
+
+      function chooseAiMunition() {
+        if (aiShots <= 1) return "rock";
+        const health = castleHealth(castles[0]);
+        if (health < 45) return Math.random() < 0.55 ? "tar" : "fireball";
+        const options = ["rock", "rock", "fireball", "oil", "bolt"];
+        return options[Math.floor(Math.random() * options.length)];
+      }
+
+      function randomFrom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function scheduleAi() {
+        window.clearTimeout(aiTimer);
+        if (phase === "input" && currentPlayer === 1 && opponentMode === "cpu") {
+          aiTimer = window.setTimeout(fireAi, AI_DELAY);
+        }
+      }
+
+      function showMessage(text, duration = 1800) {
+        message = text;
+        messageUntil = performance.now() + duration;
+      }
+
+      function insultOpponent() {
+        if (phase !== "input" || currentPlayer !== 0) return;
+        const line = Math.random() < 0.35 ? insultSelect.value : randomFrom(insults);
+        showMessage(`${players[0].name}: "${line}"`, 1900);
+        window.setTimeout(() => {
+          if (phase === "input" && currentPlayer === 0) {
+            const reply = randomFrom(replies);
+            showMessage(`${players[1].name}: "${reply}"`, 2200);
+          }
+        }, 2050);
+      }
+
+      function requestSurrender() {
+        if (phase !== "input" || currentPlayer !== 0) return;
+        const enemyHealth = castleHealth(castles[1]);
+        const accepted = enemyHealth <= 35 || (!castles[1].catapult.alive && enemyHealth <= 55);
+        if (accepted) {
+          phase = "gameover";
+          message = `${players[1].name} accepts surrender terms`;
+          messageUntil = Infinity;
+          setControls();
+          updateHud();
+        } else {
+          showMessage(`${players[1].name}: "Request denied. Fire away."`, 2400);
+        }
+      }
+
+      function offerSurrender() {
+        if (phase !== "input") return;
+        if (currentPlayer === 1 && opponentMode === "cpu") return;
+        const winner = 1 - currentPlayer;
+        phase = "gameover";
+        message = `${players[currentPlayer].name} surrenders. ${players[winner].name} wins`;
+        messageUntil = Infinity;
+        setControls();
+        updateHud();
+      }
+
+      function endTurn(resultText) {
+        stopFlightSound();
+        projectile = null;
+        message = resultText || "";
+        messageUntil = performance.now() + 1200;
+        updateHud();
+
+        const enemy = castles[1 - currentPlayer];
+        const self = castles[currentPlayer];
+        if (!enemy.catapult.alive || castleHealth(enemy) <= 0) {
+          phase = "gameover";
+          message = `${players[currentPlayer].name} wins`;
+          messageUntil = Infinity;
+          setControls();
+          updateHud();
+          return;
+        }
+        if (!self.catapult.alive || castleHealth(self) <= 0) {
+          phase = "gameover";
+          message = `${players[1 - currentPlayer].name} wins`;
+          messageUntil = Infinity;
+          setControls();
+          updateHud();
+          return;
+        }
+
+        phase = "resolving";
+        window.setTimeout(() => {
+          currentPlayer = 1 - currentPlayer;
+          newWind();
+          phase = "input";
+          setControls();
+          updateHud();
+          scheduleAi();
+        }, TURN_DELAY);
+      }
+
+      function rectCircleHit(rect, cx, cy, radius) {
+        const closestX = clamp(cx, rect.x, rect.x + rect.w);
+        const closestY = clamp(cy, rect.y, rect.y + rect.h);
+        const dx = cx - closestX;
+        const dy = cy - closestY;
+        return dx * dx + dy * dy <= radius * radius;
+      }
+
+      function activeMunition() {
+        return projectile ? munitions[projectile.type] : munitions.rock;
+      }
+
+      function blastCastle(castle, x, y, munition) {
+        let hits = 0;
+        castle.bricks.forEach((brick) => {
+          if (brick.hp > 0 && rectCircleHit(brick, x, y, munition.blast)) {
+            const cx = brick.x + brick.w / 2;
+            const cy = brick.y + brick.h / 2;
+            const distance = Math.hypot(cx - x, cy - y);
+            let damage = distance < 13 ? 3 : 1;
+            if (projectile && projectile.type === "bolt") {
+              damage = brick.zone === "wood" ? 3 : damage + 1;
+            }
+            damage = Math.ceil(damage * munition.damage);
+            brick.hp = Math.max(0, brick.hp - damage);
+            hits += 1;
+            if (brick.hp === 0) {
+              spawnRubble(cx, cy, castle.color, 8);
+            }
+          }
+        });
+        return hits;
+      }
+
+      function blastTerrain(x, y, munition) {
+        const radius = munition.blast + 3;
+        for (let tx = Math.max(0, Math.floor(x - radius)); tx < Math.min(WIDTH, x + radius); tx += 1) {
+          const dx = tx - x;
+          const depth = Math.sqrt(Math.max(0, radius * radius - dx * dx)) * (projectile && projectile.type === "bolt" ? 0.18 : 0.52);
+          if (terrain[tx] < y + depth) {
+            terrain[tx] = clamp(y + depth, 0, HEIGHT - 20);
+          }
+        }
+      }
+
+      function catapultContains(castle, x, y) {
+        const cat = castle.catapult;
+        if (!cat.alive) return false;
+        return x > cat.x - 28 && x < cat.x + 28 && y > cat.y - 24 && y < cat.y + 22;
+      }
+
+      function destroyCatapult(castle) {
+        castle.catapult.alive = false;
+        spawnRubble(castle.catapult.x, castle.catapult.y - 12, "#f5c44f", 30);
+      }
+
+      function spawnRubble(x, y, color, count) {
+        for (let i = 0; i < count; i += 1) {
+          particles.push({
+            x,
+            y,
+            vx: rand(-60, 60),
+            vy: rand(-95, -18),
+            life: rand(0.45, 1.1),
+            color,
+            size: rand(2, 5)
+          });
+        }
+      }
+
+      function spawnImpactEffect(x, y, type) {
+        if (type === "fireball") {
+          impactMarks.push({ x, y, radius: 25, color: "rgba(224, 68, 28, 0.45)", life: 3.8 });
+          for (let i = 0; i < 34; i += 1) {
+            particles.push({
+              x,
+              y,
+              vx: rand(-75, 75),
+              vy: rand(-125, -22),
+              life: rand(0.45, 1.2),
+              color: i % 2 ? "#ffcf5a" : "#f05a28",
+              size: rand(2, 6)
+            });
+          }
+          return;
+        }
+
+        if (type === "oil" || type === "tar") {
+          impactMarks.push({
+            x,
+            y,
+            radius: type === "oil" ? 32 : 26,
+            color: type === "oil" ? "rgba(255, 139, 42, 0.5)" : "rgba(12, 8, 6, 0.72)",
+            life: type === "oil" ? 4.4 : 5.6
+          });
+          for (let i = 0; i < 28; i += 1) {
+            particles.push({
+              x,
+              y,
+              vx: rand(-90, 90),
+              vy: rand(-80, -8),
+              life: rand(0.5, 1.4),
+              color: type === "oil" ? (i % 3 ? "#ff9f32" : "#2b1b12") : "#12100e",
+              size: rand(2, 7)
+            });
+          }
+          return;
+        }
+
+        if (type === "bolt") {
+          spawnRubble(x, y, "#c8b28a", 16);
+          impactMarks.push({ x, y, radius: 13, color: "rgba(222, 196, 134, 0.32)", life: 1.6 });
+          return;
+        }
+
+        spawnRubble(x, y, "#79694c", 22);
+        impactMarks.push({ x, y, radius: 18, color: "rgba(70, 55, 40, 0.48)", life: 2.4 });
+      }
+
+      function blastSoldiers(x, y, radius) {
+        let losses = 0;
+        soldiers.forEach((soldier) => {
+          if (!soldier.alive) return;
+          const distance = Math.hypot(soldier.x - x, soldier.y - 8 - y);
+          if (distance <= radius + 8) {
+            soldier.alive = false;
+            losses += 1;
+            spawnRubble(soldier.x, soldier.y - 9, soldier.color, 9);
+          }
+        });
+        return losses;
+      }
+
+      function resolveImpact(x, y) {
+        const type = projectile ? projectile.type : "rock";
+        stopFlightSound();
+        playImpactSound(type);
+        const munition = activeMunition();
+        const enemy = castles[1 - currentPlayer];
+        const friendly = castles[currentPlayer];
+        let text = `${munition.label} lands`;
+
+        if (catapultContains(enemy, x, y)) {
+          destroyCatapult(enemy);
+          text = "Catapult destroyed";
+        } else {
+          const enemyHits = blastCastle(enemy, x, y, munition);
+          const friendlyHits = blastCastle(friendly, x, y, munition);
+          const soldierHits = blastSoldiers(x, y, munition.blast);
+          spawnImpactEffect(x, y, type);
+          if (enemyHits > 0) text = `${munition.label} hits the wall`;
+          if (friendlyHits > 0 && enemyHits === 0) text = `${munition.label} hits your own wall`;
+          if (soldierHits > 0 && enemyHits === 0 && friendlyHits === 0) {
+            text = `Soldier: "${randomFrom(soldierLaments)}"`;
+          }
+          if (enemyHits === 0 && friendlyHits === 0) blastTerrain(x, y, munition);
+        }
+
+        endTurn(text);
+      }
+
+      function update(dt) {
+        if (skyComment && performance.now() > skyComment.until) {
+          skyComment = null;
+        }
+
+        impactMarks = impactMarks.filter((mark) => {
+          mark.life -= dt;
+          return mark.life > 0;
+        });
+
+        particles = particles.filter((p) => {
+          p.life -= dt;
+          p.vy += GRAVITY * dt * 0.85;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          return p.life > 0;
+        });
+
+        if (!projectile || phase !== "firing") return;
+
+        projectile.age += dt;
+        projectile.vx += wind * dt;
+        projectile.vy += GRAVITY * dt;
+        projectile.x += projectile.vx * dt;
+        projectile.y += projectile.vy * dt;
+        projectile.angle = Math.atan2(projectile.vy, projectile.vx);
+        updateFlightSound();
+
+        shotTrail.push({ x: projectile.x, y: projectile.y });
+        if (shotTrail.length > 90) shotTrail.shift();
+
+        if (projectile.x < -40 || projectile.x > WIDTH + 40 || projectile.y > HEIGHT + 40) {
+          endTurn("Missed");
+          return;
+        }
+
+        const x = Math.floor(clamp(projectile.x, 0, WIDTH - 1));
+        if (projectile.y >= terrain[x]) {
+          resolveImpact(projectile.x, terrain[x]);
+          return;
+        }
+
+        for (const castle of castles) {
+          if (castle.bricks.some((brick) => brick.hp > 0 && rectCircleHit(brick, projectile.x, projectile.y, projectile.radius || PROJECTILE_RADIUS))) {
+            resolveImpact(projectile.x, projectile.y);
+            return;
+          }
+
+          if (castle !== castles[currentPlayer] && catapultContains(castle, projectile.x, projectile.y)) {
+            resolveImpact(projectile.x, projectile.y);
+            return;
+          }
+        }
+      }
+
+      function drawSky() {
+        const mode = skyMode || skies[0];
+        const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
+        sky.addColorStop(0, mode.top);
+        sky.addColorStop(0.62, mode.mid);
+        sky.addColorStop(1, mode.ground);
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+        if (mode.body === "sun" || mode.body === "lowSun" || mode.body === "sunrise") {
+          const sx = mode.body === "lowSun" ? 655 : mode.body === "sunrise" ? 145 : 648;
+          const sy = mode.body === "lowSun" ? 88 : mode.body === "sunrise" ? 104 : 44;
+          ctx.fillStyle = "#f8d170";
+          ctx.fillRect(sx, sy, 24, 24);
+          ctx.fillStyle = "rgba(255, 234, 170, 0.28)";
+          ctx.fillRect(sx - 7, sy - 7, 38, 38);
+        } else {
+          ctx.fillStyle = "#e7e3c6";
+          ctx.fillRect(644, 42, 22, 22);
+          ctx.fillStyle = mode.body === "moon" ? mode.top : "rgba(8,18,36,0.9)";
+          ctx.fillRect(654, 38, 16, 24);
+          drawStars(mode.body === "constellations");
+        }
+      }
+
+      function drawStars(withConstellations) {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.46)";
+        for (let x = 0; x < WIDTH; x += 61) {
+          ctx.fillRect((x * 47) % WIDTH, 26 + (x * 13) % 98, 2, 2);
+        }
+        if (!withConstellations) return;
+        drawConstellation([[92, 62], [121, 55], [145, 68], [171, 61], [195, 72], [219, 58]], "#d9e7ff");
+        drawConstellation([[356, 52], [374, 82], [398, 74], [419, 102], [392, 118], [370, 104]], "#d9e7ff");
+        drawConstellation([[552, 58], [575, 78], [602, 58], [575, 98], [575, 36]], "#d9e7ff");
+      }
+
+      function drawConstellation(points, color) {
+        ctx.strokeStyle = "rgba(217, 231, 255, 0.35)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        });
+        ctx.stroke();
+        ctx.fillStyle = color;
+        points.forEach((point) => ctx.fillRect(point[0] - 1, point[1] - 1, 3, 3));
+      }
+
+      function drawTerrain() {
+        ctx.beginPath();
+        ctx.moveTo(0, HEIGHT);
+        for (let x = 0; x < WIDTH; x += 1) {
+          ctx.lineTo(x, terrain[x]);
+        }
+        ctx.lineTo(WIDTH, HEIGHT);
+        ctx.closePath();
+        ctx.fillStyle = "#5e513c";
+        ctx.fill();
+
+        ctx.beginPath();
+        for (let x = 0; x < WIDTH; x += 1) {
+          if (x === 0) ctx.moveTo(x, terrain[x]);
+          else ctx.lineTo(x, terrain[x]);
+        }
+        ctx.strokeStyle = "#98a665";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+        for (let x = 0; x < WIDTH; x += 8) {
+          ctx.fillRect(x, terrain[x] + 5, 5, 2);
+        }
+      }
+
+      function drawMoats() {
+        const moats = [
+          { x: 40, y: 314, w: 205, h: 22 },
+          { x: 588, y: 314, w: 196, h: 22 }
+        ];
+        moats.forEach((moat) => {
+          const water = ctx.createLinearGradient(0, moat.y, 0, moat.y + moat.h);
+          water.addColorStop(0, "#274c61");
+          water.addColorStop(1, "#152b3c");
+          ctx.fillStyle = water;
+          ctx.beginPath();
+          ctx.ellipse(moat.x + moat.w / 2, moat.y + moat.h / 2, moat.w / 2, moat.h / 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(180, 214, 216, 0.36)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(moat.x + 10, moat.y + 9);
+          ctx.lineTo(moat.x + moat.w - 12, moat.y + 7);
+          ctx.moveTo(moat.x + 32, moat.y + 17);
+          ctx.lineTo(moat.x + moat.w - 36, moat.y + 15);
+          ctx.stroke();
+        });
+      }
+
+      function drawNoMansLand() {
+        scenery.forEach((item) => {
+          if (item.type === "lake") drawLake(item);
+        });
+        scenery.forEach((item) => {
+          if (item.type === "tree") drawTree(item);
+          if (item.type === "stakes") drawStakes(item);
+        });
+      }
+
+      function drawLake(item) {
+        ctx.fillStyle = "#17364a";
+        ctx.beginPath();
+        ctx.ellipse(item.x, item.y, item.w / 2, item.h / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(170, 213, 220, 0.38)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(item.x - item.w * 0.32, item.y - 2);
+        ctx.lineTo(item.x + item.w * 0.28, item.y - 4);
+        ctx.stroke();
+      }
+
+      function drawTree(item) {
+        ctx.strokeStyle = "#3c2618";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(item.x, item.y);
+        ctx.lineTo(item.x + item.lean, item.y - item.h);
+        ctx.stroke();
+        ctx.fillStyle = "#203f2d";
+        ctx.beginPath();
+        ctx.moveTo(item.x + item.lean, item.y - item.h - 18);
+        ctx.lineTo(item.x - 13, item.y - 7);
+        ctx.lineTo(item.x + 14, item.y - 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawStakes(item) {
+        ctx.strokeStyle = "#2b1b12";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < item.count; i += 1) {
+          const x = item.x + i * 7;
+          ctx.beginPath();
+          ctx.moveTo(x, item.y + 2);
+          ctx.lineTo(x + 3, item.y - 14);
+          ctx.stroke();
+        }
+      }
+
+      function drawSoldiers() {
+        soldiers.forEach((soldier) => {
+          if (!soldier.alive) return;
+          drawTinySoldier(soldier);
+        });
+      }
+
+      function drawTinySoldier(soldier) {
+        const x = soldier.x;
+        const y = soldier.y;
+        const dir = soldier.dir;
+        ctx.fillStyle = soldier.tunic;
+        ctx.fillRect(x - 3, y - 11, 6, 9);
+        ctx.fillStyle = "#d9c099";
+        ctx.fillRect(x - 2, y - 15, 4, 4);
+        ctx.strokeStyle = "#f3eee0";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y - 10);
+        ctx.lineTo(x, y - 2);
+        ctx.moveTo(x, y - 7);
+        ctx.lineTo(x + dir * 6, y - 11);
+        ctx.moveTo(x, y - 2);
+        ctx.lineTo(x - 3, y + 4);
+        ctx.moveTo(x, y - 2);
+        ctx.lineTo(x + 3, y + 4);
+        ctx.stroke();
+        ctx.fillStyle = soldier.color;
+        if (soldier.shield === "buckler") {
+          ctx.beginPath();
+          ctx.arc(x - dir * 8, y - 8, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#f7f0d6";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255,255,255,0.48)";
+          ctx.fillRect(x - dir * 8 - 1, y - 10, 2, 5);
+        } else {
+          ctx.fillRect(x - dir * 8 - 4, y - 15, 8, 12);
+          ctx.strokeStyle = "#f7f0d6";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x - dir * 8 - 4, y - 15, 8, 12);
+          ctx.fillStyle = "rgba(255,255,255,0.34)";
+          ctx.fillRect(x - dir * 8 - 3, y - 13, 6, 2);
+        }
+        ctx.fillStyle = "#c8b28a";
+        ctx.fillRect(x + dir * 6, y - 13, 9, 2);
+      }
+
+      function drawCastle(castle) {
+        drawCastleInteriors(castle);
+        castle.bricks.forEach((brick) => {
+          if (brick.hp <= 0) return;
+          const damageTint = brick.hp / brick.maxHp;
+          if (brick.zone === "wood") {
+            ctx.fillStyle = damageTint < 0.6 ? "#4d351f" : castle.wood;
+            ctx.fillRect(brick.x, brick.y, brick.w, brick.h);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+            ctx.fillRect(brick.x, brick.y + brick.h - 2, brick.w, 2);
+          } else {
+            ctx.fillStyle = damageTint < 0.6 ? castle.dark : castle.color;
+            ctx.fillRect(brick.x, brick.y, brick.w + 1, brick.h + 1);
+          }
+        });
+
+        drawCastleOutlines(castle);
+        drawStoneTexture(castle);
+        drawCastleDetails(castle);
+
+        const cat = castle.catapult;
+        if (!cat.alive) {
+          drawTowerCrew(castle, castle.side === "left" ? 1 : -1);
+          return;
+        }
+
+        const dir = castle.side === "left" ? 1 : -1;
+        drawTowerCrew(castle, dir);
+      }
+
+      function drawCastleInteriors(castle) {
+        castle.features.forEach((part) => {
+          if (!["keep", "gate", "flank", "wall"].includes(part.zone)) return;
+          ctx.fillStyle = "rgba(10, 12, 15, 0.66)";
+          ctx.fillRect(part.x + 10, part.y + 12, Math.max(0, part.w - 20), Math.max(0, part.h - 32));
+          ctx.fillStyle = "rgba(190, 194, 188, 0.24)";
+          ctx.fillRect(part.x + 8, part.y + part.h - 20, Math.max(0, part.w - 16), 12);
+        });
+      }
+
+      function drawCastleOutlines(castle) {
+        castle.features.forEach((part) => {
+          if (part.zone === "wood") return;
+          ctx.strokeStyle = "#30383d";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(part.x - 1, part.y - 1, part.w + 2, part.h + 2);
+          ctx.strokeStyle = "rgba(214, 220, 220, 0.38)";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(part.x + 1, part.y + 1, Math.max(1, part.w - 2), Math.max(1, part.h - 2));
+        });
+      }
+
+      function drawStoneTexture(castle) {
+        ctx.strokeStyle = "rgba(44, 50, 54, 0.32)";
+        ctx.lineWidth = 1;
+        castle.features.forEach((part) => {
+          if (!["keep", "gate", "flank", "wall"].includes(part.zone)) return;
+          for (let y = part.y + 11; y < part.y + part.h - 8; y += 18) {
+            ctx.beginPath();
+            ctx.moveTo(part.x + 4, y);
+            ctx.lineTo(part.x + part.w - 4, y);
+            ctx.stroke();
+          }
+          for (let y = part.y + part.h - 18; y < part.y + part.h - 4; y += 6) {
+            for (let x = part.x + 6; x < part.x + part.w - 6; x += 14) {
+              ctx.strokeRect(x, y, 9, 4);
+            }
+          }
+        });
+      }
+
+      function drawTowerCrew(castle, dir) {
+        if (castle.side === "left") {
+          const tower = feature(castle, "keep");
+          drawStickFigure(tower.x + 12, tower.y - 2, dir, 1.25);
+          drawStickFigure(tower.x + tower.w - 12, tower.y - 1, dir, 1.25);
+          return;
+        }
+        const tower = feature(castle, "round-tower");
+        drawStickFigure(tower.x + 12, tower.y - 2, dir, 1.25);
+        drawStickFigure(tower.x + tower.w - 12, tower.y - 1, dir, 1.25);
+      }
+
+      function feature(castle, name) {
+        return castle.features.find((item) => item.name === name);
+      }
+
+      function drawCastleDetails(castle) {
+        castle.features.forEach((part) => {
+          if (part.zone === "wood") {
+            drawHoarding(part);
+          }
+          if (part.zone === "gate") {
+            drawArchedGate(part);
+          }
+          if (part.zone === "keep" || part.zone === "flank") {
+            drawArrowSlits(part);
+          }
+          if (part.zone === "bartizan") {
+            drawBartizan(part, castle);
+          }
+        });
+
+        if (castle.side === "left") {
+          drawRoof(feature(castle, "keep"), 42, castle.dark);
+          drawRoof(feature(castle, "flank-right"), 32, castle.dark);
+          drawFlag(feature(castle, "keep"), castle, 1);
+          drawShield(feature(castle, "gatehouse"), castle, 0.5);
+        } else {
+          drawSteepRoof(feature(castle, "donjon"), castle.dark);
+          drawConicalRoof(feature(castle, "round-tower"), castle.dark);
+          drawRoof(feature(castle, "motte-tower"), 24, castle.dark);
+          drawFlag(feature(castle, "round-tower"), castle, -1);
+          drawShield(feature(castle, "donjon"), castle, 0.5);
+        }
+
+      }
+
+      function drawFlag(part, castle, dir) {
+        if (!part) return;
+        const poleX = part.x + part.w / 2;
+        const poleTop = part.y - 48;
+        ctx.fillStyle = "#171b20";
+        ctx.fillRect(poleX - 1, poleTop, 2, 42);
+        ctx.fillStyle = castle.heraldry;
+        ctx.beginPath();
+        ctx.moveTo(poleX, poleTop + 4);
+        ctx.lineTo(poleX + dir * 30, poleTop + 9);
+        ctx.lineTo(poleX + dir * 12, poleTop + 17);
+        ctx.lineTo(poleX + dir * 30, poleTop + 25);
+        ctx.lineTo(poleX, poleTop + 24);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.28)";
+        ctx.fillRect(dir === 1 ? poleX + 3 : poleX - 18, poleTop + 8, 14, 3);
+      }
+
+      function drawShield(part, castle, xRatio) {
+        if (!part) return;
+        const x = part.x + part.w * xRatio;
+        const y = part.y + part.h * 0.42;
+        ctx.fillStyle = "#20242a";
+        ctx.beginPath();
+        ctx.moveTo(x - 12, y - 14);
+        ctx.lineTo(x + 12, y - 14);
+        ctx.lineTo(x + 10, y + 5);
+        ctx.lineTo(x, y + 18);
+        ctx.lineTo(x - 10, y + 5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = castle.heraldry;
+        ctx.beginPath();
+        ctx.moveTo(x - 9, y - 11);
+        ctx.lineTo(x + 9, y - 11);
+        ctx.lineTo(x + 7, y + 4);
+        ctx.lineTo(x, y + 14);
+        ctx.lineTo(x - 7, y + 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = castle.heraldryDark;
+        ctx.fillRect(x - 2, y - 11, 4, 22);
+        ctx.fillRect(x - 8, y - 2, 16, 4);
+      }
+
+      function drawSiegeEngines(castle) {
+        const dir = castle.side === "left" ? 1 : -1;
+        const gate = feature(castle, "gatehouse");
+        const curtain = feature(castle, "curtain");
+        const hoarding = feature(castle, "hoarding");
+
+        if (castle.side === "left") {
+          drawTrebuchet(curtain.x + 38, curtain.y + curtain.h - 33, dir);
+          drawWeaponPlatform(hoarding.x + hoarding.w - 50, hoarding.y - 4, 45);
+          drawBallista(hoarding.x + hoarding.w - 38, hoarding.y - 13, dir);
+          drawWeaponPlatform(gate.x + 6, gate.y - 3, 40);
+          drawSpringald(gate.x + 20, gate.y - 17, dir);
+          drawOilJars(gate.x + gate.w - 22, gate.y + 20);
+        } else {
+          drawTrebuchet(curtain.x + curtain.w - 42, curtain.y + curtain.h - 32, dir);
+          drawWeaponPlatform(hoarding.x + 2, hoarding.y - 4, 45);
+          drawBallista(hoarding.x + 10, hoarding.y - 13, dir);
+          drawWeaponPlatform(gate.x + gate.w - 44, gate.y - 5, 40);
+          drawSpringald(gate.x + gate.w - 24, gate.y - 19, dir);
+          drawOilJars(gate.x + 12, gate.y + 20);
+        }
+      }
+
+      function drawWeaponPlatform(x, y, w) {
+        ctx.fillStyle = "#5a3b21";
+        ctx.fillRect(x, y + 18, w, 7);
+        ctx.strokeStyle = "#2d1c10";
+        ctx.lineWidth = 2;
+        for (let px = x + 5; px < x + w; px += 12) {
+          ctx.beginPath();
+          ctx.moveTo(px, y + 18);
+          ctx.lineTo(px - 3, y + 32);
+          ctx.stroke();
+        }
+      }
+
+      function drawTrebuchet(x, y, dir) {
+        ctx.strokeStyle = "#3b2616";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x - 13, y + 30);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + 14, y + 30);
+        ctx.moveTo(x - 17, y + 30);
+        ctx.lineTo(x + 18, y + 30);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + dir * 30, y - 14);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - dir * 13, y + 12);
+        ctx.stroke();
+        ctx.fillStyle = "#6b4224";
+        ctx.fillRect(x - dir * 17 - 5, y + 8, 10, 12);
+        ctx.fillStyle = "#2f251c";
+        ctx.fillRect(x + dir * 29 - 3, y - 17, 6, 6);
+      }
+
+      function drawBallista(x, y, dir) {
+        ctx.strokeStyle = "#2b1d13";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x - dir * 17, y + 11);
+        ctx.lineTo(x + dir * 22, y + 2);
+        ctx.moveTo(x + dir * 8, y + 8);
+        ctx.lineTo(x - dir * 8, y - 4);
+        ctx.moveTo(x + dir * 8, y + 8);
+        ctx.lineTo(x - dir * 8, y + 20);
+        ctx.stroke();
+        ctx.fillStyle = "#c8b28a";
+        ctx.fillRect(dir === 1 ? x : x - 24, y, 24, 3);
+        ctx.fillStyle = "#dfe8eb";
+        ctx.fillRect(x + dir * 21 - (dir === 1 ? 0 : 4), y - 2, 4, 7);
+      }
+
+      function drawSpringald(x, y, dir) {
+        ctx.fillStyle = "#4f3520";
+        ctx.fillRect(x - 10, y + 5, 20, 13);
+        ctx.strokeStyle = "#20150e";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x - 10, y + 5);
+        ctx.lineTo(x + 10, y + 18);
+        ctx.moveTo(x + 10, y + 5);
+        ctx.lineTo(x - 10, y + 18);
+        ctx.moveTo(x, y + 11);
+        ctx.lineTo(x + dir * 26, y + 5);
+        ctx.stroke();
+      }
+
+      function drawOilJars(x, y) {
+        const colors = ["#d7b36a", "#18120f", "#9b6e3e"];
+        colors.forEach((color, index) => {
+          const jx = x + index * 9;
+          ctx.fillStyle = color;
+          ctx.fillRect(jx, y, 7, 10);
+          ctx.fillStyle = "#5a3b21";
+          ctx.fillRect(jx + 1, y - 3, 5, 3);
+          ctx.fillStyle = "rgba(255,255,255,0.25)";
+          ctx.fillRect(jx + 1, y + 2, 2, 3);
+        });
+      }
+
+      function drawArchedGate(part) {
+        if (!part) return;
+        const gx = part.x + part.w * 0.5 - 14;
+        const gy = part.y + part.h - 36;
+        ctx.fillStyle = "#18110d";
+        ctx.fillRect(gx, gy + 12, 28, 24);
+        ctx.beginPath();
+        ctx.arc(gx + 14, gy + 13, 14, Math.PI, 0);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255, 230, 180, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(gx + 5, gy + 17, 18, 19);
+      }
+
+      function drawArrowSlits(part) {
+        if (!part) return;
+        ctx.fillStyle = "#12161f";
+        const slots = Math.max(1, Math.floor(part.h / 42));
+        for (let i = 0; i < slots; i += 1) {
+          const y = part.y + 22 + i * 36;
+          ctx.fillRect(part.x + part.w * 0.5 - 2, y, 4, 14);
+          if (part.w > 52) {
+            ctx.fillRect(part.x + 12, y + 8, 4, 12);
+            ctx.fillRect(part.x + part.w - 16, y + 5, 4, 12);
+          }
+        }
+      }
+
+      function drawHoarding(part) {
+        if (!part) return;
+        ctx.fillStyle = "#5a3b21";
+        for (let x = part.x + 3; x < part.x + part.w; x += 14) {
+          ctx.fillRect(x, part.y + part.h - 4, 5, 10);
+        }
+        ctx.strokeStyle = "rgba(20, 12, 6, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(part.x, part.y, part.w, part.h);
+      }
+
+      function drawBartizan(part, castle) {
+        if (!part) return;
+        ctx.fillStyle = castle.light;
+        ctx.fillRect(part.x - 3, part.y + 6, part.w + 6, 8);
+        ctx.fillStyle = "#12161f";
+        ctx.fillRect(part.x + part.w * 0.5 - 2, part.y + 15, 4, 9);
+      }
+
+      function drawRoof(part, height, color) {
+        if (!part) return;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(part.x - 6, part.y);
+        ctx.lineTo(part.x + part.w / 2, part.y - height);
+        ctx.lineTo(part.x + part.w + 6, part.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#111318";
+        ctx.fillRect(part.x + part.w / 2 - 1, part.y - height - 10, 2, 10);
+      }
+
+      function drawSteepRoof(part, color) {
+        if (!part) return;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(part.x - 8, part.y);
+        ctx.lineTo(part.x + 8, part.y - 54);
+        ctx.lineTo(part.x + part.w - 6, part.y - 42);
+        ctx.lineTo(part.x + part.w + 8, part.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawConicalRoof(part, color) {
+        if (!part) return;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(part.x - 8, part.y);
+        ctx.lineTo(part.x + part.w / 2, part.y - 64);
+        ctx.lineTo(part.x + part.w + 8, part.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#111318";
+        ctx.fillRect(part.x + part.w / 2 - 1, part.y - 76, 2, 12);
+      }
+
+      function drawProjectile() {
+        if (shotTrail.length > 1) {
+          ctx.strokeStyle = "rgba(255, 224, 155, 0.45)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          shotTrail.forEach((point, index) => {
+            if (index === 0) ctx.moveTo(point.x, point.y);
+            else ctx.lineTo(point.x, point.y);
+          });
+          ctx.stroke();
+        }
+
+        if (!projectile) return;
+        const type = projectile.type || "rock";
+        ctx.save();
+        ctx.translate(projectile.x, projectile.y);
+        ctx.rotate(projectile.angle);
+
+        if (type === "bolt") {
+          ctx.fillStyle = "#c8b28a";
+          ctx.fillRect(-18, -2, 32, 4);
+          ctx.fillStyle = "#4f3b24";
+          ctx.fillRect(-17, -6, 8, 12);
+          ctx.fillStyle = "#dfe8eb";
+          ctx.beginPath();
+          ctx.moveTo(14, -5);
+          ctx.lineTo(23, 0);
+          ctx.lineTo(14, 5);
+          ctx.closePath();
+          ctx.fill();
+        } else if (type === "rock") {
+          ctx.fillStyle = "#30271f";
+          ctx.fillRect(-8, -7, 15, 14);
+          ctx.fillStyle = "#6c6155";
+          ctx.fillRect(-4, -6, 5, 4);
+        } else if (type === "fireball") {
+          ctx.fillStyle = "#ffcf5a";
+          ctx.beginPath();
+          ctx.arc(0, 0, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#e24b3e";
+          ctx.beginPath();
+          ctx.moveTo(-10, -3);
+          ctx.lineTo(-22, -9);
+          ctx.lineTo(-17, 0);
+          ctx.lineTo(-22, 9);
+          ctx.lineTo(-8, 4);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          ctx.fillStyle = type === "oil" ? "#d7b36a" : "#18120f";
+          ctx.fillRect(-8, -9, 16, 18);
+          ctx.fillStyle = "#8a623c";
+          ctx.fillRect(-5, -12, 10, 4);
+          ctx.fillStyle = "rgba(255,255,255,0.28)";
+          ctx.fillRect(-4, -6, 4, 5);
+        }
+        ctx.restore();
+      }
+
+      function drawImpactMarks() {
+        impactMarks.forEach((mark) => {
+          ctx.globalAlpha = clamp(mark.life / 2.4, 0.15, 1);
+          ctx.fillStyle = mark.color;
+          ctx.beginPath();
+          ctx.ellipse(mark.x, mark.y + 4, mark.radius, Math.max(4, mark.radius * 0.32), 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function drawStickFigure(x, y, dir, scale = 1) {
+        ctx.strokeStyle = "#111318";
+        ctx.lineWidth = Math.max(2, 2 * scale);
+        ctx.fillStyle = "#f2d19b";
+        ctx.beginPath();
+        ctx.arc(x, y - 18 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(x, y - 14 * scale);
+        ctx.lineTo(x, y - 3 * scale);
+        ctx.moveTo(x, y - 10 * scale);
+        ctx.lineTo(x + dir * 8 * scale, y - 13 * scale);
+        ctx.moveTo(x, y - 9 * scale);
+        ctx.lineTo(x - dir * 6 * scale, y - 7 * scale);
+        ctx.moveTo(x, y - 3 * scale);
+        ctx.lineTo(x + dir * 5 * scale, y + 5 * scale);
+        ctx.moveTo(x, y - 3 * scale);
+        ctx.lineTo(x - dir * 4 * scale, y + 5 * scale);
+        ctx.stroke();
+      }
+
+      function drawParticles() {
+        particles.forEach((p) => {
+          ctx.globalAlpha = clamp(p.life, 0, 1);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function drawAim() {
+        const isHumanTurn = phase === "input" && (currentPlayer === 0 || opponentMode === "human");
+        if (!isHumanTurn) return;
+        const castle = castles[currentPlayer];
+        const dir = players[currentPlayer].side;
+        const angle = Number(angleInput.value) * Math.PI / 180;
+        const power = Number(powerInput.value);
+        const length = 26 + power * 0.45;
+        const x = castle.catapult.x;
+        const y = castle.catapult.y - 7;
+        const endX = x + dir * Math.cos(angle) * length;
+        const endY = y - Math.sin(angle) * length;
+
+        ctx.strokeStyle = "#f5c44f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.fillStyle = "#f5c44f";
+        ctx.fillRect(endX - 2, endY - 2, 4, 4);
+      }
+
+      function drawStatusText(now) {
+        const shouldShow = phase === "gameover" || now < messageUntil || phase === "splash";
+        if (!shouldShow || !message) return;
+
+        const lines = wrapText(message, 34, 2);
+        const boxHeight = 20 + lines.length * 18;
+        ctx.fillStyle = "rgba(4, 7, 12, 0.72)";
+        ctx.fillRect(205, 12, 390, boxHeight);
+        ctx.strokeStyle = "#46536c";
+        ctx.strokeRect(205, 12, 390, boxHeight);
+        ctx.fillStyle = "#ffe09b";
+        ctx.font = "16px Courier New";
+        ctx.textAlign = "center";
+        lines.forEach((line, index) => {
+          ctx.fillText(line, WIDTH / 2, 34 + index * 18);
+        });
+        ctx.textAlign = "left";
+      }
+
+      function drawSkyComment() {
+        if (!skyComment) return;
+        const lines = wrapText(skyComment.text, 28, 2);
+        const width = 260;
+        const height = 20 + lines.length * 16;
+        const x = clamp(skyComment.x - width / 2, 22, WIDTH - width - 22);
+        const y = skyComment.y;
+
+        ctx.fillStyle = "rgba(245, 233, 200, 0.92)";
+        ctx.fillRect(x, y, width, height);
+        ctx.strokeStyle = "rgba(28, 34, 48, 0.82)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, height);
+        ctx.beginPath();
+        ctx.moveTo(skyComment.x - 10, y + height);
+        ctx.lineTo(skyComment.x + 10, y + height);
+        ctx.lineTo(skyComment.x, y + height + 12);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#111722";
+        ctx.font = "13px Courier New";
+        ctx.textAlign = "center";
+        lines.forEach((line, index) => {
+          ctx.fillText(line, x + width / 2, y + 18 + index * 16);
+        });
+        ctx.textAlign = "left";
+      }
+
+      function wrapText(text, maxChars, maxLines) {
+        const words = text.split(" ");
+        const lines = [];
+        let line = "";
+        words.forEach((word) => {
+          const candidate = line ? `${line} ${word}` : word;
+          if (candidate.length > maxChars && line) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = candidate;
+          }
+        });
+        if (line) lines.push(line);
+        if (lines.length > maxLines) {
+          lines.length = maxLines;
+          lines[maxLines - 1] = `${lines[maxLines - 1].slice(0, maxChars - 3)}...`;
+        }
+        return lines;
+      }
+
+      function render(now) {
+        drawSky();
+        drawTerrain();
+        drawNoMansLand();
+        drawMoats();
+        drawImpactMarks();
+        drawSoldiers();
+        castles.forEach(drawCastle);
+        drawAim();
+        drawProjectile();
+        drawParticles();
+        drawSkyComment();
+        drawStatusText(now);
+      }
+
+      function frame(now) {
+        const dt = Math.min(0.033, (now - lastTime) / 1000);
+        lastTime = now;
+        update(dt);
+        render(now);
+        requestAnimationFrame(frame);
+      }
+
+      angleInput.addEventListener("input", updateHud);
+      powerInput.addEventListener("input", updateHud);
+      opponentModeInput.addEventListener("change", () => {
+        if (opponentModeInput.value === "human" && rightNameInput.value === "CPU") {
+          rightNameInput.value = "Player 2";
+        }
+        if (opponentModeInput.value === "cpu" && rightNameInput.value === "Player 2") {
+          rightNameInput.value = "CPU";
+        }
+      });
+      fireButton.addEventListener("click", fireHuman);
+      insultButton.addEventListener("click", insultOpponent);
+      requestSurrenderButton.addEventListener("click", requestSurrender);
+      offerSurrenderButton.addEventListener("click", offerSurrender);
+      resetButton.addEventListener("click", () => resetGame(false));
+      startButton.addEventListener("click", () => {
+        ensureAudio();
+        resetGame(false);
+      });
+
+      setRandomSplash();
+      resetGame(location.hash === "#play" ? false : true);
+      requestAnimationFrame((now) => {
+        lastTime = now;
+        requestAnimationFrame(frame);
+      });
+    })();
+  </script>
+</body>
+</html>

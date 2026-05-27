@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galveston Disaster Response Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #111827;
+    --panel-border: #1e2d40;
+    --grid: rgba(30,120,180,0.12);
+    --water:   #00d4ff;
+    --food:    #39ff14;
+    --shelter: #ff9f0a;
+    --medical: #ff375f;
+    --evac:    #bf5af2;
+    --text: #c8d8e8;
+    --dim: #5a7a9a;
+    --mono: 'Share Tech Mono', monospace;
+    --head: 'Barlow Condensed', sans-serif;
+    --body: 'Barlow', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 0 20px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--food);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--food);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+  .header-title {
+    font-family: var(--head);
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+  .coord-display {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--water);
+    letter-spacing: 1px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── LEFT TOOLBAR ── */
+  .toolbar {
+    width: 72px;
+    background: var(--panel);
+    border-right: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .tool-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tool-btn {
+    width: 48px; height: 48px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    background: rgba(255,255,255,0.04);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .tool-btn:hover { background: rgba(255,255,255,0.08); }
+  .tool-btn.active {
+    background: rgba(255,255,255,0.1);
+  }
+  .tool-btn.active[data-type="water"]   { border-color: var(--water);   box-shadow: 0 0 12px rgba(0,212,255,0.3); }
+  .tool-btn.active[data-type="food"]    { border-color: var(--food);    box-shadow: 0 0 12px rgba(57,255,20,0.3); }
+  .tool-btn.active[data-type="shelter"] { border-color: var(--shelter); box-shadow: 0 0 12px rgba(255,159,10,0.3); }
+  .tool-btn.active[data-type="medical"] { border-color: var(--medical); box-shadow: 0 0 12px rgba(255,55,95,0.3); }
+  .tool-btn.active[data-type="evac"]    { border-color: var(--evac);    box-shadow: 0 0 12px rgba(191,90,242,0.3); }
+  .tool-btn.active[data-type="cursor"]  { border-color: var(--dim); }
+
+  .pin-icon { font-size: 20px; }
+  .pin-label { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.5px; }
+  .tool-divider { width: 40px; height: 1px; background: var(--panel-border); margin: 4px 0; }
+
+  /* ── MAP AREA ── */
+  .map-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #060b12;
+    cursor: crosshair;
+  }
+  .map-wrapper.cursor-mode { cursor: default; }
+
+  /* Grid overlay */
+  .map-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #map-svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ── PIN DOTS ── */
+  .pin-marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.1s;
+  }
+  .pin-marker:hover { transform: translate(-50%, -100%) scale(1.2); }
+  .pin-marker svg { display: block; filter: drop-shadow(0 0 6px currentColor); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 280px;
+    background: var(--panel);
+    border-left: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .sidebar-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sidebar-title {
+    font-family: var(--head);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .entry-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .log-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .log-list::-webkit-scrollbar { width: 4px; }
+  .log-list::-webkit-scrollbar-track { background: transparent; }
+  .log-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
+
+  .log-entry {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--panel-border);
+    border-left-width: 3px;
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    animation: fadeIn 0.3s ease;
+  }
+  .log-entry:hover { background: rgba(255,255,255,0.06); }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+
+  .log-entry[data-type="water"]   { border-left-color: var(--water); }
+  .log-entry[data-type="food"]    { border-left-color: var(--food); }
+  .log-entry[data-type="shelter"] { border-left-color: var(--shelter); }
+  .log-entry[data-type="medical"] { border-left-color: var(--medical); }
+  .log-entry[data-type="evac"]    { border-left-color: var(--evac); }
+
+  .log-type {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+  .log-entry[data-type="water"]   .log-type { color: var(--water); }
+  .log-entry[data-type="food"]    .log-type { color: var(--food); }
+  .log-entry[data-type="shelter"] .log-type { color: var(--shelter); }
+  .log-entry[data-type="medical"] .log-type { color: var(--medical); }
+  .log-entry[data-type="evac"]    .log-type { color: var(--evac); }
+
+  .log-location { font-size: 12px; color: #fff; font-weight: 500; margin-bottom: 4px; }
+  .log-note { font-size: 11px; color: var(--dim); line-height: 1.4; }
+  .log-coords { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 5px; }
+
+  .delete-btn {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 0 0 6px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .delete-btn:hover { color: var(--medical); }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-align: center;
+    padding: 20px;
+    letter-spacing: 1px;
+  }
+  .empty-icon { font-size: 36px; opacity: 0.3; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #141e2b;
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    width: 400px;
+    padding: 24px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { opacity:0; transform: scale(0.95) translateY(10px); } to { opacity:1; transform: scale(1) translateY(0); } }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .modal-type-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  .modal-title {
+    font-family: var(--head);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: #fff;
+    font-family: var(--body);
+    font-size: 13px;
+    padding: 10px 12px;
+    transition: border-color 0.15s;
+    outline: none;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: rgba(255,255,255,0.3); }
+  .form-textarea { height: 90px; }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .btn {
+    font-family: var(--head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-cancel {
+    background: rgba(255,255,255,0.06);
+    color: var(--dim);
+  }
+  .btn-cancel:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+  .btn-place {
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+    font-weight: 900;
+  }
+  .btn-place:hover { filter: brightness(1.15); }
+
+  /* ── BOTTOM STATUS BAR ── */
+  .statusbar {
+    height: 28px;
+    background: var(--panel);
+    border-top: 1px solid var(--panel-border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .statusbar span b { color: var(--text); }
+
+  /* ── LEGEND ── */
+  .legend {
+    padding: 12px 16px;
+    border-top: 1px solid var(--panel-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.5px;
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tooltip-hint {
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    letter-spacing: 0.5px;
+    border-top: 1px solid var(--panel-border);
+  }
+</style>
+</head>
+<body>
+<style id="ds-games-header-style">
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; box-sizing: border-box; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+</style>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Galveston Disaster Response Map</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+
+
+<!-- TOP BAR -->
+<header>
+  <div class="header-left">
+    <div class="status-dot"></div>
+    <div>
+      <div class="header-title">GALVESTON DISASTER RESPONSE MAP</div>
+      <div class="header-sub">GEOSCIENCE FIELD OPS · RESOURCE PLACEMENT EXERCISE</div>
+    </div>
+  </div>
+  <div class="coord-display" id="coordDisplay">29.3013° N &nbsp;|&nbsp; 94.7977° W</div>
+</header>
+
+<div class="main">
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="tool-label">Mode</div>
+    <button class="tool-btn active" data-type="cursor" onclick="setTool('cursor')" title="Select">
+      <span class="pin-icon">🔍</span>
+      <span class="pin-label">Select</span>
+    </button>
+    <div class="tool-divider"></div>
+    <div class="tool-label">Place</div>
+    <button class="tool-btn" data-type="water" onclick="setTool('water')" title="Water Supply">
+      <span class="pin-icon">💧</span>
+      <span class="pin-label">Water</span>
+    </button>
+    <button class="tool-btn" data-type="food" onclick="setTool('food')" title="Food Distribution">
+      <span class="pin-icon">🥫</span>
+      <span class="pin-label">Food</span>
+    </button>
+    <button class="tool-btn" data-type="shelter" onclick="setTool('shelter')" title="Shelter Site">
+      <span class="pin-icon">🏠</span>
+      <span class="pin-label">Shelter</span>
+    </button>
+    <button class="tool-btn" data-type="medical" onclick="setTool('medical')" title="Medical Station">
+      <span class="pin-icon">🏥</span>
+      <span class="pin-label">Medical</span>
+    </button>
+    <button class="tool-btn" data-type="evac" onclick="setTool('evac')" title="Evacuation Route">
+      <span class="pin-icon">🚗</span>
+      <span class="pin-label">Evac</span>
+    </button>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-wrapper" id="mapWrapper">
+    <svg id="map-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#040d18"/>
+          <stop offset="100%" stop-color="#061524"/>
+        </linearGradient>
+        <linearGradient id="bayGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#051020"/>
+          <stop offset="100%" stop-color="#081a30"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(0,212,255,0.08)" stroke-width="1.5"/>
+        </pattern>
+      </defs>
+
+      <!-- Ocean (Gulf of Mexico) -->
+      <rect width="900" height="560" fill="url(#oceanGrad)"/>
+      <text x="450" y="530" text-anchor="middle" fill="rgba(0,180,255,0.15)" font-family="Barlow Condensed" font-size="18" letter-spacing="8" font-weight="700">GULF OF MEXICO</text>
+
+      <!-- Galveston Bay (north) -->
+      <path d="M0,0 L900,0 L900,180 Q700,160 580,200 Q480,220 350,200 Q230,185 150,195 Q80,200 0,180 Z"
+            fill="url(#bayGrad)" opacity="0.9"/>
+      <text x="200" y="80" fill="rgba(0,150,200,0.2)" font-family="Barlow Condensed" font-size="14" letter-spacing="5" font-weight="700">GALVESTON BAY</text>
+      <text x="680" y="100" fill="rgba(0,150,200,0.18)" font-family="Barlow Condensed" font-size="12" letter-spacing="4">WEST BAY</text>
+
+      <!-- Galveston Island landmass -->
+      <path d="
+        M 60,195
+        Q 100,188 180,192
+        Q 260,196 340,196
+        Q 420,195 500,196
+        Q 580,197 660,195
+        Q 740,192 810,188
+        Q 860,185 890,183
+        L 890,240
+        Q 870,248 840,255
+        Q 800,265 760,272
+        Q 720,278 680,282
+        Q 640,286 600,290
+        Q 560,293 520,296
+        Q 480,299 440,300
+        Q 400,300 360,298
+        Q 320,296 280,292
+        Q 240,288 200,283
+        Q 160,276 120,268
+        Q 90,260 65,250
+        Q 45,242 40,232
+        Q 45,212 60,195 Z
+      " fill="#1a2810" stroke="rgba(100,200,100,0.15)" stroke-width="0.5"/>
+
+      <!-- Seawall Boulevard (south edge detail) -->
+      <path d="M 50,248 Q 200,278 400,298 Q 600,316 850,260"
+            fill="none" stroke="rgba(255,200,0,0.25)" stroke-width="2.5" stroke-dasharray="8,4"/>
+
+      <!-- Major Roads -->
+      <!-- Broadway (main east-west) -->
+      <path d="M 65,228 Q 200,235 400,242 Q 600,248 870,225"
+            fill="none" stroke="rgba(200,180,100,0.2)" stroke-width="2"/>
+      <!-- Seawall Blvd -->
+      <path d="M 52,246 Q 200,276 400,297 Q 600,314 850,258"
+            fill="none" stroke="rgba(200,180,100,0.18)" stroke-width="1.5"/>
+      <!-- 61st St (vertical connector) -->
+      <path d="M 440,198 L 445,298" fill="none" stroke="rgba(200,180,100,0.15)" stroke-width="1.5"/>
+      <!-- 25th St -->
+      <path d="M 295,196 L 298,292" fill="none" stroke="rgba(200,180,100,0.12)" stroke-width="1"/>
+      <!-- 45th St -->
+      <path d="M 370,197 L 373,295" fill="none" stroke="rgba(200,180,100,0.12)" stroke-width="1"/>
+      <!-- 75th St -->
+      <path d="M 506,197 L 510,298" fill="none" stroke="rgba(200,180,100,0.12)" stroke-width="1"/>
+      <!-- Stewart Beach area road -->
+      <path d="M 720,195 L 725,272" fill="none" stroke="rgba(200,180,100,0.12)" stroke-width="1"/>
+
+      <!-- I-45 / Causeway (north) -->
+      <path d="M 375,0 L 370,197" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/>
+      <text x="340" y="40" fill="rgba(255,255,255,0.3)" font-family="Share Tech Mono" font-size="10">I-45</text>
+      <text x="310" y="55" fill="rgba(255,255,255,0.2)" font-family="Share Tech Mono" font-size="9">TO HOUSTON</text>
+
+      <!-- Pelican Island (small island to north) -->
+      <ellipse cx="310" cy="160" rx="55" ry="18" fill="#182210" stroke="rgba(100,200,100,0.12)" stroke-width="0.5"/>
+      <text x="310" y="164" text-anchor="middle" fill="rgba(150,200,100,0.3)" font-family="Share Tech Mono" font-size="8">PELICAN ISLAND</text>
+
+      <!-- ══ LANDMARKS ══ -->
+      <!-- UTMB Hospital -->
+      <rect x="175" y="215" width="36" height="22" rx="3" fill="rgba(255,55,95,0.15)" stroke="rgba(255,55,95,0.4)" stroke-width="1"/>
+      <text x="193" y="229" text-anchor="middle" fill="rgba(255,55,95,0.8)" font-family="Share Tech Mono" font-size="8">UTMB</text>
+
+      <!-- Galveston Island State Park -->
+      <rect x="710" y="218" width="52" height="30" rx="3" fill="rgba(57,255,20,0.07)" stroke="rgba(57,255,20,0.25)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="736" y="231" text-anchor="middle" fill="rgba(57,255,20,0.5)" font-family="Share Tech Mono" font-size="7">ISLAND</text>
+      <text x="736" y="241" text-anchor="middle" fill="rgba(57,255,20,0.5)" font-family="Share Tech Mono" font-size="7">STATE PARK</text>
+
+      <!-- Moody Gardens -->
+      <rect x="570" y="216" width="46" height="20" rx="3" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.25)" stroke-width="1"/>
+      <text x="593" y="229" text-anchor="middle" fill="rgba(0,212,255,0.55)" font-family="Share Tech Mono" font-size="8">MOODY GDNS</text>
+
+      <!-- Port of Galveston -->
+      <rect x="78" y="200" width="56" height="18" rx="3" fill="rgba(191,90,242,0.12)" stroke="rgba(191,90,242,0.35)" stroke-width="1"/>
+      <text x="106" y="212" text-anchor="middle" fill="rgba(191,90,242,0.7)" font-family="Share Tech Mono" font-size="8">PORT</text>
+
+      <!-- The Strand -->
+      <rect x="148" y="208" width="40" height="14" rx="2" fill="rgba(255,200,80,0.08)" stroke="rgba(255,200,80,0.25)" stroke-width="1"/>
+      <text x="168" y="218" text-anchor="middle" fill="rgba(255,200,80,0.55)" font-family="Share Tech Mono" font-size="7">THE STRAND</text>
+
+      <!-- Galveston Airport (Scholes) -->
+      <rect x="485" y="204" width="60" height="20" rx="3" fill="rgba(200,200,200,0.06)" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+      <text x="515" y="217" text-anchor="middle" fill="rgba(200,200,200,0.4)" font-family="Share Tech Mono" font-size="8">✈ AIRPORT</text>
+
+      <!-- Ball High School -->
+      <circle cx="330" cy="240" r="5" fill="rgba(255,159,10,0.2)" stroke="rgba(255,159,10,0.4)" stroke-width="1"/>
+      <text x="330" y="256" text-anchor="middle" fill="rgba(255,159,10,0.45)" font-family="Share Tech Mono" font-size="7">BALL HS</text>
+
+      <!-- GISD -->
+      <circle cx="390" cy="245" r="4" fill="rgba(255,159,10,0.15)" stroke="rgba(255,159,10,0.3)" stroke-width="1"/>
+      <text x="390" y="258" text-anchor="middle" fill="rgba(255,159,10,0.4)" font-family="Share Tech Mono" font-size="7">GISD</text>
+
+      <!-- Compass rose -->
+      <g transform="translate(840,50)">
+        <circle r="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <text y="-12" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Barlow Condensed" font-size="12" font-weight="700">N</text>
+        <text y="16" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Barlow Condensed" font-size="10">S</text>
+        <text x="-14" y="4" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Barlow Condensed" font-size="10">W</text>
+        <text x="14" y="4" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Barlow Condensed" font-size="10">E</text>
+        <line x1="0" y1="-18" x2="0" y2="-6" stroke="rgba(0,212,255,0.7)" stroke-width="1.5"/>
+        <line x1="0" y1="6" x2="0" y2="16" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+        <line x1="-16" y1="0" x2="-6" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+        <line x1="6" y1="0" x2="16" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      </g>
+
+      <!-- Scale bar -->
+      <g transform="translate(30,490)">
+        <rect width="80" height="4" fill="rgba(255,255,255,0.2)" rx="1"/>
+        <rect width="40" height="4" fill="rgba(0,212,255,0.5)" rx="1"/>
+        <text y="14" fill="rgba(255,255,255,0.3)" font-family="Share Tech Mono" font-size="9">0         5 km</text>
+      </g>
+    </svg>
+
+    <!-- Pin markers injected here by JS -->
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Field Log</span>
+      <span class="entry-count" id="entryCount">0 entries</span>
+    </div>
+
+    <div class="log-list" id="logList">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📋</div>
+        <div>SELECT A RESOURCE TYPE<br>THEN CLICK THE MAP<br>TO PLACE A MARKER</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--water);box-shadow:0 0 4px var(--water)"></div>Water Supply</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--food);box-shadow:0 0 4px var(--food)"></div>Food Distrib.</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--shelter);box-shadow:0 0 4px var(--shelter)"></div>Shelter Site</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--medical);box-shadow:0 0 4px var(--medical)"></div>Medical Station</div>
+      <div class="legend-item" style="grid-column:1/-1"><div class="legend-dot" style="background:var(--evac);box-shadow:0 0 4px var(--evac)"></div>Evacuation Route</div>
+    </div>
+
+    <div class="tooltip-hint">Click any log entry to zoom to pin</div>
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span>MODE: <b id="modeLabel">SELECT</b></span>
+  <span>PINS: <b id="pinCount">0</b></span>
+  <span>WATER: <b id="cWater" style="color:var(--water)">0</b> &nbsp;
+        FOOD: <b id="cFood" style="color:var(--food)">0</b> &nbsp;
+        SHELTER: <b id="cShelter" style="color:var(--shelter)">0</b> &nbsp;
+        MEDICAL: <b id="cMed" style="color:var(--medical)">0</b> &nbsp;
+        EVAC: <b id="cEvac" style="color:var(--evac)">0</b></span>
+</div>
+
+<!-- PLACEMENT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-type-badge" id="modalBadge">WATER</div>
+      <div class="modal-title">Log Resource Location</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Location Name / Description</label>
+      <input class="form-input" id="locInput" type="text" placeholder="e.g., UTMB Hospital Parking Lot" maxlength="60"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Why does this location matter?</label>
+      <textarea class="form-textarea" id="noteInput" placeholder="Explain your reasoning using what you know about Galveston's geography and population needs..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="cancelModal()">Cancel</button>
+      <button class="btn btn-place" id="placeBtn" onclick="confirmPlace()">Place Marker</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS = {
+  water:   '#00d4ff',
+  food:    '#39ff14',
+  shelter: '#ff9f0a',
+  medical: '#ff375f',
+  evac:    '#bf5af2'
+};
+const LABELS = {
+  water:   '💧 WATER',
+  food:    '🥫 FOOD',
+  shelter: '🏠 SHELTER',
+  medical: '🏥 MEDICAL',
+  evac:    '🚗 EVAC'
+};
+const EMOJIS = {
+  water:'💧', food:'🥫', shelter:'🏠', medical:'🏥', evac:'🚗'
+};
+
+let currentTool = 'cursor';
+let pendingX, pendingY;
+let pins = [];
+let nextId = 1;
+
+// ── Coordinate simulation (maps pixel % to approx lat/lon for Galveston)
+function pixelToCoord(px, py) {
+  const wrapper = document.getElementById('mapWrapper');
+  const rect = wrapper.getBoundingClientRect();
+  const xPct = px / rect.width;
+  const yPct = py / rect.height;
+  const lat = (29.34 - yPct * 0.15).toFixed(4);
+  const lon = (-94.72 - xPct * 0.16).toFixed(4);
+  return { lat, lon };
+}
+
+function setTool(type) {
+  currentTool = type;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-type="${type}"]`).classList.add('active');
+  const wrapper = document.getElementById('mapWrapper');
+  wrapper.classList.toggle('cursor-mode', type === 'cursor');
+  document.getElementById('modeLabel').textContent = type.toUpperCase();
+}
+
+// ── Map click
+document.getElementById('mapWrapper').addEventListener('click', function(e) {
+  if (currentTool === 'cursor') return;
+  const rect = this.getBoundingClientRect();
+  pendingX = e.clientX - rect.left;
+  pendingY = e.clientY - rect.top;
+  openModal();
+});
+
+// ── Coord display on mousemove
+document.getElementById('mapWrapper').addEventListener('mousemove', function(e) {
+  const rect = this.getBoundingClientRect();
+  const c = pixelToCoord(e.clientX - rect.left, e.clientY - rect.top);
+  document.getElementById('coordDisplay').textContent =
+    `${c.lat}° N  |  ${Math.abs(c.lon)}° W`;
+});
+
+function openModal() {
+  const color = COLORS[currentTool];
+  const badge = document.getElementById('modalBadge');
+  badge.textContent = currentTool.toUpperCase();
+  badge.style.background = color + '22';
+  badge.style.color = color;
+  badge.style.border = `1px solid ${color}55`;
+  document.getElementById('placeBtn').style.background = color;
+  document.getElementById('placeBtn').style.color = ['food'].includes(currentTool) ? '#000' : '#000';
+  document.getElementById('locInput').value = '';
+  document.getElementById('noteInput').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('locInput').focus(), 100);
+}
+
+function cancelModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function confirmPlace() {
+  const loc = document.getElementById('locInput').value.trim() || 'Unnamed Location';
+  const note = document.getElementById('noteInput').value.trim() || 'No note provided.';
+  const coord = pixelToCoord(pendingX, pendingY);
+  placePin(pendingX, pendingY, currentTool, loc, note, coord);
+  cancelModal();
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) cancelModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') cancelModal();
+});
+
+function placePin(x, y, type, loc, note, coord) {
+  const wrapper = document.getElementById('mapWrapper');
+  const id = nextId++;
+
+  // Create DOM pin
+  const el = document.createElement('div');
+  el.className = 'pin-marker';
+  el.dataset.id = id;
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  el.style.color = COLORS[type];
+  el.innerHTML = `
+    <svg width="28" height="36" viewBox="0 0 28 36">
+      <path d="M14 2 C7.4 2 2 7.4 2 14 C2 22 14 34 14 34 C14 34 26 22 26 14 C26 7.4 20.6 2 14 2Z"
+        fill="${COLORS[type]}22" stroke="${COLORS[type]}" stroke-width="1.5"/>
+      <circle cx="14" cy="14" r="5" fill="${COLORS[type]}" opacity="0.9"/>
+    </svg>`;
+  el.addEventListener('click', (e) => { e.stopPropagation(); highlightEntry(id); });
+  wrapper.appendChild(el);
+
+  const pin = { id, x, y, type, loc, note, coord };
+  pins.push(pin);
+  addLogEntry(pin);
+  updateCounts();
+}
+
+function addLogEntry(pin) {
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) emptyState.remove();
+
+  const list = document.getElementById('logList');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.dataset.type = pin.type;
+  entry.dataset.id = pin.id;
+  entry.innerHTML = `
+    <button class="delete-btn" onclick="removePin(${pin.id}, event)" title="Remove">✕</button>
+    <div class="log-type">${LABELS[pin.type]}</div>
+    <div class="log-location">${pin.loc}</div>
+    <div class="log-note">${pin.note}</div>
+    <div class="log-coords">${pin.coord.lat}° N, ${Math.abs(pin.coord.lon)}° W</div>
+  `;
+  entry.addEventListener('click', () => highlightEntry(pin.id));
+  list.appendChild(entry);
+  entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function removePin(id, event) {
+  if (event) event.stopPropagation();
+  pins = pins.filter(p => p.id !== id);
+  const pinEl = document.querySelector(`.pin-marker[data-id="${id}"]`);
+  if (pinEl) pinEl.remove();
+  const logEl = document.querySelector(`.log-entry[data-id="${id}"]`);
+  if (logEl) logEl.remove();
+  if (pins.length === 0) {
+    const list = document.getElementById('logList');
+    list.innerHTML = `<div class="empty-state" id="emptyState"><div class="empty-icon">📋</div><div>SELECT A RESOURCE TYPE<br>THEN CLICK THE MAP<br>TO PLACE A MARKER</div></div>`;
+  }
+  updateCounts();
+}
+
+function highlightEntry(id) {
+  document.querySelectorAll('.log-entry').forEach(e => e.style.outline = 'none');
+  const entry = document.querySelector(`.log-entry[data-id="${id}"]`);
+  if (entry) {
+    const pin = pins.find(p => p.id === id);
+    const color = COLORS[pin.type];
+    entry.style.outline = `1px solid ${color}`;
+    entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  // Flash the pin
+  const pinEl = document.querySelector(`.pin-marker[data-id="${id}"]`);
+  if (pinEl) {
+    pinEl.style.transform = 'translate(-50%,-100%) scale(1.4)';
+    setTimeout(() => pinEl.style.transform = '', 300);
+  }
+}
+
+function updateCounts() {
+  const total = pins.length;
+  document.getElementById('pinCount').textContent = total;
+  document.getElementById('entryCount').textContent = `${total} entr${total === 1 ? 'y' : 'ies'}`;
+  ['water','food','shelter','medical','evac'].forEach(t => {
+    const map = { water:'cWater', food:'cFood', shelter:'cShelter', medical:'cMed', evac:'cEvac' };
+    document.getElementById(map[t]).textContent = pins.filter(p => p.type === t).length;
+  });
+}
+</script>
+</body>
+</html>
