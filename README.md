@@ -29,7 +29,15 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.2 — Advanced-view icon overhaul: every Insert / Arrange / Sync menu item now renders the new colour PNG + SVG set instead of the flat monochrome icons.** Pinned as a GitHub release: [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2). Previous milestones: [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.3 — Image upload approval queue (Compliance Roadmap Days 1.3 / 1.4) + NDPA / DPA review-packet polish (CIPA support statement, evidence gallery scaffolding, capture guide).** Pinned as a GitHub release: [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3). Previous milestones: [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.3)
+
+- **Image upload approval queue (Compliance Roadmap Days 1.3 / 1.4).** Student image uploads now land in a new `ImageQueue` Sheet tab as `pending` and stay hidden on the student board until a teacher approves them in the Compliance Console. Apps Script (`Code.gs` v1.9.0) gains `uploadImage_`, `imageQueueResolve_`, `imageQueueList_`, `imageQueueThumbResponse_`, and `setImageStatus_`. The whiteboard inserts a "Pending teacher approval" SVG placeholder + a `pendingImageId` on the board object and polls every 8 seconds; the placeholder swaps in the real bytes (or a rejection placeholder) as soon as the teacher decides. Reject trashes the Drive file. Approve / reject decisions log `IMAGE_APPROVED` / `IMAGE_REJECTED` audit events.
+- **CIPA support statement** added to `legal/texas-compliance.html` (section 11). Explicit "supports CIPA, does not replace district filtering" framing, plus a CIPA entry in "laws this page covers".
+- **NDPA / DPA Review Packet** (`legal/ndpa-packet.html`) flips the image-queue row from "not yet shipped" to a description of the live flow and adds a section 12 "Evidence gallery" with six labelled `<figure>` placeholders for the captures a district reviewer expects.
+- **Operator capture guide** at `docs/CAPTURE.md` — six entries (Compliance Console overview, Image Approval Queue, Family Access Tools queue, Activity Records, District Privacy Packet download, Per-student Export / Delete) describing where to find each screen, what state to put the app in, what file name to use, and where to drop the PNG.
+- **`docs/COMPLIANCE.md`** gains an "Image Approval Queue (Days 1.3 / 1.4)" section explaining the six-step flow plus the four `safety.images.*` config knobs.
 
 ## Recent improvements (v3.1.2)
 
@@ -98,6 +106,9 @@ timeline
   v3.1.2 : Advanced-view icon overhaul
          : Insert / Arrange / Sync menus swap flat SVGs for colour PNGs and cleaner SVGs
          : New adv-*.svg + adv-*.png set in assets/icons/tools/
+  v3.1.3 : Image upload approval queue + NDPA / DPA review-packet polish
+         : Compliance Roadmap Days 1.3 / 1.4 closed; ImageQueue sheet + Apps Script endpoints; whiteboard polls + swaps placeholders; Compliance Console review UI
+         : CIPA support statement in Texas page; evidence gallery + docs/CAPTURE.md operator checklist
 ```
 
 ## Included files
