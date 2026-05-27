@@ -223,7 +223,21 @@
       color: var(--gray-90);
       font-size: .85rem;
       font-weight: 600;
+      flex: 1;
     }
+    .toolbar-toggle {
+      min-height: 32px;
+      padding: 4px 12px;
+      border: 2px solid var(--gray-30);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      font-size: .78rem;
+      white-space: nowrap;
+    }
+    .toolbar-toggle:hover { border-color: var(--navy); color: var(--navy); }
+    .toolbar-toggle.on { background: var(--navy); border-color: var(--navy); color: var(--white); }
     .canvas-shell {
       position: relative;
       border: 2px solid var(--gray-30);
@@ -234,6 +248,7 @@
         linear-gradient(90deg, #f3f0fa 1px, transparent 1px) 0 0 / 24px 24px,
         #ffffff;
     }
+    .canvas-shell.no-grid { background: #ffffff; }
     svg#cmCanvas {
       display: block;
       width: 100%;
@@ -412,6 +427,7 @@
         <div class="canvas-toolbar">
           <span class="mode-pill" id="modeIndicator">Mode: Select / Drag</span>
           <span class="hint-line" id="hintLine">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
+          <button class="toolbar-toggle on" id="gridToggleBtn" type="button" aria-pressed="true">Grid: On</button>
         </div>
         <div class="canvas-shell" id="canvasShell">
           <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concept map canvas"></svg>
@@ -1588,6 +1604,18 @@
     render();
     setStatus('Cleared. One starter node added.', 'info');
   });
+
+  (function setupGridToggle(){
+    const btn = document.getElementById('gridToggleBtn');
+    let gridOn = true;
+    btn.addEventListener('click', () => {
+      gridOn = !gridOn;
+      canvasShell.classList.toggle('no-grid', !gridOn);
+      btn.classList.toggle('on', gridOn);
+      btn.setAttribute('aria-pressed', gridOn ? 'true' : 'false');
+      btn.textContent = 'Grid: ' + (gridOn ? 'On' : 'Off');
+    });
+  })();
 
   document.getElementById('centerBtn').addEventListener('click', () => {
     if (!state.nodes.length) return;
