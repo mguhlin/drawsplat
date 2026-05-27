@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dots and Boxes</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --border: #eef2ff;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--white); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .subtitle { margin: 0; color: var(--gray-90); font-size: 1rem; line-height: 1.45; max-width: 720px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-top: 18px; padding: 14px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .field { display: grid; gap: 6px; }
+    .field label { font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gray-50); }
+    .field select { min-width: 130px; padding: 9px 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; }
+    .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .controls .spacer { flex: 1; }
+    .btn { min-height: 44px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); padding: 9px 14px; color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 8px 18px rgba(64, 64, 65, .08); }
+    .btn.primary { color: var(--white); background: var(--navy); border-color: var(--navy); }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+
+    .scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 14px; }
+    .player-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 12px 14px; background: var(--white); box-shadow: var(--shadow); display: grid; gap: 10px; position: relative; }
+    .player-card.active { border-width: 3px; background: #fbfcff; }
+    .player-card.active::after { content: "ON TURN"; position: absolute; top: -10px; right: 10px; background: var(--gold); color: var(--black); font-size: .7rem; font-weight: 900; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px; }
+    .player-row { display: flex; align-items: center; gap: 8px; }
+    .player-color-pick { width: 36px; height: 36px; border: 2px solid var(--border); border-radius: 6px; padding: 2px; background: var(--white); cursor: pointer; flex: 0 0 auto; }
+    .player-color-pick::-webkit-color-swatch-wrapper { padding: 0; }
+    .player-color-pick::-webkit-color-swatch { border: none; border-radius: 4px; }
+    .player-color-pick::-moz-color-swatch { border: none; border-radius: 4px; }
+    .player-name-input { flex: 1 1 auto; min-width: 0; padding: 7px 9px; border: 2px solid var(--border); border-radius: 6px; font-weight: 700; outline: none; color: var(--gray-90); background: var(--white); }
+    .player-name-input:focus, .player-initial-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(108, 40, 217, .18); }
+    .player-bottom { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+    .player-initial-wrap { display: flex; align-items: center; gap: 8px; }
+    .player-initial-label { font-size: .72rem; font-weight: 800; color: var(--gray-50); text-transform: uppercase; letter-spacing: .06em; }
+    .player-initial-input { width: 58px; padding: 7px 6px; border: 2px solid var(--border); border-radius: 6px; font-weight: 900; text-align: center; text-transform: uppercase; font-size: 1.1rem; outline: none; color: var(--gray-90); background: var(--white); }
+    .player-score-display { font-size: 1.4rem; font-weight: 900; color: var(--gray-90); font-variant-numeric: tabular-nums; }
+    .player-type-select { padding: 6px 8px; border: 2px solid var(--border); border-radius: 6px; background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; outline: none; }
+    .player-type-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(108, 40, 217, .18); }
+    .player-card.cpu { background: linear-gradient(180deg, #fbfcff, #f0f4ff); }
+    .player-card.cpu .player-name-input::placeholder { color: var(--blue); }
+
+    .celebrate-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 100; display: none; }
+    .winner-overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 101; background: rgba(15, 22, 50, 0.45); animation: winnerFade .35s ease; padding: 20px; }
+    .winner-overlay.show { display: grid; }
+    .winner-card { background: var(--white); border-radius: var(--radius); padding: 32px 40px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.35); border: 6px solid var(--gold); max-width: min(520px, 92vw); animation: winnerPop .55s cubic-bezier(.18,1.2,.4,1); }
+    .winner-eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .12em; font-weight: 900; font-size: .9rem; }
+    .winner-name { font-size: clamp(2rem, 6vw, 3.6rem); color: var(--navy); font-weight: 900; margin: 8px 0 4px; line-height: 1; }
+    .winner-name.tie { font-size: clamp(1.5rem, 4.5vw, 2.6rem); }
+    .winner-sub { color: var(--gray-50); margin: 0 0 18px; font-weight: 700; }
+    .winner-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .winner-actions .btn { min-width: 140px; }
+    @keyframes winnerFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes winnerPop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+
+    .board-wrap { display: grid; place-items: center; margin-top: 18px; padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: #fbfcff; box-shadow: var(--shadow); }
+    svg.board { width: 100%; max-width: 720px; height: auto; touch-action: manipulation; }
+    .dot { fill: var(--gray-90); }
+    .line-hit { fill: transparent; cursor: pointer; }
+    .line-hit:hover + .line-ghost,
+    .line-hit:focus + .line-ghost { opacity: 1; }
+    .line-ghost { pointer-events: none; opacity: 0; transition: opacity 120ms; }
+    .line { pointer-events: none; }
+    .box-fill { pointer-events: none; opacity: .92; }
+    .box-letter { pointer-events: none; fill: var(--white); font-weight: 900; font-family: Arial, Helvetica, sans-serif; text-anchor: middle; dominant-baseline: central; }
+
+    .message { min-height: 1.4em; margin-top: 14px; color: var(--navy); font-weight: 800; font-size: 1.05rem; }
+    .message.win { color: var(--green); font-size: 1.2rem; }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1180px); padding-top: 18px; }
+      header.site { align-items: flex-start; flex-direction: column; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .field select, .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Dots and Boxes</h1>
+        <p class="subtitle">Take turns drawing one line at a time. Close the fourth side of a box to claim it and earn another turn. Most boxes wins.</p>
+      </div>
+      <a class="home-link" href="../index.html">Tool Menu</a>
+    </header>
+
+    <section class="controls" aria-label="Game settings">
+      <div class="field">
+        <label for="gridSize">Board size</label>
+        <select id="gridSize">
+          <option value="3">3 &times; 3 boxes</option>
+          <option value="4">4 &times; 4 boxes</option>
+          <option value="5" selected>5 &times; 5 boxes</option>
+          <option value="6">6 &times; 6 boxes</option>
+          <option value="7">7 &times; 7 boxes</option>
+          <option value="8">8 &times; 8 boxes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="playerCount">Players</label>
+        <select id="playerCount">
+          <option value="2" selected>2 players</option>
+          <option value="3">3 players</option>
+          <option value="4">4 players</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn gold" id="newGameBtn" type="button">New Game</button>
+    </section>
+
+    <section class="scoreboard" id="scoreboard" aria-label="Score"></section>
+
+    <section class="board-wrap">
+      <svg class="board" id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dots and boxes board"></svg>
+    </section>
+
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+  </div>
+
+  <canvas class="celebrate-canvas" id="confettiCanvas" aria-hidden="true"></canvas>
+  <div class="winner-overlay" id="winnerOverlay" role="dialog" aria-live="assertive" aria-modal="false">
+    <div class="winner-card">
+      <div class="winner-eyebrow" id="winnerEyebrow">Winner!</div>
+      <div class="winner-name" id="winnerName">Player 1</div>
+      <p class="winner-sub" id="winnerSub">9 boxes</p>
+      <div class="winner-actions">
+        <button class="btn primary" id="winnerNewGame" type="button">Play Again</button>
+        <button class="btn" id="winnerDismiss" type="button">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+
+    const COLORS = ["#7c3aed", "#ef4444", "#22c55e", "#a855f7"];
+    const NAMES = ["Player 1", "Player 2", "Player 3", "Player 4"];
+    const INITIALS = ["1", "2", "3", "4"];
+
+    const playerSettings = [0, 1, 2, 3].map(i => ({
+      name: NAMES[i],
+      initial: INITIALS[i],
+      color: COLORS[i],
+      isComputer: false
+    }));
+
+    const state = {
+      cols: 5,
+      rows: 5,
+      players: [],
+      current: 0,
+      hLines: [],
+      vLines: [],
+      boxes: [],
+      gameOver: false,
+      remaining: 0
+    };
+
+    function makeGrid(rows, cols) {
+      const hLines = [];
+      for (let r = 0; r <= rows; r++) hLines.push(new Array(cols).fill(-1));
+      const vLines = [];
+      for (let r = 0; r < rows; r++) vLines.push(new Array(cols + 1).fill(-1));
+      const boxes = [];
+      for (let r = 0; r < rows; r++) boxes.push(new Array(cols).fill(-1));
+      return { hLines, vLines, boxes };
+    }
+
+    function newGame() {
+      const size = Number($("#gridSize").value);
+      const playerCount = Number($("#playerCount").value);
+      state.cols = size;
+      state.rows = size;
+      const g = makeGrid(state.rows, state.cols);
+      state.hLines = g.hLines;
+      state.vLines = g.vLines;
+      state.boxes = g.boxes;
+      state.players = Array.from({ length: playerCount }, (_, i) => ({
+        name: playerSettings[i].name,
+        initial: playerSettings[i].initial,
+        color: playerSettings[i].color,
+        isComputer: !!playerSettings[i].isComputer,
+        score: 0
+      }));
+      state.current = 0;
+      state.gameOver = false;
+      state.remaining = state.rows * state.cols;
+      hideCelebration();
+      buildScoreboard();
+      renderBoard();
+      message(`${displayName(state.players[0])}'s turn. ${active().isComputer ? "Computer is thinking…" : "Click a line to draw it."}`);
+      maybeScheduleAI();
+    }
+
+    function displayName(p) { return p.name.trim() || "Player"; }
+    function displayInitial(p) {
+      const i = (p.initial || "").trim().toUpperCase();
+      if (i) return i.slice(0, 2);
+      const fromName = p.name.replace(/[^A-Za-z0-9]/g, "").slice(0, 1).toUpperCase();
+      return fromName || "?";
+    }
+
+    function onPlayerEdit(idx, field, value) {
+      let v = value;
+      if (field === "initial") v = v.toUpperCase().slice(0, 2);
+      if (field === "isComputer") v = !!value;
+      playerSettings[idx][field] = v;
+      if (state.players[idx]) state.players[idx][field] = v;
+      updateScoreboardStyles();
+      renderBoard();
+      if (field === "isComputer" && idx === state.current && !state.gameOver) maybeScheduleAI();
+    }
+
+    function active() { return state.players[state.current]; }
+
+    function placeHLine(r, c) {
+      if (state.gameOver || state.hLines[r][c] !== -1) return;
+      state.hLines[r][c] = state.current;
+      let claimed = 0;
+      if (r > 0) claimed += tryClaimBox(r - 1, c);
+      if (r < state.rows) claimed += tryClaimBox(r, c);
+      finishMove(claimed);
+    }
+
+    function placeVLine(r, c) {
+      if (state.gameOver || state.vLines[r][c] !== -1) return;
+      state.vLines[r][c] = state.current;
+      let claimed = 0;
+      if (c > 0) claimed += tryClaimBox(r, c - 1);
+      if (c < state.cols) claimed += tryClaimBox(r, c);
+      finishMove(claimed);
+    }
+
+    function tryClaimBox(r, c) {
+      if (state.boxes[r][c] !== -1) return 0;
+      const top = state.hLines[r][c] !== -1;
+      const bottom = state.hLines[r + 1][c] !== -1;
+      const left = state.vLines[r][c] !== -1;
+      const right = state.vLines[r][c + 1] !== -1;
+      if (top && bottom && left && right) {
+        state.boxes[r][c] = state.current;
+        active().score++;
+        state.remaining--;
+        return 1;
+      }
+      return 0;
+    }
+
+    function finishMove(claimed) {
+      updateScoreboardStyles();
+      renderBoard();
+      if (state.remaining === 0) {
+        state.gameOver = true;
+        updateScoreboardStyles();
+        endGame();
+        return;
+      }
+      if (claimed > 0) {
+        const suffix = active().isComputer ? " Computer goes again…" : " Go again!";
+        message(`${displayName(active())} claimed ${claimed} box${claimed === 1 ? "" : "es"}.${suffix}`);
+      } else {
+        state.current = (state.current + 1) % state.players.length;
+        updateScoreboardStyles();
+        renderBoard();
+        message(`${displayName(active())}'s turn.${active().isComputer ? " Computer is thinking…" : ""}`);
+      }
+      maybeScheduleAI();
+    }
+
+    let aiTimer = null;
+    function maybeScheduleAI() {
+      if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+      if (state.gameOver) return;
+      if (!active().isComputer) return;
+      const delay = 500 + Math.random() * 400;
+      aiTimer = setTimeout(() => {
+        aiTimer = null;
+        if (state.gameOver || !active().isComputer) return;
+        const move = aiPickMove();
+        if (!move) return;
+        if (move.kind === "h") placeHLine(move.r, move.c);
+        else placeVLine(move.r, move.c);
+      }, delay);
+    }
+
+    function allUndrawnMoves() {
+      const moves = [];
+      for (let r = 0; r <= state.rows; r++) {
+        for (let c = 0; c < state.cols; c++) {
+          if (state.hLines[r][c] === -1) moves.push({ kind: "h", r, c });
+        }
+      }
+      for (let r = 0; r < state.rows; r++) {
+        for (let c = 0; c <= state.cols; c++) {
+          if (state.vLines[r][c] === -1) moves.push({ kind: "v", r, c });
+        }
+      }
+      return moves;
+    }
+
+    function boxDrawnSides(r, c) {
+      let n = 0;
+      if (state.hLines[r][c] !== -1) n++;
+      if (state.hLines[r + 1][c] !== -1) n++;
+      if (state.vLines[r][c] !== -1) n++;
+      if (state.vLines[r][c + 1] !== -1) n++;
+      return n;
+    }
+
+    function simulateMove(move, fn) {
+      const arr = move.kind === "h" ? state.hLines : state.vLines;
+      arr[move.r][move.c] = -2;
+      const result = fn();
+      arr[move.r][move.c] = -1;
+      return result;
+    }
+
+    function completedBoxesIfMove(move) {
+      return simulateMove(move, () => {
+        let count = 0;
+        if (move.kind === "h") {
+          if (move.r > 0 && state.boxes[move.r - 1][move.c] === -1 && boxDrawnSides(move.r - 1, move.c) === 4) count++;
+          if (move.r < state.rows && state.boxes[move.r][move.c] === -1 && boxDrawnSides(move.r, move.c) === 4) count++;
+        } else {
+          if (move.c > 0 && state.boxes[move.r][move.c - 1] === -1 && boxDrawnSides(move.r, move.c - 1) === 4) count++;
+          if (move.c < state.cols && state.boxes[move.r][move.c] === -1 && boxDrawnSides(move.r, move.c) === 4) count++;
+        }
+        return count;
+      });
+    }
+
+    function givesAwayBoxes(move) {
+      return simulateMove(move, () => {
+        let n = 0;
+        const check = (r, c) => {
+          if (r < 0 || c < 0 || r >= state.rows || c >= state.cols) return;
+          if (state.boxes[r][c] !== -1) return;
+          if (boxDrawnSides(r, c) === 3) n++;
+        };
+        if (move.kind === "h") { check(move.r - 1, move.c); check(move.r, move.c); }
+        else { check(move.r, move.c - 1); check(move.r, move.c); }
+        return n;
+      });
+    }
+
+    function aiPickMove() {
+      const moves = allUndrawnMoves();
+      if (moves.length === 0) return null;
+      for (const m of moves) {
+        if (completedBoxesIfMove(m) > 0) return m;
+      }
+      const safe = moves.filter(m => givesAwayBoxes(m) === 0);
+      if (safe.length > 0) return safe[Math.floor(Math.random() * safe.length)];
+      let best = moves[0], bestCost = Infinity;
+      for (const m of moves) {
+        const cost = givesAwayBoxes(m);
+        if (cost < bestCost) { best = m; bestCost = cost; }
+      }
+      return best;
+    }
+
+    function endGame() {
+      const top = Math.max(...state.players.map(p => p.score));
+      const winners = state.players.filter(p => p.score === top);
+      let msg;
+      if (winners.length === 1) msg = `Game over! ${displayName(winners[0])} wins with ${top} boxes.`;
+      else msg = `Game over! Tie at ${top} boxes: ${winners.map(w => displayName(w)).join(", ")}.`;
+      message(msg, "win");
+      celebrate(winners, top);
+    }
+
+    function buildScoreboard() {
+      const container = $("#scoreboard");
+      container.innerHTML = "";
+      state.players.forEach((p, i) => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+        card.dataset.idx = i;
+
+        const top = document.createElement("div");
+        top.className = "player-row";
+
+        const color = document.createElement("input");
+        color.type = "color";
+        color.className = "player-color-pick";
+        color.value = p.color;
+        color.title = "Pick player color";
+        color.setAttribute("aria-label", `Player ${i + 1} color`);
+        color.addEventListener("input", e => onPlayerEdit(i, "color", e.target.value));
+
+        const name = document.createElement("input");
+        name.type = "text";
+        name.className = "player-name-input";
+        name.value = p.name;
+        name.maxLength = 24;
+        name.placeholder = "Player name";
+        name.setAttribute("aria-label", `Player ${i + 1} name`);
+        name.addEventListener("input", e => onPlayerEdit(i, "name", e.target.value));
+
+        top.appendChild(color);
+        top.appendChild(name);
+
+        const bottom = document.createElement("div");
+        bottom.className = "player-bottom";
+
+        const initialWrap = document.createElement("div");
+        initialWrap.className = "player-initial-wrap";
+        const initialLabel = document.createElement("span");
+        initialLabel.className = "player-initial-label";
+        initialLabel.textContent = "Initial";
+        const initialInput = document.createElement("input");
+        initialInput.type = "text";
+        initialInput.className = "player-initial-input";
+        initialInput.value = p.initial;
+        initialInput.maxLength = 2;
+        initialInput.placeholder = "?";
+        initialInput.setAttribute("aria-label", `Player ${i + 1} box initial`);
+        initialInput.addEventListener("input", e => {
+          const v = e.target.value.toUpperCase().slice(0, 2);
+          if (e.target.value !== v) e.target.value = v;
+          onPlayerEdit(i, "initial", v);
+        });
+        initialWrap.appendChild(initialLabel);
+        initialWrap.appendChild(initialInput);
+
+        const typeSelect = document.createElement("select");
+        typeSelect.className = "player-type-select";
+        typeSelect.setAttribute("aria-label", `Player ${i + 1} type`);
+        typeSelect.innerHTML = '<option value="human">Human</option><option value="cpu">Computer</option>';
+        typeSelect.value = p.isComputer ? "cpu" : "human";
+        typeSelect.addEventListener("change", e => onPlayerEdit(i, "isComputer", e.target.value === "cpu"));
+
+        const score = document.createElement("span");
+        score.className = "player-score-display";
+        score.dataset.role = "score";
+        score.textContent = p.score;
+
+        bottom.appendChild(initialWrap);
+        bottom.appendChild(typeSelect);
+        bottom.appendChild(score);
+
+        card.appendChild(top);
+        card.appendChild(bottom);
+        container.appendChild(card);
+      });
+      updateScoreboardStyles();
+    }
+
+    function updateScoreboardStyles() {
+      $$(".player-card").forEach(card => {
+        const idx = Number(card.dataset.idx);
+        const p = state.players[idx];
+        if (!p) return;
+        const isActive = idx === state.current && !state.gameOver;
+        card.classList.toggle("active", isActive);
+        card.classList.toggle("cpu", !!p.isComputer);
+        card.style.borderColor = isActive ? p.color : "";
+        const score = card.querySelector('[data-role="score"]');
+        if (score) {
+          score.textContent = p.score;
+          score.style.color = p.color;
+        }
+      });
+    }
+
+    function renderBoard() {
+      const svg = $("#board");
+      const cols = state.cols, rows = state.rows;
+      const margin = 24;
+      const step = 80;
+      const W = margin * 2 + step * cols;
+      const H = margin * 2 + step * rows;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      const dotR = 6;
+      const lineW = 7;
+      const hit = 24;
+      const parts = [];
+
+      // boxes (claimed)
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const owner = state.boxes[r][c];
+          if (owner === -1) continue;
+          const color = state.players[owner].color;
+          const x = margin + c * step;
+          const y = margin + r * step;
+          parts.push(`<rect class="box-fill" x="${x + 4}" y="${y + 4}" width="${step - 8}" height="${step - 8}" rx="6" fill="${color}" />`);
+          const initial = displayInitial(state.players[owner]);
+          const fontSize = initial.length > 1 ? step * 0.38 : step * 0.5;
+          parts.push(`<text class="box-letter" x="${x + step / 2}" y="${y + step / 2 + 1}" font-size="${fontSize}">${escapeHTML(initial)}</text>`);
+        }
+      }
+
+      // horizontal line hits + ghosts + drawn
+      for (let r = 0; r <= rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x1 = margin + c * step;
+          const y1 = margin + r * step;
+          const x2 = x1 + step;
+          const owner = state.hLines[r][c];
+          if (owner !== -1) {
+            parts.push(`<line class="line" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y1}" stroke="${state.players[owner].color}" stroke-width="${lineW}" stroke-linecap="round" />`);
+          } else if (!state.gameOver) {
+            parts.push(`<rect class="line-hit" x="${x1}" y="${y1 - hit / 2}" width="${step}" height="${hit}" data-kind="h" data-r="${r}" data-c="${c}" />`);
+            parts.push(`<line class="line-ghost" x1="${x1 + 6}" y1="${y1}" x2="${x2 - 6}" y2="${y1}" stroke="${active().color}" stroke-width="${lineW}" stroke-linecap="round" stroke-opacity="0.45" />`);
+          }
+        }
+      }
+
+      // vertical line hits + ghosts + drawn
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c <= cols; c++) {
+          const x1 = margin + c * step;
+          const y1 = margin + r * step;
+          const y2 = y1 + step;
+          const owner = state.vLines[r][c];
+          if (owner !== -1) {
+            parts.push(`<line class="line" x1="${x1}" y1="${y1}" x2="${x1}" y2="${y2}" stroke="${state.players[owner].color}" stroke-width="${lineW}" stroke-linecap="round" />`);
+          } else if (!state.gameOver) {
+            parts.push(`<rect class="line-hit" x="${x1 - hit / 2}" y="${y1}" width="${hit}" height="${step}" data-kind="v" data-r="${r}" data-c="${c}" />`);
+            parts.push(`<line class="line-ghost" x1="${x1}" y1="${y1 + 6}" x2="${x1}" y2="${y2 - 6}" stroke="${active().color}" stroke-width="${lineW}" stroke-linecap="round" stroke-opacity="0.45" />`);
+          }
+        }
+      }
+
+      // dots last so they sit on top of line ends
+      for (let r = 0; r <= rows; r++) {
+        for (let c = 0; c <= cols; c++) {
+          const x = margin + c * step;
+          const y = margin + r * step;
+          parts.push(`<circle class="dot" cx="${x}" cy="${y}" r="${dotR}" />`);
+        }
+      }
+
+      svg.innerHTML = parts.join("");
+      svg.querySelectorAll(".line-hit").forEach(el => {
+        el.addEventListener("click", () => {
+          if (state.players[state.current] && state.players[state.current].isComputer) return;
+          const r = Number(el.dataset.r);
+          const c = Number(el.dataset.c);
+          if (el.dataset.kind === "h") placeHLine(r, c);
+          else placeVLine(r, c);
+        });
+      });
+    }
+
+    function message(text, kind) {
+      const el = $("#message");
+      el.textContent = text;
+      el.classList.toggle("win", kind === "win");
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    const confetti = { canvas: null, ctx: null, particles: [], raf: null, spawnUntil: 0, dpr: 1 };
+    function ensureConfetti() {
+      if (confetti.canvas) return;
+      confetti.canvas = $("#confettiCanvas");
+      confetti.ctx = confetti.canvas.getContext("2d");
+      window.addEventListener("resize", sizeConfetti);
+      sizeConfetti();
+    }
+    function sizeConfetti() {
+      if (!confetti.canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      confetti.dpr = dpr;
+      confetti.canvas.width = Math.floor(window.innerWidth * dpr);
+      confetti.canvas.height = Math.floor(window.innerHeight * dpr);
+      confetti.canvas.style.width = window.innerWidth + "px";
+      confetti.canvas.style.height = window.innerHeight + "px";
+      confetti.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function pickConfettiColors(winners) {
+      const palette = ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e"];
+      const winColors = winners.map(w => w.color).filter(Boolean);
+      return winColors.concat(palette);
+    }
+    function launchFirework(x, y, colors) {
+      const n = 60 + Math.floor(Math.random() * 30);
+      for (let i = 0; i < n; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 3 + Math.random() * 6;
+        confetti.particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1,
+          color: colors[(Math.random() * colors.length) | 0],
+          size: 3 + Math.random() * 4,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.4,
+          shape: Math.random() < 0.7 ? "rect" : "circle",
+          life: 90 + Math.random() * 50
+        });
+      }
+    }
+    function spawnRain(colors) {
+      const W = window.innerWidth;
+      for (let i = 0; i < 5; i++) {
+        confetti.particles.push({
+          x: Math.random() * W,
+          y: -10,
+          vx: (Math.random() - 0.5) * 3,
+          vy: 2 + Math.random() * 3,
+          color: colors[(Math.random() * colors.length) | 0],
+          size: 4 + Math.random() * 6,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.3,
+          shape: Math.random() < 0.65 ? "rect" : "circle",
+          life: 260
+        });
+      }
+    }
+    let confettiColors = [];
+    function celebrate(winners, score) {
+      ensureConfetti();
+      confetti.canvas.style.display = "block";
+      confetti.particles.length = 0;
+      confettiColors = pickConfettiColors(winners);
+      confetti.spawnUntil = performance.now() + 5200;
+      const W = window.innerWidth, H = window.innerHeight;
+      let i = 0;
+      const burst = () => {
+        if (i++ >= 5) return;
+        launchFirework((0.2 + Math.random() * 0.6) * W, (0.3 + Math.random() * 0.35) * H, confettiColors);
+        setTimeout(burst, 280);
+      };
+      burst();
+      if (!confetti.raf) tickConfetti();
+      showWinnerBanner(winners, score);
+    }
+    function tickConfetti() {
+      const ctx = confetti.ctx;
+      const W = window.innerWidth, H = window.innerHeight;
+      const now = performance.now();
+      if (now < confetti.spawnUntil) spawnRain(confettiColors);
+      ctx.clearRect(0, 0, W, H);
+      for (let i = confetti.particles.length - 1; i >= 0; i--) {
+        const p = confetti.particles[i];
+        p.vy += 0.13;
+        p.vx *= 0.995;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vRot;
+        p.life--;
+        if (p.life <= 0 || p.y > H + 20 || p.x < -40 || p.x > W + 40) {
+          confetti.particles.splice(i, 1);
+          continue;
+        }
+        const alpha = Math.min(1, p.life / 50);
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        if (p.shape === "rect") {
+          ctx.fillRect(-p.size, -p.size / 2, p.size * 2, p.size);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      if (confetti.particles.length > 0 || now < confetti.spawnUntil) {
+        confetti.raf = requestAnimationFrame(tickConfetti);
+      } else {
+        confetti.raf = null;
+        confetti.canvas.style.display = "none";
+        ctx.clearRect(0, 0, W, H);
+      }
+    }
+    function hideCelebration() {
+      if (confetti.raf) { cancelAnimationFrame(confetti.raf); confetti.raf = null; }
+      if (confetti.canvas) { confetti.canvas.style.display = "none"; confetti.ctx && confetti.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); confetti.particles.length = 0; }
+      confetti.spawnUntil = 0;
+      $("#winnerOverlay").classList.remove("show");
+    }
+    function showWinnerBanner(winners, score) {
+      const overlay = $("#winnerOverlay");
+      const nameEl = $("#winnerName");
+      if (winners.length === 1) {
+        $("#winnerEyebrow").textContent = "You Won!";
+        nameEl.textContent = displayName(winners[0]);
+        nameEl.classList.remove("tie");
+        nameEl.style.color = winners[0].color;
+        $("#winnerSub").textContent = `${score} ${score === 1 ? "box" : "boxes"} claimed`;
+      } else {
+        $("#winnerEyebrow").textContent = "Tie Game!";
+        nameEl.textContent = winners.map(w => displayName(w)).join(" & ");
+        nameEl.classList.add("tie");
+        nameEl.style.color = "var(--navy)";
+        $("#winnerSub").textContent = `${score} ${score === 1 ? "box" : "boxes"} each`;
+      }
+      overlay.classList.add("show");
+    }
+
+    $("#winnerDismiss").addEventListener("click", () => $("#winnerOverlay").classList.remove("show"));
+    $("#winnerNewGame").addEventListener("click", () => { hideCelebration(); newGame(); });
+    $("#newGameBtn").addEventListener("click", newGame);
+    $("#gridSize").addEventListener("change", newGame);
+    $("#playerCount").addEventListener("change", newGame);
+    newGame();
+  </script>
+</body>
+</html>

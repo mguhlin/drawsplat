@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wheel Spinner</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .subtitle { margin: 0; color: var(--gray-90); font-size: 1rem; line-height: 1.45; max-width: 720px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+
+    .layout { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0 0 12px; color: var(--gray-90); font-size: 1.1rem; }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    textarea { width: 100%; min-height: 220px; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; resize: vertical; line-height: 1.4; }
+    textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+
+    .btn { min-height: 44px; padding: 9px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 8px 18px rgba(64, 64, 65, .08); }
+    .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .btn.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
+    .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+    .stage { display: grid; grid-template-rows: 1fr auto; gap: 16px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .wheel-wrap { position: relative; width: min(580px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; }
+    canvas { width: 100%; height: 100%; display: block; }
+    .pointer { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid var(--navy); filter: drop-shadow(0 4px 6px rgba(124, 58, 237, .35)); z-index: 2; pointer-events: none; }
+
+    .result { text-align: center; padding: 14px 16px; border: 2px solid var(--border); border-radius: var(--radius); background: linear-gradient(180deg, #f8f6ff, #eef2ff); }
+    .result-eyebrow { color: var(--gold); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .result-text { margin: 4px 0 0; color: var(--navy); font-size: clamp(1.4rem, 4vw, 2.4rem); font-weight: 900; line-height: 1.1; min-height: 1.4em; word-break: break-word; }
+
+    .spin-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding-top: 4px; }
+    .spin-btn { min-height: 56px; padding: 0 28px; font-size: 1.1rem; }
+
+    footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
+    footer.foot a { color: var(--navy); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Wheel Spinner</h1>
+        <p class="subtitle">Drop a list of names, prompts, or random picks on the wheel and give it a spin. Standalone — no whiteboard required.</p>
+      </div>
+      <a class="home-link" href="../../index.html">Home</a>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-label="Wheel entries">
+        <h2>Entries</h2>
+        <div class="field">
+          <label for="entriesInput">One per line</label>
+          <textarea id="entriesInput" placeholder="Ada&#10;Bao&#10;Camila&#10;Diego&#10;Emma"></textarea>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="applyBtn">Apply Entries</button>
+          <button type="button" class="btn" id="shuffleBtn">Shuffle</button>
+          <button type="button" class="btn danger" id="clearBtn">Clear</button>
+        </div>
+        <p class="subtitle" style="margin-top:14px;font-size:.85rem;color:var(--gray-50)">Tip: paste a roster, list of prompts, or random options. Up to 50 entries fit comfortably on the wheel.</p>
+      </section>
+
+      <section class="stage" aria-label="Spinner stage">
+        <div class="wheel-wrap">
+          <div class="pointer" aria-hidden="true"></div>
+          <canvas id="wheel" width="1100" height="1100" aria-label="Spinner wheel"></canvas>
+        </div>
+        <div class="result" aria-live="polite">
+          <div class="result-eyebrow">Result</div>
+          <p class="result-text" id="resultText">Press Spin</p>
+        </div>
+        <div class="spin-row">
+          <button type="button" class="btn primary spin-btn" id="spinBtn">Spin the Wheel</button>
+          <button type="button" class="btn" id="removeWinnerBtn">Remove Winner</button>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
+    </footer>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const canvas = $("wheel");
+    const ctx = canvas.getContext("2d");
+    const entriesInput = $("entriesInput");
+    const resultText = $("resultText");
+    const spinBtn = $("spinBtn");
+
+    const COLORS = ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e", "#0ea5e9"];
+    let entries = ["Ada", "Bao", "Camila", "Diego", "Emma", "Faisal"];
+    let rotation = 0;
+    let spinning = false;
+
+    function readEntries() {
+      const lines = entriesInput.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      return lines.length ? lines : entries;
+    }
+
+    function applyEntries() {
+      const list = readEntries();
+      if (list.length < 2) {
+        resultText.textContent = "Need at least 2 entries.";
+        return;
+      }
+      entries = list;
+      drawWheel();
+      resultText.textContent = "Press Spin";
+    }
+
+    function drawWheel() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = Math.min(cx, cy) - 20;
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      const n = entries.length;
+      const slice = (Math.PI * 2) / n;
+      for (let i = 0; i < n; i++) {
+        const start = i * slice;
+        const end = start + slice;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "rgba(255,255,255,0.7)";
+        ctx.stroke();
+        // Label
+        ctx.save();
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#fff";
+        const label = entries[i].length > 22 ? entries[i].slice(0, 21) + "…" : entries[i];
+        const size = n > 24 ? 22 : n > 16 ? 30 : n > 10 ? 40 : 52;
+        ctx.font = `900 ${size}px Arial, Helvetica, sans-serif`;
+        ctx.shadowColor = "rgba(0,0,0,0.35)";
+        ctx.shadowBlur = 4;
+        ctx.fillText(label, r - 18, 0);
+        ctx.restore();
+      }
+      // Outer ring
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = "#7c3aed";
+      ctx.stroke();
+      // Hub
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.12, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#7c3aed";
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function spin() {
+      if (spinning) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      const targetIndex = Math.floor(Math.random() * entries.length);
+      const slice = (Math.PI * 2) / entries.length;
+      // We want the pointer (top, -PI/2 from canvas perspective) to land on the centre of targetIndex.
+      const sliceCentre = targetIndex * slice + slice / 2;
+      const turns = 5 + Math.random() * 3;
+      const finalRotation = (-Math.PI / 2) - sliceCentre + turns * Math.PI * 2;
+      const startRotation = rotation;
+      const delta = finalRotation - startRotation;
+      const duration = 4200;
+      const start = performance.now();
+      function frame(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 4);
+        rotation = startRotation + delta * eased;
+        drawWheel();
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          rotation = ((rotation % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
+          drawWheel();
+          resultText.textContent = entries[targetIndex];
+          spinning = false;
+          spinBtn.disabled = false;
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    $("applyBtn").addEventListener("click", applyEntries);
+    $("shuffleBtn").addEventListener("click", () => {
+      const list = readEntries();
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+      entriesInput.value = list.join("\n");
+      applyEntries();
+    });
+    $("clearBtn").addEventListener("click", () => {
+      entriesInput.value = "";
+      entries = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      resultText.textContent = "Add entries, then spin";
+    });
+    $("removeWinnerBtn").addEventListener("click", () => {
+      const winner = resultText.textContent;
+      if (!entries.length || !entries.includes(winner)) return;
+      entries = entries.filter(e => e !== winner);
+      entriesInput.value = entries.join("\n");
+      if (entries.length < 2) {
+        resultText.textContent = entries.length === 1 ? `Only "${entries[0]}" left` : "All entries removed";
+      } else {
+        resultText.textContent = `Removed "${winner}"`;
+      }
+      drawWheel();
+    });
+    spinBtn.addEventListener("click", spin);
+
+    // Seed
+    entriesInput.value = entries.join("\n");
+    drawWheel();
+  </script>
+</body>
+</html>

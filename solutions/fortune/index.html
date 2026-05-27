@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Fortune Wheel Teacher</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --border: #eef2ff;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--gray-90);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 32%,
+        var(--gold) 32% 52%,
+        var(--orange) 52% 64%,
+        var(--red) 64% 76%,
+        var(--blue) 76% 88%,
+        var(--green) 88% 96%,
+        var(--yellow) 96% 100%
+      );
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(330px, 460px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .panel {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label, .field-title { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--gray-90);
+      background: var(--white);
+      outline: none;
+    }
+
+    textarea { min-height: 170px; resize: vertical; line-height: 1.45; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(108, 40, 217, .18);
+    }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 2px solid rgba(124, 58, 237, .22);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(64, 64, 65, .08);
+    }
+
+    .btn.primary { color: var(--white); background: var(--navy); border-color: var(--navy); }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+
+    .preview-box {
+      display: grid;
+      gap: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #fbfcff;
+    }
+
+    .category {
+      color: var(--gray-50);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .phrase-list {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.6;
+      font-weight: 800;
+    }
+
+    .share-link {
+      word-break: break-all;
+      color: var(--navy);
+      font-size: .9rem;
+      line-height: 1.4;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin-top: 12px;
+      color: var(--navy);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .help {
+      margin: 0;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 940px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1180px); padding-top: 18px; }
+      header { align-items: flex-start; flex-direction: column; }
+      .split, .button-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Classroom Fortune Wheel</h1>
+        <p class="subtitle">Teacher setup page: choose an education category or custom puzzle set, then share the student wheel link.</p>
+      </div>
+      <a class="home-link" href="../index.html">Tool Menu</a>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel" aria-label="Teacher setup">
+        <h2>Teacher Setup</h2>
+
+        <div class="field">
+          <label for="titleInput">Game Title</label>
+          <input id="titleInput" type="text" value="Classroom Fortune Wheel" maxlength="90">
+        </div>
+
+        <div class="field">
+          <label for="categorySelect">Education Category</label>
+          <select id="categorySelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="customPhrases">Custom Puzzle Phrases</label>
+          <textarea id="customPhrases" placeholder="Enter one puzzle phrase per line. Leave blank to use the selected category."></textarea>
+          <p class="help">Use vocabulary, concepts, or short review phrases. Students will see the wheel, puzzle board, and letters only.</p>
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="teamCount">Teams</label>
+            <select id="teamCount">
+              <option value="1">1 team</option>
+              <option value="2">2 teams</option>
+              <option value="3" selected>3 teams</option>
+              <option value="4">4 teams</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="startMode">Starting Puzzle</label>
+            <select id="startMode">
+              <option value="random" selected>Random</option>
+              <option value="first">First in list</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn primary" id="updateBtn">Update Preview</button>
+          <button class="btn gold" id="copyBtn">Copy Student Link</button>
+          <button class="btn" id="openBtn">Open Student Page</button>
+          <button class="btn" id="downloadBtn">Download Setup</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-label="Share preview">
+        <h2>Student Link Preview</h2>
+        <div class="preview-box">
+          <div>
+            <div class="category" id="previewCategory">Category</div>
+            <h3 id="previewTitle" style="margin:6px 0 0;color:var(--navy);">Classroom Fortune Wheel</h3>
+          </div>
+          <div>
+            <span class="field-title">Puzzle Phrases</span>
+            <ol class="phrase-list" id="phraseList"></ol>
+          </div>
+          <div>
+            <span class="field-title">Share URL</span>
+            <div class="share-link" id="shareLink"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    const categories = [
+      { label: "K-2 Science", phrases: ["weather pattern", "plant needs water", "animal habitat", "day and night", "soil and rocks"] },
+      { label: "K-2 Math", phrases: ["count by tens", "equal groups", "number pattern", "two dimensional shapes", "measure length"] },
+      { label: "K-2 ELAR", phrases: ["beginning sound", "story elements", "author and title", "rhyming words", "complete sentence"] },
+      { label: "3-5 Science", phrases: ["life cycle", "producer consumer", "matter has mass", "force and motion", "conductor insulator"] },
+      { label: "3-5 Math", phrases: ["equivalent fractions", "area and perimeter", "place value", "multiply decimals", "coordinate grid"] },
+      { label: "3-5 Social Studies", phrases: ["texas regions", "local government", "primary source", "goods and services", "historic landmark"] },
+      { label: "6-8 Science", phrases: ["plate tectonics", "photosynthesis", "density and mass", "newton laws", "ecosystem interactions"] },
+      { label: "6-8 Math", phrases: ["linear relationship", "integer operations", "proportional reasoning", "coordinate plane", "probability model"] },
+      { label: "6-8 ELAR", phrases: ["central idea", "text evidence", "point of view", "figurative language", "argument claim"] },
+      { label: "9-12 Biology", phrases: ["cellular respiration", "genotype phenotype", "natural selection", "homeostasis", "protein synthesis"] },
+      { label: "9-12 Math", phrases: ["quadratic function", "domain and range", "exponential growth", "polynomial expression", "inverse function"] },
+      { label: "9-12 History", phrases: ["civil rights movement", "industrial revolution", "constitutional principles", "cold war conflict", "judicial review"] },
+      { label: "Spanish Language Arts", phrases: ["idea central", "lenguaje figurado", "punto de vista", "texto informativo", "contraargumento"] },
+      { label: "Health Arts Technology", phrases: ["digital citizenship", "creative composition", "healthy nutrition", "algorithm design", "collaboration skills"] }
+    ];
+
+    function b64urlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function selectedConfig() {
+      const category = categories[Number($("#categorySelect").value)] || categories[0];
+      const custom = $("#customPhrases").value.split(/\n+/).map(v => v.trim()).filter(Boolean);
+      return {
+        title: $("#titleInput").value.trim() || "Classroom Fortune Wheel",
+        category: custom.length ? "Custom Puzzle Set" : category.label,
+        phrases: custom.length ? custom : category.phrases,
+        teamCount: Number($("#teamCount").value) || 3,
+        startMode: $("#startMode").value
+      };
+    }
+
+    function studentUrl() {
+      const url = new URL("student.html", window.location.href);
+      url.hash = "f=" + b64urlEncode(JSON.stringify(selectedConfig()));
+      return url.toString();
+    }
+
+    function renderPreview() {
+      const cfg = selectedConfig();
+      $("#previewTitle").textContent = cfg.title;
+      $("#previewCategory").textContent = cfg.category;
+      $("#phraseList").innerHTML = cfg.phrases.map(p => `<li>${escapeHTML(p)}</li>`).join("");
+      $("#shareLink").textContent = studentUrl();
+      $("#status").textContent = cfg.phrases.length + " puzzle phrases ready.";
+    }
+
+    function copyLink() {
+      const url = studentUrl();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => $("#status").textContent = "Student link copied.");
+      } else {
+        window.prompt("Copy this student link:", url);
+      }
+    }
+
+    function downloadSetup() {
+      const blob = new Blob([JSON.stringify(selectedConfig(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "fortune-wheel-setup.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    function init() {
+      $("#categorySelect").innerHTML = categories.map((cat, i) => `<option value="${i}">${escapeHTML(cat.label)}</option>`).join("");
+      ["titleInput", "categorySelect", "customPhrases", "teamCount", "startMode"].forEach(id => {
+        $("#" + id).addEventListener("input", renderPreview);
+        $("#" + id).addEventListener("change", renderPreview);
+      });
+      $("#updateBtn").addEventListener("click", renderPreview);
+      $("#copyBtn").addEventListener("click", copyLink);
+      $("#openBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
+      $("#downloadBtn").addEventListener("click", downloadSetup);
+      renderPreview();
+    }
+
+    init();
+  </script>
+</body>
+</html>

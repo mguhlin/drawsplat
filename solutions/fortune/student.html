@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Fortune Wheel Student</title>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --border: #eef2ff;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--white); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%);
+    }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .subtitle { margin: 0; color: var(--gray-90); font-size: 1rem; line-height: 1.45; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+
+    .scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 18px; }
+    .team-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 12px 14px; background: var(--white); box-shadow: var(--shadow); display: grid; gap: 6px; position: relative; }
+    .team-card.active { border-color: var(--gold); background: #fff8eb; }
+    .team-card.cpu { background: linear-gradient(180deg, #fbfcff, #eef3ff); }
+    .team-card.cpu.active { background: linear-gradient(180deg, #fff8eb, #fff1d6); }
+    .team-card.active::after { content: "ON TURN"; position: absolute; top: -10px; right: 10px; background: var(--gold); color: var(--black); font-size: .7rem; font-weight: 900; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px; }
+    .team-name { color: var(--navy); font-weight: 900; font-size: 1rem; }
+    .team-cpu-toggle { margin-top: 4px; padding: 5px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--white); color: var(--gray-90); font-weight: 800; font-size: .78rem; cursor: pointer; align-self: start; }
+    .team-cpu-toggle:hover { background: #f4f7ff; border-color: var(--blue); }
+    .team-cpu-toggle.cpu { background: var(--blue); border-color: var(--blue); color: var(--white); }
+
+    .celebrate-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 100; display: none; }
+    .winner-overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 101; background: rgba(15, 22, 50, 0.45); animation: winnerFade .35s ease; padding: 20px; }
+    .winner-overlay.show { display: grid; }
+    .winner-card { background: var(--white); border-radius: var(--radius); padding: 32px 40px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.35); border: 6px solid var(--gold); max-width: min(520px, 92vw); animation: winnerPop .55s cubic-bezier(.18,1.2,.4,1); }
+    .winner-eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .12em; font-weight: 900; font-size: .9rem; }
+    .winner-name { font-size: clamp(2rem, 6vw, 3.6rem); color: var(--navy); font-weight: 900; margin: 8px 0 4px; line-height: 1; }
+    .winner-phrase { color: var(--gray-90); font-size: 1.1rem; font-weight: 800; margin: 4px 0 6px; }
+    .winner-sub { color: var(--gray-50); margin: 0 0 18px; font-weight: 700; }
+    .winner-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .winner-actions .btn { min-width: 140px; }
+    @keyframes winnerFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes winnerPop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+    .team-row { display: flex; justify-content: space-between; gap: 8px; font-size: .9rem; }
+    .team-label { color: var(--gray-50); font-weight: 700; }
+    .team-value { color: var(--gray-90); font-weight: 900; font-variant-numeric: tabular-nums; }
+
+    main { display: grid; grid-template-columns: minmax(320px, 600px) 1fr; gap: 18px; align-items: start; padding-top: 18px; }
+    .panel, .stage { border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); padding: 18px; }
+    .panel h2 { margin: 0 0 12px; color: var(--black); font-size: 1.1rem; }
+
+    .wheel-wrap { position: relative; width: min(100%, 520px); aspect-ratio: 1 / 1; margin: 0 auto; display: grid; place-items: center; }
+    canvas { width: 100%; height: 100%; border-radius: 50%; filter: drop-shadow(0 16px 22px rgba(31, 41, 55, .22)); }
+    .pointer { position: absolute; right: -4px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 22px solid transparent; border-bottom: 22px solid transparent; border-right: 42px solid var(--gray-10); filter: drop-shadow(0 4px 5px rgba(31, 41, 55, .24)); z-index: 2; }
+    .center-dot { position: absolute; width: 24%; height: 24%; display: grid; place-items: center; color: var(--white); background: var(--navy); border: 8px solid var(--white); border-radius: 50%; box-shadow: 0 8px 18px rgba(31, 41, 55, .18); font-weight: 900; text-align: center; z-index: 3; font-size: 1rem; font-family: inherit; cursor: pointer; transition: transform 120ms ease, background 120ms ease, color 120ms ease; }
+    .center-dot:hover:not(:disabled) { background: var(--gold); color: var(--black); transform: scale(1.06); }
+    .center-dot:active:not(:disabled) { transform: scale(0.96); }
+    .center-dot:disabled { cursor: not-allowed; opacity: .55; }
+    .center-dot:focus-visible { outline: 4px solid rgba(108, 40, 217, .35); outline-offset: 4px; }
+
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .btn { min-height: 48px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); padding: 9px 12px; color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 8px 18px rgba(64, 64, 65, .08); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+    .btn.spin { grid-column: 1 / -1; min-height: 56px; color: var(--black); background: var(--gold); border-color: var(--gold); font-size: 1.1rem; }
+    .btn.solve { color: var(--white); background: var(--navy); border-color: var(--navy); }
+    .btn.vowel { color: var(--white); background: var(--blue); border-color: var(--blue); }
+    .btn.vowel.armed { background: var(--red); border-color: var(--red); }
+    .btn.ghost { background: var(--white); }
+
+    .solve-box { margin-top: 12px; padding: 14px; border: 2px dashed var(--navy); border-radius: var(--radius); background: #f4f7ff; display: none; }
+    .solve-box.show { display: grid; gap: 10px; }
+    .solve-box label { font-weight: 800; color: var(--navy); font-size: .9rem; }
+    .solve-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
+    .solve-input { padding: 12px 14px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; outline: none; }
+    .solve-input:focus { border-color: var(--navy); box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+
+    .puzzle-card { margin-top: 14px; border: 2px solid var(--border); border-radius: var(--radius); padding: 18px; background: #fbfcff; }
+    .category { color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .puzzle { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 14px; align-items: center; }
+    .word { display: inline-flex; gap: 5px; }
+    .tile { width: clamp(28px, 3.6vw, 46px); height: clamp(36px, 4.6vw, 56px); display: grid; place-items: center; border: 2px solid var(--navy); border-radius: 6px; background: var(--white); color: var(--navy); font-size: clamp(1rem, 2.8vw, 1.9rem); font-weight: 900; text-transform: uppercase; }
+    .tile.punct { border-color: var(--gray-30); background: var(--gray-10); color: var(--gray-90); }
+    .tile.blank { border-color: transparent; background: transparent; width: 14px; }
+
+    .message { min-height: 1.5em; margin-top: 12px; color: var(--navy); font-weight: 800; line-height: 1.4; }
+    .message.bankrupt { color: var(--red); }
+    .message.good { color: var(--green); }
+
+    .letter-section + .letter-section { margin-top: 14px; }
+    .letter-section-label { font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-50); margin-bottom: 6px; }
+    .letter-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .letter-grid.vowels { grid-template-columns: repeat(5, 1fr); }
+    .letter { min-height: 38px; border: 2px solid var(--border); border-radius: 6px; background: var(--white); color: var(--navy); font-weight: 900; font-size: 1rem; }
+    .letter.vowel { color: var(--blue); border-color: rgba(108, 40, 217, .35); }
+    .letter:hover:not(:disabled) { background: #f4f7ff; }
+    .letter.used { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+
+    @media (max-width: 940px) { main { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1180px); padding-top: 18px; }
+      header.site { align-items: flex-start; flex-direction: column; }
+      .letter-grid { grid-template-columns: repeat(7, 1fr); }
+      .solve-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 id="titleText">Classroom Fortune Wheel</h1>
+        <p class="subtitle">Spin the wheel, call a consonant, buy a vowel for $250, or solve the puzzle.</p>
+      </div>
+      <a class="home-link" href="../index.html">Tool Menu</a>
+    </header>
+
+    <section class="scoreboard" id="scoreboard" aria-label="Team scoreboard"></section>
+
+    <main id="app">
+      <section class="stage">
+        <div class="wheel-wrap">
+          <canvas id="wheelCanvas" width="900" height="900" aria-label="Fortune wheel"></canvas>
+          <div class="pointer" aria-hidden="true"></div>
+          <button type="button" class="center-dot" id="centerSpin" aria-label="Spin the wheel">SPIN</button>
+        </div>
+        <div class="actions">
+          <button class="btn spin" id="spinBtn">Spin the Wheel</button>
+          <button class="btn vowel" id="vowelBtn">Buy a Vowel ($250)</button>
+          <button class="btn solve" id="solveBtn">Solve Puzzle</button>
+        </div>
+        <div class="solve-box" id="solveBox">
+          <label for="solveInput">Type the full solution and press Enter</label>
+          <div class="solve-row">
+            <input class="solve-input" id="solveInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Your guess">
+            <button class="btn solve" id="solveSubmit" type="button">Submit</button>
+            <button class="btn ghost" id="solveCancel" type="button">Cancel</button>
+          </div>
+        </div>
+        <div class="puzzle-card">
+          <div class="category" id="categoryText">Category</div>
+          <div class="puzzle" id="puzzleBoard" aria-label="Puzzle board"></div>
+        </div>
+        <div class="message" id="message" role="status" aria-live="polite">Spin to begin.</div>
+        <div class="actions" style="margin-top:10px;">
+          <button class="btn ghost" id="nextRoundBtn" hidden>Next Puzzle</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>Letters</h2>
+        <div class="letter-section">
+          <div class="letter-section-label">Consonants &mdash; spin first</div>
+          <div class="letter-grid" id="consonantGrid"></div>
+        </div>
+        <div class="letter-section">
+          <div class="letter-section-label">Vowels &mdash; tap Buy a Vowel ($250)</div>
+          <div class="letter-grid vowels" id="vowelGrid"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <canvas class="celebrate-canvas" id="confettiCanvas" aria-hidden="true"></canvas>
+  <div class="winner-overlay" id="winnerOverlay" role="dialog" aria-live="assertive">
+    <div class="winner-card">
+      <div class="winner-eyebrow" id="winnerEyebrow">Solved!</div>
+      <div class="winner-name" id="winnerName">Team 1</div>
+      <p class="winner-phrase" id="winnerPhrase"></p>
+      <p class="winner-sub" id="winnerSub"></p>
+      <div class="winner-actions">
+        <button class="btn solve" id="winnerNext" type="button" style="color:var(--white);background:var(--navy);border-color:var(--navy);">Next Puzzle</button>
+        <button class="btn" id="winnerDismiss" type="button">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+
+    const defaultConfig = {
+      title: "Classroom Fortune Wheel",
+      category: "K-2 Science",
+      phrases: ["weather pattern", "plant needs water", "animal habitat", "day and night", "soil and rocks"],
+      startMode: "random",
+      teamCount: 3
+    };
+
+    const VOWEL_COST = 250;
+    const VOWELS = new Set(["A", "E", "I", "O", "U"]);
+    const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ".split("");
+    const VOWEL_LIST = ["A", "E", "I", "O", "U"];
+
+    const wheel = [
+      { label: "500",      value: 500,        color: "#7c3aed" },
+      { label: "600",      value: 600,        color: "#f97316" },
+      { label: "700",      value: 700,        color: "#6d28d9" },
+      { label: "BANKRUPT", value: "bankrupt", color: "#000000" },
+      { label: "800",      value: 800,        color: "#22c55e" },
+      { label: "300",      value: 300,        color: "#a855f7" },
+      { label: "1000",     value: 1000,       color: "#ef4444" },
+      { label: "500",      value: 500,        color: "#7c3aed" },
+      { label: "LOSE TURN",value: "lose",     color: "#cbd5e1" },
+      { label: "600",      value: 600,        color: "#f97316" },
+      { label: "400",      value: 400,        color: "#facc15" },
+      { label: "2500",     value: 2500,       color: "#a855f7" },
+      { label: "700",      value: 700,        color: "#6d28d9" },
+      { label: "300",      value: 300,        color: "#a855f7" },
+      { label: "BANKRUPT", value: "bankrupt", color: "#000000" },
+      { label: "900",      value: 900,        color: "#22c55e" }
+    ];
+
+    const canvas = $("#wheelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const state = {
+      cfg: defaultConfig,
+      rotation: 0,
+      spinning: false,
+      pendingPrize: null,
+      puzzle: "",
+      revealed: new Set(),
+      used: new Set(),
+      teams: [],
+      currentTeam: 0,
+      gameState: "needs-spin"
+    };
+
+    function b64urlDecode(s) {
+      const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+      const norm = s.replace(/-/g, "+").replace(/_/g, "/") + pad;
+      const bin = atob(norm);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function loadConfig() {
+      const hash = window.location.hash || "";
+      if (!hash.startsWith("#f=")) return;
+      try {
+        const cfg = JSON.parse(b64urlDecode(hash.slice(3)));
+        if (cfg && Array.isArray(cfg.phrases) && cfg.phrases.length) {
+          state.cfg = { ...defaultConfig, ...cfg };
+        }
+      } catch {}
+    }
+
+    function readableText(hex) {
+      const c = hex.replace("#", "");
+      const r = parseInt(c.slice(0, 2), 16);
+      const g = parseInt(c.slice(2, 4), 16);
+      const b = parseInt(c.slice(4, 6), 16);
+      return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#000000" : "#FFFFFF";
+    }
+
+    function drawWheel() {
+      const W = canvas.width, H = canvas.height, cx = W / 2, cy = H / 2, r = Math.min(W, H) * .46;
+      const slice = Math.PI * 2 / wheel.length;
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(state.rotation);
+      ctx.translate(-cx, -cy);
+      wheel.forEach((item, i) => {
+        const start = i * slice, end = start + slice;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = item.color;
+        ctx.fill();
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.save();
+        ctx.translate(cx + Math.cos(start + slice / 2) * r * .68, cy + Math.sin(start + slice / 2) * r * .68);
+        ctx.rotate(start + slice / 2);
+        ctx.fillStyle = readableText(item.color);
+        const isWord = typeof item.value !== "number";
+        ctx.font = (isWord ? "900 18px" : "900 26px") + " Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(item.label, 0, 0);
+        ctx.restore();
+      });
+      ctx.restore();
+    }
+
+    function initTeams() {
+      const n = Math.max(1, Math.min(4, Number(state.cfg.teamCount) || 1));
+      const palette = ["var(--navy)", "var(--red)", "var(--green)", "var(--blue)"];
+      state.teams = Array.from({ length: n }, (_, i) => ({
+        name: "Team " + (i + 1),
+        round: 0,
+        bank: 0,
+        color: palette[i],
+        isComputer: false
+      }));
+      state.currentTeam = 0;
+    }
+
+    function team() { return state.teams[state.currentTeam]; }
+
+    function advanceTurn(reason) {
+      state.pendingPrize = null;
+      state.gameState = "needs-spin";
+      $("#vowelBtn").classList.remove("armed");
+      hideSolveBox();
+      if (state.teams.length > 1) {
+        state.currentTeam = (state.currentTeam + 1) % state.teams.length;
+      }
+      if (reason) message(reason + " " + team().name + " is up.");
+      else message(team().name + " is up. Spin the wheel.");
+      updateUI();
+    }
+
+    function renderScoreboard() {
+      $("#scoreboard").innerHTML = state.teams.map((t, i) => {
+        const classes = ["team-card"];
+        if (i === state.currentTeam) classes.push("active");
+        if (t.isComputer) classes.push("cpu");
+        const toggleLabel = t.isComputer ? "🤖 Computer" : "👤 Human";
+        return `
+        <div class="${classes.join(" ")}">
+          <div class="team-name" style="color:${t.color}">${escapeHTML(t.name)}</div>
+          <div class="team-row"><span class="team-label">Round</span><span class="team-value">$${t.round}</span></div>
+          <div class="team-row"><span class="team-label">Bank</span><span class="team-value">$${t.bank}</span></div>
+          <button type="button" class="team-cpu-toggle${t.isComputer ? " cpu" : ""}" data-idx="${i}" aria-pressed="${t.isComputer}">${toggleLabel}</button>
+        </div>`;
+      }).join("");
+    }
+
+    let audioCtx = null;
+    function ensureAudio() {
+      if (audioCtx) { if (audioCtx.state === "suspended") audioCtx.resume(); return audioCtx; }
+      const Ctor = window.AudioContext || window.webkitAudioContext;
+      if (!Ctor) return null;
+      try { audioCtx = new Ctor(); } catch { audioCtx = null; }
+      return audioCtx;
+    }
+    let tickToggle = 0;
+    function playTick() {
+      const ctx = audioCtx;
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      const basePitches = [1650, 1380];
+      osc.frequency.value = basePitches[tickToggle & 1] + (Math.random() * 80 - 40);
+      tickToggle++;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.22, t + 0.002);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.06);
+    }
+    function playLanding() {
+      const ctx = audioCtx;
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(420, t);
+      osc.frequency.exponentialRampToValueAtTime(260, t + 0.18);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.24);
+    }
+
+    function spin() {
+      if (state.spinning || state.gameState !== "needs-spin") return;
+      ensureAudio();
+      state.spinning = true;
+      $("#vowelBtn").classList.remove("armed");
+      updateUI();
+      const TWO_PI = Math.PI * 2;
+      const slice = TWO_PI / wheel.length;
+      const index = Math.floor(Math.random() * wheel.length);
+      const targetMid = index * slice + slice / 2;
+      const targetFinal = (TWO_PI - targetMid) % TWO_PI;
+      const startMod = ((state.rotation % TWO_PI) + TWO_PI) % TWO_PI;
+      let delta = targetFinal - startMod;
+      if (delta < 0) delta += TWO_PI;
+      const fullSpins = (5 + Math.floor(Math.random() * 4)) * TWO_PI;
+      const start = state.rotation;
+      const end = start + fullSpins + delta;
+      const duration = 3200;
+      const t0 = performance.now();
+      let lastSlice = -1;
+      function frame(now) {
+        const p = Math.min(1, (now - t0) / duration);
+        state.rotation = start + (end - start) * (1 - Math.pow(1 - p, 4));
+        drawWheel();
+        const normRot = ((state.rotation % TWO_PI) + TWO_PI) % TWO_PI;
+        const sliceAtPointer = Math.floor(((TWO_PI - normRot) % TWO_PI) / slice) % wheel.length;
+        if (lastSlice !== -1 && sliceAtPointer !== lastSlice) playTick();
+        lastSlice = sliceAtPointer;
+        if (p < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          state.spinning = false;
+          playLanding();
+          handleSlot(wheel[index]);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function handleSlot(slot) {
+      if (slot.value === "bankrupt") {
+        const lost = team().round;
+        team().round = 0;
+        message(`BANKRUPT! ${team().name} loses $${lost} for the round.`, "bankrupt");
+        setTimeout(() => advanceTurn(""), 900);
+      } else if (slot.value === "lose") {
+        message(`LOSE A TURN. ${team().name} passes.`);
+        setTimeout(() => advanceTurn(""), 900);
+      } else {
+        state.pendingPrize = slot.value;
+        state.gameState = "needs-consonant";
+        message(`$${slot.value}. ${team().name}, call a consonant.`);
+        updateUI();
+      }
+    }
+
+    function guessConsonant(letter) {
+      if (state.gameState !== "needs-consonant") {
+        message("Spin the wheel before calling a consonant.");
+        return;
+      }
+      if (state.used.has(letter) || state.revealed.has(letter)) return;
+      state.used.add(letter);
+      const count = [...state.puzzle].filter(ch => ch === letter).length;
+      if (count > 0) {
+        state.revealed.add(letter);
+        const won = state.pendingPrize * count;
+        team().round += won;
+        message(`${letter} appears ${count} time${count === 1 ? "" : "s"}. +$${won}. Spin, buy, or solve.`, "good");
+        state.pendingPrize = null;
+        state.gameState = "needs-spin";
+        renderPuzzle();
+        renderLetters();
+        renderScoreboard();
+        checkAutoSolved();
+        updateUI();
+      } else {
+        message(`No ${letter} in the puzzle.`);
+        renderLetters();
+        setTimeout(() => advanceTurn(""), 700);
+      }
+    }
+
+    function armVowel() {
+      if (state.gameState !== "needs-spin") {
+        message("Finish this spin first, then buy a vowel.");
+        return;
+      }
+      if (team().round < VOWEL_COST) {
+        message(`Need at least $${VOWEL_COST} this round to buy a vowel.`);
+        return;
+      }
+      if (vowelsRemaining() === 0) {
+        message("All vowels are already used.");
+        return;
+      }
+      state.gameState = "buying-vowel";
+      $("#vowelBtn").classList.add("armed");
+      message(`${team().name}, tap a vowel ($${VOWEL_COST}).`);
+      updateUI();
+    }
+
+    function cancelVowel() {
+      if (state.gameState === "buying-vowel") {
+        state.gameState = "needs-spin";
+        $("#vowelBtn").classList.remove("armed");
+        message(`${team().name}, choose your move.`);
+        updateUI();
+      }
+    }
+
+    function buyVowel(letter) {
+      if (state.gameState !== "buying-vowel") return;
+      if (state.used.has(letter) || state.revealed.has(letter)) return;
+      team().round -= VOWEL_COST;
+      state.used.add(letter);
+      $("#vowelBtn").classList.remove("armed");
+      const count = [...state.puzzle].filter(ch => ch === letter).length;
+      if (count > 0) {
+        state.revealed.add(letter);
+        message(`${letter} appears ${count} time${count === 1 ? "" : "s"}. −$${VOWEL_COST}. Keep going.`, "good");
+        state.gameState = "needs-spin";
+        renderPuzzle();
+        renderLetters();
+        renderScoreboard();
+        checkAutoSolved();
+        updateUI();
+      } else {
+        message(`No ${letter}. −$${VOWEL_COST}.`);
+        renderLetters();
+        renderScoreboard();
+        setTimeout(() => advanceTurn(""), 700);
+      }
+    }
+
+    function vowelsRemaining() {
+      return VOWEL_LIST.filter(v => !state.used.has(v) && !state.revealed.has(v) && state.puzzle.includes(v)).length
+        + VOWEL_LIST.filter(v => !state.used.has(v) && !state.revealed.has(v) && !state.puzzle.includes(v)).length;
+    }
+
+    function openSolveBox() {
+      if (state.spinning || state.gameState === "round-over") return;
+      state.gameState = "solving";
+      $("#vowelBtn").classList.remove("armed");
+      $("#solveBox").classList.add("show");
+      $("#solveInput").value = "";
+      $("#solveInput").focus();
+      message(`${team().name}, type the full solution.`);
+      updateUI();
+    }
+
+    function hideSolveBox() {
+      $("#solveBox").classList.remove("show");
+    }
+
+    function cancelSolve() {
+      if (state.gameState !== "solving") return;
+      hideSolveBox();
+      state.gameState = state.pendingPrize ? "needs-consonant" : "needs-spin";
+      message(`${team().name}, choose your move.`);
+      updateUI();
+    }
+
+    function submitSolve() {
+      const raw = $("#solveInput").value;
+      const guess = normalizeForCompare(raw);
+      const target = normalizeForCompare(state.puzzle);
+      if (!guess) {
+        message("Type your guess, then press Enter.");
+        return;
+      }
+      if (guess === target) {
+        const solver = team();
+        solver.bank += solver.round;
+        const won = solver.round;
+        solver.round = 0;
+        state.revealed = new Set([...state.puzzle].filter(ch => /[A-Z]/.test(ch)));
+        state.gameState = "round-over";
+        hideSolveBox();
+        message(`SOLVED! ${solver.name} banks $${won}. Total: $${solver.bank}.`, "good");
+        renderPuzzle();
+        renderLetters();
+        renderScoreboard();
+        $("#nextRoundBtn").hidden = false;
+        updateUI();
+        celebrate(solver, won, state.puzzle);
+      } else {
+        message(`"${raw}" is not the puzzle. ${team().name} loses the turn.`, "bankrupt");
+        hideSolveBox();
+        setTimeout(() => advanceTurn(""), 900);
+      }
+    }
+
+    function normalize(text) {
+      return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+    }
+
+    function normalizeForCompare(text) {
+      return normalize(text).replace(/[^A-Z\s]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function checkAutoSolved() {
+      const allLetters = [...state.puzzle].filter(ch => /[A-Z]/.test(ch));
+      if (allLetters.length && allLetters.every(ch => state.revealed.has(ch))) {
+        const solver = team();
+        solver.bank += solver.round;
+        const won = solver.round;
+        solver.round = 0;
+        state.gameState = "round-over";
+        message(`Puzzle revealed! ${solver.name} banks $${won}. Total: $${solver.bank}.`, "good");
+        renderScoreboard();
+        $("#nextRoundBtn").hidden = false;
+        updateUI();
+        celebrate(solver, won, state.puzzle);
+      }
+    }
+
+    function choosePuzzle() {
+      const phrases = state.cfg.phrases;
+      const phrase = state.cfg.startMode === "first" ? phrases[0] : phrases[Math.floor(Math.random() * phrases.length)];
+      state.puzzle = normalize(phrase);
+      state.revealed = new Set();
+      state.used = new Set();
+      state.pendingPrize = null;
+      state.teams.forEach(t => { t.round = 0; });
+      state.gameState = "needs-spin";
+      $("#nextRoundBtn").hidden = true;
+      hideSolveBox();
+      hideCelebration();
+      renderPuzzle();
+      renderLetters();
+      renderScoreboard();
+      message(`New puzzle. ${team().name} starts. Spin the wheel.`);
+      updateUI();
+    }
+
+    function renderPuzzle() {
+      $("#categoryText").textContent = state.cfg.category || "Shared Puzzle";
+      const words = state.puzzle.split(" ");
+      $("#puzzleBoard").innerHTML = words.map(word => {
+        const tiles = [...word].map(ch => {
+          if (/[A-Z]/.test(ch)) {
+            return `<span class="tile">${state.revealed.has(ch) ? ch : ""}</span>`;
+          }
+          if (ch === " ") return `<span class="tile blank"></span>`;
+          return `<span class="tile punct">${escapeHTML(ch)}</span>`;
+        }).join("");
+        return `<span class="word">${tiles}</span>`;
+      }).join("");
+    }
+
+    function renderLetters() {
+      $("#consonantGrid").innerHTML = CONSONANTS.map(letter => {
+        const disabled = state.used.has(letter) || state.revealed.has(letter);
+        return `<button class="letter${disabled ? " used" : ""}" data-letter="${letter}" data-kind="consonant" ${disabled ? "disabled" : ""}>${letter}</button>`;
+      }).join("");
+      $("#vowelGrid").innerHTML = VOWEL_LIST.map(letter => {
+        const disabled = state.used.has(letter) || state.revealed.has(letter);
+        return `<button class="letter vowel${disabled ? " used" : ""}" data-letter="${letter}" data-kind="vowel" ${disabled ? "disabled" : ""}>${letter}</button>`;
+      }).join("");
+      $$(".letter").forEach(btn => btn.addEventListener("click", () => {
+        const letter = btn.dataset.letter;
+        if (btn.dataset.kind === "vowel") buyVowel(letter);
+        else guessConsonant(letter);
+      }));
+    }
+
+    function message(text, kind) {
+      const el = $("#message");
+      el.textContent = text;
+      el.classList.remove("bankrupt", "good");
+      if (kind === "bankrupt") el.classList.add("bankrupt");
+      if (kind === "good") el.classList.add("good");
+    }
+
+    function updateUI() {
+      renderScoreboard();
+      const overOrSpinning = state.spinning || state.gameState === "round-over";
+      const cpuTurn = !!(team() && team().isComputer);
+      const spinDisabled = overOrSpinning || state.gameState !== "needs-spin" || cpuTurn;
+      $("#spinBtn").disabled = spinDisabled;
+      $("#centerSpin").disabled = spinDisabled;
+      $("#vowelBtn").disabled = overOrSpinning
+        || (state.gameState !== "needs-spin" && state.gameState !== "buying-vowel")
+        || team().round < VOWEL_COST
+        || vowelsRemaining() === 0
+        || cpuTurn;
+      $("#solveBtn").disabled = overOrSpinning || cpuTurn;
+      $("#vowelBtn").textContent = state.gameState === "buying-vowel"
+        ? "Cancel Vowel Buy"
+        : `Buy a Vowel ($${VOWEL_COST})`;
+      $("#solveBtn").textContent = state.gameState === "solving" ? "Cancel Solve" : "Solve Puzzle";
+      $$(".letter").forEach(btn => {
+        const letter = btn.dataset.letter;
+        if (!letter) return;
+        const taken = state.used.has(letter) || state.revealed.has(letter);
+        btn.disabled = taken || cpuTurn;
+      });
+      maybeScheduleAI();
+    }
+
+    const CONSONANT_FREQ = ["T", "N", "R", "S", "L", "H", "D", "C", "M", "G", "P", "F", "Y", "B", "K", "V", "W", "X", "Z", "J", "Q"];
+    const VOWEL_FREQ = ["E", "A", "O", "I", "U"];
+
+    function revealedFraction() {
+      const all = [...state.puzzle].filter(ch => /[A-Z]/.test(ch));
+      if (!all.length) return 1;
+      return all.filter(ch => state.revealed.has(ch)).length / all.length;
+    }
+    function anyUnusedVowel() {
+      return VOWEL_FREQ.some(v => !state.used.has(v) && !state.revealed.has(v));
+    }
+    function pickConsonantSmart() {
+      for (const c of CONSONANT_FREQ) {
+        if (!state.used.has(c) && !state.revealed.has(c)) return c;
+      }
+      return null;
+    }
+    function pickVowelSmart() {
+      for (const v of VOWEL_FREQ) {
+        if (!state.used.has(v) && !state.revealed.has(v)) return v;
+      }
+      return null;
+    }
+
+    let aiTimer = null;
+    function maybeScheduleAI() {
+      if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+      if (state.spinning) return;
+      if (state.gameState === "round-over" || state.gameState === "solving") return;
+      const t = team();
+      if (!t || !t.isComputer) return;
+      const delay = 750 + Math.random() * 500;
+      aiTimer = setTimeout(aiAct, delay);
+    }
+
+    function aiAct() {
+      aiTimer = null;
+      if (state.spinning) return;
+      const t = team();
+      if (!t || !t.isComputer) return;
+      if (state.gameState === "needs-spin") aiChooseStart();
+      else if (state.gameState === "needs-consonant") aiPickConsonant();
+      else if (state.gameState === "buying-vowel") aiPickVowel();
+    }
+
+    function aiChooseStart() {
+      const ratio = revealedFraction();
+      const t = team();
+      if (ratio >= 0.65 && t.round >= 100) {
+        aiSolve();
+        return;
+      }
+      if (ratio >= 0.4 && anyUnusedVowel() && t.round >= VOWEL_COST && Math.random() < 0.55) {
+        armVowel();
+        return;
+      }
+      spin();
+    }
+
+    function aiPickConsonant() {
+      const c = pickConsonantSmart();
+      if (c) guessConsonant(c);
+    }
+
+    function aiPickVowel() {
+      const v = pickVowelSmart();
+      if (v) buyVowel(v);
+      else cancelVowel();
+    }
+
+    function aiSolve() {
+      state.gameState = "solving";
+      $("#solveInput").value = state.puzzle;
+      submitSolve();
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    function resolveColor(c) {
+      if (!c) return "#7c3aed";
+      if (c.startsWith("var(")) {
+        const name = c.slice(4, -1).trim();
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || "#7c3aed";
+      }
+      return c;
+    }
+
+    const confetti = { canvas: null, ctx: null, particles: [], raf: null, spawnUntil: 0 };
+    function ensureConfetti() {
+      if (confetti.canvas) return;
+      confetti.canvas = $("#confettiCanvas");
+      confetti.ctx = confetti.canvas.getContext("2d");
+      window.addEventListener("resize", sizeConfetti);
+      sizeConfetti();
+    }
+    function sizeConfetti() {
+      if (!confetti.canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      confetti.canvas.width = Math.floor(window.innerWidth * dpr);
+      confetti.canvas.height = Math.floor(window.innerHeight * dpr);
+      confetti.canvas.style.width = window.innerWidth + "px";
+      confetti.canvas.style.height = window.innerHeight + "px";
+      confetti.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function launchFirework(x, y, colors) {
+      const n = 60 + Math.floor(Math.random() * 30);
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const s = 3 + Math.random() * 6;
+        confetti.particles.push({
+          x, y,
+          vx: Math.cos(a) * s,
+          vy: Math.sin(a) * s - 1,
+          color: colors[(Math.random() * colors.length) | 0],
+          size: 3 + Math.random() * 4,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.4,
+          shape: Math.random() < 0.7 ? "rect" : "circle",
+          life: 90 + Math.random() * 50
+        });
+      }
+    }
+    function spawnRain(colors) {
+      const W = window.innerWidth;
+      for (let i = 0; i < 5; i++) {
+        confetti.particles.push({
+          x: Math.random() * W,
+          y: -10,
+          vx: (Math.random() - 0.5) * 3,
+          vy: 2 + Math.random() * 3,
+          color: colors[(Math.random() * colors.length) | 0],
+          size: 4 + Math.random() * 6,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.3,
+          shape: Math.random() < 0.65 ? "rect" : "circle",
+          life: 260
+        });
+      }
+    }
+    let confettiColors = [];
+    function celebrate(winnerTeam, wonAmount, phrase) {
+      ensureConfetti();
+      confetti.canvas.style.display = "block";
+      confetti.particles.length = 0;
+      const palette = ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e"];
+      confettiColors = [resolveColor(winnerTeam.color)].concat(palette);
+      confetti.spawnUntil = performance.now() + 5200;
+      const W = window.innerWidth, H = window.innerHeight;
+      let i = 0;
+      const burst = () => {
+        if (i++ >= 5) return;
+        launchFirework((0.2 + Math.random() * 0.6) * W, (0.3 + Math.random() * 0.35) * H, confettiColors);
+        setTimeout(burst, 280);
+      };
+      burst();
+      if (!confetti.raf) tickConfetti();
+      showWinnerBanner(winnerTeam, wonAmount, phrase);
+    }
+    function tickConfetti() {
+      const ctx = confetti.ctx;
+      const W = window.innerWidth, H = window.innerHeight;
+      const now = performance.now();
+      if (now < confetti.spawnUntil) spawnRain(confettiColors);
+      ctx.clearRect(0, 0, W, H);
+      for (let i = confetti.particles.length - 1; i >= 0; i--) {
+        const p = confetti.particles[i];
+        p.vy += 0.13;
+        p.vx *= 0.995;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vRot;
+        p.life--;
+        if (p.life <= 0 || p.y > H + 20 || p.x < -40 || p.x > W + 40) {
+          confetti.particles.splice(i, 1);
+          continue;
+        }
+        const alpha = Math.min(1, p.life / 50);
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        if (p.shape === "rect") {
+          ctx.fillRect(-p.size, -p.size / 2, p.size * 2, p.size);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      if (confetti.particles.length > 0 || now < confetti.spawnUntil) {
+        confetti.raf = requestAnimationFrame(tickConfetti);
+      } else {
+        confetti.raf = null;
+        confetti.canvas.style.display = "none";
+        ctx.clearRect(0, 0, W, H);
+      }
+    }
+    function hideCelebration() {
+      if (confetti.raf) { cancelAnimationFrame(confetti.raf); confetti.raf = null; }
+      if (confetti.canvas) {
+        confetti.canvas.style.display = "none";
+        if (confetti.ctx) confetti.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        confetti.particles.length = 0;
+      }
+      confetti.spawnUntil = 0;
+      $("#winnerOverlay").classList.remove("show");
+    }
+    function showWinnerBanner(winnerTeam, wonAmount, phrase) {
+      $("#winnerEyebrow").textContent = "Solved!";
+      const nameEl = $("#winnerName");
+      nameEl.textContent = winnerTeam.name;
+      nameEl.style.color = winnerTeam.color;
+      $("#winnerPhrase").textContent = phrase;
+      $("#winnerSub").textContent = `+$${wonAmount} this round  ·  $${winnerTeam.bank} total`;
+      $("#winnerOverlay").classList.add("show");
+    }
+
+    function init() {
+      loadConfig();
+      $("#titleText").textContent = state.cfg.title || "Classroom Fortune Wheel";
+      initTeams();
+      $("#spinBtn").addEventListener("click", spin);
+      $("#centerSpin").addEventListener("click", spin);
+      $("#vowelBtn").addEventListener("click", () => {
+        if (state.gameState === "buying-vowel") cancelVowel();
+        else armVowel();
+      });
+      $("#solveBtn").addEventListener("click", () => {
+        if (state.gameState === "solving") cancelSolve();
+        else openSolveBox();
+      });
+      $("#solveSubmit").addEventListener("click", submitSolve);
+      $("#solveCancel").addEventListener("click", cancelSolve);
+      $("#solveInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); submitSolve(); }
+        else if (e.key === "Escape") { e.preventDefault(); cancelSolve(); }
+      });
+      $("#nextRoundBtn").addEventListener("click", choosePuzzle);
+      $("#scoreboard").addEventListener("click", (e) => {
+        const btn = e.target.closest(".team-cpu-toggle");
+        if (!btn) return;
+        const idx = Number(btn.dataset.idx);
+        if (!state.teams[idx]) return;
+        state.teams[idx].isComputer = !state.teams[idx].isComputer;
+        renderScoreboard();
+        updateUI();
+      });
+      $("#winnerDismiss").addEventListener("click", () => $("#winnerOverlay").classList.remove("show"));
+      $("#winnerNext").addEventListener("click", () => { hideCelebration(); choosePuzzle(); });
+      drawWheel();
+      choosePuzzle();
+    }
+
+    init();
+  </script>
+</body>
+</html>
