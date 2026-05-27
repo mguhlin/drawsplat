@@ -267,8 +267,49 @@
       ctx.restore();
     }
 
+    /* --- Click sound (Web Audio, lazy-init on first spin to honour autoplay rules) --- */
+    let audioCtx = null;
+    let lastTickAt = 0;
+    function ensureAudio() {
+      if (!audioCtx) {
+        try {
+          const Ctor = window.AudioContext || window.webkitAudioContext;
+          if (Ctor) audioCtx = new Ctor();
+        } catch (e) { audioCtx = null; }
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
+    }
+    function playTick(volume) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      // Tone: short triangle blip with a quick pitch drop — reads as a wooden "clack".
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(900 + (Math.random() - 0.5) * 220, now);
+      o.frequency.exponentialRampToValueAtTime(380, now + 0.05);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(volume, now + 0.002);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(now);
+      o.stop(now + 0.08);
+    }
+
+    function pointerSliceIndex(rot) {
+      const n = entries.length;
+      if (n < 1) return 0;
+      const slice = (Math.PI * 2) / n;
+      // The pointer sits at angle -π/2 in canvas space. After the wheel rotates
+      // by `rot`, the slice under the pointer has index floor((-π/2 - rot) / slice).
+      const raw = (-Math.PI / 2 - rot) / slice;
+      return ((Math.floor(raw) % n) + n) % n;
+    }
+
     function spin() {
       if (spinning || entries.length < 2) return;
+      ensureAudio();
       spinning = true;
       spinBtn.disabled = true;
       wheelWrap.classList.add("spinning");
@@ -282,11 +323,27 @@
       const delta = finalRotation - startRotation;
       const duration = 4200;
       const start = performance.now();
+      let lastSliceUnderPointer = pointerSliceIndex(startRotation);
+      lastTickAt = performance.now();
       function frame(now) {
         const t = Math.min(1, (now - start) / duration);
         const eased = 1 - Math.pow(1 - t, 4);
         rotation = startRotation + delta * eased;
         drawWheel();
+        // Click whenever the pointer crosses a slice boundary, throttled so the
+        // very fast opening sweep doesn't buzz. As the wheel slows the ticks
+        // naturally spread out into a clear clickety-clack.
+        const idx = pointerSliceIndex(rotation);
+        if (idx !== lastSliceUnderPointer) {
+          const gap = now - lastTickAt;
+          if (gap > 28) {
+            // Quieter at the fast start, louder near the end as the wheel settles.
+            const vol = 0.12 + 0.18 * Math.min(1, eased);
+            playTick(vol);
+            lastTickAt = now;
+          }
+          lastSliceUnderPointer = idx;
+        }
         if (t < 1) {
           requestAnimationFrame(frame);
         } else {
