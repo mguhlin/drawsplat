@@ -1297,7 +1297,12 @@
         }
 
         for (const castle of castles) {
-          if (castle.bricks.some((brick) => brick.hp > 0 && rectCircleHit(brick, projectile.x, projectile.y, projectile.radius || PROJECTILE_RADIUS))) {
+          // Shots ignore the firing player's own bricks during flight — Player 1's
+          // projectile used to spawn right against the right flank tower and the
+          // shooter's own brick could intercept the round before it cleared the
+          // wall. Blast-radius self-damage from resolveImpact() is preserved.
+          if (castle !== castles[currentPlayer]
+              && castle.bricks.some((brick) => brick.hp > 0 && rectCircleHit(brick, projectile.x, projectile.y, projectile.radius || PROJECTILE_RADIUS))) {
             resolveImpact(projectile.x, projectile.y);
             return;
           }
