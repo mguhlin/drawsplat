@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Concept Map Studio — DrawSplatTM</title>
-  <meta name="description" content="Standalone concept map and mind map builder. Use indented text to build a radial or left-to-right concept map with optional links, emoji, and images. Download as SVG or PNG.">
+  <meta name="description" content="Interactive concept map and mind map editor. Drag nodes, click to connect, label connectors, attach images and links. Export as SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <style>
     :root {
       --navy: #7c3aed;
       --gold: #a855f7;
+      --amber: #f59e0b;
       --black: #000000;
       --white: #FFFFFF;
       --red: #ef4444;
@@ -50,7 +51,7 @@
         var(--yellow) 94% 100%);
     }
     .page {
-      width: min(1280px, calc(100% - 28px));
+      width: min(1320px, calc(100% - 28px));
       margin: 0 auto;
       padding: 22px 0 38px;
     }
@@ -75,7 +76,7 @@
     h1 {
       margin: 0;
       color: var(--navy);
-      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
       line-height: .95;
     }
     .subtitle {
@@ -121,7 +122,7 @@
     }
     .app-grid {
       display: grid;
-      grid-template-columns: minmax(260px, 320px) 1fr;
+      grid-template-columns: minmax(260px, 300px) 1fr;
       gap: 18px;
       align-items: start;
       padding-top: 22px;
@@ -137,109 +138,127 @@
     }
     .panel { padding: 18px; }
     .panel h2 {
-      margin: 0 0 12px;
+      margin: 0 0 10px;
       color: var(--black);
-      font-size: 1.15rem;
+      font-size: 1.05rem;
     }
     .panel h3 {
-      margin: 16px 0 8px;
+      margin: 14px 0 8px;
       color: var(--gray-90);
-      font-size: .9rem;
+      font-size: .82rem;
       text-transform: uppercase;
       letter-spacing: .06em;
     }
-    .field { display: grid; gap: 7px; margin-bottom: 14px; }
-    label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
-    select {
-      width: 100%;
-      min-height: 42px;
-      padding: 9px 10px;
-      color: var(--black);
-      background: var(--white);
+    .tool-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .tool-row.full { grid-template-columns: 1fr; }
+    .tool-btn {
+      min-height: 38px;
+      padding: 6px 8px;
       border: 2px solid var(--gray-30);
       border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      font-size: .82rem;
+      text-align: center;
+      line-height: 1.15;
     }
-    .syntax-help {
-      margin: 6px 0 0;
+    .tool-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .tool-btn.active { border-color: var(--navy); background: var(--navy); color: var(--white); }
+    .tool-btn.danger { border-color: var(--red); color: var(--red); }
+    .tool-btn.danger:hover { background: var(--red); color: var(--white); }
+    .tool-btn[disabled] {
+      opacity: .45;
+      cursor: not-allowed;
+      border-color: var(--gray-30);
+      color: var(--gray-50);
+      background: var(--white);
+    }
+    .selection-info {
+      margin-top: 6px;
       padding: 10px 12px;
       background: var(--gray-10);
       border-radius: 6px;
-      font-size: .82rem;
-      line-height: 1.5;
-      color: var(--gray-90);
-    }
-    .syntax-help code {
-      background: rgba(124, 58, 237, 0.1);
-      padding: 1px 4px;
-      border-radius: 3px;
       font-size: .85rem;
+      line-height: 1.45;
+      color: var(--gray-90);
+      min-height: 60px;
     }
-    .stage { padding: 18px; min-height: 600px; }
-    .stage-head {
+    .selection-info strong { color: var(--navy); }
+    .stage { padding: 14px; }
+    .canvas-toolbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
-      margin-bottom: 14px;
-    }
-    .stage-head h2 {
-      margin: 0;
-      color: var(--black);
-      font-size: 1.15rem;
-    }
-    .editor-grid {
-      display: grid;
-      grid-template-columns: minmax(260px, 1fr) minmax(280px, 1.4fr);
-      gap: 14px;
-    }
-    @media (max-width: 820px) {
-      .editor-grid { grid-template-columns: 1fr; }
-    }
-    textarea#cmSource {
-      width: 100%;
-      min-height: 460px;
-      padding: 12px;
-      color: var(--black);
+      margin-bottom: 8px;
+      padding: 6px 10px;
       background: var(--gray-10);
+      border-radius: 6px;
+      flex-wrap: wrap;
+    }
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: var(--white);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+    .mode-pill.connect { background: var(--amber); }
+    .hint-line {
+      color: var(--gray-90);
+      font-size: .85rem;
+      font-weight: 600;
+    }
+    .canvas-shell {
+      position: relative;
       border: 2px solid var(--gray-30);
       border-radius: var(--radius);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: .92rem;
-      line-height: 1.5;
-      resize: vertical;
+      overflow: hidden;
+      background:
+        linear-gradient(0deg, #f3f0fa 1px, transparent 1px) 0 0 / 24px 24px,
+        linear-gradient(90deg, #f3f0fa 1px, transparent 1px) 0 0 / 24px 24px,
+        #ffffff;
     }
-    .cm-preview {
-      min-height: 460px;
-      padding: 14px;
-      border: 2px dashed var(--gray-30);
-      border-radius: var(--radius);
-      background: var(--white);
-      overflow: auto;
-      display: grid;
-      place-items: center;
-    }
-    .cm-preview svg { max-width: 100%; height: auto; }
-    .cm-error {
-      color: var(--red);
-      font-weight: 800;
-      padding: 12px;
-      border-left: 4px solid var(--red);
-      background: #fef2f2;
-      border-radius: 6px;
-      white-space: pre-wrap;
-      font-size: .9rem;
+    svg#cmCanvas {
+      display: block;
       width: 100%;
+      height: clamp(440px, 70vh, 720px);
+      touch-action: none;
     }
-    .editor-actions {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+    .cm-node { cursor: grab; }
+    .cm-node.dragging { cursor: grabbing; }
+    .cm-node.pending rect { stroke-dasharray: 6 4; }
+    .cm-node text { user-select: none; pointer-events: none; }
+    .cm-connector { cursor: pointer; }
+    .cm-connector text { user-select: none; pointer-events: none; }
+    .inline-editor {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      min-width: 120px;
+      max-width: 280px;
+      padding: 8px 10px;
+      border: 2px solid var(--amber);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 700;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
     }
     .actions {
       display: flex;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 8px;
+      margin-top: 12px;
       flex-wrap: wrap;
     }
     .button {
@@ -253,7 +272,7 @@
     }
     .button.primary { color: var(--white); background: var(--navy); }
     .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
-    .button:disabled { opacity: .5; cursor: not-allowed; }
+    .button[disabled] { opacity: .5; cursor: not-allowed; }
     .status {
       margin-top: 12px;
       padding: 10px 12px;
@@ -266,9 +285,9 @@
     .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
     .status:empty { display: none; }
     .footer-note {
-      margin-top: 18px;
+      margin-top: 12px;
       color: var(--gray-50);
-      font-size: .85rem;
+      font-size: .82rem;
       line-height: 1.45;
     }
     .footer-note a { color: var(--navy); }
@@ -281,7 +300,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1>Concept Map Studio</h1>
-        <p class="subtitle">Build classroom-ready concept maps and mind maps from indented text. Choose a radial layout or a left-to-right tree, attach images or links, and export as SVG or PNG.</p>
+        <p class="subtitle">Drag nodes, click to connect, label every link, attach images, and set web links. Export the finished map as SVG or PNG. Works the same way as the concept map in the DrawSplat<sup>TM</sup> whiteboard.</p>
       </div>
       <div class="header-actions">
         <a class="secondary-link" href="../../pages/features.html">All Tools</a>
@@ -290,50 +309,65 @@
     </header>
 
     <main class="app-grid">
-      <aside class="panel" aria-label="Options">
-        <h2>Layout</h2>
-        <div class="field">
-          <label for="cmLayout">Layout</label>
-          <select id="cmLayout">
-            <option value="radial">Radial mind map</option>
-            <option value="tree">Left-to-right concept map</option>
-          </select>
+      <aside class="panel" aria-label="Tools">
+        <h2>Mode</h2>
+        <div class="tool-row">
+          <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button">Select / Drag</button>
+          <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button">Connect Nodes</button>
         </div>
 
-        <h3>Syntax</h3>
-        <div class="syntax-help">
-          One node per line. Use leading hyphens to nest:
-          <br><code>Root</code>
-          <br><code>- Child</code>
-          <br><code>-- Grandchild</code>
-          <br><br>Each row supports up to three pipe-separated fields:
-          <br><code>label | link | emoji-or-image</code>
-          <br><br>The <strong>image</strong> field accepts an emoji (e.g. <code>🌱</code>) or an attached image (use the Add image button below the editor).
+        <h3>Add</h3>
+        <div class="tool-row">
+          <button class="tool-btn" id="addNodeBtn" type="button">+ Node</button>
+          <button class="tool-btn" id="addChildBtn" type="button">+ Child of Selected</button>
         </div>
 
-        <h3>About</h3>
-        <p class="footer-note">Concept maps are rendered locally in your browser as SVG. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a finished map onto a board.</p>
+        <h3>Selected item</h3>
+        <div class="tool-row full">
+          <button class="tool-btn" id="editTextBtn" type="button">Edit Label</button>
+        </div>
+        <div class="tool-row">
+          <button class="tool-btn" id="setLinkBtn" type="button">Set Link</button>
+          <button class="tool-btn" id="attachImageBtn" type="button">Attach Image</button>
+        </div>
+        <div class="tool-row">
+          <button class="tool-btn" id="clearImageBtn" type="button">Clear Image</button>
+          <button class="tool-btn" id="clearLinkBtn" type="button">Clear Link</button>
+        </div>
+        <div class="tool-row full">
+          <button class="tool-btn" id="editConnectorBtn" type="button">Edit Connector Label</button>
+        </div>
+        <div class="tool-row full">
+          <button class="tool-btn danger" id="deleteBtn" type="button">Delete Selected</button>
+        </div>
+        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+
+        <h3>Selection</h3>
+        <div class="selection-info" id="selectionInfo">Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.</div>
+
+        <h3>Map</h3>
+        <div class="tool-row">
+          <button class="tool-btn" id="resetBtn" type="button">Reset Map</button>
+          <button class="tool-btn" id="clearMapBtn" type="button">Clear All</button>
+        </div>
+
+        <p class="footer-note">Concept maps render and stay in your browser only. Nothing is uploaded. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
       </aside>
 
-      <section class="stage" aria-label="Concept map editor">
-        <div class="stage-head">
-          <h2>Editor &amp; Preview</h2>
+      <section class="stage" aria-label="Concept map canvas">
+        <div class="canvas-toolbar">
+          <span class="mode-pill" id="modeIndicator">Mode: Select / Drag</span>
+          <span class="hint-line" id="hintLine">Click a node to select. Drag to move. Double-click to rename.</span>
         </div>
-        <div class="editor-actions">
-          <button class="button" id="sampleBtn" type="button">Load Sample</button>
-          <button class="button" id="imageBtn" type="button">Add image to current line</button>
-          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-        </div>
-        <div class="editor-grid">
-          <textarea id="cmSource" spellcheck="false" aria-label="Concept map source"></textarea>
-          <div id="cmPreview" class="cm-preview" aria-live="polite" aria-label="Concept map preview"></div>
+        <div class="canvas-shell" id="canvasShell">
+          <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concept map canvas"></svg>
+          <input id="inlineEditor" class="inline-editor" hidden>
         </div>
         <div class="actions">
-          <button class="button primary" id="renderBtn" type="button">Render Now</button>
           <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
           <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
           <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
-          <button class="button gold" id="clearBtn" type="button">Clear</button>
+          <button class="button gold" id="centerBtn" type="button">Center View</button>
         </div>
         <div class="status" id="statusLine" role="status"></div>
       </section>
@@ -342,269 +376,698 @@
 
 <script>
 (function(){
-  const $ = id => document.getElementById(id);
-  const sourceEl = $('cmSource');
-  const previewEl = $('cmPreview');
-  const layoutEl = $('cmLayout');
-  const statusEl = $('statusLine');
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('cmCanvas');
+  const canvasShell = document.getElementById('canvasShell');
+  const inlineEditor = document.getElementById('inlineEditor');
+  const statusEl = document.getElementById('statusLine');
+  const modeEl = document.getElementById('modeIndicator');
+  const hintEl = document.getElementById('hintLine');
+  const selInfoEl = document.getElementById('selectionInfo');
+  const selectToolBtn = document.getElementById('selectToolBtn');
+  const connectToolBtn = document.getElementById('connectToolBtn');
 
-  const SAMPLE = 'Ecosystems | https://education.nationalgeographic.org/\n- Producers | | 🌱\n-- Plants make food\n- Consumers | | 🐇\n-- Herbivores\n-- Carnivores\n- Decomposers | | 🍄\n- Energy Flow | https://www.si.edu/ | ⚡';
+  const PALETTE = [
+    {fill:'#dbeafe', stroke:'#2563eb', text:'#1e3a8a'},
+    {fill:'#d1fae5', stroke:'#059669', text:'#064e3b'},
+    {fill:'#fef3c7', stroke:'#ca8a04', text:'#713f12'},
+    {fill:'#fce7f3', stroke:'#db2777', text:'#831843'},
+    {fill:'#ffedd5', stroke:'#ea580c', text:'#7c2d12'},
+    {fill:'#e9d5ff', stroke:'#7c3aed', text:'#581c87'}
+  ];
+  const ROOT_STYLE = {fill:'#7c3aed', stroke:'#5b21b6', text:'#ffffff'};
+  const CANVAS_W = 1200, CANVAS_H = 720;
+  const NODE_W = 184, NODE_H = 76;
 
+  const state = {
+    nodes: [],
+    connectors: [],
+    nextId: 1,
+    selectedId: null,
+    selectedKind: null,
+    tool: 'select',
+    pendingFrom: null,
+    drag: null,
+    editing: null
+  };
+
+  function uid(prefix){ return prefix + (state.nextId++); }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function truncate(s, max){ s = String(s||''); return s.length > max ? s.slice(0, max-1) + '…' : s; }
   function setStatus(msg, kind){
     statusEl.textContent = msg || '';
     statusEl.className = 'status' + (kind ? ' ' + kind : '');
   }
-  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function safeUrl(u){
     const s = String(u||'').trim();
     return /^(https?:\/\/|mailto:)/i.test(s) ? s : '';
   }
-  function parseRows(text){
-    const nodes = [], stack = [];
-    String(text||'').split(/\n+/).forEach((raw, lineIndex) => {
-      if(!raw.trim()) return;
-      const indent = (raw.match(/^\s*/)||[''])[0].length;
-      const dash = (raw.trim().match(/^-+/)||[''])[0].length;
-      const depth = dash ? dash : Math.floor(indent/2);
-      const body = raw.trim().replace(/^-+\s*/, '');
-      const parts = body.split('|').map(s => s.trim());
-      const label = parts[0] || '';
-      const link = parts[1] || '';
-      const image = parts[2] || '';
-      if(!label) return;
-      const node = {id: nodes.length, label, link: safeUrl(link), image, depth: Math.max(0, depth), children: [], lineIndex};
-      while(stack.length && stack[stack.length-1].depth >= node.depth) stack.pop();
-      if(stack.length) {
-        node.parent = stack[stack.length-1].id;
-        stack[stack.length-1].children.push(node.id);
-      }
-      nodes.push(node); stack.push(node);
-    });
-    return nodes;
+  function colorForNewChild(){
+    const idx = state.nodes.filter(n => !n.isRoot).length % PALETTE.length;
+    return PALETTE[idx];
   }
-  function layoutNodes(nodes, layout){
-    const W = 900, H = 560, pad = 70, levels = {};
-    nodes.forEach(n => (levels[n.depth]||(levels[n.depth]=[])).push(n));
-    if(layout === 'tree'){
-      const maxDepth = Math.max.apply(null, nodes.map(n => n.depth).concat([1]));
-      Object.entries(levels).forEach(([depth, list]) => {
-        const x = pad + (W - pad*2) * (+depth / Math.max(1, maxDepth));
-        list.forEach((n, i) => { n.x = x; n.y = pad + (H - pad*2) * ((i+1) / (list.length+1)); });
-      });
+  function makeNode(opts){
+    opts = opts || {};
+    const palette = opts.isRoot ? ROOT_STYLE : colorForNewChild();
+    return {
+      id: uid('n'),
+      x: typeof opts.x === 'number' ? opts.x : CANVAS_W/2,
+      y: typeof opts.y === 'number' ? opts.y : CANVAS_H/2,
+      w: NODE_W,
+      h: NODE_H,
+      label: opts.label || 'Idea',
+      link: opts.link || '',
+      image: opts.image || '',
+      isRoot: !!opts.isRoot,
+      fill: palette.fill,
+      stroke: palette.stroke,
+      text: palette.text
+    };
+  }
+  function makeConnector(fromId, toId, label){
+    return {id: uid('c'), fromId, toId, label: label || ''};
+  }
+  function nodeById(id){ return state.nodes.find(n => n.id === id); }
+  function connectorById(id){ return state.connectors.find(c => c.id === id); }
+
+  function defaultMap(){
+    state.nodes = [];
+    state.connectors = [];
+    state.nextId = 1;
+    state.selectedId = null;
+    state.selectedKind = null;
+    state.pendingFrom = null;
+    const root = makeNode({label: 'Main Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
+    state.nodes.push(root);
+    const positions = [
+      {label: 'Idea 1', x: CANVAS_W/2 - 320, y: CANVAS_H/2 - 170},
+      {label: 'Idea 2', x: CANVAS_W/2 + 320, y: CANVAS_H/2 - 170},
+      {label: 'Idea 3', x: CANVAS_W/2 - 320, y: CANVAS_H/2 + 170},
+      {label: 'Idea 4', x: CANVAS_W/2 + 320, y: CANVAS_H/2 + 170}
+    ];
+    positions.forEach(p => {
+      const n = makeNode(p);
+      state.nodes.push(n);
+      state.connectors.push(makeConnector(root.id, n.id));
+    });
+    state.selectedId = root.id;
+    state.selectedKind = 'node';
+  }
+
+  function anchorPoint(from, to){
+    const dx = to.x - from.x, dy = to.y - from.y;
+    if (dx === 0 && dy === 0) return {x: from.x, y: from.y};
+    const hw = from.w/2, hh = from.h/2;
+    let tx, ty;
+    const ratio = Math.abs(dy*hw) - Math.abs(dx*hh);
+    if (ratio <= 0) {
+      tx = dx > 0 ? hw : -hw;
+      ty = dx === 0 ? 0 : tx * dy / dx;
     } else {
-      const root = nodes.find(n => typeof n.parent !== 'number') || nodes[0];
-      if(root){ root.x = W/2; root.y = H/2; }
-      const branches = nodes.filter(n => n.parent === (root ? root.id : -1));
-      branches.forEach((n, i) => {
-        const a = (Math.PI*2*i/Math.max(1, branches.length)) - Math.PI/2;
-        const r = 170;
-        n.x = W/2 + Math.cos(a)*r; n.y = H/2 + Math.sin(a)*r;
-        const kids = nodes.filter(k => k.parent === n.id);
-        kids.forEach((k, j) => {
-          const spread = (kids.length-1)*0.34;
-          const aa = a - spread/2 + j*.34;
-          const rr = 300;
-          k.x = W/2 + Math.cos(aa)*rr;
-          k.y = H/2 + Math.sin(aa)*rr;
-        });
-      });
-      nodes.filter(n => typeof n.x !== 'number').forEach((n, i) => {
-        const a = (Math.PI*2*i/Math.max(1, nodes.length)) - Math.PI/2;
-        const r = 235;
-        n.x = W/2 + Math.cos(a)*r; n.y = H/2 + Math.sin(a)*r;
-      });
+      ty = dy > 0 ? hh : -hh;
+      tx = dy === 0 ? 0 : ty * dx / dy;
     }
-    nodes.forEach(n => { n.x = Math.max(80, Math.min(W-80, n.x)); n.y = Math.max(58, Math.min(H-58, n.y)); });
-    return {W, H, nodes};
+    return {x: from.x + tx, y: from.y + ty};
   }
-  function imageMarkup(value, x, y, size){
-    if(!value) return '';
-    if(/^(data:image\/|\.?\/?assets\/|blob:)/i.test(value))
-      return '<image href="' + esc(value) + '" x="' + (x - size/2) + '" y="' + (y - size/2) + '" width="' + size + '" height="' + size + '" preserveAspectRatio="xMidYMid meet"/>';
-    return '<text x="' + x + '" y="' + (y + size*.34) + '" font-family="Arial, sans-serif" font-size="' + size + '" text-anchor="middle">' + esc(value.slice(0, 4)) + '</text>';
-  }
-  function buildSvg(config){
-    const parsed = parseRows(config.source);
-    const layout = layoutNodes(parsed, config.layout || 'radial');
-    const nodes = layout.nodes, W = layout.W, H = layout.H;
-    if(!nodes.length) {
-      return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"><rect width="100%" height="100%" fill="#fff"/><text x="' + W/2 + '" y="' + H/2 + '" text-anchor="middle" font-family="Arial" font-size="22" fill="#64748b">Add one node per line.</text></svg>';
+
+  function svgPart(tag, attrs, children){
+    const el = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) {
+      if (attrs[k] !== null && attrs[k] !== undefined) el.setAttribute(k, attrs[k]);
     }
-    const colors = ['#dbeafe', '#fce7f3', '#d1fae5', '#ffedd5', '#fef3c7', '#e9d5ff'];
-    let body = '<rect width="100%" height="100%" rx="18" fill="#ffffff"/>';
-    nodes.filter(n => typeof n.parent === 'number').forEach(n => {
-      const p = nodes[n.parent];
-      if(p) body += '<path d="M ' + p.x + ' ' + p.y + ' C ' + ((p.x+n.x)/2) + ' ' + p.y + ', ' + ((p.x+n.x)/2) + ' ' + n.y + ', ' + n.x + ' ' + n.y + '" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>';
-    });
-    nodes.forEach(n => {
-      const isRoot = typeof n.parent !== 'number';
-      const w = Math.min(210, Math.max(118, n.label.length*8 + 52 + (n.image ? 34 : 0)));
-      const h = n.image ? 74 : 58;
-      const x = n.x - w/2, y = n.y - h/2;
-      const fill = isRoot ? '#7c3aed' : colors[n.depth % colors.length];
-      const stroke = isRoot ? '#5b21b6' : '#cbd5e1';
-      const text = isRoot ? '#fff' : '#111827';
-      const labelX = x + (n.image ? 58 : w/2);
-      const anchor = n.image ? 'start' : 'middle';
-      const image = imageMarkup(n.image, x + 32, n.y, 30);
-      const link = n.link
-        ? '<text x="' + (x + w - 24) + '" y="' + (y + 20) + '" font-family="Arial" font-size="17" fill="' + (isRoot ? '#fef3c7' : '#2563eb') + '">↗</text>' +
-          '<text x="' + (x + w/2) + '" y="' + (y + h - 9) + '" text-anchor="middle" font-family="Arial" font-size="9" fill="' + (isRoot ? '#ede9fe' : '#64748b') + '">' + esc(n.link.replace(/^https?:\/\//, '').slice(0, 32)) + '</text>'
-        : '';
-      body += '<g>' +
-        (n.link ? '<a href="' + esc(n.link) + '" target="_blank" rel="noopener noreferrer">' : '') +
-        '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="16" fill="' + fill + '" stroke="' + stroke + '" stroke-width="2"/>' +
-        '<title>' + esc(n.link || n.label) + '</title>' +
-        image +
-        '<text x="' + labelX + '" y="' + (y + (n.image ? 32 : 35)) + '" text-anchor="' + anchor + '" font-family="Arial" font-size="' + (isRoot ? 18 : 15) + '" font-weight="800" fill="' + text + '">' + esc(n.label).slice(0, 30) + '</text>' +
-        link +
-        (n.link ? '</a>' : '') +
-        '</g>';
-    });
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">' + body + '</svg>';
+    if (children) children.forEach(c => el.appendChild(c));
+    return el;
   }
-  function configFromUI(){
-    return {layout: layoutEl.value, source: sourceEl.value};
+  function svgText(text, attrs){
+    const t = svgPart('text', attrs);
+    t.textContent = text;
+    return t;
   }
-  function renderPreview(){
-    try {
-      const nodes = parseRows(sourceEl.value);
-      if(!nodes.length) {
-        previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Add at least one node on the left.</div>';
+
+  function render(){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute('viewBox', `0 0 ${CANVAS_W} ${CANVAS_H}`);
+
+    // Defs
+    const defs = svgPart('defs');
+    defs.innerHTML =
+      '<marker id="cmArrow" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto">' +
+      '<path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker>' +
+      '<marker id="cmArrowSelected" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto">' +
+      '<path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/></marker>';
+    svg.appendChild(defs);
+
+    // Connectors behind nodes
+    state.connectors.forEach(c => {
+      const from = nodeById(c.fromId), to = nodeById(c.toId);
+      if (!from || !to) return;
+      const isSelected = state.selectedKind === 'connector' && state.selectedId === c.id;
+      const p1 = anchorPoint(from, to), p2 = anchorPoint(to, from);
+      const midX = (p1.x + p2.x) / 2, midY = (p1.y + p2.y) / 2;
+      const ctrlX = midX;
+      const d = `M ${p1.x} ${p1.y} C ${ctrlX} ${p1.y}, ${ctrlX} ${p2.y}, ${p2.x} ${p2.y}`;
+      const g = svgPart('g', {class: 'cm-connector' + (isSelected ? ' selected' : ''), 'data-id': c.id});
+      g.appendChild(svgPart('path', {
+        d, fill: 'none',
+        stroke: isSelected ? '#f59e0b' : '#94a3b8',
+        'stroke-width': isSelected ? 4 : 3,
+        'stroke-linecap': 'round',
+        'marker-end': isSelected ? 'url(#cmArrowSelected)' : 'url(#cmArrow)'
+      }));
+      // Wider invisible hit-area so connector is easy to click
+      g.appendChild(svgPart('path', {
+        d, fill: 'none', stroke: 'transparent', 'stroke-width': 18, 'pointer-events': 'stroke'
+      }));
+      if (c.label) {
+        const labelText = truncate(c.label, 28);
+        const charW = 7.2;
+        const w = Math.min(220, Math.max(60, labelText.length * charW + 18));
+        g.appendChild(svgPart('rect', {
+          x: midX - w/2, y: midY - 13, width: w, height: 26, rx: 8,
+          fill: '#ffffff', stroke: isSelected ? '#f59e0b' : '#94a3b8', 'stroke-width': isSelected ? 2 : 1.5
+        }));
+        g.appendChild(svgText(labelText, {
+          x: midX, y: midY + 5, 'text-anchor': 'middle',
+          'font-family': 'Arial, sans-serif', 'font-size': 13, 'font-weight': 700,
+          fill: '#475569'
+        }));
+      } else if (isSelected) {
+        // hint marker for an unlabeled selected connector
+        g.appendChild(svgPart('circle', {
+          cx: midX, cy: midY, r: 8, fill: '#f59e0b', opacity: 0.85
+        }));
+      }
+      svg.appendChild(g);
+    });
+
+    // Nodes
+    state.nodes.forEach(n => {
+      const isSelected = state.selectedKind === 'node' && state.selectedId === n.id;
+      const isPending = state.pendingFrom === n.id;
+      const g = svgPart('g', {
+        class: 'cm-node' + (isSelected ? ' selected' : '') + (isPending ? ' pending' : ''),
+        'data-id': n.id
+      });
+      const x = n.x - n.w/2, y = n.y - n.h/2;
+      const stroke = isSelected ? '#f59e0b' : (isPending ? '#f59e0b' : n.stroke);
+      g.appendChild(svgPart('rect', {
+        x, y, width: n.w, height: n.h, rx: 18,
+        fill: n.fill, stroke,
+        'stroke-width': isSelected ? 3.5 : 2.2
+      }));
+      if (n.image) {
+        // image circle on the left
+        const imgSize = 46;
+        const ix = x + 12, iy = n.y - imgSize/2;
+        const clipId = 'clip_' + n.id;
+        const clip = svgPart('clipPath', {id: clipId});
+        clip.appendChild(svgPart('circle', {cx: ix + imgSize/2, cy: iy + imgSize/2, r: imgSize/2}));
+        g.appendChild(clip);
+        g.appendChild(svgPart('image', {
+          href: n.image, x: ix, y: iy, width: imgSize, height: imgSize,
+          preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#' + clipId + ')'
+        }));
+        g.appendChild(svgText(truncate(n.label, 18), {
+          x: x + n.w/2 + 22, y: n.y + 6, 'text-anchor': 'middle',
+          'font-family': 'Arial, sans-serif',
+          'font-size': n.isRoot ? 18 : 15,
+          'font-weight': 800, fill: n.text
+        }));
+      } else {
+        g.appendChild(svgText(truncate(n.label, 22), {
+          x: n.x, y: n.y + 6, 'text-anchor': 'middle',
+          'font-family': 'Arial, sans-serif',
+          'font-size': n.isRoot ? 18 : 15,
+          'font-weight': 800, fill: n.text
+        }));
+      }
+      if (n.link) {
+        const lx = x + n.w - 16, ly = y + 16;
+        g.appendChild(svgPart('circle', {cx: lx, cy: ly, r: 11, fill: '#ffffff', stroke: n.stroke, 'stroke-width': 1.5}));
+        g.appendChild(svgText('↗', {x: lx, y: ly + 5, 'text-anchor': 'middle', 'font-family': 'Arial, sans-serif', 'font-size': 14, 'font-weight': 800, fill: n.stroke}));
+      }
+      svg.appendChild(g);
+    });
+
+    updateModeUI();
+    updateActionStates();
+    updateSelectionInfo();
+  }
+
+  function updateModeUI(){
+    selectToolBtn.classList.toggle('active', state.tool === 'select');
+    connectToolBtn.classList.toggle('active', state.tool === 'connect');
+    modeEl.textContent = 'Mode: ' + (state.tool === 'connect' ? 'Connect Nodes' : 'Select / Drag');
+    modeEl.classList.toggle('connect', state.tool === 'connect');
+    if (state.tool === 'connect') {
+      hintEl.textContent = state.pendingFrom
+        ? 'Click the second node to connect, or click the same node to cancel.'
+        : 'Click the first node, then the second node to connect them.';
+    } else {
+      hintEl.textContent = 'Click to select. Drag to move. Double-click a node to rename. Double-click a connector to label it.';
+    }
+  }
+
+  function updateActionStates(){
+    const nodeSelected = state.selectedKind === 'node' && nodeById(state.selectedId);
+    const connSelected = state.selectedKind === 'connector' && connectorById(state.selectedId);
+    document.getElementById('addChildBtn').disabled = !nodeSelected;
+    document.getElementById('editTextBtn').disabled = !nodeSelected;
+    document.getElementById('setLinkBtn').disabled = !nodeSelected;
+    document.getElementById('attachImageBtn').disabled = !nodeSelected;
+    document.getElementById('clearImageBtn').disabled = !(nodeSelected && nodeSelected.image);
+    document.getElementById('clearLinkBtn').disabled = !(nodeSelected && nodeSelected.link);
+    document.getElementById('editConnectorBtn').disabled = !connSelected;
+    document.getElementById('deleteBtn').disabled = !(nodeSelected || connSelected);
+  }
+
+  function updateSelectionInfo(){
+    if (state.selectedKind === 'node') {
+      const n = nodeById(state.selectedId);
+      if (!n) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      const bits = [];
+      bits.push('<strong>Node</strong>: ' + esc(n.label));
+      if (n.isRoot) bits.push('Root node.');
+      if (n.link) bits.push('Link: <em>' + esc(n.link) + '</em>');
+      if (n.image) bits.push('Has an attached image.');
+      const cn = state.connectors.filter(c => c.fromId === n.id || c.toId === n.id).length;
+      bits.push(cn + ' connector' + (cn === 1 ? '' : 's') + '.');
+      selInfoEl.innerHTML = bits.join('<br>');
+    } else if (state.selectedKind === 'connector') {
+      const c = connectorById(state.selectedId);
+      if (!c) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      const from = nodeById(c.fromId), to = nodeById(c.toId);
+      let html = '<strong>Connector</strong>';
+      if (from && to) html += '<br>' + esc(from.label) + ' → ' + esc(to.label);
+      if (c.label) html += '<br>Label: <em>' + esc(c.label) + '</em>';
+      else html += '<br>No label yet. Double-click the connector or use Edit Connector Label.';
+      selInfoEl.innerHTML = html;
+    } else {
+      selInfoEl.textContent = 'Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.';
+    }
+  }
+
+  function setTool(tool){
+    state.tool = tool;
+    if (tool !== 'connect') state.pendingFrom = null;
+    render();
+  }
+
+  function selectNode(id){
+    state.selectedId = id;
+    state.selectedKind = id ? 'node' : null;
+    render();
+  }
+  function selectConnector(id){
+    state.selectedId = id;
+    state.selectedKind = id ? 'connector' : null;
+    render();
+  }
+  function clearSelection(){
+    state.selectedId = null;
+    state.selectedKind = null;
+    render();
+  }
+
+  function pointerToSvg(e){
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return {x: 0, y: 0};
+    const inv = ctm.inverse();
+    const out = pt.matrixTransform(inv);
+    return {x: out.x, y: out.y};
+  }
+
+  // Pointer interaction
+  svg.addEventListener('pointerdown', e => {
+    if (state.editing) return; // ignore canvas clicks while editing
+    if (e.button !== 0) return;
+    const nodeEl = e.target.closest('.cm-node');
+    const connEl = e.target.closest('.cm-connector');
+
+    if (state.tool === 'connect') {
+      if (!nodeEl) return;
+      const id = nodeEl.dataset.id;
+      if (!state.pendingFrom) {
+        state.pendingFrom = id;
+        setStatus('First node picked. Click the second node.', 'info');
+        render();
+      } else if (state.pendingFrom !== id) {
+        state.connectors.push(makeConnector(state.pendingFrom, id));
+        state.pendingFrom = null;
+        setStatus('Connector added. Switching back to Select mode.', 'success');
+        setTool('select');
+      } else {
+        state.pendingFrom = null;
+        setStatus('Connector cancelled.', 'info');
+        render();
+      }
+      e.preventDefault();
+      return;
+    }
+
+    if (nodeEl) {
+      const n = nodeById(nodeEl.dataset.id);
+      if (!n) return;
+      if (n.link && (e.ctrlKey || e.metaKey)) {
+        window.open(n.link, '_blank', 'noopener,noreferrer');
         return;
       }
-      previewEl.innerHTML = buildSvg(configFromUI());
-    } catch(err) {
-      previewEl.innerHTML = '<div class="cm-error">' + esc(err && err.message ? err.message : String(err)) + '</div>';
+      selectNode(n.id);
+      const p = pointerToSvg(e);
+      state.drag = {id: n.id, dx: p.x - n.x, dy: p.y - n.y, moved: false};
+      try { svg.setPointerCapture(e.pointerId); } catch(_) {}
+      nodeEl.classList.add('dragging');
+      e.preventDefault();
+      return;
+    }
+
+    if (connEl) {
+      selectConnector(connEl.dataset.id);
+      e.preventDefault();
+      return;
+    }
+
+    clearSelection();
+  });
+
+  svg.addEventListener('pointermove', e => {
+    if (!state.drag) return;
+    const n = nodeById(state.drag.id);
+    if (!n) return;
+    const p = pointerToSvg(e);
+    n.x = Math.max(n.w/2 + 4, Math.min(CANVAS_W - n.w/2 - 4, p.x - state.drag.dx));
+    n.y = Math.max(n.h/2 + 4, Math.min(CANVAS_H - n.h/2 - 4, p.y - state.drag.dy));
+    state.drag.moved = true;
+    render();
+  });
+
+  function endDrag(e){
+    if (state.drag) {
+      try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+      state.drag = null;
     }
   }
-  let previewTimer = null;
-  function schedulePreview(){
-    clearTimeout(previewTimer);
-    previewTimer = setTimeout(renderPreview, 200);
+  svg.addEventListener('pointerup', endDrag);
+  svg.addEventListener('pointercancel', endDrag);
+
+  svg.addEventListener('dblclick', e => {
+    const nodeEl = e.target.closest('.cm-node');
+    const connEl = e.target.closest('.cm-connector');
+    if (nodeEl) {
+      e.preventDefault();
+      const n = nodeById(nodeEl.dataset.id);
+      if (n) { selectNode(n.id); beginNodeInlineEdit(n.id); }
+    } else if (connEl) {
+      e.preventDefault();
+      selectConnector(connEl.dataset.id);
+      editConnectorLabel(connEl.dataset.id);
+    }
+  });
+
+  // Inline editor over a node
+  function beginNodeInlineEdit(id){
+    const n = nodeById(id);
+    if (!n) return;
+    // Convert node-canvas coords to canvasShell coords
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    const pt = svg.createSVGPoint();
+    pt.x = n.x; pt.y = n.y;
+    const screen = pt.matrixTransform(ctm);
+    const shellRect = canvasShell.getBoundingClientRect();
+    inlineEditor.style.left = (screen.x - shellRect.left) + 'px';
+    inlineEditor.style.top = (screen.y - shellRect.top) + 'px';
+    inlineEditor.value = n.label;
+    inlineEditor.hidden = false;
+    state.editing = id;
+    inlineEditor.focus();
+    inlineEditor.select();
+    setStatus('Press Enter to save, Esc to cancel.', 'info');
   }
-  function svgToBlob(svgString){
-    return new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+  function commitInlineEdit(save){
+    if (!state.editing) return;
+    const n = nodeById(state.editing);
+    if (n && save) {
+      const val = (inlineEditor.value || '').trim();
+      n.label = val || 'Idea';
+      setStatus('Label updated.', 'success');
+    } else if (!save) {
+      setStatus('Edit cancelled.', 'info');
+    }
+    state.editing = null;
+    inlineEditor.hidden = true;
+    inlineEditor.value = '';
+    render();
   }
-  function svgUrlToPngBlob(svgDataUrl, minWidth){
-    minWidth = minWidth || 1600;
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const naturalW = img.naturalWidth || img.width || 900;
-        const naturalH = img.naturalHeight || img.height || 560;
-        const aspect = naturalH/naturalW;
-        const w = Math.max(minWidth, naturalW*2);
-        const h = Math.max(40, Math.round(w*aspect));
-        const cv = document.createElement('canvas');
-        cv.width = w; cv.height = h;
-        const cx = cv.getContext('2d');
-        cx.fillStyle = '#ffffff';
-        cx.fillRect(0,0,w,h);
-        try { cx.drawImage(img, 0, 0, w, h); }
-        catch(err) { reject(err); return; }
-        cv.toBlob(b => {
-          if(b) resolve(b);
-          else reject(new Error('PNG encode failed'));
-        }, 'image/png');
-      };
-      img.onerror = () => reject(new Error('SVG decode failed'));
-      img.src = svgDataUrl;
+  inlineEditor.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); commitInlineEdit(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); commitInlineEdit(false); }
+  });
+  inlineEditor.addEventListener('blur', () => commitInlineEdit(true));
+
+  function editConnectorLabel(id){
+    const c = connectorById(id);
+    if (!c) return;
+    const v = window.prompt('Connector label (the relationship between the two nodes — e.g. "leads to", "causes", "supports"):', c.label || '');
+    if (v === null) return;
+    c.label = v.trim();
+    setStatus(c.label ? 'Connector label updated.' : 'Connector label cleared.', 'success');
+    render();
+  }
+
+  // Top-bar action handlers
+  selectToolBtn.addEventListener('click', () => setTool('select'));
+  connectToolBtn.addEventListener('click', () => {
+    if (state.nodes.length < 2) return setStatus('Add at least two nodes before connecting.', 'danger');
+    setTool('connect');
+    setStatus('Connect mode: click the first node, then the second node.', 'info');
+  });
+
+  document.getElementById('addNodeBtn').addEventListener('click', () => {
+    const n = makeNode({label: 'New Idea', x: CANVAS_W/2 + (Math.random()*120 - 60), y: CANVAS_H/2 + (Math.random()*120 - 60)});
+    state.nodes.push(n);
+    selectNode(n.id);
+    setStatus('Node added. Drag to position, double-click to rename.', 'success');
+  });
+
+  document.getElementById('addChildBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    const parent = nodeById(state.selectedId);
+    if (!parent) return;
+    // Place child to the right of parent by default, offset down a bit if crowded
+    const siblings = state.connectors.filter(c => c.fromId === parent.id).length;
+    const angle = (siblings * 0.7) - 1.2;
+    const r = 220;
+    const child = makeNode({
+      label: 'Child Idea',
+      x: parent.x + Math.cos(angle) * r,
+      y: parent.y + Math.sin(angle) * r
     });
-  }
-  function downloadBlob(blob, filename){
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
-  }
-  function defaultBaseName(){
-    const lines = sourceEl.value.split('\n').map(l => l.trim()).filter(Boolean);
-    const first = (lines[0] || 'concept-map').split('|')[0].trim();
-    return (first.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'concept-map').toLowerCase();
-  }
-
-  sourceEl.addEventListener('input', schedulePreview);
-  layoutEl.addEventListener('change', renderPreview);
-
-  $('sampleBtn').addEventListener('click', () => {
-    sourceEl.value = SAMPLE;
-    renderPreview();
-    setStatus('Sample loaded.', 'info');
-  });
-  $('renderBtn').addEventListener('click', () => { renderPreview(); setStatus('Re-rendered.', 'success'); });
-  $('clearBtn').addEventListener('click', () => {
-    sourceEl.value = '';
-    previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Add at least one node on the left.</div>';
-    setStatus('Editor cleared.', 'info');
+    child.x = Math.max(child.w/2 + 4, Math.min(CANVAS_W - child.w/2 - 4, child.x));
+    child.y = Math.max(child.h/2 + 4, Math.min(CANVAS_H - child.h/2 - 4, child.y));
+    state.nodes.push(child);
+    state.connectors.push(makeConnector(parent.id, child.id));
+    selectNode(child.id);
+    setStatus('Child added and connected to selected node.', 'success');
   });
 
-  $('imageBtn').addEventListener('click', () => $('imageInput').click());
-  $('imageInput').addEventListener('change', e => {
+  document.getElementById('editTextBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    beginNodeInlineEdit(state.selectedId);
+  });
+
+  document.getElementById('editConnectorBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'connector') return;
+    editConnectorLabel(state.selectedId);
+  });
+
+  document.getElementById('setLinkBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    const n = nodeById(state.selectedId);
+    if (!n) return;
+    const v = window.prompt('Link URL for "' + n.label + '" (https:// or mailto:). Leave blank to clear.', n.link || '');
+    if (v === null) return;
+    if (!v.trim()) { n.link = ''; setStatus('Link cleared.', 'info'); render(); return; }
+    const safe = safeUrl(v);
+    if (!safe) { setStatus('Link must start with https://, http://, or mailto:.', 'danger'); return; }
+    n.link = safe;
+    setStatus('Link set. Ctrl/Cmd-click the node to open it.', 'success');
+    render();
+  });
+
+  document.getElementById('clearLinkBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    const n = nodeById(state.selectedId);
+    if (!n || !n.link) return;
+    n.link = '';
+    setStatus('Link cleared.', 'info');
+    render();
+  });
+
+  document.getElementById('attachImageBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    document.getElementById('imageInput').click();
+  });
+  document.getElementById('imageInput').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];
-    if(!f) return;
-    if(!/^image\//.test(f.type)) {
-      setStatus('Please choose an image file.', 'danger');
-      e.target.value = '';
-      return;
-    }
-    if(f.size > 4 * 1024 * 1024) {
-      setStatus('Image is over 4 MB. Pick a smaller file.', 'danger');
-      e.target.value = '';
-      return;
-    }
+    e.target.value = '';
+    if (!f) return;
+    if (state.selectedKind !== 'node') { setStatus('Select a node first, then attach an image.', 'danger'); return; }
+    if (!/^image\//.test(f.type)) { setStatus('Pick an image file.', 'danger'); return; }
+    if (f.size > 4 * 1024 * 1024) { setStatus('Image is over 4 MB. Pick a smaller file.', 'danger'); return; }
     const r = new FileReader();
     r.onload = () => {
-      const ta = sourceEl;
-      const start = ta.selectionStart || 0;
-      const lines = ta.value.split('\n');
-      let pos = 0, idx = 0;
-      for(; idx < lines.length; idx++) {
-        if(start <= pos + lines[idx].length) break;
-        pos += lines[idx].length + 1;
-      }
-      const parts = (lines[idx] || 'New idea').split('|').map(s => s.trim());
-      while(parts.length < 3) parts.push('');
-      parts[2] = r.result;
-      lines[idx] = parts.join(' | ');
-      ta.value = lines.join('\n');
-      renderPreview();
-      setStatus('Image attached to the current line.', 'success');
-      e.target.value = '';
+      const n = nodeById(state.selectedId);
+      if (!n) return;
+      n.image = r.result;
+      setStatus('Image attached to the selected node.', 'success');
+      render();
     };
     r.onerror = () => setStatus('Could not read image file.', 'danger');
     r.readAsDataURL(f);
   });
+  document.getElementById('clearImageBtn').addEventListener('click', () => {
+    if (state.selectedKind !== 'node') return;
+    const n = nodeById(state.selectedId);
+    if (!n || !n.image) return;
+    n.image = '';
+    setStatus('Image cleared.', 'info');
+    render();
+  });
 
-  $('downloadSvgBtn').addEventListener('click', () => {
-    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
-    const svg = buildSvg(configFromUI());
-    downloadBlob(svgToBlob(svg), defaultBaseName() + '.svg');
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    if (state.selectedKind === 'node') {
+      const id = state.selectedId;
+      const n = nodeById(id);
+      if (!n) return;
+      if (state.nodes.length === 1) { setStatus('Can\'t delete the last node. Use Clear All instead.', 'danger'); return; }
+      if (n.isRoot && !window.confirm('Delete the root node? Children stay but lose their root connection.')) return;
+      state.nodes = state.nodes.filter(x => x.id !== id);
+      state.connectors = state.connectors.filter(c => c.fromId !== id && c.toId !== id);
+      clearSelection();
+      setStatus('Node deleted.', 'success');
+    } else if (state.selectedKind === 'connector') {
+      state.connectors = state.connectors.filter(c => c.id !== state.selectedId);
+      clearSelection();
+      setStatus('Connector deleted.', 'success');
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!window.confirm('Reset the map back to the four-idea starter?')) return;
+    defaultMap();
+    render();
+    setStatus('Map reset.', 'info');
+  });
+  document.getElementById('clearMapBtn').addEventListener('click', () => {
+    if (!window.confirm('Clear the entire map? This cannot be undone.')) return;
+    state.nodes = [];
+    state.connectors = [];
+    state.selectedId = null;
+    state.selectedKind = null;
+    state.pendingFrom = null;
+    const n = makeNode({label: 'New Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
+    state.nodes.push(n);
+    state.selectedId = n.id;
+    state.selectedKind = 'node';
+    render();
+    setStatus('Cleared. One starter node added.', 'info');
+  });
+
+  document.getElementById('centerBtn').addEventListener('click', () => {
+    if (!state.nodes.length) return;
+    const minX = Math.min.apply(null, state.nodes.map(n => n.x - n.w/2));
+    const maxX = Math.max.apply(null, state.nodes.map(n => n.x + n.w/2));
+    const minY = Math.min.apply(null, state.nodes.map(n => n.y - n.h/2));
+    const maxY = Math.max.apply(null, state.nodes.map(n => n.y + n.h/2));
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    const targetX = CANVAS_W/2, targetY = CANVAS_H/2;
+    const shiftX = targetX - cx, shiftY = targetY - cy;
+    state.nodes.forEach(n => { n.x += shiftX; n.y += shiftY; });
+    render();
+    setStatus('Map re-centered.', 'info');
+  });
+
+  // Export
+  function buildExportSvg(){
+    // Render a clean snapshot to a string (no selection / pending highlights)
+    const savedSel = {id: state.selectedId, kind: state.selectedKind, pending: state.pendingFrom};
+    state.selectedId = null;
+    state.selectedKind = null;
+    state.pendingFrom = null;
+    render();
+    const xml = new XMLSerializer().serializeToString(svg);
+    state.selectedId = savedSel.id;
+    state.selectedKind = savedSel.kind;
+    state.pendingFrom = savedSel.pending;
+    render();
+    // Ensure standalone xmlns
+    if (!/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/.test(xml)) {
+      return xml.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+    }
+    return xml;
+  }
+  function svgBlob(xml){ return new Blob([xml], {type: 'image/svg+xml;charset=utf-8'}); }
+  function svgToPngBlob(xml, minWidth){
+    minWidth = minWidth || 1800;
+    return new Promise((resolve, reject) => {
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+      const img = new Image();
+      img.onload = () => {
+        const naturalW = img.naturalWidth || CANVAS_W;
+        const naturalH = img.naturalHeight || CANVAS_H;
+        const aspect = naturalH / naturalW;
+        const w = Math.max(minWidth, naturalW * 2);
+        const h = Math.max(40, Math.round(w * aspect));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.fillStyle = '#ffffff';
+        cx.fillRect(0, 0, w, h);
+        try { cx.drawImage(img, 0, 0, w, h); }
+        catch(err) { reject(err); return; }
+        cv.toBlob(b => b ? resolve(b) : reject(new Error('PNG encode failed')), 'image/png');
+      };
+      img.onerror = () => reject(new Error('SVG decode failed'));
+      img.src = dataUrl;
+    });
+  }
+  function downloadBlob(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1200);
+  }
+  function defaultBaseName(){
+    const root = state.nodes.find(n => n.isRoot) || state.nodes[0];
+    const raw = (root ? root.label : 'concept-map').toString();
+    return (raw.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'concept-map').toLowerCase();
+  }
+
+  document.getElementById('downloadSvgBtn').addEventListener('click', () => {
+    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    downloadBlob(svgBlob(buildExportSvg()), defaultBaseName() + '.svg');
     setStatus('Downloaded SVG.', 'success');
   });
-  $('downloadPngBtn').addEventListener('click', async () => {
-    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
+  document.getElementById('downloadPngBtn').addEventListener('click', async () => {
+    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
     try {
-      const svg = buildSvg(configFromUI());
-      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-      const blob = await svgUrlToPngBlob(dataUrl);
+      const blob = await svgToPngBlob(buildExportSvg());
       downloadBlob(blob, defaultBaseName() + '.png');
       setStatus('Downloaded PNG.', 'success');
     } catch(err) {
-      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+      setStatus('PNG render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
     }
   });
-  $('copyPngBtn').addEventListener('click', async () => {
-    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
-    if(!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
+  document.getElementById('copyPngBtn').addEventListener('click', async () => {
+    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
       return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
     try {
-      const svg = buildSvg(configFromUI());
-      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-      const blob = await svgUrlToPngBlob(dataUrl);
+      const blob = await svgToPngBlob(buildExportSvg());
       await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
       setStatus('Concept map copied to clipboard as PNG.', 'success');
     } catch(err) {
@@ -612,8 +1075,33 @@
     }
   });
 
-  sourceEl.value = SAMPLE;
-  renderPreview();
+  // Keyboard shortcuts (when not editing)
+  document.addEventListener('keydown', e => {
+    if (state.editing) return;
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (state.selectedKind) {
+        e.preventDefault();
+        document.getElementById('deleteBtn').click();
+      }
+    } else if (e.key === 'Escape') {
+      if (state.tool === 'connect') { setTool('select'); setStatus('Connect mode cancelled.', 'info'); }
+      else if (state.selectedKind) clearSelection();
+    } else if (e.key === 'Enter') {
+      if (state.selectedKind === 'node') {
+        e.preventDefault();
+        beginNodeInlineEdit(state.selectedId);
+      } else if (state.selectedKind === 'connector') {
+        e.preventDefault();
+        editConnectorLabel(state.selectedId);
+      }
+    }
+  });
+
+  // Boot
+  defaultMap();
+  render();
 })();
 </script>
 </body>
