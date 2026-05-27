@@ -714,5 +714,84 @@
   document.getElementById('openConfigEditorBtn')?.addEventListener('click',openConfigEditor);
   document.getElementById('applyAuditFilterBtn')?.addEventListener('click',applyAuditFilter);
 
+  /* --- Compliance: Image upload approval queue (Days 1.3 / 1.4) ---------- */
+  async function loadImageQueueConfig(){
+    try{
+      const cfg=await fetchConfig();
+      const img=(cfg.safety && cfg.safety.images) || {};
+      setBool(document.getElementById('cfgImageApproval'),img.teacherApprovalRequired!==false);
+      const m=document.getElementById('cfgImageMaxBytes'); if(m) m.value=img.maxBytes||5242880;
+      panelStatus('imageQueueConfigStatus','Loaded from server.','ok');
+    }catch(err){ panelStatus('imageQueueConfigStatus',String(err.message||err),'error'); }
+  }
+  async function saveImageQueueConfig(){
+    try{
+      const cfg=await fetchConfig();
+      cfg.safety=cfg.safety||{}; cfg.safety.images=cfg.safety.images||{};
+      cfg.safety.images.teacherApprovalRequired=bool(document.getElementById('cfgImageApproval'));
+      cfg.safety.images.maxBytes=parseInt(val(document.getElementById('cfgImageMaxBytes'),'5242880'),10);
+      if(!Array.isArray(cfg.safety.images.allowedMimeTypes)||!cfg.safety.images.allowedMimeTypes.length){
+        cfg.safety.images.allowedMimeTypes=['image/png','image/jpeg','image/webp'];
+      }
+      if(!Array.isArray(cfg.safety.images.blockedMimeTypes)||!cfg.safety.images.blockedMimeTypes.length){
+        cfg.safety.images.blockedMimeTypes=['image/svg+xml'];
+      }
+      await adminCall('setCompliance',{config:JSON.stringify(cfg)},'POST');
+      panelStatus('imageQueueConfigStatus','Saved.','ok');
+    }catch(err){ panelStatus('imageQueueConfigStatus',String(err.message||err),'error'); }
+  }
+  async function loadImageQueue(){
+    const host=document.getElementById('imageQueueList');
+    if(!host) return;
+    host.textContent='Loading…';
+    try{
+      const status=(document.getElementById('imageQueueStatusFilter')||{}).value||'pending';
+      const data=await adminCall('imageQueueList',{status,limit:'100'});
+      renderImageQueue(host,data.images||[],status);
+    }catch(err){ host.textContent=String(err.message||err); }
+  }
+  function renderImageQueue(host,images,status){
+    if(!images.length){ host.innerHTML='<p class="hint">No '+esc(status)+' images.</p>'; return; }
+    const url=cleanUrl();
+    const passEsc=(()=>{ try{ return encodeURIComponent(localStorage.getItem(ADMIN_PASSCODE_KEY)||''); }catch(_){return '';} })();
+    const rows=images.map(img=>{
+      const thumb=url?(url+(url.includes('?')?'&':'?')+'action=imageQueueThumb&passcode='+passEsc+'&id='+encodeURIComponent(img.id)):'';
+      const meta=[];
+      if(img.uploadedBy) meta.push('by <strong>'+esc(img.uploadedBy)+'</strong>');
+      meta.push('('+esc(img.uploaderRole||'student')+')');
+      if(img.boardId) meta.push('board: '+esc(img.boardId));
+      if(img.roomId) meta.push('room: '+esc(img.roomId));
+      if(img.byteSize) meta.push(Math.round((+img.byteSize)/1024)+' KB');
+      if(img.mimeType) meta.push(esc(img.mimeType));
+      const decided=img.status==='pending'?'':('<div class="hint" style="margin-top:4px">Decided '+esc(img.decidedAt||'')+(img.decidedBy?' by '+esc(img.decidedBy):'')+(img.decisionNote?' — '+esc(img.decisionNote):'')+'</div>');
+      const actions=img.status==='pending'
+        ? '<div class="admin-actions" style="margin-top:8px"><button type="button" class="primary" data-act="approve" data-id="'+esc(img.id)+'">Approve</button><button type="button" class="danger" data-act="reject" data-id="'+esc(img.id)+'">Reject</button></div>'
+        : '';
+      return `<div class="list-item" data-image-row="${esc(img.id)}" style="display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px"><img data-thumb-src="${esc(thumb)}" alt="" style="width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--line);background:#f3f4f6"><div style="flex:1"><div><strong>${esc(img.fileName||img.id)}</strong> <span class="badge ${img.status==='pending'?'warn':(img.status==='approved'?'ok':'bad')}">${esc(img.status||'pending')}</span></div><div class="hint">${meta.join(' · ')}</div><div class="hint">Submitted ${esc(img.submittedAt||'')}</div>${decided}${actions}</div></div>`;
+    }).join('');
+    host.innerHTML=rows;
+    host.querySelectorAll('img[data-thumb-src]').forEach(async el=>{
+      const src=el.getAttribute('data-thumb-src'); if(!src) return;
+      try{ const res=await fetch(src); const text=await res.text(); if(text.startsWith('data:')) el.src=text; }catch(_){ }
+    });
+    host.querySelectorAll('button[data-act]').forEach(btn=>{
+      btn.addEventListener('click',async()=>{
+        const id=btn.dataset.id, act=btn.dataset.act;
+        let note='';
+        if(act==='reject'){ note=(window.prompt('Reason for rejecting this image? (optional, visible in audit log)')||'').trim(); }
+        btn.disabled=true; btn.textContent='Working…';
+        try{
+          await adminCall('setImageStatus',{id,decision:act==='approve'?'approved':'rejected',decisionNote:note},'POST');
+          await loadImageQueue();
+        }catch(err){ alert(err.message||err); btn.disabled=false; btn.textContent=act==='approve'?'Approve':'Reject'; }
+      });
+    });
+  }
+  document.getElementById('loadImageQueueConfigBtn')?.addEventListener('click',loadImageQueueConfig);
+  document.getElementById('saveImageQueueConfigBtn')?.addEventListener('click',saveImageQueueConfig);
+  document.getElementById('loadImageQueueBtn')?.addEventListener('click',loadImageQueue);
+  document.getElementById('refreshImageQueueBtn')?.addEventListener('click',loadImageQueue);
+  document.getElementById('imageQueueStatusFilter')?.addEventListener('change',loadImageQueue);
+
   loadSettings();
 })();

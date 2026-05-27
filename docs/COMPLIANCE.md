@@ -166,6 +166,7 @@ The Teacher Admin &rarr; Compliance Console is split into seven collapsible sect
 | Section | What it controls |
 |---|---|
 | **Safety Review** | Text filter on/off, blockOnMatch, link allowlist on/off, blockUnapproved. Plus the existing board/room freeze controls. |
+| **Image Approval Queue** | Teacher-approval-required toggle, max upload size, plus the pending / approved / rejected review queue (thumbnail + Approve / Reject). Student uploads land here when teacher approval is required; approved images appear on the student board within ~8 seconds. See "Image Approval Queue (Days 1.3 / 1.4)" below. |
 | **Family Access Tools** | Parent portal enabled, request form enabled, verification method (`teacher_code`, `district_roster`, `admin_approval`). Plus the existing request queue. |
 | **Student Age Band Lock** | Per-student age band table (see Day 2.1 / 2.2 section above). |
 | **Use Limits** | Daily seconds, session seconds, allowed hours, weekend toggle, enabled flag. Enforcement code lands in Days 2.8&ndash;2.9; the config is pre-stageable now. |
@@ -175,6 +176,25 @@ The Teacher Admin &rarr; Compliance Console is split into seven collapsible sect
 | **District Privacy Packet** | One-click ZIP download (see Day 3.6 section above). |
 
 For advanced edits (anything not exposed as a checkbox or input), use **Open Raw Config Editor** in the Privacy Settings panel. The dialog shows the entire merged config as JSON; saving runs through the same `setCompliance` filter, so only the known top-level sections persist.
+
+## Image Approval Queue (Days 1.3 / 1.4)
+
+When `safety.images.teacherApprovalRequired` is `true` (the default), every image that a student uploads to a board is held in a pending queue until a teacher approves it. The flow:
+
+1. **Client &mdash; whiteboard (`assets/js/app.js`).** When `board.mode === 'student'` and a Google Apps Script URL is configured, the four upload paths (main image button, paste-as-image, sticky-note attached image, custom sticker) call `submitImageForApproval(dataUrl, fileName)` instead of embedding the data URL directly. The function POSTs `{action: 'uploadImage', dataUrl, fileName, boardId, roomId, uploadedBy, uploaderRole}` to the script. Teacher mode and missing-script-URL deployments bypass the queue.
+2. **Server &mdash; `uploadImage_`.** Decodes the base64, validates mime (`allowedMimeTypes` / `blockedMimeTypes`) and size (`maxBytes`), writes the bytes to the `DrawSplatTM Saves` Drive folder, and appends a row to the `ImageQueue` sheet with columns `id, boardId, roomId, uploadedBy, uploaderRole, fileName, driveId, mimeType, byteSize, status, submittedAt, decidedBy, decidedAt, decisionNote`. Student uploads return `status: 'pending'`. Teacher uploads auto-approve and return the bytes inline. Logs `IMAGE_UPLOAD` (and `notifyComplianceAdmin_` for pending rows).
+3. **Client placeholder.** The whiteboard inserts an image object with `src` set to a `PENDING_IMAGE_PLACEHOLDER` SVG ("Pending teacher approval") and `pendingImageId` set to the returned id. A polling timer (every 8 seconds) calls `?action=imageQueueResolve&id=...` for every object that still carries a `pendingImageId`.
+4. **Teacher review &mdash; Compliance Console &rarr; Image Approval Queue.** The admin page lists pending rows with a thumbnail (loaded via `?action=imageQueueThumb&passcode=...&id=...`), uploader, board / room, mime, size, and Approve / Reject buttons. Rejection prompts for an optional decision note.
+5. **Decision &mdash; `setImageStatus_`.** Admin-gated. On reject, the Drive file is trashed. The row's `status`, `decidedBy`, `decidedAt`, `decisionNote` columns are updated and an `IMAGE_APPROVED` or `IMAGE_REJECTED` audit event is written.
+6. **Client resolution.** The next poll sees `status: 'approved'` (with the inline data URL `src`) or `status: 'rejected'`, swaps the placeholder for either the real image or `REJECTED_IMAGE_PLACEHOLDER`, removes `pendingImageId`, re-renders, and persists.
+
+Knobs in `compliance.config.json` &rarr; `safety.images`:
+
+- `enabled` &mdash; master switch; when false, the `uploadImage` endpoint refuses uploads.
+- `teacherApprovalRequired` &mdash; when false, student uploads auto-approve like teacher uploads (the queue still records them as `approved` rows for audit).
+- `allowedMimeTypes` &mdash; allowlist (default: `image/png`, `image/jpeg`, `image/webp`).
+- `blockedMimeTypes` &mdash; explicit blocklist that wins over allowlist (default: `image/svg+xml`).
+- `maxBytes` &mdash; per-file size cap (default 5 MiB).
 
 ## Time Limits (Days 2.8 / 2.9)
 

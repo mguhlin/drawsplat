@@ -110,6 +110,7 @@
       <li><strong>FERPA</strong> (Family Educational Rights and Privacy Act) &mdash; federal law giving parents and eligible students rights over education records, including the right to inspect, correct, and control disclosure.</li>
       <li><strong>COPPA</strong> (Children's Online Privacy Protection Act) &mdash; federal law about collecting personal information from children under 13. In school deployments the district typically acts as the parent's agent for consent.</li>
       <li><strong>Texas Education Code 32.151&ndash;32.156</strong> &mdash; framework for student data agreements between districts and online service providers.</li>
+      <li><strong>CIPA</strong> (Children's Internet Protection Act) &mdash; federal E-rate requirement that <em>schools and libraries</em> deploy a technology protection measure that blocks visual depictions of obscenity / child pornography / content harmful to minors, plus an internet safety policy. CIPA is a network-level obligation on the district, not a privacy law on the vendor. DrawSplat<sup class="tm">TM</sup> provides supporting features (see &ldquo;CIPA support statement&rdquo; below) but does not replace the district's network filter or internet safety policy.</li>
     </ul>
   </section>
 
@@ -177,6 +178,17 @@
 
     <h3>10. Retention and disposal</h3>
     <p>Districts configure how long boards and audit records persist via the Compliance Console's <strong>Retention Policy &amp; Cleanup</strong> section. A nightly Apps Script trigger (installable from the same panel) archives boards older than the archive threshold, deletes boards older than the delete threshold, and prunes audit rows older than the keep window. Every run logs a <code>RETENTION_ACTION</code> event.</p>
+
+    <h3 id="cipa">11. CIPA support statement</h3>
+    <p>The <strong>Children's Internet Protection Act</strong> (CIPA) is a federal E-rate condition on the <em>school or library</em>: covered institutions must deploy a technology protection measure that blocks visual depictions of obscenity, child pornography, and content harmful to minors, and must adopt an internet safety policy. CIPA is a network-level obligation on the district, not a privacy law on the vendor. DrawSplat<sup class="tm">TM</sup> ships features that <em>support</em> a district's CIPA posture but does not replace the district's filter or internet safety policy:</p>
+    <ul class="admin-checklist">
+      <li><strong>Server-enforced link allowlist.</strong> Pasted URLs are checked against a district-managed allowlist before save.</li>
+      <li><strong>Server-enforced text keyword filter.</strong> Hits write a <code>TEXT_FILTER_HIT</code> event and (by default) reject the save.</li>
+      <li><strong>Board and room freeze.</strong> Teachers freeze a board to block all writes until they unfreeze it.</li>
+      <li><strong>Image upload approval queue.</strong> Student image uploads land as <em>pending</em> and stay hidden on the student view until a teacher approves them. Rejection trashes the file. Approve / reject decisions are recorded as <code>IMAGE_APPROVED</code> / <code>IMAGE_REJECTED</code> events.</li>
+      <li><strong>Audit trail.</strong> Every safety event is logged, so a district can prove ongoing review.</li>
+    </ul>
+    <p><strong>DrawSplat<sup class="tm">TM</sup> does not replace the district's required network-level internet filter.</strong> CIPA compliance also requires an internet safety policy and (in many jurisdictions) ongoing internet-safety education, both of which remain district responsibilities.</p>
   </section>
 
   <section class="policy-section">

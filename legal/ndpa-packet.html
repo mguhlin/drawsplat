@@ -121,7 +121,7 @@ Self-hosted MySQL mode:
         <tr><td>Retention</td><td>Configurable archive / delete / audit-keep windows. Scheduled trigger (Apps Script) or in-process cron (Node) prunes data and writes a <code>RETENTION_ACTION</code> audit row.</td><td><code>runRetentionCleanup_</code> / <code>cron-jobs.js</code></td></tr>
         <tr><td>Data export</td><td>Per-student ZIP of every board + turn-in + the user row (no hashed credentials). Logs <code>DATA_EXPORT</code>.</td><td><code>exportStudentData_</code></td></tr>
         <tr><td>Data deletion</td><td>Admin button trashes Drive files and removes rows. Logs <code>DATA_DELETED</code>.</td><td><code>deleteStudentData_</code></td></tr>
-        <tr><td>Image upload approval queue</td><td>Phase 1.3 / 1.4 — not yet shipped. Student image uploads default to disabled until the queue is live.</td><td><code>COMPLIANCE-ROADMAP.md</code> Phase 1.3 / 1.4 rows</td></tr>
+        <tr><td>Image upload approval queue</td><td>Shipped. Student image uploads land in <code>ImageQueue</code> with status <code>pending</code> and stay hidden on the student board until a teacher approves them in the Compliance Console. Reject trashes the Drive file and replaces the student board image with a rejection placeholder. Both decisions log <code>IMAGE_APPROVED</code> / <code>IMAGE_REJECTED</code> events.</td><td><code>apps-script/Code.gs uploadImage_ / setImageStatus_</code>; <code>admin/admin.html</code> Image Approval Queue section</td></tr>
       </tbody>
     </table>
   </section>
@@ -187,7 +187,7 @@ Self-hosted MySQL mode:
     <p>See <a href="texas-compliance.html">legal/texas-compliance.html</a> for the plain-language explainer.</p>
 
     <h3>CIPA</h3>
-    <p>CIPA is a school / library E-rate internet-safety and filtering obligation, not a vendor privacy law. DrawSplat<sup class="tm">TM</sup> supports CIPA via link allowlists, board freeze, text filtering, moderation, audit logs, and the under-development image-upload approval queue, but does <strong>not</strong> replace the district&rsquo;s network-level filter or its internet safety policy. Full statement: <a href="texas-compliance.html#cipa">CIPA support statement</a>.</p>
+    <p>CIPA is a school / library E-rate internet-safety and filtering obligation, not a vendor privacy law. DrawSplat<sup class="tm">TM</sup> supports CIPA via link allowlists, board freeze, text filtering, the moderation + image-approval queues, and the audit log, but does <strong>not</strong> replace the district&rsquo;s network-level filter or its internet safety policy. Full statement: <a href="texas-compliance.html#cipa">CIPA support statement</a>.</p>
   </section>
 
   <section class="policy-section">
@@ -207,6 +207,38 @@ Self-hosted MySQL mode:
   <section class="policy-section">
     <h2>11. Recommended production posture</h2>
     <p>For classroom production use today, the supported path is <strong>Google Apps Script + Sheets + Drive</strong> in the district&rsquo;s own Google Workspace tenant. The MySQL self-hosted path is feature-complete in code but has not yet been exercised against a live database in production. Districts that want to pilot the MySQL path should run a technical review (integration test against a non-production database, single-instance only, manual cron monitoring) before student production use. See <a href="../server/mysql-backend/README.md">server/mysql-backend/README.md</a> for the production checklist.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>12. Evidence gallery (district reviewer)</h2>
+    <p>These are the screens a district reviewer typically needs to see &mdash; the live Compliance Console, the Family Access Tools queue, the District Privacy Packet download, and the audit log. The <a href="../docs/CAPTURE.md">CAPTURE.md</a> checklist in the repo describes exactly where to find each one and what state to put the app in before capturing. Operators are expected to drop in their own deployment&rsquo;s screenshots before sharing this page with a district reviewer, since each capture should reflect the district&rsquo;s own configuration.</p>
+    <div class="evidence-gallery">
+      <figure>
+        <div class="evidence-placeholder" data-capture="compliance-console-overview">Compliance Console overview &mdash; capture from Teacher Admin &rarr; Compliance Console with every <code>&lt;details&gt;</code> closed except the header.</div>
+        <figcaption>1. Compliance Console &mdash; overview. Demonstrates that every safeguard is one page, expandable per district reviewer interest.</figcaption>
+      </figure>
+      <figure>
+        <div class="evidence-placeholder" data-capture="image-approval-queue">Image Approval Queue &mdash; capture the queue with two pending images, the thumbnail visible, the Approve / Reject buttons visible.</div>
+        <figcaption>2. Image Approval Queue (Days 1.3 / 1.4). Demonstrates the moderation step between student upload and student-visible image.</figcaption>
+      </figure>
+      <figure>
+        <div class="evidence-placeholder" data-capture="family-access-queue">Family Access Tools request queue &mdash; capture one verified request with the Approve / Decline / Note controls visible.</div>
+        <figcaption>3. Family Access Tools queue. Demonstrates the parent-request workflow end-to-end.</figcaption>
+      </figure>
+      <figure>
+        <div class="evidence-placeholder" data-capture="audit-records">Activity Records (audit log) &mdash; capture filtered to the last seven days, showing at least one row each of <code>BOARD_FREEZE</code>, <code>TEXT_FILTER_HIT</code>, <code>IMAGE_APPROVED</code>, <code>PARENT_REQUEST_CREATED</code>, <code>DATA_EXPORT</code>.</div>
+        <figcaption>4. Activity Records / audit log. Demonstrates that every compliance-relevant action leaves an immutable trail.</figcaption>
+      </figure>
+      <figure>
+        <div class="evidence-placeholder" data-capture="privacy-packet-download">District Privacy Packet download &mdash; capture the &ldquo;Download District Privacy Packet&rdquo; button with the resulting toast showing the zip size and audit-row count.</div>
+        <figcaption>5. District Privacy Packet. Demonstrates the one-click ZIP that bundles the compliance config + last 90 days of audit + parent-request log.</figcaption>
+      </figure>
+      <figure>
+        <div class="evidence-placeholder" data-capture="data-export-delete">Per-student Export / Delete &mdash; capture the user row in <strong>Student Age Band Lock</strong> with the Export Data and Delete Data buttons visible.</div>
+        <figcaption>6. Data export and deletion. Demonstrates FERPA-style inspect / correct / delete rights.</figcaption>
+      </figure>
+    </div>
+    <p class="hint">Operator note: replace each <code>.evidence-placeholder</code> div with an <code>&lt;img src=&quot;evidence/<em>capture-key</em>.png&quot;&gt;</code> once you&rsquo;ve captured the screen. The <code>data-capture</code> attribute matches the filename in <a href="../docs/CAPTURE.md">docs/CAPTURE.md</a>.</p>
   </section>
 
   <section class="policy-section">

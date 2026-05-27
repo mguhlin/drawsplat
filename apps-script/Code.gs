@@ -1,4 +1,4 @@
-// DS_VERSION = '1.8.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.9.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,10 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.9.0  Days 1.3 / 1.4 — Image upload approval queue. New ImageQueue
+ *          sheet tab + uploadImage / imageQueueResolve / imageQueueList /
+ *          setImageStatus endpoints. Student uploads start as pending and
+ *          require teacher approval before rendering on student boards.
  *   1.8.0  Contact / Information Request form — new ContactRequests
  *          sheet tab + createContactRequest endpoint. Replaces the
  *          mailto link that used to live on the Pricing page.
@@ -29,7 +33,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.8.0';
+const DS_VERSION = '1.9.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -42,11 +46,13 @@ const DS_SHEETS = {
   parentRequests: 'ParentRequests',
   users: 'Users',
   timeUsage: 'TimeUsage',
-  contactRequests: 'ContactRequests'
+  contactRequests: 'ContactRequests',
+  imageQueue: 'ImageQueue'
 };
 
 const DS_TIME_HEADERS = ['key', 'studentName', 'className', 'date', 'secondsToday', 'sessionStart', 'lastBeat'];
 const DS_CONTACT_HEADERS = ['id', 'createdAt', 'name', 'email', 'organization', 'role', 'topic', 'details', 'sourcePage', 'status', 'decidedAt', 'decisionNote'];
+const DS_IMAGE_HEADERS = ['id', 'boardId', 'roomId', 'uploadedBy', 'uploaderRole', 'fileName', 'driveId', 'mimeType', 'byteSize', 'status', 'submittedAt', 'decidedBy', 'decidedAt', 'decisionNote'];
 
 const DS_AUDIT_HEADERS = ['id', 'timestamp', 'actor', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'userAgent'];
 const DS_PARENT_HEADERS = ['id', 'parentName', 'parentEmail', 'studentName', 'studentId', 'requestType', 'details', 'status', 'assignedTo', 'createdAt', 'decidedAt', 'decisionNote'];
@@ -67,6 +73,7 @@ function setup() {
   ensureSheet_(ss, DS_SHEETS.users, DS_USER_HEADERS);
   ensureSheet_(ss, DS_SHEETS.timeUsage, DS_TIME_HEADERS);
   ensureSheet_(ss, DS_SHEETS.contactRequests, DS_CONTACT_HEADERS);
+  ensureSheet_(ss, DS_SHEETS.imageQueue, DS_IMAGE_HEADERS);
   if (!DS_PROPS.getProperty('PASSWORD_SALT')) DS_PROPS.setProperty('PASSWORD_SALT', Utilities.getUuid());
   return 'DrawSplatTM setup complete.';
 }
@@ -95,6 +102,9 @@ function doGet(e) {
       case 'cleanupStatus': return json_(getCleanupStatus_(p));
       case 'timeStatus': return json_(getTimeStatus_(p));
       case 'contactRequestList': return json_(adminContactRequestList_(p));
+      case 'imageQueueResolve': return json_(imageQueueResolve_(p));
+      case 'imageQueueList': return json_(adminImageQueueList_(p));
+      case 'imageQueueThumb': return imageQueueThumbResponse_(p);
       default: return json_({ ok: true, app: 'DrawSplatTM' });
     }
   } catch (err) {
@@ -128,6 +138,8 @@ function doPost(e) {
       case 'rosterImport': return json_(rosterImport_(body));
       case 'contactRequest': return json_(createContactRequest_(body));
       case 'contactRequestDecide': return json_(decideContactRequest_(body));
+      case 'uploadImage': return json_(uploadImage_(body));
+      case 'setImageStatus': return json_(setImageStatus_(body));
       default: return json_({ ok: false, error: 'Unknown action.' });
     }
   } catch (err) {
@@ -1735,6 +1747,192 @@ function decideContactRequest_(body) {
     entityId: id,
     before: { status: existing.status || '' },
     after: { status: decision }
+  });
+  return { ok: true, id: id, status: decision };
+}
+
+/* --- Compliance: Image upload approval queue (Days 1.3 / 1.4) ------------- */
+
+/* imageConfig_() returns the active image-moderation configuration. Mirrors
+ * safetyConfig_(): if a COMPLIANCE_CONFIG script property is set, its
+ * safety.images block wins; otherwise the defaults from compliance.config.json
+ * are used. teacherApprovalRequired is the master gate that flips student
+ * uploads into the pending queue. */
+function imageConfig_() {
+  const stored = DS_PROPS.getProperty('COMPLIANCE_CONFIG');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed && parsed.safety && parsed.safety.images) return parsed.safety.images;
+    } catch (e) {}
+  }
+  return {
+    enabled: true,
+    allowedMimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+    blockedMimeTypes: ['image/svg+xml'],
+    maxBytes: 5242880,
+    teacherApprovalRequired: true,
+    stripMetadata: true
+  };
+}
+
+/* uploadImage_ accepts a base64 image from the whiteboard. Body fields:
+ *   dataUrl       data:image/png;base64,...   (required)
+ *   fileName      original or 'image.png'      (optional)
+ *   boardId       persisted board id, or empty (optional)
+ *   roomId        live room name, or empty     (optional)
+ *   uploadedBy    student or teacher name      (optional)
+ *   uploaderRole  'student' or 'teacher'       (defaults to 'student')
+ *
+ * Teacher uploads bypass the queue entirely and return status: 'approved'.
+ * Student uploads land in ImageQueue with status: 'pending' and the client
+ * is expected to poll imageQueueResolve until the teacher approves. */
+function uploadImage_(body) {
+  const cfg = imageConfig_();
+  if (cfg.enabled === false) throw new Error('Image uploads are disabled.');
+  const dataUrl = String((body && body.dataUrl) || '');
+  if (!dataUrl) throw new Error('Missing dataUrl.');
+  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) throw new Error('Invalid image data URL.');
+  const mime = String(match[1] || '').toLowerCase();
+  const allowed = (cfg.allowedMimeTypes || []).map(String);
+  const blocked = (cfg.blockedMimeTypes || []).map(String);
+  if (blocked.indexOf(mime) !== -1) throw new Error('Image type blocked by safety filter: ' + mime);
+  if (allowed.length && allowed.indexOf(mime) === -1) throw new Error('Unsupported image type: ' + mime);
+  const bytes = Utilities.base64Decode(match[2]);
+  const maxBytes = parseInt(cfg.maxBytes || 5242880, 10);
+  if (bytes.length > maxBytes) throw new Error('Image exceeds ' + maxBytes + '-byte limit.');
+  const role = String((body && body.uploaderRole) || 'student').toLowerCase() === 'teacher' ? 'teacher' : 'student';
+  const requireApproval = role === 'student' && cfg.teacherApprovalRequired !== false;
+  const id = 'img_' + Utilities.getUuid();
+  const folder = getFolder_();
+  const uploadedBy = String((body && body.uploadedBy) || '');
+  const safeName = cleanName_((body && body.fileName) || ('image-' + id + '.' + mime.split('/').pop()));
+  const file = folder.createFile(Utilities.newBlob(bytes, mime, id + '-' + safeName));
+  const row = {
+    id: id,
+    boardId: String((body && body.boardId) || ''),
+    roomId: String((body && body.roomId) || ''),
+    uploadedBy: uploadedBy,
+    uploaderRole: role,
+    fileName: safeName,
+    driveId: file.getId(),
+    mimeType: mime,
+    byteSize: bytes.length,
+    status: requireApproval ? 'pending' : 'approved',
+    submittedAt: now_(),
+    decidedBy: requireApproval ? '' : uploadedBy,
+    decidedAt: requireApproval ? '' : now_(),
+    decisionNote: requireApproval ? '' : 'auto-approved (teacher upload)'
+  };
+  upsertRow_(DS_SHEETS.imageQueue, 'id', id, row);
+  logEvent_('IMAGE_UPLOAD', {
+    actor: row.uploadedBy,
+    actorRole: role,
+    entityType: 'image',
+    entityId: id,
+    after: { status: row.status, mime: mime, byteSize: bytes.length, fileName: safeName, boardId: row.boardId || '', roomId: row.roomId || '' }
+  });
+  if (requireApproval) {
+    notifyComplianceAdmin_(
+      'New image awaiting approval',
+      'Image ' + id + ' from ' + (row.uploadedBy || '(unknown student)') + (row.boardId ? ' on board ' + row.boardId : '') + (row.roomId ? ' in room ' + row.roomId : '') + '.\n\nReview at /admin/admin.html → Compliance Console → Image Approval Queue.'
+    );
+  }
+  return {
+    ok: true,
+    id: id,
+    status: row.status,
+    pollUrl: '?action=imageQueueResolve&id=' + encodeURIComponent(id),
+    src: row.status === 'approved' ? imageQueueDataUrl_(file, mime) : ''
+  };
+}
+
+/* imageQueueResolve_ — the client polls this endpoint with the image id.
+ * Returns { status, src } where src is the data: URL once approved. Reject
+ * leaves the row but src empty so the client can swap in a placeholder. */
+function imageQueueResolve_(p) {
+  const id = String((p && p.id) || '');
+  if (!id) throw new Error('Missing image id.');
+  const row = findRow_(DS_SHEETS.imageQueue, 'id', id);
+  if (!row) throw new Error('Image not found.');
+  const status = String(row.status || 'pending');
+  let src = '';
+  if (status === 'approved' && row.driveId) {
+    try {
+      const file = DriveApp.getFileById(row.driveId);
+      src = imageQueueDataUrl_(file, row.mimeType);
+    } catch (e) {
+      src = '';
+    }
+  }
+  return { ok: true, id: id, status: status, src: src, decisionNote: row.decisionNote || '', decidedAt: row.decidedAt || '' };
+}
+
+function imageQueueDataUrl_(file, mime) {
+  const blob = file.getBlob();
+  return 'data:' + (mime || blob.getContentType() || 'application/octet-stream') + ';base64,' + Utilities.base64Encode(blob.getBytes());
+}
+
+/* imageQueueThumbResponse_ streams the approved bytes directly so the admin
+ * UI can render a thumbnail without inflating its JSON payload. Admin gate. */
+function imageQueueThumbResponse_(p) {
+  requireAdmin_(p);
+  const id = String((p && p.id) || '');
+  const row = findRow_(DS_SHEETS.imageQueue, 'id', id);
+  if (!row || !row.driveId) return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
+  try {
+    const file = DriveApp.getFileById(row.driveId);
+    const out = ContentService.createTextOutput(imageQueueDataUrl_(file, row.mimeType));
+    out.setMimeType(ContentService.MimeType.TEXT);
+    return out;
+  } catch (e) {
+    return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
+  }
+}
+
+function adminImageQueueList_(p) {
+  requireAdmin_(p);
+  const rows = readRows_(DS_SHEETS.imageQueue);
+  const status = String((p && p.status) || 'pending').toLowerCase();
+  const limit = Math.max(1, Math.min(parseInt((p && p.limit) || '100', 10), 500));
+  let filtered = rows;
+  if (status && status !== 'all') filtered = filtered.filter(r => String(r.status) === status);
+  filtered.sort((a, b) => String(b.submittedAt).localeCompare(String(a.submittedAt)));
+  filtered = filtered.slice(0, limit);
+  return { ok: true, status: status, total: filtered.length, images: filtered };
+}
+
+/* setImageStatus_ flips an ImageQueue row to approved or rejected. Rejection
+ * trashes the Drive file so the bytes can't leak out of an audit log. */
+function setImageStatus_(body) {
+  requireAdmin_(body);
+  const id = String((body && body.id) || '');
+  if (!id) throw new Error('Missing image id.');
+  const decision = String((body && body.decision) || '').toLowerCase();
+  if (decision !== 'approved' && decision !== 'rejected') throw new Error('Invalid decision.');
+  const existing = findRow_(DS_SHEETS.imageQueue, 'id', id);
+  if (!existing) throw new Error('Image not found.');
+  const note = String((body && body.decisionNote) || '').slice(0, 500);
+  const actor = String((body && body.actor) || 'admin');
+  let driveId = existing.driveId;
+  if (decision === 'rejected' && existing.driveId) {
+    try { DriveApp.getFileById(existing.driveId).setTrashed(true); } catch (e) {}
+  }
+  const patch = Object.assign({}, existing, {
+    status: decision,
+    decidedBy: actor,
+    decidedAt: now_(),
+    decisionNote: note
+  });
+  upsertRow_(DS_SHEETS.imageQueue, 'id', id, patch);
+  logEvent_(decision === 'approved' ? 'IMAGE_APPROVED' : 'IMAGE_REJECTED', {
+    actor: actor,
+    actorRole: 'admin',
+    entityType: 'image',
+    entityId: id,
+    before: { status: existing.status || '' },
+    after: { status: decision, decisionNote: note, fileName: existing.fileName || '' }
   });
   return { ok: true, id: id, status: decision };
 }

@@ -1192,7 +1192,7 @@ function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o|
 function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; if(o.type==='connector'){o.connectorLabel=ta.value}else{o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o)} positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id&&o.type!=='connector') ui.richEditor.innerHTML=o.html}
 function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); let blockReason=''; if(save&&o&&ta&&window.DrawSplatSafety){const surface=o.type==='sticky'?'sticky':(o.type==='text'?'text':(o.type==='comment'?'comment':'text')); const r=window.DrawSplatSafety.checkAll(ta.value,surface); if(!r.allowed){blockReason=r.reason; save=false}} if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){if(o.type==='connector') o.connectorLabel=inlineEditOriginal.connectorLabel; else{o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html}} inlineEditId=null; inlineEditOriginal=null; if(wrap){wrap.classList.remove('show','connector-label-edit'); wrap.style.transform=''} if(ta){ta.style.textAlign=''; ta.style.fontWeight=''} render(); if(blockReason) setStatus(blockReason,'danger'); else if(save) saveState()}
 
-function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel()}
+function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
 function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=Math.abs(o.w),h=Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
@@ -1601,7 +1601,7 @@ function nudgeSelected(dx,dy){
   render(); saveState(false);
   return true;
 }
-function pasteBlobAsImage(blob,label){return new Promise(async resolve=>{if(!blob||!(await validateImageDeep(blob))){resolve(false); return} const reader=new FileReader(); reader.onload=()=>{const dataUrl=reader.result; const probe=new Image(); probe.onload=()=>{let w=probe.width,h=probe.height; const maxDim=600; if(Math.max(w,h)>maxDim){const s=maxDim/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s)} addObj(makeObj('image',120,120,Math.max(40,w),Math.max(40,h),{src:dataUrl,fill:'none',stroke:'#000',strokeWidth:1})); setStatus(label||'Image pasted.','success'); resolve(true)}; probe.onerror=()=>resolve(false); probe.src=dataUrl}; reader.onerror=()=>resolve(false); reader.readAsDataURL(blob)})}
+function pasteBlobAsImage(blob,label){return new Promise(async resolve=>{if(!blob||!(await validateImageDeep(blob))){resolve(false); return} const reader=new FileReader(); reader.onload=async()=>{let dataUrl=reader.result, pendingImageId=''; if(imageNeedsModeration()){const m=await submitImageForApproval(dataUrl,'paste.png'); if(m.blocked){resolve(false); return} dataUrl=m.dataUrl; pendingImageId=m.imageId||''} const probe=new Image(); probe.onload=()=>{let w=probe.width,h=probe.height; const maxDim=600; if(Math.max(w,h)>maxDim){const s=maxDim/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s)} const extra=pendingImageId?{pendingImageId}:{}; addObj(makeObj('image',120,120,Math.max(40,w),Math.max(40,h),{src:dataUrl,fill:'none',stroke:'#000',strokeWidth:1,...extra})); if(pendingImageId) ensurePendingImagePoller(); else setStatus(label||'Image pasted.','success'); resolve(true)}; probe.onerror=()=>resolve(false); probe.src=dataUrl}; reader.onerror=()=>resolve(false); reader.readAsDataURL(blob)})}
 async function smartPaste(){if(navigator.clipboard&&navigator.clipboard.read){try{const items=await navigator.clipboard.read(); for(const item of items){const imgType=item.types.find(t=>t.startsWith('image/')); if(imgType){const blob=await item.getType(imgType); if(await pasteBlobAsImage(blob,'Image pasted from clipboard.')) return}}}catch(_){}} pasteClipboard()}
 function svgUrlToPngBlob(svgDataUrl,bgFill='#ffffff',minWidth=1600){return new Promise((resolve,reject)=>{const img=new Image(); img.onload=()=>{const naturalW=img.naturalWidth||img.width||800, naturalH=img.naturalHeight||img.height||600; const aspect=naturalH/naturalW; const w=Math.max(minWidth,naturalW*2); const h=Math.max(40,Math.round(w*aspect)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const cx=cv.getContext('2d'); if(bgFill){cx.fillStyle=bgFill; cx.fillRect(0,0,w,h)} try{cx.drawImage(img,0,0,w,h)}catch(err){reject(err); return} cv.toBlob(b=>{if(b) resolve(b); else reject(new Error('PNG encode failed'))},'image/png')}; img.onerror=()=>reject(new Error('SVG decode failed')); img.src=svgDataUrl})}
 async function copySelectionAsPngBlob(){if(!selectedIds.length) throw new Error('No selection.'); const objs=selectedIds.map(findObj).filter(Boolean); if(!objs.length) throw new Error('No selection.'); const pad=20; let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity; for(const o of objs){const b=normBox(o); if(b.w<=0||b.h<=0) continue; minX=Math.min(minX,b.x); minY=Math.min(minY,b.y); maxX=Math.max(maxX,b.x+b.w); maxY=Math.max(maxY,b.y+b.h)} if(!isFinite(minX)) throw new Error('Selection has no extent.'); minX-=pad; minY-=pad; maxX+=pad; maxY+=pad; const bbox={x:minX,y:minY,w:maxX-minX,h:maxY-minY}; const fullCv=await exportCanvas(); const scaleX=fullCv.width/svg.clientWidth; const scaleY=fullCv.height/svg.clientHeight; const cx=Math.max(0,bbox.x*zoom*scaleX), cy=Math.max(0,bbox.y*zoom*scaleY); const cw=Math.min(fullCv.width-cx,bbox.w*zoom*scaleX), ch=Math.min(fullCv.height-cy,bbox.h*zoom*scaleY); const cv=document.createElement('canvas'); cv.width=Math.max(20,Math.round(cw)); cv.height=Math.max(20,Math.round(ch)); const ctx=cv.getContext('2d'); ctx.drawImage(fullCv,cx,cy,cw,ch,0,0,cv.width,cv.height); return new Promise((resolve,reject)=>{cv.toBlob(b=>b?resolve(b):reject(new Error('PNG encode failed')),'image/png')})}
@@ -3047,18 +3047,87 @@ function batchImagePosition(index,w,h){
   const cols=3, gap=28, startX=80, startY=80, col=index%cols, row=Math.floor(index/cols);
   return {x:startX+col*(Math.min(w,220)+gap), y:startY+row*(Math.min(h,170)+gap)};
 }
-async function addImageDataUrlToBoard(src,offset=0,batch=false){
+const PENDING_IMAGE_PLACEHOLDER='data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" viewBox="0 0 240 180"><rect width="240" height="180" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><circle cx="120" cy="78" r="22" fill="none" stroke="#d97706" stroke-width="3"/><path d="M120 64 V78 L132 86" stroke="#d97706" stroke-width="3" stroke-linecap="round" fill="none"/><text x="120" y="128" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#92400e">Pending teacher approval</text><text x="120" y="148" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#92400e">Image appears once approved.</text></svg>');
+const REJECTED_IMAGE_PLACEHOLDER='data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" viewBox="0 0 240 180"><rect width="240" height="180" rx="12" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/><circle cx="120" cy="78" r="22" fill="none" stroke="#b91c1c" stroke-width="3"/><path d="M104 62 L136 94 M136 62 L104 94" stroke="#b91c1c" stroke-width="3" stroke-linecap="round" fill="none"/><text x="120" y="128" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#7f1d1d">Image rejected</text><text x="120" y="148" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#7f1d1d">Ask your teacher for details.</text></svg>');
+
+function imageNeedsModeration(){return !!(board&&board.mode==='student'&&googleScriptUrl())}
+async function submitImageForApproval(dataUrl,fileName){
+  const url=googleScriptUrl();
+  if(!url) return {approved:true,dataUrl,imageId:''};
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({
+      action:'uploadImage',
+      dataUrl,
+      fileName:fileName||'image.png',
+      boardId:(board&&board.boardId)||'',
+      roomId:(typeof collabRoom!=='undefined'&&collabRoom)||'',
+      uploadedBy:(board&&board.studentName)||'',
+      uploaderRole:(board&&board.mode==='student')?'student':'teacher'
+    })});
+    const out=await res.json();
+    if(!out.ok){setStatus(out.error||'Image upload blocked by safety filter.','danger'); return {approved:false,blocked:true};}
+    if(out.status==='approved') return {approved:true,dataUrl:out.src||dataUrl,imageId:out.id||''};
+    setStatus('Image sent to teacher for approval.','success');
+    return {approved:false,pending:true,imageId:out.id,dataUrl:PENDING_IMAGE_PLACEHOLDER};
+  }catch(err){setStatus('Image upload failed: '+err.message,'danger'); return {approved:false,blocked:true};}
+}
+let _pendingImagePoller=null;
+function listPendingImageObjects(){
+  const out=[];
+  (board&&board.panels?board.panels:[]).forEach(p=>(p.objects||[]).forEach(o=>{if(o&&o.pendingImageId) out.push(o)}));
+  return out;
+}
+function setObjectImageSrc(o,src){
+  if(!o) return;
+  if(o.type==='image') o.src=src;
+  else if(o.type==='sticky') o.imageSrc=src;
+  else if(o.type==='stamp') o.stampSrc=src;
+}
+async function pollPendingImages(){
+  const url=googleScriptUrl(); if(!url){if(_pendingImagePoller){clearInterval(_pendingImagePoller); _pendingImagePoller=null} return}
+  const pending=listPendingImageObjects();
+  if(!pending.length){if(_pendingImagePoller){clearInterval(_pendingImagePoller); _pendingImagePoller=null} return}
+  let changed=false;
+  for(const o of pending){
+    try{
+      const res=await fetch(url+'?action=imageQueueResolve&id='+encodeURIComponent(o.pendingImageId));
+      const out=await res.json();
+      if(!out.ok) continue;
+      if(out.status==='approved'&&out.src){setObjectImageSrc(o,out.src); delete o.pendingImageId; changed=true}
+      else if(out.status==='rejected'){setObjectImageSrc(o,REJECTED_IMAGE_PLACEHOLDER); delete o.pendingImageId; changed=true}
+    }catch(err){}
+  }
+  if(changed){render(); saveState(false)}
+}
+function ensurePendingImagePoller(){
+  if(_pendingImagePoller) return;
+  if(!listPendingImageObjects().length) return;
+  _pendingImagePoller=setInterval(pollPendingImages,8000);
+  setTimeout(pollPendingImages,1500);
+}
+async function addImageDataUrlToBoard(src,offset=0,batch=false,opts={}){
   const meta=await transparentContentCrop(src);
   let naturalW=meta.naturalW||0,naturalH=meta.naturalH||0,w=320,h=220;
   if(naturalW&&naturalH){const visibleW=meta.crop?meta.crop.w*naturalW:naturalW, visibleH=meta.crop?meta.crop.h*naturalH:naturalH; const s=Math.min(1,480/Math.max(visibleW,visibleH)); w=Math.max(40,Math.round(visibleW*s)); h=Math.max(40,Math.round(visibleH*s))}
   const pos=batch?batchImagePosition(offset,w,h):{x:80+offset*28,y:80+offset*28};
-  panel().objects.push(makeObj('image',pos.x,pos.y,w,h,{src,fill:'none',stroke:'#000',strokeWidth:1,naturalW,naturalH,...(meta.crop?{crop:meta.crop}: {})}));
+  const extra=opts&&opts.pendingImageId?{pendingImageId:opts.pendingImageId}:{};
+  panel().objects.push(makeObj('image',pos.x,pos.y,w,h,{src,fill:'none',stroke:'#000',strokeWidth:1,naturalW,naturalH,...(meta.crop?{crop:meta.crop}: {}),...extra}));
   return true;
 }
 function addImageFileToBoard(f,offset=0,batch=false){
   return new Promise(resolve=>{
     const r=new FileReader();
-    r.onload=async()=>resolve(await addImageDataUrlToBoard(r.result,offset,batch));
+    r.onload=async()=>{
+      let src=r.result, pendingImageId='';
+      if(imageNeedsModeration()){
+        const m=await submitImageForApproval(src,f.name||'image.png');
+        if(m.blocked){resolve(false); return}
+        src=m.dataUrl; pendingImageId=m.imageId||'';
+      }
+      const ok=await addImageDataUrlToBoard(src,offset,batch,{pendingImageId});
+      if(pendingImageId) ensurePendingImagePoller();
+      resolve(ok);
+    };
     r.onerror=()=>resolve(false);
     r.readAsDataURL(f);
   });
@@ -3126,8 +3195,8 @@ gid('imageInput').onchange=async e=>{
   if(added.length){selectedIds=panel().objects.slice(-added.length).map(o=>o.id); render(); saveState(); setStatus('Added '+added.length+' image'+(added.length===1?'':'s')+'.','success')}
   e.target.value='';
 };
-gid('stickyImageInput').onchange=async e=>{const f=e.target.files[0], o=currentObj(); if(!f||!o||o.type!=='sticky') return; if(!(await validateImageDeep(f))){e.target.value='';return} const r=new FileReader(); r.onload=()=>{o.imageSrc=r.result; render(); saveState()}; r.readAsDataURL(f); e.target.value=''};
-gid('customStickerInput').onchange=async e=>{const f=e.target.files[0]; if(!f) return; if(!(await validateImageDeep(f))){e.target.value='';return} const r=new FileReader(); r.onload=()=>addObj(makeObj('stamp',90,90,104,104,{stampLabel:(f.name||'Sticker').replace(/\.[^.]+$/,''),stampBg:'#ffffff',stampSrc:r.result,fill:'none',stroke:'none',strokeWidth:0})); r.readAsDataURL(f); e.target.value=''};
+gid('stickyImageInput').onchange=async e=>{const f=e.target.files[0], o=currentObj(); if(!f||!o||o.type!=='sticky') return; if(!(await validateImageDeep(f))){e.target.value='';return} const r=new FileReader(); r.onload=async()=>{let src=r.result, pendingImageId=''; if(imageNeedsModeration()){const m=await submitImageForApproval(src,f.name||'sticky.png'); if(m.blocked){e.target.value=''; return} src=m.dataUrl; pendingImageId=m.imageId||''} o.imageSrc=src; if(pendingImageId){o.pendingImageId=pendingImageId; ensurePendingImagePoller()}else if(o.pendingImageId) delete o.pendingImageId; render(); saveState()}; r.readAsDataURL(f); e.target.value=''};
+gid('customStickerInput').onchange=async e=>{const f=e.target.files[0]; if(!f) return; if(!(await validateImageDeep(f))){e.target.value='';return} const r=new FileReader(); r.onload=async()=>{let src=r.result, pendingImageId=''; if(imageNeedsModeration()){const m=await submitImageForApproval(src,f.name||'sticker.png'); if(m.blocked){e.target.value=''; return} src=m.dataUrl; pendingImageId=m.imageId||''} const obj=makeObj('stamp',90,90,104,104,{stampLabel:(f.name||'Sticker').replace(/\.[^.]+$/,''),stampBg:'#ffffff',stampSrc:src,fill:'none',stroke:'none',strokeWidth:0}); if(pendingImageId) obj.pendingImageId=pendingImageId; addObj(obj); if(pendingImageId) ensurePendingImagePoller()}; r.readAsDataURL(f); e.target.value=''};
 gid('audioInput').onchange=e=>{const f=e.target.files[0], o=currentObj(); if(!f||!o||o.type!=='audio') return; if(!validateUpload(f,'audio')){e.target.value='';return} const r=new FileReader(); r.onload=()=>setAudioOnCurrent(r.result,f.name||'Audio file'); r.readAsDataURL(f); e.target.value=''};
 function compressImageForBg(file,maxDim=1600,quality=0.85){return new Promise((resolve,reject)=>{const fr=new FileReader(); fr.onload=()=>{const img=new Image(); img.onload=()=>{const scale=Math.min(1,maxDim/Math.max(img.width,img.height)); const w=Math.max(1,Math.round(img.width*scale)), h=Math.max(1,Math.round(img.height*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const cx=cv.getContext('2d'); cx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg',quality))}; img.onerror=()=>reject(new Error('decode failed')); img.src=fr.result}; fr.onerror=()=>reject(new Error('read failed')); fr.readAsDataURL(file)})}
 function transparentContentCrop(dataUrl){return new Promise(resolve=>{const img=new Image(); img.onload=()=>{try{const w=img.width,h=img.height;if(!w||!h||w*h>12000000)return resolve({naturalW:w,naturalH:h});const cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);const px=cx.getImageData(0,0,w,h).data;let minX=w,minY=h,maxX=-1,maxY=-1,hasAlpha=false;for(let y=0;y<h;y++){for(let x=0;x<w;x++){const a=px[(y*w+x)*4+3];if(a<250)hasAlpha=true;if(a>12){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}}}if(!hasAlpha||maxX<0)return resolve({naturalW:w,naturalH:h});const pad=Math.max(2,Math.round(Math.min(w,h)*0.01));minX=Math.max(0,minX-pad);minY=Math.max(0,minY-pad);maxX=Math.min(w-1,maxX+pad);maxY=Math.min(h-1,maxY+pad);const cropW=maxX-minX+1,cropH=maxY-minY+1;if(cropW>w*0.96&&cropH>h*0.96)return resolve({naturalW:w,naturalH:h});resolve({naturalW:w,naturalH:h,crop:{x:minX/w,y:minY/h,w:cropW/w,h:cropH/h}})}catch(_){resolve({naturalW:img.width||0,naturalH:img.height||0})}};img.onerror=()=>resolve({});img.src=dataUrl})}

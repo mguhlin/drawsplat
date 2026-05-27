@@ -825,6 +825,11 @@ sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter
 .policy-table th,.policy-table td{border:1px solid #e4e7f1;padding:11px;vertical-align:top;text-align:left}
 .policy-table th{background:#f6f2ff;color:#172033}
 .policy-table td{color:#4b5563}
+.evidence-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0 0}
+.evidence-gallery figure{margin:0;background:#fafbff;border:1px solid #e4e7f1;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.evidence-gallery img{width:100%;height:auto;border:1px solid #e4e7f1;border-radius:10px;display:block}
+.evidence-placeholder{min-height:140px;border:2px dashed #c7d2fe;border-radius:10px;background:repeating-linear-gradient(45deg,#f7f8ff,#f7f8ff 6px,#eef0fa 6px,#eef0fa 12px);color:#4f46e5;font-size:13px;font-weight:600;line-height:1.5;padding:14px;display:flex;align-items:center;text-align:left}
+.evidence-gallery figcaption{font-size:13px;color:#4b5563;line-height:1.4}
 .signature-line{font-family:ui-monospace,Menlo,monospace;color:#4b5563}
 .policy-builder-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.85fr);gap:18px;margin:16px 0 48px}
 .policy-builder-form,.policy-builder-preview{background:#fff;border:1px solid #e4e7f1;border-radius:16px;box-shadow:0 12px 34px #1720330d;padding:22px}
