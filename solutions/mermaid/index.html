@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mermaid Diagram Studio — DrawSplatTM</title>
+  <meta name="description" content="Standalone Mermaid diagram editor with live preview, templates for flowcharts, sequence, mind maps, pie, Gantt, timeline, class, and state. Download as SVG or PNG.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M6 8h4l3 6 3-6h4v16h-4v-9l-2 4h-2l-2-4v9H6z'/%3E%3C/svg%3E">
+  <script src="../../vendor/mermaid.min.js" defer onerror="window.__mermaidMissing=true"></script>
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 16px 34px rgba(64, 64, 65, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg,
+        var(--navy) 0 28%,
+        var(--gold) 28% 46%,
+        var(--orange) 46% 58%,
+        var(--red) 58% 70%,
+        var(--blue) 70% 84%,
+        var(--green) 84% 94%,
+        var(--yellow) 94% 100%);
+    }
+    .page {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+    .title-block { display: grid; gap: 8px; }
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: .95;
+    }
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 22px;
+    }
+    @media (max-width: 940px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+    .panel, .stage {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .panel { padding: 18px; }
+    .panel h2 {
+      margin: 0 0 12px;
+      color: var(--black);
+      font-size: 1.15rem;
+    }
+    .panel h3 {
+      margin: 16px 0 8px;
+      color: var(--gray-90);
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .template-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .template-grid button {
+      min-height: 40px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      text-align: left;
+    }
+    .template-grid button:hover { border-color: var(--navy); color: var(--navy); }
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      color: var(--black);
+      background: var(--white);
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+    }
+    .stage { padding: 18px; min-height: 600px; }
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stage-head h2 {
+      margin: 0;
+      color: var(--black);
+      font-size: 1.15rem;
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(280px, 1.4fr);
+      gap: 14px;
+    }
+    @media (max-width: 820px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+    textarea#mermaidSource {
+      width: 100%;
+      min-height: 460px;
+      padding: 12px;
+      color: var(--black);
+      background: var(--gray-10);
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .92rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .mermaid-preview {
+      min-height: 460px;
+      padding: 14px;
+      border: 2px dashed var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      overflow: auto;
+      display: grid;
+      place-items: center;
+    }
+    .mermaid-preview svg {
+      max-width: 100%;
+      height: auto;
+    }
+    .mermaid-error {
+      color: var(--red);
+      font-weight: 800;
+      padding: 12px;
+      border-left: 4px solid var(--red);
+      background: #fef2f2;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-size: .9rem;
+      width: 100%;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .button {
+      min-height: 44px;
+      padding: 9px 14px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+    }
+    .button.primary { color: var(--white); background: var(--navy); }
+    .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
+    .button:disabled { opacity: .5; cursor: not-allowed; }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-weight: 800;
+      min-height: 1.2em;
+    }
+    .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
+    .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
+    .status:empty { display: none; }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.45;
+    }
+    .footer-note a { color: var(--navy); }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1>Mermaid Diagram Studio</h1>
+        <p class="subtitle">Type or paste Mermaid syntax on the left, preview on the right. Use templates for flowcharts, sequence diagrams, mind maps, pie charts, Gantt charts, timelines, class diagrams, and state diagrams. Download as SVG or PNG, or copy to clipboard.</p>
+      </div>
+      <div class="header-actions">
+        <a class="secondary-link" href="../../pages/features.html">All Tools</a>
+        <a class="home-link" href="../../app/whiteboard.html">Open Whiteboard</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <aside class="panel" aria-label="Templates and options">
+        <h2>Templates</h2>
+        <div class="template-grid" id="templateGrid">
+          <button type="button" data-mtpl="flowchart">Flowchart</button>
+          <button type="button" data-mtpl="pie">Pie Chart</button>
+          <button type="button" data-mtpl="sequence">Sequence</button>
+          <button type="button" data-mtpl="mindmap">Mind Map</button>
+          <button type="button" data-mtpl="gantt">Gantt</button>
+          <button type="button" data-mtpl="timeline">Timeline</button>
+          <button type="button" data-mtpl="class">Class</button>
+          <button type="button" data-mtpl="state">State</button>
+        </div>
+
+        <h3>Template language</h3>
+        <div class="field">
+          <label for="langSelect">Language</label>
+          <select id="langSelect">
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="vi">Vietnamese</option>
+            <option value="ar">Arabic</option>
+            <option value="zh">Chinese</option>
+            <option value="uh">Urdu / Hindi</option>
+          </select>
+        </div>
+
+        <h3>About</h3>
+        <p class="footer-note">Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
+      </aside>
+
+      <section class="stage" aria-label="Mermaid editor">
+        <div class="stage-head">
+          <h2>Editor &amp; Preview</h2>
+        </div>
+        <div class="editor-grid">
+          <textarea id="mermaidSource" spellcheck="false" aria-label="Mermaid source"></textarea>
+          <div id="mermaidPreview" class="mermaid-preview" aria-live="polite" aria-label="Diagram preview"></div>
+        </div>
+        <div class="actions">
+          <button class="button primary" id="renderBtn" type="button">Render Now</button>
+          <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
+          <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
+          <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
+          <button class="button gold" id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="status" id="statusLine" role="status"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const sourceEl = $('mermaidSource');
+  const previewEl = $('mermaidPreview');
+  const statusEl = $('statusLine');
+  const langSel = $('langSelect');
+
+  const MERMAID_TEMPLATES = {
+    en:{flowchart:'graph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Continue]\n  B -->|No| D[Stop]',pie:'pie title Favorite Subjects\n  "Math" : 30\n  "Science" : 25\n  "English" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: Has a question\n  Teacher->>Student: Provides an answer\n  Student->>Notebook: Writes down notes',mindmap:'mindmap\n  root((Topic))\n    Idea 1\n      Detail A\n      Detail B\n    Idea 2\n      Detail C\n    Idea 3\n      Detail D\n      Detail E',gantt:'gantt\n  title Project Timeline\n  dateFormat YYYY-MM-DD\n  section Planning\n    Outline   :a1, 2026-01-01, 7d\n    Research  :a2, after a1, 14d\n  section Build\n    Draft     :b1, after a2, 21d\n    Review    :b2, after b1, 7d',timeline:'timeline\n  title School Year\n  August    : Welcome week\n  October   : Midterms\n  December  : Holiday break\n  March     : Spring break\n  May       : Final exams',class:'classDiagram\n  class Animal {\n    +String name\n    +int age\n    +makeSound()\n  }\n  class Dog {\n    +String breed\n    +bark()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : start\n  Working --> Review : submit\n  Review --> Working : revise\n  Review --> Done : approve\n  Done --> [*]'},
+    es:{flowchart:'graph TD\n  A[Inicio] --> B{Decisión}\n  B -->|Sí| C[Continuar]\n  B -->|No| D[Detener]',pie:'pie title Materias favoritas\n  "Matemáticas" : 30\n  "Ciencias" : 25\n  "Español" : 20\n  "Arte" : 15\n  "Otra" : 10',sequence:'sequenceDiagram\n  Estudiante->>Docente: Tiene una pregunta\n  Docente->>Estudiante: Da una respuesta\n  Estudiante->>Cuaderno: Escribe notas',mindmap:'mindmap\n  root((Tema))\n    Idea 1\n      Detalle A\n      Detalle B\n    Idea 2\n      Detalle C\n    Idea 3\n      Detalle D\n      Detalle E',gantt:'gantt\n  title Cronograma del proyecto\n  dateFormat YYYY-MM-DD\n  section Planificación\n    Esquema   :a1, 2026-01-01, 7d\n    Investigación  :a2, after a1, 14d\n  section Construcción\n    Borrador     :b1, after a2, 21d\n    Revisión    :b2, after b1, 7d',timeline:'timeline\n  title Año escolar\n  Agosto    : Semana de bienvenida\n  Octubre   : Exámenes parciales\n  Diciembre  : Vacaciones\n  Marzo     : Descanso de primavera\n  Mayo       : Exámenes finales',class:'classDiagram\n  class Animal {\n    +String nombre\n    +int edad\n    +hacerSonido()\n  }\n  class Perro {\n    +String raza\n    +ladrar()\n  }\n  Animal <|-- Perro',state:'stateDiagram-v2\n  [*] --> Inactivo\n  Inactivo --> Trabajando : iniciar\n  Trabajando --> Revisión : enviar\n  Revisión --> Trabajando : revisar\n  Revisión --> Terminado : aprobar\n  Terminado --> [*]'},
+    vi:{flowchart:'graph TD\n  A[Bắt đầu] --> B{Quyết định}\n  B -->|Có| C[Tiếp tục]\n  B -->|Không| D[Dừng]',pie:'pie title Môn học yêu thích\n  "Toán" : 30\n  "Khoa học" : 25\n  "Tiếng Việt" : 20\n  "Nghệ thuật" : 15\n  "Khác" : 10',sequence:'sequenceDiagram\n  Học_sinh->>Giáo_viên: Có câu hỏi\n  Giáo_viên->>Học_sinh: Trả lời\n  Học_sinh->>Vở: Ghi chú',mindmap:'mindmap\n  root((Chủ đề))\n    Ý tưởng 1\n      Chi tiết A\n      Chi tiết B\n    Ý tưởng 2\n      Chi tiết C\n    Ý tưởng 3\n      Chi tiết D\n      Chi tiết E',gantt:'gantt\n  title Tiến độ dự án\n  dateFormat YYYY-MM-DD\n  section Lập kế hoạch\n    Dàn ý   :a1, 2026-01-01, 7d\n    Nghiên cứu  :a2, after a1, 14d\n  section Thực hiện\n    Bản nháp     :b1, after a2, 21d\n    Xem lại    :b2, after b1, 7d',timeline:'timeline\n  title Năm học\n  Tháng 8    : Tuần chào mừng\n  Tháng 10   : Kiểm tra giữa kỳ\n  Tháng 12  : Nghỉ lễ\n  Tháng 3     : Nghỉ xuân\n  Tháng 5       : Kiểm tra cuối kỳ',class:'classDiagram\n  class Động_vật {\n    +String tên\n    +int tuổi\n    +phátÂm()\n  }\n  class Chó {\n    +String giống\n    +sủa()\n  }\n  Động_vật <|-- Chó',state:'stateDiagram-v2\n  [*] --> Chờ\n  Chờ --> Làm_việc : bắt đầu\n  Làm_việc --> Xem_lại : nộp\n  Xem_lại --> Làm_việc : sửa\n  Xem_lại --> Hoàn_thành : duyệt\n  Hoàn_thành --> [*]'},
+    ar:{flowchart:'graph TD\n  A[البداية] --> B{قرار}\n  B -->|نعم| C[متابعة]\n  B -->|لا| D[توقف]',pie:'pie title المواد المفضلة\n  "رياضيات" : 30\n  "علوم" : 25\n  "لغة" : 20\n  "فن" : 15\n  "أخرى" : 10',sequence:'sequenceDiagram\n  طالب->>معلم: لديه سؤال\n  معلم->>طالب: يقدم إجابة\n  طالب->>دفتر: يكتب ملاحظات',mindmap:'mindmap\n  root((موضوع))\n    فكرة 1\n      تفصيل A\n      تفصيل B\n    فكرة 2\n      تفصيل C\n    فكرة 3\n      تفصيل D\n      تفصيل E',gantt:'gantt\n  title الجدول الزمني للمشروع\n  dateFormat YYYY-MM-DD\n  section تخطيط\n    مخطط   :a1, 2026-01-01, 7d\n    بحث  :a2, after a1, 14d\n  section بناء\n    مسودة     :b1, after a2, 21d\n    مراجعة    :b2, after b1, 7d',timeline:'timeline\n  title العام الدراسي\n  أغسطس    : أسبوع الترحيب\n  أكتوبر   : اختبارات منتصف الفصل\n  ديسمبر  : عطلة\n  مارس     : عطلة الربيع\n  مايو       : الاختبارات النهائية',class:'classDiagram\n  class حيوان {\n    +String اسم\n    +int عمر\n    +إصدار_صوت()\n  }\n  class كلب {\n    +String سلالة\n    +نباح()\n  }\n  حيوان <|-- كلب',state:'stateDiagram-v2\n  [*] --> خامل\n  خامل --> يعمل : ابدأ\n  يعمل --> مراجعة : إرسال\n  مراجعة --> يعمل : تعديل\n  مراجعة --> منجز : اعتماد\n  منجز --> [*]'},
+    zh:{flowchart:'graph TD\n  A[开始] --> B{决定}\n  B -->|是| C[继续]\n  B -->|否| D[停止]',pie:'pie title 最喜欢的科目\n  "数学" : 30\n  "科学" : 25\n  "语文" : 20\n  "艺术" : 15\n  "其他" : 10',sequence:'sequenceDiagram\n  学生->>教师: 有问题\n  教师->>学生: 给出答案\n  学生->>笔记本: 写下笔记',mindmap:'mindmap\n  root((主题))\n    想法 1\n      细节 A\n      细节 B\n    想法 2\n      细节 C\n    想法 3\n      细节 D\n      细节 E',gantt:'gantt\n  title 项目时间表\n  dateFormat YYYY-MM-DD\n  section 计划\n    大纲   :a1, 2026-01-01, 7d\n    研究  :a2, after a1, 14d\n  section 制作\n    草稿     :b1, after a2, 21d\n    审阅    :b2, after b1, 7d',timeline:'timeline\n  title 学年\n  八月    : 欢迎周\n  十月   : 期中考试\n  十二月  : 假期\n  三月     : 春假\n  五月       : 期末考试',class:'classDiagram\n  class 动物 {\n    +String 名称\n    +int 年龄\n    +发声()\n  }\n  class 狗 {\n    +String 品种\n    +叫()\n  }\n  动物 <|-- 狗',state:'stateDiagram-v2\n  [*] --> 空闲\n  空闲 --> 工作中 : 开始\n  工作中 --> 审阅 : 提交\n  审阅 --> 工作中 : 修改\n  审阅 --> 完成 : 批准\n  完成 --> [*]'},
+    uh:{flowchart:'graph TD\n  A[शुरू / شروع] --> B{निर्णय / فیصلہ}\n  B -->|हाँ / ہاں| C[जारी रखें / جاری رکھیں]\n  B -->|नहीं / نہیں| D[रोकें / روکیں]',pie:'pie title पसंदीदा विषय / پسندیدہ مضامین\n  "Math" : 30\n  "Science" : 25\n  "Language" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: प्रश्न है / سوال ہے\n  Teacher->>Student: उत्तर देता है / جواب دیتا ہے\n  Student->>Notebook: नोट लिखता है / نوٹ لکھتا ہے',mindmap:'mindmap\n  root((विषय / موضوع))\n    विचार 1\n      विवरण A\n      विवरण B\n    विचार 2\n      विवरण C\n    विचार 3\n      विवरण D\n      विवरण E',gantt:'gantt\n  title परियोजना समयरेखा / منصوبہ ٹائم لائن\n  dateFormat YYYY-MM-DD\n  section योजना / منصوبہ بندی\n    रूपरेखा   :a1, 2026-01-01, 7d\n    शोध  :a2, after a1, 14d\n  section निर्माण / تعمیر\n    मसौदा     :b1, after a2, 21d\n    समीक्षा    :b2, after b1, 7d',timeline:'timeline\n  title स्कूल वर्ष / تعلیمی سال\n  August    : स्वागत सप्ताह / خوش آمدید ہفتہ\n  October   : मध्यावधि / مڈٹرم\n  December  : छुट्टी / تعطیل\n  March     : वसंत अवकाश / بہار تعطیل\n  May       : अंतिम परीक्षा / آخری امتحان',class:'classDiagram\n  class Animal {\n    +String नाम\n    +int उम्र\n    +आवाज़()\n  }\n  class Dog {\n    +String नस्ल\n    +भौंकना()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : शुरू / شروع\n  Working --> Review : जमा / جمع\n  Review --> Working : सुधार / ترمیم\n  Review --> Done : मंजूर / منظور\n  Done --> [*]'}
+  };
+  const MERMAID_PALETTE = [
+    {fill:'#dbeafe',stroke:'#2563eb',text:'#1e3a8a'},
+    {fill:'#fce7f3',stroke:'#db2777',text:'#831843'},
+    {fill:'#d1fae5',stroke:'#059669',text:'#064e3b'},
+    {fill:'#ffedd5',stroke:'#ea580c',text:'#7c2d12'},
+    {fill:'#fef3c7',stroke:'#ca8a04',text:'#713f12'},
+    {fill:'#e9d5ff',stroke:'#7c3aed',text:'#581c87'}
+  ];
+
+  function setStatus(msg, kind){
+    statusEl.textContent = msg || '';
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function tpl(key){
+    const set = MERMAID_TEMPLATES[langSel.value] || MERMAID_TEMPLATES.en;
+    return set[key] || MERMAID_TEMPLATES.en[key] || '';
+  }
+  function applyPalette(svgString, source){
+    if(/classDef|:::/.test(source||'')) return svgString;
+    try{
+      const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+      const nodes = doc.querySelectorAll('g.node');
+      if(!nodes.length) return svgString;
+      nodes.forEach((node, i) => {
+        const c = MERMAID_PALETTE[i % MERMAID_PALETTE.length];
+        node.querySelectorAll('rect, polygon, circle, ellipse, path').forEach(shape => {
+          shape.setAttribute('fill', c.fill);
+          shape.setAttribute('stroke', c.stroke);
+          shape.setAttribute('stroke-width', '1.5');
+        });
+        node.querySelectorAll('text, tspan').forEach(t => {
+          t.setAttribute('fill', c.text);
+          t.setAttribute('style', (t.getAttribute('style')||'') + ';color:' + c.text);
+        });
+        node.querySelectorAll('foreignObject div, foreignObject span, foreignObject p').forEach(el => {
+          if(el.style) el.style.color = c.text;
+        });
+      });
+      return new XMLSerializer().serializeToString(doc);
+    } catch(_) { return svgString; }
+  }
+  function tightenSvgString(svgString, pad){
+    pad = pad || 12;
+    return new Promise(resolve => {
+      try {
+        const wrap = document.createElement('div');
+        Object.assign(wrap.style, {position:'absolute', left:'-10000px', top:'-10000px', opacity:'0', pointerEvents:'none'});
+        wrap.innerHTML = svgString;
+        const s = wrap.querySelector('svg');
+        if(!s) return resolve(svgString);
+        s.querySelectorAll('rect').forEach(r => {
+          const x = r.getAttribute('x')||'0', y = r.getAttribute('y')||'0',
+            w = r.getAttribute('width')||'', h = r.getAttribute('height')||'',
+            fill = (r.getAttribute('fill')||'').toLowerCase();
+          if((x==='0'||x==='0px')&&(y==='0'||y==='0px')&&(w==='100%'||h==='100%'||fill==='#fff'||fill==='#ffffff'||fill==='white'))
+            r.style.display = 'none';
+        });
+        document.body.appendChild(wrap);
+        requestAnimationFrame(() => {
+          try {
+            const b = s.getBBox();
+            document.body.removeChild(wrap);
+            if(!b||!isFinite(b.width)||!isFinite(b.height)||b.width<1||b.height<1) return resolve(svgString);
+            const x = Math.floor(b.x-pad), y = Math.floor(b.y-pad),
+              w = Math.ceil(b.width+pad*2), h = Math.ceil(b.height+pad*2);
+            s.setAttribute('viewBox', x+' '+y+' '+w+' '+h);
+            s.setAttribute('width', String(w));
+            s.setAttribute('height', String(h));
+            s.style.maxWidth = '';
+            s.style.height = '';
+            resolve(new XMLSerializer().serializeToString(s));
+          } catch(_) {
+            try{document.body.removeChild(wrap)}catch(__){}
+            resolve(svgString);
+          }
+        });
+      } catch(_) { resolve(svgString); }
+    });
+  }
+  let mermaidInited = false;
+  function ensureInit(){
+    if(mermaidInited) return true;
+    if(typeof window.mermaid === 'undefined') return false;
+    try {
+      window.mermaid.initialize({startOnLoad:false, theme:'default', securityLevel:'strict'});
+      mermaidInited = true;
+    } catch(_) {}
+    return mermaidInited;
+  }
+  async function renderColoredSvg(source){
+    if(!ensureInit()) throw new Error('Mermaid library not loaded');
+    const renderId = 'mr_' + Math.random().toString(36).slice(2);
+    const out = await window.mermaid.render(renderId, source);
+    const svg = out && out.svg ? out.svg : String(out||'');
+    return await tightenSvgString(applyPalette(svg, source), 14);
+  }
+  function showLibError(){
+    previewEl.innerHTML = '<div class="mermaid-error">Mermaid library failed to load. Make sure <code>vendor/mermaid.min.js</code> is present and reload the page.</div>';
+  }
+  async function renderPreview(){
+    const source = sourceEl.value;
+    if(window.__mermaidMissing) return showLibError();
+    if(!source.trim()) {
+      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Type Mermaid syntax on the left to preview here.</div>';
+      return;
+    }
+    if(!ensureInit()) {
+      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Loading Mermaid...</div>';
+      setTimeout(renderPreview, 200);
+      return;
+    }
+    try {
+      const renderId = 'mp_' + Math.random().toString(36).slice(2);
+      const out = await window.mermaid.render(renderId, source);
+      const raw = out && out.svg ? out.svg : String(out||'');
+      previewEl.innerHTML = applyPalette(raw, source);
+    } catch(err) {
+      previewEl.innerHTML = '<div class="mermaid-error">' + esc(err && err.message ? err.message : String(err)) + '</div>';
+    }
+  }
+  let previewTimer = null;
+  function schedulePreview(){
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(renderPreview, 300);
+  }
+  function svgToBlob(svgString, type){
+    return new Blob([svgString], {type: type || 'image/svg+xml;charset=utf-8'});
+  }
+  function svgUrlToPngBlob(svgDataUrl, minWidth){
+    minWidth = minWidth || 1600;
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const naturalW = img.naturalWidth || img.width || 800;
+        const naturalH = img.naturalHeight || img.height || 600;
+        const aspect = naturalH/naturalW;
+        const w = Math.max(minWidth, naturalW*2);
+        const h = Math.max(40, Math.round(w*aspect));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.fillStyle = '#ffffff';
+        cx.fillRect(0,0,w,h);
+        try { cx.drawImage(img, 0, 0, w, h); }
+        catch(err) { reject(err); return; }
+        cv.toBlob(b => {
+          if(b) resolve(b);
+          else reject(new Error('PNG encode failed'));
+        }, 'image/png');
+      };
+      img.onerror = () => reject(new Error('SVG decode failed'));
+      img.src = svgDataUrl;
+    });
+  }
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  }
+  function defaultBaseName(){
+    const s = sourceEl.value.trim();
+    const m = s.match(/title\s+(.+)/i) || s.match(/^([\w-]+)/);
+    const raw = (m ? m[1] : 'mermaid').toString().trim();
+    return (raw.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'mermaid').toLowerCase();
+  }
+
+  document.querySelectorAll('[data-mtpl]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mtpl;
+      const t = tpl(key);
+      if(!t) return;
+      sourceEl.value = t;
+      renderPreview();
+      setStatus('Loaded ' + key + ' template.', 'info');
+    });
+  });
+
+  sourceEl.addEventListener('input', schedulePreview);
+  langSel.addEventListener('change', () => {
+    setStatus('Template language updated. Click a template to load it in this language.', 'info');
+  });
+
+  $('renderBtn').addEventListener('click', () => { renderPreview(); setStatus('Re-rendered.', 'success'); });
+  $('clearBtn').addEventListener('click', () => {
+    sourceEl.value = '';
+    previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Type Mermaid syntax on the left to preview here.</div>';
+    setStatus('Editor cleared.', 'info');
+  });
+
+  $('downloadSvgBtn').addEventListener('click', async () => {
+    const source = sourceEl.value.trim();
+    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
+    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    try {
+      const svg = await renderColoredSvg(source);
+      downloadBlob(svgToBlob(svg), defaultBaseName() + '.svg');
+      setStatus('Downloaded SVG.', 'success');
+    } catch(err) {
+      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+    }
+  });
+
+  $('downloadPngBtn').addEventListener('click', async () => {
+    const source = sourceEl.value.trim();
+    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
+    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    try {
+      const svg = await renderColoredSvg(source);
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+      const blob = await svgUrlToPngBlob(dataUrl);
+      downloadBlob(blob, defaultBaseName() + '.png');
+      setStatus('Downloaded PNG.', 'success');
+    } catch(err) {
+      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+    }
+  });
+
+  $('copyPngBtn').addEventListener('click', async () => {
+    const source = sourceEl.value.trim();
+    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
+    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    if(!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
+      return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
+    try {
+      const svg = await renderColoredSvg(source);
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+      const blob = await svgUrlToPngBlob(dataUrl);
+      await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      setStatus('Diagram copied to clipboard as PNG.', 'success');
+    } catch(err) {
+      setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+    }
+  });
+
+  // Load default template on first run.
+  sourceEl.value = tpl('flowchart');
+  function waitAndRender(tries){
+    tries = tries || 0;
+    if(window.__mermaidMissing) return showLibError();
+    if(typeof window.mermaid !== 'undefined') return renderPreview();
+    if(tries > 25) return showLibError();
+    setTimeout(() => waitAndRender(tries + 1), 100);
+  }
+  waitAndRender();
+})();
+</script>
+</body>
+</html>

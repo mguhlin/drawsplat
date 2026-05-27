@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.83';
+const CACHE = 'drawsplat-v3.0.84';
 const SHELL = [
   './',
   './index.html',
@@ -42,8 +42,10 @@ const SHELL = [
   './solutions/coinflipping/index.html',
   './solutions/coinflipping/assets/coin-heads.png',
   './solutions/coinflipping/assets/coin-tails.png',
+  './solutions/concept-map/index.html',
   './solutions/dice/index.html',
   './solutions/markdown-studio/index.html',
+  './solutions/mermaid/index.html',
   './solutions/memepuzzle/index.html',
   './solutions/memepuzzle/student.html',
   './solutions/wordsearch/index.html',

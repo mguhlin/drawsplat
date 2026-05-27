@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Map Studio — DrawSplatTM</title>
+  <meta name="description" content="Standalone concept map and mind map builder. Use indented text to build a radial or left-to-right concept map with optional links, emoji, and images. Download as SVG or PNG.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 16px 34px rgba(64, 64, 65, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg,
+        var(--navy) 0 28%,
+        var(--gold) 28% 46%,
+        var(--orange) 46% 58%,
+        var(--red) 58% 70%,
+        var(--blue) 70% 84%,
+        var(--green) 84% 94%,
+        var(--yellow) 94% 100%);
+    }
+    .page {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+    .title-block { display: grid; gap: 8px; }
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: .95;
+    }
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 22px;
+    }
+    @media (max-width: 940px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+    .panel, .stage {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .panel { padding: 18px; }
+    .panel h2 {
+      margin: 0 0 12px;
+      color: var(--black);
+      font-size: 1.15rem;
+    }
+    .panel h3 {
+      margin: 16px 0 8px;
+      color: var(--gray-90);
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      color: var(--black);
+      background: var(--white);
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+    }
+    .syntax-help {
+      margin: 6px 0 0;
+      padding: 10px 12px;
+      background: var(--gray-10);
+      border-radius: 6px;
+      font-size: .82rem;
+      line-height: 1.5;
+      color: var(--gray-90);
+    }
+    .syntax-help code {
+      background: rgba(124, 58, 237, 0.1);
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: .85rem;
+    }
+    .stage { padding: 18px; min-height: 600px; }
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stage-head h2 {
+      margin: 0;
+      color: var(--black);
+      font-size: 1.15rem;
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(280px, 1.4fr);
+      gap: 14px;
+    }
+    @media (max-width: 820px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+    textarea#cmSource {
+      width: 100%;
+      min-height: 460px;
+      padding: 12px;
+      color: var(--black);
+      background: var(--gray-10);
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .92rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .cm-preview {
+      min-height: 460px;
+      padding: 14px;
+      border: 2px dashed var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      overflow: auto;
+      display: grid;
+      place-items: center;
+    }
+    .cm-preview svg { max-width: 100%; height: auto; }
+    .cm-error {
+      color: var(--red);
+      font-weight: 800;
+      padding: 12px;
+      border-left: 4px solid var(--red);
+      background: #fef2f2;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-size: .9rem;
+      width: 100%;
+    }
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .button {
+      min-height: 40px;
+      padding: 9px 14px;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+    }
+    .button.primary { color: var(--white); background: var(--navy); }
+    .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
+    .button:disabled { opacity: .5; cursor: not-allowed; }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-weight: 800;
+      min-height: 1.2em;
+    }
+    .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
+    .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
+    .status:empty { display: none; }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.45;
+    }
+    .footer-note a { color: var(--navy); }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1>Concept Map Studio</h1>
+        <p class="subtitle">Build classroom-ready concept maps and mind maps from indented text. Choose a radial layout or a left-to-right tree, attach images or links, and export as SVG or PNG.</p>
+      </div>
+      <div class="header-actions">
+        <a class="secondary-link" href="../../pages/features.html">All Tools</a>
+        <a class="home-link" href="../../app/whiteboard.html">Open Whiteboard</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <aside class="panel" aria-label="Options">
+        <h2>Layout</h2>
+        <div class="field">
+          <label for="cmLayout">Layout</label>
+          <select id="cmLayout">
+            <option value="radial">Radial mind map</option>
+            <option value="tree">Left-to-right concept map</option>
+          </select>
+        </div>
+
+        <h3>Syntax</h3>
+        <div class="syntax-help">
+          One node per line. Use leading hyphens to nest:
+          <br><code>Root</code>
+          <br><code>- Child</code>
+          <br><code>-- Grandchild</code>
+          <br><br>Each row supports up to three pipe-separated fields:
+          <br><code>label | link | emoji-or-image</code>
+          <br><br>The <strong>image</strong> field accepts an emoji (e.g. <code>🌱</code>) or an attached image (use the Add image button below the editor).
+        </div>
+
+        <h3>About</h3>
+        <p class="footer-note">Concept maps are rendered locally in your browser as SVG. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a finished map onto a board.</p>
+      </aside>
+
+      <section class="stage" aria-label="Concept map editor">
+        <div class="stage-head">
+          <h2>Editor &amp; Preview</h2>
+        </div>
+        <div class="editor-actions">
+          <button class="button" id="sampleBtn" type="button">Load Sample</button>
+          <button class="button" id="imageBtn" type="button">Add image to current line</button>
+          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+        </div>
+        <div class="editor-grid">
+          <textarea id="cmSource" spellcheck="false" aria-label="Concept map source"></textarea>
+          <div id="cmPreview" class="cm-preview" aria-live="polite" aria-label="Concept map preview"></div>
+        </div>
+        <div class="actions">
+          <button class="button primary" id="renderBtn" type="button">Render Now</button>
+          <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
+          <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
+          <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
+          <button class="button gold" id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="status" id="statusLine" role="status"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const sourceEl = $('cmSource');
+  const previewEl = $('cmPreview');
+  const layoutEl = $('cmLayout');
+  const statusEl = $('statusLine');
+
+  const SAMPLE = 'Ecosystems | https://education.nationalgeographic.org/\n- Producers | | 🌱\n-- Plants make food\n- Consumers | | 🐇\n-- Herbivores\n-- Carnivores\n- Decomposers | | 🍄\n- Energy Flow | https://www.si.edu/ | ⚡';
+
+  function setStatus(msg, kind){
+    statusEl.textContent = msg || '';
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function safeUrl(u){
+    const s = String(u||'').trim();
+    return /^(https?:\/\/|mailto:)/i.test(s) ? s : '';
+  }
+  function parseRows(text){
+    const nodes = [], stack = [];
+    String(text||'').split(/\n+/).forEach((raw, lineIndex) => {
+      if(!raw.trim()) return;
+      const indent = (raw.match(/^\s*/)||[''])[0].length;
+      const dash = (raw.trim().match(/^-+/)||[''])[0].length;
+      const depth = dash ? dash : Math.floor(indent/2);
+      const body = raw.trim().replace(/^-+\s*/, '');
+      const parts = body.split('|').map(s => s.trim());
+      const label = parts[0] || '';
+      const link = parts[1] || '';
+      const image = parts[2] || '';
+      if(!label) return;
+      const node = {id: nodes.length, label, link: safeUrl(link), image, depth: Math.max(0, depth), children: [], lineIndex};
+      while(stack.length && stack[stack.length-1].depth >= node.depth) stack.pop();
+      if(stack.length) {
+        node.parent = stack[stack.length-1].id;
+        stack[stack.length-1].children.push(node.id);
+      }
+      nodes.push(node); stack.push(node);
+    });
+    return nodes;
+  }
+  function layoutNodes(nodes, layout){
+    const W = 900, H = 560, pad = 70, levels = {};
+    nodes.forEach(n => (levels[n.depth]||(levels[n.depth]=[])).push(n));
+    if(layout === 'tree'){
+      const maxDepth = Math.max.apply(null, nodes.map(n => n.depth).concat([1]));
+      Object.entries(levels).forEach(([depth, list]) => {
+        const x = pad + (W - pad*2) * (+depth / Math.max(1, maxDepth));
+        list.forEach((n, i) => { n.x = x; n.y = pad + (H - pad*2) * ((i+1) / (list.length+1)); });
+      });
+    } else {
+      const root = nodes.find(n => typeof n.parent !== 'number') || nodes[0];
+      if(root){ root.x = W/2; root.y = H/2; }
+      const branches = nodes.filter(n => n.parent === (root ? root.id : -1));
+      branches.forEach((n, i) => {
+        const a = (Math.PI*2*i/Math.max(1, branches.length)) - Math.PI/2;
+        const r = 170;
+        n.x = W/2 + Math.cos(a)*r; n.y = H/2 + Math.sin(a)*r;
+        const kids = nodes.filter(k => k.parent === n.id);
+        kids.forEach((k, j) => {
+          const spread = (kids.length-1)*0.34;
+          const aa = a - spread/2 + j*.34;
+          const rr = 300;
+          k.x = W/2 + Math.cos(aa)*rr;
+          k.y = H/2 + Math.sin(aa)*rr;
+        });
+      });
+      nodes.filter(n => typeof n.x !== 'number').forEach((n, i) => {
+        const a = (Math.PI*2*i/Math.max(1, nodes.length)) - Math.PI/2;
+        const r = 235;
+        n.x = W/2 + Math.cos(a)*r; n.y = H/2 + Math.sin(a)*r;
+      });
+    }
+    nodes.forEach(n => { n.x = Math.max(80, Math.min(W-80, n.x)); n.y = Math.max(58, Math.min(H-58, n.y)); });
+    return {W, H, nodes};
+  }
+  function imageMarkup(value, x, y, size){
+    if(!value) return '';
+    if(/^(data:image\/|\.?\/?assets\/|blob:)/i.test(value))
+      return '<image href="' + esc(value) + '" x="' + (x - size/2) + '" y="' + (y - size/2) + '" width="' + size + '" height="' + size + '" preserveAspectRatio="xMidYMid meet"/>';
+    return '<text x="' + x + '" y="' + (y + size*.34) + '" font-family="Arial, sans-serif" font-size="' + size + '" text-anchor="middle">' + esc(value.slice(0, 4)) + '</text>';
+  }
+  function buildSvg(config){
+    const parsed = parseRows(config.source);
+    const layout = layoutNodes(parsed, config.layout || 'radial');
+    const nodes = layout.nodes, W = layout.W, H = layout.H;
+    if(!nodes.length) {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"><rect width="100%" height="100%" fill="#fff"/><text x="' + W/2 + '" y="' + H/2 + '" text-anchor="middle" font-family="Arial" font-size="22" fill="#64748b">Add one node per line.</text></svg>';
+    }
+    const colors = ['#dbeafe', '#fce7f3', '#d1fae5', '#ffedd5', '#fef3c7', '#e9d5ff'];
+    let body = '<rect width="100%" height="100%" rx="18" fill="#ffffff"/>';
+    nodes.filter(n => typeof n.parent === 'number').forEach(n => {
+      const p = nodes[n.parent];
+      if(p) body += '<path d="M ' + p.x + ' ' + p.y + ' C ' + ((p.x+n.x)/2) + ' ' + p.y + ', ' + ((p.x+n.x)/2) + ' ' + n.y + ', ' + n.x + ' ' + n.y + '" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>';
+    });
+    nodes.forEach(n => {
+      const isRoot = typeof n.parent !== 'number';
+      const w = Math.min(210, Math.max(118, n.label.length*8 + 52 + (n.image ? 34 : 0)));
+      const h = n.image ? 74 : 58;
+      const x = n.x - w/2, y = n.y - h/2;
+      const fill = isRoot ? '#7c3aed' : colors[n.depth % colors.length];
+      const stroke = isRoot ? '#5b21b6' : '#cbd5e1';
+      const text = isRoot ? '#fff' : '#111827';
+      const labelX = x + (n.image ? 58 : w/2);
+      const anchor = n.image ? 'start' : 'middle';
+      const image = imageMarkup(n.image, x + 32, n.y, 30);
+      const link = n.link
+        ? '<text x="' + (x + w - 24) + '" y="' + (y + 20) + '" font-family="Arial" font-size="17" fill="' + (isRoot ? '#fef3c7' : '#2563eb') + '">↗</text>' +
+          '<text x="' + (x + w/2) + '" y="' + (y + h - 9) + '" text-anchor="middle" font-family="Arial" font-size="9" fill="' + (isRoot ? '#ede9fe' : '#64748b') + '">' + esc(n.link.replace(/^https?:\/\//, '').slice(0, 32)) + '</text>'
+        : '';
+      body += '<g>' +
+        (n.link ? '<a href="' + esc(n.link) + '" target="_blank" rel="noopener noreferrer">' : '') +
+        '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="16" fill="' + fill + '" stroke="' + stroke + '" stroke-width="2"/>' +
+        '<title>' + esc(n.link || n.label) + '</title>' +
+        image +
+        '<text x="' + labelX + '" y="' + (y + (n.image ? 32 : 35)) + '" text-anchor="' + anchor + '" font-family="Arial" font-size="' + (isRoot ? 18 : 15) + '" font-weight="800" fill="' + text + '">' + esc(n.label).slice(0, 30) + '</text>' +
+        link +
+        (n.link ? '</a>' : '') +
+        '</g>';
+    });
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">' + body + '</svg>';
+  }
+  function configFromUI(){
+    return {layout: layoutEl.value, source: sourceEl.value};
+  }
+  function renderPreview(){
+    try {
+      const nodes = parseRows(sourceEl.value);
+      if(!nodes.length) {
+        previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Add at least one node on the left.</div>';
+        return;
+      }
+      previewEl.innerHTML = buildSvg(configFromUI());
+    } catch(err) {
+      previewEl.innerHTML = '<div class="cm-error">' + esc(err && err.message ? err.message : String(err)) + '</div>';
+    }
+  }
+  let previewTimer = null;
+  function schedulePreview(){
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(renderPreview, 200);
+  }
+  function svgToBlob(svgString){
+    return new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+  }
+  function svgUrlToPngBlob(svgDataUrl, minWidth){
+    minWidth = minWidth || 1600;
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const naturalW = img.naturalWidth || img.width || 900;
+        const naturalH = img.naturalHeight || img.height || 560;
+        const aspect = naturalH/naturalW;
+        const w = Math.max(minWidth, naturalW*2);
+        const h = Math.max(40, Math.round(w*aspect));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.fillStyle = '#ffffff';
+        cx.fillRect(0,0,w,h);
+        try { cx.drawImage(img, 0, 0, w, h); }
+        catch(err) { reject(err); return; }
+        cv.toBlob(b => {
+          if(b) resolve(b);
+          else reject(new Error('PNG encode failed'));
+        }, 'image/png');
+      };
+      img.onerror = () => reject(new Error('SVG decode failed'));
+      img.src = svgDataUrl;
+    });
+  }
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  }
+  function defaultBaseName(){
+    const lines = sourceEl.value.split('\n').map(l => l.trim()).filter(Boolean);
+    const first = (lines[0] || 'concept-map').split('|')[0].trim();
+    return (first.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'concept-map').toLowerCase();
+  }
+
+  sourceEl.addEventListener('input', schedulePreview);
+  layoutEl.addEventListener('change', renderPreview);
+
+  $('sampleBtn').addEventListener('click', () => {
+    sourceEl.value = SAMPLE;
+    renderPreview();
+    setStatus('Sample loaded.', 'info');
+  });
+  $('renderBtn').addEventListener('click', () => { renderPreview(); setStatus('Re-rendered.', 'success'); });
+  $('clearBtn').addEventListener('click', () => {
+    sourceEl.value = '';
+    previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Add at least one node on the left.</div>';
+    setStatus('Editor cleared.', 'info');
+  });
+
+  $('imageBtn').addEventListener('click', () => $('imageInput').click());
+  $('imageInput').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    if(!/^image\//.test(f.type)) {
+      setStatus('Please choose an image file.', 'danger');
+      e.target.value = '';
+      return;
+    }
+    if(f.size > 4 * 1024 * 1024) {
+      setStatus('Image is over 4 MB. Pick a smaller file.', 'danger');
+      e.target.value = '';
+      return;
+    }
+    const r = new FileReader();
+    r.onload = () => {
+      const ta = sourceEl;
+      const start = ta.selectionStart || 0;
+      const lines = ta.value.split('\n');
+      let pos = 0, idx = 0;
+      for(; idx < lines.length; idx++) {
+        if(start <= pos + lines[idx].length) break;
+        pos += lines[idx].length + 1;
+      }
+      const parts = (lines[idx] || 'New idea').split('|').map(s => s.trim());
+      while(parts.length < 3) parts.push('');
+      parts[2] = r.result;
+      lines[idx] = parts.join(' | ');
+      ta.value = lines.join('\n');
+      renderPreview();
+      setStatus('Image attached to the current line.', 'success');
+      e.target.value = '';
+    };
+    r.onerror = () => setStatus('Could not read image file.', 'danger');
+    r.readAsDataURL(f);
+  });
+
+  $('downloadSvgBtn').addEventListener('click', () => {
+    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
+    const svg = buildSvg(configFromUI());
+    downloadBlob(svgToBlob(svg), defaultBaseName() + '.svg');
+    setStatus('Downloaded SVG.', 'success');
+  });
+  $('downloadPngBtn').addEventListener('click', async () => {
+    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
+    try {
+      const svg = buildSvg(configFromUI());
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+      const blob = await svgUrlToPngBlob(dataUrl);
+      downloadBlob(blob, defaultBaseName() + '.png');
+      setStatus('Downloaded PNG.', 'success');
+    } catch(err) {
+      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+    }
+  });
+  $('copyPngBtn').addEventListener('click', async () => {
+    if(!parseRows(sourceEl.value).length) return setStatus('Add at least one node first.', 'danger');
+    if(!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
+      return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
+    try {
+      const svg = buildSvg(configFromUI());
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+      const blob = await svgUrlToPngBlob(dataUrl);
+      await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      setStatus('Concept map copied to clipboard as PNG.', 'success');
+    } catch(err) {
+      setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+    }
+  });
+
+  sourceEl.value = SAMPLE;
+  renderPreview();
+})();
+</script>
+</body>
+</html>
