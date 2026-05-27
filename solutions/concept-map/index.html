@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Concept Map Studio — DrawSplatTM</title>
-  <meta name="description" content="Interactive concept map and graphic organizer studio. Drag nodes, click to connect, label every connector, multi-select, group nodes, choose from 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
+  <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -200,8 +200,7 @@
     .canvas-toolbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 8px;
       padding: 6px 10px;
       background: var(--gray-10);
@@ -221,12 +220,36 @@
     .mode-pill.connect { background: var(--amber); }
     .hint-line {
       color: var(--gray-90);
-      font-size: .85rem;
+      font-size: .82rem;
       font-weight: 600;
       flex: 1;
+      min-width: 180px;
     }
+    .toolbar-cluster {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar-cluster .toolbar-icon-btn { border-radius: 0; }
+    .toolbar-cluster .toolbar-icon-btn:first-child { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+    .toolbar-cluster .toolbar-icon-btn:last-child { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+    .toolbar-cluster .toolbar-icon-btn + .toolbar-icon-btn { margin-left: -2px; }
+    .toolbar-icon-btn {
+      min-width: 32px;
+      min-height: 30px;
+      padding: 4px 9px;
+      border: 2px solid var(--gray-30);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      font-size: .8rem;
+      line-height: 1;
+      border-radius: 6px;
+    }
+    .toolbar-icon-btn:hover:not([disabled]) { border-color: var(--navy); color: var(--navy); }
+    .toolbar-icon-btn[disabled] { opacity: .4; cursor: not-allowed; }
     .toolbar-toggle {
-      min-height: 32px;
+      min-height: 30px;
       padding: 4px 12px;
       border: 2px solid var(--gray-30);
       border-radius: 999px;
@@ -249,6 +272,8 @@
         #ffffff;
     }
     .canvas-shell.no-grid { background: #ffffff; }
+    .canvas-shell.pan-mode svg#cmCanvas { cursor: grab; }
+    .canvas-shell.pan-mode.panning svg#cmCanvas { cursor: grabbing; }
     svg#cmCanvas {
       display: block;
       width: 100%;
@@ -341,7 +366,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1>Concept Map Studio</h1>
-        <p class="subtitle">Drag nodes, click to connect, label every connector, multi-select, group nodes, choose from 5 pastel colors. Start from a template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
+        <p class="subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
       </div>
       <div class="header-actions">
         <a class="secondary-link" href="../../pages/features.html">All Tools</a>
@@ -378,7 +403,7 @@
           <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button">Select / Drag</button>
           <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button">Connect Nodes</button>
         </div>
-        <p class="hint-text">Shift-click nodes to add to the selection. Drag on empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked.</p>
+        <p class="hint-text">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
 
         <h3>Add nodes</h3>
         <div class="tool-row">
@@ -418,7 +443,7 @@
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
         <h3>Selection</h3>
-        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag on empty canvas to rubber-band select. Click the white label box on a connector to edit its label.</div>
+        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click the white label box on a connector to edit its label.</div>
 
         <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
       </aside>
@@ -427,6 +452,16 @@
         <div class="canvas-toolbar">
           <span class="mode-pill" id="modeIndicator">Mode: Select / Drag</span>
           <span class="hint-line" id="hintLine">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
+          <span class="toolbar-cluster" role="group" aria-label="History">
+            <button class="toolbar-icon-btn" id="undoBtn" type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">↶ Undo</button>
+            <button class="toolbar-icon-btn" id="redoBtn" type="button" title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">↷ Redo</button>
+          </span>
+          <span class="toolbar-cluster" role="group" aria-label="Zoom">
+            <button class="toolbar-icon-btn" id="zoomOutBtn" type="button" title="Zoom out (−)" aria-label="Zoom out">−</button>
+            <button class="toolbar-icon-btn" id="zoomResetBtn" type="button" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+            <button class="toolbar-icon-btn" id="zoomInBtn" type="button" title="Zoom in (+)" aria-label="Zoom in">+</button>
+          </span>
+          <button class="toolbar-toggle" id="panToggleBtn" type="button" aria-pressed="false">Pan: Off</button>
           <button class="toolbar-toggle on" id="gridToggleBtn" type="button" aria-pressed="true">Grid: On</button>
         </div>
         <div class="canvas-shell" id="canvasShell">
@@ -439,7 +474,7 @@
           <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
           <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
           <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
-          <button class="button gold" id="centerBtn" type="button">Center View</button>
+          <button class="button gold" id="fitViewBtn" type="button">Fit View</button>
         </div>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
         <div class="status" id="statusLine" role="status"></div>
@@ -459,9 +494,12 @@
   const selInfoEl = document.getElementById('selectionInfo');
   const selectToolBtn = document.getElementById('selectToolBtn');
   const connectToolBtn = document.getElementById('connectToolBtn');
+  const undoBtn = document.getElementById('undoBtn');
+  const redoBtn = document.getElementById('redoBtn');
+  const zoomLabelBtn = document.getElementById('zoomResetBtn');
+  const panToggleBtn = document.getElementById('panToggleBtn');
+  const gridToggleBtn = document.getElementById('gridToggleBtn');
 
-  /* 5 classroom-pastel colours. New non-root nodes cycle through these in
-     order. Cycle Color steps a selected node forward through this list. */
   const PALETTE = [
     {name:'Pink',     fill:'#fce7f3', stroke:'#ec4899', text:'#831843'},
     {name:'Mint',     fill:'#d1fae5', stroke:'#10b981', text:'#064e3b'},
@@ -470,23 +508,31 @@
     {name:'Sky',      fill:'#dbeafe', stroke:'#3b82f6', text:'#1e3a8a'}
   ];
   const ROOT_STYLE = {fill:'#7c3aed', stroke:'#5b21b6', text:'#ffffff'};
+  /* CANVAS_W / CANVAS_H are the *unit* viewBox dimensions. The canvas is now
+     infinite — node positions are unbounded; the view is pan/zoomable. Export
+     "Fit View" recomputes a viewBox tight around the existing content. */
   const CANVAS_W = 1200, CANVAS_H = 720;
   const NODE_W = 184, NODE_H = 76;
-  const RUBBER_MIN = 5; // pixels before a click becomes a drag
+  const RUBBER_MIN = 5;
+  const HISTORY_LIMIT = 60;
+  const ZOOM_MIN = 0.18, ZOOM_MAX = 4.5;
 
   const state = {
     nodes: [],
     connectors: [],
     groups: [],
     nextId: 1,
-    selection: {kind: null, ids: []},     // kind: 'node' | 'connector' | 'group' | null
+    selection: {kind: null, ids: []},
     tool: 'select',
-    pendingFrom: null,                    // single-source multi-shot connect
-    pendingFromMulti: null,               // multi-source single-target connect
-    drag: null,                           // {kind, ids, lastX, lastY}
-    rubber: null,                         // {x0,y0,x,y, additive}
-    pendingClickClear: false,             // pending "click empty -> clear" decision
-    editing: null
+    pendingFrom: null,
+    pendingFromMulti: null,
+    drag: null,
+    rubber: null,
+    pan: null,         // active pan gesture {clientX0, clientY0, viewX0, viewY0}
+    panToggle: false,  // sticky pan-mode toggle (touch friendly)
+    editing: null,
+    view: {x: 0, y: 0, scale: 1},  // viewBox: x y CANVAS_W/scale CANVAS_H/scale
+    history: {undo: [], redo: []}
   };
 
   /* ===== helpers ===== */
@@ -518,6 +564,75 @@
   function applyPalette(node, idx){
     const c = PALETTE[((idx % PALETTE.length) + PALETTE.length) % PALETTE.length];
     node.fill = c.fill; node.stroke = c.stroke; node.text = c.text;
+  }
+
+  /* ===== history (model only) ===== */
+  function snapshotState(){
+    return JSON.stringify({
+      nodes: state.nodes,
+      connectors: state.connectors,
+      groups: state.groups,
+      nextId: state.nextId
+    });
+  }
+  /* Call BEFORE any model mutation. Pushes the current state onto the undo
+     stack and clears redo. Dedups against the most recent entry. */
+  function recordHistory(){
+    const snap = snapshotState();
+    const stk = state.history.undo;
+    if (stk.length && stk[stk.length - 1] === snap) return;
+    stk.push(snap);
+    if (stk.length > HISTORY_LIMIT) stk.shift();
+    state.history.redo = [];
+    updateHistoryButtons();
+  }
+  function restoreFromSnap(snap){
+    const obj = JSON.parse(snap);
+    state.nodes = obj.nodes;
+    state.connectors = obj.connectors;
+    state.groups = obj.groups || [];
+    state.nextId = obj.nextId;
+    // Sanitize selection — referenced ids may no longer exist
+    if (state.selection.kind === 'node') {
+      state.selection.ids = state.selection.ids.filter(id => nodeById(id));
+    } else if (state.selection.kind === 'connector') {
+      state.selection.ids = state.selection.ids.filter(id => connectorById(id));
+    } else if (state.selection.kind === 'group') {
+      state.selection.ids = state.selection.ids.filter(id => groupById(id));
+    }
+    if (!state.selection.ids.length) state.selection.kind = null;
+    // Cancel any in-flight gestures
+    state.drag = null; state.rubber = null; state.pan = null;
+    state.pendingFrom = null; state.pendingFromMulti = null;
+    state.editing = null;
+    inlineEditor.hidden = true;
+  }
+  function undo(){
+    if (!state.history.undo.length) return;
+    state.history.redo.push(snapshotState());
+    if (state.history.redo.length > HISTORY_LIMIT) state.history.redo.shift();
+    restoreFromSnap(state.history.undo.pop());
+    updateHistoryButtons();
+    render();
+    setStatus('Undo.', 'info');
+  }
+  function redo(){
+    if (!state.history.redo.length) return;
+    state.history.undo.push(snapshotState());
+    if (state.history.undo.length > HISTORY_LIMIT) state.history.undo.shift();
+    restoreFromSnap(state.history.redo.pop());
+    updateHistoryButtons();
+    render();
+    setStatus('Redo.', 'info');
+  }
+  function resetHistory(){
+    state.history.undo = [];
+    state.history.redo = [];
+    updateHistoryButtons();
+  }
+  function updateHistoryButtons(){
+    undoBtn.disabled = !state.history.undo.length;
+    redoBtn.disabled = !state.history.redo.length;
   }
 
   /* ===== node / connector / group constructors ===== */
@@ -837,6 +952,31 @@
       h: (maxY - minY) + pad*2 + labelExtra
     };
   }
+  function contentBounds(){
+    if (!state.nodes.length) return null;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.nodes.forEach(n => {
+      minX = Math.min(minX, n.x - n.w/2);
+      maxX = Math.max(maxX, n.x + n.w/2);
+      minY = Math.min(minY, n.y - n.h/2);
+      maxY = Math.max(maxY, n.y + n.h/2);
+    });
+    state.groups.forEach(g => {
+      const b = groupBounds(g);
+      if (!b) return;
+      minX = Math.min(minX, b.x);
+      maxX = Math.max(maxX, b.x + b.w);
+      minY = Math.min(minY, b.y);
+      maxY = Math.max(maxY, b.y + b.h);
+    });
+    return {minX, minY, maxX, maxY};
+  }
+  function viewCenter(){
+    return {
+      x: state.view.x + (CANVAS_W / state.view.scale) / 2,
+      y: state.view.y + (CANVAS_H / state.view.scale) / 2
+    };
+  }
 
   /* ===== render ===== */
   function svgPart(tag, attrs, children){
@@ -853,9 +993,11 @@
     return t;
   }
 
-  function render(){
+  function render(viewBoxOverride){
     while (svg.firstChild) svg.removeChild(svg.firstChild);
-    svg.setAttribute('viewBox', '0 0 ' + CANVAS_W + ' ' + CANVAS_H);
+    const vbW = CANVAS_W / state.view.scale;
+    const vbH = CANVAS_H / state.view.scale;
+    svg.setAttribute('viewBox', viewBoxOverride || (state.view.x + ' ' + state.view.y + ' ' + vbW + ' ' + vbH));
 
     const defs = svgPart('defs');
     defs.innerHTML =
@@ -906,11 +1048,9 @@
         'stroke-linecap': 'round',
         'marker-end': isSel ? 'url(#cmArrowSelected)' : 'url(#cmArrow)'
       }));
-      // Wider invisible hit-area
       g.appendChild(svgPart('path', {
         d, fill: 'none', stroke: 'transparent', 'stroke-width': 18, 'pointer-events': 'stroke'
       }));
-      // Label sub-group — clicking this should open the label editor directly
       const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
       if (c.label) {
         const labelText = truncate(c.label, 28);
@@ -927,7 +1067,6 @@
           'font-size': 13, 'font-weight': 700, fill: '#475569'
         }));
       } else {
-        // Empty-label hit target so the user can click to add one
         labelGroup.appendChild(svgPart('rect', {
           x: midX - 32, y: midY - 13, width: 64, height: 26, rx: 8,
           fill: isSel ? '#fff7e6' : '#ffffff', 'fill-opacity': isSel ? 1 : 0.85,
@@ -1000,7 +1139,7 @@
       band.appendChild(svgPart('rect', {
         x, y, width: w, height: h,
         fill: '#7c3aed', 'fill-opacity': 0.08,
-        stroke: '#7c3aed', 'stroke-width': 1.5, 'stroke-dasharray': '6 4'
+        stroke: '#7c3aed', 'stroke-width': 1.5 / state.view.scale, 'stroke-dasharray': (6/state.view.scale) + ' ' + (4/state.view.scale)
       }));
       svg.appendChild(band);
     }
@@ -1008,6 +1147,7 @@
     updateModeUI();
     updateActionStates();
     updateSelectionInfo();
+    updateZoomLabel();
   }
 
   function updateModeUI(){
@@ -1017,16 +1157,21 @@
     if (state.tool === 'connect') {
       modeEl.textContent = 'Mode: Connect Nodes';
       if (state.pendingFromMulti && state.pendingFromMulti.length) {
-        hintEl.textContent = state.pendingFromMulti.length + ' source nodes pinned — click a target to connect them all. Esc to exit.';
+        hintEl.textContent = state.pendingFromMulti.length + ' source nodes pinned — click a target. Esc to exit.';
       } else if (state.pendingFrom) {
-        hintEl.textContent = 'Source pinned. Click each target to connect; Esc or click empty canvas to exit.';
+        hintEl.textContent = 'Source pinned. Click each target. Esc or click empty canvas to exit.';
       } else {
-        hintEl.textContent = 'Click the source node first, then click each target. Esc to exit.';
+        hintEl.textContent = 'Click the source node, then click each target. Esc to exit.';
       }
     } else {
       modeEl.textContent = 'Mode: Select / Drag';
-      hintEl.textContent = 'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node.';
+      hintEl.textContent = state.panToggle
+        ? 'Pan mode: drag anywhere to move the view.'
+        : 'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node. Middle-mouse drag or Pan toggle to pan; wheel to zoom.';
     }
+  }
+  function updateZoomLabel(){
+    zoomLabelBtn.textContent = Math.round(state.view.scale * 100) + '%';
   }
 
   function updateActionStates(){
@@ -1088,7 +1233,7 @@
       else html += '<br>No label yet. Use Edit Group Label.';
       selInfoEl.innerHTML = html;
     } else {
-      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag on empty canvas to rubber-band select. Click the white label box on a connector to edit its label.';
+      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click the white label box on a connector to edit its label.';
     }
   }
 
@@ -1101,6 +1246,62 @@
     render();
   }
 
+  /* ===== zoom / pan ===== */
+  function clientToWorld(clientX, clientY){
+    const rect = svg.getBoundingClientRect();
+    const sx = (clientX - rect.left) / rect.width;
+    const sy = (clientY - rect.top) / rect.height;
+    return {
+      x: state.view.x + sx * (CANVAS_W / state.view.scale),
+      y: state.view.y + sy * (CANVAS_H / state.view.scale),
+      sx, sy
+    };
+  }
+  function zoomAt(clientX, clientY, factor){
+    const w0 = clientToWorld(clientX, clientY);
+    const newScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, state.view.scale * factor));
+    if (newScale === state.view.scale) return;
+    state.view.scale = newScale;
+    state.view.x = w0.x - w0.sx * (CANVAS_W / newScale);
+    state.view.y = w0.y - w0.sy * (CANVAS_H / newScale);
+    render();
+  }
+  function zoomIn(){
+    const rect = svg.getBoundingClientRect();
+    zoomAt(rect.left + rect.width/2, rect.top + rect.height/2, 1.2);
+  }
+  function zoomOut(){
+    const rect = svg.getBoundingClientRect();
+    zoomAt(rect.left + rect.width/2, rect.top + rect.height/2, 1/1.2);
+  }
+  function resetZoom(){
+    state.view = {x: 0, y: 0, scale: 1};
+    render();
+  }
+  function fitView(){
+    const b = contentBounds();
+    if (!b) { resetZoom(); return; }
+    const pad = 40;
+    const w = (b.maxX - b.minX) + pad*2;
+    const h = (b.maxY - b.minY) + pad*2;
+    const scale = Math.min(CANVAS_W / w, CANVAS_H / h);
+    state.view.scale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, scale));
+    // Center the content in the visible viewBox
+    const vbW = CANVAS_W / state.view.scale;
+    const vbH = CANVAS_H / state.view.scale;
+    state.view.x = (b.minX + b.maxX)/2 - vbW/2;
+    state.view.y = (b.minY + b.maxY)/2 - vbH/2;
+    render();
+  }
+  function setPanMode(on){
+    state.panToggle = !!on;
+    panToggleBtn.classList.toggle('on', state.panToggle);
+    panToggleBtn.setAttribute('aria-pressed', state.panToggle ? 'true' : 'false');
+    panToggleBtn.textContent = 'Pan: ' + (state.panToggle ? 'On' : 'Off');
+    canvasShell.classList.toggle('pan-mode', state.panToggle);
+    render();
+  }
+
   /* ===== pointer handlers ===== */
   function pointerToSvg(e){
     const pt = svg.createSVGPoint();
@@ -1110,23 +1311,49 @@
     const out = pt.matrixTransform(ctm.inverse());
     return {x: out.x, y: out.y};
   }
-  function clampNodePos(n, x, y){
-    n.x = Math.max(n.w/2 + 4, Math.min(CANVAS_W - n.w/2 - 4, x));
-    n.y = Math.max(n.h/2 + 4, Math.min(CANVAS_H - n.h/2 - 4, y));
+  function startPan(e){
+    state.pan = {
+      clientX0: e.clientX, clientY0: e.clientY,
+      viewX0: state.view.x, viewY0: state.view.y
+    };
+    try { svg.setPointerCapture(e.pointerId); } catch(_) {}
+    canvasShell.classList.add('panning');
+  }
+  function continuePan(e){
+    if (!state.pan) return;
+    const rect = svg.getBoundingClientRect();
+    const dxClient = e.clientX - state.pan.clientX0;
+    const dyClient = e.clientY - state.pan.clientY0;
+    const dxWorld = dxClient * (CANVAS_W / state.view.scale) / rect.width;
+    const dyWorld = dyClient * (CANVAS_H / state.view.scale) / rect.height;
+    state.view.x = state.pan.viewX0 - dxWorld;
+    state.view.y = state.pan.viewY0 - dyWorld;
+    render();
+  }
+  function endPan(e){
+    if (!state.pan) return;
+    try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+    state.pan = null;
+    canvasShell.classList.remove('panning');
   }
 
   svg.addEventListener('pointerdown', e => {
     if (state.editing) return;
+    // Middle button OR pan-mode toggle -> always pan
+    if (e.button === 1 || (e.button === 0 && state.panToggle)) {
+      e.preventDefault();
+      startPan(e);
+      return;
+    }
     if (e.button !== 0) return;
+
     const nodeEl = e.target.closest('.cm-node');
     const connEl = e.target.closest('.cm-connector');
     const labelEl = e.target.closest('.cm-connector-label');
     const groupEl = e.target.closest('.cm-group');
 
-    /* ----- connect tool ----- */
     if (state.tool === 'connect') {
       if (!nodeEl) {
-        // Click empty (or non-node) -> exit connect mode
         state.pendingFrom = null;
         state.pendingFromMulti = null;
         setTool('select');
@@ -1135,27 +1362,31 @@
         return;
       }
       const id = nodeEl.dataset.id;
-      // Multi-source -> single-target: create N connectors at once
       if (state.pendingFromMulti && state.pendingFromMulti.length) {
         let added = 0;
+        const toAdd = [];
         state.pendingFromMulti.forEach(srcId => {
           if (srcId === id) return;
           const exists = state.connectors.some(c => c.fromId === srcId && c.toId === id);
-          if (!exists) { state.connectors.push(makeConnector(srcId, id)); added++; }
+          if (!exists) toAdd.push(srcId);
         });
+        if (toAdd.length) recordHistory();
+        toAdd.forEach(srcId => { state.connectors.push(makeConnector(srcId, id)); added++; });
         state.pendingFromMulti = null;
         setTool('select');
         setStatus('Created ' + added + ' connector' + (added === 1 ? '' : 's') + ' to "' + esc(nodeById(id).label) + '".', added ? 'success' : 'info');
         e.preventDefault();
         return;
       }
-      // Single-source -> multi-shot
       if (!state.pendingFrom) {
         state.pendingFrom = id;
         setStatus('Source pinned: "' + esc(nodeById(id).label) + '". Click each target to connect. Esc or click empty canvas to exit.', 'info');
       } else if (state.pendingFrom !== id) {
         const exists = state.connectors.some(c => c.fromId === state.pendingFrom && c.toId === id);
-        if (!exists) state.connectors.push(makeConnector(state.pendingFrom, id));
+        if (!exists) {
+          recordHistory();
+          state.connectors.push(makeConnector(state.pendingFrom, id));
+        }
         setStatus(exists ? 'Already connected. Pick another target.' : 'Connector added. Click another target or Esc.', exists ? 'info' : 'success');
       } else {
         state.pendingFrom = null;
@@ -1166,9 +1397,6 @@
       return;
     }
 
-    /* ----- select tool ----- */
-
-    // Connector label first (priority over wider connector hit area)
     if (labelEl && connEl) {
       const id = connEl.dataset.id;
       setSelection('connector', [id]);
@@ -1184,17 +1412,14 @@
         window.open(n.link, '_blank', 'noopener,noreferrer');
         return;
       }
-      // Shift-click: toggle node in selection
       if (e.shiftKey) {
         toggleSelection('node', n.id);
         render();
         e.preventDefault();
         return;
       }
-      // If node is already in multi-selection, keep selection (drag-all)
       const alreadySel = isSelected('node', n.id);
       if (!alreadySel) setSelection('node', [n.id]);
-      // Start drag — collect all node ids that should move together
       const dragNodes = collectDragNodeIds(n.id);
       const p = pointerToSvg(e);
       state.drag = {kind: 'node', ids: dragNodes, lastX: p.x, lastY: p.y, moved: false};
@@ -1219,7 +1444,6 @@
       if (!grp) return;
       if (e.shiftKey) toggleSelection('group', id);
       else setSelection('group', [id]);
-      // Start group drag
       const p = pointerToSvg(e);
       state.drag = {kind: 'group', ids: grp.nodeIds.slice(), lastX: p.x, lastY: p.y, moved: false};
       try { svg.setPointerCapture(e.pointerId); } catch(_) {}
@@ -1229,41 +1453,39 @@
       return;
     }
 
-    // Empty canvas
     const p = pointerToSvg(e);
     state.rubber = {x0: p.x, y0: p.y, x: p.x, y: p.y, additive: !!e.shiftKey, didMove: false};
     try { svg.setPointerCapture(e.pointerId); } catch(_) {}
-    // If user just clicks (no drag), we'll clear selection on pointerup.
   });
 
   function collectDragNodeIds(seedId){
     const ids = new Set();
-    // Include all selected if seed is selected
     if (isSelected('node', seedId)) {
       state.selection.ids.forEach(id => ids.add(id));
     } else {
       ids.add(seedId);
     }
-    // Expand to whole groups for any included node
     const added = new Set(ids);
     added.forEach(id => {
-      groupsContaining(id).forEach(g => {
-        g.nodeIds.forEach(nid => ids.add(nid));
-      });
+      groupsContaining(id).forEach(g => g.nodeIds.forEach(nid => ids.add(nid)));
     });
     return Array.from(ids);
   }
 
   svg.addEventListener('pointermove', e => {
+    if (state.pan) { continuePan(e); return; }
     if (state.drag) {
       const p = pointerToSvg(e);
       const dx = p.x - state.drag.lastX, dy = p.y - state.drag.lastY;
       state.drag.lastX = p.x; state.drag.lastY = p.y;
-      state.drag.moved = true;
+      if (!state.drag.moved) {
+        recordHistory();
+        state.drag.moved = true;
+      }
       state.drag.ids.forEach(id => {
         const n = nodeById(id);
         if (!n) return;
-        clampNodePos(n, n.x + dx, n.y + dy);
+        n.x += dx; n.y += dy;
       });
       render();
     } else if (state.rubber) {
@@ -1276,7 +1498,8 @@
     }
   });
 
-  function endDrag(e){
+  function endGesture(e){
+    if (state.pan) { endPan(e); return; }
     if (state.drag) {
       try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
       state.drag = null;
@@ -1303,15 +1526,21 @@
         if (hits.length) setStatus('Selected ' + state.selection.ids.length + ' node' + (state.selection.ids.length === 1 ? '' : 's') + '.', 'success');
         else if (!r.additive) clearSelection();
       } else {
-        // Single click on empty -> clear unless shift held
         if (!state.rubber.additive) clearSelection();
       }
       state.rubber = null;
       render();
     }
   }
-  svg.addEventListener('pointerup', endDrag);
-  svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('pointerup', endGesture);
+  svg.addEventListener('pointercancel', endGesture);
+
+  // Wheel = zoom (always around cursor). preventDefault to stop page scroll.
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.12 : 1/1.12;
+    zoomAt(e.clientX, e.clientY, factor);
+  }, {passive: false});
 
   svg.addEventListener('dblclick', e => {
     const nodeEl = e.target.closest('.cm-node');
@@ -1343,18 +1572,18 @@
       editGroupLabel(id);
       return;
     }
-    // Empty canvas → add node here
+    // Empty canvas: add a node at click point
     e.preventDefault();
+    recordHistory();
     const p = pointerToSvg(e);
     const n = makeNode({label: 'New Idea', x: p.x, y: p.y});
-    clampNodePos(n, n.x, n.y);
     state.nodes.push(n);
     setSelection('node', [n.id]);
     render();
     setStatus('Node added where you double-clicked.', 'success');
   });
 
-  /* ===== inline editor (node text) ===== */
+  /* ===== inline node editor ===== */
   function beginNodeInlineEdit(id){
     const n = nodeById(id);
     if (!n) return;
@@ -1377,8 +1606,12 @@
     if (!state.editing) return;
     const n = nodeById(state.editing);
     if (n && save) {
-      n.label = (inlineEditor.value || '').trim() || 'Idea';
-      setStatus('Label updated.', 'success');
+      const newLabel = (inlineEditor.value || '').trim() || 'Idea';
+      if (newLabel !== n.label) {
+        recordHistory();
+        n.label = newLabel;
+        setStatus('Label updated.', 'success');
+      }
     } else if (!save) {
       setStatus('Edit cancelled.', 'info');
     }
@@ -1398,8 +1631,11 @@
     if (!c) return;
     const v = window.prompt('Connector label (the relationship between the two nodes — e.g. "leads to", "causes", "supports"):', c.label || '');
     if (v === null) return;
-    c.label = v.trim();
-    setStatus(c.label ? 'Connector label updated.' : 'Connector label cleared.', 'success');
+    const newLabel = v.trim();
+    if (newLabel === c.label) return;
+    recordHistory();
+    c.label = newLabel;
+    setStatus(newLabel ? 'Connector label updated.' : 'Connector label cleared.', 'success');
     render();
   }
   function editGroupLabel(id){
@@ -1407,8 +1643,11 @@
     if (!g) return;
     const v = window.prompt('Group label (shown in the corner of the group box):', g.label || '');
     if (v === null) return;
-    g.label = v.trim();
-    setStatus(g.label ? 'Group label updated.' : 'Group label cleared.', 'success');
+    const newLabel = v.trim();
+    if (newLabel === g.label) return;
+    recordHistory();
+    g.label = newLabel;
+    setStatus(newLabel ? 'Group label updated.' : 'Group label cleared.', 'success');
     render();
   }
 
@@ -1430,19 +1669,21 @@
   });
 
   document.getElementById('addNodeBtn').addEventListener('click', () => {
-    const x = CANVAS_W/2 + (Math.random()*140 - 70);
-    const y = CANVAS_H/2 + (Math.random()*140 - 70);
+    recordHistory();
+    const c = viewCenter();
+    const x = c.x + (Math.random()*140 - 70);
+    const y = c.y + (Math.random()*140 - 70);
     const n = makeNode({label: 'New Idea', x, y});
-    clampNodePos(n, n.x, n.y);
     state.nodes.push(n);
     setSelection('node', [n.id]);
     render();
-    setStatus('Node added. Drag to position, double-click to rename — or double-click the canvas to add nodes where you click.', 'success');
+    setStatus('Node added at the centre of the view. Drag to position; double-click to rename.', 'success');
   });
 
   document.getElementById('addChildBtn').addEventListener('click', () => {
     const parent = singleSelectedNode();
     if (!parent) return;
+    recordHistory();
     const siblings = state.connectors.filter(c => c.fromId === parent.id).length;
     const angle = (siblings * 0.7) - 1.2;
     const r = 220;
@@ -1451,7 +1692,6 @@
       x: parent.x + Math.cos(angle) * r,
       y: parent.y + Math.sin(angle) * r
     });
-    clampNodePos(child, child.x, child.y);
     state.nodes.push(child);
     state.connectors.push(makeConnector(parent.id, child.id));
     setSelection('node', [child.id]);
@@ -1462,20 +1702,21 @@
   document.getElementById('cycleColorBtn').addEventListener('click', () => {
     const ns = selectedNodes();
     if (!ns.length) return;
-    ns.forEach(n => {
-      if (n.isRoot) return;
+    const recolorable = ns.filter(n => !n.isRoot);
+    if (!recolorable.length) { setStatus('Root nodes keep their colour. Select a non-root node to cycle colours.', 'info'); return; }
+    recordHistory();
+    recolorable.forEach(n => {
       const idx = paletteIndexFor(n);
       applyPalette(n, (idx + 1) % PALETTE.length);
     });
-    const recolored = ns.filter(n => !n.isRoot).length;
-    if (!recolored) setStatus('Root nodes keep their colour. Select a non-root node to cycle colours.', 'info');
-    else setStatus('Cycled ' + recolored + ' node' + (recolored === 1 ? '' : 's') + ' to the next pastel.', 'success');
+    setStatus('Cycled ' + recolorable.length + ' node' + (recolorable.length === 1 ? '' : 's') + ' to the next pastel.', 'success');
     render();
   });
 
   document.getElementById('groupSelectedBtn').addEventListener('click', () => {
     const ns = selectedNodes();
     if (ns.length < 2) return setStatus('Select two or more nodes to group.', 'danger');
+    recordHistory();
     const g = makeGroup(ns.map(n => n.id), '');
     state.groups.push(g);
     setSelection('group', [g.id]);
@@ -1485,6 +1726,7 @@
   document.getElementById('ungroupBtn').addEventListener('click', () => {
     const g = selectedGroupObj();
     if (!g) return;
+    recordHistory();
     state.groups = state.groups.filter(x => x.id !== g.id);
     clearSelection();
     render();
@@ -1508,9 +1750,18 @@
     if (!n) return;
     const v = window.prompt('Link URL for "' + n.label + '" (https:// or mailto:). Leave blank to clear.', n.link || '');
     if (v === null) return;
-    if (!v.trim()) { n.link = ''; setStatus('Link cleared.', 'info'); render(); return; }
+    if (!v.trim()) {
+      if (!n.link) return;
+      recordHistory();
+      n.link = '';
+      setStatus('Link cleared.', 'info');
+      render();
+      return;
+    }
     const safe = safeUrl(v);
     if (!safe) { setStatus('Link must start with https://, http://, or mailto:.', 'danger'); return; }
+    if (safe === n.link) return;
+    recordHistory();
     n.link = safe;
     setStatus('Link set. Ctrl/Cmd-click the node to open it.', 'success');
     render();
@@ -1518,6 +1769,7 @@
   document.getElementById('clearLinkBtn').addEventListener('click', () => {
     const n = singleSelectedNode();
     if (!n || !n.link) return;
+    recordHistory();
     n.link = '';
     setStatus('Link cleared.', 'info');
     render();
@@ -1536,6 +1788,7 @@
     if (f.size > 4 * 1024 * 1024) { setStatus('Image is over 4 MB. Pick a smaller file.', 'danger'); return; }
     const r = new FileReader();
     r.onload = () => {
+      recordHistory();
       n.image = r.result;
       setStatus('Image attached to "' + n.label + '".', 'success');
       render();
@@ -1546,6 +1799,7 @@
   document.getElementById('clearImageBtn').addEventListener('click', () => {
     const n = singleSelectedNode();
     if (!n || !n.image) return;
+    recordHistory();
     n.image = '';
     setStatus('Image cleared.', 'info');
     render();
@@ -1561,9 +1815,9 @@
       const ids = new Set(sel.ids);
       const rootSelected = state.nodes.some(n => ids.has(n.id) && n.isRoot);
       if (rootSelected && !window.confirm('Delete the root node? Other nodes stay but lose their root connection.')) return;
+      recordHistory();
       state.nodes = state.nodes.filter(n => !ids.has(n.id));
       state.connectors = state.connectors.filter(c => !ids.has(c.fromId) && !ids.has(c.toId));
-      // Strip removed nodes from groups; drop empty groups
       state.groups = state.groups
         .map(g => Object.assign({}, g, {nodeIds: g.nodeIds.filter(id => !ids.has(id))}))
         .filter(g => g.nodeIds.length >= 2);
@@ -1571,11 +1825,13 @@
       setStatus('Deleted ' + ids.size + ' node' + (ids.size === 1 ? '' : 's') + '.', 'success');
     } else if (sel.kind === 'connector') {
       const ids = new Set(sel.ids);
+      recordHistory();
       state.connectors = state.connectors.filter(c => !ids.has(c.id));
       clearSelection();
       setStatus('Connector deleted.', 'success');
     } else if (sel.kind === 'group') {
       const ids = new Set(sel.ids);
+      recordHistory();
       state.groups = state.groups.filter(g => !ids.has(g.id));
       clearSelection();
       setStatus('Group removed (member nodes kept).', 'success');
@@ -1588,46 +1844,40 @@
     const key = sel ? sel.value : 'concept-map';
     const tpl = TEMPLATES[key];
     if (!tpl) return;
-    if (state.nodes.length && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone.')) return;
+    if (state.nodes.length && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone unless you Undo.')) return;
+    recordHistory();
     loadTemplate(key);
-    render();
+    resetZoom();
     setStatus('Loaded template: ' + tpl.title + '.', 'success');
   });
   document.getElementById('clearMapBtn').addEventListener('click', () => {
-    if (!window.confirm('Clear the entire map? This cannot be undone.')) return;
+    if (!window.confirm('Clear the entire map?')) return;
+    recordHistory();
     state.nodes = []; state.connectors = []; state.groups = [];
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
     const n = makeNode({label: 'New Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
     state.nodes.push(n);
     setSelection('node', [n.id]);
-    render();
-    setStatus('Cleared. One starter node added.', 'info');
+    resetZoom();
+    setStatus('Cleared. One starter node added. Use Undo to bring back your previous map.', 'info');
   });
 
-  (function setupGridToggle(){
-    const btn = document.getElementById('gridToggleBtn');
-    let gridOn = true;
-    btn.addEventListener('click', () => {
-      gridOn = !gridOn;
-      canvasShell.classList.toggle('no-grid', !gridOn);
-      btn.classList.toggle('on', gridOn);
-      btn.setAttribute('aria-pressed', gridOn ? 'true' : 'false');
-      btn.textContent = 'Grid: ' + (gridOn ? 'On' : 'Off');
-    });
-  })();
-
-  document.getElementById('centerBtn').addEventListener('click', () => {
-    if (!state.nodes.length) return;
-    const minX = Math.min.apply(null, state.nodes.map(n => n.x - n.w/2));
-    const maxX = Math.max.apply(null, state.nodes.map(n => n.x + n.w/2));
-    const minY = Math.min.apply(null, state.nodes.map(n => n.y - n.h/2));
-    const maxY = Math.max.apply(null, state.nodes.map(n => n.y + n.h/2));
-    const shiftX = (CANVAS_W/2) - (minX + maxX)/2;
-    const shiftY = (CANVAS_H/2) - (minY + maxY)/2;
-    state.nodes.forEach(n => { n.x += shiftX; n.y += shiftY; });
-    render();
-    setStatus('Map re-centered.', 'info');
+  /* ===== history buttons + zoom buttons + toggles ===== */
+  undoBtn.addEventListener('click', undo);
+  redoBtn.addEventListener('click', redo);
+  document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+  document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+  zoomLabelBtn.addEventListener('click', () => { resetZoom(); setStatus('Zoom reset to 100%.', 'info'); });
+  document.getElementById('fitViewBtn').addEventListener('click', () => { fitView(); setStatus('View fitted to content.', 'info'); });
+  panToggleBtn.addEventListener('click', () => setPanMode(!state.panToggle));
+  gridToggleBtn.addEventListener('click', () => {
+    const next = !canvasShell.classList.contains('no-grid') === false;
+    canvasShell.classList.toggle('no-grid');
+    const on = !canvasShell.classList.contains('no-grid');
+    gridToggleBtn.classList.toggle('on', on);
+    gridToggleBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    gridToggleBtn.textContent = 'Grid: ' + (on ? 'On' : 'Off');
   });
 
   /* ===== export ===== */
@@ -1639,7 +1889,14 @@
     state.selection = {kind: null, ids: []};
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.rubber = null;
-    render();
+    // Build an override viewBox tight around content
+    let override = null;
+    const b = contentBounds();
+    if (b) {
+      const pad = 30;
+      override = (b.minX - pad) + ' ' + (b.minY - pad) + ' ' + (b.maxX - b.minX + pad*2) + ' ' + (b.maxY - b.minY + pad*2);
+    }
+    render(override);
     const xml = new XMLSerializer().serializeToString(svg);
     state.selection = savedSel;
     state.pendingFrom = savedPending;
@@ -1728,8 +1985,8 @@
       bumpId(id);
       nodes.push({
         id,
-        x: clampNumber(raw.x, -CANVAS_W, CANVAS_W * 2, CANVAS_W / 2),
-        y: clampNumber(raw.y, -CANVAS_H, CANVAS_H * 2, CANVAS_H / 2),
+        x: clampNumber(raw.x, -100000, 100000, 0),
+        y: clampNumber(raw.y, -100000, 100000, 0),
         w: clampNumber(raw.w, 40, 400, NODE_W),
         h: clampNumber(raw.h, 24, 200, NODE_H),
         label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : 'Idea',
@@ -1801,8 +2058,10 @@
       try { data = JSON.parse(r.result); }
       catch (err) { setStatus('Could not parse JSON: ' + (err && err.message ? err.message : String(err)), 'danger'); return; }
       try {
+        recordHistory();
         applyLoadedJson(data);
-        render();
+        resetZoom();
+        fitView();
         setStatus('Loaded ' + state.nodes.length + ' nodes, ' + state.connectors.length + ' connector' + (state.connectors.length === 1 ? '' : 's') + ', ' + state.groups.length + ' group' + (state.groups.length === 1 ? '' : 's') + '.', 'success');
       } catch (err) {
         setStatus('Could not load: ' + (err && err.message ? err.message : String(err)), 'danger');
@@ -1841,11 +2100,32 @@
     if (state.editing) return;
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (ctrl && (e.key === 'z' || e.key === 'Z')) {
+      e.preventDefault();
+      if (e.shiftKey) redo(); else undo();
+      return;
+    }
+    if (ctrl && (e.key === 'y' || e.key === 'Y')) {
+      e.preventDefault(); redo(); return;
+    }
+    if (ctrl && (e.key === 'a' || e.key === 'A')) {
+      e.preventDefault();
+      if (state.nodes.length) {
+        setSelection('node', state.nodes.map(n => n.id));
+        render();
+        setStatus('Selected all ' + state.nodes.length + ' nodes.', 'info');
+      }
+      return;
+    }
+    if (!ctrl && (e.key === '+' || e.key === '=')) { e.preventDefault(); zoomIn(); return; }
+    if (!ctrl && (e.key === '-' || e.key === '_')) { e.preventDefault(); zoomOut(); return; }
+    if (!ctrl && e.key === '0') { e.preventDefault(); resetZoom(); return; }
     if (e.key === 'Delete' || e.key === 'Backspace') {
       if (state.selection.kind) { e.preventDefault(); document.getElementById('deleteBtn').click(); }
     } else if (e.key === 'Escape') {
       if (state.tool === 'connect') { setTool('select'); setStatus('Connect mode cancelled.', 'info'); }
-      else if (state.selection.kind) clearSelection(), render();
+      else if (state.selection.kind) { clearSelection(); render(); }
     } else if (e.key === 'Enter') {
       const n = singleSelectedNode();
       const c = selectedConnectorObj();
@@ -1853,18 +2133,12 @@
       if (n) { e.preventDefault(); beginNodeInlineEdit(n.id); }
       else if (c) { e.preventDefault(); editConnectorLabel(c.id); }
       else if (g) { e.preventDefault(); editGroupLabel(g.id); }
-    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A')) {
-      e.preventDefault();
-      if (state.nodes.length) {
-        setSelection('node', state.nodes.map(n => n.id));
-        render();
-        setStatus('Selected all ' + state.nodes.length + ' nodes.', 'info');
-      }
     }
   });
 
   /* ===== boot ===== */
   defaultMap();
+  resetHistory();
   render();
 })();
 </script>
