@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Concept Map Studio — DrawSplatTM</title>
-  <meta name="description" content="Interactive concept map and graphic organizer studio. Start from a template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence chain, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Drag nodes, click to connect, label connectors. Export as SVG or PNG.">
+  <meta name="description" content="Interactive concept map and graphic organizer studio. Drag nodes, click to connect, label every connector, multi-select, group nodes, choose from 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -81,7 +81,7 @@
     }
     .subtitle {
       margin: 0;
-      max-width: 780px;
+      max-width: 820px;
       color: var(--gray-90);
       font-size: 1rem;
       line-height: 1.45;
@@ -122,7 +122,7 @@
     }
     .app-grid {
       display: grid;
-      grid-template-columns: minmax(260px, 300px) 1fr;
+      grid-template-columns: minmax(260px, 304px) 1fr;
       gap: 18px;
       align-items: start;
       padding-top: 22px;
@@ -155,6 +155,7 @@
       gap: 6px;
     }
     .tool-row.full { grid-template-columns: 1fr; }
+    .tool-row + .tool-row { margin-top: 6px; }
     .tool-btn {
       min-height: 38px;
       padding: 6px 8px;
@@ -177,6 +178,12 @@
       border-color: var(--gray-30);
       color: var(--gray-50);
       background: var(--white);
+    }
+    .hint-text {
+      margin: 4px 0 0;
+      color: var(--gray-50);
+      font-size: .78rem;
+      line-height: 1.45;
     }
     .selection-info {
       margin-top: 6px;
@@ -230,7 +237,7 @@
     svg#cmCanvas {
       display: block;
       width: 100%;
-      height: clamp(440px, 70vh, 720px);
+      height: clamp(440px, 70vh, 760px);
       touch-action: none;
     }
     .cm-node { cursor: grab; }
@@ -239,11 +246,28 @@
     .cm-node text { user-select: none; pointer-events: none; }
     .cm-connector { cursor: pointer; }
     .cm-connector text { user-select: none; pointer-events: none; }
+    .cm-connector-label { cursor: text; }
+    .cm-group { cursor: grab; }
+    .cm-group.dragging { cursor: grabbing; }
+    .cm-group text { user-select: none; pointer-events: none; }
+    .cm-rubber { pointer-events: none; }
+    .template-select {
+      width: 100%;
+      min-height: 40px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 700;
+      font-size: .88rem;
+    }
+    .template-select:focus { border-color: var(--navy); outline: none; }
     .inline-editor {
       position: absolute;
       transform: translate(-50%, -50%);
-      min-width: 120px;
-      max-width: 280px;
+      min-width: 140px;
+      max-width: 320px;
       padding: 8px 10px;
       border: 2px solid var(--amber);
       border-radius: 8px;
@@ -254,6 +278,7 @@
       text-align: center;
       outline: none;
       box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      z-index: 10;
     }
     .actions {
       display: flex;
@@ -288,21 +313,10 @@
       margin-top: 12px;
       color: var(--gray-50);
       font-size: .82rem;
-      line-height: 1.45;
+      line-height: 1.5;
     }
     .footer-note a { color: var(--navy); }
-    .template-select {
-      width: 100%;
-      min-height: 40px;
-      padding: 6px 10px;
-      border: 2px solid var(--gray-30);
-      border-radius: var(--radius);
-      background: var(--white);
-      color: var(--gray-90);
-      font-weight: 700;
-      font-size: .88rem;
-    }
-    .template-select:focus { border-color: var(--navy); outline: none; }
+    .footer-note strong { color: var(--gray-90); }
   </style>
 </head>
 <body>
@@ -312,7 +326,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1>Concept Map Studio</h1>
-        <p class="subtitle">Drag nodes, click to connect, label every connector, attach images, and set web links. Start from a classroom template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Export as SVG or PNG.</p>
+        <p class="subtitle">Drag nodes, click to connect, label every connector, multi-select, group nodes, choose from 5 pastel colors. Start from a template — fishbone, Frayer model, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
       </div>
       <div class="header-actions">
         <a class="secondary-link" href="../../pages/features.html">All Tools</a>
@@ -349,43 +363,55 @@
           <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button">Select / Drag</button>
           <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button">Connect Nodes</button>
         </div>
+        <p class="hint-text">Shift-click nodes to add to the selection. Drag on empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked.</p>
 
-        <h3>Add</h3>
+        <h3>Add nodes</h3>
         <div class="tool-row">
           <button class="tool-btn" id="addNodeBtn" type="button">+ Node</button>
           <button class="tool-btn" id="addChildBtn" type="button">+ Child of Selected</button>
         </div>
 
-        <h3>Selected item</h3>
-        <div class="tool-row full">
+        <h3>Edit selected</h3>
+        <div class="tool-row">
           <button class="tool-btn" id="editTextBtn" type="button">Edit Label</button>
+          <button class="tool-btn" id="cycleColorBtn" type="button">Cycle Color</button>
         </div>
         <div class="tool-row">
           <button class="tool-btn" id="setLinkBtn" type="button">Set Link</button>
           <button class="tool-btn" id="attachImageBtn" type="button">Attach Image</button>
         </div>
         <div class="tool-row">
-          <button class="tool-btn" id="clearImageBtn" type="button">Clear Image</button>
           <button class="tool-btn" id="clearLinkBtn" type="button">Clear Link</button>
+          <button class="tool-btn" id="clearImageBtn" type="button">Clear Image</button>
         </div>
         <div class="tool-row full">
           <button class="tool-btn" id="editConnectorBtn" type="button">Edit Connector Label</button>
         </div>
+
+        <h3>Groups</h3>
+        <div class="tool-row">
+          <button class="tool-btn" id="groupSelectedBtn" type="button">Group Selected</button>
+          <button class="tool-btn" id="ungroupBtn" type="button">Ungroup</button>
+        </div>
         <div class="tool-row full">
+          <button class="tool-btn" id="editGroupLabelBtn" type="button">Edit Group Label</button>
+        </div>
+
+        <div class="tool-row full" style="margin-top:10px">
           <button class="tool-btn danger" id="deleteBtn" type="button">Delete Selected</button>
         </div>
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
         <h3>Selection</h3>
-        <div class="selection-info" id="selectionInfo">Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.</div>
+        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag on empty canvas to rubber-band select. Click the white label box on a connector to edit its label.</div>
 
-        <p class="footer-note">Concept maps render and stay in your browser only. Nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
+        <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
       </aside>
 
       <section class="stage" aria-label="Concept map canvas">
         <div class="canvas-toolbar">
           <span class="mode-pill" id="modeIndicator">Mode: Select / Drag</span>
-          <span class="hint-line" id="hintLine">Click a node to select. Drag to move. Double-click to rename.</span>
+          <span class="hint-line" id="hintLine">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
         </div>
         <div class="canvas-shell" id="canvasShell">
           <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concept map canvas"></svg>
@@ -418,30 +444,36 @@
   const selectToolBtn = document.getElementById('selectToolBtn');
   const connectToolBtn = document.getElementById('connectToolBtn');
 
+  /* 5 classroom-pastel colours. New non-root nodes cycle through these in
+     order. Cycle Color steps a selected node forward through this list. */
   const PALETTE = [
-    {fill:'#dbeafe', stroke:'#2563eb', text:'#1e3a8a'},
-    {fill:'#d1fae5', stroke:'#059669', text:'#064e3b'},
-    {fill:'#fef3c7', stroke:'#ca8a04', text:'#713f12'},
-    {fill:'#fce7f3', stroke:'#db2777', text:'#831843'},
-    {fill:'#ffedd5', stroke:'#ea580c', text:'#7c2d12'},
-    {fill:'#e9d5ff', stroke:'#7c3aed', text:'#581c87'}
+    {name:'Pink',     fill:'#fce7f3', stroke:'#ec4899', text:'#831843'},
+    {name:'Mint',     fill:'#d1fae5', stroke:'#10b981', text:'#064e3b'},
+    {name:'Lavender', fill:'#ede9fe', stroke:'#8b5cf6', text:'#4c1d95'},
+    {name:'Butter',   fill:'#fef9c3', stroke:'#eab308', text:'#713f12'},
+    {name:'Sky',      fill:'#dbeafe', stroke:'#3b82f6', text:'#1e3a8a'}
   ];
   const ROOT_STYLE = {fill:'#7c3aed', stroke:'#5b21b6', text:'#ffffff'};
   const CANVAS_W = 1200, CANVAS_H = 720;
   const NODE_W = 184, NODE_H = 76;
+  const RUBBER_MIN = 5; // pixels before a click becomes a drag
 
   const state = {
     nodes: [],
     connectors: [],
+    groups: [],
     nextId: 1,
-    selectedId: null,
-    selectedKind: null,
+    selection: {kind: null, ids: []},     // kind: 'node' | 'connector' | 'group' | null
     tool: 'select',
-    pendingFrom: null,
-    drag: null,
+    pendingFrom: null,                    // single-source multi-shot connect
+    pendingFromMulti: null,               // multi-source single-target connect
+    drag: null,                           // {kind, ids, lastX, lastY}
+    rubber: null,                         // {x0,y0,x,y, additive}
+    pendingClickClear: false,             // pending "click empty -> clear" decision
     editing: null
   };
 
+  /* ===== helpers ===== */
   function uid(prefix){ return prefix + (state.nextId++); }
   function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function truncate(s, max){ s = String(s||''); return s.length > max ? s.slice(0, max-1) + '…' : s; }
@@ -453,6 +485,26 @@
     const s = String(u||'').trim();
     return /^(https?:\/\/|mailto:)/i.test(s) ? s : '';
   }
+  const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+  function validHex(v, fallback){ return typeof v === 'string' && HEX_RE.test(v) ? v : fallback; }
+  function clampNumber(v, min, max, fallback){
+    const n = +v;
+    if (!isFinite(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+  function paletteIndexFor(node){
+    if (node.isRoot) return -1;
+    for (let i = 0; i < PALETTE.length; i++) {
+      if (PALETTE[i].fill.toLowerCase() === (node.fill || '').toLowerCase()) return i;
+    }
+    return 0;
+  }
+  function applyPalette(node, idx){
+    const c = PALETTE[((idx % PALETTE.length) + PALETTE.length) % PALETTE.length];
+    node.fill = c.fill; node.stroke = c.stroke; node.text = c.text;
+  }
+
+  /* ===== node / connector / group constructors ===== */
   function colorForNewChild(){
     const idx = state.nodes.filter(n => !n.isRoot).length % PALETTE.length;
     return PALETTE[idx];
@@ -478,248 +530,246 @@
   function makeConnector(fromId, toId, label){
     return {id: uid('c'), fromId, toId, label: label || ''};
   }
+  function makeGroup(nodeIds, label){
+    const colorIndex = state.groups.length % PALETTE.length;
+    return {id: uid('g'), nodeIds: nodeIds.slice(), label: label || '', colorIndex};
+  }
   function nodeById(id){ return state.nodes.find(n => n.id === id); }
   function connectorById(id){ return state.connectors.find(c => c.id === id); }
+  function groupById(id){ return state.groups.find(g => g.id === id); }
 
-  /* Each template returns a spec:
-     { nodes: { key: {label, x, y, isRoot?} }, connectors: [{from, to, label?}], rootKey? }
-     Keys are template-local; loader maps them to fresh node ids. */
-  const TEMPLATES = {
-    'concept-map': {
-      title: 'Concept Map',
-      build: () => ({
-        rootKey: 'root',
-        nodes: {
-          root: {label: 'Main Idea', x: 600, y: 360, isRoot: true},
-          a:    {label: 'Idea 1',    x: 290, y: 200},
-          b:    {label: 'Idea 2',    x: 910, y: 200},
-          c:    {label: 'Idea 3',    x: 290, y: 520},
-          d:    {label: 'Idea 4',    x: 910, y: 520}
-        },
-        connectors: [
-          {from: 'root', to: 'a'},
-          {from: 'root', to: 'b'},
-          {from: 'root', to: 'c'},
-          {from: 'root', to: 'd'}
-        ]
-      })
-    },
-    'mind-map': {
-      title: 'Mind Map',
-      build: () => ({
-        rootKey: 'root',
-        nodes: {
-          root: {label: 'Topic',         x: 600, y: 360, isRoot: true},
-          n1:   {label: 'Subtopic 1',    x: 600, y: 140},
-          n2:   {label: 'Subtopic 2',    x: 980, y: 240},
-          n3:   {label: 'Subtopic 3',    x: 980, y: 480},
-          n4:   {label: 'Subtopic 4',    x: 600, y: 580},
-          n5:   {label: 'Subtopic 5',    x: 220, y: 480},
-          n6:   {label: 'Subtopic 6',    x: 220, y: 240}
-        },
-        connectors: ['n1','n2','n3','n4','n5','n6'].map(k => ({from: 'root', to: k}))
-      })
-    },
-    'fishbone': {
-      title: 'Fishbone (Cause Analysis)',
-      build: () => ({
-        rootKey: 'effect',
-        nodes: {
-          effect:    {label: 'Effect / Problem', x: 1020, y: 360, isRoot: true},
-          people:    {label: 'People',           x: 240,  y: 130},
-          process:   {label: 'Process',          x: 540,  y: 130},
-          equipment: {label: 'Equipment',        x: 800,  y: 200},
-          environment:{label: 'Environment',     x: 800,  y: 520},
-          materials: {label: 'Materials',        x: 540,  y: 590},
-          methods:   {label: 'Methods',          x: 240,  y: 590}
-        },
-        connectors: ['people','process','equipment','environment','materials','methods']
-          .map(k => ({from: k, to: 'effect', label: 'contributes to'}))
-      })
-    },
-    'frayer': {
-      title: 'Frayer Model',
-      build: () => ({
-        rootKey: 'word',
-        nodes: {
-          word:    {label: 'Word / Concept',   x: 600, y: 360, isRoot: true},
-          def:     {label: 'Definition',       x: 290, y: 180},
-          char:    {label: 'Characteristics',  x: 910, y: 180},
-          ex:      {label: 'Examples',         x: 290, y: 540},
-          nonex:   {label: 'Non-Examples',     x: 910, y: 540}
-        },
-        connectors: [
-          {from: 'word', to: 'def'},
-          {from: 'word', to: 'char'},
-          {from: 'word', to: 'ex'},
-          {from: 'word', to: 'nonex'}
-        ]
-      })
-    },
-    'kwl': {
-      title: 'KWL Chart',
-      build: () => ({
-        rootKey: 'w',
-        nodes: {
-          k: {label: 'What I Know',          x: 260, y: 360},
-          w: {label: 'What I Want to Know',  x: 600, y: 360, isRoot: true},
-          l: {label: 'What I Learned',       x: 940, y: 360}
-        },
-        connectors: [
-          {from: 'k', to: 'w', label: 'leads to'},
-          {from: 'w', to: 'l', label: 'becomes'}
-        ]
-      })
-    },
-    '5ws': {
-      title: '5 Ws (and How)',
-      build: () => ({
-        rootKey: 'topic',
-        nodes: {
-          topic: {label: 'Topic / Event', x: 600, y: 360, isRoot: true},
-          who:   {label: 'Who?',          x: 260, y: 180},
-          what:  {label: 'What?',         x: 600, y: 130},
-          when:  {label: 'When?',         x: 940, y: 180},
-          where: {label: 'Where?',        x: 940, y: 540},
-          why:   {label: 'Why?',          x: 600, y: 590},
-          how:   {label: 'How?',          x: 260, y: 540}
-        },
-        connectors: ['who','what','when','where','why','how'].map(k => ({from: 'topic', to: k}))
-      })
-    },
-    'cycle': {
-      title: 'Cycle (4 steps)',
-      build: () => ({
-        rootKey: 's1',
-        nodes: {
-          s1: {label: 'Step 1', x: 600, y: 140, isRoot: true},
-          s2: {label: 'Step 2', x: 980, y: 360},
-          s3: {label: 'Step 3', x: 600, y: 580},
-          s4: {label: 'Step 4', x: 220, y: 360}
-        },
-        connectors: [
-          {from: 's1', to: 's2', label: 'then'},
-          {from: 's2', to: 's3', label: 'then'},
-          {from: 's3', to: 's4', label: 'then'},
-          {from: 's4', to: 's1', label: 'repeats'}
-        ]
-      })
-    },
-    'sequence': {
-      title: 'Sequence Chain (5 steps)',
-      build: () => ({
-        rootKey: 's1',
-        nodes: {
-          s1: {label: 'Step 1', x: 180, y: 360, isRoot: true},
-          s2: {label: 'Step 2', x: 390, y: 360},
-          s3: {label: 'Step 3', x: 600, y: 360},
-          s4: {label: 'Step 4', x: 810, y: 360},
-          s5: {label: 'Step 5', x: 1020, y: 360}
-        },
-        connectors: [
-          {from: 's1', to: 's2', label: 'then'},
-          {from: 's2', to: 's3', label: 'then'},
-          {from: 's3', to: 's4', label: 'then'},
-          {from: 's4', to: 's5', label: 'then'}
-        ]
-      })
-    },
-    'cause-effect': {
-      title: 'Cause & Effect',
-      build: () => ({
-        rootKey: 'effect',
-        nodes: {
-          effect: {label: 'Effect',  x: 940, y: 360, isRoot: true},
-          c1:     {label: 'Cause 1', x: 240, y: 180},
-          c2:     {label: 'Cause 2', x: 240, y: 360},
-          c3:     {label: 'Cause 3', x: 240, y: 540}
-        },
-        connectors: ['c1','c2','c3'].map(k => ({from: k, to: 'effect', label: 'causes'}))
-      })
-    },
-    'compare-contrast': {
-      title: 'Compare & Contrast',
-      build: () => ({
-        rootKey: 'topic',
-        nodes: {
-          topic:  {label: 'Topic',        x: 600, y: 130, isRoot: true},
-          a:      {label: 'Subject A',    x: 290, y: 340},
-          b:      {label: 'Subject B',    x: 910, y: 340},
-          aOnly:  {label: 'A Only',       x: 180, y: 560},
-          shared: {label: 'Both Share',   x: 600, y: 560},
-          bOnly:  {label: 'B Only',       x: 1020,y: 560}
-        },
-        connectors: [
-          {from: 'topic', to: 'a'},
-          {from: 'topic', to: 'b'},
-          {from: 'a', to: 'aOnly',  label: 'unique'},
-          {from: 'a', to: 'shared', label: 'shares'},
-          {from: 'b', to: 'shared', label: 'shares'},
-          {from: 'b', to: 'bOnly',  label: 'unique'}
-        ]
-      })
-    },
-    'hierarchy': {
-      title: 'Hierarchy / Tree',
-      build: () => ({
-        rootKey: 'root',
-        nodes: {
-          root: {label: 'Top',       x: 600, y: 130, isRoot: true},
-          b1:   {label: 'Branch A',  x: 320, y: 320},
-          b2:   {label: 'Branch B',  x: 880, y: 320},
-          l1:   {label: 'Leaf A1',   x: 180, y: 540},
-          l2:   {label: 'Leaf A2',   x: 460, y: 540},
-          l3:   {label: 'Leaf B1',   x: 740, y: 540},
-          l4:   {label: 'Leaf B2',   x: 1020,y: 540}
-        },
-        connectors: [
-          {from: 'root', to: 'b1'},
-          {from: 'root', to: 'b2'},
-          {from: 'b1', to: 'l1'},
-          {from: 'b1', to: 'l2'},
-          {from: 'b2', to: 'l3'},
-          {from: 'b2', to: 'l4'}
-        ]
-      })
-    },
-    'story-map': {
-      title: 'Story Map',
-      build: () => ({
-        rootKey: 'problem',
-        nodes: {
-          problem:  {label: 'Problem',     x: 600, y: 360, isRoot: true},
-          setting:  {label: 'Setting',     x: 260, y: 160},
-          chars:    {label: 'Characters',  x: 940, y: 160},
-          events:   {label: 'Events',      x: 260, y: 560},
-          solution: {label: 'Solution',    x: 940, y: 560}
-        },
-        connectors: [
-          {from: 'problem', to: 'setting'},
-          {from: 'problem', to: 'chars'},
-          {from: 'problem', to: 'events'},
-          {from: 'problem', to: 'solution'}
-        ]
-      })
+  /* ===== selection helpers ===== */
+  function isSelected(kind, id){
+    return state.selection.kind === kind && state.selection.ids.indexOf(id) !== -1;
+  }
+  function setSelection(kind, ids){
+    const arr = Array.isArray(ids) ? ids.slice() : (ids ? [ids] : []);
+    if (!arr.length) { state.selection = {kind: null, ids: []}; return; }
+    state.selection = {kind, ids: arr};
+  }
+  function toggleSelection(kind, id){
+    if (state.selection.kind && state.selection.kind !== kind) {
+      state.selection = {kind, ids: [id]};
+      return;
     }
+    if (!state.selection.kind) {
+      state.selection = {kind, ids: [id]};
+    } else {
+      const idx = state.selection.ids.indexOf(id);
+      if (idx === -1) state.selection.ids.push(id);
+      else state.selection.ids.splice(idx, 1);
+      if (!state.selection.ids.length) state.selection.kind = null;
+    }
+  }
+  function clearSelection(){ state.selection = {kind: null, ids: []}; }
+  function selectedNodes(){
+    return state.selection.kind === 'node'
+      ? state.selection.ids.map(nodeById).filter(Boolean) : [];
+  }
+  function selectedConnectorObj(){
+    return state.selection.kind === 'connector' && state.selection.ids.length === 1
+      ? connectorById(state.selection.ids[0]) : null;
+  }
+  function selectedGroupObj(){
+    return state.selection.kind === 'group' && state.selection.ids.length === 1
+      ? groupById(state.selection.ids[0]) : null;
+  }
+  function singleSelectedNode(){
+    const ns = selectedNodes();
+    return ns.length === 1 ? ns[0] : null;
+  }
+  function groupsContaining(nodeId){
+    return state.groups.filter(g => g.nodeIds.indexOf(nodeId) !== -1);
+  }
+
+  /* ===== templates ===== */
+  const TEMPLATES = {
+    'concept-map': {title: 'Concept Map', build: () => ({
+      rootKey: 'root',
+      nodes: {
+        root: {label: 'Main Idea', x: 600, y: 360, isRoot: true},
+        a:    {label: 'Idea 1',    x: 290, y: 200},
+        b:    {label: 'Idea 2',    x: 910, y: 200},
+        c:    {label: 'Idea 3',    x: 290, y: 520},
+        d:    {label: 'Idea 4',    x: 910, y: 520}
+      },
+      connectors: [
+        {from: 'root', to: 'a'}, {from: 'root', to: 'b'},
+        {from: 'root', to: 'c'}, {from: 'root', to: 'd'}
+      ]
+    })},
+    'mind-map': {title: 'Mind Map', build: () => ({
+      rootKey: 'root',
+      nodes: {
+        root: {label: 'Topic',      x: 600, y: 360, isRoot: true},
+        n1:   {label: 'Subtopic 1', x: 600, y: 140},
+        n2:   {label: 'Subtopic 2', x: 980, y: 240},
+        n3:   {label: 'Subtopic 3', x: 980, y: 480},
+        n4:   {label: 'Subtopic 4', x: 600, y: 580},
+        n5:   {label: 'Subtopic 5', x: 220, y: 480},
+        n6:   {label: 'Subtopic 6', x: 220, y: 240}
+      },
+      connectors: ['n1','n2','n3','n4','n5','n6'].map(k => ({from: 'root', to: k}))
+    })},
+    'fishbone': {title: 'Fishbone (Cause Analysis)', build: () => ({
+      rootKey: 'effect',
+      nodes: {
+        effect:     {label: 'Effect / Problem', x: 1020, y: 360, isRoot: true},
+        people:     {label: 'People',           x: 240,  y: 130},
+        process:    {label: 'Process',          x: 540,  y: 130},
+        equipment:  {label: 'Equipment',        x: 800,  y: 200},
+        environment:{label: 'Environment',      x: 800,  y: 520},
+        materials:  {label: 'Materials',        x: 540,  y: 590},
+        methods:    {label: 'Methods',          x: 240,  y: 590}
+      },
+      connectors: ['people','process','equipment','environment','materials','methods']
+        .map(k => ({from: k, to: 'effect', label: 'contributes to'}))
+    })},
+    'frayer': {title: 'Frayer Model', build: () => ({
+      rootKey: 'word',
+      nodes: {
+        word:  {label: 'Word / Concept',  x: 600, y: 360, isRoot: true},
+        def:   {label: 'Definition',      x: 290, y: 180},
+        char:  {label: 'Characteristics', x: 910, y: 180},
+        ex:    {label: 'Examples',        x: 290, y: 540},
+        nonex: {label: 'Non-Examples',    x: 910, y: 540}
+      },
+      connectors: [
+        {from: 'word', to: 'def'},  {from: 'word', to: 'char'},
+        {from: 'word', to: 'ex'},   {from: 'word', to: 'nonex'}
+      ]
+    })},
+    'kwl': {title: 'KWL Chart', build: () => ({
+      rootKey: 'w',
+      nodes: {
+        k: {label: 'What I Know',         x: 260, y: 360},
+        w: {label: 'What I Want to Know', x: 600, y: 360, isRoot: true},
+        l: {label: 'What I Learned',      x: 940, y: 360}
+      },
+      connectors: [
+        {from: 'k', to: 'w', label: 'leads to'},
+        {from: 'w', to: 'l', label: 'becomes'}
+      ]
+    })},
+    '5ws': {title: '5 Ws (and How)', build: () => ({
+      rootKey: 'topic',
+      nodes: {
+        topic: {label: 'Topic / Event', x: 600, y: 360, isRoot: true},
+        who:   {label: 'Who?',          x: 260, y: 180},
+        what:  {label: 'What?',         x: 600, y: 130},
+        when:  {label: 'When?',         x: 940, y: 180},
+        where: {label: 'Where?',        x: 940, y: 540},
+        why:   {label: 'Why?',          x: 600, y: 590},
+        how:   {label: 'How?',          x: 260, y: 540}
+      },
+      connectors: ['who','what','when','where','why','how'].map(k => ({from: 'topic', to: k}))
+    })},
+    'cycle': {title: 'Cycle (4 steps)', build: () => ({
+      rootKey: 's1',
+      nodes: {
+        s1: {label: 'Step 1', x: 600, y: 140, isRoot: true},
+        s2: {label: 'Step 2', x: 980, y: 360},
+        s3: {label: 'Step 3', x: 600, y: 580},
+        s4: {label: 'Step 4', x: 220, y: 360}
+      },
+      connectors: [
+        {from: 's1', to: 's2', label: 'then'},
+        {from: 's2', to: 's3', label: 'then'},
+        {from: 's3', to: 's4', label: 'then'},
+        {from: 's4', to: 's1', label: 'repeats'}
+      ]
+    })},
+    'sequence': {title: 'Sequence Chain (5 steps)', build: () => ({
+      rootKey: 's1',
+      nodes: {
+        s1: {label: 'Step 1', x: 180,  y: 360, isRoot: true},
+        s2: {label: 'Step 2', x: 390,  y: 360},
+        s3: {label: 'Step 3', x: 600,  y: 360},
+        s4: {label: 'Step 4', x: 810,  y: 360},
+        s5: {label: 'Step 5', x: 1020, y: 360}
+      },
+      connectors: [
+        {from: 's1', to: 's2', label: 'then'},
+        {from: 's2', to: 's3', label: 'then'},
+        {from: 's3', to: 's4', label: 'then'},
+        {from: 's4', to: 's5', label: 'then'}
+      ]
+    })},
+    'cause-effect': {title: 'Cause & Effect', build: () => ({
+      rootKey: 'effect',
+      nodes: {
+        effect: {label: 'Effect',  x: 940, y: 360, isRoot: true},
+        c1:     {label: 'Cause 1', x: 240, y: 180},
+        c2:     {label: 'Cause 2', x: 240, y: 360},
+        c3:     {label: 'Cause 3', x: 240, y: 540}
+      },
+      connectors: ['c1','c2','c3'].map(k => ({from: k, to: 'effect', label: 'causes'}))
+    })},
+    'compare-contrast': {title: 'Compare & Contrast', build: () => ({
+      rootKey: 'topic',
+      nodes: {
+        topic:  {label: 'Topic',      x: 600, y: 130, isRoot: true},
+        a:      {label: 'Subject A',  x: 290, y: 340},
+        b:      {label: 'Subject B',  x: 910, y: 340},
+        aOnly:  {label: 'A Only',     x: 180, y: 560},
+        shared: {label: 'Both Share', x: 600, y: 560},
+        bOnly:  {label: 'B Only',     x: 1020,y: 560}
+      },
+      connectors: [
+        {from: 'topic', to: 'a'}, {from: 'topic', to: 'b'},
+        {from: 'a', to: 'aOnly',  label: 'unique'},
+        {from: 'a', to: 'shared', label: 'shares'},
+        {from: 'b', to: 'shared', label: 'shares'},
+        {from: 'b', to: 'bOnly',  label: 'unique'}
+      ]
+    })},
+    'hierarchy': {title: 'Hierarchy / Tree', build: () => ({
+      rootKey: 'root',
+      nodes: {
+        root: {label: 'Top',      x: 600, y: 130, isRoot: true},
+        b1:   {label: 'Branch A', x: 320, y: 320},
+        b2:   {label: 'Branch B', x: 880, y: 320},
+        l1:   {label: 'Leaf A1',  x: 180, y: 540},
+        l2:   {label: 'Leaf A2',  x: 460, y: 540},
+        l3:   {label: 'Leaf B1',  x: 740, y: 540},
+        l4:   {label: 'Leaf B2',  x: 1020,y: 540}
+      },
+      connectors: [
+        {from: 'root', to: 'b1'}, {from: 'root', to: 'b2'},
+        {from: 'b1', to: 'l1'},   {from: 'b1', to: 'l2'},
+        {from: 'b2', to: 'l3'},   {from: 'b2', to: 'l4'}
+      ]
+    })},
+    'story-map': {title: 'Story Map', build: () => ({
+      rootKey: 'problem',
+      nodes: {
+        problem:  {label: 'Problem',    x: 600, y: 360, isRoot: true},
+        setting:  {label: 'Setting',    x: 260, y: 160},
+        chars:    {label: 'Characters', x: 940, y: 160},
+        events:   {label: 'Events',     x: 260, y: 560},
+        solution: {label: 'Solution',   x: 940, y: 560}
+      },
+      connectors: [
+        {from: 'problem', to: 'setting'}, {from: 'problem', to: 'chars'},
+        {from: 'problem', to: 'events'},  {from: 'problem', to: 'solution'}
+      ]
+    })}
   };
 
   function loadTemplate(key){
     const tpl = TEMPLATES[key];
     if (!tpl) return;
     const spec = tpl.build();
-    state.nodes = [];
-    state.connectors = [];
+    state.nodes = []; state.connectors = []; state.groups = [];
     state.nextId = 1;
-    state.selectedId = null;
-    state.selectedKind = null;
-    state.pendingFrom = null;
+    clearSelection();
+    state.pendingFrom = null; state.pendingFromMulti = null;
+    state.drag = null; state.rubber = null;
     const idByKey = {};
-    // Create root first (if any) so its color comes from ROOT_STYLE
-    const rootKey = spec.rootKey;
     const keys = Object.keys(spec.nodes);
+    const rootKey = spec.rootKey;
     const ordered = rootKey && spec.nodes[rootKey]
-      ? [rootKey].concat(keys.filter(k => k !== rootKey))
-      : keys;
+      ? [rootKey].concat(keys.filter(k => k !== rootKey)) : keys;
     ordered.forEach(k => {
       const n = spec.nodes[k];
       const node = makeNode(n);
@@ -732,11 +782,11 @@
       state.connectors.push(makeConnector(fromId, toId, c.label || ''));
     });
     const rootId = rootKey ? idByKey[rootKey] : (state.nodes[0] && state.nodes[0].id);
-    if (rootId) { state.selectedId = rootId; state.selectedKind = 'node'; }
+    if (rootId) setSelection('node', [rootId]);
   }
-
   function defaultMap(){ loadTemplate('concept-map'); }
 
+  /* ===== geometry ===== */
   function anchorPoint(from, to){
     const dx = to.x - from.x, dy = to.y - from.y;
     if (dx === 0 && dy === 0) return {x: from.x, y: from.y};
@@ -752,7 +802,27 @@
     }
     return {x: from.x + tx, y: from.y + ty};
   }
+  function groupBounds(g){
+    const ns = g.nodeIds.map(nodeById).filter(Boolean);
+    if (!ns.length) return null;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ns.forEach(n => {
+      minX = Math.min(minX, n.x - n.w/2);
+      maxX = Math.max(maxX, n.x + n.w/2);
+      minY = Math.min(minY, n.y - n.h/2);
+      maxY = Math.max(maxY, n.y + n.h/2);
+    });
+    const pad = 16;
+    const labelExtra = g.label ? 24 : 4;
+    return {
+      x: minX - pad,
+      y: minY - pad - labelExtra,
+      w: (maxX - minX) + pad*2,
+      h: (maxY - minY) + pad*2 + labelExtra
+    };
+  }
 
+  /* ===== render ===== */
   function svgPart(tag, attrs, children){
     const el = document.createElementNS(NS, tag);
     if (attrs) for (const k in attrs) {
@@ -769,108 +839,155 @@
 
   function render(){
     while (svg.firstChild) svg.removeChild(svg.firstChild);
-    svg.setAttribute('viewBox', `0 0 ${CANVAS_W} ${CANVAS_H}`);
+    svg.setAttribute('viewBox', '0 0 ' + CANVAS_W + ' ' + CANVAS_H);
 
-    // Defs
     const defs = svgPart('defs');
     defs.innerHTML =
       '<marker id="cmArrow" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto">' +
-      '<path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker>' +
+        '<path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker>' +
       '<marker id="cmArrowSelected" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto">' +
-      '<path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/></marker>';
+        '<path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/></marker>';
     svg.appendChild(defs);
 
-    // Connectors behind nodes
+    // Groups (behind everything)
+    state.groups.forEach(g => {
+      const b = groupBounds(g);
+      if (!b) return;
+      const c = PALETTE[((g.colorIndex || 0) % PALETTE.length + PALETTE.length) % PALETTE.length];
+      const isSel = isSelected('group', g.id);
+      const grpEl = svgPart('g', {class: 'cm-group' + (isSel ? ' selected' : ''), 'data-id': g.id});
+      grpEl.appendChild(svgPart('rect', {
+        x: b.x, y: b.y, width: b.w, height: b.h, rx: 14,
+        fill: c.fill, 'fill-opacity': 0.32,
+        stroke: isSel ? '#f59e0b' : c.stroke,
+        'stroke-width': isSel ? 3 : 2,
+        'stroke-dasharray': '8 4'
+      }));
+      if (g.label) {
+        grpEl.appendChild(svgText(truncate(g.label, 32), {
+          x: b.x + 14, y: b.y + 19,
+          'font-family': 'Arial, sans-serif',
+          'font-size': 14, 'font-weight': 800, fill: c.text
+        }));
+      }
+      svg.appendChild(grpEl);
+    });
+
+    // Connectors
     state.connectors.forEach(c => {
       const from = nodeById(c.fromId), to = nodeById(c.toId);
       if (!from || !to) return;
-      const isSelected = state.selectedKind === 'connector' && state.selectedId === c.id;
+      const isSel = isSelected('connector', c.id);
       const p1 = anchorPoint(from, to), p2 = anchorPoint(to, from);
       const midX = (p1.x + p2.x) / 2, midY = (p1.y + p2.y) / 2;
       const ctrlX = midX;
-      const d = `M ${p1.x} ${p1.y} C ${ctrlX} ${p1.y}, ${ctrlX} ${p2.y}, ${p2.x} ${p2.y}`;
-      const g = svgPart('g', {class: 'cm-connector' + (isSelected ? ' selected' : ''), 'data-id': c.id});
+      const d = 'M ' + p1.x + ' ' + p1.y + ' C ' + ctrlX + ' ' + p1.y + ', ' + ctrlX + ' ' + p2.y + ', ' + p2.x + ' ' + p2.y;
+      const g = svgPart('g', {class: 'cm-connector' + (isSel ? ' selected' : ''), 'data-id': c.id});
       g.appendChild(svgPart('path', {
         d, fill: 'none',
-        stroke: isSelected ? '#f59e0b' : '#94a3b8',
-        'stroke-width': isSelected ? 4 : 3,
+        stroke: isSel ? '#f59e0b' : '#94a3b8',
+        'stroke-width': isSel ? 4 : 3,
         'stroke-linecap': 'round',
-        'marker-end': isSelected ? 'url(#cmArrowSelected)' : 'url(#cmArrow)'
+        'marker-end': isSel ? 'url(#cmArrowSelected)' : 'url(#cmArrow)'
       }));
-      // Wider invisible hit-area so connector is easy to click
+      // Wider invisible hit-area
       g.appendChild(svgPart('path', {
         d, fill: 'none', stroke: 'transparent', 'stroke-width': 18, 'pointer-events': 'stroke'
       }));
+      // Label sub-group — clicking this should open the label editor directly
+      const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
       if (c.label) {
         const labelText = truncate(c.label, 28);
         const charW = 7.2;
         const w = Math.min(220, Math.max(60, labelText.length * charW + 18));
-        g.appendChild(svgPart('rect', {
+        labelGroup.appendChild(svgPart('rect', {
           x: midX - w/2, y: midY - 13, width: w, height: 26, rx: 8,
-          fill: '#ffffff', stroke: isSelected ? '#f59e0b' : '#94a3b8', 'stroke-width': isSelected ? 2 : 1.5
+          fill: '#ffffff', stroke: isSel ? '#f59e0b' : '#94a3b8',
+          'stroke-width': isSel ? 2 : 1.5
         }));
-        g.appendChild(svgText(labelText, {
+        labelGroup.appendChild(svgText(labelText, {
           x: midX, y: midY + 5, 'text-anchor': 'middle',
-          'font-family': 'Arial, sans-serif', 'font-size': 13, 'font-weight': 700,
-          fill: '#475569'
+          'font-family': 'Arial, sans-serif',
+          'font-size': 13, 'font-weight': 700, fill: '#475569'
         }));
-      } else if (isSelected) {
-        // hint marker for an unlabeled selected connector
-        g.appendChild(svgPart('circle', {
-          cx: midX, cy: midY, r: 8, fill: '#f59e0b', opacity: 0.85
+      } else {
+        // Empty-label hit target so the user can click to add one
+        labelGroup.appendChild(svgPart('rect', {
+          x: midX - 32, y: midY - 13, width: 64, height: 26, rx: 8,
+          fill: isSel ? '#fff7e6' : '#ffffff', 'fill-opacity': isSel ? 1 : 0.85,
+          stroke: isSel ? '#f59e0b' : '#cbd5e1', 'stroke-width': isSel ? 2 : 1.2,
+          'stroke-dasharray': '4 3'
+        }));
+        labelGroup.appendChild(svgText('label', {
+          x: midX, y: midY + 5, 'text-anchor': 'middle',
+          'font-family': 'Arial, sans-serif',
+          'font-size': 11, 'font-weight': 700, fill: isSel ? '#92400e' : '#94a3b8',
+          'font-style': 'italic'
         }));
       }
+      g.appendChild(labelGroup);
       svg.appendChild(g);
     });
 
     // Nodes
     state.nodes.forEach(n => {
-      const isSelected = state.selectedKind === 'node' && state.selectedId === n.id;
-      const isPending = state.pendingFrom === n.id;
-      const g = svgPart('g', {
-        class: 'cm-node' + (isSelected ? ' selected' : '') + (isPending ? ' pending' : ''),
+      const isSel = isSelected('node', n.id);
+      const isPending = state.pendingFrom === n.id ||
+        (state.pendingFromMulti && state.pendingFromMulti.indexOf(n.id) !== -1);
+      const gNode = svgPart('g', {
+        class: 'cm-node' + (isSel ? ' selected' : '') + (isPending ? ' pending' : ''),
         'data-id': n.id
       });
       const x = n.x - n.w/2, y = n.y - n.h/2;
-      const stroke = isSelected ? '#f59e0b' : (isPending ? '#f59e0b' : n.stroke);
-      g.appendChild(svgPart('rect', {
+      const stroke = (isSel || isPending) ? '#f59e0b' : n.stroke;
+      gNode.appendChild(svgPart('rect', {
         x, y, width: n.w, height: n.h, rx: 18,
-        fill: n.fill, stroke,
-        'stroke-width': isSelected ? 3.5 : 2.2
+        fill: n.fill, stroke, 'stroke-width': isSel ? 3.5 : 2.2
       }));
       if (n.image) {
-        // image circle on the left
         const imgSize = 46;
         const ix = x + 12, iy = n.y - imgSize/2;
         const clipId = 'clip_' + n.id;
         const clip = svgPart('clipPath', {id: clipId});
         clip.appendChild(svgPart('circle', {cx: ix + imgSize/2, cy: iy + imgSize/2, r: imgSize/2}));
-        g.appendChild(clip);
-        g.appendChild(svgPart('image', {
+        gNode.appendChild(clip);
+        gNode.appendChild(svgPart('image', {
           href: n.image, x: ix, y: iy, width: imgSize, height: imgSize,
           preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#' + clipId + ')'
         }));
-        g.appendChild(svgText(truncate(n.label, 18), {
+        gNode.appendChild(svgText(truncate(n.label, 18), {
           x: x + n.w/2 + 22, y: n.y + 6, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
-          'font-size': n.isRoot ? 18 : 15,
-          'font-weight': 800, fill: n.text
+          'font-size': n.isRoot ? 18 : 15, 'font-weight': 800, fill: n.text
         }));
       } else {
-        g.appendChild(svgText(truncate(n.label, 22), {
+        gNode.appendChild(svgText(truncate(n.label, 22), {
           x: n.x, y: n.y + 6, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
-          'font-size': n.isRoot ? 18 : 15,
-          'font-weight': 800, fill: n.text
+          'font-size': n.isRoot ? 18 : 15, 'font-weight': 800, fill: n.text
         }));
       }
       if (n.link) {
         const lx = x + n.w - 16, ly = y + 16;
-        g.appendChild(svgPart('circle', {cx: lx, cy: ly, r: 11, fill: '#ffffff', stroke: n.stroke, 'stroke-width': 1.5}));
-        g.appendChild(svgText('↗', {x: lx, y: ly + 5, 'text-anchor': 'middle', 'font-family': 'Arial, sans-serif', 'font-size': 14, 'font-weight': 800, fill: n.stroke}));
+        gNode.appendChild(svgPart('circle', {cx: lx, cy: ly, r: 11, fill: '#ffffff', stroke: n.stroke, 'stroke-width': 1.5}));
+        gNode.appendChild(svgText('↗', {x: lx, y: ly + 5, 'text-anchor': 'middle', 'font-family': 'Arial, sans-serif', 'font-size': 14, 'font-weight': 800, fill: n.stroke}));
       }
-      svg.appendChild(g);
+      svg.appendChild(gNode);
     });
+
+    // Rubber band
+    if (state.rubber) {
+      const r = state.rubber;
+      const x = Math.min(r.x0, r.x), y = Math.min(r.y0, r.y);
+      const w = Math.abs(r.x - r.x0), h = Math.abs(r.y - r.y0);
+      const band = svgPart('g', {class: 'cm-rubber'});
+      band.appendChild(svgPart('rect', {
+        x, y, width: w, height: h,
+        fill: '#7c3aed', 'fill-opacity': 0.08,
+        stroke: '#7c3aed', 'stroke-width': 1.5, 'stroke-dasharray': '6 4'
+      }));
+      svg.appendChild(band);
+    }
 
     updateModeUI();
     updateActionStates();
@@ -880,34 +997,54 @@
   function updateModeUI(){
     selectToolBtn.classList.toggle('active', state.tool === 'select');
     connectToolBtn.classList.toggle('active', state.tool === 'connect');
-    modeEl.textContent = 'Mode: ' + (state.tool === 'connect' ? 'Connect Nodes' : 'Select / Drag');
     modeEl.classList.toggle('connect', state.tool === 'connect');
     if (state.tool === 'connect') {
-      hintEl.textContent = state.pendingFrom
-        ? 'Click the second node to connect, or click the same node to cancel.'
-        : 'Click the first node, then the second node to connect them.';
+      modeEl.textContent = 'Mode: Connect Nodes';
+      if (state.pendingFromMulti && state.pendingFromMulti.length) {
+        hintEl.textContent = state.pendingFromMulti.length + ' source nodes pinned — click a target to connect them all. Esc to exit.';
+      } else if (state.pendingFrom) {
+        hintEl.textContent = 'Source pinned. Click each target to connect; Esc or click empty canvas to exit.';
+      } else {
+        hintEl.textContent = 'Click the source node first, then click each target. Esc to exit.';
+      }
     } else {
-      hintEl.textContent = 'Click to select. Drag to move. Double-click a node to rename. Double-click a connector to label it.';
+      modeEl.textContent = 'Mode: Select / Drag';
+      hintEl.textContent = 'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node.';
     }
   }
 
   function updateActionStates(){
-    const nodeSelected = state.selectedKind === 'node' && nodeById(state.selectedId);
-    const connSelected = state.selectedKind === 'connector' && connectorById(state.selectedId);
-    document.getElementById('addChildBtn').disabled = !nodeSelected;
-    document.getElementById('editTextBtn').disabled = !nodeSelected;
-    document.getElementById('setLinkBtn').disabled = !nodeSelected;
-    document.getElementById('attachImageBtn').disabled = !nodeSelected;
-    document.getElementById('clearImageBtn').disabled = !(nodeSelected && nodeSelected.image);
-    document.getElementById('clearLinkBtn').disabled = !(nodeSelected && nodeSelected.link);
-    document.getElementById('editConnectorBtn').disabled = !connSelected;
-    document.getElementById('deleteBtn').disabled = !(nodeSelected || connSelected);
+    const sel = state.selection;
+    const nodes = selectedNodes();
+    const single = nodes.length === 1 ? nodes[0] : null;
+    const conn = selectedConnectorObj();
+    const grp = selectedGroupObj();
+    const anyNode = sel.kind === 'node' && sel.ids.length > 0;
+    document.getElementById('addChildBtn').disabled = !single;
+    document.getElementById('editTextBtn').disabled = !single;
+    document.getElementById('cycleColorBtn').disabled = !anyNode;
+    document.getElementById('setLinkBtn').disabled = !single;
+    document.getElementById('attachImageBtn').disabled = !single;
+    document.getElementById('clearImageBtn').disabled = !(single && single.image);
+    document.getElementById('clearLinkBtn').disabled = !(single && single.link);
+    document.getElementById('editConnectorBtn').disabled = !conn;
+    document.getElementById('groupSelectedBtn').disabled = !(anyNode && sel.ids.length >= 2);
+    document.getElementById('ungroupBtn').disabled = !grp;
+    document.getElementById('editGroupLabelBtn').disabled = !grp;
+    document.getElementById('deleteBtn').disabled = !sel.kind;
   }
 
   function updateSelectionInfo(){
-    if (state.selectedKind === 'node') {
-      const n = nodeById(state.selectedId);
-      if (!n) { selInfoEl.textContent = 'Nothing selected.'; return; }
+    const sel = state.selection;
+    if (sel.kind === 'node') {
+      const ns = selectedNodes();
+      if (!ns.length) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      if (ns.length > 1) {
+        selInfoEl.innerHTML = '<strong>' + ns.length + ' nodes selected.</strong><br>' +
+          'Drag any to move them together. Group Selected makes them a group. Click Connect, then a target, to wire all to one target.';
+        return;
+      }
+      const n = ns[0];
       const bits = [];
       bits.push('<strong>Node</strong>: ' + esc(n.label));
       if (n.isRoot) bits.push('Root node.');
@@ -915,77 +1052,111 @@
       if (n.image) bits.push('Has an attached image.');
       const cn = state.connectors.filter(c => c.fromId === n.id || c.toId === n.id).length;
       bits.push(cn + ' connector' + (cn === 1 ? '' : 's') + '.');
+      const inGroups = groupsContaining(n.id);
+      if (inGroups.length) bits.push('In ' + inGroups.length + ' group' + (inGroups.length === 1 ? '' : 's') + '.');
       selInfoEl.innerHTML = bits.join('<br>');
-    } else if (state.selectedKind === 'connector') {
-      const c = connectorById(state.selectedId);
+    } else if (sel.kind === 'connector') {
+      const c = selectedConnectorObj();
       if (!c) { selInfoEl.textContent = 'Nothing selected.'; return; }
       const from = nodeById(c.fromId), to = nodeById(c.toId);
       let html = '<strong>Connector</strong>';
       if (from && to) html += '<br>' + esc(from.label) + ' → ' + esc(to.label);
-      if (c.label) html += '<br>Label: <em>' + esc(c.label) + '</em>';
-      else html += '<br>No label yet. Double-click the connector or use Edit Connector Label.';
+      html += '<br>' + (c.label ? 'Label: <em>' + esc(c.label) + '</em>' : 'No label yet. Click the white box on the connector to add one.');
+      selInfoEl.innerHTML = html;
+    } else if (sel.kind === 'group') {
+      const g = selectedGroupObj();
+      if (!g) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      let html = '<strong>Group</strong>';
+      html += '<br>Members: ' + g.nodeIds.length + ' node' + (g.nodeIds.length === 1 ? '' : 's');
+      if (g.label) html += '<br>Label: <em>' + esc(g.label) + '</em>';
+      else html += '<br>No label yet. Use Edit Group Label.';
       selInfoEl.innerHTML = html;
     } else {
-      selInfoEl.textContent = 'Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.';
+      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag on empty canvas to rubber-band select. Click the white label box on a connector to edit its label.';
     }
   }
 
   function setTool(tool){
     state.tool = tool;
-    if (tool !== 'connect') state.pendingFrom = null;
+    if (tool !== 'connect') {
+      state.pendingFrom = null;
+      state.pendingFromMulti = null;
+    }
     render();
   }
 
-  function selectNode(id){
-    state.selectedId = id;
-    state.selectedKind = id ? 'node' : null;
-    render();
-  }
-  function selectConnector(id){
-    state.selectedId = id;
-    state.selectedKind = id ? 'connector' : null;
-    render();
-  }
-  function clearSelection(){
-    state.selectedId = null;
-    state.selectedKind = null;
-    render();
-  }
-
+  /* ===== pointer handlers ===== */
   function pointerToSvg(e){
     const pt = svg.createSVGPoint();
     pt.x = e.clientX; pt.y = e.clientY;
     const ctm = svg.getScreenCTM();
     if (!ctm) return {x: 0, y: 0};
-    const inv = ctm.inverse();
-    const out = pt.matrixTransform(inv);
+    const out = pt.matrixTransform(ctm.inverse());
     return {x: out.x, y: out.y};
   }
+  function clampNodePos(n, x, y){
+    n.x = Math.max(n.w/2 + 4, Math.min(CANVAS_W - n.w/2 - 4, x));
+    n.y = Math.max(n.h/2 + 4, Math.min(CANVAS_H - n.h/2 - 4, y));
+  }
 
-  // Pointer interaction
   svg.addEventListener('pointerdown', e => {
-    if (state.editing) return; // ignore canvas clicks while editing
+    if (state.editing) return;
     if (e.button !== 0) return;
     const nodeEl = e.target.closest('.cm-node');
     const connEl = e.target.closest('.cm-connector');
+    const labelEl = e.target.closest('.cm-connector-label');
+    const groupEl = e.target.closest('.cm-group');
 
+    /* ----- connect tool ----- */
     if (state.tool === 'connect') {
-      if (!nodeEl) return;
+      if (!nodeEl) {
+        // Click empty (or non-node) -> exit connect mode
+        state.pendingFrom = null;
+        state.pendingFromMulti = null;
+        setTool('select');
+        setStatus('Exited connect mode.', 'info');
+        e.preventDefault();
+        return;
+      }
       const id = nodeEl.dataset.id;
+      // Multi-source -> single-target: create N connectors at once
+      if (state.pendingFromMulti && state.pendingFromMulti.length) {
+        let added = 0;
+        state.pendingFromMulti.forEach(srcId => {
+          if (srcId === id) return;
+          const exists = state.connectors.some(c => c.fromId === srcId && c.toId === id);
+          if (!exists) { state.connectors.push(makeConnector(srcId, id)); added++; }
+        });
+        state.pendingFromMulti = null;
+        setTool('select');
+        setStatus('Created ' + added + ' connector' + (added === 1 ? '' : 's') + ' to "' + esc(nodeById(id).label) + '".', added ? 'success' : 'info');
+        e.preventDefault();
+        return;
+      }
+      // Single-source -> multi-shot
       if (!state.pendingFrom) {
         state.pendingFrom = id;
-        setStatus('First node picked. Click the second node.', 'info');
-        render();
+        setStatus('Source pinned: "' + esc(nodeById(id).label) + '". Click each target to connect. Esc or click empty canvas to exit.', 'info');
       } else if (state.pendingFrom !== id) {
-        state.connectors.push(makeConnector(state.pendingFrom, id));
-        state.pendingFrom = null;
-        setStatus('Connector added. Switching back to Select mode.', 'success');
-        setTool('select');
+        const exists = state.connectors.some(c => c.fromId === state.pendingFrom && c.toId === id);
+        if (!exists) state.connectors.push(makeConnector(state.pendingFrom, id));
+        setStatus(exists ? 'Already connected. Pick another target.' : 'Connector added. Click another target or Esc.', exists ? 'info' : 'success');
       } else {
         state.pendingFrom = null;
-        setStatus('Connector cancelled.', 'info');
-        render();
+        setStatus('Source cleared. Click a new source.', 'info');
       }
+      render();
+      e.preventDefault();
+      return;
+    }
+
+    /* ----- select tool ----- */
+
+    // Connector label first (priority over wider connector hit area)
+    if (labelEl && connEl) {
+      const id = connEl.dataset.id;
+      setSelection('connector', [id]);
+      editConnectorLabel(id);
       e.preventDefault();
       return;
     }
@@ -997,39 +1168,130 @@
         window.open(n.link, '_blank', 'noopener,noreferrer');
         return;
       }
-      selectNode(n.id);
+      // Shift-click: toggle node in selection
+      if (e.shiftKey) {
+        toggleSelection('node', n.id);
+        render();
+        e.preventDefault();
+        return;
+      }
+      // If node is already in multi-selection, keep selection (drag-all)
+      const alreadySel = isSelected('node', n.id);
+      if (!alreadySel) setSelection('node', [n.id]);
+      // Start drag — collect all node ids that should move together
+      const dragNodes = collectDragNodeIds(n.id);
       const p = pointerToSvg(e);
-      state.drag = {id: n.id, dx: p.x - n.x, dy: p.y - n.y, moved: false};
+      state.drag = {kind: 'node', ids: dragNodes, lastX: p.x, lastY: p.y, moved: false};
       try { svg.setPointerCapture(e.pointerId); } catch(_) {}
       nodeEl.classList.add('dragging');
+      render();
       e.preventDefault();
       return;
     }
 
     if (connEl) {
-      selectConnector(connEl.dataset.id);
+      if (e.shiftKey) toggleSelection('connector', connEl.dataset.id);
+      else setSelection('connector', [connEl.dataset.id]);
+      render();
       e.preventDefault();
       return;
     }
 
-    clearSelection();
+    if (groupEl) {
+      const id = groupEl.dataset.id;
+      const grp = groupById(id);
+      if (!grp) return;
+      if (e.shiftKey) toggleSelection('group', id);
+      else setSelection('group', [id]);
+      // Start group drag
+      const p = pointerToSvg(e);
+      state.drag = {kind: 'group', ids: grp.nodeIds.slice(), lastX: p.x, lastY: p.y, moved: false};
+      try { svg.setPointerCapture(e.pointerId); } catch(_) {}
+      groupEl.classList.add('dragging');
+      render();
+      e.preventDefault();
+      return;
+    }
+
+    // Empty canvas
+    const p = pointerToSvg(e);
+    state.rubber = {x0: p.x, y0: p.y, x: p.x, y: p.y, additive: !!e.shiftKey, didMove: false};
+    try { svg.setPointerCapture(e.pointerId); } catch(_) {}
+    // If user just clicks (no drag), we'll clear selection on pointerup.
   });
 
+  function collectDragNodeIds(seedId){
+    const ids = new Set();
+    // Include all selected if seed is selected
+    if (isSelected('node', seedId)) {
+      state.selection.ids.forEach(id => ids.add(id));
+    } else {
+      ids.add(seedId);
+    }
+    // Expand to whole groups for any included node
+    const added = new Set(ids);
+    added.forEach(id => {
+      groupsContaining(id).forEach(g => {
+        g.nodeIds.forEach(nid => ids.add(nid));
+      });
+    });
+    return Array.from(ids);
+  }
+
   svg.addEventListener('pointermove', e => {
-    if (!state.drag) return;
-    const n = nodeById(state.drag.id);
-    if (!n) return;
-    const p = pointerToSvg(e);
-    n.x = Math.max(n.w/2 + 4, Math.min(CANVAS_W - n.w/2 - 4, p.x - state.drag.dx));
-    n.y = Math.max(n.h/2 + 4, Math.min(CANVAS_H - n.h/2 - 4, p.y - state.drag.dy));
-    state.drag.moved = true;
-    render();
+    if (state.drag) {
+      const p = pointerToSvg(e);
+      const dx = p.x - state.drag.lastX, dy = p.y - state.drag.lastY;
+      state.drag.lastX = p.x; state.drag.lastY = p.y;
+      state.drag.moved = true;
+      state.drag.ids.forEach(id => {
+        const n = nodeById(id);
+        if (!n) return;
+        clampNodePos(n, n.x + dx, n.y + dy);
+      });
+      render();
+    } else if (state.rubber) {
+      const p = pointerToSvg(e);
+      state.rubber.x = p.x; state.rubber.y = p.y;
+      if (Math.abs(p.x - state.rubber.x0) > RUBBER_MIN || Math.abs(p.y - state.rubber.y0) > RUBBER_MIN) {
+        state.rubber.didMove = true;
+      }
+      render();
+    }
   });
 
   function endDrag(e){
     if (state.drag) {
       try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
       state.drag = null;
+      render();
+      return;
+    }
+    if (state.rubber) {
+      try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+      if (state.rubber.didMove) {
+        const r = state.rubber;
+        const minX = Math.min(r.x0, r.x), maxX = Math.max(r.x0, r.x);
+        const minY = Math.min(r.y0, r.y), maxY = Math.max(r.y0, r.y);
+        const hits = state.nodes.filter(n =>
+          n.x - n.w/2 >= minX && n.x + n.w/2 <= maxX &&
+          n.y - n.h/2 >= minY && n.y + n.h/2 <= maxY
+        ).map(n => n.id);
+        if (r.additive && state.selection.kind === 'node') {
+          hits.forEach(id => {
+            if (state.selection.ids.indexOf(id) === -1) state.selection.ids.push(id);
+          });
+        } else if (hits.length) {
+          setSelection('node', hits);
+        }
+        if (hits.length) setStatus('Selected ' + state.selection.ids.length + ' node' + (state.selection.ids.length === 1 ? '' : 's') + '.', 'success');
+        else if (!r.additive) clearSelection();
+      } else {
+        // Single click on empty -> clear unless shift held
+        if (!state.rubber.additive) clearSelection();
+      }
+      state.rubber = null;
+      render();
     }
   }
   svg.addEventListener('pointerup', endDrag);
@@ -1037,23 +1299,49 @@
 
   svg.addEventListener('dblclick', e => {
     const nodeEl = e.target.closest('.cm-node');
+    const labelEl = e.target.closest('.cm-connector-label');
     const connEl = e.target.closest('.cm-connector');
+    const groupEl = e.target.closest('.cm-group');
     if (nodeEl) {
       e.preventDefault();
       const n = nodeById(nodeEl.dataset.id);
-      if (n) { selectNode(n.id); beginNodeInlineEdit(n.id); }
-    } else if (connEl) {
-      e.preventDefault();
-      selectConnector(connEl.dataset.id);
-      editConnectorLabel(connEl.dataset.id);
+      if (n) { setSelection('node', [n.id]); beginNodeInlineEdit(n.id); render(); }
+      return;
     }
+    if (labelEl && connEl) {
+      e.preventDefault();
+      setSelection('connector', [connEl.dataset.id]);
+      editConnectorLabel(connEl.dataset.id);
+      return;
+    }
+    if (connEl) {
+      e.preventDefault();
+      setSelection('connector', [connEl.dataset.id]);
+      editConnectorLabel(connEl.dataset.id);
+      return;
+    }
+    if (groupEl) {
+      e.preventDefault();
+      const id = groupEl.dataset.id;
+      setSelection('group', [id]);
+      editGroupLabel(id);
+      return;
+    }
+    // Empty canvas → add node here
+    e.preventDefault();
+    const p = pointerToSvg(e);
+    const n = makeNode({label: 'New Idea', x: p.x, y: p.y});
+    clampNodePos(n, n.x, n.y);
+    state.nodes.push(n);
+    setSelection('node', [n.id]);
+    render();
+    setStatus('Node added where you double-clicked.', 'success');
   });
 
-  // Inline editor over a node
+  /* ===== inline editor (node text) ===== */
   function beginNodeInlineEdit(id){
     const n = nodeById(id);
     if (!n) return;
-    // Convert node-canvas coords to canvasShell coords
     const ctm = svg.getScreenCTM();
     if (!ctm) return;
     const pt = svg.createSVGPoint();
@@ -1073,8 +1361,7 @@
     if (!state.editing) return;
     const n = nodeById(state.editing);
     if (n && save) {
-      const val = (inlineEditor.value || '').trim();
-      n.label = val || 'Idea';
+      n.label = (inlineEditor.value || '').trim() || 'Idea';
       setStatus('Label updated.', 'success');
     } else if (!save) {
       setStatus('Edit cancelled.', 'info');
@@ -1099,27 +1386,47 @@
     setStatus(c.label ? 'Connector label updated.' : 'Connector label cleared.', 'success');
     render();
   }
+  function editGroupLabel(id){
+    const g = groupById(id);
+    if (!g) return;
+    const v = window.prompt('Group label (shown in the corner of the group box):', g.label || '');
+    if (v === null) return;
+    g.label = v.trim();
+    setStatus(g.label ? 'Group label updated.' : 'Group label cleared.', 'success');
+    render();
+  }
 
-  // Top-bar action handlers
+  /* ===== top-level button handlers ===== */
   selectToolBtn.addEventListener('click', () => setTool('select'));
   connectToolBtn.addEventListener('click', () => {
     if (state.nodes.length < 2) return setStatus('Add at least two nodes before connecting.', 'danger');
-    setTool('connect');
-    setStatus('Connect mode: click the first node, then the second node.', 'info');
+    const selNs = selectedNodes();
+    state.pendingFrom = null;
+    if (selNs.length >= 2) {
+      state.pendingFromMulti = selNs.map(n => n.id);
+      setTool('connect');
+      setStatus(selNs.length + ' source nodes pinned. Click a target to connect them all.', 'info');
+    } else {
+      state.pendingFromMulti = null;
+      setTool('connect');
+      setStatus('Connect mode: click a source node, then each target. Esc to exit.', 'info');
+    }
   });
 
   document.getElementById('addNodeBtn').addEventListener('click', () => {
-    const n = makeNode({label: 'New Idea', x: CANVAS_W/2 + (Math.random()*120 - 60), y: CANVAS_H/2 + (Math.random()*120 - 60)});
+    const x = CANVAS_W/2 + (Math.random()*140 - 70);
+    const y = CANVAS_H/2 + (Math.random()*140 - 70);
+    const n = makeNode({label: 'New Idea', x, y});
+    clampNodePos(n, n.x, n.y);
     state.nodes.push(n);
-    selectNode(n.id);
-    setStatus('Node added. Drag to position, double-click to rename.', 'success');
+    setSelection('node', [n.id]);
+    render();
+    setStatus('Node added. Drag to position, double-click to rename — or double-click the canvas to add nodes where you click.', 'success');
   });
 
   document.getElementById('addChildBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
-    const parent = nodeById(state.selectedId);
+    const parent = singleSelectedNode();
     if (!parent) return;
-    // Place child to the right of parent by default, offset down a bit if crowded
     const siblings = state.connectors.filter(c => c.fromId === parent.id).length;
     const angle = (siblings * 0.7) - 1.2;
     const r = 220;
@@ -1128,27 +1435,60 @@
       x: parent.x + Math.cos(angle) * r,
       y: parent.y + Math.sin(angle) * r
     });
-    child.x = Math.max(child.w/2 + 4, Math.min(CANVAS_W - child.w/2 - 4, child.x));
-    child.y = Math.max(child.h/2 + 4, Math.min(CANVAS_H - child.h/2 - 4, child.y));
+    clampNodePos(child, child.x, child.y);
     state.nodes.push(child);
     state.connectors.push(makeConnector(parent.id, child.id));
-    selectNode(child.id);
+    setSelection('node', [child.id]);
+    render();
     setStatus('Child added and connected to selected node.', 'success');
   });
 
+  document.getElementById('cycleColorBtn').addEventListener('click', () => {
+    const ns = selectedNodes();
+    if (!ns.length) return;
+    ns.forEach(n => {
+      if (n.isRoot) return;
+      const idx = paletteIndexFor(n);
+      applyPalette(n, (idx + 1) % PALETTE.length);
+    });
+    const recolored = ns.filter(n => !n.isRoot).length;
+    if (!recolored) setStatus('Root nodes keep their colour. Select a non-root node to cycle colours.', 'info');
+    else setStatus('Cycled ' + recolored + ' node' + (recolored === 1 ? '' : 's') + ' to the next pastel.', 'success');
+    render();
+  });
+
+  document.getElementById('groupSelectedBtn').addEventListener('click', () => {
+    const ns = selectedNodes();
+    if (ns.length < 2) return setStatus('Select two or more nodes to group.', 'danger');
+    const g = makeGroup(ns.map(n => n.id), '');
+    state.groups.push(g);
+    setSelection('group', [g.id]);
+    render();
+    setStatus('Group created with ' + ns.length + ' nodes. Drag any node in the group to move them together.', 'success');
+  });
+  document.getElementById('ungroupBtn').addEventListener('click', () => {
+    const g = selectedGroupObj();
+    if (!g) return;
+    state.groups = state.groups.filter(x => x.id !== g.id);
+    clearSelection();
+    render();
+    setStatus('Group removed. The member nodes are still there.', 'success');
+  });
+  document.getElementById('editGroupLabelBtn').addEventListener('click', () => {
+    const g = selectedGroupObj();
+    if (g) editGroupLabel(g.id);
+  });
+
   document.getElementById('editTextBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
-    beginNodeInlineEdit(state.selectedId);
+    const n = singleSelectedNode();
+    if (n) beginNodeInlineEdit(n.id);
   });
-
   document.getElementById('editConnectorBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'connector') return;
-    editConnectorLabel(state.selectedId);
+    const c = selectedConnectorObj();
+    if (c) editConnectorLabel(c.id);
   });
-
   document.getElementById('setLinkBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
-    const n = nodeById(state.selectedId);
+    const n = singleSelectedNode();
     if (!n) return;
     const v = window.prompt('Link URL for "' + n.label + '" (https:// or mailto:). Leave blank to clear.', n.link || '');
     if (v === null) return;
@@ -1159,41 +1499,36 @@
     setStatus('Link set. Ctrl/Cmd-click the node to open it.', 'success');
     render();
   });
-
   document.getElementById('clearLinkBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
-    const n = nodeById(state.selectedId);
+    const n = singleSelectedNode();
     if (!n || !n.link) return;
     n.link = '';
     setStatus('Link cleared.', 'info');
     render();
   });
-
   document.getElementById('attachImageBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
+    if (!singleSelectedNode()) return;
     document.getElementById('imageInput').click();
   });
   document.getElementById('imageInput').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
-    if (state.selectedKind !== 'node') { setStatus('Select a node first, then attach an image.', 'danger'); return; }
+    const n = singleSelectedNode();
+    if (!n) { setStatus('Select a single node first, then attach an image.', 'danger'); return; }
     if (!/^image\//.test(f.type)) { setStatus('Pick an image file.', 'danger'); return; }
     if (f.size > 4 * 1024 * 1024) { setStatus('Image is over 4 MB. Pick a smaller file.', 'danger'); return; }
     const r = new FileReader();
     r.onload = () => {
-      const n = nodeById(state.selectedId);
-      if (!n) return;
       n.image = r.result;
-      setStatus('Image attached to the selected node.', 'success');
+      setStatus('Image attached to "' + n.label + '".', 'success');
       render();
     };
     r.onerror = () => setStatus('Could not read image file.', 'danger');
     r.readAsDataURL(f);
   });
   document.getElementById('clearImageBtn').addEventListener('click', () => {
-    if (state.selectedKind !== 'node') return;
-    const n = nodeById(state.selectedId);
+    const n = singleSelectedNode();
     if (!n || !n.image) return;
     n.image = '';
     setStatus('Image cleared.', 'info');
@@ -1201,21 +1536,35 @@
   });
 
   document.getElementById('deleteBtn').addEventListener('click', () => {
-    if (state.selectedKind === 'node') {
-      const id = state.selectedId;
-      const n = nodeById(id);
-      if (!n) return;
-      if (state.nodes.length === 1) { setStatus('Can\'t delete the last node. Use Clear All instead.', 'danger'); return; }
-      if (n.isRoot && !window.confirm('Delete the root node? Children stay but lose their root connection.')) return;
-      state.nodes = state.nodes.filter(x => x.id !== id);
-      state.connectors = state.connectors.filter(c => c.fromId !== id && c.toId !== id);
+    const sel = state.selection;
+    if (sel.kind === 'node') {
+      if (!sel.ids.length) return;
+      if (state.nodes.length - sel.ids.length < 1) {
+        return setStatus('Can\'t delete every node. Use Clear All instead.', 'danger');
+      }
+      const ids = new Set(sel.ids);
+      const rootSelected = state.nodes.some(n => ids.has(n.id) && n.isRoot);
+      if (rootSelected && !window.confirm('Delete the root node? Other nodes stay but lose their root connection.')) return;
+      state.nodes = state.nodes.filter(n => !ids.has(n.id));
+      state.connectors = state.connectors.filter(c => !ids.has(c.fromId) && !ids.has(c.toId));
+      // Strip removed nodes from groups; drop empty groups
+      state.groups = state.groups
+        .map(g => Object.assign({}, g, {nodeIds: g.nodeIds.filter(id => !ids.has(id))}))
+        .filter(g => g.nodeIds.length >= 2);
       clearSelection();
-      setStatus('Node deleted.', 'success');
-    } else if (state.selectedKind === 'connector') {
-      state.connectors = state.connectors.filter(c => c.id !== state.selectedId);
+      setStatus('Deleted ' + ids.size + ' node' + (ids.size === 1 ? '' : 's') + '.', 'success');
+    } else if (sel.kind === 'connector') {
+      const ids = new Set(sel.ids);
+      state.connectors = state.connectors.filter(c => !ids.has(c.id));
       clearSelection();
       setStatus('Connector deleted.', 'success');
+    } else if (sel.kind === 'group') {
+      const ids = new Set(sel.ids);
+      state.groups = state.groups.filter(g => !ids.has(g.id));
+      clearSelection();
+      setStatus('Group removed (member nodes kept).', 'success');
     }
+    render();
   });
 
   document.getElementById('applyTemplateBtn').addEventListener('click', () => {
@@ -1223,23 +1572,19 @@
     const key = sel ? sel.value : 'concept-map';
     const tpl = TEMPLATES[key];
     if (!tpl) return;
-    const hasContent = state.nodes.length > 0;
-    if (hasContent && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone.')) return;
+    if (state.nodes.length && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone.')) return;
     loadTemplate(key);
     render();
     setStatus('Loaded template: ' + tpl.title + '.', 'success');
   });
   document.getElementById('clearMapBtn').addEventListener('click', () => {
     if (!window.confirm('Clear the entire map? This cannot be undone.')) return;
-    state.nodes = [];
-    state.connectors = [];
-    state.selectedId = null;
-    state.selectedKind = null;
-    state.pendingFrom = null;
+    state.nodes = []; state.connectors = []; state.groups = [];
+    clearSelection();
+    state.pendingFrom = null; state.pendingFromMulti = null;
     const n = makeNode({label: 'New Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
     state.nodes.push(n);
-    state.selectedId = n.id;
-    state.selectedKind = 'node';
+    setSelection('node', [n.id]);
     render();
     setStatus('Cleared. One starter node added.', 'info');
   });
@@ -1250,28 +1595,29 @@
     const maxX = Math.max.apply(null, state.nodes.map(n => n.x + n.w/2));
     const minY = Math.min.apply(null, state.nodes.map(n => n.y - n.h/2));
     const maxY = Math.max.apply(null, state.nodes.map(n => n.y + n.h/2));
-    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-    const targetX = CANVAS_W/2, targetY = CANVAS_H/2;
-    const shiftX = targetX - cx, shiftY = targetY - cy;
+    const shiftX = (CANVAS_W/2) - (minX + maxX)/2;
+    const shiftY = (CANVAS_H/2) - (minY + maxY)/2;
     state.nodes.forEach(n => { n.x += shiftX; n.y += shiftY; });
     render();
     setStatus('Map re-centered.', 'info');
   });
 
-  // Export
+  /* ===== export ===== */
   function buildExportSvg(){
-    // Render a clean snapshot to a string (no selection / pending highlights)
-    const savedSel = {id: state.selectedId, kind: state.selectedKind, pending: state.pendingFrom};
-    state.selectedId = null;
-    state.selectedKind = null;
-    state.pendingFrom = null;
+    const savedSel = state.selection;
+    const savedPending = state.pendingFrom;
+    const savedPendingMulti = state.pendingFromMulti;
+    const savedRubber = state.rubber;
+    state.selection = {kind: null, ids: []};
+    state.pendingFrom = null; state.pendingFromMulti = null;
+    state.rubber = null;
     render();
     const xml = new XMLSerializer().serializeToString(svg);
-    state.selectedId = savedSel.id;
-    state.selectedKind = savedSel.kind;
-    state.pendingFrom = savedSel.pending;
+    state.selection = savedSel;
+    state.pendingFrom = savedPending;
+    state.pendingFromMulti = savedPendingMulti;
+    state.rubber = savedRubber;
     render();
-    // Ensure standalone xmlns
     if (!/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/.test(xml)) {
       return xml.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
     }
@@ -1292,8 +1638,7 @@
         const cv = document.createElement('canvas');
         cv.width = w; cv.height = h;
         const cx = cv.getContext('2d');
-        cx.fillStyle = '#ffffff';
-        cx.fillRect(0, 0, w, h);
+        cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h);
         try { cx.drawImage(img, 0, 0, w, h); }
         catch(err) { reject(err); return; }
         cv.toBlob(b => b ? resolve(b) : reject(new Error('PNG encode failed')), 'image/png');
@@ -1315,35 +1660,24 @@
     return (raw.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'concept-map').toLowerCase();
   }
 
-  /* JSON save/load. File format is { type, version, saved, canvas, nodes,
-     connectors }. Load is defensive: missing fields fall back, malformed
-     entries are dropped, image URLs are accepted only if they're data:image/
-     URLs, and link URLs go through safeUrl(). */
+  /* ===== JSON save/load ===== */
   const SAVE_TYPE = 'drawsplat-concept-map';
-  const SAVE_VERSION = 1;
-  const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
-  function validHex(v, fallback){ return typeof v === 'string' && HEX_RE.test(v) ? v : fallback; }
-  function clampNumber(v, min, max, fallback){
-    const n = +v;
-    if (!isFinite(n)) return fallback;
-    return Math.max(min, Math.min(max, n));
-  }
+  const SAVE_VERSION = 2;
   function buildSaveJson(){
     return {
-      type: SAVE_TYPE,
-      version: SAVE_VERSION,
-      saved: new Date().toISOString(),
+      type: SAVE_TYPE, version: SAVE_VERSION, saved: new Date().toISOString(),
       canvas: {w: CANVAS_W, h: CANVAS_H},
       nodes: state.nodes.map(n => ({
         id: n.id, x: n.x, y: n.y, w: n.w, h: n.h,
-        label: n.label,
-        link: n.link || '',
-        image: n.image || '',
-        isRoot: !!n.isRoot,
-        fill: n.fill, stroke: n.stroke, text: n.text
+        label: n.label, link: n.link || '', image: n.image || '',
+        isRoot: !!n.isRoot, fill: n.fill, stroke: n.stroke, text: n.text
       })),
       connectors: state.connectors.map(c => ({
         id: c.id, fromId: c.fromId, toId: c.toId, label: c.label || ''
+      })),
+      groups: state.groups.map(g => ({
+        id: g.id, nodeIds: g.nodeIds.slice(), label: g.label || '',
+        colorIndex: g.colorIndex || 0
       }))
     };
   }
@@ -1351,7 +1685,6 @@
     if (!data || typeof data !== 'object') throw new Error('File is not valid JSON object.');
     if (data.type !== SAVE_TYPE) throw new Error('Not a DrawSplat concept map file.');
     if (!Array.isArray(data.nodes) || !Array.isArray(data.connectors)) throw new Error('Missing nodes or connectors.');
-
     const nodes = [];
     const idSeen = {};
     let maxIdNum = 0;
@@ -1375,13 +1708,12 @@
         link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
         image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
         isRoot: !!raw.isRoot,
-        fill: validHex(raw.fill, '#dbeafe'),
-        stroke: validHex(raw.stroke, '#2563eb'),
-        text: validHex(raw.text, '#1e3a8a')
+        fill: validHex(raw.fill, '#fce7f3'),
+        stroke: validHex(raw.stroke, '#ec4899'),
+        text: validHex(raw.text, '#831843')
       });
     }
     if (!nodes.length) throw new Error('No usable nodes in file.');
-
     const connectors = [];
     for (const raw of data.connectors) {
       if (!raw || typeof raw !== 'object') continue;
@@ -1394,15 +1726,30 @@
         label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : ''
       });
     }
-
+    const groups = [];
+    if (Array.isArray(data.groups)) {
+      for (const raw of data.groups) {
+        if (!raw || typeof raw !== 'object') continue;
+        const seen = {};
+        const ids = (Array.isArray(raw.nodeIds) ? raw.nodeIds : [])
+          .filter(id => idSeen[id] && !seen[id] && (seen[id] = true));
+        if (ids.length < 2) continue;
+        const id = typeof raw.id === 'string' && raw.id.trim() ? raw.id.trim() : ('g' + (groups.length + 1));
+        bumpId(id);
+        groups.push({
+          id, nodeIds: ids,
+          label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : '',
+          colorIndex: clampNumber(raw.colorIndex, 0, PALETTE.length - 1, 0) | 0
+        });
+      }
+    }
     state.nodes = nodes;
     state.connectors = connectors;
+    state.groups = groups;
     state.nextId = maxIdNum + 1;
-    state.selectedId = null;
-    state.selectedKind = null;
-    state.pendingFrom = null;
-    state.editing = null;
-    state.drag = null;
+    clearSelection();
+    state.pendingFrom = null; state.pendingFromMulti = null;
+    state.editing = null; state.drag = null; state.rubber = null;
   }
 
   document.getElementById('saveJsonBtn').addEventListener('click', () => {
@@ -1428,7 +1775,7 @@
       try {
         applyLoadedJson(data);
         render();
-        setStatus('Loaded map: ' + state.nodes.length + ' nodes, ' + state.connectors.length + ' connector' + (state.connectors.length === 1 ? '' : 's') + '.', 'success');
+        setStatus('Loaded ' + state.nodes.length + ' nodes, ' + state.connectors.length + ' connector' + (state.connectors.length === 1 ? '' : 's') + ', ' + state.groups.length + ' group' + (state.groups.length === 1 ? '' : 's') + '.', 'success');
       } catch (err) {
         setStatus('Could not load: ' + (err && err.message ? err.message : String(err)), 'danger');
       }
@@ -1448,9 +1795,7 @@
       const blob = await svgToPngBlob(buildExportSvg());
       downloadBlob(blob, defaultBaseName() + '.png');
       setStatus('Downloaded PNG.', 'success');
-    } catch(err) {
-      setStatus('PNG render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
-    }
+    } catch(err) { setStatus('PNG render failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
   });
   document.getElementById('copyPngBtn').addEventListener('click', async () => {
     if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
@@ -1460,36 +1805,37 @@
       const blob = await svgToPngBlob(buildExportSvg());
       await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
       setStatus('Concept map copied to clipboard as PNG.', 'success');
-    } catch(err) {
-      setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger');
-    }
+    } catch(err) { setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
   });
 
-  // Keyboard shortcuts (when not editing)
+  /* ===== keyboard ===== */
   document.addEventListener('keydown', e => {
     if (state.editing) return;
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     if (e.key === 'Delete' || e.key === 'Backspace') {
-      if (state.selectedKind) {
-        e.preventDefault();
-        document.getElementById('deleteBtn').click();
-      }
+      if (state.selection.kind) { e.preventDefault(); document.getElementById('deleteBtn').click(); }
     } else if (e.key === 'Escape') {
       if (state.tool === 'connect') { setTool('select'); setStatus('Connect mode cancelled.', 'info'); }
-      else if (state.selectedKind) clearSelection();
+      else if (state.selection.kind) clearSelection(), render();
     } else if (e.key === 'Enter') {
-      if (state.selectedKind === 'node') {
-        e.preventDefault();
-        beginNodeInlineEdit(state.selectedId);
-      } else if (state.selectedKind === 'connector') {
-        e.preventDefault();
-        editConnectorLabel(state.selectedId);
+      const n = singleSelectedNode();
+      const c = selectedConnectorObj();
+      const g = selectedGroupObj();
+      if (n) { e.preventDefault(); beginNodeInlineEdit(n.id); }
+      else if (c) { e.preventDefault(); editConnectorLabel(c.id); }
+      else if (g) { e.preventDefault(); editGroupLabel(g.id); }
+    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A')) {
+      e.preventDefault();
+      if (state.nodes.length) {
+        setSelection('node', state.nodes.map(n => n.id));
+        render();
+        setStatus('Selected all ' + state.nodes.length + ' nodes.', 'info');
       }
     }
   });
 
-  // Boot
+  /* ===== boot ===== */
   defaultMap();
   render();
 })();
