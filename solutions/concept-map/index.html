@@ -445,7 +445,7 @@
         <h3>Selection</h3>
         <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click the white label box on a connector to edit its label.</div>
 
-        <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
+        <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
       </aside>
 
       <section class="stage" aria-label="Concept map canvas">
@@ -1881,7 +1881,25 @@
   });
 
   /* ===== export ===== */
-  function buildExportSvg(){
+  function nodeSelectionActive(){
+    return state.selection.kind === 'node' && state.selection.ids.length > 0;
+  }
+  /* When useSelection is true and the current selection is a non-empty set of
+     nodes, build the export from JUST those nodes — plus any connector whose
+     BOTH endpoints are selected, plus any group whose members are fully
+     selected. The viewBox tightens around that subset. */
+  function buildExportSvg(useSelection){
+    const filterSel = !!(useSelection && nodeSelectionActive());
+    let savedNodes = null, savedConnectors = null, savedGroups = null;
+    if (filterSel) {
+      const ids = new Set(state.selection.ids);
+      savedNodes = state.nodes;
+      savedConnectors = state.connectors;
+      savedGroups = state.groups;
+      state.nodes = state.nodes.filter(n => ids.has(n.id));
+      state.connectors = state.connectors.filter(c => ids.has(c.fromId) && ids.has(c.toId));
+      state.groups = state.groups.filter(g => g.nodeIds.every(id => ids.has(id)));
+    }
     const savedSel = state.selection;
     const savedPending = state.pendingFrom;
     const savedPendingMulti = state.pendingFromMulti;
@@ -1889,7 +1907,6 @@
     state.selection = {kind: null, ids: []};
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.rubber = null;
-    // Build an override viewBox tight around content
     let override = null;
     const b = contentBounds();
     if (b) {
@@ -1898,6 +1915,11 @@
     }
     render(override);
     const xml = new XMLSerializer().serializeToString(svg);
+    if (filterSel) {
+      state.nodes = savedNodes;
+      state.connectors = savedConnectors;
+      state.groups = savedGroups;
+    }
     state.selection = savedSel;
     state.pendingFrom = savedPending;
     state.pendingFromMulti = savedPendingMulti;
@@ -1907,6 +1929,14 @@
       return xml.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
     }
     return xml;
+  }
+  function exportBaseName(useSelection){
+    const base = defaultBaseName();
+    return (useSelection && nodeSelectionActive()) ? base + '-selection' : base;
+  }
+  function selectionExportSummary(){
+    const ids = state.selection.ids;
+    return ids.length + ' selected node' + (ids.length === 1 ? '' : 's');
   }
   function svgBlob(xml){ return new Blob([xml], {type: 'image/svg+xml;charset=utf-8'}); }
   function svgToPngBlob(xml, minWidth){
@@ -2073,25 +2103,28 @@
 
   document.getElementById('downloadSvgBtn').addEventListener('click', () => {
     if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
-    downloadBlob(svgBlob(buildExportSvg()), defaultBaseName() + '.svg');
-    setStatus('Downloaded SVG.', 'success');
+    const useSel = nodeSelectionActive();
+    downloadBlob(svgBlob(buildExportSvg(useSel)), exportBaseName(useSel) + '.svg');
+    setStatus(useSel ? 'Downloaded SVG of ' + selectionExportSummary() + '.' : 'Downloaded SVG.', 'success');
   });
   document.getElementById('downloadPngBtn').addEventListener('click', async () => {
     if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    const useSel = nodeSelectionActive();
     try {
-      const blob = await svgToPngBlob(buildExportSvg());
-      downloadBlob(blob, defaultBaseName() + '.png');
-      setStatus('Downloaded PNG.', 'success');
+      const blob = await svgToPngBlob(buildExportSvg(useSel));
+      downloadBlob(blob, exportBaseName(useSel) + '.png');
+      setStatus(useSel ? 'Downloaded PNG of ' + selectionExportSummary() + '.' : 'Downloaded PNG.', 'success');
     } catch(err) { setStatus('PNG render failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
   });
   document.getElementById('copyPngBtn').addEventListener('click', async () => {
     if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
     if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
       return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
+    const useSel = nodeSelectionActive();
     try {
-      const blob = await svgToPngBlob(buildExportSvg());
+      const blob = await svgToPngBlob(buildExportSvg(useSel));
       await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-      setStatus('Concept map copied to clipboard as PNG.', 'success');
+      setStatus(useSel ? 'Copied ' + selectionExportSummary() + ' to clipboard as PNG.' : 'Concept map copied to clipboard as PNG.', 'success');
     } catch(err) { setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
   });
 
