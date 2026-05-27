@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flood Fill — DrawSplat Games</title>
+<style>
+  /* DrawSplat Games header */
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  * { box-sizing: border-box; }
+  :root { --bg: #f7f5ff; --panel: #fff; --ink: #1e1b4b; --muted: #64748b; --line: #ddd6fe; --accent: #7c3aed; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  .shell { max-width: 800px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1.game-title { margin: 0 0 14px; color: var(--accent); font-size: clamp(1.4rem, 4vw, 2rem); }
+  p.lede { margin: 0 0 18px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; margin-bottom: 18px; }
+  .group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .group .gl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; font-weight: 800; }
+  .btn { background: #fff; color: var(--accent); border: 2px solid var(--line); border-radius: 8px; padding: 7px 12px; font-weight: 800; cursor: pointer; font-size: .85rem; transition: border-color .15s; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.active { border-color: var(--accent); background: #ede9fe; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .metrics { display: flex; gap: 18px; margin-left: auto; }
+  .metric { text-align: center; }
+  .metric .label { display: block; font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; font-weight: 800; }
+  .metric .val { display: block; font-size: 1.3rem; font-weight: 900; color: var(--accent); }
+  .canvas-wrap { padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; }
+  canvas { display: block; width: 100%; max-width: 500px; aspect-ratio: 1; margin: 0 auto; image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 8px; }
+  .palette { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 14px; }
+  .swatch { width: 56px; height: 56px; border-radius: 12px; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.08); cursor: pointer; transition: transform .12s; }
+  .swatch:hover { transform: scale(1.05); }
+  .swatch.disabled { opacity: .3; cursor: not-allowed; }
+  .end-card { display: none; margin-top: 18px; padding: 20px; border-radius: 12px; text-align: center; }
+  .end-card.victory { display: block; background: linear-gradient(180deg, #d1fae5, #a7f3d0); border: 2px solid #22c55e; color: #14532d; }
+  .end-card.defeat { display: block; background: linear-gradient(180deg, #fee2e2, #fecaca); border: 2px solid #ef4444; color: #7f1d1d; }
+  .end-card h2 { margin: 0 0 6px; font-size: 1.4rem; }
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Flood Fill</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+  <h1 class="game-title">Unify the board.</h1>
+  <p class="lede">Pick colours below to flood from the top-left corner. Match the whole grid before your moves run out.</p>
+  <div class="controls">
+    <div class="group">
+      <span class="gl">Density</span>
+      <button class="btn size-btn" data-size="12">12×12 Casual</button>
+      <button class="btn size-btn active" data-size="18">18×18 Standard</button>
+      <button class="btn size-btn" data-size="24">24×24 Expert</button>
+    </div>
+    <div class="group">
+      <span class="gl">Colours</span>
+      <button class="btn col-btn" data-cc="4">4</button>
+      <button class="btn col-btn active" data-cc="6">6</button>
+      <button class="btn col-btn" data-cc="8">8</button>
+    </div>
+    <button class="btn primary" id="newBtn">New Game</button>
+    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <div class="metrics">
+      <div class="metric"><span class="label">Moves</span><span class="val"><span id="movesLeft">--</span>/<span id="maxMoves">--</span></span></div>
+    </div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="board" width="500" height="500" aria-label="Flood fill board"></canvas>
+    <div id="palette" class="palette"></div>
+  </div>
+  <div id="endCard" class="end-card">
+    <h2 id="endTitle">--</h2>
+    <p id="endText">--</p>
+  </div>
+</div>
+
+<script>
+const PALETTES = {
+  4: ["#7c3aed", "#f97316", "#22c55e", "#ef4444"],
+  6: ["#7c3aed", "#f97316", "#22c55e", "#ef4444", "#facc15", "#0ea5e9"],
+  8: ["#7c3aed", "#f97316", "#22c55e", "#ef4444", "#facc15", "#0ea5e9", "#ec4899", "#0d9488"],
+};
+const SIZES = [12, 18, 24];
+
+let size = 18;
+let colorCount = 6;
+let boardMatrix = [];
+let movesRemaining = 0;
+let maxMoves = 0;
+let matchStatus = "menu";
+let audioCtx = null;
+let muted = false;
+
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
+const paletteEl = document.getElementById("palette");
+const movesLeftEl = document.getElementById("movesLeft");
+const maxMovesEl = document.getElementById("maxMoves");
+const endCard = document.getElementById("endCard");
+const endTitle = document.getElementById("endTitle");
+const endText = document.getElementById("endText");
+
+function init() {
+  // Random fill
+  boardMatrix = Array.from({length: size}, () =>
+    Array.from({length: size}, () => Math.floor(Math.random() * colorCount))
+  );
+  // Vary the origin if all immediate neighbours match
+  if (boardMatrix[0][1] === boardMatrix[0][0] && boardMatrix[1][0] === boardMatrix[0][0]) {
+    const alt = (boardMatrix[0][0] + 1) % colorCount;
+    boardMatrix[0][1] = alt;
+  }
+  maxMoves = Math.floor((size + size) * 0.85) + colorCount;
+  movesRemaining = maxMoves;
+  matchStatus = "active";
+  endCard.classList.remove("victory", "defeat");
+  drawBoard();
+  renderPalette();
+  updateMetrics();
+}
+
+function drawBoard() {
+  const palette = PALETTES[colorCount];
+  const W = canvas.width, H = canvas.height;
+  const cellW = W / size, cellH = H / size;
+  ctx.clearRect(0, 0, W, H);
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      ctx.fillStyle = palette[boardMatrix[r][c]];
+      ctx.fillRect(c * cellW, r * cellH, cellW + 1, cellH + 1);
+    }
+  }
+}
+
+function renderPalette() {
+  paletteEl.innerHTML = "";
+  const palette = PALETTES[colorCount];
+  for (let i = 0; i < colorCount; i++) {
+    const btn = document.createElement("button");
+    btn.className = "swatch" + (boardMatrix[0][0] === i ? " disabled" : "");
+    btn.style.background = palette[i];
+    btn.setAttribute("aria-label", `Flood with colour ${i+1}`);
+    btn.addEventListener("click", () => pick(i));
+    paletteEl.appendChild(btn);
+  }
+}
+
+function pick(newColor) {
+  if (matchStatus !== "active") return;
+  const oldColor = boardMatrix[0][0];
+  if (newColor === oldColor) return;
+  // BFS queue flood
+  const queue = [[0,0]];
+  const seen = new Set();
+  while (queue.length) {
+    const [r, c] = queue.shift();
+    const key = r + "," + c;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (boardMatrix[r][c] !== oldColor) continue;
+    boardMatrix[r][c] = newColor;
+    if (r > 0)        queue.push([r-1, c]);
+    if (r < size-1)   queue.push([r+1, c]);
+    if (c > 0)        queue.push([r, c-1]);
+    if (c < size-1)   queue.push([r, c+1]);
+  }
+  movesRemaining -= 1;
+  drawBoard();
+  renderPalette();
+  updateMetrics();
+  playChime(newColor);
+  // Win?
+  const first = boardMatrix[0][0];
+  const won = boardMatrix.every(row => row.every(v => v === first));
+  if (won) {
+    matchStatus = "victory";
+    endCard.classList.add("victory");
+    endTitle.textContent = "Board unified.";
+    endText.textContent = `${maxMoves - movesRemaining} moves used.`;
+    playVictory();
+  } else if (movesRemaining <= 0) {
+    matchStatus = "defeat";
+    endCard.classList.add("defeat");
+    endTitle.textContent = "Out of moves.";
+    endText.textContent = "Try a different palette or density.";
+  }
+}
+
+function updateMetrics() {
+  movesLeftEl.textContent = movesRemaining;
+  maxMovesEl.textContent = maxMoves;
+}
+
+function ensureAudio() {
+  if (muted) return null;
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+
+function playChime(idx) {
+  const c = ensureAudio();
+  if (!c) return;
+  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+  const f = scale[idx % scale.length];
+  const now = c.currentTime;
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = "triangle";
+  o.frequency.setValueAtTime(f, now);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  o.connect(g); g.connect(c.destination);
+  o.start(now); o.stop(now + 0.3);
+}
+
+function playVictory() {
+  const c = ensureAudio();
+  if (!c) return;
+  [392, 523, 659, 784].forEach((f, i) => {
+    const t = c.currentTime + i * 0.12;
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + 0.45);
+  });
+}
+
+document.querySelectorAll(".size-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".size-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    size = parseInt(b.dataset.size, 10);
+    init();
+  });
+});
+document.querySelectorAll(".col-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".col-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    colorCount = parseInt(b.dataset.cc, 10);
+    init();
+  });
+});
+document.getElementById("newBtn").addEventListener("click", init);
+document.getElementById("muteBtn").addEventListener("click", (e) => {
+  muted = !muted;
+  e.target.textContent = muted ? "🔇" : "🔊";
+});
+
+init();
+</script>
+</body>
+</html>

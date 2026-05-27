@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lights Out — DrawSplat Games</title>
+<style>
+  /* DrawSplat Games header */
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  /* Themes */
+  :root { --bg: #0a1929; --panel: #142940; --on: #00ffd5; --off: #1b3552; --ink: #d1e6ff; --accent: #a855f7; --panel-border: rgba(255,255,255,0.05); }
+  body.theme-cyber { --bg: #07101e; --panel: #122336; --on: #00ffd5; --off: #1b3552; --ink: #d1e6ff; --accent: #a855f7; --panel-border: rgba(0,255,213,0.18); }
+  body.theme-amber { --bg: #120800; --panel: #2a1a08; --on: #ffb84d; --off: #3d2700; --ink: #ffeacc; --accent: #ff9500; --panel-border: rgba(255,184,77,0.2); }
+  body.theme-slate { --bg: #f1f5f9; --panel: #ffffff; --on: #475569; --off: #e2e8f0; --ink: #1e293b; --accent: #7c3aed; --panel-border: #cbd5e1; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); transition: background .3s, color .3s; }
+  .shell { max-width: 720px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1.game-title { margin: 0 0 18px; color: var(--on); font-size: clamp(1.4rem, 4vw, 2.2rem); letter-spacing: .04em; }
+  .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 14px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 12px; margin-bottom: 18px; }
+  .group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .group .gl { font-size: .68rem; opacity: .65; text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; }
+  .btn { background: transparent; color: var(--ink); border: 2px solid var(--off); border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: .85rem; transition: all .15s; }
+  .btn:hover { border-color: var(--on); }
+  .btn.active { border-color: var(--on); color: var(--on); background: rgba(255,255,255,0.04); }
+  .btn.primary { background: var(--on); color: var(--bg); border-color: var(--on); }
+  select { background: var(--panel); color: var(--ink); border: 2px solid var(--off); border-radius: 8px; padding: 7px 12px; font-weight: 700; font-size: .85rem; }
+  .metrics { display: flex; gap: 18px; margin-left: auto; }
+  .metric { text-align: center; }
+  .metric .label { display: block; font-size: .62rem; opacity: .6; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; }
+  .metric .val { display: block; font-size: 1.4rem; font-weight: 900; color: var(--on); }
+  .grid-wrap { padding: 16px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px; }
+  .grid { display: grid; gap: 8px; aspect-ratio: 1; max-width: 560px; margin: 0 auto; }
+  .cell { aspect-ratio: 1; border-radius: 10px; border: 0; background: var(--off); cursor: pointer; transition: transform .12s, background .2s, box-shadow .2s; padding: 0; }
+  .cell.on { background: var(--on); box-shadow: 0 0 22px var(--on), inset 0 0 12px rgba(255,255,255,0.18); }
+  .cell:hover { transform: scale(1.04); }
+  .cell:active { transform: scale(.96); }
+  .win-card { display: none; margin-top: 20px; padding: 22px; background: var(--panel); border: 2px solid var(--on); border-radius: 14px; text-align: center; }
+  .win-card.show { display: block; animation: popIn .4s ease; }
+  @keyframes popIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .win-card h2 { margin: 0 0 8px; color: var(--on); font-size: 1.6rem; }
+  .win-card p { margin: 0; opacity: .85; }
+  .quip { margin-top: 14px; padding: 12px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82rem; color: var(--on); min-height: 1.4em; opacity: 0; transition: opacity .25s; }
+  .quip.show { opacity: 1; }
+  body.theme-slate .cell.on { box-shadow: 0 4px 14px rgba(71,85,105,.4); }
+</style>
+</head>
+<body class="theme-cyber">
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Lights Out</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+  <h1 class="game-title">Clear the grid — toggle a cell to flip it and its orthogonal neighbours.</h1>
+  <div class="controls">
+    <div class="group">
+      <span class="gl">Size</span>
+      <button class="btn size-btn" data-size="4">4×4</button>
+      <button class="btn size-btn active" data-size="5">5×5</button>
+      <button class="btn size-btn" data-size="6">6×6</button>
+    </div>
+    <div class="group">
+      <span class="gl">Theme</span>
+      <select id="themeSel">
+        <option value="cyber">Cyber Neon</option>
+        <option value="amber">Terminal Amber</option>
+        <option value="slate">Minimal Slate</option>
+      </select>
+    </div>
+    <button class="btn primary" id="newBtn">New Puzzle</button>
+    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <div class="metrics">
+      <div class="metric"><span class="label">Moves</span><span class="val" id="moveCount">0</span></div>
+      <div class="metric"><span class="label">Par</span><span class="val" id="parMoves">--</span></div>
+    </div>
+  </div>
+  <div class="grid-wrap">
+    <div id="grid" class="grid" role="grid" aria-label="Lights Out grid"></div>
+  </div>
+  <p id="quip" class="quip"></p>
+  <div id="winCard" class="win-card">
+    <h2>System cleared.</h2>
+    <p>You took <strong id="winMoves">--</strong> moves. Par was <strong id="winPar">--</strong>.</p>
+  </div>
+</div>
+
+<script>
+const QUIPS_PLAY = [
+  "Nodes inverted. Topology updated.",
+  "Cascade tracked.",
+  "Edge logic propagated.",
+  "Cell flipped — continuing.",
+  "Lattice state advanced.",
+  "Adjacency engaged.",
+];
+const QUIPS_WIN = [
+  "Matrix collapsed. Clean slate.",
+  "All nodes dark. Mission complete.",
+  "Inversion achieved.",
+];
+
+let size = 5;
+let grid = [];
+let moveCount = 0;
+let parMoves = 0;
+let gameState = "playing";
+let audioCtx = null;
+let muted = false;
+
+const gridEl = document.getElementById("grid");
+const moveEl = document.getElementById("moveCount");
+const parEl = document.getElementById("parMoves");
+const winCard = document.getElementById("winCard");
+const quipEl = document.getElementById("quip");
+
+function init() {
+  grid = Array.from({length: size}, () => Array(size).fill(false));
+  // Walk-backward: start clean, apply (size*size - 10) random valid toggles for solvability.
+  const shuffles = Math.max(size + 3, size * size - 10);
+  parMoves = shuffles;
+  for (let i = 0; i < shuffles; i++) {
+    const r = Math.floor(Math.random() * size);
+    const c = Math.floor(Math.random() * size);
+    toggle(r, c, false);
+  }
+  moveCount = 0;
+  gameState = "playing";
+  winCard.classList.remove("show");
+  quipEl.classList.remove("show");
+  render();
+  updateMetrics();
+}
+
+function toggle(r, c, withSound) {
+  const dirs = [[0,0],[1,0],[-1,0],[0,1],[0,-1]];
+  for (const [dr, dc] of dirs) {
+    const nr = r + dr, nc = c + dc;
+    if (nr >= 0 && nr < size && nc >= 0 && nc < size) grid[nr][nc] = !grid[nr][nc];
+  }
+  if (withSound) playClick(c);
+}
+
+function handleClick(r, c) {
+  if (gameState !== "playing") return;
+  toggle(r, c, true);
+  moveCount++;
+  render();
+  updateMetrics();
+  if (Math.random() < 0.4) showQuip(QUIPS_PLAY[Math.floor(Math.random() * QUIPS_PLAY.length)]);
+  if (checkWin()) {
+    gameState = "complete";
+    document.getElementById("winMoves").textContent = moveCount;
+    document.getElementById("winPar").textContent = parMoves;
+    winCard.classList.add("show");
+    showQuip(QUIPS_WIN[Math.floor(Math.random() * QUIPS_WIN.length)]);
+    playVictory();
+  }
+}
+
+function checkWin() {
+  return grid.every(row => row.every(cell => !cell));
+}
+
+function render() {
+  gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  gridEl.innerHTML = "";
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const btn = document.createElement("button");
+      btn.className = "cell" + (grid[r][c] ? " on" : "");
+      btn.setAttribute("aria-label", `Row ${r+1} column ${c+1} ${grid[r][c] ? "lit" : "dark"}`);
+      btn.addEventListener("click", () => handleClick(r, c));
+      gridEl.appendChild(btn);
+    }
+  }
+}
+
+function updateMetrics() {
+  moveEl.textContent = moveCount;
+  parEl.textContent = parMoves;
+}
+
+function showQuip(text) {
+  quipEl.textContent = "> " + text;
+  quipEl.classList.add("show");
+}
+
+function ensureAudio() {
+  if (muted) return null;
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+
+function playClick(col) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  // Map columns to scale notes C4..B4
+  const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+  const f = notes[col % notes.length];
+  const now = ctx.currentTime;
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(f, now);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.22, now + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(now); o.stop(now + 0.25);
+}
+
+function playVictory() {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const notes = [392.00, 493.88, 587.33, 783.99];
+  notes.forEach((f, i) => {
+    const t = ctx.currentTime + i * 0.12;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.25, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t + 0.45);
+  });
+}
+
+document.querySelectorAll(".size-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    size = parseInt(btn.dataset.size, 10);
+    init();
+  });
+});
+document.getElementById("themeSel").addEventListener("change", (e) => {
+  document.body.className = "theme-" + e.target.value;
+});
+document.getElementById("newBtn").addEventListener("click", init);
+document.getElementById("muteBtn").addEventListener("click", (e) => {
+  muted = !muted;
+  e.target.textContent = muted ? "🔇" : "🔊";
+});
+
+init();
+</script>
+</body>
+</html>

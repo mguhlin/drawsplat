@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tangram Packing — DrawSplat Games</title>
+<style>
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  * { box-sizing: border-box; }
+  :root { --bg: #f7f5ff; --panel: #fff; --ink: #1e1b4b; --muted: #64748b; --line: #ddd6fe; --accent: #7c3aed; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  .shell { max-width: 920px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1.game-title { margin: 0 0 14px; color: var(--accent); font-size: clamp(1.4rem, 4vw, 2rem); }
+  p.lede { margin: 0 0 18px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; margin-bottom: 18px; }
+  .group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .group .gl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; font-weight: 800; }
+  .btn { background: #fff; color: var(--accent); border: 2px solid var(--line); border-radius: 8px; padding: 7px 12px; font-weight: 800; cursor: pointer; font-size: .85rem; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.active { border-color: var(--accent); background: #ede9fe; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .metric { margin-left: auto; }
+  .metric .label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-weight: 800; margin-right: 6px; }
+  .metric .val { font-size: 1.2rem; font-weight: 900; color: var(--accent); }
+  .canvas-wrap { padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; }
+  canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 8/5; margin: 0 auto; touch-action: none; background: #fafaff; border-radius: 8px; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  .hint { margin-top: 10px; text-align: center; color: var(--muted); font-size: .85rem; }
+  .hint strong { color: var(--accent); }
+  .win-card { display: none; margin-top: 18px; padding: 20px; background: linear-gradient(180deg, #d1fae5, #a7f3d0); border: 2px solid #22c55e; border-radius: 12px; text-align: center; color: #14532d; }
+  .win-card.show { display: block; }
+  .win-card h2 { margin: 0 0 6px; }
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Tangram Packing</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+  <h1 class="game-title">Pack every block inside the silhouette.</h1>
+  <p class="lede">Drag pieces onto the dark target. Click a piece to rotate it 90°. Pieces snap to the silhouette grid when they fit cleanly.</p>
+  <div class="controls">
+    <div class="group">
+      <span class="gl">Silhouette</span>
+      <button class="btn shape-btn active" data-shape="square">Square Box</button>
+      <button class="btn shape-btn" data-shape="tee">T-Shape</button>
+      <button class="btn shape-btn" data-shape="pyramid">Pyramid</button>
+    </div>
+    <button class="btn primary" id="newBtn">Reset Puzzle</button>
+    <button class="btn" id="rotateBtn">Rotate Selected (90°)</button>
+    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <div class="metric"><span class="label">Filled</span><span class="val" id="coverage">0%</span></div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="board" width="800" height="500" aria-label="Tangram Packing board"></canvas>
+    <p class="hint">Click a piece to <strong>rotate</strong>. Drag to <strong>move</strong>. Drop on the silhouette to <strong>snap</strong>.</p>
+  </div>
+  <div id="winCard" class="win-card">
+    <h2>Silhouette filled.</h2>
+    <p>Every target cell is covered without overlap.</p>
+  </div>
+</div>
+
+<script>
+const CELL = 50;
+const SHAPES = {
+  square: {
+    target: (() => { // 5x4 = 20 cells centred upper area
+      const cells = [];
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 5; c++) cells.push([r, c]);
+      return { cells, offX: 4, offY: 1 }; // grid offset to position the silhouette
+    })(),
+    pieces: [
+      { color: "#7c3aed", cells: [[0,0],[0,1],[0,2],[0,3]] },   // I-4
+      { color: "#f97316", cells: [[0,0],[0,1],[1,0],[1,1]] },   // O
+      { color: "#22c55e", cells: [[0,0],[0,1],[0,2],[1,1]] },   // T
+      { color: "#ef4444", cells: [[0,0],[0,1],[0,2],[1,0]] },   // J
+      { color: "#0ea5e9", cells: [[0,0],[1,0],[1,1],[1,2]] },   // L
+    ],
+  },
+  tee: {
+    target: (() => {
+      const cells = [];
+      // Horizontal top bar 5 wide
+      for (let c = 0; c < 5; c++) cells.push([0, c]);
+      // Vertical stem 3 tall, centred
+      for (let r = 1; r < 4; r++) cells.push([r, 2]);
+      return { cells, offX: 4, offY: 1 };
+    })(),
+    pieces: [
+      { color: "#7c3aed", cells: [[0,0],[0,1],[0,2],[0,3],[0,4]] }, // I-5 (top bar)
+      { color: "#f97316", cells: [[0,0],[1,0],[2,0]] },              // I-3
+    ],
+  },
+  pyramid: {
+    target: (() => {
+      const cells = [];
+      // Triangular stack: row 0 has 1 cell at col 2, row 1 has 3 (cols 1-3), row 2 has 5 (cols 0-4)
+      cells.push([0, 2]);
+      cells.push([1, 1], [1, 2], [1, 3]);
+      cells.push([2, 0], [2, 1], [2, 2], [2, 3], [2, 4]);
+      return { cells, offX: 4, offY: 1 };
+    })(),
+    pieces: [
+      { color: "#7c3aed", cells: [[0,0]] },                         // single
+      { color: "#f97316", cells: [[0,0],[0,1],[0,2]] },              // I-3
+      { color: "#22c55e", cells: [[0,0],[0,1],[0,2],[0,3],[0,4]] },  // I-5
+    ],
+  },
+};
+
+let activeShape = "square";
+let pieces = [];
+let target = null;
+let activePiece = null;
+let dragOffset = { x: 0, y: 0 };
+let dragStart = { x: 0, y: 0 };
+let didDrag = false;
+let audioCtx = null;
+let muted = false;
+
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
+const W = canvas.width, H = canvas.height;
+const coverageEl = document.getElementById("coverage");
+const winCard = document.getElementById("winCard");
+
+function init() {
+  winCard.classList.remove("show");
+  target = SHAPES[activeShape].target;
+  pieces = SHAPES[activeShape].pieces.map((p, i) => ({
+    id: i,
+    color: p.color,
+    baseCells: p.cells.map(c => [...c]),
+    rotation: 0,
+    gridX: i * 3,
+    gridY: 7, // bottom storage shelf in grid units
+    locked: false,
+  }));
+  draw();
+  updateCoverage();
+}
+
+function rotatedCells(piece) {
+  let cells = piece.baseCells;
+  for (let k = 0; k < piece.rotation; k++) {
+    cells = cells.map(([r, c]) => [c, -r]);
+    const minR = Math.min(...cells.map(([r]) => r));
+    const minC = Math.min(...cells.map(([, c]) => c));
+    cells = cells.map(([r, c]) => [r - minR, c - minC]);
+  }
+  return cells;
+}
+
+function pieceWorldCells(piece) {
+  return rotatedCells(piece).map(([r, c]) => [piece.gridY + r, piece.gridX + c]);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  // Background grid lines
+  ctx.strokeStyle = "#eef2ff";
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += CELL) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y <= H; y += CELL) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  // Target silhouette
+  ctx.fillStyle = "#1e1b4b";
+  for (const [r, c] of target.cells) {
+    const x = (target.offX + c) * CELL;
+    const y = (target.offY + r) * CELL;
+    ctx.fillRect(x, y, CELL, CELL);
+  }
+  ctx.strokeStyle = "#a855f7";
+  ctx.lineWidth = 3;
+  for (const [r, c] of target.cells) {
+    const x = (target.offX + c) * CELL;
+    const y = (target.offY + r) * CELL;
+    ctx.strokeRect(x + 1.5, y + 1.5, CELL - 3, CELL - 3);
+  }
+  // Pieces
+  for (const piece of pieces) {
+    if (piece === activePiece) continue; // draw on top last
+    drawPiece(piece);
+  }
+  if (activePiece) drawPiece(activePiece, true);
+}
+
+function drawPiece(piece, isActive) {
+  ctx.save();
+  ctx.fillStyle = piece.color;
+  ctx.strokeStyle = isActive ? "#fff" : "rgba(0,0,0,0.2)";
+  ctx.lineWidth = isActive ? 4 : 2;
+  const cells = pieceWorldCells(piece);
+  for (const [gr, gc] of cells) {
+    const x = gc * CELL;
+    const y = gr * CELL;
+    ctx.fillRect(x + 3, y + 3, CELL - 6, CELL - 6);
+    ctx.strokeRect(x + 3, y + 3, CELL - 6, CELL - 6);
+  }
+  ctx.restore();
+}
+
+function canvasPoint(evt) {
+  const rect = canvas.getBoundingClientRect();
+  return { x: (evt.clientX - rect.left) * (W / rect.width), y: (evt.clientY - rect.top) * (H / rect.height) };
+}
+
+function pickPiece(x, y) {
+  // Top-most under pointer (search in reverse so visually-top pieces win)
+  for (let i = pieces.length - 1; i >= 0; i--) {
+    const p = pieces[i];
+    const cells = pieceWorldCells(p);
+    for (const [gr, gc] of cells) {
+      const cx = gc * CELL, cy = gr * CELL;
+      if (x >= cx && x < cx + CELL && y >= cy && y < cy + CELL) return p;
+    }
+  }
+  return null;
+}
+
+function piecesOverlap(piece, ignoreId) {
+  const set = new Set();
+  for (const other of pieces) {
+    if (other === piece || other.id === ignoreId) continue;
+    for (const [r, c] of pieceWorldCells(other)) set.add(r + "," + c);
+  }
+  for (const [r, c] of pieceWorldCells(piece)) {
+    if (set.has(r + "," + c)) return true;
+  }
+  return false;
+}
+
+function trySnap(piece) {
+  // After release, try to snap onto silhouette if cells line up
+  const targetSet = new Set(target.cells.map(([r, c]) => (target.offY + r) + "," + (target.offX + c)));
+  // Try the current position first
+  const cells = pieceWorldCells(piece);
+  const allInside = cells.every(([r, c]) => targetSet.has(r + "," + c));
+  if (allInside && !piecesOverlap(piece)) return true;
+  return false;
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  const p = canvasPoint(e);
+  const piece = pickPiece(p.x, p.y);
+  if (!piece) return;
+  activePiece = piece;
+  dragOffset = { x: p.x - piece.gridX * CELL, y: p.y - piece.gridY * CELL };
+  dragStart = { x: piece.gridX, y: piece.gridY };
+  didDrag = false;
+  canvas.classList.add("dragging");
+  draw();
+});
+canvas.addEventListener("pointermove", (e) => {
+  if (!activePiece) return;
+  const p = canvasPoint(e);
+  const rawX = (p.x - dragOffset.x) / CELL;
+  const rawY = (p.y - dragOffset.y) / CELL;
+  if (Math.abs(rawX - dragStart.x) > 0.15 || Math.abs(rawY - dragStart.y) > 0.15) didDrag = true;
+  activePiece.gridX = rawX;
+  activePiece.gridY = rawY;
+  draw();
+});
+canvas.addEventListener("pointerup", () => {
+  if (!activePiece) return;
+  // Snap to nearest integer grid
+  activePiece.gridX = Math.round(activePiece.gridX);
+  activePiece.gridY = Math.round(activePiece.gridY);
+  if (!didDrag) {
+    // Click without drag → rotate
+    activePiece.rotation = (activePiece.rotation + 1) % 4;
+    activePiece.gridX = dragStart.x;
+    activePiece.gridY = dragStart.y;
+    playClick();
+  } else {
+    // Check if all cells land inside the silhouette
+    if (trySnap(activePiece)) {
+      activePiece.locked = true;
+      playClick();
+    }
+    // If overlapping after release, bounce back
+    if (piecesOverlap(activePiece)) {
+      activePiece.gridX = dragStart.x;
+      activePiece.gridY = dragStart.y;
+    }
+  }
+  activePiece = null;
+  canvas.classList.remove("dragging");
+  draw();
+  updateCoverage();
+});
+canvas.addEventListener("pointercancel", () => {
+  if (activePiece) {
+    activePiece.gridX = dragStart.x;
+    activePiece.gridY = dragStart.y;
+    activePiece = null;
+    canvas.classList.remove("dragging");
+    draw();
+  }
+});
+
+function updateCoverage() {
+  const targetSet = new Set(target.cells.map(([r, c]) => (target.offY + r) + "," + (target.offX + c)));
+  let covered = 0;
+  const seen = new Set();
+  for (const p of pieces) {
+    for (const [r, c] of pieceWorldCells(p)) {
+      const key = r + "," + c;
+      if (targetSet.has(key) && !seen.has(key)) { covered++; seen.add(key); }
+    }
+  }
+  const pct = Math.round((covered / target.cells.length) * 100);
+  coverageEl.textContent = pct + "%";
+  if (covered === target.cells.length) {
+    winCard.classList.add("show");
+    playVictory();
+  } else {
+    winCard.classList.remove("show");
+  }
+}
+
+document.querySelectorAll(".shape-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".shape-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    activeShape = b.dataset.shape;
+    init();
+  });
+});
+document.getElementById("newBtn").addEventListener("click", init);
+document.getElementById("rotateBtn").addEventListener("click", () => {
+  // Rotate the most-recently interacted piece, or the first
+  const p = pieces[pieces.length - 1];
+  if (!p) return;
+  p.rotation = (p.rotation + 1) % 4;
+  draw();
+  playClick();
+});
+document.getElementById("muteBtn").addEventListener("click", (e) => {
+  muted = !muted;
+  e.target.textContent = muted ? "🔇" : "🔊";
+});
+
+function ensureAudio() {
+  if (muted) return null;
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function playClick() {
+  const c = ensureAudio(); if (!c) return;
+  const now = c.currentTime;
+  const o = c.createOscillator(); const g = c.createGain();
+  o.type = "triangle"; o.frequency.setValueAtTime(540, now);
+  o.frequency.exponentialRampToValueAtTime(300, now + 0.06);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.18, now + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+  o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.12);
+}
+function playVictory() {
+  const c = ensureAudio(); if (!c) return;
+  [392, 523, 659, 784].forEach((f, i) => {
+    const t = c.currentTime + i * 0.12;
+    const o = c.createOscillator(); const g = c.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.45);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

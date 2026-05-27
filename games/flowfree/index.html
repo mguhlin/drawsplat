@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Free — DrawSplat Games</title>
+<style>
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  * { box-sizing: border-box; }
+  :root { --bg: #0a0a18; --panel: #161434; --ink: #e0dcff; --muted: #807bb0; --line: #2a2755; --accent: #a855f7; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  .shell { max-width: 760px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1.game-title { margin: 0 0 14px; color: var(--accent); font-size: clamp(1.4rem, 4vw, 2rem); }
+  p.lede { margin: 0 0 18px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; margin-bottom: 18px; }
+  .group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .group .gl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; font-weight: 800; }
+  .btn { background: transparent; color: var(--ink); border: 2px solid var(--line); border-radius: 8px; padding: 7px 12px; font-weight: 800; cursor: pointer; font-size: .85rem; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.active { border-color: var(--accent); background: rgba(168,85,247,0.12); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .metrics { display: flex; gap: 18px; margin-left: auto; }
+  .metric { text-align: center; }
+  .metric .label { display: block; font-size: .58rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-weight: 800; margin-bottom: 2px; }
+  .metric .val { display: block; font-size: 1.2rem; font-weight: 900; color: var(--accent); }
+  .canvas-wrap { padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; }
+  canvas { display: block; width: 100%; max-width: 450px; aspect-ratio: 1; margin: 0 auto; touch-action: none; background: #0a0a18; border-radius: 8px; cursor: crosshair; }
+  .win-card { display: none; margin-top: 18px; padding: 20px; background: linear-gradient(180deg, #14532d, #166534); border: 2px solid #22c55e; border-radius: 12px; text-align: center; color: #d1fae5; }
+  .win-card.show { display: block; }
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Flow Free</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+  <h1 class="game-title">Connect every matched pair without crossing.</h1>
+  <p class="lede">Drag from one colour terminal to its twin. Paths can't overlap, and every cell must be filled to clear the board.</p>
+  <div class="controls">
+    <div class="group">
+      <span class="gl">Grid</span>
+      <button class="btn size-btn active" data-key="n5">5×5 Novice</button>
+      <button class="btn size-btn" data-key="n7">7×7 Intermediate</button>
+      <button class="btn size-btn" data-key="n9">9×9 Advanced</button>
+    </div>
+    <button class="btn primary" id="newBtn">Reset</button>
+    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <div class="metrics">
+      <div class="metric"><span class="label">Flows</span><span class="val"><span id="completed">0</span>/<span id="totalFlows">--</span></span></div>
+      <div class="metric"><span class="label">Coverage</span><span class="val" id="coverage">0%</span></div>
+    </div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="board" width="450" height="450" aria-label="Flow Free board"></canvas>
+  </div>
+  <div id="winCard" class="win-card">
+    <h2>All flows connected.</h2>
+    <p>Every cell covered, every pair joined.</p>
+  </div>
+</div>
+
+<script>
+const PUZZLES = {
+  n5: {
+    size: 5,
+    pairs: [
+      { color: "#ef4444", a: [0,0], b: [4,1] },
+      { color: "#facc15", a: [0,4], b: [4,4] },
+      { color: "#22c55e", a: [1,2], b: [3,3] },
+      { color: "#0ea5e9", a: [2,0], b: [2,4] },
+      { color: "#a855f7", a: [3,1], b: [4,0] },
+    ],
+  },
+  n7: {
+    size: 7,
+    pairs: [
+      { color: "#ef4444", a: [0,0], b: [6,6] },
+      { color: "#facc15", a: [0,6], b: [6,0] },
+      { color: "#22c55e", a: [1,3], b: [5,3] },
+      { color: "#0ea5e9", a: [2,1], b: [4,5] },
+      { color: "#a855f7", a: [2,5], b: [4,1] },
+      { color: "#f97316", a: [3,2], b: [3,4] },
+    ],
+  },
+  n9: {
+    size: 9,
+    pairs: [
+      { color: "#ef4444", a: [0,0], b: [8,8] },
+      { color: "#facc15", a: [0,8], b: [8,0] },
+      { color: "#22c55e", a: [1,2], b: [7,6] },
+      { color: "#0ea5e9", a: [2,4], b: [6,4] },
+      { color: "#a855f7", a: [3,1], b: [5,7] },
+      { color: "#f97316", a: [3,7], b: [5,1] },
+      { color: "#ec4899", a: [4,3], b: [4,5] },
+    ],
+  },
+};
+
+let puzzleKey = "n5";
+let cellMatrix = []; // { color, isTerminal, paths: [colour,...] simplified: pathOwner only }
+let gridSize = 5;
+let activeColor = null;
+let isDrawing = false;
+let currentPath = []; // list of [r,c] for the active draw
+let lastCell = null;
+let completedFlows = new Set();
+let audioCtx = null;
+let muted = false;
+
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
+const W = canvas.width, H = canvas.height;
+const completedEl = document.getElementById("completed");
+const totalFlowsEl = document.getElementById("totalFlows");
+const coverageEl = document.getElementById("coverage");
+const winCard = document.getElementById("winCard");
+
+function init() {
+  const p = PUZZLES[puzzleKey];
+  gridSize = p.size;
+  cellMatrix = Array.from({length: gridSize}, () => Array.from({length: gridSize}, () => ({ color: null, isTerminal: false, pathOwner: null })));
+  p.pairs.forEach(pair => {
+    const [ar, ac] = pair.a, [br, bc] = pair.b;
+    cellMatrix[ar][ac] = { color: pair.color, isTerminal: true, pathOwner: pair.color };
+    cellMatrix[br][bc] = { color: pair.color, isTerminal: true, pathOwner: pair.color };
+  });
+  completedFlows = new Set();
+  totalFlowsEl.textContent = p.pairs.length;
+  winCard.classList.remove("show");
+  updateMetrics();
+  draw();
+}
+
+function cellSize() { return W / gridSize; }
+function cellAt(x, y) {
+  const cw = cellSize();
+  const c = Math.floor(x / cw);
+  const r = Math.floor(y / cw);
+  if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) return null;
+  return { r, c };
+}
+
+function draw() {
+  ctx.fillStyle = "#0a0a18";
+  ctx.fillRect(0, 0, W, H);
+  const cw = cellSize();
+  // Grid
+  ctx.strokeStyle = "rgba(255,255,255,0.07)";
+  ctx.lineWidth = 1;
+  for (let i = 1; i < gridSize; i++) {
+    ctx.beginPath(); ctx.moveTo(i*cw, 0); ctx.lineTo(i*cw, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i*cw); ctx.lineTo(W, i*cw); ctx.stroke();
+  }
+  // Path fills
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      const cell = cellMatrix[r][c];
+      if (cell.pathOwner && !cell.isTerminal) {
+        ctx.fillStyle = cell.pathOwner;
+        ctx.globalAlpha = 0.85;
+        ctx.fillRect(c*cw + cw*0.18, r*cw + cw*0.18, cw*0.64, cw*0.64);
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+  // Terminals on top
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      const cell = cellMatrix[r][c];
+      if (cell.isTerminal) {
+        ctx.fillStyle = cell.color;
+        ctx.beginPath();
+        ctx.arc(c*cw + cw/2, r*cw + cw/2, cw*0.36, 0, Math.PI*2);
+        ctx.fill();
+        // Inner glow
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        ctx.beginPath();
+        ctx.arc(c*cw + cw/2 - cw*0.08, r*cw + cw/2 - cw*0.08, cw*0.08, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function canvasPoint(evt) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width;
+  const sy = canvas.height / rect.height;
+  return { x: (evt.clientX - rect.left) * sx, y: (evt.clientY - rect.top) * sy };
+}
+
+function startDraw(r, c) {
+  const cell = cellMatrix[r][c];
+  if (!cell.color) return false;
+  // Clear any existing path for this colour first
+  clearColorPath(cell.color);
+  activeColor = cell.color;
+  currentPath = [[r, c]];
+  lastCell = { r, c };
+  isDrawing = true;
+  return true;
+}
+
+function clearColorPath(color) {
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      const cell = cellMatrix[r][c];
+      if (cell.pathOwner === color && !cell.isTerminal) {
+        cell.pathOwner = null;
+      }
+    }
+  }
+  completedFlows.delete(color);
+}
+
+function extendDraw(r, c) {
+  if (!isDrawing) return;
+  if (!lastCell) return;
+  if (r === lastCell.r && c === lastCell.c) return;
+  // Must be orthogonally adjacent to lastCell
+  const dr = Math.abs(r - lastCell.r);
+  const dc = Math.abs(c - lastCell.c);
+  if (dr + dc !== 1) return;
+  const target = cellMatrix[r][c];
+  // Cannot enter another colour's terminal
+  if (target.isTerminal && target.color !== activeColor) return;
+  // If entering own terminal that isn't the start, finalize
+  if (target.isTerminal && target.color === activeColor) {
+    // ensure we didn't start from this terminal
+    const start = currentPath[0];
+    if (start[0] === r && start[1] === c) return;
+    currentPath.push([r, c]);
+    finalizeFlow();
+    return;
+  }
+  // Overwrite logic: if cell has a different colour's path, clear that whole path
+  if (target.pathOwner && target.pathOwner !== activeColor) {
+    clearColorPath(target.pathOwner);
+  }
+  // Don't loop back on own path — if revisiting an earlier cell of own path, trim
+  const ownPathIdx = currentPath.findIndex(p => p[0] === r && p[1] === c);
+  if (ownPathIdx >= 0) {
+    // Trim path back to that point
+    for (let i = ownPathIdx + 1; i < currentPath.length; i++) {
+      const [pr, pc] = currentPath[i];
+      if (!cellMatrix[pr][pc].isTerminal) cellMatrix[pr][pc].pathOwner = null;
+    }
+    currentPath = currentPath.slice(0, ownPathIdx + 1);
+    lastCell = { r, c };
+    draw();
+    return;
+  }
+  target.pathOwner = activeColor;
+  currentPath.push([r, c]);
+  lastCell = { r, c };
+  draw();
+}
+
+function finalizeFlow() {
+  completedFlows.add(activeColor);
+  isDrawing = false;
+  activeColor = null;
+  lastCell = null;
+  currentPath = [];
+  draw();
+  updateMetrics();
+  playChime();
+  checkWin();
+}
+
+function cancelDraw() {
+  isDrawing = false;
+  activeColor = null;
+  lastCell = null;
+  currentPath = [];
+  draw();
+  updateMetrics();
+}
+
+function checkWin() {
+  if (completedFlows.size !== PUZZLES[puzzleKey].pairs.length) return;
+  // All cells must have a pathOwner
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      if (!cellMatrix[r][c].pathOwner) return;
+    }
+  }
+  winCard.classList.add("show");
+  playVictory();
+}
+
+function updateMetrics() {
+  completedEl.textContent = completedFlows.size;
+  let filled = 0;
+  const total = gridSize * gridSize;
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      if (cellMatrix[r][c].pathOwner) filled++;
+    }
+  }
+  coverageEl.textContent = Math.round((filled / total) * 100) + "%";
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  const p = canvasPoint(e);
+  const cell = cellAt(p.x, p.y);
+  if (!cell) return;
+  startDraw(cell.r, cell.c);
+  draw();
+});
+canvas.addEventListener("pointermove", (e) => {
+  if (!isDrawing) return;
+  const p = canvasPoint(e);
+  const cell = cellAt(p.x, p.y);
+  if (!cell) return;
+  extendDraw(cell.r, cell.c);
+});
+canvas.addEventListener("pointerup", () => {
+  if (isDrawing) cancelDraw();
+});
+canvas.addEventListener("pointercancel", () => {
+  if (isDrawing) cancelDraw();
+});
+
+document.querySelectorAll(".size-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".size-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    puzzleKey = b.dataset.key;
+    init();
+  });
+});
+document.getElementById("newBtn").addEventListener("click", init);
+document.getElementById("muteBtn").addEventListener("click", (e) => {
+  muted = !muted;
+  e.target.textContent = muted ? "🔇" : "🔊";
+});
+
+function ensureAudio() {
+  if (muted) return null;
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function playChime() {
+  const c = ensureAudio(); if (!c) return;
+  const now = c.currentTime;
+  const o = c.createOscillator(); const g = c.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(660, now);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.2, now + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+  o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.32);
+}
+function playVictory() {
+  const c = ensureAudio(); if (!c) return;
+  [523, 659, 784, 1046].forEach((f, i) => {
+    const t = c.currentTime + i * 0.12;
+    const o = c.createOscillator(); const g = c.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.45);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
