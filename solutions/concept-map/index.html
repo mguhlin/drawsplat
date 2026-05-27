@@ -379,7 +379,7 @@
         <h3>Selection</h3>
         <div class="selection-info" id="selectionInfo">Click a node or connector to select it. Double-click a node to rename it. Double-click a connector to add a label.</div>
 
-        <p class="footer-note">Concept maps render and stay in your browser only. Nothing is uploaded. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
+        <p class="footer-note">Concept maps render and stay in your browser only. Nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab.</p>
       </aside>
 
       <section class="stage" aria-label="Concept map canvas">
@@ -392,11 +392,14 @@
           <input id="inlineEditor" class="inline-editor" hidden>
         </div>
         <div class="actions">
+          <button class="button primary" id="saveJsonBtn" type="button">Save .json</button>
+          <button class="button" id="loadJsonBtn" type="button">Load .json</button>
           <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
           <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
           <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
           <button class="button gold" id="centerBtn" type="button">Center View</button>
         </div>
+        <input id="jsonInput" type="file" accept="application/json,.json" hidden>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
@@ -1311,6 +1314,128 @@
     const raw = (root ? root.label : 'concept-map').toString();
     return (raw.replace(/[^a-z0-9\-_ ]+/gi, '').slice(0, 40).trim().replace(/\s+/g, '-') || 'concept-map').toLowerCase();
   }
+
+  /* JSON save/load. File format is { type, version, saved, canvas, nodes,
+     connectors }. Load is defensive: missing fields fall back, malformed
+     entries are dropped, image URLs are accepted only if they're data:image/
+     URLs, and link URLs go through safeUrl(). */
+  const SAVE_TYPE = 'drawsplat-concept-map';
+  const SAVE_VERSION = 1;
+  const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+  function validHex(v, fallback){ return typeof v === 'string' && HEX_RE.test(v) ? v : fallback; }
+  function clampNumber(v, min, max, fallback){
+    const n = +v;
+    if (!isFinite(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+  function buildSaveJson(){
+    return {
+      type: SAVE_TYPE,
+      version: SAVE_VERSION,
+      saved: new Date().toISOString(),
+      canvas: {w: CANVAS_W, h: CANVAS_H},
+      nodes: state.nodes.map(n => ({
+        id: n.id, x: n.x, y: n.y, w: n.w, h: n.h,
+        label: n.label,
+        link: n.link || '',
+        image: n.image || '',
+        isRoot: !!n.isRoot,
+        fill: n.fill, stroke: n.stroke, text: n.text
+      })),
+      connectors: state.connectors.map(c => ({
+        id: c.id, fromId: c.fromId, toId: c.toId, label: c.label || ''
+      }))
+    };
+  }
+  function applyLoadedJson(data){
+    if (!data || typeof data !== 'object') throw new Error('File is not valid JSON object.');
+    if (data.type !== SAVE_TYPE) throw new Error('Not a DrawSplat concept map file.');
+    if (!Array.isArray(data.nodes) || !Array.isArray(data.connectors)) throw new Error('Missing nodes or connectors.');
+
+    const nodes = [];
+    const idSeen = {};
+    let maxIdNum = 0;
+    const bumpId = id => {
+      const m = String(id || '').match(/(\d+)/);
+      if (m) { const n = +m[1]; if (n > maxIdNum) maxIdNum = n; }
+    };
+    for (const raw of data.nodes) {
+      if (!raw || typeof raw !== 'object') continue;
+      const id = typeof raw.id === 'string' && raw.id.trim() ? raw.id.trim() : ('n' + (nodes.length + 1));
+      if (idSeen[id]) continue;
+      idSeen[id] = true;
+      bumpId(id);
+      nodes.push({
+        id,
+        x: clampNumber(raw.x, -CANVAS_W, CANVAS_W * 2, CANVAS_W / 2),
+        y: clampNumber(raw.y, -CANVAS_H, CANVAS_H * 2, CANVAS_H / 2),
+        w: clampNumber(raw.w, 40, 400, NODE_W),
+        h: clampNumber(raw.h, 24, 200, NODE_H),
+        label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : 'Idea',
+        link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
+        image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
+        isRoot: !!raw.isRoot,
+        fill: validHex(raw.fill, '#dbeafe'),
+        stroke: validHex(raw.stroke, '#2563eb'),
+        text: validHex(raw.text, '#1e3a8a')
+      });
+    }
+    if (!nodes.length) throw new Error('No usable nodes in file.');
+
+    const connectors = [];
+    for (const raw of data.connectors) {
+      if (!raw || typeof raw !== 'object') continue;
+      if (!idSeen[raw.fromId] || !idSeen[raw.toId]) continue;
+      if (raw.fromId === raw.toId) continue;
+      const id = typeof raw.id === 'string' && raw.id.trim() ? raw.id.trim() : ('c' + (connectors.length + 1));
+      bumpId(id);
+      connectors.push({
+        id, fromId: raw.fromId, toId: raw.toId,
+        label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : ''
+      });
+    }
+
+    state.nodes = nodes;
+    state.connectors = connectors;
+    state.nextId = maxIdNum + 1;
+    state.selectedId = null;
+    state.selectedKind = null;
+    state.pendingFrom = null;
+    state.editing = null;
+    state.drag = null;
+  }
+
+  document.getElementById('saveJsonBtn').addEventListener('click', () => {
+    if (!state.nodes.length) return setStatus('Nothing to save yet.', 'danger');
+    const json = JSON.stringify(buildSaveJson(), null, 2);
+    downloadBlob(new Blob([json], {type: 'application/json'}), defaultBaseName() + '.drawsplat-cmap.json');
+    setStatus('Saved as .json. Re-open it here with Load .json.', 'success');
+  });
+  document.getElementById('loadJsonBtn').addEventListener('click', () => {
+    document.getElementById('jsonInput').click();
+  });
+  document.getElementById('jsonInput').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    if (f.size > 8 * 1024 * 1024) return setStatus('File is over 8 MB. Pick a smaller file.', 'danger');
+    if (state.nodes.length && !window.confirm('Replace the current map with the loaded file?')) return;
+    const r = new FileReader();
+    r.onload = () => {
+      let data;
+      try { data = JSON.parse(r.result); }
+      catch (err) { setStatus('Could not parse JSON: ' + (err && err.message ? err.message : String(err)), 'danger'); return; }
+      try {
+        applyLoadedJson(data);
+        render();
+        setStatus('Loaded map: ' + state.nodes.length + ' nodes, ' + state.connectors.length + ' connector' + (state.connectors.length === 1 ? '' : 's') + '.', 'success');
+      } catch (err) {
+        setStatus('Could not load: ' + (err && err.message ? err.message : String(err)), 'danger');
+      }
+    };
+    r.onerror = () => setStatus('Could not read file.', 'danger');
+    r.readAsText(f);
+  });
 
   document.getElementById('downloadSvgBtn').addEventListener('click', () => {
     if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
