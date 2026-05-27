@@ -56,9 +56,9 @@
   <div class="controls">
     <div class="group">
       <span class="gl">Silhouette</span>
-      <button class="btn shape-btn active" data-shape="square">Square Box</button>
-      <button class="btn shape-btn" data-shape="tee">T-Shape</button>
-      <button class="btn shape-btn" data-shape="pyramid">Pyramid</button>
+      <button class="btn shape-btn active" data-shape="tee">Beginner T-Shape</button>
+      <button class="btn shape-btn" data-shape="pyramid">Intermediate Pyramid</button>
+      <button class="btn shape-btn" data-shape="square">Advanced Square Box</button>
     </div>
     <button class="btn primary" id="newBtn">Reset Puzzle</button>
     <button class="btn" id="rotateBtn">Rotate Selected (90°)</button>
@@ -123,7 +123,7 @@ const SHAPES = {
   },
 };
 
-let activeShape = "square";
+let activeShape = "tee";
 let pieces = [];
 let target = null;
 let activePiece = null;

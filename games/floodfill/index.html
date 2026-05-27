@@ -60,14 +60,14 @@
   <div class="controls">
     <div class="group">
       <span class="gl">Density</span>
-      <button class="btn size-btn" data-size="12">12×12 Casual</button>
-      <button class="btn size-btn active" data-size="18">18×18 Standard</button>
-      <button class="btn size-btn" data-size="24">24×24 Expert</button>
+      <button class="btn size-btn active" data-size="12">Beginner 12×12</button>
+      <button class="btn size-btn" data-size="18">Intermediate 18×18</button>
+      <button class="btn size-btn" data-size="24">Expert 24×24</button>
     </div>
     <div class="group">
       <span class="gl">Colours</span>
-      <button class="btn col-btn" data-cc="4">4</button>
-      <button class="btn col-btn active" data-cc="6">6</button>
+      <button class="btn col-btn active" data-cc="4">4</button>
+      <button class="btn col-btn" data-cc="6">6</button>
       <button class="btn col-btn" data-cc="8">8</button>
     </div>
     <button class="btn primary" id="newBtn">New Game</button>
@@ -94,8 +94,8 @@ const PALETTES = {
 };
 const SIZES = [12, 18, 24];
 
-let size = 18;
-let colorCount = 6;
+let size = 12;
+let colorCount = 4;
 let boardMatrix = [];
 let movesRemaining = 0;
 let maxMoves = 0;

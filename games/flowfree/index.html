@@ -53,9 +53,10 @@
   <div class="controls">
     <div class="group">
       <span class="gl">Grid</span>
-      <button class="btn size-btn active" data-key="n5">5×5 Novice</button>
-      <button class="btn size-btn" data-key="n7">7×7 Intermediate</button>
-      <button class="btn size-btn" data-key="n9">9×9 Advanced</button>
+      <button class="btn size-btn active" data-key="n4">Beginner 4×4</button>
+      <button class="btn size-btn" data-key="n5">Intermediate 5×5</button>
+      <button class="btn size-btn" data-key="n7">Advanced 7×7</button>
+      <button class="btn size-btn" data-key="n9">Expert 9×9</button>
     </div>
     <button class="btn primary" id="newBtn">Reset</button>
     <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
@@ -76,14 +77,22 @@
 <script>
 // Each puzzle is constructed from a known full-coverage solution so every
 // cell has exactly one colour and every endpoint pair has a valid path.
-// 5x5 solution layout (R=red, Y=yellow, G=green, B=blue):
-//   R R R R Y
-//   R R R R Y
-//   R G G G Y
-//   R G G G Y
-//   R R B B Y
-// 7x7 / 9x9 use concentric L-shape rings (R outer, B next ring, G inner ring, Y inner inner, P centre).
+// 4x4 Beginner solution layout (R=red, Y=yellow, G=green, B=blue):
+//   . R Y Y       R: (0,1) -> (2,0), 4 cells
+//   . G Y B       Y: (0,3) -> (1,2), 3 cells
+//   R . . B       G: (1,1) -> (3,0), 4 cells
+//   G . . B       B: (1,3) -> (3,3), 5 cells
+// 5x5 Intermediate: R is a 12-cell L-snake; Y / G / B are smaller.
 const PUZZLES = {
+  n4: {
+    size: 4,
+    pairs: [
+      { color: "#ef4444", a: [0,1], b: [2,0] },   // Red: 4-cell L
+      { color: "#facc15", a: [0,3], b: [1,2] },   // Yellow: 3-cell L
+      { color: "#22c55e", a: [1,1], b: [3,0] },   // Green: 4-cell L
+      { color: "#0ea5e9", a: [1,3], b: [3,3] },   // Blue: 5-cell snake
+    ],
+  },
   n5: {
     size: 5,
     pairs: [
@@ -114,7 +123,7 @@ const PUZZLES = {
   },
 };
 
-let puzzleKey = "n5";
+let puzzleKey = "n4";
 let cellMatrix = []; // { color, isTerminal, paths: [colour,...] simplified: pathOwner only }
 let gridSize = 5;
 let activeColor = null;
