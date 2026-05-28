@@ -1032,9 +1032,14 @@ function parseWalls(svgText) {
 // via data URL so the image data stays valid for every redraw — blob
 // URLs revoked after onload can race the next drawImage in some browsers.
 function rasterizeSvgBackground(svgText) {
+  // Strip every <line> too — the SVG's painted walls don't reflect our
+  // dead-end-removal smashes, so we render walls procedurally in canvas
+  // from state.walls instead. The SVG keeps its frame, floor, cactus
+  // paths, decorations, and grain-dot circles.
   const cleaned = svgText
     .replace(/<ellipse[^/]*\/>/g, "")
-    .replace(/<polygon[^/]*\/>/g, "");
+    .replace(/<polygon[^/]*\/>/g, "")
+    .replace(/<line[^/]*\/>/g, "");
   const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(cleaned);
   return new Promise((resolve) => {
     const img = new Image();
@@ -1073,7 +1078,7 @@ function removeDeadEnds() {
     state.brokenEdges.push({ type: side, x: c, y: r });
   }
   // Iterate until stable so newly-opened cells don't leave dangling pockets.
-  for (let pass = 0; pass < 6; pass++) {
+  for (let pass = 0; pass < 10; pass++) {
     let changed = false;
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
@@ -1727,7 +1732,7 @@ function render() {
   if (state.bgImage) {
     ctx.drawImage(state.bgImage, 0, 0, CW, CH);
   }
-  drawBrokenEdges();
+  drawProceduralWalls();
   drawPowerups();
   drawEntities();
   drawPredators();
@@ -1809,28 +1814,48 @@ function drawMinimap() {
   ctx.restore();
 }
 
-function drawBrokenEdges() {
-  // Paint a tunnel-coloured swatch over each smashed wall so the SVG's
-  // painted wall doesn't visually contradict gameplay collision.
-  ctx.fillStyle = "#7a4a22";
-  for (const e of state.brokenEdges) {
-    if (e.type === "top") {
-      ctx.fillRect(OX + e.x * TILE, OY + e.y * TILE - 7, TILE, 14);
-    } else {
-      ctx.fillRect(OX + e.x * TILE - 7, OY + e.y * TILE, 14, TILE);
+function drawProceduralWalls() {
+  if (!state.walls) return;
+  // Each wall edge becomes a chunky pebble string. Drawing from state.walls
+  // means logical openings always look open and broken walls disappear
+  // cleanly. Pebbles overlap so corners thicken naturally.
+  for (let r = 0; r <= ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (state.walls.top[r][c]) {
+        drawPebbleRun(OX + c * TILE, OY + r * TILE, true);
+      }
     }
   }
-  // Subtle rubble specks on top of the mask
-  ctx.fillStyle = "rgba(0,0,0,.35)";
-  for (const e of state.brokenEdges) {
-    const seed = (e.x * 13 + e.y * 17) % 100;
-    if (e.type === "top") {
-      ctx.fillRect(OX + e.x * TILE + (seed % 20) + 4, OY + e.y * TILE - 1, 4, 3);
-      ctx.fillRect(OX + e.x * TILE + (seed % 30) + 22, OY + e.y * TILE + 1, 5, 3);
-    } else {
-      ctx.fillRect(OX + e.x * TILE - 1, OY + e.y * TILE + (seed % 20) + 6, 3, 4);
-      ctx.fillRect(OX + e.x * TILE + 1, OY + e.y * TILE + (seed % 30) + 26, 3, 5);
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c <= COLS; c++) {
+      if (state.walls.left[r][c]) {
+        drawPebbleRun(OX + c * TILE, OY + r * TILE, false);
+      }
     }
+  }
+}
+
+function drawPebbleRun(x, y, horizontal) {
+  const steps = 4;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const cx = horizontal ? x + t * TILE : x;
+    const cy = horizontal ? y : y + t * TILE;
+    // Deterministic per-position size jitter so the wall doesn't shimmer.
+    const r = 10 + ((cx * 13 + cy * 17) % 30) / 14;  // ~10..12 px
+    // Drop shadow
+    ctx.fillStyle = "rgba(8, 4, 2, .55)";
+    ctx.beginPath(); ctx.arc(cx + 1.5, cy + 2, r + 0.5, 0, Math.PI * 2); ctx.fill();
+    // Pebble body
+    const grad = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.15, cx, cy, r);
+    grad.addColorStop(0, "#8b552a");
+    grad.addColorStop(0.55, "#5a3018");
+    grad.addColorStop(1, "#321a0c");
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    // Tiny highlight speck
+    ctx.fillStyle = "rgba(255, 220, 160, .25)";
+    ctx.beginPath(); ctx.arc(cx - r * 0.3, cy - r * 0.3, r * 0.18, 0, Math.PI * 2); ctx.fill();
   }
 }
 
