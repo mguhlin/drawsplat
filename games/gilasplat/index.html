@@ -708,6 +708,86 @@ const PREDATOR_VOICE = {
   "predator-badger": sfx.badger,
 };
 
+// ========== Background music ==========
+// A 32-step procedural desert-pentatonic loop generated on the fly via
+// Web Audio. Pentatonic scale + walking bass + light hat keeps it CC0
+// by construction — no external sound files involved.
+const MUSIC_TEMPO = 92;            // BPM
+const MUSIC_STEP_S = 60 / MUSIC_TEMPO / 2;  // eighth-note resolution
+// 32 steps = 4 bars of 4/4 at eighth-note granularity
+const MUSIC_BASS = [
+  73.42, 0, 0, 0, 0, 0, 110.00, 0,   // D2 . . . . . A2 .
+  73.42, 0, 0, 0, 0, 0, 110.00, 0,
+  87.31, 0, 0, 0, 0, 0, 110.00, 0,   // F2 . . . . . A2 .
+  82.41, 0, 0, 0, 0, 0,  97.99, 0,   // E2 . . . . . G2 .
+];
+const MUSIC_MEL = [
+  587.33, 0,    698.46, 0,    783.99, 0,    880.00, 0,     // D5 F5 G5 A5
+ 1046.50, 0,    880.00, 0,    783.99, 0,    698.46, 0,     // D6 A5 G5 F5
+  587.33, 0,    698.46, 0,    783.99, 0,    880.00, 0,
+ 1046.50, 0,    0,      0,    880.00, 0,    783.99, 0,
+];
+let musicTimer = null;
+let musicGain = null;
+let musicStep = 0;
+
+function startMusic() {
+  if (musicTimer || !state.soundOn) return;
+  const ctx = getCtx();
+  musicGain = ctx.createGain();
+  musicGain.gain.value = 0.16;
+  musicGain.connect(ctx.destination);
+  musicStep = 0;
+  musicTimer = setInterval(scheduleMusicStep, MUSIC_STEP_S * 1000);
+}
+function stopMusic() {
+  if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+  if (musicGain) {
+    const g = musicGain; musicGain = null;
+    try {
+      const ctx = getCtx();
+      g.gain.cancelScheduledValues(ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+    } catch (e) {}
+    setTimeout(() => { try { g.disconnect(); } catch (e) {} }, 200);
+  }
+}
+function scheduleMusicStep() {
+  if (!musicGain || !state.soundOn) return;
+  const ctx = getCtx();
+  const t = ctx.currentTime + 0.05;
+  const step = musicStep % 32;
+  musicStep++;
+  if (MUSIC_BASS[step] > 0)  musicNote(MUSIC_BASS[step], 0.40, "triangle", 0.16, t);
+  if (MUSIC_MEL[step]  > 0)  musicNote(MUSIC_MEL[step],  0.22, "square",   0.07, t);
+  if (step % 2 === 1)        musicHat(t);
+}
+function musicNote(freq, dur, type, vol, t) {
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g).connect(musicGain);
+  osc.start(t); osc.stop(t + dur + 0.05);
+}
+function musicHat(t) {
+  const ctx = getCtx();
+  const dur = 0.045;
+  const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "highpass"; filter.frequency.setValueAtTime(5000, t);
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.06, t);
+  src.connect(filter).connect(g).connect(musicGain);
+  src.start(t);
+}
+
 // ========== Voice (Web Speech API) ==========
 // Pick a playful pitch/rate. Cancels prior utterances so rapid-fire eats
 // don't stack a backlog of quotes.
@@ -902,6 +982,11 @@ $("soundBtn").addEventListener("click", () => {
   $("soundBtn").classList.toggle("on", state.soundOn);
   $("soundBtn").classList.toggle("off", !state.soundOn);
   $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
+  if (state.soundOn) {
+    if (state.running && !state.paused) startMusic();
+  } else {
+    stopMusic();
+  }
 });
 $("playAgainBtn").addEventListener("click", () => {
   const startIdx = readStartLevel();
@@ -923,6 +1008,7 @@ function quitToSetup() {
   state.running = false;
   cancelAnimationFrame(state.rafId);
   $("overlay").classList.remove("show");
+  stopMusic();
   setScreen("setup");
 }
 
@@ -1039,6 +1125,8 @@ async function loadLevel(idx) {
   setBannerForLevel(lvl);
   updateHUD();
   beginCountdown(3, `Level ${idx + 1} — ${lvl.name}`);
+  stopMusic();
+  setTimeout(() => { if (state.running && !state.paused) startMusic(); }, 3200);
   cancelAnimationFrame(state.rafId);
   state.rafId = requestAnimationFrame(loop);
 }
@@ -1236,8 +1324,10 @@ function togglePause() {
     $("overlaySub").textContent = "Take a breath. The eggs aren't going anywhere… much.";
     $("countdown").textContent = "";
     $("overlayActions").innerHTML = "";
-  } else if (state.countdown <= 0) {
-    overlay.classList.remove("show");
+    stopMusic();
+  } else {
+    if (state.countdown <= 0) overlay.classList.remove("show");
+    startMusic();
   }
 }
 
@@ -1710,6 +1800,7 @@ function updateHatchling(e, dt) {
 // ========== Level transitions ==========
 function levelComplete() {
   state.running = false;
+  stopMusic();
   sfx.levelClear();
   const next = state.levelIdx + 1;
   const overlay = $("overlay");
@@ -1738,6 +1829,7 @@ function levelComplete() {
 
 function gameOver(victorious) {
   state.running = false;
+  stopMusic();
   sfx.gameOver();
   setTimeout(() => endRun(victorious), 600);
 }
