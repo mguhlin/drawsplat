@@ -59,6 +59,7 @@
     .btn.ghost { background: transparent; border-color: var(--gray-30); color: var(--gray-70); box-shadow: none; }
     .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn.toggle.active { background: var(--gray-10); border-color: var(--navy); color: var(--navy); }
     .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 
     .mode-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
@@ -71,6 +72,11 @@
     .tone-chip.active { border-color: var(--navy); background: var(--gray-10); color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
     .tone-chip .em { font-size: 1.1rem; }
 
+    .intensity-row { display: flex; align-items: center; gap: 10px; }
+    .intensity-slider { flex: 1; accent-color: var(--orange); }
+    .intensity-display { font-size: 1rem; font-weight: 800; color: var(--navy); min-width: 70px; text-align: right; }
+    .intensity-label { color: var(--gray-50); font-size: .82rem; margin-top: 4px; min-height: 1.2em; line-height: 1.35; }
+
     .stage { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); min-height: 60vh; }
     .stage-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .stage-header h2 { margin: 0; color: var(--navy); font-size: 1.2rem; }
@@ -81,9 +87,29 @@
     .empty p { margin: 0; font-size: 1rem; max-width: 32ch; line-height: 1.4; }
 
     .result-card { padding: 18px 20px; border: 2px solid var(--border); border-radius: 12px; background: linear-gradient(180deg, #f8f6ff, #eef2ff); }
-    .result-card h3 { margin: 0 0 8px; color: var(--navy); font-size: 1rem; }
-    .result-text { white-space: pre-wrap; line-height: 1.55; color: var(--gray-90); font-size: 1rem; }
+    .result-card h3 { margin: 0 0 8px; color: var(--navy); font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .result-card h3 .hint { color: var(--gray-50); font-weight: 600; font-size: .82rem; }
+    .result-text { white-space: pre-wrap; line-height: 1.6; color: var(--gray-90); font-size: 1rem; }
     .result-text[contenteditable=true] { outline: 2px solid var(--blue); outline-offset: 2px; background: var(--white); padding: 8px; border-radius: 6px; }
+
+    /* Word-level diff markers */
+    .diff-added { background: rgba(34, 197, 94, .18); border-bottom: 2px solid var(--green); padding: 0 2px; border-radius: 3px; }
+    .diff-removed { background: rgba(239, 68, 68, .10); text-decoration: line-through; color: var(--gray-50); padding: 0 2px; border-radius: 3px; margin: 0 1px; }
+    .diff-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: .78rem; color: var(--gray-50); }
+    .diff-legend .swatch { display: inline-block; padding: 0 6px; border-radius: 3px; margin-right: 5px; }
+    .diff-legend .swatch.added { background: rgba(34, 197, 94, .18); border-bottom: 2px solid var(--green); }
+    .diff-legend .swatch.removed { background: rgba(239, 68, 68, .10); color: var(--gray-50); text-decoration: line-through; }
+    .diff-stats { display: inline-flex; gap: 10px; align-items: center; font-size: .78rem; color: var(--gray-50); font-weight: 700; }
+    .diff-stats .pos { color: #15803d; }
+    .diff-stats .neg { color: var(--red); }
+
+    /* AI CTA */
+    .ai-cta { margin-top: 14px; padding: 12px 14px; border: 2px dashed var(--orange); border-radius: 8px; background: #fffbeb; color: var(--gray-90); font-size: .9rem; line-height: 1.55; display: flex; align-items: flex-start; gap: 10px; }
+    .ai-cta.strong { border-color: var(--red); background: #fef2f2; }
+    .ai-cta .em { font-size: 1.1rem; line-height: 1.3; }
+    .ai-cta .link-btn { background: none; border: none; color: var(--orange); font-weight: 800; cursor: pointer; padding: 0; font-size: inherit; text-decoration: underline; }
+    .ai-cta.strong .link-btn { color: var(--red); }
+    .ai-cta .link-btn:hover { color: var(--navy); }
 
     .stage-footer { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid var(--gray-10); }
     .stage-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -114,7 +140,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
         <h1>Toneshifter</h1>
-        <p class="tagline">Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English.</p>
+        <p class="tagline">Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English. Slide <strong>intensity</strong> for a light tweak vs. a full structural rewrite.</p>
       </div>
       <a class="home-link" href="../../index.html">Home</a>
     </header>
@@ -132,6 +158,15 @@
           <div class="tone-grid" id="toneGrid" role="radiogroup" aria-label="Target tone"></div>
         </div>
 
+        <div class="field">
+          <label>Intensity — how much rewrite?</label>
+          <div class="intensity-row">
+            <input type="range" min="1" max="3" value="2" class="intensity-slider" id="intensitySlider" aria-label="Intensity level">
+            <span class="intensity-display" id="intensityDisplay">Medium</span>
+          </div>
+          <div class="intensity-label" id="intensityLabel">Word swaps plus tone scaffolding — greetings, sign-offs, structure.</div>
+        </div>
+
         <div class="btn-row">
           <button type="button" class="btn primary" id="shiftBtn">Shift it →</button>
           <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
@@ -140,8 +175,8 @@
         <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
 
         <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
-          Toneshifter works without an account or API key — it uses regex tone rewrites.
-          Add an Anthropic or OpenAI key in Settings to unlock natural, context-aware rewriting.
+          Heuristic mode swaps words and adds tone scaffolding but can't truly rewrite voice.
+          Add an Anthropic or OpenAI key in Settings to unlock natural, context-aware rewrites.
         </p>
       </section>
 
@@ -154,13 +189,14 @@
         <div id="stageBody">
           <div class="empty" id="emptyState">
             <div class="splat" aria-hidden="true">🎚️</div>
-            <p>Paste a draft, pick a tone, and hit <strong>Shift it</strong>. The rewrite is editable — click to tweak before copying.</p>
+            <p>Paste a draft, pick a tone, slide the intensity, and hit <strong>Shift it</strong>. The rewrite is editable — click to tweak before copying.</p>
           </div>
         </div>
 
         <div class="stage-footer" id="stageFooter" hidden>
           <span class="stage-meta" id="footerMeta"></span>
           <div class="stage-actions">
+            <button type="button" class="btn toggle" id="diffBtn" title="Highlight what changed vs the original">Show diff</button>
             <button type="button" class="btn" id="copyBtn" title="Copy rewrite to clipboard">Copy rewrite</button>
             <button type="button" class="btn ghost" id="swapBtn" title="Send rewrite back to the input">↺ Use as input</button>
             <button type="button" class="btn ghost" id="clearBtn">Clear</button>
@@ -219,6 +255,10 @@
   const emptyState = $("emptyState");
   const modePill = $("modePill");
   const toneGrid = $("toneGrid");
+  const intensitySlider = $("intensitySlider");
+  const intensityDisplay = $("intensityDisplay");
+  const intensityLabel = $("intensityLabel");
+  const diffBtn = $("diffBtn");
   const toast = $("toast");
   const settingsBtn = $("settingsBtn");
   const settingsModal = $("settingsModal");
@@ -228,7 +268,11 @@
   let settings = loadSettings();
   let currentTone = "formal";
   let currentResult = "";
+  let currentSource = "";
+  let lastIsHeuristic = true;
+  let showDiff = false;
 
+  // ====== Tone catalog
   const TONES = [
     { key: "formal",      em: "🎩", label: "Formal",       desc: "Professional, no contractions, polite distance." },
     { key: "casual",      em: "👋", label: "Casual",       desc: "Conversational, contractions OK, friendly." },
@@ -242,8 +286,7 @@
   TONES.forEach((t, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "tone-chip" + (i === 0 ? " active" : "");
-    b.dataset.tone = t.key;
-    b.title = t.desc;
+    b.dataset.tone = t.key; b.title = t.desc;
     b.innerHTML = `<span class="em" aria-hidden="true">${t.em}</span><span>${t.label}</span>`;
     b.addEventListener("click", () => {
       currentTone = t.key;
@@ -253,16 +296,67 @@
     toneGrid.appendChild(b);
   });
 
+  // ====== Intensity slider
+  const INTENSITY_LABELS = {
+    1: { name: "Light",   note: "Just word swaps and contractions — original structure preserved." },
+    2: { name: "Medium",  note: "Word swaps plus tone scaffolding — greetings, sign-offs, structure." },
+    3: { name: "Strong",  note: "Full rewrite — restructured sentences, tone-specific framing top to bottom." },
+  };
+  function renderIntensity() {
+    const n = +intensitySlider.value;
+    const info = INTENSITY_LABELS[n];
+    intensityDisplay.textContent = info.name;
+    intensityLabel.textContent = info.note;
+  }
+  intensitySlider.addEventListener("input", renderIntensity);
+  renderIntensity();
+
   // ============================================================
   //  HEURISTIC ENGINE
   // ============================================================
-  // Each tone is a transform applied per sentence. Rough but useful.
   function splitSentences(text) {
     return text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
   }
-  function joinSentences(arr) { return arr.join(" "); }
+  function applyMap(text, pairs) {
+    return pairs.reduce((acc, [re, rep]) => acc.replace(re, rep), text);
+  }
+  function squashSpaces(t) {
+    return t.replace(/[ \t]+/g, " ")
+      .replace(/\s+([,.!?;:])/g, "$1")
+      .replace(/\(\s+/g, "(").replace(/\s+\)/g, ")")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+  function capFirst(s) { return s.length ? s[0].toUpperCase() + s.slice(1) : s; }
+  function ensureSentenceCase(text) {
+    return text.split(/\n\n+/).map(para =>
+      splitSentences(para).map(s => capFirst(s.replace(/^[a-z]/, m => m.toUpperCase()))).join(" ")
+    ).join("\n\n");
+  }
+  function ensureTrailingDot(t) {
+    const last = t.split("\n").filter(l => l.trim()).pop();
+    if (!last) return t;
+    const trimmed = last.trim();
+    // Don't add a period after commas/colons/etc. — that's a sign-off line like "Best regards,"
+    if (/[.!?,:;]$/.test(trimmed)) return t;
+    return t.replace(/\s*$/, ".");
+  }
+  function hasGreeting(t) {
+    return /^(dear|hello|hi|hey|good (morning|afternoon|evening|day))[\s,!]/i.test(t.trim());
+  }
+  function hasSignoff(t) {
+    return /(thanks(\s|,|!|$)|thank you|regards|sincerely|cheers|best,|catch you later|talk soon|appreciate it|much obliged)/i.test(t);
+  }
+  function stripExistingGreeting(t) {
+    const stripped = t.replace(/^(dear[^,\n]*,\s*|hello[^,\n]*,\s*|hi[^,\n]*[,!]\s*|hey[^,\n]*[,!]\s*|good (?:morning|afternoon|evening|day)[^,\n]*,\s*)/i, "");
+    // If we stripped something, recapitalize the new first letter.
+    return stripped !== t ? capFirst(stripped.trim()) : stripped;
+  }
+  function stripExistingSignoff(t) {
+    return t.replace(/[\s\n]*(thanks( so much| a lot| again)?[!.]?|thank you[!.]?|best( regards| wishes)?,?|sincerely,?|regards,?|cheers,?|catch you later[!.]?|talk soon[!.]?|much obliged[!.]?)[\s\n]*$/i, "");
+  }
 
-  // Contraction expansion / compression
+  // ====== Contraction maps
   const EXPAND = [
     [/\bi'm\b/gi, "I am"], [/\bI'm\b/g, "I am"],
     [/\b(you|we|they)'re\b/gi, "$1 are"],
@@ -270,11 +364,13 @@
     [/\b(i|you|we|they)'ve\b/gi, "$1 have"], [/\bI've\b/g, "I have"],
     [/\b(i|you|we|they|he|she|it)'ll\b/gi, "$1 will"], [/\bI'll\b/g, "I will"],
     [/\b(i|you|we|they|he|she|it)'d\b/gi, "$1 would"], [/\bI'd\b/g, "I would"],
-    [/\b(do|does|did|is|are|was|were|have|has|had|would|could|should|will|wo|ca|must|might|need|ai)n't\b/gi, (m, v) => v === "wo" ? "will not" : v === "ca" ? "cannot" : v === "ai" ? "is not" : v + " not"],
+    [/\b(do|does|did|is|are|was|were|have|has|had|would|could|should|will|wo|ca|must|might|need|ai)n't\b/gi, (m, v) =>
+      v === "wo" ? "will not" : v === "ca" ? "cannot" : v === "ai" ? "is not" : v + " not"],
     [/\blet's\b/gi, "let us"],
     [/\bthat's\b/gi, "that is"], [/\bthere's\b/gi, "there is"], [/\bwhat's\b/gi, "what is"],
     [/\bwho's\b/gi, "who is"], [/\bhere's\b/gi, "here is"],
-    [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"], [/\bgotta\b/gi, "have to"], [/\bkinda\b/gi, "kind of"], [/\bsorta\b/gi, "sort of"],
+    [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"], [/\bgotta\b/gi, "have to"],
+    [/\bkinda\b/gi, "kind of"], [/\bsorta\b/gi, "sort of"],
   ];
   const CONTRACT = [
     [/\bI am\b/g, "I'm"],
@@ -289,124 +385,311 @@
     [/\bthat is\b/gi, "that's"], [/\bthere is\b/gi, "there's"],
   ];
 
-  // Slang/casual phrase map
-  const CASUALIZE = [
+  // ====== Per-tone vocab maps (used by Light, deepened by Medium/Strong)
+  const FORMALIZE_BASIC = [
+    [/\bhey\b/gi, "Hello"], [/\bhi(?!gh)\b/gi, "Hello"],
+    [/\blol\b/gi, ""], [/\blmao\b/gi, ""], [/\bhaha+\b/gi, ""],
+    [/\btbh\b/gi, "to be honest"], [/\bimo\b/gi, "in my opinion"], [/\bidk\b/gi, "I am not certain"],
+    [/\btysm\b/gi, "thank you"], [/\bty\b/gi, "thank you"], [/\bthx\b/gi, "thank you"],
+    [/\bpls\b/gi, "please"], [/\bplz\b/gi, "please"],
+    [/\bu\b/gi, "you"], [/\bur\b/gi, "your"], [/\br\b/gi, "are"],
+    [/\bkinda\b/gi, "somewhat"], [/\bsorta\b/gi, "somewhat"],
+    [/\bgotta\b/gi, "must"], [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"],
+    [/\bguys\b/gi, "everyone"], [/\byou guys\b/gi, "you all"],
+  ];
+  const FORMALIZE_DEEP = [
+    [/\bjust\s+/gi, ""],
+    [/\breally\s+/gi, ""],
+    [/\bbasically\s+/gi, ""],
+    [/\bactually\s+/gi, ""],
+    [/\bget\b/gi, "obtain"], [/\bgot\b/gi, "received"],
+    [/\bbig\b/gi, "significant"], [/\bsmall\b/gi, "minor"],
+    [/\bask\b/gi, "request"], [/\btell\b/gi, "inform"],
+    [/\bshow\b/gi, "demonstrate"], [/\bfind out\b/gi, "ascertain"],
+    [/\bsoon\b/gi, "at your earliest convenience"],
+    [/\bhelp\b/gi, "assistance"],
+    [/\bsorry\b/gi, "I apologize"],
+    [/\bthanks\b/gi, "thank you"],
+  ];
+  const FORMALIZE_STRUCTURAL = [
+    [/\bI want\b/gi, "I would like"],
+    [/\bI need\b/gi, "I will require"],
+    [/\bcan you\b/gi, "would you be able to"],
+    [/\bcould you\b/gi, "would you kindly"],
+    [/\blet me know\b/gi, "please advise"],
+    [/\bmake sure\b/gi, "ensure"],
+    [/\bgive me\b/gi, "provide me with"],
+    [/\bsend me\b/gi, "forward to me"],
+    [/\babout\b/gi, "regarding"],
+    [/\bbefore\b/gi, "prior to"],
+    [/\bafter\b/gi, "subsequent to"],
+  ];
+
+  const CASUALIZE_BASIC = [
     [/\bhello\b/gi, "hey"], [/\bgreetings\b/gi, "hey"],
     [/\bregards\b/gi, "thanks"], [/\bsincerely\b/gi, "thanks"], [/\bbest regards\b/gi, "thanks"],
     [/\butilize\b/gi, "use"], [/\bcommence\b/gi, "start"], [/\bterminate\b/gi, "end"], [/\bassist\b/gi, "help"],
     [/\bin order to\b/gi, "to"], [/\bdue to the fact that\b/gi, "because"],
   ];
-  const FORMALIZE = [
-    [/\bhey\b/gi, "Hello"], [/\bhi\b/gi, "Hello"],
-    [/\blol\b/gi, ""], [/\blmao\b/gi, ""], [/\bhaha+\b/gi, ""], [/\btbh\b/gi, "to be honest"], [/\bimo\b/gi, "in my opinion"], [/\bidk\b/gi, "I am not sure"], [/\btysm\b/gi, "thank you"], [/\bty\b/gi, "thank you"], [/\bthx\b/gi, "thank you"], [/\bpls\b/gi, "please"], [/\bplz\b/gi, "please"], [/\bu\b/gi, "you"], [/\bur\b/gi, "your"], [/\br\b/gi, "are"],
-    [/\bkinda\b/gi, "somewhat"], [/\bsorta\b/gi, "somewhat"],
-    [/\bgotta\b/gi, "must"], [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"],
-    [/\bjust\b/gi, ""], [/\breally\b/gi, ""],
-    [/\bget\b/gi, "obtain"],
-    [/\bguys\b/gi, "everyone"], [/\byou guys\b/gi, "you all"],
+  const CASUALIZE_DEEP = [
+    [/\brequire\b/gi, "need"], [/\bobtain\b/gi, "get"], [/\bprovide\b/gi, "give"],
+    [/\bdemonstrate\b/gi, "show"], [/\bcertainly\b/gi, "sure"],
+    [/\bsignificant\b/gi, "big"], [/\bminor\b/gi, "small"],
+    [/\bprior to\b/gi, "before"], [/\bsubsequent to\b/gi, "after"],
+    [/\bregarding\b/gi, "about"], [/\bensure\b/gi, "make sure"],
+    [/\bI would like\b/gi, "I want"], [/\bI am\b/gi, "I'm"],
   ];
-  // Fillers to strip for concise mode
+
+  // Fillers stripped for Concise
   const FILLERS = [
     /\b(just|really|very|basically|literally|actually|honestly|like|kind of|sort of|maybe|perhaps|i think|i feel|i guess|to be honest|tbh|in my opinion|imo|at the end of the day|at this point in time|in terms of|as a matter of fact|the fact (that|of the matter)|needless to say)\b/gi,
     /\bin order to\b/gi,
     /\bdue to the fact that\b/gi,
     /\bfor all intents and purposes\b/gi,
   ];
+  const CONCISE_DEEP = [
+    [/\bin the event that\b/gi, "if"],
+    [/\bat this time\b/gi, "now"],
+    [/\bat this point\b/gi, "now"],
+    [/\bprior to\b/gi, "before"],
+    [/\bsubsequent to\b/gi, "after"],
+    [/\bwith regard to\b/gi, "about"],
+    [/\bwith regards to\b/gi, "about"],
+    [/\bin spite of the fact that\b/gi, "although"],
+    [/\bin the near future\b/gi, "soon"],
+    [/\ba significant number of\b/gi, "many"],
+    [/\ba large number of\b/gi, "many"],
+    [/\bdespite the fact that\b/gi, "although"],
+    [/\bowing to the fact that\b/gi, "because"],
+    [/\bit should be noted that\b/gi, ""],
+    [/\bit is important to note that\b/gi, ""],
+    [/\bplease (be )?(advised|aware|note) that\b/gi, ""],
+    // Verbose boilerplate openers
+    [/\bI am writing to (inquire|ask|let you know|inform you|request|enquire)( whether| if| about)?\b/gi, ""],
+    [/\bI would like to (inquire|ask|let you know|inform you|request|enquire)( whether| if| about)?\b/gi, ""],
+    [/\bI would be (very |so )?(grateful|appreciative|thankful) if (you (could|would))?\b/gi, "please"],
+    // Verbose verbs
+    [/\bwould be willing to\b/gi, "would"],
+    [/\bwould be able to\b/gi, "can"],
+    [/\bwould you be able to\b/gi, "can you"],
+    [/\bI was hoping (to|that)\b/gi, ""],
+    // Verbose nouns
+    [/\bthe submission of\b/gi, ""],
+    [/\bthe completion of\b/gi, "finishing"],
+    [/\bthe (delivery|provision) of\b/gi, ""],
+    // Hedges that survive Light pass
+    [/\bif (it is|it's) not too much trouble\b/gi, ""],
+    [/\bif possible\b/gi, ""],
+    [/\bif you (could|would|have time|have a moment|don't mind)\b/gi, ""],
+  ];
 
-  function applyMap(text, pairs) {
-    return pairs.reduce((acc, [re, rep]) => acc.replace(re, rep), text);
-  }
-  function squashSpaces(t) { return t.replace(/[ \t]+/g, " ").replace(/\s+([,.!?;:])/g, "$1").replace(/\(\s+/g, "(").replace(/\s+\)/g, ")").trim(); }
-  function capFirst(s) { return s.length ? s[0].toUpperCase() + s.slice(1) : s; }
-  function ensureSentenceCase(text) {
-    return splitSentences(text).map(s => capFirst(s.replace(/^[a-z]/, m => m.toUpperCase()))).join(" ");
-  }
-
-  function toneFormal(text) {
-    let t = text;
-    t = applyMap(t, FORMALIZE);
+  // ====== Tone implementations
+  function toneFormal(text, intensity) {
+    let t = applyMap(text, FORMALIZE_BASIC);
     t = applyMap(t, EXPAND);
+    if (intensity >= 2) t = applyMap(t, FORMALIZE_DEEP);
+    if (intensity >= 3) t = applyMap(t, FORMALIZE_STRUCTURAL);
     t = squashSpaces(t);
     t = ensureSentenceCase(t);
-    // Ensure final punctuation
-    if (!/[.!?]$/.test(t)) t += ".";
-    return t;
+
+    if (intensity >= 2) {
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      const greeting = intensity >= 3 ? "Hello,\n\nI hope this message finds you well." : "Hello,";
+      const closer = intensity >= 3
+        ? "Thank you for your time and consideration.\n\nBest regards,"
+        : "Best regards,";
+      t = `${greeting}\n\n${t}`;
+      if (splitSentences(t).length > 1) t = `${t}\n\n${closer}`;
+    }
+    return ensureTrailingDot(squashSpaces(t));
   }
-  function toneCasual(text) {
-    let t = text;
-    t = applyMap(t, CASUALIZE);
+
+  function toneCasual(text, intensity) {
+    let t = applyMap(text, CASUALIZE_BASIC);
     t = applyMap(t, CONTRACT);
-    t = squashSpaces(t);
-    return capFirst(t);
-  }
-  function toneFriendly(text) {
-    let t = toneCasual(text);
-    // Add a warm opener if it doesn't already have a greeting
-    if (!/^(hi|hey|hello)\b/i.test(t)) t = "Hi! " + t;
-    // Soften imperatives
-    t = t.replace(/^(Send|Give|Tell|Bring|Do|Make|Get)\b/gm, "Could you $1");
-    // Add a sign-off if multi-sentence and none present
-    if (splitSentences(t).length > 1 && !/(thanks|thank you|appreciate)/i.test(t)) t += " Thanks so much!";
+    if (intensity >= 2) t = applyMap(t, CASUALIZE_DEEP);
+
+    if (intensity >= 2) {
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      const opener = intensity >= 3 ? "Hey!" : "Hey,";
+      const closer = intensity >= 3 ? "Catch you later!" : "Thanks!";
+      t = `${opener} ${t}`;
+      if (splitSentences(t).length > 2) t = `${t}\n\n${closer}`;
+    }
+    if (intensity >= 3) {
+      // Insert casual connector before the second sentence if missing
+      const ss = splitSentences(t);
+      if (ss.length >= 2 && !/^(so|anyway|btw|honestly|tbh|basically)\b/i.test(ss[1])) {
+        ss[1] = "So " + ss[1].replace(/^[A-Z]/, m => m.toLowerCase());
+      }
+      t = ss.join(" ");
+    }
     return squashSpaces(t);
   }
-  function toneConcise(text) {
+
+  function toneFriendly(text, intensity) {
+    let t = applyMap(text, CASUALIZE_BASIC);
+    t = applyMap(t, CONTRACT);
+    if (intensity >= 2) {
+      t = applyMap(t, CASUALIZE_DEEP);
+      // Strip texting slang at Medium+ so it reads warm not silly
+      t = t.replace(/\b(lol|lmao|haha+|hehe+|rofl|smh|tbh|imo|idk)\b/gi, "")
+           .replace(/\bkinda\b/gi, "kind of").replace(/\bsorta\b/gi, "sort of");
+    }
+
+    // Soften imperatives at the sentence head AND swap the trailing period for a question mark
+    t = t.split(/(?<=[.!?])\s+/).map(s => {
+      const softened = s.replace(/^(Send|Give|Tell|Bring|Do|Make|Get|Fix|Update|Reply)\b/, (m, v) => `Could you ${v.toLowerCase()}`);
+      // If we softened to "Could you …" and the sentence ends with ".", switch to "?"
+      if (softened !== s && /\.$/.test(softened) && !/\?$/.test(softened)) return softened.replace(/\.$/, "?");
+      return softened;
+    }).join(" ");
+
+    if (intensity >= 2) {
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      const opener = intensity >= 3 ? "Hi there! Hope you're doing well." : "Hi!";
+      const closer = intensity >= 3 ? "Really appreciate your help — thanks so much! 😊" : "Thanks so much!";
+      t = `${opener} ${t}`;
+      if (splitSentences(t).length >= 2) t = `${t} ${closer}`;
+    }
+    if (intensity >= 3) {
+      // Insert appreciation
+      t = t.replace(/(\.|!)(\s+)(Could you )/i, "$1$2(No rush at all on this!) $3");
+    }
+    return squashSpaces(t);
+  }
+
+  function toneConcise(text, intensity) {
     let t = text;
     t = applyMap(t, FILLERS.map(re => [re, ""]));
-    // Tighten common verbose phrases
-    t = t.replace(/\bin the event that\b/gi, "if");
-    t = t.replace(/\bat this time\b/gi, "now");
-    t = t.replace(/\bprior to\b/gi, "before");
-    t = t.replace(/\bsubsequent to\b/gi, "after");
-    t = t.replace(/\bwith regard to\b/gi, "about");
-    t = t.replace(/\bin spite of the fact that\b/gi, "although");
-    t = squashSpaces(t);
-    return ensureSentenceCase(t);
-  }
-  function toneDiplomatic(text) {
-    let t = text;
-    // Soften absolutes
-    t = t.replace(/\byou never\b/gi, "I haven't seen");
-    t = t.replace(/\byou always\b/gi, "I've noticed you sometimes");
-    t = t.replace(/\bnever\b/gi, "rarely");
-    t = t.replace(/\balways\b/gi, "often");
-    t = t.replace(/\bmust\b/gi, "may want to");
-    t = t.replace(/\bshould\b/gi, "might consider");
-    t = t.replace(/\bwrong\b/gi, "not quite right");
-    t = t.replace(/\bbad\b/gi, "less effective");
-    t = t.replace(/\bstupid\b/gi, "confusing");
-    t = t.replace(/\bterrible\b/gi, "not ideal");
-    t = applyMap(t, EXPAND);
-    // Add a softening preamble if criticism is detected
-    if (/\b(issue|problem|concern|disagree|but|however)\b/i.test(t) && !/^I appreciate/i.test(t)) {
-      t = "I appreciate the effort here, and I want to share some thoughts. " + t;
+    if (intensity >= 2) {
+      t = applyMap(t, CONCISE_DEEP);
+      // Drop greetings and sign-offs entirely
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      // Strip leading hedges
+      t = t.replace(/\b(i was wondering if|sorry to bother(?:,|\s)+but|if it'?s not too much trouble|when you (get a|have a) (sec|moment|minute)|whenever you (get|have) a chance)\b/gi, "");
+    }
+    if (intensity >= 3) {
+      // Aggressively merge short clauses
+      const ss = splitSentences(t).filter(Boolean);
+      const merged = [];
+      for (let i = 0; i < ss.length; i++) {
+        const s = ss[i];
+        if (merged.length && (merged[merged.length - 1].length + s.length) < 90 && /[a-z]\b\.?$/i.test(merged[merged.length - 1])) {
+          merged[merged.length - 1] = merged[merged.length - 1].replace(/\.\s*$/, "") + ", " + s.replace(/^[A-Z]/, m => m.toLowerCase());
+        } else merged.push(s);
+      }
+      t = merged.join(" ");
+      // Drop "I think/feel/wonder" residues
+      t = t.replace(/\b(i think|i feel|i wonder|i believe)\b\s*,?\s*/gi, "");
     }
     t = squashSpaces(t);
-    return capFirst(t);
-  }
-  function toneEncouraging(text) {
-    let t = text;
-    t = t.replace(/\bcan't\b/gi, "haven't yet");
-    t = t.replace(/\bcannot\b/gi, "haven't yet");
-    t = t.replace(/\bfailed\b/gi, "didn't land — yet");
-    t = t.replace(/\bbad\b/gi, "a starting point");
-    t = applyMap(t, EXPAND);
-    if (!/^(great|nice|well done|love|amazing)/i.test(t)) t = "Great progress — " + t.replace(/^[A-Z]/, m => m.toLowerCase());
-    if (!/(you've got|you can|keep going|proud)/i.test(t)) t += " Keep going!";
-    t = squashSpaces(t);
-    return capFirst(t);
-  }
-  function toneConfident(text) {
-    let t = text;
-    // Strip hedges
-    t = t.replace(/\b(maybe|perhaps|i think|i feel|i guess|just|kind of|sort of|possibly|might be able to|i was wondering if|if it's not too much trouble|sorry to bother(?:,|\s)+but)\b/gi, "");
-    t = t.replace(/\bcould you possibly\b/gi, "please");
-    t = t.replace(/\bif you (have|get) (a moment|a second|some time)\b/gi, "");
-    t = t.replace(/\bsorry\b/gi, "");
-    t = applyMap(t, EXPAND);
-    t = squashSpaces(t);
     return ensureSentenceCase(t);
   }
-  function tonePlain(text) {
+
+  function toneDiplomatic(text, intensity) {
+    let t = text;
+    // Soften absolutes
+    t = t.replace(/\byou never\b/gi, "I haven't seen you")
+         .replace(/\byou always\b/gi, "I've noticed you sometimes")
+         .replace(/\bnever\b/gi, "rarely")
+         .replace(/\balways\b/gi, "often")
+         .replace(/\bmust\b/gi, "may want to")
+         .replace(/\bshould\b/gi, "might consider")
+         .replace(/\bwrong\b/gi, "not quite right")
+         .replace(/\bbad\b/gi, "less effective")
+         .replace(/\bstupid\b/gi, "confusing")
+         .replace(/\bterrible\b/gi, "not ideal");
+    t = applyMap(t, EXPAND);
+
+    if (intensity >= 2) {
+      // Soften but → and
+      t = t.replace(/\bbut\b/gi, "and");
+      // Add appreciation preamble if criticism is detected
+      if (/\b(issue|problem|concern|disagree|however)\b/i.test(t)) {
+        t = "I appreciate the effort here, and I want to share a thought: " + t.replace(/^[A-Z]/, m => m.toLowerCase());
+      }
+      // Soften direct asks into questions
+      t = t.replace(/\bplease (send|fix|update|do|change)\b/gi, "would you be open to $1ing");
+    }
+    if (intensity >= 3) {
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      t = `I value your perspective on this, and I'd love to think through it together.\n\n${t}\n\nLet's keep talking — happy to find common ground.`;
+    }
+    return squashSpaces(t);
+  }
+
+  function toneEncouraging(text, intensity) {
+    let t = text;
+    t = t.replace(/\bcan't\b/gi, "haven't yet")
+         .replace(/\bcannot\b/gi, "haven't yet")
+         .replace(/\bfailed\b/gi, "didn't land — yet")
+         .replace(/\bbad\b/gi, "a starting point")
+         .replace(/\bproblem\b/gi, "puzzle")
+         .replace(/\bmistake\b/gi, "lesson")
+         .replace(/\bweak\b/gi, "growing");
+    t = applyMap(t, EXPAND);
+
+    if (intensity >= 2) {
+      t = stripExistingGreeting(t);
+      t = stripExistingSignoff(t);
+      const opener = intensity >= 3
+        ? "Great progress — I'm proud of how far you've come."
+        : "Great work so far!";
+      const closer = intensity >= 3
+        ? "You've got everything you need to take the next step. Keep going — I believe in you. 🌟"
+        : "Keep going — you've got this!";
+      t = `${opener} ${t}`;
+      if (splitSentences(t).length >= 2) t = `${t} ${closer}`;
+    }
+    if (intensity >= 3) {
+      // Future-focused reframing
+      t = t.replace(/\b(I think|I feel) you\b/gi, "Next time, you can");
+      t = t.replace(/\bdidn't\b/gi, "didn't (yet)");
+    }
+    return squashSpaces(t);
+  }
+
+  function toneConfident(text, intensity) {
+    let t = text;
+    // Strip hedges
+    t = t.replace(/\bif (it'?s|it is) not too much trouble\b/gi, "");
+    t = t.replace(/\b(maybe|perhaps|i think|i feel|i guess|just|kind of|sort of|possibly|probably|might be able to|i was wondering if|if possible|sorry to bother(?:,|\s)+but)\b/gi, "");
+    t = t.replace(/\bcould you possibly\b/gi, "please");
+    t = t.replace(/\bif you (have|get) (a moment|a second|some time)\b/gi, "");
+    t = t.replace(/\bif you (could|would|have time|don't mind)\b/gi, "");
+    t = t.replace(/\bsorry\b/gi, "");
+    t = applyMap(t, EXPAND);
+
+    if (intensity >= 2) {
+      // Drop softening qualifiers more aggressively
+      t = t.replace(/\b(I would like to|I'd like to|I was hoping to)\b/gi, "I'll");
+      t = t.replace(/\bcould you\b/gi, "please");
+      t = t.replace(/\bwould you mind\b/gi, "please");
+      t = t.replace(/\bwhen you (get a|have a) (sec|moment|minute|chance)\b/gi, "by EOD");
+      // Drop apologies entirely
+      t = stripExistingGreeting(t);
+    }
+    if (intensity >= 3) {
+      // "I might X" → "I will X"
+      t = t.replace(/\bI might\b/gi, "I will");
+      t = t.replace(/\bI hope to\b/gi, "I will");
+      t = t.replace(/\bI'd love to\b/gi, "I will");
+      // Move the ask to the front: if a "please X" pattern is mid-text, no easy generic transform — instead drop trailing politeness
+      t = stripExistingSignoff(t);
+      // Tighten — drop fillers seen in confident drafts
+      t = t.replace(/\b(thanks in advance|thanks so much|thanks a lot|much appreciated)\b/gi, "");
+    }
+    t = squashSpaces(t);
+    return ensureSentenceCase(ensureTrailingDot(t));
+  }
+
+  function tonePlain(text, intensity) {
     let t = text;
     t = applyMap(t, [
       [/\butilize\b/gi, "use"], [/\bcommence\b/gi, "start"], [/\bterminate\b/gi, "end"], [/\bsubsequent\b/gi, "next"],
@@ -414,13 +697,35 @@
       [/\bendeavor\b/gi, "try"], [/\bdemonstrate\b/gi, "show"], [/\brequire\b/gi, "need"], [/\bobtain\b/gi, "get"],
       [/\bpurchase\b/gi, "buy"], [/\bregarding\b/gi, "about"], [/\bin the event that\b/gi, "if"],
       [/\bdue to the fact that\b/gi, "because"], [/\bat this time\b/gi, "now"],
+      [/\bplease be advised\b/gi, ""], [/\bper my (previous|last) email\b/gi, "as I mentioned"],
     ]);
-    // Split very long sentences
-    t = t.split(/(?<=[.!?])\s+/).flatMap(s => {
-      if (s.length < 140) return [s];
-      // crude split at comma + conjunction
-      return s.split(/, (?:and|but|so|because) /).map((p, i, arr) => p + (i < arr.length - 1 ? "." : ""));
-    }).join(" ");
+    if (intensity >= 2) {
+      // Split long sentences (>120 chars) at clause boundaries
+      t = t.split(/(?<=[.!?])\s+/).flatMap(s => {
+        if (s.length < 120) return [s];
+        return s.split(/, (?:and|but|so|because) /).map((p, i, arr) => p + (i < arr.length - 1 ? "." : ""));
+      }).join(" ");
+      t = applyMap(t, EXPAND);
+    }
+    if (intensity >= 3) {
+      // Aggressive: cap sentence length to ~15 words, split on ", " after long phrases
+      const sentences = splitSentences(t);
+      const tightened = [];
+      for (const s of sentences) {
+        const words = s.split(/\s+/);
+        if (words.length <= 15) { tightened.push(s); continue; }
+        // Try splitting at the nearest comma after word 10
+        const commaIdx = s.indexOf(",", words.slice(0, 10).join(" ").length);
+        if (commaIdx > 0) {
+          tightened.push(s.slice(0, commaIdx).replace(/[,;]$/, "") + ".");
+          tightened.push(s.slice(commaIdx + 1).trim().replace(/^[a-z]/, m => m.toUpperCase()));
+        } else tightened.push(s);
+      }
+      t = tightened.join(" ");
+      // Paragraph break every 2-3 sentences
+      const ss = splitSentences(t);
+      t = ss.map((s, i) => (i > 0 && i % 3 === 0) ? `\n\n${s}` : s).join(" ").replace(/  +/g, " ");
+    }
     t = squashSpaces(t);
     return ensureSentenceCase(t);
   }
@@ -430,9 +735,69 @@
     diplomatic: toneDiplomatic, encouraging: toneEncouraging, confident: toneConfident, plain: tonePlain,
   };
 
-  function heuristicShift(text, tone) {
+  function heuristicShift(text, tone, intensity) {
     const fn = TONE_FN[tone] || ((x) => x);
-    return fn(text);
+    return fn(text, intensity);
+  }
+
+  // ============================================================
+  //  WORD-LEVEL DIFF (LCS)
+  // ============================================================
+  function tokenize(s) {
+    // Split into words, whitespace, and punctuation as separate tokens
+    return s.match(/[\w']+|[^\w\s]+|\s+/g) || [];
+  }
+  function isWhitespace(tok) { return /^\s+$/.test(tok); }
+
+  function diffWords(a, b) {
+    const A = tokenize(a);
+    const B = tokenize(b);
+    const m = A.length, n = B.length;
+    // LCS DP
+    const dp = Array.from({ length: m + 1 }, () => new Uint32Array(n + 1));
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (A[i - 1] === B[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+        else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+    // Backtrack
+    const ops = [];
+    let i = m, j = n;
+    while (i > 0 && j > 0) {
+      if (A[i - 1] === B[j - 1]) { ops.unshift({ op: "eq", t: A[i - 1] }); i--; j--; }
+      else if (dp[i - 1][j] >= dp[i][j - 1]) { ops.unshift({ op: "del", t: A[i - 1] }); i--; }
+      else { ops.unshift({ op: "ins", t: B[j - 1] }); j--; }
+    }
+    while (i > 0) { ops.unshift({ op: "del", t: A[i - 1] }); i--; }
+    while (j > 0) { ops.unshift({ op: "ins", t: B[j - 1] }); j--; }
+    return ops;
+  }
+
+  function renderDiffHTML(ops) {
+    // Group consecutive same-op tokens, hide pure-whitespace ins/del when adjacent to eq
+    const out = [];
+    for (let k = 0; k < ops.length; k++) {
+      const o = ops[k];
+      const isWS = isWhitespace(o.t);
+      if (o.op === "eq") {
+        out.push(escapeHtml(o.t));
+      } else if (isWS) {
+        // Preserve whitespace cleanly so we don't paint a giant green block on a newline
+        out.push(escapeHtml(o.t));
+      } else if (o.op === "ins") {
+        out.push(`<span class="diff-added">${escapeHtml(o.t)}</span>`);
+      } else {
+        out.push(`<span class="diff-removed">${escapeHtml(o.t)}</span>`);
+      }
+    }
+    return out.join("");
+  }
+
+  function diffStats(ops) {
+    let adds = 0, dels = 0;
+    ops.forEach(o => { if (!isWhitespace(o.t)) { if (o.op === "ins") adds++; else if (o.op === "del") dels++; } });
+    return { adds, dels };
   }
 
   // ============================================================
@@ -449,21 +814,27 @@
   }
   refreshModePill();
 
-  function buildPrompt(text, tone) {
+  function buildPrompt(text, tone, intensity) {
     const t = TONES.find(x => x.key === tone) || TONES[0];
+    const intensityNote = intensity === 1
+      ? "Apply a LIGHT rewrite — keep structure, swap a few words."
+      : intensity === 2
+      ? "Apply a MEDIUM rewrite — swap words, restructure sentences as needed, add tone-appropriate greeting and sign-off if natural."
+      : "Apply a STRONG rewrite — restructure the whole message in the target tone, including framing, opener, and closer. Preserve meaning but commit to the voice.";
     return `You are Toneshifter, a careful rewriter that preserves meaning while changing tone.
 Rewrite the following text in this tone: "${t.label}" — ${t.desc}
+Intensity: ${intensity}/3. ${intensityNote}
 Rules:
-- Preserve the original meaning and any specific facts, names, or asks.
-- Match length within +/- 30%.
-- Do not add new information or invent facts.
+- Preserve the original meaning, names, and specific asks.
+- Match length within +/- 50% (Strong intensity may be longer than the original).
+- Do not invent facts.
 - Return ONLY the rewritten text, no preamble, no quotes, no explanation.
 
 Original:
 ${text}`;
   }
-  async function aiShift(text, tone) {
-    const prompt = buildPrompt(text, tone);
+  async function aiShift(text, tone, intensity) {
+    const prompt = buildPrompt(text, tone, intensity);
     return settings.provider === "anthropic" ? aiAnthropic(prompt) : aiOpenAI(prompt);
   }
   async function aiAnthropic(prompt) {
@@ -471,7 +842,7 @@ ${text}`;
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "content-type": "application/json", "x-api-key": settings.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-      body: JSON.stringify({ model, max_tokens: 1200, messages: [{ role: "user", content: prompt }] }),
+      body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
     });
     if (!res.ok) throw new Error(`Anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const data = await res.json();
@@ -482,7 +853,7 @@ ${text}`;
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", "authorization": `Bearer ${settings.apiKey}` },
-      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.5 }),
+      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.6 }),
     });
     if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const data = await res.json();
@@ -492,27 +863,82 @@ ${text}`;
   // ============================================================
   //  RENDER
   // ============================================================
-  function render(text, tone, source) {
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+  function render(rewrite, tone, intensity, sourceLabel, isHeuristic) {
     const t = TONES.find(x => x.key === tone) || TONES[0];
+    const intensityName = INTENSITY_LABELS[intensity].name;
     stageTitle.textContent = `${t.em} ${t.label}`;
-    stageMeta.textContent = `${source} · ${text.length} chars`;
+    stageMeta.textContent = `${sourceLabel} · intensity: ${intensityName}`;
+
+    currentResult = rewrite;
+    currentSource = srcInput.value.trim();
+    lastIsHeuristic = isHeuristic;
+
     stageBody.innerHTML = "";
     const card = document.createElement("div");
     card.className = "result-card";
-    const h = document.createElement("h3"); h.textContent = "Rewrite (click to edit)";
-    const p = document.createElement("div");
-    p.className = "result-text"; p.textContent = text; p.title = "Click to edit";
-    p.addEventListener("click", () => {
-      p.contentEditable = "true"; p.focus();
-      const r = document.createRange(); r.selectNodeContents(p); r.collapse(false);
-      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      p.addEventListener("blur", () => { p.contentEditable = "false"; currentResult = p.textContent; }, { once: true });
-    });
-    card.appendChild(h); card.appendChild(p);
+
+    const h = document.createElement("h3");
+    h.innerHTML = `Rewrite <span class="hint">${showDiff ? "(diff view — toggle off to edit)" : "(click to edit)"}</span>`;
+    card.appendChild(h);
+
+    const body = document.createElement("div");
+    body.className = "result-text";
+
+    if (showDiff) {
+      const ops = diffWords(currentSource, currentResult);
+      body.innerHTML = renderDiffHTML(ops);
+      // Add legend
+      const legend = document.createElement("div");
+      legend.className = "diff-legend";
+      const { adds, dels } = diffStats(ops);
+      legend.innerHTML = `<span><span class="swatch added">added</span>new text in the rewrite</span>
+        <span><span class="swatch removed">removed</span>was in the original, dropped</span>
+        <span class="diff-stats"><span class="pos">+${adds}</span><span class="neg">-${dels}</span> word changes</span>`;
+      card.appendChild(body);
+      card.appendChild(legend);
+    } else {
+      body.textContent = currentResult;
+      body.title = "Click to edit";
+      body.addEventListener("click", () => {
+        body.contentEditable = "true"; body.focus();
+        const r = document.createRange(); r.selectNodeContents(body); r.collapse(false);
+        const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        body.addEventListener("blur", () => { body.contentEditable = "false"; currentResult = body.textContent; updateFooterMeta(); }, { once: true });
+      });
+      card.appendChild(body);
+    }
+
+    // AI CTA in heuristic mode
+    if (isHeuristic) {
+      const cta = document.createElement("div");
+      cta.className = "ai-cta" + (intensity === 3 ? " strong" : "");
+      const msg = intensity === 3
+        ? `Strong intensity hits the heuristic ceiling hard — the rewrite changes structure but the voice still sounds rule-based.`
+        : `Heuristic mode tweaks words and structure but can't truly rewrite voice.`;
+      cta.innerHTML = `<span class="em" aria-hidden="true">${intensity === 3 ? "⚠️" : "💡"}</span>
+        <span>${msg} <button type="button" class="link-btn" id="ctaSettingsLink">Unlock AI rewrites →</button> for results that genuinely sound like ${t.label.toLowerCase()}.</span>`;
+      card.appendChild(cta);
+    }
+
     stageBody.appendChild(card);
     stageFooter.hidden = false;
-    footerMeta.textContent = `Original: ${srcInput.value.length} chars · Rewrite: ${text.length} chars`;
-    currentResult = text;
+    diffBtn.classList.toggle("active", showDiff);
+    diffBtn.textContent = showDiff ? "Hide diff" : "Show diff";
+    updateFooterMeta();
+
+    if (isHeuristic) {
+      const link = document.getElementById("ctaSettingsLink");
+      if (link) link.addEventListener("click", openSettings);
+    }
+  }
+  function updateFooterMeta() {
+    const srcLen = currentSource.length, resLen = currentResult.length;
+    const delta = resLen - srcLen;
+    const pct = srcLen ? Math.round((delta / srcLen) * 100) : 0;
+    const sign = delta >= 0 ? "+" : "";
+    footerMeta.textContent = `Original: ${srcLen} chars · Rewrite: ${resLen} chars (${sign}${delta} / ${sign}${pct}%)`;
   }
 
   // ============================================================
@@ -521,24 +947,45 @@ ${text}`;
   async function doShift() {
     const text = srcInput.value.trim();
     if (!text) { srcInput.focus(); showToast("Paste some text first.", true); return; }
+    const intensity = +intensitySlider.value;
     shiftBtn.disabled = true;
     const orig = shiftBtn.textContent;
     shiftBtn.textContent = settings.apiKey ? "Asking Claude…" : "Shifting…";
     try {
-      const out = settings.apiKey ? await aiShift(text, currentTone) : heuristicShift(text, currentTone);
-      render(out, currentTone, settings.apiKey ? "AI rewrite" : "Heuristic rewrite");
+      let out, sourceLabel, isHeuristic;
+      if (settings.apiKey) {
+        out = await aiShift(text, currentTone, intensity);
+        sourceLabel = `AI rewrite (${settings.provider === "openai" ? "OpenAI" : "Claude"})`;
+        isHeuristic = false;
+      } else {
+        out = heuristicShift(text, currentTone, intensity);
+        sourceLabel = "Heuristic rewrite";
+        isHeuristic = true;
+      }
+      render(out, currentTone, intensity, sourceLabel, isHeuristic);
     } catch (err) {
       console.error(err);
       showToast("AI call failed — using heuristic. " + (err.message || ""), true);
-      const out = heuristicShift(text, currentTone);
-      render(out, currentTone, "Heuristic fallback");
+      const out = heuristicShift(text, currentTone, intensity);
+      render(out, currentTone, intensity, "Heuristic fallback (AI failed)", true);
     } finally { shiftBtn.disabled = false; shiftBtn.textContent = orig; }
   }
   shiftBtn.addEventListener("click", doShift);
   srcInput.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doShift(); });
 
+  diffBtn.addEventListener("click", () => {
+    if (!currentResult) { showToast("Run a shift first.", true); return; }
+    showDiff = !showDiff;
+    const intensity = +intensitySlider.value;
+    render(currentResult, currentTone,
+      Math.max(1, Math.min(3, intensity)),
+      lastIsHeuristic ? "Heuristic rewrite" : `AI rewrite (${settings.provider === "openai" ? "OpenAI" : "Claude"})`,
+      lastIsHeuristic);
+  });
+
   $("clearBtn").addEventListener("click", () => {
-    currentResult = ""; stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
+    currentResult = ""; currentSource = ""; showDiff = false;
+    stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
     stageTitle.textContent = "Rewritten draft will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
   });
   $("copyBtn").addEventListener("click", async () => {
@@ -548,7 +995,8 @@ ${text}`;
   });
   $("swapBtn").addEventListener("click", () => {
     if (!currentResult) return;
-    srcInput.value = currentResult; srcInput.focus(); showToast("Sent rewrite back to the input.");
+    srcInput.value = currentResult; srcInput.focus();
+    showToast("Sent rewrite back to the input.");
   });
 
   // ====== Settings modal
