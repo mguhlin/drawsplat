@@ -293,7 +293,7 @@
       <div class="final" id="finalScore"></div>
       <div class="end-actions">
         <button type="button" class="btn big" id="playAgainBtn">Play again ↻</button>
-        <button type="button" class="btn ghost" id="newRunBtn">Change difficulty</button>
+        <button type="button" class="btn ghost" id="newRunBtn">← Main menu</button>
       </div>
     </div>
   </section>
@@ -803,6 +803,43 @@ const QUIPS = {
     "Egg apocalypse.",
   ],
 };
+
+const END_SAYINGS = {
+  time: [
+    "The sun beat you.",
+    "Out of time! The desert wins.",
+    "Daylight got you.",
+    "Sunset caught the gila.",
+    "Hot sand, fast clock.",
+    "Time's up — back to the cool dark.",
+    "You ran out of seconds.",
+    "The desert clock was faster.",
+    "Tick tock — too slow.",
+    "The eggs outlasted you.",
+  ],
+  predator: [
+    "A predator caught you.",
+    "Snatched! Better luck next round.",
+    "The food chain wins this round.",
+    "Caught between paws.",
+    "Lunch for someone else today.",
+    "Got chomped.",
+    "Pounced! Try again, slither faster.",
+    "Predator: 1, Gila: 0.",
+  ],
+  victory: [
+    "Desert champion!",
+    "All burrows cleared. Legendary.",
+    "The maze bows to you.",
+    "You ARE the GilaSplat.",
+    "Total egg domination!",
+    "Sun, sand, and victory.",
+  ],
+};
+function pickEndSaying(pool) {
+  const arr = END_SAYINGS[pool] || END_SAYINGS.time;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 function emitQuip(kind) {
   const pool = QUIPS[kind] || QUIPS.egg;
   const text = pool[Math.floor(Math.random() * pool.length)];
@@ -1722,8 +1759,8 @@ function endRun(victorious, reason) {
     state.hiScore = state.score;
     try { localStorage.setItem("gilasplat.hiScore", String(state.hiScore)); } catch (e) { /* blocked */ }
   }
-  const losingTitle = reason === "Predator!" ? "A predator caught you." : "The sun beat you.";
-  $("endBanner").textContent = victorious ? "Desert champion!" : losingTitle;
+  const pool = victorious ? "victory" : (reason === "Predator!" ? "predator" : "time");
+  $("endBanner").textContent = pickEndSaying(pool);
   const recordTag = newRecord ? " · 🏅 New record!" : ` · Hi-Score ${state.hiScore}`;
   $("finalScore").textContent = `Score ${state.score} · Eggs ${state.eggsEaten} · Hatchlings ${state.chicksEaten}${recordTag}`;
   setScreen("end");
