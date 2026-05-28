@@ -620,7 +620,8 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .landing-nav-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:240px;background:#fff;border:1px solid #e2e6f0;border-radius:12px;box-shadow:0 14px 40px #11182733;padding:8px;display:flex;flex-direction:column;gap:2px;z-index:50}
 .landing-nav-menu a{display:block;padding:9px 12px;border-radius:8px;text-decoration:none;color:#1f2937;font-size:14px;font-weight:600;white-space:nowrap}
 .landing-nav-menu a:hover{background:#f3efff;color:var(--navy);text-decoration:none}
-@media(max-width:880px){.landing-nav-menu{position:static;box-shadow:none;border:0;padding:4px 0 4px 12px;background:transparent}.landing-nav-menu a{padding:6px 0;font-size:13px}.landing-nav-dropdown{display:block;width:100%}}
+.landing-nav-divider{border:0;border-top:1px solid #e2e6f0;margin:6px 4px;height:0}
+@media(max-width:880px){.landing-nav-menu{position:static;box-shadow:none;border:0;padding:4px 0 4px 12px;background:transparent}.landing-nav-menu a{padding:6px 0;font-size:13px}.landing-nav-dropdown{display:block;width:100%}.landing-nav-divider{margin:4px 0}}
 .config-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:6px 0 10px}
 @media(min-width:560px){.config-grid{grid-template-columns:1fr 1fr}}
 .config-row{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink)}
