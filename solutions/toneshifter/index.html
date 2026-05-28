@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toneshifter — DrawSplat Tools</title>
+  <title data-i18n="doc.title">Toneshifter — DrawSplat Tools</title>
   <meta name="description" content="Rewrite any text in a chosen tone — formal, casual, friendly, concise, diplomatic, encouraging, or plain English.">
   <style>
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
     :root {
       --navy: #7c3aed;
       --gold: #a855f7;
@@ -132,117 +135,126 @@
     footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
     footer.foot a { color: var(--navy); font-weight: 800; }
   </style>
+  <script src="../../assets/js/widget-i18n.js"></script>
 </head>
 <body>
   <div class="top-bar"></div>
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Toneshifter</h1>
-        <p class="tagline">Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English. Slide <strong>intensity</strong> for a light tweak vs. a full structural rewrite.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Toneshifter</h1>
+        <p class="tagline" data-i18n-html="header.tagline.html">Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English. Slide <strong>intensity</strong> for a light tweak vs. a full structural rewrite.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <div class="layout">
       <section class="panel" aria-label="Input">
-        <h2>Paste your draft</h2>
+        <h2 data-i18n="panel.h2">Paste your draft</h2>
         <div class="field">
-          <label for="srcInput">Original text</label>
-          <textarea id="srcInput" placeholder="Hey, just wondering if you could send me that file when you get a sec — kinda need it for the meeting tomorrow lol"></textarea>
+          <label for="srcInput" data-i18n="panel.srcLabel">Original text</label>
+          <textarea id="srcInput" data-i18n-placeholder="panel.srcPlaceholder"></textarea>
         </div>
 
         <div class="field">
-          <label>Target tone</label>
+          <label data-i18n="panel.toneLabel">Target tone</label>
           <div class="tone-grid" id="toneGrid" role="radiogroup" aria-label="Target tone"></div>
         </div>
 
         <div class="field">
-          <label>Intensity — how much rewrite?</label>
+          <label data-i18n="panel.intensityLabel">Intensity — how much rewrite?</label>
           <div class="intensity-row">
             <input type="range" min="1" max="3" value="2" class="intensity-slider" id="intensitySlider" aria-label="Intensity level">
             <span class="intensity-display" id="intensityDisplay">Medium</span>
           </div>
-          <div class="intensity-label" id="intensityLabel">Word swaps plus tone scaffolding — greetings, sign-offs, structure.</div>
+          <div class="intensity-label" id="intensityLabel"></div>
         </div>
 
         <div class="btn-row">
-          <button type="button" class="btn primary" id="shiftBtn">Shift it →</button>
-          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+          <button type="button" class="btn primary" id="shiftBtn" data-i18n="panel.shiftBtn">Shift it →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" data-i18n="panel.settingsBtn">⚙️ Settings</button>
         </div>
 
-        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill" data-i18n="mode.heuristic">Heuristic mode</span></div>
 
-        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45" data-i18n="panel.intro">
           Heuristic mode swaps words and adds tone scaffolding but can't truly rewrite voice.
           Add an Anthropic or OpenAI key in Settings to unlock natural, context-aware rewrites.
+        </p>
+        <p style="margin-top:8px;font-size:.78rem;color:var(--orange);line-height:1.4" data-i18n="panel.langNote">
+          The heuristic only works on English text. For other languages, switch on AI mode in Settings.
         </p>
       </section>
 
       <section class="stage" aria-label="Rewritten output">
         <div class="stage-header">
-          <h2 id="stageTitle">Rewritten draft will appear here</h2>
+          <h2 id="stageTitle" data-i18n="stage.title.empty">Rewritten draft will appear here</h2>
           <span class="stage-meta" id="stageMeta"></span>
         </div>
 
         <div id="stageBody">
           <div class="empty" id="emptyState">
             <div class="splat" aria-hidden="true">🎚️</div>
-            <p>Paste a draft, pick a tone, slide the intensity, and hit <strong>Shift it</strong>. The rewrite is editable — click to tweak before copying.</p>
+            <p data-i18n-html="stage.empty.html">Paste a draft, pick a tone, slide the intensity, and hit <strong>Shift it</strong>. The rewrite is editable — click to tweak before copying.</p>
           </div>
         </div>
 
         <div class="stage-footer" id="stageFooter" hidden>
           <span class="stage-meta" id="footerMeta"></span>
           <div class="stage-actions">
-            <button type="button" class="btn toggle" id="diffBtn" title="Highlight what changed vs the original">Show diff</button>
-            <button type="button" class="btn" id="copyBtn" title="Copy rewrite to clipboard">Copy rewrite</button>
-            <button type="button" class="btn ghost" id="swapBtn" title="Send rewrite back to the input">↺ Use as input</button>
-            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+            <button type="button" class="btn toggle" id="diffBtn" data-i18n="stage.showDiff">Show diff</button>
+            <button type="button" class="btn" id="copyBtn" data-i18n="stage.copy">Copy rewrite</button>
+            <button type="button" class="btn ghost" id="swapBtn" data-i18n="stage.useAsInput">↺ Use as input</button>
+            <button type="button" class="btn ghost" id="clearBtn" data-i18n="stage.clear">Clear</button>
           </div>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
+    <footer class="foot" data-i18n-html="footer.html">
       Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
     </footer>
   </div>
 
   <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal">
-      <h3 id="settingsTitle">AI mode (optional)</h3>
-      <p class="intro">Bring your own API key for natural rewrites that actually sound like the chosen tone. Your key stays in this browser — saved to <code>localStorage</code>, sent directly to the provider.</p>
+      <h3 id="settingsTitle" data-i18n="settings.h3">AI mode (optional)</h3>
+      <p class="intro" data-i18n-html="settings.intro.html">Bring your own API key for natural rewrites.</p>
       <div class="field">
-        <label>Provider</label>
+        <label data-i18n="settings.providerLabel">Provider</label>
         <div class="radio-row">
-          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
-          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+          <label><input type="radio" name="provider" value="anthropic" checked> <span data-i18n="settings.anthropic">Anthropic (Claude)</span></label>
+          <label><input type="radio" name="provider" value="openai"> <span data-i18n="settings.openai">OpenAI</span></label>
         </div>
       </div>
       <div class="field">
-        <label for="apiKeyInput">API key</label>
-        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+        <label for="apiKeyInput" data-i18n="settings.keyLabel">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
       </div>
       <div class="field">
-        <label for="modelInput">Model (optional override)</label>
-        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+        <label for="modelInput" data-i18n="settings.modelLabel">Model (optional override)</label>
+        <input type="text" id="modelInput" data-i18n-placeholder="settings.modelPh">
       </div>
-      <div class="privacy-note"><strong>No server.</strong> Toneshifter is a single static page. Requests go from your browser straight to Anthropic or OpenAI.</div>
+      <div class="privacy-note" data-i18n-html="settings.privacy.html"><strong>No server.</strong></div>
       <div class="actions">
-        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
-        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
-        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+        <button type="button" class="btn danger" id="clearKeyBtn" data-i18n="settings.clearKey">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn" data-i18n="settings.cancel">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn" data-i18n="settings.save">Save</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="./locales.js"></script>
   <script>
   "use strict";
   const $ = (id) => document.getElementById(id);
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const STORAGE_KEY = "toneshifter.v1";
 
   const srcInput = $("srcInput");
@@ -272,44 +284,45 @@
   let lastIsHeuristic = true;
   let showDiff = false;
 
-  // ====== Tone catalog
-  const TONES = [
-    { key: "formal",      em: "🎩", label: "Formal",       desc: "Professional, no contractions, polite distance." },
-    { key: "casual",      em: "👋", label: "Casual",       desc: "Conversational, contractions OK, friendly." },
-    { key: "friendly",    em: "🙂", label: "Friendly",     desc: "Warm, encouraging, approachable." },
-    { key: "concise",     em: "✂️", label: "Concise",      desc: "Cut every word that isn't pulling weight." },
-    { key: "diplomatic",  em: "🕊️", label: "Diplomatic",   desc: "Soften criticism, preserve the relationship." },
-    { key: "encouraging", em: "🌟", label: "Encouraging",  desc: "Supportive, future-focused, kind." },
-    { key: "confident",   em: "💪", label: "Confident",    desc: "Direct, no hedging, owns the ask." },
-    { key: "plain",       em: "📖", label: "Plain English",desc: "Simple words, short sentences, easy to read." },
+  // ====== Tone catalog (emojis stay in code; labels/descs come from locales)
+  const TONE_META = [
+    { key: "formal",      em: "🎩" },
+    { key: "casual",      em: "👋" },
+    { key: "friendly",    em: "🙂" },
+    { key: "concise",     em: "✂️" },
+    { key: "diplomatic",  em: "🕊️" },
+    { key: "encouraging", em: "🌟" },
+    { key: "confident",   em: "💪" },
+    { key: "plain",       em: "📖" },
   ];
-  TONES.forEach((t, i) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "tone-chip" + (i === 0 ? " active" : "");
-    b.dataset.tone = t.key; b.title = t.desc;
-    b.innerHTML = `<span class="em" aria-hidden="true">${t.em}</span><span>${t.label}</span>`;
-    b.addEventListener("click", () => {
-      currentTone = t.key;
-      document.querySelectorAll(".tone-chip").forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
+  function toneLabel(key) { return t(`tone.${key}.label`); }
+  function toneDesc(key)  { return t(`tone.${key}.desc`); }
+
+  function renderTones() {
+    toneGrid.innerHTML = "";
+    TONE_META.forEach((tm, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "tone-chip" + (tm.key === currentTone || (currentTone === null && i === 0) ? " active" : "");
+      b.dataset.tone = tm.key;
+      b.title = toneDesc(tm.key);
+      b.innerHTML = `<span class="em" aria-hidden="true">${tm.em}</span><span>${escapeHtml(toneLabel(tm.key))}</span>`;
+      b.addEventListener("click", () => {
+        currentTone = tm.key;
+        document.querySelectorAll(".tone-chip").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+      });
+      toneGrid.appendChild(b);
     });
-    toneGrid.appendChild(b);
-  });
+  }
 
   // ====== Intensity slider
-  const INTENSITY_LABELS = {
-    1: { name: "Light",   note: "Just word swaps and contractions — original structure preserved." },
-    2: { name: "Medium",  note: "Word swaps plus tone scaffolding — greetings, sign-offs, structure." },
-    3: { name: "Strong",  note: "Full rewrite — restructured sentences, tone-specific framing top to bottom." },
-  };
   function renderIntensity() {
     const n = +intensitySlider.value;
-    const info = INTENSITY_LABELS[n];
-    intensityDisplay.textContent = info.name;
-    intensityLabel.textContent = info.note;
+    intensityDisplay.textContent = t(`intensity.${n}.name`);
+    intensityLabel.textContent = t(`intensity.${n}.note`);
   }
   intensitySlider.addEventListener("input", renderIntensity);
-  renderIntensity();
 
   // ============================================================
   //  HEURISTIC ENGINE
@@ -809,21 +822,28 @@
   }
   function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
   function refreshModePill() {
-    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
-    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+    if (settings.apiKey) {
+      modePill.className = "mode-pill ai";
+      modePill.removeAttribute("data-i18n");
+      modePill.textContent = t("mode.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+    } else {
+      modePill.className = "mode-pill heuristic";
+      modePill.setAttribute("data-i18n", "mode.heuristic");
+      modePill.textContent = t("mode.heuristic");
+    }
   }
-  refreshModePill();
 
   function buildPrompt(text, tone, intensity) {
-    const t = TONES.find(x => x.key === tone) || TONES[0];
+    const langName = t("ai.lang");
     const intensityNote = intensity === 1
       ? "Apply a LIGHT rewrite — keep structure, swap a few words."
       : intensity === 2
       ? "Apply a MEDIUM rewrite — swap words, restructure sentences as needed, add tone-appropriate greeting and sign-off if natural."
       : "Apply a STRONG rewrite — restructure the whole message in the target tone, including framing, opener, and closer. Preserve meaning but commit to the voice.";
     return `You are Toneshifter, a careful rewriter that preserves meaning while changing tone.
-Rewrite the following text in this tone: "${t.label}" — ${t.desc}
+Rewrite the following text in this tone: "${toneLabel(tone)}" — ${toneDesc(tone)}
 Intensity: ${intensity}/3. ${intensityNote}
+Respond entirely in ${langName}.
 Rules:
 - Preserve the original meaning, names, and specific asks.
 - Match length within +/- 50% (Strong intensity may be longer than the original).
@@ -866,10 +886,11 @@ ${text}`;
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
   function render(rewrite, tone, intensity, sourceLabel, isHeuristic) {
-    const t = TONES.find(x => x.key === tone) || TONES[0];
-    const intensityName = INTENSITY_LABELS[intensity].name;
-    stageTitle.textContent = `${t.em} ${t.label}`;
-    stageMeta.textContent = `${sourceLabel} · intensity: ${intensityName}`;
+    const tm = TONE_META.find(x => x.key === tone) || TONE_META[0];
+    const intensityName = t(`intensity.${intensity}.name`);
+    stageTitle.removeAttribute("data-i18n");
+    stageTitle.textContent = `${tm.em} ${toneLabel(tone)}`;
+    stageMeta.textContent = `${sourceLabel}${t("stage.meta.dot")}${t("stage.meta.intensity", { name: intensityName })}`;
 
     currentResult = rewrite;
     currentSource = srcInput.value.trim();
@@ -880,7 +901,7 @@ ${text}`;
     card.className = "result-card";
 
     const h = document.createElement("h3");
-    h.innerHTML = `Rewrite <span class="hint">${showDiff ? "(diff view — toggle off to edit)" : "(click to edit)"}</span>`;
+    h.innerHTML = `${escapeHtml(t("card.rewriteHeader"))} <span class="hint">${escapeHtml(showDiff ? t("card.diffHint") : t("card.editHint"))}</span>`;
     card.appendChild(h);
 
     const body = document.createElement("div");
@@ -889,18 +910,17 @@ ${text}`;
     if (showDiff) {
       const ops = diffWords(currentSource, currentResult);
       body.innerHTML = renderDiffHTML(ops);
-      // Add legend
       const legend = document.createElement("div");
       legend.className = "diff-legend";
       const { adds, dels } = diffStats(ops);
-      legend.innerHTML = `<span><span class="swatch added">added</span>new text in the rewrite</span>
-        <span><span class="swatch removed">removed</span>was in the original, dropped</span>
-        <span class="diff-stats"><span class="pos">+${adds}</span><span class="neg">-${dels}</span> word changes</span>`;
+      legend.innerHTML = `<span><span class="swatch added">${escapeHtml(t("diff.added"))}</span>${escapeHtml(t("diff.added.label"))}</span>
+        <span><span class="swatch removed">${escapeHtml(t("diff.removed"))}</span>${escapeHtml(t("diff.removed.label"))}</span>
+        <span class="diff-stats"><span class="pos">+${adds}</span><span class="neg">-${dels}</span> ${escapeHtml(t("diff.stats"))}</span>`;
       card.appendChild(body);
       card.appendChild(legend);
     } else {
       body.textContent = currentResult;
-      body.title = "Click to edit";
+      body.title = t("card.editHint").replace(/[()]/g, "").trim();
       body.addEventListener("click", () => {
         body.contentEditable = "true"; body.focus();
         const r = document.createRange(); r.selectNodeContents(body); r.collapse(false);
@@ -914,18 +934,17 @@ ${text}`;
     if (isHeuristic) {
       const cta = document.createElement("div");
       cta.className = "ai-cta" + (intensity === 3 ? " strong" : "");
-      const msg = intensity === 3
-        ? `Strong intensity hits the heuristic ceiling hard — the rewrite changes structure but the voice still sounds rule-based.`
-        : `Heuristic mode tweaks words and structure but can't truly rewrite voice.`;
+      const msg = intensity === 3 ? t("cta.strong") : t("cta.heuristic");
+      const suffix = t("cta.suffix", { tone: toneLabel(tone).toLowerCase() });
       cta.innerHTML = `<span class="em" aria-hidden="true">${intensity === 3 ? "⚠️" : "💡"}</span>
-        <span>${msg} <button type="button" class="link-btn" id="ctaSettingsLink">Unlock AI rewrites →</button> for results that genuinely sound like ${t.label.toLowerCase()}.</span>`;
+        <span>${escapeHtml(msg)} <button type="button" class="link-btn" id="ctaSettingsLink">${escapeHtml(t("cta.link"))}</button> ${escapeHtml(suffix)}</span>`;
       card.appendChild(cta);
     }
 
     stageBody.appendChild(card);
     stageFooter.hidden = false;
     diffBtn.classList.toggle("active", showDiff);
-    diffBtn.textContent = showDiff ? "Hide diff" : "Show diff";
+    diffBtn.textContent = showDiff ? t("stage.hideDiff") : t("stage.showDiff");
     updateFooterMeta();
 
     if (isHeuristic) {
@@ -938,7 +957,7 @@ ${text}`;
     const delta = resLen - srcLen;
     const pct = srcLen ? Math.round((delta / srcLen) * 100) : 0;
     const sign = delta >= 0 ? "+" : "";
-    footerMeta.textContent = `Original: ${srcLen} chars · Rewrite: ${resLen} chars (${sign}${delta} / ${sign}${pct}%)`;
+    footerMeta.textContent = t("stage.meta.footer", { srcLen, resLen, sign, delta, pct });
   }
 
   // ============================================================
@@ -946,57 +965,59 @@ ${text}`;
   // ============================================================
   async function doShift() {
     const text = srcInput.value.trim();
-    if (!text) { srcInput.focus(); showToast("Paste some text first.", true); return; }
+    if (!text) { srcInput.focus(); showToast(t("toast.empty"), true); return; }
     const intensity = +intensitySlider.value;
     shiftBtn.disabled = true;
     const orig = shiftBtn.textContent;
-    shiftBtn.textContent = settings.apiKey ? "Asking Claude…" : "Shifting…";
+    shiftBtn.textContent = settings.apiKey ? t("panel.shiftBtn.busyAi") : t("panel.shiftBtn.busy");
     try {
       let out, sourceLabel, isHeuristic;
       if (settings.apiKey) {
         out = await aiShift(text, currentTone, intensity);
-        sourceLabel = `AI rewrite (${settings.provider === "openai" ? "OpenAI" : "Claude"})`;
+        sourceLabel = t("stage.meta.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
         isHeuristic = false;
       } else {
         out = heuristicShift(text, currentTone, intensity);
-        sourceLabel = "Heuristic rewrite";
+        sourceLabel = t("stage.meta.heuristic");
         isHeuristic = true;
       }
       render(out, currentTone, intensity, sourceLabel, isHeuristic);
     } catch (err) {
       console.error(err);
-      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      showToast(t("toast.aiFailed", { err: err.message || "" }), true);
       const out = heuristicShift(text, currentTone, intensity);
-      render(out, currentTone, intensity, "Heuristic fallback (AI failed)", true);
+      render(out, currentTone, intensity, t("stage.meta.heuristicFallback"), true);
     } finally { shiftBtn.disabled = false; shiftBtn.textContent = orig; }
   }
   shiftBtn.addEventListener("click", doShift);
   srcInput.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doShift(); });
 
   diffBtn.addEventListener("click", () => {
-    if (!currentResult) { showToast("Run a shift first.", true); return; }
+    if (!currentResult) { showToast(t("toast.runFirst"), true); return; }
     showDiff = !showDiff;
     const intensity = +intensitySlider.value;
-    render(currentResult, currentTone,
-      Math.max(1, Math.min(3, intensity)),
-      lastIsHeuristic ? "Heuristic rewrite" : `AI rewrite (${settings.provider === "openai" ? "OpenAI" : "Claude"})`,
-      lastIsHeuristic);
+    const srcLabel = lastIsHeuristic
+      ? t("stage.meta.heuristic")
+      : t("stage.meta.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+    render(currentResult, currentTone, Math.max(1, Math.min(3, intensity)), srcLabel, lastIsHeuristic);
   });
 
   $("clearBtn").addEventListener("click", () => {
     currentResult = ""; currentSource = ""; showDiff = false;
     stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
-    stageTitle.textContent = "Rewritten draft will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
+    stageTitle.setAttribute("data-i18n", "stage.title.empty");
+    stageTitle.textContent = t("stage.title.empty");
+    stageMeta.textContent = ""; stageFooter.hidden = true;
   });
   $("copyBtn").addEventListener("click", async () => {
     if (!currentResult) return;
-    try { await navigator.clipboard.writeText(currentResult); showToast("Rewrite copied."); }
-    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+    try { await navigator.clipboard.writeText(currentResult); showToast(t("toast.copied")); }
+    catch { showToast(t("toast.copyFailed"), true); }
   });
   $("swapBtn").addEventListener("click", () => {
     if (!currentResult) return;
     srcInput.value = currentResult; srcInput.focus();
-    showToast("Sent rewrite back to the input.");
+    showToast(t("toast.swapped"));
   });
 
   // ====== Settings modal
@@ -1012,13 +1033,13 @@ ${text}`;
   $("saveSettingsBtn").addEventListener("click", () => {
     const provider = document.querySelector('input[name=provider]:checked').value;
     saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
-    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    showToast(settings.apiKey ? t("toast.aiReady") : t("toast.heuristic"));
     closeSettings();
   });
   $("clearKeyBtn").addEventListener("click", () => {
     apiKeyInput.value = ""; modelInput.value = "";
     saveSettings({ provider: settings.provider, apiKey: "", model: "" });
-    showToast("Key cleared.");
+    showToast(t("toast.keyCleared"));
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
 
@@ -1027,6 +1048,22 @@ ${text}`;
     toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
     clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
   }
+
+  // ====== i18n boot
+  function bootI18nDependentUI() {
+    renderTones();
+    renderIntensity();
+    refreshModePill();
+    if (currentResult) {
+      const intensity = +intensitySlider.value;
+      const srcLabel = lastIsHeuristic
+        ? t("stage.meta.heuristic")
+        : t("stage.meta.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+      render(currentResult, currentTone, Math.max(1, Math.min(3, intensity)), srcLabel, lastIsHeuristic);
+    }
+  }
+  bootI18nDependentUI();
+  window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
