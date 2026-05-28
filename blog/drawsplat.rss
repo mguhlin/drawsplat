@@ -1,25 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>Miguel&apos;s Writings - Search results for DrawSplat</title>
-    <link>https://mguhlin.github.io/creations/search/?q=DrawSplat</link>
-    <description>Generated RSS feed for the currently displayed search results.</description>
-    <lastBuildDate>Thu, 28 May 2026 13:46:29 GMT</lastBuildDate>
-    <item>
-      <title>DrawSplat Feature: Concept Map Studio</title>
-      <link>http://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</link>
-      <guid isPermaLink="true">http://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</guid>
-      <pubDate>Thu, 28 May 2026 09:03:00 GMT</pubDate>
-      <source>mguhlin.org</source>
-      <description>There’s a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat’s concept map tool inside the whiteboard, a more robust version is available as a web-based tool. In fact, one of my favorite additions (and it’s tied with another) is the […]</description>
-    </item>
-    <item>
-      <title>Introducing DrawSplat, A Free #Whiteboard Plus Solution</title>
-      <link>http://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</link>
-      <guid isPermaLink="true">http://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</guid>
-      <pubDate>Wed, 27 May 2026 09:50:00 GMT</pubDate>
-      <source>mguhlin.org</source>
-      <description>When I started down this road, I wanted teachers, gasping for tools that aren’t stuffed with Gen AI features, to have access to fun tools they could use with their students. The job didn’t take as long as I thought it would, and was “Mission Possible” even for a non-coder like me. Now, teachers everywhere […]</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" ?>
+	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+		<channel>
+			<title>!DrawSplat</title>
+			<link>https://mguhlin.raindrop.page/draw-splat-71392298</link>
+			<description>DrawSplatTM related blog posts - Visit DrawSplat.org</description>
+			<language>en-US</language>
+			<generator>raindrop.io</generator>
+			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
+			
+			<lastBuildDate>Thu, 28 May 2026 14:19:30 GMT</lastBuildDate>
+			<item>
+		<title>DrawSplat Feature: Concept Map Studio</title>
+		<link>https://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</link>
+		<description>&lt;img src="https://mguhlin.org/wp-content/uploads/2026/05/image-82.png" /&gt;&lt;br/&gt;There’s a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat’s concept map tool inside the whiteboard…</description>
+		<pubDate>Thu, 28 May 2026 14:19:25 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</guid>
+		
+	</item><item>
+		<title>Introducing DrawSplat, A Free #Whiteboard Plus Solution</title>
+		<link>https://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-65.png?fit=1200%2C699&amp;amp;ssl=1" /&gt;&lt;br/&gt;When I started down this road, I wanted teachers, gasping for tools that aren’t stuffed with Gen AI features, to have access to fun tools they could use with their students. The job didn&amp;#821…</description>
+		<pubDate>Thu, 28 May 2026 14:19:19 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</guid>
+		
+	</item>
+		</channel>
+	</rss>

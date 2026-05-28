@@ -31,6 +31,17 @@
     }[c]));
   }
 
+  /* Some feeds (Raindrop, WordPress) wrap descriptions in HTML — e.g.
+     "<img src='...'/><br/>real text…". textContent gives us that as a
+     plain string with the HTML re-decoded; strip tags so the displayed
+     excerpt is just the prose. */
+  function stripHtml(s) {
+    return String(s || '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function formatDate(s) {
     if (!s) return '';
     const d = new Date(s);
@@ -53,8 +64,11 @@
       rendered++;
       const link = safeUrl(linkRaw);
       const pub = item.querySelector('pubDate')?.textContent || '';
-      const src = (item.querySelector('source')?.textContent || '').trim();
-      const desc = (item.querySelector('description')?.textContent || '').trim();
+      let src = (item.querySelector('source')?.textContent || '').trim();
+      if (!src && link) {
+        try { src = new URL(link).hostname.replace(/^www\./, ''); } catch (_) { src = ''; }
+      }
+      const desc = stripHtml(item.querySelector('description')?.textContent || '');
       const dateStr = formatDate(pub);
 
       const card = document.createElement('article');
