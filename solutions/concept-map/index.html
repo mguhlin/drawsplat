@@ -443,7 +443,7 @@
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
         <h3>Selection</h3>
-        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click the white label box on a connector to edit its label.</div>
+        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
 
         <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
       </aside>
@@ -1051,8 +1051,16 @@
       g.appendChild(svgPart('path', {
         d, fill: 'none', stroke: 'transparent', 'stroke-width': 18, 'pointer-events': 'stroke'
       }));
-      const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
+      /* Label rendering:
+         - With a real label: always show the white pill (lets the user click it
+           to re-edit).
+         - Empty label + connector selected: show a dashed "label" placeholder
+           pill so the user has an obvious click target to add a label.
+         - Empty label + connector NOT selected: render nothing — the connector
+           stays uncluttered. The wider invisible hit-path above still picks up
+           clicks on the line itself. */
       if (c.label) {
+        const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
         const labelText = truncate(c.label, 28);
         const charW = 7.2;
         const w = Math.min(220, Math.max(60, labelText.length * charW + 18));
@@ -1066,21 +1074,22 @@
           'font-family': 'Arial, sans-serif',
           'font-size': 13, 'font-weight': 700, fill: '#475569'
         }));
-      } else {
+        g.appendChild(labelGroup);
+      } else if (isSel) {
+        const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
         labelGroup.appendChild(svgPart('rect', {
-          x: midX - 32, y: midY - 13, width: 64, height: 26, rx: 8,
-          fill: isSel ? '#fff7e6' : '#ffffff', 'fill-opacity': isSel ? 1 : 0.85,
-          stroke: isSel ? '#f59e0b' : '#cbd5e1', 'stroke-width': isSel ? 2 : 1.2,
+          x: midX - 36, y: midY - 13, width: 72, height: 26, rx: 8,
+          fill: '#fff7e6', stroke: '#f59e0b', 'stroke-width': 2,
           'stroke-dasharray': '4 3'
         }));
-        labelGroup.appendChild(svgText('label', {
+        labelGroup.appendChild(svgText('+ label', {
           x: midX, y: midY + 5, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
-          'font-size': 11, 'font-weight': 700, fill: isSel ? '#92400e' : '#94a3b8',
+          'font-size': 11, 'font-weight': 700, fill: '#92400e',
           'font-style': 'italic'
         }));
+        g.appendChild(labelGroup);
       }
-      g.appendChild(labelGroup);
       svg.appendChild(g);
     });
 
@@ -1222,7 +1231,7 @@
       const from = nodeById(c.fromId), to = nodeById(c.toId);
       let html = '<strong>Connector</strong>';
       if (from && to) html += '<br>' + esc(from.label) + ' → ' + esc(to.label);
-      html += '<br>' + (c.label ? 'Label: <em>' + esc(c.label) + '</em>' : 'No label yet. Click the white box on the connector to add one.');
+      html += '<br>' + (c.label ? 'Label: <em>' + esc(c.label) + '</em>' : 'No label yet. Click the "+ label" pill on the connector, or use Edit Connector Label, to add one.');
       selInfoEl.innerHTML = html;
     } else if (sel.kind === 'group') {
       const g = selectedGroupObj();
@@ -1233,7 +1242,7 @@
       else html += '<br>No label yet. Use Edit Group Label.';
       selInfoEl.innerHTML = html;
     } else {
-      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click the white label box on a connector to edit its label.';
+      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.';
     }
   }
 
