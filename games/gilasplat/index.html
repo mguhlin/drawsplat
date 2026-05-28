@@ -404,9 +404,9 @@ const LEVELS_LEGACY_REFERENCE = [
 // 15 hand-illustrated SVG mazes shipped in ./mazes/. Order, names, and
 // predator schedule track the spec table in gilasplat-design-spec memory.
 const LEVELS = [
-  { name: "Chicken Coop Tunnel",   svg: "./mazes/maze_level1.svg",  timeLimit: 80, hatchSeconds: 26, eggCount: 28, eggMix: [["chicken", 100]],                                                                     predators: [] },
-  { name: "Cracked Coop",          svg: "./mazes/maze_level2.svg",  timeLimit: 75, hatchSeconds: 20, eggCount: 30, eggMix: [["chicken", 85], ["speckled", 15]],                                                    predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.50 }] },
-  { name: "Root Maze",             svg: "./mazes/maze_level3.svg",  timeLimit: 70, hatchSeconds: 16, eggCount: 32, eggMix: [["chicken", 60], ["speckled", 40]],                                                    predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.60 }] },
+  { name: "Chicken Coop Tunnel",   svg: "./mazes/maze_level1.svg",  timeLimit: 90, hatchSeconds: 12, eggCount: 30, eggMix: [["chicken", 55], ["speckled", 15], ["lizard", 18], ["tortoise", 12]],                  predators: [] },
+  { name: "Cracked Coop",          svg: "./mazes/maze_level2.svg",  timeLimit: 80, hatchSeconds: 10, eggCount: 32, eggMix: [["chicken", 45], ["speckled", 15], ["lizard", 20], ["tortoise", 12], ["snake", 8]],   predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.50 }] },
+  { name: "Root Maze",             svg: "./mazes/maze_level3.svg",  timeLimit: 75, hatchSeconds: 8,  eggCount: 34, eggMix: [["chicken", 35], ["speckled", 15], ["lizard", 20], ["tortoise", 18], ["snake", 12]],  predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.55 }] },
   { name: "Desert Nesting Ground", svg: "./mazes/maze_level4.svg",  timeLimit: 70, hatchSeconds: 14, eggCount: 32, eggMix: [["chicken", 55], ["speckled", 15], ["tortoise", 30]],                                  predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.65 }] },
   { name: "Lizard Burrows",        svg: "./mazes/maze_level5.svg",  timeLimit: 70, hatchSeconds: 13, eggCount: 34, eggMix: [["chicken", 45], ["lizard", 55]],                                                      predators: [{ kind: "predator-owl", spawn: [0, 11], speed: 0.55 }] },
   { name: "Hatchling Rush",        svg: "./mazes/maze_level6.svg",  timeLimit: 68, hatchSeconds: 8,  eggCount: 34, eggMix: [["chicken", 40], ["speckled", 30], ["lizard", 30]],                                    predators: [{ kind: "predator-owl", spawn: [0, 11], speed: 0.60 }, { kind: "predator-fox", spawn: [18, 11], speed: 0.55 }] },
@@ -1052,11 +1052,13 @@ function rasterizeSvgBackground(svgText) {
   });
 }
 
-// After parsing the SVG walls, every reachable cell with only one open
-// exit gets a fresh opening to a neighbour so the gila can never enter a
-// pocket they have to back out of. Walls torn down here are recorded
-// in state.brokenEdges so the visual mask covers the SVG art.
-function removeDeadEnds() {
+// Iteratively smash walls until every cell has at least `minExits` open
+// connections (capped at the number of in-bounds neighbours, so corner
+// cells require 2 and edge cells 3). Caller picks the threshold.
+//   minExits=2: removes only true dead-ends (cells with 1 exit).
+//   minExits=3: also removes "peninsulas" — long corridor stretches that
+//   force the player to backtrack get shortcut walls broken so loops form.
+function smashDeadEnds(minExits) {
   if (!state.walls) return;
   const DIRS = [
     { x: 0, y: -1, key: ["top",  (x, y) => [y,     x]] },
@@ -1077,21 +1079,19 @@ function removeDeadEnds() {
     state.walls[side][r][c] = 0;
     state.brokenEdges.push({ type: side, x: c, y: r });
   }
-  // Iterate until stable so newly-opened cells don't leave dangling pockets.
-  for (let pass = 0; pass < 10; pass++) {
+  for (let pass = 0; pass < 12; pass++) {
     let changed = false;
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        const open = DIRS.filter(d => isOpen(c, r, d));
-        if (open.length >= 2) continue;
-        // Find candidate walls to smash. Prefer edges that open into
-        // an in-bounds neighbour. Skip the outer frame (no neighbour).
-        const candidates = DIRS.filter(d => {
+        const inboundDirs = DIRS.filter(d => {
           const nx = c + d.x, ny = r + d.y;
-          return nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS && !isOpen(c, r, d);
+          return nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS;
         });
+        const target = Math.min(minExits, inboundDirs.length);
+        const open = inboundDirs.filter(d => isOpen(c, r, d));
+        if (open.length >= target) continue;
+        const candidates = inboundDirs.filter(d => !isOpen(c, r, d));
         if (!candidates.length) continue;
-        // Pick a deterministic-ish candidate to keep this idempotent.
         const pickIdx = (r * COLS + c + pass) % candidates.length;
         openEdge(c, r, candidates[pickIdx]);
         changed = true;
@@ -1099,6 +1099,13 @@ function removeDeadEnds() {
     }
     if (!changed) break;
   }
+}
+
+function removeDeadEnds() {
+  // Two-stage: first kill genuine dead-ends, then add shortcut loops so
+  // the player can almost always cut across rather than retrace.
+  smashDeadEnds(2);
+  smashDeadEnds(3);
 }
 
 function bestSpawnCell() {
