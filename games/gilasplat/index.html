@@ -1836,26 +1836,29 @@ function drawProceduralWalls() {
 }
 
 function drawPebbleRun(x, y, horizontal) {
-  const steps = 4;
+  // Five chunky pebbles per edge, big enough that adjacent edges
+  // overlap into a continuous mound. Solid fills (no canvas gradient)
+  // so the wall can't go invisible if a browser silently rejects a
+  // gradient stop.
+  const PEBBLE_R = 13;
+  const steps = 5;
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const cx = horizontal ? x + t * TILE : x;
     const cy = horizontal ? y : y + t * TILE;
-    // Deterministic per-position size jitter so the wall doesn't shimmer.
-    const r = 10 + ((cx * 13 + cy * 17) % 30) / 14;  // ~10..12 px
     // Drop shadow
-    ctx.fillStyle = "rgba(8, 4, 2, .55)";
-    ctx.beginPath(); ctx.arc(cx + 1.5, cy + 2, r + 0.5, 0, Math.PI * 2); ctx.fill();
-    // Pebble body
-    const grad = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.15, cx, cy, r);
-    grad.addColorStop(0, "#8b552a");
-    grad.addColorStop(0.55, "#5a3018");
-    grad.addColorStop(1, "#321a0c");
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-    // Tiny highlight speck
-    ctx.fillStyle = "rgba(255, 220, 160, .25)";
-    ctx.beginPath(); ctx.arc(cx - r * 0.3, cy - r * 0.3, r * 0.18, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.beginPath(); ctx.arc(cx + 2, cy + 3, PEBBLE_R + 1, 0, Math.PI * 2); ctx.fill();
+    // Body — solid mid-brown
+    ctx.fillStyle = "#6a3a1a";
+    ctx.beginPath(); ctx.arc(cx, cy, PEBBLE_R, 0, Math.PI * 2); ctx.fill();
+    // Dark rim
+    ctx.strokeStyle = "#321a08";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, PEBBLE_R, 0, Math.PI * 2); ctx.stroke();
+    // Highlight cap
+    ctx.fillStyle = "rgba(255, 200, 130, 0.45)";
+    ctx.beginPath(); ctx.arc(cx - PEBBLE_R * 0.32, cy - PEBBLE_R * 0.38, PEBBLE_R * 0.38, 0, Math.PI * 2); ctx.fill();
   }
 }
 
