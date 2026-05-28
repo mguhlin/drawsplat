@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.95';
+const CACHE = 'drawsplat-v3.0.96';
 const SHELL = [
   './',
   './index.html',
@@ -40,6 +40,7 @@ const SHELL = [
   './blog/index.html',
   './blog/blog.js',
   './blog/drawsplat.rss',
+  './assets/brand/DrawSplat_Subscribe_RSS.png',
   './solutions/bingo-card-generator/index.html',
   './solutions/bingo-caller/index.html',
   './solutions/coinflipping/index.html',

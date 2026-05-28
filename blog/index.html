@@ -12,7 +12,18 @@
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
   .blog-shell { padding: 28px 0 40px; }
-  .blog-hero { display: grid; gap: 12px; padding: 26px 0 22px; border-bottom: 2px solid #eef2ff; margin-bottom: 28px; }
+  .blog-hero { display: grid; gap: 12px; padding: 26px 0 22px; border-bottom: 2px solid #eef2ff; margin-bottom: 28px; grid-template-columns: minmax(0,1fr) auto; align-items: center; }
+  .blog-hero > * { grid-column: 1; }
+  .blog-hero-subscribe { grid-column: 2; grid-row: 1 / span 5; justify-self: end; align-self: center; padding-left: 24px; }
+  .blog-hero-subscribe a { display: inline-block; line-height: 0; transition: transform .18s ease, filter .18s ease; }
+  .blog-hero-subscribe a:hover { transform: translateY(-2px); filter: drop-shadow(0 8px 14px rgba(124,58,237,0.4)); }
+  .blog-hero-subscribe img { display: block; width: clamp(180px, 22vw, 260px); height: auto; }
+  .blog-hero-subscribe .subscribe-caption { display: block; margin-top: 4px; text-align: center; font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #6b7280; line-height: 1.3; }
+  @media (max-width: 720px) {
+    .blog-hero { grid-template-columns: 1fr; }
+    .blog-hero-subscribe { grid-column: 1; grid-row: auto; justify-self: start; padding-left: 0; padding-top: 6px; }
+    .blog-hero-subscribe img { width: 180px; }
+  }
   .blog-hero h1 { color: var(--navy, #7c3aed); margin: 0; }
   .blog-hero .blog-eyebrow { margin: 0; color: #a855f7; font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
   .blog-hero p { margin: 0; max-width: 760px; line-height: 1.55; }
@@ -161,6 +172,12 @@
     <h1>DrawSplat<sup class="tm">TM</sup> Blog</h1>
     <p>Posts about DrawSplat<sup class="tm">TM</sup> from external blogs, syndicated via RSS. Click any post title to read the original on the source site in a new tab.</p>
     <p class="blog-source">Feed source: <a href="https://mguhlin.github.io/creations/search/?q=DrawSplat" target="_blank" rel="noopener noreferrer">mguhlin.github.io · DrawSplat search</a> · Raw feed: <a href="drawsplat.rss">drawsplat.rss</a></p>
+    <div class="blog-hero-subscribe">
+      <a href="drawsplat.rss" type="application/rss+xml" title="Subscribe to the DrawSplat Blog RSS feed in your reader (Feedly, Inoreader, NetNewsWire, Reeder, etc.)">
+        <img src="../assets/brand/DrawSplat_Subscribe_RSS.png" alt="Subscribe via RSS" width="260" height="200" />
+      </a>
+      <span class="subscribe-caption">Paste this page's RSS URL into your reader, or right-click the button → Copy Link.</span>
+    </div>
   </section>
 
   <section class="blog-list" id="blogList" aria-live="polite">
@@ -169,6 +186,8 @@
 
   <p class="blog-footer-note">
     <strong>How this works.</strong> This page reads <a href="drawsplat.rss">drawsplat.rss</a> from this same site (no external requests, fully covered by the page's Content Security Policy) and renders the entries here with DrawSplat<sup class="tm">TM</sup> styling. Click <em>Read full post</em> on any entry to open the original article on its source blog in a new tab.
+    <br><br>
+    <strong>Subscribe in your RSS reader.</strong> Tap the <em>Subscribe via RSS</em> button above (or copy the link <code>https://drawsplat.org/blog/drawsplat.rss</code>) and paste it into Feedly, Inoreader, NetNewsWire, Reeder, Thunderbird, or any other reader. New posts that the site operator publishes will appear in your reader as soon as the feed file is updated and the site rebuilds.
   </p>
 </main>
 
