@@ -5,12 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM MySQL Setup Guide</title>
-<meta name="description" content="Set up the DrawSplatTM starter MySQL backend for self-hosted room, board, template, turn-in, and retention storage." />
-<link rel="canonical" href="https://drawsplat.org/guides/mysql-setup.html" />
+<title>DrawSplatTM Blog | Blogs About DrawSplat</title>
+<meta name="description" content="Blogs about DrawSplatTM, syndicated from external blog posts. Read what teachers, writers, and the project author are saying about the free, static-first whiteboard for classrooms." />
+<link rel="canonical" href="https://drawsplat.org/blog/" />
+<link rel="alternate" type="application/rss+xml" title="DrawSplat Blog" href="drawsplat.rss" />
 <link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .blog-shell { padding: 28px 0 40px; }
+  .blog-hero { display: grid; gap: 12px; padding: 26px 0 22px; border-bottom: 2px solid #eef2ff; margin-bottom: 28px; }
+  .blog-hero h1 { color: var(--navy, #7c3aed); margin: 0; }
+  .blog-hero .blog-eyebrow { margin: 0; color: #a855f7; font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .blog-hero p { margin: 0; max-width: 760px; line-height: 1.55; }
+  .blog-hero .blog-source { font-size: .9rem; color: #6b7280; font-weight: 700; }
+  .blog-hero .blog-source a { color: var(--navy, #7c3aed); }
+  .blog-list { display: grid; gap: 18px; }
+  .blog-card {
+    display: grid; gap: 10px;
+    padding: 22px 26px;
+    border: 2px solid #e2e6f0; border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(64,64,65,0.06);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .blog-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(64,64,65,0.10); border-color: #ddd6fe; }
+  .blog-card h2 { margin: 0; font-size: clamp(1.2rem, 2.4vw, 1.6rem); line-height: 1.25; }
+  .blog-card h2 a { color: var(--navy, #7c3aed); text-decoration: none; }
+  .blog-card h2 a:hover { text-decoration: underline; }
+  .blog-card-meta {
+    margin: 0; font-size: .82rem; font-weight: 800;
+    color: #6b7280; letter-spacing: .03em; text-transform: uppercase;
+  }
+  .blog-card-meta .blog-source-tag { color: #7c3aed; }
+  .blog-card-desc { margin: 0; color: #374151; line-height: 1.55; }
+  .blog-card-cta {
+    align-self: start;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    border: 2px solid var(--navy, #7c3aed); border-radius: 8px;
+    color: var(--navy, #7c3aed); background: #fff;
+    font-weight: 800; text-decoration: none; font-size: .9rem;
+  }
+  .blog-card-cta:hover { background: var(--navy, #7c3aed); color: #fff; }
+  .blog-status {
+    padding: 24px 26px;
+    border: 2px dashed #cbd5e1; border-radius: 14px;
+    color: #475569; font-weight: 700; text-align: center;
+    background: #f8fafc;
+  }
+  .blog-status.error { border-color: #fca5a5; background: #fef2f2; color: #7f1d1d; }
+  .blog-footer-note {
+    margin-top: 28px; padding: 18px 22px;
+    background: #fbfaff; border-radius: 12px; border-left: 6px solid #7c3aed;
+    color: #4c1d95; font-size: .92rem; line-height: 1.5;
+  }
+  .blog-footer-note strong { color: #4c1d95; }
+  .blog-footer-note a { color: #4c1d95; font-weight: 700; }
+  @media (max-width: 640px) {
+    .blog-card { padding: 18px 18px; }
+    .blog-card h2 { font-size: 1.1rem; }
+  }
+</style>
 </head>
-<body class="admin-page start-page support-page guide-article-page">
+<body class="admin-page start-page">
 <header class="landing-header">
   <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
     <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
@@ -98,98 +154,34 @@
   <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
 </header>
 
-<main class="landing-shell article-shell">
-  <nav class="article-breadcrumb" aria-label="Guide breadcrumb">
-    <a href="../pages/support.html">Support</a>
-    <span>/</span>
-    <a href="index.html">Guides and Classroom Activities</a>
-  </nav>
+<main class="landing-shell blog-shell">
+  <section class="blog-hero">
+    <p class="blog-eyebrow">Blogs About DrawSplat</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> Blog</h1>
+    <p>Posts about DrawSplat<sup class="tm">TM</sup> from external blogs, syndicated via RSS. Click any post title to read the original on the source site in a new tab.</p>
+    <p class="blog-source">Feed source: <a href="https://mguhlin.github.io/creations/search/?q=DrawSplat" target="_blank" rel="noopener noreferrer">mguhlin.github.io · DrawSplat search</a> · Raw feed: <a href="drawsplat.rss">drawsplat.rss</a></p>
+  </section>
 
-  <article class="guide-article">
-    <img class="guide-hero-image" src="images/mysql-setup-guide.png" alt="MySQL setup in DrawSplatTM showing browser app, secure API server, MySQL database, and safe server-side credentials">
-    <p class="landing-eyebrow">Setup Guide</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> MySQL Setup and How It Works</h1>
-    <p class="article-lede">The MySQL backend is for self-hosted DrawSplat<sup class="tm">TM</sup> deployments that want local database storage for rooms, boards, templates, student turn-ins, retention metadata, and audit-ready server records.</p>
+  <section class="blog-list" id="blogList" aria-live="polite">
+    <p class="blog-status" id="blogStatus">Loading latest posts…</p>
+  </section>
 
-    <h2>How the MySQL Option Works</h2>
-    <p>The DrawSplat<sup class="tm">TM</sup> browser app never connects directly to MySQL. The browser talks to a backend API over HTTP or HTTPS, and the backend talks to the database.</p>
-    <pre><code>DrawSplat<sup class="tm">TM</sup> browser app -> HTTPS backend API -> MySQL</code></pre>
-    <p>This matters because database hostnames, usernames, and passwords must stay on the server. Students and teachers should only receive the public backend API endpoint.</p>
-
-    <h2>What the Starter Backend Provides</h2>
-    <p>The starter backend in <code>server/mysql-backend/</code> includes API routes for:</p>
-    <ul>
-      <li>health checks</li>
-      <li>room creation</li>
-      <li>board load and save</li>
-      <li>reusable templates</li>
-      <li>student turn-ins</li>
-      <li>temporary session deletes</li>
-      <li>expired-session maintenance</li>
-    </ul>
-    <p>The starter stores board JSON in MySQL. For large image or audio uploads, a production deployment should add object storage or a protected filesystem location and store only metadata or file pointers in MySQL.</p>
-
-    <h2>1. Create the Database</h2>
-    <p>Create a MySQL database and application user on the database server:</p>
-    <pre><code>CREATE DATABASE drawsplat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'drawsplat_app'@'%' IDENTIFIED BY 'CHANGE_ME';
-GRANT SELECT, INSERT, UPDATE, DELETE ON drawsplat.* TO 'drawsplat_app'@'%';
-FLUSH PRIVILEGES;</code></pre>
-    <p>Use a strong password and restrict the database host permissions for your deployment.</p>
-
-    <h2>2. Run the Schema</h2>
-    <p>From the backend folder, load the schema into the database:</p>
-    <pre><code>mysql -u drawsplat_app -p drawsplat &lt; schema.sql</code></pre>
-    <p>The schema prepares the tables needed for rooms, boards, templates, turn-ins, retention metadata, and audit records.</p>
-
-    <h2>3. Install and Configure the Backend</h2>
-    <p>Install the Node backend dependencies in <code>server/mysql-backend/</code>:</p>
-    <pre><code>npm install</code></pre>
-    <p>Create the server-only environment file:</p>
-    <pre><code>cp .env.example .env</code></pre>
-    <p>Edit <code>.env</code> with the real database host, port, database name, user, password, TLS setting, and allowed DrawSplat<sup class="tm">TM</sup> origin. Keep this file out of Git and do not share it with students.</p>
-
-    <h2>4. Start and Test the Backend</h2>
-    <p>Start the backend server:</p>
-    <pre><code>npm start</code></pre>
-    <p>Then test the health route:</p>
-    <pre><code>curl http://localhost:8787/api/drawsplat/mysql/health</code></pre>
-    <p>A healthy backend returns JSON similar to:</p>
-    <pre><code>{"ok":true,"provider":"mysql","time":"2026-05-16T00:00:00.000Z"}</code></pre>
-
-    <h2>5. Connect DrawSplat<sup class="tm">TM</sup> to the Backend</h2>
-    <ol>
-      <li>Open <a href="../admin/mysql-setup.html">DrawSplat<sup class="tm">TM</sup> MySQL Setup Wizard</a>.</li>
-      <li>Enter the public backend API endpoint, such as <code>https://drawsplat.example.org/api/drawsplat/mysql</code>.</li>
-      <li>Use <strong>Test Endpoint</strong> to verify the backend responds.</li>
-      <li>Use <strong>Save Endpoint</strong> to store the endpoint in the current browser.</li>
-    </ol>
-    <p>The wizard saves the endpoint and can generate a server-side <code>.env</code> template. It does not save the MySQL password in the browser.</p>
-
-    <h2>Current Integration Status</h2>
-    <p>The MySQL backend and setup wizard are the foundation for a self-hosted storage provider. The current static app can save the MySQL endpoint setting without breaking Google Apps Script. Full board sync through the MySQL API requires wiring the board save, load, cloud-sync, template, and turn-in calls to the MySQL provider.</p>
-
-    <h2>Production Checklist</h2>
-    <ul>
-      <li>Serve the backend over HTTPS.</li>
-      <li>Keep <code>.env</code> out of Git.</li>
-      <li>Do not expose MySQL directly to browsers.</li>
-      <li>Add authentication before public use.</li>
-      <li>Add role checks for teacher, student, and admin actions.</li>
-      <li>Set request-size limits appropriate for your deployment.</li>
-      <li>Put media files in object storage or a protected filesystem path.</li>
-      <li>Run expired-session cleanup as a scheduled job.</li>
-      <li>Log administrative deletes and exports in audit records.</li>
-    </ul>
-
-    <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
-  </article>
+  <p class="blog-footer-note">
+    <strong>How this works.</strong> This page reads <a href="drawsplat.rss">drawsplat.rss</a> from this same site (no external requests, fully covered by the page's Content Security Policy) and renders the entries here with DrawSplat<sup class="tm">TM</sup> styling. Click <em>Read full post</em> on any entry to open the original article on its source blog in a new tab.
+  </p>
 </main>
 
 <footer class="landing-footer">
   <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat<sup class="tm">TM</sup> MySQL setup guide.</span>
-  <a href="index.html">Guides</a>
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later or a separate commercial license.</span>
+  <a href="https://drawsplat.org/" target="_blank" rel="noopener noreferrer">DrawSplat<sup class="tm">TM</sup>.org</a>
+  <a href="../README.md">Read the README</a>
   <a href="../pages/support.html">Support</a>
-</footer></body>
+  <a href="../community/index.html">Community</a>
+  <a href="../pages/pricing.html">Pricing</a>
+  <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+</footer>
+
+<script src="blog.js" defer></script>
+</body>
 </html>

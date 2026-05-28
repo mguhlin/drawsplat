@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.92';
+const CACHE = 'drawsplat-v3.0.93';
 const SHELL = [
   './',
   './index.html',
@@ -37,6 +37,9 @@ const SHELL = [
   './app/whiteboard.html','./languages/index-sp.html','./languages/index-vn.html','./languages/index-ab.html','./languages/index-cn.html','./languages/index.uh.html',
   './admin/admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
   './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/js/privacy-builder.js','./assets/brand/DrawSplat_logo.png','./assets/brand/DrawSplat_Terms_Privacy.png','./assets/brand/DrawSplat_Privacy_Builder.png',
+  './blog/index.html',
+  './blog/blog.js',
+  './blog/drawsplat.rss',
   './solutions/bingo-card-generator/index.html',
   './solutions/bingo-caller/index.html',
   './solutions/coinflipping/index.html',
@@ -113,7 +116,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/assets/js/app.js','/assets/css/app.css','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js'];
+const NETWORK_FIRST_PATHS = ['/assets/js/app.js','/assets/css/app.css','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;

@@ -96,6 +96,7 @@
         <tr><td><code>/admin/admin.html</code> (Teacher Admin)</td><td>Local admin preferences; admin passcode prompt held in memory only</td><td>Configured Apps Script <code>/exec</code> URL only</td><td>Admin reads / writes age band, parent requests, audit log, etc. — only when explicitly invoked by the admin.</td></tr>
         <tr><td><code>/parents/index.html</code> (Family Access Tools)</td><td>None</td><td>Configured Apps Script <code>/exec</code> URL only, when a parent submits a request</td><td>The parent submits their own name/email plus the student name they request data for. Used only to route the ticket to the school admin.</td></tr>
         <tr><td><code>/community/</code> (Community Board)</td><td>Sign-in token (HMAC bearer) and "last visited" timestamp</td><td>The Community Apps Script <code>/exec</code> URL configured by the site operator</td><td>Author name + email on posts that the user voluntarily submitted to the board. Used for moderation routing.</td></tr>
+        <tr><td><code>/blog/</code> (Blogs About DrawSplat)</td><td>None</td><td>Only a same-origin fetch of <code>/blog/drawsplat.rss</code>; click-throughs on each card open the source blog in a new tab via standard <code>&lt;a target="_blank"&gt;</code>.</td><td>None &mdash; the RSS file ships in the static repo; post titles, authors, and excerpts come from the feed file shipped by the site operator.</td></tr>
       </tbody>
     </table>
   </section>

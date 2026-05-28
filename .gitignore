@@ -38,3 +38,6 @@ screenshots/
 # Python/local server artifacts
 __pycache__/
 *.pyc
+
+# Concept Map Studio sample JSON files (local only)
+JSON/
