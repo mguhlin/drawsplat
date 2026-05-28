@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vibe Check — DrawSplat Tools</title>
+  <title data-i18n="doc.title">Vibe Check — DrawSplat Tools</title>
   <meta name="description" content="Paste a message and get an honest read on its tone — warm, urgent, sarcastic, frustrated, formal, and more. Helps you decode tricky text.">
   <style>
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
     :root {
       --navy: #7c3aed;
       --gold: #a855f7;
@@ -128,106 +131,114 @@
     footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
     footer.foot a { color: var(--navy); font-weight: 800; }
   </style>
+  <script src="../../assets/js/widget-i18n.js"></script>
 </head>
 <body>
   <div class="top-bar"></div>
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Vibe Check</h1>
-        <p class="tagline">Paste a message you received and get an honest read on its tone — so you can stop spiraling about what your boss / mom / professor "really meant."</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Vibe Check</h1>
+        <p class="tagline" data-i18n="header.tagline">Paste a message you received and get an honest read on its tone — so you can stop spiraling about what your boss / mom / professor "really meant."</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <div class="layout">
       <section class="panel" aria-label="Input">
-        <h2>Paste the message</h2>
+        <h2 data-i18n="panel.h2">Paste the message</h2>
         <div class="field">
-          <label for="srcInput">What did they actually write?</label>
-          <textarea id="srcInput" placeholder="Paste the email, text, or DM you can't stop re-reading…"></textarea>
+          <label for="srcInput" data-i18n="panel.srcLabel">What did they actually write?</label>
+          <textarea id="srcInput" data-i18n-placeholder="panel.srcPlaceholder"></textarea>
         </div>
 
         <div class="field">
-          <label>Try an example</label>
+          <label data-i18n="panel.examplesLabel">Try an example</label>
           <div class="examples" id="exampleChips"></div>
         </div>
 
         <div class="btn-row">
-          <button type="button" class="btn primary" id="checkBtn">Check the vibe →</button>
-          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+          <button type="button" class="btn primary" id="checkBtn" data-i18n="panel.checkBtn">Check the vibe →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" data-i18n="panel.settingsBtn">⚙️ Settings</button>
         </div>
 
-        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill" data-i18n="mode.heuristic">Heuristic mode</span></div>
 
-        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45" data-i18n="panel.intro">
           Vibe Check works without an account or API key — it scores keywords, punctuation, capitalization, and emojis.
-          Add an Anthropic or OpenAI key in Settings for a nuanced read that catches sarcasm and context.
+        </p>
+        <p style="margin-top:8px;font-size:.78rem;color:var(--orange);line-height:1.4" data-i18n="panel.langNote">
+          The keyword scorer is English-tuned; for other languages, switch on AI mode.
         </p>
       </section>
 
       <section class="stage" aria-label="Analysis">
         <div class="stage-header">
-          <h2 id="stageTitle">Your read will appear here</h2>
+          <h2 id="stageTitle" data-i18n="stage.title.empty">Your read will appear here</h2>
           <span class="stage-meta" id="stageMeta"></span>
         </div>
 
         <div id="stageBody">
           <div class="empty" id="emptyState">
             <div class="splat" aria-hidden="true">🪞</div>
-            <p>Paste a message and hit <strong>Check the vibe</strong>. You'll get an overall mood, detected tones, and an honest interpretation.</p>
+            <p data-i18n-html="stage.empty.html">Paste a message and hit <strong>Check the vibe</strong>. You'll get an overall mood, detected tones, and an honest interpretation.</p>
           </div>
         </div>
 
         <div class="stage-footer" id="stageFooter" hidden>
           <span class="stage-meta" id="footerMeta"></span>
           <div class="stage-actions">
-            <button type="button" class="btn" id="copyBtn" title="Copy the read as text">Copy read</button>
-            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+            <button type="button" class="btn" id="copyBtn" data-i18n="stage.copy">Copy read</button>
+            <button type="button" class="btn ghost" id="clearBtn" data-i18n="stage.clear">Clear</button>
           </div>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
+    <footer class="foot" data-i18n-html="footer.html">
       Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
     </footer>
   </div>
 
   <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal">
-      <h3 id="settingsTitle">AI mode (optional)</h3>
-      <p class="intro">Bring your own API key for a nuanced read that catches sarcasm, context, and subtle warmth. Your key stays in this browser — saved to <code>localStorage</code>, sent directly to the provider.</p>
+      <h3 id="settingsTitle" data-i18n="settings.h3">AI mode (optional)</h3>
+      <p class="intro" data-i18n-html="settings.intro.html">Bring your own API key for a nuanced read.</p>
       <div class="field">
-        <label>Provider</label>
+        <label data-i18n="settings.providerLabel">Provider</label>
         <div class="radio-row">
-          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
-          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+          <label><input type="radio" name="provider" value="anthropic" checked> <span data-i18n="settings.anthropic">Anthropic (Claude)</span></label>
+          <label><input type="radio" name="provider" value="openai"> <span data-i18n="settings.openai">OpenAI</span></label>
         </div>
       </div>
       <div class="field">
-        <label for="apiKeyInput">API key</label>
-        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+        <label for="apiKeyInput" data-i18n="settings.keyLabel">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
       </div>
       <div class="field">
-        <label for="modelInput">Model (optional override)</label>
-        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+        <label for="modelInput" data-i18n="settings.modelLabel">Model (optional override)</label>
+        <input type="text" id="modelInput" data-i18n-placeholder="settings.modelPh">
       </div>
-      <div class="privacy-note"><strong>No server.</strong> Vibe Check is a single static page. Messages and your key go straight from your browser to the chosen provider. Don't paste anything confidential without thinking it through.</div>
+      <div class="privacy-note" data-i18n-html="settings.privacy.html"><strong>No server.</strong></div>
       <div class="actions">
-        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
-        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
-        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+        <button type="button" class="btn danger" id="clearKeyBtn" data-i18n="settings.clearKey">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn" data-i18n="settings.cancel">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn" data-i18n="settings.save">Save</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="./locales.js"></script>
   <script>
   "use strict";
   const $ = (id) => document.getElementById(id);
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const STORAGE_KEY = "vibeCheck.v1";
 
   const srcInput = $("srcInput");
@@ -249,52 +260,55 @@
   let settings = loadSettings();
   let currentRead = null;
 
-  const EXAMPLES = [
-    { label: "Boss DM", text: "Can we chat tomorrow?" },
-    { label: "Mom text", text: "K." },
-    { label: "Group thread", text: "Sure!! whatever works for everyone 😅 not picky lol just tell me when n where" },
-    { label: "Professor email", text: "Per my previous email, the deadline is firm. Please ensure your submission is uploaded by 11:59 PM." },
-    { label: "Friend rant", text: "I CANNOT believe she said that to me. I'm DONE. Done done done. Anyway how was your day lol" },
-  ];
-  EXAMPLES.forEach(e => {
-    const chip = document.createElement("button");
-    chip.type = "button"; chip.className = "example-chip"; chip.textContent = e.label;
-    chip.title = e.text;
-    chip.addEventListener("click", () => { srcInput.value = e.text; srcInput.focus(); });
-    exampleChips.appendChild(chip);
-  });
+  // Example chip keys — texts and labels both come from locales since
+  // examples are part of the UX, not the heuristic engine.
+  const EXAMPLE_KEYS = ["bossDm", "momText", "groupThread", "profEmail", "friendRant"];
+
+  function renderExamples() {
+    exampleChips.innerHTML = "";
+    EXAMPLE_KEYS.forEach(k => {
+      const labelText = t(`example.${k}.label`);
+      const text = t(`example.${k}.text`);
+      const chip = document.createElement("button");
+      chip.type = "button"; chip.className = "example-chip";
+      chip.textContent = labelText; chip.title = text;
+      chip.addEventListener("click", () => { srcInput.value = text; srcInput.focus(); });
+      exampleChips.appendChild(chip);
+    });
+  }
 
   // ============================================================
   //  HEURISTIC ENGINE
   // ============================================================
-  // Each tone has a list of keyword regexes; matches add weight.
-  // Punctuation/caps/emoji cues also feed weights.
+  // Each tone has a list of keyword regexes (English-tuned); matches add weight.
+  // Labels come from the locale dictionary at render time.
   const TONE_DEFS = [
-    { key: "warm",        em: "🤗", label: "Warm",        kw: [/\b(thanks?|thank you|appreciate|love|miss you|hope you|kind|grateful|sweet|hugs?|xoxo)\b/gi, /[❤️💕💖🥰😊🙂🤗💛💜💙]/gu] },
-    { key: "enthusiastic",em: "🎉", label: "Enthusiastic",kw: [/\b(amazing|awesome|fantastic|incredible|love it|woo+|yay+|can'?t wait|so excited)\b/gi, /[🎉🎊🥳🚀✨🔥💯]/gu] },
-    { key: "urgent",      em: "⚡", label: "Urgent",      kw: [/\b(asap|right now|immediately|urgent|by (today|tomorrow|tonight|EOD|end of day)|deadline|need this|need it now|today!?|right away)\b/gi] },
-    { key: "formal",      em: "🎩", label: "Formal",      kw: [/\b(per (my|our|your) (previous|last) (email|message|note)|please be advised|kindly|sincerely|regards|to whom it may concern|please ensure|effective immediately|going forward)\b/gi] },
-    { key: "passive-aggressive", em: "😬", label: "Passive-aggressive", kw: [/\b(as i mentioned|per my (previous|last)|as previously stated|just following up|circling back|gentle reminder|friendly reminder|with all due respect|interesting|noted|k\.?$|fine\.?$|whatever)\b/gi] },
-    { key: "frustrated",  em: "😤", label: "Frustrated",  kw: [/\b(again|seriously|come on|tired of|sick of|fed up|enough|how many times|over and over|ridiculous|unbelievable|disappointed|frustrat)\b/gi] },
-    { key: "angry",       em: "🔥", label: "Angry",       kw: [/\b(angry|furious|livid|hate|damn|hell|wtf|stupid|idiot|done|enough!?|stop)\b/gi, /[😠😡🤬]/gu] },
-    { key: "sarcastic",   em: "🙃", label: "Sarcastic",   kw: [/\b(oh\s*great|wow|amazing|sure(\s+thing)?|right\.?|nice\.?|cool\.?|obviously|clearly|love that for|love that)\b/gi, /\/s\b/gi, /[🙃😏]/gu] },
-    { key: "anxious",     em: "😰", label: "Anxious / worried", kw: [/\b(sorry|apolog|hope (it'?s )?(okay|alright|ok)|just wanted to|i (might be|could be) wrong|please don'?t|nervous|worried|stressed)\b/gi] },
-    { key: "neutral",     em: "📝", label: "Neutral / matter-of-fact", kw: [/\b(noted|received|got it|confirmed|sounds good|on it|ok\.?$|sure\.?$)\b/gi] },
-    { key: "playful",     em: "😄", label: "Playful",     kw: [/\b(lol|lmao|haha+|hehe+|jk|kidding|btw|tbh|imo|fr|ngl)\b/gi, /[😄😂🤣😆😝😜😎]/gu] },
-    { key: "curt",        em: "✂️", label: "Curt / short", kw: [] },
+    { key: "warm",        em: "🤗", kw: [/\b(thanks?|thank you|appreciate|love|miss you|hope you|kind|grateful|sweet|hugs?|xoxo)\b/gi, /[❤️💕💖🥰😊🙂🤗💛💜💙]/gu] },
+    { key: "enthusiastic",em: "🎉", kw: [/\b(amazing|awesome|fantastic|incredible|love it|woo+|yay+|can'?t wait|so excited)\b/gi, /[🎉🎊🥳🚀✨🔥💯]/gu] },
+    { key: "urgent",      em: "⚡", kw: [/\b(asap|right now|immediately|urgent|by (today|tomorrow|tonight|EOD|end of day)|deadline|need this|need it now|today!?|right away)\b/gi] },
+    { key: "formal",      em: "🎩", kw: [/\b(per (my|our|your) (previous|last) (email|message|note)|please be advised|kindly|sincerely|regards|to whom it may concern|please ensure|effective immediately|going forward)\b/gi] },
+    { key: "passive-aggressive", em: "😬", kw: [/\b(as i mentioned|per my (previous|last)|as previously stated|just following up|circling back|gentle reminder|friendly reminder|with all due respect|interesting|noted|k\.?$|fine\.?$|whatever)\b/gi] },
+    { key: "frustrated",  em: "😤", kw: [/\b(again|seriously|come on|tired of|sick of|fed up|enough|how many times|over and over|ridiculous|unbelievable|disappointed|frustrat)\b/gi] },
+    { key: "angry",       em: "🔥", kw: [/\b(angry|furious|livid|hate|damn|hell|wtf|stupid|idiot|done|enough!?|stop)\b/gi, /[😠😡🤬]/gu] },
+    { key: "sarcastic",   em: "🙃", kw: [/\b(oh\s*great|wow|amazing|sure(\s+thing)?|right\.?|nice\.?|cool\.?|obviously|clearly|love that for|love that)\b/gi, /\/s\b/gi, /[🙃😏]/gu] },
+    { key: "anxious",     em: "😰", kw: [/\b(sorry|apolog|hope (it'?s )?(okay|alright|ok)|just wanted to|i (might be|could be) wrong|please don'?t|nervous|worried|stressed)\b/gi] },
+    { key: "neutral",     em: "📝", kw: [/\b(noted|received|got it|confirmed|sounds good|on it|ok\.?$|sure\.?$)\b/gi] },
+    { key: "playful",     em: "😄", kw: [/\b(lol|lmao|haha+|hehe+|jk|kidding|btw|tbh|imo|fr|ngl)\b/gi, /[😄😂🤣😆😝😜😎]/gu] },
+    { key: "curt",        em: "✂️", kw: [] },
   ];
+  function toneLabel(key) { return t(`tone.${key}`); }
 
   function scoreTones(text) {
-    const scores = Object.fromEntries(TONE_DEFS.map(t => [t.key, 0]));
+    const scores = Object.fromEntries(TONE_DEFS.map(td => [td.key, 0]));
     const lower = text;
     const lettersOnly = text.replace(/[^A-Za-z]/g, "");
     const upperRatio = lettersOnly.length ? (lettersOnly.match(/[A-Z]/g) || []).length / lettersOnly.length : 0;
 
     // Keyword scores
-    for (const t of TONE_DEFS) {
-      for (const re of t.kw) {
+    for (const td of TONE_DEFS) {
+      for (const re of td.kw) {
         const matches = lower.match(re);
-        if (matches) scores[t.key] += matches.length * 2;
+        if (matches) scores[td.key] += matches.length * 2;
       }
     }
 
@@ -347,77 +361,35 @@
     const neg = NEG.reduce((a, k) => a + scores[k], 0);
     const mood = pos - neg > 2 ? "positive" : neg - pos > 2 ? "negative" : "neutral";
 
-    // Top 3 tones with non-zero score
+    // Top 5 tones with non-zero score
     const ranked = TONE_DEFS
-      .map(t => ({ ...t, score: scores[t.key] }))
-      .filter(t => t.score > 0)
+      .map(td => ({ ...td, score: scores[td.key] }))
+      .filter(td => td.score > 0)
       .sort((a, b) => b.score - a.score);
 
     const maxScore = ranked[0]?.score || 1;
-    const tones = ranked.slice(0, 5).map(t => ({ key: t.key, em: t.em, label: t.label, pct: Math.min(100, Math.round((t.score / maxScore) * 100)) }));
+    const tones = ranked.slice(0, 5).map(td => ({ key: td.key, em: td.em, label: toneLabel(td.key), pct: Math.min(100, Math.round((td.score / maxScore) * 100)) }));
 
-    const headlineToneObj = ranked[0] || { em: "📝", label: "Matter-of-fact" };
+    const topKey = ranked[0]?.key || null;
+    const headlineEm = ranked[0]?.em || "📝";
     const moodEmoji = mood === "positive" ? "😊" : mood === "negative" ? "😟" : "😐";
-    const headline = `Reads as ${headlineToneObj.label.toLowerCase()}.`;
+    const headline = topKey
+      ? t("headline.format", { tone: toneLabel(topKey).toLowerCase() })
+      : t("headline.fallback");
 
-    const interpretation = buildInterpretation(headlineToneObj.key, text, scores);
-    const likely = buildLikely(headlineToneObj.key, scores);
-    const unlikely = buildUnlikely(headlineToneObj.key, scores);
-    const caveat = "Text strips out facial expression and tone of voice — even a careful read can miss the truth. If the message matters, the safest move is asking the sender directly.";
+    const interpretation = topKey ? lookupOrDefault("interp", topKey) : t("interp.default");
+    const likely        = topKey ? lookupOrDefault("likely", topKey) : t("likely.default");
+    const unlikely      = topKey ? lookupOrDefault("unlikely", topKey) : t("unlikely.default");
+    const caveat = t("card.caveat");
 
-    return { source: "heuristic", mood, moodEmoji, headlineToneEmoji: headlineToneObj.em, headline, tones, interpretation, likely, unlikely, caveat };
+    return { source: "heuristic", mood, moodEmoji, headlineToneEmoji: headlineEm, headline, tones, interpretation, likely, unlikely, caveat };
   }
 
-  function buildInterpretation(topKey, text, scores) {
-    const tips = {
-      "warm": "The sender is leading with care. Words like thanks, appreciate, or warm emojis are doing most of the work.",
-      "enthusiastic": "High energy — multiple exclamation marks, hype words, or celebration emojis. They're genuinely excited (or performing excitement to be polite).",
-      "urgent": "Time pressure is the dominant signal. They want a response soon and they want you to know it.",
-      "formal": "Distance and procedure. Likely written carefully, possibly with a paper trail in mind.",
-      "passive-aggressive": "Polite words, but the framing ('per my last email', 'just following up') signals frustration. They're trying not to say what they actually mean.",
-      "frustrated": "Repeated complaints, exasperation words, and intensity markers. They're at the end of a rope, not just venting briefly.",
-      "angry": "Strong negative words, ALL CAPS, or aggressive emojis. Treat with care; consider giving it time before responding.",
-      "sarcastic": "The surface meaning probably isn't the real meaning. Look for the obvious opposite.",
-      "anxious": "Lots of softening, apologies, or hedging. The sender is worried about your reaction, not yours.",
-      "neutral": "Few emotional signals either way — likely a short factual update.",
-      "playful": "Casual, joking, lol/haha territory. Low-stakes.",
-      "curt": "Very short. Could mean they're busy, distracted, or upset — hard to tell from text alone.",
-    };
-    return tips[topKey] || "Mixed signals — read the example below for what's likely and what's probably not.";
-  }
-  function buildLikely(topKey, scores) {
-    const map = {
-      "warm": "They like you and are trying to make that obvious.",
-      "enthusiastic": "They genuinely want this to happen.",
-      "urgent": "They want a quick reply, even if just an acknowledgement.",
-      "formal": "They want a clean record and a professional response.",
-      "passive-aggressive": "They feel ignored or unheard and want acknowledgement first, action second.",
-      "frustrated": "Something built up over time, not just this one message.",
-      "angry": "Don't respond from your phone. Step away, then write back.",
-      "sarcastic": "The opposite of the literal words is closer to the truth.",
-      "anxious": "They're afraid of being a bother. Reassure first, answer second.",
-      "neutral": "Just info — a short reply is fine.",
-      "playful": "Match the energy. No deep analysis needed.",
-      "curt": "Could just be busy. Don't read disaster into it without other signals.",
-    };
-    return map[topKey] || "Take a breath, then read it one more time.";
-  }
-  function buildUnlikely(topKey, scores) {
-    const map = {
-      "warm": "It's almost certainly not sarcasm. Take the kindness at face value.",
-      "enthusiastic": "Probably not anger, even if the punctuation is loud.",
-      "urgent": "Probably not a personal slight — they're just stressed about the timing.",
-      "formal": "Probably not personal warmth or coldness — they're being procedural.",
-      "passive-aggressive": "It's probably not literal politeness, despite the polite words.",
-      "frustrated": "Probably not a sudden mood — there's history behind it.",
-      "angry": "Probably not casual or playful, even if it ends with 'lol'.",
-      "sarcastic": "Probably not sincere praise.",
-      "anxious": "Probably not anger at you, even if it feels intense.",
-      "neutral": "Probably not loaded subtext — sometimes a short message is just a short message.",
-      "playful": "Probably not serious criticism.",
-      "curt": "Probably not personal rejection — short messages get over-read.",
-    };
-    return map[topKey] || "Don't assume the worst-case interpretation.";
+  // Helper: lookup `<prefix>.<key>` and fall back to `<prefix>.default`.
+  function lookupOrDefault(prefix, key) {
+    const direct = t(`${prefix}.${key}`);
+    if (direct !== `${prefix}.${key}`) return direct;
+    return t(`${prefix}.default`);
   }
 
   // ============================================================
@@ -429,12 +401,19 @@
   }
   function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
   function refreshModePill() {
-    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
-    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+    if (settings.apiKey) {
+      modePill.className = "mode-pill ai";
+      modePill.removeAttribute("data-i18n");
+      modePill.textContent = t("mode.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+    } else {
+      modePill.className = "mode-pill heuristic";
+      modePill.setAttribute("data-i18n", "mode.heuristic");
+      modePill.textContent = t("mode.heuristic");
+    }
   }
-  refreshModePill();
 
   function buildPrompt(text) {
+    const langName = t("ai.lang");
     return `You are Vibe Check, a careful reader for neurodivergent users who second-guess message tone.
 Analyze the message below and return ONLY a JSON object of this shape:
 {
@@ -451,6 +430,7 @@ Analyze the message below and return ONLY a JSON object of this shape:
 Rules:
 - Be honest, not flattering. If it's passive-aggressive, say so.
 - Pct values 0-100, top tone should be 80-100.
+- Respond entirely in ${langName} (translate the message if needed, but quote literal phrases as written).
 - Do not add extra fields. Return ONLY the JSON object.
 
 Message:
@@ -506,31 +486,35 @@ ${text}`;
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
   function render(r) {
-    stageTitle.textContent = "The read";
-    stageMeta.textContent = `${r.source === "ai" ? "AI analysis" : "Heuristic analysis"} · mood: ${r.mood}`;
+    stageTitle.removeAttribute("data-i18n");
+    stageTitle.textContent = t("stage.title.result");
+    const moodLocalized = t(`mood.${r.mood}`);
+    const srcLabel = r.source === "ai" ? t("stage.meta.ai") : t("stage.meta.heuristic");
+    stageMeta.textContent = `${srcLabel}${t("stage.meta.dot")}${t("stage.meta.mood", { mood: moodLocalized })}`;
     stageBody.innerHTML = "";
 
     const card = document.createElement("div");
     card.className = "vibe-card";
 
+    const moodSuffix = t("mood.suffix", { mood: moodLocalized });
     const summary = document.createElement("div");
     summary.className = "vibe-summary";
     summary.innerHTML = `<span class="vibe-emoji" aria-hidden="true">${escapeHtml(r.headlineToneEmoji)}</span>
       <div>
         <div class="vibe-headline">${escapeHtml(r.headline)}</div>
-        <span class="vibe-mood ${r.mood}">${escapeHtml(r.moodEmoji)} ${escapeHtml(r.mood)} mood</span>
+        <span class="vibe-mood ${r.mood}">${escapeHtml(r.moodEmoji)} ${escapeHtml(moodSuffix)}</span>
       </div>`;
     card.appendChild(summary);
 
     if (r.tones && r.tones.length) {
       const tones = document.createElement("div");
       tones.className = "tones";
-      r.tones.forEach(t => {
+      r.tones.forEach(tn => {
         const row = document.createElement("div");
         row.className = "tone-row";
-        row.innerHTML = `<div class="tone-name">${escapeHtml(t.em)} ${escapeHtml(t.label)}</div>
-          <div class="tone-bar"><span style="width:${t.pct}%"></span></div>
-          <div class="tone-pct">${t.pct}%</div>`;
+        row.innerHTML = `<div class="tone-name">${escapeHtml(tn.em)} ${escapeHtml(tn.label)}</div>
+          <div class="tone-bar"><span style="width:${tn.pct}%"></span></div>
+          <div class="tone-pct">${tn.pct}%</div>`;
         tones.appendChild(row);
       });
       card.appendChild(tones);
@@ -539,7 +523,7 @@ ${text}`;
     if (r.interpretation) {
       const interp = document.createElement("div");
       interp.className = "interpretation";
-      interp.innerHTML = `<h3>What it conveys</h3><div>${escapeHtml(r.interpretation)}</div>`;
+      interp.innerHTML = `<h3>${escapeHtml(t("card.conveys"))}</h3><div>${escapeHtml(r.interpretation)}</div>`;
       card.appendChild(interp);
     }
 
@@ -548,12 +532,12 @@ ${text}`;
       reads.className = "reads";
       if (r.likely) {
         const a = document.createElement("div"); a.className = "read likely";
-        a.innerHTML = `<h4>Probably means</h4><div>${escapeHtml(r.likely)}</div>`;
+        a.innerHTML = `<h4>${escapeHtml(t("card.likely"))}</h4><div>${escapeHtml(r.likely)}</div>`;
         reads.appendChild(a);
       }
       if (r.unlikely) {
         const b = document.createElement("div"); b.className = "read unlikely";
-        b.innerHTML = `<h4>Probably does NOT mean</h4><div>${escapeHtml(r.unlikely)}</div>`;
+        b.innerHTML = `<h4>${escapeHtml(t("card.unlikely"))}</h4><div>${escapeHtml(r.unlikely)}</div>`;
         reads.appendChild(b);
       }
       card.appendChild(reads);
@@ -567,7 +551,10 @@ ${text}`;
 
     stageBody.appendChild(card);
     stageFooter.hidden = false;
-    footerMeta.textContent = `Mood: ${r.mood} · Top tones: ${(r.tones || []).slice(0, 3).map(t => t.label).join(", ")}`;
+    footerMeta.textContent = t("stage.meta.footerTones", {
+      mood: moodLocalized,
+      tones: (r.tones || []).slice(0, 3).map(tn => tn.label).join(", "),
+    });
     currentRead = r;
   }
 
@@ -576,16 +563,16 @@ ${text}`;
   // ============================================================
   async function doCheck() {
     const text = srcInput.value.trim();
-    if (!text) { srcInput.focus(); showToast("Paste a message first.", true); return; }
+    if (!text) { srcInput.focus(); showToast(t("toast.empty"), true); return; }
     checkBtn.disabled = true;
     const orig = checkBtn.textContent;
-    checkBtn.textContent = settings.apiKey ? "Asking Claude…" : "Reading…";
+    checkBtn.textContent = settings.apiKey ? t("panel.checkBtn.busyAi") : t("panel.checkBtn.busy");
     try {
       const r = settings.apiKey ? await aiCheck(text) : heuristicCheck(text);
       render(r);
     } catch (err) {
       console.error(err);
-      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      showToast(t("toast.aiFailed", { err: err.message || "" }), true);
       render(heuristicCheck(text));
     } finally { checkBtn.disabled = false; checkBtn.textContent = orig; }
   }
@@ -594,24 +581,27 @@ ${text}`;
 
   $("clearBtn").addEventListener("click", () => {
     currentRead = null; stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
-    stageTitle.textContent = "Your read will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
+    stageTitle.setAttribute("data-i18n", "stage.title.empty");
+    stageTitle.textContent = t("stage.title.empty");
+    stageMeta.textContent = ""; stageFooter.hidden = true;
   });
   $("copyBtn").addEventListener("click", async () => {
     if (!currentRead) return;
     const r = currentRead;
+    const moodLocalized = t(`mood.${r.mood}`);
     const out = [
-      `Headline: ${r.headline}`,
-      `Mood: ${r.mood}`,
-      `Top tones: ${(r.tones || []).map(t => `${t.label} (${t.pct}%)`).join(", ")}`,
+      `${t("stage.copy.headline")}: ${r.headline}`,
+      `${t("stage.copy.mood")}: ${moodLocalized}`,
+      `${t("stage.copy.topTones")}: ${(r.tones || []).map(tn => `${tn.label} (${tn.pct}%)`).join(", ")}`,
       ``,
-      `What it conveys: ${r.interpretation}`,
-      `Probably means: ${r.likely}`,
-      `Probably does NOT mean: ${r.unlikely}`,
+      `${t("stage.copy.conveys")}: ${r.interpretation}`,
+      `${t("stage.copy.likely")}: ${r.likely}`,
+      `${t("stage.copy.unlikely")}: ${r.unlikely}`,
       ``,
-      `Caveat: ${r.caveat}`,
+      `${t("stage.copy.caveat")}: ${r.caveat}`,
     ].join("\n");
-    try { await navigator.clipboard.writeText(out); showToast("Read copied."); }
-    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+    try { await navigator.clipboard.writeText(out); showToast(t("toast.copied")); }
+    catch { showToast(t("toast.copyFailed"), true); }
   });
 
   // ====== Settings modal
@@ -627,13 +617,13 @@ ${text}`;
   $("saveSettingsBtn").addEventListener("click", () => {
     const provider = document.querySelector('input[name=provider]:checked').value;
     saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
-    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    showToast(settings.apiKey ? t("toast.aiReady") : t("toast.heuristic"));
     closeSettings();
   });
   $("clearKeyBtn").addEventListener("click", () => {
     apiKeyInput.value = ""; modelInput.value = "";
     saveSettings({ provider: settings.provider, apiKey: "", model: "" });
-    showToast("Key cleared.");
+    showToast(t("toast.keyCleared"));
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
 
@@ -642,6 +632,15 @@ ${text}`;
     toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
     clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
   }
+
+  // ====== i18n boot
+  function bootI18nDependentUI() {
+    renderExamples();
+    refreshModePill();
+    if (currentRead) render(currentRead);
+  }
+  bootI18nDependentUI();
+  window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
