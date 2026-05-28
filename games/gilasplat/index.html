@@ -67,6 +67,10 @@
   .mode-btn .desc { font-size: .82rem; opacity: .7; }
   .mode-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
   .mode-btn.active { border-color: var(--gold); background: var(--panel-2); box-shadow: 0 0 0 3px rgba(168, 85, 247, .25); }
+  .start-level-row { display: flex; gap: 14px; align-items: center; margin: 0 0 24px; flex-wrap: wrap; }
+  .start-level-row select { padding: 12px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 10px; color: #fff; font-weight: 700; font-size: 1rem; min-width: 280px; cursor: pointer; }
+  .start-level-row select:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(168, 85, 247, .25); }
+  .start-level-row .start-level-hint { color: var(--ink); opacity: .7; font-size: .85rem; }
 
   .start-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px; }
   .btn { padding: 12px 22px; background: var(--gold); color: #fff; border: 2px solid var(--gold); border-radius: 10px; font-weight: 800; transition: all .15s; }
@@ -104,6 +108,10 @@
   .hud .cell.power .val { color: var(--teal); font-size: 1.05rem; }
   .hud .cell.power .ring { display: inline-block; width: 100%; height: 6px; background: rgba(20, 184, 166, .2); border-radius: 3px; margin-top: 4px; overflow: hidden; }
   .hud .cell.power .ring i { display: block; height: 100%; background: var(--teal); transition: width .1s linear; }
+  .hud .cell.keys { border-top: 4px solid var(--yellow); display: none; }
+  .hud .cell.keys.show { display: flex; }
+  .hud .cell.keys .val { color: var(--yellow); display: flex; align-items: center; gap: 4px; }
+  .hud .cell.keys .keyicon { display: inline-block; width: 22px; height: 22px; background-image: url('./assets/power-key.png'); background-size: contain; background-repeat: no-repeat; }
 
   /* ===== Instruction banner ===== */
   .banner-strip { margin-top: 14px; padding: 12px 18px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: center; }
@@ -130,6 +138,29 @@
   .sound-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; color: var(--ink); font-weight: 700; font-size: .85rem; }
   .sound-toggle.on { color: var(--green); border-color: var(--green); }
   .sound-toggle.off { color: var(--ink); opacity: .5; }
+
+  /* ===== Legend modal ===== */
+  .legend-backdrop { position: fixed; inset: 0; background: rgba(5, 10, 21, .85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+  .legend-backdrop.show { display: flex; }
+  .legend-modal { width: min(960px, 100%); max-height: 92vh; overflow-y: auto; background: var(--panel); border: 2px solid var(--border); border-radius: 16px; padding: 24px 28px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  .legend-modal h2 { margin: 0 0 4px; color: #fff; font-size: 1.6rem; font-weight: 900; }
+  .legend-modal .sub { margin: 0 0 18px; color: var(--ink); opacity: .75; font-size: .9rem; }
+  .legend-modal .close { float: right; background: transparent; color: var(--ink); border: 2px solid var(--border); border-radius: 999px; width: 36px; height: 36px; font-size: 1.1rem; font-weight: 800; line-height: 1; padding: 0; cursor: pointer; }
+  .legend-modal .close:hover { color: #fff; border-color: var(--gold); }
+  .legend-section { margin-bottom: 20px; }
+  .legend-section h3 { margin: 0 0 10px; padding-bottom: 6px; color: var(--gold); font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; border-bottom: 1px solid var(--border); }
+  .legend-section h3 .accent { color: var(--ink); opacity: .65; font-weight: 700; text-transform: none; letter-spacing: 0; }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--panel-2); border: 2px solid var(--border); border-radius: 10px; }
+  .legend-item .sprite { width: 44px; height: 44px; flex-shrink: 0; object-fit: contain; }
+  .legend-item .sprite.purple { filter: hue-rotate(250deg) saturate(1.05); }
+  .legend-item .info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .legend-item .name { color: #fff; font-weight: 800; font-size: .92rem; line-height: 1.2; }
+  .legend-item .effect { color: var(--ink); opacity: .75; font-size: .78rem; line-height: 1.3; }
+  .legend-decoration { padding: 14px 16px; background: rgba(20, 184, 166, .08); border: 2px dashed rgba(20, 184, 166, .35); border-radius: 10px; color: var(--ink); font-size: .9rem; line-height: 1.4; }
+  .legend-decoration b { color: var(--teal); }
+  .legend-btn { padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; color: var(--ink); font-weight: 700; font-size: .85rem; cursor: pointer; }
+  .legend-btn:hover { color: #fff; border-color: var(--gold); }
 
   /* ===== End screen ===== */
   .end-card { padding: 40px 20px; background: var(--panel); border-radius: 14px; border: 2px solid var(--border); text-align: center; }
@@ -192,6 +223,12 @@
       </button>
     </div>
 
+    <label class="field-label" for="startLevel">Start from level</label>
+    <div class="start-level-row">
+      <select id="startLevel"></select>
+      <span class="start-level-hint" id="startLevelHint">All 15 levels unlocked.</span>
+    </div>
+
     <div class="start-row">
       <button type="button" class="btn big" id="startBtn">Enter the burrow →</button>
     </div>
@@ -208,6 +245,7 @@
       <div class="cell lives"><span class="label">Lives</span><span class="val" id="hudLives"></span></div>
       <div class="cell combo" id="hudComboCell"><span class="label">Combo</span><span class="val" id="hudCombo">×1</span></div>
       <div class="cell power" id="hudPowerCell"><span class="label">Power</span><span class="val" id="hudPowerLabel">—</span><span class="ring"><i id="hudPowerBar"></i></span></div>
+      <div class="cell keys" id="hudKeysCell"><span class="label">Keys</span><span class="val"><span class="keyicon"></span>×<span id="hudKeys">0</span></span></div>
       <div class="cell time"><span class="label">Time</span><span class="val" id="hudTime">60</span></div>
     </div>
 
@@ -230,11 +268,22 @@
       <span class="controls-hint">Move: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
       <span class="controls-hint">Or: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span>
       <span class="spacer"></span>
+      <button type="button" class="legend-btn" id="legendBtn">📖 Legend</button>
       <button type="button" class="sound-toggle on" id="soundBtn">🔊 Sound on</button>
       <button type="button" class="btn ghost" id="pauseBtn">⏸ Pause</button>
       <button type="button" class="btn danger" id="quitBtn">Quit</button>
     </div>
   </section>
+
+  <!-- ===== Legend modal ===== -->
+  <div class="legend-backdrop" id="legendBackdrop" role="dialog" aria-modal="true" aria-labelledby="legendTitle">
+    <div class="legend-modal" id="legendModal">
+      <button type="button" class="close" id="legendCloseBtn" aria-label="Close legend">×</button>
+      <h2 id="legendTitle">Legend</h2>
+      <p class="sub">Everything that moves, glows, or sparkles. The rest of the desert art is scenery.</p>
+      <div id="legendBody"></div>
+    </div>
+  </div>
 
   <!-- ===== End ===== -->
   <section class="screen" id="end">
@@ -404,6 +453,8 @@ const state = {
   powerups: [],             // collectible items on the maze
   activePowers: {},         // kind -> expiry timestamp (performance.now-relative)
   revealUntil: 0,           // moon-glow flash effect
+  keysHeld: 0,              // burrow keys collected, each breaks one wall
+  brokenEdges: [],          // visual mask for walls the key smashed
   // Gila monster — moves tile-to-tile with smooth interpolation
   gila: {
     tx: 1, ty: 1,         // current tile
@@ -451,6 +502,7 @@ const POWER_KINDS = {
   cactus:      { sprite: "power-cactus",    durationMs: 0,    label: "+5s",       hue: "#22c55e", quip: "Five more seconds!" },
   "shed-skin": { sprite: "power-shed-skin", durationMs: 4000, label: "PHASING",   hue: "#a855f7", quip: "Catch me now." },
   dust:        { sprite: "power-dust",      durationMs: 5000, label: "DUST",      hue: "#d1e6ff", quip: "Eat my dust." },
+  key:         { sprite: "power-key",       durationMs: 0,    label: "KEY",       hue: "#facc15", quip: "Open sesame!" },
   beetle:      { sprite: "power-beetle",    durationMs: 0,    label: "+100",      hue: "#7c3aed", quip: "Beetle bounty!" },
   "warm-rock": { sprite: "power-warm-rock", durationMs: 8000, label: "TIME STOP", hue: "#f97316", quip: "Hatch later, eggs." },
   moon:        { sprite: "power-moon",      durationMs: 3000, label: "MOON",      hue: "#8bd4ff", quip: "Lit up like the moon." },
@@ -767,16 +819,23 @@ loadAssets().then(() => {
   startBtn.disabled = false;
   startBtn.textContent = startBtnLabel;
 });
+function readStartLevel() {
+  const sel = $("startLevel");
+  const v = parseInt(sel.value, 10);
+  return Number.isFinite(v) && v >= 0 && v < LEVELS.length ? v : 0;
+}
 startBtn.addEventListener("click", () => {
   if (!assetsReady) return;
-  state.levelIdx = 0;
+  const startIdx = readStartLevel();
+  try { localStorage.setItem("gilasplat.startLevel", String(startIdx)); } catch (e) {}
+  state.levelIdx = startIdx;
   state.score = 0;
   state.eggsEaten = 0;
   state.chicksEaten = 0;
   state.lives = 3;
   setScreen("game");
   getCtx();
-  loadLevel(0);
+  loadLevel(startIdx);
 });
 
 $("pauseBtn").addEventListener("click", togglePause);
@@ -788,13 +847,14 @@ $("soundBtn").addEventListener("click", () => {
   $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
 });
 $("playAgainBtn").addEventListener("click", () => {
-  state.levelIdx = 0;
+  const startIdx = readStartLevel();
+  state.levelIdx = startIdx;
   state.score = 0;
   state.eggsEaten = 0;
   state.chicksEaten = 0;
   state.lives = 3;
   setScreen("game");
-  loadLevel(0);
+  loadLevel(startIdx);
 });
 $("newRunBtn").addEventListener("click", quitToSetup);
 
@@ -831,6 +891,8 @@ async function loadLevel(idx) {
     svgText = "<svg/>";
   }
   state.walls = parseWalls(svgText);
+  state.brokenEdges = [];
+  removeDeadEnds();
   state.bgImage = await rasterizeSvgBackground(svgText);
 
   // Gila spawn: pick the cell with the largest reach so the gila has
@@ -881,6 +943,8 @@ async function loadLevel(idx) {
   }
   state.activePowers = {};
   state.revealUntil = 0;
+  state.keysHeld = 0;
+  state.brokenEdges = [];
 
   // Spawn predators
   state.predators = (lvl.predators || []).map(p => {
@@ -981,6 +1045,55 @@ function rasterizeSvgBackground(svgText) {
     img.onerror = () => resolve(null);
     img.src = url;
   });
+}
+
+// After parsing the SVG walls, every reachable cell with only one open
+// exit gets a fresh opening to a neighbour so the gila can never enter a
+// pocket they have to back out of. Walls torn down here are recorded
+// in state.brokenEdges so the visual mask covers the SVG art.
+function removeDeadEnds() {
+  if (!state.walls) return;
+  const DIRS = [
+    { x: 0, y: -1, key: ["top",  (x, y) => [y,     x]] },
+    { x: 0, y: 1,  key: ["top",  (x, y) => [y + 1, x]] },
+    { x: -1, y: 0, key: ["left", (x, y) => [y,     x]] },
+    { x: 1, y: 0,  key: ["left", (x, y) => [y,     x + 1]] },
+  ];
+  function isOpen(x, y, d) {
+    const nx = x + d.x, ny = y + d.y;
+    if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) return false;
+    const [side, idx] = d.key;
+    const [r, c] = idx(x, y);
+    return !state.walls[side][r][c];
+  }
+  function openEdge(x, y, d) {
+    const [side, idx] = d.key;
+    const [r, c] = idx(x, y);
+    state.walls[side][r][c] = 0;
+    state.brokenEdges.push({ type: side, x: c, y: r });
+  }
+  // Iterate until stable so newly-opened cells don't leave dangling pockets.
+  for (let pass = 0; pass < 6; pass++) {
+    let changed = false;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const open = DIRS.filter(d => isOpen(c, r, d));
+        if (open.length >= 2) continue;
+        // Find candidate walls to smash. Prefer edges that open into
+        // an in-bounds neighbour. Skip the outer frame (no neighbour).
+        const candidates = DIRS.filter(d => {
+          const nx = c + d.x, ny = r + d.y;
+          return nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS && !isOpen(c, r, d);
+        });
+        if (!candidates.length) continue;
+        // Pick a deterministic-ish candidate to keep this idempotent.
+        const pickIdx = (r * COLS + c + pass) % candidates.length;
+        openEdge(c, r, candidates[pickIdx]);
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
 }
 
 function bestSpawnCell() {
@@ -1107,6 +1220,25 @@ function update(dt) {
 
   // ---- Gila monster ----
   updateGila(dt);
+
+  // Continuous hatchling proximity check — catches chicks the gila
+  // brushes against mid-frame between tile centers. Without this the
+  // only eat trigger is at tile arrival, which fast hatchlings can dodge.
+  {
+    const g = state.gila;
+    for (let i = state.entities.length - 1; i >= 0; i--) {
+      const e = state.entities[i];
+      if (!HATCHLING_KINDS[e.kind]) continue;
+      const ex = e.px !== undefined ? e.px : cellX(e.x);
+      const ey = e.py !== undefined ? e.py : cellY(e.y);
+      const dx = ex - g.px;
+      const dy = ey - g.py;
+      if (Math.hypot(dx, dy) < TILE * 0.5) {
+        eat(e);
+        state.entities.splice(i, 1);
+      }
+    }
+  }
 
   // ---- Entities: hatching + hatchling wandering + golden egg vanish ----
   for (let i = state.entities.length - 1; i >= 0; i--) {
@@ -1265,6 +1397,20 @@ function updateGila(dt) {
     } else if (canStep(g.tx, g.ty, g.dir)) {
       chosen = g.dir;
     }
+    // Burrow key: if the player is actively trying to push into a wall
+    // and holds a key, smash that edge open and consume one key.
+    if (!chosen && state.keysHeld > 0 && g.queuedDir
+        && g.queuedDir.x >= -1 && g.queuedDir.x <= 1
+        && (g.queuedDir.x || g.queuedDir.y)) {
+      const nx = g.tx + g.queuedDir.x, ny = g.ty + g.queuedDir.y;
+      if (nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS) {
+        breakWall(g.tx, g.ty, g.queuedDir);
+        state.keysHeld -= 1;
+        speak("Open sesame!");
+        updateHUD();
+        chosen = g.queuedDir;
+      }
+    }
     if (chosen) {
       g.dir = chosen;
       g.nx = g.tx + chosen.x;
@@ -1322,6 +1468,10 @@ function checkEat() {
   const g = state.gila;
   for (let i = state.entities.length - 1; i >= 0; i--) {
     const e = state.entities[i];
+    // Hatchlings are handled by the per-frame proximity sweep so the
+    // gila doesn't whiff while passing through. Eggs are static, so a
+    // tile match is enough.
+    if (HATCHLING_KINDS[e.kind]) continue;
     if (e.x === g.tx && e.y === g.ty) {
       eat(e);
       state.entities.splice(i, 1);
@@ -1351,10 +1501,21 @@ function applyPower(kind) {
   } else if (kind === "moon") {
     state.revealUntil = performance.now() + spec.durationMs;
     state.activePowers[kind] = state.revealUntil;
+  } else if (kind === "key") {
+    state.keysHeld += 1;
   } else {
     state.activePowers[kind] = performance.now() + spec.durationMs;
   }
   updateHUD();
+}
+
+function breakWall(x, y, dir) {
+  if (dir.y === -1)     { state.walls.top[y][x] = 0; state.brokenEdges.push({ type: "top",  x, y }); }
+  else if (dir.y === 1) { state.walls.top[y + 1][x] = 0; state.brokenEdges.push({ type: "top",  x, y: y + 1 }); }
+  else if (dir.x === -1){ state.walls.left[y][x] = 0; state.brokenEdges.push({ type: "left", x, y }); }
+  else if (dir.x === 1) { state.walls.left[y][x + 1] = 0; state.brokenEdges.push({ type: "left", x: x + 1, y }); }
+  // Sparkle sfx: 4-note ascending bell rip
+  [880, 1320, 1760, 2200].forEach((f, i) => setTimeout(() => tone(f, 0.06, "triangle", 0.13), i * 40));
 }
 
 function isPowerActive(kind) {
@@ -1515,6 +1676,14 @@ function updateHUD() {
   } else {
     comboCell.classList.remove("show");
   }
+  // Keys cell: show if any keys are held.
+  const keysCell = $("hudKeysCell");
+  if (state.keysHeld > 0) {
+    keysCell.classList.add("show");
+    $("hudKeys").textContent = state.keysHeld;
+  } else {
+    keysCell.classList.remove("show");
+  }
   // Power cell: show the longest-remaining active timed effect.
   const powerCell = $("hudPowerCell");
   const now = performance.now();
@@ -1558,6 +1727,7 @@ function render() {
   if (state.bgImage) {
     ctx.drawImage(state.bgImage, 0, 0, CW, CH);
   }
+  drawBrokenEdges();
   drawPowerups();
   drawEntities();
   drawPredators();
@@ -1565,6 +1735,103 @@ function render() {
   drawActivePowerAura();
   drawMoonReveal();
   drawQuip();
+  drawMinimap();
+}
+
+function drawMinimap() {
+  if (!state.walls) return;
+  const SCALE = 8;
+  const MW = COLS * SCALE;   // 152
+  const MH = ROWS * SCALE;   // 96
+  const PAD = 14;
+  const x0 = CW - MW - PAD;
+  const y0 = CH - MH - PAD;
+  ctx.save();
+  // Frame
+  ctx.fillStyle = "rgba(10, 14, 22, .82)";
+  ctx.fillRect(x0 - 6, y0 - 6, MW + 12, MH + 12);
+  ctx.strokeStyle = "rgba(168, 85, 247, .55)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x0 - 6, y0 - 6, MW + 12, MH + 12);
+  // Tunnel floor wash
+  ctx.fillStyle = "rgba(74, 44, 20, .55)";
+  ctx.fillRect(x0, y0, MW, MH);
+  // Walls
+  ctx.strokeStyle = "rgba(255, 200, 140, .9)";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let r = 0; r <= ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (state.walls.top[r][c]) {
+        ctx.moveTo(x0 + c * SCALE, y0 + r * SCALE);
+        ctx.lineTo(x0 + (c + 1) * SCALE, y0 + r * SCALE);
+      }
+    }
+  }
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c <= COLS; c++) {
+      if (state.walls.left[r][c]) {
+        ctx.moveTo(x0 + c * SCALE, y0 + r * SCALE);
+        ctx.lineTo(x0 + c * SCALE, y0 + (r + 1) * SCALE);
+      }
+    }
+  }
+  ctx.stroke();
+  // Eggs
+  for (const e of state.entities) {
+    if (EGG_KINDS[e.kind]) {
+      ctx.fillStyle = e.kind === "golden" ? "#facc15" : "rgba(251, 247, 232, .9)";
+      ctx.fillRect(x0 + e.x * SCALE + 2, y0 + e.y * SCALE + 2, 4, 4);
+    } else if (HATCHLING_KINDS[e.kind]) {
+      ctx.fillStyle = "#facc15";
+      ctx.fillRect(x0 + e.x * SCALE + 2, y0 + e.y * SCALE + 2, 4, 4);
+    }
+  }
+  // Power-ups
+  for (const p of state.powerups) {
+    const spec = POWER_KINDS[p.kind];
+    ctx.fillStyle = (spec && spec.hue) || "#14b8a6";
+    ctx.fillRect(x0 + p.x * SCALE + 2, y0 + p.y * SCALE + 2, 4, 4);
+  }
+  // Predators
+  ctx.fillStyle = "#ef4444";
+  for (const p of state.predators) {
+    ctx.fillRect(x0 + p.tx * SCALE + 1, y0 + p.ty * SCALE + 1, 6, 6);
+  }
+  // Gila with a soft pulse outline
+  const g = state.gila;
+  ctx.fillStyle = "#a855f7";
+  ctx.fillRect(x0 + g.tx * SCALE + 1, y0 + g.ty * SCALE + 1, 6, 6);
+  const pulse = (Math.sin(performance.now() / 220) + 1) / 2;
+  ctx.strokeStyle = `rgba(168, 85, 247, ${0.45 + pulse * 0.5})`;
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x0 + g.tx * SCALE - 1, y0 + g.ty * SCALE - 1, SCALE + 2, SCALE + 2);
+  ctx.restore();
+}
+
+function drawBrokenEdges() {
+  // Paint a tunnel-coloured swatch over each smashed wall so the SVG's
+  // painted wall doesn't visually contradict gameplay collision.
+  ctx.fillStyle = "#7a4a22";
+  for (const e of state.brokenEdges) {
+    if (e.type === "top") {
+      ctx.fillRect(OX + e.x * TILE, OY + e.y * TILE - 7, TILE, 14);
+    } else {
+      ctx.fillRect(OX + e.x * TILE - 7, OY + e.y * TILE, 14, TILE);
+    }
+  }
+  // Subtle rubble specks on top of the mask
+  ctx.fillStyle = "rgba(0,0,0,.35)";
+  for (const e of state.brokenEdges) {
+    const seed = (e.x * 13 + e.y * 17) % 100;
+    if (e.type === "top") {
+      ctx.fillRect(OX + e.x * TILE + (seed % 20) + 4, OY + e.y * TILE - 1, 4, 3);
+      ctx.fillRect(OX + e.x * TILE + (seed % 30) + 22, OY + e.y * TILE + 1, 5, 3);
+    } else {
+      ctx.fillRect(OX + e.x * TILE - 1, OY + e.y * TILE + (seed % 20) + 6, 3, 4);
+      ctx.fillRect(OX + e.x * TILE + 1, OY + e.y * TILE + (seed % 30) + 26, 3, 5);
+    }
+  }
 }
 
 function drawPowerups() {
@@ -1769,11 +2036,128 @@ function drawGila() {
   }
 }
 
+// ========== Legend modal ==========
+// Reads straight from the dispatch tables so it can't drift from gameplay.
+const PREDATORS_INFO = [
+  { kind: "predator-fox",    name: "Fox",    note: "Path chaser. First seen in Cracked Coop." },
+  { kind: "predator-owl",    name: "Owl",    note: "Patient ambusher. Watch the moon levels." },
+  { kind: "predator-hawk",   name: "Hawk",   note: "Fast swooper — sharp descending screech." },
+  { kind: "predator-coyote", name: "Coyote", note: "Long corridor stalker — distant yip-howl." },
+  { kind: "predator-badger", name: "Badger", note: "Slow, persistent, low growl underground." },
+];
+function buildLegend() {
+  const body = $("legendBody");
+  if (!body) return;
+  const sections = [];
+
+  // ----- Eggs -----
+  const eggRows = Object.entries(EGG_KINDS).map(([kind, spec]) => {
+    const name = ({
+      chicken: "Chicken egg", speckled: "Speckled chicken egg",
+      tortoise: "Tortoise egg", lizard: "Lizard egg", snake: "Snake egg",
+      golden: "Golden egg",
+    })[kind] || kind;
+    const effect = kind === "golden"
+      ? `${spec.score} pts — vanishes if you don't grab it fast`
+      : `${spec.score} pts — hatches into ${spec.hatchTo || "nothing"}`;
+    return itemRow(spec.sprite, name, effect);
+  }).join("");
+  sections.push(section("Eggs · eat these", eggRows));
+
+  // ----- Hatchlings -----
+  const hatchRows = Object.entries(HATCHLING_KINDS).map(([kind, spec]) => {
+    const name = ({
+      "chick": "Chick", "h-tortoise": "Tortoise hatchling",
+      "h-lizard": "Lizard hatchling", "h-snake": "Snake hatchling",
+    })[kind] || kind;
+    const speedLabel = spec.speed >= 1.2 ? "fast" : spec.speed >= 0.9 ? "medium" : "slow";
+    return itemRow(spec.sprite, name, `${spec.score} pts — wanders (${speedLabel})`);
+  }).join("");
+  sections.push(section("Hatchlings · they move, but worth more", hatchRows));
+
+  // ----- Power-ups -----
+  const powerRows = Object.entries(POWER_KINDS).map(([kind, spec]) => {
+    const friendly = ({
+      sunstone: "Sunstone", cactus: "Cactus fruit", "shed-skin": "Shed skin",
+      dust: "Dust cloud", key: "Burrow key", beetle: "Desert beetle",
+      "warm-rock": "Warm rock", moon: "Moon glow",
+    })[kind] || kind;
+    const effectText = ({
+      sunstone: "5s speed boost",
+      cactus: "Adds 5 seconds to the timer",
+      "shed-skin": "4s predator phasing — they pass through",
+      dust: "5s predator slow (×3 slower)",
+      key: "Break one wall by pushing into it",
+      beetle: "+100 bonus + chime",
+      "warm-rock": "8s hatch-timer freeze",
+      moon: "3s screen reveal flash",
+    })[kind] || spec.label;
+    return itemRow(spec.sprite, friendly, effectText);
+  }).join("");
+  sections.push(section("Power-ups · pick up to use", powerRows));
+
+  // ----- Predators -----
+  const predRows = PREDATORS_INFO.map(p => itemRow(p.kind, p.name, p.note)).join("");
+  sections.push(section("Predators · avoid", predRows));
+
+  // ----- Decoration -----
+  sections.push(`
+    <div class="legend-section">
+      <h3>Decoration <span class="accent">— not edible</span></h3>
+      <div class="legend-decoration">
+        <b>Bones, skulls, crystals, cactus, sprouts, spiders, centipedes,</b> and the dirt-clump walls
+        themselves are scenery painted into each maze. They don't add points, don't hurt you, and the
+        gila monster passes right through the artwork (collision is set by the maze walls only).
+      </div>
+    </div>
+  `);
+
+  body.innerHTML = sections.join("");
+
+  function section(title, inner) {
+    return `<div class="legend-section"><h3>${title}</h3><div class="legend-grid">${inner}</div></div>`;
+  }
+  function itemRow(spriteKey, name, effect) {
+    const path = ASSET_PATHS[spriteKey] || `./assets/${spriteKey}.png`;
+    const purpleClass = spriteKey === "gila" ? " purple" : "";
+    return `<div class="legend-item"><img class="sprite${purpleClass}" src="${path}" alt=""><div class="info"><div class="name">${name}</div><div class="effect">${effect}</div></div></div>`;
+  }
+}
+buildLegend();
+const legendBackdrop = $("legendBackdrop");
+const openLegend  = () => legendBackdrop.classList.add("show");
+const closeLegend = () => legendBackdrop.classList.remove("show");
+$("legendBtn").addEventListener("click", openLegend);
+$("legendCloseBtn").addEventListener("click", closeLegend);
+legendBackdrop.addEventListener("click", (e) => { if (e.target === legendBackdrop) closeLegend(); });
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && legendBackdrop.classList.contains("show")) {
+    e.preventDefault();
+    closeLegend();
+  }
+});
+
 // Load persistent hi-score, then paint HUD.
 try {
   const stored = parseInt(localStorage.getItem("gilasplat.hiScore") || "0", 10);
   if (!Number.isNaN(stored)) state.hiScore = stored;
 } catch (e) { /* localStorage may be blocked */ }
+
+// Populate the level-select with all 15 levels, restoring the saved choice.
+(function initStartLevelSelect() {
+  const sel = $("startLevel");
+  if (!sel) return;
+  let saved = 0;
+  try { saved = parseInt(localStorage.getItem("gilasplat.startLevel") || "0", 10); } catch (e) {}
+  if (!Number.isFinite(saved) || saved < 0 || saved >= LEVELS.length) saved = 0;
+  for (let i = 0; i < LEVELS.length; i++) {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `L${i + 1} — ${LEVELS[i].name}`;
+    if (i === saved) opt.selected = true;
+    sel.appendChild(opt);
+  }
+})();
 updateHUD();
 </script>
 </body>
