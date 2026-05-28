@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clock Wizard — DrawSplat Tools</title>
+  <meta name="description" content="Get a realistic time estimate for any task, with phase breakdown and an honest ADHD-tax allowance.">
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #ffffff;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-70: #374151;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .tagline { margin: 8px 0 0; color: var(--gray-50); font-size: 1rem; max-width: 60ch; }
+
+    .layout { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0 0 12px; color: var(--gray-90); font-size: 1.1rem; }
+
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+    textarea, input[type=text], input[type=password] { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; line-height: 1.4; }
+    textarea { min-height: 90px; resize: vertical; }
+    textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    select { width: 100%; padding: 9px 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; }
+
+    .btn { min-height: 40px; padding: 8px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 6px 14px rgba(64, 64, 65, .06); }
+    .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .btn.ghost { background: transparent; border-color: var(--gray-30); color: var(--gray-70); box-shadow: none; }
+    .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+    .mode-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .mode-pill.heuristic { background: var(--gray-10); color: var(--navy); }
+    .mode-pill.ai { background: linear-gradient(120deg, var(--orange), var(--gold)); color: var(--white); }
+
+    .examples { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .example-chip { padding: 5px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--white); color: var(--gray-70); font-weight: 700; font-size: .78rem; cursor: pointer; }
+    .example-chip:hover { border-color: var(--navy); color: var(--navy); }
+
+    .context-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .context-btn { padding: 8px 6px; border: 2px solid var(--border); border-radius: 6px; background: var(--white); color: var(--gray-70); font-weight: 700; font-size: .82rem; cursor: pointer; text-align: center; }
+    .context-btn.active { border-color: var(--navy); background: var(--gray-10); color: var(--navy); }
+
+    .stage { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); min-height: 60vh; }
+    .stage-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .stage-header h2 { margin: 0; color: var(--navy); font-size: 1.2rem; }
+    .stage-meta { color: var(--gray-50); font-size: .82rem; }
+
+    .empty { display: grid; place-items: center; gap: 10px; padding: 32px 16px; text-align: center; color: var(--gray-50); border: 2px dashed var(--border); border-radius: var(--radius); }
+    .empty .splat { font-size: 3rem; }
+    .empty p { margin: 0; font-size: 1rem; max-width: 32ch; line-height: 1.4; }
+
+    .estimate-card { padding: 20px 22px; border: 2px solid var(--border); border-radius: 12px; background: linear-gradient(180deg, #f8f6ff, #eef2ff); display: grid; gap: 16px; }
+    .estimate-range { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .estimate-range .big { font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; color: var(--navy); line-height: 1; }
+    .estimate-range .sub { color: var(--gray-50); font-size: 1rem; font-weight: 700; }
+    .estimate-realistic { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--orange); color: var(--white); border-radius: 999px; font-weight: 800; font-size: .9rem; }
+
+    .phases { display: grid; gap: 6px; padding: 0; list-style: none; margin: 0; }
+    .phase { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; background: var(--white); border: 2px solid var(--border); border-radius: 6px; }
+    .phase-name { font-weight: 700; color: var(--gray-90); font-size: .95rem; }
+    .phase-time { color: var(--navy); font-weight: 800; font-size: .92rem; white-space: nowrap; }
+
+    .bar { height: 12px; background: var(--gray-10); border-radius: 999px; overflow: hidden; display: flex; }
+    .bar > span { display: block; height: 100%; transition: width .3s; }
+    .bar-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: .78rem; color: var(--gray-50); margin-top: 4px; }
+    .bar-legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+    .caveats { padding: 12px 14px; border-left: 4px solid var(--orange); background: #fffbeb; color: var(--gray-90); border-radius: 6px; font-size: .9rem; line-height: 1.5; }
+    .caveats h3 { margin: 0 0 6px; font-size: .9rem; color: var(--orange); text-transform: uppercase; letter-spacing: .06em; }
+    .caveats ul { margin: 0; padding-left: 18px; }
+    .caveats li { margin-bottom: 4px; }
+
+    .stage-footer { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid var(--gray-10); }
+    .stage-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(140%); padding: 10px 18px; background: var(--gray-90); color: var(--white); border-radius: 999px; font-weight: 700; font-size: .9rem; box-shadow: 0 12px 26px rgba(0,0,0,.18); transition: transform .25s ease; z-index: 100; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
+
+    .modal-veil { position: fixed; inset: 0; background: rgba(17, 24, 39, .55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 80; }
+    .modal-veil.show { display: flex; }
+    .modal { width: min(540px, 100%); background: var(--white); border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,.25); padding: 20px; max-height: 90vh; overflow: auto; }
+    .modal h3 { margin: 0 0 10px; color: var(--navy); }
+    .modal p.intro { margin: 0 0 14px; color: var(--gray-70); font-size: .9rem; line-height: 1.45; }
+    .modal .field { margin-bottom: 12px; }
+    .modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+    .radio-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 700; color: var(--gray-70); text-transform: none; letter-spacing: 0; font-size: .92rem; }
+    .privacy-note { margin: 10px 0 0; padding: 10px 12px; background: var(--gray-10); border-radius: 6px; color: var(--gray-70); font-size: .82rem; line-height: 1.45; }
+
+    footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
+    footer.foot a { color: var(--navy); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Clock Wizard</h1>
+        <p class="tagline">Describe a task, get an honest time estimate — with phase breakdown and an ADHD-tax allowance so you don't over-promise.</p>
+      </div>
+      <a class="home-link" href="../../index.html">Home</a>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-label="Task input">
+        <h2>What's the task?</h2>
+        <div class="field">
+          <label for="taskInput">Describe it in one line</label>
+          <textarea id="taskInput" placeholder="e.g. Write a one-page book report on The Outsiders"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Try one of these</label>
+          <div class="examples" id="exampleChips"></div>
+        </div>
+
+        <div class="field">
+          <label>How are you feeling today?</label>
+          <div class="context-row" role="radiogroup" aria-label="Context">
+            <button type="button" class="context-btn" data-ctx="focused">🧘 Focused</button>
+            <button type="button" class="context-btn active" data-ctx="normal">🙂 Normal</button>
+            <button type="button" class="context-btn" data-ctx="scattered">🌀 Scattered</button>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="estimateBtn">Estimate →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+        </div>
+
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+          Clock Wizard works without an account or API key — it uses verb-keyed time templates.
+          Add an Anthropic or OpenAI key in Settings for a tailored estimate.
+        </p>
+      </section>
+
+      <section class="stage" aria-label="Estimate">
+        <div class="stage-header">
+          <h2 id="stageTitle">Your estimate will appear here</h2>
+          <span class="stage-meta" id="stageMeta"></span>
+        </div>
+
+        <div id="stageBody">
+          <div class="empty" id="emptyState">
+            <div class="splat" aria-hidden="true">⏳</div>
+            <p>Type a task and hit <strong>Estimate</strong>. You'll get a realistic range, phase breakdown, and an honest reality-check.</p>
+          </div>
+        </div>
+
+        <div class="stage-footer" id="stageFooter" hidden>
+          <span class="stage-meta" id="footerMeta"></span>
+          <div class="stage-actions">
+            <button type="button" class="btn" id="copyBtn" title="Copy estimate as text">Copy estimate</button>
+            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
+    </footer>
+  </div>
+
+  <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal">
+      <h3 id="settingsTitle">AI mode (optional)</h3>
+      <p class="intro">Bring your own API key to unlock context-aware estimates. Your key stays in this browser only — saved to <code>localStorage</code>, sent directly to the provider you choose.</p>
+      <div class="field">
+        <label>Provider</label>
+        <div class="radio-row">
+          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
+          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="apiKeyInput">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+      </div>
+      <div class="field">
+        <label for="modelInput">Model (optional override)</label>
+        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+      </div>
+      <div class="privacy-note"><strong>No server.</strong> Clock Wizard is a single static page. Requests go from your browser straight to Anthropic or OpenAI. Don't use a shared/admin key on a public computer.</div>
+      <div class="actions">
+        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const STORAGE_KEY = "clockWizard.v1";
+
+  const taskInput = $("taskInput");
+  const estimateBtn = $("estimateBtn");
+  const stageBody = $("stageBody");
+  const stageTitle = $("stageTitle");
+  const stageMeta = $("stageMeta");
+  const stageFooter = $("stageFooter");
+  const footerMeta = $("footerMeta");
+  const emptyState = $("emptyState");
+  const modePill = $("modePill");
+  const exampleChips = $("exampleChips");
+  const toast = $("toast");
+  const settingsBtn = $("settingsBtn");
+  const settingsModal = $("settingsModal");
+  const apiKeyInput = $("apiKeyInput");
+  const modelInput = $("modelInput");
+
+  let settings = loadSettings();
+  let currentEstimate = null;
+  let context = "normal";
+
+  document.querySelectorAll(".context-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".context-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      context = b.dataset.ctx;
+    });
+  });
+
+  const EXAMPLES = [
+    "Email my professor about a paper extension",
+    "Write a one-page book report on The Outsiders",
+    "Clean my bedroom",
+    "Prep tomorrow's slide deck on photosynthesis",
+    "Grade 24 short-answer essays",
+    "Plan a 3-day weekend trip to Austin",
+    "File my taxes",
+    "Practice violin for the recital",
+  ];
+  EXAMPLES.forEach(t => {
+    const chip = document.createElement("button");
+    chip.type = "button"; chip.className = "example-chip"; chip.textContent = t;
+    chip.addEventListener("click", () => { taskInput.value = t; taskInput.focus(); });
+    exampleChips.appendChild(chip);
+  });
+
+  // ====== TIME TEMPLATES (minutes)
+  // Each: { min, max, phases:[[name, share]] } — shares sum to ~1.0
+  const TIME_TEMPLATES = {
+    "email-short":   { min: 3,   max: 10,  phases: [["Read the original", .2], ["Draft the reply", .55], ["Re-read + send", .25]] },
+    "email-tricky":  { min: 15,  max: 45,  phases: [["Think through the angle", .2], ["Draft", .45], ["Re-read for tone", .2], ["Send + log", .15]] },
+    "phone-call":    { min: 5,   max: 25,  phases: [["Find a quiet spot", .1], ["Notes / agenda", .15], ["The call itself", .55], ["Recap + follow-up", .2]] },
+    "essay-short":   { min: 60,  max: 150, phases: [["Outline", .15], ["First draft", .55], ["Edit + format", .2], ["Submit", .1]] },
+    "essay-long":    { min: 240, max: 480, phases: [["Research", .25], ["Outline", .1], ["Draft", .4], ["Edit + cite + format", .2], ["Submit", .05]] },
+    "report":        { min: 120, max: 300, phases: [["Pull the data", .2], ["Outline", .1], ["Draft", .45], ["Edit + format", .2], ["Send", .05]] },
+    "slides":        { min: 90,  max: 240, phases: [["Outline the story", .2], ["Build slides", .5], ["Polish + rehearse", .25], ["Export", .05]] },
+    "grade":         { min: 60,  max: 240, phases: [["Set up rubric / quiet space", .1], ["Grade", .8], ["Enter scores", .1]] },
+    "clean-room":    { min: 30,  max: 90,  phases: [["Pick up loose items", .25], ["Sort / declutter", .25], ["Wipe surfaces", .2], ["Vacuum / sweep", .2], ["Take trash out", .1]] },
+    "clean-kitchen": { min: 20,  max: 60,  phases: [["Clear dishes", .35], ["Wipe counters + stove", .35], ["Sweep / mop", .25], ["Take trash out", .05]] },
+    "laundry":       { min: 90,  max: 180, phases: [["Sort + start wash", .1], ["Wash cycle (waiting)", .35], ["Dry cycle (waiting)", .4], ["Fold + put away", .15]] },
+    "study":         { min: 45,  max: 180, phases: [["Skim / overview", .15], ["Deep read with notes", .5], ["Self-quiz", .25], ["Mark weak spots", .1]] },
+    "research":      { min: 30,  max: 120, phases: [["Frame the question", .1], ["Find sources", .3], ["Take notes", .35], ["Synthesize", .2], ["Cite", .05]] },
+    "lesson-plan":   { min: 30,  max: 90,  phases: [["Pick objective", .15], ["Sketch activity", .3], ["Build materials", .35], ["Print / share", .2]] },
+    "appointment":   { min: 60,  max: 120, phases: [["Travel there", .25], ["Wait", .15], ["The appointment", .4], ["Travel back", .2]] },
+    "grocery":       { min: 30,  max: 75,  phases: [["Make the list", .1], ["Travel there", .2], ["Shop", .45], ["Travel back + unpack", .25]] },
+    "errand":        { min: 15,  max: 60,  phases: [["Get in the car / out the door", .15], ["The errand itself", .5], ["Travel back", .35]] },
+    "exercise":      { min: 20,  max: 75,  phases: [["Change + warm up", .15], ["Main workout", .65], ["Cool down + shower", .2]] },
+    "practice":      { min: 20,  max: 60,  phases: [["Warm up", .2], ["Drill the hard parts", .55], ["Play through", .2], ["Pack up", .05]] },
+    "pay-bill":      { min: 3,   max: 15,  phases: [["Find the bill", .25], ["Pay it", .5], ["File the receipt", .25]] },
+    "trip-plan":     { min: 60,  max: 240, phases: [["Pick the dates + destination", .15], ["Book travel", .3], ["Book lodging", .25], ["Plan activities", .25], ["Confirm + share itinerary", .05]] },
+    "pack":          { min: 30,  max: 60,  phases: [["List what you need", .15], ["Lay it out", .3], ["Pack the bag", .45], ["Double-check essentials", .1]] },
+    "taxes":         { min: 90,  max: 300, phases: [["Gather documents", .35], ["Enter the data", .4], ["Review + file", .2], ["File + save copy", .05]] },
+    "code-feature":  { min: 60,  max: 240, phases: [["Plan + read existing code", .2], ["Write the change", .45], ["Test + debug", .25], ["PR + cleanup", .1]] },
+    "default":       { min: 20,  max: 60,  phases: [["Get clear on what's needed", .15], ["Gather what you'll use", .15], ["Do the main thing", .55], ["Wrap up + check", .15]] },
+  };
+
+  const KEYWORDS = [
+    [/\b(email|reply|message)\b.*\b(tricky|extension|hard|difficult|angry|sensitive|to my boss|to (my )?prof)\b/i, "email-tricky"],
+    [/\b(email|reply|respond|write to|message)\b/i, "email-short"],
+    [/\b(call|phone|ring|talk to .* on the phone)\b/i, "phone-call"],
+    [/\b(write|draft).*\b(thesis|dissertation|research paper|long essay|book chapter)\b/i, "essay-long"],
+    [/\b(write|draft).*\b(essay|paper|article|book report|blog post|story|memo)\b/i, "essay-short"],
+    [/\b(report|write up|summary)\b/i, "report"],
+    [/\b(slide(s)?|deck|presentation|powerpoint|keynote)\b/i, "slides"],
+    [/\b(grade|grading|mark essays|score (the )?papers)\b/i, "grade"],
+    [/\b(clean|tidy).*\b(kitchen|sink|stove|counters?|dishes)\b/i, "clean-kitchen"],
+    [/\b(clean|tidy|declutter|vacuum|sweep).*\b(room|bedroom|house|apartment|office|space)\b/i, "clean-room"],
+    [/\b(clean|tidy|declutter)\b/i, "clean-room"],
+    [/\b(laundry|wash clothes)\b/i, "laundry"],
+    [/\b(study|review for|cram|prep for (?:an?|the)? ?(?:test|exam|quiz)|test prep)\b/i, "study"],
+    [/\b(research|investigate|dig into|find out about)\b/i, "research"],
+    [/\b(lesson plan|sub plans?|prep .*(?:lesson|class|unit))\b/i, "lesson-plan"],
+    [/\b(doctor|dentist|therapist|appointment|checkup)\b/i, "appointment"],
+    [/\b(grocer|groceries|supermarket|trader joe|costco|hy-vee|kroger|wholefoods)\b/i, "grocery"],
+    [/\b(post office|dmv|pharmacy|pick up|drop off|return .* package)\b/i, "errand"],
+    [/\b(workout|exercise|gym|run|jog|yoga|spin class|pilates|swim)\b/i, "exercise"],
+    [/\b(practice|rehearse|drill .* (piano|violin|guitar|saxophone|cello)|practice .* (piano|violin|guitar|recital))\b/i, "practice"],
+    [/\b(pay .* bill|pay rent|pay credit card)\b/i, "pay-bill"],
+    [/\b(plan .* (trip|vacation|weekend)|book .* trip|book travel|trip to)\b/i, "trip-plan"],
+    [/\b(pack|suitcase|prep .* (trip|travel))\b/i, "pack"],
+    [/\b(file .* taxes|tax return|do taxes|file taxes)\b/i, "taxes"],
+    [/\b(implement|build .* feature|fix .* bug|debug|write code|code review)\b/i, "code-feature"],
+  ];
+
+  function classify(t) { for (const [re, k] of KEYWORDS) if (re.test(t)) return k; return "default"; }
+
+  function heuristicEstimate(text, ctx) {
+    const key = classify(text);
+    const tmpl = TIME_TEMPLATES[key];
+    let { min, max, phases } = tmpl;
+    // Apply context scaling. Focused tightens to lower half, scattered pushes 1.4× max.
+    if (ctx === "focused") { max = Math.round(min + (max - min) * 0.55); }
+    else if (ctx === "scattered") { max = Math.round(max * 1.4); min = Math.round(min * 1.15); }
+    // Realistic = midpoint of (current) range + an ADHD-tax allowance scaled by context.
+    const adhdTax = ctx === "focused" ? 0.05 : ctx === "scattered" ? 0.3 : 0.15;
+    const realistic = Math.round(((min + max) / 2) * (1 + adhdTax));
+    // Phase breakdown anchored on the realistic estimate.
+    const phaseLines = phases.map(([name, share]) => ({ name, mins: Math.max(1, Math.round(realistic * share)) }));
+
+    const caveats = buildCaveats(key, ctx, realistic);
+    return { key, label: prettyKey(key), min, max, realistic, phases: phaseLines, caveats, source: "heuristic" };
+  }
+
+  function prettyKey(k) {
+    return ({
+      "email-short": "Quick email",
+      "email-tricky": "Tricky email",
+      "phone-call": "Phone call",
+      "essay-short": "Short essay / report",
+      "essay-long": "Long-form essay",
+      "report": "Report",
+      "slides": "Slide deck",
+      "grade": "Grading",
+      "clean-room": "Cleaning a room",
+      "clean-kitchen": "Cleaning the kitchen",
+      "laundry": "Laundry",
+      "study": "Studying",
+      "research": "Research",
+      "lesson-plan": "Lesson plan",
+      "appointment": "Appointment (with travel)",
+      "grocery": "Grocery run",
+      "errand": "Errand",
+      "exercise": "Workout",
+      "practice": "Practice session",
+      "pay-bill": "Pay a bill",
+      "trip-plan": "Trip planning",
+      "pack": "Packing",
+      "taxes": "Filing taxes",
+      "code-feature": "Code change",
+      "default": "General task",
+    })[k] || "Task";
+  }
+
+  function buildCaveats(key, ctx, realistic) {
+    const c = [];
+    if (ctx === "scattered") c.push("You said you're scattered — give yourself permission to take longer than planned.");
+    if (realistic >= 120) c.push("Plan at least one real break — 5 min walk or stretch — somewhere in the middle.");
+    if (["laundry","trip-plan","appointment","taxes"].includes(key)) c.push("This estimate includes waiting / travel that you can multitask through.");
+    if (["essay-short","essay-long","report","slides"].includes(key)) c.push("Add 15–25% if you haven't started thinking yet — the warm-up is real work.");
+    if (["clean-room","clean-kitchen"].includes(key)) c.push("Set a timer for the lower number — you can almost always stop earlier than you think.");
+    if (key === "default") c.push("No template matched, so this is a generic guess. Add more detail to the task description for a sharper number.");
+    if (!c.length) c.push("Add 10–15 min on top if you're transitioning straight from another task.");
+    return c;
+  }
+
+  // ====== AI
+  function loadSettings() {
+    try { const r = localStorage.getItem(STORAGE_KEY); if (!r) return { provider: "anthropic", apiKey: "", model: "" }; return JSON.parse(r); }
+    catch { return { provider: "anthropic", apiKey: "", model: "" }; }
+  }
+  function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
+  function refreshModePill() {
+    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
+    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+  }
+  refreshModePill();
+
+  function buildPrompt(text, ctx) {
+    return `You are Clock Wizard, an honest time estimator for neurodivergent users (ADHD/autism).
+Estimate how long this task will realistically take. The user reports they are feeling: "${ctx}" (focused / normal / scattered).
+Return ONLY a JSON object of shape:
+{"label":"...short task name...","min":12,"max":45,"realistic":30,"phases":[{"name":"...","mins":10}],"caveats":["...","..."]}
+Rules:
+- All times in MINUTES, as integers.
+- "min" and "max" bracket the realistic range; "realistic" is your single honest best guess including ADHD-tax (transitions, setup).
+- "phases" should add up to roughly "realistic" minutes, 3–6 phases.
+- "caveats" are 1–3 short honest reality-checks (no fluff).
+- Do not be optimistic. Most tasks take longer than people think.
+
+Task: ${text}`;
+  }
+  async function aiEstimate(text, ctx) {
+    const prompt = buildPrompt(text, ctx);
+    return settings.provider === "anthropic" ? aiAnthropic(prompt) : aiOpenAI(prompt);
+  }
+  async function aiAnthropic(prompt) {
+    const model = settings.model || "claude-haiku-4-5-20251001";
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": settings.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model, max_tokens: 700, messages: [{ role: "user", content: prompt }] }),
+    });
+    if (!res.ok) throw new Error(`Anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    return parseEstimate((data.content || []).map(b => b.text || "").join(""));
+  }
+  async function aiOpenAI(prompt) {
+    const model = settings.model || "gpt-4o-mini";
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", "authorization": `Bearer ${settings.apiKey}` },
+      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.3, response_format: { type: "json_object" } }),
+    });
+    if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    return parseEstimate(data.choices?.[0]?.message?.content || "");
+  }
+  function parseEstimate(text) {
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error("AI response was not JSON");
+    const o = JSON.parse(m[0]);
+    return {
+      key: "ai", label: String(o.label || "Task"),
+      min: +o.min || 0, max: +o.max || 0, realistic: +o.realistic || 0,
+      phases: (o.phases || []).map(p => ({ name: String(p.name || "Step"), mins: +p.mins || 0 })),
+      caveats: Array.isArray(o.caveats) && o.caveats.length ? o.caveats.map(String) : ["Be kind to yourself — this is an estimate, not a contract."],
+      source: "ai",
+    };
+  }
+
+  // ====== RENDER
+  function fmt(m) {
+    if (m < 1) return "<1 min";
+    if (m < 60) return `${m} min`;
+    const h = Math.floor(m / 60), r = m % 60;
+    return r ? `${h} h ${r} min` : `${h} h`;
+  }
+  function render(est) {
+    stageTitle.textContent = est.label;
+    stageMeta.textContent = `${est.source === "ai" ? "AI" : "Heuristic"} · context: ${context}`;
+    stageBody.innerHTML = "";
+
+    const card = document.createElement("div");
+    card.className = "estimate-card";
+
+    const range = document.createElement("div");
+    range.className = "estimate-range";
+    range.innerHTML = `<span class="big">${fmt(est.min)} – ${fmt(est.max)}</span><span class="sub">realistic range</span>`;
+    card.appendChild(range);
+
+    const realistic = document.createElement("div");
+    realistic.innerHTML = `<span class="estimate-realistic">🎯 Honest target: ${fmt(est.realistic)}</span>`;
+    card.appendChild(realistic);
+
+    // Phase bar
+    const totalMins = est.phases.reduce((a, b) => a + b.mins, 0) || est.realistic || 1;
+    const colors = ["#7c3aed","#a855f7","#f97316","#22c55e","#facc15","#14b8a6"];
+    const bar = document.createElement("div"); bar.className = "bar";
+    est.phases.forEach((p, i) => {
+      const span = document.createElement("span");
+      span.style.width = `${(p.mins / totalMins) * 100}%`;
+      span.style.background = colors[i % colors.length];
+      span.title = `${p.name} — ${fmt(p.mins)}`;
+      bar.appendChild(span);
+    });
+    card.appendChild(bar);
+
+    const legend = document.createElement("div"); legend.className = "bar-legend";
+    est.phases.forEach((p, i) => {
+      const item = document.createElement("span");
+      item.innerHTML = `<span class="swatch" style="background:${colors[i % colors.length]}"></span>${escapeHtml(p.name)}`;
+      legend.appendChild(item);
+    });
+    card.appendChild(legend);
+
+    const ul = document.createElement("ul"); ul.className = "phases";
+    est.phases.forEach(p => {
+      const li = document.createElement("li"); li.className = "phase";
+      li.innerHTML = `<span class="phase-name">${escapeHtml(p.name)}</span><span class="phase-time">${fmt(p.mins)}</span>`;
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+
+    const cav = document.createElement("div"); cav.className = "caveats";
+    cav.innerHTML = `<h3>Honest check</h3><ul>${est.caveats.map(c => `<li>${escapeHtml(c)}</li>`).join("")}</ul>`;
+    card.appendChild(cav);
+
+    stageBody.appendChild(card);
+    stageFooter.hidden = false;
+    footerMeta.textContent = `Total phases: ${est.phases.length} · sum ${fmt(est.phases.reduce((a,b)=>a+b.mins,0))}`;
+  }
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+  // ====== ENTRY
+  async function doEstimate() {
+    const text = taskInput.value.trim();
+    if (!text) { taskInput.focus(); showToast("Type a task first.", true); return; }
+    estimateBtn.disabled = true;
+    const orig = estimateBtn.textContent;
+    estimateBtn.textContent = settings.apiKey ? "Asking Claude…" : "Estimating…";
+    try {
+      currentEstimate = settings.apiKey ? await aiEstimate(text, context) : heuristicEstimate(text, context);
+      render(currentEstimate);
+    } catch (err) {
+      console.error(err);
+      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      currentEstimate = heuristicEstimate(text, context);
+      render(currentEstimate);
+    } finally { estimateBtn.disabled = false; estimateBtn.textContent = orig; }
+  }
+  estimateBtn.addEventListener("click", doEstimate);
+  taskInput.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doEstimate(); });
+
+  $("clearBtn").addEventListener("click", () => {
+    currentEstimate = null; stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
+    stageTitle.textContent = "Your estimate will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
+  });
+  $("copyBtn").addEventListener("click", async () => {
+    if (!currentEstimate) return;
+    const e = currentEstimate;
+    const text = [
+      `Task: ${taskInput.value.trim()}`,
+      `Type: ${e.label}`,
+      `Range: ${fmt(e.min)} – ${fmt(e.max)}`,
+      `Honest target: ${fmt(e.realistic)}`,
+      "",
+      "Phases:",
+      ...e.phases.map(p => `  • ${p.name} — ${fmt(p.mins)}`),
+      "",
+      "Caveats:",
+      ...e.caveats.map(c => `  • ${c}`),
+    ].join("\n");
+    try { await navigator.clipboard.writeText(text); showToast("Estimate copied."); }
+    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+  });
+
+  // ====== Settings modal
+  function openSettings() {
+    apiKeyInput.value = settings.apiKey || ""; modelInput.value = settings.model || "";
+    const radio = document.querySelector(`input[name=provider][value="${settings.provider}"]`); if (radio) radio.checked = true;
+    settingsModal.classList.add("show"); apiKeyInput.focus();
+  }
+  function closeSettings() { settingsModal.classList.remove("show"); }
+  settingsBtn.addEventListener("click", openSettings);
+  $("cancelSettingsBtn").addEventListener("click", closeSettings);
+  settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) closeSettings(); });
+  $("saveSettingsBtn").addEventListener("click", () => {
+    const provider = document.querySelector('input[name=provider]:checked').value;
+    saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
+    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    closeSettings();
+  });
+  $("clearKeyBtn").addEventListener("click", () => {
+    apiKeyInput.value = ""; modelInput.value = "";
+    saveSettings({ provider: settings.provider, apiKey: "", model: "" });
+    showToast("Key cleared.");
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
+
+  let toastTimer = null;
+  function showToast(msg, isError = false) {
+    toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
+  }
+  </script>
+</body>
+</html>
