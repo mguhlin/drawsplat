@@ -1,0 +1,93 @@
+name: Refresh blog RSS snapshot
+
+# Pulls the latest curated DrawSplat feed from Raindrop.io and commits
+# a fresh snapshot to blog/drawsplat.rss if posts actually changed.
+# Keeps the rendered cards on /blog/ current without manual export.
+#
+# Subscribers to the live Raindrop feed (the Subscribe-via-RSS button
+# points there) don't depend on this — they get updates the moment a
+# new bookmark hits the collection. This workflow only refreshes the
+# on-page snapshot that the rendered blog cards read from.
+
+on:
+  schedule:
+    # Daily at 03:17 UTC — off-peak; intentionally not on the hour to
+    # avoid the GitHub Actions cron stampede.
+    - cron: '17 3 * * *'
+  # Manual trigger from the Actions tab. Useful right after publishing
+  # a new post if you want the snapshot to refresh immediately.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Prevent overlapping runs (cron + manual dispatch) from racing on the
+# file. With only one job at a time, the latest scheduled run always
+# wins and the file stays consistent.
+concurrency:
+  group: refresh-blog-rss
+  cancel-in-progress: false
+
+env:
+  FEED_URL: https://raindrop.io/collection/71392298/feed
+  SNAPSHOT: blog/drawsplat.rss
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Fetch latest Raindrop RSS
+        run: |
+          set -euo pipefail
+          # -f fails the build on HTTP errors so we never overwrite the
+          # snapshot with an error page. -L follows redirects (Raindrop
+          # bounces through a CDN). --max-time caps stalls.
+          curl -fL --silent --show-error --max-time 60 \
+            "$FEED_URL" -o "${SNAPSHOT}.new"
+
+          # Quick structural sanity check — must look like RSS 2.0 with
+          # at least one item. Bail early if the upstream changed shape.
+          head -3 "${SNAPSHOT}.new"
+          grep -q '<rss' "${SNAPSHOT}.new"
+          if ! grep -q '<item>' "${SNAPSHOT}.new"; then
+            echo "Fetched feed has no <item> entries — refusing to commit." >&2
+            exit 1
+          fi
+
+      - name: Decide whether to commit (ignores lastBuildDate churn)
+        id: diff
+        run: |
+          set -euo pipefail
+          # Raindrop rewrites <lastBuildDate> on every fetch even when no
+          # post changed. Strip it from both files before diffing so a
+          # no-op cron run doesn't produce a noise commit + Cloudflare
+          # Pages rebuild.
+          strip_build_date() {
+            sed 's#<lastBuildDate>[^<]*</lastBuildDate>##g' "$1"
+          }
+          if [ -f "$SNAPSHOT" ] && \
+             diff -q <(strip_build_date "$SNAPSHOT") \
+                     <(strip_build_date "${SNAPSHOT}.new") > /dev/null; then
+            echo "No real changes — skipping commit."
+            rm "${SNAPSHOT}.new"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            mv "${SNAPSHOT}.new" "$SNAPSHOT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push the refreshed snapshot
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$SNAPSHOT"
+          ITEMS=$(grep -c '<item>' "$SNAPSHOT" || echo "?")
+          git commit \
+            -m "Refresh blog RSS snapshot from Raindrop ($ITEMS items)" \
+            -m "Automated daily refresh by .github/workflows/refresh-blog-rss.yml. Subscribers to https://raindrop.io/collection/71392298/feed get updates instantly; this commit keeps the on-page /blog/ snapshot in sync too."
+          git push origin HEAD:main
