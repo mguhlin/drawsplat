@@ -1,0 +1,598 @@
+/* Brain Sort — locale dictionary. Loaded after assets/js/widget-i18n.js
+   and before the inline widget script.  AI-seeded; review by native
+   speakers recommended before classroom rollout. */
+WidgetI18n.register('brain-sort', {
+
+  // ===========================================================
+  //  ENGLISH (source of truth)
+  // ===========================================================
+  en: {
+    'doc.title': 'Brain Sort — DrawSplat Tools',
+    'header.eyebrow': 'DrawSplat™ Tools',
+    'header.h1': 'Brain Sort',
+    'header.tagline': "Dump everything that's in your head — one thought per line. Brain Sort groups it into a tidy checklist by category, so you can stop juggling.",
+    'header.home': 'Home',
+
+    'panel.h2': "What's in your head?",
+    'panel.dumpLabel': 'One thought per line (rambling is fine)',
+    'panel.dumpPlaceholder': "email professor about extension\nlaundry\nbuy groceries\nfinish chapter 4 reading\ntext mom back\ngym at 5\npay phone bill\nbook dentist\npractice violin\nfix kitchen drawer",
+    'panel.examplesLabel': 'Try an example',
+    'panel.groupByLabel': 'Group by',
+    'panel.groupBy.topic': 'Topic — Work, Home, Health, etc.',
+    'panel.groupBy.effort': 'Effort — Quick wins vs. big tasks',
+    'panel.groupBy.when': 'When — Today, This week, Someday',
+    'panel.sortBtn': 'Sort it →',
+    'panel.sortBtn.busyAi': 'Asking Claude…',
+    'panel.sortBtn.busy': 'Sorting…',
+    'panel.settingsBtn': '⚙️ Settings',
+    'panel.intro': 'Brain Sort works without an account or API key — it categorizes by keywords. Add an Anthropic or OpenAI key in Settings for smarter grouping and renaming.',
+    'panel.langNote': 'Keyword categorization is tuned for English; switch to AI mode for accurate multilingual sorting.',
+
+    'mode.heuristic': 'Heuristic mode',
+    'mode.ai': 'AI mode · {provider}',
+
+    'example.studentWeek': 'Student week',
+    'example.workDay': 'Work day',
+    'example.teacherSunday': 'Teacher Sunday',
+
+    'stage.title.empty': 'Your sorted list will appear here',
+    'stage.title.sorted': 'Sorted',
+    'stage.empty.html': 'Paste a rambling brain dump and hit <strong>Sort it</strong>. You’ll get a grouped checklist you can edit, check off, and copy.',
+    'stage.meta.items.one': '{n} item',
+    'stage.meta.items.many': '{n} items',
+    'stage.meta.groups.one': '{n} group',
+    'stage.meta.groups.many': '{n} groups',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · AI',
+
+    'group.count.one': '{n} item',
+    'group.count.many': '{n} items',
+
+    'stage.copyMd': 'Copy as Markdown',
+    'stage.clear': 'Clear',
+    'stage.progress': '{done} of {total} done',
+
+    // Category titles (emojis stay in code)
+    'cat.work':     'Work',
+    'cat.home':     'Home',
+    'cat.errands':  'Errands',
+    'cat.health':   'Health & Self-care',
+    'cat.social':   'People',
+    'cat.learning': 'Learning',
+    'cat.money':    'Money',
+    'cat.creative': 'Creative',
+    'cat.school':   'School',
+    'cat.other':    'Other',
+
+    // Effort buckets
+    'effort.quick':  'Quick wins (under ~10 min)',
+    'effort.medium': 'Medium tasks (10–60 min)',
+    'effort.deep':   'Deep work (60+ min)',
+
+    // When buckets
+    'when.today':   'Today',
+    'when.week':    'This week',
+    'when.someday': 'Someday / unscheduled',
+
+    // Settings modal
+    'settings.h3': 'AI mode (optional)',
+    'settings.intro.html': 'Bring your own API key to unlock smarter categorization. Your key stays in this browser only — it’s saved to <code>localStorage</code> and sent directly to the provider you choose.',
+    'settings.providerLabel': 'Provider',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'API key',
+    'settings.keyPh': 'sk-... or sk-ant-...',
+    'settings.modelLabel': 'Model (optional override)',
+    'settings.modelPh': 'default: claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>No server.</strong> Brain Sort is a single static page. Requests go from your browser straight to Anthropic or OpenAI. Do not use a shared/admin key on a public computer.',
+    'settings.clearKey': 'Clear key',
+    'settings.cancel': 'Cancel',
+    'settings.save': 'Save',
+
+    // Toasts
+    'toast.empty': 'Type or paste a brain dump first.',
+    'toast.copied': 'Copied as Markdown.',
+    'toast.copyFailed': 'Couldn’t copy — your browser blocked clipboard access.',
+    'toast.aiReady': 'AI mode ready.',
+    'toast.heuristic': 'Heuristic mode (no key saved).',
+    'toast.keyCleared': 'Key cleared.',
+    'toast.aiFailed': 'AI call failed — using heuristic. {err}',
+
+    // Confirms
+    'confirm.clear': 'Clear sorted list?',
+
+    // Tooltips
+    'tip.remove': 'Remove',
+    'tip.editTask': 'Click to edit',
+
+    // Footer
+    'footer.html': 'Part of the DrawSplat™ Widgets collection. <a href="../../pages/features.html">Explore more</a>.',
+
+    'ai.lang': 'English',
+  },
+
+  es: {
+    'doc.title': 'Ordena-Mente — Herramientas DrawSplat',
+    'header.eyebrow': 'Herramientas DrawSplat™',
+    'header.h1': 'Ordena-Mente',
+    'header.tagline': 'Vuelca todo lo que tienes en la cabeza — un pensamiento por línea. Ordena-Mente lo agrupa en una lista ordenada por categoría para que dejes de hacer malabarismos.',
+    'header.home': 'Inicio',
+
+    'panel.h2': '¿Qué tienes en la cabeza?',
+    'panel.dumpLabel': 'Un pensamiento por línea (divagar está bien)',
+    'panel.dumpPlaceholder': 'escribir al profesor sobre prórroga\nlavar ropa\ncomprar comida\nterminar capítulo 4\nresponder a mamá\ngimnasio a las 5\npagar factura del móvil\npedir cita dental\npracticar violín\narreglar cajón de cocina',
+    'panel.examplesLabel': 'Prueba un ejemplo',
+    'panel.groupByLabel': 'Agrupar por',
+    'panel.groupBy.topic': 'Tema — Trabajo, Casa, Salud, etc.',
+    'panel.groupBy.effort': 'Esfuerzo — Tareas rápidas vs. grandes',
+    'panel.groupBy.when': 'Cuándo — Hoy, Esta semana, Algún día',
+    'panel.sortBtn': 'Ordenar →',
+    'panel.sortBtn.busyAi': 'Consultando a Claude…',
+    'panel.sortBtn.busy': 'Ordenando…',
+    'panel.settingsBtn': '⚙️ Ajustes',
+    'panel.intro': 'Ordena-Mente funciona sin cuenta ni clave API — categoriza por palabras clave. Añade una clave de Anthropic u OpenAI en Ajustes para agrupar y renombrar mejor.',
+    'panel.langNote': 'La categorización por palabras clave está optimizada para inglés; usa el modo IA para clasificación multilingüe precisa.',
+
+    'mode.heuristic': 'Modo heurístico',
+    'mode.ai': 'Modo IA · {provider}',
+
+    'example.studentWeek': 'Semana de estudiante',
+    'example.workDay': 'Día de trabajo',
+    'example.teacherSunday': 'Domingo del docente',
+
+    'stage.title.empty': 'Tu lista ordenada aparecerá aquí',
+    'stage.title.sorted': 'Ordenado',
+    'stage.empty.html': 'Pega un volcado mental y pulsa <strong>Ordenar</strong>. Obtendrás una lista agrupada para editar, marcar y copiar.',
+    'stage.meta.items.one': '{n} elemento',
+    'stage.meta.items.many': '{n} elementos',
+    'stage.meta.groups.one': '{n} grupo',
+    'stage.meta.groups.many': '{n} grupos',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · IA',
+
+    'group.count.one': '{n} elemento',
+    'group.count.many': '{n} elementos',
+
+    'stage.copyMd': 'Copiar como Markdown',
+    'stage.clear': 'Limpiar',
+    'stage.progress': '{done} de {total} completados',
+
+    'cat.work':     'Trabajo',
+    'cat.home':     'Hogar',
+    'cat.errands':  'Recados',
+    'cat.health':   'Salud y autocuidado',
+    'cat.social':   'Gente',
+    'cat.learning': 'Aprendizaje',
+    'cat.money':    'Dinero',
+    'cat.creative': 'Creativo',
+    'cat.school':   'Escuela',
+    'cat.other':    'Otros',
+
+    'effort.quick':  'Victorias rápidas (menos de ~10 min)',
+    'effort.medium': 'Tareas medianas (10–60 min)',
+    'effort.deep':   'Trabajo profundo (60+ min)',
+
+    'when.today':   'Hoy',
+    'when.week':    'Esta semana',
+    'when.someday': 'Algún día / sin programar',
+
+    'settings.h3': 'Modo IA (opcional)',
+    'settings.intro.html': 'Usa tu propia clave API para una categorización más inteligente. Tu clave se guarda solo en este navegador (en <code>localStorage</code>) y se envía directamente al proveedor que elijas.',
+    'settings.providerLabel': 'Proveedor',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'Clave API',
+    'settings.keyPh': 'sk-... o sk-ant-...',
+    'settings.modelLabel': 'Modelo (anular opcional)',
+    'settings.modelPh': 'por defecto: claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>Sin servidor.</strong> Ordena-Mente es una página estática. Las solicitudes van directamente desde tu navegador a Anthropic u OpenAI. No uses una clave compartida en un equipo público.',
+    'settings.clearKey': 'Borrar clave',
+    'settings.cancel': 'Cancelar',
+    'settings.save': 'Guardar',
+
+    'toast.empty': 'Primero escribe o pega un volcado mental.',
+    'toast.copied': 'Copiado como Markdown.',
+    'toast.copyFailed': 'No se pudo copiar — tu navegador bloqueó el acceso al portapapeles.',
+    'toast.aiReady': 'Modo IA listo.',
+    'toast.heuristic': 'Modo heurístico (sin clave guardada).',
+    'toast.keyCleared': 'Clave borrada.',
+    'toast.aiFailed': 'Falló la llamada a la IA — usando heurística. {err}',
+
+    'confirm.clear': '¿Limpiar la lista ordenada?',
+
+    'tip.remove': 'Eliminar',
+    'tip.editTask': 'Pulsa para editar',
+
+    'footer.html': 'Parte de la colección de Widgets DrawSplat™. <a href="../../pages/features.html">Explorar más</a>.',
+
+    'ai.lang': 'Spanish (español)',
+  },
+
+  vi: {
+    'doc.title': 'Brain Sort — Công cụ DrawSplat',
+    'header.eyebrow': 'Công cụ DrawSplat™',
+    'header.h1': 'Brain Sort',
+    'header.tagline': 'Đổ hết mọi thứ trong đầu — mỗi suy nghĩ một dòng. Brain Sort gom thành danh sách gọn theo nhóm để bạn không phải nhớ tất cả cùng lúc.',
+    'header.home': 'Trang chủ',
+
+    'panel.h2': 'Đang nghĩ gì?',
+    'panel.dumpLabel': 'Mỗi suy nghĩ một dòng (lan man cũng được)',
+    'panel.dumpPlaceholder': 'email cho giáo sư xin gia hạn\ngiặt đồ\nmua thực phẩm\nđọc hết chương 4\nnhắn tin lại cho mẹ\ngym lúc 5h\ntrả hóa đơn điện thoại\nđặt hẹn nha sĩ\nluyện violin\nsửa ngăn kéo bếp',
+    'panel.examplesLabel': 'Thử ví dụ',
+    'panel.groupByLabel': 'Nhóm theo',
+    'panel.groupBy.topic': 'Chủ đề — Công việc, Nhà, Sức khỏe, v.v.',
+    'panel.groupBy.effort': 'Công sức — Việc nhanh vs. việc lớn',
+    'panel.groupBy.when': 'Khi nào — Hôm nay, Tuần này, Một ngày nào đó',
+    'panel.sortBtn': 'Sắp xếp →',
+    'panel.sortBtn.busyAi': 'Đang hỏi Claude…',
+    'panel.sortBtn.busy': 'Đang sắp xếp…',
+    'panel.settingsBtn': '⚙️ Cài đặt',
+    'panel.intro': 'Brain Sort hoạt động không cần tài khoản hay khóa API — phân loại theo từ khóa. Thêm khóa Anthropic hoặc OpenAI trong Cài đặt để nhóm và đặt tên thông minh hơn.',
+    'panel.langNote': 'Phân loại từ khóa tối ưu cho tiếng Anh; dùng chế độ AI để phân loại đa ngôn ngữ chính xác.',
+
+    'mode.heuristic': 'Chế độ heuristic',
+    'mode.ai': 'Chế độ AI · {provider}',
+
+    'example.studentWeek': 'Tuần sinh viên',
+    'example.workDay': 'Ngày làm việc',
+    'example.teacherSunday': 'Chủ Nhật của giáo viên',
+
+    'stage.title.empty': 'Danh sách sắp xếp sẽ hiện ở đây',
+    'stage.title.sorted': 'Đã sắp xếp',
+    'stage.empty.html': 'Dán bản đổ ý nghĩ và bấm <strong>Sắp xếp</strong>. Bạn sẽ nhận danh sách theo nhóm để chỉnh sửa, đánh dấu và sao chép.',
+    'stage.meta.items.one': '{n} mục',
+    'stage.meta.items.many': '{n} mục',
+    'stage.meta.groups.one': '{n} nhóm',
+    'stage.meta.groups.many': '{n} nhóm',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · AI',
+
+    'group.count.one': '{n} mục',
+    'group.count.many': '{n} mục',
+
+    'stage.copyMd': 'Sao chép dạng Markdown',
+    'stage.clear': 'Xoá',
+    'stage.progress': '{done} trên {total} đã xong',
+
+    'cat.work':     'Công việc',
+    'cat.home':     'Nhà',
+    'cat.errands':  'Việc vặt',
+    'cat.health':   'Sức khỏe & chăm sóc bản thân',
+    'cat.social':   'Mọi người',
+    'cat.learning': 'Học',
+    'cat.money':    'Tiền',
+    'cat.creative': 'Sáng tạo',
+    'cat.school':   'Trường',
+    'cat.other':    'Khác',
+
+    'effort.quick':  'Việc nhanh (dưới ~10 phút)',
+    'effort.medium': 'Việc vừa (10–60 phút)',
+    'effort.deep':   'Việc sâu (60+ phút)',
+
+    'when.today':   'Hôm nay',
+    'when.week':    'Tuần này',
+    'when.someday': 'Một ngày nào đó / chưa định',
+
+    'settings.h3': 'Chế độ AI (tuỳ chọn)',
+    'settings.intro.html': 'Đem khóa API của bạn để phân loại thông minh hơn. Khóa chỉ lưu trong trình duyệt này (trong <code>localStorage</code>) và gửi thẳng tới nhà cung cấp bạn chọn.',
+    'settings.providerLabel': 'Nhà cung cấp',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'Khóa API',
+    'settings.keyPh': 'sk-... hoặc sk-ant-...',
+    'settings.modelLabel': 'Mô hình (ghi đè tuỳ chọn)',
+    'settings.modelPh': 'mặc định: claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>Không máy chủ.</strong> Brain Sort là trang tĩnh đơn lẻ. Yêu cầu đi thẳng từ trình duyệt đến Anthropic hoặc OpenAI. Không dùng khóa chung trên máy công cộng.',
+    'settings.clearKey': 'Xoá khóa',
+    'settings.cancel': 'Huỷ',
+    'settings.save': 'Lưu',
+
+    'toast.empty': 'Nhập hoặc dán bản đổ ý nghĩ trước.',
+    'toast.copied': 'Đã sao chép dạng Markdown.',
+    'toast.copyFailed': 'Không sao chép được — trình duyệt chặn truy cập clipboard.',
+    'toast.aiReady': 'Chế độ AI đã sẵn sàng.',
+    'toast.heuristic': 'Chế độ heuristic (chưa lưu khóa).',
+    'toast.keyCleared': 'Đã xoá khóa.',
+    'toast.aiFailed': 'AI thất bại — dùng heuristic. {err}',
+
+    'confirm.clear': 'Xoá danh sách đã sắp xếp?',
+
+    'tip.remove': 'Xoá',
+    'tip.editTask': 'Bấm để chỉnh sửa',
+
+    'footer.html': 'Một phần bộ Widget DrawSplat™. <a href="../../pages/features.html">Khám phá thêm</a>.',
+
+    'ai.lang': 'Vietnamese (Tiếng Việt)',
+  },
+
+  ar: {
+    'doc.title': 'فرز الذهن — أدوات DrawSplat',
+    'header.eyebrow': 'أدوات DrawSplat™',
+    'header.h1': 'فرز الذهن',
+    'header.tagline': 'فرّغ كل ما يدور في رأسك — فكرة واحدة في كل سطر. ‏فرز الذهن يجمعها في قائمة مرتبة حسب الفئة، فلا تحتاج للموازنة في عقلك.',
+    'header.home': 'الرئيسية',
+
+    'panel.h2': 'ماذا يدور في رأسك؟',
+    'panel.dumpLabel': 'فكرة في كل سطر (الإسهاب مسموح)',
+    'panel.dumpPlaceholder': 'مراسلة الأستاذ بشأن التمديد\nالغسيل\nشراء البقالة\nإنهاء قراءة الفصل 4\nالرد على رسالة أمي\nالنادي الرياضي الساعة 5\nدفع فاتورة الهاتف\nحجز موعد طبيب الأسنان\nتدريب الكمان\nإصلاح درج المطبخ',
+    'panel.examplesLabel': 'جرّب مثالاً',
+    'panel.groupByLabel': 'التجميع حسب',
+    'panel.groupBy.topic': 'الموضوع — العمل، البيت، الصحة، إلخ',
+    'panel.groupBy.effort': 'الجهد — مهام سريعة مقابل مهام كبيرة',
+    'panel.groupBy.when': 'الوقت — اليوم، هذا الأسبوع، يوماً ما',
+    'panel.sortBtn': 'افرز →',
+    'panel.sortBtn.busyAi': 'يسأل Claude…',
+    'panel.sortBtn.busy': 'يفرز…',
+    'panel.settingsBtn': '⚙️ الإعدادات',
+    'panel.intro': 'فرز الذهن يعمل بدون حساب أو مفتاح API — يصنّف حسب الكلمات المفتاحية. أضف مفتاح Anthropic أو OpenAI في الإعدادات للحصول على تجميع وتسمية أذكى.',
+    'panel.langNote': 'التصنيف بالكلمات المفتاحية مُحسَّن للإنجليزية؛ استخدم وضع الذكاء الاصطناعي للتصنيف الدقيق متعدد اللغات.',
+
+    'mode.heuristic': 'الوضع التقليدي',
+    'mode.ai': 'وضع الذكاء الاصطناعي · {provider}',
+
+    'example.studentWeek': 'أسبوع طالب',
+    'example.workDay': 'يوم عمل',
+    'example.teacherSunday': 'أحد المعلّم',
+
+    'stage.title.empty': 'ستظهر قائمتك المُفرَزة هنا',
+    'stage.title.sorted': 'مُفرَز',
+    'stage.empty.html': 'الصق إفراغاً ذهنياً واضغط <strong>افرز</strong>. ستحصل على قائمة مُجمَّعة قابلة للتعديل والتمييز والنسخ.',
+    'stage.meta.items.one': 'عنصر واحد',
+    'stage.meta.items.many': '{n} عنصر',
+    'stage.meta.groups.one': 'مجموعة واحدة',
+    'stage.meta.groups.many': '{n} مجموعة',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · ذكاء اصطناعي',
+
+    'group.count.one': 'عنصر واحد',
+    'group.count.many': '{n} عنصر',
+
+    'stage.copyMd': 'نسخ كـ Markdown',
+    'stage.clear': 'مسح',
+    'stage.progress': '{done} من {total} مكتمل',
+
+    'cat.work':     'العمل',
+    'cat.home':     'البيت',
+    'cat.errands':  'مهام',
+    'cat.health':   'الصحة والرعاية الذاتية',
+    'cat.social':   'الناس',
+    'cat.learning': 'تعلّم',
+    'cat.money':    'مال',
+    'cat.creative': 'إبداعي',
+    'cat.school':   'المدرسة',
+    'cat.other':    'أخرى',
+
+    'effort.quick':  'إنجازات سريعة (أقل من ~10 دقائق)',
+    'effort.medium': 'مهام متوسطة (10–60 دقيقة)',
+    'effort.deep':   'عمل عميق (60+ دقيقة)',
+
+    'when.today':   'اليوم',
+    'when.week':    'هذا الأسبوع',
+    'when.someday': 'يوماً ما / غير مجدول',
+
+    'settings.h3': 'وضع الذكاء الاصطناعي (اختياري)',
+    'settings.intro.html': 'استخدم مفتاحك الخاص لتصنيف أذكى. يبقى المفتاح في هذا المتصفح فقط (في <code>localStorage</code>) ويُرسل مباشرة إلى المزود الذي تختاره.',
+    'settings.providerLabel': 'المزود',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'مفتاح API',
+    'settings.keyPh': 'sk-... أو sk-ant-...',
+    'settings.modelLabel': 'النموذج (اختياري)',
+    'settings.modelPh': 'افتراضياً: claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>بدون خادم.</strong> فرز الذهن صفحة ساكنة واحدة. الطلبات تذهب مباشرة من متصفحك إلى Anthropic أو OpenAI.',
+    'settings.clearKey': 'مسح المفتاح',
+    'settings.cancel': 'إلغاء',
+    'settings.save': 'حفظ',
+
+    'toast.empty': 'اكتب أو الصق إفراغاً ذهنياً أولاً.',
+    'toast.copied': 'تم النسخ كـ Markdown.',
+    'toast.copyFailed': 'تعذّر النسخ — منع المتصفح الوصول للحافظة.',
+    'toast.aiReady': 'وضع الذكاء الاصطناعي جاهز.',
+    'toast.heuristic': 'الوضع التقليدي (لم يُحفظ مفتاح).',
+    'toast.keyCleared': 'تم مسح المفتاح.',
+    'toast.aiFailed': 'فشل استدعاء الذكاء الاصطناعي — استخدام التقليدي. {err}',
+
+    'confirm.clear': 'مسح القائمة المُفرَزة؟',
+
+    'tip.remove': 'إزالة',
+    'tip.editTask': 'انقر للتعديل',
+
+    'footer.html': 'جزء من مجموعة أدوات DrawSplat™. <a href="../../pages/features.html">استكشف المزيد</a>.',
+
+    'ai.lang': 'Arabic (العربية)',
+  },
+
+  zh: {
+    'doc.title': 'Brain Sort — DrawSplat 工具',
+    'header.eyebrow': 'DrawSplat™ 工具',
+    'header.h1': 'Brain Sort',
+    'header.tagline': '把脑中所有想法倾倒出来 — 每行一条。Brain Sort 将它们按类别整理成清单，让你不再头脑混乱。',
+    'header.home': '首页',
+
+    'panel.h2': '脑中有什么？',
+    'panel.dumpLabel': '每行一条想法（散乱也没关系）',
+    'panel.dumpPlaceholder': '给教授写邮件申请延期\n洗衣服\n买菜\n读完第 4 章\n回妈妈短信\n5 点去健身房\n交电话费\n约牙医\n练小提琴\n修厨房抽屉',
+    'panel.examplesLabel': '试试示例',
+    'panel.groupByLabel': '分组方式',
+    'panel.groupBy.topic': '主题 — 工作、家、健康等',
+    'panel.groupBy.effort': '难度 — 快速任务对比大型任务',
+    'panel.groupBy.when': '何时 — 今天、本周、有空时',
+    'panel.sortBtn': '排序 →',
+    'panel.sortBtn.busyAi': '正在询问 Claude…',
+    'panel.sortBtn.busy': '排序中…',
+    'panel.settingsBtn': '⚙️ 设置',
+    'panel.intro': 'Brain Sort 无需账户或 API 密钥 — 按关键词分类。在设置中添加 Anthropic 或 OpenAI 密钥可获得更智能的分组和命名。',
+    'panel.langNote': '关键词分类针对英文优化；切换到 AI 模式以获得准确的多语言分类。',
+
+    'mode.heuristic': '启发式模式',
+    'mode.ai': 'AI 模式 · {provider}',
+
+    'example.studentWeek': '学生周',
+    'example.workDay': '工作日',
+    'example.teacherSunday': '教师周日',
+
+    'stage.title.empty': '排好的清单会显示在这里',
+    'stage.title.sorted': '已排序',
+    'stage.empty.html': '粘贴零散的想法并点击 <strong>排序</strong>。会得到可编辑、勾选、复制的分组清单。',
+    'stage.meta.items.one': '{n} 项',
+    'stage.meta.items.many': '{n} 项',
+    'stage.meta.groups.one': '{n} 组',
+    'stage.meta.groups.many': '{n} 组',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · AI',
+
+    'group.count.one': '{n} 项',
+    'group.count.many': '{n} 项',
+
+    'stage.copyMd': '以 Markdown 复制',
+    'stage.clear': '清空',
+    'stage.progress': '已完成 {done} / {total}',
+
+    'cat.work':     '工作',
+    'cat.home':     '家',
+    'cat.errands':  '杂事',
+    'cat.health':   '健康和自我照顾',
+    'cat.social':   '人际',
+    'cat.learning': '学习',
+    'cat.money':    '财务',
+    'cat.creative': '创意',
+    'cat.school':   '学校',
+    'cat.other':    '其它',
+
+    'effort.quick':  '快速完成（不超过 10 分钟）',
+    'effort.medium': '中等任务（10–60 分钟）',
+    'effort.deep':   '深度工作（60 分钟以上）',
+
+    'when.today':   '今天',
+    'when.week':    '本周',
+    'when.someday': '某天 / 未安排',
+
+    'settings.h3': 'AI 模式（可选）',
+    'settings.intro.html': '使用你自己的 API 密钥获得更智能的分类。密钥仅保存在此浏览器（<code>localStorage</code>）并直接发送到所选提供商。',
+    'settings.providerLabel': '提供商',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'API 密钥',
+    'settings.keyPh': 'sk-... 或 sk-ant-...',
+    'settings.modelLabel': '模型（可选覆盖）',
+    'settings.modelPh': '默认：claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>无服务器。</strong> Brain Sort 是单一静态页面。请求直接从浏览器发到 Anthropic 或 OpenAI。请勿在公共电脑使用共享密钥。',
+    'settings.clearKey': '清除密钥',
+    'settings.cancel': '取消',
+    'settings.save': '保存',
+
+    'toast.empty': '请先输入或粘贴想法。',
+    'toast.copied': '已复制为 Markdown。',
+    'toast.copyFailed': '无法复制 — 浏览器阻止了剪贴板访问。',
+    'toast.aiReady': 'AI 模式已就绪。',
+    'toast.heuristic': '启发式模式（未保存密钥）。',
+    'toast.keyCleared': '密钥已清除。',
+    'toast.aiFailed': 'AI 调用失败 — 改用启发式。{err}',
+
+    'confirm.clear': '清空排序清单？',
+
+    'tip.remove': '移除',
+    'tip.editTask': '点击编辑',
+
+    'footer.html': 'DrawSplat™ 工具集的一部分。<a href="../../pages/features.html">了解更多</a>。',
+
+    'ai.lang': 'Chinese (中文)',
+  },
+
+  uh: {
+    'doc.title': 'दिमाग़ क्रम — DrawSplat उपकरण',
+    'header.eyebrow': 'DrawSplat™ उपकरण',
+    'header.h1': 'दिमाग़ क्रम',
+    'header.tagline': 'दिमाग़ में जो भी है सब उगल दीजिए — एक पंक्ति एक विचार। दिमाग़ क्रम उन्हें श्रेणी अनुसार साफ़ सूची में रख देता है।',
+    'header.home': 'मुख्य पृष्ठ',
+
+    'panel.h2': 'दिमाग़ में क्या है?',
+    'panel.dumpLabel': 'एक विचार प्रति पंक्ति (बेतरतीब चलेगा)',
+    'panel.dumpPlaceholder': 'प्रोफ़ेसर को विस्तार के लिए ईमेल\nकपड़े धोना\nराशन ख़रीदना\nअध्याय 4 पूरा करना\nमाँ को जवाब देना\n5 बजे जिम\nफ़ोन बिल भरना\nदंत चिकित्सक से समय लेना\nवायलिन अभ्यास\nरसोई की दराज़ ठीक करना',
+    'panel.examplesLabel': 'उदाहरण आज़माएँ',
+    'panel.groupByLabel': 'समूहीकरण',
+    'panel.groupBy.topic': 'विषय — काम, घर, स्वास्थ्य आदि',
+    'panel.groupBy.effort': 'प्रयास — त्वरित बनाम बड़े काम',
+    'panel.groupBy.when': 'कब — आज, इस सप्ताह, किसी दिन',
+    'panel.sortBtn': 'क्रम लगाएँ →',
+    'panel.sortBtn.busyAi': 'Claude से पूछ रहे हैं…',
+    'panel.sortBtn.busy': 'क्रम लगा रहे हैं…',
+    'panel.settingsBtn': '⚙️ सेटिंग्स',
+    'panel.intro': 'दिमाग़ क्रम बिना खाते या API कुंजी के काम करता है — कीवर्ड से वर्गीकरण। सेटिंग्स में Anthropic या OpenAI कुंजी जोड़ें।',
+    'panel.langNote': 'कीवर्ड वर्गीकरण अंग्रेज़ी के लिए अनुकूलित है; सटीक बहुभाषी वर्गीकरण के लिए AI मोड चालू करें।',
+
+    'mode.heuristic': 'हिुरिस्टिक मोड',
+    'mode.ai': 'AI मोड · {provider}',
+
+    'example.studentWeek': 'विद्यार्थी सप्ताह',
+    'example.workDay': 'कार्य दिवस',
+    'example.teacherSunday': 'शिक्षक का रविवार',
+
+    'stage.title.empty': 'आपकी क्रमित सूची यहाँ दिखेगी',
+    'stage.title.sorted': 'क्रमित',
+    'stage.empty.html': 'दिमाग़ डंप चिपकाएँ और <strong>क्रम लगाएँ</strong> दबाएँ। संपादन, चिन्हन और कॉपी योग्य समूहित सूची मिलेगी।',
+    'stage.meta.items.one': '{n} वस्तु',
+    'stage.meta.items.many': '{n} वस्तुएँ',
+    'stage.meta.groups.one': '{n} समूह',
+    'stage.meta.groups.many': '{n} समूह',
+    'stage.meta.dot': ' · ',
+    'stage.meta.ai': ' · AI',
+
+    'group.count.one': '{n} वस्तु',
+    'group.count.many': '{n} वस्तुएँ',
+
+    'stage.copyMd': 'Markdown के रूप में कॉपी',
+    'stage.clear': 'मिटाएँ',
+    'stage.progress': '{total} में से {done} पूर्ण',
+
+    'cat.work':     'काम',
+    'cat.home':     'घर',
+    'cat.errands':  'दिनचर्या के काम',
+    'cat.health':   'स्वास्थ्य और स्व-देखभाल',
+    'cat.social':   'लोग',
+    'cat.learning': 'सीखना',
+    'cat.money':    'पैसा',
+    'cat.creative': 'रचनात्मक',
+    'cat.school':   'विद्यालय',
+    'cat.other':    'अन्य',
+
+    'effort.quick':  'त्वरित जीत (~10 मिनट से कम)',
+    'effort.medium': 'मध्यम कार्य (10–60 मिनट)',
+    'effort.deep':   'गहन कार्य (60+ मिनट)',
+
+    'when.today':   'आज',
+    'when.week':    'इस सप्ताह',
+    'when.someday': 'किसी दिन / अनिर्धारित',
+
+    'settings.h3': 'AI मोड (वैकल्पिक)',
+    'settings.intro.html': 'अपनी API कुंजी से चतुर वर्गीकरण पाएँ। कुंजी केवल इस ब्राउज़र में (<code>localStorage</code>) रहती है।',
+    'settings.providerLabel': 'प्रदाता',
+    'settings.anthropic': 'Anthropic (Claude)',
+    'settings.openai': 'OpenAI',
+    'settings.keyLabel': 'API कुंजी',
+    'settings.keyPh': 'sk-... या sk-ant-...',
+    'settings.modelLabel': 'मॉडल (वैकल्पिक)',
+    'settings.modelPh': 'डिफ़ॉल्ट: claude-haiku-4-5-20251001 / gpt-4o-mini',
+    'settings.privacy.html': '<strong>कोई सर्वर नहीं।</strong> दिमाग़ क्रम एक स्थैतिक पृष्ठ है। अनुरोध सीधे ब्राउज़र से Anthropic या OpenAI को जाते हैं।',
+    'settings.clearKey': 'कुंजी मिटाएँ',
+    'settings.cancel': 'रद्द',
+    'settings.save': 'सहेजें',
+
+    'toast.empty': 'पहले विचार लिखें या चिपकाएँ।',
+    'toast.copied': 'Markdown के रूप में कॉपी हुआ।',
+    'toast.copyFailed': 'कॉपी नहीं हुआ — ब्राउज़र ने क्लिपबोर्ड पहुँच रोक दी।',
+    'toast.aiReady': 'AI मोड तैयार।',
+    'toast.heuristic': 'हिुरिस्टिक मोड (कोई कुंजी नहीं सहेजी)।',
+    'toast.keyCleared': 'कुंजी मिटा दी।',
+    'toast.aiFailed': 'AI विफल — हिुरिस्टिक उपयोग। {err}',
+
+    'confirm.clear': 'क्रमित सूची मिटाएँ?',
+
+    'tip.remove': 'हटाएँ',
+    'tip.editTask': 'संपादन के लिए क्लिक',
+
+    'footer.html': 'DrawSplat™ विजेट संग्रह का हिस्सा। <a href="../../pages/features.html">और देखें</a>।',
+
+    'ai.lang': 'Hindi (हिन्दी)',
+  },
+});

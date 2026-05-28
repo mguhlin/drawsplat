@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brain Sort — DrawSplat Tools</title>
+  <title data-i18n="doc.title">Brain Sort — DrawSplat Tools</title>
   <meta name="description" content="Dump everything in your head, get an organized checklist grouped by category — a neurodivergent-friendly compiler.">
   <style>
     :root {
@@ -39,8 +39,12 @@
     .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .eyebrow a { color: inherit; text-decoration: none; }
     h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
     .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
     .tagline { margin: 8px 0 0; color: var(--gray-50); font-size: 1rem; max-width: 60ch; }
+
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
 
     .layout { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
     @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
@@ -58,7 +62,6 @@
 
     .btn { min-height: 40px; padding: 8px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 6px 14px rgba(64, 64, 65, .06); }
     .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
-    .btn.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
     .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
     .btn.ghost { background: transparent; border-color: var(--gray-30); color: var(--gray-70); box-shadow: none; }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
@@ -123,130 +126,130 @@
     footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
     footer.foot a { color: var(--navy); font-weight: 800; }
   </style>
+  <script src="../../assets/js/widget-i18n.js"></script>
 </head>
 <body>
   <div class="top-bar"></div>
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Brain Sort</h1>
-        <p class="tagline">Dump everything that's in your head — one thought per line. Brain Sort groups it into a tidy checklist by category, so you can stop juggling.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Brain Sort</h1>
+        <p class="tagline" data-i18n="header.tagline">Dump everything that's in your head — one thought per line. Brain Sort groups it into a tidy checklist by category, so you can stop juggling.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <div class="layout">
       <section class="panel" aria-label="Brain dump input">
-        <h2>What's in your head?</h2>
+        <h2 data-i18n="panel.h2">What's in your head?</h2>
         <div class="field">
-          <label for="dumpInput">One thought per line (rambling is fine)</label>
-          <textarea id="dumpInput" placeholder="email professor about extension
-laundry
-buy groceries
-finish chapter 4 reading
-text mom back
-gym at 5
-pay phone bill
-book dentist
-practice violin
-fix kitchen drawer"></textarea>
+          <label for="dumpInput" data-i18n="panel.dumpLabel">One thought per line (rambling is fine)</label>
+          <textarea id="dumpInput" data-i18n-placeholder="panel.dumpPlaceholder"></textarea>
         </div>
 
         <div class="field">
-          <label>Try an example</label>
+          <label data-i18n="panel.examplesLabel">Try an example</label>
           <div class="examples" id="exampleChips"></div>
         </div>
 
         <div class="field">
-          <label for="groupBy">Group by</label>
+          <label for="groupBy" data-i18n="panel.groupByLabel">Group by</label>
           <select id="groupBy">
-            <option value="topic">Topic — Work, Home, Health, etc.</option>
-            <option value="effort">Effort — Quick wins vs. big tasks</option>
-            <option value="when">When — Today, This week, Someday</option>
+            <option value="topic" data-i18n="panel.groupBy.topic">Topic — Work, Home, Health, etc.</option>
+            <option value="effort" data-i18n="panel.groupBy.effort">Effort — Quick wins vs. big tasks</option>
+            <option value="when" data-i18n="panel.groupBy.when">When — Today, This week, Someday</option>
           </select>
         </div>
 
         <div class="btn-row">
-          <button type="button" class="btn primary" id="sortBtn">Sort it →</button>
-          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+          <button type="button" class="btn primary" id="sortBtn" data-i18n="panel.sortBtn">Sort it →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" data-i18n="panel.settingsBtn">⚙️ Settings</button>
         </div>
 
-        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill" data-i18n="mode.heuristic">Heuristic mode</span></div>
 
-        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45" data-i18n="panel.intro">
           Brain Sort works without an account or API key — it categorizes by keywords.
           Add an Anthropic or OpenAI key in Settings for smarter grouping and renaming.
+        </p>
+        <p style="margin-top:8px;font-size:.78rem;color:var(--orange);line-height:1.4" data-i18n="panel.langNote">
+          Keyword categorization is tuned for English; switch to AI mode for accurate multilingual sorting.
         </p>
       </section>
 
       <section class="stage" aria-label="Sorted groups">
         <div class="stage-header">
-          <h2 id="stageTitle">Your sorted list will appear here</h2>
+          <h2 id="stageTitle" data-i18n="stage.title.empty">Your sorted list will appear here</h2>
           <span class="stage-meta" id="stageMeta"></span>
         </div>
 
         <div id="stageBody">
           <div class="empty" id="emptyState">
             <div class="splat" aria-hidden="true">🧠</div>
-            <p>Paste a rambling brain dump and hit <strong>Sort it</strong>. You'll get a grouped checklist you can edit, check off, and copy.</p>
+            <p data-i18n-html="stage.empty.html">Paste a rambling brain dump and hit <strong>Sort it</strong>. You'll get a grouped checklist you can edit, check off, and copy.</p>
           </div>
         </div>
 
         <div class="stage-footer" id="stageFooter" hidden>
           <span class="progress" id="progress"></span>
           <div class="stage-actions">
-            <button type="button" class="btn" id="copyMdBtn" title="Copy as a Markdown checklist">Copy as Markdown</button>
-            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+            <button type="button" class="btn" id="copyMdBtn" data-i18n="stage.copyMd">Copy as Markdown</button>
+            <button type="button" class="btn ghost" id="clearBtn" data-i18n="stage.clear">Clear</button>
           </div>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
+    <footer class="foot" data-i18n-html="footer.html">
       Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
     </footer>
   </div>
 
   <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal">
-      <h3 id="settingsTitle">AI mode (optional)</h3>
-      <p class="intro">
+      <h3 id="settingsTitle" data-i18n="settings.h3">AI mode (optional)</h3>
+      <p class="intro" data-i18n-html="settings.intro.html">
         Bring your own API key to unlock smarter categorization.
         Your key stays in this browser only — it's saved to <code>localStorage</code> and sent directly to the provider you choose.
       </p>
       <div class="field">
-        <label>Provider</label>
+        <label data-i18n="settings.providerLabel">Provider</label>
         <div class="radio-row">
-          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
-          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+          <label><input type="radio" name="provider" value="anthropic" checked> <span data-i18n="settings.anthropic">Anthropic (Claude)</span></label>
+          <label><input type="radio" name="provider" value="openai"> <span data-i18n="settings.openai">OpenAI</span></label>
         </div>
       </div>
       <div class="field">
-        <label for="apiKeyInput">API key</label>
-        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+        <label for="apiKeyInput" data-i18n="settings.keyLabel">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
       </div>
       <div class="field">
-        <label for="modelInput">Model (optional override)</label>
-        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+        <label for="modelInput" data-i18n="settings.modelLabel">Model (optional override)</label>
+        <input type="text" id="modelInput" data-i18n-placeholder="settings.modelPh">
       </div>
-      <div class="privacy-note">
+      <div class="privacy-note" data-i18n-html="settings.privacy.html">
         <strong>No server.</strong> Brain Sort is a single static page. Requests go from your browser straight to Anthropic or OpenAI.
         Do not use a shared/admin key on a public computer.
       </div>
       <div class="actions">
-        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
-        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
-        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+        <button type="button" class="btn danger" id="clearKeyBtn" data-i18n="settings.clearKey">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn" data-i18n="settings.cancel">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn" data-i18n="settings.save">Save</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="./locales.js"></script>
   <script>
   "use strict";
   const $ = (id) => document.getElementById(id);
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const STORAGE_KEY = "brainSort.v1";
 
   // DOM
@@ -269,36 +272,58 @@ fix kitchen drawer"></textarea>
 
   // State
   let nextId = 1;
-  let groups = []; // [{ key, title, emoji, tasks: [{id, text, done}] }]
+  let groups = []; // [{ key, titleKey?, emoji, title, tasks: [{id, text, done}] }]
   let settings = loadSettings();
+  let lastSortMode = null;
 
-  const EXAMPLES = [
-    `email prof about extension\nlaundry\nbuy groceries\ngym\ntext mom\npay phone bill\nbook dentist\nfinish chapter 4`,
-    `prep slide deck for Monday\nreview Jordan's PR\nlunch with Sam\ncancel old subscription\nschedule 1:1 with manager\nsubmit expenses\nwater plants`,
-    `lesson plan friday\ngrade essays\nemail principal\norder lab supplies\ncall parent about Mia\nbus duty wed\nprint sub plans`,
-  ];
-  ["Student week", "Work day", "Teacher Sunday"].forEach((label, i) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "example-chip";
-    chip.textContent = label;
-    chip.addEventListener("click", () => { dumpInput.value = EXAMPLES[i]; dumpInput.focus(); });
-    exampleChips.appendChild(chip);
-  });
+  // ====== Example chips
+  // Dumps stay English since the heuristic keyword regex is English-tuned;
+  // chip labels translate to whatever locale is active.
+  const EXAMPLE_DUMPS = {
+    studentWeek: `email prof about extension\nlaundry\nbuy groceries\ngym\ntext mom\npay phone bill\nbook dentist\nfinish chapter 4`,
+    workDay:     `prep slide deck for Monday\nreview Jordan's PR\nlunch with Sam\ncancel old subscription\nschedule 1:1 with manager\nsubmit expenses\nwater plants`,
+    teacherSunday: `lesson plan friday\ngrade essays\nemail principal\norder lab supplies\ncall parent about Mia\nbus duty wed\nprint sub plans`,
+  };
+  const EXAMPLE_KEYS = ["studentWeek", "workDay", "teacherSunday"];
+
+  function renderExamples() {
+    exampleChips.innerHTML = "";
+    EXAMPLE_KEYS.forEach(k => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "example-chip";
+      chip.textContent = t(`example.${k}`);
+      chip.addEventListener("click", () => { dumpInput.value = EXAMPLE_DUMPS[k]; dumpInput.focus(); });
+      exampleChips.appendChild(chip);
+    });
+  }
 
   // ====== HEURISTIC ENGINE
-  const CATS = {
-    work:     { emoji: "💼", title: "Work" },
-    home:     { emoji: "🏡", title: "Home" },
-    errands:  { emoji: "🛒", title: "Errands" },
-    health:   { emoji: "💪", title: "Health & Self-care" },
-    social:   { emoji: "👋", title: "People" },
-    learning: { emoji: "📚", title: "Learning" },
-    money:    { emoji: "💰", title: "Money" },
-    creative: { emoji: "🎨", title: "Creative" },
-    school:   { emoji: "🏫", title: "School" },
-    other:    { emoji: "📦", title: "Other" },
+  // Emojis stay in code (universal); titles come from the dictionary.
+  const CAT_META = {
+    work:     { emoji: "💼" }, home:     { emoji: "🏡" }, errands:  { emoji: "🛒" },
+    health:   { emoji: "💪" }, social:   { emoji: "👋" }, learning: { emoji: "📚" },
+    money:    { emoji: "💰" }, creative: { emoji: "🎨" }, school:   { emoji: "🏫" },
+    other:    { emoji: "📦" },
   };
+  const EFFORT_META = {
+    quick:  { emoji: "⚡" },
+    medium: { emoji: "🪜" },
+    deep:   { emoji: "🏔️" },
+  };
+  const WHEN_META = {
+    today:   { emoji: "🔥" },
+    week:    { emoji: "📅" },
+    someday: { emoji: "🌱" },
+  };
+
+  function metaFor(mode, key) {
+    if (mode === "effort") return { emoji: EFFORT_META[key].emoji, title: t(`effort.${key}`) };
+    if (mode === "when")   return { emoji: WHEN_META[key].emoji,   title: t(`when.${key}`) };
+    return { emoji: CAT_META[key].emoji, title: t(`cat.${key}`) };
+  }
+
+  // Keyword maps (English-tuned). See panel.langNote.
   const KEYWORDS = [
     ["work",     /\b(email|meeting|standup|deck|slides?|deadline|presentation|report|client|boss|manager|stakeholder|deliverable|slack|jira|ticket|PR|review .* code|invoice|proposal|RFP|sprint|standup|1:1|one-on-one|expenses?)\b/i],
     ["school",   /\b(essay|paper|homework|assignment|chapter|class|professor|prof|teacher|lecture|study|exam|quiz|test|syllabus|grade|grading|lesson plan|sub plans?|principal|parent[- ]?teacher|bus duty|recess|hallway)\b/i],
@@ -315,31 +340,18 @@ fix kitchen drawer"></textarea>
     for (const [key, re] of KEYWORDS) if (re.test(text)) return key;
     return "other";
   }
-
   function effortBucket(text) {
-    // Heuristic: short text + email/text/pay/quick verbs => quick win, else medium, long jobs => deep work
-    const t = text.toLowerCase();
-    if (/\b(write essay|finish chapter|prep deck|lesson plan|do laundry|clean .*(room|house)|study for|grade|workout|exercise|read book|read chapter)\b/.test(t) || text.length > 90) return "deep";
-    if (/\b(email|text|call|pay|reply|reschedule|book|order|cancel|water plants|take out trash|return)\b/.test(t) || text.length < 32) return "quick";
+    const tx = text.toLowerCase();
+    if (/\b(write essay|finish chapter|prep deck|lesson plan|do laundry|clean .*(room|house)|study for|grade|workout|exercise|read book|read chapter)\b/.test(tx) || text.length > 90) return "deep";
+    if (/\b(email|text|call|pay|reply|reschedule|book|order|cancel|water plants|take out trash|return)\b/.test(tx) || text.length < 32) return "quick";
     return "medium";
   }
-  const EFFORT = {
-    quick:  { emoji: "⚡", title: "Quick wins (under ~10 min)" },
-    medium: { emoji: "🪜", title: "Medium tasks (10–60 min)" },
-    deep:   { emoji: "🏔️", title: "Deep work (60+ min)" },
-  };
-
   function whenBucket(text) {
-    const t = text.toLowerCase();
-    if (/\b(today|asap|now|this morning|tonight|by \d|due today)\b/.test(t)) return "today";
-    if (/\b(tomorrow|this week|by friday|by monday|wed|thu|fri|mon|tue|sat|sun)\b/.test(t)) return "week";
+    const tx = text.toLowerCase();
+    if (/\b(today|asap|now|this morning|tonight|by \d|due today)\b/.test(tx)) return "today";
+    if (/\b(tomorrow|this week|by friday|by monday|wed|thu|fri|mon|tue|sat|sun)\b/.test(tx)) return "week";
     return "someday";
   }
-  const WHEN = {
-    today:   { emoji: "🔥", title: "Today" },
-    week:    { emoji: "📅", title: "This week" },
-    someday: { emoji: "🌱", title: "Someday / unscheduled" },
-  };
 
   function newTask(text) { return { id: nextId++, text: text.trim(), done: false }; }
 
@@ -347,17 +359,16 @@ fix kitchen drawer"></textarea>
     const cleaned = lines.map(l => l.replace(/^[-*•\d.\s)]+/, "").trim()).filter(Boolean);
     const groupMap = new Map();
     for (const line of cleaned) {
-      let key, meta;
-      if (mode === "effort") { key = effortBucket(line); meta = EFFORT[key]; }
-      else if (mode === "when") { key = whenBucket(line); meta = WHEN[key]; }
-      else { key = classify(line); meta = CATS[key]; }
-      if (!groupMap.has(key)) groupMap.set(key, { key, title: meta.title, emoji: meta.emoji, tasks: [] });
+      const key = mode === "effort" ? effortBucket(line)
+                : mode === "when"   ? whenBucket(line)
+                : classify(line);
+      const m = metaFor(mode, key);
+      if (!groupMap.has(key)) groupMap.set(key, { key, mode, title: m.title, emoji: m.emoji, tasks: [] });
       groupMap.get(key).tasks.push(newTask(line));
     }
-    // Stable order based on canonical key list per mode
     const order = mode === "effort" ? ["quick","medium","deep"]
-                 : mode === "when"   ? ["today","week","someday"]
-                 : ["work","school","home","errands","health","social","money","learning","creative","other"];
+                : mode === "when"   ? ["today","week","someday"]
+                : ["work","school","home","errands","health","social","money","learning","creative","other"];
     return order.filter(k => groupMap.has(k)).map(k => groupMap.get(k));
   }
 
@@ -368,17 +379,24 @@ fix kitchen drawer"></textarea>
   }
   function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
   function refreshModePill() {
-    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
-    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+    if (settings.apiKey) {
+      modePill.className = "mode-pill ai";
+      modePill.removeAttribute("data-i18n");
+      modePill.textContent = t("mode.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+    } else {
+      modePill.className = "mode-pill heuristic";
+      modePill.setAttribute("data-i18n", "mode.heuristic");
+      modePill.textContent = t("mode.heuristic");
+    }
   }
-  refreshModePill();
 
   function buildPrompt(text, mode) {
+    const langName = t("ai.lang");
     const modeNote = mode === "effort"
       ? "Group by effort: 'Quick wins (under ~10 min)', 'Medium tasks (10–60 min)', 'Deep work (60+ min)'."
       : mode === "when"
       ? "Group by when: 'Today', 'This week', 'Someday / unscheduled'."
-      : "Group by topic (e.g., Work, School, Home, Errands, Health & Self-care, People, Money, Learning, Creative, Other). Use sensible topics that match the dump.";
+      : "Group by topic (e.g., Work, School, Home, Errands, Health & Self-care, People, Money, Learning, Creative, Other).";
     return `You are Brain Sort, a friendly task organizer for neurodivergent users.
 Take this brain dump and produce a JSON object with shape:
 {"groups":[{"title":"...","emoji":"...","tasks":["...","..."]}]}
@@ -387,6 +405,7 @@ Rules:
 - ${modeNote}
 - Pick a relevant emoji per group.
 - Preserve everything from the dump; do not invent unrelated tasks.
+- Respond entirely in ${langName} (translate the dump if needed).
 - Return ONLY the JSON object, no preamble.
 
 Brain dump:
@@ -427,9 +446,10 @@ ${text}`;
     if (!Array.isArray(obj.groups)) throw new Error("AI response missing groups[]");
     return obj.groups.map(g => ({
       key: (g.title || "group").toLowerCase().replace(/\s+/g, "-"),
+      mode: "ai",
       title: String(g.title || "Group"),
       emoji: String(g.emoji || "📦"),
-      tasks: (g.tasks || []).map(t => newTask(String(t))),
+      tasks: (g.tasks || []).map(tx => newTask(String(tx))),
     }));
   }
 
@@ -437,7 +457,8 @@ ${text}`;
   function render() {
     if (!groups.length) {
       stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
-      stageTitle.textContent = "Your sorted list will appear here";
+      stageTitle.setAttribute("data-i18n", "stage.title.empty");
+      stageTitle.textContent = t("stage.title.empty");
       stageMeta.textContent = ""; stageFooter.hidden = true; return;
     }
     stageBody.innerHTML = "";
@@ -446,31 +467,36 @@ ${text}`;
     groups.forEach(g => wrap.appendChild(renderGroup(g)));
     stageBody.appendChild(wrap);
     stageFooter.hidden = false;
+    stageTitle.removeAttribute("data-i18n");
+    stageTitle.textContent = t("stage.title.sorted");
     updateProgress();
   }
   function renderGroup(g) {
+    // For heuristic groups, refresh title from current locale (AI-generated groups keep their own titles).
+    const title = (g.mode && g.mode !== "ai") ? metaFor(g.mode, g.key).title : g.title;
     const card = document.createElement("section");
     card.className = "group";
     const head = document.createElement("div");
     head.className = "group-head";
-    head.innerHTML = `<span class="group-emoji" aria-hidden="true">${escapeHtml(g.emoji)}</span><span class="group-title">${escapeHtml(g.title)}</span><span class="group-count">${g.tasks.length} item${g.tasks.length === 1 ? "" : "s"}</span>`;
+    const countStr = g.tasks.length === 1 ? t("group.count.one", { n: 1 }) : t("group.count.many", { n: g.tasks.length });
+    head.innerHTML = `<span class="group-emoji" aria-hidden="true">${escapeHtml(g.emoji)}</span><span class="group-title">${escapeHtml(title)}</span><span class="group-count">${escapeHtml(countStr)}</span>`;
     const body = document.createElement("div");
     body.className = "group-body";
-    g.tasks.forEach(t => body.appendChild(renderTask(t, g)));
+    g.tasks.forEach(tk => body.appendChild(renderTask(tk, g)));
     card.appendChild(head); card.appendChild(body);
     return card;
   }
-  function renderTask(t, parent) {
+  function renderTask(tk, parent) {
     const row = document.createElement("div");
-    row.className = "task" + (t.done ? " done" : "");
-    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = t.done;
-    cb.addEventListener("change", () => { t.done = cb.checked; row.classList.toggle("done", cb.checked); updateProgress(); });
-    const txt = document.createElement("div"); txt.className = "task-text"; txt.textContent = t.text; txt.title = "Click to edit";
-    txt.addEventListener("click", () => makeEditable(txt, t));
+    row.className = "task" + (tk.done ? " done" : "");
+    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = tk.done;
+    cb.addEventListener("change", () => { tk.done = cb.checked; row.classList.toggle("done", cb.checked); updateProgress(); });
+    const txt = document.createElement("div"); txt.className = "task-text"; txt.textContent = tk.text; txt.title = t("tip.editTask");
+    txt.addEventListener("click", () => makeEditable(txt, tk));
     const controls = document.createElement("div"); controls.className = "task-controls";
-    const del = document.createElement("button"); del.type = "button"; del.className = "icon-btn danger"; del.title = "Remove"; del.textContent = "✕";
+    const del = document.createElement("button"); del.type = "button"; del.className = "icon-btn danger"; del.title = t("tip.remove"); del.textContent = "✕";
     del.addEventListener("click", () => {
-      parent.tasks = parent.tasks.filter(x => x.id !== t.id);
+      parent.tasks = parent.tasks.filter(x => x.id !== tk.id);
       groups = groups.filter(g => g.tasks.length);
       render();
     });
@@ -478,40 +504,51 @@ ${text}`;
     row.appendChild(cb); row.appendChild(txt); row.appendChild(controls);
     return row;
   }
-  function makeEditable(el, t) {
+  function makeEditable(el, tk) {
     el.contentEditable = "true"; el.focus();
     const r = document.createRange(); r.selectNodeContents(el); r.collapse(false);
     const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-    const commit = () => { el.contentEditable = "false"; const v = el.textContent.trim(); if (v) t.text = v; else el.textContent = t.text; };
+    const commit = () => { el.contentEditable = "false"; const v = el.textContent.trim(); if (v) tk.text = v; else el.textContent = tk.text; };
     el.addEventListener("blur", commit, { once: true });
-    el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); el.blur(); } if (e.key === "Escape") { el.textContent = t.text; el.blur(); } });
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); el.blur(); } if (e.key === "Escape") { el.textContent = tk.text; el.blur(); } });
   }
   function updateProgress() {
     let total = 0, done = 0;
-    groups.forEach(g => g.tasks.forEach(t => { total++; if (t.done) done++; }));
-    progress.textContent = `${done} of ${total} done`;
+    groups.forEach(g => g.tasks.forEach(tk => { total++; if (tk.done) done++; }));
+    progress.textContent = t("stage.progress", { done, total });
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+  function refreshMetaLine() {
+    if (!groups.length) return;
+    const total = groups.reduce((n, g) => n + g.tasks.length, 0);
+    const itemsStr = total === 1 ? t("stage.meta.items.one", { n: total }) : t("stage.meta.items.many", { n: total });
+    const groupsStr = groups.length === 1 ? t("stage.meta.groups.one", { n: groups.length }) : t("stage.meta.groups.many", { n: groups.length });
+    let s = `${itemsStr}${t("stage.meta.dot")}${groupsStr}${t("stage.meta.dot")}${lastSortMode || "topic"}`;
+    if (settings.apiKey) s += t("stage.meta.ai");
+    stageMeta.textContent = s;
+  }
 
   // ====== ENTRY
   async function doSort() {
     const text = dumpInput.value.trim();
-    if (!text) { dumpInput.focus(); showToast("Type or paste a brain dump first.", true); return; }
+    if (!text) { dumpInput.focus(); showToast(t("toast.empty"), true); return; }
     const mode = groupBySel.value;
     sortBtn.disabled = true;
     const original = sortBtn.textContent;
-    sortBtn.textContent = settings.apiKey ? "Asking Claude…" : "Sorting…";
+    sortBtn.textContent = settings.apiKey ? t("panel.sortBtn.busyAi") : t("panel.sortBtn.busy");
     try {
       groups = settings.apiKey ? await aiSort(text, mode) : heuristicSort(text.split(/\r?\n/), mode);
-      const total = groups.reduce((n, g) => n + g.tasks.length, 0);
-      stageTitle.textContent = "Sorted";
-      stageMeta.textContent = `${total} items · ${groups.length} group${groups.length === 1 ? "" : "s"} · ${mode}${settings.apiKey ? " · AI" : ""}`;
+      lastSortMode = mode;
       render();
+      refreshMetaLine();
     } catch (err) {
       console.error(err);
-      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      showToast(t("toast.aiFailed", { err: err.message || "" }), true);
       groups = heuristicSort(text.split(/\r?\n/), mode);
+      lastSortMode = mode;
       render();
+      refreshMetaLine();
     } finally {
       sortBtn.disabled = false; sortBtn.textContent = original;
     }
@@ -519,16 +556,23 @@ ${text}`;
   sortBtn.addEventListener("click", doSort);
   dumpInput.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doSort(); });
 
-  $("clearBtn").addEventListener("click", () => { if (!groups.length) return; if (confirm("Clear sorted list?")) { groups = []; render(); } });
+  $("clearBtn").addEventListener("click", () => {
+    if (!groups.length) return;
+    if (confirm(t("confirm.clear"))) { groups = []; lastSortMode = null; render(); }
+  });
   $("copyMdBtn").addEventListener("click", async () => {
     let md = "";
-    groups.forEach(g => { md += `## ${g.emoji} ${g.title}\n\n`; g.tasks.forEach(t => md += `- [${t.done ? "x" : " "}] ${t.text}\n`); md += "\n"; });
-    try { await navigator.clipboard.writeText(md.trim()); showToast("Copied as Markdown."); }
-    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+    groups.forEach(g => {
+      const title = (g.mode && g.mode !== "ai") ? metaFor(g.mode, g.key).title : g.title;
+      md += `## ${g.emoji} ${title}\n\n`;
+      g.tasks.forEach(tk => md += `- [${tk.done ? "x" : " "}] ${tk.text}\n`);
+      md += "\n";
+    });
+    try { await navigator.clipboard.writeText(md.trim()); showToast(t("toast.copied")); }
+    catch { showToast(t("toast.copyFailed"), true); }
   });
 
   // ====== Settings modal
-  const saveBtn = $("saveSettingsBtn"), cancelBtn = $("cancelSettingsBtn"), clearKey = $("clearKeyBtn");
   function openSettings() {
     apiKeyInput.value = settings.apiKey || ""; modelInput.value = settings.model || "";
     const radio = document.querySelector(`input[name=provider][value="${settings.provider}"]`); if (radio) radio.checked = true;
@@ -536,15 +580,21 @@ ${text}`;
   }
   function closeSettings() { settingsModal.classList.remove("show"); }
   settingsBtn.addEventListener("click", openSettings);
-  cancelBtn.addEventListener("click", closeSettings);
+  $("cancelSettingsBtn").addEventListener("click", closeSettings);
   settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) closeSettings(); });
-  saveBtn.addEventListener("click", () => {
+  $("saveSettingsBtn").addEventListener("click", () => {
     const provider = document.querySelector('input[name=provider]:checked').value;
     saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
-    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    showToast(settings.apiKey ? t("toast.aiReady") : t("toast.heuristic"));
+    refreshMetaLine();
     closeSettings();
   });
-  clearKey.addEventListener("click", () => { apiKeyInput.value = ""; modelInput.value = ""; saveSettings({ provider: settings.provider, apiKey: "", model: "" }); showToast("Key cleared."); });
+  $("clearKeyBtn").addEventListener("click", () => {
+    apiKeyInput.value = ""; modelInput.value = "";
+    saveSettings({ provider: settings.provider, apiKey: "", model: "" });
+    showToast(t("toast.keyCleared"));
+    refreshMetaLine();
+  });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
 
   // ====== Toast
@@ -553,6 +603,15 @@ ${text}`;
     toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
     clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
   }
+
+  // ====== i18n boot
+  function bootI18nDependentUI() {
+    renderExamples();
+    refreshModePill();
+    if (groups.length) { render(); refreshMetaLine(); }
+  }
+  bootI18nDependentUI();
+  window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
