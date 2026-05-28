@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GilaSplat — DrawSplat Games</title>
+<meta name="description" content="A retro underground maze arcade — guide a gila monster through desert burrows eating eggs and hatchlings before the timer runs out.">
+<style>
+  /* DrawSplat Games header (shared shell) */
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  :root {
+    --navy: #7c3aed;
+    --gold: #a855f7;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #6d28d9;
+    --green: #22c55e;
+    --yellow: #facc15;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --ink: #d1e6ff;
+    --bg: #0a1322;
+    --panel: #142c46;
+    --panel-2: #1c3a5d;
+    --border: rgba(168, 85, 247, .25);
+    --sand-dark: #1a0e04;
+    --sand: #4a2c14;
+    --sand-lit: #7a4a22;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  .shell { max-width: 1100px; margin: 0 auto; padding: 22px 16px 40px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ===== Setup screen ===== */
+  .setup-hero { display: grid; grid-template-columns: minmax(180px, 240px) 1fr; gap: 22px; align-items: center; margin: 0 0 22px; }
+  @media (max-width: 640px) { .setup-hero { grid-template-columns: 1fr; text-align: center; } .setup-hero .face { margin: 0 auto; } }
+  .setup-hero .face { width: 100%; max-width: 240px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 35% 30%, #a855f7 0%, #6d28d9 60%, #3b0764 100%); box-shadow: 0 0 0 4px rgba(168, 85, 247, .25), 0 20px 50px rgba(108, 40, 217, .45), inset 0 0 40px rgba(0, 0, 0, .25); animation: heroFloat 4s ease-in-out infinite; }
+  .setup-hero .face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  @keyframes heroFloat { 50% { transform: translateY(-6px); } }
+  .setup-h1 { margin: 0 0 8px; color: #fff; font-size: clamp(1.5rem, 4vw, 2.4rem); letter-spacing: .02em; }
+  .setup-sub { margin: 0 0 0; color: var(--ink); opacity: .8; font-size: 1rem; max-width: 60ch; }
+  .blurb-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 0 0 26px; }
+  .blurb { padding: 16px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; }
+  .blurb h3 { margin: 0 0 6px; color: var(--gold); font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+  .blurb p { margin: 0; color: var(--ink); font-size: .92rem; line-height: 1.4; opacity: .85; }
+
+  .field-label { display: block; margin: 0 0 8px; color: #fff; font-weight: 800; font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; opacity: .85; }
+
+  .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 26px; }
+  @media (max-width: 640px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-btn { padding: 16px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; color: var(--ink); text-align: center; transition: all .15s; }
+  .mode-btn .icon { font-size: 1.8rem; line-height: 1; margin-bottom: 8px; }
+  .mode-btn .label { font-weight: 800; font-size: 1rem; color: #fff; margin-bottom: 4px; }
+  .mode-btn .desc { font-size: .82rem; opacity: .7; }
+  .mode-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .mode-btn.active { border-color: var(--gold); background: var(--panel-2); box-shadow: 0 0 0 3px rgba(168, 85, 247, .25); }
+
+  .start-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px; }
+  .btn { padding: 12px 22px; background: var(--gold); color: #fff; border: 2px solid var(--gold); border-radius: 10px; font-weight: 800; transition: all .15s; }
+  .btn:hover { background: var(--navy); border-color: var(--navy); transform: translateY(-1px); }
+  .btn.big { padding: 16px 36px; font-size: 1.1rem; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: rgba(255,255,255,.25); }
+  .btn.ghost:hover { background: var(--panel-2); border-color: var(--gold); color: #fff; }
+  .btn.danger { background: var(--red); border-color: var(--red); }
+  .btn.danger:hover { background: #b91c1c; border-color: #b91c1c; }
+
+  /* ===== Game screen ===== */
+  .hud { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .hud .cell { padding: 10px 12px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; gap: 2px; }
+  .hud .cell .label { font-size: .62rem; color: var(--ink); opacity: .6; text-transform: uppercase; letter-spacing: .1em; }
+  .hud .cell .val { font-size: 1.4rem; color: #fff; font-weight: 900; line-height: 1; }
+  .hud .cell.score { border-top: 4px solid var(--gold); }
+  .hud .cell.time { border-top: 4px solid var(--orange); }
+  .hud .cell.time.low .val { color: var(--red); animation: pulseLow .6s infinite; }
+  @keyframes pulseLow { 50% { opacity: .55; } }
+  .hud .cell.level { border-top: 4px solid var(--green); }
+  .hud .cell.eggs { border-top: 4px solid #facc15; }
+  .hud .cell.chicks { border-top: 4px solid var(--pink); }
+  .hud .cell.hiscore { border-top: 4px solid var(--pink); }
+  .hud .cell.hiscore .val { color: var(--pink); }
+  .hud .cell.lives { border-top: 4px solid var(--red); }
+  .hud .cell.lives .val { display: flex; align-items: center; gap: 4px; }
+  .hud .cell.lives .heart { width: 20px; height: 20px; border-radius: 50%; background-image: url('./assets/gila.png'); background-size: cover; filter: hue-rotate(250deg) saturate(1.05) drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+  .hud .cell.lives .heart.spent { opacity: .18; filter: hue-rotate(250deg) saturate(.3) grayscale(.6); }
+  .hud .cell.combo { border-top: 4px solid var(--gold); display: none; }
+  .hud .cell.combo.show { display: flex; animation: comboPop .4s ease-out; }
+  .hud .cell.combo .val { color: var(--gold); }
+  @keyframes comboPop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.18); } 100% { transform: scale(1); opacity: 1; } }
+  .hud .cell.power { border-top: 4px solid var(--teal); display: none; }
+  .hud .cell.power.show { display: flex; }
+  .hud .cell.power .val { color: var(--teal); font-size: 1.05rem; }
+  .hud .cell.power .ring { display: inline-block; width: 100%; height: 6px; background: rgba(20, 184, 166, .2); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+  .hud .cell.power .ring i { display: block; height: 100%; background: var(--teal); transition: width .1s linear; }
+
+  /* ===== Instruction banner ===== */
+  .banner-strip { margin-top: 14px; padding: 12px 18px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: center; }
+  .banner-strip .mini-gila { width: 56px; height: 56px; border-radius: 12px; background: radial-gradient(circle at 35% 30%, #a855f7 0%, #6d28d9 60%, #3b0764 100%); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 12px rgba(0,0,0,.4); }
+  .banner-strip .mini-gila img { width: 80%; height: 80%; object-fit: contain; filter: hue-rotate(250deg) saturate(1.05) drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  .banner-strip .msg { color: #ffd66b; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .banner-strip .msg .level-name { color: var(--gold); }
+
+  .court-wrap { position: relative; background: var(--sand-dark); border: 2px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.4); aspect-ratio: 1024/768; }
+  canvas#maze { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+  .overlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; background: rgba(5, 10, 21, .85); color: #fff; text-align: center; padding: 20px; }
+  .overlay.show { display: flex; }
+  .overlay .big { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 900; }
+  .overlay .sub { color: var(--ink); opacity: .75; font-size: 1rem; max-width: 38ch; }
+  .overlay .countdown { font-size: clamp(3rem, 12vw, 6rem); font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(168, 85, 247, .6); }
+  .overlay .winner-banner { font-size: clamp(2rem, 7vw, 3.6rem); font-weight: 900; }
+  .overlay-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+
+  .game-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+  .game-toolbar .spacer { flex: 1; }
+  .controls-hint { padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; font-size: .82rem; color: var(--ink); }
+  .controls-hint kbd { display: inline-block; padding: 2px 7px; background: var(--panel-2); border: 1px solid var(--border); border-bottom: 2px solid rgba(0,0,0,.3); border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .78rem; color: var(--gold); margin: 0 2px; }
+  .sound-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; color: var(--ink); font-weight: 700; font-size: .85rem; }
+  .sound-toggle.on { color: var(--green); border-color: var(--green); }
+  .sound-toggle.off { color: var(--ink); opacity: .5; }
+
+  /* ===== End screen ===== */
+  .end-card { padding: 40px 20px; background: var(--panel); border-radius: 14px; border: 2px solid var(--border); text-align: center; }
+  .end-card .crown { line-height: 1; margin: 0 0 14px; display: flex; align-items: center; justify-content: center; }
+  .end-gila { width: clamp(180px, 28vw, 260px); height: clamp(180px, 28vw, 260px); object-fit: contain; filter: drop-shadow(0 14px 28px rgba(168, 85, 247, .35)); }
+  .end-gila.champion { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #a855f7 0%, #6d28d9 60%, #3b0764 100%); padding: 10px; box-shadow: 0 0 0 4px rgba(168, 85, 247, .25); animation: heroFloat 4s ease-in-out infinite; }
+  .end-gila.defeated { transform: rotate(-12deg); filter: drop-shadow(0 10px 22px rgba(239, 68, 68, .3)) hue-rotate(250deg) saturate(1.05); opacity: .92; }
+  .end-card h2 { margin: 0 0 8px; color: #fff; font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; }
+  .end-card .final { color: var(--gold); font-size: 1.2rem; font-weight: 800; margin-bottom: 24px; }
+  .end-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">GilaSplat</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+
+  <!-- ===== Setup ===== -->
+  <section class="screen active" id="setup">
+    <div class="setup-hero">
+      <div class="face"><img src="./assets/gila-face.png" alt="Cute iridescent purple gila monster face"></div>
+      <div>
+        <h2 class="setup-h1">Slither, snack, survive.</h2>
+        <p class="setup-sub">You are a gila monster threading desert burrows, tunnels, and old chicken coops. Eat eggs and the hatchlings they turn into before the sun goes down.</p>
+      </div>
+    </div>
+
+    <div class="blurb-row">
+      <div class="blurb">
+        <h3>Eat eggs</h3>
+        <p>Common chicken eggs are 10 points. Speckled eggs are 15. Clear the level to advance.</p>
+      </div>
+      <div class="blurb">
+        <h3>Watch the timer</h3>
+        <p>Eggs hatch into chicks worth 25 points — but they wander, and they're harder to corner.</p>
+      </div>
+      <div class="blurb">
+        <h3>Beat the clock</h3>
+        <p>Run out of time and the maze closes. Predators arrive in later updates.</p>
+      </div>
+    </div>
+
+    <label class="field-label">Starting difficulty</label>
+    <div class="mode-grid">
+      <button type="button" class="mode-btn active" data-diff="beginner">
+        <div class="icon">🥚</div><div class="label">Beginner</div><div class="desc">Slow hatching, generous timer</div>
+      </button>
+      <button type="button" class="mode-btn" data-diff="easy">
+        <div class="icon">🐣</div><div class="label">Easy</div><div class="desc">Hatchlings move; clock is shorter</div>
+      </button>
+      <button type="button" class="mode-btn" data-diff="medium">
+        <div class="icon">🦎</div><div class="label">Medium</div><div class="desc">Fast hatching, tight clock</div>
+      </button>
+    </div>
+
+    <div class="start-row">
+      <button type="button" class="btn big" id="startBtn">Enter the burrow →</button>
+    </div>
+  </section>
+
+  <!-- ===== Game ===== -->
+  <section class="screen" id="game">
+    <div class="hud">
+      <div class="cell score"><span class="label">Score</span><span class="val" id="hudScore">0</span></div>
+      <div class="cell hiscore"><span class="label">Hi-Score</span><span class="val" id="hudHiScore">0</span></div>
+      <div class="cell level"><span class="label">Level</span><span class="val" id="hudLevel">1</span></div>
+      <div class="cell eggs"><span class="label">Eggs eaten</span><span class="val" id="hudEggs">0</span></div>
+      <div class="cell chicks"><span class="label">Hatchlings</span><span class="val" id="hudChicks">0</span></div>
+      <div class="cell lives"><span class="label">Lives</span><span class="val" id="hudLives"></span></div>
+      <div class="cell combo" id="hudComboCell"><span class="label">Combo</span><span class="val" id="hudCombo">×1</span></div>
+      <div class="cell power" id="hudPowerCell"><span class="label">Power</span><span class="val" id="hudPowerLabel">—</span><span class="ring"><i id="hudPowerBar"></i></span></div>
+      <div class="cell time"><span class="label">Time</span><span class="val" id="hudTime">60</span></div>
+    </div>
+
+    <div class="court-wrap">
+      <canvas id="maze" width="1024" height="768" aria-label="GilaSplat maze"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="big" id="overlayTitle">Get ready…</div>
+        <div class="sub" id="overlaySub"></div>
+        <div class="countdown" id="countdown"></div>
+        <div class="overlay-actions" id="overlayActions"></div>
+      </div>
+    </div>
+
+    <div class="banner-strip">
+      <div class="mini-gila"><img src="./assets/gila.png" alt=""></div>
+      <div class="msg" id="bannerMsg">Eat all the eggs before they hatch!</div>
+    </div>
+
+    <div class="game-toolbar">
+      <span class="controls-hint">Move: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
+      <span class="controls-hint">Or: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span>
+      <span class="spacer"></span>
+      <button type="button" class="sound-toggle on" id="soundBtn">🔊 Sound on</button>
+      <button type="button" class="btn ghost" id="pauseBtn">⏸ Pause</button>
+      <button type="button" class="btn danger" id="quitBtn">Quit</button>
+    </div>
+  </section>
+
+  <!-- ===== End ===== -->
+  <section class="screen" id="end">
+    <div class="end-card">
+      <div class="crown" id="endIcon"></div>
+      <h2 id="endBanner"></h2>
+      <div class="final" id="finalScore"></div>
+      <div class="end-actions">
+        <button type="button" class="btn big" id="playAgainBtn">Play again ↻</button>
+        <button type="button" class="btn ghost" id="newRunBtn">Change difficulty</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+// ========== DOM ==========
+const $ = (id) => document.getElementById(id);
+const setupScreen = $("setup");
+const gameScreen = $("game");
+const endScreen = $("end");
+
+// ========== Tile constants ==========
+// Canvas matches the SVG mazes' viewBox (1024×768). The playable grid
+// is the inner sand panel: 19 cols × 12 rows at TILE=50.105, offset
+// (OX, OY) from the top-left corner of the canvas. Helpers cellX/cellY
+// turn (col, row) into the canvas-pixel center of that tile.
+const COLS = 19, ROWS = 12;
+const TILE = 50.105;
+const OX = 36, OY = 83.37;
+const CW = 1024, CH = 768;
+const cellX = (c) => OX + c * TILE + TILE / 2;
+const cellY = (r) => OY + r * TILE + TILE / 2;
+
+// ========== Levels ==========
+// Each level points at a hand-illustrated SVG maze under ./mazes/.
+// loadLevel() fetches the SVG, parses <line> elements into per-edge
+// walls, strips gameplay <ellipse>/<polygon> elements, and uses the
+// remaining art as the canvas background. Eggs are then sprinkled
+// procedurally across reachable open cells.
+const LEVELS_LEGACY_REFERENCE = [
+  {
+    name: "Chicken Coop Tunnel",
+    timeLimit: 80,
+    hatchSeconds: 24,   // eggs start hatching late so the intro is gentle
+    speckledRatio: 0,
+    predators: [],
+    rows: [
+      // Open-pillar layout: eggs sit in vertical column corridors
+      // accessible from row 1, so every egg is reachable.
+      "###################",
+      "#G................#",
+      "#.#.#.#.#.#.#.#.#.#",
+      "#.#e#.#e#.#e#.#e#.#",
+      "#.#.#.#.#.#.#.#.#.#",
+      "#.#e#.#e#.#e#.#e#.#",
+      "#.#.#.#.#.#.#.#.#.#",
+      "#.................#",
+      "#.e.e.e.e.e.e.e.e.#",
+      "#.................#",
+      "#.e.e.e.e.e.e.e.e.#",
+      "#.................#",
+      "###################",
+    ],
+  },
+  {
+    name: "Cracked Coop",
+    timeLimit: 70,
+    hatchSeconds: 18,
+    speckledRatio: 0.25,
+    predators: [{ kind: "predator-fox", spawn: [17, 11], speed: 0.55 }],
+    rows: [
+      "###################",
+      "#G..e.e.e.e.e.e.e.#",
+      "#.#####.#####.###.#",
+      "#.....e.......e...#",
+      "#.###.#######.###.#",
+      "#.e.e.#.e.e.#.e.e.#",
+      "#.#####.....#####.#",
+      "#......e.e........#",
+      "#.#####.....#####.#",
+      "#.e.e.#.e.e.#.e.e.#",
+      "#.###.#######.###.#",
+      "#..e.e.e.e.e.e.e..#",
+      "###################",
+    ],
+  },
+  {
+    name: "Root Maze",
+    timeLimit: 65,
+    hatchSeconds: 12,
+    speckledRatio: 0.45,
+    predators: [
+      { kind: "predator-fox", spawn: [17, 11], speed: 0.65 },
+      { kind: "predator-owl", spawn: [1, 11], speed: 0.50 },
+    ],
+    rows: [
+      "###################",
+      "#G.e.#...e...#.e..#",
+      "#.#.#.###.###.#.#.#",
+      "#.#.....e.....#.#.#",
+      "#.#.###.#.###.#.#.#",
+      "#.e.#.e.#.e.#.e.#.#",
+      "#.###.###.###.###.#",
+      "#.#.e.#.e.#.e.#.e.#",
+      "#.#.###.#.###.#.#.#",
+      "#.#.....e.....#.#.#",
+      "#.#.#.###.###.#.#.#",
+      "#..e.#...e...#.e..#",
+      "###################",
+    ],
+  },
+];
+
+// 15 hand-illustrated SVG mazes shipped in ./mazes/. Order, names, and
+// predator schedule track the spec table in gilasplat-design-spec memory.
+const LEVELS = [
+  { name: "Chicken Coop Tunnel",   svg: "./mazes/maze_level1.svg",  timeLimit: 80, hatchSeconds: 26, eggCount: 28, eggMix: [["chicken", 100]],                                                                     predators: [] },
+  { name: "Cracked Coop",          svg: "./mazes/maze_level2.svg",  timeLimit: 75, hatchSeconds: 20, eggCount: 30, eggMix: [["chicken", 85], ["speckled", 15]],                                                    predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.50 }] },
+  { name: "Root Maze",             svg: "./mazes/maze_level3.svg",  timeLimit: 70, hatchSeconds: 16, eggCount: 32, eggMix: [["chicken", 60], ["speckled", 40]],                                                    predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.60 }] },
+  { name: "Desert Nesting Ground", svg: "./mazes/maze_level4.svg",  timeLimit: 70, hatchSeconds: 14, eggCount: 32, eggMix: [["chicken", 55], ["speckled", 15], ["tortoise", 30]],                                  predators: [{ kind: "predator-fox", spawn: [18, 11], speed: 0.65 }] },
+  { name: "Lizard Burrows",        svg: "./mazes/maze_level5.svg",  timeLimit: 70, hatchSeconds: 13, eggCount: 34, eggMix: [["chicken", 45], ["lizard", 55]],                                                      predators: [{ kind: "predator-owl", spawn: [0, 11], speed: 0.55 }] },
+  { name: "Hatchling Rush",        svg: "./mazes/maze_level6.svg",  timeLimit: 68, hatchSeconds: 8,  eggCount: 34, eggMix: [["chicken", 40], ["speckled", 30], ["lizard", 30]],                                    predators: [{ kind: "predator-owl", spawn: [0, 11], speed: 0.60 }, { kind: "predator-fox", spawn: [18, 11], speed: 0.55 }] },
+  { name: "Snake Clutch Cave",     svg: "./mazes/maze_level7.svg",  timeLimit: 65, hatchSeconds: 12, eggCount: 32, eggMix: [["chicken", 35], ["snake", 65]],                                                       predators: [{ kind: "predator-hawk", spawn: [18, 0], speed: 0.45 }] },
+  { name: "Badger Tunnels",        svg: "./mazes/maze_level8.svg",  timeLimit: 65, hatchSeconds: 11, eggCount: 34, eggMix: [["chicken", 20], ["tortoise", 40], ["lizard", 40]],                                    predators: [{ kind: "predator-badger", spawn: [18, 11], speed: 0.65 }] },
+  { name: "Moonlit Maze",          svg: "./mazes/maze_level9.svg",  timeLimit: 62, hatchSeconds: 10, eggCount: 34, eggMix: [["chicken", 30], ["speckled", 20], ["snake", 50]],                                     predators: [{ kind: "predator-owl", spawn: [0, 11], speed: 0.65 }, { kind: "predator-badger", spawn: [18, 11], speed: 0.65 }] },
+  { name: "Coyote Crossing",       svg: "./mazes/maze_level10.svg", timeLimit: 60, hatchSeconds: 9,  eggCount: 36, eggMix: [["chicken", 25], ["speckled", 20], ["tortoise", 20], ["lizard", 20], ["snake", 15]],   predators: [{ kind: "predator-coyote", spawn: [18, 11], speed: 0.80 }] },
+  { name: "Raptor Ridge",          svg: "./mazes/maze_level11.svg", timeLimit: 60, hatchSeconds: 8,  eggCount: 36, eggMix: [["snake", 100]],                                                                       predators: [{ kind: "predator-hawk", spawn: [18, 0], speed: 0.85 }] },
+  { name: "Desert Ruins",          svg: "./mazes/maze_level12.svg", timeLimit: 58, hatchSeconds: 7,  eggCount: 36, eggMix: [["chicken", 35], ["speckled", 25], ["tortoise", 15], ["golden", 25]],                  predators: [{ kind: "predator-hawk", spawn: [18, 0], speed: 0.85 }, { kind: "predator-coyote", spawn: [0, 11], speed: 0.75 }] },
+  { name: "Predator Parade",       svg: "./mazes/maze_level13.svg", timeLimit: 55, hatchSeconds: 7,  eggCount: 38, eggMix: [["chicken", 20], ["speckled", 20], ["tortoise", 20], ["lizard", 20], ["snake", 20]],   predators: [{ kind: "predator-fox", spawn: [0, 0], speed: 0.65 }, { kind: "predator-owl", spawn: [18, 0], speed: 0.65 }, { kind: "predator-badger", spawn: [18, 11], speed: 0.70 }, { kind: "predator-hawk", spawn: [0, 11], speed: 0.80 }] },
+  { name: "Hatchstorm",            svg: "./mazes/maze_level14.svg", timeLimit: 55, hatchSeconds: 4,  eggCount: 40, eggMix: [["chicken", 30], ["speckled", 30], ["tortoise", 20], ["lizard", 20]],                  predators: [{ kind: "predator-coyote", spawn: [0, 0], speed: 0.85 }, { kind: "predator-hawk", spawn: [18, 0], speed: 0.85 }, { kind: "predator-owl", spawn: [9, 11], speed: 0.70 }] },
+  { name: "GilaSplat Gauntlet",    svg: "./mazes/maze_level15.svg", timeLimit: 50, hatchSeconds: 5,  eggCount: 42, eggMix: [["chicken", 20], ["speckled", 15], ["tortoise", 15], ["lizard", 15], ["snake", 25], ["golden", 10]], predators: [{ kind: "predator-fox", spawn: [0, 0], speed: 0.75 }, { kind: "predator-coyote", spawn: [18, 0], speed: 0.85 }, { kind: "predator-badger", spawn: [0, 11], speed: 0.80 }, { kind: "predator-hawk", spawn: [18, 11], speed: 0.90 }, { kind: "predator-owl", spawn: [9, 6], speed: 0.75 }] },
+];
+
+// ========== State ==========
+const state = {
+  difficulty: "beginner",
+  levelIdx: 0,
+  score: 0,
+  eggsEaten: 0,
+  chicksEaten: 0,
+  timeLeft: 0,
+  running: false,
+  paused: false,
+  soundOn: true,
+  countdown: 0,
+  lastTime: 0,
+  rafId: 0,
+  // Wall edges (Pac-Man style): walls.top[r][c] === 1 means a wall sits
+  // on the top edge of cell (c, r); walls.left[r][c] === 1 means a wall
+  // sits on the left edge. Outer frame edges are included.
+  walls: null,
+  bgImage: null,      // Background SVG with gameplay items stripped
+  entities: [],       // eggs, chicks
+  predators: [],      // hostile chasers populated per level
+  quipText: "",
+  quipUntil: 0,
+  combo: 0,
+  lastEatAt: 0,
+  heartbeatAt: 0,
+  comboDisplayUntil: 0,
+  lives: 3,
+  hiScore: 0,
+  powerups: [],             // collectible items on the maze
+  activePowers: {},         // kind -> expiry timestamp (performance.now-relative)
+  revealUntil: 0,           // moon-glow flash effect
+  // Gila monster — moves tile-to-tile with smooth interpolation
+  gila: {
+    tx: 1, ty: 1,         // current tile
+    nx: 1, ny: 1,         // target tile when moving
+    px: 60, py: 60,       // pixel position (center)
+    moving: false,
+    moveT: 0,             // 0..1 progress through current move
+    moveDur: 0.18,        // seconds per tile (overridden by difficulty)
+    dir: { x: 1, y: 0 },  // facing direction
+    queuedDir: null,      // next direction buffered from input
+    tongueT: 0,           // tongue flick timer
+    pauseT: 0,            // post-eat pause
+  },
+};
+
+const DIFF = {
+  beginner: { moveDur: 0.34, hatchScale: 1.5, timeScale: 1.0,  chickSpeed: 0.50 },
+  easy:     { moveDur: 0.28, hatchScale: 1.0, timeScale: 0.92, chickSpeed: 0.70 },
+  medium:   { moveDur: 0.22, hatchScale: 0.7, timeScale: 0.85, chickSpeed: 0.95 },
+};
+
+// ========== Egg + hatchling kinds ==========
+// One source of truth for sprite, score, quip pool, and hatch behavior.
+// Score values track the spec table.
+const EGG_KINDS = {
+  chicken:  { sprite: "egg-chicken",           score: 10,  hatchTo: "chick",       hatchScale: 1.0, quip: "egg",      sfx: "eatEgg" },
+  speckled: { sprite: "egg-chicken-speckled",  score: 15,  hatchTo: "chick",       hatchScale: 1.0, quip: "speckled", sfx: "eatSpeckled" },
+  tortoise: { sprite: "egg-tortoise",          score: 30,  hatchTo: "h-tortoise",  hatchScale: 1.4, quip: "tortoise", sfx: "crunch" },
+  lizard:   { sprite: "egg-lizard",            score: 35,  hatchTo: "h-lizard",    hatchScale: 0.9, quip: "lizard",   sfx: "crunch" },
+  snake:    { sprite: "egg-snake",             score: 45,  hatchTo: "h-snake",     hatchScale: 0.8, quip: "snake",    sfx: "crunch" },
+  golden:   { sprite: "egg-golden",            score: 100, hatchTo: null,          hatchScale: 0.6, quip: "golden",   sfx: "chime" },
+};
+const HATCHLING_KINDS = {
+  "chick":       { sprite: "chick",              score: 25, speed: 1.0,  quip: "chick",    sfx: "eatChick" },
+  "h-tortoise":  { sprite: "hatchling-tortoise", score: 50, speed: 0.55, quip: "tortoise", sfx: "squeak" },
+  "h-lizard":    { sprite: "hatchling-lizard",   score: 60, speed: 1.25, quip: "lizard",   sfx: "squeak" },
+  "h-snake":     { sprite: "hatchling-snake",    score: 75, speed: 0.95, quip: "snake",    sfx: "squeak" },
+};
+// ========== Power-ups ==========
+// Each effect is timed (durationMs > 0) or instant. The reducers in
+// applyPower() are intentionally tiny so adding a new power-up is one
+// table row + one optional reducer branch.
+const POWER_KINDS = {
+  sunstone:    { sprite: "power-sunstone",  durationMs: 5000, label: "SPEED",     hue: "#facc15", quip: "ZOOMIES!" },
+  cactus:      { sprite: "power-cactus",    durationMs: 0,    label: "+5s",       hue: "#22c55e", quip: "Five more seconds!" },
+  "shed-skin": { sprite: "power-shed-skin", durationMs: 4000, label: "PHASING",   hue: "#a855f7", quip: "Catch me now." },
+  dust:        { sprite: "power-dust",      durationMs: 5000, label: "DUST",      hue: "#d1e6ff", quip: "Eat my dust." },
+  beetle:      { sprite: "power-beetle",    durationMs: 0,    label: "+100",      hue: "#7c3aed", quip: "Beetle bounty!" },
+  "warm-rock": { sprite: "power-warm-rock", durationMs: 8000, label: "TIME STOP", hue: "#f97316", quip: "Hatch later, eggs." },
+  moon:        { sprite: "power-moon",      durationMs: 3000, label: "MOON",      hue: "#8bd4ff", quip: "Lit up like the moon." },
+};
+const POWER_KEYS = Object.keys(POWER_KINDS);
+
+function pickEggKind(mix) {
+  let total = 0;
+  for (const m of mix) total += m[1];
+  let r = Math.random() * total;
+  for (const [k, w] of mix) {
+    r -= w;
+    if (r <= 0) return k;
+  }
+  return mix[0][0];
+}
+
+// ========== Asset loader ==========
+// All sprite art lives in ./assets/ as transparent 512×512 PNGs.
+// Walls and floor stay procedural for now (no tile-sheet shipped yet).
+const ASSET_PATHS = {
+  gila: "./assets/gila.png",
+  "egg-chicken": "./assets/egg-chicken.png",
+  "egg-chicken-speckled": "./assets/egg-chicken-speckled.png",
+  "egg-tortoise": "./assets/egg-tortoise.png",
+  "egg-lizard": "./assets/egg-lizard.png",
+  "egg-snake": "./assets/egg-snake.png",
+  "egg-golden": "./assets/egg-golden.png",
+  chick: "./assets/chick.png",
+  "hatchling-tortoise": "./assets/hatchling-tortoise.png",
+  "hatchling-lizard": "./assets/hatchling-lizard.png",
+  "hatchling-snake": "./assets/hatchling-snake.png",
+  "mystery-clutch": "./assets/mystery-clutch.png",
+  "predator-fox": "./assets/predator-fox.png",
+  "predator-coyote": "./assets/predator-coyote.png",
+  "predator-badger": "./assets/predator-badger.png",
+  "predator-owl": "./assets/predator-owl.png",
+  "predator-hawk": "./assets/predator-hawk.png",
+  "power-sunstone": "./assets/power-sunstone.png",
+  "power-cactus": "./assets/power-cactus.png",
+  "power-shed-skin": "./assets/power-shed-skin.png",
+  "power-dust": "./assets/power-dust.png",
+  "power-key": "./assets/power-key.png",
+  "power-beetle": "./assets/power-beetle.png",
+  "power-warm-rock": "./assets/power-warm-rock.png",
+  "power-moon": "./assets/power-moon.png",
+};
+const ASSETS = {};
+let assetsReady = false;
+function loadAssets() {
+  const entries = Object.entries(ASSET_PATHS);
+  return Promise.all(entries.map(([key, path]) => new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => { ASSETS[key] = img; resolve(); };
+    img.onerror = () => { ASSETS[key] = null; resolve(); };
+    img.src = path;
+  }))).then(() => {
+    // Bake a DrawSplat-purple version of the gila by hue-rotating
+    // the orange-and-black source. Stored once, rendered every frame.
+    if (ASSETS.gila) ASSETS["gila-purple"] = tintHue(ASSETS.gila, 250, 1.05);
+    assetsReady = true;
+  });
+}
+function tintHue(img, degrees, saturate) {
+  const c = document.createElement("canvas");
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const cx = c.getContext("2d");
+  cx.filter = `hue-rotate(${degrees}deg) saturate(${saturate || 1})`;
+  cx.drawImage(img, 0, 0);
+  return c;
+}
+
+// ========== Audio (Web Audio API) ==========
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, duration, type = "square", vol = 0.12, attack = 0.005) {
+  if (!state.soundOn) return;
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(vol, ctx.currentTime + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration + 0.02);
+  } catch (e) { /* ignore */ }
+}
+function noiseBurst(duration, vol = 0.08, filterFreq = 0) {
+  if (!state.soundOn) return;
+  try {
+    const ctx = getCtx();
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    let last = src;
+    if (filterFreq) {
+      const f = ctx.createBiquadFilter();
+      f.type = "bandpass";
+      f.frequency.setValueAtTime(filterFreq, ctx.currentTime);
+      f.Q.value = 1.4;
+      src.connect(f); last = f;
+    }
+    last.connect(g).connect(ctx.destination);
+    src.start();
+  } catch (e) { /* ignore */ }
+}
+function slide(fStart, fEnd, duration, type = "triangle", vol = 0.12) {
+  if (!state.soundOn) return;
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(fStart, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(1, fEnd), ctx.currentTime + duration);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(vol, ctx.currentTime + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration + 0.02);
+  } catch (e) { /* ignore */ }
+}
+function chord(freqs, duration, type = "sine", vol = 0.08) {
+  freqs.forEach(f => tone(f, duration, type, vol));
+}
+const sfx = {
+  scuttle: () => tone(180 + Math.random() * 40, 0.04, "square", 0.04),
+  tongue:  () => { tone(1500, 0.025, "triangle", 0.07); setTimeout(() => tone(1700, 0.025, "triangle", 0.06), 35); },
+  count:   () => tone(880, 0.08, "triangle", 0.10),
+  tickLow: () => tone(900, 0.04, "square", 0.10),
+
+  // ----- Eating -----
+  eatEgg: () => { tone(620, 0.07, "sine", 0.16); setTimeout(() => tone(880, 0.05, "sine", 0.12), 50); },
+  eatSpeckled: () => { tone(700, 0.06, "square", 0.14); setTimeout(() => tone(1040, 0.06, "square", 0.10), 50); },
+  // Crunchy reptile-egg pop: noise burst + low body thud
+  crunch: () => { noiseBurst(0.05, 0.16, 2200); tone(180, 0.06, "square", 0.12); },
+  // Quick chirp-pop for chicks
+  eatChick: () => { tone(1500, 0.05, "triangle", 0.13); setTimeout(() => tone(900, 0.07, "sine", 0.13), 50); },
+  // Faster squeak-pop for bigger hatchlings
+  squeak: () => { slide(1700, 700, 0.08, "triangle", 0.14); setTimeout(() => tone(420, 0.05, "sine", 0.10), 60); },
+  // Sparkly chime for golden egg
+  chime: () => {
+    [880, 1109, 1318, 1760].forEach((f, i) => setTimeout(() => tone(f, 0.22, "sine", 0.13 - i * 0.018), i * 70));
+  },
+
+  // ----- Hatching + timing -----
+  hatch: () => {
+    noiseBurst(0.04, 0.10, 1600);
+    setTimeout(() => noiseBurst(0.04, 0.10, 1600), 80);
+    setTimeout(() => tone(820, 0.10, "triangle", 0.11), 170);
+  },
+
+  // ----- Level transitions -----
+  levelStart: () => {
+    // Desert drumbeat: 4 quick low thuds, then a high accent
+    for (let i = 0; i < 4; i++) setTimeout(() => { noiseBurst(0.05, 0.16, 180); tone(110, 0.05, "sine", 0.10); }, i * 110);
+    setTimeout(() => tone(660, 0.18, "triangle", 0.14), 480);
+  },
+  levelClear: () => {
+    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, 0.16, "sine", 0.18), i * 110));
+    setTimeout(() => chord([523, 659, 784, 1046], 0.30, "triangle", 0.05), 480);
+  },
+  gameOver: () => {
+    [600, 480, 380, 280].forEach((f, i) => setTimeout(() => tone(f, 0.20, "sawtooth", 0.13), i * 150));
+  },
+
+  // ----- Predators: warning voices -----
+  fox:    () => { noiseBurst(0.10, 0.06, 5000); setTimeout(() => noiseBurst(0.08, 0.05, 4500), 110); },
+  owl:    () => { slide(420, 280, 0.30, "sine", 0.13); setTimeout(() => { noiseBurst(0.06, 0.07, 800); noiseBurst(0.06, 0.05, 1200); }, 320); },
+  hawk:   () => { slide(2400, 900, 0.22, "sawtooth", 0.13); },
+  coyote: () => { slide(440, 700, 0.10, "triangle", 0.11); setTimeout(() => slide(720, 380, 0.32, "triangle", 0.12), 130); },
+  badger: () => { tone(110, 0.18, "sawtooth", 0.13); setTimeout(() => noiseBurst(0.12, 0.10, 350), 60); },
+
+  // ----- Tension + reward -----
+  heartbeat: () => { tone(60, 0.12, "sine", 0.18); setTimeout(() => tone(60, 0.18, "sine", 0.14), 180); },
+  gulp:  () => { tone(180, 0.14, "sine", 0.18); setTimeout(() => tone(90, 0.30, "sine", 0.18), 140); },
+  combo: () => {
+    [523, 659, 784, 988].forEach((f, i) => setTimeout(() => tone(f, 0.10, "triangle", 0.13), i * 70));
+  },
+  bigCombo: () => {
+    [523, 659, 784, 988, 1175, 1318].forEach((f, i) => setTimeout(() => tone(f, 0.10, "sine", 0.15), i * 60));
+    setTimeout(() => chord([523, 659, 784, 1046], 0.36, "triangle", 0.07), 380);
+  },
+};
+const PREDATOR_VOICE = {
+  "predator-fox": sfx.fox,
+  "predator-owl": sfx.owl,
+  "predator-hawk": sfx.hawk,
+  "predator-coyote": sfx.coyote,
+  "predator-badger": sfx.badger,
+};
+
+// ========== Voice (Web Speech API) ==========
+// Pick a playful pitch/rate. Cancels prior utterances so rapid-fire eats
+// don't stack a backlog of quotes.
+let preferredVoice = null;
+function pickVoice() {
+  if (preferredVoice || !("speechSynthesis" in window)) return;
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return;
+  // Prefer a clearly playful / character-y voice if the browser exposes one;
+  // otherwise the first English voice; otherwise the system default.
+  preferredVoice =
+    voices.find(v => /child|kid|princess|junior|whisper/i.test(v.name)) ||
+    voices.find(v => /en[-_]?US|en[-_]?GB/i.test(v.lang) && /google|samantha|aria|jenny/i.test(v.name)) ||
+    voices.find(v => /^en/i.test(v.lang)) ||
+    voices[0];
+}
+if ("speechSynthesis" in window) {
+  speechSynthesis.onvoiceschanged = pickVoice;
+  pickVoice();
+}
+function speak(text) {
+  if (!state.soundOn || !("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (preferredVoice) u.voice = preferredVoice;
+    u.rate = 1.15;
+    u.pitch = 1.25;
+    u.volume = 0.85;
+    speechSynthesis.speak(u);
+  } catch (e) { /* ignore */ }
+}
+
+// ========== Quips ==========
+const QUIPS = {
+  egg: [
+    "Tastes like chicken!",
+    "Mmm, breakfast.",
+    "Yolk's on you.",
+    "Eggcellent!",
+    "Shell-shocked.",
+    "Nailed it.",
+  ],
+  speckled: [
+    "Speckled and snackled.",
+    "A little crunchy. I like it.",
+    "Freckled, deckled, schnozzled.",
+  ],
+  chick: [
+    "Sorry, little buddy.",
+    "Cheep cheep CHOMP.",
+    "Crunchier than expected!",
+    "Should've stayed in the shell.",
+  ],
+  tortoise: [
+    "Tastes like tortoise omelet! Gimme some cheese with that!",
+    "Slow food, fast bite.",
+  ],
+  lizard: [
+    "Cousin? Sorry, cousin.",
+    "Family reunion. Briefly.",
+  ],
+  snake: [
+    "Risky business, delicious payoff.",
+    "Hiss hiss, gone gone.",
+  ],
+  golden: [
+    "JACKPOT!",
+    "Solid gold, baby.",
+    "I am SO rich.",
+  ],
+  combo3: [
+    "Combo!",
+    "Streak!",
+    "Three in a row!",
+  ],
+  combo6: [
+    "SIX! Unstoppable!",
+    "Combo frenzy!",
+    "I am the snack tornado.",
+  ],
+  combo10: [
+    "TEN! I am a LEGEND.",
+    "MEGA COMBO!",
+    "Egg apocalypse.",
+  ],
+};
+function emitQuip(kind) {
+  const pool = QUIPS[kind] || QUIPS.egg;
+  const text = pool[Math.floor(Math.random() * pool.length)];
+  state.quipText = text;
+  state.quipUntil = performance.now() + 1800;
+  speak(text);
+}
+
+// ========== Setup interactions ==========
+document.querySelectorAll(".mode-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    state.difficulty = b.dataset.diff;
+    document.querySelectorAll(".mode-btn").forEach(x => x.classList.toggle("active", x === b));
+  });
+});
+
+const startBtn = $("startBtn");
+const startBtnLabel = startBtn.textContent;
+startBtn.disabled = true;
+startBtn.textContent = "Loading sprites…";
+loadAssets().then(() => {
+  startBtn.disabled = false;
+  startBtn.textContent = startBtnLabel;
+});
+startBtn.addEventListener("click", () => {
+  if (!assetsReady) return;
+  state.levelIdx = 0;
+  state.score = 0;
+  state.eggsEaten = 0;
+  state.chicksEaten = 0;
+  state.lives = 3;
+  setScreen("game");
+  getCtx();
+  loadLevel(0);
+});
+
+$("pauseBtn").addEventListener("click", togglePause);
+$("quitBtn").addEventListener("click", quitToSetup);
+$("soundBtn").addEventListener("click", () => {
+  state.soundOn = !state.soundOn;
+  $("soundBtn").classList.toggle("on", state.soundOn);
+  $("soundBtn").classList.toggle("off", !state.soundOn);
+  $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
+});
+$("playAgainBtn").addEventListener("click", () => {
+  state.levelIdx = 0;
+  state.score = 0;
+  state.eggsEaten = 0;
+  state.chicksEaten = 0;
+  state.lives = 3;
+  setScreen("game");
+  loadLevel(0);
+});
+$("newRunBtn").addEventListener("click", quitToSetup);
+
+function setScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === name));
+}
+
+function quitToSetup() {
+  state.running = false;
+  cancelAnimationFrame(state.rafId);
+  $("overlay").classList.remove("show");
+  setScreen("setup");
+}
+
+// ========== Level loading ==========
+// Each level fetches its SVG, parses the wall lines into edge data,
+// strips gameplay-item ellipses/polygons from a clone, and uses that
+// clone as the canvas background. Eggs are sprinkled into open cells.
+async function loadLevel(idx) {
+  const lvl = LEVELS[idx];
+  const diff = DIFF[state.difficulty];
+  state.gila.moveDur = diff.moveDur;
+  state.gila.dir = { x: 1, y: 0 };
+  state.gila.queuedDir = null;
+  state.gila.moving = false;
+  state.gila.moveT = 0;
+  state.gila.tongueT = 0;
+  state.gila.pauseT = 0;
+
+  let svgText;
+  try {
+    svgText = await fetch(lvl.svg, { cache: "force-cache" }).then(r => r.text());
+  } catch (e) {
+    svgText = "<svg/>";
+  }
+  state.walls = parseWalls(svgText);
+  state.bgImage = await rasterizeSvgBackground(svgText);
+
+  // Gila spawn: pick the cell with the largest reach so the gila has
+  // the biggest playable territory on this maze. (Later levels are
+  // intentionally compartmentalised — burrow keys / digging will open
+  // more once power-ups land.)
+  const spawn = bestSpawnCell();
+  state.gila.tx = state.gila.nx = spawn.x;
+  state.gila.ty = state.gila.ny = spawn.y;
+  state.gila.px = cellX(spawn.x);
+  state.gila.py = cellY(spawn.y);
+
+  // Sprinkle eggs across reachable cells (excluding the spawn tile).
+  const reachable = computeReachable(spawn.x, spawn.y);
+  const candidateCells = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (!reachable[r * COLS + c]) continue;
+      if (c === spawn.x && r === spawn.y) continue;
+      candidateCells.push([c, r]);
+    }
+  }
+  shuffle(candidateCells);
+  const want = Math.min(lvl.eggCount || 24, candidateCells.length);
+  state.entities = [];
+  for (let i = 0; i < want; i++) {
+    const [x, y] = candidateCells[i];
+    const kind = pickEggKind(lvl.eggMix || [["chicken", 100]]);
+    const spec = EGG_KINDS[kind];
+    state.entities.push({
+      kind, x, y,
+      hatchAt: lvl.hatchSeconds > 0 ? lvl.hatchSeconds * spec.hatchScale * diff.hatchScale * (0.75 + Math.random() * 0.5) : -1,
+      wobble: Math.random() * Math.PI * 2,
+    });
+  }
+
+  // Spawn 2 power-ups in random reachable cells not already holding an egg.
+  state.powerups = [];
+  const occupied = new Set(state.entities.map(e => `${e.x},${e.y}`));
+  occupied.add(`${spawn.x},${spawn.y}`);
+  const freeCells = candidateCells.filter(([c, r]) => !occupied.has(`${c},${r}`));
+  shuffle(freeCells);
+  const powerCount = Math.min(2, freeCells.length);
+  for (let i = 0; i < powerCount; i++) {
+    const [x, y] = freeCells[i];
+    const kind = POWER_KEYS[Math.floor(Math.random() * POWER_KEYS.length)];
+    state.powerups.push({ kind, x, y, wobble: Math.random() * Math.PI * 2 });
+  }
+  state.activePowers = {};
+  state.revealUntil = 0;
+
+  // Spawn predators
+  state.predators = (lvl.predators || []).map(p => {
+    let [sx, sy] = p.spawn;
+    if (!reachable[sy * COLS + sx]) {
+      // Fall back to a reachable open cell furthest from gila
+      const open = candidateCells.slice().sort((a, b) => {
+        const da = Math.abs(a[0] - spawn.x) + Math.abs(a[1] - spawn.y);
+        const db = Math.abs(b[0] - spawn.x) + Math.abs(b[1] - spawn.y);
+        return db - da;
+      });
+      if (open.length) { sx = open[0][0]; sy = open[0][1]; }
+    }
+    return {
+      kind: p.kind,
+      tx: sx, ty: sy, nx: sx, ny: sy,
+      px: cellX(sx), py: cellY(sy),
+      moving: false, moveT: 0,
+      moveDur: 1 / Math.max(0.2, p.speed),
+      dir: { x: -1, y: 0 },
+      brainCooldown: 0,
+      facing: -1,
+    };
+  });
+
+  state.quipText = "";
+  state.quipUntil = 0;
+  state.combo = 0;
+  state.lastEatAt = 0;
+  state.heartbeatAt = 0;
+  state.timeLeft = lvl.timeLimit * diff.timeScale;
+  state.running = true;
+  state.paused = false;
+  state.lastTime = performance.now();
+  setBannerForLevel(lvl);
+  updateHUD();
+  beginCountdown(3, `Level ${idx + 1} — ${lvl.name}`);
+  cancelAnimationFrame(state.rafId);
+  state.rafId = requestAnimationFrame(loop);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// Build wall-edge data from SVG <line> elements. Lines with thin stroke
+// (the inline shadow accent) are skipped.
+function parseWalls(svgText) {
+  const top  = Array.from({ length: ROWS + 1 }, () => new Uint8Array(COLS));
+  const left = Array.from({ length: ROWS }, () => new Uint8Array(COLS + 1));
+  // Always-on outer frame in case the SVG omits a perimeter segment
+  for (let c = 0; c < COLS; c++) { top[0][c] = 1; top[ROWS][c] = 1; }
+  for (let r = 0; r < ROWS; r++) { left[r][0] = 1; left[r][COLS] = 1; }
+  const re = /<line[^>]*x1="([\d.]+)"[^>]*y1="([\d.]+)"[^>]*x2="([\d.]+)"[^>]*y2="([\d.]+)"[^>]*stroke-width="([\d.]+)"/g;
+  let m;
+  while ((m = re.exec(svgText))) {
+    const x1 = parseFloat(m[1]), y1 = parseFloat(m[2]);
+    const x2 = parseFloat(m[3]), y2 = parseFloat(m[4]);
+    const sw = parseFloat(m[5]);
+    if (sw < 5) continue;
+    const c1 = Math.round((x1 - OX) / TILE);
+    const r1 = Math.round((y1 - OY) / TILE);
+    const c2 = Math.round((x2 - OX) / TILE);
+    const r2 = Math.round((y2 - OY) / TILE);
+    if (r1 === r2) {
+      const lo = Math.min(c1, c2), hi = Math.max(c1, c2);
+      for (let c = lo; c < hi; c++) {
+        if (r1 >= 0 && r1 <= ROWS && c >= 0 && c < COLS) top[r1][c] = 1;
+      }
+    } else if (c1 === c2) {
+      const lo = Math.min(r1, r2), hi = Math.max(r1, r2);
+      for (let r = lo; r < hi; r++) {
+        if (c1 >= 0 && c1 <= COLS && r >= 0 && r < ROWS) left[r][c1] = 1;
+      }
+    }
+  }
+  return { top, left };
+}
+
+// Strip gameplay ellipses + polygons (decorative eggs and stars) so the
+// canvas-overlay eggs are the source of truth. Returns a loaded Image
+// via data URL so the image data stays valid for every redraw — blob
+// URLs revoked after onload can race the next drawImage in some browsers.
+function rasterizeSvgBackground(svgText) {
+  const cleaned = svgText
+    .replace(/<ellipse[^/]*\/>/g, "")
+    .replace(/<polygon[^/]*\/>/g, "");
+  const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(cleaned);
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      if (!img.naturalWidth) { resolve(null); return; }
+      resolve(img);
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+function bestSpawnCell() {
+  let best = { x: 0, y: 0, count: -1 };
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const seen = computeReachable(c, r);
+      let cnt = 0;
+      for (let i = 0; i < seen.length; i++) cnt += seen[i];
+      if (cnt > best.count) best = { x: c, y: r, count: cnt };
+    }
+  }
+  return best;
+}
+
+function computeReachable(sx, sy) {
+  const seen = new Uint8Array(COLS * ROWS);
+  const stack = [[sx, sy]];
+  seen[sy * COLS + sx] = 1;
+  while (stack.length) {
+    const [x, y] = stack.pop();
+    for (const d of [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]) {
+      if (!canStep(x, y, d)) continue;
+      const nx = x + d.x, ny = y + d.y;
+      const idx = ny * COLS + nx;
+      if (seen[idx]) continue;
+      seen[idx] = 1;
+      stack.push([nx, ny]);
+    }
+  }
+  return seen;
+}
+
+// ========== Countdown overlay ==========
+function beginCountdown(secs, title) {
+  state.countdown = secs;
+  const overlay = $("overlay");
+  overlay.classList.add("show");
+  $("overlayTitle").textContent = title || "Get ready…";
+  $("overlaySub").textContent = "Eat every egg before the timer runs out.";
+  $("countdown").textContent = secs;
+  $("overlayActions").innerHTML = "";
+  sfx.count();
+  const tick = () => {
+    state.countdown -= 1;
+    if (state.countdown <= 0) {
+      overlay.classList.remove("show");
+      sfx.levelStart();
+      // Each predator announces itself with its species-specific call.
+      state.predators.forEach((p, i) => {
+        const voice = PREDATOR_VOICE[p.kind];
+        if (voice) setTimeout(voice, 500 + i * 350);
+      });
+      return;
+    }
+    $("countdown").textContent = state.countdown;
+    sfx.count();
+    setTimeout(tick, 1000);
+  };
+  setTimeout(tick, 1000);
+}
+
+function togglePause() {
+  if (!state.running) return;
+  state.paused = !state.paused;
+  $("pauseBtn").textContent = state.paused ? "▶ Resume" : "⏸ Pause";
+  const overlay = $("overlay");
+  if (state.paused) {
+    overlay.classList.add("show");
+    $("overlayTitle").textContent = "Paused";
+    $("overlaySub").textContent = "Take a breath. The eggs aren't going anywhere… much.";
+    $("countdown").textContent = "";
+    $("overlayActions").innerHTML = "";
+  } else if (state.countdown <= 0) {
+    overlay.classList.remove("show");
+  }
+}
+
+// ========== Input ==========
+const keys = Object.create(null);
+addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+  keys[k] = true;
+  if (k === " ") { e.preventDefault(); togglePause(); return; }
+  let dir = null;
+  if (k === "arrowup" || k === "w") dir = { x: 0, y: -1 };
+  else if (k === "arrowdown" || k === "s") dir = { x: 0, y: 1 };
+  else if (k === "arrowleft" || k === "a") dir = { x: -1, y: 0 };
+  else if (k === "arrowright" || k === "d") dir = { x: 1, y: 0 };
+  if (dir) {
+    e.preventDefault();
+    state.gila.queuedDir = dir;
+  }
+});
+addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+// ========== Main loop ==========
+function loop(now) {
+  state.rafId = requestAnimationFrame(loop);
+  if (!state.running) return;
+  const dt = Math.min(0.05, (now - state.lastTime) / 1000);
+  state.lastTime = now;
+  if (!state.paused && state.countdown <= 0) {
+    update(dt);
+  }
+  render();
+}
+
+function update(dt) {
+  // ---- Timer ----
+  state.timeLeft -= dt;
+  if (state.timeLeft <= 0) {
+    state.timeLeft = 0;
+    updateHUD();
+    return gameOver(false);
+  }
+  // Low-time pulse
+  const prevSec = Math.ceil(state.timeLeft + dt);
+  const curSec = Math.ceil(state.timeLeft);
+  if (curSec !== prevSec) {
+    if (curSec <= 10 && curSec > 0) sfx.tickLow();
+    updateHUD();
+  }
+
+  // ---- Gila monster ----
+  updateGila(dt);
+
+  // ---- Entities: hatching + hatchling wandering + golden egg vanish ----
+  for (let i = state.entities.length - 1; i >= 0; i--) {
+    const e = state.entities[i];
+    const eggSpec = EGG_KINDS[e.kind];
+    if (eggSpec && e.hatchAt > 0) {
+      // Warm rock freezes every hatch timer for its duration.
+      if (!isPowerActive("warm-rock")) e.hatchAt -= dt;
+      if (e.hatchAt <= 0) {
+        if (eggSpec.hatchTo === null) {
+          // Golden egg vanishes if not eaten quickly.
+          state.entities.splice(i, 1);
+          continue;
+        }
+        e.kind = eggSpec.hatchTo;
+        e.wanderT = 0;
+        e.px = cellX(e.x);
+        e.py = cellY(e.y);
+        e.targetX = e.x;
+        e.targetY = e.y;
+        sfx.hatch();
+      }
+    }
+    if (HATCHLING_KINDS[e.kind]) {
+      updateHatchling(e, dt);
+    }
+    e.wobble += dt * 2;
+  }
+
+  // ---- Combo decay ----
+  if (state.combo > 0 && performance.now() - state.lastEatAt > 1500) {
+    state.combo = 0;
+    updateHUD();
+  }
+  // ---- Active power-up bar decay (visual only) ----
+  for (const k in state.activePowers) {
+    if (state.activePowers[k] > 0) { updateHUD(); break; }
+  }
+
+  // ---- Predators ----
+  let nearest = Infinity;
+  for (const p of state.predators) {
+    updatePredator(p, dt);
+    if (predatorCaughtGila(p)) {
+      return predatorCatch(p);
+    }
+    const d = Math.abs(p.tx - state.gila.tx) + Math.abs(p.ty - state.gila.ty);
+    if (d < nearest) nearest = d;
+  }
+  // Proximity heartbeat: triggers when a predator is within 4 tiles,
+  // cadence shrinks from ~1.4s at distance 4 down to ~0.5s at distance 0.
+  if (nearest <= 4) {
+    const now = performance.now();
+    const cadence = 500 + nearest * 230;
+    if (now - state.heartbeatAt >= cadence) {
+      sfx.heartbeat();
+      state.heartbeatAt = now;
+    }
+  } else {
+    state.heartbeatAt = 0;
+  }
+
+  // ---- Win condition ----
+  if (state.entities.length === 0) {
+    return levelComplete();
+  }
+}
+
+function updatePredator(p, dt) {
+  if (!p.moving) {
+    p.brainCooldown -= dt;
+    if (p.brainCooldown <= 0) {
+      p.brainCooldown = 0.35 + Math.random() * 0.2;
+      // Chase: pick neighbour that minimises distance to gila if within 7 tiles
+      const dist = Math.abs(p.tx - state.gila.tx) + Math.abs(p.ty - state.gila.ty);
+      const choices = [
+        { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 },
+      ].filter(d => canStep(p.tx, p.ty, d));
+      if (!choices.length) return;
+      let dir;
+      if (dist <= 7 && Math.random() < 0.85) {
+        choices.sort((a, b) => {
+          const ax = (p.tx + a.x) - state.gila.tx;
+          const ay = (p.ty + a.y) - state.gila.ty;
+          const bx = (p.tx + b.x) - state.gila.tx;
+          const by = (p.ty + b.y) - state.gila.ty;
+          return (Math.abs(ax) + Math.abs(ay)) - (Math.abs(bx) + Math.abs(by));
+        });
+        dir = choices[0];
+      } else {
+        dir = choices[Math.floor(Math.random() * choices.length)];
+      }
+      p.dir = dir;
+      p.nx = p.tx + dir.x;
+      p.ny = p.ty + dir.y;
+      if (dir.x) p.facing = dir.x;
+      p.moving = true;
+      p.moveT = 0;
+    } else {
+      return;
+    }
+  }
+  // Dust cloud slows predators to 1/3 speed.
+  const slowScale = isPowerActive("dust") ? 3 : 1;
+  p.moveT += dt / (p.moveDur * slowScale);
+  if (p.moveT >= 1) {
+    p.tx = p.nx; p.ty = p.ny;
+    p.px = cellX(p.tx);
+    p.py = cellY(p.ty);
+    p.moving = false;
+    p.moveT = 0;
+  } else {
+    const fromX = cellX(p.tx);
+    const fromY = cellY(p.ty);
+    const toX = cellX(p.nx);
+    const toY = cellY(p.ny);
+    p.px = fromX + (toX - fromX) * p.moveT;
+    p.py = fromY + (toY - fromY) * p.moveT;
+  }
+}
+
+function predatorCaughtGila(p) {
+  // Shed-skin grants temporary phasing — predators pass through.
+  if (isPowerActive("shed-skin")) return false;
+  // Catch when both occupy the same tile (after interpolation snap).
+  const dx = p.px - state.gila.px;
+  const dy = p.py - state.gila.py;
+  return Math.hypot(dx, dy) < TILE * 0.55;
+}
+
+function predatorCatch(p) {
+  state.running = false;
+  sfx.gulp();
+  state.lives -= 1;
+  updateHUD();
+  if (state.lives <= 0) {
+    speak("Caught me! Game over.");
+    setTimeout(() => endRun(false, "Predator!"), 700);
+    return;
+  }
+  speak("Caught me! Curses.");
+  // Respawn after a short pause: re-load current level, keeping score.
+  setTimeout(() => loadLevel(state.levelIdx), 900);
+}
+
+function updateGila(dt) {
+  const g = state.gila;
+  if (g.pauseT > 0) { g.pauseT -= dt; return; }
+  g.tongueT -= dt;
+
+  if (!g.moving) {
+    // Try queued direction first, then current direction
+    let chosen = null;
+    if (g.queuedDir && canStep(g.tx, g.ty, g.queuedDir)) {
+      chosen = g.queuedDir;
+    } else if (canStep(g.tx, g.ty, g.dir)) {
+      chosen = g.dir;
+    }
+    if (chosen) {
+      g.dir = chosen;
+      g.nx = g.tx + chosen.x;
+      g.ny = g.ty + chosen.y;
+      g.moving = true;
+      g.moveT = 0;
+      sfx.scuttle();
+    } else {
+      return;
+    }
+  }
+
+  // Sunstone gives a 0.6× moveDur multiplier (faster legs).
+  const moveScale = isPowerActive("sunstone") ? 0.6 : 1;
+  g.moveT += dt / (g.moveDur * moveScale);
+  if (g.moveT >= 1) {
+    g.tx = g.nx;
+    g.ty = g.ny;
+    g.px = cellX(g.tx);
+    g.py = cellY(g.ty);
+    g.moving = false;
+    g.moveT = 0;
+    checkEat();
+    // Tongue flick if food nearby
+    if (foodNearby(g.tx, g.ty)) {
+      g.tongueT = 0.18;
+      if (Math.random() < 0.6) sfx.tongue();
+    }
+  } else {
+    const fromX = cellX(g.tx);
+    const fromY = cellY(g.ty);
+    const toX = cellX(g.nx);
+    const toY = cellY(g.ny);
+    g.px = fromX + (toX - fromX) * g.moveT;
+    g.py = fromY + (toY - fromY) * g.moveT;
+  }
+}
+
+function canStep(x, y, dir) {
+  const nx = x + dir.x, ny = y + dir.y;
+  if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) return false;
+  if (!state.walls) return true;
+  if (dir.y === -1) return !state.walls.top[y][x];
+  if (dir.y === 1)  return !state.walls.top[y + 1][x];
+  if (dir.x === -1) return !state.walls.left[y][x];
+  if (dir.x === 1)  return !state.walls.left[y][x + 1];
+  return false;
+}
+
+function foodNearby(x, y) {
+  return state.entities.some(e => Math.abs(e.x - x) + Math.abs(e.y - y) <= 1);
+}
+
+function checkEat() {
+  const g = state.gila;
+  for (let i = state.entities.length - 1; i >= 0; i--) {
+    const e = state.entities[i];
+    if (e.x === g.tx && e.y === g.ty) {
+      eat(e);
+      state.entities.splice(i, 1);
+      g.pauseT = 0.06;
+    }
+  }
+  for (let i = state.powerups.length - 1; i >= 0; i--) {
+    const p = state.powerups[i];
+    if (p.x === g.tx && p.y === g.ty) {
+      applyPower(p.kind);
+      state.powerups.splice(i, 1);
+    }
+  }
+}
+
+function applyPower(kind) {
+  const spec = POWER_KINDS[kind];
+  if (!spec) return;
+  // Electric sparkle sfx common to every power-up
+  [880, 1320, 1760].forEach((f, i) => setTimeout(() => tone(f, 0.07, "triangle", 0.13), i * 50));
+  speak(spec.quip);
+  if (kind === "cactus") {
+    state.timeLeft += 5;
+  } else if (kind === "beetle") {
+    state.score += 100;
+    sfx.chime();
+  } else if (kind === "moon") {
+    state.revealUntil = performance.now() + spec.durationMs;
+    state.activePowers[kind] = state.revealUntil;
+  } else {
+    state.activePowers[kind] = performance.now() + spec.durationMs;
+  }
+  updateHUD();
+}
+
+function isPowerActive(kind) {
+  return state.activePowers[kind] && state.activePowers[kind] > performance.now();
+}
+
+function eat(e) {
+  const egg = EGG_KINDS[e.kind];
+  const hatch = HATCHLING_KINDS[e.kind];
+  let baseScore = 0;
+  if (egg) {
+    baseScore = egg.score;
+    state.eggsEaten += 1;
+    (sfx[egg.sfx] || sfx.eatEgg)();
+    emitQuip(egg.quip);
+  } else if (hatch) {
+    baseScore = hatch.score;
+    state.chicksEaten += 1;
+    (sfx[hatch.sfx] || sfx.eatChick)();
+    emitQuip(hatch.quip);
+  }
+  // Combo: chain eats within 1.5s for rising-arcade bonus
+  const now = performance.now();
+  if (now - state.lastEatAt < 1500) state.combo += 1;
+  else state.combo = 1;
+  state.lastEatAt = now;
+  let bonus = 0;
+  if (state.combo === 3) { sfx.combo(); emitQuip("combo3"); bonus = 25; }
+  else if (state.combo === 6) { sfx.bigCombo(); emitQuip("combo6"); bonus = 100; }
+  else if (state.combo === 10) { sfx.bigCombo(); emitQuip("combo10"); bonus = 250; }
+  state.score += baseScore + bonus;
+  updateHUD();
+}
+
+function updateHatchling(e, dt) {
+  const hatch = HATCHLING_KINDS[e.kind];
+  const speed = DIFF[state.difficulty].chickSpeed * (hatch ? hatch.speed : 1);
+  e.wanderT -= dt;
+  // Snap chick position to tile target; pick a new neighbour every ~0.6s
+  const tx = e.targetX, ty = e.targetY;
+  const cx = cellX(tx);
+  const cy = cellY(ty);
+  const dx = cx - e.px, dy = cy - e.py;
+  const dist = Math.hypot(dx, dy);
+  if (dist < 2 || e.wanderT <= 0) {
+    e.x = tx;
+    e.y = ty;
+    e.px = cx;
+    e.py = cy;
+    const dirs = [
+      { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 },
+    ].filter(d => canStep(e.x, e.y, d));
+    if (dirs.length) {
+      // 70% pick a random open neighbour, 30% stay put
+      if (Math.random() < 0.7) {
+        const d = dirs[Math.floor(Math.random() * dirs.length)];
+        e.targetX = e.x + d.x;
+        e.targetY = e.y + d.y;
+      } else {
+        e.targetX = e.x;
+        e.targetY = e.y;
+      }
+    }
+    e.wanderT = 0.45 + Math.random() * 0.4;
+  } else {
+    const step = (TILE / 0.5) * speed * dt; // 0.5s to cross a tile at speed 1
+    const k = Math.min(1, step / dist);
+    e.px += dx * k;
+    e.py += dy * k;
+    // Update logical x,y once we cross into the next tile center
+    e.x = Math.round((e.px - OX - TILE / 2) / TILE);
+    e.y = Math.round((e.py - OY - TILE / 2) / TILE);
+  }
+}
+
+// ========== Level transitions ==========
+function levelComplete() {
+  state.running = false;
+  sfx.levelClear();
+  const next = state.levelIdx + 1;
+  const overlay = $("overlay");
+  overlay.classList.add("show");
+  if (next >= LEVELS.length) {
+    $("overlayTitle").textContent = "All burrows cleared!";
+    $("overlaySub").textContent = `You sweep the desert with ${state.score} points — final level conquered.`;
+    $("countdown").textContent = "";
+    $("overlayActions").innerHTML = "";
+    setTimeout(() => endRun(true), 1600);
+    return;
+  }
+  $("overlayTitle").textContent = "Level cleared!";
+  $("overlaySub").textContent = `Score so far: ${state.score} · Time bonus banked for later updates.`;
+  $("countdown").textContent = "";
+  $("overlayActions").innerHTML = "";
+  const btn = document.createElement("button");
+  btn.className = "btn big";
+  btn.textContent = `Next: ${LEVELS[next].name} →`;
+  btn.addEventListener("click", () => {
+    state.levelIdx = next;
+    loadLevel(next);
+  });
+  $("overlayActions").appendChild(btn);
+}
+
+function gameOver(victorious) {
+  state.running = false;
+  sfx.gameOver();
+  setTimeout(() => endRun(victorious), 600);
+}
+
+function endRun(victorious, reason) {
+  cancelAnimationFrame(state.rafId);
+  $("overlay").classList.remove("show");
+  // Swap the emoji slot for the real purple gila portrait at a larger size.
+  const iconEl = $("endIcon");
+  iconEl.innerHTML = "";
+  const img = document.createElement("img");
+  img.src = victorious ? "./assets/gila-face.png" : "./assets/gila.png";
+  img.alt = "Gila monster";
+  img.className = "end-gila " + (victorious ? "champion" : "defeated");
+  iconEl.appendChild(img);
+  // Persist hi-score and badge it if this run set a new record.
+  const newRecord = state.score > state.hiScore;
+  if (newRecord) {
+    state.hiScore = state.score;
+    try { localStorage.setItem("gilasplat.hiScore", String(state.hiScore)); } catch (e) { /* blocked */ }
+  }
+  const losingTitle = reason === "Predator!" ? "A predator caught you." : "The sun beat you.";
+  $("endBanner").textContent = victorious ? "Desert champion!" : losingTitle;
+  const recordTag = newRecord ? " · 🏅 New record!" : ` · Hi-Score ${state.hiScore}`;
+  $("finalScore").textContent = `Score ${state.score} · Eggs ${state.eggsEaten} · Hatchlings ${state.chicksEaten}${recordTag}`;
+  setScreen("end");
+}
+
+function updateHUD() {
+  $("hudScore").textContent = state.score;
+  $("hudHiScore").textContent = Math.max(state.hiScore, state.score);
+  $("hudLevel").textContent = state.levelIdx + 1;
+  $("hudEggs").textContent = state.eggsEaten;
+  $("hudChicks").textContent = state.chicksEaten;
+  $("hudTime").textContent = Math.ceil(state.timeLeft);
+  $("hudTime").parentElement.classList.toggle("low", state.timeLeft <= 10);
+  // Lives row: render 3 mini-gila pips; spent ones go ghosted.
+  const livesCell = $("hudLives");
+  if (livesCell.childElementCount !== 3) {
+    livesCell.innerHTML = '<span class="heart"></span><span class="heart"></span><span class="heart"></span>';
+  }
+  const hearts = livesCell.querySelectorAll(".heart");
+  for (let i = 0; i < hearts.length; i++) {
+    hearts[i].classList.toggle("spent", i >= state.lives);
+  }
+  // Combo cell: show only while a streak is fresh and combo > 1.
+  const showCombo = state.combo >= 2 && performance.now() < state.lastEatAt + 1500;
+  const comboCell = $("hudComboCell");
+  if (showCombo) {
+    if (!comboCell.classList.contains("show")) comboCell.classList.add("show");
+    $("hudCombo").textContent = `×${state.combo}`;
+  } else {
+    comboCell.classList.remove("show");
+  }
+  // Power cell: show the longest-remaining active timed effect.
+  const powerCell = $("hudPowerCell");
+  const now = performance.now();
+  let active = null;
+  for (const [k, until] of Object.entries(state.activePowers)) {
+    if (until <= now) continue;
+    const spec = POWER_KINDS[k];
+    if (!spec) continue;
+    const remain = until - now;
+    if (!active || remain > active.remain) active = { k, remain, total: spec.durationMs, spec };
+  }
+  if (active) {
+    powerCell.classList.add("show");
+    $("hudPowerLabel").textContent = active.spec.label;
+    $("hudPowerLabel").style.color = active.spec.hue;
+    $("hudPowerBar").style.background = active.spec.hue;
+    $("hudPowerBar").style.width = `${Math.max(0, Math.min(100, (active.remain / active.total) * 100))}%`;
+  } else {
+    powerCell.classList.remove("show");
+  }
+}
+
+function setBannerForLevel(lvl) {
+  const banner = $("bannerMsg");
+  if (!banner) return;
+  const messages = [
+    `Level ${state.levelIdx + 1} — <span class="level-name">${lvl.name}</span>`,
+    "Eat every egg before the timer runs out!",
+    state.predators.length ? "Watch your back — predators are out." : "No predators here. Just eggs.",
+  ];
+  banner.innerHTML = messages.join(" · ");
+}
+
+// ========== Render ==========
+const canvas = $("maze");
+const ctx = canvas.getContext("2d");
+
+function render() {
+  ctx.fillStyle = "#1a0e04";
+  ctx.fillRect(0, 0, CW, CH);
+  if (state.bgImage) {
+    ctx.drawImage(state.bgImage, 0, 0, CW, CH);
+  }
+  drawPowerups();
+  drawEntities();
+  drawPredators();
+  drawGila();
+  drawActivePowerAura();
+  drawMoonReveal();
+  drawQuip();
+}
+
+function drawPowerups() {
+  const t = performance.now() / 1000;
+  for (const p of state.powerups) {
+    const px = cellX(p.x);
+    const py = cellY(p.y) + Math.sin(t * 2 + p.wobble) * 3;
+    const spec = POWER_KINDS[p.kind];
+    if (!spec) continue;
+    // Soft glow halo
+    ctx.save();
+    ctx.shadowColor = spec.hue;
+    ctx.shadowBlur = 14 + Math.sin(t * 3 + p.wobble) * 4;
+    drawSprite(ASSETS[spec.sprite], px, py, TILE * 0.82);
+    ctx.restore();
+  }
+}
+
+function drawActivePowerAura() {
+  // Visible aura around the gila for each timed effect that's running.
+  const auras = [
+    { kind: "sunstone",  color: "rgba(250, 204, 21, .35)" },
+    { kind: "shed-skin", color: "rgba(168, 85, 247, .45)" },
+    { kind: "dust",      color: "rgba(209, 230, 255, .35)" },
+    { kind: "warm-rock", color: "rgba(249, 115, 22, .35)" },
+  ];
+  const t = performance.now() / 1000;
+  let layer = 0;
+  for (const a of auras) {
+    if (!isPowerActive(a.kind)) continue;
+    const g = state.gila;
+    const r = TILE * (0.7 + layer * 0.15) + Math.sin(t * 4 + layer) * 3;
+    ctx.save();
+    ctx.strokeStyle = a.color;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(g.px, g.py, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    layer += 1;
+  }
+}
+
+function drawMoonReveal() {
+  if (performance.now() >= state.revealUntil) return;
+  const remaining = state.revealUntil - performance.now();
+  const alpha = Math.min(0.45, remaining / 3000);
+  ctx.save();
+  ctx.fillStyle = `rgba(139, 212, 255, ${alpha})`;
+  ctx.fillRect(0, 0, CW, CH);
+  ctx.restore();
+}
+
+function drawPredators() {
+  for (const p of state.predators) {
+    const img = ASSETS[p.kind];
+    // Predator sprites generally face left; flip when chasing right.
+    drawSprite(img, p.px, p.py, TILE * 1.35, { flipX: p.facing > 0 });
+  }
+}
+
+function drawQuip() {
+  const now = performance.now();
+  if (now > state.quipUntil || !state.quipText) return;
+  const remaining = state.quipUntil - now;
+  const alpha = Math.min(1, remaining / 400);   // fade out final 400ms
+  const lift  = Math.max(0, (1800 - remaining) / 1800) * 22;  // float upward
+  const g = state.gila;
+  const x = g.px;
+  const y = g.py - TILE * 0.85 - lift;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.font = "bold 22px system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const w = ctx.measureText(state.quipText).width + 28;
+  // Speech bubble
+  ctx.fillStyle = "rgba(255, 248, 230, 0.96)";
+  ctx.strokeStyle = "rgba(31, 19, 13, 0.85)";
+  ctx.lineWidth = 3;
+  roundRect(ctx, x - w / 2, y - 22, w, 38, 14);
+  ctx.fill(); ctx.stroke();
+  // Tail
+  ctx.beginPath();
+  ctx.moveTo(x - 8, y + 16);
+  ctx.lineTo(x, y + 28);
+  ctx.lineTo(x + 8, y + 16);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Text
+  ctx.fillStyle = "#1f130d";
+  ctx.fillText(state.quipText, x, y);
+  ctx.restore();
+}
+
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+
+function drawEntities() {
+  for (const e of state.entities) {
+    if (EGG_KINDS[e.kind]) drawEgg(e);
+    else if (HATCHLING_KINDS[e.kind]) drawHatchling(e);
+  }
+}
+
+function drawSprite(img, cx, cy, size, opts = {}) {
+  if (!img) return;
+  const { rotation = 0, flipX = false, alpha = 1 } = opts;
+  ctx.save();
+  if (alpha !== 1) ctx.globalAlpha = alpha;
+  ctx.translate(cx, cy);
+  if (rotation) ctx.rotate(rotation);
+  if (flipX) ctx.scale(-1, 1);
+  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  ctx.restore();
+}
+
+function drawEgg(e) {
+  const px = cellX(e.x);
+  const py = cellY(e.y) + Math.sin(e.wobble) * 1.5;
+  const spec = EGG_KINDS[e.kind];
+  if (!spec) return;
+  // Hatch warning glow as timer nears zero. Golden egg pulses gold instead of red.
+  const warn = e.hatchAt > 0 && e.hatchAt < 3 ? 1 - e.hatchAt / 3 : 0;
+  const size = e.kind === "golden" ? TILE * 0.8 : TILE * 0.72;
+  if (warn > 0) {
+    ctx.save();
+    ctx.shadowColor = e.kind === "golden" ? "rgba(250, 204, 21, .95)" : "rgba(239, 68, 68, .85)";
+    ctx.shadowBlur = 6 + warn * 20;
+    drawSprite(ASSETS[spec.sprite], px, py, size);
+    ctx.restore();
+  } else {
+    if (e.kind === "golden") {
+      // Constant gentle gold shimmer
+      ctx.save();
+      ctx.shadowColor = "rgba(250, 204, 21, .55)";
+      ctx.shadowBlur = 12 + Math.sin(e.wobble * 3) * 4;
+      drawSprite(ASSETS[spec.sprite], px, py, size);
+      ctx.restore();
+    } else {
+      drawSprite(ASSETS[spec.sprite], px, py, size);
+    }
+  }
+}
+
+function drawHatchling(e) {
+  const spec = HATCHLING_KINDS[e.kind];
+  if (!spec) return;
+  const px = e.px;
+  const py = e.py + Math.sin(e.wobble * 2) * 1.5;
+  drawSprite(ASSETS[spec.sprite], px, py, TILE * 0.82);
+}
+
+function drawGila() {
+  const g = state.gila;
+  // Sprite faces right by default. Rotate for vertical dirs, flip for left.
+  let rotation = 0, flipX = false;
+  if (g.dir.x === -1) flipX = true;
+  else if (g.dir.y === 1) rotation = Math.PI / 2;
+  else if (g.dir.y === -1) rotation = -Math.PI / 2;
+
+  // Slight slither wiggle perpendicular to motion
+  const wiggleAmp = g.moving ? 2 : 0;
+  const wigglePhase = performance.now() / 90;
+  const perpX = -g.dir.y, perpY = g.dir.x;
+  const wx = Math.sin(wigglePhase) * wiggleAmp * perpX;
+  const wy = Math.sin(wigglePhase) * wiggleAmp * perpY;
+
+  drawSprite(ASSETS["gila-purple"] || ASSETS.gila, g.px + wx, g.py + wy, TILE * 1.25, { rotation, flipX });
+
+  // Tongue flick — a small red tick at the head when food is close
+  if (g.tongueT > 0) {
+    const t = g.tongueT / 0.18;
+    const len = TILE * 0.32 * (1 - Math.abs(t - 0.5) * 2);
+    const hx = g.px + g.dir.x * TILE * 0.42 + wx;
+    const hy = g.py + g.dir.y * TILE * 0.42 + wy;
+    ctx.strokeStyle = "#ef4444";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.lineTo(hx + g.dir.x * len, hy + g.dir.y * len);
+    ctx.stroke();
+  }
+
+  // Dust puff trailing each step
+  if (g.moving && g.moveT > 0.05 && g.moveT < 0.5) {
+    const fade = 1 - g.moveT * 2;
+    ctx.fillStyle = `rgba(255, 220, 160, ${0.28 * fade})`;
+    const dx = g.px - g.dir.x * TILE * 0.55;
+    const dy = g.py - g.dir.y * TILE * 0.55;
+    ctx.beginPath();
+    ctx.arc(dx, dy, 7 + (1 - fade) * 7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Load persistent hi-score, then paint HUD.
+try {
+  const stored = parseInt(localStorage.getItem("gilasplat.hiScore") || "0", 10);
+  if (!Number.isNaN(stored)) state.hiScore = stored;
+} catch (e) { /* localStorage may be blocked */ }
+updateHUD();
+</script>
+</body>
+</html>
