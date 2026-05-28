@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toneshifter — DrawSplat Tools</title>
+  <meta name="description" content="Rewrite any text in a chosen tone — formal, casual, friendly, concise, diplomatic, encouraging, or plain English.">
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --white: #ffffff;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-70: #374151;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .tagline { margin: 8px 0 0; color: var(--gray-50); font-size: 1rem; max-width: 60ch; }
+
+    .layout { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0 0 12px; color: var(--gray-90); font-size: 1.1rem; }
+
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+    textarea, input[type=text], input[type=password] { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; line-height: 1.4; }
+    textarea { min-height: 200px; resize: vertical; }
+    textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    select { width: 100%; padding: 9px 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; }
+
+    .btn { min-height: 40px; padding: 8px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 6px 14px rgba(64, 64, 65, .06); }
+    .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .btn.ghost { background: transparent; border-color: var(--gray-30); color: var(--gray-70); box-shadow: none; }
+    .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+    .mode-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .mode-pill.heuristic { background: var(--gray-10); color: var(--navy); }
+    .mode-pill.ai { background: linear-gradient(120deg, var(--orange), var(--gold)); color: var(--white); }
+
+    .tone-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .tone-chip { padding: 8px 10px; border: 2px solid var(--border); border-radius: 8px; background: var(--white); color: var(--gray-70); font-weight: 700; font-size: .85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; text-align: left; }
+    .tone-chip:hover { border-color: var(--navy); color: var(--navy); }
+    .tone-chip.active { border-color: var(--navy); background: var(--gray-10); color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
+    .tone-chip .em { font-size: 1.1rem; }
+
+    .stage { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); min-height: 60vh; }
+    .stage-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .stage-header h2 { margin: 0; color: var(--navy); font-size: 1.2rem; }
+    .stage-meta { color: var(--gray-50); font-size: .82rem; }
+
+    .empty { display: grid; place-items: center; gap: 10px; padding: 32px 16px; text-align: center; color: var(--gray-50); border: 2px dashed var(--border); border-radius: var(--radius); }
+    .empty .splat { font-size: 3rem; }
+    .empty p { margin: 0; font-size: 1rem; max-width: 32ch; line-height: 1.4; }
+
+    .result-card { padding: 18px 20px; border: 2px solid var(--border); border-radius: 12px; background: linear-gradient(180deg, #f8f6ff, #eef2ff); }
+    .result-card h3 { margin: 0 0 8px; color: var(--navy); font-size: 1rem; }
+    .result-text { white-space: pre-wrap; line-height: 1.55; color: var(--gray-90); font-size: 1rem; }
+    .result-text[contenteditable=true] { outline: 2px solid var(--blue); outline-offset: 2px; background: var(--white); padding: 8px; border-radius: 6px; }
+
+    .stage-footer { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid var(--gray-10); }
+    .stage-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(140%); padding: 10px 18px; background: var(--gray-90); color: var(--white); border-radius: 999px; font-weight: 700; font-size: .9rem; box-shadow: 0 12px 26px rgba(0,0,0,.18); transition: transform .25s ease; z-index: 100; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
+
+    .modal-veil { position: fixed; inset: 0; background: rgba(17, 24, 39, .55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 80; }
+    .modal-veil.show { display: flex; }
+    .modal { width: min(540px, 100%); background: var(--white); border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,.25); padding: 20px; max-height: 90vh; overflow: auto; }
+    .modal h3 { margin: 0 0 10px; color: var(--navy); }
+    .modal p.intro { margin: 0 0 14px; color: var(--gray-70); font-size: .9rem; line-height: 1.45; }
+    .modal .field { margin-bottom: 12px; }
+    .modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+    .radio-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 700; color: var(--gray-70); text-transform: none; letter-spacing: 0; font-size: .92rem; }
+    .privacy-note { margin: 10px 0 0; padding: 10px 12px; background: var(--gray-10); border-radius: 6px; color: var(--gray-70); font-size: .82rem; line-height: 1.45; }
+
+    footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
+    footer.foot a { color: var(--navy); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Toneshifter</h1>
+        <p class="tagline">Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English.</p>
+      </div>
+      <a class="home-link" href="../../index.html">Home</a>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-label="Input">
+        <h2>Paste your draft</h2>
+        <div class="field">
+          <label for="srcInput">Original text</label>
+          <textarea id="srcInput" placeholder="Hey, just wondering if you could send me that file when you get a sec — kinda need it for the meeting tomorrow lol"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Target tone</label>
+          <div class="tone-grid" id="toneGrid" role="radiogroup" aria-label="Target tone"></div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="shiftBtn">Shift it →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+        </div>
+
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+          Toneshifter works without an account or API key — it uses regex tone rewrites.
+          Add an Anthropic or OpenAI key in Settings to unlock natural, context-aware rewriting.
+        </p>
+      </section>
+
+      <section class="stage" aria-label="Rewritten output">
+        <div class="stage-header">
+          <h2 id="stageTitle">Rewritten draft will appear here</h2>
+          <span class="stage-meta" id="stageMeta"></span>
+        </div>
+
+        <div id="stageBody">
+          <div class="empty" id="emptyState">
+            <div class="splat" aria-hidden="true">🎚️</div>
+            <p>Paste a draft, pick a tone, and hit <strong>Shift it</strong>. The rewrite is editable — click to tweak before copying.</p>
+          </div>
+        </div>
+
+        <div class="stage-footer" id="stageFooter" hidden>
+          <span class="stage-meta" id="footerMeta"></span>
+          <div class="stage-actions">
+            <button type="button" class="btn" id="copyBtn" title="Copy rewrite to clipboard">Copy rewrite</button>
+            <button type="button" class="btn ghost" id="swapBtn" title="Send rewrite back to the input">↺ Use as input</button>
+            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
+    </footer>
+  </div>
+
+  <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal">
+      <h3 id="settingsTitle">AI mode (optional)</h3>
+      <p class="intro">Bring your own API key for natural rewrites that actually sound like the chosen tone. Your key stays in this browser — saved to <code>localStorage</code>, sent directly to the provider.</p>
+      <div class="field">
+        <label>Provider</label>
+        <div class="radio-row">
+          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
+          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="apiKeyInput">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+      </div>
+      <div class="field">
+        <label for="modelInput">Model (optional override)</label>
+        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+      </div>
+      <div class="privacy-note"><strong>No server.</strong> Toneshifter is a single static page. Requests go from your browser straight to Anthropic or OpenAI.</div>
+      <div class="actions">
+        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const STORAGE_KEY = "toneshifter.v1";
+
+  const srcInput = $("srcInput");
+  const shiftBtn = $("shiftBtn");
+  const stageBody = $("stageBody");
+  const stageTitle = $("stageTitle");
+  const stageMeta = $("stageMeta");
+  const stageFooter = $("stageFooter");
+  const footerMeta = $("footerMeta");
+  const emptyState = $("emptyState");
+  const modePill = $("modePill");
+  const toneGrid = $("toneGrid");
+  const toast = $("toast");
+  const settingsBtn = $("settingsBtn");
+  const settingsModal = $("settingsModal");
+  const apiKeyInput = $("apiKeyInput");
+  const modelInput = $("modelInput");
+
+  let settings = loadSettings();
+  let currentTone = "formal";
+  let currentResult = "";
+
+  const TONES = [
+    { key: "formal",      em: "🎩", label: "Formal",       desc: "Professional, no contractions, polite distance." },
+    { key: "casual",      em: "👋", label: "Casual",       desc: "Conversational, contractions OK, friendly." },
+    { key: "friendly",    em: "🙂", label: "Friendly",     desc: "Warm, encouraging, approachable." },
+    { key: "concise",     em: "✂️", label: "Concise",      desc: "Cut every word that isn't pulling weight." },
+    { key: "diplomatic",  em: "🕊️", label: "Diplomatic",   desc: "Soften criticism, preserve the relationship." },
+    { key: "encouraging", em: "🌟", label: "Encouraging",  desc: "Supportive, future-focused, kind." },
+    { key: "confident",   em: "💪", label: "Confident",    desc: "Direct, no hedging, owns the ask." },
+    { key: "plain",       em: "📖", label: "Plain English",desc: "Simple words, short sentences, easy to read." },
+  ];
+  TONES.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tone-chip" + (i === 0 ? " active" : "");
+    b.dataset.tone = t.key;
+    b.title = t.desc;
+    b.innerHTML = `<span class="em" aria-hidden="true">${t.em}</span><span>${t.label}</span>`;
+    b.addEventListener("click", () => {
+      currentTone = t.key;
+      document.querySelectorAll(".tone-chip").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+    });
+    toneGrid.appendChild(b);
+  });
+
+  // ============================================================
+  //  HEURISTIC ENGINE
+  // ============================================================
+  // Each tone is a transform applied per sentence. Rough but useful.
+  function splitSentences(text) {
+    return text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
+  }
+  function joinSentences(arr) { return arr.join(" "); }
+
+  // Contraction expansion / compression
+  const EXPAND = [
+    [/\bi'm\b/gi, "I am"], [/\bI'm\b/g, "I am"],
+    [/\b(you|we|they)'re\b/gi, "$1 are"],
+    [/\b(he|she|it)'s\b/gi, "$1 is"],
+    [/\b(i|you|we|they)'ve\b/gi, "$1 have"], [/\bI've\b/g, "I have"],
+    [/\b(i|you|we|they|he|she|it)'ll\b/gi, "$1 will"], [/\bI'll\b/g, "I will"],
+    [/\b(i|you|we|they|he|she|it)'d\b/gi, "$1 would"], [/\bI'd\b/g, "I would"],
+    [/\b(do|does|did|is|are|was|were|have|has|had|would|could|should|will|wo|ca|must|might|need|ai)n't\b/gi, (m, v) => v === "wo" ? "will not" : v === "ca" ? "cannot" : v === "ai" ? "is not" : v + " not"],
+    [/\blet's\b/gi, "let us"],
+    [/\bthat's\b/gi, "that is"], [/\bthere's\b/gi, "there is"], [/\bwhat's\b/gi, "what is"],
+    [/\bwho's\b/gi, "who is"], [/\bhere's\b/gi, "here is"],
+    [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"], [/\bgotta\b/gi, "have to"], [/\bkinda\b/gi, "kind of"], [/\bsorta\b/gi, "sort of"],
+  ];
+  const CONTRACT = [
+    [/\bI am\b/g, "I'm"],
+    [/\b(you|we|they) are\b/gi, "$1're"],
+    [/\b(he|she|it) is\b/gi, "$1's"],
+    [/\b(I|you|we|they) have\b/gi, "$1've"],
+    [/\b(I|you|we|they|he|she|it) will\b/gi, "$1'll"],
+    [/\b(I|you|we|they|he|she|it) would\b/gi, "$1'd"],
+    [/\bdo not\b/gi, "don't"], [/\bdoes not\b/gi, "doesn't"], [/\bdid not\b/gi, "didn't"],
+    [/\bis not\b/gi, "isn't"], [/\bare not\b/gi, "aren't"], [/\bwas not\b/gi, "wasn't"], [/\bwere not\b/gi, "weren't"],
+    [/\bcannot\b/gi, "can't"], [/\bwill not\b/gi, "won't"],
+    [/\bthat is\b/gi, "that's"], [/\bthere is\b/gi, "there's"],
+  ];
+
+  // Slang/casual phrase map
+  const CASUALIZE = [
+    [/\bhello\b/gi, "hey"], [/\bgreetings\b/gi, "hey"],
+    [/\bregards\b/gi, "thanks"], [/\bsincerely\b/gi, "thanks"], [/\bbest regards\b/gi, "thanks"],
+    [/\butilize\b/gi, "use"], [/\bcommence\b/gi, "start"], [/\bterminate\b/gi, "end"], [/\bassist\b/gi, "help"],
+    [/\bin order to\b/gi, "to"], [/\bdue to the fact that\b/gi, "because"],
+  ];
+  const FORMALIZE = [
+    [/\bhey\b/gi, "Hello"], [/\bhi\b/gi, "Hello"],
+    [/\blol\b/gi, ""], [/\blmao\b/gi, ""], [/\bhaha+\b/gi, ""], [/\btbh\b/gi, "to be honest"], [/\bimo\b/gi, "in my opinion"], [/\bidk\b/gi, "I am not sure"], [/\btysm\b/gi, "thank you"], [/\bty\b/gi, "thank you"], [/\bthx\b/gi, "thank you"], [/\bpls\b/gi, "please"], [/\bplz\b/gi, "please"], [/\bu\b/gi, "you"], [/\bur\b/gi, "your"], [/\br\b/gi, "are"],
+    [/\bkinda\b/gi, "somewhat"], [/\bsorta\b/gi, "somewhat"],
+    [/\bgotta\b/gi, "must"], [/\bgonna\b/gi, "going to"], [/\bwanna\b/gi, "want to"],
+    [/\bjust\b/gi, ""], [/\breally\b/gi, ""],
+    [/\bget\b/gi, "obtain"],
+    [/\bguys\b/gi, "everyone"], [/\byou guys\b/gi, "you all"],
+  ];
+  // Fillers to strip for concise mode
+  const FILLERS = [
+    /\b(just|really|very|basically|literally|actually|honestly|like|kind of|sort of|maybe|perhaps|i think|i feel|i guess|to be honest|tbh|in my opinion|imo|at the end of the day|at this point in time|in terms of|as a matter of fact|the fact (that|of the matter)|needless to say)\b/gi,
+    /\bin order to\b/gi,
+    /\bdue to the fact that\b/gi,
+    /\bfor all intents and purposes\b/gi,
+  ];
+
+  function applyMap(text, pairs) {
+    return pairs.reduce((acc, [re, rep]) => acc.replace(re, rep), text);
+  }
+  function squashSpaces(t) { return t.replace(/[ \t]+/g, " ").replace(/\s+([,.!?;:])/g, "$1").replace(/\(\s+/g, "(").replace(/\s+\)/g, ")").trim(); }
+  function capFirst(s) { return s.length ? s[0].toUpperCase() + s.slice(1) : s; }
+  function ensureSentenceCase(text) {
+    return splitSentences(text).map(s => capFirst(s.replace(/^[a-z]/, m => m.toUpperCase()))).join(" ");
+  }
+
+  function toneFormal(text) {
+    let t = text;
+    t = applyMap(t, FORMALIZE);
+    t = applyMap(t, EXPAND);
+    t = squashSpaces(t);
+    t = ensureSentenceCase(t);
+    // Ensure final punctuation
+    if (!/[.!?]$/.test(t)) t += ".";
+    return t;
+  }
+  function toneCasual(text) {
+    let t = text;
+    t = applyMap(t, CASUALIZE);
+    t = applyMap(t, CONTRACT);
+    t = squashSpaces(t);
+    return capFirst(t);
+  }
+  function toneFriendly(text) {
+    let t = toneCasual(text);
+    // Add a warm opener if it doesn't already have a greeting
+    if (!/^(hi|hey|hello)\b/i.test(t)) t = "Hi! " + t;
+    // Soften imperatives
+    t = t.replace(/^(Send|Give|Tell|Bring|Do|Make|Get)\b/gm, "Could you $1");
+    // Add a sign-off if multi-sentence and none present
+    if (splitSentences(t).length > 1 && !/(thanks|thank you|appreciate)/i.test(t)) t += " Thanks so much!";
+    return squashSpaces(t);
+  }
+  function toneConcise(text) {
+    let t = text;
+    t = applyMap(t, FILLERS.map(re => [re, ""]));
+    // Tighten common verbose phrases
+    t = t.replace(/\bin the event that\b/gi, "if");
+    t = t.replace(/\bat this time\b/gi, "now");
+    t = t.replace(/\bprior to\b/gi, "before");
+    t = t.replace(/\bsubsequent to\b/gi, "after");
+    t = t.replace(/\bwith regard to\b/gi, "about");
+    t = t.replace(/\bin spite of the fact that\b/gi, "although");
+    t = squashSpaces(t);
+    return ensureSentenceCase(t);
+  }
+  function toneDiplomatic(text) {
+    let t = text;
+    // Soften absolutes
+    t = t.replace(/\byou never\b/gi, "I haven't seen");
+    t = t.replace(/\byou always\b/gi, "I've noticed you sometimes");
+    t = t.replace(/\bnever\b/gi, "rarely");
+    t = t.replace(/\balways\b/gi, "often");
+    t = t.replace(/\bmust\b/gi, "may want to");
+    t = t.replace(/\bshould\b/gi, "might consider");
+    t = t.replace(/\bwrong\b/gi, "not quite right");
+    t = t.replace(/\bbad\b/gi, "less effective");
+    t = t.replace(/\bstupid\b/gi, "confusing");
+    t = t.replace(/\bterrible\b/gi, "not ideal");
+    t = applyMap(t, EXPAND);
+    // Add a softening preamble if criticism is detected
+    if (/\b(issue|problem|concern|disagree|but|however)\b/i.test(t) && !/^I appreciate/i.test(t)) {
+      t = "I appreciate the effort here, and I want to share some thoughts. " + t;
+    }
+    t = squashSpaces(t);
+    return capFirst(t);
+  }
+  function toneEncouraging(text) {
+    let t = text;
+    t = t.replace(/\bcan't\b/gi, "haven't yet");
+    t = t.replace(/\bcannot\b/gi, "haven't yet");
+    t = t.replace(/\bfailed\b/gi, "didn't land — yet");
+    t = t.replace(/\bbad\b/gi, "a starting point");
+    t = applyMap(t, EXPAND);
+    if (!/^(great|nice|well done|love|amazing)/i.test(t)) t = "Great progress — " + t.replace(/^[A-Z]/, m => m.toLowerCase());
+    if (!/(you've got|you can|keep going|proud)/i.test(t)) t += " Keep going!";
+    t = squashSpaces(t);
+    return capFirst(t);
+  }
+  function toneConfident(text) {
+    let t = text;
+    // Strip hedges
+    t = t.replace(/\b(maybe|perhaps|i think|i feel|i guess|just|kind of|sort of|possibly|might be able to|i was wondering if|if it's not too much trouble|sorry to bother(?:,|\s)+but)\b/gi, "");
+    t = t.replace(/\bcould you possibly\b/gi, "please");
+    t = t.replace(/\bif you (have|get) (a moment|a second|some time)\b/gi, "");
+    t = t.replace(/\bsorry\b/gi, "");
+    t = applyMap(t, EXPAND);
+    t = squashSpaces(t);
+    return ensureSentenceCase(t);
+  }
+  function tonePlain(text) {
+    let t = text;
+    t = applyMap(t, [
+      [/\butilize\b/gi, "use"], [/\bcommence\b/gi, "start"], [/\bterminate\b/gi, "end"], [/\bsubsequent\b/gi, "next"],
+      [/\bassist\b/gi, "help"], [/\bprior to\b/gi, "before"], [/\binitiate\b/gi, "start"], [/\bfacilitate\b/gi, "help"],
+      [/\bendeavor\b/gi, "try"], [/\bdemonstrate\b/gi, "show"], [/\brequire\b/gi, "need"], [/\bobtain\b/gi, "get"],
+      [/\bpurchase\b/gi, "buy"], [/\bregarding\b/gi, "about"], [/\bin the event that\b/gi, "if"],
+      [/\bdue to the fact that\b/gi, "because"], [/\bat this time\b/gi, "now"],
+    ]);
+    // Split very long sentences
+    t = t.split(/(?<=[.!?])\s+/).flatMap(s => {
+      if (s.length < 140) return [s];
+      // crude split at comma + conjunction
+      return s.split(/, (?:and|but|so|because) /).map((p, i, arr) => p + (i < arr.length - 1 ? "." : ""));
+    }).join(" ");
+    t = squashSpaces(t);
+    return ensureSentenceCase(t);
+  }
+
+  const TONE_FN = {
+    formal: toneFormal, casual: toneCasual, friendly: toneFriendly, concise: toneConcise,
+    diplomatic: toneDiplomatic, encouraging: toneEncouraging, confident: toneConfident, plain: tonePlain,
+  };
+
+  function heuristicShift(text, tone) {
+    const fn = TONE_FN[tone] || ((x) => x);
+    return fn(text);
+  }
+
+  // ============================================================
+  //  AI ENGINE
+  // ============================================================
+  function loadSettings() {
+    try { const r = localStorage.getItem(STORAGE_KEY); if (!r) return { provider: "anthropic", apiKey: "", model: "" }; return JSON.parse(r); }
+    catch { return { provider: "anthropic", apiKey: "", model: "" }; }
+  }
+  function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
+  function refreshModePill() {
+    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
+    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+  }
+  refreshModePill();
+
+  function buildPrompt(text, tone) {
+    const t = TONES.find(x => x.key === tone) || TONES[0];
+    return `You are Toneshifter, a careful rewriter that preserves meaning while changing tone.
+Rewrite the following text in this tone: "${t.label}" — ${t.desc}
+Rules:
+- Preserve the original meaning and any specific facts, names, or asks.
+- Match length within +/- 30%.
+- Do not add new information or invent facts.
+- Return ONLY the rewritten text, no preamble, no quotes, no explanation.
+
+Original:
+${text}`;
+  }
+  async function aiShift(text, tone) {
+    const prompt = buildPrompt(text, tone);
+    return settings.provider === "anthropic" ? aiAnthropic(prompt) : aiOpenAI(prompt);
+  }
+  async function aiAnthropic(prompt) {
+    const model = settings.model || "claude-haiku-4-5-20251001";
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": settings.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model, max_tokens: 1200, messages: [{ role: "user", content: prompt }] }),
+    });
+    if (!res.ok) throw new Error(`Anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    return ((data.content || []).map(b => b.text || "").join("")).trim();
+  }
+  async function aiOpenAI(prompt) {
+    const model = settings.model || "gpt-4o-mini";
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", "authorization": `Bearer ${settings.apiKey}` },
+      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.5 }),
+    });
+    if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    return (data.choices?.[0]?.message?.content || "").trim();
+  }
+
+  // ============================================================
+  //  RENDER
+  // ============================================================
+  function render(text, tone, source) {
+    const t = TONES.find(x => x.key === tone) || TONES[0];
+    stageTitle.textContent = `${t.em} ${t.label}`;
+    stageMeta.textContent = `${source} · ${text.length} chars`;
+    stageBody.innerHTML = "";
+    const card = document.createElement("div");
+    card.className = "result-card";
+    const h = document.createElement("h3"); h.textContent = "Rewrite (click to edit)";
+    const p = document.createElement("div");
+    p.className = "result-text"; p.textContent = text; p.title = "Click to edit";
+    p.addEventListener("click", () => {
+      p.contentEditable = "true"; p.focus();
+      const r = document.createRange(); r.selectNodeContents(p); r.collapse(false);
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      p.addEventListener("blur", () => { p.contentEditable = "false"; currentResult = p.textContent; }, { once: true });
+    });
+    card.appendChild(h); card.appendChild(p);
+    stageBody.appendChild(card);
+    stageFooter.hidden = false;
+    footerMeta.textContent = `Original: ${srcInput.value.length} chars · Rewrite: ${text.length} chars`;
+    currentResult = text;
+  }
+
+  // ============================================================
+  //  ENTRY
+  // ============================================================
+  async function doShift() {
+    const text = srcInput.value.trim();
+    if (!text) { srcInput.focus(); showToast("Paste some text first.", true); return; }
+    shiftBtn.disabled = true;
+    const orig = shiftBtn.textContent;
+    shiftBtn.textContent = settings.apiKey ? "Asking Claude…" : "Shifting…";
+    try {
+      const out = settings.apiKey ? await aiShift(text, currentTone) : heuristicShift(text, currentTone);
+      render(out, currentTone, settings.apiKey ? "AI rewrite" : "Heuristic rewrite");
+    } catch (err) {
+      console.error(err);
+      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      const out = heuristicShift(text, currentTone);
+      render(out, currentTone, "Heuristic fallback");
+    } finally { shiftBtn.disabled = false; shiftBtn.textContent = orig; }
+  }
+  shiftBtn.addEventListener("click", doShift);
+  srcInput.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doShift(); });
+
+  $("clearBtn").addEventListener("click", () => {
+    currentResult = ""; stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
+    stageTitle.textContent = "Rewritten draft will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
+  });
+  $("copyBtn").addEventListener("click", async () => {
+    if (!currentResult) return;
+    try { await navigator.clipboard.writeText(currentResult); showToast("Rewrite copied."); }
+    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+  });
+  $("swapBtn").addEventListener("click", () => {
+    if (!currentResult) return;
+    srcInput.value = currentResult; srcInput.focus(); showToast("Sent rewrite back to the input.");
+  });
+
+  // ====== Settings modal
+  function openSettings() {
+    apiKeyInput.value = settings.apiKey || ""; modelInput.value = settings.model || "";
+    const radio = document.querySelector(`input[name=provider][value="${settings.provider}"]`); if (radio) radio.checked = true;
+    settingsModal.classList.add("show"); apiKeyInput.focus();
+  }
+  function closeSettings() { settingsModal.classList.remove("show"); }
+  settingsBtn.addEventListener("click", openSettings);
+  $("cancelSettingsBtn").addEventListener("click", closeSettings);
+  settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) closeSettings(); });
+  $("saveSettingsBtn").addEventListener("click", () => {
+    const provider = document.querySelector('input[name=provider]:checked').value;
+    saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
+    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    closeSettings();
+  });
+  $("clearKeyBtn").addEventListener("click", () => {
+    apiKeyInput.value = ""; modelInput.value = "";
+    saveSettings({ provider: settings.provider, apiKey: "", model: "" });
+    showToast("Key cleared.");
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
+
+  let toastTimer = null;
+  function showToast(msg, isError = false) {
+    toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
+  }
+  </script>
+</body>
+</html>
