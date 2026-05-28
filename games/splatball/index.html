@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Splatball — DrawSplat Games</title>
+<title data-i18n="doc.title">Splatball — DrawSplat Games</title>
 <meta name="description" content="A colorful, sound-on, Pong-style paddle rally for one or two players — plus computer-vs-computer mode.">
 <style>
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+  .i18n-picker select { padding: 7px 10px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 3px rgba(108, 40, 217, .25); }
   /* DrawSplat Games header */
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
   .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
@@ -123,89 +126,93 @@
   .sound-toggle.on { color: var(--green); border-color: var(--green); }
   .sound-toggle.off { color: var(--ink); opacity: .5; }
 </style>
+<script src="../../assets/js/widget-i18n.js"></script>
 </head>
 <body>
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Splatball</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Splatball</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
 
   <!-- ===== Setup ===== -->
   <section class="screen active" id="setup">
-    <h2 class="setup-h1">Set up your match</h2>
-    <p class="setup-sub">Two paddles, one bouncing ball, sound on. Pick who's playing, what color they are, and how long the rally goes.</p>
+    <h2 class="setup-h1" data-i18n="setup.h1">Set up your match</h2>
+    <p class="setup-sub" data-i18n="setup.sub">Two paddles, one bouncing ball, sound on.</p>
 
-    <label class="field-label">Match type</label>
+    <label class="field-label" data-i18n="setup.modeLabel">Match type</label>
     <div class="mode-grid">
       <button type="button" class="mode-btn active" data-mode="pvp">
-        <div class="icon">👤👤</div><div class="label">Player vs Player</div><div class="desc">Same keyboard, W/S vs ↑/↓</div>
+        <div class="icon">👤👤</div><div class="label" data-i18n="mode.pvp.label">Player vs Player</div><div class="desc" data-i18n="mode.pvp.desc">Same keyboard, W/S vs ↑/↓</div>
       </button>
       <button type="button" class="mode-btn" data-mode="pvc">
-        <div class="icon">👤🤖</div><div class="label">Player vs Computer</div><div class="desc">You on the left, AI on the right</div>
+        <div class="icon">👤🤖</div><div class="label" data-i18n="mode.pvc.label">Player vs Computer</div><div class="desc" data-i18n="mode.pvc.desc">You on the left, AI on the right</div>
       </button>
       <button type="button" class="mode-btn" data-mode="cvc">
-        <div class="icon">🤖🤖</div><div class="label">Computer vs Computer</div><div class="desc">Sit back and watch the bots</div>
+        <div class="icon">🤖🤖</div><div class="label" data-i18n="mode.cvc.label">Computer vs Computer</div><div class="desc" data-i18n="mode.cvc.desc">Sit back and watch the bots</div>
       </button>
     </div>
 
     <div class="player-row">
       <div class="player-card p1" id="p1card">
-        <h3>Left paddle · Player 1</h3>
+        <h3 data-i18n="card.p1.title">Left paddle · Player 1</h3>
         <div class="name-row">
-          <input type="text" id="p1name" placeholder="Name (e.g. Ada)" maxlength="20" value="Player 1">
+          <input type="text" id="p1name" data-i18n-placeholder="card.namePh" maxlength="20" value="Player 1">
         </div>
         <div class="ai-name">🤖 <span id="p1aiName">Computer One</span></div>
-        <label class="field-label">Color</label>
+        <label class="field-label" data-i18n="card.colorLabel">Color</label>
         <div class="colors" id="p1colors"></div>
         <div class="difficulty-row">
-          <label class="field-label">AI difficulty</label>
+          <label class="field-label" data-i18n="card.diffLabel">AI difficulty</label>
           <select id="p1diff">
-            <option value="easy">Easy — slow and forgiving</option>
-            <option value="medium" selected>Medium — tracks the ball</option>
-            <option value="hard">Hard — nearly perfect</option>
+            <option value="easy" data-i18n="diff.easy">Easy — slow and forgiving</option>
+            <option value="medium" selected data-i18n="diff.medium">Medium — tracks the ball</option>
+            <option value="hard" data-i18n="diff.hard">Hard — nearly perfect</option>
           </select>
         </div>
       </div>
       <div class="vs">VS</div>
       <div class="player-card p2" id="p2card">
-        <h3>Right paddle · Player 2</h3>
+        <h3 data-i18n="card.p2.title">Right paddle · Player 2</h3>
         <div class="name-row">
-          <input type="text" id="p2name" placeholder="Name (e.g. Bao)" maxlength="20" value="Player 2">
+          <input type="text" id="p2name" data-i18n-placeholder="card.namePh2" maxlength="20" value="Player 2">
         </div>
         <div class="ai-name">🤖 <span id="p2aiName">Computer Two</span></div>
-        <label class="field-label">Color</label>
+        <label class="field-label" data-i18n="card.colorLabel">Color</label>
         <div class="colors" id="p2colors"></div>
         <div class="difficulty-row">
-          <label class="field-label">AI difficulty</label>
+          <label class="field-label" data-i18n="card.diffLabel">AI difficulty</label>
           <select id="p2diff">
-            <option value="easy">Easy — slow and forgiving</option>
-            <option value="medium" selected>Medium — tracks the ball</option>
-            <option value="hard">Hard — nearly perfect</option>
+            <option value="easy" data-i18n="diff.easy">Easy — slow and forgiving</option>
+            <option value="medium" selected data-i18n="diff.medium">Medium — tracks the ball</option>
+            <option value="hard" data-i18n="diff.hard">Hard — nearly perfect</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="winscore-row">
-      <label for="winScore">First to:</label>
+      <label for="winScore" data-i18n="winScore.label">First to:</label>
       <select id="winScore">
-        <option value="3">3 points (quick)</option>
-        <option value="5">5 points</option>
-        <option value="7">7 points</option>
-        <option value="11" selected>11 points (classic)</option>
-        <option value="15">15 points</option>
-        <option value="21">21 points (epic)</option>
+        <option value="3" data-i18n="winScore.3">3 points (quick)</option>
+        <option value="5" data-i18n="winScore.5">5 points</option>
+        <option value="7" data-i18n="winScore.7">7 points</option>
+        <option value="11" selected data-i18n="winScore.11">11 points (classic)</option>
+        <option value="15" data-i18n="winScore.15">15 points</option>
+        <option value="21" data-i18n="winScore.21">21 points (epic)</option>
       </select>
     </div>
 
     <div class="start-row">
-      <button type="button" class="btn big" id="startBtn">Start Match →</button>
+      <button type="button" class="btn big" id="startBtn" data-i18n="setup.startBtn">Start Match →</button>
     </div>
   </section>
 
@@ -214,7 +221,7 @@
     <div class="scoreboard">
       <div class="scorebox left">
         <div>
-          <div class="label">Left</div>
+          <div class="label" data-i18n="score.left">Left</div>
           <div class="name" id="leftName">Player 1</div>
         </div>
         <div class="score" id="leftScore">0</div>
@@ -223,7 +230,7 @@
       <div class="scorebox right">
         <div class="score" id="rightScore">0</div>
         <div>
-          <div class="label">Right</div>
+          <div class="label" data-i18n="score.right">Right</div>
           <div class="name" id="rightName">Player 2</div>
         </div>
       </div>
@@ -233,18 +240,18 @@
       <canvas id="court" width="1600" height="1000" aria-label="Splatball court"></canvas>
       <div class="overlay" id="overlay">
         <div class="big" id="overlayTitle">Get ready…</div>
-        <div class="sub" id="overlaySub">First to serve: left paddle</div>
+        <div class="sub" id="overlaySub"></div>
         <div class="countdown" id="countdown"></div>
       </div>
     </div>
 
     <div class="game-toolbar">
-      <span class="controls-hint" id="ctrlLeft">Left: <kbd>W</kbd> / <kbd>S</kbd></span>
-      <span class="controls-hint" id="ctrlRight">Right: <kbd>↑</kbd> / <kbd>↓</kbd></span>
+      <span class="controls-hint" id="ctrlLeft" data-i18n-html="toolbar.left">Left: <kbd>W</kbd> / <kbd>S</kbd></span>
+      <span class="controls-hint" id="ctrlRight" data-i18n-html="toolbar.right">Right: <kbd>↑</kbd> / <kbd>↓</kbd></span>
       <span class="spacer"></span>
-      <button type="button" class="sound-toggle on" id="soundBtn">🔊 Sound on</button>
-      <button type="button" class="btn ghost" id="pauseBtn">⏸ Pause</button>
-      <button type="button" class="btn danger" id="quitBtn">Quit</button>
+      <button type="button" class="sound-toggle on" id="soundBtn" data-i18n="toolbar.soundOn">🔊 Sound on</button>
+      <button type="button" class="btn ghost" id="pauseBtn" data-i18n="toolbar.pause">⏸ Pause</button>
+      <button type="button" class="btn danger" id="quitBtn" data-i18n="toolbar.quit">Quit</button>
     </div>
   </section>
 
@@ -255,34 +262,40 @@
       <div class="winner-banner" id="winnerBanner" style="font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; color:#fff; margin-bottom: 8px;"></div>
       <div id="finalScore" style="color: var(--gold); font-size: 1.2rem; font-weight: 800; margin-bottom: 24px;"></div>
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button type="button" class="btn big" id="rematchBtn">Rematch ↻</button>
-        <button type="button" class="btn ghost" id="newMatchBtn">New Match</button>
+        <button type="button" class="btn big" id="rematchBtn" data-i18n="end.rematch">Rematch ↻</button>
+        <button type="button" class="btn ghost" id="newMatchBtn" data-i18n="end.newMatch">New Match</button>
       </div>
     </div>
   </section>
 
 </div>
 
+<script src="./locales.js"></script>
 <script>
 "use strict";
 
 // ========== DOM ==========
 const $ = (id) => document.getElementById(id);
+const t = (k, vars) => WidgetI18n.t(k, vars);
 const setupScreen = $("setup");
 const gameScreen = $("game");
 const endScreen = $("end");
 
 // ========== Colors ==========
+// Names come from the locale dictionary (colorName.<key>); only the
+// canonical key and hex live in code so a language switch retranslates
+// every swatch tooltip.
 const PALETTE = [
-  { name: "Orange",  hex: "#f97316" },
-  { name: "Red",     hex: "#ef4444" },
-  { name: "Pink",    hex: "#ec4899" },
-  { name: "Gold",    hex: "#a855f7" },
-  { name: "Navy",    hex: "#7c3aed" },
-  { name: "Blue",    hex: "#3b82f6" },
-  { name: "Teal",    hex: "#14b8a6" },
-  { name: "Green",   hex: "#22c55e" },
+  { key: "orange", hex: "#f97316" },
+  { key: "red",    hex: "#ef4444" },
+  { key: "pink",   hex: "#ec4899" },
+  { key: "gold",   hex: "#a855f7" },
+  { key: "navy",   hex: "#7c3aed" },
+  { key: "blue",   hex: "#3b82f6" },
+  { key: "teal",   hex: "#14b8a6" },
+  { key: "green",  hex: "#22c55e" },
 ];
+function colorName(key) { return t(`colorName.${key}`); }
 
 // ========== State ==========
 const state = {
@@ -353,16 +366,15 @@ const sfx = {
 function buildColorPicker(containerId, idx) {
   const c = $(containerId); c.innerHTML = "";
   PALETTE.forEach((p) => {
+    const name = colorName(p.key);
     const b = document.createElement("button");
     b.type = "button"; b.className = "swatch"; b.style.background = p.hex;
-    b.title = p.name; b.dataset.hex = p.hex;
-    b.setAttribute("aria-label", `${p.name} for player ${idx + 1}`);
+    b.title = name; b.dataset.hex = p.hex;
+    b.setAttribute("aria-label", t("colorAria", { color: name, n: idx + 1 }));
     b.addEventListener("click", () => {
       const player = idx === 0 ? state.p1 : state.p2;
-      // Avoid both players picking the same color
       const other = idx === 0 ? state.p2 : state.p1;
       if (other.color === p.hex) {
-        // Swap: give the other player the previous color
         const prev = player.color;
         other.color = prev;
         document.querySelectorAll(`#${idx === 0 ? "p2colors" : "p1colors"} .swatch`).forEach(el =>
@@ -373,13 +385,11 @@ function buildColorPicker(containerId, idx) {
     });
     c.appendChild(b);
   });
-  // Mark default active
   const def = (idx === 0 ? state.p1.color : state.p2.color);
   c.querySelectorAll(".swatch").forEach(el => el.classList.toggle("active", el.dataset.hex === def));
 }
 
 function refreshModeUI() {
-  // mode → which players are AI
   state.p1.isAI = state.mode === "cvc";
   state.p2.isAI = state.mode !== "pvp";
   $("p1card").classList.toggle("ai", state.p1.isAI);
@@ -394,7 +404,6 @@ function refreshModeUI() {
   }
 }
 
-// Wire mode buttons
 document.querySelectorAll(".mode-btn").forEach(b => {
   b.addEventListener("click", () => {
     state.mode = b.dataset.mode;
@@ -403,16 +412,11 @@ document.querySelectorAll(".mode-btn").forEach(b => {
   });
 });
 
-// Wire name inputs (only used when not AI)
-$("p1name").addEventListener("input", e => { if (!state.p1.isAI) state.p1.name = e.target.value.trim() || "Player 1"; });
-$("p2name").addEventListener("input", e => { if (!state.p2.isAI) state.p2.name = e.target.value.trim() || "Player 2"; });
+$("p1name").addEventListener("input", e => { if (!state.p1.isAI) state.p1.name = e.target.value.trim() || t("defaultName.p1"); });
+$("p2name").addEventListener("input", e => { if (!state.p2.isAI) state.p2.name = e.target.value.trim() || t("defaultName.p2"); });
 $("p1diff").addEventListener("change", e => state.p1.difficulty = e.target.value);
 $("p2diff").addEventListener("change", e => state.p2.difficulty = e.target.value);
 $("winScore").addEventListener("change", e => state.winScore = +e.target.value);
-
-buildColorPicker("p1colors", 0);
-buildColorPicker("p2colors", 1);
-refreshModeUI();
 
 // ========== Game ==========
 const canvas = $("court");
@@ -433,7 +437,7 @@ function startMatch() {
   setScreen("game");
   applyCSSAccentColors();
   updateScoreboard();
-  $("winscorePill").textContent = `First to ${state.winScore}`;
+  $("winscorePill").textContent = t("winscorePill", { n: state.winScore });
   $("ctrlLeft").style.display = state.p1.isAI ? "none" : "inline-block";
   $("ctrlRight").style.display = state.p2.isAI ? "none" : "inline-block";
   resetBall();
@@ -474,8 +478,9 @@ function beginCountdown(secs) {
   state.countdown = secs;
   const overlay = $("overlay");
   overlay.classList.add("show");
-  $("overlayTitle").textContent = "Get ready…";
-  $("overlaySub").textContent = state.servingTo === 0 ? `${state.p2.name} serves` : `${state.p1.name} serves`;
+  $("overlayTitle").textContent = t("overlay.getReady");
+  const server = state.servingTo === 0 ? state.p2.name : state.p1.name;
+  $("overlaySub").textContent = t("overlay.serves", { name: server });
   $("countdown").textContent = secs;
   sfx.count();
   const tick = () => {
@@ -495,12 +500,12 @@ function beginCountdown(secs) {
 function togglePause() {
   if (!state.running) return;
   state.paused = !state.paused;
-  $("pauseBtn").textContent = state.paused ? "▶ Resume" : "⏸ Pause";
+  $("pauseBtn").textContent = state.paused ? t("toolbar.resume") : t("toolbar.pause");
   const overlay = $("overlay");
   if (state.paused) {
     overlay.classList.add("show");
-    $("overlayTitle").textContent = "Paused";
-    $("overlaySub").textContent = "Press space, or click Resume, to keep playing.";
+    $("overlayTitle").textContent = t("overlay.paused");
+    $("overlaySub").textContent = t("overlay.pausedHint");
     $("countdown").textContent = "";
   } else if (state.countdown <= 0) {
     overlay.classList.remove("show");
@@ -611,9 +616,16 @@ function endMatch(winnerIdx) {
   sfx.win();
   const winner = winnerIdx === 0 ? state.p1 : state.p2;
   const loser = winnerIdx === 0 ? state.p2 : state.p1;
-  $("winnerBanner").textContent = `${winner.name} wins!`;
+  $("winnerBanner").textContent = t("end.winner", { name: winner.name });
   $("winnerBanner").style.color = winner.color;
-  $("finalScore").textContent = `${state.scores[0]} – ${state.scores[1]} · ${winner.name} ${state.scores[winnerIdx]}, ${loser.name} ${state.scores[1 - winnerIdx]}`;
+  $("finalScore").textContent = t("end.finalScore", {
+    leftScore: state.scores[0],
+    rightScore: state.scores[1],
+    winnerName: winner.name,
+    winnerPoints: state.scores[winnerIdx],
+    loserName: loser.name,
+    loserPoints: state.scores[1 - winnerIdx],
+  });
   setScreen("end");
 }
 
@@ -749,12 +761,34 @@ $("soundBtn").addEventListener("click", () => {
   state.soundOn = !state.soundOn;
   $("soundBtn").classList.toggle("on", state.soundOn);
   $("soundBtn").classList.toggle("off", !state.soundOn);
-  $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
+  $("soundBtn").textContent = state.soundOn ? t("toolbar.soundOn") : t("toolbar.soundOff");
 });
 $("rematchBtn").addEventListener("click", () => startMatch());
 $("newMatchBtn").addEventListener("click", () => {
   setScreen("setup");
 });
+
+// ====== i18n boot
+// Set default player names to localized strings, then build pickers and wire UI.
+state.p1.name = t("defaultName.p1");
+state.p2.name = t("defaultName.p2");
+$("p1name").value = state.p1.name;
+$("p2name").value = state.p2.name;
+
+function bootI18nDependentUI() {
+  // Rebuild color pickers so swatch tooltips/aria pick up the new language.
+  buildColorPicker("p1colors", 0);
+  buildColorPicker("p2colors", 1);
+  refreshModeUI();
+  // If a game is on screen, update the win-score pill and the pause/sound button labels.
+  if (state.running) {
+    $("winscorePill").textContent = t("winscorePill", { n: state.winScore });
+    $("pauseBtn").textContent = state.paused ? t("toolbar.resume") : t("toolbar.pause");
+    $("soundBtn").textContent = state.soundOn ? t("toolbar.soundOn") : t("toolbar.soundOff");
+  }
+}
+bootI18nDependentUI();
+window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
 </script>
 </body>
 </html>
