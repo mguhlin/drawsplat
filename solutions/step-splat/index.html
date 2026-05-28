@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step-Splat — DrawSplat Tools</title>
+  <meta name="description" content="Splat any task into bite-size steps. A neurodivergent-friendly task chunker with adjustable spiciness.">
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #ffffff;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-70: #374151;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header.site { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 6px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .tagline { margin: 8px 0 0; color: var(--gray-50); font-size: 1rem; max-width: 60ch; }
+
+    .layout { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0 0 12px; color: var(--gray-90); font-size: 1.1rem; }
+
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+    textarea, input[type=text], input[type=password] { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; line-height: 1.4; }
+    textarea { min-height: 90px; resize: vertical; }
+    textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+
+    select { width: 100%; padding: 9px 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); outline: none; }
+
+    .btn { min-height: 40px; padding: 8px 14px; border: 2px solid rgba(124, 58, 237, .22); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; box-shadow: 0 6px 14px rgba(64, 64, 65, .06); }
+    .btn.primary { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .btn.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
+    .btn.danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn.ghost { background: transparent; border-color: var(--gray-30); color: var(--gray-70); box-shadow: none; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+    .spice-row { display: flex; align-items: center; gap: 10px; }
+    .spice-slider { flex: 1; accent-color: var(--orange); }
+    .spice-display { font-size: 1.4rem; min-width: 90px; letter-spacing: 2px; }
+    .spice-label { color: var(--gray-50); font-size: .82rem; margin-top: 4px; min-height: 1.2em; }
+
+    .mode-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .mode-pill.heuristic { background: var(--gray-10); color: var(--navy); }
+    .mode-pill.ai { background: linear-gradient(120deg, var(--orange), var(--gold)); color: var(--white); }
+
+    .examples { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .example-chip { padding: 5px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--white); color: var(--gray-70); font-weight: 700; font-size: .78rem; cursor: pointer; }
+    .example-chip:hover { border-color: var(--navy); color: var(--navy); }
+
+    .stage { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 22px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); min-height: 60vh; }
+
+    .stage-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .stage-header h2 { margin: 0; color: var(--navy); font-size: 1.2rem; }
+    .stage-meta { color: var(--gray-50); font-size: .82rem; }
+
+    .empty { display: grid; place-items: center; gap: 10px; padding: 32px 16px; text-align: center; color: var(--gray-50); border: 2px dashed var(--border); border-radius: var(--radius); }
+    .empty .splat { font-size: 3rem; }
+    .empty p { margin: 0; font-size: 1rem; max-width: 32ch; line-height: 1.4; }
+
+    .tree { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .tree ul { list-style: none; margin: 6px 0 0 0; padding: 0 0 0 22px; display: grid; gap: 6px; border-left: 2px dashed var(--gray-30); }
+
+    .task { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 10px; padding: 10px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); transition: background .15s, border-color .15s; }
+    .task:hover { border-color: var(--navy); }
+    .task.done { background: #f9fafb; border-color: var(--gray-30); }
+    .task.done .task-text { color: var(--gray-50); text-decoration: line-through; }
+    .task .task-text { font-size: 1rem; line-height: 1.35; word-break: break-word; cursor: text; }
+    .task .task-text[contenteditable=true] { outline: 2px solid var(--blue); outline-offset: 2px; background: var(--white); padding: 2px 4px; border-radius: 4px; }
+    .task-controls { display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+    .task:hover .task-controls, .task:focus-within .task-controls { opacity: 1; }
+    .task input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--green); margin-top: 2px; cursor: pointer; }
+
+    .icon-btn { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--border); border-radius: 6px; background: var(--white); color: var(--gray-70); font-size: 1rem; }
+    .icon-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .icon-btn.danger:hover { border-color: var(--red); color: var(--red); }
+    .icon-btn.expand { color: var(--orange); border-color: rgba(249, 115, 22, .35); font-weight: 900; }
+    .icon-btn.expand:hover { background: var(--orange); color: var(--white); border-color: var(--orange); }
+    .icon-btn.busy { opacity: .5; cursor: wait; }
+
+    .stage-footer { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid var(--gray-10); }
+    .stage-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .progress { color: var(--gray-50); font-size: .82rem; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(140%); padding: 10px 18px; background: var(--gray-90); color: var(--white); border-radius: 999px; font-weight: 700; font-size: .9rem; box-shadow: 0 12px 26px rgba(0,0,0,.18); transition: transform .25s ease; z-index: 100; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
+
+    /* Settings modal */
+    .modal-veil { position: fixed; inset: 0; background: rgba(17, 24, 39, .55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 80; }
+    .modal-veil.show { display: flex; }
+    .modal { width: min(540px, 100%); background: var(--white); border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,.25); padding: 20px; max-height: 90vh; overflow: auto; }
+    .modal h3 { margin: 0 0 10px; color: var(--navy); }
+    .modal p.intro { margin: 0 0 14px; color: var(--gray-70); font-size: .9rem; line-height: 1.45; }
+    .modal .field { margin-bottom: 12px; }
+    .modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+    .radio-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 700; color: var(--gray-70); text-transform: none; letter-spacing: 0; font-size: .92rem; }
+    .privacy-note { margin: 10px 0 0; padding: 10px 12px; background: var(--gray-10); border-radius: 6px; color: var(--gray-70); font-size: .82rem; line-height: 1.45; }
+
+    footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
+    footer.foot a { color: var(--navy); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+  <div class="page">
+    <header class="site">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1>Step-Splat</h1>
+        <p class="tagline">Splat any task into bite-size steps. Slide the <strong>spiciness</strong> for shorter or chunkier breakdowns. Click <strong>↳</strong> on any step to splat it further.</p>
+      </div>
+      <a class="home-link" href="../../index.html">Home</a>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-label="Task input">
+        <h2>What's the task?</h2>
+        <div class="field">
+          <label for="taskInput">Describe it in one line</label>
+          <textarea id="taskInput" placeholder="e.g. Write a one-page book report on The Outsiders"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Try one of these</label>
+          <div class="examples" id="exampleChips"></div>
+        </div>
+
+        <div class="field">
+          <label>Spiciness — how broken-down?</label>
+          <div class="spice-row">
+            <input type="range" min="1" max="5" value="3" class="spice-slider" id="spiceSlider" aria-label="Spiciness level">
+            <span class="spice-display" id="spiceDisplay">🌶️🌶️🌶️</span>
+          </div>
+          <div class="spice-label" id="spiceLabel">Just right — five or six steps with some detail.</div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="splatBtn">Splat it →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+        </div>
+
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+          Step-Splat works without an account or API key — it uses keyword templates for common tasks.
+          Add an Anthropic or OpenAI key in Settings to switch on AI mode for richer breakdowns.
+        </p>
+      </section>
+
+      <section class="stage" aria-label="Steps">
+        <div class="stage-header">
+          <h2 id="stageTitle">Steps will appear here</h2>
+          <span class="stage-meta" id="stageMeta"></span>
+        </div>
+
+        <div id="stageBody">
+          <div class="empty" id="emptyState">
+            <div class="splat" aria-hidden="true">🪄</div>
+            <p>Type a task and hit <strong>Splat it</strong>. You'll get a checklist you can edit, expand, and copy.</p>
+          </div>
+        </div>
+
+        <div class="stage-footer" id="stageFooter" hidden>
+          <span class="progress" id="progress"></span>
+          <div class="stage-actions">
+            <button type="button" class="btn" id="copyMdBtn" title="Copy as a Markdown checklist">Copy as Markdown</button>
+            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
+    </footer>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal">
+      <h3 id="settingsTitle">AI mode (optional)</h3>
+      <p class="intro">
+        Bring your own API key to unlock richer, context-aware breakdowns.
+        Your key stays in this browser only — it's saved to <code>localStorage</code> and sent directly to the provider you choose.
+      </p>
+
+      <div class="field">
+        <label>Provider</label>
+        <div class="radio-row">
+          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
+          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="apiKeyInput">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+      </div>
+
+      <div class="field">
+        <label for="modelInput">Model (optional override)</label>
+        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+      </div>
+
+      <div class="privacy-note">
+        <strong>No server.</strong> Step-Splat is a single static page. Requests go from your browser straight to Anthropic or OpenAI.
+        Do not use a shared/admin key on a public computer. Clear the key when you're done.
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  // ============================================================
+  // Step-Splat — Magic-ToDo-style task chunker for DrawSplat Tools
+  //   * Heuristic engine uses verb-keyed templates × spiciness
+  //   * Optional BYOK AI mode (Anthropic Claude or OpenAI)
+  //   * Recursive sub-step expansion, in-place editing, MD export
+  // ============================================================
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const STORAGE_KEY = "stepSplat.v1";
+
+  // -------- DOM refs
+  const taskInput = $("taskInput");
+  const splatBtn = $("splatBtn");
+  const spiceSlider = $("spiceSlider");
+  const spiceDisplay = $("spiceDisplay");
+  const spiceLabel = $("spiceLabel");
+  const stageBody = $("stageBody");
+  const stageTitle = $("stageTitle");
+  const stageMeta = $("stageMeta");
+  const stageFooter = $("stageFooter");
+  const emptyState = $("emptyState");
+  const progress = $("progress");
+  const modePill = $("modePill");
+  const exampleChips = $("exampleChips");
+  const toast = $("toast");
+
+  // Settings modal refs
+  const settingsBtn = $("settingsBtn");
+  const settingsModal = $("settingsModal");
+  const apiKeyInput = $("apiKeyInput");
+  const modelInput = $("modelInput");
+  const saveSettingsBtn = $("saveSettingsBtn");
+  const cancelSettingsBtn = $("cancelSettingsBtn");
+  const clearKeyBtn = $("clearKeyBtn");
+
+  // -------- State
+  let nextId = 1;
+  /** @type {Array<{id:number,text:string,done:boolean,children:any[]}>} */
+  let tree = [];
+  let settings = loadSettings();
+
+  // -------- Spiciness labels
+  const SPICE_LABELS = {
+    1: "Mild — two or three big steps.",
+    2: "Lite — three or four steps.",
+    3: "Just right — five or six steps with some detail.",
+    4: "Chunky — seven to nine steps including prep and wrap-up.",
+    5: "Extra spicy — every micro-move spelled out, ADHD-friendly.",
+  };
+
+  function renderSpice() {
+    const n = +spiceSlider.value;
+    spiceDisplay.textContent = "🌶️".repeat(n);
+    spiceLabel.textContent = SPICE_LABELS[n];
+  }
+  spiceSlider.addEventListener("input", renderSpice);
+  renderSpice();
+
+  // -------- Example chips
+  const EXAMPLES = [
+    "Write a one-page book report on The Outsiders",
+    "Clean my bedroom",
+    "Plan a Friday science lesson on the water cycle",
+    "Email my professor about an extension",
+    "Make spaghetti for four people",
+    "Organize my Google Drive",
+    "Fix the squeaky kitchen door",
+    "Study for tomorrow's algebra quiz",
+  ];
+  EXAMPLES.forEach(text => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "example-chip";
+    chip.textContent = text;
+    chip.addEventListener("click", () => { taskInput.value = text; taskInput.focus(); });
+    exampleChips.appendChild(chip);
+  });
+
+  // ============================================================
+  //  HEURISTIC ENGINE
+  // ============================================================
+  // Template ordering matters: the more specific verbs come first.
+  // Each template is the FULL list at spiciness 5; we slice down for lower levels.
+  const TEMPLATES = {
+    write: [
+      "Pick the topic and audience",
+      "Brain-dump everything you already know",
+      "Sketch a rough outline (3–5 bullets)",
+      "Set a 15-minute timer and write a messy first draft",
+      "Take a short break — water, walk, stretch",
+      "Re-read and tighten — cut filler words",
+      "Proofread for typos and grammar",
+      "Format and add a title",
+      "Submit, send, or share",
+    ],
+    plan: [
+      "Write what 'done' looks like in one sentence",
+      "List the constraints: time, money, people, space",
+      "Brainstorm three different approaches",
+      "Pick the approach that fits best",
+      "Break it into 3–5 milestones with dates",
+      "Decide the very first step you can do today",
+      "Put the first step on your calendar",
+    ],
+    clean: [
+      "Set a 10-minute timer — you can stop when it dings",
+      "Pick up the loose stuff — clothes, trash, dishes",
+      "Sort surfaces into keep / trash / donate",
+      "Wipe down surfaces with a damp cloth",
+      "Vacuum or sweep the floor",
+      "Put items back where they belong",
+      "Take the trash bag out the door",
+      "Light a candle or open a window as a reward",
+    ],
+    cook: [
+      "Read the whole recipe once before starting",
+      "Pull every ingredient onto the counter (mise en place)",
+      "Pre-heat the oven / boil water if needed",
+      "Chop, measure, and mix the prep items",
+      "Cook the main components in order",
+      "Plate the food",
+      "Clean as you go — wash the prep tools",
+      "Eat and enjoy",
+    ],
+    email: [
+      "Decide the one goal of the message",
+      "Write a clear subject line",
+      "Draft the body — keep it under five lines",
+      "Re-read once for tone — would you want to receive this?",
+      "Double-check the recipient, CC, attachments",
+      "Send it",
+    ],
+    call: [
+      "Write down the goal of the call in one sentence",
+      "Jot 2–3 questions you need answered",
+      "Find a quiet spot with no echo",
+      "Take a deep breath, then dial",
+      "Take notes as you talk",
+      "Repeat back what was agreed before hanging up",
+      "Email a short recap as a follow-up",
+    ],
+    study: [
+      "Gather your materials in one spot",
+      "Skim the chapter — read headings and bold words",
+      "Read carefully, highlighting only key ideas",
+      "Write a one-page summary in your own words",
+      "Quiz yourself without looking at notes",
+      "Mark the weak spots and revisit them tomorrow",
+    ],
+    research: [
+      "Phrase your question in a single sentence",
+      "Brainstorm three search keywords",
+      "Find five sources and save the links",
+      "Skim each and tag the useful sections",
+      "Take notes in bullet form",
+      "Synthesize the notes into a short summary",
+      "Cite the sources",
+    ],
+    build: [
+      "Sketch what you're making on paper",
+      "List the materials and tools you'll need",
+      "Gather everything in one workspace",
+      "Build the rough version — don't aim for perfect",
+      "Test that it works",
+      "Polish, paint, or trim",
+      "Show it to someone for feedback",
+    ],
+    fix: [
+      "Describe what's broken in one sentence",
+      "Search online for 'how to fix [the thing]'",
+      "Gather the tools you'll need",
+      "Try the simplest fix first",
+      "Test whether it worked",
+      "If still broken — ask for help or call a pro",
+    ],
+    organize: [
+      "Pick one shelf, drawer, or folder — only one",
+      "Empty it completely",
+      "Wipe the empty space",
+      "Sort items into keep / donate / trash / move",
+      "Group what's left into categories",
+      "Label containers or folders",
+      "Put it back, neatest items in front",
+    ],
+    schedule: [
+      "Check your calendar for clashes",
+      "Pick three time options",
+      "Send the invite or message with the options",
+      "Wait for the reply",
+      "Confirm and add it to your calendar",
+      "Set a reminder 1 hour before",
+    ],
+    buy: [
+      "Write down exactly what you need (and what you don't)",
+      "Check prices at 2–3 places",
+      "Read a couple of recent reviews",
+      "Decide and place the order",
+      "Save the receipt or confirmation email",
+    ],
+    read: [
+      "Find a quiet spot with no notifications",
+      "Skim headings and bold words first",
+      "Read for understanding, not speed",
+      "Highlight or underline only the key ideas",
+      "Summarize each chapter in one sentence",
+      "Tell someone what you learned",
+    ],
+    practice: [
+      "Decide what skill you're practicing today",
+      "Warm up for 5 minutes",
+      "Do the core drill — set a timer",
+      "Record yourself or take notes on what was hard",
+      "Cool down",
+      "Note one thing to improve next time",
+    ],
+    pack: [
+      "List how many days and what activities",
+      "Lay out clothing on the bed",
+      "Add toiletries and chargers",
+      "Pack the bag in heavy-to-light order",
+      "Double-check passport, keys, wallet",
+      "Set the bag by the door tonight",
+    ],
+    apply: [
+      "Read the requirements end to end",
+      "Gather supporting documents",
+      "Draft each section in plain text first",
+      "Get a friend or teacher to skim it",
+      "Fill out the form / portal",
+      "Hit submit and save the confirmation",
+    ],
+    party: [
+      "Pick a date and guest list",
+      "Send invites — even a quick group chat counts",
+      "Plan food, drinks, and one activity",
+      "Make a shopping list",
+      "Tidy the space the day before",
+      "Set up 1 hour before guests arrive",
+      "Enjoy — and prep leftovers for tomorrow",
+    ],
+    exercise: [
+      "Put on workout clothes",
+      "Drink a glass of water",
+      "Warm up for 5 minutes",
+      "Do the main workout",
+      "Cool down and stretch",
+      "Log what you did",
+    ],
+    sleep: [
+      "Set a phone-off alarm 1 hour before bed",
+      "Dim the lights",
+      "Brush teeth and get into pajamas",
+      "Set tomorrow's clothes out",
+      "Read or stretch for 10 minutes",
+      "Get into bed at the planned time",
+    ],
+    "default": [
+      "Get clear on what 'done' looks like",
+      "Write down what you'll need to do it",
+      "Take the very first small step",
+      "Set a 15-minute timer and keep going",
+      "Take a quick break — water, stretch, walk",
+      "Finish the last bit",
+      "Review and tick it off",
+    ],
+  };
+
+  // Keyword → template lookup. Earlier keys win.
+  const KEYWORD_MAP = [
+    [/\b(write|draft|essay|report|article|blog|paper|story|letter)\b/i, "write"],
+    [/\b(plan|design|outline|prepare|schedule a (?:trip|event)|organize an event)\b/i, "plan"],
+    [/\b(clean|tidy|declutter|dust|vacuum|sweep|mop|wash|laundry)\b/i, "clean"],
+    [/\b(cook|bake|make .*(?:dinner|lunch|breakfast|meal|recipe|spaghetti|pasta|cake|cookies|bread))\b/i, "cook"],
+    [/\b(email|message|text|reply|respond|write to)\b/i, "email"],
+    [/\b(call|phone|ring|speak to|talk to .* (?:on the phone|over the phone))\b/i, "call"],
+    [/\b(study|review for|cram|memorize|prep for (?:an?|the) (?:test|exam|quiz))\b/i, "study"],
+    [/\b(research|investigate|look into|dig into|find out about|gather info)\b/i, "research"],
+    [/\b(build|construct|assemble|put together|make a .*(?:project|model|shed|desk|garden))\b/i, "build"],
+    [/\b(fix|repair|debug|patch|mend|troubleshoot)\b/i, "fix"],
+    [/\b(organize|sort|file|tidy up|reorganize|alphabetize)\b/i, "organize"],
+    [/\b(schedule|book a|set up a meeting|arrange|reschedule)\b/i, "schedule"],
+    [/\b(buy|purchase|order|shop for|pick up|get a new)\b/i, "buy"],
+    [/\b(read|finish reading|get through|work through .* book|chapter)\b/i, "read"],
+    [/\b(practice|rehearse|drill|train for|work on (?:my|the) .*)\b/i, "practice"],
+    [/\b(pack|prep for trip|get ready for .* trip|suitcase)\b/i, "pack"],
+    [/\b(apply|submit|enroll|register|sign up for)\b/i, "apply"],
+    [/\b(party|gathering|host|throw a|birthday|celebration)\b/i, "party"],
+    [/\b(exercise|workout|run|jog|gym|yoga|stretch)\b/i, "exercise"],
+    [/\b(sleep|bedtime|wind down|go to bed)\b/i, "sleep"],
+  ];
+
+  function classify(task) {
+    for (const [re, key] of KEYWORD_MAP) {
+      if (re.test(task)) return key;
+    }
+    return "default";
+  }
+
+  function heuristicSplat(task, spice) {
+    const key = classify(task);
+    const full = TEMPLATES[key];
+    // Spiciness 1: first 2-3 steps. 5: full list. Linear interpolation.
+    const counts = { 1: 3, 2: 4, 3: 5, 4: Math.min(7, full.length), 5: full.length };
+    const n = Math.min(counts[spice], full.length);
+    let steps = full.slice(0, n);
+
+    if (spice >= 4) {
+      // Add bookend hype/cooldown
+      steps = ["Pick the moment — start it now, don't pre-think it"].concat(steps).concat(["Pause and notice you actually did the thing"]);
+    }
+    if (spice === 5) {
+      // Insert micro-breaks
+      const padded = [];
+      steps.forEach((s, i) => {
+        padded.push(s);
+        if (i < steps.length - 1 && i % 2 === 1) {
+          padded.push("Quick 60-second reset — water, deep breath, look away from the screen");
+        }
+      });
+      steps = padded;
+    }
+    return steps;
+  }
+
+  // ============================================================
+  //  AI ENGINE (BYOK)
+  // ============================================================
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { provider: "anthropic", apiKey: "", model: "" };
+      return JSON.parse(raw);
+    } catch { return { provider: "anthropic", apiKey: "", model: "" }; }
+  }
+  function saveSettings(s) {
+    settings = s;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    refreshModePill();
+  }
+  function refreshModePill() {
+    if (settings.apiKey) {
+      modePill.className = "mode-pill ai";
+      modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`;
+    } else {
+      modePill.className = "mode-pill heuristic";
+      modePill.textContent = "Heuristic mode";
+    }
+  }
+  refreshModePill();
+
+  function buildPrompt(task, spice, parentChain) {
+    const depth = SPICE_LABELS[spice].toLowerCase();
+    const context = parentChain.length
+      ? `\nThis is a sub-step inside a larger task. Parent chain (most recent last): ${parentChain.map(p => `"${p}"`).join(" → ")}.`
+      : "";
+    return `You are Step-Splat, a friendly task chunker for neurodivergent users (ADHD/autism/anxiety).
+Break the following task into a short ordered checklist of concrete, action-verb-led steps.
+Spiciness ${spice}/5 means: ${depth}
+Rules:
+- Each step starts with a verb.
+- Each step is one short sentence (under 14 words).
+- No numbering, no markdown, no preamble.
+- Return ONLY a JSON array of strings, nothing else.${context}
+
+Task: ${task}`;
+  }
+
+  async function aiSplat(task, spice, parentChain = []) {
+    const prompt = buildPrompt(task, spice, parentChain);
+    if (settings.provider === "anthropic") return aiSplatAnthropic(prompt);
+    return aiSplatOpenAI(prompt);
+  }
+
+  async function aiSplatAnthropic(prompt) {
+    const model = settings.model || "claude-haiku-4-5-20251001";
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": settings.apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 700,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    if (!res.ok) throw new Error(`Anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || "").join("");
+    return parseStepList(text);
+  }
+
+  async function aiSplatOpenAI(prompt) {
+    const model = settings.model || "gpt-4o-mini";
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${settings.apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.6,
+      }),
+    });
+    if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || "";
+    return parseStepList(text);
+  }
+
+  function parseStepList(text) {
+    // Find the first [ ... ] JSON array in the response
+    const match = text.match(/\[[\s\S]*\]/);
+    if (match) {
+      try {
+        const arr = JSON.parse(match[0]);
+        if (Array.isArray(arr)) return arr.map(s => String(s).trim()).filter(Boolean);
+      } catch {}
+    }
+    // Fallback: split by newlines, strip bullets/numbers
+    return text.split(/\r?\n/)
+      .map(line => line.replace(/^\s*([-*•]|\d+[.)])\s*/, "").trim())
+      .filter(Boolean);
+  }
+
+  // ============================================================
+  //  RENDERING + STATE
+  // ============================================================
+  function newNode(text) { return { id: nextId++, text, done: false, children: [] }; }
+
+  function findNode(id, nodes = tree) {
+    for (const n of nodes) {
+      if (n.id === id) return n;
+      const found = findNode(id, n.children);
+      if (found) return found;
+    }
+    return null;
+  }
+  function parentChainOf(id) {
+    // Walk down from root looking for id, return ancestor texts
+    function walk(nodes, trail) {
+      for (const n of nodes) {
+        if (n.id === id) return trail;
+        const r = walk(n.children, trail.concat(n.text));
+        if (r) return r;
+      }
+      return null;
+    }
+    return walk(tree, []) || [];
+  }
+  function removeNode(id, nodes = tree) {
+    const idx = nodes.findIndex(n => n.id === id);
+    if (idx >= 0) { nodes.splice(idx, 1); return true; }
+    for (const n of nodes) if (removeNode(id, n.children)) return true;
+    return false;
+  }
+
+  function renderTree() {
+    if (!tree.length) {
+      stageBody.innerHTML = "";
+      stageBody.appendChild(emptyState);
+      stageTitle.textContent = "Steps will appear here";
+      stageMeta.textContent = "";
+      stageFooter.hidden = true;
+      return;
+    }
+    stageBody.innerHTML = "";
+    const ul = document.createElement("ul");
+    ul.className = "tree";
+    tree.forEach(n => ul.appendChild(renderNode(n)));
+    stageBody.appendChild(ul);
+    stageFooter.hidden = false;
+    updateProgress();
+  }
+
+  function renderNode(node) {
+    const li = document.createElement("li");
+    const row = document.createElement("div");
+    row.className = "task" + (node.done ? " done" : "");
+    row.dataset.id = node.id;
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = node.done;
+    cb.addEventListener("change", () => {
+      setDone(node, cb.checked);
+      row.classList.toggle("done", cb.checked);
+      updateProgress();
+    });
+
+    const text = document.createElement("div");
+    text.className = "task-text";
+    text.textContent = node.text;
+    text.title = "Click to edit";
+    text.addEventListener("click", () => makeEditable(text, node));
+
+    const controls = document.createElement("div");
+    controls.className = "task-controls";
+
+    const expand = document.createElement("button");
+    expand.type = "button";
+    expand.className = "icon-btn expand";
+    expand.title = "Splat this step further";
+    expand.textContent = "↳";
+    expand.addEventListener("click", () => expandNode(node, expand));
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "icon-btn danger";
+    del.title = "Remove this step";
+    del.textContent = "✕";
+    del.addEventListener("click", () => {
+      removeNode(node.id);
+      renderTree();
+    });
+
+    controls.appendChild(expand);
+    controls.appendChild(del);
+
+    row.appendChild(cb);
+    row.appendChild(text);
+    row.appendChild(controls);
+    li.appendChild(row);
+
+    if (node.children.length) {
+      const sub = document.createElement("ul");
+      node.children.forEach(c => sub.appendChild(renderNode(c)));
+      li.appendChild(sub);
+    }
+
+    return li;
+  }
+
+  function makeEditable(el, node) {
+    el.contentEditable = "true";
+    el.focus();
+    // place caret at end
+    const range = document.createRange(); range.selectNodeContents(el); range.collapse(false);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    const commit = () => {
+      el.contentEditable = "false";
+      const v = el.textContent.trim();
+      if (v) node.text = v; else el.textContent = node.text;
+    };
+    el.addEventListener("blur", commit, { once: true });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); el.blur(); }
+      if (e.key === "Escape") { el.textContent = node.text; el.blur(); }
+    });
+  }
+
+  function setDone(node, done) {
+    node.done = done;
+    // Cascade to children for a satisfying click
+    if (done) cascade(node.children, true);
+  }
+  function cascade(nodes, done) { nodes.forEach(n => { n.done = done; cascade(n.children, done); }); }
+
+  function updateProgress() {
+    let total = 0, done = 0;
+    (function walk(nodes) {
+      nodes.forEach(n => { total++; if (n.done) done++; walk(n.children); });
+    })(tree);
+    progress.textContent = `${done} of ${total} done`;
+  }
+
+  async function expandNode(node, btn) {
+    if (node.children.length) {
+      const ok = confirm("This step already has sub-steps. Replace them?");
+      if (!ok) return;
+      node.children = [];
+    }
+    btn.classList.add("busy");
+    btn.disabled = true;
+    const spice = +spiceSlider.value;
+    try {
+      const chain = parentChainOf(node.id).concat(node.text);
+      const steps = settings.apiKey
+        ? await aiSplat(node.text, spice, parentChainOf(node.id))
+        : heuristicSplat(node.text, spice);
+      node.children = steps.map(newNode);
+      renderTree();
+    } catch (err) {
+      console.error(err);
+      showToast("AI call failed — falling back to heuristic. " + (err.message || ""), true);
+      node.children = heuristicSplat(node.text, spice).map(newNode);
+      renderTree();
+    } finally {
+      btn.classList.remove("busy");
+      btn.disabled = false;
+    }
+  }
+
+  // ============================================================
+  //  SPLAT — main entry
+  // ============================================================
+  async function doSplat() {
+    const task = taskInput.value.trim();
+    if (!task) { taskInput.focus(); showToast("Type a task first.", true); return; }
+    splatBtn.disabled = true;
+    const originalLabel = splatBtn.textContent;
+    splatBtn.textContent = settings.apiKey ? "Asking Claude…" : "Splatting…";
+    const spice = +spiceSlider.value;
+    try {
+      const steps = settings.apiKey
+        ? await aiSplat(task, spice, [])
+        : heuristicSplat(task, spice);
+      tree = [{ id: nextId++, text: task, done: false, children: steps.map(newNode) }];
+      stageTitle.textContent = task;
+      stageMeta.textContent = `${steps.length} step${steps.length === 1 ? "" : "s"} · spice ${spice}/5${settings.apiKey ? " · AI" : ""}`;
+      renderTree();
+    } catch (err) {
+      console.error(err);
+      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      const steps = heuristicSplat(task, spice);
+      tree = [{ id: nextId++, text: task, done: false, children: steps.map(newNode) }];
+      stageTitle.textContent = task;
+      stageMeta.textContent = `${steps.length} steps · spice ${spice}/5 · heuristic fallback`;
+      renderTree();
+    } finally {
+      splatBtn.disabled = false;
+      splatBtn.textContent = originalLabel;
+    }
+  }
+  splatBtn.addEventListener("click", doSplat);
+  taskInput.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doSplat();
+  });
+
+  // ============================================================
+  //  Footer actions
+  // ============================================================
+  $("clearBtn").addEventListener("click", () => {
+    if (!tree.length) return;
+    if (confirm("Clear all steps?")) { tree = []; renderTree(); }
+  });
+
+  $("copyMdBtn").addEventListener("click", async () => {
+    const md = treeToMarkdown(tree);
+    try {
+      await navigator.clipboard.writeText(md);
+      showToast("Copied as Markdown checklist.");
+    } catch {
+      showToast("Couldn't copy — your browser blocked clipboard access.", true);
+    }
+  });
+
+  function treeToMarkdown(nodes, depth = 0) {
+    let out = "";
+    for (const n of nodes) {
+      const pad = "  ".repeat(depth);
+      if (depth === 0) {
+        out += `# ${n.text}\n\n`;
+        out += treeToMarkdown(n.children, depth + 1);
+      } else {
+        out += `${pad}- [${n.done ? "x" : " "}] ${n.text}\n`;
+        out += treeToMarkdown(n.children, depth + 1);
+      }
+    }
+    return out;
+  }
+
+  // ============================================================
+  //  Settings modal
+  // ============================================================
+  function openSettings() {
+    apiKeyInput.value = settings.apiKey || "";
+    modelInput.value = settings.model || "";
+    const radio = document.querySelector(`input[name=provider][value="${settings.provider}"]`);
+    if (radio) radio.checked = true;
+    settingsModal.classList.add("show");
+    apiKeyInput.focus();
+  }
+  function closeSettings() { settingsModal.classList.remove("show"); }
+
+  settingsBtn.addEventListener("click", openSettings);
+  cancelSettingsBtn.addEventListener("click", closeSettings);
+  settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) closeSettings(); });
+  saveSettingsBtn.addEventListener("click", () => {
+    const provider = document.querySelector('input[name=provider]:checked').value;
+    saveSettings({
+      provider,
+      apiKey: apiKeyInput.value.trim(),
+      model: modelInput.value.trim(),
+    });
+    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    closeSettings();
+  });
+  clearKeyBtn.addEventListener("click", () => {
+    apiKeyInput.value = "";
+    modelInput.value = "";
+    saveSettings({ provider: settings.provider, apiKey: "", model: "" });
+    showToast("Key cleared.");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings();
+  });
+
+  // ============================================================
+  //  Toast
+  // ============================================================
+  let toastTimer = null;
+  function showToast(msg, isError = false) {
+    toast.textContent = msg;
+    toast.classList.toggle("error", !!isError);
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
+  }
+  </script>
+</body>
+</html>
