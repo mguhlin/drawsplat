@@ -728,15 +728,23 @@ if ("speechSynthesis" in window) {
   speechSynthesis.onvoiceschanged = pickVoice;
   pickVoice();
 }
+let lastSpeakAt = 0;
 function speak(text) {
   if (!state.soundOn || !("speechSynthesis" in window)) return;
+  // Throttle rather than cancel: rapid eats during a combo would
+  // otherwise speechSynthesis.cancel() the previous utterance before
+  // it gets a chance to actually say anything.
+  const now = performance.now();
+  if (now - lastSpeakAt < 650) return;
+  lastSpeakAt = now;
   try {
-    speechSynthesis.cancel();
+    // Only cancel if a very stale utterance is somehow still in the queue.
+    if (speechSynthesis.pending && speechSynthesis.pending > 1) speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (preferredVoice) u.voice = preferredVoice;
-    u.rate = 1.15;
+    u.rate = 1.1;
     u.pitch = 1.25;
-    u.volume = 0.85;
+    u.volume = 1.0;
     speechSynthesis.speak(u);
   } catch (e) { /* ignore */ }
 }
@@ -835,6 +843,18 @@ startBtn.addEventListener("click", () => {
   state.lives = 3;
   setScreen("game");
   getCtx();
+  // First-gesture audio unlock: many browsers gate speechSynthesis behind
+  // a user interaction. Speak a barely-audible "go" so the engine warms up.
+  try {
+    if ("speechSynthesis" in window) {
+      const warm = new SpeechSynthesisUtterance("Let's go!");
+      warm.volume = 0.6;
+      warm.rate = 1.1;
+      if (preferredVoice) warm.voice = preferredVoice;
+      speechSynthesis.speak(warm);
+      lastSpeakAt = performance.now();
+    }
+  } catch (e) { /* ignore */ }
   loadLevel(startIdx);
 });
 
