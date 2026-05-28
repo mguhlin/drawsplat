@@ -1227,18 +1227,37 @@ function update(dt) {
   updateGila(dt);
 
   // Continuous hatchling proximity check — catches chicks the gila
-  // brushes against mid-frame between tile centers. Without this the
-  // only eat trigger is at tile arrival, which fast hatchlings can dodge.
+  // brushes against between tile centers. Triple guard:
+  //   1. Proximity (centers within 0.72 TILE — visual sprites overlap there).
+  //   2. Same-tile match (chick logical cell == gila tile).
+  //   3. Swept segment: chick's last-frame to current-frame line passes
+  //      within 0.6 TILE of the gila's path. Catches fast hatchlings that
+  //      teleport past in a single frame.
   {
     const g = state.gila;
+    const R_PROX  = TILE * 0.72;
+    const R_SWEEP = TILE * 0.6;
     for (let i = state.entities.length - 1; i >= 0; i--) {
       const e = state.entities[i];
       if (!HATCHLING_KINDS[e.kind]) continue;
       const ex = e.px !== undefined ? e.px : cellX(e.x);
       const ey = e.py !== undefined ? e.py : cellY(e.y);
-      const dx = ex - g.px;
-      const dy = ey - g.py;
-      if (Math.hypot(dx, dy) < TILE * 0.5) {
+      let hit = false;
+      const dx = ex - g.px, dy = ey - g.py;
+      if (Math.hypot(dx, dy) < R_PROX) hit = true;
+      else if (e.x === g.tx && e.y === g.ty) hit = true;
+      else if (e.lastPx !== undefined) {
+        // Swept-segment closest distance from gila center to (lastPx -> px)
+        const sx = e.lastPx, sy = e.lastPy;
+        const vx = ex - sx, vy = ey - sy;
+        const lenSq = vx * vx + vy * vy;
+        if (lenSq > 1) {
+          const t = Math.max(0, Math.min(1, ((g.px - sx) * vx + (g.py - sy) * vy) / lenSq));
+          const cx = sx + vx * t, cy = sy + vy * t;
+          if (Math.hypot(cx - g.px, cy - g.py) < R_SWEEP) hit = true;
+        }
+      }
+      if (hit) {
         eat(e);
         state.entities.splice(i, 1);
       }
@@ -1262,6 +1281,8 @@ function update(dt) {
         e.wanderT = 0;
         e.px = cellX(e.x);
         e.py = cellY(e.y);
+        e.lastPx = e.px;
+        e.lastPy = e.py;
         e.targetX = e.x;
         e.targetY = e.y;
         sfx.hatch();
@@ -1558,6 +1579,10 @@ function eat(e) {
 function updateHatchling(e, dt) {
   const hatch = HATCHLING_KINDS[e.kind];
   const speed = DIFF[state.difficulty].chickSpeed * (hatch ? hatch.speed : 1);
+  // Stamp last-frame position so the gila's swept-segment collision can
+  // catch hatchlings that crossed its path in a single frame.
+  e.lastPx = e.px;
+  e.lastPy = e.py;
   e.wanderT -= dt;
   // Snap chick position to tile target; pick a new neighbour every ~0.6s
   const tx = e.targetX, ty = e.targetY;
