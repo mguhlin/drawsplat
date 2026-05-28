@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splatball — DrawSplat Games</title>
+<meta name="description" content="A colorful, sound-on, Pong-style paddle rally for one or two players — plus computer-vs-computer mode.">
+<style>
+  /* DrawSplat Games header */
+  .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
+  .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
+  .ds-games-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-games-eyebrow { margin: 0; color: #a855f7; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .ds-games-eyebrow a { color: inherit; text-decoration: none; }
+  .ds-games-h1 { margin: 0; color: #7c3aed; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .ds-games-home { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; color: #ffffff; background: #7c3aed; border-radius: 8px; font: 700 .9rem Arial, sans-serif; text-decoration: none; white-space: nowrap; }
+  .ds-games-home:hover { background: #6d28d9; }
+
+  :root {
+    --navy: #7c3aed;
+    --gold: #a855f7;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #6d28d9;
+    --green: #22c55e;
+    --yellow: #facc15;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --ink: #d1e6ff;
+    --bg: #0a1322;
+    --panel: #142c46;
+    --panel-2: #1c3a5d;
+    --border: rgba(168, 85, 247, .25);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  .shell { max-width: 1000px; margin: 0 auto; padding: 22px 16px 40px; }
+
+  /* Screens */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ===== Setup screen ===== */
+  .setup-h1 { margin: 0 0 8px; color: #fff; font-size: clamp(1.4rem, 4vw, 2.2rem); letter-spacing: .02em; }
+  .setup-sub { margin: 0 0 26px; color: var(--ink); opacity: .75; font-size: 1rem; }
+
+  .field-label { display: block; margin: 0 0 8px; color: #fff; font-weight: 800; font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; opacity: .85; }
+
+  .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 26px; }
+  @media (max-width: 640px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-btn { padding: 16px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; color: var(--ink); text-align: center; transition: all .15s; }
+  .mode-btn .icon { font-size: 1.8rem; line-height: 1; margin-bottom: 8px; }
+  .mode-btn .label { font-weight: 800; font-size: 1rem; color: #fff; margin-bottom: 4px; }
+  .mode-btn .desc { font-size: .82rem; opacity: .7; }
+  .mode-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+  .mode-btn.active { border-color: var(--gold); background: var(--panel-2); box-shadow: 0 0 0 3px rgba(168, 85, 247, .25); }
+
+  .player-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; margin-bottom: 22px; }
+  @media (max-width: 720px) { .player-row { grid-template-columns: 1fr; } .vs { display: none; } }
+  .player-card { padding: 16px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; }
+  .player-card h3 { margin: 0 0 12px; color: #fff; font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; opacity: .85; }
+  .player-card.p1 { border-top: 4px solid var(--orange); }
+  .player-card.p2 { border-top: 4px solid var(--green); }
+  .vs { display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 1.6rem; }
+
+  .player-card input[type=text] { width: 100%; padding: 10px 12px; background: rgba(0,0,0,.25); border: 2px solid var(--border); border-radius: 8px; color: #fff; outline: none; margin-bottom: 14px; }
+  .player-card input[type=text]:focus { border-color: var(--gold); }
+
+  .colors { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 14px; }
+  .swatch { aspect-ratio: 1; border: 3px solid transparent; border-radius: 8px; cursor: pointer; transition: transform .12s; padding: 0; }
+  .swatch:hover { transform: scale(1.08); }
+  .swatch.active { border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.25); transform: scale(1.05); }
+
+  .difficulty-row { display: none; }
+  .player-card.ai .difficulty-row { display: block; }
+  .player-card .name-row { display: block; }
+  .player-card.ai .name-row { display: none; }
+  .player-card .ai-name { display: none; padding: 10px 12px; background: rgba(0,0,0,.25); border: 2px dashed var(--border); border-radius: 8px; color: var(--gold); margin-bottom: 14px; font-weight: 700; text-align: center; }
+  .player-card.ai .ai-name { display: block; }
+  .difficulty-row select { width: 100%; padding: 10px 12px; background: rgba(0,0,0,.25); border: 2px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
+  .difficulty-row select:focus { border-color: var(--gold); }
+
+  .winscore-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; padding: 14px 18px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; }
+  .winscore-row label { color: #fff; font-weight: 800; font-size: .9rem; }
+  .winscore-row select { padding: 8px 12px; background: rgba(0,0,0,.25); border: 2px solid var(--border); border-radius: 8px; color: #fff; outline: none; font-weight: 700; }
+
+  .start-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .btn { padding: 12px 22px; background: var(--gold); color: #fff; border: 2px solid var(--gold); border-radius: 10px; font-weight: 800; transition: all .15s; }
+  .btn:hover { background: var(--navy); border-color: var(--navy); transform: translateY(-1px); }
+  .btn.big { padding: 16px 36px; font-size: 1.1rem; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: rgba(255,255,255,.25); }
+  .btn.ghost:hover { background: var(--panel-2); border-color: var(--gold); color: #fff; }
+  .btn.danger { background: var(--red); border-color: var(--red); }
+  .btn.danger:hover { background: #b91c1c; border-color: #b91c1c; }
+
+  /* ===== Game screen ===== */
+  .scoreboard { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; margin-bottom: 14px; }
+  .scorebox { padding: 10px 14px; background: var(--panel); border-radius: 12px; border: 2px solid var(--border); display: flex; align-items: center; gap: 14px; }
+  .scorebox.left { justify-content: flex-start; border-top: 4px solid var(--p1color, var(--orange)); }
+  .scorebox.right { justify-content: flex-end; border-top: 4px solid var(--p2color, var(--green)); }
+  .scorebox .name { font-weight: 800; color: #fff; font-size: 1.05rem; opacity: .9; }
+  .scorebox .score { font-weight: 900; color: #fff; font-size: 2rem; line-height: 1; }
+  .scorebox .label { font-size: .68rem; color: var(--ink); opacity: .55; text-transform: uppercase; letter-spacing: .08em; }
+  .winscore-pill { padding: 4px 10px; background: var(--panel-2); border-radius: 999px; color: var(--gold); font-weight: 800; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
+
+  .court-wrap { position: relative; background: #050a15; border: 2px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.4); aspect-ratio: 16/10; }
+  canvas#court { display: block; width: 100%; height: 100%; }
+
+  .overlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; background: rgba(5, 10, 21, .85); color: #fff; text-align: center; padding: 20px; }
+  .overlay.show { display: flex; }
+  .overlay .big { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 900; }
+  .overlay .sub { color: var(--ink); opacity: .75; font-size: 1rem; max-width: 32ch; }
+  .overlay .countdown { font-size: clamp(3rem, 12vw, 6rem); font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(168, 85, 247, .6); }
+  .overlay .winner-banner { font-size: clamp(2rem, 7vw, 3.6rem); font-weight: 900; }
+
+  .game-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+  .game-toolbar .spacer { flex: 1; }
+  .controls-hint { padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; font-size: .82rem; color: var(--ink); }
+  .controls-hint kbd { display: inline-block; padding: 2px 7px; background: var(--panel-2); border: 1px solid var(--border); border-bottom: 2px solid rgba(0,0,0,.3); border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .78rem; color: var(--gold); margin: 0 2px; }
+  .sound-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--panel); border: 2px solid var(--border); border-radius: 999px; color: var(--ink); font-weight: 700; font-size: .85rem; }
+  .sound-toggle.on { color: var(--green); border-color: var(--green); }
+  .sound-toggle.off { color: var(--ink); opacity: .5; }
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Splatball</h1>
+  </div>
+  <a class="ds-games-home" href="../../index.html">Home</a>
+</header>
+
+<div class="shell">
+
+  <!-- ===== Setup ===== -->
+  <section class="screen active" id="setup">
+    <h2 class="setup-h1">Set up your match</h2>
+    <p class="setup-sub">Two paddles, one bouncing ball, sound on. Pick who's playing, what color they are, and how long the rally goes.</p>
+
+    <label class="field-label">Match type</label>
+    <div class="mode-grid">
+      <button type="button" class="mode-btn active" data-mode="pvp">
+        <div class="icon">👤👤</div><div class="label">Player vs Player</div><div class="desc">Same keyboard, W/S vs ↑/↓</div>
+      </button>
+      <button type="button" class="mode-btn" data-mode="pvc">
+        <div class="icon">👤🤖</div><div class="label">Player vs Computer</div><div class="desc">You on the left, AI on the right</div>
+      </button>
+      <button type="button" class="mode-btn" data-mode="cvc">
+        <div class="icon">🤖🤖</div><div class="label">Computer vs Computer</div><div class="desc">Sit back and watch the bots</div>
+      </button>
+    </div>
+
+    <div class="player-row">
+      <div class="player-card p1" id="p1card">
+        <h3>Left paddle · Player 1</h3>
+        <div class="name-row">
+          <input type="text" id="p1name" placeholder="Name (e.g. Ada)" maxlength="20" value="Player 1">
+        </div>
+        <div class="ai-name">🤖 <span id="p1aiName">Computer One</span></div>
+        <label class="field-label">Color</label>
+        <div class="colors" id="p1colors"></div>
+        <div class="difficulty-row">
+          <label class="field-label">AI difficulty</label>
+          <select id="p1diff">
+            <option value="easy">Easy — slow and forgiving</option>
+            <option value="medium" selected>Medium — tracks the ball</option>
+            <option value="hard">Hard — nearly perfect</option>
+          </select>
+        </div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="player-card p2" id="p2card">
+        <h3>Right paddle · Player 2</h3>
+        <div class="name-row">
+          <input type="text" id="p2name" placeholder="Name (e.g. Bao)" maxlength="20" value="Player 2">
+        </div>
+        <div class="ai-name">🤖 <span id="p2aiName">Computer Two</span></div>
+        <label class="field-label">Color</label>
+        <div class="colors" id="p2colors"></div>
+        <div class="difficulty-row">
+          <label class="field-label">AI difficulty</label>
+          <select id="p2diff">
+            <option value="easy">Easy — slow and forgiving</option>
+            <option value="medium" selected>Medium — tracks the ball</option>
+            <option value="hard">Hard — nearly perfect</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="winscore-row">
+      <label for="winScore">First to:</label>
+      <select id="winScore">
+        <option value="3">3 points (quick)</option>
+        <option value="5">5 points</option>
+        <option value="7">7 points</option>
+        <option value="11" selected>11 points (classic)</option>
+        <option value="15">15 points</option>
+        <option value="21">21 points (epic)</option>
+      </select>
+    </div>
+
+    <div class="start-row">
+      <button type="button" class="btn big" id="startBtn">Start Match →</button>
+    </div>
+  </section>
+
+  <!-- ===== Game ===== -->
+  <section class="screen" id="game">
+    <div class="scoreboard">
+      <div class="scorebox left">
+        <div>
+          <div class="label">Left</div>
+          <div class="name" id="leftName">Player 1</div>
+        </div>
+        <div class="score" id="leftScore">0</div>
+      </div>
+      <div class="winscore-pill" id="winscorePill">First to 11</div>
+      <div class="scorebox right">
+        <div class="score" id="rightScore">0</div>
+        <div>
+          <div class="label">Right</div>
+          <div class="name" id="rightName">Player 2</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="court-wrap">
+      <canvas id="court" width="1600" height="1000" aria-label="Splatball court"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="big" id="overlayTitle">Get ready…</div>
+        <div class="sub" id="overlaySub">First to serve: left paddle</div>
+        <div class="countdown" id="countdown"></div>
+      </div>
+    </div>
+
+    <div class="game-toolbar">
+      <span class="controls-hint" id="ctrlLeft">Left: <kbd>W</kbd> / <kbd>S</kbd></span>
+      <span class="controls-hint" id="ctrlRight">Right: <kbd>↑</kbd> / <kbd>↓</kbd></span>
+      <span class="spacer"></span>
+      <button type="button" class="sound-toggle on" id="soundBtn">🔊 Sound on</button>
+      <button type="button" class="btn ghost" id="pauseBtn">⏸ Pause</button>
+      <button type="button" class="btn danger" id="quitBtn">Quit</button>
+    </div>
+  </section>
+
+  <!-- ===== End ===== -->
+  <section class="screen" id="end">
+    <div style="padding: 40px 20px; background: var(--panel); border-radius: 14px; border: 2px solid var(--border); text-align: center;">
+      <div style="font-size:4rem; line-height:1; margin-bottom:14px">🏆</div>
+      <div class="winner-banner" id="winnerBanner" style="font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; color:#fff; margin-bottom: 8px;"></div>
+      <div id="finalScore" style="color: var(--gold); font-size: 1.2rem; font-weight: 800; margin-bottom: 24px;"></div>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button type="button" class="btn big" id="rematchBtn">Rematch ↻</button>
+        <button type="button" class="btn ghost" id="newMatchBtn">New Match</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+// ========== DOM ==========
+const $ = (id) => document.getElementById(id);
+const setupScreen = $("setup");
+const gameScreen = $("game");
+const endScreen = $("end");
+
+// ========== Colors ==========
+const PALETTE = [
+  { name: "Orange",  hex: "#f97316" },
+  { name: "Red",     hex: "#ef4444" },
+  { name: "Pink",    hex: "#ec4899" },
+  { name: "Gold",    hex: "#a855f7" },
+  { name: "Navy",    hex: "#7c3aed" },
+  { name: "Blue",    hex: "#3b82f6" },
+  { name: "Teal",    hex: "#14b8a6" },
+  { name: "Green",   hex: "#22c55e" },
+];
+
+// ========== State ==========
+const state = {
+  mode: "pvp",           // pvp | pvc | cvc
+  p1: { name: "Player 1", color: PALETTE[0].hex, isAI: false, difficulty: "medium" },
+  p2: { name: "Player 2", color: PALETTE[7].hex, isAI: false, difficulty: "medium" },
+  winScore: 11,
+  scores: [0, 0],
+  // Court dims in canvas-internal units
+  cw: 1600, ch: 1000,
+  paddleW: 20, paddleH: 180,
+  paddleY: [410, 410],       // top-of-paddle, 0..(ch-paddleH)
+  paddleSpeed: 14,           // canvas units per frame at 60fps
+  ball: { x: 800, y: 500, vx: 0, vy: 0, r: 16, color: "#ffffff" },
+  ballBaseSpeed: 12,
+  ballSpeed: 12,
+  running: false,
+  paused: false,
+  soundOn: true,
+  countdown: 0,              // seconds remaining; 0 = play
+  lastTime: 0,
+  servingTo: -1,             // -1 = first serve random, 0 = serve toward left, 1 = serve toward right
+  rafId: 0,
+};
+
+const AI_NAMES = ["Splat-Bot", "Pixel-Bot", "Glitchy", "Bouncer", "Rally-9", "VoltAI", "Smasher", "PaddleX"];
+function pickAiName(used) {
+  const pool = AI_NAMES.filter(n => n !== used);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// ========== Audio (Web Audio API) ==========
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, duration, type = "square", vol = 0.12) {
+  if (!state.soundOn) return;
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) { /* AudioContext not available */ }
+}
+const sfx = {
+  paddle: () => tone(440 + Math.random() * 60, 0.07, "square", 0.14),
+  wall:   () => tone(240, 0.05, "square", 0.10),
+  score:  () => { tone(330, 0.10, "sine", 0.18); setTimeout(() => tone(220, 0.18, "sine", 0.18), 90); },
+  serve:  () => tone(660, 0.07, "triangle", 0.12),
+  win:    () => {
+    tone(523, 0.14, "sine", 0.20);
+    setTimeout(() => tone(659, 0.14, "sine", 0.20), 140);
+    setTimeout(() => tone(784, 0.32, "sine", 0.22), 280);
+  },
+  count:  () => tone(880, 0.08, "triangle", 0.10),
+};
+
+// ========== Setup screen ==========
+function buildColorPicker(containerId, idx) {
+  const c = $(containerId); c.innerHTML = "";
+  PALETTE.forEach((p) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "swatch"; b.style.background = p.hex;
+    b.title = p.name; b.dataset.hex = p.hex;
+    b.setAttribute("aria-label", `${p.name} for player ${idx + 1}`);
+    b.addEventListener("click", () => {
+      const player = idx === 0 ? state.p1 : state.p2;
+      // Avoid both players picking the same color
+      const other = idx === 0 ? state.p2 : state.p1;
+      if (other.color === p.hex) {
+        // Swap: give the other player the previous color
+        const prev = player.color;
+        other.color = prev;
+        document.querySelectorAll(`#${idx === 0 ? "p2colors" : "p1colors"} .swatch`).forEach(el =>
+          el.classList.toggle("active", el.dataset.hex === prev));
+      }
+      player.color = p.hex;
+      c.querySelectorAll(".swatch").forEach(el => el.classList.toggle("active", el.dataset.hex === p.hex));
+    });
+    c.appendChild(b);
+  });
+  // Mark default active
+  const def = (idx === 0 ? state.p1.color : state.p2.color);
+  c.querySelectorAll(".swatch").forEach(el => el.classList.toggle("active", el.dataset.hex === def));
+}
+
+function refreshModeUI() {
+  // mode → which players are AI
+  state.p1.isAI = state.mode === "cvc";
+  state.p2.isAI = state.mode !== "pvp";
+  $("p1card").classList.toggle("ai", state.p1.isAI);
+  $("p2card").classList.toggle("ai", state.p2.isAI);
+  if (state.p1.isAI && !state.p1.aiNameLocked) {
+    const n = pickAiName(state.p2.name);
+    $("p1aiName").textContent = n; state.p1.name = n;
+  }
+  if (state.p2.isAI && !state.p2.aiNameLocked) {
+    const n = pickAiName(state.p1.name);
+    $("p2aiName").textContent = n; state.p2.name = n;
+  }
+}
+
+// Wire mode buttons
+document.querySelectorAll(".mode-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    state.mode = b.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach(x => x.classList.toggle("active", x === b));
+    refreshModeUI();
+  });
+});
+
+// Wire name inputs (only used when not AI)
+$("p1name").addEventListener("input", e => { if (!state.p1.isAI) state.p1.name = e.target.value.trim() || "Player 1"; });
+$("p2name").addEventListener("input", e => { if (!state.p2.isAI) state.p2.name = e.target.value.trim() || "Player 2"; });
+$("p1diff").addEventListener("change", e => state.p1.difficulty = e.target.value);
+$("p2diff").addEventListener("change", e => state.p2.difficulty = e.target.value);
+$("winScore").addEventListener("change", e => state.winScore = +e.target.value);
+
+buildColorPicker("p1colors", 0);
+buildColorPicker("p2colors", 1);
+refreshModeUI();
+
+// ========== Game ==========
+const canvas = $("court");
+const ctx = canvas.getContext("2d");
+const keys = Object.create(null);
+
+addEventListener("keydown", (e) => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === " ") { e.preventDefault(); togglePause(); }
+  if (["arrowup", "arrowdown", "w", "s"].includes(e.key.toLowerCase())) e.preventDefault();
+});
+addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+function startMatch() {
+  state.scores = [0, 0];
+  state.servingTo = Math.random() < 0.5 ? 0 : 1;
+  state.paddleY = [(state.ch - state.paddleH) / 2, (state.ch - state.paddleH) / 2];
+  setScreen("game");
+  applyCSSAccentColors();
+  updateScoreboard();
+  $("winscorePill").textContent = `First to ${state.winScore}`;
+  $("ctrlLeft").style.display = state.p1.isAI ? "none" : "inline-block";
+  $("ctrlRight").style.display = state.p2.isAI ? "none" : "inline-block";
+  resetBall();
+  // Activate audio on user gesture
+  getCtx();
+  beginCountdown(3);
+  state.running = true;
+  state.paused = false;
+  state.lastTime = performance.now();
+  cancelAnimationFrame(state.rafId);
+  state.rafId = requestAnimationFrame(loop);
+}
+
+function applyCSSAccentColors() {
+  document.documentElement.style.setProperty("--p1color", state.p1.color);
+  document.documentElement.style.setProperty("--p2color", state.p2.color);
+  $("leftName").textContent = state.p1.name;
+  $("rightName").textContent = state.p2.name;
+}
+
+function setScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === name));
+}
+
+function resetBall() {
+  state.ball.x = state.cw / 2;
+  state.ball.y = state.ch / 2;
+  state.ballSpeed = state.ballBaseSpeed;
+  // Serve direction: toward who lost the point (or random first serve)
+  const dir = state.servingTo === 0 ? -1 : 1;
+  const angle = (Math.random() * 0.5 - 0.25) * Math.PI; // -45° to +45° from horizontal
+  state.ball.vx = Math.cos(angle) * state.ballSpeed * dir;
+  state.ball.vy = Math.sin(angle) * state.ballSpeed;
+  state.ball.color = "#ffffff";
+}
+
+function beginCountdown(secs) {
+  state.countdown = secs;
+  const overlay = $("overlay");
+  overlay.classList.add("show");
+  $("overlayTitle").textContent = "Get ready…";
+  $("overlaySub").textContent = state.servingTo === 0 ? `${state.p2.name} serves` : `${state.p1.name} serves`;
+  $("countdown").textContent = secs;
+  sfx.count();
+  const tick = () => {
+    state.countdown -= 1;
+    if (state.countdown <= 0) {
+      overlay.classList.remove("show");
+      sfx.serve();
+      return;
+    }
+    $("countdown").textContent = state.countdown;
+    sfx.count();
+    setTimeout(tick, 1000);
+  };
+  setTimeout(tick, 1000);
+}
+
+function togglePause() {
+  if (!state.running) return;
+  state.paused = !state.paused;
+  $("pauseBtn").textContent = state.paused ? "▶ Resume" : "⏸ Pause";
+  const overlay = $("overlay");
+  if (state.paused) {
+    overlay.classList.add("show");
+    $("overlayTitle").textContent = "Paused";
+    $("overlaySub").textContent = "Press space, or click Resume, to keep playing.";
+    $("countdown").textContent = "";
+  } else if (state.countdown <= 0) {
+    overlay.classList.remove("show");
+  }
+}
+
+function loop(now) {
+  state.rafId = requestAnimationFrame(loop);
+  if (!state.running) return;
+  const dt = Math.min(0.05, (now - state.lastTime) / 1000);
+  state.lastTime = now;
+  if (!state.paused && state.countdown <= 0) update(dt);
+  render();
+}
+
+function update(dt) {
+  const f = dt * 60; // normalize to 60fps frame units
+
+  // ---- Paddle inputs / AI ----
+  // Player 1 (left)
+  if (state.p1.isAI) {
+    aiMove(0, state.p1.difficulty, f);
+  } else {
+    if (keys["w"]) state.paddleY[0] -= state.paddleSpeed * f;
+    if (keys["s"]) state.paddleY[0] += state.paddleSpeed * f;
+  }
+  // Player 2 (right)
+  if (state.p2.isAI) {
+    aiMove(1, state.p2.difficulty, f);
+  } else {
+    if (keys["arrowup"]) state.paddleY[1] -= state.paddleSpeed * f;
+    if (keys["arrowdown"]) state.paddleY[1] += state.paddleSpeed * f;
+  }
+  for (let i = 0; i < 2; i++) {
+    state.paddleY[i] = Math.max(0, Math.min(state.ch - state.paddleH, state.paddleY[i]));
+  }
+
+  // ---- Ball ----
+  state.ball.x += state.ball.vx * f;
+  state.ball.y += state.ball.vy * f;
+
+  // Top / bottom walls
+  if (state.ball.y - state.ball.r < 0) {
+    state.ball.y = state.ball.r; state.ball.vy = -state.ball.vy; sfx.wall();
+  }
+  if (state.ball.y + state.ball.r > state.ch) {
+    state.ball.y = state.ch - state.ball.r; state.ball.vy = -state.ball.vy; sfx.wall();
+  }
+
+  // Left paddle collision
+  if (state.ball.vx < 0 && state.ball.x - state.ball.r <= state.paddleW) {
+    const py = state.paddleY[0];
+    if (state.ball.y >= py - state.ball.r && state.ball.y <= py + state.paddleH + state.ball.r) {
+      paddleHit(0);
+    }
+  }
+  // Right paddle collision
+  if (state.ball.vx > 0 && state.ball.x + state.ball.r >= state.cw - state.paddleW) {
+    const py = state.paddleY[1];
+    if (state.ball.y >= py - state.ball.r && state.ball.y <= py + state.paddleH + state.ball.r) {
+      paddleHit(1);
+    }
+  }
+
+  // Scoring
+  if (state.ball.x < -state.ball.r) score(1);    // right scored
+  if (state.ball.x > state.cw + state.ball.r) score(0); // left scored
+}
+
+function paddleHit(idx) {
+  const py = state.paddleY[idx];
+  const hitPos = ((state.ball.y - py) / state.paddleH) - 0.5; // -0.5 .. 0.5
+  const clamped = Math.max(-0.5, Math.min(0.5, hitPos));
+  const angleDeg = clamped * 70; // ±35° based on hit position
+  const angleRad = angleDeg * Math.PI / 180;
+  // Speed up a touch each rally hit
+  state.ballSpeed = Math.min(state.ballBaseSpeed * 2.2, state.ballSpeed * 1.05);
+  const dir = idx === 0 ? 1 : -1;
+  state.ball.vx = Math.cos(angleRad) * state.ballSpeed * dir;
+  state.ball.vy = Math.sin(angleRad) * state.ballSpeed;
+  // Reposition ball just outside the paddle so it can't double-hit
+  state.ball.x = idx === 0 ? state.paddleW + state.ball.r + 1 : state.cw - state.paddleW - state.ball.r - 1;
+  state.ball.color = idx === 0 ? state.p1.color : state.p2.color;
+  sfx.paddle();
+}
+
+function score(winnerIdx) {
+  state.scores[winnerIdx] += 1;
+  updateScoreboard();
+  sfx.score();
+  if (state.scores[winnerIdx] >= state.winScore) {
+    endMatch(winnerIdx);
+    return;
+  }
+  state.servingTo = 1 - winnerIdx; // serve toward the one who lost
+  resetBall();
+  beginCountdown(2);
+}
+
+function updateScoreboard() {
+  $("leftScore").textContent = state.scores[0];
+  $("rightScore").textContent = state.scores[1];
+}
+
+function endMatch(winnerIdx) {
+  state.running = false;
+  cancelAnimationFrame(state.rafId);
+  sfx.win();
+  const winner = winnerIdx === 0 ? state.p1 : state.p2;
+  const loser = winnerIdx === 0 ? state.p2 : state.p1;
+  $("winnerBanner").textContent = `${winner.name} wins!`;
+  $("winnerBanner").style.color = winner.color;
+  $("finalScore").textContent = `${state.scores[0]} – ${state.scores[1]} · ${winner.name} ${state.scores[winnerIdx]}, ${loser.name} ${state.scores[1 - winnerIdx]}`;
+  setScreen("end");
+}
+
+// ---- AI ----
+function aiMove(idx, difficulty, frameFactor) {
+  const targetY = aiTargetY(idx, difficulty);
+  const paddleCenter = state.paddleY[idx] + state.paddleH / 2;
+  const diff = targetY - paddleCenter;
+  const speeds = { easy: 7, medium: 11, hard: 16 };
+  const maxStep = speeds[difficulty] * frameFactor;
+  // Add a tiny deadzone so it doesn't jitter
+  if (Math.abs(diff) < 6) return;
+  state.paddleY[idx] += Math.sign(diff) * Math.min(Math.abs(diff), maxStep);
+}
+
+function aiTargetY(idx, difficulty) {
+  const b = state.ball;
+  const movingTowardMe = idx === 0 ? b.vx < 0 : b.vx > 0;
+  if (!movingTowardMe) {
+    // Drift back toward center while waiting
+    return state.ch / 2;
+  }
+  const paddleX = idx === 0 ? state.paddleW : state.cw - state.paddleW;
+  if (difficulty === "hard") {
+    return predictBallY(paddleX);
+  }
+  if (difficulty === "medium") {
+    // Track current ball Y with small lag
+    return b.y + (Math.random() - 0.5) * 50;
+  }
+  // easy: laggy & sometimes wrong
+  if (Math.random() < 0.25) return state.paddleY[idx] + state.paddleH / 2; // freeze
+  return b.y + (Math.random() - 0.5) * 140;
+}
+
+function predictBallY(targetX) {
+  const b = state.ball;
+  if (Math.abs(b.vx) < 0.01) return b.y;
+  let x = b.x, y = b.y, vx = b.vx, vy = b.vy;
+  let safety = 0;
+  while (((vx > 0 && x < targetX) || (vx < 0 && x > targetX)) && safety < 50) {
+    const dx = targetX - x;
+    const tx = dx / vx;
+    const dy = vy * tx;
+    const newY = y + dy;
+    if (newY < b.r) {
+      const t = (b.r - y) / vy;
+      x = x + vx * t; y = b.r; vy = -vy;
+    } else if (newY > state.ch - b.r) {
+      const t = ((state.ch - b.r) - y) / vy;
+      x = x + vx * t; y = state.ch - b.r; vy = -vy;
+    } else {
+      return newY;
+    }
+    safety++;
+  }
+  return y;
+}
+
+// ---- Render ----
+function render() {
+  const W = state.cw, H = state.ch;
+  // Background
+  ctx.fillStyle = "#050a15";
+  ctx.fillRect(0, 0, W, H);
+  // Center dashed line
+  ctx.strokeStyle = "rgba(168, 85, 247, .35)";
+  ctx.lineWidth = 4;
+  ctx.setLineDash([18, 22]);
+  ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+  ctx.setLineDash([]);
+  // Glow ring at center
+  ctx.beginPath(); ctx.arc(W/2, H/2, 70, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(168, 85, 247, .15)"; ctx.lineWidth = 2; ctx.stroke();
+
+  // Paddles
+  drawPaddle(0, state.paddleY[0], state.p1.color);
+  drawPaddle(1, state.paddleY[1], state.p2.color);
+
+  // Ball with glow
+  const b = state.ball;
+  ctx.save();
+  ctx.shadowColor = b.color;
+  ctx.shadowBlur = 30;
+  ctx.fillStyle = b.color;
+  ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  // Ball inner shine
+  ctx.fillStyle = "rgba(255,255,255,.7)";
+  ctx.beginPath(); ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.35, 0, Math.PI * 2); ctx.fill();
+}
+
+function drawPaddle(idx, y, color) {
+  const x = idx === 0 ? 0 : state.cw - state.paddleW;
+  ctx.save();
+  ctx.shadowColor = color; ctx.shadowBlur = 28;
+  ctx.fillStyle = color;
+  // Rounded rect
+  const r = 6;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + state.paddleW - r, y);
+  ctx.quadraticCurveTo(x + state.paddleW, y, x + state.paddleW, y + r);
+  ctx.lineTo(x + state.paddleW, y + state.paddleH - r);
+  ctx.quadraticCurveTo(x + state.paddleW, y + state.paddleH, x + state.paddleW - r, y + state.paddleH);
+  ctx.lineTo(x + r, y + state.paddleH);
+  ctx.quadraticCurveTo(x, y + state.paddleH, x, y + state.paddleH - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  // Highlight stripe
+  ctx.fillStyle = "rgba(255,255,255,.25)";
+  ctx.fillRect(x + (idx === 0 ? state.paddleW - 4 : 0), y + 8, 3, state.paddleH - 16);
+}
+
+// ========== Buttons ==========
+$("startBtn").addEventListener("click", () => {
+  // Sync names from inputs if not AI
+  if (!state.p1.isAI) state.p1.name = $("p1name").value.trim() || "Player 1";
+  if (!state.p2.isAI) state.p2.name = $("p2name").value.trim() || "Player 2";
+  startMatch();
+});
+$("pauseBtn").addEventListener("click", togglePause);
+$("quitBtn").addEventListener("click", () => {
+  state.running = false;
+  cancelAnimationFrame(state.rafId);
+  $("overlay").classList.remove("show");
+  setScreen("setup");
+});
+$("soundBtn").addEventListener("click", () => {
+  state.soundOn = !state.soundOn;
+  $("soundBtn").classList.toggle("on", state.soundOn);
+  $("soundBtn").classList.toggle("off", !state.soundOn);
+  $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
+});
+$("rematchBtn").addEventListener("click", () => startMatch());
+$("newMatchBtn").addEventListener("click", () => {
+  setScreen("setup");
+});
+</script>
+</body>
+</html>
