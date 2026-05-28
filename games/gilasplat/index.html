@@ -471,9 +471,9 @@ const state = {
 };
 
 const DIFF = {
-  beginner: { moveDur: 0.34, hatchScale: 1.5, timeScale: 1.0,  chickSpeed: 0.50 },
-  easy:     { moveDur: 0.28, hatchScale: 1.0, timeScale: 0.92, chickSpeed: 0.70 },
-  medium:   { moveDur: 0.22, hatchScale: 0.7, timeScale: 0.85, chickSpeed: 0.95 },
+  beginner: { moveDur: 0.26, hatchScale: 1.5, timeScale: 1.0,  chickSpeed: 0.50 },
+  easy:     { moveDur: 0.22, hatchScale: 1.0, timeScale: 0.92, chickSpeed: 0.70 },
+  medium:   { moveDur: 0.18, hatchScale: 0.7, timeScale: 0.85, chickSpeed: 0.95 },
 };
 
 // ========== Egg + hatchling kinds ==========
@@ -1190,7 +1190,19 @@ addEventListener("keydown", (e) => {
   else if (k === "arrowright" || k === "d") dir = { x: 1, y: 0 };
   if (dir) {
     e.preventDefault();
-    state.gila.queuedDir = dir;
+    const g = state.gila;
+    g.queuedDir = dir;
+    // Mid-move 180° instant reversal: if the user presses the opposite
+    // of the current motion vector, swap source/destination tiles and
+    // invert moveT so the gila U-turns without waiting for tile arrival.
+    if (g.moving && dir.x === -g.dir.x && dir.y === -g.dir.y) {
+      const sx = g.tx, sy = g.ty;
+      g.tx = g.nx; g.ty = g.ny;
+      g.nx = sx;  g.ny = sy;
+      g.dir = dir;
+      g.moveT = 1 - g.moveT;
+      g.queuedDir = null;
+    }
   }
 });
 addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
@@ -1452,6 +1464,16 @@ function updateGila(dt) {
   // Sunstone gives a 0.6× moveDur multiplier (faster legs).
   const moveScale = isPowerActive("sunstone") ? 0.6 : 1;
   g.moveT += dt / (g.moveDur * moveScale);
+  // Pre-turn lookahead: if the user has queued a direction and the gila
+  // is past ~70% of the current step, check the upcoming tile. If the
+  // queued direction would be valid there, snap arrival now so the corner
+  // turns immediately. Removes the "I pressed it on time but the gila
+  // kept straight" feel near intersections.
+  if (g.moveT > 0.7 && g.moveT < 1 && g.queuedDir
+      && (g.queuedDir.x !== g.dir.x || g.queuedDir.y !== g.dir.y)
+      && canStep(g.nx, g.ny, g.queuedDir)) {
+    g.moveT = 1;
+  }
   if (g.moveT >= 1) {
     g.tx = g.nx;
     g.ty = g.ny;
