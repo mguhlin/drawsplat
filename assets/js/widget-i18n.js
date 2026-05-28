@@ -72,13 +72,17 @@
 
   const STORAGE_KEY = 'drawsplat.language';
 
+  // The whiteboard treats `uh` as LTR Hindi (Devanagari) with bilingual
+  // Urdu/Hindi labels in key UI text — see assets/js/locales.js. Mirroring
+  // that here so widgets and the whiteboard render consistently.
+  // The `htmlLang` value goes into <html lang=…> when this locale is active.
   const LANGS = [
-    { code: 'en', label: 'English',          dir: 'ltr' },
-    { code: 'es', label: 'Español',          dir: 'ltr' },
-    { code: 'vi', label: 'Tiếng Việt',       dir: 'ltr' },
-    { code: 'ar', label: 'العربية',           dir: 'rtl' },
-    { code: 'zh', label: '中文',              dir: 'ltr' },
-    { code: 'uh', label: 'اردو / हिन्दी',     dir: 'rtl' },
+    { code: 'en', label: 'English',          dir: 'ltr', htmlLang: 'en' },
+    { code: 'es', label: 'Español',          dir: 'ltr', htmlLang: 'es' },
+    { code: 'vi', label: 'Tiếng Việt',       dir: 'ltr', htmlLang: 'vi' },
+    { code: 'ar', label: 'العربية',           dir: 'rtl', htmlLang: 'ar' },
+    { code: 'zh', label: '中文',              dir: 'ltr', htmlLang: 'zh' },
+    { code: 'uh', label: 'हिन्दी / اردو',     dir: 'ltr', htmlLang: 'hi' },
   ];
 
   const state = {
@@ -145,7 +149,7 @@
   // ---- Apply translations to the DOM
   function apply() {
     const langCfg = LANGS.find(l => l.code === state.lang) || LANGS[0];
-    document.documentElement.lang = langCfg.code;
+    document.documentElement.lang = langCfg.htmlLang || langCfg.code;
     document.documentElement.dir = langCfg.dir;
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
