@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clock Wizard — DrawSplat Tools</title>
+  <title data-i18n="doc.title">Clock Wizard — DrawSplat Tools</title>
   <meta name="description" content="Get a realistic time estimate for any task, with phase breakdown and an honest ADHD-tax allowance.">
   <style>
     :root {
@@ -29,7 +29,7 @@
     }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--bg); }
-    button, input, select, textarea { font: inherit; }
+    button, input, select { font: inherit; }
     button { cursor: pointer; }
     .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%); }
     .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
@@ -38,8 +38,11 @@
     .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .eyebrow a { color: inherit; text-decoration: none; }
     h1 { margin: 0; color: var(--navy); font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: .95; }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
     .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
     .tagline { margin: 8px 0 0; color: var(--gray-50); font-size: 1rem; max-width: 60ch; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
 
     .layout { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; padding-top: 22px; align-items: start; }
     @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
@@ -125,115 +128,123 @@
     footer.foot { margin-top: 24px; padding-top: 14px; border-top: 2px solid var(--gray-10); color: var(--gray-50); font-size: .85rem; text-align: center; }
     footer.foot a { color: var(--navy); font-weight: 800; }
   </style>
+  <script src="../../assets/js/widget-i18n.js"></script>
 </head>
 <body>
   <div class="top-bar"></div>
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Clock Wizard</h1>
-        <p class="tagline">Describe a task, get an honest time estimate — with phase breakdown and an ADHD-tax allowance so you don't over-promise.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Clock Wizard</h1>
+        <p class="tagline" data-i18n="header.tagline">Describe a task, get an honest time estimate — with phase breakdown and an ADHD-tax allowance so you don't over-promise.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <div class="layout">
       <section class="panel" aria-label="Task input">
-        <h2>What's the task?</h2>
+        <h2 data-i18n="panel.h2">What's the task?</h2>
         <div class="field">
-          <label for="taskInput">Describe it in one line</label>
-          <textarea id="taskInput" placeholder="e.g. Write a one-page book report on The Outsiders"></textarea>
+          <label for="taskInput" data-i18n="panel.taskLabel">Describe it in one line</label>
+          <textarea id="taskInput" data-i18n-placeholder="panel.taskPlaceholder"></textarea>
         </div>
 
         <div class="field">
-          <label>Try one of these</label>
+          <label data-i18n="panel.examplesLabel">Try one of these</label>
           <div class="examples" id="exampleChips"></div>
         </div>
 
         <div class="field">
-          <label>How are you feeling today?</label>
+          <label data-i18n="panel.ctxLabel">How are you feeling today?</label>
           <div class="context-row" role="radiogroup" aria-label="Context">
-            <button type="button" class="context-btn" data-ctx="focused">🧘 Focused</button>
-            <button type="button" class="context-btn active" data-ctx="normal">🙂 Normal</button>
-            <button type="button" class="context-btn" data-ctx="scattered">🌀 Scattered</button>
+            <button type="button" class="context-btn" data-ctx="focused" data-i18n="panel.ctx.focused">🧘 Focused</button>
+            <button type="button" class="context-btn active" data-ctx="normal" data-i18n="panel.ctx.normal">🙂 Normal</button>
+            <button type="button" class="context-btn" data-ctx="scattered" data-i18n="panel.ctx.scattered">🌀 Scattered</button>
           </div>
         </div>
 
         <div class="btn-row">
-          <button type="button" class="btn primary" id="estimateBtn">Estimate →</button>
-          <button type="button" class="btn ghost" id="settingsBtn" title="AI settings">⚙️ Settings</button>
+          <button type="button" class="btn primary" id="estimateBtn" data-i18n="panel.estimateBtn">Estimate →</button>
+          <button type="button" class="btn ghost" id="settingsBtn" data-i18n="panel.settingsBtn">⚙️ Settings</button>
         </div>
 
-        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill">Heuristic mode</span></div>
+        <div style="margin-top:12px"><span class="mode-pill heuristic" id="modePill" data-i18n="mode.heuristic">Heuristic mode</span></div>
 
-        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45">
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.45" data-i18n="panel.intro">
           Clock Wizard works without an account or API key — it uses verb-keyed time templates.
-          Add an Anthropic or OpenAI key in Settings for a tailored estimate.
+        </p>
+        <p style="margin-top:8px;font-size:.78rem;color:var(--orange);line-height:1.4" data-i18n="panel.langNote">
+          Heuristic templates are matched on English keywords; switch to AI mode for accurate multilingual estimates.
         </p>
       </section>
 
       <section class="stage" aria-label="Estimate">
         <div class="stage-header">
-          <h2 id="stageTitle">Your estimate will appear here</h2>
+          <h2 id="stageTitle" data-i18n="stage.title.empty">Your estimate will appear here</h2>
           <span class="stage-meta" id="stageMeta"></span>
         </div>
 
         <div id="stageBody">
           <div class="empty" id="emptyState">
             <div class="splat" aria-hidden="true">⏳</div>
-            <p>Type a task and hit <strong>Estimate</strong>. You'll get a realistic range, phase breakdown, and an honest reality-check.</p>
+            <p data-i18n-html="stage.empty.html">Type a task and hit <strong>Estimate</strong>. You'll get a realistic range, phase breakdown, and an honest reality-check.</p>
           </div>
         </div>
 
         <div class="stage-footer" id="stageFooter" hidden>
           <span class="stage-meta" id="footerMeta"></span>
           <div class="stage-actions">
-            <button type="button" class="btn" id="copyBtn" title="Copy estimate as text">Copy estimate</button>
-            <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+            <button type="button" class="btn" id="copyBtn" data-i18n="stage.copy">Copy estimate</button>
+            <button type="button" class="btn ghost" id="clearBtn" data-i18n="stage.clear">Clear</button>
           </div>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
+    <footer class="foot" data-i18n-html="footer.html">
       Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
     </footer>
   </div>
 
   <div class="modal-veil" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal">
-      <h3 id="settingsTitle">AI mode (optional)</h3>
-      <p class="intro">Bring your own API key to unlock context-aware estimates. Your key stays in this browser only — saved to <code>localStorage</code>, sent directly to the provider you choose.</p>
+      <h3 id="settingsTitle" data-i18n="settings.h3">AI mode (optional)</h3>
+      <p class="intro" data-i18n-html="settings.intro.html">Bring your own API key to unlock context-aware estimates.</p>
       <div class="field">
-        <label>Provider</label>
+        <label data-i18n="settings.providerLabel">Provider</label>
         <div class="radio-row">
-          <label><input type="radio" name="provider" value="anthropic" checked> Anthropic (Claude)</label>
-          <label><input type="radio" name="provider" value="openai"> OpenAI</label>
+          <label><input type="radio" name="provider" value="anthropic" checked> <span data-i18n="settings.anthropic">Anthropic (Claude)</span></label>
+          <label><input type="radio" name="provider" value="openai"> <span data-i18n="settings.openai">OpenAI</span></label>
         </div>
       </div>
       <div class="field">
-        <label for="apiKeyInput">API key</label>
-        <input type="password" id="apiKeyInput" autocomplete="off" placeholder="sk-... or sk-ant-...">
+        <label for="apiKeyInput" data-i18n="settings.keyLabel">API key</label>
+        <input type="password" id="apiKeyInput" autocomplete="off" data-i18n-placeholder="settings.keyPh">
       </div>
       <div class="field">
-        <label for="modelInput">Model (optional override)</label>
-        <input type="text" id="modelInput" placeholder="default: claude-haiku-4-5-20251001 / gpt-4o-mini">
+        <label for="modelInput" data-i18n="settings.modelLabel">Model (optional override)</label>
+        <input type="text" id="modelInput" data-i18n-placeholder="settings.modelPh">
       </div>
-      <div class="privacy-note"><strong>No server.</strong> Clock Wizard is a single static page. Requests go from your browser straight to Anthropic or OpenAI. Don't use a shared/admin key on a public computer.</div>
+      <div class="privacy-note" data-i18n-html="settings.privacy.html"><strong>No server.</strong></div>
       <div class="actions">
-        <button type="button" class="btn danger" id="clearKeyBtn">Clear key</button>
-        <button type="button" class="btn ghost" id="cancelSettingsBtn">Cancel</button>
-        <button type="button" class="btn primary" id="saveSettingsBtn">Save</button>
+        <button type="button" class="btn danger" id="clearKeyBtn" data-i18n="settings.clearKey">Clear key</button>
+        <button type="button" class="btn ghost" id="cancelSettingsBtn" data-i18n="settings.cancel">Cancel</button>
+        <button type="button" class="btn primary" id="saveSettingsBtn" data-i18n="settings.save">Save</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="./locales.js"></script>
   <script>
   "use strict";
   const $ = (id) => document.getElementById(id);
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const STORAGE_KEY = "clockWizard.v1";
 
   const taskInput = $("taskInput");
@@ -264,51 +275,46 @@
     });
   });
 
-  const EXAMPLES = [
-    "Email my professor about a paper extension",
-    "Write a one-page book report on The Outsiders",
-    "Clean my bedroom",
-    "Prep tomorrow's slide deck on photosynthesis",
-    "Grade 24 short-answer essays",
-    "Plan a 3-day weekend trip to Austin",
-    "File my taxes",
-    "Practice violin for the recital",
-  ];
-  EXAMPLES.forEach(t => {
-    const chip = document.createElement("button");
-    chip.type = "button"; chip.className = "example-chip"; chip.textContent = t;
-    chip.addEventListener("click", () => { taskInput.value = t; taskInput.focus(); });
-    exampleChips.appendChild(chip);
-  });
+  const EXAMPLE_COUNT = 8;
+  function renderExamples() {
+    exampleChips.innerHTML = "";
+    for (let i = 0; i < EXAMPLE_COUNT; i++) {
+      const text = t(`example.${i}`);
+      const chip = document.createElement("button");
+      chip.type = "button"; chip.className = "example-chip"; chip.textContent = text;
+      chip.addEventListener("click", () => { taskInput.value = text; taskInput.focus(); });
+      exampleChips.appendChild(chip);
+    }
+  }
 
-  // ====== TIME TEMPLATES (minutes)
-  // Each: { min, max, phases:[[name, share]] } — shares sum to ~1.0
+  // ====== TIME TEMPLATES (minutes) — phase labels come from locales by index
+  // Each: { min, max, shares: [...] }   shares sum to ~1.0
   const TIME_TEMPLATES = {
-    "email-short":   { min: 3,   max: 10,  phases: [["Read the original", .2], ["Draft the reply", .55], ["Re-read + send", .25]] },
-    "email-tricky":  { min: 15,  max: 45,  phases: [["Think through the angle", .2], ["Draft", .45], ["Re-read for tone", .2], ["Send + log", .15]] },
-    "phone-call":    { min: 5,   max: 25,  phases: [["Find a quiet spot", .1], ["Notes / agenda", .15], ["The call itself", .55], ["Recap + follow-up", .2]] },
-    "essay-short":   { min: 60,  max: 150, phases: [["Outline", .15], ["First draft", .55], ["Edit + format", .2], ["Submit", .1]] },
-    "essay-long":    { min: 240, max: 480, phases: [["Research", .25], ["Outline", .1], ["Draft", .4], ["Edit + cite + format", .2], ["Submit", .05]] },
-    "report":        { min: 120, max: 300, phases: [["Pull the data", .2], ["Outline", .1], ["Draft", .45], ["Edit + format", .2], ["Send", .05]] },
-    "slides":        { min: 90,  max: 240, phases: [["Outline the story", .2], ["Build slides", .5], ["Polish + rehearse", .25], ["Export", .05]] },
-    "grade":         { min: 60,  max: 240, phases: [["Set up rubric / quiet space", .1], ["Grade", .8], ["Enter scores", .1]] },
-    "clean-room":    { min: 30,  max: 90,  phases: [["Pick up loose items", .25], ["Sort / declutter", .25], ["Wipe surfaces", .2], ["Vacuum / sweep", .2], ["Take trash out", .1]] },
-    "clean-kitchen": { min: 20,  max: 60,  phases: [["Clear dishes", .35], ["Wipe counters + stove", .35], ["Sweep / mop", .25], ["Take trash out", .05]] },
-    "laundry":       { min: 90,  max: 180, phases: [["Sort + start wash", .1], ["Wash cycle (waiting)", .35], ["Dry cycle (waiting)", .4], ["Fold + put away", .15]] },
-    "study":         { min: 45,  max: 180, phases: [["Skim / overview", .15], ["Deep read with notes", .5], ["Self-quiz", .25], ["Mark weak spots", .1]] },
-    "research":      { min: 30,  max: 120, phases: [["Frame the question", .1], ["Find sources", .3], ["Take notes", .35], ["Synthesize", .2], ["Cite", .05]] },
-    "lesson-plan":   { min: 30,  max: 90,  phases: [["Pick objective", .15], ["Sketch activity", .3], ["Build materials", .35], ["Print / share", .2]] },
-    "appointment":   { min: 60,  max: 120, phases: [["Travel there", .25], ["Wait", .15], ["The appointment", .4], ["Travel back", .2]] },
-    "grocery":       { min: 30,  max: 75,  phases: [["Make the list", .1], ["Travel there", .2], ["Shop", .45], ["Travel back + unpack", .25]] },
-    "errand":        { min: 15,  max: 60,  phases: [["Get in the car / out the door", .15], ["The errand itself", .5], ["Travel back", .35]] },
-    "exercise":      { min: 20,  max: 75,  phases: [["Change + warm up", .15], ["Main workout", .65], ["Cool down + shower", .2]] },
-    "practice":      { min: 20,  max: 60,  phases: [["Warm up", .2], ["Drill the hard parts", .55], ["Play through", .2], ["Pack up", .05]] },
-    "pay-bill":      { min: 3,   max: 15,  phases: [["Find the bill", .25], ["Pay it", .5], ["File the receipt", .25]] },
-    "trip-plan":     { min: 60,  max: 240, phases: [["Pick the dates + destination", .15], ["Book travel", .3], ["Book lodging", .25], ["Plan activities", .25], ["Confirm + share itinerary", .05]] },
-    "pack":          { min: 30,  max: 60,  phases: [["List what you need", .15], ["Lay it out", .3], ["Pack the bag", .45], ["Double-check essentials", .1]] },
-    "taxes":         { min: 90,  max: 300, phases: [["Gather documents", .35], ["Enter the data", .4], ["Review + file", .2], ["File + save copy", .05]] },
-    "code-feature":  { min: 60,  max: 240, phases: [["Plan + read existing code", .2], ["Write the change", .45], ["Test + debug", .25], ["PR + cleanup", .1]] },
-    "default":       { min: 20,  max: 60,  phases: [["Get clear on what's needed", .15], ["Gather what you'll use", .15], ["Do the main thing", .55], ["Wrap up + check", .15]] },
+    "email-short":   { min: 3,   max: 10,  shares: [.2, .55, .25] },
+    "email-tricky":  { min: 15,  max: 45,  shares: [.2, .45, .2, .15] },
+    "phone-call":    { min: 5,   max: 25,  shares: [.1, .15, .55, .2] },
+    "essay-short":   { min: 60,  max: 150, shares: [.15, .55, .2, .1] },
+    "essay-long":    { min: 240, max: 480, shares: [.25, .1, .4, .2, .05] },
+    "report":        { min: 120, max: 300, shares: [.2, .1, .45, .2, .05] },
+    "slides":        { min: 90,  max: 240, shares: [.2, .5, .25, .05] },
+    "grade":         { min: 60,  max: 240, shares: [.1, .8, .1] },
+    "clean-room":    { min: 30,  max: 90,  shares: [.25, .25, .2, .2, .1] },
+    "clean-kitchen": { min: 20,  max: 60,  shares: [.35, .35, .25, .05] },
+    "laundry":       { min: 90,  max: 180, shares: [.1, .35, .4, .15] },
+    "study":         { min: 45,  max: 180, shares: [.15, .5, .25, .1] },
+    "research":      { min: 30,  max: 120, shares: [.1, .3, .35, .2, .05] },
+    "lesson-plan":   { min: 30,  max: 90,  shares: [.15, .3, .35, .2] },
+    "appointment":   { min: 60,  max: 120, shares: [.25, .15, .4, .2] },
+    "grocery":       { min: 30,  max: 75,  shares: [.1, .2, .45, .25] },
+    "errand":        { min: 15,  max: 60,  shares: [.15, .5, .35] },
+    "exercise":      { min: 20,  max: 75,  shares: [.15, .65, .2] },
+    "practice":      { min: 20,  max: 60,  shares: [.2, .55, .2, .05] },
+    "pay-bill":      { min: 3,   max: 15,  shares: [.25, .5, .25] },
+    "trip-plan":     { min: 60,  max: 240, shares: [.15, .3, .25, .25, .05] },
+    "pack":          { min: 30,  max: 60,  shares: [.15, .3, .45, .1] },
+    "taxes":         { min: 90,  max: 300, shares: [.35, .4, .2, .05] },
+    "code-feature":  { min: 60,  max: 240, shares: [.2, .45, .25, .1] },
+    "default":       { min: 20,  max: 60,  shares: [.15, .15, .55, .15] },
   };
 
   const KEYWORDS = [
@@ -339,64 +345,33 @@
     [/\b(implement|build .* feature|fix .* bug|debug|write code|code review)\b/i, "code-feature"],
   ];
 
-  function classify(t) { for (const [re, k] of KEYWORDS) if (re.test(t)) return k; return "default"; }
+  function classify(text) { for (const [re, k] of KEYWORDS) if (re.test(text)) return k; return "default"; }
 
   function heuristicEstimate(text, ctx) {
     const key = classify(text);
     const tmpl = TIME_TEMPLATES[key];
-    let { min, max, phases } = tmpl;
-    // Apply context scaling. Focused tightens to lower half, scattered pushes 1.4× max.
+    let { min, max, shares } = tmpl;
     if (ctx === "focused") { max = Math.round(min + (max - min) * 0.55); }
     else if (ctx === "scattered") { max = Math.round(max * 1.4); min = Math.round(min * 1.15); }
-    // Realistic = midpoint of (current) range + an ADHD-tax allowance scaled by context.
     const adhdTax = ctx === "focused" ? 0.05 : ctx === "scattered" ? 0.3 : 0.15;
     const realistic = Math.round(((min + max) / 2) * (1 + adhdTax));
-    // Phase breakdown anchored on the realistic estimate.
-    const phaseLines = phases.map(([name, share]) => ({ name, mins: Math.max(1, Math.round(realistic * share)) }));
-
+    const phases = shares.map((share, i) => ({
+      name: t(`tmpl.${key}.phase.${i}`),
+      mins: Math.max(1, Math.round(realistic * share)),
+    }));
     const caveats = buildCaveats(key, ctx, realistic);
-    return { key, label: prettyKey(key), min, max, realistic, phases: phaseLines, caveats, source: "heuristic" };
-  }
-
-  function prettyKey(k) {
-    return ({
-      "email-short": "Quick email",
-      "email-tricky": "Tricky email",
-      "phone-call": "Phone call",
-      "essay-short": "Short essay / report",
-      "essay-long": "Long-form essay",
-      "report": "Report",
-      "slides": "Slide deck",
-      "grade": "Grading",
-      "clean-room": "Cleaning a room",
-      "clean-kitchen": "Cleaning the kitchen",
-      "laundry": "Laundry",
-      "study": "Studying",
-      "research": "Research",
-      "lesson-plan": "Lesson plan",
-      "appointment": "Appointment (with travel)",
-      "grocery": "Grocery run",
-      "errand": "Errand",
-      "exercise": "Workout",
-      "practice": "Practice session",
-      "pay-bill": "Pay a bill",
-      "trip-plan": "Trip planning",
-      "pack": "Packing",
-      "taxes": "Filing taxes",
-      "code-feature": "Code change",
-      "default": "General task",
-    })[k] || "Task";
+    return { key, label: t(`tmpl.${key}.label`), min, max, realistic, phases, caveats, source: "heuristic" };
   }
 
   function buildCaveats(key, ctx, realistic) {
     const c = [];
-    if (ctx === "scattered") c.push("You said you're scattered — give yourself permission to take longer than planned.");
-    if (realistic >= 120) c.push("Plan at least one real break — 5 min walk or stretch — somewhere in the middle.");
-    if (["laundry","trip-plan","appointment","taxes"].includes(key)) c.push("This estimate includes waiting / travel that you can multitask through.");
-    if (["essay-short","essay-long","report","slides"].includes(key)) c.push("Add 15–25% if you haven't started thinking yet — the warm-up is real work.");
-    if (["clean-room","clean-kitchen"].includes(key)) c.push("Set a timer for the lower number — you can almost always stop earlier than you think.");
-    if (key === "default") c.push("No template matched, so this is a generic guess. Add more detail to the task description for a sharper number.");
-    if (!c.length) c.push("Add 10–15 min on top if you're transitioning straight from another task.");
+    if (ctx === "scattered") c.push(t("caveat.scattered"));
+    if (realistic >= 120) c.push(t("caveat.longBreak"));
+    if (["laundry","trip-plan","appointment","taxes"].includes(key)) c.push(t("caveat.waiting"));
+    if (["essay-short","essay-long","report","slides"].includes(key)) c.push(t("caveat.warmup"));
+    if (["clean-room","clean-kitchen"].includes(key)) c.push(t("caveat.timer"));
+    if (key === "default") c.push(t("caveat.generic"));
+    if (!c.length) c.push(t("caveat.transition"));
     return c;
   }
 
@@ -407,14 +382,22 @@
   }
   function saveSettings(s) { settings = s; localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); refreshModePill(); }
   function refreshModePill() {
-    if (settings.apiKey) { modePill.className = "mode-pill ai"; modePill.textContent = `AI mode · ${settings.provider === "openai" ? "OpenAI" : "Claude"}`; }
-    else { modePill.className = "mode-pill heuristic"; modePill.textContent = "Heuristic mode"; }
+    if (settings.apiKey) {
+      modePill.className = "mode-pill ai";
+      modePill.removeAttribute("data-i18n");
+      modePill.textContent = t("mode.ai", { provider: settings.provider === "openai" ? "OpenAI" : "Claude" });
+    } else {
+      modePill.className = "mode-pill heuristic";
+      modePill.setAttribute("data-i18n", "mode.heuristic");
+      modePill.textContent = t("mode.heuristic");
+    }
   }
-  refreshModePill();
 
   function buildPrompt(text, ctx) {
+    const langName = t("ai.lang");
     return `You are Clock Wizard, an honest time estimator for neurodivergent users (ADHD/autism).
 Estimate how long this task will realistically take. The user reports they are feeling: "${ctx}" (focused / normal / scattered).
+Respond entirely in ${langName}.
 Return ONLY a JSON object of shape:
 {"label":"...short task name...","min":12,"max":45,"realistic":30,"phases":[{"name":"...","mins":10}],"caveats":["...","..."]}
 Rules:
@@ -460,21 +443,26 @@ Task: ${text}`;
       key: "ai", label: String(o.label || "Task"),
       min: +o.min || 0, max: +o.max || 0, realistic: +o.realistic || 0,
       phases: (o.phases || []).map(p => ({ name: String(p.name || "Step"), mins: +p.mins || 0 })),
-      caveats: Array.isArray(o.caveats) && o.caveats.length ? o.caveats.map(String) : ["Be kind to yourself — this is an estimate, not a contract."],
+      caveats: Array.isArray(o.caveats) && o.caveats.length ? o.caveats.map(String) : [t("caveat.transition")],
       source: "ai",
     };
   }
 
   // ====== RENDER
   function fmt(m) {
-    if (m < 1) return "<1 min";
-    if (m < 60) return `${m} min`;
+    if (m < 1) return t("time.lt1");
+    if (m < 60) return t("time.min", { n: m });
     const h = Math.floor(m / 60), r = m % 60;
-    return r ? `${h} h ${r} min` : `${h} h`;
+    return r ? t("time.hm", { h, m: r }) : t("time.h", { h });
+  }
+  function ctxLabel(c) {
+    return t(`panel.ctx.${c}`).replace(/^[^\w]+\s*/, "").toLowerCase();
   }
   function render(est) {
+    stageTitle.removeAttribute("data-i18n");
     stageTitle.textContent = est.label;
-    stageMeta.textContent = `${est.source === "ai" ? "AI" : "Heuristic"} · context: ${context}`;
+    const srcLabel = est.source === "ai" ? t("stage.meta.ai") : t("stage.meta.heuristic");
+    stageMeta.textContent = `${srcLabel}${t("stage.meta.dot")}${t("stage.meta.ctx", { ctx: ctxLabel(context) })}`;
     stageBody.innerHTML = "";
 
     const card = document.createElement("div");
@@ -482,14 +470,13 @@ Task: ${text}`;
 
     const range = document.createElement("div");
     range.className = "estimate-range";
-    range.innerHTML = `<span class="big">${fmt(est.min)} – ${fmt(est.max)}</span><span class="sub">realistic range</span>`;
+    range.innerHTML = `<span class="big">${escapeHtml(fmt(est.min))} – ${escapeHtml(fmt(est.max))}</span><span class="sub">${escapeHtml(t("card.range"))}</span>`;
     card.appendChild(range);
 
     const realistic = document.createElement("div");
-    realistic.innerHTML = `<span class="estimate-realistic">🎯 Honest target: ${fmt(est.realistic)}</span>`;
+    realistic.innerHTML = `<span class="estimate-realistic">${escapeHtml(t("card.target", { time: fmt(est.realistic) }))}</span>`;
     card.appendChild(realistic);
 
-    // Phase bar
     const totalMins = est.phases.reduce((a, b) => a + b.mins, 0) || est.realistic || 1;
     const colors = ["#7c3aed","#a855f7","#f97316","#22c55e","#facc15","#14b8a6"];
     const bar = document.createElement("div"); bar.className = "bar";
@@ -513,34 +500,34 @@ Task: ${text}`;
     const ul = document.createElement("ul"); ul.className = "phases";
     est.phases.forEach(p => {
       const li = document.createElement("li"); li.className = "phase";
-      li.innerHTML = `<span class="phase-name">${escapeHtml(p.name)}</span><span class="phase-time">${fmt(p.mins)}</span>`;
+      li.innerHTML = `<span class="phase-name">${escapeHtml(p.name)}</span><span class="phase-time">${escapeHtml(fmt(p.mins))}</span>`;
       ul.appendChild(li);
     });
     card.appendChild(ul);
 
     const cav = document.createElement("div"); cav.className = "caveats";
-    cav.innerHTML = `<h3>Honest check</h3><ul>${est.caveats.map(c => `<li>${escapeHtml(c)}</li>`).join("")}</ul>`;
+    cav.innerHTML = `<h3>${escapeHtml(t("card.honestCheck"))}</h3><ul>${est.caveats.map(c => `<li>${escapeHtml(c)}</li>`).join("")}</ul>`;
     card.appendChild(cav);
 
     stageBody.appendChild(card);
     stageFooter.hidden = false;
-    footerMeta.textContent = `Total phases: ${est.phases.length} · sum ${fmt(est.phases.reduce((a,b)=>a+b.mins,0))}`;
+    footerMeta.textContent = t("stage.meta.footer", { n: est.phases.length, sum: fmt(est.phases.reduce((a,b)=>a+b.mins,0)) });
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
   // ====== ENTRY
   async function doEstimate() {
     const text = taskInput.value.trim();
-    if (!text) { taskInput.focus(); showToast("Type a task first.", true); return; }
+    if (!text) { taskInput.focus(); showToast(t("toast.empty"), true); return; }
     estimateBtn.disabled = true;
     const orig = estimateBtn.textContent;
-    estimateBtn.textContent = settings.apiKey ? "Asking Claude…" : "Estimating…";
+    estimateBtn.textContent = settings.apiKey ? t("panel.estimateBtn.busyAi") : t("panel.estimateBtn.busy");
     try {
       currentEstimate = settings.apiKey ? await aiEstimate(text, context) : heuristicEstimate(text, context);
       render(currentEstimate);
     } catch (err) {
       console.error(err);
-      showToast("AI call failed — using heuristic. " + (err.message || ""), true);
+      showToast(t("toast.aiFailed", { err: err.message || "" }), true);
       currentEstimate = heuristicEstimate(text, context);
       render(currentEstimate);
     } finally { estimateBtn.disabled = false; estimateBtn.textContent = orig; }
@@ -550,25 +537,27 @@ Task: ${text}`;
 
   $("clearBtn").addEventListener("click", () => {
     currentEstimate = null; stageBody.innerHTML = ""; stageBody.appendChild(emptyState);
-    stageTitle.textContent = "Your estimate will appear here"; stageMeta.textContent = ""; stageFooter.hidden = true;
+    stageTitle.setAttribute("data-i18n", "stage.title.empty");
+    stageTitle.textContent = t("stage.title.empty");
+    stageMeta.textContent = ""; stageFooter.hidden = true;
   });
   $("copyBtn").addEventListener("click", async () => {
     if (!currentEstimate) return;
     const e = currentEstimate;
     const text = [
-      `Task: ${taskInput.value.trim()}`,
-      `Type: ${e.label}`,
-      `Range: ${fmt(e.min)} – ${fmt(e.max)}`,
-      `Honest target: ${fmt(e.realistic)}`,
+      `${t("stage.copy.headerTask")}: ${taskInput.value.trim()}`,
+      `${t("stage.copy.headerType")}: ${e.label}`,
+      `${t("stage.copy.headerRange")}: ${fmt(e.min)} – ${fmt(e.max)}`,
+      `${t("stage.copy.headerTarget")}: ${fmt(e.realistic)}`,
       "",
-      "Phases:",
+      t("stage.copy.headerPhases"),
       ...e.phases.map(p => `  • ${p.name} — ${fmt(p.mins)}`),
       "",
-      "Caveats:",
+      t("stage.copy.headerCaveats"),
       ...e.caveats.map(c => `  • ${c}`),
     ].join("\n");
-    try { await navigator.clipboard.writeText(text); showToast("Estimate copied."); }
-    catch { showToast("Couldn't copy — your browser blocked clipboard access.", true); }
+    try { await navigator.clipboard.writeText(text); showToast(t("toast.copied")); }
+    catch { showToast(t("toast.copyFailed"), true); }
   });
 
   // ====== Settings modal
@@ -584,13 +573,13 @@ Task: ${text}`;
   $("saveSettingsBtn").addEventListener("click", () => {
     const provider = document.querySelector('input[name=provider]:checked').value;
     saveSettings({ provider, apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() });
-    showToast(settings.apiKey ? "AI mode ready." : "Heuristic mode (no key saved).");
+    showToast(settings.apiKey ? t("toast.aiReady") : t("toast.heuristic"));
     closeSettings();
   });
   $("clearKeyBtn").addEventListener("click", () => {
     apiKeyInput.value = ""; modelInput.value = "";
     saveSettings({ provider: settings.provider, apiKey: "", model: "" });
-    showToast("Key cleared.");
+    showToast(t("toast.keyCleared"));
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && settingsModal.classList.contains("show")) closeSettings(); });
 
@@ -599,6 +588,15 @@ Task: ${text}`;
     toast.textContent = msg; toast.classList.toggle("error", !!isError); toast.classList.add("show");
     clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
   }
+
+  // ====== i18n boot
+  function bootI18nDependentUI() {
+    renderExamples();
+    refreshModePill();
+    if (currentEstimate) render(currentEstimate);
+  }
+  bootI18nDependentUI();
+  window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
