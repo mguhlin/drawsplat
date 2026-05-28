@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.0 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.0.94';
+const CACHE = 'drawsplat-v3.0.95';
 const SHELL = [
   './',
   './index.html',

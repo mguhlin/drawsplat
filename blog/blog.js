@@ -7,6 +7,24 @@
   const list = document.getElementById('blogList');
   const status = document.getElementById('blogStatus');
 
+  /* The upstream RSS comes from a "DrawSplat" search and occasionally pulls
+     in false-positive posts (e.g. an "About Me" or CV page that happens to
+     mention DrawSplat once). To keep this page focused, any item whose link
+     contains one of these substrings is skipped during render. Add or
+     remove entries to curate; matching is case-sensitive substring. */
+  const EXCLUDE_LINK_PATTERNS = [
+    '/about-miguel/',
+    '/curriculum-vitae/',
+  ];
+
+  function isExcluded(link) {
+    if (!link) return false;
+    for (let i = 0; i < EXCLUDE_LINK_PATTERNS.length; i++) {
+      if (link.indexOf(EXCLUDE_LINK_PATTERNS[i]) !== -1) return true;
+    }
+    return false;
+  }
+
   function esc(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -27,9 +45,12 @@
 
   function renderItems(items) {
     list.textContent = '';
+    let rendered = 0;
     items.forEach(item => {
       const title = (item.querySelector('title')?.textContent || 'Untitled').trim();
       const linkRaw = (item.querySelector('link')?.textContent || '').trim();
+      if (isExcluded(linkRaw)) return;
+      rendered++;
       const link = safeUrl(linkRaw);
       const pub = item.querySelector('pubDate')?.textContent || '';
       const src = (item.querySelector('source')?.textContent || '').trim();
@@ -56,6 +77,9 @@
         cta;
       list.appendChild(card);
     });
+    if (rendered === 0) {
+      showStatus('No DrawSplat posts in the feed yet. Check back soon.', '');
+    }
   }
 
   function showStatus(message, kind) {
