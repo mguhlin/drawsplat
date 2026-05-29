@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classroom Word Search Maker</title>
+  <title data-i18n="doc.title">Classroom Word Search Maker</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -399,30 +405,33 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Word Search Maker</h1>
-        <p class="subtitle">Build printable word searches from TEKS-inspired vocabulary banks or paste your own classroom terms.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Word Search Maker</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Build printable word searches from TEKS-inspired vocabulary banks or paste your own classroom terms.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel" aria-label="Word search setup">
-        <h2>Setup</h2>
+      <section class="panel" data-i18n-aria-label="panel.setup.aria" aria-label="Word search setup">
+        <h2 data-i18n="panel.h2">Setup</h2>
 
         <div class="field">
-          <label for="presetSelect">TEKS-Inspired Vocabulary</label>
+          <label for="presetSelect" data-i18n="field.preset">TEKS-Inspired Vocabulary</label>
           <select id="presetSelect"></select>
-          <p class="help">Starter banks are organized by grade band and content area. Edit the word list after loading any preset.</p>
+          <p class="help" data-i18n="help.preset">Starter banks are organized by grade band and content area. Edit the word list after loading any preset.</p>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="titleInput">Title</label>
-            <input id="titleInput" type="text" maxlength="80" value="Science Vocabulary">
+            <label for="titleInput" data-i18n="field.title">Title</label>
+            <input id="titleInput" type="text" maxlength="80" value="">
           </div>
           <div class="field">
-            <label for="gridSize">Grid Size</label>
+            <label for="gridSize" data-i18n="field.size">Grid Size</label>
             <select id="gridSize">
               <option value="10">10 x 10</option>
               <option value="12" selected>12 x 12</option>
@@ -434,32 +443,32 @@
         </div>
 
         <div class="field">
-          <label for="wordInput">Words or Phrases</label>
+          <label for="wordInput" data-i18n="field.words">Words or Phrases</label>
           <textarea id="wordInput" spellcheck="true"></textarea>
-          <p class="help">Paste one term per line or separate terms with commas. Spaces and punctuation are removed in the puzzle but kept in the word bank.</p>
+          <p class="help" data-i18n="help.words">Paste one term per line or separate terms with commas. Spaces and punctuation are removed in the puzzle but kept in the word bank.</p>
         </div>
 
         <div class="field">
-          <span class="field-title">Directions</span>
+          <span class="field-title" data-i18n="field.directions">Directions</span>
           <div class="check-grid">
-            <label class="check-row" for="forwardDir">Forward <input id="forwardDir" type="checkbox" checked></label>
-            <label class="check-row" for="backwardDir">Backward <input id="backwardDir" type="checkbox" checked></label>
-            <label class="check-row" for="verticalDir">Vertical <input id="verticalDir" type="checkbox" checked></label>
-            <label class="check-row" for="diagonalDir">Diagonal <input id="diagonalDir" type="checkbox"></label>
+            <label class="check-row" for="forwardDir"><span data-i18n="dir.forward">Forward</span> <input id="forwardDir" type="checkbox" checked></label>
+            <label class="check-row" for="backwardDir"><span data-i18n="dir.backward">Backward</span> <input id="backwardDir" type="checkbox" checked></label>
+            <label class="check-row" for="verticalDir"><span data-i18n="dir.vertical">Vertical</span> <input id="verticalDir" type="checkbox" checked></label>
+            <label class="check-row" for="diagonalDir"><span data-i18n="dir.diagonal">Diagonal</span> <input id="diagonalDir" type="checkbox"></label>
           </div>
         </div>
 
         <div class="button-grid">
-          <button class="btn primary" id="generateBtn">Generate</button>
-          <button class="btn gold" id="newVersionBtn">New Layout</button>
-          <button class="btn" id="solutionBtn">Show Key</button>
-          <button class="btn" id="printBtn">Print</button>
-          <button class="btn" id="copyLinkBtn">Copy Link</button>
-          <button class="btn" id="clearBtn">Clear Words</button>
+          <button class="btn primary" id="generateBtn" data-i18n="button.generate">Generate</button>
+          <button class="btn gold" id="newVersionBtn" data-i18n="button.newVersion">New Layout</button>
+          <button class="btn" id="solutionBtn" data-i18n="button.showKey">Show Key</button>
+          <button class="btn" id="printBtn" data-i18n="button.print">Print</button>
+          <button class="btn" id="copyLinkBtn" data-i18n="button.copyLink">Copy Link</button>
+          <button class="btn" id="clearBtn" data-i18n="button.clear">Clear Words</button>
         </div>
       </section>
 
-      <section class="preview" aria-label="Word search preview">
+      <section class="preview" data-i18n-aria-label="panel.preview.aria" aria-label="Word search preview">
         <div class="preview-head">
           <div class="preview-title">
             <h2 id="previewTitle">Science Vocabulary</h2>
@@ -469,9 +478,9 @@
         </div>
 
         <div class="worksheet">
-          <div class="grid" id="grid" aria-label="Generated word search grid"></div>
+          <div class="grid" id="grid" data-i18n-aria-label="grid.aria" aria-label="Generated word search grid"></div>
           <aside class="word-bank">
-            <h3>Word Bank</h3>
+            <h3 data-i18n="wordbank.h3">Word Bank</h3>
             <ol class="word-list" id="wordList"></ol>
           </aside>
         </div>
@@ -479,154 +488,40 @@
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
 
+    // Preset metadata uses i18n keys for label + title (rendered via t() when
+    // building the picker and when loading). Word lists stay in their original
+    // language — the puzzle generator is language-agnostic, and teachers can
+    // edit the list after loading.
     const presets = [
-      {
-        id: "k2-science-earth",
-        label: "K-2 Science: Weather and Earth",
-        title: "Weather and Earth",
-        words: ["cloud", "rain", "wind", "sun", "moon", "star", "soil", "rock", "water", "plant", "animal", "season"]
-      },
-      {
-        id: "k2-math-foundations",
-        label: "K-2 Math: Number and Geometry",
-        title: "Number and Geometry",
-        words: ["number", "count", "add", "subtract", "equal", "more", "less", "circle", "square", "triangle", "pattern", "measure"]
-      },
-      {
-        id: "k2-elar-reading",
-        label: "K-2 ELAR: Reading Foundations",
-        title: "Reading Foundations",
-        words: ["letter", "sound", "word", "sentence", "story", "author", "title", "picture", "rhyme", "vowel", "beginning", "ending"]
-      },
-      {
-        id: "k2-sla-basics",
-        label: "K-2 Spanish Language Arts: Lectura",
-        title: "Lectura en Espanol",
-        words: ["letra", "sonido", "palabra", "cuento", "autor", "titulo", "rima", "vocal", "silaba", "imagen", "leer", "escribir"]
-      },
-      {
-        id: "k2-social-community",
-        label: "K-2 Social Studies: Community",
-        title: "Community Vocabulary",
-        words: ["family", "school", "city", "state", "map", "rule", "leader", "holiday", "custom", "citizen", "goods", "services"]
-      },
-      {
-        id: "35-science-life",
-        label: "3-5 Science: Life Science",
-        title: "Life Science",
-        words: ["organism", "habitat", "ecosystem", "producer", "consumer", "decomposer", "adaptation", "trait", "inherit", "life cycle", "energy", "survival"]
-      },
-      {
-        id: "35-science-matter",
-        label: "3-5 Science: Matter and Energy",
-        title: "Matter and Energy",
-        words: ["matter", "mass", "volume", "mixture", "solution", "solid", "liquid", "gas", "conductor", "insulator", "force", "energy"]
-      },
-      {
-        id: "35-math-problem",
-        label: "3-5 Math: Operations and Fractions",
-        title: "Operations and Fractions",
-        words: ["factor", "multiple", "product", "quotient", "fraction", "decimal", "numerator", "denominator", "equivalent", "area", "perimeter", "volume"]
-      },
-      {
-        id: "35-elar-comprehension",
-        label: "3-5 ELAR: Comprehension",
-        title: "Comprehension Skills",
-        words: ["theme", "summary", "inference", "evidence", "context", "genre", "poetry", "drama", "fiction", "nonfiction", "revise", "edit"]
-      },
-      {
-        id: "35-social-texas",
-        label: "3-5 Social Studies: Texas and U.S. History",
-        title: "Texas and U.S. History",
-        words: ["region", "settlement", "mission", "colony", "republic", "constitution", "industry", "migration", "culture", "government", "economy", "landmark"]
-      },
-      {
-        id: "35-sla-literatura",
-        label: "3-5 Spanish Language Arts: Literatura",
-        title: "Literatura en Espanol",
-        words: ["tema", "resumen", "inferencia", "evidencia", "contexto", "genero", "poesia", "drama", "ficcion", "texto informativo", "revisar", "editar"]
-      },
-      {
-        id: "68-science-systems",
-        label: "6-8 Science: Systems and Interactions",
-        title: "Systems and Interactions",
-        words: ["system", "variable", "model", "gravity", "friction", "density", "element", "compound", "photosynthesis", "cell", "organ", "ecosystem", "plate tectonics", "watershed"]
-      },
-      {
-        id: "68-math-algebra",
-        label: "6-8 Math: Ratios and Algebra",
-        title: "Ratios and Algebra",
-        words: ["ratio", "proportion", "integer", "coordinate", "expression", "equation", "inequality", "function", "slope", "percent", "probability", "scatterplot", "linear", "constant"]
-      },
-      {
-        id: "68-elar-analysis",
-        label: "6-8 ELAR: Text Analysis",
-        title: "Text Analysis",
-        words: ["claim", "argument", "evidence", "thesis", "structure", "point of view", "figurative", "symbolism", "allusion", "central idea", "paraphrase", "citation"]
-      },
-      {
-        id: "68-social-civics",
-        label: "6-8 Social Studies: Civics and History",
-        title: "Civics and History",
-        words: ["civilization", "democracy", "republic", "federalism", "amendment", "rights", "responsibility", "geography", "trade", "revolution", "reform", "primary source"]
-      },
-      {
-        id: "68-sla-analisis",
-        label: "6-8 Spanish Language Arts: Analisis de Textos",
-        title: "Analisis de Textos",
-        words: ["argumento", "evidencia", "tesis", "estructura", "punto de vista", "lenguaje figurado", "simbolo", "idea central", "parafrasis", "cita", "ensayo", "revision"]
-      },
-      {
-        id: "912-biology",
-        label: "9-12 Science: Biology",
-        title: "Biology Vocabulary",
-        words: ["homeostasis", "metabolism", "enzyme", "protein", "nucleus", "mitosis", "meiosis", "genotype", "phenotype", "mutation", "evolution", "biodiversity", "classification", "ecology"]
-      },
-      {
-        id: "912-chemistry-physics",
-        label: "9-12 Science: Chemistry and Physics",
-        title: "Chemistry and Physics",
-        words: ["atom", "molecule", "isotope", "electron", "reaction", "equilibrium", "stoichiometry", "velocity", "acceleration", "momentum", "wave", "frequency", "circuit", "energy"]
-      },
-      {
-        id: "912-math-functions",
-        label: "9-12 Math: Algebra and Functions",
-        title: "Algebra and Functions",
-        words: ["domain", "range", "function", "quadratic", "exponential", "logarithm", "polynomial", "matrix", "sequence", "transformation", "regression", "asymptote", "vertex", "inverse"]
-      },
-      {
-        id: "912-elar-rhetoric",
-        label: "9-12 ELAR: Rhetoric and Research",
-        title: "Rhetoric and Research",
-        words: ["rhetoric", "audience", "purpose", "tone", "syntax", "diction", "theme", "motif", "credible", "source", "synthesis", "plagiarism", "annotation", "counterclaim"]
-      },
-      {
-        id: "912-social-history",
-        label: "9-12 Social Studies: U.S. and World History",
-        title: "History and Government",
-        words: ["industrialization", "imperialism", "nationalism", "globalization", "constitution", "federalism", "judicial review", "suffrage", "civil rights", "cold war", "reconstruction", "urbanization"]
-      },
-      {
-        id: "912-sla-retorica",
-        label: "9-12 Spanish Language Arts: Retorica e Investigacion",
-        title: "Retorica e Investigacion",
-        words: ["retorica", "audiencia", "proposito", "tono", "sintaxis", "diccion", "tema", "motivo", "fuente", "sintesis", "plagio", "anotacion", "contraargumento"]
-      },
-      {
-        id: "all-health-finearts",
-        label: "K-12 Other Areas: Health, Arts, and Technology",
-        title: "Health Arts and Technology",
-        words: ["wellness", "nutrition", "safety", "rhythm", "melody", "texture", "contrast", "composition", "algorithm", "data", "digital", "career", "collaboration", "creativity"]
-      },
-      {
-        id: "custom",
-        label: "Make Your Own Word Search",
-        title: "Custom Word Search",
-        words: ["paste", "your", "own", "words", "here"]
-      }
+      { id: "k2-science-earth",      labelKey: "preset.k2sciEarth.label",     titleKey: "preset.k2sciEarth.title",     words: ["cloud", "rain", "wind", "sun", "moon", "star", "soil", "rock", "water", "plant", "animal", "season"] },
+      { id: "k2-math-foundations",   labelKey: "preset.k2math.label",         titleKey: "preset.k2math.title",         words: ["number", "count", "add", "subtract", "equal", "more", "less", "circle", "square", "triangle", "pattern", "measure"] },
+      { id: "k2-elar-reading",       labelKey: "preset.k2elar.label",         titleKey: "preset.k2elar.title",         words: ["letter", "sound", "word", "sentence", "story", "author", "title", "picture", "rhyme", "vowel", "beginning", "ending"] },
+      { id: "k2-sla-basics",         labelKey: "preset.k2sla.label",          titleKey: "preset.k2sla.title",          words: ["letra", "sonido", "palabra", "cuento", "autor", "titulo", "rima", "vocal", "silaba", "imagen", "leer", "escribir"] },
+      { id: "k2-social-community",   labelKey: "preset.k2social.label",       titleKey: "preset.k2social.title",       words: ["family", "school", "city", "state", "map", "rule", "leader", "holiday", "custom", "citizen", "goods", "services"] },
+      { id: "35-science-life",       labelKey: "preset.35sciLife.label",      titleKey: "preset.35sciLife.title",      words: ["organism", "habitat", "ecosystem", "producer", "consumer", "decomposer", "adaptation", "trait", "inherit", "life cycle", "energy", "survival"] },
+      { id: "35-science-matter",     labelKey: "preset.35sciMatter.label",    titleKey: "preset.35sciMatter.title",    words: ["matter", "mass", "volume", "mixture", "solution", "solid", "liquid", "gas", "conductor", "insulator", "force", "energy"] },
+      { id: "35-math-problem",       labelKey: "preset.35math.label",         titleKey: "preset.35math.title",         words: ["factor", "multiple", "product", "quotient", "fraction", "decimal", "numerator", "denominator", "equivalent", "area", "perimeter", "volume"] },
+      { id: "35-elar-comprehension", labelKey: "preset.35elar.label",         titleKey: "preset.35elar.title",         words: ["theme", "summary", "inference", "evidence", "context", "genre", "poetry", "drama", "fiction", "nonfiction", "revise", "edit"] },
+      { id: "35-social-texas",       labelKey: "preset.35social.label",       titleKey: "preset.35social.title",       words: ["region", "settlement", "mission", "colony", "republic", "constitution", "industry", "migration", "culture", "government", "economy", "landmark"] },
+      { id: "35-sla-literatura",     labelKey: "preset.35sla.label",          titleKey: "preset.35sla.title",          words: ["tema", "resumen", "inferencia", "evidencia", "contexto", "genero", "poesia", "drama", "ficcion", "texto informativo", "revisar", "editar"] },
+      { id: "68-science-systems",    labelKey: "preset.68sciSystems.label",   titleKey: "preset.68sciSystems.title",   words: ["system", "variable", "model", "gravity", "friction", "density", "element", "compound", "photosynthesis", "cell", "organ", "ecosystem", "plate tectonics", "watershed"] },
+      { id: "68-math-algebra",       labelKey: "preset.68mathAlg.label",      titleKey: "preset.68mathAlg.title",      words: ["ratio", "proportion", "integer", "coordinate", "expression", "equation", "inequality", "function", "slope", "percent", "probability", "scatterplot", "linear", "constant"] },
+      { id: "68-elar-analysis",      labelKey: "preset.68elarAnalysis.label", titleKey: "preset.68elarAnalysis.title", words: ["claim", "argument", "evidence", "thesis", "structure", "point of view", "figurative", "symbolism", "allusion", "central idea", "paraphrase", "citation"] },
+      { id: "68-social-civics",      labelKey: "preset.68socialCivics.label", titleKey: "preset.68socialCivics.title", words: ["civilization", "democracy", "republic", "federalism", "amendment", "rights", "responsibility", "geography", "trade", "revolution", "reform", "primary source"] },
+      { id: "68-sla-analisis",       labelKey: "preset.68slaAnalisis.label",  titleKey: "preset.68slaAnalisis.title",  words: ["argumento", "evidencia", "tesis", "estructura", "punto de vista", "lenguaje figurado", "simbolo", "idea central", "parafrasis", "cita", "ensayo", "revision"] },
+      { id: "912-biology",           labelKey: "preset.912bio.label",         titleKey: "preset.912bio.title",         words: ["homeostasis", "metabolism", "enzyme", "protein", "nucleus", "mitosis", "meiosis", "genotype", "phenotype", "mutation", "evolution", "biodiversity", "classification", "ecology"] },
+      { id: "912-chemistry-physics", labelKey: "preset.912chemPhys.label",    titleKey: "preset.912chemPhys.title",    words: ["atom", "molecule", "isotope", "electron", "reaction", "equilibrium", "stoichiometry", "velocity", "acceleration", "momentum", "wave", "frequency", "circuit", "energy"] },
+      { id: "912-math-functions",    labelKey: "preset.912mathFunc.label",    titleKey: "preset.912mathFunc.title",    words: ["domain", "range", "function", "quadratic", "exponential", "logarithm", "polynomial", "matrix", "sequence", "transformation", "regression", "asymptote", "vertex", "inverse"] },
+      { id: "912-elar-rhetoric",     labelKey: "preset.912elar.label",        titleKey: "preset.912elar.title",        words: ["rhetoric", "audience", "purpose", "tone", "syntax", "diction", "theme", "motif", "credible", "source", "synthesis", "plagiarism", "annotation", "counterclaim"] },
+      { id: "912-social-history",    labelKey: "preset.912social.label",      titleKey: "preset.912social.title",      words: ["industrialization", "imperialism", "nationalism", "globalization", "constitution", "federalism", "judicial review", "suffrage", "civil rights", "cold war", "reconstruction", "urbanization"] },
+      { id: "912-sla-retorica",      labelKey: "preset.912sla.label",         titleKey: "preset.912sla.title",         words: ["retorica", "audiencia", "proposito", "tono", "sintaxis", "diccion", "tema", "motivo", "fuente", "sintesis", "plagio", "anotacion", "contraargumento"] },
+      { id: "all-health-finearts",   labelKey: "preset.health.label",         titleKey: "preset.health.title",         words: ["wellness", "nutrition", "safety", "rhythm", "melody", "texture", "contrast", "composition", "algorithm", "data", "digital", "career", "collaboration", "creativity"] },
+      { id: "custom",                labelKey: "preset.custom.label",         titleKey: "preset.custom.title",         words: ["paste", "your", "own", "words", "here"] }
     ];
 
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -709,7 +604,8 @@
 
     function generate() {
       showSolution = false;
-      $("#solutionBtn").textContent = "Show Key";
+      $("#solutionBtn").setAttribute("data-i18n", "button.showKey");
+      $("#solutionBtn").textContent = t("button.showKey");
       const size = Number($("#gridSize").value);
       const words = parseWords($("#wordInput").value);
       const grid = Array.from({ length: size }, () => Array.from({ length: size }, () => ""));
@@ -740,8 +636,8 @@
     function render() {
       const size = current.grid.length || Number($("#gridSize").value);
       const solutionCells = new Set(showSolution ? current.placed.flatMap(word => word.cells) : []);
-      $("#previewTitle").textContent = $("#titleInput").value.trim() || "Word Search";
-      $("#previewMeta").textContent = size + " x " + size + " puzzle";
+      $("#previewTitle").textContent = $("#titleInput").value.trim() || t("preview.titleDefault");
+      $("#previewMeta").textContent = t("preview.metaSize", { n: size });
       $("#grid").style.gridTemplateColumns = `repeat(${size}, 1fr)`;
       $("#grid").innerHTML = current.grid.flatMap((row, r) => row.map((letter, c) => {
         const cls = solutionCells.has(r + "," + c) ? "cell solution" : "cell";
@@ -753,8 +649,8 @@
         .join("");
 
       const status = [];
-      status.push(current.placed.length + " words placed");
-      if (current.failed.length) status.push("Skipped: " + current.failed.join(", "));
+      status.push(t("status.placed", { n: current.placed.length }));
+      if (current.failed.length) status.push(t("status.skipped", { words: current.failed.join(", ") }));
       $("#status").textContent = status.join(". ");
     }
 
@@ -762,10 +658,18 @@
       return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
     }
 
+    let activePresetId = null;
+    let lastPresetTitle = "";
+    let lastPresetWords = "";
     function loadPreset(id) {
       const preset = presets.find(item => item.id === id) || presets[0];
-      $("#titleInput").value = preset.title;
-      $("#wordInput").value = preset.words.join("\n");
+      activePresetId = preset.id;
+      const titleTr = t(preset.titleKey);
+      const wordsTr = preset.words.join("\n");
+      $("#titleInput").value = titleTr;
+      $("#wordInput").value = wordsTr;
+      lastPresetTitle = titleTr;
+      lastPresetWords = wordsTr;
       generate();
     }
 
@@ -797,9 +701,9 @@
         diagonal: $("#diagonalDir").checked
       }));
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url.toString()).then(() => $("#status").textContent = "Share link copied.");
+        navigator.clipboard.writeText(url.toString()).then(() => $("#status").textContent = t("status.linkCopied"));
       } else {
-        window.prompt("Copy this word search link:", url.toString());
+        window.prompt(t("prompt.copyLink"), url.toString());
       }
     }
 
@@ -808,7 +712,7 @@
       if (!hash.startsWith("#w=")) return false;
       try {
         const data = JSON.parse(b64urlDecode(hash.slice(3)));
-        $("#titleInput").value = data.title || "Word Search";
+        $("#titleInput").value = data.title || t("preview.titleDefault");
         $("#wordInput").value = data.words || "";
         $("#gridSize").value = data.size || "12";
         $("#forwardDir").checked = data.forward !== false;
@@ -822,30 +726,59 @@
       }
     }
 
+    function buildPresetPicker() {
+      // Each option carries data-i18n so a language switch retranslates the
+      // visible label without rebuilding the select.
+      $("#presetSelect").innerHTML = presets.map(item =>
+        `<option value="${item.id}" data-i18n="${item.labelKey}">${escapeHTML(t(item.labelKey))}</option>`
+      ).join("");
+    }
+
     function init() {
-      $("#presetSelect").innerHTML = presets.map(item => `<option value="${item.id}">${escapeHTML(item.label)}</option>`).join("");
+      buildPresetPicker();
       $("#presetSelect").addEventListener("change", event => loadPreset(event.target.value));
       $("#generateBtn").addEventListener("click", generate);
       $("#newVersionBtn").addEventListener("click", generate);
       $("#solutionBtn").addEventListener("click", () => {
         showSolution = !showSolution;
-        $("#solutionBtn").textContent = showSolution ? "Hide Key" : "Show Key";
+        const key = showSolution ? "button.hideKey" : "button.showKey";
+        $("#solutionBtn").setAttribute("data-i18n", key);
+        $("#solutionBtn").textContent = t(key);
         render();
       });
       $("#printBtn").addEventListener("click", () => window.print());
       $("#copyLinkBtn").addEventListener("click", copyLink);
       $("#clearBtn").addEventListener("click", () => {
         $("#presetSelect").value = "custom";
-        $("#titleInput").value = "Custom Word Search";
+        activePresetId = "custom";
+        $("#titleInput").value = t("preset.custom.title");
+        lastPresetTitle = t("preset.custom.title");
         $("#wordInput").value = "";
+        lastPresetWords = "";
         current = { grid: [], words: [], placed: [], failed: [] };
         $("#grid").innerHTML = "";
         $("#wordList").innerHTML = "";
-        $("#status").textContent = "Paste your own words, then generate.";
+        $("#status").textContent = t("status.pasteThenGen");
       });
       if (!loadHash()) loadPreset("35-science-life");
     }
 
     init();
+
+    // On language change: re-render so status/preview labels update, and if
+    // the title/words still match the last-loaded preset values, swap them
+    // for the new locale's translation.
+    window.addEventListener("widget-i18n:changed", () => {
+      const preset = presets.find(p => p.id === activePresetId);
+      if (preset) {
+        const freshTitle = t(preset.titleKey);
+        if ($("#titleInput").value === lastPresetTitle) {
+          $("#titleInput").value = freshTitle;
+        }
+        lastPresetTitle = freshTitle;
+      }
+      // Re-render the puzzle to refresh meta / status / Show-Key button text.
+      render();
+    });
   </script></body>
 </html>
