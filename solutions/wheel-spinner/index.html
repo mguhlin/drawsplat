@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wheel Spinner</title>
+  <title data-i18n="doc.title">Wheel Spinner</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: var(--white, #fff); color: var(--gray-90, #111827); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue, #6d28d9); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    header.site .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -94,57 +100,62 @@
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Wheel Spinner</h1>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Wheel Spinner</h1>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <div class="layout">
-      <section class="panel" aria-label="Wheel entries">
-        <h2>Entries</h2>
+      <section class="panel" data-i18n-aria-label="panel.entries.aria" aria-label="Wheel entries">
+        <h2 data-i18n="entries.h2">Entries</h2>
         <div class="field">
-          <label for="entriesInput">One per line</label>
+          <label for="entriesInput" data-i18n="entries.label">One per line</label>
           <textarea id="entriesInput" placeholder="Ada&#10;Bao&#10;Camila&#10;Diego&#10;Emma"></textarea>
         </div>
         <div class="btn-row">
-          <button type="button" class="btn primary" id="applyBtn">Apply Entries</button>
-          <button type="button" class="btn" id="importBtn">Import…</button>
-          <button type="button" class="btn" id="shuffleBtn">Shuffle</button>
-          <button type="button" class="btn danger" id="clearBtn">Clear</button>
+          <button type="button" class="btn primary" id="applyBtn" data-i18n="button.apply">Apply Entries</button>
+          <button type="button" class="btn" id="importBtn" data-i18n="button.import">Import…</button>
+          <button type="button" class="btn" id="shuffleBtn" data-i18n="button.shuffle">Shuffle</button>
+          <button type="button" class="btn danger" id="clearBtn" data-i18n="button.clear">Clear</button>
         </div>
         <input type="file" id="importFile" accept=".txt,.csv,.md,text/plain,text/csv" hidden>
 
         <div class="field" style="margin-top:18px">
-          <label>Color Palette</label>
-          <div class="palette-row" id="paletteRow" role="radiogroup" aria-label="Wheel color palette"></div>
+          <label data-i18n="field.palette">Color Palette</label>
+          <div class="palette-row" id="paletteRow" role="radiogroup" data-i18n-aria-label="palette.aria" aria-label="Wheel color palette"></div>
         </div>
-        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.4">Tip: paste a roster, list of prompts, or random options. Click the wheel — or hit Spin — to roll. Up to 50 entries fit comfortably.</p>
+        <p style="margin-top:14px;font-size:.85rem;color:var(--gray-50);line-height:1.4" data-i18n="entries.tip">Tip: paste a roster, list of prompts, or random options. Click the wheel — or hit Spin — to roll. Up to 50 entries fit comfortably.</p>
       </section>
 
-      <section class="stage" aria-label="Spinner stage">
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Spinner stage">
         <div class="result" id="resultBox" aria-live="polite">
-          <div class="result-eyebrow">Result</div>
-          <p class="result-text" id="resultText">Click the wheel to spin</p>
+          <div class="result-eyebrow" data-i18n="result.eyebrow">Result</div>
+          <p class="result-text" id="resultText" data-i18n="result.click">Click the wheel to spin</p>
         </div>
         <div class="action-row">
-          <button type="button" class="btn primary" id="spinBtn">Spin</button>
-          <button type="button" class="btn" id="removeWinnerBtn">Remove Winner</button>
+          <button type="button" class="btn primary" id="spinBtn" data-i18n="button.spin">Spin</button>
+          <button type="button" class="btn" id="removeWinnerBtn" data-i18n="button.removeWinner">Remove Winner</button>
         </div>
         <div class="wheel-wrap" id="wheelWrap">
           <div class="pointer" aria-hidden="true"></div>
-          <canvas id="wheel" width="1100" height="1100" aria-label="Spinner wheel — click to spin"></canvas>
-          <div class="click-hint">Click to spin</div>
+          <canvas id="wheel" width="1100" height="1100" data-i18n-aria-label="wheel.aria" aria-label="Spinner wheel — click to spin"></canvas>
+          <div class="click-hint" data-i18n="wheel.clickHint">Click to spin</div>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
+    <footer class="foot" data-i18n-html="footer.html">
       Part of the DrawSplat<sup class="tm">TM</sup> Widgets collection. <a href="../../pages/features.html">Explore more</a>.
     </footer>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (id) => document.getElementById(id);
     const canvas = $("wheel");
     const ctx = canvas.getContext("2d");
@@ -157,13 +168,13 @@
     const paletteRow = $("paletteRow");
 
     const PALETTES = {
-      vibrant: { label: "Vibrant", colors: ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e", "#0ea5e9"] },
-      pastel:  { label: "Pastel",  colors: ["#d8b4fe", "#fbcfe8", "#fecaca", "#ddd6fe", "#fde68a", "#fed7aa", "#bbf7d0", "#bae6fd"] },
-      earth:   { label: "Earth",   colors: ["#8b5e3c", "#b08968", "#a0522d", "#6f4e37", "#c89f8c", "#d4a373", "#7c6f5b", "#a98467"] },
-      ocean:   { label: "Ocean",   colors: ["#0ea5e9", "#06b6d4", "#14b8a6", "#22d3ee", "#38bdf8", "#67e8f9", "#5eead4", "#2dd4bf"] },
-      sunset:  { label: "Sunset",  colors: ["#f97316", "#ea580c", "#dc2626", "#f59e0b", "#fb923c", "#fbbf24", "#f472b6", "#e879f9"] },
-      forest:  { label: "Forest",  colors: ["#166534", "#15803d", "#16a34a", "#22c55e", "#4d7c0f", "#65a30d", "#84cc16", "#365314"] },
-      mono:    { label: "Mono",    colors: ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0"] },
+      vibrant: { labelKey: "palette.vibrant", colors: ["#7c3aed", "#a855f7", "#ef4444", "#6d28d9", "#facc15", "#f97316", "#22c55e", "#0ea5e9"] },
+      pastel:  { labelKey: "palette.pastel",  colors: ["#d8b4fe", "#fbcfe8", "#fecaca", "#ddd6fe", "#fde68a", "#fed7aa", "#bbf7d0", "#bae6fd"] },
+      earth:   { labelKey: "palette.earth",   colors: ["#8b5e3c", "#b08968", "#a0522d", "#6f4e37", "#c89f8c", "#d4a373", "#7c6f5b", "#a98467"] },
+      ocean:   { labelKey: "palette.ocean",   colors: ["#0ea5e9", "#06b6d4", "#14b8a6", "#22d3ee", "#38bdf8", "#67e8f9", "#5eead4", "#2dd4bf"] },
+      sunset:  { labelKey: "palette.sunset",  colors: ["#f97316", "#ea580c", "#dc2626", "#f59e0b", "#fb923c", "#fbbf24", "#f472b6", "#e879f9"] },
+      forest:  { labelKey: "palette.forest",  colors: ["#166534", "#15803d", "#16a34a", "#22c55e", "#4d7c0f", "#65a30d", "#84cc16", "#365314"] },
+      mono:    { labelKey: "palette.mono",    colors: ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0"] },
     };
 
     let activePalette = "vibrant";
@@ -184,8 +195,10 @@
     function renderPaletteChips() {
       paletteRow.innerHTML = Object.entries(PALETTES).map(([id, p]) => {
         const swatches = p.colors.slice(0, 5).map(c => `<span class="palette-swatch" style="background:${c}"></span>`).join("");
+        // data-i18n on the label span re-translates on language switch without
+        // tearing down the whole chip row.
         return `<button type="button" class="palette-chip${id === activePalette ? " active" : ""}" data-palette="${id}" role="radio" aria-checked="${id === activePalette}">
-          <span class="palette-swatches">${swatches}</span> ${p.label}
+          <span class="palette-swatches">${swatches}</span> <span data-i18n="${p.labelKey}">${t(p.labelKey)}</span>
         </button>`;
       }).join("");
       paletteRow.querySelectorAll("[data-palette]").forEach(btn => {
@@ -202,15 +215,27 @@
       return lines.length ? lines : entries;
     }
 
+    function setResult(key, vars) {
+      // Keep data-i18n in sync so a later language switch re-translates the
+      // canonical status text. Pass `null` as key to mean "this is user data,
+      // don't translate it" (e.g., the winning entry name).
+      if (key) {
+        resultText.setAttribute("data-i18n", key);
+        resultText.textContent = t(key, vars);
+      } else {
+        resultText.removeAttribute("data-i18n");
+      }
+    }
+
     function applyEntries() {
       const list = readEntries();
       if (list.length < 2) {
-        resultText.textContent = "Need at least 2 entries.";
+        setResult("result.need2");
         return;
       }
       entries = list;
       drawWheel();
-      resultText.textContent = "Click the wheel to spin";
+      setResult("result.click");
     }
 
     function drawWheel() {
@@ -349,6 +374,7 @@
         } else {
           rotation = ((rotation % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
           drawWheel();
+          setResult(null);
           resultText.textContent = entries[targetIndex];
           resultBox.classList.remove("celebrating");
           // restart animation
@@ -465,17 +491,19 @@
       entriesInput.value = "";
       entries = [];
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      resultText.textContent = "Add entries, then spin";
+      setResult("result.addEntries");
     });
     $("removeWinnerBtn").addEventListener("click", () => {
       const winner = resultText.textContent;
       if (!entries.length || !entries.includes(winner)) return;
       entries = entries.filter(e => e !== winner);
       entriesInput.value = entries.join("\n");
-      if (entries.length < 2) {
-        resultText.textContent = entries.length === 1 ? `Only "${entries[0]}" left` : "All entries removed";
+      if (entries.length === 1) {
+        setResult("result.onlyOne", { name: entries[0] });
+      } else if (entries.length === 0) {
+        setResult("result.allRemoved");
       } else {
-        resultText.textContent = `Removed "${winner}"`;
+        setResult("result.removed", { name: winner });
       }
       drawWheel();
     });
@@ -490,12 +518,12 @@
         // Split on newlines, commas, semicolons, or tabs so CSV / TSV / plain lists all work.
         const list = text.split(/[\r\n,;\t]+/).map(s => s.trim()).filter(Boolean);
         if (!list.length) {
-          resultText.textContent = "Nothing to import.";
+          setResult("result.nothingImport");
           return;
         }
         entriesInput.value = list.join("\n");
         applyEntries();
-        resultText.textContent = `Imported ${list.length} entries`;
+        setResult("result.imported", { count: list.length });
       };
       reader.readAsText(file);
       importFile.value = "";
@@ -505,6 +533,18 @@
     entriesInput.value = entries.join("\n");
     renderPaletteChips();
     drawWheel();
+
+    function bootI18nDependentUI() {
+      // Palette chip labels carry their own data-i18n attrs and are re-translated
+      // by the i18n module's apply() automatically — but the chips were generated
+      // by JS so they only existed after apply()'s first run. Re-render them now
+      // so the next language switch picks them up. Wheel labels stay as the
+      // user's entry strings (no translation needed). Result text re-translates
+      // via its data-i18n attr when in canonical status mode; user-supplied
+      // names (after a spin) keep their original value.
+      renderPaletteChips();
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
