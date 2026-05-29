@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Concept Map Studio — DrawSplatTM</title>
+  <title data-i18n="doc.title">Concept Map Studio — DrawSplatTM</title>
   <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -364,117 +369,118 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
-        <h1>Concept Map Studio</h1>
-        <p class="subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Concept Map Studio</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
       </div>
       <div class="header-actions">
-        <a class="secondary-link" href="../../pages/features.html">All Tools</a>
-        <a class="home-link" href="../../index.html">Home</a>
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="nav.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
       </div>
     </header>
 
     <main class="app-grid">
-      <aside class="panel" aria-label="Tools">
-        <h2>Templates</h2>
+      <aside class="panel" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
+        <h2 data-i18n="section.templates">Templates</h2>
         <div class="tool-row full">
-          <select class="template-select" id="templateSelect" aria-label="Graphic organizer template">
-            <option value="concept-map">Concept Map (starter)</option>
-            <option value="mind-map">Mind Map (6 spokes)</option>
-            <option value="fishbone">Fishbone / Ishikawa</option>
-            <option value="frayer">Frayer Model</option>
-            <option value="kwl">KWL Chart</option>
-            <option value="5ws">5 Ws (and How)</option>
-            <option value="cycle">Cycle (4 steps)</option>
-            <option value="sequence">Sequence Chain (5 steps)</option>
-            <option value="cause-effect">Cause &amp; Effect</option>
-            <option value="compare-contrast">Compare &amp; Contrast</option>
-            <option value="hierarchy">Hierarchy / Tree</option>
-            <option value="story-map">Story Map</option>
+          <select class="template-select" id="templateSelect" data-i18n-aria-label="template.select.aria" aria-label="Graphic organizer template">
+            <option value="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</option>
+            <option value="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</option>
+            <option value="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</option>
+            <option value="frayer" data-i18n="tpl.frayer">Frayer Model</option>
+            <option value="kwl" data-i18n="tpl.kwl">KWL Chart</option>
+            <option value="5ws" data-i18n="tpl.5ws">5 Ws (and How)</option>
+            <option value="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</option>
+            <option value="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</option>
+            <option value="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</option>
+            <option value="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</option>
+            <option value="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</option>
+            <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
           </select>
         </div>
         <div class="tool-row">
-          <button class="tool-btn" id="applyTemplateBtn" type="button">Apply Template</button>
-          <button class="tool-btn danger" id="clearMapBtn" type="button">Clear All</button>
+          <button class="tool-btn" id="applyTemplateBtn" type="button" data-i18n="button.applyTemplate">Apply Template</button>
+          <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
         </div>
 
-        <h3>Mode</h3>
+        <h3 data-i18n="section.mode">Mode</h3>
         <div class="tool-row">
-          <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button">Select / Drag</button>
-          <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button">Connect Nodes</button>
+          <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button" data-i18n="button.selectTool">Select / Drag</button>
+          <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button" data-i18n="button.connectTool">Connect Nodes</button>
         </div>
-        <p class="hint-text">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
+        <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
 
-        <h3>Add nodes</h3>
+        <h3 data-i18n="section.addNodes">Add nodes</h3>
         <div class="tool-row">
-          <button class="tool-btn" id="addNodeBtn" type="button">+ Node</button>
-          <button class="tool-btn" id="addChildBtn" type="button">+ Child of Selected</button>
+          <button class="tool-btn" id="addNodeBtn" type="button" data-i18n="button.addNode">+ Node</button>
+          <button class="tool-btn" id="addChildBtn" type="button" data-i18n="button.addChild">+ Child of Selected</button>
         </div>
 
-        <h3>Edit selected</h3>
+        <h3 data-i18n="section.editSelected">Edit selected</h3>
         <div class="tool-row">
-          <button class="tool-btn" id="editTextBtn" type="button">Edit Label</button>
-          <button class="tool-btn" id="cycleColorBtn" type="button">Cycle Color</button>
+          <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
+          <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
         </div>
         <div class="tool-row">
-          <button class="tool-btn" id="setLinkBtn" type="button">Set Link</button>
-          <button class="tool-btn" id="attachImageBtn" type="button">Attach Image</button>
+          <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
+          <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
         </div>
         <div class="tool-row">
-          <button class="tool-btn" id="clearLinkBtn" type="button">Clear Link</button>
-          <button class="tool-btn" id="clearImageBtn" type="button">Clear Image</button>
+          <button class="tool-btn" id="clearLinkBtn" type="button" data-i18n="button.clearLink">Clear Link</button>
+          <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
         </div>
         <div class="tool-row full">
-          <button class="tool-btn" id="editConnectorBtn" type="button">Edit Connector Label</button>
+          <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
         </div>
 
-        <h3>Groups</h3>
+        <h3 data-i18n="section.groups">Groups</h3>
         <div class="tool-row">
-          <button class="tool-btn" id="groupSelectedBtn" type="button">Group Selected</button>
-          <button class="tool-btn" id="ungroupBtn" type="button">Ungroup</button>
+          <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
+          <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
         </div>
         <div class="tool-row full">
-          <button class="tool-btn" id="editGroupLabelBtn" type="button">Edit Group Label</button>
+          <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
         </div>
 
         <div class="tool-row full" style="margin-top:10px">
-          <button class="tool-btn danger" id="deleteBtn" type="button">Delete Selected</button>
+          <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
         </div>
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
 
-        <h3>Selection</h3>
-        <div class="selection-info" id="selectionInfo">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
+        <h3 data-i18n="section.selection">Selection</h3>
+        <div class="selection-info" id="selectionInfo" data-i18n="selection.emptyHint">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
 
-        <p class="footer-note">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
+        <p class="footer-note" data-i18n-html="footer.note.html">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
       </aside>
 
-      <section class="stage" aria-label="Concept map canvas">
+      <section class="stage" data-i18n-aria-label="panel.canvas.aria" aria-label="Concept map canvas">
         <div class="canvas-toolbar">
-          <span class="mode-pill" id="modeIndicator">Mode: Select / Drag</span>
-          <span class="hint-line" id="hintLine">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
-          <span class="toolbar-cluster" role="group" aria-label="History">
-            <button class="toolbar-icon-btn" id="undoBtn" type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">↶ Undo</button>
-            <button class="toolbar-icon-btn" id="redoBtn" type="button" title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">↷ Redo</button>
+          <span class="mode-pill" id="modeIndicator" data-i18n="modePill.select">Mode: Select / Drag</span>
+          <span class="hint-line" id="hintLine" data-i18n="hintLine.default">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
+          <span class="toolbar-cluster" role="group" data-i18n-aria-label="toolbar.history.aria" aria-label="History">
+            <button class="toolbar-icon-btn" id="undoBtn" type="button" data-i18n="button.undo" data-i18n-title="button.undo.title" data-i18n-aria-label="button.undo.aria" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">↶ Undo</button>
+            <button class="toolbar-icon-btn" id="redoBtn" type="button" data-i18n="button.redo" data-i18n-title="button.redo.title" data-i18n-aria-label="button.redo.aria" title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">↷ Redo</button>
           </span>
-          <span class="toolbar-cluster" role="group" aria-label="Zoom">
-            <button class="toolbar-icon-btn" id="zoomOutBtn" type="button" title="Zoom out (−)" aria-label="Zoom out">−</button>
-            <button class="toolbar-icon-btn" id="zoomResetBtn" type="button" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
-            <button class="toolbar-icon-btn" id="zoomInBtn" type="button" title="Zoom in (+)" aria-label="Zoom in">+</button>
+          <span class="toolbar-cluster" role="group" data-i18n-aria-label="toolbar.zoom.aria" aria-label="Zoom">
+            <button class="toolbar-icon-btn" id="zoomOutBtn" type="button" data-i18n-title="button.zoomOut.title" data-i18n-aria-label="button.zoomOut.aria" title="Zoom out (−)" aria-label="Zoom out">−</button>
+            <button class="toolbar-icon-btn" id="zoomResetBtn" type="button" data-i18n-title="button.zoomReset.title" data-i18n-aria-label="button.zoomReset.aria" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
+            <button class="toolbar-icon-btn" id="zoomInBtn" type="button" data-i18n-title="button.zoomIn.title" data-i18n-aria-label="button.zoomIn.aria" title="Zoom in (+)" aria-label="Zoom in">+</button>
           </span>
-          <button class="toolbar-toggle" id="panToggleBtn" type="button" aria-pressed="false">Pan: Off</button>
-          <button class="toolbar-toggle on" id="gridToggleBtn" type="button" aria-pressed="true">Grid: On</button>
+          <button class="toolbar-toggle" id="panToggleBtn" type="button" aria-pressed="false" data-i18n="toggle.panOff">Pan: Off</button>
+          <button class="toolbar-toggle on" id="gridToggleBtn" type="button" aria-pressed="true" data-i18n="toggle.gridOn">Grid: On</button>
         </div>
         <div class="canvas-shell" id="canvasShell">
-          <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concept map canvas"></svg>
-          <input id="inlineEditor" class="inline-editor" hidden>
+          <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" data-i18n-aria-label="svg.aria" aria-label="Concept map canvas"></svg>
+          <input id="inlineEditor" class="inline-editor" data-i18n-aria-label="inline.editor.aria" aria-label="Node label editor" hidden>
         </div>
         <div class="actions">
-          <button class="button primary" id="saveJsonBtn" type="button">Save .json</button>
-          <button class="button" id="loadJsonBtn" type="button">Load .json</button>
-          <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
-          <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
-          <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
-          <button class="button gold" id="fitViewBtn" type="button">Fit View</button>
+          <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
+          <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
+          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+          <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+          <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+          <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
         </div>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
         <div class="status" id="statusLine" role="status"></div>
@@ -482,8 +488,10 @@
     </main>
   </div>
 
+<script src="./locales.js"></script>
 <script>
 (function(){
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.getElementById('cmCanvas');
   const canvasShell = document.getElementById('canvasShell');
@@ -614,7 +622,7 @@
     restoreFromSnap(state.history.undo.pop());
     updateHistoryButtons();
     render();
-    setStatus('Undo.', 'info');
+    setStatus(t('status.undo'), 'info');
   }
   function redo(){
     if (!state.history.redo.length) return;
@@ -623,7 +631,7 @@
     restoreFromSnap(state.history.redo.pop());
     updateHistoryButtons();
     render();
-    setStatus('Redo.', 'info');
+    setStatus(t('status.redo'), 'info');
   }
   function resetHistory(){
     state.history.undo = [];
@@ -649,7 +657,7 @@
       y: typeof opts.y === 'number' ? opts.y : CANVAS_H/2,
       w: NODE_W,
       h: NODE_H,
-      label: opts.label || 'Idea',
+      label: opts.label || t('tplNode.idea'),
       link: opts.link || '',
       image: opts.image || '',
       isRoot: !!opts.isRoot,
@@ -713,157 +721,160 @@
     return state.groups.filter(g => g.nodeIds.indexOf(nodeId) !== -1);
   }
 
-  /* ===== templates ===== */
+  /* ===== templates =====
+     Node labels and connector relationship words flow through t() so each
+     template loads in the active language. Template title strings come from
+     tplTitle.{key}. */
   const TEMPLATES = {
-    'concept-map': {title: 'Concept Map', build: () => ({
+    'concept-map': {key: 'concept-map', build: () => ({
       rootKey: 'root',
       nodes: {
-        root: {label: 'Main Idea', x: 600, y: 360, isRoot: true},
-        a:    {label: 'Idea 1',    x: 290, y: 200},
-        b:    {label: 'Idea 2',    x: 910, y: 200},
-        c:    {label: 'Idea 3',    x: 290, y: 520},
-        d:    {label: 'Idea 4',    x: 910, y: 520}
+        root: {label: t('tplNode.main'),                x: 600, y: 360, isRoot: true},
+        a:    {label: t('tplNode.ideaN', {n: 1}),       x: 290, y: 200},
+        b:    {label: t('tplNode.ideaN', {n: 2}),       x: 910, y: 200},
+        c:    {label: t('tplNode.ideaN', {n: 3}),       x: 290, y: 520},
+        d:    {label: t('tplNode.ideaN', {n: 4}),       x: 910, y: 520}
       },
       connectors: [
         {from: 'root', to: 'a'}, {from: 'root', to: 'b'},
         {from: 'root', to: 'c'}, {from: 'root', to: 'd'}
       ]
     })},
-    'mind-map': {title: 'Mind Map', build: () => ({
+    'mind-map': {key: 'mind-map', build: () => ({
       rootKey: 'root',
       nodes: {
-        root: {label: 'Topic',      x: 600, y: 360, isRoot: true},
-        n1:   {label: 'Subtopic 1', x: 600, y: 140},
-        n2:   {label: 'Subtopic 2', x: 980, y: 240},
-        n3:   {label: 'Subtopic 3', x: 980, y: 480},
-        n4:   {label: 'Subtopic 4', x: 600, y: 580},
-        n5:   {label: 'Subtopic 5', x: 220, y: 480},
-        n6:   {label: 'Subtopic 6', x: 220, y: 240}
+        root: {label: t('tplNode.topic'),               x: 600, y: 360, isRoot: true},
+        n1:   {label: t('tplNode.subtopicN', {n: 1}),   x: 600, y: 140},
+        n2:   {label: t('tplNode.subtopicN', {n: 2}),   x: 980, y: 240},
+        n3:   {label: t('tplNode.subtopicN', {n: 3}),   x: 980, y: 480},
+        n4:   {label: t('tplNode.subtopicN', {n: 4}),   x: 600, y: 580},
+        n5:   {label: t('tplNode.subtopicN', {n: 5}),   x: 220, y: 480},
+        n6:   {label: t('tplNode.subtopicN', {n: 6}),   x: 220, y: 240}
       },
       connectors: ['n1','n2','n3','n4','n5','n6'].map(k => ({from: 'root', to: k}))
     })},
-    'fishbone': {title: 'Fishbone (Cause Analysis)', build: () => ({
+    'fishbone': {key: 'fishbone', build: () => ({
       rootKey: 'effect',
       nodes: {
-        effect:     {label: 'Effect / Problem', x: 1020, y: 360, isRoot: true},
-        people:     {label: 'People',           x: 240,  y: 130},
-        process:    {label: 'Process',          x: 540,  y: 130},
-        equipment:  {label: 'Equipment',        x: 800,  y: 200},
-        environment:{label: 'Environment',      x: 800,  y: 520},
-        materials:  {label: 'Materials',        x: 540,  y: 590},
-        methods:    {label: 'Methods',          x: 240,  y: 590}
+        effect:     {label: t('tplNode.effect'),        x: 1020, y: 360, isRoot: true},
+        people:     {label: t('tplNode.people'),        x: 240,  y: 130},
+        process:    {label: t('tplNode.process'),       x: 540,  y: 130},
+        equipment:  {label: t('tplNode.equipment'),     x: 800,  y: 200},
+        environment:{label: t('tplNode.environment'),   x: 800,  y: 520},
+        materials:  {label: t('tplNode.materials'),     x: 540,  y: 590},
+        methods:    {label: t('tplNode.methods'),       x: 240,  y: 590}
       },
       connectors: ['people','process','equipment','environment','materials','methods']
-        .map(k => ({from: k, to: 'effect', label: 'contributes to'}))
+        .map(k => ({from: k, to: 'effect', label: t('tplRel.contributesTo')}))
     })},
-    'frayer': {title: 'Frayer Model', build: () => ({
+    'frayer': {key: 'frayer', build: () => ({
       rootKey: 'word',
       nodes: {
-        word:  {label: 'Word / Concept',  x: 600, y: 360, isRoot: true},
-        def:   {label: 'Definition',      x: 290, y: 180},
-        char:  {label: 'Characteristics', x: 910, y: 180},
-        ex:    {label: 'Examples',        x: 290, y: 540},
-        nonex: {label: 'Non-Examples',    x: 910, y: 540}
+        word:  {label: t('tplNode.word'),               x: 600, y: 360, isRoot: true},
+        def:   {label: t('tplNode.definition'),         x: 290, y: 180},
+        char:  {label: t('tplNode.characteristics'),    x: 910, y: 180},
+        ex:    {label: t('tplNode.examples'),           x: 290, y: 540},
+        nonex: {label: t('tplNode.nonExamples'),        x: 910, y: 540}
       },
       connectors: [
         {from: 'word', to: 'def'},  {from: 'word', to: 'char'},
         {from: 'word', to: 'ex'},   {from: 'word', to: 'nonex'}
       ]
     })},
-    'kwl': {title: 'KWL Chart', build: () => ({
+    'kwl': {key: 'kwl', build: () => ({
       rootKey: 'w',
       nodes: {
-        k: {label: 'What I Know',         x: 260, y: 360},
-        w: {label: 'What I Want to Know', x: 600, y: 360, isRoot: true},
-        l: {label: 'What I Learned',      x: 940, y: 360}
+        k: {label: t('tplNode.know'),                   x: 260, y: 360},
+        w: {label: t('tplNode.want'),                   x: 600, y: 360, isRoot: true},
+        l: {label: t('tplNode.learned'),                x: 940, y: 360}
       },
       connectors: [
-        {from: 'k', to: 'w', label: 'leads to'},
-        {from: 'w', to: 'l', label: 'becomes'}
+        {from: 'k', to: 'w', label: t('tplRel.leadsTo')},
+        {from: 'w', to: 'l', label: t('tplRel.becomes')}
       ]
     })},
-    '5ws': {title: '5 Ws (and How)', build: () => ({
+    '5ws': {key: '5ws', build: () => ({
       rootKey: 'topic',
       nodes: {
-        topic: {label: 'Topic / Event', x: 600, y: 360, isRoot: true},
-        who:   {label: 'Who?',          x: 260, y: 180},
-        what:  {label: 'What?',         x: 600, y: 130},
-        when:  {label: 'When?',         x: 940, y: 180},
-        where: {label: 'Where?',        x: 940, y: 540},
-        why:   {label: 'Why?',          x: 600, y: 590},
-        how:   {label: 'How?',          x: 260, y: 540}
+        topic: {label: t('tplNode.topicEvent'),         x: 600, y: 360, isRoot: true},
+        who:   {label: t('tplNode.who'),                x: 260, y: 180},
+        what:  {label: t('tplNode.what'),               x: 600, y: 130},
+        when:  {label: t('tplNode.when'),               x: 940, y: 180},
+        where: {label: t('tplNode.where'),              x: 940, y: 540},
+        why:   {label: t('tplNode.why'),                x: 600, y: 590},
+        how:   {label: t('tplNode.how'),                x: 260, y: 540}
       },
       connectors: ['who','what','when','where','why','how'].map(k => ({from: 'topic', to: k}))
     })},
-    'cycle': {title: 'Cycle (4 steps)', build: () => ({
+    'cycle': {key: 'cycle', build: () => ({
       rootKey: 's1',
       nodes: {
-        s1: {label: 'Step 1', x: 600, y: 140, isRoot: true},
-        s2: {label: 'Step 2', x: 980, y: 360},
-        s3: {label: 'Step 3', x: 600, y: 580},
-        s4: {label: 'Step 4', x: 220, y: 360}
+        s1: {label: t('tplNode.stepN', {n: 1}),         x: 600, y: 140, isRoot: true},
+        s2: {label: t('tplNode.stepN', {n: 2}),         x: 980, y: 360},
+        s3: {label: t('tplNode.stepN', {n: 3}),         x: 600, y: 580},
+        s4: {label: t('tplNode.stepN', {n: 4}),         x: 220, y: 360}
       },
       connectors: [
-        {from: 's1', to: 's2', label: 'then'},
-        {from: 's2', to: 's3', label: 'then'},
-        {from: 's3', to: 's4', label: 'then'},
-        {from: 's4', to: 's1', label: 'repeats'}
+        {from: 's1', to: 's2', label: t('tplRel.then')},
+        {from: 's2', to: 's3', label: t('tplRel.then')},
+        {from: 's3', to: 's4', label: t('tplRel.then')},
+        {from: 's4', to: 's1', label: t('tplRel.repeats')}
       ]
     })},
-    'sequence': {title: 'Sequence Chain (5 steps)', build: () => ({
+    'sequence': {key: 'sequence', build: () => ({
       rootKey: 's1',
       nodes: {
-        s1: {label: 'Step 1', x: 180,  y: 360, isRoot: true},
-        s2: {label: 'Step 2', x: 390,  y: 360},
-        s3: {label: 'Step 3', x: 600,  y: 360},
-        s4: {label: 'Step 4', x: 810,  y: 360},
-        s5: {label: 'Step 5', x: 1020, y: 360}
+        s1: {label: t('tplNode.stepN', {n: 1}),         x: 180,  y: 360, isRoot: true},
+        s2: {label: t('tplNode.stepN', {n: 2}),         x: 390,  y: 360},
+        s3: {label: t('tplNode.stepN', {n: 3}),         x: 600,  y: 360},
+        s4: {label: t('tplNode.stepN', {n: 4}),         x: 810,  y: 360},
+        s5: {label: t('tplNode.stepN', {n: 5}),         x: 1020, y: 360}
       },
       connectors: [
-        {from: 's1', to: 's2', label: 'then'},
-        {from: 's2', to: 's3', label: 'then'},
-        {from: 's3', to: 's4', label: 'then'},
-        {from: 's4', to: 's5', label: 'then'}
+        {from: 's1', to: 's2', label: t('tplRel.then')},
+        {from: 's2', to: 's3', label: t('tplRel.then')},
+        {from: 's3', to: 's4', label: t('tplRel.then')},
+        {from: 's4', to: 's5', label: t('tplRel.then')}
       ]
     })},
-    'cause-effect': {title: 'Cause & Effect', build: () => ({
+    'cause-effect': {key: 'cause-effect', build: () => ({
       rootKey: 'effect',
       nodes: {
-        effect: {label: 'Effect',  x: 940, y: 360, isRoot: true},
-        c1:     {label: 'Cause 1', x: 240, y: 180},
-        c2:     {label: 'Cause 2', x: 240, y: 360},
-        c3:     {label: 'Cause 3', x: 240, y: 540}
+        effect: {label: t('tplNode.effectShort'),       x: 940, y: 360, isRoot: true},
+        c1:     {label: t('tplNode.causeN', {n: 1}),    x: 240, y: 180},
+        c2:     {label: t('tplNode.causeN', {n: 2}),    x: 240, y: 360},
+        c3:     {label: t('tplNode.causeN', {n: 3}),    x: 240, y: 540}
       },
-      connectors: ['c1','c2','c3'].map(k => ({from: k, to: 'effect', label: 'causes'}))
+      connectors: ['c1','c2','c3'].map(k => ({from: k, to: 'effect', label: t('tplRel.causes')}))
     })},
-    'compare-contrast': {title: 'Compare & Contrast', build: () => ({
+    'compare-contrast': {key: 'compare-contrast', build: () => ({
       rootKey: 'topic',
       nodes: {
-        topic:  {label: 'Topic',      x: 600, y: 130, isRoot: true},
-        a:      {label: 'Subject A',  x: 290, y: 340},
-        b:      {label: 'Subject B',  x: 910, y: 340},
-        aOnly:  {label: 'A Only',     x: 180, y: 560},
-        shared: {label: 'Both Share', x: 600, y: 560},
-        bOnly:  {label: 'B Only',     x: 1020,y: 560}
+        topic:  {label: t('tplNode.topic'),             x: 600, y: 130, isRoot: true},
+        a:      {label: t('tplNode.subjectA'),          x: 290, y: 340},
+        b:      {label: t('tplNode.subjectB'),          x: 910, y: 340},
+        aOnly:  {label: t('tplNode.aOnly'),             x: 180, y: 560},
+        shared: {label: t('tplNode.bothShare'),         x: 600, y: 560},
+        bOnly:  {label: t('tplNode.bOnly'),             x: 1020,y: 560}
       },
       connectors: [
         {from: 'topic', to: 'a'}, {from: 'topic', to: 'b'},
-        {from: 'a', to: 'aOnly',  label: 'unique'},
-        {from: 'a', to: 'shared', label: 'shares'},
-        {from: 'b', to: 'shared', label: 'shares'},
-        {from: 'b', to: 'bOnly',  label: 'unique'}
+        {from: 'a', to: 'aOnly',  label: t('tplRel.unique')},
+        {from: 'a', to: 'shared', label: t('tplRel.shares')},
+        {from: 'b', to: 'shared', label: t('tplRel.shares')},
+        {from: 'b', to: 'bOnly',  label: t('tplRel.unique')}
       ]
     })},
-    'hierarchy': {title: 'Hierarchy / Tree', build: () => ({
+    'hierarchy': {key: 'hierarchy', build: () => ({
       rootKey: 'root',
       nodes: {
-        root: {label: 'Top',      x: 600, y: 130, isRoot: true},
-        b1:   {label: 'Branch A', x: 320, y: 320},
-        b2:   {label: 'Branch B', x: 880, y: 320},
-        l1:   {label: 'Leaf A1',  x: 180, y: 540},
-        l2:   {label: 'Leaf A2',  x: 460, y: 540},
-        l3:   {label: 'Leaf B1',  x: 740, y: 540},
-        l4:   {label: 'Leaf B2',  x: 1020,y: 540}
+        root: {label: t('tplNode.top'),                 x: 600, y: 130, isRoot: true},
+        b1:   {label: t('tplNode.branchA'),             x: 320, y: 320},
+        b2:   {label: t('tplNode.branchB'),             x: 880, y: 320},
+        l1:   {label: t('tplNode.leafA1'),              x: 180, y: 540},
+        l2:   {label: t('tplNode.leafA2'),              x: 460, y: 540},
+        l3:   {label: t('tplNode.leafB1'),              x: 740, y: 540},
+        l4:   {label: t('tplNode.leafB2'),              x: 1020,y: 540}
       },
       connectors: [
         {from: 'root', to: 'b1'}, {from: 'root', to: 'b2'},
@@ -871,14 +882,14 @@
         {from: 'b2', to: 'l3'},   {from: 'b2', to: 'l4'}
       ]
     })},
-    'story-map': {title: 'Story Map', build: () => ({
+    'story-map': {key: 'story-map', build: () => ({
       rootKey: 'problem',
       nodes: {
-        problem:  {label: 'Problem',    x: 600, y: 360, isRoot: true},
-        setting:  {label: 'Setting',    x: 260, y: 160},
-        chars:    {label: 'Characters', x: 940, y: 160},
-        events:   {label: 'Events',     x: 260, y: 560},
-        solution: {label: 'Solution',   x: 940, y: 560}
+        problem:  {label: t('tplNode.problem'),         x: 600, y: 360, isRoot: true},
+        setting:  {label: t('tplNode.setting'),         x: 260, y: 160},
+        chars:    {label: t('tplNode.characters'),      x: 940, y: 160},
+        events:   {label: t('tplNode.events'),          x: 260, y: 560},
+        solution: {label: t('tplNode.solution'),        x: 940, y: 560}
       },
       connectors: [
         {from: 'problem', to: 'setting'}, {from: 'problem', to: 'chars'},
@@ -886,6 +897,7 @@
       ]
     })}
   };
+  function templateTitle(key) { return t('tplTitle.' + key); }
 
   function loadTemplate(key){
     const tpl = TEMPLATES[key];
@@ -1082,7 +1094,7 @@
           fill: '#fff7e6', stroke: '#f59e0b', 'stroke-width': 2,
           'stroke-dasharray': '4 3'
         }));
-        labelGroup.appendChild(svgText('+ label', {
+        labelGroup.appendChild(svgText(t('connector.pillLabel'), {
           x: midX, y: midY + 5, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
           'font-size': 11, 'font-weight': 700, fill: '#92400e',
@@ -1163,20 +1175,31 @@
     selectToolBtn.classList.toggle('active', state.tool === 'select');
     connectToolBtn.classList.toggle('active', state.tool === 'connect');
     modeEl.classList.toggle('connect', state.tool === 'connect');
+    // Hint and mode pill are dynamic — manage their data-i18n attributes
+    // so the applier doesn't fight with our textContent updates.
     if (state.tool === 'connect') {
-      modeEl.textContent = 'Mode: Connect Nodes';
+      modeEl.setAttribute('data-i18n', 'modePill.connect');
+      modeEl.textContent = t('modePill.connect');
       if (state.pendingFromMulti && state.pendingFromMulti.length) {
-        hintEl.textContent = state.pendingFromMulti.length + ' source nodes pinned — click a target. Esc to exit.';
+        hintEl.removeAttribute('data-i18n');
+        hintEl.textContent = t('hintLine.connectMulti', {n: state.pendingFromMulti.length});
       } else if (state.pendingFrom) {
-        hintEl.textContent = 'Source pinned. Click each target. Esc or click empty canvas to exit.';
+        hintEl.setAttribute('data-i18n', 'hintLine.connectPending');
+        hintEl.textContent = t('hintLine.connectPending');
       } else {
-        hintEl.textContent = 'Click the source node, then click each target. Esc to exit.';
+        hintEl.setAttribute('data-i18n', 'hintLine.connectEmpty');
+        hintEl.textContent = t('hintLine.connectEmpty');
       }
     } else {
-      modeEl.textContent = 'Mode: Select / Drag';
-      hintEl.textContent = state.panToggle
-        ? 'Pan mode: drag anywhere to move the view.'
-        : 'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node. Middle-mouse drag or Pan toggle to pan; wheel to zoom.';
+      modeEl.setAttribute('data-i18n', 'modePill.select');
+      modeEl.textContent = t('modePill.select');
+      if (state.panToggle) {
+        hintEl.setAttribute('data-i18n', 'hintLine.selectPan');
+        hintEl.textContent = t('hintLine.selectPan');
+      } else {
+        hintEl.setAttribute('data-i18n', 'hintLine.selectIdle');
+        hintEl.textContent = t('hintLine.selectIdle');
+      }
     }
   }
   function updateZoomLabel(){
@@ -1206,43 +1229,46 @@
 
   function updateSelectionInfo(){
     const sel = state.selection;
+    // The selection panel content is dynamic — strip data-i18n while we write
+    // runtime HTML, restore the static-hint binding when nothing is selected.
+    selInfoEl.removeAttribute('data-i18n');
     if (sel.kind === 'node') {
       const ns = selectedNodes();
-      if (!ns.length) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      if (!ns.length) { selInfoEl.textContent = t('selection.none'); return; }
       if (ns.length > 1) {
-        selInfoEl.innerHTML = '<strong>' + ns.length + ' nodes selected.</strong><br>' +
-          'Drag any to move them together. Group Selected makes them a group. Click Connect, then a target, to wire all to one target.';
+        selInfoEl.innerHTML = t('selection.multi.html', {count: ns.length});
         return;
       }
       const n = ns[0];
       const bits = [];
-      bits.push('<strong>Node</strong>: ' + esc(n.label));
-      if (n.isRoot) bits.push('Root node.');
-      if (n.link) bits.push('Link: <em>' + esc(n.link) + '</em>');
-      if (n.image) bits.push('Has an attached image.');
+      bits.push('<strong>' + t('selection.node.heading') + '</strong>: ' + esc(n.label));
+      if (n.isRoot) bits.push(t('selection.node.root'));
+      if (n.link) bits.push(t('selection.node.link', {url: esc(n.link)}));
+      if (n.image) bits.push(t('selection.node.image'));
       const cn = state.connectors.filter(c => c.fromId === n.id || c.toId === n.id).length;
-      bits.push(cn + ' connector' + (cn === 1 ? '' : 's') + '.');
+      bits.push(t(cn === 1 ? 'selection.node.connectorOne' : 'selection.node.connectorMany', {n: cn}));
       const inGroups = groupsContaining(n.id);
-      if (inGroups.length) bits.push('In ' + inGroups.length + ' group' + (inGroups.length === 1 ? '' : 's') + '.');
+      if (inGroups.length) bits.push(t(inGroups.length === 1 ? 'selection.node.inGroupOne' : 'selection.node.inGroupMany', {n: inGroups.length}));
       selInfoEl.innerHTML = bits.join('<br>');
     } else if (sel.kind === 'connector') {
       const c = selectedConnectorObj();
-      if (!c) { selInfoEl.textContent = 'Nothing selected.'; return; }
+      if (!c) { selInfoEl.textContent = t('selection.none'); return; }
       const from = nodeById(c.fromId), to = nodeById(c.toId);
-      let html = '<strong>Connector</strong>';
-      if (from && to) html += '<br>' + esc(from.label) + ' → ' + esc(to.label);
-      html += '<br>' + (c.label ? 'Label: <em>' + esc(c.label) + '</em>' : 'No label yet. Click the "+ label" pill on the connector, or use Edit Connector Label, to add one.');
+      let html = '<strong>' + t('selection.conn.heading') + '</strong>';
+      if (from && to) html += '<br>' + t('selection.conn.arrow', {from: esc(from.label), to: esc(to.label)});
+      html += '<br>' + (c.label ? t('selection.conn.label', {label: esc(c.label)}) : t('selection.conn.noLabel'));
       selInfoEl.innerHTML = html;
     } else if (sel.kind === 'group') {
       const g = selectedGroupObj();
-      if (!g) { selInfoEl.textContent = 'Nothing selected.'; return; }
-      let html = '<strong>Group</strong>';
-      html += '<br>Members: ' + g.nodeIds.length + ' node' + (g.nodeIds.length === 1 ? '' : 's');
-      if (g.label) html += '<br>Label: <em>' + esc(g.label) + '</em>';
-      else html += '<br>No label yet. Use Edit Group Label.';
+      if (!g) { selInfoEl.textContent = t('selection.none'); return; }
+      let html = '<strong>' + t('selection.group.heading') + '</strong>';
+      html += '<br>' + (g.nodeIds.length === 1 ? t('selection.group.membersOne') : t('selection.group.membersMany', {n: g.nodeIds.length}));
+      if (g.label) html += '<br>' + t('selection.group.label', {label: esc(g.label)});
+      else html += '<br>' + t('selection.group.noLabel');
       selInfoEl.innerHTML = html;
     } else {
-      selInfoEl.textContent = 'Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.';
+      selInfoEl.setAttribute('data-i18n', 'selection.emptyHint');
+      selInfoEl.textContent = t('selection.emptyHint');
     }
   }
 
@@ -1306,7 +1332,9 @@
     state.panToggle = !!on;
     panToggleBtn.classList.toggle('on', state.panToggle);
     panToggleBtn.setAttribute('aria-pressed', state.panToggle ? 'true' : 'false');
-    panToggleBtn.textContent = 'Pan: ' + (state.panToggle ? 'On' : 'Off');
+    const key = state.panToggle ? 'toggle.panOn' : 'toggle.panOff';
+    panToggleBtn.setAttribute('data-i18n', key);
+    panToggleBtn.textContent = t(key);
     canvasShell.classList.toggle('pan-mode', state.panToggle);
     render();
   }
@@ -1366,7 +1394,7 @@
         state.pendingFrom = null;
         state.pendingFromMulti = null;
         setTool('select');
-        setStatus('Exited connect mode.', 'info');
+        setStatus(t('status.exitConnect'), 'info');
         e.preventDefault();
         return;
       }
@@ -1383,23 +1411,23 @@
         toAdd.forEach(srcId => { state.connectors.push(makeConnector(srcId, id)); added++; });
         state.pendingFromMulti = null;
         setTool('select');
-        setStatus('Created ' + added + ' connector' + (added === 1 ? '' : 's') + ' to "' + esc(nodeById(id).label) + '".', added ? 'success' : 'info');
+        setStatus(t('status.createdConnectors', {n: added, label: esc(nodeById(id).label)}), added ? 'success' : 'info');
         e.preventDefault();
         return;
       }
       if (!state.pendingFrom) {
         state.pendingFrom = id;
-        setStatus('Source pinned: "' + esc(nodeById(id).label) + '". Click each target to connect. Esc or click empty canvas to exit.', 'info');
+        setStatus(t('status.sourcePinned', {label: esc(nodeById(id).label)}), 'info');
       } else if (state.pendingFrom !== id) {
         const exists = state.connectors.some(c => c.fromId === state.pendingFrom && c.toId === id);
         if (!exists) {
           recordHistory();
           state.connectors.push(makeConnector(state.pendingFrom, id));
         }
-        setStatus(exists ? 'Already connected. Pick another target.' : 'Connector added. Click another target or Esc.', exists ? 'info' : 'success');
+        setStatus(exists ? t('status.alreadyConnected') : t('status.connectorAdded'), exists ? 'info' : 'success');
       } else {
         state.pendingFrom = null;
-        setStatus('Source cleared. Click a new source.', 'info');
+        setStatus(t('status.sourceCleared'), 'info');
       }
       render();
       e.preventDefault();
@@ -1532,7 +1560,7 @@
         } else if (hits.length) {
           setSelection('node', hits);
         }
-        if (hits.length) setStatus('Selected ' + state.selection.ids.length + ' node' + (state.selection.ids.length === 1 ? '' : 's') + '.', 'success');
+        if (hits.length) setStatus(t('status.selectedCount', {n: state.selection.ids.length}), 'success');
         else if (!r.additive) clearSelection();
       } else {
         if (!state.rubber.additive) clearSelection();
@@ -1585,11 +1613,11 @@
     e.preventDefault();
     recordHistory();
     const p = pointerToSvg(e);
-    const n = makeNode({label: 'New Idea', x: p.x, y: p.y});
+    const n = makeNode({label: t('tplNode.newIdea'), x: p.x, y: p.y});
     state.nodes.push(n);
     setSelection('node', [n.id]);
     render();
-    setStatus('Node added where you double-clicked.', 'success');
+    setStatus(t('status.nodeAddedDblClick'), 'success');
   });
 
   /* ===== inline node editor ===== */
@@ -1609,20 +1637,20 @@
     state.editing = id;
     inlineEditor.focus();
     inlineEditor.select();
-    setStatus('Press Enter to save, Esc to cancel.', 'info');
+    setStatus(t('status.editSaveCancel'), 'info');
   }
   function commitInlineEdit(save){
     if (!state.editing) return;
     const n = nodeById(state.editing);
     if (n && save) {
-      const newLabel = (inlineEditor.value || '').trim() || 'Idea';
+      const newLabel = (inlineEditor.value || '').trim() || t('tplNode.idea');
       if (newLabel !== n.label) {
         recordHistory();
         n.label = newLabel;
-        setStatus('Label updated.', 'success');
+        setStatus(t('status.labelUpdated'), 'success');
       }
     } else if (!save) {
-      setStatus('Edit cancelled.', 'info');
+      setStatus(t('status.editCancelled'), 'info');
     }
     state.editing = null;
     inlineEditor.hidden = true;
@@ -1638,42 +1666,42 @@
   function editConnectorLabel(id){
     const c = connectorById(id);
     if (!c) return;
-    const v = window.prompt('Connector label (the relationship between the two nodes — e.g. "leads to", "causes", "supports"):', c.label || '');
+    const v = window.prompt(t('prompt.connectorLabel'), c.label || '');
     if (v === null) return;
     const newLabel = v.trim();
     if (newLabel === c.label) return;
     recordHistory();
     c.label = newLabel;
-    setStatus(newLabel ? 'Connector label updated.' : 'Connector label cleared.', 'success');
+    setStatus(newLabel ? t('status.connectorLabelUpdated') : t('status.connectorLabelCleared'), 'success');
     render();
   }
   function editGroupLabel(id){
     const g = groupById(id);
     if (!g) return;
-    const v = window.prompt('Group label (shown in the corner of the group box):', g.label || '');
+    const v = window.prompt(t('prompt.groupLabel'), g.label || '');
     if (v === null) return;
     const newLabel = v.trim();
     if (newLabel === g.label) return;
     recordHistory();
     g.label = newLabel;
-    setStatus(newLabel ? 'Group label updated.' : 'Group label cleared.', 'success');
+    setStatus(newLabel ? t('status.groupLabelUpdated') : t('status.groupLabelCleared'), 'success');
     render();
   }
 
   /* ===== top-level button handlers ===== */
   selectToolBtn.addEventListener('click', () => setTool('select'));
   connectToolBtn.addEventListener('click', () => {
-    if (state.nodes.length < 2) return setStatus('Add at least two nodes before connecting.', 'danger');
+    if (state.nodes.length < 2) return setStatus(t('status.needTwoNodes'), 'danger');
     const selNs = selectedNodes();
     state.pendingFrom = null;
     if (selNs.length >= 2) {
       state.pendingFromMulti = selNs.map(n => n.id);
       setTool('connect');
-      setStatus(selNs.length + ' source nodes pinned. Click a target to connect them all.', 'info');
+      setStatus(t('status.multiSourcePinned', {n: selNs.length}), 'info');
     } else {
       state.pendingFromMulti = null;
       setTool('connect');
-      setStatus('Connect mode: click a source node, then each target. Esc to exit.', 'info');
+      setStatus(t('status.connectModeOn'), 'info');
     }
   });
 
@@ -1682,11 +1710,11 @@
     const c = viewCenter();
     const x = c.x + (Math.random()*140 - 70);
     const y = c.y + (Math.random()*140 - 70);
-    const n = makeNode({label: 'New Idea', x, y});
+    const n = makeNode({label: t('tplNode.newIdea'), x, y});
     state.nodes.push(n);
     setSelection('node', [n.id]);
     render();
-    setStatus('Node added at the centre of the view. Drag to position; double-click to rename.', 'success');
+    setStatus(t('status.nodeAddedCenter'), 'success');
   });
 
   document.getElementById('addChildBtn').addEventListener('click', () => {
@@ -1697,7 +1725,7 @@
     const angle = (siblings * 0.7) - 1.2;
     const r = 220;
     const child = makeNode({
-      label: 'Child Idea',
+      label: t('tplNode.childIdea'),
       x: parent.x + Math.cos(angle) * r,
       y: parent.y + Math.sin(angle) * r
     });
@@ -1705,32 +1733,32 @@
     state.connectors.push(makeConnector(parent.id, child.id));
     setSelection('node', [child.id]);
     render();
-    setStatus('Child added and connected to selected node.', 'success');
+    setStatus(t('status.childAdded'), 'success');
   });
 
   document.getElementById('cycleColorBtn').addEventListener('click', () => {
     const ns = selectedNodes();
     if (!ns.length) return;
     const recolorable = ns.filter(n => !n.isRoot);
-    if (!recolorable.length) { setStatus('Root nodes keep their colour. Select a non-root node to cycle colours.', 'info'); return; }
+    if (!recolorable.length) { setStatus(t('status.rootColorLocked'), 'info'); return; }
     recordHistory();
     recolorable.forEach(n => {
       const idx = paletteIndexFor(n);
       applyPalette(n, (idx + 1) % PALETTE.length);
     });
-    setStatus('Cycled ' + recolorable.length + ' node' + (recolorable.length === 1 ? '' : 's') + ' to the next pastel.', 'success');
+    setStatus(t('status.cycledColors', {n: recolorable.length}), 'success');
     render();
   });
 
   document.getElementById('groupSelectedBtn').addEventListener('click', () => {
     const ns = selectedNodes();
-    if (ns.length < 2) return setStatus('Select two or more nodes to group.', 'danger');
+    if (ns.length < 2) return setStatus(t('status.needTwoToGroup'), 'danger');
     recordHistory();
     const g = makeGroup(ns.map(n => n.id), '');
     state.groups.push(g);
     setSelection('group', [g.id]);
     render();
-    setStatus('Group created with ' + ns.length + ' nodes. Drag any node in the group to move them together.', 'success');
+    setStatus(t('status.groupCreated', {n: ns.length}), 'success');
   });
   document.getElementById('ungroupBtn').addEventListener('click', () => {
     const g = selectedGroupObj();
@@ -1739,7 +1767,7 @@
     state.groups = state.groups.filter(x => x.id !== g.id);
     clearSelection();
     render();
-    setStatus('Group removed. The member nodes are still there.', 'success');
+    setStatus(t('status.groupRemoved'), 'success');
   });
   document.getElementById('editGroupLabelBtn').addEventListener('click', () => {
     const g = selectedGroupObj();
@@ -1757,22 +1785,22 @@
   document.getElementById('setLinkBtn').addEventListener('click', () => {
     const n = singleSelectedNode();
     if (!n) return;
-    const v = window.prompt('Link URL for "' + n.label + '" (https:// or mailto:). Leave blank to clear.', n.link || '');
+    const v = window.prompt(t('prompt.linkUrl', {label: n.label}), n.link || '');
     if (v === null) return;
     if (!v.trim()) {
       if (!n.link) return;
       recordHistory();
       n.link = '';
-      setStatus('Link cleared.', 'info');
+      setStatus(t('status.linkCleared'), 'info');
       render();
       return;
     }
     const safe = safeUrl(v);
-    if (!safe) { setStatus('Link must start with https://, http://, or mailto:.', 'danger'); return; }
+    if (!safe) { setStatus(t('status.linkBadScheme'), 'danger'); return; }
     if (safe === n.link) return;
     recordHistory();
     n.link = safe;
-    setStatus('Link set. Ctrl/Cmd-click the node to open it.', 'success');
+    setStatus(t('status.linkSet'), 'success');
     render();
   });
   document.getElementById('clearLinkBtn').addEventListener('click', () => {
@@ -1780,7 +1808,7 @@
     if (!n || !n.link) return;
     recordHistory();
     n.link = '';
-    setStatus('Link cleared.', 'info');
+    setStatus(t('status.linkCleared'), 'info');
     render();
   });
   document.getElementById('attachImageBtn').addEventListener('click', () => {
@@ -1792,17 +1820,17 @@
     e.target.value = '';
     if (!f) return;
     const n = singleSelectedNode();
-    if (!n) { setStatus('Select a single node first, then attach an image.', 'danger'); return; }
-    if (!/^image\//.test(f.type)) { setStatus('Pick an image file.', 'danger'); return; }
-    if (f.size > 4 * 1024 * 1024) { setStatus('Image is over 4 MB. Pick a smaller file.', 'danger'); return; }
+    if (!n) { setStatus(t('status.selectNodeFirst'), 'danger'); return; }
+    if (!/^image\//.test(f.type)) { setStatus(t('status.pickImageFile'), 'danger'); return; }
+    if (f.size > 4 * 1024 * 1024) { setStatus(t('status.imageTooLarge'), 'danger'); return; }
     const r = new FileReader();
     r.onload = () => {
       recordHistory();
       n.image = r.result;
-      setStatus('Image attached to "' + n.label + '".', 'success');
+      setStatus(t('status.imageAttached', {label: n.label}), 'success');
       render();
     };
-    r.onerror = () => setStatus('Could not read image file.', 'danger');
+    r.onerror = () => setStatus(t('status.imageReadFail'), 'danger');
     r.readAsDataURL(f);
   });
   document.getElementById('clearImageBtn').addEventListener('click', () => {
@@ -1810,7 +1838,7 @@
     if (!n || !n.image) return;
     recordHistory();
     n.image = '';
-    setStatus('Image cleared.', 'info');
+    setStatus(t('status.imageCleared'), 'info');
     render();
   });
 
@@ -1819,11 +1847,11 @@
     if (sel.kind === 'node') {
       if (!sel.ids.length) return;
       if (state.nodes.length - sel.ids.length < 1) {
-        return setStatus('Can\'t delete every node. Use Clear All instead.', 'danger');
+        return setStatus(t('status.cantDeleteAll'), 'danger');
       }
       const ids = new Set(sel.ids);
       const rootSelected = state.nodes.some(n => ids.has(n.id) && n.isRoot);
-      if (rootSelected && !window.confirm('Delete the root node? Other nodes stay but lose their root connection.')) return;
+      if (rootSelected && !window.confirm(t('confirm.deleteRoot'))) return;
       recordHistory();
       state.nodes = state.nodes.filter(n => !ids.has(n.id));
       state.connectors = state.connectors.filter(c => !ids.has(c.fromId) && !ids.has(c.toId));
@@ -1831,19 +1859,19 @@
         .map(g => Object.assign({}, g, {nodeIds: g.nodeIds.filter(id => !ids.has(id))}))
         .filter(g => g.nodeIds.length >= 2);
       clearSelection();
-      setStatus('Deleted ' + ids.size + ' node' + (ids.size === 1 ? '' : 's') + '.', 'success');
+      setStatus(t('status.deletedNodes', {n: ids.size}), 'success');
     } else if (sel.kind === 'connector') {
       const ids = new Set(sel.ids);
       recordHistory();
       state.connectors = state.connectors.filter(c => !ids.has(c.id));
       clearSelection();
-      setStatus('Connector deleted.', 'success');
+      setStatus(t('status.connectorDeleted'), 'success');
     } else if (sel.kind === 'group') {
       const ids = new Set(sel.ids);
       recordHistory();
       state.groups = state.groups.filter(g => !ids.has(g.id));
       clearSelection();
-      setStatus('Group removed (member nodes kept).', 'success');
+      setStatus(t('status.groupRemovedKept'), 'success');
     }
     render();
   });
@@ -1853,23 +1881,24 @@
     const key = sel ? sel.value : 'concept-map';
     const tpl = TEMPLATES[key];
     if (!tpl) return;
-    if (state.nodes.length && !window.confirm('Replace the current map with the "' + tpl.title + '" template? This cannot be undone unless you Undo.')) return;
+    const tplName = templateTitle(key);
+    if (state.nodes.length && !window.confirm(t('confirm.replaceTpl', {name: tplName}))) return;
     recordHistory();
     loadTemplate(key);
     resetZoom();
-    setStatus('Loaded template: ' + tpl.title + '.', 'success');
+    setStatus(t('status.templateLoaded', {name: tplName}), 'success');
   });
   document.getElementById('clearMapBtn').addEventListener('click', () => {
-    if (!window.confirm('Clear the entire map?')) return;
+    if (!window.confirm(t('confirm.clearMap'))) return;
     recordHistory();
     state.nodes = []; state.connectors = []; state.groups = [];
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
-    const n = makeNode({label: 'New Idea', x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
+    const n = makeNode({label: t('tplNode.newIdea'), x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
     state.nodes.push(n);
     setSelection('node', [n.id]);
     resetZoom();
-    setStatus('Cleared. One starter node added. Use Undo to bring back your previous map.', 'info');
+    setStatus(t('status.clearMapDone'), 'info');
   });
 
   /* ===== history buttons + zoom buttons + toggles ===== */
@@ -1877,16 +1906,17 @@
   redoBtn.addEventListener('click', redo);
   document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
   document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
-  zoomLabelBtn.addEventListener('click', () => { resetZoom(); setStatus('Zoom reset to 100%.', 'info'); });
-  document.getElementById('fitViewBtn').addEventListener('click', () => { fitView(); setStatus('View fitted to content.', 'info'); });
+  zoomLabelBtn.addEventListener('click', () => { resetZoom(); setStatus(t('status.zoomReset'), 'info'); });
+  document.getElementById('fitViewBtn').addEventListener('click', () => { fitView(); setStatus(t('status.viewFitted'), 'info'); });
   panToggleBtn.addEventListener('click', () => setPanMode(!state.panToggle));
   gridToggleBtn.addEventListener('click', () => {
-    const next = !canvasShell.classList.contains('no-grid') === false;
     canvasShell.classList.toggle('no-grid');
     const on = !canvasShell.classList.contains('no-grid');
     gridToggleBtn.classList.toggle('on', on);
     gridToggleBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    gridToggleBtn.textContent = 'Grid: ' + (on ? 'On' : 'Off');
+    const key = on ? 'toggle.gridOn' : 'toggle.gridOff';
+    gridToggleBtn.setAttribute('data-i18n', key);
+    gridToggleBtn.textContent = t(key);
   });
 
   /* ===== export ===== */
@@ -1944,8 +1974,7 @@
     return (useSelection && nodeSelectionActive()) ? base + '-selection' : base;
   }
   function selectionExportSummary(){
-    const ids = state.selection.ids;
-    return ids.length + ' selected node' + (ids.length === 1 ? '' : 's');
+    return t('export.selectionSummary', {n: state.selection.ids.length});
   }
   function svgBlob(xml){ return new Blob([xml], {type: 'image/svg+xml;charset=utf-8'}); }
   function svgToPngBlob(xml, minWidth){
@@ -2006,9 +2035,9 @@
     };
   }
   function applyLoadedJson(data){
-    if (!data || typeof data !== 'object') throw new Error('File is not valid JSON object.');
-    if (data.type !== SAVE_TYPE) throw new Error('Not a DrawSplat concept map file.');
-    if (!Array.isArray(data.nodes) || !Array.isArray(data.connectors)) throw new Error('Missing nodes or connectors.');
+    if (!data || typeof data !== 'object') throw new Error(t('load.errBadFile'));
+    if (data.type !== SAVE_TYPE) throw new Error(t('load.errNotConceptMap'));
+    if (!Array.isArray(data.nodes) || !Array.isArray(data.connectors)) throw new Error(t('load.errMissingArrays'));
     const nodes = [];
     const idSeen = {};
     let maxIdNum = 0;
@@ -2028,7 +2057,7 @@
         y: clampNumber(raw.y, -100000, 100000, 0),
         w: clampNumber(raw.w, 40, 400, NODE_W),
         h: clampNumber(raw.h, 24, 200, NODE_H),
-        label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : 'Idea',
+        label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : t('tplNode.idea'),
         link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
         image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
         isRoot: !!raw.isRoot,
@@ -2037,7 +2066,7 @@
         text: validHex(raw.text, '#831843')
       });
     }
-    if (!nodes.length) throw new Error('No usable nodes in file.');
+    if (!nodes.length) throw new Error(t('load.errNoNodes'));
     const connectors = [];
     for (const raw of data.connectors) {
       if (!raw || typeof raw !== 'object') continue;
@@ -2077,10 +2106,10 @@
   }
 
   document.getElementById('saveJsonBtn').addEventListener('click', () => {
-    if (!state.nodes.length) return setStatus('Nothing to save yet.', 'danger');
+    if (!state.nodes.length) return setStatus(t('status.nothingToSave'), 'danger');
     const json = JSON.stringify(buildSaveJson(), null, 2);
     downloadBlob(new Blob([json], {type: 'application/json'}), defaultBaseName() + '.drawsplat-cmap.json');
-    setStatus('Saved as .json. Re-open it here with Load .json.', 'success');
+    setStatus(t('status.savedJson'), 'success');
   });
   document.getElementById('loadJsonBtn').addEventListener('click', () => {
     document.getElementById('jsonInput').click();
@@ -2089,52 +2118,52 @@
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
-    if (f.size > 8 * 1024 * 1024) return setStatus('File is over 8 MB. Pick a smaller file.', 'danger');
-    if (state.nodes.length && !window.confirm('Replace the current map with the loaded file?')) return;
+    if (f.size > 8 * 1024 * 1024) return setStatus(t('status.jsonTooLarge'), 'danger');
+    if (state.nodes.length && !window.confirm(t('confirm.replaceLoaded'))) return;
     const r = new FileReader();
     r.onload = () => {
       let data;
       try { data = JSON.parse(r.result); }
-      catch (err) { setStatus('Could not parse JSON: ' + (err && err.message ? err.message : String(err)), 'danger'); return; }
+      catch (err) { setStatus(t('status.parseError', {err: err && err.message ? err.message : String(err)}), 'danger'); return; }
       try {
         recordHistory();
         applyLoadedJson(data);
         resetZoom();
         fitView();
-        setStatus('Loaded ' + state.nodes.length + ' nodes, ' + state.connectors.length + ' connector' + (state.connectors.length === 1 ? '' : 's') + ', ' + state.groups.length + ' group' + (state.groups.length === 1 ? '' : 's') + '.', 'success');
+        setStatus(t('status.loadedSummary', {nodes: state.nodes.length, connectors: state.connectors.length, groups: state.groups.length}), 'success');
       } catch (err) {
-        setStatus('Could not load: ' + (err && err.message ? err.message : String(err)), 'danger');
+        setStatus(t('status.loadError', {err: err && err.message ? err.message : String(err)}), 'danger');
       }
     };
-    r.onerror = () => setStatus('Could not read file.', 'danger');
+    r.onerror = () => setStatus(t('status.fileReadError'), 'danger');
     r.readAsText(f);
   });
 
   document.getElementById('downloadSvgBtn').addEventListener('click', () => {
-    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
     const useSel = nodeSelectionActive();
     downloadBlob(svgBlob(buildExportSvg(useSel)), exportBaseName(useSel) + '.svg');
-    setStatus(useSel ? 'Downloaded SVG of ' + selectionExportSummary() + '.' : 'Downloaded SVG.', 'success');
+    setStatus(useSel ? t('status.svgDownloadedSel', {summary: selectionExportSummary()}) : t('status.svgDownloaded'), 'success');
   });
   document.getElementById('downloadPngBtn').addEventListener('click', async () => {
-    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
     const useSel = nodeSelectionActive();
     try {
       const blob = await svgToPngBlob(buildExportSvg(useSel));
       downloadBlob(blob, exportBaseName(useSel) + '.png');
-      setStatus(useSel ? 'Downloaded PNG of ' + selectionExportSummary() + '.' : 'Downloaded PNG.', 'success');
-    } catch(err) { setStatus('PNG render failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
+      setStatus(useSel ? t('status.pngDownloadedSel', {summary: selectionExportSummary()}) : t('status.pngDownloaded'), 'success');
+    } catch(err) { setStatus(t('status.pngRenderFail', {err: err && err.message ? err.message : String(err)}), 'danger'); }
   });
   document.getElementById('copyPngBtn').addEventListener('click', async () => {
-    if (!state.nodes.length) return setStatus('Add at least one node first.', 'danger');
+    if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
     if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
-      return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
+      return setStatus(t('status.clipboardUnsupported'), 'danger');
     const useSel = nodeSelectionActive();
     try {
       const blob = await svgToPngBlob(buildExportSvg(useSel));
       await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-      setStatus(useSel ? 'Copied ' + selectionExportSummary() + ' to clipboard as PNG.' : 'Concept map copied to clipboard as PNG.', 'success');
-    } catch(err) { setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger'); }
+      setStatus(useSel ? t('status.pngCopiedSel', {summary: selectionExportSummary()}) : t('status.pngCopied'), 'success');
+    } catch(err) { setStatus(t('status.copyFail', {err: err && err.message ? err.message : String(err)}), 'danger'); }
   });
 
   /* ===== keyboard ===== */
@@ -2156,7 +2185,7 @@
       if (state.nodes.length) {
         setSelection('node', state.nodes.map(n => n.id));
         render();
-        setStatus('Selected all ' + state.nodes.length + ' nodes.', 'info');
+        setStatus(t('status.selectedAll', {n: state.nodes.length}), 'info');
       }
       return;
     }
@@ -2166,7 +2195,7 @@
     if (e.key === 'Delete' || e.key === 'Backspace') {
       if (state.selection.kind) { e.preventDefault(); document.getElementById('deleteBtn').click(); }
     } else if (e.key === 'Escape') {
-      if (state.tool === 'connect') { setTool('select'); setStatus('Connect mode cancelled.', 'info'); }
+      if (state.tool === 'connect') { setTool('select'); setStatus(t('status.connectCancelled'), 'info'); }
       else if (state.selection.kind) { clearSelection(); render(); }
     } else if (e.key === 'Enter') {
       const n = singleSelectedNode();
@@ -2182,6 +2211,12 @@
   defaultMap();
   resetHistory();
   render();
+
+  // Language switch: re-render so the mode pill, hint, selection panel,
+  // "+ label" pill, and any future toolbar text get the new strings.
+  // Nodes/connectors the user has built keep their text — only the freshly
+  // loaded template defaults change on switch.
+  window.addEventListener('widget-i18n:changed', () => render());
 })();
 </script>
 </body>
