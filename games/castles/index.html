@@ -1576,6 +1576,94 @@
 
         const dir = castle.side === "left" ? 1 : -1;
         drawTowerCrew(castle, dir);
+        // Command pennant marks the catapult kill-spot so opponents have a
+        // visible target. Heraldry color matches the castle's flag/shield,
+        // so each player can spot the other's banner. Pulses on a slow sine
+        // wave so it reads as "this is interactive / aim here".
+        drawCatapultPennant(castle, dir);
+      }
+
+      // Big, glowing pennant in the castle's heraldry color, mounted at the
+      // catapult hitbox. Sized and offset to overlap the kill rectangle so
+      // landing the missile on the visible pennant reads as a clean kill.
+      function drawCatapultPennant(castle, dir) {
+        const cat = castle.catapult;
+        const poleX = cat.x;
+        const poleTop = cat.y - 46;
+        const poleBottom = cat.y + 6;
+        const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(performance.now() / 360));
+
+        // Soft glow halo behind the pennant so it stays readable against
+        // both light and dark castle stone.
+        ctx.save();
+        const haloRadius = 26;
+        const gradient = ctx.createRadialGradient(poleX + dir * 14, cat.y - 24, 2, poleX + dir * 14, cat.y - 24, haloRadius);
+        gradient.addColorStop(0, castle.heraldry + "");
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalAlpha = 0.30 * pulse;
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(poleX + dir * 14, cat.y - 24, haloRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Pole
+        ctx.fillStyle = "#1a1f26";
+        ctx.fillRect(poleX - 1, poleTop, 3, poleBottom - poleTop);
+        // Spear tip at the top of the pole
+        ctx.fillStyle = castle.heraldryDark;
+        ctx.beginPath();
+        ctx.moveTo(poleX, poleTop - 6);
+        ctx.lineTo(poleX - 3, poleTop + 1);
+        ctx.lineTo(poleX + 3, poleTop + 1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Pennant — a long, narrow triangle pointing into the field of play
+        // (left castle's pennant aims right, right castle's aims left).
+        const pennantLen = 34;
+        const pennantH = 22;
+        ctx.fillStyle = castle.heraldry;
+        ctx.beginPath();
+        ctx.moveTo(poleX, poleTop + 2);
+        ctx.lineTo(poleX + dir * pennantLen, poleTop + pennantH / 2);
+        ctx.lineTo(poleX, poleTop + pennantH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Heraldic stripe across the pennant
+        ctx.fillStyle = castle.heraldryDark;
+        ctx.beginPath();
+        ctx.moveTo(poleX + dir * 6, poleTop + 4);
+        ctx.lineTo(poleX + dir * 22, poleTop + pennantH / 2);
+        ctx.lineTo(poleX + dir * 6, poleTop + pennantH - 4);
+        ctx.closePath();
+        ctx.fill();
+
+        // Bright highlight along the leading edge so the pennant pops
+        ctx.strokeStyle = "rgba(255,255,255,0.55)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(poleX, poleTop + 2);
+        ctx.lineTo(poleX + dir * pennantLen, poleTop + pennantH / 2);
+        ctx.stroke();
+
+        // Tiny target reticle dot at the catapult center — same heraldry
+        // color but pulses brighter when the missile is in flight so the
+        // opponent's eye is drawn to it.
+        const reticleRadius = 3 + (projectile && currentPlayer !== (castle.side === "left" ? 0 : 1) ? 1.5 : 0);
+        ctx.save();
+        ctx.globalAlpha = 0.75 + 0.25 * pulse;
+        ctx.fillStyle = castle.heraldry;
+        ctx.beginPath();
+        ctx.arc(cat.x, cat.y, reticleRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(cat.x, cat.y, reticleRadius + 1, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
       }
 
       function drawCastleInteriors(castle) {
