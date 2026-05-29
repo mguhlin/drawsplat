@@ -811,21 +811,26 @@ if ("speechSynthesis" in window) {
 let lastSpeakAt = 0;
 function speak(text) {
   if (!state.soundOn || !("speechSynthesis" in window)) return;
-  // Throttle rather than cancel: rapid eats during a combo would
-  // otherwise speechSynthesis.cancel() the previous utterance before
-  // it gets a chance to actually say anything.
+  // Throttle so combo eats don't stomp each other.
   const now = performance.now();
   if (now - lastSpeakAt < 650) return;
   lastSpeakAt = now;
   try {
-    // Only cancel if a very stale utterance is somehow still in the queue.
-    if (speechSynthesis.pending && speechSynthesis.pending > 1) speechSynthesis.cancel();
+    // Chromium + Linux quirk: the speech engine silently jams after a
+    // few utterances. The canonical workaround is cancel + resume
+    // before every speak, and to schedule the new utterance after a
+    // micro-delay so the engine resets cleanly.
+    speechSynthesis.cancel();
+    speechSynthesis.resume();
     const u = new SpeechSynthesisUtterance(text);
     if (preferredVoice) u.voice = preferredVoice;
-    u.rate = 1.1;
+    u.rate = 1.05;
     u.pitch = 1.25;
     u.volume = 1.0;
-    speechSynthesis.speak(u);
+    u.onerror = (e) => console.warn("[gilasplat] speech error:", e.error);
+    setTimeout(() => {
+      try { speechSynthesis.speak(u); } catch (e) {}
+    }, 40);
   } catch (e) { /* ignore */ }
 }
 
