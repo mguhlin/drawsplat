@@ -619,15 +619,72 @@
         flightSound = null;
       }
 
+      // Filtered white-noise burst — gives explosions their crash texture.
+      // Lowpass cutoff sweeps down so it starts bright and rumbles into bass.
+      function playNoiseBurst({ duration = 0.45, gain = 0.18, cutoffStart = 2200, cutoffEnd = 180, q = 0.85, delay = 0 } = {}) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime + delay;
+        const sampleRate = audioCtx.sampleRate;
+        const buffer = audioCtx.createBuffer(1, Math.max(1, Math.floor(sampleRate * duration)), sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+        const src = audioCtx.createBufferSource();
+        src.buffer = buffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.Q.value = q;
+        filter.frequency.setValueAtTime(cutoffStart, now);
+        filter.frequency.exponentialRampToValueAtTime(Math.max(60, cutoffEnd), now + duration);
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0.0001, now);
+        env.gain.exponentialRampToValueAtTime(gain, now + 0.012);
+        env.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        src.connect(filter);
+        filter.connect(env);
+        env.connect(audioCtx.destination);
+        src.start(now);
+        src.stop(now + duration);
+      }
+
+      // Layered explosion: a deep sub-boom, a mid crack, a noise burst, plus
+      // the per-munition characteristic tone. The mix is tuned so impacts
+      // have body without clipping.
       function playImpactSound(type) {
-        const impacts = {
-          rock: [{ type: "square", start: 95, end: 28, duration: 0.36, gain: 0.11 }],
-          fireball: [{ type: "sawtooth", start: 420, end: 55, duration: 0.45, gain: 0.12 }],
-          oil: [{ type: "triangle", start: 260, end: 70, duration: 0.32, gain: 0.085 }],
-          tar: [{ type: "square", start: 170, end: 38, duration: 0.42, gain: 0.09 }],
-          bolt: [{ type: "sawtooth", start: 760, end: 110, duration: 0.18, gain: 0.08 }]
+        if (!audioCtx) return;
+        // Per-munition character voice — same shape as before but louder
+        // and a hair longer to mesh with the noise tail.
+        const voices = {
+          rock:     [{ type: "square",   start: 130, end: 32, duration: 0.48, gain: 0.16 }],
+          fireball: [{ type: "sawtooth", start: 520, end: 60, duration: 0.55, gain: 0.18 }],
+          oil:      [{ type: "triangle", start: 320, end: 75, duration: 0.40, gain: 0.12 }],
+          tar:      [{ type: "square",   start: 210, end: 42, duration: 0.52, gain: 0.13 }],
+          bolt:     [{ type: "sawtooth", start: 820, end: 120, duration: 0.22, gain: 0.10 }]
         };
-        impacts[type].forEach(playTone);
+        (voices[type] || voices.rock).forEach(playTone);
+
+        // Bolts are sharp piercing shots, not chest-thumping booms — give
+        // them only a light noise crack and skip the sub-boom layer.
+        if (type === "bolt") {
+          playNoiseBurst({ duration: 0.22, gain: 0.14, cutoffStart: 3800, cutoffEnd: 900, q: 0.6 });
+          return;
+        }
+
+        // Sub-boom: very low sine that snaps from ~70Hz down to ~28Hz.
+        // This is where the "explosive" body comes from.
+        const boomGain = type === "fireball" ? 0.30 : type === "tar" ? 0.26 : 0.22;
+        const boomEnd = type === "fireball" ? 24 : 30;
+        playTone({ type: "sine", start: 78, end: boomEnd, duration: 0.65, gain: boomGain });
+        // Mid crack: a punchy short square hit, almost instantaneous.
+        playTone({ type: "square", start: 280, end: 70, duration: 0.09, gain: 0.13 });
+        // White-noise crash: starts bright (debris/shrapnel) and sweeps into
+        // bass (rumble tail). Fireball and tar get longer tails.
+        const noiseSpec = {
+          rock:     { duration: 0.55, gain: 0.20, cutoffStart: 2600, cutoffEnd: 200 },
+          fireball: { duration: 0.70, gain: 0.24, cutoffStart: 3200, cutoffEnd: 160 },
+          oil:      { duration: 0.50, gain: 0.18, cutoffStart: 2400, cutoffEnd: 220 },
+          tar:      { duration: 0.65, gain: 0.22, cutoffStart: 2200, cutoffEnd: 180 }
+        };
+        playNoiseBurst({ ...(noiseSpec[type] || noiseSpec.rock), q: 0.9 });
       }
 
       function makeTerrain() {
@@ -968,11 +1025,14 @@
         updateHud();
       }
 
-      function endTurn(resultText) {
+      function endTurn(resultText, duration) {
         stopFlightSound();
         projectile = null;
         message = resultText || "";
-        messageUntil = performance.now() + 1200;
+        // Default message linger bumped from 1200ms -> 2200ms so short
+        // outcome lines ("X hits the wall") are easier to read. Caller can
+        // pass a longer duration for chatty results (soldier laments).
+        messageUntil = performance.now() + (duration || 2200);
         updateHud();
 
         const enemy = castles[1 - currentPlayer];
@@ -1146,6 +1206,9 @@
         const enemy = castles[1 - currentPlayer];
         const friendly = castles[currentPlayer];
         let text = t('msg.lands', { label: munitionLabel(type) });
+        // Soldier laments are full sentences and the joke needs reading time;
+        // bump their on-screen duration past the default short-message linger.
+        let duration;
 
         if (catapultContains(enemy, x, y)) {
           destroyCatapult(enemy);
@@ -1160,11 +1223,12 @@
           if (friendlyHits > 0 && enemyHits === 0) text = t('msg.hitSelf', { label });
           if (soldierHits > 0 && enemyHits === 0 && friendlyHits === 0) {
             text = t('msg.soldierQuoted', { quote: randomFrom(soldierLaments()) });
+            duration = 4200;
           }
           if (enemyHits === 0 && friendlyHits === 0) blastTerrain(x, y, munition);
         }
 
-        endTurn(text);
+        endTurn(text, duration);
       }
 
       function update(dt) {
