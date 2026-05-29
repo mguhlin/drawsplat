@@ -1247,10 +1247,54 @@ function smashDeadEnds(minExits) {
 }
 
 function removeDeadEnds() {
-  // Two-stage: first kill genuine dead-ends, then add shortcut loops so
-  // the player can almost always cut across rather than retrace.
+  // First kill true 1-exit dead-ends so no cell traps the player.
   smashDeadEnds(2);
-  smashDeadEnds(3);
+  // Then a *light* shortcut pass: turn ~25% of corridor cells into
+  // small loops so the player rarely retraces a long corridor, while
+  // keeping the maze structure visible.
+  addShortcutLoops(0.25);
+}
+
+function addShortcutLoops(rate) {
+  if (!state.walls) return;
+  const DIRS = [
+    { x: 0, y: -1, key: ["top",  (x, y) => [y,     x]] },
+    { x: 0, y: 1,  key: ["top",  (x, y) => [y + 1, x]] },
+    { x: -1, y: 0, key: ["left", (x, y) => [y,     x]] },
+    { x: 1, y: 0,  key: ["left", (x, y) => [y,     x + 1]] },
+  ];
+  function isOpen(x, y, d) {
+    const nx = x + d.x, ny = y + d.y;
+    if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) return false;
+    const [side, idx] = d.key;
+    const [r, c] = idx(x, y);
+    return !state.walls[side][r][c];
+  }
+  function openEdge(x, y, d) {
+    const [side, idx] = d.key;
+    const [r, c] = idx(x, y);
+    state.walls[side][r][c] = 0;
+    state.brokenEdges.push({ type: side, x: c, y: r });
+  }
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      // Skip corner cells (only 2 in-bound neighbours — already maxed at 2)
+      const inbounds = DIRS.filter(d => {
+        const nx = c + d.x, ny = r + d.y;
+        return nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS;
+      });
+      if (inbounds.length < 3) continue;
+      const open = inbounds.filter(d => isOpen(c, r, d));
+      // Only break walls when the cell currently sits at exactly 2 exits —
+      // those are the corridor-feeling ones where a shortcut helps most.
+      if (open.length !== 2) continue;
+      if (Math.random() > rate) continue;
+      const candidates = inbounds.filter(d => !isOpen(c, r, d));
+      if (!candidates.length) continue;
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      openEdge(c, r, pick);
+    }
+  }
 }
 
 function bestSpawnCell() {
