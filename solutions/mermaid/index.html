@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mermaid Diagram Studio — DrawSplatTM</title>
+  <title data-i18n="doc.title">Mermaid Diagram Studio — DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #eef2ff); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    header .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <meta name="description" content="Standalone Mermaid diagram editor with live preview, templates for flowcharts, sequence, mind maps, pie, Gantt, timeline, class, and state. Download as SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M6 8h4l3 6 3-6h4v16h-4v-9l-2 4h-2l-2-4v9H6z'/%3E%3C/svg%3E">
   <script src="../../vendor/mermaid.min.js" defer onerror="window.__mermaidMissing=true"></script>
@@ -278,69 +284,72 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html">DrawSplat<sup>TM</sup> Tools</a></p>
-        <h1>Mermaid Diagram Studio</h1>
-        <p class="subtitle">Type or paste Mermaid syntax on the left, preview on the right. Use templates for flowcharts, sequence diagrams, mind maps, pie charts, Gantt charts, timelines, class diagrams, and state diagrams. Download as SVG or PNG, or copy to clipboard.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Mermaid Diagram Studio</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Type or paste Mermaid syntax on the left, preview on the right. Use templates for flowcharts, sequence diagrams, mind maps, pie charts, Gantt charts, timelines, class diagrams, and state diagrams. Download as SVG or PNG, or copy to clipboard.</p>
       </div>
       <div class="header-actions">
-        <a class="secondary-link" href="../../pages/features.html">All Tools</a>
-        <a class="home-link" href="../../index.html">Home</a>
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
       </div>
     </header>
 
     <main class="app-grid">
-      <aside class="panel" aria-label="Templates and options">
-        <h2>Templates</h2>
+      <aside class="panel" data-i18n-aria-label="panel.templates.aria" aria-label="Templates and options">
+        <h2 data-i18n="templates.h2">Templates</h2>
         <div class="template-grid" id="templateGrid">
-          <button type="button" data-mtpl="flowchart">Flowchart</button>
-          <button type="button" data-mtpl="pie">Pie Chart</button>
-          <button type="button" data-mtpl="sequence">Sequence</button>
-          <button type="button" data-mtpl="mindmap">Mind Map</button>
-          <button type="button" data-mtpl="gantt">Gantt</button>
-          <button type="button" data-mtpl="timeline">Timeline</button>
-          <button type="button" data-mtpl="class">Class</button>
-          <button type="button" data-mtpl="state">State</button>
+          <button type="button" data-mtpl="flowchart" data-i18n="tpl.flowchart">Flowchart</button>
+          <button type="button" data-mtpl="pie" data-i18n="tpl.pie">Pie Chart</button>
+          <button type="button" data-mtpl="sequence" data-i18n="tpl.sequence">Sequence</button>
+          <button type="button" data-mtpl="mindmap" data-i18n="tpl.mindmap">Mind Map</button>
+          <button type="button" data-mtpl="gantt" data-i18n="tpl.gantt">Gantt</button>
+          <button type="button" data-mtpl="timeline" data-i18n="tpl.timeline">Timeline</button>
+          <button type="button" data-mtpl="class" data-i18n="tpl.class">Class</button>
+          <button type="button" data-mtpl="state" data-i18n="tpl.state">State</button>
         </div>
 
-        <h3>Template language</h3>
+        <h3 data-i18n="templates.h3lang">Template language</h3>
         <div class="field">
-          <label for="langSelect">Language</label>
+          <label for="langSelect" data-i18n="field.lang">Language</label>
           <select id="langSelect">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="vi">Vietnamese</option>
-            <option value="ar">Arabic</option>
-            <option value="zh">Chinese</option>
-            <option value="uh">Urdu / Hindi</option>
+            <option value="en" data-i18n="langOpt.en">English</option>
+            <option value="es" data-i18n="langOpt.es">Spanish</option>
+            <option value="vi" data-i18n="langOpt.vi">Vietnamese</option>
+            <option value="ar" data-i18n="langOpt.ar">Arabic</option>
+            <option value="zh" data-i18n="langOpt.zh">Chinese</option>
+            <option value="uh" data-i18n="langOpt.uh">Urdu / Hindi</option>
           </select>
         </div>
 
-        <h3>About</h3>
-        <p class="footer-note">Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
+        <h3 data-i18n="about.h3">About</h3>
+        <p class="footer-note" data-i18n-html="about.html">Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
       </aside>
 
-      <section class="stage" aria-label="Mermaid editor">
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Mermaid editor">
         <div class="stage-head">
-          <h2>Editor &amp; Preview</h2>
+          <h2 data-i18n="stage.h2">Editor &amp; Preview</h2>
         </div>
         <div class="editor-grid">
-          <textarea id="mermaidSource" spellcheck="false" aria-label="Mermaid source"></textarea>
-          <div id="mermaidPreview" class="mermaid-preview" aria-live="polite" aria-label="Diagram preview"></div>
+          <textarea id="mermaidSource" spellcheck="false" data-i18n-aria-label="editor.aria" aria-label="Mermaid source"></textarea>
+          <div id="mermaidPreview" class="mermaid-preview" aria-live="polite" data-i18n-aria-label="preview.aria" aria-label="Diagram preview"></div>
         </div>
         <div class="actions">
-          <button class="button primary" id="renderBtn" type="button">Render Now</button>
-          <button class="button" id="downloadSvgBtn" type="button">Download SVG</button>
-          <button class="button" id="downloadPngBtn" type="button">Download PNG</button>
-          <button class="button" id="copyPngBtn" type="button">Copy PNG</button>
-          <button class="button gold" id="clearBtn" type="button">Clear</button>
+          <button class="button primary" id="renderBtn" type="button" data-i18n="button.render">Render Now</button>
+          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.dlSvg">Download SVG</button>
+          <button class="button" id="downloadPngBtn" type="button" data-i18n="button.dlPng">Download PNG</button>
+          <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+          <button class="button gold" id="clearBtn" type="button" data-i18n="button.clear">Clear</button>
         </div>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
   </div>
 
+<script src="./locales.js"></script>
 <script>
 (function(){
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   const $ = id => document.getElementById(id);
   const sourceEl = $('mermaidSource');
   const previewEl = $('mermaidPreview');
@@ -453,17 +462,17 @@
     return await tightenSvgString(applyPalette(svg, source), 14);
   }
   function showLibError(){
-    previewEl.innerHTML = '<div class="mermaid-error">Mermaid library failed to load. Make sure <code>vendor/mermaid.min.js</code> is present and reload the page.</div>';
+    previewEl.innerHTML = '<div class="mermaid-error">' + t('preview.libError') + '</div>';
   }
   async function renderPreview(){
     const source = sourceEl.value;
     if(window.__mermaidMissing) return showLibError();
     if(!source.trim()) {
-      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Type Mermaid syntax on the left to preview here.</div>';
+      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.empty') + '</div>';
       return;
     }
     if(!ensureInit()) {
-      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Loading Mermaid...</div>';
+      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.loading') + '</div>';
       setTimeout(renderPreview, 200);
       return;
     }
@@ -529,68 +538,68 @@
   document.querySelectorAll('[data-mtpl]').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.mtpl;
-      const t = tpl(key);
-      if(!t) return;
-      sourceEl.value = t;
+      const text = tpl(key);
+      if(!text) return;
+      sourceEl.value = text;
       renderPreview();
-      setStatus('Loaded ' + key + ' template.', 'info');
+      setStatus(t('status.loaded', { name: t('tpl.' + key) }), 'info');
     });
   });
 
   sourceEl.addEventListener('input', schedulePreview);
   langSel.addEventListener('change', () => {
-    setStatus('Template language updated. Click a template to load it in this language.', 'info');
+    setStatus(t('status.langUpdate'), 'info');
   });
 
-  $('renderBtn').addEventListener('click', () => { renderPreview(); setStatus('Re-rendered.', 'success'); });
+  $('renderBtn').addEventListener('click', () => { renderPreview(); setStatus(t('status.rerendered'), 'success'); });
   $('clearBtn').addEventListener('click', () => {
     sourceEl.value = '';
-    previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">Type Mermaid syntax on the left to preview here.</div>';
-    setStatus('Editor cleared.', 'info');
+    previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.empty') + '</div>';
+    setStatus(t('status.editorCleared'), 'info');
   });
 
   $('downloadSvgBtn').addEventListener('click', async () => {
     const source = sourceEl.value.trim();
-    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
-    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    if(!source) return setStatus(t('status.addFirst'), 'danger');
+    if(window.__mermaidMissing) return setStatus(t('status.libMissing'), 'danger');
     try {
       const svg = await renderColoredSvg(source);
       downloadBlob(svgToBlob(svg), defaultBaseName() + '.svg');
-      setStatus('Downloaded SVG.', 'success');
+      setStatus(t('status.svgDl'), 'success');
     } catch(err) {
-      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+      setStatus(t('status.renderFailed', { err: err && err.message ? err.message : String(err) }), 'danger');
     }
   });
 
   $('downloadPngBtn').addEventListener('click', async () => {
     const source = sourceEl.value.trim();
-    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
-    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    if(!source) return setStatus(t('status.addFirst'), 'danger');
+    if(window.__mermaidMissing) return setStatus(t('status.libMissing'), 'danger');
     try {
       const svg = await renderColoredSvg(source);
       const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
       const blob = await svgUrlToPngBlob(dataUrl);
       downloadBlob(blob, defaultBaseName() + '.png');
-      setStatus('Downloaded PNG.', 'success');
+      setStatus(t('status.pngDl'), 'success');
     } catch(err) {
-      setStatus('Render failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+      setStatus(t('status.renderFailed', { err: err && err.message ? err.message : String(err) }), 'danger');
     }
   });
 
   $('copyPngBtn').addEventListener('click', async () => {
     const source = sourceEl.value.trim();
-    if(!source) return setStatus('Add Mermaid syntax first.', 'danger');
-    if(window.__mermaidMissing) return setStatus('Mermaid library is missing.', 'danger');
+    if(!source) return setStatus(t('status.addFirst'), 'danger');
+    if(window.__mermaidMissing) return setStatus(t('status.libMissing'), 'danger');
     if(!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined')
-      return setStatus('Clipboard not supported in this browser. Use Download PNG instead.', 'danger');
+      return setStatus(t('status.clipboardUnsupported'), 'danger');
     try {
       const svg = await renderColoredSvg(source);
       const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
       const blob = await svgUrlToPngBlob(dataUrl);
       await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-      setStatus('Diagram copied to clipboard as PNG.', 'success');
+      setStatus(t('status.copied'), 'success');
     } catch(err) {
-      setStatus('Copy failed: ' + (err && err.message ? err.message : String(err)), 'danger');
+      setStatus(t('status.copyFailed', { err: err && err.message ? err.message : String(err) }), 'danger');
     }
   });
 
@@ -604,6 +613,19 @@
     setTimeout(() => waitAndRender(tries + 1), 100);
   }
   waitAndRender();
+
+  function bootI18nDependentUI() {
+    // The preview empty/loading placeholders aren't carrying data-i18n
+    // attributes (they're JS-injected and recreated on render). Repaint
+    // the empty placeholder if that's what's currently showing.
+    if (previewEl.querySelector('.mermaid-error') == null && sourceEl.value.trim() === '') {
+      previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.empty') + '</div>';
+    }
+    // Status line: leave any in-flight status alone — user can do another
+    // action to refresh it. Re-running render is intentional only on the
+    // render button.
+  }
+  window.addEventListener('widget-i18n:changed', bootI18nDependentUI);
 })();
 </script>
 </body>
