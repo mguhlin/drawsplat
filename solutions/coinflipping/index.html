@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Classroom Coin Flipper</title>
+  <title data-i18n="doc.title">Classroom Coin Flipper</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -813,196 +818,197 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Classroom Coin Flipper</h1>
-        <p class="subtitle">Flip one coin, flip many coins, track probability, customize both sides, and save classroom-ready setups.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Classroom Coin Flipper</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Flip one coin, flip many coins, track probability, customize both sides, and save classroom-ready setups.</p>
       </div>
       <div class="header-actions">
         <label class="toggle-control" for="simpleModeToggle">
-          <input id="simpleModeToggle" type="checkbox" role="switch" aria-label="Simple mode" checked />
+          <input id="simpleModeToggle" type="checkbox" role="switch" data-i18n-aria-label="header.simpleModeAria" aria-label="Simple mode" checked />
           <span class="toggle-switch" aria-hidden="true"></span>
-          <span>Simple Mode</span>
+          <span data-i18n="header.simpleMode">Simple Mode</span>
         </label>
-        <a class="home-link" href="../../app/whiteboard.html">Tool Menu</a>
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../app/whiteboard.html" data-i18n="header.home">Tool Menu</a>
       </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel left-panel" aria-label="Coin settings">
-        <h2>Setup</h2>
+      <section class="panel left-panel" data-i18n-aria-label="panel.setup.aria" aria-label="Coin settings">
+        <h2 data-i18n="setup.h2">Setup</h2>
 
         <div class="field">
-          <label for="modeSelect">Activity Mode</label>
+          <label for="modeSelect" data-i18n="setup.activityMode">Activity Mode</label>
           <select id="modeSelect">
-            <option value="standard">Standard Coin Flip</option>
-            <option value="decision">Fast Decision Maker</option>
-            <option value="intuition">Test Your Intuition</option>
-            <option value="luck">Test Your Luck</option>
-            <option value="best">Best 2 out of 3</option>
-            <option value="team">Team Chooser</option>
-            <option value="tie">Tie Breaker</option>
-            <option value="yesno">Yes/No Decision</option>
+            <option value="standard" data-i18n="mode.standard.title">Standard Coin Flip</option>
+            <option value="decision" data-i18n="mode.decision.title">Fast Decision Maker</option>
+            <option value="intuition" data-i18n="mode.intuition.title">Test Your Intuition</option>
+            <option value="luck" data-i18n="mode.luck.title">Test Your Luck</option>
+            <option value="best" data-i18n="mode.best.title">Best 2 out of 3</option>
+            <option value="team" data-i18n="mode.team.title">Team Chooser</option>
+            <option value="tie" data-i18n="mode.tie.title">Tie Breaker</option>
+            <option value="yesno" data-i18n="mode.yesno.title">Yes/No Decision</option>
           </select>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="headsLabel">Side A Label</label>
+            <label for="headsLabel" data-i18n="field.sideALabel">Side A Label</label>
             <input id="headsLabel" type="text" value="Heads" maxlength="24" />
           </div>
           <div class="field">
-            <label for="tailsLabel">Side B Label</label>
+            <label for="tailsLabel" data-i18n="field.sideBLabel">Side B Label</label>
             <input id="tailsLabel" type="text" value="Tails" maxlength="24" />
           </div>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="coinCount">Coins per Flip</label>
+            <label for="coinCount" data-i18n="field.coinCount">Coins per Flip</label>
             <input id="coinCount" type="number" min="1" max="20" value="1" />
           </div>
           <div class="field">
-            <label for="runCount">Number of Flips</label>
+            <label for="runCount" data-i18n="field.runCount">Number of Flips</label>
             <input id="runCount" type="number" min="1" max="200" value="1" />
           </div>
         </div>
 
         <div class="field">
-          <label for="themeSelect">Preset Theme</label>
+          <label for="themeSelect" data-i18n="field.theme">Preset Theme</label>
           <select id="themeSelect">
-            <option value="drawsplat">DrawSplat<sup class="tm">TM</sup> Purple</option>
-            <option value="redblue">Red / Blue</option>
-            <option value="orangegreen">Orange / Green</option>
-            <option value="yellownavy">Yellow / Navy</option>
-            <option value="gray">Classic Gray</option>
-            <option value="contrast">High Contrast</option>
+            <option value="drawsplat" data-i18n-html="theme.drawsplat">DrawSplat<sup class="tm">TM</sup> Purple</option>
+            <option value="redblue" data-i18n="theme.redblue">Red / Blue</option>
+            <option value="orangegreen" data-i18n="theme.orangegreen">Orange / Green</option>
+            <option value="yellownavy" data-i18n="theme.yellownavy">Yellow / Navy</option>
+            <option value="gray" data-i18n="theme.gray">Classic Gray</option>
+            <option value="contrast" data-i18n="theme.contrast">High Contrast</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="coinStyle">Coin Style</label>
+          <label for="coinStyle" data-i18n="field.coinStyle">Coin Style</label>
           <select id="coinStyle">
-            <option value="classic">Classic Coin</option>
-            <option value="ringed">Ringed Coin</option>
-            <option value="flat">Flat Token</option>
-            <option value="token">Square Token</option>
-            <option value="seal">Classroom Seal</option>
+            <option value="classic" data-i18n="style.classic">Classic Coin</option>
+            <option value="ringed" data-i18n="style.ringed">Ringed Coin</option>
+            <option value="flat" data-i18n="style.flat">Flat Token</option>
+            <option value="token" data-i18n="style.token">Square Token</option>
+            <option value="seal" data-i18n="style.seal">Classroom Seal</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="coinPicturePreset">Coin Picture Preset</label>
+          <label for="coinPicturePreset" data-i18n="field.preset">Coin Picture Preset</label>
           <select id="coinPicturePreset">
-            <option value="">Use custom images or colors</option>
-            <option value="heads-tails">Heads / Tails</option>
-            <option value="canadian-loonie">Canadian Loonie</option>
-            <option value="uk-pound">UK Coin</option>
-            <option value="dutch-euro">Dutch Coin</option>
-            <option value="mexican-peso">Mexican Coin</option>
+            <option value="" data-i18n="preset.none">Use custom images or colors</option>
+            <option value="heads-tails" data-i18n="preset.headsTails">Heads / Tails</option>
+            <option value="canadian-loonie" data-i18n="preset.canadianLoonie">Canadian Loonie</option>
+            <option value="uk-pound" data-i18n="preset.ukPound">UK Coin</option>
+            <option value="dutch-euro" data-i18n="preset.dutchEuro">Dutch Coin</option>
+            <option value="mexican-peso" data-i18n="preset.mexicanPeso">Mexican Coin</option>
           </select>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="headsColor">Side A Color</label>
+            <label for="headsColor" data-i18n="field.sideAColor">Side A Color</label>
             <input id="headsColor" type="color" value="#a855f7" />
           </div>
           <div class="field">
-            <label for="tailsColor">Side B Color</label>
+            <label for="tailsColor" data-i18n="field.sideBColor">Side B Color</label>
             <input id="tailsColor" type="color" value="#7c3aed" />
           </div>
         </div>
 
         <div class="field">
-          <label for="backgroundColor">Background Color</label>
+          <label for="backgroundColor" data-i18n="field.background">Background Color</label>
           <input id="backgroundColor" type="color" value="#FFFFFF" />
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="headsImage">Heads / Side A Image</label>
+            <label for="headsImage" data-i18n="field.headsImage">Heads / Side A Image</label>
             <input id="headsImage" type="file" accept="image/*" />
           </div>
           <div class="field">
-            <label for="tailsImage">Tails / Side B Image</label>
+            <label for="tailsImage" data-i18n="field.tailsImage">Tails / Side B Image</label>
             <input id="tailsImage" type="file" accept="image/*" />
           </div>
         </div>
-        <div class="image-previews" aria-label="Loaded coin images">
+        <div class="image-previews" data-i18n-aria-label="panel.images.aria" aria-label="Loaded coin images">
           <div class="image-preview" id="headsPreview">
-            <img alt="Heads image preview" id="headsPreviewImg" />
-            <span>Heads image</span>
+            <img data-i18n-alt="image.headsAlt" alt="Heads image preview" id="headsPreviewImg" />
+            <span data-i18n="image.headsLabel">Heads image</span>
           </div>
           <div class="image-preview" id="tailsPreview">
-            <img alt="Tails image preview" id="tailsPreviewImg" />
-            <span>Tails image</span>
+            <img data-i18n-alt="image.tailsAlt" alt="Tails image preview" id="tailsPreviewImg" />
+            <span data-i18n="image.tailsLabel">Tails image</span>
           </div>
         </div>
-        <p class="small-note">Images stay in this browser. Use save setup if you want to reuse them later.</p>
+        <p class="small-note" data-i18n="image.note">Images stay in this browser. Use save setup if you want to reuse them later.</p>
 
         <div class="switch-row">
-          <label for="soundToggle">Flip Sound</label>
+          <label for="soundToggle" data-i18n="switch.sound">Flip Sound</label>
           <input id="soundToggle" type="checkbox" checked />
         </div>
 
         <div class="switch-row">
-          <label for="fullscreenToggle">Full Screen on Flip</label>
+          <label for="fullscreenToggle" data-i18n="switch.fullscreen">Full Screen on Flip</label>
           <input id="fullscreenToggle" type="checkbox" />
         </div>
 
         <div class="actions">
-          <button class="button primary" id="flipBtn" type="button">Flip</button>
-          <button class="button" id="resetStatsBtn" type="button">Reset Stats</button>
-          <button class="button" id="clearImagesBtn" type="button">Clear Images</button>
-          <button class="button gold" id="saveSetupBtn" type="button">Save Setup</button>
+          <button class="button primary" id="flipBtn" type="button" data-i18n="button.flip">Flip</button>
+          <button class="button" id="resetStatsBtn" type="button" data-i18n="button.resetStats">Reset Stats</button>
+          <button class="button" id="clearImagesBtn" type="button" data-i18n="button.clearImages">Clear Images</button>
+          <button class="button gold" id="saveSetupBtn" type="button" data-i18n="button.saveSetup">Save Setup</button>
         </div>
       </section>
 
-      <section class="stage" aria-label="Coin flipper">
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Coin flipper">
         <div class="mode-line">
-          <span class="mode-pill" id="modePill">Standard Coin Flip</span>
-          <span id="modeHint">Click the coin or press Flip.</span>
+          <span class="mode-pill" id="modePill" data-i18n="mode.standard.title">Standard Coin Flip</span>
+          <span id="modeHint" data-i18n="mode.standard.hint">Click the coin or press Flip.</span>
         </div>
 
         <div class="coin-area">
           <div class="coin-grid single" id="coinGrid" aria-live="polite"></div>
         </div>
 
-        <div class="result" id="resultText">Ready to Flip</div>
-        <p class="sub-result" id="subResult">Choose your setup, then flip the coin.</p>
+        <div class="result" id="resultText" data-i18n="stage.readyToFlip">Ready to Flip</div>
+        <p class="sub-result" id="subResult" data-i18n="stage.subDefault">Choose your setup, then flip the coin.</p>
 
         <div class="guess-box" id="guessBox">
-          <button class="button guess-button" id="guessHeadsBtn" type="button">Guess Heads</button>
-          <button class="button guess-button" id="guessTailsBtn" type="button">Guess Tails</button>
+          <button class="button guess-button" id="guessHeadsBtn" type="button" data-i18n="guess.heads">Guess Heads</button>
+          <button class="button guess-button" id="guessTailsBtn" type="button" data-i18n="guess.tails">Guess Tails</button>
         </div>
 
         <div class="stage-actions">
-          <button class="button primary" id="flipAgainBtn" type="button">Flip Again</button>
-          <button class="button" id="fullscreenBtn" type="button">Full Screen</button>
-          <button class="button advanced-action" id="copyResultBtn" type="button">Copy Result</button>
-          <button class="button advanced-action" id="shareResultBtn" type="button">Share Result</button>
-          <button class="button advanced-action" id="shareSetupBtn" type="button">Share Setup</button>
-          <button class="button advanced-action" id="printBtn" type="button">Print</button>
+          <button class="button primary" id="flipAgainBtn" type="button" data-i18n="button.flipAgain">Flip Again</button>
+          <button class="button" id="fullscreenBtn" type="button" data-i18n="button.fullscreen">Full Screen</button>
+          <button class="button advanced-action" id="copyResultBtn" type="button" data-i18n="button.copyResult">Copy Result</button>
+          <button class="button advanced-action" id="shareResultBtn" type="button" data-i18n="button.shareResult">Share Result</button>
+          <button class="button advanced-action" id="shareSetupBtn" type="button" data-i18n="button.shareSetup">Share Setup</button>
+          <button class="button advanced-action" id="printBtn" type="button" data-i18n="button.print">Print</button>
         </div>
       </section>
 
-      <aside class="panel stats-panel" aria-label="Results and saved setups">
-        <h2>Stats</h2>
+      <aside class="panel stats-panel" data-i18n-aria-label="panel.stats.aria" aria-label="Results and saved setups">
+        <h2 data-i18n="stats.h2">Stats</h2>
         <div class="stats-grid">
           <div class="stat">
-            <span>Total Flips</span>
+            <span data-i18n="stats.totalFlips">Total Flips</span>
             <strong id="totalStat">0</strong>
           </div>
           <div class="stat">
-            <span id="headsStatLabel">Side A</span>
+            <span id="headsStatLabel" data-i18n="stats.sideADefault">Side A</span>
             <strong id="headsStat">0</strong>
           </div>
           <div class="stat">
-            <span id="tailsStatLabel">Side B</span>
+            <span id="tailsStatLabel" data-i18n="stats.sideBDefault">Side B</span>
             <strong id="tailsStat">0</strong>
           </div>
           <div class="stat">
-            <span id="extraLabel">History</span>
+            <span id="extraLabel" data-i18n="stats.history">History</span>
             <strong id="extraStat">0</strong>
           </div>
         </div>
@@ -1015,22 +1021,25 @@
           </div>
         </div>
 
-        <h2>History</h2>
+        <h2 data-i18n="history.h2">History</h2>
         <div class="history" id="historyList">
-          <div class="history-item">No flips yet.</div>
+          <div class="history-item" data-i18n="history.empty">No flips yet.</div>
         </div>
 
-        <h2 style="margin-top:18px;">Saved Setups</h2>
+        <h2 style="margin-top:18px;" data-i18n="saved.h2">Saved Setups</h2>
         <div class="field">
-          <label for="setupName">Setup Name</label>
-          <input id="setupName" type="text" placeholder="Example: Yes or No" maxlength="40" />
+          <label for="setupName" data-i18n="saved.nameLabel">Setup Name</label>
+          <input id="setupName" type="text" data-i18n-placeholder="saved.namePh" placeholder="Example: Yes or No" maxlength="40" />
         </div>
         <div class="saved-list" id="savedSetups"></div>
       </aside>
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
+
     const themes = {
       drawsplat: { a: "#a855f7", b: "#7c3aed", bg: "#FFFFFF", textA: "#FFFFFF", textB: "#FFFFFF" },
       redblue: { a: "#ef4444", b: "#6d28d9", bg: "#FFFFFF", textA: "#FFFFFF", textB: "#FFFFFF" },
@@ -1040,22 +1049,28 @@
       contrast: { a: "#000000", b: "#FFFFFF", bg: "#E6E7E8", textA: "#FFFFFF", textB: "#000000" }
     };
 
-    const modeDefaults = {
-      standard: { title: "Standard Coin Flip", hint: "Click the coin or press Flip.", a: "Heads", b: "Tails" },
-      decision: { title: "Fast Decision Maker", hint: "Use custom labels for a quick choice.", a: "Option A", b: "Option B" },
-      intuition: { title: "Test Your Intuition", hint: "Pick your guess before each flip.", a: "Heads", b: "Tails" },
-      luck: { title: "Test Your Luck", hint: "Try to build the longest same-side streak.", a: "Heads", b: "Tails" },
-      best: { title: "Best 2 out of 3", hint: "One click runs three flips and declares a winner.", a: "Heads", b: "Tails" },
-      team: { title: "Team Chooser", hint: "Let the coin choose which team goes first.", a: "Team A", b: "Team B" },
-      tie: { title: "Tie Breaker", hint: "A quick fair choice for a close call.", a: "Choice A", b: "Choice B" },
-      yesno: { title: "Yes/No Decision", hint: "A simple yes or no result.", a: "Yes", b: "No" }
+    // Mode catalog. titleKey/hintKey/aKey/bKey resolve through t() at render time,
+    // so language switches re-translate everything without a page reload.
+    const modeCatalog = {
+      standard:  { titleKey: "mode.standard.title",  hintKey: "mode.standard.hint",  aKey: "mode.standard.a",  bKey: "mode.standard.b"  },
+      decision:  { titleKey: "mode.decision.title",  hintKey: "mode.decision.hint",  aKey: "mode.decision.a",  bKey: "mode.decision.b"  },
+      intuition: { titleKey: "mode.intuition.title", hintKey: "mode.intuition.hint", aKey: "mode.intuition.a", bKey: "mode.intuition.b" },
+      luck:      { titleKey: "mode.luck.title",      hintKey: "mode.luck.hint",      aKey: "mode.luck.a",      bKey: "mode.luck.b"      },
+      best:      { titleKey: "mode.best.title",      hintKey: "mode.best.hint",      aKey: "mode.best.a",      bKey: "mode.best.b"      },
+      team:      { titleKey: "mode.team.title",      hintKey: "mode.team.hint",      aKey: "mode.team.a",      bKey: "mode.team.b"      },
+      tie:       { titleKey: "mode.tie.title",       hintKey: "mode.tie.hint",       aKey: "mode.tie.a",       bKey: "mode.tie.b"       },
+      yesno:     { titleKey: "mode.yesno.title",     hintKey: "mode.yesno.hint",     aKey: "mode.yesno.a",     bKey: "mode.yesno.b"     }
     };
+    function modeDefault(name) {
+      const m = modeCatalog[name] || modeCatalog.standard;
+      return { title: t(m.titleKey), hint: t(m.hintKey), a: t(m.aKey), b: t(m.bKey) };
+    }
 
     const coinPicturePresets = {
       "heads-tails": {
-        name: "Heads / Tails",
-        a: "Heads",
-        b: "Tails",
+        nameKey: "preset.headsTails",
+        aKey: "preset.headsTails.a",
+        bKey: "preset.headsTails.b",
         theme: "drawsplat",
         style: "classic",
         headsColor: "#a855f7",
@@ -1066,9 +1081,9 @@
         }
       },
       "canadian-loonie": {
-        name: "Canadian Loonie",
-        a: "Loon",
-        b: "Maple",
+        nameKey: "preset.canadianLoonie",
+        aKey: "preset.loonie.a",
+        bKey: "preset.loonie.b",
         theme: "drawsplat",
         style: "classic",
         headsColor: "#D9A441",
@@ -1079,9 +1094,9 @@
         }
       },
       "uk-pound": {
-        name: "UK Coin",
-        a: "Crown",
-        b: "Pound",
+        nameKey: "preset.ukPound",
+        aKey: "preset.ukPound.a",
+        bKey: "preset.ukPound.b",
         theme: "gray",
         style: "ringed",
         headsColor: "#D7D9DA",
@@ -1092,9 +1107,9 @@
         }
       },
       "dutch-euro": {
-        name: "Dutch Coin",
-        a: "Lion",
-        b: "Euro",
+        nameKey: "preset.dutchEuro",
+        aKey: "preset.dutch.a",
+        bKey: "preset.dutch.b",
         theme: "orangegreen",
         style: "ringed",
         headsColor: "#f97316",
@@ -1105,9 +1120,9 @@
         }
       },
       "mexican-peso": {
-        name: "Mexican Coin",
-        a: "Eagle",
-        b: "Peso",
+        nameKey: "preset.mexicanPeso",
+        aKey: "preset.mexican.a",
+        bKey: "preset.mexican.b",
         theme: "contrast",
         style: "ringed",
         headsColor: "#C7C9CC",
@@ -1187,7 +1202,7 @@
       lastSide: "",
       headsImageData: "",
       tailsImageData: "",
-      lastResult: "No result yet."
+      lastResult: ""   // filled in at boot via t("result.noResult")
     };
 
     function clampNumber(value, min, max) {
@@ -1198,8 +1213,8 @@
 
     function labels() {
       return {
-        a: els.headsLabel.value.trim() || "Side A",
-        b: els.tailsLabel.value.trim() || "Side B"
+        a: els.headsLabel.value.trim() || t("stats.sideADefault"),
+        b: els.tailsLabel.value.trim() || t("stats.sideBDefault")
       };
     }
 
@@ -1285,8 +1300,8 @@
     function applyCoinPicturePreset(name) {
       const preset = coinPicturePresets[name];
       if (!preset) return;
-      els.headsLabel.value = preset.a;
-      els.tailsLabel.value = preset.b;
+      els.headsLabel.value = t(preset.aKey);
+      els.tailsLabel.value = t(preset.bKey);
       els.themeSelect.value = preset.theme;
       els.coinStyle.value = preset.style;
       els.headsColor.value = preset.headsColor;
@@ -1296,7 +1311,8 @@
       els.tailsImage.value = "";
       state.headsImageData = preset.images ? preset.images.a : coinPictureDataUri(preset.art.a);
       state.tailsImageData = preset.images ? preset.images.b : coinPictureDataUri(preset.art.b);
-      els.subResult.textContent = "Loaded " + preset.name + " pictures.";
+      els.subResult.removeAttribute("data-i18n");
+      els.subResult.textContent = t("preset.loaded", { name: t(preset.nameKey) });
       applyVisuals();
     }
 
@@ -1309,7 +1325,7 @@
         const button = document.createElement("button");
         button.className = "coin-button";
         button.type = "button";
-        button.setAttribute("aria-label", "Flip coin " + (index + 1));
+        button.setAttribute("aria-label", t("flip.coinAria", { n: index + 1 }));
         button.addEventListener("click", flip);
 
         const coin = document.createElement("span");
@@ -1410,45 +1426,56 @@
       const tailsPct = total ? 100 - headsPct : 0;
       const current = labels();
       els.totalStat.textContent = total;
+      els.headsStatLabel.removeAttribute("data-i18n");
       els.headsStatLabel.textContent = current.a;
       els.headsStat.textContent = state.heads;
+      els.tailsStatLabel.removeAttribute("data-i18n");
       els.tailsStatLabel.textContent = current.b;
       els.tailsStat.textContent = state.tails;
       els.headsBar.style.width = headsPct + "%";
-      els.headsPercent.textContent = current.a + " " + headsPct + "%";
-      els.tailsPercent.textContent = current.b + " " + tailsPct + "%";
+      els.headsPercent.textContent = t("percent.sideLabel", { name: current.a, pct: headsPct });
+      els.tailsPercent.textContent = t("percent.sideLabel", { name: current.b, pct: tailsPct });
 
       if (els.modeSelect.value === "intuition") {
-        els.extraLabel.textContent = "Guesses";
+        els.extraLabel.setAttribute("data-i18n", "stats.guesses");
+        els.extraLabel.textContent = t("stats.guesses");
         els.extraStat.textContent = state.correctGuesses + "/" + state.guessTotal;
       } else if (els.modeSelect.value === "luck") {
-        els.extraLabel.textContent = "Best Streak";
+        els.extraLabel.setAttribute("data-i18n", "stats.bestStreak");
+        els.extraLabel.textContent = t("stats.bestStreak");
         els.extraStat.textContent = state.bestStreak;
       } else {
-        els.extraLabel.textContent = "History";
+        els.extraLabel.setAttribute("data-i18n", "stats.history");
+        els.extraLabel.textContent = t("stats.history");
         els.extraStat.textContent = state.history.length;
       }
 
       if (!state.history.length) {
-        els.historyList.innerHTML = '<div class="history-item">No flips yet.</div>';
+        els.historyList.innerHTML = '<div class="history-item" data-i18n="history.empty">' + t("history.empty") + '</div>';
         return;
       }
 
-      els.historyList.innerHTML = state.history.map((item, index) => (
-        '<div class="history-item"><strong>#' + (state.history.length - index) + ' ' + item.summary + '</strong><span>' + item.results + '</span><span>' + item.time + '</span></div>'
-      )).join("");
+      const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+      els.historyList.innerHTML = state.history.map((item, index) => {
+        const header = t("history.entry", { n: state.history.length - index, summary: item.summary });
+        return '<div class="history-item"><strong>' + esc(header) + '</strong><span>' + esc(item.results) + '</span><span>' + esc(item.time) + '</span></div>';
+      }).join("");
     }
 
     function updateModeText() {
       if (isSimpleMode()) {
-        els.modePill.textContent = "Simple Coin Flip";
-        els.modeHint.textContent = "Click the coin or press Flip.";
+        els.modePill.setAttribute("data-i18n", "mode.simple.title");
+        els.modePill.textContent = t("mode.simple.title");
+        els.modeHint.setAttribute("data-i18n", "mode.simple.hint");
+        els.modeHint.textContent = t("mode.simple.hint");
         els.guessBox.classList.remove("show");
         return;
       }
-      const mode = modeDefaults[els.modeSelect.value] || modeDefaults.standard;
-      els.modePill.textContent = mode.title;
-      els.modeHint.textContent = mode.hint;
+      const mode = modeCatalog[els.modeSelect.value] || modeCatalog.standard;
+      els.modePill.setAttribute("data-i18n", mode.titleKey);
+      els.modePill.textContent = t(mode.titleKey);
+      els.modeHint.setAttribute("data-i18n", mode.hintKey);
+      els.modeHint.textContent = t(mode.hintKey);
       els.guessBox.classList.toggle("show", els.modeSelect.value === "intuition");
       updateStats();
     }
@@ -1456,7 +1483,8 @@
     function updateSimpleMode() {
       document.body.classList.toggle("simple-mode", isSimpleMode());
       els.simpleModeToggle.setAttribute("aria-checked", String(isSimpleMode()));
-      els.flipAgainBtn.textContent = isSimpleMode() ? "Flip" : "Flip Again";
+      els.flipAgainBtn.setAttribute("data-i18n", isSimpleMode() ? "button.flip" : "button.flipAgain");
+      els.flipAgainBtn.textContent = isSimpleMode() ? t("button.flip") : t("button.flipAgain");
       updateModeText();
       renderCoins([state.currentSide]);
     }
@@ -1464,8 +1492,10 @@
     function flip() {
       const mode = isSimpleMode() ? "standard" : els.modeSelect.value;
       if (mode === "intuition" && !state.selectedGuess) {
-        els.resultText.textContent = "Choose a Guess";
-        els.subResult.textContent = "Pick " + labels().a + " or " + labels().b + " before flipping.";
+        els.resultText.removeAttribute("data-i18n");
+        els.resultText.textContent = t("result.chooseGuess");
+        els.subResult.removeAttribute("data-i18n");
+        els.subResult.textContent = t("result.pickGuess", { a: labels().a, b: labels().b });
         return;
       }
 
@@ -1484,6 +1514,9 @@
         coinCount = 1;
       }
 
+      els.resultText.removeAttribute("data-i18n");
+      els.subResult.removeAttribute("data-i18n");
+
       if (mode === "best") {
         rounds = 3;
         coinCount = 1;
@@ -1491,19 +1524,28 @@
         const aWins = results.filter((side) => side === "a").length;
         const winner = aWins >= 2 ? "a" : "b";
         state.currentSide = winner;
-        summary = "Best 2 out of 3";
-        state.lastResult = resultName(winner) + " wins, " + results.map(resultName).join(" / ");
-        els.resultText.textContent = resultName(winner) + " Wins";
-        els.subResult.textContent = results.map(resultName).join(" / ");
+        summary = t("history.best2of3");
+        const slash = results.map(resultName).join(" / ");
+        state.lastResult = t("result.wins", { name: resultName(winner) }) + " — " + slash;
+        els.resultText.textContent = t("result.wins", { name: resultName(winner) });
+        els.subResult.textContent = slash;
       } else {
         results = Array.from({ length: rounds * coinCount }, randomSide);
         state.currentSide = results[results.length - 1];
         const aCount = results.filter((side) => side === "a").length;
         const bCount = results.length - aCount;
-        summary = rounds === 1 && coinCount === 1 ? "Single flip" : rounds + " round(s), " + coinCount + " coin(s)";
-        state.lastResult = results.length === 1 ? resultName(results[0]) : labels().a + ": " + aCount + ", " + labels().b + ": " + bCount;
-        els.resultText.textContent = results.length === 1 ? resultName(results[0]) : labels().a + " " + aCount + " / " + labels().b + " " + bCount;
-        els.subResult.textContent = results.length === 1 ? "Result: " + resultName(results[0]) : "Results: " + results.map(resultName).join(", ");
+        summary = (rounds === 1 && coinCount === 1)
+          ? t("history.singleFlip")
+          : t("history.multi", { rounds, coins: coinCount });
+        state.lastResult = results.length === 1
+          ? resultName(results[0])
+          : t("result.compositeLast", { a: labels().a, aCount, b: labels().b, bCount });
+        els.resultText.textContent = results.length === 1
+          ? resultName(results[0])
+          : t("result.composite", { a: labels().a, aCount, b: labels().b, bCount });
+        els.subResult.textContent = results.length === 1
+          ? t("result.single", { n: resultName(results[0]) })
+          : t("result.multi", { list: results.map(resultName).join(", ") });
       }
 
       addResults(results, summary);
@@ -1522,9 +1564,11 @@
       state.currentStreak = 0;
       state.bestStreak = 0;
       state.lastSide = "";
-      state.lastResult = "No result yet.";
-      els.resultText.textContent = "Ready to Flip";
-      els.subResult.textContent = "Stats and history have been reset.";
+      state.lastResult = t("result.noResult");
+      els.resultText.setAttribute("data-i18n", "stage.readyToFlip");
+      els.resultText.textContent = t("stage.readyToFlip");
+      els.subResult.removeAttribute("data-i18n");
+      els.subResult.textContent = t("result.statsReset");
       updateStats();
     }
 
@@ -1603,18 +1647,19 @@
     }
 
     function saveSetup() {
-      const name = els.setupName.value.trim() || modeDefaults[els.modeSelect.value].title;
+      const name = els.setupName.value.trim() || modeDefault(els.modeSelect.value).title;
       const setups = savedSetups().filter((setup) => setup.name !== name);
       setups.unshift({ name, setup: currentSetup() });
       storeSetups(setups);
       els.setupName.value = "";
-      els.subResult.textContent = "Saved setup: " + name;
+      els.subResult.removeAttribute("data-i18n");
+      els.subResult.textContent = t("saved.savedAs", { name });
     }
 
     function renderSavedSetups() {
       const setups = savedSetups();
       if (!setups.length) {
-        els.savedSetups.innerHTML = '<p class="small-note">No saved setups yet.</p>';
+        els.savedSetups.innerHTML = '<p class="small-note" data-i18n="saved.empty">' + t("saved.empty") + '</p>';
         return;
       }
       els.savedSetups.innerHTML = "";
@@ -1628,12 +1673,12 @@
         const load = document.createElement("button");
         load.className = "mini";
         load.type = "button";
-        load.textContent = "Load";
+        load.textContent = t("button.load");
         load.addEventListener("click", () => applySetup(item.setup));
         const remove = document.createElement("button");
         remove.className = "mini danger";
         remove.type = "button";
-        remove.textContent = "Delete";
+        remove.textContent = t("button.delete");
         remove.addEventListener("click", () => {
           const next = savedSetups();
           next.splice(index, 1);
@@ -1648,22 +1693,25 @@
     async function copyText(text) {
       try {
         await navigator.clipboard.writeText(text);
-        els.subResult.textContent = "Copied to clipboard.";
+        els.subResult.removeAttribute("data-i18n");
+        els.subResult.textContent = t("result.copySuccess");
       } catch (error) {
+        els.subResult.removeAttribute("data-i18n");
         els.subResult.textContent = text;
       }
     }
 
     function resultShareText() {
-      return "Classroom Coin Flipper result: " + state.lastResult;
+      return t("result.shareText", { r: state.lastResult });
     }
 
     async function shareResult() {
       const text = resultShareText();
       if (navigator.share) {
         try {
-          await navigator.share({ title: "Classroom Coin Flipper", text });
-          els.subResult.textContent = "Result shared.";
+          await navigator.share({ title: t("header.h1"), text });
+          els.subResult.removeAttribute("data-i18n");
+          els.subResult.textContent = t("result.shareSuccess");
           return;
         } catch (error) {
           if (error.name === "AbortError") return;
@@ -1698,7 +1746,7 @@
 
     els.simpleModeToggle.addEventListener("change", updateSimpleMode);
     els.modeSelect.addEventListener("change", () => {
-      const mode = modeDefaults[els.modeSelect.value] || modeDefaults.standard;
+      const mode = modeDefault(els.modeSelect.value);
       els.headsLabel.value = mode.a;
       els.tailsLabel.value = mode.b;
       updateModeText();
@@ -1756,6 +1804,8 @@
       }
     });
 
+    state.lastResult = t("result.noResult");
+
     if (!loadSetupFromUrl()) {
       setTheme("drawsplat");
       els.coinPicturePreset.value = "heads-tails";
@@ -1766,5 +1816,20 @@
     }
     renderSavedSetups();
     updateStats();
+
+    function bootI18nDependentUI() {
+      // Re-translate the mode pill/hint, the simple-mode "Flip" button, and the
+      // current side labels in stats/history. Inputs hold their user-supplied
+      // values; mode change is the canonical way to reset label defaults.
+      updateModeText();
+      updateSimpleMode();
+      renderSavedSetups();
+      // If the lastResult placeholder is still the "no result" sentinel,
+      // re-translate it. Otherwise leave the last real result untouched.
+      // (We can't distinguish reliably after translation, so just always
+      // refresh — saved result strings already include translated labels.)
+      updateStats();
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script></body>
 </html>
