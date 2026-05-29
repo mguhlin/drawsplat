@@ -57,6 +57,14 @@ const GRAPH_I18N={
 };
 const DOT_PALETTE=['#ef4444','#f97316','#facc15','#22c55e','#14b8a6','#3b82f6','#8b5cf6','#ec4899','#111827','#ffffff'];
 const ERASER_SIZE_CHOICES=[['Small',4],['Bigger',18],['Biggest',36]];
+const PEN_SIZE_CHOICES=[['Fine',2],['Medium',5],['Bold',10],['Marker',20]];
+// Pen and eraser each remember their own stroke width so switching tools
+// doesn't carry the eraser's chunky width back into the pen (or vice versa).
+// The Style panel's strokeWidth slider holds whichever value belongs to the
+// currently active tool; setTool restores the right one on switch, and the
+// slider's input listener pushes user-driven changes back to the active
+// tool's stored value.
+let penStrokeWidth=4, eraserStrokeWidth=4;
 const DOT_PICTURES=[
   {id:'heart',label:'Heart',rows:['.XX.XX.','XXXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'],color:'#fecdd3'},
   {id:'flower',label:'Flower',rows:['..XXX..','.XXXXX.','XXXOXXX','.XXXXX.','..XXX..','...S...','...S...','..SSS..'],color:'#fde68a'},
@@ -626,6 +634,7 @@ function refreshEraserSizeControls(){
   document.querySelectorAll('[data-eraser-width]').forEach(btn=>btn.classList.toggle('active',+btn.dataset.eraserWidth===current));
 }
 function setEraserWidth(width,label){
+  eraserStrokeWidth=width;
   if(ui.strokeWidth) ui.strokeWidth.value=String(width);
   refreshEraserSizeControls();
   setTool('eraser');
@@ -643,6 +652,35 @@ function buildEraserSizeControls(){
     setEraserWidth(+btn.dataset.eraserWidth,btn.textContent);
   }));
   refreshEraserSizeControls();
+  return wrap;
+}
+// Pen thickness presets — same shape as the eraser controls. The wrapper
+// hides itself unless the pen tool is active so the popover stays tidy.
+function refreshPenSizeControls(){
+  const wrap=gid('penSizeControls');
+  if(wrap) wrap.hidden=tool!=='pen';
+  const current=+ui.strokeWidth?.value||penStrokeWidth;
+  document.querySelectorAll('[data-pen-width]').forEach(btn=>btn.classList.toggle('active',+btn.dataset.penWidth===current));
+}
+function setPenWidth(width){
+  penStrokeWidth=width;
+  if(ui.strokeWidth) ui.strokeWidth.value=String(width);
+  refreshPenSizeControls();
+  setTool('pen');
+  setStatus('Pencil thickness updated.','success');
+}
+function buildPenSizeControls(){
+  const wrap=document.createElement('div');
+  wrap.id='penSizeControls';
+  wrap.className='eraser-size-controls pen-size-controls';
+  wrap.hidden=true;
+  wrap.setAttribute('aria-label','Pencil thickness');
+  wrap.innerHTML='<span>Pencil</span>'+PEN_SIZE_CHOICES.map(([label,width],index)=>`<button type="button" data-pen-width="${width}" aria-label="${label} pencil" title="${label}"><span class="eraser-size-dot pen-size-dot-${index+1}" aria-hidden="true"></span></button>`).join('');
+  wrap.querySelectorAll('[data-pen-width]').forEach(btn=>btn.addEventListener('click',event=>{
+    event.stopPropagation();
+    setPenWidth(+btn.dataset.penWidth);
+  }));
+  refreshPenSizeControls();
   return wrap;
 }
 
@@ -1062,7 +1100,16 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 /* Tool, workspace, and selection primitives. These are intentionally small
    because drawing, editing, grouping, and inspector code all depend on them. */
 function refreshToolGroupsActive(){document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>group.classList.toggle('active',!!group.querySelector(`button.active,[data-tool="${tool}"]`)))}
-function setTool(next){tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); if(next==='eraser') setStatus('Eraser: choose Small, Bigger, or Biggest, then drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='bucket') setStatus('Paint Bucket: click a shape, note, dot, or line, or click blank canvas to add a color layer above the panel background.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')}
+function setTool(next){
+  // Restore the per-tool stored stroke width before re-rendering controls.
+  // Pen and eraser each keep their own width so the slider reflects the
+  // active tool's choice instead of carrying the previous tool's value.
+  if(ui.strokeWidth){
+    if(next==='pen') ui.strokeWidth.value=String(penStrokeWidth);
+    else if(next==='eraser') ui.strokeWidth.value=String(eraserStrokeWidth);
+  }
+  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); if(next==='eraser') setStatus('Eraser: choose Small, Bigger, or Biggest, then drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='pen') setStatus('Pencil: pick a thickness — Fine, Medium, Bold, or Marker — then drag on the canvas.'); else if(next==='bucket') setStatus('Paint Bucket: click a shape, note, dot, or line, or click blank canvas to add a color layer above the panel background.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')
+}
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
 function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||localStorage.getItem('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; localStorage.setItem('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
@@ -3262,7 +3309,7 @@ function applyStyleToSelectedObject(o){
   }
   Object.assign(o,st);
 }
-['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{if(k==='strokeColor') updateToolColorPaletteActive(ui.strokeColor.value); if(k==='strokeWidth') refreshEraserSizeControls?.(); selectedIds.forEach(idv=>applyStyleToSelectedObject(findObj(idv))); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
+['strokeColor','strokeWidth','fillColor','opacity','fillPattern'].forEach(k=>gid(k).addEventListener('input',()=>{if(k==='strokeColor') updateToolColorPaletteActive(ui.strokeColor.value); if(k==='strokeWidth'){const v=+ui.strokeWidth.value||4; if(tool==='pen') penStrokeWidth=v; else if(tool==='eraser') eraserStrokeWidth=v; refreshEraserSizeControls?.(); refreshPenSizeControls?.();} selectedIds.forEach(idv=>applyStyleToSelectedObject(findObj(idv))); const c=currentObj(); if(c&&c.type==='sticky') c.fill=ui.stickyColor.value; render(); saveState()}));
 ui.stickyColor.addEventListener('change',()=>{selectedIds.forEach(idv=>{const o=findObj(idv); if(o&&o.type==='sticky') o.fill=ui.stickyColor.value}); syncSimpleStickyPalette(); syncSimpleColor(); render(); saveState()});
 ui.fontSize.addEventListener('input',()=>{ui.fontSizeValue.textContent=ui.fontSize.value+'px'; const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.fontSize=+ui.fontSize.value; fitPlainTextBoxToContent(o); render(); saveState()}});
 ui.textColor.addEventListener('input',()=>{const o=currentObj(); if(o&&TEXTABLE_TYPES.includes(o.type)&&selectedIds.length===1){o.textColor=ui.textColor.value; render(); saveState()}});
@@ -3706,6 +3753,10 @@ gid('saveRestorePointBtn').onclick=saveRestorePoint;
 gid('restorePointBtn').onclick=restoreSelectedPoint;
 gid('undoBtn').onclick=undo;
 gid('redoBtn').onclick=redo;
+// Mirror the header Undo/Redo into the sidebar so they're reachable
+// without hunting through the top menu. Same handlers, same shortcuts.
+gid('sidebarUndoBtn')?.addEventListener('click',undo);
+gid('sidebarRedoBtn')?.addEventListener('click',redo);
 
 /* Local file save/load keeps DrawSplatTM usable without a backend. Imported JSON
    is migrated immediately so old boards pick up new default fields. */
@@ -4411,6 +4462,7 @@ function registerServiceWorker(){
       });
       if(groupId==='drawToolGroup'){
         panelEl.appendChild(buildToolColorPalette());
+        panelEl.appendChild(buildPenSizeControls());
         panelEl.appendChild(buildEraserSizeControls());
       }
       details.append(summary,panelEl);
