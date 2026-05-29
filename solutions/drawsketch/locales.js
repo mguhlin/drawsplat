@@ -7,7 +7,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'Draw and Sketch',
     'header.subtitle': 'Turn the left knob to draw left and right, the right knob to draw up and down, and turn both knobs together to curve.',
-    'header.home': 'Tool Menu',
+    'header.home': 'Home',
 
     'game.title': 'Blue and Gold Sketch Screen',
     'button.erase':  'Erase',
@@ -40,7 +40,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'Herramientas DrawSplat™',
     'header.h1': 'Dibujo y boceto',
     'header.subtitle': 'Gira la perilla izquierda para dibujar a izquierda y derecha, la derecha para arriba y abajo, y ambas a la vez para curvar.',
-    'header.home': 'Menú de herramientas',
+    'header.home': 'Inicio',
 
     'game.title': 'Pantalla de boceto azul y dorada',
     'button.erase':  'Borrar',
@@ -73,7 +73,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'Công cụ DrawSplat™',
     'header.h1': 'Vẽ và phác',
     'header.subtitle': 'Xoay núm trái để vẽ ngang, núm phải để vẽ dọc, và xoay cả hai cùng lúc để vẽ đường cong.',
-    'header.home': 'Trình đơn công cụ',
+    'header.home': 'Trang chủ',
 
     'game.title': 'Màn hình phác xanh và vàng',
     'button.erase':  'Xóa',
@@ -106,7 +106,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'أدوات DrawSplat™',
     'header.h1': 'الرسم والتخطيط',
     'header.subtitle': 'أدِر المقبض الأيسر للرسم يمينًا ويسارًا، والمقبض الأيمن للرسم لأعلى ولأسفل، وأدر كليهما معًا لرسم منحنى.',
-    'header.home': 'قائمة الأدوات',
+    'header.home': 'الرئيسية',
 
     'game.title': 'شاشة رسم زرقاء وذهبية',
     'button.erase':  'مسح',
@@ -139,7 +139,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'DrawSplat™ 工具',
     'header.h1': '画与速写',
     'header.subtitle': '转动左旋钮左右画线,转动右旋钮上下画线,同时转动两个旋钮即可画出曲线。',
-    'header.home': '工具菜单',
+    'header.home': '首页',
 
     'game.title': '蓝金速写屏',
     'button.erase':  '擦除',
@@ -172,7 +172,7 @@ WidgetI18n.register('drawsketch', {
     'header.eyebrow': 'DrawSplat™ उपकरण',
     'header.h1': 'चित्र और रेखाचित्र',
     'header.subtitle': 'बाएँ नॉब को घुमाकर दाएँ-बाएँ बनाएँ, दाएँ नॉब को घुमाकर ऊपर-नीचे, और दोनों को एक साथ घुमाकर वक्र बनाएँ।',
-    'header.home': 'उपकरण मेनू',
+    'header.home': 'मुखपृष्ठ',
 
     'game.title': 'नीली और सुनहरी रेखाचित्र स्क्रीन',
     'button.erase':  'मिटाएँ',

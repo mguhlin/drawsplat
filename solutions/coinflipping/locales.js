@@ -9,7 +9,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': 'Flip one coin, flip many coins, track probability, customize both sides, and save classroom-ready setups.',
     'header.simpleMode': 'Simple Mode',
     'header.simpleModeAria': 'Simple mode',
-    'header.home': 'Tool Menu',
+    'header.home': 'Home',
 
     'panel.setup.aria': 'Coin settings',
     'panel.stage.aria': 'Coin flipper',
@@ -173,7 +173,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': 'Lanza una moneda, lanza muchas, registra la probabilidad, personaliza ambos lados y guarda configuraciones listas para el aula.',
     'header.simpleMode': 'Modo simple',
     'header.simpleModeAria': 'Modo simple',
-    'header.home': 'Menú de herramientas',
+    'header.home': 'Inicio',
 
     'panel.setup.aria': 'Ajustes de la moneda',
     'panel.stage.aria': 'Lanzador de monedas',
@@ -337,7 +337,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': 'Tung một đồng xu, tung nhiều đồng xu, theo dõi xác suất, tùy chỉnh hai mặt và lưu các thiết lập sẵn cho lớp học.',
     'header.simpleMode': 'Chế độ đơn giản',
     'header.simpleModeAria': 'Chế độ đơn giản',
-    'header.home': 'Trình đơn công cụ',
+    'header.home': 'Trang chủ',
 
     'panel.setup.aria': 'Cài đặt đồng xu',
     'panel.stage.aria': 'Bộ tung đồng xu',
@@ -501,7 +501,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': 'اقذف عملة واحدة أو عدة عملات، وتتبّع الاحتمالات، وخصّص الوجهين، واحفظ إعدادات جاهزة للصف.',
     'header.simpleMode': 'الوضع المبسّط',
     'header.simpleModeAria': 'الوضع المبسّط',
-    'header.home': 'قائمة الأدوات',
+    'header.home': 'الرئيسية',
 
     'panel.setup.aria': 'إعدادات العملة',
     'panel.stage.aria': 'قاذف العملات',
@@ -665,7 +665,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': '抛一枚或多枚硬币、追踪概率、自定义两面，并保存课堂可用的设置。',
     'header.simpleMode': '简易模式',
     'header.simpleModeAria': '简易模式',
-    'header.home': '工具菜单',
+    'header.home': '首页',
 
     'panel.setup.aria': '硬币设置',
     'panel.stage.aria': '抛硬币台',
@@ -829,7 +829,7 @@ WidgetI18n.register('coinflipping', {
     'header.subtitle': 'एक सिक्का उछालें, कई सिक्के उछालें, संभावना ट्रैक करें, दोनों ओर अनुकूलित करें और कक्षा-तैयार सेटअप सहेजें।',
     'header.simpleMode': 'सरल मोड',
     'header.simpleModeAria': 'सरल मोड',
-    'header.home': 'उपकरण मेनू',
+    'header.home': 'मुखपृष्ठ',
 
     'panel.setup.aria': 'सिक्के की सेटिंग',
     'panel.stage.aria': 'सिक्का उछालक',

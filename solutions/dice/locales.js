@@ -10,7 +10,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': 'Roll clean classroom dice with a simple default view, then switch on advanced options for multiple dice, die types, modifiers, sound, totals, products, and history.',
     'header.advanced': 'Advanced',
     'header.advancedAria': 'Advanced mode',
-    'header.home': 'Tool Menu',
+    'header.home': 'Home',
 
     'panel.setup.aria': 'Dice settings',
     'panel.stage.aria': 'Dice roller',
@@ -66,7 +66,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': 'Lanza dados de aula con una vista simple por defecto y activa opciones avanzadas para varios dados, tipos, modificadores, sonido, totales, productos e historial.',
     'header.advanced': 'Avanzado',
     'header.advancedAria': 'Modo avanzado',
-    'header.home': 'Menú de herramientas',
+    'header.home': 'Inicio',
 
     'panel.setup.aria': 'Ajustes de los dados',
     'panel.stage.aria': 'Lanzador de dados',
@@ -122,7 +122,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': 'Đổ xúc xắc lớp học với chế độ đơn giản mặc định, rồi bật chế độ nâng cao cho nhiều xúc xắc, loại, hệ số cộng, âm thanh, tổng, tích và lịch sử.',
     'header.advanced': 'Nâng cao',
     'header.advancedAria': 'Chế độ nâng cao',
-    'header.home': 'Trình đơn công cụ',
+    'header.home': 'Trang chủ',
 
     'panel.setup.aria': 'Cài đặt xúc xắc',
     'panel.stage.aria': 'Bộ đổ xúc xắc',
@@ -178,7 +178,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': 'ارمِ نردًا نظيفًا للصف بعرض بسيط افتراضيًا، ثم فعّل خيارات متقدّمة لعدّة أحجار وأنواع ومعدّلات وصوت ومجاميع وحاصل ضرب وسجلّ.',
     'header.advanced': 'متقدّم',
     'header.advancedAria': 'وضع متقدّم',
-    'header.home': 'قائمة الأدوات',
+    'header.home': 'الرئيسية',
 
     'panel.setup.aria': 'إعدادات النرد',
     'panel.stage.aria': 'قاذف النرد',
@@ -234,7 +234,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': '默认以简洁的课堂视图掷骰子,然后开启高级选项以使用多颗骰子、多种类型、修正值、音效、总和、乘积和历史记录。',
     'header.advanced': '高级',
     'header.advancedAria': '高级模式',
-    'header.home': '工具菜单',
+    'header.home': '首页',
 
     'panel.setup.aria': '骰子设置',
     'panel.stage.aria': '掷骰台',
@@ -290,7 +290,7 @@ WidgetI18n.register('dice', {
     'header.subtitle': 'सरल डिफ़ॉल्ट दृश्य में साफ कक्षा पासे रोल करें, फिर कई पासों, प्रकारों, संशोधक, ध्वनि, कुल, गुणनफल और इतिहास के लिए उन्नत विकल्प चालू करें।',
     'header.advanced': 'उन्नत',
     'header.advancedAria': 'उन्नत मोड',
-    'header.home': 'उपकरण मेनू',
+    'header.home': 'मुखपृष्ठ',
 
     'panel.setup.aria': 'पासा सेटिंग',
     'panel.stage.aria': 'पासा रोलर',
