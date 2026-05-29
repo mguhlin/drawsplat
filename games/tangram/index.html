@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tangram Packing — DrawSplat Games</title>
+<title data-i18n="doc.title">Tangram Packing — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
   .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
@@ -44,36 +50,41 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Tangram Packing</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Tangram Packing</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
-  <h1 class="game-title">Pack every block inside the silhouette.</h1>
-  <p class="lede">Drag pieces onto the dark target. Click a piece to rotate it 90°. Pieces snap to the silhouette grid when they fit cleanly.</p>
+  <h1 class="game-title" data-i18n="game.title">Pack every block inside the silhouette.</h1>
+  <p class="lede" data-i18n="game.lede">Drag pieces onto the dark target. Click a piece to rotate it 90°. Pieces snap to the silhouette grid when they fit cleanly.</p>
   <div class="controls">
     <div class="group">
-      <span class="gl">Silhouette</span>
-      <button class="btn shape-btn active" data-shape="tee">Beginner T-Shape</button>
-      <button class="btn shape-btn" data-shape="pyramid">Intermediate Pyramid</button>
-      <button class="btn shape-btn" data-shape="square">Advanced Square Box</button>
+      <span class="gl" data-i18n="group.silhouette">Silhouette</span>
+      <button class="btn shape-btn active" data-shape="tee" data-i18n="shape.tee">Beginner T-Shape</button>
+      <button class="btn shape-btn" data-shape="pyramid" data-i18n="shape.pyramid">Intermediate Pyramid</button>
+      <button class="btn shape-btn" data-shape="square" data-i18n="shape.square">Advanced Square Box</button>
     </div>
-    <button class="btn primary" id="newBtn">Reset Puzzle</button>
-    <button class="btn" id="rotateBtn">Rotate Selected (90°)</button>
-    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
-    <div class="metric"><span class="label">Filled</span><span class="val" id="coverage">0%</span></div>
+    <button class="btn primary" id="newBtn" data-i18n="button.reset">Reset Puzzle</button>
+    <button class="btn" id="rotateBtn" data-i18n="button.rotate">Rotate Selected (90°)</button>
+    <button class="btn" id="muteBtn" data-i18n-aria-label="button.mute.aria" aria-label="Toggle sound">🔊</button>
+    <div class="metric"><span class="label" data-i18n="metric.filled">Filled</span><span class="val" id="coverage">0%</span></div>
   </div>
   <div class="canvas-wrap">
-    <canvas id="board" width="800" height="500" aria-label="Tangram Packing board"></canvas>
-    <p class="hint">Click a piece to <strong>rotate</strong>. Drag to <strong>move</strong>. Drop on the silhouette to <strong>snap</strong>.</p>
+    <canvas id="board" width="800" height="500" data-i18n-aria-label="board.aria" aria-label="Tangram Packing board"></canvas>
+    <p class="hint" data-i18n-html="hint.html">Click a piece to <strong>rotate</strong>. Drag to <strong>move</strong>. Drop on the silhouette to <strong>snap</strong>.</p>
   </div>
   <div id="winCard" class="win-card">
-    <h2>Silhouette filled.</h2>
-    <p>Every target cell is covered without overlap.</p>
+    <h2 data-i18n="win.title">Silhouette filled.</h2>
+    <p data-i18n="win.body">Every target cell is covered without overlap.</p>
   </div>
 </div>
+
+<script src="./locales.js"></script>
 
 <script>
 const CELL = 50;
