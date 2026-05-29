@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classroom Fortune Wheel Teacher</title>
+  <title data-i18n="doc.title.teacher">Classroom Fortune Wheel Teacher</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #eef2ff); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -235,74 +241,77 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Classroom Fortune Wheel</h1>
-        <p class="subtitle">Teacher setup page: choose an education category or custom puzzle set, then share the student wheel link.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Classroom Fortune Wheel</h1>
+        <p class="subtitle" data-i18n="header.subtitle.teacher">Teacher setup page: choose an education category or custom puzzle set, then share the student wheel link.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel" aria-label="Teacher setup">
-        <h2>Teacher Setup</h2>
+      <section class="panel" data-i18n-aria-label="panel.setup.aria" aria-label="Teacher setup">
+        <h2 data-i18n="setup.h2">Teacher Setup</h2>
 
         <div class="field">
-          <label for="titleInput">Game Title</label>
+          <label for="titleInput" data-i18n="field.gameTitle">Game Title</label>
           <input id="titleInput" type="text" value="Classroom Fortune Wheel" maxlength="90">
         </div>
 
         <div class="field">
-          <label for="categorySelect">Education Category</label>
+          <label for="categorySelect" data-i18n="field.category">Education Category</label>
           <select id="categorySelect"></select>
         </div>
 
         <div class="field">
-          <label for="customPhrases">Custom Puzzle Phrases</label>
-          <textarea id="customPhrases" placeholder="Enter one puzzle phrase per line. Leave blank to use the selected category."></textarea>
-          <p class="help">Use vocabulary, concepts, or short review phrases. Students will see the wheel, puzzle board, and letters only.</p>
+          <label for="customPhrases" data-i18n="field.phrases">Custom Puzzle Phrases</label>
+          <textarea id="customPhrases" data-i18n-placeholder="field.phrasesPh" placeholder="Enter one puzzle phrase per line. Leave blank to use the selected category."></textarea>
+          <p class="help" data-i18n="field.phrasesHelp">Use vocabulary, concepts, or short review phrases. Students will see the wheel, puzzle board, and letters only.</p>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="teamCount">Teams</label>
+            <label for="teamCount" data-i18n="field.teams">Teams</label>
             <select id="teamCount">
-              <option value="1">1 team</option>
-              <option value="2">2 teams</option>
-              <option value="3" selected>3 teams</option>
-              <option value="4">4 teams</option>
+              <option value="1" data-i18n="teams.1">1 team</option>
+              <option value="2" data-i18n="teams.2">2 teams</option>
+              <option value="3" selected data-i18n="teams.3">3 teams</option>
+              <option value="4" data-i18n="teams.4">4 teams</option>
             </select>
           </div>
           <div class="field">
-            <label for="startMode">Starting Puzzle</label>
+            <label for="startMode" data-i18n="field.startMode">Starting Puzzle</label>
             <select id="startMode">
-              <option value="random" selected>Random</option>
-              <option value="first">First in list</option>
+              <option value="random" selected data-i18n="startMode.random">Random</option>
+              <option value="first" data-i18n="startMode.first">First in list</option>
             </select>
           </div>
         </div>
 
         <div class="button-grid">
-          <button class="btn primary" id="updateBtn">Update Preview</button>
-          <button class="btn gold" id="copyBtn">Copy Student Link</button>
-          <button class="btn" id="openBtn">Open Student Page</button>
-          <button class="btn" id="downloadBtn">Download Setup</button>
+          <button class="btn primary" id="updateBtn" data-i18n="button.update">Update Preview</button>
+          <button class="btn gold" id="copyBtn" data-i18n="button.copyLink">Copy Student Link</button>
+          <button class="btn" id="openBtn" data-i18n="button.openStudent">Open Student Page</button>
+          <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
         </div>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
-      <section class="panel" aria-label="Share preview">
-        <h2>Student Link Preview</h2>
+      <section class="panel" data-i18n-aria-label="panel.preview.aria" aria-label="Share preview">
+        <h2 data-i18n="preview.h2">Student Link Preview</h2>
         <div class="preview-box">
           <div>
-            <div class="category" id="previewCategory">Category</div>
+            <div class="category" id="previewCategory" data-i18n="preview.categoryDefault">Category</div>
             <h3 id="previewTitle" style="margin:6px 0 0;color:var(--navy);">Classroom Fortune Wheel</h3>
           </div>
           <div>
-            <span class="field-title">Puzzle Phrases</span>
+            <span class="field-title" data-i18n="preview.phrasesLabel">Puzzle Phrases</span>
             <ol class="phrase-list" id="phraseList"></ol>
           </div>
           <div>
-            <span class="field-title">Share URL</span>
+            <span class="field-title" data-i18n="preview.urlLabel">Share URL</span>
             <div class="share-link" id="shareLink"></div>
           </div>
         </div>
@@ -310,24 +319,29 @@
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
 
+    // Phrases stay English-default per futuremap §5 / engine-locale stance.
+    // Teachers paste their own phrases via the Custom Puzzle Phrases textarea
+    // for non-English play. Category labels translate via labelKey.
     const categories = [
-      { label: "K-2 Science", phrases: ["weather pattern", "plant needs water", "animal habitat", "day and night", "soil and rocks"] },
-      { label: "K-2 Math", phrases: ["count by tens", "equal groups", "number pattern", "two dimensional shapes", "measure length"] },
-      { label: "K-2 ELAR", phrases: ["beginning sound", "story elements", "author and title", "rhyming words", "complete sentence"] },
-      { label: "3-5 Science", phrases: ["life cycle", "producer consumer", "matter has mass", "force and motion", "conductor insulator"] },
-      { label: "3-5 Math", phrases: ["equivalent fractions", "area and perimeter", "place value", "multiply decimals", "coordinate grid"] },
-      { label: "3-5 Social Studies", phrases: ["texas regions", "local government", "primary source", "goods and services", "historic landmark"] },
-      { label: "6-8 Science", phrases: ["plate tectonics", "photosynthesis", "density and mass", "newton laws", "ecosystem interactions"] },
-      { label: "6-8 Math", phrases: ["linear relationship", "integer operations", "proportional reasoning", "coordinate plane", "probability model"] },
-      { label: "6-8 ELAR", phrases: ["central idea", "text evidence", "point of view", "figurative language", "argument claim"] },
-      { label: "9-12 Biology", phrases: ["cellular respiration", "genotype phenotype", "natural selection", "homeostasis", "protein synthesis"] },
-      { label: "9-12 Math", phrases: ["quadratic function", "domain and range", "exponential growth", "polynomial expression", "inverse function"] },
-      { label: "9-12 History", phrases: ["civil rights movement", "industrial revolution", "constitutional principles", "cold war conflict", "judicial review"] },
-      { label: "Spanish Language Arts", phrases: ["idea central", "lenguaje figurado", "punto de vista", "texto informativo", "contraargumento"] },
-      { label: "Health Arts Technology", phrases: ["digital citizenship", "creative composition", "healthy nutrition", "algorithm design", "collaboration skills"] }
+      { labelKey: "category.k2science", phrases: ["weather pattern", "plant needs water", "animal habitat", "day and night", "soil and rocks"] },
+      { labelKey: "category.k2math",    phrases: ["count by tens", "equal groups", "number pattern", "two dimensional shapes", "measure length"] },
+      { labelKey: "category.k2elar",    phrases: ["beginning sound", "story elements", "author and title", "rhyming words", "complete sentence"] },
+      { labelKey: "category.35science", phrases: ["life cycle", "producer consumer", "matter has mass", "force and motion", "conductor insulator"] },
+      { labelKey: "category.35math",    phrases: ["equivalent fractions", "area and perimeter", "place value", "multiply decimals", "coordinate grid"] },
+      { labelKey: "category.35social",  phrases: ["texas regions", "local government", "primary source", "goods and services", "historic landmark"] },
+      { labelKey: "category.68science", phrases: ["plate tectonics", "photosynthesis", "density and mass", "newton laws", "ecosystem interactions"] },
+      { labelKey: "category.68math",    phrases: ["linear relationship", "integer operations", "proportional reasoning", "coordinate plane", "probability model"] },
+      { labelKey: "category.68elar",    phrases: ["central idea", "text evidence", "point of view", "figurative language", "argument claim"] },
+      { labelKey: "category.912bio",    phrases: ["cellular respiration", "genotype phenotype", "natural selection", "homeostasis", "protein synthesis"] },
+      { labelKey: "category.912math",   phrases: ["quadratic function", "domain and range", "exponential growth", "polynomial expression", "inverse function"] },
+      { labelKey: "category.912history",phrases: ["civil rights movement", "industrial revolution", "constitutional principles", "cold war conflict", "judicial review"] },
+      { labelKey: "category.spanishELAR",phrases: ["idea central", "lenguaje figurado", "punto de vista", "texto informativo", "contraargumento"] },
+      { labelKey: "category.HAT",       phrases: ["digital citizenship", "creative composition", "healthy nutrition", "algorithm design", "collaboration skills"] }
     ];
 
     function b64urlEncode(str) {
@@ -341,8 +355,8 @@
       const category = categories[Number($("#categorySelect").value)] || categories[0];
       const custom = $("#customPhrases").value.split(/\n+/).map(v => v.trim()).filter(Boolean);
       return {
-        title: $("#titleInput").value.trim() || "Classroom Fortune Wheel",
-        category: custom.length ? "Custom Puzzle Set" : category.label,
+        title: $("#titleInput").value.trim() || t("field.gameTitleDefault"),
+        category: custom.length ? t("category.customSet") : t(category.labelKey),
         phrases: custom.length ? custom : category.phrases,
         teamCount: Number($("#teamCount").value) || 3,
         startMode: $("#startMode").value
@@ -358,18 +372,22 @@
     function renderPreview() {
       const cfg = selectedConfig();
       $("#previewTitle").textContent = cfg.title;
-      $("#previewCategory").textContent = cfg.category;
+      // Previewed category is dynamic — strip its data-i18n attr so the i18n
+      // applier doesn't overwrite the runtime category label on language change.
+      const catEl = $("#previewCategory");
+      catEl.removeAttribute("data-i18n");
+      catEl.textContent = cfg.category;
       $("#phraseList").innerHTML = cfg.phrases.map(p => `<li>${escapeHTML(p)}</li>`).join("");
       $("#shareLink").textContent = studentUrl();
-      $("#status").textContent = cfg.phrases.length + " puzzle phrases ready.";
+      $("#status").textContent = t("status.phrasesReady", { count: cfg.phrases.length });
     }
 
     function copyLink() {
       const url = studentUrl();
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => $("#status").textContent = "Student link copied.");
+        navigator.clipboard.writeText(url).then(() => $("#status").textContent = t("status.linkCopied"));
       } else {
-        window.prompt("Copy this student link:", url);
+        window.prompt(t("prompt.copyLink"), url);
       }
     }
 
@@ -389,8 +407,22 @@
       return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
     }
 
+    function renderCategoryOptions() {
+      // Each option carries data-i18n so a language switch retranslates the
+      // visible label without us rebuilding the select.
+      $("#categorySelect").innerHTML = categories.map((cat, i) =>
+        `<option value="${i}" data-i18n="${cat.labelKey}">${escapeHTML(t(cat.labelKey))}</option>`
+      ).join("");
+    }
+
     function init() {
-      $("#categorySelect").innerHTML = categories.map((cat, i) => `<option value="${i}">${escapeHTML(cat.label)}</option>`).join("");
+      renderCategoryOptions();
+      // Seed title input with translated default. Once the user types, we
+      // leave their text alone.
+      const titleInput = $("#titleInput");
+      if (!titleInput.value || titleInput.value === "Classroom Fortune Wheel") {
+        titleInput.value = t("field.gameTitleDefault");
+      }
       ["titleInput", "categorySelect", "customPhrases", "teamCount", "startMode"].forEach(id => {
         $("#" + id).addEventListener("input", renderPreview);
         $("#" + id).addEventListener("change", renderPreview);
@@ -403,6 +435,14 @@
     }
 
     init();
+
+    function bootI18nDependentUI() {
+      // Categories were JS-injected so the dictionary applier wires up their
+      // data-i18n correctly without us re-rendering — but if the language
+      // changed before init we still want to repaint the preview status text.
+      renderPreview();
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
