@@ -585,10 +585,20 @@
         const now = audioCtx.currentTime;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        const wave = type === "bolt" ? "sawtooth" : type === "fireball" ? "square" : "triangle";
-        osc.type = wave;
-        osc.frequency.setValueAtTime(type === "bolt" ? 520 : 170, now);
-        gain.gain.setValueAtTime(type === "fireball" ? 0.026 : 0.018, now);
+        // Cannonball-whistle: clean sine wave for everything except the
+        // ballista bolt (which keeps a faintly buzzy sawtooth edge to read
+        // as an arrow rather than a falling object).
+        osc.type = type === "bolt" ? "sawtooth" : "sine";
+        // Starting pitches are much higher than before so the whistle is
+        // audible above background. Pitch climbs toward `peak` in
+        // updateFlightSound as the projectile approaches its target,
+        // mimicking the classic incoming-cannonball whistle.
+        const startFreq =
+          type === "bolt" ? 1500 :
+          type === "fireball" ? 820 :
+          640;
+        osc.frequency.setValueAtTime(startFreq, now);
+        gain.gain.setValueAtTime(type === "fireball" ? 0.030 : 0.022, now);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(now);
@@ -602,13 +612,32 @@
         const groundY = terrain[Math.floor(clamp(projectile.x, 0, WIDTH - 1))];
         const groundDistance = Math.max(0, groundY - projectile.y);
         const proximity = clamp(1 - Math.min(targetDistance, groundDistance * 1.8) / 360, 0, 1);
-        const base = flightSound.type === "bolt" ? 460 : flightSound.type === "fireball" ? 210 : 135;
-        const peak = flightSound.type === "bolt" ? 980 : flightSound.type === "fireball" ? 720 : 420;
-        const wobble = Math.sin(projectile.age * 18) * (flightSound.type === "fireball" ? 28 : 10);
+        // Whistle ranges — base = pitch at apex, peak = pitch at approach.
+        // Sweeping bottom→top reads as "incoming" / Doppler-style.
+        const base =
+          flightSound.type === "bolt" ? 1500 :
+          flightSound.type === "fireball" ? 820 :
+          640;
+        const peak =
+          flightSound.type === "bolt" ? 2800 :
+          flightSound.type === "fireball" ? 2200 :
+          1800;
+        // Vibrato — fireballs get a faster, deeper wobble (whoosh feel);
+        // bolts get a fast tight quiver; stones/oil/tar get a calm wobble
+        // suggestive of a heavy spinning object cutting air.
+        const wobbleAmp =
+          flightSound.type === "fireball" ? 42 :
+          flightSound.type === "bolt" ? 26 :
+          18;
+        const wobbleRate =
+          flightSound.type === "fireball" ? 22 :
+          flightSound.type === "bolt" ? 32 :
+          14;
+        const wobble = Math.sin(projectile.age * wobbleRate) * wobbleAmp;
         const freq = base + (peak - base) * proximity + wobble;
         const now = audioCtx.currentTime;
-        flightSound.osc.frequency.setTargetAtTime(freq, now, 0.035);
-        flightSound.gain.gain.setTargetAtTime(0.012 + proximity * 0.045, now, 0.04);
+        flightSound.osc.frequency.setTargetAtTime(freq, now, 0.028);
+        flightSound.gain.gain.setTargetAtTime(0.018 + proximity * 0.055, now, 0.04);
       }
 
       function stopFlightSound() {
@@ -646,45 +675,74 @@
         src.stop(now + duration);
       }
 
-      // Layered explosion: a deep sub-boom, a mid crack, a noise burst, plus
-      // the per-munition characteristic tone. The mix is tuned so impacts
+      // Layered explosion. Each munition has its own personality — deep
+      // granite thud (rock), muffled WHOOMP (fireball), wet splat (oil),
+      // gooey THWAP (tar), sharp THWICK (bolt). The mix is tuned so impacts
       // have body without clipping.
       function playImpactSound(type) {
         if (!audioCtx) return;
-        // Per-munition character voice — same shape as before but louder
-        // and a hair longer to mesh with the noise tail.
+        // Per-munition character voice. Pitch ranges and envelopes are
+        // tuned so the thud signature is recognisable even with the eyes
+        // closed.
         const voices = {
-          rock:     [{ type: "square",   start: 130, end: 32, duration: 0.48, gain: 0.16 }],
-          fireball: [{ type: "sawtooth", start: 520, end: 60, duration: 0.55, gain: 0.18 }],
-          oil:      [{ type: "triangle", start: 320, end: 75, duration: 0.40, gain: 0.12 }],
-          tar:      [{ type: "square",   start: 210, end: 42, duration: 0.52, gain: 0.13 }],
-          bolt:     [{ type: "sawtooth", start: 820, end: 120, duration: 0.22, gain: 0.10 }]
+          // Rock: dry, woody, granite-on-stone clack
+          rock:     [{ type: "square",   start: 165, end: 38,  duration: 0.40, gain: 0.18 }],
+          // Fireball: longer screech-into-rumble
+          fireball: [{ type: "sawtooth", start: 620, end: 55,  duration: 0.62, gain: 0.20 }],
+          // Oil: short pop of glass + splat
+          oil:      [{ type: "triangle", start: 380, end: 95,  duration: 0.34, gain: 0.14 }],
+          // Tar: slow, dense, gooey heave
+          tar:      [{ type: "square",   start: 230, end: 36,  duration: 0.60, gain: 0.15 }],
+          // Bolt: piercing arrow-into-wood
+          bolt:     [{ type: "sawtooth", start: 980, end: 140, duration: 0.20, gain: 0.11 }]
         };
         (voices[type] || voices.rock).forEach(playTone);
 
         // Bolts are sharp piercing shots, not chest-thumping booms — give
-        // them only a light noise crack and skip the sub-boom layer.
+        // them only a light high-frequency noise crack and skip the
+        // sub-boom layer.
         if (type === "bolt") {
-          playNoiseBurst({ duration: 0.22, gain: 0.14, cutoffStart: 3800, cutoffEnd: 900, q: 0.6 });
+          playNoiseBurst({ duration: 0.20, gain: 0.14, cutoffStart: 4200, cutoffEnd: 1100, q: 0.6 });
           return;
         }
 
-        // Sub-boom: very low sine that snaps from ~70Hz down to ~28Hz.
-        // This is where the "explosive" body comes from.
-        const boomGain = type === "fireball" ? 0.30 : type === "tar" ? 0.26 : 0.22;
-        const boomEnd = type === "fireball" ? 24 : 30;
-        playTone({ type: "sine", start: 78, end: boomEnd, duration: 0.65, gain: boomGain });
-        // Mid crack: a punchy short square hit, almost instantaneous.
-        playTone({ type: "square", start: 280, end: 70, duration: 0.09, gain: 0.13 });
-        // White-noise crash: starts bright (debris/shrapnel) and sweeps into
-        // bass (rumble tail). Fireball and tar get longer tails.
-        const noiseSpec = {
-          rock:     { duration: 0.55, gain: 0.20, cutoffStart: 2600, cutoffEnd: 200 },
-          fireball: { duration: 0.70, gain: 0.24, cutoffStart: 3200, cutoffEnd: 160 },
-          oil:      { duration: 0.50, gain: 0.18, cutoffStart: 2400, cutoffEnd: 220 },
-          tar:      { duration: 0.65, gain: 0.22, cutoffStart: 2200, cutoffEnd: 180 }
+        // Sub-boom: very low sine that snaps down to bass. Tuning varies
+        // per type so each impact has its own bottom-end signature.
+        const subSpec = {
+          rock:     { start: 72,  end: 30, duration: 0.55, gain: 0.22 },
+          // Fireball booms low, slow and long for the whoomp body
+          fireball: { start: 86,  end: 22, duration: 0.78, gain: 0.32 },
+          // Oil is a quick high-mid splat — minimal sub
+          oil:      { start: 60,  end: 36, duration: 0.32, gain: 0.16 },
+          // Tar is the deepest, gooiest bass thud — slowest decay
+          tar:      { start: 64,  end: 18, duration: 0.85, gain: 0.30 }
         };
-        playNoiseBurst({ ...(noiseSpec[type] || noiseSpec.rock), q: 0.9 });
+        const sub = subSpec[type] || subSpec.rock;
+        playTone({ type: "sine", ...sub });
+
+        // Mid crack — varies by type to add textural identity to the thud.
+        // Rock gets a sharp granite snap, oil gets a glassy chink,
+        // fireball gets a meatier thwomp, tar gets almost nothing (just
+        // the gooey bottom does the talking).
+        const crackSpec = {
+          rock:     { type: "square",   start: 320, end: 80,  duration: 0.08, gain: 0.15 },
+          fireball: { type: "sawtooth", start: 220, end: 50,  duration: 0.11, gain: 0.16 },
+          oil:      { type: "triangle", start: 540, end: 160, duration: 0.06, gain: 0.13 },
+          tar:      { type: "square",   start: 180, end: 60,  duration: 0.14, gain: 0.10 }
+        };
+        playTone(crackSpec[type] || crackSpec.rock);
+
+        // White-noise crash: starts bright (debris/shrapnel) and sweeps
+        // into bass (rumble tail). Tuned per type so each thud has a
+        // distinct sheen — rock is gritty, fireball is roaring, oil is
+        // splash-y and short, tar is low and muddy.
+        const noiseSpec = {
+          rock:     { duration: 0.55, gain: 0.22, cutoffStart: 2600, cutoffEnd: 220, q: 0.9 },
+          fireball: { duration: 0.85, gain: 0.28, cutoffStart: 3600, cutoffEnd: 140, q: 0.95 },
+          oil:      { duration: 0.40, gain: 0.18, cutoffStart: 4200, cutoffEnd: 380, q: 0.7 },
+          tar:      { duration: 0.75, gain: 0.20, cutoffStart: 1800, cutoffEnd: 130, q: 1.0 }
+        };
+        playNoiseBurst(noiseSpec[type] || noiseSpec.rock);
       }
 
       function makeTerrain() {
