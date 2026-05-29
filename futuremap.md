@@ -4,7 +4,7 @@
 (`solutions/`) and games (`games/`). Companion to the existing
 `COMPLIANCE-ROADMAP.md`. Keep this file lean and edit-as-you-go.
 
-**Last updated:** 2026-05-29 — Wave 2 shipped on commit `2848888` (Rubric Builder).
+**Last updated:** 2026-05-29 — Wave 3 shipped on commit `1415a62` (Fun Quiz). All 23 widgets and games are now translated to six languages.
 
 ---
 
@@ -64,19 +64,28 @@ shipping commits:
 
 ---
 
-## 3. Wave 3 — convert remaining `games/`
+## 3. Wave 3 — convert remaining `games/` — COMPLETE
 
-| Game | Notes | Est. keys |
+All 7 remaining games converted. Actual key counts and shipping commits:
+
+| Game | Actual keys | Commit |
 |---|---|---|
-| `games/lightsout/` | Smallest game; size selector + theme + reset | ~40 |
-| `games/floodfill/` | Color buttons + moves counter + reset | ~35 |
-| `games/flowfree/` | Level picker + reset + win message | ~40 |
-| `games/untangle/` | Difficulty + reset + crossings counter | ~35 |
-| `games/funquiz/` | Multiple themed quizzes (smurfs/dwarfs/looney/eggquiz/galveston). Each example HTML may need its own locales OR a shared funquiz/locales.js | ~150 |
-| `games/castles/` | Strategy game; resource labels + actions | ~120 |
-| `games/tangram/` | Shape/silhouette picker + drag controls | ~50 |
+| `games/lightsout/` | 32 | `5453627` |
+| `games/floodfill/` | 20 | `970fc63` |
+| `games/untangle/` | 19 | `c4fd301` |
+| `games/flowfree/` | 19 | `252fe84` |
+| `games/tangram/` | 19 | `0342bd8` |
+| `games/castles/` | 156 (25 insults + 25 replies + 28 laments + 20 launch quips + chrome) | `92af433` |
+| `games/funquiz/` | 121 (shared across all 4 character-quiz pages: Pooh / Smurfs / Dwarfs / Looney) | `1415a62` |
 
-Same pattern as Wave 1 (see §6).
+**Total Wave 3: ~386 keys × 6 languages.**
+
+Open items:
+- `games/funquiz/eggquiz.html` and `games/funquiz/galveston-disaster-map.html`
+  are large self-contained experiences separate from the four-character-quiz
+  framework. Not translated in Wave 3. Decide whether to include them in a
+  Wave 4 batch or treat them as orphan examples (similar to the
+  TCEA-themed pages cut in `7becd5d`).
 
 ---
 
