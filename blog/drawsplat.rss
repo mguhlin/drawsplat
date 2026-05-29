@@ -8,8 +8,29 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 28 May 2026 14:19:30 GMT</lastBuildDate>
+			<lastBuildDate>Fri, 29 May 2026 21:12:31 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat Feature: Mermaid Diagram Studio</title>
+		<link>https://mguhlin.org/2026/05/29/drawsplat-feature-mermaid-diagram-studio/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-89.png?fit=1200%2C733&amp;amp;ssl=1" /&gt;&lt;br/&gt;I remember when I first encountered Mermaid diagrams. The challenge? Generating the Mermaid syntax so that it would work in a Mermaid rendering engine. For whatever the reason, any code I put toget…</description>
+		<pubDate>Fri, 29 May 2026 21:12:25 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/05/29/drawsplat-feature-mermaid-diagram-studio/</guid>
+		
+	</item><item>
+		<title>Comparing Codex and Code: DrawSplat</title>
+		<link>https://mguhlin.org/2026/05/29/comparing-codex-and-code-drawsplat/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-47.png?fit=1200%2C644&amp;amp;ssl=1" /&gt;&lt;br/&gt;A while back, I started working on a vibe-coded solution, DrawSplat. I started the project on a lark to see how far a non-programmer could go. I started in Claude back when I was paying $20 a month…</description>
+		<pubDate>Fri, 29 May 2026 21:12:04 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/05/29/comparing-codex-and-code-drawsplat/</guid>
+		
+	</item><item>
+		<title>Vibe-Coding: Castles and Catapults game #AI #FREE</title>
+		<link>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/splash.png?fit=1200%2C900&amp;amp;ssl=1" /&gt;&lt;br/&gt;When I was a thirteen year old in high school, one of my favorite things to do was to visit the computer lab. It was full of TRS-80s, and one of the few games available was, “Castles and Cata…</description>
+		<pubDate>Fri, 29 May 2026 08:26:54 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</guid>
+		
+	</item><item>
 		<title>DrawSplat Feature: Concept Map Studio</title>
 		<link>https://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</link>
 		<description>&lt;img src="https://mguhlin.org/wp-content/uploads/2026/05/image-82.png" /&gt;&lt;br/&gt;There’s a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat’s concept map tool inside the whiteboard…</description>
