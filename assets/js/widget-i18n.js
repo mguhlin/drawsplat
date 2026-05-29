@@ -218,6 +218,14 @@
     register(widgetKey, dictionaries) {
       state.dictionaries[widgetKey] = dictionaries || {};
       state.activeWidget = widgetKey;
+      // Resolve the active language immediately, even before DOMContentLoaded,
+      // so widgets that call WidgetI18n.t() during their bootstrap (e.g. to
+      // build default templates or seed canvas labels) see the correct
+      // language instead of falling back to en. The full DOM apply() still
+      // waits for DOMContentLoaded; this just settles state.lang early.
+      if (!state.initialized && state.lang === 'en') {
+        state.lang = detectLang();
+      }
       if (state.initialized) {
         // Late registration — re-apply with the new dictionary
         ensurePickers();
