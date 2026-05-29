@@ -4166,77 +4166,24 @@ gid('inspectorBackdrop').onclick=()=>setInspectorOpen(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&_isInspectorMobile()&&document.querySelector('.inspector')?.classList.contains('show')) setInspectorOpen(false)});
 async function loadTurnInById(turninId){const url=googleScriptUrl(); if(!url||!turninId) return; const load=await fetch(url+'?action=turnInLoad&turninId='+encodeURIComponent(turninId)); const loaded=await load.json(); if(loaded.ok&&loaded.turnin&&loaded.turnin.board){board=loaded.turnin.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); gid('moderationDialog').close(); setStatus('Loaded turn-in from '+(loaded.turnin.studentName||'student')+'.','success')}}
 async function openModerationDashboard(){const comments=[]; board.panels.forEach((p,pi)=>p.objects.filter(o=>o.type==='comment').forEach(o=>comments.push({panelIndex:pi,panelName:p.name,obj:o}))); const unresolved=comments.filter(c=>!c.obj.resolved).length, resolved=comments.length-unresolved; gid('moderationSummary').innerHTML=`<span class="pill warn">${esc(unresolved)} unresolved</span> <span class="pill ok">${esc(resolved)} resolved</span> <span class="pill">${esc(comments.length)} total comments</span>`; gid('moderationComments').innerHTML=comments.length?comments.map((c,i)=>`<div class="list-item"><h4>${esc(c.panelName)} — ${c.obj.resolved?'Resolved':'Open'}</h4><p>${esc(c.obj.text||htmlToPlainText(c.obj.html)||'No text')}</p><button data-jump-comment="${i}">Jump to Comment</button></div>`).join(''):'<div class="list-item">No comments on this board.</div>'; gid('moderationComments').querySelectorAll('[data-jump-comment]').forEach(btn=>btn.onclick=()=>{const c=comments[+btn.dataset.jumpComment]; board.active=c.panelIndex; setSingleSelection(c.obj.id); gid('moderationDialog').close(); render()}); let turnins=[]; const url=googleScriptUrl(); if(url){ try{const res=await fetch(url+'?action=turnInList'); const out=await res.json(); if(out.ok&&out.turnins) turnins=out.turnins}catch(err){} } gid('moderationTurnins').innerHTML=turnins.length?turnins.map(t=>`<div class="list-item"><h4>${esc(t.studentName||'Student')} — ${esc(t.title||'Untitled')}</h4><p>${esc(t.className||'No class')} · ${esc(t.updatedAt||'')}</p><button data-load-turnin="${esc(t.turninId)}">Load Turn-In</button></div>`).join(''):'<div class="list-item">No Google turn-ins found yet.</div>'; gid('moderationTurnins').querySelectorAll('[data-load-turnin]').forEach(btn=>btn.onclick=()=>loadTurnInById(btn.dataset.loadTurnin)); gid('moderationDialog').showModal()}
-// Reused AudioContext for whiteboard SFX so each TNT click doesn't leak a
-// new context. Created lazily on the first user gesture (browsers require
-// that for audio playback).
-let _tntAudioCtx=null;
-function tntAudio(){
-  if(!_tntAudioCtx){
-    try{_tntAudioCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(_){_tntAudioCtx=null}
-  }
-  if(_tntAudioCtx&&_tntAudioCtx.state==='suspended') _tntAudioCtx.resume().catch(()=>{});
-  return _tntAudioCtx;
-}
-function tntTone({type='sine',start=200,end=40,duration=0.4,gain=0.2,delay=0}={}){
-  const c=tntAudio(); if(!c) return;
-  const t0=c.currentTime+delay;
-  const osc=c.createOscillator();
-  const g=c.createGain();
-  osc.type=type;
-  osc.frequency.setValueAtTime(start,t0);
-  osc.frequency.exponentialRampToValueAtTime(Math.max(1,end),t0+duration);
-  g.gain.setValueAtTime(0.0001,t0);
-  g.gain.exponentialRampToValueAtTime(gain,t0+0.012);
-  g.gain.exponentialRampToValueAtTime(0.0001,t0+duration);
-  osc.connect(g); g.connect(c.destination);
-  osc.start(t0); osc.stop(t0+duration+0.05);
-}
-function tntNoiseBurst({duration=0.5,gain=0.25,cutoffStart=2400,cutoffEnd=180,q=0.85,delay=0}={}){
-  const c=tntAudio(); if(!c) return;
-  const t0=c.currentTime+delay;
-  const sampleRate=c.sampleRate;
-  const buf=c.createBuffer(1,Math.max(1,Math.floor(sampleRate*duration)),sampleRate);
-  const data=buf.getChannelData(0);
-  for(let i=0;i<data.length;i+=1) data[i]=Math.random()*2-1;
-  const src=c.createBufferSource(); src.buffer=buf;
-  const filter=c.createBiquadFilter();
-  filter.type='lowpass';
-  filter.Q.value=q;
-  filter.frequency.setValueAtTime(cutoffStart,t0);
-  filter.frequency.exponentialRampToValueAtTime(Math.max(60,cutoffEnd),t0+duration);
-  const env=c.createGain();
-  env.gain.setValueAtTime(0.0001,t0);
-  env.gain.exponentialRampToValueAtTime(gain,t0+0.012);
-  env.gain.exponentialRampToValueAtTime(0.0001,t0+duration);
-  src.connect(filter); filter.connect(env); env.connect(c.destination);
-  src.start(t0); src.stop(t0+duration+0.05);
-}
-// Dramatic layered TNT blast for the canvas detonation:
-// 1) Quick fuse sizzle (bright noise + a tiny click)
-// 2) A 70 ms beat of silence to set up the punch
-// 3) The main BOOM — three layered tones (sub sine, body sawtooth, mid
-//    square) plus a long filtered-noise crash that sweeps from bright
-//    debris into deep rumble
-// 4) A delayed secondary thump so the bass tail feels seismic
+// Whiteboard TNT detonation uses a single CC0 Red Library MP3 ("Huge
+// Explosion with Long Decay") for a dramatic blast that matches the
+// canvas-shake visual. Cached after the first play so repeat detonations
+// fire instantly. Source and license live at
+// assets/audio/explosions/README.md.
+let _tntBoomAudio=null;
 function playTntBoom(){
-  if(!tntAudio()) return;
-  // Fuse sizzle (40 ms bright crackle)
-  tntNoiseBurst({duration:0.05,gain:0.18,cutoffStart:5000,cutoffEnd:2200,q:0.4,delay:0});
-  tntTone({type:'square',start:1200,end:800,duration:0.04,gain:0.10,delay:0.005});
-
-  // Main blast at ~85 ms in
-  const boom=0.085;
-  // Sub-boom — chest-thump body. Loud and slow.
-  tntTone({type:'sine',start:108,end:18,duration:1.1,gain:0.40,delay:boom});
-  // Mid body — adds weight and texture
-  tntTone({type:'sawtooth',start:520,end:60,duration:0.75,gain:0.22,delay:boom});
-  // Sharp opening crack so the punch reads
-  tntTone({type:'square',start:340,end:90,duration:0.12,gain:0.20,delay:boom});
-  // Huge debris/rumble noise — long tail
-  tntNoiseBurst({duration:1.25,gain:0.32,cutoffStart:3500,cutoffEnd:120,q:0.95,delay:boom});
-  // Secondary thump 280 ms later for the seismic echo
-  tntTone({type:'sine',start:78,end:22,duration:0.9,gain:0.26,delay:boom+0.28});
-  tntNoiseBurst({duration:0.65,gain:0.18,cutoffStart:1400,cutoffEnd:100,q:1.0,delay:boom+0.30});
+  try{
+    if(!_tntBoomAudio){
+      _tntBoomAudio=new Audio('../assets/audio/explosions/r09-52-huge-explosion-with-long-decay.mp3');
+      _tntBoomAudio.preload='auto';
+    }
+    // Clone so a second TNT click while the first is still playing doesn't
+    // cut the previous sample short.
+    const node=_tntBoomAudio.cloneNode();
+    node.volume=0.85;
+    node.play().catch(()=>{});
+  }catch(_){/* audio unavailable — visual still plays */}
 }
 function playCanvasDetonation(){
   const shell=document.querySelector('.canvas-shell');

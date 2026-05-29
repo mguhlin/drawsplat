@@ -648,101 +648,71 @@
         flightSound = null;
       }
 
-      // Filtered white-noise burst — gives explosions their crash texture.
-      // Lowpass cutoff sweeps down so it starts bright and rumbles into bass.
-      function playNoiseBurst({ duration = 0.45, gain = 0.18, cutoffStart = 2200, cutoffEnd = 180, q = 0.85, delay = 0 } = {}) {
-        if (!audioCtx) return;
-        const now = audioCtx.currentTime + delay;
-        const sampleRate = audioCtx.sampleRate;
-        const buffer = audioCtx.createBuffer(1, Math.max(1, Math.floor(sampleRate * duration)), sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
-        const src = audioCtx.createBufferSource();
-        src.buffer = buffer;
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.Q.value = q;
-        filter.frequency.setValueAtTime(cutoffStart, now);
-        filter.frequency.exponentialRampToValueAtTime(Math.max(60, cutoffEnd), now + duration);
-        const env = audioCtx.createGain();
-        env.gain.setValueAtTime(0.0001, now);
-        env.gain.exponentialRampToValueAtTime(gain, now + 0.012);
-        env.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-        src.connect(filter);
-        filter.connect(env);
-        env.connect(audioCtx.destination);
-        src.start(now);
-        src.stop(now + duration);
+      // CC0 Red Library explosion samples. Per-munition pools; each impact
+      // picks one at random for variety so back-to-back shots don't sound
+      // identical. Files live under assets/audio/explosions/. License + source
+      // at assets/audio/explosions/README.md.
+      const EXPLOSION_BASE = "../../assets/audio/explosions/";
+      const EXPLOSION_POOLS = {
+        // Rock: woody/stone debris-style impacts
+        rock: [
+          "r09-49-short-explosion-with-debris",
+          "r09-48-huge-explosion-with-wood-and-sand-debris",
+          "r29-33-large-explosion-with-metal-and-glass-debris",
+          "r30-01-large-explosions-with-debris"
+        ],
+        // Fireball: long-decay roaring booms
+        fireball: [
+          "r09-52-huge-explosion-with-long-decay",
+          "r11-54-thunderous-blasts",
+          "r09-53-huge-explosion",
+          "r30-06-big-crisp-explosions"
+        ],
+        // Oil: glass-shatter / molotov-style pops
+        oil: [
+          "r29-26-molotov-cocktails-through-windows-and-explode",
+          "r11-53-explosive-blast",
+          "r09-47-booming-blast"
+        ],
+        // Tar: low, dense, sustained rumbles
+        tar: [
+          "r30-07-big-explosions-some-debris",
+          "r20-34-steam-engine-explodes",
+          "r29-03-long-rumble-for-earthquake-or-explosion"
+        ],
+        // Bolt: a whistle-and-hit or a single sharp shell impact
+        bolt: [
+          "r09-51-long-whistle-and-hit",
+          "r30-12-large-gun-shells-fly-by-and-explode"
+        ]
+      };
+      // Cache the first HTMLAudioElement per path so the browser doesn't
+      // re-fetch on every shot. We clone the cached node before play() so
+      // overlapping plays don't restart the same instance.
+      const _explosionCache = {};
+      function preloadExplosionSamples() {
+        Object.values(EXPLOSION_POOLS).forEach(list => list.forEach(slug => {
+          const path = EXPLOSION_BASE + slug + ".mp3";
+          if (_explosionCache[path]) return;
+          const a = new Audio(path);
+          a.preload = "auto";
+          _explosionCache[path] = a;
+        }));
       }
-
-      // Layered explosion. Each munition has its own personality — deep
-      // granite thud (rock), muffled WHOOMP (fireball), wet splat (oil),
-      // gooey THWAP (tar), sharp THWICK (bolt). The mix is tuned so impacts
-      // have body without clipping.
       function playImpactSound(type) {
-        if (!audioCtx) return;
-        // Per-munition character voice. Pitch ranges and envelopes are
-        // tuned so the thud signature is recognisable even with the eyes
-        // closed.
-        const voices = {
-          // Rock: dry, woody, granite-on-stone clack
-          rock:     [{ type: "square",   start: 165, end: 38,  duration: 0.40, gain: 0.18 }],
-          // Fireball: longer screech-into-rumble
-          fireball: [{ type: "sawtooth", start: 620, end: 55,  duration: 0.62, gain: 0.20 }],
-          // Oil: short pop of glass + splat
-          oil:      [{ type: "triangle", start: 380, end: 95,  duration: 0.34, gain: 0.14 }],
-          // Tar: slow, dense, gooey heave
-          tar:      [{ type: "square",   start: 230, end: 36,  duration: 0.60, gain: 0.15 }],
-          // Bolt: piercing arrow-into-wood
-          bolt:     [{ type: "sawtooth", start: 980, end: 140, duration: 0.20, gain: 0.11 }]
-        };
-        (voices[type] || voices.rock).forEach(playTone);
-
-        // Bolts are sharp piercing shots, not chest-thumping booms — give
-        // them only a light high-frequency noise crack and skip the
-        // sub-boom layer.
-        if (type === "bolt") {
-          playNoiseBurst({ duration: 0.20, gain: 0.14, cutoffStart: 4200, cutoffEnd: 1100, q: 0.6 });
-          return;
+        const pool = EXPLOSION_POOLS[type] || EXPLOSION_POOLS.rock;
+        const slug = pool[Math.floor(Math.random() * pool.length)];
+        const path = EXPLOSION_BASE + slug + ".mp3";
+        let cached = _explosionCache[path];
+        if (!cached) {
+          cached = new Audio(path);
+          cached.preload = "auto";
+          _explosionCache[path] = cached;
         }
-
-        // Sub-boom: very low sine that snaps down to bass. Tuning varies
-        // per type so each impact has its own bottom-end signature.
-        const subSpec = {
-          rock:     { start: 72,  end: 30, duration: 0.55, gain: 0.22 },
-          // Fireball booms low, slow and long for the whoomp body
-          fireball: { start: 86,  end: 22, duration: 0.78, gain: 0.32 },
-          // Oil is a quick high-mid splat — minimal sub
-          oil:      { start: 60,  end: 36, duration: 0.32, gain: 0.16 },
-          // Tar is the deepest, gooiest bass thud — slowest decay
-          tar:      { start: 64,  end: 18, duration: 0.85, gain: 0.30 }
-        };
-        const sub = subSpec[type] || subSpec.rock;
-        playTone({ type: "sine", ...sub });
-
-        // Mid crack — varies by type to add textural identity to the thud.
-        // Rock gets a sharp granite snap, oil gets a glassy chink,
-        // fireball gets a meatier thwomp, tar gets almost nothing (just
-        // the gooey bottom does the talking).
-        const crackSpec = {
-          rock:     { type: "square",   start: 320, end: 80,  duration: 0.08, gain: 0.15 },
-          fireball: { type: "sawtooth", start: 220, end: 50,  duration: 0.11, gain: 0.16 },
-          oil:      { type: "triangle", start: 540, end: 160, duration: 0.06, gain: 0.13 },
-          tar:      { type: "square",   start: 180, end: 60,  duration: 0.14, gain: 0.10 }
-        };
-        playTone(crackSpec[type] || crackSpec.rock);
-
-        // White-noise crash: starts bright (debris/shrapnel) and sweeps
-        // into bass (rumble tail). Tuned per type so each thud has a
-        // distinct sheen — rock is gritty, fireball is roaring, oil is
-        // splash-y and short, tar is low and muddy.
-        const noiseSpec = {
-          rock:     { duration: 0.55, gain: 0.22, cutoffStart: 2600, cutoffEnd: 220, q: 0.9 },
-          fireball: { duration: 0.85, gain: 0.28, cutoffStart: 3600, cutoffEnd: 140, q: 0.95 },
-          oil:      { duration: 0.40, gain: 0.18, cutoffStart: 4200, cutoffEnd: 380, q: 0.7 },
-          tar:      { duration: 0.75, gain: 0.20, cutoffStart: 1800, cutoffEnd: 130, q: 1.0 }
-        };
-        playNoiseBurst(noiseSpec[type] || noiseSpec.rock);
+        const node = cached.cloneNode();
+        // Bolts are sharper / lower volume so they don't dominate.
+        node.volume = type === "bolt" ? 0.55 : 0.75;
+        node.play().catch(() => {});
       }
 
       function makeTerrain() {
@@ -2223,6 +2193,10 @@
       resetButton.addEventListener("click", () => resetGame(false));
       startButton.addEventListener("click", () => {
         ensureAudio();
+        // Kick off MP3 explosion preload now so the first impact isn't
+        // delayed by network. Browsers also unlock media playback on this
+        // user gesture, so any later .play() calls go through cleanly.
+        preloadExplosionSamples();
         resetGame(false);
       });
 
