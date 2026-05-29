@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flood Fill — DrawSplat Games</title>
+<title data-i18n="doc.title">Flood Fill — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   /* DrawSplat Games header */
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
@@ -48,36 +54,39 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Flood Fill</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Flood Fill</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
-  <h1 class="game-title">Unify the board.</h1>
-  <p class="lede">Pick colours below to flood from the top-left corner. Match the whole grid before your moves run out.</p>
+  <h1 class="game-title" data-i18n="game.title">Unify the board.</h1>
+  <p class="lede" data-i18n="game.lede">Pick colours below to flood from the top-left corner. Match the whole grid before your moves run out.</p>
   <div class="controls">
     <div class="group">
-      <span class="gl">Density</span>
-      <button class="btn size-btn active" data-size="12">Beginner 12×12</button>
-      <button class="btn size-btn" data-size="18">Intermediate 18×18</button>
-      <button class="btn size-btn" data-size="24">Expert 24×24</button>
+      <span class="gl" data-i18n="group.density">Density</span>
+      <button class="btn size-btn active" data-size="12" data-i18n="size.beginner">Beginner 12×12</button>
+      <button class="btn size-btn" data-size="18" data-i18n="size.intermediate">Intermediate 18×18</button>
+      <button class="btn size-btn" data-size="24" data-i18n="size.expert">Expert 24×24</button>
     </div>
     <div class="group">
-      <span class="gl">Colours</span>
+      <span class="gl" data-i18n="group.colours">Colours</span>
       <button class="btn col-btn active" data-cc="4">4</button>
       <button class="btn col-btn" data-cc="6">6</button>
       <button class="btn col-btn" data-cc="8">8</button>
     </div>
-    <button class="btn primary" id="newBtn">New Game</button>
-    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <button class="btn primary" id="newBtn" data-i18n="button.new">New Game</button>
+    <button class="btn" id="muteBtn" data-i18n-aria-label="button.mute.aria" aria-label="Toggle sound">🔊</button>
     <div class="metrics">
-      <div class="metric"><span class="label">Moves</span><span class="val"><span id="movesLeft">--</span>/<span id="maxMoves">--</span></span></div>
+      <div class="metric"><span class="label" data-i18n="metric.moves">Moves</span><span class="val"><span id="movesLeft">--</span>/<span id="maxMoves">--</span></span></div>
     </div>
   </div>
   <div class="canvas-wrap">
-    <canvas id="board" width="500" height="500" aria-label="Flood fill board"></canvas>
+    <canvas id="board" width="500" height="500" data-i18n-aria-label="board.aria" aria-label="Flood fill board"></canvas>
     <div id="palette" class="palette"></div>
   </div>
   <div id="endCard" class="end-card">
@@ -86,7 +95,9 @@
   </div>
 </div>
 
+<script src="./locales.js"></script>
 <script>
+const t = (k, vars) => WidgetI18n.t(k, vars);
 const PALETTES = {
   4: ["#7c3aed", "#f97316", "#22c55e", "#ef4444"],
   6: ["#7c3aed", "#f97316", "#22c55e", "#ef4444", "#facc15", "#0ea5e9"],
@@ -151,7 +162,7 @@ function renderPalette() {
     const btn = document.createElement("button");
     btn.className = "swatch" + (boardMatrix[0][0] === i ? " disabled" : "");
     btn.style.background = palette[i];
-    btn.setAttribute("aria-label", `Flood with colour ${i+1}`);
+    btn.setAttribute("aria-label", t('swatch.aria', { n: i + 1 }));
     btn.addEventListener("click", () => pick(i));
     paletteEl.appendChild(btn);
   }
@@ -187,14 +198,14 @@ function pick(newColor) {
   if (won) {
     matchStatus = "victory";
     endCard.classList.add("victory");
-    endTitle.textContent = "Board unified.";
-    endText.textContent = `${maxMoves - movesRemaining} moves used.`;
+    endTitle.textContent = t('end.victoryTitle');
+    endText.textContent = t('end.victoryBody', { n: maxMoves - movesRemaining });
     playVictory();
   } else if (movesRemaining <= 0) {
     matchStatus = "defeat";
     endCard.classList.add("defeat");
-    endTitle.textContent = "Out of moves.";
-    endText.textContent = "Try a different palette or density.";
+    endTitle.textContent = t('end.defeatTitle');
+    endText.textContent = t('end.defeatBody');
   }
 }
 
@@ -269,6 +280,19 @@ document.getElementById("muteBtn").addEventListener("click", (e) => {
 });
 
 init();
+
+// On language change: re-render the palette (so swatch aria-labels refresh)
+// and the end card text if it's currently visible.
+window.addEventListener('widget-i18n:changed', () => {
+  renderPalette();
+  if (matchStatus === 'victory') {
+    endTitle.textContent = t('end.victoryTitle');
+    endText.textContent = t('end.victoryBody', { n: maxMoves - movesRemaining });
+  } else if (matchStatus === 'defeat') {
+    endTitle.textContent = t('end.defeatTitle');
+    endText.textContent = t('end.defeatBody');
+  }
+});
 </script>
 </body>
 </html>
