@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rubric Builder</title>
+  <title data-i18n="doc.title">Rubric Builder</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid #e5e7eb; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -293,74 +299,77 @@
   <main class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Classroom Widget</a></p>
-        <h1>Rubric Builder</h1>
-        <p class="subtitle">Create a classroom rubric with editable criteria, performance levels, point values, and ready-to-print descriptors.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Classroom Widget</a></p>
+        <h1 data-i18n="header.h1">Rubric Builder</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Create a classroom rubric with editable criteria, performance levels, point values, and ready-to-print descriptors.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <section class="app-grid">
       <aside class="panel">
-        <h2>Rubric setup</h2>
+        <h2 data-i18n="panel.h2">Rubric setup</h2>
 
         <div class="field">
-          <label for="rubricTitle">Title</label>
-          <input id="rubricTitle" value="Project Rubric">
+          <label for="rubricTitle" data-i18n="field.title">Title</label>
+          <input id="rubricTitle" value="">
         </div>
 
         <div class="field">
-          <label for="rubricDescription">Description</label>
-          <textarea id="rubricDescription">Use this rubric to guide feedback and scoring.</textarea>
+          <label for="rubricDescription" data-i18n="field.description">Description</label>
+          <textarea id="rubricDescription"></textarea>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="templateSelect">Template</label>
+            <label for="templateSelect" data-i18n="field.template">Template</label>
             <select id="templateSelect">
-              <option value="project">Project</option>
-              <option value="writing">Writing</option>
-              <option value="presentation">Presentation</option>
-              <option value="collaboration">Collaboration</option>
-              <option value="blank">Blank</option>
+              <option value="project" data-i18n="tpl.project">Project</option>
+              <option value="writing" data-i18n="tpl.writing">Writing</option>
+              <option value="presentation" data-i18n="tpl.presentation">Presentation</option>
+              <option value="collaboration" data-i18n="tpl.collaboration">Collaboration</option>
+              <option value="blank" data-i18n="tpl.blank">Blank</option>
             </select>
           </div>
           <div class="field">
-            <label for="levelPreset">Levels</label>
+            <label for="levelPreset" data-i18n="field.levelPreset">Levels</label>
             <select id="levelPreset">
-              <option value="4">4 levels</option>
-              <option value="3">3 levels</option>
-              <option value="5">5 levels</option>
+              <option value="4" data-i18n="levelPreset.4">4 levels</option>
+              <option value="3" data-i18n="levelPreset.3">3 levels</option>
+              <option value="5" data-i18n="levelPreset.5">5 levels</option>
             </select>
           </div>
         </div>
 
         <div class="button-row">
-          <button class="primary" id="applyTemplateBtn">Apply Template</button>
-          <button id="addCriterionBtn">Add Criterion</button>
-          <button id="addLevelBtn">Add Level</button>
+          <button class="primary" id="applyTemplateBtn" data-i18n="button.applyTemplate">Apply Template</button>
+          <button id="addCriterionBtn" data-i18n="button.addCriterion">Add Criterion</button>
+          <button id="addLevelBtn" data-i18n="button.addLevel">Add Level</button>
         </div>
 
         <div class="field">
-          <label>Performance levels</label>
+          <label data-i18n="label.levels">Performance levels</label>
           <div id="levelsList" class="criteria-list"></div>
         </div>
 
         <div class="field">
-          <label>Criteria</label>
+          <label data-i18n="label.criteria">Criteria</label>
           <div id="criteriaList" class="criteria-list"></div>
         </div>
 
         <div class="button-row">
-          <button id="copyBtn">Copy Text</button>
-          <button id="downloadCsvBtn">Download CSV</button>
-          <button id="printBtn">Print</button>
-          <button class="danger" id="resetBtn">Reset</button>
+          <button id="copyBtn" data-i18n="button.copy">Copy Text</button>
+          <button id="downloadCsvBtn" data-i18n="button.downloadCsv">Download CSV</button>
+          <button id="printBtn" data-i18n="button.print">Print</button>
+          <button class="danger" id="resetBtn" data-i18n="button.reset">Reset</button>
         </div>
         <div id="status" class="status" role="status" aria-live="polite"></div>
       </aside>
 
-      <section class="preview" aria-label="Rubric preview">
+      <section class="preview" data-i18n-aria-label="preview.aria" aria-label="Rubric preview">
         <div class="rubric-meta">
           <h2 id="previewTitle"></h2>
           <p id="previewDescription"></p>
@@ -371,98 +380,92 @@
     </section>
   </main>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
+    // Templates store criterion KEYS so each render pulls the active locale's
+    // translated name. The auto-generated descriptors flow through stems.
     const templates = {
-      project: {
-        title: 'Project Rubric',
-        description: 'Use this rubric to evaluate planning, content, design, and reflection.',
-        criteria: [
-          ['Content Accuracy', 4],
-          ['Organization', 4],
-          ['Visual Design', 4],
-          ['Reflection', 4]
-        ]
-      },
-      writing: {
-        title: 'Writing Rubric',
-        description: 'Use this rubric to evaluate ideas, organization, voice, conventions, and revision.',
-        criteria: [
-          ['Ideas and Evidence', 4],
-          ['Organization', 4],
-          ['Voice and Word Choice', 4],
-          ['Conventions', 4]
-        ]
-      },
-      presentation: {
-        title: 'Presentation Rubric',
-        description: 'Use this rubric to evaluate content, delivery, visuals, and audience engagement.',
-        criteria: [
-          ['Content', 4],
-          ['Delivery', 4],
-          ['Visuals', 4],
-          ['Audience Engagement', 4]
-        ]
-      },
-      collaboration: {
-        title: 'Collaboration Rubric',
-        description: 'Use this rubric to evaluate teamwork, participation, communication, and follow-through.',
-        criteria: [
-          ['Participation', 4],
-          ['Communication', 4],
-          ['Problem Solving', 4],
-          ['Follow-through', 4]
-        ]
-      },
-      blank: {
-        title: 'Rubric',
-        description: '',
-        criteria: [['Criterion 1', 4], ['Criterion 2', 4], ['Criterion 3', 4]]
-      }
+      project:       { titleKey: 'tplTitle.project',       descKey: 'tplDesc.project',       criteria: [['crit.project.1', 4], ['crit.project.2', 4], ['crit.project.3', 4], ['crit.project.4', 4]] },
+      writing:       { titleKey: 'tplTitle.writing',       descKey: 'tplDesc.writing',       criteria: [['crit.writing.1', 4], ['crit.writing.2', 4], ['crit.writing.3', 4], ['crit.writing.4', 4]] },
+      presentation:  { titleKey: 'tplTitle.presentation',  descKey: 'tplDesc.presentation',  criteria: [['crit.presentation.1', 4], ['crit.presentation.2', 4], ['crit.presentation.3', 4], ['crit.presentation.4', 4]] },
+      collaboration: { titleKey: 'tplTitle.collaboration', descKey: 'tplDesc.collaboration', criteria: [['crit.collaboration.1', 4], ['crit.collaboration.2', 4], ['crit.collaboration.3', 4], ['crit.collaboration.4', 4]] },
+      blank:         { titleKey: 'tplTitle.blank',         descKey: 'tplDesc.blank',         criteria: [['__blank__1', 4], ['__blank__2', 4], ['__blank__3', 4]] }
     };
 
+    // Level sets translate at boot via these keys.
     const levelSets = {
-      3: ['Meets Expectations', 'Developing', 'Beginning'],
-      4: ['Exceeds Expectations', 'Meets Expectations', 'Developing', 'Beginning'],
-      5: ['Advanced', 'Proficient', 'Developing', 'Beginning', 'Not Yet']
+      3: ['level.meets', 'level.developing', 'level.beginning'],
+      4: ['level.exceeds', 'level.meets', 'level.developing', 'level.beginning'],
+      5: ['level.advanced', 'level.proficient', 'level.developing', 'level.beginning', 'level.notYet']
     };
 
     let state = {
-      title: 'Project Rubric',
-      description: 'Use this rubric to guide feedback and scoring.',
-      levels: [...levelSets[4]],
+      title: '',
+      description: '',
+      levels: [],
       criteria: []
     };
 
     const $ = id => document.getElementById(id);
 
+    const STEMS = ['descStem.strong', 'descStem.clear', 'descStem.partial', 'descStem.limited', 'descStem.notYet'];
     function descriptor(criterion, level, index) {
-      const stems = [
-        `Shows strong, consistent evidence of ${criterion.toLowerCase()}.`,
-        `Shows clear evidence of ${criterion.toLowerCase()}.`,
-        `Shows partial evidence of ${criterion.toLowerCase()}.`,
-        `Shows limited evidence of ${criterion.toLowerCase()}.`,
-        `Does not yet show enough evidence of ${criterion.toLowerCase()}.`
-      ];
-      return stems[index] || stems[stems.length - 1];
+      const key = STEMS[index] || STEMS[STEMS.length - 1];
+      return t(key, { criterion: String(criterion).toLowerCase() });
+    }
+
+    // Resolve a criterion key (e.g. "crit.project.1" or "__blank__2") into its
+    // current-language display name.
+    function resolveCriterionName(keyOrName) {
+      if (typeof keyOrName !== 'string') return String(keyOrName);
+      if (keyOrName.startsWith('__blank__')) {
+        const n = +keyOrName.slice('__blank__'.length);
+        return t('crit.blankN', { n });
+      }
+      if (keyOrName.startsWith('crit.')) return t(keyOrName);
+      return keyOrName;
+    }
+
+    // Track which template was last applied + a snapshot of the strings it
+    // produced. Used by the language-change handler to swap defaults.
+    let lastTemplate = 'project';
+    let lastSnapshot = { title: '', description: '', levels: [], critNames: [] };
+
+    function snapshotTemplate(name) {
+      const tpl = templates[name] || templates.project;
+      const levelKeys = levelSets[$('levelPreset').value] || levelSets[4];
+      return {
+        title: t(tpl.titleKey),
+        description: t(tpl.descKey),
+        levels: levelKeys.map(k => t(k)),
+        critNames: tpl.criteria.map(([k]) => resolveCriterionName(k)),
+      };
     }
 
     function applyTemplate(name = $('templateSelect').value) {
-      const t = templates[name] || templates.project;
-      const levels = [...levelSets[$('levelPreset').value] || levelSets[4]];
+      const tpl = templates[name] || templates.project;
+      const levelKeys = levelSets[$('levelPreset').value] || levelSets[4];
+      const levels = levelKeys.map(k => t(k));
       state = {
-        title: t.title,
-        description: t.description,
+        title: t(tpl.titleKey),
+        description: t(tpl.descKey),
         levels,
-        criteria: t.criteria.map(([name, points]) => ({
-          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-          name,
-          points,
-          descriptions: levels.map((level, i) => descriptor(name, level, i))
-        }))
+        criteria: tpl.criteria.map(([critKey, points]) => {
+          const displayName = resolveCriterionName(critKey);
+          return {
+            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+            name: displayName,
+            points,
+            descriptions: levels.map((level, i) => descriptor(displayName, level, i))
+          };
+        })
       };
+      lastTemplate = name in templates ? name : 'project';
+      lastSnapshot = snapshotTemplate(lastTemplate);
       syncFields();
       render();
-      setStatus('Template applied.');
+      setStatus(t('status.templateApplied'));
     }
 
     function syncFields() {
@@ -471,7 +474,7 @@
     }
 
     function updateStateFromFields() {
-      state.title = $('rubricTitle').value.trim() || 'Rubric';
+      state.title = $('rubricTitle').value.trim() || t('titleFallback');
       state.description = $('rubricDescription').value.trim();
     }
 
@@ -481,24 +484,29 @@
     }
 
     function renderLevels() {
+      const removeLabel = t('button.remove');
+      const ariaLevel = t('aria.levelName');
       $('levelsList').innerHTML = state.levels.map((level, index) => `
         <div class="criteria-card">
           <div class="criteria-head">
-            <input class="small-input" value="${escapeAttr(level)}" data-level-name="${index}" aria-label="Level name">
+            <input class="small-input" value="${escapeAttr(level)}" data-level-name="${index}" aria-label="${escapeAttr(ariaLevel)}">
             <span></span>
-            <button class="danger" data-remove-level="${index}" ${state.levels.length <= 2 ? 'disabled' : ''}>Remove</button>
+            <button class="danger" data-remove-level="${index}" ${state.levels.length <= 2 ? 'disabled' : ''}>${escapeHtml(removeLabel)}</button>
           </div>
         </div>
       `).join('');
     }
 
     function renderCriteriaEditor() {
+      const removeLabel = t('button.remove');
+      const ariaCrit = t('aria.criterionName');
+      const ariaPts = t('aria.points');
       $('criteriaList').innerHTML = state.criteria.map((criterion, index) => `
         <div class="criteria-card">
           <div class="criteria-head">
-            <input class="small-input" value="${escapeAttr(criterion.name)}" data-criterion-name="${index}" aria-label="Criterion name">
-            <input class="small-input" type="number" min="0" max="100" value="${criterion.points}" data-criterion-points="${index}" aria-label="Points">
-            <button class="danger" data-remove-criterion="${index}">Remove</button>
+            <input class="small-input" value="${escapeAttr(criterion.name)}" data-criterion-name="${index}" aria-label="${escapeAttr(ariaCrit)}">
+            <input class="small-input" type="number" min="0" max="100" value="${criterion.points}" data-criterion-points="${index}" aria-label="${escapeAttr(ariaPts)}">
+            <button class="danger" data-remove-criterion="${index}">${escapeHtml(removeLabel)}</button>
           </div>
           ${state.levels.map((level, levelIndex) => `
             <textarea data-description="${index}:${levelIndex}" aria-label="${escapeAttr(criterion.name)} ${escapeAttr(level)}">${escapeHtml(criterion.descriptions[levelIndex] || '')}</textarea>
@@ -512,19 +520,20 @@
       $('previewTitle').textContent = state.title;
       $('previewDescription').textContent = state.description;
       const total = state.criteria.reduce((sum, c) => sum + (+c.points || 0), 0);
-      $('previewTotal').textContent = `${total} total points`;
+      $('previewTotal').textContent = t('preview.totalPoints', { n: total });
+      const critCol = t('preview.criteriaCol');
       const table = `
         <table>
           <thead>
             <tr>
-              <th>Criteria</th>
+              <th>${escapeHtml(critCol)}</th>
               ${state.levels.map(level => `<th>${escapeHtml(level)}</th>`).join('')}
             </tr>
           </thead>
           <tbody>
             ${state.criteria.map(criterion => `
               <tr>
-                <td><span class="criterion-name">${escapeHtml(criterion.name)}</span><span class="criterion-points">${+criterion.points || 0} pts</span></td>
+                <td><span class="criterion-name">${escapeHtml(criterion.name)}</span><span class="criterion-points">${escapeHtml(t('preview.points', { n: +criterion.points || 0 }))}</span></td>
                 ${state.levels.map((level, i) => `<td><div class="descriptor">${escapeHtml(criterion.descriptions[i] || '')}</div></td>`).join('')}
               </tr>
             `).join('')}
@@ -541,7 +550,7 @@
     }
 
     function addCriterion() {
-      const name = `Criterion ${state.criteria.length + 1}`;
+      const name = t('crit.blankN', { n: state.criteria.length + 1 });
       state.criteria.push({
         id: String(Date.now() + Math.random()),
         name,
@@ -552,7 +561,7 @@
     }
 
     function addLevel() {
-      state.levels.push(`Level ${state.levels.length + 1}`);
+      state.levels.push(t('level.numericN', { n: state.levels.length + 1 }));
       state.criteria.forEach(c => c.descriptions.push(descriptor(c.name, '', state.levels.length - 1)));
       render();
     }
@@ -566,9 +575,10 @@
 
     function rubricText() {
       updateStateFromFields();
-      const lines = [state.title, state.description, '', `Total points: ${state.criteria.reduce((sum, c) => sum + (+c.points || 0), 0)}`, ''];
+      const totalPts = state.criteria.reduce((sum, c) => sum + (+c.points || 0), 0);
+      const lines = [state.title, state.description, '', t('text.totalLabel', { n: totalPts }), ''];
       state.criteria.forEach(c => {
-        lines.push(`${c.name} (${+c.points || 0} pts)`);
+        lines.push(`${c.name} (${t('preview.points', { n: +c.points || 0 })})`);
         state.levels.forEach((level, i) => lines.push(`- ${level}: ${c.descriptions[i] || ''}`));
         lines.push('');
       });
@@ -577,13 +587,16 @@
 
     function downloadCsv() {
       updateStateFromFields();
-      const rows = [['Criteria', 'Points', ...state.levels]];
+      const rows = [[t('csv.criteriaCol'), t('csv.pointsCol'), ...state.levels]];
       state.criteria.forEach(c => rows.push([c.name, c.points, ...state.levels.map((_, i) => c.descriptions[i] || '')]));
       const csv = rows.map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = (state.title || 'rubric').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.csv';
+      // Filename slugifies the title; ASCII-only patterns (regex above) mean
+      // non-Latin titles fall back to the localized "rubric" word.
+      const slug = (state.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      a.download = (slug || t('csv.fileFallback')) + '.csv';
       a.click();
       URL.revokeObjectURL(a.href);
     }
@@ -641,13 +654,34 @@
     $('copyBtn').addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(rubricText());
-        setStatus('Rubric copied.');
+        setStatus(t('status.copied'));
       } catch (_) {
-        setStatus('Copy unavailable in this browser.');
+        setStatus(t('status.copyFail'));
       }
     });
     $('resetBtn').addEventListener('click', () => applyTemplate('project'));
 
     applyTemplate('project');
+
+    // On language change: swap title / description / level names / criterion
+    // names that still match the previous locale's defaults. Custom text
+    // (criterion edits, descriptor edits, free-typed level names) stays.
+    window.addEventListener('widget-i18n:changed', () => {
+      const tpl = templates[lastTemplate];
+      if (!tpl) { render(); return; }
+      const fresh = snapshotTemplate(lastTemplate);
+      if (state.title === lastSnapshot.title) state.title = fresh.title;
+      if (state.description === lastSnapshot.description) state.description = fresh.description;
+      state.levels = state.levels.map((lvl, i) =>
+        lastSnapshot.levels[i] !== undefined && lvl === lastSnapshot.levels[i] ? fresh.levels[i] : lvl);
+      state.criteria.forEach((c, i) => {
+        if (lastSnapshot.critNames[i] !== undefined && c.name === lastSnapshot.critNames[i]) {
+          c.name = fresh.critNames[i];
+        }
+      });
+      lastSnapshot = fresh;
+      syncFields();
+      render();
+    });
   </script></body>
 </html>
