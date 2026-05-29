@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Story Wheel Maker</title>
+  <title data-i18n="doc.title">Story Wheel Maker</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -239,43 +245,46 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Story Wheel Maker</h1>
-        <p class="subtitle">Choose the 3, 5, or 7 most important events, put them in order, illustrate each wedge, and share a visual story summary.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Story Wheel Maker</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Choose the 3, 5, or 7 most important events, put them in order, illustrate each wedge, and share a visual story summary.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel" aria-label="Story wheel setup">
-        <h2>Setup</h2>
+      <section class="panel" data-i18n-aria-label="panel.setup.aria" aria-label="Story wheel setup">
+        <h2 data-i18n="setup.h2">Setup</h2>
 
         <div class="split">
           <div class="field">
-            <label for="storyTitle">Story Title</label>
-            <input id="storyTitle" type="text" value="The Story Title">
+            <label for="storyTitle" data-i18n="field.title">Story Title</label>
+            <input id="storyTitle" type="text" value="">
           </div>
           <div class="field">
-            <label for="authorName">Author</label>
-            <input id="authorName" type="text" value="Author Name">
+            <label for="authorName" data-i18n="field.author">Author</label>
+            <input id="authorName" type="text" value="">
           </div>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="eventCount">Important Events</label>
+            <label for="eventCount" data-i18n="field.eventCount">Important Events</label>
             <select id="eventCount">
-              <option value="3">3 events</option>
-              <option value="5" selected>5 events</option>
-              <option value="7">7 events</option>
+              <option value="3" data-i18n="eventCount.3">3 events</option>
+              <option value="5" selected data-i18n="eventCount.5">5 events</option>
+              <option value="7" data-i18n="eventCount.7">7 events</option>
             </select>
           </div>
           <div class="field">
-            <label for="wheelMode">Wheel Type</label>
+            <label for="wheelMode" data-i18n="field.wheelMode">Wheel Type</label>
             <select id="wheelMode">
-              <option value="summary" selected>Story Summary</option>
-              <option value="multimedia">Multimedia Summary</option>
-              <option value="sequence">Sequencing Practice</option>
+              <option value="summary" selected data-i18n="wheelMode.summary">Story Summary</option>
+              <option value="multimedia" data-i18n="wheelMode.multimedia">Multimedia Summary</option>
+              <option value="sequence" data-i18n="wheelMode.sequence">Sequencing Practice</option>
             </select>
           </div>
         </div>
@@ -283,27 +292,29 @@
         <div id="events"></div>
 
         <div class="button-grid">
-          <button class="btn primary" id="renderBtn">Update Wheel</button>
-          <button class="btn gold" id="rotateBtn">Spin Preview</button>
-          <button class="btn" id="printBtn">Print</button>
-          <button class="btn" id="saveBtn">Save PNG</button>
-          <button class="btn" id="copyLinkBtn">Copy Link</button>
-          <button class="btn" id="clearBtn">Clear Events</button>
+          <button class="btn primary" id="renderBtn" data-i18n="button.update">Update Wheel</button>
+          <button class="btn gold" id="rotateBtn" data-i18n="button.spin">Spin Preview</button>
+          <button class="btn" id="printBtn" data-i18n="button.print">Print</button>
+          <button class="btn" id="saveBtn" data-i18n="button.save">Save PNG</button>
+          <button class="btn" id="copyLinkBtn" data-i18n="button.copyLink">Copy Link</button>
+          <button class="btn" id="clearBtn" data-i18n="button.clear">Clear Events</button>
         </div>
-        <p class="help" style="margin-top:12px;">Use short event summaries. Add an image URL or upload a picture for each wedge when students illustrate their event.</p>
+        <p class="help" style="margin-top:12px;" data-i18n="help.line">Use short event summaries. Add an image URL or upload a picture for each wedge when students illustrate their event.</p>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
-      <section class="preview" aria-label="Story wheel preview">
-        <h2>Preview</h2>
+      <section class="preview" data-i18n-aria-label="panel.preview.aria" aria-label="Story wheel preview">
+        <h2 data-i18n="preview.h2">Preview</h2>
         <div class="canvas-wrap">
-          <canvas id="wheelCanvas" width="1600" height="1600" aria-label="Story wheel preview"></canvas>
+          <canvas id="wheelCanvas" width="1600" height="1600" data-i18n-aria-label="panel.preview.aria" aria-label="Story wheel preview"></canvas>
         </div>
       </section>
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => [...document.querySelectorAll(sel)];
     const canvas = $("#wheelCanvas");
@@ -314,13 +325,13 @@
 
     function defaults(count) {
       const base = [
-        ["Beginning", "Introduce the setting, characters, and problem."],
-        ["Event 2", "Describe an important early event."],
-        ["Middle", "Show how the problem develops."],
-        ["Event 4", "Describe a turning point or major detail."],
-        ["Ending", "Explain how the story ends or what changes."],
-        ["Reflection", "Add a key lesson, theme, or final insight."],
-        ["Share", "Prepare to explain this event to others."]
+        [t("default.beginning.label"),  t("default.beginning.text")],
+        [t("default.event2.label"),     t("default.event2.text")],
+        [t("default.middle.label"),     t("default.middle.text")],
+        [t("default.event4.label"),     t("default.event4.text")],
+        [t("default.ending.label"),     t("default.ending.text")],
+        [t("default.reflection.label"), t("default.reflection.text")],
+        [t("default.share.label"),      t("default.share.text")]
       ];
       if (count === 3) return [base[0], base[2], base[4]];
       if (count === 5) return base.slice(0, 5);
@@ -345,18 +356,18 @@
         const card = document.createElement("section");
         card.className = "event-card";
         card.innerHTML = `
-          <h3>Wedge ${i + 1}</h3>
+          <h3>${escapeHTML(t("event.wedge", { n: i + 1 }))}</h3>
           <div class="field">
-            <label>Event Label</label>
+            <label>${escapeHTML(t("event.label"))}</label>
             <input class="event-label" type="text" value="${escapeAttr(data.label)}">
           </div>
           <div class="field">
-            <label>Written Explanation</label>
+            <label>${escapeHTML(t("event.text"))}</label>
             <textarea class="event-text">${escapeHTML(data.text)}</textarea>
           </div>
           <div class="field">
-            <label>Image URL or Upload</label>
-            <input class="event-image" type="text" value="${escapeAttr(data.image)}" placeholder="https://...">
+            <label>${escapeHTML(t("event.image"))}</label>
+            <input class="event-image" type="text" value="${escapeAttr(data.image)}" placeholder="${escapeAttr(t("event.imagePh"))}">
             <input class="event-upload" type="file" accept="image/*">
           </div>
         `;
@@ -441,7 +452,7 @@
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = "900 42px Arial, Helvetica, sans-serif";
-        wrapText(event.label || "Event " + (i + 1), 0, -95, 245, 46);
+        wrapText(event.label || t("canvas.eventFallback", { n: i + 1 }), 0, -95, 245, 46);
         ctx.font = "700 27px Arial, Helvetica, sans-serif";
         wrapText(event.text || "", 0, 30, 285, 32, 5);
         ctx.restore();
@@ -458,12 +469,12 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = "900 44px Arial, Helvetica, sans-serif";
-      wrapText($("#storyTitle").value || "Story Title", cx, cy - 32, 285, 46, 3);
+      wrapText($("#storyTitle").value || t("canvas.titleFallback"), cx, cy - 32, 285, 46, 3);
       ctx.fillStyle = "#404041";
       ctx.font = "700 28px Arial, Helvetica, sans-serif";
-      wrapText($("#authorName").value || "Author", cx, cy + 70, 260, 32, 2);
+      wrapText($("#authorName").value || t("canvas.authorFallback"), cx, cy + 70, 260, 32, 2);
 
-      $("#status").textContent = events.length + " story events ready.";
+      $("#status").textContent = t("status.ready", { count: events.length });
     }
 
     function wrapText(text, x, y, maxWidth, lineHeight, maxLines = 4) {
@@ -545,9 +556,9 @@
       const url = new URL(window.location.href);
       url.hash = "s=" + b64urlEncode(JSON.stringify(config()));
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url.toString()).then(() => $("#status").textContent = "Story wheel link copied.");
+        navigator.clipboard.writeText(url.toString()).then(() => $("#status").textContent = t("status.linkCopied"));
       } else {
-        window.prompt("Copy this story wheel link:", url.toString());
+        window.prompt(t("prompt.copyLink"), url.toString());
       }
     }
 
@@ -564,6 +575,46 @@
 
     function escapeAttr(str) {
       return escapeHTML(str).replace(/"/g, "&quot;");
+    }
+
+    // Remember the last-applied translated defaults so a language switch can
+    // swap them out without overwriting user-customized event text.
+    let lastDefaults = null;
+
+    function seedTitleInputs() {
+      const titleEl = $("#storyTitle");
+      if (!titleEl.value || titleEl.value === lastTitleDefault) {
+        titleEl.value = t("field.titleDefault");
+      }
+      lastTitleDefault = t("field.titleDefault");
+      const authorEl = $("#authorName");
+      if (!authorEl.value || authorEl.value === lastAuthorDefault) {
+        authorEl.value = t("field.authorDefault");
+      }
+      lastAuthorDefault = t("field.authorDefault");
+    }
+    let lastTitleDefault = "";
+    let lastAuthorDefault = "";
+
+    function swapEventDefaults() {
+      const fresh = defaults(7);  // full translated set
+      const cards = $$(".event-card");
+      cards.forEach((card, idx) => {
+        const labelInput = card.querySelector(".event-label");
+        const textArea = card.querySelector(".event-text");
+        // Map this slot to the right base index when count is 3 / 5 / 7.
+        const count = Number($("#eventCount").value);
+        const slotIdx = count === 3 ? [0, 2, 4][idx] :
+                        count === 5 ? idx :
+                        idx;
+        if (lastDefaults && labelInput.value === lastDefaults[slotIdx][0]) {
+          labelInput.value = fresh[slotIdx][0];
+        }
+        if (lastDefaults && textArea.value === lastDefaults[slotIdx][1]) {
+          textArea.value = fresh[slotIdx][1];
+        }
+      });
+      lastDefaults = fresh;
     }
 
     $("#eventCount").addEventListener("change", () => buildEventInputs(true));
@@ -583,6 +634,15 @@
       renderWheel();
     });
 
+    seedTitleInputs();
     if (!loadHash()) buildEventInputs(false);
+    lastDefaults = defaults(7);
+
+    function bootI18nDependentUI() {
+      seedTitleInputs();
+      swapEventDefaults();
+      renderWheel();
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script></body>
 </html>
