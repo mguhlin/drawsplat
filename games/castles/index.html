@@ -699,6 +699,37 @@
           _explosionCache[path] = a;
         }));
       }
+      // Per-munition playback duration cap. The raw samples are 3-7 seconds
+      // with long debris/rumble tails; gameplay-wise the impact reads in
+      // well under a second, and the next shot starts soon after. We cut
+      // each clip with a short volume fade so it ends without an audible
+      // pop. Each entry is { hold, fade } where:
+      //   hold = full-volume playback time before the fade begins (ms)
+      //   fade = how long the fade-out runs after `hold` (ms)
+      // Total play time = hold + fade.
+      const EXPLOSION_DURATIONS = {
+        rock:     { hold: 550, fade: 150 },
+        fireball: { hold: 800, fade: 220 }, // whoomp body lingers a bit
+        oil:      { hold: 460, fade: 140 },
+        tar:      { hold: 700, fade: 200 }, // gooey low-end gets extra
+        bolt:     { hold: 320, fade: 110 }  // sharp piercing hit
+      };
+      function fadeOutAndStop(node, fadeMs) {
+        const startVol = node.volume;
+        const steps = 6;
+        const stepMs = Math.max(8, Math.floor(fadeMs / steps));
+        let i = 0;
+        const interval = setInterval(() => {
+          i += 1;
+          const remaining = Math.max(0, 1 - i / steps);
+          node.volume = startVol * remaining;
+          if (i >= steps) {
+            clearInterval(interval);
+            try { node.pause(); } catch (_) {}
+            try { node.currentTime = 0; } catch (_) {}
+          }
+        }, stepMs);
+      }
       function playImpactSound(type) {
         const pool = EXPLOSION_POOLS[type] || EXPLOSION_POOLS.rock;
         const slug = pool[Math.floor(Math.random() * pool.length)];
@@ -713,6 +744,8 @@
         // Bolts are sharper / lower volume so they don't dominate.
         node.volume = type === "bolt" ? 0.55 : 0.75;
         node.play().catch(() => {});
+        const dur = EXPLOSION_DURATIONS[type] || EXPLOSION_DURATIONS.rock;
+        setTimeout(() => fadeOutAndStop(node, dur.fade), dur.hold);
       }
 
       function makeTerrain() {
