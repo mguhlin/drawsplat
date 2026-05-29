@@ -708,11 +708,11 @@
       //   fade = how long the fade-out runs after `hold` (ms)
       // Total play time = hold + fade.
       const EXPLOSION_DURATIONS = {
-        rock:     { hold: 550, fade: 150 },
-        fireball: { hold: 800, fade: 220 }, // whoomp body lingers a bit
-        oil:      { hold: 460, fade: 140 },
-        tar:      { hold: 700, fade: 200 }, // gooey low-end gets extra
-        bolt:     { hold: 320, fade: 110 }  // sharp piercing hit
+        rock:     { hold: 1100, fade: 250 },
+        fireball: { hold: 1500, fade: 350 }, // whoomp body lingers a bit
+        oil:      { hold:  900, fade: 220 },
+        tar:      { hold: 1400, fade: 300 }, // gooey low-end gets extra
+        bolt:     { hold:  650, fade: 180 }  // sharp piercing hit
       };
       function fadeOutAndStop(node, fadeMs) {
         const startVol = node.volume;
