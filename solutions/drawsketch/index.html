@@ -303,77 +303,6 @@
   </style>
 </head>
 <body>
-<!-- MG-BACK-NAV v2 -->
-<style id="mg-back-nav-style">
-  .mg-back-bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 32px;
-    z-index: 999999;
-    background: #FCB040;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(10, 52, 118, 0.25);
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-    font-size: 12.5px;
-    line-height: 1;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-  }
-  .mg-back-bar a {
-    color: #0A3476;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    transition: color 0.15s;
-  }
-  .mg-back-bar a:hover { color: #061f49; }
-  .mg-back-bar .mg-back-arrow { color: #0A3476; }
-  .mg-back-bar .mg-back-sep { color: rgba(10,52,118,0.4); margin: 0 4px; }
-  .mg-back-bar .mg-back-label { color: rgba(10,52,118,0.7); font-weight: 400; }
-  @media print { .mg-back-bar { display: none !important; } }
-</style>
-<div class="mg-back-bar" role="navigation" aria-label="Back to TCEA index">
-  <a href="../../index.html"><span class="mg-back-arrow">←</span> TCEA</a>
-</div>
-<script id="mg-back-nav-script">
-(function() {
-  var BAR_H = 32;
-  var done = false;
-  function offsetFixedHeaders() {
-    if (done) return;
-    done = true;
-    var nodes = document.querySelectorAll(
-      'header, nav, .topnav, .top-nav, .topbar, .navbar, .site-nav, .site-header, ' +
-      '[class*="topnav"], [class*="topbar"], [class*="navbar"]'
-    );
-    nodes.forEach(function(el) {
-      if (el.classList.contains('mg-back-bar')) return;
-      var cs = window.getComputedStyle(el);
-      var pos = cs.position;
-      if (pos !== 'fixed' && pos !== 'sticky') return;
-      var topVal = parseFloat(cs.top);
-      if (isNaN(topVal) || topVal >= BAR_H) return;
-      // Only shift wide, top-pinned bars (avoid moving inline-fixed widgets)
-      var rect = el.getBoundingClientRect();
-      if (rect.width < window.innerWidth * 0.4) return;
-      el.style.setProperty('top', (topVal + BAR_H) + 'px', 'important');
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', offsetFixedHeaders);
-  } else {
-    offsetFixedHeaders();
-  }
-  // Re-run once on full load in case scripts inject nav after DOMContentLoaded
-  window.addEventListener('load', function() { done = false; offsetFixedHeaders(); });
-})();
-</script>
 <div class="top-bar" aria-hidden="true"></div>
   <div class="page">
     <header>
@@ -384,7 +313,7 @@
       </div>
       <div class="header-actions">
         <div class="i18n-picker" data-i18n-picker></div>
-        <a class="home-link" href="../index.html" data-i18n="header.home">Tool Menu</a>
+        <a class="home-link" href="../../app/whiteboard.html" data-i18n="header.home">Tool Menu</a>
       </div>
     </header>
 
