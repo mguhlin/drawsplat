@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dicebreaker — Roll</title>
+<title data-i18n="doc.title.play">Dicebreaker — Roll</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 1px solid #ddd6fe; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .8rem; cursor: pointer; }
+  .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+  .header-actions { position: absolute; top: 18px; inset-inline-end: 18px; }
+  header.top { position: relative; }
+</style>
 <style>
   :root {
     --navy: #7c3aed;
@@ -190,18 +197,21 @@ footer.bottom a { color: var(--accent); text-decoration: none; }
 <div class="top-bar" aria-hidden="true"></div>
 
 <header class="top">
-  <h1 id="title">Dicebreaker</h1>
-  <p id="subtitle">Tap the die to roll.</p>
+  <div class="header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+  </div>
+  <h1 id="title" data-i18n="play.h1">Dicebreaker</h1>
+  <p id="subtitle" data-i18n="play.subtitle">Tap the die to roll.</p>
 </header>
 
 <main>
   <section class="stage" id="stage">
     <div class="scene">
-      <div class="cube" id="cube" role="button" aria-label="Roll the die" tabindex="0">
+      <div class="cube" id="cube" role="button" data-i18n-aria-label="play.aria.rollDie" aria-label="Roll the die" tabindex="0">
         <!-- six faces injected here -->
       </div>
     </div>
-    <div class="hint" id="hint">Tap or press Space to roll</div>
+    <div class="hint" id="hint" data-i18n="play.hint.tap">Tap or press Space to roll</div>
 
     <div class="result" id="result" aria-live="polite">
       <span class="num"><span id="resultNum">—</span></span>
@@ -209,17 +219,17 @@ footer.bottom a { color: var(--accent); text-decoration: none; }
     </div>
 
     <div class="controls">
-      <button class="btn primary" id="rollBtn">Roll the die</button>
-      <button class="btn" id="rollAgain" hidden>Roll again</button>
+      <button class="btn primary" id="rollBtn" data-i18n="play.btn.roll">Roll the die</button>
+      <button class="btn" id="rollAgain" hidden data-i18n="play.btn.rollAgain">Roll again</button>
     </div>
   </section>
 
   <section class="empty" id="empty" hidden>
-    <h2>No dicebreaker loaded</h2>
-    <p>Load a <code>.json</code> file exported from the creator, or open a share link.</p>
+    <h2 data-i18n="play.empty.h2">No dicebreaker loaded</h2>
+    <p data-i18n-html="play.empty.p.html">Load a <code>.json</code> file exported from the creator, or open a share link.</p>
     <p>
-      <button class="btn primary" id="loadBtn">Load file&hellip;</button>
-      <a class="btn" href="index.html" style="text-decoration:none;display:inline-block;">Create one</a>
+      <button class="btn primary" id="loadBtn" data-i18n="play.btn.loadFile">Load file&hellip;</button>
+      <a class="btn" href="index.html" style="text-decoration:none;display:inline-block;" data-i18n="play.btn.createOne">Create one</a>
     </p>
     <input id="fileInput" type="file" accept="application/json,.json" hidden>
   </section>
@@ -227,14 +237,16 @@ footer.bottom a { color: var(--accent); text-decoration: none; }
 
 <footer class="bottom">
   <span id="footerTitle"></span>
-  <a href="index.html">Create or edit &rarr;</a>
-  <a href="../../app/whiteboard.html">Tool Menu</a>
-  <button class="btn" id="loadBtn2" style="padding:4px 10px;font-size:13px;">Load file</button>
+  <a href="index.html" data-i18n="play.footer.create">Create or edit &rarr;</a>
+  <a href="../../index.html" data-i18n="header.home">Home</a>
+  <button class="btn" id="loadBtn2" style="padding:4px 10px;font-size:13px;" data-i18n="play.footer.loadFile">Load file</button>
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="./locales.js"></script>
 <script>
+const t = (k, vars) => WidgetI18n.t(k, vars);
 const $ = (s) => document.querySelector(s);
 
 function toast(msg, ms = 2200) {
@@ -307,7 +319,8 @@ function roll() {
   rolling = true;
   $('#cube').classList.add('rolling');
   $('#result').classList.remove('show');
-  $('#hint').textContent = 'Rolling…';
+  $('#hint').removeAttribute('data-i18n');
+  $('#hint').textContent = t('play.hint.rolling');
   $('#rollBtn').disabled = true;
 
   const n = 1 + Math.floor(Math.random() * 6);
@@ -342,18 +355,20 @@ function roll() {
 function showResult(n) {
   lastResult = n;
   $('#resultNum').textContent = n;
-  $('#resultText').textContent = (state.prompts?.[n - 1] || '').trim() || '(no prompt set for this face)';
+  $('#resultText').textContent = (state.prompts?.[n - 1] || '').trim() || t('play.result.noPrompt');
   $('#result').classList.add('show');
   $('#rollBtn').hidden = true;
   $('#rollAgain').hidden = false;
-  $('#hint').textContent = 'You rolled a ' + n;
+  $('#hint').removeAttribute('data-i18n');
+  $('#hint').textContent = t('play.hint.youRolled', { n });
 }
 
 function resetRoll() {
   $('#result').classList.remove('show');
   $('#rollBtn').hidden = false;
   $('#rollAgain').hidden = true;
-  $('#hint').textContent = 'Tap or press Space to roll';
+  $('#hint').setAttribute('data-i18n', 'play.hint.tap');
+  $('#hint').textContent = t('play.hint.tap');
 }
 
 //=== State / loading =================================================
@@ -376,10 +391,26 @@ function applyState(s) {
 
 function paintChrome() {
   document.documentElement.style.setProperty('--accent', state.accent);
-  $('#title').textContent = state.title || 'Dicebreaker';
-  $('#subtitle').textContent = state.subtitle || 'Tap the die to roll.';
+  // When a creator's title/subtitle is loaded, strip the i18n attrs so the
+  // applier doesn't overwrite custom text on language change.
+  const titleEl = $('#title');
+  const subEl = $('#subtitle');
+  if (state.title) {
+    titleEl.removeAttribute('data-i18n');
+    titleEl.textContent = state.title;
+  } else {
+    titleEl.setAttribute('data-i18n', 'play.h1');
+    titleEl.textContent = t('play.h1');
+  }
+  if (state.subtitle) {
+    subEl.removeAttribute('data-i18n');
+    subEl.textContent = state.subtitle;
+  } else {
+    subEl.setAttribute('data-i18n', 'play.subtitle');
+    subEl.textContent = t('play.subtitle');
+  }
   $('#footerTitle').textContent = state.title || '';
-  document.title = (state.title || 'Dicebreaker') + ' — Roll';
+  document.title = (state.title || t('play.h1')) + ' — ' + t('play.btn.roll');
 }
 
 function loadFromHash() {
@@ -412,9 +443,9 @@ async function loadFromFile(file) {
     const obj = JSON.parse(text);
     applyState(obj);
     showStage();
-    toast('Loaded ' + file.name);
+    toast(t('play.toast.loaded', { name: file.name }));
   } catch (e) {
-    toast('Could not read file: ' + e.message, 3500);
+    toast(t('play.toast.cantRead', { err: e.message }), 3500);
   }
 }
 
@@ -469,5 +500,16 @@ function init() {
 }
 
 init();
+
+function bootI18nDependentUI() {
+  paintChrome();
+  // If a result is currently shown, re-render its "You rolled a N" text.
+  if (lastResult != null) {
+    $('#hint').removeAttribute('data-i18n');
+    $('#hint').textContent = t('play.hint.youRolled', { n: lastResult });
+    $('#resultText').textContent = (state.prompts?.[lastResult - 1] || '').trim() || t('play.result.noPrompt');
+  }
+}
+window.addEventListener('widget-i18n:changed', bootI18nDependentUI);
 </script></body>
 </html>

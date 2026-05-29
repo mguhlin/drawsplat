@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dicebreaker Creator</title>
+<title data-i18n="doc.title">Dicebreaker Creator</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 8px 10px; border: 1px solid #ddd6fe; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 38px; }
+  .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+  .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   :root {
     --navy: #7c3aed;
@@ -65,11 +71,18 @@
   header.top .tag { color: var(--gray-90); font-size: 1rem; }
   header.top .spacer { flex: 1; }
   header.top a { color: var(--navy); text-decoration: none; font-size: 13px; font-weight: 800; }
-  header.top a.menu-link {
+  header.top a.home-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
     color: var(--white);
     background: var(--navy);
     border-radius: var(--radius);
-    padding: 10px 14px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
   }
   main {
     display: grid;
@@ -163,118 +176,121 @@
 <div class="top-bar" aria-hidden="true"></div>
 
 <header class="top">
-  <h1>Dicebreaker Creator</h1>
-  <span class="tag">Roll a die, answer a prompt. Make your own template in seconds.</span>
+  <h1 data-i18n="header.h1">Dicebreaker Creator</h1>
+  <span class="tag" data-i18n="header.tag">Roll a die, answer a prompt. Make your own template in seconds.</span>
   <div class="spacer"></div>
-  <a class="menu-link" href="../../app/whiteboard.html">Tool Menu</a>
+  <div class="header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <main>
   <!-- Editor panel -->
   <section class="panel" id="editor">
-    <h2>Your dicebreaker</h2>
+    <h2 data-i18n="panel.editor.h2">Your dicebreaker</h2>
 
     <div class="field">
-      <label for="title">Title</label>
-      <input id="title" type="text" maxlength="80" placeholder="Today's Debrief">
+      <label for="title" data-i18n="field.title">Title</label>
+      <input id="title" type="text" maxlength="80" data-i18n-placeholder="field.title.ph" placeholder="Today's Debrief">
     </div>
     <div class="field">
-      <label for="subtitle">Subtitle / instructions</label>
-      <input id="subtitle" type="text" maxlength="120" placeholder="Roll the die and answer the matching prompt.">
+      <label for="subtitle" data-i18n="field.subtitle">Subtitle / instructions</label>
+      <input id="subtitle" type="text" maxlength="120" data-i18n-placeholder="field.subtitle.ph" placeholder="Roll the die and answer the matching prompt.">
     </div>
 
     <div class="field">
-      <label>Prompts (one per face)</label>
+      <label data-i18n="field.prompts">Prompts (one per face)</label>
       <div id="prompts"></div>
     </div>
 
     <div class="row">
       <div class="field" style="margin-bottom:0;">
-        <label for="accent">Accent color</label>
+        <label for="accent" data-i18n="field.accent">Accent color</label>
         <input id="accent" type="color" value="#7c3aed" style="width:100%; height:38px; padding:2px; border:1px solid var(--line); border-radius:8px; background:#fff;">
       </div>
       <div class="field" style="margin-bottom:0;">
-        <label for="layout">Layout</label>
+        <label for="layout" data-i18n="field.layout">Layout</label>
         <select id="layout">
-          <option value="grid">Grid (3 &times; 2)</option>
-          <option value="strip">Strip (6 &times; 1)</option>
+          <option value="grid" data-i18n="layout.grid">Grid (3 &times; 2)</option>
+          <option value="strip" data-i18n="layout.strip">Strip (6 &times; 1)</option>
         </select>
       </div>
     </div>
 
     <div class="field" style="margin-top: 12px;">
-      <label>Quick starts</label>
+      <label data-i18n="field.quickStarts">Quick starts</label>
       <div class="pill-group">
-        <button class="pill" data-preset="debrief">Debrief</button>
-        <button class="pill" data-preset="entry">Entry ticket</button>
-        <button class="pill" data-preset="story">Roll-a-story</button>
-        <button class="pill" data-preset="getknow">Get-to-know-you</button>
-        <button class="pill" data-preset="blank">Clear</button>
+        <button class="pill" data-preset="debrief" data-i18n="pill.debrief">Debrief</button>
+        <button class="pill" data-preset="entry" data-i18n="pill.entry">Entry ticket</button>
+        <button class="pill" data-preset="story" data-i18n="pill.story">Roll-a-story</button>
+        <button class="pill" data-preset="getknow" data-i18n="pill.getknow">Get-to-know-you</button>
+        <button class="pill" data-preset="blank" data-i18n="pill.blank">Clear</button>
       </div>
     </div>
 
     <div class="actions">
-      <h3>Download</h3>
-      <button class="btn primary" id="dl-png">PNG</button>
-      <button class="btn primary" id="dl-pdf">PDF</button>
-      <button class="btn primary" id="dl-pptx">PPTX</button>
-      <button class="btn" id="dl-json">JSON</button>
-      <button class="btn" id="load-json">Load JSON&hellip;</button>
+      <h3 data-i18n="actions.download">Download</h3>
+      <button class="btn primary" id="dl-png" data-i18n="btn.png">PNG</button>
+      <button class="btn primary" id="dl-pdf" data-i18n="btn.pdf">PDF</button>
+      <button class="btn primary" id="dl-pptx" data-i18n="btn.pptx">PPTX</button>
+      <button class="btn" id="dl-json" data-i18n="btn.json">JSON</button>
+      <button class="btn" id="load-json" data-i18n="btn.loadJson">Load JSON&hellip;</button>
       <input id="json-file-input" type="file" accept="application/json,.json" hidden>
     </div>
 
     <div class="actions">
-      <h3>For students</h3>
-      <button class="btn primary" id="open-play">Open student view</button>
-      <button class="btn" id="copy-link">Copy share link</button>
+      <h3 data-i18n="actions.students">For students</h3>
+      <button class="btn primary" id="open-play" data-i18n="btn.openPlay">Open student view</button>
+      <button class="btn" id="copy-link" data-i18n="btn.copyLink">Copy share link</button>
     </div>
-    <div class="inline-help">
+    <div class="inline-help" data-i18n-html="help.studentView.html">
       The student view (<code>play.html</code>) shows a 3D die students click to roll &mdash; the chosen prompt appears below.
       The share link encodes your dicebreaker in the URL, so no server is needed.
     </div>
 
     <div class="actions">
-      <h3>Save to cloud</h3>
-      <button class="btn" id="save-gdrive">Google Drive</button>
-      <button class="btn" id="save-onedrive">OneDrive</button>
-      <button class="btn" id="save-dropbox">Dropbox</button>
+      <h3 data-i18n="actions.cloud">Save to cloud</h3>
+      <button class="btn" id="save-gdrive" data-i18n="btn.gdrive">Google Drive</button>
+      <button class="btn" id="save-onedrive" data-i18n="btn.onedrive">OneDrive</button>
+      <button class="btn" id="save-dropbox" data-i18n="btn.dropbox">Dropbox</button>
     </div>
-    <div class="inline-help">
+    <div class="inline-help" data-i18n="help.cloud">
       Cloud save uploads the PDF. You'll be asked once which OAuth client to use; keys are stored only in your browser.
     </div>
 
     <details class="settings">
-      <summary>Cloud API keys (one-time setup)</summary>
-      <p>
+      <summary data-i18n="settings.summary">Cloud API keys (one-time setup)</summary>
+      <p data-i18n-html="settings.intro.html">
         To upload directly, register a client app with each service and paste its public client ID below.
         Add this page's URL as an allowed JavaScript origin / redirect URI.
         Keys are saved to <code>localStorage</code> in your browser only.
       </p>
       <div class="field">
-        <label for="key-gdrive">Google OAuth Client ID</label>
+        <label for="key-gdrive" data-i18n="settings.google">Google OAuth Client ID</label>
         <input id="key-gdrive" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
-        <div class="inline-help">Enable the Drive API; scope <code>drive.file</code>.</div>
+        <div class="inline-help" data-i18n-html="settings.google.help.html">Enable the Drive API; scope <code>drive.file</code>.</div>
       </div>
       <div class="field">
-        <label for="key-onedrive">Microsoft (Azure AD) Application (client) ID</label>
+        <label for="key-onedrive" data-i18n="settings.ms">Microsoft (Azure AD) Application (client) ID</label>
         <input id="key-onedrive" type="text" placeholder="00000000-0000-0000-0000-000000000000" autocomplete="off">
-        <div class="inline-help">Register an SPA in Entra ID; delegated scope <code>Files.ReadWrite</code>.</div>
+        <div class="inline-help" data-i18n-html="settings.ms.help.html">Register an SPA in Entra ID; delegated scope <code>Files.ReadWrite</code>.</div>
       </div>
       <div class="field">
-        <label for="key-dropbox">Dropbox App Key</label>
+        <label for="key-dropbox" data-i18n="settings.dropbox">Dropbox App Key</label>
         <input id="key-dropbox" type="text" placeholder="abcdefghijklmno" autocomplete="off">
-        <div class="inline-help">Create a "scoped app" with <code>files.content.write</code> and add this page as a redirect URI.</div>
+        <div class="inline-help" data-i18n-html="settings.dropbox.help.html">Create a "scoped app" with <code>files.content.write</code> and add this page as a redirect URI.</div>
       </div>
     </details>
   </section>
 
   <!-- Preview panel -->
   <section class="panel">
-    <h2>Preview</h2>
+    <h2 data-i18n="panel.preview.h2">Preview</h2>
     <div class="preview-wrap">
-      <canvas id="preview" width="1600" height="1200" aria-label="Dicebreaker preview"></canvas>
+      <canvas id="preview" width="1600" height="1200" data-i18n-aria-label="canvas.aria" aria-label="Dicebreaker preview"></canvas>
     </div>
-    <div class="inline-help" style="margin-top:10px;">
+    <div class="inline-help" style="margin-top:10px;" data-i18n="help.preview">
       The preview re-renders as you edit. Downloads use this exact image at full resolution.
     </div>
   </section>
@@ -283,7 +299,9 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Libraries (loaded lazily on first use to keep first paint fast) -->
+<script src="./locales.js"></script>
 <script>
+const t = (k, vars) => WidgetI18n.t(k, vars);
 //=== Tiny helpers ====================================================
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -306,69 +324,31 @@ function loadScript(src) {
 }
 
 //=== State ===========================================================
-const PRESETS = {
-  debrief: {
-    title: "Today's Debrief",
-    subtitle: "Roll the die and answer the matching prompt.",
-    prompts: [
-      "What did you learn today?",
-      "Why does what you learned matter?",
-      "List three big ideas from today's lesson.",
-      "What would you change or do differently?",
-      "How do you feel about your work today? Why?",
-      "What question do you still have?"
-    ]
-  },
-  entry: {
-    title: "Entry Ticket",
-    subtitle: "Roll, then share with your group.",
-    prompts: [
-      "What do you already know about this topic?",
-      "What's one question you have going in?",
-      "What word or phrase comes to mind?",
-      "Where might you need help today?",
-      "What prediction can you make about today's lesson?",
-      "Connect today's topic to something you already know."
-    ]
-  },
-  story: {
-    title: "Roll-a-Story",
-    subtitle: "Roll once for each element; write the story.",
-    prompts: [
-      "Setting: a quiet library after midnight",
-      "Character: an inventor who has lost their notebook",
-      "Object: a brass key that hums",
-      "Problem: the doors won't stay closed",
-      "Twist: the clocks all run backwards",
-      "Ending: someone finally tells the truth"
-    ]
-  },
-  getknow: {
-    title: "Get to Know You",
-    subtitle: "Roll the die, answer the prompt out loud.",
-    prompts: [
-      "Share one thing on your mind today.",
-      "What's a small win from this week?",
-      "Pick a song that matches your mood.",
-      "What's a hobby you'd try if time were free?",
-      "Describe your perfect Saturday.",
-      "Who's someone you're grateful for and why?"
-    ]
-  },
-  blank: {
-    title: "",
-    subtitle: "",
-    prompts: ["", "", "", "", "", ""]
+// Presets pull translated strings on-demand so language switches refresh
+// them. The "blank" preset stays empty regardless of locale.
+function preset(name) {
+  if (name === 'blank') {
+    return { title: '', subtitle: '', prompts: ['', '', '', '', '', ''] };
   }
-};
+  return {
+    title:    t(`preset.${name}.title`),
+    subtitle: t(`preset.${name}.subtitle`),
+    prompts:  [1, 2, 3, 4, 5, 6].map(i => t(`preset.${name}.p${i}`))
+  };
+}
 
 const state = {
-  title: PRESETS.debrief.title,
-  subtitle: PRESETS.debrief.subtitle,
-  prompts: [...PRESETS.debrief.prompts],
+  title: '',
+  subtitle: '',
+  prompts: ['', '', '', '', '', ''],
   accent: '#7c3aed',
   layout: 'grid'
 };
+// Track which translated preset the title/subtitle/prompts currently
+// reflect, so a language switch can swap them out unless the user has
+// typed something custom.
+let lastPresetName = 'debrief';
+let lastPresetSnapshot = null;
 
 //=== Build the editor ================================================
 function buildPromptInputs() {
@@ -379,7 +359,7 @@ function buildPromptInputs() {
     row.className = 'prompt-row';
     row.innerHTML = `
       <div class="face-mini">${dieFaceSVG(i + 1, state.accent)}</div>
-      <textarea data-idx="${i}" rows="2" maxlength="240" placeholder="Prompt for face ${i + 1}"></textarea>
+      <textarea data-idx="${i}" rows="2" maxlength="240" placeholder="${escapeAttr(t('prompt.ph', { n: i + 1 }))}"></textarea>
     `;
     wrap.appendChild(row);
   }
@@ -391,6 +371,16 @@ function buildPromptInputs() {
       render();
     });
   });
+}
+
+function refreshPromptPlaceholders() {
+  $$('#prompts textarea').forEach((ta, i) => {
+    ta.placeholder = t('prompt.ph', { n: i + 1 });
+  });
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
 }
 
 function refreshFaceMinis() {
@@ -442,7 +432,7 @@ function render() {
   ctx.fillStyle = ink;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  const title = state.title?.trim() || 'Untitled dicebreaker';
+  const title = state.title?.trim() || t('canvas.titleFallback');
   ctx.font = '700 76px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
   ctx.fillText(title, W / 2, 60);
 
@@ -468,7 +458,7 @@ function render() {
   ctx.fillStyle = muted;
   ctx.font = '400 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
   ctx.textAlign = 'right';
-  ctx.fillText('Made with DrawSplatTM Dicebreaker', W - 40, H - 28);
+  ctx.fillText(t('canvas.footer'), W - 40, H - 28);
 }
 
 function drawGrid(ctx, x, y, w, h, accent, ink) {
@@ -521,7 +511,7 @@ function drawCard(ctx, x, y, w, h, face, text, accent, ink, vertical = false) {
   ctx.fillStyle = ink;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  const promptText = (text || '').trim() || '(empty)';
+  const promptText = (text || '').trim() || t('canvas.empty');
 
   // shrink-to-fit
   let fontSize = vertical ? 22 : 38;
@@ -543,7 +533,7 @@ function drawCard(ctx, x, y, w, h, face, text, accent, ink, vertical = false) {
   if (!(text || '').trim()) {
     ctx.fillStyle = '#9ca3af';
     ctx.font = `italic 500 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
-    ctx.fillText('(empty)', (textLeft + textRight) / 2, textTop);
+    ctx.fillText(t('canvas.empty'), (textLeft + textRight) / 2, textTop);
   }
 }
 
@@ -712,7 +702,7 @@ async function exportPPTX() {
   });
 
   // title
-  slide.addText(state.title || 'Untitled dicebreaker', {
+  slide.addText(state.title || t('canvas.titleFallback'), {
     x: 0.3, y: 0.25, w: slideW - 0.6, h: 0.8,
     fontFace: 'Calibri', fontSize: 36, bold: true, color: ink, align: 'center'
   });
@@ -823,13 +813,13 @@ function oauthPopup({ authUrl, name = 'oauth' }) {
     const left = window.screenX + (window.outerWidth - w) / 2;
     const top  = window.screenY + (window.outerHeight - h) / 2;
     const popup = window.open(authUrl, name, `width=${w},height=${h},left=${left},top=${top}`);
-    if (!popup) return reject(new Error('Popup blocked. Allow popups and try again.'));
+    if (!popup) return reject(new Error(t('oauth.popupBlocked')));
 
     const timer = setInterval(() => {
       try {
         if (popup.closed) {
           clearInterval(timer);
-          reject(new Error('Window closed before authorization completed.'));
+          reject(new Error(t('oauth.closed')));
           return;
         }
         // Same-origin check — works once Dropbox/Google/MS redirects back here.
@@ -875,7 +865,7 @@ async function ensureToken(service) {
   let authUrl;
   if (service === 'google') {
     const id = getKey('gdrive');
-    if (!id) throw new Error('Add your Google OAuth Client ID in Settings first.');
+    if (!id) throw new Error(t('oauth.needGoogleKey'));
     const params = new URLSearchParams({
       client_id: id,
       redirect_uri: redirect,
@@ -887,7 +877,7 @@ async function ensureToken(service) {
     authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
   } else if (service === 'microsoft') {
     const id = getKey('onedrive');
-    if (!id) throw new Error('Add your Microsoft Application (client) ID in Settings first.');
+    if (!id) throw new Error(t('oauth.needMsKey'));
     const params = new URLSearchParams({
       client_id: id,
       redirect_uri: redirect,
@@ -897,7 +887,7 @@ async function ensureToken(service) {
     authUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?' + params.toString();
   } else if (service === 'dropbox') {
     const id = getKey('dropbox');
-    if (!id) throw new Error('Add your Dropbox App Key in Settings first.');
+    if (!id) throw new Error(t('oauth.needDropboxKey'));
     const params = new URLSearchParams({
       client_id: id,
       redirect_uri: redirect,
@@ -909,7 +899,7 @@ async function ensureToken(service) {
   }
 
   const { access_token, expires_in } = await oauthPopup({ authUrl, name: 'oauth_' + service });
-  if (!access_token) throw new Error('No access token returned.');
+  if (!access_token) throw new Error(t('oauth.noToken'));
   tokenCache[service] = {
     access_token,
     expiresAt: Date.now() + (parseInt(expires_in || '3600', 10) * 1000)
@@ -928,7 +918,7 @@ async function uploadGoogleDrive(blob, filename, mime) {
     headers: { Authorization: 'Bearer ' + token },
     body: fd
   });
-  if (!res.ok) throw new Error('Google Drive upload failed: ' + res.status + ' ' + await res.text());
+  if (!res.ok) throw new Error(t('toast.cloudFailed', { label: 'Google Drive', err: res.status + ' ' + await res.text() }));
   return res.json();
 }
 
@@ -940,7 +930,7 @@ async function uploadOneDrive(blob, filename, mime) {
     headers: { Authorization: 'Bearer ' + token, 'Content-Type': mime },
     body: blob
   });
-  if (!res.ok) throw new Error('OneDrive upload failed: ' + res.status + ' ' + await res.text());
+  if (!res.ok) throw new Error(t('toast.cloudFailed', { label: 'OneDrive', err: res.status + ' ' + await res.text() }));
   return res.json();
 }
 
@@ -957,7 +947,7 @@ async function uploadDropbox(blob, filename, mime) {
     },
     body: blob
   });
-  if (!res.ok) throw new Error('Dropbox upload failed: ' + res.status + ' ' + await res.text());
+  if (!res.ok) throw new Error(t('toast.cloudFailed', { label: 'Dropbox', err: res.status + ' ' + await res.text() }));
   return res.json();
 }
 
@@ -970,8 +960,7 @@ async function uploadDropbox(blob, filename, mime) {
   const h = window.location.hash || '';
   if (h.includes('access_token') || window.location.search.includes('access_token')) {
     if (window.opener) {
-      document.body && (document.body.innerHTML =
-        '<p style="font:14px system-ui;padding:30px;color:#374151">Authorization complete. You can close this window.</p>');
+      document.body && (document.body.innerHTML = t('oauth.completeHtml'));
       // The opener's poll will fire shortly; close as a fallback after a moment.
       setTimeout(() => { try { window.close(); } catch(_){} }, 1500);
     }
@@ -980,7 +969,15 @@ async function uploadDropbox(blob, filename, mime) {
 
 //=== Wire up =========================================================
 function init() {
-  // Editor bindings
+  // Editor bindings — seed state from the default "debrief" preset, then
+  // sync inputs.
+  const seed = preset('debrief');
+  state.title = seed.title;
+  state.subtitle = seed.subtitle;
+  state.prompts = [...seed.prompts];
+  lastPresetName = 'debrief';
+  lastPresetSnapshot = seed;
+
   buildPromptInputs();
   $('#title').value = state.title;
   $('#subtitle').value = state.subtitle;
@@ -995,8 +992,10 @@ function init() {
   // Presets
   $$('.pill[data-preset]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const p = PRESETS[btn.dataset.preset];
-      if (!p) return;
+      const name = btn.dataset.preset;
+      const p = preset(name);
+      lastPresetName = name;
+      lastPresetSnapshot = p;
       applyState({ ...state, ...p });
     });
   });
@@ -1004,19 +1003,19 @@ function init() {
   // Downloads
   $('#dl-png').addEventListener('click', async () => {
     try { const { blob, filename } = await exportPNG(); downloadBlob(blob, filename); }
-    catch (e) { toast('PNG export failed: ' + e.message); }
+    catch (e) { toast(t('toast.exportFailed', { type: 'PNG', err: e.message })); }
   });
   $('#dl-pdf').addEventListener('click', async () => {
-    try { toast('Building PDF…'); const { blob, filename } = await exportPDF(); downloadBlob(blob, filename); toast('PDF ready'); }
-    catch (e) { toast('PDF export failed: ' + e.message); }
+    try { toast(t('toast.buildPdf')); const { blob, filename } = await exportPDF(); downloadBlob(blob, filename); toast(t('toast.pdfReady')); }
+    catch (e) { toast(t('toast.exportFailed', { type: 'PDF', err: e.message })); }
   });
   $('#dl-pptx').addEventListener('click', async () => {
-    try { toast('Building PPTX…'); const { blob, filename } = await exportPPTX(); downloadBlob(blob, filename); toast('PPTX ready'); }
-    catch (e) { toast('PPTX export failed: ' + e.message); }
+    try { toast(t('toast.buildPptx')); const { blob, filename } = await exportPPTX(); downloadBlob(blob, filename); toast(t('toast.pptxReady')); }
+    catch (e) { toast(t('toast.exportFailed', { type: 'PPTX', err: e.message })); }
   });
   $('#dl-json').addEventListener('click', async () => {
     try { const { blob, filename } = await exportJSON(); downloadBlob(blob, filename); }
-    catch (e) { toast('JSON export failed: ' + e.message); }
+    catch (e) { toast(t('toast.exportFailed', { type: 'JSON', err: e.message })); }
   });
 
   // Load JSON
@@ -1028,12 +1027,12 @@ function init() {
       const text = await file.text();
       const data = JSON.parse(text);
       if (data.type && data.type !== 'dicebreaker') {
-        if (!confirm('That file does not look like a dicebreaker. Load it anyway?')) return;
+        if (!confirm(t('confirm.notDicebreaker'))) return;
       }
       applyState(data);
-      toast('Loaded ' + file.name);
+      toast(t('toast.loadedJson', { name: file.name }));
     } catch (err) {
-      toast('Could not load JSON: ' + err.message);
+      toast(t('toast.loadJsonFailed', { err: err.message }));
     }
     e.target.value = '';
   });
@@ -1041,14 +1040,14 @@ function init() {
   // Cloud save
   const cloudSave = async (label, uploader) => {
     try {
-      toast('Building PDF for ' + label + '…');
+      toast(t('toast.buildCloud', { label }));
       const { blob, filename, mime } = await exportPDF();
-      toast('Uploading to ' + label + '…', 6000);
+      toast(t('toast.uploading', { label }), 6000);
       const result = await uploader(blob, filename, mime);
       const link = result.webViewLink || result.webUrl || result.path_display || filename;
-      toast('Saved to ' + label + ': ' + link, 5000);
+      toast(t('toast.savedTo', { label, link }), 5000);
     } catch (err) {
-      toast(label + ' save failed: ' + err.message, 5000);
+      toast(t('toast.cloudFailed', { label, err: err.message }), 5000);
     }
   };
   // Student view
@@ -1059,10 +1058,10 @@ function init() {
     const url = buildShareUrl();
     try {
       await navigator.clipboard.writeText(url);
-      toast('Share link copied');
+      toast(t('toast.shareCopied'));
     } catch {
       // Fallback for non-secure contexts (file://) — show a prompt.
-      window.prompt('Copy this link and share it with students:', url);
+      window.prompt(t('prompt.copyShare'), url);
     }
   });
 
@@ -1079,6 +1078,23 @@ function init() {
 
   render();
 }
+
+// On language change, swap any text that still matches the last translated
+// preset for the same fields in the new locale. Custom text stays.
+function bootI18nDependentUI() {
+  refreshPromptPlaceholders();
+  if (lastPresetSnapshot) {
+    const fresh = preset(lastPresetName);
+    if (state.title === lastPresetSnapshot.title) state.title = fresh.title;
+    if (state.subtitle === lastPresetSnapshot.subtitle) state.subtitle = fresh.subtitle;
+    state.prompts = state.prompts.map((p, i) =>
+      p === lastPresetSnapshot.prompts[i] ? fresh.prompts[i] : p);
+    lastPresetSnapshot = fresh;
+    syncEditorToState();
+  }
+  render();
+}
+window.addEventListener('widget-i18n:changed', bootI18nDependentUI);
 
 // Don't initialize the editor if we're acting as an OAuth callback popup.
 if (!(window.opener && (window.location.hash.includes('access_token') ||
