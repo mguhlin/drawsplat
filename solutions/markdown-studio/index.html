@@ -962,50 +962,11 @@ def hello():
   const dropOverlay  = $('drop-overlay');
 
   // ---------- Sample (intentionally messy to demo the cleaner) ----------
-  const sample = [
-    '# GenAI Prompt Writing Checklist',
-    '',
-    '## Purpose',
-    'Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.',
-    '',
-    '### ### Key Takeaways for Districts',
-    '',
-    '### ## Broader Context & Historical Parallel',
-    '',
-    '## Strong Prompt Elements',
-    '',
-    '* Clear task',
-    '* Specific audience',
-    '* Required format',
-    '* Source material separated in a code block',
-    '* Desired tone or reading level',
-    '',
-    '## Example Prompt',
-    '',
-    '```text',
-    'Create a 5th-grade reading activity about ecosystems.',
-    'Use short paragraphs, a vocabulary table, and five comprehension questions.',
-    '```',
-    '',
-    '## Vocabulary Table',
-    '',
-    '| Term | Student-Friendly Meaning | Example |',
-    '|---|---|---|',
-    '| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |',
-    '| Habitat | Where an organism lives | A frog lives near water. |',
-    '| Adaptation | A trait that helps survival | A cactus stores water. |',
-    '',
-    '## Student Checklist',
-    '',
-    '-[ ] I explained my task clearly.',
-    '-[ ] I named my audience.',
-    '-[ ] I gave the AI a format to follow.',
-    '-[x] I included source text when needed.',
-    '',
-    '> Tip: Better structure usually leads to better GenAI output.',
-    '',
-    '![Sample image](https://mguhlin.github.io/creations/markdown/md.png)'
-  ].join('\n');
+  // Pulled from the active locale's `sample.md` key so a Spanish/Arabic/
+  // etc. user sees demo content in their language while the cleaner's
+  // syntax-level fixes (### ### duplicate markers, -[x] checkboxes, etc.)
+  // still demonstrate.
+  function currentSample() { return t('sample.md'); }
 
   // ---------- Markdown parser ----------
   function escapeHtml(t) {
@@ -1731,7 +1692,10 @@ def hello():
   $('btn-save-html').addEventListener('click', saveHtml);
   $('btn-sample').addEventListener('click', () => {
     if (input.value.trim() && !confirm(t('confirm.replaceSample'))) return;
-    input.value = sample; render();
+    const s = currentSample();
+    input.value = s;
+    lastLoadedSample = s;
+    render();
   });
   $('btn-clear-all').addEventListener('click', () => {
     if (!confirm(t('confirm.clearAll'))) return;
@@ -1810,16 +1774,30 @@ def hello():
   });
 
   // ---------- Boot ----------
+  // Track which sample text the editor last loaded, so a language switch
+  // can swap it for the same locale's sample only when the user hasn't
+  // started editing.
+  let lastLoadedSample = '';
   if (!loadDraft()) {
-    input.value = sample;
+    lastLoadedSample = currentSample();
+    input.value = lastLoadedSample;
   }
   render();
   setSaveState('saved', t('save.idle'));
 
-  // Re-render save-state text on language change. The autosave timer will
-  // overwrite this on the next save, but if the editor sits idle the new
-  // locale's "Idle" label appears immediately.
+  // On language change:
+  // - If the editor still shows the previously-loaded sample verbatim,
+  //   swap it for the new locale's sample so the demo demos in their
+  //   language. Custom content is preserved.
+  // - Repaint the "Idle" save state if the autosave timer hasn't taken
+  //   over yet.
   window.addEventListener('widget-i18n:changed', () => {
+    if (input.value === lastLoadedSample) {
+      const fresh = currentSample();
+      input.value = fresh;
+      lastLoadedSample = fresh;
+      render();
+    }
     if (savestate.classList.contains('saved') && !savestate.textContent.includes('·')) {
       setSaveState('saved', t('save.idle'));
     }

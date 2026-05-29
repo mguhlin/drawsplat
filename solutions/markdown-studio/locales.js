@@ -10,6 +10,7 @@
 WidgetI18n.register('markdown-studio', {
 
   en: {
+    'sample.md':          "# GenAI Prompt Writing Checklist\n\n## Purpose\nUse this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.\n\n### ### Key Takeaways for Districts\n\n### ## Broader Context & Historical Parallel\n\n## Strong Prompt Elements\n\n* Clear task\n* Specific audience\n* Required format\n* Source material separated in a code block\n* Desired tone or reading level\n\n## Example Prompt\n\n```text\nCreate a 5th-grade reading activity about ecosystems.\nUse short paragraphs, a vocabulary table, and five comprehension questions.\n```\n\n## Vocabulary Table\n\n| Term | Student-Friendly Meaning | Example |\n|---|---|---|\n| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |\n| Habitat | Where an organism lives | A frog lives near water. |\n| Adaptation | A trait that helps survival | A cactus stores water. |\n\n## Student Checklist\n\n-[ ] I explained my task clearly.\n-[ ] I named my audience.\n-[ ] I gave the AI a format to follow.\n-[x] I included source text when needed.\n\n> Tip: Better structure usually leads to better GenAI output.\n\n![Sample image](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'Markdown Studio — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Markdown Studio</em>',
     'nav.openDrawsplatHtml':'Open DrawSplat<sup class="tm">TM</sup>',
@@ -139,6 +140,7 @@ WidgetI18n.register('markdown-studio', {
   },
 
   es: {
+    'sample.md':          "# Lista de verificación para escribir prompts de GenAI\n\n## Propósito\nUsa esta lista para crear prompts más claros para ChatGPT, Claude, Gemini, NotebookLM, Perplexity o herramientas similares.\n\n### ### Puntos clave para los distritos\n\n### ## Contexto amplio y paralelo histórico\n\n## Elementos de un buen prompt\n\n* Tarea clara\n* Audiencia específica\n* Formato requerido\n* Material fuente separado en un bloque de código\n* Tono o nivel de lectura deseado\n\n## Ejemplo de prompt\n\n```text\nCrea una actividad de lectura de quinto grado sobre ecosistemas.\nUsa párrafos cortos, una tabla de vocabulario y cinco preguntas de comprensión.\n```\n\n## Tabla de vocabulario\n\n| Término | Significado para estudiantes | Ejemplo |\n|---|---|---|\n| Ecosistema | Seres vivos y no vivos en un mismo lugar | Estanque, bosque, desierto |\n| Hábitat | Lugar donde vive un organismo | Una rana vive cerca del agua. |\n| Adaptación | Un rasgo que ayuda a sobrevivir | Un cactus almacena agua. |\n\n## Lista para estudiantes\n\n-[ ] Expliqué mi tarea con claridad.\n-[ ] Nombré a mi audiencia.\n-[ ] Le di a la IA un formato a seguir.\n-[x] Incluí texto fuente cuando fue necesario.\n\n> Consejo: Una mejor estructura suele producir mejores resultados de la IA.\n\n![Imagen de ejemplo](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'Estudio de Markdown — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Estudio de Markdown</em>',
     'nav.openDrawsplatHtml':'Abrir DrawSplat<sup class="tm">TM</sup>',
@@ -268,6 +270,7 @@ WidgetI18n.register('markdown-studio', {
   },
 
   vi: {
+    'sample.md':          "# Danh sách kiểm tra viết prompt GenAI\n\n## Mục đích\nDùng danh sách này để tạo prompt rõ ràng hơn cho ChatGPT, Claude, Gemini, NotebookLM, Perplexity, hoặc các công cụ tương tự.\n\n### ### Điểm chính cho các phòng giáo dục\n\n### ## Bối cảnh rộng và song hành lịch sử\n\n## Yếu tố của prompt mạnh\n\n* Nhiệm vụ rõ ràng\n* Khán giả cụ thể\n* Định dạng yêu cầu\n* Tài liệu nguồn tách trong khối mã\n* Giọng văn hoặc mức đọc mong muốn\n\n## Ví dụ prompt\n\n```text\nTạo một hoạt động đọc lớp 5 về hệ sinh thái.\nDùng đoạn văn ngắn, một bảng từ vựng và năm câu hỏi hiểu.\n```\n\n## Bảng từ vựng\n\n| Thuật ngữ | Nghĩa thân thiện với học sinh | Ví dụ |\n|---|---|---|\n| Hệ sinh thái | Sinh vật sống và không sống ở cùng một nơi | Ao, rừng, sa mạc |\n| Môi trường sống | Nơi sinh vật sinh sống | Một con ếch sống gần nước. |\n| Sự thích nghi | Một đặc điểm giúp sinh tồn | Cây xương rồng tích trữ nước. |\n\n## Danh sách cho học sinh\n\n-[ ] Tôi đã giải thích nhiệm vụ rõ ràng.\n-[ ] Tôi đã nêu rõ khán giả.\n-[ ] Tôi đã cho AI một định dạng để theo.\n-[x] Tôi đã đưa văn bản nguồn khi cần.\n\n> Mẹo: Cấu trúc tốt hơn thường dẫn đến kết quả GenAI tốt hơn.\n\n![Ảnh mẫu](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'Xưởng Markdown — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Xưởng Markdown</em>',
     'nav.openDrawsplatHtml':'Mở DrawSplat<sup class="tm">TM</sup>',
@@ -397,6 +400,7 @@ WidgetI18n.register('markdown-studio', {
   },
 
   ar: {
+    'sample.md':          "# قائمة كتابة موجِّهات GenAI\n\n## الغرض\nاستخدم هذه القائمة لإنشاء موجِّهات أوضح لـ ChatGPT أو Claude أو Gemini أو NotebookLM أو Perplexity أو أدوات مشابهة.\n\n### ### نقاط رئيسية للمناطق التعليمية\n\n### ## السياق الأوسع والمقارنة التاريخية\n\n## عناصر موجِّه قوي\n\n* مهمة واضحة\n* جمهور محدد\n* تنسيق مطلوب\n* مادة مصدر مفصولة في كتلة كود\n* نبرة أو مستوى قراءة مرغوب\n\n## مثال موجِّه\n\n```text\nأنشئ نشاط قراءة للصف الخامس عن النظم البيئية.\nاستخدم فقرات قصيرة وجدول مفردات وخمسة أسئلة فهم.\n```\n\n## جدول المفردات\n\n| المصطلح | معنى ملائم للطلاب | مثال |\n|---|---|---|\n| النظام البيئي | كائنات حية وغير حية في مكان واحد | بركة، غابة، صحراء |\n| الموطن | المكان الذي يعيش فيه الكائن | الضفدع يعيش قرب الماء. |\n| التكيف | صفة تساعد على البقاء | الصبار يخزن الماء. |\n\n## قائمة الطلاب\n\n-[ ] شرحت مهمتي بوضوح.\n-[ ] حددت جمهوري.\n-[ ] أعطيت الذكاء الاصطناعي تنسيقًا يتبعه.\n-[x] أدرجت نص المصدر عند الحاجة.\n\n> نصيحة: البنية الأفضل تؤدي عادةً إلى مخرجات GenAI أفضل.\n\n![صورة عينة](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'استوديو Markdown — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>استوديو Markdown</em>',
     'nav.openDrawsplatHtml':'فتح DrawSplat<sup class="tm">TM</sup>',
@@ -526,6 +530,7 @@ WidgetI18n.register('markdown-studio', {
   },
 
   zh: {
+    'sample.md':          "# GenAI 提示词撰写清单\n\n## 目的\n用此清单为 ChatGPT、Claude、Gemini、NotebookLM、Perplexity 或类似工具创建更清晰的提示词。\n\n### ### 给学区的要点\n\n### ## 更宽广的背景与历史对照\n\n## 强提示词要素\n\n* 明确的任务\n* 具体的受众\n* 所需的格式\n* 在代码块中分隔的源材料\n* 期望的语气或阅读水平\n\n## 提示词示例\n\n```text\n为五年级学生创建一个关于生态系统的阅读活动。\n使用短段落、一个词汇表和五个理解问题。\n```\n\n## 词汇表\n\n| 术语 | 学生友好的含义 | 示例 |\n|---|---|---|\n| 生态系统 | 同一个地方的生物和非生物 | 池塘、森林、沙漠 |\n| 栖息地 | 生物居住的地方 | 青蛙住在水边。 |\n| 适应 | 帮助生存的特征 | 仙人掌储存水。 |\n\n## 学生清单\n\n-[ ] 我清楚地解释了任务。\n-[ ] 我指明了受众。\n-[ ] 我给了 AI 一个要遵循的格式。\n-[x] 在需要时我包含了源文本。\n\n> 提示：更好的结构通常带来更好的 GenAI 输出。\n\n![示例图片](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'Markdown 工作室 — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>Markdown 工作室</em>',
     'nav.openDrawsplatHtml':'打开 DrawSplat<sup class="tm">TM</sup>',
@@ -655,6 +660,7 @@ WidgetI18n.register('markdown-studio', {
   },
 
   uh: {
+    'sample.md':          "# GenAI प्रॉम्प्ट लेखन चेकलिस्ट\n\n## उद्देश्य\nChatGPT, Claude, Gemini, NotebookLM, Perplexity या समान टूल्स के लिए स्पष्ट प्रॉम्प्ट बनाने हेतु इस चेकलिस्ट का उपयोग करें।\n\n### ### जिलों के लिए मुख्य बिंदु\n\n### ## व्यापक संदर्भ और ऐतिहासिक समानांतर\n\n## मज़बूत प्रॉम्प्ट तत्व\n\n* स्पष्ट कार्य\n* विशिष्ट दर्शक\n* आवश्यक प्रारूप\n* कोड ब्लॉक में अलग किया स्रोत सामग्री\n* वांछित स्वर या पढ़ने का स्तर\n\n## उदाहरण प्रॉम्प्ट\n\n```text\nपारिस्थितिक तंत्र पर 5वीं कक्षा की पठन गतिविधि बनाएँ।\nछोटे पैराग्राफ़, एक शब्दावली तालिका और पाँच समझ प्रश्नों का उपयोग करें।\n```\n\n## शब्दावली तालिका\n\n| शब्द | छात्र-अनुकूल अर्थ | उदाहरण |\n|---|---|---|\n| पारिस्थितिक तंत्र | एक स्थान में जीवित और निर्जीव चीज़ें | तालाब, जंगल, रेगिस्तान |\n| आवास | जहाँ जीव रहता है | मेंढक पानी के पास रहता है। |\n| अनुकूलन | जीवित रहने में मदद करने वाला गुण | कैक्टस पानी संग्रहित करता है। |\n\n## छात्र चेकलिस्ट\n\n-[ ] मैंने अपना कार्य स्पष्ट रूप से समझाया।\n-[ ] मैंने अपने दर्शकों का नाम लिया।\n-[ ] मैंने AI को एक प्रारूप दिया जिसका पालन करना है।\n-[x] आवश्यकता पड़ने पर मैंने स्रोत पाठ शामिल किया।\n\n> सुझाव: बेहतर संरचना आमतौर पर बेहतर GenAI आउटपुट देती है।\n\n![नमूना छवि](https://mguhlin.github.io/creations/markdown/md.png)",
     'doc.title':          'मार्कडाउन स्टूडियो — DrawSplat',
     'nav.brandHtml':      'DrawSplat<sup class="tm">TM</sup> <em>मार्कडाउन स्टूडियो</em>',
     'nav.openDrawsplatHtml':'DrawSplat<sup class="tm">TM</sup> खोलें',
