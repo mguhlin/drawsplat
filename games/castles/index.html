@@ -3,7 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Castles & Catapults</title>
+  <title data-i18n="doc.title">Castles &amp; Catapults</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+    .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+    .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       color-scheme: dark;
@@ -296,108 +302,108 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Castles & Catapults</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Castles &amp; Catapults</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 
   <main>
     <div class="shell">
-      <section class="stage" aria-label="Castles & Catapults game">
+      <section class="stage" data-i18n-aria-label="stage.aria" aria-label="Castles & Catapults game">
         <canvas id="game" width="800" height="400"></canvas>
         <div class="splash" id="splash">
           <div class="titleBlock">
-            <h1>Castles & Catapults</h1>
-            <p class="subtitle">Break the opposing fortress before their catapult finds your walls.</p>
-            <button id="startButton" type="button">Start</button>
+            <h1 data-i18n="splash.h1">Castles &amp; Catapults</h1>
+            <p class="subtitle" data-i18n="splash.subtitle">Break the opposing fortress before their catapult finds your walls.</p>
+            <button id="startButton" type="button" data-i18n="splash.start">Start</button>
           </div>
         </div>
       </section>
 
-      <section class="setup" aria-label="Player setup">
+      <section class="setup" data-i18n-aria-label="setup.aria" aria-label="Player setup">
         <label class="setupPanel">
-          <span class="label">Left Commander</span>
-          <input id="leftNameInput" type="text" maxlength="14" value="Player 1">
-          <input id="leftColorInput" type="color" value="#58a6d6" aria-label="Left heraldry color">
+          <span class="label" data-i18n="setup.leftLabel">Left Commander</span>
+          <input id="leftNameInput" type="text" maxlength="14" value="">
+          <input id="leftColorInput" type="color" value="#58a6d6" data-i18n-aria-label="setup.leftColor.aria" aria-label="Left heraldry color">
         </label>
         <label class="setupPanel">
-          <span class="label">Right Commander</span>
-          <input id="rightNameInput" type="text" maxlength="14" value="CPU">
-          <input id="rightColorInput" type="color" value="#e65d49" aria-label="Right heraldry color">
+          <span class="label" data-i18n="setup.rightLabel">Right Commander</span>
+          <input id="rightNameInput" type="text" maxlength="14" value="">
+          <input id="rightColorInput" type="color" value="#e65d49" data-i18n-aria-label="setup.rightColor.aria" aria-label="Right heraldry color">
         </label>
         <label class="setupPanel">
-          <span class="label">Opponent</span>
+          <span class="label" data-i18n="setup.opponentLabel">Opponent</span>
           <select id="opponentModeInput">
-            <option value="cpu">Computer / CPU</option>
-            <option value="human">Person / Local 2P</option>
+            <option value="cpu" data-i18n="setup.opponent.cpu">Computer / CPU</option>
+            <option value="human" data-i18n="setup.opponent.human">Person / Local 2P</option>
           </select>
         </label>
       </section>
 
-      <section class="hud" aria-label="Game controls">
+      <section class="hud" data-i18n-aria-label="hud.aria" aria-label="Game controls">
         <div class="readout">
           <div class="metric">
-            <span class="label">Turn</span>
+            <span class="label" data-i18n="hud.turn">Turn</span>
             <span class="value" id="turnText">Player 1</span>
           </div>
           <div class="metric">
-            <span class="label">Wind</span>
+            <span class="label" data-i18n="hud.wind">Wind</span>
             <span class="value" id="windText">0</span>
           </div>
           <div class="metric">
-            <span class="label">Left Castle</span>
+            <span class="label" data-i18n="hud.leftCastle">Left Castle</span>
             <span class="value" id="leftHealth">100%</span>
           </div>
           <div class="metric">
-            <span class="label">Right Castle</span>
+            <span class="label" data-i18n="hud.rightCastle">Right Castle</span>
             <span class="value" id="rightHealth">100%</span>
           </div>
         </div>
 
         <div class="controls">
           <label class="field">
-            <span class="label">Angle <span id="angleValue">45</span></span>
+            <span class="label"><span data-i18n="ctrl.angle">Angle</span> <span id="angleValue">45</span></span>
             <input id="angle" type="range" min="12" max="82" value="45">
           </label>
           <label class="field">
-            <span class="label">Power <span id="powerValue">62</span></span>
+            <span class="label"><span data-i18n="ctrl.power">Power</span> <span id="powerValue">62</span></span>
             <input id="power" type="range" min="28" max="100" value="62">
           </label>
           <label class="field">
-            <span class="label">Missile</span>
+            <span class="label" data-i18n="ctrl.missile">Missile</span>
             <select id="munitionSelect">
-              <option value="rock">Stone Shot</option>
-              <option value="fireball">Flaming Ball</option>
-              <option value="oil">Clay Oil Jar</option>
-              <option value="tar">Sealed Tar Pot</option>
-              <option value="bolt">Ballista Bolt</option>
+              <option value="rock" data-i18n="missile.rock">Stone Shot</option>
+              <option value="fireball" data-i18n="missile.fireball">Flaming Ball</option>
+              <option value="oil" data-i18n="missile.oil">Clay Oil Jar</option>
+              <option value="tar" data-i18n="missile.tar">Sealed Tar Pot</option>
+              <option value="bolt" data-i18n="missile.bolt">Ballista Bolt</option>
             </select>
           </label>
-          <button id="fireButton" type="button">Fire</button>
-          <button id="resetButton" class="secondary" type="button">Reset</button>
+          <button id="fireButton" type="button" data-i18n="ctrl.fire">Fire</button>
+          <button id="resetButton" class="secondary" type="button" data-i18n="ctrl.reset">Reset</button>
         </div>
       </section>
 
-      <section class="diplomacy" aria-label="Diplomacy and taunts">
-        <select id="insultSelect">
-          <option value="Your merlons are ornamental.">Your merlons are ornamental.</option>
-          <option value="That gatehouse could not stop a parade.">That gatehouse could not stop a parade.</option>
-          <option value="Your donjon leans like a tired bannerman.">Your donjon leans like a tired bannerman.</option>
-          <option value="Strike your colors before we redecorate.">Strike your colors before we redecorate.</option>
-        </select>
-        <button id="insultButton" class="secondary" type="button">Insult</button>
-        <button id="requestSurrenderButton" class="secondary" type="button">Request Surrender</button>
-        <button id="offerSurrenderButton" type="button">Offer Surrender</button>
+      <section class="diplomacy" data-i18n-aria-label="dipl.aria" aria-label="Diplomacy and taunts">
+        <select id="insultSelect"></select>
+        <button id="insultButton" class="secondary" type="button" data-i18n="dipl.insult">Insult</button>
+        <button id="requestSurrenderButton" class="secondary" type="button" data-i18n="dipl.request">Request Surrender</button>
+        <button id="offerSurrenderButton" type="button" data-i18n="dipl.offer">Offer Surrender</button>
       </section>
     </div>
   </main>
 
+  <script src="./locales.js"></script>
   <script>
     (() => {
       "use strict";
 
+      const t = (k, vars) => WidgetI18n.t(k, vars);
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
       const angleInput = document.getElementById("angle");
@@ -454,8 +460,8 @@
       let flightSound = null;
 
       const players = [
-        { name: "Player 1", color: "#58a6d6", side: 1 },
-        { name: "CPU", color: "#e65d49", side: -1 }
+        { name: t('name.player1'), color: "#58a6d6", side: 1 },
+        { name: t('name.cpu'),     color: "#e65d49", side: -1 }
       ];
 
       const splashImages = [
@@ -472,123 +478,27 @@
         { name: "stars", top: "#081224", mid: "#14243d", ground: "#3c4147", body: "constellations" }
       ];
 
+      // Munition labels are read via t() at the moment they're rendered into
+      // a status message, so they always match the active locale.
       const munitions = {
-        rock: { label: "Stone shot", radius: 8, blast: 24, damage: 1, color: "#6c6155", speed: 1 },
-        fireball: { label: "flaming ball", radius: 9, blast: 31, damage: 1.25, color: "#f05a28", speed: 0.94 },
-        oil: { label: "clay oil jar", radius: 10, blast: 34, damage: 1.12, color: "#d7b36a", speed: 0.9 },
-        tar: { label: "sealed tar pot", radius: 10, blast: 29, damage: 1.35, color: "#18120f", speed: 0.86 },
-        bolt: { label: "ballista bolt", radius: 6, blast: 16, damage: 1.8, color: "#c8b28a", speed: 1.18 }
+        rock:     { labelKey: 'missile.rock',     radius: 8,  blast: 24, damage: 1,    color: "#6c6155", speed: 1 },
+        fireball: { labelKey: 'missile.fireball', radius: 9,  blast: 31, damage: 1.25, color: "#f05a28", speed: 0.94 },
+        oil:      { labelKey: 'missile.oil',      radius: 10, blast: 34, damage: 1.12, color: "#d7b36a", speed: 0.9 },
+        tar:      { labelKey: 'missile.tar',      radius: 10, blast: 29, damage: 1.35, color: "#18120f", speed: 0.86 },
+        bolt:     { labelKey: 'missile.bolt',     radius: 6,  blast: 16, damage: 1.8,  color: "#c8b28a", speed: 1.18 }
       };
+      function munitionLabel(type) {
+        const m = munitions[type] || munitions.rock;
+        return t(m.labelKey);
+      }
 
-      const insults = [
-        "Your merlons are ornamental.",
-        "That gatehouse could not stop a parade.",
-        "Your donjon leans like a tired bannerman.",
-        "Strike your colors before we redecorate.",
-        "Your moat is mostly decorative soup.",
-        "I have seen sturdier walls on a pie crust.",
-        "Your keep is one sneeze from becoming gravel.",
-        "Your trebuchet appears to be assembled from furniture.",
-        "Even your flag is trying to escape.",
-        "Your battlements have the courage of damp cheese.",
-        "That tower was clearly built on a dare.",
-        "Your ballista squints before it fires.",
-        "We shall catalog your rubble by lunchtime.",
-        "Your masons owe everyone an apology.",
-        "Your gatehouse is making surrender faces.",
-        "Your shield looks nervous.",
-        "Your courtyard smells of boiled panic.",
-        "Your archers are waving goodbye to themselves.",
-        "I admire how bravely your wall is already cracking.",
-        "Your castle has the posture of a tired mule.",
-        "Our stones asked for a better target.",
-        "Your hoardings look like rented scaffolds.",
-        "That tower is not tall, it is merely ambitious.",
-        "Your moat has more discipline than your army.",
-        "Prepare to become a historical footnote."
-      ];
-
-      const replies = [
-        "Your stones throw straighter than your wit.",
-        "We have heard fiercer words from a damp herald.",
-        "Keep shouting. It helps us judge the range.",
-        "Our gatehouse remains unmoved by poetry.",
-        "Your insult hit harder than your last shot, barely.",
-        "A fine speech. Shame about the aim.",
-        "We would reply, but our jester is busy loading tar.",
-        "Your heraldry is doing most of the work.",
-        "Send that line again, we need kindling.",
-        "Your confidence is admirably unburdened by evidence.",
-        "The moat laughed. We cannot stop it.",
-        "Your army just asked to stand farther away from you.",
-        "Our walls have survived worse grammar.",
-        "You talk like a siege engine with a loose wheel.",
-        "A bold taunt from a future crater.",
-        "We accept your words as surrender practice.",
-        "Your mother was a portcullis and your father smelt of pitch.",
-        "Your missile budget appears mostly theoretical.",
-        "We shall carve that insult into your surrender table.",
-        "The tower heard you and chose to remain standing.",
-        "That was almost rude enough to damage masonry.",
-        "Our cooks throw hotter things than that.",
-        "Your diplomacy has excellent range and poor accuracy.",
-        "Do keep talking. It masks the creaking of your trebuchet.",
-        "Your finest weapon remains wishful thinking."
-      ];
-
-      const soldierLaments = [
-        "Tell my boots I died upright.",
-        "I regret joining the scenic infantry.",
-        "That was not in the recruitment song.",
-        "Mother warned me about horizontal rocks.",
-        "I appear to have been promoted to crater.",
-        "Save my helmet, it had plans.",
-        "At least the moat did not get me.",
-        "I knew I should have chosen accounting.",
-        "My spear was decorative anyway.",
-        "I request a transfer to the back row.",
-        "That cloud is shaped like unemployment.",
-        "Medic! Or carpenter! Either works.",
-        "My knees have surrendered independently.",
-        "Please avenge me with better math.",
-        "I have become battlefield confetti.",
-        "This is why I distrust flying pottery.",
-        "Who stores oil in throwable jars?",
-        "I saw the bolt and chose denial.",
-        "A heroic end would have had more warning.",
-        "Please tell the bard to exaggerate.",
-        "I am now one with no-man's land.",
-        "The ground and I are negotiating terms.",
-        "I was promised light marching.",
-        "That flaming ball had opinions.",
-        "My shield filed a complaint.",
-        "The captain said stand here, specifically.",
-        "I leave my rations to the least flattened.",
-        "This armor is mostly emotional support."
-      ];
-
-      const launchQuips = [
-        "A bold experiment in gravity begins.",
-        "Someone checked the angle, probably.",
-        "The castle requests everyone look busy.",
-        "Physics has been notified.",
-        "Stand back, the math is decorative.",
-        "A missile with opinions prepares to depart.",
-        "The quartermaster denies all responsibility.",
-        "Trajectory: hopeful.",
-        "The wind says this should be funny.",
-        "Another perfectly reasonable workplace incident.",
-        "Loose helmets are now officially airborne hazards.",
-        "The launch crew nods with false confidence.",
-        "Someone yell 'incoming' in advance.",
-        "This is why castles need insurance.",
-        "The projectile has entered negotiations.",
-        "A brief silence for the target area.",
-        "The moat refuses to be a witness.",
-        "All calculations rounded to the nearest panic.",
-        "The stone would like to speak to a wall.",
-        "A brave arc is about to be drawn."
-      ];
+      // Taunt arrays read from the active locale via t() so insults/replies/
+      // laments/launch-quips all pull the user's language. Static helpers
+      // return the array at call time so a language switch picks up.
+      function insults()        { return Array.from({ length: 25 }, (_, i) => t('insult.'  + (i + 1))); }
+      function replies()        { return Array.from({ length: 25 }, (_, i) => t('reply.'   + (i + 1))); }
+      function soldierLaments() { return Array.from({ length: 28 }, (_, i) => t('lament.'  + (i + 1))); }
+      function launchQuips()    { return Array.from({ length: 20 }, (_, i) => t('launch.'  + (i + 1))); }
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -614,8 +524,8 @@
 
       function applyPlayerSettings() {
         opponentMode = opponentModeInput.value;
-        players[0].name = cleanName(leftNameInput.value, "Player 1");
-        players[1].name = cleanName(rightNameInput.value, opponentMode === "cpu" ? "CPU" : "Player 2");
+        players[0].name = cleanName(leftNameInput.value, t('name.player1'));
+        players[1].name = cleanName(rightNameInput.value, opponentMode === "cpu" ? t('name.cpu') : t('name.player2'));
         players[0].color = leftColorInput.value;
         players[1].color = rightColorInput.value;
       }
@@ -929,10 +839,12 @@
         const rightHp = castleHp(castles[1]);
         angleValue.textContent = angleInput.value;
         powerValue.textContent = powerInput.value;
-        turnText.textContent = phase === "gameover" ? "Done" : players[currentPlayer].name;
-        windText.textContent = wind === 0 ? "Calm" : `${Math.abs(wind)} ${wind > 0 ? ">" : "<"}`;
-        leftHealth.textContent = `${leftHp.live}/${leftHp.total} HP (${leftHp.pct}%)`;
-        rightHealth.textContent = `${rightHp.live}/${rightHp.total} HP (${rightHp.pct}%)`;
+        turnText.textContent = phase === "gameover" ? t('hud.done') : players[currentPlayer].name;
+        windText.textContent = wind === 0
+          ? t('hud.calm')
+          : t('hud.windFmt', { n: Math.abs(wind), dir: wind > 0 ? '>' : '<' });
+        leftHealth.textContent = t('hud.hpFmt', { live: leftHp.live, total: leftHp.total, pct: leftHp.pct });
+        rightHealth.textContent = t('hud.hpFmt', { live: rightHp.live, total: rightHp.total, pct: rightHp.pct });
       }
 
       function fire(angleDeg, power) {
@@ -947,7 +859,7 @@
         const speed = (120 + power * 2.45) * munition.speed;
 
         skyComment = {
-          text: randomFrom(launchQuips),
+          text: randomFrom(launchQuips()),
           x: currentPlayer === 0 ? 235 : 565,
           y: 72,
           until: performance.now() + 1900
@@ -1020,12 +932,12 @@
 
       function insultOpponent() {
         if (phase !== "input" || currentPlayer !== 0) return;
-        const line = Math.random() < 0.35 ? insultSelect.value : randomFrom(insults);
-        showMessage(`${players[0].name}: "${line}"`, 1900);
+        const line = Math.random() < 0.35 ? insultSelect.value : randomFrom(insults());
+        showMessage(t('msg.taunted', { name: players[0].name, quote: line }), 1900);
         window.setTimeout(() => {
           if (phase === "input" && currentPlayer === 0) {
-            const reply = randomFrom(replies);
-            showMessage(`${players[1].name}: "${reply}"`, 2200);
+            const reply = randomFrom(replies());
+            showMessage(t('msg.replied', { name: players[1].name, quote: reply }), 2200);
           }
         }, 2050);
       }
@@ -1036,12 +948,12 @@
         const accepted = enemyHealth <= 35 || (!castles[1].catapult.alive && enemyHealth <= 55);
         if (accepted) {
           phase = "gameover";
-          message = `${players[1].name} accepts surrender terms`;
+          message = t('msg.acceptsSurrender', { name: players[1].name });
           messageUntil = Infinity;
           setControls();
           updateHud();
         } else {
-          showMessage(`${players[1].name}: "Request denied. Fire away."`, 2400);
+          showMessage(t('msg.requestDenied', { name: players[1].name }), 2400);
         }
       }
 
@@ -1050,7 +962,7 @@
         if (currentPlayer === 1 && opponentMode === "cpu") return;
         const winner = 1 - currentPlayer;
         phase = "gameover";
-        message = `${players[currentPlayer].name} surrenders. ${players[winner].name} wins`;
+        message = t('msg.surrendersWins', { loser: players[currentPlayer].name, winner: players[winner].name });
         messageUntil = Infinity;
         setControls();
         updateHud();
@@ -1067,7 +979,7 @@
         const self = castles[currentPlayer];
         if (!enemy.catapult.alive || castleHealth(enemy) <= 0) {
           phase = "gameover";
-          message = `${players[currentPlayer].name} wins`;
+          message = t('msg.wins', { name: players[currentPlayer].name });
           messageUntil = Infinity;
           setControls();
           updateHud();
@@ -1075,7 +987,7 @@
         }
         if (!self.catapult.alive || castleHealth(self) <= 0) {
           phase = "gameover";
-          message = `${players[1 - currentPlayer].name} wins`;
+          message = t('msg.wins', { name: players[1 - currentPlayer].name });
           messageUntil = Infinity;
           setControls();
           updateHud();
@@ -1233,20 +1145,21 @@
         const munition = activeMunition();
         const enemy = castles[1 - currentPlayer];
         const friendly = castles[currentPlayer];
-        let text = `${munition.label} lands`;
+        let text = t('msg.lands', { label: munitionLabel(type) });
 
         if (catapultContains(enemy, x, y)) {
           destroyCatapult(enemy);
-          text = "Catapult destroyed";
+          text = t('msg.catapultDestroyed');
         } else {
           const enemyHits = blastCastle(enemy, x, y, munition);
           const friendlyHits = blastCastle(friendly, x, y, munition);
           const soldierHits = blastSoldiers(x, y, munition.blast);
           spawnImpactEffect(x, y, type);
-          if (enemyHits > 0) text = `${munition.label} hits the wall`;
-          if (friendlyHits > 0 && enemyHits === 0) text = `${munition.label} hits your own wall`;
+          const label = munitionLabel(type);
+          if (enemyHits > 0) text = t('msg.hitEnemy', { label });
+          if (friendlyHits > 0 && enemyHits === 0) text = t('msg.hitSelf', { label });
           if (soldierHits > 0 && enemyHits === 0 && friendlyHits === 0) {
-            text = `Soldier: "${randomFrom(soldierLaments)}"`;
+            text = t('msg.soldierQuoted', { quote: randomFrom(soldierLaments()) });
           }
           if (enemyHits === 0 && friendlyHits === 0) blastTerrain(x, y, munition);
         }
@@ -2083,11 +1996,14 @@
       angleInput.addEventListener("input", updateHud);
       powerInput.addEventListener("input", updateHud);
       opponentModeInput.addEventListener("change", () => {
-        if (opponentModeInput.value === "human" && rightNameInput.value === "CPU") {
-          rightNameInput.value = "Player 2";
+        // Auto-switch the right player's default name when toggling
+        // opponent mode, but only if the field still matches a default
+        // (so a teacher's custom name isn't overwritten).
+        if (opponentModeInput.value === "human" && rightNameInput.value === t('name.cpu')) {
+          rightNameInput.value = t('name.player2');
         }
-        if (opponentModeInput.value === "cpu" && rightNameInput.value === "Player 2") {
-          rightNameInput.value = "CPU";
+        if (opponentModeInput.value === "cpu" && rightNameInput.value === t('name.player2')) {
+          rightNameInput.value = t('name.cpu');
         }
       });
       fireButton.addEventListener("click", fireHuman);
@@ -2100,11 +2016,51 @@
         resetGame(false);
       });
 
+      // Seed input fields from the active locale's defaults, and populate
+      // the insult dropdown from the first four insult.* keys.
+      let lastLeftDefault = '';
+      let lastRightDefault = '';
+      function seedNameInputs() {
+        const p1 = t('name.player1');
+        const p2 = opponentModeInput.value === 'cpu' ? t('name.cpu') : t('name.player2');
+        if (!leftNameInput.value || leftNameInput.value === lastLeftDefault) leftNameInput.value = p1;
+        if (!rightNameInput.value || rightNameInput.value === lastRightDefault) rightNameInput.value = p2;
+        lastLeftDefault = p1;
+        lastRightDefault = p2;
+      }
+      function populateInsultSelect() {
+        const keys = ['insult.1', 'insult.2', 'insult.3', 'insult.4'];
+        insultSelect.innerHTML = keys.map(k => {
+          const v = t(k);
+          const escAttr = v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+          const escText = v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          return '<option value="' + escAttr + '">' + escText + '</option>';
+        }).join('');
+      }
+      seedNameInputs();
+      populateInsultSelect();
+
       setRandomSplash();
       resetGame(location.hash === "#play" ? false : true);
       requestAnimationFrame((now) => {
         lastTime = now;
         requestAnimationFrame(frame);
+      });
+
+      // Language switch: refresh seeded defaults, rebuild insult dropdown,
+      // and repaint HUD (so Done / Calm / wind direction text refreshes).
+      // The four taunt-arrays are functions, so future random picks already
+      // come from the new locale.
+      window.addEventListener('widget-i18n:changed', () => {
+        seedNameInputs();
+        populateInsultSelect();
+        // If players were never customized, also update the in-game player
+        // names so they swap on language change.
+        if (players[0].name === lastLeftDefault) players[0].name = t('name.player1');
+        if (players[1].name === lastRightDefault) {
+          players[1].name = opponentMode === 'cpu' ? t('name.cpu') : t('name.player2');
+        }
+        updateHud();
       });
     })();
   </script>
