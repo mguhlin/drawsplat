@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classroom Dice Roller</title>
+  <title data-i18n="doc.title">Classroom Dice Roller</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -559,42 +564,43 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Classroom Dice Roller</h1>
-        <p class="subtitle">Roll clean classroom dice with a simple default view, then switch on advanced options for multiple dice, die types, modifiers, sound, totals, products, and history.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Classroom Dice Roller</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Roll clean classroom dice with a simple default view, then switch on advanced options for multiple dice, die types, modifiers, sound, totals, products, and history.</p>
       </div>
       <div class="header-actions">
         <label class="toggle-control" for="advancedToggle">
-          <input id="advancedToggle" type="checkbox" role="switch" aria-label="Advanced mode">
+          <input id="advancedToggle" type="checkbox" role="switch" data-i18n-aria-label="header.advancedAria" aria-label="Advanced mode">
           <span class="toggle-switch" aria-hidden="true"></span>
-          <span>Advanced</span>
+          <span data-i18n="header.advanced">Advanced</span>
         </label>
-        <a class="home-link" href="../../app/whiteboard.html">Tool Menu</a>
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../app/whiteboard.html" data-i18n="header.home">Tool Menu</a>
       </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel advanced-panel" aria-label="Dice settings">
-        <h2>Setup</h2>
+      <section class="panel advanced-panel" data-i18n-aria-label="panel.setup.aria" aria-label="Dice settings">
+        <h2 data-i18n="setup.h2">Setup</h2>
 
         <div class="field">
-          <label>Quick Starts</label>
+          <label data-i18n="setup.quickStarts">Quick Starts</label>
           <div class="template-row">
-            <button class="pill" data-preset="single">One d6</button>
-            <button class="pill" data-preset="pair">Two d6</button>
-            <button class="pill" data-preset="math">Math d6</button>
-            <button class="pill" data-preset="twenty">d20 + Modifier</button>
-            <button class="pill" data-preset="assorted">Assorted Set</button>
+            <button class="pill" data-preset="single" data-i18n="preset.single">One d6</button>
+            <button class="pill" data-preset="pair" data-i18n="preset.pair">Two d6</button>
+            <button class="pill" data-preset="math" data-i18n="preset.math">Math d6</button>
+            <button class="pill" data-preset="twenty" data-i18n="preset.twenty">d20 + Modifier</button>
+            <button class="pill" data-preset="assorted" data-i18n="preset.assorted">Assorted Set</button>
           </div>
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="diceCount">Number of Dice</label>
+            <label for="diceCount" data-i18n="field.diceCount">Number of Dice</label>
             <input id="diceCount" type="number" min="1" max="100" value="1">
           </div>
           <div class="field">
-            <label for="dieType">Die Type</label>
+            <label for="dieType" data-i18n="field.dieType">Die Type</label>
             <select id="dieType">
               <option value="4">d4</option>
               <option value="6" selected>d6</option>
@@ -608,78 +614,80 @@
 
         <div class="split">
           <div class="field">
-            <label for="modifier">Modifier</label>
+            <label for="modifier" data-i18n="field.modifier">Modifier</label>
             <input id="modifier" type="number" min="-100" max="100" value="0">
           </div>
           <div class="field">
-            <label for="rollSpeed">Roll Animation</label>
+            <label for="rollSpeed" data-i18n="field.rollSpeed">Roll Animation</label>
             <select id="rollSpeed">
-              <option value="quick">Quick</option>
-              <option value="standard" selected>Standard</option>
-              <option value="dramatic">Dramatic</option>
+              <option value="quick" data-i18n="rollSpeed.quick">Quick</option>
+              <option value="standard" selected data-i18n="rollSpeed.standard">Standard</option>
+              <option value="dramatic" data-i18n="rollSpeed.dramatic">Dramatic</option>
             </select>
           </div>
         </div>
 
         <label class="check-row" for="soundToggle">
-          <span>Sound Effects</span>
+          <span data-i18n="switch.sound">Sound Effects</span>
           <input id="soundToggle" type="checkbox" checked>
         </label>
         <label class="check-row" for="productToggle" style="margin-top:10px;">
-          <span>Show Product</span>
+          <span data-i18n="switch.product">Show Product</span>
           <input id="productToggle" type="checkbox" checked>
         </label>
 
         <div class="button-grid" style="margin-top:14px;">
-          <button class="btn" id="copyLinkBtn">Copy Setup Link</button>
-          <button class="btn" id="clearHistoryBtn">Clear History</button>
+          <button class="btn" id="copyLinkBtn" data-i18n="button.copyLink">Copy Setup Link</button>
+          <button class="btn" id="clearHistoryBtn" data-i18n="button.clearHistory">Clear History</button>
         </div>
       </section>
 
-      <section class="stage" aria-label="Dice roller">
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Dice roller">
         <div class="dice-board" id="diceBoard"></div>
         <div class="summary">
-          <div class="small-label">Total</div>
+          <div class="small-label" data-i18n="summary.total">Total</div>
           <div class="total" id="totalText">1</div>
           <div class="formula" id="formulaText">1d6</div>
         </div>
-        <button class="roll-btn" id="rollBtn">Roll Dice</button>
-        <div class="simple-controls" aria-label="Simple dice count">
-          <button class="btn" id="oneDieBtn">1 Die</button>
-          <button class="btn" id="twoDiceBtn">2 Dice</button>
+        <button class="roll-btn" id="rollBtn" data-i18n="button.roll">Roll Dice</button>
+        <div class="simple-controls" data-i18n-aria-label="panel.simpleControls.aria" aria-label="Simple dice count">
+          <button class="btn" id="oneDieBtn" data-i18n="button.oneDie">1 Die</button>
+          <button class="btn" id="twoDiceBtn" data-i18n="button.twoDice">2 Dice</button>
         </div>
       </section>
 
-      <aside class="panel stats-panel" aria-label="Roll results">
-        <h2>Results</h2>
+      <aside class="panel stats-panel" data-i18n-aria-label="panel.stats.aria" aria-label="Roll results">
+        <h2 data-i18n="results.h2">Results</h2>
         <div class="stat-grid">
           <div class="stat">
-            <span class="small-label">Dice</span>
+            <span class="small-label" data-i18n="results.dice">Dice</span>
             <strong id="diceStat">1d6</strong>
           </div>
           <div class="stat">
-            <span class="small-label">Rolls</span>
+            <span class="small-label" data-i18n="results.rolls">Rolls</span>
             <strong id="rollCount">0</strong>
           </div>
           <div class="stat">
-            <span class="small-label">Raw Sum</span>
+            <span class="small-label" data-i18n="results.sum">Raw Sum</span>
             <strong id="sumStat">1</strong>
           </div>
           <div class="stat advanced-stat product-card">
-            <span class="small-label">Product</span>
+            <span class="small-label" data-i18n="results.product">Product</span>
             <strong id="productStat">1</strong>
           </div>
         </div>
 
-        <h2 style="margin-top:18px;">History</h2>
+        <h2 style="margin-top:18px;" data-i18n="history.h2">History</h2>
         <div class="history-list" id="historyList">
-          <div class="empty">No rolls yet.</div>
+          <div class="empty" data-i18n="history.empty">No rolls yet.</div>
         </div>
       </aside>
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => [...document.querySelectorAll(sel)];
 
@@ -859,7 +867,7 @@
       document.body.classList.toggle("hide-product", !$("#productToggle").checked);
       $("#historyList").innerHTML = state.history.length
         ? state.history.map((item, i) => `<div class="history-item"><span>${escapeHTML(item.label)}: ${item.values.join(", ")}</span><span>${item.total}</span></div>`).join("")
-        : '<div class="empty">No rolls yet.</div>';
+        : `<div class="empty" data-i18n="history.empty">${escapeHTML(t("history.empty"))}</div>`;
     }
 
     function renderDice(isRolling) {
@@ -884,7 +892,7 @@
     function createCubeDie(value, isRolling, index) {
       const scene = document.createElement("div");
       scene.className = "die-scene" + (isRolling ? " rolling" : "");
-      scene.setAttribute("aria-label", "Rolled " + value + " on a d6");
+      scene.setAttribute("aria-label", t("die.aria", { value, sides: 6 }));
 
       const cube = document.createElement("div");
       cube.className = "die-cube";
@@ -912,7 +920,7 @@
     function createDie(value, isRolling, sides) {
       const die = document.createElement("div");
       die.className = "die" + (isRolling ? " rolling" : "");
-      die.setAttribute("aria-label", "Rolled " + value + " on a d" + sides);
+      die.setAttribute("aria-label", t("die.aria", { value, sides }));
       if (sides === 6 && value <= 6) {
         const grid = document.createElement("div");
         grid.className = "pip-grid";
@@ -985,7 +993,7 @@
       };
       url.hash = "d=" + b64urlEncode(JSON.stringify(payload));
       if (navigator.clipboard) navigator.clipboard.writeText(url.toString());
-      else window.prompt("Copy this setup link:", url.toString());
+      else window.prompt(t("prompt.copyLink"), url.toString());
     }
 
     function loadFromHash() {
@@ -1058,5 +1066,14 @@
     }
 
     init();
+
+    function bootI18nDependentUI() {
+      // Re-render the dice board (aria-labels) and the history list (empty-state
+      // text). The history rows themselves carry user-supplied formulas/values,
+      // which stay verbatim on language change — only the empty-state message
+      // needs re-translation.
+      render();
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script></body>
 </html>
