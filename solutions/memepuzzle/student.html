@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meme Puzzle Student</title>
+  <title data-i18n="doc.title.student">Meme Puzzle Student</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 7px 10px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -62,35 +68,40 @@
   <div class="top-bar" aria-hidden="true"></div>
   <div class="page">
     <header>
-      <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-      <h1 id="title">Meme Puzzle</h1>
-      <p class="subtitle">Answer each question correctly to reveal the hidden image.</p>
+      <div class="header-row">
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <div class="i18n-picker" data-i18n-picker></div>
+      </div>
+      <h1 id="title" data-i18n="header.h1.student">Meme Puzzle</h1>
+      <p class="subtitle" data-i18n="header.subtitle.student">Answer each question correctly to reveal the hidden image.</p>
     </header>
     <main id="app">
       <section class="board-card">
         <div class="image-board">
-          <img id="puzzleImage" alt="Hidden meme puzzle image">
+          <img id="puzzleImage" data-i18n-alt="play.imgAlt" alt="Hidden meme puzzle image">
           <div class="tile-grid" id="tileGrid"></div>
         </div>
       </section>
       <aside class="panel">
         <div class="progress">
-          <div class="stat"><span>Correct</span><strong id="correctCount">0</strong></div>
-          <div class="stat"><span>Total</span><strong id="totalCount">0</strong></div>
+          <div class="stat"><span data-i18n="play.correct">Correct</span><strong id="correctCount">0</strong></div>
+          <div class="stat"><span data-i18n="play.total">Total</span><strong id="totalCount">0</strong></div>
         </div>
         <div class="question" id="questionText"></div>
         <div class="field">
-          <label for="answerInput">Answer</label>
+          <label for="answerInput" data-i18n="play.answerLabel">Answer</label>
           <input id="answerInput" type="text" autocomplete="off">
-          <button class="btn gold" id="submitBtn">Submit Answer</button>
+          <button class="btn gold" id="submitBtn" data-i18n="play.submit">Submit Answer</button>
         </div>
         <div class="message" id="message" role="status" aria-live="polite"></div>
       </aside>
     </main>
   </div>
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
-    const state = { title: "Meme Puzzle", image: "", questions: [], index: 0, correct: 0, opened: 0 };
+    const state = { title: "", image: "", questions: [], index: 0, correct: 0, opened: 0 };
 
     function b64urlDecode(s) {
       const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
@@ -134,16 +145,25 @@
     }
 
     function render() {
-      $("#title").textContent = state.title;
+      // The teacher's title is custom content — strip the default-binding
+      // attr so the i18n applier doesn't overwrite it on language change.
+      const titleEl = $("#title");
+      if (state.title) {
+        titleEl.removeAttribute("data-i18n");
+        titleEl.textContent = state.title;
+      } else {
+        titleEl.setAttribute("data-i18n", "header.h1.student");
+        titleEl.textContent = t("header.h1.student");
+      }
       $("#puzzleImage").src = state.image;
       $("#correctCount").textContent = state.correct;
       $("#totalCount").textContent = state.questions.length;
       renderTiles();
       if (state.index >= state.questions.length) {
-        $("#questionText").textContent = "Puzzle complete.";
+        $("#questionText").textContent = t("play.complete");
         $("#answerInput").disabled = true;
         $("#submitBtn").disabled = true;
-        $("#message").textContent = "All tiles are open.";
+        $("#message").textContent = t("play.allOpen");
       } else {
         $("#questionText").textContent = state.questions[state.index].question;
       }
@@ -158,17 +178,17 @@
         state.opened += 1;
         state.index += 1;
         $("#answerInput").value = "";
-        $("#message").textContent = "Correct. One tile removed.";
+        $("#message").textContent = t("play.correctMsg");
         render();
       } else {
-        $("#message").textContent = "Try again.";
+        $("#message").textContent = t("play.tryAgain");
         $("#answerInput").select();
       }
     }
 
     function init() {
       if (!loadConfig()) {
-        $("#app").innerHTML = '<section class="panel"><p class="empty">No puzzle is loaded. Ask your teacher for the student link.</p></section>';
+        $("#app").innerHTML = '<section class="panel"><p class="empty" data-i18n="play.noPuzzle">' + t("play.noPuzzle") + '</p></section>';
         return;
       }
       $("#submitBtn").addEventListener("click", submit);
@@ -179,5 +199,9 @@
     }
 
     init();
+    window.addEventListener("widget-i18n:changed", () => {
+      // Re-render so dynamic strings (Puzzle complete, Correct., etc.) refresh.
+      if (state.questions.length) render();
+    });
   </script></body>
 </html>

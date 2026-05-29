@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meme Puzzle Maker</title>
+  <title data-i18n="doc.title">Meme Puzzle Maker</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -275,89 +281,83 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Meme Puzzle Maker</h1>
-        <p class="subtitle">Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Meme Puzzle Maker</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
     <main class="app-grid">
-      <section class="panel" aria-label="Teacher setup">
-        <h2>Teacher Setup</h2>
+      <section class="panel" data-i18n-aria-label="panel.setup.aria" aria-label="Teacher setup">
+        <h2 data-i18n="panel.h2">Teacher Setup</h2>
 
         <div class="field">
-          <label for="titleInput">Activity Title</label>
-          <input id="titleInput" type="text" value="Meme Puzzle Practice" maxlength="90">
+          <label for="titleInput" data-i18n="field.title">Activity Title</label>
+          <input id="titleInput" type="text" value="" maxlength="90">
         </div>
 
         <div class="split">
           <div class="field">
-            <label for="questionCount">Number of Questions</label>
+            <label for="questionCount" data-i18n="field.questionCount">Number of Questions</label>
             <input id="questionCount" type="number" min="1" max="30" value="10">
           </div>
           <div class="field">
-            <label for="imageSelect">Cute Cat Image</label>
+            <label for="imageSelect" data-i18n="field.image">Cute Cat Image</label>
             <select id="imageSelect">
-              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg">Cute Cat</option>
-              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Tabby-cat.jpg">Tabby Cat</option>
-              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cat-1046544.jpg">Orange Cat</option>
-              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cute_cat_in_the_bed.jpg">Cat in Bed</option>
-              <option value="custom">Custom Image URL</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg" data-i18n="image.cat1">Cute Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Tabby-cat.jpg" data-i18n="image.tabby">Tabby Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cat-1046544.jpg" data-i18n="image.orange">Orange Cat</option>
+              <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cute_cat_in_the_bed.jpg" data-i18n="image.bed">Cat in Bed</option>
+              <option value="custom" data-i18n="image.custom">Custom Image URL</option>
             </select>
           </div>
         </div>
 
         <div class="field">
-          <label for="imageUrl">Image URL</label>
+          <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
           <input id="imageUrl" type="text" value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg">
         </div>
 
         <div class="field">
-          <label for="imageUpload">Or Upload an Image</label>
+          <label for="imageUpload" data-i18n="field.imageUpload">Or Upload an Image</label>
           <input id="imageUpload" type="file" accept="image/*">
-          <p class="help">Uploaded images work best for local classroom use. Very large images can make shared links long.</p>
+          <p class="help" data-i18n="help.upload">Uploaded images work best for local classroom use. Very large images can make shared links long.</p>
         </div>
 
         <div class="field">
-          <label for="qaInput">Questions and Answers</label>
-          <textarea id="qaInput" spellcheck="true">What do plants need to make food?,sunlight
-What force pulls objects toward Earth?,gravity
-What is the bottom number of a fraction called?,denominator
-What is the main idea of a text called?,theme
-What do we call a living thing?,organism
-What type of source comes from the time being studied?,primary source
-What is water as a gas called?,vapor
-What operation finds the total?,addition
-What is an educated guess called?,hypothesis
-What is the place where an organism lives?,habitat</textarea>
-          <p class="help">Use one line per item: <strong>question,answer</strong>. You can also use <strong>question | answer</strong> or tab-separated text.</p>
+          <label for="qaInput" data-i18n="field.qa">Questions and Answers</label>
+          <textarea id="qaInput" spellcheck="true"></textarea>
+          <p class="help" data-i18n-html="help.qa.html">Use one line per item: <strong>question,answer</strong>. You can also use <strong>question | answer</strong> or tab-separated text.</p>
         </div>
 
         <div class="button-grid">
-          <button class="btn primary" id="previewBtn">Update Preview</button>
-          <button class="btn gold" id="copyLinkBtn">Copy Student Link</button>
-          <button class="btn" id="openStudentBtn">Open Student Page</button>
-          <button class="btn" id="downloadBtn">Download Setup</button>
+          <button class="btn primary" id="previewBtn" data-i18n="button.preview">Update Preview</button>
+          <button class="btn gold" id="copyLinkBtn" data-i18n="button.copyLink">Copy Student Link</button>
+          <button class="btn" id="openStudentBtn" data-i18n="button.openStudent">Open Student Page</button>
+          <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
         </div>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
-      <section class="preview" aria-label="Puzzle preview">
-        <h2>Preview</h2>
+      <section class="preview" data-i18n-aria-label="panel.preview.aria" aria-label="Puzzle preview">
+        <h2 data-i18n="preview.h2">Preview</h2>
         <div class="puzzle-wrap">
           <div class="image-board">
-            <img id="previewImage" alt="Hidden puzzle image">
+            <img id="previewImage" data-i18n-alt="preview.imgAlt" alt="Hidden puzzle image">
             <div class="tile-grid" id="tileGrid"></div>
           </div>
           <aside class="summary">
             <div>
-              <span class="field-title">Questions</span>
+              <span class="field-title" data-i18n="summary.questions">Questions</span>
               <strong id="questionTotal">10</strong>
             </div>
             <div>
-              <span class="field-title">Student Link</span>
-              <p class="help">Share links work like Dicebreaker links: the activity setup is encoded in the URL.</p>
+              <span class="field-title" data-i18n="summary.link">Student Link</span>
+              <p class="help" data-i18n="summary.linkHelp">Share links work like Dicebreaker links: the activity setup is encoded in the URL.</p>
             </div>
             <ol class="question-list" id="questionList"></ol>
           </aside>
@@ -366,9 +366,15 @@ What is the place where an organism lives?,habitat</textarea>
     </main>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     let uploadedImage = "";
+    // Track last-applied translated defaults so language switches refresh
+    // them without overwriting custom teacher content.
+    let lastTitleDefault = "";
+    let lastQaDefault = "";
 
     function parseQA(text, limit) {
       const rows = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
@@ -393,7 +399,7 @@ What is the place where an organism lives?,habitat</textarea>
       const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 10));
       const questions = parseQA($("#qaInput").value, total);
       return {
-        title: $("#titleInput").value.trim() || "Meme Puzzle Practice",
+        title: $("#titleInput").value.trim() || t("field.titleDefault"),
         image: uploadedImage || $("#imageUrl").value.trim(),
         questions
       };
@@ -415,7 +421,7 @@ What is the place where an organism lives?,habitat</textarea>
       $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
       $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
       $("#tileGrid").innerHTML = Array.from({ length: count }, (_, i) => `<div class="cover-tile${i < openCount ? " open" : ""}">${i + 1}</div>`).join("");
-      $("#status").textContent = data.questions.length + " questions ready.";
+      $("#status").textContent = t("status.ready", { n: data.questions.length });
     }
 
     function b64urlEncode(str) {
@@ -434,9 +440,9 @@ What is the place where an organism lives?,habitat</textarea>
     function copyLink() {
       const url = studentUrl();
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => $("#status").textContent = "Student link copied.");
+        navigator.clipboard.writeText(url).then(() => $("#status").textContent = t("status.linkCopied"));
       } else {
-        window.prompt("Copy this student link:", url);
+        window.prompt(t("prompt.copyLink"), url);
       }
     }
 
@@ -469,7 +475,7 @@ What is the place where an organism lives?,habitat</textarea>
       const reader = new FileReader();
       reader.onload = () => {
         uploadedImage = reader.result;
-        $("#imageUrl").value = "Uploaded image";
+        $("#imageUrl").value = t("image.uploadedLabel");
         renderPreview();
       };
       reader.readAsDataURL(file);
@@ -479,6 +485,21 @@ What is the place where an organism lives?,habitat</textarea>
     $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
     $("#downloadBtn").addEventListener("click", downloadSetup);
 
+    function seedDefaults() {
+      const titleEl = $("#titleInput");
+      if (!titleEl.value || titleEl.value === lastTitleDefault) titleEl.value = t("field.titleDefault");
+      lastTitleDefault = t("field.titleDefault");
+      const qaEl = $("#qaInput");
+      if (!qaEl.value || qaEl.value === lastQaDefault) qaEl.value = t("qa.default");
+      lastQaDefault = t("qa.default");
+    }
+
+    seedDefaults();
     renderPreview();
+
+    window.addEventListener("widget-i18n:changed", () => {
+      seedDefaults();
+      renderPreview();
+    });
   </script></body>
 </html>
