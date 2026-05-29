@@ -541,6 +541,8 @@
       const text = tpl(key);
       if(!text) return;
       sourceEl.value = text;
+      lastLoadedKey = key;
+      lastLoadedSource = text;
       renderPreview();
       setStatus(t('status.loaded', { name: t('tpl.' + key) }), 'info');
     });
@@ -603,8 +605,30 @@
     }
   });
 
+  // Template-language dropdown defaults to the UI language so the first
+  // auto-loaded template (and the pie/sequence/etc. buttons) match the
+  // user's picked locale instead of always starting from English.
+  if (window.WidgetI18n && WidgetI18n.getLang) {
+    const uiLang = WidgetI18n.getLang();
+    if (MERMAID_TEMPLATES[uiLang]) langSel.value = uiLang;
+  }
+
+  // Track which template (if any) the user is currently looking at, so a
+  // UI-language switch can swap to the same template in the new locale
+  // when the source still matches the previously-loaded template verbatim.
+  let lastLoadedKey = 'flowchart';
+  let lastLoadedSource = '';
+
+  function loadTemplate(key) {
+    const text = tpl(key);
+    if (!text) return;
+    sourceEl.value = text;
+    lastLoadedKey = key;
+    lastLoadedSource = text;
+  }
+
   // Load default template on first run.
-  sourceEl.value = tpl('flowchart');
+  loadTemplate('flowchart');
   function waitAndRender(tries){
     tries = tries || 0;
     if(window.__mermaidMissing) return showLibError();
@@ -621,9 +645,25 @@
     if (previewEl.querySelector('.mermaid-error') == null && sourceEl.value.trim() === '') {
       previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.empty') + '</div>';
     }
-    // Status line: leave any in-flight status alone — user can do another
-    // action to refresh it. Re-running render is intentional only on the
-    // render button.
+
+    // Sync the template-language dropdown to the new UI language so the
+    // pie / sequence / etc. buttons load the matching template language.
+    // If the editor source still matches the previously-loaded template
+    // verbatim (user hasn't typed custom Mermaid syntax), swap to the
+    // same template key in the new locale so the diagram updates too.
+    const newUiLang = WidgetI18n.getLang();
+    if (MERMAID_TEMPLATES[newUiLang] && langSel.value !== newUiLang) {
+      const wasUntouched = sourceEl.value === lastLoadedSource;
+      langSel.value = newUiLang;
+      if (wasUntouched && lastLoadedKey) {
+        const fresh = tpl(lastLoadedKey);
+        if (fresh) {
+          sourceEl.value = fresh;
+          lastLoadedSource = fresh;
+          renderPreview();
+        }
+      }
+    }
   }
   window.addEventListener('widget-i18n:changed', bootI18nDependentUI);
 })();
