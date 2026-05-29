@@ -20,7 +20,6 @@
       "enabled": true,
       "blockUnapproved": true,
       "allowedDomains": [
-        "tcea.org",
         "edu.google.com",
         "khanacademy.org",
         "loc.gov",
