@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dots and Boxes</title>
+  <title data-i18n="doc.title">Dots and Boxes</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #eef2ff); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    header.site .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
   <style>
     :root {
       --navy: #7c3aed;
@@ -109,41 +115,33 @@
   <div class="page">
     <header class="site">
       <div class="title-block">
-        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
-        <h1>Dots and Boxes</h1>
-        <p class="subtitle">Take turns drawing one line at a time. Close the fourth side of a box to claim it and earn another turn. Most boxes wins.</p>
+        <p class="eyebrow"><a href="../../pages/features.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">DrawSplat<sup class="tm">TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Dots and Boxes</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Take turns drawing one line at a time. Close the fourth side of a box to claim it and earn another turn. Most boxes wins.</p>
       </div>
-      <a class="home-link" href="../../index.html">Home</a>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
     </header>
 
-    <section class="controls" aria-label="Game settings">
+    <section class="controls" data-i18n-aria-label="controls.aria" aria-label="Game settings">
       <div class="field">
-        <label for="gridSize">Board size</label>
-        <select id="gridSize">
-          <option value="3">3 &times; 3 boxes</option>
-          <option value="4">4 &times; 4 boxes</option>
-          <option value="5" selected>5 &times; 5 boxes</option>
-          <option value="6">6 &times; 6 boxes</option>
-          <option value="7">7 &times; 7 boxes</option>
-          <option value="8">8 &times; 8 boxes</option>
-        </select>
+        <label for="gridSize" data-i18n="field.gridSize">Board size</label>
+        <select id="gridSize"></select>
       </div>
       <div class="field">
-        <label for="playerCount">Players</label>
-        <select id="playerCount">
-          <option value="2" selected>2 players</option>
-          <option value="3">3 players</option>
-          <option value="4">4 players</option>
-        </select>
+        <label for="playerCount" data-i18n="field.players">Players</label>
+        <select id="playerCount"></select>
       </div>
       <div class="spacer"></div>
-      <button class="btn gold" id="newGameBtn" type="button">New Game</button>
+      <button class="btn gold" id="newGameBtn" type="button" data-i18n="button.newGame">New Game</button>
     </section>
 
-    <section class="scoreboard" id="scoreboard" aria-label="Score"></section>
+    <section class="scoreboard" id="scoreboard" data-i18n-aria-label="scoreboard.aria" aria-label="Score"></section>
 
     <section class="board-wrap">
-      <svg class="board" id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dots and boxes board"></svg>
+      <svg class="board" id="board" xmlns="http://www.w3.org/2000/svg" role="img" data-i18n-aria-label="board.aria" aria-label="Dots and boxes board"></svg>
     </section>
 
     <div class="message" id="message" role="status" aria-live="polite"></div>
@@ -156,26 +154,49 @@
       <div class="winner-name" id="winnerName">Player 1</div>
       <p class="winner-sub" id="winnerSub">9 boxes</p>
       <div class="winner-actions">
-        <button class="btn primary" id="winnerNewGame" type="button">Play Again</button>
-        <button class="btn" id="winnerDismiss" type="button">Dismiss</button>
+        <button class="btn primary" id="winnerNewGame" type="button" data-i18n="winner.newGame">Play Again</button>
+        <button class="btn" id="winnerDismiss" type="button" data-i18n="winner.dismiss">Dismiss</button>
       </div>
     </div>
   </div>
 
+  <script src="./locales.js"></script>
   <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => [...document.querySelectorAll(sel)];
 
     const COLORS = ["#7c3aed", "#ef4444", "#22c55e", "#a855f7"];
-    const NAMES = ["Player 1", "Player 2", "Player 3", "Player 4"];
     const INITIALS = ["1", "2", "3", "4"];
 
+    // Players seeded with translated default names. The names are kept up
+    // to date on language switch only if the user hasn't customized them
+    // (see bootI18nDependentUI).
     const playerSettings = [0, 1, 2, 3].map(i => ({
-      name: NAMES[i],
+      name: t("player.default", { n: i + 1 }),
       initial: INITIALS[i],
       color: COLORS[i],
-      isComputer: false
+      isComputer: false,
+      _defaultedSlot: i + 1   // tracker — gets cleared when user types a custom name
     }));
+
+    function buildSelectOptions() {
+      // Build the gridSize and playerCount <select>s once on init and once
+      // per language change. Selected values are preserved.
+      const gridSel = $("#gridSize");
+      const prevGrid = gridSel.value || "5";
+      gridSel.innerHTML = [3,4,5,6,7,8].map(n =>
+        `<option value="${n}"${n === 5 && !gridSel.value ? " selected" : ""}>${escapeHTML(t("gridSize.option", { n }))}</option>`
+      ).join("");
+      gridSel.value = prevGrid;
+
+      const playerSel = $("#playerCount");
+      const prevPlayers = playerSel.value || "2";
+      playerSel.innerHTML = [2,3,4].map(n =>
+        `<option value="${n}"${n === 2 && !playerSel.value ? " selected" : ""}>${escapeHTML(t("players.option", { n }))}</option>`
+      ).join("");
+      playerSel.value = prevPlayers;
+    }
 
     const state = {
       cols: 5,
@@ -213,6 +234,7 @@
         initial: playerSettings[i].initial,
         color: playerSettings[i].color,
         isComputer: !!playerSettings[i].isComputer,
+        _defaultedSlot: playerSettings[i]._defaultedSlot,
         score: 0
       }));
       state.current = 0;
@@ -221,11 +243,21 @@
       hideCelebration();
       buildScoreboard();
       renderBoard();
-      message(`${displayName(state.players[0])}'s turn. ${active().isComputer ? "Computer is thinking…" : "Click a line to draw it."}`);
+      announceTurn(null);
       maybeScheduleAI();
     }
 
-    function displayName(p) { return p.name.trim() || "Player"; }
+    function announceTurn(prefix) {
+      // Sets the live status: optional already-translated prefix (e.g.,
+      // "X claimed 3 boxes. Go again!") followed by whose turn is next.
+      const a = active();
+      const hint = a.isComputer ? t("msg.turnComputer") : t("msg.turnHuman");
+      const turn = t("msg.turn", { name: displayName(a) });
+      const parts = prefix ? [prefix, turn, hint] : [turn, hint];
+      setMessage(parts.join(" "));
+    }
+
+    function displayName(p) { return p.name.trim() || t("player.defaultName"); }
     function displayInitial(p) {
       const i = (p.initial || "").trim().toUpperCase();
       if (i) return i.slice(0, 2);
@@ -239,6 +271,12 @@
       if (field === "isComputer") v = !!value;
       playerSettings[idx][field] = v;
       if (state.players[idx]) state.players[idx][field] = v;
+      // Once the user types a custom name, drop the default-slot tracker so
+      // a later language switch leaves their text alone.
+      if (field === "name") {
+        playerSettings[idx]._defaultedSlot = null;
+        if (state.players[idx]) state.players[idx]._defaultedSlot = null;
+      }
       updateScoreboardStyles();
       renderBoard();
       if (field === "isComputer" && idx === state.current && !state.gameOver) maybeScheduleAI();
@@ -289,13 +327,16 @@
         return;
       }
       if (claimed > 0) {
-        const suffix = active().isComputer ? " Computer goes again…" : " Go again!";
-        message(`${displayName(active())} claimed ${claimed} box${claimed === 1 ? "" : "es"}.${suffix}`);
+        // Same player goes again. Build the "X claimed N boxes. Go again!" line.
+        const claimKey = claimed === 1 ? "msg.claimed1" : "msg.claimedN";
+        const claimText = t(claimKey, { name: displayName(active()), n: claimed });
+        const goKey = active().isComputer ? "msg.goAgainComputer" : "msg.goAgain";
+        setMessage(claimText + " " + t(goKey));
       } else {
         state.current = (state.current + 1) % state.players.length;
         updateScoreboardStyles();
         renderBoard();
-        message(`${displayName(active())}'s turn.${active().isComputer ? " Computer is thinking…" : ""}`);
+        announceTurn(null);
       }
       maybeScheduleAI();
     }
@@ -395,10 +436,10 @@
     function endGame() {
       const top = Math.max(...state.players.map(p => p.score));
       const winners = state.players.filter(p => p.score === top);
-      let msg;
-      if (winners.length === 1) msg = `Game over! ${displayName(winners[0])} wins with ${top} boxes.`;
-      else msg = `Game over! Tie at ${top} boxes: ${winners.map(w => displayName(w)).join(", ")}.`;
-      message(msg, "win");
+      const text = winners.length === 1
+        ? t("msg.gameOverWin", { name: displayName(winners[0]), score: top })
+        : t("msg.gameOverTie", { score: top, names: winners.map(w => displayName(w)).join(", ") });
+      setMessage(text, "win");
       celebrate(winners, top);
     }
 
@@ -417,8 +458,8 @@
         color.type = "color";
         color.className = "player-color-pick";
         color.value = p.color;
-        color.title = "Pick player color";
-        color.setAttribute("aria-label", `Player ${i + 1} color`);
+        color.title = t("player.colorTitle");
+        color.setAttribute("aria-label", t("player.colorAria", { n: i + 1 }));
         color.addEventListener("input", e => onPlayerEdit(i, "color", e.target.value));
 
         const name = document.createElement("input");
@@ -426,8 +467,8 @@
         name.className = "player-name-input";
         name.value = p.name;
         name.maxLength = 24;
-        name.placeholder = "Player name";
-        name.setAttribute("aria-label", `Player ${i + 1} name`);
+        name.placeholder = t("player.namePh");
+        name.setAttribute("aria-label", t("player.nameAria", { n: i + 1 }));
         name.addEventListener("input", e => onPlayerEdit(i, "name", e.target.value));
 
         top.appendChild(color);
@@ -440,14 +481,14 @@
         initialWrap.className = "player-initial-wrap";
         const initialLabel = document.createElement("span");
         initialLabel.className = "player-initial-label";
-        initialLabel.textContent = "Initial";
+        initialLabel.textContent = t("player.initialLabel");
         const initialInput = document.createElement("input");
         initialInput.type = "text";
         initialInput.className = "player-initial-input";
         initialInput.value = p.initial;
         initialInput.maxLength = 2;
         initialInput.placeholder = "?";
-        initialInput.setAttribute("aria-label", `Player ${i + 1} box initial`);
+        initialInput.setAttribute("aria-label", t("player.initialAria", { n: i + 1 }));
         initialInput.addEventListener("input", e => {
           const v = e.target.value.toUpperCase().slice(0, 2);
           if (e.target.value !== v) e.target.value = v;
@@ -458,8 +499,8 @@
 
         const typeSelect = document.createElement("select");
         typeSelect.className = "player-type-select";
-        typeSelect.setAttribute("aria-label", `Player ${i + 1} type`);
-        typeSelect.innerHTML = '<option value="human">Human</option><option value="cpu">Computer</option>';
+        typeSelect.setAttribute("aria-label", t("player.typeAria", { n: i + 1 }));
+        typeSelect.innerHTML = `<option value="human">${escapeHTML(t("player.type.human"))}</option><option value="cpu">${escapeHTML(t("player.type.cpu"))}</option>`;
         typeSelect.value = p.isComputer ? "cpu" : "human";
         typeSelect.addEventListener("change", e => onPlayerEdit(i, "isComputer", e.target.value === "cpu"));
 
@@ -577,7 +618,7 @@
       });
     }
 
-    function message(text, kind) {
+    function setMessage(text, kind) {
       const el = $("#message");
       el.textContent = text;
       el.classList.toggle("win", kind === "win");
@@ -713,18 +754,23 @@
     function showWinnerBanner(winners, score) {
       const overlay = $("#winnerOverlay");
       const nameEl = $("#winnerName");
+      const eyebrow = $("#winnerEyebrow");
       if (winners.length === 1) {
-        $("#winnerEyebrow").textContent = "You Won!";
+        eyebrow.textContent = t("winner.you");
         nameEl.textContent = displayName(winners[0]);
         nameEl.classList.remove("tie");
         nameEl.style.color = winners[0].color;
-        $("#winnerSub").textContent = `${score} ${score === 1 ? "box" : "boxes"} claimed`;
+        $("#winnerSub").textContent = score === 1
+          ? t("winner.sub.single1")
+          : t("winner.sub.single", { score });
       } else {
-        $("#winnerEyebrow").textContent = "Tie Game!";
+        eyebrow.textContent = t("winner.tie");
         nameEl.textContent = winners.map(w => displayName(w)).join(" & ");
         nameEl.classList.add("tie");
         nameEl.style.color = "var(--navy)";
-        $("#winnerSub").textContent = `${score} ${score === 1 ? "box" : "boxes"} each`;
+        $("#winnerSub").textContent = score === 1
+          ? t("winner.sub.tie1")
+          : t("winner.sub.tie", { score });
       }
       overlay.classList.add("show");
     }
@@ -734,7 +780,35 @@
     $("#newGameBtn").addEventListener("click", newGame);
     $("#gridSize").addEventListener("change", newGame);
     $("#playerCount").addEventListener("change", newGame);
+    buildSelectOptions();
     newGame();
+
+    function bootI18nDependentUI() {
+      // Refresh JS-generated UI:
+      //   * the gridSize / playerCount dropdowns (their option labels)
+      //   * default player names — only for slots the user hasn't renamed
+      //   * the scoreboard (initial / human / cpu / name placeholder)
+      //   * the live message (rebuild via announceTurn or endGame summary
+      //     re-render — but those are write-once, so we just call newGame()?
+      //     No: that would discard the user's in-progress game. Instead we
+      //     rebuild the scoreboard and refresh the turn announcement if the
+      //     game is still active.)
+      buildSelectOptions();
+      // Translate-update any player slots that are still on their default name.
+      playerSettings.forEach((p, i) => {
+        if (p._defaultedSlot != null) {
+          p.name = t("player.default", { n: p._defaultedSlot });
+        }
+      });
+      state.players.forEach((p, i) => {
+        if (p._defaultedSlot != null) p.name = t("player.default", { n: p._defaultedSlot });
+      });
+      buildScoreboard();
+      renderBoard();
+      // Re-announce whoever is currently on turn (only when game is still live).
+      if (!state.gameOver && active()) announceTurn(null);
+    }
+    window.addEventListener("widget-i18n:changed", bootI18nDependentUI);
   </script>
 </body>
 </html>
