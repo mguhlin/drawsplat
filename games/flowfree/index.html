@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Free — DrawSplat Games</title>
+<title data-i18n="doc.title">Flow Free — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
   .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
@@ -41,39 +47,43 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Flow Free</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Flow Free</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
-  <h1 class="game-title">Connect every matched pair without crossing.</h1>
-  <p class="lede">Drag from one colour terminal to its twin. Paths can't overlap, and every cell must be filled to clear the board.</p>
+  <h1 class="game-title" data-i18n="game.title">Connect every matched pair without crossing.</h1>
+  <p class="lede" data-i18n="game.lede">Drag from one colour terminal to its twin. Paths can't overlap, and every cell must be filled to clear the board.</p>
   <div class="controls">
     <div class="group">
-      <span class="gl">Grid</span>
-      <button class="btn size-btn active" data-key="n4">Beginner 4×4</button>
-      <button class="btn size-btn" data-key="n5">Intermediate 5×5</button>
-      <button class="btn size-btn" data-key="n7">Advanced 7×7</button>
-      <button class="btn size-btn" data-key="n9">Expert 9×9</button>
+      <span class="gl" data-i18n="group.grid">Grid</span>
+      <button class="btn size-btn active" data-key="n4" data-i18n="size.beginner">Beginner 4×4</button>
+      <button class="btn size-btn" data-key="n5" data-i18n="size.intermediate">Intermediate 5×5</button>
+      <button class="btn size-btn" data-key="n7" data-i18n="size.advanced">Advanced 7×7</button>
+      <button class="btn size-btn" data-key="n9" data-i18n="size.expert">Expert 9×9</button>
     </div>
-    <button class="btn primary" id="newBtn">Reset</button>
-    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <button class="btn primary" id="newBtn" data-i18n="button.reset">Reset</button>
+    <button class="btn" id="muteBtn" data-i18n-aria-label="button.mute.aria" aria-label="Toggle sound">🔊</button>
     <div class="metrics">
-      <div class="metric"><span class="label">Flows</span><span class="val"><span id="completed">0</span>/<span id="totalFlows">--</span></span></div>
-      <div class="metric"><span class="label">Coverage</span><span class="val" id="coverage">0%</span></div>
+      <div class="metric"><span class="label" data-i18n="metric.flows">Flows</span><span class="val"><span id="completed">0</span>/<span id="totalFlows">--</span></span></div>
+      <div class="metric"><span class="label" data-i18n="metric.coverage">Coverage</span><span class="val" id="coverage">0%</span></div>
     </div>
   </div>
   <div class="canvas-wrap">
-    <canvas id="board" width="450" height="450" aria-label="Flow Free board"></canvas>
+    <canvas id="board" width="450" height="450" data-i18n-aria-label="board.aria" aria-label="Flow Free board"></canvas>
   </div>
   <div id="winCard" class="win-card">
-    <h2>All flows connected.</h2>
-    <p>Every cell covered, every pair joined.</p>
+    <h2 data-i18n="win.title">All flows connected.</h2>
+    <p data-i18n="win.body">Every cell covered, every pair joined.</p>
   </div>
 </div>
 
+<script src="./locales.js"></script>
 <script>
 // Each puzzle is constructed from a known full-coverage solution so every
 // cell has exactly one colour and every endpoint pair has a valid path.
