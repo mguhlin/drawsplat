@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lights Out — DrawSplat Games</title>
+<title data-i18n="doc.title">Lights Out — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   /* DrawSplat Games header */
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
@@ -57,60 +63,54 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Lights Out</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Lights Out</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
-  <h1 class="game-title">Clear the grid — toggle a cell to flip it and its orthogonal neighbours.</h1>
+  <h1 class="game-title" data-i18n="game.title">Clear the grid — toggle a cell to flip it and its orthogonal neighbours.</h1>
   <div class="controls">
     <div class="group">
-      <span class="gl">Size</span>
-      <button class="btn size-btn active" data-size="4">Beginner 4×4</button>
-      <button class="btn size-btn" data-size="5">Intermediate 5×5</button>
-      <button class="btn size-btn" data-size="6">Advanced 6×6</button>
+      <span class="gl" data-i18n="group.size">Size</span>
+      <button class="btn size-btn active" data-size="4" data-i18n="size.beginner">Beginner 4×4</button>
+      <button class="btn size-btn" data-size="5" data-i18n="size.intermediate">Intermediate 5×5</button>
+      <button class="btn size-btn" data-size="6" data-i18n="size.advanced">Advanced 6×6</button>
     </div>
     <div class="group">
-      <span class="gl">Theme</span>
+      <span class="gl" data-i18n="group.theme">Theme</span>
       <select id="themeSel">
-        <option value="cyber">Cyber Neon</option>
-        <option value="amber">Terminal Amber</option>
-        <option value="slate">Minimal Slate</option>
+        <option value="cyber" data-i18n="theme.cyber">Cyber Neon</option>
+        <option value="amber" data-i18n="theme.amber">Terminal Amber</option>
+        <option value="slate" data-i18n="theme.slate">Minimal Slate</option>
       </select>
     </div>
-    <button class="btn primary" id="newBtn">New Puzzle</button>
-    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+    <button class="btn primary" id="newBtn" data-i18n="button.new">New Puzzle</button>
+    <button class="btn" id="muteBtn" data-i18n-aria-label="button.mute.aria" aria-label="Toggle sound">🔊</button>
     <div class="metrics">
-      <div class="metric"><span class="label">Moves</span><span class="val" id="moveCount">0</span></div>
-      <div class="metric"><span class="label">Par</span><span class="val" id="parMoves">--</span></div>
+      <div class="metric"><span class="label" data-i18n="metric.moves">Moves</span><span class="val" id="moveCount">0</span></div>
+      <div class="metric"><span class="label" data-i18n="metric.par">Par</span><span class="val" id="parMoves">--</span></div>
     </div>
   </div>
   <div class="grid-wrap">
-    <div id="grid" class="grid" role="grid" aria-label="Lights Out grid"></div>
+    <div id="grid" class="grid" role="grid" data-i18n-aria-label="grid.aria" aria-label="Lights Out grid"></div>
   </div>
   <p id="quip" class="quip"></p>
   <div id="winCard" class="win-card">
-    <h2>System cleared.</h2>
-    <p>You took <strong id="winMoves">--</strong> moves. Par was <strong id="winPar">--</strong>.</p>
+    <h2 data-i18n="win.title">System cleared.</h2>
+    <p id="winBody" data-i18n-html="win.body.html">You took <strong id="winMoves">--</strong> moves. Par was <strong id="winPar">--</strong>.</p>
   </div>
 </div>
 
+<script src="./locales.js"></script>
 <script>
-const QUIPS_PLAY = [
-  "Nodes inverted. Topology updated.",
-  "Cascade tracked.",
-  "Edge logic propagated.",
-  "Cell flipped — continuing.",
-  "Lattice state advanced.",
-  "Adjacency engaged.",
-];
-const QUIPS_WIN = [
-  "Matrix collapsed. Clean slate.",
-  "All nodes dark. Mission complete.",
-  "Inversion achieved.",
-];
+const t = (k, vars) => WidgetI18n.t(k, vars);
+function playQuips() { return [1,2,3,4,5,6].map(n => t('quip.play.' + n)); }
+function winQuips() { return [1,2,3].map(n => t('quip.win.' + n)); }
 
 let size = 4;
 let grid = [];
@@ -159,13 +159,19 @@ function handleClick(r, c) {
   moveCount++;
   render();
   updateMetrics();
-  if (Math.random() < 0.4) showQuip(QUIPS_PLAY[Math.floor(Math.random() * QUIPS_PLAY.length)]);
+  if (Math.random() < 0.4) {
+    const q = playQuips();
+    showQuip(q[Math.floor(Math.random() * q.length)]);
+  }
   if (checkWin()) {
     gameState = "complete";
-    document.getElementById("winMoves").textContent = moveCount;
-    document.getElementById("winPar").textContent = parMoves;
+    // win.body.html is rendered by the i18n applier with literal {moves}/{par}
+    // placeholders preserved inside the <strong> tags — repaint with current
+    // counts using t() interpolation, and let the applier own the markup.
+    document.getElementById("winBody").innerHTML = t('win.body.html', { moves: moveCount, par: parMoves });
     winCard.classList.add("show");
-    showQuip(QUIPS_WIN[Math.floor(Math.random() * QUIPS_WIN.length)]);
+    const q = winQuips();
+    showQuip(q[Math.floor(Math.random() * q.length)]);
     playVictory();
   }
 }
@@ -181,7 +187,8 @@ function render() {
     for (let c = 0; c < size; c++) {
       const btn = document.createElement("button");
       btn.className = "cell" + (grid[r][c] ? " on" : "");
-      btn.setAttribute("aria-label", `Row ${r+1} column ${c+1} ${grid[r][c] ? "lit" : "dark"}`);
+      const state = grid[r][c] ? t('cell.lit') : t('cell.dark');
+      btn.setAttribute("aria-label", t('cell.aria', { r: r+1, c: c+1, state }));
       btn.addEventListener("click", () => handleClick(r, c));
       gridEl.appendChild(btn);
     }
@@ -261,6 +268,16 @@ document.getElementById("muteBtn").addEventListener("click", (e) => {
 });
 
 init();
+
+// Re-render the grid (so cell aria-labels pick up the new locale) and the
+// win body if it's currently visible. Static elements like buttons get
+// updated by the i18n applier automatically.
+window.addEventListener('widget-i18n:changed', () => {
+  render();
+  if (winCard.classList.contains('show')) {
+    document.getElementById("winBody").innerHTML = t('win.body.html', { moves: moveCount, par: parMoves });
+  }
+});
 </script>
 </body>
 </html>
