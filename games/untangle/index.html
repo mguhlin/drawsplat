@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Untangle — DrawSplat Games</title>
+<title data-i18n="doc.title">Untangle — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
 <style>
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
   .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
@@ -43,36 +49,40 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Untangle</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Untangle</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
-  <h1 class="game-title">Drag the nodes until no lines cross.</h1>
-  <p class="lede">Each line glows crimson while it intersects another. When every edge turns emerald you've cleared the graph.</p>
+  <h1 class="game-title" data-i18n="game.title">Drag the nodes until no lines cross.</h1>
+  <p class="lede" data-i18n="game.lede">Each line glows crimson while it intersects another. When every edge turns emerald you've cleared the graph.</p>
   <div class="controls">
     <div class="group">
-      <span class="gl">Difficulty</span>
-      <button class="btn diff-btn active" data-n="6">Beginner (6)</button>
-      <button class="btn diff-btn" data-n="12">Intermediate (12)</button>
-      <button class="btn diff-btn" data-n="20">Advanced (20)</button>
+      <span class="gl" data-i18n="group.difficulty">Difficulty</span>
+      <button class="btn diff-btn active" data-n="6" data-i18n="diff.beginner">Beginner (6)</button>
+      <button class="btn diff-btn" data-n="12" data-i18n="diff.intermediate">Intermediate (12)</button>
+      <button class="btn diff-btn" data-n="20" data-i18n="diff.advanced">Advanced (20)</button>
     </div>
-    <button class="btn primary" id="newBtn">Reset</button>
-    <button class="btn" id="skipBtn">Skip</button>
-    <button class="btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
-    <div class="metric"><span class="label">Crossings</span><span class="val" id="crossings">--</span></div>
+    <button class="btn primary" id="newBtn" data-i18n="button.reset">Reset</button>
+    <button class="btn" id="skipBtn" data-i18n="button.skip">Skip</button>
+    <button class="btn" id="muteBtn" data-i18n-aria-label="button.mute.aria" aria-label="Toggle sound">🔊</button>
+    <div class="metric"><span class="label" data-i18n="metric.crossings">Crossings</span><span class="val" id="crossings">--</span></div>
   </div>
   <div class="canvas-wrap">
-    <canvas id="board" width="600" height="600" aria-label="Untangle graph"></canvas>
+    <canvas id="board" width="600" height="600" data-i18n-aria-label="board.aria" aria-label="Untangle graph"></canvas>
   </div>
   <div id="winCard" class="win-card">
-    <h2>Graph cleared.</h2>
-    <p>No more intersections — every edge is emerald.</p>
+    <h2 data-i18n="win.title">Graph cleared.</h2>
+    <p data-i18n="win.body">No more intersections — every edge is emerald.</p>
   </div>
 </div>
 
+<script src="./locales.js"></script>
 <script>
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
@@ -260,13 +270,13 @@ function ensureAudio() {
 function playVictory() {
   const c = ensureAudio(); if (!c) return;
   [392, 523, 659, 784, 1046].forEach((f, i) => {
-    const t = c.currentTime + i * 0.1;
+    const startT = c.currentTime + i * 0.1;
     const o = c.createOscillator(); const g = c.createGain();
-    o.type = "triangle"; o.frequency.setValueAtTime(f, t);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
-    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.45);
+    o.type = "triangle"; o.frequency.setValueAtTime(f, startT);
+    g.gain.setValueAtTime(0.0001, startT);
+    g.gain.exponentialRampToValueAtTime(0.18, startT + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, startT + 0.4);
+    o.connect(g); g.connect(c.destination); o.start(startT); o.stop(startT + 0.45);
   });
 }
 
