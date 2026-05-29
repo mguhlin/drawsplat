@@ -3,9 +3,14 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Markdown Studio — DrawSplatTM</title>
+<title data-i18n="doc.title">Markdown Studio — DrawSplatTM</title>
 <meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML or WordPress block code. Strip AI writing tells. Save .md or .html.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M7 9h3l3 6 3-6h3v14h-3v-9l-2.5 5h-1L10 13v10H7z'/%3E%3C/svg%3E">
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+.i18n-picker select{padding:6px 10px;border:1px solid #d9ddec;border-radius:8px;background:#fff;color:#172033;font-weight:700;font-size:.82rem;cursor:pointer}
+.i18n-picker select:focus{border-color:#7c3aed;outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.18)}
+</style>
 <style>
 :root {
   --navy:        #7c3aed;
@@ -637,69 +642,70 @@ footer .credit a:hover {
 </head>
 <body>
 <nav class="topnav">
-  <a href="../../index.html" class="topnav-brand">DrawSplat<sup class="tm">TM</sup> <em>Markdown Studio</em></a>
+  <a href="../../index.html" class="topnav-brand" data-i18n-html="nav.brandHtml">DrawSplat<sup class="tm">TM</sup> <em>Markdown Studio</em></a>
   <div class="topnav-spacer"></div>
-  <a href="../../app/whiteboard.html" class="topnav-link">Open DrawSplat<sup class="tm">TM</sup></a>
-  <a href="#help" class="topnav-link">Help</a>
+  <div class="i18n-picker" data-i18n-picker></div>
+  <a href="../../app/whiteboard.html" class="topnav-link" data-i18n-html="nav.openDrawsplatHtml">Open DrawSplat<sup class="tm">TM</sup></a>
+  <a href="#help" class="topnav-link" data-i18n="nav.help">Help</a>
 </nav>
 
 <header class="hero">
   <div class="hero-inner">
-    <div class="eyebrow">Markdown · Cleaner · Converter</div>
-    <h1>Markdown <em>Studio</em></h1>
-    <p>Paste Markdown. Clean common formatting bugs. Strip AI writing 
-tells. Find and replace. Preview the rendered HTML, copy plain HTML, or 
-copy WordPress block code that pastes into Gutenberg without needing the 
+    <div class="eyebrow" data-i18n="hero.eyebrow">Markdown · Cleaner · Converter</div>
+    <h1 data-i18n-html="hero.h1Html">Markdown <em>Studio</em></h1>
+    <p data-i18n="hero.subtitle">Paste Markdown. Clean common formatting bugs. Strip AI writing
+tells. Find and replace. Preview the rendered HTML, copy plain HTML, or
+copy WordPress block code that pastes into Gutenberg without needing the
 Custom HTML block.</p>
-    <p style="margin-top:14px;font-size:0.88rem;color:rgba(255,255,255,0.7)">Shortcuts: <kbd>Ctrl/⌘ F</kbd> find · <kbd>Ctrl/⌘ S</kbd> save .md · <kbd>Ctrl/⌘ K</kbd> clean · drop a <code style="font-family:'Courier New',monospace;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;color:var(--white);border:1px solid rgba(255,255,255,0.2)">.md</code> file anywhere</p>
+    <p style="margin-top:14px;font-size:0.88rem;color:rgba(255,255,255,0.7)" data-i18n-html="hero.shortcuts.html">Shortcuts: <kbd>Ctrl/⌘ F</kbd> find · <kbd>Ctrl/⌘ S</kbd> save .md · <kbd>Ctrl/⌘ K</kbd> clean · drop a <code style="font-family:'Courier New',monospace;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;color:var(--white);border:1px solid rgba(255,255,255,0.2)">.md</code> file anywhere</p>
   </div>
 </header>
 
 <main class="tool-wrap">
   <!-- Toolbar -->
-  <div class="toolbar" role="toolbar" aria-label="Markdown actions">
+  <div class="toolbar" role="toolbar" data-i18n-aria-label="toolbar.aria" aria-label="Markdown actions">
     <div class="toolbar-group">
-      <button class="btn btn-primary" id="btn-clean" title="Normalize headings, bullets, checkboxes, blank lines (Ctrl+K)">Clean Markdown</button>
-      <button class="btn btn-warn" id="btn-strip-ai" title="Strip common AI writing tells">Strip AI Tells</button>
-      <button class="btn" id="btn-find" title="Find and replace (Ctrl+F)">Find / Replace</button>
+      <button class="btn btn-primary" id="btn-clean" data-i18n="btn.clean" data-i18n-title="btn.clean.title" title="Normalize headings, bullets, checkboxes, blank lines (Ctrl+K)">Clean Markdown</button>
+      <button class="btn btn-warn" id="btn-strip-ai" data-i18n="btn.stripAi" data-i18n-title="btn.stripAi.title" title="Strip common AI writing tells">Strip AI Tells</button>
+      <button class="btn" id="btn-find" data-i18n="btn.find" data-i18n-title="btn.find.title" title="Find and replace (Ctrl+F)">Find / Replace</button>
     </div>
     <div class="toolbar-divider"></div>
     <div class="toolbar-group">
-      <button class="btn" id="btn-import" title="Open a .md or .txt file">Import File</button>
+      <button class="btn" id="btn-import" data-i18n="btn.import" data-i18n-title="btn.import.title" title="Open a .md or .txt file">Import File</button>
       <input type="file" id="file-input" accept=".md,.markdown,.txt" hidden="">
-      <button class="btn" id="btn-save-md" title="Download as .md (Ctrl+S)">Save .md</button>
-      <button class="btn" id="btn-save-html" title="Download as .html">Save .html</button>
+      <button class="btn" id="btn-save-md" data-i18n="btn.saveMd" data-i18n-title="btn.saveMd.title" title="Download as .md (Ctrl+S)">Save .md</button>
+      <button class="btn" id="btn-save-html" data-i18n="btn.saveHtml" data-i18n-title="btn.saveHtml.title" title="Download as .html">Save .html</button>
     </div>
     <div class="toolbar-divider"></div>
     <div class="toolbar-group">
-      <button class="btn" id="btn-sample" title="Load a sample document">Sample</button>
-      <button class="btn" id="btn-clear-all" title="Clear everything">Clear All</button>
+      <button class="btn" id="btn-sample" data-i18n="btn.sample" data-i18n-title="btn.sample.title" title="Load a sample document">Sample</button>
+      <button class="btn" id="btn-clear-all" data-i18n="btn.clearAll" data-i18n-title="btn.clearAll.title" title="Clear everything">Clear All</button>
     </div>
   </div>
 
   <!-- Find bar (toggled) -->
-  <div class="findbar" id="findbar" role="region" aria-label="Find and replace">
+  <div class="findbar" id="findbar" role="region" data-i18n-aria-label="findbar.aria" aria-label="Find and replace">
     <div class="findbar-row">
       <div class="field">
-        <label for="find-input">Find</label>
-        <input type="text" id="find-input" placeholder="Text to find" autocomplete="off">
+        <label for="find-input" data-i18n="find.find">Find</label>
+        <input type="text" id="find-input" data-i18n-placeholder="find.findPh" placeholder="Text to find" autocomplete="off">
       </div>
       <div class="field">
-        <label for="replace-input">Replace</label>
-        <input type="text" id="replace-input" placeholder="Replacement text" autocomplete="off">
+        <label for="replace-input" data-i18n="find.replace">Replace</label>
+        <input type="text" id="replace-input" data-i18n-placeholder="find.replacePh" placeholder="Replacement text" autocomplete="off">
       </div>
       <div class="find-actions">
-        <button class="btn" id="btn-find-prev" title="Find previous">◀ Prev</button>
-        <button class="btn" id="btn-find-next" title="Find next">Next ▶</button>
-        <button class="btn" id="btn-replace-one" title="Replace this match">Replace</button>
-        <button class="btn btn-primary" id="btn-replace-all" title="Replace all matches">Replace All</button>
-        <button class="btn" id="btn-find-close" title="Close (Esc)">✕</button>
+        <button class="btn" id="btn-find-prev" data-i18n="btn.findPrev" data-i18n-title="btn.findPrev.title" title="Find previous">◀ Prev</button>
+        <button class="btn" id="btn-find-next" data-i18n="btn.findNext" data-i18n-title="btn.findNext.title" title="Find next">Next ▶</button>
+        <button class="btn" id="btn-replace-one" data-i18n="btn.replaceOne" data-i18n-title="btn.replaceOne.title" title="Replace this match">Replace</button>
+        <button class="btn btn-primary" id="btn-replace-all" data-i18n="btn.replaceAll" data-i18n-title="btn.replaceAll.title" title="Replace all matches">Replace All</button>
+        <button class="btn" id="btn-find-close" data-i18n-title="btn.findClose.title" title="Close (Esc)">✕</button>
       </div>
     </div>
     <div class="find-opts">
-      <label><input type="checkbox" id="opt-case"> Match case</label>
-      <label><input type="checkbox" id="opt-word"> Whole word</label>
-      <label><input type="checkbox" id="opt-regex"> Regex</label>
+      <label><input type="checkbox" id="opt-case"> <span data-i18n="find.optCase">Match case</span></label>
+      <label><input type="checkbox" id="opt-word"> <span data-i18n="find.optWord">Whole word</span></label>
+      <label><input type="checkbox" id="opt-regex"> <span data-i18n="find.optRegex">Regex</span></label>
     </div>
     <div class="find-status" id="find-status" aria-live="polite"></div>
   </div>
@@ -708,12 +714,12 @@ Custom HTML block.</p>
   <div class="grid">
     <div class="panel">
       <div class="panel-head">
-        <h3>Markdown Input</h3>
+        <h3 data-i18n="panel.mdInput">Markdown Input</h3>
         <div class="panel-actions">
-          <button class="btn" id="btn-copy-md">Copy</button>
+          <button class="btn" id="btn-copy-md" data-i18n="btn.copy">Copy</button>
         </div>
       </div>
-      <textarea class="editor" id="md-input" spellcheck="false" aria-label="Markdown input"># GenAI Prompt Writing Checklist
+      <textarea class="editor" id="md-input" spellcheck="false" data-i18n-aria-label="panel.mdInput.aria" aria-label="Markdown input"># GenAI Prompt Writing Checklist
 
 ## Purpose
 Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.
@@ -758,9 +764,9 @@ Use short paragraphs, a vocabulary table, and five comprehension questions.
     </div>
     <div class="panel">
       <div class="panel-head">
-        <h3>Rendered Preview</h3>
+        <h3 data-i18n="panel.preview">Rendered Preview</h3>
         <div class="panel-actions">
-          <button class="btn" id="btn-copy-formatted" title="Copy as rich text (paste into Word, Docs, WordPress visual)">Copy Formatted</button>
+          <button class="btn" id="btn-copy-formatted" data-i18n="btn.copyFormatted" data-i18n-title="btn.copyFormatted.title" title="Copy as rich text (paste into Word, Docs, WordPress visual)">Copy Formatted</button>
         </div>
       </div>
       <div id="md-preview" class="preview" aria-live="polite"></div>
@@ -770,40 +776,40 @@ Use short paragraphs, a vocabulary table, and five comprehension questions.
   <!-- Raw HTML -->
   <div class="panel">
     <div class="panel-head">
-      <h3>Raw HTML Output</h3>
+      <h3 data-i18n="panel.rawHtml">Raw HTML Output</h3>
       <div class="panel-actions">
-        <button class="btn" id="btn-copy-html">Copy HTML</button>
+        <button class="btn" id="btn-copy-html" data-i18n="btn.copyHtml">Copy HTML</button>
       </div>
     </div>
-    <textarea class="raw" id="html-output" readonly="readonly" spellcheck="false" aria-label="Raw HTML output"></textarea>
+    <textarea class="raw" id="html-output" readonly="readonly" spellcheck="false" data-i18n-aria-label="panel.rawHtml.aria" aria-label="Raw HTML output"></textarea>
   </div>
 
   <!-- WordPress Block Code -->
   <div class="panel" style="margin-top:16px">
     <div class="panel-head">
-      <h3>WordPress Block Code</h3>
+      <h3 data-i18n="panel.wpBlock">WordPress Block Code</h3>
       <div class="panel-actions">
-        <button class="btn" id="btn-copy-wp" title="Copy Gutenberg block markup — paste into the WordPress block editor">Copy WP Code</button>
-        <button class="btn" id="btn-save-wp" title="Download as .html (Gutenberg block markup)">Save .html</button>
+        <button class="btn" id="btn-copy-wp" data-i18n="btn.copyWp" data-i18n-title="btn.copyWp.title" title="Copy Gutenberg block markup — paste into the WordPress block editor">Copy WP Code</button>
+        <button class="btn" id="btn-save-wp" data-i18n="btn.saveWp" data-i18n-title="btn.saveWp.title" title="Download as .html (Gutenberg block markup)">Save .html</button>
       </div>
     </div>
-    <textarea class="raw" id="wp-output" readonly="readonly" spellcheck="false" aria-label="WordPress block code output"></textarea>
+    <textarea class="raw" id="wp-output" readonly="readonly" spellcheck="false" data-i18n-aria-label="panel.wpBlock.aria" aria-label="WordPress block code output"></textarea>
   </div>
 
   <!-- Status bar -->
   <div class="statusbar" style="margin-top:14px">
-    <span><strong id="stat-words">130</strong> words</span>
-    <span><strong id="stat-chars">1,153</strong> chars</span>
-    <span><strong id="stat-read">1</strong> min read</span>
-    <span class="savestate saved" id="savestate">Saved · 11:18 AM</span>
+    <span><strong id="stat-words">130</strong> <span data-i18n="stat.words">words</span></span>
+    <span><strong id="stat-chars">1,153</strong> <span data-i18n="stat.chars">chars</span></span>
+    <span><strong id="stat-read">1</strong> <span data-i18n="stat.read">min read</span></span>
+    <span class="savestate saved" id="savestate" data-i18n="save.idle">Saved · 11:18 AM</span>
   </div>
 </main>
 
 <!-- Help (collapsed) -->
 <section class="help" id="help">
   <details class="help-card">
-    <summary class="help-summary">WordPress Block Code — when to use it</summary>
-    <div class="help-body">
+    <summary class="help-summary" data-i18n="help.wp.summary">WordPress Block Code — when to use it</summary>
+    <div class="help-body" data-i18n-html="help.wp.body.html">
       <p>The <strong>WordPress Block Code</strong> output produces Gutenberg block markup (those <code>&lt;!-- wp:paragraph --&gt;</code> comments). Paste it into the WordPress block editor and it converts to native blocks — no Custom HTML block needed.</p>
       <h4>How to use it</h4>
       <ol>
@@ -823,7 +829,7 @@ Use short paragraphs, a vocabulary table, and five comprehension questions.
   </details>
 
   <details class="help-card">
-    <summary class="help-summary">Markdown Quick Reference</summary>
+    <summary class="help-summary" data-i18n="help.mdRef.summary">Markdown Quick Reference</summary>
     <div class="help-body">
       <h4>Headings</h4>
       <pre># H1
@@ -872,8 +878,8 @@ def hello():
   </details>
 
   <details class="help-card">
-    <summary class="help-summary">What "Clean Markdown" Fixes</summary>
-    <div class="help-body">
+    <summary class="help-summary" data-i18n="help.cleaner.summary">What "Clean Markdown" Fixes</summary>
+    <div class="help-body" data-i18n-html="help.cleaner.body.html">
       <ul>
         <li>Normalizes Windows line endings (<code>\r\n</code> → <code>\n</code>).</li>
         <li>Trims trailing spaces on every line.</li>
@@ -890,66 +896,54 @@ def hello():
   </details>
 
   <details class="help-card">
-    <summary class="help-summary">What "Strip AI Tells" Removes</summary>
-    <div class="help-body">
+    <summary class="help-summary" data-i18n="help.ai.summary">What "Strip AI Tells" Removes</summary>
+    <div class="help-body" data-i18n-html="help.ai.body.html">
       <p>One click cleanup for the typical fingerprints of LLM-generated prose. Run this <em>after</em> Clean Markdown for best results.</p>
-      <ul>
-        <li>Curly quotes ("" '') → straight quotes (" ').</li>
-        <li>Em-dashes used as parentheticals (<code>word — word</code>) → comma-comma.</li>
-        <li>Non-breaking spaces and zero-width characters → regular space / removed.</li>
-        <li>Decorative emoji bullets (✨ 🚀 ✅ etc. at start of bullet) → removed.</li>
-        <li>Trailing colons after headings (<code>## Overview:</code> → <code>## Overview</code>).</li>
-        <li>Common stock phrases removed where they begin a sentence: 
-"It's important to note that", "It's worth noting that", "In 
-conclusion,", "In summary,", "Furthermore,", "Moreover,", "As we 
-navigate", "In today's fast-paced world,", "In the ever-evolving 
-landscape of".</li>
-        <li>"Delve into" → "explore". "Leverage" → "use". "Utilize" → "use".</li>
-      </ul>
-      <p>This is opinionated. Skim the diff in your editor before publishing — sometimes you actually want an em-dash.</p>
     </div>
   </details>
 
   <details class="help-card">
-    <summary class="help-summary">Keyboard Shortcuts</summary>
+    <summary class="help-summary" data-i18n="help.kbd.summary">Keyboard Shortcuts</summary>
     <div class="help-body">
       <table>
-        <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+        <thead><tr><th data-i18n="help.kbd.action">Action</th><th data-i18n="help.kbd.shortcut">Shortcut</th></tr></thead>
         <tbody>
-          <tr><td>Open Find / Replace</td><td><kbd>Ctrl</kbd>+<kbd>F</kbd> · <kbd>⌘</kbd>+<kbd>F</kbd></td></tr>
-          <tr><td>Find next match</td><td><kbd>Enter</kbd> in Find field</td></tr>
-          <tr><td>Find previous</td><td><kbd>Shift</kbd>+<kbd>Enter</kbd> in Find field</td></tr>
-          <tr><td>Close Find bar</td><td><kbd>Esc</kbd></td></tr>
-          <tr><td>Save .md</td><td><kbd>Ctrl</kbd>+<kbd>S</kbd> · <kbd>⌘</kbd>+<kbd>S</kbd></td></tr>
-          <tr><td>Clean Markdown</td><td><kbd>Ctrl</kbd>+<kbd>K</kbd> · <kbd>⌘</kbd>+<kbd>K</kbd></td></tr>
-          <tr><td>Drop a file</td><td>Drag a <code>.md</code> or <code>.txt</code> file onto the page</td></tr>
+          <tr><td data-i18n="help.kbd.openFind">Open Find / Replace</td><td><kbd>Ctrl</kbd>+<kbd>F</kbd> · <kbd>⌘</kbd>+<kbd>F</kbd></td></tr>
+          <tr><td data-i18n="help.kbd.findNext">Find next match</td><td data-i18n="help.kbd.findNextVal"><kbd>Enter</kbd> in Find field</td></tr>
+          <tr><td data-i18n="help.kbd.findPrev">Find previous</td><td data-i18n="help.kbd.findPrevVal"><kbd>Shift</kbd>+<kbd>Enter</kbd> in Find field</td></tr>
+          <tr><td data-i18n="help.kbd.findClose">Close Find bar</td><td><kbd>Esc</kbd></td></tr>
+          <tr><td data-i18n="help.kbd.saveMd">Save .md</td><td><kbd>Ctrl</kbd>+<kbd>S</kbd> · <kbd>⌘</kbd>+<kbd>S</kbd></td></tr>
+          <tr><td data-i18n="help.kbd.cleanMd">Clean Markdown</td><td><kbd>Ctrl</kbd>+<kbd>K</kbd> · <kbd>⌘</kbd>+<kbd>K</kbd></td></tr>
+          <tr><td data-i18n="help.kbd.drop">Drop a file</td><td data-i18n-html="help.kbd.dropVal.html">Drag a <code>.md</code> or <code>.txt</code> file onto the page</td></tr>
         </tbody>
       </table>
     </div>
   </details>
 
   <details class="help-card">
-    <summary class="help-summary">Privacy and Storage</summary>
-    <div class="help-body">
+    <summary class="help-summary" data-i18n="help.privacy.summary">Privacy and Storage</summary>
+    <div class="help-body" data-i18n-html="help.privacy.body.html">
       <p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>
     </div>
   </details>
 </section>
 
 <footer>
-  <div class="brand">DrawSplat<sup class="tm">TM</sup> <span>Markdown Studio</span></div>
-  <div class="credit">Vibe-coded by <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a></div>
+  <div class="brand" data-i18n-html="footer.brandHtml">DrawSplat<sup class="tm">TM</sup> <span>Markdown Studio</span></div>
+  <div class="credit" data-i18n-html="footer.credit.html">Vibe-coded by <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a></div>
   <div></div>
 </footer>
 
-<a href="#" id="back-to-top" aria-label="Back to top">↑</a>
-<div class="drop-overlay" id="drop-overlay"><span>Drop your .md file to import</span></div>
+<a href="#" id="back-to-top" data-i18n-aria-label="btt.aria" aria-label="Back to top">↑</a>
+<div class="drop-overlay" id="drop-overlay"><span data-i18n="drop.overlay">Drop your .md file to import</span></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="./locales.js"></script>
 <script>
 (function () {
   'use strict';
 
+  const t = (k, vars) => WidgetI18n.t(k, vars);
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
   const input        = $('md-input');
@@ -1494,18 +1488,20 @@ landscape of".</li>
   let saveTimer = null;
   function scheduleSave() {
     if (saveTimer) clearTimeout(saveTimer);
-    setSaveState('dirty', 'Saving…');
+    setSaveState('dirty', t('save.saving'));
     saveTimer = setTimeout(() => {
       try {
         localStorage.setItem(STORAGE_KEY, input.value);
-        setSaveState('saved', 'Saved · ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));
+        setSaveState('saved', t('save.savedAt', { time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) }));
       } catch (e) {
-        setSaveState('dirty', 'Save failed (storage full?)');
+        setSaveState('dirty', t('save.failed'));
       }
     }, 600);
   }
   function setSaveState(cls, text) {
     savestate.className = 'savestate ' + cls;
+    // Dynamic save-state text owns the element; let the applier ignore it.
+    savestate.removeAttribute('data-i18n');
     savestate.textContent = text;
   }
   function loadDraft() {
@@ -1527,7 +1523,7 @@ landscape of".</li>
     let pattern;
     if (optRegex.checked) {
       try { pattern = q; new RegExp(pattern, flags); }
-      catch (e) { setFindStatus('Invalid regex.'); return null; }
+      catch (e) { setFindStatus(t('find.invalidRegex')); return null; }
     } else {
       pattern = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       if (optWord.checked) pattern = '\\b' + pattern + '\\b';
@@ -1556,20 +1552,20 @@ landscape of".</li>
           lm = { i: m.index, l: m[0].length };
           if (m.index === re2.lastIndex) re2.lastIndex++;
         }
-        if (!lm) { setFindStatus('No match.'); return; }
-        select(lm.i, lm.l); setFindStatus('Wrapped to last match.'); return;
+        if (!lm) { setFindStatus(t('find.noMatch')); return; }
+        select(lm.i, lm.l); setFindStatus(t('find.wrappedLast')); return;
       }
-      select(last, lastLen); setFindStatus('Match found.');
+      select(last, lastLen); setFindStatus(t('find.matchFound'));
     } else {
       re.lastIndex = start;
       let m = re.exec(text);
       if (!m) {
         re.lastIndex = 0;
         m = re.exec(text);
-        if (!m) { setFindStatus('No match.'); return; }
-        select(m.index, m[0].length); setFindStatus('Wrapped to first match.'); return;
+        if (!m) { setFindStatus(t('find.noMatch')); return; }
+        select(m.index, m[0].length); setFindStatus(t('find.wrappedFirst')); return;
       }
-      select(m.index, m[0].length); setFindStatus('Match found.');
+      select(m.index, m[0].length); setFindStatus(t('find.matchFound'));
     }
   }
 
@@ -1592,7 +1588,7 @@ landscape of".</li>
     input.value = input.value.substring(0, start) + replaceInput.value + input.value.substring(end);
     input.setSelectionRange(start, start + replaceInput.value.length);
     render();
-    setFindStatus('Replaced one.');
+    setFindStatus(t('find.replacedOne'));
     findNext('next');
   }
 
@@ -1602,7 +1598,7 @@ landscape of".</li>
     let count = 0;
     input.value = input.value.replace(re, () => { count++; return replaceInput.value; });
     render();
-    setFindStatus(count + ' replacement' + (count === 1 ? '' : 's') + ' made.');
+    setFindStatus(t(count === 1 ? 'find.replacedOneN' : 'find.replacedManyN', { n: count }));
   }
 
   function setFindStatus(msg) { findStatus.textContent = msg || ''; }
@@ -1623,8 +1619,8 @@ landscape of".</li>
   async function copyText(text, btn) {
     try {
       await navigator.clipboard.writeText(text);
-      flashBtn(btn, 'Copied!');
-      showToast('Copied to clipboard');
+      flashBtn(btn, t('btn.copied'));
+      showToast(t('toast.copied'));
     } catch (e) {
       // Fallback
       const ta = document.createElement('textarea');
@@ -1632,7 +1628,7 @@ landscape of".</li>
       document.body.appendChild(ta); ta.select();
       try { document.execCommand('copy'); } catch (_) {}
       document.body.removeChild(ta);
-      flashBtn(btn, 'Copied!');
+      flashBtn(btn, t('btn.copied'));
     }
   }
 
@@ -1645,8 +1641,8 @@ landscape of".</li>
           'text/html': new Blob([html], { type: 'text/html' }),
           'text/plain': new Blob([plain], { type: 'text/plain' })
         })]);
-        flashBtn(btn, 'Copied!');
-        showToast('Copied as rich text');
+        flashBtn(btn, t('btn.copied'));
+        showToast(t('toast.copiedRich'));
         return;
       } catch (e) { /* fall through */ }
     }
@@ -1655,7 +1651,7 @@ landscape of".</li>
     const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
     try { document.execCommand('copy'); } catch (_) {}
     s.removeAllRanges();
-    flashBtn(btn, 'Copied!');
+    flashBtn(btn, t('btn.copied'));
   }
 
   function downloadFile(filename, content, mime) {
@@ -1677,14 +1673,14 @@ landscape of".</li>
 
   function saveMd() {
     downloadFile(suggestFilename('md'), input.value, 'text/markdown');
-    showToast('Downloaded .md');
+    showToast(t('toast.savedMd'));
   }
   function saveHtml() {
     const wrapped = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>' +
       escapeHtml(suggestFilename('').replace(/\.$/, '')) + '</title>\n</head>\n<body>\n' +
       rawOutput.value + '\n</body>\n</html>\n';
     downloadFile(suggestFilename('html'), wrapped, 'text/html');
-    showToast('Downloaded .html');
+    showToast(t('toast.savedHtml'));
   }
 
   function importFile(file) {
@@ -1693,7 +1689,7 @@ landscape of".</li>
     r.onload = (e) => {
       input.value = String(e.target.result || '');
       render();
-      showToast('Imported ' + file.name);
+      showToast(t('toast.imported', { name: file.name }));
     };
     r.readAsText(file);
   }
@@ -1711,13 +1707,13 @@ landscape of".</li>
   $('btn-clean').addEventListener('click', () => {
     input.value = cleanMarkdownText(input.value);
     render();
-    showToast('Markdown cleaned');
+    showToast(t('toast.mdCleaned'));
   });
   $('btn-strip-ai').addEventListener('click', () => {
-    if (!confirm('Strip common AI writing tells (em-dashes, smart quotes, "delve into", "in conclusion", emoji bullets, etc.)?\n\nReview the changes after — sometimes you actually want an em-dash.')) return;
+    if (!confirm(t('confirm.stripAi'))) return;
     input.value = stripAITells(input.value);
     render();
-    showToast('AI tells stripped');
+    showToast(t('toast.aiStripped'));
   });
   $('btn-find').addEventListener('click', () => toggleFindbar());
   $('btn-find-close').addEventListener('click', () => toggleFindbar(false));
@@ -1734,14 +1730,14 @@ landscape of".</li>
   $('btn-save-md').addEventListener('click', saveMd);
   $('btn-save-html').addEventListener('click', saveHtml);
   $('btn-sample').addEventListener('click', () => {
-    if (input.value.trim() && !confirm('Replace current content with the sample document?')) return;
+    if (input.value.trim() && !confirm(t('confirm.replaceSample'))) return;
     input.value = sample; render();
   });
   $('btn-clear-all').addEventListener('click', () => {
-    if (!confirm('Clear the editor and remove the saved draft?')) return;
+    if (!confirm(t('confirm.clearAll'))) return;
     input.value = ''; render();
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-    showToast('Cleared');
+    showToast(t('toast.cleared'));
   });
 
   $('btn-copy-md').addEventListener('click', (e) => copyText(input.value, e.currentTarget));
@@ -1750,7 +1746,7 @@ landscape of".</li>
   $('btn-copy-wp').addEventListener('click', (e) => copyText(wpOutput.value, e.currentTarget));
   $('btn-save-wp').addEventListener('click', () => {
     downloadFile(suggestFilename('html').replace(/\.html$/, '-wp.html'), wpOutput.value, 'text/html');
-    showToast('Downloaded WordPress block code');
+    showToast(t('toast.savedWp'));
   });
 
   input.addEventListener('input', scheduleRender);
@@ -1818,7 +1814,16 @@ landscape of".</li>
     input.value = sample;
   }
   render();
-  setSaveState('saved', 'Idle');
+  setSaveState('saved', t('save.idle'));
+
+  // Re-render save-state text on language change. The autosave timer will
+  // overwrite this on the next save, but if the editor sits idle the new
+  // locale's "Idle" label appears immediately.
+  window.addEventListener('widget-i18n:changed', () => {
+    if (savestate.classList.contains('saved') && !savestate.textContent.includes('·')) {
+      setSaveState('saved', t('save.idle'));
+    }
+  });
 })();
 </script>
 
