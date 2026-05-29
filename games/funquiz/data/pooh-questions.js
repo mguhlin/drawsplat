@@ -1,47 +1,50 @@
+// Each question/answer holds an i18n key into games/funquiz/locales.js so a
+// language switch flips the prompts and answers. Character names (the radio
+// values) stay literal English so the result lookup + image map still work.
 const questions = [
   {
-    question: "What best describes your teaching style?",
+    qKey: 'pooh.q1.question',
     answers: {
-      "Winnie the Pooh": "Warm and caring",
-      "Rabbit": "Organized and structured",
-      "Tigger": "Energetic and fun",
-      "Owl": "Knowledge-driven"
+      'Winnie the Pooh': 'pooh.q1.WinnieThePooh',
+      'Rabbit':          'pooh.q1.Rabbit',
+      'Tigger':          'pooh.q1.Tigger',
+      'Owl':             'pooh.q1.Owl'
     }
   },
   {
-    question: "How do you handle classroom challenges?",
+    qKey: 'pooh.q2.question',
     answers: {
-      "Piglet": "With quiet bravery",
-      "Tigger": "With excitement and optimism",
-      "Eeyore": "With patience and realism",
-      "Kanga": "With nurturing care"
+      'Piglet':          'pooh.q2.Piglet',
+      'Tigger':          'pooh.q2.Tigger',
+      'Eeyore':          'pooh.q2.Eeyore',
+      'Kanga':           'pooh.q2.Kanga'
     }
   },
   {
-    question: "Your students would describe you as...",
+    qKey: 'pooh.q3.question',
     answers: {
-      "Winnie the Pooh": "Loving and loyal",
-      "Owl": "Wise and helpful",
-      "Tigger": "Fun and adventurous",
-      "Rabbit": "Detail-oriented"
+      'Winnie the Pooh': 'pooh.q3.WinnieThePooh',
+      'Owl':             'pooh.q3.Owl',
+      'Tigger':          'pooh.q3.Tigger',
+      'Rabbit':          'pooh.q3.Rabbit'
     }
   },
   {
-    question: "You value most in your classroom:",
+    qKey: 'pooh.q4.question',
     answers: {
-      "Kanga": "A safe, loving space",
-      "Rabbit": "Structure and routine",
-      "Tigger": "Laughter and curiosity",
-      "Owl": "Learning and discovery"
+      'Kanga':           'pooh.q4.Kanga',
+      'Rabbit':          'pooh.q4.Rabbit',
+      'Tigger':          'pooh.q4.Tigger',
+      'Owl':             'pooh.q4.Owl'
     }
   },
   {
-    question: "Pick a classroom motto:",
+    qKey: 'pooh.q5.question',
     answers: {
-      "Piglet": "Even the smallest can be brave",
-      "Eeyore": "Slow and steady support wins",
-      "Tigger": "The most wonderful thing is YOU",
-      "Owl": "Wisdom starts with wonder"
+      'Piglet':          'pooh.q5.Piglet',
+      'Eeyore':          'pooh.q5.Eeyore',
+      'Tigger':          'pooh.q5.Tigger',
+      'Owl':             'pooh.q5.Owl'
     }
   }
 ];

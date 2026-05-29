@@ -1,47 +1,49 @@
+// See data/pooh-questions.js for the format note. Character names stay
+// literal English brand words; question / answer text resolves via t().
 const questions = [
   {
-    question: "How would your students describe your teaching style?",
+    qKey: 'looney.q1.question',
     answers: {
-      "Bugs Bunny": "Clever and cool",
-      "Daffy Duck": "Energetic and passionate",
-      "Wile E. Coyote": "Creative and persistent",
-      "Porky Pig": "Patient and kind"
+      'Bugs Bunny':         'looney.q1.BugsBunny',
+      'Daffy Duck':         'looney.q1.DaffyDuck',
+      'Wile E. Coyote':     'looney.q1.WileECoyote',
+      'Porky Pig':          'looney.q1.PorkyPig'
     }
   },
   {
-    question: "What do you value most in your classroom?",
+    qKey: 'looney.q2.question',
     answers: {
-      "Marvin the Martian": "Logic and curiosity",
-      "Sylvester": "Hard work and focus",
-      "Road Runner": "Speed and efficiency",
-      "Pepé Le Pew": "Charm and enthusiasm"
+      'Marvin the Martian': 'looney.q2.MarvinTheMartian',
+      'Sylvester':          'looney.q2.Sylvester',
+      'Road Runner':        'looney.q2.RoadRunner',
+      'Pepé Le Pew':        'looney.q2.PepeLePew'
     }
   },
   {
-    question: "What motivates you as a teacher?",
+    qKey: 'looney.q3.question',
     answers: {
-      "Bugs Bunny": "Outsmarting challenges",
-      "Daffy Duck": "Big dreams and big plans",
-      "Porky Pig": "Helping others improve",
-      "Marvin the Martian": "Inventing new ideas"
+      'Bugs Bunny':         'looney.q3.BugsBunny',
+      'Daffy Duck':         'looney.q3.DaffyDuck',
+      'Porky Pig':          'looney.q3.PorkyPig',
+      'Marvin the Martian': 'looney.q3.MarvinTheMartian'
     }
   },
   {
-    question: "What’s your classroom superpower?",
+    qKey: 'looney.q4.question',
     answers: {
-      "Wile E. Coyote": "Problem-solving",
-      "Road Runner": "Quick thinking",
-      "Sylvester": "Focus and follow-through",
-      "Pepé Le Pew": "Confidence and positivity"
+      'Wile E. Coyote':     'looney.q4.WileECoyote',
+      'Road Runner':        'looney.q4.RoadRunner',
+      'Sylvester':          'looney.q4.Sylvester',
+      'Pepé Le Pew':        'looney.q4.PepeLePew'
     }
   },
   {
-    question: "Pick your teaching motto:",
+    qKey: 'looney.q5.question',
     answers: {
-      "Bugs Bunny": "Work smart, not hard",
-      "Daffy Duck": "Go big or go home!",
-      "Porky Pig": "One step at a time",
-      "Marvin the Martian": "Dream beyond Earth"
+      'Bugs Bunny':         'looney.q5.BugsBunny',
+      'Daffy Duck':         'looney.q5.DaffyDuck',
+      'Porky Pig':          'looney.q5.PorkyPig',
+      'Marvin the Martian': 'looney.q5.MarvinTheMartian'
     }
   }
 ];

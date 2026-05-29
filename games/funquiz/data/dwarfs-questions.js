@@ -1,47 +1,49 @@
+// See data/pooh-questions.js for the format note. Character names stay
+// literal English brand words; question / answer text resolves via t().
 const questions = [
   {
-    question: "What’s your classroom personality?",
+    qKey: 'dwarfs.q1.question',
     answers: {
-      "Happy": "Upbeat and positive",
-      "Grumpy": "Tough but fair",
-      "Doc": "Knowledgeable and organized",
-      "Dopey": "Playful and fun-loving"
+      'Happy':       'dwarfs.q1.Happy',
+      'Grumpy':      'dwarfs.q1.Grumpy',
+      'Doc':         'dwarfs.q1.Doc',
+      'Dopey':       'dwarfs.q1.Dopey'
     }
   },
   {
-    question: "How do you support students emotionally?",
+    qKey: 'dwarfs.q2.question',
     answers: {
-      "Snow White": "With kindness and nurturing",
-      "Bashful": "With gentle encouragement",
-      "Sleepy": "By creating a calm environment",
-      "Sneezy": "With resilience and humor"
+      'Snow White':  'dwarfs.q2.SnowWhite',
+      'Bashful':     'dwarfs.q2.Bashful',
+      'Sleepy':      'dwarfs.q2.Sleepy',
+      'Sneezy':      'dwarfs.q2.Sneezy'
     }
   },
   {
-    question: "Your students would say you’re...",
+    qKey: 'dwarfs.q3.question',
     answers: {
-      "Happy": "Always smiling and encouraging",
-      "Grumpy": "Strict but secretly caring",
-      "Doc": "Smart and helpful",
-      "Dopey": "Silly and approachable"
+      'Happy':       'dwarfs.q3.Happy',
+      'Grumpy':      'dwarfs.q3.Grumpy',
+      'Doc':         'dwarfs.q3.Doc',
+      'Dopey':       'dwarfs.q3.Dopey'
     }
   },
   {
-    question: "What keeps your classroom running?",
+    qKey: 'dwarfs.q4.question',
     answers: {
-      "Doc": "Clear leadership",
-      "Sleepy": "Low-stress vibes",
-      "Snow White": "Caring relationships",
-      "Grumpy": "Rules and structure"
+      'Doc':         'dwarfs.q4.Doc',
+      'Sleepy':      'dwarfs.q4.Sleepy',
+      'Snow White':  'dwarfs.q4.SnowWhite',
+      'Grumpy':      'dwarfs.q4.Grumpy'
     }
   },
   {
-    question: "Pick a classroom motto:",
+    qKey: 'dwarfs.q5.question',
     answers: {
-      "Dopey": "Learning should be fun!",
-      "Snow White": "Be kind, always",
-      "Doc": "Think it through",
-      "Bashful": "Speak up when you're ready"
+      'Dopey':       'dwarfs.q5.Dopey',
+      'Snow White':  'dwarfs.q5.SnowWhite',
+      'Doc':         'dwarfs.q5.Doc',
+      'Bashful':     'dwarfs.q5.Bashful'
     }
   }
 ];

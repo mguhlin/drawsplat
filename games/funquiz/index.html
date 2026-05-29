@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Winnie the Pooh Quiz</title>
+  <title data-i18n="doc.title.pooh">Winnie the Pooh Quiz</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+    .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
+    .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  </style>
 </head>
 <body>
 <style id="ds-games-header-style">
@@ -19,28 +25,32 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
-    <h1 class="ds-games-h1">Winnie the Pooh Quiz</h1>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1.pooh">Winnie the Pooh Quiz</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 
 
 <div id="quiz-container">
-    <h1>Winnie the Pooh Educator Quiz</h1>
+    <h1 data-i18n="quiz.h1.pooh">Winnie the Pooh Educator Quiz</h1>
     <select onchange="location = this.value;">
-      <option disabled selected>Choose a quiz</option>
-      <option value='index.html'>Winnie the Pooh</option>
-      <option value='smurfs.html'>The Smurfs</option>
-      <option value='dwarfs.html'>Snow White</option>
-      <option value='looney.html'>Looney Tunes</option>
+      <option disabled selected data-i18n="select.choose">Choose a quiz</option>
+      <option value='index.html' data-i18n="option.pooh">Winnie the Pooh</option>
+      <option value='smurfs.html' data-i18n="option.smurfs">The Smurfs</option>
+      <option value='dwarfs.html' data-i18n="option.dwarfs">Snow White</option>
+      <option value='looney.html' data-i18n="option.looney">Looney Tunes</option>
     </select>
     <div id="question-box"></div>
-    <button id="next-btn" onclick="nextQuestion()">Next</button>
+    <button id="next-btn" onclick="nextQuestion()" data-i18n="button.next">Next</button>
     <div id="result-box"></div>
   </div>
-  <script src="script.js"></script>
+  <script src="./locales.js"></script>
   <script src="data/pooh-questions.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

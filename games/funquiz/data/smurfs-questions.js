@@ -1,47 +1,49 @@
+// See data/pooh-questions.js for the format note. Character names stay
+// literal English brand words; question / answer text resolves via t().
 const questions = [
   {
-    question: "How do you support your students?",
+    qKey: 'smurfs.q1.question',
     answers: {
-      "Papa Smurf": "With wisdom and kindness",
-      "Brainy Smurf": "By teaching them all the facts",
-      "Smurfette": "With care and encouragement",
-      "Hefty Smurf": "By motivating them to be strong"
+      'Papa Smurf':    'smurfs.q1.PapaSmurf',
+      'Brainy Smurf':  'smurfs.q1.BrainySmurf',
+      'Smurfette':     'smurfs.q1.Smurfette',
+      'Hefty Smurf':   'smurfs.q1.HeftySmurf'
     }
   },
   {
-    question: "Your teaching style is best described as...",
+    qKey: 'smurfs.q2.question',
     answers: {
-      "Clumsy Smurf": "A bit chaotic but heartfelt",
-      "Smurfette": "Compassionate and understanding",
-      "Brainy Smurf": "Informative and structured",
-      "Jokey Smurf": "Lighthearted and fun"
+      'Clumsy Smurf':  'smurfs.q2.ClumsySmurf',
+      'Smurfette':     'smurfs.q2.Smurfette',
+      'Brainy Smurf':  'smurfs.q2.BrainySmurf',
+      'Jokey Smurf':   'smurfs.q2.JokeySmurf'
     }
   },
   {
-    question: "What’s your biggest classroom strength?",
+    qKey: 'smurfs.q3.question',
     answers: {
-      "Papa Smurf": "Leadership and wisdom",
-      "Vanity Smurf": "Confidence and style",
-      "Grouchy Smurf": "Discipline with care",
-      "Jokey Smurf": "Making students laugh"
+      'Papa Smurf':    'smurfs.q3.PapaSmurf',
+      'Vanity Smurf':  'smurfs.q3.VanitySmurf',
+      'Grouchy Smurf': 'smurfs.q3.GrouchySmurf',
+      'Jokey Smurf':   'smurfs.q3.JokeySmurf'
     }
   },
   {
-    question: "What motivates you as a teacher?",
+    qKey: 'smurfs.q4.question',
     answers: {
-      "Smurfette": "Helping others grow",
-      "Hefty Smurf": "Pushing through challenges",
-      "Brainy Smurf": "Sharing knowledge",
-      "Papa Smurf": "Guiding the group"
+      'Smurfette':     'smurfs.q4.Smurfette',
+      'Hefty Smurf':   'smurfs.q4.HeftySmurf',
+      'Brainy Smurf':  'smurfs.q4.BrainySmurf',
+      'Papa Smurf':    'smurfs.q4.PapaSmurf'
     }
   },
   {
-    question: "What do you believe every student needs?",
+    qKey: 'smurfs.q5.question',
     answers: {
-      "Clumsy Smurf": "Room to make mistakes",
-      "Smurfette": "Support and love",
-      "Brainy Smurf": "Clear instruction",
-      "Papa Smurf": "A steady mentor"
+      'Clumsy Smurf':  'smurfs.q5.ClumsySmurf',
+      'Smurfette':     'smurfs.q5.Smurfette',
+      'Brainy Smurf':  'smurfs.q5.BrainySmurf',
+      'Papa Smurf':    'smurfs.q5.PapaSmurf'
     }
   }
 ];
