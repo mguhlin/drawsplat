@@ -4,7 +4,7 @@
 (`solutions/`) and games (`games/`). Companion to the existing
 `COMPLIANCE-ROADMAP.md`. Keep this file lean and edit-as-you-go.
 
-**Last updated:** 2026-05-28 — Wave 1 shipped on commit `270957b`.
+**Last updated:** 2026-05-29 — Wave 2 shipped on commit `2848888` (Rubric Builder).
 
 ---
 
@@ -34,34 +34,33 @@ English section; sister languages can be edited there without touching `index.ht
 
 ---
 
-## 2. Wave 2 — convert remaining `solutions/` widgets
+## 2. Wave 2 — convert remaining `solutions/` widgets — COMPLETE
 
 **Goal:** apply the same i18n pattern (see §6 playbook) to the remaining 16 widgets.
 
-Sorted roughly by string volume (lowest first — start there to build momentum):
+All 16 widgets converted across two sessions. Final actual key counts and
+shipping commits:
 
-| Widget | Notes | Est. keys |
+| Widget | Actual keys | Commit |
 |---|---|---|
-| `solutions/coinflipping/` | Tiny: header + buttons + result | ~25 |
-| `solutions/dice/` | Tiny: dice count selector + roll button | ~30 |
-| `solutions/wheel-spinner/` | Small: entries box + Spin + Remove Winner | ~40 |
-| `solutions/fortune/` | Like wheel-spinner, plus teacher/student modes | ~50 |
-| `solutions/drawsketch/` | Sketch pad: pen color + brush size + Clear | ~30 |
-| `solutions/dotsboxes/` | Two-player game; player labels + score | ~50 |
-| `solutions/bingo-caller/` | Caller controls + player cards | ~70 |
-| `solutions/bingo-card-generator/` | Card type chooser + word list + print | ~50 |
-| `solutions/storywheel/` | Like wheel-spinner with story prompts | ~50 |
-| `solutions/dicebreakers/` | Six-face prompt editor | ~50 |
-| `solutions/rubric-builder/` | Criteria editor + 4-level scale + export | ~90 |
-| `solutions/memepuzzle/` | Image puzzle builder + difficulty | ~60 |
-| `solutions/wordsearch/` | Word list + grid size + print | ~60 |
-| `solutions/concept-map/` | Indented text → SVG mind map; many controls | ~120 |
-| `solutions/markdown-studio/` | Markdown editor + preview + export | ~80 |
-| `solutions/mermaid/` | Already has `langSelect` for **diagram templates only**; need to add UI chrome translation alongside that existing dropdown (don't duplicate). | ~110 |
+| `solutions/coinflipping/` | 25 | `a712ba3` |
+| `solutions/dice/` | 32 | `2c8ae0c` |
+| `solutions/drawsketch/` | 30 | `1d0d999` |
+| `solutions/wheel-spinner/` | 41 | `ec01144` |
+| `solutions/fortune/` | 95 (teacher + student combined) | `741bb97` |
+| `solutions/dotsboxes/` | 38 | `8e56a6e` |
+| `solutions/mermaid/` | 112 (chrome added alongside existing template dropdown) | `204dd88` |
+| `solutions/storywheel/` | 53 | `ddac11d` |
+| `solutions/dicebreakers/` | 122 (creator + play.html, OAuth cloud-save included) | `0d1b231` |
+| `solutions/concept-map/` | 245 (12 templates with localized node + relationship labels) | `56a8b37` |
+| `solutions/bingo-card-generator/` | 39 | `622356d` |
+| `solutions/memepuzzle/` | 49 (teacher + student) | `c565333` |
+| `solutions/wordsearch/` | 83 (24 TEKS preset labels) | `956e332` |
+| `solutions/bingo-caller/` | 36 | `0db974a` |
+| `solutions/markdown-studio/` | 111 (toolbar + find/replace + 5 help cards) | `0df5905` |
+| `solutions/rubric-builder/` | 84 | `2848888` |
 
-**Suggested grouping for commits:** one commit per widget, same pattern as Wave 1.
-For very small widgets (coinflipping, dice, drawsketch), bundling 3-4 into a
-single commit is acceptable if reviewer prefers — ask first.
+**Pattern was one commit per widget. Total ≈ 1195 keys × 6 languages.**
 
 ---
 
