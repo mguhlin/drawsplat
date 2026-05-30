@@ -25,6 +25,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': 'Fast — fixed 256-color palette',
     'settings.qualityBest': 'Best — per-frame palette',
     'settings.dither': 'Dither (Floyd-Steinberg) — smooths gradients',
+    'settings.paletteSize': 'Palette size (Best mode)',
+    'settings.pal256': '256 colors — best quality',
+    'settings.pal128': '128 colors — smaller file',
+    'settings.pal64': '64 colors — smallest file',
+    'settings.pal32': '32 colors — tiny / posterized',
 
     'about.h3': 'About',
     'about.html': 'Encoded locally with a small custom GIF writer (fixed cube or per-frame median-cut palette, optional Floyd-Steinberg dithering). Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the finished GIF onto a board.',
@@ -36,6 +41,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'Clear All',
     'button.generate': 'Generate GIF',
     'button.download': 'Download GIF',
+    'button.recordVideo': 'Record as Video (WebM / MP4)',
     'button.reset': 'Reset',
 
     'row.up': 'Move up',
@@ -49,7 +55,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': 'Add at least one frame first.',
     'status.encoding': 'Encoding GIF…',
     'status.ready': 'GIF ready ({kb} KB). Click Download to save.',
-    'status.encodeFail': 'GIF encoding failed: {msg}'
+    'status.encodeFail': 'GIF encoding failed: {msg}',
+    'status.recording': 'Recording video (real-time, ~{s}s)…',
+    'status.videoReady': '{ext} video ready ({kb} KB) — saved.',
+    'status.videoFail': 'Video recording failed: {msg}'
   },
 
   es: {
@@ -75,6 +84,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': 'Rápido — paleta fija de 256 colores',
     'settings.qualityBest': 'Mejor — paleta por cuadro',
     'settings.dither': 'Difuminado (Floyd-Steinberg) — suaviza los gradientes',
+    'settings.paletteSize': 'Tamaño de paleta (modo Mejor)',
+    'settings.pal256': '256 colores — máxima calidad',
+    'settings.pal128': '128 colores — archivo más pequeño',
+    'settings.pal64': '64 colores — el más pequeño',
+    'settings.pal32': '32 colores — diminuto / posterizado',
 
     'about.h3': 'Acerca de',
     'about.html': 'Codificado localmente con un pequeño codificador GIF (paleta cúbica fija o paleta por cuadro mediante corte mediano, con difuminado Floyd-Steinberg opcional). Combina con el <a href="../../app/whiteboard.html">pizarrón DrawSplat<sup>TM</sup></a> para soltar el GIF terminado en un tablero.',
@@ -86,6 +100,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'Borrar Todo',
     'button.generate': 'Generar GIF',
     'button.download': 'Descargar GIF',
+    'button.recordVideo': 'Grabar como Video (WebM / MP4)',
     'button.reset': 'Reiniciar',
 
     'row.up': 'Subir',
@@ -99,7 +114,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': 'Agrega al menos un cuadro primero.',
     'status.encoding': 'Codificando GIF…',
     'status.ready': 'GIF listo ({kb} KB). Haz clic en Descargar para guardarlo.',
-    'status.encodeFail': 'La codificación del GIF falló: {msg}'
+    'status.encodeFail': 'La codificación del GIF falló: {msg}',
+    'status.recording': 'Grabando video (tiempo real, ~{s}s)…',
+    'status.videoReady': 'Video {ext} listo ({kb} KB) — guardado.',
+    'status.videoFail': 'La grabación de video falló: {msg}'
   },
 
   vi: {
@@ -125,6 +143,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': 'Nhanh — bảng màu cố định 256 màu',
     'settings.qualityBest': 'Tốt nhất — bảng màu theo từng khung',
     'settings.dither': 'Trộn điểm (Floyd-Steinberg) — làm mượt chuyển sắc',
+    'settings.paletteSize': 'Kích thước bảng màu (chế độ Tốt nhất)',
+    'settings.pal256': '256 màu — chất lượng cao nhất',
+    'settings.pal128': '128 màu — tệp nhỏ hơn',
+    'settings.pal64': '64 màu — tệp nhỏ nhất',
+    'settings.pal32': '32 màu — rất nhỏ / màu cô đặc',
 
     'about.h3': 'Giới thiệu',
     'about.html': 'Mã hóa cục bộ bằng bộ ghi GIF nhỏ gọn (bảng màu khối cố định hoặc bảng theo khung bằng phép cắt trung vị, có tùy chọn trộn điểm Floyd-Steinberg). Ghép cặp với <a href="../../app/whiteboard.html">bảng trắng DrawSplat<sup>TM</sup></a> để thả GIF đã tạo vào bảng.',
@@ -136,6 +159,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'Xóa Hết',
     'button.generate': 'Tạo GIF',
     'button.download': 'Tải GIF',
+    'button.recordVideo': 'Ghi thành Video (WebM / MP4)',
     'button.reset': 'Đặt lại',
 
     'row.up': 'Lên',
@@ -149,7 +173,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': 'Hãy thêm ít nhất một khung trước.',
     'status.encoding': 'Đang mã hóa GIF…',
     'status.ready': 'GIF sẵn sàng ({kb} KB). Nhấn Tải để lưu.',
-    'status.encodeFail': 'Mã hóa GIF thất bại: {msg}'
+    'status.encodeFail': 'Mã hóa GIF thất bại: {msg}',
+    'status.recording': 'Đang ghi video (thời gian thực, ~{s}s)…',
+    'status.videoReady': 'Video {ext} sẵn sàng ({kb} KB) — đã lưu.',
+    'status.videoFail': 'Ghi video thất bại: {msg}'
   },
 
   ar: {
@@ -175,6 +202,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': 'سريع — لوحة ألوان ثابتة من 256 لونًا',
     'settings.qualityBest': 'الأفضل — لوحة ألوان لكل إطار',
     'settings.dither': 'تذبذب (Floyd-Steinberg) — يلطّف التدرجات',
+    'settings.paletteSize': 'حجم اللوحة (وضع الأفضل)',
+    'settings.pal256': '256 لونًا — أفضل جودة',
+    'settings.pal128': '128 لونًا — ملف أصغر',
+    'settings.pal64': '64 لونًا — أصغر ملف',
+    'settings.pal32': '32 لونًا — صغير جدًا / مُلصق',
 
     'about.h3': 'حول',
     'about.html': 'يتم الترميز محليًا باستخدام مُرمِّز GIF صغير (لوحة مكعبة ثابتة أو لوحة لكل إطار عبر القطع الوسيط، مع تذبذب Floyd-Steinberg اختياري). اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat<sup>TM</sup></a> لإسقاط ملف GIF الجاهز في لوحة.',
@@ -186,6 +218,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'مسح الكل',
     'button.generate': 'إنشاء GIF',
     'button.download': 'تنزيل GIF',
+    'button.recordVideo': 'تسجيل كفيديو (WebM / MP4)',
     'button.reset': 'إعادة ضبط',
 
     'row.up': 'إلى الأعلى',
@@ -199,7 +232,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': 'أضف إطارًا واحدًا على الأقل أولاً.',
     'status.encoding': 'جارٍ ترميز GIF…',
     'status.ready': 'GIF جاهز ({kb} كيلوبايت). انقر تنزيل للحفظ.',
-    'status.encodeFail': 'فشل ترميز GIF: {msg}'
+    'status.encodeFail': 'فشل ترميز GIF: {msg}',
+    'status.recording': 'جارٍ تسجيل الفيديو (في الوقت الفعلي، حوالي {s}ث)…',
+    'status.videoReady': 'فيديو {ext} جاهز ({kb} كيلوبايت) — تم الحفظ.',
+    'status.videoFail': 'فشل تسجيل الفيديو: {msg}'
   },
 
   zh: {
@@ -225,6 +261,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': '快速 — 固定 256 色调色板',
     'settings.qualityBest': '最佳 — 每帧独立调色板',
     'settings.dither': '抖动 (Floyd-Steinberg) — 让渐变更平滑',
+    'settings.paletteSize': '调色板大小（最佳模式）',
+    'settings.pal256': '256 色 — 最佳质量',
+    'settings.pal128': '128 色 — 较小文件',
+    'settings.pal64': '64 色 — 最小文件',
+    'settings.pal32': '32 色 — 极小 / 颜色块化',
 
     'about.h3': '关于',
     'about.html': '使用内置的小型 GIF 编码器在本地编码（固定立方体调色板或每帧中位切分调色板，可选 Floyd-Steinberg 抖动）。可与 <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> 白板</a> 配合，将生成的 GIF 放到画板上。',
@@ -236,6 +277,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': '清空全部',
     'button.generate': '生成 GIF',
     'button.download': '下载 GIF',
+    'button.recordVideo': '录制为视频 (WebM / MP4)',
     'button.reset': '重置',
 
     'row.up': '上移',
@@ -249,7 +291,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': '请先至少添加一帧。',
     'status.encoding': '正在编码 GIF…',
     'status.ready': 'GIF 就绪（{kb} KB）。点击下载保存。',
-    'status.encodeFail': 'GIF 编码失败：{msg}'
+    'status.encodeFail': 'GIF 编码失败：{msg}',
+    'status.recording': '正在录制视频（实时，约 {s} 秒）…',
+    'status.videoReady': '{ext} 视频已就绪（{kb} KB）— 已保存。',
+    'status.videoFail': '视频录制失败：{msg}'
   },
 
   uh: {
@@ -275,6 +320,11 @@ WidgetI18n.register('animated-gif', {
     'settings.qualityFast': 'تیز — مقررہ 256 رنگوں کی پیلیٹ',
     'settings.qualityBest': 'بہترین — فی فریم پیلیٹ',
     'settings.dither': 'ڈِدر (Floyd-Steinberg) — گریڈینٹس کو نرم کرتا ہے',
+    'settings.paletteSize': 'پیلیٹ سائز (بہترین موڈ)',
+    'settings.pal256': '256 رنگ — بہترین کوالٹی',
+    'settings.pal128': '128 رنگ — چھوٹی فائل',
+    'settings.pal64': '64 رنگ — سب سے چھوٹی فائل',
+    'settings.pal32': '32 رنگ — انتہائی چھوٹی / پوسٹرائزڈ',
 
     'about.h3': 'تعارف',
     'about.html': 'مقامی طور پر ایک چھوٹے GIF انکوڈر کے ساتھ انکوڈ کیا گیا (مقررہ کیوب پیلیٹ یا فی فریم میڈین-کٹ پیلیٹ، اختیاری Floyd-Steinberg ڈِدرنگ کے ساتھ)۔ تیار GIF کو بورڈ پر چھوڑنے کے لیے <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> وائٹ بورڈ</a> کے ساتھ جوڑیں۔',
@@ -286,6 +336,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'سب صاف کریں',
     'button.generate': 'GIF بنائیں',
     'button.download': 'GIF ڈاؤن لوڈ کریں',
+    'button.recordVideo': 'بطور ویڈیو ریکارڈ کریں (WebM / MP4)',
     'button.reset': 'دوبارہ ترتیب دیں',
 
     'row.up': 'اوپر کریں',
@@ -299,7 +350,10 @@ WidgetI18n.register('animated-gif', {
     'status.needFrames': 'پہلے کم از کم ایک فریم شامل کریں۔',
     'status.encoding': 'GIF انکوڈ ہو رہا ہے…',
     'status.ready': 'GIF تیار ہے ({kb} KB)۔ محفوظ کرنے کے لیے ڈاؤن لوڈ پر کلک کریں۔',
-    'status.encodeFail': 'GIF انکوڈنگ ناکام: {msg}'
+    'status.encodeFail': 'GIF انکوڈنگ ناکام: {msg}',
+    'status.recording': 'ویڈیو ریکارڈ ہو رہی ہے (حقیقی وقت، تقریباً {s} سیکنڈ)…',
+    'status.videoReady': '{ext} ویڈیو تیار ({kb} KB) — محفوظ ہو گئی۔',
+    'status.videoFail': 'ویڈیو ریکارڈنگ ناکام: {msg}'
   }
 
 });

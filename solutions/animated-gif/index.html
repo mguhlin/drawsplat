@@ -141,6 +141,15 @@
         <div class="field">
           <label><input id="ditherInput" type="checkbox"> <span data-i18n="settings.dither">Dither (Floyd-Steinberg) — smooths gradients</span></label>
         </div>
+        <div class="field">
+          <label for="paletteSizeInput" data-i18n="settings.paletteSize">Palette size (Best mode)</label>
+          <select id="paletteSizeInput">
+            <option value="256" selected data-i18n="settings.pal256">256 colors — best quality</option>
+            <option value="128" data-i18n="settings.pal128">128 colors — smaller file</option>
+            <option value="64" data-i18n="settings.pal64">64 colors — smallest file</option>
+            <option value="32" data-i18n="settings.pal32">32 colors — tiny / posterized</option>
+          </select>
+        </div>
 
         <h3 data-i18n="about.h3">About</h3>
         <p class="footer-note" data-i18n-html="about.html">Encoded locally with a small custom 256-color GIF writer. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the finished GIF onto a board.</p>
@@ -156,6 +165,7 @@
         <div class="actions">
           <button class="button primary" id="generateBtn" type="button" data-i18n="button.generate">Generate GIF</button>
           <button class="button" id="downloadBtn" type="button" disabled data-i18n="button.download">Download GIF</button>
+          <button class="button" id="recordVideoBtn" type="button" data-i18n="button.recordVideo" title="Render the same frames as a WebM (or MP4 on Safari) video file. Records in real-time so a long animation takes that long to produce.">Record as Video (WebM / MP4)</button>
           <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
         </div>
         <div class="status" id="statusLine" role="status"></div>
@@ -284,8 +294,9 @@
         const loop=Math.max(0, parseInt($('loopInput').value,10)||0);
         const mode=$('qualityInput').value==='fast'?'fast':'best';
         const dither=$('ditherInput').checked;
+        const paletteSize=parseInt($('paletteSizeInput').value,10)||256;
         const canvases=framesToCanvases();
-        const blob=window.DrawSplatGifEncoder.encode(canvases, {delayMs, loopCount:loop, mode, dither});
+        const blob=window.DrawSplatGifEncoder.encode(canvases, {delayMs, loopCount:loop, mode, dither, paletteSize});
         if(state.lastBlobUrl) URL.revokeObjectURL(state.lastBlobUrl);
         state.lastBlobUrl=URL.createObjectURL(blob);
         const wrap=$('previewWrap'); wrap.innerHTML='';
@@ -306,6 +317,33 @@
     if(!state.lastBlobUrl) return;
     const a=document.createElement('a'); a.href=state.lastBlobUrl; a.download='drawsplat-animation.gif';
     document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  // Hide the video button entirely if the browser can't record.
+  if (window.DrawSplatGifEncoder && !window.DrawSplatGifEncoder.videoSupported()) {
+    const vb = $('recordVideoBtn'); if (vb) vb.style.display = 'none';
+  }
+  $('recordVideoBtn')?.addEventListener('click', async ()=>{
+    if(!state.frames.length){ setStatus(t('status.needFrames'),'danger'); return; }
+    const btn=$('recordVideoBtn'); btn.disabled=true;
+    const delayMs=parseInt($('delayInput').value,10)||450;
+    const loop=Math.max(1, parseInt($('loopInput').value,10)||1);
+    setStatus(t('status.recording',{s: Math.ceil(state.frames.length * loop * delayMs / 1000)}),'info');
+    try{
+      const canvases=framesToCanvases();
+      const blob=await window.DrawSplatGifEncoder.encodeVideo(canvases, {delayMs, loopCount:loop});
+      const ext = blob.type.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='drawsplat-animation.'+ext;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+      const kb=Math.round(blob.size/1024);
+      setStatus(t('status.videoReady',{kb:kb, ext:ext.toUpperCase()}),'success');
+    } catch(err){
+      setStatus(t('status.videoFail',{msg:err.message||err}),'danger');
+    } finally {
+      btn.disabled=false;
+    }
   });
 
   // Re-render the (mostly static) UI text on language change.

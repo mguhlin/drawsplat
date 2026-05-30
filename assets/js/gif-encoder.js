@@ -44,20 +44,77 @@
   function appendBytes(target,bytes){
     for(let i=0;i<bytes.length;i+=8192) target.push(...bytes.slice(i,i+8192));
   }
-  // Degenerate LZW: emits CLEAR every 240 codes so the decoder never builds a
-  // dictionary entry. Output is fat but spec-valid and matches the existing
-  // whiteboard files exactly.
+  // Proper GIF-spec LZW with a real dictionary. Replaces the previous
+  // "degenerate" encoder that emitted CLEAR every 240 codes and never built
+  // a dictionary entry. Typical real-world content compresses 3–10× smaller
+  // with proper LZW (flat colors, runs, and repeated patterns all get
+  // dictionary codes).
+  //
+  // Algorithm:
+  //   1. Start with the implicit base dictionary (codes 0..N-1 = single
+  //      symbols, where N = 1<<minCodeSize). Reserve CLEAR = N, END = N+1.
+  //      First user code is N+2. Code size starts at minCodeSize+1.
+  //   2. Maintain a longest-matched prefix. For each new symbol K, if
+  //      (prefix,K) is in the dict, extend; otherwise emit prefix's code,
+  //      add (prefix,K) → nextCode, and start a new prefix from K.
+  //   3. When the dict fills (nextCode reaches 2^codeSize), grow codeSize
+  //      by 1 (up to 12 bits / 4096 entries). When the 12-bit ceiling hits,
+  //      emit CLEAR and rebuild.
   function lzwEncode(indices, minCodeSize){
-    const clear=1<<minCodeSize, end=clear+1, out=[]; let cur=0, bits=0, codeCount=0;
-    const write=code=>{ cur|=code<<bits; bits+=minCodeSize+1; while(bits>=8){ out.push(cur&255); cur>>=8; bits-=8; } };
-    write(clear);
-    for(let i=0;i<indices.length;i++){
-      if(codeCount>=240){ write(clear); codeCount=0; }
-      write(indices[i]);
-      codeCount++;
+    const CLEAR = 1 << minCodeSize;
+    const END = CLEAR + 1;
+    const MAX_CODE = 4095;
+    let codeSize = minCodeSize + 1;
+    let nextCode = END + 1;
+    const dict = new Map();
+    const out = [];
+    let buf = 0, bufBits = 0;
+    function writeCode(code){
+      buf |= code << bufBits;
+      bufBits += codeSize;
+      while (bufBits >= 8) {
+        out.push(buf & 0xff);
+        buf >>>= 8;
+        bufBits -= 8;
+      }
     }
-    write(end);
-    if(bits>0) out.push(cur&255);
+    function resetDict(){
+      dict.clear();
+      codeSize = minCodeSize + 1;
+      nextCode = END + 1;
+    }
+    if (!indices.length) {
+      writeCode(CLEAR);
+      writeCode(END);
+      if (bufBits > 0) out.push(buf & 0xff);
+      return out;
+    }
+    writeCode(CLEAR);
+    let prefix = indices[0];
+    for (let i = 1; i < indices.length; i++) {
+      const k = indices[i];
+      // Key = (prefix << 12) | k packs up to 12+8 = 20 bits — safely inside
+      // a 32-bit Number, and Map handles small ints efficiently.
+      const key = (prefix << 12) | k;
+      const existing = dict.get(key);
+      if (existing !== undefined) {
+        prefix = existing;
+      } else {
+        writeCode(prefix);
+        if (nextCode <= MAX_CODE) {
+          dict.set(key, nextCode);
+          nextCode++;
+          if (nextCode > (1 << codeSize) && codeSize < 12) codeSize++;
+        } else {
+          writeCode(CLEAR);
+          resetDict();
+        }
+        prefix = k;
+      }
+    }
+    writeCode(prefix);
+    writeCode(END);
+    if (bufBits > 0) out.push(buf & 0xff);
     return out;
   }
 
@@ -143,10 +200,11 @@
   function lookup(lut, r, g, b){
     return lut[((r>>3)<<10)|((g>>3)<<5)|(b>>3)];
   }
-  function mapToIndices(rgba, lut){
+  function mapToIndices(rgba, lut, transparentIdx){
+    const t = transparentIdx == null ? 255 : transparentIdx;
     const out=new Uint8Array(rgba.length/4);
     for(let i=0,j=0;i<rgba.length;i+=4,j++){
-      if(rgba[i+3]<80){ out[j]=255; continue; }
+      if(rgba[i+3]<80){ out[j]=t; continue; }
       out[j]=lookup(lut, rgba[i], rgba[i+1], rgba[i+2]);
     }
     return out;
@@ -154,7 +212,8 @@
   // Floyd-Steinberg. Accumulate float errors in a side buffer; for each
   // pixel pick the nearest palette entry, then push the residual to the
   // right/below-left/below/below-right neighbors with 7/3/5/1 weights.
-  function ditherToIndices(rgba, w, h, palette, lut){
+  function ditherToIndices(rgba, w, h, palette, lut, transparentIdx){
+    const t = transparentIdx == null ? 255 : transparentIdx;
     const buf=new Float32Array(w*h*3);
     for(let i=0,j=0;i<rgba.length;i+=4,j+=3){
       buf[j]=rgba[i]; buf[j+1]=rgba[i+1]; buf[j+2]=rgba[i+2];
@@ -163,7 +222,7 @@
     for(let y=0;y<h;y++){
       for(let x=0;x<w;x++){
         const idx=y*w+x, bi=idx*3, ai=idx*4;
-        if(rgba[ai+3]<80){ out[idx]=255; continue; }
+        if(rgba[ai+3]<80){ out[idx]=t; continue; }
         const r=Math.max(0,Math.min(255,buf[bi]));
         const g=Math.max(0,Math.min(255,buf[bi+1]));
         const b=Math.max(0,Math.min(255,buf[bi+2]));
@@ -188,12 +247,28 @@
     const loopCount=o.loopCount|0;
     const mode=o.mode==='best'?'best':'fast';
     const dither=!!o.dither && mode==='best';
+    // paletteSize only matters in best mode. Must be a power of 2 between
+    // 4 and 256. Smaller = smaller file (smaller LCT bytes per frame +
+    // smaller LZW minCodeSize), but worse color fidelity. Reserve index
+    // (size-1) for transparent.
+    let palSize = 256;
+    if (mode === 'best') {
+      const requested = o.paletteSize | 0;
+      if ([4, 8, 16, 32, 64, 128, 256].indexOf(requested) >= 0) palSize = requested;
+    }
+    // GIF spec: size field N in the LCT/GCT packed byte means 2^(N+1) entries.
+    // So for palSize=256 → N=7, 128 → N=6, 64 → N=5, etc.
+    const sizeField = Math.max(0, Math.round(Math.log2(palSize)) - 1);
+    // GIF spec: minCodeSize must be >= 2 even if palette is smaller.
+    const minCode = Math.max(2, Math.round(Math.log2(palSize)));
+    const transparentIdx = palSize - 1;
     const w=canvases[0].width, h=canvases[0].height;
     const out=[];
     const text=s=>{ for(let i=0;i<s.length;i++) out.push(s.charCodeAt(i)); };
     text('GIF89a');
-    // Logical Screen Descriptor. The cube palette stays as the global table
-    // even in best mode, so older viewers always have a defined GCT.
+    // Logical Screen Descriptor. Global cube palette is always 256 entries
+    // so older viewers always have a defined GCT, even when per-frame LCTs
+    // are smaller in best mode.
     const globalPal=cubePalette();
     out.push(w&255, w>>8, h&255, h>>8, 0xF7, 0, 255);
     for(let i=0;i<globalPal.length;i++) out.push(globalPal[i]);
@@ -202,38 +277,103 @@
     out.push(3, 1, loopCount&255, loopCount>>8, 0);
     const delay=Math.max(2, Math.round(delayMs/10));
     for(const c of canvases){
-      let indices, hasLCT, lctBytes=null;
+      let indices, hasLCT, lctBytes=null, frameMinCode = 8;
       if(mode==='best'){
         const ctx=c.getContext('2d');
         const rgba=ctx.getImageData(0,0,c.width,c.height).data;
-        // Reserve index 255 for transparent; max 255 real colors.
-        const tuples=medianCutPalette(rgba, 255);
-        while(tuples.length<256) tuples.push([0,0,0]);
+        // Reserve last index for transparent; quantize to palSize-1 colors.
+        const tuples=medianCutPalette(rgba, palSize - 1);
+        while(tuples.length<palSize) tuples.push([0,0,0]);
         const lut=buildPaletteLUT(tuples);
         indices = dither
-          ? ditherToIndices(rgba, c.width, c.height, tuples, lut)
-          : mapToIndices(rgba, lut);
+          ? ditherToIndices(rgba, c.width, c.height, tuples, lut, transparentIdx)
+          : mapToIndices(rgba, lut, transparentIdx);
         lctBytes=[];
         for(const t of tuples){ lctBytes.push(t[0], t[1], t[2]); }
         hasLCT=true;
+        frameMinCode = minCode;
       } else {
         indices=cubeIndices(c);
         hasLCT=false;
+        frameMinCode = 8;
       }
       // Graphic Control Extension.
       out.push(0x21, 0xF9, 4, 0x00, delay&255, delay>>8, 0, 0);
-      // Image Descriptor.
-      const packed = hasLCT ? 0x87 : 0x00; // LCT flag + size=7 (256 entries)
+      // Image Descriptor. Packed byte: bit 7 = LCT flag, bits 2..0 = LCT size.
+      const packed = hasLCT ? (0x80 | sizeField) : 0x00;
       out.push(0x2C, 0,0,0,0, w&255, w>>8, h&255, h>>8, packed);
       if(hasLCT){
         for(let i=0;i<lctBytes.length;i++) out.push(lctBytes[i]);
       }
-      out.push(8);
-      appendBytes(out, packSubBlocks(lzwEncode(indices, 8)));
+      out.push(frameMinCode);
+      appendBytes(out, packSubBlocks(lzwEncode(indices, frameMinCode)));
     }
     out.push(0x3B);
     return new Blob([new Uint8Array(out)], {type:'image/gif'});
   }
 
-  window.DrawSplatGifEncoder = { encode };
+  // -------- WebM / MP4 video export via MediaRecorder. -----------------
+  // Uses canvas.captureStream(0) so we can push frames at exact times
+  // matching the requested delayMs. MediaRecorder support:
+  //   - WebM (VP8/VP9): Chrome, Edge, Firefox; not in Safari < 14.5
+  //   - MP4 (H.264):    Safari 14.5+
+  // The function picks whichever mime the browser supports.
+  function pickVideoMime(){
+    if (typeof MediaRecorder === 'undefined') return null;
+    const candidates = [
+      'video/mp4;codecs=avc1.42E01E',
+      'video/mp4',
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm'
+    ];
+    for (const m of candidates) {
+      try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (_) {}
+    }
+    return null;
+  }
+  function videoSupported(){ return pickVideoMime() !== null; }
+  async function encodeVideo(canvases, opts){
+    const o = opts || {};
+    const delayMs = Math.max(20, o.delayMs || 450);
+    const loopCount = Math.max(1, o.loopCount | 0 || 1);
+    const mime = pickVideoMime();
+    if (!mime) throw new Error('Video recording is not supported in this browser.');
+    if (!canvases.length) throw new Error('No frames to record.');
+    const w = canvases[0].width, h = canvases[0].height;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    // White background so the first captured frame isn't a black flash.
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+    // captureStream(0) → manual frame control via track.requestFrame().
+    const stream = c.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const bps = Math.max(500_000, Math.min(8_000_000, w * h * 8));
+    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: bps });
+    const chunks = [];
+    recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    const stopped = new Promise(resolve => { recorder.onstop = resolve; });
+    recorder.start();
+    // Prime the stream with the first frame so the recorder has something
+    // to write before the first delay tick.
+    ctx.drawImage(canvases[0], 0, 0);
+    if (track.requestFrame) track.requestFrame();
+    await new Promise(r => setTimeout(r, 60));
+    for (let loop = 0; loop < loopCount; loop++) {
+      for (let i = 0; i < canvases.length; i++) {
+        ctx.drawImage(canvases[i], 0, 0);
+        if (track.requestFrame) track.requestFrame();
+        await new Promise(r => setTimeout(r, delayMs));
+      }
+    }
+    // Let the encoder flush.
+    await new Promise(r => setTimeout(r, 250));
+    recorder.stop();
+    await stopped;
+    track.stop();
+    return new Blob(chunks, { type: mime });
+  }
+
+  window.DrawSplatGifEncoder = { encode, encodeVideo, videoSupported, pickVideoMime };
 })();
