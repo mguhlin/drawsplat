@@ -21,9 +21,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': 'Frame delay (milliseconds)',
     'settings.loop': 'Loop count (0 = forever)',
     'settings.maxWidth': 'Max width in pixels (0 = original)',
+    'settings.quality': 'Color quality',
+    'settings.qualityFast': 'Fast — fixed 256-color palette',
+    'settings.qualityBest': 'Best — per-frame palette',
+    'settings.dither': 'Dither (Floyd-Steinberg) — smooths gradients',
 
     'about.h3': 'About',
-    'about.html': 'Encoded locally with a small custom 256-color GIF writer. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the finished GIF onto a board.',
+    'about.html': 'Encoded locally with a small custom GIF writer (fixed cube or per-frame median-cut palette, optional Floyd-Steinberg dithering). Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the finished GIF onto a board.',
 
     'stage.h2': 'Preview & Download',
     'preview.placeholder': 'Your generated GIF will appear here.',
@@ -67,9 +71,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': 'Retardo por cuadro (milisegundos)',
     'settings.loop': 'Número de repeticiones (0 = para siempre)',
     'settings.maxWidth': 'Ancho máximo en píxeles (0 = original)',
+    'settings.quality': 'Calidad de color',
+    'settings.qualityFast': 'Rápido — paleta fija de 256 colores',
+    'settings.qualityBest': 'Mejor — paleta por cuadro',
+    'settings.dither': 'Difuminado (Floyd-Steinberg) — suaviza los gradientes',
 
     'about.h3': 'Acerca de',
-    'about.html': 'Codificado localmente con un pequeño codificador GIF de 256 colores. Combina con el <a href="../../app/whiteboard.html">pizarrón DrawSplat<sup>TM</sup></a> para soltar el GIF terminado en un tablero.',
+    'about.html': 'Codificado localmente con un pequeño codificador GIF (paleta cúbica fija o paleta por cuadro mediante corte mediano, con difuminado Floyd-Steinberg opcional). Combina con el <a href="../../app/whiteboard.html">pizarrón DrawSplat<sup>TM</sup></a> para soltar el GIF terminado en un tablero.',
 
     'stage.h2': 'Previsualización y Descarga',
     'preview.placeholder': 'Tu GIF generado aparecerá aquí.',
@@ -113,9 +121,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': 'Thời gian giữa khung (mili-giây)',
     'settings.loop': 'Số lần lặp (0 = mãi mãi)',
     'settings.maxWidth': 'Chiều rộng tối đa (pixel, 0 = gốc)',
+    'settings.quality': 'Chất lượng màu',
+    'settings.qualityFast': 'Nhanh — bảng màu cố định 256 màu',
+    'settings.qualityBest': 'Tốt nhất — bảng màu theo từng khung',
+    'settings.dither': 'Trộn điểm (Floyd-Steinberg) — làm mượt chuyển sắc',
 
     'about.h3': 'Giới thiệu',
-    'about.html': 'Mã hóa cục bộ bằng bộ ghi GIF 256 màu nhỏ gọn. Ghép cặp với <a href="../../app/whiteboard.html">bảng trắng DrawSplat<sup>TM</sup></a> để thả GIF đã tạo vào bảng.',
+    'about.html': 'Mã hóa cục bộ bằng bộ ghi GIF nhỏ gọn (bảng màu khối cố định hoặc bảng theo khung bằng phép cắt trung vị, có tùy chọn trộn điểm Floyd-Steinberg). Ghép cặp với <a href="../../app/whiteboard.html">bảng trắng DrawSplat<sup>TM</sup></a> để thả GIF đã tạo vào bảng.',
 
     'stage.h2': 'Xem trước & Tải xuống',
     'preview.placeholder': 'GIF của bạn sẽ xuất hiện ở đây.',
@@ -159,9 +171,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': 'تأخير الإطار (بالملي ثانية)',
     'settings.loop': 'عدد التكرارات (0 = إلى الأبد)',
     'settings.maxWidth': 'أقصى عرض بالبكسل (0 = الأصلي)',
+    'settings.quality': 'جودة الألوان',
+    'settings.qualityFast': 'سريع — لوحة ألوان ثابتة من 256 لونًا',
+    'settings.qualityBest': 'الأفضل — لوحة ألوان لكل إطار',
+    'settings.dither': 'تذبذب (Floyd-Steinberg) — يلطّف التدرجات',
 
     'about.h3': 'حول',
-    'about.html': 'يتم الترميز محليًا باستخدام مُرمِّز GIF صغير بـ256 لونًا. اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat<sup>TM</sup></a> لإسقاط ملف GIF الجاهز في لوحة.',
+    'about.html': 'يتم الترميز محليًا باستخدام مُرمِّز GIF صغير (لوحة مكعبة ثابتة أو لوحة لكل إطار عبر القطع الوسيط، مع تذبذب Floyd-Steinberg اختياري). اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat<sup>TM</sup></a> لإسقاط ملف GIF الجاهز في لوحة.',
 
     'stage.h2': 'المعاينة والتنزيل',
     'preview.placeholder': 'سيظهر ملف GIF الذي أنشأته هنا.',
@@ -205,9 +221,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': '帧延迟（毫秒）',
     'settings.loop': '循环次数（0 = 永远）',
     'settings.maxWidth': '最大宽度（像素，0 = 原始）',
+    'settings.quality': '颜色质量',
+    'settings.qualityFast': '快速 — 固定 256 色调色板',
+    'settings.qualityBest': '最佳 — 每帧独立调色板',
+    'settings.dither': '抖动 (Floyd-Steinberg) — 让渐变更平滑',
 
     'about.h3': '关于',
-    'about.html': '使用内置的 256 色小型 GIF 编码器在本地编码。可与 <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> 白板</a> 配合，将生成的 GIF 放到画板上。',
+    'about.html': '使用内置的小型 GIF 编码器在本地编码（固定立方体调色板或每帧中位切分调色板，可选 Floyd-Steinberg 抖动）。可与 <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> 白板</a> 配合，将生成的 GIF 放到画板上。',
 
     'stage.h2': '预览与下载',
     'preview.placeholder': '生成的 GIF 将显示在这里。',
@@ -251,9 +271,13 @@ WidgetI18n.register('animated-gif', {
     'settings.delay': 'فریم تاخیر (ملی سیکنڈ)',
     'settings.loop': 'لُوپ کاؤنٹ (0 = ہمیشہ)',
     'settings.maxWidth': 'زیادہ سے زیادہ چوڑائی پکسلز (0 = اصل)',
+    'settings.quality': 'رنگوں کا معیار',
+    'settings.qualityFast': 'تیز — مقررہ 256 رنگوں کی پیلیٹ',
+    'settings.qualityBest': 'بہترین — فی فریم پیلیٹ',
+    'settings.dither': 'ڈِدر (Floyd-Steinberg) — گریڈینٹس کو نرم کرتا ہے',
 
     'about.h3': 'تعارف',
-    'about.html': 'مقامی طور پر ایک چھوٹے 256 رنگوں والے GIF رائٹر کے ساتھ انکوڈ کیا گیا۔ تیار GIF کو بورڈ پر چھوڑنے کے لیے <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> وائٹ بورڈ</a> کے ساتھ جوڑیں۔',
+    'about.html': 'مقامی طور پر ایک چھوٹے GIF انکوڈر کے ساتھ انکوڈ کیا گیا (مقررہ کیوب پیلیٹ یا فی فریم میڈین-کٹ پیلیٹ، اختیاری Floyd-Steinberg ڈِدرنگ کے ساتھ)۔ تیار GIF کو بورڈ پر چھوڑنے کے لیے <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> وائٹ بورڈ</a> کے ساتھ جوڑیں۔',
 
     'stage.h2': 'پیش منظر اور ڈاؤن لوڈ',
     'preview.placeholder': 'آپ کی تیار GIF یہاں ظاہر ہوگی۔',

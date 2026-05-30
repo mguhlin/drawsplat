@@ -3675,33 +3675,17 @@ async function selectedObjectsToGifCanvases(){
   const maxGifSize=960, fit=Math.min(1,maxGifSize/Math.max(maxW,maxH)), w=Math.max(40,Math.round(maxW*fit)), h=Math.max(40,Math.round(maxH*fit));
   return images.map(img=>{const c=document.createElement('canvas'); c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h); const iw=(img.naturalWidth||img.width)*fit, ih=(img.naturalHeight||img.height)*fit; ctx.drawImage(img,(w-iw)/2,(h-ih)/2,iw,ih); return c});
 }
-function gifPalette(){const p=[]; for(let r=0;r<8;r++)for(let g=0;g<8;g++)for(let b=0;b<4;b++)p.push(Math.round(r*255/7),Math.round(g*255/7),Math.round(b*255/3)); return p}
-function canvasToGifIndices(c){const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data, out=new Uint8Array(c.width*c.height); for(let i=0,j=0;i<d.length;i+=4,j++){const a=d[i+3]; if(a<80){out[j]=255; continue} const r=d[i]>>5,g=d[i+1]>>5,b=d[i+2]>>6; out[j]=(r<<5)|(g<<2)|b} return out}
-function packGifSubBlocks(bytes){const out=[]; for(let i=0;i<bytes.length;i+=255){const chunk=bytes.slice(i,i+255); out.push(chunk.length,...chunk)} out.push(0); return out}
-function appendBytes(target,bytes){for(let i=0;i<bytes.length;i+=8192) target.push(...bytes.slice(i,i+8192))}
-function lzwGifEncode(indices,minCodeSize=8){
-  const clear=1<<minCodeSize, end=clear+1, out=[]; let cur=0,bits=0,codeCount=0;
-  const write=code=>{cur|=code<<bits; bits+=minCodeSize+1; while(bits>=8){out.push(cur&255); cur>>=8; bits-=8}};
-  write(clear);
-  indices.forEach(idx=>{if(codeCount>=240){write(clear); codeCount=0} write(idx); codeCount++});
-  write(end);
-  if(bits>0) out.push(cur&255);
-  return out;
-}
-function encodeGif(canvases,delayMs=450){
-  const w=canvases[0].width,h=canvases[0].height,pal=gifPalette(), out=[];
-  const text=s=>[...s].forEach(ch=>out.push(ch.charCodeAt(0))); text('GIF89a');
-  out.push(w&255,w>>8,h&255,h>>8,0xF7,0,255,...pal);
-  out.push(0x21,0xFF,11); text('NETSCAPE2.0'); out.push(3,1,0,0,0);
-  const delay=Math.max(2,Math.round(delayMs/10));
-  canvases.forEach(c=>{out.push(0x21,0xF9,4,0x00,delay&255,delay>>8,0,0,0x2C,0,0,0,0,w&255,w>>8,h&255,h>>8,0,8); appendBytes(out,packGifSubBlocks(lzwGifEncode(canvasToGifIndices(c),8)))});
-  out.push(0x3B); return new Blob([new Uint8Array(out)],{type:'image/gif'});
+// GIF encoding now lives in assets/js/gif-encoder.js (shared with the
+// standalone Animated GIF widget). Thin wrapper preserves the old call site.
+function encodeGif(canvases, delayMs=450, opts){
+  const o = Object.assign({delayMs, loopCount:0, mode:'fast', dither:false}, opts||{});
+  return window.DrawSplatGifEncoder.encode(canvases, o);
 }
 async function createGifFromSelection(){
   try{
     const btn=gid('createGifBtn'); if(btn) btn.disabled=true;
     setStatus('Creating GIF...');
-    const canvases=await selectedObjectsToGifCanvases(), delay=+gid('gifDelay')?.value||450, blob=encodeGif(canvases,delay), url=URL.createObjectURL(blob);
+    const canvases=await selectedObjectsToGifCanvases(), delay=+gid('gifDelay')?.value||450, mode=(gid('gifQuality')?.value==='fast')?'fast':'best', dither=!!gid('gifDither')?.checked, blob=encodeGif(canvases,delay,{mode,dither}), url=URL.createObjectURL(blob);
     const img=gid('gifPreview'); if(img){img.onload=()=>setStatus('GIF ready.','success'); img.onerror=()=>setStatus('GIF preview could not be decoded.','danger'); img.src=url; img.hidden=false}
     const dl=gid('downloadGifBtn'); if(dl){dl.disabled=false; dl.dataset.gifUrl=url}
     setStatus('GIF ready.','success');

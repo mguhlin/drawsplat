@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="doc.title">Animated GIF Maker — DrawSplatTM</title>
   <script src="../../assets/js/widget-i18n.js"></script>
+  <script src="../../assets/js/gif-encoder.js"></script>
   <meta name="description" content="Build an animated GIF from PNG, JPG, WebP, or GIF frames. Reorder, set per-frame delay, choose loop count, preview, and download. Runs entirely in the browser.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M6 8h4l3 6 3-6h4v16h-4v-9l-2 4h-2l-2-4v9H6z'/%3E%3C/svg%3E">
   <style>
@@ -128,7 +129,17 @@
         </div>
         <div class="field">
           <label for="maxWidthInput" data-i18n="settings.maxWidth">Max width in pixels (0 = original)</label>
-          <input id="maxWidthInput" type="number" min="0" max="4096" step="10" value="640">
+          <input id="maxWidthInput" type="number" min="0" max="8192" step="10" value="0">
+        </div>
+        <div class="field">
+          <label for="qualityInput" data-i18n="settings.quality">Color quality</label>
+          <select id="qualityInput">
+            <option value="fast" data-i18n="settings.qualityFast">Fast — fixed 256-color palette</option>
+            <option value="best" selected data-i18n="settings.qualityBest">Best — per-frame palette</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><input id="ditherInput" type="checkbox"> <span data-i18n="settings.dither">Dither (Floyd-Steinberg) — smooths gradients</span></label>
         </div>
 
         <h3 data-i18n="about.h3">About</h3>
@@ -239,45 +250,7 @@
     setStatus('','');
   });
 
-  // ----- Inline GIF encoder. Same algorithm as the whiteboard's encodeGif
-  // (assets/js/app.js). Kept inline so this widget runs without depending on
-  // the whiteboard bundle.
-  function gifPalette(){ const p=[]; for(let r=0;r<8;r++)for(let g=0;g<8;g++)for(let b=0;b<4;b++)p.push(Math.round(r*255/7),Math.round(g*255/7),Math.round(b*255/3)); return p; }
-  function canvasToGifIndices(c){
-    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data, out=new Uint8Array(c.width*c.height);
-    for(let i=0,j=0;i<d.length;i+=4,j++){
-      const a=d[i+3]; if(a<80){ out[j]=255; continue; }
-      const r=d[i]>>5, g=d[i+1]>>5, b=d[i+2]>>6;
-      out[j]=(r<<5)|(g<<2)|b;
-    }
-    return out;
-  }
-  function packGifSubBlocks(bytes){ const out=[]; for(let i=0;i<bytes.length;i+=255){ const chunk=bytes.slice(i,i+255); out.push(chunk.length,...chunk); } out.push(0); return out; }
-  function appendBytes(target,bytes){ for(let i=0;i<bytes.length;i+=8192) target.push(...bytes.slice(i,i+8192)); }
-  function lzwGifEncode(indices, minCodeSize=8){
-    const clear=1<<minCodeSize, end=clear+1, out=[]; let cur=0, bits=0, codeCount=0;
-    const write=code=>{ cur|=code<<bits; bits+=minCodeSize+1; while(bits>=8){ out.push(cur&255); cur>>=8; bits-=8; } };
-    write(clear);
-    indices.forEach(idx=>{ if(codeCount>=240){ write(clear); codeCount=0; } write(idx); codeCount++; });
-    write(end);
-    if(bits>0) out.push(cur&255);
-    return out;
-  }
-  function encodeGif(canvases, delayMs, loopCount){
-    const w=canvases[0].width, h=canvases[0].height, pal=gifPalette(), out=[];
-    const text=s=>[...s].forEach(ch=>out.push(ch.charCodeAt(0)));
-    text('GIF89a');
-    out.push(w&255, w>>8, h&255, h>>8, 0xF7, 0, 255, ...pal);
-    out.push(0x21, 0xFF, 11); text('NETSCAPE2.0');
-    out.push(3, 1, loopCount&255, loopCount>>8, 0);
-    const delay=Math.max(2, Math.round(delayMs/10));
-    canvases.forEach(c=>{
-      out.push(0x21, 0xF9, 4, 0x00, delay&255, delay>>8, 0, 0, 0x2C, 0,0,0,0, w&255, w>>8, h&255, h>>8, 0, 8);
-      appendBytes(out, packGifSubBlocks(lzwGifEncode(canvasToGifIndices(c), 8)));
-    });
-    out.push(0x3B);
-    return new Blob([new Uint8Array(out)], {type:'image/gif'});
-  }
+  // Encoder lives in assets/js/gif-encoder.js (window.DrawSplatGifEncoder).
 
   function framesToCanvases(){
     const first=state.frames[0];
@@ -309,8 +282,10 @@
       try{
         const delayMs=parseInt($('delayInput').value,10)||450;
         const loop=Math.max(0, parseInt($('loopInput').value,10)||0);
+        const mode=$('qualityInput').value==='fast'?'fast':'best';
+        const dither=$('ditherInput').checked;
         const canvases=framesToCanvases();
-        const blob=encodeGif(canvases, delayMs, loop);
+        const blob=window.DrawSplatGifEncoder.encode(canvases, {delayMs, loopCount:loop, mode, dither});
         if(state.lastBlobUrl) URL.revokeObjectURL(state.lastBlobUrl);
         state.lastBlobUrl=URL.createObjectURL(blob);
         const wrap=$('previewWrap'); wrap.innerHTML='';
