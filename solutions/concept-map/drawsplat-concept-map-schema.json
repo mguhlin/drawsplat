@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://drawsplat.org/solutions/concept-map/drawsplat-concept-map-schema.json",
   "title": "DrawSplat Concept Map Studio — import/export schema",
-  "description": "Schema for .drawsplat-cmap.json files used by DrawSplat Concept Map Studio (solutions/concept-map). The Studio's Load .json button accepts any object that validates against this schema. Unknown fields are tolerated and ignored. Send this file to an LLM along with your prompt to get back JSON you can load directly.",
+  "description": "Schema for .drawsplat-cmap.json files used by DrawSplat Concept Map Studio (solutions/concept-map). The Studio's Load .json button accepts any object that validates against this schema. Unknown fields are tolerated and ignored. Send this file to an LLM along with your prompt to get back JSON you can load directly.\n\nBackward compatibility: the loader auto-migrates older formats on import, so you do NOT need to update existing files by hand. Specifically it accepts: a missing `type` field (treated as a concept map if `nodes` is present); v1 files where `nodes` was an object keyed by id rather than an array; v1 connectors that used `{from, to}` instead of `{fromId, toId}`; missing `connectors` or `groups` arrays (default to empty); and missing `level` per node (defaults to 1 if `isRoot`, else 2). Files saved by the current Studio always emit the canonical shape below.",
   "type": "object",
   "required": ["type", "nodes", "connectors"],
   "properties": {

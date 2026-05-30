@@ -2147,6 +2147,67 @@
   /* ===== JSON save/load ===== */
   const SAVE_TYPE = 'drawsplat-concept-map';
   const SAVE_VERSION = 2;
+
+  /* migrateImportedData(raw) — normalize older / sloppy concept-map JSONs
+     into the current schema shape so they load without errors. The Studio
+     stays forward-only on disk (Save .json always writes the current shape)
+     but every reader is lenient. Handles:
+       * Missing `type` — accepted if the rest of the shape looks like a map.
+       * v1 shape — `nodes` was an OBJECT keyed by id; convert to v2 array.
+         `connectors` used {from, to} instead of {fromId, toId}.
+         `rootKey` at the top level marked the root; copy it onto isRoot.
+       * Missing `connectors` or `groups` — default to empty arrays.
+       * Any other unknown top-level fields — preserved but ignored by the
+         loader's strict per-field validation that runs after migration.
+     Mutating `data` in place is intentional; the caller passes the parsed
+     JSON it controls. */
+  function migrateImportedData(raw){
+    if (!raw || typeof raw !== 'object') return raw;
+
+    // Tolerate a missing or stale `type` identifier when the rest of the
+    // shape is clearly a concept map (has a `nodes` field).
+    if (raw.type !== SAVE_TYPE) {
+      const looksLikeMap = ('nodes' in raw) && raw.nodes !== null && typeof raw.nodes === 'object';
+      if (looksLikeMap) raw.type = SAVE_TYPE;
+    }
+
+    // v1 nodes were an object keyed by id; v2 expects an array. Convert.
+    if (raw.nodes && !Array.isArray(raw.nodes) && typeof raw.nodes === 'object') {
+      const rootKey = raw.rootKey || null;
+      const arr = [];
+      for (const key of Object.keys(raw.nodes)) {
+        const n = raw.nodes[key] || {};
+        arr.push(Object.assign({}, n, {
+          id: typeof n.id === 'string' && n.id ? n.id : key,
+          isRoot: !!(n.isRoot || (rootKey && key === rootKey))
+        }));
+      }
+      raw.nodes = arr;
+    }
+
+    // v1 connectors used {from, to}; v2 uses {fromId, toId}. Rename and
+    // synthesize ids if missing so the existing loader doesn't reject them.
+    if (Array.isArray(raw.connectors)) {
+      raw.connectors = raw.connectors.map((c, i) => {
+        if (!c || typeof c !== 'object') return c;
+        const fromId = c.fromId != null ? c.fromId : c.from;
+        const toId = c.toId != null ? c.toId : c.to;
+        return Object.assign({}, c, {
+          id: typeof c.id === 'string' && c.id ? c.id : ('c' + (i + 1)),
+          fromId: fromId,
+          toId: toId
+        });
+      });
+    }
+
+    // Missing arrays default to empty so the strict shape check passes.
+    if (!Array.isArray(raw.connectors)) raw.connectors = [];
+    if (!Array.isArray(raw.groups)) raw.groups = [];
+    if (!Array.isArray(raw.nodes)) raw.nodes = [];
+
+    return raw;
+  }
+
   function buildSaveJson(){
     return {
       type: SAVE_TYPE, version: SAVE_VERSION, saved: new Date().toISOString(),
@@ -2167,6 +2228,7 @@
   }
   function applyLoadedJson(data){
     if (!data || typeof data !== 'object') throw new Error(t('load.errBadFile'));
+    data = migrateImportedData(data);
     if (data.type !== SAVE_TYPE) throw new Error(t('load.errNotConceptMap'));
     if (!Array.isArray(data.nodes) || !Array.isArray(data.connectors)) throw new Error(t('load.errMissingArrays'));
     const nodes = [];
