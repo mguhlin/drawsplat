@@ -31,21 +31,42 @@
     .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
     .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
     .secondary-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; text-decoration: none; white-space: nowrap; }
-    .app-grid { display: grid; grid-template-columns: minmax(300px, 360px) 1fr; gap: 18px; align-items: start; padding-top: 22px; }
-    @media (max-width: 940px) { .app-grid { grid-template-columns: 1fr; } }
-    .panel, .stage { border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-    .panel { padding: 18px; }
-    .panel h2, .stage h2 { margin: 0 0 12px; color: var(--black); font-size: 1.15rem; }
+    /* Full-bleed preview stage — escapes the .page max-width so the card
+       can fill the entire viewport horizontally. The trick: width:100vw
+       plus negative side margins equal to (50vw - 50%) of the parent. */
+    .preview-stage {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: 16px 14px;
+      background: var(--gray-10);
+      display: grid;
+      place-items: center;
+      min-height: 64vh;
+      margin-top: 16px;
+    }
+    #posterSvg {
+      width: 100%; height: auto;
+      max-width: none;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 14px 36px rgba(0,0,0,.14);
+    }
+    /* Compact controls panel below the preview. URL gets the headline
+       treatment; secondary fields tuck into a small grid; advanced options
+       are collapsible via <details>. */
+    .controls { border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 18px; margin-top: 18px; }
+    .controls h2 { margin: 0 0 12px; color: var(--black); font-size: 1.05rem; }
     .field { display: grid; gap: 6px; margin-bottom: 14px; }
     label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
     input[type="text"], input[type="url"], input[type="number"], select { width: 100%; min-height: 42px; padding: 9px 10px; color: var(--black); background: var(--white); border: 2px solid var(--gray-30); border-radius: var(--radius); }
+    .url-input { font-size: 1.25rem; font-weight: 800; min-height: 56px; padding: 12px 14px; border-color: var(--navy); }
     input[type="color"] { width: 56px; height: 42px; border: 2px solid var(--gray-30); border-radius: var(--radius); padding: 2px; background: var(--white); cursor: pointer; }
     input[type="range"] { width: 100%; }
-    .row { display: flex; gap: 10px; align-items: center; }
-    .row > * { flex: 1; }
-    .stage { padding: 18px; min-height: 600px; }
-    .preview-wrap { padding: 14px; background: var(--gray-10); border-radius: var(--radius); display: grid; place-items: center; min-height: 520px; }
-    #posterSvg { width: 100%; max-width: 100%; height: auto; background: #fff; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 0; }
+    .secondary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 760px) { .secondary-grid { grid-template-columns: 1fr; } }
     .actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .button { min-height: 44px; padding: 9px 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; }
     .button.primary { color: var(--white); background: var(--navy); }
@@ -55,6 +76,11 @@
     .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
     .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
     .status:empty { display: none; }
+    .more-options { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+    .more-options > summary { cursor: pointer; font-weight: 800; color: var(--navy); font-size: .92rem; list-style: none; padding: 4px 0; }
+    .more-options > summary::-webkit-details-marker { display: none; }
+    .more-options > summary::before { content: '▸ '; display: inline-block; transition: transform .15s; }
+    .more-options[open] > summary::before { content: '▾ '; }
     .footer-note { margin-top: 18px; color: var(--gray-50); font-size: .85rem; line-height: 1.45; }
     .footer-note a { color: var(--navy); }
   </style>
@@ -75,63 +101,63 @@
       </div>
     </header>
 
-    <main class="app-grid">
-      <aside class="panel" data-i18n-aria-label="panel.controls.aria" aria-label="Big Link controls">
-        <h2 data-i18n="panel.controls.h2">Card content</h2>
-        <div class="field">
-          <label for="urlInput" data-i18n="field.url">URL or short text (the BIG part)</label>
-          <input id="urlInput" type="text" maxlength="200" value="drawsplat.org">
-        </div>
-        <div class="field">
-          <label for="titleInput" data-i18n="field.title">Title (top strip — leave empty to remove)</label>
-          <input id="titleInput" type="text" maxlength="60" value="" placeholder="Join Here">
-        </div>
-        <div class="field">
-          <label for="noteInput" data-i18n="field.note">Note (bottom — leave empty to remove)</label>
-          <input id="noteInput" type="text" maxlength="120" value="" placeholder="Type this address into your browser">
-        </div>
+    <!-- Full-bleed preview — escapes .page so the card spans the viewport. -->
+    <section class="preview-stage" data-i18n-aria-label="panel.preview.aria" aria-label="Big Link preview">
+      <div id="previewSlot" style="width:100%"></div>
+    </section>
 
-        <h2 style="margin-top:6px" data-i18n="panel.style.h2">Style</h2>
-        <div class="field">
-          <label for="accentInput" data-i18n="field.accent">Accent color</label>
-          <div class="row">
-            <input id="accentInput" type="color" value="#7c3aed" style="flex:0 0 56px">
-            <span class="footer-note" style="margin:0" data-i18n="field.accent.hint">Used for the title strip and the big URL text.</span>
+    <!-- Compact controls panel under the preview. URL takes the headline
+         input; everything else is grouped or tucked behind <details>. -->
+    <section class="controls" data-i18n-aria-label="panel.controls.aria" aria-label="Big Link controls">
+      <div class="field">
+        <label for="urlInput" data-i18n="field.url">URL or short text (the BIG part)</label>
+        <input id="urlInput" type="text" maxlength="200" value="drawsplat.org" class="url-input" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="actions">
+        <button class="button primary" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+        <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+        <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+        <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
+      </div>
+      <div class="status" id="statusLine" role="status"></div>
+
+      <details class="more-options">
+        <summary data-i18n="panel.more">More options (title, note, color, fill, shape)</summary>
+        <div class="secondary-grid" style="margin-top:12px">
+          <div class="field" style="margin-bottom:0">
+            <label for="titleInput" data-i18n="field.title">Title (top strip — leave empty to remove)</label>
+            <input id="titleInput" type="text" maxlength="60" value="" placeholder="Join Here">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="noteInput" data-i18n="field.note">Note (bottom — leave empty to remove)</label>
+            <input id="noteInput" type="text" maxlength="120" value="" placeholder="Type this address into your browser">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="accentInput" data-i18n="field.accent">Accent color</label>
+            <div class="row">
+              <input id="accentInput" type="color" value="#7c3aed" style="flex:0 0 56px">
+              <span class="footer-note" style="margin:0" data-i18n="field.accent.hint">Used for the title strip and the big URL text.</span>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="ratioInput" data-i18n="field.ratio">Card shape</label>
+            <select id="ratioInput">
+              <option value="16:9" data-i18n="ratio.169">16:9 (widescreen — slide / projector)</option>
+              <option value="4:3" data-i18n="ratio.43">4:3 (classic projector)</option>
+              <option value="1:1" data-i18n="ratio.11">1:1 (square — social media)</option>
+              <option value="3:4" data-i18n="ratio.34">3:4 (portrait — print sign)</option>
+            </select>
           </div>
         </div>
-        <div class="field">
+        <div class="field" style="margin-top:14px; margin-bottom:0">
           <label for="scaleInput" data-i18n="field.scale">Text fill (100% = fills the card)</label>
           <input id="scaleInput" type="range" min="40" max="100" step="2" value="100">
           <span class="footer-note" style="margin:0"><span id="scaleValue">100</span>% — <span data-i18n="field.scale.hint">leave title and note empty to maximize, like large-type.com</span></span>
         </div>
-        <div class="field">
-          <label for="ratioInput" data-i18n="field.ratio">Card shape</label>
-          <select id="ratioInput">
-            <option value="16:9" data-i18n="ratio.169">16:9 (widescreen — slide / projector)</option>
-            <option value="4:3" data-i18n="ratio.43">4:3 (classic projector)</option>
-            <option value="1:1" data-i18n="ratio.11">1:1 (square — social media)</option>
-            <option value="3:4" data-i18n="ratio.34">3:4 (portrait — print sign)</option>
-          </select>
-        </div>
+      </details>
 
-        <h2 style="margin-top:6px" data-i18n="panel.about.h2">About</h2>
-        <p class="footer-note" data-i18n-html="panel.about.html">Same card the whiteboard's Big Link widget makes — but standalone, so you can use it without opening the whiteboard. Nothing is uploaded; the SVG is generated locally in your browser. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the saved PNG straight onto a board.</p>
-      </aside>
-
-      <section class="stage" data-i18n-aria-label="panel.preview.aria" aria-label="Big Link preview">
-        <h2 data-i18n="stage.h2">Preview</h2>
-        <div class="preview-wrap">
-          <div id="previewSlot"></div>
-        </div>
-        <div class="actions">
-          <button class="button primary" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
-          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
-          <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
-          <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
-        </div>
-        <div class="status" id="statusLine" role="status"></div>
-      </section>
-    </main>
+      <p class="footer-note" data-i18n-html="panel.about.html">Same card the whiteboard's Big Link widget makes — but standalone, so you can use it without opening the whiteboard. Nothing is uploaded; the SVG is generated locally in your browser. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the saved PNG straight onto a board.</p>
+    </section>
   </div>
 
 <script src="./locales.js"></script>
