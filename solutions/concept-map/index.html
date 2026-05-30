@@ -2864,10 +2864,13 @@
     const hash = (location.hash || '').replace(/^#/, '');
     if (!hash) return false;
     const hp = new URLSearchParams(hash);
+    // URLSearchParams already URL-decodes the value. Don't decode again —
+    // decodeURIComponent throws on any '%' in JSON string values, which
+    // silently dropped the hash on import.
     const json = hp.get('json');
     if (!json) return false;
     try {
-      const data = JSON.parse(decodeURIComponent(json));
+      const data = JSON.parse(json);
       applyLoadedJson(data);
       return true;
     } catch (err) {

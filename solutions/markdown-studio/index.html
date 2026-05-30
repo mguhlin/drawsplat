@@ -1785,11 +1785,15 @@ def hello():
   function loadFromHashMd() {
     const hash = (location.hash || '').replace(/^#/, '');
     if (!hash) return false;
+    // URLSearchParams already URL-decodes the value once. Don't call
+    // decodeURIComponent again — it throws URIError on any '%' in the
+    // content (e.g. "100% pure"), which previously caused the hash to be
+    // silently dropped and the default sample / saved draft shown instead.
     const hp = new URLSearchParams(hash);
     const md = hp.get('md');
     if (!md) return false;
-    try { input.value = decodeURIComponent(md); return true; }
-    catch (e) { return false; }
+    input.value = md;
+    return true;
   }
   let lastLoadedSample = '';
   if (loadFromHashMd()) {

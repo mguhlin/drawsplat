@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>Compliance Gap List | DrawSplatTM</title>
+<meta name="description" content="Honest, section-by-section list of what each legal regime (COPPA, FERPA, CIPA, Texas SCOPE Act, TEC 32.151+, NDPA, GDPR, UK GDPR) requires that DrawSplatTM does not yet provide out of the box, and why." />
+<link rel="canonical" href="https://drawsplat.org/legal/compliance-gaps.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown" open>
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/combined-policy.html">Get all documents below</a>
+        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/gdpr-compliance.html">GDPR Compliance</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
+        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
+        <a href="../legal/accessibility.html">Accessibility Statement</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Honest Compliance Posture</p>
+    <h1>What DrawSplat<sup class="tm">TM</sup> does NOT yet do — and why.</h1>
+    <p>This page is the deliberate opposite of marketing. Every other compliance document on this site describes what's <em>in</em> the product; this one lists what's <em>not</em>, grouped by legal regime. We publish it so your DPO, district counsel, or procurement reviewer can decide quickly whether a gap is a deal-breaker or something your district can paper over with its own controls.</p>
+    <p><strong>Use it like this:</strong> read the section for the laws that apply to you, see which line items are listed as "not in scope" vs "deploying district must add," and weigh those against your own constraints.</p>
+    <p class="hint">Last reviewed against the codebase on 2026-05-30. The bullets describe the platform as it ships on <code>main</code>; nothing here is forward-looking. When a gap is closed, it gets removed from this list.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>USA — Federal</h2>
+
+    <h3>COPPA (Children's Online Privacy Protection Act)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No built-in parental consent collection flow.</strong> DrawSplat<sup class="tm">TM</sup> is designed to be deployed by schools, which typically rely on the COPPA school-authorization carve-out (school acts as the parent's agent for consent for instructional purposes). If you operate DrawSplat<sup class="tm">TM</sup> outside of school authorization — for instance, a parent-facing direct-to-consumer product or a public after-school club where parents register children individually — you must collect verifiable parental consent yourself. The product does not ship a verifiable-consent flow (credit-card check, government-ID check, signed form upload, etc.).</li>
+      <li><strong>No automated COPPA notice generator.</strong> The <a href="privacy-builder.html">Privacy Notice Builder</a> can produce a customized notice, but you fill in the COPPA-specific fields by hand; we do not generate the FTC-style "Notice to Parents" form for you.</li>
+    </ul>
+
+    <h3>FERPA (Family Educational Rights and Privacy Act)</h3>
+    <ul class="admin-checklist">
+      <li><strong>The district is the educational agency under FERPA, not DrawSplat<sup class="tm">TM</sup>.</strong> Subject access requests (parents requesting their child's education records) must be handled by the district. The platform provides export endpoints (Teacher Admin → Compliance Console → Student Data Export) but does not include a parent-facing FERPA-request intake form. The <a href="../parents/index.html">Family Access Portal</a> scaffolds this; the district configures verification and SLA.</li>
+      <li><strong>No automated annual notification.</strong> 34 CFR § 99.7 requires the school to give annual notification of FERPA rights; the platform does not generate or distribute that notice.</li>
+      <li><strong>No directory-information opt-out flow at the platform level.</strong> If your district designates board labels or display names as directory information, the opt-out workflow lives in your SIS, not in DrawSplat<sup class="tm">TM</sup>.</li>
+    </ul>
+
+    <h3>CIPA (Children's Internet Protection Act)</h3>
+    <ul class="admin-checklist">
+      <li><strong>DrawSplat<sup class="tm">TM</sup> is not a network filter.</strong> CIPA requires the school to deploy a "technology protection measure" at the network level that blocks visual depictions of obscenity / child pornography / harmful-to-minors content. DrawSplat<sup class="tm">TM</sup> ships safety primitives (link allowlist, text keyword filter, image approval queue) that <em>support</em> CIPA but do not replace your district's network filter or its internet safety policy. See <a href="texas-compliance.html#cipa-support-statement">CIPA support statement</a>.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>USA — Texas</h2>
+
+    <h3>SCOPE Act (Texas Securing Children Online through Parental Empowerment Act)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No age-verification mechanism at the platform level beyond the optional Age Band Lock.</strong> SCOPE focuses on operators of digital services <em>directly used by minors</em>. In a school deployment the district handles age registration in its SIS; DrawSplat<sup class="tm">TM</sup> doesn't independently verify a user's age. If you deploy outside a school SIS context, you would need to add age verification yourself.</li>
+      <li><strong>No advertising / monetization controls — because we don't advertise.</strong> SCOPE restricts targeted advertising to minors. DrawSplat<sup class="tm">TM</sup> runs zero advertising and no third-party trackers, so the rules are moot in this product. There is no "ad preference" UI because there is nothing to set preferences against.</li>
+      <li><strong>Harmful-content strategy is district-side.</strong> SCOPE requires operators to publish a strategy for preventing minors from accessing harmful content. Text and link safety filters ship in the Compliance Console; the broader strategy document (which the law requires you publish on your service) is something the district adapts from the model language in <a href="texas-compliance.html">Texas Compliance</a> and <a href="district-addendum.html">District Privacy Addendum</a>.</li>
+    </ul>
+
+    <h3>TEC 32.151–32.156 (Student Data Privacy Agreements)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No pre-signed master TEC DPA.</strong> The TEC chapter requires the district and the operator to have a data sharing agreement in place. DrawSplat<sup class="tm">TM</sup> is open-source software you deploy under your own control — there is no "operator" entity to countersign a DPA with. If your district's procurement office insists on a signed DPA, point them at the <a href="district-addendum.html">District Privacy Addendum</a> as the model contract language; your superintendent or board can adopt it as policy without a counterparty.</li>
+    </ul>
+
+    <h3>State NDPA (Network of Data Privacy Agreements) interoperability</h3>
+    <ul class="admin-checklist">
+      <li><strong>No SDPC signatory page.</strong> DrawSplat<sup class="tm">TM</sup> is not registered as an NDPA vendor on the Student Data Privacy Consortium signatory list because there is no commercial entity to sign. The <a href="ndpa-packet.html">NDPA / DPA Review Packet</a> mirrors the data points an NDPA reviewer needs, but it's not the same as being on the consortium's signatory list.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>European Union / United Kingdom — GDPR &amp; UK GDPR</h2>
+
+    <h3>Controller / processor contracting</h3>
+    <ul class="admin-checklist">
+      <li><strong>No DrawSplat-to-district Data Processing Agreement (Art. 28) template.</strong> Because DrawSplat<sup class="tm">TM</sup> is open-source software you deploy under your own control, there is no operator entity to sign a processor agreement with. Article 28 obligations sit between you and your hosting provider (Google Workspace, your MySQL host) — those DPAs are unaffected by introducing DrawSplat<sup class="tm">TM</sup>.</li>
+      <li><strong>No turnkey Standard Contractual Clauses (SCCs).</strong> SCCs apply between controller and processor for international transfers. Same reason as above — they're not contracted between you and DrawSplat<sup class="tm">TM</sup>, they're between you and whoever hosts the backend.</li>
+    </ul>
+
+    <h3>Data Protection Impact Assessment (Art. 35)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No automated DPIA template.</strong> Classroom whiteboards processing children's content usually trigger DPIA threshold under Working Party 29 guidance. The <a href="gdpr-compliance.html">GDPR Compliance Summary</a>, <a href="ndpa-packet.html">NDPA Packet</a>, and <a href="district-addendum.html">District Privacy Addendum</a> together cover the substantive content a DPIA needs, but your DPO must repackage that into your jurisdiction's DPIA template (CNIL in France, ICO in the UK, etc.). We do not generate the DPIA file for you.</li>
+    </ul>
+
+    <h3>Consent and cookie/storage notice</h3>
+    <ul class="admin-checklist">
+      <li><strong>Consent banner is acknowledge-only, not granular.</strong> The localStorage notice has one "Got it" button. We do not offer granular toggles for "necessary / preferences / analytics / advertising" because the platform stores nothing in those last two categories — there is no analytics and no advertising. Strict EU jurisdictions sometimes expect granular controls even when categories are empty; if your DPO insists, replace <code>assets/js/consent-banner.js</code> with a Cookiebot / OneTrust / Klaro integration in your self-host fork.</li>
+      <li><strong>No "withdraw consent" workflow.</strong> Because the only "consent" we collect is acknowledgement of a localStorage notice, there's no withdrawal flow — clearing your browser's storage clears it. For school-mediated processing the relevant legal basis is typically Art. 6(1)(e) public task, not consent, so withdrawal isn't applicable.</li>
+    </ul>
+
+    <h3>Children's data (Art. 8)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No direct-to-consumer parental consent flow.</strong> Same reason as the COPPA gap above. The school-mediated deployment model is the intended use; direct-to-parent registration is not.</li>
+    </ul>
+
+    <h3>Data subject rights (Arts. 15–22) — subject-initiated path</h3>
+    <ul class="admin-checklist">
+      <li><strong>Identity verification for subject requests is district-configured.</strong> The Family Access Portal accepts requests but does not perform identity verification itself (no government-ID upload, no notarized form, no SAML login). Your district decides how to verify a requestor's identity and configures the intake accordingly.</li>
+      <li><strong>No 30-day SLA timer.</strong> GDPR Art. 12(3) requires response "without undue delay and at the latest within one month." The platform does not track request age or send reminder emails to administrators; that's on your case-management workflow.</li>
+    </ul>
+
+    <h3>Records of Processing Activities (Art. 30)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No RoPA template.</strong> The <a href="gdpr-compliance.html#11-records-of-processing-activities-ropa-art-30">GDPR Compliance Summary §11</a> lists the suggested fields you should record; we don't generate or maintain the RoPA file itself.</li>
+    </ul>
+
+    <h3>Breach notification (Arts. 33–34)</h3>
+    <ul class="admin-checklist">
+      <li><strong>No automated 72-hour breach notification.</strong> The platform does not detect breaches in your hosting environment (we have no telemetry to do so). Your incident response process runs through your hosting provider and supervisory authority. If you find a vulnerability in the open-source code, report it via the <a href="../pages/contact.html">contact form</a> and we'll patch and release.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Cross-cutting gaps that apply everywhere</h2>
+
+    <ul class="admin-checklist">
+      <li><strong>No Data Protection Officer on file.</strong> DrawSplat<sup class="tm">TM</sup> is open-source software, not a corporate entity with a designated DPO. The named contact for security issues and questions is Miguel Guhlin via the <a href="../pages/contact.html">contact form</a>; that's not a substitute for your district's DPO.</li>
+      <li><strong>No SOC 2 / ISO 27001 attestation.</strong> Same reason — there's no SaaS operator to be audited. If your procurement office requires those, point them at your hosting provider's attestation (Google Workspace and major MySQL hosts have them).</li>
+      <li><strong>No formal subprocessor list.</strong> The platform itself uses no subprocessors (no SaaS dependencies, no analytics, no advertising). When you self-host the MySQL backend, YOUR hosting provider is a subprocessor between you and your students — that's covered in your contract with them, not in ours.</li>
+      <li><strong>No bug bounty program.</strong> We do credit responsible disclosure publicly. There is no monetary reward.</li>
+      <li><strong>Penetration test cadence is informal.</strong> Code is open-source and your security team can audit it directly; we do not publish scheduled third-party pen-test reports.</li>
+      <li><strong>Accessibility audit is informal.</strong> The <a href="accessibility.html">Accessibility Statement</a> describes the standards we target and the known issues; there is no third-party WCAG audit certificate.</li>
+      <li><strong>No vendor questionnaire pre-filled.</strong> Common district vendor questionnaires (HECVAT, SIG, CAIQ) are not pre-completed. Most of the data points needed are in the existing policy documents; you map them to your questionnaire format manually.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Things we deliberately do not do</h2>
+    <p>Some "gaps" are intentional design choices, not roadmap items:</p>
+    <ul class="admin-checklist">
+      <li><strong>No telemetry.</strong> Nothing about user behavior is reported back to anyone. This means we cannot proactively detect misuse, generate usage analytics for your district, or surface aggregate adoption metrics. If your district wants those, you instrument them at your hosting layer.</li>
+      <li><strong>No third-party JavaScript.</strong> All runtime dependencies are local files. This means we cannot use Google Analytics, Mixpanel, Sentry, etc. for error tracking — your hosting provider's logs are the source of truth.</li>
+      <li><strong>No SaaS operator to contract with.</strong> The whole project is open-source software you deploy. This means there is no entity to sign a DPA / SCC / NDPA / TEC DPA with. The model contract language documents (District Addendum, NDPA Packet) exist so your district can adopt the same language as internal policy.</li>
+      <li><strong>No mandatory cloud features.</strong> Browser-only mode works fully. Cloud sync, Google Drive save, MySQL backend, image approval, parent portal — all opt-in. This lets a school start without ANY data processing concerns and scale up only as policy allows.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>How this list is maintained</h2>
+    <p>Every commit that closes a gap should remove the relevant bullet here. Every commit that introduces a new compliance obligation should add a bullet. If you spot something we've missed — a regulation you need that isn't named — please file it via the <a href="../pages/contact.html">contact form</a> and we'll either close the gap or document it here.</p>
+    <p>Cross-links:</p>
+    <ul class="admin-checklist">
+      <li><a href="gdpr-compliance.html">GDPR Compliance Summary</a></li>
+      <li><a href="texas-compliance.html">Texas Compliance</a></li>
+      <li><a href="terms-privacy.html">Terms &amp; Privacy</a></li>
+      <li><a href="district-addendum.html">District Privacy Addendum</a></li>
+      <li><a href="ndpa-packet.html">NDPA / DPA Review Packet</a></li>
+      <li><a href="combined-policy.html">All policy documents in one page</a></li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <a href="../index.html">Home</a>
+  <a href="../pages/features.html">Features</a>
+  <a href="../pages/background-templates.html">Background Templates</a>
+  <a href="../pages/pricing.html">Pricing</a>
+  <a href="terms-privacy.html">Terms &amp; Privacy</a>
+  <a href="compliance-gaps.html">Compliance Gap List</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script></body>
+</html>
