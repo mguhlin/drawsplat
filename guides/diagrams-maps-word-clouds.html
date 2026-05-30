@@ -145,6 +145,18 @@
       <li>Use word clouds as discussion starters, not final evidence. Ask students to explain why important words appear larger or smaller.</li>
     </ul>
 
+    <h2>Advanced Concept Map features</h2>
+    <ul>
+      <li><strong>Three-tier visual hierarchy.</strong> Tag each node with <code>level: 1</code> (main idea), <code>2</code> (directly connected), or <code>3</code> (supporting detail). Box dimensions and font sizes scale automatically so the visual weight matches the idea's importance.</li>
+      <li><strong>Section filter.</strong> Tag nodes with an optional <code>section</code> string (e.g., "Inputs", "Process", "Outputs"). A pill row appears above the canvas; click a section to focus on it (others fade). Lets a large map double as multiple smaller views.</li>
+      <li><strong>Outline view.</strong> Toggle the panel under the canvas to see the map rendered as a traditional academic outline (Roman → Letter → Number → letter) with an always-emitted "Next Steps and Action Items" section. Copy as Markdown or hand off to Markdown Studio with one click.</li>
+      <li><strong>Markdown Studio handoff.</strong> Click <strong>Open in Markdown Studio →</strong> in the outline panel to send the outline to Markdown Studio for further editing. The reverse direction also works: type headings in Markdown Studio and click <strong>Open in Concept Map Studio →</strong> to convert <code># / ## / ### / -</code> structure into a level-1/2/3 map with radial auto-layout.</li>
+      <li><strong>Hold Space + drag</strong> to pan the canvas without flipping the Pan toggle (matches Figma / Photoshop / Lucidchart).</li>
+      <li><strong>Copy Embed Code</strong> generates an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites or WordPress to embed a live, pan/zoom/clickable version of the map (read-only). <strong>Copy Embed Link</strong> gives just the URL.</li>
+      <li><strong>Format spec for AI chatbots.</strong> Click <strong>format spec (v2)</strong> in the sidebar hint to download <code>drawsplat-concept-map-schema-v2.json</code>. Hand it to ChatGPT / Claude / Gemini with your prompt and the resulting JSON loads directly via <strong>Load .json</strong>. The loader also auto-migrates older shapes (v1 nodes-as-object format, missing fields, etc.) so legacy saves still open.</li>
+      <li><strong>Overlap resolver on import.</strong> Loading a JSON whose author placed nodes at overlapping coordinates triggers a five-phase separator (within-group / loose-vs-loose / rigid group-vs-group / loose-vs-foreign-group / cleanup) so the map opens readable, not piled up.</li>
+    </ul>
+
     <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
   </article>
 </main>
