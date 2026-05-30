@@ -277,6 +277,28 @@
       line-height: 1.45;
     }
     .footer-note a { color: var(--navy); }
+    .footer-note code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; color: var(--gray-90); }
+    /* Color guide — labelled swatches that reflect the active palette so
+       the user knows exactly which hex codes their Mermaid directive uses.
+       Click the hex code to copy it to the clipboard. */
+    .palette-swatches { display: grid; gap: 6px; margin-top: 10px; }
+    .palette-swatches[hidden] { display: none; }
+    .palette-swatch {
+      display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center;
+      padding: 6px 8px; border: 1px solid var(--gray-30); border-radius: 6px;
+      background: #fff; font-size: .82rem;
+    }
+    .palette-swatch button.swatch-hex {
+      appearance: none; border: 1px solid transparent; background: transparent;
+      cursor: pointer; padding: 4px 8px; border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; color: var(--navy);
+      font-size: .8rem;
+    }
+    .palette-swatch button.swatch-hex:hover { background: #f3f4f6; border-color: var(--gray-30); }
+    .palette-swatch .swatch-chip {
+      width: 36px; height: 28px; border-radius: 5px; border: 1px solid var(--gray-30);
+    }
+    .palette-swatch .swatch-label { color: var(--gray-90); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -307,6 +329,10 @@
           <button type="button" data-mtpl="timeline" data-i18n="tpl.timeline">Timeline</button>
           <button type="button" data-mtpl="class" data-i18n="tpl.class">Class</button>
           <button type="button" data-mtpl="state" data-i18n="tpl.state">State</button>
+          <button type="button" data-mtpl="quadrant" data-i18n="tpl.quadrant">Quadrant</button>
+          <button type="button" data-mtpl="xychart" data-i18n="tpl.xychart">XY Chart</button>
+          <button type="button" data-mtpl="kanban" data-i18n="tpl.kanban">Kanban</button>
+          <button type="button" data-mtpl="venn" data-i18n="tpl.venn">Venn</button>
         </div>
 
         <h3 data-i18n="templates.h3lang">Template language</h3>
@@ -321,6 +347,22 @@
             <option value="uh" data-i18n="langOpt.uh">Urdu / Hindi</option>
           </select>
         </div>
+
+        <h3 data-i18n="palette.h3">Color palette</h3>
+        <div class="field">
+          <label for="paletteSelect" data-i18n="palette.label">Palette</label>
+          <select id="paletteSelect">
+            <option value="drawsplat" selected data-i18n="palette.drawsplat">DrawSplat Purple (high contrast)</option>
+            <option value="navy" data-i18n="palette.navy">Navy Professional</option>
+            <option value="forest" data-i18n="palette.forest">Forest Green</option>
+            <option value="sunset" data-i18n="palette.sunset">Sunset Orange</option>
+            <option value="mono" data-i18n="palette.mono">Mono Print (B&amp;W, projector-safe)</option>
+            <option value="dark" data-i18n="palette.dark">Dark Mode</option>
+            <option value="default" data-i18n="palette.default">No palette (Mermaid default)</option>
+          </select>
+        </div>
+        <div id="paletteSwatches" class="palette-swatches" aria-live="polite"></div>
+        <p class="footer-note" data-i18n="palette.hint">Selecting a palette injects a Mermaid <code>%%{init}%%</code> directive at the top of the editor with the hex codes below. Copy any swatch to use it elsewhere.</p>
 
         <h3 data-i18n="about.h3">About</h3>
         <p class="footer-note" data-i18n-html="about.html">Diagrams are rendered locally in your browser. Nothing is uploaded. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a diagram onto a board.</p>
@@ -357,7 +399,7 @@
   const langSel = $('langSelect');
 
   const MERMAID_TEMPLATES = {
-    en:{flowchart:'graph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Continue]\n  B -->|No| D[Stop]',pie:'pie title Favorite Subjects\n  "Math" : 30\n  "Science" : 25\n  "English" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: Has a question\n  Teacher->>Student: Provides an answer\n  Student->>Notebook: Writes down notes',mindmap:'mindmap\n  root((Topic))\n    Idea 1\n      Detail A\n      Detail B\n    Idea 2\n      Detail C\n    Idea 3\n      Detail D\n      Detail E',gantt:'gantt\n  title Project Timeline\n  dateFormat YYYY-MM-DD\n  section Planning\n    Outline   :a1, 2026-01-01, 7d\n    Research  :a2, after a1, 14d\n  section Build\n    Draft     :b1, after a2, 21d\n    Review    :b2, after b1, 7d',timeline:'timeline\n  title School Year\n  August    : Welcome week\n  October   : Midterms\n  December  : Holiday break\n  March     : Spring break\n  May       : Final exams',class:'classDiagram\n  class Animal {\n    +String name\n    +int age\n    +makeSound()\n  }\n  class Dog {\n    +String breed\n    +bark()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : start\n  Working --> Review : submit\n  Review --> Working : revise\n  Review --> Done : approve\n  Done --> [*]'},
+    en:{flowchart:'graph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Continue]\n  B -->|No| D[Stop]',pie:'pie title Favorite Subjects\n  "Math" : 30\n  "Science" : 25\n  "English" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: Has a question\n  Teacher->>Student: Provides an answer\n  Student->>Notebook: Writes down notes',mindmap:'mindmap\n  root((Topic))\n    Idea 1\n      Detail A\n      Detail B\n    Idea 2\n      Detail C\n    Idea 3\n      Detail D\n      Detail E',gantt:'gantt\n  title Project Timeline\n  dateFormat YYYY-MM-DD\n  section Planning\n    Outline   :a1, 2026-01-01, 7d\n    Research  :a2, after a1, 14d\n  section Build\n    Draft     :b1, after a2, 21d\n    Review    :b2, after b1, 7d',timeline:'timeline\n  title School Year\n  August    : Welcome week\n  October   : Midterms\n  December  : Holiday break\n  March     : Spring break\n  May       : Final exams',class:'classDiagram\n  class Animal {\n    +String name\n    +int age\n    +makeSound()\n  }\n  class Dog {\n    +String breed\n    +bark()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : start\n  Working --> Review : submit\n  Review --> Working : revise\n  Review --> Done : approve\n  Done --> [*]',quadrant:'quadrantChart\n  title Project priorities\n  x-axis Low Effort --> High Effort\n  y-axis Low Value --> High Value\n  quadrant-1 Quick wins\n  quadrant-2 Major projects\n  quadrant-3 Fill-ins\n  quadrant-4 Time sinks\n  Lesson plan: [0.25, 0.75]\n  Grading rubric: [0.40, 0.65]\n  Wall display: [0.55, 0.30]\n  Curriculum redesign: [0.85, 0.90]\n  Newsletter: [0.30, 0.20]',xychart:'xychart-beta\n  title "Monthly Reading Hours"\n  x-axis [Sep, Oct, Nov, Dec, Jan, Feb, Mar, Apr, May]\n  y-axis "Hours" 0 --> 30\n  bar [10, 14, 18, 12, 22, 26, 28, 20, 16]\n  line [10, 14, 18, 12, 22, 26, 28, 20, 16]',kanban:'kanban\n  Backlog\n    t1[Brainstorm topics]\n    t2[Find sources]\n  In_Progress\n    t3[Draft outline]\n    t4[Write rough draft]\n  Review\n    t5[Peer feedback]\n  Done\n    t6[Final edits]\n    t7[Submit assignment]',venn:'venn-beta\n    "Math": A\n    "Science": B\n    "Engineering": C\n    "Applied math": A, B\n    "Material science": B, C\n    "Computational engineering": A, C\n    "STEM": A, B, C'},
     es:{flowchart:'graph TD\n  A[Inicio] --> B{Decisión}\n  B -->|Sí| C[Continuar]\n  B -->|No| D[Detener]',pie:'pie title Materias favoritas\n  "Matemáticas" : 30\n  "Ciencias" : 25\n  "Español" : 20\n  "Arte" : 15\n  "Otra" : 10',sequence:'sequenceDiagram\n  Estudiante->>Docente: Tiene una pregunta\n  Docente->>Estudiante: Da una respuesta\n  Estudiante->>Cuaderno: Escribe notas',mindmap:'mindmap\n  root((Tema))\n    Idea 1\n      Detalle A\n      Detalle B\n    Idea 2\n      Detalle C\n    Idea 3\n      Detalle D\n      Detalle E',gantt:'gantt\n  title Cronograma del proyecto\n  dateFormat YYYY-MM-DD\n  section Planificación\n    Esquema   :a1, 2026-01-01, 7d\n    Investigación  :a2, after a1, 14d\n  section Construcción\n    Borrador     :b1, after a2, 21d\n    Revisión    :b2, after b1, 7d',timeline:'timeline\n  title Año escolar\n  Agosto    : Semana de bienvenida\n  Octubre   : Exámenes parciales\n  Diciembre  : Vacaciones\n  Marzo     : Descanso de primavera\n  Mayo       : Exámenes finales',class:'classDiagram\n  class Animal {\n    +String nombre\n    +int edad\n    +hacerSonido()\n  }\n  class Perro {\n    +String raza\n    +ladrar()\n  }\n  Animal <|-- Perro',state:'stateDiagram-v2\n  [*] --> Inactivo\n  Inactivo --> Trabajando : iniciar\n  Trabajando --> Revisión : enviar\n  Revisión --> Trabajando : revisar\n  Revisión --> Terminado : aprobar\n  Terminado --> [*]'},
     vi:{flowchart:'graph TD\n  A[Bắt đầu] --> B{Quyết định}\n  B -->|Có| C[Tiếp tục]\n  B -->|Không| D[Dừng]',pie:'pie title Môn học yêu thích\n  "Toán" : 30\n  "Khoa học" : 25\n  "Tiếng Việt" : 20\n  "Nghệ thuật" : 15\n  "Khác" : 10',sequence:'sequenceDiagram\n  Học_sinh->>Giáo_viên: Có câu hỏi\n  Giáo_viên->>Học_sinh: Trả lời\n  Học_sinh->>Vở: Ghi chú',mindmap:'mindmap\n  root((Chủ đề))\n    Ý tưởng 1\n      Chi tiết A\n      Chi tiết B\n    Ý tưởng 2\n      Chi tiết C\n    Ý tưởng 3\n      Chi tiết D\n      Chi tiết E',gantt:'gantt\n  title Tiến độ dự án\n  dateFormat YYYY-MM-DD\n  section Lập kế hoạch\n    Dàn ý   :a1, 2026-01-01, 7d\n    Nghiên cứu  :a2, after a1, 14d\n  section Thực hiện\n    Bản nháp     :b1, after a2, 21d\n    Xem lại    :b2, after b1, 7d',timeline:'timeline\n  title Năm học\n  Tháng 8    : Tuần chào mừng\n  Tháng 10   : Kiểm tra giữa kỳ\n  Tháng 12  : Nghỉ lễ\n  Tháng 3     : Nghỉ xuân\n  Tháng 5       : Kiểm tra cuối kỳ',class:'classDiagram\n  class Động_vật {\n    +String tên\n    +int tuổi\n    +phátÂm()\n  }\n  class Chó {\n    +String giống\n    +sủa()\n  }\n  Động_vật <|-- Chó',state:'stateDiagram-v2\n  [*] --> Chờ\n  Chờ --> Làm_việc : bắt đầu\n  Làm_việc --> Xem_lại : nộp\n  Xem_lại --> Làm_việc : sửa\n  Xem_lại --> Hoàn_thành : duyệt\n  Hoàn_thành --> [*]'},
     ar:{flowchart:'graph TD\n  A[البداية] --> B{قرار}\n  B -->|نعم| C[متابعة]\n  B -->|لا| D[توقف]',pie:'pie title المواد المفضلة\n  "رياضيات" : 30\n  "علوم" : 25\n  "لغة" : 20\n  "فن" : 15\n  "أخرى" : 10',sequence:'sequenceDiagram\n  طالب->>معلم: لديه سؤال\n  معلم->>طالب: يقدم إجابة\n  طالب->>دفتر: يكتب ملاحظات',mindmap:'mindmap\n  root((موضوع))\n    فكرة 1\n      تفصيل A\n      تفصيل B\n    فكرة 2\n      تفصيل C\n    فكرة 3\n      تفصيل D\n      تفصيل E',gantt:'gantt\n  title الجدول الزمني للمشروع\n  dateFormat YYYY-MM-DD\n  section تخطيط\n    مخطط   :a1, 2026-01-01, 7d\n    بحث  :a2, after a1, 14d\n  section بناء\n    مسودة     :b1, after a2, 21d\n    مراجعة    :b2, after b1, 7d',timeline:'timeline\n  title العام الدراسي\n  أغسطس    : أسبوع الترحيب\n  أكتوبر   : اختبارات منتصف الفصل\n  ديسمبر  : عطلة\n  مارس     : عطلة الربيع\n  مايو       : الاختبارات النهائية',class:'classDiagram\n  class حيوان {\n    +String اسم\n    +int عمر\n    +إصدار_صوت()\n  }\n  class كلب {\n    +String سلالة\n    +نباح()\n  }\n  حيوان <|-- كلب',state:'stateDiagram-v2\n  [*] --> خامل\n  خامل --> يعمل : ابدأ\n  يعمل --> مراجعة : إرسال\n  مراجعة --> يعمل : تعديل\n  مراجعة --> منجز : اعتماد\n  منجز --> [*]'},
@@ -619,13 +661,206 @@
   let lastLoadedKey = 'flowchart';
   let lastLoadedSource = '';
 
+  /* ---------- Color palettes ----------
+     Each palette → a set of Mermaid themeVariables that we inject into the
+     editor source as a %%{init:...}%% directive at the top. The directive
+     is a real line of Mermaid syntax so users can copy / share / edit the
+     hex codes themselves. */
+  const PALETTES = {
+    drawsplat: {
+      name: 'DrawSplat Purple',
+      vars: {
+        primaryColor: '#7c3aed',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#5b21b6',
+        secondaryColor: '#ede9fe',
+        secondaryTextColor: '#4c1d95',
+        secondaryBorderColor: '#a78bfa',
+        tertiaryColor: '#fef3c7',
+        tertiaryTextColor: '#713f12',
+        tertiaryBorderColor: '#eab308',
+        lineColor: '#475569',
+        background: '#ffffff',
+        mainBkg: '#7c3aed',
+        nodeBorder: '#5b21b6',
+        clusterBkg: '#f5f3ff',
+        clusterBorder: '#a78bfa',
+        edgeLabelBackground: '#ffffff'
+      }
+    },
+    navy: {
+      name: 'Navy Professional',
+      vars: {
+        primaryColor: '#1e3a8a',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#1e40af',
+        secondaryColor: '#dbeafe',
+        secondaryTextColor: '#1e3a8a',
+        secondaryBorderColor: '#60a5fa',
+        tertiaryColor: '#fef3c7',
+        tertiaryTextColor: '#713f12',
+        tertiaryBorderColor: '#eab308',
+        lineColor: '#334155',
+        background: '#ffffff',
+        mainBkg: '#1e3a8a',
+        nodeBorder: '#1e40af',
+        clusterBkg: '#eff6ff',
+        clusterBorder: '#93c5fd',
+        edgeLabelBackground: '#ffffff'
+      }
+    },
+    forest: {
+      name: 'Forest Green',
+      vars: {
+        primaryColor: '#166534',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#15803d',
+        secondaryColor: '#d1fae5',
+        secondaryTextColor: '#14532d',
+        secondaryBorderColor: '#34d399',
+        tertiaryColor: '#fef3c7',
+        tertiaryTextColor: '#713f12',
+        tertiaryBorderColor: '#eab308',
+        lineColor: '#374151',
+        background: '#ffffff',
+        mainBkg: '#166534',
+        nodeBorder: '#15803d',
+        clusterBkg: '#f0fdf4',
+        clusterBorder: '#86efac',
+        edgeLabelBackground: '#ffffff'
+      }
+    },
+    sunset: {
+      name: 'Sunset Orange',
+      vars: {
+        primaryColor: '#c2410c',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#9a3412',
+        secondaryColor: '#fed7aa',
+        secondaryTextColor: '#7c2d12',
+        secondaryBorderColor: '#fb923c',
+        tertiaryColor: '#fef3c7',
+        tertiaryTextColor: '#713f12',
+        tertiaryBorderColor: '#eab308',
+        lineColor: '#44403c',
+        background: '#ffffff',
+        mainBkg: '#c2410c',
+        nodeBorder: '#9a3412',
+        clusterBkg: '#fff7ed',
+        clusterBorder: '#fdba74',
+        edgeLabelBackground: '#ffffff'
+      }
+    },
+    mono: {
+      name: 'Mono Print (B&W)',
+      vars: {
+        primaryColor: '#ffffff',
+        primaryTextColor: '#111827',
+        primaryBorderColor: '#111827',
+        secondaryColor: '#f3f4f6',
+        secondaryTextColor: '#111827',
+        secondaryBorderColor: '#111827',
+        tertiaryColor: '#e5e7eb',
+        tertiaryTextColor: '#111827',
+        tertiaryBorderColor: '#111827',
+        lineColor: '#111827',
+        background: '#ffffff',
+        mainBkg: '#ffffff',
+        nodeBorder: '#111827',
+        clusterBkg: '#fafafa',
+        clusterBorder: '#9ca3af',
+        edgeLabelBackground: '#ffffff'
+      }
+    },
+    dark: {
+      name: 'Dark Mode',
+      vars: {
+        primaryColor: '#1e293b',
+        primaryTextColor: '#f1f5f9',
+        primaryBorderColor: '#475569',
+        secondaryColor: '#334155',
+        secondaryTextColor: '#f1f5f9',
+        secondaryBorderColor: '#64748b',
+        tertiaryColor: '#0f172a',
+        tertiaryTextColor: '#f1f5f9',
+        tertiaryBorderColor: '#475569',
+        lineColor: '#94a3b8',
+        background: '#0f172a',
+        mainBkg: '#1e293b',
+        nodeBorder: '#475569',
+        clusterBkg: '#0f172a',
+        clusterBorder: '#475569',
+        edgeLabelBackground: '#1e293b'
+      }
+    },
+    default: {
+      name: 'Mermaid default',
+      vars: null  // no directive injected
+    }
+  };
+  // Regex to find an existing %%{init:...}%% directive line at the start of
+  // the source (Mermaid allows it anywhere but we always write it on line 1).
+  const INIT_DIRECTIVE_RE = /^\s*%%\{init:\s*\{[^}]*\}\s*\}%%[ \t]*\r?\n?/;
+
+  function paletteDirective(key) {
+    const p = PALETTES[key];
+    if (!p || !p.vars) return '';
+    return "%%{init: {\"theme\": \"base\", \"themeVariables\": " + JSON.stringify(p.vars) + "}}%%\n";
+  }
+  function applyPaletteToSource(src, key) {
+    const stripped = String(src || '').replace(INIT_DIRECTIVE_RE, '');
+    return paletteDirective(key) + stripped;
+  }
+  function currentPalette() { return $('paletteSelect')?.value || 'drawsplat'; }
+
+  function renderSwatches(key) {
+    const host = $('paletteSwatches'); if (!host) return;
+    const p = PALETTES[key];
+    if (!p || !p.vars) { host.hidden = true; host.innerHTML = ''; return; }
+    host.hidden = false;
+    const rows = [
+      ['Primary fill',   p.vars.primaryColor,        p.vars.primaryTextColor],
+      ['Secondary fill', p.vars.secondaryColor,      p.vars.secondaryTextColor],
+      ['Tertiary fill',  p.vars.tertiaryColor,       p.vars.tertiaryTextColor],
+      ['Lines',          p.vars.lineColor,           '#ffffff'],
+      ['Background',     p.vars.background,          p.vars.primaryTextColor]
+    ];
+    host.innerHTML = rows.map(([label, fill, txt]) =>
+      `<div class="palette-swatch">
+        <span class="swatch-chip" style="background:${fill};color:${txt}"></span>
+        <span class="swatch-label">${label}</span>
+        <button type="button" class="swatch-hex" data-copy="${fill}" title="Click to copy">${fill}</button>
+      </div>`
+    ).join('');
+  }
+
   function loadTemplate(key) {
     const text = tpl(key);
     if (!text) return;
-    sourceEl.value = text;
+    const withPalette = applyPaletteToSource(text, currentPalette());
+    sourceEl.value = withPalette;
     lastLoadedKey = key;
-    lastLoadedSource = text;
+    lastLoadedSource = withPalette;
   }
+
+  // Palette controls: dropdown change rewrites the init directive on the
+  // current source; clicking any hex swatch copies the color to clipboard.
+  $('paletteSelect')?.addEventListener('change', () => {
+    const key = currentPalette();
+    sourceEl.value = applyPaletteToSource(sourceEl.value, key);
+    renderSwatches(key);
+    renderPreview();
+    setStatus(t('status.paletteApplied'), 'success');
+  });
+  $('paletteSwatches')?.addEventListener('click', e => {
+    const btn = e.target.closest('.swatch-hex'); if (!btn) return;
+    const hex = btn.dataset.copy || btn.textContent.trim();
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(hex).then(
+      () => setStatus(t('status.hexCopied', { hex }), 'success'),
+      () => setStatus(hex, 'info')
+    );
+  });
+  renderSwatches(currentPalette());
 
   // Load default template on first run.
   loadTemplate('flowchart');
