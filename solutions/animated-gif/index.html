@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="doc.title">Animated GIF Maker — DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <meta name="description" content="Build an animated GIF from PNG, JPG, WebP, or GIF frames. Reorder, set per-frame delay, choose loop count, preview, and download. Runs entirely in the browser.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M6 8h4l3 6 3-6h4v16h-4v-9l-2 4h-2l-2-4v9H6z'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --navy: #7c3aed;
+      --gold: #a855f7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #404041;
+      --border: #ddd6fe;
+      --radius: 8px;
+      --shadow: 0 16px 34px rgba(64, 64, 65, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--text); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 28%, var(--gold) 28% 46%, var(--orange) 46% 58%, var(--red) 58% 70%, var(--blue) 70% 84%, var(--green) 84% 94%, var(--yellow) 94% 100%); }
+    .page { width: min(1280px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 8px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(2rem, 5vw, 3.6rem); line-height: .95; }
+    .subtitle { margin: 0; max-width: 780px; color: var(--gray-90); font-size: 1rem; line-height: 1.45; }
+    .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .secondary-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .app-grid { display: grid; grid-template-columns: minmax(320px, 380px) 1fr; gap: 18px; align-items: start; padding-top: 22px; }
+    @media (max-width: 940px) { .app-grid { grid-template-columns: 1fr; } }
+    .panel, .stage { border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .panel { padding: 18px; }
+    .panel h2 { margin: 0 0 12px; color: var(--black); font-size: 1.15rem; }
+    .panel h3 { margin: 18px 0 8px; color: var(--gray-90); font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; }
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+    input[type="number"], input[type="text"], select { width: 100%; min-height: 42px; padding: 9px 10px; color: var(--black); background: var(--white); border: 2px solid var(--gray-30); border-radius: var(--radius); }
+    .stage { padding: 18px; min-height: 600px; }
+    .stage-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .stage-head h2 { margin: 0; color: var(--black); font-size: 1.15rem; }
+    .preview-wrap { min-height: 360px; padding: 14px; border: 2px dashed var(--gray-30); border-radius: var(--radius); background: var(--white); display: grid; place-items: center; }
+    .preview-wrap img { max-width: 100%; max-height: 520px; }
+    .preview-wrap .placeholder { color: var(--gray-50); font-weight: 700; text-align: center; }
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .button { min-height: 44px; padding: 9px 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; }
+    .button.primary { color: var(--white); background: var(--navy); }
+    .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
+    .button:disabled { opacity: .5; cursor: not-allowed; }
+    .status { margin-top: 12px; padding: 10px 12px; border-radius: 6px; font-weight: 800; min-height: 1.2em; }
+    .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
+    .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
+    .status:empty { display: none; }
+    .frame-list { display: grid; gap: 8px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+    .frame-row { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; padding: 6px; border: 1.5px solid var(--gray-30); border-radius: var(--radius); background: var(--gray-10); }
+    .frame-row .thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 4px; background: #fff; border: 1px solid var(--gray-30); }
+    .frame-row .meta { font-size: .78rem; color: var(--gray-90); line-height: 1.3; word-break: break-word; }
+    .frame-row .meta strong { color: var(--navy); }
+    .frame-row .row-actions { display: flex; gap: 4px; }
+    .frame-row .row-actions button { min-height: 32px; min-width: 32px; padding: 4px 6px; border: 1.5px solid var(--gray-30); border-radius: 4px; background: var(--white); color: var(--gray-90); font-weight: 800; font-size: .85rem; }
+    .frame-row .row-actions button:hover { border-color: var(--navy); color: var(--navy); }
+    .frame-row .row-actions button.danger { color: var(--red); }
+    .empty-hint { padding: 16px; text-align: center; color: var(--gray-50); border: 2px dashed var(--gray-30); border-radius: var(--radius); }
+    .file-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .file-row .button { min-height: 42px; }
+    .file-row input[type="file"] { display: none; }
+    .footer-note { margin-top: 18px; color: var(--gray-50); font-size: .85rem; line-height: 1.45; }
+    .footer-note a { color: var(--navy); }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Animated GIF Maker</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Add image frames, set per-frame delay and loop count, preview the animation, and download a ready-to-share GIF. Everything runs in your browser — nothing is uploaded.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <aside class="panel" data-i18n-aria-label="panel.frames.aria" aria-label="Frames and settings">
+        <h2 data-i18n="frames.h2">Frames</h2>
+        <div class="file-row">
+          <label class="button primary" for="frameInput" data-i18n="button.addFrames">Add Frames</label>
+          <input id="frameInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+          <button class="button" id="clearFramesBtn" type="button" data-i18n="button.clearFrames">Clear All</button>
+        </div>
+        <p class="footer-note" data-i18n="frames.hint">Tip: drag-add multiple images at once. The first frame's size sets the GIF dimensions; other frames are scaled to match.</p>
+
+        <div id="frameList" class="frame-list" aria-live="polite">
+          <p class="empty-hint" data-i18n="frames.empty">No frames yet. Click <strong>Add Frames</strong> to pick images.</p>
+        </div>
+
+        <h3 data-i18n="settings.h3">Animation Settings</h3>
+        <div class="field">
+          <label for="delayInput" data-i18n="settings.delay">Frame delay (milliseconds)</label>
+          <input id="delayInput" type="number" min="20" max="10000" step="10" value="450">
+        </div>
+        <div class="field">
+          <label for="loopInput" data-i18n="settings.loop">Loop count (0 = forever)</label>
+          <input id="loopInput" type="number" min="0" max="65535" step="1" value="0">
+        </div>
+        <div class="field">
+          <label for="maxWidthInput" data-i18n="settings.maxWidth">Max width in pixels (0 = original)</label>
+          <input id="maxWidthInput" type="number" min="0" max="4096" step="10" value="640">
+        </div>
+
+        <h3 data-i18n="about.h3">About</h3>
+        <p class="footer-note" data-i18n-html="about.html">Encoded locally with a small custom 256-color GIF writer. Pair with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the finished GIF onto a board.</p>
+      </aside>
+
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="GIF preview and download">
+        <div class="stage-head">
+          <h2 data-i18n="stage.h2">Preview &amp; Download</h2>
+        </div>
+        <div id="previewWrap" class="preview-wrap">
+          <p class="placeholder" data-i18n="preview.placeholder">Your generated GIF will appear here.</p>
+        </div>
+        <div class="actions">
+          <button class="button primary" id="generateBtn" type="button" data-i18n="button.generate">Generate GIF</button>
+          <button class="button" id="downloadBtn" type="button" disabled data-i18n="button.download">Download GIF</button>
+          <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
+        </div>
+        <div class="status" id="statusLine" role="status"></div>
+      </section>
+    </main>
+  </div>
+
+<script src="./locales.js"></script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const t=(key,vars)=>window.WidgetI18n?window.WidgetI18n.t(key,vars):key;
+
+  const state={
+    frames: [], // {id, name, w, h, image}
+    lastBlobUrl: null
+  };
+  let nextId=1;
+
+  function setStatus(msg, cls){
+    const el=$('statusLine'); el.textContent=msg||''; el.className='status '+(cls||'');
+  }
+
+  function renderList(){
+    const wrap=$('frameList');
+    if(!state.frames.length){
+      wrap.innerHTML='<p class="empty-hint">'+t('frames.empty')+'</p>';
+      return;
+    }
+    wrap.innerHTML='';
+    state.frames.forEach((f,idx)=>{
+      const row=document.createElement('div'); row.className='frame-row';
+      const img=document.createElement('img'); img.className='thumb'; img.src=f.image.src; img.alt='';
+      const meta=document.createElement('div'); meta.className='meta';
+      meta.innerHTML='<strong>'+(idx+1)+'.</strong> '+escapeHtml(f.name)+'<br><span style="color:#64748b">'+f.w+'×'+f.h+'</span>';
+      const acts=document.createElement('div'); acts.className='row-actions';
+      const up=mkBtn('↑', t('row.up'), ()=>move(idx,-1));
+      const down=mkBtn('↓', t('row.down'), ()=>move(idx,1));
+      const del=mkBtn('✕', t('row.remove'), ()=>remove(idx)); del.classList.add('danger');
+      acts.append(up,down,del);
+      row.append(img,meta,acts);
+      wrap.append(row);
+    });
+  }
+  function mkBtn(label,title,onClick){ const b=document.createElement('button'); b.type='button'; b.textContent=label; b.title=title; b.addEventListener('click',onClick); return b; }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function move(idx,dir){
+    const j=idx+dir; if(j<0||j>=state.frames.length) return;
+    const [item]=state.frames.splice(idx,1); state.frames.splice(j,0,item); renderList();
+  }
+  function remove(idx){ state.frames.splice(idx,1); renderList(); }
+
+  function loadFile(file){
+    return new Promise((res,rej)=>{
+      const fr=new FileReader();
+      fr.onload=()=>{
+        const img=new Image();
+        img.onload=()=>res({ id:nextId++, name:file.name, w:img.naturalWidth, h:img.naturalHeight, image:img });
+        img.onerror=()=>rej(new Error(file.name));
+        img.src=fr.result;
+      };
+      fr.onerror=()=>rej(new Error(file.name));
+      fr.readAsDataURL(file);
+    });
+  }
+
+  $('frameInput').addEventListener('change', async ev=>{
+    const files=Array.from(ev.target.files||[]); if(!files.length) return;
+    setStatus(t('status.loading',{n:files.length}),'info');
+    try{
+      for(const f of files){
+        const frame=await loadFile(f);
+        state.frames.push(frame);
+      }
+      renderList();
+      setStatus(t('status.loaded',{n:files.length}),'success');
+    }catch(err){
+      setStatus(t('status.loadFail',{name:err.message}),'danger');
+    }
+    ev.target.value='';
+  });
+
+  $('clearFramesBtn').addEventListener('click', ()=>{
+    state.frames=[]; renderList(); setStatus(t('status.cleared'),'info');
+  });
+  $('resetBtn').addEventListener('click', ()=>{
+    state.frames=[]; renderList();
+    $('previewWrap').innerHTML='<p class="placeholder">'+t('preview.placeholder')+'</p>';
+    $('downloadBtn').disabled=true;
+    if(state.lastBlobUrl){ URL.revokeObjectURL(state.lastBlobUrl); state.lastBlobUrl=null; }
+    setStatus('','');
+  });
+
+  // ----- Inline GIF encoder. Same algorithm as the whiteboard's encodeGif
+  // (assets/js/app.js). Kept inline so this widget runs without depending on
+  // the whiteboard bundle.
+  function gifPalette(){ const p=[]; for(let r=0;r<8;r++)for(let g=0;g<8;g++)for(let b=0;b<4;b++)p.push(Math.round(r*255/7),Math.round(g*255/7),Math.round(b*255/3)); return p; }
+  function canvasToGifIndices(c){
+    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data, out=new Uint8Array(c.width*c.height);
+    for(let i=0,j=0;i<d.length;i+=4,j++){
+      const a=d[i+3]; if(a<80){ out[j]=255; continue; }
+      const r=d[i]>>5, g=d[i+1]>>5, b=d[i+2]>>6;
+      out[j]=(r<<5)|(g<<2)|b;
+    }
+    return out;
+  }
+  function packGifSubBlocks(bytes){ const out=[]; for(let i=0;i<bytes.length;i+=255){ const chunk=bytes.slice(i,i+255); out.push(chunk.length,...chunk); } out.push(0); return out; }
+  function appendBytes(target,bytes){ for(let i=0;i<bytes.length;i+=8192) target.push(...bytes.slice(i,i+8192)); }
+  function lzwGifEncode(indices, minCodeSize=8){
+    const clear=1<<minCodeSize, end=clear+1, out=[]; let cur=0, bits=0, codeCount=0;
+    const write=code=>{ cur|=code<<bits; bits+=minCodeSize+1; while(bits>=8){ out.push(cur&255); cur>>=8; bits-=8; } };
+    write(clear);
+    indices.forEach(idx=>{ if(codeCount>=240){ write(clear); codeCount=0; } write(idx); codeCount++; });
+    write(end);
+    if(bits>0) out.push(cur&255);
+    return out;
+  }
+  function encodeGif(canvases, delayMs, loopCount){
+    const w=canvases[0].width, h=canvases[0].height, pal=gifPalette(), out=[];
+    const text=s=>[...s].forEach(ch=>out.push(ch.charCodeAt(0)));
+    text('GIF89a');
+    out.push(w&255, w>>8, h&255, h>>8, 0xF7, 0, 255, ...pal);
+    out.push(0x21, 0xFF, 11); text('NETSCAPE2.0');
+    out.push(3, 1, loopCount&255, loopCount>>8, 0);
+    const delay=Math.max(2, Math.round(delayMs/10));
+    canvases.forEach(c=>{
+      out.push(0x21, 0xF9, 4, 0x00, delay&255, delay>>8, 0, 0, 0x2C, 0,0,0,0, w&255, w>>8, h&255, h>>8, 0, 8);
+      appendBytes(out, packGifSubBlocks(lzwGifEncode(canvasToGifIndices(c), 8)));
+    });
+    out.push(0x3B);
+    return new Blob([new Uint8Array(out)], {type:'image/gif'});
+  }
+
+  function framesToCanvases(){
+    const first=state.frames[0];
+    const maxW=parseInt($('maxWidthInput').value,10)||0;
+    let targetW=first.w, targetH=first.h;
+    if(maxW>0 && first.w>maxW){
+      const scale=maxW/first.w;
+      targetW=Math.round(first.w*scale);
+      targetH=Math.round(first.h*scale);
+    }
+    return state.frames.map(f=>{
+      const c=document.createElement('canvas'); c.width=targetW; c.height=targetH;
+      const ctx=c.getContext('2d');
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,targetW,targetH);
+      // Letterbox/scale-fit the frame inside targetW×targetH to preserve aspect.
+      const fr=f.w/f.h, tr=targetW/targetH;
+      let dw, dh;
+      if(fr>tr){ dw=targetW; dh=Math.round(targetW/fr); } else { dh=targetH; dw=Math.round(targetH*fr); }
+      const dx=Math.round((targetW-dw)/2), dy=Math.round((targetH-dh)/2);
+      ctx.drawImage(f.image, dx, dy, dw, dh);
+      return c;
+    });
+  }
+
+  $('generateBtn').addEventListener('click', ()=>{
+    if(!state.frames.length){ setStatus(t('status.needFrames'),'danger'); return; }
+    const btn=$('generateBtn'); btn.disabled=true; setStatus(t('status.encoding'),'info');
+    setTimeout(()=>{
+      try{
+        const delayMs=parseInt($('delayInput').value,10)||450;
+        const loop=Math.max(0, parseInt($('loopInput').value,10)||0);
+        const canvases=framesToCanvases();
+        const blob=encodeGif(canvases, delayMs, loop);
+        if(state.lastBlobUrl) URL.revokeObjectURL(state.lastBlobUrl);
+        state.lastBlobUrl=URL.createObjectURL(blob);
+        const wrap=$('previewWrap'); wrap.innerHTML='';
+        const img=document.createElement('img'); img.src=state.lastBlobUrl; img.alt='Generated GIF preview';
+        wrap.appendChild(img);
+        $('downloadBtn').disabled=false;
+        const kb=Math.round(blob.size/1024);
+        setStatus(t('status.ready',{kb:kb}),'success');
+      }catch(err){
+        setStatus(t('status.encodeFail',{msg:err.message||err}),'danger');
+      }finally{
+        btn.disabled=false;
+      }
+    }, 16);
+  });
+
+  $('downloadBtn').addEventListener('click', ()=>{
+    if(!state.lastBlobUrl) return;
+    const a=document.createElement('a'); a.href=state.lastBlobUrl; a.download='drawsplat-animation.gif';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  // Re-render the (mostly static) UI text on language change.
+  document.addEventListener('widget-i18n:changed', renderList);
+  renderList();
+})();
+</script>
+</body>
+</html>
