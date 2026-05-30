@@ -41,7 +41,7 @@ WidgetI18n.register('animated-gif', {
     'button.clearFrames': 'Clear All',
     'button.generate': 'Generate GIF',
     'button.download': 'Download GIF',
-    'button.recordVideo': 'Record as Video (WebM / MP4)',
+    'button.recordVideo': 'Export as Video (MP4 / WebM)',
     'button.reset': 'Reset',
 
     'row.up': 'Move up',
@@ -57,8 +57,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF ready ({kb} KB). Click Download to save.',
     'status.encodeFail': 'GIF encoding failed: {msg}',
     'status.recording': 'Recording video (real-time, ~{s}s)…',
+    'status.encodingMp4': 'Encoding MP4 via native WebCodecs (faster than real-time)…',
     'status.videoReady': '{ext} video ready ({kb} KB) — saved.',
-    'status.videoFail': 'Video recording failed: {msg}'
+    'status.videoFail': 'Video export failed: {msg}'
   },
 
   es: {
@@ -116,8 +117,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF listo ({kb} KB). Haz clic en Descargar para guardarlo.',
     'status.encodeFail': 'La codificación del GIF falló: {msg}',
     'status.recording': 'Grabando video (tiempo real, ~{s}s)…',
+    'status.encodingMp4': 'Codificando MP4 con WebCodecs nativo (más rápido que tiempo real)…',
     'status.videoReady': 'Video {ext} listo ({kb} KB) — guardado.',
-    'status.videoFail': 'La grabación de video falló: {msg}'
+    'status.videoFail': 'La exportación de video falló: {msg}'
   },
 
   vi: {
@@ -175,8 +177,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF sẵn sàng ({kb} KB). Nhấn Tải để lưu.',
     'status.encodeFail': 'Mã hóa GIF thất bại: {msg}',
     'status.recording': 'Đang ghi video (thời gian thực, ~{s}s)…',
+    'status.encodingMp4': 'Đang mã hóa MP4 bằng WebCodecs gốc (nhanh hơn thời gian thực)…',
     'status.videoReady': 'Video {ext} sẵn sàng ({kb} KB) — đã lưu.',
-    'status.videoFail': 'Ghi video thất bại: {msg}'
+    'status.videoFail': 'Xuất video thất bại: {msg}'
   },
 
   ar: {
@@ -234,8 +237,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF جاهز ({kb} كيلوبايت). انقر تنزيل للحفظ.',
     'status.encodeFail': 'فشل ترميز GIF: {msg}',
     'status.recording': 'جارٍ تسجيل الفيديو (في الوقت الفعلي، حوالي {s}ث)…',
+    'status.encodingMp4': 'جارٍ ترميز MP4 عبر WebCodecs الأصلي (أسرع من الوقت الفعلي)…',
     'status.videoReady': 'فيديو {ext} جاهز ({kb} كيلوبايت) — تم الحفظ.',
-    'status.videoFail': 'فشل تسجيل الفيديو: {msg}'
+    'status.videoFail': 'فشل تصدير الفيديو: {msg}'
   },
 
   zh: {
@@ -293,8 +297,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF 就绪（{kb} KB）。点击下载保存。',
     'status.encodeFail': 'GIF 编码失败：{msg}',
     'status.recording': '正在录制视频（实时，约 {s} 秒）…',
+    'status.encodingMp4': '正在通过原生 WebCodecs 编码 MP4（比实时更快）…',
     'status.videoReady': '{ext} 视频已就绪（{kb} KB）— 已保存。',
-    'status.videoFail': '视频录制失败：{msg}'
+    'status.videoFail': '视频导出失败：{msg}'
   },
 
   uh: {
@@ -352,8 +357,9 @@ WidgetI18n.register('animated-gif', {
     'status.ready': 'GIF تیار ہے ({kb} KB)۔ محفوظ کرنے کے لیے ڈاؤن لوڈ پر کلک کریں۔',
     'status.encodeFail': 'GIF انکوڈنگ ناکام: {msg}',
     'status.recording': 'ویڈیو ریکارڈ ہو رہی ہے (حقیقی وقت، تقریباً {s} سیکنڈ)…',
+    'status.encodingMp4': 'MP4 کو مقامی WebCodecs کے ذریعے انکوڈ کیا جا رہا ہے (حقیقی وقت سے تیز)…',
     'status.videoReady': '{ext} ویڈیو تیار ({kb} KB) — محفوظ ہو گئی۔',
-    'status.videoFail': 'ویڈیو ریکارڈنگ ناکام: {msg}'
+    'status.videoFail': 'ویڈیو ایکسپورٹ ناکام: {msg}'
   }
 
 });

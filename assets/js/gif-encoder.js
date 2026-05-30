@@ -332,14 +332,103 @@
     }
     return null;
   }
-  function videoSupported(){ return pickVideoMime() !== null; }
+  function webCodecsMp4Available(){
+    return typeof window !== 'undefined'
+      && 'VideoEncoder' in window
+      && typeof window.VideoFrame !== 'undefined'
+      && !!window.DrawSplatMp4;
+  }
+  function videoSupported(){
+    return webCodecsMp4Available() || pickVideoMime() !== null;
+  }
+  // Dispatcher — prefer WebCodecs MP4 when available (Chrome/Edge 94+,
+  // Firefox 130+, Safari 16.4+ — covers ~90% of current visitors), fall
+  // back to MediaRecorder (WebM in Chrome/Edge/Firefox, MP4 in Safari).
   async function encodeVideo(canvases, opts){
+    if (!canvases.length) throw new Error('No frames to record.');
+    if (webCodecsMp4Available()) {
+      try {
+        const sup = await window.VideoEncoder.isConfigSupported({
+          codec: 'avc1.42E01E',
+          width: canvases[0].width,
+          height: canvases[0].height,
+          bitrate: 1_000_000,
+          framerate: 30
+        });
+        if (sup && sup.supported) return await encodeVideoWebCodecs(canvases, opts);
+      } catch (_) { /* fall through */ }
+    }
+    return await encodeVideoMediaRecorder(canvases, opts);
+  }
+
+  // WebCodecs path — encodes AVC H.264 to MP4 via a hand-rolled muxer.
+  // Output is real MP4 (cross-platform) at the native bitrate, encoded by
+  // the OS's hardware H.264 encoder when available. NOT real-time — runs
+  // as fast as the encoder can chew through frames (typically much faster
+  // than MediaRecorder).
+  async function encodeVideoWebCodecs(canvases, opts){
+    const o = opts || {};
+    const delayMs = Math.max(20, o.delayMs || 450);
+    const loopCount = Math.max(1, o.loopCount | 0 || 1);
+    const w = canvases[0].width, h = canvases[0].height;
+    // H.264 requires even dimensions. Round down if needed.
+    const codecW = w & ~1, codecH = h & ~1;
+    if (codecW !== w || codecH !== h) {
+      throw new Error('Video width and height must be even numbers for MP4 encoding (use a different Max Width).');
+    }
+    const bitrate = Math.max(800_000, Math.min(12_000_000, w * h * 4));
+    const muxer = new window.DrawSplatMp4.Muxer({ width: w, height: h, timescale: 90000 });
+    let avcCSet = false;
+    const samples = [];
+    let outputError = null;
+    const encoder = new window.VideoEncoder({
+      output(chunk, metadata){
+        try {
+          if (!avcCSet && metadata && metadata.decoderConfig && metadata.decoderConfig.description) {
+            const desc = metadata.decoderConfig.description;
+            muxer.addAvcDecoderConfig(desc instanceof Uint8Array ? desc : new Uint8Array(desc));
+            avcCSet = true;
+          }
+          const buf = new ArrayBuffer(chunk.byteLength);
+          chunk.copyTo(buf);
+          samples.push({
+            data: new Uint8Array(buf),
+            durationTicks: Math.round(delayMs * 90), // 90000 ticks/s
+            isKey: chunk.type === 'key'
+          });
+        } catch (e) { outputError = e; }
+      },
+      error(e){ outputError = e; }
+    });
+    encoder.configure({ codec: 'avc1.42E01E', width: w, height: h, bitrate, framerate: 30 });
+    let frameIndex = 0;
+    for (let loop = 0; loop < loopCount; loop++) {
+      for (let i = 0; i < canvases.length; i++) {
+        if (outputError) throw outputError;
+        const timestamp = frameIndex * delayMs * 1000;  // microseconds
+        const duration = delayMs * 1000;
+        const frame = new window.VideoFrame(canvases[i], { timestamp, duration });
+        encoder.encode(frame, { keyFrame: (frameIndex % 60) === 0 });
+        frame.close();
+        frameIndex++;
+      }
+    }
+    await encoder.flush();
+    encoder.close();
+    if (outputError) throw outputError;
+    if (!avcCSet) throw new Error('Encoder produced no decoder config — try a smaller resolution or a different browser.');
+    for (const s of samples) muxer.addSample(s);
+    return muxer.finalize();
+  }
+
+  // Fallback path — MediaRecorder. Real-time recording. WebM in
+  // Chrome/Edge/Firefox; MP4 in Safari 14.5+.
+  async function encodeVideoMediaRecorder(canvases, opts){
     const o = opts || {};
     const delayMs = Math.max(20, o.delayMs || 450);
     const loopCount = Math.max(1, o.loopCount | 0 || 1);
     const mime = pickVideoMime();
     if (!mime) throw new Error('Video recording is not supported in this browser.');
-    if (!canvases.length) throw new Error('No frames to record.');
     const w = canvases[0].width, h = canvases[0].height;
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
@@ -379,5 +468,13 @@
     return new Blob(chunks, { type: mime });
   }
 
-  window.DrawSplatGifEncoder = { encode, encodeVideo, videoSupported, pickVideoMime };
+  window.DrawSplatGifEncoder = {
+    encode,
+    encodeVideo,
+    encodeVideoWebCodecs,
+    encodeVideoMediaRecorder,
+    videoSupported,
+    pickVideoMime,
+    webCodecsMp4Available
+  };
 })();
