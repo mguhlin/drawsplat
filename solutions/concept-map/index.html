@@ -628,6 +628,24 @@
     if (cur) lines.push(cur);
     return lines;
   }
+  // Single source of truth for "how tall does this node need to be to fit
+  // its wrapped label?" Used by applyLoadedJson (before the overlap
+  // resolver runs) AND by render's pre-pass. Sized for the EXPORT font so
+  // export-mode SVG/PNG never finds itself with overlapping boxes — the
+  // screen-mode font is smaller, so the on-screen layout just has a little
+  // extra breathing room.
+  function computeLayoutHeight(n){
+    const fontSize = LEVEL_DIMS[nodeLevel(n)].fontExport;
+    const charW = fontSize * 0.55;
+    const leftReserve = n.image ? 68 : 0;
+    const usableW = Math.max(48, n.w - 24 - leftReserve);
+    const maxChars = Math.max(4, Math.floor(usableW / charW));
+    const wrapped = wrapLabel(n.label, maxChars);
+    const lineHeight = fontSize * 1.25;
+    const minH = LEVEL_DIMS[nodeLevel(n)].baseH;
+    const textBlock = wrapped.length * lineHeight + 24;
+    return Math.max(minH, Math.ceil(textBlock));
+  }
   function svgWrappedText(lines, attrs){
     const t = svgPart('text', attrs);
     const fontSize = parseFloat(attrs['font-size'] || 14);
@@ -1117,20 +1135,20 @@
     const vbH = CANVAS_H / state.view.scale;
     svg.setAttribute('viewBox', viewBoxOverride || (state.view.x + ' ' + state.view.y + ' ' + vbW + ' ' + vbH));
 
-    // Pre-pass: compute wrapped label lines for each node, then auto-grow
-    // n.h to fit. Anchor calcs and group bounds downstream all read n.h, so
-    // doing this before anything else keeps everything consistent.
+    // Pre-pass: wrap each node's label for the active mode (so screen and
+    // export modes both produce readable line breaks at the right font size)
+    // and ensure n.h is at least computeLayoutHeight(n) — the export-sized
+    // floor that the post-import overlap resolver also targeted, so we never
+    // grow boxes past what the resolver knew about.
     state.nodes.forEach(n => {
       const fontSize = nodeFontSize(n);
-      const charW = fontSize * 0.55; // Arial-ish heuristic, good enough
-      const leftReserve = n.image ? 68 : 0; // image takes ~46px + margin
+      const charW = fontSize * 0.55; // Arial-ish heuristic
+      const leftReserve = n.image ? 68 : 0;
       const usableW = Math.max(48, n.w - 24 - leftReserve);
       const maxChars = Math.max(4, Math.floor(usableW / charW));
       n._wrapped = wrapLabel(n.label, maxChars);
-      const lineHeight = fontSize * 1.25;
-      const minH = LEVEL_DIMS[nodeLevel(n)].baseH;
-      const textBlock = n._wrapped.length * lineHeight + 24;
-      n.h = Math.max(minH, Math.ceil(textBlock));
+      const layoutH = computeLayoutHeight(n);
+      if (n.h < layoutH) n.h = layoutH;
     });
 
     const defs = svgPart('defs');
@@ -2296,130 +2314,160 @@
     state.nodes = nodes;
     state.connectors = connectors;
     state.groups = groups;
-    resolveOverlaps(state.nodes, state.groups, 8);
+    // Size each node to fit its wrapped label BEFORE running the resolver,
+    // otherwise the resolver works with declared (default-sized) heights and
+    // render's pre-pass later inflates h to fit wrapped text, undoing the
+    // separation.
+    state.nodes.forEach(n => { n.h = computeLayoutHeight(n); });
+    resolveOverlaps(state.nodes, state.groups, 12);
     state.nextId = maxIdNum + 1;
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.editing = null; state.drag = null; state.rubber = null;
   }
 
-  // Iterative separation pass run after JSON import. Three sub-passes per
-  // iteration:
-  //   1. Pairwise node-vs-node — push overlapping rectangles apart along the
-  //      smaller-overlap axis. Less disruptive to the author's intent than
-  //      jumping along the larger axis.
-  //   2. Group-vs-group — compute each group's bounding rectangle (same
-  //      formula as groupBounds), and where two groups' rectangles intersect,
-  //      translate every member node of both groups by half the overlap each.
-  //      Nodes that belong to BOTH overlapping groups receive opposite
-  //      half-pushes that cancel out, which is correct: the seam tears apart
-  //      while shared nodes hold their position.
-  //   3. Free-node-vs-group — a node that doesn't belong to a group should
-  //      not sit inside that group's outline. Treat as group-vs-tiny-group
-  //      and push the node out.
-  // Repeats until everything is clear or the iteration cap fires. O(iter ×
-  // (n² + g²)) — fine for typical concept maps.
+  // Separation pass run after JSON import. Five sequential phases — each
+  // runs to completion before the next, so they can't fight each other and
+  // cascade into runaway displacement:
+  //   A. Node-vs-node WITHIN each group (members of the same group settle
+  //      against each other before the group is treated as a rigid unit).
+  //   B. Loose-node-vs-loose-node (nodes that aren't in any group).
+  //   C. Group-vs-group rigid separation — translate every member of each
+  //      overlapping group by the same delta, so the cluster moves as one
+  //      and internal arrangement is preserved. Nodes in BOTH overlapping
+  //      groups get opposite half-pushes that cancel.
+  //   D. Loose-node-vs-group — push any loose node out of a group rect it's
+  //      intruding on (group doesn't move; the loose outsider does).
+  //   E. Final node-vs-node within each group, in case phase C nudged
+  //      members into each other.
+  // Per-axis push is clamped to MAX_PUSH per pass so a single bad input
+  // can't shove a node thousands of units away.
   function resolveOverlaps(nodes, groups, gap){
-    gap = gap || 8;
+    gap = gap || 12;
+    groups = groups || [];
     const GROUP_PAD = 16;
     const GROUP_LABEL_EXTRA = 24;
-    const MAX_ITER = 120;
-    function nodeRect(n){ return {x: n.x - n.w/2, y: n.y - n.h/2, w: n.w, h: n.h, cx: n.x, cy: n.y}; }
-    function groupRect(g){
-      const members = g.nodeIds.map(id => nodes.find(n => n.id === id)).filter(Boolean);
+    const MAX_PUSH = 220;
+    function nodeRect(n){ return {cx: n.x, cy: n.y, w: n.w, h: n.h}; }
+    function groupRectOf(members, hasLabel){
       if (!members.length) return null;
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      let mnx=Infinity, mny=Infinity, mxx=-Infinity, mxy=-Infinity;
       for (const n of members) {
-        if (n.x - n.w/2 < minX) minX = n.x - n.w/2;
-        if (n.y - n.h/2 < minY) minY = n.y - n.h/2;
-        if (n.x + n.w/2 > maxX) maxX = n.x + n.w/2;
-        if (n.y + n.h/2 > maxY) maxY = n.y + n.h/2;
+        if (n.x - n.w/2 < mnx) mnx = n.x - n.w/2;
+        if (n.y - n.h/2 < mny) mny = n.y - n.h/2;
+        if (n.x + n.w/2 > mxx) mxx = n.x + n.w/2;
+        if (n.y + n.h/2 > mxy) mxy = n.y + n.h/2;
       }
-      const labelExtra = g.label ? GROUP_LABEL_EXTRA : 4;
-      const x = minX - GROUP_PAD;
-      const y = minY - GROUP_PAD - labelExtra;
-      const w = (maxX - minX) + GROUP_PAD*2;
-      const h = (maxY - minY) + GROUP_PAD*2 + labelExtra;
-      return {x, y, w, h, cx: x + w/2, cy: y + h/2, members};
+      const labelExtra = hasLabel ? GROUP_LABEL_EXTRA : 4;
+      const x = mnx - GROUP_PAD;
+      const y = mny - GROUP_PAD - labelExtra;
+      const w = (mxx - mnx) + GROUP_PAD*2;
+      const h = (mxy - mny) + GROUP_PAD*2 + labelExtra;
+      return {x, y, w, h, cx: x + w/2, cy: y + h/2};
     }
-    function pushRects(a, b, gap){
-      // Returns [pushX, pushY] to apply to a (b gets the opposite). null if no overlap.
+    function clamp(v){ return Math.max(-MAX_PUSH, Math.min(MAX_PUSH, v)); }
+    function pushVec(a, b, gap){
       const dx = b.cx - a.cx, dy = b.cy - a.cy;
-      const overlapX = (a.w + b.w)/2 + gap - Math.abs(dx);
-      const overlapY = (a.h + b.h)/2 + gap - Math.abs(dy);
-      if (overlapX <= 0 || overlapY <= 0) return null;
-      if (overlapX < overlapY) {
+      const ox = (a.w + b.w)/2 + gap - Math.abs(dx);
+      const oy = (a.h + b.h)/2 + gap - Math.abs(dy);
+      if (ox <= 0 || oy <= 0) return null;
+      if (ox < oy) {
         const sign = dx === 0 ? 1 : (dx > 0 ? 1 : -1);
-        return [-sign * overlapX / 2, 0];
+        return [clamp(-sign * ox / 2), 0];
       } else {
         const sign = dy === 0 ? 1 : (dy > 0 ? 1 : -1);
-        return [0, -sign * overlapY / 2];
+        return [0, clamp(-sign * oy / 2)];
       }
     }
-    for (let iter = 0; iter < MAX_ITER; iter++) {
-      let moved = false;
-
-      // 1. Node-vs-node.
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i], b = nodes[j];
-          const push = pushRects(nodeRect(a), nodeRect(b), gap);
-          if (!push) continue;
-          a.x += push[0]; a.y += push[1];
-          b.x -= push[0]; b.y -= push[1];
-          moved = true;
-        }
-      }
-
-      // 2. Group-vs-group. Recompute rects each iteration since node positions move.
-      if (groups && groups.length >= 2) {
-        const rects = groups.map(groupRect);
-        for (let i = 0; i < rects.length; i++) {
-          for (let j = i + 1; j < rects.length; j++) {
-            const ga = rects[i], gb = rects[j];
-            if (!ga || !gb) continue;
-            const push = pushRects(ga, gb, gap);
-            if (!push) continue;
-            for (const n of ga.members) { n.x += push[0]; n.y += push[1]; }
-            for (const n of gb.members) { n.x -= push[0]; n.y -= push[1]; }
-            moved = true;
-            // Recompute the rects we still need to test against in this pass.
-            rects[i] = groupRect(groups[i]);
-            rects[j] = groupRect(groups[j]);
-          }
-        }
-      }
-
-      // 3. Free-node-vs-foreign-group: a node not in group G shouldn't sit
-      // inside G's outline.
-      if (groups && groups.length) {
-        const memberOf = new Map(); // node.id -> Set of group indexes
-        groups.forEach((g, gi) => {
-          g.nodeIds.forEach(id => {
-            let set = memberOf.get(id);
-            if (!set) { set = new Set(); memberOf.set(id, set); }
-            set.add(gi);
-          });
-        });
-        const rects = groups.map(groupRect);
-        for (let gi = 0; gi < rects.length; gi++) {
-          const gr = rects[gi]; if (!gr) continue;
-          for (const n of nodes) {
-            const inGroups = memberOf.get(n.id);
-            if (inGroups && inGroups.has(gi)) continue;
-            const push = pushRects(gr, nodeRect(n), gap);
-            if (!push) continue;
-            // Push only the node — moving the whole group to dodge one
-            // outsider would cascade. Node absorbs the full overlap (×2 to
-            // compensate for the group not moving).
-            n.x -= push[0] * 2; n.y -= push[1] * 2;
+    function separateNodes(items, maxIter){
+      for (let iter = 0; iter < maxIter; iter++) {
+        let moved = false;
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i], b = items[j];
+            const p = pushVec(nodeRect(a), nodeRect(b), gap);
+            if (!p) continue;
+            a.x += p[0]; a.y += p[1];
+            b.x -= p[0]; b.y -= p[1];
             moved = true;
           }
         }
+        if (!moved) return;
       }
-
-      if (!moved) break;
     }
+
+    const memberOf = new Map();
+    groups.forEach((g, gi) => {
+      g.nodeIds.forEach(id => {
+        let s = memberOf.get(id);
+        if (!s) { s = new Set(); memberOf.set(id, s); }
+        s.add(gi);
+      });
+    });
+    const groupMembers = groups.map(g =>
+      g.nodeIds.map(id => nodes.find(n => n.id === id)).filter(Boolean)
+    );
+    const looseNodes = nodes.filter(n => !memberOf.has(n.id));
+
+    // A. Within-group node settling.
+    for (const members of groupMembers) separateNodes(members, 60);
+
+    // B. Loose-node settling.
+    separateNodes(looseNodes, 60);
+
+    // C. Rigid group-vs-group separation. Skip pairs that share at least one
+    // member node — rigid separation would tug the shared node in opposite
+    // directions and balloon both group rectangles into the void. Shared-
+    // member groups are conceptually linked anyway; let them overlap.
+    function sharesMember(gi, gj){
+      const a = groups[gi].nodeIds, b = new Set(groups[gj].nodeIds);
+      for (const id of a) if (b.has(id)) return true;
+      return false;
+    }
+    if (groups.length >= 2) {
+      for (let iter = 0; iter < 80; iter++) {
+        let moved = false;
+        const rects = groupMembers.map((m, gi) => groupRectOf(m, !!groups[gi].label));
+        for (let i = 0; i < groups.length; i++) {
+          for (let j = i + 1; j < groups.length; j++) {
+            if (!rects[i] || !rects[j]) continue;
+            if (sharesMember(i, j)) continue;
+            const p = pushVec(rects[i], rects[j], gap);
+            if (!p) continue;
+            for (const n of groupMembers[i]) { n.x += p[0]; n.y += p[1]; }
+            for (const n of groupMembers[j]) { n.x -= p[0]; n.y -= p[1]; }
+            rects[i] = groupRectOf(groupMembers[i], !!groups[i].label);
+            rects[j] = groupRectOf(groupMembers[j], !!groups[j].label);
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+    }
+
+    // D. Loose nodes pushed out of any foreign group rect.
+    if (groups.length && looseNodes.length) {
+      for (let iter = 0; iter < 40; iter++) {
+        let moved = false;
+        const rects = groupMembers.map((m, gi) => groupRectOf(m, !!groups[gi].label));
+        for (const n of looseNodes) {
+          for (let gi = 0; gi < rects.length; gi++) {
+            const gr = rects[gi]; if (!gr) continue;
+            const p = pushVec(gr, nodeRect(n), gap);
+            if (!p) continue;
+            // Group stays put; node absorbs the full overlap (clamped twice
+            // so a doubled push still respects MAX_PUSH).
+            n.x -= clamp(p[0] * 2);
+            n.y -= clamp(p[1] * 2);
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+    }
+
+    // E. Final within-group cleanup after rigid translation.
+    for (const members of groupMembers) separateNodes(members, 30);
   }
 
   document.getElementById('saveJsonBtn').addEventListener('click', () => {
