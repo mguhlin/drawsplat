@@ -346,29 +346,33 @@
     const ctx = c.getContext('2d');
     // White background so the first captured frame isn't a black flash.
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
-    // captureStream(0) → manual frame control via track.requestFrame().
-    const stream = c.captureStream(0);
+    // Use a fixed-rate captureStream — captureStream(0) + requestFrame()
+    // is unreliable in Firefox (the recorder ends up with zero samples).
+    // 30 FPS captures everything we draw while staying portable across
+    // Chrome / Edge / Firefox / Safari with no requestFrame requirement.
+    const stream = c.captureStream(30);
     const track = stream.getVideoTracks()[0];
     const bps = Math.max(500_000, Math.min(8_000_000, w * h * 8));
     const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: bps });
     const chunks = [];
     recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
     const stopped = new Promise(resolve => { recorder.onstop = resolve; });
-    recorder.start();
-    // Prime the stream with the first frame so the recorder has something
-    // to write before the first delay tick.
+    // Prime the canvas with the first frame BEFORE starting the recorder
+    // so the stream's first sample isn't blank.
     ctx.drawImage(canvases[0], 0, 0);
-    if (track.requestFrame) track.requestFrame();
-    await new Promise(r => setTimeout(r, 60));
+    recorder.start();
+    // Give the recorder a beat to attach to the stream and capture the
+    // priming frame; without this Firefox occasionally drops it.
+    await new Promise(r => setTimeout(r, 120));
     for (let loop = 0; loop < loopCount; loop++) {
       for (let i = 0; i < canvases.length; i++) {
         ctx.drawImage(canvases[i], 0, 0);
-        if (track.requestFrame) track.requestFrame();
         await new Promise(r => setTimeout(r, delayMs));
       }
     }
-    // Let the encoder flush.
-    await new Promise(r => setTimeout(r, 250));
+    // Hold the last frame visible for one extra delay-tick + flush the
+    // encoder buffer.
+    await new Promise(r => setTimeout(r, Math.max(300, delayMs)));
     recorder.stop();
     await stopped;
     track.stop();
