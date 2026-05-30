@@ -198,6 +198,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': 'Embed code copied. Paste it into Google Sites or WordPress.',
     'status.embedLinkCopied': 'Embed link copied. Anyone with the link sees a read-only viewer.',
     'status.embedCopyFailed': 'Could not copy to clipboard.',
+    'status.outlineCopied':   'Outline copied as Markdown.',
+
+    'outline.toggle': 'Outline view (Markdown)',
+    'outline.copy':   'Copy Markdown',
+    'outline.hint':   'Live mirror of the map\'s hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.',
 
     'status.undo':          'Undo.',
     'status.redo':          'Redo.',
@@ -475,6 +480,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': 'Código de inserción copiado. Pégalo en Google Sites o WordPress.',
     'status.embedLinkCopied': 'Enlace de inserción copiado. Cualquiera con el enlace ve un visor de solo lectura.',
     'status.embedCopyFailed': 'No se pudo copiar al portapapeles.',
+    'status.outlineCopied':   'Esquema copiado como Markdown.',
+
+    'outline.toggle': 'Vista de esquema (Markdown)',
+    'outline.copy':   'Copiar Markdown',
+    'outline.hint':   'Espejo en vivo de la jerarquía del mapa. Úsalo como esquema de estudio, pégalo en notas o pásalo a una IA como contexto.',
 
     'status.undo':          'Deshecho.',
     'status.redo':          'Rehecho.',
@@ -752,6 +762,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': 'Đã sao chép mã nhúng. Dán vào Google Sites hoặc WordPress.',
     'status.embedLinkCopied': 'Đã sao chép liên kết nhúng. Ai có liên kết sẽ xem ở chế độ chỉ đọc.',
     'status.embedCopyFailed': 'Không thể sao chép vào bộ nhớ tạm.',
+    'status.outlineCopied':   'Đã sao chép dàn ý dưới dạng Markdown.',
+
+    'outline.toggle': 'Chế độ dàn ý (Markdown)',
+    'outline.copy':   'Sao chép Markdown',
+    'outline.hint':   'Bản sao trực tiếp của cấu trúc bản đồ. Dùng làm dàn ý ôn tập, dán vào ghi chú, hoặc đưa cho AI làm ngữ cảnh.',
 
     'status.undo':          'Đã hoàn tác.',
     'status.redo':          'Đã làm lại.',
@@ -1029,6 +1044,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': 'تم نسخ كود التضمين. الصقه في Google Sites أو WordPress.',
     'status.embedLinkCopied': 'تم نسخ رابط التضمين. أي شخص لديه الرابط يرى عارضًا للقراءة فقط.',
     'status.embedCopyFailed': 'تعذر النسخ إلى الحافظة.',
+    'status.outlineCopied':   'تم نسخ المخطط بصيغة Markdown.',
+
+    'outline.toggle': 'عرض المخطط (Markdown)',
+    'outline.copy':   'نسخ Markdown',
+    'outline.hint':   'انعكاس حي لتسلسل الخريطة. استخدمه كمخطط دراسة، الصقه في الملاحظات، أو أعطه لذكاء اصطناعي كسياق.',
 
     'status.undo':          'تم التراجع.',
     'status.redo':          'تمت الإعادة.',
@@ -1306,6 +1326,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': '嵌入代码已复制。粘贴到 Google Sites 或 WordPress。',
     'status.embedLinkCopied': '嵌入链接已复制。任何持有链接的人都能看到只读查看器。',
     'status.embedCopyFailed': '无法复制到剪贴板。',
+    'status.outlineCopied':   '大纲已复制为 Markdown。',
+
+    'outline.toggle': '大纲视图 (Markdown)',
+    'outline.copy':   '复制 Markdown',
+    'outline.hint':   '地图层级的实时镜像。可作为学习大纲、粘贴到笔记，或交给 AI 作为上下文。',
 
     'status.undo':          '已撤销。',
     'status.redo':          '已重做。',
@@ -1583,6 +1608,11 @@ WidgetI18n.register('concept-map', {
     'status.embedCodeCopied': 'एम्बेड कोड कॉपी हो गया। Google Sites या WordPress में पेस्ट करें।',
     'status.embedLinkCopied': 'एम्बेड लिंक कॉपी हो गया। लिंक रखने वाले को रीड-ओनली व्यू मिलता है।',
     'status.embedCopyFailed': 'क्लिपबोर्ड पर कॉपी नहीं हो सका।',
+    'status.outlineCopied':   'आउटलाइन Markdown के रूप में कॉपी हो गई।',
+
+    'outline.toggle': 'आउटलाइन व्यू (Markdown)',
+    'outline.copy':   'Markdown कॉपी करें',
+    'outline.hint':   'मानचित्र की पदानुक्रम का लाइव प्रतिबिंब। अध्ययन आउटलाइन के रूप में, नोट्स में पेस्ट करें, या AI को संदर्भ के रूप में दें।',
 
     'status.undo':          'पूर्ववत।',
     'status.redo':          'पुनः किया।',

@@ -363,6 +363,19 @@
     .footer-note a { color: var(--navy); }
     .footer-note strong { color: var(--gray-90); }
 
+    /* Outline view: toggleable markdown mirror of the map below the canvas. */
+    .outline-panel { margin-top: 14px; border: 1.5px solid var(--border); border-radius: 8px; background: #f8fafc; }
+    .outline-toggle { cursor: pointer; padding: 10px 14px; font-weight: 700; color: var(--navy); font-size: .92rem; list-style: none; user-select: none; }
+    .outline-toggle::-webkit-details-marker { display: none; }
+    .outline-toggle::before { content: '▸ '; display: inline-block; margin-right: 4px; }
+    .outline-panel[open] .outline-toggle::before { content: '▾ '; }
+    .outline-actions { display: flex; align-items: center; gap: 12px; padding: 0 14px 8px; flex-wrap: wrap; }
+    .outline-copy-btn { padding: 6px 12px; border: 1.5px solid var(--navy); border-radius: 6px; background: #fff; color: var(--navy); font-weight: 700; font-size: .82rem; cursor: pointer; }
+    .outline-copy-btn:hover { background: var(--navy); color: #fff; }
+    .outline-hint { color: var(--gray-50); font-size: .82rem; line-height: 1.4; }
+    .outline-md { margin: 0; padding: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; line-height: 1.55; overflow-x: auto; background: #fff; border-top: 1px solid var(--border); border-radius: 0 0 6px 6px; max-height: 360px; overflow-y: auto; color: var(--gray-90); white-space: pre-wrap; word-break: break-word; }
+    .outline-md:empty::before { content: 'No nodes yet.'; color: var(--gray-50); font-family: inherit; }
+
     /* Embed mode — used when the page is loaded via ?embed=1 (typically
        inside an <iframe> on a Google Site, WordPress page, etc). Hides the
        editor chrome and leaves only the canvas plus pan/zoom. The same JSON
@@ -521,6 +534,14 @@
           <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
         </div>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
+        <details class="outline-panel" id="outlineDetails">
+          <summary class="outline-toggle" data-i18n="outline.toggle">Outline view (Markdown)</summary>
+          <div class="outline-actions">
+            <button type="button" class="outline-copy-btn" id="copyOutlineBtn" data-i18n="outline.copy">Copy Markdown</button>
+            <span class="outline-hint" data-i18n="outline.hint">Live mirror of the map's hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.</span>
+          </div>
+          <pre id="outlineMarkdown" class="outline-md" aria-live="polite"></pre>
+        </details>
         <p class="footer-note" data-i18n-html="actions.schemaHint">Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.</p>
         <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         <div class="status" id="statusLine" role="status"></div>
@@ -645,6 +666,37 @@
     const minH = LEVEL_DIMS[nodeLevel(n)].baseH;
     const textBlock = wrapped.length * lineHeight + 24;
     return Math.max(minH, Math.ceil(textBlock));
+  }
+  // Connector label pills sit at the midpoint of the connector line by
+  // default — but when nodes are dense the midpoint often lands inside a
+  // node box. Shift the pill perpendicular to the connector direction until
+  // it's clear, falling back to "give up after N tries" if the canvas is
+  // hopelessly packed.
+  function avoidNodesForLabel(midX, midY, labelW, labelH, perpX, perpY){
+    let lx = midX, ly = midY;
+    const PAD = 4;
+    for (let iter = 0; iter < 10; iter++) {
+      let worstOverlap = 0;
+      let worstSign = 1;
+      for (const n of state.nodes) {
+        const dx = n.x - lx, dy = n.y - ly;
+        const ox = (labelW + n.w)/2 + PAD - Math.abs(dx);
+        const oy = (labelH + n.h)/2 + PAD - Math.abs(dy);
+        if (ox <= 0 || oy <= 0) continue;
+        const need = Math.min(ox, oy) + 2;
+        if (need > worstOverlap) {
+          worstOverlap = need;
+          // Move away from the node's center along the perpendicular axis.
+          // Pick whichever sign of perp takes us further from the node.
+          const towardsNode = perpX * dx + perpY * dy;
+          worstSign = towardsNode > 0 ? -1 : 1;
+        }
+      }
+      if (worstOverlap <= 0) return {x: lx, y: ly};
+      lx += perpX * worstOverlap * worstSign;
+      ly += perpY * worstOverlap * worstSign;
+    }
+    return {x: lx, y: ly};
   }
   function svgWrappedText(lines, attrs){
     const t = svgPart('text', attrs);
@@ -1151,6 +1203,9 @@
       if (n.h < layoutH) n.h = layoutH;
     });
 
+    // Keep the markdown outline mirror in sync with edits.
+    if (typeof refreshOutline === 'function') refreshOutline();
+
     const defs = svgPart('defs');
     defs.innerHTML =
       '<marker id="cmArrow" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto">' +
@@ -1212,18 +1267,24 @@
          - Empty label + connector NOT selected: render nothing — the connector
            stays uncluttered. The wider invisible hit-path above still picks up
            clicks on the line itself. */
+      // Perpendicular to the connector direction — used to shove the label
+      // pill out of any node it would otherwise sit on top of.
+      const segDx = p2.x - p1.x, segDy = p2.y - p1.y;
+      const segLen = Math.sqrt(segDx*segDx + segDy*segDy) || 1;
+      const perpX = -segDy / segLen, perpY = segDx / segLen;
       if (c.label) {
         const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
         const labelText = truncate(c.label, 28);
         const charW = 7.2;
         const w = Math.min(220, Math.max(60, labelText.length * charW + 18));
+        const pos = avoidNodesForLabel(midX, midY, w, 26, perpX, perpY);
         labelGroup.appendChild(svgPart('rect', {
-          x: midX - w/2, y: midY - 13, width: w, height: 26, rx: 8,
+          x: pos.x - w/2, y: pos.y - 13, width: w, height: 26, rx: 8,
           fill: '#ffffff', stroke: isSel ? '#f59e0b' : '#94a3b8',
           'stroke-width': isSel ? 2 : 1.5
         }));
         labelGroup.appendChild(svgText(labelText, {
-          x: midX, y: midY + 5, 'text-anchor': 'middle',
+          x: pos.x, y: pos.y + 5, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
           'font-size': renderExportMode ? EXPORT_FONTS.connector : SCREEN_FONTS.connector,
           'font-weight': 700, fill: '#475569'
@@ -1231,13 +1292,14 @@
         g.appendChild(labelGroup);
       } else if (isSel) {
         const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
+        const pos = avoidNodesForLabel(midX, midY, 72, 26, perpX, perpY);
         labelGroup.appendChild(svgPart('rect', {
-          x: midX - 36, y: midY - 13, width: 72, height: 26, rx: 8,
+          x: pos.x - 36, y: pos.y - 13, width: 72, height: 26, rx: 8,
           fill: '#fff7e6', stroke: '#f59e0b', 'stroke-width': 2,
           'stroke-dasharray': '4 3'
         }));
         labelGroup.appendChild(svgText(t('connector.pillLabel'), {
-          x: midX, y: midY + 5, 'text-anchor': 'middle',
+          x: pos.x, y: pos.y + 5, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
           'font-size': 11, 'font-weight': 700, fill: '#92400e',
           'font-style': 'italic'
@@ -2567,6 +2629,74 @@
   document.getElementById('copyEmbedLinkBtn').addEventListener('click', () => {
     if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
     copyToClipboard(buildEmbedUrl(), t('status.embedLinkCopied'), t('status.embedCopyFailed'));
+  });
+
+  /* Outline view — live markdown mirror of the map's hierarchy. Walk from
+     each root node down through outgoing connectors; depth-first; visited
+     set prevents cycles. Heading depth follows level: 1 → #, 2 → ##, 3 → ###,
+     deeper → bulleted list. Unconnected nodes appear under a final
+     "(Unconnected)" section so nothing is silently dropped. */
+  function buildOutlineMarkdown(){
+    if (!state.nodes.length) return '';
+    const children = new Map();
+    state.connectors.forEach(c => {
+      if (!children.has(c.fromId)) children.set(c.fromId, []);
+      children.get(c.fromId).push(c.toId);
+    });
+    const roots = state.nodes.filter(n => n.isRoot || nodeLevel(n) === 1);
+    const startNodes = roots.length ? roots : state.nodes.filter(n => nodeLevel(n) === 2);
+    const visited = new Set();
+    const lines = [];
+    function indentForDepth(d){ return d <= 0 ? '' : '  '.repeat(d - 3 >= 0 ? d - 2 : 0); }
+    function walk(nodeId, depth){
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      const n = nodeById(nodeId);
+      if (!n) return;
+      const label = String(n.label || '').replace(/\s+/g, ' ').trim() || '(unnamed)';
+      if (depth === 0) lines.push('# ' + label);
+      else if (depth === 1) lines.push('## ' + label);
+      else if (depth === 2) lines.push('### ' + label);
+      else lines.push(indentForDepth(depth) + '- ' + label);
+      if (n.link) {
+        const indent = depth <= 2 ? '  ' : indentForDepth(depth) + '  ';
+        lines.push(indent + '↗ ' + n.link);
+      }
+      const kids = (children.get(nodeId) || []).slice();
+      for (const kid of kids) walk(kid, depth + 1);
+    }
+    for (const r of startNodes) walk(r.id, 0);
+    const orphans = state.nodes.filter(n => !visited.has(n.id));
+    if (orphans.length) {
+      if (lines.length) lines.push('');
+      lines.push('## (Unconnected)');
+      for (const n of orphans) {
+        const label = String(n.label || '').replace(/\s+/g, ' ').trim() || '(unnamed)';
+        lines.push('- ' + label);
+      }
+    }
+    if (state.groups.length) {
+      lines.push('');
+      lines.push('## (Groups)');
+      for (const g of state.groups) {
+        lines.push('- ' + (g.label || '(unnamed group)') + ' — ' + g.nodeIds.length + ' nodes');
+      }
+    }
+    return lines.join('\n');
+  }
+  function refreshOutline(){
+    const el = document.getElementById('outlineMarkdown');
+    if (!el) return;
+    // Only rebuild if the panel is open — cheap optimization for large maps.
+    const panel = document.getElementById('outlineDetails');
+    if (panel && !panel.open) return;
+    el.textContent = buildOutlineMarkdown();
+  }
+  document.getElementById('outlineDetails')?.addEventListener('toggle', refreshOutline);
+  document.getElementById('copyOutlineBtn')?.addEventListener('click', () => {
+    const md = buildOutlineMarkdown();
+    if (!md) return setStatus(t('status.addNodeFirst'), 'danger');
+    copyToClipboard(md, t('status.outlineCopied'), t('status.embedCopyFailed'));
   });
 
   /* ===== keyboard ===== */
