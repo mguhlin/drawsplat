@@ -15,7 +15,7 @@
   <span class="badge">Setup</span>
   <span class="spacer"></span>
   <a class="admin-header-link" href="../legal/terms-privacy.html">Terms & Privacy</a>
-  <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button">Lock Admin</button>
+  <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button" data-viewer-ok>Lock Admin</button>
   <a class="admin-header-link" href="../app/whiteboard.html">Open Board</a>
 </header>
 
@@ -33,6 +33,10 @@
     <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
   </div>
 </section>
+
+<div class="admin-viewer-banner" role="status">
+  Read-only viewer mode — you can browse settings but cannot save changes. Switch users from <strong>Lock Admin</strong> to sign in with the full admin password.
+</div>
 
 <main class="admin-shell">
   <section class="admin-hero">
@@ -130,6 +134,17 @@
         <a class="admin-button" href="../README.md">Read README</a>
         <a class="admin-button" href="../legal/terms-privacy.html">Read Terms & Privacy</a>
       </div>
+    </article>
+
+    <article class="admin-panel" id="gameAccessPanel">
+      <h3>Game Access</h3>
+      <p class="hint">Hide individual games from the landing page and Features page. Setting is stored in this browser (localStorage) — apply it on each teacher device.</p>
+      <div id="gameAccessList" class="config-grid"></div>
+      <div class="admin-actions">
+        <button id="saveGameAccessBtn" type="button" class="primary">Save Game Access</button>
+        <button id="resetGameAccessBtn" type="button">Enable All</button>
+      </div>
+      <p id="gameAccessStatus" class="hint" role="status" aria-live="polite"></p>
     </article>
 
     <article class="admin-panel admin-compliance" id="complianceConsole">
@@ -299,5 +314,7 @@
 </dialog>
 
 <script src="../assets/js/admin-gate.js?v=1.0"></script>
+<script src="../assets/js/games-filter.js"></script>
+<script src="../assets/js/admin-games-access.js"></script>
 <script src="../assets/js/admin.js?v=1.0"></script></body>
 </html>

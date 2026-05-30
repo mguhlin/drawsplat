@@ -3757,6 +3757,8 @@ gid('redoBtn').onclick=redo;
 // without hunting through the top menu. Same handlers, same shortcuts.
 gid('sidebarUndoBtn')?.addEventListener('click',undo);
 gid('sidebarRedoBtn')?.addEventListener('click',redo);
+gid('sidebarAudioToggleBtn')?.addEventListener('click',()=>{ setAudioMuted(!isAudioMuted()); setStatus(isAudioMuted()?'DrawSplat sound effects muted.':'DrawSplat sound effects on.','success'); });
+refreshAudioToggleBtn();
 
 /* Local file save/load keeps DrawSplatTM usable without a backend. Imported JSON
    is migrated immediately so old boards pick up new default fields. */
@@ -4171,8 +4173,24 @@ async function openModerationDashboard(){const comments=[]; board.panels.forEach
 // canvas-shake visual. Cached after the first play so repeat detonations
 // fire instantly. Source and license live at
 // assets/audio/explosions/README.md.
+// Global mute applies to DrawSplat-generated sound effects only (TNT today,
+// future game/UI cues). User-recorded audio notes are intentionally exempt —
+// muting a teacher's recording is a footgun.
+const AUDIO_MUTE_KEY='drawsplat.audioMuted';
+function isAudioMuted(){ try{ return localStorage.getItem(AUDIO_MUTE_KEY)==='1'; }catch(_){ return false; } }
+function setAudioMuted(muted){
+  try{ localStorage.setItem(AUDIO_MUTE_KEY, muted?'1':'0'); }catch(_){}
+  refreshAudioToggleBtn();
+}
+function refreshAudioToggleBtn(){
+  const btn=document.getElementById('sidebarAudioToggleBtn'); if(!btn) return;
+  const muted=isAudioMuted();
+  btn.textContent = muted ? 'Audio: Off' : 'Audio: On';
+  btn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+}
 let _tntBoomAudio=null;
 function playTntBoom(){
+  if(isAudioMuted()) return;
   try{
     if(!_tntBoomAudio){
       _tntBoomAudio=new Audio('../assets/audio/explosions/r09-52-huge-explosion-with-long-decay.mp3');

@@ -646,7 +646,16 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .admin-locked .admin-shell{display:none}
 .admin-locked .admin-sign-out{display:none}
 .admin-locked .admin-gate{display:flex}
+.admin-locked .admin-viewer-banner{display:none}
 .admin-unlocked .admin-gate{display:none}
+.admin-full .admin-viewer-banner{display:none}
+.admin-viewer-banner{display:none;margin:0 auto 16px;max-width:1120px;padding:12px 16px;background:#fff8e1;border:1px solid #f4c430;border-radius:10px;color:#5b4514;font-weight:700}
+.admin-viewer .admin-viewer-banner{display:block}
+.admin-viewer .admin-shell input:not([data-viewer-ok]),
+.admin-viewer .admin-shell select:not([data-viewer-ok]),
+.admin-viewer .admin-shell textarea:not([data-viewer-ok]),
+.admin-viewer .admin-shell button:not([data-viewer-ok]){pointer-events:none;opacity:.55;cursor:not-allowed;filter:grayscale(.4)}
+.admin-viewer .admin-shell button.danger:not([data-viewer-ok]){opacity:.35}
 .admin-gate-card{width:min(100%,460px);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px #17203322;padding:24px}
 .admin-gate-card h2{font-size:26px;margin:6px 0 8px;color:var(--ink)}
 .admin-gate-card p{color:var(--muted);line-height:1.5}
