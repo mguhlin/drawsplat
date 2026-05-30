@@ -2114,10 +2114,47 @@
     state.nodes = nodes;
     state.connectors = connectors;
     state.groups = groups;
+    resolveOverlaps(state.nodes, 8);
     state.nextId = maxIdNum + 1;
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.editing = null; state.drag = null; state.rubber = null;
+  }
+
+  // Iterative pairwise separation. For each overlapping pair, push both
+  // halfway apart along the axis with the smaller overlap (less disruptive
+  // to the author's intended layout) plus a min-gap buffer. Repeats until
+  // no overlaps or the iteration cap is hit. O(iter × n²) — fine for the
+  // 10s-of-nodes case typical for concept maps.
+  function resolveOverlaps(nodes, gap){
+    gap = gap || 8;
+    const MAX_ITER = 60;
+    for (let iter = 0; iter < MAX_ITER; iter++) {
+      let moved = false;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const overlapX = (a.w + b.w)/2 + gap - Math.abs(dx);
+          const overlapY = (a.h + b.h)/2 + gap - Math.abs(dy);
+          if (overlapX <= 0 || overlapY <= 0) continue;
+          if (overlapX < overlapY) {
+            // Same-x tiebreak: shove right.
+            const sign = dx === 0 ? 1 : (dx > 0 ? 1 : -1);
+            const push = overlapX / 2;
+            a.x -= sign * push;
+            b.x += sign * push;
+          } else {
+            const sign = dy === 0 ? 1 : (dy > 0 ? 1 : -1);
+            const push = overlapY / 2;
+            a.y -= sign * push;
+            b.y += sign * push;
+          }
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
   }
 
   document.getElementById('saveJsonBtn').addEventListener('click', () => {
