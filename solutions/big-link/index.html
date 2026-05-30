@@ -44,8 +44,8 @@
     .row { display: flex; gap: 10px; align-items: center; }
     .row > * { flex: 1; }
     .stage { padding: 18px; min-height: 600px; }
-    .preview-wrap { padding: 14px; background: var(--gray-10); border-radius: var(--radius); display: grid; place-items: center; min-height: 420px; }
-    #posterSvg { width: 100%; max-width: 720px; height: auto; background: #fff; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+    .preview-wrap { padding: 14px; background: var(--gray-10); border-radius: var(--radius); display: grid; place-items: center; min-height: 520px; }
+    #posterSvg { width: 100%; max-width: 100%; height: auto; background: #fff; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.12); }
     .actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .button { min-height: 44px; padding: 9px 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; }
     .button.primary { color: var(--white); background: var(--navy); }
@@ -100,9 +100,9 @@
           </div>
         </div>
         <div class="field">
-          <label for="scaleInput" data-i18n="field.scale">Text fill (<span id="scaleValue">100</span>% = fills the card)</label>
+          <label for="scaleInput" data-i18n="field.scale">Text fill (100% = fills the card)</label>
           <input id="scaleInput" type="range" min="40" max="100" step="2" value="100">
-          <span class="footer-note" style="margin:0" data-i18n="field.scale.hint">Leave the title and note empty to maximize the link text — like large-type.com.</span>
+          <span class="footer-note" style="margin:0"><span id="scaleValue">100</span>% — <span data-i18n="field.scale.hint">leave title and note empty to maximize, like large-type.com</span></span>
         </div>
         <div class="field">
           <label for="ratioInput" data-i18n="field.ratio">Card shape</label>
@@ -171,32 +171,75 @@
     return lines.slice(0, maxLines);
   }
 
+  // Wrap text at WHITESPACE only — never mid-word. Returns null if any
+  // single word is too long to fit in maxChars on its own.
+  function wrapWordsOnly(text, maxChars, maxLines){
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    if (words.some(w => w.length > maxChars)) return null;
+    const lines = [];
+    let cur = '';
+    for (const w of words) {
+      if (!cur) { cur = w; continue; }
+      if (cur.length + 1 + w.length <= maxChars) cur += ' ' + w;
+      else {
+        lines.push(cur);
+        if (lines.length >= maxLines) return null;
+        cur = w;
+      }
+    }
+    if (cur) lines.push(cur);
+    return lines.length <= maxLines ? lines : null;
+  }
+
   function fitUrlText(text, w, h, scale, hasTitle, hasNote){
-    // Large-type style: find the LARGEST font size that fits the entire
-    // text inside the available middle area. The scale slider (0.2–1.0) is
-    // a final shrink multiplier — at 100% the text fills as much as it can
-    // (like large-type.com); lower values shrink for breathing room. When
-    // there's no title, the top strip collapses; same for the bottom note.
+    // Large-type behavior: find the LARGEST font size where the text fits
+    // the available area, strongly preferring single-line layouts over
+    // ugly mid-word breaks. URLs (no whitespace) are NEVER hyphen-split;
+    // they stay on one line at whatever size fits both width and height.
     const headerH = hasTitle ? Math.max(60, Math.min(140, h * 0.10)) : 0;
     const footerH = hasNote  ? Math.max(50, Math.min(120, h * 0.08)) : 0;
     const availableH = h - headerH - footerH;
-    // Minimal side padding so short text (e.g. "drawsplat.org") really
-    // fills the card edge-to-edge.
     const padX = Math.max(12, w * 0.025);
     const usableW = w - padX * 2;
-    const maxLines = Math.max(1, Math.min(5, Math.floor(availableH / 80)));
-    // Search from a very large cap downward. For a single short word the
-    // first iteration that fits is huge.
-    for (let size = Math.round(h * 1.4); size >= 24; size -= 6) {
-      const charW = size * 0.55;
-      const maxChars = Math.max(6, Math.floor(usableW / charW));
-      const lines = wrapText(text, maxChars, maxLines);
-      const longest = Math.max(1, ...lines.map(l => l.length));
-      if (longest * charW <= usableW && lines.length * size * 1.12 <= availableH) {
-        return { lines, size: Math.round(size * Math.max(0.2, Math.min(1, scale))), headerH, footerH };
+    const t = String(text || '').trim() || 'drawsplat.org';
+    const finalScale = Math.max(0.2, Math.min(1, scale));
+    const apply = (size, lines) => ({
+      lines,
+      size: Math.round(Math.max(24, size) * finalScale),
+      headerH, footerH
+    });
+
+    // No whitespace → single token (URL, hashtag, one word). Don't wrap.
+    // Just compute the max size that fits both width and height.
+    if (!/\s/.test(t)) {
+      const widthLimit = usableW / (t.length * 0.55);
+      const heightLimit = availableH / 1.12;
+      return apply(Math.floor(Math.min(widthLimit, heightLimit)), [t]);
+    }
+
+    // Multi-word: try 1, 2, 3, 4 lines. For each line count find the
+    // largest size that fits. Keep the overall biggest.
+    let best = null;
+    for (let nLines = 1; nLines <= 4; nLines++) {
+      // Upper bound on size at this line count, height-wise.
+      const heightCap = Math.floor(availableH / (nLines * 1.12));
+      for (let size = heightCap; size >= 24; size -= 4) {
+        const charW = size * 0.55;
+        const maxChars = Math.max(4, Math.floor(usableW / charW));
+        const lines = wrapWordsOnly(t, maxChars, nLines);
+        if (lines) {
+          if (!best || size > best.rawSize) best = { rawSize: size, lines };
+          break;
+        }
       }
     }
-    return { lines: [String(text||'').slice(0, 20)], size: 28, headerH, footerH };
+    if (best) return apply(best.rawSize, best.lines);
+
+    // Fallback only if even multi-word at smallest size won't fit (huge
+    // single word in a tiny canvas): hard-break with the legacy wrapper.
+    const lines = wrapText(t, Math.max(6, Math.floor(usableW / 22)), 5);
+    return apply(40, lines);
   }
 
   function buildSvg(){
