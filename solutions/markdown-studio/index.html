@@ -1639,7 +1639,8 @@ def hello():
   function saveHtml() {
     const wrapped = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>' +
       escapeHtml(suggestFilename('').replace(/\.$/, '')) + '</title>\n</head>\n<body>\n' +
-      rawOutput.value + '\n</body>\n</html>\n';
+      rawOutput.value + '\n<script src="../../assets/js/consent-banner.js" defer></script>
+</body>\n</html>\n';
     downloadFile(suggestFilename('html'), wrapped, 'text/html');
     showToast(t('toast.savedHtml'));
   }
