@@ -13,6 +13,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'DrawSplat™ Tools',
     'header.h1':          'Dicebreaker Creator',
     'header.tag':         'Roll a die, answer a prompt. Make your own template in seconds.',
+    'header.allTools':    'All Tools',
     'header.home':        'Home',
 
     'panel.editor.h2':    'Your dicebreaker',
@@ -150,6 +151,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'Herramientas DrawSplat™',
     'header.h1':          'Creador de Rompehielos con Dado',
     'header.tag':         'Tira un dado, responde una pregunta. Crea tu propia plantilla en segundos.',
+    'header.allTools':    'Todas las herramientas',
     'header.home':        'Inicio',
 
     'panel.editor.h2':    'Tu rompehielos',
@@ -285,6 +287,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'Công cụ DrawSplat™',
     'header.h1':          'Trình tạo Phá băng bằng Xúc xắc',
     'header.tag':         'Tung xúc xắc, trả lời câu hỏi. Tạo mẫu của riêng bạn trong vài giây.',
+    'header.allTools':    'Tất cả công cụ',
     'header.home':        'Trang chủ',
 
     'panel.editor.h2':    'Phá băng của bạn',
@@ -420,6 +423,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'أدوات DrawSplat™',
     'header.h1':          'منشئ كسر الجليد بالنرد',
     'header.tag':         'ارمِ النرد، أجب عن سؤال. أنشئ قالبك الخاص في ثوانٍ.',
+    'header.allTools':    'كل الأدوات',
     'header.home':        'الرئيسية',
 
     'panel.editor.h2':    'كسر الجليد الخاص بك',
@@ -555,6 +559,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'DrawSplat™ 工具',
     'header.h1':          '骰子破冰器制作工具',
     'header.tag':         '投掷骰子，回答一个问题。几秒内制作你自己的模板。',
+    'header.allTools':    '所有工具',
     'header.home':        '首页',
 
     'panel.editor.h2':    '你的破冰器',
@@ -690,6 +695,7 @@ WidgetI18n.register('dicebreakers', {
     'header.eyebrow':     'DrawSplat™ टूल्स',
     'header.h1':          'पासे का बर्फ़तोड़ निर्माता',
     'header.tag':         'पासा फेंकें, एक प्रश्न का उत्तर दें। सेकंडों में अपना खाका बनाएं।',
+    'header.allTools':    'सभी उपकरण',
     'header.home':        'मुख पृष्ठ',
 
     'panel.editor.h2':    'आपका बर्फ़तोड़',
