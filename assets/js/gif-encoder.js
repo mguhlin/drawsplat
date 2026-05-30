@@ -348,14 +348,19 @@
     if (!canvases.length) throw new Error('No frames to record.');
     if (webCodecsMp4Available()) {
       try {
-        const sup = await window.VideoEncoder.isConfigSupported({
+        // Probe the EXACT config we'll use (avc.format: 'avc' is required
+        // for MP4 muxing — see encodeVideoWebCodecs). If the browser
+        // doesn't accept it, fall through to MediaRecorder rather than
+        // ship an MP4 the player can't decode.
+        const probe = await window.VideoEncoder.isConfigSupported({
           codec: 'avc1.42E01E',
           width: canvases[0].width,
           height: canvases[0].height,
           bitrate: 1_000_000,
-          framerate: 30
+          framerate: 30,
+          avc: { format: 'avc' }
         });
-        if (sup && sup.supported) return await encodeVideoWebCodecs(canvases, opts);
+        if (probe && probe.supported) return await encodeVideoWebCodecs(canvases, opts);
       } catch (_) { /* fall through */ }
     }
     return await encodeVideoMediaRecorder(canvases, opts);
@@ -400,7 +405,18 @@
       },
       error(e){ outputError = e; }
     });
-    encoder.configure({ codec: 'avc1.42E01E', width: w, height: h, bitrate, framerate: 30 });
+    // avc.format: 'avc' ⇒ chunks come out in AVCC format (4-byte length
+    // prefix per NAL) which is what MP4 mdat expects. The default in
+    // Chrome WebCodecs is 'annexb' (00 00 00 01 start codes) and that
+    // would produce an MP4 most players can't decode — typically failing
+    // partway through (e.g. the last sample turns into garbage).
+    encoder.configure({
+      codec: 'avc1.42E01E',
+      width: w, height: h,
+      bitrate,
+      framerate: 30,
+      avc: { format: 'avc' }
+    });
     let frameIndex = 0;
     for (let loop = 0; loop < loopCount; loop++) {
       for (let i = 0; i < canvases.length; i++) {
