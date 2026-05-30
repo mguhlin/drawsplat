@@ -79,16 +79,16 @@
       <aside class="panel" data-i18n-aria-label="panel.controls.aria" aria-label="Big Link controls">
         <h2 data-i18n="panel.controls.h2">Card content</h2>
         <div class="field">
-          <label for="titleInput" data-i18n="field.title">Title (top strip)</label>
-          <input id="titleInput" type="text" maxlength="60" value="Join Here">
-        </div>
-        <div class="field">
-          <label for="urlInput" data-i18n="field.url">URL or short text (big middle)</label>
+          <label for="urlInput" data-i18n="field.url">URL or short text (the BIG part)</label>
           <input id="urlInput" type="text" maxlength="200" value="drawsplat.org">
         </div>
         <div class="field">
-          <label for="noteInput" data-i18n="field.note">Note (bottom, optional)</label>
-          <input id="noteInput" type="text" maxlength="120" value="Type this address into your browser">
+          <label for="titleInput" data-i18n="field.title">Title (top strip — leave empty to remove)</label>
+          <input id="titleInput" type="text" maxlength="60" value="" placeholder="Join Here">
+        </div>
+        <div class="field">
+          <label for="noteInput" data-i18n="field.note">Note (bottom — leave empty to remove)</label>
+          <input id="noteInput" type="text" maxlength="120" value="" placeholder="Type this address into your browser">
         </div>
 
         <h2 style="margin-top:6px" data-i18n="panel.style.h2">Style</h2>
@@ -100,8 +100,9 @@
           </div>
         </div>
         <div class="field">
-          <label for="scaleInput" data-i18n="field.scale">Big text scale (<span id="scaleValue">100</span>%)</label>
-          <input id="scaleInput" type="range" min="60" max="220" step="5" value="100">
+          <label for="scaleInput" data-i18n="field.scale">Text fill (<span id="scaleValue">100</span>% = fills the card)</label>
+          <input id="scaleInput" type="range" min="40" max="100" step="2" value="100">
+          <span class="footer-note" style="margin:0" data-i18n="field.scale.hint">Leave the title and note empty to maximize the link text — like large-type.com.</span>
         </div>
         <div class="field">
           <label for="ratioInput" data-i18n="field.ratio">Card shape</label>
@@ -170,44 +171,59 @@
     return lines.slice(0, maxLines);
   }
 
-  function fitUrlText(text, w, h, scale){
-    // Find the largest font size such that the wrapped lines fit in the
-    // available middle area. Mirrors the whiteboard's bigLinkTextFit logic.
-    const headerH = Math.max(80, Math.min(200, 100 * scale));
-    const footerH = Math.max(60, Math.min(180, 80 * scale));
+  function fitUrlText(text, w, h, scale, hasTitle, hasNote){
+    // Large-type style: find the LARGEST font size that fits the entire
+    // text inside the available middle area. The scale slider (0.2–1.0) is
+    // a final shrink multiplier — at 100% the text fills as much as it can
+    // (like large-type.com); lower values shrink for breathing room. When
+    // there's no title, the top strip collapses; same for the bottom note.
+    const headerH = hasTitle ? Math.max(60, Math.min(140, h * 0.10)) : 0;
+    const footerH = hasNote  ? Math.max(50, Math.min(120, h * 0.08)) : 0;
     const availableH = h - headerH - footerH;
-    const maxLines = Math.max(1, Math.min(5, Math.floor(availableH / Math.max(36, 60 * scale))));
-    for (let size = Math.round(180 * scale); size >= 28; size -= 2) {
+    // Minimal side padding so short text (e.g. "drawsplat.org") really
+    // fills the card edge-to-edge.
+    const padX = Math.max(12, w * 0.025);
+    const usableW = w - padX * 2;
+    const maxLines = Math.max(1, Math.min(5, Math.floor(availableH / 80)));
+    // Search from a very large cap downward. For a single short word the
+    // first iteration that fits is huge.
+    for (let size = Math.round(h * 1.4); size >= 24; size -= 6) {
       const charW = size * 0.55;
-      const maxChars = Math.max(8, Math.floor((w - 80) / charW));
+      const maxChars = Math.max(6, Math.floor(usableW / charW));
       const lines = wrapText(text, maxChars, maxLines);
       const longest = Math.max(1, ...lines.map(l => l.length));
-      if (longest * charW <= w - 80 && lines.length * size * 1.12 <= availableH) {
-        return { lines, size, headerH, footerH };
+      if (longest * charW <= usableW && lines.length * size * 1.12 <= availableH) {
+        return { lines, size: Math.round(size * Math.max(0.2, Math.min(1, scale))), headerH, footerH };
       }
     }
     return { lines: [String(text||'').slice(0, 20)], size: 28, headerH, footerH };
   }
 
   function buildSvg(){
-    const title = $('titleInput').value || '';
-    const url = $('urlInput').value || '';
-    const note = $('noteInput').value || '';
+    const title = ($('titleInput').value || '').trim();
+    const url = ($('urlInput').value || '').trim() || 'drawsplat.org';
+    const note = ($('noteInput').value || '').trim();
     const accent = $('accentInput').value || '#7c3aed';
     const scale = (+($('scaleInput').value) || 100) / 100;
     const ratio = $('ratioInput').value || '16:9';
     const w = BASE_W, h = RATIOS[ratio] || 720;
+    const hasTitle = !!title;
+    const hasNote = !!note;
 
-    const fit = fitUrlText(url || 'drawsplat.org', w, h, scale);
-    const titleSize = Math.max(28, Math.min(80, fit.headerH * 0.5));
-    const noteSize = Math.max(20, Math.min(60, fit.footerH * 0.4));
+    const fit = fitUrlText(url, w, h, scale, hasTitle, hasNote);
+    const titleSize = hasTitle ? Math.max(28, Math.min(96, fit.headerH * 0.55)) : 0;
+    const noteSize  = hasNote  ? Math.max(20, Math.min(60, fit.footerH * 0.5)) : 0;
 
     const blockH = fit.lines.length * fit.size * 1.12;
-    const startY = fit.headerH + (h - fit.headerH - fit.footerH) / 2 - blockH / 2 + fit.size * 0.72;
+    const startY = fit.headerH + (h - fit.headerH - fit.footerH) / 2 - blockH / 2 + fit.size * 0.78;
 
     const lineTags = fit.lines.map((line, i) =>
       `<text x="${w/2}" y="${startY + i * fit.size * 1.12}" font-size="${fit.size}" font-weight="900" font-family="Inter, Arial, sans-serif" fill="${accent}" text-anchor="middle">${esc(line)}</text>`
     ).join('');
+
+    const headerStrip = hasTitle ? `<rect x="0" y="0" width="${w}" height="${fit.headerH}" fill="${accent}" />
+  <text x="${w/2}" y="${fit.headerH * 0.68}" font-size="${titleSize}" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#ffffff" text-anchor="middle">${esc(title)}</text>` : '';
+    const noteText = hasNote ? `<text x="${w/2}" y="${h - fit.footerH * 0.35}" font-size="${noteSize}" font-weight="800" font-family="Inter, Arial, sans-serif" fill="#475569" text-anchor="middle">${esc(note)}</text>` : '';
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" id="posterSvg">
   <defs>
@@ -217,10 +233,9 @@
     </linearGradient>
   </defs>
   <rect x="0" y="0" width="${w}" height="${h}" fill="url(#bgGrad)" />
-  <rect x="0" y="0" width="${w}" height="${fit.headerH}" fill="${accent}" />
-  <text x="${w/2}" y="${fit.headerH * 0.65}" font-size="${titleSize}" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#ffffff" text-anchor="middle">${esc(title)}</text>
+  ${headerStrip}
   ${lineTags}
-  ${note ? `<text x="${w/2}" y="${h - fit.footerH * 0.40}" font-size="${noteSize}" font-weight="800" font-family="Inter, Arial, sans-serif" fill="#475569" text-anchor="middle">${esc(note)}</text>` : ''}
+  ${noteText}
   <rect x="2" y="2" width="${w-4}" height="${h-4}" fill="none" stroke="#e2e8f0" stroke-width="3" rx="14" />
 </svg>`;
   }
@@ -299,9 +314,11 @@
     }
   });
   $('resetBtn').addEventListener('click', () => {
-    $('titleInput').value = t('default.title');
+    // Reset to "large-type" defaults: URL only, no title, no note,
+    // accent purple, 16:9, 100% fill.
+    $('titleInput').value = '';
     $('urlInput').value = 'drawsplat.org';
-    $('noteInput').value = t('default.note');
+    $('noteInput').value = '';
     $('accentInput').value = '#7c3aed';
     $('scaleInput').value = 100;
     $('ratioInput').value = '16:9';
