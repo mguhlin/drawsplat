@@ -467,7 +467,7 @@
             <button class="toolbar-icon-btn" id="zoomResetBtn" type="button" data-i18n-title="button.zoomReset.title" data-i18n-aria-label="button.zoomReset.aria" title="Reset zoom (0)" aria-label="Reset zoom">100%</button>
             <button class="toolbar-icon-btn" id="zoomInBtn" type="button" data-i18n-title="button.zoomIn.title" data-i18n-aria-label="button.zoomIn.aria" title="Zoom in (+)" aria-label="Zoom in">+</button>
           </span>
-          <button class="toolbar-toggle" id="panToggleBtn" type="button" aria-pressed="false" data-i18n="toggle.panOff">Pan: Off</button>
+          <button class="toolbar-toggle" id="panToggleBtn" type="button" aria-pressed="false" data-i18n="toggle.panOff" title="Pan mode: drag the canvas to move around. Or hold Space + drag temporarily, or middle-click drag.">Pan: Off</button>
           <button class="toolbar-toggle on" id="gridToggleBtn" type="button" aria-pressed="true" data-i18n="toggle.gridOn">Grid: On</button>
         </div>
         <div class="canvas-shell" id="canvasShell">
@@ -1463,7 +1463,7 @@
   svg.addEventListener('pointerdown', e => {
     if (state.editing) return;
     // Middle button OR pan-mode toggle -> always pan
-    if (e.button === 1 || (e.button === 0 && state.panToggle)) {
+    if (e.button === 1 || (e.button === 0 && (state.panToggle || spaceDownForPan))) {
       e.preventDefault();
       startPan(e);
       return;
@@ -2382,6 +2382,25 @@
   });
 
   /* ===== keyboard ===== */
+  // Hold Space to temporarily pan with the arrow tool — matches the
+  // universal design-tool shortcut (Figma, Photoshop, Lucidchart, Excalidraw).
+  // Doesn't replace the toolbar Pan toggle or middle-click drag.
+  let spaceDownForPan = false;
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'Space') return;
+    if (e.repeat || state.editing) return;
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    spaceDownForPan = true;
+    canvasShell.classList.add('pan-mode');
+    e.preventDefault();
+  });
+  document.addEventListener('keyup', e => {
+    if (e.code !== 'Space') return;
+    spaceDownForPan = false;
+    if (!state.panToggle) canvasShell.classList.remove('pan-mode');
+  });
+
   document.addEventListener('keydown', e => {
     if (state.editing) return;
     const tag = (e.target && e.target.tagName) || '';
