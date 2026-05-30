@@ -110,7 +110,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         'Mode',
     'button.selectTool':    'Select / Drag',
     'button.connectTool':   'Connect Nodes',
-    'hint.modePanel':       'Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.',
+    'hint.modePanel':       'Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Hold Space + drag, middle-mouse drag, or use the Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.',
 
     'section.addNodes':     'Add nodes',
     'button.addNode':       '+ Node',
@@ -162,7 +162,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'Source pinned. Click each target. Esc or click empty canvas to exit.',
     'hintLine.connectEmpty':'Click the source node, then click each target. Esc to exit.',
     'hintLine.selectPan':   'Pan mode: drag anywhere to move the view.',
-    'hintLine.selectIdle':  'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node. Middle-mouse drag or Pan toggle to pan; wheel to zoom.',
+    'hintLine.selectIdle':  'Click to select. Shift-click to add. Drag empty canvas to rubber-band. Double-click empty to add a node. Hold Space + drag, middle-mouse drag, or Pan toggle to pan; wheel to zoom.',
 
     'toolbar.history.aria': 'History',
     'toolbar.zoom.aria':    'Zoom',
@@ -190,7 +190,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'Copy PNG',
     'button.fitView':       'Fit View',
 
-    'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.',
+    'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.',
 
     'status.undo':          'Undo.',
     'status.redo':          'Redo.',
@@ -380,7 +380,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         'Modo',
     'button.selectTool':    'Seleccionar / Arrastrar',
     'button.connectTool':   'Conectar nodos',
-    'hint.modePanel':       'Mayús+clic en los nodos para agregar a la selección. Arrastra el lienzo vacío para selección rectangular. Doble clic en lienzo vacío para agregar un nodo. Arrastra con botón medio o usa el botón Pan. Rueda / Ctrl+rueda para hacer zoom.',
+    'hint.modePanel':       'Mayús+clic en los nodos para agregar a la selección. Arrastra el lienzo vacío para selección rectangular. Doble clic en lienzo vacío para agregar un nodo. Mantén Espacio + arrastra, arrastra con botón medio, o usa el botón Pan para desplazar. Rueda / Ctrl+rueda para hacer zoom.',
 
     'section.addNodes':     'Agregar nodos',
     'button.addNode':       '+ Nodo',
@@ -432,7 +432,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'Fuente fijada. Haz clic en cada destino. Esc o clic en lienzo vacío para salir.',
     'hintLine.connectEmpty':'Haz clic en el nodo fuente, luego en cada destino. Esc para salir.',
     'hintLine.selectPan':   'Modo desplazamiento: arrastra para mover la vista.',
-    'hintLine.selectIdle':  'Haz clic para seleccionar. Mayús+clic para agregar. Arrastra el lienzo vacío para selección rectangular. Doble clic en vacío para agregar nodo. Botón medio o Pan para desplazar; rueda para zoom.',
+    'hintLine.selectIdle':  'Haz clic para seleccionar. Mayús+clic para agregar. Arrastra el lienzo vacío para selección rectangular. Doble clic en vacío para agregar nodo. Espacio + arrastra, botón medio, o Pan para desplazar; rueda para zoom.',
 
     'toolbar.history.aria': 'Historial',
     'toolbar.zoom.aria':    'Zoom',
@@ -460,7 +460,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'Copiar PNG',
     'button.fitView':       'Ajustar vista',
 
-    'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./concept-map-schema.json" download>especificación del formato</a> — documenta cada campo que el Studio lee.',
+    'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./drawsplat-concept-map-schema.json" download>especificación del formato</a> — documenta cada campo que el Studio lee.',
 
     'status.undo':          'Deshecho.',
     'status.redo':          'Rehecho.',
@@ -650,7 +650,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         'Chế độ',
     'button.selectTool':    'Chọn / Kéo',
     'button.connectTool':   'Kết nối nút',
-    'hint.modePanel':       'Shift+nhấp vào các nút để thêm vào lựa chọn. Kéo khung trống để chọn vùng. Nhấp đúp khung trống để thêm nút tại vị trí đó. Kéo nút giữa hoặc bật Pan để cuộn xem. Cuộn / Ctrl+cuộn để phóng to.',
+    'hint.modePanel':       'Shift+nhấp vào các nút để thêm vào lựa chọn. Kéo khung trống để chọn vùng. Nhấp đúp khung trống để thêm nút tại vị trí đó. Giữ Phím cách + kéo, kéo nút chuột giữa, hoặc bật Pan để di chuyển khung nhìn. Cuộn / Ctrl+cuộn để phóng to.',
 
     'section.addNodes':     'Thêm nút',
     'button.addNode':       '+ Nút',
@@ -702,7 +702,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'Đã ghim nguồn. Nhấp từng đích. Esc hoặc nhấp khung trống để thoát.',
     'hintLine.connectEmpty':'Nhấp nút nguồn, rồi nhấp từng đích. Esc để thoát.',
     'hintLine.selectPan':   'Chế độ Pan: kéo bất kỳ để di chuyển khung nhìn.',
-    'hintLine.selectIdle':  'Nhấp để chọn. Shift+nhấp để thêm. Kéo khung trống để chọn vùng. Nhấp đúp khung trống để thêm nút. Kéo nút giữa hoặc Pan để cuộn xem; cuộn để phóng to.',
+    'hintLine.selectIdle':  'Nhấp để chọn. Shift+nhấp để thêm. Kéo khung trống để chọn vùng. Nhấp đúp khung trống để thêm nút. Phím cách + kéo, kéo nút chuột giữa, hoặc Pan để di chuyển; cuộn để phóng to.',
 
     'toolbar.history.aria': 'Lịch sử',
     'toolbar.zoom.aria':    'Phóng to',
@@ -730,7 +730,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'Sao chép PNG',
     'button.fitView':       'Vừa khung',
 
-    'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./concept-map-schema.json" download>tệp đặc tả định dạng</a> trước — tệp này mô tả mọi trường mà Studio đọc.',
+    'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./drawsplat-concept-map-schema.json" download>tệp đặc tả định dạng</a> trước — tệp này mô tả mọi trường mà Studio đọc.',
 
     'status.undo':          'Đã hoàn tác.',
     'status.redo':          'Đã làm lại.',
@@ -920,7 +920,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         'الوضع',
     'button.selectTool':    'تحديد / سحب',
     'button.connectTool':   'ربط العقد',
-    'hint.modePanel':       'Shift+نقر على العقد لإضافتها إلى التحديد. اسحب اللوحة الفارغة للتحديد المستطيلي. نقر مزدوج على اللوحة الفارغة لإضافة عقدة في موقع النقر. اسحب بالزر الأوسط أو فعّل Pan للتحريك. العجلة / Ctrl+العجلة للتكبير.',
+    'hint.modePanel':       'Shift+نقر على العقد لإضافتها إلى التحديد. اسحب اللوحة الفارغة للتحديد المستطيلي. نقر مزدوج على اللوحة الفارغة لإضافة عقدة في موقع النقر. اضغط مفتاح المسافة + اسحب، أو اسحب بالزر الأوسط، أو فعّل Pan للتحريك. العجلة / Ctrl+العجلة للتكبير.',
 
     'section.addNodes':     'إضافة عقد',
     'button.addNode':       '+ عقدة',
@@ -972,7 +972,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'تم تثبيت المصدر. انقر كل هدف. Esc أو انقر اللوحة الفارغة للخروج.',
     'hintLine.connectEmpty':'انقر عقدة المصدر، ثم انقر كل هدف. Esc للخروج.',
     'hintLine.selectPan':   'وضع التحريك: اسحب في أي مكان لتحريك العرض.',
-    'hintLine.selectIdle':  'انقر للتحديد. Shift+نقر لإضافة. اسحب اللوحة الفارغة للتحديد المستطيلي. نقر مزدوج على فارغ لإضافة عقدة. اسحب بالزر الأوسط أو Pan للتحريك؛ العجلة للتكبير.',
+    'hintLine.selectIdle':  'انقر للتحديد. Shift+نقر لإضافة. اسحب اللوحة الفارغة للتحديد المستطيلي. نقر مزدوج على فارغ لإضافة عقدة. مفتاح المسافة + اسحب، أو الزر الأوسط، أو Pan للتحريك؛ العجلة للتكبير.',
 
     'toolbar.history.aria': 'السجل',
     'toolbar.zoom.aria':    'التكبير',
@@ -1000,7 +1000,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'نسخ PNG',
     'button.fitView':       'ملاءمة العرض',
 
-    'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./concept-map-schema.json" download>مواصفات التنسيق</a> — فهي توثّق كل حقل يقرؤه الاستوديو.',
+    'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./drawsplat-concept-map-schema.json" download>مواصفات التنسيق</a> — فهي توثّق كل حقل يقرؤه الاستوديو.',
 
     'status.undo':          'تم التراجع.',
     'status.redo':          'تمت الإعادة.',
@@ -1190,7 +1190,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         '模式',
     'button.selectTool':    '选择 / 拖动',
     'button.connectTool':   '连接节点',
-    'hint.modePanel':       'Shift+点击节点可加入选择。在空白处拖动以框选。在空白处双击可在该位置添加节点。中键拖动或开启 Pan 可平移。滚轮 / Ctrl+滚轮缩放。',
+    'hint.modePanel':       'Shift+点击节点可加入选择。在空白处拖动以框选。在空白处双击可在该位置添加节点。按住空格 + 拖动、中键拖动，或开启 Pan 平移视图。滚轮 / Ctrl+滚轮缩放。',
 
     'section.addNodes':     '添加节点',
     'button.addNode':       '+ 节点',
@@ -1242,7 +1242,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'源已固定。点击每个目标。Esc 或点击空画布退出。',
     'hintLine.connectEmpty':'点击源节点，再点击每个目标。Esc 退出。',
     'hintLine.selectPan':   '平移模式：在任意位置拖动以移动视图。',
-    'hintLine.selectIdle':  '点击选择。Shift+点击添加。拖动空画布框选。双击空白添加节点。中键拖动或 Pan 平移；滚轮缩放。',
+    'hintLine.selectIdle':  '点击选择。Shift+点击添加。拖动空画布框选。双击空白添加节点。空格 + 拖动、中键拖动，或 Pan 平移；滚轮缩放。',
 
     'toolbar.history.aria': '历史',
     'toolbar.zoom.aria':    '缩放',
@@ -1270,7 +1270,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       '复制 PNG',
     'button.fitView':       '适合视图',
 
-    'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./concept-map-schema.json" download>格式规范</a> 交给它——里面记录了 Studio 读取的每一个字段。',
+    'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./drawsplat-concept-map-schema.json" download>格式规范</a> 交给它——里面记录了 Studio 读取的每一个字段。',
 
     'status.undo':          '已撤销。',
     'status.redo':          '已重做。',
@@ -1460,7 +1460,7 @@ WidgetI18n.register('concept-map', {
     'section.mode':         'मोड',
     'button.selectTool':    'चुनें / खींचें',
     'button.connectTool':   'नोड्स जोड़ें',
-    'hint.modePanel':       'चयन में जोड़ने के लिए Shift+क्लिक करें। रबर-बैंड चयन के लिए खाली कैनवस खींचें। उस स्थान पर नोड जोड़ने के लिए खाली कैनवस पर डबल-क्लिक करें। पैन करने के लिए मध्य-माउस खींचें या Pan टॉगल करें। ज़ूम के लिए व्हील / Ctrl+व्हील।',
+    'hint.modePanel':       'चयन में जोड़ने के लिए Shift+क्लिक करें। रबर-बैंड चयन के लिए खाली कैनवस खींचें। उस स्थान पर नोड जोड़ने के लिए खाली कैनवस पर डबल-क्लिक करें। पैन करने के लिए Space + खींचें, मध्य-माउस खींचें, या Pan टॉगल करें। ज़ूम के लिए व्हील / Ctrl+व्हील।',
 
     'section.addNodes':     'नोड्स जोड़ें',
     'button.addNode':       '+ नोड',
@@ -1512,7 +1512,7 @@ WidgetI18n.register('concept-map', {
     'hintLine.connectPending':'स्रोत पिन। प्रत्येक लक्ष्य पर क्लिक करें। Esc या खाली कैनवस पर क्लिक करके बाहर जाएँ।',
     'hintLine.connectEmpty':'स्रोत नोड पर क्लिक करें, फिर प्रत्येक लक्ष्य पर। बाहर जाने के लिए Esc।',
     'hintLine.selectPan':   'पैन मोड: दृश्य को स्थानांतरित करने के लिए कहीं भी खींचें।',
-    'hintLine.selectIdle':  'चुनने के लिए क्लिक करें। जोड़ने के लिए Shift+क्लिक। रबर-बैंड चयन के लिए खाली कैनवस खींचें। नोड जोड़ने के लिए खाली पर डबल-क्लिक। मध्य-माउस खींचें या Pan से पैन करें; ज़ूम के लिए व्हील।',
+    'hintLine.selectIdle':  'चुनने के लिए क्लिक करें। जोड़ने के लिए Shift+क्लिक। रबर-बैंड चयन के लिए खाली कैनवस खींचें। नोड जोड़ने के लिए खाली पर डबल-क्लिक। Space + खींचें, मध्य-माउस खींचें, या Pan से पैन करें; ज़ूम के लिए व्हील।',
 
     'toolbar.history.aria': 'इतिहास',
     'toolbar.zoom.aria':    'ज़ूम',
@@ -1540,7 +1540,7 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'PNG कॉपी करें',
     'button.fitView':       'दृश्य फ़िट करें',
 
-    'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./concept-map-schema.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है।',
+    'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./drawsplat-concept-map-schema.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है।',
 
     'status.undo':          'पूर्ववत।',
     'status.redo':          'पुनः किया।',

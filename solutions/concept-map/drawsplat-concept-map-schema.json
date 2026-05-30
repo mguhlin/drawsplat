@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://drawsplat.org/solutions/concept-map/concept-map-schema.json",
+  "$id": "https://drawsplat.org/solutions/concept-map/drawsplat-concept-map-schema.json",
   "title": "DrawSplat Concept Map Studio — import/export schema",
   "description": "Schema for .drawsplat-cmap.json files used by DrawSplat Concept Map Studio (solutions/concept-map). The Studio's Load .json button accepts any object that validates against this schema. Unknown fields are tolerated and ignored. Send this file to an LLM along with your prompt to get back JSON you can load directly.",
   "type": "object",
