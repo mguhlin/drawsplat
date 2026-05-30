@@ -190,6 +190,8 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'Copy PNG',
     'button.fitView':       'Fit View',
 
+    'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.',
+
     'status.undo':          'Undo.',
     'status.redo':          'Redo.',
     'status.exitConnect':   'Exited connect mode.',
@@ -457,6 +459,8 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'Descargar PNG',
     'button.copyPng':       'Copiar PNG',
     'button.fitView':       'Ajustar vista',
+
+    'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./concept-map-schema.json" download>especificación del formato</a> — documenta cada campo que el Studio lee.',
 
     'status.undo':          'Deshecho.',
     'status.redo':          'Rehecho.',
@@ -726,6 +730,8 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       'Sao chép PNG',
     'button.fitView':       'Vừa khung',
 
+    'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./concept-map-schema.json" download>tệp đặc tả định dạng</a> trước — tệp này mô tả mọi trường mà Studio đọc.',
+
     'status.undo':          'Đã hoàn tác.',
     'status.redo':          'Đã làm lại.',
     'status.exitConnect':   'Đã thoát chế độ kết nối.',
@@ -993,6 +999,8 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'تنزيل PNG',
     'button.copyPng':       'نسخ PNG',
     'button.fitView':       'ملاءمة العرض',
+
+    'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./concept-map-schema.json" download>مواصفات التنسيق</a> — فهي توثّق كل حقل يقرؤه الاستوديو.',
 
     'status.undo':          'تم التراجع.',
     'status.redo':          'تمت الإعادة.',
@@ -1262,6 +1270,8 @@ WidgetI18n.register('concept-map', {
     'button.copyPng':       '复制 PNG',
     'button.fitView':       '适合视图',
 
+    'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./concept-map-schema.json" download>格式规范</a> 交给它——里面记录了 Studio 读取的每一个字段。',
+
     'status.undo':          '已撤销。',
     'status.redo':          '已重做。',
     'status.exitConnect':   '已退出连接模式。',
@@ -1529,6 +1539,8 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'PNG डाउनलोड',
     'button.copyPng':       'PNG कॉपी करें',
     'button.fitView':       'दृश्य फ़िट करें',
+
+    'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./concept-map-schema.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है।',
 
     'status.undo':          'पूर्ववत।',
     'status.redo':          'पुनः किया।',

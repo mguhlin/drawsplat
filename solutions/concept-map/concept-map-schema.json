@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://drawsplat.org/solutions/concept-map/concept-map-schema.json",
+  "title": "DrawSplat Concept Map Studio — import/export schema",
+  "description": "Schema for .drawsplat-cmap.json files used by DrawSplat Concept Map Studio (solutions/concept-map). The Studio's Load .json button accepts any object that validates against this schema. Unknown fields are tolerated and ignored. Send this file to an LLM along with your prompt to get back JSON you can load directly.",
+  "type": "object",
+  "required": ["type", "nodes", "connectors"],
+  "properties": {
+    "type": {
+      "const": "drawsplat-concept-map",
+      "description": "Identifies the file as a DrawSplat concept map. Must be the exact literal string."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "description": "Schema version. The current writer emits 2. The reader is lenient — older versions still load."
+    },
+    "saved": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp the file was generated. Optional; informational only."
+    },
+    "canvas": {
+      "type": "object",
+      "description": "Hint for the initial view size. The canvas is logically infinite — node coordinates are unbounded and the view auto-fits on load — so this is only used for the default zoom origin.",
+      "properties": {
+        "w": { "type": "number", "default": 1200 },
+        "h": { "type": "number", "default": 720 }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The concept-map nodes. At least one node is required for a file to load.",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "connectors": {
+      "type": "array",
+      "description": "Directed edges between nodes. Connectors whose fromId or toId don't match an existing node id are silently dropped on load. Self-loops (fromId === toId) are also dropped.",
+      "items": { "$ref": "#/$defs/connector" }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Optional named clusters that visually outline a set of nodes. Groups with fewer than 2 valid node ids are dropped on load.",
+      "items": { "$ref": "#/$defs/group" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for a node, connector, or group. Any non-empty string is accepted; if the string ends in digits (e.g. 'n12'), those digits feed the next-id counter so newly-added items don't collide. Recommended convention: 'n1', 'n2', … for nodes; 'c1', 'c2', … for connectors; 'g1', 'g2', … for groups."
+    },
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+      "description": "CSS-style hex color: #RGB, #RRGGBB, or #RRGGBBAA. Invalid values are replaced with the default for the field."
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Visible text inside the node. Longer strings are truncated to 200 characters on load."
+        },
+        "x": {
+          "type": "number",
+          "minimum": -100000,
+          "maximum": 100000,
+          "default": 0,
+          "description": "Horizontal canvas coordinate of the node's CENTER, in unit-viewBox pixels. Values outside ±100000 are clamped."
+        },
+        "y": {
+          "type": "number",
+          "minimum": -100000,
+          "maximum": 100000,
+          "default": 0,
+          "description": "Vertical canvas coordinate of the node's CENTER, in unit-viewBox pixels. Values outside ±100000 are clamped."
+        },
+        "w": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 400,
+          "default": 184,
+          "description": "Rendered node width in pixels. Out-of-range values are clamped."
+        },
+        "h": {
+          "type": "number",
+          "minimum": 24,
+          "maximum": 200,
+          "default": 76,
+          "description": "Rendered node height in pixels. Out-of-range values are clamped."
+        },
+        "link": {
+          "type": "string",
+          "default": "",
+          "description": "Optional clickable URL. Only http://, https://, and mailto: schemes are kept on load; any other value is dropped to an empty string."
+        },
+        "image": {
+          "type": "string",
+          "default": "",
+          "pattern": "^(data:image/.*|)$",
+          "description": "Optional inline image rendered behind the label. Must be a base64 data URL beginning with 'data:image/' (PNG, JPEG, SVG, etc). External http URLs are rejected for privacy/CSP reasons — embed the image data instead."
+        },
+        "isRoot": {
+          "type": "boolean",
+          "default": false,
+          "description": "Marks the central / root node. Root nodes get a default purple style and are emphasized visually. A map can have zero, one, or several root nodes."
+        },
+        "fill": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#fce7f3",
+          "description": "Background fill color. Defaults to the Pink palette swatch (#fce7f3). For consistency with the built-in palette, pair fill+stroke+text from the same color family — see the 'examples' block at the bottom of this schema for the five palette swatches the Studio uses."
+        },
+        "stroke": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#ec4899",
+          "description": "Border color. Defaults to Pink (#ec4899)."
+        },
+        "text": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#831843",
+          "description": "Label text color. Defaults to dark Pink (#831843)."
+        }
+      }
+    },
+    "connector": {
+      "type": "object",
+      "required": ["id", "fromId", "toId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "fromId": {
+          "$ref": "#/$defs/id",
+          "description": "Id of the source node. Must match a node.id in the same file."
+        },
+        "toId": {
+          "$ref": "#/$defs/id",
+          "description": "Id of the destination node. Must match a node.id in the same file and differ from fromId."
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "default": "",
+          "description": "Optional edge label (e.g. 'causes', 'leads to', 'is a kind of'). Rendered along the line."
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "required": ["id", "nodeIds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nodeIds": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "description": "Node ids that belong to this cluster. At least 2 valid ids are required for the group to render.",
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "default": "",
+          "description": "Optional group label drawn near the cluster outline."
+        },
+        "colorIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "default": 0,
+          "description": "Index into the Studio's 5-color group palette: 0 Pink, 1 Mint, 2 Lavender, 3 Butter, 4 Sky."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "type": "drawsplat-concept-map",
+      "version": 2,
+      "saved": "2026-05-30T00:00:00.000Z",
+      "canvas": { "w": 1200, "h": 720 },
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Photosynthesis",
+          "x": 600, "y": 200, "w": 220, "h": 80,
+          "isRoot": true,
+          "fill": "#7c3aed", "stroke": "#5b21b6", "text": "#ffffff"
+        },
+        {
+          "id": "n2",
+          "label": "Sunlight",
+          "x": 300, "y": 420,
+          "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
+        },
+        {
+          "id": "n3",
+          "label": "Water (H₂O)",
+          "x": 600, "y": 420,
+          "fill": "#dbeafe", "stroke": "#3b82f6", "text": "#1e3a8a"
+        },
+        {
+          "id": "n4",
+          "label": "Carbon Dioxide (CO₂)",
+          "x": 900, "y": 420,
+          "fill": "#d1fae5", "stroke": "#10b981", "text": "#064e3b"
+        },
+        {
+          "id": "n5",
+          "label": "Glucose + O₂",
+          "x": 600, "y": 620,
+          "fill": "#ede9fe", "stroke": "#8b5cf6", "text": "#4c1d95"
+        }
+      ],
+      "connectors": [
+        { "id": "c1", "fromId": "n2", "toId": "n1", "label": "provides energy" },
+        { "id": "c2", "fromId": "n3", "toId": "n1", "label": "supplies hydrogen" },
+        { "id": "c3", "fromId": "n4", "toId": "n1", "label": "supplies carbon" },
+        { "id": "c4", "fromId": "n1", "toId": "n5", "label": "produces" }
+      ],
+      "groups": [
+        {
+          "id": "g1",
+          "label": "Inputs",
+          "nodeIds": ["n2", "n3", "n4"],
+          "colorIndex": 4
+        }
+      ]
+    }
+  ]
+}
