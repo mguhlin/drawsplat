@@ -2114,45 +2114,128 @@
     state.nodes = nodes;
     state.connectors = connectors;
     state.groups = groups;
-    resolveOverlaps(state.nodes, 8);
+    resolveOverlaps(state.nodes, state.groups, 8);
     state.nextId = maxIdNum + 1;
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.editing = null; state.drag = null; state.rubber = null;
   }
 
-  // Iterative pairwise separation. For each overlapping pair, push both
-  // halfway apart along the axis with the smaller overlap (less disruptive
-  // to the author's intended layout) plus a min-gap buffer. Repeats until
-  // no overlaps or the iteration cap is hit. O(iter × n²) — fine for the
-  // 10s-of-nodes case typical for concept maps.
-  function resolveOverlaps(nodes, gap){
+  // Iterative separation pass run after JSON import. Three sub-passes per
+  // iteration:
+  //   1. Pairwise node-vs-node — push overlapping rectangles apart along the
+  //      smaller-overlap axis. Less disruptive to the author's intent than
+  //      jumping along the larger axis.
+  //   2. Group-vs-group — compute each group's bounding rectangle (same
+  //      formula as groupBounds), and where two groups' rectangles intersect,
+  //      translate every member node of both groups by half the overlap each.
+  //      Nodes that belong to BOTH overlapping groups receive opposite
+  //      half-pushes that cancel out, which is correct: the seam tears apart
+  //      while shared nodes hold their position.
+  //   3. Free-node-vs-group — a node that doesn't belong to a group should
+  //      not sit inside that group's outline. Treat as group-vs-tiny-group
+  //      and push the node out.
+  // Repeats until everything is clear or the iteration cap fires. O(iter ×
+  // (n² + g²)) — fine for typical concept maps.
+  function resolveOverlaps(nodes, groups, gap){
     gap = gap || 8;
-    const MAX_ITER = 60;
+    const GROUP_PAD = 16;
+    const GROUP_LABEL_EXTRA = 24;
+    const MAX_ITER = 120;
+    function nodeRect(n){ return {x: n.x - n.w/2, y: n.y - n.h/2, w: n.w, h: n.h, cx: n.x, cy: n.y}; }
+    function groupRect(g){
+      const members = g.nodeIds.map(id => nodes.find(n => n.id === id)).filter(Boolean);
+      if (!members.length) return null;
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      for (const n of members) {
+        if (n.x - n.w/2 < minX) minX = n.x - n.w/2;
+        if (n.y - n.h/2 < minY) minY = n.y - n.h/2;
+        if (n.x + n.w/2 > maxX) maxX = n.x + n.w/2;
+        if (n.y + n.h/2 > maxY) maxY = n.y + n.h/2;
+      }
+      const labelExtra = g.label ? GROUP_LABEL_EXTRA : 4;
+      const x = minX - GROUP_PAD;
+      const y = minY - GROUP_PAD - labelExtra;
+      const w = (maxX - minX) + GROUP_PAD*2;
+      const h = (maxY - minY) + GROUP_PAD*2 + labelExtra;
+      return {x, y, w, h, cx: x + w/2, cy: y + h/2, members};
+    }
+    function pushRects(a, b, gap){
+      // Returns [pushX, pushY] to apply to a (b gets the opposite). null if no overlap.
+      const dx = b.cx - a.cx, dy = b.cy - a.cy;
+      const overlapX = (a.w + b.w)/2 + gap - Math.abs(dx);
+      const overlapY = (a.h + b.h)/2 + gap - Math.abs(dy);
+      if (overlapX <= 0 || overlapY <= 0) return null;
+      if (overlapX < overlapY) {
+        const sign = dx === 0 ? 1 : (dx > 0 ? 1 : -1);
+        return [-sign * overlapX / 2, 0];
+      } else {
+        const sign = dy === 0 ? 1 : (dy > 0 ? 1 : -1);
+        return [0, -sign * overlapY / 2];
+      }
+    }
     for (let iter = 0; iter < MAX_ITER; iter++) {
       let moved = false;
+
+      // 1. Node-vs-node.
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const a = nodes[i], b = nodes[j];
-          const dx = b.x - a.x, dy = b.y - a.y;
-          const overlapX = (a.w + b.w)/2 + gap - Math.abs(dx);
-          const overlapY = (a.h + b.h)/2 + gap - Math.abs(dy);
-          if (overlapX <= 0 || overlapY <= 0) continue;
-          if (overlapX < overlapY) {
-            // Same-x tiebreak: shove right.
-            const sign = dx === 0 ? 1 : (dx > 0 ? 1 : -1);
-            const push = overlapX / 2;
-            a.x -= sign * push;
-            b.x += sign * push;
-          } else {
-            const sign = dy === 0 ? 1 : (dy > 0 ? 1 : -1);
-            const push = overlapY / 2;
-            a.y -= sign * push;
-            b.y += sign * push;
-          }
+          const push = pushRects(nodeRect(a), nodeRect(b), gap);
+          if (!push) continue;
+          a.x += push[0]; a.y += push[1];
+          b.x -= push[0]; b.y -= push[1];
           moved = true;
         }
       }
+
+      // 2. Group-vs-group. Recompute rects each iteration since node positions move.
+      if (groups && groups.length >= 2) {
+        const rects = groups.map(groupRect);
+        for (let i = 0; i < rects.length; i++) {
+          for (let j = i + 1; j < rects.length; j++) {
+            const ga = rects[i], gb = rects[j];
+            if (!ga || !gb) continue;
+            const push = pushRects(ga, gb, gap);
+            if (!push) continue;
+            for (const n of ga.members) { n.x += push[0]; n.y += push[1]; }
+            for (const n of gb.members) { n.x -= push[0]; n.y -= push[1]; }
+            moved = true;
+            // Recompute the rects we still need to test against in this pass.
+            rects[i] = groupRect(groups[i]);
+            rects[j] = groupRect(groups[j]);
+          }
+        }
+      }
+
+      // 3. Free-node-vs-foreign-group: a node not in group G shouldn't sit
+      // inside G's outline.
+      if (groups && groups.length) {
+        const memberOf = new Map(); // node.id -> Set of group indexes
+        groups.forEach((g, gi) => {
+          g.nodeIds.forEach(id => {
+            let set = memberOf.get(id);
+            if (!set) { set = new Set(); memberOf.set(id, set); }
+            set.add(gi);
+          });
+        });
+        const rects = groups.map(groupRect);
+        for (let gi = 0; gi < rects.length; gi++) {
+          const gr = rects[gi]; if (!gr) continue;
+          for (const n of nodes) {
+            const inGroups = memberOf.get(n.id);
+            if (inGroups && inGroups.has(gi)) continue;
+            const push = pushRects(gr, nodeRect(n), gap);
+            if (!push) continue;
+            // Push only the node — moving the whole group to dodge one
+            // outsider would cascade. Node absorbs the full overlap (×2 to
+            // compensate for the group not moving).
+            n.x -= push[0] * 2; n.y -= push[1] * 2;
+            moved = true;
+          }
+        }
+      }
+
       if (!moved) break;
     }
   }
