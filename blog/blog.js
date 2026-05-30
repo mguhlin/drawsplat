@@ -54,6 +54,15 @@
     return /^https?:\/\//i.test(u) ? u : '';
   }
 
+  /* Raindrop's RSS embeds the post's first image as the leading <img> inside
+     <description>. Extract its src so we can render a real thumbnail next
+     to each card. Returns an empty string when no img is found. */
+  function extractFirstImageSrc(rawDescription) {
+    const m = String(rawDescription || '').match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (!m) return '';
+    return safeUrl(m[1]);
+  }
+
   function renderItems(items) {
     list.textContent = '';
     let rendered = 0;
@@ -68,11 +77,13 @@
       if (!src && link) {
         try { src = new URL(link).hostname.replace(/^www\./, ''); } catch (_) { src = ''; }
       }
-      const desc = stripHtml(item.querySelector('description')?.textContent || '');
+      const rawDesc = item.querySelector('description')?.textContent || '';
+      const desc = stripHtml(rawDesc);
+      const thumbSrc = extractFirstImageSrc(rawDesc);
       const dateStr = formatDate(pub);
 
       const card = document.createElement('article');
-      card.className = 'blog-card';
+      card.className = 'blog-card' + (thumbSrc ? ' has-thumb' : '');
       const titleHtml = link
         ? `<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>`
         : esc(title);
@@ -83,12 +94,21 @@
       const cta = link
         ? `<a class="blog-card-cta" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Read full post ↗</a>`
         : '';
+      // Wrap the thumbnail in the link too so clicking it opens the post.
+      const thumbHtml = thumbSrc
+        ? (link
+            ? `<a class="blog-card-thumb-link" href="${esc(link)}" target="_blank" rel="noopener noreferrer"><img class="blog-card-thumb" src="${esc(thumbSrc)}" alt="" loading="lazy" referrerpolicy="no-referrer"></a>`
+            : `<img class="blog-card-thumb" src="${esc(thumbSrc)}" alt="" loading="lazy" referrerpolicy="no-referrer">`)
+        : '';
 
       card.innerHTML =
-        '<h2>' + titleHtml + '</h2>' +
-        (metaHtml ? '<p class="blog-card-meta">' + metaHtml + '</p>' : '') +
-        (desc ? '<p class="blog-card-desc">' + esc(desc) + '</p>' : '') +
-        cta;
+        thumbHtml +
+        '<div class="blog-card-body">' +
+          '<h2>' + titleHtml + '</h2>' +
+          (metaHtml ? '<p class="blog-card-meta">' + metaHtml + '</p>' : '') +
+          (desc ? '<p class="blog-card-desc">' + esc(desc) + '</p>' : '') +
+          cta +
+        '</div>';
       list.appendChild(card);
     });
     if (rendered === 0) {

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>DrawSplatTM Blog | Blogs About DrawSplat</title>
 <meta name="description" content="Blogs about DrawSplatTM, syndicated from external blog posts. Read what teachers, writers, and the project author are saying about the free, static-first whiteboard for classrooms." />
 <link rel="canonical" href="https://drawsplat.org/blog/" />
@@ -38,6 +38,20 @@
     box-shadow: 0 6px 18px rgba(64,64,65,0.06);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
+  .blog-card.has-thumb {
+    /* Thumbnail on the left, body on the right at >=640px. Stacks vertically
+       on narrow screens via the media query below. */
+    grid-template-columns: minmax(140px, 220px) minmax(0, 1fr);
+    column-gap: 22px;
+  }
+  .blog-card-thumb-link { display: block; align-self: start; }
+  .blog-card-thumb {
+    display: block; width: 100%; height: auto; aspect-ratio: 16/10;
+    object-fit: cover; border-radius: 10px;
+    background: #f3f4f6;
+    border: 1px solid #e2e6f0;
+  }
+  .blog-card-body { display: grid; gap: 10px; min-width: 0; }
   .blog-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(64,64,65,0.10); border-color: #ddd6fe; }
   .blog-card h2 { margin: 0; font-size: clamp(1.2rem, 2.4vw, 1.6rem); line-height: 1.25; }
   .blog-card h2 a { color: var(--navy, #7c3aed); text-decoration: none; }
@@ -74,6 +88,8 @@
   @media (max-width: 640px) {
     .blog-card { padding: 18px 18px; }
     .blog-card h2 { font-size: 1.1rem; }
+    .blog-card.has-thumb { grid-template-columns: 1fr; row-gap: 12px; }
+    .blog-card-thumb { aspect-ratio: 16/9; }
   }
 </style>
 </head>
