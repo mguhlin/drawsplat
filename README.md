@@ -29,11 +29,9 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.3 — Image upload approval queue (Compliance Roadmap Days 1.3 / 1.4) + NDPA / DPA review-packet polish (CIPA support statement, evidence gallery scaffolding, capture guide).** Pinned as a GitHub release: [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3). Previous milestones: [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.4 — Admin viewer-preview mode, Concept Map embeddable iframe, word-wrap + level hierarchy + Space-drag pan + JSON Schema spec for the Concept Map, Animated GIF Maker widget with median-cut + Floyd-Steinberg quality, whiteboard audio mute toggle + per-game access toggles, Dicebreakers Creator chrome refresh.** Pinned as a GitHub release: [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4). Previous milestones: [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
 
-## Unreleased — on `main` since v3.1.3
-
-This block lists work landed on `main` after the v3.1.3 tag was cut. These ship live to drawsplat.org as they merge; the next release tag (v3.1.4) will roll them up.
+## Recent improvements (v3.1.4)
 
 - **Admin viewer mode (zero-config).** The admin login page now has a **Preview as Viewer** button next to Unlock Admin. Clicking it enters a read-only tour of the admin layout — every Save / Load / Edit control is disabled (CSS + a capturing event listener for defense in depth) and no backend data is loaded. Safe for anyone to click, including drawsplat.org visitors who don't have the admin password. Self-hosters can remove the button from `admin/admin.html` if they don't want public preview. (Earlier viewer-password design is now retired.)
 - **Whiteboard sidebar gains an Audio On/Off toggle.** Next to Undo/Redo. Persists in `localStorage.drawsplat.audioMuted`. Mutes DrawSplat sound effects (TNT today, future game/UI cues); user-recorded audio notes are intentionally exempt.
