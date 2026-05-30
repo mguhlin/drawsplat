@@ -22,12 +22,13 @@
 <section class="admin-gate" aria-label="Admin password required">
   <div class="admin-gate-card">
     <img src="../assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
-    <h2>Admin Access Required</h2>
-    <p>Enter the DrawSplat<sup class="tm">TM</sup> admin password to manage Google Apps Script, MySQL, storage modes, and classroom links.</p>
+    <h2>Admin Access</h2>
+    <p>Enter the DrawSplat<sup class="tm">TM</sup> admin password to manage Google Apps Script, MySQL, storage modes, and classroom links. No password? Click <strong>Preview as Viewer</strong> for a read-only tour of the panel layout — no real data is loaded, so it's safe for anyone to click.</p>
     <label class="admin-label" for="adminGatePassword">Admin password</label>
     <input id="adminGatePassword" type="password" autocomplete="current-password">
     <div class="admin-actions">
       <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
+      <button id="adminViewerPreviewBtn" type="button">Preview as Viewer</button>
       <a class="admin-button" href="access.html">Request Access</a>
     </div>
     <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
@@ -35,7 +36,7 @@
 </section>
 
 <div class="admin-viewer-banner" role="status">
-  Read-only viewer mode — you can browse settings but cannot save changes. Switch users from <strong>Lock Admin</strong> to sign in with the full admin password.
+  <strong>Preview mode</strong> — you're looking at the admin layout in read-only form. No backend data is loaded and every Save / Load / Edit control is disabled. Click <strong>Lock Admin</strong> in the header to exit and sign in with the real admin password.
 </div>
 
 <main class="admin-shell">

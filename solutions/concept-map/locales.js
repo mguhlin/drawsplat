@@ -189,8 +189,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'Download PNG',
     'button.copyPng':       'Copy PNG',
     'button.fitView':       'Fit View',
+    'button.copyEmbedCode': 'Copy Embed Code',
+    'button.copyEmbedLink': 'Copy Embed Link',
 
     'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.',
+    'actions.embedHint':    '<strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.',
+
+    'status.embedCodeCopied': 'Embed code copied. Paste it into Google Sites or WordPress.',
+    'status.embedLinkCopied': 'Embed link copied. Anyone with the link sees a read-only viewer.',
+    'status.embedCopyFailed': 'Could not copy to clipboard.',
 
     'status.undo':          'Undo.',
     'status.redo':          'Redo.',
@@ -459,8 +466,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'Descargar PNG',
     'button.copyPng':       'Copiar PNG',
     'button.fitView':       'Ajustar vista',
+    'button.copyEmbedCode': 'Copiar código de inserción',
+    'button.copyEmbedLink': 'Copiar enlace de inserción',
 
     'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./drawsplat-concept-map-schema.json" download>especificación del formato</a> — documenta cada campo que el Studio lee.',
+    'actions.embedHint':    '<strong>Insertar en un sitio web:</strong> haz clic en <strong>Copiar código de inserción</strong> para obtener un fragmento <code>&lt;iframe&gt;</code> que puedes pegar en Google Sites (Insertar → Código de inserción) o en WordPress (bloque HTML personalizado). Los lectores pueden desplazar, hacer zoom y abrir enlaces de los nodos — pero no editar. Usa <strong>Copiar enlace de inserción</strong> si solo quieres la URL.',
+
+    'status.embedCodeCopied': 'Código de inserción copiado. Pégalo en Google Sites o WordPress.',
+    'status.embedLinkCopied': 'Enlace de inserción copiado. Cualquiera con el enlace ve un visor de solo lectura.',
+    'status.embedCopyFailed': 'No se pudo copiar al portapapeles.',
 
     'status.undo':          'Deshecho.',
     'status.redo':          'Rehecho.',
@@ -729,8 +743,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'Tải PNG',
     'button.copyPng':       'Sao chép PNG',
     'button.fitView':       'Vừa khung',
+    'button.copyEmbedCode': 'Sao chép mã nhúng',
+    'button.copyEmbedLink': 'Sao chép liên kết nhúng',
 
     'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./drawsplat-concept-map-schema.json" download>tệp đặc tả định dạng</a> trước — tệp này mô tả mọi trường mà Studio đọc.',
+    'actions.embedHint':    '<strong>Nhúng vào website:</strong> nhấn <strong>Sao chép mã nhúng</strong> để lấy đoạn <code>&lt;iframe&gt;</code> dán vào Google Sites (Embed → Embed code) hoặc WordPress (khối Custom HTML). Người xem có thể di chuyển, phóng to và bấm vào liên kết của nút — nhưng không sửa được. Dùng <strong>Sao chép liên kết nhúng</strong> nếu chỉ cần URL.',
+
+    'status.embedCodeCopied': 'Đã sao chép mã nhúng. Dán vào Google Sites hoặc WordPress.',
+    'status.embedLinkCopied': 'Đã sao chép liên kết nhúng. Ai có liên kết sẽ xem ở chế độ chỉ đọc.',
+    'status.embedCopyFailed': 'Không thể sao chép vào bộ nhớ tạm.',
 
     'status.undo':          'Đã hoàn tác.',
     'status.redo':          'Đã làm lại.',
@@ -999,8 +1020,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'تنزيل PNG',
     'button.copyPng':       'نسخ PNG',
     'button.fitView':       'ملاءمة العرض',
+    'button.copyEmbedCode': 'نسخ كود التضمين',
+    'button.copyEmbedLink': 'نسخ رابط التضمين',
 
     'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./drawsplat-concept-map-schema.json" download>مواصفات التنسيق</a> — فهي توثّق كل حقل يقرؤه الاستوديو.',
+    'actions.embedHint':    '<strong>تضمين في موقع ويب:</strong> انقر <strong>نسخ كود التضمين</strong> للحصول على مقطع <code>&lt;iframe&gt;</code> يمكنك لصقه في Google Sites (Embed → Embed code) أو WordPress (كتلة Custom HTML). يحصل المشاهدون على تحريك وتكبير وروابط قابلة للنقر على العقد — لكن لا يمكنهم التعديل. استخدم <strong>نسخ رابط التضمين</strong> إذا كنت تريد الرابط فقط.',
+
+    'status.embedCodeCopied': 'تم نسخ كود التضمين. الصقه في Google Sites أو WordPress.',
+    'status.embedLinkCopied': 'تم نسخ رابط التضمين. أي شخص لديه الرابط يرى عارضًا للقراءة فقط.',
+    'status.embedCopyFailed': 'تعذر النسخ إلى الحافظة.',
 
     'status.undo':          'تم التراجع.',
     'status.redo':          'تمت الإعادة.',
@@ -1269,8 +1297,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   '下载 PNG',
     'button.copyPng':       '复制 PNG',
     'button.fitView':       '适合视图',
+    'button.copyEmbedCode': '复制嵌入代码',
+    'button.copyEmbedLink': '复制嵌入链接',
 
     'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./drawsplat-concept-map-schema.json" download>格式规范</a> 交给它——里面记录了 Studio 读取的每一个字段。',
+    'actions.embedHint':    '<strong>嵌入到网站：</strong>点击 <strong>复制嵌入代码</strong> 获取可粘贴到 Google Sites（Embed → Embed code）或 WordPress（自定义 HTML 块）的 <code>&lt;iframe&gt;</code> 片段。访客可以平移、缩放，并点击节点链接 — 但无法编辑。如果只需要 URL，请使用 <strong>复制嵌入链接</strong>。',
+
+    'status.embedCodeCopied': '嵌入代码已复制。粘贴到 Google Sites 或 WordPress。',
+    'status.embedLinkCopied': '嵌入链接已复制。任何持有链接的人都能看到只读查看器。',
+    'status.embedCopyFailed': '无法复制到剪贴板。',
 
     'status.undo':          '已撤销。',
     'status.redo':          '已重做。',
@@ -1539,8 +1574,15 @@ WidgetI18n.register('concept-map', {
     'button.downloadPng':   'PNG डाउनलोड',
     'button.copyPng':       'PNG कॉपी करें',
     'button.fitView':       'दृश्य फ़िट करें',
+    'button.copyEmbedCode': 'एम्बेड कोड कॉपी करें',
+    'button.copyEmbedLink': 'एम्बेड लिंक कॉपी करें',
 
     'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./drawsplat-concept-map-schema.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है।',
+    'actions.embedHint':    '<strong>वेबसाइट में एम्बेड करें:</strong> <strong>एम्बेड कोड कॉपी करें</strong> पर क्लिक करके <code>&lt;iframe&gt;</code> स्निपेट लें जिसे आप Google Sites (Embed → Embed code) या WordPress (Custom HTML ब्लॉक) में पेस्ट कर सकते हैं। पाठक pan, zoom, और नोड लिंक खोल सकते हैं — लेकिन एडिट नहीं कर सकते। केवल URL चाहिए तो <strong>एम्बेड लिंक कॉपी करें</strong> का उपयोग करें।',
+
+    'status.embedCodeCopied': 'एम्बेड कोड कॉपी हो गया। Google Sites या WordPress में पेस्ट करें।',
+    'status.embedLinkCopied': 'एम्बेड लिंक कॉपी हो गया। लिंक रखने वाले को रीड-ओनली व्यू मिलता है।',
+    'status.embedCopyFailed': 'क्लिपबोर्ड पर कॉपी नहीं हो सका।',
 
     'status.undo':          'पूर्ववत।',
     'status.redo':          'पुनः किया।',

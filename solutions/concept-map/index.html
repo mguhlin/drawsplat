@@ -362,9 +362,45 @@
     }
     .footer-note a { color: var(--navy); }
     .footer-note strong { color: var(--gray-90); }
+
+    /* Embed mode — used when the page is loaded via ?embed=1 (typically
+       inside an <iframe> on a Google Site, WordPress page, etc). Hides the
+       editor chrome and leaves only the canvas plus pan/zoom. The same JSON
+       loader runs but reads its data from the URL hash. */
+    body.embed-mode .top-bar,
+    body.embed-mode header,
+    body.embed-mode aside.panel,
+    body.embed-mode .stage .actions,
+    body.embed-mode .stage > .footer-note,
+    body.embed-mode .stage .status,
+    body.embed-mode .stage-head,
+    body.embed-mode .mode-pill,
+    body.embed-mode .hint-line,
+    body.embed-mode #undoBtn,
+    body.embed-mode #redoBtn,
+    body.embed-mode #gridToggleBtn { display: none !important; }
+    body.embed-mode .page { padding: 0; max-width: none; width: 100%; }
+    body.embed-mode .app-grid { grid-template-columns: 1fr; padding: 0; gap: 0; }
+    body.embed-mode .stage { padding: 6px; min-height: 100vh; box-shadow: none; border-radius: 0; border: 0; }
+    body.embed-mode .canvas-toolbar { padding: 4px 6px; gap: 6px; }
+    body.embed-mode .canvas-shell { min-height: calc(100vh - 60px); }
+    .embed-credit { display: none; }
+    body.embed-mode .embed-credit {
+      display: block;
+      position: fixed; right: 8px; bottom: 6px;
+      font-size: 11px; font-weight: 700;
+      background: rgba(255,255,255,.85);
+      padding: 3px 8px; border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--gray-50);
+      text-decoration: none;
+      z-index: 10;
+    }
+    .embed-credit:hover { color: var(--navy); background: #fff; }
   </style>
 </head>
 <body>
+  <a class="embed-credit" href="https://drawsplat.org/solutions/concept-map/" target="_blank" rel="noopener noreferrer">Made with DrawSplat™ Concept Map Studio →</a>
   <div class="top-bar" aria-hidden="true"></div>
   <div class="page">
     <header>
@@ -480,10 +516,13 @@
           <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
           <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
           <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+          <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
+          <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
           <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
         </div>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
         <p class="footer-note" data-i18n-html="actions.schemaHint">Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.</p>
+        <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
@@ -1666,6 +1705,7 @@
   }, {passive: false});
 
   svg.addEventListener('dblclick', e => {
+    if (document.body.classList.contains('embed-mode')) return;
     const nodeEl = e.target.closest('.cm-node');
     const labelEl = e.target.closest('.cm-connector-label');
     const connEl = e.target.closest('.cm-connector');
@@ -2381,6 +2421,44 @@
     } catch(err) { setStatus(t('status.copyFail', {err: err && err.message ? err.message : String(err)}), 'danger'); }
   });
 
+  /* Embed URL + iframe code. Encodes the current map JSON into the URL hash
+     (kept client-side; never sent to a server). Viewers loading the URL get
+     a pan/zoom canvas with clickable node links; the editor UI is hidden by
+     the body.embed-mode CSS rules. */
+  function buildEmbedUrl(){
+    const data = buildSaveJson();
+    const json = encodeURIComponent(JSON.stringify(data));
+    return location.origin + location.pathname + '?embed=1#json=' + json;
+  }
+  function buildEmbedCode(){
+    const url = buildEmbedUrl();
+    const title = (state.nodes.find(n => n.isRoot)?.label || 'Concept Map').replace(/"/g, '&quot;');
+    return '<iframe src="' + url + '" width="100%" height="640" style="border:1px solid #ddd6fe;border-radius:8px" loading="lazy" title="' + title + '"></iframe>';
+  }
+  async function copyToClipboard(text, okMsg, failMsg){
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); ta.remove();
+      }
+      setStatus(okMsg, 'success');
+    } catch (err) {
+      setStatus(failMsg + ' ' + (err && err.message ? err.message : ''), 'danger');
+    }
+  }
+  document.getElementById('copyEmbedCodeBtn').addEventListener('click', () => {
+    if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
+    copyToClipboard(buildEmbedCode(), t('status.embedCodeCopied'), t('status.embedCopyFailed'));
+  });
+  document.getElementById('copyEmbedLinkBtn').addEventListener('click', () => {
+    if (!state.nodes.length) return setStatus(t('status.addNodeFirst'), 'danger');
+    copyToClipboard(buildEmbedUrl(), t('status.embedLinkCopied'), t('status.embedCopyFailed'));
+  });
+
   /* ===== keyboard ===== */
   // Hold Space to temporarily pan with the arrow tool — matches the
   // universal design-tool shortcut (Figma, Photoshop, Lucidchart, Excalidraw).
@@ -2427,6 +2505,7 @@
     if (!ctrl && (e.key === '-' || e.key === '_')) { e.preventDefault(); zoomOut(); return; }
     if (!ctrl && e.key === '0') { e.preventDefault(); resetZoom(); return; }
     if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (document.body.classList.contains('embed-mode')) return;
       if (state.selection.kind) { e.preventDefault(); document.getElementById('deleteBtn').click(); }
     } else if (e.key === 'Escape') {
       if (state.tool === 'connect') { setTool('select'); setStatus(t('status.connectCancelled'), 'info'); }
@@ -2441,10 +2520,42 @@
     }
   });
 
+  /* ===== embed mode ===== */
+  // ?embed=1 hides the editor chrome; map data comes from the URL hash
+  // (#json=<URL-encoded JSON>). Used by the Studio's Copy Embed Code button
+  // when teachers paste a live concept map into Google Sites or WordPress.
+  const embedParams = new URLSearchParams(location.search);
+  const isEmbedMode = embedParams.get('embed') === '1';
+  function loadFromHash(){
+    const hash = (location.hash || '').replace(/^#/, '');
+    if (!hash) return false;
+    const hp = new URLSearchParams(hash);
+    const json = hp.get('json');
+    if (!json) return false;
+    try {
+      const data = JSON.parse(decodeURIComponent(json));
+      applyLoadedJson(data);
+      return true;
+    } catch (err) {
+      console.error('Concept Map embed: hash data parse failed:', err);
+      return false;
+    }
+  }
+
   /* ===== boot ===== */
-  defaultMap();
+  if (isEmbedMode) {
+    document.body.classList.add('embed-mode');
+  }
+  const loadedFromHash = loadFromHash();
+  if (!loadedFromHash) defaultMap();
   resetHistory();
-  render();
+  if (isEmbedMode) {
+    // Re-render then fit so the embedded viewer always opens framed.
+    render();
+    fitView();
+  } else {
+    render();
+  }
 
   // Language switch: re-render so the mode pill, hint, selection panel,
   // "+ label" pill, and any future toolbar text get the new strings.
