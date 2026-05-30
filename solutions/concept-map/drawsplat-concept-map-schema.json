@@ -74,6 +74,11 @@
           "maximum": 3,
           "description": "Visual hierarchy. 1 = main idea (largest box, largest text). 2 = directly connected to a main idea (medium). 3 = supporting detail / leaf (smallest). If omitted, defaults to 1 when isRoot is true, otherwise 2. Use level=3 for short factual nodes attached to a level-2 hub so they read as visually subordinate. The default width and base height for the node come from the level; explicit w/h still override."
         },
+        "section": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Optional section / chapter tag. When at least one node in the map has a `section`, the Studio shows a section-filter pill row above the canvas; clicking a section focuses on it and fades nodes in other sections. Useful for breaking large maps into chapters (e.g. \"Inputs\", \"Process\", \"Outputs\") without splitting into separate files. Nodes can omit `section` to always show. Whitespace is trimmed, and values longer than 80 characters are truncated on load."
+        },
         "x": {
           "type": "number",
           "minimum": -100000,
@@ -203,6 +208,7 @@
           "id": "n2",
           "label": "Sunlight",
           "level": 2,
+          "section": "Inputs",
           "x": 300, "y": 420,
           "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
         },
@@ -210,6 +216,7 @@
           "id": "n3",
           "label": "Water (H₂O)",
           "level": 2,
+          "section": "Inputs",
           "x": 600, "y": 420,
           "fill": "#dbeafe", "stroke": "#3b82f6", "text": "#1e3a8a"
         },
@@ -217,6 +224,7 @@
           "id": "n4",
           "label": "Carbon Dioxide (CO₂)",
           "level": 2,
+          "section": "Inputs",
           "x": 900, "y": 420,
           "fill": "#d1fae5", "stroke": "#10b981", "text": "#064e3b"
         },
@@ -224,6 +232,7 @@
           "id": "n5",
           "label": "Glucose + O₂",
           "level": 2,
+          "section": "Outputs",
           "x": 600, "y": 620,
           "fill": "#ede9fe", "stroke": "#8b5cf6", "text": "#4c1d95"
         },
@@ -231,6 +240,7 @@
           "id": "n6",
           "label": "Visible spectrum, 400-700nm",
           "level": 3,
+          "section": "Inputs",
           "x": 140, "y": 540,
           "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
         }

@@ -376,6 +376,20 @@
     .outline-md { margin: 0; padding: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; line-height: 1.55; overflow-x: auto; background: #fff; border-top: 1px solid var(--border); border-radius: 0 0 6px 6px; max-height: 360px; overflow-y: auto; color: var(--gray-90); white-space: pre-wrap; word-break: break-word; }
     .outline-md:empty::before { content: 'No nodes yet.'; color: var(--gray-50); font-family: inherit; }
 
+    /* Section filter — appears above the canvas-toolbar only when at least
+       one node has a `section` field. Clicking a pill focuses the canvas
+       on that section; non-matching nodes fade out. */
+    .section-filter { display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 8px; background: #faf9ff; border: 1.5px solid var(--border); border-radius: 8px; flex-wrap: wrap; }
+    .section-filter[hidden] { display: none; }
+    .section-filter-label { color: var(--navy); font-weight: 700; font-size: .85rem; }
+    .section-filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .section-pill { padding: 4px 12px; border: 1.5px solid var(--gray-30); border-radius: 999px; background: #fff; color: var(--gray-90); font-size: .82rem; font-weight: 700; cursor: pointer; }
+    .section-pill:hover { border-color: var(--navy); color: var(--navy); }
+    .section-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .cm-node.section-faded { opacity: .22; }
+    .cm-connector.section-faded { opacity: .22; }
+    .cm-group.section-faded { opacity: .35; }
+
     /* Embed mode — used when the page is loaded via ?embed=1 (typically
        inside an <iframe> on a Google Site, WordPress page, etc). Hides the
        editor chrome and leaves only the canvas plus pan/zoom. The same JSON
@@ -504,6 +518,10 @@
       </aside>
 
       <section class="stage" data-i18n-aria-label="panel.canvas.aria" aria-label="Concept map canvas">
+        <div class="section-filter" id="sectionFilter" hidden>
+          <span class="section-filter-label" data-i18n="section.filterLabel">Section filter:</span>
+          <div class="section-filter-pills" id="sectionFilterPills"></div>
+        </div>
         <div class="canvas-toolbar">
           <span class="mode-pill" id="modeIndicator" data-i18n="modePill.select">Mode: Select / Drag</span>
           <span class="hint-line" id="hintLine" data-i18n="hintLine.default">Click to select. Drag to move. Shift-click to add. Double-click to rename.</span>
@@ -613,8 +631,66 @@
     panToggle: false,  // sticky pan-mode toggle (touch friendly)
     editing: null,
     view: {x: 0, y: 0, scale: 1},  // viewBox: x y CANVAS_W/scale CANVAS_H/scale
-    history: {undo: [], redo: []}
+    history: {undo: [], redo: []},
+    activeSection: null  // null = show all; string = focus that section, fade others
   };
+
+  // Section-filter helpers — when activeSection is set, nodes outside that
+  // section render with the .section-faded CSS class. Connectors fade if
+  // either endpoint is faded; groups fade if their bounding rect doesn't
+  // contain any in-section node.
+  function isNodeFaded(n){
+    if (!state.activeSection) return false;
+    return (n.section || '') !== state.activeSection;
+  }
+  function isConnectorFaded(c){
+    if (!state.activeSection) return false;
+    const a = nodeById(c.fromId), b = nodeById(c.toId);
+    if (!a || !b) return false;
+    return isNodeFaded(a) && isNodeFaded(b);
+  }
+  function isGroupFaded(g){
+    if (!state.activeSection) return false;
+    // Fade group if NONE of its members are in the active section.
+    return !g.nodeIds.some(id => {
+      const n = nodeById(id);
+      return n && (n.section || '') === state.activeSection;
+    });
+  }
+  function listSections(){
+    const set = new Set();
+    state.nodes.forEach(n => { if (n.section) set.add(n.section); });
+    return Array.from(set).sort();
+  }
+  function refreshSectionFilter(){
+    const wrap = document.getElementById('sectionFilter');
+    const pills = document.getElementById('sectionFilterPills');
+    if (!wrap || !pills) return;
+    const sections = listSections();
+    if (!sections.length) {
+      wrap.hidden = true;
+      pills.innerHTML = '';
+      state.activeSection = null;
+      return;
+    }
+    wrap.hidden = false;
+    const active = state.activeSection;
+    pills.innerHTML = '';
+    const mkPill = (label, value) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'section-pill' + ((value === active) ? ' active' : '');
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        state.activeSection = value;
+        refreshSectionFilter();
+        render();
+      });
+      return b;
+    };
+    pills.appendChild(mkPill(t('section.all'), null));
+    for (const s of sections) pills.appendChild(mkPill(s, s));
+  }
 
   /* ===== helpers ===== */
   function uid(prefix){ return prefix + (state.nextId++); }
@@ -1206,6 +1282,8 @@
 
     // Keep the markdown outline mirror in sync with edits.
     if (typeof refreshOutline === 'function') refreshOutline();
+    // Keep the section filter pills in sync with the current node list.
+    if (typeof refreshSectionFilter === 'function') refreshSectionFilter();
 
     const defs = svgPart('defs');
     defs.innerHTML =
@@ -1221,7 +1299,8 @@
       if (!b) return;
       const c = PALETTE[((g.colorIndex || 0) % PALETTE.length + PALETTE.length) % PALETTE.length];
       const isSel = isSelected('group', g.id);
-      const grpEl = svgPart('g', {class: 'cm-group' + (isSel ? ' selected' : ''), 'data-id': g.id});
+      const grpFaded = isGroupFaded(g);
+      const grpEl = svgPart('g', {class: 'cm-group' + (isSel ? ' selected' : '') + (grpFaded ? ' section-faded' : ''), 'data-id': g.id});
       grpEl.appendChild(svgPart('rect', {
         x: b.x, y: b.y, width: b.w, height: b.h, rx: 14,
         fill: c.fill, 'fill-opacity': 0.32,
@@ -1249,7 +1328,8 @@
       const midX = (p1.x + p2.x) / 2, midY = (p1.y + p2.y) / 2;
       const ctrlX = midX;
       const d = 'M ' + p1.x + ' ' + p1.y + ' C ' + ctrlX + ' ' + p1.y + ', ' + ctrlX + ' ' + p2.y + ', ' + p2.x + ' ' + p2.y;
-      const g = svgPart('g', {class: 'cm-connector' + (isSel ? ' selected' : ''), 'data-id': c.id});
+      const cFaded = isConnectorFaded(c);
+      const g = svgPart('g', {class: 'cm-connector' + (isSel ? ' selected' : '') + (cFaded ? ' section-faded' : ''), 'data-id': c.id});
       g.appendChild(svgPart('path', {
         d, fill: 'none',
         stroke: isSel ? '#f59e0b' : '#94a3b8',
@@ -1316,7 +1396,7 @@
       const isPending = state.pendingFrom === n.id ||
         (state.pendingFromMulti && state.pendingFromMulti.indexOf(n.id) !== -1);
       const gNode = svgPart('g', {
-        class: 'cm-node' + (isSel ? ' selected' : '') + (isPending ? ' pending' : ''),
+        class: 'cm-node' + (isSel ? ' selected' : '') + (isPending ? ' pending' : '') + (isNodeFaded(n) ? ' section-faded' : ''),
         'data-id': n.id
       });
       const x = n.x - n.w/2, y = n.y - n.h/2;
@@ -2296,7 +2376,9 @@
       nodes: state.nodes.map(n => ({
         id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, level: nodeLevel(n),
         label: n.label, link: n.link || '', image: n.image || '',
-        isRoot: !!n.isRoot, fill: n.fill, stroke: n.stroke, text: n.text
+        isRoot: !!n.isRoot,
+        section: n.section || '',
+        fill: n.fill, stroke: n.stroke, text: n.text
       })),
       connectors: state.connectors.map(c => ({
         id: c.id, fromId: c.fromId, toId: c.toId, label: c.label || ''
@@ -2339,6 +2421,7 @@
         link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
         image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
         isRoot,
+        section: (typeof raw.section === 'string' && raw.section.trim()) ? raw.section.trim().slice(0, 80) : '',
         fill: validHex(raw.fill, '#fce7f3'),
         stroke: validHex(raw.stroke, '#ec4899'),
         text: validHex(raw.text, '#831843')

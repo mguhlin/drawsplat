@@ -206,6 +206,9 @@ WidgetI18n.register('concept-map', {
     'outline.openMd': 'Open in Markdown Studio →',
     'outline.hint':   'Live mirror of the map\'s hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.',
 
+    'section.filterLabel': 'Section filter:',
+    'section.all': 'All',
+
     'status.undo':          'Undo.',
     'status.redo':          'Redo.',
     'status.exitConnect':   'Exited connect mode.',
@@ -489,6 +492,9 @@ WidgetI18n.register('concept-map', {
     'outline.copy':   'Copiar Markdown',
     'outline.openMd': 'Abrir en Markdown Studio →',
     'outline.hint':   'Espejo en vivo de la jerarquía del mapa. Úsalo como esquema de estudio, pégalo en notas o pásalo a una IA como contexto.',
+
+    'section.filterLabel': 'Filtro de sección:',
+    'section.all': 'Todas',
 
     'status.undo':          'Deshecho.',
     'status.redo':          'Rehecho.',
@@ -774,6 +780,9 @@ WidgetI18n.register('concept-map', {
     'outline.openMd': 'Mở trong Markdown Studio →',
     'outline.hint':   'Bản sao trực tiếp của cấu trúc bản đồ. Dùng làm dàn ý ôn tập, dán vào ghi chú, hoặc đưa cho AI làm ngữ cảnh.',
 
+    'section.filterLabel': 'Bộ lọc phần:',
+    'section.all': 'Tất cả',
+
     'status.undo':          'Đã hoàn tác.',
     'status.redo':          'Đã làm lại.',
     'status.exitConnect':   'Đã thoát chế độ kết nối.',
@@ -1057,6 +1066,9 @@ WidgetI18n.register('concept-map', {
     'outline.copy':   'نسخ Markdown',
     'outline.openMd': 'فتح في Markdown Studio ←',
     'outline.hint':   'انعكاس حي لتسلسل الخريطة. استخدمه كمخطط دراسة، الصقه في الملاحظات، أو أعطه لذكاء اصطناعي كسياق.',
+
+    'section.filterLabel': 'مرشح القسم:',
+    'section.all': 'الكل',
 
     'status.undo':          'تم التراجع.',
     'status.redo':          'تمت الإعادة.',
@@ -1342,6 +1354,9 @@ WidgetI18n.register('concept-map', {
     'outline.openMd': '在 Markdown Studio 中打开 →',
     'outline.hint':   '地图层级的实时镜像。可作为学习大纲、粘贴到笔记，或交给 AI 作为上下文。',
 
+    'section.filterLabel': '章节过滤：',
+    'section.all': '全部',
+
     'status.undo':          '已撤销。',
     'status.redo':          '已重做。',
     'status.exitConnect':   '已退出连接模式。',
@@ -1625,6 +1640,9 @@ WidgetI18n.register('concept-map', {
     'outline.copy':   'Markdown कॉपी करें',
     'outline.openMd': 'Markdown Studio में खोलें →',
     'outline.hint':   'मानचित्र की पदानुक्रम का लाइव प्रतिबिंब। अध्ययन आउटलाइन के रूप में, नोट्स में पेस्ट करें, या AI को संदर्भ के रूप में दें।',
+
+    'section.filterLabel': 'सेक्शन फ़िल्टर:',
+    'section.all': 'सभी',
 
     'status.undo':          'पूर्ववत।',
     'status.redo':          'पुनः किया।',
