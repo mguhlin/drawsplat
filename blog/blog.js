@@ -105,6 +105,7 @@
   }
 
   async function load() {
+    showStatus('Loading posts…', '');
     try {
       const res = await fetch('drawsplat.rss', { cache: 'no-cache' });
       if (!res.ok) throw new Error('Could not load feed (HTTP ' + res.status + ').');
