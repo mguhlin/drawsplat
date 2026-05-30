@@ -522,6 +522,17 @@
      "Fit View" recomputes a viewBox tight around the existing content. */
   const CANVAS_W = 1200, CANVAS_H = 720;
   const NODE_W = 184, NODE_H = 76;
+  // Visual hierarchy: level 1 = main idea (largest), level 2 = directly
+  // connected to main (medium), level 3 = detail / leaf (smallest). Nodes
+  // without an explicit `level` field default to 1 if isRoot, else 2.
+  // The base height is a floor — nodes auto-grow vertically to fit wrapped
+  // text. fontScreen drives the in-editor UI; fontExport is used for SVG/PNG
+  // exports so labels stay readable at full size.
+  const LEVEL_DIMS = {
+    1: { w: 248, baseH: 96, fontScreen: 19, fontExport: 24 },
+    2: { w: 200, baseH: 80, fontScreen: 16, fontExport: 19 },
+    3: { w: 168, baseH: 64, fontScreen: 13, fontExport: 16 }
+  };
   const RUBBER_MIN = 5;
   const HISTORY_LIMIT = 60;
   const ZOOM_MIN = 0.18, ZOOM_MAX = 4.5;
@@ -548,6 +559,52 @@
   function uid(prefix){ return prefix + (state.nextId++); }
   function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function truncate(s, max){ s = String(s||''); return s.length > max ? s.slice(0, max-1) + '…' : s; }
+  function nodeLevel(n){
+    if (typeof n.level === 'number' && n.level >= 1 && n.level <= 3) return n.level | 0;
+    return n.isRoot ? 1 : 2;
+  }
+  function nodeFontSize(n){
+    const L = LEVEL_DIMS[nodeLevel(n)];
+    return renderExportMode ? L.fontExport : L.fontScreen;
+  }
+  // Greedy word-wrap. Splits the label into words, packs them into lines no
+  // longer than maxChars. Very long words are hard-broken with a hyphen so
+  // they don't push past the box. Returns an array of strings, one per line.
+  function wrapLabel(label, maxChars){
+    const words = String(label || '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    const max = Math.max(3, maxChars | 0);
+    const lines = [];
+    let cur = '';
+    for (let w of words) {
+      while (w.length > max) {
+        if (cur) { lines.push(cur); cur = ''; }
+        lines.push(w.slice(0, max - 1) + '-');
+        w = w.slice(max - 1);
+      }
+      if (!cur) { cur = w; continue; }
+      if (cur.length + 1 + w.length <= max) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  function svgWrappedText(lines, attrs){
+    const t = svgPart('text', attrs);
+    const fontSize = parseFloat(attrs['font-size'] || 14);
+    const lineHeight = fontSize * 1.25;
+    const cx = attrs.x;
+    const totalH = (lines.length - 1) * lineHeight;
+    const baselineY = (typeof attrs.y === 'number' ? attrs.y : parseFloat(attrs.y || 0))
+                      - totalH / 2 + fontSize * 0.35;
+    t.setAttribute('y', baselineY);
+    lines.forEach((line, i) => {
+      const ts = svgPart('tspan', { x: cx, dy: i === 0 ? 0 : lineHeight });
+      ts.textContent = line;
+      t.appendChild(ts);
+    });
+    return t;
+  }
   function setStatus(msg, kind){
     statusEl.textContent = msg || '';
     statusEl.className = 'status' + (kind ? ' ' + kind : '');
@@ -1009,8 +1066,10 @@
   // In export mode (SVG/PNG download or PNG copy), bump font sizes so labels
   // read cleanly when the PNG is opened at full size. The screen UI keeps its
   // tighter sizes so the canvas doesn't feel cramped.
-  const EXPORT_FONTS = { node: 18, nodeRoot: 22, group: 18, connector: 16 };
-  const SCREEN_FONTS = { node: 15, nodeRoot: 18, group: 14, connector: 13 };
+  // Node label fonts now come from LEVEL_DIMS / nodeFontSize(). These hold
+  // the remaining group + connector label sizes.
+  const EXPORT_FONTS = { group: 18, connector: 16 };
+  const SCREEN_FONTS = { group: 14, connector: 13 };
   let renderExportMode = false;
   function render(viewBoxOverride, opts){
     renderExportMode = !!(opts && opts.exportMode);
@@ -1018,6 +1077,22 @@
     const vbW = CANVAS_W / state.view.scale;
     const vbH = CANVAS_H / state.view.scale;
     svg.setAttribute('viewBox', viewBoxOverride || (state.view.x + ' ' + state.view.y + ' ' + vbW + ' ' + vbH));
+
+    // Pre-pass: compute wrapped label lines for each node, then auto-grow
+    // n.h to fit. Anchor calcs and group bounds downstream all read n.h, so
+    // doing this before anything else keeps everything consistent.
+    state.nodes.forEach(n => {
+      const fontSize = nodeFontSize(n);
+      const charW = fontSize * 0.55; // Arial-ish heuristic, good enough
+      const leftReserve = n.image ? 68 : 0; // image takes ~46px + margin
+      const usableW = Math.max(48, n.w - 24 - leftReserve);
+      const maxChars = Math.max(4, Math.floor(usableW / charW));
+      n._wrapped = wrapLabel(n.label, maxChars);
+      const lineHeight = fontSize * 1.25;
+      const minH = LEVEL_DIMS[nodeLevel(n)].baseH;
+      const textBlock = n._wrapped.length * lineHeight + 24;
+      n.h = Math.max(minH, Math.ceil(textBlock));
+    });
 
     const defs = svgPart('defs');
     defs.innerHTML =
@@ -1130,6 +1205,7 @@
         x, y, width: n.w, height: n.h, rx: 18,
         fill: n.fill, stroke, 'stroke-width': isSel ? 3.5 : 2.2
       }));
+      const labelFontSize = nodeFontSize(n);
       if (n.image) {
         const imgSize = 46;
         const ix = x + 12, iy = n.y - imgSize/2;
@@ -1141,16 +1217,16 @@
           href: n.image, x: ix, y: iy, width: imgSize, height: imgSize,
           preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#' + clipId + ')'
         }));
-        gNode.appendChild(svgText(truncate(n.label, 18), {
-          x: x + n.w/2 + 22, y: n.y + 6, 'text-anchor': 'middle',
+        gNode.appendChild(svgWrappedText(n._wrapped, {
+          x: x + (n.w + imgSize + 24) / 2, y: n.y, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
-          'font-size': n.isRoot ? (renderExportMode ? EXPORT_FONTS.nodeRoot : SCREEN_FONTS.nodeRoot) : (renderExportMode ? EXPORT_FONTS.node : SCREEN_FONTS.node), 'font-weight': 800, fill: n.text
+          'font-size': labelFontSize, 'font-weight': 800, fill: n.text
         }));
       } else {
-        gNode.appendChild(svgText(truncate(n.label, 22), {
-          x: n.x, y: n.y + 6, 'text-anchor': 'middle',
+        gNode.appendChild(svgWrappedText(n._wrapped, {
+          x: n.x, y: n.y, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
-          'font-size': n.isRoot ? (renderExportMode ? EXPORT_FONTS.nodeRoot : SCREEN_FONTS.nodeRoot) : (renderExportMode ? EXPORT_FONTS.node : SCREEN_FONTS.node), 'font-weight': 800, fill: n.text
+          'font-size': labelFontSize, 'font-weight': 800, fill: n.text
         }));
       }
       if (n.link) {
@@ -2036,7 +2112,7 @@
       type: SAVE_TYPE, version: SAVE_VERSION, saved: new Date().toISOString(),
       canvas: {w: CANVAS_W, h: CANVAS_H},
       nodes: state.nodes.map(n => ({
-        id: n.id, x: n.x, y: n.y, w: n.w, h: n.h,
+        id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, level: nodeLevel(n),
         label: n.label, link: n.link || '', image: n.image || '',
         isRoot: !!n.isRoot, fill: n.fill, stroke: n.stroke, text: n.text
       })),
@@ -2066,16 +2142,20 @@
       if (idSeen[id]) continue;
       idSeen[id] = true;
       bumpId(id);
+      const isRoot = !!raw.isRoot;
+      const lvl = clampNumber(raw.level, 1, 3, isRoot ? 1 : 2) | 0;
+      const lvlDims = LEVEL_DIMS[lvl];
       nodes.push({
         id,
         x: clampNumber(raw.x, -100000, 100000, 0),
         y: clampNumber(raw.y, -100000, 100000, 0),
-        w: clampNumber(raw.w, 40, 400, NODE_W),
-        h: clampNumber(raw.h, 24, 200, NODE_H),
+        w: clampNumber(raw.w, 40, 400, lvlDims.w),
+        h: clampNumber(raw.h, 24, 200, lvlDims.baseH),
+        level: lvl,
         label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : t('tplNode.idea'),
         link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
         image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
-        isRoot: !!raw.isRoot,
+        isRoot,
         fill: validHex(raw.fill, '#fce7f3'),
         stroke: validHex(raw.stroke, '#ec4899'),
         text: validHex(raw.text, '#831843')

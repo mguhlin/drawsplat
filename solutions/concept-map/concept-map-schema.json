@@ -66,7 +66,13 @@
         "label": {
           "type": "string",
           "maxLength": 200,
-          "description": "Visible text inside the node. Longer strings are truncated to 200 characters on load."
+          "description": "Visible text inside the node. The Studio word-wraps long labels into multiple lines and auto-grows the node's height to fit. Strings over 200 characters are truncated on load."
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "Visual hierarchy. 1 = main idea (largest box, largest text). 2 = directly connected to a main idea (medium). 3 = supporting detail / leaf (smallest). If omitted, defaults to 1 when isRoot is true, otherwise 2. Use level=3 for short factual nodes attached to a level-2 hub so they read as visually subordinate. The default width and base height for the node come from the level; explicit w/h still override."
         },
         "x": {
           "type": "number",
@@ -86,15 +92,13 @@
           "type": "number",
           "minimum": 40,
           "maximum": 400,
-          "default": 184,
-          "description": "Rendered node width in pixels. Out-of-range values are clamped."
+          "description": "Rendered node width in pixels. Out-of-range values are clamped. If omitted, defaults from `level`: 248 (level 1), 200 (level 2), 168 (level 3)."
         },
         "h": {
           "type": "number",
           "minimum": 24,
           "maximum": 200,
-          "default": 76,
-          "description": "Rendered node height in pixels. Out-of-range values are clamped."
+          "description": "Minimum node height in pixels. The Studio auto-grows nodes vertically to fit wrapped label text, so this acts as a floor rather than an exact value. If omitted, defaults from `level`: 96 (level 1), 80 (level 2), 64 (level 3)."
         },
         "link": {
           "type": "string",
@@ -189,41 +193,54 @@
       "nodes": [
         {
           "id": "n1",
-          "label": "Photosynthesis",
-          "x": 600, "y": 200, "w": 220, "h": 80,
+          "label": "Photosynthesis converts light energy into chemical energy in plant cells",
+          "level": 1,
+          "x": 600, "y": 200,
           "isRoot": true,
           "fill": "#7c3aed", "stroke": "#5b21b6", "text": "#ffffff"
         },
         {
           "id": "n2",
           "label": "Sunlight",
+          "level": 2,
           "x": 300, "y": 420,
           "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
         },
         {
           "id": "n3",
           "label": "Water (H₂O)",
+          "level": 2,
           "x": 600, "y": 420,
           "fill": "#dbeafe", "stroke": "#3b82f6", "text": "#1e3a8a"
         },
         {
           "id": "n4",
           "label": "Carbon Dioxide (CO₂)",
+          "level": 2,
           "x": 900, "y": 420,
           "fill": "#d1fae5", "stroke": "#10b981", "text": "#064e3b"
         },
         {
           "id": "n5",
           "label": "Glucose + O₂",
+          "level": 2,
           "x": 600, "y": 620,
           "fill": "#ede9fe", "stroke": "#8b5cf6", "text": "#4c1d95"
+        },
+        {
+          "id": "n6",
+          "label": "Visible spectrum, 400-700nm",
+          "level": 3,
+          "x": 140, "y": 540,
+          "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
         }
       ],
       "connectors": [
         { "id": "c1", "fromId": "n2", "toId": "n1", "label": "provides energy" },
         { "id": "c2", "fromId": "n3", "toId": "n1", "label": "supplies hydrogen" },
         { "id": "c3", "fromId": "n4", "toId": "n1", "label": "supplies carbon" },
-        { "id": "c4", "fromId": "n1", "toId": "n5", "label": "produces" }
+        { "id": "c4", "fromId": "n1", "toId": "n5", "label": "produces" },
+        { "id": "c5", "fromId": "n6", "toId": "n2", "label": "is the active range" }
       ],
       "groups": [
         {
