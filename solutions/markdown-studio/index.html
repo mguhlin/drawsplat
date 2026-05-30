@@ -7,6 +7,7 @@
 <meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML or WordPress block code. Strip AI writing tells. Save .md or .html.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M7 9h3l3 6 3-6h3v14h-3v-9l-2.5 5h-1L10 13v10H7z'/%3E%3C/svg%3E">
 <script src="../../assets/js/widget-i18n.js"></script>
+<script src="../../assets/js/cm-md-handoff.js"></script>
 <style>
 .i18n-picker select{padding:6px 10px;border:1px solid #d9ddec;border-radius:8px;background:#fff;color:#172033;font-weight:700;font-size:.82rem;cursor:pointer}
 .i18n-picker select:focus{border-color:#7c3aed;outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.18)}
@@ -680,6 +681,10 @@ Custom HTML block.</p>
     <div class="toolbar-group">
       <button class="btn" id="btn-sample" data-i18n="btn.sample" data-i18n-title="btn.sample.title" title="Load a sample document">Sample</button>
       <button class="btn" id="btn-clear-all" data-i18n="btn.clearAll" data-i18n-title="btn.clearAll.title" title="Clear everything">Clear All</button>
+    </div>
+    <div class="toolbar-divider"></div>
+    <div class="toolbar-group">
+      <button class="btn" id="btn-open-concept-map" data-i18n="btn.openCm" data-i18n-title="btn.openCm.title" title="Parse headings + bullets into a concept map and open in Concept Map Studio">Open in Concept Map Studio →</button>
     </div>
   </div>
 
@@ -1704,6 +1709,15 @@ def hello():
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
     showToast(t('toast.cleared'));
   });
+  $('btn-open-concept-map')?.addEventListener('click', () => {
+    const md = input.value || '';
+    if (!md.trim()) { showToast(t('toast.cmEmpty') || 'Add some markdown headings first.'); return; }
+    if (!window.DrawSplatHandoff) { showToast('Handoff module not loaded.'); return; }
+    const mapJson = window.DrawSplatHandoff.parseMarkdownToConceptMap(md);
+    window.DrawSplatHandoff.write(JSON.stringify(mapJson), 'conceptmap');
+    window.open('../concept-map/', '_blank', 'noopener');
+    showToast(t('toast.cmOpened') || 'Opened in Concept Map Studio.');
+  });
 
   $('btn-copy-md').addEventListener('click', (e) => copyText(input.value, e.currentTarget));
   $('btn-copy-formatted').addEventListener('click', (e) => copyFormatted(e.currentTarget));
@@ -1782,13 +1796,18 @@ def hello():
   // in Markdown Studio" button) can hand off content via the URL hash —
   // #md=<encodeURIComponent>. If present, we use that and skip the saved
   // draft / sample to avoid overwriting the just-handed-off content.
-  function loadFromHashMd() {
+  // Receive a handoff from another DrawSplat tool (Concept Map Studio's
+  // Outline view → Open in Markdown Studio button). Primary channel is
+  // localStorage via DrawSplatHandoff — bulletproof across same-origin
+  // tabs and survives the recipient's cached HTML. URL hash kept as a
+  // fallback for when the sender wasn't able to write localStorage.
+  function loadFromHandoff() {
+    if (window.DrawSplatHandoff) {
+      const content = window.DrawSplatHandoff.readAndClear('markdown');
+      if (content) { input.value = content; return true; }
+    }
     const hash = (location.hash || '').replace(/^#/, '');
     if (!hash) return false;
-    // URLSearchParams already URL-decodes the value once. Don't call
-    // decodeURIComponent again — it throws URIError on any '%' in the
-    // content (e.g. "100% pure"), which previously caused the hash to be
-    // silently dropped and the default sample / saved draft shown instead.
     const hp = new URLSearchParams(hash);
     const md = hp.get('md');
     if (!md) return false;
@@ -1796,7 +1815,7 @@ def hello():
     return true;
   }
   let lastLoadedSample = '';
-  if (loadFromHashMd()) {
+  if (loadFromHandoff()) {
     lastLoadedSample = '';
   } else if (!loadDraft()) {
     lastLoadedSample = currentSample();

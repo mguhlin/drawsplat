@@ -38,6 +38,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Load a sample document',
     'btn.clearAll':       'Clear All',
     'btn.clearAll.title': 'Clear everything',
+    'btn.openCm':         'Open in Concept Map Studio →',
+    'btn.openCm.title':   'Parse headings and bullets into a concept map and open it in Concept Map Studio',
 
     'findbar.aria':       'Find and replace',
     'find.find':          'Find',
@@ -99,6 +101,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    'Downloaded .html',
     'toast.imported':     'Imported {name}',
     'toast.cleared':      'Cleared',
+    'toast.cmEmpty':      'Add some markdown headings first.',
+    'toast.cmOpened':     'Opened in Concept Map Studio.',
     'toast.savedWp':      'Downloaded WordPress block code',
 
     'confirm.stripAi':    'Strip common AI writing tells (em-dashes, smart quotes, "delve into", "in conclusion", emoji bullets, etc.)?\n\nReview the changes after — sometimes you actually want an em-dash.',
@@ -168,6 +172,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Cargar un documento de ejemplo',
     'btn.clearAll':       'Borrar todo',
     'btn.clearAll.title': 'Borrar todo',
+    'btn.openCm':         'Abrir en Concept Map Studio →',
+    'btn.openCm.title':   'Convierte los encabezados y viñetas en un mapa conceptual y ábrelo en Concept Map Studio',
 
     'findbar.aria':       'Buscar y reemplazar',
     'find.find':          'Buscar',
@@ -229,6 +235,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    '.html descargado',
     'toast.imported':     '{name} importado',
     'toast.cleared':      'Borrado',
+    'toast.cmEmpty':      'Primero añade algunos encabezados Markdown.',
+    'toast.cmOpened':     'Abierto en Concept Map Studio.',
     'toast.savedWp':      'Código de bloque WordPress descargado',
 
     'confirm.stripAi':    '¿Quitar pistas comunes de escritura de IA (guiones em, comillas curvas, "delve into", "in conclusion", viñetas con emoji, etc.)?\n\nRevisa los cambios después — a veces sí quieres un guion em.',
@@ -298,6 +306,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'Tải một tài liệu mẫu',
     'btn.clearAll':       'Xóa tất cả',
     'btn.clearAll.title': 'Xóa mọi thứ',
+    'btn.openCm':         'Mở trong Concept Map Studio →',
+    'btn.openCm.title':   'Phân tích các tiêu đề và mục danh sách thành bản đồ khái niệm và mở trong Concept Map Studio',
 
     'findbar.aria':       'Tìm và thay thế',
     'find.find':          'Tìm',
@@ -359,6 +369,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    'Đã tải .html',
     'toast.imported':     'Đã nhập {name}',
     'toast.cleared':      'Đã xóa',
+    'toast.cmEmpty':      'Hãy thêm một số tiêu đề Markdown trước.',
+    'toast.cmOpened':     'Đã mở trong Concept Map Studio.',
     'toast.savedWp':      'Đã tải mã khối WordPress',
 
     'confirm.stripAi':    'Loại bỏ các dấu hiệu viết AI phổ biến (gạch ngang em, dấu nháy cong, "delve into", "in conclusion", gạch đầu dòng emoji, v.v.)?\n\nXem lại các thay đổi sau — đôi khi bạn thực sự muốn một dấu gạch em.',
@@ -428,6 +440,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'تحميل مستند عينة',
     'btn.clearAll':       'مسح الكل',
     'btn.clearAll.title': 'مسح كل شيء',
+    'btn.openCm':         'افتح في Concept Map Studio ←',
+    'btn.openCm.title':   'حلل العناوين والنقاط إلى خريطة مفاهيم وافتحها في Concept Map Studio',
 
     'findbar.aria':       'بحث واستبدال',
     'find.find':          'بحث',
@@ -489,6 +503,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    'تم تنزيل .html',
     'toast.imported':     'تم استيراد {name}',
     'toast.cleared':      'تم المسح',
+    'toast.cmEmpty':      'أضف بعض عناوين Markdown أولاً.',
+    'toast.cmOpened':     'تم الفتح في Concept Map Studio.',
     'toast.savedWp':      'تم تنزيل كود كتلة WordPress',
 
     'confirm.stripAi':    'إزالة آثار الكتابة الشائعة للذكاء الاصطناعي (em-dashes، اقتباسات ذكية، "delve into"، "in conclusion"، تعدادات بإيموجي، إلخ)؟\n\nراجع التغييرات بعد ذلك — أحيانًا تريد بالفعل em-dash.',
@@ -558,6 +574,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   '加载示例文档',
     'btn.clearAll':       '清空',
     'btn.clearAll.title': '清空所有',
+    'btn.openCm':         '在 Concept Map Studio 中打开 →',
+    'btn.openCm.title':   '将标题和项目符号解析为概念图，并在 Concept Map Studio 中打开',
 
     'findbar.aria':       '查找和替换',
     'find.find':          '查找',
@@ -619,6 +637,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    '已下载 .html',
     'toast.imported':     '已导入 {name}',
     'toast.cleared':      '已清空',
+    'toast.cmEmpty':      '请先添加一些 Markdown 标题。',
+    'toast.cmOpened':     '已在 Concept Map Studio 中打开。',
     'toast.savedWp':      '已下载 WordPress 块代码',
 
     'confirm.stripAi':    '剥离常见的 AI 写作痕迹（em-dashes、智能引号、"delve into"、"in conclusion"、emoji 项目符号等）？\n\n之后请审查变更——有时你确实想要 em-dash。',
@@ -688,6 +708,8 @@ WidgetI18n.register('markdown-studio', {
     'btn.sample.title':   'एक नमूना दस्तावेज़ लोड करें',
     'btn.clearAll':       'सब साफ़ करें',
     'btn.clearAll.title': 'सब कुछ साफ़ करें',
+    'btn.openCm':         'Concept Map Studio में खोलें →',
+    'btn.openCm.title':   'हेडिंग और बुलेट्स को कॉन्सेप्ट मैप में पार्स करें और Concept Map Studio में खोलें',
 
     'findbar.aria':       'खोजें और बदलें',
     'find.find':          'खोजें',
@@ -749,6 +771,8 @@ WidgetI18n.register('markdown-studio', {
     'toast.savedHtml':    '.html डाउनलोड हुआ',
     'toast.imported':     '{name} आयात हुआ',
     'toast.cleared':      'साफ़ हो गया',
+    'toast.cmEmpty':      'पहले कुछ Markdown हेडिंग जोड़ें।',
+    'toast.cmOpened':     'Concept Map Studio में खोल दिया।',
     'toast.savedWp':      'WordPress ब्लॉक कोड डाउनलोड हुआ',
 
     'confirm.stripAi':    'आम AI लेखन निशान हटाएँ (em-dashes, स्मार्ट कोट्स, "delve into", "in conclusion", emoji बुलेट, आदि)?\n\nबाद में परिवर्तनों की समीक्षा करें — कभी-कभी आप वास्तव में em-dash चाहते हैं।',

@@ -7,6 +7,7 @@
   <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <script src="../../assets/js/widget-i18n.js"></script>
+  <script src="../../assets/js/cm-md-handoff.js"></script>
   <style>
     .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
     .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
@@ -2785,11 +2786,12 @@
   document.getElementById('openInMarkdownStudioBtn')?.addEventListener('click', () => {
     const md = buildOutlineMarkdown();
     if (!md) return setStatus(t('status.addNodeFirst'), 'danger');
-    // Hand off via URL hash to keep the content client-side only. The
-    // markdown-studio page reads #md=<encoded> on load and uses it instead
-    // of the saved draft / sample.
+    // Write to localStorage handoff — bulletproof across same-origin tabs
+    // and survives cached recipient HTML. URL hash kept as a fallback so
+    // older recipient pages still pick up content.
+    if (window.DrawSplatHandoff) window.DrawSplatHandoff.write(md, 'markdown');
     const url = '../markdown-studio/#md=' + encodeURIComponent(md);
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(url, '_blank', 'noopener');
     setStatus(t('status.outlineOpenedMd'), 'success');
   });
 
@@ -2878,13 +2880,30 @@
       return false;
     }
   }
+  // Inbound handoff from Markdown Studio's "Open in Concept Map Studio"
+  // button — a JSON map object (already parsed from markdown by the sender).
+  function loadFromHandoff(){
+    if (!window.DrawSplatHandoff) return false;
+    const content = window.DrawSplatHandoff.readAndClear('conceptmap');
+    if (!content) return false;
+    try {
+      const data = JSON.parse(content);
+      applyLoadedJson(data);
+      return true;
+    } catch (err) {
+      console.error('Concept Map handoff: parse failed:', err);
+      return false;
+    }
+  }
 
   /* ===== boot ===== */
   if (isEmbedMode) {
     document.body.classList.add('embed-mode');
   }
-  const loadedFromHash = loadFromHash();
-  if (!loadedFromHash) defaultMap();
+  // Priority: localStorage handoff (Markdown Studio sender) → URL hash
+  // (embed mode) → default map.
+  const loadedFromAnywhere = loadFromHandoff() || loadFromHash();
+  if (!loadedFromAnywhere) defaultMap();
   resetHistory();
   if (isEmbedMode) {
     // Re-render then fit so the embedded viewer always opens framed.
