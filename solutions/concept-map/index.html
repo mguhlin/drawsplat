@@ -2716,11 +2716,21 @@
     copyToClipboard(buildEmbedUrl(), t('status.embedLinkCopied'), t('status.embedCopyFailed'));
   });
 
-  /* Outline view — live markdown mirror of the map's hierarchy. Walk from
-     each root node down through outgoing connectors; depth-first; visited
-     set prevents cycles. Heading depth follows level: 1 → #, 2 → ##, 3 → ###,
-     deeper → bulleted list. Unconnected nodes appear under a final
-     "(Unconnected)" section so nothing is silently dropped. */
+  /* Traditional outline formatter (Roman → Letter → Number → letter).
+     Maps the concept map's hierarchy to classic academic outline notation:
+       Document title (single # ) ← root node label
+       # I. / II. / III.            ← root's direct children (level-2 hubs),
+                                       OR the roots themselves if multiple
+       ## A. / B. / C.              ← one hop deeper
+       1. / 2. / 3.                 ← next hop (no markdown heading)
+       a. / b. / c.                 ← deeper still, blank-line padded
+     Always ends with a "# X. Next Steps and Action Items" section. Nodes
+     whose `section` field matches /action|next step|todo|task/i are
+     pulled out of the main outline and placed there; if none, a placeholder
+     marker is emitted. (Concept maps don't typically have direct quotes
+     under each Roman numeral, so the quote line from the original
+     traditional-outline spec is intentionally omitted — readers adding
+     a transcript-derived quote can paste it manually.) */
   function buildOutlineMarkdown(){
     if (!state.nodes.length) return '';
     const children = new Map();
@@ -2728,45 +2738,131 @@
       if (!children.has(c.fromId)) children.set(c.fromId, []);
       children.get(c.fromId).push(c.toId);
     });
-    const roots = state.nodes.filter(n => n.isRoot || nodeLevel(n) === 1);
-    const startNodes = roots.length ? roots : state.nodes.filter(n => nodeLevel(n) === 2);
+
     const visited = new Set();
     const lines = [];
-    function indentForDepth(d){ return d <= 0 ? '' : '  '.repeat(d - 3 >= 0 ? d - 2 : 0); }
-    function walk(nodeId, depth){
+    const ACTION_RE = /(action item|next step|action|todo|task)/i;
+    const isAction = n => !!(n && n.section && ACTION_RE.test(n.section));
+
+    function toRoman(n){
+      const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+      const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+      let s = '';
+      for (let i = 0; i < vals.length; i++) {
+        while (n >= vals[i]) { s += syms[i]; n -= vals[i]; }
+      }
+      return s;
+    }
+    function toLetter(n, upper){
+      // 1=a, 2=b, …, 26=z, 27=aa
+      let s = '';
+      while (n > 0) { n--; s = String.fromCharCode((upper ? 65 : 97) + (n % 26)) + s; n = Math.floor(n / 26); }
+      return s;
+    }
+    function labelOf(n){ return String(n.label || '').replace(/\s+/g, ' ').trim() || '(unnamed)'; }
+    function kidsOf(id, opts){
+      const skipAction = opts && opts.skipAction;
+      return (children.get(id) || [])
+        .map(cid => nodeById(cid))
+        .filter(Boolean)
+        .filter(n => !visited.has(n.id))
+        .filter(n => !skipAction || !isAction(n));
+    }
+
+    // 1. Document title from the root, if exactly one.
+    const roots = state.nodes.filter(n => n.isRoot || nodeLevel(n) === 1);
+    let topLevel = []; // nodes that become Roman-numeral main sections
+    if (roots.length === 1) {
+      const root = roots[0];
+      visited.add(root.id);
+      lines.push('# ' + labelOf(root));
+      topLevel = kidsOf(root.id, {skipAction: true});
+    } else if (roots.length > 1) {
+      topLevel = roots.filter(r => !isAction(r));
+    } else {
+      // No root — use level-2 nodes as Romans.
+      topLevel = state.nodes.filter(n => nodeLevel(n) === 2 && !isAction(n));
+    }
+
+    // Sub-letter recursion for depths beyond Numbered (1, 2, 3). Lowercase
+    // a/b/c… each on its own line with blank lines before and after.
+    function emitSubLetter(nodeId, idx, indent){
       if (visited.has(nodeId)) return;
       visited.add(nodeId);
-      const n = nodeById(nodeId);
-      if (!n) return;
-      const label = String(n.label || '').replace(/\s+/g, ' ').trim() || '(unnamed)';
-      if (depth === 0) lines.push('# ' + label);
-      else if (depth === 1) lines.push('## ' + label);
-      else if (depth === 2) lines.push('### ' + label);
-      else lines.push(indentForDepth(depth) + '- ' + label);
-      if (n.link) {
-        const indent = depth <= 2 ? '  ' : indentForDepth(depth) + '  ';
-        lines.push(indent + '↗ ' + n.link);
-      }
-      const kids = (children.get(nodeId) || []).slice();
-      for (const kid of kids) walk(kid, depth + 1);
+      const n = nodeById(nodeId); if (!n) return;
+      lines.push('');
+      lines.push(indent + toLetter(idx, false) + '. ' + labelOf(n));
+      lines.push('');
+      const kids = kidsOf(nodeId, {skipAction: true});
+      kids.forEach((kid, i) => emitSubLetter(kid.id, i + 1, indent + '   '));
     }
-    for (const r of startNodes) walk(r.id, 0);
+    // Numbered (1, 2, 3). Each on its own line. Children become a/b/c…
+    function emitNumber(nodeId, idx){
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      const n = nodeById(nodeId); if (!n) return;
+      lines.push(idx + '. ' + labelOf(n));
+      const kids = kidsOf(nodeId, {skipAction: true});
+      kids.forEach((kid, i) => emitSubLetter(kid.id, i + 1, '   '));
+    }
+    // Subsection (A, B, C…) → ## H2. Children become 1, 2, 3.
+    function emitLetter(nodeId, idx){
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      const n = nodeById(nodeId); if (!n) return;
+      lines.push('');
+      lines.push('## ' + toLetter(idx, true) + '. ' + labelOf(n));
+      const kids = kidsOf(nodeId, {skipAction: true});
+      kids.forEach((kid, i) => emitNumber(kid.id, i + 1));
+    }
+    // Main section (I, II, III…) → # H1. Children become A, B, C.
+    function emitRoman(nodeId, idx){
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      const n = nodeById(nodeId); if (!n) return;
+      lines.push('');
+      lines.push('# ' + toRoman(idx) + '. ' + labelOf(n));
+      const kids = kidsOf(nodeId, {skipAction: true});
+      kids.forEach((kid, i) => emitLetter(kid.id, i + 1));
+    }
+
+    let romanCounter = 0;
+    topLevel.forEach(n => { romanCounter++; emitRoman(n.id, romanCounter); });
+
+    // Final required section: "Next Steps and Action Items". Sourced from
+    // nodes whose `section` field matches the action regex; if none, emit a
+    // placeholder so the section still appears.
+    const actionRoots = state.nodes.filter(n => isAction(n) && !visited.has(n.id));
+    romanCounter++;
+    lines.push('');
+    lines.push('# ' + toRoman(romanCounter) + '. Next Steps and Action Items');
+    if (actionRoots.length) {
+      actionRoots.forEach((n, i) => emitLetter(n.id, i + 1));
+    } else {
+      lines.push('');
+      lines.push('## A. (No action items in this concept map — tag nodes with section="Action Items" or "Next Steps" to populate this section.)');
+    }
+
+    // Anything still unvisited (cycle remainders, orphans). Surface so
+    // nothing is silently dropped.
     const orphans = state.nodes.filter(n => !visited.has(n.id));
     if (orphans.length) {
-      if (lines.length) lines.push('');
-      lines.push('## (Unconnected)');
-      for (const n of orphans) {
-        const label = String(n.label || '').replace(/\s+/g, ' ').trim() || '(unnamed)';
-        lines.push('- ' + label);
-      }
-    }
-    if (state.groups.length) {
+      romanCounter++;
       lines.push('');
-      lines.push('## (Groups)');
-      for (const g of state.groups) {
-        lines.push('- ' + (g.label || '(unnamed group)') + ' — ' + g.nodeIds.length + ' nodes');
-      }
+      lines.push('# ' + toRoman(romanCounter) + '. (Unconnected nodes)');
+      orphans.forEach((n, i) => lines.push((i + 1) + '. ' + labelOf(n)));
     }
+
+    if (state.groups.length) {
+      romanCounter++;
+      lines.push('');
+      lines.push('# ' + toRoman(romanCounter) + '. (Groups)');
+      state.groups.forEach((g, i) => {
+        lines.push('');
+        lines.push('## ' + toLetter(i + 1, true) + '. ' + (g.label || '(unnamed group)') + ' — ' + g.nodeIds.length + ' nodes');
+      });
+    }
+
     return lines.join('\n');
   }
   function refreshOutline(){
