@@ -1777,8 +1777,23 @@ def hello():
   // Track which sample text the editor last loaded, so a language switch
   // can swap it for the same locale's sample only when the user hasn't
   // started editing.
+  // Hash-prefill: another DrawSplat tool (e.g. Concept Map Studio's "Open
+  // in Markdown Studio" button) can hand off content via the URL hash —
+  // #md=<encodeURIComponent>. If present, we use that and skip the saved
+  // draft / sample to avoid overwriting the just-handed-off content.
+  function loadFromHashMd() {
+    const hash = (location.hash || '').replace(/^#/, '');
+    if (!hash) return false;
+    const hp = new URLSearchParams(hash);
+    const md = hp.get('md');
+    if (!md) return false;
+    try { input.value = decodeURIComponent(md); return true; }
+    catch (e) { return false; }
+  }
   let lastLoadedSample = '';
-  if (!loadDraft()) {
+  if (loadFromHashMd()) {
+    lastLoadedSample = '';
+  } else if (!loadDraft()) {
     lastLoadedSample = currentSample();
     input.value = lastLoadedSample;
   }

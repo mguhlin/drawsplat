@@ -192,16 +192,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': 'Copy Embed Code',
     'button.copyEmbedLink': 'Copy Embed Link',
 
-    'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.',
+    'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema-v2.json" download>format spec (v2)</a> first — it documents every field the Studio reads. Files saved here will round-trip cleanly.',
     'actions.embedHint':    '<strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.',
 
     'status.embedCodeCopied': 'Embed code copied. Paste it into Google Sites or WordPress.',
     'status.embedLinkCopied': 'Embed link copied. Anyone with the link sees a read-only viewer.',
     'status.embedCopyFailed': 'Could not copy to clipboard.',
     'status.outlineCopied':   'Outline copied as Markdown.',
+    'status.outlineOpenedMd': 'Opened in Markdown Studio in a new tab.',
 
     'outline.toggle': 'Outline view (Markdown)',
     'outline.copy':   'Copy Markdown',
+    'outline.openMd': 'Open in Markdown Studio →',
     'outline.hint':   'Live mirror of the map\'s hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.',
 
     'status.undo':          'Undo.',
@@ -474,16 +476,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': 'Copiar código de inserción',
     'button.copyEmbedLink': 'Copiar enlace de inserción',
 
-    'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./drawsplat-concept-map-schema.json" download>especificación del formato</a> — documenta cada campo que el Studio lee.',
+    'actions.schemaHint':   '¿Le pides a un chatbot de IA que construya el JSON por ti? Pásale primero la <a href="./drawsplat-concept-map-schema-v2.json" download>especificación del formato (v2)</a> — documenta cada campo que el Studio lee. Los archivos guardados aquí se recargan sin pérdidas.',
     'actions.embedHint':    '<strong>Insertar en un sitio web:</strong> haz clic en <strong>Copiar código de inserción</strong> para obtener un fragmento <code>&lt;iframe&gt;</code> que puedes pegar en Google Sites (Insertar → Código de inserción) o en WordPress (bloque HTML personalizado). Los lectores pueden desplazar, hacer zoom y abrir enlaces de los nodos — pero no editar. Usa <strong>Copiar enlace de inserción</strong> si solo quieres la URL.',
 
     'status.embedCodeCopied': 'Código de inserción copiado. Pégalo en Google Sites o WordPress.',
     'status.embedLinkCopied': 'Enlace de inserción copiado. Cualquiera con el enlace ve un visor de solo lectura.',
     'status.embedCopyFailed': 'No se pudo copiar al portapapeles.',
     'status.outlineCopied':   'Esquema copiado como Markdown.',
+    'status.outlineOpenedMd': 'Abierto en Markdown Studio en una nueva pestaña.',
 
     'outline.toggle': 'Vista de esquema (Markdown)',
     'outline.copy':   'Copiar Markdown',
+    'outline.openMd': 'Abrir en Markdown Studio →',
     'outline.hint':   'Espejo en vivo de la jerarquía del mapa. Úsalo como esquema de estudio, pégalo en notas o pásalo a una IA como contexto.',
 
     'status.undo':          'Deshecho.',
@@ -756,16 +760,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': 'Sao chép mã nhúng',
     'button.copyEmbedLink': 'Sao chép liên kết nhúng',
 
-    'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./drawsplat-concept-map-schema.json" download>tệp đặc tả định dạng</a> trước — tệp này mô tả mọi trường mà Studio đọc.',
+    'actions.schemaHint':   'Nhờ một chatbot AI tạo JSON cho bạn? Hãy đưa cho nó <a href="./drawsplat-concept-map-schema-v2.json" download>tệp đặc tả định dạng (v2)</a> trước — tệp này mô tả mọi trường mà Studio đọc. Tệp lưu tại đây sẽ tải lại đầy đủ.',
     'actions.embedHint':    '<strong>Nhúng vào website:</strong> nhấn <strong>Sao chép mã nhúng</strong> để lấy đoạn <code>&lt;iframe&gt;</code> dán vào Google Sites (Embed → Embed code) hoặc WordPress (khối Custom HTML). Người xem có thể di chuyển, phóng to và bấm vào liên kết của nút — nhưng không sửa được. Dùng <strong>Sao chép liên kết nhúng</strong> nếu chỉ cần URL.',
 
     'status.embedCodeCopied': 'Đã sao chép mã nhúng. Dán vào Google Sites hoặc WordPress.',
     'status.embedLinkCopied': 'Đã sao chép liên kết nhúng. Ai có liên kết sẽ xem ở chế độ chỉ đọc.',
     'status.embedCopyFailed': 'Không thể sao chép vào bộ nhớ tạm.',
     'status.outlineCopied':   'Đã sao chép dàn ý dưới dạng Markdown.',
+    'status.outlineOpenedMd': 'Đã mở trong Markdown Studio ở tab mới.',
 
     'outline.toggle': 'Chế độ dàn ý (Markdown)',
     'outline.copy':   'Sao chép Markdown',
+    'outline.openMd': 'Mở trong Markdown Studio →',
     'outline.hint':   'Bản sao trực tiếp của cấu trúc bản đồ. Dùng làm dàn ý ôn tập, dán vào ghi chú, hoặc đưa cho AI làm ngữ cảnh.',
 
     'status.undo':          'Đã hoàn tác.',
@@ -1038,16 +1044,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': 'نسخ كود التضمين',
     'button.copyEmbedLink': 'نسخ رابط التضمين',
 
-    'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./drawsplat-concept-map-schema.json" download>مواصفات التنسيق</a> — فهي توثّق كل حقل يقرؤه الاستوديو.',
+    'actions.schemaHint':   'هل تطلب من روبوت محادثة بالذكاء الاصطناعي بناء JSON لك؟ سلّمه أولاً <a href="./drawsplat-concept-map-schema-v2.json" download>مواصفات التنسيق (v2)</a> — فهي توثّق كل حقل يقرؤه الاستوديو. الملفات المحفوظة هنا تُحمَّل دون فقد.',
     'actions.embedHint':    '<strong>تضمين في موقع ويب:</strong> انقر <strong>نسخ كود التضمين</strong> للحصول على مقطع <code>&lt;iframe&gt;</code> يمكنك لصقه في Google Sites (Embed → Embed code) أو WordPress (كتلة Custom HTML). يحصل المشاهدون على تحريك وتكبير وروابط قابلة للنقر على العقد — لكن لا يمكنهم التعديل. استخدم <strong>نسخ رابط التضمين</strong> إذا كنت تريد الرابط فقط.',
 
     'status.embedCodeCopied': 'تم نسخ كود التضمين. الصقه في Google Sites أو WordPress.',
     'status.embedLinkCopied': 'تم نسخ رابط التضمين. أي شخص لديه الرابط يرى عارضًا للقراءة فقط.',
     'status.embedCopyFailed': 'تعذر النسخ إلى الحافظة.',
     'status.outlineCopied':   'تم نسخ المخطط بصيغة Markdown.',
+    'status.outlineOpenedMd': 'تم الفتح في Markdown Studio في علامة تبويب جديدة.',
 
     'outline.toggle': 'عرض المخطط (Markdown)',
     'outline.copy':   'نسخ Markdown',
+    'outline.openMd': 'فتح في Markdown Studio ←',
     'outline.hint':   'انعكاس حي لتسلسل الخريطة. استخدمه كمخطط دراسة، الصقه في الملاحظات، أو أعطه لذكاء اصطناعي كسياق.',
 
     'status.undo':          'تم التراجع.',
@@ -1320,16 +1328,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': '复制嵌入代码',
     'button.copyEmbedLink': '复制嵌入链接',
 
-    'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./drawsplat-concept-map-schema.json" download>格式规范</a> 交给它——里面记录了 Studio 读取的每一个字段。',
+    'actions.schemaHint':   '让 AI 聊天机器人为你生成 JSON？先把 <a href="./drawsplat-concept-map-schema-v2.json" download>格式规范 (v2)</a> 交给它——里面记录了 Studio 读取的每一个字段。这里保存的文件可以无损往返加载。',
     'actions.embedHint':    '<strong>嵌入到网站：</strong>点击 <strong>复制嵌入代码</strong> 获取可粘贴到 Google Sites（Embed → Embed code）或 WordPress（自定义 HTML 块）的 <code>&lt;iframe&gt;</code> 片段。访客可以平移、缩放，并点击节点链接 — 但无法编辑。如果只需要 URL，请使用 <strong>复制嵌入链接</strong>。',
 
     'status.embedCodeCopied': '嵌入代码已复制。粘贴到 Google Sites 或 WordPress。',
     'status.embedLinkCopied': '嵌入链接已复制。任何持有链接的人都能看到只读查看器。',
     'status.embedCopyFailed': '无法复制到剪贴板。',
     'status.outlineCopied':   '大纲已复制为 Markdown。',
+    'status.outlineOpenedMd': '已在新标签页中打开 Markdown Studio。',
 
     'outline.toggle': '大纲视图 (Markdown)',
     'outline.copy':   '复制 Markdown',
+    'outline.openMd': '在 Markdown Studio 中打开 →',
     'outline.hint':   '地图层级的实时镜像。可作为学习大纲、粘贴到笔记，或交给 AI 作为上下文。',
 
     'status.undo':          '已撤销。',
@@ -1602,16 +1612,18 @@ WidgetI18n.register('concept-map', {
     'button.copyEmbedCode': 'एम्बेड कोड कॉपी करें',
     'button.copyEmbedLink': 'एम्बेड लिंक कॉपी करें',
 
-    'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./drawsplat-concept-map-schema.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है।',
+    'actions.schemaHint':   'किसी AI चैटबॉट से JSON बनवाना है? पहले उसे <a href="./drawsplat-concept-map-schema-v2.json" download>फ़ॉर्मेट स्पेसिफ़िकेशन (v2)</a> दें — इसमें Studio जो हर फ़ील्ड पढ़ता है, सब दर्ज है। यहाँ सहेजी गई फ़ाइलें बिना नुकसान दोबारा लोड होती हैं।',
     'actions.embedHint':    '<strong>वेबसाइट में एम्बेड करें:</strong> <strong>एम्बेड कोड कॉपी करें</strong> पर क्लिक करके <code>&lt;iframe&gt;</code> स्निपेट लें जिसे आप Google Sites (Embed → Embed code) या WordPress (Custom HTML ब्लॉक) में पेस्ट कर सकते हैं। पाठक pan, zoom, और नोड लिंक खोल सकते हैं — लेकिन एडिट नहीं कर सकते। केवल URL चाहिए तो <strong>एम्बेड लिंक कॉपी करें</strong> का उपयोग करें।',
 
     'status.embedCodeCopied': 'एम्बेड कोड कॉपी हो गया। Google Sites या WordPress में पेस्ट करें।',
     'status.embedLinkCopied': 'एम्बेड लिंक कॉपी हो गया। लिंक रखने वाले को रीड-ओनली व्यू मिलता है।',
     'status.embedCopyFailed': 'क्लिपबोर्ड पर कॉपी नहीं हो सका।',
     'status.outlineCopied':   'आउटलाइन Markdown के रूप में कॉपी हो गई।',
+    'status.outlineOpenedMd': 'नए टैब में Markdown Studio खोला गया।',
 
     'outline.toggle': 'आउटलाइन व्यू (Markdown)',
     'outline.copy':   'Markdown कॉपी करें',
+    'outline.openMd': 'Markdown Studio में खोलें →',
     'outline.hint':   'मानचित्र की पदानुक्रम का लाइव प्रतिबिंब। अध्ययन आउटलाइन के रूप में, नोट्स में पेस्ट करें, या AI को संदर्भ के रूप में दें।',
 
     'status.undo':          'पूर्ववत।',

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>GDPR Compliance | DrawSplatTM</title>
+<meta name="description" content="Plain-language summary of DrawSplatTM's GDPR posture: roles, lawful bases, what the platform provides, and what the deploying district must add to be fully compliant in the EU and UK." />
+<link rel="canonical" href="https://drawsplat.org/legal/gdpr-compliance.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown" open>
+      <summary>Privacy &amp; Terms</summary>
+      <div class="landing-nav-menu">
+        <a href="../legal/combined-policy.html">Get all documents below</a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/gdpr-compliance.html"><strong>GDPR Compliance Summary</strong></a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
+        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
+        <a href="../legal/accessibility.html">Accessibility Statement</a>
+      </div>
+    </details>
+    <a href="../pages/pricing.html">Pricing</a>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Plain-Language Explainer</p>
+    <h1>GDPR compliance summary for DrawSplat<sup class="tm">TM</sup>.</h1>
+    <p>This page is for European and UK school administrators, IT leaders, and data protection officers (DPOs) deciding whether DrawSplat<sup class="tm">TM</sup> fits their compliance obligations under the EU General Data Protection Regulation (Regulation (EU) 2016/679) and the UK GDPR. It is not legal advice — your DPO should map the items below against your specific deployment.</p>
+    <p><strong>Headline:</strong> DrawSplat<sup class="tm">TM</sup> is open-source educational software you deploy under your control. There is no DrawSplat SaaS that processes student data. Your school or district is the <strong>data controller</strong>; DrawSplat<sup class="tm">TM</sup> ships the technical primitives (browser-only mode, data export, deletion, audit logs, role-based access) that you wire into your compliance posture.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>1. Who is the controller and who is the processor?</h2>
+    <p>Under Art. 4 GDPR, this depends on the deployment path:</p>
+    <ul class="admin-checklist">
+      <li><strong>Browser-only mode (no backend configured)</strong> — no personal data leaves the student's device or the teacher's browser. There is no processor. The school is the controller of whatever local storage it directs students to use, but no data flows over the network at all.</li>
+      <li><strong>Google Apps Script backend</strong> — Google is the processor (governed by your existing Google Workspace for Education DPA). DrawSplat<sup class="tm">TM</sup> is software running inside your Google account, not a third party with its own data access.</li>
+      <li><strong>MySQL self-hosted backend</strong> — your district or hosting partner is the processor (governed by your existing hosting contract). DrawSplat<sup class="tm">TM</sup> is the application layer running on infrastructure you already control.</li>
+      <li><strong>drawsplat.org (the public marketing/demo site)</strong> — Miguel Guhlin is the publisher of the marketing pages. Students should NOT do classroom work on drawsplat.org for production use; that site exists to demo features and serve documentation. School deployments host their own copy.</li>
+    </ul>
+    <p>Because the platform itself is not a third-party SaaS that holds student data, GDPR Art. 28 controller–processor contracting requirements between you and DrawSplat<sup class="tm">TM</sup> do not arise. They DO arise between you and Google / your hosting provider — those agreements are unaffected by introducing DrawSplat<sup class="tm">TM</sup>.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>2. Lawful basis for processing student data</h2>
+    <p>Per Art. 6 GDPR, the school typically relies on either:</p>
+    <ul class="admin-checklist">
+      <li><strong>Art. 6(1)(e) — public task</strong>, where the school is performing its public-interest education duty. This is the most common basis in EU/UK state schools for routine classroom tools.</li>
+      <li><strong>Art. 6(1)(a) — explicit consent</strong>, less common because consent under GDPR can be withdrawn at any time and processing must stop, which is hard to operationalize in a classroom.</li>
+    </ul>
+    <p>For students under 16 (or the lower limit set by the member state, as low as 13 in some countries — Art. 8), where consent IS the basis, parental consent is required. DrawSplat<sup class="tm">TM</sup> ships a <a href="../parents/index.html">Family Access Portal</a> for parents to request access, exports, and deletion.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>3. Data minimisation — what DrawSplat<sup class="tm">TM</sup> processes</h2>
+    <p>DrawSplat<sup class="tm">TM</sup>'s baseline collection is intentionally minimal:</p>
+    <ul class="admin-checklist">
+      <li><strong>Browser localStorage on the student's device</strong>: language preference (<code>drawsplat.language</code>), current board JSON, viewer-mode flag, audio mute setting (<code>drawsplat.audioMuted</code>), per-game enabled list, admin session token (sessionStorage, cleared on tab close). No identifiers, no behavioural tracking, no analytics. See the persistent <a href="#localStorage">localStorage inventory below</a>.</li>
+      <li><strong>When cloud sync is enabled</strong>: a room name and a salted-SHA-256 hash of the room password (server-side). Board JSON, image uploads (if enabled), audit events. Student names if the teacher chose to attach them. The district controls retention via the Teacher Admin → Compliance Console.</li>
+      <li><strong>No cookies</strong> for tracking. The site uses localStorage only for user preferences listed above. No third-party analytics, ad networks, or fingerprinting libraries.</li>
+      <li><strong>No outbound network requests on the standalone widgets</strong>. The standalone widgets (Concept Map Studio, Bingo Card Generator, Animated GIF Maker, etc.) run entirely in the browser. They never call a server unless the teacher explicitly opts into Cloud Save (Google Drive, OneDrive, or Dropbox via OAuth).</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>4. Data subject rights — what the platform supports</h2>
+    <p>Articles 15–22 give individuals seven rights. Here's how DrawSplat<sup class="tm">TM</sup> supports each:</p>
+    <ul class="admin-checklist">
+      <li><strong>Right of access (Art. 15)</strong> — Teacher Admin → Compliance Console → "Student data export" generates a JSON dump of everything tied to that student. Parents can request the same via the Family Access Portal.</li>
+      <li><strong>Right to rectification (Art. 16)</strong> — Teachers can edit student boards directly; parents can flag inaccuracies via the Family Access Portal request form.</li>
+      <li><strong>Right to erasure / "right to be forgotten" (Art. 17)</strong> — Teacher Admin → Compliance Console → "Full data delete" removes the student's boards, audit records, and image uploads. Apps Script deployments delete underlying Drive files; MySQL deployments cascade-delete.</li>
+      <li><strong>Right to restriction (Art. 18)</strong> — Teacher Admin → "Freeze student" suspends new writes and hides existing content from the student view while preserving it for review.</li>
+      <li><strong>Right to data portability (Art. 20)</strong> — every standalone widget supports Save .json, and the whiteboard supports Save .drawsplat.json. Boards round-trip; you can re-import them into another DrawSplat<sup class="tm">TM</sup> deployment or extract them programmatically.</li>
+      <li><strong>Right to object (Art. 21)</strong> — your DPO documents the objection; the technical action is typically "freeze" then "delete" via the controls above.</li>
+      <li><strong>Right re: automated decision-making (Art. 22)</strong> — DrawSplat<sup class="tm">TM</sup> does not perform automated profiling or automated decision-making about students. Optional AI features (where present in widgets) are always teacher-initiated, never autonomous.</li>
+    </ul>
+    <p>Subject-initiated rights flows (parents/students requesting directly without going through a teacher) are scaffolded in the Family Access Portal but rely on the district configuring its own intake and verification process.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>5. Data residency and international transfers</h2>
+    <p>Under Chapter V GDPR, transfers of personal data outside the EU/UK / EEA require an adequacy decision or safeguards (Standard Contractual Clauses, BCRs, etc.).</p>
+    <ul class="admin-checklist">
+      <li><strong>Browser-only mode</strong> — zero transfers; data never leaves the student device.</li>
+      <li><strong>Apps Script backend</strong> — the data residency is whatever Google Workspace for Education has agreed with you under the EU/UK Data Processing Amendment (DPA). DrawSplat<sup class="tm">TM</sup> adds no further transfers.</li>
+      <li><strong>MySQL self-hosted</strong> — you decide where the database sits. Host inside the EU/UK if your DPIA requires it.</li>
+      <li><strong>drawsplat.org marketing site</strong> — hosted on Cloudflare Pages, which has EU/UK-compliant transfer safeguards in place. Marketing pages collect no personal data.</li>
+    </ul>
+    <p>Document your hosting choice in your Records of Processing Activities (RoPA, Art. 30).</p>
+  </section>
+
+  <section class="policy-section" id="localStorage">
+    <h2>6. localStorage inventory (no cookies, no third-party trackers)</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> uses browser localStorage and sessionStorage for non-essential UI preferences. Under the EU Cookie Directive (2002/58/EC as amended) plus the ePrivacy interpretation of GDPR, even non-cookie local storage may require notice for non-essential items. Here is the complete inventory the public pages may set, so your privacy notice can describe them:</p>
+    <ul class="admin-checklist">
+      <li><code>drawsplat.language</code> — UI language pick (en / es / vi / ar / zh / uh). Strictly necessary for the language preference to persist between visits.</li>
+      <li><code>drawsplat.audioMuted</code> — whiteboard audio toggle. Convenience setting.</li>
+      <li><code>drawsplat.disabledGames</code> — admin per-game access list (per browser). Convenience setting.</li>
+      <li><code>drawsplat.adminAccess</code> (sessionStorage) — admin role token, cleared when the browser tab closes. Strictly necessary for the admin gate.</li>
+      <li><code>drawsplat.consent.accepted</code> — records that the user has acknowledged this notice so the banner doesn't re-appear. Strictly necessary for the banner itself.</li>
+      <li>Per-widget content (e.g. the current concept map, bingo card, dicebreaker draft) — saved locally so a refresh doesn't lose work. The user controls this directly via Save / Load / Clear buttons inside each widget.</li>
+      <li>Whiteboard board state — same pattern: the in-progress board persists across refreshes; the user can clear it via the TNT Reset button.</li>
+    </ul>
+    <p>None of these is shared with a third party. The localStorage consent banner that appears on first visit explains this and lets the user dismiss it.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>7. Security measures (Art. 32)</h2>
+    <ul class="admin-checklist">
+      <li>Room passwords stored as salted SHA-256 hashes, never plaintext.</li>
+      <li>Strict per-page Content Security Policy (<code>script-src 'self'</code>, no inline scripts on admin pages, no third-party origins).</li>
+      <li>Role-based access control in the MySQL backend (<code>server/mysql-backend/rbac.js</code>): five roles (admin, teacher, student, parent, viewer) with a permission matrix gate on every mutation endpoint.</li>
+      <li>HTTPS-only via Cloudflare Pages for the public site; self-hosted deployments must terminate TLS at their own load balancer.</li>
+      <li>Open-source code, so your security team can audit it directly (<a href="https://github.com/mguhlin/drawsplat" target="_blank" rel="noopener noreferrer">github.com/mguhlin/drawsplat</a>).</li>
+      <li>No third-party JavaScript bundled into the runtime — all dependencies are local files audited at release time.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>8. Children's data (Art. 8)</h2>
+    <p>GDPR Art. 8 requires parental consent for information society services offered directly to children under 16 (member states may lower the threshold to 13). DrawSplat<sup class="tm">TM</sup> is offered to schools, not directly to children — schools obtain consent under the public-task / parental-authority framework. The Family Access Portal provides parents a self-service way to request access, exports, and deletion of their child's data.</p>
+    <p>If a district uses DrawSplat<sup class="tm">TM</sup> outside that school-mediated context (e.g. a public after-school club where parents register children individually), the operator must obtain parental consent under Art. 8 directly — DrawSplat<sup class="tm">TM</sup> does not include a built-in consent-collection flow for that scenario.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>9. Data Protection Impact Assessment (DPIA, Art. 35)</h2>
+    <p>A DPIA is required when processing is likely to result in high risk to rights and freedoms (Art. 35(1)). Classroom whiteboards processing children's content typically trigger that threshold under Working Party 29 guidance (children + large-scale processing of vulnerable subjects).</p>
+    <p>DrawSplat<sup class="tm">TM</sup> does not ship a turnkey DPIA template, but the <a href="ndpa-packet.html">NDPA / DPA Review Packet</a> and <a href="district-addendum.html">District Privacy Addendum</a> cover most of the substantive content a DPIA needs: data flows, retention, security measures, third-party processors, subject rights flows. Your DPO can repackage those into your jurisdiction's DPIA template.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>10. Breach notification (Art. 33–34)</h2>
+    <p>You must notify your supervisory authority within 72 hours of becoming aware of a personal-data breach that poses risk to data subjects. Because DrawSplat<sup class="tm">TM</sup> is not a SaaS hosted by Miguel Guhlin — your district hosts the backend — the breach detection and notification flow runs through your existing incident response process, not through us.</p>
+    <p>That said, if you discover a security vulnerability in the open-source code itself, please report it via the <a href="../pages/contact.html">contact form</a> so the patch can ship to all deployments. We treat security reports as urgent and credit responsible disclosure.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>11. Records of Processing Activities (RoPA, Art. 30)</h2>
+    <p>You should keep an Art. 30 record covering each DrawSplat<sup class="tm">TM</sup> deployment. Suggested fields:</p>
+    <ul class="admin-checklist">
+      <li>Controller: your school / district name + DPO contact.</li>
+      <li>Categories of data subjects: students aged X–Y, teachers, administrators, parents.</li>
+      <li>Categories of personal data: name (if attached to boards), student work product (board JSON), uploaded images (if enabled), audit-log events (timestamps + actions).</li>
+      <li>Recipients: your hosting provider (Google / your MySQL host / your district IT).</li>
+      <li>Transfers outside EU/UK: yes/no — document under Chapter V if yes.</li>
+      <li>Retention periods: configurable in Teacher Admin → Compliance Console → Retention.</li>
+      <li>Security measures: row of TOMs taken from §7 above plus your own controls (network filtering, MFA on admin, etc.).</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>12. Honest gaps you should know about</h2>
+    <p>To save your DPO time:</p>
+    <ul class="admin-checklist">
+      <li><strong>No GDPR-targeted Standard Contractual Clauses template.</strong> DrawSplat<sup class="tm">TM</sup> is not a controller or processor of your students' data, so SCCs don't apply between you and DrawSplat<sup class="tm">TM</sup>. They DO apply between you and Google / your hosting provider — those agreements are unchanged by introducing DrawSplat<sup class="tm">TM</sup>.</li>
+      <li><strong>No turnkey DPIA template.</strong> See §9 — use the NDPA Packet + District Addendum as source material for your jurisdiction's template.</li>
+      <li><strong>The drawsplat.org admin panel is not for production student data.</strong> It exists for demo and documentation. Run your own copy of the code for real classroom use, with your own admin password.</li>
+      <li><strong>The localStorage consent banner is the default-on path.</strong> Self-hosters who want a different consent UI can replace <code>assets/js/consent-banner.js</code> with their own implementation; it's a single small module.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>13. Quick checklist for your DPO</h2>
+    <p>Before classroom rollout in the EU/UK:</p>
+    <ul class="admin-checklist">
+      <li>Decide the deployment path (browser-only / Apps Script / MySQL self-host) and document it.</li>
+      <li>Confirm controller/processor relationships with your hosting provider (Google Workspace DPA, your MySQL host's processor agreement, etc.).</li>
+      <li>Pick a lawful basis (typically Art. 6(1)(e) public task).</li>
+      <li>Run a DPIA using NDPA Packet + this page as source material.</li>
+      <li>Add DrawSplat<sup class="tm">TM</sup> to your RoPA.</li>
+      <li>Configure retention in Teacher Admin → Compliance Console.</li>
+      <li>Update your school's privacy notice to mention the localStorage items in §6 and the data subject rights flows in §4.</li>
+      <li>Communicate the Family Access Portal URL to parents so they have a clear path for subject rights requests.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Cross-links</h2>
+    <ul class="admin-checklist">
+      <li><a href="terms-privacy.html">Full Terms &amp; Privacy</a> — the authoritative text including governing law clauses.</li>
+      <li><a href="district-addendum.html">District Privacy Addendum</a> — model contract language.</li>
+      <li><a href="ndpa-packet.html">NDPA / DPA Review Packet</a> — packet for district reviewers.</li>
+      <li><a href="combined-policy.html">All policy documents in one page</a> — for printing or DPO review.</li>
+      <li><a href="../parents/index.html">Family Access Portal</a> — subject-rights intake.</li>
+      <li><a href="../pages/contact.html">Contact form</a> — security disclosure, questions, requests.</li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <a href="../index.html">Home</a>
+  <a href="../pages/features.html">Features</a>
+  <a href="../pages/background-templates.html">Background Templates</a>
+  <a href="../pages/pricing.html">Pricing</a>
+  <a href="terms-privacy.html">Terms &amp; Privacy</a>
+  <a href="gdpr-compliance.html">GDPR Compliance</a>
+</footer>
+</body>
+</html>

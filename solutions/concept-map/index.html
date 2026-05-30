@@ -538,11 +538,12 @@
           <summary class="outline-toggle" data-i18n="outline.toggle">Outline view (Markdown)</summary>
           <div class="outline-actions">
             <button type="button" class="outline-copy-btn" id="copyOutlineBtn" data-i18n="outline.copy">Copy Markdown</button>
+            <button type="button" class="outline-copy-btn" id="openInMarkdownStudioBtn" data-i18n="outline.openMd">Open in Markdown Studio →</button>
             <span class="outline-hint" data-i18n="outline.hint">Live mirror of the map's hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.</span>
           </div>
           <pre id="outlineMarkdown" class="outline-md" aria-live="polite"></pre>
         </details>
-        <p class="footer-note" data-i18n-html="actions.schemaHint">Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema.json" download>format spec</a> first — it documents every field the Studio reads.</p>
+        <p class="footer-note" data-i18n-html="actions.schemaHint">Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema-v2.json" download>format spec</a> first — it documents every field the Studio reads.</p>
         <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         <div class="status" id="statusLine" role="status"></div>
       </section>
@@ -2697,6 +2698,16 @@
     const md = buildOutlineMarkdown();
     if (!md) return setStatus(t('status.addNodeFirst'), 'danger');
     copyToClipboard(md, t('status.outlineCopied'), t('status.embedCopyFailed'));
+  });
+  document.getElementById('openInMarkdownStudioBtn')?.addEventListener('click', () => {
+    const md = buildOutlineMarkdown();
+    if (!md) return setStatus(t('status.addNodeFirst'), 'danger');
+    // Hand off via URL hash to keep the content client-side only. The
+    // markdown-studio page reads #md=<encoded> on load and uses it instead
+    // of the saved draft / sample.
+    const url = '../markdown-studio/#md=' + encodeURIComponent(md);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setStatus(t('status.outlineOpenedMd'), 'success');
   });
 
   /* ===== keyboard ===== */
