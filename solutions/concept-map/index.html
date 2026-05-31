@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="doc.title">Concept Map Studio — DrawSplatTM</title>
-  <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
+  <meta name="description" content="Interactive concept map and graphic organizer studio. Infinite canvas with zoom and pan, undo/redo, multi-select, grouping, 5 pastel colors. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause and effect, compare and contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='10' cy='12' r='4' fill='%23FAA634'/%3E%3Ccircle cx='22' cy='20' r='4' fill='%23FAA634'/%3E%3Cpath stroke='%23FAA634' stroke-width='2' d='M12 14 L20 18'/%3E%3C/svg%3E">
   <script src="../../assets/js/widget-i18n.js"></script>
   <script src="../../assets/js/cm-md-handoff.js"></script>
@@ -57,7 +57,7 @@
         var(--yellow) 94% 100%);
     }
     .page {
-      width: min(1320px, calc(100% - 28px));
+      width: calc(100% - 28px);
       margin: 0 auto;
       padding: 22px 0 38px;
     }
@@ -127,14 +127,8 @@
       white-space: nowrap;
     }
     .app-grid {
-      display: grid;
-      grid-template-columns: minmax(260px, 304px) 1fr;
-      gap: 18px;
-      align-items: start;
+      display: block;
       padding-top: 22px;
-    }
-    @media (max-width: 940px) {
-      .app-grid { grid-template-columns: 1fr; }
     }
     .panel, .stage {
       border: 2px solid var(--border);
@@ -159,6 +153,81 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
+    }
+    .top-template-bar {
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .top-template-bar h2 {
+      margin: 0 0 8px;
+      color: var(--black);
+      font-size: .95rem;
+    }
+    .template-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .template-link-btn {
+      min-height: 36px;
+      padding: 6px 10px;
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      font-size: .82rem;
+      line-height: 1.15;
+      text-align: center;
+    }
+    .template-link-btn:hover,
+    .template-link-btn.active {
+      border-color: var(--navy);
+      color: var(--navy);
+      background: #faf9ff;
+    }
+    .control-dock {
+      margin-top: 12px;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+    }
+    .control-section {
+      display: grid;
+      gap: 8px;
+    }
+    .control-section h3 {
+      margin: 0;
+      color: var(--gray-90);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .control-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .control-dock .hint-text {
+      margin: 0;
+    }
+    .selection-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 760px) {
+      .selection-row { grid-template-columns: 1fr; }
     }
     .tool-row.full { grid-template-columns: 1fr; }
     .tool-row + .tool-row { margin-top: 6px; }
@@ -202,7 +271,7 @@
       min-height: 60px;
     }
     .selection-info strong { color: var(--navy); }
-    .stage { padding: 14px; }
+    .stage { padding: 12px; }
     .canvas-toolbar {
       display: flex;
       align-items: center;
@@ -283,8 +352,11 @@
     svg#cmCanvas {
       display: block;
       width: 100%;
-      height: clamp(440px, 70vh, 760px);
+      height: clamp(560px, calc(100vh - 270px), 920px);
       touch-action: none;
+    }
+    @media (max-width: 760px) {
+      svg#cmCanvas { height: clamp(440px, 62vh, 760px); }
     }
     .cm-node { cursor: grab; }
     .cm-node.dragging { cursor: grabbing; }
@@ -329,7 +401,6 @@
     .actions {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
       flex-wrap: wrap;
     }
     .button {
@@ -398,6 +469,8 @@
     body.embed-mode .top-bar,
     body.embed-mode header,
     body.embed-mode aside.panel,
+    body.embed-mode .top-template-bar,
+    body.embed-mode .control-dock,
     body.embed-mode .stage .actions,
     body.embed-mode .stage > .footer-note,
     body.embed-mode .stage .status,
@@ -435,7 +508,7 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1 data-i18n="header.h1">Concept Map Studio</h1>
-        <p class="subtitle" data-i18n="header.subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
+        <p class="subtitle" data-i18n="header.subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
       </div>
       <div class="header-actions">
         <div class="i18n-picker" data-i18n-picker></div>
@@ -445,78 +518,39 @@
     </header>
 
     <main class="app-grid">
-      <aside class="panel" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
+      <nav class="top-template-bar" data-i18n-aria-label="section.templates" aria-label="Templates">
         <h2 data-i18n="section.templates">Templates</h2>
-        <div class="tool-row full">
-          <select class="template-select" id="templateSelect" data-i18n-aria-label="template.select.aria" aria-label="Graphic organizer template">
-            <option value="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</option>
-            <option value="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</option>
-            <option value="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</option>
-            <option value="frayer" data-i18n="tpl.frayer">Frayer Model</option>
-            <option value="kwl" data-i18n="tpl.kwl">KWL Chart</option>
-            <option value="5ws" data-i18n="tpl.5ws">5 Ws (and How)</option>
-            <option value="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</option>
-            <option value="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</option>
-            <option value="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</option>
-            <option value="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</option>
-            <option value="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</option>
-            <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
-          </select>
+        <select class="template-select" id="templateSelect" data-i18n-aria-label="template.select.aria" aria-label="Graphic organizer template" hidden>
+          <option value="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</option>
+          <option value="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</option>
+          <option value="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</option>
+          <option value="frayer" data-i18n="tpl.frayer">Frayer Model</option>
+          <option value="kwl" data-i18n="tpl.kwl">KWL Chart</option>
+          <option value="t-chart" data-i18n="tpl.t-chart">T-Chart</option>
+          <option value="5ws" data-i18n="tpl.5ws">5 Ws (and How)</option>
+          <option value="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</option>
+          <option value="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</option>
+          <option value="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</option>
+          <option value="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</option>
+          <option value="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</option>
+          <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
+        </select>
+        <div class="template-links">
+          <button class="template-link-btn active" type="button" data-template="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</button>
+          <button class="template-link-btn" type="button" data-template="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</button>
+          <button class="template-link-btn" type="button" data-template="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</button>
+          <button class="template-link-btn" type="button" data-template="frayer" data-i18n="tpl.frayer">Frayer Model</button>
+          <button class="template-link-btn" type="button" data-template="kwl" data-i18n="tpl.kwl">KWL Chart</button>
+          <button class="template-link-btn" type="button" data-template="t-chart" data-i18n="tpl.t-chart">T-Chart</button>
+          <button class="template-link-btn" type="button" data-template="5ws" data-i18n="tpl.5ws">5 Ws (and How)</button>
+          <button class="template-link-btn" type="button" data-template="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</button>
+          <button class="template-link-btn" type="button" data-template="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</button>
+          <button class="template-link-btn" type="button" data-template="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</button>
+          <button class="template-link-btn" type="button" data-template="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</button>
+          <button class="template-link-btn" type="button" data-template="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</button>
+          <button class="template-link-btn" type="button" data-template="story-map" data-i18n="tpl.story-map">Story Map</button>
         </div>
-        <div class="tool-row">
-          <button class="tool-btn" id="applyTemplateBtn" type="button" data-i18n="button.applyTemplate">Apply Template</button>
-          <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
-        </div>
-
-        <h3 data-i18n="section.mode">Mode</h3>
-        <div class="tool-row">
-          <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button" data-i18n="button.selectTool">Select / Drag</button>
-          <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button" data-i18n="button.connectTool">Connect Nodes</button>
-        </div>
-        <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
-
-        <h3 data-i18n="section.addNodes">Add nodes</h3>
-        <div class="tool-row">
-          <button class="tool-btn" id="addNodeBtn" type="button" data-i18n="button.addNode">+ Node</button>
-          <button class="tool-btn" id="addChildBtn" type="button" data-i18n="button.addChild">+ Child of Selected</button>
-        </div>
-
-        <h3 data-i18n="section.editSelected">Edit selected</h3>
-        <div class="tool-row">
-          <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
-          <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
-        </div>
-        <div class="tool-row">
-          <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
-          <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
-        </div>
-        <div class="tool-row">
-          <button class="tool-btn" id="clearLinkBtn" type="button" data-i18n="button.clearLink">Clear Link</button>
-          <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
-        </div>
-        <div class="tool-row full">
-          <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
-        </div>
-
-        <h3 data-i18n="section.groups">Groups</h3>
-        <div class="tool-row">
-          <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
-          <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
-        </div>
-        <div class="tool-row full">
-          <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
-        </div>
-
-        <div class="tool-row full" style="margin-top:10px">
-          <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
-        </div>
-        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-
-        <h3 data-i18n="section.selection">Selection</h3>
-        <div class="selection-info" id="selectionInfo" data-i18n="selection.emptyHint">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
-
-        <p class="footer-note" data-i18n-html="footer.note.html">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
-      </aside>
+      </nav>
 
       <section class="stage" data-i18n-aria-label="panel.canvas.aria" aria-label="Concept map canvas">
         <div class="section-filter" id="sectionFilter" hidden>
@@ -542,16 +576,56 @@
           <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" data-i18n-aria-label="svg.aria" aria-label="Concept map canvas"></svg>
           <input id="inlineEditor" class="inline-editor" data-i18n-aria-label="inline.editor.aria" aria-label="Node label editor" hidden>
         </div>
-        <div class="actions">
-          <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
-          <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
-          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
-          <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
-          <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
-          <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
-          <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
-          <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
+
+        <div class="control-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
+          <div class="control-section">
+            <h3 data-i18n="section.mode">Mode</h3>
+            <div class="control-buttons">
+              <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button" data-i18n="button.selectTool">Select / Drag</button>
+              <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button" data-i18n="button.connectTool">Connect Nodes</button>
+              <button class="tool-btn" id="addNodeBtn" type="button" data-i18n="button.addNode">+ Node</button>
+              <button class="tool-btn" id="addChildBtn" type="button" data-i18n="button.addChild">+ Child of Selected</button>
+              <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
+            </div>
+            <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
+          </div>
+
+          <div class="control-section">
+            <h3 data-i18n="section.editSelected">Edit selected</h3>
+            <div class="control-buttons">
+              <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
+              <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
+              <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
+              <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
+              <button class="tool-btn" id="clearLinkBtn" type="button" data-i18n="button.clearLink">Clear Link</button>
+              <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
+              <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
+              <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
+              <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
+              <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
+              <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
+            </div>
+          </div>
+
+          <div class="control-section">
+            <div class="actions">
+              <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
+              <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
+              <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+              <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+              <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+              <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
+              <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
+              <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
+            </div>
+          </div>
+
+          <div class="selection-row">
+            <div class="selection-info" id="selectionInfo" data-i18n="selection.emptyHint">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
+            <p class="footer-note" data-i18n-html="footer.note.html">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
+          </div>
         </div>
+        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
         <details class="outline-panel" id="outlineDetails">
           <summary class="outline-toggle" data-i18n="outline.toggle">Outline view (Markdown)</summary>
@@ -1036,6 +1110,26 @@
       connectors: [
         {from: 'k', to: 'w', label: t('tplRel.leadsTo')},
         {from: 'w', to: 'l', label: t('tplRel.becomes')}
+      ]
+    })},
+    't-chart': {key: 't-chart', build: () => ({
+      rootKey: 'topic',
+      nodes: {
+        topic: {label: t('tplNode.tChartTopic'),        x: 600, y: 120, isRoot: true},
+        left:  {label: t('tplNode.leftColumn'),         x: 350, y: 260},
+        right: {label: t('tplNode.rightColumn'),        x: 850, y: 260},
+        l1:    {label: t('tplNode.leftPointN', {n: 1}), x: 350, y: 390},
+        l2:    {label: t('tplNode.leftPointN', {n: 2}), x: 350, y: 500},
+        l3:    {label: t('tplNode.leftPointN', {n: 3}), x: 350, y: 610},
+        r1:    {label: t('tplNode.rightPointN', {n: 1}),x: 850, y: 390},
+        r2:    {label: t('tplNode.rightPointN', {n: 2}),x: 850, y: 500},
+        r3:    {label: t('tplNode.rightPointN', {n: 3}),x: 850, y: 610}
+      },
+      connectors: [
+        {from: 'topic', to: 'left', label: t('tplRel.includes')},
+        {from: 'topic', to: 'right', label: t('tplRel.includes')},
+        {from: 'left', to: 'l1'}, {from: 'left', to: 'l2'}, {from: 'left', to: 'l3'},
+        {from: 'right', to: 'r1'}, {from: 'right', to: 'r2'}, {from: 'right', to: 'r3'}
       ]
     })},
     '5ws': {key: '5ws', build: () => ({
@@ -2164,9 +2258,14 @@
     render();
   });
 
-  document.getElementById('applyTemplateBtn').addEventListener('click', () => {
+  function setActiveTemplateButton(key){
+    document.querySelectorAll('[data-template]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-template') === key);
+    });
+  }
+  function applyTemplateKey(key){
     const sel = document.getElementById('templateSelect');
-    const key = sel ? sel.value : 'concept-map';
+    if (sel) sel.value = key;
     const tpl = TEMPLATES[key];
     if (!tpl) return;
     const tplName = templateTitle(key);
@@ -2174,7 +2273,16 @@
     recordHistory();
     loadTemplate(key);
     resetZoom();
+    setActiveTemplateButton(key);
     setStatus(t('status.templateLoaded', {name: tplName}), 'success');
+  }
+  const applyTemplateBtn = document.getElementById('applyTemplateBtn');
+  if (applyTemplateBtn) applyTemplateBtn.addEventListener('click', () => {
+    const sel = document.getElementById('templateSelect');
+    applyTemplateKey(sel ? sel.value : 'concept-map');
+  });
+  document.querySelectorAll('[data-template]').forEach(btn => {
+    btn.addEventListener('click', () => applyTemplateKey(btn.getAttribute('data-template') || 'concept-map'));
   });
   document.getElementById('clearMapBtn').addEventListener('click', () => {
     if (!window.confirm(t('confirm.clearMap'))) return;
