@@ -67,12 +67,16 @@
     'stage.preview': 'Preview',
     'action.png': 'Download PNG',
     'action.svg': 'Download SVG',
+    'action.copyPng': 'Copy PNG',
 
     'err.heading': 'Something went wrong',
     'msg.noPoints': 'Add coordinate pairs to plot points.',
     'msg.emptyData': 'Add Category,Value rows to draw a chart.',
     'msg.defaultTitle': 'Graph',
-    'msg.sourcePrefix': 'Source:'
+    'msg.sourcePrefix': 'Source:',
+    'msg.copied': 'PNG copied to clipboard.',
+    'msg.copyFailed': 'Copy failed:',
+    'msg.copyUnsupported': 'Clipboard not supported in this browser.'
   });
 
   // Spanish — AI-seeded; native-speaker review pending.
@@ -137,12 +141,16 @@
     'stage.preview': 'Vista previa',
     'action.png': 'Descargar PNG',
     'action.svg': 'Descargar SVG',
+    'action.copyPng': 'Copiar PNG',
 
     'err.heading': 'Algo salió mal',
     'msg.noPoints': 'Agrega pares de coordenadas para marcar puntos.',
     'msg.emptyData': 'Agrega filas Categoría,Valor para dibujar una gráfica.',
     'msg.defaultTitle': 'Gráfica',
-    'msg.sourcePrefix': 'Fuente:'
+    'msg.sourcePrefix': 'Fuente:',
+    'msg.copied': 'PNG copiado al portapapeles.',
+    'msg.copyFailed': 'Error al copiar:',
+    'msg.copyUnsupported': 'El portapapeles no es compatible con este navegador.'
   });
 
   // Vietnamese — AI-seeded; native-speaker review pending.
@@ -207,12 +215,16 @@
     'stage.preview': 'Xem trước',
     'action.png': 'Tải PNG',
     'action.svg': 'Tải SVG',
+    'action.copyPng': 'Sao chép PNG',
 
     'err.heading': 'Đã xảy ra lỗi',
     'msg.noPoints': 'Thêm các cặp tọa độ để vẽ điểm.',
     'msg.emptyData': 'Thêm các hàng Danh mục,Giá trị để vẽ biểu đồ.',
     'msg.defaultTitle': 'Đồ thị',
-    'msg.sourcePrefix': 'Nguồn:'
+    'msg.sourcePrefix': 'Nguồn:',
+    'msg.copied': 'Đã sao chép PNG vào bộ nhớ tạm.',
+    'msg.copyFailed': 'Sao chép thất bại:',
+    'msg.copyUnsupported': 'Trình duyệt này không hỗ trợ bộ nhớ tạm.'
   });
 
   // Arabic — AI-seeded; native-speaker review pending.
@@ -277,12 +289,16 @@
     'stage.preview': 'معاينة',
     'action.png': 'تنزيل PNG',
     'action.svg': 'تنزيل SVG',
+    'action.copyPng': 'نسخ PNG',
 
     'err.heading': 'حدث خطأ ما',
     'msg.noPoints': 'أضف أزواج إحداثيات لرسم النقاط.',
     'msg.emptyData': 'أضف صفوف الفئة،القيمة لرسم رسم بياني.',
     'msg.defaultTitle': 'رسم بياني',
-    'msg.sourcePrefix': 'المصدر:'
+    'msg.sourcePrefix': 'المصدر:',
+    'msg.copied': 'تم نسخ PNG إلى الحافظة.',
+    'msg.copyFailed': 'فشل النسخ:',
+    'msg.copyUnsupported': 'الحافظة غير مدعومة في هذا المتصفح.'
   });
 
   // Chinese (Simplified) — AI-seeded; native-speaker review pending.
@@ -347,12 +363,16 @@
     'stage.preview': '预览',
     'action.png': '下载 PNG',
     'action.svg': '下载 SVG',
+    'action.copyPng': '复制 PNG',
 
     'err.heading': '出了点问题',
     'msg.noPoints': '添加坐标对以绘制点。',
     'msg.emptyData': '添加“类别,数值”行以绘制图表。',
     'msg.defaultTitle': '图表',
-    'msg.sourcePrefix': '来源：'
+    'msg.sourcePrefix': '来源：',
+    'msg.copied': 'PNG 已复制到剪贴板。',
+    'msg.copyFailed': '复制失败：',
+    'msg.copyUnsupported': '此浏览器不支持剪贴板。'
   });
 
   // Hindi / Urdu — AI-seeded; native-speaker review pending.
@@ -417,12 +437,16 @@
     'stage.preview': 'पूर्वावलोकन / پیش منظر',
     'action.png': 'PNG डाउनलोड करें',
     'action.svg': 'SVG डाउनलोड करें',
+    'action.copyPng': 'PNG कॉपी करें / PNG کاپی کریں',
 
     'err.heading': 'कुछ गलत हो गया',
     'msg.noPoints': 'बिंदु बनाने के लिए निर्देशांक जोड़े जोड़ें।',
     'msg.emptyData': 'चार्ट बनाने के लिए श्रेणी,मान पंक्तियाँ जोड़ें।',
     'msg.defaultTitle': 'ग्राफ़',
-    'msg.sourcePrefix': 'स्रोत:'
+    'msg.sourcePrefix': 'स्रोत:',
+    'msg.copied': 'PNG क्लिपबोर्ड पर कॉपी हो गया। / PNG کلپ بورڈ پر کاپی ہو گیا۔',
+    'msg.copyFailed': 'कॉपी विफल: / کاپی ناکام:',
+    'msg.copyUnsupported': 'इस ब्राउज़र में क्लिपबोर्ड समर्थित नहीं है। / اس براؤزر میں کلپ بورڈ سپورٹڈ نہیں ہے۔'
   });
 
   if (window.WidgetI18n) window.WidgetI18n.register('graph-maker', DICT);

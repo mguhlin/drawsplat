@@ -310,6 +310,7 @@ Sushi,6</textarea>
           <div class="actions">
             <button class="btn secondary" id="svgBtn" data-i18n="action.svg">Download SVG</button>
             <button class="btn" id="pngBtn" data-i18n="action.png">Download PNG</button>
+            <button class="btn secondary" id="copyBtn" data-i18n="action.copyPng">Copy PNG</button>
           </div>
         </div>
         <div id="previewStage"></div>
@@ -327,6 +328,9 @@ Sushi,6</textarea>
     const errBox = document.getElementById('errBox');
     function showError(msg){
       if(!errBox) return;
+      errBox.style.background = '';
+      errBox.style.borderColor = '';
+      errBox.style.color = '';
       errBox.style.display = 'block';
       errBox.textContent = t('err.heading') + ': ' + msg;
     }
@@ -692,33 +696,66 @@ Sushi,6</textarea>
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
+    // Render the live #gmSvg into a PNG Blob (shared by exportPNG + copyPNG).
+    function svgToPngBlob(){
+      return new Promise(function(resolve, reject){
+        const svg = document.getElementById('gmSvg');
+        if(!svg){ reject(new Error('Nothing to render')); return; }
+        const clone = svg.cloneNode(true);
+        clone.setAttribute('xmlns', SVGNS);
+        const data = new XMLSerializer().serializeToString(clone);
+        const svg64 = btoa(unescape(encodeURIComponent(data)));
+        const img = new Image();
+        img.onload = function(){
+          const scale = 2;
+          const canvas = document.createElement('canvas');
+          canvas.width  = (svg.viewBox.baseVal.width  || svg.clientWidth)  * scale;
+          canvas.height = (svg.viewBox.baseVal.height || svg.clientHeight) * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(function(blob){
+            blob ? resolve(blob) : reject(new Error('PNG encode failed'));
+          });
+        };
+        img.onerror = function(){ reject(new Error('Could not render SVG')); };
+        img.src = 'data:image/svg+xml;base64,' + svg64;
+      });
+    }
     function exportPNG(){
-      const svg = document.getElementById('gmSvg');
-      if(!svg) return;
-      const clone = svg.cloneNode(true);
-      clone.setAttribute('xmlns', SVGNS);
-      const data = new XMLSerializer().serializeToString(clone);
-      const svg64 = btoa(unescape(encodeURIComponent(data)));
-      const img = new Image();
-      img.onload = function(){
-        const scale = 2;
-        const canvas = document.createElement('canvas');
-        canvas.width  = (svg.viewBox.baseVal.width  || svg.clientWidth)  * scale;
-        canvas.height = (svg.viewBox.baseVal.height || svg.clientHeight) * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(function(blob){
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = titleVal() + '.png';
-          document.body.appendChild(a); a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        });
-      };
-      img.src = 'data:image/svg+xml;base64,' + svg64;
+      svgToPngBlob().then(function(blob){
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = titleVal() + '.png';
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }).catch(function(err){
+        showError(err && err.message ? err.message : String(err));
+      });
+    }
+    // Shows a transient success note reusing #errBox (styled green inline).
+    function showOk(msg){
+      if(!errBox) return;
+      errBox.style.display = 'block';
+      errBox.style.background = '#f0fdf4';
+      errBox.style.borderColor = '#bbf7d0';
+      errBox.style.color = '#166534';
+      errBox.textContent = msg;
+    }
+    function copyPNG(){
+      if(!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined'){
+        showError(t('msg.copyUnsupported'));
+        return;
+      }
+      svgToPngBlob().then(function(blob){
+        return navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      }).then(function(){
+        showOk(t('msg.copied'));
+      }).catch(function(err){
+        showError(t('msg.copyFailed') + ' ' + (err && err.message ? err.message : String(err)));
+      });
     }
 
     // ---- localized example seeding ----
@@ -761,6 +798,7 @@ Sushi,6</textarea>
       });
       document.getElementById('svgBtn').addEventListener('click', exportSVG);
       document.getElementById('pngBtn').addEventListener('click', exportPNG);
+      document.getElementById('copyBtn').addEventListener('click', copyPNG);
       window.addEventListener('widget-i18n:changed', function(){ seedExamples(); render(); });
       seedExamples();
       render();
