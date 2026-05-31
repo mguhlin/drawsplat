@@ -1,0 +1,5 @@
+question,answer,wrong1,wrong2,wrong3,type,points,notes
+"Which process do plants use to make food?","Photosynthesis","Respiration","Evaporation","Condensation","multiple-choice",100,"Use this row for a standard multiple-choice question."
+"The Earth orbits the Sun.","True","False","","","true-false",100,"For true/false, put the correct value in answer and the other value in wrong1."
+"What is the main idea of a text?","The central message or point","","","","short-answer",100,"For short answer, leave wrong answer columns blank."
+"What is 7 x 8?","56","48","54","64","multiple-choice",100,"Distractors are optional but recommended for multiple choice."

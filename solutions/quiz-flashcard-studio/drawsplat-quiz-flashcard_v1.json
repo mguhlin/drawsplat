@@ -1,0 +1,38 @@
+{
+  "title": "Sample Import Quiz",
+  "timer": 30,
+  "questions": [
+    {
+      "question": "Which process do plants use to make food?",
+      "answer": "Photosynthesis",
+      "wrong": ["Respiration", "Evaporation", "Condensation"],
+      "type": "multiple-choice",
+      "points": 100,
+      "notes": "Use this object for a standard multiple-choice question."
+    },
+    {
+      "question": "The Earth orbits the Sun.",
+      "answer": "True",
+      "wrong": ["False"],
+      "type": "true-false",
+      "points": 100,
+      "notes": "For true/false, put the correct value in answer and the other value in wrong."
+    },
+    {
+      "question": "What is the main idea of a text?",
+      "answer": "The central message or point",
+      "wrong": [],
+      "type": "short-answer",
+      "points": 100,
+      "notes": "For short answer, wrong can be an empty array."
+    },
+    {
+      "question": "What is 7 x 8?",
+      "answer": "56",
+      "wrong": ["48", "54", "64"],
+      "type": "multiple-choice",
+      "points": 100,
+      "notes": "Distractors are optional but recommended for multiple choice."
+    }
+  ]
+}
