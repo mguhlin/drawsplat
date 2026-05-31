@@ -27,10 +27,18 @@
       line-height:1.5;
     }
     .top-bar{
-      background:var(--panel);
-      border-bottom:1px solid var(--line);
-      padding:14px 20px;
+      height:12px;
+      background:linear-gradient(90deg,#7c3aed 0 28%,#a855f7 28% 46%,#f97316 46% 58%,#ef4444 58% 70%,#6d28d9 70% 84%,#22c55e 84% 94%,#facc15 94% 100%);
     }
+    .page-head{
+      display:flex;align-items:flex-start;justify-content:space-between;
+      gap:18px;flex-wrap:wrap;margin:0 0 26px;
+    }
+    .title-block{display:grid;gap:8px;}
+    .header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+    .i18n-picker select{padding:9px 12px;border:2px solid #ddd6fe;border-radius:8px;background:#fff;color:#111827;font-weight:700;font-size:.85rem;cursor:pointer;min-height:42px;}
+    .secondary-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;border:2px solid var(--brand);border-radius:10px;color:var(--brand);background:#fff;font-weight:800;text-decoration:none;white-space:nowrap;}
+    .home-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;color:#fff;background:var(--brand);border-radius:10px;font-weight:800;text-decoration:none;white-space:nowrap;}
     .top-bar-inner{
       max-width:1180px;
       margin:0 auto;
@@ -71,7 +79,7 @@
       font-weight:700;color:var(--brand);margin:0 0 6px;
     }
     h1{
-      font-size:clamp(1.6rem,3vw,2.3rem);margin:0 0 8px;line-height:1.15;
+      font-size:clamp(2rem,5vw,3.4rem);margin:0;line-height:1;color:var(--brand);
     }
     .subtitle{
       color:var(--muted);font-size:1.02rem;margin:0 0 26px;max-width:660px;
@@ -150,24 +158,21 @@
   </style>
 </head>
 <body>
-  <header class="top-bar">
-    <div class="top-bar-inner">
-      <a class="brand-mark" href="../../index.html">
-        <span class="logo" aria-hidden="true"></span>
-        <span>DrawSplat</span>
-      </a>
-      <nav class="top-links">
-        <a href="../../index.html" data-i18n="header.allTools">All Tools</a>
-        <a href="../../index.html" data-i18n="header.home">Home</a>
-        <select id="langSelect" class="lang-select" data-i18n-picker aria-label="Language"></select>
-      </nav>
-    </div>
-  </header>
+  <div class="top-bar" aria-hidden="true"></div>
 
   <main class="wrap">
-    <p class="eyebrow" data-i18n="header.eyebrow">DrawSplat™ Tools</p>
-    <h1 data-i18n="hero.title">Graph Maker</h1>
-    <p class="subtitle" data-i18n="hero.subtitle">Make bar, line, area, and pie charts from your data — plus a coordinate plane mode for plotting points and lines in math lessons.</p>
+    <header class="page-head">
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="hero.title">Graph Maker</h1>
+        <p class="subtitle" data-i18n="hero.subtitle">Make bar, line, area, and pie charts from your data — plus a coordinate plane mode for plotting points and lines in math lessons.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
 
     <div id="errBox" role="alert"></div>
 
