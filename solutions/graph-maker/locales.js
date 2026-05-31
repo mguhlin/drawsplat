@@ -1,7 +1,8 @@
 // Graph Maker — i18n strings. AI-seeded; native-speaker review pending.
 (function () {
+  var DICT = {};
   function reg(lang, strings) {
-    if (window.WidgetI18n) window.WidgetI18n.register('graph-maker', strings, lang);
+    DICT[lang] = strings;
   }
 
   // English (source of truth)
@@ -423,4 +424,6 @@
     'msg.defaultTitle': 'Pakuhi',
     'msg.sourcePrefix': 'Kumu:'
   });
+
+  if (window.WidgetI18n) window.WidgetI18n.register('graph-maker', DICT);
 })();
