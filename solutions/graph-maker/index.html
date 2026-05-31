@@ -721,6 +721,24 @@ Sushi,6</textarea>
       img.src = 'data:image/svg+xml;base64,' + svg64;
     }
 
+    // ---- localized example seeding ----
+    // The data/points textareas ship with example content. Keep that example in
+    // sync with the active language until the user edits it themselves, so the
+    // "Pizza,12 / Tacos,8 ..." sample reads in Hindi/Vietnamese/Chinese/etc.
+    const EXAMPLE_FIELDS = [
+      {id:'chartData',   key:'form.dataPlaceholder'},
+      {id:'pointsInput', key:'form.pointsPlaceholder'}
+    ];
+    function seedExamples(){
+      if(!window.WidgetI18n) return;
+      EXAMPLE_FIELDS.forEach(function(ex){
+        const el = document.getElementById(ex.id);
+        if(!el || el.dataset.userEdited === '1') return;
+        const v = t(ex.key);
+        if(v !== undefined && v !== ex.key) el.value = v;
+      });
+    }
+
     // ---- wire up ----
     function bind(){
       const ids = ['graphType',
@@ -733,12 +751,18 @@ Sushi,6</textarea>
         node.addEventListener('input', render);
         node.addEventListener('change', render);
       });
+      // Flag example textareas as user-owned once typed in, so we stop reseeding.
+      EXAMPLE_FIELDS.forEach(function(ex){
+        const el = document.getElementById(ex.id);
+        if(el) el.addEventListener('input', function(){ el.dataset.userEdited = '1'; });
+      });
       document.querySelectorAll('input[name="quad"]').forEach(function(r){
         r.addEventListener('change', render);
       });
       document.getElementById('svgBtn').addEventListener('click', exportSVG);
       document.getElementById('pngBtn').addEventListener('click', exportPNG);
-      window.addEventListener('widget-i18n:changed', render);
+      window.addEventListener('widget-i18n:changed', function(){ seedExamples(); render(); });
+      seedExamples();
       render();
     }
 
