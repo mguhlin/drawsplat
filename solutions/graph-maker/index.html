@@ -167,13 +167,62 @@
   <main class="wrap">
     <p class="eyebrow" data-i18n="header.eyebrow">DrawSplat™ Tools</p>
     <h1 data-i18n="hero.title">Graph Maker</h1>
-    <p class="subtitle" data-i18n="hero.subtitle">Build a Cartesian coordinate grid, plot points, and draw lines for math lessons.</p>
+    <p class="subtitle" data-i18n="hero.subtitle">Make bar, line, area, and pie charts from your data — plus a coordinate plane mode for plotting points and lines in math lessons.</p>
 
     <div id="errBox" role="alert"></div>
 
     <div class="studio">
       <!-- ============ CONTROLS ============ -->
       <div class="panel">
+        <div class="field">
+          <label for="graphType" data-i18n="form.typeLabel">Graph type</label>
+          <select id="graphType">
+            <option value="bar" data-i18n="type.bar">Bar</option>
+            <option value="line" data-i18n="type.line">Line</option>
+            <option value="area" data-i18n="type.area">Area</option>
+            <option value="pie" data-i18n="type.pie">Pie</option>
+            <option value="coord" data-i18n="type.coord">Coordinate Plane</option>
+          </select>
+        </div>
+
+        <!-- ===== Chart-mode controls (bar/line/area/pie) ===== -->
+        <div id="chartControls">
+          <div class="field">
+            <label for="chartTitle" data-i18n="form.titleLabel">Graph title</label>
+            <input type="text" id="chartTitle" data-i18n-attr="placeholder:form.chartTitlePlaceholder" placeholder="Class favorites" value="Class favorites" />
+          </div>
+
+          <fieldset class="group">
+            <legend data-i18n="group.data">Data</legend>
+            <div class="field">
+              <label for="chartData" data-i18n="form.dataLabel">Data — one row per line: Category,Value</label>
+              <textarea id="chartData" data-i18n-attr="placeholder:form.dataPlaceholder" placeholder="Pizza,12&#10;Tacos,8&#10;Salad,5&#10;Sushi,6">Pizza,12
+Tacos,8
+Salad,5
+Sushi,6</textarea>
+              <p class="hint" data-i18n="form.dataHint">Example: Pizza,12 makes a bar (or slice) for Pizza worth 12.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend data-i18n="group.labels">Labels</legend>
+            <div class="field">
+              <label for="chartXLabel" data-i18n="form.xLabel">X-axis label</label>
+              <input type="text" id="chartXLabel" data-i18n-attr="placeholder:form.xLabelPlaceholder" placeholder="Category" value="" />
+            </div>
+            <div class="field">
+              <label for="chartYLabel" data-i18n="form.yLabel">Y-axis label (ignored for pie)</label>
+              <input type="text" id="chartYLabel" data-i18n-attr="placeholder:form.yLabelPlaceholder" placeholder="Value" value="" />
+            </div>
+            <div class="field">
+              <label for="chartSource" data-i18n="form.sourceLabel">Source / attribution (optional)</label>
+              <input type="text" id="chartSource" data-i18n-attr="placeholder:form.sourcePlaceholder" placeholder="Class survey" value="" />
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- ===== Coordinate-plane controls ===== -->
+        <div id="coordControls">
         <div class="field">
           <label for="titleInput" data-i18n="form.titleLabel">Graph title</label>
           <input type="text" id="titleInput" data-i18n-attr="placeholder:form.titlePlaceholder" placeholder="My Coordinate Plane" value="My Coordinate Plane" />
@@ -246,6 +295,7 @@
             </div>
           </div>
         </fieldset>
+        </div><!-- /#coordControls -->
       </div>
 
       <!-- ============ PREVIEW ============ -->
@@ -288,6 +338,97 @@
       grid:  '#e5e7eb',      // line
       text:  '#2e1065'
     };
+
+    // ===== Data-chart logic (ported from whiteboard Graph Creator) =====
+    const GRAPH_COLORS = ['#7c3aed','#f59e0b','#2563eb','#16a34a','#dc2626','#0891b2','#db2777','#475569'];
+
+    function esc(s){
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function parseGraphRows(text){
+      return String(text||'').split(/\n+/).map(function(line){return line.trim();}).filter(Boolean).map(function(line){
+        const parts = line.includes(',') ? line.split(',') : line.split(/\t+/);
+        if(parts.length < 2){
+          const m = line.match(/^(.*?)[\s:]+(-?\d+(?:\.\d+)?)$/);
+          return m ? {label:m[1].trim(), value:+m[2]} : null;
+        }
+        const value = parseFloat(parts.pop());
+        return Number.isFinite(value) ? {label:parts.join(',').trim()||'Item', value:value} : null;
+      }).filter(Boolean);
+    }
+
+    function niceMax(v){
+      if(v <= 0) return 10;
+      const p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p;
+      return (n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
+    }
+
+    // Builds a complete <svg> string for bar/line/area/pie modes.
+    function graphSvg(config){
+      const data = parseGraphRows(config.dataText), W = 720, H = 460, left = 74, right = 38, top = 58, bottom = 78, cw = W - left - right, ch = H - top - bottom;
+      const title = esc(config.title || t('msg.defaultTitle')), xLabel = esc(config.xLabel || ''), yLabel = esc(config.yLabel || ''), source = esc(config.source || '');
+      if(!data.length){
+        return '<svg id="gmSvg" xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><rect width="100%" height="100%" fill="#fff"/><text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" font-family="Arial" font-size="22" fill="#64748b">'+esc(t('msg.emptyData'))+'</text></svg>';
+      }
+      const max = niceMax(Math.max.apply(null, data.map(function(d){return d.value;}).concat([1])));
+      const y = function(v){return top + ch - (Math.max(0,v)/max)*ch;};
+      const x = function(i){return left + (data.length === 1 ? cw/2 : (i/(data.length-1))*cw);};
+      let body = '';
+      if(config.type === 'pie'){
+        const cx = W/2, cy = 238, r = 128, total = data.reduce(function(s,d){return s + Math.max(0,d.value);}, 0) || 1;
+        let a = -Math.PI/2;
+        body = data.map(function(d,i){
+          const part = Math.max(0,d.value)/total, a2 = a + part*Math.PI*2, large = part > .5 ? 1 : 0;
+          const x1 = cx + Math.cos(a)*r, y1 = cy + Math.sin(a)*r, x2 = cx + Math.cos(a2)*r, y2 = cy + Math.sin(a2)*r;
+          const mid = (a + a2)/2, lx = cx + Math.cos(mid)*(r+34), ly = cy + Math.sin(mid)*(r+34);
+          a = a2;
+          return '<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+GRAPH_COLORS[i%GRAPH_COLORS.length]+'" stroke="#fff" stroke-width="3"/><text x="'+lx+'" y="'+ly+'" text-anchor="'+(lx<cx?'end':'start')+'" font-family="Arial" font-size="13" fill="#1f2937">'+esc(d.label)+'</text>';
+        }).join('');
+      } else {
+        const axis = '<line x1="'+left+'" y1="'+top+'" x2="'+left+'" y2="'+(top+ch)+'" stroke="#334155" stroke-width="2"/><line x1="'+left+'" y1="'+(top+ch)+'" x2="'+(left+cw)+'" y2="'+(top+ch)+'" stroke="#334155" stroke-width="2"/>';
+        const ticks = [0,1,2,3,4].map(function(i){
+          const val = max*i/4, yy = y(val);
+          return '<line x1="'+left+'" y1="'+yy+'" x2="'+(left+cw)+'" y2="'+yy+'" stroke="#e2e8f0"/><text x="'+(left-10)+'" y="'+(yy+4)+'" text-anchor="end" font-family="Arial" font-size="13" fill="#475569">'+(Number.isInteger(val)?val:val.toFixed(1))+'</text>';
+        }).join('');
+        const labels = data.map(function(d,i){
+          return '<text x="'+x(i)+'" y="'+(top+ch+24)+'" text-anchor="middle" font-family="Arial" font-size="13" fill="#1f2937">'+esc(d.label).slice(0,18)+'</text>';
+        }).join('');
+        if(config.type === 'bar'){
+          const slot = cw/data.length, bw = Math.max(18, slot*.62);
+          body = data.map(function(d,i){
+            return '<rect x="'+(left+i*slot+(slot-bw)/2)+'" y="'+y(d.value)+'" width="'+bw+'" height="'+(top+ch-y(d.value))+'" rx="5" fill="'+GRAPH_COLORS[i%GRAPH_COLORS.length]+'"/><text x="'+(left+i*slot+slot/2)+'" y="'+(y(d.value)-8)+'" text-anchor="middle" font-family="Arial" font-size="13" fill="#1f2937">'+esc(d.value)+'</text>';
+          }).join('');
+        } else {
+          const pts = data.map(function(d,i){return x(i)+','+y(d.value);}).join(' ');
+          if(config.type === 'area') body += '<polygon points="'+left+','+(top+ch)+' '+pts+' '+(left+cw)+','+(top+ch)+'" fill="#93c5fd" opacity=".45"/>';
+          body += '<polyline points="'+pts+'" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>';
+          body += data.map(function(d,i){
+            return '<circle cx="'+x(i)+'" cy="'+y(d.value)+'" r="6" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="'+x(i)+'" y="'+(y(d.value)-12)+'" text-anchor="middle" font-family="Arial" font-size="13" fill="#1f2937">'+esc(d.value)+'</text>';
+          }).join('');
+        }
+        body = ticks + axis + body + labels + '<text x="'+(left+cw/2)+'" y="'+(H-28)+'" text-anchor="middle" font-family="Arial" font-size="15" fill="#334155">'+xLabel+'</text><text x="22" y="'+(top+ch/2)+'" text-anchor="middle" font-family="Arial" font-size="15" fill="#334155" transform="rotate(-90 22 '+(top+ch/2)+')">'+yLabel+'</text>';
+      }
+      return '<svg id="gmSvg" xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><rect width="100%" height="100%" fill="#fff"/><text x="'+(W/2)+'" y="32" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700" fill="#111827">'+title+'</text>'+body+(source?'<text x="'+(W-16)+'" y="'+(H-14)+'" text-anchor="end" font-family="Arial" font-size="12" fill="#64748b">'+esc(t('msg.sourcePrefix'))+' '+source+'</text>':'')+'</svg>';
+    }
+
+    function currentType(){
+      const sel = document.getElementById('graphType');
+      return sel ? sel.value : 'bar';
+    }
+
+    function chartConfig(){
+      return {
+        type: currentType(),
+        title: document.getElementById('chartTitle').value,
+        xLabel: document.getElementById('chartXLabel').value,
+        yLabel: document.getElementById('chartYLabel').value,
+        source: document.getElementById('chartSource').value,
+        dataText: document.getElementById('chartData').value
+      };
+    }
 
     // chart-studio linearScale pattern
     function linearScale(domainMin, domainMax, rangeMin, rangeMax){
@@ -332,9 +473,7 @@
       return String(r);
     }
 
-    function render(){
-      try{
-        errBox.style.display = 'none';
+    function renderCoord(){
         const stage = document.getElementById('previewStage');
         stage.innerHTML = '';
 
@@ -374,6 +513,7 @@
         const sy = linearScale(yMin, yMax, plotY1, plotY0); // invert: y up
 
         const svg = el('svg', {
+          id: 'gmSvg',
           xmlns: SVGNS,
           viewBox: '0 0 ' + W + ' ' + H,
           width: W, height: H,
@@ -502,6 +642,25 @@
         });
 
         stage.appendChild(svg);
+    }
+
+    function renderChart(){
+      const stage = document.getElementById('previewStage');
+      stage.innerHTML = graphSvg(chartConfig());
+    }
+
+    function syncControls(){
+      const isCoord = currentType() === 'coord';
+      document.getElementById('coordControls').style.display = isCoord ? '' : 'none';
+      document.getElementById('chartControls').style.display = isCoord ? 'none' : '';
+    }
+
+    function render(){
+      try{
+        errBox.style.display = 'none';
+        syncControls();
+        if(currentType() === 'coord') renderCoord();
+        else renderChart();
       }catch(err){
         showError(err && err.message ? err.message : String(err));
       }
@@ -509,11 +668,13 @@
 
     // ---- export (chart-studio pattern) ----
     function titleVal(){
-      const v = document.getElementById('titleInput').value.trim();
+      const v = (currentType() === 'coord'
+        ? document.getElementById('titleInput').value
+        : document.getElementById('chartTitle').value).trim();
       return v || 'graph';
     }
     function exportSVG(){
-      const svg = document.querySelector('#previewStage svg');
+      const svg = document.getElementById('gmSvg');
       if(!svg) return;
       const clone = svg.cloneNode(true);
       clone.setAttribute('xmlns', SVGNS);
@@ -527,7 +688,7 @@
       URL.revokeObjectURL(url);
     }
     function exportPNG(){
-      const svg = document.querySelector('#previewStage svg');
+      const svg = document.getElementById('gmSvg');
       if(!svg) return;
       const clone = svg.cloneNode(true);
       clone.setAttribute('xmlns', SVGNS);
@@ -557,7 +718,9 @@
 
     // ---- wire up ----
     function bind(){
-      const ids = ['titleInput','xMin','xMax','yMin','yMax','stepInput','showGrid',
+      const ids = ['graphType',
+        'chartTitle','chartData','chartXLabel','chartYLabel','chartSource',
+        'titleInput','xMin','xMax','yMin','yMax','stepInput','showGrid',
         'showNumbers','showLabels','connect','enableLine','slope','intercept','pointsInput'];
       ids.forEach(function(id){
         const node = document.getElementById(id);

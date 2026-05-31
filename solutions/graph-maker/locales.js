@@ -11,11 +11,31 @@
     'header.allTools': 'All Tools',
     'header.home': 'Home',
     'hero.title': 'Graph Maker',
-    'hero.subtitle': 'Build a Cartesian coordinate grid, plot points, and draw lines for math lessons.',
+    'hero.subtitle': 'Make bar, line, area, and pie charts from your data — plus a coordinate plane mode for plotting points and lines in math lessons.',
 
+    'form.typeLabel': 'Graph type',
+    'type.bar': 'Bar',
+    'type.line': 'Line',
+    'type.area': 'Area',
+    'type.pie': 'Pie',
+    'type.coord': 'Coordinate Plane',
+
+    'group.data': 'Data',
+    'group.labels': 'Labels',
     'group.grid': 'Coordinate grid',
     'group.points': 'Points',
     'group.line': 'Line: y = m·x + b',
+
+    'form.dataLabel': 'Data — one row per line: Category,Value',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nSalad,5\nSushi,6',
+    'form.dataHint': 'Example: Pizza,12 makes a bar (or slice) for Pizza worth 12.',
+    'form.xLabel': 'X-axis label',
+    'form.xLabelPlaceholder': 'Category',
+    'form.yLabel': 'Y-axis label (ignored for pie)',
+    'form.yLabelPlaceholder': 'Value',
+    'form.sourceLabel': 'Source / attribution (optional)',
+    'form.sourcePlaceholder': 'Class survey',
+    'form.chartTitlePlaceholder': 'Class favorites',
 
     'form.titleLabel': 'Graph title',
     'form.titlePlaceholder': 'My Coordinate Plane',
@@ -48,7 +68,10 @@
     'action.svg': 'Download SVG',
 
     'err.heading': 'Something went wrong',
-    'msg.noPoints': 'Add coordinate pairs to plot points.'
+    'msg.noPoints': 'Add coordinate pairs to plot points.',
+    'msg.emptyData': 'Add Category,Value rows to draw a chart.',
+    'msg.defaultTitle': 'Graph',
+    'msg.sourcePrefix': 'Source:'
   });
 
   // Spanish — AI-seeded; native-speaker review pending.
@@ -58,11 +81,31 @@
     'header.allTools': 'Todas las herramientas',
     'header.home': 'Inicio',
     'hero.title': 'Creador de Gráficas',
-    'hero.subtitle': 'Crea un plano cartesiano, marca puntos y traza rectas para clases de matemáticas.',
+    'hero.subtitle': 'Crea gráficas de barras, líneas, áreas y circulares con tus datos, además de un modo de plano cartesiano para marcar puntos y rectas en clases de matemáticas.',
 
+    'form.typeLabel': 'Tipo de gráfica',
+    'type.bar': 'Barras',
+    'type.line': 'Líneas',
+    'type.area': 'Área',
+    'type.pie': 'Circular',
+    'type.coord': 'Plano cartesiano',
+
+    'group.data': 'Datos',
+    'group.labels': 'Etiquetas',
     'group.grid': 'Cuadrícula de coordenadas',
     'group.points': 'Puntos',
     'group.line': 'Recta: y = m·x + b',
+
+    'form.dataLabel': 'Datos — una fila por línea: Categoría,Valor',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nEnsalada,5\nSushi,6',
+    'form.dataHint': 'Ejemplo: Pizza,12 crea una barra (o sector) de Pizza con valor 12.',
+    'form.xLabel': 'Etiqueta del eje X',
+    'form.xLabelPlaceholder': 'Categoría',
+    'form.yLabel': 'Etiqueta del eje Y (se ignora en circular)',
+    'form.yLabelPlaceholder': 'Valor',
+    'form.sourceLabel': 'Fuente / atribución (opcional)',
+    'form.sourcePlaceholder': 'Encuesta de clase',
+    'form.chartTitlePlaceholder': 'Favoritos de la clase',
 
     'form.titleLabel': 'Título de la gráfica',
     'form.titlePlaceholder': 'Mi plano cartesiano',
@@ -95,7 +138,10 @@
     'action.svg': 'Descargar SVG',
 
     'err.heading': 'Algo salió mal',
-    'msg.noPoints': 'Agrega pares de coordenadas para marcar puntos.'
+    'msg.noPoints': 'Agrega pares de coordenadas para marcar puntos.',
+    'msg.emptyData': 'Agrega filas Categoría,Valor para dibujar una gráfica.',
+    'msg.defaultTitle': 'Gráfica',
+    'msg.sourcePrefix': 'Fuente:'
   });
 
   // Vietnamese — AI-seeded; native-speaker review pending.
@@ -105,11 +151,31 @@
     'header.allTools': 'Tất cả công cụ',
     'header.home': 'Trang chủ',
     'hero.title': 'Trình Tạo Đồ Thị',
-    'hero.subtitle': 'Tạo lưới tọa độ Descartes, vẽ điểm và đường thẳng cho bài học toán.',
+    'hero.subtitle': 'Tạo biểu đồ cột, đường, vùng và tròn từ dữ liệu của bạn — kèm chế độ mặt phẳng tọa độ để vẽ điểm và đường thẳng cho bài học toán.',
 
+    'form.typeLabel': 'Loại đồ thị',
+    'type.bar': 'Cột',
+    'type.line': 'Đường',
+    'type.area': 'Vùng',
+    'type.pie': 'Tròn',
+    'type.coord': 'Mặt phẳng tọa độ',
+
+    'group.data': 'Dữ liệu',
+    'group.labels': 'Nhãn',
     'group.grid': 'Lưới tọa độ',
     'group.points': 'Điểm',
     'group.line': 'Đường thẳng: y = m·x + b',
+
+    'form.dataLabel': 'Dữ liệu — mỗi dòng một hàng: Danh mục,Giá trị',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nSalad,5\nSushi,6',
+    'form.dataHint': 'Ví dụ: Pizza,12 tạo một cột (hoặc lát) cho Pizza với giá trị 12.',
+    'form.xLabel': 'Nhãn trục X',
+    'form.xLabelPlaceholder': 'Danh mục',
+    'form.yLabel': 'Nhãn trục Y (bỏ qua với biểu đồ tròn)',
+    'form.yLabelPlaceholder': 'Giá trị',
+    'form.sourceLabel': 'Nguồn / ghi công (tùy chọn)',
+    'form.sourcePlaceholder': 'Khảo sát lớp học',
+    'form.chartTitlePlaceholder': 'Yêu thích của lớp',
 
     'form.titleLabel': 'Tiêu đề đồ thị',
     'form.titlePlaceholder': 'Mặt phẳng tọa độ của tôi',
@@ -142,7 +208,10 @@
     'action.svg': 'Tải SVG',
 
     'err.heading': 'Đã xảy ra lỗi',
-    'msg.noPoints': 'Thêm các cặp tọa độ để vẽ điểm.'
+    'msg.noPoints': 'Thêm các cặp tọa độ để vẽ điểm.',
+    'msg.emptyData': 'Thêm các hàng Danh mục,Giá trị để vẽ biểu đồ.',
+    'msg.defaultTitle': 'Đồ thị',
+    'msg.sourcePrefix': 'Nguồn:'
   });
 
   // Arabic — AI-seeded; native-speaker review pending.
@@ -152,11 +221,31 @@
     'header.allTools': 'كل الأدوات',
     'header.home': 'الرئيسية',
     'hero.title': 'صانع الرسوم البيانية',
-    'hero.subtitle': 'أنشئ شبكة إحداثيات ديكارتية وارسم النقاط والخطوط لدروس الرياضيات.',
+    'hero.subtitle': 'أنشئ رسومًا بيانية بالأعمدة والخطوط والمساحات والدوائر من بياناتك، بالإضافة إلى وضع المستوى الإحداثي لرسم النقاط والخطوط في دروس الرياضيات.',
 
+    'form.typeLabel': 'نوع الرسم',
+    'type.bar': 'أعمدة',
+    'type.line': 'خطي',
+    'type.area': 'مساحي',
+    'type.pie': 'دائري',
+    'type.coord': 'المستوى الإحداثي',
+
+    'group.data': 'البيانات',
+    'group.labels': 'التسميات',
     'group.grid': 'شبكة الإحداثيات',
     'group.points': 'النقاط',
     'group.line': 'الخط: y = m·x + b',
+
+    'form.dataLabel': 'البيانات — صف واحد في كل سطر: الفئة،القيمة',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nSalad,5\nSushi,6',
+    'form.dataHint': 'مثال: Pizza,12 ينشئ عمودًا (أو قطاعًا) للبيتزا بقيمة 12.',
+    'form.xLabel': 'تسمية المحور X',
+    'form.xLabelPlaceholder': 'الفئة',
+    'form.yLabel': 'تسمية المحور Y (تُتجاهَل في الدائري)',
+    'form.yLabelPlaceholder': 'القيمة',
+    'form.sourceLabel': 'المصدر / الإسناد (اختياري)',
+    'form.sourcePlaceholder': 'استطلاع الصف',
+    'form.chartTitlePlaceholder': 'مفضلات الصف',
 
     'form.titleLabel': 'عنوان الرسم',
     'form.titlePlaceholder': 'مستوى الإحداثيات الخاص بي',
@@ -189,7 +278,10 @@
     'action.svg': 'تنزيل SVG',
 
     'err.heading': 'حدث خطأ ما',
-    'msg.noPoints': 'أضف أزواج إحداثيات لرسم النقاط.'
+    'msg.noPoints': 'أضف أزواج إحداثيات لرسم النقاط.',
+    'msg.emptyData': 'أضف صفوف الفئة،القيمة لرسم رسم بياني.',
+    'msg.defaultTitle': 'رسم بياني',
+    'msg.sourcePrefix': 'المصدر:'
   });
 
   // Chinese (Simplified) — AI-seeded; native-speaker review pending.
@@ -199,11 +291,31 @@
     'header.allTools': '所有工具',
     'header.home': '主页',
     'hero.title': '坐标图制作器',
-    'hero.subtitle': '为数学课构建笛卡尔坐标网格、绘制点和直线。',
+    'hero.subtitle': '用你的数据制作柱状图、折线图、面积图和饼图，还有坐标平面模式可在数学课上绘制点和直线。',
 
+    'form.typeLabel': '图表类型',
+    'type.bar': '柱状图',
+    'type.line': '折线图',
+    'type.area': '面积图',
+    'type.pie': '饼图',
+    'type.coord': '坐标平面',
+
+    'group.data': '数据',
+    'group.labels': '标签',
     'group.grid': '坐标网格',
     'group.points': '点',
     'group.line': '直线：y = m·x + b',
+
+    'form.dataLabel': '数据 — 每行一条：类别,数值',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nSalad,5\nSushi,6',
+    'form.dataHint': '示例：Pizza,12 为 Pizza 生成一个数值为 12 的柱（或扇区）。',
+    'form.xLabel': 'X 轴标签',
+    'form.xLabelPlaceholder': '类别',
+    'form.yLabel': 'Y 轴标签（饼图忽略）',
+    'form.yLabelPlaceholder': '数值',
+    'form.sourceLabel': '来源 / 署名（可选）',
+    'form.sourcePlaceholder': '课堂调查',
+    'form.chartTitlePlaceholder': '班级最爱',
 
     'form.titleLabel': '图表标题',
     'form.titlePlaceholder': '我的坐标平面',
@@ -236,7 +348,10 @@
     'action.svg': '下载 SVG',
 
     'err.heading': '出了点问题',
-    'msg.noPoints': '添加坐标对以绘制点。'
+    'msg.noPoints': '添加坐标对以绘制点。',
+    'msg.emptyData': '添加“类别,数值”行以绘制图表。',
+    'msg.defaultTitle': '图表',
+    'msg.sourcePrefix': '来源：'
   });
 
   // Hawaiian — AI-seeded; native-speaker review pending.
@@ -246,11 +361,31 @@
     'header.allTools': 'Nā Mea Hana a Pau',
     'header.home': 'Home',
     'hero.title': 'Mea Hana Pakuhi',
-    'hero.subtitle': 'E kūkulu i kahi mākālua hōʻailona, e kaha i nā kiko a me nā laina no nā haʻawina makemakika.',
+    'hero.subtitle': 'E hana i nā pakuhi kolamu, laina, ʻāpana, a poepoe mai kāu ʻikepili — me ke ʻano mākālua hōʻailona no ke kaha ʻana i nā kiko a me nā laina no nā haʻawina makemakika.',
 
+    'form.typeLabel': 'ʻAno pakuhi',
+    'type.bar': 'Kolamu',
+    'type.line': 'Laina',
+    'type.area': 'ʻĀpana',
+    'type.pie': 'Poepoe',
+    'type.coord': 'Mākālua hōʻailona',
+
+    'group.data': 'ʻIkepili',
+    'group.labels': 'Nā lepili',
     'group.grid': 'Mākālua hōʻailona',
     'group.points': 'Nā kiko',
     'group.line': 'Laina: y = m·x + b',
+
+    'form.dataLabel': 'ʻIkepili — hoʻokahi lālani i kēlā me kēia laina: Māhele,Waiwai',
+    'form.dataPlaceholder': 'Pizza,12\nTacos,8\nSalad,5\nSushi,6',
+    'form.dataHint': 'Laʻana: Pizza,12 e hana i kahi kolamu (a ʻāpana paha) no Pizza me ka waiwai 12.',
+    'form.xLabel': 'Lepili koʻo X',
+    'form.xLabelPlaceholder': 'Māhele',
+    'form.yLabel': 'Lepili koʻo Y (haʻalele ʻia no ka poepoe)',
+    'form.yLabelPlaceholder': 'Waiwai',
+    'form.sourceLabel': 'Kumu / hōʻaiā (koho)',
+    'form.sourcePlaceholder': 'Noiʻi papa',
+    'form.chartTitlePlaceholder': 'Nā punahele o ka papa',
 
     'form.titleLabel': 'Poʻo inoa o ka pakuhi',
     'form.titlePlaceholder': 'Kuʻu mākālua hōʻailona',
@@ -283,6 +418,9 @@
     'action.svg': 'Hoʻoiho SVG',
 
     'err.heading': 'Ua hewa kekahi mea',
-    'msg.noPoints': 'E hoʻohui i nā pālua hōʻailona e kaha ai i nā kiko.'
+    'msg.noPoints': 'E hoʻohui i nā pālua hōʻailona e kaha ai i nā kiko.',
+    'msg.emptyData': 'E hoʻohui i nā lālani Māhele,Waiwai e kaha ai i kahi pakuhi.',
+    'msg.defaultTitle': 'Pakuhi',
+    'msg.sourcePrefix': 'Kumu:'
   });
 })();
