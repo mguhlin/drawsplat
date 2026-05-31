@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="page.title">Graph Maker — DrawSplat™ Tools</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <style>
+    :root{
+      --bg:#f5f3ff;
+      --panel:#ffffff;
+      --ink:#2e1065;
+      --muted:#6b7280;
+      --brand:#7c3aed;
+      --brand-dark:#5b21b6;
+      --accent:#f59e0b;
+      --line:#e5e7eb;
+      --radius:16px;
+      --shadow:0 10px 30px rgba(124,58,237,.12);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.5;
+    }
+    .top-bar{
+      background:var(--panel);
+      border-bottom:1px solid var(--line);
+      padding:14px 20px;
+    }
+    .top-bar-inner{
+      max-width:1180px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand-mark{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color:var(--brand-dark);
+      text-decoration:none;
+      font-size:1.05rem;
+    }
+    .brand-mark .logo{
+      width:34px;height:34px;border-radius:9px;
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+    }
+    .top-links{
+      display:flex;align-items:center;gap:18px;
+    }
+    .top-links a{
+      color:var(--ink);text-decoration:none;font-weight:600;font-size:.92rem;
+    }
+    .top-links a:hover{color:var(--brand);}
+    .lang-select{
+      font:inherit;padding:7px 10px;border:1px solid var(--line);
+      border-radius:9px;background:var(--panel);color:var(--ink);cursor:pointer;
+    }
+    .wrap{
+      max-width:1180px;margin:0 auto;padding:28px 20px 60px;
+    }
+    .eyebrow{
+      text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;
+      font-weight:700;color:var(--brand);margin:0 0 6px;
+    }
+    h1{
+      font-size:clamp(1.6rem,3vw,2.3rem);margin:0 0 8px;line-height:1.15;
+    }
+    .subtitle{
+      color:var(--muted);font-size:1.02rem;margin:0 0 26px;max-width:660px;
+    }
+    .studio{
+      display:grid;
+      grid-template-columns:360px 1fr;
+      gap:24px;
+      align-items:start;
+    }
+    @media(max-width:880px){
+      .studio{grid-template-columns:1fr;}
+    }
+    .panel{
+      background:var(--panel);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;
+    }
+    .group{
+      border:1px solid var(--line);border-radius:12px;
+      padding:14px 14px 4px;margin:0 0 18px;
+    }
+    .group > legend, .group-title{
+      font-weight:700;font-size:.82rem;text-transform:uppercase;
+      letter-spacing:.06em;color:var(--brand-dark);padding:0 4px;margin:0 0 12px;
+    }
+    label{font-weight:600;font-size:.9rem;display:block;margin:0 0 6px;}
+    input[type=text],input[type=number],textarea,select{
+      width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);
+      border-radius:10px;background:#fff;color:var(--ink);
+    }
+    textarea{resize:vertical;min-height:96px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+    .field{margin:0 0 14px;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    .row > .field{flex:1;min-width:0;}
+    .check{
+      display:flex;align-items:center;gap:9px;margin:0 0 10px;font-weight:600;font-size:.9rem;
+    }
+    .check input{width:auto;margin:0;}
+    .check label{margin:0;}
+    .radio-row{display:flex;flex-direction:column;gap:8px;margin:0 0 8px;}
+    .radio-row .opt{display:flex;align-items:center;gap:9px;font-weight:600;font-size:.9rem;}
+    .radio-row .opt input{width:auto;margin:0;}
+    .hint{font-size:.8rem;color:var(--muted);margin:6px 0 12px;}
+    .btn{
+      font:inherit;font-weight:700;cursor:pointer;border:none;border-radius:10px;
+      padding:11px 18px;background:var(--brand);color:#fff;
+    }
+    .btn:hover{background:var(--brand-dark);}
+    .btn.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand);}
+    .btn.secondary:hover{background:var(--bg);}
+    .stage{
+      background:var(--panel);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;
+      display:flex;flex-direction:column;gap:14px;
+    }
+    .stage-head{
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:12px;
+    }
+    .stage-head .label{
+      font-weight:700;font-size:.82rem;text-transform:uppercase;
+      letter-spacing:.06em;color:var(--brand-dark);
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;}
+    #previewStage{
+      width:100%;display:flex;justify-content:center;align-items:center;
+      background:#fff;border:1px solid var(--line);border-radius:12px;
+      padding:10px;overflow:auto;
+    }
+    #previewStage svg{max-width:100%;height:auto;}
+    #errBox{
+      display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;
+      border-radius:10px;padding:10px 12px;font-size:.85rem;margin:0 0 14px;
+    }
+    @media(max-width:760px){.top-links{gap:12px;}}
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <a class="brand-mark" href="../../index.html">
+        <span class="logo" aria-hidden="true"></span>
+        <span>DrawSplat</span>
+      </a>
+      <nav class="top-links">
+        <a href="../../index.html" data-i18n="header.allTools">All Tools</a>
+        <a href="../../index.html" data-i18n="header.home">Home</a>
+        <select id="langSelect" class="lang-select" data-i18n-picker aria-label="Language"></select>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="eyebrow" data-i18n="header.eyebrow">DrawSplat™ Tools</p>
+    <h1 data-i18n="hero.title">Graph Maker</h1>
+    <p class="subtitle" data-i18n="hero.subtitle">Build a Cartesian coordinate grid, plot points, and draw lines for math lessons.</p>
+
+    <div id="errBox" role="alert"></div>
+
+    <div class="studio">
+      <!-- ============ CONTROLS ============ -->
+      <div class="panel">
+        <div class="field">
+          <label for="titleInput" data-i18n="form.titleLabel">Graph title</label>
+          <input type="text" id="titleInput" data-i18n-attr="placeholder:form.titlePlaceholder" placeholder="My Coordinate Plane" value="My Coordinate Plane" />
+        </div>
+
+        <fieldset class="group">
+          <legend data-i18n="group.grid">Coordinate grid</legend>
+
+          <div class="field">
+            <label data-i18n="form.quadrants">Quadrants</label>
+            <div class="radio-row">
+              <span class="opt"><input type="radio" name="quad" id="quad4" value="4" checked /><label for="quad4" data-i18n="form.quad4">4 quadrants (origin centered)</label></span>
+              <span class="opt"><input type="radio" name="quad" id="quad1" value="1" /><label for="quad1" data-i18n="form.quad1">1 quadrant (positives only)</label></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="xMin" data-i18n="form.xMin">x min</label>
+              <input type="number" id="xMin" value="-10" step="1" />
+            </div>
+            <div class="field">
+              <label for="xMax" data-i18n="form.xMax">x max</label>
+              <input type="number" id="xMax" value="10" step="1" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="yMin" data-i18n="form.yMin">y min</label>
+              <input type="number" id="yMin" value="-10" step="1" />
+            </div>
+            <div class="field">
+              <label for="yMax" data-i18n="form.yMax">y max</label>
+              <input type="number" id="yMax" value="10" step="1" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="stepInput" data-i18n="form.step">Step (gridline spacing)</label>
+            <input type="number" id="stepInput" value="1" step="0.5" min="0.1" />
+          </div>
+
+          <div class="check"><input type="checkbox" id="showGrid" checked /><label for="showGrid" data-i18n="form.showGrid">Show gridlines</label></div>
+          <div class="check"><input type="checkbox" id="showNumbers" checked /><label for="showNumbers" data-i18n="form.showNumbers">Show axis numbers</label></div>
+          <div class="check"><input type="checkbox" id="showLabels" checked /><label for="showLabels" data-i18n="form.showLabels">Show point labels</label></div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend data-i18n="group.points">Points</legend>
+          <div class="field">
+            <label for="pointsInput" data-i18n="form.pointsLabel">Points — one per line: x,y or x,y,label</label>
+            <textarea id="pointsInput" data-i18n-attr="placeholder:form.pointsPlaceholder" placeholder="2,3&#10;-4,1&#10;5,-2">2,3
+-4,1
+5,-2</textarea>
+            <p class="hint" data-i18n="form.pointsHint">Example: 2,3,A draws a point at (2, 3) labeled A.</p>
+          </div>
+          <div class="check"><input type="checkbox" id="connect" /><label for="connect" data-i18n="form.connect">Connect points (line graph)</label></div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend data-i18n="group.line">Line: y = m·x + b</legend>
+          <div class="check"><input type="checkbox" id="enableLine" /><label for="enableLine" data-i18n="form.enableLine">Draw y = m·x + b line</label></div>
+          <div class="row">
+            <div class="field">
+              <label for="slope" data-i18n="form.slope">m (slope)</label>
+              <input type="number" id="slope" value="1" step="0.1" />
+            </div>
+            <div class="field">
+              <label for="intercept" data-i18n="form.intercept">b (y-intercept)</label>
+              <input type="number" id="intercept" value="0" step="0.1" />
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- ============ PREVIEW ============ -->
+      <div class="stage">
+        <div class="stage-head">
+          <span class="label" data-i18n="stage.preview">Preview</span>
+          <div class="actions">
+            <button class="btn secondary" id="svgBtn" data-i18n="action.svg">Download SVG</button>
+            <button class="btn" id="pngBtn" data-i18n="action.png">Download PNG</button>
+          </div>
+        </div>
+        <div id="previewStage"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./locales.js"></script>
+  <script src="../../assets/js/consent-banner.js" defer></script>
+  <script>
+  (function(){
+    const t = (key,vars)=>window.WidgetI18n?window.WidgetI18n.t(key,vars):key;
+
+    // ---- error probe ----
+    const errBox = document.getElementById('errBox');
+    function showError(msg){
+      if(!errBox) return;
+      errBox.style.display = 'block';
+      errBox.textContent = t('err.heading') + ': ' + msg;
+    }
+    window.addEventListener('error', function(e){
+      showError((e && e.message) ? e.message : String(e));
+    });
+
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    const COLORS = {
+      point: '#7c3aed',      // brand purple
+      line:  '#f59e0b',      // accent gold
+      poly:  '#5b21b6',      // brand dark
+      axis:  '#2e1065',      // ink
+      grid:  '#e5e7eb',      // line
+      text:  '#2e1065'
+    };
+
+    // chart-studio linearScale pattern
+    function linearScale(domainMin, domainMax, rangeMin, rangeMax){
+      const dSpan = (domainMax - domainMin) || 1;
+      const rSpan = rangeMax - rangeMin;
+      return function(v){
+        return rangeMin + ((v - domainMin) / dSpan) * rSpan;
+      };
+    }
+
+    function el(name, attrs, text){
+      const node = document.createElementNS(SVGNS, name);
+      if(attrs) for(const k in attrs) node.setAttribute(k, attrs[k]);
+      if(text != null) node.textContent = text;
+      return node;
+    }
+
+    function num(id, fallback){
+      const v = parseFloat(document.getElementById(id).value);
+      return isFinite(v) ? v : fallback;
+    }
+
+    function parsePoints(){
+      const raw = document.getElementById('pointsInput').value || '';
+      const out = [];
+      raw.split(/\n/).forEach(function(line){
+        line = line.trim();
+        if(!line) return;
+        const parts = line.split(',');
+        const x = parseFloat(parts[0]);
+        const y = parseFloat(parts[1]);
+        if(!isFinite(x) || !isFinite(y)) return;
+        const label = parts.length > 2 ? parts.slice(2).join(',').trim() : '';
+        out.push({x:x, y:y, label:label});
+      });
+      return out;
+    }
+
+    // "nice" number formatting for tick labels
+    function fmt(v){
+      const r = Math.round(v * 1000) / 1000;
+      return String(r);
+    }
+
+    function render(){
+      try{
+        errBox.style.display = 'none';
+        const stage = document.getElementById('previewStage');
+        stage.innerHTML = '';
+
+        const oneQuad = document.querySelector('input[name="quad"]:checked').value === '1';
+
+        let xMin = num('xMin', -10), xMax = num('xMax', 10);
+        let yMin = num('yMin', -10), yMax = num('yMax', 10);
+        if(oneQuad){
+          xMin = Math.max(0, Math.min(xMin, 0)); // origin at bottom-left
+          xMin = 0; yMin = 0;
+          if(xMax <= 0) xMax = 10;
+          if(yMax <= 0) yMax = 10;
+        }
+        if(xMax <= xMin) xMax = xMin + 1;
+        if(yMax <= yMin) yMax = yMin + 1;
+
+        let step = num('stepInput', 1);
+        if(!(step > 0)) step = 1;
+
+        const showGrid    = document.getElementById('showGrid').checked;
+        const showNumbers = document.getElementById('showNumbers').checked;
+        const showLabels  = document.getElementById('showLabels').checked;
+        const connect     = document.getElementById('connect').checked;
+        const enableLine  = document.getElementById('enableLine').checked;
+        const slope       = num('slope', 1);
+        const intercept   = num('intercept', 0);
+        const title       = document.getElementById('titleInput').value.trim();
+
+        // canvas geometry
+        const W = 720, H = 720;
+        const pad = 48;
+        const titleH = title ? 40 : 12;
+        const plotX0 = pad, plotX1 = W - pad;
+        const plotY0 = pad + titleH, plotY1 = H - pad;
+
+        const sx = linearScale(xMin, xMax, plotX0, plotX1);
+        const sy = linearScale(yMin, yMax, plotY1, plotY0); // invert: y up
+
+        const svg = el('svg', {
+          xmlns: SVGNS,
+          viewBox: '0 0 ' + W + ' ' + H,
+          width: W, height: H,
+          role: 'img'
+        });
+
+        // background
+        svg.appendChild(el('rect', {x:0, y:0, width:W, height:H, fill:'#ffffff'}));
+
+        // arrowhead marker
+        const defs = el('defs');
+        const marker = el('marker', {
+          id:'gm-arrow', viewBox:'0 0 10 10', refX:'8', refY:'5',
+          markerWidth:'7', markerHeight:'7', orient:'auto-start-reverse'
+        });
+        marker.appendChild(el('path', {d:'M 0 0 L 10 5 L 0 10 z', fill:COLORS.axis}));
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+
+        // title
+        if(title){
+          svg.appendChild(el('text', {
+            x: W/2, y: 28, 'text-anchor':'middle',
+            'font-size':'22', 'font-weight':'700',
+            'font-family':'sans-serif', fill:COLORS.text
+          }, title));
+        }
+
+        // helper: collect tick values from a snapped start
+        function ticks(min, max){
+          const vals = [];
+          const start = Math.ceil(min / step) * step;
+          // guard against runaway loops
+          let guard = 0;
+          for(let v = start; v <= max + 1e-9 && guard < 5000; v += step, guard++){
+            vals.push(Math.round(v * 1e6) / 1e6);
+          }
+          return vals;
+        }
+        const xTicks = ticks(xMin, xMax);
+        const yTicks = ticks(yMin, yMax);
+
+        // gridlines
+        if(showGrid){
+          const g = el('g', {stroke:COLORS.grid, 'stroke-width':'1'});
+          xTicks.forEach(function(xv){
+            g.appendChild(el('line', {x1:sx(xv), y1:plotY0, x2:sx(xv), y2:plotY1}));
+          });
+          yTicks.forEach(function(yv){
+            g.appendChild(el('line', {x1:plotX0, y1:sy(yv), x2:plotX1, y2:sy(yv)}));
+          });
+          svg.appendChild(g);
+        }
+
+        // axes — draw at x=0/y=0 if inside range, else at edges
+        const axisX = (yMin <= 0 && yMax >= 0) ? sy(0) : plotY1; // horizontal axis y-position
+        const axisY = (xMin <= 0 && xMax >= 0) ? sx(0) : plotX0; // vertical axis x-position
+
+        const axes = el('g', {stroke:COLORS.axis, 'stroke-width':'2'});
+        // x-axis (horizontal)
+        const xa = el('line', {x1:plotX0, y1:axisX, x2:plotX1, y2:axisX, 'marker-end':'url(#gm-arrow)', 'marker-start':'url(#gm-arrow)'});
+        axes.appendChild(xa);
+        // y-axis (vertical)
+        const ya = el('line', {x1:axisY, y1:plotY1, x2:axisY, y2:plotY0, 'marker-end':'url(#gm-arrow)', 'marker-start':'url(#gm-arrow)'});
+        axes.appendChild(ya);
+        svg.appendChild(axes);
+
+        // tick marks + numbers
+        const tickLen = 5;
+        const lab = el('g', {fill:COLORS.text, 'font-size':'12', 'font-family':'sans-serif'});
+        const tickG = el('g', {stroke:COLORS.axis, 'stroke-width':'1.5'});
+        xTicks.forEach(function(xv){
+          const px = sx(xv);
+          tickG.appendChild(el('line', {x1:px, y1:axisX - tickLen, x2:px, y2:axisX + tickLen}));
+          if(showNumbers && Math.abs(xv) > 1e-9){
+            lab.appendChild(el('text', {x:px, y:axisX + 18, 'text-anchor':'middle'}, fmt(xv)));
+          }
+        });
+        yTicks.forEach(function(yv){
+          const py = sy(yv);
+          tickG.appendChild(el('line', {x1:axisY - tickLen, y1:py, x2:axisY + tickLen, y2:py}));
+          if(showNumbers && Math.abs(yv) > 1e-9){
+            lab.appendChild(el('text', {x:axisY - 9, y:py + 4, 'text-anchor':'end'}, fmt(yv)));
+          }
+        });
+        // origin label
+        if(showNumbers && xMin <= 0 && xMax >= 0 && yMin <= 0 && yMax >= 0){
+          lab.appendChild(el('text', {x:axisY - 9, y:axisX + 18, 'text-anchor':'end'}, '0'));
+        }
+        svg.appendChild(tickG);
+        svg.appendChild(lab);
+
+        // y = m·x + b line
+        if(enableLine){
+          // clip to plot: compute y at xMin and xMax, then clamp visually via two endpoints
+          const x1 = xMin, y1 = slope * xMin + intercept;
+          const x2 = xMax, y2 = slope * xMax + intercept;
+          svg.appendChild(el('line', {
+            x1:sx(x1), y1:sy(y1), x2:sx(x2), y2:sy(y2),
+            stroke:COLORS.line, 'stroke-width':'3', 'stroke-linecap':'round'
+          }));
+        }
+
+        // points
+        const pts = parsePoints();
+
+        // polyline (connect) drawn under points
+        if(connect && pts.length > 1){
+          const ptsAttr = pts.map(function(p){ return sx(p.x) + ',' + sy(p.y); }).join(' ');
+          svg.appendChild(el('polyline', {
+            points: ptsAttr, fill:'none', stroke:COLORS.poly,
+            'stroke-width':'2.5', 'stroke-linejoin':'round', 'stroke-linecap':'round'
+          }));
+        }
+
+        pts.forEach(function(p){
+          const cx = sx(p.x), cy = sy(p.y);
+          svg.appendChild(el('circle', {cx:cx, cy:cy, r:'5.5', fill:COLORS.point, stroke:'#fff', 'stroke-width':'1.5'}));
+          if(showLabels){
+            const txt = p.label || ('(' + fmt(p.x) + ', ' + fmt(p.y) + ')');
+            svg.appendChild(el('text', {
+              x:cx + 9, y:cy - 8, 'font-size':'13', 'font-weight':'600',
+              'font-family':'sans-serif', fill:COLORS.poly
+            }, txt));
+          }
+        });
+
+        stage.appendChild(svg);
+      }catch(err){
+        showError(err && err.message ? err.message : String(err));
+      }
+    }
+
+    // ---- export (chart-studio pattern) ----
+    function titleVal(){
+      const v = document.getElementById('titleInput').value.trim();
+      return v || 'graph';
+    }
+    function exportSVG(){
+      const svg = document.querySelector('#previewStage svg');
+      if(!svg) return;
+      const clone = svg.cloneNode(true);
+      clone.setAttribute('xmlns', SVGNS);
+      const data = new XMLSerializer().serializeToString(clone);
+      const blob = new Blob([data], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = titleVal() + '.svg';
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    function exportPNG(){
+      const svg = document.querySelector('#previewStage svg');
+      if(!svg) return;
+      const clone = svg.cloneNode(true);
+      clone.setAttribute('xmlns', SVGNS);
+      const data = new XMLSerializer().serializeToString(clone);
+      const svg64 = btoa(unescape(encodeURIComponent(data)));
+      const img = new Image();
+      img.onload = function(){
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width  = (svg.viewBox.baseVal.width  || svg.clientWidth)  * scale;
+        canvas.height = (svg.viewBox.baseVal.height || svg.clientHeight) * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob){
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = titleVal() + '.png';
+          document.body.appendChild(a); a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      };
+      img.src = 'data:image/svg+xml;base64,' + svg64;
+    }
+
+    // ---- wire up ----
+    function bind(){
+      const ids = ['titleInput','xMin','xMax','yMin','yMax','stepInput','showGrid',
+        'showNumbers','showLabels','connect','enableLine','slope','intercept','pointsInput'];
+      ids.forEach(function(id){
+        const node = document.getElementById(id);
+        if(!node) return;
+        node.addEventListener('input', render);
+        node.addEventListener('change', render);
+      });
+      document.querySelectorAll('input[name="quad"]').forEach(function(r){
+        r.addEventListener('change', render);
+      });
+      document.getElementById('svgBtn').addEventListener('click', exportSVG);
+      document.getElementById('pngBtn').addEventListener('click', exportPNG);
+      window.addEventListener('widget-i18n:changed', render);
+      render();
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', bind);
+    }else{
+      bind();
+    }
+  })();
+  </script>
+</body>
+</html>

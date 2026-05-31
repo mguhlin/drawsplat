@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="doc.title">Coloring Book — DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <meta name="description" content="A digital coloring book for the classroom. Pick a page, choose a color, and paint it in with a brush. Erase, undo, clear, then download as PNG or SVG, or print. Runs entirely in the browser.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Ccircle cx='12' cy='13' r='5' fill='%23facc15'/%3E%3Ccircle cx='21' cy='19' r='5' fill='%23ef4444'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --navy: #7c3aed; --gold: #a855f7; --black: #000; --white: #fff;
+      --red: #ef4444; --blue: #6d28d9; --yellow: #facc15; --orange: #f97316; --green: #22c55e;
+      --gray-90: #111827; --gray-50: #64748b; --gray-30: #cbd5e1; --gray-10: #eef2ff;
+      --bg: #fff; --surface: #fff; --text: #404041; --border: #ddd6fe; --radius: 8px;
+      --shadow: 0 16px 34px rgba(64,64,65,.12);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--text); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 28%, var(--gold) 28% 46%, var(--orange) 46% 58%, var(--red) 58% 70%, var(--blue) 70% 84%, var(--green) 84% 94%, var(--yellow) 94% 100%); }
+    .page { width: min(1280px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 8px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(2rem, 5vw, 3.6rem); line-height: .95; }
+    .subtitle { margin: 0; max-width: 780px; color: var(--gray-90); font-size: 1rem; line-height: 1.45; }
+    .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .secondary-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; text-decoration: none; white-space: nowrap; }
+
+    .layout { display: grid; grid-template-columns: 280px 1fr; gap: 18px; margin-top: 18px; align-items: start; }
+    @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 16px; }
+    .panel h2 { margin: 0 0 12px; color: var(--black); font-size: 1.05rem; }
+
+    /* Gallery */
+    .gallery-cat { margin-bottom: 16px; }
+    .gallery-cat > h3 { margin: 0 0 8px; color: var(--navy); font-size: .82rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+    .thumb { display: grid; gap: 4px; place-items: center; padding: 8px 4px; border: 2px solid var(--gray-30); border-radius: var(--radius); background: var(--white); text-align: center; }
+    .thumb:hover { border-color: var(--navy); }
+    .thumb.active { border-color: var(--navy); box-shadow: 0 0 0 2px var(--navy) inset; }
+    .thumb .emoji { font-size: 1.6rem; line-height: 1; }
+    .thumb .name { font-size: .68rem; font-weight: 700; color: var(--gray-90); line-height: 1.1; }
+    .gallery-msg { padding: 10px 12px; border-radius: 6px; font-weight: 700; color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .gallery-loading { color: var(--gray-50); font-weight: 700; }
+
+    /* Stage */
+    .stage-wrap { display: grid; gap: 14px; }
+    .stage { background: var(--gray-10); border-radius: var(--radius); padding: 16px; display: grid; place-items: center; min-height: 52vh; position: relative; }
+    #stageCanvasWrap { position: relative; width: 100%; max-width: 640px; display: none; }
+    #stageCanvasWrap.ready { display: block; }
+    #paintCanvas, #lineCanvas { position: absolute; inset: 0; width: 100%; height: auto; border-radius: 6px; }
+    #paintCanvas { background: #fff; box-shadow: 0 14px 36px rgba(0,0,0,.12); }
+    #lineCanvas { pointer-events: none; mix-blend-mode: multiply; }
+    /* The wrapper height is driven by the spacer image so the absolute canvases lay over it. */
+    #stageSpacer { display: block; width: 100%; height: auto; visibility: hidden; }
+    #paintCanvas { touch-action: none; cursor: crosshair; }
+    .stage-empty { color: var(--gray-50); font-weight: 700; text-align: center; padding: 40px 12px; }
+
+    /* Toolbar */
+    .toolbar { display: grid; gap: 14px; }
+    .tool-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    label.tool-label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+    .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+    .swatch { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--gray-30); padding: 0; cursor: pointer; }
+    .swatch.active { border-color: var(--black); box-shadow: 0 0 0 2px var(--white) inset, 0 0 0 4px var(--navy); }
+    input[type="color"] { width: 48px; height: 38px; border: 2px solid var(--gray-30); border-radius: var(--radius); padding: 2px; background: var(--white); cursor: pointer; }
+    input[type="range"] { width: 140px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .button { min-height: 44px; padding: 9px 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; }
+    .button.primary { color: var(--white); background: var(--navy); }
+    .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
+    .button[aria-pressed="true"] { color: var(--white); background: var(--navy); }
+    .status { padding: 10px 12px; border-radius: 6px; font-weight: 800; min-height: 1.2em; }
+    .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
+    .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
+    .status:empty { display: none; }
+    .footer-note { margin-top: 18px; color: var(--gray-50); font-size: .85rem; line-height: 1.45; }
+    .footer-note a { color: var(--navy); }
+
+    /* Diagnostics probe (visible only if an error is captured). */
+    #errProbe { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 6px; font-weight: 800; color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; white-space: pre-wrap; }
+    #errProbe.has-error { display: block; }
+
+    /* Print: isolate the stage canvases only. */
+    @media print {
+      body * { visibility: hidden !important; }
+      #stageCanvasWrap, #stageCanvasWrap * { visibility: visible !important; }
+      #stageCanvasWrap { position: fixed; inset: 0; margin: auto; max-width: 95vw; max-height: 95vh; }
+      #paintCanvas { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Coloring Book</h1>
+        <p class="subtitle" data-i18n="header.subtitle">A digital coloring book for the classroom. Pick a page, choose a color, then paint it in with a brush. Erase, undo, or clear, then download as PNG or SVG, or print. Everything happens in your browser.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <div id="errProbe" role="alert"></div>
+
+    <div class="layout">
+      <!-- Gallery of coloring pages, grouped by category. -->
+      <section class="panel" data-i18n-aria-label="panel.gallery.aria" aria-label="Coloring page gallery">
+        <h2 data-i18n="panel.gallery.h2">Pick a page</h2>
+        <div id="gallery">
+          <p class="gallery-loading" data-i18n="gallery.loading">Loading pages…</p>
+        </div>
+      </section>
+
+      <!-- Stage + tools. -->
+      <section class="panel stage-wrap" data-i18n-aria-label="panel.stage.aria" aria-label="Coloring stage and tools">
+        <div class="stage">
+          <p class="stage-empty" id="stageEmpty" data-i18n="stage.empty">Choose a page on the left to start coloring.</p>
+          <div id="stageCanvasWrap">
+            <img id="stageSpacer" alt="" aria-hidden="true">
+            <canvas id="paintCanvas" data-i18n-aria-label="stage.canvas.aria" aria-label="Coloring canvas — drag to paint"></canvas>
+            <canvas id="lineCanvas" aria-hidden="true"></canvas>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="tool-row">
+            <span class="tool-label" data-i18n="tool.colors">Colors</span>
+            <div class="swatches" id="swatches" role="group" data-i18n-aria-label="tool.colors.aria" aria-label="Color palette"></div>
+            <label class="tool-label" for="customColor" data-i18n="tool.custom">Custom</label>
+            <input id="customColor" type="color" value="#ef4444" data-i18n-aria-label="tool.custom.aria" aria-label="Custom color">
+          </div>
+
+          <div class="tool-row">
+            <label class="tool-label" for="brushSize" data-i18n="tool.brush">Brush size</label>
+            <input id="brushSize" type="range" min="6" max="80" step="2" value="26" data-i18n-aria-label="tool.brush.aria" aria-label="Brush size">
+            <span class="tool-label" id="brushValue">26</span>
+          </div>
+
+          <div class="actions">
+            <button class="button" id="eraserBtn" type="button" aria-pressed="false" data-i18n="button.eraser">Eraser</button>
+            <button class="button" id="undoBtn" type="button" data-i18n="button.undo">Undo</button>
+            <button class="button gold" id="clearBtn" type="button" data-i18n="button.clear">Clear all</button>
+          </div>
+
+          <div class="actions">
+            <button class="button primary" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+            <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+            <button class="button" id="printBtn" type="button" data-i18n="button.print">Print</button>
+          </div>
+
+          <div class="status" id="statusLine" role="status"></div>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer-note" data-i18n-html="panel.about.html">The same coloring pages from the DrawSplat<sup>TM</sup> whiteboard, standalone. Nothing is uploaded; pages load and color entirely in your browser. Pair it with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop a finished PNG onto a board.</p>
+  </div>
+
+<script src="./locales.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const t = (key, vars) => window.WidgetI18n ? window.WidgetI18n.t(key, vars) : key;
+
+  // ---- Error probe: surface any uncaught error for verification.
+  function showProbe(msg){
+    const el = $('errProbe'); if (!el) return;
+    el.textContent = 'JS error: ' + msg;
+    el.classList.add('has-error');
+  }
+  window.addEventListener('error', e => showProbe((e && e.message) || 'unknown'));
+  window.addEventListener('unhandledrejection', e => showProbe('promise: ' + ((e && e.reason && e.reason.message) || e.reason || 'unknown')));
+
+  // Path from this page (solutions/coloring-book/) up to repo root.
+  const ROOT = '../../';
+  const MANIFEST_URL = ROOT + 'assets/coloring-book/manifest.json';
+  const PALETTE = ['#ef4444','#f97316','#facc15','#22c55e','#06b6d4','#3b82f6','#7c3aed','#ec4899','#a16207','#7f1d1d','#9ca3af','#000000'];
+  // Per-category fallback emoji (manifest has no emoji field).
+  const CAT_EMOJI = { animals: '🦊', dinosaurs: '🦕' };
+
+  let activeColor = PALETTE[0];
+  let brushSize = 26;
+  let eraser = false;
+  let currentPage = null;
+
+  // Canvases. paint = user strokes (bottom), line = line-art on top (multiply).
+  const paint = $('paintCanvas');
+  const line = $('lineCanvas');
+  const pctx = paint.getContext('2d');
+  const lctx = line.getContext('2d');
+
+  // Undo: ImageData snapshots of the paint layer, taken at stroke start.
+  const undoStack = [];
+  const MAX_UNDO = 20;
+
+  function setStatus(msg, cls){
+    const el = $('statusLine'); el.textContent = msg || ''; el.className = 'status ' + (cls || '');
+  }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Resolve a usable image URL for a page. Manifest gives root-relative paths
+  // like "assets/coloring-book/foo.png"; we prefix ROOT to reach them from
+  // this sub-page. paths[] lists fallbacks (different extensions).
+  function pageUrls(page){
+    const list = [];
+    const add = p => { if (p) list.push(ROOT + String(p).replace(/^\.?\//, '')); };
+    add(page.path || page.file || page.svg || page.src);
+    (page.paths || []).forEach(add);
+    if (!list.length && page.id) add('assets/coloring-book/' + page.id + '.png');
+    return list.filter((v,i)=>list.indexOf(v)===i);
+  }
+
+  // Try a list of candidate URLs until one image loads.
+  function loadFirstImage(urls){
+    return new Promise((resolve, reject) => {
+      let i = 0;
+      const tryNext = () => {
+        if (i >= urls.length) { reject(new Error('no image could be loaded')); return; }
+        const url = urls[i++];
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve({ img: img, url: url });
+        img.onerror = tryNext;
+        img.src = url;
+      };
+      tryNext();
+    });
+  }
+
+  // ---- Gallery ----------------------------------------------------------
+  function renderGalleryError(msg){ $('gallery').innerHTML = '<p class="gallery-msg">' + esc(msg) + '</p>'; }
+
+  function buildGallery(pages){
+    const gallery = $('gallery');
+    gallery.innerHTML = '';
+    if (!pages || !pages.length) { renderGalleryError(t('gallery.empty')); return; }
+
+    const order = [];
+    const byCat = {};
+    pages.forEach(p => {
+      const cat = p.category || 'pages';
+      if (!byCat[cat]) { byCat[cat] = []; order.push(cat); }
+      byCat[cat].push(p);
+    });
+
+    order.forEach(cat => {
+      const wrap = document.createElement('div');
+      wrap.className = 'gallery-cat';
+      const h3 = document.createElement('h3');
+      h3.textContent = t('cat.' + cat) || cat;
+      wrap.appendChild(h3);
+      const thumbs = document.createElement('div');
+      thumbs.className = 'thumbs';
+      byCat[cat].forEach(page => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'thumb';
+        btn.dataset.id = page.id || page.label || '';
+        const name = page.label || page.title || page.id || '';
+        btn.innerHTML =
+          '<span class="emoji" aria-hidden="true">' + (page.emoji || CAT_EMOJI[cat] || '🎨') + '</span>' +
+          '<span class="name">' + esc(name) + '</span>';
+        btn.setAttribute('aria-label', name);
+        btn.addEventListener('click', () => loadPage(page, btn));
+        thumbs.appendChild(btn);
+      });
+      wrap.appendChild(thumbs);
+      gallery.appendChild(wrap);
+    });
+  }
+
+  // ---- Page loading -----------------------------------------------------
+  async function loadPage(page, btn){
+    const urls = pageUrls(page);
+    if (!urls.length) { setStatus(t('status.loadFail', { msg: 'no path' }), 'danger'); return; }
+    setStatus(t('status.loading'), 'info');
+    try {
+      const { img } = await loadFirstImage(urls);
+      // Internal canvas resolution = image native size (capped for memory).
+      const maxDim = 1200;
+      let w = img.naturalWidth || 1024, h = img.naturalHeight || 1024;
+      const scale = Math.min(1, maxDim / Math.max(w, h));
+      w = Math.round(w * scale); h = Math.round(h * scale);
+
+      paint.width = w; paint.height = h;
+      line.width = w; line.height = h;
+
+      // White paint base.
+      pctx.fillStyle = '#ffffff'; pctx.fillRect(0, 0, w, h);
+      // Line-art on the top layer; multiply blend lets paint show through white.
+      lctx.clearRect(0, 0, w, h);
+      lctx.drawImage(img, 0, 0, w, h);
+
+      // The hidden spacer img sizes the wrapper so the absolute canvases stack.
+      $('stageSpacer').src = img.src;
+      $('stageEmpty').style.display = 'none';
+      $('stageCanvasWrap').classList.add('ready');
+
+      currentPage = page;
+      undoStack.length = 0;
+      document.querySelectorAll('.thumb.active').forEach(el => el.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const name = page.label || page.title || page.id || '';
+      setStatus(t('status.loaded', { name: name }), 'success');
+    } catch (err) {
+      setStatus(t('status.loadFail', { msg: (err && err.message) || err }), 'danger');
+    }
+  }
+
+  // ---- Painting ---------------------------------------------------------
+  let drawing = false, lastX = 0, lastY = 0;
+
+  function canvasPoint(ev){
+    const r = paint.getBoundingClientRect();
+    const sx = paint.width / r.width, sy = paint.height / r.height;
+    const cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+    const cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - r.top;
+    return { x: cx * sx, y: cy * sy };
+  }
+
+  function pushUndo(){
+    try {
+      undoStack.push(pctx.getImageData(0, 0, paint.width, paint.height));
+      if (undoStack.length > MAX_UNDO) undoStack.shift();
+    } catch (e) { /* ignore (e.g. tainted canvas) */ }
+  }
+
+  function strokeTo(x, y){
+    pctx.strokeStyle = eraser ? '#ffffff' : activeColor;
+    pctx.fillStyle = pctx.strokeStyle;
+    pctx.lineWidth = brushSize;
+    pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+    pctx.beginPath();
+    pctx.moveTo(lastX, lastY);
+    pctx.lineTo(x, y);
+    pctx.stroke();
+    // Dot at the new point so single taps paint too.
+    pctx.beginPath();
+    pctx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+    pctx.fill();
+    lastX = x; lastY = y;
+  }
+
+  function startDraw(ev){
+    if (!currentPage) return;
+    ev.preventDefault();
+    pushUndo();
+    drawing = true;
+    const p = canvasPoint(ev);
+    lastX = p.x; lastY = p.y;
+    strokeTo(p.x, p.y);
+  }
+  function moveDraw(ev){
+    if (!drawing) return;
+    ev.preventDefault();
+    const p = canvasPoint(ev);
+    strokeTo(p.x, p.y);
+  }
+  function endDraw(){ drawing = false; }
+
+  paint.addEventListener('mousedown', startDraw);
+  window.addEventListener('mousemove', moveDraw);
+  window.addEventListener('mouseup', endDraw);
+  paint.addEventListener('touchstart', startDraw, { passive: false });
+  paint.addEventListener('touchmove', moveDraw, { passive: false });
+  paint.addEventListener('touchend', endDraw);
+
+  // ---- Palette + tools --------------------------------------------------
+  function buildSwatches(){
+    const wrap = $('swatches');
+    wrap.innerHTML = '';
+    PALETTE.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch' + (i === 0 ? ' active' : '');
+      b.style.background = c;
+      b.dataset.color = c;
+      b.setAttribute('aria-label', c);
+      b.addEventListener('click', () => {
+        activeColor = c; eraser = false; syncEraser();
+        document.querySelectorAll('.swatch.active').forEach(s => s.classList.remove('active'));
+        b.classList.add('active');
+        if (/^#[0-9a-f]{6}$/i.test(c)) $('customColor').value = c;
+      });
+      wrap.appendChild(b);
+    });
+  }
+
+  $('customColor').addEventListener('input', e => {
+    activeColor = e.target.value; eraser = false; syncEraser();
+    document.querySelectorAll('.swatch.active').forEach(s => s.classList.remove('active'));
+  });
+
+  $('brushSize').addEventListener('input', e => {
+    brushSize = +e.target.value; $('brushValue').textContent = e.target.value;
+  });
+
+  function syncEraser(){ $('eraserBtn').setAttribute('aria-pressed', eraser ? 'true' : 'false'); }
+  $('eraserBtn').addEventListener('click', () => { eraser = !eraser; syncEraser(); });
+
+  $('undoBtn').addEventListener('click', () => {
+    const snap = undoStack.pop();
+    if (!snap) { setStatus(t('status.nothingUndo'), 'info'); return; }
+    pctx.putImageData(snap, 0, 0);
+  });
+
+  $('clearBtn').addEventListener('click', () => {
+    if (!currentPage) return;
+    pushUndo();
+    pctx.fillStyle = '#ffffff';
+    pctx.fillRect(0, 0, paint.width, paint.height);
+    setStatus(t('status.cleared'), 'info');
+  });
+
+  // ---- Export -----------------------------------------------------------
+  // Flatten paint + line-art into one canvas (multiply, matching the screen).
+  function flatten(){
+    const w = paint.width, h = paint.height;
+    const cv = document.createElement('canvas');
+    cv.width = w; cv.height = h;
+    const cx = cv.getContext('2d');
+    cx.drawImage(paint, 0, 0);
+    cx.globalCompositeOperation = 'multiply';
+    cx.drawImage(line, 0, 0);
+    cx.globalCompositeOperation = 'source-over';
+    return cv;
+  }
+
+  function baseName(){
+    const n = (currentPage && (currentPage.id || currentPage.label)) || 'coloring';
+    return String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'coloring';
+  }
+
+  function downloadBlob(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  $('downloadPngBtn').addEventListener('click', () => {
+    if (!currentPage) { setStatus(t('status.noPage'), 'danger'); return; }
+    try {
+      flatten().toBlob(b => {
+        if (!b) { setStatus(t('status.pngFail', { msg: 'encode failed' }), 'danger'); return; }
+        downloadBlob(b, baseName() + '.png');
+        setStatus(t('status.pngSaved'), 'success');
+      }, 'image/png');
+    } catch (err) {
+      setStatus(t('status.pngFail', { msg: (err && err.message) || err }), 'danger');
+    }
+  });
+
+  // SVG export: wrap the flattened raster as an embedded <image> so the file
+  // is a valid, openable SVG (the source pages are raster, not vector).
+  $('downloadSvgBtn').addEventListener('click', () => {
+    if (!currentPage) { setStatus(t('status.noPage'), 'danger'); return; }
+    try {
+      const cv = flatten();
+      const dataUrl = cv.toDataURL('image/png');
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+        'width="' + cv.width + '" height="' + cv.height + '" viewBox="0 0 ' + cv.width + ' ' + cv.height + '">' +
+        '<image width="' + cv.width + '" height="' + cv.height + '" xlink:href="' + dataUrl + '"/></svg>';
+      downloadBlob(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }), baseName() + '.svg');
+      setStatus(t('status.svgSaved'), 'success');
+    } catch (err) {
+      setStatus(t('status.pngFail', { msg: (err && err.message) || err }), 'danger');
+    }
+  });
+
+  $('printBtn').addEventListener('click', () => {
+    if (!currentPage) { setStatus(t('status.noPage'), 'danger'); return; }
+    window.print();
+  });
+
+  // ---- i18n: re-render the gallery on language change so category headers
+  // (and the active selection) pick up the new locale.
+  let loadedPages = null;
+  document.addEventListener('widget-i18n:changed', () => {
+    if (loadedPages) {
+      const activeId = (document.querySelector('.thumb.active') || {}).dataset
+        ? document.querySelector('.thumb.active').dataset.id : null;
+      buildGallery(loadedPages);
+      if (activeId) {
+        const el = document.querySelector('.thumb[data-id="' + activeId + '"]');
+        if (el) el.classList.add('active');
+      }
+    }
+  });
+
+  // ---- Boot -------------------------------------------------------------
+  async function loadManifest(){
+    try {
+      const res = await fetch(MANIFEST_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const pages = Array.isArray(data) ? data : (data.pages || data.items || data.list || []);
+      loadedPages = pages;
+      buildGallery(pages);
+    } catch (err) {
+      renderGalleryError(t('gallery.error', { msg: (err && err.message) || err }));
+    }
+  }
+
+  buildSwatches();
+  syncEraser();
+  loadManifest();
+})();
+</script>
+<script src="../../assets/js/consent-banner.js" defer></script>
+</body>
+</html>

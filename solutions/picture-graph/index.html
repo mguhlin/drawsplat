@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="doc.title">Picture Graph — DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <meta name="description" content="Build a classroom pictograph where one icon equals N units. Add rows, pick an emoji per row, set the key, toggle values, and download a clean PNG or SVG. Runs entirely in the browser.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Cpath fill='%23FAA634' d='M5 22h6v4H5zM13 16h6v10h-6zM21 10h6v16h-6z'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --navy: #7c3aed; --gold: #a855f7; --black: #000; --white: #fff;
+      --red: #ef4444; --blue: #6d28d9; --yellow: #facc15; --orange: #f97316; --green: #22c55e;
+      --gray-90: #111827; --gray-50: #64748b; --gray-30: #cbd5e1; --gray-10: #eef2ff;
+      --bg: #fff; --surface: #fff; --text: #404041; --border: #ddd6fe; --radius: 8px;
+      --shadow: 0 16px 34px rgba(64,64,65,.12);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--text); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar { height: 12px; background: linear-gradient(90deg, var(--navy) 0 28%, var(--gold) 28% 46%, var(--orange) 46% 58%, var(--red) 58% 70%, var(--blue) 70% 84%, var(--green) 84% 94%, var(--yellow) 94% 100%); }
+    .page { width: min(1280px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .title-block { display: grid; gap: 8px; }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow a { color: inherit; text-decoration: none; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(2rem, 5vw, 3.6rem); line-height: .95; }
+    .subtitle { margin: 0; max-width: 780px; color: var(--gray-90); font-size: 1rem; line-height: 1.45; }
+    .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .home-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; color: var(--white); background: var(--navy); border-radius: var(--radius); font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .secondary-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; text-decoration: none; white-space: nowrap; }
+
+    /* Two-column layout: controls on the left, live preview on the right,
+       like Chart Studio. Collapses to one column on narrow screens. */
+    .layout { display: grid; grid-template-columns: 380px 1fr; gap: 22px; margin-top: 22px; align-items: start; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel { border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); padding: 18px; }
+    .panel h2 { margin: 0 0 12px; color: var(--black); font-size: 1.05rem; }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    label { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+    input[type="text"], input[type="number"], select { width: 100%; min-height: 42px; padding: 9px 10px; color: var(--black); background: var(--white); border: 2px solid var(--gray-30); border-radius: var(--radius); }
+    input[type="range"] { width: 100%; }
+    .check-row { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+    .check-row input { width: 18px; height: 18px; min-height: 0; flex: 0 0 18px; accent-color: var(--navy); }
+    .check-row label { margin: 0; }
+
+    /* Key / scale presets */
+    .key-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .chip { min-height: 38px; padding: 6px 14px; border: 2px solid var(--gray-30); border-radius: var(--radius); background: var(--white); color: var(--gray-90); font-weight: 800; }
+    .chip.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+    /* Row editor */
+    .rows-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .rows-heading h3 { margin: 0; font-size: .92rem; color: var(--gray-90); }
+    .row-item { display: grid; grid-template-columns: 1fr 70px 52px 38px; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .row-item input[type="text"], .row-item input[type="number"] { min-height: 40px; }
+    .row-item .icon-input { text-align: center; font-size: 1.2rem; }
+    .remove-btn { min-height: 40px; width: 38px; border: 2px solid var(--gray-30); border-radius: var(--radius); background: var(--white); color: var(--red); font-weight: 900; font-size: 1.1rem; line-height: 1; padding: 0; }
+    .remove-btn:hover { background: #fee2e2; border-color: #fca5a5; }
+    .add-btn { min-height: 42px; width: 100%; padding: 9px 14px; border: 2px dashed var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; margin-top: 4px; }
+
+    /* Emoji picker */
+    .emoji-picker { margin: 8px 0 12px; padding: 10px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--gray-10); }
+    .emoji-picker .picker-hint { font-size: .8rem; font-weight: 800; color: var(--gray-50); margin: 0 0 6px; }
+    .emoji-grid { display: flex; gap: 4px; flex-wrap: wrap; }
+    .emoji-btn { width: 40px; height: 40px; border: 2px solid transparent; border-radius: var(--radius); background: var(--white); font-size: 1.3rem; line-height: 1; padding: 0; }
+    .emoji-btn:hover { border-color: var(--navy); }
+
+    .actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .button { min-height: 44px; padding: 9px 14px; border: 2px solid var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; }
+    .button.primary { color: var(--white); background: var(--navy); }
+    .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
+    .status { margin-top: 12px; padding: 10px 12px; border-radius: 6px; font-weight: 800; min-height: 1.2em; }
+    .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
+    .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+    .status.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #93c5fd; }
+    .status:empty { display: none; }
+
+    .preview-stage { padding: 16px; background: var(--gray-10); border-radius: var(--radius); display: grid; place-items: center; min-height: 360px; }
+    #graphSvg { width: 100%; height: auto; max-width: none; background: #fff; border-radius: 6px; box-shadow: 0 14px 36px rgba(0,0,0,.14); }
+
+    .footer-note { margin-top: 18px; color: var(--gray-50); font-size: .85rem; line-height: 1.45; }
+    .footer-note a { color: var(--navy); }
+
+    /* Verification probe — hidden unless an error fires. */
+    #errProbe { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 6px; font-weight: 800; color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Picture Graph</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Build a classroom pictograph where one icon equals a chosen number of units. Add rows, pick an emoji per row, set the key, and download a clean PNG or SVG to project, print, or paste into a slide.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Controls -->
+      <section class="panel" data-i18n-aria-label="panel.controls.aria" aria-label="Picture Graph controls">
+        <h2 data-i18n="panel.data.h2">Data</h2>
+
+        <div class="field">
+          <label for="titleInput" data-i18n="field.graphTitle">Graph title</label>
+          <input id="titleInput" type="text" maxlength="80" data-i18n-placeholder="field.graphTitle.placeholder" placeholder="Favorite Fruits" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label data-i18n="rows.heading">Rows</label>
+          <div id="rowsList"></div>
+          <button class="add-btn" id="addRowBtn" type="button" data-i18n="rows.add">+ Add row</button>
+        </div>
+
+        <details class="emoji-picker-wrap">
+          <summary style="cursor:pointer;font-weight:800;color:var(--navy);font-size:.9rem" data-i18n="rows.pick">Pick an emoji</summary>
+          <div class="emoji-picker">
+            <p class="picker-hint" data-i18n="rows.pick">Pick an emoji</p>
+            <div class="emoji-grid" id="emojiGrid"></div>
+          </div>
+        </details>
+
+        <h2 style="margin-top:18px" data-i18n="panel.options.h2">Options</h2>
+
+        <div class="field">
+          <label data-i18n="field.key">Key — each icon equals</label>
+          <div class="key-presets" id="keyPresets">
+            <button class="chip" type="button" data-key="1">1</button>
+            <button class="chip" type="button" data-key="2">2</button>
+            <button class="chip" type="button" data-key="5">5</button>
+            <button class="chip" type="button" data-key="10">10</button>
+          </div>
+          <input id="keyInput" type="number" min="1" max="1000" step="1" value="1">
+        </div>
+
+        <div class="check-row">
+          <input id="showValues" type="checkbox" checked>
+          <label for="showValues" data-i18n="field.showValues">Show the number at the end of each row</label>
+        </div>
+
+        <div class="actions">
+          <button class="button primary" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+          <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+          <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
+        </div>
+        <div class="status" id="statusLine" role="status"></div>
+        <div id="errProbe">JS ERROR</div>
+      </section>
+
+      <!-- Preview -->
+      <section class="panel" data-i18n-aria-label="panel.preview.aria" aria-label="Picture Graph preview">
+        <div class="preview-stage">
+          <div id="previewSlot" style="width:100%"></div>
+        </div>
+        <p class="footer-note" data-i18n-html="about.html">Each icon stands for the number you set in the key, so big numbers stay readable. Nothing is uploaded — the graph is drawn locally in your browser as SVG.</p>
+      </section>
+    </div>
+  </div>
+
+<script src="./locales.js"></script>
+<script>
+// Verification probe: surface any uncaught error in a visible div so headless
+// --dump-dom shows it. Removed visually unless something actually breaks.
+window.addEventListener('error', function(e){
+  var p = document.getElementById('errProbe');
+  if (p) { p.style.display = 'block'; p.textContent = 'JS ERROR: ' + (e.message || e.error || 'unknown') + ' @ ' + (e.filename||'') + ':' + (e.lineno||'') + ':' + (e.colno||''); }
+});
+</script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const t = (key, vars) => window.WidgetI18n ? window.WidgetI18n.t(key, vars) : key;
+
+  // Curated emoji set for the quick picker. Free-text entry in each row's
+  // icon field means any emoji (or short text) also works.
+  const EMOJIS = ['🍎','🍌','🍊','🍇','🍓','⭐','❤️','🐱','🐶','🚗','🌳','📚','⚽','🏀','☀️','🌧️','🍦','🎈','🐟','🦋'];
+
+  // Internal SVG canvas width; height grows with the row count. The element
+  // scales fluidly via CSS; downloads render at this resolution x a factor.
+  const BASE_W = 1100;
+
+  function sampleRows(){
+    return [
+      { label: t('sample.apples'),  value: 6, icon: '🍎' },
+      { label: t('sample.bananas'), value: 4, icon: '🍌' },
+      { label: t('sample.oranges'), value: 3, icon: '🍊' }
+    ];
+  }
+
+  // State
+  let rows = sampleRows();
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function unitsPerIcon(){
+    let n = Math.floor(+($('keyInput').value) || 1);
+    if (n < 1) n = 1;
+    return n;
+  }
+
+  // ---- Row editor UI ----
+  function renderRows(){
+    const list = $('rowsList');
+    list.innerHTML = '';
+    rows.forEach((row, i) => {
+      const div = document.createElement('div');
+      div.className = 'row-item';
+      div.innerHTML =
+        '<input type="text" class="label-input" maxlength="40" value="' + esc(row.label) + '" data-i18n-placeholder="rows.label.placeholder" placeholder="' + esc(t('rows.label.placeholder')) + '" aria-label="' + esc(t('rows.label')) + '">' +
+        '<input type="number" class="value-input" min="0" max="100000" step="1" value="' + esc(row.value) + '" aria-label="' + esc(t('rows.value')) + '">' +
+        '<input type="text" class="icon-input" maxlength="8" value="' + esc(row.icon) + '" data-i18n-placeholder="rows.icon.placeholder" placeholder="🍎" aria-label="' + esc(t('rows.icon')) + '">' +
+        '<button type="button" class="remove-btn" aria-label="' + esc(t('rows.removeAria', { n: i + 1 })) + '" title="' + esc(t('rows.remove')) + '">×</button>';
+
+      div.querySelector('.label-input').addEventListener('input', e => { rows[i].label = e.target.value; render(); });
+      div.querySelector('.value-input').addEventListener('input', e => { rows[i].value = Math.max(0, Math.floor(+e.target.value || 0)); render(); });
+      const iconIn = div.querySelector('.icon-input');
+      iconIn.addEventListener('input', e => { rows[i].icon = e.target.value; lastFocusedIconIdx = i; render(false); });
+      iconIn.addEventListener('focus', () => { lastFocusedIconIdx = i; });
+      div.querySelector('.remove-btn').addEventListener('click', () => removeRow(i));
+      list.appendChild(div);
+    });
+  }
+
+  let lastFocusedIconIdx = 0;
+
+  function addRow(){
+    rows.push({ label: '', value: 1, icon: EMOJIS[rows.length % EMOJIS.length] });
+    render();
+  }
+  function removeRow(i){
+    if (rows.length <= 1) { setStatus(t('status.minRow'), 'info'); return; }
+    rows.splice(i, 1);
+    if (lastFocusedIconIdx >= rows.length) lastFocusedIconIdx = rows.length - 1;
+    render();
+  }
+
+  function renderEmojiPicker(){
+    const grid = $('emojiGrid');
+    grid.innerHTML = '';
+    EMOJIS.forEach(em => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'emoji-btn';
+      b.textContent = em;
+      b.addEventListener('click', () => {
+        const idx = (lastFocusedIconIdx >= 0 && lastFocusedIconIdx < rows.length) ? lastFocusedIconIdx : rows.length - 1;
+        rows[idx].icon = em;
+        render();
+      });
+      grid.appendChild(b);
+    });
+  }
+
+  // ---- SVG graph ----
+  function buildSvg(){
+    const title = ($('titleInput').value || '').trim();
+    const upi = unitsPerIcon();
+    const showValues = $('showValues').checked;
+    const keyIcon = (rows[0] && rows[0].icon) || '🍎';
+
+    const padX = 36;
+    const titleH = title ? 70 : 24;
+    const labelColW = 230;           // left column for row labels
+    const iconStartX = padX + labelColW;
+    const iconSize = 46;             // font-size for emoji
+    const iconStep = 50;             // horizontal advance per icon
+    const rowH = 64;
+    const rowsTop = titleH + 12;
+    const keyLineH = 56;
+
+    const maxIcons = rows.reduce((m, r) => {
+      const v = Math.max(0, +r.value || 0);
+      return Math.max(m, Math.ceil(v / upi));
+    }, 1);
+    const valueColW = showValues ? 90 : 10;
+    const w = Math.max(BASE_W, iconStartX + maxIcons * iconStep + valueColW + padX);
+    const h = rowsTop + rows.length * rowH + keyLineH + 16;
+
+    const palette = ['#7c3aed','#f97316','#22c55e','#ef4444','#6d28d9','#facc15','#0ea5e9','#ec4899'];
+
+    let body = '';
+
+    // Title
+    if (title) {
+      body += '<text x="' + padX + '" y="44" font-size="40" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#7c3aed">' + esc(title) + '</text>';
+    }
+
+    // Rows
+    rows.forEach((row, i) => {
+      const cy = rowsTop + i * rowH + rowH / 2;
+      const value = Math.max(0, Math.floor(+row.value || 0));
+      const icon = row.icon || '•';
+      const accent = palette[i % palette.length];
+      const baseline = cy + iconSize * 0.34;
+
+      // Label
+      body += '<text x="' + padX + '" y="' + (cy + 7) + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="' + accent + '">' + esc(row.label) + '</text>';
+
+      // Full icons
+      const fullCount = Math.floor(value / upi);
+      const remainder = value - fullCount * upi;
+      const frac = upi > 0 ? remainder / upi : 0;
+
+      let x = iconStartX;
+      for (let k = 0; k < fullCount && k < 200; k++) {
+        body += '<text x="' + x + '" y="' + baseline + '" font-size="' + iconSize + '" font-family="Inter, Arial, sans-serif" text-anchor="start">' + esc(icon) + '</text>';
+        x += iconStep;
+      }
+
+      // Partial icon via clipPath on the fractional width
+      if (frac > 0.001 && fullCount < 200) {
+        const clipId = 'clip' + i;
+        const clipW = Math.max(2, iconStep * frac);
+        body += '<clipPath id="' + clipId + '"><rect x="' + x + '" y="' + (cy - rowH / 2) + '" width="' + clipW + '" height="' + rowH + '"/></clipPath>';
+        body += '<text x="' + x + '" y="' + baseline + '" font-size="' + iconSize + '" font-family="Inter, Arial, sans-serif" text-anchor="start" clip-path="url(#' + clipId + ')">' + esc(icon) + '</text>';
+        x += iconStep;
+      }
+
+      // Value number at row end
+      if (showValues) {
+        const vx = iconStartX + maxIcons * iconStep + 14;
+        body += '<text x="' + vx + '" y="' + (cy + 8) + '" font-size="24" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#111827" text-anchor="start">' + esc(value) + '</text>';
+      }
+
+      // Row separator
+      const sepY = rowsTop + (i + 1) * rowH;
+      body += '<line x1="' + padX + '" y1="' + sepY + '" x2="' + (w - padX) + '" y2="' + sepY + '" stroke="#e2e8f0" stroke-width="1.5"/>';
+    });
+
+    // Key line
+    const keyY = rowsTop + rows.length * rowH + 38;
+    body += '<text x="' + padX + '" y="' + keyY + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="#64748b">' +
+            esc(t('key.line', { icon: keyIcon, n: upi })) + '</text>';
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" id="graphSvg">' +
+      '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#ffffff"/>' +
+      body +
+      '<rect x="1.5" y="1.5" width="' + (w - 3) + '" height="' + (h - 3) + '" fill="none" stroke="#e2e8f0" stroke-width="3" rx="14"/>' +
+      '</svg>';
+  }
+
+  function setStatus(msg, cls){
+    const el = $('statusLine'); el.textContent = msg || ''; el.className = 'status ' + (cls || '');
+  }
+
+  function updateKeyChips(){
+    const upi = String(unitsPerIcon());
+    document.querySelectorAll('#keyPresets .chip').forEach(c => {
+      c.classList.toggle('active', c.getAttribute('data-key') === upi);
+    });
+  }
+
+  // rebuildRows=true re-renders the row inputs (DOM); pass false to only
+  // redraw the SVG (e.g. while typing in an icon field, to keep focus).
+  function render(rebuildRows){
+    if (rebuildRows !== false) renderRows();
+    updateKeyChips();
+    $('previewSlot').innerHTML = buildSvg();
+  }
+
+  // ---- Export ----
+  function downloadBlob(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  function svgString(){
+    const svg = $('graphSvg'); if (!svg) return '';
+    return new XMLSerializer().serializeToString(svg);
+  }
+  function svgToPngBlob(scaleX){
+    scaleX = scaleX || 2;
+    return new Promise((resolve, reject) => {
+      const xml = svgString();
+      const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+      const img = new Image();
+      img.onload = () => {
+        const w = (img.naturalWidth || BASE_W) * scaleX, h = (img.naturalHeight || 400) * scaleX;
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h);
+        try { cx.drawImage(img, 0, 0, w, h); }
+        catch (err) { reject(err); return; }
+        cv.toBlob(b => b ? resolve(b) : reject(new Error('PNG encode failed')), 'image/png');
+      };
+      img.onerror = () => reject(new Error('SVG decode failed'));
+      img.src = dataUrl;
+    });
+  }
+  function defaultFilename(ext){
+    const base = ($('titleInput').value || 'picture-graph').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'picture-graph';
+    return base + '.' + ext;
+  }
+
+  // ---- Wiring ----
+  $('addRowBtn').addEventListener('click', addRow);
+
+  $('titleInput').addEventListener('input', () => render(false));
+  $('showValues').addEventListener('change', () => render(false));
+  $('keyInput').addEventListener('input', () => render(false));
+
+  document.querySelectorAll('#keyPresets .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      $('keyInput').value = chip.getAttribute('data-key');
+      render(false);
+    });
+  });
+
+  $('downloadSvgBtn').addEventListener('click', () => {
+    const xml = svgString(); if (!xml) return;
+    downloadBlob(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }), defaultFilename('svg'));
+    setStatus(t('status.svgSaved'), 'success');
+  });
+  $('downloadPngBtn').addEventListener('click', async () => {
+    try {
+      const blob = await svgToPngBlob(2);
+      downloadBlob(blob, defaultFilename('png'));
+      setStatus(t('status.pngSaved'), 'success');
+    } catch (err) {
+      setStatus(t('status.pngFail', { msg: err.message || err }), 'danger');
+    }
+  });
+  $('copyPngBtn').addEventListener('click', async () => {
+    if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined') {
+      setStatus(t('status.clipboardUnsupported'), 'danger'); return;
+    }
+    try {
+      const blob = await svgToPngBlob(2);
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      setStatus(t('status.pngCopied'), 'success');
+    } catch (err) {
+      setStatus(t('status.copyFail', { msg: err.message || err }), 'danger');
+    }
+  });
+  $('resetBtn').addEventListener('click', () => {
+    $('titleInput').value = t('sample.title');
+    $('keyInput').value = 1;
+    $('showValues').checked = true;
+    rows = sampleRows();
+    lastFocusedIconIdx = 0;
+    render();
+    setStatus(t('status.reset'), 'info');
+  });
+
+  // On locale change, refresh sample labels only if still untouched defaults
+  // would be confusing; simplest correct behavior: re-render so placeholders,
+  // key line, and aria labels update. Title placeholder updates via i18n.
+  document.addEventListener('widget-i18n:changed', () => {
+    renderEmojiPicker();
+    render();
+  });
+
+  // Boot
+  $('titleInput').value = t('sample.title');
+  renderEmojiPicker();
+  render();
+})();
+</script>
+<script src="../../assets/js/consent-banner.js" defer></script>
+</body>
+</html>
