@@ -60,6 +60,16 @@
     .row-item .icon-input { text-align: center; font-size: 1.2rem; }
     .remove-btn { min-height: 40px; width: 38px; border: 2px solid var(--gray-30); border-radius: var(--radius); background: var(--white); color: var(--red); font-weight: 900; font-size: 1.1rem; line-height: 1; padding: 0; }
     .remove-btn:hover { background: #fee2e2; border-color: #fca5a5; }
+
+    /* Per-row image upload — sits under the inputs for each row */
+    .row-image { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: -2px 0 4px; padding: 6px 8px; border: 1px dashed var(--gray-30); border-radius: var(--radius); background: var(--gray-10); }
+    .row-image .img-upload-btn { min-height: 34px; padding: 5px 10px; border: 2px solid var(--navy); border-radius: var(--radius); background: var(--white); color: var(--navy); font-weight: 800; font-size: .78rem; white-space: nowrap; }
+    .row-image .img-upload-btn:hover { background: var(--gray-10); }
+    .row-image .img-thumb { width: 34px; height: 34px; object-fit: contain; border: 1px solid var(--gray-30); border-radius: 6px; background: #fff; }
+    .row-image .img-clear-btn { min-height: 34px; padding: 5px 9px; border: 2px solid var(--gray-30); border-radius: var(--radius); background: var(--white); color: var(--red); font-weight: 800; font-size: .78rem; white-space: nowrap; }
+    .row-image .img-clear-btn:hover { background: #fee2e2; border-color: #fca5a5; }
+    .row-image .img-hint { color: var(--gray-50); font-size: .74rem; font-weight: 700; }
+    .row-image input[type="file"] { display: none; }
     .add-btn { min-height: 42px; width: 100%; padding: 9px 14px; border: 2px dashed var(--navy); border-radius: var(--radius); color: var(--navy); background: var(--white); font-weight: 800; margin-top: 4px; }
 
     /* Emoji picker */
@@ -143,8 +153,18 @@
         </div>
 
         <div class="check-row">
-          <input id="showValues" type="checkbox" checked>
+          <input id="showLabels" type="checkbox" checked>
+          <label for="showLabels" data-i18n="field.showLabels">Show category labels</label>
+        </div>
+
+        <div class="check-row">
+          <input id="showValues" type="checkbox">
           <label for="showValues" data-i18n="field.showValues">Show the number at the end of each row</label>
+        </div>
+
+        <div class="check-row">
+          <input id="showKey" type="checkbox">
+          <label for="showKey" data-i18n="field.showKey">Show the key line (1 icon = N)</label>
         </div>
 
         <div class="actions">
@@ -189,11 +209,14 @@ window.addEventListener('error', function(e){
   // scales fluidly via CSS; downloads render at this resolution x a factor.
   const BASE_W = 1100;
 
+  // Each row carries an emoji/text `icon` plus an optional uploaded `image`
+  // (a data URL). When `image` is set it becomes the repeated picture; the
+  // emoji is kept as a fallback so clearing the image reverts cleanly.
   function sampleRows(){
     return [
-      { label: t('sample.apples'),  value: 6, icon: '🍎' },
-      { label: t('sample.bananas'), value: 4, icon: '🍌' },
-      { label: t('sample.oranges'), value: 3, icon: '🍊' }
+      { label: t('sample.apples'),  value: 6, icon: '🍎', image: null },
+      { label: t('sample.bananas'), value: 4, icon: '🍌', image: null },
+      { label: t('sample.oranges'), value: 3, icon: '🍊', image: null }
     ];
   }
 
@@ -215,18 +238,45 @@ window.addEventListener('error', function(e){
     rows.forEach((row, i) => {
       const div = document.createElement('div');
       div.className = 'row-item';
+      const hasImg = !!row.image;
+      const imgRow =
+        '<div class="row-image">' +
+          '<button type="button" class="img-upload-btn">' + esc(t('rows.uploadImage')) + '</button>' +
+          (hasImg
+            ? '<img class="img-thumb" src="' + esc(row.image) + '" alt="">' +
+              '<button type="button" class="img-clear-btn">' + esc(t('rows.clearImage')) + '</button>'
+            : '<span class="img-hint">' + esc(t('rows.imageHint')) + '</span>') +
+          '<input type="file" class="img-file" accept="image/*">' +
+        '</div>';
       div.innerHTML =
         '<input type="text" class="label-input" maxlength="40" value="' + esc(row.label) + '" data-i18n-placeholder="rows.label.placeholder" placeholder="' + esc(t('rows.label.placeholder')) + '" aria-label="' + esc(t('rows.label')) + '">' +
         '<input type="number" class="value-input" min="0" max="100000" step="1" value="' + esc(row.value) + '" aria-label="' + esc(t('rows.value')) + '">' +
-        '<input type="text" class="icon-input" maxlength="8" value="' + esc(row.icon) + '" data-i18n-placeholder="rows.icon.placeholder" placeholder="🍎" aria-label="' + esc(t('rows.icon')) + '">' +
-        '<button type="button" class="remove-btn" aria-label="' + esc(t('rows.removeAria', { n: i + 1 })) + '" title="' + esc(t('rows.remove')) + '">×</button>';
+        '<input type="text" class="icon-input" maxlength="8" value="' + esc(row.icon) + '" data-i18n-placeholder="rows.icon.placeholder" placeholder="🍎" aria-label="' + esc(t('rows.icon')) + '"' + (hasImg ? ' disabled' : '') + '>' +
+        '<button type="button" class="remove-btn" aria-label="' + esc(t('rows.removeAria', { n: i + 1 })) + '" title="' + esc(t('rows.remove')) + '">×</button>' +
+        imgRow;
 
-      div.querySelector('.label-input').addEventListener('input', e => { rows[i].label = e.target.value; render(); });
-      div.querySelector('.value-input').addEventListener('input', e => { rows[i].value = Math.max(0, Math.floor(+e.target.value || 0)); render(); });
+      div.querySelector('.label-input').addEventListener('input', e => { rows[i].label = e.target.value; render(false); });
+      div.querySelector('.value-input').addEventListener('input', e => { rows[i].value = Math.max(0, Math.floor(+e.target.value || 0)); render(false); });
       const iconIn = div.querySelector('.icon-input');
       iconIn.addEventListener('input', e => { rows[i].icon = e.target.value; lastFocusedIconIdx = i; render(false); });
       iconIn.addEventListener('focus', () => { lastFocusedIconIdx = i; });
       div.querySelector('.remove-btn').addEventListener('click', () => removeRow(i));
+
+      // Per-row image upload wiring
+      const fileIn = div.querySelector('.img-file');
+      div.querySelector('.img-upload-btn').addEventListener('click', () => fileIn.click());
+      fileIn.addEventListener('change', e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        if (!/^image\//.test(f.type)) { setStatus(t('status.notImage'), 'danger'); return; }
+        const reader = new FileReader();
+        reader.onload = () => { rows[i].image = reader.result; setStatus(t('status.imageAdded'), 'success'); render(); };
+        reader.onerror = () => setStatus(t('status.imageFail'), 'danger');
+        reader.readAsDataURL(f);
+      });
+      const clearBtn = div.querySelector('.img-clear-btn');
+      if (clearBtn) clearBtn.addEventListener('click', () => { rows[i].image = null; setStatus(t('status.imageCleared'), 'info'); render(); });
+
       list.appendChild(div);
     });
   }
@@ -234,7 +284,7 @@ window.addEventListener('error', function(e){
   let lastFocusedIconIdx = 0;
 
   function addRow(){
-    rows.push({ label: '', value: 1, icon: EMOJIS[rows.length % EMOJIS.length] });
+    rows.push({ label: '', value: 1, icon: EMOJIS[rows.length % EMOJIS.length], image: null });
     render();
   }
   function removeRow(i){
@@ -255,6 +305,7 @@ window.addEventListener('error', function(e){
       b.addEventListener('click', () => {
         const idx = (lastFocusedIconIdx >= 0 && lastFocusedIconIdx < rows.length) ? lastFocusedIconIdx : rows.length - 1;
         rows[idx].icon = em;
+        rows[idx].image = null; // picking an emoji reverts an image-based row
         render();
       });
       grid.appendChild(b);
@@ -262,21 +313,26 @@ window.addEventListener('error', function(e){
   }
 
   // ---- SVG graph ----
+  // Visual-first by default: no value numbers, no key line, no row separators.
+  // The toggles in Options bring those back for teachers who want them.
   function buildSvg(){
     const title = ($('titleInput').value || '').trim();
     const upi = unitsPerIcon();
     const showValues = $('showValues').checked;
+    const showKey    = $('showKey').checked;
+    const showLabels = $('showLabels').checked;
     const keyIcon = (rows[0] && rows[0].icon) || '🍎';
 
     const padX = 36;
     const titleH = title ? 70 : 24;
-    const labelColW = 230;           // left column for row labels
+    const labelColW = showLabels ? 230 : 12;   // collapse the label column when off
     const iconStartX = padX + labelColW;
     const iconSize = 46;             // font-size for emoji
-    const iconStep = 50;             // horizontal advance per icon
+    const imgSize = 46;              // box size for uploaded images
+    const iconStep = 50;             // horizontal advance per picture
     const rowH = 64;
     const rowsTop = titleH + 12;
-    const keyLineH = 56;
+    const keyLineH = showKey ? 56 : 16;
 
     const maxIcons = rows.reduce((m, r) => {
       const v = Math.max(0, +r.value || 0);
@@ -295,54 +351,71 @@ window.addEventListener('error', function(e){
       body += '<text x="' + padX + '" y="44" font-size="40" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#7c3aed">' + esc(title) + '</text>';
     }
 
+    // Renders one repeated picture at (x, cy) — image element when the row has
+    // an uploaded data URL, otherwise the emoji/text glyph. `frac` (0–1) clips
+    // the picture to a partial width for the fractional last icon.
+    function picture(row, x, cy, baseline, frac, clipId){
+      const usable = (frac == null) ? 1 : Math.max(0, Math.min(1, frac));
+      let snippet;
+      if (row.image) {
+        const iy = cy - imgSize / 2;
+        snippet = '<image x="' + x + '" y="' + iy + '" width="' + imgSize + '" height="' + imgSize + '" preserveAspectRatio="xMidYMid meet" href="' + esc(row.image) + '" xlink:href="' + esc(row.image) + '"';
+      } else {
+        snippet = '<text x="' + x + '" y="' + baseline + '" font-size="' + iconSize + '" font-family="Inter, Arial, sans-serif" text-anchor="start"';
+      }
+      if (clipId) {
+        const clipW = Math.max(2, iconStep * usable);
+        body += '<clipPath id="' + clipId + '"><rect x="' + x + '" y="' + (cy - rowH / 2) + '" width="' + clipW + '" height="' + rowH + '"/></clipPath>';
+        snippet += ' clip-path="url(#' + clipId + ')"';
+      }
+      snippet += row.image ? ' />' : '>' + esc(row.icon || '•') + '</text>';
+      body += snippet;
+    }
+
     // Rows
     rows.forEach((row, i) => {
       const cy = rowsTop + i * rowH + rowH / 2;
       const value = Math.max(0, Math.floor(+row.value || 0));
-      const icon = row.icon || '•';
       const accent = palette[i % palette.length];
       const baseline = cy + iconSize * 0.34;
 
-      // Label
-      body += '<text x="' + padX + '" y="' + (cy + 7) + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="' + accent + '">' + esc(row.label) + '</text>';
+      // Label (optional)
+      if (showLabels) {
+        body += '<text x="' + padX + '" y="' + (cy + 7) + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="' + accent + '">' + esc(row.label) + '</text>';
+      }
 
-      // Full icons
+      // Full pictures
       const fullCount = Math.floor(value / upi);
       const remainder = value - fullCount * upi;
       const frac = upi > 0 ? remainder / upi : 0;
 
       let x = iconStartX;
       for (let k = 0; k < fullCount && k < 200; k++) {
-        body += '<text x="' + x + '" y="' + baseline + '" font-size="' + iconSize + '" font-family="Inter, Arial, sans-serif" text-anchor="start">' + esc(icon) + '</text>';
+        picture(row, x, cy, baseline, null, null);
         x += iconStep;
       }
 
-      // Partial icon via clipPath on the fractional width
+      // Partial picture via clipPath on the fractional width
       if (frac > 0.001 && fullCount < 200) {
-        const clipId = 'clip' + i;
-        const clipW = Math.max(2, iconStep * frac);
-        body += '<clipPath id="' + clipId + '"><rect x="' + x + '" y="' + (cy - rowH / 2) + '" width="' + clipW + '" height="' + rowH + '"/></clipPath>';
-        body += '<text x="' + x + '" y="' + baseline + '" font-size="' + iconSize + '" font-family="Inter, Arial, sans-serif" text-anchor="start" clip-path="url(#' + clipId + ')">' + esc(icon) + '</text>';
+        picture(row, x, cy, baseline, frac, 'clip' + i);
         x += iconStep;
       }
 
-      // Value number at row end
+      // Value number at row end (optional)
       if (showValues) {
         const vx = iconStartX + maxIcons * iconStep + 14;
         body += '<text x="' + vx + '" y="' + (cy + 8) + '" font-size="24" font-weight="900" font-family="Inter, Arial, sans-serif" fill="#111827" text-anchor="start">' + esc(value) + '</text>';
       }
-
-      // Row separator
-      const sepY = rowsTop + (i + 1) * rowH;
-      body += '<line x1="' + padX + '" y1="' + sepY + '" x2="' + (w - padX) + '" y2="' + sepY + '" stroke="#e2e8f0" stroke-width="1.5"/>';
     });
 
-    // Key line
-    const keyY = rowsTop + rows.length * rowH + 38;
-    body += '<text x="' + padX + '" y="' + keyY + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="#64748b">' +
-            esc(t('key.line', { icon: keyIcon, n: upi })) + '</text>';
+    // Key line (optional)
+    if (showKey) {
+      const keyY = rowsTop + rows.length * rowH + 38;
+      body += '<text x="' + padX + '" y="' + keyY + '" font-size="22" font-weight="800" font-family="Inter, Arial, sans-serif" fill="#64748b">' +
+              esc(t('key.line', { icon: keyIcon, n: upi })) + '</text>';
+    }
 
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" id="graphSvg">' +
+    return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ' + w + ' ' + h + '" id="graphSvg">' +
       '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#ffffff"/>' +
       body +
       '<rect x="1.5" y="1.5" width="' + (w - 3) + '" height="' + (h - 3) + '" fill="none" stroke="#e2e8f0" stroke-width="3" rx="14"/>' +
@@ -409,6 +482,8 @@ window.addEventListener('error', function(e){
 
   $('titleInput').addEventListener('input', () => render(false));
   $('showValues').addEventListener('change', () => render(false));
+  $('showKey').addEventListener('change', () => render(false));
+  $('showLabels').addEventListener('change', () => render(false));
   $('keyInput').addEventListener('input', () => render(false));
 
   document.querySelectorAll('#keyPresets .chip').forEach(chip => {
@@ -447,7 +522,9 @@ window.addEventListener('error', function(e){
   $('resetBtn').addEventListener('click', () => {
     $('titleInput').value = t('sample.title');
     $('keyInput').value = 1;
-    $('showValues').checked = true;
+    $('showValues').checked = false;
+    $('showKey').checked = false;
+    $('showLabels').checked = true;
     rows = sampleRows();
     lastFocusedIconIdx = 0;
     render();

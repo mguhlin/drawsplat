@@ -19,7 +19,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': 'Favorite Fruits',
     'field.key': 'Key — each icon equals',
     'field.key.unit': 'units',
+    'field.showLabels': 'Show category labels',
     'field.showValues': 'Show the number at the end of each row',
+    'field.showKey': 'Show the key line (1 icon = N)',
 
     'rows.heading': 'Rows',
     'rows.label': 'Label',
@@ -31,6 +33,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': 'Remove row {n}',
     'rows.add': '+ Add row',
     'rows.pick': 'Pick an emoji',
+    'rows.uploadImage': 'Upload image',
+    'rows.clearImage': 'Clear image',
+    'rows.imageHint': 'or use a picture',
 
     'button.downloadPng': 'Download PNG',
     'button.downloadSvg': 'Download SVG',
@@ -47,8 +52,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': 'Clipboard image copy not supported in this browser. Use Download PNG instead.',
     'status.reset': 'Reset to the sample graph.',
     'status.minRow': 'A picture graph needs at least one row.',
+    'status.imageAdded': 'Picture added to the row.',
+    'status.imageCleared': 'Picture cleared — back to the emoji.',
+    'status.imageFail': 'Could not read that image file.',
+    'status.notImage': 'Please choose an image file.',
 
-    'about.html': 'Each icon stands for the number you set in the key, so big numbers stay readable. Nothing is uploaded — the graph is drawn locally in your browser as SVG. Pair it with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the saved PNG straight onto a board.',
+    'about.html': 'Each picture stands for the number you set in the key, so big numbers stay readable — but the graph is visual by default, so pre-readers can compare rows at a glance. Use an emoji or upload your own picture per row. Nothing is uploaded to a server — the graph is drawn locally in your browser as SVG. Pair it with the <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> whiteboard</a> to drop the saved PNG straight onto a board.',
 
     'sample.title': 'Favorite Fruits',
     'sample.apples': 'Apples',
@@ -73,7 +82,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': 'Frutas favoritas',
     'field.key': 'Clave — cada icono equivale a',
     'field.key.unit': 'unidades',
+    'field.showLabels': 'Mostrar las etiquetas de categoría',
     'field.showValues': 'Mostrar el número al final de cada fila',
+    'field.showKey': 'Mostrar la línea de clave (1 icono = N)',
 
     'rows.heading': 'Filas',
     'rows.label': 'Etiqueta',
@@ -85,6 +96,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': 'Quitar fila {n}',
     'rows.add': '+ Agregar fila',
     'rows.pick': 'Elige un emoji',
+    'rows.uploadImage': 'Subir imagen',
+    'rows.clearImage': 'Quitar imagen',
+    'rows.imageHint': 'o usa una imagen',
 
     'button.downloadPng': 'Descargar PNG',
     'button.downloadSvg': 'Descargar SVG',
@@ -101,8 +115,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': 'El portapapeles de imágenes no es compatible con este navegador. Usa Descargar PNG.',
     'status.reset': 'Restablecido al gráfico de ejemplo.',
     'status.minRow': 'Un pictograma necesita al menos una fila.',
+    'status.imageAdded': 'Imagen añadida a la fila.',
+    'status.imageCleared': 'Imagen quitada — vuelve al emoji.',
+    'status.imageFail': 'No se pudo leer ese archivo de imagen.',
+    'status.notImage': 'Elige un archivo de imagen.',
 
-    'about.html': 'Cada icono representa el número que defines en la clave, así los números grandes siguen siendo legibles. Nada se sube — el gráfico se dibuja localmente en tu navegador como SVG. Combínalo con el <a href="../../app/whiteboard.html">pizarrón DrawSplat<sup>TM</sup></a> para soltar el PNG guardado directamente en un tablero.',
+    'about.html': 'Cada imagen representa el número que defines en la clave, así los números grandes siguen siendo legibles, pero el gráfico es visual por defecto para que los que aún no leen comparen las filas de un vistazo. Usa un emoji o sube tu propia imagen por fila. Nada se sube a un servidor — el gráfico se dibuja localmente en tu navegador como SVG. Combínalo con el <a href="../../app/whiteboard.html">pizarrón DrawSplat<sup>TM</sup></a> para soltar el PNG guardado directamente en un tablero.',
 
     'sample.title': 'Frutas favoritas',
     'sample.apples': 'Manzanas',
@@ -127,7 +145,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': 'Trái cây yêu thích',
     'field.key': 'Khóa — mỗi biểu tượng bằng',
     'field.key.unit': 'đơn vị',
+    'field.showLabels': 'Hiện nhãn danh mục',
     'field.showValues': 'Hiện số ở cuối mỗi hàng',
+    'field.showKey': 'Hiện dòng khóa (1 biểu tượng = N)',
 
     'rows.heading': 'Hàng',
     'rows.label': 'Nhãn',
@@ -139,6 +159,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': 'Xóa hàng {n}',
     'rows.add': '+ Thêm hàng',
     'rows.pick': 'Chọn emoji',
+    'rows.uploadImage': 'Tải ảnh lên',
+    'rows.clearImage': 'Xóa ảnh',
+    'rows.imageHint': 'hoặc dùng một hình ảnh',
 
     'button.downloadPng': 'Tải PNG',
     'button.downloadSvg': 'Tải SVG',
@@ -155,8 +178,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': 'Trình duyệt không hỗ trợ sao chép ảnh vào bộ nhớ tạm. Hãy dùng Tải PNG.',
     'status.reset': 'Đã đặt lại về biểu đồ mẫu.',
     'status.minRow': 'Biểu đồ tranh cần ít nhất một hàng.',
+    'status.imageAdded': 'Đã thêm hình ảnh vào hàng.',
+    'status.imageCleared': 'Đã xóa hình ảnh — quay lại emoji.',
+    'status.imageFail': 'Không thể đọc tệp hình ảnh đó.',
+    'status.notImage': 'Vui lòng chọn một tệp hình ảnh.',
 
-    'about.html': 'Mỗi biểu tượng đại diện cho con số bạn đặt trong khóa, nên các số lớn vẫn dễ đọc. Không có gì được tải lên — biểu đồ được vẽ cục bộ trong trình duyệt dưới dạng SVG. Kết hợp với <a href="../../app/whiteboard.html">bảng trắng DrawSplat<sup>TM</sup></a> để thả PNG đã lưu trực tiếp lên bảng.',
+    'about.html': 'Mỗi hình ảnh đại diện cho con số bạn đặt trong khóa, nên các số lớn vẫn dễ đọc — nhưng biểu đồ mặc định là trực quan, để các em chưa biết đọc có thể so sánh các hàng trong nháy mắt. Dùng emoji hoặc tải hình ảnh của riêng bạn cho mỗi hàng. Không có gì được tải lên máy chủ — biểu đồ được vẽ cục bộ trong trình duyệt dưới dạng SVG. Kết hợp với <a href="../../app/whiteboard.html">bảng trắng DrawSplat<sup>TM</sup></a> để thả PNG đã lưu trực tiếp lên bảng.',
 
     'sample.title': 'Trái cây yêu thích',
     'sample.apples': 'Táo',
@@ -181,7 +208,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': 'الفواكه المفضلة',
     'field.key': 'المفتاح — كل رمز يساوي',
     'field.key.unit': 'وحدات',
+    'field.showLabels': 'إظهار تسميات الفئات',
     'field.showValues': 'إظهار الرقم في نهاية كل صف',
+    'field.showKey': 'إظهار سطر المفتاح (1 رمز = N)',
 
     'rows.heading': 'الصفوف',
     'rows.label': 'التسمية',
@@ -193,6 +222,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': 'إزالة الصف {n}',
     'rows.add': '+ إضافة صف',
     'rows.pick': 'اختر رمزًا تعبيريًا',
+    'rows.uploadImage': 'رفع صورة',
+    'rows.clearImage': 'مسح الصورة',
+    'rows.imageHint': 'أو استخدم صورة',
 
     'button.downloadPng': 'تنزيل PNG',
     'button.downloadSvg': 'تنزيل SVG',
@@ -209,8 +241,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': 'لا يدعم هذا المتصفح نسخ الصور إلى الحافظة. استخدم تنزيل PNG.',
     'status.reset': 'تمت إعادة الضبط إلى الرسم النموذجي.',
     'status.minRow': 'يحتاج الرسم التصويري إلى صف واحد على الأقل.',
+    'status.imageAdded': 'تمت إضافة الصورة إلى الصف.',
+    'status.imageCleared': 'تم مسح الصورة — العودة إلى الرمز التعبيري.',
+    'status.imageFail': 'تعذّرت قراءة ملف الصورة هذا.',
+    'status.notImage': 'يرجى اختيار ملف صورة.',
 
-    'about.html': 'يمثّل كل رمز العدد الذي تضبطه في المفتاح، فتبقى الأرقام الكبيرة سهلة القراءة. لا يتم رفع شيء — يُرسم الرسم محليًا في متصفحك كـ SVG. اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat<sup>TM</sup></a> لإسقاط ملف PNG المحفوظ مباشرة على لوحة.',
+    'about.html': 'تمثّل كل صورة العدد الذي تضبطه في المفتاح، فتبقى الأرقام الكبيرة سهلة القراءة — لكن الرسم بصري افتراضيًا، حتى يقارن من لم يتعلموا القراءة بعد بين الصفوف بلمحة. استخدم رمزًا تعبيريًا أو ارفع صورتك الخاصة لكل صف. لا يتم رفع شيء إلى خادم — يُرسم الرسم محليًا في متصفحك كـ SVG. اقرنه مع <a href="../../app/whiteboard.html">سبورة DrawSplat<sup>TM</sup></a> لإسقاط ملف PNG المحفوظ مباشرة على لوحة.',
 
     'sample.title': 'الفواكه المفضلة',
     'sample.apples': 'تفاح',
@@ -235,7 +271,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': '最喜欢的水果',
     'field.key': '图例 — 每个图标代表',
     'field.key.unit': '单位',
+    'field.showLabels': '显示类别标签',
     'field.showValues': '在每行末尾显示数值',
+    'field.showKey': '显示图例行（1 图标 = N）',
 
     'rows.heading': '行',
     'rows.label': '标签',
@@ -247,6 +285,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': '删除第 {n} 行',
     'rows.add': '+ 添加行',
     'rows.pick': '选择表情符号',
+    'rows.uploadImage': '上传图片',
+    'rows.clearImage': '清除图片',
+    'rows.imageHint': '或使用图片',
 
     'button.downloadPng': '下载 PNG',
     'button.downloadSvg': '下载 SVG',
@@ -263,8 +304,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': '此浏览器不支持图片剪贴板复制。请改用"下载 PNG"。',
     'status.reset': '已重置为示例图表。',
     'status.minRow': '象形图至少需要一行。',
+    'status.imageAdded': '已将图片添加到该行。',
+    'status.imageCleared': '已清除图片 — 恢复为表情符号。',
+    'status.imageFail': '无法读取该图片文件。',
+    'status.notImage': '请选择一个图片文件。',
 
-    'about.html': '每个图标代表你在图例中设定的数字，因此大数字也清晰易读。不会上传任何内容 — 图表在你的浏览器中以 SVG 本地绘制。与 <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> 白板</a> 配合，将保存的 PNG 直接拖到画板上。',
+    'about.html': '每张图片代表你在图例中设定的数字，因此大数字也清晰易读 — 但图表默认以视觉为主，让尚未识字的孩子也能一眼比较各行。每行可使用表情符号或上传你自己的图片。不会上传任何内容到服务器 — 图表在你的浏览器中以 SVG 本地绘制。与 <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> 白板</a> 配合，将保存的 PNG 直接拖到画板上。',
 
     'sample.title': '最喜欢的水果',
     'sample.apples': '苹果',
@@ -289,7 +334,9 @@ WidgetI18n.register('picture-graph', {
     'field.graphTitle.placeholder': 'پسندیدہ پھل',
     'field.key': 'کلید — ہر آئیکن برابر ہے',
     'field.key.unit': 'یونٹس',
+    'field.showLabels': 'زمرہ لیبل دکھائیں',
     'field.showValues': 'ہر قطار کے آخر میں نمبر دکھائیں',
+    'field.showKey': 'کلید کی لائن دکھائیں (1 آئیکن = N)',
 
     'rows.heading': 'قطاریں',
     'rows.label': 'لیبل',
@@ -301,6 +348,9 @@ WidgetI18n.register('picture-graph', {
     'rows.removeAria': 'قطار {n} ہٹائیں',
     'rows.add': '+ قطار شامل کریں',
     'rows.pick': 'ایموجی چنیں',
+    'rows.uploadImage': 'تصویر اپ لوڈ کریں',
+    'rows.clearImage': 'تصویر صاف کریں',
+    'rows.imageHint': 'یا کوئی تصویر استعمال کریں',
 
     'button.downloadPng': 'PNG ڈاؤن لوڈ کریں',
     'button.downloadSvg': 'SVG ڈاؤن لوڈ کریں',
@@ -317,8 +367,12 @@ WidgetI18n.register('picture-graph', {
     'status.clipboardUnsupported': 'یہ براؤزر کلپ بورڈ پر تصویر کاپی کرنے کو سپورٹ نہیں کرتا۔ PNG ڈاؤن لوڈ کریں استعمال کریں۔',
     'status.reset': 'نمونہ گراف پر دوبارہ ترتیب دے دی گئی۔',
     'status.minRow': 'تصویری گراف کے لیے کم از کم ایک قطار درکار ہے۔',
+    'status.imageAdded': 'قطار میں تصویر شامل کر دی گئی۔',
+    'status.imageCleared': 'تصویر صاف کر دی گئی — ایموجی پر واپس۔',
+    'status.imageFail': 'وہ تصویری فائل پڑھی نہیں جا سکی۔',
+    'status.notImage': 'براہ کرم ایک تصویری فائل منتخب کریں۔',
 
-    'about.html': 'ہر آئیکن وہ نمبر ظاہر کرتا ہے جو آپ کلید میں مقرر کرتے ہیں، اس لیے بڑے نمبر بھی پڑھنے میں آسان رہتے ہیں۔ کچھ بھی اپ لوڈ نہیں ہوتا — گراف آپ کے براؤزر میں مقامی طور پر SVG کے طور پر بنتا ہے۔ محفوظ کردہ PNG کو بورڈ پر چھوڑنے کے لیے <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> وائٹ بورڈ</a> کے ساتھ جوڑیں۔',
+    'about.html': 'ہر تصویر وہ نمبر ظاہر کرتی ہے جو آپ کلید میں مقرر کرتے ہیں، اس لیے بڑے نمبر بھی پڑھنے میں آسان رہتے ہیں — مگر گراف بطورِ ڈیفالٹ بصری ہے، تاکہ جو بچے ابھی پڑھ نہیں سکتے وہ ایک نظر میں قطاروں کا موازنہ کر سکیں۔ ہر قطار کے لیے ایموجی استعمال کریں یا اپنی تصویر اپ لوڈ کریں۔ کچھ بھی سرور پر اپ لوڈ نہیں ہوتا — گراف آپ کے براؤزر میں مقامی طور پر SVG کے طور پر بنتا ہے۔ محفوظ کردہ PNG کو بورڈ پر چھوڑنے کے لیے <a href="../../app/whiteboard.html">DrawSplat<sup>TM</sup> وائٹ بورڈ</a> کے ساتھ جوڑیں۔',
 
     'sample.title': 'پسندیدہ پھل',
     'sample.apples': 'سیب',
