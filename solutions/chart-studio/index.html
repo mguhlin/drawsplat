@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="doc.title">Chart Studio — DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <meta name="description" content="Turn a CSV into a bar chart, line chart, or animated bar chart race. Runs entirely in the browser; no data is uploaded. Download as PNG, SVG, animated GIF, or MP4 video.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237c3aed'/%3E%3Crect x='6' y='18' width='4' height='8' fill='%23FAA634'/%3E%3Crect x='12' y='12' width='4' height='14' fill='%23FAA634'/%3E%3Crect x='18' y='8' width='4' height='18' fill='%23FAA634'/%3E%3Crect x='24' y='14' width='4' height='12' fill='%23FAA634'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --navy:#7c3aed; --gold:#a855f7; --black:#000; --white:#fff;
+      --red:#ef4444; --blue:#6d28d9; --yellow:#facc15; --orange:#f97316; --green:#22c55e;
+      --gray-90:#111827; --gray-50:#64748b; --gray-30:#cbd5e1; --gray-10:#eef2ff;
+      --bg:#fff; --surface:#fff; --text:#404041; --border:#ddd6fe; --radius:8px;
+      --shadow:0 16px 34px rgba(64,64,65,.12);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .top-bar{height:12px;background:linear-gradient(90deg,var(--navy) 0 28%,var(--gold) 28% 46%,var(--orange) 46% 58%,var(--red) 58% 70%,var(--blue) 70% 84%,var(--green) 84% 94%,var(--yellow) 94% 100%)}
+    .page{width:min(1280px,calc(100% - 28px));margin:0 auto;padding:22px 0 38px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:18px;border-bottom:2px solid var(--gray-10)}
+    .title-block{display:grid;gap:8px}
+    .eyebrow{margin:0;color:var(--gold);font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .eyebrow a{color:inherit;text-decoration:none}
+    h1{margin:0;color:var(--navy);font-size:clamp(2rem,5vw,3.6rem);line-height:.95}
+    .subtitle{margin:0;max-width:780px;color:var(--gray-90);font-size:1rem;line-height:1.45}
+    .header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .i18n-picker select{padding:9px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:#111827;font-weight:700;font-size:.85rem;cursor:pointer;min-height:42px}
+    .home-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;color:var(--white);background:var(--navy);border-radius:var(--radius);font-weight:800;text-decoration:none;white-space:nowrap}
+    .secondary-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;border:2px solid var(--navy);border-radius:var(--radius);color:var(--navy);background:var(--white);font-weight:800;text-decoration:none;white-space:nowrap}
+    .app-grid{display:grid;grid-template-columns:minmax(320px,400px) 1fr;gap:18px;align-items:start;padding-top:22px}
+    @media (max-width:980px){.app-grid{grid-template-columns:1fr}}
+    .panel,.stage{border:2px solid var(--border);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+    .panel{padding:18px}
+    .panel h2{margin:0 0 12px;color:var(--black);font-size:1.05rem}
+    .panel h3{margin:14px 0 6px;color:var(--gray-90);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+    .field{display:grid;gap:6px;margin-bottom:12px}
+    label{color:var(--gray-90);font-size:.84rem;font-weight:800}
+    input[type="text"],input[type="number"],select,textarea{width:100%;min-height:38px;padding:8px 10px;color:var(--black);background:var(--white);border:2px solid var(--gray-30);border-radius:var(--radius)}
+    textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;min-height:140px;resize:vertical}
+    input[type="file"]{font-size:.82rem}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .row > *{flex:1;min-width:0}
+    .stage{padding:18px;min-height:560px}
+    .stage-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+    .stage-head h2{margin:0;color:var(--black);font-size:1.05rem}
+    .preview-wrap{padding:14px;background:var(--gray-10);border-radius:var(--radius);display:grid;place-items:center;min-height:420px}
+    #chartSvg{width:100%;max-width:100%;height:auto;background:#fff;border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.08)}
+    .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .button{min-height:42px;padding:9px 14px;border:2px solid var(--navy);border-radius:var(--radius);color:var(--navy);background:var(--white);font-weight:800;font-size:.9rem}
+    .button.primary{color:var(--white);background:var(--navy)}
+    .button.gold{color:var(--black);background:var(--yellow);border-color:var(--yellow)}
+    .button.small{min-height:32px;padding:4px 10px;font-size:.8rem}
+    .status{margin-top:12px;padding:10px 12px;border-radius:6px;font-weight:800;min-height:1.2em;font-size:.88rem}
+    .status.success{color:#064e3b;background:#d1fae5;border:1px solid #6ee7b7}
+    .status.danger{color:#7f1d1d;background:#fee2e2;border:1px solid #fca5a5}
+    .status.info{color:#1e3a8a;background:#dbeafe;border:1px solid #93c5fd}
+    .status:empty{display:none}
+    .footer-note{margin-top:14px;color:var(--gray-50);font-size:.82rem;line-height:1.45}
+    .footer-note a{color:var(--navy)}
+    .footer-note code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:var(--gray-90)}
+    /* Data table preview */
+    .data-preview{max-height:260px;overflow:auto;border:1px solid var(--gray-30);border-radius:6px;background:#fff}
+    .data-preview table{width:100%;border-collapse:collapse;font-size:.8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .data-preview th{position:sticky;top:0;background:#f3f4f6;font-weight:800;color:var(--navy);text-align:left;padding:6px 8px;border-bottom:1px solid var(--gray-30);font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+    .data-preview td{padding:5px 8px;border-bottom:1px solid #f1f5f9;color:var(--gray-90);white-space:nowrap}
+    .data-preview td.num{text-align:right;color:#0f766e}
+    .data-preview tr:nth-child(even) td{background:#fafbff}
+    .chart-mode-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+    .chart-mode-row button{min-height:38px;padding:6px 8px;border:2px solid var(--gray-30);border-radius:var(--radius);background:#fff;color:var(--gray-90);font-weight:800;font-size:.8rem;cursor:pointer}
+    .chart-mode-row button:hover{border-color:var(--navy);color:var(--navy)}
+    .chart-mode-row button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+    /* Palette swatches reused from Mermaid Studio pattern */
+    .palette-swatches{display:grid;gap:4px;margin-top:6px}
+    .palette-swatch{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:4px 6px;border:1px solid var(--gray-30);border-radius:5px;background:#fff;font-size:.75rem}
+    .palette-swatch .swatch-chip{width:28px;height:20px;border-radius:4px;border:1px solid var(--gray-30)}
+    .palette-swatch button.swatch-hex{appearance:none;border:1px solid transparent;background:transparent;cursor:pointer;padding:2px 6px;border-radius:3px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;color:var(--navy);font-size:.74rem}
+    .palette-swatch button.swatch-hex:hover{background:#f3f4f6;border-color:var(--gray-30)}
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+        <h1 data-i18n="header.h1">Chart Studio</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Paste a CSV, pick columns, choose a chart type — bar, line, or animated bar chart race. Runs entirely in the browser; no data is uploaded. Download as PNG, SVG, animated GIF, or MP4.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="secondary-link" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <aside class="panel" data-i18n-aria-label="panel.controls.aria" aria-label="Chart Studio controls">
+        <h2 data-i18n="panel.controls.h2">Data + Chart</h2>
+
+        <div class="field">
+          <label data-i18n="field.csv">CSV data (paste or load file)</label>
+          <textarea id="csvInput" spellcheck="false" placeholder="month,reading,math,science
+Jan,12,18,8
+Feb,15,20,11
+Mar,18,22,14
+Apr,22,25,18
+May,25,28,22"></textarea>
+          <div class="row" style="margin-top:6px">
+            <input id="csvFile" type="file" accept=".csv,text/csv,text/plain">
+            <button type="button" class="button small" id="csvSampleBtn" data-i18n="button.sample">Load sample</button>
+            <button type="button" class="button small" id="csvClearBtn" data-i18n="button.clearCsv">Clear</button>
+          </div>
+        </div>
+
+        <h3 data-i18n="section.preview">Data preview</h3>
+        <div class="data-preview" id="dataPreview" aria-live="polite">
+          <p style="padding:10px;color:var(--gray-50);font-family:Arial,sans-serif">Paste CSV above to see the data here.</p>
+        </div>
+
+        <h3 data-i18n="section.chartType">Chart type</h3>
+        <div class="chart-mode-row" role="tablist" aria-label="Chart type">
+          <button type="button" data-chart="bar" class="active" data-i18n="chart.bar">Bar</button>
+          <button type="button" data-chart="line" data-i18n="chart.line">Line</button>
+          <button type="button" data-chart="race" data-i18n="chart.race">Bar race</button>
+        </div>
+
+        <div class="field" id="columnXField">
+          <label for="colX" data-i18n="field.colX">X axis (categories / time)</label>
+          <select id="colX"></select>
+        </div>
+        <div class="field" id="columnYField">
+          <label for="colY" data-i18n="field.colY">Y axis (values — one or more)</label>
+          <select id="colY" multiple size="5" style="min-height:120px"></select>
+          <span class="footer-note" style="margin:0" data-i18n="field.colY.hint">Hold Ctrl / Cmd to pick multiple value columns.</span>
+        </div>
+        <div class="field" id="titleField">
+          <label for="chartTitle" data-i18n="field.title">Chart title</label>
+          <input id="chartTitle" type="text" maxlength="120" value="Reading, math, science by month">
+        </div>
+
+        <h3 data-i18n="section.palette">Color palette</h3>
+        <div class="field" style="margin-bottom:6px">
+          <select id="paletteSelect">
+            <option value="drawsplat" selected data-i18n="palette.drawsplat">DrawSplat Purple</option>
+            <option value="navy" data-i18n="palette.navy">Navy Professional</option>
+            <option value="forest" data-i18n="palette.forest">Forest Green</option>
+            <option value="sunset" data-i18n="palette.sunset">Sunset Orange</option>
+            <option value="mono" data-i18n="palette.mono">Mono Print (B&amp;W)</option>
+            <option value="dark" data-i18n="palette.dark">Dark Mode</option>
+          </select>
+        </div>
+        <div id="paletteSwatches" class="palette-swatches" aria-live="polite"></div>
+
+        <h3 data-i18n="about.h3">About</h3>
+        <p class="footer-note" data-i18n-html="about.html">Built into DrawSplat<sup>TM</sup> as the open-source answer to Flourish-style chart tools. Runs in your browser — nothing is uploaded. Animated bar chart race exports use the same encoder as the <a href="../animated-gif/">Animated GIF Maker</a> (GIF) and a hand-rolled MP4 muxer (modern browsers).</p>
+      </aside>
+
+      <section class="stage" data-i18n-aria-label="panel.stage.aria" aria-label="Chart preview">
+        <div class="stage-head">
+          <h2 data-i18n="stage.h2">Chart preview</h2>
+          <span class="footer-note" id="raceFrameStatus" style="margin:0"></span>
+        </div>
+        <div class="preview-wrap">
+          <div id="previewSlot" style="width:100%"></div>
+        </div>
+        <div class="actions">
+          <button class="button primary" id="renderBtn" type="button" data-i18n="button.render">Render</button>
+          <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+          <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+          <button class="button gold" id="resetBtn" type="button" data-i18n="button.reset">Reset</button>
+        </div>
+        <div class="status" id="statusLine" role="status"></div>
+        <p class="footer-note" data-i18n="footer.note">Bar chart race export (animated GIF + MP4) ships in the next slice. The frame-interpolation engine that drives it is already in place — see <code>buildRaceFrames()</code> in this page's script.</p>
+      </section>
+    </main>
+  </div>
+
+<script src="./locales.js"></script>
+<script src="../../assets/js/consent-banner.js" defer></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const t = (key, vars) => window.WidgetI18n ? window.WidgetI18n.t(key, vars) : key;
+
+  function setStatus(msg, kind){
+    const el = $('statusLine'); el.textContent = msg || ''; el.className = 'status ' + (kind || '');
+  }
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+  /* ---------- Color palettes — same swatches as Mermaid Studio so cross-
+     tool styling stays consistent. Each palette has a CATEGORY color
+     cycle for charts with multiple series. ---------- */
+  const PALETTES = {
+    drawsplat: { name:'DrawSplat Purple', axis:'#334155', grid:'#e2e8f0', bg:'#ffffff',
+      cycle:['#7c3aed','#ec4899','#22c55e','#f97316','#3b82f6','#facc15','#14b8a6','#a855f7'] },
+    navy: { name:'Navy Professional', axis:'#1e293b', grid:'#dbeafe', bg:'#ffffff',
+      cycle:['#1e3a8a','#0e7490','#0f766e','#92400e','#7c2d12','#581c87','#9f1239','#365314'] },
+    forest: { name:'Forest Green', axis:'#374151', grid:'#d1fae5', bg:'#ffffff',
+      cycle:['#166534','#15803d','#65a30d','#ca8a04','#c2410c','#9a3412','#7c2d12','#15803d'] },
+    sunset: { name:'Sunset Orange', axis:'#44403c', grid:'#fed7aa', bg:'#ffffff',
+      cycle:['#c2410c','#ea580c','#f59e0b','#dc2626','#be123c','#9f1239','#7c2d12','#92400e'] },
+    mono: { name:'Mono Print (B&W)', axis:'#111827', grid:'#9ca3af', bg:'#ffffff',
+      cycle:['#111827','#374151','#6b7280','#9ca3af','#d1d5db','#111827','#374151','#6b7280'] },
+    dark: { name:'Dark Mode', axis:'#cbd5e1', grid:'#334155', bg:'#0f172a',
+      cycle:['#a78bfa','#f472b6','#34d399','#fb923c','#60a5fa','#fbbf24','#5eead4','#c084fc'] }
+  };
+  function currentPalette(){ return PALETTES[$('paletteSelect').value] || PALETTES.drawsplat; }
+  function renderSwatches(){
+    const host = $('paletteSwatches'); if (!host) return;
+    const p = currentPalette();
+    const rows = [
+      ['Axis', p.axis], ['Grid', p.grid], ['Background', p.bg],
+      ...p.cycle.slice(0,6).map((c,i)=>['Series ' + (i+1), c])
+    ];
+    host.innerHTML = rows.map(([label, hex]) =>
+      `<div class="palette-swatch"><span class="swatch-chip" style="background:${hex}"></span><span>${label}</span><button type="button" class="swatch-hex" data-copy="${hex}">${hex}</button></div>`
+    ).join('');
+  }
+
+  /* ---------- Slice 2: hand-rolled CSV parser.
+     Handles quoted fields, embedded commas, embedded newlines, escaped
+     quotes (""), and CRLF / LF line endings. No external dependency. */
+  function parseCsv(text){
+    const rows = []; let row = []; let field = ''; let inQuotes = false;
+    const s = String(text || '').replace(/^﻿/, '');  // strip BOM
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (s[i+1] === '"') { field += '"'; i++; }
+          else { inQuotes = false; }
+        } else { field += c; }
+      } else {
+        if (c === '"') { inQuotes = true; }
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\r') { /* swallow; \n handles row break */ }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else { field += c; }
+      }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    // Drop trailing all-empty rows
+    while (rows.length && rows[rows.length-1].every(c => !c.trim())) rows.pop();
+    if (!rows.length) return { headers: [], data: [] };
+    const headers = rows[0].map(h => String(h || '').trim());
+    const data = rows.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = r[idx] != null ? r[idx] : ''; });
+      return obj;
+    });
+    return { headers, data };
+  }
+  // Detect which columns are numeric (most cells parse as finite numbers).
+  function detectNumericColumns(headers, data){
+    const out = {};
+    headers.forEach(h => {
+      let numeric = 0, total = 0;
+      for (const row of data) {
+        const v = row[h];
+        if (v === '' || v == null) continue;
+        total++;
+        if (isFinite(Number(v))) numeric++;
+      }
+      out[h] = total > 0 && numeric / total >= 0.7;
+    });
+    return out;
+  }
+
+  // ---------- State ----------
+  let state = {
+    csvText: '',
+    headers: [],
+    data: [],
+    numericCols: {},
+    chartType: 'bar',
+    title: ''
+  };
+
+  function loadCsv(text){
+    state.csvText = text;
+    const parsed = parseCsv(text);
+    state.headers = parsed.headers;
+    state.data = parsed.data;
+    state.numericCols = detectNumericColumns(state.headers, state.data);
+    rebuildColumnPickers();
+    renderDataPreview();
+  }
+  function rebuildColumnPickers(){
+    const xSel = $('colX'), ySel = $('colY');
+    if (!xSel || !ySel) return;
+    const prevX = xSel.value, prevY = Array.from(ySel.selectedOptions).map(o=>o.value);
+    xSel.innerHTML = state.headers.map(h => `<option value="${esc(h)}">${esc(h)}</option>`).join('');
+    ySel.innerHTML = state.headers.map(h => `<option value="${esc(h)}">${esc(h)}${state.numericCols[h] ? ' (#)' : ''}</option>`).join('');
+    // Defaults: first column → X, all numeric columns → Y
+    if (state.headers.includes(prevX)) xSel.value = prevX;
+    else if (state.headers.length) xSel.value = state.headers[0];
+    const ySelected = prevY.length ? prevY.filter(v => state.headers.includes(v))
+                                   : state.headers.filter(h => state.numericCols[h]);
+    Array.from(ySel.options).forEach(o => { o.selected = ySelected.includes(o.value); });
+    // If nothing got selected, pick the first numeric (if any).
+    if (!Array.from(ySel.selectedOptions).length) {
+      const firstNum = state.headers.find(h => state.numericCols[h]);
+      if (firstNum) Array.from(ySel.options).find(o => o.value === firstNum).selected = true;
+    }
+  }
+  function renderDataPreview(){
+    const host = $('dataPreview');
+    if (!state.headers.length) {
+      host.innerHTML = '<p style="padding:10px;color:var(--gray-50);font-family:Arial,sans-serif">' + esc(t('preview.empty')) + '</p>';
+      return;
+    }
+    const rows = state.data.slice(0, 50);
+    const head = '<tr>' + state.headers.map(h => `<th>${esc(h)}</th>`).join('') + '</tr>';
+    const body = rows.map(r => '<tr>' + state.headers.map(h => {
+      const v = r[h] != null ? r[h] : '';
+      const cls = state.numericCols[h] && v !== '' ? 'num' : '';
+      return `<td class="${cls}">${esc(v)}</td>`;
+    }).join('') + '</tr>').join('');
+    host.innerHTML = '<table><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+  }
+  function selectedY(){ return Array.from($('colY').selectedOptions).map(o => o.value); }
+  function selectedX(){ return $('colX').value; }
+
+  /* ---------- Slice 1: chart primitives (scales, axes, ticks).
+     No external dependency — small SVG-friendly helpers we need for bar
+     and line charts. */
+  function linearScale(domain, range){
+    const [d0, d1] = domain, [r0, r1] = range;
+    const dr = (d1 - d0) || 1;
+    const rr = r1 - r0;
+    return v => r0 + (v - d0) / dr * rr;
+  }
+  function bandScale(values, range, padding){
+    padding = padding == null ? 0.18 : padding;
+    const n = values.length;
+    const [r0, r1] = range;
+    const step = (r1 - r0) / Math.max(1, n);
+    const band = step * (1 - padding);
+    const off = (step - band) / 2;
+    const m = new Map();
+    values.forEach((v, i) => m.set(v, r0 + i * step + off));
+    return {
+      band: band,
+      step: step,
+      apply: v => m.get(v),
+      values: values
+    };
+  }
+  function niceTicks(min, max, count){
+    count = count || 6;
+    if (min === max) { return { ticks:[min], min, max }; }
+    const range = max - min;
+    const step0 = range / count;
+    const mag = Math.pow(10, Math.floor(Math.log10(step0)));
+    const norm = step0 / mag;
+    const step = (norm >= 7.5 ? 10 : norm >= 3 ? 5 : norm >= 1.5 ? 2 : 1) * mag;
+    const niceMin = Math.floor(min / step) * step;
+    const niceMax = Math.ceil(max / step) * step;
+    const ticks = [];
+    for (let v = niceMin; v <= niceMax + step/2; v += step) ticks.push(Math.round(v * 1e10) / 1e10);
+    return { ticks, min: niceMin, max: niceMax };
+  }
+  function fmtNumber(n){
+    if (!isFinite(n)) return '';
+    if (Math.abs(n) >= 1000) return n.toLocaleString();
+    if (Math.abs(n) < 1) return Number(n.toFixed(2)).toString();
+    return Number(n.toFixed(2)).toString();
+  }
+
+  /* ---------- Slice 3: bar chart renderer.
+     Grouped bars when multiple Y columns are selected. SVG output. */
+  const W = 1200, H = 700; // viewBox
+  function renderBarChart(){
+    const x = selectedX(), ys = selectedY().filter(y => state.numericCols[y]);
+    if (!x || !ys.length) {
+      $('previewSlot').innerHTML = '<p style="padding:30px;color:var(--gray-50)">' + esc(t('chart.need')) + '</p>';
+      return;
+    }
+    const pal = currentPalette();
+    const margins = { top: 80, right: 40, bottom: 90, left: 70 };
+    const innerW = W - margins.left - margins.right, innerH = H - margins.top - margins.bottom;
+    const categories = state.data.map(r => String(r[x])).filter(v => v !== '');
+    const xs = bandScale(categories, [0, innerW], 0.22);
+    const groupW = xs.band, barW = groupW / ys.length;
+    const allVals = state.data.flatMap(r => ys.map(y => Number(r[y]) || 0));
+    const yMin = Math.min(0, ...allVals), yMax = Math.max(...allVals);
+    const yt = niceTicks(yMin, yMax, 6);
+    const ysc = linearScale([yt.min, yt.max], [innerH, 0]);
+    const tickWidth = 110; // for x-label rotation decision
+    const rotateX = (innerW / categories.length) < 64;
+    const title = ($('chartTitle').value || '').trim();
+    const out = [];
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" id="chartSvg">`);
+    out.push(`<rect width="${W}" height="${H}" fill="${pal.bg}"/>`);
+    if (title) {
+      out.push(`<text x="${W/2}" y="42" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="900" fill="${pal.axis}">${esc(title)}</text>`);
+    }
+    out.push(`<g transform="translate(${margins.left} ${margins.top})">`);
+    // Gridlines + Y axis labels
+    yt.ticks.forEach(v => {
+      const y = ysc(v);
+      out.push(`<line x1="0" x2="${innerW}" y1="${y}" y2="${y}" stroke="${pal.grid}" stroke-width="1"/>`);
+      out.push(`<text x="-10" y="${y+4}" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="14" fill="${pal.axis}">${esc(fmtNumber(v))}</text>`);
+    });
+    // Bars
+    state.data.forEach((r, ri) => {
+      const cat = String(r[x]);
+      const gx = xs.apply(cat); if (gx == null) return;
+      ys.forEach((y, yi) => {
+        const v = Number(r[y]) || 0;
+        const by = ysc(Math.max(0, v));
+        const bh = Math.abs(ysc(v) - ysc(0));
+        const bx = gx + yi * barW;
+        out.push(`<rect x="${bx+2}" y="${by}" width="${Math.max(1, barW-4)}" height="${bh}" fill="${pal.cycle[yi % pal.cycle.length]}" rx="2"/>`);
+      });
+    });
+    // X-axis labels
+    categories.forEach(cat => {
+      const cx = xs.apply(cat) + xs.band / 2;
+      if (rotateX) {
+        out.push(`<text x="${cx}" y="${innerH+18}" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="13" fill="${pal.axis}" transform="rotate(-35 ${cx} ${innerH+18})">${esc(cat)}</text>`);
+      } else {
+        out.push(`<text x="${cx}" y="${innerH+22}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="${pal.axis}">${esc(cat)}</text>`);
+      }
+    });
+    // Baseline axis line
+    out.push(`<line x1="0" x2="${innerW}" y1="${ysc(0)}" y2="${ysc(0)}" stroke="${pal.axis}" stroke-width="1.5"/>`);
+    out.push('</g>');
+    // Legend (top-right)
+    if (ys.length > 1) {
+      let lx = W - margins.right - 12;
+      ys.slice().reverse().forEach((y, i) => {
+        const col = pal.cycle[(ys.length - 1 - i) % pal.cycle.length];
+        const lw = 8 + y.length * 8 + 24;
+        lx -= lw;
+        out.push(`<rect x="${lx}" y="${margins.top - 28}" width="14" height="14" fill="${col}" rx="3"/>`);
+        out.push(`<text x="${lx + 20}" y="${margins.top - 16}" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="${pal.axis}">${esc(y)}</text>`);
+        lx -= 12;
+      });
+    }
+    out.push('</svg>');
+    $('previewSlot').innerHTML = out.join('');
+  }
+
+  /* ---------- Slice 4: line chart renderer.
+     One line per selected Y column. Same scale machinery as bar. */
+  function renderLineChart(){
+    const x = selectedX(), ys = selectedY().filter(y => state.numericCols[y]);
+    if (!x || !ys.length) {
+      $('previewSlot').innerHTML = '<p style="padding:30px;color:var(--gray-50)">' + esc(t('chart.need')) + '</p>';
+      return;
+    }
+    const pal = currentPalette();
+    const margins = { top: 80, right: 40, bottom: 90, left: 70 };
+    const innerW = W - margins.left - margins.right, innerH = H - margins.top - margins.bottom;
+    const categories = state.data.map(r => String(r[x])).filter(v => v !== '');
+    const xs = bandScale(categories, [0, innerW], 0);
+    const allVals = state.data.flatMap(r => ys.map(y => Number(r[y]) || 0));
+    const yMin = Math.min(0, ...allVals), yMax = Math.max(...allVals);
+    const yt = niceTicks(yMin, yMax, 6);
+    const ysc = linearScale([yt.min, yt.max], [innerH, 0]);
+    const rotateX = (innerW / categories.length) < 64;
+    const title = ($('chartTitle').value || '').trim();
+    const out = [];
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" id="chartSvg">`);
+    out.push(`<rect width="${W}" height="${H}" fill="${pal.bg}"/>`);
+    if (title) out.push(`<text x="${W/2}" y="42" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="900" fill="${pal.axis}">${esc(title)}</text>`);
+    out.push(`<g transform="translate(${margins.left} ${margins.top})">`);
+    yt.ticks.forEach(v => {
+      const y = ysc(v);
+      out.push(`<line x1="0" x2="${innerW}" y1="${y}" y2="${y}" stroke="${pal.grid}" stroke-width="1"/>`);
+      out.push(`<text x="-10" y="${y+4}" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="14" fill="${pal.axis}">${esc(fmtNumber(v))}</text>`);
+    });
+    // Lines
+    ys.forEach((y, yi) => {
+      const color = pal.cycle[yi % pal.cycle.length];
+      const pts = state.data.map(r => {
+        const cat = String(r[x]); const v = Number(r[y]);
+        if (xs.apply(cat) == null || !isFinite(v)) return null;
+        return { x: xs.apply(cat) + xs.band / 2, y: ysc(v) };
+      }).filter(Boolean);
+      if (pts.length < 2) return;
+      const d = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y).join(' ');
+      out.push(`<path d="${d}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`);
+      pts.forEach(p => out.push(`<circle cx="${p.x}" cy="${p.y}" r="4" fill="${color}"/>`));
+    });
+    categories.forEach(cat => {
+      const cx = xs.apply(cat) + xs.band / 2;
+      if (rotateX) {
+        out.push(`<text x="${cx}" y="${innerH+18}" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="13" fill="${pal.axis}" transform="rotate(-35 ${cx} ${innerH+18})">${esc(cat)}</text>`);
+      } else {
+        out.push(`<text x="${cx}" y="${innerH+22}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="${pal.axis}">${esc(cat)}</text>`);
+      }
+    });
+    out.push(`<line x1="0" x2="${innerW}" y1="${ysc(0)}" y2="${ysc(0)}" stroke="${pal.axis}" stroke-width="1.5"/>`);
+    out.push('</g>');
+    if (ys.length > 1) {
+      let lx = W - margins.right - 12;
+      ys.slice().reverse().forEach((y, i) => {
+        const col = pal.cycle[(ys.length - 1 - i) % pal.cycle.length];
+        const lw = 8 + y.length * 8 + 24;
+        lx -= lw;
+        out.push(`<line x1="${lx}" x2="${lx+14}" y1="${margins.top-21}" y2="${margins.top-21}" stroke="${col}" stroke-width="3"/>`);
+        out.push(`<text x="${lx + 20}" y="${margins.top - 16}" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="${pal.axis}">${esc(y)}</text>`);
+        lx -= 12;
+      });
+    }
+    out.push('</svg>');
+    $('previewSlot').innerHTML = out.join('');
+  }
+
+  /* ---------- Slice 5: bar chart race — frame interpolation engine.
+     Given a "race data set" (rows = time periods, columns = categories
+     with running values), produce a sequence of intermediate snapshots
+     for smooth animation. UI / GIF export ships in the next slice.
+
+     Input data shape (caller's responsibility to transform into this):
+       periods: [
+         { label: '2020', values: { 'Cat A': 12, 'Cat B': 8, ... } },
+         { label: '2021', values: { 'Cat A': 15, 'Cat B': 14, ... } },
+         ...
+       ]
+     Output frames: [
+       {
+         periodLabel: '2020.4',         // interpolated time label
+         entries: [
+           { name: 'Cat A', value: 13.2, rank: 0, y: 0.0 },
+           ...
+         ]
+       },
+       ...
+     ]
+     y is a 0-based slot index, smoothly interpolated between rank changes
+     across adjacent periods. The renderer (next slice) just plots bars at
+     y * rowHeight. */
+  function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function buildRaceFrames(periods, opts){
+    opts = opts || {};
+    const fps = opts.fps || 30;
+    const periodDuration = opts.periodDuration || 1.2;  // seconds per period transition
+    const framesPerPeriod = Math.round(fps * periodDuration);
+    if (!periods.length) return [];
+    const allCats = Array.from(new Set(periods.flatMap(p => Object.keys(p.values))));
+    function rank(values){
+      return allCats.slice().sort((a,b) => (values[b]||0) - (values[a]||0));
+    }
+    const out = [];
+    for (let i = 0; i < periods.length - 1; i++) {
+      const p0 = periods[i], p1 = periods[i+1];
+      const r0 = rank(p0.values), r1 = rank(p1.values);
+      const rankOf0 = Object.fromEntries(r0.map((c, idx) => [c, idx]));
+      const rankOf1 = Object.fromEntries(r1.map((c, idx) => [c, idx]));
+      for (let f = 0; f <= framesPerPeriod; f++) {
+        const u = framesPerPeriod === 0 ? 1 : f / framesPerPeriod;
+        const eu = easeInOutCubic(u);
+        const entries = allCats.map(name => {
+          const v0 = +p0.values[name] || 0, v1 = +p1.values[name] || 0;
+          const value = v0 + (v1 - v0) * eu;
+          const y0 = rankOf0[name] != null ? rankOf0[name] : allCats.length;
+          const y1 = rankOf1[name] != null ? rankOf1[name] : allCats.length;
+          const y = y0 + (y1 - y0) * eu;
+          return { name, value, y };
+        });
+        // Compute integer rank from interpolated y for callers that want it
+        entries.slice().sort((a,b) => a.y - b.y).forEach((e, idx) => { e.rank = idx; });
+        out.push({
+          periodLabel: (typeof p0.label === 'string' && typeof p1.label === 'string')
+            ? (eu < 0.5 ? p0.label : p1.label)
+            : (Number(p0.label) + (Number(p1.label) - Number(p0.label)) * eu).toFixed(1),
+          entries
+        });
+      }
+    }
+    return out;
+  }
+  // Make available for the next slice (UI + export):
+  window.DrawSplatChartStudio = window.DrawSplatChartStudio || {};
+  window.DrawSplatChartStudio.buildRaceFrames = buildRaceFrames;
+
+  // Stub renderer for the bar race chart type. Shows current state +
+  // a hint that interactive playback ships next slice.
+  function renderRacePreview(){
+    const x = selectedX(), ys = selectedY().filter(y => state.numericCols[y]);
+    if (!x || !ys.length) {
+      $('previewSlot').innerHTML = '<p style="padding:30px;color:var(--gray-50)">' + esc(t('chart.need')) + '</p>';
+      return;
+    }
+    // For now: render the LAST period as a simple horizontal bar chart so
+    // users see the "finish line" of the race. Animation playback ships
+    // in the next slice using buildRaceFrames.
+    const pal = currentPalette();
+    const margins = { top: 80, right: 40, bottom: 60, left: 220 };
+    const innerW = W - margins.left - margins.right, innerH = H - margins.top - margins.bottom;
+    const lastRow = state.data[state.data.length - 1] || {};
+    const entries = ys.map(y => ({ name: y, value: Number(lastRow[y]) || 0 }))
+                     .sort((a,b) => b.value - a.value);
+    const max = Math.max(1, ...entries.map(e => e.value));
+    const ts = niceTicks(0, max, 5);
+    const xsc = linearScale([0, ts.max], [0, innerW]);
+    const rowH = Math.min(60, innerH / Math.max(1, entries.length));
+    const title = ($('chartTitle').value || '').trim() + ' (last period — ' + esc(String(lastRow[x] || '')) + ')';
+    const out = [];
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" id="chartSvg">`);
+    out.push(`<rect width="${W}" height="${H}" fill="${pal.bg}"/>`);
+    out.push(`<text x="${W/2}" y="42" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="900" fill="${pal.axis}">${esc(title)}</text>`);
+    out.push(`<g transform="translate(${margins.left} ${margins.top})">`);
+    ts.ticks.forEach(v => {
+      const lx = xsc(v);
+      out.push(`<line x1="${lx}" x2="${lx}" y1="0" y2="${innerH}" stroke="${pal.grid}" stroke-width="1"/>`);
+      out.push(`<text x="${lx}" y="${innerH+22}" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="${pal.axis}">${esc(fmtNumber(v))}</text>`);
+    });
+    entries.forEach((e, i) => {
+      const y = i * rowH + 8;
+      const bh = rowH - 16;
+      const bw = xsc(e.value);
+      const color = pal.cycle[i % pal.cycle.length];
+      out.push(`<text x="-12" y="${y + bh/2 + 5}" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="700" fill="${pal.axis}">${esc(e.name)}</text>`);
+      out.push(`<rect x="0" y="${y}" width="${bw}" height="${bh}" fill="${color}" rx="3"/>`);
+      out.push(`<text x="${bw + 8}" y="${y + bh/2 + 5}" text-anchor="start" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="${pal.axis}">${esc(fmtNumber(e.value))}</text>`);
+    });
+    out.push('</g>');
+    out.push('</svg>');
+    $('previewSlot').innerHTML = out.join('');
+    // Engine-readiness indicator
+    const frames = buildRaceFrames(racePeriodsFromState(), { fps: 30, periodDuration: 1.0 });
+    $('raceFrameStatus').textContent = frames.length
+      ? t('race.framesReady', { n: frames.length, secs: (frames.length / 30).toFixed(1) })
+      : '';
+  }
+  // Transform the current CSV into the race-engine's period structure.
+  function racePeriodsFromState(){
+    const x = selectedX(), ys = selectedY().filter(y => state.numericCols[y]);
+    if (!x || !ys.length) return [];
+    return state.data.map(row => ({
+      label: String(row[x]),
+      values: Object.fromEntries(ys.map(y => [y, Number(row[y]) || 0]))
+    }));
+  }
+
+  function render(){
+    if (!state.headers.length) {
+      $('previewSlot').innerHTML = '<p style="padding:30px;color:var(--gray-50)">' + esc(t('chart.loadFirst')) + '</p>';
+      $('raceFrameStatus').textContent = '';
+      return;
+    }
+    if (state.chartType === 'bar')  return renderBarChart();
+    if (state.chartType === 'line') return renderLineChart();
+    if (state.chartType === 'race') return renderRacePreview();
+  }
+
+  // ---------- Export ----------
+  function svgString(){
+    const svg = $('chartSvg'); if (!svg) return '';
+    return new XMLSerializer().serializeToString(svg);
+  }
+  function downloadBlob(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  async function svgToPngBlob(scaleX){
+    scaleX = scaleX || 2;
+    const xml = svgString(); if (!xml) throw new Error('No chart rendered');
+    const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const w = (img.naturalWidth || W) * scaleX, h = (img.naturalHeight || H) * scaleX;
+        const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h);
+        try { cx.drawImage(img, 0, 0, w, h); }
+        catch (err) { reject(err); return; }
+        cv.toBlob(b => b ? resolve(b) : reject(new Error('PNG encode failed')), 'image/png');
+      };
+      img.onerror = () => reject(new Error('SVG decode failed'));
+      img.src = dataUrl;
+    });
+  }
+  function suggestName(ext){
+    const base = ($('chartTitle').value || 'chart').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'chart';
+    return base + '.' + ext;
+  }
+
+  // ---------- Wiring ----------
+  function setChartType(kind){
+    state.chartType = kind;
+    document.querySelectorAll('.chart-mode-row button').forEach(b => b.classList.toggle('active', b.dataset.chart === kind));
+    render();
+  }
+  document.querySelectorAll('.chart-mode-row button').forEach(b => b.addEventListener('click', () => setChartType(b.dataset.chart)));
+  $('csvInput').addEventListener('input', e => { loadCsv(e.target.value); render(); });
+  $('csvFile').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    if (f.size > 4 * 1024 * 1024) { setStatus(t('status.fileTooLarge'), 'danger'); return; }
+    const text = await f.text();
+    $('csvInput').value = text;
+    loadCsv(text); render();
+    setStatus(t('status.loadedFile', { name: f.name }), 'success');
+    e.target.value = '';
+  });
+  const SAMPLE_CSV = 'month,reading,math,science\nJan,12,18,8\nFeb,15,20,11\nMar,18,22,14\nApr,22,25,18\nMay,25,28,22\nJun,28,30,26';
+  $('csvSampleBtn').addEventListener('click', () => { $('csvInput').value = SAMPLE_CSV; loadCsv(SAMPLE_CSV); render(); setStatus(t('status.sampleLoaded'), 'info'); });
+  $('csvClearBtn').addEventListener('click', () => { $('csvInput').value = ''; loadCsv(''); render(); setStatus(t('status.cleared'), 'info'); });
+  $('colX').addEventListener('change', render);
+  $('colY').addEventListener('change', render);
+  $('chartTitle').addEventListener('input', render);
+  $('paletteSelect').addEventListener('change', () => { renderSwatches(); render(); });
+  $('paletteSwatches').addEventListener('click', e => {
+    const btn = e.target.closest('.swatch-hex'); if (!btn) return;
+    const hex = btn.dataset.copy;
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(hex).then(() => setStatus(t('status.hexCopied', { hex }), 'success'));
+  });
+  $('renderBtn').addEventListener('click', render);
+  $('downloadSvgBtn').addEventListener('click', () => {
+    const xml = svgString(); if (!xml) return setStatus(t('status.noChart'), 'danger');
+    downloadBlob(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }), suggestName('svg'));
+    setStatus(t('status.svgSaved'), 'success');
+  });
+  $('downloadPngBtn').addEventListener('click', async () => {
+    try { const blob = await svgToPngBlob(2); downloadBlob(blob, suggestName('png')); setStatus(t('status.pngSaved'), 'success'); }
+    catch (err) { setStatus(t('status.pngFail', { msg: err.message || err }), 'danger'); }
+  });
+  $('resetBtn').addEventListener('click', () => {
+    $('csvInput').value = SAMPLE_CSV; loadCsv(SAMPLE_CSV);
+    $('chartTitle').value = 'Reading, math, science by month';
+    $('paletteSelect').value = 'drawsplat';
+    renderSwatches(); setChartType('bar');
+    setStatus(t('status.reset'), 'info');
+  });
+  document.addEventListener('widget-i18n:changed', () => { renderSwatches(); render(); });
+
+  // Boot
+  $('csvInput').value = SAMPLE_CSV;
+  loadCsv(SAMPLE_CSV);
+  renderSwatches();
+  render();
+})();
+</script>
+</body>
+</html>
