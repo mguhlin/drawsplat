@@ -128,10 +128,10 @@
     }
     .app-grid {
       display: grid;
-      grid-template-columns: minmax(260px, 320px) 1fr;
+      grid-template-columns: minmax(200px, 240px) 1fr;
       gap: 18px;
       align-items: start;
-      padding-top: 22px;
+      padding-top: 18px;
     }
     @media (max-width: 940px) {
       .app-grid { grid-template-columns: 1fr; }
@@ -156,11 +156,13 @@
       letter-spacing: .06em;
     }
     .template-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
+    .templates-bar { margin-bottom: 18px; }
     .template-grid button {
+      flex: 0 0 auto;
       min-height: 40px;
       padding: 6px 10px;
       border: 2px solid var(--gray-30);
@@ -317,8 +319,8 @@
       </div>
     </header>
 
-    <main class="app-grid">
-      <aside class="panel" data-i18n-aria-label="panel.templates.aria" aria-label="Templates and options">
+    <main>
+      <section class="panel templates-bar" data-i18n-aria-label="panel.templates.aria" aria-label="Templates">
         <h2 data-i18n="templates.h2">Templates</h2>
         <div class="template-grid" id="templateGrid">
           <button type="button" data-mtpl="flowchart" data-i18n="tpl.flowchart">Flowchart</button>
@@ -334,7 +336,9 @@
           <button type="button" data-mtpl="kanban" data-i18n="tpl.kanban">Kanban</button>
           <button type="button" data-mtpl="venn" data-i18n="tpl.venn">Venn</button>
         </div>
-
+      </section>
+      <div class="app-grid">
+      <aside class="panel" aria-label="Options">
         <h3 data-i18n="templates.h3lang">Template language</h3>
         <div class="field">
           <label for="langSelect" data-i18n="field.lang">Language</label>
@@ -384,6 +388,7 @@
         </div>
         <div class="status" id="statusLine" role="status"></div>
       </section>
+      </div>
     </main>
   </div>
 
@@ -893,7 +898,7 @@
   function paletteDirective(key) {
     const p = PALETTES[key];
     if (!p || !p.vars) return '';
-    return "%%{init: {\"theme\": \"base\", \"themeVariables\": " + JSON.stringify(p.vars) + "}}%%\n";
+    return "%%{init: " + JSON.stringify({ theme: "base", themeVariables: p.vars }, null, 2) + "}%%\n";
   }
   function applyPaletteToSource(src, key) {
     const stripped = String(src || '').replace(INIT_DIRECTIVE_RE, '');
