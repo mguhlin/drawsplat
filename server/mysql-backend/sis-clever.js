@@ -112,7 +112,7 @@ function attachSisRoutes(app, pool, options) {
       await logEvent('SIS_CONNECTED', { actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role, targetType: 'sis_clever' });
       res.json({ ok: true });
     } catch (err) {
-      res.status(500).json({ ok: false, error: err.message });
+      res.status(500).json({ ok: false, error: 'Server error' });
     }
   });
 
@@ -123,7 +123,7 @@ function attachSisRoutes(app, pool, options) {
       });
       res.json(result);
     } catch (err) {
-      res.status(500).json({ ok: false, error: err.message });
+      res.status(500).json({ ok: false, error: 'Server error' });
     }
   });
 

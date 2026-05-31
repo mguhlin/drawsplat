@@ -1,6 +1,6 @@
 # Handoff after v3.1.0 — 2026-05-24
 
-> If you're an AI assistant (Codex, Claude Code, Copilot, Cursor, etc.) picking up this repo, **read this file first**. It explains what's freshly shipped, what's intentionally deferred, and where the canonical references live.
+> If you're an AI assistant picking up this repo, **read this file first**. It explains what's freshly shipped, what's intentionally deferred, and where the canonical references live.
 
 DrawSplatTM is at the **v3.1.0** GitHub release. `main` is clean and pushed. `pages/download.html` "Latest stable" CTA points at the published zip (`drawsplat-selfhost-v3.1.0.zip`, ~86 MB, sha256 `cb9311fcec…34d1d`).
 
@@ -30,7 +30,7 @@ New / rewritten files under `server/mysql-backend/`:
 
 - `scripts/make-selfhost-bundle.sh [label]` builds `dist/drawsplat-selfhost-<label>.zip` excluding `.git`, `node_modules`, `.env`, logs.
 - `pages/download.html` lists the three deployment paths (browser-only, Apps Script, MySQL) and links the GitHub release. Hero shows the v3.1.0 badge + SHA-256.
-- "Download for Self-Hosting" link is now in the Support dropdown across **24 top-nav pages** (index, pages/*, legal/*, guides/*).
+- "Download for Self-Hosting" link is now in the Technical dropdown across the top-nav pages (index, pages/*, legal/*, guides/*).
 
 ### 3. Hero imagery added
 

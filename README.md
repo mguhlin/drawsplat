@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1, Compliance Phases 1–3 complete on the Apps Script path, Phase 4 (MySQL) scaffolded end-to-end (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI)
+- **Status:** v3.1.7, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
 - **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
 
 ## Getting started
@@ -29,7 +29,17 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.6 — Animated GIF Maker: real LZW compression (3–10× smaller files), palette-size option, and cross-browser MP4 export via WebCodecs with a hand-rolled muxer. Concept Map: traditional Roman/Letter/Number outline formatter. Blog page: thumbnails from RSS feed. Firefox WebM export hot-fix.** Pinned as a GitHub release: [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6). Previous milestones: [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.7 — Security hardening release for self-hosters.** MySQL backend now ships with security headers, API/auth/parent-request rate limits, safer CORS defaults, admin bootstrap controls, protected maintenance cleanup, room-key validation, JSON payload caps, sanitized client-visible errors, and tighter SSE subscriptions. Markdown Studio now validates Markdown link/image URLs and escapes attributes before previewing. The self-host download page and setup docs are refreshed for the hardened defaults. Pinned as a GitHub release: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7). Previous milestones: [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.7)
+
+- **MySQL backend security hardening.** Added `server/mysql-backend/security.js` with reusable security headers, CORS allowlist support, lightweight in-memory rate limiting, maintenance-route auth, admin bootstrap controls, email/room-key validation, and safe string helpers.
+- **Safer self-host defaults.** Docker and `.env.example` no longer document wildcard CORS as the default. Public registration creates teacher/parent accounts only unless `ALLOW_ADMIN_SELF_REGISTRATION=true` and `BOOTSTRAP_ADMIN_EMAILS` explicitly allow the first admin bootstrap.
+- **Protected sensitive routes.** `/maintenance/delete-expired` now requires either `MAINTENANCE_TOKEN` or a district/campus admin bearer token. Auth, OAuth, and parent request routes have rate limits. SSE board subscriptions are limited to valid room keys and capped per connection.
+- **Reduced information leakage.** Backend 500 responses no longer echo raw exception messages to clients. OAuth failures return a generic invalid-token response.
+- **Input and payload hardening.** Room keys must be short URL-safe IDs, board/template JSON saves have configurable byte caps, and user-facing string fields are normalized/truncated before storage.
+- **Markdown Studio XSS fix.** Markdown preview now allowlists URL schemes for links/images and escapes generated `href`, `src`, `alt`, and code-language attributes.
+- **Tool-specific AI assistant reference removed.** The handoff doc now uses generic AI-assistant wording.
 
 ## Recent improvements (v3.1.6)
 
@@ -97,7 +107,7 @@ Other docs that pair with setup:
 - **Compliance Console operator guide** at `guides/compliance-guide.html` walks through the eight Console sections.
 - **Contact / Information Request form** at `pages/contact.html` replaces every `mailto:` on the site. Posts to a new `ContactRequests` Google Sheet tab via `apps-script/Code.gs` v1.8.0; admin gets an email notification.
 - **Free pricing model.** `pages/pricing.html` is now three cards: Everyone (free), Coffee (optional [Buy Me a Coffee](https://buymeacoffee.com/drawsplat) donation), Support & PD (optional paid). New pricing hero infographic. PayPal links retired.
-- **Navigation overhaul.** Four dropdowns — For Teachers, For Families, Privacy & Terms, Support — plus top-level Pricing. **Download for Self-Hosting** lives in the Support dropdown on all 24+ top-nav pages.
+- **Navigation overhaul.** Dropdowns for For Teachers, For Families, Technical, Support, Tools, Widgets, and Games. **Download for Self-Hosting** now lives in the Technical dropdown across the top-nav pages.
 - **24 top-nav pages** (index, pages/*, legal/*, guides/*) refreshed with the consistent dropdown nav, accessible `<details name="landing-topnav">` pattern (only one menu open at a time).
 ## Version evolution
 
@@ -147,6 +157,15 @@ timeline
   v3.1.3 : Image upload approval queue + NDPA / DPA review-packet polish
          : Compliance Roadmap Days 1.3 / 1.4 closed; ImageQueue sheet + Apps Script endpoints; whiteboard polls + swaps placeholders; Compliance Console review UI
          : CIPA support statement in Texas page; evidence gallery + docs/CAPTURE.md operator checklist
+  v3.1.4 : Admin viewer preview + Concept Map embed + Animated GIF Maker
+         : Read-only admin tour, whiteboard audio toggle, game access panel, GIF maker, concept-map schema/embed/export upgrades
+  v3.1.5 : Concept Map layout + compliance docs
+         : Overlap resolver, section filter, Markdown Studio handoff, GDPR summary, compliance gap list, consent banner
+  v3.1.6 : GIF compression + video export
+         : Real GIF LZW, palette-size option, MP4/WebM export, traditional concept-map outline, blog thumbnails
+  v3.1.7 : Self-host security hardening
+         : Backend security headers, rate limits, safer CORS, admin bootstrap guardrails, protected maintenance cleanup
+         : Markdown Studio URL allowlist + attribute escaping; refreshed self-host docs and bundle
 ```
 
 ## Included files
@@ -188,7 +207,7 @@ timeline
 - `assets/brand/` — logo and cover artwork, including the new pricing + Texas Privacy hero infographics + Buy Me a Coffee QR
 - `sw.js` — service worker for offline shell
 - `apps-script/Code.gs` — Google Apps Script backend (v1.8.0): boards, rooms, turn-ins, parent requests, compliance config, audit, retention, contact requests
-- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes `server.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
+- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes `server.js`, `security.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
 - `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
 - `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller)
 - `compliance.config.json` — default safety / retention / privacy configuration (client baseline; server-authoritative copy lives in Apps Script Script Property or the MySQL `compliance_config` table)
@@ -224,7 +243,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the v3.1.0 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Production hardening (integration test suite, multi-instance Redis pub/sub for SSE) is still TODO.
+Districts that want to deploy this path can grab the v3.1.7 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 

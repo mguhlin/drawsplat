@@ -12,6 +12,8 @@
  * map for Redis pub/sub. The endpoint shape stays the same.
  */
 
+const { isValidRoomKey } = require('./security');
+
 const channels = new Map();
 
 function add(channel, res) {
@@ -39,7 +41,12 @@ function attach(app, basePath, auth) {
     const userChannel = `user:${req.dsUser.id}`;
     add(userChannel, res);
 
-    const boardKeys = String(req.query.boards || '').split(',').map(s => s.trim()).filter(Boolean);
+    const boardKeys = String(req.query.boards || '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+      .filter(isValidRoomKey)
+      .slice(0, 25);
     for (const roomKey of boardKeys) add(`board:${roomKey}`, res);
 
     const heartbeat = setInterval(() => {

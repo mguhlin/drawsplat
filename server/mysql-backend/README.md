@@ -132,6 +132,8 @@ Drop the Sheet tabs into a folder as `Users.csv`, `ParentRequests.csv`, `Audit.c
 
 - Serve the API over HTTPS (terminate TLS at a reverse proxy or use a managed PaaS).
 - Set `CORS_ORIGIN` to your frontend domain.
+- Keep `ALLOW_ADMIN_SELF_REGISTRATION=false` except during first-admin bootstrap with `BOOTSTRAP_ADMIN_EMAILS`.
+- Set `MAINTENANCE_TOKEN` for automated retention cleanup, or call maintenance routes with a district/campus admin bearer token.
 - Rotate `DRAWSPLAT_PEPPER` only when you intend to invalidate every stored password.
 - Run automated backups of the MySQL volume.
 - Verify the Clever district token is stored as encrypted-at-rest (managed MySQL providers handle this; bare-metal installs need disk encryption).

@@ -4,6 +4,14 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const mysql = require('mysql2/promise');
+const {
+  buildCorsOptions,
+  securityHeaders,
+  createRateLimiter,
+  requireMaintenanceAuth,
+  safeString,
+  isValidRoomKey
+} = require('./security');
 
 const app = express();
 const apiBasePath = (process.env.API_BASE_PATH || '/api/drawsplat/mysql').replace(/\/+$/, '');
@@ -22,8 +30,12 @@ const pool = mysql.createPool({
   ssl: process.env.MYSQL_SSL === 'true' ? {} : undefined
 });
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
+app.disable('x-powered-by');
+if (process.env.TRUST_PROXY === 'true') app.set('trust proxy', 1);
+app.use(securityHeaders);
+app.use(cors(buildCorsOptions()));
 app.use(express.json({ limit: '25mb' }));
+app.use(apiBasePath, createRateLimiter({ scope: 'api', windowMs: 60 * 1000, max: Number(process.env.API_RATE_LIMIT_PER_MINUTE || 300) }));
 
 // Serve the bundled parent portal HTML + JS so districts get the family-facing
 // surface alongside the API. Static assets are mounted under /parent-portal/.
@@ -91,12 +103,20 @@ function expiresAt(hours = sessionTtlHours){
   return date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
+function validateJsonPayload(value, maxBytes, name) {
+  const json = JSON.stringify(value);
+  if (Buffer.byteLength(json, 'utf8') > maxBytes) {
+    throw Object.assign(new Error(`${name} exceeds maximum size`), { status: 413 });
+  }
+  return json;
+}
+
 async function ensureRoom(roomKey, title = null){
   const key = String(roomKey || '').trim();
-  if(!key) throw Object.assign(new Error('roomKey is required'), { status: 400 });
+  if(!isValidRoomKey(key)) throw Object.assign(new Error('roomKey must be 1-80 letters, numbers, underscores, or hyphens'), { status: 400 });
   await pool.execute(
     'INSERT INTO rooms (room_key, title, expires_at) VALUES (:roomKey, :title, :expiresAt) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP',
-    { roomKey: key, title, expiresAt: expiresAt() }
+    { roomKey: key, title: safeString(title, 200) || null, expiresAt: expiresAt() }
   );
   const [rows] = await pool.execute('SELECT id, room_key AS roomKey, title, frozen FROM rooms WHERE room_key = :roomKey', { roomKey: key });
   return rows[0];
@@ -135,16 +155,17 @@ app.get(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
 app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
   const room = await ensureRoom(req.params.roomKey, req.body.title || null);
   if(!req.body.board) return res.status(400).json({ ok: false, error: 'board is required' });
+  const boardJson = validateJsonPayload(req.body.board, Number(process.env.MAX_BOARD_JSON_BYTES || 5 * 1024 * 1024), 'board');
 
   if (room.frozen) {
-    await dsLogEvent('BOARD_WRITE_BLOCKED', { actor: req.body.createdBy || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { reason: 'frozen' } });
+    await dsLogEvent('BOARD_WRITE_BLOCKED', { actor: safeString(req.body.createdBy, 200) || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { reason: 'frozen' } });
     return res.status(423).json({ ok: false, error: 'board_frozen' });
   }
 
   const config = await loadComplianceConfig();
   const safety = dsCheckBoardSafety(req.body.board, config);
   if (!safety.ok) {
-    await dsLogEvent('TEXT_FILTER_HIT', { actor: req.body.createdBy || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { hits: safety.hits.slice(0, 10) } });
+    await dsLogEvent('TEXT_FILTER_HIT', { actor: safeString(req.body.createdBy, 200) || null, targetType: 'room', targetId: String(req.params.roomKey), metadata: { hits: safety.hits.slice(0, 10) } });
     return res.status(422).json({ ok: false, error: safety.reason || 'safety_block', hits: safety.hits });
   }
 
@@ -152,12 +173,12 @@ app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
     'INSERT INTO board_snapshots (room_id, board_json, created_by, expires_at) VALUES (:roomId, CAST(:boardJson AS JSON), :createdBy, :expiresAt)',
     {
       roomId: room.id,
-      boardJson: JSON.stringify(req.body.board),
-      createdBy: req.body.createdBy || null,
+      boardJson,
+      createdBy: safeString(req.body.createdBy, 200) || null,
       expiresAt: req.body.expiresAt || expiresAt()
     }
   );
-  realtime.publishBoard(req.params.roomKey, 'board.updated', { roomKey: req.params.roomKey, createdBy: req.body.createdBy || null, at: new Date().toISOString() });
+  realtime.publishBoard(req.params.roomKey, 'board.updated', { roomKey: req.params.roomKey, createdBy: safeString(req.body.createdBy, 200) || null, at: new Date().toISOString() });
   res.json({ ok: true, room });
 }));
 
@@ -168,9 +189,10 @@ app.get(apiBasePath + '/templates', asyncRoute(async (_req, res) => {
 
 app.post(apiBasePath + '/templates', asyncRoute(async (req, res) => {
   if(!req.body.name || !req.body.template) return res.status(400).json({ ok: false, error: 'name and template are required' });
+  const templateJson = validateJsonPayload(req.body.template, Number(process.env.MAX_TEMPLATE_JSON_BYTES || 2 * 1024 * 1024), 'template');
   const [result] = await pool.execute(
     'INSERT INTO templates (name, template_json) VALUES (:name, CAST(:templateJson AS JSON))',
-    { name: req.body.name, templateJson: JSON.stringify(req.body.template) }
+    { name: safeString(req.body.name, 200), templateJson }
   );
   res.json({ ok: true, templateId: result.insertId });
 }));
@@ -184,22 +206,23 @@ app.get(apiBasePath + '/turnins', asyncRoute(async (_req, res) => {
 
 app.post(apiBasePath + '/turnins', asyncRoute(async (req, res) => {
   if(!req.body.board) return res.status(400).json({ ok: false, error: 'board is required' });
+  const boardJson = validateJsonPayload(req.body.board, Number(process.env.MAX_BOARD_JSON_BYTES || 5 * 1024 * 1024), 'board');
   let roomId = null;
   if(req.body.roomKey) roomId = (await ensureRoom(req.body.roomKey)).id;
   const config = await loadComplianceConfig();
   const safety = dsCheckBoardSafety(req.body.board, config);
   if (!safety.ok) {
-    await dsLogEvent('TEXT_FILTER_HIT', { actor: req.body.studentName || null, targetType: 'turnin', metadata: { hits: safety.hits.slice(0, 10) } });
+    await dsLogEvent('TEXT_FILTER_HIT', { actor: safeString(req.body.studentName, 200) || null, targetType: 'turnin', metadata: { hits: safety.hits.slice(0, 10) } });
     return res.status(422).json({ ok: false, error: safety.reason || 'safety_block', hits: safety.hits });
   }
   const [result] = await pool.execute(
     'INSERT INTO turnins (room_id, student_name, class_name, title, board_json, expires_at) VALUES (:roomId, :studentName, :className, :title, CAST(:boardJson AS JSON), :expiresAt)',
     {
       roomId,
-      studentName: req.body.studentName || null,
-      className: req.body.className || null,
-      title: req.body.title || null,
-      boardJson: JSON.stringify(req.body.board),
+      studentName: safeString(req.body.studentName, 200) || null,
+      className: safeString(req.body.className, 200) || null,
+      title: safeString(req.body.title, 200) || null,
+      boardJson,
       expiresAt: req.body.expiresAt || null
     }
   );
@@ -213,7 +236,7 @@ app.delete(apiBasePath + '/sessions/:roomKey', asyncRoute(async (req, res) => {
   res.json({ ok: true, deleted: true });
 }));
 
-app.post(apiBasePath + '/maintenance/delete-expired', asyncRoute(async (_req, res) => {
+app.post(apiBasePath + '/maintenance/delete-expired', requireMaintenanceAuth(dsAuth), asyncRoute(async (_req, res) => {
   const [snapshots] = await pool.execute('DELETE FROM board_snapshots WHERE expires_at IS NOT NULL AND expires_at < NOW()');
   const [turnins] = await pool.execute('DELETE FROM turnins WHERE expires_at IS NOT NULL AND expires_at < NOW()');
   const [rooms] = await pool.execute('DELETE FROM rooms WHERE expires_at IS NOT NULL AND expires_at < NOW()');
@@ -221,6 +244,9 @@ app.post(apiBasePath + '/maintenance/delete-expired', asyncRoute(async (_req, re
 }));
 
 app.use((err, _req, res, _next) => {
+  if (err && err.message === 'cors_origin_not_allowed') {
+    return res.status(403).json({ ok: false, error: 'cors_origin_not_allowed' });
+  }
   const status = err.status || 500;
   res.status(status).json({ ok: false, error: status === 500 ? 'Server error' : err.message });
 });

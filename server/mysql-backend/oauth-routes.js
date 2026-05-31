@@ -11,6 +11,7 @@
  */
 
 const crypto = require('crypto');
+const { createRateLimiter, normalizeEmail, chooseSelfRegisteredRole } = require('./security');
 
 function generateSessionToken() { return crypto.randomBytes(32).toString('base64url'); }
 function sha256(value) { return crypto.createHash('sha256').update(String(value)).digest(); }
@@ -25,7 +26,7 @@ async function verifyGoogle(idToken, expectedAudience) {
   return {
     provider: 'google',
     subject: payload.sub,
-    email: payload.email,
+    email: normalizeEmail(payload.email),
     displayName: payload.name || payload.email,
     pictureUrl: payload.picture || null
   };
@@ -69,6 +70,7 @@ async function issueSession(pool, userRow, req, sessionTtlHours) {
 }
 
 async function upsertProviderUser(pool, profile, defaultRole) {
+  const assignedRole = chooseSelfRegisteredRole(defaultRole, profile.email);
   const [existing] = await pool.query(
     `SELECT * FROM users WHERE (provider = ? AND provider_subject = ?) OR (email = ? AND deleted_at IS NULL) LIMIT 1`,
     [profile.provider, profile.subject, profile.email]
@@ -83,7 +85,7 @@ async function upsertProviderUser(pool, profile, defaultRole) {
   const [r] = await pool.execute(
     `INSERT INTO users (email, display_name, role, provider, provider_subject)
      VALUES (?, ?, ?, ?, ?)`,
-    [profile.email, profile.displayName || '', defaultRole, profile.provider, profile.subject]
+    [profile.email, profile.displayName || '', assignedRole, profile.provider, profile.subject]
   );
   const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [r.insertId]);
   return rows[0];
@@ -94,8 +96,9 @@ function attachOAuthRoutes(app, pool, options) {
   const sessionTtlHours = options.sessionTtlHours || 24;
   const googleClientId = options.googleClientId || process.env.GOOGLE_CLIENT_ID || '';
   const logEvent = options.logEvent || (async () => {});
+  const authLimiter = createRateLimiter({ scope: 'oauth', windowMs: 15 * 60 * 1000, max: Number(process.env.AUTH_RATE_LIMIT_PER_15_MIN || 20) });
 
-  app.post(basePath + '/auth/google', async (req, res) => {
+  app.post(basePath + '/auth/google', authLimiter, async (req, res) => {
     try {
       const idToken = String((req.body && req.body.idToken) || '');
       if (!idToken) return res.status(400).json({ ok: false, error: 'idToken_required' });
@@ -105,11 +108,11 @@ function attachOAuthRoutes(app, pool, options) {
       await logEvent('LOGIN', { actor: user.email, actorUserId: user.id, actorRole: user.role, targetType: 'session', metadata: { provider: 'google' } });
       res.json({ ok: true, token, expiresAt, user: { id: user.id, email: user.email, role: user.role, displayName: user.display_name } });
     } catch (err) {
-      res.status(401).json({ ok: false, error: err.message });
+      res.status(401).json({ ok: false, error: 'invalid_oauth_token' });
     }
   });
 
-  app.post(basePath + '/auth/microsoft', async (req, res) => {
+  app.post(basePath + '/auth/microsoft', authLimiter, async (req, res) => {
     try {
       const accessToken = String((req.body && req.body.accessToken) || '');
       if (!accessToken) return res.status(400).json({ ok: false, error: 'accessToken_required' });
@@ -119,7 +122,7 @@ function attachOAuthRoutes(app, pool, options) {
       await logEvent('LOGIN', { actor: user.email, actorUserId: user.id, actorRole: user.role, targetType: 'session', metadata: { provider: 'microsoft' } });
       res.json({ ok: true, token, expiresAt, user: { id: user.id, email: user.email, role: user.role, displayName: user.display_name } });
     } catch (err) {
-      res.status(401).json({ ok: false, error: err.message });
+      res.status(401).json({ ok: false, error: 'invalid_oauth_token' });
     }
   });
 }

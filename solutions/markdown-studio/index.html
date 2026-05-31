@@ -977,13 +977,31 @@ def hello():
   function escapeHtml(t) {
     return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
+  function escapeAttr(t) {
+    return escapeHtml(t).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeMarkdownUrl(url, kind) {
+    const raw = String(url || '').trim().replace(/[\u0000-\u001f\u007f\s]+/g, '');
+    if (!raw) return '';
+    const lower = raw.toLowerCase();
+    if (lower.startsWith('http://') || lower.startsWith('https://')) return raw;
+    if (kind === 'link' && lower.startsWith('mailto:')) return raw;
+    if (raw[0] === '#' || raw[0] === '/' || raw.startsWith('./') || raw.startsWith('../')) return raw;
+    return '';
+  }
 
   function inlineFormat(text) {
     let s = escapeHtml(text);
     // Images first (must come before links)
-    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy">');
+    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt, url) => {
+      const safeUrl = safeMarkdownUrl(url, 'image');
+      return safeUrl ? '<img src="' + escapeAttr(safeUrl) + '" alt="' + escapeAttr(alt) + '" loading="lazy">' : alt;
+    });
     // Links
-    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => {
+      const safeUrl = safeMarkdownUrl(url, 'link');
+      return safeUrl ? '<a href="' + escapeAttr(safeUrl) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label;
+    });
     // Inline code (do before emphasis so we don't process inside it; minimal version)
     s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
     // Bold + italic combos
@@ -1050,7 +1068,7 @@ def hello():
           codeLang = t.replace(/^```/, '').trim();
           codeBuf = [];
         } else {
-          html += '<pre><code' + (codeLang ? ' class="language-' + escapeHtml(codeLang) + '"' : '') + '>' +
+          html += '<pre><code' + (codeLang ? ' class="language-' + escapeAttr(codeLang) + '"' : '') + '>' +
                   escapeHtml(codeBuf.join('\n')) + '</code></pre>';
           inCode = false;
           codeLang = '';
@@ -1177,7 +1195,7 @@ def hello():
     function pushCode(code, lang) {
       flushList();
       // WordPress core/code block. Language is preserved via class for highlighters.
-      const cls = lang ? ' class="language-' + escapeHtml(lang) + '"' : '';
+      const cls = lang ? ' class="language-' + escapeAttr(lang) + '"' : '';
       out.push('<!-- wp:code -->');
       out.push('<pre class="wp-block-code"><code' + cls + '>' + escapeHtml(code) + '</code></pre>');
       out.push('<!-- /wp:code -->');
@@ -1185,9 +1203,11 @@ def hello():
     }
 
     function pushImage(alt, src) {
+      const safeUrl = safeMarkdownUrl(src, 'image');
+      if (!safeUrl) return;
       flushList();
       out.push('<!-- wp:image -->');
-      out.push('<figure class="wp-block-image"><img src="' + src + '" alt="' + alt + '"/></figure>');
+      out.push('<figure class="wp-block-image"><img src="' + escapeAttr(safeUrl) + '" alt="' + escapeAttr(alt) + '"/></figure>');
       out.push('<!-- /wp:image -->');
       out.push('');
     }

@@ -201,7 +201,7 @@ function attachPrivacyPacketRoute(app, pool, options) {
       });
       res.send(result.zip);
     } catch (err) {
-      res.status(500).json({ ok: false, error: err.message });
+      res.status(500).json({ ok: false, error: 'Server error' });
     }
   });
 }

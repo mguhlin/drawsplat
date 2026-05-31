@@ -37,6 +37,7 @@
       <summary>Technical</summary>
       <div class="landing-nav-menu">
         <a href="../pages/pricing.html">Pricing</a>
+        <a href="../pages/download.html">Download for Self-Hosting</a>
         <a href="../legal/combined-policy.html">Get all documents below</a>
         <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
         <hr class="landing-nav-divider">
@@ -125,16 +126,16 @@
     <p class="landing-eyebrow">Download</p>
     <h1>Self-host DrawSplat<sup class="tm">TM</sup> for your school, organization, or district.</h1>
     <p>
-      <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.6</span>
-      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-05-30 &mdash; Animated GIF Maker: real LZW compression + palette options + MP4/WebM video export; Concept Map traditional outline formatter; blog page thumbnails; Firefox WebM fix</span>
+      <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.7</span>
+      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-05-31 &mdash; self-host security hardening: safer CORS, rate limits, admin bootstrap controls, protected maintenance cleanup, payload caps, and Markdown Studio URL sanitization</span>
     </p>
     <p>DrawSplat<sup class="tm">TM</sup> is free under the AGPL-3.0-or-later. Schools, districts, and organizations can host the whole thing on their own infrastructure &mdash; static site, Google Apps Script backend, or self-hosted MySQL backend. Download a complete zipped bundle, deploy it, and you&rsquo;re running.</p>
     <p>
-      <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.6/drawsplat-selfhost-v3.1.6.zip">Download v3.1.6 zip (133&nbsp;MB)</a>
-      &nbsp; <a class="landing-cta" href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6" target="_blank" rel="noopener noreferrer">Release notes</a>
+      <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.7/drawsplat-selfhost-v3.1.7.zip">Download v3.1.7 zip (133&nbsp;MB)</a>
+      &nbsp; <a class="landing-cta" href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7" target="_blank" rel="noopener noreferrer">Release notes</a>
       &nbsp; <a class="landing-cta" href="https://github.com/mguhlin/drawsplat" target="_blank" rel="noopener noreferrer">Browse the source</a>
     </p>
-    <p class="hint" style="max-width:760px">SHA-256: <code style="font-size:0.82rem">74e169a3c8680da3d5124dfd64e6f8fc4590a23a3bc8d72490c896704d296ff2</code></p>
+    <p class="hint" style="max-width:760px">SHA-256: <code style="font-size:0.82rem">9dcd5b6faf1593db11d151f77ae820bfa85c14564604418e340c1d912f564d4c</code></p>
   </section>
 
   <section class="landing-section">
@@ -166,11 +167,12 @@
       <article class="support-resource-card featured">
         <span class="support-resource-type">Path 3</span>
         <h3>Self-hosted MySQL (Phase 4)</h3>
-        <p>For districts that need a local database, real-time session enforcement, SSO/SIS sync (Clever scaffold included), and a parent portal. One <code>docker compose up</code> brings up MySQL + Node API.</p>
+        <p>For districts that need a local database, real-time session enforcement, SSO/SIS sync (Clever scaffold included), stronger backend guardrails, and a parent portal. One <code>docker compose up</code> brings up MySQL + Node API.</p>
         <ul class="admin-checklist">
           <li>Requires Docker (or Node 20+ &amp; MySQL 8+).</li>
           <li>OAuth (Google + Microsoft), RBAC tree (district/campus/teacher/student/parent).</li>
           <li>Server-side safety filter, board freeze, age-band lock, time-limit enforcement (SSE push), retention cron, privacy packet generator.</li>
+          <li>Security headers, configurable CORS allowlist, rate limits, admin bootstrap controls, protected maintenance cleanup, room-key validation, and payload caps.</li>
           <li>Follow <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>.</li>
         </ul>
       </article>

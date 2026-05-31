@@ -10,6 +10,7 @@ Use this when you want **a self-hosted, district-scale deployment** with a real 
 - Node + Express HTTP API on port 8787.
 - bearer-token auth with scrypt-pepper passwords.
 - Role-based access control (district_admin / campus_admin / teacher / student / parent).
+- Conservative API hardening: security headers, request-size caps, rate limits, validated room keys, and admin bootstrap controls.
 - Same compliance surface as the Apps Script path (parent requests, age band, time limits, audit, config push).
 
 ## What's still TODO before this can replace Apps Script
@@ -39,7 +40,7 @@ cp .env.example .env
 #   MYSQL_ROOT_PASSWORD
 #   MYSQL_PASSWORD
 #   DRAWSPLAT_PEPPER          (long random string — peppers password hashes)
-#   CORS_ORIGIN               (your DrawSplat frontend domain)
+#   CORS_ORIGIN               (your exact DrawSplat frontend origin)
 
 docker compose up -d
 docker compose logs -f api
@@ -122,7 +123,7 @@ The Apps Script path remains fully functional throughout. There is no requiremen
 ## Operational checklist
 
 - [ ] `.env` populated with rotation-safe secrets (especially `DRAWSPLAT_PEPPER`).
-- [ ] First admin user created via `POST /api/drawsplat/mysql/auth/register` with `role: "district_admin"`. Without this, no admin endpoints are reachable.
+- [ ] First admin user created by temporarily setting `ALLOW_ADMIN_SELF_REGISTRATION=true` and `BOOTSTRAP_ADMIN_EMAILS=admin@example.org`, then calling `POST /api/drawsplat/mysql/auth/register` with that email and `role: "district_admin"`. Turn admin self-registration off immediately after bootstrap.
 - [ ] CORS origin set to your actual frontend hostname.
 - [ ] Reverse proxy in front of the API. The API does not terminate TLS.
 - [ ] Automated database backups configured. Apps Script's "your data is in your Google Drive" property is the convenience the MySQL path gives up.
