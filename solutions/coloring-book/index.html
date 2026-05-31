@@ -77,6 +77,7 @@
     .button.primary { color: var(--white); background: var(--navy); }
     .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
     .button[aria-pressed="true"] { color: var(--white); background: var(--navy); }
+    .tool-btn[aria-pressed="true"] { color: var(--white); background: var(--navy); border-color: var(--navy); }
     .status { padding: 10px 12px; border-radius: 6px; font-weight: 800; min-height: 1.2em; }
     .status.success { color: #064e3b; background: #d1fae5; border: 1px solid #6ee7b7; }
     .status.danger { color: #7f1d1d; background: #fee2e2; border: 1px solid #fca5a5; }
@@ -137,6 +138,13 @@
         </div>
 
         <div class="toolbar">
+          <div class="tool-row" id="toolSelector" role="group" data-i18n-aria-label="tool.tool.aria" aria-label="Tool">
+            <span class="tool-label" data-i18n="tool.tool">Tool</span>
+            <button class="button tool-btn" id="brushToolBtn" type="button" data-tool="brush" aria-pressed="true" data-i18n="tool.brushTool">Brush</button>
+            <button class="button tool-btn" id="bucketToolBtn" type="button" data-tool="bucket" aria-pressed="false" data-i18n="tool.bucket">Paint bucket</button>
+            <button class="button tool-btn" id="sprayToolBtn" type="button" data-tool="spray" aria-pressed="false" data-i18n="tool.spray">Spray can</button>
+          </div>
+
           <div class="tool-row">
             <span class="tool-label" data-i18n="tool.colors">Colors</span>
             <div class="swatches" id="swatches" role="group" data-i18n-aria-label="tool.colors.aria" aria-label="Color palette"></div>
@@ -196,6 +204,7 @@
   let brushSize = 26;
   let eraser = false;
   let currentPage = null;
+  let currentTool = 'brush'; // 'brush' | 'bucket' | 'spray'
 
   // Canvases. paint = user strokes (bottom), line = line-art on top (multiply).
   const paint = $('paintCanvas');
@@ -355,19 +364,120 @@
     lastX = x; lastY = y;
   }
 
+  // ---- Paint bucket (flood fill) ---------------------------------------
+  function hexToRgb(hex){
+    let h = String(hex).replace('#', '');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    const n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  // Scanline flood fill of the paint layer, bounded by the line-art outlines.
+  function floodFill(sx, sy){
+    const w = paint.width, h = paint.height;
+    if (!w || !h) return;
+    sx = Math.floor(sx); sy = Math.floor(sy);
+    if (sx < 0 || sy < 0 || sx >= w || sy >= h) return;
+
+    const fill = pctx.getImageData(0, 0, w, h);
+    const fd = fill.data;
+    let line;
+    try { line = lctx.getImageData(0, 0, w, h); }
+    catch (e) { return; } // tainted canvas — bail rather than throw
+    const ld = line.data;
+
+    const fillRgb = eraser ? [255, 255, 255] : hexToRgb(activeColor);
+    const OUTLINE = 110; // line-art luminance below this = barrier
+    const TOL = 32;      // paint-color match tolerance
+
+    function isBarrier(p){
+      if (ld[p + 3] < 16) return false; // transparent line-art pixel
+      const lum = 0.299 * ld[p] + 0.587 * ld[p + 1] + 0.114 * ld[p + 2];
+      return lum < OUTLINE;
+    }
+
+    const idx0 = (sy * w + sx) * 4;
+    if (isBarrier(idx0)) return; // clicked the outline itself
+    const seedR = fd[idx0], seedG = fd[idx0 + 1], seedB = fd[idx0 + 2];
+
+    function matchesSeed(p){
+      return Math.abs(fd[p] - seedR) <= TOL &&
+             Math.abs(fd[p + 1] - seedG) <= TOL &&
+             Math.abs(fd[p + 2] - seedB) <= TOL;
+    }
+
+    const visited = new Uint8Array(w * h);
+    const stack = [[sx, sy]];
+    while (stack.length){
+      const node = stack.pop();
+      const y = node[1];
+      let lx = node[0];
+      // walk left to span start
+      while (lx >= 0){
+        const cell = y * w + lx, p = cell * 4;
+        if (visited[cell] || isBarrier(p) || !matchesSeed(p)) break;
+        lx--;
+      }
+      lx++;
+      let spanUp = false, spanDown = false;
+      for (let cx = lx; cx < w; cx++){
+        const cell = y * w + cx, p = cell * 4;
+        if (visited[cell] || isBarrier(p) || !matchesSeed(p)) break;
+        visited[cell] = 1;
+        fd[p] = fillRgb[0]; fd[p + 1] = fillRgb[1]; fd[p + 2] = fillRgb[2]; fd[p + 3] = 255;
+        if (y > 0){
+          const up = (y - 1) * w + cx, upP = up * 4;
+          const ok = !visited[up] && !isBarrier(upP) && matchesSeed(upP);
+          if (ok && !spanUp){ stack.push([cx, y - 1]); spanUp = true; }
+          else if (!ok) spanUp = false;
+        }
+        if (y < h - 1){
+          const dn = (y + 1) * w + cx, dnP = dn * 4;
+          const ok = !visited[dn] && !isBarrier(dnP) && matchesSeed(dnP);
+          if (ok && !spanDown){ stack.push([cx, y + 1]); spanDown = true; }
+          else if (!ok) spanDown = false;
+        }
+      }
+    }
+    pctx.putImageData(fill, 0, 0);
+  }
+
+  // ---- Spray can -------------------------------------------------------
+  function sprayAt(x, y){
+    const radius = brushSize;                       // radius scales with slider
+    const dots = Math.max(4, Math.round(brushSize * 1.2)); // density scales too
+    pctx.fillStyle = eraser ? '#ffffff' : activeColor;
+    for (let i = 0; i < dots; i++){
+      const ang = Math.random() * Math.PI * 2;
+      const dist = Math.random() * radius;
+      const r = 0.5 + Math.random() * 1.5;
+      pctx.beginPath();
+      pctx.arc(x + Math.cos(ang) * dist, y + Math.sin(ang) * dist, r, 0, Math.PI * 2);
+      pctx.fill();
+    }
+  }
+
   function startDraw(ev){
     if (!currentPage) return;
     ev.preventDefault();
+    const p = canvasPoint(ev);
+    // Paint bucket: a single click fill (no drag); erasing falls back to brush.
+    if (currentTool === 'bucket' && !eraser){
+      pushUndo();
+      floodFill(p.x, p.y);
+      return;
+    }
     pushUndo();
     drawing = true;
-    const p = canvasPoint(ev);
     lastX = p.x; lastY = p.y;
+    if (currentTool === 'spray'){ sprayAt(p.x, p.y); return; }
     strokeTo(p.x, p.y);
   }
   function moveDraw(ev){
     if (!drawing) return;
     ev.preventDefault();
     const p = canvasPoint(ev);
+    if (currentTool === 'spray'){ sprayAt(p.x, p.y); lastX = p.x; lastY = p.y; return; }
     strokeTo(p.x, p.y);
   }
   function endDraw(){ drawing = false; }
@@ -411,6 +521,14 @@
 
   function syncEraser(){ $('eraserBtn').setAttribute('aria-pressed', eraser ? 'true' : 'false'); }
   $('eraserBtn').addEventListener('click', () => { eraser = !eraser; syncEraser(); });
+
+  // Tool selector: brush / paint bucket / spray can.
+  const toolBtns = Array.prototype.slice.call(document.querySelectorAll('.tool-btn'));
+  function syncTools(){
+    toolBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.tool === currentTool ? 'true' : 'false'));
+  }
+  function setTool(tool){ currentTool = tool; syncTools(); }
+  toolBtns.forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
 
   $('undoBtn').addEventListener('click', () => {
     const snap = undoStack.pop();
@@ -518,6 +636,7 @@
 
   buildSwatches();
   syncEraser();
+  syncTools();
   loadManifest();
 })();
 </script>
