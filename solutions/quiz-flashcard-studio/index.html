@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
+<title>Quiz &amp; Flashcard Studio | DrawSplatTM</title>
+<meta name="description" content="Create, import, export, play, and review classroom quizzes and transfer them into flashcards.">
+<script src="../../vendor/jszip.min.js"></script>
+<style>
+:root{--ink:#172033;--muted:#64748b;--line:#d9ddec;--soft:#f8fafc;--paper:#fff;--purple:#7c3aed;--violet:#5b21b6;--teal:#0f766e;--gold:#f59e0b;--red:#dc2626;--green:#16a34a;--blue:#2563eb;--shadow:0 14px 32px rgba(23,32,51,.1);--radius:8px}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff 0,#f8fafc 62%,#eefdf8 100%)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.topbar{min-height:70px;padding:14px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:#ffffffed;position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}.brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:900;text-decoration:none}.brand img{width:42px}.nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-left:auto}.nav a,.nav button,.btn{min-height:40px;border:1px solid var(--line);border-radius:var(--radius);padding:9px 12px;background:#fff;color:var(--ink);font-weight:850;text-decoration:none}.nav button.active,.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}.btn.teal{background:var(--teal);border-color:var(--teal);color:#fff}.btn.gold{background:var(--gold);border-color:var(--gold);color:#111827}.btn.danger{background:#fff;border-color:#fecaca;color:var(--red)}.btn.small{min-height:34px;padding:7px 10px;font-size:.88rem}.shell{max-width:1480px;margin:0 auto;padding:26px 22px 42px}.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;padding-bottom:20px;border-bottom:1px solid var(--line)}.eyebrow{margin:0 0 8px;color:var(--teal);font-size:.78rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.hero h1{margin:0;font-size:clamp(2rem,5vw,4.4rem);line-height:.98;letter-spacing:0;color:#111827}.hero p{max-width:860px;margin:12px 0 0;color:#475569;font-size:1.05rem;line-height:1.55}.stats{display:grid;grid-template-columns:repeat(3,110px);gap:8px}.stat{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;text-align:center;box-shadow:var(--shadow)}.stat b{display:block;font-size:1.45rem}.stat span{display:block;color:var(--muted);font-size:.78rem;font-weight:850;text-transform:uppercase}
+.view{display:none}.view.active{display:block}.workspace{display:grid;grid-template-columns:390px minmax(0,1fr);gap:18px;padding-top:20px}.panel,.stage,.card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}.panel{padding:16px;align-self:start;position:sticky;top:92px}.stage{padding:18px;min-height:66vh}.panel h2,.stage h2{margin:0 0 12px;font-size:1.15rem;letter-spacing:0}.field{display:grid;gap:7px;margin:12px 0}label,.label{color:#334155;font-size:.86rem;font-weight:900}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:var(--radius);padding:10px 11px;background:#fff;color:var(--ink)}textarea{min-height:150px;resize:vertical;line-height:1.45}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{color:var(--muted);font-size:.86rem;line-height:1.45}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.question-list{display:grid;gap:10px}.qitem{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:#fff}.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.qhead strong{line-height:1.35}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;min-height:28px;border-radius:999px;padding:4px 9px;background:#f1f5f9;color:#334155;font-size:.78rem;font-weight:850}.chip.correct{background:#dcfce7;color:#166534}.chip.type{background:#ede9fe;color:#5b21b6}.option-grid{display:grid;gap:8px}.option-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center}.option-row input[type=radio],.option-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--purple)}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.search{max-width:360px}.dropzone{border:2px dashed #99f6e4;border-radius:var(--radius);padding:14px;background:#f0fdfa}.dropzone.drag{background:#ccfbf1;border-color:var(--teal)}
+.play-shell{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}.question-card{min-height:360px;display:grid;align-content:start;gap:16px;padding:18px;border:1px solid var(--line);border-radius:var(--radius);background:#fff}.question-card h3{font-size:clamp(1.4rem,3vw,2.4rem);line-height:1.14;margin:0}.answer-btn{width:100%;min-height:54px;border:1px solid var(--line);border-radius:var(--radius);background:#f8fafc;color:#111827;text-align:left;font-weight:850;padding:13px}.answer-btn.selected{border-color:var(--purple);background:#ede9fe}.answer-btn.correct{border-color:#86efac;background:#dcfce7}.answer-btn.wrong{border-color:#fecaca;background:#fee2e2}.scoreboard{padding:14px;border:1px solid var(--line);border-radius:var(--radius);background:#fff}.score-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #eef2f7}.score-row:last-child{border-bottom:0}.progress{height:12px;border-radius:999px;background:#e2e8f0;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--purple))}
+.flash-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}.flash-card{min-height:380px;display:grid;place-items:center;text-align:center;padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow);transition:transform .18s}.flash-card.flipped{background:#f0fdfa}.flash-card button{border:0;background:transparent;color:inherit;width:100%;min-height:320px;font-size:clamp(1.5rem,4vw,3rem);font-weight:900;line-height:1.15}.flash-meta{display:flex;justify-content:center;gap:10px;color:var(--muted);font-weight:850}.report-table{width:100%;border-collapse:collapse;font-size:.93rem}.report-table th,.report-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left}.report-table th{background:#f8fafc;color:#334155}.empty{display:grid;place-items:center;min-height:260px;border:1px dashed var(--line);border-radius:var(--radius);color:var(--muted);text-align:center;padding:18px}.footer{max-width:1480px;margin:0 auto;padding:26px 22px 38px;display:flex;align-items:center;gap:12px;color:var(--muted);border-top:1px solid var(--line)}.footer img{width:34px}.footer a{margin-left:auto;color:var(--purple);font-weight:900}
+@media(max-width:980px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.workspace,.play-shell,.flash-layout{grid-template-columns:1fr}.panel{position:static}.topbar{position:static;align-items:flex-start;flex-direction:column}.nav{margin-left:0}.footer{align-items:flex-start;flex-direction:column}.footer a{margin-left:0}}@media print{.topbar,.panel,.toolbar,.footer,.actions{display:none}.shell{padding:0}.stage,.card,.question-card,.flash-card{box-shadow:none;border:0}.workspace,.play-shell,.flash-layout{display:block}body{background:white}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../index.html" aria-label="DrawSplatTM home"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup>TM</sup></span></a>
+  <nav class="nav" aria-label="Quiz studio views">
+    <button type="button" class="active" data-view-btn="build">Build</button>
+    <button type="button" data-view-btn="play">Play Quiz</button>
+    <button type="button" data-view-btn="flashcards">Flashcards</button>
+    <button type="button" data-view-btn="reports">Reports</button>
+    <a href="../../app/whiteboard.html">Whiteboard</a>
+  </nav>
+</header>
+<main class="shell">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Classroom Widget</p>
+      <h1>Quiz &amp; Flashcard Studio</h1>
+      <p>Create a quiz, import a question bank, run a self-paced classroom round, export the content, then transfer the same questions into study flashcards.</p>
+    </div>
+    <div class="stats" aria-label="Question bank summary">
+      <div class="stat"><b id="statQuestions">0</b><span>Questions</span></div>
+      <div class="stat"><b id="statPoints">0</b><span>Points</span></div>
+      <div class="stat"><b id="statCards">0</b><span>Cards</span></div>
+    </div>
+  </section>
+
+  <section class="view active" id="view-build">
+    <div class="workspace">
+      <aside class="panel">
+        <h2>Quiz Setup</h2>
+        <div class="field"><label for="quizTitle">Title</label><input id="quizTitle" value="Quick Review Quiz"></div>
+        <div class="row">
+          <div class="field"><label for="quizTimer">Seconds per question</label><input id="quizTimer" type="number" min="0" max="300" value="30"></div>
+          <div class="field"><label for="quizMode">Play mode</label><select id="quizMode"><option value="self">Self-paced</option><option value="host">Teacher-led</option></select></div>
+        </div>
+        <div class="row">
+          <label class="field"><span>Shuffle questions</span><select id="shuffleQuestions"><option value="yes">Yes</option><option value="no">No</option></select></label>
+          <label class="field"><span>Shuffle answers</span><select id="shuffleAnswers"><option value="yes">Yes</option><option value="no">No</option></select></label>
+        </div>
+        <div class="field"><label for="questionText">Question</label><textarea id="questionText" placeholder="What is retrieval practice?"></textarea></div>
+        <div class="field"><label for="answerText">Correct answer</label><input id="answerText" placeholder="Pulling information from memory"></div>
+        <div class="field"><label for="wrongText">Distractors or alternate answers</label><textarea id="wrongText" placeholder="Re-reading notes&#10;Highlighting text&#10;Copying definitions"></textarea></div>
+        <div class="row">
+          <div class="field"><label for="questionType">Type</label><select id="questionType"><option value="multiple-choice">Multiple choice</option><option value="true-false">True / False</option><option value="short-answer">Short answer</option></select></div>
+          <div class="field"><label for="points">Points</label><input id="points" type="number" min="1" max="100" value="100"></div>
+        </div>
+        <div class="actions"><button class="btn primary" id="addQuestion" type="button">Add Question</button><button class="btn" id="updateQuestion" type="button" disabled>Update</button><button class="btn danger" id="clearForm" type="button">Clear</button></div>
+        <hr>
+        <div class="field dropzone" id="dropzone"><label for="fileInput">Import Questions</label><input id="fileInput" type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.ods,.odt,application/json,text/csv,text/tab-separated-values"><p class="hint">CSV/TSV columns: question, answer, wrong1, wrong2, wrong3, type, points. XLSX/ODS use the first sheet. JSON accepts this app's export.</p></div>
+        <div class="field"><label for="pasteImport">Paste Import</label><textarea id="pasteImport" placeholder="Question,Answer,Wrong 1,Wrong 2&#10;2 + 2?,4,3,5"></textarea></div>
+        <div class="actions"><button class="btn teal" id="importPaste" type="button">Import Pasted Text</button><button class="btn" id="loadSample" type="button">Load Sample</button></div>
+        <div class="actions"><button class="btn" id="saveDraft" type="button">Save Draft</button><button class="btn" id="loadDraft" type="button">Load Draft</button></div>
+      </aside>
+      <section class="stage">
+        <div class="toolbar">
+          <h2>Question Bank</h2>
+          <input class="search" id="searchQuestions" placeholder="Search questions" aria-label="Search questions">
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="startQuiz" type="button">Start Quiz</button>
+          <button class="btn teal" id="makeCards" type="button">Transfer to Flashcards</button>
+          <button class="btn" id="exportJson" type="button">Export JSON</button>
+          <button class="btn" id="exportCsv" type="button">Export CSV</button>
+          <button class="btn" id="exportXlsx" type="button">Export XLSX</button>
+          <button class="btn danger" id="clearAll" type="button">Clear All</button>
+        </div>
+        <p class="hint" id="status" aria-live="polite"></p>
+        <div id="questionList" class="question-list"></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="view" id="view-play">
+    <div class="workspace">
+      <aside class="panel">
+        <h2>Play Controls</h2>
+        <div class="field"><label for="playerName">Player / team name</label><input id="playerName" value="Team 1"></div>
+        <div class="actions"><button class="btn primary" id="newPlayer" type="button">Add Player</button><button class="btn" id="restartQuiz" type="button">Restart</button></div>
+        <div class="field"><label for="shareLink">Standalone quiz link</label><textarea id="shareLink" readonly></textarea></div>
+        <div class="actions"><button class="btn" id="copyLink" type="button">Copy Link</button></div>
+        <p class="hint">The link embeds the quiz in the URL hash for a self-paced online run. It does not create a live server room or collect remote responses.</p>
+      </aside>
+      <section class="stage">
+        <div class="play-shell">
+          <div>
+            <div class="toolbar"><h2 id="playTitle">Quiz</h2><span id="playCounter" class="chip">0 / 0</span></div>
+            <div class="progress" aria-hidden="true"><span id="playProgress" style="width:0%"></span></div>
+            <div id="playArea" class="question-card"></div>
+            <div class="actions"><button class="btn" id="prevQuestion" type="button">Previous</button><button class="btn primary" id="submitAnswer" type="button">Submit</button><button class="btn teal" id="nextQuestion" type="button">Next</button></div>
+          </div>
+          <aside class="scoreboard"><h2>Leaderboard</h2><div id="scoreboard"></div></aside>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="view" id="view-flashcards">
+    <div class="flash-layout" style="padding-top:20px">
+      <aside class="panel">
+        <h2>Flashcard Maker</h2>
+        <p class="hint">Cards are generated from quiz questions. The front is the question and the back is the correct answer plus optional context.</p>
+        <div class="actions"><button class="btn teal" id="syncCards" type="button">Transfer from Quiz</button><button class="btn" id="shuffleCards" type="button">Shuffle</button><button class="btn" id="exportCardsCsv" type="button">Export Cards CSV</button><button class="btn" id="printCards" type="button">Print Cards</button></div>
+        <div class="flash-meta"><span id="flashCount">0 cards</span><span id="flashSide">Front</span></div>
+      </aside>
+      <section class="stage">
+        <div id="flashCard" class="flash-card"><button type="button" id="flipCard">No cards yet</button></div>
+        <div class="actions" style="justify-content:center"><button class="btn" id="prevCard" type="button">Previous</button><button class="btn primary" id="flipCardBtn" type="button">Flip</button><button class="btn teal" id="nextCard" type="button">Next</button></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="view" id="view-reports">
+    <div class="stage" style="margin-top:20px">
+      <div class="toolbar"><h2>Reports</h2><div class="actions"><button class="btn" id="exportReport" type="button">Export Report CSV</button><button class="btn danger" id="clearReports" type="button">Clear Reports</button></div></div>
+      <div id="reportArea"></div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><img src="../../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup>TM</sup> Quiz &amp; Flashcard Studio. Browser-only imports, exports, quiz runs, and flashcards.</span><a href="../../index.html">Home</a></footer>
+<script>
+const $=id=>document.getElementById(id);
+const state={questions:[],editing:null,players:[{name:'Team 1',score:0,answered:0}],activePlayer:0,order:[],playIndex:0,selected:null,revealed:false,reports:[],cards:[],cardIndex:0,cardBack:false,optionOrders:{},timeLeft:null,timerId:null};
+const sample=[
+  {question:'Which strategy asks learners to pull information from memory?',answer:'Retrieval practice',wrong:['Highlighting','Re-reading','Copying notes'],type:'multiple-choice',points:100},
+  {question:'ClassQuiz is valued partly because it can be self-hosted.',answer:'True',wrong:['False'],type:'true-false',points:100},
+  {question:'What format is commonly used for spreadsheet question imports?',answer:'CSV',wrong:['PNG','MP3','SVG'],type:'multiple-choice',points:100},
+  {question:'Flashcards support which learning routine?',answer:'Rehearsal',wrong:['Data tracking','Advertising','One-time reading'],type:'multiple-choice',points:100}
+];
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function normalizeQuestion(q){let wrong=Array.isArray(q.wrong)?q.wrong:String(q.wrong||'').split(/[|;\n]/).map(s=>s.trim()).filter(Boolean);let type=(q.type||'multiple-choice').toLowerCase();if(type.includes('true')) type='true-false'; if(type.includes('short')) type='short-answer'; if(!['multiple-choice','true-false','short-answer'].includes(type)) type='multiple-choice';return{id:q.id||uid(),question:String(q.question||q.prompt||'').trim(),answer:String(q.answer||q.correct||'').trim(),wrong, type, points:Math.max(1,Number(q.points)||100), notes:String(q.notes||'').trim()}}
+function valid(q){return q.question&&q.answer}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function setStatus(msg){$('status').textContent=msg}
+function renderStats(){const points=state.questions.reduce((s,q)=>s+(Number(q.points)||0),0);$('statQuestions').textContent=state.questions.length;$('statPoints').textContent=points;$('statCards').textContent=state.cards.length}
+function renderQuestions(){renderStats();const q=$('searchQuestions').value.trim().toLowerCase();const list=state.questions.filter(item=>!q||[item.question,item.answer,item.wrong.join(' ')].join(' ').toLowerCase().includes(q));$('questionList').innerHTML=list.length?list.map((item,i)=>`<article class="qitem"><div class="qhead"><strong>${i+1}. ${esc(item.question)}</strong><div class="actions"><button class="btn small" type="button" data-edit="${item.id}">Edit</button><button class="btn small danger" type="button" data-del="${item.id}">Delete</button></div></div><div class="chips"><span class="chip type">${esc(item.type)}</span><span class="chip">${item.points} pts</span><span class="chip correct">${esc(item.answer)}</span>${item.wrong.map(w=>`<span class="chip">${esc(w)}</span>`).join('')}</div>${item.notes?`<p class="hint">${esc(item.notes)}</p>`:''}</article>`).join(''):'<div class="empty">No questions yet. Add one, paste CSV text, or import a file.</div>';updateShareLink()}
+function formQuestion(){return normalizeQuestion({question:$('questionText').value,answer:$('answerText').value,wrong:$('wrongText').value.split(/\n+/).map(s=>s.trim()).filter(Boolean),type:$('questionType').value,points:$('points').value})}
+function clearForm(){state.editing=null;$('questionText').value='';$('answerText').value='';$('wrongText').value='';$('questionType').value='multiple-choice';$('points').value=100;$('updateQuestion').disabled=true;$('addQuestion').disabled=false}
+function addQuestion(){const q=formQuestion();if(!valid(q)){setStatus('Add both a question and a correct answer.');return}state.questions.push(q);clearForm();renderQuestions();setStatus('Question added.')}
+function editQuestion(id){const q=state.questions.find(x=>x.id===id);if(!q)return;state.editing=id;$('questionText').value=q.question;$('answerText').value=q.answer;$('wrongText').value=q.wrong.join('\n');$('questionType').value=q.type;$('points').value=q.points;$('updateQuestion').disabled=false;$('addQuestion').disabled=true}
+function updateQuestion(){const idx=state.questions.findIndex(q=>q.id===state.editing);if(idx<0)return;const q={...formQuestion(),id:state.editing};if(!valid(q)){setStatus('Add both a question and a correct answer.');return}state.questions[idx]=q;clearForm();renderQuestions();setStatus('Question updated.')}
+function deleteQuestion(id){state.questions=state.questions.filter(q=>q.id!==id);renderQuestions();syncCards(false)}
+function csvEscape(s){s=String(s??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function parseDelimited(text,sep){const rows=[];let row=[],cell='',quote=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(ch==='"'&&quote&&next==='"'){cell+='"';i++;continue}if(ch==='"'){quote=!quote;continue}if(ch===sep&&!quote){row.push(cell);cell='';continue}if((ch==='\n'||ch==='\r')&&!quote){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(c=>c.trim()))rows.push(row);row=[];cell='';continue}cell+=ch}row.push(cell);if(row.some(c=>c.trim()))rows.push(row);return rows}
+function rowsToQuestions(rows){if(!rows.length)return[];const headers=rows[0].map(h=>h.trim().toLowerCase());const hasHeader=headers.some(h=>['question','prompt','answer','correct','wrong1','distractor1','type','points'].includes(h));const data=hasHeader?rows.slice(1):rows;function at(row,names,idx){for(const n of names){const i=headers.indexOf(n);if(i>=0)return row[i]||''}return row[idx]||''}return data.map(row=>normalizeQuestion({question:hasHeader?at(row,['question','prompt'],0):row[0],answer:hasHeader?at(row,['answer','correct','correct answer'],1):row[1],wrong:hasHeader?[at(row,['wrong1','distractor1'],2),at(row,['wrong2','distractor2'],3),at(row,['wrong3','distractor3'],4),at(row,['wrong4','distractor4'],5)].filter(Boolean):row.slice(2,5).filter(Boolean),type:hasHeader?at(row,['type','question type'],5):row[5],points:hasHeader?at(row,['points','score'],6):row[6],notes:hasHeader?at(row,['notes','explanation'],7):row[7]})).filter(valid)}
+function importText(text,name='pasted text'){let incoming=[];const trimmed=text.trim();try{if(trimmed.startsWith('{')||trimmed.startsWith('[')){const data=JSON.parse(trimmed);incoming=(Array.isArray(data)?data:data.questions||[]).map(normalizeQuestion).filter(valid)}else{const sep=trimmed.includes('\t')?'\t':',';incoming=rowsToQuestions(parseDelimited(trimmed,sep))}}catch(err){setStatus('Import failed: '+err.message);return}mergeQuestions(incoming,name)}
+function mergeQuestions(incoming,name){if(!incoming.length){setStatus('No usable questions found in '+name+'.');return}state.questions.push(...incoming);renderQuestions();syncCards(false);setStatus('Imported '+incoming.length+' question(s) from '+name+'.')}
+async function importFile(file){const ext=file.name.split('.').pop().toLowerCase();const buf=await file.arrayBuffer();if(ext==='xlsx'){mergeQuestions(await parseXlsx(buf),file.name);return}if(ext==='ods'||ext==='odt'){mergeQuestions(await parseOpenDocument(buf),file.name);return}const text=new TextDecoder().decode(buf);importText(text,file.name)}
+function xmlText(node){return Array.from(node.childNodes).map(n=>n.nodeType===3||n.nodeType===4?n.nodeValue:xmlText(n)).join('')}
+async function parseXlsx(buf){const zip=await JSZip.loadAsync(buf);const shared=[];const ss=zip.file('xl/sharedStrings.xml');if(ss){const doc=new DOMParser().parseFromString(await ss.async('text'),'application/xml');doc.querySelectorAll('si').forEach(si=>shared.push(xmlText(si)))}const sheetName=Object.keys(zip.files).find(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n));if(!sheetName)return[];const doc=new DOMParser().parseFromString(await zip.file(sheetName).async('text'),'application/xml');const rows=[];doc.querySelectorAll('sheetData row').forEach(r=>{const row=[];r.querySelectorAll('c').forEach(c=>{const ref=c.getAttribute('r')||'A1';const col=lettersToIndex(ref.replace(/\d/g,''));const v=c.querySelector('v');const inline=c.querySelector('is');let val=inline?xmlText(inline):(v?xmlText(v):'');if(c.getAttribute('t')==='s')val=shared[Number(val)]||'';row[col]=val});rows.push(row.map(x=>x||''))});return rowsToQuestions(rows)}
+async function parseOpenDocument(buf){const zip=await JSZip.loadAsync(buf);const file=zip.file('content.xml');if(!file)return[];const doc=new DOMParser().parseFromString(await file.async('text'),'application/xml');const tableRows=Array.from(doc.getElementsByTagName('table:table-row'));if(tableRows.length){const rows=tableRows.map(tr=>Array.from(tr.getElementsByTagName('table:table-cell')).flatMap(td=>{const repeat=Number(td.getAttribute('table:number-columns-repeated'))||1;const val=xmlText(td).trim();return Array(repeat).fill(val)}));return rowsToQuestions(rows)}const lines=xmlText(doc).split(/\n+/).map(s=>s.trim()).filter(Boolean);return rowsToQuestions(lines.map(line=>line.split(/\t|,/)))}
+function lettersToIndex(s){let n=0;for(const ch of s){n=n*26+(ch.charCodeAt(0)-64)}return Math.max(0,n-1)}
+function exportJson(){download('quiz-flashcard-studio.json',JSON.stringify({title:$('quizTitle').value,timer:$('quizTimer').value,questions:state.questions},null,2),'application/json')}
+function exportCsv(){const rows=[['question','answer','wrong1','wrong2','wrong3','type','points','notes'],...state.questions.map(q=>[q.question,q.answer,q.wrong[0]||'',q.wrong[1]||'',q.wrong[2]||'',q.type,q.points,q.notes||''])];download('quiz-questions.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv')}
+async function exportXlsx(){const zip=new JSZip();const rows=[['question','answer','wrong1','wrong2','wrong3','type','points','notes'],...state.questions.map(q=>[q.question,q.answer,q.wrong[0]||'',q.wrong[1]||'',q.wrong[2]||'',q.type,q.points,q.notes||''])];const sheet=rows.map((r,ri)=>`<row r="${ri+1}">${r.map((c,ci)=>`<c r="${String.fromCharCode(65+ci)}${ri+1}" t="inlineStr"><is><t>${escXml(c)}</t></is></c>`).join('')}</row>`).join('');zip.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>');zip.folder('_rels').file('.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');zip.folder('xl').file('workbook.xml','<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Questions" sheetId="1" r:id="rId1"/></sheets></workbook>');zip.folder('xl').folder('_rels').file('workbook.xml.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>');zip.folder('xl').folder('worksheets').file('sheet1.xml','<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>'+sheet+'</sheetData></worksheet>');const blob=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});downloadBlob('quiz-questions.xlsx',blob)}
+function escXml(s){return String(s??'').replace(/[<>&'"]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[m]))}
+function download(name,text,type){downloadBlob(name,new Blob([text],{type}))}
+function downloadBlob(name,blob){const a=document.createElement('a');a.download=name;a.href=URL.createObjectURL(blob);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+function saveDraft(){localStorage.setItem('drawsplat.quizFlashcardStudio',JSON.stringify({title:$('quizTitle').value,timer:$('quizTimer').value,questions:state.questions,reports:state.reports}));setStatus('Draft saved in this browser.')}
+function loadDraft(){const raw=localStorage.getItem('drawsplat.quizFlashcardStudio');if(!raw){setStatus('No saved draft found.');return}const data=JSON.parse(raw);$('quizTitle').value=data.title||'Quick Review Quiz';$('quizTimer').value=data.timer??30;state.questions=(data.questions||[]).map(normalizeQuestion).filter(valid);state.reports=data.reports||[];syncCards(false);renderQuestions();renderReports();setStatus('Draft loaded.')}
+function startQuiz(){if(!state.questions.length){setStatus('Add questions before starting.');return}state.order=($('shuffleQuestions').value==='yes'?shuffle(state.questions):[...state.questions]).map(q=>q.id);state.playIndex=0;state.selected=null;state.revealed=false;state.optionOrders={};state.timeLeft=null;state.players.forEach(p=>{p.score=0;p.answered=0});showView('play');renderPlay()}
+function currentQuestion(){return state.questions.find(q=>q.id===state.order[state.playIndex])||state.questions[0]}
+function answerOptions(q){if(q.type==='short-answer')return[];if(state.optionOrders[q.id])return state.optionOrders[q.id];let opts=q.type==='true-false'?[q.answer,...q.wrong.filter(Boolean)]:[q.answer,...q.wrong.filter(Boolean)];opts=[...new Set(opts)];state.optionOrders[q.id]=$('shuffleAnswers').value==='yes'?shuffle(opts):opts;return state.optionOrders[q.id]}
+function questionDuration(){return Math.max(0,Number($('quizTimer').value)||0)}
+function timerText(){return questionDuration()?` · ${Math.max(0,state.timeLeft??questionDuration())}s`:''}
+function ensureTimer(){clearInterval(state.timerId);state.timerId=null;if(state.revealed||!questionDuration())return;state.timerId=setInterval(()=>{if(document.hidden||!document.getElementById('view-play').classList.contains('active'))return;state.timeLeft=Math.max(0,(state.timeLeft??questionDuration())-1);$('playCounter').textContent=state.questions.length?`${state.playIndex+1} / ${state.order.length}${timerText()}`:'0 / 0';if(state.timeLeft<=0){clearInterval(state.timerId);state.timerId=null;state.revealed=true;renderPlay()}},1000)}
+function renderPlay(){renderStats();const q=currentQuestion();$('playTitle').textContent=$('quizTitle').value||'Quiz';if(state.timeLeft===null)state.timeLeft=questionDuration();$('playCounter').textContent=state.questions.length?`${state.playIndex+1} / ${state.order.length}${timerText()}`:'0 / 0';$('playProgress').style.width=state.order.length?`${((state.playIndex+1)/state.order.length)*100}%`:'0%';if(!q){$('playArea').innerHTML='<div class="empty">Start a quiz from the Build tab.</div>';return}const opts=answerOptions(q);$('playArea').innerHTML=`<h3>${esc(q.question)}</h3>${q.type==='short-answer'?`<input id="shortAnswer" placeholder="Type an answer">`:`<div class="option-grid">${opts.map(o=>`<button class="answer-btn ${state.selected===o?'selected':''} ${state.revealed&&o===q.answer?'correct':''} ${state.revealed&&state.selected===o&&o!==q.answer?'wrong':''}" type="button" data-answer="${esc(o)}">${esc(o)}</button>`).join('')}</div>`}${state.revealed?`<p class="hint"><strong>Correct answer:</strong> ${esc(q.answer)}</p>`:''}`;renderScoreboard();ensureTimer()}
+function submitAnswer(){const q=currentQuestion();if(!q)return;let answer=q.type==='short-answer'?($('shortAnswer')?.value||'').trim():state.selected;if(!answer){return}const correct=answer.trim().toLowerCase()===q.answer.trim().toLowerCase();const p=state.players[state.activePlayer];p.answered++;if(correct)p.score+=q.points;state.revealed=true;state.reports.push({time:new Date().toISOString(),quiz:$('quizTitle').value,player:p.name,question:q.question,answer,correct,points:correct?q.points:0});renderPlay();renderReports()}
+function nextQuestion(){if(state.playIndex<state.order.length-1){state.playIndex++;state.selected=null;state.revealed=false;state.timeLeft=null;renderPlay()}}
+function prevQuestion(){if(state.playIndex>0){state.playIndex--;state.selected=null;state.revealed=false;state.timeLeft=null;renderPlay()}}
+function renderScoreboard(){$('scoreboard').innerHTML=state.players.slice().sort((a,b)=>b.score-a.score).map((p,i)=>`<div class="score-row"><strong>${i+1}. ${esc(p.name)}</strong><span>${p.score}</span></div>`).join('')||'<p class="hint">No players yet.</p>'}
+function updateShareLink(){const payload=btoa(unescape(encodeURIComponent(JSON.stringify({title:$('quizTitle').value,timer:$('quizTimer').value,questions:state.questions}))));$('shareLink').value=location.origin+location.pathname+'#quiz='+payload}
+function loadHashQuiz(){if(!location.hash.startsWith('#quiz='))return;try{const data=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(6)))));$('quizTitle').value=data.title||'Shared Quiz';$('quizTimer').value=data.timer??30;state.questions=(data.questions||[]).map(normalizeQuestion).filter(valid);syncCards(false);renderQuestions();startQuiz()}catch(err){setStatus('Shared quiz link could not be loaded.')}}
+function syncCards(show=true){state.cards=state.questions.map(q=>({front:q.question,back:q.answer+(q.notes?'\n\n'+q.notes:''),id:q.id}));state.cardIndex=0;state.cardBack=false;renderFlash();renderStats();if(show)showView('flashcards')}
+function renderFlash(){const card=state.cards[state.cardIndex];$('flashCount').textContent=state.cards.length?`${state.cardIndex+1} / ${state.cards.length} cards`:'0 cards';$('flashSide').textContent=state.cardBack?'Back':'Front';$('flashCard').classList.toggle('flipped',state.cardBack);$('flipCard').textContent=card?(state.cardBack?card.back:card.front):'No cards yet'}
+function flipFlash(){if(!state.cards.length)return;state.cardBack=!state.cardBack;renderFlash()}
+function nextFlash(){if(!state.cards.length)return;state.cardIndex=(state.cardIndex+1)%state.cards.length;state.cardBack=false;renderFlash()}
+function prevFlash(){if(!state.cards.length)return;state.cardIndex=(state.cardIndex-1+state.cards.length)%state.cards.length;state.cardBack=false;renderFlash()}
+function renderReports(){if(!state.reports.length){$('reportArea').innerHTML='<div class="empty">No responses yet. Run a quiz to collect local report rows.</div>';return}$('reportArea').innerHTML=`<table class="report-table"><thead><tr><th>Time</th><th>Player</th><th>Question</th><th>Answer</th><th>Result</th><th>Points</th></tr></thead><tbody>${state.reports.map(r=>`<tr><td>${esc(new Date(r.time).toLocaleString())}</td><td>${esc(r.player)}</td><td>${esc(r.question)}</td><td>${esc(r.answer)}</td><td>${r.correct?'Correct':'Incorrect'}</td><td>${r.points}</td></tr>`).join('')}</tbody></table>`}
+function exportReport(){const rows=[['time','quiz','player','question','answer','correct','points'],...state.reports.map(r=>[r.time,r.quiz,r.player,r.question,r.answer,r.correct,r.points])];download('quiz-report.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv')}
+function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('[data-view-btn]').forEach(b=>b.classList.toggle('active',b.dataset.viewBtn===name));if(name==='reports')renderReports();if(name==='flashcards')renderFlash();if(name==='play')renderPlay()}
+document.querySelectorAll('[data-view-btn]').forEach(b=>b.onclick=()=>showView(b.dataset.viewBtn));
+$('addQuestion').onclick=addQuestion;$('updateQuestion').onclick=updateQuestion;$('clearForm').onclick=clearForm;$('searchQuestions').oninput=renderQuestions;$('questionList').onclick=e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-del]');if(edit)editQuestion(edit.dataset.edit);if(del)deleteQuestion(del.dataset.del)};
+$('fileInput').onchange=e=>{[...e.target.files].forEach(importFile);e.target.value=''};$('importPaste').onclick=()=>importText($('pasteImport').value);$('loadSample').onclick=()=>{state.questions=sample.map(normalizeQuestion);syncCards(false);renderQuestions();setStatus('Sample quiz loaded.')};
+$('exportJson').onclick=exportJson;$('exportCsv').onclick=exportCsv;$('exportXlsx').onclick=exportXlsx;$('saveDraft').onclick=saveDraft;$('loadDraft').onclick=loadDraft;$('clearAll').onclick=()=>{if(confirm('Clear all questions?')){state.questions=[];state.cards=[];renderQuestions();renderFlash();setStatus('Question bank cleared.')}};
+$('startQuiz').onclick=startQuiz;$('restartQuiz').onclick=startQuiz;$('newPlayer').onclick=()=>{const name=$('playerName').value.trim()||'Team '+(state.players.length+1);state.players.push({name,score:0,answered:0});state.activePlayer=state.players.length-1;renderScoreboard()};$('playArea').onclick=e=>{const b=e.target.closest('[data-answer]');if(b&&!state.revealed){state.selected=b.dataset.answer;renderPlay()}};$('submitAnswer').onclick=submitAnswer;$('nextQuestion').onclick=nextQuestion;$('prevQuestion').onclick=prevQuestion;$('copyLink').onclick=async()=>{await navigator.clipboard.writeText($('shareLink').value)};
+$('makeCards').onclick=()=>syncCards(true);$('syncCards').onclick=()=>syncCards(true);$('shuffleCards').onclick=()=>{state.cards=shuffle(state.cards);state.cardIndex=0;state.cardBack=false;renderFlash()};$('flipCard').onclick=flipFlash;$('flipCardBtn').onclick=flipFlash;$('nextCard').onclick=nextFlash;$('prevCard').onclick=prevFlash;$('exportCardsCsv').onclick=()=>{const rows=[['front','back'],...state.cards.map(c=>[c.front,c.back])];download('flashcards.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv')};$('printCards').onclick=()=>window.print();
+$('exportReport').onclick=exportReport;$('clearReports').onclick=()=>{state.reports=[];renderReports()};
+['quizTitle','quizTimer'].forEach(id=>$(id).addEventListener('input',updateShareLink));
+const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));dz.addEventListener('drop',e=>[...e.dataTransfer.files].forEach(importFile));
+renderQuestions();syncCards(false);renderReports();loadHashQuiz();
+</script>
+<script src="../../assets/js/consent-banner.js" defer></script>
+</body>
+</html>
