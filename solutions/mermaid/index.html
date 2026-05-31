@@ -398,7 +398,7 @@
   const langSel = $('langSelect');
 
   const MERMAID_TEMPLATES = {
-    en:{flowchart:'graph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Continue]\n  B -->|No| D[Stop]',pie:'pie title Favorite Subjects\n  "Math" : 30\n  "Science" : 25\n  "English" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: Has a question\n  Teacher->>Student: Provides an answer\n  Student->>Notebook: Writes down notes',mindmap:'mindmap\n  root((Topic))\n    Idea 1\n      Detail A\n      Detail B\n    Idea 2\n      Detail C\n    Idea 3\n      Detail D\n      Detail E',gantt:'gantt\n  title Project Timeline\n  dateFormat YYYY-MM-DD\n  section Planning\n    Outline   :a1, 2026-01-01, 7d\n    Research  :a2, after a1, 14d\n  section Build\n    Draft     :b1, after a2, 21d\n    Review    :b2, after b1, 7d',timeline:'timeline\n  title School Year\n  August    : Welcome week\n  October   : Midterms\n  December  : Holiday break\n  March     : Spring break\n  May       : Final exams',class:'classDiagram\n  class Animal {\n    +String name\n    +int age\n    +makeSound()\n  }\n  class Dog {\n    +String breed\n    +bark()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : start\n  Working --> Review : submit\n  Review --> Working : revise\n  Review --> Done : approve\n  Done --> [*]',quadrant:'quadrantChart\n  title Project priorities\n  x-axis Low Effort --> High Effort\n  y-axis Low Value --> High Value\n  quadrant-1 Quick wins\n  quadrant-2 Major projects\n  quadrant-3 Fill-ins\n  quadrant-4 Time sinks\n  Lesson plan: [0.25, 0.75]\n  Grading rubric: [0.40, 0.65]\n  Wall display: [0.55, 0.30]\n  Curriculum redesign: [0.85, 0.90]\n  Newsletter: [0.30, 0.20]',xychart:'xychart-beta\n  title "Monthly Reading Hours"\n  x-axis [Sep, Oct, Nov, Dec, Jan, Feb, Mar, Apr, May]\n  y-axis "Hours" 0 --> 30\n  bar [10, 14, 18, 12, 22, 26, 28, 20, 16]\n  line [10, 14, 18, 12, 22, 26, 28, 20, 16]',kanban:'kanban\n  Backlog\n    t1[Brainstorm topics]\n    t2[Find sources]\n  In_Progress\n    t3[Draft outline]\n    t4[Write rough draft]\n  Review\n    t5[Peer feedback]\n  Done\n    t6[Final edits]\n    t7[Submit assignment]',venn:'venn-beta\n    title STEM Overlap\n    set Math\n    set Science\n    set Engineering\n    union Math Science\n    union Science Engineering\n    union Math Science Engineering'},
+    en:{flowchart:'graph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Continue]\n  B -->|No| D[Stop]',pie:'pie title Favorite Subjects\n  "Math" : 30\n  "Science" : 25\n  "English" : 20\n  "Art" : 15\n  "Other" : 10',sequence:'sequenceDiagram\n  Student->>Teacher: Has a question\n  Teacher->>Student: Provides an answer\n  Student->>Notebook: Writes down notes',mindmap:'mindmap\n  root((Topic))\n    Idea 1\n      Detail A\n      Detail B\n    Idea 2\n      Detail C\n    Idea 3\n      Detail D\n      Detail E',gantt:'gantt\n  title Project Timeline\n  dateFormat YYYY-MM-DD\n  section Planning\n    Outline   :a1, 2026-01-01, 7d\n    Research  :a2, after a1, 14d\n  section Build\n    Draft     :b1, after a2, 21d\n    Review    :b2, after b1, 7d',timeline:'timeline\n  title School Year\n  August    : Welcome week\n  October   : Midterms\n  December  : Holiday break\n  March     : Spring break\n  May       : Final exams',class:'classDiagram\n  class Animal {\n    +String name\n    +int age\n    +makeSound()\n  }\n  class Dog {\n    +String breed\n    +bark()\n  }\n  Animal <|-- Dog',state:'stateDiagram-v2\n  [*] --> Idle\n  Idle --> Working : start\n  Working --> Review : submit\n  Review --> Working : revise\n  Review --> Done : approve\n  Done --> [*]',quadrant:'quadrantChart\n  title Project priorities\n  x-axis Low Effort --> High Effort\n  y-axis Low Value --> High Value\n  quadrant-1 Quick wins\n  quadrant-2 Major projects\n  quadrant-3 Fill-ins\n  quadrant-4 Time sinks\n  Lesson plan: [0.25, 0.75]\n  Grading rubric: [0.40, 0.65]\n  Wall display: [0.55, 0.30]\n  Curriculum redesign: [0.85, 0.90]\n  Newsletter: [0.30, 0.20]',xychart:'xychart-beta\n  title "Monthly Reading Hours"\n  x-axis [Sep, Oct, Nov, Dec, Jan, Feb, Mar, Apr, May]\n  y-axis "Hours" 0 --> 30\n  bar [10, 14, 18, 12, 22, 26, 28, 20, 16]\n  line [10, 14, 18, 12, 22, 26, 28, 20, 16]',kanban:'kanban\n  Backlog\n    t1[Brainstorm topics]\n    t2[Find sources]\n  In_Progress\n    t3[Draft outline]\n    t4[Write rough draft]\n  Review\n    t5[Peer feedback]\n  Done\n    t6[Final edits]\n    t7[Submit assignment]',venn:'venn-beta\n    title Science & Engineering\n    set Science ["Science"] :5\n        text ["Asks questions"]\n        text ["Builds explanations"]\n        text ["Uses evidence"]\n        text ["Tests ideas"]\n        text ["Develops models"]\n    set Engineering ["Engineering"] :5\n        text ["Defines problems"]\n        text ["Designs solutions"]\n        text ["Builds prototypes"]\n        text ["Tests constraints"]\n        text ["Improves designs"]\n    union Science,Engineering ["Both"] :3\n        text ["Use data"]\n        text ["Make models"]\n        text ["Test and revise"]\n        text ["Solve real problems"]'},
     es:{flowchart:'graph TD\n  A[Inicio] --> B{Decisión}\n  B -->|Sí| C[Continuar]\n  B -->|No| D[Detener]',pie:'pie title Materias favoritas\n  "Matemáticas" : 30\n  "Ciencias" : 25\n  "Español" : 20\n  "Arte" : 15\n  "Otra" : 10',sequence:'sequenceDiagram\n  Estudiante->>Docente: Tiene una pregunta\n  Docente->>Estudiante: Da una respuesta\n  Estudiante->>Cuaderno: Escribe notas',mindmap:'mindmap\n  root((Tema))\n    Idea 1\n      Detalle A\n      Detalle B\n    Idea 2\n      Detalle C\n    Idea 3\n      Detalle D\n      Detalle E',gantt:'gantt\n  title Cronograma del proyecto\n  dateFormat YYYY-MM-DD\n  section Planificación\n    Esquema   :a1, 2026-01-01, 7d\n    Investigación  :a2, after a1, 14d\n  section Construcción\n    Borrador     :b1, after a2, 21d\n    Revisión    :b2, after b1, 7d',timeline:'timeline\n  title Año escolar\n  Agosto    : Semana de bienvenida\n  Octubre   : Exámenes parciales\n  Diciembre  : Vacaciones\n  Marzo     : Descanso de primavera\n  Mayo       : Exámenes finales',class:'classDiagram\n  class Animal {\n    +String nombre\n    +int edad\n    +hacerSonido()\n  }\n  class Perro {\n    +String raza\n    +ladrar()\n  }\n  Animal <|-- Perro',state:'stateDiagram-v2\n  [*] --> Inactivo\n  Inactivo --> Trabajando : iniciar\n  Trabajando --> Revisión : enviar\n  Revisión --> Trabajando : revisar\n  Revisión --> Terminado : aprobar\n  Terminado --> [*]'},
     vi:{flowchart:'graph TD\n  A[Bắt đầu] --> B{Quyết định}\n  B -->|Có| C[Tiếp tục]\n  B -->|Không| D[Dừng]',pie:'pie title Môn học yêu thích\n  "Toán" : 30\n  "Khoa học" : 25\n  "Tiếng Việt" : 20\n  "Nghệ thuật" : 15\n  "Khác" : 10',sequence:'sequenceDiagram\n  Học_sinh->>Giáo_viên: Có câu hỏi\n  Giáo_viên->>Học_sinh: Trả lời\n  Học_sinh->>Vở: Ghi chú',mindmap:'mindmap\n  root((Chủ đề))\n    Ý tưởng 1\n      Chi tiết A\n      Chi tiết B\n    Ý tưởng 2\n      Chi tiết C\n    Ý tưởng 3\n      Chi tiết D\n      Chi tiết E',gantt:'gantt\n  title Tiến độ dự án\n  dateFormat YYYY-MM-DD\n  section Lập kế hoạch\n    Dàn ý   :a1, 2026-01-01, 7d\n    Nghiên cứu  :a2, after a1, 14d\n  section Thực hiện\n    Bản nháp     :b1, after a2, 21d\n    Xem lại    :b2, after b1, 7d',timeline:'timeline\n  title Năm học\n  Tháng 8    : Tuần chào mừng\n  Tháng 10   : Kiểm tra giữa kỳ\n  Tháng 12  : Nghỉ lễ\n  Tháng 3     : Nghỉ xuân\n  Tháng 5       : Kiểm tra cuối kỳ',class:'classDiagram\n  class Động_vật {\n    +String tên\n    +int tuổi\n    +phátÂm()\n  }\n  class Chó {\n    +String giống\n    +sủa()\n  }\n  Động_vật <|-- Chó',state:'stateDiagram-v2\n  [*] --> Chờ\n  Chờ --> Làm_việc : bắt đầu\n  Làm_việc --> Xem_lại : nộp\n  Xem_lại --> Làm_việc : sửa\n  Xem_lại --> Hoàn_thành : duyệt\n  Hoàn_thành --> [*]'},
     ar:{flowchart:'graph TD\n  A[البداية] --> B{قرار}\n  B -->|نعم| C[متابعة]\n  B -->|لا| D[توقف]',pie:'pie title المواد المفضلة\n  "رياضيات" : 30\n  "علوم" : 25\n  "لغة" : 20\n  "فن" : 15\n  "أخرى" : 10',sequence:'sequenceDiagram\n  طالب->>معلم: لديه سؤال\n  معلم->>طالب: يقدم إجابة\n  طالب->>دفتر: يكتب ملاحظات',mindmap:'mindmap\n  root((موضوع))\n    فكرة 1\n      تفصيل A\n      تفصيل B\n    فكرة 2\n      تفصيل C\n    فكرة 3\n      تفصيل D\n      تفصيل E',gantt:'gantt\n  title الجدول الزمني للمشروع\n  dateFormat YYYY-MM-DD\n  section تخطيط\n    مخطط   :a1, 2026-01-01, 7d\n    بحث  :a2, after a1, 14d\n  section بناء\n    مسودة     :b1, after a2, 21d\n    مراجعة    :b2, after b1, 7d',timeline:'timeline\n  title العام الدراسي\n  أغسطس    : أسبوع الترحيب\n  أكتوبر   : اختبارات منتصف الفصل\n  ديسمبر  : عطلة\n  مارس     : عطلة الربيع\n  مايو       : الاختبارات النهائية',class:'classDiagram\n  class حيوان {\n    +String اسم\n    +int عمر\n    +إصدار_صوت()\n  }\n  class كلب {\n    +String سلالة\n    +نباح()\n  }\n  حيوان <|-- كلب',state:'stateDiagram-v2\n  [*] --> خامل\n  خامل --> يعمل : ابدأ\n  يعمل --> مراجعة : إرسال\n  مراجعة --> يعمل : تعديل\n  مراجعة --> منجز : اعتماد\n  منجز --> [*]'},
@@ -485,6 +485,86 @@
       } catch(_) { resolve(svgString); }
     });
   }
+  // ---- Custom venn-beta renderer ----------------------------------------
+  // The vendored Mermaid build has no Venn support, so we parse and draw it
+  // ourselves. Grammar:
+  //   venn-beta
+  //     title My Title                 (optional)
+  //     set ID ["Label"] :weight       (weight + ["Label"] optional)
+  //       text ["item"]
+  //     union A,B ["Label"] :weight
+  //       text ["item"]
+  function isVennSource(s){ return /^\s*venn-beta\b/.test(s || ''); }
+  function parseVennBeta(source){
+    const sets = [], unions = []; let title = '', cur = null, m;
+    (source || '').split(/\r?\n/).forEach(raw => {
+      const line = raw.trim();
+      if(!line || /^venn-beta\b/.test(line)) return;
+      if((m = line.match(/^title\s+(?:\["?([^"\]]*)"?\]|(.+))$/))){ title = (m[1] != null ? m[1] : (m[2] || '')).trim(); cur = null; return; }
+      if((m = line.match(/^set\s+([^\[\s:]+)\s*(?:\["([^"]*)"\])?\s*(?::\s*([0-9.]+))?/))){
+        const s = { id:m[1], label: m[2] != null ? m[2] : m[1], weight: m[3] ? parseFloat(m[3]) : 1, items: [] };
+        sets.push(s); cur = s.items; return;
+      }
+      if((m = line.match(/^union\s+([^\[:]+?)\s*(?:\["([^"]*)"\])?\s*(?::\s*([0-9.]+))?\s*$/))){
+        const ids = m[1].split(/[,\s]+/).map(x => x.trim()).filter(Boolean);
+        const u = { ids, label: m[2] != null ? m[2] : ids.join(' ∩ '), weight: m[3] ? parseFloat(m[3]) : 1, items: [] };
+        unions.push(u); cur = u.items; return;
+      }
+      if((m = line.match(/^text\s*\["([^"]*)"\]/))){ if(cur) cur.push(m[1]); return; }
+    });
+    return { title, sets, unions };
+  }
+  function renderVennBeta(source){
+    const { title, sets, unions } = parseVennBeta(source);
+    if(!sets.length) throw new Error('Venn: add at least one "set".');
+    const pal = MERMAID_PALETTE;
+    const W = 860, H = 620;
+    const cx = W / 2, top = title ? 60 : 30;
+    const Cy = (H + top) / 2;
+    const n = sets.length;
+    const wmax = Math.max.apply(null, sets.map(s => s.weight || 1).concat(1));
+    const baseR = n >= 3 ? 140 : (n === 2 ? 165 : 150);
+    const radius = sets.map(s => baseR * Math.sqrt((s.weight || 1) / wmax));
+    const centers = [];
+    if(n === 1){ centers.push({ x:cx, y:Cy }); }
+    else if(n === 2){ const sep = (radius[0] + radius[1]) * 0.62; centers.push({ x:cx - sep/2, y:Cy }, { x:cx + sep/2, y:Cy }); }
+    else { const ring = baseR * 0.62; for(let i=0;i<n;i++){ const a = (-90 + i*(360/n)) * Math.PI/180; centers.push({ x:cx + ring*Math.cos(a), y:Cy + ring*Math.sin(a) }); } }
+    const gc = centers.reduce((a,c) => ({ x:a.x + c.x/n, y:a.y + c.y/n }), { x:0, y:0 });
+    const idIndex = {}; sets.forEach((s,i) => { idIndex[s.id] = i; });
+    const parts = [];
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Arial,Helvetica,sans-serif">`);
+    parts.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
+    if(title) parts.push(`<text x="${cx}" y="42" text-anchor="middle" font-size="26" font-weight="800" fill="#111827">${esc(title)}</text>`);
+    centers.forEach((c,i) => { const col = pal[i % pal.length]; parts.push(`<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${radius[i].toFixed(1)}" fill="${col.fill}" fill-opacity="0.5" stroke="${col.stroke}" stroke-width="2.5"/>`); });
+    function block(ax, ay, lines, labelColor){
+      const lh = 21, fs = 14, total = lines.length;
+      const startY = ay - ((total - 1) * lh) / 2;
+      const maxLen = Math.max.apply(null, lines.map(l => l.text.length).concat(1));
+      const w = Math.min(W - 20, maxLen * (fs * 0.56) + 18), h = total * lh + 12;
+      const out = ['<g>'];
+      out.push(`<rect x="${(ax - w/2).toFixed(1)}" y="${(startY - lh/2 - 4).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="8" fill="#ffffff" fill-opacity="0.62"/>`);
+      lines.forEach((l,i) => { out.push(`<text x="${ax.toFixed(1)}" y="${(startY + i*lh + 4).toFixed(1)}" text-anchor="middle" font-size="${l.bold ? fs+1 : fs}" font-weight="${l.bold ? 800 : 500}" fill="${l.bold ? labelColor : '#1f2937'}">${esc(l.text)}</text>`); });
+      out.push('</g>'); return out.join('');
+    }
+    sets.forEach((s,i) => {
+      const c = centers[i]; const dx = c.x - gc.x, dy = c.y - gc.y, d = Math.hypot(dx,dy) || 1;
+      const push = n === 1 ? 0 : radius[i] * 0.46;
+      const ax = c.x + (dx/d) * push, ay = c.y + (dy/d) * push;
+      const lines = [{ text:s.label, bold:true }].concat(s.items.map(t => ({ text:t })));
+      parts.push(block(ax, ay, lines, pal[i % pal.length].text));
+    });
+    unions.forEach(u => {
+      const idxs = u.ids.map(id => idIndex[id]).filter(i => i != null && i >= 0);
+      if(!idxs.length) return;
+      const ux = idxs.reduce((a,i) => a + centers[i].x, 0) / idxs.length;
+      const uy = idxs.reduce((a,i) => a + centers[i].y, 0) / idxs.length;
+      const lines = [{ text:u.label, bold:true }].concat(u.items.map(t => ({ text:t })));
+      parts.push(block(ux, uy, lines, '#111827'));
+    });
+    parts.push('</svg>');
+    return parts.join('');
+  }
+
   let mermaidInited = false;
   function ensureInit(){
     if(mermaidInited) return true;
@@ -496,6 +576,7 @@
     return mermaidInited;
   }
   async function renderColoredSvg(source){
+    if(isVennSource(source)) return await tightenSvgString(renderVennBeta(source), 16);
     if(!ensureInit()) throw new Error('Mermaid library not loaded');
     const renderId = 'mr_' + Math.random().toString(36).slice(2);
     const out = await window.mermaid.render(renderId, source);
@@ -507,6 +588,11 @@
   }
   async function renderPreview(){
     const source = sourceEl.value;
+    if(isVennSource(source)) {
+      try { previewEl.innerHTML = renderVennBeta(source); setStatus('', ''); }
+      catch(err) { previewEl.innerHTML = '<div class="mermaid-error">' + esc(err && err.message ? err.message : String(err)) + '</div>'; }
+      return;
+    }
     if(window.__mermaidMissing) return showLibError();
     if(!source.trim()) {
       previewEl.innerHTML = '<div style="color:var(--gray-50);text-align:center">' + t('preview.empty') + '</div>';
