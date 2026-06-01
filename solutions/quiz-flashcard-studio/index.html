@@ -10,6 +10,7 @@
 <script src="../../assets/js/widget-i18n.js"></script>
 <script src="./locales.js"></script>
 <script src="../../vendor/jszip.min.js"></script>
+<script src="./science-sample-data.js"></script>
 <style>
 :root{--navy:#7c3aed;--gold:#a855f7;--black:#000000;--white:#ffffff;--red:#ef4444;--blue:#6d28d9;--yellow:#facc15;--orange:#f97316;--green:#22c55e;--teal:#14b8a6;--gray-90:#111827;--gray-70:#374151;--gray-50:#64748b;--gray-30:#cbd5e1;--gray-10:#eef2ff;--bg:#ffffff;--surface:#ffffff;--border:#ddd6fe;--radius:8px;--shadow:0 12px 24px rgba(64,64,65,.08);--ink:#111827;--muted:#64748b;--line:#ddd6fe;--purple:#7c3aed}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--gray-90);background:var(--bg)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -70,6 +71,8 @@
         <div class="actions"><button class="btn primary" id="addQuestion" type="button" data-i18n="build.add">Add Question</button><button class="btn" id="updateQuestion" type="button" disabled data-i18n="build.update">Update</button><button class="btn danger" id="clearForm" type="button" data-i18n="common.clear">Clear</button></div>
         <hr>
         <div class="field dropzone" id="dropzone"><label for="fileInput" data-i18n="build.import">Import Questions</label><input id="fileInput" type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.ods,.odt,application/json,text/csv,text/tab-separated-values"><p class="hint" data-i18n="build.importHint">CSV/TSV columns: question, answer, wrong1, wrong2, wrong3, type, points, notes. XLSX/ODS use the first sheet. JSON accepts this app's export.</p><p class="hint"><a href="./drawsplat-quiz-flashcard_v1.csv" download data-i18n="build.sampleCsv">Sample CSV</a> · <a href="./drawsplat-quiz-flashcard_v1.json" download data-i18n="build.sampleJson">Sample JSON</a></p></div>
+        <div class="field"><label for="sampleSet" data-i18n="build.sampleSet">Sample Data Set</label><select id="sampleSet"></select></div>
+        <div class="actions" id="sampleChoices" aria-label="Science sample quick choices"></div>
         <div class="field"><label for="pasteImport" data-i18n="build.paste">Paste Import</label><textarea id="pasteImport" data-i18n-placeholder="build.pastePh" placeholder="Question,Answer,Wrong 1,Wrong 2&#10;2 + 2?,4,3,5"></textarea></div>
         <div class="actions"><button class="btn teal" id="importPaste" type="button" data-i18n="build.importPaste">Import Pasted Text</button><button class="btn" id="loadSample" type="button" data-i18n="build.loadSample">Load Sample</button></div>
         <div class="actions"><button class="btn" id="saveDraft" type="button" data-i18n="build.saveDraft">Save Draft</button><button class="btn" id="loadDraft" type="button" data-i18n="build.loadDraft">Load Draft</button></div>
@@ -152,12 +155,9 @@
 const $=id=>document.getElementById(id);
 const t=(key,vars)=>window.WidgetI18n?WidgetI18n.t(key,vars):key;
 const state={questions:[],editing:null,players:[{name:'Team 1',score:0,answered:0}],activePlayer:0,order:[],playIndex:0,selected:null,revealed:false,reports:[],cards:[],cardIndex:0,cardBack:false,optionOrders:{},timeLeft:null,timerId:null,studentMode:false};
-const sample=[
-  {question:'Which strategy asks learners to pull information from memory?',answer:'Retrieval practice',wrong:['Highlighting','Re-reading','Copying notes'],type:'multiple-choice',points:100},
-  {question:'ClassQuiz is valued partly because it can be self-hosted.',answer:'True',wrong:['False'],type:'true-false',points:100},
-  {question:'What format is commonly used for spreadsheet question imports?',answer:'CSV',wrong:['PNG','MP3','SVG'],type:'multiple-choice',points:100},
-  {question:'Flashcards support which learning routine?',answer:'Rehearsal',wrong:['Data tracking','Advertising','One-time reading'],type:'multiple-choice',points:100}
-];
+const sampleSets=Array.isArray(window.DRAWSPLAT_SCIENCE_SAMPLE_SETS)?window.DRAWSPLAT_SCIENCE_SAMPLE_SETS:[];
+function initSampleSets(){const sel=$('sampleSet'),choices=$('sampleChoices');if(!sel)return;sel.innerHTML=sampleSets.map(set=>`<option value="${esc(set.id)}">${esc(set.label||set.title)}</option>`).join('');if(sampleSets[0])sel.value=sampleSets[0].id;if(choices)choices.innerHTML=sampleSets.map(set=>`<button class="btn small" type="button" data-load-sample-set="${esc(set.id)}">${esc(set.title||set.label)}</button>`).join('')}
+function loadSampleSet(id){const selected=sampleSets.find(set=>set.id===id)||sampleSets.find(set=>set.id===$('sampleSet')?.value)||sampleSets[0];if(!selected){setStatus(t('status.noSample'));return}$('quizTitle').value=selected.title||'Science TEKS Sample';$('quizTimer').value=selected.timer??30;state.questions=(selected.questions||[]).map(normalizeQuestion).filter(valid);syncCards(false);renderQuestions();setStatus(t('status.sampleLoaded',{title:selected.title||'sample'}))}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
 function normalizeQuestion(q){let wrong=Array.isArray(q.wrong)?q.wrong:String(q.wrong||'').split(/[|;\n]/).map(s=>s.trim()).filter(Boolean);let type=(q.type||'multiple-choice').toLowerCase();if(type.includes('true')) type='true-false'; if(type.includes('short')) type='short-answer'; if(!['multiple-choice','true-false','short-answer'].includes(type)) type='multiple-choice';return{id:q.id||uid(),question:String(q.question||q.prompt||'').trim(),answer:String(q.answer||q.correct||'').trim(),wrong, type, points:Math.max(1,Number(q.points)||100), notes:String(q.notes||'').trim()}}
@@ -217,7 +217,7 @@ function printFlashcards(){const cards=flashcardsForPrint();if(!cards.length){al
 function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('[data-view-btn]').forEach(b=>b.classList.toggle('active',b.dataset.viewBtn===name));if(name==='reports')renderReports();if(name==='flashcards')renderFlash();if(name==='play')renderPlay()}
 document.querySelectorAll('[data-view-btn]').forEach(b=>b.onclick=()=>showView(b.dataset.viewBtn));
 $('addQuestion').onclick=addQuestion;$('updateQuestion').onclick=updateQuestion;$('clearForm').onclick=clearForm;$('searchQuestions').oninput=renderQuestions;$('questionList').onclick=e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-del]');if(edit)editQuestion(edit.dataset.edit);if(del)deleteQuestion(del.dataset.del)};
-$('fileInput').onchange=e=>{[...e.target.files].forEach(importFile);e.target.value=''};$('importPaste').onclick=()=>importText($('pasteImport').value);$('loadSample').onclick=()=>{state.questions=sample.map(normalizeQuestion);syncCards(false);renderQuestions();setStatus('Sample quiz loaded.')};
+$('fileInput').onchange=e=>{[...e.target.files].forEach(importFile);e.target.value=''};$('importPaste').onclick=()=>importText($('pasteImport').value);$('loadSample').onclick=()=>loadSampleSet($('sampleSet').value);$('sampleChoices').onclick=e=>{const btn=e.target.closest('[data-load-sample-set]');if(btn)loadSampleSet(btn.dataset.loadSampleSet)};
 $('exportJson').onclick=exportJson;$('exportCsv').onclick=exportCsv;$('exportXlsx').onclick=exportXlsx;$('saveDraft').onclick=saveDraft;$('loadDraft').onclick=loadDraft;$('clearAll').onclick=()=>{if(confirm(t('confirm.clearAll'))){state.questions=[];state.cards=[];renderQuestions();renderFlash();setStatus(t('status.cleared'))}};
 $('startQuiz').onclick=startQuiz;$('restartQuiz').onclick=startQuiz;$('studentRestart').onclick=startQuiz;$('newPlayer').onclick=()=>{const name=$('playerName').value.trim()||'Team '+(state.players.length+1);state.players.push({name,score:0,answered:0});state.activePlayer=state.players.length-1;renderScoreboard()};$('studentAddTeam').onclick=()=>{const name=$('studentTeamName').value.trim()||'Team '+(state.players.length+1);state.players.push({name,score:0,answered:0});state.activePlayer=state.players.length-1;$('studentTeamName').value='Team '+(state.players.length+1);renderScoreboard()};$('playArea').onclick=e=>{const b=e.target.closest('[data-answer]');if(b&&!state.revealed){state.selected=b.dataset.answer;renderPlay()}};$('submitAnswer').onclick=submitAnswer;$('nextQuestion').onclick=nextQuestion;$('prevQuestion').onclick=prevQuestion;$('copyLink').onclick=async()=>{await navigator.clipboard.writeText($('shareLink').value)};
 $('makeCards').onclick=()=>syncCards(true);$('syncCards').onclick=()=>syncCards(true);$('shuffleCards').onclick=()=>{state.cards=shuffle(state.cards);state.cardIndex=0;state.cardBack=false;renderFlash()};$('flipCard').onclick=flipFlash;$('flipCardBtn').onclick=flipFlash;$('nextCard').onclick=nextFlash;$('prevCard').onclick=prevFlash;$('exportCardsCsv').onclick=()=>{const rows=[['front','back'],...state.cards.map(c=>[c.front,c.back])];download('flashcards.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv')};$('printCards').onclick=printFlashcards;
@@ -225,7 +225,7 @@ $('exportReport').onclick=exportReport;$('clearReports').onclick=()=>{state.repo
 ['quizTitle','quizTimer'].forEach(id=>$(id).addEventListener('input',updateShareLink));
 const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));dz.addEventListener('drop',e=>[...e.dataTransfer.files].forEach(importFile));
 window.addEventListener('widget-i18n:changed',()=>{renderQuestions();renderPlay();renderFlash();renderReports()});
-renderQuestions();syncCards(false);renderReports();loadHashQuiz();
+initSampleSets();renderQuestions();syncCards(false);renderReports();loadHashQuiz();
 </script>
 <script src="../../assets/js/consent-banner.js" defer></script>
 </body>
