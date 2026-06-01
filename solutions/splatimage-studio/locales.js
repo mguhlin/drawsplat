@@ -66,7 +66,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.addImages': 'Add Images',
     'stage.aria': 'SplatImage Studio canvas',
     'layers.empty': 'No layers yet.',
-    'hint': 'Tips: paste screenshots with Ctrl+V, drag images onto the canvas, Shift-click for multi-select, mouse wheel over selected text changes its size, and Delete removes selected items.',
+    'hint': 'Tips: paste screenshots with Ctrl+V, drag images onto the canvas, drag handles to resize, hold Shift while resizing to keep proportions, mouse wheel over selected text changes its size, and Delete removes selected items.',
     'status.ready': 'Ready.',
     'status.imported': 'Imported {n} image(s).',
     'status.pasted': 'Pasted image from clipboard.',
@@ -98,7 +98,7 @@ WidgetI18n.register('splatimage-studio', {
     'field.stroke': 'Trazo', 'field.fill': 'Relleno', 'field.transparent': 'Relleno transparente', 'field.width': 'Grosor', 'field.arrow': 'Tamaño de flecha', 'field.font': 'Tamaño de texto', 'field.delay': 'Retraso GIF',
     'button.applyCrop': 'Aplicar recorte', 'button.cancelCrop': 'Cancelar', 'button.clear': 'Borrar', 'button.fit': 'Ajustar', 'button.actual': '100%', 'button.exportGif': 'Exportar GIF', 'button.exportFrames': 'Exportar cuadros', 'button.addImages': 'Añadir imágenes',
     'stage.aria': 'Lienzo de SplatImage Studio', 'layers.empty': 'Aún no hay capas.',
-    'hint': 'Consejos: pega capturas con Ctrl+V, arrastra imágenes, usa Shift-clic para selección múltiple y la rueda sobre texto seleccionado cambia su tamaño.',
+    'hint': 'Consejos: pega capturas con Ctrl+V, arrastra imágenes, usa los tiradores para cambiar tamaño, mantén Shift para conservar proporciones y la rueda sobre texto seleccionado cambia su tamaño.',
     'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
   },
   vi: {
@@ -117,7 +117,7 @@ WidgetI18n.register('splatimage-studio', {
     'field.stroke': 'Vien', 'field.fill': 'To mau', 'field.transparent': 'Nen trong suot', 'field.width': 'Do day', 'field.arrow': 'Co mui ten', 'field.font': 'Co chu', 'field.delay': 'Tre GIF',
     'button.applyCrop': 'Ap dung cat', 'button.cancelCrop': 'Huy', 'button.clear': 'Xoa het', 'button.fit': 'Vua khung', 'button.actual': '100%', 'button.exportGif': 'Xuat GIF', 'button.exportFrames': 'Xuat khung', 'button.addImages': 'Them anh',
     'stage.aria': 'Khung ve SplatImage Studio', 'layers.empty': 'Chua co lop.',
-    'hint': 'Meo: Ctrl+V de dan anh chup, keo tha anh vao khung, Shift-bam de chon nhieu, lan chuot tren van ban da chon de doi co chu.',
+    'hint': 'Meo: Ctrl+V de dan anh chup, keo tha anh vao khung, keo tay nam de doi kich thuoc, giu Shift de giu ti le, lan chuot tren van ban da chon de doi co chu.',
     'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
   },
   ar: {
@@ -136,7 +136,7 @@ WidgetI18n.register('splatimage-studio', {
     'field.stroke': 'حد', 'field.fill': 'تعبئة', 'field.transparent': 'تعبئة شفافة', 'field.width': 'عرض الخط', 'field.arrow': 'حجم السهم', 'field.font': 'حجم النص', 'field.delay': 'تاخير GIF',
     'button.applyCrop': 'تطبيق القص', 'button.cancelCrop': 'الغاء', 'button.clear': 'مسح', 'button.fit': 'ملاءمة', 'button.actual': '100%', 'button.exportGif': 'تصدير GIF', 'button.exportFrames': 'تصدير اطارات', 'button.addImages': 'اضافة صور',
     'stage.aria': 'لوحة SplatImage Studio', 'layers.empty': 'لا توجد طبقات.',
-    'hint': 'نصائح: الصق لقطات الشاشة ب Ctrl+V واسحب الصور للوحة واستخدم Shift للنقر المتعدد وعجلة الفارة لتغيير حجم النص المحدد.',
+    'hint': 'نصائح: الصق لقطات الشاشة ب Ctrl+V واسحب الصور للوحة واسحب المقابض لتغيير الحجم واضغط Shift للحفاظ على النسبة.',
     'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
   },
   zh: {
@@ -155,7 +155,7 @@ WidgetI18n.register('splatimage-studio', {
     'field.stroke': '描边', 'field.fill': '填充', 'field.transparent': '透明填充', 'field.width': '线宽', 'field.arrow': '箭头大小', 'field.font': '文字大小', 'field.delay': 'GIF 延迟',
     'button.applyCrop': '应用裁剪', 'button.cancelCrop': '取消', 'button.clear': '清空', 'button.fit': '适合', 'button.actual': '100%', 'button.exportGif': '导出 GIF', 'button.exportFrames': '导出帧', 'button.addImages': '添加图片',
     'stage.aria': 'SplatImage Studio 画布', 'layers.empty': '还没有图层。',
-    'hint': '提示：Ctrl+V 粘贴截图，拖放图片，Shift 点击多选，鼠标滚轮可调整所选文字大小。',
+    'hint': '提示：Ctrl+V 粘贴截图，拖放图片，拖动控制点调整大小，按住 Shift 保持比例，鼠标滚轮可调整所选文字大小。',
     'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
   },
   uh: {
@@ -174,7 +174,7 @@ WidgetI18n.register('splatimage-studio', {
     'field.stroke': 'Stroke', 'field.fill': 'Fill', 'field.transparent': 'Transparent fill', 'field.width': 'Line width', 'field.arrow': 'Arrow size', 'field.font': 'Text size', 'field.delay': 'GIF delay',
     'button.applyCrop': 'Apply crop', 'button.cancelCrop': 'Cancel', 'button.clear': 'Clear', 'button.fit': 'Fit', 'button.actual': '100%', 'button.exportGif': 'Export GIF', 'button.exportFrames': 'Export Frames', 'button.addImages': 'Add Images',
     'stage.aria': 'SplatImage Studio canvas', 'layers.empty': 'Abhi layers nahi hain.',
-    'hint': 'Tips: Ctrl+V se screenshot paste karein, images drag karein, Shift-click multi-select ke liye, aur selected text par mouse wheel size badalta hai.',
+    'hint': 'Tips: Ctrl+V se screenshot paste karein, images drag karein, handles se resize karein, Shift pakad kar proportions rakhein, aur selected text par mouse wheel size badalta hai.',
     'status.ready': 'Ready.', 'status.imported': '{n} image import hui.', 'status.pasted': 'Image paste hui.', 'status.exported': 'PNG export hua.', 'status.copied': 'PNG copy hua.', 'status.needSelection': 'Pehle object select karein.', 'status.needImages': 'Pehle image layers select karein.', 'status.gif': '{n} frames se GIF export hua.', 'status.frames': '{n} frame files download hui.', 'status.crop': 'Canvas crop hua.', 'status.effect': 'Effect apply hua.', 'status.undo': 'Undo ke liye kuch nahi.', 'status.redo': 'Redo ke liye kuch nahi.'
   }
 });
