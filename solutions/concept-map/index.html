@@ -200,6 +200,17 @@
       display: grid;
       gap: 12px;
     }
+    .instruction-dock {
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      align-items: start;
+    }
+    .instruction-dock .footer-note {
+      margin: 0;
+    }
+    .instruction-stack {
+      display: grid;
+      gap: 10px;
+    }
     .control-section {
       display: grid;
       gap: 8px;
@@ -352,11 +363,11 @@
     svg#cmCanvas {
       display: block;
       width: 100%;
-      height: clamp(560px, calc(100vh - 270px), 920px);
+      height: clamp(680px, calc(100vh - 220px), 1100px);
       touch-action: none;
     }
     @media (max-width: 760px) {
-      svg#cmCanvas { height: clamp(440px, 62vh, 760px); }
+      svg#cmCanvas { height: clamp(520px, 70vh, 900px); }
     }
     .cm-node { cursor: grab; }
     .cm-node.dragging { cursor: grabbing; }
@@ -392,6 +403,15 @@
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
+    }
+    .studio-menu-spacer {
+      flex: 1 1 24px;
+      min-width: 12px;
+    }
+    .studio-menu-clear {
+      margin-left: auto;
+      padding-inline: 13px;
+      white-space: nowrap;
     }
     .studio-menu {
       position: relative;
@@ -586,6 +606,10 @@
       z-index: 10;
     }
     .embed-credit:hover { color: var(--navy); background: #fff; }
+    @media (max-width: 760px) {
+      .instruction-dock { grid-template-columns: 1fr; }
+      .studio-menu-clear { margin-left: 0; }
+    }
   </style>
 </head>
 <body>
@@ -698,6 +722,8 @@
           <option value="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</option>
           <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
         </select>
+        <span class="studio-menu-spacer" aria-hidden="true"></span>
+        <button class="tool-btn danger studio-menu-clear" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
       </nav>
 
       <section class="stage" data-i18n-aria-label="panel.canvas.aria" aria-label="Concept map canvas">
@@ -725,23 +751,16 @@
           <input id="inlineEditor" class="inline-editor" data-i18n-aria-label="inline.editor.aria" aria-label="Node label editor" hidden>
         </div>
 
-        <div class="control-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
-          <div class="control-section">
-            <h3 data-i18n="section.editSelected">Edit selected</h3>
-            <div class="control-buttons">
-              <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
-            </div>
+        <div class="control-dock instruction-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
+          <div class="instruction-stack">
             <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
-          </div>
-
-          <div class="selection-row">
             <div class="selection-info" id="selectionInfo" data-i18n="selection.emptyHint">Click a node or connector to select. Shift-click to add another. Drag empty canvas to rubber-band select. Click a connector line to select it — a "+ label" pill appears so you can add or edit its label.</div>
-            <p class="footer-note" data-i18n-html="footer.note.html">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
           </div>
+          <p class="footer-note" data-i18n-html="footer.note.html">Concept maps stay in your browser only — nothing is uploaded. Use <strong>Save .json</strong> to keep your work as a local file, then <strong>Load .json</strong> to re-open it later. Ctrl/Cmd-click a node with a link to open it in a new tab. <strong>Copy / Download with nodes selected</strong> exports just the selection (with connectors between them and fully-selected groups), tightly cropped and upscaled.</p>
+          <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         </div>
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
-        <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
@@ -766,6 +785,23 @@
   const zoomLabelBtn = document.getElementById('zoomResetBtn');
   const panToggleBtn = document.getElementById('panToggleBtn');
   const gridToggleBtn = document.getElementById('gridToggleBtn');
+  const studioMenus = Array.from(document.querySelectorAll('.studio-menu-bar .studio-menu'));
+
+  studioMenus.forEach(menu => {
+    menu.addEventListener('toggle', () => {
+      if (!menu.open) return;
+      studioMenus.forEach(other => { if (other !== menu) other.open = false; });
+    });
+    menu.addEventListener('click', event => {
+      const target = event.target;
+      if (target.closest('summary') || !target.closest('button, a')) return;
+      menu.open = false;
+    });
+  });
+  document.addEventListener('pointerdown', event => {
+    if (event.target.closest('.studio-menu-bar')) return;
+    studioMenus.forEach(menu => { menu.open = false; });
+  });
 
   const PALETTE = [
     {name:'Pink',     fill:'#fce7f3', stroke:'#ec4899', text:'#831843'},
