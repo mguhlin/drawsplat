@@ -819,36 +819,47 @@
     const textBlock = wrapped.length * lineHeight + 24;
     return Math.max(minH, Math.ceil(textBlock));
   }
+  function rectOverlap(a, b, gap){
+    gap = gap || 0;
+    return Math.abs(a.cx - b.cx) < (a.w + b.w)/2 + gap &&
+           Math.abs(a.cy - b.cy) < (a.h + b.h)/2 + gap;
+  }
   // Connector label pills sit at the midpoint of the connector line by
-  // default — but when nodes are dense the midpoint often lands inside a
-  // node box. Shift the pill perpendicular to the connector direction until
-  // it's clear, falling back to "give up after N tries" if the canvas is
-  // hopelessly packed.
-  function avoidNodesForLabel(midX, midY, labelW, labelH, perpX, perpY){
-    let lx = midX, ly = midY;
-    const PAD = 4;
-    for (let iter = 0; iter < 10; iter++) {
-      let worstOverlap = 0;
-      let worstSign = 1;
-      for (const n of state.nodes) {
-        const dx = n.x - lx, dy = n.y - ly;
-        const ox = (labelW + n.w)/2 + PAD - Math.abs(dx);
-        const oy = (labelH + n.h)/2 + PAD - Math.abs(dy);
-        if (ox <= 0 || oy <= 0) continue;
-        const need = Math.min(ox, oy) + 2;
-        if (need > worstOverlap) {
-          worstOverlap = need;
-          // Move away from the node's center along the perpendicular axis.
-          // Pick whichever sign of perp takes us further from the node.
-          const towardsNode = perpX * dx + perpY * dy;
-          worstSign = towardsNode > 0 ? -1 : 1;
-        }
+  // default. Dense AI/imported maps can put that midpoint inside a node, or
+  // place several relationship labels on top of one another. Try a compact
+  // set of perpendicular/tangent offsets and choose the first collision-free
+  // position. This keeps labels readable without mutating user node positions.
+  function avoidObstaclesForLabel(midX, midY, labelW, labelH, perpX, perpY, extraRects){
+    const tangentX = -perpY, tangentY = perpX;
+    const obstacles = state.nodes.map(n => ({cx: n.x, cy: n.y, w: n.w, h: n.h}))
+      .concat(extraRects || []);
+    const base = {x: midX, y: midY};
+    const candidates = [base];
+    const step = Math.max(labelH + 12, 38);
+    for (let i = 1; i <= 10; i++) {
+      candidates.push({x: midX + perpX*step*i, y: midY + perpY*step*i});
+      candidates.push({x: midX - perpX*step*i, y: midY - perpY*step*i});
+      if (i <= 4) {
+        candidates.push({x: midX + tangentX*step*i, y: midY + tangentY*step*i});
+        candidates.push({x: midX - tangentX*step*i, y: midY - tangentY*step*i});
+        candidates.push({x: midX + perpX*step*i + tangentX*step, y: midY + perpY*step*i + tangentY*step});
+        candidates.push({x: midX - perpX*step*i - tangentX*step, y: midY - perpY*step*i - tangentY*step});
       }
-      if (worstOverlap <= 0) return {x: lx, y: ly};
-      lx += perpX * worstOverlap * worstSign;
-      ly += perpY * worstOverlap * worstSign;
     }
-    return {x: lx, y: ly};
+    let best = base, bestScore = Infinity;
+    for (const c of candidates) {
+      const r = {cx: c.x, cy: c.y, w: labelW, h: labelH};
+      let score = Math.hypot(c.x - midX, c.y - midY);
+      for (const ob of obstacles) {
+        if (!rectOverlap(r, ob, 6)) continue;
+        const ox = (labelW + ob.w)/2 + 6 - Math.abs(c.x - ob.cx);
+        const oy = (labelH + ob.h)/2 + 6 - Math.abs(c.y - ob.cy);
+        score += 10000 + Math.max(0, ox) * Math.max(0, oy);
+      }
+      if (score < bestScore) { bestScore = score; best = c; }
+      if (score < 9999) return best;
+    }
+    return best;
   }
   function svgWrappedText(lines, attrs){
     const t = svgPart('text', attrs);
@@ -1415,6 +1426,7 @@
     });
 
     // Connectors
+    const placedConnectorLabelRects = [];
     state.connectors.forEach(c => {
       const from = nodeById(c.fromId), to = nodeById(c.toId);
       if (!from || !to) return;
@@ -1453,7 +1465,8 @@
         const labelText = truncate(c.label, 28);
         const charW = 7.2;
         const w = Math.min(220, Math.max(60, labelText.length * charW + 18));
-        const pos = avoidNodesForLabel(midX, midY, w, 26, perpX, perpY);
+        const pos = avoidObstaclesForLabel(midX, midY, w, 26, perpX, perpY, placedConnectorLabelRects);
+        placedConnectorLabelRects.push({cx: pos.x, cy: pos.y, w, h: 26});
         labelGroup.appendChild(svgPart('rect', {
           x: pos.x - w/2, y: pos.y - 13, width: w, height: 26, rx: 8,
           fill: '#ffffff', stroke: isSel ? '#f59e0b' : '#94a3b8',
@@ -1468,7 +1481,8 @@
         g.appendChild(labelGroup);
       } else if (isSel) {
         const labelGroup = svgPart('g', {class: 'cm-connector-label', 'data-id': c.id});
-        const pos = avoidNodesForLabel(midX, midY, 72, 26, perpX, perpY);
+        const pos = avoidObstaclesForLabel(midX, midY, 72, 26, perpX, perpY, placedConnectorLabelRects);
+        placedConnectorLabelRects.push({cx: pos.x, cy: pos.y, w: 72, h: 26});
         labelGroup.appendChild(svgPart('rect', {
           x: pos.x - 36, y: pos.y - 13, width: 72, height: 26, rx: 8,
           fill: '#fff7e6', stroke: '#f59e0b', 'stroke-width': 2,
@@ -2574,11 +2588,55 @@
     // render's pre-pass later inflates h to fit wrapped text, undoing the
     // separation.
     state.nodes.forEach(n => { n.h = computeLayoutHeight(n); });
+    spreadStackedImportedNodes(state.nodes, state.groups);
     resolveOverlaps(state.nodes, state.groups, 12);
     state.nextId = maxIdNum + 1;
     clearSelection();
     state.pendingFrom = null; state.pendingFromMulti = null;
     state.editing = null; state.drag = null; state.rubber = null;
+  }
+
+  // AI-generated or hand-authored JSON often gives siblings in a group the
+  // same x/y coordinate. The force-style resolver can eventually unstack
+  // them, but starting from identical centers makes the result vertical and
+  // cramped. Before the resolver runs, fan out exact/near duplicate clusters
+  // into a compact grid around their original center.
+  function spreadStackedImportedNodes(nodes, groups){
+    const buckets = new Map();
+    nodes.forEach(n => {
+      const key = Math.round(n.x / 12) + ':' + Math.round(n.y / 12);
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(n);
+    });
+    buckets.forEach(stack => {
+      if (stack.length < 2) return;
+      const cx = stack.reduce((s, n) => s + n.x, 0) / stack.length;
+      const cy = stack.reduce((s, n) => s + n.y, 0) / stack.length;
+      const maxW = Math.max(...stack.map(n => n.w));
+      const maxH = Math.max(...stack.map(n => n.h));
+      const cols = Math.ceil(Math.sqrt(stack.length));
+      const rows = Math.ceil(stack.length / cols);
+      const dx = maxW + 48;
+      const dy = maxH + 36;
+      stack.forEach((n, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        n.x = cx + (col - (cols - 1) / 2) * dx;
+        n.y = cy + (row - (rows - 1) / 2) * dy;
+      });
+    });
+
+    // When a labeled group's members are still nearly collinear after the
+    // duplicate spread, give the group extra vertical breathing room so its
+    // label band does not sit on top of the first member node.
+    (groups || []).forEach(g => {
+      const members = g.nodeIds.map(id => nodes.find(n => n.id === id)).filter(Boolean);
+      if (members.length < 2) return;
+      const minY = Math.min(...members.map(n => n.y));
+      const maxY = Math.max(...members.map(n => n.y));
+      if (maxY - minY > Math.max(...members.map(n => n.h)) * 0.8) return;
+      members.forEach((n, i) => { n.y += (i - (members.length - 1) / 2) * 34; });
+    });
   }
 
   // Separation pass run after JSON import. Five sequential phases — each
