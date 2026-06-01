@@ -460,6 +460,11 @@
       border: 1px solid var(--border);
       border-radius: 6px;
     }
+    .studio-menu-divider {
+      height: 1px;
+      margin: 3px 2px;
+      background: var(--gray-30);
+    }
     .inline-editor {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -616,6 +621,20 @@
         <details class="studio-menu">
           <summary>Edit</summary>
           <div class="studio-menu-panel">
+            <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
+            <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
+            <div class="studio-menu-divider" role="separator"></div>
+            <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
+            <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
+            <button class="tool-btn" id="clearLinkBtn" type="button" data-i18n="button.clearLink">Clear Link</button>
+            <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
+            <div class="studio-menu-divider" role="separator"></div>
+            <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
+            <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
+            <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
+            <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
+            <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
+            <div class="studio-menu-divider" role="separator"></div>
             <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
             <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
             <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
@@ -711,17 +730,6 @@
             <h3 data-i18n="section.editSelected">Edit selected</h3>
             <div class="control-buttons">
               <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
-              <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
-              <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
-              <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
-              <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
-              <button class="tool-btn" id="clearLinkBtn" type="button" data-i18n="button.clearLink">Clear Link</button>
-              <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
-              <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
-              <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
-              <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
-              <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
-              <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
             </div>
             <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
           </div>
