@@ -721,6 +721,9 @@
           <div class="studio-menu-panel">
             <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
             <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
+            <button class="tool-btn" id="textSizeUpBtn" type="button" data-i18n="button.textSizeUp">Text +</button>
+            <button class="tool-btn" id="textSizeDownBtn" type="button" data-i18n="button.textSizeDown">Text -</button>
+            <button class="tool-btn" id="textSizeResetBtn" type="button" data-i18n="button.textSizeReset">Reset Text</button>
             <div class="studio-menu-divider" role="separator"></div>
             <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
             <button class="tool-btn" id="attachImageBtn" type="button" data-i18n="button.attachImage">Attach Image</button>
@@ -728,6 +731,7 @@
             <button class="tool-btn" id="clearImageBtn" type="button" data-i18n="button.clearImage">Clear Image</button>
             <div class="studio-menu-divider" role="separator"></div>
             <button class="tool-btn" id="editConnectorBtn" type="button" data-i18n="button.editConnector">Edit Connector Label</button>
+            <button class="tool-btn" id="clearConnectorLabelsBtn" type="button" data-i18n="button.clearConnectorLabels">Clear Connector Labels</button>
             <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
             <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
             <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
@@ -983,8 +987,8 @@
       b.textContent = label;
       b.addEventListener('click', () => {
         state.activeSection = value;
-        refreshSectionFilter();
-        render();
+        if (value) fitSection(value);
+        else fitView();
       });
       return b;
     };
@@ -1002,7 +1006,8 @@
   }
   function nodeFontSize(n){
     const L = LEVEL_DIMS[nodeLevel(n)];
-    return renderExportMode ? L.fontExport : L.fontScreen;
+    const scale = clampNumber(n.fontScale, 0.65, 1.8, 1);
+    return (renderExportMode ? L.fontExport : L.fontScreen) * scale;
   }
   // Greedy word-wrap. Splits the label into words, packs them into lines no
   // longer than maxChars. Very long words are hard-broken with a hyphen so
@@ -1033,7 +1038,7 @@
   // screen-mode font is smaller, so the on-screen layout just has a little
   // extra breathing room.
   function computeLayoutHeight(n){
-    const fontSize = LEVEL_DIMS[nodeLevel(n)].fontExport;
+    const fontSize = LEVEL_DIMS[nodeLevel(n)].fontExport * clampNumber(n.fontScale, 0.65, 1.8, 1);
     const charW = fontSize * 0.55;
     const leftReserve = n.image ? 68 : 0;
     const usableW = Math.max(48, n.w - 24 - leftReserve);
@@ -1215,6 +1220,7 @@
       label: opts.label || t('tplNode.idea'),
       link: opts.link || '',
       image: opts.image || '',
+      fontScale: clampNumber(opts.fontScale, 0.65, 1.8, 1),
       isRoot: !!opts.isRoot,
       fill: palette.fill,
       stroke: palette.stroke,
@@ -1558,6 +1564,17 @@
     });
     return {minX, minY, maxX, maxY};
   }
+  function nodeListBounds(nodes){
+    if (!nodes || !nodes.length) return null;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    nodes.forEach(n => {
+      minX = Math.min(minX, n.x - n.w/2);
+      maxX = Math.max(maxX, n.x + n.w/2);
+      minY = Math.min(minY, n.y - n.h/2);
+      maxY = Math.max(maxY, n.y + n.h/2);
+    });
+    return {minX, minY, maxX, maxY};
+  }
   function viewCenter(){
     return {
       x: state.view.x + (CANVAS_W / state.view.scale) / 2,
@@ -1836,11 +1853,15 @@
     document.getElementById('addChildBtn').disabled = !single;
     document.getElementById('editTextBtn').disabled = !single;
     document.getElementById('cycleColorBtn').disabled = !anyNode;
+    document.getElementById('textSizeUpBtn').disabled = !state.nodes.length;
+    document.getElementById('textSizeDownBtn').disabled = !state.nodes.length;
+    document.getElementById('textSizeResetBtn').disabled = !state.nodes.length;
     document.getElementById('setLinkBtn').disabled = !single;
     document.getElementById('attachImageBtn').disabled = !single;
     document.getElementById('clearImageBtn').disabled = !(single && single.image);
     document.getElementById('clearLinkBtn').disabled = !(single && single.link);
     document.getElementById('editConnectorBtn').disabled = !conn;
+    document.getElementById('clearConnectorLabelsBtn').disabled = !state.connectors.some(c => c.label);
     document.getElementById('groupSelectedBtn').disabled = !(anyNode && sel.ids.length >= 2);
     document.getElementById('ungroupBtn').disabled = !grp;
     document.getElementById('editGroupLabelBtn').disabled = !grp;
@@ -1942,6 +1963,20 @@
     const scale = Math.min(CANVAS_W / w, CANVAS_H / h);
     state.view.scale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, scale));
     // Center the content in the visible viewBox
+    const vbW = CANVAS_W / state.view.scale;
+    const vbH = CANVAS_H / state.view.scale;
+    state.view.x = (b.minX + b.maxX)/2 - vbW/2;
+    state.view.y = (b.minY + b.maxY)/2 - vbH/2;
+    render();
+  }
+  function fitSection(section){
+    const b = nodeListBounds(state.nodes.filter(n => (n.section || '') === section));
+    if (!b) { fitView(); return; }
+    const pad = 80;
+    const w = (b.maxX - b.minX) + pad*2;
+    const h = (b.maxY - b.minY) + pad*2;
+    const scale = Math.min(CANVAS_W / w, CANVAS_H / h);
+    state.view.scale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, scale));
     const vbW = CANVAS_W / state.view.scale;
     const vbH = CANVAS_H / state.view.scale;
     state.view.x = (b.minX + b.maxX)/2 - vbW/2;
@@ -2370,6 +2405,37 @@
     setStatus(t('status.cycledColors', {n: recolorable.length}), 'success');
     render();
   });
+  function nodeTextTargets(){
+    const selected = selectedNodes();
+    return selected.length ? selected : state.nodes.slice();
+  }
+  function adjustNodeTextScale(delta){
+    const ns = nodeTextTargets();
+    if (!ns.length) return;
+    recordHistory();
+    ns.forEach(n => {
+      n.fontScale = clampNumber((n.fontScale || 1) + delta, 0.65, 1.8, 1);
+      n.h = computeLayoutHeight(n);
+    });
+    resolveOverlaps(state.nodes, state.groups, 12);
+    setStatus(t('status.textSizeChanged', {n: ns.length}), 'success');
+    render();
+  }
+  function resetNodeTextScale(){
+    const ns = nodeTextTargets();
+    if (!ns.length) return;
+    recordHistory();
+    ns.forEach(n => {
+      n.fontScale = 1;
+      n.h = computeLayoutHeight(n);
+    });
+    resolveOverlaps(state.nodes, state.groups, 12);
+    setStatus(t('status.textSizeReset', {n: ns.length}), 'info');
+    render();
+  }
+  document.getElementById('textSizeUpBtn').addEventListener('click', () => adjustNodeTextScale(0.12));
+  document.getElementById('textSizeDownBtn').addEventListener('click', () => adjustNodeTextScale(-0.12));
+  document.getElementById('textSizeResetBtn').addEventListener('click', resetNodeTextScale);
 
   document.getElementById('groupSelectedBtn').addEventListener('click', () => {
     const ns = selectedNodes();
@@ -2402,6 +2468,14 @@
   document.getElementById('editConnectorBtn').addEventListener('click', () => {
     const c = selectedConnectorObj();
     if (c) editConnectorLabel(c.id);
+  });
+  document.getElementById('clearConnectorLabelsBtn').addEventListener('click', () => {
+    const labeled = state.connectors.filter(c => c.label);
+    if (!labeled.length) return setStatus(t('status.noConnectorLabels'), 'info');
+    recordHistory();
+    labeled.forEach(c => { c.label = ''; });
+    setStatus(t('status.connectorLabelsCleared', {n: labeled.length}), 'success');
+    render();
   });
   document.getElementById('setLinkBtn').addEventListener('click', () => {
     const n = singleSelectedNode();
@@ -2724,6 +2798,7 @@
       nodes: state.nodes.map(n => ({
         id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, level: nodeLevel(n),
         label: n.label, link: n.link || '', image: n.image || '',
+        fontScale: clampNumber(n.fontScale, 0.65, 1.8, 1),
         isRoot: !!n.isRoot,
         section: n.section || '',
         fill: n.fill, stroke: n.stroke, text: n.text
@@ -2768,6 +2843,7 @@
         label: typeof raw.label === 'string' ? raw.label.slice(0, 200) : t('tplNode.idea'),
         link: typeof raw.link === 'string' ? safeUrl(raw.link) : '',
         image: (typeof raw.image === 'string' && /^data:image\//.test(raw.image)) ? raw.image : '',
+        fontScale: clampNumber(raw.fontScale, 0.65, 1.8, 1),
         isRoot,
         section: (typeof raw.section === 'string' && raw.section.trim()) ? raw.section.trim().slice(0, 80) : '',
         fill: validHex(raw.fill, '#fce7f3'),
@@ -2910,7 +2986,8 @@
         isRoot: depth === 0,
         fill: depth === 0 ? ROOT_STYLE.fill : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].fill,
         stroke: depth === 0 ? ROOT_STYLE.stroke : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].stroke,
-        text: depth === 0 ? ROOT_STYLE.text : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].text
+        text: depth === 0 ? ROOT_STYLE.text : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].text,
+        fontScale: 1
       });
       const kids = children[idx] || [];
       kids.forEach((childIdx, childPos) => {
