@@ -2103,6 +2103,7 @@ const CLASSROOM_TOOL_LINKS=[
   {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:appPath('solutions/memepuzzle/index.html')},
   {title:'Quiz & Flashcard Studio',summary:'Create, import, export, play, and review classroom quizzes, then transfer questions into flashcards.',url:appPath('solutions/quiz-flashcard-studio/index.html')},
   {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:appPath('solutions/rubric-builder/index.html')},
+  {title:'SplatImage Studio',summary:'Edit screenshots and images with annotations, layers, crop, clipboard import/export, GIF creation, and frame downloads.',url:appPath('solutions/splatimage-studio/index.html')},
   {title:'Story Wheel',summary:'Spin prompt wheels for story ideas and writing choices.',url:appPath('solutions/storywheel/index.html')},
   {title:'Word Search Maker',summary:'Generate printable vocabulary word searches.',url:appPath('solutions/wordsearch/index.html')}
 ];

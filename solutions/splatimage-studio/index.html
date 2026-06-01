@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="doc.title">SplatImage Studio - DrawSplatTM</title>
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <script src="../../assets/js/gif-encoder.js"></script>
+  <meta name="description" content="SplatImage Studio is a browser-based screenshot and image editor with annotations, crop, layers, grouping, clipboard import/export, and GIF frame export.">
+  <style>
+    :root{--navy:#7c3aed;--gold:#a855f7;--red:#ef4444;--blue:#2563eb;--green:#16a34a;--yellow:#facc15;--orange:#f97316;--ink:#111827;--muted:#64748b;--line:#cbd5e1;--soft:#eef2ff;--panel:#fff;--bg:#fff;--radius:8px;--shadow:0 16px 34px rgba(64,64,65,.12)}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}.top-bar{height:10px;background:linear-gradient(90deg,var(--navy) 0 28%,var(--gold) 28% 46%,var(--orange) 46% 58%,var(--red) 58% 70%,var(--blue) 70% 84%,var(--green) 84% 94%,var(--yellow) 94% 100%)}
+    .shell{height:calc(100% - 10px);display:grid;grid-template-rows:auto auto 1fr auto;min-height:0}.header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 16px;border-bottom:2px solid var(--soft);background:#fff}.title{min-width:0}.eyebrow{margin:0;color:var(--gold);font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.eyebrow a{color:inherit;text-decoration:none}h1{margin:2px 0 0;color:var(--navy);font-size:clamp(1.35rem,3vw,2rem);line-height:1}.subtitle{margin:4px 0 0;color:var(--muted);font-size:.86rem;line-height:1.35;max-width:900px}.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.i18n-picker select,.link-btn{min-height:36px;border:2px solid #ddd6fe;border-radius:8px;background:#fff;color:var(--ink);padding:7px 10px;font-weight:800;font-size:.82rem}.link-btn{text-decoration:none;color:var(--navy)}
+    .menubar{display:flex;align-items:center;gap:4px;padding:6px 10px;border-bottom:1px solid var(--line);background:#fafafa}.menu{position:relative}.menu>button,.toolbar button,.icon-btn{min-height:34px;padding:6px 10px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--ink);font-weight:800}.menu>button:hover,.toolbar button:hover,.icon-btn:hover{background:var(--soft);border-color:#ddd6fe}.menu-panel{display:none;position:absolute;z-index:20;top:36px;left:0;min-width:230px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}.menu:focus-within .menu-panel,.menu:hover .menu-panel{display:grid}.menu-panel button{width:100%;text-align:left;border:0;background:#fff;border-radius:6px;padding:8px 10px;color:var(--ink)}.menu-panel button:hover{background:var(--soft)}
+    .workspace{min-height:0;display:grid;grid-template-columns:270px 1fr 280px;background:#f8fafc}.sidebar,.rightbar{min-height:0;overflow:auto;background:#fff;border-inline-end:1px solid var(--line);padding:10px}.rightbar{border-inline-end:0;border-inline-start:1px solid var(--line)}.section{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;background:#fff}.section h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;color:var(--muted)}.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.tool-grid button{aspect-ratio:1;border:2px solid var(--line);border-radius:8px;background:#fff;font-weight:900;font-size:1rem}.tool-grid button.active{background:var(--navy);border-color:var(--navy);color:#fff}.field{display:grid;gap:5px;margin:8px 0}.field label{font-size:.78rem;font-weight:800;color:var(--ink)}input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:8px;background:#fff}input[type=range],input[type=number],input[type=text]{width:100%}input[type=number],input[type=text],select{min-height:34px;border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:#fff}.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.check{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:800;color:var(--ink)}
+    .stage-wrap{min-width:0;min-height:0;display:grid;grid-template-rows:auto 1fr;background:#e2e8f0}.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--line);background:#fff}.canvas-scroll{min-height:0;overflow:auto;display:grid;place-items:center;padding:36px}.canvas-shell{position:relative;box-shadow:0 16px 40px rgba(15,23,42,.22);background:#fff;transform-origin:center center}canvas{display:block}.overlay{position:absolute;inset:0;pointer-events:none}.statusbar{display:flex;justify-content:space-between;gap:12px;padding:7px 12px;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:.8rem;font-weight:700}.drop-hint{color:var(--muted)}
+    .layer-list{display:grid;gap:6px}.layer{display:grid;grid-template-columns:26px 1fr auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:7px;padding:6px;background:#fff}.layer.selected{border-color:var(--navy);background:var(--soft)}.layer .name{font-size:.78rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer .mini{width:24px;height:24px;border-radius:5px;display:grid;place-items:center;background:#f1f5f9;color:var(--navy);font-weight:900}.layer button{min-width:28px;min-height:26px;border:1px solid var(--line);background:#fff;border-radius:5px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.button{min-height:36px;padding:7px 9px;border:2px solid var(--navy);border-radius:8px;color:var(--navy);background:#fff;font-weight:800}.button.primary{background:var(--navy);color:#fff}.button.gold{border-color:var(--yellow);background:var(--yellow);color:#111}.hidden-file{display:none}.hint{font-size:.78rem;line-height:1.35;color:var(--muted);margin:8px 0 0}.crop-actions{display:none}.crop-active .crop-actions{display:flex}@media(max-width:980px){body{overflow:auto}.shell{height:auto}.workspace{grid-template-columns:1fr}.rightbar{border-inline-start:0}.canvas-scroll{min-height:520px}.sidebar,.rightbar{max-height:none}.header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="shell">
+    <header class="header">
+      <div class="title">
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat(TM) Tools</a></p>
+        <h1 data-i18n="header.h1">SplatImage Studio</h1>
+        <p class="subtitle" data-i18n="header.subtitle">A browser-based image editor for screenshots, classroom visuals, annotations, layers, crops, and GIF-ready frame exports. Nothing is uploaded.</p>
+      </div>
+      <div class="header-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="link-btn" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+        <a class="link-btn" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <nav class="menubar" aria-label="Application menus">
+      <div class="menu"><button type="button" data-i18n="menu.file">File</button><div class="menu-panel">
+        <button data-action="new" data-i18n="file.new">New canvas</button>
+        <button data-action="import" data-i18n="file.import">Import image</button>
+        <button data-action="paste" data-i18n="file.paste">Paste from clipboard</button>
+        <button data-action="exportPng" data-i18n="file.exportPng">Export PNG</button>
+        <button data-action="exportSelection" data-i18n="file.exportSelection">Export selection</button>
+        <button data-action="copyPng" data-i18n="file.copyPng">Copy PNG</button>
+        <button data-action="exportFrames" data-i18n="file.exportFrames">Export selected images as frames</button>
+        <button data-action="exportGif" data-i18n="file.exportGif">Create GIF from selected images</button>
+      </div></div>
+      <div class="menu"><button type="button" data-i18n="menu.edit">Edit</button><div class="menu-panel">
+        <button data-action="undo" data-i18n="edit.undo">Undo</button>
+        <button data-action="redo" data-i18n="edit.redo">Redo</button>
+        <button data-action="duplicate" data-i18n="edit.duplicate">Duplicate</button>
+        <button data-action="delete" data-i18n="edit.delete">Delete</button>
+        <button data-action="group" data-i18n="edit.group">Group</button>
+        <button data-action="ungroup" data-i18n="edit.ungroup">Ungroup</button>
+        <button data-action="front" data-i18n="edit.front">Bring forward</button>
+        <button data-action="back" data-i18n="edit.back">Send backward</button>
+      </div></div>
+      <div class="menu"><button type="button" data-i18n="menu.insert">Insert</button><div class="menu-panel">
+        <button data-tool="text" data-i18n="insert.text">Text</button>
+        <button data-tool="rect" data-i18n="insert.box">Box</button>
+        <button data-tool="arrow" data-i18n="insert.arrow">Arrow</button>
+        <button data-tool="line" data-i18n="insert.line">Line</button>
+        <button data-tool="freehand" data-i18n="insert.freehand">Freehand</button>
+        <button data-tool="crop" data-i18n="insert.crop">Crop</button>
+      </div></div>
+      <div class="menu"><button type="button" data-i18n="menu.effects">Effects</button><div class="menu-panel">
+        <button data-effect="grayscale" data-i18n="effect.grayscale">Grayscale</button>
+        <button data-effect="sepia" data-i18n="effect.sepia">Sepia</button>
+        <button data-effect="invert" data-i18n="effect.invert">Invert</button>
+        <button data-effect="blur" data-i18n="effect.blur">Soft blur</button>
+      </div></div>
+    </nav>
+
+    <main class="workspace">
+      <aside class="sidebar">
+        <section class="section">
+          <h2 data-i18n="panel.tools">Tools</h2>
+          <div class="tool-grid" id="toolGrid">
+            <button data-tool="select" class="active" title="Select" data-i18n-title="tool.select">↖</button>
+            <button data-tool="pan" title="Pan" data-i18n-title="tool.pan">✋</button>
+            <button data-tool="freehand" title="Freehand" data-i18n-title="tool.freehand">✎</button>
+            <button data-tool="line" title="Line" data-i18n-title="tool.line">╱</button>
+            <button data-tool="arrow" title="Arrow" data-i18n-title="tool.arrow">➜</button>
+            <button data-tool="rect" title="Box" data-i18n-title="tool.rect">□</button>
+            <button data-tool="text" title="Text" data-i18n-title="tool.text">T</button>
+            <button data-tool="crop" title="Crop" data-i18n-title="tool.crop">⌗</button>
+          </div>
+          <input id="imageInput" class="hidden-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+          <div class="actions" style="margin-top:8px">
+            <button class="button primary" data-action="import" data-i18n="button.addImages">Add Images</button>
+            <button class="button" data-action="fit" data-i18n="button.fit">Fit</button>
+          </div>
+        </section>
+        <section class="section">
+          <h2 data-i18n="panel.style">Style</h2>
+          <div class="field"><label for="strokeColor" data-i18n="field.stroke">Stroke</label><input id="strokeColor" type="color" value="#ef4444"></div>
+          <div class="field"><label for="fillColor" data-i18n="field.fill">Fill</label><input id="fillColor" type="color" value="#facc15"></div>
+          <label class="check"><input id="transparentFill" type="checkbox" checked> <span data-i18n="field.transparent">Transparent fill</span></label>
+          <div class="field"><label for="strokeWidth" data-i18n="field.width">Line width</label><input id="strokeWidth" type="range" min="1" max="40" value="5"></div>
+          <div class="field"><label for="arrowSize" data-i18n="field.arrow">Arrow size</label><input id="arrowSize" type="range" min="8" max="90" value="28"></div>
+          <div class="field"><label for="fontSize" data-i18n="field.font">Text size</label><input id="fontSize" type="range" min="12" max="160" value="34"></div>
+          <div class="row crop-actions">
+            <button class="button primary" data-action="applyCrop" data-i18n="button.applyCrop">Apply crop</button>
+            <button class="button" data-action="cancelCrop" data-i18n="button.cancelCrop">Cancel crop</button>
+          </div>
+        </section>
+        <section class="section">
+          <h2 data-i18n="panel.frames">GIF + Frames</h2>
+          <div class="field"><label for="delayInput" data-i18n="field.delay">GIF delay</label><input id="delayInput" type="number" min="20" max="10000" step="10" value="500"></div>
+          <div class="actions">
+            <button class="button primary" data-action="exportGif" data-i18n="button.exportGif">Export GIF</button>
+            <button class="button" data-action="exportFrames" data-i18n="button.exportFrames">Export Frames</button>
+          </div>
+          <p class="hint" data-i18n="hint">Tips: paste screenshots with Ctrl+V, drag images onto the canvas, Shift-click for multi-select, mouse wheel over selected text changes its size, and Delete removes selected items.</p>
+        </section>
+      </aside>
+
+      <section class="stage-wrap" data-i18n-aria-label="stage.aria" aria-label="SplatImage Studio canvas">
+        <div class="toolbar">
+          <button data-action="undo" data-i18n="edit.undo">Undo</button>
+          <button data-action="redo" data-i18n="edit.redo">Redo</button>
+          <button data-action="exportPng" data-i18n="file.exportPng">Export PNG</button>
+          <button data-action="copyPng" data-i18n="file.copyPng">Copy PNG</button>
+          <button data-action="actual" data-i18n="button.actual">100%</button>
+          <button data-action="clear" data-i18n="button.clear">Clear</button>
+          <span class="drop-hint" id="zoomLabel">100%</span>
+        </div>
+        <div class="canvas-scroll" id="canvasScroll">
+          <div class="canvas-shell" id="canvasShell">
+            <canvas id="stage" width="1280" height="720"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rightbar">
+        <section class="section">
+          <h2 data-i18n="panel.layers">Layers</h2>
+          <div class="layer-list" id="layerList"></div>
+        </section>
+      </aside>
+    </main>
+    <footer class="statusbar"><span id="statusLine" data-i18n="status.ready">Ready.</span><span id="docInfo">1280 x 720</span></footer>
+  </div>
+
+  <script src="./locales.js"></script>
+  <script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const canvas=$('stage'), ctx=canvas.getContext('2d'), shell=$('canvasShell');
+  const t=(key,vars)=>window.WidgetI18n?window.WidgetI18n.t(key,vars):key;
+  const state={objects:[],selected:new Set(),tool:'select',zoom:1,drag:null,crop:null,undo:[],redo:[],nextId:1,pan:{x:0,y:0}};
+  const style=()=>({stroke:$('strokeColor').value,fill:$('transparentFill').checked?'transparent':$('fillColor').value,width:+$('strokeWidth').value,arrow:+$('arrowSize').value,font:+$('fontSize').value});
+  function setStatus(k,vars){$('statusLine').textContent=t(k,vars)}
+  function snapshot(){state.undo.push(JSON.stringify(state.objects.map(o=>serialize(o))));if(state.undo.length>60)state.undo.shift();state.redo=[]}
+  function restore(s){state.objects=JSON.parse(s).map(deserialize);state.selected.clear();render()}
+  function serialize(o){const c={...o};if(c.img)c.src=c.img.src,delete c.img;return c}
+  function deserialize(o){if(o.type==='image'&&o.src){const img=new Image();img.onload=render;img.src=o.src;o.img=img}return o}
+  function uid(){return state.nextId++}
+  function escapeName(s){return String(s||'Layer').replace(/[<>&]/g,'')}
+  function setTool(tool){state.tool=tool;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));document.body.classList.toggle('crop-active',tool==='crop');if(tool!=='crop')state.crop=null;render()}
+  function canvasPoint(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/state.zoom,y:(e.clientY-r.top)/state.zoom}}
+  function bounds(o){if(o.type==='image'||o.type==='rect'||o.type==='text'||o.type==='group')return {x:o.x,y:o.y,w:o.w,h:o.h};if(o.type==='line'||o.type==='arrow')return {x:Math.min(o.x,o.x2),y:Math.min(o.y,o.y2),w:Math.abs(o.x2-o.x),h:Math.abs(o.y2-o.y)};if(o.type==='path'){let xs=o.points.map(p=>p.x),ys=o.points.map(p=>p.y);return {x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}return {x:0,y:0,w:0,h:0}}
+  function hit(p){for(let i=state.objects.length-1;i>=0;i--){const o=state.objects[i];if(o.hidden||o.locked)continue;const b=bounds(o);if(p.x>=b.x-6&&p.x<=b.x+b.w+6&&p.y>=b.y-6&&p.y<=b.y+b.h+6)return o}return null}
+  function render(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);state.objects.forEach(drawObj);drawSelection();ctx.restore();renderLayers();$('docInfo').textContent=canvas.width+' x '+canvas.height+' | '+state.objects.length+' layers'}
+  function drawObj(o){if(o.hidden||o.type==='group')return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=o.width||4;ctx.strokeStyle=o.stroke||'#ef4444';ctx.fillStyle=o.fill==='transparent'?'rgba(0,0,0,0)':(o.fill||'transparent');if(o.filter)ctx.filter=o.filter;if(o.type==='image'&&o.img)ctx.drawImage(o.img,o.x,o.y,o.w,o.h);if(o.type==='rect'){ctx.beginPath();ctx.rect(o.x,o.y,o.w,o.h);if(o.fill!=='transparent')ctx.fill();ctx.stroke()}if(o.type==='line'||o.type==='arrow'){ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(o.x2,o.y2);ctx.stroke();if(o.type==='arrow')drawArrowHead(o)}if(o.type==='path'){ctx.beginPath();o.points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke()}if(o.type==='text'){ctx.font=(o.font||34)+'px Arial, Helvetica, sans-serif';ctx.fillStyle=o.stroke||'#111827';ctx.textBaseline='top';wrapText(o.text,o.x,o.y,o.w,o.font||34)}ctx.restore()}
+  function wrapText(text,x,y,w,size){const words=String(text).split(/\s+/);let line='',yy=y,lh=size*1.2;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>w&&line){ctx.fillText(line,x,yy);line=word;yy+=lh}else line=test}if(line)ctx.fillText(line,x,yy)}
+  function drawArrowHead(o){const a=Math.atan2(o.y2-o.y,o.x2-o.x),s=o.arrow||28;ctx.beginPath();ctx.moveTo(o.x2,o.y2);ctx.lineTo(o.x2-Math.cos(a-Math.PI/6)*s,o.y2-Math.sin(a-Math.PI/6)*s);ctx.lineTo(o.x2-Math.cos(a+Math.PI/6)*s,o.y2-Math.sin(a+Math.PI/6)*s);ctx.closePath();ctx.fillStyle=o.stroke;ctx.fill()}
+  function drawSelection(){state.selected.forEach(id=>{const o=state.objects.find(x=>x.id===id);if(!o)return;const b=bounds(o);ctx.save();ctx.strokeStyle='#2563eb';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.strokeRect(b.x-4,b.y-4,b.w+8,b.h+8);ctx.setLineDash([]);ctx.fillStyle='#2563eb';[[b.x-4,b.y-4],[b.x+b.w+4,b.y-4],[b.x+b.w+4,b.y+b.h+4],[b.x-4,b.y+b.h+4]].forEach(([x,y])=>ctx.fillRect(x-4,y-4,8,8));ctx.restore()});if(state.crop){const c=state.crop;ctx.save();ctx.fillStyle='rgba(15,23,42,.35)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.clearRect(c.x,c.y,c.w,c.h);ctx.strokeStyle='#facc15';ctx.lineWidth=3;ctx.strokeRect(c.x,c.y,c.w,c.h);ctx.restore()}}
+  function renderLayers(){const list=$('layerList');list.innerHTML='';if(!state.objects.length){list.innerHTML='<p class="hint">'+t('layers.empty')+'</p>';return}state.objects.slice().reverse().forEach(o=>{const row=document.createElement('div');row.className='layer'+(state.selected.has(o.id)?' selected':'');row.innerHTML='<span class="mini">'+icon(o)+'</span><span class="name">'+escapeName(o.name||o.type)+'</span><span><button title="Visible">'+(o.hidden?'○':'●')+'</button></span>';row.addEventListener('click',()=>{state.selected.clear();state.selected.add(o.id);render()});row.querySelector('button').addEventListener('click',ev=>{ev.stopPropagation();snapshot();o.hidden=!o.hidden;render()});list.append(row)})}
+  function icon(o){return {image:'▧',rect:'□',line:'╱',arrow:'➜',path:'✎',text:'T',group:'G'}[o.type]||'•'}
+  function addObject(o){snapshot();o.id=uid();state.objects.push(o);state.selected.clear();state.selected.add(o.id);render()}
+  async function filesToImages(files){let n=0;for(const file of files){if(!file.type.startsWith('image/'))continue;const src=await readFile(file);const img=await loadImg(src);const scale=Math.min(1,(canvas.width*.7)/img.naturalWidth,(canvas.height*.7)/img.naturalHeight);addObject({type:'image',name:file.name||'Image',x:40+n*24,y:40+n*24,w:img.naturalWidth*scale,h:img.naturalHeight*scale,img,src});n++}if(n)setStatus('status.imported',{n})}
+  function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+  function loadImg(src){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>res(img);img.onerror=rej;img.src=src})}
+  canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);const p=canvasPoint(e), st=style();if(state.tool==='select'){const o=hit(p);if(o){if(!e.shiftKey)state.selected.clear();state.selected.add(o.id);state.drag={mode:'move',start:p,orig:state.objects.map(x=>({...x}))};snapshot()}else if(!e.shiftKey){state.selected.clear();render()}return render()}if(state.tool==='pan'){state.drag={mode:'pan',start:{x:e.clientX,y:e.clientY},zoom:state.zoom};return}if(state.tool==='crop'){state.crop={x:p.x,y:p.y,w:1,h:1};state.drag={mode:'crop',start:p};return render()}if(state.tool==='text'){const text=prompt('Text','Label');if(text)addObject({type:'text',name:'Text',text,x:p.x,y:p.y,w:320,h:st.font*1.3,stroke:st.stroke,font:st.font});setTool('select');return}snapshot();const base={id:uid(),name:state.tool,x:p.x,y:p.y,stroke:st.stroke,fill:st.fill,width:st.width,arrow:st.arrow};if(state.tool==='rect')state.drag={mode:'create',obj:{...base,type:'rect',w:1,h:1}};if(state.tool==='line'||state.tool==='arrow')state.drag={mode:'create',obj:{...base,type:state.tool,x2:p.x,y2:p.y}};if(state.tool==='freehand')state.drag={mode:'create',obj:{...base,type:'path',points:[p]}};state.objects.push(state.drag.obj);state.selected.clear();state.selected.add(state.drag.obj.id);render()});
+  canvas.addEventListener('pointermove',e=>{if(!state.drag)return;const p=canvasPoint(e), d=state.drag;if(d.mode==='move'){const dx=p.x-d.start.x,dy=p.y-d.start.y;const moveIds=new Set(state.selected);state.selected.forEach(id=>{const g=state.objects.find(x=>x.id===id&&x.type==='group');if(g)state.objects.forEach(o=>{if(o.group===g.id)moveIds.add(o.id)})});moveIds.forEach(id=>{const o=state.objects.find(x=>x.id===id), orig=d.orig.find(x=>x.id===id);if(o&&orig){o.x=orig.x+dx;o.y=orig.y+dy;if('x2'in o)o.x2=orig.x2+dx;if('y2'in o)o.y2=orig.y2+dy;if(o.points)o.points=orig.points.map(pt=>({x:pt.x+dx,y:pt.y+dy}))}})}if(d.mode==='create'){const o=d.obj;if(o.type==='rect'){o.w=p.x-o.x;o.h=p.y-o.y}if(o.type==='line'||o.type==='arrow'){o.x2=p.x;o.y2=p.y}if(o.type==='path')o.points.push(p)}if(d.mode==='crop'){state.crop={x:Math.min(d.start.x,p.x),y:Math.min(d.start.y,p.y),w:Math.abs(p.x-d.start.x),h:Math.abs(p.y-d.start.y)}}render()});
+  canvas.addEventListener('pointerup',()=>{state.drag=null;render()});
+  canvas.addEventListener('wheel',e=>{const sel=[...state.selected].map(id=>state.objects.find(o=>o.id===id)).filter(Boolean);const text=sel.find(o=>o.type==='text');if(text){e.preventDefault();snapshot();text.font=Math.max(8,Math.min(220,(text.font||34)+(e.deltaY<0?4:-4)));text.h=text.font*1.4;render()}},{passive:false});
+  document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea'))return;if(e.key==='Delete')run('delete');if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z')run(e.shiftKey?'redo':'undo');if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y')run('redo');if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();run('duplicate')}});
+  document.addEventListener('paste',async e=>{const items=[...(e.clipboardData&&e.clipboardData.items||[])];for(const it of items){if(it.type.startsWith('image/')){await filesToImages([it.getAsFile()]);setStatus('status.pasted');break}}});
+  document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files.length)filesToImages(e.dataTransfer.files)});
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-action]');if(a)run(a.dataset.action);const tb=e.target.closest('[data-tool]');if(tb)setTool(tb.dataset.tool);const ef=e.target.closest('[data-effect]');if(ef)applyEffect(ef.dataset.effect)});
+  $('imageInput').addEventListener('change',e=>filesToImages(e.target.files));
+  ['strokeColor','fillColor','transparentFill','strokeWidth','arrowSize','fontSize'].forEach(id=>$(id).addEventListener('input',()=>{const st=style();state.selected.forEach(sid=>{const o=state.objects.find(x=>x.id===sid);if(!o)return;if(o.type!=='image'){o.stroke=st.stroke;o.fill=st.fill;o.width=st.width;o.arrow=st.arrow;if(o.type==='text')o.font=st.font}});render()}));
+  async function run(action){if(action==='import')return $('imageInput').click();if(action==='paste')return navigator.clipboard&&navigator.clipboard.read?pasteClipboard():setStatus('status.needSelection');if(action==='new'||action==='clear'){snapshot();state.objects=[];state.selected.clear();render();return}if(action==='undo')return undo();if(action==='redo')return redo();if(action==='delete')return del();if(action==='duplicate')return duplicate();if(action==='front')return reorder(1);if(action==='back')return reorder(-1);if(action==='group')return group();if(action==='ungroup')return ungroup();if(action==='fit')return zoomTo(.75);if(action==='actual')return zoomTo(1);if(action==='exportPng')return exportCanvas();if(action==='exportSelection')return exportSelection();if(action==='copyPng')return copyCanvas();if(action==='exportGif')return exportGif();if(action==='exportFrames')return exportFrames();if(action==='applyCrop')return applyCrop();if(action==='cancelCrop'){state.crop=null;setTool('select');render()}}
+  async function pasteClipboard(){try{const items=await navigator.clipboard.read();for(const item of items){const type=item.types.find(x=>x.startsWith('image/'));if(type){const blob=await item.getType(type);await filesToImages([new File([blob],'clipboard.png',{type})]);setStatus('status.pasted');return}}}catch(_){setStatus('status.needSelection')}}
+  function undo(){if(!state.undo.length)return setStatus('status.undo');state.redo.push(JSON.stringify(state.objects.map(o=>serialize(o))));restore(state.undo.pop())}
+  function redo(){if(!state.redo.length)return setStatus('status.redo');state.undo.push(JSON.stringify(state.objects.map(o=>serialize(o))));restore(state.redo.pop())}
+  function del(){if(!state.selected.size)return setStatus('status.needSelection');snapshot();state.objects=state.objects.filter(o=>!state.selected.has(o.id));state.selected.clear();render()}
+  function duplicate(){const sel=state.objects.filter(o=>state.selected.has(o.id));if(!sel.length)return setStatus('status.needSelection');snapshot();state.selected.clear();sel.forEach(o=>{const c=deserialize(JSON.parse(JSON.stringify(serialize(o))));c.id=uid();c.x+=24;c.y+=24;if('x2'in c)c.x2+=24;if('y2'in c)c.y2+=24;if(c.points)c.points=c.points.map(p=>({x:p.x+24,y:p.y+24}));state.objects.push(c);state.selected.add(c.id)});render()}
+  function reorder(dir){const ids=[...state.selected];if(!ids.length)return setStatus('status.needSelection');snapshot();ids.forEach(id=>{const i=state.objects.findIndex(o=>o.id===id),j=i+dir;if(i>=0&&j>=0&&j<state.objects.length){const [o]=state.objects.splice(i,1);state.objects.splice(j,0,o)}});render()}
+  function group(){const sel=state.objects.filter(o=>state.selected.has(o.id));if(sel.length<2)return setStatus('status.needSelection');snapshot();const bs=sel.map(bounds),x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y)),r=Math.max(...bs.map(b=>b.x+b.w)),b=Math.max(...bs.map(b=>b.y+b.h));const gid=uid();sel.forEach(o=>o.group=gid);state.objects.push({id:gid,type:'group',name:'Group',x,y,w:r-x,h:b-y});state.selected.clear();state.selected.add(gid);render()}
+  function ungroup(){const groups=state.objects.filter(o=>state.selected.has(o.id)&&o.type==='group');if(!groups.length)return setStatus('status.needSelection');snapshot();groups.forEach(g=>state.objects.forEach(o=>{if(o.group===g.id)delete o.group}));state.objects=state.objects.filter(o=>!(state.selected.has(o.id)&&o.type==='group'));state.selected.clear();render()}
+  function zoomTo(z){state.zoom=z;shell.style.transform='scale('+z+')';$('zoomLabel').textContent=Math.round(z*100)+'%'}
+  function selectedObjects(){const ids=new Set(state.selected);state.selected.forEach(id=>{const g=state.objects.find(o=>o.id===id&&o.type==='group');if(g)state.objects.forEach(o=>{if(o.group===g.id)ids.add(o.id)})});return state.objects.filter(o=>ids.has(o.id)&&!o.hidden&&o.type!=='group')}
+  function renderFullCanvas(){const out=document.createElement('canvas');out.width=canvas.width;out.height=canvas.height;const octx=out.getContext('2d');octx.fillStyle='#fff';octx.fillRect(0,0,out.width,out.height);state.objects.filter(o=>!o.hidden).forEach(o=>drawObjOffset(o,octx,0,0));return out}
+  function renderToCanvas(objs,pad=20){const bs=objs.map(bounds);const x=Math.min(...bs.map(b=>b.x))-pad,y=Math.min(...bs.map(b=>b.y))-pad,r=Math.max(...bs.map(b=>b.x+b.w))+pad,b=Math.max(...bs.map(b=>b.y+b.h))+pad;const out=document.createElement('canvas');out.width=Math.max(1,Math.ceil(r-x));out.height=Math.max(1,Math.ceil(b-y));const octx=out.getContext('2d');octx.fillStyle='#fff';octx.fillRect(0,0,out.width,out.height);objs.forEach(o=>drawObjOffset(o,octx,-x,-y));return out}
+  function drawObjOffset(o,c,dx,dy){c.save();c.lineCap='round';c.lineJoin='round';c.lineWidth=o.width||4;c.strokeStyle=o.stroke||'#ef4444';c.fillStyle=o.fill==='transparent'?'rgba(0,0,0,0)':(o.fill||'transparent');if(o.filter)c.filter=o.filter;if(o.type==='image'&&o.img)c.drawImage(o.img,o.x+dx,o.y+dy,o.w,o.h);if(o.type==='rect'){c.beginPath();c.rect(o.x+dx,o.y+dy,o.w,o.h);if(o.fill!=='transparent')c.fill();c.stroke()}if(o.type==='line'||o.type==='arrow'){c.beginPath();c.moveTo(o.x+dx,o.y+dy);c.lineTo(o.x2+dx,o.y2+dy);c.stroke();if(o.type==='arrow'){const a=Math.atan2(o.y2-o.y,o.x2-o.x),s=o.arrow||28;c.beginPath();c.moveTo(o.x2+dx,o.y2+dy);c.lineTo(o.x2+dx-Math.cos(a-Math.PI/6)*s,o.y2+dy-Math.sin(a-Math.PI/6)*s);c.lineTo(o.x2+dx-Math.cos(a+Math.PI/6)*s,o.y2+dy-Math.sin(a+Math.PI/6)*s);c.closePath();c.fillStyle=o.stroke;c.fill()}}if(o.type==='path'){c.beginPath();o.points.forEach((p,i)=>i?c.lineTo(p.x+dx,p.y+dy):c.moveTo(p.x+dx,p.y+dy));c.stroke()}if(o.type==='text'){c.font=(o.font||34)+'px Arial';c.fillStyle=o.stroke||'#111827';c.textBaseline='top';c.fillText(o.text,o.x+dx,o.y+dy)}c.restore()}
+  function downloadCanvas(c,name){c.toBlob(b=>downloadBlob(b,name),'image/png')}
+  function exportCanvas(){downloadCanvas(renderFullCanvas(),'splatimage-studio.png');setStatus('status.exported')}
+  function exportSelection(){const objs=selectedObjects();if(!objs.length)return setStatus('status.needSelection');downloadCanvas(renderToCanvas(objs),'splatimage-selection.png')}
+  function copyCanvas(){renderFullCanvas().toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('status.copied')}catch(_){downloadBlob(b,'splatimage-studio.png')}},'image/png')}
+  function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+  function imageFrames(){return selectedObjects().filter(o=>o.type==='image'&&o.img)}
+  async function exportGif(){const imgs=imageFrames();if(!imgs.length)return setStatus('status.needImages');const maxW=Math.max(...imgs.map(o=>o.w)),maxH=Math.max(...imgs.map(o=>o.h));const frames=imgs.map(o=>{const c=document.createElement('canvas');c.width=maxW;c.height=maxH;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(o.img,(maxW-o.w)/2,(maxH-o.h)/2,o.w,o.h);return c});const blob=window.DrawSplatGifEncoder.encode(frames,{delayMs:+$('delayInput').value||500,loopCount:0,mode:'best',dither:true});downloadBlob(blob,'splatimage-frames.gif');setStatus('status.gif',{n:frames.length})}
+  function exportFrames(){const imgs=imageFrames();if(!imgs.length)return setStatus('status.needImages');imgs.forEach((o,i)=>{const c=document.createElement('canvas');c.width=o.w;c.height=o.h;c.getContext('2d').drawImage(o.img,0,0,o.w,o.h);downloadCanvas(c,'splatimage-frame-'+String(i+1).padStart(2,'0')+'.png')});setStatus('status.frames',{n:imgs.length})}
+  function applyCrop(){if(!state.crop||state.crop.w<5||state.crop.h<5)return;const c=state.crop,out=document.createElement('canvas');out.width=c.w;out.height=c.h;out.getContext('2d').drawImage(renderFullCanvas(),c.x,c.y,c.w,c.h,0,0,c.w,c.h);snapshot();canvas.width=c.w;canvas.height=c.h;state.objects=[];state.selected.clear();loadImg(out.toDataURL()).then(img=>{state.objects.push({id:uid(),type:'image',name:'Cropped canvas',x:0,y:0,w:c.w,h:c.h,img,src:img.src});state.crop=null;setTool('select');setStatus('status.crop');render()})}
+  async function applyEffect(kind){const imgs=selectedObjects().filter(o=>o.type==='image');if(!imgs.length)return setStatus('status.needImages');snapshot();const filter={grayscale:'grayscale(1)',sepia:'sepia(1)',invert:'invert(1)',blur:'blur(2px)'}[kind];imgs.forEach(o=>o.filter=filter);setStatus('status.effect');render()}
+  function init(){render();zoomTo(1);setStatus('status.ready')}
+  init();
+})();
+  </script>
+</body>
+</html>
