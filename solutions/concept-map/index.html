@@ -381,6 +381,85 @@
       font-size: .88rem;
     }
     .template-select:focus { border-color: var(--navy); outline: none; }
+    .studio-menu-bar {
+      margin-bottom: 12px;
+      padding: 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .studio-menu {
+      position: relative;
+    }
+    .studio-menu summary {
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 2px solid var(--gray-30);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-90);
+      font-weight: 800;
+      font-size: .9rem;
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .studio-menu summary::-webkit-details-marker { display: none; }
+    .studio-menu summary::after {
+      content: ' ▾';
+      color: var(--gray-50);
+      font-size: .78rem;
+    }
+    .studio-menu[open] summary,
+    .studio-menu summary:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+      background: #faf9ff;
+    }
+    .studio-menu-panel {
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 230px;
+      max-width: min(760px, calc(100vw - 56px));
+      max-height: min(70vh, 620px);
+      overflow: auto;
+      padding: 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 6px;
+    }
+    .studio-menu.outline-menu .studio-menu-panel {
+      width: min(760px, calc(100vw - 56px));
+    }
+    .studio-menu-panel .tool-btn,
+    .studio-menu-panel .button,
+    .studio-menu-panel .outline-copy-btn,
+    .studio-menu-panel .template-link-btn {
+      width: 100%;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .studio-menu-panel .footer-note {
+      margin: 6px 4px;
+    }
+    .studio-menu-panel .outline-actions {
+      padding: 0;
+    }
+    .studio-menu-panel .outline-md {
+      max-height: 430px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
     .inline-editor {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -404,6 +483,8 @@
       flex-wrap: wrap;
     }
     .button {
+      display: inline-flex;
+      align-items: center;
       min-height: 40px;
       padding: 9px 14px;
       border: 2px solid var(--navy);
@@ -411,6 +492,7 @@
       color: var(--navy);
       background: var(--white);
       font-weight: 800;
+      text-decoration: none;
     }
     .button.primary { color: var(--white); background: var(--navy); }
     .button.gold { color: var(--black); background: var(--yellow); border-color: var(--yellow); }
@@ -470,6 +552,7 @@
     body.embed-mode header,
     body.embed-mode aside.panel,
     body.embed-mode .top-template-bar,
+    body.embed-mode .studio-menu-bar,
     body.embed-mode .control-dock,
     body.embed-mode .stage .actions,
     body.embed-mode .stage > .footer-note,
@@ -518,8 +601,69 @@
     </header>
 
     <main class="app-grid">
-      <nav class="top-template-bar" data-i18n-aria-label="section.templates" aria-label="Templates">
-        <h2 data-i18n="section.templates">Templates</h2>
+      <nav class="studio-menu-bar" aria-label="Concept Map Studio menus">
+        <details class="studio-menu">
+          <summary>File</summary>
+          <div class="studio-menu-panel">
+            <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
+            <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
+            <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
+            <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
+            <a class="button" href="./drawsplat-concept-map-schema-v2.json" download>Format spec (.json)</a>
+          </div>
+        </details>
+
+        <details class="studio-menu">
+          <summary>Edit</summary>
+          <div class="studio-menu-panel">
+            <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
+            <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
+            <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
+            <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
+          </div>
+        </details>
+
+        <details class="studio-menu outline-menu" id="outlineDetails">
+          <summary>Outline</summary>
+          <div class="studio-menu-panel">
+            <div class="outline-actions">
+              <button type="button" class="outline-copy-btn" id="copyOutlineBtn" data-i18n="outline.copy">Copy Markdown</button>
+              <button type="button" class="outline-copy-btn" id="openInMarkdownStudioBtn" data-i18n="outline.openMd">Open in Markdown Studio →</button>
+              <span class="outline-hint" data-i18n="outline.hint">Live mirror of the map's hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.</span>
+            </div>
+            <pre id="outlineMarkdown" class="outline-md" aria-live="polite"></pre>
+          </div>
+        </details>
+
+        <details class="studio-menu">
+          <summary>Mode</summary>
+          <div class="studio-menu-panel">
+            <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button" data-i18n="button.selectTool">Select / Drag</button>
+            <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button" data-i18n="button.connectTool">Connect Nodes</button>
+            <button class="tool-btn" id="addNodeBtn" type="button" data-i18n="button.addNode">+ Node</button>
+            <button class="tool-btn" id="addChildBtn" type="button" data-i18n="button.addChild">+ Child of Selected</button>
+          </div>
+        </details>
+
+        <details class="studio-menu">
+          <summary>Templates</summary>
+          <div class="studio-menu-panel">
+            <button class="template-link-btn active" type="button" data-template="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</button>
+            <button class="template-link-btn" type="button" data-template="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</button>
+            <button class="template-link-btn" type="button" data-template="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</button>
+            <button class="template-link-btn" type="button" data-template="frayer" data-i18n="tpl.frayer">Frayer Model</button>
+            <button class="template-link-btn" type="button" data-template="kwl" data-i18n="tpl.kwl">KWL Chart</button>
+            <button class="template-link-btn" type="button" data-template="t-chart" data-i18n="tpl.t-chart">T-Chart</button>
+            <button class="template-link-btn" type="button" data-template="5ws" data-i18n="tpl.5ws">5 Ws (and How)</button>
+            <button class="template-link-btn" type="button" data-template="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</button>
+            <button class="template-link-btn" type="button" data-template="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</button>
+            <button class="template-link-btn" type="button" data-template="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</button>
+            <button class="template-link-btn" type="button" data-template="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</button>
+            <button class="template-link-btn" type="button" data-template="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</button>
+            <button class="template-link-btn" type="button" data-template="story-map" data-i18n="tpl.story-map">Story Map</button>
+          </div>
+        </details>
+
         <select class="template-select" id="templateSelect" data-i18n-aria-label="template.select.aria" aria-label="Graphic organizer template" hidden>
           <option value="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</option>
           <option value="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</option>
@@ -535,21 +679,6 @@
           <option value="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</option>
           <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
         </select>
-        <div class="template-links">
-          <button class="template-link-btn active" type="button" data-template="concept-map" data-i18n="tpl.concept-map">Concept Map (starter)</button>
-          <button class="template-link-btn" type="button" data-template="mind-map" data-i18n="tpl.mind-map">Mind Map (6 spokes)</button>
-          <button class="template-link-btn" type="button" data-template="fishbone" data-i18n="tpl.fishbone">Fishbone / Ishikawa</button>
-          <button class="template-link-btn" type="button" data-template="frayer" data-i18n="tpl.frayer">Frayer Model</button>
-          <button class="template-link-btn" type="button" data-template="kwl" data-i18n="tpl.kwl">KWL Chart</button>
-          <button class="template-link-btn" type="button" data-template="t-chart" data-i18n="tpl.t-chart">T-Chart</button>
-          <button class="template-link-btn" type="button" data-template="5ws" data-i18n="tpl.5ws">5 Ws (and How)</button>
-          <button class="template-link-btn" type="button" data-template="cycle" data-i18n="tpl.cycle">Cycle (4 steps)</button>
-          <button class="template-link-btn" type="button" data-template="sequence" data-i18n="tpl.sequence">Sequence Chain (5 steps)</button>
-          <button class="template-link-btn" type="button" data-template="cause-effect" data-i18n="tpl.cause-effect">Cause &amp; Effect</button>
-          <button class="template-link-btn" type="button" data-template="compare-contrast" data-i18n="tpl.compare-contrast">Compare &amp; Contrast</button>
-          <button class="template-link-btn" type="button" data-template="hierarchy" data-i18n="tpl.hierarchy">Hierarchy / Tree</button>
-          <button class="template-link-btn" type="button" data-template="story-map" data-i18n="tpl.story-map">Story Map</button>
-        </div>
       </nav>
 
       <section class="stage" data-i18n-aria-label="panel.canvas.aria" aria-label="Concept map canvas">
@@ -579,20 +708,9 @@
 
         <div class="control-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
           <div class="control-section">
-            <h3 data-i18n="section.mode">Mode</h3>
-            <div class="control-buttons">
-              <button class="tool-btn active" data-tool="select" id="selectToolBtn" type="button" data-i18n="button.selectTool">Select / Drag</button>
-              <button class="tool-btn" data-tool="connect" id="connectToolBtn" type="button" data-i18n="button.connectTool">Connect Nodes</button>
-              <button class="tool-btn" id="addNodeBtn" type="button" data-i18n="button.addNode">+ Node</button>
-              <button class="tool-btn" id="addChildBtn" type="button" data-i18n="button.addChild">+ Child of Selected</button>
-              <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
-            </div>
-            <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
-          </div>
-
-          <div class="control-section">
             <h3 data-i18n="section.editSelected">Edit selected</h3>
             <div class="control-buttons">
+              <button class="tool-btn danger" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
               <button class="tool-btn" id="editTextBtn" type="button" data-i18n="button.editText">Edit Label</button>
               <button class="tool-btn" id="cycleColorBtn" type="button" data-i18n="button.cycleColor">Cycle Color</button>
               <button class="tool-btn" id="setLinkBtn" type="button" data-i18n="button.setLink">Set Link</button>
@@ -605,19 +723,7 @@
               <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
               <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
             </div>
-          </div>
-
-          <div class="control-section">
-            <div class="actions">
-              <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
-              <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
-              <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
-              <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
-              <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
-              <button class="button" id="copyEmbedCodeBtn" type="button" data-i18n="button.copyEmbedCode" title="Copy an <iframe> HTML snippet you can paste into Google Sites or WordPress.">Copy Embed Code</button>
-              <button class="button" id="copyEmbedLinkBtn" type="button" data-i18n="button.copyEmbedLink" title="Copy a live URL that shows this map as a pan/zoom viewer.">Copy Embed Link</button>
-              <button class="button gold" id="fitViewBtn" type="button" data-i18n="button.fitView">Fit View</button>
-            </div>
+            <p class="hint-text" data-i18n="hint.modePanel">Shift-click nodes to add to the selection. Drag empty canvas to rubber-band select. Double-click empty canvas to add a node where you clicked. Middle-mouse drag or Pan toggle to pan the view. Wheel / Ctrl+wheel to zoom.</p>
           </div>
 
           <div class="selection-row">
@@ -627,16 +733,6 @@
         </div>
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
-        <details class="outline-panel" id="outlineDetails">
-          <summary class="outline-toggle" data-i18n="outline.toggle">Outline view (Markdown)</summary>
-          <div class="outline-actions">
-            <button type="button" class="outline-copy-btn" id="copyOutlineBtn" data-i18n="outline.copy">Copy Markdown</button>
-            <button type="button" class="outline-copy-btn" id="openInMarkdownStudioBtn" data-i18n="outline.openMd">Open in Markdown Studio →</button>
-            <span class="outline-hint" data-i18n="outline.hint">Live mirror of the map's hierarchy. Use it as a study outline, paste into notes, or hand to an LLM as context.</span>
-          </div>
-          <pre id="outlineMarkdown" class="outline-md" aria-live="polite"></pre>
-        </details>
-        <p class="footer-note" data-i18n-html="actions.schemaHint">Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema-v2.json" download>format spec</a> first — it documents every field the Studio reads.</p>
         <p class="footer-note" data-i18n-html="actions.embedHint"><strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.</p>
         <div class="status" id="statusLine" role="status"></div>
       </section>
