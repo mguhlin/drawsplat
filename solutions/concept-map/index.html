@@ -480,6 +480,28 @@
       border: 1px solid var(--border);
       border-radius: 6px;
     }
+    .studio-menu:not(.outline-menu) .studio-menu-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 190px;
+      width: max-content;
+    }
+    .studio-menu:not(.outline-menu) .studio-menu-panel .tool-btn,
+    .studio-menu:not(.outline-menu) .studio-menu-panel .button,
+    .studio-menu:not(.outline-menu) .studio-menu-panel .template-link-btn {
+      width: auto;
+      min-height: 32px;
+      padding: 5px 10px;
+      font-size: .78rem;
+      text-align: center;
+      justify-content: center;
+    }
+    .studio-menu:not(.outline-menu) .studio-menu-divider {
+      flex-basis: 100%;
+      width: 100%;
+    }
     .studio-menu-divider {
       height: 1px;
       margin: 3px 2px;
@@ -501,6 +523,57 @@
       outline: none;
       box-shadow: 0 6px 18px rgba(0,0,0,0.18);
       z-index: 10;
+    }
+    .markdown-dialog {
+      width: min(760px, calc(100vw - 28px));
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0;
+      box-shadow: var(--shadow);
+      color: var(--gray-90);
+    }
+    .markdown-dialog::backdrop {
+      background: rgba(17, 24, 39, .42);
+    }
+    .markdown-dialog-body {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      background: #fff;
+    }
+    .markdown-dialog h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.2rem;
+    }
+    .markdown-dialog p {
+      margin: 0;
+      color: var(--gray-50);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+    .markdown-dialog textarea {
+      width: 100%;
+      min-height: 300px;
+      resize: vertical;
+      padding: 12px;
+      border: 2px solid var(--gray-30);
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .9rem;
+      line-height: 1.45;
+      color: var(--gray-90);
+    }
+    .markdown-dialog textarea:focus {
+      border-color: var(--navy);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, .14);
+    }
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .actions {
       display: flex;
@@ -635,6 +708,7 @@
           <summary>File</summary>
           <div class="studio-menu-panel">
             <button class="button" id="loadJsonBtn" type="button" data-i18n="button.loadJson">Load .json</button>
+            <button class="button" id="pasteMarkdownBtn" type="button" data-i18n="button.pasteMarkdown">Paste Markdown</button>
             <button class="button primary" id="saveJsonBtn" type="button" data-i18n="button.saveJson">Save .json</button>
             <button class="button" id="downloadSvgBtn" type="button" data-i18n="button.downloadSvg">Download SVG</button>
             <button class="button" id="downloadPngBtn" type="button" data-i18n="button.downloadPng">Download PNG</button>
@@ -761,6 +835,17 @@
         </div>
         <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
         <input id="jsonInput" type="file" accept="application/json,.json" hidden>
+        <dialog class="markdown-dialog" id="markdownDialog">
+          <form method="dialog" class="markdown-dialog-body">
+            <h2 data-i18n="markdown.dialogTitle">Paste Markdown</h2>
+            <p data-i18n="markdown.dialogHelp">Headings become parent nodes. Bullets and numbered lists become child nodes. The current map will be replaced.</p>
+            <textarea id="markdownInput" spellcheck="false" data-i18n-placeholder="markdown.placeholder" placeholder="# Main Idea&#10;&#10;## Idea 1&#10;- Detail A&#10;- Detail B&#10;&#10;## Idea 2&#10;1. Step one&#10;2. Step two"></textarea>
+            <div class="dialog-actions">
+              <button class="button" value="cancel" type="submit" data-i18n="button.cancel">Cancel</button>
+              <button class="button primary" id="importMarkdownBtn" value="default" type="button" data-i18n="button.importMarkdown">Create Concept Map</button>
+            </div>
+          </form>
+        </dialog>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
@@ -2736,6 +2821,128 @@
     state.editing = null; state.drag = null; state.rubber = null;
   }
 
+  function plainMarkdownLabel(raw){
+    return String(raw || '')
+      .replace(/^\s*#{1,6}\s+/, '')
+      .replace(/^\s*>+\s*/, '')
+      .replace(/^\s*[-+*]\s+\[[ xX]\]\s+/, '')
+      .replace(/^\s*[-+*]\s+/, '')
+      .replace(/^\s*\d+[.)]\s+/, '')
+      .replace(/^\s*[a-zA-Z][.)]\s+/, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/[`*_~]/g, '')
+      .trim();
+  }
+
+  function markdownToConceptMapData(markdown){
+    const lines = String(markdown || '').replace(/\r\n?/g, '\n').split('\n');
+    const items = [];
+    const headingStack = [];
+    const listStack = [];
+    let inFence = false;
+    let fallbackRoot = null;
+    const addItem = (label, level, parentIndex) => {
+      label = plainMarkdownLabel(label).slice(0, 200);
+      if (!label) return null;
+      const item = {label, level: Math.max(1, Math.min(3, level)), parentIndex};
+      items.push(item);
+      return items.length - 1;
+    };
+
+    lines.forEach(line => {
+      if (/^\s*```/.test(line) || /^\s*~~~/.test(line)) { inFence = !inFence; return; }
+      if (inFence || !line.trim()) return;
+      const heading = line.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/);
+      if (heading) {
+        const depth = heading[1].length;
+        while (headingStack.length >= depth) headingStack.pop();
+        const parentIndex = headingStack.length ? headingStack[headingStack.length - 1] : null;
+        const idx = addItem(heading[2], depth, parentIndex);
+        if (idx !== null) headingStack[depth - 1] = idx;
+        listStack.length = 0;
+        return;
+      }
+      const list = line.match(/^(\s*)([-+*]|\d+[.)]|[a-zA-Z][.)])\s+(.*)$/);
+      if (list) {
+        const indent = list[1].replace(/\t/g, '    ').length;
+        while (listStack.length && indent <= listStack[listStack.length - 1].indent) listStack.pop();
+        const parentIndex = listStack.length
+          ? listStack[listStack.length - 1].index
+          : (headingStack.length ? headingStack[headingStack.length - 1] : null);
+        const idx = addItem(list[3], (parentIndex === null ? 1 : (items[parentIndex].level + 1)), parentIndex);
+        if (idx !== null) listStack.push({indent, index: idx});
+        return;
+      }
+      if (headingStack.length || listStack.length) {
+        const target = listStack.length ? listStack[listStack.length - 1].index : headingStack[headingStack.length - 1];
+        const extra = plainMarkdownLabel(line);
+        if (extra && items[target]) items[target].label = (items[target].label + ' ' + extra).slice(0, 200);
+      } else if (!fallbackRoot) {
+        fallbackRoot = plainMarkdownLabel(line).slice(0, 200);
+      }
+    });
+
+    if (!items.length && fallbackRoot) addItem(fallbackRoot, 1, null);
+    if (!items.length) throw new Error(t('markdown.errNoContent'));
+    if (items.every(item => item.parentIndex !== null)) {
+      const rootLabel = items[0].label || t('tplNode.main');
+      items.unshift({label: rootLabel, level: 1, parentIndex: null});
+      for (let i = 1; i < items.length; i++) items[i].parentIndex = items[i].parentIndex === null ? 0 : items[i].parentIndex + 1;
+    }
+
+    const children = items.map(() => []);
+    items.forEach((item, i) => { if (item.parentIndex !== null && items[item.parentIndex]) children[item.parentIndex].push(i); });
+    const roots = items.map((item, i) => item.parentIndex === null ? i : null).filter(i => i !== null);
+    const nodeIds = items.map((_, i) => 'n' + (i + 1));
+    const nodes = [];
+    const connectors = [];
+    const placeSubtree = (idx, depth, x, y, spread) => {
+      const item = items[idx];
+      const level = Math.max(1, Math.min(3, depth + 1));
+      const dims = LEVEL_DIMS[level];
+      nodes.push({
+        id: nodeIds[idx],
+        x, y,
+        w: dims.w,
+        h: dims.baseH,
+        level,
+        label: item.label,
+        isRoot: depth === 0,
+        fill: depth === 0 ? ROOT_STYLE.fill : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].fill,
+        stroke: depth === 0 ? ROOT_STYLE.stroke : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].stroke,
+        text: depth === 0 ? ROOT_STYLE.text : PALETTE[(idx - 1 + PALETTE.length) % PALETTE.length].text
+      });
+      const kids = children[idx] || [];
+      kids.forEach((childIdx, childPos) => {
+        const childSpread = Math.max(170, spread / Math.max(1, kids.length));
+        const childX = x + (childPos - (kids.length - 1) / 2) * childSpread;
+        const childY = y + 170;
+        connectors.push({id: 'c' + connectors.length, fromId: nodeIds[idx], toId: nodeIds[childIdx], label: ''});
+        placeSubtree(childIdx, depth + 1, childX, childY, childSpread * .86);
+      });
+    };
+    roots.forEach((rootIdx, i) => {
+      const spread = Math.max(280, Math.min(720, 980 / Math.max(1, roots.length)));
+      placeSubtree(rootIdx, 0, CANVAS_W / 2 + (i - (roots.length - 1) / 2) * spread, 120, 760);
+    });
+    return {
+      type: SAVE_TYPE,
+      version: SAVE_VERSION,
+      nodes,
+      connectors,
+      groups: []
+    };
+  }
+
+  function importMarkdown(markdown){
+    const data = markdownToConceptMapData(markdown);
+    recordHistory();
+    applyLoadedJson(data);
+    resetZoom();
+    fitView();
+    setStatus(t('status.markdownImported', {nodes: state.nodes.length, connectors: state.connectors.length}), 'success');
+  }
+
   // AI-generated or hand-authored JSON often gives siblings in a group the
   // same x/y coordinate. The force-style resolver can eventually unstack
   // them, but starting from identical centers makes the result vertical and
@@ -2931,6 +3138,34 @@
   });
   document.getElementById('loadJsonBtn').addEventListener('click', () => {
     document.getElementById('jsonInput').click();
+  });
+  document.getElementById('pasteMarkdownBtn').addEventListener('click', () => {
+    const dlg = document.getElementById('markdownDialog');
+    const input = document.getElementById('markdownInput');
+    if (input) input.value = '';
+    if (dlg && typeof dlg.showModal === 'function') {
+      dlg.showModal();
+      setTimeout(() => input && input.focus(), 0);
+    } else {
+      const md = window.prompt(t('markdown.dialogTitle'));
+      if (!md) return;
+      if (state.nodes.length && !window.confirm(t('confirm.replaceLoaded'))) return;
+      try { importMarkdown(md); }
+      catch (err) { setStatus(t('status.loadError', {err: err && err.message ? err.message : String(err)}), 'danger'); }
+    }
+  });
+  document.getElementById('importMarkdownBtn').addEventListener('click', () => {
+    const dlg = document.getElementById('markdownDialog');
+    const input = document.getElementById('markdownInput');
+    const md = input ? input.value : '';
+    if (!md.trim()) return setStatus(t('markdown.errNoContent'), 'danger');
+    if (state.nodes.length && !window.confirm(t('confirm.replaceLoaded'))) return;
+    try {
+      importMarkdown(md);
+      if (dlg) dlg.close();
+    } catch (err) {
+      setStatus(t('status.loadError', {err: err && err.message ? err.message : String(err)}), 'danger');
+    }
   });
   document.getElementById('jsonInput').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];

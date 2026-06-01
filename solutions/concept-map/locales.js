@@ -193,6 +193,9 @@ WidgetI18n.register('concept-map', {
 
     'button.saveJson':      'Save .json',
     'button.loadJson':      'Load .json',
+    'button.pasteMarkdown': 'Paste Markdown',
+    'button.importMarkdown':'Create Concept Map',
+    'button.cancel':        'Cancel',
     'button.downloadSvg':   'Download SVG',
     'button.downloadPng':   'Download PNG',
     'button.copyPng':       'Copy PNG',
@@ -202,6 +205,11 @@ WidgetI18n.register('concept-map', {
 
     'actions.schemaHint':   'Asking an AI chatbot to build the JSON for you? Hand it the <a href="./drawsplat-concept-map-schema-v2.json" download>format spec (v2)</a> first — it documents every field the Studio reads. Files saved here will round-trip cleanly.',
     'actions.embedHint':    '<strong>Embed in a website:</strong> click <strong>Copy Embed Code</strong> to grab an <code>&lt;iframe&gt;</code> snippet you can paste into Google Sites (Embed → Embed code) or WordPress (Custom HTML block). Viewers get pan, zoom, and clickable node links — but cannot edit. Use <strong>Copy Embed Link</strong> if you just want the URL.',
+
+    'markdown.dialogTitle': 'Paste Markdown',
+    'markdown.dialogHelp':  'Headings become parent nodes. Bullets and numbered lists become child nodes. The current map will be replaced.',
+    'markdown.placeholder': '# Main Idea\n\n## Idea 1\n- Detail A\n- Detail B\n\n## Idea 2\n1. Step one\n2. Step two',
+    'markdown.errNoContent':'Paste Markdown with at least one heading, bullet, numbered item, or line of text.',
 
     'status.embedCodeCopied': 'Embed code copied. Paste it into Google Sites or WordPress.',
     'status.embedLinkCopied': 'Embed link copied. Anyone with the link sees a read-only viewer.',
@@ -267,6 +275,7 @@ WidgetI18n.register('concept-map', {
     'status.loadedSummary': 'Loaded {nodes} nodes, {connectors} connector(s), {groups} group(s).',
     'status.loadError':     'Could not load: {err}',
     'status.fileReadError': 'Could not read file.',
+    'status.markdownImported':'Created concept map from Markdown: {nodes} nodes, {connectors} connector(s).',
     'status.addNodeFirst':  'Add at least one node first.',
     'status.svgDownloaded': 'Downloaded SVG.',
     'status.svgDownloadedSel':'Downloaded SVG of {summary}.',
