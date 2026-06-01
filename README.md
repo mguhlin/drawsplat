@@ -29,7 +29,7 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.7 — Security hardening release for self-hosters, plus Concept Map Studio workspace polish.** MySQL backend now ships with security headers, API/auth/parent-request rate limits, safer CORS defaults, admin bootstrap controls, protected maintenance cleanup, room-key validation, JSON payload caps, sanitized client-visible errors, and tighter SSE subscriptions. Markdown Studio now validates Markdown link/image URLs and escapes attributes before previewing. Concept Map Studio now has a wider full-page canvas layout and a localized T-Chart template. The self-host download page and setup docs are refreshed for the hardened defaults. Pinned as a GitHub release: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7). Previous milestones: [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.7 — Security hardening release for self-hosters, plus Concept Map Studio workspace polish.** MySQL backend now ships with security headers, API/auth/parent-request rate limits, safer CORS defaults, admin bootstrap controls, protected maintenance cleanup, room-key validation, JSON payload caps, sanitized client-visible errors, and tighter SSE subscriptions. Markdown Studio now validates Markdown link/image URLs and escapes attributes before previewing. Concept Map Studio now has a wider full-page canvas layout and a localized T-Chart template. Quiz & Flashcard Studio is included as a browser-only classroom widget with CSV/JSON/XLSX/ODS/ODT imports, exports, student/team quiz play links, printable flashcards, and versioned AI-import templates. The self-host download page and setup docs are refreshed for the hardened defaults. Pinned as a GitHub release: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7). Previous milestones: [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
 
 ## Recent improvements (v3.1.7)
 
@@ -41,6 +41,7 @@ Other docs that pair with setup:
 - **Markdown Studio XSS fix.** Markdown preview now allowlists URL schemes for links/images and escapes generated `href`, `src`, `alt`, and code-language attributes.
 - **Concept Map Studio full-width workspace.** The old left rail has been replaced with template buttons above the canvas and editing/export controls below it, giving the concept-map canvas the full page width and more vertical working room.
 - **Concept Map Studio T-Chart template.** Added a T-Chart organizer with localized template names, column labels, starter points, and relationship text across all supported Studio languages (`en`, `es`, `vi`, `ar`, `zh`, `uh`).
+- **Quiz & Flashcard Studio.** Added a standalone browser-only quiz builder and flashcard maker at `solutions/quiz-flashcard-studio/`. It imports CSV/TSV/TXT/JSON/XLSX/ODS/ODT question banks, exports JSON/CSV/XLSX/report CSV, creates student/team quiz play links, transfers question content into printable flashcards, and includes versioned AI-import templates: `drawsplat-quiz-flashcard_v1.csv` and `drawsplat-quiz-flashcard_v1.json`.
 - **Tool-specific AI assistant reference removed.** The handoff doc now uses generic AI-assistant wording.
 
 ## Recent improvements (v3.1.6)
@@ -169,6 +170,7 @@ timeline
          : Backend security headers, rate limits, safer CORS, admin bootstrap guardrails, protected maintenance cleanup
          : Markdown Studio URL allowlist + attribute escaping; refreshed self-host docs and bundle
          : Concept Map Studio full-width canvas layout + localized T-Chart template
+         : Quiz & Flashcard Studio standalone widget + versioned CSV/JSON import templates
 ```
 
 ## Included files
@@ -212,7 +214,7 @@ timeline
 - `apps-script/Code.gs` — Google Apps Script backend (v1.8.0): boards, rooms, turn-ins, parent requests, compliance config, audit, retention, contact requests
 - `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes `server.js`, `security.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
 - `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
-- `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller)
+- `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller, Quiz & Flashcard Studio)
 - `compliance.config.json` — default safety / retention / privacy configuration (client baseline; server-authoritative copy lives in Apps Script Script Property or the MySQL `compliance_config` table)
 - `scripts/make-selfhost-bundle.sh` — produces `dist/drawsplat-selfhost-<label>.zip` for districts to download
 - `COMPLIANCE-ROADMAP.md` — every compliance day-module with status + commit references
@@ -284,7 +286,7 @@ Districts that want to deploy this path can grab the v3.1.7 bundle from the [Dow
 - Built-in classroom templates: Frayer Model, KWL, T-chart, storyboard, Venn diagram, brainstorm board, and timeline
 - Template insertion with grouped objects for easier moving and resizing
 - Classroom Widgets include embedded board controls such as Poll, Random Pick, Wheel Spinner, Big Link, Work Mode, Traffic Light, Timer, Scoreboard, and Progress Race.
-- Classroom Widgets also open standalone classroom activity tools in new tabs: Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, and Rubric Builder.
+- Classroom Widgets also open standalone classroom activity tools in new tabs: Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, and Quiz & Flashcard Studio.
 - Teacher mode and student mode
 - Assignment mode with protected teacher layer and editable student layer
 - Answer key tagging and show/hide toggle

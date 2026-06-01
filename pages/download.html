@@ -95,6 +95,7 @@
         <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
         <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
         <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
+        <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
         <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
         <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
         <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
@@ -127,7 +128,7 @@
     <h1>Self-host DrawSplat<sup class="tm">TM</sup> for your school, organization, or district.</h1>
     <p>
       <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.7</span>
-      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-05-31 &mdash; self-host security hardening plus Concept Map Studio&rsquo;s full-width canvas layout and localized T-Chart template</span>
+      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-05-31 &mdash; self-host security hardening, Concept Map Studio polish, and browser-only Quiz &amp; Flashcard Studio import templates</span>
     </p>
     <p>DrawSplat<sup class="tm">TM</sup> is free under the AGPL-3.0-or-later. Schools, districts, and organizations can host the whole thing on their own infrastructure &mdash; static site, Google Apps Script backend, or self-hosted MySQL backend. Download a complete zipped bundle, deploy it, and you&rsquo;re running.</p>
     <p>
@@ -152,6 +153,7 @@
         <ul class="admin-checklist">
           <li>Best for individual teachers, demos, single-classroom use.</li>
           <li>Filtering still runs client-side from <code>compliance.config.json</code>.</li>
+          <li>Standalone classroom widgets, including Quiz &amp; Flashcard Studio, run fully in the browser and keep imported quiz/flashcard content local unless you export or share it.</li>
         </ul>
       </article>
       <article class="support-resource-card featured">
@@ -185,7 +187,7 @@
       <h2>Bundle contents</h2>
     </div>
     <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
-      <li>The complete static site (<code>index.html</code>, <code>app/</code>, <code>pages/</code>, <code>legal/</code>, <code>guides/</code>, <code>parents/</code>, <code>community/</code>, <code>languages/</code>, <code>admin/</code>, <code>solutions/</code>).</li>
+      <li>The complete static site (<code>index.html</code>, <code>app/</code>, <code>pages/</code>, <code>legal/</code>, <code>guides/</code>, <code>parents/</code>, <code>community/</code>, <code>languages/</code>, <code>admin/</code>, <code>solutions/</code>), including Quiz &amp; Flashcard Studio and its <code>drawsplat-quiz-flashcard_v1.csv</code> / <code>drawsplat-quiz-flashcard_v1.json</code> import templates.</li>
       <li><code>apps-script/Code.gs</code> &mdash; single-file Apps Script backend.</li>
       <li><code>server/mysql-backend/</code> &mdash; Node.js + MySQL backend with Docker compose, OAuth, RBAC, SSE, cron, Clever connector, privacy packet generator, migration CLI.</li>
       <li><code>compliance.config.json</code> &mdash; default safety / retention / privacy config.</li>
