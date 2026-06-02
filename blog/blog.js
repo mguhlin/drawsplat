@@ -42,6 +42,15 @@
       .trim();
   }
 
+  function formattedDescription(raw) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = String(raw || '')
+      .replace(/<img[^>]*>/gi, '')
+      .replace(/<(\/?)(b|strong|em|i|p|br)\b[^>]*>/gi, '<$1$2>')
+      .replace(/<(?!\/?(?:b|strong|em|i|p|br)\b)[^>]*>/gi, ' ');
+    return wrap.innerHTML.replace(/\s+/g, ' ').trim();
+  }
+
   function formatDate(s) {
     if (!s) return '';
     const d = new Date(s);
@@ -79,6 +88,7 @@
       const pub = item.querySelector('pubDate')?.textContent || '';
       const rawDesc = item.querySelector('description')?.textContent || '';
       const desc = stripHtml(rawDesc);
+      const descHtml = formattedDescription(rawDesc);
       const thumbSrc = extractFirstImageSrc(rawDesc);
       const dateStr = formatDate(pub);
 
@@ -105,7 +115,7 @@
         '<div class="blog-card-body">' +
           '<h2>' + titleHtml + '</h2>' +
           (metaHtml ? '<p class="blog-card-meta">' + metaHtml + '</p>' : '') +
-          (desc ? '<p class="blog-card-desc">' + esc(desc) + '</p>' : '') +
+          (desc ? '<div class="blog-card-desc">' + descHtml + '</div>' : '') +
           cta +
         '</div>';
       list.appendChild(card);
