@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplatTM Google OAuth App Disclosure</title>
+<meta name="description" content="Public Google OAuth disclosure for DrawSplatTM, including app identity, functionality, requested Google data, and privacy policy link." />
+<link rel="canonical" href="https://drawsplat.org/legal/google-oauth-disclosure.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page policy-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Technical</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/download.html">Download for Self-Hosting</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
+        <a href="../legal/combined-policy.html">All Policy Documents</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell policy-shell">
+  <section class="policy-hero">
+    <p class="landing-eyebrow">Google OAuth Disclosure</p>
+    <h1>How DrawSplat<sup class="tm">TM</sup> uses Google access.</h1>
+    <p>This public page identifies the DrawSplat<sup class="tm">TM</sup> app and explains why Google account, Drive, Sheets, Docs, and email-related permissions may be requested when a teacher, school, or Hub administrator connects DrawSplat<sup class="tm">TM</sup> to Google Apps Script.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>App and Brand Identity</h2>
+    <table class="policy-table">
+      <tbody>
+        <tr><th>App name</th><td>DrawSplat<sup class="tm">TM</sup></td></tr>
+        <tr><th>Public website</th><td><a href="https://drawsplat.org/">https://drawsplat.org/</a></td></tr>
+        <tr><th>Developer / support contact</th><td><a href="mailto:drawsplat@gmail.com">drawsplat@gmail.com</a></td></tr>
+        <tr><th>Privacy policy</th><td><a href="https://drawsplat.org/legal/combined-policy">https://drawsplat.org/legal/combined-policy</a></td></tr>
+        <tr><th>Primary audience</th><td>K-16 educators, students, families using school-deployed classrooms, and small teams using a browser-based whiteboard.</td></tr>
+      </tbody>
+    </table>
+    <p>This page is hosted on <code>drawsplat.org</code>, the same public domain used for the DrawSplat<sup class="tm">TM</sup> homepage and privacy policy. It is visible without logging in.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>What DrawSplat Does</h2>
+    <p>DrawSplat<sup class="tm">TM</sup> is an interactive browser whiteboard for classroom and visual work. Users can draw, add text, shapes, sticky notes, images, audio notes, graphs, templates, panels, and classroom widgets. Teachers can create classroom links, configure collaboration rooms, review turn-ins, use moderation tools, and optionally save classroom work through a Google Apps Script backend that writes to the teacher's or school's Google Drive and Google Sheets.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> can also run without Google access in browser-only mode. Google access is used only when a teacher, Hub administrator, or deployment owner chooses the Google Apps Script + Drive storage path or signs in for a protected admin workflow.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Why Google Access Is Requested</h2>
+    <p>Google permissions are requested to provide teacher-controlled storage, classroom setup, and admin authorization. DrawSplat<sup class="tm">TM</sup> does not request Google access for advertising, profiling, selling user data, or unrelated analytics.</p>
+    <table class="policy-table">
+      <thead><tr><th>Google capability</th><th>Purpose in DrawSplat<sup class="tm">TM</sup></th><th>Data involved</th></tr></thead>
+      <tbody>
+        <tr><td>Google sign-in / ID token verification</td><td>Verify that a Hub admin or instance admin is the approved Google account for that protected setup page.</td><td>Google account identifier, email address, email verification status, display name if returned by Google.</td></tr>
+        <tr><td>Google Drive</td><td>Create and manage DrawSplat<sup class="tm">TM</sup> folders/files for saved boards, PNG exports, templates, student turn-ins, image approval queues, privacy packets, and Hub teacher onboarding folders.</td><td>Only the DrawSplat-created or configured Drive files and folders needed for the deployment workflow.</td></tr>
+        <tr><td>Google Sheets</td><td>Record saved-board metadata, classroom room state, templates, turn-ins, audit records, parent/family access requests, time usage, compliance settings, and other deployment records.</td><td>Board metadata, classroom records, moderation/audit entries, parent request tickets, and configuration rows created by the deployment.</td></tr>
+        <tr><td>Google Docs</td><td>Create teacher setup documents for DrawSplat Hub onboarding when a Hub admin adds a teacher.</td><td>Teacher name, teacher email, setup slug, one-time setup password, and DrawSplat setup links.</td></tr>
+        <tr><td>Email through Apps Script</td><td>Notify the configured compliance/admin contact about parent/family access requests or related operational notices when the deployment enables that feature.</td><td>Recipient email, request subject, and request details submitted through the Family Access Tools workflow.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="policy-section">
+    <h2>How Google Data Is Used</h2>
+    <ul>
+      <li>Google account data is used to authenticate an admin session and enforce access rules for Hub or classroom setup pages.</li>
+      <li>Drive and Sheets data is used to store and retrieve DrawSplat<sup class="tm">TM</sup> classroom content, configuration, audit records, and teacher-managed workflow records.</li>
+      <li>Docs access is used to generate setup instructions for teachers added through DrawSplat Hub.</li>
+      <li>Email access is used only for deployment/admin notifications supported by the Apps Script backend.</li>
+      <li>DrawSplat<sup class="tm">TM</sup> does not sell Google user data, use it for ads, or transfer it to advertising networks.</li>
+      <li>Access is limited to the deployment workflows selected by the teacher, school, or Hub administrator.</li>
+    </ul>
+  </section>
+
+  <section class="policy-section">
+    <h2>Storage, Control, and Removal</h2>
+    <p>For Google Apps Script deployments, the teacher, school, or Hub operator controls the Google account and Drive/Sheets files used by the deployment. DrawSplat<sup class="tm">TM</sup> stores classroom records in that operator-controlled Google environment, not in a separate DrawSplat-hosted database by default.</p>
+    <p>Administrators can remove teacher access from Hub Admin. The removal workflow deletes registry setup/admin/config entries for that teacher and attempts to remove the teacher's editor access from generated Drive folders and files. Deployment owners can also revoke app access in their Google Account security settings and delete DrawSplat-created files from Drive.</p>
+  </section>
+
+  <section class="policy-section">
+    <h2>Privacy Policy</h2>
+    <p>The full DrawSplat<sup class="tm">TM</sup> policy packet is available at <a href="https://drawsplat.org/legal/combined-policy">https://drawsplat.org/legal/combined-policy</a>. That URL should match the privacy policy URL entered in the Google OAuth consent screen configuration.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> Google OAuth app disclosure.</span>
+  <a href="../index.html">Back to Start</a>
+  <a href="terms-privacy.html">Terms &amp; Privacy</a>
+  <a href="../pages/contact.html">Contact</a>
+</footer><script src="../assets/js/consent-banner.js" defer></script>
+</body>
+</html>
