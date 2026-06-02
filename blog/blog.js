@@ -54,6 +54,10 @@
     return /^https?:\/\//i.test(u) ? u : '';
   }
 
+  function cleanTitle(s) {
+    return String(s || '').replace(/\s+[–-]\s+Another Think Coming\s*$/i, '').trim();
+  }
+
   /* Raindrop's RSS embeds the post's first image as the leading <img> inside
      <description>. Extract its src so we can render a real thumbnail next
      to each card. Returns an empty string when no img is found. */
@@ -67,16 +71,12 @@
     list.textContent = '';
     let rendered = 0;
     items.forEach(item => {
-      const title = (item.querySelector('title')?.textContent || 'Untitled').trim();
+      const title = cleanTitle(item.querySelector('title')?.textContent || 'Untitled');
       const linkRaw = (item.querySelector('link')?.textContent || '').trim();
       if (isExcluded(linkRaw)) return;
       rendered++;
       const link = safeUrl(linkRaw);
       const pub = item.querySelector('pubDate')?.textContent || '';
-      let src = (item.querySelector('source')?.textContent || '').trim();
-      if (!src && link) {
-        try { src = new URL(link).hostname.replace(/^www\./, ''); } catch (_) { src = ''; }
-      }
       const rawDesc = item.querySelector('description')?.textContent || '';
       const desc = stripHtml(rawDesc);
       const thumbSrc = extractFirstImageSrc(rawDesc);
@@ -89,7 +89,6 @@
         : esc(title);
       const metaParts = [];
       if (dateStr) metaParts.push(esc(dateStr));
-      if (src) metaParts.push('<span class="blog-source-tag">' + esc(src) + '</span>');
       const metaHtml = metaParts.join(' · ');
       const cta = link
         ? `<a class="blog-card-cta" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Read full post ↗</a>`
