@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://oauth2.googleapis.com; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://oauth2.googleapis.com; script-src 'self' https://accounts.google.com; frame-src https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
   <title>DrawSplat Hub Instances Admin</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -43,13 +43,15 @@
       </div>
       <div class="actions">
         <a class="button" href="index.html">Hub Splash</a>
+        <a class="button" href="teacher-onboarding.html">Teacher Onboarding Checklist</a>
         <a class="button" href="../index.html">DrawSplat Home</a>
       </div>
     </section>
 
     <section class="panel" id="authPanel">
       <h2>Admin Access</h2>
-      <p>Sign in with an approved Google account. Approved admins are <code>drawsplat@gmail.com</code> and <code>jeguhlin@gmail.com</code>.</p>
+      <p>Sign in with an approved Google account.</p>
+      <p>There is no shared Hub Dashboard password. Individual instance setup passwords are only used during a school or teacher instance bootstrap.</p>
       <div class="google-host" id="googleHost"></div>
       <div class="actions">
         <button id="googlePromptBtn" type="button">Use Google sign-in prompt</button>

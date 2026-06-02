@@ -79,7 +79,18 @@
   }
   function googlePrompt(){
     if(!window.google||!google.accounts||!google.accounts.id)return msg('authMsg','Google sign-in library is still loading.','err');
-    try{google.accounts.id.prompt()}catch(err){msg('authMsg',err.message,'err')}
+    try{
+      google.accounts.id.prompt(notification=>{
+        if(!notification)return;
+        if(notification.isNotDisplayed&&notification.isNotDisplayed()){
+          msg('authMsg','Google did not show the sign-in prompt. Use the Google button above, or check that the OAuth client ID and allowed origin are configured.','err');
+        }else if(notification.isSkippedMoment&&notification.isSkippedMoment()){
+          msg('authMsg','Google skipped the sign-in prompt. Use the Google button above, or clear the browser Google sign-in state and try again.','err');
+        }else if(notification.isDismissedMoment&&notification.isDismissedMoment()){
+          msg('authMsg','Google sign-in prompt was dismissed. Try the Google button above when ready.');
+        }
+      });
+    }catch(err){msg('authMsg',err.message,'err')}
   }
   function initGoogle(){
     if(!registryUrl()){
@@ -94,7 +105,7 @@
       if(window.google&&google.accounts&&google.accounts.id){
         google.accounts.id.initialize({client_id:googleClientId(),callback:resp=>bindGoogle(resp.credential)});
         google.accounts.id.renderButton($('googleHost'),{theme:'outline',size:'large',shape:'pill',text:'continue_with',width:280});
-        if(state.sessionToken)showAdmin();else msg('authMsg','Sign in with drawsplat@gmail.com or jeguhlin@gmail.com.');
+        if(state.sessionToken)showAdmin();else msg('authMsg','Sign in with an approved Google account.');
         return;
       }
       if(tries>0)setTimeout(()=>wait(tries-1),120);

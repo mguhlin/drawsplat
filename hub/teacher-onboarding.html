@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Onboarding Checklist | DrawSplat Hub</title>
+  <style>
+    :root{--navy:#0f1d56;--teal:#2f6f73;--gold:#e6a823;--ink:#111827;--muted:#64748b;--line:#dbe3ef;--soft:#f8fafc}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:var(--ink)}
+    .top{height:10px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--navy))}
+    .banner{display:block;width:100%;height:auto;background:#fff}
+    main{max-width:980px;margin:0 auto;padding:24px 18px 48px}
+    .head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end;margin:18px 0 22px}
+    .eyebrow{margin:0 0 6px;color:var(--teal);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:900}
+    h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1;margin:0;color:var(--navy)}
+    h2{margin:0 0 10px;color:var(--navy);font-size:1.18rem}
+    p,li{color:var(--muted);line-height:1.55}.actions{display:flex;gap:8px;flex-wrap:wrap}
+    .button{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:2px solid var(--navy);border-radius:8px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none}
+    .button.primary{background:var(--navy);color:#fff}
+    .panel{border-top:3px solid var(--gold);background:#fff;border-radius:8px;padding:16px;box-shadow:0 12px 28px rgba(15,23,42,.08);margin:0 0 18px}
+    .checklist{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .checklist li{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:12px}
+    .checklist strong{display:block;color:var(--ink);margin-bottom:4px}
+    .note{border-left:6px solid var(--gold);background:#fff;border-radius:8px;padding:14px;color:var(--muted)}
+    code{background:#eef2ff;color:var(--navy);border-radius:6px;padding:2px 5px}
+    @media(max-width:760px){.head{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="top"></div>
+  <img class="banner" src="drawsplat_hub_banner.png" alt="DrawSplat Hub">
+  <main>
+    <section class="head">
+      <div>
+        <p class="eyebrow">DrawSplat Hub</p>
+        <h1>Teacher onboarding checklist</h1>
+        <p>Use this process when adding an individual classroom teacher from the Hub admin account, then handing off ownership when the teacher is ready.</p>
+      </div>
+      <div class="actions">
+        <a class="button primary" href="admin.html">Instances Admin</a>
+        <a class="button" href="index.html">Hub Splash</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Recommended Package</h2>
+      <ul class="checklist">
+        <li><strong>Create the teacher folder.</strong> From <code>drawsplat@gmail.com</code>, create a folder named for the teacher or classroom, such as <code>Teacher Name - DrawSplat Hub</code>.</li>
+        <li><strong>Create the teacher data file.</strong> Add the Google Sheet or Drive files that will hold that teacher's DrawSplat classroom data.</li>
+        <li><strong>Create the Apps Script backend.</strong> Prefer a standalone Apps Script project for easier sharing and ownership transfer. If using a Sheet-bound script, remember that the script follows the container Sheet.</li>
+        <li><strong>Create or update the config.</strong> Make sure the teacher's instance config points to the correct Apps Script Web App URL or storage backend.</li>
+        <li><strong>Share first as editor.</strong> Share the folder, Sheet, config file, and Apps Script project with the teacher as editor before asking them to use the instance.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Ownership Handoff</h2>
+      <ul class="checklist">
+        <li><strong>Confirm the teacher can open everything.</strong> Ask the teacher to open the folder, Sheet, Apps Script project, and DrawSplat instance before transferring anything.</li>
+        <li><strong>Transfer ownership where Google permits it.</strong> Transfer the folder, Sheet, standalone Apps Script project, and config file individually. Folder ownership alone may not transfer every file inside it.</li>
+        <li><strong>Check domain limits.</strong> Google may block ownership transfer across Workspace domains or between some Workspace and consumer Gmail accounts.</li>
+        <li><strong>Use copy-as-owner if transfer is blocked.</strong> If Google will not transfer ownership, have the teacher make copies from the shared package. The teacher owns the copies they create.</li>
+        <li><strong>Update the Hub record.</strong> Once the teacher owns or controls the copied package, update the Hub instance config and notes so future support points to the teacher-owned resources.</li>
+      </ul>
+    </section>
+
+    <p class="note">Practical rule: start with editor sharing from <code>drawsplat@gmail.com</code>, then transfer ownership only after the teacher confirms access. If transfer fails, the teacher-owned-copy path is the reliable fallback.</p>
+  </main>
+</body>
+</html>
