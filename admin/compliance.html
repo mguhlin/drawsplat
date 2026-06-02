@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplatTM Compliance Console</title>
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page admin-locked">
+<header>
+  <a class="logo-link" href="../index.html" aria-label="DrawSplatTM home"><img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""></a>
+  <h1>DrawSplat<sup class="tm">TM</sup> <span class="app-version">Compliance Console</span></h1>
+  <span class="badge">Internal</span>
+  <span class="spacer"></span>
+  <a class="admin-header-link" href="../legal/terms-privacy.html">Terms & Privacy</a>
+  <button class="admin-header-link admin-sign-out" id="adminSignOutBtn" type="button" data-viewer-ok>Lock Admin</button>
+  <a class="admin-header-link" href="../app/whiteboard.html">Open Board</a>
+</header>
+
+<section class="admin-gate" aria-label="Admin password required">
+  <div class="admin-gate-card">
+    <img src="../assets/brand/DrawSplat_logo.png" alt="" class="access-logo">
+    <h2>Admin Access</h2>
+    <p>Enter the DrawSplat<sup class="tm">TM</sup> admin password to use internal compliance and reviewer tools.</p>
+    <label class="admin-label" for="adminGatePassword">Admin password</label>
+    <input id="adminGatePassword" type="password" autocomplete="current-password">
+    <div class="admin-actions">
+      <button id="adminGateSubmit" class="primary" type="button">Unlock Admin</button>
+      <button id="adminGenerateLocalPasswordBtn" type="button">Generate Browser Password</button>
+      <button id="adminViewerPreviewBtn" type="button">Preview as Viewer</button>
+      <a class="admin-button" href="access.html">Request Access</a>
+    </div>
+    <p id="adminGateMessage" class="hint" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<div class="admin-viewer-banner" role="status">
+  <strong>Preview mode</strong> — you're looking at the admin layout in read-only form. No backend data is loaded and every Save / Load / Edit control is disabled. Click <strong>Lock Admin</strong> in the header to exit and sign in with the real admin password.
+</div>
+
+<main class="admin-shell">
+  <section class="admin-hero">
+    <h2>Compliance Console</h2>
+    <p>Internal compliance and reviewer tools. This page is intentionally not linked from the teacher-facing admin workflow.</p>
+  </section>
+
+  <section class="admin-grid">
+    <article class="admin-panel">
+      <h3>Google Drive + Sheets Backend</h3>
+      <p class="hint">Paste the deployed Google Apps Script Web App URL for the deployment you are reviewing or maintaining.</p>
+      <label class="admin-label" for="adminScriptUrl">Apps Script Web App URL</label>
+      <input id="adminScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+      <div class="admin-actions">
+        <button id="saveScriptUrlBtn" class="primary" type="button">Save URL</button>
+        <button id="testScriptUrlBtn" type="button">Test Connection</button>
+        <button id="clearScriptUrlBtn" type="button">Clear</button>
+      </div>
+      <p id="adminStatus" class="hint" role="status" aria-live="polite"></p>
+    </article>
+
+    <article class="admin-panel admin-compliance" id="complianceConsole">
+      <h3>Compliance Console</h3>
+      <p class="hint">Phased rollout of safety, parent-access, age-lock, and district-readiness features. Each subsection is filled in as the corresponding day in <a href="../COMPLIANCE-ROADMAP.md">COMPLIANCE-ROADMAP.md</a> is completed.</p>
+      <div class="admin-actions">
+        <a class="admin-button" href="../COMPLIANCE-ROADMAP.md">Open Roadmap</a>
+        <a class="admin-button" href="../docs/COMPLIANCE.md">Open Compliance Docs</a>
+        <a class="admin-button" href="../parents/index.html">Parent Request Center</a>
+      </div>
+      <details class="compliance-section" id="complianceSafetyReview"><summary>Safety Review (text filter, link control, board freeze)</summary><div class="compliance-body">
+        <p class="hint">Text keyword filter and link allowlist are enforced server-side on every Save to Google and Cloud Sync. Hits are recorded as <code>TEXT_FILTER_HIT</code> in Activity Records. Freeze a board to block all future writes until you unfreeze it.</p>
+        <h4 style="margin:10px 0 4px;font-size:14px;color:var(--ink-dark)">Filter configuration</h4>
+        <div class="config-grid">
+          <label class="config-row"><input type="checkbox" id="cfgSafetyTextEnabled"> Text keyword filter enabled</label>
+          <label class="config-row"><input type="checkbox" id="cfgSafetyTextBlock"> Block on match (otherwise log-only)</label>
+          <label class="config-row"><input type="checkbox" id="cfgSafetyLinksEnabled"> Link allowlist enabled</label>
+          <label class="config-row"><input type="checkbox" id="cfgSafetyLinksBlock"> Block unapproved domains</label>
+        </div>
+        <p id="safetyConfigStatus" class="hint" role="status" aria-live="polite"></p>
+        <div class="admin-actions">
+          <button id="loadSafetyConfigBtn" type="button">Load Config</button>
+          <button id="saveSafetyConfigBtn" type="button" class="primary">Save Filter Settings</button>
+        </div>
+        <hr style="margin:14px 0;border:0;border-top:1px solid var(--line)">
+        <h4 style="margin:6px 0 4px;font-size:14px;color:var(--ink-dark)">Board / room freeze</h4>
+        <div class="admin-actions"><button id="loadSafetyBoardsBtn" type="button" class="primary">Load Boards &amp; Rooms</button><button id="filterSafetyAuditBtn" type="button">View Safety Events</button></div>
+        <div id="safetyBoardsList" style="margin-top:12px"></div>
+      </div></details>
+      <details class="compliance-section" id="complianceImageQueue"><summary>Image Approval Queue (Days 1.3 / 1.4)</summary><div class="compliance-body">
+        <p class="hint">Student image uploads land here as <em>pending</em> until a teacher approves them. Approved images appear on the student's board the next time their browser polls (within ~8 seconds). Rejected images are trashed in Drive and replaced with a "rejected" placeholder on the student board.</p>
+        <div class="config-grid">
+          <label class="config-row"><input type="checkbox" id="cfgImageApproval"> Require teacher approval for student image uploads</label>
+          <label class="config-row">Max file size (bytes) <input id="cfgImageMaxBytes" type="number" min="1024" max="52428800" value="5242880" style="max-width:140px;margin-left:8px"></label>
+        </div>
+        <p id="imageQueueConfigStatus" class="hint" role="status" aria-live="polite"></p>
+        <div class="admin-actions">
+          <button id="loadImageQueueConfigBtn" type="button">Load Config</button>
+          <button id="saveImageQueueConfigBtn" type="button" class="primary">Save Image Settings</button>
+        </div>
+        <hr style="margin:14px 0;border:0;border-top:1px solid var(--line)">
+        <h4 style="margin:6px 0 4px;font-size:14px;color:var(--ink-dark)">Review queue</h4>
+        <div class="config-grid">
+          <label class="config-row">Status filter
+            <select id="imageQueueStatusFilter" style="margin-left:8px">
+              <option value="pending" selected>Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="all">All</option>
+            </select>
+          </label>
+        </div>
+        <div class="admin-actions"><button id="loadImageQueueBtn" type="button" class="primary">Load Image Queue</button><button id="refreshImageQueueBtn" type="button">Refresh</button></div>
+        <div id="imageQueueList" style="margin-top:12px"></div>
+      </div></details>
+      <details class="compliance-section" id="complianceParentAccess"><summary>Family Access Tools (request center, verification, deletion)</summary><div class="compliance-body">
+        <p class="hint">Parents submit requests at <a href="../parents/index.html">/parents/</a>. Verified requests appear here. Click <strong>Issue Parent Code</strong> on a student in Age Lock below to give a parent a one-time verification code (valid 14 days).</p>
+        <h4 style="margin:10px 0 4px;font-size:14px;color:var(--ink-dark)">Parent controls configuration</h4>
+        <div class="config-grid">
+          <label class="config-row"><input type="checkbox" id="cfgParentPortal"> Parent portal enabled</label>
+          <label class="config-row"><input type="checkbox" id="cfgParentRequestForm"> Parent request form enabled</label>
+          <label class="config-row">Verification method
+            <select id="cfgParentVerify" style="margin-left:8px">
+              <option value="teacher_code">Teacher-issued code (current)</option>
+              <option value="district_roster">District roster sync (Phase 4)</option>
+              <option value="admin_approval">Admin approval (manual)</option>
+            </select>
+          </label>
+        </div>
+        <p id="parentConfigStatus" class="hint" role="status" aria-live="polite"></p>
+        <div class="admin-actions">
+          <button id="loadParentConfigBtn" type="button">Load Config</button>
+          <button id="saveParentConfigBtn" type="button" class="primary">Save Parent Settings</button>
+        </div>
+        <hr style="margin:14px 0;border:0;border-top:1px solid var(--line)">
+        <h4 style="margin:6px 0 4px;font-size:14px;color:var(--ink-dark)">Request queue</h4>
+        <div class="admin-actions"><button id="loadParentRequestsBtn" type="button" class="primary">Load Requests</button></div>
+        <div id="parentRequestsList" style="margin-top:12px"></div>
+      </div></details>
+      <details class="compliance-section" id="complianceAgeLock"><summary>Student Age Band Lock</summary><div class="compliance-body"><p class="hint">Each student record carries one of: under_13, 13_to_17, 18_plus, unknown_minor. The band is server-locked; only the admin can override, with reason + audit trail. Rows auto-populate when students submit turn-ins; you can also add students manually below.</p><div class="admin-actions"><button id="loadUsersBtn" type="button" class="primary">Load Students</button><button id="addUserBtn" type="button">Add Student</button><button id="rosterImportBtn" type="button">Import Roster CSV</button></div><p class="hint" style="margin-top:6px">Roster CSV columns (header row required): <code>studentName</code> (required), <code>className</code>, <code>email</code>, <code>ageBand</code> (under_13 / 13_to_17 / 18_plus / unknown_minor), <code>ageSource</code>, <code>notes</code>. Existing students (same name + class) are updated; new ones are created. Idempotent.</p><input id="rosterCsvInput" type="file" accept=".csv,text/csv" hidden><div id="usersList" style="margin-top:12px"></div></div></details>
+      <details class="compliance-section" id="complianceUseLimits"><summary>Use Limits (time-of-day, daily, session)</summary><div class="compliance-body">
+        <p class="hint">Enforcement code (browser timer + Apps Script save/load gate) ships in Days 2.8 &ndash; 2.9. The configuration switches below are read by both the client and the server, so you can pre-stage values now.</p>
+        <div class="config-grid">
+          <label class="config-row"><input type="checkbox" id="cfgLimitsEnabled"> Enforce daily / session limits</label>
+          <label class="config-row"><input type="checkbox" id="cfgLimitsWeekend"> Allow weekend access</label>
+          <label class="config-row">Daily seconds <input id="cfgLimitsDaily" type="number" min="0" max="86400" value="1800" style="max-width:120px;margin-left:8px"></label>
+          <label class="config-row">Session seconds (0 = no limit) <input id="cfgLimitsSession" type="number" min="0" max="86400" value="0" style="max-width:120px;margin-left:8px"></label>
+          <label class="config-row">Allowed hours start <input id="cfgLimitsStart" type="time" value="07:30" style="margin-left:8px"></label>
+          <label class="config-row">Allowed hours end <input id="cfgLimitsEnd" type="time" value="17:00" style="margin-left:8px"></label>
+        </div>
+        <p id="limitsConfigStatus" class="hint" role="status" aria-live="polite"></p>
+        <div class="admin-actions">
+          <button id="loadLimitsConfigBtn" type="button">Load Config</button>
+          <button id="saveLimitsConfigBtn" type="button" class="primary">Save Use Limits</button>
+        </div>
+      </div></details>
+      <details class="compliance-section" id="compliancePrivacy"><summary>Privacy Settings (storage, AI, third-party services)</summary><div class="compliance-body">
+        <p class="hint">Read-only declarations the District Privacy Packet reports to district reviewers. Edit values in <code>compliance.config.json</code> at the repo root or in the JSON Editor below; they are stored in <code>COMPLIANCE_CONFIG</code> on the Apps Script side.</p>
+        <div id="privacyDeclarations" style="margin-top:8px"></div>
+        <div class="admin-actions">
+          <button id="loadPrivacyConfigBtn" type="button" class="primary">Load Privacy Declarations</button>
+          <button id="openConfigEditorBtn" type="button">Open Raw Config Editor</button>
+        </div>
+      </div></details>
+      <details class="compliance-section" id="complianceRetention"><summary>Retention Policy &amp; Cleanup</summary><div class="compliance-body">
+        <p class="hint">Boards older than the archive threshold are moved to an <code>Archive</code> folder. Boards older than the delete threshold are trashed and the row removed. Activity Records older than the keep window are pruned. A daily Apps Script trigger runs the cleanup at 02:00 server time; you can also run it on demand.</p>
+        <div class="grid retention-grid">
+          <label class="admin-label" for="retArchiveDays">Archive boards after (days)</label>
+          <input id="retArchiveDays" type="number" min="1" max="3650" value="90" style="max-width:140px">
+          <label class="admin-label" for="retDeleteDays">Delete boards after (days)</label>
+          <input id="retDeleteDays" type="number" min="1" max="3650" value="365" style="max-width:140px">
+          <label class="admin-label" for="retAuditDays">Keep Activity Records (days)</label>
+          <input id="retAuditDays" type="number" min="1" max="3650" value="365" style="max-width:140px">
+        </div>
+        <div class="admin-actions">
+          <button id="loadRetentionBtn" type="button">Load Current</button>
+          <button id="saveRetentionBtn" type="button" class="primary">Save Settings</button>
+          <button id="runCleanupBtn" type="button">Run Cleanup Now</button>
+          <button id="installTriggerBtn" type="button">Install Daily Trigger</button>
+          <button id="removeTriggerBtn" type="button">Remove Trigger</button>
+          <button id="resetDefaultsBtn" type="button" class="danger">Reset to Defaults</button>
+        </div>
+        <p id="retentionStatus" class="hint" role="status" aria-live="polite"></p>
+      </div></details>
+      <details class="compliance-section" id="complianceAudit"><summary>Activity Records (audit log)</summary><div class="compliance-body" id="complianceAuditBody">
+        <p class="hint">Filter by action, actor, and date range. Download as CSV or JSON for reviewer evidence.</p>
+        <div class="config-grid">
+          <label class="config-row">Action filter <input id="auditActionFilter" type="text" placeholder="e.g. PARENT_REQUEST_CREATED" style="margin-left:8px;min-width:240px"></label>
+          <label class="config-row">Actor contains <input id="auditActorFilter" type="text" placeholder="e.g. teacher@school" style="margin-left:8px;min-width:240px"></label>
+          <label class="config-row">Since <input id="auditSinceFilter" type="datetime-local" style="margin-left:8px"></label>
+          <label class="config-row">Limit <input id="auditLimitFilter" type="number" min="1" max="1000" value="200" style="margin-left:8px;max-width:100px"></label>
+        </div>
+        <div class="admin-actions">
+          <button id="applyAuditFilterBtn" type="button" class="primary">Apply Filter</button>
+        </div>
+        <div id="complianceAuditViewer" style="margin-top:8px">Connect a Web App URL above to load Activity Records.</div>
+      </div></details>
+      <details class="compliance-section" id="compliancePrivacyPacket"><summary>District Privacy Packet</summary><div class="compliance-body"><p class="hint">One-click ZIP with Terms &amp; Privacy, District Addendum, the current compliance config, the last 90 days of Activity Records, and the Compliance Roadmap.</p><div class="admin-actions"><button id="downloadPrivacyPacketBtn" type="button" class="primary">Download District Privacy Packet</button></div><p id="privacyPacketStatus" class="hint" role="status" aria-live="polite"></p></div></details>
+    </article>
+  </section>
+</main>
+
+<dialog id="rawConfigDialog" class="admin-passcode-dialog" style="width:min(720px,95vw)">
+  <form method="dialog" id="rawConfigForm">
+    <h3>Compliance config (raw JSON)</h3>
+    <p class="hint">Edits write to the <code>COMPLIANCE_CONFIG</code> script property on save. Only the known top-level sections (<code>safety</code>, <code>parentAccess</code>, <code>ageLock</code>, <code>timeLimits</code>, <code>retention</code>, <code>audit</code>, <code>privacy</code>) are persisted; anything else is silently dropped.</p>
+    <textarea id="rawConfigText" rows="18" style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;padding:10px;border:1.5px solid var(--line);border-radius:10px"></textarea>
+    <p id="rawConfigStatus" class="hint" role="status" aria-live="polite"></p>
+    <div class="admin-actions">
+      <button type="submit" value="cancel">Cancel</button>
+      <button type="submit" value="save" class="primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="adminPasscodeDialog" class="admin-passcode-dialog">
+  <form method="dialog" id="adminPasscodeForm">
+    <h3>Admin passcode</h3>
+    <p class="hint">Enter the <code>ADMIN_PASSCODE</code> set in your Apps Script Script Properties. It's stored in this browser only (localStorage) and used for Activity Records and the District Privacy Packet.</p>
+    <label class="admin-label" for="adminPasscodeInput">Passcode</label>
+    <input id="adminPasscodeInput" type="password" autocomplete="current-password" autofocus>
+    <div class="admin-actions">
+      <button type="submit" value="cancel">Cancel</button>
+      <button type="submit" value="ok" class="primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="../assets/js/admin-gate.js?v=1.1"></script>
+<script src="../assets/js/games-filter.js"></script>
+<script src="../assets/js/admin.js?v=1.0"></script></body>
+</html>

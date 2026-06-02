@@ -594,6 +594,11 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .admin-hero h2{font-size:28px;line-height:1.15;margin:0 0 8px;color:var(--ink)}
 .admin-hero p{max-width:760px;margin:0;color:var(--muted);line-height:1.5}
 .admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.admin-section-heading{margin:22px 0 12px;padding:16px;border-left:5px solid var(--gold);background:#fff;border-radius:12px;box-shadow:0 8px 24px #7c3aed0f}
+.admin-section-heading h2{margin:0 0 6px;color:var(--navy);font-size:22px}
+.admin-section-heading p{margin:0;color:var(--muted);line-height:1.5}
+.admin-section-heading .landing-eyebrow{margin:0 0 4px;color:#7c3aed}
+.admin-section-divider{margin-top:32px;border-top:2px solid var(--line)}
 .admin-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px #7c3aed14;padding:16px}
 .admin-panel h3{margin:0 0 8px;font-size:17px}
 .admin-label{display:block;margin:12px 0 5px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
