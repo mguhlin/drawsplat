@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.7, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
+- **Status:** v3.1.8, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
 - **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
 
 ## Getting started
@@ -29,7 +29,17 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.7 — Security hardening release for self-hosters, plus Concept Map Studio workspace polish.** MySQL backend now ships with security headers, API/auth/parent-request rate limits, safer CORS defaults, admin bootstrap controls, protected maintenance cleanup, room-key validation, JSON payload caps, sanitized client-visible errors, and tighter SSE subscriptions. Markdown Studio now validates Markdown link/image URLs and escapes attributes before previewing. Concept Map Studio now has a wider full-page canvas layout and a localized T-Chart template. Quiz & Flashcard Studio is included as a browser-only classroom widget with CSV/JSON/XLSX/ODS/ODT imports, exports, student/team quiz play links, printable flashcards, and versioned AI-import templates. The self-host download page and setup docs are refreshed for the hardened defaults. Pinned as a GitHub release: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7). Previous milestones: [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.8 — Latest self-host bundle with SplatImage Studio, Concept Map Markdown/text controls, and Quiz & Flashcard Studio science sample sets.** SplatImage Studio is included as a standalone browser-only image editor with resize and crop handles. Concept Map Studio adds Markdown import, text controls, dropdown menus, selected-node editing polish, and improved import collision layout. Quiz & Flashcard Studio now includes selectable Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets. The self-host download page and bundle are refreshed for the latest classroom tools. Pinned as a GitHub release: [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8). Previous milestones: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.8)
+
+- **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor for quick resize and crop work before images move into classroom materials.
+- **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
+- **Concept Map Studio Markdown import.** Added Markdown import support for turning heading/bullet outlines into concept-map structures.
+- **Concept Map Studio text controls.** Added text controls and moved selected-node edits into menus for a cleaner workspace.
+- **Concept Map Studio control polish.** Added dropdown menus and improved import collision layout so generated or imported maps land with less overlap.
+- **Quiz & Flashcard Studio science samples.** Added selectable Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets for fast classroom demos.
+- **Blog RSS refresh.** Updated the bundled blog RSS snapshot from Raindrop so self-hosted copies carry the latest included feed item.
 
 ## Recent improvements (v3.1.7)
 
@@ -171,6 +181,8 @@ timeline
          : Markdown Studio URL allowlist + attribute escaping; refreshed self-host docs and bundle
          : Concept Map Studio full-width canvas layout + localized T-Chart template
          : Quiz & Flashcard Studio standalone widget + versioned CSV/JSON import templates
+  v3.1.8 : Latest classroom tools self-host bundle
+         : SplatImage Studio, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
 ```
 
 ## Included files
@@ -248,7 +260,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the v3.1.7 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the v3.1.8 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 
