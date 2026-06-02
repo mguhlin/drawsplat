@@ -89,7 +89,7 @@
     <p>DrawSplat<sup class="tm">TM</sup>'s baseline collection is intentionally minimal:</p>
     <ul class="admin-checklist">
       <li><strong>Browser localStorage on the student's device</strong>: language preference (<code>drawsplat.language</code>), current board JSON, viewer-mode flag, audio mute setting (<code>drawsplat.audioMuted</code>), per-game enabled list, admin session token (sessionStorage, cleared on tab close). No identifiers, no behavioural tracking, no analytics. See the persistent <a href="#localStorage">localStorage inventory below</a>.</li>
-      <li><strong>When cloud sync is enabled</strong>: a room name and a salted-SHA-256 hash of the room password (server-side). Board JSON, image uploads (if enabled), audit events. Student names if the teacher chose to attach them. The district controls retention via the Teacher Admin → Compliance Console.</li>
+      <li><strong>When cloud sync is enabled</strong>: a room name and a salted-SHA-256 hash of the room password (server-side). Board JSON, image uploads (if enabled), audit events. Student names if the teacher chose to attach them. The district controls retention via the internal Compliance Console.</li>
       <li><strong>No cookies</strong> for tracking. The site uses localStorage only for user preferences listed above. No third-party analytics, ad networks, or fingerprinting libraries.</li>
       <li><strong>No outbound network requests on the standalone widgets</strong>. The standalone widgets (Concept Map Studio, Bingo Card Generator, Animated GIF Maker, etc.) run entirely in the browser. They never call a server unless the teacher explicitly opts into Cloud Save (Google Drive, OneDrive, or Dropbox via OAuth).</li>
     </ul>
@@ -99,9 +99,9 @@
     <h2>4. Data subject rights — what the platform supports</h2>
     <p>Articles 15–22 give individuals seven rights. Here's how DrawSplat<sup class="tm">TM</sup> supports each:</p>
     <ul class="admin-checklist">
-      <li><strong>Right of access (Art. 15)</strong> — Teacher Admin → Compliance Console → "Student data export" generates a JSON dump of everything tied to that student. Parents can request the same via the Family Access Portal.</li>
+      <li><strong>Right of access (Art. 15)</strong> — Internal Compliance Console → "Student data export" generates a JSON dump of everything tied to that student. Parents can request the same via the Family Access Portal.</li>
       <li><strong>Right to rectification (Art. 16)</strong> — Teachers can edit student boards directly; parents can flag inaccuracies via the Family Access Portal request form.</li>
-      <li><strong>Right to erasure / "right to be forgotten" (Art. 17)</strong> — Teacher Admin → Compliance Console → "Full data delete" removes the student's boards, audit records, and image uploads. Apps Script deployments delete underlying Drive files; MySQL deployments cascade-delete.</li>
+      <li><strong>Right to erasure / "right to be forgotten" (Art. 17)</strong> — Internal Compliance Console → "Full data delete" removes the student's boards, audit records, and image uploads. Apps Script deployments delete underlying Drive files; MySQL deployments cascade-delete.</li>
       <li><strong>Right to restriction (Art. 18)</strong> — Teacher Admin → "Freeze student" suspends new writes and hides existing content from the student view while preserving it for review.</li>
       <li><strong>Right to data portability (Art. 20)</strong> — every standalone widget supports Save .json, and the whiteboard supports Save .drawsplat.json. Boards round-trip; you can re-import them into another DrawSplat<sup class="tm">TM</sup> deployment or extract them programmatically.</li>
       <li><strong>Right to object (Art. 21)</strong> — your DPO documents the objection; the technical action is typically "freeze" then "delete" via the controls above.</li>
@@ -176,7 +176,7 @@
       <li>Categories of personal data: name (if attached to boards), student work product (board JSON), uploaded images (if enabled), audit-log events (timestamps + actions).</li>
       <li>Recipients: your hosting provider (Google / your MySQL host / your district IT).</li>
       <li>Transfers outside EU/UK: yes/no — document under Chapter V if yes.</li>
-      <li>Retention periods: configurable in Teacher Admin → Compliance Console → Retention.</li>
+      <li>Retention periods: configurable in Internal Compliance Console → Retention.</li>
       <li>Security measures: row of TOMs taken from §7 above plus your own controls (network filtering, MFA on admin, etc.).</li>
     </ul>
   </section>
@@ -201,7 +201,7 @@
       <li>Pick a lawful basis (typically Art. 6(1)(e) public task).</li>
       <li>Run a DPIA using NDPA Packet + this page as source material.</li>
       <li>Add DrawSplat<sup class="tm">TM</sup> to your RoPA.</li>
-      <li>Configure retention in Teacher Admin → Compliance Console.</li>
+      <li>Configure retention in the internal Compliance Console.</li>
       <li>Update your school's privacy notice to mention the localStorage items in §6 and the data subject rights flows in §4.</li>
       <li>Communicate the Family Access Portal URL to parents so they have a clear path for subject rights requests.</li>
     </ul>

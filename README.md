@@ -35,7 +35,10 @@ Other docs that pair with setup:
 
 - **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
 - **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
+- **SplatImage selected-copy fix.** Copy PNG now copies the selected object bounds when one or more objects are selected, instead of bringing along the full white canvas.
 - **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, Google OAuth admin access for approved accounts, the new Hub banner, guided admin setup, teacher folder/config creation in Drive, and an Apps Script instance registry starter.
+- **Teacher setup guides.** Added a Teacher Options quick start and Apps Script Web App URL setup guide, both linked from public support surfaces and Teacher Admin.
+- **Teacher Admin cleanup.** Teacher Admin now starts with Google Apps Script + Sheets/Drive setup, separates the MySQL section, and moves the Compliance Console to `admin/compliance.html` as an unlinked internal operator page.
 - **HTML release notes.** Added `pages/release-notes.html` so public release notes render as a styled site page instead of raw Markdown.
 - **Concept Map Studio Markdown import.** Added Markdown import support for turning heading/bullet outlines into concept-map structures.
 - **Concept Map Studio text controls.** Added text controls and moved selected-node edits into menus for a cleaner workspace.
@@ -197,7 +200,9 @@ timeline
 - `pages/download.html` — self-host download page (three deployment paths + GitHub release link + SHA-256)
 - `pages/contact.html` — Contact / Information Request form (replaces every mailto on the site)
 - `assets/js/contact.js` — posts contact submissions to the Apps Script `contactRequest` endpoint
-- `guides/` — HTML guide hub: ScratchArt, Google Drive + Sheets setup, MySQL setup, Compliance Console guide, project reference, classroom widgets, collaboration, saving/exporting, etc.
+- `guides/` — HTML guide hub: Teacher Options quick start, Apps Script Web App URL setup, ScratchArt, Google Drive + Sheets setup, MySQL setup, Compliance Console guide, project reference, classroom widgets, collaboration, saving/exporting, etc.
+- `guides/teacher-options-quick-start.html` — short teacher guide for Options, Workspace Education Tools, Simple / Advanced views, and temporary Teacher Admin access
+- `guides/apps-script-web-app-url.html` — teacher-facing walkthrough for creating the Apps Script Web App URL and saving it in Teacher Admin
 - `guides/compliance-guide.html` — operator walkthrough of the eight Compliance Console sections
 - `guides/images/` — banner and guide images used by public pages and guides
 - `pages/pricing.html` — free pricing model (Everyone / Coffee / Support & PD)
@@ -208,12 +213,13 @@ timeline
 - `parents/` — Family Access Tools (parent request form + endpoint client)
 - `community/` — Community bulletin board (Google + Microsoft SSO, email/pw fallback, multi-language UI, markdown-rendered posts/replies, author-editable from the board, stale-while-revalidate cache)
 - `community/markdown.js` — minimal CommonMark-subset renderer shared by `community/index.html` and `community/Admin.html`. Escapes HTML first; `href` allowlist limits links to `http://`, `https://`, and `mailto:`
-- `admin/admin.html` — Teacher Admin with the Compliance Console (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
+- `admin/admin.html` — Teacher Admin setup surface for Google Apps Script + Sheets/Drive, MySQL, storage mode, backend testing, and classroom links
+- `admin/compliance.html` — unlinked internal Compliance Console surface (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
 - `admin/access.html` — admin-access request page
 - `admin/mysql-setup.html` — MySQL backend setup wizard for endpoint testing and `.env` template generation
 - `languages/` — translated whiteboard entry pages (Spanish, Vietnamese, Arabic, Chinese, Urdu / Hindi)
 - `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
-- `assets/js/admin.js` — admin-page settings, backend ping, link generation, Compliance Console wiring
+- `assets/js/admin.js` — admin-page settings, backend ping, link generation, and internal Compliance Console wiring
 - `assets/js/mysql-setup.js` — MySQL wizard behavior
 - `assets/js/safety.js` — client-side text + link safety pre-check
 - `assets/js/timelimits.js` — client-side active-time tracker + workspace lock
@@ -247,7 +253,7 @@ What is built today (Phases 1&ndash;3 of the roadmap, on the Apps Script backend
 - **Student data deletion** &mdash; one-click trash + row removal for a student&rsquo;s artifacts; logged.
 - **Retention policy + scheduled cleanup** &mdash; configurable archive / delete / audit-keep windows; daily Apps Script trigger.
 - **Time limits** &mdash; browser timer + Apps Script save gate; daily seconds, session seconds, allowed hours, weekend toggle.
-- **Compliance Console** &mdash; single Teacher Admin surface (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
+- **Compliance Console** &mdash; unlinked internal operator surface at `admin/compliance.html` (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
 - **District Privacy Packet** &mdash; one-click ZIP bundling config snapshot, 90 days of Activity Records, parent-request log, and a README pointing at Terms &amp; Privacy + the District Addendum.
 
 Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend/`:
@@ -353,7 +359,7 @@ Setup instructions live in scenario-specific docs so you only read what's releva
 
 A side-by-side capability comparison and a quick "which one are you?" router lives in [`docs/setup.md`](docs/setup.md).
 
-The Teacher Admin page (`admin/admin.html`) is the single configuration surface once you've finished any of the three setups. It hides provider URLs from students &mdash; the board page (`app/whiteboard.html`) reads the saved settings without exposing them in the student URL.
+The Teacher Admin page (`admin/admin.html`) is the teacher configuration surface once you've finished any of the three setups. It hides provider URLs from students &mdash; the board page (`app/whiteboard.html`) reads the saved settings without exposing them in the student URL. Compliance operators can use the unlinked internal console at `admin/compliance.html`.
 
 ### Shared classroom board workflow
 

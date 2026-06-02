@@ -92,7 +92,7 @@ If you also want the `/community/` board with Google + Microsoft sign-in:
 
 1. Hit `https://script.google.com/macros/s/YOUR_DEPLOYMENT/exec?action=ping` in a browser. You should see JSON with `ok: true`, `app: "DrawSplatTM"`, and the current `version`.
 2. Open the whiteboard, draw something, **Save to Google**. Check Drive — the new `.drawsplat.json` should be in the **DrawSplatTM Saves** folder, and the **Boards** sheet has a new row.
-3. Open Teacher Admin → **Compliance Console** → **Activity Records**. Enter your `ADMIN_PASSCODE`. The save you just did should appear as a `BOARD_SAVE` event.
+3. Open the internal Compliance Console at `admin/compliance.html` → **Activity Records**. Enter your `ADMIN_PASSCODE`. The save you just did should appear as a `BOARD_SAVE` event.
 
 ## Upgrading when `Code.gs` changes
 
@@ -106,7 +106,7 @@ The first line of `Code.gs` shows the current version. When this file changes in
 
 ## Compliance Console quick reference
 
-Once the backend is wired, Teacher Admin → Compliance Console has eight sections. See [`COMPLIANCE.md`](COMPLIANCE.md) for the full operator guide.
+Once the backend is wired, the internal Compliance Console at `admin/compliance.html` has eight sections. See [`COMPLIANCE.md`](COMPLIANCE.md) for the full operator guide.
 
 | Section | Quick win to test |
 |---|---|

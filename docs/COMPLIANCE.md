@@ -47,9 +47,9 @@ The `passcode` value is the `ADMIN_PASSCODE` script property. The Teacher Admin 
 
 If the parent visits the public site and no Web App URL is configured in their browser, the form gives them a clear "email the school directly" message instead of failing silently. This means parents using `drawsplat.org` itself won't reach a backend &mdash; the form is for districts running their own deployment with their own Apps Script.
 
-## Teacher Admin Compliance Console
+## Internal Compliance Console
 
-Open **Teacher Admin &rarr; Compliance Console**. Seven sections are scaffolded; two are live:
+Open `admin/compliance.html` directly after unlocking the admin gate. Seven sections are scaffolded; two are live:
 
 - **Activity Records** &mdash; opens to the last 200 events. Filter by action, download CSV.
 - **District Privacy Packet** &mdash; one-click ZIP download containing:
@@ -83,7 +83,7 @@ Use `logEvent_(action, payload)` from anywhere in the Apps Script when you add a
 
 | Task | Where |
 |---|---|
-| Review a flagged parent request | Teacher Admin &rarr; Compliance Console &rarr; Family Access Tools (Day 2.4 next) |
+| Review a flagged parent request | Internal Compliance Console &rarr; Family Access Tools (Day 2.4 next) |
 | Pull a CSV of last week's events | Activity Records section &rarr; filter `since=YYYY-MM-DD` &rarr; Download CSV |
 | Produce a packet for a district reviewer | District Privacy Packet section &rarr; Download District Privacy Packet |
 | Invalidate all stored admin passcodes in the browser | Have the operator clear `localStorage` for `drawsplat.complianceAdminPasscode` |
@@ -96,13 +96,13 @@ A new `Users` sheet tracks one row per (student, class) pair. Columns: `id, stud
 - Rows auto-populate when a student submits a turn-in (`upsertUserFromTurnIn_`).
 - Allowed bands: `under_13`, `13_to_17`, `18_plus`, `unknown_minor`. Default for new rows is `unknown_minor`.
 - `ageLocked` defaults to `true` and only the admin can change `ageBand`. Every change requires a reason and emits an `AGE_BAND_CHANGED` audit event.
-- The Teacher Admin &rarr; Compliance Console &rarr; **Student Age Band Lock** section lists students, shows current band, and offers a dropdown to change it (prompts for a reason on submit).
+- The internal Compliance Console &rarr; **Student Age Band Lock** section lists students, shows current band, and offers a dropdown to change it (prompts for a reason on submit).
 
 ## Teacher-Issued Parent Verification Code (Day 2.5)
 
 Each student row can carry a single-use 8-character verification code. Workflow:
 
-1. In Teacher Admin &rarr; Compliance Console &rarr; Student Age Band Lock, click **Issue Parent Code** next to a student.
+1. In the internal Compliance Console &rarr; Student Age Band Lock, click **Issue Parent Code** next to a student.
 2. The browser shows the cleartext code in a one-time prompt. The server stores only a SHA-256 hash (with `PASSWORD_SALT`) and an expiry 14 days out.
 3. The teacher shares the code with the parent through the school's existing parent-communications channel (email, paper, etc.).
 4. The parent enters the code in the **Verification code** field on `/parents/index.html` when submitting a request.
@@ -161,7 +161,7 @@ The single `COMPLIANCE_CONFIG` Script Property is the authoritative server-side 
 
 ## Compliance Console Panels (Days 3.1–3.5)
 
-The Teacher Admin &rarr; Compliance Console is split into seven collapsible sections. Each section reads from and writes to the same `COMPLIANCE_CONFIG` Script Property via `getCompliance` / `setCompliance`. Saved changes propagate to every subsequent `saveBoard_` / `saveRoom_` call automatically.
+The internal Compliance Console is split into seven collapsible sections. Each section reads from and writes to the same `COMPLIANCE_CONFIG` Script Property via `getCompliance` / `setCompliance`. Saved changes propagate to every subsequent `saveBoard_` / `saveRoom_` call automatically.
 
 | Section | What it controls |
 |---|---|
@@ -216,7 +216,7 @@ When `compliance.config.json` (or the `COMPLIANCE_CONFIG` Script Property) has `
 - `?action=timeStatus` is an open endpoint returning the active configuration and the student&rsquo;s `secondsToday` / `remaining`. Used by the client on load.
 - `?action=timeHeartbeat` (POST) accepts a delta (capped at 90 seconds per beat to prevent inflated counters) and returns the updated counter.
 
-Operators configure the limits in **Teacher Admin &rarr; Compliance Console &rarr; Use Limits**. Disable by toggling `enabled` off &mdash; the chip disappears and saves are no longer gated.
+Operators configure the limits in **Internal Compliance Console &rarr; Use Limits**. Disable by toggling `enabled` off &mdash; the chip disappears and saves are no longer gated.
 
 ## What is intentionally not built yet
 

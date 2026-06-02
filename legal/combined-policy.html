@@ -476,7 +476,7 @@
       <li>Records every change in the Activity Records audit log (<code>AGE_BAND_CHANGED</code>) with the old value, new value, who changed it, and why.</li>
       <li>Defaults to <code>unknown_minor</code> &mdash; the safest assumption &mdash; until a roster import or admin entry provides the actual value.</li>
     </ul>
-    <p>This is configured in <strong>Teacher Admin &rarr; Compliance Console &rarr; Student Age Band Lock</strong>.</p>
+    <p>This is configured in <strong>Internal Compliance Console &rarr; Student Age Band Lock</strong>.</p>
 
     <h3>2. Strategies to limit harmful content reaching minors</h3>
     <p>SCOPE expects providers to have <em>strategies</em> (not perfect filtering) to keep harmful content away from known minors. We layer multiple safeguards:</p>
@@ -543,7 +543,7 @@
 
   <section class="policy-section">
     <h2>The "show me everything in one click" answer</h2>
-    <p>For a district reviewer, signature-ready compliance evidence is one click in <strong>Teacher Admin &rarr; Compliance Console &rarr; District Privacy Packet &rarr; Download District Privacy Packet</strong>. The ZIP contains:</p>
+    <p>For a district reviewer, signature-ready compliance evidence is one click in <strong>Internal Compliance Console &rarr; District Privacy Packet &rarr; Download District Privacy Packet</strong>. The ZIP contains:</p>
     <ul class="admin-checklist">
       <li>The current compliance configuration (every setting that is on, off, or set to a specific value).</li>
       <li>The last 90 days of Activity Records as CSV.</li>
@@ -696,7 +696,7 @@
 
   <section class="policy-section">
     <h2>Compliance Features Available to the District</h2>
-    <p>The deployment owner configures the following controls through the Compliance Console (Teacher Admin &rarr; Compliance Console). The District Privacy Packet download bundles the live configuration, the last 90 days of Activity Records, and the parent-request log in a single ZIP for review.</p>
+    <p>The deployment owner configures the following controls through the internal Compliance Console. The District Privacy Packet download bundles the live configuration, the last 90 days of Activity Records, and the parent-request log in a single ZIP for review.</p>
     <ol>
       <li><strong>Activity Records (audit log)</strong> &mdash; immutable Sheet tab tracking every compliance-relevant action.</li>
       <li><strong>Safety Review</strong> &mdash; text keyword filter and link allowlist, server-enforced on every save. Board / room freeze blocks further writes.</li>
@@ -1074,7 +1074,7 @@ Self-hosted MySQL mode:
         <tr><td>Self-hosted MySQL</td><td>Same defaults; cron in <code>server/mysql-backend/cron-jobs.js</code></td><td>Same</td><td>Same</td><td>Same</td></tr>
       </tbody>
     </table>
-    <p>All retention windows are district-configurable from Teacher Admin &rarr; Compliance Console &rarr; Retention. Every cleanup writes a <code>RETENTION_ACTION</code> audit row with counts.</p>
+    <p>All retention windows are district-configurable from Internal Compliance Console &rarr; Retention. Every cleanup writes a <code>RETENTION_ACTION</code> audit row with counts.</p>
   </section>
 
   <section class="policy-section">
@@ -1140,7 +1140,7 @@ Self-hosted MySQL mode:
     <p>These are the screens a district reviewer typically needs to see &mdash; the live Compliance Console, the Family Access Tools queue, the District Privacy Packet download, and the audit log. The <a href="../docs/CAPTURE.md">CAPTURE.md</a> checklist in the repo describes exactly where to find each one and what state to put the app in before capturing. Operators are expected to drop in their own deployment&rsquo;s screenshots before sharing this page with a district reviewer, since each capture should reflect the district&rsquo;s own configuration.</p>
     <div class="evidence-gallery">
       <figure>
-        <div class="evidence-placeholder" data-capture="compliance-console-overview">Compliance Console overview &mdash; capture from Teacher Admin &rarr; Compliance Console with every <code>&lt;details&gt;</code> closed except the header.</div>
+        <div class="evidence-placeholder" data-capture="compliance-console-overview">Compliance Console overview &mdash; capture from the internal Compliance Console with every <code>&lt;details&gt;</code> closed except the header.</div>
         <figcaption>1. Compliance Console &mdash; overview. Demonstrates that every safeguard is one page, expandable per district reviewer interest.</figcaption>
       </figure>
       <figure>

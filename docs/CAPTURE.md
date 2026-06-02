@@ -17,13 +17,13 @@ Each capture should reflect **your district's own deployment** (your spreadsheet
 
 ### 1. `compliance-console-overview.png` — Compliance Console overview
 
-**Where**: Teacher Admin → Compliance Console.
+**Where**: Internal Compliance Console at `admin/compliance.html`.
 **State**: every `<details>` collapsed except the heading. The bullet list of subsections (Safety Review, Image Approval Queue, Family Access Tools, …) should be visible.
 **What it proves**: every safeguard is one page, expandable per reviewer interest.
 
 ### 2. `image-approval-queue.png` — Image Approval Queue
 
-**Where**: Teacher Admin → Compliance Console → Image Approval Queue (Days 1.3 / 1.4) → Load Image Queue.
+**Where**: Internal Compliance Console → Image Approval Queue (Days 1.3 / 1.4) → Load Image Queue.
 **State**:
 - "Require teacher approval for student image uploads" checkbox: **ON**.
 - Status filter: **Pending**.
@@ -33,14 +33,14 @@ Each capture should reflect **your district's own deployment** (your spreadsheet
 
 ### 3. `family-access-queue.png` — Family Access Tools request queue
 
-**Where**: Teacher Admin → Compliance Console → Family Access Tools → Load Requests.
+**Where**: Internal Compliance Console → Family Access Tools → Load Requests.
 **State**: at least one verified request visible (status `verified` or `approved`), with the Approve / Decline / Note controls visible.
 **Setup**: submit a test request at `/parents/` using `studentName: "Test Student"`, then use the teacher-issued code from the student row to verify it.
 **What it proves**: the parent-request workflow is end-to-end, not a static form.
 
 ### 4. `audit-records.png` — Activity Records (audit log)
 
-**Where**: Teacher Admin → Compliance Console → Activity Records.
+**Where**: Internal Compliance Console → Activity Records.
 **State**:
 - Date range: **last 7 days**.
 - Filter: empty (so the page shows mixed actions).
@@ -50,13 +50,13 @@ Each capture should reflect **your district's own deployment** (your spreadsheet
 
 ### 5. `privacy-packet-download.png` — District Privacy Packet download
 
-**Where**: Teacher Admin → Compliance Console → District Privacy Packet.
+**Where**: Internal Compliance Console → District Privacy Packet.
 **State**: capture the moment after clicking **Download District Privacy Packet** — the toast / status line should show "Packet downloaded (N bytes, M audit rows, K parent requests)" and the download bar should still be visible.
 **What it proves**: the one-click ZIP exists and includes the compliance config + last 90 days of audit + parent-request log.
 
 ### 6. `data-export-delete.png` — Per-student Export / Delete
 
-**Where**: Teacher Admin → Compliance Console → Student Age Band Lock → Load Students.
+**Where**: Internal Compliance Console → Student Age Band Lock → Load Students.
 **State**: at least one row visible, expanded enough to show the Export Data button (green) and Delete Data button (red).
 **Setup**: blur the student name first.
 **What it proves**: FERPA-style inspect / correct / delete rights are live; an admin can run them per-student without engineering involvement.
