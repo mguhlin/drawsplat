@@ -1,12 +1,12 @@
 {
-  "instanceId": "comeniocampus",
-  "displayName": "Comenio",
+  "instanceId": "hubcampus",
+  "displayName": "DrawSplat Hub",
   "storageProvider": "google-apps-script",
   "googleScriptUrl": "",
   "mysqlApiBase": "",
   "instanceRegistryUrl": "",
   "googleClientId": "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
   "allowedAdminDomains": [],
-  "defaultRoom": "comeniocampus-classroom",
+  "defaultRoom": "hubcampus-classroom",
   "tutorialComplete": false
 }

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://oauth2.googleapis.com; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
-  <title>Comenio Instance Admin</title>
+  <title>DrawSplat Hub Instance Admin</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root{--navy:#7c3aed;--ink:#111827;--muted:#64748b;--line:#dbe3ef;--soft:#eef2ff;--ok:#15803d;--bad:#b91c1c}
@@ -14,7 +14,7 @@
     header,main{max-width:1180px;margin:0 auto;padding:18px}
     header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
     h1{font-size:clamp(1.8rem,4vw,3.2rem);line-height:1;margin:0;color:var(--navy)}p{color:var(--muted);line-height:1.5}.badge{display:inline-flex;border:1px solid #c4b5fd;background:var(--soft);border-radius:999px;padding:6px 10px;font-weight:900;color:var(--navy)}
-    .brand-art{width:min(330px,36vw);aspect-ratio:3/2;border-radius:8px;background:url('comenio-classroom.png') center/cover no-repeat;box-shadow:0 16px 34px rgba(15,23,42,.16)}
+    .brand-art{width:min(330px,36vw);aspect-ratio:3/2;border-radius:8px;background:url('hub-classroom.png') center/cover no-repeat;box-shadow:0 16px 34px rgba(15,23,42,.16)}
     .layout{display:grid;grid-template-columns:300px 1fr;gap:16px}.steps,.panel{border:1px solid var(--line);background:#fff;border-radius:8px;padding:14px}.steps{position:sticky;top:14px;align-self:start}
     .step-list{display:grid;gap:8px}.step-pill{border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;color:var(--muted);font-weight:800}.step-pill.active{border-color:var(--navy);background:var(--soft);color:var(--navy)}
     .panel{margin-bottom:14px}.panel h2{margin:0 0 8px;font-size:1.15rem}.row{display:grid;gap:6px;margin:10px 0}label{font-size:.82rem;font-weight:900}input,select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -24,13 +24,13 @@
     @media(max-width:860px){header{display:block}.layout{grid-template-columns:1fr}.steps{position:static}}
   </style>
 </head>
-<body data-instance-slug="comeniocampus">
+<body data-instance-slug="hubcampus">
   <div class="top"></div>
-  <img class="instance-banner" src="../comenio_placeholder_banner.png" alt="Comenio Classroom - Learn. Grow. Inspire.">
+  <img class="instance-banner" src="../drawsplat_hub_banner.png" alt="DrawSplat Hub">
   <header>
     <div>
       <span class="badge">Instance Admin</span>
-      <h1>Comenio Setup</h1>
+      <h1>DrawSplat Hub Setup</h1>
       <p>Bind this instance to a Google admin account, connect storage, and generate classroom links.</p>
     </div>
     <nav class="actions">
@@ -49,7 +49,7 @@
         <div class="step-pill">4. Connect storage</div>
         <div class="step-pill">5. Verify links</div>
       </div>
-      <p class="msg" id="instanceStatus">Loading Comenio config...</p>
+      <p class="msg" id="instanceStatus">Loading DrawSplat Hub config...</p>
     </aside>
     <section>
       <article class="panel">
@@ -57,9 +57,9 @@
         <ol class="tutorial">
           <li>Create or update the school Apps Script backend with <code>apps-script/Code.gs</code>, then deploy it as a Web App.</li>
           <li>Use the one-time setup password to unlock this instance admin page.</li>
-          <li>Sign in with Google. That Google account becomes the Comenio instance admin after the backend verifies the token.</li>
+          <li>Sign in with Google. That Google account becomes the DrawSplat Hub instance admin after the backend verifies the token.</li>
           <li>Paste the Apps Script Web App URL and test the connection.</li>
-          <li>Use the generated teacher/student links for Comenio classrooms.</li>
+          <li>Use the generated teacher/student links for DrawSplat Hub classrooms.</li>
         </ol>
       </article>
       <article class="panel">
@@ -111,16 +111,16 @@
         <h2>Classroom Links</h2>
         <div class="row">
           <label for="defaultRoom">Default room</label>
-          <input id="defaultRoom" type="text" value="comeniocampus-classroom">
+          <input id="defaultRoom" type="text" value="hubcampus-classroom">
         </div>
         <div class="actions">
           <button class="primary" id="copyTeacherLinkBtn" type="button">Copy teacher link</button>
           <button id="copyStudentLinkBtn" type="button">Copy student link</button>
         </div>
-        <p class="msg" id="linksMsg">Links use the Comenio instance launcher.</p>
+        <p class="msg" id="linksMsg">Links use the DrawSplat Hub instance launcher.</p>
       </article>
     </section>
   </main>
-  <script src="../../assets/js/comenio/instance-admin.js"></script>
+  <script src="../../assets/js/hub/instance-admin.js"></script>
 </body>
 </html>

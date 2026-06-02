@@ -37,6 +37,7 @@ STAGE_DIR="$(mktemp -d)"
 STAGE_ROOT="$STAGE_DIR/drawsplat-selfhost-$VERSION_LABEL"
 
 mkdir -p "$OUT_DIR" "$STAGE_ROOT"
+rm -f "$OUT_PATH"
 
 EXCLUDES=(
   ".git"

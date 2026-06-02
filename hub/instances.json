@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "hubcampus",
+    "name": "DrawSplat Hub Campus",
+    "category": "Campus",
+    "status": "Setup",
+    "lastActivity": "Not connected yet",
+    "summary": "First school-specific DrawSplat Hub instance.",
+    "path": "hubcampus/",
+    "adminPath": "hubcampus/admin.html",
+    "whiteboardPath": "hubcampus/whiteboard.html",
+    "configPath": "hubcampus/config.json"
+  }
+]

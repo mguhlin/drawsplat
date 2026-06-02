@@ -1,20 +1,20 @@
-# DrawSplatTM Instances
+# DrawSplat Hub
 
-The `comenio/` folder holds Comenio-branded school, campus, or classroom-specific entry points that share the main DrawSplatTM codebase while routing whiteboard storage to a configured backend for that instance.
+The `hub/` folder holds school, campus, or classroom-specific DrawSplat Hub entry points that share the main DrawSplatTM codebase while routing whiteboard storage to a configured backend for that instance.
 
 ## Example
 
 The first example instance is:
 
-- `comenio/comeniocampus/`
-- public launch page: `comenio/comeniocampus/index.html`
-- instance admin: `comenio/comeniocampus/admin.html`
-- config: `comenio/comeniocampus/config.json`
+- `hub/hubcampus/`
+- public launch page: `hub/hubcampus/index.html`
+- instance admin: `hub/hubcampus/admin.html`
+- config: `hub/hubcampus/config.json`
 
-The Comenio dashboard is:
+The DrawSplat Hub dashboard is:
 
-- `comenio/index.html`
-- manifest: `comenio/instances.json`
+- `hub/index.html`
+- manifest: `hub/instances.json`
 
 ## Intended Flow
 
@@ -37,10 +37,10 @@ It verifies Google tokens using Google's `tokeninfo` endpoint, stores the Google
 
 ## Copying for Another School
 
-Copy `comenio/comeniocampus/` to a new slug, then edit:
+Copy `hub/hubcampus/` to a new slug, then edit:
 
 - `config.json`
 - page titles in `index.html` and `admin.html`
 - setup password hash/registry values in the instance backend
 
-Then add one object to `comenio/instances.json`. The dashboard sorts entries alphabetically under `Classroom`, `Campus`, or `District`.
+Then add one object to `hub/instances.json`. The dashboard sorts entries alphabetically under `Classroom`, `Campus`, or `District`.
