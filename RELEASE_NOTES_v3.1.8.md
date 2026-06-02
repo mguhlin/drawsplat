@@ -13,7 +13,7 @@ DrawSplatTM v3.1.8 refreshes the self-host bundle with the latest classroom tool
 - SplatImage Studio adds a Masks dropdown that crops selected image layers into circle, oval, ellipse, square, rectangle, diamond, pentagon, and star shapes.
 - SplatImage Studio star and pentagon masks now scale to rectangular image bounds instead of leaving wide transparent margins around the masked image.
 - SplatImage Studio adds File > New layer plus visible New layer and Duplicate layer buttons in the Layers panel, per-layer opacity from 0-100%, text alignment for text boxes, and expanded Effects: sharpen, lighten, darken, pixelate, mosaic, and Picasso cubism, with an Effect strength slider.
-- Adds the first school-specific instance scaffold at `instances/comenio/`, including a Comenio launch page, guided instance admin wizard, Google OAuth admin binding pattern, and `apps-script/InstanceRegistry.gs` starter backend for one-time setup password plus Google account binding.
+- Adds the Comenio dashboard at `comenio/index.html` plus the first school-specific instance scaffold at `comenio/comeniocampus/`, including a Comenio top banner, campus hero image, guided instance admin wizard, Google OAuth admin binding pattern, and `apps-script/InstanceRegistry.gs` starter backend for one-time setup password plus Google account binding.
 - Concept Map Studio adds Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.
 - Quiz & Flashcard Studio now ships with selectable science sample data sets for Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS.
 - Quiz & Flashcard Studio flashcards now keep the correct answer visually distinct from optional explanation text on the card back.

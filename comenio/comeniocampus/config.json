@@ -1,5 +1,5 @@
 {
-  "instanceId": "comenio",
+  "instanceId": "comeniocampus",
   "displayName": "Comenio",
   "storageProvider": "google-apps-script",
   "googleScriptUrl": "",
@@ -7,7 +7,6 @@
   "instanceRegistryUrl": "",
   "googleClientId": "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
   "allowedAdminDomains": [],
-  "defaultRoom": "comenio-classroom",
+  "defaultRoom": "comeniocampus-classroom",
   "tutorialComplete": false
 }
-

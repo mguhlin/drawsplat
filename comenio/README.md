@@ -1,15 +1,20 @@
 # DrawSplatTM Instances
 
-Instances are school, campus, or classroom-specific entry points that share the main DrawSplatTM codebase while routing whiteboard storage to a configured backend for that instance.
+The `comenio/` folder holds Comenio-branded school, campus, or classroom-specific entry points that share the main DrawSplatTM codebase while routing whiteboard storage to a configured backend for that instance.
 
 ## Example
 
 The first example instance is:
 
-- `instances/comenio/`
-- public launch page: `instances/comenio/index.html`
-- instance admin: `instances/comenio/admin.html`
-- config: `instances/comenio/config.json`
+- `comenio/comeniocampus/`
+- public launch page: `comenio/comeniocampus/index.html`
+- instance admin: `comenio/comeniocampus/admin.html`
+- config: `comenio/comeniocampus/config.json`
+
+The Comenio dashboard is:
+
+- `comenio/index.html`
+- manifest: `comenio/instances.json`
 
 ## Intended Flow
 
@@ -32,9 +37,10 @@ It verifies Google tokens using Google's `tokeninfo` endpoint, stores the Google
 
 ## Copying for Another School
 
-Copy `instances/comenio/` to a new slug, then edit:
+Copy `comenio/comeniocampus/` to a new slug, then edit:
 
 - `config.json`
 - page titles in `index.html` and `admin.html`
 - setup password hash/registry values in the instance backend
 
+Then add one object to `comenio/instances.json`. The dashboard sorts entries alphabetically under `Classroom`, `Campus`, or `District`.

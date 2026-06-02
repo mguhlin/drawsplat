@@ -37,7 +37,7 @@
     $('storageProvider').value=cfg.storageProvider||'google-apps-script';
     $('googleScriptUrl').value=cfg.googleScriptUrl||'';
     $('mysqlApiBase').value=cfg.mysqlApiBase||'';
-    $('defaultRoom').value=cfg.defaultRoom||'comenio-classroom';
+    $('defaultRoom').value=cfg.defaultRoom||((cfg.instanceId||slug||'instance')+'-classroom');
     msg('instanceStatus','Loaded '+(cfg.displayName||cfg.instanceId||slug)+' config.','ok');
     if(!registryUrl())msg('setupMsg','No instanceRegistryUrl is configured yet. The wizard can preview settings, but production login/config writes need the registry backend.','err');
     else msg('setupMsg','Registry configured. Enter the one-time setup password.');

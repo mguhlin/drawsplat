@@ -2,7 +2,7 @@
  * DrawSplat(TM) Instance Registry - Apps Script starter
  *
  * Purpose:
- * - Give each /instances/<slug>/ admin page a server-side login.
+ * - Give each /comenio/<slug>/ admin page a server-side login.
  * - Verify a one-time setup password.
  * - Bind the instance admin to a Google OAuth account.
  * - Store instance storage config separately from drawsplat.org.
@@ -10,7 +10,7 @@
  * Script Properties to set before first use:
  * - GOOGLE_CLIENT_ID: OAuth web client ID used by the instance admin page.
  * - INSTANCE_SESSION_SECRET: long random secret, or let setup() create one.
- * - INSTANCE_comenio_SETUP_PASSWORD: one-time password for the Comenio admin.
+ * - INSTANCE_comeniocampus_SETUP_PASSWORD: one-time password for the Comenio Campus admin.
  *
  * Optional:
  * - INSTANCE_ALLOWED_ORIGINS: comma-separated origins allowed by policy docs.
