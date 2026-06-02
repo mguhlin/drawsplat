@@ -27,6 +27,16 @@ The DrawSplat Hub dashboard is:
 7. The admin enters the Apps Script Web App URL or MySQL API endpoint for the instance.
 8. Teachers and students use the instance launch links so saves route to the instance backend.
 
+## Hub Levels
+
+DrawSplat Hub supports three dashboard levels:
+
+- `Classroom`: independent classroom teachers who are not connected to a campus or district Hub. These instances should be free, with optional Buy Me a Coffee support shown on the admin page.
+- `Campus`: one campus admin manages multiple teacher classroom setups under the same campus Hub.
+- `District`: one district Hub groups campuses, and each campus can list its teacher classroom setups.
+
+Use `hub/instances.json` to describe those relationships. Campus entries can include a `teachers` array. District entries can include a `campuses` array. The dashboard displays those child records under the parent card and searches across both parent and child names.
+
 ## Backend
 
 For production use, do not rely on browser-only storage to protect instance settings. Use a server-side registry. The starter Apps Script registry lives at:

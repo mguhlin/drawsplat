@@ -80,11 +80,22 @@ if [ -d "$STAGE_ROOT/hub" ]; then
     "category": "Campus",
     "status": "Demo",
     "lastActivity": "Demo only",
-    "summary": "Demo school-specific DrawSplat Hub instance for self-hosters.",
+    "licenseModel": "Campus-managed classrooms",
+    "ownerType": "Campus admin",
+    "summary": "Demo campus where a single admin manages multiple teacher classroom setups.",
     "path": "hubcampus/",
     "adminPath": "hubcampus/admin.html",
     "whiteboardPath": "hubcampus/whiteboard.html",
-    "configPath": "hubcampus/config.json"
+    "configPath": "hubcampus/config.json",
+    "teachers": [
+      {
+        "slug": "sample-teacher",
+        "name": "Sample Teacher Classroom",
+        "teacher": "Demo Teacher",
+        "status": "Demo",
+        "summary": "Example classroom setup under this campus."
+      }
+    ]
   }
 ]
 EOF
