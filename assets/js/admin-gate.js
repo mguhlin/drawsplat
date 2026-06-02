@@ -1,5 +1,7 @@
 (function(){
   const ACCESS_KEY='drawsplat.adminAccess';
+  const LOCAL_HASH_KEY='drawsplat.localAdminPasswordHash';
+  const LOCAL_CREATED_KEY='drawsplat.localAdminPasswordCreatedAt';
   // Public builds do not include a working admin password. Set this to the
   // SHA-256 hash of your deployment password, or use server-side auth/SSO.
   // Anyone with this password gets FULL read/write access.
@@ -19,6 +21,18 @@
   async function sha256(text){
     const data=new TextEncoder().encode(text);
     return toHex(await crypto.subtle.digest('SHA-256',data));
+  }
+
+  function localPasswordHash(){
+    try{return localStorage.getItem(LOCAL_HASH_KEY)||''}catch(_){return ''}
+  }
+
+  function randomPassword(){
+    const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    const bytes=new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    const raw=Array.from(bytes,b=>alphabet[b%alphabet.length]).join('');
+    return raw.match(/.{1,4}/g).join('-');
   }
 
   function applyRole(role){
@@ -43,21 +57,35 @@
   async function submitPassword(){
     const input=$('adminGatePassword');
     const password=input?.value||'';
-    if(!PASSWORD_HASH){
-      return setMessage('Admin access is not configured in this public build. Request access from the developer or configure your own deployment hash. (You can still click Preview as Viewer for a read-only tour.)','danger');
-    }
-    if(!password) return setMessage('Enter the admin password, or click Preview as Viewer for a read-only tour.','danger');
+    const localHash=localPasswordHash();
+    if(!password) return setMessage('Enter the admin password, generate a browser password, or click Preview as Viewer for a read-only tour.','danger');
     try{
       const hash=await sha256(password);
-      if(hash===PASSWORD_HASH){
+      if((PASSWORD_HASH&&hash===PASSWORD_HASH)||(localHash&&hash===localHash)){
         sessionStorage.setItem(ACCESS_KEY,'admin');
         if(input) input.value='';
         applyRole('admin');
       }else{
-        setMessage('Password not accepted. Click Preview as Viewer for a read-only tour, or request admin access if you need to make changes.','danger');
+        setMessage('Password not accepted. Use the shared admin password, or generate a browser password for this device.','danger');
       }
     }catch(err){
       setMessage('Could not verify password: '+err.message,'danger');
+    }
+  }
+
+  async function generateLocalPassword(){
+    if(!crypto?.getRandomValues){
+      return setMessage('This browser cannot generate a secure local password. Use the shared admin password instead.','danger');
+    }
+    const password=randomPassword();
+    try{
+      localStorage.setItem(LOCAL_HASH_KEY,await sha256(password));
+      localStorage.setItem(LOCAL_CREATED_KEY,new Date().toISOString());
+      const input=$('adminGatePassword');
+      if(input) input.value=password;
+      setMessage('Browser password generated and stored on this device only: '+password+' Save it now. It cannot be shown again after this message changes. Click Unlock Admin to continue.','success');
+    }catch(err){
+      setMessage('Could not store the browser password: '+err.message,'danger');
     }
   }
 
@@ -95,6 +123,7 @@
     else applyRole(null);
     $('adminGateSubmit')?.addEventListener('click',submitPassword);
     $('adminGatePassword')?.addEventListener('keydown',event=>{if(event.key==='Enter')submitPassword()});
+    $('adminGenerateLocalPasswordBtn')?.addEventListener('click',generateLocalPassword);
     $('adminViewerPreviewBtn')?.addEventListener('click',enterViewerPreview);
     $('adminSignOutBtn')?.addEventListener('click',signOut);
     document.addEventListener('click',blockMutation,true);
