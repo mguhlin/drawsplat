@@ -33,7 +33,7 @@ Other docs that pair with setup:
 
 ## Recent improvements (v3.1.8)
 
-- **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layers, opacity, and art-effect work before images move into classroom materials.
+- **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
 - **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
 - **Concept Map Studio Markdown import.** Added Markdown import support for turning heading/bullet outlines into concept-map structures.
 - **Concept Map Studio text controls.** Added text controls and moved selected-node edits into menus for a cleaner workspace.
