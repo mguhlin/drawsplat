@@ -387,6 +387,10 @@ function nowSeconds_() {
   return Math.floor(Date.now() / 1000);
 }
 
+function now_() {
+  return new Date().toISOString();
+}
+
 function constantTimeEqual_(a, b) {
   a = String(a || '');
   b = String(b || '');
