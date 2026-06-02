@@ -5,7 +5,7 @@
   // Public builds do not include a working admin password. Set this to the
   // SHA-256 hash of your deployment password, or use server-side auth/SSO.
   // Anyone with this password gets FULL read/write access.
-  const PASSWORD_HASH='042f36d69b1b5ffec86e7edbf04d8fda1ffda2a54e5a8d383f951939c34198fd';
+  const PASSWORD_HASH='fbf9c2374caa0e0c94f22526b9ca813f007999031a9f60488ac048998a8d3865';
   // Viewer mode is a zero-config "preview as viewer" — anyone clicking the
   // gate's Preview button enters a read-only UI tour. No password is needed
   // because no real backend data is loaded in viewer mode (every Load /
