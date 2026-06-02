@@ -83,9 +83,11 @@
       google.accounts.id.prompt(notification=>{
         if(!notification)return;
         if(notification.isNotDisplayed&&notification.isNotDisplayed()){
-          msg('authMsg','Google did not show the sign-in prompt. Use the Google button above, or check that the OAuth client ID and allowed origin are configured.','err');
+          const reason=notification.getNotDisplayedReason?notification.getNotDisplayedReason():'unknown_reason';
+          msg('authMsg','Google did not show the sign-in prompt ('+reason+'). Use the Google button above, or check that the OAuth client ID and allowed origin are configured.','err');
         }else if(notification.isSkippedMoment&&notification.isSkippedMoment()){
-          msg('authMsg','Google skipped the sign-in prompt. Use the Google button above, or clear the browser Google sign-in state and try again.','err');
+          const reason=notification.getSkippedReason?notification.getSkippedReason():'unknown_reason';
+          msg('authMsg','Google skipped the sign-in prompt ('+reason+'). Use the Google button above, or clear the browser Google sign-in state and try again.','err');
         }else if(notification.isDismissedMoment&&notification.isDismissedMoment()){
           msg('authMsg','Google sign-in prompt was dismissed. Try the Google button above when ready.');
         }
