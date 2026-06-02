@@ -70,6 +70,26 @@ else
   done
 fi
 
+if [ -d "$STAGE_ROOT/hub" ]; then
+  find "$STAGE_ROOT/hub" -mindepth 1 -maxdepth 1 -type d ! -name "hubcampus" -prune -exec rm -rf {} +
+  cat > "$STAGE_ROOT/hub/instances.json" <<'EOF'
+[
+  {
+    "slug": "hubcampus",
+    "name": "DrawSplat Hub Campus",
+    "category": "Campus",
+    "status": "Demo",
+    "lastActivity": "Demo only",
+    "summary": "Demo school-specific DrawSplat Hub instance for self-hosters.",
+    "path": "hubcampus/",
+    "adminPath": "hubcampus/admin.html",
+    "whiteboardPath": "hubcampus/whiteboard.html",
+    "configPath": "hubcampus/config.json"
+  }
+]
+EOF
+fi
+
 cat > "$STAGE_ROOT/SELFHOST-README.txt" <<EOF
 DrawSplatTM Self-Hosted Bundle
 ==============================
@@ -85,6 +105,8 @@ What's in this zip
 - server/mysql-backend/ — Node.js + MySQL backend with Docker compose.
 - compliance.config.json — default safety / retention / privacy configuration.
 - docs/, guides/ — operator + setup documentation.
+- hub/ — generic DrawSplat Hub dashboard plus hubcampus demo only. Real Hub
+  campus folders from drawsplat.org are intentionally excluded from this bundle.
 - COMPLIANCE-ROADMAP.md, LICENSE, README.md — project context.
 
 Deployment paths

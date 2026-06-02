@@ -29,4 +29,4 @@ Build locally with:
 ./scripts/make-selfhost-bundle.sh v3.1.8
 ```
 
-The bundle includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, and standalone classroom tools. It excludes `.git`, `node_modules`, `.env`, logs, and build artifacts.
+The bundle includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, and the generic DrawSplat Hub dashboard with the `hubcampus` demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.
