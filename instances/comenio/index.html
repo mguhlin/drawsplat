@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comenio DrawSplatTM Instance</title>
+  <style>
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111827;background:#f8fafc}
+    .top{height:10px;background:linear-gradient(90deg,#7c3aed,#a855f7,#f97316,#ef4444,#2563eb,#16a34a,#facc15)}
+    .instance-banner{display:block;width:100%;height:auto;background:#fff}
+    main{max-width:1180px;margin:0 auto;padding:26px 18px}
+    .hero{min-height:64vh;display:grid;align-items:end;border-radius:8px;overflow:hidden;background:linear-gradient(90deg,rgba(255,255,255,.95),rgba(255,255,255,.7),rgba(255,255,255,.1)),url('comenio-classroom.png') center/cover no-repeat;box-shadow:0 18px 40px rgba(15,23,42,.14)}
+    .hero-inner{display:grid;gap:14px;padding:clamp(22px,5vw,52px);max-width:680px}
+    .eyebrow{margin:0;color:#7c3aed;font-weight:900;text-transform:uppercase;font-size:.75rem;letter-spacing:.08em}
+    h1{font-size:clamp(2rem,5vw,4rem);line-height:1;margin:0;color:#111827}
+    p{color:#475569;line-height:1.55;max-width:780px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border:2px solid #7c3aed;border-radius:8px;text-decoration:none;font-weight:900;color:#7c3aed;background:#fff}
+    .button.primary{background:#7c3aed;color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px}
+    .card{border:1px solid #dbe3ef;border-radius:8px;padding:16px;background:#fff}
+    .card h2{font-size:1rem;margin:0 0 8px;color:#111827}
+    code{background:#eef2ff;border-radius:5px;padding:2px 5px}
+  </style>
+</head>
+<body>
+  <div class="top"></div>
+  <img class="instance-banner" src="../comenio_placeholder_banner.png" alt="Comenio Classroom - Learn. Grow. Inspire.">
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">DrawSplatTM Instance</p>
+        <h1>Comenio</h1>
+        <p>This is the Comenio-specific DrawSplatTM entry point. Teachers and students should use these links so whiteboard saves route to the Comenio backend instead of the main DrawSplat.org site.</p>
+        <div class="actions">
+          <a class="button primary" href="whiteboard.html">Open Comenio Whiteboard</a>
+          <a class="button" href="admin.html">Instance Admin</a>
+          <a class="button" href="../../solutions/">Tools</a>
+        </div>
+      </div>
+    </section>
+    <section class="grid">
+      <article class="card">
+        <h2>Instance Storage</h2>
+        <p>The whiteboard launcher reads <code>config.json</code> and sends users to DrawSplat with the Comenio Apps Script or MySQL endpoint.</p>
+      </article>
+      <article class="card">
+        <h2>Admin Setup</h2>
+        <p>The admin page walks a school admin through one-time setup, Google account binding, backend connection, and test-save verification.</p>
+      </article>
+      <article class="card">
+        <h2>Shared Tools</h2>
+        <p>Browser-only tools and widgets remain shared across DrawSplat. Whiteboard persistence is the part that becomes instance-specific.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

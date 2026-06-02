@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening Comenio Whiteboard</title>
+  <style>
+    body{margin:0;min-height:100vh;display:grid;grid-template-rows:auto 1fr;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#111827}
+    .instance-banner{display:block;width:100%;height:auto;background:#fff}
+    .center{display:grid;place-items:center;padding:18px}
+    .panel{width:min(560px,92vw);border:1px solid #dbe3ef;border-radius:8px;background:#fff;padding:22px;box-shadow:0 18px 40px rgba(15,23,42,.12)}
+    h1{margin:0 0 8px;color:#7c3aed}
+    p{color:#475569;line-height:1.5}
+    a{color:#7c3aed;font-weight:900}
+  </style>
+</head>
+<body>
+  <img class="instance-banner" src="../comenio_placeholder_banner.png" alt="Comenio Classroom - Learn. Grow. Inspire.">
+  <div class="center">
+    <main class="panel">
+      <h1>Opening Comenio Whiteboard</h1>
+      <p id="status">Loading instance configuration...</p>
+      <p><a href="../../app/whiteboard.html">Open the standard whiteboard</a></p>
+    </main>
+  </div>
+  <script src="../../assets/js/instances/instance-launch.js"></script>
+</body>
+</html>

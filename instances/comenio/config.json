@@ -1,0 +1,13 @@
+{
+  "instanceId": "comenio",
+  "displayName": "Comenio",
+  "storageProvider": "google-apps-script",
+  "googleScriptUrl": "",
+  "mysqlApiBase": "",
+  "instanceRegistryUrl": "",
+  "googleClientId": "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+  "allowedAdminDomains": [],
+  "defaultRoom": "comenio-classroom",
+  "tutorialComplete": false
+}
+

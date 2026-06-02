@@ -40,6 +40,7 @@ const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
 const STORAGE_MODE_KEY='drawsplat.storageMode';
+const FOLDER_ENDPOINT_KEY='drawsplat.folderEndpoint';
 const SESSION_HOURS_KEY='drawsplat.sessionHours';
 const SESSION_EXPIRES_KEY='drawsplat.sessionExpiresAt';
 const svg=document.getElementById('boardSvg'), NS='http://www.w3.org/2000/svg', XHTML='http://www.w3.org/1999/xhtml';
@@ -1060,6 +1061,15 @@ function applyLaunchParams(){
   const params=new URLSearchParams(location.search);
   roleLock=params.get('role')==='student'?'student':'';
   const scriptParam=params.get('script')||'';
+  const instanceParam=params.get('instance')||'';
+  const storageParam=params.get('storage')||'';
+  const apiParam=params.get('api')||'';
+  try{
+    if(instanceParam)localStorage.setItem('drawsplat.instanceId',instanceParam);
+    if(storageParam==='mysql')localStorage.setItem(STORAGE_MODE_KEY,'mysql');
+    else if(scriptParam)localStorage.setItem(STORAGE_MODE_KEY,'google');
+    if(apiParam)localStorage.setItem(FOLDER_ENDPOINT_KEY,apiParam);
+  }catch(_){}
   const savedScript=(()=>{try{return localStorage.getItem(SCRIPT_URL_STORAGE_KEY)||''}catch(_){return ''}})();
   if(ui.scriptUrl){
     ui.scriptUrl.value=scriptParam||savedScript||DEFAULT_GOOGLE_SCRIPT_URL||ui.scriptUrl.value||'';
