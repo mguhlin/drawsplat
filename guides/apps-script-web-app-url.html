@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplatTM Apps Script Web App URL Setup</title>
+<meta name="description" content="Teacher tutorial for copying DrawSplatTM Code.gs, creating a Google Apps Script Web App URL, and saving it in Teacher Admin." />
+<link rel="canonical" href="https://drawsplat.org/guides/apps-script-web-app-url.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="admin-page start-page support-page guide-article-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="teacher-options-quick-start.html">Teacher Options Quick Start</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+      </div>
+    </details>
+  </nav>
+  <a class="landing-signin" href="../admin/admin.html">Teacher Admin</a>
+</header>
+
+<main class="landing-shell guide-article-shell">
+  <section class="guide-hero">
+    <p class="landing-eyebrow">Google Apps Script Setup</p>
+    <h1>Create the Web App URL for DrawSplat<sup class="tm">TM</sup>.</h1>
+    <p>Use these steps to copy the DrawSplat<sup class="tm">TM</sup> backend code into Google Apps Script, deploy it as a Web App, and paste the Web App URL into Teacher Admin.</p>
+    <div class="landing-actions">
+      <a class="landing-cta primary" href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">Open Code.gs</a>
+      <a class="landing-cta" href="https://github.com/mguhlin/drawsplat/blob/main/apps-script/Code.gs" target="_blank" rel="noopener noreferrer">View Code.gs on GitHub</a>
+    </div>
+  </section>
+
+  <section class="guide-section">
+    <h2>What You Need</h2>
+    <ul>
+      <li>A Google account that can create Google Sheets and Apps Script projects.</li>
+      <li>The temporary Teacher Admin password, available by request from <a href="mailto:drawsplat@gmail.com">drawsplat@gmail.com</a>.</li>
+      <li>The DrawSplat<sup class="tm">TM</sup> backend file: <a href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">apps-script/Code.gs</a>.</li>
+    </ul>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 1: Create the Google Sheet</h2>
+    <ol>
+      <li>Go to <a href="https://sheets.new" target="_blank" rel="noopener noreferrer">sheets.new</a>.</li>
+      <li>Name the sheet <strong>DrawSplatTM Saves</strong>.</li>
+      <li>Keep the sheet open. Apps Script will use it for board metadata, rooms, templates, turn-ins, audit records, and compliance records.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 2: Open Apps Script</h2>
+    <ol>
+      <li>In the Google Sheet, click <strong>Extensions</strong>.</li>
+      <li>Choose <strong>Apps Script</strong>.</li>
+      <li>Delete any starter code in the editor.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 3: Copy Code.gs</h2>
+    <ol>
+      <li>Open <a href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">DrawSplat Code.gs</a>.</li>
+      <li>Select all of the code and copy it.</li>
+      <li>Paste it into the Apps Script editor.</li>
+      <li>Save the Apps Script project.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 4: Run setup()</h2>
+    <ol>
+      <li>In the Apps Script toolbar, choose the function named <strong>setup</strong>.</li>
+      <li>Click <strong>Run</strong>.</li>
+      <li>Approve the Google permissions when prompted.</li>
+      <li>If Google shows an unverified-app warning, continue only if you trust this DrawSplat deployment and the Google account you are using.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 5: Deploy as a Web App</h2>
+    <ol>
+      <li>Click <strong>Deploy</strong>, then <strong>New deployment</strong>.</li>
+      <li>Choose deployment type <strong>Web app</strong>.</li>
+      <li>Set <strong>Execute as</strong> to <strong>Me</strong>.</li>
+      <li>Set <strong>Who has access</strong> to the access level your school allows. Many classroom deployments use <strong>Anyone</strong> so student links can reach the backend.</li>
+      <li>Click <strong>Deploy</strong>.</li>
+      <li>Copy the Web App URL. It should look like <code>https://script.google.com/macros/s/.../exec</code>.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 6: Save the URL in Teacher Admin</h2>
+    <ol>
+      <li>Open <a href="../admin/admin.html">Teacher Admin</a>.</li>
+      <li>Unlock Teacher Admin with the temporary password.</li>
+      <li>Paste the Web App URL into <strong>Apps Script Web App URL</strong>.</li>
+      <li>Click <strong>Save URL</strong>.</li>
+      <li>Click <strong>Test Connection</strong>. A successful test means the whiteboard can use this backend from this browser.</li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Step 7: Return to the Whiteboard</h2>
+    <p>After the URL is saved, return to <a href="../app/whiteboard.html">the whiteboard</a>. Save to Google, Cloud Sync, templates, turn-ins, and classroom links will use the Apps Script URL saved in that browser.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> Apps Script Web App URL setup.</span>
+  <a href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">Code.gs</a>
+  <a href="../admin/admin.html">Teacher Admin</a>
+  <a href="../app/whiteboard.html">Open Whiteboard</a>
+</footer><script src="../assets/js/consent-banner.js" defer></script>
+</body>
+</html>
