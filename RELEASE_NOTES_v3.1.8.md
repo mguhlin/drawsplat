@@ -7,6 +7,7 @@ DrawSplatTM v3.1.8 refreshes the self-host bundle with the latest classroom tool
 - SplatImage Studio is now included in the Tools dropdown as a standalone browser-only image editor with resize and crop handles for quick classroom image cleanup.
 - Concept Map Studio adds Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.
 - Quiz & Flashcard Studio now ships with selectable science sample data sets for Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS.
+- Quiz & Flashcard Studio flashcards now keep the correct answer visually distinct from optional explanation text on the card back.
 - Blog RSS content is refreshed so the self-hosted site carries the latest bundled blog snapshot.
 
 ## Self-Host Bundle
