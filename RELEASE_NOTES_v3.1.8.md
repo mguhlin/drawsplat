@@ -8,6 +8,7 @@ DrawSplatTM v3.1.8 refreshes the self-host bundle with the latest classroom tool
 - SplatImage Studio arrowheads now scale with thicker annotation lines so large arrows keep a clear, proportional head.
 - SplatImage Studio image cropping now supports double-click-to-crop on an image, crop handles around that image, and Crop now lives in the Edit menu.
 - SplatImage Studio image-crop handles now stay active even when clicked on the part of the handle just outside the image edge.
+- SplatImage Studio paste/import now displays images immediately from a temporary object URL, then backfills the data URL in the background for smoother large screenshot pastes.
 - SplatImage Studio adds File > New layer plus a visible New layer button in the Layers panel, per-layer opacity from 0-100%, and expanded Effects: sharpen, lighten, darken, pixelate, mosaic, and Picasso cubism, with an Effect strength slider.
 - Concept Map Studio adds Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.
 - Quiz & Flashcard Studio now ships with selectable science sample data sets for Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS.
