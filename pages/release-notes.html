@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<title>DrawSplatTM v3.1.8 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.8 release notes with SplatImage Studio, DrawSplat Hub, Concept Map Studio, Quiz and Flashcard Studio, and self-host bundle updates." />
+<link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .release-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+  .release-pill{display:inline-flex;align-items:center;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:6px 10px;font-size:.86rem;font-weight:800}
+  .release-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .release-card{border:2px solid #e2e6f0;border-radius:12px;background:#fff;padding:18px;box-shadow:0 8px 22px rgba(64,64,65,.06)}
+  .release-card h2{margin:0 0 8px;color:var(--navy,#7c3aed);font-size:1.15rem}
+  .release-card p{margin:0;color:#374151;line-height:1.55}
+  .release-list{display:grid;gap:10px;max-width:900px;margin:0 auto;padding-left:1.2rem}
+  .release-list li{color:#374151;line-height:1.5}
+  .release-note{max-width:900px;margin:18px auto 0;padding:16px 18px;border-left:6px solid #7c3aed;border-radius:10px;background:#fbfaff;color:#4c1d95;line-height:1.5}
+</style>
+</head>
+<body class="admin-page start-page support-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Technical</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/pricing.html">Pricing</a>
+        <a href="../pages/download.html">Download for Self-Hosting</a>
+        <a href="../pages/release-notes.html">Release Notes</a>
+        <a href="../legal/combined-policy.html">Get all documents below</a>
+        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/accessibility.html">Accessibility Statement</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown" open>
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../blog/">Blogs About DrawSplat</a>
+        <a href="../community/index.html">Community Board</a>
+        <a href="../pages/release-notes.html">Release Notes</a>
+        <hr class="landing-nav-divider">
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+      </div>
+    </details>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell support-shell">
+  <section class="support-hero">
+    <p class="landing-eyebrow">Release Notes</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.8</h1>
+    <div class="release-meta">
+      <span class="release-pill">Latest stable</span>
+      <span class="release-pill">Self-host bundle refreshed</span>
+      <span class="release-pill">Classroom tools update</span>
+    </div>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.8 refreshes the self-host bundle with the latest classroom tools, Concept Map Studio upgrades, Quiz &amp; Flashcard Studio science sample sets, and the DrawSplat Hub demo scaffold.</p>
+    <div class="landing-actions">
+      <a class="landing-cta primary" href="download.html">Download Self-Host Zip</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.8.md">View Markdown Source</a>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Highlights</p>
+      <h2>What changed</h2>
+    </div>
+    <div class="release-grid">
+      <article class="release-card">
+        <h2>SplatImage Studio</h2>
+        <p>New browser-only image editor with resize, crop, masks, layer duplication, opacity, text alignment, proportional arrowheads, faster paste/import, and expanded visual effects.</p>
+      </article>
+      <article class="release-card">
+        <h2>DrawSplat Hub</h2>
+        <p>New Hub dashboard scaffold with classroom-teacher, campus, and district grouping support plus a demo campus instance for self-hosters.</p>
+      </article>
+      <article class="release-card">
+        <h2>Concept Map Studio</h2>
+        <p>Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.</p>
+      </article>
+      <article class="release-card">
+        <h2>Quiz &amp; Flashcard Studio</h2>
+        <p>Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets, plus clearer flashcard answer formatting.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Details</p>
+      <h2>Included updates</h2>
+    </div>
+    <ul class="release-list">
+      <li>SplatImage Studio now appears in the Tools dropdown as a standalone classroom image editor.</li>
+      <li>Crop handles, mask shapes, layer controls, and art effects were added or polished.</li>
+      <li>Large pasted screenshots show more quickly and oversized transparent or near-white margins are trimmed.</li>
+      <li>DrawSplat Hub includes the dashboard, the `hubcampus` demo instance, guided admin setup, optional Buy Me a Coffee support, and the Apps Script registry starter pattern.</li>
+      <li>Concept Map Studio adds Markdown import, improved controls, and cleaner generated/imported map placement.</li>
+      <li>Quiz &amp; Flashcard Studio includes science sample sets and improved back-of-card answer clarity.</li>
+      <li>The bundled blog RSS snapshot was refreshed for self-hosted copies.</li>
+    </ul>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Self-Host Bundle</p>
+      <h2>What the ZIP contains</h2>
+    </div>
+    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.8.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="download.html">Download</a>
+  <a href="../blog/">Blog</a>
+  <a href="../community/index.html">Community</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script>
+</body>
+</html>

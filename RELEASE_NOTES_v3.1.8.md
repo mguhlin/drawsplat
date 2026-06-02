@@ -17,6 +17,7 @@ DrawSplatTM v3.1.8 refreshes the self-host bundle with the latest classroom tool
 - Concept Map Studio adds Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.
 - Quiz & Flashcard Studio now ships with selectable science sample data sets for Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS.
 - Quiz & Flashcard Studio flashcards now keep the correct answer visually distinct from optional explanation text on the card back.
+- Release notes now have a styled HTML page at `pages/release-notes.html` so site visitors do not land on raw Markdown.
 - Blog RSS content is refreshed so the self-hosted site carries the latest bundled blog snapshot.
 
 ## Self-Host Bundle
