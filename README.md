@@ -35,7 +35,7 @@ Other docs that pair with setup:
 
 - **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
 - **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
-- **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub dashboard at `hub/index.html` plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, the new Hub banner, guided admin setup, Google OAuth admin binding pattern, and an Apps Script instance registry starter.
+- **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, Google OAuth admin access for approved accounts, the new Hub banner, guided admin setup, teacher folder/config creation in Drive, and an Apps Script instance registry starter.
 - **HTML release notes.** Added `pages/release-notes.html` so public release notes render as a styled site page instead of raw Markdown.
 - **Concept Map Studio Markdown import.** Added Markdown import support for turning heading/bullet outlines into concept-map structures.
 - **Concept Map Studio text controls.** Added text controls and moved selected-node edits into menus for a cleaner workspace.
@@ -1061,7 +1061,7 @@ Mobile & responsive fixes
 - The `[hidden]` HTML attribute now wins over `display: inline-flex` from the icon-button class so genuinely-hidden buttons stay hidden.
 
 Attribution
-- About dialog credit changed from "Created by" to **"Vibe-coded by Miguel Guhlin"**.
+- About dialog credit changed from "Created by" to **"Vibe-coded by DrawSplat Administrator (drawsplat@gmail.com)"**.
 - New **License** paragraph in the About dialog.
 
 Migration notes

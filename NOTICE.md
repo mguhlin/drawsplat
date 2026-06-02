@@ -1,6 +1,6 @@
 # DrawSplatTM Notice
 
-DrawSplatTM is created by Miguel Guhlin.
+DrawSplatTM is created by DrawSplat Administrator (drawsplat@gmail.com).
 
 Official website: https://drawsplat.org
 
@@ -13,7 +13,7 @@ DrawSplatTM is available in two ways:
 
 ## Brand
 
-The DrawSplatTM name, logo, splash artwork, and visual identity are associated with Miguel Guhlin and the DrawSplatTM project. Do not use them in a way that implies endorsement, sponsorship, or official status without written permission.
+The DrawSplatTM name, logo, splash artwork, and visual identity are associated with DrawSplat Administrator (drawsplat@gmail.com) and the DrawSplatTM project. Do not use them in a way that implies endorsement, sponsorship, or official status without written permission.
 
 ## User Content
 

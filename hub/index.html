@@ -3,28 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DrawSplat Hub Dashboard</title>
+  <title>DrawSplat Hub</title>
   <style>
     :root{--navy:#0f1d56;--teal:#2f6f73;--gold:#e6a823;--ink:#111827;--muted:#64748b;--line:#dbe3ef;--soft:#f8fafc}
-    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:var(--ink)}button,input,select{font:inherit}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:var(--ink)}
     .top{height:10px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--navy))}
     .banner{display:block;width:100%;height:auto;background:#fff}
-    main{max-width:1180px;margin:0 auto;padding:24px 18px 42px}
-    .head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:18px 0 20px}
+    main{max-width:1180px;margin:0 auto;padding:24px 18px 48px}
+    .head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;margin:18px 0 24px}
     .eyebrow{margin:0 0 6px;color:var(--teal);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:900}
     h1{font-size:clamp(2rem,5vw,4rem);line-height:1;margin:0;color:var(--navy)}
-    p{color:var(--muted);line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}
+    p{color:var(--muted);line-height:1.55}.actions{display:flex;gap:8px;flex-wrap:wrap}
     .button{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:2px solid var(--navy);border-radius:8px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none}
     .button.primary{background:var(--navy);color:#fff}
-    .toolbar{display:grid;grid-template-columns:minmax(180px,1fr) 180px;gap:10px;margin:18px 0}
-    input,select{width:100%;min-height:40px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
-    .sections{display:grid;gap:18px}.section{border-top:3px solid var(--gold);background:#fff;border-radius:8px;padding:14px;box-shadow:0 12px 28px rgba(15,23,42,.08)}
-    .section h2{margin:0 0 10px;color:var(--navy);font-size:1.1rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
-    .card{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fff;display:grid;gap:10px}
-    .card h3{margin:0;color:var(--ink)}.activity{margin:0;color:var(--teal);font-size:.86rem;font-weight:900}.meta{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border-radius:999px;background:#eef2ff;color:var(--navy);padding:5px 8px;font-size:.76rem;font-weight:900}
-    .pill.status{background:#ecfdf5;color:#166534}.empty{border:1px dashed var(--line);border-radius:8px;padding:14px;color:var(--muted);background:#fff}
-    .children{display:grid;gap:8px;margin:0;padding:0;list-style:none}.child{border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--soft);display:grid;gap:4px}.child strong{color:var(--ink)}.child span{color:var(--muted);font-size:.84rem}
-    @media(max-width:760px){.head{display:block}.toolbar{grid-template-columns:1fr}}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+    .card{border:1px solid var(--line);border-radius:8px;background:#fff;padding:16px;box-shadow:0 12px 28px rgba(15,23,42,.08)}
+    .card h2{font-size:1.05rem;margin:0 0 8px;color:var(--navy)}
+    .note{margin-top:18px;border-left:6px solid var(--gold);background:#fff;border-radius:8px;padding:14px;color:var(--muted)}
+    @media(max-width:760px){.head{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -33,62 +29,31 @@
   <main>
     <section class="head">
       <div>
-        <p class="eyebrow">DrawSplat Hub Dashboard</p>
-        <h1>Instances</h1>
-        <p>Monitor independent classroom teachers, campus-managed classrooms, and district-managed campuses from one DrawSplat Hub dashboard.</p>
+        <p class="eyebrow">DrawSplat Hub</p>
+        <h1>Classroom, campus, and district DrawSplat instances.</h1>
+        <p>DrawSplat Hub keeps the public overview visible while the live instance dashboard stays behind Google-admin access.</p>
       </div>
       <div class="actions">
-        <a class="button primary" href="hubcampus/">Open First Instance</a>
+        <a class="button primary" href="hubcampus/">Open Demo Instance</a>
         <a class="button" href="../index.html">DrawSplat Home</a>
+        <a class="button" href="admin.html">Instances Admin</a>
       </div>
     </section>
-    <section class="toolbar" aria-label="Dashboard filters">
-      <input id="searchInput" type="search" placeholder="Search instances">
-      <select id="categoryFilter">
-        <option value="">All categories</option>
-        <option value="Classroom">Classroom Teachers</option>
-        <option value="Campus">Campus</option>
-        <option value="District">District</option>
-      </select>
+    <section class="grid" aria-label="DrawSplat Hub levels">
+      <article class="card">
+        <h2>Classroom Teachers</h2>
+        <p>Independent teachers can run a free classroom instance without being connected to a campus or district Hub.</p>
+      </article>
+      <article class="card">
+        <h2>Campuses</h2>
+        <p>A campus admin can manage multiple teacher classroom setups under one campus Hub.</p>
+      </article>
+      <article class="card">
+        <h2>Districts</h2>
+        <p>A district Hub can group campuses, and each campus can list its teacher classroom setups.</p>
+      </article>
     </section>
-    <section class="sections" id="sections" aria-live="polite"></section>
+    <p class="note">Instances Admin is reserved for approved DrawSplat Hub administrators. Approved accounts: drawsplat@gmail.com and jeguhlin@gmail.com.</p>
   </main>
-  <script>
-    const categories=[
-      {key:'Classroom',title:'Classroom Teachers',empty:'No independent classroom teachers yet.'},
-      {key:'Campus',title:'Campuses',empty:'No campus-managed classroom groups yet.'},
-      {key:'District',title:'Districts',empty:'No district-managed campus groups yet.'}
-    ];
-    const sections=document.getElementById('sections');
-    const searchInput=document.getElementById('searchInput');
-    const categoryFilter=document.getElementById('categoryFilter');
-    let instances=[];
-    const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-    function childList(item){
-      const children=item.category==='District'?(item.campuses||[]):(item.teachers||item.classrooms||[]);
-      if(!children.length)return '';
-      const label=item.category==='District'?'Campuses':'Classrooms';
-      return `<div><p class="activity">${label}</p><ul class="children">${children.map(child=>`<li class="child"><strong>${esc(child.name||child.slug||'Untitled')}</strong><span>${esc(child.summary||child.teacher||child.status||'Configured classroom')}</span></li>`).join('')}</ul></div>`;
-    }
-    function card(item){
-      const model=item.licenseModel||item.ownerType||item.category||'Campus';
-      return `<article class="card"><div><h3>${esc(item.name||item.slug)}</h3><p>${esc(item.summary||'DrawSplat instance')}</p><p class="activity">Activity: ${esc(item.lastActivity||'No activity reported')}</p></div><div class="meta"><span class="pill">${esc(model)}</span><span class="pill status">${esc(item.status||'Setup')}</span></div>${childList(item)}<div class="actions"><a class="button primary" href="${esc(item.path||'#')}">Open</a><a class="button" href="${esc(item.adminPath||'#')}">Admin</a><a class="button" href="${esc(item.whiteboardPath||'#')}">Board</a></div></article>`;
-    }
-    function haystack(item){
-      const childText=[...(item.teachers||[]),...(item.classrooms||[]),...(item.campuses||[])].map(x=>[x.name,x.slug,x.teacher,x.summary,x.status].join(' ')).join(' ');
-      return [item.name,item.slug,item.status,item.category,item.summary,item.licenseModel,item.ownerType,childText].join(' ').toLowerCase();
-    }
-    function render(){
-      const q=searchInput.value.trim().toLowerCase(), only=categoryFilter.value;
-      const filtered=instances.filter(x=>(!only||x.category===only)&&(!q||haystack(x).includes(q)));
-      sections.innerHTML=categories.map(cat=>{
-        const items=filtered.filter(x=>(x.category||'Campus')===cat.key).sort((a,b)=>String(a.name||a.slug).localeCompare(String(b.name||b.slug)));
-        return `<section class="section"><h2>${cat.title}</h2>${items.length?`<div class="grid">${items.map(card).join('')}</div>`:`<div class="empty">${cat.empty}</div>`}</section>`;
-      }).join('');
-    }
-    fetch('instances.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).then(data=>{instances=Array.isArray(data)?data:[];render()}).catch(()=>{sections.innerHTML='<div class="empty">Could not load instances.json.</div>'});
-    searchInput.addEventListener('input',render);
-    categoryFilter.addEventListener('change',render);
-  </script>
 </body>
 </html>

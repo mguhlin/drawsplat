@@ -1,0 +1,9 @@
+{
+  "instanceRegistryUrl": "",
+  "googleClientId": "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+  "allowedAdminEmails": [
+    "drawsplat@gmail.com",
+    "jeguhlin@gmail.com"
+  ],
+  "supportEmail": "drawsplat@gmail.com"
+}

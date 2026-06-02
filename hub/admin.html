@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://oauth2.googleapis.com; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <title>DrawSplat Hub Instances Admin</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root{--navy:#0f1d56;--teal:#2f6f73;--gold:#e6a823;--ink:#111827;--muted:#64748b;--line:#dbe3ef;--soft:#f8fafc;--ok:#166534;--bad:#b91c1c}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:var(--ink)}button,input,select{font:inherit}
+    .top{height:10px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--navy))}
+    .banner{display:block;width:100%;height:auto;background:#fff}
+    main{max-width:1180px;margin:0 auto;padding:24px 18px 42px}
+    .head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:18px 0 20px}
+    .eyebrow{margin:0 0 6px;color:var(--teal);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:900}
+    h1{font-size:clamp(2rem,5vw,4rem);line-height:1;margin:0;color:var(--navy)}
+    p{color:var(--muted);line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}
+    .button,button{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:2px solid var(--navy);border-radius:8px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none;cursor:pointer}
+    .button.primary,button.primary{background:var(--navy);color:#fff}.danger{border-color:var(--bad);color:var(--bad)}
+    .toolbar{display:grid;grid-template-columns:minmax(180px,1fr) 180px;gap:10px;margin:18px 0}
+    input,select{width:100%;min-height:40px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
+    .sections{display:grid;gap:18px}.section,.panel{border-top:3px solid var(--gold);background:#fff;border-radius:8px;padding:14px;box-shadow:0 12px 28px rgba(15,23,42,.08);margin-bottom:18px}
+    .section h2,.panel h2{margin:0 0 10px;color:var(--navy);font-size:1.1rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+    .card{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fff;display:grid;gap:10px}
+    .card h3{margin:0;color:var(--ink)}.activity{margin:0;color:var(--teal);font-size:.86rem;font-weight:900}.meta{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border-radius:999px;background:#eef2ff;color:var(--navy);padding:5px 8px;font-size:.76rem;font-weight:900}
+    .pill.status{background:#ecfdf5;color:var(--ok)}.empty{border:1px dashed var(--line);border-radius:8px;padding:14px;color:var(--muted);background:#fff}
+    .children{display:grid;gap:8px;margin:0;padding:0;list-style:none}.child{border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--soft);display:grid;gap:4px}.child strong{color:var(--ink)}.child span{color:var(--muted);font-size:.84rem}
+    .row{display:grid;gap:6px;margin:10px 0}label{font-size:.82rem;font-weight:900}.msg{border-radius:8px;padding:10px;margin-top:10px;background:#f1f5f9;color:var(--muted);font-weight:700}.msg.ok{background:#dcfce7;color:var(--ok)}.msg.err{background:#fee2e2;color:var(--bad)}
+    .hidden{display:none!important}.google-host{min-height:42px;display:flex;align-items:center}
+    @media(max-width:760px){.head{display:block}.toolbar{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="top"></div>
+  <img class="banner" src="drawsplat_hub_banner.png" alt="DrawSplat Hub">
+  <main>
+    <section class="head">
+      <div>
+        <p class="eyebrow">DrawSplat Hub Instances Admin</p>
+        <h1>Instances</h1>
+        <p>Monitor independent classroom teachers, campus-managed classrooms, and district-managed campuses from one protected dashboard.</p>
+      </div>
+      <div class="actions">
+        <a class="button" href="index.html">Hub Splash</a>
+        <a class="button" href="../index.html">DrawSplat Home</a>
+      </div>
+    </section>
+
+    <section class="panel" id="authPanel">
+      <h2>Admin Access</h2>
+      <p>Sign in with an approved Google account. Approved admins are <code>drawsplat@gmail.com</code> and <code>jeguhlin@gmail.com</code>.</p>
+      <div class="google-host" id="googleHost"></div>
+      <div class="actions">
+        <button id="googlePromptBtn" type="button">Use Google sign-in prompt</button>
+        <button id="clearSessionBtn" type="button">Clear session</button>
+      </div>
+      <p class="msg" id="authMsg">Loading Hub admin configuration...</p>
+    </section>
+
+    <section id="adminSurface" class="hidden">
+      <article class="panel">
+        <h2>Add Classroom Teacher</h2>
+        <p>Create an independent classroom teacher entry or add a teacher under a campus. With the registry configured, this creates a teacher folder/config in Google Drive and shares it with the teacher as editor.</p>
+        <div class="row">
+          <label for="teacherName">Teacher name</label>
+          <input id="teacherName" type="text" placeholder="Jane Teacher">
+        </div>
+        <div class="row">
+          <label for="teacherEmail">Teacher email</label>
+          <input id="teacherEmail" type="email" placeholder="teacher@example.org">
+        </div>
+        <div class="row">
+          <label for="teacherScope">Placement</label>
+          <select id="teacherScope">
+            <option value="Classroom">Independent classroom teacher</option>
+            <option value="Campus">Add under DrawSplat Hub Campus</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="teacherSlug">Folder / instance slug</label>
+          <input id="teacherSlug" type="text" placeholder="jane-teacher">
+        </div>
+        <div class="actions">
+          <button class="primary" id="addTeacherBtn" type="button">Add teacher</button>
+        </div>
+        <p class="msg" id="teacherMsg">Waiting for teacher details.</p>
+      </article>
+
+      <section class="toolbar" aria-label="Dashboard filters">
+        <input id="searchInput" type="search" placeholder="Search instances">
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+          <option value="Classroom">Classroom Teachers</option>
+          <option value="Campus">Campus</option>
+          <option value="District">District</option>
+        </select>
+      </section>
+      <section class="sections" id="sections" aria-live="polite"></section>
+    </section>
+  </main>
+  <script src="../assets/js/hub/hub-admin.js"></script>
+</body>
+</html>

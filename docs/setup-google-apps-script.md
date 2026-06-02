@@ -52,7 +52,8 @@ In Apps Script: **Project Settings → Script Properties → Add script property
 | Property | Required? | Purpose |
 |---|---|---|
 | `ADMIN_PASSCODE` | **Yes** for compliance features | Gates every admin endpoint (Activity Records viewer, Privacy Packet, age band, parent requests). Use 16+ random characters. |
-| `COMPLIANCE_ADMIN_EMAIL` | Recommended | Email address that gets notified when a new parent request arrives. |
+| `COMPLIANCE_ADMIN_EMAIL` | Recommended | Email address that gets notified when a new parent/contact request arrives. Use `drawsplat@gmail.com` for DrawSplat project-level communications. |
+| `HUB_ADMIN_EMAILS` | Recommended for DrawSplat Hub | Comma-separated Google accounts allowed into `hub/admin.html`; project default is `drawsplat@gmail.com,jeguhlin@gmail.com`. |
 | `COMPLIANCE_CONFIG` | Auto-generated | Holds the merged safety / retention / time-limit / privacy config blob. Created when you save settings from the Compliance Console. |
 | `PASSWORD_SALT` | Auto-generated | Used to hash parent verification codes. Don't change it unless you want to invalidate every outstanding code. |
 
