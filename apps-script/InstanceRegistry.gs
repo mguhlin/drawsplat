@@ -52,6 +52,7 @@ function doPost(e) {
     if (action === 'hubAdminGoogleAuth') return json_(hubAdminGoogleAuth_(payload));
     if (action === 'hubInstancesGet') return json_(hubInstancesGet_(payload));
     if (action === 'hubTeacherAdd') return json_(hubTeacherAdd_(payload));
+    if (action === 'hubTeacherRemove') return json_(hubTeacherRemove_(payload));
     return json_({ ok: false, error: 'Unknown action.' });
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message || err) });
@@ -85,7 +86,7 @@ function hubTeacherAdd_(payload) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Valid teacher email is required.');
   if (!slug) throw new Error('Teacher slug is required.');
 
-  const drive = createTeacherDriveConfig_(slug, name, email, session.email);
+  const drive = createTeacherDriveConfig_(slug, name, email, session.email, category);
   const child = {
     slug: slug,
     name: name + ' Classroom',
@@ -94,7 +95,10 @@ function hubTeacherAdd_(payload) {
     status: 'Invited',
     summary: 'Teacher classroom setup shared with ' + email + '.',
     folderUrl: drive.folderUrl,
-    configFileUrl: drive.configFileUrl
+    configFileUrl: drive.configFileUrl,
+    setupDocUrl: drive.setupDocUrl,
+    adminPath: drive.teacherAdminUrl,
+    whiteboardPath: drive.teacherBoardUrl
   };
   const instances = hubInstances_();
   if (category === 'Campus') {
@@ -138,7 +142,10 @@ function hubTeacherAdd_(payload) {
       configPath: '',
       teacherEmail: email,
       folderUrl: drive.folderUrl,
-      configFileUrl: drive.configFileUrl
+      configFileUrl: drive.configFileUrl,
+      setupDocUrl: drive.setupDocUrl,
+      adminPath: drive.teacherAdminUrl,
+      whiteboardPath: drive.teacherBoardUrl
     };
     const others = instances.filter(function(item) { return (item.category || 'Campus') !== 'Classroom'; });
     const classrooms = instances.filter(function(item) { return (item.category || 'Campus') === 'Classroom'; });
@@ -147,7 +154,49 @@ function hubTeacherAdd_(payload) {
     Array.prototype.push.apply(instances, others.concat(updatedClassrooms));
   }
   saveHubInstances_(instances);
-  return { ok: true, instances: instances, folderUrl: drive.folderUrl, configFileUrl: drive.configFileUrl };
+  return { ok: true, instances: instances, folderUrl: drive.folderUrl, configFileUrl: drive.configFileUrl, setupDocUrl: drive.setupDocUrl, teacherAdminUrl: drive.teacherAdminUrl };
+}
+
+function hubTeacherRemove_(payload) {
+  requireHubAdminSession_(payload);
+  const slug = clean_(payload.slug).toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  const parentSlug = clean_(payload.parentSlug || 'hubcampus').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  if (!slug) throw new Error('Teacher slug is required.');
+  const instances = hubInstances_();
+  let removed = null;
+  for (let i = instances.length - 1; i >= 0; i--) {
+    const item = instances[i];
+    if ((item.category || 'Campus') === 'Classroom' && item.slug === slug) {
+      removed = item;
+      instances.splice(i, 1);
+      continue;
+    }
+    const teachers = item.teachers || item.classrooms || [];
+    const keep = [];
+    let changed = false;
+    for (let j = 0; j < teachers.length; j++) {
+      if (teachers[j].slug === slug && (!parentSlug || item.slug === parentSlug)) {
+        removed = teachers[j];
+        changed = true;
+      } else {
+        keep.push(teachers[j]);
+      }
+    }
+    if (changed) {
+      item.teachers = keep;
+      item.lastActivity = now_();
+    }
+  }
+  if (!removed) throw new Error('Teacher record was not found.');
+  const access = revokeTeacherDriveAccess_(removed);
+  const props = PropertiesService.getScriptProperties();
+  props.deleteProperty(prop_(slug, 'SETUP_PASSWORD'));
+  props.deleteProperty(prop_(slug, 'ADMIN_GOOGLE_SUB'));
+  props.deleteProperty(prop_(slug, 'ADMIN_EMAIL'));
+  props.deleteProperty(prop_(slug, 'ADMIN_NAME'));
+  props.deleteProperty(prop_(slug, 'CONFIG'));
+  saveHubInstances_(instances);
+  return { ok: true, instances: instances, revoked: access };
 }
 
 function instanceBootstrap_(payload) {
@@ -277,18 +326,32 @@ function replaceBySlug_(items, item) {
   return out;
 }
 
-function createTeacherDriveConfig_(slug, name, email, addedBy) {
+function createTeacherDriveConfig_(slug, name, email, addedBy, category) {
   const rootName = 'DrawSplat Hub Teachers';
   const root = getOrCreateFolder_(DriveApp, rootName);
   const folder = getOrCreateFolder_(root, slug + ' - ' + name);
   folder.addEditor(email);
+  const setupPassword = Utilities.getUuid().replace(/-/g, '').slice(0, 16);
+  const room = slug + '-classroom';
+  const teacherAdminUrl = hubUrl_('hub/teacher-admin.html?instance=' + encodeURIComponent(slug));
+  const teacherBoardUrl = hubUrl_('app/whiteboard.html?instance=' + encodeURIComponent(slug) + '&room=' + encodeURIComponent(room));
+  const studentStarterUrl = hubUrl_('app/whiteboard.html?instance=' + encodeURIComponent(slug) + '&role=student&room=' + encodeURIComponent(room));
   const cfg = {
     slug: slug,
+    instanceId: slug,
+    displayName: name + ' Classroom',
     teacherName: name,
     teacherEmail: email,
+    category: category || 'Classroom',
     addedBy: addedBy || '',
     addedAt: now_(),
     status: 'invited',
+    defaultRoom: room,
+    teacherAdminUrl: teacherAdminUrl,
+    teacherBoardUrl: teacherBoardUrl,
+    studentStarterUrl: studentStarterUrl,
+    setupPassword: setupPassword,
+    nextStep: 'Open the setup document in this folder, then use the teacher admin link to connect storage and copy student links.',
     note: 'DrawSplat Hub teacher classroom setup. This file is shared so the teacher can edit or copy it into their own Drive.'
   };
   const filename = 'drawsplat-hub-' + slug + '.json';
@@ -298,7 +361,82 @@ function createTeacherDriveConfig_(slug, name, email, addedBy) {
   if (file) file.setContent(JSON.stringify(cfg, null, 2));
   else file = folder.createFile(filename, JSON.stringify(cfg, null, 2), MimeType.PLAIN_TEXT);
   file.addEditor(email);
-  return { folderUrl: folder.getUrl(), configFileUrl: file.getUrl() };
+  const setupDoc = createOrUpdateTeacherSetupDoc_(folder, cfg);
+  PropertiesService.getScriptProperties().setProperty(prop_(slug, 'SETUP_PASSWORD'), setupPassword);
+  return {
+    folderUrl: folder.getUrl(),
+    configFileUrl: file.getUrl(),
+    setupDocUrl: setupDoc.getUrl(),
+    teacherAdminUrl: teacherAdminUrl,
+    teacherBoardUrl: teacherBoardUrl,
+    studentStarterUrl: studentStarterUrl,
+    setupPassword: setupPassword
+  };
+}
+
+function createOrUpdateTeacherSetupDoc_(folder, cfg) {
+  const title = 'DrawSplat Teacher Setup - ' + cfg.teacherName;
+  const existing = folder.getFilesByName(title);
+  let doc = null;
+  if (existing.hasNext()) {
+    doc = DocumentApp.openById(existing.next().getId());
+    doc.getBody().clear();
+  } else {
+    doc = DocumentApp.create(title);
+    DriveApp.getFileById(doc.getId()).moveTo(folder);
+  }
+  const body = doc.getBody();
+  body.appendParagraph('DrawSplat Teacher Setup').setHeading(DocumentApp.ParagraphHeading.HEADING1);
+  body.appendParagraph('Teacher: ' + cfg.teacherName + ' <' + cfg.teacherEmail + '>');
+  body.appendParagraph('Instance slug: ' + cfg.slug);
+  body.appendParagraph('One-time setup password: ' + cfg.setupPassword);
+  body.appendParagraph('Teacher admin link').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body.appendParagraph(cfg.teacherAdminUrl);
+  body.appendParagraph('Use this first. Verify the one-time setup password, sign in with Google, paste your DrawSplat Apps Script Web App URL, test it, and save the instance config.');
+  body.appendParagraph('Teacher board link').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body.appendParagraph(cfg.teacherBoardUrl);
+  body.appendParagraph('Use this after storage is configured. The teacher admin page can copy a teacher link and a student link that include the saved room and backend settings.');
+  body.appendParagraph('Student starter link').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body.appendParagraph(cfg.studentStarterUrl);
+  body.appendParagraph('Use this only after the backend URL has been configured. For regular classroom use, copy the student link from the teacher admin page so it includes the current room and backend.');
+  body.appendParagraph('What is in this folder').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body.appendParagraph('This setup document gives the teacher the steps and links. The JSON file is the machine-readable setup record for support and audit purposes.');
+  doc.saveAndClose();
+  const file = DriveApp.getFileById(doc.getId());
+  file.addEditor(cfg.teacherEmail);
+  return file;
+}
+
+function hubUrl_(path) {
+  const base = clean_(PropertiesService.getScriptProperties().getProperty('HUB_SITE_BASE_URL')) || 'https://drawsplat.org';
+  return base.replace(/\/+$/, '') + '/' + String(path || '').replace(/^\/+/, '');
+}
+
+function revokeTeacherDriveAccess_(teacher) {
+  const email = clean_(teacher.teacherEmail || teacher.email).toLowerCase();
+  const result = { email: email, folder: false, files: 0, warnings: [] };
+  if (!email) return result;
+  try {
+    const folderId = driveIdFromUrl_(teacher.folderUrl);
+    if (folderId) {
+      const folder = DriveApp.getFolderById(folderId);
+      try { folder.removeEditor(email); result.folder = true; } catch (err) { result.warnings.push('Folder access: ' + String(err && err.message || err)); }
+      const files = folder.getFiles();
+      while (files.hasNext()) {
+        const file = files.next();
+        try { file.removeEditor(email); result.files++; } catch (err) { result.warnings.push(file.getName() + ': ' + String(err && err.message || err)); }
+      }
+    }
+  } catch (err) {
+    result.warnings.push(String(err && err.message || err));
+  }
+  return result;
+}
+
+function driveIdFromUrl_(url) {
+  const text = clean_(url);
+  const match = text.match(/\/(?:folders|d)\/([A-Za-z0-9_-]+)/) || text.match(/[?&]id=([A-Za-z0-9_-]+)/);
+  return match ? match[1] : '';
 }
 
 function getOrCreateFolder_(parent, name) {

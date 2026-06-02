@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://oauth2.googleapis.com; script-src 'self' https://accounts.google.com; frame-src https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <title>DrawSplat Teacher Admin</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root{--navy:#7c3aed;--ink:#111827;--muted:#64748b;--line:#dbe3ef;--soft:#eef2ff;--ok:#15803d;--bad:#b91c1c}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:var(--ink)}button,input,select{font:inherit}
+    .top{height:10px;background:linear-gradient(90deg,var(--navy),#a855f7,#f97316,#ef4444,#2563eb,#16a34a,#facc15)}
+    .instance-banner{display:block;width:100%;height:auto;background:#fff}
+    header,main{max-width:1180px;margin:0 auto;padding:18px}
+    header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    h1{font-size:clamp(1.8rem,4vw,3.2rem);line-height:1;margin:0;color:var(--navy)}p{color:var(--muted);line-height:1.5}.badge{display:inline-flex;border:1px solid #c4b5fd;background:var(--soft);border-radius:999px;padding:6px 10px;font-weight:900;color:var(--navy)}
+    .layout{display:grid;grid-template-columns:300px 1fr;gap:16px}.steps,.panel{border:1px solid var(--line);background:#fff;border-radius:8px;padding:14px}.steps{position:sticky;top:14px;align-self:start}
+    .step-list{display:grid;gap:8px}.step-pill{border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;color:var(--muted);font-weight:800}.step-pill.active{border-color:var(--navy);background:var(--soft);color:var(--navy)}
+    .panel{margin-bottom:14px}.panel h2{margin:0 0 8px;font-size:1.15rem}.row{display:grid;gap:6px;margin:10px 0}label{font-size:.82rem;font-weight:900}input,select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button,.button{min-height:38px;border:2px solid var(--navy);border-radius:8px;padding:8px 12px;background:#fff;color:var(--navy);font-weight:900;text-decoration:none;cursor:pointer}.primary{background:var(--navy);color:#fff}
+    .msg{border-radius:8px;padding:10px;margin-top:10px;background:#f1f5f9;color:var(--muted);font-weight:700}.msg.ok{background:#dcfce7;color:var(--ok)}.msg.err{background:#fee2e2;color:var(--bad)}
+    code{background:#eef2ff;border-radius:5px;padding:2px 5px}.google-host{min-height:42px;display:flex;align-items:center}.tutorial{display:grid;gap:10px}.tutorial li{color:#475569;line-height:1.45;margin-bottom:6px}
+    @media(max-width:860px){header{display:block}.layout{grid-template-columns:1fr}.steps{position:static}}
+  </style>
+</head>
+<body>
+  <div class="top"></div>
+  <img class="instance-banner" src="drawsplat_hub_banner.png" alt="DrawSplat Hub">
+  <header>
+    <div>
+      <span class="badge">Teacher Admin</span>
+      <h1>DrawSplat Classroom Setup</h1>
+      <p>Bind this classroom to your Google account, connect storage, and copy classroom links.</p>
+    </div>
+    <nav class="actions">
+      <a class="button" href="index.html">Hub Home</a>
+      <a class="button primary" href="../app/whiteboard.html">Open Board</a>
+    </nav>
+  </header>
+  <main class="layout">
+    <aside class="steps">
+      <h2>Setup Path</h2>
+      <div class="step-list">
+        <div class="step-pill active">1. Load classroom</div>
+        <div class="step-pill">2. One-time password</div>
+        <div class="step-pill">3. Bind Google admin</div>
+        <div class="step-pill">4. Connect storage</div>
+        <div class="step-pill">5. Copy links</div>
+      </div>
+      <p class="msg" id="instanceStatus">Loading classroom config...</p>
+    </aside>
+    <section>
+      <article class="panel">
+        <h2>Setup Notes</h2>
+        <ol class="tutorial">
+          <li>Use the one-time setup password from your Drive setup document.</li>
+          <li>Sign in with Google. That account becomes the classroom admin.</li>
+          <li>Paste your DrawSplat Apps Script Web App URL, test it, and save.</li>
+          <li>Copy the teacher and student links after the backend test passes.</li>
+        </ol>
+      </article>
+      <article class="panel">
+        <h2>One-Time Setup Password</h2>
+        <div class="row">
+          <label for="setupPassword">Setup password</label>
+          <input id="setupPassword" type="password" autocomplete="one-time-code">
+        </div>
+        <div class="actions">
+          <button class="primary" id="verifySetupBtn" type="button">Verify setup password</button>
+        </div>
+        <p class="msg" id="setupMsg">Waiting for setup password.</p>
+      </article>
+      <article class="panel">
+        <h2>Google Admin Binding</h2>
+        <div class="google-host" id="googleBindHost"></div>
+        <div class="actions">
+          <button id="googlePromptBtn" type="button">Use Google sign-in prompt</button>
+          <button id="clearSessionBtn" type="button">Clear local session</button>
+        </div>
+        <p class="msg" id="googleMsg">Google binding is not complete.</p>
+      </article>
+      <article class="panel">
+        <h2>Storage Settings</h2>
+        <div class="row">
+          <label for="storageProvider">Storage provider</label>
+          <select id="storageProvider">
+            <option value="google-apps-script">Google Apps Script + Drive</option>
+            <option value="mysql">MySQL API</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="googleScriptUrl">Apps Script Web App URL</label>
+          <input id="googleScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div class="row">
+          <label for="mysqlApiBase">MySQL API base URL</label>
+          <input id="mysqlApiBase" type="url" placeholder="https://school.example.org/api/drawsplat/mysql">
+        </div>
+        <div class="actions">
+          <button class="primary" id="saveConfigBtn" type="button">Save instance config</button>
+          <button id="testBackendBtn" type="button">Test backend</button>
+        </div>
+        <p class="msg" id="storageMsg">Storage settings not tested.</p>
+      </article>
+      <article class="panel">
+        <h2>Classroom Links</h2>
+        <div class="row">
+          <label for="defaultRoom">Default room</label>
+          <input id="defaultRoom" type="text">
+        </div>
+        <div class="actions">
+          <button class="primary" id="copyTeacherLinkBtn" type="button">Copy teacher link</button>
+          <button id="copyStudentLinkBtn" type="button">Copy student link</button>
+        </div>
+        <p class="msg" id="linksMsg">Links use this classroom slug and the backend URL saved above.</p>
+      </article>
+    </section>
+  </main>
+  <script src="../assets/js/hub/instance-admin.js"></script>
+</body>
+</html>

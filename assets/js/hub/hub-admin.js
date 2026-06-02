@@ -34,11 +34,22 @@
     const children=item.category==='District'?(item.campuses||[]):(item.teachers||item.classrooms||[]);
     if(!children.length)return '';
     const label=item.category==='District'?'Campuses':'Classrooms';
-    return `<div><p class="activity">${label}</p><ul class="children">${children.map(child=>`<li class="child"><strong>${esc(child.name||child.slug||'Untitled')}</strong><span>${esc(child.summary||child.teacher||child.status||'Configured classroom')}</span></li>`).join('')}</ul></div>`;
+    return `<div><p class="activity">${label}</p><ul class="children">${children.map(child=>`<li class="child"><strong>${esc(child.name||child.slug||'Untitled')}</strong><span>${esc(child.summary||child.teacher||child.status||'Configured classroom')}</span>${recordActions(child,item.slug)}</li>`).join('')}</ul></div>`;
+  }
+  function recordActions(item,parentSlug=''){
+    const links=[
+      item.setupDocUrl?`<a class="button" href="${esc(item.setupDocUrl)}" target="_blank" rel="noopener noreferrer">Setup Doc</a>`:'',
+      item.folderUrl?`<a class="button" href="${esc(item.folderUrl)}" target="_blank" rel="noopener noreferrer">Folder</a>`:'',
+      item.adminPath?`<a class="button" href="${esc(item.adminPath)}">Admin</a>`:'',
+      item.whiteboardPath?`<a class="button" href="${esc(item.whiteboardPath)}">Board</a>`:''
+    ].filter(Boolean);
+    if(item.teacherEmail&&item.slug)links.push(`<button class="danger" type="button" data-remove-teacher="${esc(item.slug)}" data-parent-slug="${esc(parentSlug)}">Remove Access</button>`);
+    return links.length?`<div class="actions">${links.join('')}</div>`:'';
   }
   function card(item){
     const model=item.licenseModel||item.ownerType||item.category||'Campus';
-    return `<article class="card"><div><h3>${esc(item.name||item.slug)}</h3><p>${esc(item.summary||'DrawSplat instance')}</p><p class="activity">Activity: ${esc(item.lastActivity||'No activity reported')}</p></div><div class="meta"><span class="pill">${esc(model)}</span><span class="pill status">${esc(item.status||'Setup')}</span></div>${childList(item)}<div class="actions"><a class="button primary" href="${esc(item.path||'#')}">Open</a><a class="button" href="${esc(item.adminPath||'#')}">Admin</a><a class="button" href="${esc(item.whiteboardPath||'#')}">Board</a></div></article>`;
+    const fallbackActions=`<div class="actions"><a class="button primary" href="${esc(item.path||'#')}">Open</a><a class="button" href="${esc(item.adminPath||'#')}">Admin</a><a class="button" href="${esc(item.whiteboardPath||'#')}">Board</a></div>`;
+    return `<article class="card"><div><h3>${esc(item.name||item.slug)}</h3><p>${esc(item.summary||'DrawSplat instance')}</p><p class="activity">Activity: ${esc(item.lastActivity||'No activity reported')}</p></div><div class="meta"><span class="pill">${esc(model)}</span><span class="pill status">${esc(item.status||'Setup')}</span></div>${childList(item)}${recordActions(item)||fallbackActions}</article>`;
   }
   function haystack(item){
     const childText=[...(item.teachers||[]),...(item.classrooms||[]),...(item.campuses||[])].map(x=>[x.name,x.slug,x.teacher,x.summary,x.status].join(' ')).join(' ');
@@ -128,8 +139,19 @@
       const out=await api('hubTeacherAdd',{sessionToken:state.sessionToken,teacher:{name:teacherName,email:teacherEmail,slug,category,parentSlug:category==='Campus'?'hubcampus':''}});
       state.instances=out.instances||state.instances;
       render();
-      const extra=out.folderUrl?' Folder shared: '+out.folderUrl:'';
-      msg('teacherMsg','Teacher added and shared as editor.'+extra,'ok');
+      const links=[out.setupDocUrl?'Setup doc: '+out.setupDocUrl:'',out.folderUrl?'Folder: '+out.folderUrl:'',out.teacherAdminUrl?'Admin: '+out.teacherAdminUrl:''].filter(Boolean).join(' ');
+      msg('teacherMsg','Teacher added and shared as editor. '+links,'ok');
+    }catch(err){msg('teacherMsg',err.message,'err')}
+  }
+  async function removeTeacher(slug,parentSlug){
+    if(!slug)return;
+    if(!confirm('Remove this teacher from Hub Admin and revoke Drive editor access where possible?'))return;
+    try{
+      const out=await api('hubTeacherRemove',{sessionToken:state.sessionToken,slug,parentSlug});
+      state.instances=out.instances||state.instances;
+      render();
+      const warn=out.revoked&&out.revoked.warnings&&out.revoked.warnings.length?' Some Drive warnings were returned.':'';
+      msg('teacherMsg','Teacher access removed.'+warn,'ok');
     }catch(err){msg('teacherMsg',err.message,'err')}
   }
   async function boot(){
@@ -143,6 +165,10 @@
     $('addTeacherBtn').addEventListener('click',addTeacher);
     $('searchInput').addEventListener('input',render);
     $('categoryFilter').addEventListener('change',render);
+    $('sections').addEventListener('click',e=>{
+      const btn=e.target.closest('[data-remove-teacher]');
+      if(btn)removeTeacher(btn.dataset.removeTeacher,btn.dataset.parentSlug||'');
+    });
     initGoogle();
   }
   boot();

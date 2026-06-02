@@ -1,6 +1,8 @@
 (function(){
   const $=id=>document.getElementById(id);
-  const slug=document.body.dataset.instanceSlug||location.pathname.split('/').filter(Boolean).slice(-2,-1)[0]||'instance';
+  const params=new URLSearchParams(location.search);
+  const querySlug=String(params.get('instance')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'');
+  const slug=querySlug||document.body.dataset.instanceSlug||location.pathname.split('/').filter(Boolean).slice(-2,-1)[0]||'instance';
   const state={config:null,setupToken:'',sessionToken:'',user:null};
   const storageKey='drawsplat.instanceAdmin.'+slug;
   const msg=(id,text,cls='')=>{const el=$(id);if(el){el.textContent=text;el.className='msg '+cls}};
@@ -33,6 +35,12 @@
     return out;
   }
   function hydrate(cfg){
+    cfg=Object.assign({},cfg||{});
+    if(querySlug){
+      cfg.instanceId=querySlug;
+      cfg.displayName=cfg.displayName||querySlug.replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+' Classroom';
+      cfg.defaultRoom=cfg.defaultRoom||querySlug+'-classroom';
+    }
     state.config=cfg;
     $('storageProvider').value=cfg.storageProvider||'google-apps-script';
     $('googleScriptUrl').value=cfg.googleScriptUrl||'';
@@ -140,10 +148,19 @@
     }catch(err){msg('storageMsg','Backend test failed: '+err.message,'err')}
   }
   function instanceLink(role){
-    const url=new URL('whiteboard.html',location.href);
+    const boardPath=location.pathname.endsWith('/teacher-admin.html')?'../app/whiteboard.html':'whiteboard.html';
+    const url=new URL(boardPath,location.href);
     const room=clean($('defaultRoom').value);
+    url.searchParams.set('instance',state.config.instanceId||slug);
     if(room)url.searchParams.set('room',room);
     if(role)url.searchParams.set('role',role);
+    if($('storageProvider').value==='mysql'){
+      const api=clean($('mysqlApiBase').value);
+      if(api){url.searchParams.set('storage','mysql');url.searchParams.set('api',api)}
+    }else{
+      const script=clean($('googleScriptUrl').value);
+      if(script)url.searchParams.set('script',script);
+    }
     return url.toString();
   }
   function copy(text,ok){
