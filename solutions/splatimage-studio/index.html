@@ -16,6 +16,7 @@
     .stage-wrap{min-width:0;min-height:0;display:grid;grid-template-rows:auto 1fr;background:#e2e8f0}.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--line);background:#fff}.canvas-scroll{min-height:0;overflow:auto;display:grid;place-items:center;padding:36px}.canvas-shell{position:relative;box-shadow:0 16px 40px rgba(15,23,42,.22);background:#fff;transform-origin:center center}canvas{display:block}.overlay{position:absolute;inset:0;pointer-events:none}.statusbar{display:flex;justify-content:space-between;gap:12px;padding:7px 12px;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:.8rem;font-weight:700}.drop-hint{color:var(--muted)}
     .layer-list{display:grid;gap:6px}.layer{display:grid;grid-template-columns:26px 1fr auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:7px;padding:6px;background:#fff}.layer.selected{border-color:var(--navy);background:var(--soft)}.layer .name{font-size:.78rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer .mini{width:24px;height:24px;border-radius:5px;display:grid;place-items:center;background:#f1f5f9;color:var(--navy);font-weight:900}.layer button{min-width:28px;min-height:26px;border:1px solid var(--line);background:#fff;border-radius:5px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.button{min-height:36px;padding:7px 9px;border:2px solid var(--navy);border-radius:8px;color:var(--navy);background:#fff;font-weight:800}.button.primary{background:var(--navy);color:#fff}.button.gold{border-color:var(--yellow);background:var(--yellow);color:#111}.hidden-file{display:none}.hint{font-size:.78rem;line-height:1.35;color:var(--muted);margin:8px 0 0}.crop-actions{display:none}.crop-active .crop-actions{display:flex}@media(max-width:980px){body{overflow:auto}.shell{height:auto}.workspace{grid-template-columns:1fr}.rightbar{border-inline-start:0}.canvas-scroll{min-height:520px}.sidebar,.rightbar{max-height:none}.header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}}
     dialog.bg-dialog{width:min(520px,calc(100vw - 28px));border:1px solid var(--line);border-radius:8px;padding:0;background:#fff;color:var(--ink);box-shadow:var(--shadow)}dialog.bg-dialog::backdrop{background:rgba(15,23,42,.45)}.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}.dialog-head h2{margin:0;font-size:1rem;color:var(--navy)}.dialog-body{padding:14px;display:grid;gap:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}.dialog-actions button,.dialog-head button{min-height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;padding:7px 10px;font-weight:800}.dialog-actions .primary{border-color:var(--navy);background:var(--navy);color:#fff}.bg-preview{height:34px;border:1px solid var(--line);border-radius:7px;background:linear-gradient(45deg,#e2e8f0 25%,transparent 25%),linear-gradient(-45deg,#e2e8f0 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e2e8f0 75%),linear-gradient(-45deg,transparent 75%,#e2e8f0 75%);background-color:#fff;background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
+    .working-overlay{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.42)}.working-overlay[hidden]{display:none}.working-box{width:min(380px,100%);border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:var(--shadow);padding:22px;text-align:center}.working-spinner{width:42px;height:42px;margin:0 auto 14px;border:5px solid #ddd6fe;border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite}.working-box h2{margin:0 0 8px;color:var(--navy);font-size:1.1rem}.working-box p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.4;font-weight:700}@keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -195,6 +196,14 @@
     </div>
   </dialog>
 
+  <div id="workingOverlay" class="working-overlay" role="alert" aria-live="assertive" aria-busy="true" hidden>
+    <div class="working-box">
+      <div class="working-spinner" aria-hidden="true"></div>
+      <h2 data-i18n="working.title">Working...</h2>
+      <p id="workingMessage" data-i18n="status.smartBgLoading">Loading cutout tools. First run may take a little longer.</p>
+    </div>
+  </div>
+
   <script src="./locales.js"></script>
   <script>
 (function(){
@@ -204,6 +213,10 @@
   const state={objects:[],selected:new Set(),tool:'select',zoom:1,drag:null,crop:null,imageCrop:null,undo:[],redo:[],nextId:1,pan:{x:0,y:0},bgRemoveModule:null};
   const style=()=>({stroke:$('strokeColor').value,fill:$('transparentFill').checked?'transparent':$('fillColor').value,width:+$('strokeWidth').value,arrow:+$('arrowSize').value,font:+$('fontSize').value,align:$('textAlign').value,opacity:+$('opacityInput').value/100});
   function setStatus(k,vars){$('statusLine').textContent=t(k,vars)}
+  function updateWorking(k,vars){const msg=t(k,vars);setStatus(k,vars);$('workingMessage').textContent=msg}
+  function showWorking(k,vars){updateWorking(k,vars);$('workingOverlay').hidden=false}
+  function hideWorking(){$('workingOverlay').hidden=true}
+  function nextPaint(){return new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res)))}
   function snapshot(){state.undo.push(JSON.stringify(state.objects.map(o=>serialize(o))));if(state.undo.length>60)state.undo.shift();state.redo=[]}
   function restore(s){state.objects=JSON.parse(s).map(deserialize);state.selected.clear();render()}
   function serialize(o){const c={...o};if(c.img)c.src=c.img.src,delete c.img;return c}
@@ -284,8 +297,8 @@
   function effectStrength(){return (+$('effectStrength').value||55)/100}
   function canvasFromImage(o){const c=document.createElement('canvas');c.width=o.img.naturalWidth||Math.round(o.w);c.height=o.img.naturalHeight||Math.round(o.h);const cx=c.getContext('2d');if(o.filter)cx.filter=o.filter;cx.drawImage(o.img,0,0,c.width,c.height);return c}
   function selectedImages(){return selectedObjects().filter(o=>o.type==='image'&&o.img)}
-  async function loadBgRemoveModule(){if(!state.bgRemoveModule){setStatus('status.smartBgLoading');state.bgRemoveModule=import('https://esm.sh/@imgly/background-removal@1.7.0?bundle&deps=onnxruntime-web@1.21.0')}return state.bgRemoveModule}
-  async function applySmartRemoveBg(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');try{const mod=await loadBgRemoveModule(),removeBackground=mod.default||mod.removeBackground||mod.imglyRemoveBackground;snapshot();for(let i=0;i<imgs.length;i++){const o=imgs[i];setStatus('status.smartBgWorking',{n:i+1,total:imgs.length});const blob=await removeBackground(await new Promise(r=>canvasFromImage(o).toBlob(r,'image/png')),{model:'isnet_quint8',output:{format:'image/png',type:'foreground'}}),img=await loadImg(URL.createObjectURL(blob));o.img=img;o.src=img.src;o.filter=''}setStatus('status.smartBgRemoved');render()}catch(err){console.error(err);setStatus('status.smartBgFailed')}}
+  async function loadBgRemoveModule(){if(!state.bgRemoveModule){updateWorking('status.smartBgLoading');state.bgRemoveModule=import('https://esm.sh/@imgly/background-removal@1.7.0?bundle&deps=onnxruntime-web@1.21.0')}return state.bgRemoveModule}
+  async function applySmartRemoveBg(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');showWorking('status.smartBgLoading');await nextPaint();try{const mod=await loadBgRemoveModule(),removeBackground=mod.default||mod.removeBackground||mod.imglyRemoveBackground;snapshot();for(let i=0;i<imgs.length;i++){const o=imgs[i];updateWorking('status.smartBgWorking',{n:i+1,total:imgs.length});await nextPaint();const blob=await removeBackground(await new Promise(r=>canvasFromImage(o).toBlob(r,'image/png')),{model:'isnet_quint8',output:{format:'image/png',type:'foreground'}}),img=await loadImg(URL.createObjectURL(blob));o.img=img;o.src=img.src;o.filter=''}hideWorking();setStatus('status.smartBgRemoved');render()}catch(err){console.error(err);hideWorking();setStatus('status.smartBgFailed')}}
   function hexToRgb(hex){const s=String(hex||'#ffffff').replace('#','');const full=s.length===3?s.split('').map(c=>c+c).join(''):s;return [0,2,4].map(i=>parseInt(full.slice(i,i+2)||'ff',16))}
   function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
   function colorDist(d,i,target){const dr=d[i]-target[0],dg=d[i+1]-target[1],db=d[i+2]-target[2];return Math.sqrt(dr*dr*.75+dg*dg*1.15+db*db*.9)}
