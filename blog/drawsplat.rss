@@ -8,25 +8,8 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 02 Jun 2026 19:20:00 GMT</lastBuildDate>
+			<lastBuildDate>Tue, 02 Jun 2026 16:21:06 GMT</lastBuildDate>
 			<item>
-		<title>DrawSplat v3.1.8 Update: More Tools, Cleaner Cards, and a Fresher Self-Host Zip</title>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><p><strong>DrawSplat v3.1.8</strong> is packed with classroom-friendly polish.</p><p><strong>SplatImage Studio</strong> now has smoother paste handling, proportional arrowheads, better crop controls, shape masks, duplicate layers, layer transparency, text alignment, and a bigger Effects menu with mosaic, cubism, pixelate, lighten, and darken options.</p><p><strong>Quiz &amp; Flashcard Studio</strong> gets clearer answer cards, so the answer stands out while extra explanation stays visually quieter. <strong>Concept Map Studio</strong> also gets friendlier import and editing controls, especially when working from Markdown or generated map content.</p><p>The self-host zip has been rebuilt with the latest code, docs, legal/compliance pages, tools, and release notes. In short: fewer rough edges, more creative tools, and a nicer path for teachers who want the full <strong>DrawSplat</strong> experience in one download.</p>]]></description>
-		<pubDate>Tue, 02 Jun 2026 19:20:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.8-general-update</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-	</item><item>
-		<title>DrawSplat Hub Update: A Protected Admin Space for Classroom, Campus, and District Instances</title>
-		<link>https://drawsplat.org/hub/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /><p><strong>DrawSplat Hub</strong> now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances.</p><p>The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators.</p><p>From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor.</p><p>That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.</p>]]></description>
-		<pubDate>Tue, 02 Jun 2026 19:19:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.8-hub-update</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat-hub</category>
-	</item><item>
 		<title>ControlAltAchieve 💡 #171</title>
 		<link>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</link>
 		<description>&lt;img src="https://rdl.ink/render/https%3A%2F%2Fmailchi.mp%2Fcontrolaltachieve%2F9q6ttmhq5h-17999308%3Fe%3D%5BUNIQID%5D" /&gt;&lt;br/&gt;DrawSplat - Resource link
@@ -41,7 +24,7 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
 		<guid>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</guid>
 		<category>edtech</category>
 	</item><item>
-		<title>DrawSplat Feature: Big Link #EduSky #FREE #education</title>
+		<title>DrawSplat Feature: Big Link #EduSky #FREE #education – Another Think Coming</title>
 		<link>https://mguhlin.org/2026/06/02/drawsplat-feature-big-link-edusky-free-education/</link>
 		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-115.png?fit=1200%2C622&amp;amp;ssl=1" /&gt;&lt;br/&gt;Ever wanted a huge, gigantic link sprawled across a website when you’re facilitating a class or workshop? I have. The problem is that these types of websites have disappeared. There are a few…</description>
 		<pubDate>Tue, 02 Jun 2026 11:16:08 GMT</pubDate>
@@ -55,21 +38,21 @@ Head on over to https://drawsplat.org/ to learn more and try it yourself.
 		<guid>https://mguhlin.org/2026/06/01/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</guid>
 		
 	</item><item>
-		<title>DrawSplat Feature: #EU #GDPR Support #EduSky #education</title>
+		<title>DrawSplat Feature: #EU #GDPR Support #EduSky #education – Another Think Coming</title>
 		<link>https://mguhlin.org/2026/06/01/drawsplat-feature-eu-gdpr-support-edusky-education/</link>
 		<description>&lt;img src="https://mguhlin.org/wp-content/uploads/2026/05/image-103.png" /&gt;&lt;br/&gt;You may have just missed my post on DrawSplat’s Privacy and Compliance section a few minutes ago. That one covers the USA and Texas. This post is a quick update for GDPR, too, right after it …</description>
 		<pubDate>Mon, 01 Jun 2026 09:26:54 GMT</pubDate>
 		<guid>https://mguhlin.org/2026/06/01/drawsplat-feature-eu-gdpr-support-edusky-education/</guid>
 		
 	</item><item>
-		<title>DrawSplatTM: Privacy and Compliance</title>
+		<title>DrawSplatTM: Privacy and Compliance – Another Think Coming</title>
 		<link>https://mguhlin.org/2026/06/01/drawsplattm-privacy-and-compliance/</link>
 		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-66.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;Thanks to Stacy Pattenaude, who offered free, friendly feedback on an earlier version of DrawSplat, I became aware of many items relevant to Compliance that I had been unaware of before. It’s…</description>
 		<pubDate>Mon, 01 Jun 2026 09:26:28 GMT</pubDate>
 		<guid>https://mguhlin.org/2026/06/01/drawsplattm-privacy-and-compliance/</guid>
 		
 	</item><item>
-		<title>DrawSplat Feature: Chart Studio #EduSky #education #free</title>
+		<title>DrawSplat Feature: Chart Studio #EduSky #education #free – Another Think Coming</title>
 		<link>https://mguhlin.org/2026/05/31/drawsplat-feature-chart-studio-edusky-education-free/</link>
 		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-119.png?fit=1200%2C844&amp;amp;ssl=1" /&gt;&lt;br/&gt;Looking for a little bit more robust chart maker? Give DrawSplat Tools: Chart Studio a try: And, it comes with a preset color palettes:</description>
 		<pubDate>Sun, 31 May 2026 12:03:27 GMT</pubDate>
