@@ -121,6 +121,8 @@
       defaultRoom:clean($('defaultRoom').value)
     };
     try{
+      const backendUrl=cfg.storageProvider==='mysql'?cfg.mysqlApiBase:cfg.googleScriptUrl;
+      if(backendUrl)await pingBackend(cfg.storageProvider,backendUrl);
       if(registryUrl()){
         if(!state.sessionToken)throw new Error('Sign in with the bound Google admin account before saving.');
         await api('instanceConfigSet',{sessionToken:state.sessionToken,config:cfg});
@@ -140,12 +142,19 @@
     const url=provider==='mysql'?clean($('mysqlApiBase').value):clean($('googleScriptUrl').value);
     if(!url)return msg('storageMsg','Enter a backend URL first.','err');
     try{
-      const testUrl=provider==='mysql'?url.replace(/\/+$/,'')+'/health':url+(url.includes('?')?'&':'?')+'action=ping';
-      const res=await fetch(testUrl);
-      const out=await res.json();
-      if(out&&out.ok)msg('storageMsg','Backend test passed.','ok');
-      else msg('storageMsg',(out&&out.error)||'Backend responded without ok=true.','err');
+      const out=await pingBackend(provider,url);
+      msg('storageMsg','Backend test passed'+(out.version?' with version '+out.version:'')+'.','ok');
     }catch(err){msg('storageMsg','Backend test failed: '+err.message,'err')}
+  }
+  async function pingBackend(provider,url){
+    const testUrl=provider==='mysql'?url.replace(/\/+$/,'')+'/health':url+(url.includes('?')?'&':'?')+'action=ping';
+    const res=await fetch(testUrl);
+    const out=await res.json();
+    if(!(out&&out.ok))throw new Error((out&&out.error)||'Backend responded without ok=true.');
+    if(provider!=='mysql'&&out.app!=='DrawSplatTM'){
+      throw new Error('That URL is not the DrawSplat whiteboard backend. Paste the Web App URL for apps-script/Code.gs; this one reports "'+(out.app||'unknown app')+'".');
+    }
+    return out;
   }
   function instanceLink(role){
     const boardPath=location.pathname.endsWith('/teacher-admin.html')?'../app/whiteboard.html':'whiteboard.html';

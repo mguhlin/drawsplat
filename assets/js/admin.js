@@ -54,7 +54,8 @@
     try{
       const res=await fetch(url+(url.includes('?')?'&':'?')+'action=ping',{method:'GET'});
       const out=await res.json();
-      if(out&&out.ok) setStatus('Connection works. Backend responded at '+(out.time||'unknown time')+'.','success');
+      if(out&&out.ok&&out.app==='DrawSplatTM') setStatus('Connection works. DrawSplat backend version '+(out.version||'unknown')+' responded at '+(out.time||'unknown time')+'.','success');
+      else if(out&&out.ok) setStatus('That URL is not the DrawSplat whiteboard backend. Paste the Web App URL for apps-script/Code.gs; this one reports "'+(out.app||'unknown app')+'".','danger');
       else setStatus((out&&out.error)||'Backend responded, but not with ok=true.','danger');
     }catch(err){
       setStatus('Connection failed: '+err.message,'danger');

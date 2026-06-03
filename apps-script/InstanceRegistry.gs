@@ -392,7 +392,7 @@ function createOrUpdateTeacherSetupDoc_(folder, cfg) {
   body.appendParagraph('One-time setup password: ' + cfg.setupPassword);
   body.appendParagraph('Teacher admin link').setHeading(DocumentApp.ParagraphHeading.HEADING2);
   body.appendParagraph(cfg.teacherAdminUrl);
-  body.appendParagraph('Use this first. Verify the one-time setup password, sign in with Google, paste your DrawSplat Apps Script Web App URL, test it, and save the instance config.');
+  body.appendParagraph('Use this first. Verify the one-time setup password, sign in with Google, then paste the teacher whiteboard storage Web App URL from apps-script/Code.gs. Do not paste the DrawSplat Hub registry URL; the storage backend ping must report app: "DrawSplatTM". Test it and save the instance config.');
   body.appendParagraph('Teacher board link').setHeading(DocumentApp.ParagraphHeading.HEADING2);
   body.appendParagraph(cfg.teacherBoardUrl);
   body.appendParagraph('Use this after storage is configured. The teacher admin page can copy a teacher link and a student link that include the saved room and backend settings.');
