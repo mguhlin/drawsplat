@@ -97,6 +97,14 @@ WidgetI18n.register('splatimage-studio', {
     'removeBg.softness': 'Edge soften',
     'removeBg.apply': 'Apply',
     'working.title': 'Working...',
+    'textDialog.title': 'Add text',
+    'textDialog.text': 'Text',
+    'textDialog.placeholder': 'Type your text here',
+    'textDialog.font': 'Font',
+    'textDialog.color': 'Text color',
+    'textDialog.format': 'Format',
+    'textDialog.preview': 'Preview',
+    'textDialog.insert': 'Insert text',
 	    'stage.aria': 'SplatImage Studio canvas',
 	    'layers.empty': 'No layers yet.',
 	    'layer.duplicate': 'Duplicate layer',
@@ -117,6 +125,7 @@ WidgetI18n.register('splatimage-studio', {
     'status.smartBgWorking': 'Cutting out background {n} of {total}.',
     'status.smartBgRemoved': 'Background cutout applied.',
     'status.smartBgFailed': 'Background cutout could not run. Try Remove edge background instead.',
+    'status.needText': 'Enter text first.',
     'status.layerAdded': 'Blank layer added.',
     'status.undo': 'Nothing to undo.',
     'status.redo': 'Nothing to redo.'
@@ -140,7 +149,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Aplicar recorte', 'button.cancelCrop': 'Cancelar', 'button.clear': 'Borrar', 'button.fit': 'Ajustar', 'button.actual': '100%', 'button.exportGif': 'Exportar GIF', 'button.exportFrames': 'Exportar cuadros', 'button.addImages': 'Añadir imágenes',
     'stage.aria': 'Lienzo de SplatImage Studio', 'layers.empty': 'Aún no hay capas.', 'layer.duplicate': 'Duplicar capa', 'working.title': 'Trabajando...',
     'hint': 'Consejos: pega capturas con Ctrl+V, arrastra imágenes, usa los tiradores para cambiar tamaño, mantén Shift para conservar proporciones y la rueda sobre texto seleccionado cambia su tamaño.',
-    'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.smartBgLoading': 'Cargando herramientas de recorte.', 'status.smartBgWorking': 'Recortando fondo {n} de {total}.', 'status.smartBgRemoved': 'Recorte de fondo aplicado.', 'status.smartBgFailed': 'No se pudo recortar el fondo. Prueba Quitar fondo por borde.', 'status.layerAdded': 'Capa en blanco agregada.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
+    'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.smartBgLoading': 'Cargando herramientas de recorte.', 'status.smartBgWorking': 'Recortando fondo {n} de {total}.', 'status.smartBgRemoved': 'Recorte de fondo aplicado.', 'status.smartBgFailed': 'No se pudo recortar el fondo. Prueba Quitar fondo por borde.', 'status.needText': 'Escribe texto primero.', 'status.layerAdded': 'Capa en blanco agregada.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
   },
   vi: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -160,7 +169,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Ap dung cat', 'button.cancelCrop': 'Huy', 'button.clear': 'Xoa het', 'button.fit': 'Vua khung', 'button.actual': '100%', 'button.exportGif': 'Xuat GIF', 'button.exportFrames': 'Xuat khung', 'button.addImages': 'Them anh',
     'stage.aria': 'Khung ve SplatImage Studio', 'layers.empty': 'Chua co lop.', 'layer.duplicate': 'Nhan doi lop', 'working.title': 'Dang xu ly...',
     'hint': 'Meo: Ctrl+V de dan anh chup, keo tha anh vao khung, keo tay nam de doi kich thuoc, giu Shift de giu ti le, lan chuot tren van ban da chon de doi co chu.',
-    'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.smartBgLoading': 'Dang tai cong cu cat nen.', 'status.smartBgWorking': 'Dang cat nen {n}/{total}.', 'status.smartBgRemoved': 'Da cat nen.', 'status.smartBgFailed': 'Khong cat nen duoc. Hay thu Remove edge background.', 'status.layerAdded': 'Da them lop trong.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
+    'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.smartBgLoading': 'Dang tai cong cu cat nen.', 'status.smartBgWorking': 'Dang cat nen {n}/{total}.', 'status.smartBgRemoved': 'Da cat nen.', 'status.smartBgFailed': 'Khong cat nen duoc. Hay thu Remove edge background.', 'status.needText': 'Hay nhap chu truoc.', 'status.layerAdded': 'Da them lop trong.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
   },
   ar: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -180,7 +189,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'تطبيق القص', 'button.cancelCrop': 'الغاء', 'button.clear': 'مسح', 'button.fit': 'ملاءمة', 'button.actual': '100%', 'button.exportGif': 'تصدير GIF', 'button.exportFrames': 'تصدير اطارات', 'button.addImages': 'اضافة صور',
     'stage.aria': 'لوحة SplatImage Studio', 'layers.empty': 'لا توجد طبقات.', 'layer.duplicate': 'تكرار الطبقة', 'working.title': 'جار العمل...',
     'hint': 'نصائح: الصق لقطات الشاشة ب Ctrl+V واسحب الصور للوحة واسحب المقابض لتغيير الحجم واضغط Shift للحفاظ على النسبة.',
-    'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.smartBgLoading': 'يتم تحميل ادوات القص.', 'status.smartBgWorking': 'يتم قص الخلفية {n} من {total}.', 'status.smartBgRemoved': 'تم قص الخلفية.', 'status.smartBgFailed': 'تعذر قص الخلفية. جرب ازالة خلفية الحواف.', 'status.layerAdded': 'تمت اضافة طبقة فارغة.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
+    'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.smartBgLoading': 'يتم تحميل ادوات القص.', 'status.smartBgWorking': 'يتم قص الخلفية {n} من {total}.', 'status.smartBgRemoved': 'تم قص الخلفية.', 'status.smartBgFailed': 'تعذر قص الخلفية. جرب ازالة خلفية الحواف.', 'status.needText': 'ادخل النص اولا.', 'status.layerAdded': 'تمت اضافة طبقة فارغة.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
   },
   zh: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -200,7 +209,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': '应用裁剪', 'button.cancelCrop': '取消', 'button.clear': '清空', 'button.fit': '适合', 'button.actual': '100%', 'button.exportGif': '导出 GIF', 'button.exportFrames': '导出帧', 'button.addImages': '添加图片',
     'stage.aria': 'SplatImage Studio 画布', 'layers.empty': '还没有图层。', 'layer.duplicate': '复制图层', 'working.title': '处理中...',
     'hint': '提示：Ctrl+V 粘贴截图，拖放图片，拖动控制点调整大小，按住 Shift 保持比例，鼠标滚轮可调整所选文字大小。',
-    'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.smartBgLoading': '正在加载抠图工具。', 'status.smartBgWorking': '正在抠背景 {n}/{total}。', 'status.smartBgRemoved': '背景抠图已应用。', 'status.smartBgFailed': '背景抠图无法运行。请尝试边缘背景移除。', 'status.layerAdded': '已添加空白图层。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
+    'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.smartBgLoading': '正在加载抠图工具。', 'status.smartBgWorking': '正在抠背景 {n}/{total}。', 'status.smartBgRemoved': '背景抠图已应用。', 'status.smartBgFailed': '背景抠图无法运行。请尝试边缘背景移除。', 'status.needText': '请先输入文字。', 'status.layerAdded': '已添加空白图层。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
   },
   uh: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -220,6 +229,6 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Apply crop', 'button.cancelCrop': 'Cancel', 'button.clear': 'Clear', 'button.fit': 'Fit', 'button.actual': '100%', 'button.exportGif': 'Export GIF', 'button.exportFrames': 'Export Frames', 'button.addImages': 'Add Images',
     'stage.aria': 'SplatImage Studio canvas', 'layers.empty': 'Abhi layers nahi hain.', 'layer.duplicate': 'Duplicate layer', 'working.title': 'Working...',
     'hint': 'Tips: Ctrl+V se screenshot paste karein, images drag karein, handles se resize karein, Shift pakad kar proportions rakhein, aur selected text par mouse wheel size badalta hai.',
-    'status.ready': 'Ready.', 'status.imported': '{n} image import hui.', 'status.pasted': 'Image paste hui.', 'status.exported': 'PNG export hua.', 'status.copied': 'PNG copy hua.', 'status.needSelection': 'Pehle object select karein.', 'status.needImages': 'Pehle image layers select karein.', 'status.gif': '{n} frames se GIF export hua.', 'status.frames': '{n} frame files download hui.', 'status.crop': 'Canvas crop hua.', 'status.effect': 'Effect apply hua.', 'status.smartBgLoading': 'Cutout tools load ho rahe hain.', 'status.smartBgWorking': 'Background cutout {n}/{total}.', 'status.smartBgRemoved': 'Background cutout apply hua.', 'status.smartBgFailed': 'Background cutout nahi chala. Remove edge background try karein.', 'status.layerAdded': 'Blank layer add hua.', 'status.undo': 'Undo ke liye kuch nahi.', 'status.redo': 'Redo ke liye kuch nahi.'
+    'status.ready': 'Ready.', 'status.imported': '{n} image import hui.', 'status.pasted': 'Image paste hui.', 'status.exported': 'PNG export hua.', 'status.copied': 'PNG copy hua.', 'status.needSelection': 'Pehle object select karein.', 'status.needImages': 'Pehle image layers select karein.', 'status.gif': '{n} frames se GIF export hua.', 'status.frames': '{n} frame files download hui.', 'status.crop': 'Canvas crop hua.', 'status.effect': 'Effect apply hua.', 'status.smartBgLoading': 'Cutout tools load ho rahe hain.', 'status.smartBgWorking': 'Background cutout {n}/{total}.', 'status.smartBgRemoved': 'Background cutout apply hua.', 'status.smartBgFailed': 'Background cutout nahi chala. Remove edge background try karein.', 'status.needText': 'Pehle text likhein.', 'status.layerAdded': 'Blank layer add hua.', 'status.undo': 'Undo ke liye kuch nahi.', 'status.redo': 'Redo ke liye kuch nahi.'
   }
 });
