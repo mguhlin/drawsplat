@@ -75,7 +75,7 @@
         <button data-effect="pixelate" data-i18n="effect.pixelate">Pixelate</button>
         <button data-effect="mosaic" data-i18n="effect.mosaic">Mosaic</button>
         <button data-effect="cubism" data-i18n="effect.cubism">Picasso cubism</button>
-        <button data-action="removeBg" data-i18n="effect.removeBg">Remove background color</button>
+        <button data-action="removeBg" data-i18n="effect.removeBg">Remove edge background</button>
       </div></div>
       <div class="menu"><button type="button" data-i18n="menu.masks">Masks</button><div class="menu-panel">
         <button data-mask="circle" data-i18n="mask.circle">Circle</button>
@@ -169,22 +169,22 @@
 
   <dialog id="removeBgDialog" class="bg-dialog">
     <div class="dialog-head">
-      <h2 data-i18n="removeBg.title">Remove background color</h2>
+      <h2 data-i18n="removeBg.title">Remove edge background</h2>
       <button id="removeBgClose" type="button" data-i18n="removeBg.close">Close</button>
     </div>
     <div class="dialog-body">
-      <p class="hint" data-i18n="removeBg.help">Pick the background color to make transparent. The starting color is sampled from the selected image's top-left corner.</p>
+      <p class="hint" data-i18n="removeBg.help">Removes background pixels connected to the image edges. The starting color is sampled from the outer edge so matching colors inside the subject are preserved.</p>
       <div class="field">
-        <label for="removeBgColor" data-i18n="removeBg.color">Background color</label>
+        <label for="removeBgColor" data-i18n="removeBg.color">Edge background color</label>
         <input id="removeBgColor" type="color" value="#ffffff">
       </div>
       <div class="field">
         <label for="removeBgTolerance" data-i18n="removeBg.tolerance">Tolerance</label>
-        <input id="removeBgTolerance" type="range" min="0" max="120" value="38">
+        <input id="removeBgTolerance" type="range" min="0" max="160" value="54">
       </div>
       <div class="field">
         <label for="removeBgSoftness" data-i18n="removeBg.softness">Edge soften</label>
-        <input id="removeBgSoftness" type="range" min="0" max="80" value="18">
+        <input id="removeBgSoftness" type="range" min="0" max="100" value="28">
       </div>
       <div class="bg-preview" aria-hidden="true"></div>
     </div>
@@ -285,9 +285,12 @@
   function selectedImages(){return selectedObjects().filter(o=>o.type==='image'&&o.img)}
   function hexToRgb(hex){const s=String(hex||'#ffffff').replace('#','');const full=s.length===3?s.split('').map(c=>c+c).join(''):s;return [0,2,4].map(i=>parseInt(full.slice(i,i+2)||'ff',16))}
   function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
-  function sampleImageCorner(o){const c=canvasFromImage(o),d=c.getContext('2d').getImageData(0,0,1,1).data;return rgbToHex(d[0],d[1],d[2])}
-  function openRemoveBgDialog(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');$('removeBgColor').value=sampleImageCorner(imgs[0]);$('removeBgDialog').showModal()}
-  async function applyRemoveBg(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');const target=hexToRgb($('removeBgColor').value),tol=+$('removeBgTolerance').value||0,soft=+$('removeBgSoftness').value||0;const hard=Math.max(0,tol),falloff=Math.max(1,soft);snapshot();for(const o of imgs){let c=canvasFromImage(o);c=mapPixels(c,(r,g,b,a)=>{const dist=Math.hypot(r-target[0],g-target[1],b-target[2]);if(dist<=hard)return [r,g,b,0];if(dist<hard+falloff){const keep=(dist-hard)/falloff;return [r,g,b,a*keep]}return [r,g,b,a]});await commitImage(o,c)}$('removeBgDialog').close();setStatus('status.bgRemoved');render()}
+  function colorDist(d,i,target){const dr=d[i]-target[0],dg=d[i+1]-target[1],db=d[i+2]-target[2];return Math.sqrt(dr*dr*.75+dg*dg*1.15+db*db*.9)}
+  function sampleImageEdge(o){const c=canvasFromImage(o),cx=c.getContext('2d'),w=c.width,h=c.height,d=cx.getImageData(0,0,w,h).data,step=Math.max(1,Math.floor(Math.min(w,h)/48));let r=0,g=0,b=0,n=0;for(let x=0;x<w;x+=step){let i=x*4;r+=d[i];g+=d[i+1];b+=d[i+2];n++;i=((h-1)*w+x)*4;r+=d[i];g+=d[i+1];b+=d[i+2];n++}for(let y=0;y<h;y+=step){let i=(y*w)*4;r+=d[i];g+=d[i+1];b+=d[i+2];n++;i=(y*w+w-1)*4;r+=d[i];g+=d[i+1];b+=d[i+2];n++}return rgbToHex(r/n,g/n,b/n)}
+  function openRemoveBgDialog(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');$('removeBgColor').value=sampleImageEdge(imgs[0]);$('removeBgDialog').showModal()}
+  function unmixBackground(d,i,target,keep){if(keep>=.98)return;for(let ch=0;ch<3;ch++){d[i+ch]=Math.max(0,Math.min(255,(d[i+ch]-target[ch]*(1-keep))/Math.max(.2,keep)))}}
+  function removeConnectedBackground(c,target,hard,soft){const cx=c.getContext('2d'),img=cx.getImageData(0,0,c.width,c.height),d=img.data,w=c.width,h=c.height,total=w*h,limit=hard+Math.max(1,soft),bg=new Uint8Array(total),q=new Int32Array(total);let head=0,tail=0;function trySeed(p){const i=p*4;if(!bg[p]&&d[i+3]&&colorDist(d,i,target)<=limit){bg[p]=1;q[tail++]=p}}for(let x=0;x<w;x++){trySeed(x);trySeed((h-1)*w+x)}for(let y=0;y<h;y++){trySeed(y*w);trySeed(y*w+w-1)}while(head<tail){const p=q[head++],x=p%w,y=(p/w)|0,n=[p-1,p+1,p-w,p+w];for(let k=0;k<4;k++){const np=n[k];if((k===0&&x===0)||(k===1&&x===w-1)||(k===2&&y===0)||(k===3&&y===h-1)||np<0||np>=total||bg[np])continue;const i=np*4;if(d[i+3]&&colorDist(d,i,target)<=limit){bg[np]=1;q[tail++]=np}}}const featherRadius=Math.max(1,Math.round(1+soft/22));for(let p=0;p<total;p++){const i=p*4;if(!d[i+3])continue;const dist=colorDist(d,i,target);if(bg[p]){const keep=dist<=hard?0:Math.min(1,(dist-hard)/Math.max(1,soft));unmixBackground(d,i,target,keep);d[i+3]=Math.round(d[i+3]*keep)}else{const x=p%w,y=(p/w)|0;let near=false;for(let yy=Math.max(0,y-featherRadius);yy<=Math.min(h-1,y+featherRadius)&&!near;yy++){for(let xx=Math.max(0,x-featherRadius);xx<=Math.min(w-1,x+featherRadius);xx++){if(bg[yy*w+xx]){near=true;break}}}if(near&&dist<limit+soft){const keep=Math.max(.45,Math.min(1,(dist-hard)/Math.max(1,soft)));unmixBackground(d,i,target,keep);d[i+3]=Math.round(d[i+3]*keep)}}}cx.putImageData(img,0,0);return c}
+  async function applyRemoveBg(){const imgs=selectedImages();if(!imgs.length)return setStatus('status.needImages');const target=hexToRgb($('removeBgColor').value),tol=+$('removeBgTolerance').value||0,soft=+$('removeBgSoftness').value||0;snapshot();for(const o of imgs){await commitImage(o,removeConnectedBackground(canvasFromImage(o),target,Math.max(0,tol),Math.max(1,soft)))}$('removeBgDialog').close();setStatus('status.bgRemoved');render()}
   function avgColor(data,w,x,y,sw,sh){let r=0,g=0,b=0,n=0;const ex=Math.min(w,x+sw),ey=y+sh;for(let yy=y;yy<ey;yy+=2){for(let xx=x;xx<ex;xx+=2){const i=(yy*w+xx)*4;r+=data[i];g+=data[i+1];b+=data[i+2];n++}}return [r/n||0,g/n||0,b/n||0]}
   function mapPixels(c,fn){const cx=c.getContext('2d'),img=cx.getImageData(0,0,c.width,c.height),d=img.data;for(let i=0;i<d.length;i+=4){const p=fn(d[i],d[i+1],d[i+2],d[i+3],i);d[i]=p[0];d[i+1]=p[1];d[i+2]=p[2];d[i+3]=p[3]??d[i+3]}cx.putImageData(img,0,0);return c}
   function pixelate(c,block,grid=false){const cx=c.getContext('2d'),src=cx.getImageData(0,0,c.width,c.height),d=src.data;cx.clearRect(0,0,c.width,c.height);for(let y=0;y<c.height;y+=block){for(let x=0;x<c.width;x+=block){const [r,g,b]=avgColor(d,c.width,x,y,Math.min(block,c.width-x),Math.min(block,c.height-y));cx.fillStyle=`rgb(${r|0},${g|0},${b|0})`;cx.fillRect(x,y,block,block);if(grid){cx.strokeStyle='rgba(255,255,255,.38)';cx.lineWidth=Math.max(1,block*.08);cx.strokeRect(x+.5,y+.5,block-1,block-1)}}}return c}
