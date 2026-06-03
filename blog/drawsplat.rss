@@ -8,8 +8,26 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 02 Jun 2026 16:21:06 GMT</lastBuildDate>
+			<lastBuildDate>Tue, 02 Jun 2026 19:20:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.8 Update: More Tools, Cleaner Cards, and a Fresher Self-Host Zip</title>
+		<link>https://drawsplat.org/pages/release-notes.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.8 is packed with classroom-friendly polish. SplatImage Studio now has smoother paste handling, proportional arrowheads, better crop controls, shape masks, duplicate layers, layer transparency, text alignment, and a bigger Effects menu with mosaic, cubism, pixelate, blur/sharpen-style cleanup, lighten, and darken options. Quiz & Flashcard Studio gets clearer answer cards, so the answer stands out while extra explanation stays visually quieter. Concept Map Studio also gets friendlier import and editing controls, especially when working from Markdown or generated map content. The self-host zip has been rebuilt with the latest code, docs, legal/compliance pages, tools, and release notes, so schools and organizations can grab one current package and run DrawSplat on their own infrastructure. In short: fewer rough edges, more creative tools, and a nicer path for teachers who want the full DrawSplat experience in one download.]]></description>
+		<pubDate>Tue, 02 Jun 2026 19:20:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.8-general-update</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+	</item><item>
+		<title>DrawSplat Hub Update: A Protected Admin Space for Classroom, Campus, and District Instances</title>
+		<link>https://drawsplat.org/hub/</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /><br/>DrawSplat Hub now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances. The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators. The approved admin accounts are mguhlin@gmail.com and jeguhlin@gmail.com. From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor. That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.]]></description>
+		<pubDate>Tue, 02 Jun 2026 19:19:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.8-hub-update</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat-hub</category>
+	</item><item>
 		<title>ControlAltAchieve 💡 #171</title>
 		<link>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</link>
 		<description>&lt;img src="https://rdl.ink/render/https%3A%2F%2Fmailchi.mp%2Fcontrolaltachieve%2F9q6ttmhq5h-17999308%3Fe%3D%5BUNIQID%5D" /&gt;&lt;br/&gt;DrawSplat - Resource link

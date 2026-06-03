@@ -1,7 +1,8 @@
 name: Refresh blog RSS snapshot
 
-# Pulls the latest curated DrawSplat feed from Raindrop.io and commits
-# a fresh snapshot to blog/drawsplat.rss if posts actually changed.
+# Pulls the latest curated DrawSplat feed from Raindrop.io, preserves
+# local DrawSplat update items, and commits a fresh snapshot to
+# blog/drawsplat.rss if posts actually changed.
 # Keeps the rendered cards on /blog/ current without manual export.
 #
 # Subscribers to the live Raindrop feed (the Subscribe-via-RSS button
@@ -56,6 +57,46 @@ jobs:
             echo "Fetched feed has no <item> entries — refusing to commit." >&2
             exit 1
           fi
+
+      - name: Preserve local DrawSplat update items
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SNAPSHOT" ]; then
+            exit 0
+          fi
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          snapshot = Path("blog/drawsplat.rss")
+          new_snapshot = Path("blog/drawsplat.rss.new")
+          current = snapshot.read_text(encoding="utf-8")
+          fresh = new_snapshot.read_text(encoding="utf-8")
+
+          local_items = [
+              item for item in re.findall(r"<item>.*?</item>", current, flags=re.S)
+              if '<source url="https://drawsplat.org/">DrawSplat Updates</source>' in item
+          ]
+          if not local_items:
+              raise SystemExit(0)
+
+          def guid(item):
+              match = re.search(r"<guid(?:\s[^>]*)?>(.*?)</guid>", item, flags=re.S)
+              return match.group(1).strip() if match else ""
+
+          fresh_guids = {
+              guid(item) for item in re.findall(r"<item>.*?</item>", fresh, flags=re.S)
+          }
+          preserved = [item for item in local_items if guid(item) not in fresh_guids]
+          if not preserved:
+              raise SystemExit(0)
+
+          first_item = fresh.find("<item>")
+          if first_item == -1:
+              raise SystemExit("Fetched feed has no <item> entries after validation.")
+          fresh = fresh[:first_item] + "".join(preserved) + fresh[first_item:]
+          new_snapshot.write_text(fresh, encoding="utf-8")
+          PY
 
       - name: Decide whether to commit (ignores lastBuildDate churn)
         id: diff
