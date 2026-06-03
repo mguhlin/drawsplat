@@ -1,4 +1,4 @@
-/* SplatImage Studio locale dictionary. AI-seeded; native-speaker review pending. */
+/* SplatImage Studio locale dictionary. Native-speaker review pending. */
 WidgetI18n.register('splatimage-studio', {
   en: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -45,6 +45,7 @@ WidgetI18n.register('splatimage-studio', {
     'effect.pixelate': 'Pixelate',
     'effect.mosaic': 'Mosaic',
     'effect.cubism': 'Picasso cubism',
+    'effect.smartRemoveBg': 'Smart background cutout',
     'effect.removeBg': 'Remove edge background',
     'mask.circle': 'Circle',
     'mask.oval': 'Oval',
@@ -111,6 +112,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.crop': 'Canvas cropped.',
     'status.effect': 'Effect applied.',
     'status.bgRemoved': 'Background color removed.',
+    'status.smartBgLoading': 'Loading cutout tools. First run may take a little longer.',
+    'status.smartBgWorking': 'Cutting out background {n} of {total}.',
+    'status.smartBgRemoved': 'Background cutout applied.',
+    'status.smartBgFailed': 'Background cutout could not run. Try Remove edge background instead.',
     'status.layerAdded': 'Blank layer added.',
     'status.undo': 'Nothing to undo.',
     'status.redo': 'Nothing to redo.'
@@ -126,7 +131,7 @@ WidgetI18n.register('splatimage-studio', {
     'file.new': 'Nuevo lienzo', 'file.newLayer': 'Nueva capa', 'file.import': 'Importar imagen', 'file.paste': 'Pegar del portapapeles', 'file.exportPng': 'Exportar PNG', 'file.exportSelection': 'Exportar selección', 'file.copyPng': 'Copiar PNG', 'file.exportFrames': 'Exportar imágenes seleccionadas como cuadros', 'file.exportGif': 'Crear GIF con imágenes seleccionadas',
     'edit.undo': 'Deshacer', 'edit.redo': 'Rehacer', 'edit.duplicate': 'Duplicar', 'edit.delete': 'Eliminar', 'edit.group': 'Agrupar', 'edit.ungroup': 'Desagrupar', 'edit.front': 'Traer adelante', 'edit.back': 'Enviar atrás',
     'insert.text': 'Texto', 'insert.box': 'Cuadro', 'insert.arrow': 'Flecha', 'insert.line': 'Línea', 'insert.freehand': 'Mano alzada', 'insert.crop': 'Recortar',
-    'effect.grayscale': 'Escala de grises', 'effect.sepia': 'Sepia', 'effect.invert': 'Invertir', 'effect.blur': 'Desenfoque suave', 'effect.sharpen': 'Enfocar', 'effect.lighten': 'Aclarar', 'effect.darken': 'Oscurecer', 'effect.pixelate': 'Pixelar', 'effect.mosaic': 'Mosaico', 'effect.cubism': 'Cubismo Picasso',
+    'effect.grayscale': 'Escala de grises', 'effect.sepia': 'Sepia', 'effect.invert': 'Invertir', 'effect.blur': 'Desenfoque suave', 'effect.sharpen': 'Enfocar', 'effect.lighten': 'Aclarar', 'effect.darken': 'Oscurecer', 'effect.pixelate': 'Pixelar', 'effect.mosaic': 'Mosaico', 'effect.cubism': 'Cubismo Picasso', 'effect.smartRemoveBg': 'Recorte de fondo inteligente',
     'mask.circle': 'Círculo', 'mask.oval': 'Óvalo', 'mask.ellipse': 'Elipse', 'mask.square': 'Cuadrado', 'mask.rectangle': 'Rectángulo', 'mask.diamond': 'Diamante', 'mask.pentagon': 'Pentágono', 'mask.star': 'Estrella',
     'tool.select': 'Seleccionar', 'tool.pan': 'Mover vista', 'tool.freehand': 'Mano alzada', 'tool.line': 'Línea', 'tool.arrow': 'Flecha', 'tool.rect': 'Cuadro', 'tool.text': 'Texto', 'tool.crop': 'Recortar',
     'panel.tools': 'Herramientas', 'panel.style': 'Estilo', 'panel.layers': 'Capas', 'panel.frames': 'GIF + Cuadros',
@@ -134,7 +139,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Aplicar recorte', 'button.cancelCrop': 'Cancelar', 'button.clear': 'Borrar', 'button.fit': 'Ajustar', 'button.actual': '100%', 'button.exportGif': 'Exportar GIF', 'button.exportFrames': 'Exportar cuadros', 'button.addImages': 'Añadir imágenes',
     'stage.aria': 'Lienzo de SplatImage Studio', 'layers.empty': 'Aún no hay capas.', 'layer.duplicate': 'Duplicar capa',
     'hint': 'Consejos: pega capturas con Ctrl+V, arrastra imágenes, usa los tiradores para cambiar tamaño, mantén Shift para conservar proporciones y la rueda sobre texto seleccionado cambia su tamaño.',
-    'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.layerAdded': 'Capa en blanco agregada.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
+    'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.smartBgLoading': 'Cargando herramientas de recorte.', 'status.smartBgWorking': 'Recortando fondo {n} de {total}.', 'status.smartBgRemoved': 'Recorte de fondo aplicado.', 'status.smartBgFailed': 'No se pudo recortar el fondo. Prueba Quitar fondo por borde.', 'status.layerAdded': 'Capa en blanco agregada.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
   },
   vi: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -146,7 +151,7 @@ WidgetI18n.register('splatimage-studio', {
     'file.new': 'Khung moi', 'file.newLayer': 'Lop moi', 'file.import': 'Nhap anh', 'file.paste': 'Dan tu bo nho tam', 'file.exportPng': 'Xuat PNG', 'file.exportSelection': 'Xuat phan chon', 'file.copyPng': 'Sao chep PNG', 'file.exportFrames': 'Xuat anh da chon thanh khung', 'file.exportGif': 'Tao GIF tu anh da chon',
     'edit.undo': 'Hoan tac', 'edit.redo': 'Lam lai', 'edit.duplicate': 'Nhan doi', 'edit.delete': 'Xoa', 'edit.group': 'Nhom', 'edit.ungroup': 'Bo nhom', 'edit.front': 'Dua len', 'edit.back': 'Dua xuong',
     'insert.text': 'Van ban', 'insert.box': 'Hop', 'insert.arrow': 'Mui ten', 'insert.line': 'Duong', 'insert.freehand': 'Ve tay', 'insert.crop': 'Cat',
-    'effect.grayscale': 'Trang den', 'effect.sepia': 'Sepia', 'effect.invert': 'Dao mau', 'effect.blur': 'Lam mo nhe', 'effect.sharpen': 'Lam net', 'effect.lighten': 'Lam sang', 'effect.darken': 'Lam toi', 'effect.pixelate': 'Pixelate', 'effect.mosaic': 'Mosaic', 'effect.cubism': 'Picasso cubism',
+    'effect.grayscale': 'Trang den', 'effect.sepia': 'Sepia', 'effect.invert': 'Dao mau', 'effect.blur': 'Lam mo nhe', 'effect.sharpen': 'Lam net', 'effect.lighten': 'Lam sang', 'effect.darken': 'Lam toi', 'effect.pixelate': 'Pixelate', 'effect.mosaic': 'Mosaic', 'effect.cubism': 'Picasso cubism', 'effect.smartRemoveBg': 'Cat nen thong minh',
     'mask.circle': 'Hinh tron', 'mask.oval': 'Oval', 'mask.ellipse': 'Ellipse', 'mask.square': 'Hinh vuong', 'mask.rectangle': 'Hinh chu nhat', 'mask.diamond': 'Hinh thoi', 'mask.pentagon': 'Ngu giac', 'mask.star': 'Ngoi sao',
     'tool.select': 'Chon', 'tool.pan': 'Keo xem', 'tool.freehand': 'Ve tay', 'tool.line': 'Duong', 'tool.arrow': 'Mui ten', 'tool.rect': 'Hop', 'tool.text': 'Van ban', 'tool.crop': 'Cat',
     'panel.tools': 'Cong cu', 'panel.style': 'Kieu', 'panel.layers': 'Lop', 'panel.frames': 'GIF + Khung',
@@ -154,7 +159,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Ap dung cat', 'button.cancelCrop': 'Huy', 'button.clear': 'Xoa het', 'button.fit': 'Vua khung', 'button.actual': '100%', 'button.exportGif': 'Xuat GIF', 'button.exportFrames': 'Xuat khung', 'button.addImages': 'Them anh',
     'stage.aria': 'Khung ve SplatImage Studio', 'layers.empty': 'Chua co lop.', 'layer.duplicate': 'Nhan doi lop',
     'hint': 'Meo: Ctrl+V de dan anh chup, keo tha anh vao khung, keo tay nam de doi kich thuoc, giu Shift de giu ti le, lan chuot tren van ban da chon de doi co chu.',
-    'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.layerAdded': 'Da them lop trong.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
+    'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.smartBgLoading': 'Dang tai cong cu cat nen.', 'status.smartBgWorking': 'Dang cat nen {n}/{total}.', 'status.smartBgRemoved': 'Da cat nen.', 'status.smartBgFailed': 'Khong cat nen duoc. Hay thu Remove edge background.', 'status.layerAdded': 'Da them lop trong.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
   },
   ar: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -166,7 +171,7 @@ WidgetI18n.register('splatimage-studio', {
     'file.new': 'لوحة جديدة', 'file.newLayer': 'طبقة جديدة', 'file.import': 'استيراد صورة', 'file.paste': 'لصق من الحافظة', 'file.exportPng': 'تصدير PNG', 'file.exportSelection': 'تصدير التحديد', 'file.copyPng': 'نسخ PNG', 'file.exportFrames': 'تصدير الصور المحددة كاطارات', 'file.exportGif': 'انشاء GIF من الصور المحددة',
     'edit.undo': 'تراجع', 'edit.redo': 'اعادة', 'edit.duplicate': 'تكرار', 'edit.delete': 'حذف', 'edit.group': 'تجميع', 'edit.ungroup': 'فك التجميع', 'edit.front': 'للامام', 'edit.back': 'للخلف',
     'insert.text': 'نص', 'insert.box': 'مربع', 'insert.arrow': 'سهم', 'insert.line': 'خط', 'insert.freehand': 'رسم حر', 'insert.crop': 'قص',
-    'effect.grayscale': 'رمادي', 'effect.sepia': 'بني', 'effect.invert': 'عكس الالوان', 'effect.blur': 'تمويه خفيف', 'effect.sharpen': 'زيادة الحدة', 'effect.lighten': 'تفتيح', 'effect.darken': 'تغميق', 'effect.pixelate': 'بكسلة', 'effect.mosaic': 'فسيفساء', 'effect.cubism': 'تكعيبية بيكاسو',
+    'effect.grayscale': 'رمادي', 'effect.sepia': 'بني', 'effect.invert': 'عكس الالوان', 'effect.blur': 'تمويه خفيف', 'effect.sharpen': 'زيادة الحدة', 'effect.lighten': 'تفتيح', 'effect.darken': 'تغميق', 'effect.pixelate': 'بكسلة', 'effect.mosaic': 'فسيفساء', 'effect.cubism': 'تكعيبية بيكاسو', 'effect.smartRemoveBg': 'قص الخلفية الذكي',
     'mask.circle': 'دائرة', 'mask.oval': 'بيضاوي', 'mask.ellipse': 'قطع ناقص', 'mask.square': 'مربع', 'mask.rectangle': 'مستطيل', 'mask.diamond': 'معين', 'mask.pentagon': 'خماسي', 'mask.star': 'نجمة',
     'tool.select': 'تحديد', 'tool.pan': 'تحريك', 'tool.freehand': 'رسم حر', 'tool.line': 'خط', 'tool.arrow': 'سهم', 'tool.rect': 'مربع', 'tool.text': 'نص', 'tool.crop': 'قص',
     'panel.tools': 'ادوات', 'panel.style': 'نمط', 'panel.layers': 'طبقات', 'panel.frames': 'GIF + اطارات',
@@ -174,7 +179,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'تطبيق القص', 'button.cancelCrop': 'الغاء', 'button.clear': 'مسح', 'button.fit': 'ملاءمة', 'button.actual': '100%', 'button.exportGif': 'تصدير GIF', 'button.exportFrames': 'تصدير اطارات', 'button.addImages': 'اضافة صور',
     'stage.aria': 'لوحة SplatImage Studio', 'layers.empty': 'لا توجد طبقات.', 'layer.duplicate': 'تكرار الطبقة',
     'hint': 'نصائح: الصق لقطات الشاشة ب Ctrl+V واسحب الصور للوحة واسحب المقابض لتغيير الحجم واضغط Shift للحفاظ على النسبة.',
-    'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.layerAdded': 'تمت اضافة طبقة فارغة.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
+    'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.smartBgLoading': 'يتم تحميل ادوات القص.', 'status.smartBgWorking': 'يتم قص الخلفية {n} من {total}.', 'status.smartBgRemoved': 'تم قص الخلفية.', 'status.smartBgFailed': 'تعذر قص الخلفية. جرب ازالة خلفية الحواف.', 'status.layerAdded': 'تمت اضافة طبقة فارغة.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
   },
   zh: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -186,7 +191,7 @@ WidgetI18n.register('splatimage-studio', {
     'file.new': '新画布', 'file.newLayer': '新图层', 'file.import': '导入图片', 'file.paste': '从剪贴板粘贴', 'file.exportPng': '导出 PNG', 'file.exportSelection': '导出所选', 'file.copyPng': '复制 PNG', 'file.exportFrames': '所选图片导出为帧', 'file.exportGif': '用所选图片创建 GIF',
     'edit.undo': '撤销', 'edit.redo': '重做', 'edit.duplicate': '复制', 'edit.delete': '删除', 'edit.group': '组合', 'edit.ungroup': '取消组合', 'edit.front': '上移', 'edit.back': '下移',
     'insert.text': '文字', 'insert.box': '方框', 'insert.arrow': '箭头', 'insert.line': '直线', 'insert.freehand': '自由绘制', 'insert.crop': '裁剪',
-    'effect.grayscale': '灰度', 'effect.sepia': '复古', 'effect.invert': '反色', 'effect.blur': '柔和模糊', 'effect.sharpen': '锐化', 'effect.lighten': '变亮', 'effect.darken': '变暗', 'effect.pixelate': '像素化', 'effect.mosaic': '马赛克', 'effect.cubism': '毕加索立体派',
+    'effect.grayscale': '灰度', 'effect.sepia': '复古', 'effect.invert': '反色', 'effect.blur': '柔和模糊', 'effect.sharpen': '锐化', 'effect.lighten': '变亮', 'effect.darken': '变暗', 'effect.pixelate': '像素化', 'effect.mosaic': '马赛克', 'effect.cubism': '毕加索立体派', 'effect.smartRemoveBg': '智能背景抠图',
     'mask.circle': '圆形', 'mask.oval': '椭圆', 'mask.ellipse': '椭圆形', 'mask.square': '正方形', 'mask.rectangle': '长方形', 'mask.diamond': '菱形', 'mask.pentagon': '五边形', 'mask.star': '星形',
     'tool.select': '选择', 'tool.pan': '平移', 'tool.freehand': '自由绘制', 'tool.line': '直线', 'tool.arrow': '箭头', 'tool.rect': '方框', 'tool.text': '文字', 'tool.crop': '裁剪',
     'panel.tools': '工具', 'panel.style': '样式', 'panel.layers': '图层', 'panel.frames': 'GIF + 帧',
@@ -194,7 +199,7 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': '应用裁剪', 'button.cancelCrop': '取消', 'button.clear': '清空', 'button.fit': '适合', 'button.actual': '100%', 'button.exportGif': '导出 GIF', 'button.exportFrames': '导出帧', 'button.addImages': '添加图片',
     'stage.aria': 'SplatImage Studio 画布', 'layers.empty': '还没有图层。', 'layer.duplicate': '复制图层',
     'hint': '提示：Ctrl+V 粘贴截图，拖放图片，拖动控制点调整大小，按住 Shift 保持比例，鼠标滚轮可调整所选文字大小。',
-    'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.layerAdded': '已添加空白图层。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
+    'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.smartBgLoading': '正在加载抠图工具。', 'status.smartBgWorking': '正在抠背景 {n}/{total}。', 'status.smartBgRemoved': '背景抠图已应用。', 'status.smartBgFailed': '背景抠图无法运行。请尝试边缘背景移除。', 'status.layerAdded': '已添加空白图层。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
   },
   uh: {
     'doc.title': 'SplatImage Studio - DrawSplat',
@@ -206,7 +211,7 @@ WidgetI18n.register('splatimage-studio', {
     'file.new': 'New canvas', 'file.newLayer': 'New layer', 'file.import': 'Import image', 'file.paste': 'Clipboard se paste', 'file.exportPng': 'PNG export', 'file.exportSelection': 'Selection export', 'file.copyPng': 'PNG copy', 'file.exportFrames': 'Selected images frames banaye', 'file.exportGif': 'Selected images se GIF banaye',
     'edit.undo': 'Undo', 'edit.redo': 'Redo', 'edit.duplicate': 'Duplicate', 'edit.delete': 'Delete', 'edit.group': 'Group', 'edit.ungroup': 'Ungroup', 'edit.front': 'Aage lao', 'edit.back': 'Peeche bhejo',
     'insert.text': 'Text', 'insert.box': 'Box', 'insert.arrow': 'Arrow', 'insert.line': 'Line', 'insert.freehand': 'Freehand', 'insert.crop': 'Crop',
-    'effect.grayscale': 'Grayscale', 'effect.sepia': 'Sepia', 'effect.invert': 'Invert', 'effect.blur': 'Soft blur', 'effect.sharpen': 'Sharpen', 'effect.lighten': 'Lighten', 'effect.darken': 'Darken', 'effect.pixelate': 'Pixelate', 'effect.mosaic': 'Mosaic', 'effect.cubism': 'Picasso cubism',
+    'effect.grayscale': 'Grayscale', 'effect.sepia': 'Sepia', 'effect.invert': 'Invert', 'effect.blur': 'Soft blur', 'effect.sharpen': 'Sharpen', 'effect.lighten': 'Lighten', 'effect.darken': 'Darken', 'effect.pixelate': 'Pixelate', 'effect.mosaic': 'Mosaic', 'effect.cubism': 'Picasso cubism', 'effect.smartRemoveBg': 'Smart background cutout',
     'mask.circle': 'Circle', 'mask.oval': 'Oval', 'mask.ellipse': 'Ellipse', 'mask.square': 'Square', 'mask.rectangle': 'Rectangle', 'mask.diamond': 'Diamond', 'mask.pentagon': 'Pentagon', 'mask.star': 'Star',
     'tool.select': 'Select', 'tool.pan': 'Pan', 'tool.freehand': 'Freehand', 'tool.line': 'Line', 'tool.arrow': 'Arrow', 'tool.rect': 'Box', 'tool.text': 'Text', 'tool.crop': 'Crop',
     'panel.tools': 'Tools', 'panel.style': 'Style', 'panel.layers': 'Layers', 'panel.frames': 'GIF + Frames',
@@ -214,6 +219,6 @@ WidgetI18n.register('splatimage-studio', {
     'button.applyCrop': 'Apply crop', 'button.cancelCrop': 'Cancel', 'button.clear': 'Clear', 'button.fit': 'Fit', 'button.actual': '100%', 'button.exportGif': 'Export GIF', 'button.exportFrames': 'Export Frames', 'button.addImages': 'Add Images',
     'stage.aria': 'SplatImage Studio canvas', 'layers.empty': 'Abhi layers nahi hain.', 'layer.duplicate': 'Duplicate layer',
     'hint': 'Tips: Ctrl+V se screenshot paste karein, images drag karein, handles se resize karein, Shift pakad kar proportions rakhein, aur selected text par mouse wheel size badalta hai.',
-    'status.ready': 'Ready.', 'status.imported': '{n} image import hui.', 'status.pasted': 'Image paste hui.', 'status.exported': 'PNG export hua.', 'status.copied': 'PNG copy hua.', 'status.needSelection': 'Pehle object select karein.', 'status.needImages': 'Pehle image layers select karein.', 'status.gif': '{n} frames se GIF export hua.', 'status.frames': '{n} frame files download hui.', 'status.crop': 'Canvas crop hua.', 'status.effect': 'Effect apply hua.', 'status.layerAdded': 'Blank layer add hua.', 'status.undo': 'Undo ke liye kuch nahi.', 'status.redo': 'Redo ke liye kuch nahi.'
+    'status.ready': 'Ready.', 'status.imported': '{n} image import hui.', 'status.pasted': 'Image paste hui.', 'status.exported': 'PNG export hua.', 'status.copied': 'PNG copy hua.', 'status.needSelection': 'Pehle object select karein.', 'status.needImages': 'Pehle image layers select karein.', 'status.gif': '{n} frames se GIF export hua.', 'status.frames': '{n} frame files download hui.', 'status.crop': 'Canvas crop hua.', 'status.effect': 'Effect apply hua.', 'status.smartBgLoading': 'Cutout tools load ho rahe hain.', 'status.smartBgWorking': 'Background cutout {n}/{total}.', 'status.smartBgRemoved': 'Background cutout apply hua.', 'status.smartBgFailed': 'Background cutout nahi chala. Remove edge background try karein.', 'status.layerAdded': 'Blank layer add hua.', 'status.undo': 'Undo ke liye kuch nahi.', 'status.redo': 'Redo ke liye kuch nahi.'
   }
 });
