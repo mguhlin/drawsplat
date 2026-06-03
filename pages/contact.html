@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>Contact / Information Request | DrawSplatTM</title>
-<meta name="description" content="Send a question, request information, or ask for a quote for DrawSplatTM setup, professional learning, compliance review, or custom development. Submissions land directly in the project's request tracker — no email required." />
+<meta name="description" content="Send a question, request information, or ask for a quote for DrawSplatTM setup, professional learning, compliance review, or custom development." />
 <link rel="canonical" href="https://drawsplat.org/pages/contact.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
@@ -127,10 +127,10 @@
     <div class="landing-hero-copy">
       <p class="landing-eyebrow">Contact / Information Request</p>
       <h1>Ask a question or request a quote.</h1>
-      <p class="landing-lede">Use this form for anything that isn&rsquo;t a parent data request (those go to <a href="../parents/index.html">Family Access Tools</a>). Submissions land in the DrawSplat<sup class="tm">TM</sup> request tracker. No email is required &mdash; the school&rsquo;s designated admin reviews the request and replies.</p>
+      <p class="landing-lede">Use this form for anything that isn&rsquo;t a parent data request (those go to <a href="../parents/index.html">Family Access Tools</a>). Requests route to the DrawSplat<sup class="tm">TM</sup> project contact inbox for follow-up.</p>
     </div>
     <div class="landing-hero-art image-hero" aria-hidden="true">
-      <img src="../assets/brand/DrawSplat_Contact.png" alt="Contact / Information Request in DrawSplatTM — four-step flow: 1 Ask a Question, 2 Request a Quote, 3 Admin Review, 4 Reply from School. Requests go to the DrawSplatTM request tracker; no email required." width="1672" height="941" style="width:100%;height:auto;display:block">
+      <img src="../assets/brand/DrawSplat_Contact.png" alt="Contact / Information Request in DrawSplatTM — four-step flow: 1 Ask a Question, 2 Request a Quote, 3 Admin Review, 4 Reply from DrawSplat. Requests route to the project contact address." width="1672" height="941" style="width:100%;height:auto;display:block">
     </div>
   </section>
 
@@ -184,8 +184,8 @@
       <h2>How requests are handled</h2>
     </div>
     <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
-      <li>Your request is written to the project&rsquo;s Google Sheet (the same data store every other DrawSplat<sup class="tm">TM</sup> compliance form uses).</li>
-      <li>The configured compliance admin gets an email notification.</li>
+      <li>If the public Apps Script endpoint is configured, your request is written to the project&rsquo;s Google Sheet and an email notification is sent.</li>
+      <li>If the endpoint is not configured in this browser yet, the form opens a prefilled email addressed to the DrawSplat<sup class="tm">TM</sup> project contact inbox.</li>
       <li>A real person reads it and replies at the email you provided.</li>
       <li>If you asked for a quote on Support &amp; Professional Learning, you&rsquo;ll get a scope outline plus pricing options.</li>
     </ol>
@@ -200,6 +200,6 @@
   <a href="../legal/terms-privacy.html">Privacy</a>
 </footer>
 
-<script src="../assets/js/contact.js?v=0.1"></script><script src="../assets/js/consent-banner.js" defer></script>
+<script src="../assets/js/contact.js?v=0.2"></script><script src="../assets/js/consent-banner.js" defer></script>
 </body>
 </html>

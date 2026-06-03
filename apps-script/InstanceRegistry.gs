@@ -12,7 +12,7 @@
  * - INSTANCE_SESSION_SECRET: long random secret, or let setup() create one.
  * - INSTANCE_hubcampus_SETUP_PASSWORD: one-time password for the DrawSplat Hub Campus admin.
  * - HUB_ADMIN_EMAILS: comma-separated Hub admin emails. Default:
- *   drawsplat@gmail.com,jeguhlin@gmail.com.
+ *   mguhlin@gmail.com,jeguhlin@gmail.com.
  *
  * Optional:
  * - INSTANCE_ALLOWED_ORIGINS: comma-separated origins allowed by policy docs.
@@ -282,7 +282,7 @@ function requireHubAdminSession_(payload) {
 }
 
 function hubAdminEmails_() {
-  const raw = clean_(PropertiesService.getScriptProperties().getProperty('HUB_ADMIN_EMAILS')) || 'drawsplat@gmail.com,jeguhlin@gmail.com';
+  const raw = clean_(PropertiesService.getScriptProperties().getProperty('HUB_ADMIN_EMAILS')) || 'mguhlin@gmail.com,jeguhlin@gmail.com';
   return raw.split(',').map(function(s) { return clean_(s).toLowerCase(); }).filter(Boolean);
 }
 

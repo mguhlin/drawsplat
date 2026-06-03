@@ -1,11 +1,12 @@
 /* DrawSplat contact / information request form.
-   Posts to the same Apps Script Web App used by the rest of the site.
-   The Web App URL is stored once per browser in localStorage by an
-   administrator. If it isn't configured locally, the form falls back
-   to a clear "ask the school admin to set this up" message — the
-   form will not silently fail. */
+   Posts to the same Apps Script Web App used by the rest of the site when
+   configured. If no endpoint is available, it opens a prefilled email draft
+   so the public site still has a working contact path. */
 (function(){
   const STORAGE_KEY='drawsplat.googleScriptUrl';
+  const DEFAULT_CONTACT_SCRIPT_URL='PUT CONTACT APPS SCRIPT WEB APP URL HERE';
+  const CONTACT_SCRIPT_URL_PLACEHOLDER='PUT CONTACT APPS SCRIPT WEB APP URL HERE';
+  const CONTACT_EMAIL='mguhlin@gmail.com';
   const form=document.getElementById('contactForm');
   if(!form) return;
   const status=document.getElementById('contactStatus');
@@ -21,7 +22,25 @@
     status.style.color = kind==='error' ? '#b91c1c' : (kind==='ok' ? '#16a34a' : '');
   }
   function getScriptUrl(){
-    try{ return (localStorage.getItem(STORAGE_KEY)||'').trim(); }catch(e){ return ''; }
+    let local='';
+    try{ local=(localStorage.getItem(STORAGE_KEY)||'').trim(); }catch(e){}
+    const fallback=(DEFAULT_CONTACT_SCRIPT_URL||'').trim();
+    const url=local||fallback;
+    return url===CONTACT_SCRIPT_URL_PLACEHOLDER?'':url;
+  }
+  function openEmailFallback(payload){
+    const subject='DrawSplat contact request: '+payload.topic;
+    const body=[
+      'Name: '+payload.name,
+      'Email: '+payload.email,
+      'Organization: '+(payload.organization||''),
+      'Role: '+(payload.role||''),
+      'Topic: '+payload.topic,
+      'Source page: '+payload.sourcePage,
+      '',
+      payload.details
+    ].join('\n');
+    location.href='mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   }
   form.addEventListener('submit',async function(ev){
     ev.preventDefault();
@@ -41,7 +60,8 @@
     }
     const url=getScriptUrl();
     if(!url){
-      setStatus('This site has no backend configured in this browser. Ask the school’s administrator to paste the Apps Script Web App URL into Teacher Admin → Google Drive + Sheets. They only need to do it once.','error');
+      openEmailFallback(payload);
+      setStatus('Opening your email app with this request addressed to '+CONTACT_EMAIL+'.','ok');
       return;
     }
     submitBtn.disabled=true;

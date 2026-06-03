@@ -1067,7 +1067,7 @@ Mobile & responsive fixes
 - The `[hidden]` HTML attribute now wins over `display: inline-flex` from the icon-button class so genuinely-hidden buttons stay hidden.
 
 Attribution
-- About dialog credit changed from "Created by" to **"Vibe-coded by DrawSplat Administrator (drawsplat@gmail.com)"**.
+- About dialog credit changed from "Created by" to **"Vibe-coded by DrawSplat Administrator (mguhlin@gmail.com)"**.
 - New **License** paragraph in the About dialog.
 
 Migration notes

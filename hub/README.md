@@ -46,9 +46,9 @@ The public splash page stays visible at `hub/index.html`. The live dashboard and
 Production admin access must use the Apps Script registry, not browser-only checks. Configure:
 
 - `hub/config.json` → `instanceRegistryUrl`
-- `hub/config.json` → `googleClientId`
-- Apps Script property `GOOGLE_CLIENT_ID`
-- Apps Script property `HUB_ADMIN_EMAILS=drawsplat@gmail.com,jeguhlin@gmail.com`
+- `hub/config.json` → `googleClientId` from the Google Cloud project owned by `mguhlin@gmail.com`
+- Apps Script property `GOOGLE_CLIENT_ID` with that same OAuth client ID
+- Apps Script property `HUB_ADMIN_EMAILS=mguhlin@gmail.com,jeguhlin@gmail.com`
 
 The registry verifies the Google ID token server-side and only returns dashboard data to approved Hub admins.
 
