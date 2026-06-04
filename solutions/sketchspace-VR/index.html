@@ -136,11 +136,12 @@ button.danger{background:var(--danger)}
       <div>
         <label for="starterLayout" data-i18n="field.starterLayout">Starter layout</label>
         <select id="starterLayout">
-          <option value="lifeCycle" data-i18n="starter.lifeCycle">Life cycle room</option>
-          <option value="cellModel" data-i18n="starter.cellModel">Plant cell model</option>
-          <option value="algebra" data-i18n="starter.algebra">Algebra walkthrough</option>
-          <option value="country" data-i18n="starter.country">Country profile</option>
-          <option value="story" data-i18n="starter.story">Story setting and evidence</option>
+          <option value="citizenship" data-i18n="starter.citizenship">Citizenship</option>
+          <option value="ecosystems" data-i18n="starter.ecosystems">Ecosystems and adaptations</option>
+          <option value="geography" data-i18n="starter.geography">Geography</option>
+          <option value="history" data-i18n="starter.history">History</option>
+          <option value="lifeCycles" data-i18n="starter.lifeCycles">Life cycles</option>
+          <option value="weatherWater" data-i18n="starter.weatherWater">Weather and water cycle</option>
         </select>
         <div class="help" data-i18n="field.starterLayout.help">Load a curriculum example, then redraw or replace each panel with your own work.</div>
       </div>
@@ -209,7 +210,7 @@ button.danger{background:var(--danger)}
     en: {
       'doc.title':'SketchSpace VR | DrawSplat Tools','header.eyebrow':'DrawSplat<sup>TM</sup> Tools','header.h1':'SketchSpace VR','header.subtitle':'Print a cube-room template, let students draw each panel, photograph the finished page, and turn it into an interactive virtual room in the browser.','header.allTools':'All Tools','header.home':'Home',
       'workflow.title':'Classroom workflow','workflow.print.title':'1. Print','workflow.print.body':'Use the built-in cube-room template.','workflow.draw.title':'2. Draw','workflow.draw.body':'Students sketch, label, color, or collage the six panels.','workflow.upload.title':'3. Upload','workflow.upload.body':'Take a photo, crop to the outside border, and load it here.','workflow.explore.title':'4. Explore','workflow.explore.body':'Drag, rotate, use fullscreen, or try split-view mode.',
-      'build.title':'Build the room','button.printTemplate':'Print student template','field.upload':'Upload photographed template','field.upload.help':'Best result: crop the photo to the outside rectangle of the printed net before uploading. Use the trim sliders below if needed.','field.layout':'Template layout','layout.cross':'Four by three cube net: left, front, right, back, top, bottom','layout.strip':'Six-panel strip: left, front, right, back, top, bottom','field.trimLeft':'Trim left','field.trimRight':'Trim right','field.trimTop':'Trim top','field.trimBottom':'Trim bottom','button.createRoom':'Create room','button.demo':'Load demo','field.starterLayout':'Starter layout','field.starterLayout.help':'Load a curriculum example, then redraw or replace each panel with your own work.','starter.lifeCycle':'Life cycle room','starter.cellModel':'Plant cell model','starter.algebra':'Algebra walkthrough','starter.country':'Country profile','starter.story':'Story setting and evidence','button.loadStarter':'Load starter layout','button.downloadFaces':'Download face set','button.reset':'Reset','button.teacherGuide':'Teacher guide and lesson ideas','button.teacherGuideShort':'Teacher guide','privacy.note':'Privacy note: images stay in this browser. This page does not upload student work anywhere.',
+      'build.title':'Build the room','button.printTemplate':'Print student template','field.upload':'Upload photographed template','field.upload.help':'Best result: crop the photo to the outside rectangle of the printed net before uploading. Use the trim sliders below if needed.','field.layout':'Template layout','layout.cross':'Four by three cube net: left, front, right, back, top, bottom','layout.strip':'Six-panel strip: left, front, right, back, top, bottom','field.trimLeft':'Trim left','field.trimRight':'Trim right','field.trimTop':'Trim top','field.trimBottom':'Trim bottom','button.createRoom':'Create room','button.demo':'Load demo','field.starterLayout':'Starter layout','field.starterLayout.help':'Load a curriculum example, then redraw or replace each panel with your own work.','starter.citizenship':'Citizenship','starter.ecosystems':'Ecosystems and adaptations','starter.geography':'Geography','starter.history':'History','starter.lifeCycles':'Life cycles','starter.weatherWater':'Weather and water cycle','button.loadStarter':'Load starter layout','button.downloadFaces':'Download face set','button.reset':'Reset','button.teacherGuide':'Teacher guide and lesson ideas','button.teacherGuideShort':'Teacher guide','privacy.note':'Privacy note: images stay in this browser. This page does not upload student work anywhere.',
       'preview.title':'Crop preview','preview.canvas':'Uploaded template preview','preview.help':'The highlighted boxes show which parts of the uploaded page become the walls, ceiling, and floor.','viewer.title':'Virtual experience','button.zoomIn':'Zoom in','button.zoomOut':'Zoom out','button.hideLabels':'Hide labels','button.showLabels':'Show labels','button.splitView':'Split view','button.singleView':'Single view','button.vrGlasses':'VR glasses','button.exitVr':'Exit VR','button.motionLook':'Motion look','button.motionOn':'Motion on','button.fullscreen':'Fullscreen','status.ready':'Load a drawing or try the demo.','viewer.hint':'Drag to look around. Use arrow keys to rotate. Fullscreen works well on a projector. VR glasses mode creates a phone-cardboard style view.','vr.leftEye':'Left eye','vr.rightEye':'Right eye','vr.help':'Place phone sideways in VR viewer. Tap VR glasses again to exit.',
       'uses.title':'Suggested student uses','uses.science.title':'Science','uses.science.body':'Cell parts, habitats, water cycle, ecosystems','uses.math.title':'Math','uses.math.body':'Coordinate grids, geometry vocabulary, equation steps','uses.ela.title':'ELA','uses.ela.body':'Story setting, sequencing, character evidence','uses.social.title':'Social studies','uses.social.body':'Museum room, historical place, country profile',
       'print.title':'SketchSpace VR Student Template','print.instructions':'Draw inside the six white panels. Keep the outside border visible when photographing. Crop to the outside border before uploading.','print.studentTask':'Student task:','print.studentTask.body':'Create a clear six-panel learning room. Use color, simple labels, and large drawings. Large shapes work better than tiny writing.','face.ceiling':'Ceiling','face.floor':'Floor','face.leftWall':'Left Wall','face.frontWall':'Front Wall','face.rightWall':'Right Wall','face.backWall':'Back Wall',
@@ -284,7 +285,7 @@ button.danger{background:var(--danger)}
     c.strokeStyle='#111'; c.lineWidth=3; c.strokeRect(rect.x,rect.y,rect.w,rect.h);
   }
   function drawStarterLayout(kind){
-    const src = starterLayouts[kind] || starterLayouts.lifeCycle;
+    const src = starterLayouts[kind] || starterLayouts.citizenship;
     const starterImage = new Image();
     starterImage.onload = () => {
       img = null;
@@ -320,11 +321,12 @@ button.danger{background:var(--danger)}
     starterImage.src = src;
   }
   const starterLayouts = {
-    lifeCycle: 'assets/life-cycle.png',
-    cellModel: 'assets/plant-cell-model.png',
-    algebra: 'assets/algebra-walkthrough.png',
-    country: 'assets/country-profile.png',
-    story: 'assets/story-setting-evidence.png'
+    citizenship: 'assets/citizenship.png',
+    ecosystems: 'assets/ecosystems-adaptations.png',
+    geography: 'assets/geography.png',
+    history: 'assets/history.png',
+    lifeCycles: 'assets/life-cycles.png',
+    weatherWater: 'assets/weather-water-cycle.png'
   };
   function extractFaces(){
     const rect = cropRect(), map = faceMap(rect), out = {};
