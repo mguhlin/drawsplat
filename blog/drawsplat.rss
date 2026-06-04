@@ -8,8 +8,18 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 04 Jun 2026 13:12:31 GMT</lastBuildDate>
+			<lastBuildDate>Thu, 04 Jun 2026 14:06:05 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat Update: SketchSpace VR Turns Student Drawings into Virtual Rooms</title>
+		<link>https://drawsplat.org/solutions/sketchspace-VR/</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>SketchSpace VR is now available from the DrawSplat Tools dropdown as a standalone classroom solution. Students can print a one-page cube-room template, draw or label six panels, photograph the finished page, and explore the result as an interactive virtual room in the browser. The tool includes privacy-friendly local image handling, crop preview, trim controls, fullscreen viewing, split-view, phone viewer mode, and a language picker. To help students get started, SketchSpace VR also includes five curriculum starter layouts: life cycle room, plant cell model, algebra walkthrough, country profile, and story setting with evidence. A separate teacher guide provides setup notes, lesson ideas, examples, assessment prompts, sharing guidance, and links to the TCEA Panoform posts that inspired this paper-first virtual reality workflow.]]></description>
+		<pubDate>Thu, 04 Jun 2026 14:06:05 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-update-sketchspace-vr</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>drawsplat</category>
+		<category>drawsplat-tools</category>
+		<category>sketchspace-vr</category>
+	</item><item>
 		<title>DrawSplat v3.1.8 Update: More Tools, Cleaner Cards, and a Fresher Self-Host Zip</title>
 		<link>https://drawsplat.org/pages/release-notes.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.8 is packed with classroom-friendly polish. SplatImage Studio now has smoother paste handling, proportional arrowheads, better crop controls, shape masks, duplicate layers, layer transparency, text alignment, and a bigger Effects menu with mosaic, cubism, pixelate, blur/sharpen-style cleanup, lighten, and darken options. Quiz & Flashcard Studio gets clearer answer cards, so the answer stands out while extra explanation stays visually quieter. Concept Map Studio also gets friendlier import and editing controls, especially when working from Markdown or generated map content. The self-host zip has been rebuilt with the latest code, docs, legal/compliance pages, tools, and release notes, so schools and organizations can grab one current package and run DrawSplat on their own infrastructure. In short: fewer rough edges, more creative tools, and a nicer path for teachers who want the full DrawSplat experience in one download.]]></description>
