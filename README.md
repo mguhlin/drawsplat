@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.8, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
+- **Status:** v3.1.9, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
 - **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
 
 ## Getting started
@@ -29,7 +29,16 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.8 — Latest self-host bundle with SplatImage Studio, Concept Map Markdown/text controls, and Quiz & Flashcard Studio science sample sets.** SplatImage Studio is included as a standalone browser-only image editor with resize and crop handles. Concept Map Studio adds Markdown import, text controls, dropdown menus, selected-node editing polish, and improved import collision layout. Quiz & Flashcard Studio now includes selectable Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets. The self-host download page and bundle are refreshed for the latest classroom tools. Pinned as a GitHub release: [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8). Previous milestones: [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.9 — Latest self-host bundle with SketchSpace VR, SplatImage Studio cutout/text upgrades, and the current classroom tools set.** SketchSpace VR is included as a standalone paper-first virtual-room tool with a student template, crop preview, curriculum starter layouts, Play examples, and a teacher guide. SplatImage Studio adds richer text controls, Canva-friendly clipboard image workflows, selected-object copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. The self-host download page and bundle are refreshed for the latest classroom tools. Pinned as a GitHub release: [v3.1.9](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.9). Previous milestones: [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8) (SplatImage Studio, DrawSplat Hub, Concept Map Markdown/text controls, Quiz science sample sets), [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.9)
+
+- **SketchSpace VR.** Added `solutions/sketchspace-VR/`, a standalone DrawSplat Tool for printing a flat 4x3 room template, drawing six active panels, photographing the page, uploading it, and exploring the result as a virtual room in the browser.
+- **SketchSpace VR teaching materials.** Added a Teacher Guide, Play examples page, image prompt pattern, curriculum starter guidance, full-screen starter links, corrected process visual, and six image-backed curriculum starters for citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle.
+- **SplatImage Studio text workflow.** Replaced the simple text-label flow with a richer text dialog that supports adjustable font size, bold, italic, underline, alignment, and live preview before insertion.
+- **SplatImage Studio background cutout.** Added Smart background cutout and Remove edge background actions, kept the interface free of AI labeling, and added a visible Working dialog during longer cutout processing.
+- **SplatImage Studio clipboard and export polish.** Improved image paste/import for copied images from tools such as Canva and kept selected-object PNG copy/export focused on the selected object bounds.
+- **Blog RSS refresh.** Updated the bundled blog RSS snapshot with the latest DrawSplat release/update items for self-hosted copies.
 
 ## Recent improvements (v3.1.8)
 
@@ -186,8 +195,10 @@ timeline
          : Markdown Studio URL allowlist + attribute escaping; refreshed self-host docs and bundle
          : Concept Map Studio full-width canvas layout + localized T-Chart template
          : Quiz & Flashcard Studio standalone widget + versioned CSV/JSON import templates
-  v3.1.8 : Latest classroom tools self-host bundle
+  v3.1.8 : Classroom tools self-host bundle
          : SplatImage Studio, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
+  v3.1.9 : Latest classroom tools self-host bundle
+         : SketchSpace VR, SplatImage text/cutout/clipboard upgrades, current blog RSS snapshot
 ```
 
 ## Included files
@@ -268,7 +279,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the v3.1.8 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the v3.1.9 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 

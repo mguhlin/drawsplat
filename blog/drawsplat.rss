@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 04 Jun 2026 14:06:05 GMT</lastBuildDate>
+			<lastBuildDate>Thu, 04 Jun 2026 17:00:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.9 Update: SketchSpace VR, SplatImage Cutouts, and a Current Self-Host Zip</title>
+		<link>https://drawsplat.org/pages/release-notes.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.9 refreshes the self-host package with the newest classroom tools and documentation. SketchSpace VR is now part of the Tools dropdown as a paper-first virtual room workflow: students print a flat room grid, draw six panels, photograph the page, upload it, and explore the result in the browser. The release also adds a SketchSpace VR Teacher Guide, a Play examples page, six curriculum starter layouts, full-screen starter links, and corrected workflow visuals that match the actual no-cutting, no-folding template. SplatImage Studio also gets practical classroom polish: richer text boxes, Canva-friendly clipboard image workflows, selected-object PNG copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. The bundled RSS snapshot, release notes, README, and self-host download page have been updated so self-hosted copies carry the current DrawSplat story.]]></description>
+		<pubDate>Thu, 04 Jun 2026 17:00:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.9-sketchspace-splatimage-selfhost</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>sketchspace-vr</category>
+		<category>splatimage-studio</category>
+	</item><item>
 		<title>DrawSplat Update: SketchSpace VR Turns Student Drawings into Virtual Rooms</title>
 		<link>https://drawsplat.org/solutions/sketchspace-VR/</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>SketchSpace VR is now available from the DrawSplat Tools dropdown as a standalone classroom solution. Students can print a one-page cube-room template, draw or label six panels, photograph the finished page, and explore the result as an interactive virtual room in the browser. The tool includes privacy-friendly local image handling, crop preview, trim controls, fullscreen viewing, split-view, phone viewer mode, and a language picker. To help students get started, SketchSpace VR also includes six curriculum starter layouts: citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle. A separate teacher guide provides setup notes, lesson ideas, examples, assessment prompts, sharing guidance, image prompt patterns, and links to "Wallpaper Your 3D Virtual Reality Room" and "Virtual Reality with Panoform Is Easy, Engaging, and Fun for Everyone," the posts that inspired this paper-first virtual reality workflow.]]></description>

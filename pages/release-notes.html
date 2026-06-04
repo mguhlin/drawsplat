@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM v3.1.8 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.8 release notes with SplatImage Studio, DrawSplat Hub, Concept Map Studio, Quiz and Flashcard Studio, and self-host bundle updates." />
+<title>DrawSplatTM v3.1.9 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.9 release notes with SketchSpace VR, SplatImage Studio cutout and text upgrades, current blog RSS, and self-host bundle updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -86,16 +86,16 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Release Notes</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.8</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.9</h1>
     <div class="release-meta">
       <span class="release-pill">Latest stable</span>
       <span class="release-pill">Self-host bundle refreshed</span>
       <span class="release-pill">Classroom tools update</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.8 refreshes the self-host bundle with the latest classroom tools, Concept Map Studio upgrades, Quiz &amp; Flashcard Studio science sample sets, and the DrawSplat Hub admin scaffold.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.9 refreshes the self-host bundle with SketchSpace VR, the latest SplatImage Studio cutout and text upgrades, current classroom tools, and the bundled blog RSS update snapshot.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zip</a>
-      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.8.md">View Markdown Source</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.9.md">View Markdown Source</a>
     </div>
   </section>
 
@@ -106,20 +106,20 @@
     </div>
     <div class="release-grid">
       <article class="release-card">
+        <h2>SketchSpace VR</h2>
+        <p>New paper-first virtual room tool with printable 4x3 template, crop preview, room viewer, curriculum starters, Play examples, and a Teacher Guide.</p>
+      </article>
+      <article class="release-card">
         <h2>SplatImage Studio</h2>
-        <p>New browser-only image editor with resize, crop, masks, layer duplication, opacity, text alignment, proportional arrowheads, faster paste/import, and expanded visual effects.</p>
+        <p>Richer text insertion, Canva-friendly clipboard image workflows, selected-object copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks.</p>
       </article>
       <article class="release-card">
-        <h2>DrawSplat Hub</h2>
-        <p>Public Hub splash page plus protected Instances Admin with Google OAuth access for approved administrators, classroom-teacher, campus, and district grouping, and a demo campus instance for self-hosters.</p>
+        <h2>Teacher Materials</h2>
+        <p>SketchSpace VR now includes lesson ideas, assessment prompts, image prompt patterns, six starter layouts, and full-screen links for starter examples.</p>
       </article>
       <article class="release-card">
-        <h2>Concept Map Studio</h2>
-        <p>Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.</p>
-      </article>
-      <article class="release-card">
-        <h2>Quiz &amp; Flashcard Studio</h2>
-        <p>Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS sample data sets, plus clearer flashcard answer formatting.</p>
+        <h2>Blog Snapshot</h2>
+        <p>The bundled RSS feed includes the latest DrawSplat update posts so self-hosted copies render current news without external requests.</p>
       </article>
     </div>
   </section>
@@ -130,12 +130,13 @@
       <h2>Included updates</h2>
     </div>
     <ul class="release-list">
-      <li>SplatImage Studio now appears in the Tools dropdown as a standalone classroom image editor.</li>
-      <li>Crop handles, mask shapes, layer controls, and art effects were added or polished.</li>
-      <li>Large pasted screenshots show more quickly and oversized transparent or near-white margins are trimmed.</li>
-      <li>DrawSplat Hub includes a public splash page, protected Instances Admin, the <code>hubcampus</code> demo instance, guided admin setup, optional Buy Me a Coffee support, Google OAuth access for approved administrators, teacher folder/config creation in Drive, and the Apps Script registry starter pattern.</li>
-      <li>Concept Map Studio adds Markdown import, improved controls, and cleaner generated/imported map placement.</li>
-      <li>Quiz &amp; Flashcard Studio includes science sample sets and improved back-of-card answer clarity.</li>
+      <li>SketchSpace VR now appears in the Tools dropdown as a standalone classroom solution.</li>
+      <li>The SketchSpace VR student tool includes the printable room template, crop preview, trim controls, starter layouts, split-view, fullscreen viewing, and phone viewer mode.</li>
+      <li>The Teacher Guide includes setup steps, lesson ideas, assessment prompts, image prompt patterns, starter layout links, and cited inspiration articles by title.</li>
+      <li>The Play page shows example rooms and links the new examples and workflow visuals full screen.</li>
+      <li>SplatImage Studio supports richer text boxes with font size, bold, italic, underline, alignment, and preview.</li>
+      <li>SplatImage Studio includes Smart background cutout and Remove edge background with non-AI interface language and a visible Working dialog during longer processing.</li>
+      <li>Clipboard image workflows and selected-object PNG export are documented in the current bundle.</li>
       <li>The bundled blog RSS snapshot was refreshed for self-hosted copies.</li>
     </ul>
   </section>
@@ -145,7 +146,7 @@
       <p class="landing-eyebrow">Self-Host Bundle</p>
       <h2>What the ZIP contains</h2>
     </div>
-    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.8.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.9.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, SplatImage Studio, SketchSpace VR, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
   </section>
 </main>
 
