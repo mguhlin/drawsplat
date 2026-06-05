@@ -42,7 +42,7 @@
 	</item><item>
 		<title>DrawSplat Hub Update: A Protected Admin Space for Classroom, Campus, and District Instances</title>
 		<link>https://drawsplat.org/hub/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /><br/>DrawSplat Hub now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances. The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators. The approved admin accounts are mguhlin@gmail.com and jeguhlin@gmail.com. From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor. That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.]]></description>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /><br/>DrawSplat Hub now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances. The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators. The approved admin accounts are drawsplat@gmail.com and jeguhlin@gmail.com. From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor. That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.]]></description>
 		<pubDate>Tue, 02 Jun 2026 19:19:00 GMT</pubDate>
 		<guid isPermaLink="false">drawsplat-release-v3.1.8-hub-update</guid>
 		<source url="https://drawsplat.org/">DrawSplat Updates</source>
@@ -58,9 +58,9 @@
 		<title>ControlAltAchieve 💡 #171</title>
 		<link>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</link>
 		<description>&lt;img src="https://rdl.ink/render/https%3A%2F%2Fmailchi.mp%2Fcontrolaltachieve%2F9q6ttmhq5h-17999308%3Fe%3D%5BUNIQID%5D" /&gt;&lt;br/&gt;DrawSplat - Resource link
-I am constantly blown away by the quality of free resources being created with vibe coding. Recently my friend Miguel Guhlin shared with me his latest creation … DrawSplat. He wanted to create an interactive tool for student creativity, drawing some inspiration from programs such as Jamboard, KidPix, and others.
+I am constantly blown away by the quality of free resources being created with vibe coding. Recently, DrawSplat was shared as an interactive tool for student creativity, drawing some inspiration from programs such as Jamboard, KidPix, and others.
 
-His creation, DrawSplat, is a completely free interactive whiteboard tool for K-16 educators and students. It runs in your browser and includes a dizzying array of features including pens, paint, shapes, lines, text, notes, images, diagrams, backgrounds, stickers, graphs, widgets, and so much more. And Miguel seems to add new features everytime I check the site.
+DrawSplat is a completely free interactive whiteboard tool for K-16 educators and students. It runs in your browser and includes a dizzying array of features including pens, paint, shapes, lines, text, notes, images, diagrams, backgrounds, stickers, graphs, widgets, and so much more. And new features keep appearing every time the site is checked.
 
 Head on over to https://drawsplat.org/ to learn more and try it yourself.
 

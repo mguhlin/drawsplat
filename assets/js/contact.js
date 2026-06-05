@@ -6,7 +6,7 @@
   const STORAGE_KEY='drawsplat.googleScriptUrl';
   const DEFAULT_CONTACT_SCRIPT_URL='PUT CONTACT APPS SCRIPT WEB APP URL HERE';
   const CONTACT_SCRIPT_URL_PLACEHOLDER='PUT CONTACT APPS SCRIPT WEB APP URL HERE';
-  const CONTACT_EMAIL='mguhlin@gmail.com';
+  const CONTACT_EMAIL='drawsplat@gmail.com';
   const form=document.getElementById('contactForm');
   if(!form) return;
   const status=document.getElementById('contactStatus');

@@ -52,14 +52,14 @@ In Apps Script: **Project Settings → Script Properties → Add script property
 | Property | Required? | Purpose |
 |---|---|---|
 | `ADMIN_PASSCODE` | **Yes** for compliance features | Gates every admin endpoint (Activity Records viewer, Privacy Packet, age band, parent requests). Use 16+ random characters. |
-| `COMPLIANCE_ADMIN_EMAIL` | Recommended | Email address that gets notified when a new parent/contact request arrives. Use `mguhlin@gmail.com` for DrawSplat project-level communications. |
-| `HUB_ADMIN_EMAILS` | Recommended for DrawSplat Hub | Comma-separated Google accounts allowed into `hub/admin.html`; project default is `mguhlin@gmail.com,jeguhlin@gmail.com`. |
+| `COMPLIANCE_ADMIN_EMAIL` | Recommended | Email address that gets notified when a new parent/contact request arrives. Use `drawsplat@gmail.com` for DrawSplat project-level communications. |
+| `HUB_ADMIN_EMAILS` | Recommended for DrawSplat Hub | Comma-separated Google accounts allowed into `hub/admin.html`; project default is `drawsplat@gmail.com,jeguhlin@gmail.com`. |
 | `COMPLIANCE_CONFIG` | Auto-generated | Holds the merged safety / retention / time-limit / privacy config blob. Created when you save settings from the Compliance Console. |
 | `PASSWORD_SALT` | Auto-generated | Used to hash parent verification codes. Don't change it unless you want to invalidate every outstanding code. |
 
 The compliance features (text filter, link allowlist, retention, time limits) all read defaults from `compliance.config.json` baked into `Code.gs`. You only need `COMPLIANCE_CONFIG` set if you want to override those defaults — and you can do that through the Compliance Console UI rather than editing the property directly.
 
-For the public DrawSplat<sup>TM</sup> contact form, set `COMPLIANCE_ADMIN_EMAIL=mguhlin@gmail.com` in the Apps Script project, deploy the Web App, then paste that `/exec` URL into `DEFAULT_CONTACT_SCRIPT_URL` in `assets/js/contact.js`. If that constant is still the placeholder, the contact form falls back to opening a prefilled email draft to the same project contact inbox.
+For the public DrawSplat<sup>TM</sup> contact form, set `COMPLIANCE_ADMIN_EMAIL=drawsplat@gmail.com` in the Apps Script project, deploy the Web App, then paste that `/exec` URL into `DEFAULT_CONTACT_SCRIPT_URL` in `assets/js/contact.js`. If that constant is still the placeholder, the contact form falls back to opening a prefilled email draft to the same project contact inbox.
 
 ## Step 4 — Deploy as a Web App
 

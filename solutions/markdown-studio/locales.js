@@ -140,7 +140,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>Everything runs in your browser. No content leaves this page. Your draft is saved to <code>localStorage</code> on this domain so it survives refreshes — clear it via <strong>Clear All</strong> or browser tools.</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Markdown Studio</span>',
-    'footer.credit.html': 'Vibe-coded by <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded by <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   es: {
@@ -274,7 +274,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>Todo se ejecuta en tu navegador. Ningún contenido sale de esta página. Tu borrador se guarda en <code>localStorage</code> de este dominio para que sobreviva a las recargas — bórralo con <strong>Borrar todo</strong> o herramientas del navegador.</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Estudio de Markdown</span>',
-    'footer.credit.html': 'Vibe-coded por <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded por <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   vi: {
@@ -408,7 +408,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>Mọi thứ chạy trong trình duyệt của bạn. Không nội dung nào rời trang này. Bản nháp lưu vào <code>localStorage</code> của miền này để giữ qua các lần tải lại — xóa bằng <strong>Xóa tất cả</strong> hoặc công cụ trình duyệt.</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Xưởng Markdown</span>',
-    'footer.credit.html': 'Vibe-coded bởi <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded bởi <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   ar: {
@@ -542,7 +542,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>كل شيء يعمل في متصفحك. لا يغادر المحتوى هذه الصفحة. تُحفظ مسودتك في <code>localStorage</code> لهذا النطاق فتنجو من إعادة التحميل — امسحها عبر <strong>مسح الكل</strong> أو أدوات المتصفح.</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>استوديو Markdown</span>',
-    'footer.credit.html': 'Vibe-coded بواسطة <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded بواسطة <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   zh: {
@@ -676,7 +676,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>一切都在你的浏览器中运行。没有内容会离开此页面。你的草稿保存到此域的 <code>localStorage</code>，因此能在刷新后保留——通过<strong>清空所有</strong>或浏览器工具清除。</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>Markdown 工作室</span>',
-    'footer.credit.html': 'Vibe-coded 由 <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded 由 <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
   uh: {
@@ -810,7 +810,7 @@ WidgetI18n.register('markdown-studio', {
     'help.privacy.body.html':'<p>सब कुछ आपके ब्राउज़र में चलता है। कोई सामग्री इस पृष्ठ से बाहर नहीं जाती। आपका ड्राफ्ट इस डोमेन के <code>localStorage</code> में सहेजा जाता है ताकि यह रिफ्रेश के बाद भी बना रहे — इसे <strong>सब साफ़ करें</strong> या ब्राउज़र टूल से साफ़ करें।</p>',
 
     'footer.brandHtml':   'DrawSplat<sup class="tm">TM</sup> <span>मार्कडाउन स्टूडियो</span>',
-    'footer.credit.html': 'Vibe-coded द्वारा <a href="https://mguhlin.org" target="_blank" rel="noopener">Miguel Guhlin</a>',
+    'footer.credit.html': 'Vibe-coded द्वारा <a href="../../pages/contact.html" target="_blank" rel="noopener">DrawSplat Developer(s)</a>',
   },
 
 });

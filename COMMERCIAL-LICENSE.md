@@ -12,7 +12,7 @@ DrawSplatTM is published under the **GNU AGPL-3.0-or-later**. Any school, distri
 
 ## Optional paid services
 
-Districts that want hands-on help can engage DrawSplat Administrator (mguhlin@gmail.com) for **separately scoped professional services** rather than a product license. Services are billed under a services agreement, not as a product fee, so they do not put a "paid license" on student devices.
+Districts that want hands-on help can engage DrawSplat Developer(s) for **separately scoped professional services** rather than a product license. Services are billed under a services agreement, not as a product fee, so they do not put a "paid license" on student devices.
 
 Examples:
 
@@ -35,5 +35,5 @@ These are described in plain language at `pages/pricing.html` and quoted on requ
 For services quotes, compliance review, or licensing questions:
 
 - Contact form: <https://drawsplat.org/pages/contact.html>
-- Email: mguhlin@gmail.com
+- Email: drawsplat@gmail.com
 - Official site: <https://drawsplat.org>
