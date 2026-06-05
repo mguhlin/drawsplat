@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title data-i18n="doc.title">Low-Cost SketchSpace VR Viewer | DrawSplat Tools</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+:root{
+  --navy:#7c3aed; --gold:#a855f7; --teal:#0f766e; --sky:#eef2ff; --ink:#111827; --muted:#64748b; --line:#cbd5e1; --paper:#ffffff; --orange:#f97316; --red:#ef4444; --blue:#2563eb; --green:#16a34a; --yellow:#facc15;
+  --radius:8px; --shadow:0 12px 24px rgba(64,64,65,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff}
+.top-bar{height:12px;background:linear-gradient(90deg,var(--navy) 0 32%,var(--gold) 32% 52%,var(--orange) 52% 64%,var(--red) 64% 76%,var(--blue) 76% 88%,var(--green) 88% 96%,var(--yellow) 96% 100%)}
+.site-header{display:flex;align-items:center;justify-content:space-between;gap:18px;width:min(1160px,calc(100% - 28px));margin:0 auto;padding:18px 0;border-bottom:2px solid var(--sky);background:#fff;color:var(--ink)}
+.title-block{display:grid;gap:6px;min-width:0}.eyebrow{margin:0;color:var(--gold);font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.eyebrow a{color:inherit;text-decoration:none}.site-header h1{margin:0;color:var(--navy);font-size:clamp(2rem,5vw,3.7rem);line-height:.95;letter-spacing:0}.site-header p{margin:0;max-width:850px;color:var(--muted);font-size:1rem;line-height:1.45}.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.i18n-picker select,.link-btn{min-height:38px;border:2px solid #ddd6fe;border-radius:var(--radius);background:#fff;color:var(--ink);padding:7px 10px;font-weight:800;font-size:.85rem}.link-btn{text-decoration:none;color:var(--navy)}
+main{max-width:1160px;margin:0 auto;padding:18px;display:grid;gap:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:var(--paper);border:2px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card h2{font-size:1.05rem;margin:0;padding:14px 16px;background:#f8f6ff;border-bottom:1px solid var(--line);color:var(--navy)}.body{padding:16px 18px}.body p{margin:0 0 12px;color:var(--muted);line-height:1.55}.body p:last-child{margin-bottom:0}.list{display:grid;gap:10px;margin:0;padding:0;list-style:none}.list li{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--muted);line-height:1.45}.list b{display:block;color:var(--navy);margin-bottom:3px}.steps{counter-reset:step;display:grid;gap:10px}.step{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.step b{display:block;color:var(--teal);text-transform:uppercase;font-size:.82rem;letter-spacing:.04em;margin-bottom:4px}.callout{border:1px solid #f4d08b;background:#fff8e8;color:#4a3210;border-radius:12px;padding:14px;line-height:1.5}.callout strong{color:#111827}.measure{width:100%;border-collapse:collapse}.measure th,.measure td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}.measure th{background:#f8f6ff;color:var(--navy)}.measure td:last-child{text-align:right;white-space:nowrap}.diagram{font:1rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;color:#334155;overflow:auto}.source-links a,.body a{color:var(--navy);font-weight:800}.button-row{display:flex;gap:10px;flex-wrap:wrap}.button-row .link-btn{display:inline-flex;align-items:center}.compact-list{margin:0;padding-left:1.1rem;color:var(--muted);line-height:1.55}.compact-list li{margin:.15rem 0}.price td:first-child{text-align:left;white-space:normal}.price td:last-child{text-align:right}
+@media(max-width:900px){.site-header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}.grid,.three{grid-template-columns:1fr}.measure{font-size:.92rem}}
+</style>
+</head>
+<body>
+<div class="top-bar" aria-hidden="true"></div>
+<header class="site-header">
+  <div class="title-block">
+    <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
+    <h1 data-i18n="header.h1">Low-Cost SketchSpace VR Viewer</h1>
+    <p data-i18n="header.subtitle">Build a simple handheld cardboard phone viewer for short SketchSpace VR classroom rotations.</p>
+  </div>
+  <div class="header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="link-btn" href="./" data-i18n="header.studentTool">Student tool</a>
+    <a class="link-btn" href="teacher.html" data-i18n="header.teacherGuide">Teacher guide</a>
+    <a class="link-btn" href="play.html" data-i18n="header.playExamples">Play examples</a>
+    <a class="link-btn" href="../../pages/features.html" data-i18n="header.allTools">All Tools</a>
+  </div>
+</header>
+<main>
+  <section class="card">
+    <h2 data-i18n="workflow.title">SketchSpace VR workflow</h2>
+    <div class="body grid">
+      <div>
+        <ol class="compact-list">
+          <li>Print the SketchSpace VR cube-room template.</li>
+          <li>Students draw the six panels: ceiling, left wall, front wall, right wall, back wall, and floor.</li>
+          <li>Photograph the completed template.</li>
+          <li>Crop the photo to the outside border.</li>
+          <li>Upload it into SketchSpace VR.</li>
+          <li>Use fullscreen, split view, or VR glasses mode.</li>
+          <li>Place the phone sideways into the cardboard viewer.</li>
+        </ol>
+      </div>
+      <div class="callout">
+        <strong>What you are building:</strong> a simple handheld cardboard viewer, similar to Google Cardboard. It needs a phone, a cardboard body, two biconvex lenses, and a simple way to hold the phone in place. It does not need electronics, batteries, a head strap, a magnet button, NFC tags, or Bluetooth controllers.
+      </div>
+    </div>
+  </section>
+
+  <section class="three">
+    <article class="card">
+      <h2>SketchSpace VR links</h2>
+      <div class="body button-row">
+        <a class="link-btn" href="./">Student tool</a>
+        <a class="link-btn" href="teacher.html">Teacher guide</a>
+        <a class="link-btn" href="play.html">Play examples</a>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Cheapest path</h2>
+      <div class="body">
+        <p><strong>Buy lens pairs and make your own cardboard viewers.</strong></p>
+        <p>This usually gives a classroom the lowest cost per viewer.</p>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Easiest path</h2>
+      <div class="body">
+        <p><strong>Buy prebuilt Google Cardboard V2-style viewers.</strong></p>
+        <p>This is faster when the build time matters more than the price.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Important purchasing note</h2>
+    <div class="body">
+      <p>Google no longer sells the original official Google Cardboard viewer directly through the Google Store. For classroom use, look for Google Cardboard-compatible lens pairs, Google Cardboard V2-style compatible viewers, DIY Google Cardboard-style kits, or generic cardboard smartphone VR viewers.</p>
+      <p>Amazon, Walmart, eBay, AliExpress, and electronics suppliers change inventory often, so this guide uses search links instead of relying on one unstable product listing.</p>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Recommended lens search terms</h2>
+      <div class="body">
+        <ul class="list">
+          <li>Google Cardboard lenses 25mm 45mm focal length biconvex</li>
+          <li>Google Cardboard V2 lens pair 45mm focal length</li>
+          <li>biconvex lens pair for Google Cardboard</li>
+          <li>25mm 45mm focal length biconvex lens VR</li>
+          <li>34mm 45mm focal length biconvex lens VR</li>
+        </ul>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Best lens specs</h2>
+      <div class="body">
+        <table class="measure">
+          <tbody>
+            <tr><th>Lens type</th><td>biconvex</td></tr>
+            <tr><th>Focal length</th><td>45 mm</td></tr>
+            <tr><th>Lens diameter</th><td>25 mm to 34 mm</td></tr>
+            <tr><th>Quantity</th><td>1 pair per viewer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Lens search links</h2>
+    <div class="body source-links">
+      <div class="grid">
+        <ul class="list">
+          <li><b>Amazon lens pair search</b><a href="https://www.amazon.com/s?k=Google+Cardboard+lenses+25mm+45mm+focal+length+biconvex" target="_blank" rel="noopener noreferrer">Google Cardboard lenses 25mm 45mm focal length biconvex</a></li>
+          <li><b>Amazon V2 lens search</b><a href="https://www.amazon.com/s?k=Google+Cardboard+V2+lens+pair+45mm+focal+length" target="_blank" rel="noopener noreferrer">Google Cardboard V2 lens pair 45mm focal length</a></li>
+          <li><b>Amazon bulk lens search</b><a href="https://www.amazon.com/s?k=25mm+45mm+focal+length+biconvex+lens+VR" target="_blank" rel="noopener noreferrer">25mm 45mm focal length biconvex lens VR</a></li>
+          <li><b>Amazon 34 mm lens search</b><a href="https://www.amazon.com/s?k=34mm+45mm+focal+length+biconvex+lens+Google+Cardboard" target="_blank" rel="noopener noreferrer">34mm 45mm focal length biconvex lens Google Cardboard</a></li>
+        </ul>
+        <ul class="list">
+          <li><b>CRCibernetica</b><a href="https://www.crcibernetica.com/lens-for-google-cardboard-25mm-45mm-focal-length-1-pair/" target="_blank" rel="noopener noreferrer">Lens for Google Cardboard 25 mm, 45 mm focal length, 1 pair</a></li>
+          <li><b>eBay</b><a href="https://www.ebay.com/sch/i.html?_nkw=Google+Cardboard+lenses+25mm+45mm+focal+length" target="_blank" rel="noopener noreferrer">Google Cardboard lenses 25mm 45mm focal length</a></li>
+          <li><b>AliExpress</b><a href="https://www.aliexpress.us/w/wholesale-25mm-45mm-biconvex-lens-google-cardboard.html" target="_blank" rel="noopener noreferrer">25mm 45mm biconvex lens Google Cardboard</a></li>
+          <li><b>Walmart</b><a href="https://www.walmart.com/search?q=Google+Cardboard+biconvex+lenses+45mm" target="_blank" rel="noopener noreferrer">Google Cardboard biconvex lenses 45mm</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Prebuilt viewer search links</h2>
+    <div class="body source-links grid">
+      <ul class="list">
+        <li><b>Amazon</b><a href="https://www.amazon.com/s?k=Google+Cardboard+V2+viewer" target="_blank" rel="noopener noreferrer">Google Cardboard V2 viewer</a></li>
+        <li><b>Amazon</b><a href="https://www.amazon.com/s?k=Google+Cardboard+compatible+VR+viewer" target="_blank" rel="noopener noreferrer">Google Cardboard-compatible VR viewer</a></li>
+        <li><b>Amazon</b><a href="https://www.amazon.com/s?k=cardboard+VR+viewer+for+smartphone" target="_blank" rel="noopener noreferrer">cardboard VR viewer for smartphone</a></li>
+        <li><b>Amazon</b><a href="https://www.amazon.com/s?k=DIY+Google+Cardboard+VR+kit" target="_blank" rel="noopener noreferrer">DIY Google Cardboard VR kit</a></li>
+        <li><b>Amazon</b><a href="https://www.amazon.com/s?k=bulk+Google+Cardboard+VR+viewer" target="_blank" rel="noopener noreferrer">bulk Google Cardboard VR viewer</a></li>
+      </ul>
+      <ul class="list">
+        <li><b>Tinkersphere</b><a href="http://tinkersphere.com/gaming/1451-google-cardboard-viewer-v2-with-headstrap-.html" target="_blank" rel="noopener noreferrer">Google Cardboard Viewer V2</a></li>
+        <li><b>CRCibernetica</b><a href="https://www.crcibernetica.com/diy-google-cardboard-v2/" target="_blank" rel="noopener noreferrer">DIY Google Cardboard V2</a></li>
+        <li><b>eBay</b><a href="https://www.ebay.com/sch/i.html?_nkw=Google+Cardboard+V2+viewer" target="_blank" rel="noopener noreferrer">Google Cardboard V2 viewer</a></li>
+        <li><b>Walmart</b><a href="https://www.walmart.com/search?q=Google+Cardboard+VR+viewer" target="_blank" rel="noopener noreferrer">Google Cardboard VR viewer</a></li>
+        <li><b>AliExpress</b><a href="https://www.aliexpress.us/w/wholesale-google-cardboard-v2.html" target="_blank" rel="noopener noreferrer">Google Cardboard V2</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Materials for one DIY viewer</h2>
+      <div class="body">
+        <table class="measure">
+          <thead><tr><th>Material</th><th>Amount</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Corrugated cardboard</td><td>1 sheet</td><td>About 12" x 18"; thin shipping-box cardboard works</td></tr>
+            <tr><td>Biconvex lenses</td><td>1 pair</td><td>25 mm or 34 mm diameter, 45 mm focal length</td></tr>
+            <tr><td>Velcro dots or strips</td><td>2-4 pieces</td><td>Holds the phone flap closed</td></tr>
+            <tr><td>Large rubber band</td><td>1</td><td>Backup phone holder</td></tr>
+            <tr><td>Binder clips</td><td>2</td><td>Optional side clamps</td></tr>
+            <tr><td>Clear packing tape</td><td>small amount</td><td>Reinforces folds and lens holes</td></tr>
+            <tr><td>Glue stick or hot glue</td><td>small amount</td><td>Holds tabs and lenses</td></tr>
+            <tr><td>Scissors or craft knife</td><td>1</td><td>Adult use recommended for craft knives</td></tr>
+            <tr><td>Ruler and pencil</td><td>1 each</td><td>Needed for measuring and marking</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Other material searches</h2>
+      <div class="body source-links">
+        <ul class="list">
+          <li><a href="https://www.amazon.com/s?k=corrugated+cardboard+sheets+craft" target="_blank" rel="noopener noreferrer">Corrugated cardboard sheets</a></li>
+          <li><a href="https://www.amazon.com/s?k=velcro+dots" target="_blank" rel="noopener noreferrer">Velcro dots</a></li>
+          <li><a href="https://www.amazon.com/s?k=large+rubber+bands" target="_blank" rel="noopener noreferrer">Large rubber bands</a></li>
+          <li><a href="https://www.amazon.com/s?k=binder+clips" target="_blank" rel="noopener noreferrer">Binder clips</a></li>
+          <li><a href="https://www.amazon.com/s?k=clear+packing+tape" target="_blank" rel="noopener noreferrer">Clear packing tape</a></li>
+          <li><a href="https://www.amazon.com/s?k=hot+glue+sticks" target="_blank" rel="noopener noreferrer">Hot glue sticks</a></li>
+          <li><a href="https://www.amazon.com/s?k=craft+knife" target="_blank" rel="noopener noreferrer">Craft knife</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Working measurements</h2>
+    <div class="body grid">
+      <table class="measure">
+        <tbody>
+          <tr><th>Distance between lens centers</th><td>64 mm</td></tr>
+          <tr><th>Distance from phone screen to lenses</th><td>40-45 mm</td></tr>
+          <tr><th>Lens focal length</th><td>45 mm</td></tr>
+          <tr><th>Viewer width</th><td>150-165 mm</td></tr>
+          <tr><th>Viewer height</th><td>85-95 mm</td></tr>
+          <tr><th>Viewer depth</th><td>45-50 mm</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>Most important:</strong> keep lens centers about 64 mm apart and keep the phone screen about 40-45 mm behind the lenses. If the phone is too close or too far from the lenses, the image may look blurry.
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Simple cut-and-fold design</h2>
+    <div class="body">
+      <p>You are making a rectangular viewer with three parts: front lens panel, middle spacer/tunnel, and back phone holder.</p>
+      <pre class="diagram">[eyes] -> [two lenses] -> [cardboard tunnel] -> [phone in landscape mode]</pre>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Build steps</h2>
+    <div class="body steps">
+      <div class="step"><b>1. Cut the main strip</b><p>Cut one cardboard strip 16 inches wide x 4 inches tall. Mark vertical fold lines at 1 inch, 5 inches, 9.5 inches, 14 inches, and 16 inches. Score the fold lines lightly so the cardboard bends cleanly.</p></div>
+      <div class="step"><b>2. Mark lens centers</b><p>On the lens panel, find the horizontal center. Mark two lens centers 64 mm apart: one 32 mm left of center and one 32 mm right of center. Keep both lens centers vertically centered.</p></div>
+      <div class="step"><b>3. Cut lens holes</b><p>Cut two round holes slightly smaller than the lenses. For 25 mm lenses, cut about 22-23 mm holes. For 34 mm lenses, cut about 30-31 mm holes.</p></div>
+      <div class="step"><b>4. Attach lenses</b><p>Place one lens over each hole. Use clear tape around the edge, hot glue around the rim, or a cardboard ring over the lens edge. Do not cover the center of the lens. Make sure both lenses face the same direction.</p></div>
+      <div class="step"><b>5. Build the spacer</b><p>Fold the cardboard so the phone screen will sit about 40-45 mm behind the lenses. Use tape to reinforce the fold lines.</p></div>
+      <div class="step"><b>6. Create the phone holder</b><p>At the back, make a simple flap or pocket. The phone should slide in sideways in landscape orientation. Use Velcro, a rubber band, binder clips, or a reinforced cardboard flap. Do not permanently glue the phone pocket closed.</p></div>
+      <div class="step"><b>7. Add a nose notch</b><p>Cut a shallow curved notch between the lenses at the bottom edge. Keep it small so the viewer stays sturdy.</p></div>
+      <div class="step"><b>8. Reinforce the viewer</b><p>Use clear packing tape around lens holes, fold lines, phone holder, outer corners, and the nose notch so the viewer survives classroom use.</p></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>How to use with SketchSpace VR</h2>
+      <div class="body">
+        <ol class="compact-list">
+          <li>Open SketchSpace VR on the phone.</li>
+          <li>Load a demo or upload a student's photographed room template.</li>
+          <li>Test the room normally first.</li>
+          <li>Tap <strong>VR glasses</strong> or <strong>split view</strong>.</li>
+          <li>Rotate the phone sideways.</li>
+          <li>Place the phone into the cardboard viewer.</li>
+          <li>Hold the viewer with both hands.</li>
+          <li>Look around and explore the room.</li>
+        </ol>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Student viewing rules</h2>
+      <div class="body">
+        <ol class="compact-list">
+          <li>Sit down before using the viewer.</li>
+          <li>Hold the viewer with both hands.</li>
+          <li>Do not walk while viewing.</li>
+          <li>Use the viewer for 1-2 minutes, then pass it on.</li>
+          <li>Keep the phone secure in the holder.</li>
+          <li>Use large drawings and short labels in SketchSpace VR.</li>
+          <li>Remove the phone before handing the viewer to another group.</li>
+        </ol>
+      </div>
+    </article>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Best classroom setup</h2>
+      <div class="body">
+        <p>Use one viewer per group of 3-4 students. Students can rotate through drawing, photographing, uploading, viewing, and revising.</p>
+        <table class="measure">
+          <tbody>
+            <tr><th>12 students</th><td>3-4 viewers</td></tr>
+            <tr><th>20 students</th><td>5-6 viewers</td></tr>
+            <tr><th>24 students</th><td>6-8 viewers</td></tr>
+            <tr><th>30 students</th><td>8-10 viewers</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Cost estimate</h2>
+      <div class="body">
+        <table class="measure price">
+          <tbody>
+            <tr><td>Recycled cardboard + purchased lens pair</td><td>$1-$5 per viewer</td></tr>
+            <tr><td>Purchased cardboard sheets + lens pair</td><td>$3-$8 per viewer</td></tr>
+            <tr><td>Prebuilt Cardboard-style viewer</td><td>$5-$15 each</td></tr>
+            <tr><td>Class set of 8 DIY viewers</td><td>about $25-$60</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Buying checklist</h2>
+      <div class="body">
+        <p><strong>For a DIY class set, buy in this order:</strong></p>
+        <ol class="compact-list">
+          <li>Biconvex lens pairs, 45 mm focal length</li>
+          <li>Corrugated cardboard sheets</li>
+          <li>Velcro dots or strips</li>
+          <li>Large rubber bands</li>
+          <li>Binder clips</li>
+          <li>Clear packing tape</li>
+        </ol>
+        <p><strong>For a faster ready-made setup:</strong></p>
+        <ol class="compact-list">
+          <li>Google Cardboard V2-style viewers</li>
+          <li>Alcohol-free lens-safe wipes or microfiber cloths</li>
+          <li>Number labels for classroom checkout</li>
+        </ol>
+      </div>
+    </article>
+    <article class="card">
+      <h2>Teacher notes</h2>
+      <div class="body">
+        <p>SketchSpace VR works best when students use large drawings, strong color, short labels, one clear idea per panel, simple arrows or symbols, and high contrast between text and background.</p>
+        <p>Avoid tiny handwriting, crowded diagrams, pale pencil-only drawings, long paragraphs, low-light photos, and crooked or uncropped uploads.</p>
+        <p>The cleaner the photographed template, the better the virtual room will look.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Best overall recommendation</h2>
+    <div class="body callout">
+      <p><strong>Use 25 mm or 34 mm biconvex lenses, 45 mm focal length, a simple handheld cardboard viewer, a phone in landscape mode, no strap, and no magnet.</strong></p>
+      <p>This keeps the viewer cheap, safer for classroom rotation, easy to build, easy to repair, and good enough for short SketchSpace VR viewing turns.</p>
+    </div>
+  </section>
+</main>
+<script>
+(() => {
+  const LOCALES = {
+    en: {
+      'doc.title':'Low-Cost SketchSpace VR Viewer | DrawSplat Tools',
+      'header.eyebrow':'DrawSplat<sup>TM</sup> Tools',
+      'header.h1':'Low-Cost SketchSpace VR Viewer',
+      'header.subtitle':'Build a simple handheld cardboard phone viewer for short SketchSpace VR classroom rotations.',
+      'header.studentTool':'Student tool',
+      'header.teacherGuide':'Teacher guide',
+      'header.playExamples':'Play examples',
+      'header.allTools':'All Tools',
+      'workflow.title':'SketchSpace VR workflow'
+    }
+  };
+  window.WidgetI18n && WidgetI18n.register('sketchspace-vr-viewer', LOCALES);
+})();
+</script>
+</body>
+</html>
