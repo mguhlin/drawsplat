@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM v3.1.9 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.9 release notes with SketchSpace VR, SplatImage Studio cutout and text upgrades, current blog RSS, and self-host bundle updates." />
+<title>DrawSplatTM v3.1.10 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.10 release notes with Squirrel Run sound feedback, collision speech bubbles, tree celebration animation, and self-host bundle updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -86,16 +86,16 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Release Notes</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.9</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.10</h1>
     <div class="release-meta">
       <span class="release-pill">Latest stable</span>
       <span class="release-pill">Self-host bundle refreshed</span>
       <span class="release-pill">Classroom tools update</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.9 refreshes the self-host bundle with SketchSpace VR, the latest SplatImage Studio cutout and text upgrades, current classroom tools, and the bundled blog RSS update snapshot.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.10 refreshes the self-host bundle with Squirrel Run game polish, the current classroom tools, and the bundled blog RSS update snapshot.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zip</a>
-      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.9.md">View Markdown Source</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.10.md">View Markdown Source</a>
     </div>
   </section>
 
@@ -106,16 +106,16 @@
     </div>
     <div class="release-grid">
       <article class="release-card">
-        <h2>SketchSpace VR</h2>
-        <p>New paper-first virtual room tool with printable 4x3 template, crop preview, room viewer, curriculum starters, Play examples, and a Teacher Guide.</p>
+        <h2>Squirrel Run Sounds</h2>
+        <p>Movement now has light audio feedback, life loss has a splat sound, and the game header includes a classroom-friendly sound toggle.</p>
       </article>
       <article class="release-card">
-        <h2>SplatImage Studio</h2>
-        <p>Richer text insertion, Canva-friendly clipboard image workflows, selected-object copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks.</p>
+        <h2>Squirrel Remarks</h2>
+        <p>When the squirrel gets stopped by traffic or hazards, a speech bubble pops up with a short squirrel-point-of-view joke.</p>
       </article>
       <article class="release-card">
-        <h2>Teacher Materials</h2>
-        <p>SketchSpace VR now includes lesson ideas, assessment prompts, image prompt patterns, six starter layouts, and full-screen links for starter examples.</p>
+        <h2>Tree Celebration</h2>
+        <p>Reaching the tree now triggers a brief celebratory dance before the next level starts.</p>
       </article>
       <article class="release-card">
         <h2>Blog Snapshot</h2>
@@ -130,13 +130,12 @@
       <h2>Included updates</h2>
     </div>
     <ul class="release-list">
-      <li>SketchSpace VR now appears in the Tools dropdown as a standalone classroom solution.</li>
-      <li>The SketchSpace VR student tool includes the printable room template, crop preview, trim controls, starter layouts, split-view, fullscreen viewing, and phone viewer mode.</li>
-      <li>The Teacher Guide includes setup steps, lesson ideas, assessment prompts, image prompt patterns, starter layout links, and cited inspiration articles by title.</li>
-      <li>The Play page shows example rooms and links the new examples and workflow visuals full screen.</li>
-      <li>SplatImage Studio supports richer text boxes with font size, bold, italic, underline, alignment, and preview.</li>
-      <li>SplatImage Studio includes Smart background cutout and Remove edge background with non-AI interface language and a visible Working dialog during longer processing.</li>
-      <li>Clipboard image workflows and selected-object PNG export are documented in the current bundle.</li>
+      <li>Squirrel Run now includes generated movement audio that plays only when the squirrel actually moves.</li>
+      <li>A splat sound plays when the squirrel loses a life, with a header sound toggle for quiet classrooms.</li>
+      <li>Collision feedback now includes a temporary speech bubble anchored near the place where the squirrel was stopped.</li>
+      <li>Goal feedback now pauses the level briefly and animates a small celebratory dance at the tree.</li>
+      <li>A phone-sized Playwright smoke test verified page load, start, touch movement, sound toggle, pause/resume, and no browser console/page errors.</li>
+      <li>The root Playwright package files are excluded from the self-host bundle while backend package files remain included.</li>
       <li>The bundled blog RSS snapshot was refreshed for self-hosted copies.</li>
     </ul>
   </section>
@@ -146,7 +145,7 @@
       <p class="landing-eyebrow">Self-Host Bundle</p>
       <h2>What the ZIP contains</h2>
     </div>
-    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.9.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, SplatImage Studio, SketchSpace VR, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.10.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, DrawSplat Games including Squirrel Run, standalone classroom tools, SplatImage Studio, SketchSpace VR, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
   </section>
 </main>
 

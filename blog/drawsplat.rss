@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 04 Jun 2026 17:00:00 GMT</lastBuildDate>
+			<lastBuildDate>Fri, 05 Jun 2026 03:30:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.10 Update: Squirrel Run Gets Sound, Squirrel Jokes, and a Tree Dance</title>
+		<link>https://drawsplat.org/games/squirrel-run-game/</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Squirrel Run now feels more alive in DrawSplat Games. The game adds light movement sounds, a splat sound when the squirrel loses a life, and a sound toggle for quiet classrooms. When the squirrel gets stopped by traffic, cats, dogs, or general bad road-crossing decisions, a speech bubble pops up with a short squirrel-point-of-view remark. Reaching the tree also gets a payoff: the squirrel pauses for a quick celebratory dance before the next level begins. The self-host download, release notes, README, and bundled RSS snapshot have been refreshed for v3.1.10.]]></description>
+		<pubDate>Fri, 05 Jun 2026 03:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.10-squirrel-run-feedback</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>drawsplat-games</category>
+		<category>squirrel-run</category>
+	</item><item>
 		<title>DrawSplat v3.1.9 Update: SketchSpace VR, SplatImage Cutouts, and a Current Self-Host Zip</title>
 		<link>https://drawsplat.org/pages/release-notes.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.9 refreshes the self-host package with the newest classroom tools and documentation. SketchSpace VR is now part of the Tools dropdown as a paper-first virtual room workflow: students print a flat room grid, draw six panels, photograph the page, upload it, and explore the result in the browser. The release also adds a SketchSpace VR Teacher Guide, a Play examples page, six curriculum starter layouts, full-screen starter links, and corrected workflow visuals that match the actual no-cutting, no-folding template. SplatImage Studio also gets practical classroom polish: richer text boxes, Canva-friendly clipboard image workflows, selected-object PNG copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. The bundled RSS snapshot, release notes, README, and self-host download page have been updated so self-hosted copies carry the current DrawSplat story.]]></description>

@@ -50,6 +50,8 @@ EXCLUDES=(
   ".DS_Store"
   ".env"
   ".env.local"
+  "/package.json"
+  "/package-lock.json"
   "*.log"
   "*.swp"
   "drawsplat-selfhost-*.zip"

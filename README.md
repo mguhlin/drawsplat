@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.9, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
+- **Status:** v3.1.10, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
 - **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
 
 ## Getting started
@@ -29,7 +29,13 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.9 — Latest self-host bundle with SketchSpace VR, SplatImage Studio cutout/text upgrades, and the current classroom tools set.** SketchSpace VR is included as a standalone paper-first virtual-room tool with a student template, crop preview, curriculum starter layouts, Play examples, and a teacher guide. SplatImage Studio adds richer text controls, Canva-friendly clipboard image workflows, selected-object copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. The self-host download page and bundle are refreshed for the latest classroom tools. Pinned as a GitHub release: [v3.1.9](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.9). Previous milestones: [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8) (SplatImage Studio, DrawSplat Hub, Concept Map Markdown/text controls, Quiz science sample sets), [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.10 — Latest self-host bundle with Squirrel Run game polish, SketchSpace VR, SplatImage Studio cutout/text upgrades, and the current classroom tools set.** Squirrel Run now includes movement audio, a splat sound, squirrel-point-of-view speech bubbles after collisions, and a short tree-home celebration dance before the next level. SketchSpace VR remains included as a standalone paper-first virtual-room tool with a student template, crop preview, curriculum starter layouts, Play examples, and a teacher guide. SplatImage Studio includes richer text controls, Canva-friendly clipboard image workflows, selected-object copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. Pinned as a GitHub release: [v3.1.10](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.10). Previous milestones: [v3.1.9](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.9) (SketchSpace VR and SplatImage Studio classroom bundle), [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8) (SplatImage Studio, DrawSplat Hub, Concept Map Markdown/text controls, Quiz science sample sets), [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.10)
+
+- **Squirrel Run feedback polish.** Added low-volume movement sounds, a splat sound on life loss, a classroom-friendly sound toggle, squirrel-point-of-view speech bubbles after collisions, and a short congratulatory dance when the squirrel reaches the tree.
+- **Mobile smoke test.** Verified Squirrel Run in a phone-sized Playwright run: start, touch movement, sound toggle, pause/resume, and no browser console/page errors.
+- **Self-host bundle refresh.** Updated README, release notes, blog RSS, download metadata, and the self-host bundle for the latest DrawSplat Games build.
 
 ## Recent improvements (v3.1.9)
 
@@ -199,6 +205,8 @@ timeline
          : SplatImage Studio, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
   v3.1.9 : Latest classroom tools self-host bundle
          : SketchSpace VR, SplatImage text/cutout/clipboard upgrades, current blog RSS snapshot
+  v3.1.10: Squirrel Run game polish
+         : Movement/splat sounds, collision speech bubbles, tree-home dance, refreshed self-host bundle
 ```
 
 ## Included files
@@ -279,7 +287,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the v3.1.9 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the v3.1.10 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 
