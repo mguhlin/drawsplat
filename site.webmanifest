@@ -1,0 +1,14 @@
+{
+  "name": "DrawSplat",
+  "short_name": "DrawSplat",
+  "icons": [
+    {
+      "src": "assets/brand/DrawSplat_logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#7c3aed",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
