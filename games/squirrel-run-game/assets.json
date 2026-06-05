@@ -1,0 +1,19 @@
+{
+  "title": "Squirrel Run Sprite Pack",
+  "license": "Original generated assets for DrawSplat Squirrel Run. You may use them in the game package.",
+  "sprites": [
+    "squirrel.png",
+    "car_red.png",
+    "car_blue.png",
+    "car_green.png",
+    "pickup_orange.png",
+    "school_bus.png",
+    "cat.png",
+    "dog.png",
+    "acorn.png",
+    "tree_goal.png",
+    "heart.png",
+    "shield.png",
+    "drawsplat_splat.png"
+  ]
+}

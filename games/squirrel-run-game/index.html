@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'" />
+<title data-i18n="doc.title">Squirrel Run — DrawSplat Games</title>
+<script src="../../assets/js/widget-i18n.js"></script>
+<style>
+:root{--purple:#7c3aed;--pink:#ec4899;--teal:#14b8a6;--gold:#f59e0b;--ink:#172033;--soft:#f8fafc;--line:#dbe4f0;--road:#2f3542;--grass:#80d481;}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 20% 0%,#f5e8ff 0,#fff 36%,#e7fbf7 100%);color:var(--ink)}
+.ds-games-topbar{height:10px;background:linear-gradient(90deg,#7c3aed 0 32%,#a855f7 32% 52%,#f97316 52% 64%,#ef4444 64% 76%,#6d28d9 76% 88%,#22c55e 88% 96%,#facc15 96% 100%)}
+.ds-games-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 22px;background:#fff;color:#111827;font-family:Arial,Helvetica,sans-serif;border-bottom:2px solid #eef2ff;position:sticky;top:0;z-index:3}
+.ds-games-title{display:flex;flex-direction:column;gap:2px;min-width:0}.ds-games-eyebrow{margin:0;color:#a855f7;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.ds-games-eyebrow a{color:inherit;text-decoration:none}.ds-games-h1{margin:0;color:#7c3aed;font-size:1.4rem;font-weight:800;line-height:1}.ds-games-header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.ds-games-home,.pill{display:inline-flex;align-items:center;justify-content:center;min-height:36px;border:2px solid #ddd6fe;background:#fff;border-radius:8px;padding:7px 12px;font-weight:800;font-size:.85rem;color:#7c3aed;text-decoration:none;white-space:nowrap}.ds-games-home.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}.ds-games-home:hover,.pill:hover{background:#f8f6ff}.i18n-picker select{padding:6px 10px;border:2px solid #cbd5e1;border-radius:8px;background:#fff;color:#111827;font-weight:700;font-size:.82rem;cursor:pointer;min-height:36px}.i18n-picker select:focus{border-color:#7c3aed;outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.18)}
+.wrap{max-width:1380px;margin:0 auto;padding:18px;}.hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:12px}.hero h1{margin:0;font-size:clamp(2rem,4vw,4.2rem);line-height:.95}.hero p{margin:.5rem 0 0;max-width:760px;color:#465366;font-weight:650}.card{border:1px solid rgba(23,32,51,.12);border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 18px 38px rgba(30,41,59,.14);overflow:hidden}.game-shell{display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}.canvas-wrap{position:relative;padding:12px}canvas{width:100%;height:auto;display:block;border-radius:18px;background:#83d57d;outline:1px solid rgba(23,32,51,.15)}.panel{padding:18px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:12px}.stat b{display:block;font-size:1.7rem}.controls{display:grid;grid-template-columns:repeat(3,70px);gap:8px;justify-content:center;margin:16px 0}.controls button,.action{border:0;border-radius:16px;padding:14px 12px;background:linear-gradient(135deg,var(--purple),#9f67ff);color:#fff;font-weight:900;font-size:1.05rem;box-shadow:0 8px 18px rgba(124,58,237,.24);cursor:pointer}.controls button:active,.action:active{transform:translateY(1px)}.controls .blank{visibility:hidden}.action{width:100%;margin:8px 0;background:linear-gradient(135deg,var(--teal),#0f9488)}.action.secondary{background:linear-gradient(135deg,#334155,#111827)}.legend{font-size:.92rem;line-height:1.45;color:#4b5563}.legend h2{margin:.3rem 0 .6rem;color:var(--ink)}.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid #cbd5e1;border-bottom-width:3px;border-radius:6px;background:#fff;padding:1px 5px;font-weight:800;color:#111827}.overlay{position:absolute;inset:12px;display:grid;place-items:center;background:rgba(15,23,42,.55);border-radius:18px}.overlay.hidden{display:none}.message{max-width:560px;margin:20px;background:#fff;border-radius:24px;padding:24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.32)}.message h2{font-size:2rem;margin:.1rem 0 .4rem}.message p{color:#4b5563;line-height:1.45}@media(max-width:1000px){.ds-games-header{align-items:flex-start;flex-direction:column}.ds-games-header-actions{justify-content:flex-start}.game-shell{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.panel{order:2}}
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html#games-title" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1" data-i18n="header.h1">Squirrel Run</h1>
+  </div>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../pages/features.html#games-title" data-i18n="header.games">Games</a>
+    <a class="ds-games-home primary" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero"><div><h1 data-i18n="game.h1">Squirrel Run</h1><p data-i18n="game.subtitle">Dart across three lanes, dodge vehicles, avoid cats and dogs, collect acorns, and reach the tree hollow. Built as a standalone classroom-safe HTML5 canvas game.</p></div><span class="pill" data-i18n="game.controls">Keyboard + touch controls</span></section>
+  <section class="game-shell">
+    <div class="card canvas-wrap"><canvas id="game" width="1280" height="720" data-i18n-aria-label="canvas.aria" aria-label="Squirrel Run game canvas"></canvas><div id="overlay" class="overlay"><div class="message"><h2 id="overlayTitle" data-i18n="overlay.title">Squirrel Run</h2><p id="overlayText" data-i18n="overlay.instructions">Use arrow keys, WASD, or the buttons to move. Cross all three traffic lanes and reach the tree hollow.</p><button class="action" id="startBtn" data-i18n="button.start">Start Game</button></div></div></div>
+    <aside class="card panel"><div class="legend"><h2 data-i18n="how.title">How to Play</h2><p data-i18n="how.body">Move one grid step at a time. Cars, trucks, cats, and dogs are hazards. Acorns add points. The tree hollow is safe.</p><p><span class="kbd">↑</span> <span class="kbd">↓</span> <span class="kbd">←</span> <span class="kbd">→</span> <span data-i18n="how.or">or</span> <span class="kbd">WASD</span></p></div><div class="stats"><div class="stat"><span data-i18n="stat.score">Score</span><b id="score">0</b></div><div class="stat"><span data-i18n="stat.level">Level</span><b id="level">1</b></div><div class="stat"><span data-i18n="stat.lives">Lives</span><b id="lives">3</b></div><div class="stat"><span data-i18n="stat.acorns">Acorns</span><b id="acorns">0</b></div></div><button class="action" id="pauseBtn" data-i18n="button.pause">Pause</button><button class="action secondary" id="resetBtn" data-i18n="button.reset">Reset</button><div class="controls" data-i18n-aria-label="controls.aria" aria-label="Touch controls"><span class="blank"></span><button data-move="up" data-i18n-aria-label="move.up" aria-label="Move up">↑</button><span class="blank"></span><button data-move="left" data-i18n-aria-label="move.left" aria-label="Move left">←</button><button data-move="down" data-i18n-aria-label="move.down" aria-label="Move down">↓</button><button data-move="right" data-i18n-aria-label="move.right" aria-label="Move right">→</button></div><div class="legend"><h2 data-i18n="features.title">Game Features</h2><p data-i18n="features.body">Large 1280 x 720 canvas, original transparent sprites, level speed-up, collision detection, pickups, win/loss states, and no external libraries.</p></div></aside>
+  </section>
+</main>
+<script>
+(() => {
+'use strict';
+const LOCALES={
+  en:{
+    'doc.title':'Squirrel Run - DrawSplat Games','header.eyebrow':'DrawSplat\u2122 Games','header.h1':'Squirrel Run','header.games':'Games','header.home':'Home',
+    'game.h1':'Squirrel Run','game.subtitle':'Dart across three lanes, dodge vehicles, avoid cats and dogs, collect acorns, and reach the tree hollow. Built as a standalone classroom-safe HTML5 canvas game.','game.controls':'Keyboard + touch controls',
+    'canvas.aria':'Squirrel Run game canvas','overlay.title':'Squirrel Run','overlay.instructions':'Use arrow keys, WASD, or the buttons to move. Cross all three traffic lanes and reach the tree hollow.','button.start':'Start Game','button.playAgain':'Play Again','button.pause':'Pause','button.resume':'Resume','button.reset':'Reset',
+    'how.title':'How to Play','how.body':'Move one grid step at a time. Cars, trucks, cats, and dogs are hazards. Acorns add points. The tree hollow is safe.','how.or':'or',
+    'stat.score':'Score','stat.level':'Level','stat.lives':'Lives','stat.acorns':'Acorns','controls.aria':'Touch controls','move.up':'Move up','move.down':'Move down','move.left':'Move left','move.right':'Move right',
+    'features.title':'Game Features','features.body':'Large 1280 x 720 canvas, original transparent sprites, level speed-up, collision detection, pickups, win/loss states, and no external libraries.',
+    'end.gameOver.title':'Game Over','end.gameOver.body':'The squirrel got stopped in traffic. Try again and time your crossings.','canvas.paused':'PAUSED','canvas.treeHome':'TREE HOME','canvas.start':'START','canvas.hud':'Score {score}   Level {level}   Lives {lives}'
+  },
+  es:{
+    'doc.title':'Squirrel Run - Juegos DrawSplat','header.eyebrow':'Juegos DrawSplat\u2122','header.games':'Juegos','header.home':'Inicio','game.subtitle':'Cruza tres carriles, esquiva vehiculos, evita gatos y perros, recoge bellotas y llega al hueco del arbol.','game.controls':'Teclado + controles tactiles','overlay.instructions':'Usa flechas, WASD o los botones para moverte. Cruza los carriles y llega al arbol.','button.start':'Iniciar juego','button.playAgain':'Jugar otra vez','button.pause':'Pausa','button.resume':'Continuar','button.reset':'Reiniciar','how.title':'Como jugar','how.body':'Muevete un cuadro a la vez. Autos, camiones, gatos y perros son peligros. Las bellotas dan puntos. El arbol es seguro.','how.or':'o','stat.score':'Puntos','stat.level':'Nivel','stat.lives':'Vidas','stat.acorns':'Bellotas','features.title':'Funciones del juego','features.body':'Lienzo grande, sprites originales, aumento de velocidad, colisiones, objetos, estados de ganar/perder y sin bibliotecas externas.','end.gameOver.title':'Fin del juego','end.gameOver.body':'La ardilla se detuvo en el trafico. Intenta otra vez y calcula mejor el cruce.','canvas.paused':'PAUSA','canvas.treeHome':'ARBOL','canvas.start':'INICIO','canvas.hud':'Puntos {score}   Nivel {level}   Vidas {lives}'
+  },
+  vi:{'header.eyebrow':'Tro choi DrawSplat\u2122','header.games':'Tro choi','header.home':'Trang chu','game.subtitle':'Bang qua ba lan duong, tranh xe, meo va cho, nhat hat dau, va den hoc cay.','game.controls':'Ban phim + cam ung','overlay.instructions':'Dung phim mui ten, WASD, hoac nut de di chuyen. Bang qua cac lan duong va den hoc cay.','button.start':'Bat dau','button.playAgain':'Choi lai','button.pause':'Tam dung','button.resume':'Tiep tuc','button.reset':'Dat lai','how.title':'Cach choi','how.body':'Di tung o mot. Xe, meo va cho la vat can. Hat dau them diem. Hoc cay la noi an toan.','how.or':'hoac','stat.score':'Diem','stat.level':'Cap','stat.lives':'Mang','stat.acorns':'Hat dau','features.title':'Tinh nang','end.gameOver.title':'Thua roi','end.gameOver.body':'Soc bi chan lai tren duong. Hay thu lai va can thoi diem bang qua.','canvas.paused':'TAM DUNG','canvas.treeHome':'HOC CAY','canvas.start':'BAT DAU','canvas.hud':'Diem {score}   Cap {level}   Mang {lives}'},
+  ar:{'header.eyebrow':'ألعاب DrawSplat™','header.games':'الألعاب','header.home':'الرئيسية','game.subtitle':'اعبر ثلاثة مسارات، وتجنب المركبات والقطط والكلاب، واجمع الجوز، ثم اصل إلى الشجرة.','game.controls':'لوحة مفاتيح + لمس','overlay.instructions':'استخدم الأسهم أو WASD أو الأزرار للحركة. اعبر المسارات واصل إلى الشجرة.','button.start':'ابدأ اللعبة','button.playAgain':'العب مرة أخرى','button.pause':'إيقاف مؤقت','button.resume':'متابعة','button.reset':'إعادة ضبط','how.title':'طريقة اللعب','how.body':'تحرك خطوة واحدة في كل مرة. السيارات والشاحنات والقطط والكلاب مخاطر. الجوز يضيف نقاطا. الشجرة آمنة.','how.or':'أو','stat.score':'النقاط','stat.level':'المستوى','stat.lives':'الحياة','stat.acorns':'الجوز','features.title':'ميزات اللعبة','end.gameOver.title':'انتهت اللعبة','end.gameOver.body':'توقفت السنجابة في الطريق. حاول مرة أخرى واختر وقت العبور.','canvas.paused':'متوقف','canvas.treeHome':'الشجرة','canvas.start':'البداية','canvas.hud':'النقاط {score}   المستوى {level}   الحياة {lives}'},
+  zh:{'header.eyebrow':'DrawSplat™ 游戏','header.games':'游戏','header.home':'首页','game.subtitle':'穿过三条车道，躲开车辆、猫和狗，收集橡子，到达树洞。','game.controls':'键盘 + 触控','overlay.instructions':'使用方向键、WASD 或按钮移动。穿过车道并到达树洞。','button.start':'开始游戏','button.playAgain':'再玩一次','button.pause':'暂停','button.resume':'继续','button.reset':'重置','how.title':'玩法','how.body':'每次移动一格。汽车、卡车、猫和狗是危险。橡子加分。树洞是安全区。','how.or':'或','stat.score':'分数','stat.level':'关卡','stat.lives':'生命','stat.acorns':'橡子','features.title':'游戏功能','end.gameOver.title':'游戏结束','end.gameOver.body':'小松鼠被交通挡住了。再试一次，掌握过马路的时机。','canvas.paused':'暂停','canvas.treeHome':'树洞','canvas.start':'开始','canvas.hud':'分数 {score}   关卡 {level}   生命 {lives}'},
+  uh:{'header.eyebrow':'DrawSplat\u2122 Games','header.games':'Games','header.home':'Home','game.subtitle':'Teen lanes paar karein, gaariyon, billiyon aur kutton se bachein, acorns uthayein, aur tree hollow tak pahunchein.','game.controls':'Keyboard + touch controls','overlay.instructions':'Arrow keys, WASD, ya buttons se move karein. Lanes paar karke tree hollow tak pahunchein.','button.start':'Start Game','button.playAgain':'Phir khelen','button.pause':'Pause','button.resume':'Resume','button.reset':'Reset','how.title':'Kaise Khelen','how.body':'Ek waqt mein ek grid step move karein. Cars, trucks, cats, aur dogs hazards hain. Acorns points dete hain. Tree hollow safe hai.','how.or':'or','stat.score':'Score','stat.level':'Level','stat.lives':'Lives','stat.acorns':'Acorns','features.title':'Game Features','end.gameOver.title':'Game Over','end.gameOver.body':'Squirrel traffic mein ruk gaya. Dobara try karein aur crossing ka time set karein.','canvas.paused':'PAUSED','canvas.treeHome':'TREE HOME','canvas.start':'START','canvas.hud':'Score {score}   Level {level}   Lives {lives}'}
+};
+window.WidgetI18n && WidgetI18n.register('squirrel-run', LOCALES);
+const t=(key,vars)=>window.WidgetI18n?WidgetI18n.t(key,vars):(LOCALES.en[key]||key);
+const canvas=document.getElementById('game'), ctx=canvas.getContext('2d');
+const scoreEl=document.getElementById('score'), levelEl=document.getElementById('level'), livesEl=document.getElementById('lives'), acornsEl=document.getElementById('acorns');
+const overlay=document.getElementById('overlay'), overlayTitle=document.getElementById('overlayTitle'), overlayText=document.getElementById('overlayText');
+const startBtn=document.getElementById('startBtn'), pauseBtn=document.getElementById('pauseBtn'), resetBtn=document.getElementById('resetBtn');
+let overlayTitleKey='overlay.title', overlayTextKey='overlay.instructions', overlayButtonKey='button.start';
+const ASSETS=['squirrel.png','car_red.png','car_blue.png','car_green.png','pickup_orange.png','school_bus.png','cat.png','dog.png','acorn.png','tree_goal.png','heart.png','shield.png'];
+const img={}; let loaded=0; ASSETS.forEach(n=>{img[n]=new Image();img[n].src='assets/'+n;img[n].onload=()=>{loaded++; if(loaded===ASSETS.length) render();};});
+const state={running:false,paused:false,score:0,level:1,lives:3,acorns:0,time:0,player:{x:600,y:626,w:70,h:70},hazards:[],pickups:[],goal:{x:548,y:18,w:120,h:120},safe:false,last:0};
+const lanes=[{y:450,h:96,dir:1,speed:145,types:['car_red.png','car_blue.png','cat.png']},{y:330,h:96,dir:-1,speed:175,types:['pickup_orange.png','dog.png','car_green.png']},{y:210,h:96,dir:1,speed:205,types:['school_bus.png','car_blue.png','car_red.png']}];
+function rand(a,b){return Math.random()*(b-a)+a} function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function resetPlayer(){state.player.x=600;state.player.y=626;state.safe=false}
+function newLevel(keepScore=true){state.hazards=[];state.pickups=[];resetPlayer(); lanes.forEach((lane,li)=>{for(let i=0;i<4+state.level;i++){const type=lane.types[(i+li)%lane.types.length];const isAnimal=type==='cat.png'||type==='dog.png';state.hazards.push({img:type,x:(i*330+rand(0,80))%1420-120,y:lane.y+(isAnimal?18:8),w:isAnimal?118:(type==='school_bus.png'?210:175),h:isAnimal?72:88,dir:lane.dir,speed:(lane.speed+state.level*26)*(isAnimal?.78:1),lane:li});}}); for(let i=0;i<5;i++) state.pickups.push({x:120+i*250+rand(-25,25),y:[552,390,270,150][i%4],w:42,h:42,taken:false}); if(!keepScore){state.score=0;state.level=1;state.lives=3;state.acorns=0;} updateUI();}
+function startGame(){newLevel(false);state.running=true;state.paused=false;overlay.classList.add('hidden');overlayButtonKey='button.start';state.last=performance.now();requestAnimationFrame(loop)}
+function updateUI(){scoreEl.textContent=state.score;levelEl.textContent=state.level;livesEl.textContent=state.lives;acornsEl.textContent=state.acorns}
+function rects(a,b){return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y}
+function move(dx,dy){if(!state.running||state.paused)return; const p=state.player; p.x=clamp(p.x+dx*84,22,canvas.width-p.w-22); p.y=clamp(p.y+dy*84,20,canvas.height-p.h-20); state.score+= dy<0?2:0; updateUI(); checkGoal();}
+function loseLife(){state.lives--; updateUI(); if(state.lives<=0){end('end.gameOver.title','end.gameOver.body');} else {resetPlayer();}}
+function checkGoal(){if(rects(state.player,state.goal)){state.score+=100+state.level*25;state.level++;updateUI();newLevel(true);}}
+function syncDynamicLabels(){pauseBtn.textContent=state.paused?t('button.resume'):t('button.pause');}
+function renderOverlayText(){overlayTitle.textContent=t(overlayTitleKey);overlayText.textContent=t(overlayTextKey);startBtn.textContent=t(overlayButtonKey);}
+function end(titleKey,textKey){state.running=false;overlayTitleKey=titleKey;overlayTextKey=textKey;overlayButtonKey='button.playAgain';renderOverlayText();overlay.classList.remove('hidden');syncDynamicLabels();}
+function loop(now){const dt=Math.min(.033,(now-state.last)/1000||0);state.last=now;if(state.running&&!state.paused){update(dt);render();requestAnimationFrame(loop)}}
+function update(dt){state.time+=dt; for(const h of state.hazards){h.x+=h.dir*h.speed*dt; if(h.dir>0&&h.x>canvas.width+80)h.x=-h.w-rand(60,260); if(h.dir<0&&h.x+h.w<-80)h.x=canvas.width+rand(60,260); if(rects(state.player,{x:h.x+10,y:h.y+10,w:h.w-20,h:h.h-20})) loseLife();}
+ for(const a of state.pickups){if(!a.taken && rects(state.player,a)){a.taken=true;state.acorns++;state.score+=25;updateUI();}}
+}
+function roadSign(text,x,y){ctx.save();ctx.fillStyle='#fff';ctx.strokeStyle='#1f2937';ctx.lineWidth=4;ctx.roundRect(x,y,152,42,10);ctx.fill();ctx.stroke();ctx.fillStyle='#1f2937';ctx.font='bold 22px Arial';ctx.textAlign='center';ctx.fillText(text,x+76,y+28);ctx.restore();}
+function render(){ctx.clearRect(0,0,canvas.width,canvas.height); // background
+ const grd=ctx.createLinearGradient(0,0,0,canvas.height);grd.addColorStop(0,'#c7f9cc');grd.addColorStop(1,'#79d77d');ctx.fillStyle=grd;ctx.fillRect(0,0,canvas.width,canvas.height);
+ // sidewalks/road lanes
+ ctx.fillStyle='#7f5539';ctx.fillRect(0,0,canvas.width,18);ctx.fillStyle='#b7e4c7';ctx.fillRect(0,120,canvas.width,80);ctx.fillStyle='#8bd17c';ctx.fillRect(0,560,canvas.width,160);
+ ctx.fillStyle='#2f3542';ctx.fillRect(0,200,canvas.width,360); for(let y of [320,440]){ctx.strokeStyle='#f8fafc';ctx.lineWidth=6;ctx.setLineDash([40,36]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();ctx.setLineDash([]);} ctx.fillStyle='rgba(255,255,255,.12)';ctx.fillRect(0,200,canvas.width,10);ctx.fillRect(0,550,canvas.width,10);
+ // grassy decorations
+ ctx.fillStyle='rgba(20,120,70,.35)'; for(let x=18;x<canvas.width;x+=46){ctx.beginPath();ctx.moveTo(x,585);ctx.lineTo(x+10,556);ctx.lineTo(x+20,585);ctx.fill();}
+ if(img['tree_goal.png'].complete) ctx.drawImage(img['tree_goal.png'],state.goal.x-40,state.goal.y-40,200,200); roadSign(t('canvas.treeHome'),710,52); roadSign(t('canvas.start'),64,630);
+ // pickups
+ for(const a of state.pickups){if(!a.taken && img['acorn.png'].complete)ctx.drawImage(img['acorn.png'],a.x,a.y,a.w,a.h)}
+ // hazards
+ for(const h of state.hazards){ctx.save(); if(h.dir<0){ctx.translate(h.x+h.w,h.y);ctx.scale(-1,1);ctx.drawImage(img[h.img],0,0,h.w,h.h);} else {ctx.drawImage(img[h.img],h.x,h.y,h.w,h.h);} ctx.restore();}
+ // player
+ const p=state.player; if(img['squirrel.png'].complete)ctx.drawImage(img['squirrel.png'],p.x,p.y,p.w,p.h); else {ctx.fillStyle='#9a5b2f';ctx.fillRect(p.x,p.y,p.w,p.h)}
+ // HUD strip in canvas
+ ctx.fillStyle='rgba(255,255,255,.88)';ctx.roundRect(18,18,330,54,16);ctx.fill();ctx.fillStyle='#172033';ctx.font='bold 24px Arial';ctx.fillText(t('canvas.hud',{score:state.score,level:state.level,lives:state.lives}),38,53);
+ if(state.paused){ctx.fillStyle='rgba(15,23,42,.45)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.font='bold 64px Arial';ctx.textAlign='center';ctx.fillText(t('canvas.paused'),canvas.width/2,canvas.height/2);ctx.textAlign='start';}
+}
+CanvasRenderingContext2D.prototype.roundRect = CanvasRenderingContext2D.prototype.roundRect || function(x,y,w,h,r){this.beginPath();this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase(); if(['arrowup','w'].includes(k))move(0,-1); else if(['arrowdown','s'].includes(k))move(0,1); else if(['arrowleft','a'].includes(k))move(-1,0); else if(['arrowright','d'].includes(k))move(1,0); else if(k==='p')togglePause();});
+document.querySelectorAll('[data-move]').forEach(b=>b.addEventListener('click',()=>{const m=b.dataset.move;move(m==='left'?-1:m==='right'?1:0,m==='up'?-1:m==='down'?1:0)}));
+function togglePause(){if(!state.running)return;state.paused=!state.paused;syncDynamicLabels(); if(!state.paused){state.last=performance.now();requestAnimationFrame(loop)} render();}
+startBtn.addEventListener('click',startGame); pauseBtn.addEventListener('click',togglePause); resetBtn.addEventListener('click',()=>{end('overlay.title','overlay.instructions');overlayButtonKey='button.start';renderOverlayText();newLevel(false);render();});
+window.addEventListener('widget-i18n:changed',()=>{syncDynamicLabels();renderOverlayText();render();});
+newLevel(false);render();
+})();
+</script>
+</body>
+</html>
