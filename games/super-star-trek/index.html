@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Super Star Trek - Browser Edition</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div id="startScreen" class="start-screen" role="button" tabindex="0" aria-label="Start Super Star Trek">
+    <img src="SuperStarTrek_Browser_Edition.png" alt="Super Star Trek Browser Edition">
+    <button id="startGameBtn" type="button">Click to begin</button>
+  </div>
+
+  <main id="app" class="app">
+    <section class="display" aria-label="Game interface">
+      <div class="bridge-top">
+        <div class="bridge-controls">
+          <div class="topbar">
+            <div>
+              <h1>Super Star Trek</h1>
+              <p id="quipText">Plot a course. Trouble is not going to find itself.</p>
+            </div>
+          </div>
+
+          <form id="commandForm" class="command-line command-line-top" autocomplete="off">
+            <label id="promptLabel" for="commandInput">COMMAND?</label>
+            <input id="commandInput" name="command" type="text" spellcheck="false" autofocus>
+            <button type="submit">Enter</button>
+          </form>
+        </div>
+
+        <figure class="splash-art scene-banner">
+          <img id="sceneImage" src="assets/SuperStarTrek_SplashImage.png" alt="Super Star Trek display art">
+        </figure>
+      </div>
+
+      <div class="play-area">
+        <section class="sector-panel" aria-label="Current sector map">
+          <div class="section-head">
+            <div>
+              <h2>Current Sector</h2>
+              <p id="sectorCaption">Enterprise sensor display</p>
+            </div>
+            <div id="endBanner" class="end-banner" hidden>
+              <strong id="endTitle">Mission ended</strong>
+              <button id="endNewGameBtn" type="button">New game</button>
+            </div>
+          </div>
+          <div class="sector-stage">
+            <div id="sectorGrid" class="sector-grid" aria-label="8 by 8 sector grid"></div>
+            <div id="effectsLayer" class="effects-layer" aria-hidden="true"></div>
+          </div>
+        </section>
+
+        <section class="terminal-panel" aria-label="Mission log">
+          <div class="section-head">
+            <div>
+              <h2>Mission Log</h2>
+              <p>Command history and ship reports</p>
+            </div>
+          </div>
+          <div id="terminal" class="terminal" role="log" aria-live="polite"></div>
+        </section>
+      </div>
+
+    </section>
+
+    <aside class="panel" aria-label="Command controls">
+      <div class="panel-block">
+        <h2>Commands</h2>
+        <div class="command-grid">
+          <button type="button" data-command="NAV" title="Set course and warp factor">NAV</button>
+          <button type="button" data-command="SRS" title="Short range sensor scan">SRS</button>
+          <button type="button" data-command="LRS" title="Long range sensor scan">LRS</button>
+          <button type="button" data-command="PHA" title="Fire phasers">PHA</button>
+          <button type="button" data-command="TOR" title="Fire photon torpedoes">TOR</button>
+          <button type="button" data-command="SHE" title="Raise or lower shields">SHE</button>
+          <button type="button" data-command="DAM" title="Damage control report">DAM</button>
+          <button type="button" data-command="COM" title="Library computer">COM</button>
+          <button type="button" data-command="MAP" title="Cumulative galactic record">MAP</button>
+          <button type="button" data-command="XXX" title="Resign command">XXX</button>
+        </div>
+        <button id="optionsBtn" class="options-rail-button" type="button" title="Open game options">Options</button>
+      </div>
+
+      <div class="panel-block">
+        <h2>Action</h2>
+        <p id="actionHint" class="hint">Choose a command or type one below.</p>
+        <div id="choicePanel" class="choice-panel"></div>
+      </div>
+
+      <div class="panel-block">
+        <h2>Computer</h2>
+        <div class="computer-grid">
+          <button type="button" data-computer="0" title="Cumulative galactic record">Record</button>
+          <button type="button" data-computer="1" title="Status report">Status</button>
+          <button type="button" data-computer="2" title="Photon torpedo data">Torpedo Data</button>
+          <button type="button" data-computer="3" title="Starbase navigation data">Starbase Nav</button>
+          <button type="button" data-computer="4" title="Direction and distance calculator">D/D Calc</button>
+          <button type="button" data-computer="5" title="Galactic region name map">Region Map</button>
+        </div>
+      </div>
+
+      <div class="panel-block">
+        <h2>Status</h2>
+        <dl id="statusPanel" class="status-grid"></dl>
+      </div>
+
+      <div class="panel-block">
+        <h2>Legend</h2>
+        <ul class="legend">
+          <li><span class="ship legend-icon"><img src="assets/enterprise-constitution-class-starship-icon.png" alt=""> </span> Enterprise</li>
+          <li><span class="enemy legend-icon"><img src="assets/klingon-bird-of-prey-warship-icon.png" alt=""> </span> Klingon</li>
+          <li><span class="romulan legend-icon"><img src="assets/romulan-warbird-starship-icon.png" alt=""> </span> Romulan</li>
+          <li><span class="base legend-icon"><img src="assets/starbase-orbital-station-icon.png" alt=""> </span> Starbase</li>
+          <li><span class="star legend-icon"><img src="assets/yellow-main-sequence-star-icon.png" alt=""> </span> Star</li>
+          <li><span class="empty"> . </span> Empty space</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="optionsDialog" class="options-dialog">
+    <div class="dialog-head">
+      <h2>Options</h2>
+      <button id="closeOptionsBtn" type="button" aria-label="Close options">Close</button>
+    </div>
+    <div class="options-content">
+      <label class="select-label" for="difficultySelect">
+        Difficulty
+        <select id="difficultySelect">
+          <option value="classic" selected>Classic</option>
+          <option value="easy">Easy</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+      <button id="soundBtn" type="button" aria-pressed="true" title="Toggle sound effects">Sound on</button>
+      <button id="helpBtn" type="button" title="Open instructions">Instructions</button>
+      <button id="newGameBtn" type="button">New game</button>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog" class="help-dialog">
+    <div class="dialog-head">
+      <h2>Instructions</h2>
+      <button id="closeHelpBtn" type="button" aria-label="Close instructions">Close</button>
+    </div>
+    <div class="help-content">
+      <h3>Mission</h3>
+      <p>Destroy all Klingon and Romulan warships before the deadline. Dock next to a starbase to refuel, repair, and reload photon torpedoes.</p>
+
+      <h3>Commands</h3>
+      <table>
+        <thead>
+          <tr><th>Command</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>NAV</code></td><td>Set course and warp factor.</td></tr>
+          <tr><td><code>SRS</code></td><td>Short range sensor scan.</td></tr>
+          <tr><td><code>LRS</code></td><td>Long range sensor scan.</td></tr>
+          <tr><td><code>PHA</code></td><td>Fire phasers.</td></tr>
+          <tr><td><code>TOR</code></td><td>Fire photon torpedoes.</td></tr>
+          <tr><td><code>SHE</code></td><td>Move energy into shields.</td></tr>
+          <tr><td><code>DAM</code></td><td>Damage control report.</td></tr>
+          <tr><td><code>COM</code></td><td>Library computer.</td></tr>
+          <tr><td><code>MAP</code></td><td>Cumulative galactic record.</td></tr>
+          <tr><td><code>XXX</code></td><td>Resign command.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Navigation</h3>
+      <pre>      4  3  2
+       \ | /
+        \|/
+    5 ---*--- 1
+        /|\
+       / | \
+      6  7  8</pre>
+      <p>Decimal courses are allowed. Course <code>1.5</code> is halfway between courses <code>1</code> and <code>2</code>. One warp factor is roughly the size of one quadrant.</p>
+
+      <h3>Long Range Scan Codes</h3>
+      <p>Each three-digit code is <code>KBS</code>: hundreds are Klingons, tens are starbases, and units are stars. For example, <code>207</code> means two Klingons, no starbases, and seven stars. Romulans cloak from long-range scans and appear only in the local sector display.</p>
+
+      <h3>Library Computer</h3>
+      <p>Computer options: <code>0</code> record, <code>1</code> status, <code>2</code> torpedo data, <code>3</code> starbase nav, <code>4</code> direction/distance calculator, <code>5</code> region map.</p>
+
+      <h3>Credits</h3>
+      <p>Based on the classic Super Star Trek lineage: original game by Mike Mayfield; modified version published in David H. Ahl's <cite>101 BASIC Computer Games</cite>; further modifications and debugging by Bob Leedom; Lua conversion by Emanuele Bolognesi; Lua-modified version updated in June 2025 at the prompting of Miguel Guhlin; browser edition created for static online play.</p>
+    </div>
+  </dialog>
+
+  <script src="assets/game.js"></script>
+</body>
+</html>

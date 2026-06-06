@@ -8,8 +8,33 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 04 Jun 2026 13:12:31 GMT</lastBuildDate>
+			<lastBuildDate>Sat, 06 Jun 2026 01:32:52 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.10 Update: Super Star Trek Joins DrawSplat Games</title>
+		<link>https://drawsplat.org/games/super-star-trek/</link>
+		<description><![CDATA[<img src="https://drawsplat.org/games/super-star-trek/SuperStarTrek_SplashImage.png" /><br/>Super Star Trek joins DrawSplat Games as a browser-playable edition of the classic command-driven space strategy game. Command the Enterprise across an 8 by 8 galaxy, scan nearby sectors, dock at starbases, manage shields and energy, and clear Klingon and Romulan ships before time runs out. The game runs as static HTML, CSS, JavaScript, and local image assets, so it is included in the Games dropdown, Teacher Admin Game Access, and the refreshed self-host bundle.]]></description>
+		<pubDate>Sat, 06 Jun 2026 02:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.10-super-star-trek</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>drawsplat-games</category>
+		<category>super-star-trek</category>
+	</item><item>
+		<title>DrawSplat Game: Squirrel Run</title>
+		<link>https://mguhlin.org/2026/06/05/drawsplat-game-squirrel-run/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/file_0000000081dc71fd86ff11fbb872c8ad.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;“Wouldn’t it be cool to have a game where you try to move a squirrel across the road?” asked my wife. We were both thinking of old Frogger game. We watched a squirrel 🐿️ dart acro…</description>
+		<pubDate>Sat, 06 Jun 2026 01:32:51 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/06/05/drawsplat-game-squirrel-run/</guid>
+		
+	</item><item>
+		<title>DrawSplat Tools: Turn Paper Drawings into Virtual Rooms with SketchSpace VR #EduSky #education #panoform</title>
+		<link>https://mguhlin.org/2026/06/05/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</link>
+		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/feature_drawplat.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;A student leans over a printed grid with colored pencils scattered everywhere. She is trying to decide where the water cycle should go. Evaporation on the left wall? Clouds on the ceiling? Runoff a…</description>
+		<pubDate>Sat, 06 Jun 2026 01:32:35 GMT</pubDate>
+		<guid>https://mguhlin.org/2026/06/05/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</guid>
+		
+	</item><item>
 		<title>DrawSplat v3.1.10 Update: Squirrel Run Gets Sound, Squirrel Jokes, and a Tree Dance</title>
 		<link>https://drawsplat.org/games/squirrel-run-game/</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Squirrel Run now feels more alive in DrawSplat Games. The game adds light movement sounds, a splat sound when the squirrel loses a life, and a sound toggle for quiet classrooms. When the squirrel gets stopped by traffic, cats, dogs, or general bad road-crossing decisions, a speech bubble pops up with a short squirrel-point-of-view remark. Reaching the tree also gets a payoff: the squirrel pauses for a quick celebratory dance before the next level begins. The self-host download, release notes, README, and bundled RSS snapshot have been refreshed for v3.1.10.]]></description>

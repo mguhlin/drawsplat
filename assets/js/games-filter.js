@@ -3,7 +3,7 @@
 // localStorage under drawsplat.disabledGames as a JSON array of game slugs.
 (function(){
   const KEY='drawsplat.disabledGames';
-  const GAMES=['castles','floodfill','flowfree','funquiz','gilasplat','lightsout','splatball','squirrel-run-game','tangram','untangle'];
+  const GAMES=['castles','floodfill','flowfree','funquiz','gilasplat','lightsout','splatball','squirrel-run-game','super-star-trek','tangram','untangle'];
 
   function read(){
     try{

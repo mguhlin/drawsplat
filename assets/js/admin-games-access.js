@@ -1,7 +1,7 @@
 // Game Access admin panel — checkbox per game, persists to localStorage via
 // games-filter.js. Disabled games are hidden from the landing and Features pages.
 (function(){
-  const TITLES={castles:'Castles',floodfill:'Flood Fill',flowfree:'Flow Free',funquiz:'Fun Quiz',gilasplat:'GilaSplat',lightsout:'Lights Out',splatball:'Splatball','squirrel-run-game':'Squirrel Run',tangram:'Tangram Packing',untangle:'Untangle'};
+  const TITLES={castles:'Castles',floodfill:'Flood Fill',flowfree:'Flow Free',funquiz:'Fun Quiz',gilasplat:'GilaSplat',lightsout:'Lights Out',splatball:'Splatball','squirrel-run-game':'Squirrel Run','super-star-trek':'Super Star Trek',tangram:'Tangram Packing',untangle:'Untangle'};
   function render(){
     const wrap=document.getElementById('gameAccessList'); if(!wrap) return;
     const disabled=new Set(window.DrawSplatGamesFilter.getDisabled());
