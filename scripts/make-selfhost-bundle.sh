@@ -113,7 +113,8 @@ Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 What's in this zip
 ------------------
 - The complete static site (index.html, app/, pages/, legal/, guides/, parents/,
-  community/, languages/, admin/, solutions/) ready to drop into any static host.
+  community/, languages/, admin/, games/, gridsplat/, solutions/) ready to drop
+  into any static host.
 - apps-script/Code.gs  — the Google Apps Script backend (single-file).
 - server/mysql-backend/ — Node.js + MySQL backend with Docker compose.
 - compliance.config.json — default safety / retention / privacy configuration.
