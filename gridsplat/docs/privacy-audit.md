@@ -2,7 +2,7 @@
 
 Last checked: 2026-06-07
 
-GridSplat is built as a static Vite app. The production bundle contains no analytics packages, ad scripts, tracking pixels, or third-party network beacons.
+GridSplat™ is built as a static Vite app. The production bundle contains no analytics packages, ad scripts, tracking pixels, or third-party network beacons.
 
 Checked by:
 

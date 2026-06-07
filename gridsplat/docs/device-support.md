@@ -1,6 +1,6 @@
 # Browser and Device Support
 
-GridSplat targets classroom browsers and school devices.
+GridSplat™ targets classroom browsers and school devices.
 
 Official support:
 
@@ -18,6 +18,6 @@ Test matrix:
 
 Known caveats:
 
-- File System Access API is limited outside Chromium; GridSplat keeps the `.gridsplat.json` download/upload fallback.
+- File System Access API is limited outside Chromium; GridSplat™ keeps the `.gridsplat.json` download/upload fallback.
 - Cloud saving depends on district policy and provider app registration.
 - Excel import/export is deferred until a maintained, safe parser is selected.

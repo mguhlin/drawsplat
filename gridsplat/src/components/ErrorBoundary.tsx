@@ -19,7 +19,7 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('GridSplat recovered from a render error', error, info);
+    console.error('GridSplat™ recovered from a render error', error, info);
   }
 
   render() {
@@ -28,10 +28,10 @@ export class ErrorBoundary extends Component<
         <main className="error-shell" role="alert">
           <h1>Oops. Your work is still in this browser.</h1>
           <p>
-            GridSplat can reload the app and restore the latest autosaved sheet.
+            GridSplat™ can reload the app and restore the latest autosaved sheet.
           </p>
           <button type="button" onClick={() => window.location.reload()}>
-            Reload GridSplat
+            Reload GridSplat™
           </button>
         </main>
       );

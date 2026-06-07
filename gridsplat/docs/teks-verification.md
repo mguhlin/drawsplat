@@ -17,4 +17,4 @@ Verified coded math alignments:
 
 Science alignment note:
 
-The science activities are aligned in spirit to elementary scientific and engineering practices around collecting, organizing, and analyzing observations and measurements. They are not presented as official coded science alignments inside GridSplat until a Texas educator reviews exact science student expectations for the intended grade level.
+The science activities are aligned in spirit to elementary scientific and engineering practices around collecting, organizing, and analyzing observations and measurements. They are not presented as official coded science alignments inside GridSplat™ until a Texas educator reviews exact science student expectations for the intended grade level.
