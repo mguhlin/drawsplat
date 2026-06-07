@@ -1,0 +1,42 @@
+[
+  {
+    "code": "3.8A",
+    "subject": "Mathematics",
+    "grade": 3,
+    "description": "Summarize a data set with multiple categories using a frequency table, dot plot, pictograph, or bar graph with scaled intervals.",
+    "source": "Texas Education Agency TEKS; 19 TAC Chapter 111 Mathematics, Grade 3",
+    "sourceUrl": "https://tea.texas.gov/about-tea/laws-and-rules/texas-administrative-code/19-tac-chapter-111",
+    "verifiedDate": "2026-06-07",
+    "verificationStatus": "verified"
+  },
+  {
+    "code": "3.8B",
+    "subject": "Mathematics",
+    "grade": 3,
+    "description": "Solve one- and two-step problems using categorical data represented with a frequency table, dot plot, pictograph, or bar graph with scaled intervals.",
+    "source": "Texas Education Agency TEKS; 19 TAC Chapter 111 Mathematics, Grade 3",
+    "sourceUrl": "https://tea.texas.gov/about-tea/laws-and-rules/texas-administrative-code/19-tac-chapter-111",
+    "verifiedDate": "2026-06-07",
+    "verificationStatus": "verified"
+  },
+  {
+    "code": "4.9A",
+    "subject": "Mathematics",
+    "grade": 4,
+    "description": "Represent data on a frequency table, dot plot, or stem-and-leaf plot marked with whole numbers and fractions.",
+    "source": "Texas Education Agency TEKS; 19 TAC Chapter 111 Mathematics, Grade 4",
+    "sourceUrl": "https://tea.texas.gov/about-tea/laws-and-rules/texas-administrative-code/19-tac-chapter-111",
+    "verifiedDate": "2026-06-07",
+    "verificationStatus": "verified"
+  },
+  {
+    "code": "4.9B",
+    "subject": "Mathematics",
+    "grade": 4,
+    "description": "Solve one- and two-step problems using data in whole number, decimal, and fraction form in a frequency table, dot plot, or stem-and-leaf plot.",
+    "source": "Texas Education Agency TEKS; 19 TAC Chapter 111 Mathematics, Grade 4",
+    "sourceUrl": "https://tea.texas.gov/about-tea/laws-and-rules/texas-administrative-code/19-tac-chapter-111",
+    "verifiedDate": "2026-06-07",
+    "verificationStatus": "verified"
+  }
+]
