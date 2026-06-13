@@ -389,9 +389,7 @@ test('updates and exports the picture graph', async ({ page }, testInfo) => {
     page.locator('[aria-label="Bananas pictures"] .picture-symbol'),
   ).toHaveCount(4);
 
-  await page
-    .getByRole('button', { name: 'Drag one picture' })
-    .dragTo(page.getByTestId('picture-column-oranges'));
+  await page.getByRole('button', { name: 'Add one Oranges' }).click();
   await expect(page.getByTestId('picture-column-oranges')).toContainText(
     '5 total',
   );
