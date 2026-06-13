@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   addPicture,
   initialPictureCategories,
+  matrixToPictureCategories,
+  pictureCategoriesToMatrix,
   removePicture,
   scaledPictureCount,
   updateCategoryCount,
@@ -30,5 +32,16 @@ describe('picture graph model', () => {
   it('calculates scaled picture counts', () => {
     expect(scaledPictureCount(5, 2)).toBe(3);
     expect(scaledPictureCount(5, 1)).toBe(5);
+  });
+
+  it('converts between picture graph categories and sheet matrices', () => {
+    const matrix = pictureCategoriesToMatrix(initialPictureCategories);
+    const categories = matrixToPictureCategories(matrix);
+
+    expect(matrix[0]).toEqual(['Category', 'Count']);
+    expect(categories?.[0]).toMatchObject({
+      count: initialPictureCategories[0].count,
+      label: initialPictureCategories[0].label,
+    });
   });
 });

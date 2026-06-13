@@ -25,12 +25,12 @@ Pick boring, stable, well-documented tools. A child-facing education tool must w
 | App framework                | **Vanilla JS + Vite** (build tool) OR **React + Vite**                                        | Vanilla keeps it light and dependency-free; React makes the UI state (drag-drop, menus) far easier to manage. **Recommendation: React + Vite.** The drag-and-drop picture graphs and live-updating charts are much harder to keep bug-free in vanilla JS. |
 | Language                     | **TypeScript**                                                                                | Catches mistakes before a child ever sees them. Non-negotiable for a maintainable codebase.                                                                                                                                                               |
 | Spreadsheet grid             | **Custom lightweight grid** built on a canvas or virtualized DOM, NOT a heavy commercial grid | Commercial grids (AG Grid, Handsontable) are powerful but adult-oriented, often paid, and hard to make "big-cell + kid-friendly." Build a focused grid. (See Module 3 for the build-vs-buy note.)                                                         |
-| Formula engine               | **HyperFormula** (open source, MIT)                                                           | Re-implementing Excel-style formulas (SUM, AVERAGE, IF…) is a multi-month trap. HyperFormula handles ~400 functions, is well-tested, and runs entirely in the browser. Do not write your own formula parser.                                              |
+| Formula engine               | **HyperFormula wrapper**                                                                       | Re-implementing Excel-style formulas (SUM, AVERAGE, IF…) is a multi-month trap. The current package is `GPL-3.0-only`, not MIT, so GridSplat / SplatStudio is released under GPL-3.0-only rather than buying a commercial formula-engine license. |
 | Charts                       | **Chart.js** (MIT)                                                                            | Simple, mobile-friendly, animated, accessible. Covers bar, line, pie, scatter. For the _drag-drop picture graph_, build custom (Module 7) — Chart.js can't do that.                                                                                       |
 | Drag-and-drop                | **@dnd-kit** (MIT)                                                                            | Touch-friendly, accessible, works on phones. Avoid the older react-dnd (weaker touch support).                                                                                                                                                            |
 | File parsing (import/export) | **SheetJS (xlsx)** community build for Excel/CSV; **PapaParse** for robust CSV                | SheetJS reads/writes .xlsx, .csv, and more. PapaParse handles messy real-world CSVs gracefully.                                                                                                                                                           |
 | Markdown tables              | **Custom small functions** (parse + serialize)                                                | Markdown tables are simple enough to handle in ~80 lines; no library needed.                                                                                                                                                                              |
-| Cloud save                   | **Google Drive API**, **Dropbox JS SDK**, **Microsoft Graph (OneDrive)** via OAuth 2.0 PKCE   | These let the browser talk directly to the user's cloud with no server. PKCE is the login flow that works for static sites.                                                                                                                               |
+| Cloud save                   | **Google Drive API**, **Dropbox API**, **Microsoft Graph (OneDrive)** via OAuth 2.0 PKCE      | These let the browser talk directly to the user's cloud with no server. PKCE is the login flow that works for static sites.                                                                                                                               |
 | Local save                   | **File System Access API** with download/upload fallback                                      | Lets returning users re-open the same file. Fallback covers Safari/Firefox where the API is limited.                                                                                                                                                      |
 | Hosting                      | **GitHub Pages** (or Netlify/Cloudflare Pages)                                                | Free, fast, static. Matches the "no backend" design.                                                                                                                                                                                                      |
 | Testing                      | **Vitest** (unit) + **Playwright** (browser/end-to-end)                                       | Vitest is fast and pairs with Vite. Playwright tests real browser behavior including touch.                                                                                                                                                               |
@@ -240,7 +240,7 @@ gridsplat/
 1. **Local save/open:** Use the File System Access API where supported (lets users re-save to the same file). Fallback: download a `.gridsplat.json` file / upload to open. Always provide the fallback — Safari and Firefox don't fully support the modern API.
 2. **Cloud save (OAuth 2.0 with PKCE, browser-only):**
    - Google Drive API
-   - Dropbox JavaScript SDK
+   - Dropbox API
    - Microsoft Graph API (OneDrive)
    - Each gets its own adapter behind a shared `CloudProvider` interface (`io/cloud/`). The UI ("Save to…") doesn't know which cloud it's talking to — only the adapter does.
 3. Store API client IDs in environment variables, injected at build time. **No secrets in the code.** PKCE means no client _secret_ is needed (correct for static sites).
@@ -250,6 +250,7 @@ gridsplat/
 **Critical caveats to surface to the product owner (you said you don't code — read these):**
 
 - Cloud APIs require **registering an app** with Google, Dropbox, and Microsoft and getting client IDs. This is free but is a manual setup step you (or an admin) must do once. The plan can't do it for you.
+- These app registrations are not GridSplat software licenses and should not create a per-seat cost. They are deployment-owner setup tasks, and districts may still require admin approval.
 - Google in particular may require an **app verification / review** before students outside your own organization can use Drive save. Budget weeks for this if you go public. Until then, it works for your own org/test accounts.
 - School Google/Microsoft accounts are often **locked down by the district** — third-party app access may be blocked by admins. Test with a real student account early. This is the #1 thing that will surprise you.
 
@@ -396,15 +397,15 @@ Build in this order. Do not skip ahead. Commit and run CI after each.
 2. ☑ **Module 5** — Design system + UI shell + i18n string table + splash. _(Built early so later modules have buttons/menus to use.)_
 3. ☑ **Module 3** — The grid (hardest; budget the most time).
 4. ☑ **Module 4** — Formula engine (HyperFormula wrapper).
-5. ☐ **Module 8** — Import/export + versioned JSON file format + Markdown both directions. CSV, JSON, Markdown, clipboard paste, and PNG exports are complete; Excel import/export is intentionally deferred.
+5. ☑ **Module 8** — Import/export + versioned JSON file format + Markdown both directions. CSV, JSON, Markdown, Excel, clipboard paste, and PNG exports are complete.
 6. ☑ **Module 6** — Charts.
 7. ☑ **Module 7** — Picture graphs (signature feature).
-8. ☐ **Module 9** — Local save + browser-storage autosave + cloud adapters. Local save, autosave, offline handling, and provider scaffolds are complete; cloud save end-to-end is intentionally deferred.
+8. ☑ **Module 9** — Local save + browser-storage autosave + cloud adapters. Local save, autosave, offline handling, and browser-side OAuth PKCE provider adapters are complete. End-to-end provider validation is tracked as release validation because it requires real Google/Dropbox/Microsoft app registrations.
 9. ☑ **Module 10** — Activities, projects, TEKS data (codes verified by a human) + everyday and financial-literacy templates.
-10. ☑ **Module 11** — Presentation mode.
+10. ☑ **Module 11** — Presentation mode. Slide builder, keyboard/touch navigation, spotlight, print view, live sheet/chart/picture graph snapshots, fullscreen mode, and PNG export are implemented.
 11. ☑ **Module 12** — Help, onboarding, privacy note.
 12. ☑ **Module 14** — PWA / offline support + print stylesheet + device support matrix.
-13. ☐ Final pass: full e2e test suite, accessibility audit, low-end-device check, deploy to GitHub Pages.
+13. ☐ Final pass: full e2e test suite and automated accessibility smoke test are complete; low-end-device check and GitHub Pages deployment validation still require target hardware/hosting access.
 
 **For token management:** Each numbered module is a safe stopping point. Finish a module, commit, run its acceptance test, then start the next in a fresh context. Carry forward only: this plan, `docs/decisions.md`, and the file-format/schema doc.
 

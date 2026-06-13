@@ -4,11 +4,14 @@ import {
   useDraggable,
   useDroppable,
 } from '@dnd-kit/core';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { findPictureIcon, pictureIcons } from './icons';
 import {
   addPicture,
   initialPictureCategories,
+  matrixToPictureCategories,
+  pictureCategoriesToMatrix,
   removePicture,
   scaledPictureCount,
   updateCategoryCount,
@@ -55,13 +58,20 @@ function PictureColumn({
       className={isOver ? 'picture-column over' : 'picture-column'}
       data-testid={`picture-column-${category.id}`}
     >
-      <div className="picture-stack" aria-label={`${category.label} pictures`}>
+      <div
+        aria-label={`${category.label} pictures`}
+        className="picture-stack"
+        role="img"
+      >
         {Array.from({
           length: scaledPictureCount(category.count, scale),
         }).map((_, index) => (
-          <span className="picture-symbol" key={`${category.id}-${index}`}>
-            {category.icon}
-          </span>
+          <img
+            alt=""
+            className="picture-symbol"
+            key={`${category.id}-${index}`}
+            src={findPictureIcon(category.iconId).svg}
+          />
         ))}
       </div>
       <strong>{category.label}</strong>
@@ -74,6 +84,47 @@ export function PictureGraph() {
   const [categories, setCategories] = useState(initialPictureCategories);
   const [scale, setScale] = useState(1);
   const [message, setMessage] = useState('');
+  const didUserChangeRef = useRef(false);
+  const isSyncingFromSheetRef = useRef(false);
+
+  useEffect(() => {
+    function syncFromSheet(event: Event) {
+      if (didUserChangeRef.current) {
+        didUserChangeRef.current = false;
+        return;
+      }
+
+      const matrix = (event as CustomEvent<string[][]>).detail;
+      const nextCategories = matrixToPictureCategories(matrix);
+
+      if (!nextCategories) {
+        return;
+      }
+
+      isSyncingFromSheetRef.current = true;
+      setCategories(nextCategories);
+      window.setTimeout(() => {
+        isSyncingFromSheetRef.current = false;
+      }, 0);
+    }
+
+    window.addEventListener('gridsplat:sheet-updated', syncFromSheet);
+
+    return () =>
+      window.removeEventListener('gridsplat:sheet-updated', syncFromSheet);
+  }, []);
+
+  useEffect(() => {
+    if (isSyncingFromSheetRef.current || !didUserChangeRef.current) {
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('gridsplat:load-matrix', {
+        detail: pictureCategoriesToMatrix(categories),
+      }),
+    );
+  }, [categories]);
 
   function downloadPictureGraph(dataUrl: string) {
     const anchor = document.createElement('a');
@@ -89,7 +140,19 @@ export function PictureGraph() {
     }, 0);
   }
 
-  function createFallbackPng() {
+  async function loadIcon(src: string): Promise<HTMLImageElement> {
+    const image = new Image();
+
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error('Picture icon did not load.'));
+      image.src = src;
+    });
+
+    return image;
+  }
+
+  async function createFallbackPng() {
     const canvas = document.createElement('canvas');
     const width = 960;
     const height = 540;
@@ -120,19 +183,24 @@ export function PictureGraph() {
     ctx.font = '600 20px sans-serif';
     ctx.fillText(`Each picture equals ${scale}`, padding, 84);
 
+    const icons = await Promise.all(
+      categories.map((category) => loadIcon(findPictureIcon(category.iconId).svg)),
+    );
+
     categories.forEach((category, columnIndex) => {
       const centerX = padding + columnWidth * columnIndex + columnWidth / 2;
       const pictureCount = scaledPictureCount(category.count, scale);
       const symbolGap = chartHeight / Math.max(maxPictures, 1);
 
       ctx.textAlign = 'center';
-      ctx.font = '34px sans-serif';
 
       Array.from({ length: pictureCount }).forEach((_, pictureIndex) => {
-        ctx.fillText(
-          category.icon,
-          centerX,
-          chartTop + chartHeight - pictureIndex * symbolGap,
+        ctx.drawImage(
+          icons[columnIndex],
+          centerX - 18,
+          chartTop + chartHeight - pictureIndex * symbolGap - 34,
+          36,
+          36,
         );
       });
 
@@ -146,6 +214,10 @@ export function PictureGraph() {
     return canvas.toDataURL('image/png');
   }
 
+  function markUserChange() {
+    didUserChangeRef.current = true;
+  }
+
   function handleDragEnd(event: DragEndEvent) {
     const targetId = event.over?.id;
 
@@ -153,15 +225,16 @@ export function PictureGraph() {
       return;
     }
 
+    markUserChange();
     setCategories((current) => addPicture(current, targetId));
   }
 
-  function exportPictureGraph() {
+  async function exportPictureGraph() {
     setMessage('Downloaded gridsplat-picture-graph.png.');
     document.documentElement.dataset.pictureGraphExported = 'true';
 
     try {
-      downloadPictureGraph(createFallbackPng());
+      downloadPictureGraph(await createFallbackPng());
     } catch {
       setMessage('Picture graph export is ready to try again.');
     }
@@ -220,24 +293,48 @@ export function PictureGraph() {
                 min="0"
                 type="number"
                 value={category.count}
-                onChange={(event) =>
+                onChange={(event) => {
+                  markUserChange();
                   setCategories((current) =>
                     updateCategoryCount(
                       current,
                       category.id,
                       Number(event.target.value),
                     ),
-                  )
-                }
+                  );
+                }}
               />
+            </label>
+            <label>
+              Picture
+              <select
+                value={category.iconId}
+                onChange={(event) => {
+                  markUserChange();
+                  setCategories((current) =>
+                    current.map((item) =>
+                      item.id === category.id
+                        ? { ...item, iconId: event.target.value }
+                        : item,
+                    ),
+                  );
+                }}
+              >
+                {pictureIcons.map((icon) => (
+                  <option key={icon.id} value={icon.id}>
+                    {icon.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <button
               aria-label={`Remove one ${category.label}`}
               className="picture-stepper"
               type="button"
-              onClick={() =>
+              onClick={() => {
+                markUserChange();
                 setCategories((current) => removePicture(current, category.id))
-              }
+              }}
             >
               -
             </button>
@@ -245,9 +342,10 @@ export function PictureGraph() {
               aria-label={`Add one ${category.label}`}
               className="picture-stepper"
               type="button"
-              onClick={() =>
+              onClick={() => {
+                markUserChange();
                 setCategories((current) => addPicture(current, category.id))
-              }
+              }}
             >
               +
             </button>

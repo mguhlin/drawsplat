@@ -18,7 +18,7 @@ import {
 import { loadAutosave, saveAutosave } from '../io/autosave';
 import { exportCsv, importCsv } from '../io/csv';
 import { cloudProviders } from '../io/cloud/providers';
-import { downloadText } from '../io/download';
+import { downloadBuffer, downloadText } from '../io/download';
 import { exportNativeJson, importNativeJson } from '../io/json';
 import { saveSheetLocally } from '../io/localFile';
 import {
@@ -26,9 +26,10 @@ import {
   importMarkdown,
   markdownToMatrix,
 } from '../io/markdown';
-import { matrixToSheet, type SheetMatrix } from '../io/matrix';
+import { matrixToSheet, sheetToMatrix, type SheetMatrix } from '../io/matrix';
 import { strings } from '../i18n/strings';
 import {
+  clearCells,
   createSheet,
   getColumnName,
   isCellInSelection,
@@ -47,6 +48,18 @@ const HEADER_SIZE = 48;
 const OVERSCAN = 4;
 
 type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent';
+type GridAction =
+  | { action: 'chart'; chartType: ChartKind }
+  | {
+      action:
+        | 'copy'
+        | 'new-sheet'
+        | 'open-file'
+        | 'paste'
+        | 'redo'
+        | 'save-file'
+        | 'undo';
+    };
 
 interface ResizeState {
   type: 'row' | 'col';
@@ -86,6 +99,7 @@ export function SpreadsheetGrid() {
     }
   });
   const [history, setHistory] = useState<SheetData[]>([]);
+  const [future, setFuture] = useState<SheetData[]>([]);
   const [selection, setSelection] = useState<SelectionRange>(() =>
     createSelection({ row: 0, col: 0 }),
   );
@@ -121,6 +135,14 @@ export function SpreadsheetGrid() {
   }, [sheet]);
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('gridsplat:sheet-updated', {
+        detail: sheetToMatrix(sheet),
+      }),
+    );
+  }, [sheet]);
+
+  useEffect(() => {
     function loadMatrix(event: Event) {
       const matrix = (event as CustomEvent<SheetMatrix>).detail;
 
@@ -135,6 +157,52 @@ export function SpreadsheetGrid() {
     return () =>
       window.removeEventListener('gridsplat:load-matrix', loadMatrix);
   }, [sheet]);
+
+  useEffect(() => {
+    function handleGridAction(event: Event) {
+      const detail = (event as CustomEvent<GridAction>).detail;
+
+      if (detail.action === 'new-sheet') {
+        resetSheet();
+      }
+
+      if (detail.action === 'open-file') {
+        fileInputRef.current?.click();
+      }
+
+      if (detail.action === 'save-file') {
+        void saveLocalFile();
+      }
+
+      if (detail.action === 'undo') {
+        undo();
+      }
+
+      if (detail.action === 'redo') {
+        redo();
+      }
+
+      if (detail.action === 'copy') {
+        void copySelectionToClipboard();
+      }
+
+      if (detail.action === 'paste') {
+        void pasteFromClipboard();
+      }
+
+      if (detail.action === 'chart') {
+        makeChart(detail.chartType);
+      }
+    }
+
+    window.addEventListener('gridsplat:grid-action', handleGridAction);
+
+    return () =>
+      window.removeEventListener('gridsplat:grid-action', handleGridAction);
+    // The event bridge depends on current sheet/selection/chart state; the
+    // called handlers are plain function declarations in this component.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chartTitle, selection, sheet]);
 
   const totalWidth = useMemo(
     () => HEADER_SIZE + colWidths.reduce((sum, width) => sum + width, 0),
@@ -182,6 +250,7 @@ export function SpreadsheetGrid() {
 
   function remember(currentSheet: SheetData) {
     setHistory((previous) => [...previous.slice(-24), currentSheet]);
+    setFuture([]);
   }
 
   function selectCell(address: CellAddress) {
@@ -198,6 +267,12 @@ export function SpreadsheetGrid() {
     setSelection(createSelection(address));
     setEditingCell(address);
     setDraftValue(sheet[address.row][address.col].rawValue);
+  }
+
+  function beginEditingWithValue(address: CellAddress, value: string) {
+    setSelection(createSelection(address));
+    setEditingCell(address);
+    setDraftValue(value);
   }
 
   function commitEditing(moveDown = false) {
@@ -228,6 +303,7 @@ export function SpreadsheetGrid() {
       const priorSheet = previous.at(-1);
 
       if (priorSheet) {
+        setFuture((next) => [sheet, ...next].slice(0, 25));
         setSheet(priorSheet);
       }
 
@@ -236,36 +312,114 @@ export function SpreadsheetGrid() {
     setEditingCell(null);
   }
 
+  function redo() {
+    setFuture((previous) => {
+      const nextSheet = previous[0];
+
+      if (nextSheet) {
+        setHistory((nextHistory) => [...nextHistory.slice(-24), sheet]);
+        setSheet(nextSheet);
+      }
+
+      return previous.slice(1);
+    });
+    setEditingCell(null);
+  }
+
+  function clearSelection() {
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage('Cleared selected cells.');
+
+      return clearCells(currentSheet, selection);
+    });
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (editingCell) {
       return;
     }
 
     const active = selection.end;
+    const isShortcut = event.ctrlKey || event.metaKey;
+
+    if (isShortcut && event.key.toLowerCase() === 'z') {
+      event.preventDefault();
+
+      if (event.shiftKey) {
+        redo();
+        return;
+      }
+
+      undo();
+      return;
+    }
+
+    if (isShortcut && event.key.toLowerCase() === 'y') {
+      event.preventDefault();
+      redo();
+      return;
+    }
+
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      event.preventDefault();
+      clearSelection();
+      return;
+    }
 
     if (event.key === 'Enter') {
       event.preventDefault();
       beginEditing(active);
+      return;
     }
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       selectCell({ row: active.row + 1, col: active.col });
+      return;
     }
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       selectCell({ row: active.row - 1, col: active.col });
+      return;
     }
 
     if (event.key === 'ArrowRight' || event.key === 'Tab') {
       event.preventDefault();
-      selectCell({ row: active.row, col: active.col + 1 });
+      selectCell({
+        row: active.row,
+        col: active.col + (event.shiftKey ? -1 : 1),
+      });
+      return;
     }
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       selectCell({ row: active.row, col: active.col - 1 });
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      selectCell({ row: active.row, col: 0 });
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      selectCell({ row: active.row, col: DEFAULT_COLS - 1 });
+      return;
+    }
+
+    if (
+      event.key.length === 1 &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey
+    ) {
+      event.preventDefault();
+      beginEditingWithValue(active, event.key);
     }
   }
 
@@ -306,15 +460,7 @@ export function SpreadsheetGrid() {
     event.preventDefault();
   }
 
-  function handlePaste(event: ClipboardEvent<HTMLDivElement>) {
-    const pastedText = event.clipboardData.getData('text/plain');
-
-    if (!pastedText) {
-      return;
-    }
-
-    event.preventDefault();
-
+  function pasteTextIntoSheet(pastedText: string) {
     try {
       const values =
         pastedText.includes('|') && pastedText.includes('---')
@@ -336,7 +482,50 @@ export function SpreadsheetGrid() {
     }
   }
 
-  function exportFile(format: 'json' | 'csv' | 'markdown') {
+  function handlePaste(event: ClipboardEvent<HTMLDivElement>) {
+    const pastedText = event.clipboardData.getData('text/plain');
+
+    if (!pastedText) {
+      return;
+    }
+
+    event.preventDefault();
+    pasteTextIntoSheet(pastedText);
+  }
+
+  async function copySelectionToClipboard() {
+    try {
+      await navigator.clipboard.writeText(serializeSelection(sheet, selection));
+      setFileMessage('Copied the selected cells.');
+    } catch (error) {
+      setFileMessage(
+        error instanceof Error
+          ? `We couldn't copy those cells: ${error.message}`
+          : "We couldn't copy those cells.",
+      );
+    }
+  }
+
+  async function pasteFromClipboard() {
+    try {
+      const pastedText = await navigator.clipboard.readText();
+
+      if (!pastedText) {
+        setFileMessage('The clipboard is empty.');
+        return;
+      }
+
+      pasteTextIntoSheet(pastedText);
+    } catch (error) {
+      setFileMessage(
+        error instanceof Error
+          ? `We couldn't read the clipboard: ${error.message}`
+          : "We couldn't read the clipboard.",
+      );
+    }
+  }
+
+  async function exportFile(format: 'json' | 'csv' | 'markdown' | 'xlsx') {
     if (format === 'json') {
       downloadText(
         'gridsplat.gridsplat.json',
@@ -355,6 +544,13 @@ export function SpreadsheetGrid() {
       downloadText('gridsplat.md', exportMarkdown(sheet), 'text/markdown');
       setFileMessage('Downloaded a Markdown table.');
     }
+
+    if (format === 'xlsx') {
+      const { excelMimeType, exportExcel } = await import('../io/excel');
+
+      downloadBuffer('gridsplat.xlsx', await exportExcel(sheet), excelMimeType());
+      setFileMessage('Downloaded an Excel workbook.');
+    }
   }
 
   async function importFile(event: ChangeEvent<HTMLInputElement>) {
@@ -365,13 +561,21 @@ export function SpreadsheetGrid() {
     }
 
     try {
-      const text = await file.text();
-      const nextSheet =
-        file.name.endsWith('.gridsplat.json') || file.name.endsWith('.json')
-          ? importNativeJson(text)
-          : file.name.endsWith('.md') || file.name.endsWith('.markdown')
-            ? importMarkdown(text)
-            : importCsv(text);
+      const isExcelFile =
+        file.name.endsWith('.xlsx') ||
+        file.type ===
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      const nextSheet = isExcelFile
+        ? await import('../io/excel').then(async ({ importExcel }) =>
+            importExcel(await file.arrayBuffer()),
+          )
+        : await file.text().then((text) =>
+            file.name.endsWith('.gridsplat.json') || file.name.endsWith('.json')
+              ? importNativeJson(text)
+              : file.name.endsWith('.md') || file.name.endsWith('.markdown')
+                ? importMarkdown(text)
+                : importCsv(text),
+          );
 
       remember(sheet);
       setSheet(nextSheet);
@@ -401,12 +605,46 @@ export function SpreadsheetGrid() {
     }
 
     try {
-      await provider.connect();
+      const fileId = await provider.save(sheet);
+
+      setFileMessage(
+        fileId
+          ? `Saved to ${provider.name}.`
+          : `Connected to ${provider.name}.`,
+      );
     } catch (error) {
       setFileMessage(
         error instanceof Error
           ? error.message
           : `${provider.name} is not connected yet.`,
+      );
+    }
+  }
+
+  async function loadCloudProvider(providerName: string) {
+    const provider = cloudProviders.find((item) => item.name === providerName);
+    const fileId = provider?.getLastFileId();
+
+    if (!provider) {
+      return;
+    }
+
+    if (!fileId) {
+      setFileMessage(`Save to ${provider.name} before reopening from it.`);
+      return;
+    }
+
+    try {
+      remember(sheet);
+      setSheet(await provider.load(fileId));
+      setSelection(createSelection({ row: 0, col: 0 }));
+      setEditingCell(null);
+      setFileMessage(`Opened the last ${provider.name} save.`);
+    } catch (error) {
+      setFileMessage(
+        error instanceof Error
+          ? error.message
+          : `${provider.name} could not open the last save.`,
       );
     }
   }
@@ -575,15 +813,24 @@ export function SpreadsheetGrid() {
         <button
           className="big-action"
           type="button"
+          onClick={redo}
+          disabled={future.length === 0}
+        >
+          Redo
+        </button>
+        <button
+          className="big-action"
+          type="button"
           onClick={() => fileInputRef.current?.click()}
         >
           Import
         </button>
         <input
           ref={fileInputRef}
+          aria-label="Import spreadsheet file"
           className="visually-hidden"
           type="file"
-          accept=".csv,.json,.gridsplat.json,.md,.markdown,text/csv,application/json,text/markdown"
+          accept=".csv,.json,.gridsplat.json,.md,.markdown,.xlsx,text/csv,application/json,text/markdown,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           onChange={importFile}
         />
         <button
@@ -607,6 +854,13 @@ export function SpreadsheetGrid() {
         >
           Markdown
         </button>
+        <button
+          className="big-action secondary"
+          type="button"
+          onClick={() => void exportFile('xlsx')}
+        >
+          Excel
+        </button>
         <button className="big-action" type="button" onClick={saveLocalFile}>
           Save File
         </button>
@@ -618,15 +872,24 @@ export function SpreadsheetGrid() {
           Start Over
         </button>
         {cloudProviders.map((provider) => (
-          <button
-            className="big-action secondary"
-            key={provider.id}
-            type="button"
-            onClick={() => tryCloudProvider(provider.name)}
-            disabled={!isOnline}
-          >
-            {provider.name}
-          </button>
+          <span className="cloud-actions" key={provider.id}>
+            <button
+              className="big-action secondary"
+              type="button"
+              onClick={() => tryCloudProvider(provider.name)}
+              disabled={!isOnline}
+            >
+              Save {provider.name}
+            </button>
+            <button
+              className="big-action secondary"
+              type="button"
+              onClick={() => loadCloudProvider(provider.name)}
+              disabled={!isOnline || !provider.getLastFileId()}
+            >
+              Open {provider.name}
+            </button>
+          </span>
         ))}
         <label className="header-toggle">
           <input
@@ -690,14 +953,6 @@ export function SpreadsheetGrid() {
       <div
         ref={scrollerRef}
         className="sheet-scroller"
-        role="grid"
-        aria-label="GridSplat™ grid"
-        aria-rowcount={DEFAULT_ROWS}
-        aria-colcount={DEFAULT_COLS}
-        tabIndex={0}
-        onCopy={handleCopy}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
         onScroll={handleScroll}
       >
         <div
@@ -710,7 +965,6 @@ export function SpreadsheetGrid() {
           />
           {visibleCols.map(({ col, left, width }) => (
             <div
-              aria-hidden="true"
               className="column-header"
               key={col}
               style={{
@@ -739,7 +993,6 @@ export function SpreadsheetGrid() {
           ))}
           {visibleRows.map(({ row, top, height }) => (
             <div
-              aria-hidden="true"
               className="row-header"
               key={row}
               style={{
@@ -766,69 +1019,96 @@ export function SpreadsheetGrid() {
               />
             </div>
           ))}
-          {visibleRows.flatMap(({ row, top, height }) =>
-            visibleCols.map(({ col, left, width }) => {
-              const address = { row, col };
-              const cell = sheet[row][col];
-              const isEditing =
-                editingCell?.row === row && editingCell.col === col;
-              const isSelected = isCellInSelection(address, selection);
+          <div
+            aria-colcount={DEFAULT_COLS}
+            aria-label="GridSplat™ grid"
+            aria-rowcount={DEFAULT_ROWS}
+            className="sheet-grid-layer"
+            role="grid"
+            tabIndex={0}
+            onCopy={handleCopy}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+          >
+            {visibleRows.map(({ row, top, height }) => (
+              <div
+                aria-rowindex={row + 1}
+                className="sheet-row"
+                key={row}
+                role="row"
+                style={{
+                  top,
+                  width: totalWidth,
+                  height,
+                }}
+              >
+                {visibleCols.map(({ col, left, width }) => {
+                  const address = { row, col };
+                  const cell = sheet[row][col];
+                  const isEditing =
+                    editingCell?.row === row && editingCell.col === col;
+                  const isSelected = isCellInSelection(address, selection);
 
-              return (
-                <div
-                  aria-colindex={col + 1}
-                  aria-label={`Cell ${getColumnName(col)}${row + 1}`}
-                  aria-rowindex={row + 1}
-                  className={isSelected ? 'sheet-cell selected' : 'sheet-cell'}
-                  data-testid={`cell-${getColumnName(col)}${row + 1}`}
-                  key={`${row}-${col}`}
-                  role="gridcell"
-                  style={{
-                    top,
-                    left,
-                    width,
-                    height,
-                  }}
-                  onDoubleClick={() => beginEditing(address)}
-                  onPointerDown={() => handleCellPointerDown(address)}
-                  onPointerEnter={() => handleCellPointerEnter(address)}
-                  onPointerUp={() => handleCellPointerUp(address)}
-                >
-                  {isEditing ? (
-                    <input
-                      aria-label={`Edit cell ${getColumnName(col)}${row + 1}`}
-                      className="cell-editor"
-                      value={draftValue}
-                      autoFocus
-                      onBlur={() => commitEditing()}
-                      onChange={(event) => setDraftValue(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          commitEditing(true);
-                        }
-
-                        if (event.key === 'Escape') {
-                          event.preventDefault();
-                          cancelEditing();
-                        }
-                      }}
-                    />
-                  ) : (
-                    <span
+                  return (
+                    <div
+                      aria-colindex={col + 1}
+                      aria-label={`Cell ${getColumnName(col)}${row + 1}`}
                       className={
-                        cell.errorType
-                          ? `cell-value ${cell.type} error`
-                          : `cell-value ${cell.type}`
+                        isSelected ? 'sheet-cell selected' : 'sheet-cell'
                       }
+                      data-testid={`cell-${getColumnName(col)}${row + 1}`}
+                      key={`${row}-${col}`}
+                      role="gridcell"
+                      style={{
+                        top: 0,
+                        left,
+                        width,
+                        height,
+                      }}
+                      onDoubleClick={() => beginEditing(address)}
+                      onPointerDown={() => handleCellPointerDown(address)}
+                      onPointerEnter={() => handleCellPointerEnter(address)}
+                      onPointerUp={() => handleCellPointerUp(address)}
                     >
-                      {formatDisplayValue(cell.displayValue)}
-                    </span>
-                  )}
-                </div>
-              );
-            }),
-          )}
+                      {isEditing ? (
+                        <input
+                          aria-label={`Edit cell ${getColumnName(col)}${row + 1}`}
+                          className="cell-editor"
+                          value={draftValue}
+                          autoFocus
+                          onBlur={() => commitEditing()}
+                          onChange={(event) =>
+                            setDraftValue(event.target.value)
+                          }
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault();
+                              commitEditing(true);
+                            }
+
+                            if (event.key === 'Escape') {
+                              event.preventDefault();
+                              cancelEditing();
+                            }
+                          }}
+                        />
+                      ) : (
+                        <span
+                          className={
+                            cell.errorType
+                              ? `cell-value ${cell.type} error`
+                              : `cell-value ${cell.type}`
+                          }
+                        >
+                          {formatDisplayValue(cell.displayValue)}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       {chart ? (

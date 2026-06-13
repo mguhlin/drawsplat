@@ -6,13 +6,19 @@ GridSplat™ is a browser-based spreadsheet, charting, and graphing tool for gra
 
 The app is built with React, TypeScript, and Vite as a static web application so it can be hosted with GitHub Pages.
 
+## License
+
+GridSplat™ / SplatStudio is released under GPL-3.0-only. See [LICENSE.md](LICENSE.md) and [COPYING](COPYING).
+
+The broader DrawSplat™ whiteboard, tools, widgets, and backends remain under the repository-level DrawSplat™ AGPL-3.0-or-later license unless a file or subdirectory says otherwise.
+
 ## Project Status
 
-Modules 1-10 are implemented: foundation, UI shell, grid, formulas, import/export, charts, picture graphs, save scaffolds, and built-in activities.
+Local implementation modules are addressed: foundation, UI shell, grid, formulas, CSV/JSON/Markdown/Excel import/export, charts, picture graphs, save scaffolds, activities, presentation, help/privacy, and PWA support.
 
-Remaining plan modules: presentation mode, help/onboarding/privacy, and PWA/offline support.
+Remaining release validation: provider credential checks with real Google/Dropbox/Microsoft app registrations, low-end Chromebook profiling, and production deployment validation.
 
-The modular build plan lives in [docs/plan.md](docs/plan.md).
+The modular build plan lives in [docs/plan.md](docs/plan.md). The cloud/OAuth rollout strategy lives in [docs/cloud-auth-strategy.md](docs/cloud-auth-strategy.md).
 
 ## Run Locally
 

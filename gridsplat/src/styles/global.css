@@ -609,6 +609,66 @@ h1 {
   height: 120px;
 }
 
+.viewer-snapshot-image {
+  width: min(760px, 92%);
+  max-height: 340px;
+  border: 4px solid #fff;
+  border-radius: var(--radius-2);
+  background: #fff;
+  object-fit: contain;
+}
+
+.viewer-sheet-snapshot {
+  width: min(780px, 94%);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.viewer-sheet-snapshot span {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: var(--space-2);
+  border: 2px solid #fff;
+  border-radius: var(--radius-2);
+  background: rgb(255 255 255 / 16%);
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-stats {
+  width: min(680px, 92%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.viewer-stats div {
+  padding: var(--space-3);
+  border: 2px solid #fff;
+  border-radius: var(--radius-2);
+  background: rgb(255 255 255 / 16%);
+}
+
+.viewer-stats dt,
+.viewer-stats dd {
+  margin: 0;
+}
+
+.viewer-stats dt {
+  font-weight: 900;
+}
+
+.viewer-stats dd {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 900;
+}
+
 .viewer-nav,
 .exit-presentation {
   min-height: 56px;
@@ -882,7 +942,8 @@ h1 {
 }
 
 .scale-control input,
-.picture-data-row input {
+.picture-data-row input,
+.picture-data-row select {
   min-height: 42px;
   width: 96px;
   border: 1px solid var(--color-border);
@@ -914,7 +975,7 @@ h1 {
 .picture-graph {
   min-height: 320px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
   border: 1px solid var(--color-border);
@@ -951,14 +1012,11 @@ h1 {
 .picture-symbol {
   width: 42px;
   height: 42px;
-  display: inline-grid;
-  place-items: center;
+  display: block;
   border: 1px solid var(--color-primary);
   border-radius: 50%;
-  color: var(--color-primary-dark);
   background: var(--color-accent);
-  font-size: 1.3rem;
-  font-weight: 900;
+  object-fit: contain;
 }
 
 .picture-data-table {
@@ -1122,6 +1180,17 @@ h1 {
 
 .sheet-canvas {
   position: relative;
+}
+
+.sheet-row {
+  position: absolute;
+  left: 0;
+}
+
+.sheet-grid-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .corner-header,

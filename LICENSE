@@ -1,20 +1,35 @@
 DrawSplatTM License
 Copyright (c) 2026 DrawSplat Developer(s) <drawsplat@gmail.com>
 
-DrawSplatTM is free/open source under the GNU Affero General Public License,
-version 3.0 or later (AGPL-3.0-or-later).
+DrawSplatTM whiteboard code, tools, widgets, Apps Script backend, MySQL backend,
+compliance features, and other non-GridSplat parts of this repository are
+free/open source under the GNU Affero General Public License, version 3.0 or
+later (AGPL-3.0-or-later).
 
 SPDX-License-Identifier: AGPL-3.0-or-later
+
+GridSplatTM / SplatStudio exception
+-----------------------------------
+
+The GridSplatTM subproject in `gridsplat/` is released under the GNU General
+Public License, version 3.0 only (GPL-3.0-only). See `gridsplat/LICENSE.md`
+and `gridsplat/COPYING`.
+
+This license split lets GridSplat ship with GPL-3.0-only dependencies while
+DrawSplatTM whiteboard and the existing tools/widgets continue under the
+current AGPL-3.0-or-later licensing.
 
 In plain language:
 
 - Individual educators, students, and community users may use the open
-  version for free.
-- You may study, copy, modify, and share the open version under AGPL terms.
+  versions for free.
+- You may study, copy, modify, and share the open versions under the license
+  terms that apply to each subproject.
 - If you modify DrawSplatTM and offer it as a hosted network service, AGPL
   requires you to make the corresponding source code available to users.
 - Paid school, district, hosted, closed-source, embedded, or site-license
-  deployments may use a separate commercial license.
+  deployments of AGPL-covered DrawSplatTM components may use a separate
+  commercial license.
 
 The full AGPL v3.0 license text is available at:
 

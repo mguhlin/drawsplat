@@ -4,6 +4,7 @@ import type {
   SheetCell,
   SheetData,
 } from './types';
+import Papa from 'papaparse';
 import { recalculateSheet } from '../formulas/engine';
 
 const BLANK_CELL: SheetCell = {
@@ -86,13 +87,46 @@ export function pasteCells(
   );
 }
 
+export function clearCells(
+  sheet: SheetData,
+  selection: SelectionRange,
+): SheetData {
+  const normalized = normalizeSelection(selection);
+
+  return recalculateSheet(
+    sheet.map((row, rowIndex) =>
+      row.map((cell, colIndex) =>
+        rowIndex >= normalized.start.row &&
+        rowIndex <= normalized.end.row &&
+        colIndex >= normalized.start.col &&
+        colIndex <= normalized.end.col
+          ? createCell('')
+          : cell,
+      ),
+    ),
+  );
+}
+
 export function parsePastedText(text: string): string[][] {
   const normalizedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  const rows = normalizedText.endsWith('\n')
-    ? normalizedText.slice(0, -1).split('\n')
-    : normalizedText.split('\n');
 
-  return rows.map((row) => row.split('\t'));
+  if (normalizedText.includes('\t')) {
+    const rows = normalizedText.endsWith('\n')
+      ? normalizedText.slice(0, -1).split('\n')
+      : normalizedText.split('\n');
+
+    return rows.map((row) => row.split('\t'));
+  }
+
+  const result = Papa.parse<string[]>(normalizedText, {
+    skipEmptyLines: false,
+  });
+
+  if (result.errors.length > 0) {
+    throw new Error(result.errors[0].message);
+  }
+
+  return result.data;
 }
 
 export function normalizeSelection(selection: SelectionRange): SelectionRange {

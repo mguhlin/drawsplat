@@ -20,4 +20,4 @@ Known caveats:
 
 - File System Access API is limited outside Chromium; GridSplat™ keeps the `.gridsplat.json` download/upload fallback.
 - Cloud saving depends on district policy and provider app registration.
-- Excel import/export is deferred until a maintained, safe parser is selected.
+- Excel import/export uses ExcelJS and is lazy-loaded so the workbook parser is not part of the initial app chunk.

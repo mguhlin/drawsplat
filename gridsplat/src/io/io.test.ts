@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { updateCell, createSheet } from '../grid/gridModel';
 import { exportCsv, importCsv } from './csv';
+import { exportExcel, importExcel } from './excel';
 import { exportNativeJson, importNativeJson } from './json';
 import {
   exportMarkdown,
@@ -36,6 +37,14 @@ describe('import/export adapters', () => {
 
     expect(imported[0][0].displayValue).toBe('Fruit');
     expect(imported[1][1].displayValue).toBe('4');
+  });
+
+  it('round-trips Excel workbooks', async () => {
+    const imported = await importExcel(await exportExcel(sampleSheet()));
+
+    expect(imported[0][0].displayValue).toBe('Fruit');
+    expect(imported[1][1].displayValue).toBe('4');
+    expect(imported[2][1].displayValue).toBe('4');
   });
 
   it('round-trips Markdown tables', () => {

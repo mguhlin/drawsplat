@@ -1,4 +1,7 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
+import { exportExcel } from '../src/io/excel';
+import { updateCell, createSheet } from '../src/grid/gridModel';
 
 test.beforeEach(async ({ context, page }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -119,6 +122,24 @@ test('enters data, selects a range, copies, pastes, and undoes on desktop', asyn
 
   await expect(page.getByTestId('cell-C1')).not.toContainText('9');
   await expect(page.getByTestId('cell-D2')).not.toContainText('12');
+
+  await page.getByRole('button', { name: 'Redo' }).click();
+
+  await expect(page.getByTestId('cell-C1')).toContainText('9');
+  await expect(page.getByTestId('cell-D2')).toContainText('12');
+
+  await page.getByTestId('cell-E1').click();
+  await page.getByLabel('Edit cell E1').press('Escape');
+  await page.locator('[role="grid"]').focus();
+  await page.keyboard.press('K');
+  await page.getByLabel('Edit cell E1').press('Enter');
+  await expect(page.getByTestId('cell-E1')).toContainText('K');
+
+  await page.getByTestId('cell-E1').click();
+  await page.getByLabel('Edit cell E1').press('Escape');
+  await page.locator('[role="grid"]').focus();
+  await page.keyboard.press('Delete');
+  await expect(page.getByTestId('cell-E1')).not.toContainText('K');
 });
 
 test('opens a roomy editor from a mobile tap', async ({ page }, testInfo) => {
@@ -209,6 +230,49 @@ test('imports CSV and pastes Markdown tables', async ({ page }, testInfo) => {
   await expect(page.getByTestId('cell-C1')).toContainText('Item');
   await expect(page.getByTestId('cell-D2')).toContainText('5');
   await expect(page.getByText('Pasted table into the sheet.')).toBeVisible();
+
+  await page.getByTestId('cell-E1').click();
+  await page.getByLabel('Edit cell E1').press('Escape');
+  await page.locator('[role="grid"]').focus();
+  await page.evaluate(() =>
+    navigator.clipboard.writeText('Name,Note\nApples,"Red, sweet"'),
+  );
+  await page.keyboard.press('ControlOrMeta+V');
+
+  await expect(page.getByTestId('cell-E1')).toContainText('Name');
+  await expect(page.getByTestId('cell-F2')).toContainText('Red, sweet');
+});
+
+test('imports and exports Excel workbooks', async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Excel flow runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+
+  let sheet = createSheet(20, 20);
+
+  sheet = updateCell(sheet, { row: 0, col: 0 }, 'Name');
+  sheet = updateCell(sheet, { row: 0, col: 1 }, 'Count');
+  sheet = updateCell(sheet, { row: 1, col: 0 }, 'Grapes');
+  sheet = updateCell(sheet, { row: 1, col: 1 }, '8');
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'fruit.xlsx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    buffer: Buffer.from(await exportExcel(sheet)),
+  });
+
+  await expect(page.getByTestId('cell-A1')).toContainText('Name');
+  await expect(page.getByTestId('cell-B2')).toContainText('8');
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Excel' }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe('gridsplat.xlsx');
 });
 
 test('creates a live-updating bar chart and exports PNG', async ({
@@ -330,7 +394,7 @@ test('autosaves sheet data in the browser and shows cloud setup status', async (
   await dismissSplash(page);
   await expect(page.getByTestId('cell-A1')).toContainText('Autosaved');
 
-  await page.getByRole('button', { name: 'Google Drive' }).click();
+  await page.getByRole('button', { name: 'Save Google Drive' }).click();
   await expect(page.getByText(/VITE_GOOGLE_DRIVE_CLIENT_ID/)).toBeVisible();
 });
 
@@ -451,6 +515,12 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'Print Slides' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-printed', 'true');
 
+  const slideDownloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export PNG' }).click();
+  const slideDownload = await slideDownloadPromise;
+
+  expect(slideDownload.suggestedFilename()).toBe('gridsplat-slide-3.png');
+
   await page.getByRole('button', { name: 'Spotlight' }).click();
 
   await page.getByRole('button', { name: 'Start Presentation' }).click();
@@ -494,4 +564,21 @@ test('replays onboarding and shows privacy help', async ({
   await expect(page.getByLabel('First tour steps')).toContainText(
     'Make a chart or picture graph',
   );
+});
+
+test('has no automated accessibility violations on the main workspace', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Accessibility smoke test runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+
+  const results = await new AxeBuilder({ page })
+    .include('main')
+    .analyze();
+
+  expect(results.violations).toEqual([]);
 });

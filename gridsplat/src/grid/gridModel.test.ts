@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createCell,
   createSheet,
+  clearCells,
   getColumnName,
   parsePastedText,
   pasteCells,
@@ -24,6 +25,13 @@ describe('gridModel', () => {
     ]);
   });
 
+  it('parses comma-delimited pasted text with quoted values', () => {
+    expect(parsePastedText('Name,Note\nApples,"Red, sweet"')).toEqual([
+      ['Name', 'Note'],
+      ['Apples', 'Red, sweet'],
+    ]);
+  });
+
   it('updates, pastes, and serializes selected cells', () => {
     let sheet = createSheet(4, 4);
 
@@ -41,6 +49,21 @@ describe('gridModel', () => {
         end: { row: 2, col: 2 },
       }),
     ).toBe('B\tC\nD\tE');
+  });
+
+  it('clears selected cells and recalculates formulas', () => {
+    let sheet = createSheet(4, 4);
+
+    sheet = updateCell(sheet, { row: 0, col: 0 }, '5');
+    sheet = updateCell(sheet, { row: 1, col: 0 }, '6');
+    sheet = updateCell(sheet, { row: 0, col: 1 }, '=SUM(A1:A2)');
+    sheet = clearCells(sheet, {
+      start: { row: 0, col: 0 },
+      end: { row: 0, col: 0 },
+    });
+
+    expect(sheet[0][0].displayValue).toBe('');
+    expect(sheet[0][1].displayValue).toBe('6');
   });
 
   it('names spreadsheet columns', () => {

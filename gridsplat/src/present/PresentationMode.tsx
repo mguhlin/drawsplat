@@ -6,7 +6,7 @@ import {
   MonitorUp,
   Plus,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type SlideKind = 'sheet' | 'chart' | 'picture';
 
@@ -15,6 +15,12 @@ interface Slide {
   kind: SlideKind;
   title: string;
   body: string;
+}
+
+interface SlideSnapshot {
+  imageUrl?: string;
+  rows?: string[][];
+  stats?: Array<{ label: string; value: string }>;
 }
 
 const slideLibrary: Record<SlideKind, Omit<Slide, 'id'>> = {
@@ -46,8 +52,11 @@ export function PresentationMode() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPresenting, setIsPresenting] = useState(false);
   const [isSpotlight, setIsSpotlight] = useState(false);
+  const [snapshots, setSnapshots] = useState<Record<string, SlideSnapshot>>({});
+  const viewerRef = useRef<HTMLElement>(null);
 
   const activeSlide = slides[activeIndex] ?? slides[0];
+  const activeSnapshot = snapshots[activeSlide.id];
 
   useEffect(() => {
     if (!isPresenting) {
@@ -118,6 +127,133 @@ export function PresentationMode() {
     window.print();
   }
 
+  function captureSnapshot(kind: SlideKind): SlideSnapshot {
+    if (kind === 'chart') {
+      const canvas = document.querySelector<HTMLCanvasElement>(
+        '[data-testid="chart-canvas"]',
+      );
+      const stats = Array.from(
+        document.querySelectorAll<HTMLTableRowElement>('.chart-summary tbody tr'),
+      ).map((row) => ({
+        label: row.querySelector('th')?.textContent?.trim() ?? '',
+        value: row.querySelector('td')?.textContent?.trim() ?? '',
+      }));
+
+      return {
+        imageUrl: canvas?.toDataURL('image/png'),
+        stats,
+      };
+    }
+
+    if (kind === 'picture') {
+      const stats = Array.from(
+        document.querySelectorAll<HTMLElement>('.picture-column'),
+      ).map((column) => {
+        const label = column.querySelector('strong')?.textContent?.trim() ?? '';
+        const value =
+          Array.from(column.querySelectorAll('span'))
+            .map((item) => item.textContent?.trim() ?? '')
+            .find((text) => text.endsWith('total')) ?? '';
+
+        return { label, value };
+      });
+
+      return { stats };
+    }
+
+    const cells = Array.from(
+      document.querySelectorAll<HTMLElement>('.sheet-cell .cell-value'),
+    )
+      .map((cell) => cell.textContent?.trim() ?? '')
+      .slice(0, 24);
+    const rows: string[][] = [];
+
+    for (let index = 0; index < cells.length; index += 4) {
+      rows.push(cells.slice(index, index + 4));
+    }
+
+    return { rows };
+  }
+
+  function refreshSnapshots() {
+    setSnapshots(
+      Object.fromEntries(
+        slides.map((slide) => [slide.id, captureSnapshot(slide.kind)]),
+      ),
+    );
+  }
+
+  async function startPresentation() {
+    refreshSnapshots();
+    setIsPresenting(true);
+
+    await viewerRef.current?.requestFullscreen?.();
+  }
+
+  async function exportActiveSlidePng() {
+    const snapshot = captureSnapshot(activeSlide.kind);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 1280;
+    canvas.height = 720;
+
+    if (!ctx) {
+      return;
+    }
+
+    ctx.fillStyle = activeSlide.kind === 'sheet' ? '#7c3aed' : '#4c1d95';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 34px sans-serif';
+    ctx.fillText(`Slide ${activeIndex + 1}`, 72, 86);
+    ctx.font = '800 68px sans-serif';
+    ctx.fillText(activeSlide.title, 72, 165);
+    ctx.font = '600 30px sans-serif';
+    ctx.fillText(activeSlide.body, 72, 220, 1120);
+
+    if (snapshot.imageUrl) {
+      const image = new Image();
+
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => resolve();
+        image.onerror = () => reject(new Error('Slide image did not load.'));
+        image.src = snapshot.imageUrl ?? '';
+      });
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(120, 270, 1040, 320);
+      ctx.drawImage(image, 140, 290, 1000, 280);
+    }
+
+    if (snapshot.rows) {
+      ctx.font = '700 28px sans-serif';
+      snapshot.rows.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          const x = 72 + colIndex * 260;
+          const y = 300 + rowIndex * 58;
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x, y - 34, 230, 46);
+          ctx.fillText(cell || ' ', x + 16, y);
+        });
+      });
+    }
+
+    if (snapshot.stats) {
+      ctx.font = '700 36px sans-serif';
+      snapshot.stats.slice(0, 8).forEach((item, index) => {
+        ctx.fillText(`${item.label}: ${item.value}`, 120, 310 + index * 48);
+      });
+    }
+
+    const anchor = document.createElement('a');
+
+    anchor.href = canvas.toDataURL('image/png');
+    anchor.download = `gridsplat-slide-${activeIndex + 1}.png`;
+    anchor.click();
+  }
+
   return (
     <section className="presentation-workspace" aria-labelledby="present-title">
       <header className="module-header">
@@ -143,9 +279,17 @@ export function PresentationMode() {
             Print Slides
           </button>
           <button
+            className="big-action secondary"
+            type="button"
+            onClick={() => void exportActiveSlidePng()}
+          >
+            <Download aria-hidden="true" size={20} />
+            Export PNG
+          </button>
+          <button
             className="big-action"
             type="button"
-            onClick={() => setIsPresenting(true)}
+            onClick={() => void startPresentation()}
           >
             <MonitorUp aria-hidden="true" size={20} />
             Start Presentation
@@ -223,6 +367,7 @@ export function PresentationMode() {
 
       {isPresenting ? (
         <section
+          ref={viewerRef}
           aria-label="Presentation viewer"
           aria-modal="true"
           className="presentation-viewer"
@@ -243,11 +388,32 @@ export function PresentationMode() {
           >
             <p>Slide {activeIndex + 1}</p>
             <h2>{activeSlide.title}</h2>
-            <div className="viewer-visual" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
+            {activeSnapshot?.imageUrl ? (
+              <img
+                alt={`${activeSlide.title} snapshot`}
+                className="viewer-snapshot-image"
+                src={activeSnapshot.imageUrl}
+              />
+            ) : null}
+            {activeSnapshot?.rows ? (
+              <div className="viewer-sheet-snapshot" aria-label="Sheet snapshot">
+                {activeSnapshot.rows.map((row, rowIndex) =>
+                  row.map((cell, colIndex) => (
+                    <span key={`${rowIndex}-${colIndex}`}>{cell}</span>
+                  )),
+                )}
+              </div>
+            ) : null}
+            {activeSnapshot?.stats ? (
+              <dl className="viewer-stats">
+                {activeSnapshot.stats.map((item) => (
+                  <div key={`${item.label}-${item.value}`}>
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
             <strong>{activeSlide.body}</strong>
           </article>
           <button

@@ -25,6 +25,18 @@ import { strings } from './i18n/strings';
 import { TemplatesLibrary } from './templates/TemplatesLibrary';
 
 type DialogKind = 'activity' | 'help' | 'privacy' | null;
+type GridAction =
+  | { action: 'chart'; chartType: 'bar' | 'line' | 'pie' | 'scatter' }
+  | {
+      action:
+        | 'copy'
+        | 'new-sheet'
+        | 'open-file'
+        | 'paste'
+        | 'redo'
+        | 'save-file'
+        | 'undo';
+    };
 
 const toolbarMenus = [
   {
@@ -33,7 +45,7 @@ const toolbarMenus = [
   },
   {
     label: 'Edit',
-    items: ['Undo', 'Copy', 'Paste'],
+    items: ['Undo', 'Redo', 'Copy', 'Paste'],
   },
   {
     label: 'Insert',
@@ -73,7 +85,81 @@ export function App() {
     window.setTimeout(() => setToastMessage(''), 2200);
   }
 
+  function dispatchGridAction(detail: GridAction) {
+    window.dispatchEvent(
+      new CustomEvent<GridAction>('gridsplat:grid-action', { detail }),
+    );
+  }
+
   function handleMenuAction(label: string) {
+    if (label === 'New sheet') {
+      dispatchGridAction({ action: 'new-sheet' });
+      return;
+    }
+
+    if (label === 'Open file') {
+      dispatchGridAction({ action: 'open-file' });
+      return;
+    }
+
+    if (label === 'Save local copy') {
+      dispatchGridAction({ action: 'save-file' });
+      return;
+    }
+
+    if (label === 'Undo') {
+      dispatchGridAction({ action: 'undo' });
+      return;
+    }
+
+    if (label === 'Redo') {
+      dispatchGridAction({ action: 'redo' });
+      return;
+    }
+
+    if (label === 'Copy') {
+      dispatchGridAction({ action: 'copy' });
+      return;
+    }
+
+    if (label === 'Paste') {
+      dispatchGridAction({ action: 'paste' });
+      return;
+    }
+
+    if (label === 'Formula') {
+      showToast('Type =SUM(A1:A5) or another formula in any cell.');
+      return;
+    }
+
+    if (label === 'Picture graph') {
+      document
+        .getElementById('picture-title')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('Picture graph tools are ready below.');
+      return;
+    }
+
+    if (label === 'Bar chart') {
+      dispatchGridAction({ action: 'chart', chartType: 'bar' });
+      return;
+    }
+
+    if (label === 'Line chart') {
+      dispatchGridAction({ action: 'chart', chartType: 'line' });
+      return;
+    }
+
+    if (label === 'Pie chart') {
+      dispatchGridAction({ action: 'chart', chartType: 'pie' });
+      return;
+    }
+
+    if (label === 'Scatter plot') {
+      dispatchGridAction({ action: 'chart', chartType: 'scatter' });
+      return;
+    }
+
     if (
       label === 'Quick help' ||
       label === 'Keyboard help' ||
@@ -114,7 +200,7 @@ export function App() {
       return;
     }
 
-    showToast(`${label} will be built in a later module.`);
+    showToast(`${label} is not available yet.`);
   }
 
   function loadActivity(activity: Activity) {
@@ -159,7 +245,7 @@ export function App() {
           <Tooltip text="Start a new classroom sheet">
             <IconButton
               icon={<FilePlus2 aria-hidden="true" size={22} />}
-              onClick={() => showToast('New sheet ready.')}
+              onClick={() => dispatchGridAction({ action: 'new-sheet' })}
             >
               New
             </IconButton>
@@ -167,7 +253,7 @@ export function App() {
           <Tooltip text="Open a spreadsheet file">
             <IconButton
               icon={<FolderOpen aria-hidden="true" size={22} />}
-              onClick={() => showToast('File opening arrives in Module 8.')}
+              onClick={() => dispatchGridAction({ action: 'open-file' })}
             >
               Open
             </IconButton>
@@ -175,7 +261,7 @@ export function App() {
           <Tooltip text="Save work to this device">
             <IconButton
               icon={<Save aria-hidden="true" size={22} />}
-              onClick={() => showToast('Local saving arrives in Module 9.')}
+              onClick={() => dispatchGridAction({ action: 'save-file' })}
             >
               Save
             </IconButton>
