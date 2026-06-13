@@ -48,13 +48,17 @@ const HEADER_SIZE = 48;
 const OVERSCAN = 4;
 
 type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent';
+type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
 type GridAction =
   | { action: 'chart'; chartType: ChartKind }
+  | { action: 'chart-title'; title: string }
+  | { action: 'export-file'; format: ExportFormat }
   | {
       action:
         | 'cloud-open'
         | 'cloud-save'
         | 'copy'
+        | 'export-chart'
         | 'new-sheet'
         | 'open-file'
         | 'paste'
@@ -184,6 +188,14 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         void saveLocalFile();
       }
 
+      if (detail.action === 'export-file') {
+        void exportFile(detail.format);
+      }
+
+      if (detail.action === 'export-chart') {
+        exportChartPng();
+      }
+
       if (detail.action === 'cloud-save' && detail.providerName) {
         void tryCloudProvider(detail.providerName);
       }
@@ -210,6 +222,10 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
       if (detail.action === 'chart') {
         makeChart(detail.chartType);
+      }
+
+      if (detail.action === 'chart-title') {
+        updateChartTitle(detail.title);
       }
     }
 
@@ -846,13 +862,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         >
           Redo
         </button>
-        <button
-          className="big-action"
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          Import
-        </button>
         <input
           ref={fileInputRef}
           aria-label="Import spreadsheet file"
@@ -861,44 +870,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           accept=".csv,.json,.gridsplat.json,.md,.markdown,.xlsx,text/csv,application/json,text/markdown,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           onChange={importFile}
         />
-        <button
-          className="big-action secondary"
-          type="button"
-          onClick={() => exportFile('json')}
-        >
-          JSON
-        </button>
-        <button
-          className="big-action secondary"
-          type="button"
-          onClick={() => exportFile('csv')}
-        >
-          CSV
-        </button>
-        <button
-          className="big-action secondary"
-          type="button"
-          onClick={() => exportFile('markdown')}
-        >
-          Markdown
-        </button>
-        <button
-          className="big-action secondary"
-          type="button"
-          onClick={() => void exportFile('xlsx')}
-        >
-          Excel
-        </button>
-        <button className="big-action" type="button" onClick={saveLocalFile}>
-          Save File
-        </button>
-        <button
-          className="big-action secondary"
-          type="button"
-          onClick={resetSheet}
-        >
-          Start Over
-        </button>
         <label className="header-toggle">
           <input
             type="checkbox"
@@ -929,34 +900,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         <p aria-live="polite" className="file-message">
           {fileMessage}
         </p>
-      </div>
-      <div className="chart-picker" aria-label="Chart picker">
-        <label className="chart-title-field">
-          Chart title
-          <input
-            value={chartTitle}
-            onChange={(event) => updateChartTitle(event.target.value)}
-          />
-        </label>
-        {(['bar', 'line', 'pie', 'scatter'] as ChartKind[]).map((type) => (
-          <button
-            className="chart-type-button"
-            key={type}
-            type="button"
-            onClick={() => makeChart(type)}
-          >
-            <span className={`chart-preview ${type}`} aria-hidden="true" />
-            {type[0].toUpperCase()}
-            {type.slice(1)}
-          </button>
-        ))}
-        <button
-          className="chart-type-button"
-          type="button"
-          onClick={exportChartPng}
-        >
-          Export Chart PNG
-        </button>
       </div>
       <div
         ref={scrollerRef}

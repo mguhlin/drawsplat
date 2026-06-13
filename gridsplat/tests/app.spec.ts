@@ -71,6 +71,27 @@ test('opens activity dialog from the splash on touch', async ({
   await expect(page.getByTestId('cell-B2')).toContainText('72');
 });
 
+test('opens top menus from mobile taps', async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'mobile-chrome',
+    'Mobile menu flow runs in mobile Chrome.',
+  );
+
+  await dismissSplash(page);
+  await page.getByRole('button', { name: 'File', exact: true }).tap();
+  await expect(page.getByRole('menu', { name: 'File menu' })).toBeVisible();
+  await expect(
+    page.getByRole('menuitem', { name: 'Export JSON' }),
+  ).toBeVisible();
+  await page.getByRole('menuitem', { name: 'Export JSON' }).tap();
+  await expect(page.getByText('Downloaded a GridSplat™ JSON file.')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Templates' }).tap();
+  await expect(
+    page.getByRole('menu', { name: 'Templates menu' }),
+  ).toBeVisible();
+});
+
 test('enters data, selects a range, copies, pastes, and undoes on desktop', async ({
   page,
 }, testInfo) => {
@@ -273,7 +294,8 @@ test('imports and exports Excel workbooks', async ({ page }, testInfo) => {
   await expect(page.getByTestId('cell-B2')).toContainText('8');
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Excel' }).click();
+  await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Export Excel' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat.xlsx');
@@ -308,7 +330,7 @@ test('creates a live-updating bar chart and exports PNG', async ({
   await page.mouse.up();
 
   await page
-    .getByLabel('Chart picker')
+    .getByLabel('Chart tools')
     .getByLabel('Chart title')
     .fill('Fruit Count');
   await page.getByRole('button', { name: 'Bar' }).click();
@@ -330,7 +352,8 @@ test('creates a live-updating bar chart and exports PNG', async ({
   ).toContainText('9');
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export Chart PNG' }).click();
+  await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Export chart PNG' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat-chart.png');
@@ -500,7 +523,8 @@ test('formats numbers and starts over with confirmation', async ({
   await expect(page.getByTestId('cell-A1')).toContainText('$12.50');
 
   page.once('dialog', (dialog) => dialog.accept());
-  await page.getByRole('button', { name: 'Start Over' }).click();
+  await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Start over' }).click();
   await expect(
     page.getByText('Started over with a blank sheet.'),
   ).toBeVisible();

@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 export interface DropdownMenuItem {
   label: string;
@@ -14,21 +14,32 @@ interface DropdownMenuProps {
 export function DropdownMenu({ items, label }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuId = useId();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function closeOnOutsidePointer(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    window.addEventListener('pointerdown', closeOnOutsidePointer);
+
+    return () =>
+      window.removeEventListener('pointerdown', closeOnOutsidePointer);
+  }, [isOpen]);
 
   return (
-    <div className="dropdown-menu">
+    <div className="dropdown-menu" ref={menuRef}>
       <button
         aria-controls={menuId}
         aria-expanded={isOpen}
         className="menu-button"
         type="button"
-        onBlur={(event) => {
-          if (
-            !event.currentTarget.parentElement?.contains(event.relatedTarget)
-          ) {
-            setIsOpen(false);
-          }
-        }}
         onClick={() => setIsOpen((current) => !current)}
       >
         <span>{label}</span>
@@ -40,13 +51,6 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
           className="menu-popover"
           id={menuId}
           role="menu"
-          onBlur={(event) => {
-            if (
-              !event.currentTarget.parentElement?.contains(event.relatedTarget)
-            ) {
-              setIsOpen(false);
-            }
-          }}
         >
           {items.map((item) => (
             <button

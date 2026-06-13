@@ -36,13 +36,18 @@ type DialogKind =
   | 'slides'
   | 'templates'
   | null;
+type ChartKind = 'bar' | 'line' | 'pie' | 'scatter';
+type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
 type GridAction =
-  | { action: 'chart'; chartType: 'bar' | 'line' | 'pie' | 'scatter' }
+  | { action: 'chart'; chartType: ChartKind }
+  | { action: 'chart-title'; title: string }
+  | { action: 'export-file'; format: ExportFormat }
   | {
       action:
         | 'cloud-open'
         | 'cloud-save'
         | 'copy'
+        | 'export-chart'
         | 'new-sheet'
         | 'open-file'
         | 'paste'
@@ -67,8 +72,14 @@ const toolbarMenus = [
     label: 'File',
     items: [
       'New sheet',
-      'Open file',
-      'Save local copy',
+      'Import file',
+      'Save file',
+      'Export chart PNG',
+      'Export CSV',
+      'Export Excel',
+      'Export JSON',
+      'Export Markdown',
+      'Start over',
       ...cloudFileMenuItems,
     ],
   },
@@ -120,6 +131,7 @@ export function App() {
   const [toastMessage, setToastMessage] = useState('');
   const [dialogKind, setDialogKind] = useState<DialogKind>(null);
   const [sheetMatrix, setSheetMatrix] = useState<SheetMatrix | null>(null);
+  const [chartTitle, setChartTitle] = useState('My Chart');
 
   function showToast(message: string) {
     setToastMessage(message);
@@ -138,13 +150,43 @@ export function App() {
       return;
     }
 
-    if (label === 'Open file') {
+    if (label === 'Import file') {
       dispatchGridAction({ action: 'open-file' });
       return;
     }
 
-    if (label === 'Save local copy') {
+    if (label === 'Save file') {
       dispatchGridAction({ action: 'save-file' });
+      return;
+    }
+
+    if (label === 'Export chart PNG') {
+      dispatchGridAction({ action: 'export-chart' });
+      return;
+    }
+
+    if (label === 'Export CSV') {
+      dispatchGridAction({ action: 'export-file', format: 'csv' });
+      return;
+    }
+
+    if (label === 'Export Excel') {
+      dispatchGridAction({ action: 'export-file', format: 'xlsx' });
+      return;
+    }
+
+    if (label === 'Export JSON') {
+      dispatchGridAction({ action: 'export-file', format: 'json' });
+      return;
+    }
+
+    if (label === 'Export Markdown') {
+      dispatchGridAction({ action: 'export-file', format: 'markdown' });
+      return;
+    }
+
+    if (label === 'Start over') {
+      dispatchGridAction({ action: 'new-sheet' });
       return;
     }
 
@@ -295,6 +337,15 @@ export function App() {
     showToast(`Loaded ${template.title}.`);
   }
 
+  function changeChartTitle(title: string) {
+    setChartTitle(title);
+    dispatchGridAction({ action: 'chart-title', title });
+  }
+
+  function makeChart(chartType: ChartKind) {
+    dispatchGridAction({ action: 'chart', chartType });
+  }
+
   return (
     <main className="app-shell" aria-labelledby="app-title">
       <header className="app-header">
@@ -342,6 +393,28 @@ export function App() {
           </Tooltip>
         </div>
       </header>
+
+      <section className="chart-picker top-chart-tools" aria-label="Chart tools">
+        <label className="chart-title-field">
+          Chart title
+          <input
+            value={chartTitle}
+            onChange={(event) => changeChartTitle(event.target.value)}
+          />
+        </label>
+        {(['bar', 'line', 'pie', 'scatter'] as ChartKind[]).map((type) => (
+          <button
+            className="chart-type-button"
+            key={type}
+            type="button"
+            onClick={() => makeChart(type)}
+          >
+            <span className={`chart-preview ${type}`} aria-hidden="true" />
+            {type[0].toUpperCase()}
+            {type.slice(1)}
+          </button>
+        ))}
+      </section>
 
       <nav className="top-toolbar" aria-label="Main toolbar">
         {toolbarMenus.map((menu) => (
