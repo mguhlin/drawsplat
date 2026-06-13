@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>DrawSplatTM v3.1.11 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.11 release notes with GridSplatTM, SplatWorksTM Studio navigation, dedicated Games and Tools pages, and self-host bundle updates." />
+<meta name="description" content="DrawSplatTM v3.1.11 release notes with GridSplatTM, separated SplatWorksTM and DrawSplat navigation, dedicated Games and Tools pages, and self-host bundle updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -35,18 +35,16 @@
   </a>
   <nav class="landing-nav" aria-label="DrawSplatTM navigation">
     <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers</summary>
+      <summary>For Teachers &amp; Families</summary>
       <div class="landing-nav-menu">
         <a href="../app/whiteboard.html">Open Whiteboard</a>
         <a href="../admin/admin.html">Teacher Admin</a>
         <a href="../pages/features.html">Features</a>
         <a href="../pages/background-templates.html">Background Templates</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Families</summary>
-      <div class="landing-nav-menu">
+        <a href="../guides/">Teacher Guides</a>
+        <hr class="landing-nav-divider">
         <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
         <a href="../pages/contact.html">Contact / Information Request</a>
       </div>
     </details>
@@ -55,7 +53,6 @@
       <div class="landing-nav-menu">
         <a href="../pages/pricing.html">Pricing</a>
         <a href="../pages/download.html">Download for Self-Hosting</a>
-        <a href="../pages/release-notes.html">Release Notes</a>
         <a href="../legal/combined-policy.html">Get all documents below</a>
         <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
         <hr class="landing-nav-divider">
@@ -63,26 +60,95 @@
         <a href="../legal/district-addendum.html">District Privacy Addendum</a>
         <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
         <hr class="landing-nav-divider">
+        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
         <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
         <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <hr class="landing-nav-divider">
         <a href="../legal/texas-compliance.html">Texas Compliance</a>
         <a href="../legal/widgets-security.html">Widget Security Boundary</a>
       </div>
     </details>
-    <details name="landing-topnav" class="landing-nav-dropdown" open>
+    <details name="landing-topnav" class="landing-nav-dropdown">
       <summary>Support</summary>
       <div class="landing-nav-menu">
         <a href="../blog/">Blogs About DrawSplat</a>
         <a href="../community/index.html">Community Board</a>
-        <a href="../pages/release-notes.html">Release Notes</a>
         <hr class="landing-nav-divider">
         <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
         <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="../pages/contact.html">Contact / Information Request</a>
         <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
         <a href="../pages/support.html">Support &amp; Guides Hub</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>SplatWorks&trade;</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/gridsplat.html">SplatWorks&trade;</a>
+          <a href="#" aria-disabled="true">WriteSplat&trade; <span class="studio-nav-note">Planned</span></a>
+          <a href="#" aria-disabled="true">ListSplat&trade; <span class="studio-nav-note">Planned</span></a>
+          <a href="#" aria-disabled="true">ShowSplat&trade; <span class="studio-nav-note">Planned</span></a>
+          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
+        </div>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>DrawSplat</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
+          <a href="../pages/tools.html">View All Tools</a>
+          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
+          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
+          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
+          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
+          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
+          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
+          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
+          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
+          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
+          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
+          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
+          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
+          <a href="../solutions/splatimage-studio/" target="_blank" rel="noopener noreferrer">SplatImage Studio</a>
+          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
+          <a href="../pages/tools.html#widgets">View All Widgets</a>
+          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
+          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
+          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
+          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
+          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
+          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
+          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
+          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
+          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
+          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
+          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
+          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
+          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
+          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
+          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../games/">Games</a>
+          <a href="../games/">View All Games</a>
+          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
+          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
+          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
+          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
+          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
+          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
+          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
+          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
+          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
+          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
+          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
+          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
+        </div>
       </div>
     </details>
   </nav>
@@ -98,7 +164,7 @@
       <span class="release-pill">Self-host bundle refreshed</span>
       <span class="release-pill">DrawSplat Studio update</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.11 brings GridSplat<sup class="tm">TM</sup> into DrawSplat Studio, refreshes Studio navigation around SplatWorks<sup class="tm">TM</sup>, and rebuilds the self-host bundle with the integrated spreadsheet app.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.11 brings GridSplat<sup class="tm">TM</sup> into SplatWorks<sup class="tm">TM</sup>, separates SplatWorks navigation from DrawSplat tools/widgets/games, and rebuilds the self-host bundle with the integrated spreadsheet app.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zip</a>
       <a class="landing-cta" href="../RELEASE_NOTES_v3.1.11.md">View Markdown Source</a>
@@ -117,19 +183,19 @@
       </article>
       <article class="release-card">
         <h2>SplatWorks<sup class="tm">TM</sup></h2>
-        <p>Studio suite language now centers on SplatWorks<sup class="tm">TM</sup>, WriteSplat<sup class="tm">TM</sup>, ListSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and GridSplat<sup class="tm">TM</sup>.</p>
+        <p>SplatWorks<sup class="tm">TM</sup> now stays focused on WriteSplat<sup class="tm">TM</sup>, ListSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and GridSplat<sup class="tm">TM</sup>.</p>
       </article>
       <article class="release-card">
-        <h2>Studio Dropdown</h2>
-        <p>The top navigation now uses one Studio menu with SplatWorks<sup class="tm">TM</sup>, Tools, Widgets, and Games groups for quick access.</p>
+        <h2>Navigation Split</h2>
+        <p>The top navigation now has separate SplatWorks<sup class="tm">TM</sup> and DrawSplat menus. DrawSplat groups Tools, Widgets, and Games.</p>
       </article>
       <article class="release-card">
         <h2>Collection Pages</h2>
         <p>Dedicated Games and Tools pages let visitors browse each collection as a full page instead of only through dropdown links.</p>
       </article>
       <article class="release-card">
-        <h2>SplatWorks<sup class="tm">TM</sup> Tools</h2>
-        <p>Big Link, Concept Map, Markdown Studio, Rubric Builder, SplatImage Studio, and Word Search Maker now sit under SplatWorks<sup class="tm">TM</sup>.</p>
+        <h2>DrawSplat Tools</h2>
+        <p>Big Link, Concept Map, Markdown Studio, Rubric Builder, SplatImage Studio, and Word Search Maker now sit under the DrawSplat tools group.</p>
       </article>
     </div>
   </section>
@@ -142,8 +208,8 @@
     <ul class="release-list">
       <li>GridSplat<sup class="tm">TM</sup> now lives at <code>gridsplat/</code> as part of this repository and loads from the production Vite bundle.</li>
       <li>A dedicated GridSplat<sup class="tm">TM</sup> page introduces it as the SplatWorks<sup class="tm">TM</sup> spreadsheet for classroom tables, charts, and data work.</li>
-      <li>The Studio dropdown includes SplatWorks<sup class="tm">TM</sup>, Tools, Widgets, and Games groups across the public navigation pages.</li>
-      <li>SplatWorks<sup class="tm">TM</sup> is described as kid-friendly tools for writing, data, and classroom projects.</li>
+      <li>The public navigation separates SplatWorks<sup class="tm">TM</sup> from the DrawSplat tools, widgets, and games menu.</li>
+      <li>SplatWorks<sup class="tm">TM</sup> is described as the GPL-covered office app family for writing, lists, slides, and spreadsheets.</li>
       <li>Planned Studio app names now use WriteSplat<sup class="tm">TM</sup>, ListSplat<sup class="tm">TM</sup>, and ShowSplat<sup class="tm">TM</sup> for writing, data, and outline-to-slides presentations.</li>
       <li>Tools and Games each have a dedicated collection page for browsing everything in that category.</li>
       <li>The self-host bundle builder now includes <code>games/</code> and <code>gridsplat/</code> in its embedded deployment notes.</li>
