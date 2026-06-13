@@ -1,6 +1,4 @@
 import {
-  Activity as ActivityIcon,
-  BarChart3,
   FilePlus2,
   FolderOpen,
   HelpCircle,
@@ -19,16 +17,31 @@ import { IconButton } from './components/IconButton';
 import { Toast } from './components/Toast';
 import { Tooltip } from './components/Tooltip';
 import { SpreadsheetGrid } from './grid/SpreadsheetGrid';
+import { cloudProviders } from './io/cloud/providers';
+import type { SheetMatrix } from './io/matrix';
 import { PictureGraph } from './picturegraph/PictureGraph';
 import { PresentationMode } from './present/PresentationMode';
 import { strings } from './i18n/strings';
 import { TemplatesLibrary } from './templates/TemplatesLibrary';
+import {
+  spreadsheetTemplates,
+  type SpreadsheetTemplate,
+} from './templates/templates';
 
-type DialogKind = 'activity' | 'help' | 'privacy' | null;
+type DialogKind =
+  | 'activity'
+  | 'help'
+  | 'picture'
+  | 'privacy'
+  | 'slides'
+  | 'templates'
+  | null;
 type GridAction =
   | { action: 'chart'; chartType: 'bar' | 'line' | 'pie' | 'scatter' }
   | {
       action:
+        | 'cloud-open'
+        | 'cloud-save'
         | 'copy'
         | 'new-sheet'
         | 'open-file'
@@ -36,12 +49,28 @@ type GridAction =
         | 'redo'
         | 'save-file'
         | 'undo';
+      providerName?: string;
     };
+
+const cloudFileMenuItems = cloudProviders
+  .map((provider) => provider.name)
+  .sort((firstProvider, secondProvider) =>
+    firstProvider.localeCompare(secondProvider),
+  )
+  .flatMap((providerName) => [
+    `Open ${providerName}`,
+    `Save ${providerName}`,
+  ]);
 
 const toolbarMenus = [
   {
     label: 'File',
-    items: ['New sheet', 'Open file', 'Save local copy'],
+    items: [
+      'New sheet',
+      'Open file',
+      'Save local copy',
+      ...cloudFileMenuItems,
+    ],
   },
   {
     label: 'Edit',
@@ -57,11 +86,22 @@ const toolbarMenus = [
   },
   {
     label: 'Activities',
-    items: ['Try an activity', 'Templates', 'Teacher ideas', 'Sample data'],
+    items: [
+      'Browse activities',
+      ...activities.map((activity) => activity.title),
+      'Teacher ideas',
+    ],
+  },
+  {
+    label: 'Templates',
+    items: [
+      'Browse templates',
+      ...spreadsheetTemplates.map((template) => template.title),
+    ],
   },
   {
     label: 'Present',
-    items: ['Start presentation', 'Whiteboard view'],
+    items: ['Whiteboard slides'],
   },
   {
     label: 'Help',
@@ -79,6 +119,7 @@ export function App() {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState('');
   const [dialogKind, setDialogKind] = useState<DialogKind>(null);
+  const [sheetMatrix, setSheetMatrix] = useState<SheetMatrix | null>(null);
 
   function showToast(message: string) {
     setToastMessage(message);
@@ -104,6 +145,26 @@ export function App() {
 
     if (label === 'Save local copy') {
       dispatchGridAction({ action: 'save-file' });
+      return;
+    }
+
+    const cloudProvider = cloudProviders.find((provider) =>
+      label.endsWith(provider.name),
+    );
+
+    if (cloudProvider && label.startsWith('Open ')) {
+      dispatchGridAction({
+        action: 'cloud-open',
+        providerName: cloudProvider.name,
+      });
+      return;
+    }
+
+    if (cloudProvider && label.startsWith('Save ')) {
+      dispatchGridAction({
+        action: 'cloud-save',
+        providerName: cloudProvider.name,
+      });
       return;
     }
 
@@ -133,10 +194,7 @@ export function App() {
     }
 
     if (label === 'Picture graph') {
-      document
-        .getElementById('picture-title')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      showToast('Picture graph tools are ready below.');
+      setDialogKind('picture');
       return;
     }
 
@@ -179,24 +237,36 @@ export function App() {
       return;
     }
 
-    if (label === 'Start presentation' || label === 'Whiteboard view') {
-      document
-        .getElementById('present-title')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      showToast('Presentation tools are ready below.');
+    if (label === 'Whiteboard slides') {
+      setDialogKind('slides');
       return;
     }
 
-    if (label === 'Templates') {
-      document
-        .getElementById('templates-title')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      showToast('Templates are ready below.');
+    if (label === 'Browse templates') {
+      setDialogKind('templates');
       return;
     }
 
-    if (label === 'Try an activity' || label === 'Sample data') {
+    const selectedTemplate = spreadsheetTemplates.find(
+      (template) => template.title === label,
+    );
+
+    if (selectedTemplate) {
+      loadTemplate(selectedTemplate);
+      return;
+    }
+
+    if (label === 'Browse activities') {
       setDialogKind('activity');
+      return;
+    }
+
+    const selectedActivity = activities.find(
+      (activity) => activity.title === label,
+    );
+
+    if (selectedActivity) {
+      loadActivity(selectedActivity);
       return;
     }
 
@@ -214,12 +284,16 @@ export function App() {
     showToast(`Loaded ${activity.title}.`);
   }
 
-  const classSurveyActivity = activities.find(
-    (activity) => activity.id === 'class-pet-survey',
-  );
-  const weatherActivity = activities.find(
-    (activity) => activity.id === 'daily-temperature',
-  );
+  function loadTemplate(template: SpreadsheetTemplate) {
+    window.dispatchEvent(
+      new CustomEvent('gridsplat:load-matrix', {
+        detail: template.sampleData,
+      }),
+    );
+    setDialogKind(null);
+    setIsSplashVisible(false);
+    showToast(`Loaded ${template.title}.`);
+  }
 
   return (
     <main className="app-shell" aria-labelledby="app-title">
@@ -282,11 +356,7 @@ export function App() {
         ))}
       </nav>
 
-      <SpreadsheetGrid />
-      <PictureGraph />
-      <ActivitiesLibrary />
-      <TemplatesLibrary />
-      <PresentationMode />
+      <SpreadsheetGrid onSheetUpdated={setSheetMatrix} />
 
       {isSplashVisible ? (
         <section
@@ -331,7 +401,10 @@ export function App() {
                 <BigButton
                   icon={<FolderOpen aria-hidden="true" size={24} />}
                   variant="secondary"
-                  onClick={() => showToast('File opening arrives in Module 8.')}
+                  onClick={() => {
+                    setIsSplashVisible(false);
+                    dispatchGridAction({ action: 'open-file' });
+                  }}
                 >
                   Open a File
                 </BigButton>
@@ -350,39 +423,38 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'activity'}
-        title="Try an Activity"
+        title="Classroom Activities"
         onClose={() => setDialogKind(null)}
+        variant="wide"
       >
-        <div className="dialog-grid">
-          <article>
-            <ActivityIcon aria-hidden="true" size={28} />
-            <h3>Class Survey</h3>
-            <p>Collect favorites, count totals, and build a chart next.</p>
-            {classSurveyActivity ? (
-              <button
-                className="big-action"
-                type="button"
-                onClick={() => loadActivity(classSurveyActivity)}
-              >
-                Load Class Survey
-              </button>
-            ) : null}
-          </article>
-          <article>
-            <BarChart3 aria-hidden="true" size={28} />
-            <h3>Weather Data</h3>
-            <p>Type daily temperatures and compare the numbers.</p>
-            {weatherActivity ? (
-              <button
-                className="big-action"
-                type="button"
-                onClick={() => loadActivity(weatherActivity)}
-              >
-                Load Weather Data
-              </button>
-            ) : null}
-          </article>
-        </div>
+        <ActivitiesLibrary onLoadActivity={loadActivity} />
+      </Dialog>
+
+      <Dialog
+        isOpen={dialogKind === 'picture'}
+        title="Picture Graph"
+        onClose={() => setDialogKind(null)}
+        variant="wide"
+      >
+        <PictureGraph initialMatrix={sheetMatrix} />
+      </Dialog>
+
+      <Dialog
+        isOpen={dialogKind === 'templates'}
+        title="Spreadsheet Templates"
+        onClose={() => setDialogKind(null)}
+        variant="wide"
+      >
+        <TemplatesLibrary onLoadTemplate={loadTemplate} />
+      </Dialog>
+
+      <Dialog
+        isOpen={dialogKind === 'slides'}
+        title="Whiteboard Slides"
+        onClose={() => setDialogKind(null)}
+        variant="wide"
+      >
+        <PresentationMode />
       </Dialog>
 
       <Dialog

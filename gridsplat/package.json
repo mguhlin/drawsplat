@@ -5,8 +5,8 @@
   "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node scripts/with-vite-index.mjs vite",
+    "build": "tsc -b && node scripts/with-vite-index.mjs vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --check .",

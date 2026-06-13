@@ -1,14 +1,10 @@
 import { spreadsheetTemplates, type SpreadsheetTemplate } from './templates';
 
-function loadTemplate(template: SpreadsheetTemplate) {
-  window.dispatchEvent(
-    new CustomEvent('gridsplat:load-matrix', {
-      detail: template.sampleData,
-    }),
-  );
+interface TemplatesLibraryProps {
+  onLoadTemplate: (template: SpreadsheetTemplate) => void;
 }
 
-export function TemplatesLibrary() {
+export function TemplatesLibrary({ onLoadTemplate }: TemplatesLibraryProps) {
   return (
     <section className="templates-library" aria-labelledby="templates-title">
       <header className="module-header">
@@ -28,7 +24,7 @@ export function TemplatesLibrary() {
             <button
               className="big-action"
               type="button"
-              onClick={() => loadTemplate(template)}
+              onClick={() => onLoadTemplate(template)}
             >
               Load Template
             </button>

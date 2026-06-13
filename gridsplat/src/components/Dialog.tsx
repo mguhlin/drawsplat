@@ -6,9 +6,16 @@ interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  variant?: 'default' | 'wide';
 }
 
-export function Dialog({ children, isOpen, onClose, title }: DialogProps) {
+export function Dialog({
+  children,
+  isOpen,
+  onClose,
+  title,
+  variant = 'default',
+}: DialogProps) {
   if (!isOpen) {
     return null;
   }
@@ -18,7 +25,7 @@ export function Dialog({ children, isOpen, onClose, title }: DialogProps) {
       <section
         aria-labelledby="dialog-title"
         aria-modal="true"
-        className="dialog"
+        className={variant === 'wide' ? 'dialog dialog-wide' : 'dialog'}
         role="dialog"
       >
         <header className="dialog-header">

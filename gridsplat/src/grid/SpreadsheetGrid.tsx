@@ -52,6 +52,8 @@ type GridAction =
   | { action: 'chart'; chartType: ChartKind }
   | {
       action:
+        | 'cloud-open'
+        | 'cloud-save'
         | 'copy'
         | 'new-sheet'
         | 'open-file'
@@ -59,6 +61,7 @@ type GridAction =
         | 'redo'
         | 'save-file'
         | 'undo';
+      providerName?: string;
     };
 
 interface ResizeState {
@@ -66,6 +69,10 @@ interface ResizeState {
   index: number;
   startPointer: number;
   startSize: number;
+}
+
+interface SpreadsheetGridProps {
+  onSheetUpdated?: (matrix: SheetMatrix) => void;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -88,7 +95,7 @@ function buildOffsets(sizes: number[]): number[] {
   }, []);
 }
 
-export function SpreadsheetGrid() {
+export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sheet, setSheet] = useState<SheetData>(() => {
@@ -135,12 +142,15 @@ export function SpreadsheetGrid() {
   }, [sheet]);
 
   useEffect(() => {
+    const matrix = sheetToMatrix(sheet);
+
+    onSheetUpdated?.(matrix);
     window.dispatchEvent(
       new CustomEvent('gridsplat:sheet-updated', {
-        detail: sheetToMatrix(sheet),
+        detail: matrix,
       }),
     );
-  }, [sheet]);
+  }, [onSheetUpdated, sheet]);
 
   useEffect(() => {
     function loadMatrix(event: Event) {
@@ -172,6 +182,14 @@ export function SpreadsheetGrid() {
 
       if (detail.action === 'save-file') {
         void saveLocalFile();
+      }
+
+      if (detail.action === 'cloud-save' && detail.providerName) {
+        void tryCloudProvider(detail.providerName);
+      }
+
+      if (detail.action === 'cloud-open' && detail.providerName) {
+        void loadCloudProvider(detail.providerName);
       }
 
       if (detail.action === 'undo') {
@@ -604,6 +622,11 @@ export function SpreadsheetGrid() {
       return;
     }
 
+    if (!isOnline) {
+      setFileMessage(`${provider.name} needs an internet connection.`);
+      return;
+    }
+
     try {
       const fileId = await provider.save(sheet);
 
@@ -626,6 +649,11 @@ export function SpreadsheetGrid() {
     const fileId = provider?.getLastFileId();
 
     if (!provider) {
+      return;
+    }
+
+    if (!isOnline) {
+      setFileMessage(`${provider.name} needs an internet connection.`);
       return;
     }
 
@@ -871,26 +899,6 @@ export function SpreadsheetGrid() {
         >
           Start Over
         </button>
-        {cloudProviders.map((provider) => (
-          <span className="cloud-actions" key={provider.id}>
-            <button
-              className="big-action secondary"
-              type="button"
-              onClick={() => tryCloudProvider(provider.name)}
-              disabled={!isOnline}
-            >
-              Save {provider.name}
-            </button>
-            <button
-              className="big-action secondary"
-              type="button"
-              onClick={() => loadCloudProvider(provider.name)}
-              disabled={!isOnline || !provider.getLastFileId()}
-            >
-              Open {provider.name}
-            </button>
-          </span>
-        ))}
         <label className="header-toggle">
           <input
             type="checkbox"

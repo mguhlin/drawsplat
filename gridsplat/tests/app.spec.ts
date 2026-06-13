@@ -57,12 +57,16 @@ test('opens activity dialog from the splash on touch', async ({
 
   await page.getByRole('button', { name: 'Try an Activity' }).tap();
   await expect(
-    page.getByRole('dialog', { name: 'Try an Activity' }),
+    page.getByRole('dialog', { name: 'Classroom Activities' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Class Survey' }),
+    page.getByRole('heading', { name: 'Class Pet Survey Bar Graph' }),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Load Weather Data' }).tap();
+  await page
+    .locator('.activity-card')
+    .filter({ hasText: 'Daily Temperature Line Graph' })
+    .getByRole('button', { name: 'Load Activity' })
+    .tap();
   await expect(page.getByTestId('cell-A1')).toContainText('Day');
   await expect(page.getByTestId('cell-B2')).toContainText('72');
 });
@@ -339,10 +343,12 @@ test('updates and exports the picture graph', async ({ page }, testInfo) => {
   );
 
   await dismissSplash(page);
-  await page
-    .getByLabel('Favorite Fruit Pictograph')
-    .getByRole('heading', { name: 'Favorite Fruit Pictograph' })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Insert' }).click();
+  await page.getByRole('menuitem', { name: 'Picture graph' }).click();
+  await expect(page.getByRole('dialog', { name: 'Picture Graph' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Favorite Fruit Pictograph' }),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Add one Apples' }).click();
   await expect(page.getByTestId('picture-column-apples')).toContainText(
@@ -394,7 +400,13 @@ test('autosaves sheet data in the browser and shows cloud setup status', async (
   await dismissSplash(page);
   await expect(page.getByTestId('cell-A1')).toContainText('Autosaved');
 
-  await page.getByRole('button', { name: 'Save Google Drive' }).click();
+  await expect(
+    page.locator('.sheet-toolbar').getByRole('button', {
+      name: 'Save Google Drive',
+    }),
+  ).toHaveCount(0);
+  await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Save Google Drive' }).click();
   await expect(page.getByText(/VITE_GOOGLE_DRIVE_CLIENT_ID/)).toBeVisible();
 });
 
@@ -407,9 +419,11 @@ test('loads an activity dataset and toggles teacher notes', async ({
   );
 
   await dismissSplash(page);
-  await page
-    .getByRole('heading', { name: 'Classroom Activities' })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Activities' }).click();
+  await page.getByRole('menuitem', { name: 'Browse activities' }).click();
+  await expect(
+    page.getByRole('dialog', { name: 'Classroom Activities' }),
+  ).toBeVisible();
 
   const activity = page.locator('.activity-card').filter({
     hasText: 'Class Pet Survey Bar Graph',
@@ -419,7 +433,9 @@ test('loads an activity dataset and toggles teacher notes', async ({
   await expect(activity).toContainText('which pet category has the most');
 
   await activity.getByRole('button', { name: 'Load Activity' }).click();
-  await expect(page.getByText('Loaded activity data.')).toBeVisible();
+  await expect(
+    page.getByText('Loaded Class Pet Survey Bar Graph.'),
+  ).toBeVisible();
   await expect(page.getByTestId('cell-A1')).toContainText('Pet');
   await expect(page.getByTestId('cell-B2')).toContainText('8');
 });
@@ -433,9 +449,14 @@ test('loads everyday and financial literacy templates', async ({
   );
 
   await dismissSplash(page);
-  await page
-    .getByRole('heading', { name: 'Everyday Spreadsheet Templates' })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Templates' }).click();
+  await page.getByRole('menuitem', { name: 'Browse templates' }).click();
+  await expect(
+    page.getByRole('dialog', { name: 'Spreadsheet Templates' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Everyday Spreadsheet Templates' }),
+  ).toBeVisible();
 
   await expect(page.locator('.template-card')).toHaveCount(8);
 
@@ -447,13 +468,12 @@ test('loads everyday and financial literacy templates', async ({
   await allowanceTemplate
     .getByRole('button', { name: 'Load Template' })
     .click();
-  await expect(page.getByText('Loaded activity data.')).toBeVisible();
+  await expect(page.getByText('Loaded Allowance Tracker.')).toBeVisible();
   await expect(page.getByTestId('cell-A1')).toContainText('Date');
   await expect(page.getByTestId('cell-B2')).toContainText('Allowance');
 
-  await page
-    .getByRole('heading', { name: 'Everyday Spreadsheet Templates' })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Templates' }).click();
+  await page.getByRole('menuitem', { name: 'Browse templates' }).click();
   await page
     .locator('.template-card')
     .filter({ hasText: 'Simple Gradebook' })
@@ -494,9 +514,11 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
   );
 
   await dismissSplash(page);
-  await page
-    .getByRole('heading', { name: 'Whiteboard Slides' })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Present' }).click();
+  await page.getByRole('menuitem', { name: 'Whiteboard slides' }).click();
+  await expect(
+    page.getByRole('dialog', { name: 'Whiteboard Slides' }),
+  ).toBeVisible();
 
   await expect(page.getByLabel('Presentation slides')).toContainText(
     'Class Sheet',

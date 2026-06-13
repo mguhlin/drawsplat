@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { activities, projectIdeas, type Activity } from './activities';
 
-function loadActivity(activity: Activity) {
-  window.dispatchEvent(
-    new CustomEvent('gridsplat:load-matrix', {
-      detail: activity.sampleData,
-    }),
-  );
+interface ActivitiesLibraryProps {
+  onLoadActivity: (activity: Activity) => void;
 }
 
-export function ActivitiesLibrary() {
+export function ActivitiesLibrary({ onLoadActivity }: ActivitiesLibraryProps) {
   const [openNotes, setOpenNotes] = useState<string | null>(null);
 
   return (
@@ -31,7 +27,7 @@ export function ActivitiesLibrary() {
               <button
                 className="big-action"
                 type="button"
-                onClick={() => loadActivity(activity)}
+                onClick={() => onLoadActivity(activity)}
               >
                 Load Activity
               </button>

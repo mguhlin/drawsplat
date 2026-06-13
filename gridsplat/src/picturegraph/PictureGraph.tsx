@@ -6,6 +6,7 @@ import {
 } from '@dnd-kit/core';
 import { useEffect, useRef, useState } from 'react';
 
+import type { SheetMatrix } from '../io/matrix';
 import { findPictureIcon, pictureIcons } from './icons';
 import {
   addPicture,
@@ -80,12 +81,32 @@ function PictureColumn({
   );
 }
 
-export function PictureGraph() {
-  const [categories, setCategories] = useState(initialPictureCategories);
+interface PictureGraphProps {
+  initialMatrix?: SheetMatrix | null;
+}
+
+function getInitialCategories(initialMatrix: SheetMatrix | null | undefined) {
+  return initialMatrix
+    ? (matrixToPictureCategories(initialMatrix) ?? initialPictureCategories)
+    : initialPictureCategories;
+}
+
+export function PictureGraph({ initialMatrix }: PictureGraphProps) {
+  const [categories, setCategories] = useState(() =>
+    getInitialCategories(initialMatrix),
+  );
   const [scale, setScale] = useState(1);
   const [message, setMessage] = useState('');
   const didUserChangeRef = useRef(false);
   const isSyncingFromSheetRef = useRef(false);
+
+  useEffect(() => {
+    if (didUserChangeRef.current) {
+      return;
+    }
+
+    setCategories(getInitialCategories(initialMatrix));
+  }, [initialMatrix]);
 
   useEffect(() => {
     function syncFromSheet(event: Event) {
