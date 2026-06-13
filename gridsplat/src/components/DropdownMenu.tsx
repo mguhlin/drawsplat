@@ -1,9 +1,10 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 
 export interface DropdownMenuItem {
+  children?: DropdownMenuItem[];
   label: string;
-  onSelect: () => void;
+  onSelect?: () => void;
 }
 
 interface DropdownMenuProps {
@@ -13,6 +14,7 @@ interface DropdownMenuProps {
 
 export function DropdownMenu({ items, label }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const menuId = useId();
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +26,7 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
     function closeOnOutsidePointer(event: PointerEvent) {
       if (!menuRef.current?.contains(event.target as Node)) {
         setIsOpen(false);
+        setOpenSubmenu(null);
       }
     }
 
@@ -53,18 +56,56 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
           role="menu"
         >
           {items.map((item) => (
-            <button
-              className="menu-item"
-              key={item.label}
-              role="menuitem"
-              type="button"
-              onClick={() => {
-                item.onSelect();
-                setIsOpen(false);
-              }}
-            >
-              {item.label}
-            </button>
+            <div className="menu-row" key={item.label}>
+              <button
+                aria-expanded={
+                  item.children ? openSubmenu === item.label : undefined
+                }
+                className="menu-item"
+                role="menuitem"
+                type="button"
+                onClick={() => {
+                  if (item.children) {
+                    setOpenSubmenu((current) =>
+                      current === item.label ? null : item.label,
+                    );
+                    return;
+                  }
+
+                  item.onSelect?.();
+                  setIsOpen(false);
+                  setOpenSubmenu(null);
+                }}
+              >
+                <span>{item.label}</span>
+                {item.children ? (
+                  <ChevronRight aria-hidden="true" size={18} />
+                ) : null}
+              </button>
+              {item.children && openSubmenu === item.label ? (
+                <div
+                  aria-label={`${item.label} submenu`}
+                  className="submenu-popover"
+                  role="menu"
+                >
+                  {item.children.map((child) => (
+                    <button
+                      className="menu-item submenu-item"
+                      key={child.label}
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        child.onSelect?.();
+                        setIsOpen(false);
+                        setOpenSubmenu(null);
+                      }}
+                    >
+                      {child.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           ))}
         </div>
       ) : null}

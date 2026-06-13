@@ -80,10 +80,9 @@ test('opens top menus from mobile taps', async ({ page }, testInfo) => {
   await dismissSplash(page);
   await page.getByRole('button', { name: 'File', exact: true }).tap();
   await expect(page.getByRole('menu', { name: 'File menu' })).toBeVisible();
-  await expect(
-    page.getByRole('menuitem', { name: 'Export JSON' }),
-  ).toBeVisible();
-  await page.getByRole('menuitem', { name: 'Export JSON' }).tap();
+  await page.getByRole('menuitem', { name: 'Export' }).tap();
+  await expect(page.getByRole('menuitem', { name: 'JSON' })).toBeVisible();
+  await page.getByRole('menuitem', { name: 'JSON' }).tap();
   await expect(page.getByText('Downloaded a GridSplat™ JSON file.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Templates' }).tap();
@@ -295,7 +294,8 @@ test('imports and exports Excel workbooks', async ({ page }, testInfo) => {
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'File', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Export Excel' }).click();
+  await page.getByRole('menuitem', { name: 'Export' }).click();
+  await page.getByRole('menuitem', { name: 'Excel' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat.xlsx');
@@ -353,7 +353,8 @@ test('creates a live-updating bar chart and exports PNG', async ({
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'File', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Export chart PNG' }).click();
+  await page.getByRole('menuitem', { name: 'Export' }).click();
+  await page.getByRole('menuitem', { name: 'Chart PNG' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat-chart.png');
@@ -429,6 +430,7 @@ test('autosaves sheet data in the browser and shows cloud setup status', async (
     }),
   ).toHaveCount(0);
   await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Save' }).click();
   await page.getByRole('menuitem', { name: 'Save Google Drive' }).click();
   await expect(page.getByText(/VITE_GOOGLE_DRIVE_CLIENT_ID/)).toBeVisible();
 });

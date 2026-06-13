@@ -12,7 +12,10 @@ import { BigButton } from './components/BigButton';
 import { ActivitiesLibrary } from './activities/ActivitiesLibrary';
 import { activities, type Activity } from './activities/activities';
 import { Dialog } from './components/Dialog';
-import { DropdownMenu } from './components/DropdownMenu';
+import {
+  DropdownMenu,
+  type DropdownMenuItem,
+} from './components/DropdownMenu';
 import { IconButton } from './components/IconButton';
 import { Toast } from './components/Toast';
 import { Tooltip } from './components/Tooltip';
@@ -57,30 +60,42 @@ type GridAction =
       providerName?: string;
     };
 
-const cloudFileMenuItems = cloudProviders
+const cloudProviderNames = cloudProviders
   .map((provider) => provider.name)
   .sort((firstProvider, secondProvider) =>
     firstProvider.localeCompare(secondProvider),
-  )
-  .flatMap((providerName) => [
-    `Open ${providerName}`,
-    `Save ${providerName}`,
-  ]);
+  );
 
 const toolbarMenus = [
   {
     label: 'File',
     items: [
       'New sheet',
-      'Import file',
-      'Save file',
-      'Export chart PNG',
-      'Export CSV',
-      'Export Excel',
-      'Export JSON',
-      'Export Markdown',
       'Start over',
-      ...cloudFileMenuItems,
+      {
+        label: 'Open',
+        children: [
+          'Import file',
+          ...cloudProviderNames.map((providerName) => `Open ${providerName}`),
+        ],
+      },
+      {
+        label: 'Save',
+        children: [
+          'Save file',
+          ...cloudProviderNames.map((providerName) => `Save ${providerName}`),
+        ],
+      },
+      {
+        label: 'Export',
+        children: [
+          'Chart PNG',
+          'CSV',
+          'Excel',
+          'JSON',
+          'Markdown',
+        ],
+      },
     ],
   },
   {
@@ -126,6 +141,28 @@ const toolbarMenus = [
   },
 ];
 
+type MenuItemConfig = string | { children: string[]; label: string };
+
+function buildMenuItems(
+  items: MenuItemConfig[],
+  onSelect: (label: string) => void,
+): DropdownMenuItem[] {
+  return items.map((item) =>
+    typeof item === 'string'
+      ? {
+          label: item,
+          onSelect: () => onSelect(item),
+        }
+      : {
+          label: item.label,
+          children: item.children.map((child) => ({
+            label: child,
+            onSelect: () => onSelect(child),
+          })),
+        },
+  );
+}
+
 export function App() {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState('');
@@ -160,27 +197,27 @@ export function App() {
       return;
     }
 
-    if (label === 'Export chart PNG') {
+    if (label === 'Chart PNG') {
       dispatchGridAction({ action: 'export-chart' });
       return;
     }
 
-    if (label === 'Export CSV') {
+    if (label === 'CSV') {
       dispatchGridAction({ action: 'export-file', format: 'csv' });
       return;
     }
 
-    if (label === 'Export Excel') {
+    if (label === 'Excel') {
       dispatchGridAction({ action: 'export-file', format: 'xlsx' });
       return;
     }
 
-    if (label === 'Export JSON') {
+    if (label === 'JSON') {
       dispatchGridAction({ action: 'export-file', format: 'json' });
       return;
     }
 
-    if (label === 'Export Markdown') {
+    if (label === 'Markdown') {
       dispatchGridAction({ action: 'export-file', format: 'markdown' });
       return;
     }
@@ -419,10 +456,7 @@ export function App() {
       <nav className="top-toolbar" aria-label="Main toolbar">
         {toolbarMenus.map((menu) => (
           <DropdownMenu
-            items={menu.items.map((item) => ({
-              label: item,
-              onSelect: () => handleMenuAction(item),
-            }))}
+            items={buildMenuItems(menu.items, handleMenuAction)}
             key={menu.label}
             label={menu.label}
           />
