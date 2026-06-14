@@ -58,7 +58,7 @@
       version: 1,
       title: 'Untitled ShowSplat Deck',
       theme: 'violet',
-      footer: 'ShowSplatTM by DrawSplatTM',
+      footer: 'ShowSplat™ by DrawSplat™',
       globalAudio: null,
       slides: [
         makeTemplateSlide('title'),
@@ -78,10 +78,10 @@
       elements: []
     };
     if (template === 'title') {
-      slide.title = 'ShowSplatTM';
+      slide.title = 'ShowSplat™';
       slide.bg = 'section';
       slide.notes = 'I will open by naming the deck and giving the audience a quick sense of what we are going to build or explain. This title slide keeps the focus on the main idea before moving into the details.';
-      slide.elements.push(textElement('ShowSplatTM', 150, 230, 920, 120, 72, true, '#ffffff'));
+      slide.elements.push(textElement('ShowSplat™', 150, 230, 920, 120, 72, true, '#ffffff'));
       slide.elements.push(textElement('A WebDeck-first presentation workspace', 158, 360, 900, 70, 34, false, '#f5f3ff'));
     } else if (template === 'section') {
       slide.title = 'Section Break';
@@ -217,7 +217,7 @@
       version: 1,
       title: value.title || 'Untitled ShowSplat Deck',
       theme: value.theme || 'violet',
-      footer: value.footer || 'ShowSplatTM by DrawSplatTM',
+      footer: value.footer || 'ShowSplat™ by DrawSplat™',
       globalAudio: normalizeAudio(value.globalAudio),
       slides: value.slides.map(slide => ({
         id: slide.id || uid('slide'),
@@ -576,10 +576,9 @@
       cropX: obj.cropX ?? 50,
       cropY: obj.cropY ?? 50
     };
-    target.setPointerCapture(event.pointerId);
-    target.addEventListener('pointermove', move);
-    target.addEventListener('pointerup', stop, { once: true });
-    renderCanvas();
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', stop, { once: true });
+    target.classList.add('selected');
 
     function move(ev) {
       if (cropTargetId === obj.id && obj.type === 'image') {
@@ -594,10 +593,10 @@
       renderInspector();
     }
 
-    function stop(ev) {
-      target.releasePointerCapture(ev.pointerId);
-      target.removeEventListener('pointermove', move);
+    function stop() {
+      document.removeEventListener('pointermove', move);
       saveSoon();
+      render();
     }
   }
 
@@ -617,9 +616,8 @@
       w: obj.w,
       h: obj.h
     };
-    target.setPointerCapture(event.pointerId);
-    target.addEventListener('pointermove', move);
-    target.addEventListener('pointerup', stop, { once: true });
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', stop, { once: true });
 
     function move(ev) {
       const dx = (ev.clientX - start.x) / rect.width * SLIDE_W;
@@ -640,10 +638,10 @@
       renderInspector();
     }
 
-    function stop(ev) {
-      target.releasePointerCapture(ev.pointerId);
-      target.removeEventListener('pointermove', move);
+    function stop() {
+      document.removeEventListener('pointermove', move);
       saveSoon();
+      render();
     }
   }
 
@@ -655,9 +653,8 @@
     const obj = selectedObject();
     const rect = target.getBoundingClientRect();
     const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    target.setPointerCapture(event.pointerId);
-    target.addEventListener('pointermove', move);
-    target.addEventListener('pointerup', stop, { once: true });
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', stop, { once: true });
 
     function move(ev) {
       const angle = Math.atan2(ev.clientY - center.y, ev.clientX - center.x) * 180 / Math.PI + 90;
@@ -666,10 +663,10 @@
       renderInspector();
     }
 
-    function stop(ev) {
-      target.releasePointerCapture(ev.pointerId);
-      target.removeEventListener('pointermove', move);
+    function stop() {
+      document.removeEventListener('pointermove', move);
       saveSoon();
+      render();
     }
   }
 
@@ -983,7 +980,7 @@
       render();
     }
     if (action === 'open-markdown') openMarkdown();
-    if (action === 'load-markdown-sample') els.markdownInput.value = '# ShowSplatTM\n\n- Build slides from Markdown\n- Insert media anywhere\n- Export WebDeck HTML\n\n---\n\n# Media slide\n\n- Add YouTube, MP4, WebM, PNG, JPG, and tables';
+    if (action === 'load-markdown-sample') els.markdownInput.value = '# ShowSplat™\n\n- Build slides from Markdown\n- Insert media anywhere\n- Export WebDeck HTML\n\n---\n\n# Media slide\n\n- Add YouTube, MP4, WebM, PNG, JPG, and tables';
     if (action === 'import-markdown') importMarkdown();
     if (action === 'copy-markdown') navigator.clipboard?.writeText(exportMarkdown()).then(() => setStatus('Markdown copied.'));
     if (action === 'export-markdown') download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.md', exportMarkdown(), 'text/markdown');

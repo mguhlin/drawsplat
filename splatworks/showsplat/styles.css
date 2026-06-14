@@ -40,16 +40,13 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
+.brand-icon {
   width: 54px;
   height: 54px;
   border-radius: 16px;
-  color: #6d28d9;
   background: #fff;
-  font-size: 2rem;
-  font-weight: 950;
+  object-fit: contain;
+  padding: 5px;
 }
 
 .brand strong { display: block; font-size: clamp(1.8rem, 4vw, 3rem); line-height: .9; }
@@ -93,6 +90,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 
 .menu-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   padding: 10px 14px;
@@ -101,7 +99,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   box-shadow: 0 10px 28px rgba(76, 29, 149, .06);
   position: relative;
   z-index: 10;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .menu { position: relative; }
@@ -139,11 +137,12 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 8px 14px;
   border-bottom: 1px solid var(--line);
   background: #fff;
-  overflow-x: auto;
+  overflow: visible;
   position: relative;
   z-index: 5;
 }
@@ -174,7 +173,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 
 .workspace {
   display: grid;
-  grid-template-columns: 220px minmax(460px, 1fr) 300px;
+  grid-template-columns: 220px minmax(460px, 1fr) 280px;
   min-height: 0;
 }
 
@@ -291,9 +290,9 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 
 .stage {
   display: grid;
-  place-items: center;
+  place-items: start center;
   min-height: 0;
-  padding: 20px;
+  padding: 14px;
   overflow: auto;
   background:
     linear-gradient(90deg, rgba(124,58,237,.08) 1px, transparent 1px),
@@ -302,7 +301,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .slide-canvas {
   position: relative;
-  width: min(100%, 1000px);
+  width: min(100%, 960px, calc((100vh - 285px) * 16 / 9));
   aspect-ratio: 16 / 9;
   flex: none;
   border: 1px solid #cfc3ff;
@@ -534,4 +533,5 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   .stage-wrap { order: 1; min-height: 70vh; }
   .thumbnail-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .stage { padding: 10px; }
+  .slide-canvas { width: min(100%, 92vw); }
 }
