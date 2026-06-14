@@ -13,6 +13,8 @@ import { ChartCanvas } from '../charts/ChartCanvas';
 import {
   buildFirstDataRangeChart,
   buildChartData,
+  findChartValueColumn,
+  findFirstDataRangeSelection,
   type ChartDataModel,
   type ChartKind,
 } from '../charts/chartData';
@@ -138,10 +140,7 @@ function getChartSourceRows(
   selection: SelectionRange,
 ): ChartSourceRow[] {
   const normalized = normalizeSelection(selection);
-  const valueCol =
-    normalized.start.col === normalized.end.col
-      ? normalized.start.col
-      : normalized.start.col + 1;
+  const valueCol = findChartValueColumn(sheet, selection);
   const rows: ChartSourceRow[] = [];
 
   for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
@@ -875,10 +874,9 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
     if (nextChart.points.length === 0) {
       nextChart = buildFirstDataRangeChart(sheet, type, chartTitle);
-      nextSelection = {
-        start: { row: 1, col: 0 },
-        end: { row: Math.max(1, nextChart.points.length), col: 1 },
-      };
+      nextSelection =
+        findFirstDataRangeSelection(sheet) ??
+        createSelection({ row: 0, col: 0 });
     }
 
     if (nextChart.points.length === 0) {

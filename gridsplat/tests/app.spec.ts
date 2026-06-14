@@ -514,6 +514,50 @@ test('creates a live-updating bar chart and exports PNG', async ({
   expect(download.suggestedFilename()).toBe('gridsplat-chart.png');
 });
 
+test('charts selected ranges that include text columns before numbers', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Chart range detection runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'reading.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from(
+      'Day,Title,Minutes,Pages\nMonday,The Willow,20,12\nTuesday,The Willow,25,16\nWednesday,The Willow,25,16',
+    ),
+  });
+
+  const a1 = await page.getByTestId('cell-A1').boundingBox();
+  const d4 = await page.getByTestId('cell-D4').boundingBox();
+
+  if (!a1 || !d4) {
+    throw new Error('Expected chart source cells to be visible');
+  }
+
+  await page.mouse.move(a1.x + a1.width / 2, a1.y + a1.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(d4.x + d4.width / 2, d4.y + d4.height / 2);
+  await page.mouse.up();
+
+  await page.getByRole('button', { name: 'Bar' }).click();
+
+  await expect(page.getByLabel('Chart preview')).toBeVisible();
+  await expect(
+    page.getByRole('table', { name: 'My Chart data' }),
+  ).toContainText('Monday');
+  await expect(
+    page.getByRole('table', { name: 'My Chart data' }),
+  ).toContainText('20');
+  await expect(
+    page.getByText('Select labels and numbers before making a chart.'),
+  ).toHaveCount(0);
+});
+
 test('updates and exports the picture graph', async ({ page }, testInfo) => {
   test.skip(
     testInfo.project.name !== 'chromium',

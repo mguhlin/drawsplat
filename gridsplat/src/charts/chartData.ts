@@ -14,6 +14,34 @@ export interface ChartDataModel {
   type: ChartKind;
 }
 
+export function findChartValueColumn(
+  sheet: SheetData,
+  selection: SelectionRange,
+): number {
+  const normalized = normalizeSelection(selection);
+
+  if (normalized.start.col === normalized.end.col) {
+    return normalized.start.col;
+  }
+
+  for (
+    let col = normalized.start.col + 1;
+    col <= normalized.end.col;
+    col += 1
+  ) {
+    for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
+      const cell = sheet[row]?.[col];
+      const value = Number(cell?.displayValue ?? cell?.rawValue ?? '');
+
+      if (Number.isFinite(value)) {
+        return col;
+      }
+    }
+  }
+
+  return normalized.start.col + 1;
+}
+
 export function buildChartData(
   sheet: SheetData,
   selection: SelectionRange,
@@ -21,16 +49,12 @@ export function buildChartData(
   title = 'My Chart',
 ): ChartDataModel {
   const normalized = normalizeSelection(selection);
+  const valueCol = findChartValueColumn(sheet, selection);
   const points: ChartPoint[] = [];
 
   for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
     const labelCell = sheet[row]?.[normalized.start.col];
-    const valueCell =
-      sheet[row]?.[
-        normalized.start.col === normalized.end.col
-          ? normalized.start.col
-          : normalized.start.col + 1
-      ];
+    const valueCell = sheet[row]?.[valueCol];
     const value = Number(valueCell?.displayValue ?? valueCell?.rawValue ?? '');
 
     if (Number.isFinite(value)) {
@@ -49,12 +73,11 @@ export function buildChartData(
   };
 }
 
-export function buildFirstDataRangeChart(
+export function findFirstDataRangeSelection(
   sheet: SheetData,
-  type: ChartKind,
-  title = 'My Chart',
-): ChartDataModel {
+): SelectionRange | null {
   let endRow = -1;
+  let endCol = -1;
 
   for (let row = sheet.length - 1; row >= 0; row -= 1) {
     if (sheet[row].some((cell) => cell.rawValue.trim().length > 0)) {
@@ -64,6 +87,32 @@ export function buildFirstDataRangeChart(
   }
 
   if (endRow < 0) {
+    return null;
+  }
+
+  for (let row = 0; row <= endRow; row += 1) {
+    for (let col = sheet[row].length - 1; col >= 0; col -= 1) {
+      if (sheet[row][col].rawValue.trim().length > 0) {
+        endCol = Math.max(endCol, col);
+        break;
+      }
+    }
+  }
+
+  return {
+    start: { row: 0, col: 0 },
+    end: { row: endRow, col: Math.max(1, endCol) },
+  };
+}
+
+export function buildFirstDataRangeChart(
+  sheet: SheetData,
+  type: ChartKind,
+  title = 'My Chart',
+): ChartDataModel {
+  const selection = findFirstDataRangeSelection(sheet);
+
+  if (!selection) {
     return {
       points: [],
       title,
@@ -73,10 +122,7 @@ export function buildFirstDataRangeChart(
 
   return buildChartData(
     sheet,
-    {
-      start: { row: 1, col: 0 },
-      end: { row: endRow, col: 1 },
-    },
+    selection,
     type,
     title,
   );
