@@ -7,8 +7,8 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.11, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
-- **Self-host bundle:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces a curated zip you can hand to a district.
+- **Status:** v3.1.12, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
+- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces separate DrawSplatTM and SplatWorksTM GridSplatTM zips so spreadsheet updates can ship without refreshing the full DrawSplatTM package.
 
 ## Getting started
 
@@ -29,7 +29,14 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.11 — Latest self-host bundle with GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages, and the current classroom tools set.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own menu. Pinned as a GitHub release: [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11). Previous milestones: [v3.1.10](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.10) (Super Star Trek, Squirrel Run polish, and classroom tools bundle), [v3.1.9](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.9) (SketchSpace VR and SplatImage Studio classroom bundle), [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8) (SplatImage Studio, DrawSplat Hub, Concept Map Markdown/text controls, Quiz science sample sets), [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+**DrawSplatTM v3.1.12 — Latest self-host packaging split with independent DrawSplatTM and SplatWorksTM GridSplatTM release zips.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12). Previous milestones: [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages), [v3.1.10](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.10) (Super Star Trek, Squirrel Run polish, and classroom tools bundle), [v3.1.9](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.9) (SketchSpace VR and SplatImage Studio classroom bundle), [v3.1.8](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.8) (SplatImage Studio, DrawSplat Hub, Concept Map Markdown/text controls, Quiz science sample sets), [v3.1.7](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.7) (self-host security hardening, Markdown Studio preview hardening, Concept Map full-width workspace, localized T-Chart template, Quiz & Flashcard Studio), [v3.1.6](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.6) (Animated GIF LZW compression + palette options + MP4/WebM export, Concept Map traditional outline formatter, blog thumbnails, Firefox WebM fix), [v3.1.5](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.5) (Concept Map overlap resolver + Outline view + section filter + Markdown Studio handoff, GDPR Compliance Summary, Compliance Gap List, consent banner), [v3.1.4](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.4) (Admin viewer-preview, Concept Map embed + word-wrap + Schema, Animated GIF Maker, whiteboard audio + game toggles), [v3.1.3](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.3) (Image upload approval queue + NDPA / DPA review-packet polish), [v3.1.2](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.2) (Advanced-view icon overhaul), [v3.1.1](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.1) (Community board polish + speed work), [v3.1.0](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.0) (Phase 4 MySQL backend + self-host bundle).
+
+## Recent improvements (v3.1.12)
+
+- **Separate self-host packages.** `./scripts/make-selfhost-bundle.sh` now creates `drawsplat-selfhost-<version>.zip` and `splatworks-gridsplat-selfhost-<version>.zip`.
+- **Cleaner licensing boundary.** The DrawSplatTM package excludes `gridsplat/`; the GridSplatTM package carries the GPL-3.0-only spreadsheet app, source, built static assets, docs, tests, and license files.
+- **Download page refresh.** The self-host download page now shows both packages on the same page with separate sizes, SHA-256 hashes, and guidance about when to download each one.
+- **GridSplat-only update path.** Future GridSplatTM changes can ship as a SplatWorksTM download without requiring schools to redownload the full DrawSplatTM whiteboard/tools/widgets/games package.
 
 ## Recent improvements (v3.1.11)
 
@@ -219,6 +226,8 @@ timeline
          : Movement/splat sounds, collision speech bubbles, tree-home dance, refreshed self-host bundle
   v3.1.11: DrawSplat Studio + GridSplat
          : GridSplat spreadsheet integration, SplatWorks naming, dedicated Games/Tools pages, refreshed self-host bundle
+  v3.1.12: Separate DrawSplat + SplatWorks downloads
+         : DrawSplat self-host zip excludes GridSplat; SplatWorks GridSplat zip ships independently with GPL license boundary
 ```
 
 ## Included files
@@ -299,7 +308,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the v3.1.11 bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install the separate SplatWorksTM GridSplatTM bundle beside it when the spreadsheet app is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 

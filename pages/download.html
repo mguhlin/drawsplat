@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>Download DrawSplatTM (self-hosting)</title>
-<meta name="description" content="Download a complete, zipped DrawSplatTM bundle for self-hosting by a school, organization, or district. Includes static site, Google Apps Script backend, and MySQL backend." />
+<title>Download DrawSplatTM and SplatWorksTM (self-hosting)</title>
+<meta name="description" content="Download separate DrawSplatTM and SplatWorksTM GridSplatTM self-hosting bundles. Keep whiteboard/tool updates separate from spreadsheet app updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/download.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
@@ -147,25 +147,56 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Download</p>
-    <h1>Self-host DrawSplat<sup class="tm">TM</sup> for your school, organization, or district.</h1>
+    <h1>Self-host DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> packages independently.</h1>
     <p>
-      <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.11</span>
-      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-06-07 &mdash; GridSplat<sup class="tm">TM</sup>, SplatWorks<sup class="tm">TM</sup> navigation, and current classroom tools</span>
+      <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.12</span>
+      <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-06-14 &mdash; separated DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> download packages</span>
     </p>
-    <p>DrawSplat<sup class="tm">TM</sup> is free under the AGPL-3.0-or-later. Schools, districts, and organizations can host the whole thing on their own infrastructure &mdash; static site, Google Apps Script backend, or self-hosted MySQL backend. Download a complete zipped bundle, deploy it, and you&rsquo;re running.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> are now packaged separately for self-hosting. Schools, districts, and organizations can update the whiteboard/tools/widgets/games package without redownloading GridSplat<sup class="tm">TM</sup>, or update GridSplat<sup class="tm">TM</sup> without refreshing the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
     <p>
-      <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.11/drawsplat-selfhost-v3.1.11.zip">Download v3.1.11 zip (210&nbsp;MB)</a>
+      <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.12/drawsplat-selfhost-v3.1.12.zip">Download DrawSplat v3.1.12 zip (203&nbsp;MB)</a>
+      &nbsp; <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.12/splatworks-gridsplat-selfhost-v3.1.12.zip">Download GridSplat v3.1.12 zip (7.2&nbsp;MB)</a>
       &nbsp; <a class="landing-cta" href="release-notes.html">Release notes</a>
       &nbsp; <a class="landing-cta" href="https://github.com/mguhlin/drawsplat" target="_blank" rel="noopener noreferrer">Browse the source</a>
     </p>
-    <p class="hint" style="max-width:760px">SHA-256: <code style="font-size:0.82rem">8d07aa3084b86ae0094a2ff5255e496d9da5c2df6c7eecb0ee244c4057da0226</code></p>
+    <p class="hint" style="max-width:900px">DrawSplat SHA-256: <code style="font-size:0.82rem">86cbc4d2eb9271ad526667acdd3f7b58c665059b2d940fee10644507305b57e7</code><br>GridSplat SHA-256: <code style="font-size:0.82rem">ac264b947a0459f0dd98b78b44eeb36126a52010ba340ad4ae431faa4352016e</code></p>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Packages</p>
+      <h2>Download only what changed</h2>
+      <p>The packages appear together here, but they are versioned as independent artifacts.</p>
+    </div>
+    <div class="support-resource-grid">
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">DrawSplatTM</span>
+        <h3>Whiteboard, tools, widgets, games, and backends</h3>
+        <p>Use this package for the interactive whiteboard, DrawSplat tools, classroom widgets, games, legal/compliance pages, Apps Script backend, MySQL backend, and Hub demo.</p>
+        <ul class="admin-checklist">
+          <li>License: AGPL-3.0-or-later unless a file or subdirectory says otherwise.</li>
+          <li>Does not include <code>gridsplat/</code>; install the GridSplat package beside it when you want the spreadsheet app.</li>
+          <li>Best when whiteboard, tools, widgets, games, docs, or backend files changed.</li>
+        </ul>
+      </article>
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">SplatWorksTM</span>
+        <h3>GridSplatTM spreadsheet package</h3>
+        <p>Use this package for the GPL-covered GridSplat spreadsheet app. It includes the built static app, source, docs, tests, and package metadata needed to rebuild it.</p>
+        <ul class="admin-checklist">
+          <li>License: GPL-3.0-only for GridSplatTM / SplatWorksTM spreadsheet code.</li>
+          <li>Deploy the included <code>gridsplat/</code> folder at <code>/gridsplat/</code>.</li>
+          <li>Best when only GridSplatTM changed.</li>
+        </ul>
+      </article>
+    </div>
   </section>
 
   <section class="landing-section">
     <div class="landing-section-head">
       <p class="landing-eyebrow">What you get</p>
-      <h2>One zip, three deployment paths</h2>
-      <p>The bundle is one self-contained directory. Pick the deployment that matches your needs and follow the matching setup guide.</p>
+      <h2>Three deployment paths</h2>
+      <p>Pick the deployment that matches your needs and follow the matching setup guide. Install DrawSplatTM, GridSplatTM, or both.</p>
     </div>
     <div class="support-resource-grid">
       <article class="support-resource-card featured">
@@ -209,14 +240,15 @@
       <h2>Bundle contents</h2>
     </div>
     <ol class="admin-checklist" style="max-width:760px;margin:0 auto">
-      <li>The complete static site (<code>index.html</code>, <code>app/</code>, <code>pages/</code>, <code>legal/</code>, <code>guides/</code>, <code>parents/</code>, <code>community/</code>, <code>languages/</code>, <code>admin/</code>, <code>solutions/</code>, <code>games/</code>), including SplatImage Studio, SketchSpace VR, Quiz &amp; Flashcard Studio, Super Star Trek, Squirrel Run, and the <code>drawsplat-quiz-flashcard_v1.csv</code> / <code>drawsplat-quiz-flashcard_v1.json</code> import templates.</li>
+      <li>The DrawSplatTM zip includes the static site (<code>index.html</code>, <code>app/</code>, <code>pages/</code>, <code>legal/</code>, <code>guides/</code>, <code>parents/</code>, <code>community/</code>, <code>languages/</code>, <code>admin/</code>, <code>solutions/</code>, <code>games/</code>), including SplatImage Studio, SketchSpace VR, Quiz &amp; Flashcard Studio, Super Star Trek, Squirrel Run, and the <code>drawsplat-quiz-flashcard_v1.csv</code> / <code>drawsplat-quiz-flashcard_v1.json</code> import templates.</li>
       <li><code>apps-script/Code.gs</code> &mdash; single-file Apps Script backend.</li>
       <li><code>server/mysql-backend/</code> &mdash; Node.js + MySQL backend with Docker compose, OAuth, RBAC, SSE, cron, Clever connector, privacy packet generator, migration CLI.</li>
       <li><code>compliance.config.json</code> &mdash; default safety / retention / privacy config.</li>
       <li><code>docs/</code>, <code>guides/</code> &mdash; operator and setup documentation.</li>
       <li><code>COMPLIANCE-ROADMAP.md</code>, <code>LICENSE</code>, <code>README.md</code>, <code>SELFHOST-README.txt</code>.</li>
+      <li>The SplatWorksTM GridSplatTM zip includes <code>gridsplat/</code>, GridSplatTM docs, source, built static assets, tests, package metadata, and GPL-3.0-only license files.</li>
     </ol>
-    <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundle: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files, and any real DrawSplat Hub campus folders. The bundle keeps only the generic Hub dashboard and <code>hubcampus</code> demo. Build your own from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
+    <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundles: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files, local test artifacts, and any real DrawSplat Hub campus folders. The DrawSplatTM bundle keeps only the generic Hub dashboard and <code>hubcampus</code> demo. Build both packages from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
   </section>
 
   <section class="landing-section">
@@ -224,7 +256,7 @@
       <p class="landing-eyebrow">License &amp; support</p>
       <h2>Free, plus optional paid services</h2>
     </div>
-    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later. Schools, organizations, and districts may use, host, modify, and redistribute it. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
+    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later unless a file or subdirectory says otherwise. GridSplat<sup class="tm">TM</sup> / SplatWorks<sup class="tm">TM</sup> spreadsheet code is GPL-3.0-only. Schools, organizations, and districts may use, host, modify, and redistribute the packages under those licenses. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
   </section>
 </main>
 

@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM v3.1.11 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.11 release notes with GridSplatTM, separated SplatWorksTM and DrawSplat navigation, dedicated Games and Tools pages, and self-host bundle updates." />
+<title>DrawSplatTM v3.1.12 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.12 release notes with separate DrawSplatTM and SplatWorksTM GridSplatTM self-host download packages." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -158,16 +158,16 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Release Notes</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.11</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.12</h1>
     <div class="release-meta">
       <span class="release-pill">Latest stable</span>
-      <span class="release-pill">Self-host bundle refreshed</span>
-      <span class="release-pill">DrawSplat Studio update</span>
+      <span class="release-pill">Separate self-host packages</span>
+      <span class="release-pill">SplatWorks download split</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.11 brings GridSplat<sup class="tm">TM</sup> into SplatWorks<sup class="tm">TM</sup>, separates SplatWorks navigation from DrawSplat tools/widgets/games, and rebuilds the self-host bundle with the integrated spreadsheet app.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.12 separates self-host download artifacts for DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> while keeping them listed together on the same public download page.</p>
     <div class="landing-actions">
-      <a class="landing-cta primary" href="download.html">Download Self-Host Zip</a>
-      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.11.md">View Markdown Source</a>
+      <a class="landing-cta primary" href="download.html">Download Self-Host Zips</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.12.md">View Markdown Source</a>
     </div>
   </section>
 
@@ -178,24 +178,24 @@
     </div>
     <div class="release-grid">
       <article class="release-card">
-        <h2>GridSplat<sup class="tm">TM</sup></h2>
-        <p>The spreadsheet app is now part of DrawSplat Studio and ships with built static assets for Cloudflare Pages and self-hosted sites.</p>
+        <h2>DrawSplat<sup class="tm">TM</sup> Package</h2>
+        <p>The DrawSplat<sup class="tm">TM</sup> zip now carries the whiteboard, tools, widgets, games, backends, and legal/compliance docs without bundling GridSplat<sup class="tm">TM</sup>.</p>
       </article>
       <article class="release-card">
-        <h2>SplatWorks<sup class="tm">TM</sup></h2>
-        <p>SplatWorks<sup class="tm">TM</sup> now stays focused on WriteSplat<sup class="tm">TM</sup>, ListSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and GridSplat<sup class="tm">TM</sup>.</p>
+        <h2>GridSplat<sup class="tm">TM</sup> Package</h2>
+        <p>The SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> zip carries the GPL-3.0-only spreadsheet app, built static assets, source, docs, tests, and license files.</p>
       </article>
       <article class="release-card">
-        <h2>Navigation Split</h2>
-        <p>The top navigation now has separate SplatWorks<sup class="tm">TM</sup> and DrawSplat menus. DrawSplat groups Tools, Widgets, and Games.</p>
+        <h2>Independent Updates</h2>
+        <p>Future GridSplat<sup class="tm">TM</sup> updates can ship without forcing schools to redownload the full DrawSplat<sup class="tm">TM</sup> package.</p>
       </article>
       <article class="release-card">
-        <h2>Collection Pages</h2>
-        <p>Dedicated Games and Tools pages let visitors browse each collection as a full page instead of only through dropdown links.</p>
+        <h2>Download Page</h2>
+        <p>The download page now shows both packages together with separate versions, sizes, hashes, licenses, and deployment notes.</p>
       </article>
       <article class="release-card">
-        <h2>DrawSplat Tools</h2>
-        <p>Big Link, Concept Map, Markdown Studio, Rubric Builder, SplatImage Studio, and Word Search Maker now sit under the DrawSplat tools group.</p>
+        <h2>Bundle Script</h2>
+        <p>The self-host bundle script now builds both zips in one run and excludes local development artifacts from release packages.</p>
       </article>
     </div>
   </section>
@@ -206,22 +206,20 @@
       <h2>Included updates</h2>
     </div>
     <ul class="release-list">
-      <li>GridSplat<sup class="tm">TM</sup> now lives at <code>gridsplat/</code> as part of this repository and loads from the production Vite bundle.</li>
-      <li>A dedicated GridSplat<sup class="tm">TM</sup> page introduces it as the SplatWorks<sup class="tm">TM</sup> spreadsheet for classroom tables, charts, and data work.</li>
-      <li>The public navigation separates SplatWorks<sup class="tm">TM</sup> from the DrawSplat tools, widgets, and games menu.</li>
-      <li>SplatWorks<sup class="tm">TM</sup> is described as the GPL-covered office app family for writing, lists, slides, and spreadsheets.</li>
-      <li>Planned Studio app names now use WriteSplat<sup class="tm">TM</sup>, ListSplat<sup class="tm">TM</sup>, and ShowSplat<sup class="tm">TM</sup> for writing, data, and outline-to-slides presentations.</li>
-      <li>Tools and Games each have a dedicated collection page for browsing everything in that category.</li>
-      <li>The self-host bundle builder now includes <code>games/</code> and <code>gridsplat/</code> in its embedded deployment notes.</li>
+      <li><code>scripts/make-selfhost-bundle.sh</code> now creates <code>drawsplat-selfhost-&lt;version&gt;.zip</code> and <code>splatworks-gridsplat-selfhost-&lt;version&gt;.zip</code>.</li>
+      <li>The DrawSplat<sup class="tm">TM</sup> zip excludes <code>gridsplat/</code> so the whiteboard/tools/widgets/games package can move independently.</li>
+      <li>The SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> zip preserves the <code>gridsplat/</code> folder because the current production build runs at <code>/gridsplat/</code>.</li>
+      <li>The package READMEs document the deployment path and licensing boundary inside each zip.</li>
+      <li>Local development folders such as <code>node_modules</code>, <code>dist</code>, <code>coverage</code>, and test artifacts are excluded from release packages.</li>
     </ul>
   </section>
 
   <section class="landing-section">
     <div class="landing-section-head">
-      <p class="landing-eyebrow">Self-Host Bundle</p>
-      <h2>What the ZIP contains</h2>
+      <p class="landing-eyebrow">Self-Host Bundles</p>
+      <h2>What the ZIP files contain</h2>
     </div>
-    <p class="release-note">The self-host ZIP is labeled <code>drawsplat-selfhost-v3.1.11.zip</code>. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, DrawSplat Games, standalone classroom tools, the integrated GridSplat<sup class="tm">TM</sup> app, SplatImage Studio, SketchSpace VR, and the generic DrawSplat Hub dashboard with the <code>hubcampus</code> demo instance. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+    <p class="release-note"><code>drawsplat-selfhost-v3.1.12.zip</code> is 203 MB with SHA-256 <code>86cbc4d2eb9271ad526667acdd3f7b58c665059b2d940fee10644507305b57e7</code>. <code>splatworks-gridsplat-selfhost-v3.1.12.zip</code> is 7.2 MB with SHA-256 <code>ac264b947a0459f0dd98b78b44eeb36126a52010ba340ad4ae431faa4352016e</code>. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
   </section>
 </main>
 

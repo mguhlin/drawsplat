@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 09 Jun 2026 10:40:58 GMT</lastBuildDate>
+			<lastBuildDate>Sun, 14 Jun 2026 04:30:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.12 Update: Separate DrawSplat and GridSplat Downloads</title>
+		<link>https://drawsplat.org/pages/download.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.12 separates self-host downloads into two independent packages. The DrawSplat zip now carries the whiteboard, classroom tools, widgets, games, Apps Script backend, MySQL backend, Hub demo, docs, and legal/compliance pages. The SplatWorks GridSplat zip carries the GPL-covered spreadsheet app, built static assets, source, docs, tests, package metadata, and license files. Both downloads remain listed together on the same Download page, but a GridSplat-only update no longer requires a full DrawSplat package refresh.]]></description>
+		<pubDate>Sun, 14 Jun 2026 04:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.12-separate-downloads</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>gridsplat</category>
+	</item><item>
 		<title>DrawSplat v3.1.10 Update: Super Star Trek Joins DrawSplat Games</title>
 		<link>https://drawsplat.org/games/super-star-trek/</link>
 		<description><![CDATA[<img src="https://drawsplat.org/games/super-star-trek/SuperStarTrek_SplashImage.png" /><br/>Super Star Trek joins DrawSplat Games as a browser-playable edition of the classic command-driven space strategy game. Command the Enterprise across an 8 by 8 galaxy, scan nearby sectors, dock at starbases, manage shields and energy, and clear Klingon and Romulan ships before time runs out. The game runs as static HTML, CSS, JavaScript, and local image assets, so it is included in the Games dropdown, Teacher Admin Game Access, and the refreshed self-host bundle.]]></description>

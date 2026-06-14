@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 #
-# DrawSplatTM self-hosting bundle builder.
+# DrawSplatTM / SplatWorksTM self-hosting bundle builder.
 #
-# Produces dist/drawsplat-selfhost-YYYYMMDD-<shortsha>.zip containing:
-#   - everything a school / district needs to deploy DrawSplatTM
-#   - excluding: .git, node_modules, .env, image-cache, log files, OS noise
+# Produces:
+#   - dist/drawsplat-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/splatworks-gridsplat-selfhost-YYYYMMDD-<shortsha>.zip
+#
+# The DrawSplatTM bundle contains the whiteboard, tools, widgets, games,
+# backends, and compliance docs. SplatWorksTM apps ship separately so a
+# GridSplatTM-only update does not force a full DrawSplatTM download refresh.
 #
 # Run from the repo root:
 #   ./scripts/make-selfhost-bundle.sh
@@ -31,17 +35,22 @@ if [ -z "$VERSION_LABEL" ]; then
 fi
 
 OUT_DIR="dist"
-OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
-OUT_PATH="$OUT_DIR/$OUT_NAME"
 STAGE_DIR="$(mktemp -d)"
-STAGE_ROOT="$STAGE_DIR/drawsplat-selfhost-$VERSION_LABEL"
+DRAWSPLAT_ROOT="$STAGE_DIR/drawsplat-selfhost-$VERSION_LABEL"
+GRID_ROOT="$STAGE_DIR/splatworks-gridsplat-selfhost-$VERSION_LABEL"
+DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
+GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
+DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
+GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$STAGE_ROOT"
-rm -f "$OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH"
 
 EXCLUDES=(
   ".git"
   ".github"
+  ".codex"
+  ".agents"
   "node_modules"
   "dist"
   "tmp"
@@ -52,9 +61,11 @@ EXCLUDES=(
   ".env.local"
   "/package.json"
   "/package-lock.json"
+  "gridsplat"
   "*.log"
   "*.swp"
   "drawsplat-selfhost-*.zip"
+  "splatworks-gridsplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -63,18 +74,18 @@ for pattern in "${EXCLUDES[@]}"; do
 done
 
 if command -v rsync >/dev/null 2>&1; then
-  rsync "${RSYNC_ARGS[@]}" ./ "$STAGE_ROOT/"
+  rsync "${RSYNC_ARGS[@]}" ./ "$DRAWSPLAT_ROOT/"
 else
   echo "rsync not found; falling back to cp + manual prune (slower)" >&2
-  cp -r ./ "$STAGE_ROOT"
+  cp -r ./ "$DRAWSPLAT_ROOT"
   for pattern in "${EXCLUDES[@]}"; do
-    find "$STAGE_ROOT" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+    find "$DRAWSPLAT_ROOT" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
   done
 fi
 
-if [ -d "$STAGE_ROOT/hub" ]; then
-  find "$STAGE_ROOT/hub" -mindepth 1 -maxdepth 1 -type d ! -name "hubcampus" -prune -exec rm -rf {} +
-  cat > "$STAGE_ROOT/hub/instances.json" <<'EOF'
+if [ -d "$DRAWSPLAT_ROOT/hub" ]; then
+  find "$DRAWSPLAT_ROOT/hub" -mindepth 1 -maxdepth 1 -type d ! -name "hubcampus" -prune -exec rm -rf {} +
+  cat > "$DRAWSPLAT_ROOT/hub/instances.json" <<'EOF'
 [
   {
     "slug": "hubcampus",
@@ -103,7 +114,7 @@ if [ -d "$STAGE_ROOT/hub" ]; then
 EOF
 fi
 
-cat > "$STAGE_ROOT/SELFHOST-README.txt" <<EOF
+cat > "$DRAWSPLAT_ROOT/SELFHOST-README.txt" <<EOF
 DrawSplatTM Self-Hosted Bundle
 ==============================
 
@@ -113,7 +124,7 @@ Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 What's in this zip
 ------------------
 - The complete static site (index.html, app/, pages/, legal/, guides/, parents/,
-  community/, languages/, admin/, games/, gridsplat/, solutions/) ready to drop
+  community/, languages/, admin/, games/, solutions/) ready to drop
   into any static host.
 - apps-script/Code.gs  — the Google Apps Script backend (single-file).
 - server/mysql-backend/ — Node.js + MySQL backend with Docker compose.
@@ -122,6 +133,13 @@ What's in this zip
 - hub/ — generic DrawSplat Hub dashboard plus hubcampus demo only. Real Hub
   campus folders from drawsplat.org are intentionally excluded from this bundle.
 - COMPLIANCE-ROADMAP.md, LICENSE, README.md — project context.
+
+What is not in this zip
+-----------------------
+SplatWorksTM apps, including GridSplatTM, are packaged separately. Download
+splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you want the spreadsheet
+app. This keeps GPL-covered SplatWorks app releases independent from DrawSplatTM
+whiteboard/tools/widgets/games releases.
 
 Deployment paths
 ----------------
@@ -154,22 +172,89 @@ Support
 - License: AGPL-3.0-or-later (see LICENSE)
 EOF
 
+GRID_EXCLUDES=(
+  ".codex"
+  ".agents"
+  "node_modules"
+  "dist"
+  "coverage"
+  "test-results"
+  "playwright-report"
+  ".env"
+  ".env.local"
+  "*.log"
+  "*.swp"
+)
+
+if command -v rsync >/dev/null 2>&1; then
+  GRID_RSYNC_ARGS=(-a --delete)
+  for pattern in "${GRID_EXCLUDES[@]}"; do
+    GRID_RSYNC_ARGS+=(--exclude "$pattern")
+  done
+  rsync "${GRID_RSYNC_ARGS[@]}" gridsplat/ "$GRID_ROOT/gridsplat/"
+else
+  cp -R gridsplat "$GRID_ROOT/gridsplat"
+  for pattern in "${GRID_EXCLUDES[@]}"; do
+    find "$GRID_ROOT/gridsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+  done
+fi
+
+cat > "$GRID_ROOT/SPLATWORKS-GRIDSPLAT-README.txt" <<EOF
+SplatWorksTM GridSplatTM Self-Hosted Bundle
+==========================================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+What's in this zip
+------------------
+- gridsplat/ — the built GridSplatTM static app plus source, tests, docs, and
+  package metadata for rebuilding from source.
+- gridsplat/LICENSE.md and gridsplat/COPYING — GPL-3.0-only license text for
+  GridSplatTM / SplatWorksTM spreadsheet code.
+
+Deployment
+----------
+GridSplatTM is currently built to run from /gridsplat/.
+
+1. Upload the included gridsplat/ folder to your static host.
+2. Open https://your-domain.example/gridsplat/.
+3. To rebuild from source:
+     cd gridsplat
+     npm install
+     npm run build
+
+Licensing boundary
+------------------
+GridSplatTM is packaged separately from DrawSplatTM so spreadsheet updates can
+ship without requiring a full DrawSplatTM whiteboard/tools/widgets/games
+download. GridSplatTM is GPL-3.0-only. DrawSplatTM whiteboard code, tools,
+widgets, games, backends, and compliance features remain under the repository
+level DrawSplatTM license unless a file or subdirectory says otherwise.
+EOF
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
-  zip -rq "$REPO_ROOT/$OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$GRID_OUT_PATH" "splatworks-gridsplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
 fi
 cd "$REPO_ROOT"
 
-SIZE_HUMAN="$(du -h "$OUT_PATH" | cut -f1)"
-SHA="$(sha256sum "$OUT_PATH" | cut -d' ' -f1)"
+DRAWSPLAT_SIZE_HUMAN="$(du -h "$DRAWSPLAT_OUT_PATH" | cut -f1)"
+DRAWSPLAT_SHA="$(sha256sum "$DRAWSPLAT_OUT_PATH" | cut -d' ' -f1)"
+GRID_SIZE_HUMAN="$(du -h "$GRID_OUT_PATH" | cut -f1)"
+GRID_SHA="$(sha256sum "$GRID_OUT_PATH" | cut -d' ' -f1)"
 
 echo ""
-echo "Built bundle:"
-echo "  $OUT_PATH ($SIZE_HUMAN)"
-echo "  sha256: $SHA"
+echo "Built bundles:"
+echo "  $DRAWSPLAT_OUT_PATH ($DRAWSPLAT_SIZE_HUMAN)"
+echo "  sha256: $DRAWSPLAT_SHA"
+echo ""
+echo "  $GRID_OUT_PATH ($GRID_SIZE_HUMAN)"
+echo "  sha256: $GRID_SHA"
 echo ""
 
 rm -rf "$STAGE_DIR"
