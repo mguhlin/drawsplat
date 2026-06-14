@@ -12,10 +12,29 @@ The first implementation is a static browser app with:
 - notes panel
 - template slides and themes
 - Markdown Studio import/export
+- WebDeck HTML, PDF, ODP, and PowerPoint/PPTX import options
 - WebDeck HTML export with optional frontend password hash
 - WebDeck HTML import for compatible `SLIDES` array decks
+- ODP and PowerPoint/PPTX export
 - AI-ready JSON instructions for generating editable ShowSplat/WebDeck content
 - browser print-to-PDF export
+- selected text-box bullet toggles and font size decrease/increase buttons
+- presentation controls that auto-hide and a pop-out notes window
+- last-slide delete safety that replaces the final slide with a blank title slide
+
+## Import and Export Notes
+
+- WebDeck HTML and `.showsplat.json` are the preferred editable formats.
+- Markdown import/export is outline-first and keeps content editable.
+- PDF import renders each page as a full-slide image. It is useful for visual
+  fidelity, including password-protected PDFs after the password prompt, but
+  the text inside the PDF is not editable yet.
+- PDF export uses the browser print dialog. Choose "Save as PDF" from the
+  print destination.
+- PPTX and ODP import/export are first-pass compatibility features. Text,
+  images, many shapes, backgrounds, and basic grouping are supported, but
+  complex masks, master-slide inheritance, theme font mapping, and advanced
+  drawing effects still need more fidelity work.
 
 ## WebDeck Direction
 

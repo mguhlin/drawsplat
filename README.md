@@ -29,7 +29,16 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.14 — Latest SplatWorksTM folder layout and ShowSplatTM editor update.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, now organized under `splatworks/` with launch paths at `/splatworks/gridsplat/` and `/splatworks/showsplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14). Previous milestones: [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
+**DrawSplatTM v3.1.14 — Latest stable self-host release, with newer ShowSplatTM live updates on `main`.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, now organized under `splatworks/` with launch paths at `/splatworks/gridsplat/` and `/splatworks/showsplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14). Current `main` adds ShowSplatTM import/export and editing refinements after that stable bundle. Previous milestones: [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
+
+## Current live updates after v3.1.14
+
+- **ShowSplatTM import/export menus.** File Import and Export now group WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX options under clear submenus. PDF export uses the browser print/save-as-PDF flow; PDF import creates image-based slide pages.
+- **PowerPoint and ODP first-pass support.** ShowSplatTM can import and export PPTX and ODP files with best-effort text, image, shape, background, and template preservation. Complex masks, grouped transforms, theme fonts, and master-page details are still active improvement areas.
+- **PDF import.** PDFs can be imported as full-slide image pages, including password-protected PDFs after a password prompt. This preserves visual appearance but does not make PDF text editable yet.
+- **Editable slide controls.** Text boxes can toggle bullets on/off, selected boxes have font size decrease/increase buttons, view zoom uses a slider, and deleting the last slide automatically creates a blank title slide.
+- **Presentation polish.** WebDeck presenter controls auto-hide after a few seconds and return on hover; speaker notes can pop out into a movable window for another monitor.
+- **Import behavior cleanup.** Imported WebDeck slides resize text to fit the slide better, keep the grid outside the slide surface, and preserve or omit the ShowSplatTM footer bar based on the source deck.
 
 ## Recent improvements (v3.1.14)
 

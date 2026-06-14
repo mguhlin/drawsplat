@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>DrawSplatTM v3.1.14 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.14 release notes with the SplatWorksTM folder layout, hub page, and ShowSplatTM editor updates." />
+<meta name="description" content="DrawSplatTM v3.1.14 release notes plus current live ShowSplatTM updates for PDF, ODP, PPTX, WebDeck, and editor workflows." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -164,11 +164,42 @@
       <span class="release-pill">SplatWorks folder</span>
       <span class="release-pill">ShowSplat editor</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.14 organizes GridSplat<sup class="tm">TM</sup> and ShowSplat<sup class="tm">TM</sup> under the new <code>splatworks/</code> folder, adds a SplatWorks<sup class="tm">TM</sup> hub page, and expands the ShowSplat<sup class="tm">TM</sup> editor with child-friendly object controls, richer thumbnails, templates, audio, and JSON save/load workflows.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.14 organizes GridSplat<sup class="tm">TM</sup> and ShowSplat<sup class="tm">TM</sup> under the new <code>splatworks/</code> folder, adds a SplatWorks<sup class="tm">TM</sup> hub page, and expands the ShowSplat<sup class="tm">TM</sup> editor with child-friendly object controls, richer thumbnails, templates, audio, and JSON save/load workflows. Current live updates after the tag add ShowSplat<sup class="tm">TM</sup> PDF, ODP, PPTX, and editor workflow refinements.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zips</a>
       <a class="landing-cta" href="../RELEASE_NOTES_v3.1.14.md">View Markdown Source</a>
     </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Current Live Updates</p>
+      <h2>ShowSplat updates after v3.1.14</h2>
+      <p>These changes are live on <code>main</code> and the public site, but they are newer than the v3.1.14 ZIP artifacts.</p>
+    </div>
+    <div class="release-grid">
+      <article class="release-card">
+        <h2>Import and Export Menus</h2>
+        <p>File menus now group WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX import/export actions under clearer submenus.</p>
+      </article>
+      <article class="release-card">
+        <h2>PPTX and ODP Compatibility</h2>
+        <p>PowerPoint and ODP import/export are available as best-effort conversions for text, images, backgrounds, many shapes, and common grouped content.</p>
+      </article>
+      <article class="release-card">
+        <h2>PDF Workflows</h2>
+        <p>PDF import creates full-slide image pages, including password-protected PDFs after a prompt. PDF export uses the browser print dialog and Save as PDF.</p>
+      </article>
+      <article class="release-card">
+        <h2>Editing Controls</h2>
+        <p>Selected text boxes can toggle bullets, shrink or grow font size, and use the zoom slider. Deleting the final slide now creates a blank title slide.</p>
+      </article>
+      <article class="release-card">
+        <h2>Presentation Mode</h2>
+        <p>Presenter navigation auto-hides after a few seconds and returns on hover. Notes can pop out into a movable window for a second display.</p>
+      </article>
+    </div>
+    <p class="release-note">Known next-run focus: improve PPTX/ODP fidelity, add editable PDF text extraction, move large imported assets to IndexedDB, add a direct deterministic PDF writer, improve table-cell editing, and add fixture-based import regression tests.</p>
   </section>
 
   <section class="landing-section">

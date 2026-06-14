@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Sun, 14 Jun 2026 17:30:00 GMT</lastBuildDate>
+			<lastBuildDate>Sun, 14 Jun 2026 22:30:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat Update: ShowSplat Adds PDF, ODP, PPTX, and Editing Workflow Polish</title>
+		<link>https://drawsplat.org/pages/showsplat.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>ShowSplat now has clearer Import and Export submenus for WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX workflows. WebDeck HTML and Markdown remain the cleanest editable formats. PDF import preserves pages as full-slide images, including password-protected PDFs after a prompt, and PDF export uses the browser Save as PDF flow. PPTX and ODP import/export are available as best-effort compatibility paths for common text, image, shape, background, and grouped slide content. The editor also adds selected-text bullet toggles, font-size decrease/increase buttons, a zoom slider, last-slide delete safety, smarter WebDeck import fitting, and presenter controls that auto-hide until hover.]]></description>
+		<pubDate>Sun, 14 Jun 2026 22:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-showsplat-pdf-odp-pptx-editor-polish</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>showsplat</category>
+	</item><item>
 		<title>DrawSplat v3.1.13 Update: ShowSplat Starts the WebDeck Presentation Tool</title>
 		<link>https://drawsplat.org/pages/showsplat.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.13 starts ShowSplat, the SplatWorks presentation and WebDeck authoring app. The first browser-native version includes slide thumbnails, a 16:9 canvas, dropdown menus, icon toolbar, notes, slide templates, color themes, draggable and resizable slide objects, media insertion, Markdown Studio import/export, slideshow preview, and WebDeck HTML export with an optional frontend password prompt. The self-host package split now includes separate DrawSplat, GridSplat, and ShowSplat zip files.]]></description>

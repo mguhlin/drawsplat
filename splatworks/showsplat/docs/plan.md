@@ -69,9 +69,11 @@ PowerPoint, and HTML slide tools such as reveal.js.
   data, notes, navigation, and optional frontend password prompt backed by a
   stored SHA-256 hash.
 - Markdown export.
-- PDF export through print-to-PDF in the browser for the first phase.
-- ODP and PPTX export are planned as real file writers after the deck model
-  stabilizes. They should not be marked complete until implemented.
+- PDF export through print-to-PDF in the browser.
+- ODP and PPTX export as first-pass real file writers.
+- PDF import as image-based slide pages.
+- ODP and PPTX import as best-effort editable decks with text, images, many
+  shapes, backgrounds, and basic grouping.
 
 ### Accessibility and Safety
 
@@ -92,3 +94,38 @@ PowerPoint, and HTML slide tools such as reveal.js.
   controls, Markdown import/export, WebDeck export, PDF print, and slideshow
   preview.
 - SplatWorks packaging support after the first app is stable.
+
+## Current Implementation Notes
+
+- WebDeck HTML and `.showsplat.json` remain the cleanest editable formats.
+- Markdown import/export is useful for outline-first decks.
+- PDF import is intentionally image-based today. It preserves page appearance
+  and supports password prompts, but it does not recover editable PDF text.
+- PPTX and ODP import/export are usable first passes, not full PowerPoint or
+  LibreOffice fidelity. The current parser handles many common text, image,
+  background, opacity, and grouping cases, but some masters, masks, theme
+  effects, freeform paths, and exact font metrics will differ.
+- The editor includes user-requested workflow polish: menu submenus, mutually
+  switching view modes, selected-box bullet toggle, font size decrease/increase
+  buttons, zoom slider, footer-bar import behavior, last-slide delete safety,
+  auto-fit on WebDeck HTML import, and auto-hiding presenter controls.
+
+## Next Run Improvement Areas
+
+- **PPTX and ODP fidelity.** Improve freeform shape parsing, clipping and image
+  masks, exact group transforms, master-slide inheritance, theme font mapping,
+  z-order edge cases, chart/table imports, and speaker notes extraction.
+- **Editable PDF import.** Add positioned text extraction and optional OCR so
+  imported PDFs can become editable text boxes instead of only slide images.
+- **Storage and performance.** Move large imported assets out of localStorage
+  into IndexedDB, lazy-render thumbnails, add compression controls, and warn
+  before browser autosave becomes too large.
+- **Export fidelity.** Add a direct deterministic PDF writer or a dedicated
+  print layout, then strengthen PPTX/ODP export with masters, media reuse,
+  notes, and theme metadata.
+- **Object editing.** Add a layers/object list, lock/background controls,
+  table cell editing, crop handles for imported image masks, and clearer
+  warnings when a selected item is an image snapshot instead of editable text.
+- **Regression tests.** Build fixture decks for WebDeck, PPTX, ODP, and PDF
+  imports, then compare generated thumbnails against reference renders from
+  LibreOffice/PowerPoint-style output.
