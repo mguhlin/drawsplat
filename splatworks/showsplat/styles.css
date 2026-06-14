@@ -404,7 +404,27 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   color: #fff;
   font-size: 13px;
   font-weight: 850;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: text;
+  z-index: 20;
+}
+.slide-footer.selected {
+  outline: 3px solid rgba(255,159,47,.8);
+  outline-offset: -3px;
+}
+.slide-footer .footer-text {
+  min-width: 120px;
+  max-width: calc(100% - 90px);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+.slide-footer .footer-text:focus {
+  outline: 2px solid rgba(255,255,255,.86);
+  outline-offset: 1px;
+  background: rgba(255,255,255,.12);
+}
+.slide-footer .footer-count {
+  flex: none;
 }
 
 .slide-object {

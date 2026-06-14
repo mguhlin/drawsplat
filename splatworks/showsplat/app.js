@@ -4,6 +4,7 @@
   const STORAGE_KEY = 'showsplat.deck.v1';
   const SLIDE_W = 1600;
   const SLIDE_H = 900;
+  const FOOTER_ID = '__showsplat_footer__';
   const themes = {
     violet: { accent: '#7c3aed', accent2: '#ff9f2f', dark: '#1e1b4b', bg: '#ffffff' },
     sky: { accent: '#0284c7', accent2: '#f59e0b', dark: '#0f172a', bg: '#f8fbff' },
@@ -246,6 +247,7 @@
         importedCss: slide.importedCss || '',
         backgroundColor: slide.backgroundColor || '',
         footerColor: slide.footerColor || '',
+        footerTextColor: slide.footerTextColor || '',
         defaultTextColor: slide.defaultTextColor || '',
         footer: slide.footer !== false,
         hidden: Boolean(slide.hidden),
@@ -401,10 +403,23 @@
     ordered.forEach(renderObject);
     if (slide.footer) {
       const footer = document.createElement('div');
-      footer.className = 'slide-footer';
+      footer.className = 'slide-footer' + (selectedId === FOOTER_ID ? ' selected' : '');
+      footer.dataset.id = FOOTER_ID;
       footer.style.background = slide.footerColor || '';
-      footer.style.color = contrastText(slide.footerColor || '#312e5f');
-      footer.innerHTML = '<span>' + escapeHtml(deck.footer || '') + '</span><span>' + (activeSlide + 1) + ' / ' + deck.slides.length + '</span>';
+      footer.style.color = slide.footerTextColor || contrastText(slide.footerColor || '#312e5f');
+      footer.innerHTML = '<span class="footer-text" contenteditable="true" spellcheck="true">' + escapeHtml(deck.footer || '') + '</span><span class="footer-count">' + (activeSlide + 1) + ' / ' + deck.slides.length + '</span>';
+      footer.addEventListener('pointerdown', () => {
+        selectedId = FOOTER_ID;
+        els.canvas.querySelectorAll('.slide-object.selected').forEach(node => node.classList.remove('selected'));
+        footer.classList.add('selected');
+        renderInspector();
+        setStatus('Editing information bar. Use text and fill colors to style it.');
+      });
+      footer.querySelector('.footer-text').addEventListener('input', event => {
+        deck.footer = event.currentTarget.textContent;
+        if (els.footerText) els.footerText.value = deck.footer;
+        saveSoon();
+      });
       els.canvas.appendChild(footer);
     }
     if (slide.audio && slide.audio.length) {
@@ -488,9 +503,19 @@
     } else if (el.type === 'html') {
       content.innerHTML = '<div class="imported-webdeck-slide" contenteditable="true">' + sanitizeImportedHtml(el.html || '') + '</div>';
       const importedRoot = content.querySelector('.imported-webdeck-slide');
+      applyImportedScale(importedRoot, el.importScale || 1);
+      if (el.autoFit !== false) {
+        requestAnimationFrame(() => fitImportedHtml(el, importedRoot));
+        importedRoot.querySelectorAll('img, video, iframe').forEach(media => {
+          media.addEventListener('load', () => fitImportedHtml(el, importedRoot), { once: true });
+          media.addEventListener('loadedmetadata', () => fitImportedHtml(el, importedRoot), { once: true });
+        });
+      }
       importedRoot.addEventListener('input', () => {
         el.html = importedRoot.innerHTML;
+        el.importScale = 1;
         saveSoon();
+        if (el.autoFit !== false) requestAnimationFrame(() => fitImportedHtml(el, importedRoot));
         renderThumbs();
       });
     } else if (el.type === 'link') {
@@ -547,9 +572,37 @@
     return el.rows;
   }
 
+  function applyImportedScale(root, scale) {
+    const safeScale = clamp(Number(scale) || 1, 0.25, 1);
+    root.style.transformOrigin = 'top left';
+    root.style.transform = 'scale(' + safeScale + ')';
+    root.style.width = (100 / safeScale) + '%';
+    root.style.height = (100 / safeScale) + '%';
+  }
+
+  function fitImportedHtml(el, root) {
+    if (!root?.isConnected) return;
+    applyImportedScale(root, 1);
+    const widthRatio = root.clientWidth / Math.max(root.scrollWidth, 1);
+    const heightRatio = root.clientHeight / Math.max(root.scrollHeight, 1);
+    const scale = clamp(Math.min(1, widthRatio, heightRatio) - 0.015, 0.25, 1);
+    if (Math.abs((el.importScale || 1) - scale) > 0.01) {
+      el.importScale = scale;
+      saveSoon();
+    }
+    applyImportedScale(root, scale);
+  }
+
   function renderInspector() {
     const slide = currentSlide();
     els.notes.value = slide.notes || '';
+    if (selectedId === FOOTER_ID) {
+      els.selectionInfo.textContent = 'Information bar selected. Edit its text on the slide, or use text and fill colors to style it.';
+      [els.altText, els.linkUrl, els.posX, els.posY, els.posW, els.posH].forEach(input => input.value = '');
+      els.textColor.value = normalizeColor(slide.footerTextColor || contrastText(slide.footerColor || '#312e5f'));
+      els.fillColor.value = normalizeColor(slide.footerColor || '#312e5f');
+      return;
+    }
     const obj = selectedObject();
     if (!obj) {
       els.selectionInfo.textContent = 'No object selected.';
@@ -821,6 +874,7 @@
     updateSelectedSlides(slide => {
       slide.backgroundColor = bg;
       slide.footerColor = bar;
+      slide.footerTextColor = contrastText(bar);
       slide.defaultTextColor = text;
       slide.elements.forEach(el => {
         if (el.type === 'text' || el.type === 'list' || el.type === 'shape' || el.type === 'link') {
@@ -867,6 +921,7 @@
     els.canvas.querySelectorAll('.slide-object.selected').forEach(node => {
       if (node !== target) node.classList.remove('selected');
     });
+    els.canvas.querySelector('.slide-footer.selected')?.classList.remove('selected');
     target.classList.add('selected');
     renderInspector();
     if (event.target.classList.contains('resize-handle') || event.target.classList.contains('rotate-handle')) return;
@@ -980,6 +1035,10 @@
   }
 
   function applyToSelected(mutator) {
+    if (selectedId === FOOTER_ID) {
+      setStatus('Information bar selected. Use text color, fill color, or edit the bar text directly.');
+      return;
+    }
     const obj = selectedObject();
     if (!obj) {
       setStatus('Select a slide object first.');
@@ -988,6 +1047,26 @@
     mutator(obj);
     saveSoon();
     render();
+  }
+
+  function applyTextColor(value) {
+    if (selectedId === FOOTER_ID) {
+      currentSlide().footerTextColor = value;
+      saveSoon();
+      render();
+      return;
+    }
+    applyToSelected(obj => obj.color = value);
+  }
+
+  function applyFillColor(value) {
+    if (selectedId === FOOTER_ID) {
+      currentSlide().footerColor = value;
+      saveSoon();
+      render();
+      return;
+    }
+    applyToSelected(obj => obj.fill = value);
   }
 
   function insertImageFile(file) {
@@ -1123,8 +1202,8 @@
   async function importDeckFile(file, text) {
     const trimmed = String(text || '').trim();
     if (/\.html?$/i.test(file.name) || /^<!doctype html/i.test(trimmed) || /const\s+SLIDES\s*=/.test(trimmed)) {
-      const sourceHtml = await resolveImportHtml(trimmed);
-      deck = normalizeDeck(webDeckHtmlToDeck(sourceHtml, file.name));
+      const source = await resolveImportHtml(trimmed);
+      deck = normalizeDeck(webDeckHtmlToDeck(source.html, file.name, source.baseUrl));
       activeSlide = 0;
       selectedId = null;
       saveSoon();
@@ -1140,26 +1219,27 @@
     setStatus('Opened ShowSplat deck.');
   }
 
-  function webDeckHtmlToDeck(html, fileName) {
+  function webDeckHtmlToDeck(html, fileName, baseUrl) {
     const sourceSlides = extractWebDeckSlides(html);
     if (!sourceSlides.length) throw new Error('No WebDeck slides found.');
     const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
     const importedCss = styleMatch ? styleMatch[1] : '';
+    const resolvedBaseUrl = baseUrl || extractBaseUrl(html);
     const fallbackTitle = (fileName || 'Imported WebDeck').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
     return {
       version: 1,
       title: decodeHtml(titleMatch ? titleMatch[1] : fallbackTitle) || fallbackTitle,
       theme: 'violet',
       footer: 'ShowSplat™ by DrawSplat™',
-      slides: sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index))
+      slides: sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index, resolvedBaseUrl))
     };
   }
 
-  function webDeckSlideToShowSplatSlide(source, importedCss, index) {
+  function webDeckSlideToShowSplatSlide(source, importedCss, index, baseUrl) {
     const bg = source.bg === 'hero' || source.bg === 'section' ? 'section' : source.bg === 'dark' ? 'dark' : 'light';
     const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
-    const html = sanitizeImportedHtml(source.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>');
+    const html = sanitizeImportedHtml(source.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl);
     return {
       id: uid('slide'),
       title: source.title || 'Slide ' + (index + 1),
@@ -1176,6 +1256,8 @@
         w: 1460,
         h: 760,
         html,
+        autoFit: true,
+        importScale: 1,
         fontFamily: 'Inter, Arial, sans-serif',
         fontSize: 30,
         bold: false,
@@ -1200,16 +1282,24 @@
 
   async function resolveImportHtml(html) {
     try {
-      if (extractWebDeckSlides(html).length) return html;
+      if (extractWebDeckSlides(html).length) return { html, baseUrl: extractBaseUrl(html) };
     } catch (err) {
       console.warn(err);
     }
     const rawUrl = extractGithubRawUrl(html);
-    if (!rawUrl) return html;
+    if (!rawUrl) return { html, baseUrl: extractBaseUrl(html) };
     setStatus('Loading raw WebDeck from GitHub...');
     const response = await fetch(rawUrl);
     if (!response.ok) throw new Error('Could not fetch raw WebDeck.');
-    return response.text();
+    return { html: await response.text(), baseUrl: rawUrl };
+  }
+
+  function extractBaseUrl(html) {
+    const baseMatch = String(html || '').match(/<base[^>]+href=["']([^"']+)["']/i);
+    if (baseMatch) return decodeHtml(baseMatch[1]);
+    const canonical = String(html || '').match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) ||
+      String(html || '').match(/<meta[^>]+property=["']og:url["'][^>]+content=["']([^"']+)["']/i);
+    return canonical ? decodeHtml(canonical[1]) : '';
   }
 
   function extractGithubRawUrl(html) {
@@ -1275,7 +1365,7 @@
     throw new Error('Could not read WebDeck slide data.');
   }
 
-  function sanitizeImportedHtml(html) {
+  function sanitizeImportedHtml(html, baseUrl) {
     const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
     doc.querySelectorAll('script, style, link, meta, object, embed').forEach(node => node.remove());
     doc.querySelectorAll('*').forEach(node => {
@@ -1285,7 +1375,43 @@
         if (name.startsWith('on') || value.startsWith('javascript:')) node.removeAttribute(attr.name);
       });
     });
+    normalizeImportedMedia(doc.body.firstElementChild, baseUrl);
     return doc.body.firstElementChild.innerHTML;
+  }
+
+  function normalizeImportedMedia(root, baseUrl) {
+    if (!root) return;
+    root.querySelectorAll('img, video, audio, source, iframe').forEach(node => {
+      const fallback = node.getAttribute('src') ||
+        node.getAttribute('data-src') ||
+        node.getAttribute('data-lazy-src') ||
+        node.getAttribute('data-original') ||
+        firstSrcsetUrl(node.getAttribute('srcset') || node.getAttribute('data-srcset') || '');
+      if (fallback) node.setAttribute('src', resolveImportedUrl(fallback, baseUrl));
+      node.removeAttribute('srcset');
+      node.removeAttribute('data-srcset');
+      node.removeAttribute('data-src');
+      node.removeAttribute('data-lazy-src');
+      node.removeAttribute('data-original');
+      if (node.tagName.toLowerCase() === 'img' && !node.getAttribute('alt')) node.setAttribute('alt', '');
+    });
+  }
+
+  function firstSrcsetUrl(srcset) {
+    return String(srcset || '').split(',').map(part => part.trim().split(/\s+/)[0]).find(Boolean) || '';
+  }
+
+  function resolveImportedUrl(url, baseUrl) {
+    const value = String(url || '').trim();
+    if (!value || /^(data:|blob:|https?:|mailto:|tel:|#)/i.test(value)) return value;
+    if (value.startsWith('//')) return window.location.protocol + value;
+    if (!baseUrl) return value;
+    try {
+      return new URL(value, baseUrl).href;
+    } catch (err) {
+      console.warn(err);
+      return value;
+    }
   }
 
   function htmlToText(html) {
@@ -1364,12 +1490,16 @@
       if (el.type === 'video') return '<div class="obj" style="' + style + '"><video src="' + escapeAttr(el.src || '') + '" controls></video></div>';
       if (el.type === 'audio') return '<div class="obj" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
       if (el.type === 'table') return '<div class="obj table" style="' + style + '">' + tableHtml(el) + '</div>';
-      if (el.type === 'html') return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
+      if (el.type === 'html') {
+        const scale = clamp(Number(el.importScale) || 1, 0.25, 1);
+        const scaleStyle = 'transform-origin:top left;transform:scale(' + scale + ');width:' + (100 / scale) + '%;height:' + (100 / scale) + '%;';
+        return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
+      }
       if (el.type === 'list') return '<div class="obj" style="' + style + '"><ul>' + String(el.text || '').split('\n').filter(Boolean).map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul></div>';
       if (el.type === 'link') return '<a class="obj" style="' + style + '" href="' + escapeAttr(el.href || '#') + '" target="_blank" rel="noopener">' + escapeHtml(el.text || 'Link') + '</a>';
       return '<div class="obj" style="' + style + '">' + escapeHtml(el.text || '').replace(/\n/g, '<br>') + '</div>';
     });
-    if (slide.footer) parts.push('<div class="footer" style="background:' + escapeAttr(slide.footerColor || 'rgba(17,24,39,.9)') + ';color:' + escapeAttr(contrastText(slide.footerColor || '#111827')) + '"><span>' + escapeHtml(deck.footer || '') + '</span><span>' + (index + 1) + ' / ' + (totalSlides || deck.slides.length) + '</span></div>');
+    if (slide.footer) parts.push('<div class="footer" style="background:' + escapeAttr(slide.footerColor || 'rgba(17,24,39,.9)') + ';color:' + escapeAttr(slide.footerTextColor || contrastText(slide.footerColor || '#111827')) + '"><span>' + escapeHtml(deck.footer || '') + '</span><span>' + (index + 1) + ' / ' + (totalSlides || deck.slides.length) + '</span></div>');
     if (slide.audio && slide.audio.length) {
       parts.push('<div class="slide-audio">' + slide.audio.map(audio => '<audio src="' + escapeAttr(audio.src || '') + '" controls preload="metadata"></audio>').join('') + '</div>');
     }
@@ -1729,8 +1859,8 @@
   });
   els.fontFamily.addEventListener('change', () => applyToSelected(obj => obj.fontFamily = els.fontFamily.value));
   els.fontSize.addEventListener('change', () => applyToSelected(obj => obj.fontSize = Number(els.fontSize.value) || 30));
-  els.textColor.addEventListener('input', () => applyToSelected(obj => obj.color = els.textColor.value));
-  els.fillColor.addEventListener('input', () => applyToSelected(obj => obj.fill = els.fillColor.value));
+  els.textColor.addEventListener('input', () => applyTextColor(els.textColor.value));
+  els.fillColor.addEventListener('input', () => applyFillColor(els.fillColor.value));
   if (els.zoomSlider) {
     els.zoomSlider.addEventListener('input', () => {
       zoomLevel = Number(els.zoomSlider.value) || 0;
