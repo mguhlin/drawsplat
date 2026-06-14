@@ -1573,16 +1573,47 @@
     return Number(value || 0) / totalEmu * totalPx;
   }
 
-  function pptxXfrm(node, slideCx, slideCy) {
+  function pptxXfrm(node, slideCx, slideCy, context) {
     const xfrm = firstXml(node, 'xfrm');
     const off = xfrm ? firstXml(xfrm, 'off') : null;
     const ext = xfrm ? firstXml(xfrm, 'ext') : null;
+    const x = Number(off?.getAttribute('x') || 0);
+    const y = Number(off?.getAttribute('y') || 0);
+    const w = Number(ext?.getAttribute('cx') || 2000000);
+    const h = Number(ext?.getAttribute('cy') || 600000);
+    if (context) {
+      return {
+        x: context.x + (x - context.chOffX) / context.chExtX * context.w,
+        y: context.y + (y - context.chOffY) / context.chExtY * context.h,
+        w: w / context.chExtX * context.w,
+        h: h / context.chExtY * context.h,
+        rotate: (context.rotate || 0) + Number(xfrm?.getAttribute('rot') || 0) / 60000
+      };
+    }
     return {
-      x: emuToPx(off?.getAttribute('x'), slideCx, SLIDE_W),
-      y: emuToPx(off?.getAttribute('y'), slideCy, SLIDE_H),
-      w: emuToPx(ext?.getAttribute('cx') || 2000000, slideCx, SLIDE_W),
-      h: emuToPx(ext?.getAttribute('cy') || 600000, slideCy, SLIDE_H),
+      x: emuToPx(x, slideCx, SLIDE_W),
+      y: emuToPx(y, slideCy, SLIDE_H),
+      w: emuToPx(w, slideCx, SLIDE_W),
+      h: emuToPx(h, slideCy, SLIDE_H),
       rotate: Number(xfrm?.getAttribute('rot') || 0) / 60000
+    };
+  }
+
+  function pptxGroupContext(group, slideCx, slideCy, parentContext) {
+    const box = pptxXfrm(group, slideCx, slideCy, parentContext);
+    const xfrm = firstXml(group, 'xfrm');
+    const chOff = xfrm ? firstXml(xfrm, 'chOff') : null;
+    const chExt = xfrm ? firstXml(xfrm, 'chExt') : null;
+    return {
+      x: box.x,
+      y: box.y,
+      w: box.w || 1,
+      h: box.h || 1,
+      chOffX: Number(chOff?.getAttribute('x') || 0),
+      chOffY: Number(chOff?.getAttribute('y') || 0),
+      chExtX: Number(chExt?.getAttribute('cx') || 1),
+      chExtY: Number(chExt?.getAttribute('cy') || 1),
+      rotate: box.rotate || 0
     };
   }
 
@@ -1614,13 +1645,93 @@
     return clamp(Number(alpha.getAttribute('amt')) / 100000, 0, 1);
   }
 
-  function fitImportedTextElement(el, widthFactor) {
+  function fitImportedTextElement(el, widthFactor, heightFactor) {
     const lines = String(el.text || '').split('\n').filter(Boolean);
     const longest = Math.max(1, ...lines.map(line => line.length));
     const byWidth = (el.w - 12) / (longest * (widthFactor || 0.74));
-    const byHeight = (el.h - 12) / Math.max(1, lines.length) / 1.08;
+    const availableHeight = Math.max(12, Math.min(el.h, SLIDE_H - el.y - 6));
+    const edgeHeightFactor = el.y > SLIDE_H * 0.88 ? Math.max(heightFactor || 1.08, 3) : (heightFactor || 1.08);
+    const byHeight = (availableHeight - 12) / Math.max(1, lines.length) / edgeHeightFactor;
     el.fontSize = clamp(Math.floor(Math.min(el.fontSize || 30, byWidth, byHeight)), 10, 96);
     return el;
+  }
+
+  async function pptxImportChildren(zip, rels, slide, root, slideCx, slideCy, context, slideIndex, zStart) {
+    let z = zStart;
+    for (const node of Array.from(root?.children || [])) {
+      if (node.localName === 'sp') {
+        await pptxImportShape(zip, rels, slide, node, slideCx, slideCy, context, slideIndex * 1000 + z++);
+      } else if (node.localName === 'pic') {
+        await pptxImportPicture(zip, rels, slide, node, slideCx, slideCy, context, slideIndex * 1000 + z++);
+      } else if (node.localName === 'grpSp') {
+        z = await pptxImportChildren(zip, rels, slide, node, slideCx, slideCy, pptxGroupContext(node, slideCx, slideCy, context), slideIndex, z);
+      }
+    }
+    return z;
+  }
+
+  async function pptxImportShape(zip, rels, slide, shape, slideCx, slideCy, context, z) {
+    const text = pptxTextFromShape(shape);
+    const box = pptxXfrm(shape, slideCx, slideCy, context);
+    const blip = firstXml(shape, 'blip');
+    const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
+    const mediaPath = rels[relId];
+    const media = mediaPath ? zip.file(mediaPath) : null;
+    if (media) {
+      const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
+      slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+        type: 'image',
+        src: 'data:' + imageMime(ext) + ';base64,' + await media.async('base64'),
+        alt: 'Imported PPTX image',
+        fill: 'transparent',
+        fit: 'cover',
+        opacity: pptxBlipOpacity(blip),
+        rotate: box.rotate,
+        z
+      }));
+    }
+    if (text) {
+      const style = pptxShapeStyle(shape);
+      const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
+        italic: style.italic,
+        align: style.align,
+        fontFamily: style.fontFamily,
+        rotate: box.rotate,
+        z: z + 250
+      });
+      slide.elements.push(fitImportedTextElement(el));
+      if (/^Slide \d+$/.test(slide.title)) slide.title = text.split('\n')[0].slice(0, 80);
+    } else if (!media) {
+      const fill = pptxShapeFill(shape);
+      if (fill && !firstXml(shape, 'ph')) {
+        const el = shapeElement(box.x, box.y, box.w, box.h, '');
+        el.fill = fill;
+        el.color = 'transparent';
+        el.rotate = box.rotate;
+        el.z = z;
+        slide.elements.push(el);
+      }
+    }
+  }
+
+  async function pptxImportPicture(zip, rels, slide, pic, slideCx, slideCy, context, z) {
+    const blip = firstXml(pic, 'blip');
+    const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
+    const mediaPath = rels[relId];
+    const media = mediaPath ? zip.file(mediaPath) : null;
+    if (!media) return;
+    const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
+    const box = pptxXfrm(pic, slideCx, slideCy, context);
+    slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+      type: 'image',
+      src: 'data:' + imageMime(ext) + ';base64,' + await media.async('base64'),
+      alt: 'Imported PPTX image',
+      fill: 'transparent',
+      fit: 'cover',
+      opacity: pptxBlipOpacity(blip),
+      rotate: box.rotate,
+      z
+    }));
   }
 
   async function pptxToDeck(buffer, fileName) {
@@ -1651,71 +1762,7 @@
       const bgClr = firstXml(firstXml(doc, 'bgPr') || doc, 'srgbClr');
       if (bgClr?.getAttribute('val')) slide.backgroundColor = '#' + bgClr.getAttribute('val');
       const spTree = firstXml(doc, 'spTree') || doc;
-      for (const [shapeIndex, shape] of directXmlNodes(spTree, 'sp').entries()) {
-        const text = pptxTextFromShape(shape);
-        const box = pptxXfrm(shape, slideCx, slideCy);
-        const blip = firstXml(shape, 'blip');
-        const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
-        const mediaPath = rels[relId];
-        const media = mediaPath ? zip.file(mediaPath) : null;
-        if (media) {
-          const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
-          const src = 'data:' + imageMime(ext) + ';base64,' + await media.async('base64');
-          slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
-            type: 'image',
-            src,
-            alt: 'Imported PPTX image',
-            fill: 'transparent',
-            fit: 'cover',
-            opacity: pptxBlipOpacity(blip),
-            rotate: box.rotate,
-            z: index * 1000 + shapeIndex
-          }));
-        }
-        if (text) {
-          const style = pptxShapeStyle(shape);
-          const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
-            italic: style.italic,
-            align: style.align,
-            fontFamily: style.fontFamily,
-            rotate: box.rotate,
-            z: index * 1000 + shapeIndex + 250
-          });
-          slide.elements.push(fitImportedTextElement(el));
-          if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
-        } else if (!media) {
-          const fill = pptxShapeFill(shape);
-          if (fill && !firstXml(shape, 'ph')) {
-            const el = shapeElement(box.x, box.y, box.w, box.h, '');
-            el.fill = fill;
-            el.color = 'transparent';
-            el.rotate = box.rotate;
-            el.z = index * 1000 + shapeIndex;
-            slide.elements.push(el);
-          }
-        }
-      }
-      for (const [picIndex, pic] of directXmlNodes(spTree, 'pic').entries()) {
-        const blip = firstXml(pic, 'blip');
-        const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
-        const mediaPath = rels[relId];
-        const media = mediaPath ? zip.file(mediaPath) : null;
-        if (!media) continue;
-        const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
-        const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : 'image/png';
-        const src = 'data:' + mime + ';base64,' + await media.async('base64');
-        const box = pptxXfrm(pic, slideCx, slideCy);
-        slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
-          type: 'image',
-          src,
-          alt: 'Imported PPTX image',
-          fill: 'transparent',
-          fit: 'cover',
-          opacity: pptxBlipOpacity(blip),
-          rotate: box.rotate,
-          z: index * 1000 + 500 + picIndex
-        }));
-      }
+      await pptxImportChildren(zip, rels, slide, spTree, slideCx, slideCy, null, index, 0);
       slides.push(slide);
     }
     return {
@@ -1918,6 +1965,7 @@
             fillColor: props?.getAttribute('draw:fill-color') || '',
             fillImage: props?.getAttribute('draw:fill-image-name') || '',
             gradient: props?.getAttribute('draw:fill-gradient-name') || '',
+            opacity: odpPercent(props?.getAttribute('draw:opacity'), 1),
             stroke: props?.getAttribute('svg:stroke-color') || ''
           };
         }
@@ -1955,8 +2003,13 @@
 
   function odpStyleImage(styles, name) {
     const style = resolveOdpGraphicStyle(styles, name);
-    if (!style.fillImage) return '';
+    if (!style.fillImage || style.opacity <= 0) return '';
     return styles.fillImages[style.fillImage] || '';
+  }
+
+  function odpStyleOpacity(styles, name) {
+    const style = resolveOdpGraphicStyle(styles, name);
+    return style.opacity ?? 1;
   }
 
   async function odpAddShapeElement(zip, slide, shape, styles, pageSize, z) {
@@ -1973,6 +2026,7 @@
           alt: shape.getAttribute('draw:name') || 'Imported ODP image',
           fill: 'transparent',
           fit: 'cover',
+          opacity: odpStyleOpacity(styles, styleName),
           z
         }));
       }
@@ -1985,7 +2039,7 @@
       el.italic = Boolean(textStyle.italic);
       if (textStyle.fontFamily) el.fontFamily = '"' + textStyle.fontFamily + '", Inter, Arial, sans-serif';
       el.z = z + 250;
-      slide.elements.push(fitImportedTextElement(el, 1.25));
+      slide.elements.push(fitImportedTextElement(el, 1.25, 1.7));
       if (/^Slide \d+$/.test(slide.title) || /^page\d+$/i.test(slide.title)) slide.title = text.split('\n')[0].slice(0, 80);
       return;
     }
@@ -2077,6 +2131,14 @@
     if (text.endsWith('cm')) return Math.round(num / 2.54 * 96);
     if (text.endsWith('mm')) return Math.round(num / 25.4 * 96);
     return Math.round(num);
+  }
+
+  function odpPercent(value, fallback) {
+    const text = String(value || '').trim();
+    if (!text) return fallback;
+    const num = parseFloat(text);
+    if (!Number.isFinite(num)) return fallback;
+    return text.endsWith('%') ? num / 100 : num;
   }
 
   function pxToIn(value, totalPx) {
