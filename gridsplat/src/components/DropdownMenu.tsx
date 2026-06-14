@@ -31,10 +31,20 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
       }
     }
 
-    window.addEventListener('pointerdown', closeOnOutsidePointer);
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setOpenSubmenu(null);
+      }
+    }
 
-    return () =>
+    window.addEventListener('pointerdown', closeOnOutsidePointer);
+    window.addEventListener('keydown', closeOnEscape);
+
+    return () => {
       window.removeEventListener('pointerdown', closeOnOutsidePointer);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
   }, [isOpen]);
 
   return (
