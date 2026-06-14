@@ -14,6 +14,8 @@
   const els = {
     canvas: document.getElementById('slideCanvas'),
     thumbs: document.getElementById('thumbnailList'),
+    rail: document.querySelector('.slide-rail'),
+    railSplitter: document.getElementById('railSplitter'),
     sorter: document.getElementById('slideSorter'),
     stage: document.getElementById('stage'),
     workspace: document.querySelector('.workspace'),
@@ -25,6 +27,8 @@
     fontSize: document.getElementById('fontSize'),
     textColor: document.getElementById('textColor'),
     fillColor: document.getElementById('fillColor'),
+    zoomSlider: document.getElementById('zoomSlider'),
+    zoomValue: document.getElementById('zoomValue'),
     altText: document.getElementById('altText'),
     linkUrl: document.getElementById('linkUrl'),
     posX: document.getElementById('posX'),
@@ -35,6 +39,9 @@
     markdownInput: document.getElementById('markdownInput'),
     themeDialog: document.getElementById('themeDialog'),
     footerText: document.getElementById('footerText'),
+    slideBgColor: document.getElementById('slideBgColor'),
+    slideBarColor: document.getElementById('slideBarColor'),
+    slideDefaultTextColor: document.getElementById('slideDefaultTextColor'),
     imageFile: document.getElementById('imageFileInput'),
     videoFile: document.getElementById('videoFileInput'),
     audioFile: document.getElementById('audioFileInput'),
@@ -48,6 +55,18 @@
   let viewMode = 'normal';
   let autosaveTimer = null;
   let cropTargetId = null;
+  let zoomLevel = Number(localStorage.getItem('showsplat.zoomLevel') || 50);
+  let draggedSlideIndex = null;
+  let selectedSlideIds = new Set();
+  let lastSlideSelectionIndex = 0;
+  const slidePalettes = {
+    paper: { bg: '#ffffff', bar: '#312e5f', text: '#1f2937' },
+    lavender: { bg: '#f4f1ff', bar: '#5b21b6', text: '#241047' },
+    mint: { bg: '#ecfdf5', bar: '#047857', text: '#12372a' },
+    sky: { bg: '#eff6ff', bar: '#1d4ed8', text: '#172554' },
+    peach: { bg: '#fff7ed', bar: '#c2410c', text: '#431407' },
+    charcoal: { bg: '#111827', bar: '#7c3aed', text: '#ffffff' }
+  };
 
   function uid(prefix) {
     return prefix + '-' + Math.random().toString(36).slice(2, 9);
@@ -90,21 +109,21 @@
       slide.elements.push(textElement('One sentence that frames the next part.', 148, 410, 780, 70, 30, false, '#f5f3ff'));
     } else if (template === 'comparison') {
       slide.title = 'Comparison';
-      slide.elements.push(textElement('Compare two options', 90, 70, 900, 70, 46, true));
+      slide.elements.push(textElement('Compare two options', 90, 82, 900, 92, 46, true));
       slide.elements.push(textElement('Option A\n- Strength\n- Tradeoff\n- Best use', 120, 210, 560, 360, 34));
       slide.elements.push(textElement('Option B\n- Strength\n- Tradeoff\n- Best use', 900, 210, 560, 360, 34));
     } else if (template === 'media') {
       slide.title = 'Media Focus';
-      slide.elements.push(textElement('Media title', 90, 70, 820, 70, 46, true));
+      slide.elements.push(textElement('Media title', 90, 82, 820, 92, 46, true));
       slide.elements.push(shapeElement(120, 180, 1120, 560, 'Drop image or video here'));
     } else if (template === 'graph') {
       slide.title = 'Graph or Data Story';
-      slide.elements.push(textElement('What the data shows', 90, 70, 860, 70, 46, true));
+      slide.elements.push(textElement('What the data shows', 90, 82, 860, 92, 46, true));
       slide.elements.push(shapeElement(100, 175, 780, 540, 'Place a graph from GridSplat, Graph Maker, or Chart Studio'));
       slide.elements.push(textElement('Key takeaways\n- Pattern\n- Evidence\n- Why it matters', 950, 210, 480, 330, 32));
     } else if (template === 'concept-map') {
       slide.title = 'Concept Map Explanation';
-      slide.elements.push(textElement('How the ideas connect', 90, 70, 900, 70, 46, true));
+      slide.elements.push(textElement('How the ideas connect', 90, 82, 900, 92, 46, true));
       slide.elements.push(shapeElement(100, 175, 920, 540, 'Import a Concept Map Studio image here'));
       slide.elements.push(textElement('Explain the relationships and examples here.', 1070, 205, 390, 280, 30));
     } else if (template === 'purple-title') {
@@ -115,7 +134,7 @@
     } else if (template === 'purple-steps') {
       slide.title = 'Purple Process';
       slide.bg = 'section';
-      slide.elements.push(textElement('Process or sequence', 95, 65, 900, 72, 48, true, '#ffffff'));
+      slide.elements.push(textElement('Process or sequence', 95, 82, 900, 96, 48, true, '#ffffff'));
       slide.elements.push(textElement('1. Start with the idea\n2. Add evidence\n3. Explain the result', 130, 190, 1020, 360, 42, true, '#ffffff'));
       slide.elements.push(shapeElement(1190, 200, 250, 250, 'Visual'));
       slide.elements[2].color = '#ffffff';
@@ -126,15 +145,15 @@
       slide.elements.push(textElement('Source or context', 160, 450, 500, 60, 26, false, '#6b7280'));
     } else if (template === 'table') {
       slide.title = 'Table';
-      slide.elements.push(textElement('Table title', 90, 70, 820, 70, 46, true));
+      slide.elements.push(textElement('Table title', 90, 82, 820, 92, 46, true));
       slide.elements.push(tableElement(140, 180, 1080, 420));
     } else if (template === 'resources') {
       slide.title = 'Resources';
-      slide.elements.push(textElement('Resources', 90, 70, 820, 70, 46, true));
+      slide.elements.push(textElement('Resources', 90, 82, 820, 92, 46, true));
       slide.elements.push(textElement('- Link or next step\n- Link or next step\n- Link or next step', 130, 190, 850, 260, 34));
     } else {
       slide.title = 'Title and Content';
-      slide.elements.push(textElement('Slide title', 90, 70, 860, 70, 46, true));
+      slide.elements.push(textElement('Slide title', 90, 82, 860, 92, 46, true));
       slide.elements.push(listElement(['First point', 'Second point', 'Third point'], 125, 190, 900, 360));
       slide.notes = 'I will use this slide to explain the main points in order, keeping the audience focused on the relationships between the bullets rather than reading every word.';
     }
@@ -149,7 +168,7 @@
       x,
       y,
       w,
-      h,
+      h: Math.max(h, Math.ceil(fontSize * 1.45) + 20),
       fontFamily: 'Inter, Arial, sans-serif',
       fontSize,
       bold: Boolean(bold),
@@ -224,7 +243,14 @@
         title: slide.title || 'Slide',
         notes: slide.notes || '',
         bg: slide.bg || 'light',
+        importedCss: slide.importedCss || '',
+        backgroundColor: slide.backgroundColor || '',
+        footerColor: slide.footerColor || '',
+        defaultTextColor: slide.defaultTextColor || '',
         footer: slide.footer !== false,
+        hidden: Boolean(slide.hidden),
+        indent: clamp(Number(slide.indent) || 0, 0, 4),
+        collapsed: Boolean(slide.collapsed),
         audio: Array.isArray(slide.audio) ? slide.audio.map(normalizeAudio).filter(Boolean) : [],
         elements: Array.isArray(slide.elements) ? slide.elements.map(normalizeElement) : []
       }))
@@ -242,7 +268,7 @@
   }
 
   function normalizeElement(el) {
-    return Object.assign({
+    const normalized = Object.assign({
       id: uid('obj'),
       type: 'text',
       x: 100,
@@ -260,13 +286,23 @@
       align: 'left',
       z: Date.now()
     }, el);
+    if (['text', 'list', 'link', 'shape', 'html'].includes(normalized.type)) {
+      const minHeight = Math.ceil((Number(normalized.fontSize) || 32) * 1.45) + 20;
+      normalized.h = Math.max(Number(normalized.h) || 0, minHeight);
+    }
+    return normalized;
   }
 
   function saveSoon() {
     clearTimeout(autosaveTimer);
     autosaveTimer = setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
-      setStatus('Autosaved in this browser.');
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+        setStatus('Autosaved in this browser.');
+      } catch (err) {
+        console.warn(err);
+        setStatus('Deck is too large for browser autosave. Use File > Save .showsplat.json.');
+      }
     }, 250);
   }
 
@@ -275,11 +311,13 @@
   }
 
   function render() {
+    normalizeSlideSelection();
     const theme = themes[deck.theme] || themes.violet;
     document.documentElement.style.setProperty('--accent', theme.accent);
     document.documentElement.style.setProperty('--accent-2', theme.accent2);
     document.documentElement.style.setProperty('--dark', theme.dark);
     els.deckTitle.value = deck.title;
+    applyZoom();
     renderThumbs();
     renderCanvas();
     renderInspector();
@@ -289,13 +327,22 @@
   function renderThumbs() {
     els.thumbs.innerHTML = '';
     deck.slides.forEach((slide, index) => {
+      if (isCollapsedChild(index)) return;
       const button = document.createElement('button');
-      button.className = 'thumb' + (index === activeSlide ? ' active' : '');
+      button.className = slideCardClass('thumb', slide, index);
       button.type = 'button';
       button.dataset.index = index;
-      button.innerHTML = '<span class="thumb-num">' + (index + 1) + '</span>';
+      button.dataset.slideId = slide.id;
+      button.draggable = true;
+      button.style.setProperty('--indent', slide.indent || 0);
+      button.innerHTML = '<span class="thumb-num">' + (index + 1) + '</span>' + slideStateBadges(slide);
       button.appendChild(buildMiniSlide(slide, index));
-      button.addEventListener('click', () => selectSlide(index));
+      button.addEventListener('click', event => handleSlideClick(event, index));
+      button.addEventListener('dragstart', slideDragStart);
+      button.addEventListener('dragover', slideDragOver);
+      button.addEventListener('dragleave', slideDragLeave);
+      button.addEventListener('drop', slideDrop);
+      button.addEventListener('dragend', slideDragEnd);
       els.thumbs.appendChild(button);
     });
   }
@@ -323,6 +370,8 @@
         item.textContent = 'Video';
       } else if (el.type === 'table') {
         item.textContent = 'Table';
+      } else if (el.type === 'html') {
+        item.textContent = htmlToText(el.html || '').slice(0, 80);
       } else {
         item.textContent = String(el.text || '').slice(0, 80);
       }
@@ -340,12 +389,21 @@
   function renderCanvas() {
     const slide = currentSlide();
     els.canvas.className = 'slide-canvas ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '');
+    els.canvas.style.background = slide.backgroundColor || '';
+    els.canvas.style.color = slide.defaultTextColor || '';
     els.canvas.innerHTML = '';
+    if (slide.importedCss) {
+      const style = document.createElement('style');
+      style.textContent = scopeImportedCss(slide.importedCss);
+      els.canvas.appendChild(style);
+    }
     const ordered = slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0));
     ordered.forEach(renderObject);
     if (slide.footer) {
       const footer = document.createElement('div');
       footer.className = 'slide-footer';
+      footer.style.background = slide.footerColor || '';
+      footer.style.color = contrastText(slide.footerColor || '#312e5f');
       footer.innerHTML = '<span>' + escapeHtml(deck.footer || '') + '</span><span>' + (activeSlide + 1) + ' / ' + deck.slides.length + '</span>';
       els.canvas.appendChild(footer);
     }
@@ -427,6 +485,14 @@
           saveSoon();
         });
       });
+    } else if (el.type === 'html') {
+      content.innerHTML = '<div class="imported-webdeck-slide" contenteditable="true">' + sanitizeImportedHtml(el.html || '') + '</div>';
+      const importedRoot = content.querySelector('.imported-webdeck-slide');
+      importedRoot.addEventListener('input', () => {
+        el.html = importedRoot.innerHTML;
+        saveSoon();
+        renderThumbs();
+      });
     } else if (el.type === 'link') {
       content.contentEditable = 'true';
       content.textContent = el.text || 'Link text';
@@ -446,25 +512,39 @@
     }
 
     node.appendChild(content);
-    if (el.id === selectedId) {
-      ['nw', 'ne', 'se', 'sw'].forEach(handleName => {
-        const handle = document.createElement('span');
-        handle.className = 'resize-handle ' + handleName;
-        handle.dataset.handle = handleName;
-        handle.addEventListener('pointerdown', resizePointerDown);
-        node.appendChild(handle);
-      });
-      const rotate = document.createElement('span');
-      rotate.className = 'rotate-handle';
-      rotate.addEventListener('pointerdown', rotatePointerDown);
-      node.appendChild(rotate);
-    }
+    const moveHandle = document.createElement('span');
+    moveHandle.className = 'move-handle';
+    moveHandle.title = 'Drag to move';
+    moveHandle.setAttribute('aria-hidden', 'true');
+    node.appendChild(moveHandle);
+    ['nw', 'ne', 'se', 'sw'].forEach(handleName => {
+      const handle = document.createElement('span');
+      handle.className = 'resize-handle ' + handleName;
+      handle.dataset.handle = handleName;
+      handle.addEventListener('pointerdown', resizePointerDown);
+      node.appendChild(handle);
+    });
+    const rotate = document.createElement('span');
+    rotate.className = 'rotate-handle';
+    rotate.addEventListener('pointerdown', rotatePointerDown);
+    node.appendChild(rotate);
     els.canvas.appendChild(node);
   }
 
   function tableHtml(el) {
-    const rows = el.rows || [['A', 'B'], ['1', '2']];
-    return '<table>' + rows.map((row, r) => '<tr>' + row.map((cell, c) => '<td data-r="' + r + '" data-c="' + c + '">' + escapeHtml(cell) + '</td>').join('') + '</tr>').join('') + '</table>';
+    const rows = normalizeTableRows(el);
+    return '<table>' + rows.map((row, r) => '<tr>' + row.map((cell, c) => '<td data-r="' + r + '" data-c="' + c + '" tabindex="0">' + escapeHtml(cell) + '</td>').join('') + '</tr>').join('') + '</table>';
+  }
+
+  function normalizeTableRows(el) {
+    const sourceRows = Array.isArray(el.rows) && el.rows.length ? el.rows : [['A', 'B'], ['1', '2']];
+    const maxColumns = Math.max(1, ...sourceRows.map(row => Array.isArray(row) ? row.length : 1));
+    el.rows = sourceRows.map(row => {
+      const cells = Array.isArray(row) ? row.slice() : [row];
+      while (cells.length < maxColumns) cells.push('');
+      return cells.map(cell => String(cell ?? ''));
+    });
+    return el.rows;
   }
 
   function renderInspector() {
@@ -493,20 +573,159 @@
     if (viewMode !== 'sorter') return;
     els.sorter.innerHTML = '';
     deck.slides.forEach((slide, index) => {
+      if (isCollapsedChild(index)) return;
       const card = document.createElement('button');
       card.type = 'button';
-      card.className = 'sorter-card' + (index === activeSlide ? ' active' : '');
-      card.innerHTML = '<div class="thumb-preview">' + escapeHtml(slide.title) + '</div><strong>' + (index + 1) + '. ' + escapeHtml(slide.title) + '</strong>';
-      card.addEventListener('click', () => {
-        selectSlide(index);
-        setView('normal');
-      });
+      card.className = slideCardClass('sorter-card', slide, index);
+      card.dataset.index = index;
+      card.dataset.slideId = slide.id;
+      card.draggable = true;
+      card.style.setProperty('--indent', slide.indent || 0);
+      card.appendChild(buildMiniSlide(slide, index));
+      card.insertAdjacentHTML('beforeend', '<strong>' + (index + 1) + '. ' + escapeHtml(slide.title) + '</strong>' + slideStateBadges(slide));
+      card.addEventListener('click', event => handleSlideClick(event, index));
+      card.addEventListener('dragstart', slideDragStart);
+      card.addEventListener('dragover', slideDragOver);
+      card.addEventListener('dragleave', slideDragLeave);
+      card.addEventListener('drop', slideDrop);
+      card.addEventListener('dragend', slideDragEnd);
       els.sorter.appendChild(card);
     });
   }
 
+  function slideDragStart(event) {
+    draggedSlideIndex = Number(event.currentTarget.dataset.index);
+    if (!selectedSlideIds.has(deck.slides[draggedSlideIndex]?.id)) {
+      selectedSlideIds = new Set([deck.slides[draggedSlideIndex]?.id].filter(Boolean));
+      renderThumbs();
+      renderSorter();
+    }
+    event.currentTarget.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', String(draggedSlideIndex));
+  }
+
+  function slideDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    const target = event.currentTarget;
+    if (!target.classList.contains('dragging')) target.classList.add('drop-target');
+  }
+
+  function slideDragLeave(event) {
+    event.currentTarget.classList.remove('drop-target');
+  }
+
+  function slideDrop(event) {
+    event.preventDefault();
+    const from = draggedSlideIndex ?? Number(event.dataTransfer.getData('text/plain'));
+    const to = Number(event.currentTarget.dataset.index);
+    clearSlideDragClasses();
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from === to) return;
+    moveSelectedSlides(from, to);
+  }
+
+  function slideDragEnd() {
+    draggedSlideIndex = null;
+    clearSlideDragClasses();
+  }
+
+  function clearSlideDragClasses() {
+    document.querySelectorAll('.thumb,.sorter-card').forEach(node => node.classList.remove('dragging', 'drop-target'));
+  }
+
+  function slideCardClass(base, slide, index) {
+    return base +
+      (index === activeSlide ? ' active' : '') +
+      (selectedSlideIds.has(slide.id) ? ' selected-slide' : '') +
+      (slide.hidden ? ' hidden-slide' : '') +
+      (slide.collapsed ? ' collapsed-slide' : '');
+  }
+
+  function slideStateBadges(slide) {
+    const badges = [];
+    if (slide.hidden) badges.push('<span class="slide-badge">Hidden</span>');
+    if (slide.collapsed) badges.push('<span class="slide-badge">Collapsed</span>');
+    if (slide.indent) badges.push('<span class="slide-badge">Level ' + (slide.indent + 1) + '</span>');
+    return badges.length ? '<span class="slide-badges">' + badges.join('') + '</span>' : '';
+  }
+
+  function isCollapsedChild(index) {
+    const indent = Number(deck.slides[index]?.indent) || 0;
+    if (!indent) return false;
+    for (let i = index - 1; i >= 0; i -= 1) {
+      const previousIndent = Number(deck.slides[i]?.indent) || 0;
+      if (previousIndent < indent) return Boolean(deck.slides[i].collapsed);
+    }
+    return false;
+  }
+
+  function handleSlideClick(event, index) {
+    if (event.shiftKey) {
+      const start = Math.min(lastSlideSelectionIndex, index);
+      const end = Math.max(lastSlideSelectionIndex, index);
+      selectedSlideIds = new Set(deck.slides.slice(start, end + 1).map(slide => slide.id));
+    } else if (event.metaKey || event.ctrlKey) {
+      const id = deck.slides[index].id;
+      selectedSlideIds = new Set(selectedSlideIds);
+      if (selectedSlideIds.has(id)) selectedSlideIds.delete(id);
+      else selectedSlideIds.add(id);
+      lastSlideSelectionIndex = index;
+    } else {
+      selectedSlideIds = new Set([deck.slides[index].id]);
+      lastSlideSelectionIndex = index;
+    }
+    activeSlide = index;
+    selectedId = null;
+    render();
+  }
+
+  function selectedSlideIndexes() {
+    if (!selectedSlideIds.size && deck.slides[activeSlide]) return [activeSlide];
+    return deck.slides.map((slide, index) => selectedSlideIds.has(slide.id) ? index : -1).filter(index => index >= 0);
+  }
+
+  function normalizeSlideSelection() {
+    const ids = new Set(deck.slides.map(slide => slide.id));
+    selectedSlideIds = new Set(Array.from(selectedSlideIds).filter(id => ids.has(id)));
+    if (!selectedSlideIds.size && deck.slides[activeSlide]) selectedSlideIds.add(deck.slides[activeSlide].id);
+  }
+
+  function moveSlide(from, to) {
+    const max = deck.slides.length - 1;
+    const source = clamp(from, 0, max);
+    const target = clamp(to, 0, max);
+    const [slide] = deck.slides.splice(source, 1);
+    deck.slides.splice(target, 0, slide);
+    if (activeSlide === source) activeSlide = target;
+    else if (source < activeSlide && target >= activeSlide) activeSlide -= 1;
+    else if (source > activeSlide && target <= activeSlide) activeSlide += 1;
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus('Moved slide ' + (source + 1) + ' to position ' + (target + 1) + '.');
+  }
+
+  function moveSelectedSlides(from, to) {
+    const indexes = selectedSlideIndexes();
+    if (!indexes.includes(from)) return moveSlide(from, to);
+    const selected = new Set(indexes);
+    const moving = deck.slides.filter((_, index) => selected.has(index));
+    const remaining = deck.slides.filter((_, index) => !selected.has(index));
+    const beforeTarget = deck.slides.slice(0, to).filter((_, index) => !selected.has(index)).length;
+    deck.slides = remaining.slice(0, beforeTarget).concat(moving, remaining.slice(beforeTarget));
+    activeSlide = deck.slides.findIndex(slide => slide.id === moving[0].id);
+    selectedSlideIds = new Set(moving.map(slide => slide.id));
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus('Moved ' + moving.length + ' selected slide' + (moving.length === 1 ? '' : 's') + '.');
+  }
+
   function selectSlide(index) {
     activeSlide = Math.max(0, Math.min(deck.slides.length - 1, index));
+    selectedSlideIds = new Set([deck.slides[activeSlide]?.id].filter(Boolean));
+    lastSlideSelectionIndex = activeSlide;
     selectedId = null;
     render();
   }
@@ -514,6 +733,8 @@
   function addSlide(template) {
     deck.slides.splice(activeSlide + 1, 0, makeTemplateSlide(template || 'title-content'));
     activeSlide += 1;
+    selectedSlideIds = new Set([deck.slides[activeSlide].id]);
+    lastSlideSelectionIndex = activeSlide;
     selectedId = null;
     saveSoon();
     render();
@@ -526,20 +747,101 @@
     clone.elements.forEach(el => el.id = uid('obj'));
     deck.slides.splice(activeSlide + 1, 0, clone);
     activeSlide += 1;
+    selectedSlideIds = new Set([clone.id]);
+    lastSlideSelectionIndex = activeSlide;
     saveSoon();
     render();
   }
 
   function deleteSlide() {
+    if (selectedSlideIndexes().length > 1) return deleteSelectedSlides();
     if (deck.slides.length === 1) {
       setStatus('A deck needs at least one slide.');
       return;
     }
     deck.slides.splice(activeSlide, 1);
     activeSlide = Math.max(0, activeSlide - 1);
+    selectedSlideIds = new Set([deck.slides[activeSlide].id]);
     selectedId = null;
     saveSoon();
     render();
+  }
+
+  function deleteSelectedSlides() {
+    const indexes = selectedSlideIndexes();
+    if (!indexes.length || indexes.length >= deck.slides.length) {
+      setStatus('Keep at least one slide in the deck.');
+      return;
+    }
+    if (!confirm('Delete ' + indexes.length + ' selected slide' + (indexes.length === 1 ? '?' : 's?'))) return;
+    const remove = new Set(indexes);
+    deck.slides = deck.slides.filter((_, index) => !remove.has(index));
+    activeSlide = clamp(Math.min(...indexes), 0, deck.slides.length - 1);
+    selectedSlideIds = new Set([deck.slides[activeSlide].id]);
+    selectedId = null;
+    saveSoon();
+    render();
+  }
+
+  function updateSelectedSlides(updater, message) {
+    const indexes = selectedSlideIndexes();
+    indexes.forEach(index => updater(deck.slides[index], index));
+    selectedSlideIds = new Set(indexes.map(index => deck.slides[index].id));
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus(message || 'Updated selected slides.');
+  }
+
+  function setSelectedSlideBg(bg) {
+    updateSelectedSlides(slide => {
+      slide.bg = bg;
+      const dark = bg === 'dark' || bg === 'section';
+      slide.elements.forEach(el => {
+        if ((el.type === 'text' || el.type === 'list' || el.type === 'shape') && (!el.color || el.color === '#1f2937' || el.color === '#ffffff')) {
+          el.color = dark ? '#ffffff' : '#1f2937';
+        }
+      });
+    }, 'Rethemed selected slides.');
+  }
+
+  function applySlidePalette(name) {
+    const palette = slidePalettes[name];
+    if (!palette) return;
+    els.slideBgColor.value = palette.bg;
+    els.slideBarColor.value = palette.bar;
+    els.slideDefaultTextColor.value = palette.text;
+    applySlideColorsToSelection(palette);
+  }
+
+  function applySlideColorsToSelection(colors) {
+    const bg = colors?.bg || els.slideBgColor.value;
+    const bar = colors?.bar || els.slideBarColor.value;
+    const text = colors?.text || els.slideDefaultTextColor.value;
+    updateSelectedSlides(slide => {
+      slide.backgroundColor = bg;
+      slide.footerColor = bar;
+      slide.defaultTextColor = text;
+      slide.elements.forEach(el => {
+        if (el.type === 'text' || el.type === 'list' || el.type === 'shape' || el.type === 'link') {
+          if (!el.color || el.color === '#1f2937' || el.color === '#ffffff') el.color = text;
+        }
+      });
+    }, 'Applied slide colors.');
+  }
+
+  function syncSlideColorInputs() {
+    const slide = currentSlide();
+    if (!slide) return;
+    els.slideBgColor.value = normalizeColor(slide.backgroundColor || (slide.bg === 'dark' || slide.bg === 'section' ? '#1e1b4b' : '#ffffff'));
+    els.slideBarColor.value = normalizeColor(slide.footerColor || '#312e5f');
+    els.slideDefaultTextColor.value = normalizeColor(slide.defaultTextColor || (slide.bg === 'dark' || slide.bg === 'section' ? '#ffffff' : '#1f2937'));
+  }
+
+  function indentSelectedSlides(delta) {
+    updateSelectedSlides(slide => {
+      slide.indent = clamp((Number(slide.indent) || 0) + delta, 0, 4);
+    }, delta > 0 ? 'Indented selected slides.' : 'Outdented selected slides.');
   }
 
   function addObject(el) {
@@ -562,9 +864,16 @@
     const id = target.dataset.id;
     selectedId = id;
     if (cropTargetId && cropTargetId !== id) cropTargetId = null;
+    els.canvas.querySelectorAll('.slide-object.selected').forEach(node => {
+      if (node !== target) node.classList.remove('selected');
+    });
+    target.classList.add('selected');
     renderInspector();
     if (event.target.classList.contains('resize-handle') || event.target.classList.contains('rotate-handle')) return;
-    if (event.target.closest('[contenteditable="true"]') && event.detail > 1) return;
+    if (event.target.closest('[contenteditable="true"]')) {
+      setStatus('Editing ' + (selectedObject()?.type || 'object') + '. Use the grip above it to move.');
+      return;
+    }
     event.preventDefault();
     const obj = selectedObject();
     const rect = els.canvas.getBoundingClientRect();
@@ -811,12 +1120,213 @@
     });
   }
 
+  async function importDeckFile(file, text) {
+    const trimmed = String(text || '').trim();
+    if (/\.html?$/i.test(file.name) || /^<!doctype html/i.test(trimmed) || /const\s+SLIDES\s*=/.test(trimmed)) {
+      const sourceHtml = await resolveImportHtml(trimmed);
+      deck = normalizeDeck(webDeckHtmlToDeck(sourceHtml, file.name));
+      activeSlide = 0;
+      selectedId = null;
+      saveSoon();
+      render();
+      setStatus('Imported WebDeck HTML. Save as .showsplat.json to keep editing.');
+      return;
+    }
+    deck = normalizeDeck(JSON.parse(trimmed));
+    activeSlide = 0;
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus('Opened ShowSplat deck.');
+  }
+
+  function webDeckHtmlToDeck(html, fileName) {
+    const sourceSlides = extractWebDeckSlides(html);
+    if (!sourceSlides.length) throw new Error('No WebDeck slides found.');
+    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const importedCss = styleMatch ? styleMatch[1] : '';
+    const fallbackTitle = (fileName || 'Imported WebDeck').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+    return {
+      version: 1,
+      title: decodeHtml(titleMatch ? titleMatch[1] : fallbackTitle) || fallbackTitle,
+      theme: 'violet',
+      footer: 'ShowSplat™ by DrawSplat™',
+      slides: sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index))
+    };
+  }
+
+  function webDeckSlideToShowSplatSlide(source, importedCss, index) {
+    const bg = source.bg === 'hero' || source.bg === 'section' ? 'section' : source.bg === 'dark' ? 'dark' : 'light';
+    const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
+    const html = sanitizeImportedHtml(source.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>');
+    return {
+      id: uid('slide'),
+      title: source.title || 'Slide ' + (index + 1),
+      notes: source.notes || '',
+      bg,
+      importedCss,
+      footer: true,
+      audio: [],
+      elements: [{
+        id: uid('obj'),
+        type: 'html',
+        x: 70,
+        y: 55,
+        w: 1460,
+        h: 760,
+        html,
+        fontFamily: 'Inter, Arial, sans-serif',
+        fontSize: 30,
+        bold: false,
+        italic: false,
+        underline: false,
+        color: textColor,
+        fill: 'transparent',
+        align: 'left',
+        z: Date.now() + index
+      }]
+    };
+  }
+
+  function extractWebDeckSlides(html) {
+    const assignment = html.search(/\b(?:const|let|var)\s+SLIDES\s*=/);
+    if (assignment < 0) return [];
+    const start = html.indexOf('[', assignment);
+    if (start < 0) return [];
+    const slideSource = readBalancedArray(html, start);
+    return parseSlideArraySource(slideSource);
+  }
+
+  async function resolveImportHtml(html) {
+    try {
+      if (extractWebDeckSlides(html).length) return html;
+    } catch (err) {
+      console.warn(err);
+    }
+    const rawUrl = extractGithubRawUrl(html);
+    if (!rawUrl) return html;
+    setStatus('Loading raw WebDeck from GitHub...');
+    const response = await fetch(rawUrl);
+    if (!response.ok) throw new Error('Could not fetch raw WebDeck.');
+    return response.text();
+  }
+
+  function extractGithubRawUrl(html) {
+    const direct = String(html || '').match(/href=["'](https:\/\/github\.com\/[^"']+\/raw\/[^"']+)["']/i);
+    if (direct) return githubRawToUserContent(direct[1].replace(/&amp;/g, '&'));
+    const rawPath = String(html || '').match(/href=["'](\/[^"']+\/raw\/[^"']+)["']/i);
+    if (rawPath) return githubRawToUserContent('https://github.com' + rawPath[1].replace(/&amp;/g, '&'));
+    const title = decodeHtml((String(html || '').match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '');
+    const titleMatch = title.match(/^([^/]+)\/(.+?) at ([^·]+) · ([^/]+)\/([^/]+)$/);
+    if (!titleMatch) return '';
+    const path = titleMatch[2].replace(/^\/+/, '').replace(/\/?$/, '/index.html');
+    const branch = titleMatch[3].trim();
+    const owner = titleMatch[4].trim();
+    const repo = titleMatch[5].trim();
+    return 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + encodeURIComponent(branch) + '/' + path;
+  }
+
+  function githubRawToUserContent(url) {
+    const match = String(url || '').match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/refs\/heads\/([^/]+)\/(.+)$/);
+    if (!match) return url;
+    return 'https://raw.githubusercontent.com/' + match[1] + '/' + match[2] + '/' + match[3] + '/' + match[4];
+  }
+
+  function parseSlideArraySource(source) {
+    try {
+      return JSON.parse(source);
+    } catch (jsonError) {
+      try {
+        const parsed = Function('"use strict";let __blank;__blank=new Proxy(function(){return "";},{get(_target,prop){if(prop===Symbol.toPrimitive)return ()=>\"\";if(prop===\"toString\")return ()=>\"\";if(prop===\"valueOf\")return ()=>\"\";return __blank;},apply(){return \"\";}});const motif=__blank;const art=__blank;const ART=__blank;const IMAGES=__blank;const ASSETS=__blank;const SOURCES=__blank;const colors=__blank;const hubNodes=__blank;const artHero=__blank;const artQuote=__blank;const artMap=__blank;const artTexas=__blank;const artAgencies=__blank;const artFunding=__blank;const artDecision=__blank;const artTimeline=__blank;const artClose=__blank;return (' + source + ');')();
+        if (Array.isArray(parsed)) return parsed;
+      } catch (literalError) {
+        console.warn(jsonError, literalError);
+      }
+      throw new Error('Could not parse WebDeck slide data.');
+    }
+  }
+
+  function readBalancedArray(text, start) {
+    let depth = 0;
+    let quote = '';
+    let escaped = false;
+    for (let i = start; i < text.length; i += 1) {
+      const ch = text[i];
+      if (quote) {
+        if (escaped) {
+          escaped = false;
+        } else if (ch === '\\') {
+          escaped = true;
+        } else if (ch === quote) {
+          quote = '';
+        }
+        continue;
+      }
+      if (ch === '"' || ch === "'") {
+        quote = ch;
+      } else if (ch === '[') {
+        depth += 1;
+      } else if (ch === ']') {
+        depth -= 1;
+        if (depth === 0) return text.slice(start, i + 1);
+      }
+    }
+    throw new Error('Could not read WebDeck slide data.');
+  }
+
+  function sanitizeImportedHtml(html) {
+    const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
+    doc.querySelectorAll('script, style, link, meta, object, embed').forEach(node => node.remove());
+    doc.querySelectorAll('*').forEach(node => {
+      Array.from(node.attributes).forEach(attr => {
+        const name = attr.name.toLowerCase();
+        const value = String(attr.value || '').trim().toLowerCase();
+        if (name.startsWith('on') || value.startsWith('javascript:')) node.removeAttribute(attr.name);
+      });
+    });
+    return doc.body.firstElementChild.innerHTML;
+  }
+
+  function htmlToText(html) {
+    const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+    return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function decodeHtml(html) {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = String(html || '');
+    return textarea.value.trim();
+  }
+
+  function importedCssForDeck() {
+    const css = deck.slides.map(slide => slide.importedCss || '').filter(Boolean);
+    return css.length ? css.map(scopeImportedCss).join('\n') : '';
+  }
+
+  function scopeImportedCss(css) {
+    return String(css || '').split('}').map(block => {
+      const parts = block.split('{');
+      if (parts.length < 2) return '';
+      const selector = parts.shift().trim();
+      const body = parts.join('{').trim();
+      if (!selector || selector.startsWith('@')) return selector + '{' + body + '}';
+      const scoped = selector.split(',').map(part => {
+        const trimmed = part.trim();
+        if (!trimmed || /^(html|body|#deck|\.slide(?:[.:#\s]|$)|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
+        return '.imported-webdeck-slide ' + trimmed;
+      }).filter(Boolean).join(',');
+      return scoped ? scoped + '{' + body + '}' : '';
+    }).filter(Boolean).join('\n');
+  }
+
   function exportMarkdown() {
     return deck.slides.map(slide => {
       const lines = ['# ' + slide.title, ''];
       slide.elements.forEach(el => {
         if (el.type === 'list') String(el.text || '').split('\n').filter(Boolean).forEach(item => lines.push('- ' + item));
         if (el.type === 'text') lines.push(String(el.text || ''));
+        if (el.type === 'html') lines.push(htmlToText(el.html || ''));
         if (el.type === 'image') lines.push('![image](' + (el.src || '') + ')');
         if (el.type === 'youtube' || el.type === 'video') lines.push('[Video](' + (el.src || '') + ')');
       });
@@ -833,31 +1343,33 @@
 
   function buildWebDeck(passwordHash) {
     const theme = themes[deck.theme] || themes.violet;
-    const slides = deck.slides.map((slide, index) => ({
+    const exportSlides = deck.slides.filter(slide => !slide.hidden);
+    const slides = exportSlides.map((slide, index) => ({
       title: slide.title,
       notes: slide.notes,
       bg: slide.bg,
-      html: slideToWebDeckHtml(slide, index)
+      html: '<div class="slide-bg" style="position:absolute;inset:0;background:' + escapeAttr(slide.backgroundColor || 'transparent') + ';color:' + escapeAttr(slide.defaultTextColor || 'inherit') + '">' + slideToWebDeckHtml(slide, index, exportSlides.length) + '</div>'
     }));
     const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title><style>' +
-      webDeckCss(theme) +
+      webDeckCss(theme) + importedCssForDeck() +
       '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><main id="deck"></main>' + globalAudio + '<div class="progress"><span id="progress"></span></div><nav class="bar"><strong>' + escapeHtml(deck.title) + '</strong><button id="prev">‹</button><div id="dots"></div><span id="count"></span><button id="next">›</button><button id="notesBtn">Notes</button><button id="fullBtn">Full</button></nav><aside id="notes"></aside><script>const PASSWORD_HASH="' + passwordHash + '";const SLIDES=' + JSON.stringify(slides) + ';' + webDeckJs() + '<\/script></body></html>';
   }
 
-  function slideToWebDeckHtml(slide, index) {
+  function slideToWebDeckHtml(slide, index, totalSlides) {
     const parts = slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).map(el => {
-      const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';transform:rotate(' + (Number(el.rotate) || 0) + 'deg);transform-origin:center center;';
+      const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || slide.defaultTextColor || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';transform:rotate(' + (Number(el.rotate) || 0) + 'deg);transform-origin:center center;';
       if (el.type === 'image') return '<div class="obj" style="' + style + '"><img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '" style="object-fit:' + escapeAttr(el.fit || 'contain') + ';object-position:' + (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%"></div>';
       if (el.type === 'youtube') return '<div class="obj" style="' + style + '"><iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe></div>';
       if (el.type === 'video') return '<div class="obj" style="' + style + '"><video src="' + escapeAttr(el.src || '') + '" controls></video></div>';
       if (el.type === 'audio') return '<div class="obj" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
       if (el.type === 'table') return '<div class="obj table" style="' + style + '">' + tableHtml(el) + '</div>';
+      if (el.type === 'html') return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
       if (el.type === 'list') return '<div class="obj" style="' + style + '"><ul>' + String(el.text || '').split('\n').filter(Boolean).map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul></div>';
       if (el.type === 'link') return '<a class="obj" style="' + style + '" href="' + escapeAttr(el.href || '#') + '" target="_blank" rel="noopener">' + escapeHtml(el.text || 'Link') + '</a>';
       return '<div class="obj" style="' + style + '">' + escapeHtml(el.text || '').replace(/\n/g, '<br>') + '</div>';
     });
-    if (slide.footer) parts.push('<div class="footer"><span>' + escapeHtml(deck.footer || '') + '</span><span>' + (index + 1) + ' / ' + deck.slides.length + '</span></div>');
+    if (slide.footer) parts.push('<div class="footer" style="background:' + escapeAttr(slide.footerColor || 'rgba(17,24,39,.9)') + ';color:' + escapeAttr(contrastText(slide.footerColor || '#111827')) + '"><span>' + escapeHtml(deck.footer || '') + '</span><span>' + (index + 1) + ' / ' + (totalSlides || deck.slides.length) + '</span></div>');
     if (slide.audio && slide.audio.length) {
       parts.push('<div class="slide-audio">' + slide.audio.map(audio => '<audio src="' + escapeAttr(audio.src || '') + '" controls preload="metadata"></audio>').join('') + '</div>');
     }
@@ -881,7 +1393,8 @@
   }
 
   function buildPrintDeck() {
-    return '<!doctype html><html><head><meta charset="utf-8"><title>' + escapeHtml(deck.title) + '</title><style>@page{size:landscape;margin:0}body{margin:0}.slide{position:relative;width:100vw;height:100vh;page-break-after:always;overflow:hidden;background:#fff}.slide.section,.slide.dark{background:#1e1b4b;color:#fff}.obj{position:absolute;padding:8px;overflow:hidden}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:#111827;color:#fff}</style></head><body>' + deck.slides.map((slide, i) => '<section class="slide ' + escapeAttr(slide.bg) + '">' + slideToWebDeckHtml(slide, i) + '</section>').join('') + '</body></html>';
+    const exportSlides = deck.slides.filter(slide => !slide.hidden);
+    return '<!doctype html><html><head><meta charset="utf-8"><title>' + escapeHtml(deck.title) + '</title><style>@page{size:landscape;margin:0}body{margin:0}.slide{position:relative;width:100vw;height:100vh;page-break-after:always;overflow:hidden;background:#fff}.slide.section,.slide.dark{background:#1e1b4b;color:#fff}.obj{position:absolute;padding:8px;overflow:hidden}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:#111827;color:#fff}' + importedCssForDeck() + '</style></head><body>' + exportSlides.map((slide, i) => '<section class="slide ' + escapeAttr(slide.bg) + '">' + slideToWebDeckHtml(slide, i, exportSlides.length) + '</section>').join('') + '</body></html>';
   }
 
   function present(startIndex) {
@@ -903,6 +1416,28 @@
     document.querySelectorAll('.menu[open]').forEach(menu => menu.open = false);
   }
 
+  function initMenus() {
+    document.querySelectorAll('.menu').forEach(menu => {
+      menu.addEventListener('toggle', () => {
+        if (!menu.open) return;
+        document.querySelectorAll('.menu[open]').forEach(other => {
+          if (other !== menu) other.open = false;
+        });
+      });
+    });
+    document.querySelectorAll('.submenu').forEach(submenu => {
+      submenu.addEventListener('toggle', () => {
+        if (!submenu.open) return;
+        submenu.parentElement?.querySelectorAll('.submenu[open]').forEach(other => {
+          if (other !== submenu) other.open = false;
+        });
+      });
+    });
+    document.addEventListener('pointerdown', event => {
+      if (!event.target.closest('.menu')) closeMenus();
+    });
+  }
+
   function runAction(action, target) {
     closeMenus();
     if (action === 'new-deck' && confirm('Start a new deck?')) {
@@ -916,10 +1451,11 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
     }
-    if (action === 'open-deck') els.deckFile.click();
+    if (action === 'open-deck' || action === 'import-webdeck') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');
     if (action === 'duplicate-slide') duplicateSlide();
     if (action === 'delete-slide') deleteSlide();
+    if (action === 'delete-selected-slides') deleteSelectedSlides();
     if (action === 'delete-object') deleteObject();
     if (action === 'add-text') addObject(textElement('Text box', 160, 150, 560, 130, 36));
     if (action === 'add-list') addObject(listElement(['First point', 'Second point', 'Third point'], 170, 170, 650, 250));
@@ -965,6 +1501,15 @@
     if (action === 'fit-text-to-box') fitTextToBox();
     if (action === 'bring-forward') applyToSelected(obj => obj.z = Date.now());
     if (action === 'send-backward') applyToSelected(obj => obj.z = 1);
+    if (action === 'hide-selected-slides') updateSelectedSlides(slide => { slide.hidden = true; }, 'Hid selected slides.');
+    if (action === 'show-selected-slides') updateSelectedSlides(slide => { slide.hidden = false; }, 'Showed selected slides.');
+    if (action === 'indent-selected-slides') indentSelectedSlides(1);
+    if (action === 'outdent-selected-slides') indentSelectedSlides(-1);
+    if (action === 'collapse-selected-slides') updateSelectedSlides(slide => { slide.collapsed = true; }, 'Collapsed selected slides.');
+    if (action === 'expand-selected-slides') updateSelectedSlides(slide => { slide.collapsed = false; }, 'Expanded selected slides.');
+    if (action === 'set-selected-bg-light') setSelectedSlideBg('light');
+    if (action === 'set-selected-bg-dark') setSelectedSlideBg('dark');
+    if (action === 'set-selected-bg-section') setSelectedSlideBg('section');
     if (action === 'toggle-footer') {
       currentSlide().footer = !currentSlide().footer;
       saveSoon();
@@ -972,6 +1517,7 @@
     }
     if (action === 'theme-gallery') {
       els.footerText.value = deck.footer || '';
+      syncSlideColorInputs();
       els.themeDialog.showModal();
     }
     if (action === 'apply-footer') {
@@ -979,6 +1525,7 @@
       saveSoon();
       render();
     }
+    if (action === 'apply-slide-colors') applySlideColorsToSelection();
     if (action === 'open-markdown') openMarkdown();
     if (action === 'load-markdown-sample') els.markdownInput.value = '# ShowSplat™\n\n- Build slides from Markdown\n- Insert media anywhere\n- Export WebDeck HTML\n\n---\n\n# Media slide\n\n- Add YouTube, MP4, WebM, PNG, JPG, and tables';
     if (action === 'import-markdown') importMarkdown();
@@ -986,12 +1533,13 @@
     if (action === 'export-markdown') download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.md', exportMarkdown(), 'text/markdown');
     if (action === 'export-webdeck') exportWebDeck();
     if (action === 'print-pdf') printPdf();
+    if (action === 'planned-import') alert(target.dataset.kind + ' import is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML, Markdown Studio, or .showsplat.json for editable decks right now.');
     if (action === 'planned-export') alert(target.dataset.kind + ' export is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML or browser PDF export in this first release.');
     if (action === 'present-first') present(0);
     if (action === 'present-current') present(activeSlide);
     if (action === 'view-normal') setView('normal');
     if (action === 'view-sorter') setView('sorter');
-    if (action === 'view-notes') els.notes.focus();
+    if (action === 'view-notes') setView('notes');
     if (action === 'toggle-sidebar') els.workspace.classList.toggle('show-inspector');
     if (action === 'show-feature-plan') window.open('docs/plan.md', '_blank', 'noopener');
   }
@@ -1030,10 +1578,76 @@
   }
 
   function setView(mode) {
-    viewMode = mode;
-    els.sorter.hidden = mode !== 'sorter';
-    els.stage.hidden = mode === 'sorter';
+    viewMode = ['sorter', 'notes'].includes(mode) ? mode : 'normal';
+    const isSorter = viewMode === 'sorter';
+    const isNotes = viewMode === 'notes';
+    els.workspace.classList.toggle('sorter-mode', isSorter);
+    els.workspace.classList.toggle('notes-mode', isNotes);
+    els.workspace.classList.toggle('normal-mode', viewMode === 'normal');
+    els.workspace.classList.toggle('show-inspector', isNotes);
+    els.sorter.hidden = !isSorter;
+    els.stage.hidden = isSorter;
+    els.sorter.style.display = isSorter ? 'grid' : 'none';
+    els.stage.style.display = isSorter ? 'none' : 'grid';
     render();
+    if (isNotes) {
+      els.notes.focus();
+      setStatus('Notes view.');
+    } else {
+      setStatus(isSorter ? 'Slide Sorter view.' : 'Normal view.');
+    }
+  }
+
+  function applyZoom() {
+    zoomLevel = clamp(Number(zoomLevel) || 50, 0, 100);
+    const scale = 0.5 + (zoomLevel / 100);
+    els.stage.style.setProperty('--canvas-zoom', scale.toFixed(2));
+    if (els.zoomSlider) els.zoomSlider.value = String(Math.round(zoomLevel));
+    if (els.zoomValue) {
+      els.zoomValue.value = Math.round(scale * 100) + '%';
+      els.zoomValue.textContent = Math.round(scale * 100) + '%';
+    }
+  }
+
+  function initRailSplitter() {
+    if (!els.rail || !els.railSplitter) return;
+    const savedHeight = Number(localStorage.getItem('showsplat.railHeight') || 0);
+    if (savedHeight) setRailHeight(savedHeight);
+    els.railSplitter.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      const startY = event.clientY;
+      const startHeight = els.rail.getBoundingClientRect().height;
+      els.railSplitter.setPointerCapture(event.pointerId);
+      els.railSplitter.classList.add('dragging');
+      const move = moveEvent => setRailHeight(startHeight + moveEvent.clientY - startY);
+      const done = () => {
+        els.railSplitter.classList.remove('dragging');
+        els.railSplitter.removeEventListener('pointermove', move);
+        els.railSplitter.removeEventListener('pointerup', done);
+        els.railSplitter.removeEventListener('pointercancel', done);
+        localStorage.setItem('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
+      };
+      els.railSplitter.addEventListener('pointermove', move);
+      els.railSplitter.addEventListener('pointerup', done);
+      els.railSplitter.addEventListener('pointercancel', done);
+    });
+    els.railSplitter.addEventListener('keydown', event => {
+      const current = els.rail.getBoundingClientRect().height;
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setRailHeight(current - 24);
+      }
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setRailHeight(current + 24);
+      }
+      localStorage.setItem('showsplat.railHeight', String(Math.round(els.rail.getBoundingClientRect().height)));
+    });
+  }
+
+  function setRailHeight(height) {
+    if (!els.rail) return;
+    els.rail.style.setProperty('--rail-height', clamp(height, 120, 420) + 'px');
   }
 
   function slideTitleFromFirstText() {
@@ -1050,6 +1664,14 @@
 
   function normalizeColor(value) {
     return /^#[0-9a-f]{6}$/i.test(value || '') ? value : '#ffffff';
+  }
+
+  function contrastText(hex) {
+    const value = normalizeColor(hex);
+    const r = parseInt(value.slice(1, 3), 16);
+    const g = parseInt(value.slice(3, 5), 16);
+    const b = parseInt(value.slice(5, 7), 16);
+    return ((r * 299 + g * 587 + b * 114) / 1000) > 150 ? '#1f2937' : '#ffffff';
   }
 
   function clamp(value, min, max) {
@@ -1082,6 +1704,8 @@
       saveSoon();
       render();
     }
+    const slidePaletteTarget = event.target.closest('[data-slide-palette]');
+    if (slidePaletteTarget) applySlidePalette(slidePaletteTarget.dataset.slidePalette);
   });
 
   document.addEventListener('keydown', event => {
@@ -1107,6 +1731,13 @@
   els.fontSize.addEventListener('change', () => applyToSelected(obj => obj.fontSize = Number(els.fontSize.value) || 30));
   els.textColor.addEventListener('input', () => applyToSelected(obj => obj.color = els.textColor.value));
   els.fillColor.addEventListener('input', () => applyToSelected(obj => obj.fill = els.fillColor.value));
+  if (els.zoomSlider) {
+    els.zoomSlider.addEventListener('input', () => {
+      zoomLevel = Number(els.zoomSlider.value) || 0;
+      localStorage.setItem('showsplat.zoomLevel', String(zoomLevel));
+      applyZoom();
+    });
+  }
   [els.altText, els.linkUrl, els.posX, els.posY, els.posW, els.posH].forEach(input => input.addEventListener('change', () => {
     const obj = selectedObject();
     if (!obj) return;
@@ -1142,16 +1773,18 @@
   els.deckFile.addEventListener('change', () => {
     const file = els.deckFile.files[0];
     if (!file) return;
-    file.text().then(text => {
-      deck = normalizeDeck(JSON.parse(text));
-      activeSlide = 0;
-      selectedId = null;
-      saveSoon();
-      render();
-    }).catch(() => setStatus('Could not open that deck file.'));
+    file.text().then(text => importDeckFile(file, text)).catch(() => setStatus('Could not open that deck file.'));
     els.deckFile.value = '';
   });
 
-  window.addEventListener('beforeunload', () => localStorage.setItem(STORAGE_KEY, JSON.stringify(deck)));
+  window.addEventListener('beforeunload', () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+    } catch (err) {
+      console.warn(err);
+    }
+  });
+  initRailSplitter();
+  initMenus();
   render();
 })();

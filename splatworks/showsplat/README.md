@@ -13,6 +13,8 @@ The first implementation is a static browser app with:
 - template slides and themes
 - Markdown Studio import/export
 - WebDeck HTML export with optional frontend password hash
+- WebDeck HTML import for compatible `SLIDES` array decks
+- AI-ready JSON instructions for generating editable ShowSplat/WebDeck content
 - browser print-to-PDF export
 
 ## WebDeck Direction
@@ -24,6 +26,14 @@ ShowSplatTM follows the WebDeck Project Instructions v2.0 direction:
 - audience controls should include a floating navigation bar, progress, notes,
   keyboard navigation, hash links, and touch-friendly behavior
 - frontend password protection is a convenience barrier only, not encryption
+
+## AI Authoring Instructions
+
+Use `docs/ai-webdeck-format-instructions.json` when asking an AI chatbot to
+generate content that ShowSplatTM can import and edit. The preferred editable
+format is `.showsplat.json`. The backward-compatible portable format is a
+single WebDeck HTML file with a JavaScript `SLIDES` array where each slide has
+`bg`, `title`, `html`, and `notes`.
 
 ## License
 

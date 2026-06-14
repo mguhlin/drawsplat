@@ -1,0 +1,241 @@
+{
+  "name": "ShowSplat WebDeck Authoring Instructions",
+  "version": "1.0.0",
+  "compatibility": {
+    "webdeck_project_instructions": "2.0",
+    "legacy_slide_array_name": "SLIDES",
+    "legacy_slide_shape": {
+      "bg": "light | dark | navy | hero | section | imgslide",
+      "title": "Short slide label",
+      "html": "Slide body HTML as a string",
+      "notes": "First-person speaker notes"
+    },
+    "backward_compatible_rule": "If you cannot produce the ShowSplat native object model, produce a self-contained WebDeck HTML file with a JavaScript SLIDES array using bg, title, html, and notes. ShowSplat can import that pattern."
+  },
+  "output_options": [
+    {
+      "format": "showsplat-json",
+      "recommended_for_editing": true,
+      "file_extension": ".showsplat.json",
+      "description": "Best format when the user wants to open the deck in ShowSplat and graphically edit text boxes, images, videos, tables, and other objects."
+    },
+    {
+      "format": "webdeck-html",
+      "recommended_for_portable_presenting": true,
+      "file_extension": ".html",
+      "description": "Best format when the user wants a single portable HTML presentation. It must include a JavaScript SLIDES array for backward compatibility."
+    }
+  ],
+  "showsplat_json_schema": {
+    "version": 1,
+    "title": "Deck title",
+    "theme": "violet | sky | forest | slate",
+    "footer": "Optional minimalist footer text",
+    "globalAudio": {
+      "id": "audio-unique-id",
+      "src": "data:audio/... or URL",
+      "name": "Audio file name",
+      "title": "Audio label"
+    },
+    "slides": [
+      {
+        "id": "slide-unique-id",
+        "title": "Short slide title",
+        "notes": "First-person presenter notes, roughly 90 to 130 words when possible.",
+        "bg": "light | dark | section",
+        "footer": true,
+        "audio": [
+          {
+            "id": "audio-unique-id",
+            "src": "data:audio/... or URL",
+            "name": "Audio file name",
+            "title": "Audio label"
+          }
+        ],
+        "elements": [
+          {
+            "id": "obj-unique-id",
+            "type": "text | list | image | video | youtube | audio | table | link | html",
+            "x": 120,
+            "y": 90,
+            "w": 760,
+            "h": 160,
+            "fontFamily": "Inter, Arial, sans-serif",
+            "fontSize": 36,
+            "bold": false,
+            "italic": false,
+            "underline": false,
+            "color": "#1f2937",
+            "fill": "transparent",
+            "align": "left",
+            "rotate": 0,
+            "z": 1
+          }
+        ]
+      }
+    ]
+  },
+  "element_types": {
+    "text": {
+      "required": ["type", "text", "x", "y", "w", "h"],
+      "fields": {
+        "text": "Plain editable text. Use newline characters for line breaks."
+      }
+    },
+    "list": {
+      "required": ["type", "text", "x", "y", "w", "h"],
+      "fields": {
+        "text": "One bullet item per line. Do not include bullet characters unless they are part of the content."
+      }
+    },
+    "image": {
+      "required": ["type", "src", "x", "y", "w", "h"],
+      "fields": {
+        "src": "Prefer a base64 data URI for portable decks. URLs are acceptable when the user expects online media.",
+        "alt": "Accessible description",
+        "fit": "contain | cover",
+        "cropX": "0 to 100 percentage, default 50",
+        "cropY": "0 to 100 percentage, default 50"
+      }
+    },
+    "youtube": {
+      "required": ["type", "src", "x", "y", "w", "h"],
+      "fields": {
+        "src": "Use https://www.youtube-nocookie.com/embed/VIDEO_ID",
+        "title": "Video title"
+      }
+    },
+    "video": {
+      "required": ["type", "src", "x", "y", "w", "h"],
+      "fields": {
+        "src": "MP4/WebM data URI or URL",
+        "title": "Video title"
+      }
+    },
+    "audio": {
+      "required": ["type", "src", "x", "y", "w", "h"],
+      "fields": {
+        "src": "MP3/OGG/WAV/WebM data URI or URL",
+        "title": "Audio title"
+      }
+    },
+    "table": {
+      "required": ["type", "rows", "x", "y", "w", "h"],
+      "fields": {
+        "rows": "Two-dimensional array of cell strings."
+      }
+    },
+    "link": {
+      "required": ["type", "text", "href", "x", "y", "w", "h"],
+      "fields": {
+        "href": "URL. Links should open in a new tab when exported."
+      }
+    },
+    "html": {
+      "required": ["type", "html", "x", "y", "w", "h"],
+      "fields": {
+        "html": "Editable imported WebDeck markup. Avoid scripts, event handlers, external CSS, object/embed tags, and javascript: URLs."
+      },
+      "use_when": "Use this only for backward-compatible WebDeck imports or when preserving an existing coded slide is more important than decomposing it into separate objects."
+    }
+  },
+  "coordinate_system": {
+    "slide_width": 1600,
+    "slide_height": 900,
+    "origin": "Top-left corner",
+    "guidance": "Use x, y, w, and h only as placement data. The user should edit visually in ShowSplat, not by typing coordinates."
+  },
+  "layout_guidance": [
+    "Keep text boxes within the 1600 by 900 slide bounds.",
+    "Leave room for a minimalist footer when footer is true.",
+    "Use no more than one main idea per slide.",
+    "Prefer real editable text to text baked into images.",
+    "Use full-slide images only when visual fidelity matters more than editability.",
+    "Do not create scrollbars inside text boxes. Fit the text or enlarge the text box.",
+    "Use clear alt text for images and meaningful titles for videos and audio."
+  ],
+  "speaker_notes_guidance": {
+    "voice": "First person, as if the presenter is speaking aloud.",
+    "length": "Roughly 90 to 130 words when the slide has enough substance.",
+    "structure": "Orient the listener to the slide, explain why it matters, then transition to the next idea.",
+    "avoid": ["stage directions", "generic hype", "assuming audience emotions"]
+  },
+  "webdeck_html_contract": {
+    "required": [
+      "One self-contained HTML file",
+      "One JavaScript array named SLIDES",
+      "Each slide object includes title, html, notes, and bg",
+      "Generic render/navigation code separate from slide content",
+      "Keyboard navigation",
+      "Clickable dots and slide counter",
+      "Speaker notes panel",
+      "Fullscreen toggle",
+      "Top progress indicator",
+      "Touch swipe support",
+      "Hash deep links such as #5",
+      "Responsive layout down to phone widths"
+    ],
+    "allowed_external_requests": ["Google Fonts only, unless the user explicitly asks for online media"],
+    "security": [
+      "Do not include arbitrary remote scripts.",
+      "Do not include inline event handlers such as onclick.",
+      "Do not use javascript: URLs.",
+      "Open links with rel=\"noopener\"."
+    ]
+  },
+  "ai_prompt_template": "Create a ShowSplat-compatible slide deck from the material below. Prefer .showsplat.json if I need to edit it in ShowSplat; otherwise produce a self-contained WebDeck HTML file. If producing HTML, use a JavaScript array named SLIDES where each slide has bg, title, html, and notes. If producing ShowSplat JSON, use version 1, 1600x900 placement coordinates, editable text/list/table/image/video/audio objects, and first-person speaker notes. Keep text editable whenever possible, avoid text-box scrollbars, use accessible alt text, and keep media embedded as data URIs when the deck must work offline. Material: [PASTE CONTENT HERE]",
+  "minimal_legacy_webdeck_example": {
+    "SLIDES": [
+      {
+        "bg": "hero",
+        "title": "Opening",
+        "html": "<div class=\"content\"><h1>Deck title</h1><p>Main promise or framing sentence.</p></div>",
+        "notes": "I open by naming the topic and giving the audience the main promise of the deck. This slide should make the purpose clear before I move into the first supporting idea."
+      },
+      {
+        "bg": "light",
+        "title": "Key Idea",
+        "html": "<div class=\"content\"><h2>One clear idea</h2><ul><li>First point</li><li>Second point</li><li>Third point</li></ul></div>",
+        "notes": "This slide turns the opening promise into specific points. I explain how the pieces fit together and then transition into the next slide where I can show an example or application."
+      }
+    ]
+  },
+  "minimal_showsplat_json_example": {
+    "version": 1,
+    "title": "Sample ShowSplat Deck",
+    "theme": "violet",
+    "footer": "ShowSplat™ by DrawSplat™",
+    "globalAudio": null,
+    "slides": [
+      {
+        "id": "slide-1",
+        "title": "Opening",
+        "notes": "I open by naming the topic and giving the audience the main promise of the deck. This slide should make the purpose clear before I move into the first supporting idea.",
+        "bg": "section",
+        "footer": true,
+        "audio": [],
+        "elements": [
+          {
+            "id": "obj-1",
+            "type": "text",
+            "x": 120,
+            "y": 240,
+            "w": 980,
+            "h": 120,
+            "text": "Deck title",
+            "fontFamily": "Inter, Arial, sans-serif",
+            "fontSize": 72,
+            "bold": true,
+            "italic": false,
+            "underline": false,
+            "color": "#ffffff",
+            "fill": "transparent",
+            "align": "left",
+            "rotate": 0,
+            "z": 1
+          }
+        ]
+      }
+    ]
+  }
+}
