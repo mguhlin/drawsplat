@@ -453,6 +453,7 @@
     node.style.zIndex = String(el.z || 1);
     node.style.transform = 'rotate(' + (Number(el.rotate) || 0) + 'deg)';
     node.style.transformOrigin = 'center center';
+    node.style.opacity = String(el.opacity ?? 1);
     if (el.id === cropTargetId) node.classList.add('crop-mode');
     node.addEventListener('pointerdown', objectPointerDown);
     if (el.type === 'image') {
@@ -1530,6 +1531,10 @@
     return xmlNodes(root, localName)[0] || null;
   }
 
+  function directXmlNodes(root, localName) {
+    return Array.from(root?.children || []).filter(node => node.localName === localName);
+  }
+
   function relsPathFor(partPath) {
     const parts = partPath.split('/');
     const file = parts.pop();
@@ -1576,7 +1581,8 @@
       x: emuToPx(off?.getAttribute('x'), slideCx, SLIDE_W),
       y: emuToPx(off?.getAttribute('y'), slideCy, SLIDE_H),
       w: emuToPx(ext?.getAttribute('cx') || 2000000, slideCx, SLIDE_W),
-      h: emuToPx(ext?.getAttribute('cy') || 600000, slideCy, SLIDE_H)
+      h: emuToPx(ext?.getAttribute('cy') || 600000, slideCy, SLIDE_H),
+      rotate: Number(xfrm?.getAttribute('rot') || 0) / 60000
     };
   }
 
@@ -1590,13 +1596,31 @@
     const rPr = firstXml(shape, 'rPr');
     const srgb = firstXml(shape, 'srgbClr');
     const pPr = firstXml(shape, 'pPr');
+    const latin = firstXml(shape, 'latin');
+    const typeface = latin?.getAttribute('typeface') || '';
     return {
       fontSize: rPr?.getAttribute('sz') ? Math.max(12, Math.round(Number(rPr.getAttribute('sz')) / 100)) : 30,
       bold: rPr?.getAttribute('b') === '1',
       italic: rPr?.getAttribute('i') === '1',
       color: srgb?.getAttribute('val') ? '#' + srgb.getAttribute('val') : '#1f2937',
-      align: ({ ctr: 'center', r: 'right' }[pPr?.getAttribute('algn')]) || 'left'
+      align: ({ ctr: 'center', r: 'right' }[pPr?.getAttribute('algn')]) || 'left',
+      fontFamily: typeface ? '"' + typeface + '", "Arial Narrow", Inter, Arial, sans-serif' : '"Arial Narrow", Inter, Arial, sans-serif'
     };
+  }
+
+  function pptxBlipOpacity(node) {
+    const alpha = firstXml(node, 'alphaModFix');
+    if (!alpha?.getAttribute('amt')) return 1;
+    return clamp(Number(alpha.getAttribute('amt')) / 100000, 0, 1);
+  }
+
+  function fitImportedTextElement(el, widthFactor) {
+    const lines = String(el.text || '').split('\n').filter(Boolean);
+    const longest = Math.max(1, ...lines.map(line => line.length));
+    const byWidth = (el.w - 12) / (longest * (widthFactor || 0.74));
+    const byHeight = (el.h - 12) / Math.max(1, lines.length) / 1.08;
+    el.fontSize = clamp(Math.floor(Math.min(el.fontSize || 30, byWidth, byHeight)), 10, 96);
+    return el;
   }
 
   async function pptxToDeck(buffer, fileName) {
@@ -1626,7 +1650,8 @@
       };
       const bgClr = firstXml(firstXml(doc, 'bgPr') || doc, 'srgbClr');
       if (bgClr?.getAttribute('val')) slide.backgroundColor = '#' + bgClr.getAttribute('val');
-      for (const [shapeIndex, shape] of xmlNodes(doc, 'sp').entries()) {
+      const spTree = firstXml(doc, 'spTree') || doc;
+      for (const [shapeIndex, shape] of directXmlNodes(spTree, 'sp').entries()) {
         const text = pptxTextFromShape(shape);
         const box = pptxXfrm(shape, slideCx, slideCy);
         const blip = firstXml(shape, 'blip');
@@ -1641,6 +1666,9 @@
             src,
             alt: 'Imported PPTX image',
             fill: 'transparent',
+            fit: 'cover',
+            opacity: pptxBlipOpacity(blip),
+            rotate: box.rotate,
             z: index * 1000 + shapeIndex
           }));
         }
@@ -1649,9 +1677,11 @@
           const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
             italic: style.italic,
             align: style.align,
+            fontFamily: style.fontFamily,
+            rotate: box.rotate,
             z: index * 1000 + shapeIndex + 250
           });
-          slide.elements.push(el);
+          slide.elements.push(fitImportedTextElement(el));
           if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
         } else if (!media) {
           const fill = pptxShapeFill(shape);
@@ -1659,12 +1689,13 @@
             const el = shapeElement(box.x, box.y, box.w, box.h, '');
             el.fill = fill;
             el.color = 'transparent';
+            el.rotate = box.rotate;
             el.z = index * 1000 + shapeIndex;
             slide.elements.push(el);
           }
         }
       }
-      for (const [picIndex, pic] of xmlNodes(doc, 'pic').entries()) {
+      for (const [picIndex, pic] of directXmlNodes(spTree, 'pic').entries()) {
         const blip = firstXml(pic, 'blip');
         const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
         const mediaPath = rels[relId];
@@ -1679,6 +1710,9 @@
           src,
           alt: 'Imported PPTX image',
           fill: 'transparent',
+          fit: 'cover',
+          opacity: pptxBlipOpacity(blip),
+          rotate: box.rotate,
           z: index * 1000 + 500 + picIndex
         }));
       }
@@ -1800,7 +1834,7 @@
     const doc = xmlDoc(content);
     const stylesText = await zip.file('styles.xml')?.async('text').catch(() => '');
     const stylesDoc = stylesText ? xmlDoc(stylesText) : null;
-    const odpStyles = parseOdpStyles(stylesDoc);
+    const odpStyles = parseOdpStyles(stylesDoc, doc);
     const pages = xmlNodes(doc, 'page');
     const slides = [];
     for (const [index, page] of pages.entries()) {
@@ -1817,6 +1851,10 @@
       const bg = page.getAttribute('draw:style-name') || '';
       if (bg) slide.backgroundColor = '#ffffff';
       slide.elements.push(...odpMasterElements(stylesDoc, odpStyles, masterName, pageSize, index));
+      for (const [shapeIndex, shape] of xmlNodes(page, 'custom-shape').entries()) {
+        if (isInsideXml(shape, 'notes')) continue;
+        await odpAddShapeElement(zip, slide, shape, odpStyles, pageSize, index * 1000 + shapeIndex);
+      }
       for (const [frameIndex, frame] of xmlNodes(page, 'frame').entries()) {
         if (isInsideXml(frame, 'notes')) continue;
         const box = odpBox(frame, pageSize);
@@ -1853,29 +1891,47 @@
     };
   }
 
-  function parseOdpStyles(stylesDoc) {
-    const styles = { graphic: {}, gradients: {} };
-    if (!stylesDoc) return styles;
-    xmlNodes(stylesDoc, 'gradient').forEach(gradient => {
-      const name = gradient.getAttribute('draw:name') || gradient.getAttribute('name');
-      if (!name) return;
-      styles.gradients[name] = {
-        start: gradient.getAttribute('draw:start-color') || gradient.getAttribute('start-color') || '',
-        end: gradient.getAttribute('draw:end-color') || gradient.getAttribute('end-color') || ''
-      };
-    });
-    xmlNodes(stylesDoc, 'style').forEach(style => {
-      if (style.getAttribute('style:family') !== 'graphic') return;
-      const name = style.getAttribute('style:name') || style.getAttribute('name');
-      if (!name) return;
-      const props = firstXml(style, 'graphic-properties');
-      styles.graphic[name] = {
-        parent: style.getAttribute('style:parent-style-name') || '',
-        fill: props?.getAttribute('draw:fill') || '',
-        fillColor: props?.getAttribute('draw:fill-color') || '',
-        gradient: props?.getAttribute('draw:fill-gradient-name') || '',
-        stroke: props?.getAttribute('svg:stroke-color') || ''
-      };
+  function parseOdpStyles(...styleDocs) {
+    const styles = { graphic: {}, gradients: {}, fillImages: {}, text: {} };
+    styleDocs.filter(Boolean).forEach(stylesDoc => {
+      xmlNodes(stylesDoc, 'fill-image').forEach(fillImage => {
+        const name = fillImage.getAttribute('draw:name') || fillImage.getAttribute('name');
+        const href = fillImage.getAttribute('xlink:href') || fillImage.getAttribute('href');
+        if (name && href) styles.fillImages[name] = href.replace(/^\.\//, '');
+      });
+      xmlNodes(stylesDoc, 'gradient').forEach(gradient => {
+        const name = gradient.getAttribute('draw:name') || gradient.getAttribute('name');
+        if (!name) return;
+        styles.gradients[name] = {
+          start: gradient.getAttribute('draw:start-color') || gradient.getAttribute('start-color') || '',
+          end: gradient.getAttribute('draw:end-color') || gradient.getAttribute('end-color') || ''
+        };
+      });
+      xmlNodes(stylesDoc, 'style').forEach(style => {
+        const name = style.getAttribute('style:name') || style.getAttribute('name');
+        if (!name) return;
+        if (style.getAttribute('style:family') === 'graphic') {
+          const props = firstXml(style, 'graphic-properties');
+          styles.graphic[name] = {
+            parent: style.getAttribute('style:parent-style-name') || '',
+            fill: props?.getAttribute('draw:fill') || '',
+            fillColor: props?.getAttribute('draw:fill-color') || '',
+            fillImage: props?.getAttribute('draw:fill-image-name') || '',
+            gradient: props?.getAttribute('draw:fill-gradient-name') || '',
+            stroke: props?.getAttribute('svg:stroke-color') || ''
+          };
+        }
+        if (style.getAttribute('style:family') === 'text') {
+          const props = firstXml(style, 'text-properties');
+          styles.text[name] = {
+            fontSize: odpCssLength(props?.getAttribute('fo:font-size')),
+            color: props?.getAttribute('fo:color') || '',
+            bold: props?.getAttribute('fo:font-weight') === 'bold',
+            italic: props?.getAttribute('fo:font-style') === 'italic',
+            fontFamily: props?.getAttribute('style:font-name') || ''
+          };
+        }
+      });
     });
     return styles;
   }
@@ -1895,6 +1951,54 @@
       return styles.gradients[style.gradient].start || styles.gradients[style.gradient].end || '#e5e7eb';
     }
     return style.stroke || '#e5e7eb';
+  }
+
+  function odpStyleImage(styles, name) {
+    const style = resolveOdpGraphicStyle(styles, name);
+    if (!style.fillImage) return '';
+    return styles.fillImages[style.fillImage] || '';
+  }
+
+  async function odpAddShapeElement(zip, slide, shape, styles, pageSize, z) {
+    const box = odpBox(shape, pageSize);
+    const styleName = shape.getAttribute('draw:style-name') || shape.getAttribute('presentation:style-name') || '';
+    const imagePath = odpStyleImage(styles, styleName);
+    if (imagePath) {
+      const media = zip.file(imagePath);
+      if (media) {
+        const ext = (imagePath.split('.').pop() || 'png').toLowerCase();
+        slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+          type: 'image',
+          src: 'data:' + imageMime(ext) + ';base64,' + await media.async('base64'),
+          alt: shape.getAttribute('draw:name') || 'Imported ODP image',
+          fill: 'transparent',
+          fit: 'cover',
+          z
+        }));
+      }
+    }
+    const text = xmlNodes(shape, 'p').map(p => (p.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n').trim();
+    if (text) {
+      const spanStyle = firstXml(shape, 'span')?.getAttribute('text:style-name') || '';
+      const textStyle = styles.text[spanStyle] || {};
+      const el = textElement(text, box.x, box.y, box.w, box.h, textStyle.fontSize || 30, textStyle.bold, textStyle.color || undefined);
+      el.italic = Boolean(textStyle.italic);
+      if (textStyle.fontFamily) el.fontFamily = '"' + textStyle.fontFamily + '", Inter, Arial, sans-serif';
+      el.z = z + 250;
+      slide.elements.push(fitImportedTextElement(el, 1.25));
+      if (/^Slide \d+$/.test(slide.title) || /^page\d+$/i.test(slide.title)) slide.title = text.split('\n')[0].slice(0, 80);
+      return;
+    }
+    if (!imagePath) {
+      const fill = odpStyleFill(styles, styleName);
+      if (fill && fill !== 'transparent') {
+        const el = shapeElement(box.x, box.y, box.w, box.h, '');
+        el.fill = fill;
+        el.color = 'transparent';
+        el.z = z;
+        slide.elements.push(el);
+      }
+    }
   }
 
   function odpMasterElements(stylesDoc, styles, masterName, pageSize, slideIndex) {
@@ -1962,6 +2066,17 @@
     if (text.endsWith('mm')) return num / 25.4;
     if (text.endsWith('pt')) return num / 72;
     return 0;
+  }
+
+  function odpCssLength(value) {
+    const text = String(value || '').trim();
+    const num = parseFloat(text) || 0;
+    if (!num) return 0;
+    if (text.endsWith('pt')) return Math.round(num * 96 / 72);
+    if (text.endsWith('in')) return Math.round(num * 96);
+    if (text.endsWith('cm')) return Math.round(num / 2.54 * 96);
+    if (text.endsWith('mm')) return Math.round(num / 25.4 * 96);
+    return Math.round(num);
   }
 
   function pxToIn(value, totalPx) {
