@@ -161,6 +161,29 @@
     return slide;
   }
 
+  function makeBlankTitleSlide() {
+    const slide = makeTemplateSlide('title');
+    slide.title = 'Title slide';
+    slide.notes = '';
+    slide.elements = [
+      textElement('Title', 150, 245, 920, 110, 72, true, '#ffffff'),
+      textElement('Subtitle', 158, 370, 900, 70, 34, false, '#f5f3ff')
+    ];
+    return slide;
+  }
+
+  function resetToBlankTitleSlide(message) {
+    const slide = makeBlankTitleSlide();
+    deck.slides = [slide];
+    activeSlide = 0;
+    selectedSlideIds = new Set([slide.id]);
+    lastSlideSelectionIndex = 0;
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus(message || 'Started a new blank title slide.');
+  }
+
   function textElement(text, x, y, w, h, fontSize, bold, color) {
     return {
       id: uid('obj'),
@@ -822,7 +845,7 @@
   function deleteSlide() {
     if (selectedSlideIndexes().length > 1) return deleteSelectedSlides();
     if (deck.slides.length === 1) {
-      setStatus('A deck needs at least one slide.');
+      resetToBlankTitleSlide('Deleted the last slide and added a blank title slide.');
       return;
     }
     deck.slides.splice(activeSlide, 1);
@@ -835,11 +858,14 @@
 
   function deleteSelectedSlides() {
     const indexes = selectedSlideIndexes();
-    if (!indexes.length || indexes.length >= deck.slides.length) {
-      setStatus('Keep at least one slide in the deck.');
+    if (!indexes.length) {
       return;
     }
     if (!confirm('Delete ' + indexes.length + ' selected slide' + (indexes.length === 1 ? '?' : 's?'))) return;
+    if (indexes.length >= deck.slides.length) {
+      resetToBlankTitleSlide('Deleted all selected slides and added a blank title slide.');
+      return;
+    }
     const remove = new Set(indexes);
     deck.slides = deck.slides.filter((_, index) => !remove.has(index));
     activeSlide = clamp(Math.min(...indexes), 0, deck.slides.length - 1);
@@ -924,6 +950,21 @@
     selectedId = null;
     saveSoon();
     render();
+  }
+
+  function toggleBulletsForSelection() {
+    const obj = selectedObject();
+    if (!obj || !['text', 'list', 'shape', 'link'].includes(obj.type)) {
+      addObject(listElement(['First point', 'Second point', 'Third point'], 170, 170, 650, 250));
+      return;
+    }
+    const lines = String(obj.text || '').split('\n').map(line => line.replace(/^\s*(?:[-*•]\s*)?/, '')).filter(Boolean);
+    obj.text = lines.join('\n') || 'First point';
+    obj.type = obj.type === 'list' ? 'text' : 'list';
+    selectedId = obj.id;
+    saveSoon();
+    render();
+    setStatus(obj.type === 'list' ? 'Bullets on.' : 'Bullets off.');
   }
 
   function objectPointerDown(event) {
@@ -1213,6 +1254,15 @@
   }
 
   async function importDeckFile(file, text) {
+    if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
+      deck = normalizeDeck(await pdfToDeck(text, file.name));
+      activeSlide = 0;
+      selectedId = null;
+      saveSoon();
+      render();
+      setStatus('Imported PDF pages as image slides. Save as .showsplat.json to keep editing.');
+      return;
+    }
     if (/\.pptx$/i.test(file.name)) {
       deck = normalizeDeck(await pptxToDeck(text, file.name));
       activeSlide = 0;
@@ -1250,6 +1300,67 @@
     saveSoon();
     render();
     setStatus('Opened ShowSplat deck.');
+  }
+
+  async function pdfToDeck(buffer, fileName) {
+    const pdfjs = requirePdf();
+    const loadingTask = pdfjs.getDocument({
+      data: buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer),
+      useWorkerFetch: false,
+      isEvalSupported: false
+    });
+    loadingTask.onPassword = (updatePassword, reason) => {
+      const retry = reason === pdfjs.PasswordResponses?.INCORRECT_PASSWORD;
+      const password = prompt(retry ? 'Incorrect password. Enter the PDF password:' : 'Enter the PDF password:');
+      if (password) updatePassword(password);
+      else loadingTask.destroy();
+    };
+    const pdf = await loadingTask.promise;
+    const slides = [];
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = Math.min(SLIDE_W / viewport.width, SLIDE_H / viewport.height, 2.5);
+      const renderViewport = page.getViewport({ scale });
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = Math.ceil(renderViewport.width);
+      pageCanvas.height = Math.ceil(renderViewport.height);
+      await page.render({ canvasContext: pageCanvas.getContext('2d'), viewport: renderViewport }).promise;
+
+      const slideCanvas = document.createElement('canvas');
+      slideCanvas.width = SLIDE_W;
+      slideCanvas.height = SLIDE_H;
+      const ctx = slideCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, SLIDE_W, SLIDE_H);
+      ctx.drawImage(pageCanvas, (SLIDE_W - pageCanvas.width) / 2, (SLIDE_H - pageCanvas.height) / 2);
+      slides.push({
+        id: uid('slide'),
+        title: 'Page ' + pageNumber,
+        notes: '',
+        bg: 'light',
+        footer: false,
+        audio: [],
+        elements: [Object.assign(textElement('', 0, 0, SLIDE_W, SLIDE_H, 24), {
+          type: 'image',
+          src: slideCanvas.toDataURL('image/jpeg', 0.82),
+          alt: 'PDF page ' + pageNumber,
+          fill: 'transparent',
+          fit: 'contain',
+          z: pageNumber
+        })]
+      });
+      page.cleanup?.();
+    }
+    pdf.cleanup?.();
+    return {
+      version: 1,
+      title: (fileName || 'Imported PDF').replace(/\.[^.]+$/, ''),
+      theme: 'violet',
+      footer: '',
+      globalAudio: null,
+      slides: slides.length ? slides : [makeBlankTitleSlide()]
+    };
   }
 
   async function verifyWebDeckImportPassword(html) {
@@ -1509,6 +1620,12 @@
   function requireZip() {
     if (!window.JSZip) throw new Error('JSZip is not loaded.');
     return window.JSZip;
+  }
+
+  function requirePdf() {
+    if (!window.pdfjsLib) throw new Error('PDF.js is not loaded.');
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = '../../vendor/pdf.worker.min.js';
+    return window.pdfjsLib;
   }
 
   function xmlDoc(xml) {
@@ -2424,14 +2541,14 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
     }
-    if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
+    if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pdf' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');
     if (action === 'duplicate-slide') duplicateSlide();
     if (action === 'delete-slide') deleteSlide();
     if (action === 'delete-selected-slides') deleteSelectedSlides();
     if (action === 'delete-object') deleteObject();
     if (action === 'add-text') addObject(textElement('Text box', 160, 150, 560, 130, 36));
-    if (action === 'add-list') addObject(listElement(['First point', 'Second point', 'Third point'], 170, 170, 650, 250));
+    if (action === 'add-list') toggleBulletsForSelection();
     if (action === 'add-table') addObject(tableElement(170, 180, 720, 300));
     if (action === 'add-link') {
       const href = prompt('Link URL');
@@ -2758,7 +2875,7 @@
   els.deckFile.addEventListener('change', () => {
     const file = els.deckFile.files[0];
     if (!file) return;
-    const reader = /\.(pptx|odp)$/i.test(file.name) ? file.arrayBuffer() : file.text();
+    const reader = /\.(pdf|pptx|odp)$/i.test(file.name) || file.type === 'application/pdf' ? file.arrayBuffer() : file.text();
     reader.then(content => importDeckFile(file, content)).catch(err => {
       console.warn(err);
       setStatus('Could not open that deck file.');
