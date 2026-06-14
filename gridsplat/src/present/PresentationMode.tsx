@@ -5,6 +5,7 @@ import {
   Maximize2,
   MonitorUp,
   Plus,
+  Trash2,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -121,6 +122,44 @@ export function PresentationMode() {
       return nextSlides;
     });
     setActiveIndex(nextIndex);
+  }
+
+  function updateSlide(
+    id: string,
+    field: 'body' | 'title',
+    value: string,
+  ) {
+    setSlides((current) =>
+      current.map((slide) =>
+        slide.id === id
+          ? {
+              ...slide,
+              [field]: value,
+            }
+          : slide,
+      ),
+    );
+  }
+
+  function deleteSlide(index: number) {
+    if (slides.length <= 1) {
+      return;
+    }
+
+    setSlides((current) =>
+      current.filter((_, slideIndex) => slideIndex !== index),
+    );
+    setActiveIndex((current) => {
+      if (current > index) {
+        return current - 1;
+      }
+
+      if (current === index) {
+        return Math.max(0, Math.min(index, slides.length - 2));
+      }
+
+      return current;
+    });
   }
 
   function exportPrintablePresentation() {
@@ -339,9 +378,28 @@ export function PresentationMode() {
                 onClick={() => setActiveIndex(index)}
               >
                 <span>Slide {index + 1}</span>
-                <strong>{slide.title}</strong>
-                <small>{slide.body}</small>
               </button>
+              <label className="slide-edit-field">
+                Title
+                <input
+                  aria-label={`Slide ${index + 1} title`}
+                  value={slide.title}
+                  onChange={(event) =>
+                    updateSlide(slide.id, 'title', event.target.value)
+                  }
+                />
+              </label>
+              <label className="slide-edit-field">
+                Description
+                <textarea
+                  aria-label={`Slide ${index + 1} description`}
+                  rows={3}
+                  value={slide.body}
+                  onChange={(event) =>
+                    updateSlide(slide.id, 'body', event.target.value)
+                  }
+                />
+              </label>
               <div className="slide-card-actions">
                 <button
                   className="big-action secondary"
@@ -358,6 +416,15 @@ export function PresentationMode() {
                   onClick={() => moveSlide(index, 1)}
                 >
                   Move Down
+                </button>
+                <button
+                  className="big-action secondary danger"
+                  type="button"
+                  disabled={slides.length <= 1}
+                  onClick={() => deleteSlide(index)}
+                >
+                  <Trash2 aria-hidden="true" size={18} />
+                  Delete
                 </button>
               </div>
             </article>

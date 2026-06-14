@@ -811,14 +811,41 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
     page.getByRole('dialog', { name: 'Whiteboard Slides' }),
   ).toBeVisible();
 
-  await expect(page.getByLabel('Presentation slides')).toContainText(
+  await expect(page.getByLabel('Slide 1 title')).toHaveValue(
     'Class Sheet',
   );
-  await page.getByRole('button', { name: /Add Chart Slide/ }).click();
-  await expect(page.getByLabel('Presentation slides')).toContainText('Slide 4');
+  await page.getByLabel('Slide 1 title').fill('Reading Log Review');
+  await page
+    .getByLabel('Slide 1 description')
+    .fill('Discuss minutes and pages by weekday.');
+  await expect(page.getByLabel('Slide 1 title')).toHaveValue(
+    'Reading Log Review',
+  );
+  await expect(page.getByLabel('Slide 1 description')).toHaveValue(
+    'Discuss minutes and pages by weekday.',
+  );
 
-  await page.getByRole('button', { name: 'Move Up' }).nth(3).click();
+  await expect(page.locator('.slide-card')).toHaveCount(3);
+  await page
+    .locator('.slide-card')
+    .nth(2)
+    .getByRole('button', { name: 'Delete' })
+    .click();
+  await expect(page.locator('.slide-card')).toHaveCount(2);
+  await expect(page.getByLabel('Presentation slides')).not.toContainText(
+    'Picture Graph',
+  );
+
+  await page.getByRole('button', { name: /Add Chart Slide/ }).click();
   await expect(page.getByLabel('Presentation slides')).toContainText('Slide 3');
+
+  await page
+    .locator('.slide-card')
+    .nth(2)
+    .getByRole('button', { name: 'Move Up' })
+    .click();
+  await expect(page.getByLabel('Presentation slides')).toContainText('Slide 3');
+  await page.getByRole('button', { name: 'Slide 1', exact: true }).click();
 
   await page.evaluate(() => {
     window.print = () => {
@@ -832,7 +859,7 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'Export PNG' }).click();
   const slideDownload = await slideDownloadPromise;
 
-  expect(slideDownload.suggestedFilename()).toBe('gridsplat-slide-3.png');
+  expect(slideDownload.suggestedFilename()).toBe('gridsplat-slide-1.png');
 
   await page.getByRole('button', { name: 'Spotlight' }).click();
 
@@ -841,12 +868,17 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
     page.getByRole('dialog', { name: 'Presentation viewer' }),
   ).toBeVisible();
   await expect(page.locator('.viewer-slide.spotlight')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Chart View' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Reading Log Review' }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole('dialog', { name: 'Presentation viewer' })
+      .getByText('Discuss minutes and pages by weekday.'),
+  ).toBeVisible();
 
   await page.keyboard.press('ArrowRight');
-  await expect(
-    page.getByRole('heading', { name: 'Picture Graph' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Chart View' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Exit Presentation' }).click();
   await expect(
