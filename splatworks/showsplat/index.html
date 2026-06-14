@@ -60,15 +60,15 @@
         <button data-action="import-webdeck">WebDeck HTML (.html)</button>
         <button data-action="open-markdown">Markdown (.md)</button>
         <button data-action="planned-import" data-kind="PDF">PDF (.pdf)</button>
-        <button data-action="planned-import" data-kind="ODP">ODP (.odp)</button>
-        <button data-action="planned-import" data-kind="PPTX">PowerPoint (.pptx)</button>
+        <button data-action="import-odp">ODP (.odp)</button>
+        <button data-action="import-pptx">PowerPoint (.pptx)</button>
       </div></details>
       <details class="submenu"><summary>Export</summary><div>
         <button data-action="export-webdeck">WebDeck HTML</button>
         <button data-action="export-markdown">Markdown (.md)</button>
         <button data-action="print-pdf">PDF via Print</button>
-        <button data-action="planned-export" data-kind="ODP">ODP (.odp)</button>
-        <button data-action="planned-export" data-kind="PPTX">PowerPoint (.pptx)</button>
+        <button data-action="export-odp">ODP (.odp)</button>
+        <button data-action="export-pptx">PowerPoint (.pptx)</button>
       </div></details>
     </div></details>
     <details class="menu"><summary>Edit</summary><div class="menu-panel">
@@ -289,8 +289,9 @@
 <input id="videoFileInput" type="file" accept="video/mp4,video/webm" hidden>
 <input id="audioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
 <input id="globalAudioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
-<input id="deckFileInput" type="file" accept="application/json,text/html,.json,.showsplat.json,.html,.htm" hidden>
+<input id="deckFileInput" type="file" accept="application/json,text/html,.json,.showsplat.json,.html,.htm,.pptx,.odp,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.oasis.opendocument.presentation" hidden>
 
+<script src="../../vendor/jszip.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

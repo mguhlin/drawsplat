@@ -1212,6 +1212,24 @@
   }
 
   async function importDeckFile(file, text) {
+    if (/\.pptx$/i.test(file.name)) {
+      deck = normalizeDeck(await pptxToDeck(text, file.name));
+      activeSlide = 0;
+      selectedId = null;
+      saveSoon();
+      render();
+      setStatus('Imported PowerPoint. Review layout and save as .showsplat.json.');
+      return;
+    }
+    if (/\.odp$/i.test(file.name)) {
+      deck = normalizeDeck(await odpToDeck(text, file.name));
+      activeSlide = 0;
+      selectedId = null;
+      saveSoon();
+      render();
+      setStatus('Imported ODP. Review layout and save as .showsplat.json.');
+      return;
+    }
     const trimmed = String(text || '').trim();
     if (/\.html?$/i.test(file.name) || /^<!doctype html/i.test(trimmed) || /const\s+SLIDES\s*=/.test(trimmed)) {
       const source = await resolveImportHtml(trimmed);
@@ -1487,6 +1505,395 @@
     return textarea.value.trim();
   }
 
+  function requireZip() {
+    if (!window.JSZip) throw new Error('JSZip is not loaded.');
+    return window.JSZip;
+  }
+
+  function xmlDoc(xml) {
+    return new DOMParser().parseFromString(String(xml || ''), 'application/xml');
+  }
+
+  function xmlText(value) {
+    return escapeHtml(value).replace(/\r?\n/g, '&#10;');
+  }
+
+  function xmlAttr(value) {
+    return escapeAttr(value).replace(/\r?\n/g, ' ');
+  }
+
+  function xmlNodes(root, localName) {
+    return Array.from(root.getElementsByTagName('*')).filter(node => node.localName === localName);
+  }
+
+  function firstXml(root, localName) {
+    return xmlNodes(root, localName)[0] || null;
+  }
+
+  function relsPathFor(partPath) {
+    const parts = partPath.split('/');
+    const file = parts.pop();
+    return parts.concat('_rels', file + '.rels').join('/');
+  }
+
+  async function readRels(zip, relsPath) {
+    const file = zip.file(relsPath);
+    if (!file) return {};
+    const doc = xmlDoc(await file.async('text'));
+    const base = relsPath.replace(/\/_rels\/[^/]+\.rels$/, '/');
+    const rels = {};
+    xmlNodes(doc, 'Relationship').forEach(rel => {
+      rels[rel.getAttribute('Id')] = resolveZipPath(base, rel.getAttribute('Target') || '');
+    });
+    return rels;
+  }
+
+  function resolveZipPath(base, target) {
+    if (!target || /^[a-z]+:/i.test(target)) return target || '';
+    const stack = (target.startsWith('/') ? target.slice(1) : base + target).split('/');
+    const out = [];
+    stack.forEach(part => {
+      if (!part || part === '.') return;
+      if (part === '..') out.pop();
+      else out.push(part);
+    });
+    return out.join('/');
+  }
+
+  function pxToEmu(value, totalPx, totalEmu) {
+    return Math.round((Number(value) || 0) / totalPx * totalEmu);
+  }
+
+  function emuToPx(value, totalEmu, totalPx) {
+    return Number(value || 0) / totalEmu * totalPx;
+  }
+
+  function pptxXfrm(node, slideCx, slideCy) {
+    const xfrm = firstXml(node, 'xfrm');
+    const off = xfrm ? firstXml(xfrm, 'off') : null;
+    const ext = xfrm ? firstXml(xfrm, 'ext') : null;
+    return {
+      x: emuToPx(off?.getAttribute('x'), slideCx, SLIDE_W),
+      y: emuToPx(off?.getAttribute('y'), slideCy, SLIDE_H),
+      w: emuToPx(ext?.getAttribute('cx') || 2000000, slideCx, SLIDE_W),
+      h: emuToPx(ext?.getAttribute('cy') || 600000, slideCy, SLIDE_H)
+    };
+  }
+
+  function pptxTextFromShape(shape) {
+    const txBody = firstXml(shape, 'txBody');
+    const paragraphs = txBody ? xmlNodes(txBody, 'p') : [];
+    return paragraphs.map(p => xmlNodes(p, 't').map(t => t.textContent || '').join('')).filter(Boolean).join('\n').trim();
+  }
+
+  function pptxShapeStyle(shape) {
+    const rPr = firstXml(shape, 'rPr');
+    const srgb = firstXml(shape, 'srgbClr');
+    const pPr = firstXml(shape, 'pPr');
+    return {
+      fontSize: rPr?.getAttribute('sz') ? Math.max(12, Math.round(Number(rPr.getAttribute('sz')) / 100)) : 30,
+      bold: rPr?.getAttribute('b') === '1',
+      italic: rPr?.getAttribute('i') === '1',
+      color: srgb?.getAttribute('val') ? '#' + srgb.getAttribute('val') : '#1f2937',
+      align: ({ ctr: 'center', r: 'right' }[pPr?.getAttribute('algn')]) || 'left'
+    };
+  }
+
+  async function pptxToDeck(buffer, fileName) {
+    const JSZip = requireZip();
+    const zip = await JSZip.loadAsync(buffer);
+    const presXml = await zip.file('ppt/presentation.xml')?.async('text');
+    if (!presXml) throw new Error('No PPTX presentation.xml found.');
+    const pres = xmlDoc(presXml);
+    const size = firstXml(pres, 'sldSz');
+    const slideCx = Number(size?.getAttribute('cx')) || 12192000;
+    const slideCy = Number(size?.getAttribute('cy')) || 6858000;
+    const presRels = await readRels(zip, 'ppt/_rels/presentation.xml.rels');
+    const slidePaths = xmlNodes(pres, 'sldId').map(node => presRels[node.getAttribute('r:id')]).filter(Boolean);
+    const slides = [];
+    for (const [index, slidePath] of slidePaths.entries()) {
+      const xml = await zip.file(slidePath)?.async('text');
+      if (!xml) continue;
+      const doc = xmlDoc(xml);
+      const rels = await readRels(zip, relsPathFor(slidePath));
+      const slide = {
+        id: uid('slide'),
+        title: 'Slide ' + (index + 1),
+        notes: '',
+        bg: 'light',
+        footer: false,
+        elements: []
+      };
+      const bgClr = firstXml(firstXml(doc, 'bgPr') || doc, 'srgbClr');
+      if (bgClr?.getAttribute('val')) slide.backgroundColor = '#' + bgClr.getAttribute('val');
+      xmlNodes(doc, 'sp').forEach((shape, shapeIndex) => {
+        const text = pptxTextFromShape(shape);
+        if (!text) return;
+        const box = pptxXfrm(shape, slideCx, slideCy);
+        const style = pptxShapeStyle(shape);
+        const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
+          italic: style.italic,
+          align: style.align,
+          z: index * 1000 + shapeIndex
+        });
+        slide.elements.push(el);
+        if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
+      });
+      for (const [picIndex, pic] of xmlNodes(doc, 'pic').entries()) {
+        const blip = firstXml(pic, 'blip');
+        const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
+        const mediaPath = rels[relId];
+        const media = mediaPath ? zip.file(mediaPath) : null;
+        if (!media) continue;
+        const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
+        const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : 'image/png';
+        const src = 'data:' + mime + ';base64,' + await media.async('base64');
+        const box = pptxXfrm(pic, slideCx, slideCy);
+        slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+          type: 'image',
+          src,
+          alt: 'Imported PPTX image',
+          fill: 'transparent',
+          z: index * 1000 + 500 + picIndex
+        }));
+      }
+      slides.push(slide);
+    }
+    return {
+      version: 1,
+      title: (fileName || 'Imported PowerPoint').replace(/\.[^.]+$/, ''),
+      theme: 'violet',
+      footer: 'ShowSplat™ by DrawSplat™',
+      slides: slides.length ? slides : defaultDeck().slides
+    };
+  }
+
+  async function exportPptx() {
+    try {
+      const blob = await buildPptx();
+      downloadBlob(safeFileName(deck.title, 'showsplat') + '.pptx', blob);
+      setStatus('Exported PowerPoint.');
+    } catch (err) {
+      console.warn(err);
+      setStatus('Could not export PowerPoint.');
+    }
+  }
+
+  async function buildPptx() {
+    const JSZip = requireZip();
+    const zip = new JSZip();
+    const exportSlides = deck.slides.filter(slide => !slide.hidden);
+    const media = [];
+    const slideCx = 12192000;
+    const slideCy = 6858000;
+    zip.file('[Content_Types].xml', pptxContentTypes(exportSlides.length, media));
+    zip.folder('_rels').file('.rels', relsXml([{ id: 'rId1', type: 'officeDocument', target: 'ppt/presentation.xml' }]));
+    zip.folder('ppt').file('presentation.xml', pptxPresentationXml(exportSlides.length, slideCx, slideCy));
+    zip.folder('ppt').folder('_rels').file('presentation.xml.rels', relsXml(exportSlides.map((_, i) => ({ id: 'rId' + (i + 1), type: 'slide', target: 'slides/slide' + (i + 1) + '.xml' }))));
+    zip.folder('ppt').file('presProps.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentationPr xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>');
+    zip.folder('ppt').file('viewProps.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:viewPr xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>');
+    zip.folder('ppt').file('tableStyles.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a:tblStyleLst xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" def="{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}"/>');
+    for (const [i, slide] of exportSlides.entries()) {
+      const slideMedia = [];
+      const slideXml = await pptxSlideXml(slide, i + 1, slideCx, slideCy, slideMedia);
+      zip.folder('ppt').folder('slides').file('slide' + (i + 1) + '.xml', slideXml);
+      zip.folder('ppt').folder('slides').folder('_rels').file('slide' + (i + 1) + '.xml.rels', relsXml(slideMedia.map((item, index) => ({ id: item.rId, type: 'image', target: '../media/' + item.name }))));
+      slideMedia.forEach(item => {
+        media.push(item);
+        zip.folder('ppt').folder('media').file(item.name, item.bytes, { base64: true });
+      });
+    }
+    zip.file('[Content_Types].xml', pptxContentTypes(exportSlides.length, media));
+    return zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+  }
+
+  function pptxContentTypes(slideCount, media) {
+    const defaults = '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+      Array.from(new Set(media.map(item => item.ext))).map(ext => '<Default Extension="' + ext + '" ContentType="' + imageMime(ext) + '"/>').join('');
+    const slides = Array.from({ length: slideCount }, (_, i) => '<Override PartName="/ppt/slides/slide' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>').join('');
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' + defaults + '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/><Override PartName="/ppt/presProps.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presProps+xml"/><Override PartName="/ppt/viewProps.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml"/><Override PartName="/ppt/tableStyles.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml"/>' + slides + '</Types>';
+  }
+
+  function relsXml(items) {
+    const typeBase = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + items.map(item => '<Relationship Id="' + item.id + '" Type="' + typeBase + item.type + '" Target="' + item.target + '"/>').join('') + '</Relationships>';
+  }
+
+  function pptxPresentationXml(count, cx, cy) {
+    const ids = Array.from({ length: count }, (_, i) => '<p:sldId id="' + (256 + i) + '" r:id="rId' + (i + 1) + '"/>').join('');
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:sldIdLst>' + ids + '</p:sldIdLst><p:sldSz cx="' + cx + '" cy="' + cy + '" type="wide"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>';
+  }
+
+  async function pptxSlideXml(slide, slideNumber, slideCx, slideCy, slideMedia) {
+    const bg = colorNoHash(slide.backgroundColor || '#ffffff');
+    let id = 2;
+    const shapes = [];
+    for (const el of slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0))) {
+      if (['text', 'list', 'link', 'shape'].includes(el.type)) shapes.push(pptxTextShape(el, id++, slideCx, slideCy));
+      if (el.type === 'image' && el.src) {
+        const media = dataUrlParts(el.src);
+        if (!media) continue;
+        const ext = media.ext;
+        const name = 'image' + (slideMedia.length + 1) + '-' + slideNumber + '.' + ext;
+        const rId = 'rId' + (slideMedia.length + 1);
+        slideMedia.push({ rId, name, ext, bytes: media.base64 });
+        shapes.push(pptxPicture(el, id++, rId, slideCx, slideCy));
+      }
+    }
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val="' + bg + '"/></a:solidFill></p:bgPr></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>' + shapes.join('') + '</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>';
+  }
+
+  function pptxTextShape(el, id, slideCx, slideCy) {
+    const off = 'x="' + pxToEmu(el.x, SLIDE_W, slideCx) + '" y="' + pxToEmu(el.y, SLIDE_H, slideCy) + '"';
+    const ext = 'cx="' + pxToEmu(el.w, SLIDE_W, slideCx) + '" cy="' + pxToEmu(el.h, SLIDE_H, slideCy) + '"';
+    const paragraphs = String(el.type === 'list' ? el.text : el.text || '').split('\n').filter(line => line.length || el.type !== 'list').map(line => {
+      const body = el.type === 'list' ? '• ' + line.replace(/^[-*]\s*/, '') : line;
+      return '<a:p><a:pPr algn="' + ({ center: 'ctr', right: 'r' }[el.align] || 'l') + '"/><a:r><a:rPr lang="en-US" sz="' + Math.round((el.fontSize || 30) * 100) + '" b="' + (el.bold ? '1' : '0') + '" i="' + (el.italic ? '1' : '0') + '"><a:solidFill><a:srgbClr val="' + colorNoHash(el.color || '#1f2937') + '"/></a:solidFill></a:rPr><a:t>' + xmlText(body) + '</a:t></a:r></a:p>';
+    }).join('') || '<a:p/>';
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="TextBox ' + id + '"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off ' + off + '/><a:ext ' + ext + '/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr wrap="square"/><a:lstStyle/>' + paragraphs + '</p:txBody></p:sp>';
+  }
+
+  function pptxPicture(el, id, rId, slideCx, slideCy) {
+    const off = 'x="' + pxToEmu(el.x, SLIDE_W, slideCx) + '" y="' + pxToEmu(el.y, SLIDE_H, slideCy) + '"';
+    const ext = 'cx="' + pxToEmu(el.w, SLIDE_W, slideCx) + '" cy="' + pxToEmu(el.h, SLIDE_H, slideCy) + '"';
+    return '<p:pic><p:nvPicPr><p:cNvPr id="' + id + '" name="' + xmlAttr(el.alt || 'Image') + '"/><p:cNvPicPr/><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="' + rId + '"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off ' + off + '/><a:ext ' + ext + '/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>';
+  }
+
+  async function odpToDeck(buffer, fileName) {
+    const JSZip = requireZip();
+    const zip = await JSZip.loadAsync(buffer);
+    const content = await zip.file('content.xml')?.async('text');
+    if (!content) throw new Error('No ODP content.xml found.');
+    const doc = xmlDoc(content);
+    const pages = xmlNodes(doc, 'page');
+    const slides = [];
+    for (const [index, page] of pages.entries()) {
+      const slide = {
+        id: uid('slide'),
+        title: page.getAttribute('draw:name') || 'Slide ' + (index + 1),
+        notes: '',
+        bg: 'light',
+        footer: false,
+        elements: []
+      };
+      const bg = page.getAttribute('draw:style-name') || '';
+      if (bg) slide.backgroundColor = '#ffffff';
+      for (const [frameIndex, frame] of xmlNodes(page, 'frame').entries()) {
+        const box = odpBox(frame);
+        const image = firstXml(frame, 'image');
+        if (image) {
+          const href = image.getAttribute('xlink:href') || image.getAttribute('href');
+          const media = href ? zip.file(href.replace(/^\.\//, '')) : null;
+          if (!media) continue;
+          const ext = (href.split('.').pop() || 'png').toLowerCase();
+          const src = 'data:' + imageMime(ext) + ';base64,' + await media.async('base64');
+          slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+            type: 'image',
+            src,
+            alt: 'Imported ODP image',
+            fill: 'transparent',
+            z: index * 1000 + frameIndex
+          }));
+          continue;
+        }
+        const text = xmlNodes(frame, 'p').map(p => p.textContent || '').filter(Boolean).join('\n').trim();
+        if (text) {
+          slide.elements.push(Object.assign(textElement(text, box.x, box.y, box.w, box.h, 30), { z: index * 1000 + frameIndex }));
+          if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
+        }
+      }
+      slides.push(slide);
+    }
+    return {
+      version: 1,
+      title: (fileName || 'Imported ODP').replace(/\.[^.]+$/, ''),
+      theme: 'violet',
+      footer: 'ShowSplat™ by DrawSplat™',
+      slides: slides.length ? slides : defaultDeck().slides
+    };
+  }
+
+  function odpBox(frame) {
+    return {
+      x: odpLength(frame.getAttribute('svg:x'), SLIDE_W),
+      y: odpLength(frame.getAttribute('svg:y'), SLIDE_H),
+      w: odpLength(frame.getAttribute('svg:width'), SLIDE_W) || 500,
+      h: odpLength(frame.getAttribute('svg:height'), SLIDE_H) || 160
+    };
+  }
+
+  function odpLength(value, totalPx) {
+    const text = String(value || '').trim();
+    const num = parseFloat(text) || 0;
+    if (text.endsWith('in')) return num / 13.333333 * totalPx;
+    if (text.endsWith('cm')) return num / 33.866667 * totalPx;
+    if (text.endsWith('mm')) return num / 338.66667 * totalPx;
+    if (text.endsWith('pt')) return num / 960 * totalPx;
+    return num;
+  }
+
+  function pxToIn(value, totalPx) {
+    return ((Number(value) || 0) / totalPx * 13.333333).toFixed(4) + 'in';
+  }
+
+  async function exportOdp() {
+    try {
+      const blob = await buildOdp();
+      downloadBlob(safeFileName(deck.title, 'showsplat') + '.odp', blob);
+      setStatus('Exported ODP.');
+    } catch (err) {
+      console.warn(err);
+      setStatus('Could not export ODP.');
+    }
+  }
+
+  async function buildOdp() {
+    const JSZip = requireZip();
+    const zip = new JSZip();
+    const exportSlides = deck.slides.filter(slide => !slide.hidden);
+    const media = [];
+    const pages = [];
+    for (const [slideIndex, slide] of exportSlides.entries()) {
+      const frames = [];
+      for (const [elementIndex, el] of slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).entries()) {
+        if (['text', 'list', 'link', 'shape'].includes(el.type)) {
+          frames.push(odpTextFrame(el, slideIndex, elementIndex));
+        }
+        if (el.type === 'image' && el.src) {
+          const part = dataUrlParts(el.src);
+          if (!part) continue;
+          const name = 'Pictures/image' + (media.length + 1) + '.' + part.ext;
+          media.push({ name, ext: part.ext, bytes: part.base64 });
+          frames.push(odpImageFrame(el, slideIndex, elementIndex, name));
+        }
+      }
+      pages.push('<draw:page draw:name="' + xmlAttr(slide.title || 'Slide ' + (slideIndex + 1)) + '" draw:style-name="dp1" draw:master-page-name="Default">' + frames.join('') + '</draw:page>');
+    }
+    zip.file('mimetype', 'application/vnd.oasis.opendocument.presentation', { compression: 'STORE' });
+    zip.folder('META-INF').file('manifest.xml', odpManifest(media));
+    zip.file('content.xml', odpContentXml(pages.join('')));
+    zip.file('styles.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.2"><office:styles/><office:automatic-styles/><office:master-styles><style:master-page xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" style:name="Default"/></office:master-styles></office:document-styles>');
+    media.forEach(item => zip.file(item.name, item.bytes, { base64: true }));
+    return zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.oasis.opendocument.presentation' });
+  }
+
+  function odpContentXml(pages) {
+    return '<?xml version="1.0" encoding="UTF-8"?><office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"><office:automatic-styles><style:style style:name="dp1" style:family="drawing-page"/></office:automatic-styles><office:body><office:presentation>' + pages + '</office:presentation></office:body></office:document-content>';
+  }
+
+  function odpManifest(media) {
+    return '<?xml version="1.0" encoding="UTF-8"?><manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2"><manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.presentation"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>' + media.map(item => '<manifest:file-entry manifest:full-path="' + xmlAttr(item.name) + '" manifest:media-type="' + imageMime(item.ext) + '"/>').join('') + '</manifest:manifest>';
+  }
+
+  function odpTextFrame(el, slideIndex, elementIndex) {
+    const paras = String(el.type === 'list' ? el.text : el.text || '').split('\n').map(line => '<text:p>' + xmlText(el.type === 'list' ? line.replace(/^[-*]\s*/, '') : line) + '</text:p>').join('');
+    return '<draw:frame draw:name="Text ' + slideIndex + '-' + elementIndex + '" svg:x="' + pxToIn(el.x, SLIDE_W) + '" svg:y="' + pxToIn(el.y, SLIDE_H) + '" svg:width="' + pxToIn(el.w, SLIDE_W) + '" svg:height="' + pxToIn(el.h, SLIDE_H) + '"><draw:text-box>' + (paras || '<text:p/>') + '</draw:text-box></draw:frame>';
+  }
+
+  function odpImageFrame(el, slideIndex, elementIndex, href) {
+    return '<draw:frame draw:name="Image ' + slideIndex + '-' + elementIndex + '" svg:x="' + pxToIn(el.x, SLIDE_W) + '" svg:y="' + pxToIn(el.y, SLIDE_H) + '" svg:width="' + pxToIn(el.w, SLIDE_W) + '" svg:height="' + pxToIn(el.h, SLIDE_H) + '"><draw:image xlink:href="' + xmlAttr(href) + '" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>';
+  }
+
   function importedCssForDeck() {
     const css = deck.slides.map(slide => slide.importedCss || '').filter(Boolean);
     return css.length ? css.map(scopeImportedCss).join('\n') : '';
@@ -1635,6 +2042,40 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
+  function downloadBlob(name, blob) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function safeFileName(value, fallback) {
+    return String(value || fallback || 'showsplat').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || fallback || 'showsplat';
+  }
+
+  function colorNoHash(value) {
+    const color = normalizeColor(value || '#ffffff');
+    return color.slice(1).toUpperCase();
+  }
+
+  function imageMime(ext) {
+    const clean = String(ext || 'png').toLowerCase();
+    if (clean === 'jpg' || clean === 'jpeg') return 'image/jpeg';
+    if (clean === 'gif') return 'image/gif';
+    if (clean === 'svg') return 'image/svg+xml';
+    if (clean === 'webp') return 'image/webp';
+    return 'image/png';
+  }
+
+  function dataUrlParts(src) {
+    const match = String(src || '').match(/^data:([^;,]+);base64,(.+)$/);
+    if (!match) return null;
+    const mime = match[1].toLowerCase();
+    const ext = mime.includes('jpeg') ? 'jpg' : mime.includes('gif') ? 'gif' : mime.includes('svg') ? 'svg' : mime.includes('webp') ? 'webp' : 'png';
+    return { mime, ext, base64: match[2] };
+  }
+
   function closeMenus() {
     document.querySelectorAll('.menu[open]').forEach(menu => menu.open = false);
   }
@@ -1674,7 +2115,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
     }
-    if (action === 'open-deck' || action === 'import-webdeck') els.deckFile.click();
+    if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');
     if (action === 'duplicate-slide') duplicateSlide();
     if (action === 'delete-slide') deleteSlide();
@@ -1758,6 +2199,8 @@
     if (action === 'export-markdown') download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.md', exportMarkdown(), 'text/markdown');
     if (action === 'export-webdeck') exportWebDeck();
     if (action === 'print-pdf') printPdf();
+    if (action === 'export-pptx') exportPptx();
+    if (action === 'export-odp') exportOdp();
     if (action === 'planned-import') alert(target.dataset.kind + ' import is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML, Markdown Studio, or .showsplat.json for editable decks right now.');
     if (action === 'planned-export') alert(target.dataset.kind + ' export is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML or browser PDF export in this first release.');
     if (action === 'present-first') present(0);
@@ -2006,7 +2449,11 @@
   els.deckFile.addEventListener('change', () => {
     const file = els.deckFile.files[0];
     if (!file) return;
-    file.text().then(text => importDeckFile(file, text)).catch(() => setStatus('Could not open that deck file.'));
+    const reader = /\.(pptx|odp)$/i.test(file.name) ? file.arrayBuffer() : file.text();
+    reader.then(content => importDeckFile(file, content)).catch(err => {
+      console.warn(err);
+      setStatus('Could not open that deck file.');
+    });
     els.deckFile.value = '';
   });
 
