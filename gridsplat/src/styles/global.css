@@ -1062,6 +1062,7 @@ h1 {
 
 .chart-floating-panel {
   position: fixed;
+  left: auto;
   right: var(--space-5);
   top: var(--space-3);
   z-index: 80;
