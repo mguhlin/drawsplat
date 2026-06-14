@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Merge, WrapText } from 'lucide-react';
 import { ChartCanvas } from '../charts/ChartCanvas';
 import {
   buildFirstDataRangeChart,
@@ -37,6 +38,7 @@ import {
   createSheet,
   getColumnName,
   isCellInSelection,
+  mergeCells,
   normalizeSelection,
   parsePastedText,
   pasteCells,
@@ -57,6 +59,10 @@ const DEFAULT_ROW_HEIGHT = 56;
 const DEFAULT_COL_WIDTH = 120;
 const HEADER_SIZE = 48;
 const OVERSCAN = 4;
+const MIN_COL_WIDTH = 72;
+const MAX_DRAG_COL_WIDTH = 240;
+const MAX_AUTOFIT_COL_WIDTH = 520;
+const CELL_TEXT_PADDING = 32;
 const MIN_CHART_PANEL_WIDTH = 320;
 const MIN_CHART_PANEL_HEIGHT = 300;
 
@@ -197,6 +203,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chartPanelRef = useRef<HTMLElement>(null);
+  const measuringCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartPanelResizeStateRef = useRef<ChartPanelResizeState | null>(null);
   const [sheet, setSheet] = useState<SheetData>(() => {
     try {
@@ -542,11 +549,26 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   function toggleBooleanFormat(
-    key: 'bold' | 'border' | 'italic' | 'strikethrough' | 'underline',
+    key:
+      | 'bold'
+      | 'border'
+      | 'italic'
+      | 'strikethrough'
+      | 'underline'
+      | 'wrapText',
   ) {
     const nextValue = !selectedCellsEvery((format) => Boolean(format?.[key]));
 
     updateSelectionFormat({ [key]: nextValue });
+  }
+
+  function mergeSelectedCells() {
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage('Merged selected cells.');
+
+      return mergeCells(currentSheet, selection);
+    });
   }
 
   function setCellFontSize(fontSize: number) {
@@ -1177,7 +1199,11 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
     if (resizeState.type === 'col') {
       const delta = event.clientX - resizeState.startPointer;
-      const nextWidth = clamp(resizeState.startSize + delta, 72, 240);
+      const nextWidth = clamp(
+        resizeState.startSize + delta,
+        MIN_COL_WIDTH,
+        MAX_DRAG_COL_WIDTH,
+      );
 
       setColWidths((current) =>
         current.map((width, index) =>
@@ -1200,6 +1226,54 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   function stopResize() {
     setResizeState(null);
+  }
+
+  function measureColumnText(text: string, format?: CellFormat): number {
+    measuringCanvasRef.current ??= document.createElement('canvas');
+
+    const context = measuringCanvasRef.current.getContext('2d');
+
+    if (!context) {
+      return text.length * 11;
+    }
+
+    const fontStyle = format?.italic ? 'italic ' : '';
+    const fontWeight = format?.bold ? '900' : '700';
+    const fontSize = format?.fontSize ?? 20;
+
+    context.font = `${fontStyle}${fontWeight} ${fontSize}px system-ui, sans-serif`;
+
+    return context.measureText(text || ' ').width;
+  }
+
+  function autofitColumn(col: number) {
+    const headerWidth = isPlainHeaders
+      ? 0
+      : measureColumnText(getColumnName(col), { bold: true, fontSize: 18 });
+    const widestCell = sheet.reduce((widest, row) => {
+      const cell = row[col];
+
+      if (!cell) {
+        return widest;
+      }
+
+      const width = measureColumnText(
+        formatDisplayValue(cell.displayValue),
+        cell.format,
+      );
+
+      return Math.max(widest, width);
+    }, headerWidth);
+    const nextWidth = clamp(
+      Math.ceil(widestCell + CELL_TEXT_PADDING),
+      MIN_COL_WIDTH,
+      MAX_AUTOFIT_COL_WIDTH,
+    );
+
+    setColWidths((current) =>
+      current.map((width, index) => (index === col ? nextWidth : width)),
+    );
+    setFileMessage(`Column ${getColumnName(col)} fit to data.`);
   }
 
   function updateFrozenPane(axis: FreezeDragAxis, event: PointerEvent) {
@@ -1338,6 +1412,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             : cellFormat?.strikethrough
               ? 'line-through'
               : undefined,
+      whiteSpace: cellFormat?.wrapText ? 'normal' : undefined,
     };
   }
 
@@ -1356,9 +1431,28 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   ) {
     const address = { row, col };
     const cell = sheet[row][col];
+
+    if (cell.hiddenBy) {
+      return null;
+    }
+
     const isEditing = editingCell?.row === row && editingCell.col === col;
     const isSelected = isCellInSelection(address, selection);
     const includeGridSemantics = options.includeGridSemantics ?? true;
+    const colSpan = cell.merge?.colSpan ?? 1;
+    const rowSpan = cell.merge?.rowSpan ?? 1;
+    const renderedWidth =
+      colSpan > 1
+        ? colWidths
+            .slice(col, Math.min(DEFAULT_COLS, col + colSpan))
+            .reduce((sum, colWidth) => sum + colWidth, 0)
+        : width;
+    const renderedHeight =
+      rowSpan > 1
+        ? rowHeights
+            .slice(row, Math.min(DEFAULT_ROWS, row + rowSpan))
+            .reduce((sum, rowHeight) => sum + rowHeight, 0)
+        : height;
 
     return (
       <div
@@ -1372,6 +1466,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           [
             'sheet-cell',
             cell.format?.border ? 'formatted-border' : '',
+            cell.merge ? 'merged-cell' : '',
             isSelected ? 'selected' : '',
             options.className ?? '',
           ]
@@ -1386,8 +1481,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         style={{
           top,
           left,
-          width,
-          height,
+          width: renderedWidth,
+          height: renderedHeight,
           backgroundColor: cell.format?.backgroundColor ?? undefined,
         }}
         onDoubleClick={() => beginEditing(address)}
@@ -1501,6 +1596,25 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           >
             S
           </button>
+          <button
+            aria-label="Wrap text"
+            aria-pressed={Boolean(selectedFormat.wrapText)}
+            className="format-button"
+            title="Wrap text"
+            type="button"
+            onClick={() => toggleBooleanFormat('wrapText')}
+          >
+            <WrapText aria-hidden="true" size={18} />
+          </button>
+          <button
+            aria-label="Merge cells"
+            className="format-button"
+            title="Merge cells"
+            type="button"
+            onClick={mergeSelectedCells}
+          >
+            <Merge aria-hidden="true" size={18} />
+          </button>
           <label className="font-size-control">
             Size
             <input
@@ -1561,7 +1675,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             checked={isPlainHeaders}
             onChange={(event) => setIsPlainHeaders(event.target.checked)}
           />
-          Plain headers
+          Hide headers
         </label>
         <label className="format-control">
           Number format
@@ -1578,10 +1692,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             <option value="percent">Percent</option>
           </select>
         </label>
-        <p aria-live="polite" className="selection-readout">
-          Cell {getColumnName(selection.end.col)}
-          {selection.end.row + 1}
-        </p>
         <p aria-live="polite" className="file-message">
           {fileMessage}
         </p>
@@ -1598,7 +1708,12 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           <div
             className="corner-header"
             style={{ width: HEADER_SIZE, height: HEADER_SIZE }}
-          />
+          >
+            <span aria-live="polite">
+              {getColumnName(selection.end.col)}
+              {selection.end.row + 1}
+            </span>
+          </div>
           {visibleCols.map(({ col, left, width }) => (
             <div
               className="column-header"
@@ -1614,6 +1729,11 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                 aria-label={`Resize column ${getColumnName(col)}`}
                 className="resize-handle resize-handle-col"
                 type="button"
+                onDoubleClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  autofitColumn(col);
+                }}
                 onPointerDown={(event) =>
                   startResize(event, {
                     type: 'col',

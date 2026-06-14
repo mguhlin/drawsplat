@@ -57,6 +57,10 @@ function compactFormat(format?: CellFormat): CellFormat | undefined {
     nextFormat.underline = true;
   }
 
+  if (format.wrapText) {
+    nextFormat.wrapText = true;
+  }
+
   return Object.keys(nextFormat).length > 0 ? nextFormat : undefined;
 }
 
@@ -174,6 +178,138 @@ export function applyCellFormat(
         ...format,
       });
     }),
+  );
+}
+
+function rangesOverlap(first: SelectionRange, second: SelectionRange): boolean {
+  return (
+    first.start.row <= second.end.row &&
+    first.end.row >= second.start.row &&
+    first.start.col <= second.end.col &&
+    first.end.col >= second.start.col
+  );
+}
+
+function getMergeRange(
+  sheet: SheetData,
+  row: number,
+  col: number,
+): SelectionRange | null {
+  const cell = sheet[row]?.[col];
+
+  if (cell?.merge) {
+    return {
+      start: { row, col },
+      end: {
+        row: row + cell.merge.rowSpan - 1,
+        col: col + cell.merge.colSpan - 1,
+      },
+    };
+  }
+
+  if (cell?.hiddenBy) {
+    const owner = cell.hiddenBy;
+    const ownerCell = sheet[owner.row]?.[owner.col];
+
+    if (ownerCell?.merge) {
+      return {
+        start: owner,
+        end: {
+          row: owner.row + ownerCell.merge.rowSpan - 1,
+          col: owner.col + ownerCell.merge.colSpan - 1,
+        },
+      };
+    }
+  }
+
+  return null;
+}
+
+function removeMergeMetadata(
+  sheet: SheetData,
+  selection: SelectionRange,
+): SheetData {
+  const normalized = normalizeSelection(selection);
+  const mergeOwners = new Set<string>();
+
+  sheet.forEach((row, rowIndex) => {
+    row.forEach((_, colIndex) => {
+      const mergeRange = getMergeRange(sheet, rowIndex, colIndex);
+
+      if (mergeRange && rangesOverlap(mergeRange, normalized)) {
+        mergeOwners.add(`${mergeRange.start.row}:${mergeRange.start.col}`);
+      }
+    });
+  });
+
+  if (mergeOwners.size === 0) {
+    return sheet;
+  }
+
+  return sheet.map((row, rowIndex) =>
+    row.map((cell, colIndex) => {
+      const isOwner = mergeOwners.has(`${rowIndex}:${colIndex}`);
+      const hiddenOwner = cell.hiddenBy
+        ? `${cell.hiddenBy.row}:${cell.hiddenBy.col}`
+        : null;
+
+      if (!isOwner && (!hiddenOwner || !mergeOwners.has(hiddenOwner))) {
+        return cell;
+      }
+
+      const { hiddenBy, merge, ...nextCell } = cell;
+
+      void hiddenBy;
+      void merge;
+
+      return nextCell;
+    }),
+  );
+}
+
+export function mergeCells(
+  sheet: SheetData,
+  selection: SelectionRange,
+): SheetData {
+  const normalized = normalizeSelection(selection);
+  const rowSpan = normalized.end.row - normalized.start.row + 1;
+  const colSpan = normalized.end.col - normalized.start.col + 1;
+
+  if (rowSpan === 1 && colSpan === 1) {
+    return recalculateSheet(removeMergeMetadata(sheet, normalized));
+  }
+
+  const unmergedSheet = removeMergeMetadata(sheet, normalized);
+
+  return recalculateSheet(
+    unmergedSheet.map((row, rowIndex) =>
+      row.map((cell, colIndex) => {
+        const isInsideSelection =
+          rowIndex >= normalized.start.row &&
+          rowIndex <= normalized.end.row &&
+          colIndex >= normalized.start.col &&
+          colIndex <= normalized.end.col;
+
+        if (!isInsideSelection) {
+          return cell;
+        }
+
+        const isOwner =
+          rowIndex === normalized.start.row && colIndex === normalized.start.col;
+
+        if (isOwner) {
+          return {
+            ...cell,
+            merge: { colSpan, rowSpan },
+          };
+        }
+
+        return {
+          ...createCell('', cell.format),
+          hiddenBy: normalized.start,
+        };
+      }),
+    ),
   );
 }
 

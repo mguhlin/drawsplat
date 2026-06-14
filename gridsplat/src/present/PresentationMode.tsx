@@ -222,8 +222,9 @@ export function PresentationMode() {
     );
   }
 
-  async function startPresentation() {
+  async function startPresentation(options: { spotlight?: boolean } = {}) {
     refreshSnapshots();
+    setIsSpotlight(Boolean(options.spotlight));
     setIsPresenting(true);
 
     await viewerRef.current?.requestFullscreen?.();
@@ -304,7 +305,7 @@ export function PresentationMode() {
           <button
             className="big-action secondary"
             type="button"
-            onClick={() => setIsSpotlight((current) => !current)}
+            onClick={() => void startPresentation({ spotlight: true })}
           >
             <Maximize2 aria-hidden="true" size={20} />
             Spotlight

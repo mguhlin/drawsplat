@@ -210,6 +210,7 @@ test('applies formatting to a selected cell range', async ({
   await page.mouse.move(b1.x + b1.width / 2, b1.y + b1.height / 2);
   await page.mouse.up();
 
+  await expect(page.locator('.corner-header')).toContainText('B1');
   await page.getByRole('button', { name: 'Bold' }).click();
   await page.getByRole('button', { name: 'Align center' }).click();
   await page.getByLabel('Fill color').fill('#fff2cc');
@@ -230,6 +231,54 @@ test('applies formatting to a selected cell range', async ({
     'background-color',
     'rgb(255, 242, 204)',
   );
+
+  await page.getByRole('button', { name: 'Wrap text' }).click();
+  await expect(page.getByTestId('cell-A1').locator('.cell-value')).toHaveCSS(
+    'white-space',
+    'normal',
+  );
+
+  const beforeMerge = await page.getByTestId('cell-A1').boundingBox();
+
+  await page.getByRole('button', { name: 'Merge cells' }).click();
+
+  const afterMerge = await page.getByTestId('cell-A1').boundingBox();
+
+  if (!beforeMerge || !afterMerge) {
+    throw new Error('Expected merged cell bounds to be visible');
+  }
+
+  await expect(page.getByTestId('cell-B1')).toHaveCount(0);
+  expect(afterMerge.width).toBeGreaterThan(beforeMerge.width);
+});
+
+test('auto-fits a column when its divider is double-clicked', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Column auto-fit flow runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+  await page.getByTestId('cell-A1').dblclick();
+  await page
+    .getByLabel('Edit cell A1')
+    .fill('A very long classroom reading response title');
+  await page.getByLabel('Edit cell A1').press('Enter');
+
+  const before = await page.locator('.column-header').first().boundingBox();
+
+  await page.getByRole('button', { name: 'Resize column A' }).dblclick();
+
+  const after = await page.locator('.column-header').first().boundingBox();
+
+  if (!before || !after) {
+    throw new Error('Expected column header bounds to be visible');
+  }
+
+  expect(after.width).toBeGreaterThan(before.width + 80);
+  await expect(page.getByText('Column A fit to data.')).toBeVisible();
 });
 
 test('extends a cell range with shift click', async ({ page }, testInfo) => {
@@ -862,8 +911,6 @@ test('builds and navigates a presentation', async ({ page }, testInfo) => {
   expect(slideDownload.suggestedFilename()).toBe('gridsplat-slide-1.png');
 
   await page.getByRole('button', { name: 'Spotlight' }).click();
-
-  await page.getByRole('button', { name: 'Start Presentation' }).click();
   await expect(
     page.getByRole('dialog', { name: 'Presentation viewer' }),
   ).toBeVisible();

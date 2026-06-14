@@ -11,12 +11,20 @@ export interface CellFormat {
   strikethrough?: boolean;
   textColor?: string;
   underline?: boolean;
+  wrapText?: boolean;
+}
+
+export interface CellMerge {
+  colSpan: number;
+  rowSpan: number;
 }
 
 export interface SheetCell {
   rawValue: string;
   displayValue: string;
   format?: CellFormat;
+  hiddenBy?: CellAddress;
+  merge?: CellMerge;
   type: CellType;
   errorType?: string;
 }

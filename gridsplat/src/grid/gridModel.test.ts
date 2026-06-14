@@ -5,6 +5,7 @@ import {
   applyCellFormat,
   clearCells,
   getColumnName,
+  mergeCells,
   parsePastedText,
   pasteCells,
   serializeSelection,
@@ -96,6 +97,31 @@ describe('gridModel', () => {
       bold: true,
       backgroundColor: '#fff2cc',
     });
+  });
+
+  it('stores merged cells on the top-left cell and clears covered cells', () => {
+    let sheet = createSheet(4, 4);
+
+    sheet = updateCell(sheet, { row: 0, col: 0 }, 'Project Notes');
+    sheet = updateCell(sheet, { row: 0, col: 1 }, 'Covered');
+    sheet = mergeCells(sheet, {
+      start: { row: 0, col: 0 },
+      end: { row: 1, col: 1 },
+    });
+
+    expect(sheet[0][0].merge).toEqual({ colSpan: 2, rowSpan: 2 });
+    expect(sheet[0][0].displayValue).toBe('Project Notes');
+    expect(sheet[0][1].displayValue).toBe('');
+    expect(sheet[0][1].hiddenBy).toEqual({ row: 0, col: 0 });
+    expect(sheet[1][1].hiddenBy).toEqual({ row: 0, col: 0 });
+
+    sheet = mergeCells(sheet, {
+      start: { row: 0, col: 0 },
+      end: { row: 0, col: 0 },
+    });
+
+    expect(sheet[0][0].merge).toBeUndefined();
+    expect(sheet[0][1].hiddenBy).toBeUndefined();
   });
 
   it('names spreadsheet columns', () => {

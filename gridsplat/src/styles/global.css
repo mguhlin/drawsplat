@@ -855,6 +855,10 @@ h1 {
   font-weight: 900;
 }
 
+.format-button svg {
+  pointer-events: none;
+}
+
 .format-button:hover,
 .format-button[aria-pressed='true'] {
   border-color: var(--color-border);
@@ -1496,9 +1500,22 @@ h1 {
   top: 0;
   left: 0;
   z-index: 4;
+  display: grid;
+  place-items: center;
   border-right: 2px solid var(--color-grid-border);
   border-bottom: 2px solid var(--color-grid-border);
   background: var(--color-header);
+  color: var(--color-primary-dark);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.corner-header span {
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0 var(--space-1);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .column-header,
@@ -1560,9 +1577,13 @@ h1 {
 }
 
 .sheet-cell.selected {
-  z-index: 2;
+  z-index: 3;
   border: 3px solid var(--color-selected);
   box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.sheet-cell.merged-cell {
+  z-index: 2;
 }
 
 .sheet-cell.formatted-border {
