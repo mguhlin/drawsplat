@@ -84,6 +84,15 @@ interface ResizeState {
   startSize: number;
 }
 
+type FreezeDragAxis = 'row' | 'col';
+
+interface ChartSourceRow {
+  label: string;
+  row: number;
+  value: number;
+  valueCol: number;
+}
+
 interface SpreadsheetGridProps {
   onSheetUpdated?: (matrix: SheetMatrix) => void;
 }
@@ -106,6 +115,52 @@ function buildOffsets(sizes: number[]): number[] {
 
     return [...offsets, previousOffset + previousSize];
   }, []);
+}
+
+function countFrozenItems(
+  sizes: number[],
+  offsets: number[],
+  pointerPosition: number,
+): number {
+  if (pointerPosition <= HEADER_SIZE) {
+    return 0;
+  }
+
+  return sizes.reduce((count, size, index) => {
+    const midpoint = offsets[index] + size / 2;
+
+    return pointerPosition >= midpoint ? index + 1 : count;
+  }, 0);
+}
+
+function getChartSourceRows(
+  sheet: SheetData,
+  selection: SelectionRange,
+): ChartSourceRow[] {
+  const normalized = normalizeSelection(selection);
+  const valueCol =
+    normalized.start.col === normalized.end.col
+      ? normalized.start.col
+      : normalized.start.col + 1;
+  const rows: ChartSourceRow[] = [];
+
+  for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
+    const labelCell = sheet[row]?.[normalized.start.col];
+    const valueCell = sheet[row]?.[valueCol];
+    const value = Number(valueCell?.displayValue ?? valueCell?.rawValue ?? '');
+
+    if (Number.isFinite(value)) {
+      rows.push({
+        label:
+          labelCell?.displayValue || labelCell?.rawValue || `Row ${row + 1}`,
+        row,
+        value,
+        valueCol,
+      });
+    }
+  }
+
+  return rows;
 }
 
 export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
@@ -134,10 +189,16 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const [colWidths, setColWidths] = useState<number[]>(
     Array.from({ length: DEFAULT_COLS }, () => DEFAULT_COL_WIDTH),
   );
+  const [frozenRows, setFrozenRows] = useState(0);
+  const [frozenCols, setFrozenCols] = useState(0);
+  const [freezeDragAxis, setFreezeDragAxis] = useState<FreezeDragAxis | null>(
+    null,
+  );
   const [scrollPosition, setScrollPosition] = useState({ top: 0, left: 0 });
   const [viewportSize, setViewportSize] = useState({ width: 900, height: 620 });
   const [fileMessage, setFileMessage] = useState('');
   const [chart, setChart] = useState<ChartDataModel | null>(null);
+  const [isChartPanelOpen, setIsChartPanelOpen] = useState(false);
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('plain');
   const [chartSelection, setChartSelection] = useState<SelectionRange | null>(
     null,
@@ -292,6 +353,39 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   );
   const selectedCell = sheet[selection.end.row]?.[selection.end.col];
   const selectedFormat = selectedCell?.format ?? {};
+  const frozenRowsList = useMemo(
+    () =>
+      Array.from({ length: frozenRows }, (_, row) => ({
+        row,
+        top: rowOffsets[row],
+        height: rowHeights[row],
+      })),
+    [frozenRows, rowHeights, rowOffsets],
+  );
+  const frozenColsList = useMemo(
+    () =>
+      Array.from({ length: frozenCols }, (_, col) => ({
+        col,
+        left: columnOffsets[col],
+        width: colWidths[col],
+      })),
+    [colWidths, columnOffsets, frozenCols],
+  );
+  const freezeRowBoundary =
+    frozenRows === 0
+      ? HEADER_SIZE
+      : rowOffsets[frozenRows - 1] + rowHeights[frozenRows - 1];
+  const freezeColBoundary =
+    frozenCols === 0
+      ? HEADER_SIZE
+      : columnOffsets[frozenCols - 1] + colWidths[frozenCols - 1];
+  const activeChartSelection = chartSelection ?? selection;
+  const activeChart = chart
+    ? buildChartData(sheet, activeChartSelection, chart.type, chart.title)
+    : null;
+  const activeChartRows = chart
+    ? getChartSourceRows(sheet, activeChartSelection)
+    : [];
 
   function remember(currentSheet: SheetData) {
     setHistory((previous) => [...previous.slice(-24), currentSheet]);
@@ -521,7 +615,20 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     }
   }
 
-  function handleCellPointerDown(address: CellAddress) {
+  function handleCellPointerDown(
+    event: PointerEvent<HTMLDivElement>,
+    address: CellAddress,
+  ) {
+    if (event.shiftKey) {
+      setDragAnchor(null);
+      setSelection({
+        start: selection.start,
+        end: address,
+      });
+      setEditingCell(null);
+      return;
+    }
+
     setDragAnchor(address);
     setSelection(createSelection(address));
     setEditingCell(null);
@@ -781,6 +888,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
     setChart(nextChart);
     setChartSelection(nextSelection);
+    setIsChartPanelOpen(true);
     setFileMessage('Chart ready.');
   }
 
@@ -805,6 +913,32 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     anchor.download = 'gridsplat-chart.png';
     anchor.click();
     setFileMessage('Downloaded a chart image.');
+  }
+
+  function startChartValueAdjust() {
+    remember(sheet);
+  }
+
+  function updateChartPointValue(pointIndex: number, nextValue: number) {
+    const sourceRow = activeChartRows[pointIndex];
+
+    if (!sourceRow) {
+      return;
+    }
+
+    const roundedValue = Math.max(0, nextValue);
+    const displayValue = Number.isInteger(roundedValue)
+      ? String(roundedValue)
+      : roundedValue.toFixed(1).replace(/\.0$/, '');
+
+    setSheet((currentSheet) =>
+      updateCell(
+        currentSheet,
+        { row: sourceRow.row, col: sourceRow.valueCol },
+        displayValue,
+      ),
+    );
+    setFileMessage('Updated chart value.');
   }
 
   function handleScroll() {
@@ -865,6 +999,79 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     setResizeState(null);
   }
 
+  function updateFrozenPane(axis: FreezeDragAxis, event: PointerEvent) {
+    const scroller = scrollerRef.current;
+
+    if (!scroller) {
+      return;
+    }
+
+    const scrollerBounds = scroller.getBoundingClientRect();
+
+    if (axis === 'col') {
+      const pointerX =
+        event.clientX - scrollerBounds.left + scroller.scrollLeft;
+
+      setFrozenCols(
+        clamp(
+          countFrozenItems(colWidths, columnOffsets, pointerX),
+          0,
+          DEFAULT_COLS - 1,
+        ),
+      );
+    }
+
+    if (axis === 'row') {
+      const pointerY = event.clientY - scrollerBounds.top + scroller.scrollTop;
+
+      setFrozenRows(
+        clamp(
+          countFrozenItems(rowHeights, rowOffsets, pointerY),
+          0,
+          DEFAULT_ROWS - 1,
+        ),
+      );
+    }
+  }
+
+  function startFreezeDrag(
+    axis: FreezeDragAxis,
+    event: PointerEvent<HTMLButtonElement>,
+  ) {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setFreezeDragAxis(axis);
+    updateFrozenPane(axis, event);
+  }
+
+  function continueFreezeDrag(event: PointerEvent<HTMLButtonElement>) {
+    if (!freezeDragAxis) {
+      return;
+    }
+
+    updateFrozenPane(freezeDragAxis, event);
+  }
+
+  function stopFreezeDrag() {
+    if (freezeDragAxis === 'col') {
+      setFileMessage(
+        frozenCols === 0
+          ? 'No columns frozen.'
+          : `Frozen ${frozenCols} column${frozenCols === 1 ? '' : 's'}.`,
+      );
+    }
+
+    if (freezeDragAxis === 'row') {
+      setFileMessage(
+        frozenRows === 0
+          ? 'No rows frozen.'
+          : `Frozen ${frozenRows} row${frozenRows === 1 ? '' : 's'}.`,
+      );
+    }
+
+    setFreezeDragAxis(null);
+  }
+
   function resetSheet() {
     if (!window.confirm(strings.startOverConfirm)) {
       return;
@@ -875,6 +1082,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     setSelection(createSelection({ row: 0, col: 0 }));
     setEditingCell(null);
     setChart(null);
+    setIsChartPanelOpen(false);
     setFileMessage('Started over with a blank sheet.');
   }
 
@@ -928,6 +1136,96 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               ? 'line-through'
               : undefined,
     };
+  }
+
+  function renderCell(
+    row: number,
+    col: number,
+    top: number,
+    left: number,
+    width: number,
+    height: number,
+    options: {
+      className?: string;
+      includeGridSemantics?: boolean;
+      keyPrefix?: string;
+    } = {},
+  ) {
+    const address = { row, col };
+    const cell = sheet[row][col];
+    const isEditing = editingCell?.row === row && editingCell.col === col;
+    const isSelected = isCellInSelection(address, selection);
+    const includeGridSemantics = options.includeGridSemantics ?? true;
+
+    return (
+      <div
+        aria-colindex={includeGridSemantics ? col + 1 : undefined}
+        aria-label={
+          includeGridSemantics
+            ? `Cell ${getColumnName(col)}${row + 1}`
+            : undefined
+        }
+        className={
+          [
+            'sheet-cell',
+            cell.format?.border ? 'formatted-border' : '',
+            isSelected ? 'selected' : '',
+            options.className ?? '',
+          ]
+            .filter(Boolean)
+            .join(' ')
+        }
+        data-testid={
+          includeGridSemantics ? `cell-${getColumnName(col)}${row + 1}` : undefined
+        }
+        key={`${options.keyPrefix ?? 'cell'}-${row}-${col}`}
+        role={includeGridSemantics ? 'gridcell' : undefined}
+        style={{
+          top,
+          left,
+          width,
+          height,
+          backgroundColor: cell.format?.backgroundColor ?? undefined,
+        }}
+        onDoubleClick={() => beginEditing(address)}
+        onPointerDown={(event) => handleCellPointerDown(event, address)}
+        onPointerEnter={() => handleCellPointerEnter(address)}
+        onPointerUp={(event) => handleCellPointerUp(event, address)}
+      >
+        {isEditing ? (
+          <input
+            aria-label={`Edit cell ${getColumnName(col)}${row + 1}`}
+            className="cell-editor"
+            value={draftValue}
+            autoFocus
+            onBlur={() => commitEditing()}
+            onChange={(event) => setDraftValue(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                commitEditing(true);
+              }
+
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEditing();
+              }
+            }}
+          />
+        ) : (
+          <span
+            className={
+              cell.errorType
+                ? `cell-value ${cell.type} error`
+                : `cell-value ${cell.type}`
+            }
+            style={getCellValueStyle(cell.format)}
+          >
+            {formatDisplayValue(cell.displayValue)}
+          </span>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -1177,108 +1475,145 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                   height,
                 }}
               >
-                {visibleCols.map(({ col, left, width }) => {
-                  const address = { row, col };
-                  const cell = sheet[row][col];
-                  const isEditing =
-                    editingCell?.row === row && editingCell.col === col;
-                  const isSelected = isCellInSelection(address, selection);
-
-                  return (
-                    <div
-                      aria-colindex={col + 1}
-                      aria-label={`Cell ${getColumnName(col)}${row + 1}`}
-                      className={
-                        [
-                          'sheet-cell',
-                          cell.format?.border ? 'formatted-border' : '',
-                          isSelected ? 'selected' : '',
-                        ]
-                          .filter(Boolean)
-                          .join(' ')
-                      }
-                      data-testid={`cell-${getColumnName(col)}${row + 1}`}
-                      key={`${row}-${col}`}
-                      role="gridcell"
-                      style={{
-                        top: 0,
-                        left,
-                        width,
-                        height,
-                        backgroundColor:
-                          cell.format?.backgroundColor ?? undefined,
-                      }}
-                      onDoubleClick={() => beginEditing(address)}
-                      onPointerDown={() => handleCellPointerDown(address)}
-                      onPointerEnter={() => handleCellPointerEnter(address)}
-                      onPointerUp={(event) =>
-                        handleCellPointerUp(event, address)
-                      }
-                    >
-                      {isEditing ? (
-                        <input
-                          aria-label={`Edit cell ${getColumnName(col)}${row + 1}`}
-                          className="cell-editor"
-                          value={draftValue}
-                          autoFocus
-                          onBlur={() => commitEditing()}
-                          onChange={(event) =>
-                            setDraftValue(event.target.value)
-                          }
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                              event.preventDefault();
-                              commitEditing(true);
-                            }
-
-                            if (event.key === 'Escape') {
-                              event.preventDefault();
-                              cancelEditing();
-                            }
-                          }}
-                        />
-                      ) : (
-                        <span
-                          className={
-                            cell.errorType
-                              ? `cell-value ${cell.type} error`
-                              : `cell-value ${cell.type}`
-                          }
-                          style={getCellValueStyle(cell.format)}
-                        >
-                          {formatDisplayValue(cell.displayValue)}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
+                {visibleCols.map(({ col, left, width }) =>
+                  renderCell(row, col, 0, left, width, height),
+                )}
               </div>
             ))}
           </div>
+          {frozenRows > 0 ? (
+            <div className="frozen-pane-layer frozen-row-layer">
+              {frozenRowsList.flatMap(({ row, top, height }) =>
+                visibleCols
+                  .filter(({ col }) => col >= frozenCols)
+                  .map(({ col, left, width }) =>
+                    renderCell(
+                      row,
+                      col,
+                      scrollPosition.top + top,
+                      left,
+                      width,
+                      height,
+                      {
+                        className: 'frozen-cell frozen-row-cell',
+                        includeGridSemantics: false,
+                        keyPrefix: 'frozen-row',
+                      },
+                    ),
+                  ),
+              )}
+            </div>
+          ) : null}
+          {frozenCols > 0 ? (
+            <div className="frozen-pane-layer frozen-col-layer">
+              {visibleRows
+                .filter(({ row }) => row >= frozenRows)
+                .flatMap(({ row, top, height }) =>
+                  frozenColsList.map(({ col, left, width }) =>
+                    renderCell(
+                      row,
+                      col,
+                      top,
+                      scrollPosition.left + left,
+                      width,
+                      height,
+                      {
+                        className: 'frozen-cell frozen-col-cell',
+                        includeGridSemantics: false,
+                        keyPrefix: 'frozen-col',
+                      },
+                    ),
+                  ),
+                )}
+            </div>
+          ) : null}
+          {frozenRows > 0 && frozenCols > 0 ? (
+            <div className="frozen-pane-layer frozen-corner-layer">
+              {frozenRowsList.flatMap(({ row, top, height }) =>
+                frozenColsList.map(({ col, left, width }) =>
+                  renderCell(
+                    row,
+                    col,
+                    scrollPosition.top + top,
+                    scrollPosition.left + left,
+                    width,
+                    height,
+                    {
+                      className: 'frozen-cell frozen-corner-cell',
+                      includeGridSemantics: false,
+                      keyPrefix: 'frozen-corner',
+                    },
+                  ),
+                ),
+              )}
+            </div>
+          ) : null}
+          <button
+            aria-label="Drag vertical freeze divider"
+            className="freeze-divider freeze-divider-col"
+            title="Drag to freeze columns"
+            type="button"
+            style={{
+              top: scrollPosition.top,
+              left: scrollPosition.left + freezeColBoundary,
+              height: viewportSize.height,
+            }}
+            onPointerCancel={stopFreezeDrag}
+            onPointerDown={(event) => startFreezeDrag('col', event)}
+            onPointerMove={continueFreezeDrag}
+            onPointerUp={stopFreezeDrag}
+          />
+          <button
+            aria-label="Drag horizontal freeze divider"
+            className="freeze-divider freeze-divider-row"
+            title="Drag to freeze rows"
+            type="button"
+            style={{
+              top: scrollPosition.top + freezeRowBoundary,
+              left: scrollPosition.left,
+              width: viewportSize.width,
+            }}
+            onPointerCancel={stopFreezeDrag}
+            onPointerDown={(event) => startFreezeDrag('row', event)}
+            onPointerMove={continueFreezeDrag}
+            onPointerUp={stopFreezeDrag}
+          />
         </div>
       </div>
-      {chart ? (
-        <section className="chart-panel" aria-label="Chart preview">
+      {activeChart && isChartPanelOpen ? (
+        <section
+          className="chart-panel chart-floating-panel"
+          aria-label="Chart preview"
+        >
+          <div className="chart-panel-header">
+            <label className="chart-title-field">
+              Chart title
+              <input
+                value={activeChart.title}
+                onChange={(event) => updateChartTitle(event.target.value)}
+              />
+            </label>
+            <button
+              className="format-button"
+              type="button"
+              aria-label="Close chart"
+              onClick={() => setIsChartPanelOpen(false)}
+            >
+              x
+            </button>
+          </div>
           <div className="chart-canvas-wrap">
             <ChartCanvas
-              chart={buildChartData(
-                sheet,
-                chartSelection ?? selection,
-                chart.type,
-                chart.title,
-              )}
+              chart={activeChart}
+              onPointAdjustStart={startChartValueAdjust}
+              onPointValueChange={updateChartPointValue}
             />
           </div>
           <table className="chart-summary">
-            <caption>{chart.title} data</caption>
+            <caption>{activeChart.title} data</caption>
             <tbody>
-              {buildChartData(
-                sheet,
-                chartSelection ?? selection,
-                chart.type,
-                chart.title,
-              ).points.map((point) => (
-                <tr key={point.label}>
+              {activeChart.points.map((point, index) => (
+                <tr key={`${point.label}-${index}`}>
                   <th scope="row">{point.label}</th>
                   <td>{point.value}</td>
                 </tr>

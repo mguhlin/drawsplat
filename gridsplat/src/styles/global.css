@@ -1001,9 +1001,28 @@ h1 {
   box-shadow: var(--shadow-soft);
 }
 
+.chart-floating-panel {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 20;
+  width: min(760px, calc(100vw - var(--space-6)));
+  max-height: min(620px, calc(100vh - var(--space-6)));
+  overflow: auto;
+}
+
+.chart-panel-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
 .chart-canvas-wrap {
   min-height: 320px;
   height: 360px;
+  cursor: crosshair;
 }
 
 .chart-summary {
@@ -1388,6 +1407,67 @@ h1 {
   box-shadow:
     inset 0 0 0 2px var(--color-primary),
     inset 0 0 0 5px var(--color-text);
+}
+
+.frozen-pane-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.frozen-pane-layer .sheet-cell {
+  pointer-events: auto;
+}
+
+.frozen-cell {
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.frozen-row-cell {
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.frozen-col-cell {
+  border-right: 2px solid var(--color-primary);
+}
+
+.frozen-corner-cell {
+  z-index: 6;
+  border-right: 2px solid var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.freeze-divider {
+  position: absolute;
+  z-index: 8;
+  border: 0;
+  padding: 0;
+  background: var(--color-primary);
+  cursor: grab;
+  opacity: 0.72;
+  touch-action: none;
+}
+
+.freeze-divider:hover,
+.freeze-divider:focus-visible {
+  background: var(--color-accent);
+  opacity: 1;
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: 2px;
+}
+
+.freeze-divider-col {
+  width: 8px;
+  transform: translateX(-4px);
+  cursor: col-resize;
+}
+
+.freeze-divider-row {
+  height: 8px;
+  transform: translateY(-4px);
+  cursor: row-resize;
 }
 
 .cell-value {

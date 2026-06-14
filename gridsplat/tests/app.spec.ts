@@ -232,6 +232,91 @@ test('applies formatting to a selected cell range', async ({
   );
 });
 
+test('extends a cell range with shift click', async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Shift-click selection runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+  await page.getByTestId('cell-A1').click();
+  await page.keyboard.down('Shift');
+  await page.getByTestId('cell-C2').click();
+  await page.keyboard.up('Shift');
+
+  await page.getByRole('button', { name: 'Bold' }).click();
+
+  await expect(page.getByTestId('cell-A1').locator('.cell-value')).toHaveCSS(
+    'font-weight',
+    '900',
+  );
+  await expect(page.getByTestId('cell-C2').locator('.cell-value')).toHaveCSS(
+    'font-weight',
+    '900',
+  );
+  await expect(page.getByTestId('cell-D2').locator('.cell-value')).not.toHaveCSS(
+    'font-weight',
+    '900',
+  );
+});
+
+test('freezes top rows and first columns by dragging dividers', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Freeze pane flow runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+  await page.getByTestId('cell-A1').dblclick();
+  await page.getByLabel('Edit cell A1').fill('Frozen corner');
+  await page.getByLabel('Edit cell A1').press('Enter');
+  await page.getByTestId('cell-A2').dblclick();
+  await page.getByLabel('Edit cell A2').fill('Frozen column');
+  await page.getByLabel('Edit cell A2').press('Enter');
+  await page.getByTestId('cell-B1').dblclick();
+  await page.getByLabel('Edit cell B1').fill('Frozen row');
+  await page.getByLabel('Edit cell B1').press('Enter');
+
+  const verticalDivider = page.getByRole('button', {
+    name: 'Drag vertical freeze divider',
+  });
+  const horizontalDivider = page.getByRole('button', {
+    name: 'Drag horizontal freeze divider',
+  });
+  const verticalBox = await verticalDivider.boundingBox();
+  const horizontalBox = await horizontalDivider.boundingBox();
+
+  if (!verticalBox || !horizontalBox) {
+    throw new Error('Expected freeze dividers to be visible');
+  }
+
+  await page.mouse.move(verticalBox.x + 4, verticalBox.y + 80);
+  await page.mouse.down();
+  await page.mouse.move(verticalBox.x + 126, verticalBox.y + 80);
+  await page.mouse.up();
+
+  await page.mouse.move(horizontalBox.x + 80, horizontalBox.y + 4);
+  await page.mouse.down();
+  await page.mouse.move(horizontalBox.x + 80, horizontalBox.y + 62);
+  await page.mouse.up();
+
+  await page.locator('.sheet-scroller').evaluate((scroller) => {
+    scroller.scrollLeft = 360;
+    scroller.scrollTop = 160;
+    scroller.dispatchEvent(new Event('scroll'));
+  });
+
+  await expect(
+    page.locator('.frozen-corner-layer .cell-value').first(),
+  ).toContainText('Frozen corner');
+  await expect(page.locator('.frozen-col-layer')).toContainText(
+    'Frozen column',
+  );
+  await expect(page.locator('.frozen-row-layer')).toContainText('Frozen row');
+});
+
 test('calculates formulas live and shows friendly errors', async ({
   page,
 }, testInfo) => {
@@ -381,6 +466,7 @@ test('creates a live-updating bar chart and exports PNG', async ({
   await page.getByRole('button', { name: 'Bar' }).click();
 
   await expect(page.getByLabel('Chart preview')).toBeVisible();
+  await expect(page.locator('.chart-floating-panel')).toBeVisible();
   await expect(
     page.getByRole('table', { name: 'Fruit Count data' }),
   ).toContainText('Bananas');
@@ -395,6 +481,29 @@ test('creates a live-updating bar chart and exports PNG', async ({
   await expect(
     page.getByRole('table', { name: 'Fruit Count data' }),
   ).toContainText('9');
+
+  const canvas = page.getByTestId('chart-canvas');
+  const canvasBox = await canvas.boundingBox();
+
+  if (!canvasBox) {
+    throw new Error('Expected chart canvas to be visible');
+  }
+
+  await page.mouse.move(
+    canvasBox.x + canvasBox.width * 0.45,
+    canvasBox.y + canvasBox.height * 0.42,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    canvasBox.x + canvasBox.width * 0.45,
+    canvasBox.y + canvasBox.height * 0.25,
+  );
+  await page.mouse.up();
+
+  await expect(page.getByTestId('cell-B3')).not.toContainText('9');
+  await expect(
+    page.getByRole('table', { name: 'Fruit Count data' }),
+  ).not.toContainText('9');
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'File', exact: true }).click();
