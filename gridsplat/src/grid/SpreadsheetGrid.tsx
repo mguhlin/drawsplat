@@ -1050,7 +1050,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
     setChart(nextChart);
     setChartSelection(nextSelection);
-    setChartPanelPosition(null);
+    setChartPanelPosition({
+      left: Math.max(
+        0,
+        window.innerWidth - Math.min(760, window.innerWidth - 24) - 20,
+      ),
+      top: 12,
+    });
     setChartPanelSize(null);
     setIsChartPanelOpen(true);
     setFileMessage('Chart ready.');
