@@ -95,6 +95,18 @@ interface ChartSourceRow {
   valueCol: number;
 }
 
+interface ChartPanelPosition {
+  left: number;
+  top: number;
+}
+
+interface ChartPanelDragState {
+  startLeft: number;
+  startPointerX: number;
+  startPointerY: number;
+  startTop: number;
+}
+
 interface SpreadsheetGridProps {
   onSheetUpdated?: (matrix: SheetMatrix) => void;
 }
@@ -165,6 +177,7 @@ function getChartSourceRows(
 export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chartPanelRef = useRef<HTMLElement>(null);
   const [sheet, setSheet] = useState<SheetData>(() => {
     try {
       return loadAutosave() ?? createSheet(DEFAULT_ROWS, DEFAULT_COLS);
@@ -198,6 +211,10 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const [fileMessage, setFileMessage] = useState('');
   const [chart, setChart] = useState<ChartDataModel | null>(null);
   const [isChartPanelOpen, setIsChartPanelOpen] = useState(false);
+  const [chartPanelPosition, setChartPanelPosition] =
+    useState<ChartPanelPosition | null>(null);
+  const [chartPanelDragState, setChartPanelDragState] =
+    useState<ChartPanelDragState | null>(null);
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('plain');
   const [chartSelection, setChartSelection] = useState<SelectionRange | null>(
     null,
@@ -939,6 +956,62 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     setFileMessage('Updated chart value.');
   }
 
+  function startChartPanelDrag(event: PointerEvent<HTMLButtonElement>) {
+    const panel = chartPanelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    const bounds = panel.getBoundingClientRect();
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setChartPanelPosition({
+      left: bounds.left,
+      top: bounds.top,
+    });
+    setChartPanelDragState({
+      startLeft: bounds.left,
+      startPointerX: event.clientX,
+      startPointerY: event.clientY,
+      startTop: bounds.top,
+    });
+  }
+
+  function continueChartPanelDrag(event: PointerEvent<HTMLButtonElement>) {
+    const panel = chartPanelRef.current;
+
+    if (!panel || !chartPanelDragState) {
+      return;
+    }
+
+    const bounds = panel.getBoundingClientRect();
+    const maxLeft = Math.max(0, window.innerWidth - bounds.width);
+    const maxTop = Math.max(0, window.innerHeight - bounds.height);
+
+    setChartPanelPosition({
+      left: clamp(
+        chartPanelDragState.startLeft +
+          event.clientX -
+          chartPanelDragState.startPointerX,
+        0,
+        maxLeft,
+      ),
+      top: clamp(
+        chartPanelDragState.startTop +
+          event.clientY -
+          chartPanelDragState.startPointerY,
+        0,
+        maxTop,
+      ),
+    });
+  }
+
+  function stopChartPanelDrag() {
+    setChartPanelDragState(null);
+  }
+
   function handleScroll() {
     const scroller = scrollerRef.current;
 
@@ -1580,9 +1653,34 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       </div>
       {activeChart && isChartPanelOpen ? (
         <section
+          ref={chartPanelRef}
           className="chart-panel chart-floating-panel"
+          data-positioned={chartPanelPosition ? 'true' : undefined}
           aria-label="Chart preview"
+          style={
+            chartPanelPosition
+              ? {
+                  left: chartPanelPosition.left,
+                  top: chartPanelPosition.top,
+                }
+              : undefined
+          }
         >
+          <div className="chart-drag-bar">
+            <button
+              aria-label="Move chart"
+              className="chart-drag-handle"
+              title="Drag to move chart"
+              type="button"
+              onPointerCancel={stopChartPanelDrag}
+              onPointerDown={startChartPanelDrag}
+              onPointerMove={continueChartPanelDrag}
+              onPointerUp={stopChartPanelDrag}
+            >
+              <span aria-hidden="true" className="chart-grip" />
+              Move chart
+            </button>
+          </div>
           <div className="chart-panel-header">
             <label className="chart-title-field">
               Chart title

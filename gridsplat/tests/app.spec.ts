@@ -474,6 +474,26 @@ test('creates a live-updating bar chart and exports PNG', async ({
     page.getByRole('table', { name: 'Fruit Count data' }),
   ).toContainText('6');
 
+  const chartPanel = page.locator('.chart-floating-panel');
+  const startPanelBox = await chartPanel.boundingBox();
+  const moveHandle = page.getByRole('button', { name: 'Move chart' });
+
+  if (!startPanelBox) {
+    throw new Error('Expected chart panel to be visible');
+  }
+
+  await moveHandle.dragTo(page.getByTestId('cell-C1'), {
+    targetPosition: { x: 12, y: 12 },
+  });
+
+  const movedPanelBox = await chartPanel.boundingBox();
+
+  if (!movedPanelBox) {
+    throw new Error('Expected moved chart panel to be visible');
+  }
+
+  expect(Math.abs(movedPanelBox.x - startPanelBox.x)).toBeGreaterThan(20);
+
   await page.getByTestId('cell-B3').dblclick();
   await page.getByLabel('Edit cell B3').fill('9');
   await page.getByLabel('Edit cell B3').press('Enter');

@@ -127,7 +127,7 @@ h1 {
 
 .top-toolbar {
   position: relative;
-  z-index: 5;
+  z-index: 30;
   padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
@@ -195,7 +195,7 @@ h1 {
   position: absolute;
   top: calc(100% + var(--space-2));
   left: 0;
-  z-index: 20;
+  z-index: 40;
   min-width: 220px;
   display: grid;
   gap: var(--space-2);
@@ -249,7 +249,7 @@ h1 {
     position: absolute;
     top: 0;
     left: calc(100% + var(--space-2));
-    z-index: 21;
+    z-index: 41;
     min-width: 220px;
     margin-top: 0;
     background: var(--color-surface);
@@ -1009,6 +1009,52 @@ h1 {
   width: min(760px, calc(100vw - var(--space-6)));
   max-height: min(620px, calc(100vh - var(--space-6)));
   overflow: auto;
+}
+
+.chart-floating-panel[data-positioned="true"] {
+  right: auto;
+  bottom: auto;
+}
+
+.chart-drag-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+}
+
+.chart-drag-handle {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  padding: 0 var(--space-3);
+  color: var(--color-muted);
+  background: var(--color-surface-strong);
+  cursor: grab;
+  font-weight: 900;
+  touch-action: none;
+}
+
+.chart-drag-handle:active {
+  cursor: grabbing;
+}
+
+.chart-drag-handle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.chart-grip {
+  width: 24px;
+  height: 14px;
+  display: inline-block;
+  background:
+    radial-gradient(circle, currentColor 1.5px, transparent 2px) 0 0 / 8px 7px,
+    radial-gradient(circle, currentColor 1.5px, transparent 2px) 4px 3.5px /
+      8px 7px;
+  opacity: 0.75;
 }
 
 .chart-panel-header {
