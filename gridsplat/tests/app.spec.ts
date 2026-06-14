@@ -104,15 +104,15 @@ test('enters data, selects a range, copies, pastes, and undoes on desktop', asyn
   ).toBeVisible();
   await dismissSplash(page);
 
-  await page.getByTestId('cell-A1').click();
+  await page.getByTestId('cell-A1').dblclick();
   await page.getByLabel('Edit cell A1').fill('5');
   await page.getByLabel('Edit cell A1').press('Enter');
 
-  await page.getByTestId('cell-A2').click();
+  await page.getByTestId('cell-A2').dblclick();
   await page.getByLabel('Edit cell A2').fill('Apples');
   await page.getByLabel('Edit cell A2').press('Enter');
 
-  await page.getByTestId('cell-B1').click();
+  await page.getByTestId('cell-B1').dblclick();
   await page.getByLabel('Edit cell B1').fill('6');
   await page.getByLabel('Edit cell B1').press('Enter');
 
@@ -134,7 +134,6 @@ test('enters data, selects a range, copies, pastes, and undoes on desktop', asyn
     .toBe('5\t6\nApples\t');
 
   await page.getByTestId('cell-C1').click();
-  await page.getByLabel('Edit cell C1').press('Escape');
   await page.locator('[role="grid"]').focus();
   await page.evaluate(() => navigator.clipboard.writeText('9\t10\n11\t12'));
   await page.keyboard.press('ControlOrMeta+V');
@@ -153,14 +152,12 @@ test('enters data, selects a range, copies, pastes, and undoes on desktop', asyn
   await expect(page.getByTestId('cell-D2')).toContainText('12');
 
   await page.getByTestId('cell-E1').click();
-  await page.getByLabel('Edit cell E1').press('Escape');
   await page.locator('[role="grid"]').focus();
   await page.keyboard.press('K');
   await page.getByLabel('Edit cell E1').press('Enter');
   await expect(page.getByTestId('cell-E1')).toContainText('K');
 
   await page.getByTestId('cell-E1').click();
-  await page.getByLabel('Edit cell E1').press('Escape');
   await page.locator('[role="grid"]').focus();
   await page.keyboard.press('Delete');
   await expect(page.getByTestId('cell-E1')).not.toContainText('K');
@@ -185,6 +182,56 @@ test('opens a roomy editor from a mobile tap', async ({ page }, testInfo) => {
   await expect(page.getByTestId('cell-A1')).toContainText('7');
 });
 
+test('applies formatting to a selected cell range', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== 'chromium',
+    'Formatting toolbar flow runs in Chromium.',
+  );
+
+  await dismissSplash(page);
+  await page.getByTestId('cell-A1').dblclick();
+  await page.getByLabel('Edit cell A1').fill('Name');
+  await page.getByLabel('Edit cell A1').press('Enter');
+  await page.getByTestId('cell-B1').dblclick();
+  await page.getByLabel('Edit cell B1').fill('Count');
+  await page.getByLabel('Edit cell B1').press('Enter');
+
+  const a1 = await page.getByTestId('cell-A1').boundingBox();
+  const b1 = await page.getByTestId('cell-B1').boundingBox();
+
+  if (!a1 || !b1) {
+    throw new Error('Expected range cells to be visible');
+  }
+
+  await page.mouse.move(a1.x + a1.width / 2, a1.y + a1.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(b1.x + b1.width / 2, b1.y + b1.height / 2);
+  await page.mouse.up();
+
+  await page.getByRole('button', { name: 'Bold' }).click();
+  await page.getByRole('button', { name: 'Align center' }).click();
+  await page.getByLabel('Fill color').fill('#fff2cc');
+
+  await expect(page.getByTestId('cell-A1').locator('.cell-value')).toHaveCSS(
+    'font-weight',
+    '900',
+  );
+  await expect(page.getByTestId('cell-B1').locator('.cell-value')).toHaveCSS(
+    'font-weight',
+    '900',
+  );
+  await expect(page.getByTestId('cell-A1').locator('.cell-value')).toHaveCSS(
+    'text-align',
+    'center',
+  );
+  await expect(page.getByTestId('cell-B1')).toHaveCSS(
+    'background-color',
+    'rgb(255, 242, 204)',
+  );
+});
+
 test('calculates formulas live and shows friendly errors', async ({
   page,
 }, testInfo) => {
@@ -194,27 +241,27 @@ test('calculates formulas live and shows friendly errors', async ({
   );
 
   await dismissSplash(page);
-  await page.getByTestId('cell-A1').click();
+  await page.getByTestId('cell-A1').dblclick();
   await page.getByLabel('Edit cell A1').fill('5');
   await page.getByLabel('Edit cell A1').press('Enter');
 
-  await page.getByTestId('cell-A2').click();
+  await page.getByTestId('cell-A2').dblclick();
   await page.getByLabel('Edit cell A2').fill('6');
   await page.getByLabel('Edit cell A2').press('Enter');
 
-  await page.getByTestId('cell-B1').click();
+  await page.getByTestId('cell-B1').dblclick();
   await page.getByLabel('Edit cell B1').fill('=SUM(A1:A2)');
   await page.getByLabel('Edit cell B1').press('Enter');
 
   await expect(page.getByTestId('cell-B1')).toContainText('11');
 
-  await page.getByTestId('cell-A1').click();
+  await page.getByTestId('cell-A1').dblclick();
   await page.getByLabel('Edit cell A1').fill('7');
   await page.getByLabel('Edit cell A1').press('Enter');
 
   await expect(page.getByTestId('cell-B1')).toContainText('13');
 
-  await page.getByTestId('cell-C1').click();
+  await page.getByTestId('cell-C1').dblclick();
   await page.getByLabel('Edit cell C1').fill('=1/0');
   await page.getByLabel('Edit cell C1').press('Enter');
 
@@ -242,7 +289,6 @@ test('imports CSV and pastes Markdown tables', async ({ page }, testInfo) => {
   await expect(page.getByText('Opened fruit.csv.')).toBeVisible();
 
   await page.getByTestId('cell-C1').click();
-  await page.getByLabel('Edit cell C1').press('Escape');
   await page.locator('[role="grid"]').focus();
   await page.evaluate(() =>
     navigator.clipboard.writeText(
@@ -256,7 +302,6 @@ test('imports CSV and pastes Markdown tables', async ({ page }, testInfo) => {
   await expect(page.getByText('Pasted table into the sheet.')).toBeVisible();
 
   await page.getByTestId('cell-E1').click();
-  await page.getByLabel('Edit cell E1').press('Escape');
   await page.locator('[role="grid"]').focus();
   await page.evaluate(() =>
     navigator.clipboard.writeText('Name,Note\nApples,"Red, sweet"'),
@@ -343,7 +388,7 @@ test('creates a live-updating bar chart and exports PNG', async ({
     page.getByRole('table', { name: 'Fruit Count data' }),
   ).toContainText('6');
 
-  await page.getByTestId('cell-B3').click();
+  await page.getByTestId('cell-B3').dblclick();
   await page.getByLabel('Edit cell B3').fill('9');
   await page.getByLabel('Edit cell B3').press('Enter');
 
@@ -411,7 +456,7 @@ test('autosaves sheet data in the browser and shows cloud setup status', async (
   );
 
   await dismissSplash(page);
-  await page.getByTestId('cell-A1').click();
+  await page.getByTestId('cell-A1').dblclick();
   await page.getByLabel('Edit cell A1').fill('Autosaved');
   await page.getByLabel('Edit cell A1').press('Enter');
   await expect(page.getByText('Autosaved in this browser.')).toBeVisible({
@@ -515,7 +560,7 @@ test('formats numbers and starts over with confirmation', async ({
   );
 
   await dismissSplash(page);
-  await page.getByTestId('cell-A1').click();
+  await page.getByTestId('cell-A1').dblclick();
   await page.getByLabel('Edit cell A1').fill('12.5');
   await page.getByLabel('Edit cell A1').press('Enter');
 

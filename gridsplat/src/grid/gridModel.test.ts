@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createCell,
   createSheet,
+  applyCellFormat,
   clearCells,
   getColumnName,
   parsePastedText,
@@ -64,6 +65,37 @@ describe('gridModel', () => {
 
     expect(sheet[0][0].displayValue).toBe('');
     expect(sheet[0][1].displayValue).toBe('6');
+  });
+
+  it('applies formatting across a selected range and preserves it through edits', () => {
+    let sheet = createSheet(4, 4);
+
+    sheet = applyCellFormat(
+      sheet,
+      {
+        start: { row: 0, col: 0 },
+        end: { row: 0, col: 1 },
+      },
+      { align: 'center', bold: true, backgroundColor: '#fff2cc' },
+    );
+    sheet = updateCell(sheet, { row: 0, col: 0 }, 'Name');
+    sheet = pasteCells(sheet, { row: 0, col: 1 }, [['Count']]);
+    sheet = clearCells(sheet, {
+      start: { row: 0, col: 1 },
+      end: { row: 0, col: 1 },
+    });
+
+    expect(sheet[0][0].format).toMatchObject({
+      align: 'center',
+      bold: true,
+      backgroundColor: '#fff2cc',
+    });
+    expect(sheet[0][1].displayValue).toBe('');
+    expect(sheet[0][1].format).toMatchObject({
+      align: 'center',
+      bold: true,
+      backgroundColor: '#fff2cc',
+    });
   });
 
   it('names spreadsheet columns', () => {

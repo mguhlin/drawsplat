@@ -3,6 +3,7 @@ import {
   type KeyboardEvent,
   type PointerEvent,
   type ChangeEvent,
+  type CSSProperties,
   useEffect,
   useMemo,
   useRef,
@@ -30,15 +31,23 @@ import { matrixToSheet, sheetToMatrix, type SheetMatrix } from '../io/matrix';
 import { strings } from '../i18n/strings';
 import {
   clearCells,
+  applyCellFormat,
   createSheet,
   getColumnName,
   isCellInSelection,
+  normalizeSelection,
   parsePastedText,
   pasteCells,
   serializeSelection,
   updateCell,
 } from './gridModel';
-import type { CellAddress, SelectionRange, SheetData } from './types';
+import type {
+  CellAddress,
+  CellFormat,
+  CellTextAlign,
+  SelectionRange,
+  SheetData,
+} from './types';
 
 const DEFAULT_ROWS = 20;
 const DEFAULT_COLS = 20;
@@ -281,6 +290,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         ),
     [colWidths, columnOffsets, scrollPosition.left, viewportSize.width],
   );
+  const selectedCell = sheet[selection.end.row]?.[selection.end.col];
+  const selectedFormat = selectedCell?.format ?? {};
 
   function remember(currentSheet: SheetData) {
     setHistory((previous) => [...previous.slice(-24), currentSheet]);
@@ -367,6 +378,59 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
       return clearCells(currentSheet, selection);
     });
+  }
+
+  function selectedCellsEvery(
+    predicate: (format: CellFormat | undefined) => boolean,
+  ) {
+    const normalized = normalizeSelection(selection);
+
+    for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
+      for (
+        let col = normalized.start.col;
+        col <= normalized.end.col;
+        col += 1
+      ) {
+        if (!predicate(sheet[row]?.[col]?.format)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  function updateSelectionFormat(format: CellFormat) {
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage('Formatted selected cells.');
+
+      return applyCellFormat(currentSheet, selection, format);
+    });
+  }
+
+  function toggleBooleanFormat(
+    key: 'bold' | 'border' | 'italic' | 'strikethrough' | 'underline',
+  ) {
+    const nextValue = !selectedCellsEvery((format) => Boolean(format?.[key]));
+
+    updateSelectionFormat({ [key]: nextValue });
+  }
+
+  function setCellFontSize(fontSize: number) {
+    updateSelectionFormat({ fontSize });
+  }
+
+  function setAlignment(align: CellTextAlign) {
+    updateSelectionFormat({ align });
+  }
+
+  function setCellTextColor(textColor: string) {
+    updateSelectionFormat({ textColor });
+  }
+
+  function setCellFillColor(backgroundColor: string) {
+    updateSelectionFormat({ backgroundColor });
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -474,8 +538,12 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     });
   }
 
-  function handleCellPointerUp(address: CellAddress) {
+  function handleCellPointerUp(
+    event: PointerEvent<HTMLDivElement>,
+    address: CellAddress,
+  ) {
     if (
+      event.pointerType === 'touch' &&
       dragAnchor &&
       dragAnchor.row === address.row &&
       dragAnchor.col === address.col
@@ -503,6 +571,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
       setSheet((currentSheet) => {
         remember(currentSheet);
+        setEditingCell(null);
         setFileMessage('Pasted table into the sheet.');
 
         return pasteCells(currentSheet, selection.start, values);
@@ -843,6 +912,24 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     })}%`;
   }
 
+  function getCellValueStyle(cellFormat: CellFormat | undefined): CSSProperties {
+    return {
+      color: cellFormat?.textColor,
+      fontSize: cellFormat?.fontSize,
+      fontStyle: cellFormat?.italic ? 'italic' : undefined,
+      fontWeight: cellFormat?.bold ? 900 : undefined,
+      textAlign: cellFormat?.align,
+      textDecoration:
+        cellFormat?.underline && cellFormat.strikethrough
+          ? 'underline line-through'
+          : cellFormat?.underline
+            ? 'underline'
+            : cellFormat?.strikethrough
+              ? 'line-through'
+              : undefined,
+    };
+  }
+
   return (
     <section className="sheet-workspace" aria-label="Spreadsheet workspace">
       <div className="sheet-toolbar" aria-label="Sheet tools">
@@ -862,6 +949,103 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         >
           Redo
         </button>
+        <div className="format-button-group" aria-label="Cell formatting">
+          <button
+            aria-label="Borders"
+            aria-pressed={Boolean(selectedFormat.border)}
+            className="format-button"
+            title="Borders"
+            type="button"
+            onClick={() => toggleBooleanFormat('border')}
+          >
+            □
+          </button>
+          <button
+            aria-label="Bold"
+            aria-pressed={Boolean(selectedFormat.bold)}
+            className="format-button"
+            title="Bold"
+            type="button"
+            onClick={() => toggleBooleanFormat('bold')}
+          >
+            B
+          </button>
+          <button
+            aria-label="Italic"
+            aria-pressed={Boolean(selectedFormat.italic)}
+            className="format-button italic"
+            title="Italic"
+            type="button"
+            onClick={() => toggleBooleanFormat('italic')}
+          >
+            I
+          </button>
+          <button
+            aria-label="Underline"
+            aria-pressed={Boolean(selectedFormat.underline)}
+            className="format-button underline"
+            title="Underline"
+            type="button"
+            onClick={() => toggleBooleanFormat('underline')}
+          >
+            U
+          </button>
+          <button
+            aria-label="Strikethrough"
+            aria-pressed={Boolean(selectedFormat.strikethrough)}
+            className="format-button strike"
+            title="Strikethrough"
+            type="button"
+            onClick={() => toggleBooleanFormat('strikethrough')}
+          >
+            S
+          </button>
+          <label className="font-size-control">
+            Size
+            <input
+              aria-label="Font size"
+              min="8"
+              max="32"
+              type="number"
+              value={selectedFormat.fontSize ?? 20}
+              onChange={(event) =>
+                setCellFontSize(Number(event.target.value) || 20)
+              }
+            />
+          </label>
+        </div>
+        <div className="format-button-group" aria-label="Cell alignment">
+          {(['left', 'center', 'right'] as CellTextAlign[]).map((align) => (
+            <button
+              aria-label={`Align ${align}`}
+              aria-pressed={selectedFormat.align === align}
+              className="format-button"
+              key={align}
+              type="button"
+              onClick={() => setAlignment(align)}
+            >
+              {align === 'left' ? 'L' : align === 'center' ? 'C' : 'R'}
+            </button>
+          ))}
+        </div>
+        <label className="color-control">
+          Text
+          <input
+            aria-label="Text color"
+            type="color"
+            value={selectedFormat.textColor ?? '#1f2937'}
+            onChange={(event) => setCellTextColor(event.target.value)}
+          />
+        </label>
+        <label className="color-control">
+          Fill
+          <input
+            aria-label="Fill color"
+            type="color"
+            value={selectedFormat.backgroundColor ?? '#ffffff'}
+            onChange={(event) => setCellFillColor(event.target.value)}
+          />
+        </label>
         <input
           ref={fileInputRef}
           aria-label="Import spreadsheet file"
@@ -1005,7 +1189,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                       aria-colindex={col + 1}
                       aria-label={`Cell ${getColumnName(col)}${row + 1}`}
                       className={
-                        isSelected ? 'sheet-cell selected' : 'sheet-cell'
+                        [
+                          'sheet-cell',
+                          cell.format?.border ? 'formatted-border' : '',
+                          isSelected ? 'selected' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')
                       }
                       data-testid={`cell-${getColumnName(col)}${row + 1}`}
                       key={`${row}-${col}`}
@@ -1015,11 +1205,15 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                         left,
                         width,
                         height,
+                        backgroundColor:
+                          cell.format?.backgroundColor ?? undefined,
                       }}
                       onDoubleClick={() => beginEditing(address)}
                       onPointerDown={() => handleCellPointerDown(address)}
                       onPointerEnter={() => handleCellPointerEnter(address)}
-                      onPointerUp={() => handleCellPointerUp(address)}
+                      onPointerUp={(event) =>
+                        handleCellPointerUp(event, address)
+                      }
                     >
                       {isEditing ? (
                         <input
@@ -1050,6 +1244,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                               ? `cell-value ${cell.type} error`
                               : `cell-value ${cell.type}`
                           }
+                          style={getCellValueStyle(cell.format)}
                         >
                           {formatDisplayValue(cell.displayValue)}
                         </span>

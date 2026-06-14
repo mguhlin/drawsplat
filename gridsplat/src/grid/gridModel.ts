@@ -1,4 +1,5 @@
 import type {
+  CellFormat,
   CellAddress,
   SelectionRange,
   SheetCell,
@@ -13,6 +14,58 @@ const BLANK_CELL: SheetCell = {
   type: 'blank',
 };
 
+function compactFormat(format?: CellFormat): CellFormat | undefined {
+  if (!format) {
+    return undefined;
+  }
+
+  const nextFormat: CellFormat = {};
+
+  if (format.align) {
+    nextFormat.align = format.align;
+  }
+
+  if (format.backgroundColor) {
+    nextFormat.backgroundColor = format.backgroundColor;
+  }
+
+  if (format.border) {
+    nextFormat.border = true;
+  }
+
+  if (format.bold) {
+    nextFormat.bold = true;
+  }
+
+  if (format.fontSize) {
+    nextFormat.fontSize = format.fontSize;
+  }
+
+  if (format.italic) {
+    nextFormat.italic = true;
+  }
+
+  if (format.strikethrough) {
+    nextFormat.strikethrough = true;
+  }
+
+  if (format.textColor) {
+    nextFormat.textColor = format.textColor;
+  }
+
+  if (format.underline) {
+    nextFormat.underline = true;
+  }
+
+  return Object.keys(nextFormat).length > 0 ? nextFormat : undefined;
+}
+
+function withFormat(cell: SheetCell, format?: CellFormat): SheetCell {
+  const compactedFormat = compactFormat(format);
+
+  return compactedFormat ? { ...cell, format: compactedFormat } : cell;
+}
+
 export function createSheet(rows: number, cols: number): SheetData {
   return recalculateSheet(
     Array.from({ length: rows }, () =>
@@ -21,36 +74,45 @@ export function createSheet(rows: number, cols: number): SheetData {
   );
 }
 
-export function createCell(rawValue: string): SheetCell {
+export function createCell(rawValue: string, format?: CellFormat): SheetCell {
   const trimmedValue = rawValue.trim();
 
   if (!trimmedValue) {
-    return { ...BLANK_CELL };
+    return withFormat({ ...BLANK_CELL }, format);
   }
 
   if (trimmedValue.startsWith('=')) {
-    return {
-      rawValue,
-      displayValue: rawValue,
-      type: 'formula',
-    };
+    return withFormat(
+      {
+        rawValue,
+        displayValue: rawValue,
+        type: 'formula',
+      },
+      format,
+    );
   }
 
   const numberValue = Number(trimmedValue);
 
   if (!Number.isNaN(numberValue) && Number.isFinite(numberValue)) {
-    return {
-      rawValue,
-      displayValue: trimmedValue,
-      type: 'number',
-    };
+    return withFormat(
+      {
+        rawValue,
+        displayValue: trimmedValue,
+        type: 'number',
+      },
+      format,
+    );
   }
 
-  return {
-    rawValue,
-    displayValue: rawValue,
-    type: 'text',
-  };
+  return withFormat(
+    {
+      rawValue,
+      displayValue: rawValue,
+      type: 'text',
+    },
+    format,
+  );
 }
 
 export function updateCell(
@@ -62,7 +124,7 @@ export function updateCell(
     sheet.map((row, rowIndex) =>
       row.map((cell, colIndex) =>
         rowIndex === address.row && colIndex === address.col
-          ? createCell(rawValue)
+          ? createCell(rawValue, cell.format)
           : cell,
       ),
     ),
@@ -81,9 +143,37 @@ export function pasteCells(
         const pastedCol = colIndex - start.col;
         const pastedValue = values[pastedRow]?.[pastedCol];
 
-        return pastedValue === undefined ? cell : createCell(pastedValue);
+        return pastedValue === undefined
+          ? cell
+          : createCell(pastedValue, cell.format);
       }),
     ),
+  );
+}
+
+export function applyCellFormat(
+  sheet: SheetData,
+  selection: SelectionRange,
+  format: CellFormat,
+): SheetData {
+  const normalized = normalizeSelection(selection);
+
+  return sheet.map((row, rowIndex) =>
+    row.map((cell, colIndex) => {
+      if (
+        rowIndex < normalized.start.row ||
+        rowIndex > normalized.end.row ||
+        colIndex < normalized.start.col ||
+        colIndex > normalized.end.col
+      ) {
+        return cell;
+      }
+
+      return withFormat(cell, {
+        ...cell.format,
+        ...format,
+      });
+    }),
   );
 }
 
@@ -100,7 +190,7 @@ export function clearCells(
         rowIndex <= normalized.end.row &&
         colIndex >= normalized.start.col &&
         colIndex <= normalized.end.col
-          ? createCell('')
+          ? createCell('', cell.format)
           : cell,
       ),
     ),
