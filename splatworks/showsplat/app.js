@@ -1626,19 +1626,44 @@
       };
       const bgClr = firstXml(firstXml(doc, 'bgPr') || doc, 'srgbClr');
       if (bgClr?.getAttribute('val')) slide.backgroundColor = '#' + bgClr.getAttribute('val');
-      xmlNodes(doc, 'sp').forEach((shape, shapeIndex) => {
+      for (const [shapeIndex, shape] of xmlNodes(doc, 'sp').entries()) {
         const text = pptxTextFromShape(shape);
-        if (!text) return;
         const box = pptxXfrm(shape, slideCx, slideCy);
-        const style = pptxShapeStyle(shape);
-        const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
-          italic: style.italic,
-          align: style.align,
-          z: index * 1000 + shapeIndex
-        });
-        slide.elements.push(el);
-        if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
-      });
+        const blip = firstXml(shape, 'blip');
+        const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
+        const mediaPath = rels[relId];
+        const media = mediaPath ? zip.file(mediaPath) : null;
+        if (media) {
+          const ext = (mediaPath.split('.').pop() || 'png').toLowerCase();
+          const src = 'data:' + imageMime(ext) + ';base64,' + await media.async('base64');
+          slide.elements.push(Object.assign(textElement('', box.x, box.y, box.w, box.h, 24), {
+            type: 'image',
+            src,
+            alt: 'Imported PPTX image',
+            fill: 'transparent',
+            z: index * 1000 + shapeIndex
+          }));
+        }
+        if (text) {
+          const style = pptxShapeStyle(shape);
+          const el = Object.assign(textElement(text, box.x, box.y, box.w, box.h, style.fontSize, style.bold, style.color), {
+            italic: style.italic,
+            align: style.align,
+            z: index * 1000 + shapeIndex + 250
+          });
+          slide.elements.push(el);
+          if (slide.title === 'Slide ' + (index + 1)) slide.title = text.split('\n')[0].slice(0, 80);
+        } else if (!media) {
+          const fill = pptxShapeFill(shape);
+          if (fill && !firstXml(shape, 'ph')) {
+            const el = shapeElement(box.x, box.y, box.w, box.h, '');
+            el.fill = fill;
+            el.color = 'transparent';
+            el.z = index * 1000 + shapeIndex;
+            slide.elements.push(el);
+          }
+        }
+      }
       for (const [picIndex, pic] of xmlNodes(doc, 'pic').entries()) {
         const blip = firstXml(pic, 'blip');
         const relId = blip?.getAttribute('r:embed') || blip?.getAttribute('embed');
@@ -1666,6 +1691,14 @@
       footer: 'ShowSplat™ by DrawSplat™',
       slides: slides.length ? slides : defaultDeck().slides
     };
+  }
+
+  function pptxShapeFill(shape) {
+    const spPr = firstXml(shape, 'spPr') || shape;
+    const solid = firstXml(spPr, 'solidFill');
+    const srgb = solid ? firstXml(solid, 'srgbClr') : null;
+    if (srgb?.getAttribute('val')) return '#' + srgb.getAttribute('val');
+    return '';
   }
 
   async function exportPptx() {
@@ -1765,9 +1798,14 @@
     const content = await zip.file('content.xml')?.async('text');
     if (!content) throw new Error('No ODP content.xml found.');
     const doc = xmlDoc(content);
+    const stylesText = await zip.file('styles.xml')?.async('text').catch(() => '');
+    const stylesDoc = stylesText ? xmlDoc(stylesText) : null;
+    const odpStyles = parseOdpStyles(stylesDoc);
     const pages = xmlNodes(doc, 'page');
     const slides = [];
     for (const [index, page] of pages.entries()) {
+      const masterName = page.getAttribute('draw:master-page-name') || '';
+      const pageSize = odpPageSize(stylesDoc, masterName);
       const slide = {
         id: uid('slide'),
         title: page.getAttribute('draw:name') || 'Slide ' + (index + 1),
@@ -1778,8 +1816,10 @@
       };
       const bg = page.getAttribute('draw:style-name') || '';
       if (bg) slide.backgroundColor = '#ffffff';
+      slide.elements.push(...odpMasterElements(stylesDoc, odpStyles, masterName, pageSize, index));
       for (const [frameIndex, frame] of xmlNodes(page, 'frame').entries()) {
-        const box = odpBox(frame);
+        if (isInsideXml(frame, 'notes')) continue;
+        const box = odpBox(frame, pageSize);
         const image = firstXml(frame, 'image');
         if (image) {
           const href = image.getAttribute('xlink:href') || image.getAttribute('href');
@@ -1813,23 +1853,115 @@
     };
   }
 
-  function odpBox(frame) {
+  function parseOdpStyles(stylesDoc) {
+    const styles = { graphic: {}, gradients: {} };
+    if (!stylesDoc) return styles;
+    xmlNodes(stylesDoc, 'gradient').forEach(gradient => {
+      const name = gradient.getAttribute('draw:name') || gradient.getAttribute('name');
+      if (!name) return;
+      styles.gradients[name] = {
+        start: gradient.getAttribute('draw:start-color') || gradient.getAttribute('start-color') || '',
+        end: gradient.getAttribute('draw:end-color') || gradient.getAttribute('end-color') || ''
+      };
+    });
+    xmlNodes(stylesDoc, 'style').forEach(style => {
+      if (style.getAttribute('style:family') !== 'graphic') return;
+      const name = style.getAttribute('style:name') || style.getAttribute('name');
+      if (!name) return;
+      const props = firstXml(style, 'graphic-properties');
+      styles.graphic[name] = {
+        parent: style.getAttribute('style:parent-style-name') || '',
+        fill: props?.getAttribute('draw:fill') || '',
+        fillColor: props?.getAttribute('draw:fill-color') || '',
+        gradient: props?.getAttribute('draw:fill-gradient-name') || '',
+        stroke: props?.getAttribute('svg:stroke-color') || ''
+      };
+    });
+    return styles;
+  }
+
+  function resolveOdpGraphicStyle(styles, name, seen) {
+    if (!name || !styles.graphic[name] || (seen || []).includes(name)) return {};
+    const style = styles.graphic[name];
+    const parent = resolveOdpGraphicStyle(styles, style.parent, (seen || []).concat(name));
+    return Object.assign({}, parent, Object.fromEntries(Object.entries(style).filter(([, value]) => value)));
+  }
+
+  function odpStyleFill(styles, name) {
+    const style = resolveOdpGraphicStyle(styles, name);
+    if (style.fill === 'none') return 'transparent';
+    if (style.fillColor) return style.fillColor;
+    if (style.gradient && styles.gradients[style.gradient]) {
+      return styles.gradients[style.gradient].start || styles.gradients[style.gradient].end || '#e5e7eb';
+    }
+    return style.stroke || '#e5e7eb';
+  }
+
+  function odpMasterElements(stylesDoc, styles, masterName, pageSize, slideIndex) {
+    const master = odpMasterPage(stylesDoc, masterName);
+    if (!master) return [];
+    return Array.from(master.children || []).flatMap((node, nodeIndex) => {
+      if (!['custom-shape', 'rect'].includes(node.localName)) return [];
+      const box = odpBox(node, pageSize);
+      const styleName = node.getAttribute('draw:style-name') || node.getAttribute('presentation:style-name') || '';
+      const text = xmlNodes(node, 'p').map(p => p.textContent || '').filter(Boolean).join('\n').trim();
+      const el = shapeElement(box.x, box.y, box.w, box.h, text);
+      el.fill = odpStyleFill(styles, styleName);
+      el.color = text ? '#1f2937' : 'transparent';
+      el.z = slideIndex * 1000 - 200 + nodeIndex;
+      return [el];
+    });
+  }
+
+  function odpMasterPage(stylesDoc, masterName) {
+    if (!stylesDoc || !masterName) return null;
+    return xmlNodes(stylesDoc, 'master-page').find(master => (master.getAttribute('style:name') || master.getAttribute('name')) === masterName) || null;
+  }
+
+  function odpPageSize(stylesDoc, masterName) {
+    const fallback = { wIn: 13.333333, hIn: 7.5 };
+    const master = odpMasterPage(stylesDoc, masterName);
+    const layoutName = master?.getAttribute('style:page-layout-name') || '';
+    if (!stylesDoc || !layoutName) return fallback;
+    const layout = xmlNodes(stylesDoc, 'page-layout').find(item => (item.getAttribute('style:name') || item.getAttribute('name')) === layoutName);
+    const props = layout ? firstXml(layout, 'page-layout-properties') : null;
+    const wIn = odpLengthToIn(props?.getAttribute('fo:page-width'));
+    const hIn = odpLengthToIn(props?.getAttribute('fo:page-height'));
+    return wIn && hIn ? { wIn, hIn } : fallback;
+  }
+
+  function isInsideXml(node, localName) {
+    for (let current = node.parentNode; current; current = current.parentNode) {
+      if (current.localName === localName) return true;
+    }
+    return false;
+  }
+
+  function odpBox(frame, pageSize) {
     return {
-      x: odpLength(frame.getAttribute('svg:x'), SLIDE_W),
-      y: odpLength(frame.getAttribute('svg:y'), SLIDE_H),
-      w: odpLength(frame.getAttribute('svg:width'), SLIDE_W) || 500,
-      h: odpLength(frame.getAttribute('svg:height'), SLIDE_H) || 160
+      x: odpLength(frame.getAttribute('svg:x'), SLIDE_W, pageSize?.wIn),
+      y: odpLength(frame.getAttribute('svg:y'), SLIDE_H, pageSize?.hIn),
+      w: odpLength(frame.getAttribute('svg:width'), SLIDE_W, pageSize?.wIn) || 500,
+      h: odpLength(frame.getAttribute('svg:height'), SLIDE_H, pageSize?.hIn) || 160
     };
   }
 
-  function odpLength(value, totalPx) {
+  function odpLength(value, totalPx, pageIn) {
+    const inches = odpLengthToIn(value);
+    if (inches && pageIn) return inches / pageIn * totalPx;
+    if (inches) return inches / 13.333333 * totalPx;
+    return parseFloat(String(value || '').trim()) || 0;
+  }
+
+  function odpLengthToIn(value) {
     const text = String(value || '').trim();
     const num = parseFloat(text) || 0;
-    if (text.endsWith('in')) return num / 13.333333 * totalPx;
-    if (text.endsWith('cm')) return num / 33.866667 * totalPx;
-    if (text.endsWith('mm')) return num / 338.66667 * totalPx;
-    if (text.endsWith('pt')) return num / 960 * totalPx;
-    return num;
+    if (!num) return 0;
+    if (text.endsWith('in')) return num;
+    if (text.endsWith('cm')) return num / 2.54;
+    if (text.endsWith('mm')) return num / 25.4;
+    if (text.endsWith('pt')) return num / 72;
+    return 0;
   }
 
   function pxToIn(value, totalPx) {
