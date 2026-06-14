@@ -1,12 +1,21 @@
 import {
+  BarChart3,
+  FileDown,
+  FileJson,
+  FileSpreadsheet,
+  FileText,
   FilePlus2,
   FolderOpen,
   HelpCircle,
+  LineChart,
   MonitorUp,
+  PieChart,
   Save,
+  ScatterChart,
   Sparkles,
+  Table,
 } from 'lucide-react';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { BigButton } from './components/BigButton';
 import { ActivitiesLibrary } from './activities/ActivitiesLibrary';
@@ -89,11 +98,11 @@ const toolbarMenus = [
       {
         label: 'Export',
         children: [
-          'Chart PNG',
-          'CSV',
-          'Excel',
-          'JSON',
-          'Markdown',
+          'Chart PNG (.png)',
+          'CSV (.csv)',
+          'Excel (.xlsx)',
+          'JSON (.gridsplat.json)',
+          'Markdown (.md)',
         ],
       },
     ],
@@ -141,6 +150,18 @@ const toolbarMenus = [
   },
 ];
 
+const menuIcons: Record<string, ReactNode> = {
+  'Bar chart': <BarChart3 size={17} />,
+  'Chart PNG (.png)': <FileDown size={17} />,
+  'CSV (.csv)': <Table size={17} />,
+  'Excel (.xlsx)': <FileSpreadsheet size={17} />,
+  'JSON (.gridsplat.json)': <FileJson size={17} />,
+  'Line chart': <LineChart size={17} />,
+  'Markdown (.md)': <FileText size={17} />,
+  'Pie chart': <PieChart size={17} />,
+  'Scatter plot': <ScatterChart size={17} />,
+};
+
 type MenuItemConfig = string | { children: string[]; label: string };
 
 function buildMenuItems(
@@ -150,16 +171,18 @@ function buildMenuItems(
   return items.map((item) =>
     typeof item === 'string'
       ? {
-          label: item,
-          onSelect: () => onSelect(item),
-        }
-      : {
-          label: item.label,
-          children: item.children.map((child) => ({
-            label: child,
-            onSelect: () => onSelect(child),
-          })),
-        },
+        label: item,
+        icon: menuIcons[item],
+        onSelect: () => onSelect(item),
+      }
+    : {
+        label: item.label,
+        children: item.children.map((child) => ({
+          label: child,
+          icon: menuIcons[child],
+          onSelect: () => onSelect(child),
+        })),
+      },
   );
 }
 
@@ -197,27 +220,27 @@ export function App() {
       return;
     }
 
-    if (label === 'Chart PNG') {
+    if (label === 'Chart PNG (.png)') {
       dispatchGridAction({ action: 'export-chart' });
       return;
     }
 
-    if (label === 'CSV') {
+    if (label === 'CSV (.csv)') {
       dispatchGridAction({ action: 'export-file', format: 'csv' });
       return;
     }
 
-    if (label === 'Excel') {
+    if (label === 'Excel (.xlsx)') {
       dispatchGridAction({ action: 'export-file', format: 'xlsx' });
       return;
     }
 
-    if (label === 'JSON') {
+    if (label === 'JSON (.gridsplat.json)') {
       dispatchGridAction({ action: 'export-file', format: 'json' });
       return;
     }
 
-    if (label === 'Markdown') {
+    if (label === 'Markdown (.md)') {
       dispatchGridAction({ action: 'export-file', format: 'markdown' });
       return;
     }

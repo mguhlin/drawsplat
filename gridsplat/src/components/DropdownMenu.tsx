@@ -1,8 +1,9 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 export interface DropdownMenuItem {
   children?: DropdownMenuItem[];
+  icon?: ReactNode;
   label: string;
   onSelect?: () => void;
 }
@@ -77,6 +78,11 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
                   setOpenSubmenu(null);
                 }}
               >
+                {item.icon ? (
+                  <span className="menu-item-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                ) : null}
                 <span>{item.label}</span>
                 {item.children ? (
                   <ChevronRight aria-hidden="true" size={18} />
@@ -100,7 +106,12 @@ export function DropdownMenu({ items, label }: DropdownMenuProps) {
                         setOpenSubmenu(null);
                       }}
                     >
-                      {child.label}
+                      {child.icon ? (
+                        <span className="menu-item-icon" aria-hidden="true">
+                          {child.icon}
+                        </span>
+                      ) : null}
+                      <span>{child.label}</span>
                     </button>
                   ))}
                 </div>

@@ -81,8 +81,10 @@ test('opens top menus from mobile taps', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'File', exact: true }).tap();
   await expect(page.getByRole('menu', { name: 'File menu' })).toBeVisible();
   await page.getByRole('menuitem', { name: 'Export' }).tap();
-  await expect(page.getByRole('menuitem', { name: 'JSON' })).toBeVisible();
-  await page.getByRole('menuitem', { name: 'JSON' }).tap();
+  await expect(
+    page.getByRole('menuitem', { name: 'JSON (.gridsplat.json)' }),
+  ).toBeVisible();
+  await page.getByRole('menuitem', { name: 'JSON (.gridsplat.json)' }).tap();
   await expect(page.getByText('Downloaded a GridSplat™ JSON file.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Templates' }).tap();
@@ -474,7 +476,7 @@ test('imports and exports Excel workbooks', async ({ page }, testInfo) => {
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Export' }).click();
-  await page.getByRole('menuitem', { name: 'Excel' }).click();
+  await page.getByRole('menuitem', { name: 'Excel (.xlsx)' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat.xlsx');
@@ -533,9 +535,19 @@ test('creates a live-updating bar chart and exports PNG', async ({
     throw new Error('Expected chart panel to be visible');
   }
 
-  await moveHandle.dragTo(page.getByTestId('cell-C1'), {
-    targetPosition: { x: 12, y: 12 },
-  });
+  const moveHandleBox = await moveHandle.boundingBox();
+
+  if (!moveHandleBox) {
+    throw new Error('Expected chart move handle to be visible');
+  }
+
+  await page.mouse.move(
+    moveHandleBox.x + moveHandleBox.width / 2,
+    moveHandleBox.y + moveHandleBox.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(120, 360);
+  await page.mouse.up();
 
   const movedPanelBox = await chartPanel.boundingBox();
 
@@ -626,7 +638,7 @@ test('creates a live-updating bar chart and exports PNG', async ({
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Export' }).click();
-  await page.getByRole('menuitem', { name: 'Chart PNG' }).click();
+  await page.getByRole('menuitem', { name: 'Chart PNG (.png)' }).click();
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe('gridsplat-chart.png');

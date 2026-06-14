@@ -9,7 +9,27 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Merge, WrapText } from 'lucide-react';
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  AlignVerticalJustifyCenter,
+  AlignVerticalJustifyEnd,
+  AlignVerticalJustifyStart,
+  ArrowDownAZ,
+  ArrowDownZA,
+  DollarSign,
+  Eraser,
+  Merge,
+  Minus,
+  PaintBucket,
+  Percent,
+  Plus,
+  Sigma,
+  Square,
+  Type,
+  WrapText,
+} from 'lucide-react';
 import { ChartCanvas } from '../charts/ChartCanvas';
 import {
   buildFirstDataRangeChart,
@@ -35,6 +55,7 @@ import { strings } from '../i18n/strings';
 import {
   clearCells,
   applyCellFormat,
+  clearCellFormat,
   createSheet,
   getColumnName,
   isCellInSelection,
@@ -43,12 +64,14 @@ import {
   parsePastedText,
   pasteCells,
   serializeSelection,
+  sortRows,
   updateCell,
 } from './gridModel';
 import type {
   CellAddress,
   CellFormat,
   CellTextAlign,
+  CellVerticalAlign,
   SelectionRange,
   SheetData,
 } from './types';
@@ -65,6 +88,13 @@ const MAX_AUTOFIT_COL_WIDTH = 520;
 const CELL_TEXT_PADDING = 32;
 const MIN_CHART_PANEL_WIDTH = 320;
 const MIN_CHART_PANEL_HEIGHT = 300;
+const FONT_FAMILIES = [
+  { label: 'Inter', value: 'Inter, system-ui, sans-serif' },
+  { label: 'Arial', value: 'Arial, sans-serif' },
+  { label: 'Calibri', value: 'Calibri, Arial, sans-serif' },
+  { label: 'Georgia', value: 'Georgia, serif' },
+  { label: 'Mono', value: 'monospace' },
+] as const;
 
 type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent';
 type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
@@ -245,6 +275,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const [chartPanelSize, setChartPanelSize] =
     useState<ChartPanelSize | null>(null);
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('plain');
+  const [sheetZoom, setSheetZoom] = useState(100);
   const [chartSelection, setChartSelection] = useState<SelectionRange | null>(
     null,
   );
@@ -571,12 +602,29 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     });
   }
 
+  function clearSelectedFormatting() {
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage('Cleared selected formatting.');
+
+      return clearCellFormat(currentSheet, selection);
+    });
+  }
+
+  function setCellFontFamily(fontFamily: string) {
+    updateSelectionFormat({ fontFamily });
+  }
+
   function setCellFontSize(fontSize: number) {
-    updateSelectionFormat({ fontSize });
+    updateSelectionFormat({ fontSize: clamp(fontSize, 8, 32) });
   }
 
   function setAlignment(align: CellTextAlign) {
     updateSelectionFormat({ align });
+  }
+
+  function setVerticalAlignment(verticalAlign: CellVerticalAlign) {
+    updateSelectionFormat({ verticalAlign });
   }
 
   function setCellTextColor(textColor: string) {
@@ -585,6 +633,61 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   function setCellFillColor(backgroundColor: string) {
     updateSelectionFormat({ backgroundColor });
+  }
+
+  function sortSelectedRows(direction: 'ascending' | 'descending') {
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage(
+        direction === 'ascending'
+          ? 'Sorted selected rows A to Z.'
+          : 'Sorted selected rows Z to A.',
+      );
+
+      return sortRows(currentSheet, selection, selection.end.col, direction);
+    });
+  }
+
+  function autoSumSelection() {
+    const normalized = normalizeSelection(selection);
+    const values: number[] = [];
+
+    for (let row = normalized.start.row; row <= normalized.end.row; row += 1) {
+      for (
+        let col = normalized.start.col;
+        col <= normalized.end.col;
+        col += 1
+      ) {
+        const value = Number(sheet[row]?.[col]?.displayValue ?? '');
+
+        if (Number.isFinite(value)) {
+          values.push(value);
+        }
+      }
+    }
+
+    if (values.length === 0) {
+      setFileMessage('Select number cells before using AutoSum.');
+      return;
+    }
+
+    const target = {
+      row: clamp(normalized.end.row + 1, 0, DEFAULT_ROWS - 1),
+      col: normalized.end.col,
+    };
+    const sum = values.reduce((total, value) => total + value, 0);
+
+    setSheet((currentSheet) => {
+      remember(currentSheet);
+      setFileMessage(`AutoSum added ${sum}.`);
+
+      return updateCell(currentSheet, target, String(sum));
+    });
+    setSelection(createSelection(target));
+  }
+
+  function setZoom(nextZoom: number) {
+    setSheetZoom(clamp(nextZoom, 50, 150));
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -1400,6 +1503,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   function getCellValueStyle(cellFormat: CellFormat | undefined): CSSProperties {
     return {
       color: cellFormat?.textColor,
+      fontFamily: cellFormat?.fontFamily,
       fontSize: cellFormat?.fontSize,
       fontStyle: cellFormat?.italic ? 'italic' : undefined,
       fontWeight: cellFormat?.bold ? 900 : undefined,
@@ -1413,6 +1517,31 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               ? 'line-through'
               : undefined,
       whiteSpace: cellFormat?.wrapText ? 'normal' : undefined,
+    };
+  }
+
+  function getCellContainerStyle(
+    cellFormat: CellFormat | undefined,
+    top: number,
+    left: number,
+    width: number,
+    height: number,
+    backgroundColor: string | undefined,
+  ): CSSProperties {
+    const alignItems =
+      cellFormat?.verticalAlign === 'top'
+        ? 'flex-start'
+        : cellFormat?.verticalAlign === 'bottom'
+          ? 'flex-end'
+          : undefined;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      alignItems,
+      backgroundColor,
     };
   }
 
@@ -1478,13 +1607,14 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         }
         key={`${options.keyPrefix ?? 'cell'}-${row}-${col}`}
         role={includeGridSemantics ? 'gridcell' : undefined}
-        style={{
+        style={getCellContainerStyle(
+          cell.format,
           top,
           left,
-          width: renderedWidth,
-          height: renderedHeight,
-          backgroundColor: cell.format?.backgroundColor ?? undefined,
-        }}
+          renderedWidth,
+          renderedHeight,
+          cell.format?.backgroundColor,
+        )}
         onDoubleClick={() => beginEditing(address)}
         onPointerDown={(event) => handleCellPointerDown(event, address)}
         onPointerEnter={() => handleCellPointerEnter(address)}
@@ -1531,21 +1661,48 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       <div className="sheet-toolbar" aria-label="Sheet tools">
         <button
           className="big-action"
+          aria-label="Undo"
+          title="Undo"
           type="button"
           onClick={undo}
           disabled={history.length === 0}
         >
-          Undo
+          ↶
         </button>
         <button
           className="big-action"
+          aria-label="Redo"
+          title="Redo"
           type="button"
           onClick={redo}
           disabled={future.length === 0}
         >
-          Redo
+          ↷
         </button>
+        <label className="format-control compact-select">
+          <span className="visually-hidden">Font family</span>
+          <select
+            aria-label="Font family"
+            value={selectedFormat.fontFamily ?? FONT_FAMILIES[0].value}
+            onChange={(event) => setCellFontFamily(event.target.value)}
+          >
+            {FONT_FAMILIES.map((font) => (
+              <option key={font.value} value={font.value}>
+                {font.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="format-button-group" aria-label="Cell formatting">
+          <button
+            aria-label="Decrease font size"
+            className="format-button"
+            title="Decrease font size"
+            type="button"
+            onClick={() => setCellFontSize((selectedFormat.fontSize ?? 20) - 1)}
+          >
+            <Minus aria-hidden="true" size={16} />
+          </button>
           <button
             aria-label="Borders"
             aria-pressed={Boolean(selectedFormat.border)}
@@ -1554,7 +1711,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             type="button"
             onClick={() => toggleBooleanFormat('border')}
           >
-            □
+            <Square aria-hidden="true" size={18} />
           </button>
           <button
             aria-label="Bold"
@@ -1615,8 +1772,17 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           >
             <Merge aria-hidden="true" size={18} />
           </button>
+          <button
+            aria-label="Clear formatting"
+            className="format-button"
+            title="Clear formatting"
+            type="button"
+            onClick={clearSelectedFormatting}
+          >
+            <Eraser aria-hidden="true" size={18} />
+          </button>
           <label className="font-size-control">
-            Size
+            <span className="visually-hidden">Font size</span>
             <input
               aria-label="Font size"
               min="8"
@@ -1628,23 +1794,147 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               }
             />
           </label>
+          <button
+            aria-label="Increase font size"
+            className="format-button"
+            title="Increase font size"
+            type="button"
+            onClick={() => setCellFontSize((selectedFormat.fontSize ?? 20) + 1)}
+          >
+            <Plus aria-hidden="true" size={16} />
+          </button>
         </div>
         <div className="format-button-group" aria-label="Cell alignment">
           {(['left', 'center', 'right'] as CellTextAlign[]).map((align) => (
-            <button
-              aria-label={`Align ${align}`}
-              aria-pressed={selectedFormat.align === align}
-              className="format-button"
-              key={align}
-              type="button"
-              onClick={() => setAlignment(align)}
-            >
-              {align === 'left' ? 'L' : align === 'center' ? 'C' : 'R'}
-            </button>
+            (() => {
+              const Icon =
+                align === 'left'
+                  ? AlignLeft
+                  : align === 'center'
+                    ? AlignCenter
+                    : AlignRight;
+
+              return (
+                <button
+                  aria-label={`Align ${align}`}
+                  aria-pressed={selectedFormat.align === align}
+                  className="format-button"
+                  key={align}
+                  title={`Align ${align}`}
+                  type="button"
+                  onClick={() => setAlignment(align)}
+                >
+                  <Icon aria-hidden="true" size={18} />
+                </button>
+              );
+            })()
           ))}
+          {(['top', 'middle', 'bottom'] as CellVerticalAlign[]).map(
+            (verticalAlign) => {
+              const Icon =
+                verticalAlign === 'top'
+                  ? AlignVerticalJustifyStart
+                  : verticalAlign === 'middle'
+                    ? AlignVerticalJustifyCenter
+                    : AlignVerticalJustifyEnd;
+
+              return (
+                <button
+                  aria-label={`Align ${verticalAlign}`}
+                  aria-pressed={selectedFormat.verticalAlign === verticalAlign}
+                  className="format-button"
+                  key={verticalAlign}
+                  title={`Align ${verticalAlign}`}
+                  type="button"
+                  onClick={() => setVerticalAlignment(verticalAlign)}
+                >
+                  <Icon aria-hidden="true" size={18} />
+                </button>
+              );
+            },
+          )}
+        </div>
+        <div className="format-button-group" aria-label="Sheet operations">
+          <button
+            aria-label="AutoSum"
+            className="format-button"
+            title="AutoSum"
+            type="button"
+            onClick={autoSumSelection}
+          >
+            <Sigma aria-hidden="true" size={18} />
+          </button>
+          <button
+            aria-label="Sort A to Z"
+            className="format-button"
+            title="Sort A to Z"
+            type="button"
+            onClick={() => sortSelectedRows('ascending')}
+          >
+            <ArrowDownAZ aria-hidden="true" size={18} />
+          </button>
+          <button
+            aria-label="Sort Z to A"
+            className="format-button"
+            title="Sort Z to A"
+            type="button"
+            onClick={() => sortSelectedRows('descending')}
+          >
+            <ArrowDownZA aria-hidden="true" size={18} />
+          </button>
+          <button
+            aria-label="Currency format"
+            aria-pressed={numberFormat === 'currency'}
+            className="format-button"
+            title="Currency format"
+            type="button"
+            onClick={() => setNumberFormat('currency')}
+          >
+            <DollarSign aria-hidden="true" size={18} />
+          </button>
+          <button
+            aria-label="Percent format"
+            aria-pressed={numberFormat === 'percent'}
+            className="format-button"
+            title="Percent format"
+            type="button"
+            onClick={() => setNumberFormat('percent')}
+          >
+            <Percent aria-hidden="true" size={18} />
+          </button>
+        </div>
+        <div className="format-button-group" aria-label="View zoom">
+          <button
+            aria-label="Zoom out"
+            className="format-button"
+            title="Zoom out"
+            type="button"
+            onClick={() => setZoom(sheetZoom - 10)}
+          >
+            <Minus aria-hidden="true" size={16} />
+          </button>
+          <button
+            aria-label="Reset zoom to 100%"
+            className="zoom-reset-button"
+            title="Reset zoom to 100%"
+            type="button"
+            onClick={() => setZoom(100)}
+          >
+            {sheetZoom}%
+          </button>
+          <button
+            aria-label="Zoom in"
+            className="format-button"
+            title="Zoom in"
+            type="button"
+            onClick={() => setZoom(sheetZoom + 10)}
+          >
+            <Plus aria-hidden="true" size={16} />
+          </button>
         </div>
         <label className="color-control">
-          Text
+          <Type aria-hidden="true" size={18} />
+          <span className="visually-hidden">Text color</span>
           <input
             aria-label="Text color"
             type="color"
@@ -1653,7 +1943,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           />
         </label>
         <label className="color-control">
-          Fill
+          <PaintBucket aria-hidden="true" size={18} />
+          <span className="visually-hidden">Fill color</span>
           <input
             aria-label="Fill color"
             type="color"
@@ -1703,7 +1994,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       >
         <div
           className="sheet-canvas"
-          style={{ width: totalWidth, height: totalHeight }}
+          style={
+            {
+              width: totalWidth,
+              height: totalHeight,
+              zoom: `${sheetZoom}%`,
+            } as CSSProperties & { zoom: string }
+          }
         >
           <div
             className="corner-header"

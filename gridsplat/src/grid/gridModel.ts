@@ -37,6 +37,10 @@ function compactFormat(format?: CellFormat): CellFormat | undefined {
     nextFormat.bold = true;
   }
 
+  if (format.fontFamily) {
+    nextFormat.fontFamily = format.fontFamily;
+  }
+
   if (format.fontSize) {
     nextFormat.fontSize = format.fontSize;
   }
@@ -57,6 +61,10 @@ function compactFormat(format?: CellFormat): CellFormat | undefined {
     nextFormat.underline = true;
   }
 
+  if (format.verticalAlign) {
+    nextFormat.verticalAlign = format.verticalAlign;
+  }
+
   if (format.wrapText) {
     nextFormat.wrapText = true;
   }
@@ -68,6 +76,14 @@ function withFormat(cell: SheetCell, format?: CellFormat): SheetCell {
   const compactedFormat = compactFormat(format);
 
   return compactedFormat ? { ...cell, format: compactedFormat } : cell;
+}
+
+function withCellMetadata(nextCell: SheetCell, previousCell: SheetCell): SheetCell {
+  return {
+    ...nextCell,
+    hiddenBy: previousCell.hiddenBy,
+    merge: previousCell.merge,
+  };
 }
 
 export function createSheet(rows: number, cols: number): SheetData {
@@ -128,7 +144,7 @@ export function updateCell(
     sheet.map((row, rowIndex) =>
       row.map((cell, colIndex) =>
         rowIndex === address.row && colIndex === address.col
-          ? createCell(rawValue, cell.format)
+          ? withCellMetadata(createCell(rawValue, cell.format), cell)
           : cell,
       ),
     ),
@@ -149,9 +165,35 @@ export function pasteCells(
 
         return pastedValue === undefined
           ? cell
-          : createCell(pastedValue, cell.format);
+          : withCellMetadata(createCell(pastedValue, cell.format), cell);
       }),
     ),
+  );
+}
+
+export function clearCellFormat(
+  sheet: SheetData,
+  selection: SelectionRange,
+): SheetData {
+  const normalized = normalizeSelection(selection);
+
+  return sheet.map((row, rowIndex) =>
+    row.map((cell, colIndex) => {
+      if (
+        rowIndex < normalized.start.row ||
+        rowIndex > normalized.end.row ||
+        colIndex < normalized.start.col ||
+        colIndex > normalized.end.col
+      ) {
+        return cell;
+      }
+
+      const { format, ...nextCell } = cell;
+
+      void format;
+
+      return nextCell;
+    }),
   );
 }
 
@@ -309,6 +351,48 @@ export function mergeCells(
           hiddenBy: normalized.start,
         };
       }),
+    ),
+  );
+}
+
+function compareCellValues(first: SheetCell, second: SheetCell): number {
+  const firstNumber = Number(first.displayValue || first.rawValue);
+  const secondNumber = Number(second.displayValue || second.rawValue);
+
+  if (Number.isFinite(firstNumber) && Number.isFinite(secondNumber)) {
+    return firstNumber - secondNumber;
+  }
+
+  return (first.displayValue || first.rawValue).localeCompare(
+    second.displayValue || second.rawValue,
+    undefined,
+    { numeric: true, sensitivity: 'base' },
+  );
+}
+
+export function sortRows(
+  sheet: SheetData,
+  selection: SelectionRange,
+  keyCol: number,
+  direction: 'ascending' | 'descending',
+): SheetData {
+  const normalized = normalizeSelection(selection);
+  const sortedRows = sheet
+    .slice(normalized.start.row, normalized.end.row + 1)
+    .sort((firstRow, secondRow) => {
+      const comparison = compareCellValues(
+        firstRow[keyCol] ?? BLANK_CELL,
+        secondRow[keyCol] ?? BLANK_CELL,
+      );
+
+      return direction === 'ascending' ? comparison : -comparison;
+    });
+
+  return recalculateSheet(
+    sheet.map((row, rowIndex) =>
+      rowIndex >= normalized.start.row && rowIndex <= normalized.end.row
+        ? sortedRows[rowIndex - normalized.start.row]
+        : row,
     ),
   );
 }
