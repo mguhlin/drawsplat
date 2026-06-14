@@ -38,7 +38,7 @@
 </svg>
 
 <header class="app-header">
-  <a class="brand" href="../index.html" aria-label="DrawSplat home">
+  <a class="brand" href="../../index.html" aria-label="DrawSplat home">
     <span class="brand-mark">S</span>
     <span><strong>ShowSplat<sup>TM</sup></strong><small>SplatWorks<sup>TM</sup> WebDeck Studio</small></span>
   </a>
@@ -53,7 +53,7 @@
   <nav class="menu-bar" aria-label="ShowSplat menus">
     <details class="menu"><summary>File</summary><div class="menu-panel">
       <button data-action="new-deck">New deck</button>
-      <button data-action="save-deck">Save browser copy</button>
+      <button data-action="save-deck">Save .showsplat.json</button>
       <button data-action="open-deck">Open .showsplat.json</button>
       <hr>
       <button data-action="export-webdeck">Export WebDeck HTML</button>
@@ -82,11 +82,15 @@
       <button data-action="insert-image-url">Image by URL</button>
       <button data-action="insert-splatimage">Image from SplatImage Studio</button>
       <button data-action="insert-concept">Image from Concept Studio</button>
+      <button data-action="insert-graph">Graph from DrawSplat or GridSplat</button>
       <hr>
       <button data-action="insert-youtube"><svg><use href="#i-video"/></svg> YouTube video</button>
       <button data-action="insert-video-url">MP4/WebM by URL</button>
       <button data-action="insert-video-upload">MP4/WebM upload</button>
       <button data-action="insert-audio-url"><svg><use href="#i-audio"/></svg> Audio by URL</button>
+      <button data-action="insert-audio-upload"><svg><use href="#i-audio"/></svg> Audio file on slide</button>
+      <button data-action="record-slide-audio"><svg><use href="#i-audio"/></svg> Record slide audio</button>
+      <button data-action="set-global-audio"><svg><use href="#i-audio"/></svg> Song for whole deck</button>
     </div></details>
     <details class="menu"><summary>Format</summary><div class="menu-panel">
       <button data-action="toggle-bold">Bold</button>
@@ -95,6 +99,9 @@
       <button data-action="align-left">Align left</button>
       <button data-action="align-center">Align center</button>
       <button data-action="align-right">Align right</button>
+      <hr>
+      <button data-action="autofit-textbox">Autofit text box to text</button>
+      <button data-action="fit-text-to-box">Fit text to text box</button>
       <hr>
       <button data-action="theme-gallery">Themes and master slide</button>
       <button data-action="toggle-footer">Toggle information bar</button>
@@ -116,6 +123,10 @@
       <button data-template="section">Section break</button>
       <button data-template="comparison">Comparison</button>
       <button data-template="media">Media focus</button>
+      <button data-template="graph">Graph or data story</button>
+      <button data-template="concept-map">Concept map explanation</button>
+      <button data-template="purple-title">Purple title slide</button>
+      <button data-template="purple-steps">Purple process slide</button>
       <button data-template="quote">Quote</button>
       <button data-template="table">Table slide</button>
       <button data-template="resources">Closing resources</button>
@@ -123,7 +134,9 @@
     <details class="menu"><summary>Help</summary><div class="menu-panel">
       <button data-action="show-feature-plan">Feature plan</button>
       <a href="docs/plan.md" target="_blank" rel="noopener">Development plan</a>
-      <a href="../pages/download.html" target="_blank" rel="noopener">Downloads</a>
+      <a href="../../pages/download.html" target="_blank" rel="noopener">Downloads</a>
+      <a href="../../legal/terms-privacy.html" target="_blank" rel="noopener">Terms &amp; Privacy</a>
+      <a href="../../legal/gdpr-compliance.html" target="_blank" rel="noopener">GDPR summary</a>
     </div></details>
   </nav>
 
@@ -152,6 +165,8 @@
     <button title="Align left" data-action="align-left"><svg><use href="#i-align-left"/></svg></button>
     <button title="Align center" data-action="align-center"><svg><use href="#i-align-center"/></svg></button>
     <button title="Align right" data-action="align-right"><svg><use href="#i-align-right"/></svg></button>
+    <button title="Autofit text box to text" data-action="autofit-textbox">↔</button>
+    <button title="Fit text to text box" data-action="fit-text-to-box">Aa</button>
     <label class="color-tool" title="Text color"><span>A</span><input id="textColor" type="color" value="#1f2937"></label>
     <label class="color-tool" title="Fill color"><svg><use href="#i-palette"/></svg><input id="fillColor" type="color" value="#ffffff"></label>
     <span class="divider"></span>
@@ -187,12 +202,15 @@
         <div id="selectionInfo" class="selection-info">No object selected.</div>
         <label>Alt text <input id="altText" type="text"></label>
         <label>Link URL <input id="linkUrl" type="url"></label>
-        <div class="grid-two">
+        <details class="advanced-position">
+          <summary>Advanced position</summary>
+          <div class="grid-two">
           <label>X <input id="posX" type="number"></label>
           <label>Y <input id="posY" type="number"></label>
           <label>W <input id="posW" type="number"></label>
           <label>H <input id="posH" type="number"></label>
-        </div>
+          </div>
+        </details>
       </div>
     </aside>
   </section>
@@ -228,6 +246,8 @@
 
 <input id="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" hidden>
 <input id="videoFileInput" type="file" accept="video/mp4,video/webm" hidden>
+<input id="audioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
+<input id="globalAudioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
 <input id="deckFileInput" type="file" accept="application/json,.json,.showsplat.json" hidden>
 
 <script src="app.js"></script>

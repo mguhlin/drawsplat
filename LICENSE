@@ -8,15 +8,17 @@ later (AGPL-3.0-or-later).
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 
-GridSplatTM / SplatStudio exception
------------------------------------
+SplatWorksTM exception
+----------------------
 
-The GridSplatTM subproject in `gridsplat/` is released under the GNU General
-Public License, version 3.0 only (GPL-3.0-only). See `gridsplat/LICENSE.md`
-and `gridsplat/COPYING`.
+The SplatWorksTM app family is released under the GNU General Public License,
+version 3.0 only (GPL-3.0-only). This currently includes GridSplatTM in
+`splatworks/gridsplat/` and ShowSplatTM in `splatworks/showsplat/`. See
+`splatworks/gridsplat/LICENSE.md` and `splatworks/gridsplat/COPYING` for the
+GPL-3.0-only license text currently bundled with the SplatWorksTM apps.
 
-This license split lets GridSplat ship with GPL-3.0-only dependencies while
-DrawSplatTM whiteboard and the existing tools/widgets continue under the
+This license split lets SplatWorksTM apps ship with GPL-3.0-only dependencies
+while DrawSplatTM whiteboard and the existing tools/widgets continue under the
 current AGPL-3.0-or-later licensing.
 
 In plain language:

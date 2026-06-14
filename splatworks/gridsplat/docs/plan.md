@@ -57,7 +57,7 @@ Pick boring, stable, well-documented tools. A child-facing education tool must w
 **Folder structure:**
 
 ```
-gridsplat/
+splatworks/gridsplat/
 ├── public/                 # static assets: splash images, icon SVGs, sample data
 │   ├── images/
 │   ├── icons/

@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/gridsplat/',
+  base: '/splatworks/gridsplat/',
   build: {
     chunkSizeWarningLimit: 1000,
     rollupOptions: {

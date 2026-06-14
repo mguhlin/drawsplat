@@ -418,7 +418,7 @@ export function App() {
           <div>
             <p className="eyebrow">
               GridSplat™ by{' '}
-              <a href="../pages/gridsplat.html">
+              <a href="../../pages/gridsplat.html">
                 DrawSplat™
               </a>
             </p>
@@ -507,7 +507,7 @@ export function App() {
               <p className="splash-copy">
                 GridSplat™ by{' '}
                 <a
-                  href="../pages/gridsplat.html"
+                  href="../../pages/gridsplat.html"
                 >
                   DrawSplat™
                 </a>
@@ -661,7 +661,7 @@ export function App() {
         <MonitorUp size={20} />
         <span>
           GridSplat™ by{' '}
-          <a href="../pages/gridsplat.html">
+          <a href="../../pages/gridsplat.html">
             DrawSplat™
           </a>
         </span>

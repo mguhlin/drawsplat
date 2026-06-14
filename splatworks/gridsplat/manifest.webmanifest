@@ -2,14 +2,14 @@
   "name": "GridSplat™ by DrawSplat™",
   "short_name": "GridSplat",
   "description": "A kid-friendly spreadsheet for sorting, graphing, and making sense of data",
-  "start_url": "/gridsplat/",
-  "scope": "/gridsplat/",
+  "start_url": "/splatworks/gridsplat/",
+  "scope": "/splatworks/gridsplat/",
   "display": "standalone",
   "background_color": "#f7fbff",
   "theme_color": "#7c3aed",
   "icons": [
     {
-      "src": "/gridsplat/gridsplat_icon.png",
+      "src": "/splatworks/gridsplat/gridsplat_icon.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"

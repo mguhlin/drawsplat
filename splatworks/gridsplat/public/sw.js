@@ -2,11 +2,11 @@
 
 const CACHE_NAME = 'gridsplat-cache-v1';
 const APP_SHELL = [
-  '/gridsplat/',
-  '/gridsplat/index.html',
-  '/gridsplat/manifest.webmanifest',
-  '/gridsplat/gridsplat_icon.png',
-  '/gridsplat/gridsplat_splash.png',
+  '/splatworks/gridsplat/',
+  '/splatworks/gridsplat/index.html',
+  '/splatworks/gridsplat/manifest.webmanifest',
+  '/splatworks/gridsplat/gridsplat_icon.png',
+  '/splatworks/gridsplat/gridsplat_splash.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -54,7 +54,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() =>
         caches
           .match(request)
-          .then((cached) => cached ?? caches.match('/gridsplat/')),
+          .then((cached) => cached ?? caches.match('/splatworks/gridsplat/')),
       ),
   );
 });

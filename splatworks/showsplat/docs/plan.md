@@ -84,7 +84,7 @@ PowerPoint, and HTML slide tools such as reveal.js.
 
 ## First Implementation Scope
 
-- Static app at `/showsplat/`.
+- Static app at `/splatworks/showsplat/`.
 - Public landing page at `pages/showsplat.html`.
 - Navigation updates so ShowSplatTM is no longer a disabled planned item.
 - Core editor with slide rail, canvas, menus, icon toolbar, notes, templates,

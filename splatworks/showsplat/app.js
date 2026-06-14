@@ -37,6 +37,8 @@
     footerText: document.getElementById('footerText'),
     imageFile: document.getElementById('imageFileInput'),
     videoFile: document.getElementById('videoFileInput'),
+    audioFile: document.getElementById('audioFileInput'),
+    globalAudioFile: document.getElementById('globalAudioFileInput'),
     deckFile: document.getElementById('deckFileInput')
   };
 
@@ -45,6 +47,7 @@
   let selectedId = null;
   let viewMode = 'normal';
   let autosaveTimer = null;
+  let cropTargetId = null;
 
   function uid(prefix) {
     return prefix + '-' + Math.random().toString(36).slice(2, 9);
@@ -56,6 +59,7 @@
       title: 'Untitled ShowSplat Deck',
       theme: 'violet',
       footer: 'ShowSplatTM by DrawSplatTM',
+      globalAudio: null,
       slides: [
         makeTemplateSlide('title'),
         makeTemplateSlide('title-content')
@@ -70,6 +74,7 @@
       notes: '',
       bg: 'light',
       footer: true,
+      audio: [],
       elements: []
     };
     if (template === 'title') {
@@ -92,6 +97,29 @@
       slide.title = 'Media Focus';
       slide.elements.push(textElement('Media title', 90, 70, 820, 70, 46, true));
       slide.elements.push(shapeElement(120, 180, 1120, 560, 'Drop image or video here'));
+    } else if (template === 'graph') {
+      slide.title = 'Graph or Data Story';
+      slide.elements.push(textElement('What the data shows', 90, 70, 860, 70, 46, true));
+      slide.elements.push(shapeElement(100, 175, 780, 540, 'Place a graph from GridSplat, Graph Maker, or Chart Studio'));
+      slide.elements.push(textElement('Key takeaways\n- Pattern\n- Evidence\n- Why it matters', 950, 210, 480, 330, 32));
+    } else if (template === 'concept-map') {
+      slide.title = 'Concept Map Explanation';
+      slide.elements.push(textElement('How the ideas connect', 90, 70, 900, 70, 46, true));
+      slide.elements.push(shapeElement(100, 175, 920, 540, 'Import a Concept Map Studio image here'));
+      slide.elements.push(textElement('Explain the relationships and examples here.', 1070, 205, 390, 280, 30));
+    } else if (template === 'purple-title') {
+      slide.title = 'Purple Title';
+      slide.bg = 'section';
+      slide.elements.push(textElement('Big idea', 135, 235, 1000, 130, 76, true, '#ffffff'));
+      slide.elements.push(textElement('Short supporting line with no scrolling text box.', 145, 380, 900, 78, 34, false, '#f5f3ff'));
+    } else if (template === 'purple-steps') {
+      slide.title = 'Purple Process';
+      slide.bg = 'section';
+      slide.elements.push(textElement('Process or sequence', 95, 65, 900, 72, 48, true, '#ffffff'));
+      slide.elements.push(textElement('1. Start with the idea\n2. Add evidence\n3. Explain the result', 130, 190, 1020, 360, 42, true, '#ffffff'));
+      slide.elements.push(shapeElement(1190, 200, 250, 250, 'Visual'));
+      slide.elements[2].color = '#ffffff';
+      slide.elements[2].fill = 'rgba(255,255,255,.16)';
     } else if (template === 'quote') {
       slide.title = 'Quote';
       slide.elements.push(textElement('“A short quote or key idea belongs here.”', 150, 240, 1050, 180, 54, true));
@@ -190,14 +218,26 @@
       title: value.title || 'Untitled ShowSplat Deck',
       theme: value.theme || 'violet',
       footer: value.footer || 'ShowSplatTM by DrawSplatTM',
+      globalAudio: normalizeAudio(value.globalAudio),
       slides: value.slides.map(slide => ({
         id: slide.id || uid('slide'),
         title: slide.title || 'Slide',
         notes: slide.notes || '',
         bg: slide.bg || 'light',
         footer: slide.footer !== false,
+        audio: Array.isArray(slide.audio) ? slide.audio.map(normalizeAudio).filter(Boolean) : [],
         elements: Array.isArray(slide.elements) ? slide.elements.map(normalizeElement) : []
       }))
+    };
+  }
+
+  function normalizeAudio(audio) {
+    if (!audio || !audio.src) return null;
+    return {
+      id: audio.id || uid('audio'),
+      src: audio.src,
+      name: audio.name || audio.title || 'Audio',
+      title: audio.title || audio.name || 'Audio'
     };
   }
 
@@ -253,10 +293,48 @@
       button.className = 'thumb' + (index === activeSlide ? ' active' : '');
       button.type = 'button';
       button.dataset.index = index;
-      button.innerHTML = '<span class="thumb-num">' + (index + 1) + '</span><span class="thumb-preview">' + escapeHtml(slide.title) + '</span>';
+      button.innerHTML = '<span class="thumb-num">' + (index + 1) + '</span>';
+      button.appendChild(buildMiniSlide(slide, index));
       button.addEventListener('click', () => selectSlide(index));
       els.thumbs.appendChild(button);
     });
+  }
+
+  function buildMiniSlide(slide, index) {
+    const mini = document.createElement('span');
+    mini.className = 'thumb-preview mini-slide ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '');
+    slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).forEach(el => {
+      const item = document.createElement('span');
+      item.className = 'mini-obj ' + el.type;
+      item.style.left = (el.x / SLIDE_W * 100) + '%';
+      item.style.top = (el.y / SLIDE_H * 100) + '%';
+      item.style.width = (el.w / SLIDE_W * 100) + '%';
+      item.style.height = (el.h / SLIDE_H * 100) + '%';
+      item.style.color = el.color || '#1f2937';
+      item.style.background = el.fill || 'transparent';
+      item.style.transform = 'rotate(' + (Number(el.rotate) || 0) + 'deg)';
+      item.style.fontWeight = el.bold ? '900' : '700';
+      if (el.type === 'image' && el.src) {
+        item.innerHTML = '<img src="' + escapeAttr(el.src) + '" alt="">';
+        const image = item.querySelector('img');
+        image.style.objectFit = el.fit || 'contain';
+        image.style.objectPosition = (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%';
+      } else if (el.type === 'video' || el.type === 'youtube') {
+        item.textContent = 'Video';
+      } else if (el.type === 'table') {
+        item.textContent = 'Table';
+      } else {
+        item.textContent = String(el.text || '').slice(0, 80);
+      }
+      mini.appendChild(item);
+    });
+    if (slide.footer) {
+      const footer = document.createElement('span');
+      footer.className = 'mini-footer';
+      footer.textContent = String(index + 1);
+      mini.appendChild(footer);
+    }
+    return mini;
   }
 
   function renderCanvas() {
@@ -271,6 +349,12 @@
       footer.innerHTML = '<span>' + escapeHtml(deck.footer || '') + '</span><span>' + (activeSlide + 1) + ' / ' + deck.slides.length + '</span>';
       els.canvas.appendChild(footer);
     }
+    if (slide.audio && slide.audio.length) {
+      const audioBar = document.createElement('div');
+      audioBar.className = 'slide-audio-bar';
+      audioBar.innerHTML = slide.audio.map(audio => '<span>Slide audio: ' + escapeHtml(audio.name) + '</span>').join('');
+      els.canvas.appendChild(audioBar);
+    }
   }
 
   function renderObject(el) {
@@ -282,7 +366,23 @@
     node.style.width = (el.w / SLIDE_W * 100) + '%';
     node.style.height = (el.h / SLIDE_H * 100) + '%';
     node.style.zIndex = String(el.z || 1);
+    node.style.transform = 'rotate(' + (Number(el.rotate) || 0) + 'deg)';
+    node.style.transformOrigin = 'center center';
+    if (el.id === cropTargetId) node.classList.add('crop-mode');
     node.addEventListener('pointerdown', objectPointerDown);
+    if (el.type === 'image') {
+      node.addEventListener('dblclick', event => {
+        event.preventDefault();
+        selectedId = el.id;
+        cropTargetId = el.id;
+        el.fit = 'cover';
+        el.cropX = el.cropX ?? 50;
+        el.cropY = el.cropY ?? 50;
+        saveSoon();
+        render();
+        setStatus('Crop mode: drag inside the image to reposition, then click off the image.');
+      });
+    }
 
     const content = document.createElement('div');
     content.className = 'object-content';
@@ -307,6 +407,9 @@
       });
     } else if (el.type === 'image') {
       content.innerHTML = '<img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '">';
+      const image = content.querySelector('img');
+      image.style.objectFit = el.fit || 'contain';
+      image.style.objectPosition = (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%';
     } else if (el.type === 'youtube') {
       content.innerHTML = '<iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe>';
     } else if (el.type === 'video') {
@@ -343,10 +446,19 @@
     }
 
     node.appendChild(content);
-    const handle = document.createElement('span');
-    handle.className = 'resize-handle';
-    handle.addEventListener('pointerdown', resizePointerDown);
-    node.appendChild(handle);
+    if (el.id === selectedId) {
+      ['nw', 'ne', 'se', 'sw'].forEach(handleName => {
+        const handle = document.createElement('span');
+        handle.className = 'resize-handle ' + handleName;
+        handle.dataset.handle = handleName;
+        handle.addEventListener('pointerdown', resizePointerDown);
+        node.appendChild(handle);
+      });
+      const rotate = document.createElement('span');
+      rotate.className = 'rotate-handle';
+      rotate.addEventListener('pointerdown', rotatePointerDown);
+      node.appendChild(rotate);
+    }
     els.canvas.appendChild(node);
   }
 
@@ -364,13 +476,13 @@
       [els.altText, els.linkUrl, els.posX, els.posY, els.posW, els.posH].forEach(input => input.value = '');
       return;
     }
-    els.selectionInfo.textContent = obj.type + ' object';
+    els.selectionInfo.textContent = obj.type + ' object selected. Drag to move, use corner handles to resize, and use the top handle to rotate.';
     els.altText.value = obj.alt || '';
     els.linkUrl.value = obj.href || '';
-    els.posX.value = Math.round(obj.x);
-    els.posY.value = Math.round(obj.y);
-    els.posW.value = Math.round(obj.w);
-    els.posH.value = Math.round(obj.h);
+    if (els.posX) els.posX.value = Math.round(obj.x);
+    if (els.posY) els.posY.value = Math.round(obj.y);
+    if (els.posW) els.posW.value = Math.round(obj.w);
+    if (els.posH) els.posH.value = Math.round(obj.h);
     els.fontFamily.value = obj.fontFamily || els.fontFamily.value;
     els.fontSize.value = obj.fontSize || 30;
     els.textColor.value = normalizeColor(obj.color || '#1f2937');
@@ -449,8 +561,9 @@
     const target = event.currentTarget;
     const id = target.dataset.id;
     selectedId = id;
+    if (cropTargetId && cropTargetId !== id) cropTargetId = null;
     renderInspector();
-    if (event.target.classList.contains('resize-handle')) return;
+    if (event.target.classList.contains('resize-handle') || event.target.classList.contains('rotate-handle')) return;
     if (event.target.closest('[contenteditable="true"]') && event.detail > 1) return;
     event.preventDefault();
     const obj = selectedObject();
@@ -459,7 +572,9 @@
       x: event.clientX,
       y: event.clientY,
       objX: obj.x,
-      objY: obj.y
+      objY: obj.y,
+      cropX: obj.cropX ?? 50,
+      cropY: obj.cropY ?? 50
     };
     target.setPointerCapture(event.pointerId);
     target.addEventListener('pointermove', move);
@@ -467,6 +582,12 @@
     renderCanvas();
 
     function move(ev) {
+      if (cropTargetId === obj.id && obj.type === 'image') {
+        obj.cropX = clamp(start.cropX - (ev.clientX - start.x) / rect.width * 100, 0, 100);
+        obj.cropY = clamp(start.cropY - (ev.clientY - start.y) / rect.height * 100, 0, 100);
+        renderCanvas();
+        return;
+      }
       obj.x = clamp(start.objX + (ev.clientX - start.x) / rect.width * SLIDE_W, 0, SLIDE_W - obj.w);
       obj.y = clamp(start.objY + (ev.clientY - start.y) / rect.height * SLIDE_H, 0, SLIDE_H - obj.h);
       renderCanvas();
@@ -487,9 +608,12 @@
     selectedId = target.dataset.id;
     const obj = selectedObject();
     const rect = els.canvas.getBoundingClientRect();
+    const handle = event.currentTarget.dataset.handle || 'se';
     const start = {
       x: event.clientX,
       y: event.clientY,
+      objX: obj.x,
+      objY: obj.y,
       w: obj.w,
       h: obj.h
     };
@@ -498,8 +622,46 @@
     target.addEventListener('pointerup', stop, { once: true });
 
     function move(ev) {
-      obj.w = clamp(start.w + (ev.clientX - start.x) / rect.width * SLIDE_W, 60, SLIDE_W - obj.x);
-      obj.h = clamp(start.h + (ev.clientY - start.y) / rect.height * SLIDE_H, 40, SLIDE_H - obj.y);
+      const dx = (ev.clientX - start.x) / rect.width * SLIDE_W;
+      const dy = (ev.clientY - start.y) / rect.height * SLIDE_H;
+      if (handle.includes('e')) obj.w = clamp(start.w + dx, 60, SLIDE_W - obj.x);
+      if (handle.includes('s')) obj.h = clamp(start.h + dy, 40, SLIDE_H - obj.y);
+      if (handle.includes('w')) {
+        const nextX = clamp(start.objX + dx, 0, start.objX + start.w - 60);
+        obj.w = start.w + (start.objX - nextX);
+        obj.x = nextX;
+      }
+      if (handle.includes('n')) {
+        const nextY = clamp(start.objY + dy, 0, start.objY + start.h - 40);
+        obj.h = start.h + (start.objY - nextY);
+        obj.y = nextY;
+      }
+      renderCanvas();
+      renderInspector();
+    }
+
+    function stop(ev) {
+      target.releasePointerCapture(ev.pointerId);
+      target.removeEventListener('pointermove', move);
+      saveSoon();
+    }
+  }
+
+  function rotatePointerDown(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = event.currentTarget.closest('.slide-object');
+    selectedId = target.dataset.id;
+    const obj = selectedObject();
+    const rect = target.getBoundingClientRect();
+    const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    target.setPointerCapture(event.pointerId);
+    target.addEventListener('pointermove', move);
+    target.addEventListener('pointerup', stop, { once: true });
+
+    function move(ev) {
+      const angle = Math.atan2(ev.clientY - center.y, ev.clientX - center.x) * 180 / Math.PI + 90;
+      obj.rotate = Math.round(angle);
       renderCanvas();
       renderInspector();
     }
@@ -537,6 +699,61 @@
       src,
       title: file.name
     })));
+  }
+
+  function insertAudioFile(file) {
+    readAsDataUrl(file).then(src => {
+      currentSlide().audio = currentSlide().audio || [];
+      currentSlide().audio.push({ id: uid('audio'), src, name: file.name, title: file.name });
+      saveSoon();
+      render();
+      setStatus('Added slide audio.');
+    });
+  }
+
+  function setGlobalAudioFile(file) {
+    readAsDataUrl(file).then(src => {
+      deck.globalAudio = { id: uid('audio'), src, name: file.name, title: file.name };
+      saveSoon();
+      render();
+      setStatus('Added presentation soundtrack.');
+    });
+  }
+
+  async function recordSlideAudio() {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      setStatus('Audio recording is not available in this browser.');
+      return;
+    }
+    try {
+      setStatus('Recording. Speak now, then confirm to stop.');
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+      recorder.addEventListener('dataavailable', event => {
+        if (event.data.size) chunks.push(event.data);
+      });
+      recorder.start();
+      window.setTimeout(() => {
+        if (recorder.state === 'recording' && confirm('Stop slide audio recording?')) recorder.stop();
+      }, 1200);
+      recorder.addEventListener('stop', () => {
+        stream.getTracks().forEach(track => track.stop());
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        const reader = new FileReader();
+        reader.onload = () => {
+          currentSlide().audio = currentSlide().audio || [];
+          currentSlide().audio.push({ id: uid('audio'), src: reader.result, name: 'Recorded slide audio', title: 'Recorded slide audio' });
+          saveSoon();
+          render();
+          setStatus('Added recorded slide audio.');
+        };
+        reader.readAsDataURL(blob);
+      });
+    } catch (err) {
+      console.warn(err);
+      setStatus('Could not start audio recording.');
+    }
   }
 
   function readAsDataUrl(file) {
@@ -625,15 +842,16 @@
       bg: slide.bg,
       html: slideToWebDeckHtml(slide, index)
     }));
+    const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title><style>' +
       webDeckCss(theme) +
-      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><main id="deck"></main><div class="progress"><span id="progress"></span></div><nav class="bar"><strong>' + escapeHtml(deck.title) + '</strong><button id="prev">‹</button><div id="dots"></div><span id="count"></span><button id="next">›</button><button id="notesBtn">Notes</button><button id="fullBtn">Full</button></nav><aside id="notes"></aside><script>const PASSWORD_HASH="' + passwordHash + '";const SLIDES=' + JSON.stringify(slides) + ';' + webDeckJs() + '<\/script></body></html>';
+      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><main id="deck"></main>' + globalAudio + '<div class="progress"><span id="progress"></span></div><nav class="bar"><strong>' + escapeHtml(deck.title) + '</strong><button id="prev">‹</button><div id="dots"></div><span id="count"></span><button id="next">›</button><button id="notesBtn">Notes</button><button id="fullBtn">Full</button></nav><aside id="notes"></aside><script>const PASSWORD_HASH="' + passwordHash + '";const SLIDES=' + JSON.stringify(slides) + ';' + webDeckJs() + '<\/script></body></html>';
   }
 
   function slideToWebDeckHtml(slide, index) {
     const parts = slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).map(el => {
-      const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';';
-      if (el.type === 'image') return '<div class="obj" style="' + style + '"><img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '"></div>';
+      const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';transform:rotate(' + (Number(el.rotate) || 0) + 'deg);transform-origin:center center;';
+      if (el.type === 'image') return '<div class="obj" style="' + style + '"><img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '" style="object-fit:' + escapeAttr(el.fit || 'contain') + ';object-position:' + (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%"></div>';
       if (el.type === 'youtube') return '<div class="obj" style="' + style + '"><iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe></div>';
       if (el.type === 'video') return '<div class="obj" style="' + style + '"><video src="' + escapeAttr(el.src || '') + '" controls></video></div>';
       if (el.type === 'audio') return '<div class="obj" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
@@ -643,11 +861,14 @@
       return '<div class="obj" style="' + style + '">' + escapeHtml(el.text || '').replace(/\n/g, '<br>') + '</div>';
     });
     if (slide.footer) parts.push('<div class="footer"><span>' + escapeHtml(deck.footer || '') + '</span><span>' + (index + 1) + ' / ' + deck.slides.length + '</span></div>');
+    if (slide.audio && slide.audio.length) {
+      parts.push('<div class="slide-audio">' + slide.audio.map(audio => '<audio src="' + escapeAttr(audio.src || '') + '" controls preload="metadata"></audio>').join('') + '</div>');
+    }
     return parts.join('');
   }
 
   function webDeckCss(theme) {
-    return ':root{--accent:' + theme.accent + ';--dark:' + theme.dark + ';font-family:Inter,Arial,sans-serif;color:#1f2937;background:#111827}body{margin:0;overflow:hidden}.slide{position:fixed;inset:0;display:none;background:#fff}.slide.active{display:block}.slide.section,.slide.dark{background:linear-gradient(135deg,var(--dark),var(--accent));color:#fff}.obj{position:absolute;overflow:auto;padding:8px;line-height:1.18}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.obj table{width:100%;height:100%;border-collapse:collapse}.obj td{border:1px solid #c7d2fe;padding:6px}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}.bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(17,24,39,.76);backdrop-filter:blur(12px);color:#fff}.bar button{border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:7px 10px;font-weight:800}.bar strong{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dot{width:10px;height:10px;border-radius:99px;border:0;background:#fff8;vertical-align:middle}.dot.active{width:28px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}#notes{position:fixed;left:20px;right:20px;bottom:82px;max-height:35vh;overflow:auto;padding:16px;border-radius:14px;background:#fff;color:#1f2937;box-shadow:0 18px 44px #0004;transform:translateY(130%);pointer-events:none;transition:.2s}#notes.open{transform:translateY(0);pointer-events:auto}#lock{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:#111827;color:#fff}body.locked #lock{display:grid}@media(max-width:640px){.bar strong{display:none}.bar{gap:5px}.dot{width:8px;height:8px}.dot.active{width:20px}.obj{font-size:max(16px,.8em)!important}}';
+    return ':root{--accent:' + theme.accent + ';--dark:' + theme.dark + ';font-family:Inter,Arial,sans-serif;color:#1f2937;background:#111827}body{margin:0;overflow:hidden}.slide{position:fixed;inset:0;display:none;background:#fff}.slide.active{display:block}.slide.section,.slide.dark{background:linear-gradient(135deg,var(--dark),var(--accent));color:#fff}.obj{position:absolute;overflow:hidden;padding:8px;line-height:1.18}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.obj table{width:100%;height:100%;border-collapse:collapse}.obj td{border:1px solid #c7d2fe;padding:6px}.slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px}.slide-audio audio{width:260px}.global-audio{position:fixed;left:18px;bottom:18px;z-index:3;width:240px}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}.bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(17,24,39,.76);backdrop-filter:blur(12px);color:#fff}.bar button{border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:7px 10px;font-weight:800}.bar strong{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dot{width:10px;height:10px;border-radius:99px;border:0;background:#fff8;vertical-align:middle}.dot.active{width:28px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}#notes{position:fixed;left:20px;right:20px;bottom:82px;max-height:35vh;overflow:auto;padding:16px;border-radius:14px;background:#fff;color:#1f2937;box-shadow:0 18px 44px #0004;transform:translateY(130%);pointer-events:none;transition:.2s}#notes.open{transform:translateY(0);pointer-events:auto}#lock{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:#111827;color:#fff}body.locked #lock{display:grid}@media(max-width:640px){.bar strong{display:none}.bar{gap:5px}.dot{width:8px;height:8px}.dot.active{width:20px}.obj{font-size:max(16px,.8em)!important}.global-audio{display:none}}';
   }
 
   function webDeckJs() {
@@ -714,6 +935,9 @@
     if (action === 'add-header') addObject(textElement('Header', 80, 35, 640, 50, 24, true, '#6b7280'));
     if (action === 'insert-image-upload') els.imageFile.click();
     if (action === 'insert-video-upload') els.videoFile.click();
+    if (action === 'insert-audio-upload') els.audioFile.click();
+    if (action === 'set-global-audio') els.globalAudioFile.click();
+    if (action === 'record-slide-audio') recordSlideAudio();
     if (action === 'insert-image-url') {
       const src = prompt('Image URL');
       if (src) addObject(Object.assign(textElement('', 180, 160, 640, 360, 24), { type: 'image', src, alt: 'Image from URL' }));
@@ -733,12 +957,15 @@
     }
     if (action === 'insert-splatimage') insertHandoffImage(['splatimage.selectedPng', 'splatimage.lastExport', 'drawsplat.splatimage.export']);
     if (action === 'insert-concept') insertHandoffImage(['drawsplat.concept.png', 'conceptMap.exportPng', 'drawsplat.conceptMap.export']);
+    if (action === 'insert-graph') insertHandoffImage(['gridsplat.chart.png', 'drawsplat.graph.png', 'drawsplat.chart.png', 'chartStudio.exportPng', 'graphMaker.exportPng']);
     if (action === 'toggle-bold') applyToSelected(obj => obj.bold = !obj.bold);
     if (action === 'toggle-italic') applyToSelected(obj => obj.italic = !obj.italic);
     if (action === 'toggle-underline') applyToSelected(obj => obj.underline = !obj.underline);
     if (action === 'align-left') applyToSelected(obj => obj.align = 'left');
     if (action === 'align-center') applyToSelected(obj => obj.align = 'center');
     if (action === 'align-right') applyToSelected(obj => obj.align = 'right');
+    if (action === 'autofit-textbox') autofitTextBox();
+    if (action === 'fit-text-to-box') fitTextToBox();
     if (action === 'bring-forward') applyToSelected(obj => obj.z = Date.now());
     if (action === 'send-backward') applyToSelected(obj => obj.z = 1);
     if (action === 'toggle-footer') {
@@ -770,6 +997,28 @@
     if (action === 'view-notes') els.notes.focus();
     if (action === 'toggle-sidebar') els.workspace.classList.toggle('show-inspector');
     if (action === 'show-feature-plan') window.open('docs/plan.md', '_blank', 'noopener');
+  }
+
+  function autofitTextBox() {
+    applyToSelected(obj => {
+      if (!['text', 'list', 'link', 'shape'].includes(obj.type)) return;
+      const lines = String(obj.text || '').split('\n');
+      const longest = Math.max(1, ...lines.map(line => line.length));
+      const fontSize = Number(obj.fontSize) || 30;
+      obj.w = clamp(Math.ceil(longest * fontSize * 0.62) + 32, 100, SLIDE_W - obj.x);
+      obj.h = clamp(Math.ceil(lines.length * fontSize * 1.28) + 28, 50, SLIDE_H - obj.y);
+    });
+  }
+
+  function fitTextToBox() {
+    applyToSelected(obj => {
+      if (!['text', 'list', 'link', 'shape'].includes(obj.type)) return;
+      const lines = String(obj.text || '').split('\n');
+      const longest = Math.max(1, ...lines.map(line => line.length));
+      const byWidth = (obj.w - 28) / (longest * 0.62);
+      const byHeight = (obj.h - 24) / Math.max(1, lines.length) / 1.25;
+      obj.fontSize = clamp(Math.floor(Math.min(byWidth, byHeight)), 12, 96);
+    });
   }
 
   function insertHandoffImage(keys) {
@@ -819,6 +1068,10 @@
   }
 
   document.addEventListener('click', event => {
+    if (cropTargetId && !event.target.closest('.slide-object[data-id="' + cropTargetId + '"]')) {
+      cropTargetId = null;
+      render();
+    }
     const actionTarget = event.target.closest('[data-action]');
     if (actionTarget) runAction(actionTarget.dataset.action, actionTarget);
     const templateTarget = event.target.closest('[data-template]');
@@ -878,6 +1131,16 @@
     const file = els.videoFile.files[0];
     if (file) insertVideoFile(file);
     els.videoFile.value = '';
+  });
+  els.audioFile.addEventListener('change', () => {
+    const file = els.audioFile.files[0];
+    if (file) insertAudioFile(file);
+    els.audioFile.value = '';
+  });
+  els.globalAudioFile.addEventListener('change', () => {
+    const file = els.globalAudioFile.files[0];
+    if (file) setGlobalAudioFile(file);
+    els.globalAudioFile.value = '';
   });
   els.deckFile.addEventListener('change', () => {
     const file = els.deckFile.files[0];

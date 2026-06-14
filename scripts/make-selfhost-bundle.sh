@@ -65,8 +65,7 @@ EXCLUDES=(
   ".env.local"
   "/package.json"
   "/package-lock.json"
-  "gridsplat"
-  "showsplat"
+  "splatworks"
   "*.log"
   "*.swp"
   "drawsplat-selfhost-*.zip"
@@ -199,11 +198,13 @@ if command -v rsync >/dev/null 2>&1; then
   for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
     GRID_RSYNC_ARGS+=(--exclude "$pattern")
   done
-  rsync "${GRID_RSYNC_ARGS[@]}" gridsplat/ "$GRID_ROOT/gridsplat/"
+  mkdir -p "$GRID_ROOT/splatworks"
+  rsync "${GRID_RSYNC_ARGS[@]}" splatworks/gridsplat/ "$GRID_ROOT/splatworks/gridsplat/"
 else
-  cp -R gridsplat "$GRID_ROOT/gridsplat"
+  mkdir -p "$GRID_ROOT/splatworks"
+  cp -R splatworks/gridsplat "$GRID_ROOT/splatworks/gridsplat"
   for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
-    find "$GRID_ROOT/gridsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+    find "$GRID_ROOT/splatworks/gridsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
   done
 fi
 
@@ -216,19 +217,19 @@ Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
 What's in this zip
 ------------------
-- gridsplat/ — the built GridSplatTM static app plus source, tests, docs, and
+- splatworks/gridsplat/ — the built GridSplatTM static app plus source, tests, docs, and
   package metadata for rebuilding from source.
-- gridsplat/LICENSE.md and gridsplat/COPYING — GPL-3.0-only license text for
+- splatworks/gridsplat/LICENSE.md and splatworks/gridsplat/COPYING — GPL-3.0-only license text for
   GridSplatTM / SplatWorksTM spreadsheet code.
 
 Deployment
 ----------
-GridSplatTM is currently built to run from /gridsplat/.
+GridSplatTM is currently built to run from /splatworks/gridsplat/.
 
-1. Upload the included gridsplat/ folder to your static host.
-2. Open https://your-domain.example/gridsplat/.
+1. Upload the included splatworks/ folder to your static host.
+2. Open https://your-domain.example/splatworks/gridsplat/.
 3. To rebuild from source:
-     cd gridsplat
+     cd splatworks/gridsplat
      npm install
      npm run build
 
@@ -246,11 +247,13 @@ if command -v rsync >/dev/null 2>&1; then
   for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
     SHOW_RSYNC_ARGS+=(--exclude "$pattern")
   done
-  rsync "${SHOW_RSYNC_ARGS[@]}" showsplat/ "$SHOW_ROOT/showsplat/"
+  mkdir -p "$SHOW_ROOT/splatworks"
+  rsync "${SHOW_RSYNC_ARGS[@]}" splatworks/showsplat/ "$SHOW_ROOT/splatworks/showsplat/"
 else
-  cp -R showsplat "$SHOW_ROOT/showsplat"
+  mkdir -p "$SHOW_ROOT/splatworks"
+  cp -R splatworks/showsplat "$SHOW_ROOT/splatworks/showsplat"
   for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
-    find "$SHOW_ROOT/showsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+    find "$SHOW_ROOT/splatworks/showsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
   done
 fi
 
@@ -263,15 +266,15 @@ Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
 What's in this zip
 ------------------
-- showsplat/ — the ShowSplatTM static presentation and WebDeck authoring app.
-- showsplat/docs/plan.md — the ShowSplatTM feature plan and release scope.
+- splatworks/showsplat/ — the ShowSplatTM static presentation and WebDeck authoring app.
+- splatworks/showsplat/docs/plan.md — the ShowSplatTM feature plan and release scope.
 
 Deployment
 ----------
 ShowSplatTM is a static browser app.
 
-1. Upload the included showsplat/ folder to your static host.
-2. Open https://your-domain.example/showsplat/.
+1. Upload the included splatworks/ folder to your static host.
+2. Open https://your-domain.example/splatworks/showsplat/.
 
 Licensing boundary
 ------------------

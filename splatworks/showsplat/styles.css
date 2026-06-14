@@ -210,6 +210,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .thumb.active { border-color: var(--accent); }
 .thumb-num { color: var(--accent); font-weight: 950; }
 .thumb-preview {
+  position: relative;
   aspect-ratio: 16/9;
   border: 1px solid #eadfff;
   border-radius: 6px;
@@ -219,6 +220,44 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   font-size: .58rem;
   font-weight: 850;
   color: var(--dark);
+}
+.mini-slide.section,
+.mini-slide.dark { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
+.mini-obj {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-size: 5px;
+  line-height: 1.1;
+  transform-origin: center center;
+  white-space: pre-wrap;
+}
+.mini-obj.shape { border: 1px dashed #c4b5fd; }
+.mini-obj img { width: 100%; height: 100%; display: block; border: 0; }
+.mini-obj.video,
+.mini-obj.youtube,
+.mini-obj.table {
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8d2ff;
+  background: #fff;
+  color: #5b21b6;
+  font-size: 6px;
+}
+.mini-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 7px;
+  background: rgba(31,27,75,.9);
+  color: #fff;
+  text-align: right;
+  padding-right: 4px;
+  font-size: 5px;
+  line-height: 7px;
 }
 .rail-add { margin: 8px 12px 16px; width: calc(100% - 24px); }
 
@@ -297,7 +336,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   min-height: 28px;
   border: 2px solid transparent;
   outline: none;
-  overflow: hidden;
+  overflow: visible;
 }
 .slide-object.selected {
   border-color: var(--accent);
@@ -307,7 +346,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   width: 100%;
   height: 100%;
   padding: 8px;
-  overflow: auto;
+  overflow: hidden;
 }
 .object-content[contenteditable="true"]:focus { outline: none; }
 .slide-object.text .object-content,
@@ -323,18 +362,65 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   border: 0;
   object-fit: contain;
 }
+.slide-object.crop-mode .object-content {
+  outline: 2px dashed var(--accent-2);
+  outline-offset: -8px;
+  cursor: move;
+}
 .slide-object.audio audio { width: 100%; }
 .slide-object.table table { width: 100%; height: 100%; border-collapse: collapse; table-layout: fixed; }
 .slide-object.table td { border: 1px solid #c7d2fe; padding: 6px; vertical-align: top; }
 .slide-object .resize-handle {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 8px 0 0 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 99px;
   background: var(--accent);
-  cursor: nwse-resize;
+  box-shadow: 0 2px 8px rgba(31,41,55,.25);
+}
+.resize-handle.nw { left: -8px; top: -8px; cursor: nwse-resize; }
+.resize-handle.ne { right: -8px; top: -8px; cursor: nesw-resize; }
+.resize-handle.se { right: -8px; bottom: -8px; cursor: nwse-resize; }
+.resize-handle.sw { left: -8px; bottom: -8px; cursor: nesw-resize; }
+.rotate-handle {
+  position: absolute;
+  left: 50%;
+  top: -38px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #fff;
+  border-radius: 99px;
+  background: var(--accent-2);
+  box-shadow: 0 2px 8px rgba(31,41,55,.25);
+  cursor: grab;
+  transform: translateX(-50%);
+}
+.rotate-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  width: 2px;
+  height: 20px;
+  background: var(--accent-2);
+  transform: translateX(-50%);
+}
+.slide-audio-bar {
+  position: absolute;
+  right: 16px;
+  bottom: 48px;
+  display: grid;
+  gap: 4px;
+  max-width: 320px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 999px;
+  background: rgba(31,27,75,.76);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 800;
+  pointer-events: none;
 }
 
 .panel {
@@ -365,6 +451,19 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .selection-info { color: var(--muted); font-weight: 800; }
+.advanced-position {
+  border: 1px solid #eee8ff;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fbfaff;
+}
+.advanced-position summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 900;
+}
+.advanced-position .grid-two { margin-top: 8px; }
 
 .slide-sorter {
   padding: 18px;
