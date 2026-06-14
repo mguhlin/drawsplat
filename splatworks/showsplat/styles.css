@@ -311,14 +311,35 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .mini-obj img { width: 100%; height: 100%; display: block; border: 0; }
 .mini-obj.video,
 .mini-obj.youtube,
-.mini-obj.table,
-.mini-obj.html {
+.mini-obj.table {
   display: grid;
   place-items: center;
   border: 1px solid #d8d2ff;
   background: #fff;
   color: #5b21b6;
   font-size: 6px;
+}
+.mini-obj.html {
+  border: 0;
+  background: #fff;
+  color: inherit;
+  font-size: 5px;
+  padding: 0;
+}
+.mini-obj.html img,
+.mini-obj.html video,
+.mini-obj.html iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  object-fit: contain;
+}
+.mini-html-content {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 .mini-footer {
   position: absolute;

@@ -373,7 +373,7 @@
       } else if (el.type === 'table') {
         item.textContent = 'Table';
       } else if (el.type === 'html') {
-        item.textContent = htmlToText(el.html || '').slice(0, 80);
+        item.innerHTML = miniHtmlPreview(el.html || '');
       } else {
         item.textContent = String(el.text || '').slice(0, 80);
       }
@@ -386,6 +386,18 @@
       mini.appendChild(footer);
     }
     return mini;
+  }
+
+  function miniHtmlPreview(html) {
+    const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
+    const media = doc.querySelector('img, video, iframe');
+    if (media) {
+      const tag = media.tagName.toLowerCase();
+      if (tag === 'img') return '<img src="' + escapeAttr(media.getAttribute('src') || '') + '" alt="">';
+      if (tag === 'video') return '<video src="' + escapeAttr(media.getAttribute('src') || '') + '"></video>';
+      return '<iframe src="' + escapeAttr(media.getAttribute('src') || '') + '" title=""></iframe>';
+    }
+    return '<span class="mini-html-content">' + sanitizeImportedHtml(html) + '</span>';
   }
 
   function renderCanvas() {
@@ -1252,26 +1264,33 @@
     const importedCss = styleMatch ? styleMatch[1] : '';
     const resolvedBaseUrl = baseUrl || extractBaseUrl(html);
     const fallbackTitle = (fileName || 'Imported WebDeck').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+    const importedSlides = sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index, resolvedBaseUrl));
+    const footerText = importedSlides.find(slide => slide.footer)?.importedFooterText || '';
+    importedSlides.forEach(slide => delete slide.importedFooterText);
     return {
       version: 1,
       title: decodeHtml(titleMatch ? titleMatch[1] : fallbackTitle) || fallbackTitle,
       theme: 'violet',
-      footer: 'ShowSplat™ by DrawSplat™',
-      slides: sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index, resolvedBaseUrl))
+      footer: footerText || 'ShowSplat™ by DrawSplat™',
+      slides: importedSlides
     };
   }
 
   function webDeckSlideToShowSplatSlide(source, importedCss, index, baseUrl) {
     const bg = source.bg === 'hero' || source.bg === 'section' ? 'section' : source.bg === 'dark' ? 'dark' : 'light';
     const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
-    const html = sanitizeImportedHtml(source.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl);
+    const footerInfo = extractImportedFooter(source.html);
+    const html = sanitizeImportedHtml(footerInfo.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl);
     return {
       id: uid('slide'),
       title: source.title || 'Slide ' + (index + 1),
       notes: source.notes || '',
       bg,
       importedCss,
-      footer: true,
+      footer: footerInfo.hasFooter,
+      footerColor: footerInfo.background || '',
+      footerTextColor: footerInfo.color || '',
+      importedFooterText: footerInfo.text,
       audio: [],
       elements: [{
         id: uid('obj'),
@@ -1279,7 +1298,7 @@
         x: 0,
         y: 0,
         w: 1600,
-        h: 850,
+        h: footerInfo.hasFooter ? 850 : 900,
         html,
         autoFit: true,
         importScale: 1,
@@ -1293,6 +1312,24 @@
         align: 'left',
         z: Date.now() + index
       }]
+    };
+  }
+
+  function extractImportedFooter(html) {
+    const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
+    const footer = doc.querySelector('.footer, [data-showsplat-footer="true"]');
+    if (!footer) return { hasFooter: false, html: String(html || ''), text: '', background: '', color: '' };
+    const spans = Array.from(footer.querySelectorAll('span'));
+    const text = (spans[0]?.textContent || footer.textContent || '').replace(/\s+\d+\s*\/\s*\d+\s*$/, '').trim();
+    const background = footer.style.background || footer.style.backgroundColor || '';
+    const color = footer.style.color || '';
+    footer.remove();
+    return {
+      hasFooter: true,
+      html: doc.body.firstElementChild ? doc.body.firstElementChild.innerHTML : '',
+      text,
+      background,
+      color
     };
   }
 
