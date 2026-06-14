@@ -478,6 +478,8 @@ test('creates a live-updating bar chart and exports PNG', async ({
   const startPanelBox = await chartPanel.boundingBox();
   const moveHandle = page.getByRole('button', { name: 'Move chart' });
 
+  await expect(page.getByRole('button', { name: 'Copy chart' })).toBeVisible();
+
   if (!startPanelBox) {
     throw new Error('Expected chart panel to be visible');
   }
@@ -492,7 +494,54 @@ test('creates a live-updating bar chart and exports PNG', async ({
     throw new Error('Expected moved chart panel to be visible');
   }
 
-  expect(Math.abs(movedPanelBox.x - startPanelBox.x)).toBeGreaterThan(20);
+  expect(
+    Math.abs(movedPanelBox.x - startPanelBox.x) +
+      Math.abs(movedPanelBox.y - startPanelBox.y),
+  ).toBeGreaterThan(20);
+
+  const resizeHandle = page.getByRole('button', {
+    exact: true,
+    name: 'Resize chart',
+  });
+  const resizeHandleBox = await resizeHandle.boundingBox();
+
+  if (!resizeHandleBox) {
+    throw new Error('Expected chart resize handle to be visible');
+  }
+
+  await page.mouse.move(
+    resizeHandleBox.x + resizeHandleBox.width / 2,
+    resizeHandleBox.y + resizeHandleBox.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    resizeHandleBox.x + resizeHandleBox.width / 2 + 120,
+    resizeHandleBox.y + resizeHandleBox.height / 2 + 80,
+  );
+  await page.mouse.up();
+
+  const resizedPanelBox = await chartPanel.boundingBox();
+
+  if (!resizedPanelBox) {
+    throw new Error('Expected resized chart panel to be visible');
+  }
+
+  expect(resizedPanelBox.width).toBeGreaterThan(movedPanelBox.width + 40);
+
+  const heightHandle = page.getByRole('button', {
+    name: 'Resize chart height',
+  });
+  await heightHandle.dragTo(page.getByRole('button', { name: 'Move chart' }));
+
+  const heightResizedPanelBox = await chartPanel.boundingBox();
+
+  if (!heightResizedPanelBox) {
+    throw new Error('Expected height-resized chart panel to be visible');
+  }
+
+  expect(heightResizedPanelBox.height).toBeLessThan(
+    resizedPanelBox.height - 30,
+  );
 
   await page.getByTestId('cell-B3').dblclick();
   await page.getByLabel('Edit cell B3').fill('9');

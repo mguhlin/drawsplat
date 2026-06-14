@@ -57,6 +57,8 @@ const DEFAULT_ROW_HEIGHT = 56;
 const DEFAULT_COL_WIDTH = 120;
 const HEADER_SIZE = 48;
 const OVERSCAN = 4;
+const MIN_CHART_PANEL_WIDTH = 320;
+const MIN_CHART_PANEL_HEIGHT = 300;
 
 type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent';
 type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
@@ -105,6 +107,23 @@ interface ChartPanelDragState {
   startPointerX: number;
   startPointerY: number;
   startTop: number;
+}
+
+interface ChartPanelSize {
+  height: number;
+  width: number;
+}
+
+type ChartResizeHandle = 'bottom' | 'corner' | 'right';
+
+interface ChartPanelResizeState {
+  handle: ChartResizeHandle;
+  startHeight: number;
+  startLeft: number;
+  startPointerX: number;
+  startPointerY: number;
+  startTop: number;
+  startWidth: number;
 }
 
 interface SpreadsheetGridProps {
@@ -178,6 +197,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chartPanelRef = useRef<HTMLElement>(null);
+  const chartPanelResizeStateRef = useRef<ChartPanelResizeState | null>(null);
   const [sheet, setSheet] = useState<SheetData>(() => {
     try {
       return loadAutosave() ?? createSheet(DEFAULT_ROWS, DEFAULT_COLS);
@@ -215,6 +235,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     useState<ChartPanelPosition | null>(null);
   const [chartPanelDragState, setChartPanelDragState] =
     useState<ChartPanelDragState | null>(null);
+  const [chartPanelSize, setChartPanelSize] =
+    useState<ChartPanelSize | null>(null);
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('plain');
   const [chartSelection, setChartSelection] = useState<SelectionRange | null>(
     null,
@@ -930,6 +952,39 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     setFileMessage('Downloaded a chart image.');
   }
 
+  function copyChartPng() {
+    const canvas = document.querySelector<HTMLCanvasElement>(
+      '[data-testid="chart-canvas"]',
+    );
+
+    if (!canvas) {
+      setFileMessage('Make a chart before copying an image.');
+      return;
+    }
+
+    canvas.toBlob((blob) => {
+      if (!blob || !navigator.clipboard || !window.ClipboardItem) {
+        setFileMessage('Copying chart images is not available here.');
+        return;
+      }
+
+      void navigator.clipboard
+        .write([
+          new ClipboardItem({
+            [blob.type]: blob,
+          }),
+        ])
+        .then(() => setFileMessage('Copied chart image.'))
+        .catch((error: unknown) =>
+          setFileMessage(
+            error instanceof Error
+              ? `We couldn't copy that chart: ${error.message}`
+              : "We couldn't copy that chart.",
+          ),
+        );
+    }, 'image/png');
+  }
+
   function startChartValueAdjust() {
     remember(sheet);
   }
@@ -1010,6 +1065,83 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   function stopChartPanelDrag() {
     setChartPanelDragState(null);
+  }
+
+  function startChartPanelResize(
+    handle: ChartResizeHandle,
+    event: PointerEvent<HTMLButtonElement>,
+  ) {
+    const panel = chartPanelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    const bounds = panel.getBoundingClientRect();
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setChartPanelPosition({
+      left: bounds.left,
+      top: bounds.top,
+    });
+    setChartPanelSize({
+      height: bounds.height,
+      width: bounds.width,
+    });
+    chartPanelResizeStateRef.current = {
+      handle,
+      startHeight: bounds.height,
+      startLeft: bounds.left,
+      startPointerX: event.clientX,
+      startPointerY: event.clientY,
+      startTop: bounds.top,
+      startWidth: bounds.width,
+    };
+  }
+
+  function continueChartPanelResize(event: PointerEvent<HTMLButtonElement>) {
+    const resizeState = chartPanelResizeStateRef.current;
+
+    if (!resizeState) {
+      return;
+    }
+
+    const deltaX = event.clientX - resizeState.startPointerX;
+    const deltaY = event.clientY - resizeState.startPointerY;
+    const maxWidth = Math.max(
+      MIN_CHART_PANEL_WIDTH,
+      window.innerWidth - resizeState.startLeft,
+    );
+    const maxHeight = Math.max(
+      MIN_CHART_PANEL_HEIGHT,
+      window.innerHeight - resizeState.startTop,
+    );
+    const canResizeWidth =
+      resizeState.handle === 'right' || resizeState.handle === 'corner';
+    const canResizeHeight =
+      resizeState.handle === 'bottom' || resizeState.handle === 'corner';
+
+    setChartPanelSize({
+      height: canResizeHeight
+        ? clamp(
+            resizeState.startHeight + deltaY,
+            MIN_CHART_PANEL_HEIGHT,
+            maxHeight,
+          )
+        : resizeState.startHeight,
+      width: canResizeWidth
+        ? clamp(
+            resizeState.startWidth + deltaX,
+            MIN_CHART_PANEL_WIDTH,
+            maxWidth,
+          )
+        : resizeState.startWidth,
+    });
+  }
+
+  function stopChartPanelResize() {
+    chartPanelResizeStateRef.current = null;
   }
 
   function handleScroll() {
@@ -1656,14 +1788,23 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           ref={chartPanelRef}
           className="chart-panel chart-floating-panel"
           data-positioned={chartPanelPosition ? 'true' : undefined}
+          data-sized={chartPanelSize ? 'true' : undefined}
           aria-label="Chart preview"
           style={
-            chartPanelPosition
-              ? {
-                  left: chartPanelPosition.left,
-                  top: chartPanelPosition.top,
-                }
-              : undefined
+            {
+              ...(chartPanelPosition
+                ? {
+                    left: chartPanelPosition.left,
+                    top: chartPanelPosition.top,
+                  }
+                : {}),
+              ...(chartPanelSize
+                ? {
+                    height: chartPanelSize.height,
+                    width: chartPanelSize.width,
+                  }
+                : {}),
+            } satisfies CSSProperties
           }
         >
           <div className="chart-drag-bar">
@@ -1679,6 +1820,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             >
               <span aria-hidden="true" className="chart-grip" />
               Move chart
+            </button>
+            <button
+              className="chart-copy-button"
+              type="button"
+              onClick={copyChartPng}
+            >
+              Copy chart
             </button>
           </div>
           <div className="chart-panel-header">
@@ -1698,7 +1846,17 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               x
             </button>
           </div>
-          <div className="chart-canvas-wrap">
+          <div
+            className="chart-canvas-wrap"
+            style={
+              chartPanelSize
+                ? {
+                    height: Math.max(160, chartPanelSize.height - 280),
+                    minHeight: 160,
+                  }
+                : undefined
+            }
+          >
             <ChartCanvas
               chart={activeChart}
               onPointAdjustStart={startChartValueAdjust}
@@ -1716,6 +1874,37 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
               ))}
             </tbody>
           </table>
+          {[
+            {
+              className: 'chart-resize-handle-right',
+              handle: 'right' as ChartResizeHandle,
+              label: 'Resize chart width',
+            },
+            {
+              className: 'chart-resize-handle-bottom',
+              handle: 'bottom' as ChartResizeHandle,
+              label: 'Resize chart height',
+            },
+            {
+              className: 'chart-resize-handle-corner',
+              handle: 'corner' as ChartResizeHandle,
+              label: 'Resize chart',
+            },
+          ].map((resizeHandle) => (
+            <button
+              aria-label={resizeHandle.label}
+              className={`chart-resize-handle ${resizeHandle.className}`}
+              key={resizeHandle.handle}
+              title={resizeHandle.label}
+              type="button"
+              onPointerCancel={stopChartPanelResize}
+              onPointerDown={(event) =>
+                startChartPanelResize(resizeHandle.handle, event)
+              }
+              onPointerMove={continueChartPanelResize}
+              onPointerUp={stopChartPanelResize}
+            />
+          ))}
         </section>
       ) : null}
     </section>

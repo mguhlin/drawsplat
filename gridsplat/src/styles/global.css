@@ -35,17 +35,17 @@ select {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  padding: 0 var(--space-4) var(--space-4);
+  gap: var(--space-2);
+  padding: 0 var(--space-2) var(--space-3);
 }
 
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-6);
-  margin: 0 calc(var(--space-4) * -1);
-  padding: var(--space-4) var(--space-6);
+  gap: var(--space-4);
+  margin: 0 calc(var(--space-2) * -1);
+  padding: var(--space-2) var(--space-4);
   color: #fff;
   background: linear-gradient(90deg, #7c3aed, #a855f7);
   box-shadow: 0 2px 10px rgb(0 0 0 / 14%);
@@ -54,26 +54,27 @@ select {
 .brand-lockup {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .brand-icon {
-  width: clamp(58px, 8vw, 82px);
-  height: clamp(58px, 8vw, 82px);
+  width: clamp(44px, 5vw, 58px);
+  height: clamp(44px, 5vw, 58px);
   flex: 0 0 auto;
-  border: 3px solid rgb(255 255 255 / 68%);
-  border-radius: 18px;
+  border: 2px solid rgb(255 255 255 / 68%);
+  border-radius: 14px;
   background: #fff;
   box-shadow: 0 8px 22px rgb(17 24 39 / 18%);
 }
 
 .eyebrow {
   display: inline-flex;
-  margin: 0 0 var(--space-2);
-  padding: var(--space-1) var(--space-3);
+  margin: 0 0 var(--space-1);
+  padding: 2px var(--space-2);
   border-radius: var(--radius-2);
   color: #fff;
   background: rgb(255 255 255 / 18%);
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -90,8 +91,8 @@ select {
 }
 
 h1 {
-  margin: 0 0 var(--space-2);
-  font-size: clamp(2rem, 5vw, 3.6rem);
+  margin: 0 0 var(--space-1);
+  font-size: clamp(1.8rem, 4vw, 3rem);
   line-height: 1;
   letter-spacing: 0;
 }
@@ -100,8 +101,8 @@ h1 {
   max-width: 44ch;
   margin: 0;
   color: rgb(255 255 255 / 88%);
-  font-size: 1.125rem;
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.35;
 }
 
 :focus-visible {
@@ -115,7 +116,7 @@ h1 {
 .dialog-grid,
 .help-list {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .header-actions,
@@ -128,7 +129,7 @@ h1 {
 .top-toolbar {
   position: relative;
   z-index: 30;
-  padding: var(--space-3);
+  padding: var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface);
@@ -140,7 +141,7 @@ h1 {
 .menu-button,
 .menu-item,
 .dialog-close {
-  min-height: 48px;
+  min-height: 42px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   cursor: pointer;
@@ -171,7 +172,7 @@ h1 {
 
 .icon-button,
 .menu-button {
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
   color: var(--color-text);
   background: var(--color-surface);
 }
@@ -298,7 +299,7 @@ h1 {
 .dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 100;
   display: grid;
   place-items: center;
   padding: var(--space-6);
@@ -744,20 +745,20 @@ h1 {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .sheet-toolbar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .big-action,
 .header-toggle,
 .format-control {
-  min-height: 48px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -769,7 +770,7 @@ h1 {
 }
 
 .big-action {
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-4);
   cursor: pointer;
 }
 
@@ -791,7 +792,7 @@ h1 {
 
 .header-toggle,
 .format-control {
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
   color: var(--color-text);
   background: var(--color-surface);
 }
@@ -808,7 +809,7 @@ h1 {
 .format-button-group,
 .color-control,
 .font-size-control {
-  min-height: 48px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
@@ -820,8 +821,8 @@ h1 {
 }
 
 .format-button {
-  width: 38px;
-  min-height: 36px;
+  width: 34px;
+  min-height: 32px;
   display: inline-grid;
   place-items: center;
   border: 1px solid transparent;
@@ -858,8 +859,8 @@ h1 {
 }
 
 .color-control input {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -867,8 +868,8 @@ h1 {
 }
 
 .font-size-control input {
-  width: 58px;
-  min-height: 34px;
+  width: 56px;
+  min-height: 30px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   color: var(--color-text);
@@ -877,7 +878,7 @@ h1 {
 }
 
 .format-control select {
-  min-height: 34px;
+  min-height: 30px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   color: var(--color-text);
@@ -886,7 +887,7 @@ h1 {
 }
 
 .selection-readout {
-  min-height: 48px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   margin: 0;
@@ -898,7 +899,7 @@ h1 {
 }
 
 .file-message {
-  min-height: 48px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   max-width: min(480px, 100%);
@@ -911,15 +912,15 @@ h1 {
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface);
 }
 
 .chart-title-field {
-  min-height: 56px;
+  min-height: 44px;
   display: grid;
   gap: var(--space-1);
   color: var(--color-muted);
@@ -928,8 +929,8 @@ h1 {
 }
 
 .chart-title-field input {
-  min-height: 42px;
-  min-width: 220px;
+  min-height: 34px;
+  min-width: 200px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   padding: 0 var(--space-3);
@@ -939,11 +940,11 @@ h1 {
 }
 
 .chart-type-button {
-  min-height: 56px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   color: var(--color-text);
@@ -957,8 +958,8 @@ h1 {
 }
 
 .chart-preview {
-  width: 42px;
-  height: 32px;
+  width: 36px;
+  height: 28px;
   display: inline-block;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
@@ -1020,9 +1021,11 @@ h1 {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
+  gap: var(--space-2);
 }
 
-.chart-drag-handle {
+.chart-drag-handle,
+.chart-copy-button {
   min-height: 34px;
   display: inline-flex;
   align-items: center;
@@ -1034,7 +1037,22 @@ h1 {
   background: var(--color-surface-strong);
   cursor: grab;
   font-weight: 900;
+}
+
+.chart-drag-handle {
+  cursor: grab;
   touch-action: none;
+}
+
+.chart-copy-button {
+  cursor: pointer;
+}
+
+.chart-copy-button:hover,
+.chart-drag-handle:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  background: #fff;
 }
 
 .chart-drag-handle:active {
@@ -1042,6 +1060,11 @@ h1 {
 }
 
 .chart-drag-handle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.chart-copy-button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
@@ -1069,6 +1092,81 @@ h1 {
   min-height: 320px;
   height: 360px;
   cursor: crosshair;
+}
+
+.chart-resize-handle {
+  position: absolute;
+  z-index: 2;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+.chart-resize-handle::after {
+  position: absolute;
+  border-radius: var(--radius-2);
+  background: var(--color-primary);
+  content: "";
+  opacity: 0.75;
+}
+
+.chart-resize-handle:hover::after,
+.chart-resize-handle:focus-visible::after {
+  background: var(--color-accent);
+  opacity: 1;
+}
+
+.chart-resize-handle:focus-visible {
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: 2px;
+}
+
+.chart-resize-handle-right {
+  top: 56px;
+  right: -7px;
+  width: 14px;
+  height: calc(100% - 80px);
+  cursor: ew-resize;
+}
+
+.chart-resize-handle-right::after {
+  top: 50%;
+  right: 3px;
+  width: 5px;
+  height: 64px;
+  transform: translateY(-50%);
+}
+
+.chart-resize-handle-bottom {
+  bottom: -7px;
+  left: 32px;
+  width: calc(100% - 76px);
+  height: 14px;
+  cursor: ns-resize;
+}
+
+.chart-resize-handle-bottom::after {
+  bottom: 3px;
+  left: 50%;
+  width: 96px;
+  height: 5px;
+  transform: translateX(-50%);
+}
+
+.chart-resize-handle-corner {
+  right: -8px;
+  bottom: -8px;
+  width: 28px;
+  height: 28px;
+  cursor: nwse-resize;
+}
+
+.chart-resize-handle-corner::after {
+  right: 4px;
+  bottom: 4px;
+  width: 16px;
+  height: 16px;
 }
 
 .chart-summary {
