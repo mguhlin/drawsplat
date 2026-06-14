@@ -573,7 +573,7 @@
   }
 
   function applyImportedScale(root, scale) {
-    const safeScale = clamp(Number(scale) || 1, 0.25, 1);
+    const safeScale = clamp(Number(scale) || 1, 0.1, 1);
     root.style.transformOrigin = 'top left';
     root.style.transform = 'scale(' + safeScale + ')';
     root.style.width = (100 / safeScale) + '%';
@@ -585,7 +585,7 @@
     applyImportedScale(root, 1);
     const widthRatio = root.clientWidth / Math.max(root.scrollWidth, 1);
     const heightRatio = root.clientHeight / Math.max(root.scrollHeight, 1);
-    const scale = clamp(Math.min(1, widthRatio, heightRatio) - 0.015, 0.25, 1);
+    const scale = clamp(Math.min(1, widthRatio, heightRatio) - 0.015, 0.1, 1);
     if (Math.abs((el.importScale || 1) - scale) > 0.01) {
       el.importScale = scale;
       saveSoon();
@@ -1203,6 +1203,8 @@
     const trimmed = String(text || '').trim();
     if (/\.html?$/i.test(file.name) || /^<!doctype html/i.test(trimmed) || /const\s+SLIDES\s*=/.test(trimmed)) {
       const source = await resolveImportHtml(trimmed);
+      const canImport = await verifyWebDeckImportPassword(source.html);
+      if (!canImport) return;
       deck = normalizeDeck(webDeckHtmlToDeck(source.html, file.name, source.baseUrl));
       activeSlide = 0;
       selectedId = null;
@@ -1217,6 +1219,29 @@
     saveSoon();
     render();
     setStatus('Opened ShowSplat deck.');
+  }
+
+  async function verifyWebDeckImportPassword(html) {
+    const hash = extractWebDeckPasswordHash(html);
+    if (!hash) return true;
+    if (!crypto?.subtle) {
+      setStatus('This browser cannot verify the WebDeck password for import.');
+      return false;
+    }
+    const password = prompt('This WebDeck is password protected. Enter the password to import it.');
+    if (password === null) {
+      setStatus('WebDeck import canceled.');
+      return false;
+    }
+    if (await sha256(password) === hash) return true;
+    alert('Incorrect WebDeck password. Import canceled.');
+    setStatus('Incorrect WebDeck password. Import canceled.');
+    return false;
+  }
+
+  function extractWebDeckPasswordHash(html) {
+    const match = String(html || '').match(/\bPASSWORD_HASH\s*=\s*["']([a-f0-9]{64})["']/i);
+    return match ? match[1].toLowerCase() : '';
   }
 
   function webDeckHtmlToDeck(html, fileName, baseUrl) {
@@ -1251,10 +1276,10 @@
       elements: [{
         id: uid('obj'),
         type: 'html',
-        x: 70,
-        y: 55,
-        w: 1460,
-        h: 760,
+        x: 0,
+        y: 0,
+        w: 1600,
+        h: 850,
         html,
         autoFit: true,
         importScale: 1,
@@ -1264,7 +1289,7 @@
         italic: false,
         underline: false,
         color: textColor,
-        fill: 'transparent',
+        fill: '#ffffff',
         align: 'left',
         z: Date.now() + index
       }]
@@ -1353,7 +1378,7 @@
         }
         continue;
       }
-      if (ch === '"' || ch === "'") {
+      if (ch === '"' || ch === "'" || ch === '`') {
         quote = ch;
       } else if (ch === '[') {
         depth += 1;
@@ -1491,7 +1516,7 @@
       if (el.type === 'audio') return '<div class="obj" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
       if (el.type === 'table') return '<div class="obj table" style="' + style + '">' + tableHtml(el) + '</div>';
       if (el.type === 'html') {
-        const scale = clamp(Number(el.importScale) || 1, 0.25, 1);
+        const scale = clamp(Number(el.importScale) || 1, 0.1, 1);
         const scaleStyle = 'transform-origin:top left;transform:scale(' + scale + ');width:' + (100 / scale) + '%;height:' + (100 / scale) + '%;';
         return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
       }
@@ -1627,6 +1652,8 @@
     if (action === 'align-left') applyToSelected(obj => obj.align = 'left');
     if (action === 'align-center') applyToSelected(obj => obj.align = 'center');
     if (action === 'align-right') applyToSelected(obj => obj.align = 'right');
+    if (action === 'decrease-font-size') changeSelectedFontSize(-2);
+    if (action === 'increase-font-size') changeSelectedFontSize(2);
     if (action === 'autofit-textbox') autofitTextBox();
     if (action === 'fit-text-to-box') fitTextToBox();
     if (action === 'bring-forward') applyToSelected(obj => obj.z = Date.now());
@@ -1682,6 +1709,14 @@
       const fontSize = Number(obj.fontSize) || 30;
       obj.w = clamp(Math.ceil(longest * fontSize * 0.62) + 32, 100, SLIDE_W - obj.x);
       obj.h = clamp(Math.ceil(lines.length * fontSize * 1.28) + 28, 50, SLIDE_H - obj.y);
+    });
+  }
+
+  function changeSelectedFontSize(delta) {
+    applyToSelected(obj => {
+      if (!['text', 'list', 'link', 'shape', 'table', 'html'].includes(obj.type)) return;
+      obj.fontSize = clamp((Number(obj.fontSize) || 30) + delta, 12, 96);
+      if (els.fontSize) els.fontSize.value = obj.fontSize;
     });
   }
 

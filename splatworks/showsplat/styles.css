@@ -462,8 +462,13 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   overflow: visible;
 }
 .slide-object.list ul { margin: 0; padding-left: 1.2em; }
-.slide-object.html .object-content { line-height: 1.2; }
+.slide-object.html .object-content {
+  background: #fff;
+  line-height: 1.2;
+  padding: 0;
+}
 .imported-webdeck-slide {
+  background: #fff;
   width: 100%;
   height: 100%;
   overflow: hidden;
