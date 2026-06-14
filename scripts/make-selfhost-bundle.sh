@@ -5,10 +5,11 @@
 # Produces:
 #   - dist/drawsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/splatworks-gridsplat-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/splatworks-showsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #
 # The DrawSplatTM bundle contains the whiteboard, tools, widgets, games,
 # backends, and compliance docs. SplatWorksTM apps ship separately so a
-# GridSplatTM-only update does not force a full DrawSplatTM download refresh.
+# SplatWorksTM-only update does not force a full DrawSplatTM download refresh.
 #
 # Run from the repo root:
 #   ./scripts/make-selfhost-bundle.sh
@@ -38,13 +39,16 @@ OUT_DIR="dist"
 STAGE_DIR="$(mktemp -d)"
 DRAWSPLAT_ROOT="$STAGE_DIR/drawsplat-selfhost-$VERSION_LABEL"
 GRID_ROOT="$STAGE_DIR/splatworks-gridsplat-selfhost-$VERSION_LABEL"
+SHOW_ROOT="$STAGE_DIR/splatworks-showsplat-selfhost-$VERSION_LABEL"
 DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
 GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
+SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
 DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
 GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
+SHOW_OUT_PATH="$OUT_DIR/$SHOW_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -62,10 +66,12 @@ EXCLUDES=(
   "/package.json"
   "/package-lock.json"
   "gridsplat"
+  "showsplat"
   "*.log"
   "*.swp"
   "drawsplat-selfhost-*.zip"
   "splatworks-gridsplat-selfhost-*.zip"
+  "splatworks-showsplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -136,10 +142,12 @@ What's in this zip
 
 What is not in this zip
 -----------------------
-SplatWorksTM apps, including GridSplatTM, are packaged separately. Download
-splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you want the spreadsheet
-app. This keeps GPL-covered SplatWorks app releases independent from DrawSplatTM
-whiteboard/tools/widgets/games releases.
+SplatWorksTM apps, including GridSplatTM and ShowSplatTM, are packaged
+separately. Download splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you
+want the spreadsheet app, and splatworks-showsplat-selfhost-$VERSION_LABEL.zip
+when you want the presentation/WebDeck app. This keeps GPL-covered SplatWorks
+app releases independent from DrawSplatTM whiteboard/tools/widgets/games
+releases.
 
 Deployment paths
 ----------------
@@ -172,7 +180,7 @@ Support
 - License: AGPL-3.0-or-later (see LICENSE)
 EOF
 
-GRID_EXCLUDES=(
+SPLATWORKS_EXCLUDES=(
   ".codex"
   ".agents"
   "node_modules"
@@ -188,13 +196,13 @@ GRID_EXCLUDES=(
 
 if command -v rsync >/dev/null 2>&1; then
   GRID_RSYNC_ARGS=(-a --delete)
-  for pattern in "${GRID_EXCLUDES[@]}"; do
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
     GRID_RSYNC_ARGS+=(--exclude "$pattern")
   done
   rsync "${GRID_RSYNC_ARGS[@]}" gridsplat/ "$GRID_ROOT/gridsplat/"
 else
   cp -R gridsplat "$GRID_ROOT/gridsplat"
-  for pattern in "${GRID_EXCLUDES[@]}"; do
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
     find "$GRID_ROOT/gridsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
   done
 fi
@@ -233,10 +241,53 @@ widgets, games, backends, and compliance features remain under the repository
 level DrawSplatTM license unless a file or subdirectory says otherwise.
 EOF
 
+if command -v rsync >/dev/null 2>&1; then
+  SHOW_RSYNC_ARGS=(-a --delete)
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
+    SHOW_RSYNC_ARGS+=(--exclude "$pattern")
+  done
+  rsync "${SHOW_RSYNC_ARGS[@]}" showsplat/ "$SHOW_ROOT/showsplat/"
+else
+  cp -R showsplat "$SHOW_ROOT/showsplat"
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
+    find "$SHOW_ROOT/showsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+  done
+fi
+
+cat > "$SHOW_ROOT/SPLATWORKS-SHOWSPLAT-README.txt" <<EOF
+SplatWorksTM ShowSplatTM Self-Hosted Bundle
+==========================================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+What's in this zip
+------------------
+- showsplat/ — the ShowSplatTM static presentation and WebDeck authoring app.
+- showsplat/docs/plan.md — the ShowSplatTM feature plan and release scope.
+
+Deployment
+----------
+ShowSplatTM is a static browser app.
+
+1. Upload the included showsplat/ folder to your static host.
+2. Open https://your-domain.example/showsplat/.
+
+Licensing boundary
+------------------
+ShowSplatTM is packaged separately from DrawSplatTM so presentation app updates
+can ship without requiring a full DrawSplatTM whiteboard/tools/widgets/games
+download. ShowSplatTM is GPL-3.0-only as part of the SplatWorksTM app family.
+DrawSplatTM whiteboard code, tools, widgets, games, backends, and compliance
+features remain under the repository-level DrawSplatTM license unless a file or
+subdirectory says otherwise.
+EOF
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$GRID_OUT_PATH" "splatworks-gridsplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$SHOW_OUT_PATH" "splatworks-showsplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
@@ -247,6 +298,8 @@ DRAWSPLAT_SIZE_HUMAN="$(du -h "$DRAWSPLAT_OUT_PATH" | cut -f1)"
 DRAWSPLAT_SHA="$(sha256sum "$DRAWSPLAT_OUT_PATH" | cut -d' ' -f1)"
 GRID_SIZE_HUMAN="$(du -h "$GRID_OUT_PATH" | cut -f1)"
 GRID_SHA="$(sha256sum "$GRID_OUT_PATH" | cut -d' ' -f1)"
+SHOW_SIZE_HUMAN="$(du -h "$SHOW_OUT_PATH" | cut -f1)"
+SHOW_SHA="$(sha256sum "$SHOW_OUT_PATH" | cut -d' ' -f1)"
 
 echo ""
 echo "Built bundles:"
@@ -255,6 +308,9 @@ echo "  sha256: $DRAWSPLAT_SHA"
 echo ""
 echo "  $GRID_OUT_PATH ($GRID_SIZE_HUMAN)"
 echo "  sha256: $GRID_SHA"
+echo ""
+echo "  $SHOW_OUT_PATH ($SHOW_SIZE_HUMAN)"
+echo "  sha256: $SHOW_SHA"
 echo ""
 
 rm -rf "$STAGE_DIR"

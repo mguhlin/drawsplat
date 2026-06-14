@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Sun, 14 Jun 2026 04:30:00 GMT</lastBuildDate>
+			<lastBuildDate>Sun, 14 Jun 2026 17:30:00 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.13 Update: ShowSplat Starts the WebDeck Presentation Tool</title>
+		<link>https://drawsplat.org/pages/showsplat.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.13 starts ShowSplat, the SplatWorks presentation and WebDeck authoring app. The first browser-native version includes slide thumbnails, a 16:9 canvas, dropdown menus, icon toolbar, notes, slide templates, color themes, draggable and resizable slide objects, media insertion, Markdown Studio import/export, slideshow preview, and WebDeck HTML export with an optional frontend password prompt. The self-host package split now includes separate DrawSplat, GridSplat, and ShowSplat zip files.]]></description>
+		<pubDate>Sun, 14 Jun 2026 17:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3.1.13-showsplat-start</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>showsplat</category>
+	</item><item>
 		<title>DrawSplat v3.1.12 Update: Separate DrawSplat and GridSplat Downloads</title>
 		<link>https://drawsplat.org/pages/download.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.12 separates self-host downloads into two independent packages. The DrawSplat zip now carries the whiteboard, classroom tools, widgets, games, Apps Script backend, MySQL backend, Hub demo, docs, and legal/compliance pages. The SplatWorks GridSplat zip carries the GPL-covered spreadsheet app, built static assets, source, docs, tests, package metadata, and license files. Both downloads remain listed together on the same Download page, but a GridSplat-only update no longer requires a full DrawSplat package refresh.]]></description>

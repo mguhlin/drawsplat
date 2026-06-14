@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM v3.1.12 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.12 release notes with separate DrawSplatTM and SplatWorksTM GridSplatTM self-host download packages." />
+<title>DrawSplatTM v3.1.13 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.13 release notes with ShowSplatTM and separate SplatWorksTM self-host download packages." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -86,7 +86,7 @@
           <a class="studio-nav-heading" href="../pages/gridsplat.html">SplatWorks&trade;</a>
           <a href="#" aria-disabled="true">WriteSplat&trade; <span class="studio-nav-note">Planned</span></a>
           <a href="#" aria-disabled="true">ListSplat&trade; <span class="studio-nav-note">Planned</span></a>
-          <a href="#" aria-disabled="true">ShowSplat&trade; <span class="studio-nav-note">Planned</span></a>
+          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
           <a href="../pages/gridsplat.html">GridSplat&trade;</a>
         </div>
       </div>
@@ -158,16 +158,16 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Release Notes</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.12</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.13</h1>
     <div class="release-meta">
       <span class="release-pill">Latest stable</span>
-      <span class="release-pill">Separate self-host packages</span>
-      <span class="release-pill">SplatWorks download split</span>
+      <span class="release-pill">ShowSplat starts</span>
+      <span class="release-pill">Three self-host packages</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.12 separates self-host download artifacts for DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> while keeping them listed together on the same public download page.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.13 starts ShowSplat<sup class="tm">TM</sup>, the SplatWorks<sup class="tm">TM</sup> presentation and WebDeck authoring app, and expands separate self-host downloads to DrawSplat<sup class="tm">TM</sup>, GridSplat<sup class="tm">TM</sup>, and ShowSplat<sup class="tm">TM</sup>.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zips</a>
-      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.12.md">View Markdown Source</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.13.md">View Markdown Source</a>
     </div>
   </section>
 
@@ -178,24 +178,24 @@
     </div>
     <div class="release-grid">
       <article class="release-card">
-        <h2>DrawSplat<sup class="tm">TM</sup> Package</h2>
-        <p>The DrawSplat<sup class="tm">TM</sup> zip now carries the whiteboard, tools, widgets, games, backends, and legal/compliance docs without bundling GridSplat<sup class="tm">TM</sup>.</p>
+        <h2>ShowSplat<sup class="tm">TM</sup></h2>
+        <p>ShowSplat<sup class="tm">TM</sup> starts as a browser-native slide deck and WebDeck authoring app with thumbnails, canvas editing, media insertion, notes, templates, themes, Markdown Studio, and WebDeck export.</p>
       </article>
       <article class="release-card">
-        <h2>GridSplat<sup class="tm">TM</sup> Package</h2>
-        <p>The SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> zip carries the GPL-3.0-only spreadsheet app, built static assets, source, docs, tests, and license files.</p>
+        <h2>Active SplatWorks<sup class="tm">TM</sup> App</h2>
+        <p>ShowSplat<sup class="tm">TM</sup> is now linked from SplatWorks<sup class="tm">TM</sup> menus and has a public page at <code>pages/showsplat.html</code>.</p>
       </article>
       <article class="release-card">
-        <h2>Independent Updates</h2>
-        <p>Future GridSplat<sup class="tm">TM</sup> updates can ship without forcing schools to redownload the full DrawSplat<sup class="tm">TM</sup> package.</p>
+        <h2>WebDeck Export</h2>
+        <p>ShowSplat<sup class="tm">TM</sup> can export a single HTML deck with navigation, progress, notes, hash links, fullscreen controls, and optional frontend password prompt.</p>
       </article>
       <article class="release-card">
-        <h2>Download Page</h2>
-        <p>The download page now shows both packages together with separate versions, sizes, hashes, licenses, and deployment notes.</p>
+        <h2>Markdown Workflow</h2>
+        <p>A built-in Markdown Studio can build slides from an outline and export the current deck back to Markdown.</p>
       </article>
       <article class="release-card">
         <h2>Bundle Script</h2>
-        <p>The self-host bundle script now builds both zips in one run and excludes local development artifacts from release packages.</p>
+        <p>The self-host bundle script now builds separate DrawSplat<sup class="tm">TM</sup>, GridSplat<sup class="tm">TM</sup>, and ShowSplat<sup class="tm">TM</sup> zips.</p>
       </article>
     </div>
   </section>
@@ -206,11 +206,12 @@
       <h2>Included updates</h2>
     </div>
     <ul class="release-list">
-      <li><code>scripts/make-selfhost-bundle.sh</code> now creates <code>drawsplat-selfhost-&lt;version&gt;.zip</code> and <code>splatworks-gridsplat-selfhost-&lt;version&gt;.zip</code>.</li>
-      <li>The DrawSplat<sup class="tm">TM</sup> zip excludes <code>gridsplat/</code> so the whiteboard/tools/widgets/games package can move independently.</li>
-      <li>The SplatWorks<sup class="tm">TM</sup> GridSplat<sup class="tm">TM</sup> zip preserves the <code>gridsplat/</code> folder because the current production build runs at <code>/gridsplat/</code>.</li>
-      <li>The package READMEs document the deployment path and licensing boundary inside each zip.</li>
-      <li>Local development folders such as <code>node_modules</code>, <code>dist</code>, <code>coverage</code>, and test artifacts are excluded from release packages.</li>
+      <li>Added <code>showsplat/</code> as a static SplatWorks<sup class="tm">TM</sup> presentation app.</li>
+      <li>Added <code>showsplat/docs/plan.md</code> with the long-term feature set and first implementation scope.</li>
+      <li>Added text, bullet list, table, hyperlink, image, YouTube, MP4/WebM, and audio insertion workflows.</li>
+      <li>Added draggable and resizable slide objects, speaker notes, slide templates, color themes, and browser autosave.</li>
+      <li>Added WebDeck HTML, Markdown, and browser print-to-PDF export paths. ODP and PPTX remain planned file writers.</li>
+      <li><code>scripts/make-selfhost-bundle.sh</code> now creates <code>splatworks-showsplat-selfhost-&lt;version&gt;.zip</code> beside the DrawSplat<sup class="tm">TM</sup> and GridSplat<sup class="tm">TM</sup> zips.</li>
     </ul>
   </section>
 
@@ -219,7 +220,7 @@
       <p class="landing-eyebrow">Self-Host Bundles</p>
       <h2>What the ZIP files contain</h2>
     </div>
-    <p class="release-note"><code>drawsplat-selfhost-v3.1.12.zip</code> is 203 MB with SHA-256 <code>86cbc4d2eb9271ad526667acdd3f7b58c665059b2d940fee10644507305b57e7</code>. <code>splatworks-gridsplat-selfhost-v3.1.12.zip</code> is 7.2 MB with SHA-256 <code>ac264b947a0459f0dd98b78b44eeb36126a52010ba340ad4ae431faa4352016e</code>. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+    <p class="release-note"><code>drawsplat-selfhost-v3.1.13.zip</code> is 203 MB with SHA-256 <code>caf2581bdd04664ede5878cefd64ae17f783ac6aee23f4bf01fec28026f8d02b</code>. <code>splatworks-gridsplat-selfhost-v3.1.13.zip</code> is 7.2 MB with SHA-256 <code>0ba4066ab28ef0a4037d1c44e47b97f61a326a68a486a9ead7298d5ca905164a</code>. <code>splatworks-showsplat-selfhost-v3.1.13.zip</code> is 24 KB with SHA-256 <code>d550456366905d24686a11a9421ed6b71c964540b65ae8cc992727c7f28f77ab</code>. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
   </section>
 </main>
 
