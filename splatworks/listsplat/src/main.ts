@@ -241,10 +241,14 @@ function fieldTypeOptions(selected: FieldType = 'text'): string {
     ['percent', 'Percent'],
     ['date', 'Date'],
     ['checkbox', 'Checkbox'],
+    ['rating', 'Rating'],
     ['choice', 'Choice'],
     ['image', 'Image'],
     ['link', 'Link'],
     ['calculation', 'Calculation'],
+    ['autoNumber', 'Auto number'],
+    ['createdAt', 'Created time'],
+    ['updatedAt', 'Updated time'],
   ];
   return types.map(([value, label]) => `<option value="${value}" ${selected === value ? 'selected' : ''}>${label}</option>`).join('');
 }
@@ -270,6 +274,18 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
 
   if (field?.type === 'checkbox') {
     return `<input class="cell-checkbox" type="checkbox" ${common} ${value === true || value === 'true' ? 'checked' : ''}>`;
+  }
+  if (field?.type === 'rating') {
+    return `<input class="cell-input" type="number" min="0" max="5" step="1" ${common} value="${html(value)}">`;
+  }
+  if (field?.type === 'choice') {
+    const options = field.options?.length ? field.options : ['Yes', 'No'];
+    return `<select class="cell-input" ${common}>${options
+      .map((option) => `<option value="${html(option)}" ${String(value) === option ? 'selected' : ''}>${html(option)}</option>`)
+      .join('')}</select>`;
+  }
+  if (field?.type === 'autoNumber' || field?.type === 'createdAt' || field?.type === 'updatedAt') {
+    return `<output class="calc-output">${html(value)}</output>`;
   }
   if (field?.type === 'longText') {
     return `<textarea class="cell-input" ${common}>${html(value)}</textarea>`;
@@ -604,6 +620,7 @@ function renderDialog(table: ListSplatTable): string {
           <label>Name <input data-field-name value="${html(field.name)}"></label>
           <label>Type <select data-field-type>${fieldTypeOptions(field.type)}</select></label>
           <label>Description <textarea data-field-description>${html(field.description)}</textarea></label>
+          <label>Choice options <input data-field-options value="${html(field.options?.join(', ') ?? '')}" placeholder="Yes, No, Maybe"></label>
           <label class="check-row"><input type="checkbox" data-field-required ${field.required ? 'checked' : ''}> Required field</label>
           <label class="check-row"><input type="checkbox" data-field-hidden ${field.hidden ? 'checked' : ''}> Hide field</label>
           <label>Calculation formula <input data-field-formula value="${html(field.formula ?? '')}" placeholder='JOIN(First Name, " ", Last Name)'></label>
@@ -798,7 +815,7 @@ function render(): void {
   `;
 }
 
-function cellValueFromInput(input: HTMLInputElement | HTMLTextAreaElement): ListSplatCellValue {
+function cellValueFromInput(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): ListSplatCellValue {
   if (input instanceof HTMLInputElement && input.type === 'checkbox') {
     return input.checked;
   }
@@ -808,7 +825,7 @@ function cellValueFromInput(input: HTMLInputElement | HTMLTextAreaElement): List
   return input.value;
 }
 
-function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement): void {
+function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): void {
   const recordId = input.dataset.recordId;
   const fieldId = input.dataset.fieldId;
   if (!recordId || !fieldId) {
@@ -831,7 +848,11 @@ function runFieldSettingsSave(): void {
   const required = appRoot.querySelector<HTMLInputElement>('[data-field-required]')?.checked ?? false;
   const hidden = appRoot.querySelector<HTMLInputElement>('[data-field-hidden]')?.checked ?? false;
   const formula = appRoot.querySelector<HTMLInputElement>('[data-field-formula]')?.value ?? '';
-  setActiveTable(updateField(table, field.id, { name, type, description, required, hidden, formula }));
+  const options = (appRoot.querySelector<HTMLInputElement>('[data-field-options]')?.value ?? '')
+    .split(',')
+    .map((option) => option.trim())
+    .filter(Boolean);
+  setActiveTable(updateField(table, field.id, { name, type, description, required, hidden, formula, options }));
   dialog = 'none';
   lastMessage = `Updated ${name}.`;
   render();
@@ -1070,13 +1091,16 @@ appRoot.addEventListener('change', (event) => {
     }
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
-  } else if (target.matches('.cell-input, .cell-checkbox') && (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+  } else if (
+    target.matches('.cell-input, .cell-checkbox') &&
+    (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)
+  ) {
     updateActiveCell(target);
   }
 });
 
 appRoot.addEventListener('input', (event) => {
-  const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+  const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
   if (target.matches('[data-project-title]')) {
     updateTitle(target.value);
     return;
@@ -1089,7 +1113,7 @@ appRoot.addEventListener('input', (event) => {
     return;
   }
 
-  if (target.matches('.cell-input')) {
+  if (target.matches('.cell-input') && (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) {
     updateActiveCell(target);
   }
 });

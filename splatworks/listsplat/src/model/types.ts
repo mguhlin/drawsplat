@@ -6,10 +6,14 @@ export type FieldType =
   | 'percent'
   | 'date'
   | 'checkbox'
+  | 'rating'
   | 'choice'
   | 'image'
   | 'link'
-  | 'calculation';
+  | 'calculation'
+  | 'autoNumber'
+  | 'createdAt'
+  | 'updatedAt';
 
 export interface ListSplatField {
   id: string;

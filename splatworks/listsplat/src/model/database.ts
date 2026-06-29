@@ -15,10 +15,14 @@ const FIELD_DEFAULTS: Record<FieldType, ListSplatCellValue> = {
   percent: 0,
   date: '',
   checkbox: false,
+  rating: 0,
   choice: '',
   image: '',
   link: '',
   calculation: '',
+  autoNumber: '',
+  createdAt: '',
+  updatedAt: '',
 };
 
 export function createId(prefix: string): string {
@@ -40,7 +44,15 @@ export function createField(name: string, type: FieldType = 'text'): ListSplatFi
 export function createRecord(fields: ListSplatField[], values: Record<string, ListSplatCellValue> = {}): ListSplatRecord {
   const now = new Date().toISOString();
   const normalizedValues = Object.fromEntries(
-    fields.map((field) => [field.id, values[field.id] ?? FIELD_DEFAULTS[field.type]]),
+    fields.map((field, index) => {
+      if (field.type === 'createdAt' || field.type === 'updatedAt') {
+        return [field.id, values[field.id] ?? now];
+      }
+      if (field.type === 'autoNumber') {
+        return [field.id, values[field.id] ?? index + 1];
+      }
+      return [field.id, values[field.id] ?? FIELD_DEFAULTS[field.type]];
+    }),
   );
 
   return {
@@ -181,17 +193,25 @@ export function updateCell(
   fieldId: string,
   value: ListSplatCellValue,
 ): ListSplatTable {
+  const now = new Date().toISOString();
   return {
     ...table,
     records: table.records.map((record) =>
       record.id === recordId
         ? {
             ...record,
-            updatedAt: new Date().toISOString(),
-            values: {
-              ...record.values,
-              [fieldId]: value,
-            },
+            updatedAt: now,
+            values: Object.fromEntries(
+              table.fields.map((field) => {
+                if (field.id === fieldId) {
+                  return [field.id, value];
+                }
+                if (field.type === 'updatedAt') {
+                  return [field.id, now];
+                }
+                return [field.id, record.values[field.id]];
+              }),
+            ),
           }
         : record,
     ),

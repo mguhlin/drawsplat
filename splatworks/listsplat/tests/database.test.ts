@@ -21,4 +21,19 @@ describe('database model', () => {
     expect(withRecord.records[0].values[firstField.id]).toBe('Test animal');
     expect(withRecord.records).toHaveLength(edited.records.length + 1);
   });
+
+  it('supports timestamp and choice field metadata', () => {
+    const table = createStarterProject().schema.tables[0];
+    const withChoice = addField(table, 'Status', 'choice');
+    const withUpdatedAt = addField(withChoice, 'Updated', 'updatedAt');
+    const statusField = withUpdatedAt.fields.find((field) => field.name === 'Status');
+    const updatedField = withUpdatedAt.fields.find((field) => field.name === 'Updated');
+
+    expect(statusField?.options).toEqual(['Yes', 'No']);
+    expect(updatedField?.type).toBe('updatedAt');
+
+    const edited = updateCell(withUpdatedAt, withUpdatedAt.records[0].id, statusField!.id, 'Yes');
+    expect(edited.records[0].values[statusField!.id]).toBe('Yes');
+    expect(String(edited.records[0].values[updatedField!.id])).toContain('T');
+  });
 });
