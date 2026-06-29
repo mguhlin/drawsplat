@@ -5,6 +5,7 @@ import {
   addRecord,
   addTable,
   assertListSplatFile,
+  createRecord,
   createStarterProject,
   deleteRecord,
   duplicateRecord,
@@ -20,7 +21,7 @@ import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
-type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship';
+type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -47,6 +48,8 @@ let undoStack: Array<{ label: string; project: ListSplatFile }> = [];
 let replacePreview: Array<{ recordId: string; fieldId: string; before: string; after: string }> = [];
 let relationshipFromTableId = activeTableId;
 let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
+let pendingCsvTable: ListSplatTable | null = null;
+let pendingCsvFileName = '';
 
 function html(value: unknown): string {
   return String(value ?? '')
@@ -169,10 +172,28 @@ function openJson(file: File): void {
 function importCsv(file: File): void {
   file.text().then((text) => {
     const table = tableFromCsv(file.name.replace(/\.csv$/i, ''), text);
-    pushUndo('CSV import');
+    pendingCsvTable = table;
+    pendingCsvFileName = file.name;
+    dialog = 'csvImport';
+    lastMessage = `Previewing ${table.records.length} CSV record${table.records.length === 1 ? '' : 's'} from ${file.name}.`;
+    render();
+  });
+}
+
+function applyCsvImport(mode: 'new' | 'append'): void {
+  if (!pendingCsvTable) {
+    dialog = 'none';
+    return;
+  }
+
+  pushUndo('CSV import');
+  if (mode === 'new') {
+    const table = pendingCsvTable;
     activeTableId = table.id;
     activeRecordId = table.records[0]?.id ?? '';
-    lastMessage = `Imported ${table.records.length} records from ${file.name}.`;
+    pendingCsvTable = null;
+    dialog = 'none';
+    lastMessage = `Imported ${table.records.length} records from ${pendingCsvFileName}.`;
     setProject({
       ...project,
       updatedAt: new Date().toISOString(),
@@ -191,7 +212,26 @@ function importCsv(file: File): void {
         },
       ],
     });
-  });
+    return;
+  }
+
+  const table = activeTable();
+  const importedFieldsByName = new Map(pendingCsvTable.fields.map((field) => [field.name.trim().toLowerCase(), field.id]));
+  const appendedRecords = pendingCsvTable.records.map((record) =>
+    createRecord(
+      table.fields,
+      Object.fromEntries(
+        table.fields.map((field) => {
+          const importedFieldId = importedFieldsByName.get(field.name.trim().toLowerCase());
+          return [field.id, importedFieldId ? record.values[importedFieldId] ?? '' : ''];
+        }),
+      ),
+    ),
+  );
+  pendingCsvTable = null;
+  dialog = 'none';
+  lastMessage = `Appended ${appendedRecords.length} CSV record${appendedRecords.length === 1 ? '' : 's'} to ${table.name}.`;
+  setActiveTable({ ...table, records: [...table.records, ...appendedRecords] });
 }
 
 function applyTemplate(templateId: string): void {
@@ -634,6 +674,41 @@ function renderDialog(table: ListSplatTable): string {
     `;
   }
 
+  if (dialog === 'csvImport' && pendingCsvTable) {
+    const previewRows = pendingCsvTable.records.slice(0, 5);
+    return `
+      <div class="modal-backdrop">
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="CSV import preview">
+          <h2>CSV import preview</h2>
+          <p>${html(pendingCsvFileName)} has ${pendingCsvTable.fields.length} field${pendingCsvTable.fields.length === 1 ? '' : 's'} and ${pendingCsvTable.records.length} record${pendingCsvTable.records.length === 1 ? '' : 's'}.</p>
+          <div class="preview-table-wrap">
+            <table class="preview-table">
+              <thead>
+                <tr>${pendingCsvTable.fields.map((field) => `<th>${html(field.name)}</th>`).join('')}</tr>
+              </thead>
+              <tbody>
+                ${previewRows
+                  .map(
+                    (record) =>
+                      `<tr>${pendingCsvTable!.fields
+                        .map((field) => `<td>${html(record.values[field.id])}</td>`)
+                        .join('')}</tr>`,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+          <p>New table keeps every CSV column. Append uses matching field names in the current table and leaves unmatched fields blank.</p>
+          <div class="modal-actions">
+            <button type="button" data-action="apply-csv-new">Create new table</button>
+            <button type="button" data-action="apply-csv-append">Append to ${html(table.name)}</button>
+            <button type="button" data-action="close-dialog">Cancel</button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
   if (dialog === 'projectIdeas') {
     return `
       <div class="modal-backdrop">
@@ -1042,6 +1117,10 @@ appRoot.addEventListener('click', (event) => {
     runReplacePreview();
   } else if (action === 'run-replace') {
     runReplace();
+  } else if (action === 'apply-csv-new') {
+    applyCsvImport('new');
+  } else if (action === 'apply-csv-append') {
+    applyCsvImport('append');
   } else if (action === 'save-field-settings') {
     pushUndo('field settings');
     runFieldSettingsSave();
@@ -1052,6 +1131,7 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'close-dialog') {
     dialog = 'none';
     replacePreview = [];
+    pendingCsvTable = null;
     render();
   } else if (action.endsWith('-view')) {
     viewMode = action.replace('-view', '') as ViewMode;

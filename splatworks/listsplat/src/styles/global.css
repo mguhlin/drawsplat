@@ -615,6 +615,10 @@ summary:focus-visible {
   box-shadow: var(--shadow);
 }
 
+.wide-modal {
+  width: min(880px, 100%);
+}
+
 .modal h2,
 .modal p {
   margin: 0;
@@ -646,6 +650,34 @@ summary:focus-visible {
   width: 22px;
   height: 22px;
   accent-color: var(--accent);
+}
+
+.preview-table-wrap {
+  max-height: 280px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .92rem;
+}
+
+.preview-table th,
+.preview-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.preview-table th {
+  position: sticky;
+  top: 0;
+  background: var(--soft);
+  color: var(--accent-dark);
 }
 
 @media (max-width: 1050px) {
