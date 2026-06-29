@@ -355,6 +355,51 @@ summary:focus-visible {
   accent-color: var(--accent);
 }
 
+.image-cell {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 92px;
+  padding: 10px;
+}
+
+.image-cell img {
+  width: 100%;
+  max-width: 180px;
+  max-height: 120px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.image-cell span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.image-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.image-upload-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
 .calc-output {
   display: block;
   min-height: 54px;
@@ -447,18 +492,22 @@ summary:focus-visible {
 .labels-view {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  align-content: start;
+  align-items: start;
   gap: 12px;
   padding: 14px;
   overflow: auto;
 }
 
 .gallery-view {
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
 }
 
 .record-card,
 .print-label {
-  min-height: 150px;
+  min-height: 0;
+  max-height: 360px;
+  overflow: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
@@ -482,15 +531,36 @@ summary:focus-visible {
   color: var(--ink);
 }
 
+.gallery-image {
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  margin: -2px -2px 12px;
+  border-radius: 7px;
+  background: var(--soft);
+  color: var(--muted);
+  font-weight: 850;
+  text-align: center;
+}
+
+.gallery-image img {
+  width: 100%;
+  height: 180px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
 .report-view {
   display: grid;
+  align-content: start;
+  grid-auto-rows: max-content;
   gap: 14px;
   padding: 14px;
   overflow: auto;
 }
 
 .report-view header {
-  padding: 14px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--soft);

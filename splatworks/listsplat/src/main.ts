@@ -319,6 +319,15 @@ function orderedFields(table: ListSplatTable): ListSplatField[] {
   ].filter((field) => field && !field.hidden);
 }
 
+function imageFields(table: ListSplatTable): ListSplatField[] {
+  return orderedFields(table).filter((field) => field.type === 'image');
+}
+
+function firstImageValue(table: ListSplatTable, record: ListSplatRecord): string {
+  const imageField = imageFields(table)[0];
+  return imageField ? String(displayValue(table, record, imageField.id) ?? '') : '';
+}
+
 function updateCurrentLayout(updates: { fieldOrder?: string[]; locked?: boolean }): void {
   const layout = currentLayout();
   if (!layout) {
@@ -344,6 +353,18 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
 
   if (field?.type === 'checkbox') {
     return `<input class="cell-checkbox" type="checkbox" ${common} ${value === true || value === 'true' ? 'checked' : ''}>`;
+  }
+  if (field?.type === 'image') {
+    const imageSrc = String(value ?? '');
+    return `
+      <div class="image-cell">
+        ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : '<span>No image yet</span>'}
+        <label class="image-upload-label">
+          Upload image
+          <input class="image-input" type="file" accept="image/*" ${common}>
+        </label>
+      </div>
+    `;
   }
   if (field?.type === 'rating') {
     return `<input class="cell-input" type="number" min="0" max="5" step="1" ${common} value="${html(value)}">`;
@@ -499,14 +520,23 @@ function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string
     <div class="cards-view ${viewMode === 'gallery' ? 'gallery-view' : ''}">
       ${rows
         .map(
-          (record) => `
+          (record) => {
+            const imageSrc = firstImageValue(table, record);
+            return `
             <article class="record-card" data-select-record="${record.id}">
+              ${
+                viewMode === 'gallery'
+                  ? `<div class="gallery-image">${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : '<span>Add an image field, then upload a picture.</span>'}</div>`
+                  : ''
+              }
               ${orderedFields(table)
-                .slice(0, viewMode === 'gallery' ? 5 : 8)
+                .filter((field) => viewMode !== 'gallery' || field.type !== 'image')
+                .slice(0, viewMode === 'gallery' ? 4 : 8)
                 .map((field) => `<p><strong>${html(field.name)}</strong><span>${html(displayValue(table, record, field.id))}</span></p>`)
                 .join('')}
             </article>
-          `,
+          `;
+          },
         )
         .join('')}
     </div>
@@ -557,6 +587,14 @@ function renderReportView(table: ListSplatTable, rows: ListSplatRecord[]): strin
 
 function renderDatabasePanel(table: ListSplatTable): string {
   const rows = visibleRecords(table);
+  const viewHelp: Record<ViewMode, string> = {
+    table: 'Table: spreadsheet-like rows and columns for fast data entry.',
+    form: 'Form: focus on one record at a time.',
+    cards: 'Cards: compact text-first record cards for browsing.',
+    gallery: 'Gallery: image-first cards for collections and exhibits.',
+    labels: 'Labels: printable small cards or shelf labels.',
+    report: 'Report: printable table with title and summaries.',
+  };
   const body =
     viewMode === 'form'
       ? renderFormView(table)
@@ -569,11 +607,14 @@ function renderDatabasePanel(table: ListSplatTable): string {
             : renderTableView(table, rows);
 
   return `
-        <section class="database-panel" aria-label="Database table">
+    <section class="database-panel" aria-label="Database table">
       ${renderTableTabs(table)}
       <div class="view-tabs" role="group" aria-label="Layout modes">
         ${(['table', 'form', 'cards', 'gallery', 'labels', 'report'] as ViewMode[])
-          .map((mode) => `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}">${mode}</button>`)
+          .map(
+            (mode) =>
+              `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}" title="${html(viewHelp[mode])}" aria-label="${html(viewHelp[mode])}">${mode}</button>`,
+          )
           .join('')}
       </div>
       ${body}
@@ -1252,10 +1293,26 @@ appRoot.addEventListener('change', (event) => {
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
   } else if (
-    target.matches('.cell-input, .cell-checkbox') &&
+    target.matches('.cell-input, .cell-checkbox, .image-input') &&
     (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)
   ) {
-    updateActiveCell(target);
+    if (target instanceof HTMLInputElement && target.type === 'file' && target.files?.[0]) {
+      const recordId = target.dataset.recordId;
+      const fieldId = target.dataset.fieldId;
+      const file = target.files[0];
+      if (recordId && fieldId) {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          pushUndo('image upload');
+          project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, String(reader.result ?? '')));
+          saveAutosave(project);
+          render();
+        });
+        reader.readAsDataURL(file);
+      }
+    } else {
+      updateActiveCell(target);
+    }
   }
 });
 
@@ -1284,5 +1341,17 @@ document.addEventListener('click', (event) => {
     closeMenus();
   }
 });
+
+document.addEventListener('toggle', (event) => {
+  const menu = event.target;
+  if (!(menu instanceof HTMLDetailsElement) || !menu.matches('.menu') || !menu.open) {
+    return;
+  }
+  document.querySelectorAll<HTMLDetailsElement>('.menu[open]').forEach((otherMenu) => {
+    if (otherMenu !== menu) {
+      otherMenu.open = false;
+    }
+  });
+}, true);
 
 render();
