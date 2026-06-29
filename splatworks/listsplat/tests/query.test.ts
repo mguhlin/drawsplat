@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createStarterProject, updateCell } from '../src/model/database';
 import { summarizeTable } from '../src/model/formulas';
-import { findDuplicateRecords, findMissingRecords, findRecords, replaceValues, sortRecords } from '../src/model/query';
+import { findDuplicateRecords, findMissingRecords, findRecords, previewReplaceValues, replaceValues, sortRecords } from '../src/model/query';
 
 describe('query tools', () => {
   it('finds records across all fields and within one field', () => {
@@ -35,6 +35,18 @@ describe('query tools', () => {
     });
     expect(result.count).toBe(1);
     expect(result.table.records[0].values[table.fields[1].id]).toBe('Freshwater ponds');
+  });
+
+  it('previews replace changes without changing the table', () => {
+    const table = createStarterProject().schema.tables[0];
+    const preview = previewReplaceValues(table, {
+      fieldIds: [table.fields[1].id],
+      find: 'lakes',
+      replacement: 'ponds',
+    });
+    expect(preview).toHaveLength(1);
+    expect(preview[0].before).toBe('Freshwater lakes');
+    expect(table.records[0].values[table.fields[1].id]).toBe('Freshwater lakes');
   });
 });
 

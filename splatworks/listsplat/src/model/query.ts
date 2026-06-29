@@ -15,6 +15,13 @@ export interface ReplaceOptions {
   caseSensitive?: boolean;
 }
 
+export interface ReplacePreviewItem {
+  recordId: string;
+  fieldId: string;
+  before: string;
+  after: string;
+}
+
 function cellText(value: unknown): string {
   return value == null ? '' : String(value);
 }
@@ -65,6 +72,33 @@ export function findDuplicateRecords(table: ListSplatTable, fieldId: string): Li
 
 export function findMissingRecords(table: ListSplatTable, fieldId: string): ListSplatRecord[] {
   return table.records.filter((record) => !cellText(record.values[fieldId]).trim());
+}
+
+export function previewReplaceValues(table: ListSplatTable, options: ReplaceOptions): ReplacePreviewItem[] {
+  if (!options.find) {
+    return [];
+  }
+
+  const flags = options.caseSensitive ? 'g' : 'gi';
+  const escapedFind = options.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(escapedFind, flags);
+  const allowedRecordIds = new Set(options.recordIds ?? table.records.map((record) => record.id));
+  const preview: ReplacePreviewItem[] = [];
+
+  table.records.forEach((record) => {
+    if (!allowedRecordIds.has(record.id)) {
+      return;
+    }
+    options.fieldIds.forEach((fieldId) => {
+      const before = cellText(record.values[fieldId]);
+      const after = before.replace(pattern, options.replacement);
+      if (after !== before) {
+        preview.push({ recordId: record.id, fieldId, before, after });
+      }
+    });
+  });
+
+  return preview;
 }
 
 export function replaceValues(table: ListSplatTable, options: ReplaceOptions): { table: ListSplatTable; count: number } {

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "cp index.vite.html index.html && tsc -b && vite build && mkdir -p assets && cp dist/assets/* ./assets/ && cp dist/index.html ./index.html",
+    "build": "cp index.vite.html index.html && tsc -b && vite build && rm -rf assets && mkdir -p assets && cp dist/assets/* ./assets/ && cp dist/index.html ./index.html",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run"
   },

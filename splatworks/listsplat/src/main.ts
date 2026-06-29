@@ -13,7 +13,8 @@ import {
   updateField,
 } from './model/database';
 import { evaluateSimpleFormula, summarizeTable } from './model/formulas';
-import { findDuplicateRecords, findMissingRecords, findRecords, replaceValues, sortRecords } from './model/query';
+import { previewReplaceValues, findDuplicateRecords, findMissingRecords, findRecords, replaceValues, sortRecords } from './model/query';
+import { addRelationship, createRelationship, relatedRecords, relationshipLabel } from './model/relationships';
 import type { FieldType, ListSplatCellValue, ListSplatFile, ListSplatRecord, ListSplatTable } from './model/types';
 import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
@@ -42,6 +43,8 @@ let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
 let selectedFieldId = '';
 let lastMessage = 'Tip: Start with one table, then add relationships when your project needs them.';
+let undoStack: Array<{ label: string; project: ListSplatFile }> = [];
+let replacePreview: Array<{ recordId: string; fieldId: string; before: string; after: string }> = [];
 
 function html(value: unknown): string {
   return String(value ?? '')
@@ -72,6 +75,28 @@ function setProject(nextProject: ListSplatFile): void {
   ensureActiveRecord(activeTable());
   saveAutosave(project);
   saveStatus = 'Saved locally';
+  render();
+}
+
+function pushUndo(label: string): void {
+  undoStack = [{ label, project: structuredClone(project) }, ...undoStack].slice(0, 12);
+}
+
+function undoLastChange(): void {
+  const last = undoStack[0];
+  if (!last) {
+    lastMessage = 'Nothing to undo yet.';
+    render();
+    return;
+  }
+  undoStack = undoStack.slice(1);
+  project = last.project;
+  activeTableId = project.schema.tables.some((table) => table.id === activeTableId)
+    ? activeTableId
+    : project.schema.tables[0].id;
+  ensureActiveRecord(activeTable());
+  saveAutosave(project);
+  lastMessage = `Undid ${last.label}.`;
   render();
 }
 
@@ -142,6 +167,7 @@ function openJson(file: File): void {
 function importCsv(file: File): void {
   file.text().then((text) => {
     const table = tableFromCsv(file.name.replace(/\.csv$/i, ''), text);
+    pushUndo('CSV import');
     activeTableId = table.id;
     activeRecordId = table.records[0]?.id ?? '';
     lastMessage = `Imported ${table.records.length} records from ${file.name}.`;
@@ -172,6 +198,7 @@ function applyTemplate(templateId: string): void {
     return;
   }
   const table = cloneTemplateTable(template);
+  pushUndo('template load');
   activeTableId = table.id;
   activeRecordId = table.records[0]?.id ?? '';
   lastMessage = `Loaded ${template.title}.`;
@@ -434,6 +461,23 @@ function renderDatabasePanel(table: ListSplatTable): string {
 
 function renderTeacherPanel(table: ListSplatTable): string {
   const summaries = summarizeTable(table);
+  const currentRecord = table.records.find((record) => record.id === activeRecordId) ?? table.records[0];
+  const relationshipCards = currentRecord
+    ? project.schema.relationships
+        .filter((relationship) => relationship.fromTableId === table.id)
+        .map((relationship) => {
+          const targetTable = project.schema.tables.find((item) => item.id === relationship.toTableId);
+          const count = targetTable ? relatedRecords(relationship, table, currentRecord, targetTable).length : 0;
+          return `
+            <div class="template-card">
+              <strong>${html(relationship.name)}</strong>
+              <span>${count} related record${count === 1 ? '' : 's'}</span>
+              <p>${html(relationshipLabel(project, relationship))}</p>
+            </div>
+          `;
+        })
+        .join('')
+    : '';
   return `
     <aside class="teacher-panel" aria-label="Teacher tools and database stats">
       <h2>Database Check</h2>
@@ -454,6 +498,7 @@ function renderTeacherPanel(table: ListSplatTable): string {
           `,
         )
         .join('')}
+      ${relationshipCards ? `<h3>Related Records</h3>${relationshipCards}` : ''}
       <h3>Template Starters</h3>
       ${listSplatTemplates
         .map(
@@ -477,6 +522,7 @@ function renderDialog(table: ListSplatTable): string {
   }
 
   if (dialog === 'replace') {
+    const previewRows = replacePreview.slice(0, 8);
     return `
       <div class="modal-backdrop">
         <section class="modal" role="dialog" aria-modal="true" aria-label="Replace values">
@@ -484,9 +530,17 @@ function renderDialog(table: ListSplatTable): string {
           <label>Find <input data-replace-find placeholder="Text to find"></label>
           <label>Replace with <input data-replace-with placeholder="New text"></label>
           <label>Field <select data-replace-field>${table.fields.map((field) => `<option value="${field.id}">${html(field.name)}</option>`).join('')}</select></label>
-          <p>Replacement applies to the current found set when search is active. You can undo by re-opening the saved JSON copy if needed.</p>
+          <p>Replacement applies to the current found set when search is active. Preview first, then apply. The last replace can be undone from Edit.</p>
+          ${
+            replacePreview.length
+              ? `<div class="replace-preview"><strong>${replacePreview.length} change${replacePreview.length === 1 ? '' : 's'} ready</strong>${previewRows
+                  .map((item) => `<p><del>${html(item.before)}</del><ins>${html(item.after)}</ins></p>`)
+                  .join('')}</div>`
+              : ''
+          }
           <div class="modal-actions">
-            <button type="button" data-action="run-replace">Replace</button>
+            <button type="button" data-action="preview-replace">Preview</button>
+            <button type="button" data-action="run-replace" ${replacePreview.length ? '' : 'disabled'}>Apply Replace</button>
             <button type="button" data-action="close-dialog">Cancel</button>
           </div>
         </section>
@@ -535,12 +589,33 @@ function renderDialog(table: ListSplatTable): string {
   }
 
   if (dialog === 'relationship') {
+    const tableOptions = project.schema.tables.map((item) => `<option value="${item.id}">${html(item.name)}</option>`).join('');
+    const fieldOptions = project.schema.tables
+      .map((item) =>
+        item.fields.map((field) => `<option value="${item.id}:${field.id}">${html(item.name)} - ${html(field.name)}</option>`).join(''),
+      )
+      .join('');
     return `
       <div class="modal-backdrop">
         <section class="modal" role="dialog" aria-modal="true" aria-label="Relationships">
           <h2>Relationships</h2>
-          <p>Relationship building is staged after flat tables, forms, CSV, find, and reports. The target v1 model is one-to-many: one animal can have many observations, one book can have many reviews.</p>
-          <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+          <p>Create a simple one-to-many relationship by matching values in two fields, such as Books:Title to Reviews:Book.</p>
+          <label>Name <input data-relationship-name placeholder="Books to reviews"></label>
+          <label>Parent table <select data-relationship-from-table>${tableOptions}</select></label>
+          <label>Parent match field <select data-relationship-from-field>${fieldOptions}</select></label>
+          <label>Related table <select data-relationship-to-table>${tableOptions}</select></label>
+          <label>Related match field <select data-relationship-to-field>${fieldOptions}</select></label>
+          ${
+            project.schema.relationships.length
+              ? `<div class="relationship-list">${project.schema.relationships
+                  .map((relationship) => `<p><strong>${html(relationship.name)}</strong><br>${html(relationshipLabel(project, relationship))}</p>`)
+                  .join('')}</div>`
+              : '<p>No relationships yet. Add a second table first for the most useful results.</p>'
+          }
+          <div class="modal-actions">
+            <button type="button" data-action="create-relationship">Create relationship</button>
+            <button type="button" data-action="close-dialog">Close</button>
+          </div>
         </section>
       </div>
     `;
@@ -595,6 +670,7 @@ function render(): void {
           ['print', 'Print'],
         ])}
         ${createMenu('Edit', [
+          ['undo-change', 'Undo last change'],
           ['add-record', 'Add record'],
           ['add-field', 'Add field'],
           ['find', 'Find records'],
@@ -713,10 +789,53 @@ function runReplace(): void {
   const replacement = appRoot.querySelector<HTMLInputElement>('[data-replace-with]')?.value ?? '';
   const fieldId = appRoot.querySelector<HTMLSelectElement>('[data-replace-field]')?.value ?? activeTable().fields[0]?.id;
   const recordIds = searchQuery ? visibleRecords(activeTable()).map((record) => record.id) : undefined;
+  pushUndo('replace');
   const result = replaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds });
   dialog = 'none';
+  replacePreview = [];
   lastMessage = `Replaced ${result.count} value${result.count === 1 ? '' : 's'}.`;
   setActiveTable(result.table);
+}
+
+function runReplacePreview(): void {
+  const find = appRoot.querySelector<HTMLInputElement>('[data-replace-find]')?.value ?? '';
+  const replacement = appRoot.querySelector<HTMLInputElement>('[data-replace-with]')?.value ?? '';
+  const fieldId = appRoot.querySelector<HTMLSelectElement>('[data-replace-field]')?.value ?? activeTable().fields[0]?.id;
+  const recordIds = searchQuery ? visibleRecords(activeTable()).map((record) => record.id) : undefined;
+  replacePreview = previewReplaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds });
+  lastMessage = `Preview found ${replacePreview.length} change${replacePreview.length === 1 ? '' : 's'}.`;
+  render();
+}
+
+function selectedRelationshipField(selector: string): { tableId: string; fieldId: string } | null {
+  const raw = appRoot.querySelector<HTMLSelectElement>(selector)?.value;
+  if (!raw) {
+    return null;
+  }
+  const [tableId, fieldId] = raw.split(':');
+  return tableId && fieldId ? { tableId, fieldId } : null;
+}
+
+function createRelationshipFromDialog(): void {
+  const fromTableId = appRoot.querySelector<HTMLSelectElement>('[data-relationship-from-table]')?.value ?? '';
+  const toTableId = appRoot.querySelector<HTMLSelectElement>('[data-relationship-to-table]')?.value ?? '';
+  const fromField = selectedRelationshipField('[data-relationship-from-field]');
+  const toField = selectedRelationshipField('[data-relationship-to-field]');
+  const name = appRoot.querySelector<HTMLInputElement>('[data-relationship-name]')?.value ?? '';
+  if (!fromTableId || !toTableId || !fromField || !toField) {
+    lastMessage = 'Choose both tables and both match fields.';
+    render();
+    return;
+  }
+  if (fromField.tableId !== fromTableId || toField.tableId !== toTableId) {
+    lastMessage = 'Match fields must belong to the tables you chose.';
+    render();
+    return;
+  }
+  pushUndo('relationship create');
+  const relationship = createRelationship(name, fromTableId, fromField.fieldId, toTableId, toField.fieldId);
+  lastMessage = `Created relationship: ${relationship.name}.`;
+  setProject(addRelationship(project, relationship));
 }
 
 appRoot.addEventListener('click', (event) => {
@@ -770,6 +889,7 @@ appRoot.addEventListener('click', (event) => {
   closeMenus();
 
   if (action === 'new') {
+    pushUndo('new database');
     const next = createStarterProject('Untitled Database');
     activeTableId = next.schema.tables[0].id;
     activeRecordId = next.schema.tables[0].records[0]?.id ?? '';
@@ -788,20 +908,25 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'print') {
     window.print();
   } else if (action === 'add-record') {
+    pushUndo('add record');
     setActiveTable(addRecord(activeTable()));
   } else if (action === 'add-field') {
     const input = appRoot.querySelector<HTMLInputElement>('[data-new-field]');
     const type = appRoot.querySelector<HTMLSelectElement>('[data-new-field-type]')?.value as FieldType | undefined;
+    pushUndo('add field');
     setActiveTable(addField(activeTable(), input?.value || 'New Field', type ?? 'text'));
   } else if (action === 'add-table') {
     const name = window.prompt('New table name?', 'New Table') ?? '';
+    pushUndo('add table');
     const next = addTable(project, name);
     activeTableId = next.schema.tables.at(-1)?.id ?? activeTableId;
     activeRecordId = activeTable().records[0]?.id ?? '';
     setProject(next);
   } else if (action === 'duplicate-record' && recordActionId) {
+    pushUndo('duplicate record');
     setActiveTable(duplicateRecord(activeTable(), recordActionId));
   } else if (action === 'delete-record' && recordActionId) {
+    pushUndo('delete record');
     setActiveTable(deleteRecord(activeTable(), recordActionId));
   } else if (action === 'toggle-sort') {
     sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
@@ -826,14 +951,23 @@ appRoot.addEventListener('click', (event) => {
     lastMessage = 'Showing all records.';
     render();
   } else if (action === 'replace') {
+    replacePreview = [];
     dialog = 'replace';
     render();
+  } else if (action === 'preview-replace') {
+    runReplacePreview();
   } else if (action === 'run-replace') {
     runReplace();
   } else if (action === 'save-field-settings') {
+    pushUndo('field settings');
     runFieldSettingsSave();
+  } else if (action === 'create-relationship') {
+    createRelationshipFromDialog();
+  } else if (action === 'undo-change') {
+    undoLastChange();
   } else if (action === 'close-dialog') {
     dialog = 'none';
+    replacePreview = [];
     render();
   } else if (action.endsWith('-view')) {
     viewMode = action.replace('-view', '') as ViewMode;
