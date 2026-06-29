@@ -57,6 +57,7 @@ export interface ListSplatLayout {
   tableId: string;
   mode: 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
   locked: boolean;
+  fieldOrder?: string[];
 }
 
 export interface ListSplatFile {

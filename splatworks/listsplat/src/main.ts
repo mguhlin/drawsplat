@@ -16,12 +16,12 @@ import {
 import { evaluateSimpleFormula, summarizeTable } from './model/formulas';
 import { previewReplaceValues, findDuplicateRecords, findMissingRecords, findRecords, replaceValues, sortRecords } from './model/query';
 import { addRelationship, createRelationship, relatedRecords, relationshipLabel } from './model/relationships';
-import type { FieldType, ListSplatCellValue, ListSplatFile, ListSplatRecord, ListSplatTable } from './model/types';
+import type { FieldType, ListSplatCellValue, ListSplatField, ListSplatFile, ListSplatRecord, ListSplatTable } from './model/types';
 import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
-type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport';
+type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport' | 'layout';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -301,6 +301,36 @@ function displayValue(table: ListSplatTable, record: ListSplatRecord, fieldId: s
   return record.values[fieldId] ?? '';
 }
 
+function currentLayout() {
+  return project.layouts.find((layout) => layout.tableId === activeTableId && layout.mode === viewMode);
+}
+
+function isField(value: ListSplatField | undefined): value is ListSplatField {
+  return Boolean(value);
+}
+
+function orderedFields(table: ListSplatTable): ListSplatField[] {
+  const layout = currentLayout();
+  const order = layout?.fieldOrder ?? table.fields.map((field) => field.id);
+  const byId = new Map(table.fields.map((field) => [field.id, field]));
+  return [
+    ...order.map((fieldId) => byId.get(fieldId)).filter(isField),
+    ...table.fields.filter((field) => !order.includes(field.id)),
+  ].filter((field) => field && !field.hidden);
+}
+
+function updateCurrentLayout(updates: { fieldOrder?: string[]; locked?: boolean }): void {
+  const layout = currentLayout();
+  if (!layout) {
+    return;
+  }
+  setProject({
+    ...project,
+    updatedAt: new Date().toISOString(),
+    layouts: project.layouts.map((item) => (item.id === layout.id ? { ...item, ...updates } : item)),
+  });
+}
+
 function recordTitle(table: ListSplatTable, record: ListSplatRecord): string {
   const firstVisibleField = table.fields.find((field) => !field.hidden) ?? table.fields[0];
   const value = firstVisibleField ? displayValue(table, record, firstVisibleField.id) : '';
@@ -362,8 +392,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
         <thead>
           <tr>
             <th>#</th>
-            ${table.fields
-              .filter((field) => !field.hidden)
+            ${orderedFields(table)
               .map(
                 (field) => `
                   <th>
@@ -383,8 +412,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
               (record, rowIndex) => `
                 <tr class="${record.id === activeRecordId ? 'active-row' : ''}" data-record-row="${record.id}">
                   <td><button type="button" class="row-button" data-select-record="${record.id}">${rowIndex + 1}</button></td>
-                  ${table.fields
-                    .filter((field) => !field.hidden)
+                  ${orderedFields(table)
                     .map((field) => `<td>${renderInput(table, record, field.id, rowIndex)}</td>`)
                     .join('')}
                   <td class="record-actions">
@@ -449,8 +477,7 @@ function renderFormView(table: ListSplatTable): string {
           .join('')}
       </div>
       <div class="record-form">
-        ${table.fields
-          .filter((field) => !field.hidden)
+        ${orderedFields(table)
           .map(
             (field, index) => `
               <label>
@@ -474,8 +501,7 @@ function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string
         .map(
           (record) => `
             <article class="record-card" data-select-record="${record.id}">
-              ${table.fields
-                .filter((field) => !field.hidden)
+              ${orderedFields(table)
                 .slice(0, viewMode === 'gallery' ? 5 : 8)
                 .map((field) => `<p><strong>${html(field.name)}</strong><span>${html(displayValue(table, record, field.id))}</span></p>`)
                 .join('')}
@@ -494,8 +520,7 @@ function renderLabelsView(table: ListSplatTable, rows: ListSplatRecord[]): strin
         .map(
           (record) => `
             <article class="print-label">
-              ${table.fields
-                .filter((field) => !field.hidden)
+              ${orderedFields(table)
                 .slice(0, 4)
                 .map((field) => `<p><strong>${html(field.name)}:</strong> ${html(displayValue(table, record, field.id))}</p>`)
                 .join('')}
@@ -544,7 +569,7 @@ function renderDatabasePanel(table: ListSplatTable): string {
             : renderTableView(table, rows);
 
   return `
-    <section class="database-panel" aria-label="Database table">
+        <section class="database-panel" aria-label="Database table">
       ${renderTableTabs(table)}
       <div class="view-tabs" role="group" aria-label="Layout modes">
         ${(['table', 'form', 'cards', 'gallery', 'labels', 'report'] as ViewMode[])
@@ -668,6 +693,38 @@ function renderDialog(table: ListSplatTable): string {
           <div class="modal-actions">
             <button type="button" data-action="save-field-settings">Save field</button>
             <button type="button" data-action="close-dialog">Cancel</button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+  if (dialog === 'layout') {
+    const layout = currentLayout();
+    const fields = orderedFields(table);
+    return `
+      <div class="modal-backdrop">
+        <section class="modal" role="dialog" aria-modal="true" aria-label="Layout designer">
+          <h2>Layout designer</h2>
+          <p>Arrange fields for the current ${html(viewMode)} view. Locked layouts can still be viewed, but students should not change them.</p>
+          <label class="check-row"><input type="checkbox" data-layout-locked ${layout?.locked ? 'checked' : ''}> Lock this layout</label>
+          <div class="layout-field-list">
+            ${fields
+              .map(
+                (field, index) => `
+                  <div class="layout-field-row">
+                    <strong>${html(field.name)}</strong>
+                    <span>${html(field.type)}</span>
+                    <button type="button" data-action="layout-field-up" data-layout-field-id="${field.id}" ${index === 0 ? 'disabled' : ''}>Up</button>
+                    <button type="button" data-action="layout-field-down" data-layout-field-id="${field.id}" ${index === fields.length - 1 ? 'disabled' : ''}>Down</button>
+                  </div>
+                `,
+              )
+              .join('')}
+          </div>
+          <div class="modal-actions">
+            <button type="button" data-action="save-layout-settings">Save layout</button>
+            <button type="button" data-action="close-dialog">Close</button>
           </div>
         </section>
       </div>
@@ -829,6 +886,7 @@ function render(): void {
           ['clear-find', 'Show all records'],
         ])}
         ${createMenu('Layout', [
+          ['layout-designer', 'Design current layout'],
           ['table-view', 'Table view'],
           ['form-view', 'Form view'],
           ['cards-view', 'Card view'],
@@ -1124,6 +1182,28 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'save-field-settings') {
     pushUndo('field settings');
     runFieldSettingsSave();
+  } else if (action === 'layout-designer' || action === 'lock-layout') {
+    dialog = 'layout';
+    render();
+  } else if (action === 'layout-field-up' || action === 'layout-field-down') {
+    const fieldId = target.closest<HTMLElement>('[data-layout-field-id]')?.dataset.layoutFieldId;
+    const layout = currentLayout();
+    if (fieldId && layout) {
+      const order = orderedFields(activeTable()).map((field) => field.id);
+      const index = order.indexOf(fieldId);
+      const swapIndex = action === 'layout-field-up' ? index - 1 : index + 1;
+      if (index >= 0 && swapIndex >= 0 && swapIndex < order.length) {
+        [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
+        pushUndo('layout order');
+        updateCurrentLayout({ fieldOrder: order });
+        dialog = 'layout';
+      }
+    }
+  } else if (action === 'save-layout-settings') {
+    const locked = appRoot.querySelector<HTMLInputElement>('[data-layout-locked]')?.checked ?? false;
+    pushUndo('layout settings');
+    updateCurrentLayout({ locked, fieldOrder: orderedFields(activeTable()).map((field) => field.id) });
+    dialog = 'none';
   } else if (action === 'create-relationship') {
     createRelationshipFromDialog();
   } else if (action === 'undo-change') {
