@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>Download DrawSplatTM and SplatWorksTM (self-hosting)</title>
-<meta name="description" content="Download separate DrawSplatTM and SplatWorksTM GridSplatTM self-hosting bundles. Keep whiteboard/tool updates separate from spreadsheet app updates." />
+<meta name="description" content="Download separate DrawSplatTM and SplatWorksTM self-hosting bundles. Keep whiteboard/tool updates separate from GridSplatTM, ShowSplatTM, and WriteSplatTM app updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/download.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
@@ -73,7 +73,7 @@
       <div class="landing-nav-menu studio-nav-menu">
         <div class="studio-nav-group">
           <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="#" aria-disabled="true">WriteSplat&trade; <span class="studio-nav-note">Planned</span></a>
+          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
           <a href="#" aria-disabled="true">ListSplat&trade; <span class="studio-nav-note">Planned</span></a>
           <a href="../pages/showsplat.html">ShowSplat&trade;</a>
           <a href="../pages/gridsplat.html">GridSplat&trade;</a>
@@ -152,8 +152,8 @@
       <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.14</span>
       <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-06-14 &mdash; SplatWorks<sup class="tm">TM</sup> folder layout, hub page, and ShowSplat<sup class="tm">TM</sup> editor updates</span>
     </p>
-    <p><strong>Current live ShowSplat<sup class="tm">TM</sup> updates after v3.1.14:</strong> the app now includes WebDeck HTML, Markdown, PDF, ODP, and PowerPoint import/export menu paths, best-effort PPTX/ODP conversion, image-based PDF import, browser Save-as-PDF export, selected-text bullet toggles, font-size buttons, a zoom slider, last-slide delete safety, and auto-hiding presenter controls. The download links below remain the latest tagged ZIP artifacts until the next packaged release is cut.</p>
-    <p>DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> are now packaged separately for self-hosting. Schools, districts, and organizations can update the whiteboard/tools/widgets/games package without redownloading GridSplat<sup class="tm">TM</sup>, or update GridSplat<sup class="tm">TM</sup> without refreshing the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
+    <p><strong>Current live SplatWorks<sup class="tm">TM</sup> updates after v3.1.14:</strong> ShowSplat<sup class="tm">TM</sup> now includes WebDeck HTML, Markdown, PDF, ODP, and PowerPoint import/export menu paths, best-effort PPTX/ODP conversion, image-based PDF import, browser Save-as-PDF export, selected-text bullet toggles, font-size buttons, a zoom slider, last-slide delete safety, and auto-hiding presenter controls. WriteSplat<sup class="tm">TM</sup> is now available on <code>main</code> with ProseMirror editing, local autosave, kid-friendly readability cards, TXT/MD/HTML/RTF/DOCX exports, templates, cloze passages, citations, teacher-only content, read-aloud controls, sentence scrambling, and vocabulary highlights. The download links below remain the latest tagged ZIP artifacts until the next packaged release is cut.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> are packaged separately for self-hosting. Schools, districts, and organizations can update the whiteboard/tools/widgets/games package without redownloading SplatWorks<sup class="tm">TM</sup> apps, or update GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, or WriteSplat<sup class="tm">TM</sup> without refreshing the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
     <p>
       <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.14/drawsplat-selfhost-v3.1.14.zip">Download DrawSplat v3.1.14 zip (203&nbsp;MB)</a>
       &nbsp; <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.14/splatworks-gridsplat-selfhost-v3.1.14.zip">Download GridSplat v3.1.14 zip (7.2&nbsp;MB)</a>
@@ -201,6 +201,16 @@
           <li>Best when only ShowSplatTM changed. Current live work adds WebDeck HTML, Markdown, PDF, ODP, and PPTX import/export paths; PDF import is image-based and PDF export uses browser print/save-as-PDF.</li>
         </ul>
       </article>
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">SplatWorksTM</span>
+        <h3>WriteSplatTM writing package</h3>
+        <p>Use this package for the GPL-covered WriteSplat word processor and classroom writing app. The next package build includes the static app, source, docs, tests, package metadata, and icon assets.</p>
+        <ul class="admin-checklist">
+          <li>License: GPL-3.0-only for WriteSplatTM / SplatWorksTM writing code.</li>
+          <li>Deploy the included <code>splatworks/</code> folder at <code>/splatworks/writesplat/</code>.</li>
+          <li>Current live app includes ProseMirror editing, offline local save, `.writesplat.json`, kid-friendly readability cards, TXT/MD/HTML/RTF/DOCX exports, templates, cloze, citations, teacher-only content, read-aloud controls, sentence scrambling, and vocabulary highlights.</li>
+        </ul>
+      </article>
     </div>
   </section>
 
@@ -208,7 +218,7 @@
     <div class="landing-section-head">
       <p class="landing-eyebrow">What you get</p>
       <h2>Three deployment paths</h2>
-      <p>Pick the deployment that matches your needs and follow the matching setup guide. Install DrawSplatTM, GridSplatTM, or both.</p>
+      <p>Pick the deployment that matches your needs and follow the matching setup guide. Install DrawSplatTM and whichever SplatWorksTM apps you need.</p>
     </div>
     <div class="support-resource-grid">
       <article class="support-resource-card featured">
@@ -260,8 +270,9 @@
       <li><code>COMPLIANCE-ROADMAP.md</code>, <code>LICENSE</code>, <code>README.md</code>, <code>SELFHOST-README.txt</code>.</li>
       <li>The SplatWorksTM GridSplatTM zip includes <code>splatworks/gridsplat/</code>, GridSplatTM docs, source, built static assets, tests, package metadata, and GPL-3.0-only license files.</li>
       <li>The SplatWorksTM ShowSplatTM zip includes <code>splatworks/showsplat/</code>, the browser presentation app, and the ShowSplatTM development plan.</li>
+      <li>The SplatWorksTM WriteSplatTM zip includes <code>splatworks/writesplat/</code>, the browser writing app, development plan, source, tests, package metadata, icon assets, and GPL-3.0-only license files.</li>
     </ol>
-    <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundles: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files, local test artifacts, and any real DrawSplat Hub campus folders. The DrawSplatTM bundle keeps only the generic Hub dashboard and <code>hubcampus</code> demo. Build both packages from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
+    <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundles: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files, local test artifacts, and any real DrawSplat Hub campus folders. The DrawSplatTM bundle keeps only the generic Hub dashboard and <code>hubcampus</code> demo. Build all packages from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
   </section>
 
   <section class="landing-section">
@@ -269,7 +280,7 @@
       <p class="landing-eyebrow">License &amp; support</p>
       <h2>Free, plus optional paid services</h2>
     </div>
-    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later unless a file or subdirectory says otherwise. GridSplat<sup class="tm">TM</sup> and ShowSplat<sup class="tm">TM</sup> / SplatWorks<sup class="tm">TM</sup> app code is GPL-3.0-only. Schools, organizations, and districts may use, host, modify, and redistribute the packages under those licenses. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
+    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later unless a file or subdirectory says otherwise. GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup> / SplatWorks<sup class="tm">TM</sup> app code is GPL-3.0-only. Schools, organizations, and districts may use, host, modify, and redistribute the packages under those licenses. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
   </section>
 </main>
 

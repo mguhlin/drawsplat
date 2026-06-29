@@ -20,7 +20,15 @@ The first implementation is a static browser app with:
 - browser print-to-PDF export
 - selected text-box bullet toggles and font size decrease/increase buttons
 - presentation controls that auto-hide and a pop-out notes window
+- task-focused in-app Help and keyboard shortcuts dialogs
 - last-slide delete safety that replaces the final slide with a blank title slide
+
+## In-App Help
+
+The Help menu now opens product-facing guidance inside ShowSplatTM for building
+decks, editing slide objects, using Markdown Studio, presenting, saving,
+exporting, importing, and privacy. Technical planning documents remain linked
+below the main Help items for maintainers and advanced users.
 
 ## Import and Export Notes
 

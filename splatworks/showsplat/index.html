@@ -152,6 +152,9 @@
       <button data-template="resources">Closing resources</button>
     </div></details>
     <details class="menu"><summary>Help</summary><div class="menu-panel">
+      <button data-action="show-help">ShowSplat help</button>
+      <button data-action="show-shortcuts">Keyboard shortcuts</button>
+      <hr>
       <button data-action="show-feature-plan">Feature plan</button>
       <a href="docs/plan.md" target="_blank" rel="noopener">Development plan</a>
       <a href="docs/ai-webdeck-format-instructions.json" target="_blank" rel="noopener">AI WebDeck JSON instructions</a>
@@ -253,6 +256,58 @@
       <button type="button" data-action="copy-markdown">Copy current deck Markdown</button>
       <button value="close">Done</button>
     </footer>
+  </form>
+</dialog>
+
+<dialog id="helpDialog" class="studio-dialog help-dialog">
+  <form method="dialog">
+    <header><h2>ShowSplat help</h2><button value="close" aria-label="Close">x</button></header>
+    <div class="help-grid">
+      <section>
+        <h3>Build a deck</h3>
+        <p>Add slides from the toolbar or Templates menu. Use the slide rail to pick, duplicate, delete, and reorder slides.</p>
+      </section>
+      <section>
+        <h3>Edit slide objects</h3>
+        <p>Select a text box, image, media item, or table on the canvas. Drag to move it, use the corner handles to resize it, and adjust details in the Selection panel.</p>
+      </section>
+      <section>
+        <h3>Use Markdown Studio</h3>
+        <p>Open Insert > Markdown Studio for outline-first decks. Separate slides with three dashes. Headings become slide titles and bullets become editable list items.</p>
+      </section>
+      <section>
+        <h3>Present</h3>
+        <p>Use SlideShow to start from the first or current slide. Presenter controls include navigation, notes, timer, and a pop-out notes window.</p>
+      </section>
+      <section>
+        <h3>Save and export</h3>
+        <p>Save Local keeps an editable browser copy. Save JSON creates the durable editable file. Export WebDeck for a single-file audience version.</p>
+      </section>
+      <section>
+        <h3>Import safely</h3>
+        <p>WebDeck and JSON keep the most editability. PDF import preserves appearance as slide images. PPTX and ODP import common text, images, shapes, and backgrounds as best-effort editable slides.</p>
+      </section>
+      <section>
+        <h3>Privacy</h3>
+        <p>ShowSplat runs in the browser. Local saves stay in this browser profile unless you export or import a file. Frontend WebDeck passwords are a classroom convenience, not encryption.</p>
+      </section>
+    </div>
+    <footer><button value="close">Done</button></footer>
+  </form>
+</dialog>
+
+<dialog id="shortcutsDialog" class="studio-dialog small-dialog help-dialog">
+  <form method="dialog">
+    <header><h2>Keyboard shortcuts</h2><button value="close" aria-label="Close">x</button></header>
+    <dl class="shortcut-list">
+      <div><dt>N</dt><dd>Add a title/content slide</dd></div>
+      <div><dt>D</dt><dd>Duplicate the current slide</dd></div>
+      <div><dt>Delete / Backspace</dt><dd>Delete the selected object</dd></div>
+      <div><dt>Arrow Up / Arrow Down</dt><dd>Move between slides in the rail</dd></div>
+      <div><dt>P</dt><dd>Present from the current slide</dd></div>
+      <div><dt>Escape</dt><dd>Close open menus</dd></div>
+    </dl>
+    <footer><button value="close">Done</button></footer>
   </form>
 </dialog>
 

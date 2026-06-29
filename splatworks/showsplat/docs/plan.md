@@ -108,7 +108,8 @@ PowerPoint, and HTML slide tools such as reveal.js.
 - The editor includes user-requested workflow polish: menu submenus, mutually
   switching view modes, selected-box bullet toggle, font size decrease/increase
   buttons, zoom slider, footer-bar import behavior, last-slide delete safety,
-  auto-fit on WebDeck HTML import, and auto-hiding presenter controls.
+  auto-fit on WebDeck HTML import, auto-hiding presenter controls, task-focused
+  Help, and a keyboard shortcuts dialog.
 
 ## Next Run Improvement Areas
 

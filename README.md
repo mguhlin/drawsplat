@@ -8,7 +8,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
 - **Status:** v3.1.14, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
-- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces separate DrawSplatTM, GridSplatTM, and ShowSplatTM zips so SplatWorksTM app updates can ship without refreshing the full DrawSplatTM package.
+- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces separate DrawSplatTM, GridSplatTM, ShowSplatTM, and WriteSplatTM zips so SplatWorksTM app updates can ship without refreshing the full DrawSplatTM package.
 
 ## Getting started
 
@@ -29,7 +29,7 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.14 — Latest stable self-host release, with newer ShowSplatTM live updates on `main`.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, now organized under `splatworks/` with launch paths at `/splatworks/gridsplat/` and `/splatworks/showsplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14). Current `main` adds ShowSplatTM import/export and editing refinements after that stable bundle. Previous milestones: [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
+**DrawSplatTM v3.1.14 — Latest stable self-host release, with newer ShowSplatTM and WriteSplatTM live updates on `main`.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, now organized under `splatworks/` with launch paths at `/splatworks/gridsplat/`, `/splatworks/showsplat/`, and `/splatworks/writesplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14). Current `main` adds ShowSplatTM import/export refinements and the WriteSplatTM classroom writing app after that stable bundle. Previous milestones: [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
 
 ## Current live updates after v3.1.14
 
@@ -39,6 +39,9 @@ Other docs that pair with setup:
 - **Editable slide controls.** Text boxes can toggle bullets on/off, selected boxes have font size decrease/increase buttons, view zoom uses a slider, and deleting the last slide automatically creates a blank title slide.
 - **Presentation polish.** WebDeck presenter controls auto-hide after a few seconds and return on hover; speaker notes can pop out into a movable window for another monitor.
 - **Import behavior cleanup.** Imported WebDeck slides resize text to fit the slide better, keep the grid outside the slide surface, and preserve or omit the ShowSplatTM footer bar based on the source deck.
+- **ShowSplatTM task-focused Help.** The Help menu now opens in-app guidance for deck building, object editing, Markdown Studio, presenting, save/export/import choices, privacy, and keyboard shortcuts while keeping technical docs available for maintainers.
+- **WriteSplatTM classroom writing app.** Added `splatworks/writesplat/`, a SplatWorksTM-styled browser word processor with ProseMirror editing, offline local autosave, native `.writesplat.json`, kid-friendly readability cards, export options, classroom templates, cloze, citations, teacher-only content, read-aloud controls, sentence scrambling, vocabulary highlights, and browser tests.
+- **Separate WriteSplatTM package path.** `./scripts/make-selfhost-bundle.sh` now creates `splatworks-writesplat-selfhost-<version>.zip` alongside the existing DrawSplatTM, GridSplatTM, and ShowSplatTM zips.
 
 ## Recent improvements (v3.1.14)
 
@@ -330,7 +333,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install the separate SplatWorksTM GridSplatTM bundle beside it when the spreadsheet app is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install separate SplatWorksTM app bundles beside it when GridSplatTM, ShowSplatTM, or WriteSplatTM is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 

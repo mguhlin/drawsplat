@@ -726,6 +726,50 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .studio-dialog button:hover { border-color: var(--accent); color: var(--accent); }
 .small-dialog { width: min(520px, calc(100vw - 32px)); }
+.help-dialog form { gap: 16px; }
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.help-grid section {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px;
+}
+.help-grid h3 {
+  margin: 0 0 6px;
+  color: var(--dark);
+  font-size: 1rem;
+}
+.help-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.shortcut-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.shortcut-list div {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.shortcut-list div:last-child { border-bottom: 0; }
+.shortcut-list dt {
+  color: var(--accent);
+  font-weight: 900;
+}
+.shortcut-list dd {
+  margin: 0;
+  color: var(--ink);
+}
 .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .dialog-subhead { margin: 14px 0 8px; font-size: 1rem; color: var(--ink); }
 .slide-palette {

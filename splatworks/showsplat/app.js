@@ -38,6 +38,8 @@
     posH: document.getElementById('posH'),
     markdownDialog: document.getElementById('markdownDialog'),
     markdownInput: document.getElementById('markdownInput'),
+    helpDialog: document.getElementById('helpDialog'),
+    shortcutsDialog: document.getElementById('shortcutsDialog'),
     themeDialog: document.getElementById('themeDialog'),
     footerText: document.getElementById('footerText'),
     slideBgColor: document.getElementById('slideBgColor'),
@@ -2635,6 +2637,8 @@
     if (action === 'view-sorter') setView('sorter');
     if (action === 'view-notes') setView('notes');
     if (action === 'toggle-sidebar') els.workspace.classList.toggle('show-inspector');
+    if (action === 'show-help') els.helpDialog.showModal();
+    if (action === 'show-shortcuts') els.shortcutsDialog.showModal();
     if (action === 'show-feature-plan') window.open('docs/plan.md', '_blank', 'noopener');
   }
 
