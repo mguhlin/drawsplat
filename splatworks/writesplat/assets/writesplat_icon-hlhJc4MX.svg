@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">WriteSplat icon</title>
+  <desc id="desc">A purple document with writing lines and an orange pencil.</desc>
+  <rect width="256" height="256" rx="48" fill="#7c3aed"/>
+  <path d="M70 42h78l38 38v134H70z" fill="#ffffff"/>
+  <path d="M148 42v39h38" fill="#ede9fe"/>
+  <path d="M92 104h72M92 128h72M92 152h50" stroke="#7c3aed" stroke-width="12" stroke-linecap="round"/>
+  <path d="M142 187l54-54 25 25-54 54-32 7z" fill="#ff9f2f"/>
+  <path d="M196 133l9-9a10 10 0 0 1 14 0l11 11a10 10 0 0 1 0 14l-9 9z" fill="#f97316"/>
+  <path d="M142 187l25 25-32 7z" fill="#4c1d95"/>
+</svg>
