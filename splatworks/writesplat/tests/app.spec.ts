@@ -346,6 +346,12 @@ test('round trips raw and split markdown editing', async ({ page }) => {
   await expect(page.locator('.ProseMirror strong')).toContainText('writers');
   await expect(page.locator('.ProseMirror li')).toHaveCount(2);
 
+  await markdown.fill('');
+  await markdown.pressSequentially('## Now is the time for all good folks\n\nThis is interesting.');
+  await expect(markdown).toHaveValue('## Now is the time for all good folks\n\nThis is interesting.');
+  await expect(page.locator('.ProseMirror h2')).toContainText('Now is the time for all good folks');
+  await expect(page.locator('.ProseMirror p')).toContainText('This is interesting.');
+
   await chooseMarkdownMode('Raw Markdown');
   await expect(editor).toBeHidden();
   await expect(markdown).toBeVisible();

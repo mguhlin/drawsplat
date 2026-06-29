@@ -37,6 +37,18 @@ describe('document exports', () => {
     );
   });
 
+  it('uses Markdown Studio-style markdown imports', () => {
+    expect(markdownToHtml('## ## Clean Heading\n\n| Item | Count |\n| --- | ---: |\n| Pens | `4` |\n\n- [x] Draft\n+ Publish')).toBe(
+      '<h2>Clean Heading</h2>\n<table><thead><tr><th>Item</th><th>Count</th></tr></thead><tbody><tr><td>Pens</td><td><code>4</code></td></tr></tbody></table>\n<ul><li><input type="checkbox" disabled checked> Draft</li><li>Publish</li></ul>',
+    );
+  });
+
+  it('filters unsafe markdown links and images', () => {
+    expect(markdownToHtml('[bad](javascript:alert1) ![bad](javascript:alert1) [ok](https://example.org)')).toBe(
+      '<p>bad bad <a href="https://example.org">ok</a></p>',
+    );
+  });
+
   it('escapes raw html during markdown import', () => {
     expect(markdownToHtml('<script>alert("x")</script>')).toBe(
       '<p>&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;</p>',

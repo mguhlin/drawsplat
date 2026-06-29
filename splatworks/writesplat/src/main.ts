@@ -1271,7 +1271,7 @@ function bootstrap(): void {
   }
 
   function syncMarkdownFromEditor(): void {
-    if (markdownMode === 'wysiwyg' || syncingMarkdown) {
+    if (markdownMode === 'wysiwyg' || syncingMarkdown || document.activeElement === markdownSource) {
       return;
     }
 

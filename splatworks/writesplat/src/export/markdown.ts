@@ -11,124 +11,161 @@ export function htmlToMarkdown(html: string): string {
 export function markdownToHtml(markdown: string): string {
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
   const blocks: string[] = [];
-  let paragraph: string[] = [];
   let list: { ordered: boolean; items: string[] } | null = null;
-  let quote: string[] = [];
   let code: string[] | null = null;
-
-  function flushParagraph(): void {
-    if (paragraph.length > 0) {
-      blocks.push(`<p>${inlineHtml(paragraph.join(' '))}</p>`);
-      paragraph = [];
-    }
-  }
+  let codeLang = '';
 
   function flushList(): void {
     if (list) {
       const tag = list.ordered ? 'ol' : 'ul';
-      blocks.push(`<${tag}>${list.items.map((item) => `<li>${inlineHtml(item)}</li>`).join('')}</${tag}>`);
+      blocks.push(`<${tag}>${list.items.join('')}</${tag}>`);
       list = null;
-    }
-  }
-
-  function flushQuote(): void {
-    if (quote.length > 0) {
-      blocks.push(`<blockquote><p>${inlineHtml(quote.join(' '))}</p></blockquote>`);
-      quote = [];
     }
   }
 
   function flushCode(): void {
     if (code) {
-      blocks.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+      const className = codeLang ? ` class="language-${escapeAttribute(codeLang)}"` : '';
+      blocks.push(`<pre><code${className}>${escapeHtml(code.join('\n'))}</code></pre>`);
       code = null;
+      codeLang = '';
     }
   }
 
-  lines.forEach((line) => {
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     if (code) {
       if (/^```/.test(line)) {
         flushCode();
       } else {
         code.push(line);
       }
-      return;
+      continue;
     }
 
-    if (/^```/.test(line)) {
-      flushParagraph();
+    const trimmed = fixDuplicateHeadingMarkers(line.trim());
+
+    if (/^```/.test(trimmed)) {
       flushList();
-      flushQuote();
       code = [];
-      return;
+      codeLang = trimmed.replace(/^```/, '').trim();
+      continue;
     }
 
-    if (!line.trim()) {
-      flushParagraph();
+    const table = parseMarkdownTable(lines, index);
+    if (table) {
       flushList();
-      flushQuote();
-      return;
+      blocks.push(table.html);
+      index = table.nextIndex - 1;
+      continue;
     }
 
-    const heading = /^(#{1,6})\s+(.+)$/u.exec(line);
+    if (!trimmed) {
+      flushList();
+      continue;
+    }
+
+    const heading = /^(#{1,6})\s+(.+)$/u.exec(trimmed);
     if (heading) {
-      flushParagraph();
       flushList();
-      flushQuote();
       const level = heading[1].length;
       blocks.push(`<h${level}>${inlineHtml(heading[2])}</h${level}>`);
-      return;
+      continue;
     }
 
-    if (/^(-{3,}|\*{3,})\s*$/u.test(line.trim())) {
-      flushParagraph();
+    if (/^(-{3,}|\*{3,}|_{3,})\s*$/u.test(trimmed)) {
       flushList();
-      flushQuote();
       blocks.push('<hr>');
-      return;
+      continue;
     }
 
-    if (/^<div style="page-break-after: always;"><\/div>$/iu.test(line.trim())) {
-      flushParagraph();
+    if (/^<div style="page-break-after: always;"><\/div>$/iu.test(trimmed)) {
       flushList();
-      flushQuote();
       blocks.push('<div class="page-break" data-page-break="true"></div>');
-      return;
+      continue;
     }
 
-    const quoteMatch = /^>\s?(.*)$/u.exec(line);
+    const quoteMatch = /^>\s?(.*)$/u.exec(trimmed);
     if (quoteMatch) {
-      flushParagraph();
       flushList();
-      quote.push(quoteMatch[1]);
-      return;
+      blocks.push(`<blockquote><p>${inlineHtml(quoteMatch[1])}</p></blockquote>`);
+      continue;
     }
 
-    const orderedMatch = /^\s*\d+\.\s+(.+)$/u.exec(line);
-    const unorderedMatch = /^\s*[-*]\s+(.+)$/u.exec(line);
+    const taskMatch = /^[-*+]\s*\[([ xX])\]\s+(.+)$/u.exec(trimmed);
+    if (taskMatch) {
+      if (!list || list.ordered) {
+        flushList();
+        list = { ordered: false, items: [] };
+      }
+      const checked = /[xX]/u.test(taskMatch[1]) ? ' checked' : '';
+      list.items.push(`<li><input type="checkbox" disabled${checked}> ${inlineHtml(taskMatch[2])}</li>`);
+      continue;
+    }
+
+    const orderedMatch = /^\s*\d+\.\s+(.+)$/u.exec(trimmed);
+    const unorderedMatch = /^\s*[-*+]\s+(.+)$/u.exec(trimmed);
     if (orderedMatch || unorderedMatch) {
-      flushParagraph();
-      flushQuote();
       const ordered = Boolean(orderedMatch);
       if (!list || list.ordered !== ordered) {
         flushList();
         list = { ordered, items: [] };
       }
-      list.items.push((orderedMatch ?? unorderedMatch)?.[1] ?? '');
-      return;
+      list.items.push(`<li>${inlineHtml((orderedMatch ?? unorderedMatch)?.[1] ?? '')}</li>`);
+      continue;
     }
 
     flushList();
-    flushQuote();
-    paragraph.push(line.trim());
-  });
+    blocks.push(`<p>${inlineHtml(trimmed)}</p>`);
+  }
 
-  flushParagraph();
   flushList();
-  flushQuote();
   flushCode();
 
   return blocks.join('\n');
+}
+
+function fixDuplicateHeadingMarkers(line: string): string {
+  const match = /^(\s*)((?:#{1,6}\s+){2,})(.*)$/u.exec(line);
+  if (!match) {
+    return line;
+  }
+
+  const markers = match[2].trim().split(/\s+/u).filter((item) => /^#{1,6}$/u.test(item));
+  if (markers.length < 2) {
+    return line;
+  }
+
+  return `${match[1]}${markers[markers.length - 1]} ${match[3].trim()}`;
+}
+
+function isTableDivider(row: string): boolean {
+  return /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/u.test(row.trim());
+}
+
+function parseMarkdownTable(lines: string[], start: number): { html: string; nextIndex: number } | null {
+  const rows: string[] = [];
+  let index = start;
+  while (index < lines.length && /^\|.*\|\s*$/u.test(lines[index].trim())) {
+    rows.push(lines[index].trim());
+    index += 1;
+  }
+
+  if (rows.length < 2 || !isTableDivider(rows[1])) {
+    return null;
+  }
+
+  const cellsFor = (row: string): string[] => {
+    const trimmed = row.replace(/^\|/u, '').replace(/\|$/u, '');
+    return trimmed.split('|').map((cell) => inlineHtml(cell.trim()));
+  };
+  const headers = cellsFor(rows[0]);
+  const bodyRows = rows.slice(2).map(cellsFor);
+  const html = `<table><thead><tr>${headers.map((header) => `<th>${header}</th>`).join('')}</tr></thead><tbody>${bodyRows
+    .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`)
+    .join('')}</tbody></table>`;
+
+  return { html, nextIndex: index };
 }
 
 function nodeToMarkdown(node: ChildNode, listDepth = 0, index = 1): string {
@@ -249,16 +286,42 @@ function inlineMarkdown(element: HTMLElement): string {
 
 function inlineHtml(markdown: string): string {
   return escapeHtml(markdown)
+    .replace(/`([^`]+)`/gu, '<code>$1</code>')
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/gu, (_match, alt: string, src: string) => {
-      return `<img src="${escapeAttribute(src)}" alt="${escapeAttribute(alt)}">`;
+      const safeUrl = safeMarkdownUrl(src, 'image');
+      return safeUrl ? `<img src="${escapeAttribute(safeUrl)}" alt="${escapeAttribute(alt)}">` : alt;
     })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gu, (_match, text: string, href: string) => {
-      return `<a href="${escapeAttribute(href)}">${text}</a>`;
+      const safeUrl = safeMarkdownUrl(href, 'link');
+      return safeUrl ? `<a href="${escapeAttribute(safeUrl)}">${text}</a>` : text;
     })
+    .replace(/\*\*\*([^*]+)\*\*\*/gu, '<strong><em>$1</em></strong>')
+    .replace(/___([^_]+)___/gu, '<strong><em>$1</em></strong>')
     .replace(/\*\*([^*]+)\*\*/gu, '<strong>$1</strong>')
+    .replace(/__([^_]+)__/gu, '<strong>$1</strong>')
     .replace(/~~([^~]+)~~/gu, '<s>$1</s>')
     .replace(/(^|[^\*])\*([^*]+)\*/gu, '$1<em>$2</em>')
+    .replace(/(^|\W)_([^_]+)_(?=\W|$)/gu, '$1<em>$2</em>')
     .replace(/&lt;u&gt;(.+?)&lt;\/u&gt;/giu, '<u>$1</u>');
+}
+
+function safeMarkdownUrl(url: string, kind: 'image' | 'link'): string {
+  const raw = String(url || '').trim().replace(/[\u0000-\u001f\u007f\s]+/gu, '');
+  if (!raw) {
+    return '';
+  }
+
+  const lower = raw.toLowerCase();
+  if (lower.startsWith('http://') || lower.startsWith('https://') || raw.startsWith('data:image/')) {
+    return raw;
+  }
+  if (kind === 'link' && lower.startsWith('mailto:')) {
+    return raw;
+  }
+  if (raw[0] === '#' || raw[0] === '/' || raw.startsWith('./') || raw.startsWith('../')) {
+    return raw;
+  }
+  return '';
 }
 
 function escapeHtml(value: string): string {
