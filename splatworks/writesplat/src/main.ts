@@ -22,6 +22,8 @@ const AUTOSAVE_KEY = 'writesplat.autosave.v1';
 const LIBRARY_INDEX_KEY = 'writesplat.documents.index.v1';
 const LIBRARY_ITEM_PREFIX = 'writesplat.documents.v1.';
 const LANGUAGE_KEY = 'drawsplat.language';
+const READ_ALOUD_VOICE_KEY = 'writesplat.readaloud.voice';
+const READ_ALOUD_RATE_KEY = 'writesplat.readaloud.rate';
 const ANALYSIS_DEBOUNCE_MS = 300;
 
 interface LibraryEntry {
@@ -423,6 +425,16 @@ function initialLanguage(): LanguageCode {
   }
 }
 
+function chooseFriendlyVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+  const preferredNames = ['google', 'microsoft', 'natural', 'samantha', 'jenny', 'aria', 'zira', 'ava', 'susan', 'karen'];
+  return (
+    voices.find((voice) => preferredNames.some((name) => voice.name.toLowerCase().includes(name))) ??
+    voices.find((voice) => voice.localService) ??
+    voices[0] ??
+    null
+  );
+}
+
 function translateText(value: string, language: LanguageCode): string {
   if (language === 'en') return value;
   return translations[language][value] ?? value;
@@ -711,6 +723,15 @@ function appHtml(): string {
             ${toolButton('open-citation-dialog', 'Citation Assistant', 'citation')}
             ${toolButton('toggle-student-view', 'Student View', 'student')}
             ${toolButton('mark-teacher-only', 'Mark Teacher Only', 'teacher')}
+            <div class="read-aloud-controls" aria-label="Read Aloud voice settings">
+              <label>Voice <select id="readAloudVoice"><option value="">Browser default</option></select></label>
+              <label>Speed <select id="readAloudRate">
+                <option value="0.8">Slower</option>
+                <option value="0.9" selected>Calm</option>
+                <option value="1">Normal</option>
+                <option value="1.15">Faster</option>
+              </select></label>
+            </div>
             ${toolButton('read-aloud', 'Read Aloud', 'play')}
             ${toolButton('stop-read-aloud', 'Stop Reading', 'stop')}
             ${toolButton('scramble-sentences', 'Scramble Sentences', 'scramble')}
@@ -1128,6 +1149,8 @@ function bootstrap(): void {
   const vocabularyTerms = getRequiredElement<HTMLTextAreaElement>('vocabularyTerms');
   const vocabularyStatus = getRequiredElement<HTMLElement>('vocabularyStatus');
   const languageSwitcher = getRequiredElement<HTMLSelectElement>('languageSwitcher');
+  const readAloudVoiceSelect = getRequiredElement<HTMLSelectElement>('readAloudVoice');
+  const readAloudRateSelect = getRequiredElement<HTMLSelectElement>('readAloudRate');
   const helpDialog = getRequiredElement<HTMLElement>('helpDialog');
   const shortcutsDialog = getRequiredElement<HTMLElement>('shortcutsDialog');
   const citationFields = {
@@ -1148,6 +1171,7 @@ function bootstrap(): void {
   let studentView = false;
   let targetGrade = Number(targetGradeSelect.value);
   let currentLocalDocumentId: string | null = null;
+  let availableVoices: SpeechSynthesisVoice[] = [];
   let citations: string[] = [];
   let answerKey: string[] = [];
 
@@ -1573,10 +1597,13 @@ function bootstrap(): void {
       writer.removeTeacherOnly();
       refresh();
     } else if (action === 'read-aloud') {
+      const selectedVoice = availableVoices.find((voice) => voice.voiceURI === readAloudVoiceSelect.value) ?? null;
       readTextAloud(documentTextFromHtml(writer.getHtml()), {
         onBoundary: (charIndex, charLength) => writer.setReadAloudTextOffset(charIndex, charLength),
         onEnd: () => writer.clearReadAloudHighlight(),
-        rate: 1,
+        pitch: 0.95,
+        rate: Number(readAloudRateSelect.value) || 0.9,
+        voice: selectedVoice,
       });
     } else if (action === 'pause-read-aloud') {
       pauseReadAloud();
@@ -1675,6 +1702,22 @@ function bootstrap(): void {
     setEditorZoom(zoomSelect.value);
   });
 
+  readAloudVoiceSelect.addEventListener('change', () => {
+    try {
+      localStorage.setItem(READ_ALOUD_VOICE_KEY, readAloudVoiceSelect.value);
+    } catch {
+      // Read-aloud voice is a convenience preference only.
+    }
+  });
+
+  readAloudRateSelect.addEventListener('change', () => {
+    try {
+      localStorage.setItem(READ_ALOUD_RATE_KEY, readAloudRateSelect.value);
+    } catch {
+      // Read-aloud speed is a convenience preference only.
+    }
+  });
+
   languageSwitcher.addEventListener('change', () => {
     const language = normalizeLanguage(languageSwitcher.value);
     try {
@@ -1688,6 +1731,10 @@ function bootstrap(): void {
   window.addEventListener('resize', syncSidebarMode);
   syncSidebarMode();
   applyLanguage(root, normalizeLanguage(languageSwitcher.value));
+  refreshReadAloudVoices();
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.addEventListener('voiceschanged', refreshReadAloudVoices);
+  }
 
   function loadNativeFile(file: WriteSplatFile): void {
     titleInput.value = file.metadata.title;
@@ -1890,6 +1937,34 @@ function bootstrap(): void {
     const zoom = allowed.has(value) ? value : '1';
     editorMount.dataset.zoom = zoom;
     editorMount.style.setProperty('--editor-zoom', zoom);
+  }
+
+  function refreshReadAloudVoices(): void {
+    if (!('speechSynthesis' in window)) {
+      readAloudVoiceSelect.innerHTML = '<option value="">Read Aloud unavailable</option>';
+      readAloudVoiceSelect.disabled = true;
+      readAloudRateSelect.disabled = true;
+      return;
+    }
+
+    availableVoices = window.speechSynthesis.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith('en'));
+    let storedVoice = '';
+    let storedRate = '';
+    try {
+      storedVoice = localStorage.getItem(READ_ALOUD_VOICE_KEY) ?? '';
+      storedRate = localStorage.getItem(READ_ALOUD_RATE_KEY) ?? '';
+    } catch {
+      storedVoice = '';
+      storedRate = '';
+    }
+
+    const preferredVoice = storedVoice || chooseFriendlyVoice(availableVoices)?.voiceURI || '';
+    readAloudVoiceSelect.innerHTML = [
+      '<option value="">Browser default</option>',
+      ...availableVoices.map((voice) => `<option value="${escapeHtml(voice.voiceURI)}">${escapeHtml(voice.name)} (${escapeHtml(voice.lang)})</option>`),
+    ].join('');
+    readAloudVoiceSelect.value = availableVoices.some((voice) => voice.voiceURI === preferredVoice) ? preferredVoice : '';
+    readAloudRateSelect.value = ['0.8', '0.9', '1', '1.15'].includes(storedRate) ? storedRate : '0.9';
   }
 
   function updateCitationPreview(): void {

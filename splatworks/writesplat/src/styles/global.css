@@ -512,6 +512,8 @@ body[data-markdown-mode='split'] .markdown-source {
 
 .ProseMirror {
   min-height: 100%;
+  caret-color: var(--accent);
+  cursor: text;
   outline: none;
 }
 
@@ -614,11 +616,11 @@ body.student-view .ProseMirror .teacher-only {
 
 .draggable-block {
   position: relative;
-  cursor: grab;
+  cursor: text;
 }
 
 .draggable-block:active {
-  cursor: grabbing;
+  cursor: text;
 }
 
 .block-drag-handle {
@@ -633,9 +635,11 @@ body.student-view .ProseMirror .teacher-only {
   color: var(--accent);
   font-weight: 900;
   line-height: 1;
-  opacity: .38;
+  opacity: 0;
+  pointer-events: none;
   cursor: grab;
   user-select: none;
+  transition: opacity .12s ease, background-color .12s ease;
 }
 
 .block-drag-handle::before {
@@ -646,6 +650,7 @@ body.student-view .ProseMirror .teacher-only {
 .block-drag-handle:focus {
   background: var(--soft);
   opacity: 1;
+  pointer-events: auto;
   outline: 2px solid transparent;
 }
 
@@ -956,6 +961,35 @@ body.sidebar-collapsed .sidebar {
 .tool-card:hover {
   border-color: var(--accent);
   background: var(--soft);
+}
+
+.read-aloud-controls {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.read-aloud-controls label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 900;
+}
+
+.read-aloud-controls select {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 800;
 }
 
 .suggestion-note {

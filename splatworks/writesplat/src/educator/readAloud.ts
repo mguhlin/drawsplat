@@ -1,7 +1,9 @@
 export interface ReadAloudOptions {
   onBoundary?: (charIndex: number, charLength: number) => void;
   onEnd?: () => void;
+  pitch?: number;
   rate: number;
+  voice?: SpeechSynthesisVoice | null;
 }
 
 export function readTextAloud(text: string, options: ReadAloudOptions): boolean {
@@ -11,7 +13,11 @@ export function readTextAloud(text: string, options: ReadAloudOptions): boolean 
 
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
+  utterance.pitch = options.pitch ?? 1;
   utterance.rate = options.rate;
+  if (options.voice) {
+    utterance.voice = options.voice;
+  }
   utterance.onboundary = (event) => {
     if (typeof event.charIndex !== 'number') {
       return;
