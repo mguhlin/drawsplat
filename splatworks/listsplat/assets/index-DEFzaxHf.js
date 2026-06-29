@@ -97,12 +97,17 @@ Apollo 11 mission,NASA,1969,Space exploration,First humans walked on the Moon`,[
         ${n}
       </div>
     </div>
-  `}function Be(e,t){return`
+  `}function Be(e,t){let n=(t,n)=>{let r=Y(e,n,t.id);if(t.type===`image`){let e=String(r??``);return`
+        <figure class="card-image-field">
+          ${e?`<img src="${V(e)}" alt="">`:`<span>No image yet</span>`}
+          <figcaption>${V(t.name)}</figcaption>
+        </figure>
+      `}return`<p><strong>${V(t.name)}</strong><span>${V(r)}</span></p>`};return`
     <div class="cards-view ${T===`gallery`?`gallery-view`:``}">
-      ${t.map(t=>{let n=Pe(e,t);return`
+      ${t.map(t=>{let r=Pe(e,t);return`
             <article class="record-card" data-select-record="${t.id}">
-              ${T===`gallery`?`<div class="gallery-image">${n?`<img src="${V(n)}" alt="">`:`<span>Add an image field, then upload a picture.</span>`}</div>`:``}
-              ${Z(e).filter(e=>T!==`gallery`||e.type!==`image`).slice(0,T===`gallery`?4:8).map(n=>`<p><strong>${V(n.name)}</strong><span>${V(Y(e,t,n.id))}</span></p>`).join(``)}
+              ${T===`gallery`?`<div class="gallery-image">${r?`<img src="${V(r)}" alt="">`:`<span>Add an image field, then upload a picture.</span>`}</div>`:``}
+              ${Z(e).filter(e=>T!==`gallery`||e.type!==`image`).slice(0,T===`gallery`?4:8).map(e=>n(e,t)).join(``)}
             </article>
           `}).join(``)}
     </div>

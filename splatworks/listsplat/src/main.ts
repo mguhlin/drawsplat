@@ -516,6 +516,20 @@ function renderFormView(table: ListSplatTable): string {
 }
 
 function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string {
+  const renderCardField = (field: ListSplatField, record: ListSplatRecord): string => {
+    const value = displayValue(table, record, field.id);
+    if (field.type === 'image') {
+      const imageSrc = String(value ?? '');
+      return `
+        <figure class="card-image-field">
+          ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : '<span>No image yet</span>'}
+          <figcaption>${html(field.name)}</figcaption>
+        </figure>
+      `;
+    }
+    return `<p><strong>${html(field.name)}</strong><span>${html(value)}</span></p>`;
+  };
+
   return `
     <div class="cards-view ${viewMode === 'gallery' ? 'gallery-view' : ''}">
       ${rows
@@ -532,7 +546,7 @@ function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string
               ${orderedFields(table)
                 .filter((field) => viewMode !== 'gallery' || field.type !== 'image')
                 .slice(0, viewMode === 'gallery' ? 4 : 8)
-                .map((field) => `<p><strong>${html(field.name)}</strong><span>${html(displayValue(table, record, field.id))}</span></p>`)
+                .map((field) => renderCardField(field, record))
                 .join('')}
             </article>
           `;

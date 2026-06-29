@@ -531,6 +531,35 @@ summary:focus-visible {
   color: var(--ink);
 }
 
+.card-image-field {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.card-image-field img {
+  width: 100%;
+  max-height: 180px;
+  border-radius: 7px;
+  object-fit: cover;
+  background: var(--soft);
+}
+
+.card-image-field span {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  border-radius: 7px;
+  background: var(--soft);
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.card-image-field figcaption {
+  color: var(--accent-dark);
+  font-weight: 900;
+}
+
 .gallery-image {
   display: grid;
   place-items: center;
