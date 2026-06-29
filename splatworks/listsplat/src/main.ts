@@ -45,6 +45,8 @@ let selectedFieldId = '';
 let lastMessage = 'Tip: Start with one table, then add relationships when your project needs them.';
 let undoStack: Array<{ label: string; project: ListSplatFile }> = [];
 let replacePreview: Array<{ recordId: string; fieldId: string; before: string; after: string }> = [];
+let relationshipFromTableId = activeTableId;
+let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
 
 function html(value: unknown): string {
   return String(value ?? '')
@@ -255,6 +257,12 @@ function displayValue(table: ListSplatTable, record: ListSplatRecord, fieldId: s
   return record.values[fieldId] ?? '';
 }
 
+function recordTitle(table: ListSplatTable, record: ListSplatRecord): string {
+  const firstVisibleField = table.fields.find((field) => !field.hidden) ?? table.fields[0];
+  const value = firstVisibleField ? displayValue(table, record, firstVisibleField.id) : '';
+  return String(value || 'Untitled record');
+}
+
 function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: string, rowIndex: number): string {
   const field = table.fields.find((item) => item.id === fieldId);
   const value = displayValue(table, record, fieldId);
@@ -342,6 +350,38 @@ function renderFormView(table: ListSplatTable): string {
   if (!record) {
     return '<div class="empty-panel">Add a record to use form view.</div>';
   }
+  const relatedSections = project.schema.relationships
+    .filter((relationship) => relationship.fromTableId === table.id)
+    .map((relationship) => {
+      const targetTable = project.schema.tables.find((item) => item.id === relationship.toTableId);
+      const rows = targetTable ? relatedRecords(relationship, table, record, targetTable) : [];
+      return `
+        <section class="related-records">
+          <h3>${html(relationship.name)}</h3>
+          <p>${rows.length} related record${rows.length === 1 ? '' : 's'} from ${html(targetTable?.name ?? 'another table')}</p>
+          ${
+            rows.length
+              ? `<div class="related-grid">${rows
+                  .slice(0, 6)
+                  .map(
+                    (relatedRecord) => `
+                      <article>
+                        <strong>${html(recordTitle(targetTable!, relatedRecord))}</strong>
+                        ${targetTable!.fields
+                          .filter((field) => !field.hidden)
+                          .slice(0, 3)
+                          .map((field) => `<span>${html(field.name)}: ${html(displayValue(targetTable!, relatedRecord, field.id))}</span>`)
+                          .join('')}
+                      </article>
+                    `,
+                  )
+                  .join('')}</div>`
+              : '<p>No matches yet. Make sure the match fields use the same value.</p>'
+          }
+        </section>
+      `;
+    })
+    .join('');
   return `
     <div class="form-view">
       <div class="form-nav">
@@ -365,6 +405,7 @@ function renderFormView(table: ListSplatTable): string {
             `,
           )
           .join('')}
+        ${relatedSections}
       </div>
     </div>
   `;
@@ -530,11 +571,17 @@ function renderDialog(table: ListSplatTable): string {
           <label>Find <input data-replace-find placeholder="Text to find"></label>
           <label>Replace with <input data-replace-with placeholder="New text"></label>
           <label>Field <select data-replace-field>${table.fields.map((field) => `<option value="${field.id}">${html(field.name)}</option>`).join('')}</select></label>
+          <label class="check-row"><input type="checkbox" data-replace-case-sensitive> Case-sensitive</label>
+          <label class="check-row"><input type="checkbox" data-replace-whole-word> Whole word only</label>
           <p>Replacement applies to the current found set when search is active. Preview first, then apply. The last replace can be undone from Edit.</p>
           ${
             replacePreview.length
               ? `<div class="replace-preview"><strong>${replacePreview.length} change${replacePreview.length === 1 ? '' : 's'} ready</strong>${previewRows
-                  .map((item) => `<p><del>${html(item.before)}</del><ins>${html(item.after)}</ins></p>`)
+                  .map((item) => {
+                    const record = table.records.find((candidate) => candidate.id === item.recordId);
+                    const field = table.fields.find((candidate) => candidate.id === item.fieldId);
+                    return `<p><span>${html(record ? recordTitle(table, record) : 'Record')} / ${html(field?.name ?? 'Field')}</span><del>${html(item.before)}</del><ins>${html(item.after)}</ins></p>`;
+                  })
                   .join('')}</div>`
               : ''
           }
@@ -589,11 +636,13 @@ function renderDialog(table: ListSplatTable): string {
   }
 
   if (dialog === 'relationship') {
-    const tableOptions = project.schema.tables.map((item) => `<option value="${item.id}">${html(item.name)}</option>`).join('');
-    const fieldOptions = project.schema.tables
-      .map((item) =>
-        item.fields.map((field) => `<option value="${item.id}:${field.id}">${html(item.name)} - ${html(field.name)}</option>`).join(''),
-      )
+    const fromTable = project.schema.tables.find((item) => item.id === relationshipFromTableId) ?? table;
+    const toTable = project.schema.tables.find((item) => item.id === relationshipToTableId) ?? table;
+    const fromFieldOptions = fromTable.fields
+      .map((field) => `<option value="${fromTable.id}:${field.id}">${html(field.name)}</option>`)
+      .join('');
+    const toFieldOptions = toTable.fields
+      .map((field) => `<option value="${toTable.id}:${field.id}">${html(field.name)}</option>`)
       .join('');
     return `
       <div class="modal-backdrop">
@@ -601,10 +650,14 @@ function renderDialog(table: ListSplatTable): string {
           <h2>Relationships</h2>
           <p>Create a simple one-to-many relationship by matching values in two fields, such as Books:Title to Reviews:Book.</p>
           <label>Name <input data-relationship-name placeholder="Books to reviews"></label>
-          <label>Parent table <select data-relationship-from-table>${tableOptions}</select></label>
-          <label>Parent match field <select data-relationship-from-field>${fieldOptions}</select></label>
-          <label>Related table <select data-relationship-to-table>${tableOptions}</select></label>
-          <label>Related match field <select data-relationship-to-field>${fieldOptions}</select></label>
+          <label>Parent table <select data-relationship-from-table>${project.schema.tables
+            .map((item) => `<option value="${item.id}" ${item.id === fromTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
+            .join('')}</select></label>
+          <label>Parent match field <select data-relationship-from-field>${fromFieldOptions}</select></label>
+          <label>Related table <select data-relationship-to-table>${project.schema.tables
+            .map((item) => `<option value="${item.id}" ${item.id === toTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
+            .join('')}</select></label>
+          <label>Related match field <select data-relationship-to-field>${toFieldOptions}</select></label>
           ${
             project.schema.relationships.length
               ? `<div class="relationship-list">${project.schema.relationships
@@ -788,9 +841,11 @@ function runReplace(): void {
   const find = appRoot.querySelector<HTMLInputElement>('[data-replace-find]')?.value ?? '';
   const replacement = appRoot.querySelector<HTMLInputElement>('[data-replace-with]')?.value ?? '';
   const fieldId = appRoot.querySelector<HTMLSelectElement>('[data-replace-field]')?.value ?? activeTable().fields[0]?.id;
+  const caseSensitive = appRoot.querySelector<HTMLInputElement>('[data-replace-case-sensitive]')?.checked ?? false;
+  const wholeWord = appRoot.querySelector<HTMLInputElement>('[data-replace-whole-word]')?.checked ?? false;
   const recordIds = searchQuery ? visibleRecords(activeTable()).map((record) => record.id) : undefined;
   pushUndo('replace');
-  const result = replaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds });
+  const result = replaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds, caseSensitive, wholeWord });
   dialog = 'none';
   replacePreview = [];
   lastMessage = `Replaced ${result.count} value${result.count === 1 ? '' : 's'}.`;
@@ -801,8 +856,10 @@ function runReplacePreview(): void {
   const find = appRoot.querySelector<HTMLInputElement>('[data-replace-find]')?.value ?? '';
   const replacement = appRoot.querySelector<HTMLInputElement>('[data-replace-with]')?.value ?? '';
   const fieldId = appRoot.querySelector<HTMLSelectElement>('[data-replace-field]')?.value ?? activeTable().fields[0]?.id;
+  const caseSensitive = appRoot.querySelector<HTMLInputElement>('[data-replace-case-sensitive]')?.checked ?? false;
+  const wholeWord = appRoot.querySelector<HTMLInputElement>('[data-replace-whole-word]')?.checked ?? false;
   const recordIds = searchQuery ? visibleRecords(activeTable()).map((record) => record.id) : undefined;
-  replacePreview = previewReplaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds });
+  replacePreview = previewReplaceValues(activeTable(), { fieldIds: [fieldId], find, replacement, recordIds, caseSensitive, wholeWord });
   lastMessage = `Preview found ${replacePreview.length} change${replacePreview.length === 1 ? '' : 's'}.`;
   render();
 }
@@ -836,6 +893,12 @@ function createRelationshipFromDialog(): void {
   const relationship = createRelationship(name, fromTableId, fromField.fieldId, toTableId, toField.fieldId);
   lastMessage = `Created relationship: ${relationship.name}.`;
   setProject(addRelationship(project, relationship));
+}
+
+function updateRelationshipDialogTables(): void {
+  relationshipFromTableId = appRoot.querySelector<HTMLSelectElement>('[data-relationship-from-table]')?.value ?? relationshipFromTableId;
+  relationshipToTableId = appRoot.querySelector<HTMLSelectElement>('[data-relationship-to-table]')?.value ?? relationshipToTableId;
+  render();
 }
 
 appRoot.addEventListener('click', (event) => {
@@ -1005,6 +1068,8 @@ appRoot.addEventListener('change', (event) => {
     if (sortFieldId) {
       setActiveTable(sortRecords(activeTable(), sortFieldId, sortDirection));
     }
+  } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
+    updateRelationshipDialogTables();
   } else if (target.matches('.cell-input, .cell-checkbox') && (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
     updateActiveCell(target);
   }

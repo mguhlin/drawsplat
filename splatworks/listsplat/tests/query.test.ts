@@ -48,6 +48,19 @@ describe('query tools', () => {
     expect(preview[0].before).toBe('Freshwater lakes');
     expect(table.records[0].values[table.fields[1].id]).toBe('Freshwater lakes');
   });
+
+  it('supports whole-word replace', () => {
+    const table = createStarterProject().schema.tables[0];
+    const habitatField = table.fields[1];
+    const edited = updateCell(table, table.records[0].id, habitatField.id, 'lake lakes laketown');
+    const result = replaceValues(edited, {
+      fieldIds: [habitatField.id],
+      find: 'lake',
+      replacement: 'pond',
+      wholeWord: true,
+    });
+    expect(result.table.records[0].values[habitatField.id]).toBe('pond lakes laketown');
+  });
 });
 
 describe('summaries', () => {

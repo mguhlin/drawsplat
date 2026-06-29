@@ -13,6 +13,7 @@ export interface ReplaceOptions {
   replacement: string;
   recordIds?: string[];
   caseSensitive?: boolean;
+  wholeWord?: boolean;
 }
 
 export interface ReplacePreviewItem {
@@ -81,7 +82,8 @@ export function previewReplaceValues(table: ListSplatTable, options: ReplaceOpti
 
   const flags = options.caseSensitive ? 'g' : 'gi';
   const escapedFind = options.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const pattern = new RegExp(escapedFind, flags);
+  const source = options.wholeWord ? `\\b${escapedFind}\\b` : escapedFind;
+  const pattern = new RegExp(source, flags);
   const allowedRecordIds = new Set(options.recordIds ?? table.records.map((record) => record.id));
   const preview: ReplacePreviewItem[] = [];
 
@@ -108,7 +110,8 @@ export function replaceValues(table: ListSplatTable, options: ReplaceOptions): {
 
   const flags = options.caseSensitive ? 'g' : 'gi';
   const escapedFind = options.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const pattern = new RegExp(escapedFind, flags);
+  const source = options.wholeWord ? `\\b${escapedFind}\\b` : escapedFind;
+  const pattern = new RegExp(source, flags);
   const allowedRecordIds = new Set(options.recordIds ?? table.records.map((record) => record.id));
   let count = 0;
 
