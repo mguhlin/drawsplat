@@ -7,6 +7,7 @@
 #   - dist/splatworks-gridsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/splatworks-showsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/splatworks-writesplat-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/splatworks-listsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #
 # The DrawSplatTM bundle contains the whiteboard, tools, widgets, games,
 # backends, and compliance docs. SplatWorksTM apps ship separately so a
@@ -42,17 +43,20 @@ DRAWSPLAT_ROOT="$STAGE_DIR/drawsplat-selfhost-$VERSION_LABEL"
 GRID_ROOT="$STAGE_DIR/splatworks-gridsplat-selfhost-$VERSION_LABEL"
 SHOW_ROOT="$STAGE_DIR/splatworks-showsplat-selfhost-$VERSION_LABEL"
 WRITE_ROOT="$STAGE_DIR/splatworks-writesplat-selfhost-$VERSION_LABEL"
+LIST_ROOT="$STAGE_DIR/splatworks-listsplat-selfhost-$VERSION_LABEL"
 DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
 GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
 SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
 WRITE_OUT_NAME="splatworks-writesplat-selfhost-$VERSION_LABEL.zip"
+LIST_OUT_NAME="splatworks-listsplat-selfhost-$VERSION_LABEL.zip"
 DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
 GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
 SHOW_OUT_PATH="$OUT_DIR/$SHOW_OUT_NAME"
 WRITE_OUT_PATH="$OUT_DIR/$WRITE_OUT_NAME"
+LIST_OUT_PATH="$OUT_DIR/$LIST_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -76,6 +80,7 @@ EXCLUDES=(
   "splatworks-gridsplat-selfhost-*.zip"
   "splatworks-showsplat-selfhost-*.zip"
   "splatworks-writesplat-selfhost-*.zip"
+  "splatworks-listsplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -151,6 +156,8 @@ separately. Download splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you
 want the spreadsheet app, and splatworks-showsplat-selfhost-$VERSION_LABEL.zip
 when you want the presentation/WebDeck app. Download
 splatworks-writesplat-selfhost-$VERSION_LABEL.zip when you want the writing app.
+Download splatworks-listsplat-selfhost-$VERSION_LABEL.zip when you want the
+classroom database app.
 This keeps GPL-covered SplatWorks app releases independent from DrawSplatTM
 whiteboard/tools/widgets/games releases.
 
@@ -193,6 +200,8 @@ SPLATWORKS_EXCLUDES=(
   "coverage"
   "test-results"
   "playwright-report"
+  "tsconfig.tsbuildinfo"
+  "assets/assets"
   ".env"
   ".env.local"
   "*.log"
@@ -345,12 +354,65 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
+if command -v rsync >/dev/null 2>&1; then
+  LIST_RSYNC_ARGS=(-a --delete)
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
+    LIST_RSYNC_ARGS+=(--exclude "$pattern")
+  done
+  mkdir -p "$LIST_ROOT/splatworks"
+  rsync "${LIST_RSYNC_ARGS[@]}" splatworks/listsplat/ "$LIST_ROOT/splatworks/listsplat/"
+else
+  mkdir -p "$LIST_ROOT/splatworks"
+  cp -R splatworks/listsplat "$LIST_ROOT/splatworks/listsplat"
+  for pattern in "${SPLATWORKS_EXCLUDES[@]}"; do
+    find "$LIST_ROOT/splatworks/listsplat" -name "$pattern" -prune -exec rm -rf {} + 2>/dev/null || true
+  done
+fi
+
+cat > "$LIST_ROOT/SPLATWORKS-LISTSPLAT-README.txt" <<EOF
+SplatWorksTM ListSplatTM Self-Hosted Bundle
+==========================================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+What's in this zip
+------------------
+- splatworks/listsplat/ — the ListSplatTM browser classroom database app,
+  including source, tests, docs, package metadata, and icon assets.
+- splatworks/listsplat/docs/plan.md — the ListSplatTM feature plan and release
+  scope.
+- splatworks/listsplat/LICENSE.md and splatworks/listsplat/COPYING —
+  GPL-3.0-only license text for ListSplatTM / SplatWorksTM database code.
+
+Deployment
+----------
+ListSplatTM is built to run from /splatworks/listsplat/.
+
+1. Upload the included splatworks/ folder to your static host.
+2. Open https://your-domain.example/splatworks/listsplat/.
+3. To rebuild from source:
+     cd splatworks/listsplat
+     npm install
+     npm run build
+
+Licensing boundary
+------------------
+ListSplatTM is packaged separately from DrawSplatTM so database app updates can
+ship without requiring a full DrawSplatTM whiteboard/tools/widgets/games
+download. ListSplatTM is GPL-3.0-only as part of the SplatWorksTM app family.
+DrawSplatTM whiteboard code, tools, widgets, games, backends, and compliance
+features remain under the repository-level DrawSplatTM license unless a file or
+subdirectory says otherwise.
+EOF
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$GRID_OUT_PATH" "splatworks-gridsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$SHOW_OUT_PATH" "splatworks-showsplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WRITE_OUT_PATH" "splatworks-writesplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$LIST_OUT_PATH" "splatworks-listsplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
@@ -365,6 +427,8 @@ SHOW_SIZE_HUMAN="$(du -h "$SHOW_OUT_PATH" | cut -f1)"
 SHOW_SHA="$(sha256sum "$SHOW_OUT_PATH" | cut -d' ' -f1)"
 WRITE_SIZE_HUMAN="$(du -h "$WRITE_OUT_PATH" | cut -f1)"
 WRITE_SHA="$(sha256sum "$WRITE_OUT_PATH" | cut -d' ' -f1)"
+LIST_SIZE_HUMAN="$(du -h "$LIST_OUT_PATH" | cut -f1)"
+LIST_SHA="$(sha256sum "$LIST_OUT_PATH" | cut -d' ' -f1)"
 
 echo ""
 echo "Built bundles:"
@@ -379,6 +443,9 @@ echo "  sha256: $SHOW_SHA"
 echo ""
 echo "  $WRITE_OUT_PATH ($WRITE_SIZE_HUMAN)"
 echo "  sha256: $WRITE_SHA"
+echo ""
+echo "  $LIST_OUT_PATH ($LIST_SIZE_HUMAN)"
+echo "  sha256: $LIST_SHA"
 echo ""
 
 rm -rf "$STAGE_DIR"
