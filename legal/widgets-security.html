@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>Widget Security Boundary &amp; Data Inventory | DrawSplatTM</title>
 <meta name="description" content="Per-widget security boundary, network-request inventory, and local-storage usage for every DrawSplatTM standalone widget and game." />
 <link rel="canonical" href="https://drawsplat.org/legal/widgets-security.html" />
@@ -44,7 +44,7 @@
     <ul class="admin-checklist">
       <li><strong>Same origin, same project.</strong> Every standalone widget under <code>/solutions/</code> and every game under <code>/games/</code> is served from the same origin as the DrawSplat<sup class="tm">TM</sup> static site. They are not iframed third parties.</li>
       <li><strong>No third-party advertising, analytics, or trackers.</strong> Visit counts come from Cloudflare Pages&rsquo; server-side metrics on the static-host CDN; no beacon, no tracking pixel, no third-party JS is loaded on widget pages.</li>
-      <li><strong>Strict Content Security Policy.</strong> Pages declare <code>default-src 'self'</code>, <code>script-src 'self'</code>, <code>style-src 'self' 'unsafe-inline'</code>, <code>img-src 'self' data:</code>, <code>connect-src 'self'</code>, <code>object-src 'none'</code>, <code>frame-ancestors 'none'</code>. Widgets that need an outbound request (e.g. Apps Script) extend <code>connect-src</code> with the specific host.</li>
+      <li><strong>Strict Content Security Policy.</strong> Pages declare <code>default-src 'self'</code>, <code>script-src 'self'</code>, <code>style-src 'self' 'unsafe-inline'</code>, <code>img-src 'self' data:</code>, <code>connect-src 'self'</code>, and <code>object-src 'none'</code>. Widgets that need an outbound request (e.g. Apps Script) extend <code>connect-src</code> with the specific host. Production hosts should also send <code>frame-ancestors 'none'</code> as an HTTP header.</li>
       <li><strong>No student data leaves the browser unless a backend is configured.</strong> Standalone widgets run entirely in the visitor&rsquo;s browser. Only the whiteboard at <code>/app/whiteboard.html</code> talks to a backend, and only if the district has set up the Google Apps Script or MySQL backend.</li>
       <li><strong>Local storage is per-widget and disclosed.</strong> Some widgets save the user&rsquo;s last setup in <code>localStorage</code> for convenience. None store student-identifying data.</li>
       <li><strong>Permissions Policy default-off.</strong> No widget requests <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, or <code>payment</code>. The whiteboard&rsquo;s audio-note feature is the single exception &mdash; it requests microphone access only when the user explicitly clicks Record.</li>
@@ -121,7 +121,7 @@
 
   <section class="policy-section">
     <h2>iframe / embed posture</h2>
-    <p>DrawSplat<sup class="tm">TM</sup> pages set <code>frame-ancestors 'none'</code> in CSP. A school portal that wants to embed a DrawSplat<sup class="tm">TM</sup> widget should run the embed in an <code>&lt;iframe sandbox="allow-scripts allow-same-origin"&gt;</code> with only the permissions the widget actually needs &mdash; never enable <code>allow-modals</code>, <code>allow-popups</code>, or <code>allow-top-navigation</code> unless the specific widget documents that it requires them. The portal&rsquo;s own Permissions Policy should also disable <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, <code>payment</code>, and <code>usb</code> on the embed unless the specific widget needs them.</p>
+    <p>Production DrawSplat<sup class="tm">TM</sup> hosts should send <code>frame-ancestors 'none'</code> in the HTTP Content Security Policy header. A school portal that wants to embed a DrawSplat<sup class="tm">TM</sup> widget should run the embed in an <code>&lt;iframe sandbox="allow-scripts allow-same-origin"&gt;</code> with only the permissions the widget actually needs &mdash; never enable <code>allow-modals</code>, <code>allow-popups</code>, or <code>allow-top-navigation</code> unless the specific widget documents that it requires them. The portal&rsquo;s own Permissions Policy should also disable <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, <code>payment</code>, and <code>usb</code> on the embed unless the specific widget needs them.</p>
   </section>
 
   <section class="policy-section">

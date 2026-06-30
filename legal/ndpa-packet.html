@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>NDPA / DPA Review Packet | DrawSplatTM</title>
 <meta name="description" content="Everything a K-12 district reviewer typically asks for in one place — product description, data elements, data flow, subprocessors, security controls, breach SOP, retention, parent workflow, FERPA / COPPA / SCOPE / CIPA crosswalks, and the District Data Privacy Addendum." />
 <link rel="canonical" href="https://drawsplat.org/legal/ndpa-packet.html" />
@@ -118,7 +118,7 @@ Self-hosted MySQL mode:
       <thead><tr><th>Control</th><th>Implementation</th><th>Where to verify</th></tr></thead>
       <tbody>
         <tr><td>Transport encryption</td><td>HTTPS required for all production deployments. <code>referrer</code> meta set to <code>no-referrer</code>.</td><td>Inline <code>&lt;meta&gt;</code> tags on every public page</td></tr>
-        <tr><td>Content Security Policy</td><td><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' [+ optional backend host]; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'</code></td><td>Inline CSP meta on every page</td></tr>
+        <tr><td>Content Security Policy</td><td><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' [+ optional backend host]; object-src 'none'; base-uri 'none'; form-action 'self'</code></td><td>Inline CSP meta on every page</td></tr>
         <tr><td>Authentication</td><td>Email + scrypt-with-pepper passwords (self-hosted backend), or Google / Microsoft OAuth with HMAC-bearer sessions. Apps Script Web App uses Google&rsquo;s own auth.</td><td><code>server/mysql-backend/oauth-routes.js</code> and <code>compliance-routes.js</code></td></tr>
         <tr><td>Authorization (RBAC)</td><td>Five-role tree: district admin, campus admin, teacher, student, parent. Enforced via <code>requireRoles</code> / <code>requirePermission</code> middleware on every protected endpoint (self-hosted backend); admin-passcode gate on the Apps Script endpoints.</td><td><code>server/mysql-backend/rbac.js</code> and <code>apps-script/Code.gs requireAdmin_</code></td></tr>
         <tr><td>Server-side safety scan</td><td>Text keyword filter + link allowlist run on every board save and turn-in. Hits write a <code>TEXT_FILTER_HIT</code> audit row and (by default) reject the save.</td><td><code>safety.js</code> / <code>scanBoardForSafety_</code></td></tr>

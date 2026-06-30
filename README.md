@@ -1203,7 +1203,7 @@ Performance
 - Live cursor broadcasts are throttled to ~20 Hz.
 
 Security
-- Strict `Content-Security-Policy` meta tag in every entry page (`script-src 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, etc.). No inline scripts remain.
+- Strict `Content-Security-Policy` meta tag in every entry page (`script-src 'self'`, `object-src 'none'`, etc.). The deployment headers add `frame-ancestors 'none'` for clickjacking protection. No inline scripts remain.
 - Image uploads are sniffed by magic bytes after the MIME header check, so a renamed file cannot bypass the whitelist.
 - Rich-text editor output is now passed through a tag-allowlist scrubber that strips `on*` attributes, `style`, `href`, `src`, `<script>`, and `<style>`.
 - The Apps Script backend uses `LockService` on every write path, hard-caps incoming payload size, validates board JSON and PNG sizes, and applies a soft per-instance rate limit via `CacheService`.
