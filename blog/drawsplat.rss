@@ -8,8 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 09 Jun 2026 10:40:58 GMT</lastBuildDate>
+			<lastBuildDate>Tue, 30 Jun 2026 12:48:26 GMT</lastBuildDate>
 			<item>
+		<title>DrawSplat v3.1.16 Update: SplatWorks Suite and Modular Self-Host Downloads</title>
+		<link>https://drawsplat.org/pages/download.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.16 makes SplatWorks available as a browser-based office suite download with GridSplat, ShowSplat, WriteSplat, and ListSplat together in one package. Schools can still download each SplatWorks app separately, and DrawSplat Tools, Widgets, and Games now have their own drop-in module ZIPs that connect when placed in the same self-host folder. The release also refreshes checksum generation, package verification, and download-page guidance for districts and teachers who want a simpler modular setup.]]></description>
+		<pubDate>Tue, 30 Jun 2026 12:48:26 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3-1-16-splatworks-modular-downloads</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>self-hosting</category>
+	</item><item>
 		<title>DrawSplat Update: ShowSplat Adds PDF, ODP, PPTX, and Editing Workflow Polish</title>
 		<link>https://drawsplat.org/pages/showsplat.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>ShowSplat now has clearer Import and Export submenus for WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX workflows. WebDeck HTML and Markdown remain the cleanest editable formats. PDF import preserves pages as full-slide images, including password-protected PDFs after a prompt, and PDF export uses the browser Save as PDF flow. PPTX and ODP import/export are available as best-effort compatibility paths for common text, image, shape, background, and grouped slide content. The editor also adds selected-text bullet toggles, font-size decrease/increase buttons, a zoom slider, last-slide delete safety, smarter WebDeck import fitting, and presenter controls that auto-hide until hover.]]></description>

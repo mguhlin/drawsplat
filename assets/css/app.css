@@ -640,9 +640,14 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .studio-nav-dropdown .studio-nav-menu{width:min(92vw,760px);max-height:calc(100vh - 100px);overflow:auto;display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px;left:auto;right:0}
 .studio-nav-group{display:flex;flex-direction:column;gap:2px;min-width:0}
 .studio-nav-menu .studio-nav-heading{color:#6d28d9;background:#f6f2ff;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.studio-nav-icons{grid-column:span 3;display:grid;grid-template-columns:repeat(4,minmax(92px,1fr));gap:10px;padding:4px}
+.landing-nav-menu .studio-nav-icon-card{display:flex;min-height:112px;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:12px 8px;border:1px solid #e5ddff;border-radius:12px;background:#fbfaff;color:#43206f;text-align:center;white-space:normal}
+.landing-nav-menu .studio-nav-icon-card:hover{background:#f3efff;border-color:#c4b5fd;transform:translateY(-1px);box-shadow:0 10px 24px #6d28d91a}
+.studio-nav-icon-card img{width:46px;height:46px;object-fit:contain}
+.studio-nav-icon-card span{font-size:12px;font-weight:900;line-height:1.1}
 .studio-nav-note{display:inline-flex;margin-left:4px;color:#6b7280;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .landing-nav-divider{border:0;border-top:1px solid #e2e6f0;margin:6px 4px;height:0}
-@media(max-width:880px){.landing-nav-menu{position:static;box-shadow:none;border:0;padding:4px 0 4px 12px;background:transparent}.landing-nav-menu a{padding:6px 0;font-size:13px}.landing-nav-dropdown{display:block;width:100%}.landing-nav-divider{margin:4px 0}.studio-nav-dropdown .studio-nav-menu{width:100%;max-height:none;display:flex;right:auto}.studio-nav-menu .studio-nav-heading{background:transparent;padding-top:10px}}
+@media(max-width:880px){.landing-nav-menu{position:static;box-shadow:none;border:0;padding:4px 0 4px 12px;background:transparent}.landing-nav-menu a{padding:6px 0;font-size:13px}.landing-nav-dropdown{display:block;width:100%}.landing-nav-divider{margin:4px 0}.studio-nav-dropdown .studio-nav-menu{width:100%;max-height:none;display:flex;right:auto}.studio-nav-menu .studio-nav-heading{background:transparent;padding-top:10px}.studio-nav-icons{grid-column:auto;grid-template-columns:repeat(2,minmax(96px,1fr));padding:4px 0}.landing-nav-menu .studio-nav-icon-card{min-height:88px;padding:10px 8px}.studio-nav-icon-card img{width:38px;height:38px}}
 .config-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:6px 0 10px}
 @media(min-width:560px){.config-grid{grid-template-columns:1fr 1fr}}
 .config-row{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink)}
@@ -695,6 +700,13 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .landing-actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 12px}
 .landing-cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;border-radius:999px;border:1px solid #d9ddec;background:#fff;color:#172033;text-decoration:none;font-weight:900;box-shadow:0 8px 24px #1720330d}
 .landing-cta.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.download-cta-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:14px auto 0;max-width:980px}
+.download-cta-grid .landing-cta{margin:0;white-space:normal;text-align:center;line-height:1.15}
+.primary-downloads .landing-cta{min-width:min(100%,250px)}
+.support-downloads{gap:10px;margin-top:12px}
+.support-downloads .landing-cta{min-width:150px}
+.app-downloads{gap:10px;margin-top:12px}
+.app-downloads .landing-cta{min-height:44px;min-width:180px}
 .landing-coffee{display:inline-flex;color:#7c3aed;font-weight:800;text-decoration:underline;text-underline-offset:3px}
 .landing-hero-art{position:relative;min-height:520px;border-radius:30px;background:linear-gradient(145deg,#ffffff,#f3efff 58%,#fff7e6);border:1px solid #e3def9;box-shadow:0 28px 70px #7c3aed24;overflow:hidden;padding:26px}
 .landing-hero-art::before{content:'';position:absolute;inset:24px;border:1px solid #ffffffcc;border-radius:24px;pointer-events:none}
