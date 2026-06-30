@@ -540,6 +540,11 @@ function isField(value: ListSplatField | undefined): value is ListSplatField {
 }
 
 function orderedFields(table: ListSplatTable): ListSplatField[] {
+  const hiddenFieldIds = new Set(currentLayout()?.hiddenFieldIds ?? []);
+  return layoutFields(table).filter((field) => !hiddenFieldIds.has(field.id));
+}
+
+function layoutFields(table: ListSplatTable): ListSplatField[] {
   const layout = currentLayout();
   const order = layout?.fieldOrder ?? table.fields.map((field) => field.id);
   const byId = new Map(table.fields.map((field) => [field.id, field]));
@@ -582,7 +587,7 @@ function firstImageValue(table: ListSplatTable, record: ListSplatRecord): string
   return imageField ? String(displayValue(table, record, imageField.id) ?? '') : '';
 }
 
-function updateCurrentLayout(updates: { fieldOrder?: string[]; locked?: boolean }): void {
+function updateCurrentLayout(updates: { fieldOrder?: string[]; hiddenFieldIds?: string[]; locked?: boolean }): void {
   const layout = currentLayout();
   if (!layout) {
     return;
@@ -1011,19 +1016,20 @@ function renderDialog(table: ListSplatTable): string {
 
   if (dialog === 'layout') {
     const layout = currentLayout();
-    const fields = orderedFields(table);
+    const fields = layoutFields(table);
+    const hiddenFieldIds = new Set(layout?.hiddenFieldIds ?? []);
     return `
       <div class="modal-backdrop">
         <section class="modal" role="dialog" aria-modal="true" aria-label="Layout designer">
           <h2>Layout designer</h2>
-          <p>Arrange fields for the current ${html(viewMode)} view. Locked layouts can still be viewed, but students should not change them.</p>
+          <p>Arrange and choose fields for the current ${html(viewMode)} view. Locked layouts can still be viewed, but students should not change them.</p>
           <label class="check-row"><input type="checkbox" data-layout-locked ${layout?.locked ? 'checked' : ''}> Lock this layout</label>
           <div class="layout-field-list">
             ${fields
               .map(
                 (field, index) => `
                   <div class="layout-field-row">
-                    <strong>${html(field.name)}</strong>
+                    <label class="check-row"><input type="checkbox" data-layout-field-visible="${field.id}" ${hiddenFieldIds.has(field.id) ? '' : 'checked'}> <strong>${html(field.name)}</strong></label>
                     <span>${html(field.type)}</span>
                     <button type="button" data-action="layout-field-up" data-layout-field-id="${field.id}" ${index === 0 ? 'disabled' : ''}>Up</button>
                     <button type="button" data-action="layout-field-down" data-layout-field-id="${field.id}" ${index === fields.length - 1 ? 'disabled' : ''}>Down</button>
@@ -1663,21 +1669,26 @@ appRoot.addEventListener('click', (event) => {
     const fieldId = target.closest<HTMLElement>('[data-layout-field-id]')?.dataset.layoutFieldId;
     const layout = currentLayout();
     if (fieldId && layout) {
-      const order = orderedFields(activeTable()).map((field) => field.id);
+      const order = layoutFields(activeTable()).map((field) => field.id);
       const index = order.indexOf(fieldId);
       const swapIndex = action === 'layout-field-up' ? index - 1 : index + 1;
       if (index >= 0 && swapIndex >= 0 && swapIndex < order.length) {
         [order[index], order[swapIndex]] = [order[swapIndex], order[index]];
         pushUndo('layout order');
-        updateCurrentLayout({ fieldOrder: order });
         dialog = 'layout';
+        updateCurrentLayout({ fieldOrder: order });
       }
     }
   } else if (action === 'save-layout-settings') {
     const locked = appRoot.querySelector<HTMLInputElement>('[data-layout-locked]')?.checked ?? false;
+    const visibleFieldIds = new Set(
+      [...appRoot.querySelectorAll<HTMLInputElement>('[data-layout-field-visible]:checked')].map((input) => input.dataset.layoutFieldVisible ?? ''),
+    );
+    const fieldOrder = layoutFields(activeTable()).map((field) => field.id);
+    const hiddenFieldIds = fieldOrder.filter((fieldId) => !visibleFieldIds.has(fieldId));
     pushUndo('layout settings');
-    updateCurrentLayout({ locked, fieldOrder: orderedFields(activeTable()).map((field) => field.id) });
     dialog = 'none';
+    updateCurrentLayout({ locked, fieldOrder, hiddenFieldIds });
   } else if (action === 'create-relationship') {
     createRelationshipFromDialog();
   } else if (action === 'undo-change') {

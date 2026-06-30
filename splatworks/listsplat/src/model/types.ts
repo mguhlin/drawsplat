@@ -58,6 +58,7 @@ export interface ListSplatLayout {
   mode: 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
   locked: boolean;
   fieldOrder?: string[];
+  hiddenFieldIds?: string[];
 }
 
 export interface ListSplatFile {

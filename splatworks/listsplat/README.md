@@ -38,11 +38,11 @@ Current working surface:
 - editable teacher notes
 - project packet HTML export with teacher notes, relationships, field structure,
   and data-quality checks
+- layout designer with per-view field order, visibility, and locking
 - basic number summaries
 
 Planned next:
 
-- richer layout builder
 - tagged-release ZIP publishing for the ListSplatTM self-host package
 
 Target app path:
