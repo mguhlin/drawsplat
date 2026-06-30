@@ -22,6 +22,140 @@ import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
 type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport' | 'layout';
+type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
+
+const LANGUAGE_KEY = 'drawsplat.language';
+const languages: Array<{ code: LanguageCode; label: string; dir: 'ltr' | 'rtl'; htmlLang: string }> = [
+  { code: 'en', label: 'English', dir: 'ltr', htmlLang: 'en' },
+  { code: 'es', label: 'Español', dir: 'ltr', htmlLang: 'es' },
+  { code: 'vi', label: 'Tiếng Việt', dir: 'ltr', htmlLang: 'vi' },
+  { code: 'ar', label: 'العربية', dir: 'rtl', htmlLang: 'ar' },
+  { code: 'zh', label: '中文', dir: 'ltr', htmlLang: 'zh' },
+  { code: 'uh', label: 'हिन्दी / اردو', dir: 'ltr', htmlLang: 'hi' },
+];
+
+const translations: Record<Exclude<LanguageCode, 'en'>, Record<string, string>> = {
+  es: {
+    New: 'Nuevo',
+    'Save JSON': 'Guardar JSON',
+    'Open JSON': 'Abrir JSON',
+    'Export CSV': 'Exportar CSV',
+    File: 'Archivo',
+    Edit: 'Editar',
+    Data: 'Datos',
+    Layout: 'Diseño',
+    Tools: 'Herramientas',
+    View: 'Vista',
+    Teacher: 'Docente',
+    Help: 'Ayuda',
+    Title: 'Título',
+    Search: 'Buscar',
+    In: 'En',
+    'All fields': 'Todos los campos',
+    Sort: 'Ordenar',
+    'Choose field': 'Elegir campo',
+    'New field': 'Campo nuevo',
+    'Field name': 'Nombre del campo',
+    Type: 'Tipo',
+    'Add field': 'Agregar campo',
+    'Add record': 'Agregar registro',
+    Table: 'Tabla',
+    Form: 'Formulario',
+    Cards: 'Tarjetas',
+    Gallery: 'Galería',
+    Labels: 'Etiquetas',
+    Report: 'Informe',
+    'Upload image': 'Subir imagen',
+    'No image yet': 'Sin imagen todavía',
+  },
+  vi: {
+    New: 'Mới',
+    'Save JSON': 'Lưu JSON',
+    'Open JSON': 'Mở JSON',
+    'Export CSV': 'Xuất CSV',
+    File: 'Tệp',
+    Edit: 'Sửa',
+    Data: 'Dữ liệu',
+    Layout: 'Bố cục',
+    Tools: 'Công cụ',
+    View: 'Xem',
+    Teacher: 'Giáo viên',
+    Help: 'Trợ giúp',
+    Title: 'Tiêu đề',
+    Search: 'Tìm',
+    Sort: 'Sắp xếp',
+    Table: 'Bảng',
+    Form: 'Biểu mẫu',
+    Cards: 'Thẻ',
+    Gallery: 'Thư viện ảnh',
+    Labels: 'Nhãn',
+    Report: 'Báo cáo',
+  },
+  ar: {
+    New: 'جديد',
+    'Save JSON': 'حفظ JSON',
+    'Open JSON': 'فتح JSON',
+    'Export CSV': 'تصدير CSV',
+    File: 'ملف',
+    Edit: 'تحرير',
+    Data: 'بيانات',
+    Layout: 'تخطيط',
+    Tools: 'أدوات',
+    View: 'عرض',
+    Teacher: 'المعلم',
+    Help: 'مساعدة',
+    Title: 'العنوان',
+    Search: 'بحث',
+    Sort: 'فرز',
+    Table: 'جدول',
+    Form: 'نموذج',
+    Cards: 'بطاقات',
+    Gallery: 'معرض',
+    Labels: 'ملصقات',
+    Report: 'تقرير',
+  },
+  zh: {
+    New: '新建',
+    'Save JSON': '保存 JSON',
+    'Open JSON': '打开 JSON',
+    'Export CSV': '导出 CSV',
+    File: '文件',
+    Edit: '编辑',
+    Data: '数据',
+    Layout: '布局',
+    Tools: '工具',
+    View: '视图',
+    Teacher: '教师',
+    Help: '帮助',
+    Title: '标题',
+    Search: '搜索',
+    Sort: '排序',
+    Table: '表格',
+    Form: '表单',
+    Cards: '卡片',
+    Gallery: '图库',
+    Labels: '标签',
+    Report: '报告',
+  },
+  uh: {
+    New: 'नया',
+    File: 'फ़ाइल',
+    Edit: 'संपादन',
+    Data: 'डेटा',
+    Layout: 'लेआउट',
+    Tools: 'औज़ार',
+    View: 'दृश्य',
+    Teacher: 'शिक्षक',
+    Help: 'सहायता',
+    Search: 'खोज',
+    Table: 'तालिका',
+    Form: 'फ़ॉर्म',
+    Cards: 'कार्ड',
+    Gallery: 'गैलरी',
+    Labels: 'लेबल',
+    Report: 'रिपोर्ट',
+  },
+};
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -50,6 +184,7 @@ let relationshipFromTableId = activeTableId;
 let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
 let pendingCsvTable: ListSplatTable | null = null;
 let pendingCsvFileName = '';
+let language = initialLanguage();
 
 function html(value: unknown): string {
   return String(value ?? '')
@@ -58,6 +193,42 @@ function html(value: unknown): string {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function normalizeLanguage(value: string | null | undefined): LanguageCode {
+  const lang = (value || '').toLowerCase();
+  if (lang.startsWith('es')) return 'es';
+  if (lang.startsWith('vi')) return 'vi';
+  if (lang.startsWith('ar')) return 'ar';
+  if (lang.startsWith('zh')) return 'zh';
+  if (lang === 'uh' || lang.startsWith('ur') || lang.startsWith('hi')) return 'uh';
+  return 'en';
+}
+
+function initialLanguage(): LanguageCode {
+  const params = new URLSearchParams(window.location.search);
+  try {
+    return normalizeLanguage(params.get('lang') || localStorage.getItem(LANGUAGE_KEY) || navigator.language);
+  } catch {
+    return normalizeLanguage(params.get('lang') || navigator.language);
+  }
+}
+
+function languageOptions(current: LanguageCode): string {
+  return languages
+    .map(({ code, label }) => `<option value="${code}"${code === current ? ' selected' : ''}>${label}</option>`)
+    .join('');
+}
+
+function t(value: string): string {
+  if (language === 'en') return value;
+  return translations[language][value] ?? value;
+}
+
+function applyDocumentLanguage(): void {
+  const config = languages.find((item) => item.code === language) ?? languages[0];
+  document.documentElement.lang = config.htmlLang;
+  document.documentElement.dir = config.dir;
 }
 
 function activeTable(): ListSplatTable {
@@ -264,9 +435,9 @@ function applyTemplate(templateId: string): void {
 function createMenu(label: string, items: Array<[string, string]>): string {
   return `
     <details class="menu">
-      <summary>${label}</summary>
+      <summary>${html(t(label))}</summary>
       <div class="menu-panel">
-        ${items.map(([action, text]) => `<button type="button" data-action="${action}">${text}</button>`).join('')}
+        ${items.map(([action, text]) => `<button type="button" data-action="${action}">${html(t(text))}</button>`).join('')}
       </div>
     </details>
   `;
@@ -357,10 +528,11 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
   if (field?.type === 'image') {
     const imageSrc = String(value ?? '');
     return `
-      <div class="image-cell">
-        ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : '<span>No image yet</span>'}
+      <div class="image-cell" tabindex="0" role="button" title="Click here and paste an image, or use Upload image." ${common}>
+        ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : `<span>${html(t('No image yet'))}</span>`}
+        <small>Paste an image here or upload one.</small>
         <label class="image-upload-label">
-          Upload image
+          ${html(t('Upload image'))}
           <input class="image-input" type="file" accept="image/*" ${common}>
         </label>
       </div>
@@ -627,7 +799,7 @@ function renderDatabasePanel(table: ListSplatTable): string {
         ${(['table', 'form', 'cards', 'gallery', 'labels', 'report'] as ViewMode[])
           .map(
             (mode) =>
-              `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}" title="${html(viewHelp[mode])}" aria-label="${html(viewHelp[mode])}">${mode}</button>`,
+              `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}" title="${html(viewHelp[mode])}" aria-label="${html(viewHelp[mode])}">${html(t(mode[0].toUpperCase() + mode.slice(1)))}</button>`,
           )
           .join('')}
       </div>
@@ -899,6 +1071,7 @@ function renderDialog(table: ListSplatTable): string {
 function render(): void {
   const table = activeTable();
   ensureActiveRecord(table);
+  applyDocumentLanguage();
   appRoot.innerHTML = `
     <header class="app-header">
       <a class="brand" href="../../pages/splatworks.html" aria-label="SplatWorks home">
@@ -909,10 +1082,11 @@ function render(): void {
         </span>
       </a>
       <div class="quick-actions">
-        <button type="button" class="button primary" data-action="new">New</button>
-        <button type="button" class="button primary" data-action="save-json">Save JSON</button>
-        <button type="button" class="button primary" data-action="open-json">Open JSON</button>
-        <button type="button" class="button primary" data-action="export-csv">Export CSV</button>
+        <button type="button" class="button primary" data-action="new">${html(t('New'))}</button>
+        <button type="button" class="button primary" data-action="save-json">${html(t('Save JSON'))}</button>
+        <button type="button" class="button primary" data-action="open-json">${html(t('Open JSON'))}</button>
+        <button type="button" class="button primary" data-action="export-csv">${html(t('Export CSV'))}</button>
+        <select id="languageSwitcher" class="lang-switcher" aria-label="Language">${languageOptions(language)}</select>
       </div>
     </header>
     <main class="listsplat-app">
@@ -973,19 +1147,19 @@ function render(): void {
         ])}
       </nav>
       <section class="toolbar" aria-label="Database toolbar">
-        <label>Title <input data-project-title value="${html(project.metadata.title)}"></label>
-        <label>Search <input data-search value="${html(searchQuery)}" placeholder="Find records"></label>
-        <label>In <select data-search-field><option value="all">All fields</option>${table.fields
+        <label>${html(t('Title'))} <input data-project-title value="${html(project.metadata.title)}"></label>
+        <label>${html(t('Search'))} <input data-search value="${html(searchQuery)}" placeholder="${html(t('Find records'))}"></label>
+        <label>${html(t('In'))} <select data-search-field><option value="all">${html(t('All fields'))}</option>${table.fields
           .map((field) => `<option value="${field.id}" ${searchFieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
           .join('')}</select></label>
-        <label>Sort <select data-sort-field><option value="">Choose field</option>${table.fields
+        <label>${html(t('Sort'))} <select data-sort-field><option value="">${html(t('Choose field'))}</option>${table.fields
           .map((field) => `<option value="${field.id}" ${sortFieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
           .join('')}</select></label>
         <button type="button" data-action="toggle-sort">${sortDirection === 'asc' ? 'A-Z' : 'Z-A'}</button>
-        <label>New field <input data-new-field placeholder="Field name"></label>
-        <label>Type <select data-new-field-type>${fieldTypeOptions()}</select></label>
-        <button type="button" data-action="add-field">Add field</button>
-        <button type="button" data-action="add-record">Add record</button>
+        <label>${html(t('New field'))} <input data-new-field placeholder="${html(t('Field name'))}"></label>
+        <label>${html(t('Type'))} <select data-new-field-type>${fieldTypeOptions()}</select></label>
+        <button type="button" data-action="add-field">${html(t('Add field'))}</button>
+        <button type="button" data-action="add-record">${html(t('Add record'))}</button>
       </section>
       <div class="workspace">
         ${renderDatabasePanel(table)}
@@ -1022,6 +1196,23 @@ function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement | HTMLSe
   project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, cellValueFromInput(input)));
   saveAutosave(project);
   saveStatus = 'Saved locally';
+}
+
+function storeImageFile(recordId: string, fieldId: string, file: File, undoLabel: string): void {
+  if (!file.type.startsWith('image/')) {
+    lastMessage = 'That clipboard item is not an image.';
+    render();
+    return;
+  }
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    pushUndo(undoLabel);
+    project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, String(reader.result ?? '')));
+    saveAutosave(project);
+    lastMessage = 'Image saved in this field.';
+    render();
+  });
+  reader.readAsDataURL(file);
 }
 
 function runFieldSettingsSave(): void {
@@ -1291,7 +1482,15 @@ appRoot.addEventListener('click', (event) => {
 
 appRoot.addEventListener('change', (event) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-  if (target.matches('[data-open-json]') && target instanceof HTMLInputElement && target.files?.[0]) {
+  if (target.matches('#languageSwitcher') && target instanceof HTMLSelectElement) {
+    language = normalizeLanguage(target.value);
+    try {
+      localStorage.setItem(LANGUAGE_KEY, language);
+    } catch {
+      // Language selection is a convenience preference only.
+    }
+    render();
+  } else if (target.matches('[data-open-json]') && target instanceof HTMLInputElement && target.files?.[0]) {
     openJson(target.files[0]);
   } else if (target.matches('[data-import-csv]') && target instanceof HTMLInputElement && target.files?.[0]) {
     importCsv(target.files[0]);
@@ -1315,18 +1514,27 @@ appRoot.addEventListener('change', (event) => {
       const fieldId = target.dataset.fieldId;
       const file = target.files[0];
       if (recordId && fieldId) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          pushUndo('image upload');
-          project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, String(reader.result ?? '')));
-          saveAutosave(project);
-          render();
-        });
-        reader.readAsDataURL(file);
+        storeImageFile(recordId, fieldId, file, 'image upload');
       }
     } else {
       updateActiveCell(target);
     }
+  }
+});
+
+appRoot.addEventListener('paste', (event) => {
+  const target = event.target as HTMLElement;
+  const imageCell = target.closest<HTMLElement>('.image-cell');
+  if (!imageCell) {
+    return;
+  }
+  const recordId = imageCell.dataset.recordId;
+  const fieldId = imageCell.dataset.fieldId;
+  const item = Array.from(event.clipboardData?.items ?? []).find((clipboardItem) => clipboardItem.type.startsWith('image/'));
+  const file = item?.getAsFile();
+  if (recordId && fieldId && file) {
+    event.preventDefault();
+    storeImageFile(recordId, fieldId, file, 'image paste');
   }
 });
 

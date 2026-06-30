@@ -129,6 +129,16 @@ summary:focus-visible {
   color: var(--accent-dark);
 }
 
+.lang-switcher {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #ffffff99;
+  border-radius: 999px;
+  background: #fff;
+  color: #1f2937;
+  font-weight: 850;
+}
+
 .listsplat-app {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
@@ -361,6 +371,13 @@ summary:focus-visible {
   align-content: start;
   min-height: 92px;
   padding: 10px;
+  border-radius: 8px;
+}
+
+.image-cell:focus {
+  outline: 3px solid var(--accent-2);
+  outline-offset: -3px;
+  background: #fffdf7;
 }
 
 .image-cell img {
@@ -374,6 +391,11 @@ summary:focus-visible {
 .image-cell span {
   color: var(--muted);
   font-weight: 800;
+}
+
+.image-cell small {
+  color: var(--muted);
+  font-weight: 750;
 }
 
 .image-input {
