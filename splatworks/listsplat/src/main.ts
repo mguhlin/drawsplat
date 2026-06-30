@@ -467,7 +467,7 @@ function fieldTypeOptions(selected: FieldType = 'text'): string {
 function displayValue(table: ListSplatTable, record: ListSplatRecord, fieldId: string): ListSplatCellValue {
   const field = table.fields.find((item) => item.id === fieldId);
   if (field?.type === 'calculation' && field.formula) {
-    return evaluateSimpleFormula(field.formula, table, record);
+    return evaluateSimpleFormula(field.formula, table, record, project);
   }
   return record.values[fieldId] ?? '';
 }
@@ -499,7 +499,7 @@ function formulaErrorCount(table: ListSplatTable): number {
     if (!field.formula) return total;
     return (
       total +
-      table.records.filter((record) => String(evaluateSimpleFormula(field.formula ?? '', table, record)).startsWith('Formula error:')).length
+      table.records.filter((record) => String(evaluateSimpleFormula(field.formula ?? '', table, record, project)).startsWith('Formula error:')).length
     );
   }, 0);
 }
@@ -940,7 +940,7 @@ function renderDialog(table: ListSplatTable): string {
           <label class="check-row"><input type="checkbox" data-field-required ${field.required ? 'checked' : ''}> Required field</label>
           <label class="check-row"><input type="checkbox" data-field-hidden ${field.hidden ? 'checked' : ''}> Hide field</label>
           <label>Calculation formula <input data-field-formula value="${html(field.formula ?? '')}" placeholder='JOIN(First Name, " ", Last Name)'></label>
-          <p>Try <code>FIELD(Animal)</code>, <code>JOIN(Animal, " lives in ", Habitat)</code>, <code>UPPER(Animal)</code>, <code>ADD(Score, Bonus)</code>, or <code>AVERAGE(Score)</code>.</p>
+          <p>Try <code>FIELD(Animal)</code>, <code>JOIN(Animal, " lives in ", Habitat)</code>, <code>UPPER(Animal)</code>, <code>ADD(Score, Bonus)</code>, <code>AVERAGE(Score)</code>, or <code>LOOKUP("Book reviews", Rating)</code>.</p>
           <div class="modal-actions">
             <button type="button" data-action="save-field-settings">Save field</button>
             <button type="button" data-action="close-dialog">Cancel</button>
@@ -1109,6 +1109,12 @@ function renderDialog(table: ListSplatTable): string {
               <code>MIN(${html(numberName)})</code>
               <code>MAX(${html(numberName)})</code>
               <code>COUNT(${html(numberName)})</code>
+            </div>
+            <div>
+              <strong>Relationships</strong>
+              <code>COUNT_RELATED("Relationship name")</code>
+              <code>LOOKUP("Relationship name", Field)</code>
+              <span>Use these after creating a relationship from Tools.</span>
             </div>
           </div>
           <p>To use one, add a new field, choose <strong>Calculation</strong>, then paste a formula into Field settings.</p>

@@ -33,13 +33,13 @@ Current working surface:
 - language switching using the shared SplatWorks preference
 - basic relationship builder
 - calculation fields with text, math, and table-summary functions
+- lookup-style calculation formulas for related records
 - Functions and Data quality dialogs for teacher-friendly guidance
 - basic number summaries
 
 Planned next:
 
 - richer layout builder
-- lookup fields
 - larger teacher project packet system
 - tagged-release ZIP publishing for the ListSplatTM self-host package
 

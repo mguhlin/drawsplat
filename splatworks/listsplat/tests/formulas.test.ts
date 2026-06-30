@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createStarterProject } from '../src/model/database';
+import { addTable, createStarterProject, replaceTable, updateCell } from '../src/model/database';
 import { evaluateSimpleFormula } from '../src/model/formulas';
+import { addRelationship, createRelationship } from '../src/model/relationships';
 
 function starterTable() {
   const table = createStarterProject().schema.tables[0];
@@ -51,5 +52,27 @@ describe('calculation formulas', () => {
     expect(evaluateSimpleFormula('SUM(Score)', table, record)).toBe('18');
     expect(evaluateSimpleFormula('AVERAGE(Bonus)', table, record)).toBe('3.5');
     expect(evaluateSimpleFormula('COUNT(Score)', table, record)).toBe('2');
+  });
+
+  it('looks up values through named relationships', () => {
+    let project = createStarterProject('Books and Reviews');
+    project = addTable(project, 'Reviews');
+
+    const books = project.schema.tables[0];
+    const reviews = project.schema.tables[1];
+    const bookTitle = books.fields[0];
+    const reviewBook = reviews.fields[0];
+    const reviewRating = reviews.fields[1];
+
+    const editedBooks = updateCell(books, books.records[0].id, bookTitle.id, 'Charlotte');
+    let editedReviews = updateCell(reviews, reviews.records[0].id, reviewBook.id, 'Charlotte');
+    editedReviews = updateCell(editedReviews, editedReviews.records[0].id, reviewRating.id, '5 stars');
+    project = replaceTable(replaceTable(project, editedBooks), editedReviews);
+
+    const relationship = createRelationship('Book reviews', editedBooks.id, bookTitle.id, editedReviews.id, reviewBook.id);
+    project = addRelationship(project, relationship);
+
+    expect(evaluateSimpleFormula('COUNT_RELATED("Book reviews")', editedBooks, editedBooks.records[0], project)).toBe('1');
+    expect(evaluateSimpleFormula('LOOKUP("Book reviews", Notes)', editedBooks, editedBooks.records[0], project)).toBe('5 stars');
   });
 });

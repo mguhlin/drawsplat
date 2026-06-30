@@ -1,4 +1,6 @@
 import type { ListSplatRecord, ListSplatTable } from './types';
+import type { ListSplatFile } from './types';
+import { relatedRecords } from './relationships';
 
 export interface TableSummary {
   fieldId: string;
@@ -102,7 +104,43 @@ function titleCase(value: string): string {
   return value.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
 }
 
-export function evaluateSimpleFormula(formula: string, table: ListSplatTable, record: ListSplatRecord): string {
+function relationshipMatches(project: ListSplatFile | undefined, table: ListSplatTable, record: ListSplatRecord, relationshipName: string): ListSplatRecord[] {
+  if (!project) {
+    return [];
+  }
+  const requestedName = relationshipName.trim().toLowerCase();
+  const relationship = project.schema.relationships.find(
+    (item) => item.fromTableId === table.id && item.name.toLowerCase() === requestedName,
+  );
+  const targetTable = relationship ? project.schema.tables.find((item) => item.id === relationship.toTableId) : undefined;
+  return relationship && targetTable ? relatedRecords(relationship, table, record, targetTable) : [];
+}
+
+function relationshipFieldValue(
+  project: ListSplatFile | undefined,
+  table: ListSplatTable,
+  record: ListSplatRecord,
+  relationshipName: string,
+  fieldName: string,
+): string {
+  if (!project) {
+    return '';
+  }
+  const relationship = project.schema.relationships.find(
+    (item) => item.fromTableId === table.id && item.name.toLowerCase() === relationshipName.trim().toLowerCase(),
+  );
+  const targetTable = relationship ? project.schema.tables.find((item) => item.id === relationship.toTableId) : undefined;
+  const targetRecord = relationshipMatches(project, table, record, relationshipName)[0];
+  const targetField = targetTable?.fields.find((field) => field.name.toLowerCase() === fieldName.trim().toLowerCase());
+  return targetRecord && targetField ? String(targetRecord.values[targetField.id] ?? '') : '';
+}
+
+export function evaluateSimpleFormula(
+  formula: string,
+  table: ListSplatTable,
+  record: ListSplatRecord,
+  project?: ListSplatFile,
+): string {
   const trimmed = formula.trim();
   if (!trimmed) {
     return '';
@@ -153,6 +191,14 @@ export function evaluateSimpleFormula(formula: string, table: ListSplatTable, re
 
   if (functionName === 'IF_EMPTY') {
     return tokenValue(table, record, first).trim() ? tokenValue(table, record, first) : tokenValue(table, record, args[1] ?? '');
+  }
+
+  if (functionName === 'LOOKUP') {
+    return relationshipFieldValue(project, table, record, literalValue(first) ?? first, literalValue(args[1] ?? '') ?? args[1] ?? '');
+  }
+
+  if (functionName === 'COUNT_RELATED') {
+    return String(relationshipMatches(project, table, record, literalValue(first) ?? first).length);
   }
 
   if (functionName === 'ADD') {
