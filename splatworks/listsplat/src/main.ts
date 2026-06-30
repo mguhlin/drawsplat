@@ -21,7 +21,7 @@ import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
-type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport' | 'layout';
+type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport' | 'layout' | 'functions' | 'quality';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -488,6 +488,30 @@ function orderedFields(table: ListSplatTable): ListSplatField[] {
     ...order.map((fieldId) => byId.get(fieldId)).filter(isField),
     ...table.fields.filter((field) => !order.includes(field.id)),
   ].filter((field) => field && !field.hidden);
+}
+
+function calculationFields(table: ListSplatTable): ListSplatField[] {
+  return table.fields.filter((field) => field.type === 'calculation');
+}
+
+function formulaErrorCount(table: ListSplatTable): number {
+  return calculationFields(table).reduce((total, field) => {
+    if (!field.formula) return total;
+    return (
+      total +
+      table.records.filter((record) => String(evaluateSimpleFormula(field.formula ?? '', table, record)).startsWith('Formula error:')).length
+    );
+  }, 0);
+}
+
+function dataQualityRows(table: ListSplatTable): Array<{ field: ListSplatField; missing: number; duplicates: number }> {
+  return table.fields
+    .filter((field) => !field.hidden && !['image', 'autoNumber', 'createdAt', 'updatedAt', 'calculation'].includes(field.type))
+    .map((field) => ({
+      field,
+      missing: findMissingRecords(table, field.id).length,
+      duplicates: findDuplicateRecords(table, field.id).length,
+    }));
 }
 
 function imageFields(table: ListSplatTable): ListSplatField[] {
@@ -1050,6 +1074,91 @@ function renderDialog(table: ListSplatTable): string {
     `;
   }
 
+  if (dialog === 'functions') {
+    const fields = table.fields.filter((field) => !['image', 'createdAt', 'updatedAt'].includes(field.type));
+    const firstTextField = fields.find((field) => ['text', 'longText', 'choice'].includes(field.type)) ?? fields[0];
+    const firstNumberField = fields.find((field) => ['number', 'currency', 'percent', 'rating'].includes(field.type)) ?? firstTextField;
+    const textName = firstTextField?.name ?? 'Field';
+    const numberName = firstNumberField?.name ?? 'Score';
+    return `
+      <div class="modal-backdrop">
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Functions">
+          <h2>Calculation functions</h2>
+          <p>Use a calculation field when students need a result made from other fields. Formulas are simple, offline, and do not run custom code.</p>
+          <div class="formula-grid">
+            <div>
+              <strong>Text</strong>
+              <code>FIELD(${html(textName)})</code>
+              <code>JOIN(${html(textName)}, " report")</code>
+              <code>UPPER(${html(textName)})</code>
+              <code>TITLECASE(${html(textName)})</code>
+              <code>CONTAINS(${html(textName)}, "a")</code>
+            </div>
+            <div>
+              <strong>Numbers</strong>
+              <code>ADD(${html(numberName)}, "5")</code>
+              <code>SUBTRACT(${html(numberName)}, "1")</code>
+              <code>MULTIPLY(${html(numberName)}, "2")</code>
+              <code>DIVIDE(${html(numberName)}, "2")</code>
+              <code>ROUND(${html(numberName)}, "1")</code>
+            </div>
+            <div>
+              <strong>Whole table</strong>
+              <code>SUM(${html(numberName)})</code>
+              <code>AVERAGE(${html(numberName)})</code>
+              <code>MIN(${html(numberName)})</code>
+              <code>MAX(${html(numberName)})</code>
+              <code>COUNT(${html(numberName)})</code>
+            </div>
+          </div>
+          <p>To use one, add a new field, choose <strong>Calculation</strong>, then paste a formula into Field settings.</p>
+          <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+        </section>
+      </div>
+    `;
+  }
+
+  if (dialog === 'quality') {
+    const rows = dataQualityRows(table);
+    const errors = formulaErrorCount(table);
+    const totalMissing = rows.reduce((total, row) => total + row.missing, 0);
+    const totalDuplicates = rows.reduce((total, row) => total + row.duplicates, 0);
+    return `
+      <div class="modal-backdrop">
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Data quality check">
+          <h2>Data quality check</h2>
+          <p>Use this before printing a report or exporting CSV. Click a count to highlight the records that need attention.</p>
+          <div class="quality-summary">
+            <div><strong>${totalMissing}</strong><span>missing values</span></div>
+            <div><strong>${totalDuplicates}</strong><span>duplicate values</span></div>
+            <div><strong>${errors}</strong><span>formula errors</span></div>
+          </div>
+          <div class="quality-table" role="table" aria-label="Field quality">
+            <div class="quality-row quality-head" role="row">
+              <span>Field</span><span>Missing</span><span>Duplicates</span>
+            </div>
+            ${
+              rows.length
+                ? rows
+                    .map(
+                      ({ field, missing, duplicates }) => `
+                        <div class="quality-row" role="row">
+                          <span><strong>${html(field.name)}</strong><small>${html(field.type)}</small></span>
+                          <button type="button" data-quality-kind="missing" data-quality-field-id="${field.id}" ${missing ? '' : 'disabled'}>${missing}</button>
+                          <button type="button" data-quality-kind="duplicates" data-quality-field-id="${field.id}" ${duplicates ? '' : 'disabled'}>${duplicates}</button>
+                        </div>
+                      `,
+                    )
+                    .join('')
+                : '<p class="empty-panel">No editable data fields are available yet.</p>'
+            }
+          </div>
+          <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+        </section>
+      </div>
+    `;
+  }
+
   return `
     <div class="modal-backdrop">
       <section class="modal" role="dialog" aria-modal="true" aria-label="ListSplat help">
@@ -1310,6 +1419,7 @@ appRoot.addEventListener('click', (event) => {
   const recordId = target.closest<HTMLElement>('[data-select-record]')?.dataset.selectRecord;
   const fieldSettings = target.closest<HTMLElement>('[data-field-settings]')?.dataset.fieldSettings;
   const recordActionId = target.closest<HTMLElement>('[data-record-action-id]')?.dataset.recordActionId;
+  const qualityTarget = target.closest<HTMLElement>('[data-quality-field-id]');
 
   if (tableId) {
     activeTableId = tableId;
@@ -1343,6 +1453,20 @@ appRoot.addEventListener('click', (event) => {
     dialog = 'field';
     render();
     return;
+  }
+
+  if (qualityTarget) {
+    const fieldId = qualityTarget.dataset.qualityFieldId;
+    const kind = qualityTarget.dataset.qualityKind;
+    if (fieldId && kind) {
+      const matches = kind === 'duplicates' ? findDuplicateRecords(activeTable(), fieldId) : findMissingRecords(activeTable(), fieldId);
+      highlightedRecordIds = new Set(matches.map((record) => record.id));
+      const field = activeTable().fields.find((item) => item.id === fieldId);
+      lastMessage = `Highlighted ${matches.length} ${kind === 'duplicates' ? 'duplicate' : 'missing'} record${matches.length === 1 ? '' : 's'} in ${field?.name ?? 'this field'}.`;
+      dialog = 'none';
+      render();
+      return;
+    }
   }
 
   if (!action) {
@@ -1471,7 +1595,13 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'relationships') {
     dialog = 'relationship';
     render();
-  } else if (action.startsWith('help-') || action === 'functions' || action === 'quality') {
+  } else if (action === 'functions') {
+    dialog = 'functions';
+    render();
+  } else if (action === 'quality') {
+    dialog = 'quality';
+    render();
+  } else if (action.startsWith('help-')) {
     dialog = 'help';
     render();
   } else {
