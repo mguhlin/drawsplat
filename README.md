@@ -8,7 +8,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
 - **Status:** v3.1.15, Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
-- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces separate DrawSplatTM, GridSplatTM, ShowSplatTM, and WriteSplatTM zips so SplatWorksTM app updates can ship without refreshing the full DrawSplatTM package.
+- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; `./scripts/make-selfhost-bundle.sh` produces separate DrawSplatTM, GridSplatTM, ShowSplatTM, WriteSplatTM, and ListSplatTM zips so SplatWorksTM app updates can ship without refreshing the full DrawSplatTM package.
 
 ## Getting started
 
@@ -29,7 +29,12 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.15 — Latest stable self-host release, with DrawSplatTM plus separate GridSplatTM, ShowSplatTM, and WriteSplatTM package downloads.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, organized under `splatworks/` with launch paths at `/splatworks/gridsplat/`, `/splatworks/showsplat/`, and `/splatworks/writesplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Pinned as a GitHub release: [v3.1.15](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.15). Previous milestones: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14) (SplatWorksTM folder layout and ShowSplatTM editor updates), [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
+**DrawSplatTM v3.1.15 — Latest stable self-host release, with DrawSplatTM plus separate GridSplatTM, ShowSplatTM, and WriteSplatTM package downloads.** SplatWorksTM is the GPL-covered office app family for WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM, organized under `splatworks/` with launch paths at `/splatworks/gridsplat/`, `/splatworks/showsplat/`, `/splatworks/writesplat/`, and `/splatworks/listsplat/`. DrawSplatTM keeps the whiteboard, standalone tools, widgets, and games under its own package and menu. Current `main` also includes ListSplatTM source, built static assets, tests, docs, and a ListSplatTM self-host bundle target for the next package refresh. Pinned stable release: [v3.1.15](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.15). Previous milestones: [v3.1.14](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.14) (SplatWorksTM folder layout and ShowSplatTM editor updates), [v3.1.13](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.13) (ShowSplatTM starts and app-split zips), [v3.1.12](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.12) (separate DrawSplatTM and GridSplatTM downloads), [v3.1.11](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.11) (GridSplatTM integrated into SplatWorksTM, separated DrawSplat/SplatWorks navigation, dedicated Games and Tools pages).
+
+## Current source after v3.1.15
+
+- **ListSplatTM classroom database app.** Added `splatworks/listsplat/`, a SplatWorksTM-styled browser database workspace for student-friendly tables, forms, cards, galleries, labels, reports, CSV import/export, `.listsplat.json` save/open, templates, image fields with upload/paste, language switching, relationship basics, calculation fields, formula examples, and data-quality checks.
+- **Separate ListSplatTM package path.** `./scripts/make-selfhost-bundle.sh` creates `splatworks-listsplat-selfhost-<version>.zip` alongside the DrawSplatTM, GridSplatTM, ShowSplatTM, and WriteSplatTM zips.
 
 ## Recent improvements (v3.1.15)
 
@@ -333,7 +338,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install separate SplatWorksTM app bundles beside it when GridSplatTM, ShowSplatTM, or WriteSplatTM is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install separate SplatWorksTM app bundles beside it when GridSplatTM, ShowSplatTM, WriteSplatTM, or ListSplatTM is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
 
 ## Core features
 

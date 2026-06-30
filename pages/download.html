@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
 <title>Download DrawSplatTM and SplatWorksTM (self-hosting)</title>
-<meta name="description" content="Download separate DrawSplatTM and SplatWorksTM self-hosting bundles. Keep whiteboard/tool updates separate from GridSplatTM, ShowSplatTM, and WriteSplatTM app updates." />
+<meta name="description" content="Download separate DrawSplatTM and SplatWorksTM self-hosting bundles. Keep whiteboard/tool updates separate from GridSplatTM, ShowSplatTM, WriteSplatTM, and ListSplatTM app updates." />
 <link rel="canonical" href="https://drawsplat.org/pages/download.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 </head>
@@ -152,8 +152,8 @@
       <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#e9f3ff;color:#0846a8;font-weight:600;font-size:0.9rem;border:1px solid #b5d6ff;vertical-align:middle">Latest stable &nbsp;&middot;&nbsp; v3.1.15</span>
       <span style="margin-left:8px;color:var(--ink-soft);font-size:0.9rem">released 2026-06-29 &mdash; WriteSplat<sup class="tm">TM</sup> package, ShowSplat<sup class="tm">TM</sup> fixes, and refreshed SplatWorks<sup class="tm">TM</sup> downloads</span>
     </p>
-    <p><strong>Packaged SplatWorks<sup class="tm">TM</sup> apps are current in v3.1.15:</strong> GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup> are now available as separate self-host ZIP downloads. ShowSplat<sup class="tm">TM</sup> includes WebDeck HTML, Markdown, PDF, ODP, and PowerPoint import/export menu paths, best-effort PPTX/ODP conversion, image-based PDF import, browser Save-as-PDF export, selected-text bullet toggles, font-size buttons, a zoom slider, last-slide delete safety, auto-hiding presenter controls, task-focused Help, and a menu layering fix. WriteSplat<sup class="tm">TM</sup> is included as a simple classroom writing space with automatic saving, easy file backup, readability feedback, ready-to-use templates, teacher-friendly tools, read-aloud controls, vocabulary highlights, Markdown Studio-style import, and export options for sharing or printing student work.</p>
-    <p>DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> are packaged separately for self-hosting. Schools, districts, and organizations can update the whiteboard/tools/widgets/games package without redownloading SplatWorks<sup class="tm">TM</sup> apps, or update GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, or WriteSplat<sup class="tm">TM</sup> without refreshing the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
+    <p><strong>Packaged SplatWorks<sup class="tm">TM</sup> apps are current in v3.1.15:</strong> GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup> are now available as separate self-host ZIP downloads. Current source also includes ListSplat<sup class="tm">TM</sup>, the classroom database app, and the bundle script can build a separate ListSplat<sup class="tm">TM</sup> package for the next release refresh.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> and SplatWorks<sup class="tm">TM</sup> are packaged separately for self-hosting. Schools, districts, and organizations can update the whiteboard/tools/widgets/games package without redownloading SplatWorks<sup class="tm">TM</sup> apps, or update GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, WriteSplat<sup class="tm">TM</sup>, or ListSplat<sup class="tm">TM</sup> without refreshing the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
     <p>
       <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.15/drawsplat-selfhost-v3.1.15.zip">Download DrawSplat v3.1.15 zip</a>
       &nbsp; <a class="landing-cta primary" href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.15/splatworks-gridsplat-selfhost-v3.1.15.zip">Download GridSplat v3.1.15 zip</a>
@@ -211,6 +211,17 @@
           <li>License: GPL-3.0-only for WriteSplatTM / SplatWorksTM writing code.</li>
           <li>Deploy the included <code>splatworks/</code> folder at <code>/splatworks/writesplat/</code>.</li>
           <li>Current live app gives teachers and students a simple writing space with automatic saving, easy file backup, readability feedback, classroom templates, teacher-friendly tools, read-aloud controls, vocabulary highlights, and export options for sharing or printing student work.</li>
+        </ul>
+      </article>
+      <article class="support-resource-card featured">
+        <span class="support-resource-type">SplatWorksTM</span>
+        <h3>ListSplatTM database package</h3>
+        <p>Use this package for the GPL-covered ListSplat classroom database app. Current source includes the static app, source, docs, tests, package metadata, icon assets, and bundle-script support.</p>
+        <ul class="admin-checklist">
+          <li>License: GPL-3.0-only for ListSplatTM / SplatWorksTM database code.</li>
+          <li>Deploy the included <code>splatworks/</code> folder at <code>/splatworks/listsplat/</code>.</li>
+          <li>Current source includes student-friendly tables, forms, cards, galleries, labels, reports, CSV import/export, image fields, language switching, calculation formulas, templates, and data-quality checks.</li>
+          <li>Build from source with <code>./scripts/make-selfhost-bundle.sh</code> until the next tagged release publishes the ListSplatTM ZIP asset.</li>
         </ul>
       </article>
     </div>
@@ -273,6 +284,7 @@
       <li>The SplatWorksTM GridSplatTM zip includes <code>splatworks/gridsplat/</code>, GridSplatTM docs, source, built static assets, tests, package metadata, and GPL-3.0-only license files.</li>
       <li>The SplatWorksTM ShowSplatTM zip includes <code>splatworks/showsplat/</code>, the browser presentation app, and the ShowSplatTM development plan.</li>
       <li>The SplatWorksTM WriteSplatTM zip includes <code>splatworks/writesplat/</code>, the browser writing app, development plan, source, tests, package metadata, icon assets, and GPL-3.0-only license files.</li>
+      <li>The SplatWorksTM ListSplatTM zip target includes <code>splatworks/listsplat/</code>, the browser database app, development plan, source, tests, package metadata, icon assets, and GPL-3.0-only license files.</li>
     </ol>
     <p style="text-align:center;color:var(--ink-soft)"><em>Excluded from the bundles: <code>.git</code>, <code>node_modules</code>, <code>.env</code>, build / log files, local test artifacts, and any real DrawSplat Hub campus folders. The DrawSplatTM bundle keeps only the generic Hub dashboard and <code>hubcampus</code> demo. Build all packages from source any time with <code>./scripts/make-selfhost-bundle.sh</code>.</em></p>
   </section>
@@ -282,7 +294,7 @@
       <p class="landing-eyebrow">License &amp; support</p>
       <h2>Free, plus optional paid services</h2>
     </div>
-    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later unless a file or subdirectory says otherwise. GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup> / SplatWorks<sup class="tm">TM</sup> app code is GPL-3.0-only. Schools, organizations, and districts may use, host, modify, and redistribute the packages under those licenses. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
+    <p style="max-width:760px;margin:0 auto">DrawSplat<sup class="tm">TM</sup> is released under the GNU AGPL-3.0-or-later unless a file or subdirectory says otherwise. GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, WriteSplat<sup class="tm">TM</sup>, and ListSplat<sup class="tm">TM</sup> / SplatWorks<sup class="tm">TM</sup> app code is GPL-3.0-only. Schools, organizations, and districts may use, host, modify, and redistribute the packages under those licenses. If you&rsquo;d like hands-on setup help, a compliance review, an admin training session, or custom development, request a quote from the <a href="contact.html">Contact / Information Request</a> page.</p>
   </section>
 </main>
 

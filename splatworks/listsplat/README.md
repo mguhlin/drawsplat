@@ -10,8 +10,8 @@ or cloud storage.
 
 ## Development
 
-ListSplatTM now has an initial working app foundation. See `docs/plan.md` for
-the full product plan.
+ListSplatTM now has a working classroom database app foundation. See
+`docs/plan.md` for the full product plan.
 
 Current working surface:
 
@@ -29,16 +29,19 @@ Current working surface:
 - replace values in a selected field
 - printable/exportable HTML report
 - classroom template starters
+- image fields with upload and paste support
+- language switching using the shared SplatWorks preference
+- basic relationship builder
+- calculation fields with text, math, and table-summary functions
+- Functions and Data quality dialogs for teacher-friendly guidance
 - basic number summaries
 
 Planned next:
 
 - richer layout builder
-- relationship builder
 - lookup fields
-- safer replace preview/undo workflow
 - larger teacher project packet system
-- public ListSplatTM product page and self-host package integration
+- tagged-release ZIP publishing for the ListSplatTM self-host package
 
 Target app path:
 

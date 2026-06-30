@@ -151,13 +151,14 @@ What's in this zip
 
 What is not in this zip
 -----------------------
-SplatWorksTM apps, including GridSplatTM, ShowSplatTM, and WriteSplatTM, are packaged
-separately. Download splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you
-want the spreadsheet app, and splatworks-showsplat-selfhost-$VERSION_LABEL.zip
-when you want the presentation/WebDeck app. Download
-splatworks-writesplat-selfhost-$VERSION_LABEL.zip when you want the writing app.
-Download splatworks-listsplat-selfhost-$VERSION_LABEL.zip when you want the
-classroom database app.
+SplatWorksTM apps, including GridSplatTM, ShowSplatTM, WriteSplatTM, and
+ListSplatTM, are packaged separately. Download
+splatworks-gridsplat-selfhost-$VERSION_LABEL.zip when you want the spreadsheet
+app, splatworks-showsplat-selfhost-$VERSION_LABEL.zip when you want the
+presentation/WebDeck app, splatworks-writesplat-selfhost-$VERSION_LABEL.zip
+when you want the writing app, and
+splatworks-listsplat-selfhost-$VERSION_LABEL.zip when you want the classroom
+database app.
 This keeps GPL-covered SplatWorks app releases independent from DrawSplatTM
 whiteboard/tools/widgets/games releases.
 
