@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" />
-<title>DrawSplatTM v3.1.15 Release Notes</title>
-<meta name="description" content="DrawSplatTM v3.1.15 release notes for refreshed DrawSplatTM, GridSplatTM, ShowSplatTM, and WriteSplatTM self-host packages." />
+<title>DrawSplatTM v3.1.16 Release Notes</title>
+<meta name="description" content="DrawSplatTM v3.1.16 release notes for modular DrawSplatTM, SplatWorksTM suite, Tools, Widgets, and Games self-host packages." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -158,29 +158,35 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Release Notes</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.15</h1>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.16</h1>
     <div class="release-meta">
       <span class="release-pill">Latest stable</span>
-      <span class="release-pill">WriteSplat package</span>
-      <span class="release-pill">SplatWorks downloads</span>
+      <span class="release-pill">SplatWorks suite</span>
+      <span class="release-pill">ListSplat package</span>
+      <span class="release-pill">Drop-in modules</span>
     </div>
-    <p>DrawSplat<sup class="tm">TM</sup> v3.1.15 refreshes the self-host release with four independent ZIP downloads: DrawSplat<sup class="tm">TM</sup>, GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup>. WriteSplat<sup class="tm">TM</sup> is now packaged for self-hosting, and the current ShowSplat<sup class="tm">TM</sup> editor fixes are included in the ShowSplat<sup class="tm">TM</sup> package.</p>
+    <p>DrawSplat<sup class="tm">TM</sup> v3.1.16 refreshes self-hosting around drop-in modules. SplatWorks<sup class="tm">TM</sup> is now downloadable as a browser-based office suite, ListSplat<sup class="tm">TM</sup> has its own ZIP package, and DrawSplat<sup class="tm">TM</sup> Tools, Widgets, and Games can be downloaded separately while still connecting when placed in the same web root.</p>
     <div class="landing-actions">
       <a class="landing-cta primary" href="download.html">Download Self-Host Zips</a>
-      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.15.md">View Markdown Source</a>
+      <a class="landing-cta" href="../docs/modular-selfhost.md">Modular self-host guide</a>
+      <a class="landing-cta" href="../RELEASE_NOTES_v3.1.16.md">View Markdown Source</a>
     </div>
   </section>
 
   <section class="landing-section">
     <div class="landing-section-head">
       <p class="landing-eyebrow">Package Refresh</p>
-      <h2>Four current self-host downloads</h2>
-      <p>Schools can install only the package they need, then update individual SplatWorks<sup class="tm">TM</sup> apps without redownloading the full DrawSplat<sup class="tm">TM</sup> bundle.</p>
+      <h2>Nine current self-host downloads</h2>
+      <p>Schools can install the full package, the SplatWorks<sup class="tm">TM</sup> suite, individual SplatWorks<sup class="tm">TM</sup> apps, or focused Tools, Widgets, and Games modules.</p>
     </div>
     <div class="release-grid">
       <article class="release-card">
-        <h2>DrawSplat<sup class="tm">TM</sup></h2>
+        <h2>DrawSplat<sup class="tm">TM</sup> Full</h2>
         <p>Whiteboard, standalone tools, widgets, games, legal/compliance pages, guides, Apps Script backend, MySQL backend, and Hub demo files.</p>
+      </article>
+      <article class="release-card">
+        <h2>SplatWorks<sup class="tm">TM</sup> Suite</h2>
+        <p>GridSplat, ShowSplat, WriteSplat, and ListSplat packaged together as a browser-based office suite with launcher pages.</p>
       </article>
       <article class="release-card">
         <h2>GridSplat<sup class="tm">TM</sup></h2>
@@ -195,11 +201,19 @@
         <p>The browser writing package with readability feedback, classroom templates, teacher tools, read-aloud controls, vocabulary highlights, Markdown Studio-style import, source, docs, and tests.</p>
       </article>
       <article class="release-card">
+        <h2>ListSplat<sup class="tm">TM</sup></h2>
+        <p>The classroom database package with tables, forms, cards, reports, CSV, image fields, language switching, formulas, relationships, project packets, and layout controls.</p>
+      </article>
+      <article class="release-card">
+        <h2>Tools, Widgets, Games</h2>
+        <p>Three focused DrawSplat modules keep normal /solutions/ and /games/ paths so they can stand alone or connect beside the full DrawSplat package.</p>
+      </article>
+      <article class="release-card">
         <h2>Checksums</h2>
-        <p>The release includes <code>SHA256SUMS-v3.1.15.txt</code> for verifying all four ZIP downloads.</p>
+        <p>The release includes <code>SHA256SUMS-v3.1.16.txt</code> for verifying all ZIP downloads.</p>
       </article>
     </div>
-    <p class="release-note">Known next-run focus: improve PPTX/ODP fidelity, add editable PDF text extraction, move large imported assets to IndexedDB, add a direct deterministic PDF writer, improve table-cell editing, and continue polishing WriteSplat<sup class="tm">TM</sup> classroom workflows.</p>
+    <p class="release-note">The package model is additive: unzip modules into the same web root and keep folder names unchanged. No installer or server-side linking step is required.</p>
   </section>
 
   <section class="landing-section">
@@ -209,24 +223,24 @@
     </div>
     <div class="release-grid">
       <article class="release-card">
-        <h2>WriteSplat<sup class="tm">TM</sup> Packaged</h2>
-        <p>WriteSplat<sup class="tm">TM</sup> now has a first-class self-host ZIP, matching the GridSplat<sup class="tm">TM</sup> and ShowSplat<sup class="tm">TM</sup> package model.</p>
+        <h2>SplatWorks<sup class="tm">TM</sup> as a Suite</h2>
+        <p>SplatWorks<sup class="tm">TM</sup> can now be downloaded as its own browser-based office suite while remaining part of the Splat universe.</p>
       </article>
       <article class="release-card">
-        <h2>WriteSplat<sup class="tm">TM</sup> App</h2>
-        <p>Includes ProseMirror editing, local autosave, JSON files, readability cards, templates, cloze, citations, teacher-only content, read-aloud controls, sentence scrambling, and exports.</p>
+        <h2>ListSplat<sup class="tm">TM</sup> Packaged</h2>
+        <p>ListSplat<sup class="tm">TM</sup> now ships as an individual self-host package and inside the SplatWorks<sup class="tm">TM</sup> suite package.</p>
       </article>
       <article class="release-card">
-        <h2>Markdown Handling</h2>
-        <p>WriteSplat<sup class="tm">TM</sup> now uses Markdown Studio-style parsing for safer, more predictable Markdown import and split-mode editing.</p>
+        <h2>DrawSplat<sup class="tm">TM</sup> Modules</h2>
+        <p>Tools, Widgets, and Games now have separate ZIPs for focused installs and faster updates.</p>
       </article>
       <article class="release-card">
-        <h2>ShowSplat<sup class="tm">TM</sup> Polish</h2>
-        <p>Task-focused Help, keyboard shortcuts, menu grouping, presentation controls, import/export refinements, and a dropdown stacking fix are included.</p>
+        <h2>Same Paths</h2>
+        <p>Packages preserve /splatworks/, /solutions/, /games/, /pages/, and /assets/ paths so modules link together naturally.</p>
       </article>
       <article class="release-card">
-        <h2>Separate Updates</h2>
-        <p>GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup> can each be updated independently from the DrawSplat<sup class="tm">TM</sup> bundle.</p>
+        <h2>Modular Guide</h2>
+        <p>Added a modular self-hosting guide that explains which ZIP to install and how to combine them.</p>
       </article>
     </div>
   </section>
@@ -237,10 +251,11 @@
       <h2>Included updates</h2>
     </div>
     <ul class="release-list">
-      <li>Added <code>splatworks-writesplat-selfhost-v3.1.15.zip</code> as the fourth release artifact.</li>
-      <li>Updated download page links for DrawSplat<sup class="tm">TM</sup>, GridSplat<sup class="tm">TM</sup>, ShowSplat<sup class="tm">TM</sup>, and WriteSplat<sup class="tm">TM</sup>.</li>
-      <li>Packaged WriteSplat<sup class="tm">TM</sup> static assets, source, tests, documentation, package metadata, and GPL-3.0-only license files.</li>
-      <li>Included ShowSplat<sup class="tm">TM</sup> Help/menu stacking fixes in the ShowSplat<sup class="tm">TM</sup> package.</li>
+      <li>Added <code>splatworks-listsplat-selfhost-v3.1.16.zip</code>.</li>
+      <li>Added <code>splatworks-suite-selfhost-v3.1.16.zip</code>.</li>
+      <li>Added <code>drawsplat-tools-selfhost-v3.1.16.zip</code>, <code>drawsplat-widgets-selfhost-v3.1.16.zip</code>, and <code>drawsplat-games-selfhost-v3.1.16.zip</code>.</li>
+      <li>Updated the bundle script so all modules can be generated in one command.</li>
+      <li>Added <code>docs/modular-selfhost.md</code> for drop-in deployment guidance.</li>
       <li>Added a release checksum file for verifying package downloads.</li>
     </ul>
   </section>
@@ -250,7 +265,7 @@
       <p class="landing-eyebrow">Self-Host Bundles</p>
       <h2>What the ZIP files contain</h2>
     </div>
-    <p class="release-note"><code>drawsplat-selfhost-v3.1.15.zip</code>, <code>splatworks-gridsplat-selfhost-v3.1.15.zip</code>, <code>splatworks-showsplat-selfhost-v3.1.15.zip</code>, and <code>splatworks-writesplat-selfhost-v3.1.15.zip</code> are attached to the GitHub release. SHA-256 values are listed in <code>SHA256SUMS-v3.1.15.txt</code>. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
+    <p class="release-note"><code>drawsplat-selfhost-v3.1.16.zip</code>, the SplatWorks<sup class="tm">TM</sup> suite and app ZIPs, and the DrawSplat<sup class="tm">TM</sup> Tools, Widgets, and Games module ZIPs are attached to the GitHub release. SHA-256 values are listed in <code>SHA256SUMS-v3.1.16.txt</code>. Real Hub campus folders are intentionally excluded from self-host bundles.</p>
   </section>
 </main>
 
