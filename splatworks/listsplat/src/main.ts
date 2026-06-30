@@ -21,7 +21,18 @@ import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
 type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
-type DialogName = 'none' | 'replace' | 'field' | 'help' | 'projectIdeas' | 'relationship' | 'csvImport' | 'layout' | 'functions' | 'quality';
+type DialogName =
+  | 'none'
+  | 'replace'
+  | 'field'
+  | 'help'
+  | 'projectIdeas'
+  | 'relationship'
+  | 'csvImport'
+  | 'layout'
+  | 'functions'
+  | 'quality'
+  | 'teacherNotes';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -323,6 +334,54 @@ function exportReport(): void {
     .map((record) => `<tr>${table.fields.map((field) => `<td>${html(displayValue(table, record, field.id))}</td>`).join('')}</tr>`)
     .join('')}</tbody></table></body></html>`;
   downloadFile(`${project.metadata.title || 'listsplat-report'}.html`, report, 'text/html;charset=utf-8');
+}
+
+function exportProjectPacket(): void {
+  const qualitySections = project.schema.tables
+    .map((table) => {
+      const rows = dataQualityRows(table);
+      const missing = rows.reduce((total, row) => total + row.missing, 0);
+      const duplicates = rows.reduce((total, row) => total + row.duplicates, 0);
+      return `
+        <section>
+          <h2>${html(table.name)}</h2>
+          <p>${table.records.length} records, ${table.fields.length} fields, ${missing} missing values, ${duplicates} duplicate values.</p>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th><th>Missing</th><th>Duplicates</th></tr></thead>
+            <tbody>${table.fields
+              .map((field) => {
+                const row = rows.find((item) => item.field.id === field.id);
+                return `<tr><td>${html(field.name)}</td><td>${html(field.type)}</td><td>${field.required ? 'Yes' : 'No'}</td><td>${html(field.description)}</td><td>${row?.missing ?? 0}</td><td>${row?.duplicates ?? 0}</td></tr>`;
+              })
+              .join('')}</tbody>
+          </table>
+        </section>
+      `;
+    })
+    .join('');
+  const relationships = project.schema.relationships.length
+    ? `<ul>${project.schema.relationships.map((relationship) => `<li>${html(relationship.name)}: ${html(relationshipLabel(project, relationship))}</li>`).join('')}</ul>`
+    : '<p>No relationships have been created yet.</p>';
+  const notes = project.teacher.notes.length
+    ? `<ul>${project.teacher.notes.map((note) => `<li>${html(note)}</li>`).join('')}</ul>`
+    : '<p>No teacher notes yet.</p>';
+  const packet = `<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>${html(project.metadata.title)} Project Packet</title>
+<style>body{font-family:system-ui,sans-serif;margin:32px;color:#1f2937;line-height:1.5}h1,h2{color:#5b21b6}section{margin:0 0 28px}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d8ccff;padding:8px;text-align:left;vertical-align:top}th{background:#f3edff;color:#4c1d95}.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.meta div{border:1px solid #d8ccff;border-radius:8px;padding:12px;background:#faf8ff}</style></head>
+<body>
+  <h1>${html(project.metadata.title || 'ListSplat Project')} Project Packet</h1>
+  <div class="meta">
+    <div><strong>Author</strong><br>${html(project.metadata.author || 'Not set')}</div>
+    <div><strong>Class</strong><br>${html(project.metadata.className || 'Not set')}</div>
+    <div><strong>Tables</strong><br>${project.schema.tables.length}</div>
+    <div><strong>Relationships</strong><br>${project.schema.relationships.length}</div>
+  </div>
+  <section><h2>Teacher Notes</h2>${notes}</section>
+  <section><h2>Relationships</h2>${relationships}</section>
+  ${qualitySections}
+</body></html>`;
+  downloadFile(`${project.metadata.title || 'listsplat'}-project-packet.html`, packet, 'text/html;charset=utf-8');
 }
 
 function openJson(file: File): void {
@@ -1165,6 +1224,22 @@ function renderDialog(table: ListSplatTable): string {
     `;
   }
 
+  if (dialog === 'teacherNotes') {
+    return `
+      <div class="modal-backdrop">
+        <section class="modal" role="dialog" aria-modal="true" aria-label="Teacher notes">
+          <h2>Teacher notes</h2>
+          <p>Add one note per line. These notes are saved in the .listsplat.json file and included in the project packet.</p>
+          <label>Notes <textarea data-teacher-notes rows="8" placeholder="Add setup directions, reflection questions, or grading reminders.">${html(project.teacher.notes.join('\n'))}</textarea></label>
+          <div class="modal-actions">
+            <button type="button" data-action="save-teacher-notes">Save notes</button>
+            <button type="button" data-action="close-dialog">Cancel</button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
   return `
     <div class="modal-backdrop">
       <section class="modal" role="dialog" aria-modal="true" aria-label="ListSplat help">
@@ -1379,6 +1454,25 @@ function runReplacePreview(): void {
   render();
 }
 
+function runTeacherNotesSave(): void {
+  const noteText = appRoot.querySelector<HTMLTextAreaElement>('[data-teacher-notes]')?.value ?? '';
+  const notes = noteText
+    .split('\n')
+    .map((note) => note.trim())
+    .filter(Boolean);
+  pushUndo('teacher notes');
+  dialog = 'none';
+  lastMessage = `Saved ${notes.length} teacher note${notes.length === 1 ? '' : 's'}.`;
+  setProject({
+    ...project,
+    updatedAt: new Date().toISOString(),
+    teacher: {
+      ...project.teacher,
+      notes,
+    },
+  });
+}
+
 function selectedRelationshipField(selector: string): { tableId: string; fieldId: string } | null {
   const raw = appRoot.querySelector<HTMLSelectElement>(selector)?.value;
   if (!raw) {
@@ -1496,8 +1590,10 @@ appRoot.addEventListener('click', (event) => {
     appRoot.querySelector<HTMLInputElement>('[data-import-csv]')?.click();
   } else if (action === 'export-csv') {
     saveCsv();
-  } else if (action === 'export-report' || action === 'project-packet') {
+  } else if (action === 'export-report') {
     exportReport();
+  } else if (action === 'project-packet') {
+    exportProjectPacket();
   } else if (action === 'print') {
     window.print();
   } else if (action === 'add-record') {
@@ -1551,6 +1647,8 @@ appRoot.addEventListener('click', (event) => {
     runReplacePreview();
   } else if (action === 'run-replace') {
     runReplace();
+  } else if (action === 'save-teacher-notes') {
+    runTeacherNotesSave();
   } else if (action === 'apply-csv-new') {
     applyCsvImport('new');
   } else if (action === 'apply-csv-append') {
@@ -1606,6 +1704,9 @@ appRoot.addEventListener('click', (event) => {
     render();
   } else if (action === 'quality') {
     dialog = 'quality';
+    render();
+  } else if (action === 'teacher-notes') {
+    dialog = 'teacherNotes';
     render();
   } else if (action.startsWith('help-')) {
     dialog = 'help';

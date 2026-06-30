@@ -35,12 +35,14 @@ Current working surface:
 - calculation fields with text, math, and table-summary functions
 - lookup-style calculation formulas for related records
 - Functions and Data quality dialogs for teacher-friendly guidance
+- editable teacher notes
+- project packet HTML export with teacher notes, relationships, field structure,
+  and data-quality checks
 - basic number summaries
 
 Planned next:
 
 - richer layout builder
-- larger teacher project packet system
 - tagged-release ZIP publishing for the ListSplatTM self-host package
 
 Target app path:
