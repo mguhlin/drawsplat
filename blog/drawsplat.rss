@@ -8,7 +8,7 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 30 Jun 2026 12:48:26 GMT</lastBuildDate>
+			<lastBuildDate>Tue, 30 Jun 2026 13:00:53 GMT</lastBuildDate>
 			<item>
 		<title>DrawSplat v3.1.16 Update: SplatWorks Suite and Modular Self-Host Downloads</title>
 		<link>https://drawsplat.org/pages/download.html</link>
@@ -20,6 +20,28 @@
 		<category>drawsplat</category>
 		<category>splatworks</category>
 		<category>self-hosting</category>
+	</item><item>
+		<title>WriteSplat Update: A Classroom Word Processor Joins SplatWorks</title>
+		<link>https://drawsplat.org/pages/writesplat.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>WriteSplat is now available as the SplatWorks writing studio for teachers and students. It runs in the browser as a private, classroom-friendly word processor with local autosave, native .writesplat JSON files, practical export formats, templates, teacher tools, and kid-friendly readability feedback. The interface now follows the purple-and-white SplatWorks look, uses icon-first controls, includes language switching, and can be downloaded as its own self-host package or as part of the SplatWorks suite.]]></description>
+		<pubDate>Tue, 30 Jun 2026 12:59:00 GMT</pubDate>
+		<guid isPermaLink="false">writesplat-classroom-word-processor-splatworks</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>writesplat</category>
+	</item><item>
+		<title>ListSplat Update: A Kid-Friendly Database Studio for SplatWorks</title>
+		<link>https://drawsplat.org/pages/listsplat.html</link>
+		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>ListSplat is now available as the SplatWorks database studio for classroom lists, records, forms, cards, galleries, labels, and reports. It helps students build simple databases with fields, records, CSV import/export, image fields, paste-and-upload image workflows, formulas, lookup relationships, find/replace, layout visibility controls, data-quality checks, and teacher project packets. ListSplat can be downloaded by itself or inside the SplatWorks suite package.]]></description>
+		<pubDate>Tue, 30 Jun 2026 12:58:00 GMT</pubDate>
+		<guid isPermaLink="false">listsplat-classroom-database-studio-splatworks</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>splatworks</category>
+		<category>listsplat</category>
 	</item><item>
 		<title>DrawSplat Update: ShowSplat Adds PDF, ODP, PPTX, and Editing Workflow Polish</title>
 		<link>https://drawsplat.org/pages/showsplat.html</link>
