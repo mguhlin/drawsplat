@@ -651,6 +651,34 @@ class SuperStarTrek {
     setTimeout(() => burst.remove(), 800);
   }
 
+  sparkleBurst() {
+    if (!this.ui.effects) return;
+    const layerBox = this.ui.effects.getBoundingClientRect();
+    const centerX = layerBox.width / 2;
+    const centerY = layerBox.height / 2;
+    const colors = ["var(--yellow)", "var(--cyan)", "var(--green)", "var(--orange)"];
+    for (let i = 0; i < 42; i += 1) {
+      const sparkle = document.createElement("div");
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 60 + Math.random() * 240;
+      sparkle.className = "sector-sparkle";
+      sparkle.style.left = `${centerX}px`;
+      sparkle.style.top = `${centerY}px`;
+      sparkle.style.color = colors[i % colors.length];
+      sparkle.style.setProperty("--spark-x", `${Math.cos(angle) * distance}px`);
+      sparkle.style.setProperty("--spark-y", `${Math.sin(angle) * distance}px`);
+      sparkle.style.animationDelay = `${Math.random() * 0.16}s`;
+      this.ui.effects.append(sparkle);
+      setTimeout(() => sparkle.remove(), 1300);
+    }
+  }
+
+  celebrateSectorClear() {
+    this.playSound("command");
+    this.sparkleBurst();
+    this.line("CONGRATULATIONS TO THE CREW: HOSTILE FORCES IN THIS SECTOR HAVE BEEN DEFEATED.", "green event-start");
+  }
+
   screenShake() {
     if (!this.ui.app) return;
     this.ui.app.classList.remove("screen-shake");
@@ -1333,6 +1361,7 @@ class SuperStarTrek {
     this.shipCondition = this.checkStatus();
     this.renderGrid();
     this.updateAlertState();
+    if (this.currentHostiles() <= 0) this.celebrateSectorClear();
     if (this.totalHostiles() <= 0) this.enemiesDefeated();
   }
 
@@ -1346,6 +1375,7 @@ class SuperStarTrek {
     this.shipCondition = this.checkStatus();
     this.renderGrid();
     this.updateAlertState();
+    if (this.currentHostiles() <= 0) this.celebrateSectorClear();
     if (this.totalHostiles() <= 0) this.enemiesDefeated();
   }
 

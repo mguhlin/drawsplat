@@ -595,6 +595,17 @@ button:disabled {
   animation: impact-burst 0.72s ease-out forwards;
 }
 
+.sector-sparkle {
+  position: absolute;
+  width: 0.52rem;
+  height: 0.52rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0.7rem currentColor, 0 0 1.2rem rgba(240, 228, 66, 0.35);
+  transform: translate(-50%, -50%) scale(0.35);
+  animation: sector-sparkle 1.05s ease-out forwards;
+}
+
 @keyframes phaser-flicker {
   0%,
   100% {
@@ -669,6 +680,22 @@ button:disabled {
   100% {
     opacity: 0;
     scale: 1.7;
+  }
+}
+
+@keyframes sector-sparkle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(0.05);
   }
 }
 
