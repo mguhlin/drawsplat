@@ -415,6 +415,81 @@
       font-size: .88rem;
     }
     .template-select:focus { border-color: var(--navy); outline: none; }
+    .quick-action-bar {
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      border: 1px solid #d9dee8;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(17, 24, 39, .10);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .quick-action-spacer {
+      flex: 1 1 18px;
+      min-width: 8px;
+    }
+    .quick-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 6px 10px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: #4b5563;
+      font-weight: 800;
+      font-size: .84rem;
+      white-space: nowrap;
+    }
+    .quick-action-btn:hover:not([disabled]),
+    .quick-action-menu[open] > summary {
+      background: #eef2ff;
+      color: var(--navy);
+    }
+    .quick-action-btn.primary-link {
+      color: #b45309;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .quick-action-btn[disabled] {
+      opacity: .42;
+      cursor: not-allowed;
+    }
+    .quick-action-icon {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+    .quick-action-menu {
+      position: relative;
+    }
+    .quick-action-menu > summary {
+      list-style: none;
+    }
+    .quick-action-menu > summary::-webkit-details-marker { display: none; }
+    .quick-action-panel {
+      position: absolute;
+      z-index: 30;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 174px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 4px;
+    }
+    .quick-action-panel .quick-action-btn {
+      justify-content: flex-start;
+      width: 100%;
+      text-align: left;
+    }
     .studio-menu-bar {
       margin-bottom: 12px;
       padding: 8px;
@@ -546,6 +621,68 @@
       outline: none;
       box-shadow: 0 6px 18px rgba(0,0,0,0.18);
       z-index: 10;
+    }
+    .node-popover {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, calc(-100% - 12px));
+      z-index: 11;
+      width: max-content;
+      max-width: min(360px, calc(100% - 24px));
+      padding: 8px;
+      border: 1px solid #d7dce6;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .98);
+      box-shadow: 0 12px 32px rgba(17, 24, 39, .20);
+      display: grid;
+      gap: 7px;
+    }
+    .node-popover[hidden] { display: none; }
+    .node-popover::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      width: 14px;
+      height: 14px;
+      transform: translateX(-50%) rotate(45deg);
+      border-right: 1px solid #d7dce6;
+      border-bottom: 1px solid #d7dce6;
+      background: #fff;
+    }
+    .node-popover-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .node-popover-btn {
+      min-width: 34px;
+      min-height: 32px;
+      padding: 5px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background: #fff;
+      color: #4b5563;
+      font-weight: 900;
+      font-size: .8rem;
+      line-height: 1;
+    }
+    .node-popover-btn:hover:not([disabled]),
+    .node-popover-btn.active {
+      border-color: var(--navy);
+      background: #eef2ff;
+      color: var(--navy);
+    }
+    .node-popover-btn.danger:hover:not([disabled]) {
+      border-color: var(--red);
+      background: var(--red);
+      color: #fff;
+    }
+    .node-popover-btn[disabled] {
+      opacity: .42;
+      cursor: not-allowed;
     }
     .markdown-dialog {
       width: min(760px, calc(100vw - 28px));
@@ -830,6 +967,41 @@
     </header>
 
     <main class="app-grid">
+      <nav class="quick-action-bar" aria-label="Concept Map quick actions">
+        <button class="quick-action-btn primary-link" id="quickSaveWorkBtn" type="button" title="Save your concept map as a local JSON file">
+          <span class="quick-action-icon" aria-hidden="true">▣</span>
+          Save your work
+        </button>
+        <details class="quick-action-menu" id="quickSaveAsMenu">
+          <summary class="quick-action-btn">
+            <span class="quick-action-icon" aria-hidden="true">⬇</span>
+            Save As
+          </summary>
+          <div class="quick-action-panel">
+            <button class="quick-action-btn" type="button" data-click-target="saveJsonBtn">JSON file</button>
+            <button class="quick-action-btn" type="button" data-click-target="downloadPngBtn">PNG image</button>
+            <button class="quick-action-btn" type="button" data-click-target="downloadSvgBtn">SVG image</button>
+          </div>
+        </details>
+        <button class="quick-action-btn" id="quickPresentBtn" type="button" title="Fit the map and enter full screen if your browser allows it">
+          <span class="quick-action-icon" aria-hidden="true">▰</span>
+          Present
+        </button>
+        <button class="quick-action-btn" id="quickPrintBtn" type="button" title="Print the current concept map">
+          <span class="quick-action-icon" aria-hidden="true">▤</span>
+          Print
+        </button>
+        <span class="quick-action-spacer" aria-hidden="true"></span>
+        <button class="quick-action-btn" id="quickUndoBtn" type="button" data-click-target="undoBtn" title="Undo">
+          <span class="quick-action-icon" aria-hidden="true">↶</span>
+          Undo
+        </button>
+        <button class="quick-action-btn" id="quickRedoBtn" type="button" data-click-target="redoBtn" title="Redo">
+          <span class="quick-action-icon" aria-hidden="true">↷</span>
+          Redo
+        </button>
+      </nav>
+
       <nav class="studio-menu-bar" aria-label="Concept Map Studio menus">
         <details class="studio-menu">
           <summary>File</summary>
@@ -954,6 +1126,21 @@
         <div class="canvas-shell" id="canvasShell">
           <svg id="cmCanvas" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" data-i18n-aria-label="svg.aria" aria-label="Concept map canvas"></svg>
           <input id="inlineEditor" class="inline-editor" data-i18n-aria-label="inline.editor.aria" aria-label="Node label editor" hidden>
+          <div class="node-popover" id="nodePopover" hidden aria-label="Selected bubble actions">
+            <div class="node-popover-row">
+              <button class="node-popover-btn" type="button" data-click-target="editTextBtn" title="Edit label" aria-label="Edit label">T</button>
+              <button class="node-popover-btn" type="button" data-click-target="addChildBtn" title="Add child bubble" aria-label="Add child bubble">＋</button>
+              <button class="node-popover-btn" type="button" data-click-target="connectToolBtn" title="Connect from this bubble" aria-label="Connect from this bubble">→</button>
+              <button class="node-popover-btn" type="button" data-click-target="cycleColorBtn" title="Cycle bubble color" aria-label="Cycle bubble color">●</button>
+              <button class="node-popover-btn danger" type="button" data-click-target="deleteBtn" title="Delete bubble" aria-label="Delete bubble">×</button>
+            </div>
+            <div class="node-popover-row">
+              <button class="node-popover-btn" type="button" data-click-target="textSizeDownBtn" title="Smaller text" aria-label="Smaller text">T−</button>
+              <button class="node-popover-btn" type="button" data-click-target="textSizeUpBtn" title="Larger text" aria-label="Larger text">T＋</button>
+              <button class="node-popover-btn" type="button" data-click-target="setLinkBtn" title="Set link" aria-label="Set link">🔗</button>
+              <button class="node-popover-btn" type="button" data-click-target="attachImageBtn" title="Attach image" aria-label="Attach image">▧</button>
+            </div>
+          </div>
         </div>
 
         <div class="control-dock instruction-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
@@ -1013,6 +1200,10 @@
   const startDialog = document.getElementById('startDialog');
   const startTemplateGrid = document.getElementById('startTemplateGrid');
   const studioMenus = Array.from(document.querySelectorAll('.studio-menu-bar .studio-menu'));
+  const quickMenus = Array.from(document.querySelectorAll('.quick-action-menu'));
+  const nodePopover = document.getElementById('nodePopover');
+  const quickUndoBtn = document.getElementById('quickUndoBtn');
+  const quickRedoBtn = document.getElementById('quickRedoBtn');
 
   studioMenus.forEach(menu => {
     menu.addEventListener('toggle', () => {
@@ -1026,8 +1217,34 @@
     });
   });
   document.addEventListener('pointerdown', event => {
-    if (event.target.closest('.studio-menu-bar')) return;
+    if (event.target.closest('.studio-menu-bar') || event.target.closest('.quick-action-bar')) return;
     studioMenus.forEach(menu => { menu.open = false; });
+    quickMenus.forEach(menu => { menu.open = false; });
+  });
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('[data-click-target]');
+    if (!trigger) return;
+    const target = document.getElementById(trigger.getAttribute('data-click-target'));
+    if (!target || target.disabled) return;
+    target.click();
+    quickMenus.forEach(menu => { menu.open = false; });
+  });
+  quickMenus.forEach(menu => {
+    menu.addEventListener('toggle', () => {
+      if (!menu.open) return;
+      quickMenus.forEach(other => { if (other !== menu) other.open = false; });
+      studioMenus.forEach(other => { other.open = false; });
+    });
+  });
+  document.getElementById('quickSaveWorkBtn')?.addEventListener('click', () => document.getElementById('saveJsonBtn')?.click());
+  document.getElementById('quickPrintBtn')?.addEventListener('click', () => window.print());
+  document.getElementById('quickPresentBtn')?.addEventListener('click', async () => {
+    fitView();
+    const target = document.querySelector('.stage');
+    if (target && target.requestFullscreen) {
+      try { await target.requestFullscreen(); }
+      catch (err) { /* Browser may block fullscreen without a user gesture. */ }
+    }
   });
 
   const PALETTE = [
@@ -1340,6 +1557,7 @@
   function updateHistoryButtons(){
     undoBtn.disabled = !state.history.undo.length;
     redoBtn.disabled = !state.history.redo.length;
+    if (typeof updateTargetButtonStates === 'function') updateTargetButtonStates();
   }
 
   /* ===== node / connector / group constructors ===== */
@@ -1720,6 +1938,44 @@
       y: state.view.y + (CANVAS_H / state.view.scale) / 2
     };
   }
+  function worldToShellPoint(x, y){
+    const rect = svg.getBoundingClientRect();
+    const shellRect = canvasShell.getBoundingClientRect();
+    const vbW = CANVAS_W / state.view.scale;
+    const vbH = CANVAS_H / state.view.scale;
+    return {
+      x: (x - state.view.x) / vbW * rect.width + rect.left - shellRect.left + canvasShell.scrollLeft,
+      y: (y - state.view.y) / vbH * rect.height + rect.top - shellRect.top + canvasShell.scrollTop
+    };
+  }
+  function updateTargetButtonStates(){
+    document.querySelectorAll('[data-click-target]').forEach(btn => {
+      const target = document.getElementById(btn.getAttribute('data-click-target'));
+      btn.disabled = !!(target && target.disabled);
+    });
+    if (quickUndoBtn) quickUndoBtn.disabled = undoBtn.disabled;
+    if (quickRedoBtn) quickRedoBtn.disabled = redoBtn.disabled;
+  }
+  function updateNodePopover(){
+    if (!nodePopover) return;
+    if (document.body.classList.contains('embed-mode') || state.editing || state.drag || state.rubber || renderExportMode) {
+      nodePopover.hidden = true;
+      return;
+    }
+    const nodes = selectedNodes();
+    if (nodes.length !== 1 || state.tool !== 'select') {
+      nodePopover.hidden = true;
+      return;
+    }
+    const n = nodes[0];
+    const p = worldToShellPoint(n.x, n.y - n.h / 2);
+    const pad = 14;
+    const maxX = Math.max(pad, canvasShell.scrollLeft + canvasShell.clientWidth - pad);
+    const x = Math.max(canvasShell.scrollLeft + pad, Math.min(p.x, maxX));
+    nodePopover.style.left = x + 'px';
+    nodePopover.style.top = Math.max(canvasShell.scrollTop + 58, p.y - 8) + 'px';
+    nodePopover.hidden = false;
+  }
 
   /* ===== render ===== */
   function svgPart(tag, attrs, children){
@@ -1963,6 +2219,8 @@
     updateActionStates();
     updateSelectionInfo();
     updateZoomLabel();
+    updateTargetButtonStates();
+    updateNodePopover();
   }
 
   function updateModeUI(){
@@ -2909,6 +3167,8 @@
     gridToggleBtn.setAttribute('data-i18n', key);
     gridToggleBtn.textContent = t(key);
   });
+  canvasShell.addEventListener('scroll', updateNodePopover, {passive: true});
+  window.addEventListener('resize', updateNodePopover);
 
   /* ===== export ===== */
   function nodeSelectionActive(){
