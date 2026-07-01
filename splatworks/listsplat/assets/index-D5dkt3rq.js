@@ -403,7 +403,7 @@ Apollo 11 mission,NASA,1969,Space exploration,First humans walked on the Moon`,[
   `}function $(){let e=H();W(e),ze(),S.innerHTML=`
     <header class="app-header">
       <a class="brand" href="../../pages/splatworks.html" aria-label="SplatWorks home">
-        <img class="brand-icon" src="listsplat_icon.svg" alt="">
+        <img class="brand-icon" src="/splatworks/listsplat/assets/listsplat_icon-BGoZDMtc.svg" alt="">
         <span>
           <strong>ListSplat<sup>TM</sup></strong>
           <small>SplatWorks<sup>TM</sup> Database Studio</small>

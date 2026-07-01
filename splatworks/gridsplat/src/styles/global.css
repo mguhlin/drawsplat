@@ -37,6 +37,7 @@ select {
   flex-direction: column;
   gap: var(--space-2);
   padding: 0 var(--space-2) var(--space-3);
+  overflow-x: clip;
 }
 
 .app-header {
@@ -129,11 +130,15 @@ h1 {
 .top-toolbar {
   position: relative;
   z-index: 30;
+  max-width: 100%;
   padding: var(--space-2);
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
+  contain: layout paint;
 }
 
 .big-button,
@@ -777,6 +782,7 @@ h1 {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
+  max-width: 100%;
 }
 
 .big-action,
@@ -1746,9 +1752,21 @@ h1 {
   }
 
   .top-toolbar {
-    overflow-x: auto;
     flex-wrap: nowrap;
     padding: var(--space-2);
+  }
+
+  .sheet-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    contain: layout paint;
+  }
+
+  .format-button-group,
+  .color-control,
+  .font-size-control {
+    flex: 0 0 auto;
   }
 
   .menu-button {
