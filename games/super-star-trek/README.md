@@ -35,7 +35,7 @@ The galaxy is divided into an 8 by 8 quadrant grid. Each quadrant contains an 8 
 | `POS` | `Position` | Direction and distance to enemies |
 | `COM` | `Computer` | Library computer |
 | `MAP` | `Map` | Cumulative galactic record |
-| `XXX` | `Exit` | Resign command |
+| `RESIGN` | `Quit`, `Exit` | Resign command |
 
 ## Symbols
 

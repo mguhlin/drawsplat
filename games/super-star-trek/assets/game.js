@@ -928,7 +928,9 @@ class SuperStarTrek {
       STATUS: "STA",
       POSITION: "POS",
       COMPUTER: "COM",
-      EXIT: "XXX"
+      EXIT: "RESIGN",
+      QUIT: "RESIGN",
+      XXX: "RESIGN"
     };
     const cmd = aliases[command] || command;
 
@@ -951,8 +953,25 @@ class SuperStarTrek {
     else if (cmd === "MAP") this.cumulativeRecord();
     else if (cmd === "STA") this.statusReport();
     else if (cmd === "POS") this.torpedoData();
-    else if (cmd === "XXX") this.endGame();
+    else if (cmd === "RESIGN") this.resignPrompt();
     else this.help();
+  }
+
+  resignPrompt() {
+    const choices = [
+      { label: "Stay and fight", value: "NO", primary: true },
+      { label: "Resign", value: "YES" }
+    ];
+    this.ask("RESIGN COMMAND? ARE YOU SURE?", (input) => {
+      const answer = input.trim().toUpperCase();
+      if (["Y", "YES"].includes(answer)) {
+        this.line("CAPTAIN RESIGNS COMMAND. THE FEDERATION IS LEFT TO ITS ENEMIES.", "red");
+        this.endGame(true, "Command resigned");
+        return;
+      }
+      this.line("RESIGNATION CANCELLED. THE CREW REMAINS AT BATTLE STATIONS.", "green");
+      this.setPrompt("COMMAND?");
+    }, choices, "Are you sure you want to resign your commission and leave the Federation to its enemies?");
   }
 
   help() {
@@ -966,7 +985,7 @@ class SuperStarTrek {
   DAM  (FOR DAMAGE CONTROL REPORTS)
   COM  (TO CALL ON LIBRARY-COMPUTER)
   MAP  (FOR CUMULATIVE GALACTIC RECORD)
-  XXX  (TO RESIGN YOUR COMMAND)`);
+  RESIGN  (TO RESIGN YOUR COMMAND)`);
   }
 
   navigationPrompt() {
