@@ -357,28 +357,45 @@
       position: relative;
       border: 2px solid var(--gray-30);
       border-radius: var(--radius);
-      overflow: hidden;
+      max-height: min(76vh, 900px);
+      overflow: auto;
       background:
         linear-gradient(0deg, #f3f0fa 1px, transparent 1px) 0 0 / 24px 24px,
         linear-gradient(90deg, #f3f0fa 1px, transparent 1px) 0 0 / 24px 24px,
         #ffffff;
+      scrollbar-gutter: stable both-edges;
     }
     .canvas-shell.no-grid { background: #ffffff; }
     .canvas-shell.pan-mode svg#cmCanvas { cursor: grab; }
     .canvas-shell.pan-mode.panning svg#cmCanvas { cursor: grabbing; }
     svg#cmCanvas {
       display: block;
-      width: 100%;
+      width: max(100%, 1200px);
       height: clamp(680px, calc(100vh - 220px), 1100px);
       touch-action: none;
     }
     @media (max-width: 760px) {
-      svg#cmCanvas { height: clamp(520px, 70vh, 900px); }
+      .canvas-shell { max-height: 70vh; }
+      svg#cmCanvas {
+        width: max(100%, 900px);
+        height: clamp(520px, 70vh, 900px);
+      }
     }
     .cm-node { cursor: grab; }
     .cm-node.dragging { cursor: grabbing; }
     .cm-node.pending rect { stroke-dasharray: 6 4; }
     .cm-node text { user-select: none; pointer-events: none; }
+    .cm-node .cm-node-label {
+      cursor: text;
+      pointer-events: visiblePainted;
+    }
+    .cm-resize-handle {
+      cursor: ew-resize;
+      fill: #ffffff;
+      stroke: #f59e0b;
+      stroke-width: 2.5;
+      vector-effect: non-scaling-stroke;
+    }
     .cm-connector { cursor: pointer; }
     .cm-connector text { user-select: none; pointer-events: none; }
     .cm-connector-label { cursor: text; }
@@ -580,6 +597,110 @@
       justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
+    }
+    .start-dialog {
+      position: relative;
+      width: min(680px, calc(100vw - 28px));
+      max-height: min(88vh, 760px);
+      padding: 0;
+      border: 0;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 24px 70px rgba(17, 24, 39, .28);
+      overflow: hidden;
+    }
+    .start-dialog::backdrop {
+      background: rgba(17, 24, 39, .34);
+      backdrop-filter: blur(2px);
+    }
+    .start-dialog-body {
+      display: grid;
+      gap: 20px;
+      max-height: inherit;
+      padding: 26px;
+      overflow: auto;
+    }
+    .start-dialog h2 {
+      margin: 0;
+      color: #4b5563;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+    .start-blank-btn {
+      justify-self: center;
+      min-height: 46px;
+      padding: 0 24px;
+      border: 0;
+      border-radius: 6px;
+      background: #33a532;
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(22, 101, 52, .28);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .start-blank-btn:hover,
+    .start-blank-btn:focus-visible {
+      background: #238b27;
+    }
+    .start-template-heading {
+      margin: 4px 0 -4px;
+      color: #4b5563;
+      font-size: 1rem;
+      font-weight: 900;
+      text-align: center;
+    }
+    .start-template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+      gap: 10px;
+    }
+    .start-template-card {
+      min-height: 102px;
+      padding: 0;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fbfdff;
+      color: #4b5563;
+      overflow: hidden;
+      font-weight: 900;
+      text-align: center;
+    }
+    .start-template-card:hover,
+    .start-template-card:focus-visible,
+    .start-template-card.active {
+      border-color: #38bdf8;
+      color: #0369a1;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, .18);
+    }
+    .start-template-thumb {
+      display: block;
+      width: 100%;
+      height: 68px;
+      background: #fff;
+    }
+    .start-template-title {
+      display: grid;
+      min-height: 30px;
+      place-items: center;
+      padding: 3px 6px 7px;
+      line-height: 1.1;
+    }
+    .start-dialog-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      min-height: 34px;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #fff;
+      color: #4b5563;
+      font-weight: 900;
+      z-index: 1;
+    }
+    @media (max-width: 520px) {
+      .start-dialog-body { padding: 22px 14px; }
+      .start-template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .actions {
       display: flex;
@@ -856,6 +977,15 @@
             </div>
           </form>
         </dialog>
+        <dialog class="start-dialog" id="startDialog" aria-labelledby="startDialogTitle">
+          <button class="start-dialog-close" id="startDialogCloseBtn" type="button" aria-label="Close">×</button>
+          <div class="start-dialog-body">
+            <h2 id="startDialogTitle">Start with a</h2>
+            <button class="start-blank-btn" id="startBlankBtn" type="button">+ Blank mind map</button>
+            <div class="start-template-heading">or start from a template:</div>
+            <div class="start-template-grid" id="startTemplateGrid"></div>
+          </div>
+        </dialog>
         <div class="status" id="statusLine" role="status"></div>
       </section>
     </main>
@@ -880,6 +1010,8 @@
   const zoomLabelBtn = document.getElementById('zoomResetBtn');
   const panToggleBtn = document.getElementById('panToggleBtn');
   const gridToggleBtn = document.getElementById('gridToggleBtn');
+  const startDialog = document.getElementById('startDialog');
+  const startTemplateGrid = document.getElementById('startTemplateGrid');
   const studioMenus = Array.from(document.querySelectorAll('.studio-menu-bar .studio-menu'));
 
   studioMenus.forEach(menu => {
@@ -911,6 +1043,7 @@
      "Fit View" recomputes a viewBox tight around the existing content. */
   const CANVAS_W = 1200, CANVAS_H = 720;
   const NODE_W = 184, NODE_H = 76;
+  const NODE_MIN_W = 80, NODE_MAX_W = 400;
   // Visual hierarchy: level 1 = main idea (largest), level 2 = directly
   // connected to main (medium), level 3 = detail / leaf (smallest). Nodes
   // without an explicit `level` field default to 1 if isRoot, else 2.
@@ -1775,12 +1908,14 @@
           preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#' + clipId + ')'
         }));
         gNode.appendChild(svgWrappedText(n._wrapped, {
+          class: 'cm-node-label',
           x: x + (n.w + imgSize + 24) / 2, y: n.y, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
           'font-size': labelFontSize, 'font-weight': 800, fill: n.text
         }));
       } else {
         gNode.appendChild(svgWrappedText(n._wrapped, {
+          class: 'cm-node-label',
           x: n.x, y: n.y, 'text-anchor': 'middle',
           'font-family': 'Arial, sans-serif',
           'font-size': labelFontSize, 'font-weight': 800, fill: n.text
@@ -1790,6 +1925,22 @@
         const lx = x + n.w - 16, ly = y + 16;
         gNode.appendChild(svgPart('circle', {cx: lx, cy: ly, r: 11, fill: '#ffffff', stroke: n.stroke, 'stroke-width': 1.5}));
         gNode.appendChild(svgText('↗', {x: lx, y: ly + 5, 'text-anchor': 'middle', 'font-family': 'Arial, sans-serif', 'font-size': 14, 'font-weight': 800, fill: n.stroke}));
+      }
+      if (isSel && !renderExportMode) {
+        const handleSize = 14;
+        ['left', 'right'].forEach(side => {
+          const hx = side === 'left' ? x : x + n.w;
+          gNode.appendChild(svgPart('rect', {
+            class: 'cm-resize-handle',
+            'data-id': n.id,
+            'data-side': side,
+            x: hx - handleSize/2,
+            y: n.y - handleSize/2,
+            width: handleSize,
+            height: handleSize,
+            rx: 4
+          }));
+        });
       }
       svg.appendChild(gNode);
     });
@@ -2046,6 +2197,8 @@
     if (e.button !== 0) return;
 
     const nodeEl = e.target.closest('.cm-node');
+    const nodeLabelEl = e.target.closest('.cm-node-label');
+    const resizeHandleEl = e.target.closest('.cm-resize-handle');
     const connEl = e.target.closest('.cm-connector');
     const labelEl = e.target.closest('.cm-connector-label');
     const groupEl = e.target.closest('.cm-group');
@@ -2095,10 +2248,42 @@
       return;
     }
 
+    if (resizeHandleEl && nodeEl) {
+      const n = nodeById(resizeHandleEl.dataset.id || nodeEl.dataset.id);
+      if (!n) return;
+      setSelection('node', [n.id]);
+      const p = pointerToSvg(e);
+      state.drag = {
+        kind: 'resize',
+        id: n.id,
+        side: resizeHandleEl.dataset.side === 'left' ? 'left' : 'right',
+        startX: p.x,
+        startW: n.w,
+        moved: false
+      };
+      try { svg.setPointerCapture(e.pointerId); } catch(_) {}
+      e.preventDefault();
+      return;
+    }
+
     if (labelEl && connEl) {
       const id = connEl.dataset.id;
       setSelection('connector', [id]);
       editConnectorLabel(id);
+      e.preventDefault();
+      return;
+    }
+
+    if (nodeLabelEl && nodeEl) {
+      const n = nodeById(nodeEl.dataset.id);
+      if (!n) return;
+      if (n.link && (e.ctrlKey || e.metaKey)) {
+        window.open(n.link, '_blank', 'noopener,noreferrer');
+        return;
+      }
+      setSelection('node', [n.id]);
+      render();
+      beginNodeInlineEdit(n.id);
       e.preventDefault();
       return;
     }
@@ -2174,6 +2359,22 @@
     if (state.pan) { continuePan(e); return; }
     if (state.drag) {
       const p = pointerToSvg(e);
+      if (state.drag.kind === 'resize') {
+        const n = nodeById(state.drag.id);
+        if (!n) return;
+        const dir = state.drag.side === 'left' ? -1 : 1;
+        const nextW = clampNumber(state.drag.startW + (p.x - state.drag.startX) * dir * 2, NODE_MIN_W, NODE_MAX_W, state.drag.startW);
+        if (Math.abs(nextW - n.w) > 0.5) {
+          if (!state.drag.moved) {
+            recordHistory();
+            state.drag.moved = true;
+          }
+          n.w = Math.round(nextW);
+          n.h = computeLayoutHeight(n);
+          render();
+        }
+        return;
+      }
       const dx = p.x - state.drag.lastX, dy = p.y - state.drag.lastY;
       state.drag.lastX = p.x; state.drag.lastY = p.y;
       if (!state.drag.moved) {
@@ -2292,8 +2493,8 @@
     pt.x = n.x; pt.y = n.y;
     const screen = pt.matrixTransform(ctm);
     const shellRect = canvasShell.getBoundingClientRect();
-    inlineEditor.style.left = (screen.x - shellRect.left) + 'px';
-    inlineEditor.style.top = (screen.y - shellRect.top) + 'px';
+    inlineEditor.style.left = (screen.x - shellRect.left + canvasShell.scrollLeft) + 'px';
+    inlineEditor.style.top = (screen.y - shellRect.top + canvasShell.scrollTop) + 'px';
     inlineEditor.value = n.label;
     inlineEditor.hidden = false;
     state.editing = id;
@@ -2582,18 +2783,81 @@
       btn.classList.toggle('active', btn.getAttribute('data-template') === key);
     });
   }
-  function applyTemplateKey(key){
+  function makeBlankMindMap(){
+    state.nodes = [];
+    state.connectors = [];
+    state.groups = [];
+    state.nextId = 1;
+    clearSelection();
+    state.pendingFrom = null;
+    state.pendingFromMulti = null;
+    state.drag = null;
+    state.rubber = null;
+    const n = makeNode({label: t('tplNode.main'), x: CANVAS_W/2, y: CANVAS_H/2, isRoot: true});
+    state.nodes.push(n);
+    setSelection('node', [n.id]);
+  }
+  function templatePreviewSvg(key){
+    const spec = TEMPLATES[key]?.build();
+    if (!spec || !spec.nodes) return '';
+    const nodes = Object.values(spec.nodes);
+    if (!nodes.length) return '';
+    const minX = Math.min(...nodes.map(n => n.x));
+    const maxX = Math.max(...nodes.map(n => n.x));
+    const minY = Math.min(...nodes.map(n => n.y));
+    const maxY = Math.max(...nodes.map(n => n.y));
+    const pad = 80;
+    const sx = 120 / Math.max(1, (maxX - minX) + pad * 2);
+    const sy = 54 / Math.max(1, (maxY - minY) + pad * 2);
+    const scale = Math.min(sx, sy);
+    const ox = 68 - ((minX + maxX) / 2) * scale;
+    const oy = 32 - ((minY + maxY) / 2) * scale;
+    const idByKey = {};
+    Object.keys(spec.nodes).forEach(k => { idByKey[k] = spec.nodes[k]; });
+    const lines = (spec.connectors || []).map(c => {
+      const a = idByKey[c.from], b = idByKey[c.to];
+      if (!a || !b) return '';
+      return `<line x1="${(a.x*scale+ox).toFixed(1)}" y1="${(a.y*scale+oy).toFixed(1)}" x2="${(b.x*scale+ox).toFixed(1)}" y2="${(b.y*scale+oy).toFixed(1)}" stroke="#9ca3af" stroke-width="1.2"/>`;
+    }).join('');
+    const boxes = Object.entries(spec.nodes).map(([k, n]) => {
+      const root = k === spec.rootKey || n.isRoot;
+      const w = root ? 20 : 16, h = root ? 10 : 8;
+      const x = n.x*scale + ox, y = n.y*scale + oy;
+      const fill = root ? '#facc15' : '#a3e635';
+      return `<rect x="${(x-w/2).toFixed(1)}" y="${(y-h/2).toFixed(1)}" width="${w}" height="${h}" rx="1.5" fill="${fill}" stroke="#d1d5db" stroke-width=".6"/>`;
+    }).join('');
+    return `<svg class="start-template-thumb" viewBox="0 0 136 68" aria-hidden="true">${lines}${boxes}</svg>`;
+  }
+  function buildStartChooser(){
+    if (!startTemplateGrid) return;
+    const keys = ['concept-map','mind-map','fishbone','frayer','kwl','t-chart','cycle','sequence','cause-effect','compare-contrast','hierarchy','story-map'];
+    startTemplateGrid.innerHTML = keys.map(key => (
+      `<button class="start-template-card" type="button" data-start-template="${key}">` +
+      templatePreviewSvg(key) +
+      `<span class="start-template-title">${esc(templateTitle(key))}</span>` +
+      `</button>`
+    )).join('');
+    startTemplateGrid.querySelectorAll('[data-start-template]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyTemplateKey(btn.getAttribute('data-start-template') || 'concept-map', {skipConfirm: true, fromChooser: true});
+        startDialog?.close();
+      });
+    });
+  }
+  function applyTemplateKey(key, opts){
+    opts = opts || {};
     const sel = document.getElementById('templateSelect');
     if (sel) sel.value = key;
     const tpl = TEMPLATES[key];
     if (!tpl) return;
     const tplName = templateTitle(key);
-    if (state.nodes.length && !window.confirm(t('confirm.replaceTpl', {name: tplName}))) return;
+    if (!opts.skipConfirm && state.nodes.length && !window.confirm(t('confirm.replaceTpl', {name: tplName}))) return;
     recordHistory();
     loadTemplate(key);
     resetZoom();
     setActiveTemplateButton(key);
     setStatus(t('status.templateLoaded', {name: tplName}), 'success');
+    if (opts.fromChooser) resetHistory();
   }
   const applyTemplateBtn = document.getElementById('applyTemplateBtn');
   if (applyTemplateBtn) applyTemplateBtn.addEventListener('click', () => {
@@ -2603,6 +2867,18 @@
   document.querySelectorAll('[data-template]').forEach(btn => {
     btn.addEventListener('click', () => applyTemplateKey(btn.getAttribute('data-template') || 'concept-map'));
   });
+  buildStartChooser();
+  document.getElementById('startBlankBtn')?.addEventListener('click', () => {
+    recordHistory();
+    makeBlankMindMap();
+    resetZoom();
+    resetHistory();
+    setActiveTemplateButton('');
+    render();
+    setStatus(t('status.nodeAddedCenter'), 'success');
+    startDialog?.close();
+  });
+  document.getElementById('startDialogCloseBtn')?.addEventListener('click', () => startDialog?.close());
   document.getElementById('clearMapBtn').addEventListener('click', () => {
     if (!window.confirm(t('confirm.clearMap'))) return;
     recordHistory();
@@ -3631,6 +3907,9 @@
     fitView();
   } else {
     render();
+    if (!loadedFromAnywhere && startDialog && typeof startDialog.showModal === 'function') {
+      startDialog.showModal();
+    }
   }
 
   // Language switch: re-render so the mode pill, hint, selection panel,
