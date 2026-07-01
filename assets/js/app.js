@@ -1121,7 +1121,8 @@ function setTool(next){
   tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); if(next==='eraser') setStatus('Eraser: choose Small, Bigger, or Biggest, then drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='pen') setStatus('Pencil: pick a thickness — Fine, Medium, Bold, or Marker — then drag on the canvas.'); else if(next==='bucket') setStatus('Paint Bucket: click a shape, note, dot, or line, or click blank canvas to add a color layer above the panel background.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')
 }
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
-function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
+function updateHeaderHeightVar(){const header=document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--drawsplat-header-height',Math.ceil(header.getBoundingClientRect().height)+'px')}
+function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); updateHeaderHeightVar(); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
 function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||localStorage.getItem('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; localStorage.setItem('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
 
 function pt(evt){const r=svg.getBoundingClientRect();return{x:(evt.clientX-r.left)/zoom,y:(evt.clientY-r.top)/zoom}}
@@ -4292,6 +4293,8 @@ function registerServiceWorker(){
   ensureClassroomWidgetButton();
   ensureAdvancedStickyPalette();
   ensureTopMenus();
+  updateHeaderHeightVar();
+  window.addEventListener('resize',updateHeaderHeightVar);
   applyGraphLocale();
   hideSidebarTemplateSection();
   initHistory();
@@ -4556,6 +4559,7 @@ function registerServiceWorker(){
       const lbl=el.closest('.row,.checkrow')?.querySelector('label')?.textContent?.trim();
       if(lbl) el.setAttribute('aria-label',lbl);
     });
+    updateHeaderHeightVar?.();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyIcons); else applyIcons();
 })();
