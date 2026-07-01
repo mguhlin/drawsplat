@@ -1,5 +1,5 @@
-/* DrawSplatTM v3.1.8 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.8';
+/* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
+const CACHE = 'drawsplat-v3.1.16';
 const SHELL = [
   './',
   './index.html',
@@ -117,7 +117,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/assets/js/app.js','/assets/css/app.css','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
+const NETWORK_FIRST_PATHS = ['/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;
