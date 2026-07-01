@@ -51,21 +51,34 @@
       +     'style="padding:8px 14px;border:0;border-radius:8px;background:#7c3aed;color:#fff;font-weight:800;cursor:pointer;font:inherit;font-weight:800">'
       +     'Got it'
       +   '</button>'
-      +   '<a href="/legal/gdpr-compliance.html" '
+      +   '<a href="/legal/gdpr-compliance.html" id="drawsplatConsentNotice" '
       +     'style="padding:8px 14px;border:1.5px solid #7c3aed;border-radius:8px;background:#fff;color:#7c3aed;font-weight:800;text-decoration:none">'
       +     'Read full notice'
       +   '</a>'
       + '</div>';
     document.body.appendChild(wrap);
-    document.getElementById('drawsplatConsentOk').addEventListener('click', () => {
+    function dismiss() {
       try { localStorage.setItem(KEY, '1'); } catch (e) {}
       wrap.remove();
-    });
+      document.dispatchEvent(new CustomEvent('drawsplat:consent-dismissed'));
+    }
+    document.getElementById('drawsplatConsentOk').addEventListener('click', dismiss);
+    document.getElementById('drawsplatConsentNotice').addEventListener('click', dismiss);
+  }
+
+  function injectWhenReady() {
+    try {
+      if (document.getElementById('welcomeDialog') && localStorage.getItem('drawsplat.welcomed') !== '1') {
+        document.addEventListener('drawsplat:welcome-dismissed', () => setTimeout(inject, 250), { once: true });
+        return;
+      }
+    } catch (e) {}
+    inject();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inject);
+    document.addEventListener('DOMContentLoaded', injectWhenReady);
   } else {
-    inject();
+    injectWhenReady();
   }
 })();

@@ -240,6 +240,18 @@ function showStartupTip(){
     showFloatingTip(STARTUP_TIPS[0][0],STARTUP_TIPS[0][1],{duration:14000});
   }
 }
+function scheduleStartupTip(delay=900){
+  const ready=()=>{
+    const welcomeOpen=!!gid('welcomeDialog')?.open;
+    const consentOpen=!!gid('drawsplatConsentBanner');
+    if(welcomeOpen||consentOpen) return false;
+    return true;
+  };
+  const run=()=>{if(ready()) showStartupTip()};
+  setTimeout(run,delay);
+  document.addEventListener('drawsplat:welcome-dismissed',()=>setTimeout(run,450),{once:true});
+  document.addEventListener('drawsplat:consent-dismissed',()=>setTimeout(run,650),{once:true});
+}
 
 /* Modal and header feedback helpers used by destructive actions, autosave,
    collaboration status, and short-lived toast messages. */
@@ -3623,7 +3635,7 @@ function updateCropPreview(){const id=gid('cropDialog').dataset.objectId; const 
 gid('cropCancel')?.addEventListener('click',()=>gid('cropDialog').close());
 gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cropRight').value=0; gid('cropBottom').value=0; gid('cropLeft').value=0; if(gid('cropShape')) gid('cropShape').value='none'; updateCropPreview()});
 gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value, shape=gid('cropShape')?.value||'none'; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} if(shape==='none') delete o.maskShape; else o.maskShape=shape; render(); saveState(); setStatus(shape==='none'?'Image cropped.':'Image shape applied.','success'); gid('cropDialog').close()});
-gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close(); setTimeout(showStartupTip,500)});
+gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close(); document.dispatchEvent(new CustomEvent('drawsplat:welcome-dismissed'))});
 gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else {setPaintColor(v); ui.strokeColor?.dispatchEvent(new Event('input',{bubbles:true}))}});
 function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='simple'?'Simple':'Advanced'; const tip=m==='simple'?'Switch to Advanced view':'Switch to Simple view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
 gid('viewToggleBtn')?.addEventListener('click',()=>{const next=(ui.interfaceMode?.value||'simple')==='simple'?'advanced':'simple'; if(ui.interfaceMode) ui.interfaceMode.value=next; applyInterfaceMode(next); refreshViewToggle()});
@@ -4304,7 +4316,7 @@ function registerServiceWorker(){
   syncSimpleStickyPalette();
   syncSimpleColor();
   render();
-  try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)}else setTimeout(showStartupTip,900)}catch(_){setTimeout(showStartupTip,900)}
+  try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)} scheduleStartupTip(900)}catch(_){scheduleStartupTip(900)}
   ensureWidgetTimerTick();
   installServiceWorkerReloadHandler();
   registerServiceWorker();
