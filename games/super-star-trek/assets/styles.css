@@ -341,6 +341,10 @@ button:disabled {
   white-space: nowrap;
 }
 
+.end-banner[hidden] {
+  display: none;
+}
+
 .splash-art {
   margin: 0;
   border: 1px solid var(--line);
