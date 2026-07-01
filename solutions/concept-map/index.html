@@ -390,7 +390,7 @@
       pointer-events: visiblePainted;
     }
     .cm-resize-handle {
-      cursor: ew-resize;
+      cursor: nwse-resize;
       fill: #ffffff;
       stroke: #f59e0b;
       stroke-width: 2.5;
@@ -1140,6 +1140,7 @@
               <button class="node-popover-btn" type="button" data-click-target="textSizeUpBtn" title="Larger text" aria-label="Larger text">T＋</button>
               <button class="node-popover-btn" type="button" data-click-target="setLinkBtn" title="Set link" aria-label="Set link">🔗</button>
               <button class="node-popover-btn" type="button" data-click-target="attachImageBtn" title="Attach image" aria-label="Attach image">▧</button>
+              <button class="node-popover-btn" type="button" data-click-target="clearImageBtn" title="Detach image" aria-label="Detach image">▧−</button>
             </div>
           </div>
         </div>
@@ -1262,6 +1263,7 @@
   const CANVAS_W = 1200, CANVAS_H = 720;
   const NODE_W = 184, NODE_H = 76;
   const NODE_MIN_W = 80, NODE_MAX_W = 400;
+  const NODE_MIN_H = 48, NODE_MAX_H = 280;
   // Visual hierarchy: level 1 = main idea (largest), level 2 = directly
   // connected to main (medium), level 3 = detail / leaf (smallest). Nodes
   // without an explicit `level` field default to 1 if isRoot, else 2.
@@ -1480,11 +1482,10 @@
     return Math.max(min, Math.min(max, n));
   }
   function paletteIndexFor(node){
-    if (node.isRoot) return -1;
     for (let i = 0; i < PALETTE.length; i++) {
       if (PALETTE[i].fill.toLowerCase() === (node.fill || '').toLowerCase()) return i;
     }
-    return 0;
+    return -1;
   }
   function applyPalette(node, idx){
     const c = PALETTE[((idx % PALETTE.length) + PALETTE.length) % PALETTE.length];
@@ -2185,14 +2186,16 @@
       }
       if (isSel && !renderExportMode) {
         const handleSize = 14;
-        ['left', 'right'].forEach(side => {
-          const hx = side === 'left' ? x : x + n.w;
+        [
+          {corner: 'tl', hx: x, hy: y},
+          {corner: 'br', hx: x + n.w, hy: y + n.h}
+        ].forEach(handle => {
           gNode.appendChild(svgPart('rect', {
             class: 'cm-resize-handle',
             'data-id': n.id,
-            'data-side': side,
-            x: hx - handleSize/2,
-            y: n.y - handleSize/2,
+            'data-corner': handle.corner,
+            x: handle.hx - handleSize/2,
+            y: handle.hy - handleSize/2,
             width: handleSize,
             height: handleSize,
             rx: 4
@@ -2515,9 +2518,13 @@
       state.drag = {
         kind: 'resize',
         id: n.id,
-        side: resizeHandleEl.dataset.side === 'left' ? 'left' : 'right',
+        corner: resizeHandleEl.dataset.corner === 'tl' ? 'tl' : 'br',
         startX: p.x,
+        startY: p.y,
         startW: n.w,
+        startH: n.h,
+        anchorX: resizeHandleEl.dataset.corner === 'tl' ? n.x + n.w / 2 : n.x - n.w / 2,
+        anchorY: resizeHandleEl.dataset.corner === 'tl' ? n.y + n.h / 2 : n.y - n.h / 2,
         moved: false
       };
       try { svg.setPointerCapture(e.pointerId); } catch(_) {}
@@ -2621,15 +2628,24 @@
       if (state.drag.kind === 'resize') {
         const n = nodeById(state.drag.id);
         if (!n) return;
-        const dir = state.drag.side === 'left' ? -1 : 1;
-        const nextW = clampNumber(state.drag.startW + (p.x - state.drag.startX) * dir * 2, NODE_MIN_W, NODE_MAX_W, state.drag.startW);
-        if (Math.abs(nextW - n.w) > 0.5) {
+        const dir = state.drag.corner === 'tl' ? -1 : 1;
+        const nextW = clampNumber(state.drag.startW + (p.x - state.drag.startX) * dir, NODE_MIN_W, NODE_MAX_W, state.drag.startW);
+        const minH = Math.max(NODE_MIN_H, computeLayoutHeight({...n, w: nextW}));
+        const nextH = clampNumber(state.drag.startH + (p.y - state.drag.startY) * dir, minH, NODE_MAX_H, Math.max(state.drag.startH, minH));
+        if (Math.abs(nextW - n.w) > 0.5 || Math.abs(nextH - n.h) > 0.5) {
           if (!state.drag.moved) {
             recordHistory();
             state.drag.moved = true;
           }
           n.w = Math.round(nextW);
-          n.h = computeLayoutHeight(n);
+          n.h = Math.round(nextH);
+          if (state.drag.corner === 'tl') {
+            n.x = state.drag.anchorX - n.w / 2;
+            n.y = state.drag.anchorY - n.h / 2;
+          } else {
+            n.x = state.drag.anchorX + n.w / 2;
+            n.y = state.drag.anchorY + n.h / 2;
+          }
           render();
         }
         return;
@@ -2861,14 +2877,12 @@
   document.getElementById('cycleColorBtn').addEventListener('click', () => {
     const ns = selectedNodes();
     if (!ns.length) return;
-    const recolorable = ns.filter(n => !n.isRoot);
-    if (!recolorable.length) { setStatus(t('status.rootColorLocked'), 'info'); return; }
     recordHistory();
-    recolorable.forEach(n => {
+    ns.forEach(n => {
       const idx = paletteIndexFor(n);
       applyPalette(n, (idx + 1) % PALETTE.length);
     });
-    setStatus(t('status.cycledColors', {n: recolorable.length}), 'success');
+    setStatus(t('status.cycledColors', {n: ns.length}), 'success');
     render();
   });
   function nodeTextTargets(){
