@@ -742,12 +742,12 @@
       padding: 0;
       border: 0;
       border-radius: 12px;
-      background: var(--white);
-      box-shadow: 0 24px 70px rgba(17, 24, 39, .28);
+      background: linear-gradient(180deg, #faf7ff 0%, #ffffff 42%);
+      box-shadow: 0 24px 70px rgba(76, 29, 149, .24);
       overflow: hidden;
     }
     .start-dialog::backdrop {
-      background: rgba(17, 24, 39, .34);
+      background: rgba(49, 46, 129, .28);
       backdrop-filter: blur(2px);
     }
     .start-dialog-body {
@@ -759,7 +759,7 @@
     }
     .start-dialog h2 {
       margin: 0;
-      color: #4b5563;
+      color: #4c1d95;
       font-size: 1.05rem;
       text-align: center;
     }
@@ -769,19 +769,20 @@
       padding: 0 24px;
       border: 0;
       border-radius: 6px;
-      background: #33a532;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
       color: #fff;
-      box-shadow: 0 3px 8px rgba(22, 101, 52, .28);
+      box-shadow: 0 8px 18px rgba(124, 58, 237, .28);
       font-size: 1rem;
       font-weight: 800;
     }
     .start-blank-btn:hover,
     .start-blank-btn:focus-visible {
-      background: #238b27;
+      background: linear-gradient(135deg, #6d28d9, #9333ea);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, .16), 0 10px 22px rgba(124, 58, 237, .28);
     }
     .start-template-heading {
       margin: 4px 0 -4px;
-      color: #4b5563;
+      color: #5b21b6;
       font-size: 1rem;
       font-weight: 900;
       text-align: center;
@@ -794,10 +795,10 @@
     .start-template-card {
       min-height: 102px;
       padding: 0;
-      border: 2px solid #e5e7eb;
+      border: 2px solid #ddd6fe;
       border-radius: 6px;
-      background: #fbfdff;
-      color: #4b5563;
+      background: #ffffff;
+      color: #4c1d95;
       overflow: hidden;
       font-weight: 900;
       text-align: center;
@@ -805,15 +806,15 @@
     .start-template-card:hover,
     .start-template-card:focus-visible,
     .start-template-card.active {
-      border-color: #38bdf8;
-      color: #0369a1;
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, .18);
+      border-color: #f97316;
+      color: #6d28d9;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, .16), 0 10px 22px rgba(124, 58, 237, .12);
     }
     .start-template-thumb {
       display: block;
       width: 100%;
       height: 68px;
-      background: #fff;
+      background: linear-gradient(180deg, #faf7ff, #ffffff);
     }
     .start-template-title {
       display: grid;
@@ -828,10 +829,10 @@
       right: 10px;
       width: 34px;
       min-height: 34px;
-      border: 1px solid #e5e7eb;
+      border: 2px solid #ddd6fe;
       border-radius: 999px;
       background: #fff;
-      color: #4b5563;
+      color: #4c1d95;
       font-weight: 900;
       z-index: 1;
     }
@@ -3075,14 +3076,15 @@
     const lines = (spec.connectors || []).map(c => {
       const a = idByKey[c.from], b = idByKey[c.to];
       if (!a || !b) return '';
-      return `<line x1="${(a.x*scale+ox).toFixed(1)}" y1="${(a.y*scale+oy).toFixed(1)}" x2="${(b.x*scale+ox).toFixed(1)}" y2="${(b.y*scale+oy).toFixed(1)}" stroke="#9ca3af" stroke-width="1.2"/>`;
+      return `<line x1="${(a.x*scale+ox).toFixed(1)}" y1="${(a.y*scale+oy).toFixed(1)}" x2="${(b.x*scale+ox).toFixed(1)}" y2="${(b.y*scale+oy).toFixed(1)}" stroke="#a78bfa" stroke-width="1.35"/>`;
     }).join('');
     const boxes = Object.entries(spec.nodes).map(([k, n]) => {
       const root = k === spec.rootKey || n.isRoot;
       const w = root ? 20 : 16, h = root ? 10 : 8;
       const x = n.x*scale + ox, y = n.y*scale + oy;
-      const fill = root ? '#facc15' : '#a3e635';
-      return `<rect x="${(x-w/2).toFixed(1)}" y="${(y-h/2).toFixed(1)}" width="${w}" height="${h}" rx="1.5" fill="${fill}" stroke="#d1d5db" stroke-width=".6"/>`;
+      const fill = root ? '#f97316' : '#c4b5fd';
+      const stroke = root ? '#fdba74' : '#8b5cf6';
+      return `<rect x="${(x-w/2).toFixed(1)}" y="${(y-h/2).toFixed(1)}" width="${w}" height="${h}" rx="1.5" fill="${fill}" stroke="${stroke}" stroke-width=".7"/>`;
     }).join('');
     return `<svg class="start-template-thumb" viewBox="0 0 136 68" aria-hidden="true">${lines}${boxes}</svg>`;
   }
