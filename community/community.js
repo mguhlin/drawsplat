@@ -505,6 +505,7 @@ function showMsg(el,text,kind){el.className='msg '+kind;el.textContent=text}
 function clearMsg(el){el.className='msg';el.textContent=''}
 
 function googleEnabled(){return !!GOOGLE_CLIENT_ID&&GOOGLE_CLIENT_ID.indexOf('PASTE_')!==0}
+function isLocalPreviewOrigin(){return /^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/.test(location.hostname)}
 function microsoftEnabled(){return !!MICROSOFT_CLIENT_ID&&MICROSOFT_CLIENT_ID.indexOf('PASTE_')!==0}
 
 function loadUser(){
@@ -814,6 +815,10 @@ function whenReady(check,cb,tries){
 
 function initGoogle(){
   if(!googleEnabled())return;
+  if(isLocalPreviewOrigin()){
+    console.info('Google sign-in is skipped on local preview origins.');
+    return;
+  }
   whenReady(()=>window.google&&google.accounts&&google.accounts.id,()=>{
     try{
       google.accounts.id.initialize({

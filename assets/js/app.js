@@ -4,7 +4,7 @@
 (function loadComplianceConfig(){
   window.complianceConfig = window.complianceConfig || null;
   try{
-    const base = (location.pathname.indexOf('/app/')===0 || location.pathname.indexOf('/admin/')===0 || location.pathname.indexOf('/parents/')===0) ? '../compliance.config.json' : 'compliance.config.json';
+    const base = (location.pathname.indexOf('/app/')===0 || location.pathname.indexOf('/admin/')===0 || location.pathname.indexOf('/parents/')===0 || location.pathname.indexOf('/languages/')===0) ? '../compliance.config.json' : 'compliance.config.json';
     fetch(base, { cache: 'no-cache' })
       .then(r => r.ok ? r.json() : null)
       .then(cfg => { if (cfg) { window.complianceConfig = cfg; window.dispatchEvent(new CustomEvent('compliance-config-ready', { detail: cfg })); } })
