@@ -52,7 +52,7 @@
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
     .top-bar {
-      height: 12px;
+      height: 8px;
       background: linear-gradient(90deg,
         var(--navy) 0 28%,
         var(--gold) 28% 46%,
@@ -65,17 +65,17 @@
     .page {
       width: calc(100% - 28px);
       margin: 0 auto;
-      padding: 22px 0 38px;
+      padding: 12px 0 28px;
     }
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      padding-bottom: 18px;
+      gap: 14px;
+      padding-bottom: 10px;
       border-bottom: 2px solid var(--gray-10);
     }
-    .title-block { display: grid; gap: 8px; }
+    .title-block { display: grid; gap: 4px; }
     .eyebrow {
       margin: 0;
       color: var(--gold);
@@ -88,7 +88,7 @@
     h1 {
       margin: 0;
       color: var(--navy);
-      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
       line-height: .95;
     }
     .subtitle {
@@ -101,9 +101,45 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
+    }
+    .about-menu {
+      position: relative;
+    }
+    .about-menu summary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--navy);
+      font-weight: 800;
+      cursor: pointer;
+      list-style: none;
+      white-space: nowrap;
+    }
+    .about-menu summary::-webkit-details-marker { display: none; }
+    .about-menu[open] summary,
+    .about-menu summary:hover {
+      border-color: var(--navy);
+      background: #faf7ff;
+    }
+    .about-panel {
+      position: absolute;
+      z-index: 40;
+      top: calc(100% + 8px);
+      right: 0;
+      width: min(520px, calc(100vw - 28px));
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
     }
     .home-link {
       display: inline-flex;
@@ -134,7 +170,7 @@
     }
     .app-grid {
       display: block;
-      padding-top: 22px;
+      padding-top: 8px;
     }
     .panel, .stage {
       border: 2px solid var(--border);
@@ -288,16 +324,17 @@
       min-height: 60px;
     }
     .selection-info strong { color: var(--navy); }
-    .stage { padding: 12px; }
+    .stage { padding: 6px; }
     .canvas-toolbar {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
-      padding: 6px 10px;
+      margin-bottom: 4px;
+      padding: 4px 7px;
       background: var(--gray-10);
       border-radius: 6px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
     }
     .mode-pill {
       display: inline-flex;
@@ -416,8 +453,8 @@
     }
     .template-select:focus { border-color: var(--navy); outline: none; }
     .quick-action-bar {
-      margin-bottom: 12px;
-      padding: 8px 10px;
+      margin-bottom: 6px;
+      padding: 5px 8px;
       border: 1px solid #d9dee8;
       border-radius: 6px;
       background: #fff;
@@ -425,7 +462,8 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
     }
     .quick-action-spacer {
       flex: 1 1 18px;
@@ -436,8 +474,8 @@
       align-items: center;
       justify-content: center;
       gap: 7px;
-      min-height: 34px;
-      padding: 6px 10px;
+      min-height: 30px;
+      padding: 4px 9px;
       border: 0;
       border-radius: 4px;
       background: transparent;
@@ -445,6 +483,7 @@
       font-weight: 800;
       font-size: .84rem;
       white-space: nowrap;
+      flex: 0 0 auto;
     }
     .quick-action-btn:hover:not([disabled]),
     .quick-action-menu[open] > summary {
@@ -466,16 +505,17 @@
     }
     .quick-action-menu {
       position: relative;
+      flex: 0 0 auto;
     }
     .quick-action-menu > summary {
       list-style: none;
     }
     .quick-action-menu > summary::-webkit-details-marker { display: none; }
     .quick-action-panel {
-      position: absolute;
-      z-index: 30;
-      top: calc(100% + 6px);
-      left: 0;
+      position: fixed;
+      z-index: 60;
+      top: var(--menu-top, 0);
+      left: var(--menu-left, 0);
       min-width: 174px;
       padding: 6px;
       border: 1px solid var(--border);
@@ -491,20 +531,28 @@
       text-align: left;
     }
     .studio-menu-bar {
-      margin-bottom: 12px;
-      padding: 8px;
+      margin-bottom: 8px;
+      padding: 6px 8px;
       border: 2px solid var(--border);
       border-radius: var(--radius);
       background: var(--surface);
       box-shadow: var(--shadow);
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
       gap: 8px;
       align-items: center;
     }
     .studio-menu-spacer {
       flex: 1 1 24px;
       min-width: 12px;
+    }
+    .studio-command-divider {
+      width: 1px;
+      align-self: stretch;
+      min-height: 28px;
+      background: #ddd6fe;
+      margin: 0 2px;
     }
     .studio-menu-clear {
       margin-left: auto;
@@ -513,10 +561,11 @@
     }
     .studio-menu {
       position: relative;
+      flex: 0 0 auto;
     }
     .studio-menu summary {
-      min-height: 38px;
-      padding: 8px 13px;
+      min-height: 34px;
+      padding: 6px 12px;
       border: 2px solid var(--gray-30);
       border-radius: var(--radius);
       background: var(--white);
@@ -540,10 +589,10 @@
       background: #faf9ff;
     }
     .studio-menu-panel {
-      position: absolute;
-      z-index: 20;
-      top: calc(100% + 6px);
-      left: 0;
+      position: fixed;
+      z-index: 60;
+      top: var(--menu-top, 0);
+      left: var(--menu-left, 0);
       min-width: 230px;
       max-width: min(760px, calc(100vw - 56px));
       max-height: min(70vh, 620px);
@@ -944,9 +993,14 @@
       z-index: 10;
     }
     .embed-credit:hover { color: var(--navy); background: #fff; }
+    @media (max-width: 1100px) {
+      .hint-line { display: none; }
+    }
     @media (max-width: 760px) {
       .instruction-dock { grid-template-columns: 1fr; }
       .studio-menu-clear { margin-left: 0; }
+      .canvas-toolbar { gap: 4px; }
+      .mode-pill { font-size: .76rem; }
     }
   </style>
 </head>
@@ -958,9 +1012,14 @@
       <div class="title-block">
         <p class="eyebrow"><a href="../../pages/features.html" data-i18n-html="header.eyebrow">DrawSplat<sup>TM</sup> Tools</a></p>
         <h1 data-i18n="header.h1">Concept Map Studio</h1>
-        <p class="subtitle" data-i18n="header.subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
       </div>
       <div class="header-actions">
+        <details class="about-menu">
+          <summary>About</summary>
+          <div class="about-panel">
+            <p class="subtitle" data-i18n="header.subtitle">Infinite canvas with zoom, pan, and undo/redo. Drag nodes, click to connect, label connectors, multi-select, group, choose from 5 pastels. Start from a template — fishbone, Frayer, KWL, T-chart, 5 Ws, cycle, sequence, cause &amp; effect, compare &amp; contrast, hierarchy, story map — or build from scratch. Save / load JSON, export SVG or PNG.</p>
+          </div>
+        </details>
         <div class="i18n-picker" data-i18n-picker></div>
         <a class="secondary-link" href="../../pages/features.html" data-i18n="nav.allTools">All Tools</a>
         <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
@@ -968,7 +1027,7 @@
     </header>
 
     <main class="app-grid">
-      <nav class="quick-action-bar" aria-label="Concept Map quick actions">
+      <nav class="studio-menu-bar" aria-label="Concept Map Studio menus">
         <button class="quick-action-btn primary-link" id="quickSaveWorkBtn" type="button" title="Save your concept map as a local JSON file">
           <span class="quick-action-icon" aria-hidden="true">▣</span>
           Save your work
@@ -992,18 +1051,7 @@
           <span class="quick-action-icon" aria-hidden="true">▤</span>
           Print
         </button>
-        <span class="quick-action-spacer" aria-hidden="true"></span>
-        <button class="quick-action-btn" id="quickUndoBtn" type="button" data-click-target="undoBtn" title="Undo">
-          <span class="quick-action-icon" aria-hidden="true">↶</span>
-          Undo
-        </button>
-        <button class="quick-action-btn" id="quickRedoBtn" type="button" data-click-target="redoBtn" title="Redo">
-          <span class="quick-action-icon" aria-hidden="true">↷</span>
-          Redo
-        </button>
-      </nav>
-
-      <nav class="studio-menu-bar" aria-label="Concept Map Studio menus">
+        <span class="studio-command-divider" aria-hidden="true"></span>
         <details class="studio-menu">
           <summary>File</summary>
           <div class="studio-menu-panel">
@@ -1101,6 +1149,14 @@
           <option value="story-map" data-i18n="tpl.story-map">Story Map</option>
         </select>
         <span class="studio-menu-spacer" aria-hidden="true"></span>
+        <button class="quick-action-btn" id="quickUndoBtn" type="button" data-click-target="undoBtn" title="Undo">
+          <span class="quick-action-icon" aria-hidden="true">↶</span>
+          Undo
+        </button>
+        <button class="quick-action-btn" id="quickRedoBtn" type="button" data-click-target="redoBtn" title="Redo">
+          <span class="quick-action-icon" aria-hidden="true">↷</span>
+          Redo
+        </button>
         <button class="tool-btn danger studio-menu-clear" id="clearMapBtn" type="button" data-i18n="button.clearMap">Clear All</button>
       </nav>
 
@@ -1201,16 +1257,37 @@
   const gridToggleBtn = document.getElementById('gridToggleBtn');
   const startDialog = document.getElementById('startDialog');
   const startTemplateGrid = document.getElementById('startTemplateGrid');
+  const aboutMenu = document.querySelector('.about-menu');
   const studioMenus = Array.from(document.querySelectorAll('.studio-menu-bar .studio-menu'));
   const quickMenus = Array.from(document.querySelectorAll('.quick-action-menu'));
   const nodePopover = document.getElementById('nodePopover');
   const quickUndoBtn = document.getElementById('quickUndoBtn');
   const quickRedoBtn = document.getElementById('quickRedoBtn');
 
+  function placeFloatingMenu(menu){
+    const trigger = menu.querySelector('summary');
+    const panel = menu.querySelector('.studio-menu-panel, .quick-action-panel');
+    if (!trigger || !panel || !menu.open) return;
+    const triggerRect = trigger.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const gap = 6;
+    const margin = 10;
+    const panelW = panelRect.width || 240;
+    const left = Math.max(margin, Math.min(triggerRect.left, window.innerWidth - panelW - margin));
+    panel.style.setProperty('--menu-left', left + 'px');
+    panel.style.setProperty('--menu-top', Math.min(triggerRect.bottom + gap, window.innerHeight - margin) + 'px');
+  }
+  function placeOpenMenus(){
+    studioMenus.forEach(placeFloatingMenu);
+    quickMenus.forEach(placeFloatingMenu);
+  }
+
   studioMenus.forEach(menu => {
     menu.addEventListener('toggle', () => {
       if (!menu.open) return;
+      if (aboutMenu) aboutMenu.open = false;
       studioMenus.forEach(other => { if (other !== menu) other.open = false; });
+      requestAnimationFrame(() => placeFloatingMenu(menu));
     });
     menu.addEventListener('click', event => {
       const target = event.target;
@@ -1218,8 +1295,14 @@
       menu.open = false;
     });
   });
+  aboutMenu?.addEventListener('toggle', () => {
+    if (!aboutMenu.open) return;
+    studioMenus.forEach(menu => { menu.open = false; });
+    quickMenus.forEach(menu => { menu.open = false; });
+  });
   document.addEventListener('pointerdown', event => {
-    if (event.target.closest('.studio-menu-bar') || event.target.closest('.quick-action-bar')) return;
+    if (event.target.closest('.studio-menu-bar') || event.target.closest('.quick-action-bar') || event.target.closest('.about-menu')) return;
+    if (aboutMenu) aboutMenu.open = false;
     studioMenus.forEach(menu => { menu.open = false; });
     quickMenus.forEach(menu => { menu.open = false; });
   });
@@ -1236,8 +1319,12 @@
       if (!menu.open) return;
       quickMenus.forEach(other => { if (other !== menu) other.open = false; });
       studioMenus.forEach(other => { other.open = false; });
+      if (aboutMenu) aboutMenu.open = false;
+      requestAnimationFrame(() => placeFloatingMenu(menu));
     });
   });
+  document.querySelector('.studio-menu-bar')?.addEventListener('scroll', placeOpenMenus, {passive: true});
+  window.addEventListener('resize', placeOpenMenus);
   document.getElementById('quickSaveWorkBtn')?.addEventListener('click', () => document.getElementById('saveJsonBtn')?.click());
   document.getElementById('quickPrintBtn')?.addEventListener('click', () => window.print());
   document.getElementById('quickPresentBtn')?.addEventListener('click', async () => {
