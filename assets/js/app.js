@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.83';
+const VERSION='3.0.94';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -4266,6 +4266,17 @@ async function loadAutosnapshot(){
   if(s){try{board=JSON.parse(s); migrateBoard(board)}catch{}} else migrateBoard(board);
 }
 
+function installServiceWorkerReloadHandler(){
+  if(!('serviceWorker' in navigator)||window.__drawsplatSwReloadHandler) return;
+  window.__drawsplatSwReloadHandler=true;
+  let reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(reloaded) return;
+    reloaded=true;
+    location.reload();
+  });
+}
+
 /* v2.5: register service worker for offline shell. Skipped on file:// where it cannot run. */
 function registerServiceWorker(){
   if(!('serviceWorker' in navigator)) return;
@@ -4292,6 +4303,7 @@ function registerServiceWorker(){
   render();
   try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)}else setTimeout(showStartupTip,900)}catch(_){setTimeout(showStartupTip,900)}
   ensureWidgetTimerTick();
+  installServiceWorkerReloadHandler();
   registerServiceWorker();
   if(shouldAutoCloudJoin()) setTimeout(()=>startCloudSync(),500);
   /* v2.5: replay-friendly version stamp the user can read in DevTools. */
