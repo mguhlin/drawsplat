@@ -716,7 +716,7 @@ function ensureSimpleExtras(){
   const dots=document.createElement('button'); dots.id='simpleDotPicturesBtn'; dots.type='button'; dots.textContent='Dot Pictures'; dots.addEventListener('click',()=>gid('openDotPictureLibraryBtn')?.click());
   const emoji=document.createElement('button'); emoji.id='simpleEmojiBtn'; emoji.type='button'; emoji.textContent='Emoji Mixer'; emoji.addEventListener('click',()=>gid('openEmojiDialogBtn')?.click());
   const gif=document.createElement('button'); gif.id='simpleGifBtn'; gif.type='button'; gif.textContent='Create GIF'; gif.addEventListener('click',()=>gid('openGifDialogBtn')?.click());
-  const concept=document.createElement('button'); concept.id='simpleConceptMapBtn'; concept.type='button'; concept.textContent='Concept Map'; concept.addEventListener('click',()=>insertNativeConceptMap());
+  const concept=document.createElement('button'); concept.id='simpleConceptMapBtn'; concept.type='button'; concept.textContent='Concept Map'; concept.addEventListener('click',()=>openConceptMapDialog());
   const palette=buildStickyPalette('simple-sticky-palette');
   palette.id='simpleStickyPalette';
   const stickyTool=document.querySelector('#toolButtons [data-tool="sticky"]');
@@ -768,7 +768,7 @@ function ensureConceptMapButton(){
   btn.type='button';
   btn.textContent='Concept Map';
   btn.dataset.ui='advanced';
-  btn.addEventListener('click',()=>insertNativeConceptMap());
+  btn.addEventListener('click',()=>openConceptMapDialog());
   anchor.insertAdjacentElement('afterend',btn);
 }
 function ensureAdvancedStickyPalette(){
