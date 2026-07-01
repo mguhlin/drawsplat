@@ -11,6 +11,15 @@
 </head>
 <body>
   <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
+  <script>
+    if (location.pathname.endsWith('/index.vite.html')) {
+      document.getElementById('app').innerHTML = '<main style="font-family:Arial,Helvetica,sans-serif;max-width:680px;margin:48px auto;padding:24px;line-height:1.5"><h1>WriteSplat developer template</h1><p>This file is used by the Vite dev/build pipeline. Open the built app instead.</p><p><a href="./">Open WriteSplat</a></p></main>';
+    } else {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = '/src/main.ts';
+      document.body.appendChild(script);
+    }
+  </script>
 </body>
 </html>
