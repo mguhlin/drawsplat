@@ -769,6 +769,21 @@ button:disabled {
   background: rgba(240, 228, 66, 0.06);
 }
 
+button.lrs-cell {
+  min-height: 1.75rem;
+  padding: 0 0.45rem;
+  font: inherit;
+  color: var(--yellow);
+  cursor: pointer;
+}
+
+button.lrs-cell:hover,
+button.lrs-cell:focus-visible {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(86, 180, 233, 0.14);
+}
+
 .lrs-cell.current {
   border-color: var(--cyan);
   background: linear-gradient(135deg, rgba(86, 180, 233, 0.34), rgba(0, 158, 115, 0.14));

@@ -715,7 +715,9 @@ class SuperStarTrek {
           this.explored[r - 1][c - 1] = value;
           parts.push({
             value: String(value + 1000).slice(1),
-            current: r === this.q1 && c === this.q2
+            current: r === this.q1 && c === this.q2,
+            row: r,
+            col: c
           });
         } else {
           parts.push({ value: "***", current: false });
@@ -727,7 +729,8 @@ class SuperStarTrek {
     rows.slice().reverse().forEach((row) => {
       const cells = row.map((part) => {
         const klass = part.current ? "lrs-cell current" : "lrs-cell";
-        return `<span class="${klass}">${part.value}</span>`;
+        if (!part.row || part.current) return `<span class="${klass}">${part.value}</span>`;
+        return `<button type="button" class="${klass}" data-lrs-row="${part.row}" data-lrs-col="${part.col}" title="Plot course to quadrant ${part.row},${part.col}">${part.value}</button>`;
       }).join("");
       this.richLine(`<span class="lrs-row">${cells}</span>`, "yellow");
     });
@@ -1014,33 +1017,68 @@ class SuperStarTrek {
         this.setPrompt("COMMAND?");
         return;
       }
-      const maxWarp = this.damage[0] < 0 ? 0.2 : 8;
-      const warpChoices = (maxWarp <= 0.2
-        ? [{ label: "Warp 0.2", value: "0.2" }]
-        : [
-          { label: "Warp 0.5", value: "0.5" },
-          { label: "Warp 1", value: "1", primary: true },
-          { label: "Warp 2", value: "2" },
-          { label: "Warp 4", value: "4" },
-          { label: "Warp 8", value: "8" }
-        ]);
-      warpChoices.push({ label: "Cancel", value: "0" });
-      this.ask(`WARP FACTOR (0-${maxWarp})?`, (warpInput) => {
-        const warp = Number(warpInput);
-        if (!Number.isFinite(warp)) {
-          this.line("Please enter a number.", "yellow");
-        } else if (warp === 0) {
-          this.line("<NAVIGATION CANCELLED>");
-        } else if (this.damage[0] < 0 && warp > 0.2) {
-          this.line("WARP ENGINES ARE DAMAGED. MAXIMUM SPEED = WARP 0.2", "yellow");
-        } else if (warp < 0 || warp > 8) {
-          this.line(`CHIEF ENGINEER SCOTT REPORTS 'THE ENGINES WON'T TAKE WARP ${warp} !'`, "red");
-        } else {
-          this.courseControl(course, warp);
-        }
-        if (!this.gameOver) this.setPrompt("COMMAND?");
-      }, warpChoices, "Warp 1 crosses roughly one quadrant; smaller values are safer for local movement.");
+      this.promptWarpForCourse(course);
     }, courseChoices, "Choose a direction. Decimal courses can still be typed manually.");
+  }
+
+  promptWarpForCourse(course) {
+    const maxWarp = this.damage[0] < 0 ? 0.2 : 8;
+    const warpChoices = (maxWarp <= 0.2
+      ? [{ label: "Warp 0.2", value: "0.2" }]
+      : [
+        { label: "Warp 0.5", value: "0.5" },
+        { label: "Warp 1", value: "1", primary: true },
+        { label: "Warp 2", value: "2" },
+        { label: "Warp 4", value: "4" },
+        { label: "Warp 8", value: "8" }
+      ]);
+    warpChoices.push({ label: "Cancel", value: "0" });
+    this.ask(`WARP FACTOR FOR COURSE ${course} (0-${maxWarp})?`, (warpInput) => {
+      const warp = Number(warpInput);
+      if (!Number.isFinite(warp)) {
+        this.line("Please enter a number.", "yellow");
+      } else if (warp === 0) {
+        this.line("<NAVIGATION CANCELLED>");
+      } else if (this.damage[0] < 0 && warp > 0.2) {
+        this.line("WARP ENGINES ARE DAMAGED. MAXIMUM SPEED = WARP 0.2", "yellow");
+      } else if (warp < 0 || warp > 8) {
+        this.line(`CHIEF ENGINEER SCOTT REPORTS 'THE ENGINES WON'T TAKE WARP ${warp} !'`, "red");
+      } else {
+        this.courseControl(course, warp);
+      }
+      if (!this.gameOver) this.setPrompt("COMMAND?");
+    }, warpChoices, "Warp 1 crosses roughly one quadrant; smaller values are safer for local movement.");
+  }
+
+  courseFromQuadrantDelta(deltaRow, deltaCol) {
+    const courses = {
+      "0,1": 1,
+      "-1,1": 2,
+      "-1,0": 3,
+      "-1,-1": 4,
+      "0,-1": 5,
+      "1,-1": 6,
+      "1,0": 7,
+      "1,1": 8
+    };
+    return courses[`${deltaRow},${deltaCol}`] || null;
+  }
+
+  plotLongRangeCourse(row, col) {
+    if (this.gameOver) return;
+    if (this.pending) {
+      this.setHint("Finish the current prompt before plotting from long-range scan results.");
+      return;
+    }
+    const deltaRow = row - this.q1;
+    const deltaCol = col - this.q2;
+    const course = this.courseFromQuadrantDelta(deltaRow, deltaCol);
+    if (!course) {
+      this.line("LRS PLOT REQUIRES A NEIGHBORING TARGET QUADRANT.", "yellow");
+      return;
+    }
+    this.line(`LRS PLOT: QUADRANT ${row},${col} IS COURSE ${course} FROM CURRENT QUADRANT ${this.q1},${this.q2}.`, "cyan event-start");
+    this.promptWarpForCourse(course);
   }
 
   courseControl(course, warp) {
@@ -1800,4 +1838,10 @@ document.querySelectorAll("[data-computer]").forEach((button) => {
     game.runComputerOption(button.dataset.computer);
     if (!game.pending && !game.gameOver) game.setPrompt("COMMAND?");
   });
+});
+
+ui.terminal?.addEventListener("click", (event) => {
+  const cell = event.target.closest("[data-lrs-row][data-lrs-col]");
+  if (!cell || !ui.terminal.contains(cell) || !game) return;
+  game.plotLongRangeCourse(Number(cell.dataset.lrsRow), Number(cell.dataset.lrsCol));
 });

@@ -26,7 +26,7 @@ The galaxy is divided into an 8 by 8 quadrant grid. Each quadrant contains an 8 
 | --- | --- | --- |
 | `NAV` | `Navigation` | Set course and warp factor |
 | `SRS` | `Screen` | Short range sensor scan |
-| `LRS` | `Sensors` | Long range sensor scan |
+| `LRS` | `Sensors` | Long range sensor scan. Click a scanned quadrant to plot a NAV course. |
 | `PHA` | `Phasers` | Fire phasers |
 | `TOR` | `Torpedo` | Fire photon torpedoes |
 | `SHE` | `Shields` | Raise or lower shields |
