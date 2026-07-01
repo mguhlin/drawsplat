@@ -11,6 +11,7 @@
   const clean=s=>String(s||'').trim();
   const configured=s=>clean(s)&&clean(s).indexOf('PASTE_')!==0;
   const msg=(id,text,cls='')=>{const el=$(id);if(el){el.textContent=text;el.className='msg '+cls}};
+  const isLocalPreviewOrigin=()=>/^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/.test(location.hostname);
 
   function registryUrl(){return clean(state.config&&state.config.instanceRegistryUrl)}
   function googleClientId(){return clean(state.config&&state.config.googleClientId)}
@@ -89,6 +90,7 @@
     }catch(err){msg('authMsg',err.message,'err')}
   }
   function googlePrompt(){
+    if(isLocalPreviewOrigin())return msg('authMsg','Google sign-in is skipped on local preview origins. Use the production Hub URL to bind or sign in with Google.');
     if(!window.google||!google.accounts||!google.accounts.id)return msg('authMsg','Google sign-in library is still loading.','err');
     try{
       google.accounts.id.prompt(notification=>{
@@ -112,6 +114,10 @@
     }
     if(!configured(googleClientId())){
       msg('authMsg','Google OAuth client ID is not configured in hub/config.json.','err');
+      return;
+    }
+    if(isLocalPreviewOrigin()){
+      msg('authMsg','Google sign-in is skipped on local preview origins. Use the production Hub URL to sign in.');
       return;
     }
     const wait=tries=>{

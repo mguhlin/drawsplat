@@ -11,10 +11,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Opening DrawSplat Hub Whiteboard</title>
   <style>
+    *{box-sizing:border-box}
+    html,body{max-width:100vw;overflow-x:hidden}
     body{margin:0;min-height:100vh;display:grid;grid-template-rows:auto 1fr;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#111827}
-    .instance-banner{display:block;width:100%;height:auto;background:#fff}
-    .center{display:grid;place-items:center;padding:18px}
-    .panel{width:min(560px,92vw);border:1px solid #dbe3ef;border-radius:8px;background:#fff;padding:22px;box-shadow:0 18px 40px rgba(15,23,42,.12)}
+    .instance-banner{display:block;width:100%;max-width:100vw;height:auto;background:#fff}
+    .center{display:grid;place-items:center;width:100%;max-width:100vw;min-width:0;padding:18px}
+    .panel{width:min(560px,92vw);max-width:100%;border:1px solid #dbe3ef;border-radius:8px;background:#fff;padding:22px;box-shadow:0 18px 40px rgba(15,23,42,.12)}
     h1{margin:0 0 8px;color:#7c3aed}
     p{color:#475569;line-height:1.5}
     a{color:#7c3aed;font-weight:900}
