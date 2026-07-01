@@ -1,0 +1,11 @@
+{
+  "name": "splatbot-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static-first virtual robotics programming studio for classrooms.",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "serve": "python3 -m http.server 4179",
+    "test": "node tests/core.test.js"
+  }
+}

@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM | Interactive Whiteboard for Classrooms and Teams</title>
-<meta name="description" content="DrawSplatTM is a static-first interactive whiteboard for classrooms, workshops, small teams, and self-hosted education use." />
+<title>DrawSplatTM | Whiteboard, SplatWorks, Tools, Widgets, and Games</title>
+<meta name="description" content="DrawSplatTM is a static-first classroom universe with an interactive whiteboard, SplatWorks office apps, standalone creation tools, quick widgets, games, multilingual entry pages, and self-hosted education options." />
 <link rel="canonical" href="https://drawsplat.org/" />
 <link rel="stylesheet" href="assets/css/app.css" />
 </head>
@@ -121,6 +121,7 @@
           <a href="solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
           <a href="solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
           <a href="solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
+          <a href="solutions/splatbot-studio/" target="_blank" rel="noopener noreferrer">SplatBot Studio</a>
           <a href="solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
           <a href="solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
           <a href="solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
@@ -147,31 +148,78 @@
       </div>
     </details>
   </nav>
-  <a class="landing-signin" href="app/whiteboard.html">Open Whiteboard</a>
+  <a class="landing-signin" href="pages/tools.html">Browse Studio</a>
 </header>
 
 <main class="landing-shell">
-  <section class="landing-hero">
-    <div class="landing-hero-copy">
-      <p class="landing-eyebrow">Static-first whiteboard for learning, planning, and visual work</p>
-      <h1>Interactive whiteboarding without putting admin controls in front of students.</h1>
-      <p class="landing-lede">DrawSplat<sup class="tm">TM</sup> is a self-contained interactive whiteboard for K-16 educators and students. It runs in the browser, supports classroom and productivity workflows, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets.</p>
+  <section class="landing-hero universe-hero">
+    <img src="assets/brand/DrawSplat_Feature_Set.png" class="universe-hero-image" alt="DrawSplat feature set showing the whiteboard, classroom tools, panels, media, charts, picture graphs, diagrams, dot art, stickers, and collages">
+    <div class="landing-hero-copy universe-hero-copy">
+      <p class="landing-eyebrow">The DrawSplat universe</p>
+      <h1>One classroom-friendly home for visual thinking, office work, tools, widgets, and games.</h1>
+      <p class="landing-lede">DrawSplat<sup class="tm">TM</sup> started as a static-first interactive whiteboard. It now brings together the whiteboard, SplatWorks&trade; apps, focused creation studios, quick classroom utilities, multilingual entry pages, games, teacher admin, family access, and self-hosting paths.</p>
       <div class="landing-actions">
         <a class="landing-cta primary" href="app/whiteboard.html">Launch Whiteboard</a>
-        <a class="landing-cta" href="admin/admin.html">Open Teacher Admin</a>
+        <a class="landing-cta" href="pages/splatworks.html">Explore SplatWorks</a>
+        <a class="landing-cta" href="pages/tools.html">Browse Tools</a>
       </div>
-    </div>
-    <div class="landing-hero-art image-hero" aria-label="DrawSplatTM feature preview">
-      <img src="guides/images/home-feature-preview.png" class="landing-hero-preview-image" alt="DrawSplatTM classroom whiteboard preview showing teacher layer, student ideas, panels, and a share with class action">
+      <div class="universe-quicklinks" aria-label="DrawSplat quick launch links">
+        <a href="pages/tools.html#widgets"><strong>Widgets</strong><span>Dice, spinners, bingo, SplatBot, prompts</span></a>
+        <a href="games/"><strong>Games</strong><span>Puzzles, arcade play, quiz games, strategy</span></a>
+        <a href="admin/admin.html"><strong>Teacher Admin</strong><span>Share links, storage, class setup</span></a>
+        <a href="languages/index-sp.html"><strong>Languages</strong><span>English, Spanish, Vietnamese, Arabic, Chinese, Urdu/Hindi</span></a>
+      </div>
     </div>
   </section>
 
-  <section class="landing-trust" aria-label="DrawSplatTM use cases">
-    <span>Classrooms</span>
-    <span>Workshops</span>
-    <span>Faculty PLCs</span>
-    <span>Small Teams</span>
-    <span>Browser-Only Sessions</span>
+  <section class="landing-trust universe-trust" aria-label="DrawSplatTM areas">
+    <span>Whiteboard</span>
+    <span>SplatWorks</span>
+    <span>Creation Tools</span>
+    <span>Quick Widgets</span>
+    <span>Games</span>
+    <span>Languages</span>
+    <span>Teacher Admin</span>
+  </section>
+
+  <section class="landing-section universe-map-section" aria-label="DrawSplatTM universe map">
+    <div class="landing-section-head">
+      <p class="landing-eyebrow">Start Anywhere</p>
+      <h2>A broader toolset, still anchored by the whiteboard.</h2>
+      <p>The whiteboard remains the shared canvas. The surrounding studios and apps let teachers, students, and families jump straight into the work they need.</p>
+    </div>
+    <div class="universe-map-grid">
+      <a class="universe-map-card whiteboard" href="app/whiteboard.html">
+        <img src="assets/favicons/whiteboard.svg" alt="">
+        <span>Interactive Whiteboard</span>
+        <p>Draw, annotate, add media, use panels, graphs, concept maps, templates, turn-ins, and classroom controls.</p>
+      </a>
+      <a class="universe-map-card splatworks" href="pages/splatworks.html">
+        <img src="splatworks/gridsplat/gridsplat_icon.png" alt="">
+        <span>SplatWorks&trade;</span>
+        <p>Launch GridSplat, ShowSplat, WriteSplat, and ListSplat as a classroom office suite beside DrawSplat.</p>
+      </a>
+      <a class="universe-map-card tools" href="pages/tools.html">
+        <img src="assets/favicons/tools.svg" alt="">
+        <span>Creation Tools</span>
+        <p>Open SplatImage Studio, Chart Studio, Markdown Studio, Graph Maker, Concept Map, Rubric Builder, and more.</p>
+      </a>
+      <a class="universe-map-card widgets" href="pages/tools.html#widgets">
+        <img src="assets/icons/tools/insert-widgets.png" alt="">
+        <span>Quick Widgets</span>
+        <p>Use small focused utilities for dice, spinners, bingo, clocks, SplatBot, flashcards, tone shifts, and prompts.</p>
+      </a>
+      <a class="universe-map-card games" href="games/">
+        <img src="assets/favicons/games.svg" alt="">
+        <span>Games</span>
+        <p>Launch classroom-friendly games and puzzles without opening the whiteboard first.</p>
+      </a>
+      <a class="universe-map-card admin" href="admin/admin.html">
+        <img src="assets/favicons/admin.svg" alt="">
+        <span>Teacher Admin</span>
+        <p>Keep setup, storage, class links, and provider testing away from the student-facing workspace.</p>
+      </a>
+    </div>
   </section>
 
   <section class="language-strip" aria-label="DrawSplatTM language entry pages">
@@ -189,8 +237,8 @@
   <section class="landing-section standalone-tools-section" aria-label="DrawSplat Studio">
     <div class="landing-section-head">
       <p class="landing-eyebrow">DrawSplat Studio</p>
-      <h2>Whiteboard, SplatWorks apps, standalone tools, widgets, and games.</h2>
-      <p>SplatWorks&trade; is the GPL-covered office app family: GridSplat&trade; for spreadsheets, ShowSplat&trade; for slide decks and WebDecks, WriteSplat&trade; for classroom writing, and ListSplat&trade; for child-friendly database projects. DrawSplat keeps the whiteboard, standalone tools, widgets, and games together.</p>
+      <h2>From quick classroom utilities to full app workspaces.</h2>
+      <p>SplatWorks&trade; is the GPL-covered office app family: GridSplat&trade; for spreadsheets, ShowSplat&trade; for slide decks and WebDecks, WriteSplat&trade; for classroom writing, and ListSplat&trade; for child-friendly database projects. DrawSplat also keeps standalone tools, widgets, and games close enough to use during the same lesson.</p>
     </div>
     <div class="standalone-tool-grid">
       <a class="standalone-tool-card studio-card-featured" href="pages/splatworks.html">
@@ -203,7 +251,7 @@
       </a>
       <a class="standalone-tool-card" href="pages/tools.html#widgets">
         <span>Widgets</span>
-        <p>Open quick classroom utilities such as dice, spinners, bingo tools, timers, tone helpers, and prompt builders.</p>
+        <p>Open quick classroom utilities such as dice, spinners, bingo tools, virtual robotics, tone helpers, and prompt builders.</p>
       </a>
       <a class="standalone-tool-card" href="games/">
         <span>Games</span>

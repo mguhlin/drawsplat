@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Abstraction</title>
+  <desc id="desc">SplatLab poster with original activities for focusing on important robot programming information.</desc>
+  <rect width="900" height="1200" rx="36" fill="#fffdf2"/>
+  <rect x="24" y="24" width="852" height="1152" rx="28" fill="none" stroke="#eab308" stroke-width="16"/>
+  <text x="450" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="86" font-weight="900" fill="#eab308" stroke="#111827" stroke-width="4" paint-order="stroke">Abstraction</text>
+  <text x="450" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#92400e">Keep the useful idea. Hide the clutter.</text>
+  <g font-family="Arial, sans-serif" font-size="24" fill="#172033">
+    <g transform="translate(80 270)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">⌖</text><text x="92" y="55" font-weight="900">Simple Map</text><text x="92" y="90">start, walls, goal</text></g>
+    <g transform="translate(490 270)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">●</text><text x="92" y="55" font-weight="900">Robot Icons</text><text x="92" y="90">actions as symbols</text></g>
+    <g transform="translate(80 430)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">≡</text><text x="92" y="55" font-weight="900">Mission Summary</text><text x="92" y="90">one clear sentence</text></g>
+    <g transform="translate(490 430)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">?</text><text x="92" y="55" font-weight="900">Sensor Snapshot</text><text x="92" y="90">wall or clear</text></g>
+    <g transform="translate(80 590)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">♪</text><text x="92" y="55" font-weight="900">Sound Meaning</text><text x="92" y="90">beep means done</text></g>
+    <g transform="translate(490 590)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">⌁</text><text x="92" y="55" font-weight="900">Route Sketch</text><text x="92" y="90">corners + distance</text></g>
+    <g transform="translate(80 750)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">Aa</text><text x="92" y="55" font-weight="900">Rule Name</text><text x="92" y="90">name a chunk</text></g>
+    <g transform="translate(490 750)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">~</text><text x="92" y="55" font-weight="900">Noise Filter</text><text x="92" y="90">ignore tiny jitter</text></g>
+    <g transform="translate(80 910)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">★</text><text x="92" y="55" font-weight="900">One Big Idea</text><text x="92" y="90">title the program</text></g>
+    <g transform="translate(490 910)"><rect width="330" height="130" rx="18" fill="#fff" stroke="#eab308" stroke-width="5"/><text x="30" y="72" font-size="42">✓</text><text x="92" y="55" font-weight="900">Helpful Details</text><text x="92" y="90">code vs notes</text></g>
+  </g>
+  <text x="450" y="1110" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#b45309">Clear ideas make better programs.</text>
+</svg>

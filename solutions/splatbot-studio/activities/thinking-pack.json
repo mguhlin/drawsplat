@@ -1,0 +1,225 @@
+{
+  "app": "SplatLab",
+  "type": "thinking-activity-pack",
+  "version": 1,
+  "title": "SplatLab Thinking Skills",
+  "storyCampaign": {
+    "id": "signal-garden",
+    "title": "The Signal Garden",
+    "premise": "SplatBot enters a living city-lab where paths, lights, sounds, and messages keep the community systems balanced. Each chapter unlocks a new station by solving a robot-control problem.",
+    "chapters": [
+      {
+        "title": "The Quiet Gate",
+        "story": "The west gate has stopped answering its morning check-in. SplatBot must cross the entry path, touch the data pod, and send the first repair signal.",
+        "challengeId": "data-pod-dock",
+        "studentGoal": "Reach a target, send a message, and return safely."
+      },
+      {
+        "title": "Breath of the Atrium",
+        "story": "The garden's air valves are stuck in sleep mode. Each valve wakes only when SplatBot arrives in the right order and plays a clear tone.",
+        "challengeId": "air-valve-burst",
+        "studentGoal": "Visit ordered checkpoints and use sound as feedback."
+      },
+      {
+        "title": "Bridge of Thin Lines",
+        "story": "A narrow skybridge carries updates between two towers. SplatBot needs a careful route that never slips into the blocked service lanes.",
+        "challengeId": "skyline-carrier",
+        "studentGoal": "Navigate a constrained path and report delivery."
+      },
+      {
+        "title": "The Matching Floor",
+        "story": "The workshop floor has mixed its marker pairs. SplatBot restores the pattern by visiting matching tiles and lighting the signal at each correct pair.",
+        "challengeId": "bolt-bay-sort",
+        "studentGoal": "Use loops and signals to model matching."
+      },
+      {
+        "title": "Cylinder of Weather Words",
+        "story": "A small message cylinder holds a forecast clue for the garden roof. SplatBot must find it, decode it, and pass the word to the message log.",
+        "challengeId": "message-cylinder-rescue",
+        "studentGoal": "Combine navigation with a human-readable code clue."
+      },
+      {
+        "title": "The Turning Core",
+        "story": "The central rhythm wheel has lost its beat. SplatBot rebuilds the pulse with turn patterns and a short song.",
+        "challengeId": "core-spin-sync",
+        "studentGoal": "Create a timed rotation and music pattern."
+      },
+      {
+        "title": "Lantern Network",
+        "story": "Four lantern stations can only restart if every team shares the same symbol sequence. SplatBot carries the pattern from browser to browser.",
+        "challengeId": "symbol-link",
+        "studentGoal": "Share and verify a sequence using messages or QR codes."
+      },
+      {
+        "title": "The Color Lock",
+        "story": "The final route opens only when the color order is correct. SplatBot follows the coded path and uses the signal light to show each solved step.",
+        "challengeId": "color-lock-path",
+        "studentGoal": "Decode a sequence, follow it, and show progress."
+      }
+    ]
+  },
+  "questChallenges": [
+    {
+      "id": "data-pod-dock",
+      "title": "Data Pod Dock",
+      "tagline": "Reach the pod, confirm the pickup, return with a signal.",
+      "virtualTask": "Program SplatBot to follow a narrow route, touch a data pod zone, send a pickup message, and return to a base square.",
+      "models": ["line following", "touch target", "message device", "route decomposition"],
+      "teacherNote": "Based on a retrieval-style robot challenge, remade as a screen-only navigation and confirmation mission."
+    },
+    {
+      "id": "air-valve-burst",
+      "title": "Air Valve Burst",
+      "tagline": "Trigger each valve without bumping the service wall.",
+      "virtualTask": "Use movement, sensing, and sound blocks to visit five valve markers in order and play a tone at each one.",
+      "models": ["ordered sequence", "repeatable checkpoint", "sound feedback", "sensor check"],
+      "teacherNote": "Models an extension-and-target task without requiring physical pipes or balls."
+    },
+    {
+      "id": "skyline-carrier",
+      "title": "Skyline Carrier",
+      "tagline": "Stay on the path, deliver the payload, report the drop.",
+      "virtualTask": "Guide SplatBot along a one-cell-wide bridge, pause at a drop zone, send a delivery message, and leave without crossing blocked cells.",
+      "models": ["constraint path", "payload drop", "debug trace", "precision movement"],
+      "teacherNote": "Inspired by cable-delivery constraints, translated into a virtual bridge and drop-zone route."
+    },
+    {
+      "id": "bolt-bay-sort",
+      "title": "Bolt Bay Sort",
+      "tagline": "Match the markers before the timer runs out.",
+      "virtualTask": "Build a program that visits paired bolt markers, changes the signal light on matches, and uses loops for repeated pairs.",
+      "models": ["matching", "loop compression", "state signal", "pattern recognition"],
+      "teacherNote": "Recasts a nut-and-bolt manipulation challenge as matching, routing, and state feedback."
+    },
+    {
+      "id": "message-cylinder-rescue",
+      "title": "Message Cylinder Rescue",
+      "tagline": "Find the cylinder, decode the clue, carry the answer forward.",
+      "virtualTask": "Navigate to a cylinder marker, read a short clue from the mission prompt, and send the decoded word through the message log.",
+      "models": ["target retrieval", "abstraction", "human-readable clue", "device message"],
+      "teacherNote": "Keeps the idea of a hidden message container while moving the physical grabber into a virtual clue-and-message workflow."
+    },
+    {
+      "id": "core-spin-sync",
+      "title": "Core Spin Sync",
+      "tagline": "Hold the rhythm long enough to stabilize the grid.",
+      "virtualTask": "Create a spin pattern using turn blocks and a short song, then keep the pattern running for the required number of beats.",
+      "models": ["rotation", "timing", "music pattern", "repeat loop"],
+      "teacherNote": "Represents gear-and-top stabilization as timed rotation, loop design, and generated audio."
+    },
+    {
+      "id": "symbol-link",
+      "title": "Symbol Link",
+      "tagline": "Share the right sequence so every station agrees.",
+      "virtualTask": "Use messages or QR share codes to pass a symbol sequence between teams, then program SplatBot to visit matching symbol tiles.",
+      "models": ["shared code", "team protocol", "sequence validation", "QR exchange"],
+      "teacherNote": "Adapts hub-display symbol coordination into open web sharing without special hardware."
+    },
+    {
+      "id": "color-lock-path",
+      "title": "Color Lock Path",
+      "tagline": "Follow the colors, unlock the route, finish together.",
+      "virtualTask": "Decode a color order from the mission prompt, visit color tiles in that order, and use the signal light to show progress.",
+      "models": ["color sequence", "conditional route", "status light", "collaboration"],
+      "teacherNote": "Turns a color-display final challenge into a virtual tile path and signal-light protocol."
+    }
+  ],
+  "concepts": [
+    {
+      "id": "decomposition",
+      "title": "Decomposition",
+      "tagline": "Split a big job into smaller jobs you can solve.",
+      "color": "#dc2626",
+      "poster": "assets/posters/decomposition.svg",
+      "standards": {
+        "teks": ["Technology Applications: computational thinking", "Technology Applications: algorithms and programs", "Technology Applications: digital systems and collaboration"],
+        "ngss": ["SEP: Developing and using models", "SEP: Planning and carrying out investigations", "CCC: Systems and system models"],
+        "commoncore": ["SMP 1: problem solving", "SMP 4: modeling", "SMP 6: precision"]
+      },
+      "activities": [
+        { "title": "Robot Route Chunks", "model": "Break a long route into start, middle, and finish commands.", "prompt": "Mark the turns first, then fill in the moves between them." },
+        { "title": "Backpack Bot", "model": "Sort a packing task into books, tools, lunch, and extras.", "prompt": "Create one mini-program for each pocket." },
+        { "title": "Obstacle Cleanup", "model": "Separate a cluttered grid into safe spaces, blocked spaces, and target spaces.", "prompt": "Solve one zone before moving to the next." },
+        { "title": "Sound Show Parts", "model": "Build a robot celebration from movement, light, message, and sound.", "prompt": "Code each effect as its own small step." },
+        { "title": "Mission Debug Pieces", "model": "Divide a failed run into where it started, where it turned, and where it stopped.", "prompt": "Fix only the first broken part." },
+        { "title": "Classroom Delivery", "model": "Break a delivery job into pickup, travel, drop-off, and return.", "prompt": "Write one command group for each phase." },
+        { "title": "Sensor Job Split", "model": "Separate sensing from acting: check first, move second.", "prompt": "Use an if block before the drive block." },
+        { "title": "Map Maker", "model": "Divide the field into rows, columns, walls, and goals.", "prompt": "Describe each part before coding." },
+        { "title": "Team Robot Roles", "model": "Split a shared challenge into driver, checker, builder, and tester roles.", "prompt": "Each teammate owns one part of the solution." },
+        { "title": "Big Program Labels", "model": "Name the parts of a program: setup, repeat, decision, finish.", "prompt": "Add one improvement to each part." }
+      ]
+    },
+    {
+      "id": "pattern-recognition",
+      "title": "Pattern Recognition",
+      "tagline": "Notice what repeats, matches, or changes by a rule.",
+      "color": "#2563eb",
+      "poster": "assets/posters/pattern-recognition.svg",
+      "standards": {
+        "teks": ["Technology Applications: patterns and data", "Technology Applications: computational thinking", "Technology Applications: program testing"],
+        "ngss": ["SEP: Analyzing and interpreting data", "SEP: Using mathematics and computational thinking", "CCC: Patterns"],
+        "commoncore": ["SMP 2: reasoning", "SMP 7: structure", "SMP 8: repeated reasoning"]
+      },
+      "activities": [
+        { "title": "Repeat Road", "model": "Find repeated move-turn pairs in a route.", "prompt": "Replace repeated commands with a loop." },
+        { "title": "Sensor Rhythm", "model": "Spot when wall checks happen before every turn.", "prompt": "Use the same if pattern at each corner." },
+        { "title": "Grid Step Pattern", "model": "Recognize routes that move the same number of spaces each time.", "prompt": "Predict the next stop before running." },
+        { "title": "Sound Beat Bot", "model": "Use repeated beeps and pauses as a pattern.", "prompt": "Make a sound pattern that matches a movement pattern." },
+        { "title": "Color Path Rules", "model": "Look for rows, columns, or corners that follow a rule.", "prompt": "State the rule before coding." },
+        { "title": "Bug Pattern Hunt", "model": "Find the same mistake happening more than once.", "prompt": "Fix the repeated cause, not just one symptom." },
+        { "title": "Schedule Robot", "model": "Model a daily routine as repeated events.", "prompt": "Use loops for repeated classroom transitions." },
+        { "title": "Dance Loop", "model": "Find a movement phrase that repeats in a robot dance.", "prompt": "Create a looped dance and change one beat." },
+        { "title": "Message Sequence", "model": "Spot patterns in status messages like ready, moving, done.", "prompt": "Send messages at matching points in each run." },
+        { "title": "Almost the Same", "model": "Compare two programs and identify what changed.", "prompt": "Circle the commands that stayed the same." }
+      ]
+    },
+    {
+      "id": "abstraction",
+      "title": "Abstraction",
+      "tagline": "Keep the useful idea and leave out details that do not matter yet.",
+      "color": "#eab308",
+      "poster": "assets/posters/abstraction.svg",
+      "standards": {
+        "teks": ["Technology Applications: model creation", "Technology Applications: digital citizenship and communication", "Technology Applications: computational thinking"],
+        "ngss": ["SEP: Developing and using models", "SEP: Obtaining, evaluating, and communicating information", "CCC: Scale, proportion, and quantity"],
+        "commoncore": ["SMP 4: modeling", "SMP 5: tools", "SMP 6: precision"]
+      },
+      "activities": [
+        { "title": "Simple Map", "model": "Turn a busy classroom map into only start, walls, and goal.", "prompt": "Remove decoration before planning the route." },
+        { "title": "Robot Icon Plan", "model": "Represent actions with simple icons: move, turn, sense, signal.", "prompt": "Use icons to explain a program to a partner." },
+        { "title": "Mission Summary", "model": "Summarize a challenge in one sentence.", "prompt": "Say what matters most before adding commands." },
+        { "title": "Sensor Snapshot", "model": "Reduce sensor data to clear states: wall, no wall, goal, not goal.", "prompt": "Choose the state your code actually needs." },
+        { "title": "Sound Meaning", "model": "Use one beep to mean done and another to mean try again.", "prompt": "Create a tiny signal language." },
+        { "title": "Route Sketch", "model": "Draw only corners and distances, not every grid square.", "prompt": "Turn the sketch into commands." },
+        { "title": "Rule Name", "model": "Give a repeated chunk a useful name.", "prompt": "Explain the named idea without listing every command." },
+        { "title": "Noise Filter", "model": "Ignore small random changes when using rough movement.", "prompt": "Focus on reaching the zone, not the exact square first." },
+        { "title": "One Big Idea", "model": "Choose the most important idea in a messy program.", "prompt": "Write a title for what the program does." },
+        { "title": "Helpful Details", "model": "Decide which details belong in teacher notes and which belong in code.", "prompt": "Separate explanation from instructions." }
+      ]
+    },
+    {
+      "id": "algorithm-development",
+      "title": "Algorithm Development",
+      "tagline": "Make clear steps that can be followed, tested, and improved.",
+      "color": "#16a34a",
+      "poster": "assets/posters/algorithm-development.svg",
+      "standards": {
+        "teks": ["Technology Applications: algorithms and programming", "Technology Applications: testing and debugging", "Technology Applications: open-ended problem solving"],
+        "ngss": ["SEP: Using mathematics and computational thinking", "SEP: Designing solutions", "CCC: Cause and effect"],
+        "commoncore": ["SMP 1: problem solving", "SMP 3: reasoning and critique", "SMP 8: repeated reasoning"]
+      },
+      "activities": [
+        { "title": "Step-by-Step Route", "model": "Write a route as ordered commands from start to goal.", "prompt": "Run after each section and revise." },
+        { "title": "If Wall Plan", "model": "Create a rule for what to do when a wall is ahead.", "prompt": "Test the rule in two different places." },
+        { "title": "Loop Builder", "model": "Turn repeated commands into a shorter algorithm.", "prompt": "Compare the long version and loop version." },
+        { "title": "Rescue Algorithm", "model": "Plan how SplatBot should recover after a blocked move.", "prompt": "Add a turn and try a new path." },
+        { "title": "Signal at Finish", "model": "Add finish steps: stop, light on, send message, play sound.", "prompt": "Make the ending clear to an observer." },
+        { "title": "Rough Movement Fix", "model": "Improve an algorithm so it survives fuzzy movement.", "prompt": "Use sensing after rough moves." },
+        { "title": "Phone Tilt Control", "model": "Use the controller as part of the algorithm.", "prompt": "Add a condition for tilt or loud sound." },
+        { "title": "Two-Version Test", "model": "Create two algorithms for the same goal and compare them.", "prompt": "Which is shorter? Which is easier to debug?" },
+        { "title": "Trace Revision", "model": "Use a run trace to find the first command that caused trouble.", "prompt": "Change one step and run again." },
+        { "title": "Teach the Robot", "model": "Record a ghost route, convert it to code, then improve it.", "prompt": "Demonstrate first, edit second." }
+      ]
+    }
+  ]
+}

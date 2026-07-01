@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- DrawSplat favicons -->
+    <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../../assets/brand/DrawSplat_logo.png">
+    <link rel="manifest" href="../../site.webmanifest">
+    <!-- /DrawSplat favicons -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#7c3aed">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+    <title data-i18n="doc.title">SplatBot Studio | DrawSplat Widgets</title>
+    <meta name="description" content="A DrawSplat widget for block and word-command virtual robotics missions.">
+    <link rel="stylesheet" href="styles.css">
+    <script src="../../assets/js/widget-i18n.js"></script>
+    <script src="locales.js"></script>
+    <script src="vendor/blockly.min.js"></script>
+    <script src="vendor/qrcode.js"></script>
+  </head>
+  <body>
+    <div class="top-bar" aria-hidden="true"></div>
+    <section id="splashPage" class="splash-page" aria-label="SplatLab story introduction">
+      <div class="splash-media" aria-hidden="true">
+        <div class="splash-grid">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="splash-bot"></div>
+        <div class="splash-goal"></div>
+      </div>
+      <div class="splash-copy">
+        <p class="eyebrow" data-i18n="splash.eyebrow">SplatLab Presents</p>
+        <h1 data-i18n="splash.h1">The Signal Garden</h1>
+        <p data-i18n="splash.copy">
+          SplatBot has entered a living city-lab where lights, sounds, routes, and messages keep the whole garden awake.
+          Each chapter asks you to program a virtual robot, test your idea, and improve it until the next station comes online.
+        </p>
+        <div class="splash-actions">
+          <button id="startLabBtn" class="primary-btn" type="button" data-i18n="splash.enter">Enter SplatLab</button>
+          <button id="skipStoryBtn" class="ghost-btn" type="button" data-i18n="splash.skip">Go to the Lab</button>
+        </div>
+        <div class="splash-chapters">
+          <article>
+            <strong data-i18n="splash.chapter1.title">Code the route</strong>
+            <span data-i18n="splash.chapter1.copy">Blocks, words, ghost recording, and QR sharing.</span>
+          </article>
+          <article>
+            <strong data-i18n="splash.chapter2.title">Wake the systems</strong>
+            <span data-i18n="splash.chapter2.copy">Signals, sounds, sensors, and virtual IoT devices.</span>
+          </article>
+          <article>
+            <strong data-i18n="splash.chapter3.title">Carry it forward</strong>
+            <span data-i18n="splash.chapter3.copy">Export readable code for Python, JavaScript, micro:bit, Dash, LEGO, and VEX.</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat Tools</a></p>
+        <h1 data-i18n="header.h1">SplatBot Studio</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Program a virtual classroom robot with blocks, word commands, missions, and shareable project files.</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="link-btn" href="../../pages/tools.html" data-i18n="header.allTools">All Tools</a>
+        <a class="link-btn home-link" href="../../index.html" data-i18n="header.home">Home</a>
+        <select id="roleSelect" title="Interface mode">
+          <option value="student" data-i18n="role.student">Student</option>
+          <option value="teacher" data-i18n="role.teacher">Teacher</option>
+        </select>
+        <select id="standardsSelect" title="Standards alignment">
+          <option value="teks">TEKS</option>
+          <option value="ngss">NGSS</option>
+          <option value="commoncore">Common Core</option>
+        </select>
+        <button id="saveBtn" class="ghost-btn" type="button" title="Save project" data-i18n="button.save">Save</button>
+        <button id="exportBtn" class="ghost-btn" type="button" title="Export project" data-i18n="button.export">Export</button>
+        <button id="importBtn" class="ghost-btn" type="button" title="Import project" data-i18n="button.import">Import</button>
+        <button id="importMissionsBtn" class="ghost-btn" type="button" title="Import mission pack" data-i18n="button.importMissions">Import Missions</button>
+        <button id="exportMissionsBtn" class="ghost-btn" type="button" title="Export mission pack" data-i18n="button.exportMissions">Export Missions</button>
+        <button id="resetBtn" class="ghost-btn" type="button" title="Reset robot" data-i18n="button.reset">Reset</button>
+        <button id="constraintBtn" class="ghost-btn" type="button" title="Random challenge constraint" data-i18n="button.constraint">Constraint</button>
+        <button id="storyBtn" class="ghost-btn" type="button" title="Show story intro" data-i18n="button.story">Story</button>
+        <button id="runBtn" class="primary-btn" type="button" title="Run program" data-i18n="button.run">Run</button>
+        <button id="stopBtn" class="danger-btn" type="button" title="Stop program" data-i18n="button.stop">Stop</button>
+        <input id="importFile" type="file" accept="application/json,.json" hidden>
+        <input id="missionFile" type="file" accept="application/json,.json" hidden>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="sim-panel" aria-label="Robot simulator">
+        <div class="mission-strip">
+          <label for="missionSelect" data-i18n="mission.label">Mission</label>
+          <select id="missionSelect"></select>
+          <span id="missionBand" class="grade-pill"></span>
+        </div>
+        <canvas id="robotCanvas" width="720" height="720" aria-label="Virtual robot field"></canvas>
+        <div class="status-grid" aria-live="polite">
+          <div>
+            <span data-i18n="status.position">Position</span>
+            <strong id="positionReadout">1, 1</strong>
+          </div>
+          <div>
+            <span data-i18n="status.direction">Direction</span>
+            <strong id="directionReadout">East</strong>
+          </div>
+          <div>
+            <span data-i18n="status.sensor">Sensor</span>
+            <strong id="sensorReadout">Clear</strong>
+          </div>
+          <div>
+            <span data-i18n="status.goal">Goal</span>
+            <strong id="goalReadout">Not yet</strong>
+          </div>
+          <div>
+            <span data-i18n="status.project">Project</span>
+            <strong id="saveReadout">Not saved</strong>
+          </div>
+        </div>
+        <div class="device-panel" aria-label="Virtual connected devices">
+          <div class="device-header">
+            <h2 data-i18n="devices.h2">Devices</h2>
+            <span data-i18n="devices.eyebrow">Virtual IoT lab</span>
+          </div>
+          <div class="device-grid">
+            <div class="signal-device">
+              <span id="signalLight" class="signal-light" aria-hidden="true"></span>
+              <strong data-i18n="devices.signal">Signal light</strong>
+              <em id="signalReadout">Off</em>
+            </div>
+            <div class="message-device">
+              <strong data-i18n="devices.messages">Message log</strong>
+              <ol id="messageLog"></ol>
+            </div>
+            <div class="sound-device">
+              <strong data-i18n="devices.sound">Sound</strong>
+              <em id="soundReadout">Silent</em>
+            </div>
+          </div>
+        </div>
+        <div class="lab-panel" aria-label="Experimental robot controls">
+          <details open>
+            <summary data-i18n="ghost.summary">Ghost recorder</summary>
+            <div class="jog-grid">
+              <button id="ghostForwardBtn" type="button" data-i18n="ghost.forward">Forward</button>
+              <button id="ghostLeftBtn" type="button" data-i18n="ghost.left">Left</button>
+              <button id="ghostRightBtn" type="button" data-i18n="ghost.right">Right</button>
+              <button id="ghostClearBtn" type="button" data-i18n="ghost.clear">Clear</button>
+            </div>
+            <div class="lab-actions">
+              <button id="ghostToWordsBtn" class="primary-btn" type="button" data-i18n="ghost.use">Use Recording</button>
+              <span id="ghostReadout">0 moves</span>
+            </div>
+          </details>
+          <details>
+            <summary data-i18n="qr.summary">Program QR</summary>
+            <div class="lab-actions">
+              <button id="makeQrBtn" type="button" data-i18n="qr.make">Make QR</button>
+              <button id="loadShareBtn" type="button" data-i18n="qr.load">Load Code</button>
+            </div>
+            <div id="qrOutput" class="qr-output" aria-label="Program QR code"></div>
+            <textarea id="shareCode" rows="3" spellcheck="false" placeholder="Share code appears here"></textarea>
+          </details>
+          <details>
+            <summary data-i18n="sensors.summary">Phone sensors</summary>
+            <div class="lab-actions">
+              <button id="enableSensorsBtn" type="button" data-i18n="sensors.enable">Enable Sensors</button>
+              <span id="sensorInputReadout">Not enabled</span>
+            </div>
+          </details>
+          <div class="constraint-readout" id="constraintReadout">No constraint</div>
+        </div>
+      </section>
+
+      <section class="builder-panel" aria-label="Coding workspace">
+        <div class="tabs" role="tablist" aria-label="Coding modes">
+          <button id="blocksTab" class="tab is-active" type="button" role="tab" aria-selected="true" data-i18n="tab.blocks">Blocks</button>
+          <button id="wordsTab" class="tab" type="button" role="tab" aria-selected="false" data-i18n="tab.words">Words</button>
+        </div>
+
+        <div id="blocksPane" class="pane is-active" role="tabpanel" aria-label="Block coding">
+          <div id="blocklyDiv"></div>
+        </div>
+
+        <div id="wordsPane" class="pane" role="tabpanel" aria-label="Plain language coding">
+          <textarea id="wordProgram" spellcheck="false">move 3
+turn right
+move 2</textarea>
+          <div class="word-help">
+            <span data-i18n="words.help">Try:</span> <code>move 4</code>, <code>turn left</code>, <code>repeat 3 move 1</code>, <code>if wall turn right</code>, <code>light on</code>, <code>play beep</code>, <code>play song success</code>.
+          </div>
+        </div>
+        <details class="code-portability" open>
+          <summary data-i18n="code.summary">Code Portability</summary>
+          <div class="code-toolbar">
+            <label><span data-i18n="code.target">Target</span>
+              <select id="codeTargetSelect">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="microbit">micro:bit MicroPython</option>
+                <option value="dash">Dash Robot Python</option>
+                <option value="lego">LEGO SPIKE Python</option>
+                <option value="vex">VEXcode Python</option>
+              </select>
+            </label>
+            <button id="generateCodeBtn" class="primary-btn" type="button" data-i18n="code.generate">Generate</button>
+            <button id="copyCodeBtn" class="ghost-btn" type="button" data-i18n="code.copy">Copy</button>
+            <button id="downloadCodeBtn" class="ghost-btn" type="button" data-i18n="code.download">Download</button>
+            <button id="importCodeBtn" class="ghost-btn" type="button" data-i18n="code.importWords">Import Words</button>
+          </div>
+          <textarea id="portableCode" rows="10" spellcheck="false" aria-label="Generated portable code"></textarea>
+          <p class="code-note" data-i18n="code.note">Hardware exports use readable adapter calls so teachers can connect them to the device library their classroom uses.</p>
+        </details>
+      </section>
+
+      <aside class="coach-panel" aria-label="Mission coach">
+        <h2 id="missionTitle">Mission</h2>
+        <p id="missionPrompt"></p>
+        <dl class="mission-meta">
+          <div>
+            <dt data-i18n="coach.concept">Concept</dt>
+            <dd id="missionConcept"></dd>
+          </div>
+          <div>
+            <dt data-i18n="coach.words">Words</dt>
+            <dd id="missionVocabulary"></dd>
+          </div>
+        </dl>
+        <div id="runMessage" class="run-message">Ready to code.</div>
+        <div class="progress-steps" id="missionSteps"></div>
+        <details class="teacher-note">
+          <summary data-i18n="coach.teacherNote">Teacher note</summary>
+          <p id="missionTeacherNote"></p>
+        </details>
+        <details class="mission-builder">
+          <summary data-i18n="builder.summary">Mission builder</summary>
+          <div class="builder-grid">
+            <label>Title <input id="builderTitle" type="text" value="Custom Mission"></label>
+            <label>Band <input id="builderBand" type="text" value="Custom"></label>
+            <label>Concept <input id="builderConcept" type="text" value="Programming"></label>
+            <label>Start X <input id="builderStartX" type="number" min="1" max="8" value="1"></label>
+            <label>Start Y <input id="builderStartY" type="number" min="1" max="8" value="8"></label>
+            <label>Facing
+              <select id="builderDir">
+                <option value="0">North</option>
+                <option value="1" selected>East</option>
+                <option value="2">South</option>
+                <option value="3">West</option>
+              </select>
+            </label>
+            <label>Goal X <input id="builderGoalX" type="number" min="1" max="8" value="8"></label>
+            <label>Goal Y <input id="builderGoalY" type="number" min="1" max="8" value="1"></label>
+          </div>
+          <label class="builder-full">Prompt <textarea id="builderPrompt" rows="2">Program SplatBot to reach the goal.</textarea></label>
+          <label class="builder-full">Walls <input id="builderWalls" type="text" placeholder="3,3; 3,4; 5,6"></label>
+          <label class="builder-full">Vocabulary <input id="builderVocabulary" type="text" value="route, goal, debug"></label>
+          <label class="builder-full">Teacher note <textarea id="builderTeacherNote" rows="2">Ask students to predict, test, and revise.</textarea></label>
+          <div class="builder-actions">
+            <button id="addMissionBtn" class="primary-btn" type="button">Add Mission</button>
+            <button id="clearCustomMissionsBtn" class="ghost-btn" type="button">Reset Pack</button>
+          </div>
+        </details>
+        <details class="thinking-lab" open>
+          <summary data-i18n="thinking.summary">Thinking Lab</summary>
+          <label><span data-i18n="thinking.concept">Concept</span>
+            <select id="thinkingConceptSelect"></select>
+          </label>
+          <img id="thinkingPoster" class="thinking-poster" alt="">
+          <p id="thinkingTagline"></p>
+          <div id="thinkingActivities" class="thinking-activities"></div>
+          <div id="standardsReadout" class="standards-readout"></div>
+          <div class="quest-section">
+            <h3 data-i18n="thinking.quests">Quest Challenges</h3>
+            <div id="questChallenges" class="quest-challenges"></div>
+          </div>
+          <div class="story-section">
+            <h3 id="storyTitle">Story Campaign</h3>
+            <p id="storyPremise"></p>
+            <div id="storyChapters" class="story-chapters"></div>
+          </div>
+        </details>
+        <button id="loadStarterBtn" class="ghost-btn full" type="button" data-i18n="button.loadStarter">Load starter blocks</button>
+      </aside>
+    </main>
+
+    <xml id="toolbox" style="display: none">
+      <category name="Drive" colour="#7c3aed">
+        <block type="splatbot_move"></block>
+        <block type="splatbot_move_roughly"></block>
+        <block type="splatbot_turn"></block>
+        <block type="splatbot_turn_roughly"></block>
+      </category>
+      <category name="Logic" colour="#b45309">
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <shadow type="math_number">
+              <field name="NUM">3</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_if"></block>
+      </category>
+      <category name="Sensors" colour="#0f766e">
+        <block type="splatbot_wall_ahead"></block>
+        <block type="splatbot_on_goal"></block>
+        <block type="splatbot_phone_tilted"></block>
+        <block type="splatbot_room_loud"></block>
+      </category>
+      <category name="Devices" colour="#2563eb">
+        <block type="splatbot_light"></block>
+        <block type="splatbot_send"></block>
+        <block type="splatbot_sound"></block>
+        <block type="splatbot_song"></block>
+      </category>
+      <category name="Numbers" colour="#2563eb">
+        <block type="math_number"></block>
+      </category>
+    </xml>
+
+    <script src="splatbot-core.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
