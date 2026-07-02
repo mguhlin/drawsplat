@@ -1758,7 +1758,7 @@ h1 {
   }
 
   .top-toolbar {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     padding: var(--space-2);
   }
 
