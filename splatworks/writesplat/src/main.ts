@@ -490,7 +490,7 @@ function appHtml(): string {
   return `
     <header class="app-header">
       <a class="brand" href="../../pages/splatworks.html" aria-label="SplatWorks home">
-        <img class="brand-icon" src="writesplat_icon.svg" alt="" aria-hidden="true">
+        <img class="brand-icon" src="writesplat_icon.png" alt="" aria-hidden="true">
         <span><strong>WriteSplat<sup>TM</sup></strong><small>SplatWorks<sup>TM</sup> Writing Studio</small></span>
       </a>
       <div class="quick-actions">
