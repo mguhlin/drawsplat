@@ -416,7 +416,7 @@ export function App() {
             src={`${import.meta.env.BASE_URL}gridsplat_icon.png`}
           />
           <div>
-            <p className="eyebrow">
+            <p className="eyebrow brand-eyebrow">
               GridSplat™ by{' '}
               <a href="../../pages/gridsplat.html">
                 DrawSplat™

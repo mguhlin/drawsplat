@@ -81,6 +81,13 @@ select {
   text-transform: uppercase;
 }
 
+.brand-eyebrow {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 var(--space-1);
+  white-space: nowrap;
+}
+
 .eyebrow a,
 .splash-copy a,
 .print-note a {
@@ -132,13 +139,12 @@ h1 {
   z-index: 30;
   max-width: 100%;
   padding: var(--space-2);
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: visible;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
-  contain: layout paint;
+  contain: layout;
 }
 
 .big-button,
