@@ -762,6 +762,9 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 .landing-trust a:hover,.landing-trust a:focus-visible{border-color:#7c3aed;background:#fbfaff;color:#5b21b6}
 .universe-trust{margin:18px 0 16px}
 .universe-trust span,.universe-trust a{border-color:#ddd6fe;color:#5b21b6;background:#fbfaff}
+.featured-tool-pills{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;margin:-2px 0 34px}
+.featured-tool-pills a{display:inline-flex;align-items:center;justify-content:center;min-height:30px;border:1px solid #d9e2f2;border-radius:999px;background:#fff;padding:6px 11px;color:#334155;font-size:12px;font-weight:800;line-height:1;text-decoration:none;box-shadow:0 6px 18px #1720330a}
+.featured-tool-pills a:hover,.featured-tool-pills a:focus-visible{border-color:#f59e0b;background:#fff7e6;color:#7c2d12}
 .language-strip{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:0 0 20px;padding:16px 18px;background:#fff;border:1px solid #e4e7f1;border-radius:16px;box-shadow:0 12px 34px #1720330d}
 .language-strip p{margin:0;color:#4b5563;line-height:1.45;font-weight:700}
 .language-links{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
