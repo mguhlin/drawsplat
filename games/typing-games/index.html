@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- DrawSplat favicons -->
+<link rel="icon" href="../../assets/favicons/games.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="../../assets/brand/DrawSplat_logo.png" />
+<link rel="manifest" href="../../site.webmanifest" />
+<meta name="theme-color" content="#7c3aed" />
+<!-- /DrawSplat favicons -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'" />
+<title>Typing Games - DrawSplat Games</title>
+<style>
+:root{--purple:#7c3aed;--violet:#a855f7;--teal:#14b8a6;--gold:#f59e0b;--red:#ef4444;--blue:#2563eb;--green:#16a34a;--ink:#172033;--muted:#526173;--line:#dbe4f0;--panel:#fff;--soft:#f8fafc}
+*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 18% 0%,#f5e8ff 0,#fff 35%,#e7fbf7 100%);color:var(--ink)}
+button,select,input{font:inherit}.ds-games-topbar{height:10px;background:linear-gradient(90deg,#7c3aed 0 28%,#a855f7 28% 48%,#f97316 48% 61%,#ef4444 61% 73%,#2563eb 73% 86%,#22c55e 86% 96%,#facc15 96% 100%)}
+.ds-games-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 22px;background:#fff;border-bottom:2px solid #eef2ff;position:sticky;top:0;z-index:10}
+.ds-games-title{display:flex;flex-direction:column;gap:2px;min-width:0}.ds-games-eyebrow{margin:0;color:#a855f7;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.ds-games-eyebrow a{color:inherit;text-decoration:none}.ds-games-h1{margin:0;color:#7c3aed;font-size:1.4rem;font-weight:900;line-height:1}.ds-games-header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.ds-games-home{display:inline-flex;align-items:center;justify-content:center;min-height:36px;border:2px solid #ddd6fe;background:#fff;border-radius:8px;padding:7px 12px;font-weight:900;font-size:.85rem;color:#7c3aed;text-decoration:none;white-space:nowrap;cursor:pointer}.ds-games-home.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}.ds-games-home:hover{background:#f8f6ff}.ds-games-home.primary:hover{background:#6d28d9}
+.wrap{max-width:1380px;margin:0 auto;padding:18px}.hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:12px}.hero h1{margin:0;font-size:clamp(2rem,4vw,4.2rem);line-height:.95}.hero p{margin:.5rem 0 0;max-width:790px;color:#465366;font-weight:700}.pill{display:inline-flex;align-items:center;justify-content:center;min-height:36px;border:2px solid #ddd6fe;background:#fff;border-radius:8px;padding:7px 12px;font-weight:900;font-size:.85rem;color:#7c3aed;text-decoration:none;white-space:nowrap}
+.shell{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}.card{border:1px solid rgba(23,32,51,.12);border-radius:18px;background:rgba(255,255,255,.92);box-shadow:0 18px 38px rgba(30,41,59,.14);overflow:hidden}.arena{position:relative;padding:12px}canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:12px;background:#101827;outline:1px solid rgba(23,32,51,.15);touch-action:none}.panel{padding:16px}.choice-grid{position:absolute;inset:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px;background:linear-gradient(135deg,rgba(15,23,42,.88),rgba(30,41,59,.72));border-radius:12px;z-index:4}.choice{border:2px solid rgba(255,255,255,.24);border-radius:14px;background:rgba(255,255,255,.96);padding:16px;text-align:left;cursor:pointer;display:grid;grid-template-rows:auto 1fr auto;gap:10px;min-width:0}.choice:hover,.choice:focus-visible{outline:none;border-color:#facc15;box-shadow:0 0 0 4px rgba(250,204,21,.28)}.choice strong{font-size:1.7rem;line-height:1;color:#111827}.choice p{margin:0;color:#465366;font-weight:700;line-height:1.38}.choice span{color:#7c3aed;font-weight:900}.mini-scene{height:150px;border-radius:10px;overflow:hidden;background:#0f172a;position:relative;border:1px solid rgba(15,23,42,.12)}.road-preview{background:linear-gradient(#7dd3fc 0 30%,#86efac 30% 43%,#3f4655 43% 74%,#86efac 74%)}.road-preview:before{content:"";position:absolute;left:0;right:0;top:86px;border-top:5px dashed #fff}.car-shape{position:absolute;left:24px;bottom:32px;width:100px;height:40px;background:#ef4444;border-radius:12px 24px 10px 10px;box-shadow:0 10px 0 #111827}.car-shape:before{content:"";position:absolute;left:34px;top:-26px;width:44px;height:30px;background:#38bdf8;border-radius:14px 14px 0 0}.word-chip{position:absolute;right:18px;top:30px;background:#fff;color:#111827;border:3px solid #f59e0b;border-radius:10px;padding:7px 12px;font-weight:900}.zap-line{position:absolute;left:130px;right:86px;top:54px;height:6px;background:#facc15;transform:skewY(-10deg);box-shadow:0 0 18px #facc15}.blocks-preview{display:grid;grid-template-columns:repeat(8,1fr);grid-auto-rows:1fr;gap:3px;padding:12px;background:linear-gradient(180deg,#111827,#1e293b)}.block-cell{border-radius:4px;background:#334155}.block-cell.on{background:#14b8a6;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}.block-cell.warn{background:#f59e0b}.block-word{position:absolute;left:56px;top:42px;background:#fff;border:3px solid #7c3aed;border-radius:9px;padding:7px 13px;font-weight:900}
+.hud{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:10px}.stat span{display:block;color:#526173;font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}.stat b{display:block;font-size:1.55rem;line-height:1.1}.control-group{display:grid;gap:8px;margin:12px 0}.control-group label{display:grid;gap:6px;color:#465366;font-weight:900}.control-group select,.typebox{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#172033;font-weight:900;padding:8px 10px}.typebox{font-size:1.08rem;letter-spacing:.02em}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.action{border:0;border-radius:12px;padding:13px 12px;background:linear-gradient(135deg,var(--purple),#9f67ff);color:#fff;font-weight:900;font-size:1rem;box-shadow:0 8px 18px rgba(124,58,237,.24);cursor:pointer;touch-action:manipulation}.action.secondary{background:linear-gradient(135deg,#334155,#111827)}.action.teal{background:linear-gradient(135deg,var(--teal),#0f9488)}.action:active{transform:translateY(1px)}.legend{font-size:.92rem;line-height:1.42;color:#4b5563}.legend h2{margin:.3rem 0 .55rem;color:var(--ink);font-size:1.12rem}.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid #cbd5e1;border-bottom-width:3px;border-radius:6px;background:#fff;padding:1px 5px;font-weight:900;color:#111827}.mobile-row{display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.toast{position:absolute;left:26px;right:26px;top:26px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.93);font-weight:900;color:#172033;text-align:center;box-shadow:0 10px 24px rgba(15,23,42,.22);opacity:0;transform:translateY(-8px);transition:.18s;z-index:5}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1000px){.ds-games-header{align-items:flex-start;flex-direction:column}.ds-games-header-actions{justify-content:flex-start}.shell{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.panel{order:2}.choice-grid{position:relative;inset:auto}.arena{display:grid;gap:12px}.toast{top:22px}}
+@media(max-width:680px){body.is-playing{padding-bottom:94px}.wrap{padding:8px}.ds-games-header{gap:8px;padding:9px 12px;position:relative}.ds-games-h1{font-size:1.65rem}.ds-games-header-actions{gap:7px}.ds-games-home,.pill{min-height:34px;font-size:.78rem;padding:6px 9px}.hero{margin-bottom:8px}.hero h1{font-size:1.8rem}.hero p,.hero .pill,.legend.extra{display:none}.card{border-radius:14px}.arena{padding:6px}.choice-grid{grid-template-columns:1fr;padding:8px;gap:8px}.choice{padding:11px}.choice strong{font-size:1.28rem}.choice p{font-size:.88rem}.mini-scene{height:92px}canvas{border-radius:10px}.panel{padding:12px}.hud{grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.stat{padding:7px 4px;text-align:center}.stat span{font-size:.62rem}.stat b{font-size:1.12rem}.actions{grid-template-columns:1fr 1fr}.mobile-row{display:grid;position:fixed;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:20;padding:8px;border:1px solid rgba(255,255,255,.24);border-radius:16px;background:rgba(15,23,42,.88);box-shadow:0 18px 44px rgba(15,23,42,.34);backdrop-filter:blur(12px)}.mobile-row .action{min-height:56px;border-radius:12px}.is-playing .typebox{position:fixed;left:8px;right:8px;bottom:max(78px,calc(env(safe-area-inset-bottom) + 78px));z-index:21;width:auto;box-shadow:0 12px 30px rgba(15,23,42,.3)}}
+</style>
+</head>
+<body>
+<div class="ds-games-topbar"></div>
+<header class="ds-games-header">
+  <div class="ds-games-title">
+    <p class="ds-games-eyebrow"><a href="../">DrawSplat&trade; Games</a></p>
+    <h1 class="ds-games-h1">Typing Games</h1>
+  </div>
+  <div class="ds-games-header-actions">
+    <button class="ds-games-home" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    <a class="ds-games-home" href="../">Games</a>
+    <a class="ds-games-home primary" href="../../index.html">Home</a>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Typing Games</h1>
+      <p>Choose a typing arcade mode, then clear targets by typing whole words. Built for quick classroom play on keyboard, touchscreen, and small screens.</p>
+    </div>
+    <span class="pill">Beginner to expert</span>
+  </section>
+  <section class="shell">
+    <div class="card arena">
+      <canvas id="game" width="1280" height="720" aria-label="Typing game canvas"></canvas>
+      <div class="toast" id="toast" aria-live="polite"></div>
+      <div class="choice-grid" id="chooser">
+        <button class="choice" type="button" data-game="road">
+          <div class="mini-scene road-preview"><div class="car-shape"></div><div class="zap-line"></div><div class="word-chip">boost</div></div>
+          <strong>Road Rally Type</strong>
+          <p>Race a tiny stunt car, jump barriers, and type word gates to zap a clear lane.</p>
+          <span>Start rally</span>
+        </button>
+        <button class="choice" type="button" data-game="blocks">
+          <div class="mini-scene blocks-preview" aria-hidden="true">
+            <div class="block-cell"></div><div class="block-cell"></div><div class="block-cell on"></div><div class="block-cell on"></div><div class="block-cell"></div><div class="block-cell"></div><div class="block-cell"></div><div class="block-cell"></div>
+            <div class="block-cell"></div><div class="block-cell on"></div><div class="block-cell on"></div><div class="block-cell"></div><div class="block-cell warn"></div><div class="block-cell warn"></div><div class="block-cell"></div><div class="block-cell"></div>
+            <div class="block-cell"></div><div class="block-cell"></div><div class="block-cell"></div><div class="block-cell"></div><div class="block-cell warn"></div><div class="block-cell"></div><div class="block-cell"></div><div class="block-cell"></div>
+            <div class="block-word">spark</div>
+          </div>
+          <strong>Block Zap Type</strong>
+          <p>Falling word blocks stack up. Type a block word to zap it before the tower reaches the top.</p>
+          <span>Start blocks</span>
+        </button>
+      </div>
+    </div>
+    <aside class="card panel">
+      <div class="legend">
+        <h2 id="modeTitle">Choose a Game</h2>
+        <p id="modeHelp">Pick a typing game from the main panel. Difficulty controls word length, pace, and scoring pressure.</p>
+        <p><span class="kbd">A-Z</span> type words &nbsp; <span class="kbd">Backspace</span> fix &nbsp; <span class="kbd">Enter</span> zap</p>
+      </div>
+      <label class="control-group">
+        <span>Difficulty</span>
+        <select id="difficulty">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="expert">Expert</option>
+        </select>
+      </label>
+      <input id="typebox" class="typebox" type="text" inputmode="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Type target word" placeholder="Type here to zap words" />
+      <div class="hud">
+        <div class="stat"><span>Score</span><b id="score">0</b></div>
+        <div class="stat"><span>Best</span><b id="best">0</b></div>
+        <div class="stat"><span>Level</span><b id="level">1</b></div>
+        <div class="stat"><span>Lives</span><b id="lives">3</b></div>
+        <div class="stat"><span>Streak</span><b id="streak">0</b></div>
+        <div class="stat"><span>Mode</span><b id="mode">--</b></div>
+      </div>
+      <div class="actions">
+        <button class="action teal" id="startBtn" type="button">Start</button>
+        <button class="action secondary" id="pauseBtn" type="button">Pause</button>
+        <button class="action secondary" id="chooseBtn" type="button">Choose Game</button>
+        <button class="action" id="resetBtn" type="button">Reset</button>
+      </div>
+      <div class="mobile-row">
+        <button class="action teal" id="mobileJump" type="button">Jump</button>
+        <button class="action" id="mobileZap" type="button">Zap</button>
+      </div>
+      <div class="legend extra">
+        <h2>Arcade Notes</h2>
+        <p>Road Rally uses <span class="kbd">Space</span> or Jump for hazards. Block Zap uses typed words only, so it works for focused keyboard practice.</p>
+      </div>
+    </aside>
+  </section>
+</main>
+<script>
+(() => {
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const chooser=document.getElementById('chooser'),typebox=document.getElementById('typebox'),difficultyEl=document.getElementById('difficulty'),soundBtn=document.getElementById('soundBtn');
+const els={score:document.getElementById('score'),best:document.getElementById('best'),level:document.getElementById('level'),lives:document.getElementById('lives'),streak:document.getElementById('streak'),mode:document.getElementById('mode'),modeTitle:document.getElementById('modeTitle'),modeHelp:document.getElementById('modeHelp'),toast:document.getElementById('toast'),startBtn:document.getElementById('startBtn'),pauseBtn:document.getElementById('pauseBtn'),chooseBtn:document.getElementById('chooseBtn'),resetBtn:document.getElementById('resetBtn'),mobileJump:document.getElementById('mobileJump'),mobileZap:document.getElementById('mobileZap')};
+const WORDS={beginner:'sun map red blue cat dog run jump road game tap zip car star book leaf rain moon ring milk smile plane note desk quick light brave happy shape'.split(' '),intermediate:'rocket canyon silver tunnel signal engine zipper planet puzzle marble orchard lantern rhythm switch thunder sprint clever square compass barrier crystal'.split(' '),expert:'velocity perimeter algorithm turbulence checkpoint constellation instrument labyrinth momentum spectrum barricade synthesis trajectory capacitor'.split(' ')};
+const CFG={beginner:{speed:.75,word:WORDS.beginner,lives:5,spawn:1.65,fall:74},intermediate:{speed:1,word:WORDS.intermediate,lives:4,spawn:1.25,fall:96},expert:{speed:1.32,word:WORDS.expert,lives:3,spawn:.95,fall:125}};
+const HIGH='typing-games-high-v1';
+let audioCtx=null,soundOn=true,raf=0,last=0,toastTimer=0;
+const state={selected:null,running:false,paused:false,difficulty:'beginner',score:0,best:readBest(),level:1,lives:5,streak:0,time:0,typed:'',shots:[],bursts:[],road:null,blocks:null};
+function readBest(){try{return parseInt(localStorage.getItem(HIGH)||'0',10)||0}catch(_){return 0}}
+function writeBest(v){try{localStorage.setItem(HIGH,String(v))}catch(_){}}
+function cfg(){return CFG[state.difficulty]||CFG.beginner}
+function pickWord(){const list=cfg().word;return list[Math.floor(Math.random()*list.length)]}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rects(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function ensureAudio(){if(!soundOn)return null;if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(_){audioCtx=null}}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});return audioCtx}
+function tone(freq,dur,type='sine',gain=.08){const c=ensureAudio();if(!c)return;const now=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(gain,now+.01);g.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(g);g.connect(c.destination);o.start(now);o.stop(now+dur+.03)}
+function zapSound(){tone(740,.08,'square',.055);setTimeout(()=>tone(1120,.08,'triangle',.04),45)}
+function failSound(){tone(160,.16,'sawtooth',.09);setTimeout(()=>tone(92,.18,'sawtooth',.06),70)}
+function bonusSound(){tone(520,.07,'triangle',.05);setTimeout(()=>tone(780,.08,'triangle',.05),70);setTimeout(()=>tone(1040,.09,'triangle',.045),140)}
+function burst(x,y,color='#facc15'){for(let i=0;i<16;i++)state.bursts.push({x,y,vx:Math.cos(i/16*Math.PI*2)*(80+Math.random()*150),vy:Math.sin(i/16*Math.PI*2)*(80+Math.random()*150),life:.45+Math.random()*.25,color})}
+function showToast(text){els.toast.textContent=text;els.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>els.toast.classList.remove('show'),1400)}
+function syncUI(){if(state.score>state.best){state.best=Math.floor(state.score);writeBest(state.best)}els.score.textContent=Math.floor(state.score);els.best.textContent=Math.floor(state.best);els.level.textContent=state.level;els.lives.textContent=state.lives;els.streak.textContent=state.streak;els.mode.textContent=state.selected==='road'?'Road':state.selected==='blocks'?'Blocks':'--';els.pauseBtn.textContent=state.paused?'Resume':'Pause';soundBtn.textContent=soundOn?'Sound on':'Sound off';soundBtn.setAttribute('aria-pressed',soundOn?'true':'false');document.body.classList.toggle('is-playing',state.running&&!state.paused)}
+function resetStats(){state.score=0;state.level=1;state.streak=0;state.lives=cfg().lives;state.typed='';typebox.value='';state.shots=[];state.bursts=[]}
+function selectGame(mode){state.selected=mode;chooser.style.display='none';resetStats();if(mode==='road')initRoad();else initBlocks();updateHelp();startGame()}
+function updateHelp(){if(state.selected==='road'){els.modeTitle.textContent='Road Rally Type';els.modeHelp.textContent='Type the glowing gate word and press Enter to zap it. Use Space or Jump to clear barriers.'}else if(state.selected==='blocks'){els.modeTitle.textContent='Block Zap Type';els.modeHelp.textContent='Type a falling block word and press Enter to zap it before the stack reaches the top.'}else{els.modeTitle.textContent='Choose a Game';els.modeHelp.textContent='Pick a typing game from the main panel. Difficulty controls word length, pace, and scoring pressure.'}}
+function startGame(){if(!state.selected){chooser.style.display='grid';showToast('Choose a typing game first');return}ensureAudio();state.running=true;state.paused=false;last=performance.now();syncUI();typebox.focus({preventScroll:true});cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function stopToChooser(){state.running=false;state.paused=false;state.selected=null;chooser.style.display='grid';updateHelp();renderMenu();syncUI()}
+function gameOver(msg){state.running=false;state.paused=false;failSound();showToast(msg||'Game over');syncUI();renderGameOver(msg||'Game over');}
+function togglePause(){if(!state.running)return;state.paused=!state.paused;syncUI();if(!state.paused){last=performance.now();raf=requestAnimationFrame(loop)}else renderPause()}
+function resetCurrent(){if(!state.selected){stopToChooser();return}resetStats();if(state.selected==='road')initRoad();else initBlocks();startGame()}
+function submitTyped(){const text=typebox.value.trim().toLowerCase();if(!text||!state.running||state.paused)return;if(state.selected==='road')zapRoad(text);else zapBlock(text);state.typed='';typebox.value='';syncUI()}
+function levelUpIfNeeded(){const next=Math.floor(state.score/500)+1;if(next>state.level){state.level=next;bonusSound();showToast('Level '+state.level);}}
+function addScore(n){state.score+=Math.max(0,n);levelUpIfNeeded();syncUI()}
+function miss(){state.streak=0;state.lives--;failSound();syncUI();if(state.lives<=0)gameOver('Out of lives')}
+function initRoad(){state.road={car:{x:165,y:535,w:118,h:52,vy:0,onGround:true},gates:[],hazards:[],roadX:0,gateTimer:.25,hazardTimer:1.2,meters:0};}
+function spawnGate(){const word=pickWord();state.road.gates.push({x:1280,y:330+Math.random()*120,w:Math.max(118,word.length*22+40),h:68,word,hit:false,color:['#14b8a6','#f59e0b','#7c3aed','#2563eb'][Math.floor(Math.random()*4)]})}
+function spawnHazard(){state.road.hazards.push({x:1320,y:556,w:62+Math.random()*28,h:54,type:Math.random()>.5?'cone':'barrier'})}
+function jump(){if(state.selected!=='road'||!state.running||state.paused)return;const car=state.road.car;if(car.onGround){car.vy=-560;car.onGround=false;tone(460,.08,'triangle',.05)}}
+function zapRoad(text){const gate=state.road.gates.find(g=>!g.hit&&g.word===text);if(!gate){miss();showToast('No match');return}gate.hit=true;state.streak++;addScore(80+gate.word.length*12+state.streak*4);state.shots.push({x:state.road.car.x+state.road.car.w,y:state.road.car.y+10,tx:gate.x+gate.w/2,ty:gate.y+gate.h/2,life:.18});burst(gate.x+gate.w/2,gate.y+gate.h/2,gate.color);zapSound()}
+function updateRoad(dt){const r=state.road,c=cfg(),speed=(260+state.level*26)*c.speed;r.roadX=(r.roadX-speed*dt)%90;r.meters+=speed*dt*.04;r.gateTimer-=dt;r.hazardTimer-=dt;if(r.gateTimer<=0){spawnGate();r.gateTimer=c.spawn+Math.random()*.6}if(r.hazardTimer<=0){spawnHazard();r.hazardTimer=1.7/c.speed+Math.random()*1.2}const car=r.car;car.vy+=1300*dt;car.y+=car.vy*dt;if(car.y>=535){car.y=535;car.vy=0;car.onGround=true}r.gates.forEach(g=>g.x-=speed*dt);r.hazards.forEach(h=>h.x-=speed*dt);r.gates=r.gates.filter(g=>{if(g.hit)return false;if(g.x+g.w<90){miss();return false}return true});for(const h of r.hazards){if(!h.hit&&rects(car,{x:h.x,y:h.y,w:h.w,h:h.h})){h.hit=true;miss();burst(h.x+h.w/2,h.y+h.h/2,'#ef4444')}}r.hazards=r.hazards.filter(h=>h.x+h.w>-80&&!h.hit);addScore(dt*4)}
+function initBlocks(){state.blocks={cols:8,rows:12,cell:48,grid:Array.from({length:12},()=>Array(8).fill(null)),active:null,timer:.2,fallTimer:0,cleared:0};spawnBlock()}
+function spawnBlock(){const b=state.blocks,word=pickWord(),col=Math.floor(Math.random()*(b.cols-1));b.active={col,row:-1,x:col,y:-1,w:2,h:1,word,color:['#14b8a6','#f59e0b','#7c3aed','#2563eb','#ef4444'][Math.floor(Math.random()*5)]};if(occupied(col,0)||occupied(col+1,0))gameOver('Stack reached the top')}
+function occupied(c,r){const b=state.blocks;return r>=0&&r<b.rows&&c>=0&&c<b.cols&&Boolean(b.grid[r][c])}
+function lockBlock(){const b=state.blocks,a=b.active;if(!a)return;for(let dx=0;dx<a.w;dx++){const r=a.row,c=a.col+dx;if(r>=0&&r<b.rows&&c>=0&&c<b.cols)b.grid[r][c]={color:a.color,word:a.word}}b.active=null;clearLines();spawnBlock()}
+function canDrop(){const b=state.blocks,a=b.active;if(!a)return false;const nr=a.row+1;if(nr>=b.rows)return false;for(let dx=0;dx<a.w;dx++){if(occupied(a.col+dx,nr))return false}return true}
+function zapBlock(text){const b=state.blocks;let hit=false;if(b.active&&b.active.word===text){burst(520+b.active.col*60,96+(b.active.row+1)*48,b.active.color);b.active=null;hit=true}else{for(let r=0;r<b.rows;r++)for(let c=0;c<b.cols;c++){const cell=b.grid[r][c];if(cell&&cell.word===text){burst(400+c*60,96+r*48,cell.color);b.grid[r][c]=null;hit=true}}}if(!hit){miss();showToast('No match');return}state.streak++;b.cleared++;addScore(70+text.length*15+state.streak*5);zapSound();if(!b.active)spawnBlock();settleBlocks()}
+function settleBlocks(){const b=state.blocks;for(let pass=0;pass<12;pass++){for(let r=b.rows-2;r>=0;r--)for(let c=0;c<b.cols;c++){if(b.grid[r][c]&&!b.grid[r+1][c]){b.grid[r+1][c]=b.grid[r][c];b.grid[r][c]=null}}}}
+function clearLines(){const b=state.blocks;let lines=0;b.grid=b.grid.filter(row=>{const full=row.every(Boolean);if(full)lines++;return !full});while(b.grid.length<b.rows)b.grid.unshift(Array(b.cols).fill(null));if(lines){addScore(lines*180);bonusSound();showToast(lines+' line clear')}}
+function updateBlocks(dt){const b=state.blocks,c=cfg();b.fallTimer+=dt;const delay=Math.max(.18,1.02-(state.level*.06))*(96/c.fall);if(b.fallTimer>=delay){b.fallTimer=0;if(canDrop())b.active.row++;else lockBlock()}if(b.grid[0].some(Boolean))gameOver('Stack reached the top')}
+function loop(now){const dt=Math.min(.033,(now-last)/1000||0);last=now;if(state.running&&!state.paused){state.time+=dt;if(state.selected==='road')updateRoad(dt);else updateBlocks(dt);updateBursts(dt);render();raf=requestAnimationFrame(loop)}}
+function updateBursts(dt){state.bursts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=220*dt;p.life-=dt});state.bursts=state.bursts.filter(p=>p.life>0);state.shots.forEach(s=>s.life-=dt);state.shots=state.shots.filter(s=>s.life>0)}
+function rounded(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawTextWord(word,x,y,typed,color){ctx.save();ctx.font='900 28px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='middle';const w=Math.max(92,word.length*22+34);rounded(x-w/2,y-24,w,48,10);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=color;ctx.stroke();ctx.fillStyle='#111827';ctx.fillText(word,x,y+1);if(typed&&word.startsWith(typed)){ctx.fillStyle='rgba(20,184,166,.25)';rounded(x-w/2+5,y-19,Math.min(w-10,typed.length*22),38,7);ctx.fill()}ctx.restore()}
+function renderHeader(title){ctx.save();ctx.fillStyle='rgba(255,255,255,.9)';rounded(18,18,430,58,16);ctx.fill();ctx.fillStyle='#172033';ctx.font='900 24px Arial';ctx.fillText(title+'   Score '+Math.floor(state.score)+'   Level '+state.level,38,55);ctx.restore()}
+function render(){ctx.clearRect(0,0,1280,720);if(state.selected==='road')renderRoad();else if(state.selected==='blocks')renderBlocks();else renderMenu();renderEffects()}
+function renderMenu(){ctx.fillStyle='#111827';ctx.fillRect(0,0,1280,720);ctx.fillStyle='#7dd3fc';ctx.fillRect(0,0,1280,210);ctx.fillStyle='#86efac';ctx.fillRect(0,210,1280,510);ctx.fillStyle='#334155';ctx.fillRect(0,390,1280,170);ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.setLineDash([44,36]);ctx.beginPath();ctx.moveTo(0,475);ctx.lineTo(1280,475);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(255,255,255,.94)';rounded(330,120,620,160,18);ctx.fill();ctx.fillStyle='#172033';ctx.textAlign='center';ctx.font='900 46px Arial';ctx.fillText('Choose a Typing Game',640,184);ctx.font='800 24px Arial';ctx.fillStyle='#526173';ctx.fillText('Road Rally Type or Block Zap Type',640,232);ctx.textAlign='start'}
+function renderRoad(){const r=state.road,typed=typebox.value.trim().toLowerCase();ctx.fillStyle='#7dd3fc';ctx.fillRect(0,0,1280,260);ctx.fillStyle='#b7e4c7';ctx.fillRect(0,260,1280,120);ctx.fillStyle='#404755';ctx.fillRect(0,380,1280,250);ctx.fillStyle='#77d67d';ctx.fillRect(0,630,1280,90);ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.setLineDash([42,48]);for(let y of [465,548]){ctx.beginPath();ctx.moveTo(r.roadX-90,y);ctx.lineTo(1370,y);ctx.stroke()}ctx.setLineDash([]);for(const h of r.hazards){ctx.fillStyle=h.type==='cone'?'#f97316':'#facc15';rounded(h.x,h.y,h.w,h.h,8);ctx.fill();ctx.fillStyle='#111827';ctx.fillRect(h.x+8,h.y+h.h-10,h.w-16,10)}for(const g of r.gates){ctx.globalAlpha=g.hit ? .25 : 1;rounded(g.x,g.y,g.w,g.h,14);ctx.fillStyle='rgba(255,255,255,.12)';ctx.fill();ctx.strokeStyle=g.color;ctx.lineWidth=5;ctx.stroke();drawTextWord(g.word,g.x+g.w/2,g.y+g.h/2,typed,g.color);ctx.globalAlpha=1}const car=r.car;ctx.save();ctx.translate(car.x,car.y);ctx.fillStyle='#ef4444';rounded(0,14,car.w,36,13);ctx.fill();ctx.fillStyle='#38bdf8';rounded(38,-8,42,30,10);ctx.fill();ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(26,51,14,0,Math.PI*2);ctx.arc(92,51,14,0,Math.PI*2);ctx.fill();ctx.restore();renderHeader('Road Rally Type')}
+function renderBlocks(){const b=state.blocks,typed=typebox.value.trim().toLowerCase();ctx.fillStyle='#0f172a';ctx.fillRect(0,0,1280,720);ctx.fillStyle='#1e293b';rounded(356,84,568,596,18);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;const size=46,gap=5,ox=424,oy=110;for(let r=0;r<b.rows;r++)for(let c=0;c<b.cols;c++){ctx.fillStyle='rgba(255,255,255,.055)';rounded(ox+c*(size+gap),oy+r*(size+gap),size,size,6);ctx.fill();const cell=b.grid[r][c];if(cell){ctx.fillStyle=cell.color;rounded(ox+c*(size+gap),oy+r*(size+gap),size,size,6);ctx.fill();ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(ox+c*(size+gap),oy+r*(size+gap)+size-8,size,8)}}if(b.active){const a=b.active;for(let dx=0;dx<a.w;dx++){ctx.fillStyle=a.color;rounded(ox+(a.col+dx)*(size+gap),oy+Math.max(0,a.row)*(size+gap),size,size,6);ctx.fill()}drawTextWord(a.word,ox+(a.col+1)*(size+gap)-gap/2,oy+Math.max(0,a.row)*(size+gap)+size/2,typed,a.color)}renderHeader('Block Zap Type')}
+function renderEffects(){for(const s of state.shots){ctx.save();ctx.globalAlpha=clamp(s.life/.18,0,1);ctx.strokeStyle='#facc15';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.tx,s.ty);ctx.stroke();ctx.restore()}for(const p of state.bursts){ctx.save();ctx.globalAlpha=clamp(p.life/.5,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();ctx.restore()}}
+function renderPause(){render();ctx.fillStyle='rgba(15,23,42,.5)';ctx.fillRect(0,0,1280,720);ctx.fillStyle='#fff';ctx.font='900 64px Arial';ctx.textAlign='center';ctx.fillText('Paused',640,370);ctx.textAlign='start'}
+function renderGameOver(msg){render();ctx.fillStyle='rgba(15,23,42,.55)';ctx.fillRect(0,0,1280,720);ctx.fillStyle='#fff';rounded(400,245,480,205,20);ctx.fill();ctx.fillStyle='#172033';ctx.textAlign='center';ctx.font='900 46px Arial';ctx.fillText('Game Over',640,315);ctx.font='800 24px Arial';ctx.fillStyle='#526173';ctx.fillText(msg,640,356);ctx.fillText('Press Start to play again',640,396);ctx.textAlign='start'}
+chooser.querySelectorAll('[data-game]').forEach(btn=>btn.addEventListener('click',()=>selectGame(btn.dataset.game)));
+difficultyEl.addEventListener('change',()=>{state.difficulty=difficultyEl.value;resetCurrent()});
+typebox.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitTyped()}else if(e.key===' '&&state.selected==='road'&&!typebox.value){e.preventDefault();jump()}});
+document.addEventListener('keydown',e=>{if(e.target===typebox)return;if(e.key===' '){e.preventDefault();jump()}else if(e.key.toLowerCase()==='p')togglePause();else if(/^[a-z]$/i.test(e.key)){typebox.focus();typebox.value+=e.key.toLowerCase()}});
+els.startBtn.addEventListener('click',()=>{if(state.selected)resetCurrent();else startGame()});els.pauseBtn.addEventListener('click',togglePause);els.chooseBtn.addEventListener('click',stopToChooser);els.resetBtn.addEventListener('click',resetCurrent);els.mobileJump.addEventListener('click',jump);els.mobileZap.addEventListener('click',submitTyped);soundBtn.addEventListener('click',()=>{soundOn=!soundOn;if(soundOn)ensureAudio();syncUI()});
+window.addEventListener('resize',()=>render());difficultyEl.value=state.difficulty;syncUI();renderMenu();
+})();
+</script>
+</body>
+</html>
