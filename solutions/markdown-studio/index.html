@@ -290,6 +290,45 @@ main, header, footer { position: relative; z-index: 1; }
   color: var(--navy);
   min-height: 1.1em;
 }
+.htmlbar {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: none;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+.htmlbar.open { display: block; }
+.htmlbar textarea {
+  width: 100%;
+  min-height: 180px;
+  margin: 8px 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--off-white);
+}
+.htmlbar textarea:focus {
+  border-color: var(--navy);
+  background: var(--white);
+}
+.htmlbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.htmlbar-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
 
 /* ---------- Editor grid ---------- */
 .grid {
@@ -678,7 +717,8 @@ Custom HTML block.</p>
     <div class="toolbar-divider"></div>
     <div class="toolbar-group">
       <button class="btn" id="btn-import" data-i18n="btn.import" data-i18n-title="btn.import.title" title="Open a .md or .txt file">Import File</button>
-      <input type="file" id="file-input" accept=".md,.markdown,.txt" hidden="">
+      <input type="file" id="file-input" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" hidden="">
+      <button class="btn" id="btn-paste-html" data-i18n="btn.pasteHtml" data-i18n-title="btn.pasteHtml.title" title="Paste HTML and convert it to Markdown or WordPress block code">Paste HTML</button>
       <button class="btn" id="btn-save-md" data-i18n="btn.saveMd" data-i18n-title="btn.saveMd.title" title="Download as .md (Ctrl+S)">Save .md</button>
       <button class="btn" id="btn-save-html" data-i18n="btn.saveHtml" data-i18n-title="btn.saveHtml.title" title="Download as .html">Save .html</button>
     </div>
@@ -720,6 +760,16 @@ Custom HTML block.</p>
     <div class="find-status" id="find-status" aria-live="polite"></div>
   </div>
 
+  <div class="htmlbar" id="htmlbar" role="region" data-i18n-aria-label="htmlbar.aria" aria-label="Paste HTML converter">
+    <p class="htmlbar-note" data-i18n="htmlbar.note">Paste a full HTML page or an HTML fragment. Markdown Studio will convert headings, paragraphs, lists, links, images, quotes, code, tables, and common WordPress block markup.</p>
+    <textarea id="html-paste-input" spellcheck="false" data-i18n-placeholder="htmlbar.placeholder" placeholder="Paste HTML here"></textarea>
+    <div class="htmlbar-actions">
+      <button class="btn btn-primary" id="btn-html-to-md" data-i18n="btn.htmlToMd" data-i18n-title="btn.htmlToMd.title" title="Convert pasted HTML into editable Markdown">Convert to Markdown</button>
+      <button class="btn" id="btn-html-to-wp" data-i18n="btn.htmlToWp" data-i18n-title="btn.htmlToWp.title" title="Convert pasted HTML to WordPress block code and copy it">Copy WP Code from HTML</button>
+      <button class="btn" id="btn-html-close" data-i18n-title="btn.htmlClose.title" title="Close HTML converter">✕</button>
+    </div>
+  </div>
+
   <!-- Editor + Preview -->
   <div class="grid">
     <div class="panel">
@@ -734,9 +784,9 @@ Custom HTML block.</p>
 ## Purpose
 Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.
 
-### ### Key Takeaways for Districts
+### Key Takeaways for Districts
 
-### ## Broader Context &amp; Historical Parallel
+### Broader Context &amp; Historical Parallel
 
 ## Strong Prompt Elements
 
@@ -763,10 +813,10 @@ Use short paragraphs, a vocabulary table, and five comprehension questions.
 
 ## Student Checklist
 
--[ ] I explained my task clearly.
--[ ] I named my audience.
--[ ] I gave the AI a format to follow.
--[x] I included source text when needed.
+- [ ] I explained my task clearly.
+- [ ] I named my audience.
+- [ ] I gave the AI a format to follow.
+- [x] I included source text when needed.
 
 &gt; Tip: Better structure usually leads to better GenAI output.
 
@@ -893,7 +943,7 @@ def hello():
       <ul>
         <li>Normalizes Windows line endings (<code>\r\n</code> → <code>\n</code>).</li>
         <li>Trims trailing spaces on every line.</li>
-        <li>Collapses duplicate heading markers like <code>### ## Title</code> down to a single level.</li>
+        <li>Collapses duplicate heading markers like <code>### Title</code> down to a single level.</li>
         <li>Adds the missing space after heading hashes (<code>##Title</code> → <code>## Title</code>).</li>
         <li>Converts <code>•</code> and <code>*</code> bullets to <code>-</code>.</li>
         <li>Normalizes checkboxes (<code>-[ ]</code>, <code>- [  ]</code> → <code>- [ ]</code>).</li>
@@ -961,6 +1011,8 @@ def hello():
   const rawOutput    = $('html-output');
   const wpOutput     = $('wp-output');
   const findbar      = $('findbar');
+  const htmlbar      = $('htmlbar');
+  const htmlPasteInput = $('html-paste-input');
   const findInput    = $('find-input');
   const replaceInput = $('replace-input');
   const optCase      = $('opt-case');
@@ -974,7 +1026,7 @@ def hello():
   // ---------- Sample (intentionally messy to demo the cleaner) ----------
   // Pulled from the active locale's `sample.md` key so a Spanish/Arabic/
   // etc. user sees demo content in their language while the cleaner's
-  // syntax-level fixes (### ### duplicate markers, -[x] checkboxes, etc.)
+  // syntax-level fixes (duplicate heading markers, checkbox spacing, etc.)
   // still demonstrate.
   function currentSample() { return t('sample.md'); }
 
@@ -1060,7 +1112,7 @@ def hello():
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      // Collapse repeated heading markers (e.g. "### ### Title" → "### Title")
+      // Collapse repeated heading markers (e.g. "### Title" → "### Title")
       // so the renderer treats them as a single heading instead of stuffing
       // literal "### " into the heading text.
       const t = fixDuplicateHeadingMarkers(line.trim());
@@ -1134,6 +1186,142 @@ def hello():
     closeLists();
     if (inCode) { html += '<pre><code>' + escapeHtml(codeBuf.join('\n')) + '</code></pre>'; }
     return html;
+  }
+
+  // ---------- HTML → Markdown ----------
+  function htmlToMarkdown(html) {
+    const host = document.createElement('div');
+    const source = String(html || '').trim();
+    const parsed = new DOMParser().parseFromString(source, 'text/html');
+    const bodyNodes = Array.from(parsed.body.childNodes).filter(node => {
+      return node.nodeType !== Node.COMMENT_NODE && (node.textContent || node.nodeType === Node.ELEMENT_NODE);
+    });
+    if (bodyNodes.length) host.append(...bodyNodes.map(node => node.cloneNode(true)));
+    else host.innerHTML = source;
+    cleanupImportedHtml(host);
+    return Array.from(host.childNodes)
+      .map(node => htmlNodeToMarkdown(node))
+      .filter(Boolean)
+      .join('\n\n')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim() + '\n';
+  }
+
+  function cleanupImportedHtml(root) {
+    root.querySelectorAll('script,style,noscript,template,meta,link,title,svg').forEach(el => el.remove());
+    root.querySelectorAll('[hidden],.screen-reader-text').forEach(el => el.remove());
+  }
+
+  function htmlNodeToMarkdown(node, listDepth = 0, itemIndex = 1) {
+    if (node.nodeType === Node.TEXT_NODE) return normalizeInlineText(node.textContent || '');
+    if (!(node instanceof HTMLElement)) return '';
+
+    const tag = node.tagName.toLowerCase();
+    if (/^h[1-6]$/.test(tag)) return '#'.repeat(Number(tag[1])) + ' ' + htmlInlineToMarkdown(node);
+    if (tag === 'p') return htmlInlineToMarkdown(node);
+    if (tag === 'br') return '\n';
+    if (tag === 'hr') return '---';
+    if (tag === 'pre') {
+      const code = node.querySelector('code');
+      const lang = code ? languageFromClass(code.className || '') : '';
+      return '```' + lang + '\n' + (code ? code.textContent || '' : node.textContent || '').replace(/\n+$/g, '') + '\n```';
+    }
+    if (tag === 'code') return '`' + (node.textContent || '').replace(/`/g, '\\`') + '`';
+    if (tag === 'blockquote') {
+      const inner = Array.from(node.childNodes).map(child => htmlNodeToMarkdown(child, listDepth, itemIndex)).filter(Boolean).join('\n\n');
+      return inner.split('\n').map(line => line.trim() ? '> ' + line : '>').join('\n');
+    }
+    if (tag === 'ul' || tag === 'ol') {
+      return Array.from(node.children)
+        .filter(child => child.tagName && child.tagName.toLowerCase() === 'li')
+        .map((child, index) => htmlNodeToMarkdown(child, listDepth + 1, index + 1))
+        .join('\n');
+    }
+    if (tag === 'li') {
+      const ordered = node.parentElement && node.parentElement.tagName.toLowerCase() === 'ol';
+      const marker = ordered ? itemIndex + '.' : '-';
+      const clone = node.cloneNode(true);
+      const nested = [];
+      clone.querySelectorAll(':scope > ul, :scope > ol').forEach(childList => {
+        nested.push(htmlNodeToMarkdown(childList, listDepth + 1, 1));
+        childList.remove();
+      });
+      const checkbox = clone.querySelector('input[type="checkbox"]');
+      const task = checkbox ? '[' + (checkbox.checked ? 'x' : ' ') + '] ' : '';
+      if (checkbox) checkbox.remove();
+      const line = '  '.repeat(Math.max(0, listDepth - 1)) + marker + ' ' + task + htmlInlineToMarkdown(clone);
+      return [line, ...nested].filter(Boolean).join('\n');
+    }
+    if (tag === 'table') return htmlTableToMarkdown(node);
+    if (tag === 'figure') {
+      const table = node.querySelector('table');
+      if (table) return htmlTableToMarkdown(table);
+      const img = node.querySelector('img');
+      if (img) return htmlImageToMarkdown(img);
+      return Array.from(node.childNodes).map(child => htmlNodeToMarkdown(child, listDepth, itemIndex)).filter(Boolean).join('\n\n');
+    }
+    if (tag === 'img') return htmlImageToMarkdown(node);
+    if (tag === 'div' || tag === 'section' || tag === 'article' || tag === 'main' || tag === 'header' || tag === 'footer') {
+      return Array.from(node.childNodes).map(child => htmlNodeToMarkdown(child, listDepth, itemIndex)).filter(Boolean).join('\n\n');
+    }
+    return htmlInlineToMarkdown(node);
+  }
+
+  function htmlInlineToMarkdown(element) {
+    return Array.from(element.childNodes).map(node => {
+      if (node.nodeType === Node.TEXT_NODE) return normalizeInlineText(node.textContent || '');
+      if (!(node instanceof HTMLElement)) return '';
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') return '\n';
+      if (tag === 'strong' || tag === 'b') return '**' + htmlInlineToMarkdown(node) + '**';
+      if (tag === 'em' || tag === 'i') return '*' + htmlInlineToMarkdown(node) + '*';
+      if (tag === 'del' || tag === 's' || tag === 'strike') return '~~' + htmlInlineToMarkdown(node) + '~~';
+      if (tag === 'code') return '`' + (node.textContent || '').replace(/`/g, '\\`') + '`';
+      if (tag === 'a') {
+        const text = htmlInlineToMarkdown(node) || node.textContent || '';
+        const href = node.getAttribute('href') || '';
+        const safeUrl = safeMarkdownUrl(href, 'link');
+        return safeUrl ? '[' + text + '](' + safeUrl + ')' : text;
+      }
+      if (tag === 'img') return htmlImageToMarkdown(node);
+      if (tag === 'ul' || tag === 'ol' || tag === 'table' || tag === 'blockquote' || tag === 'pre') {
+        return '\n' + htmlNodeToMarkdown(node) + '\n';
+      }
+      return htmlInlineToMarkdown(node);
+    }).join('').replace(/[ \t]{2,}/g, ' ').trim();
+  }
+
+  function htmlImageToMarkdown(img) {
+    const src = img.getAttribute('src') || '';
+    const safeUrl = safeMarkdownUrl(src, 'image');
+    if (!safeUrl) return '';
+    const alt = img.getAttribute('alt') || '';
+    return '![' + alt.replace(/]/g, '\\]') + '](' + safeUrl + ')';
+  }
+
+  function htmlTableToMarkdown(table) {
+    const rows = Array.from(table.querySelectorAll('tr')).map(row =>
+      Array.from(row.children)
+        .filter(cell => ['td', 'th'].includes(cell.tagName.toLowerCase()))
+        .map(cell => htmlInlineToMarkdown(cell).replace(/\|/g, '\\|').trim())
+    ).filter(row => row.length);
+    if (!rows.length) return '';
+    const width = Math.max(...rows.map(row => row.length));
+    const padded = rows.map(row => Array.from({ length: width }, (_, i) => row[i] || ''));
+    const header = padded[0];
+    const divider = Array(width).fill('---');
+    const body = padded.slice(1);
+    return [header, divider, ...body].map(row => '| ' + row.join(' | ') + ' |').join('\n');
+  }
+
+  function languageFromClass(className) {
+    const match = String(className || '').match(/(?:^|\s)language-([a-z0-9_-]+)/i);
+    return match ? match[1] : '';
+  }
+
+  function normalizeInlineText(text) {
+    return String(text || '').replace(/\s+/g, ' ');
   }
 
   // ---------- Markdown → WordPress (Gutenberg block markup) ----------
@@ -1674,13 +1862,36 @@ def hello():
     showToast(t('toast.savedHtml'));
   }
 
+  function looksLikeHtml(text) {
+    return /<(?:!doctype\s+html|html|body|article|section|main|h[1-6]|p|div|ul|ol|table|blockquote|pre|figure|img|!--\s*wp:)/i.test(String(text || ''));
+  }
+
+  function convertHtmlToEditor(html, name) {
+    const md = htmlToMarkdown(html);
+    input.value = md;
+    render();
+    showToast(name ? t('toast.importedHtml', { name }) : t('toast.htmlConverted'));
+    return md;
+  }
+
+  function toggleHtmlbar(open) {
+    if (open === undefined) open = !htmlbar.classList.contains('open');
+    htmlbar.classList.toggle('open', open);
+    if (open) { htmlPasteInput.focus(); htmlPasteInput.select(); }
+  }
+
   function importFile(file) {
     if (!file) return;
     const r = new FileReader();
     r.onload = (e) => {
-      input.value = String(e.target.result || '');
-      render();
-      showToast(t('toast.imported', { name: file.name }));
+      const text = String(e.target.result || '');
+      if (/\.html?$/i.test(file.name) || file.type === 'text/html' || looksLikeHtml(text)) {
+        convertHtmlToEditor(text, file.name);
+      } else {
+        input.value = text;
+        render();
+        showToast(t('toast.imported', { name: file.name }));
+      }
     };
     r.readAsText(file);
   }
@@ -1714,6 +1925,21 @@ def hello():
   $('btn-replace-all').addEventListener('click', replaceAll);
 
   $('btn-import').addEventListener('click', () => $('file-input').click());
+  $('btn-paste-html').addEventListener('click', () => toggleHtmlbar());
+  $('btn-html-close').addEventListener('click', () => toggleHtmlbar(false));
+  $('btn-html-to-md').addEventListener('click', () => {
+    const html = htmlPasteInput.value;
+    if (!html.trim()) { showToast(t('toast.htmlEmpty')); return; }
+    convertHtmlToEditor(html);
+    toggleHtmlbar(false);
+  });
+  $('btn-html-to-wp').addEventListener('click', (e) => {
+    const html = htmlPasteInput.value;
+    if (!html.trim()) { showToast(t('toast.htmlEmpty')); return; }
+    const wp = markdownToWordPress(htmlToMarkdown(html));
+    wpOutput.value = wp;
+    copyText(wp, e.currentTarget);
+  });
   $('file-input').addEventListener('change', (e) => {
     if (e.target.files && e.target.files[0]) importFile(e.target.files[0]);
     e.target.value = '';
@@ -1775,6 +2001,7 @@ def hello():
     if (mod && e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFindbar(true); }
     else if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); saveMd(); }
     else if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); $('btn-clean').click(); }
+    else if (e.key === 'Escape' && htmlbar.classList.contains('open')) { toggleHtmlbar(false); }
     else if (e.key === 'Escape' && findbar.classList.contains('open')) { toggleFindbar(false); }
   });
 
