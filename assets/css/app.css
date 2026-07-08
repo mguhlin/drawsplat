@@ -811,17 +811,17 @@ html[dir="rtl"] .icon-btn::after{direction:rtl}
 sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter-spacing:.02em}
 .standalone-tools-section{padding-top:24px}
 .standalone-tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.standalone-tool-card{display:flex;min-height:150px;flex-direction:column;gap:10px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:18px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.standalone-tool-card{display:flex;min-height:220px;flex-direction:column;gap:10px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:14px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
 .standalone-tool-card:hover,.standalone-tool-card:focus-visible{transform:translateY(-2px);border-color:#7c3aed;box-shadow:0 16px 42px #7c3aed1c}
-.standalone-tool-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid #e4e7f1;background:#f8fafc}
+.standalone-tool-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:10px;border:1px solid #e4e7f1;background:linear-gradient(135deg,#f8fafc,#f5f3ff);padding:14px}
 .standalone-tool-card span{color:#172033;font-size:20px;font-weight:900;line-height:1.15}
 .standalone-tool-card p{margin:0;color:#5f6776;line-height:1.45}
 .splatworks-suite-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .splatworks-suite-card{position:relative;display:flex;min-height:240px;flex-direction:column;gap:12px;border:1px solid #e4e7f1;border-radius:14px;background:#fff;box-shadow:0 12px 34px #1720330d;padding:18px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
 .splatworks-suite-card:hover,.splatworks-suite-card:focus-within{transform:translateY(-2px);border-color:#7c3aed;box-shadow:0 16px 42px #7c3aed1c}
 .splatworks-suite-card.is-planned{opacity:.78}
-.splatworks-tool-icon{display:grid;width:62px;height:62px;place-items:center;border:1px solid #d8ccff;border-radius:16px;background:#f6f1ff;color:#5b21b6;font-size:24px;font-weight:950;line-height:1;box-shadow:inset 0 1px 0 #fff}
-.splatworks-tool-icon img{width:48px;height:48px;object-fit:contain}
+.splatworks-tool-icon{display:grid;width:104px;height:104px;place-items:center;border:1px solid #d8ccff;border-radius:20px;background:#f6f1ff;color:#5b21b6;font-size:24px;font-weight:950;line-height:1;box-shadow:inset 0 1px 0 #fff}
+.splatworks-tool-icon img{width:86px;height:86px;object-fit:contain}
 .splatworks-suite-card h2,.splatworks-suite-card h3{margin:0;color:#172033;font-size:23px;line-height:1.1}
 .splatworks-suite-card p{margin:0;color:#5f6776;line-height:1.48}
 .splatworks-suite-card .studio-card-actions{margin-top:auto}
