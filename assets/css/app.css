@@ -828,6 +828,10 @@ sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter
 .splatworks-suite-card .studio-card-actions{margin-top:auto}
 .splatworks-status{display:inline-flex;align-self:flex-start;min-height:26px;align-items:center;border:1px solid #d8ccff;border-radius:999px;background:#f7f3ff;color:#5b21b6;padding:4px 9px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
 .studio-browse-shell{max-width:1220px}
+.splatworks-hero{display:grid;gap:20px;padding:46px 0 18px;text-align:center}
+.splatworks-hero h1{max-width:900px;margin:0 auto;color:#101827;font-size:clamp(2.5rem,5vw,4.4rem);line-height:1.02;letter-spacing:0}
+.splatworks-hero-image{display:block;width:100%;height:auto;border:1px solid #e4e7f1;border-radius:18px;background:#fff;box-shadow:0 22px 60px #1720331a}
+.splatworks-launch-actions{justify-content:center}
 .studio-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,420px);gap:28px;align-items:center;padding:48px 0 28px}
 .studio-hero h1{font-size:54px;line-height:1.02;margin:10px 0 14px;color:#101827;letter-spacing:0}
 .studio-hero p{color:#5f6776;font-size:18px;line-height:1.6;margin:0}
