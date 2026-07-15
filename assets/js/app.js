@@ -124,7 +124,7 @@ let renderRequested=false;
 function requestRender(){if(renderRequested) return; renderRequested=true; requestAnimationFrame(()=>{renderRequested=false; render()})}
 
 const ui={};
-['workspaceMode','interfaceMode','panelSelect','strokeColor','strokeWidth','fillColor','fillPattern','stickyColor','opacity','status','boardTitle','className','studentName','scriptUrl','richEditor','textColor','fontSize','fontSizeValue','textRotation','textRotationValue','autoScaleText','userMode','collabRoom','syncStatus','cursorStatus','templateSelect','stickerSelect','restorePointSelect','restorePointHint','assignmentModeToggle','activeLayerSelect','showAnswerKeyToggle','layerBadge'].forEach(k=>{ui[k]=document.getElementById(k)});
+['workspaceMode','interfaceMode','panelSelect','strokeColor','strokeWidth','fillColor','fillPattern','stickyColor','opacity','status','toolStatus','boardTitle','className','studentName','scriptUrl','richEditor','textColor','fontSize','fontSizeValue','textRotation','textRotationValue','autoScaleText','userMode','collabRoom','syncStatus','cursorStatus','templateSelect','stickerSelect','restorePointSelect','restorePointHint','assignmentModeToggle','activeLayerSelect','showAnswerKeyToggle','layerBadge'].forEach(k=>{ui[k]=document.getElementById(k)});
 
 const SAFE_IMAGE_TYPES=['image/png','image/jpeg','image/webp','image/gif'];
 const SAFE_AUDIO_TYPES=['audio/webm','audio/mpeg','audio/mp4','audio/wav','audio/ogg'];
@@ -1121,6 +1121,57 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 
 /* Tool, workspace, and selection primitives. These are intentionally small
    because drawing, editing, grouping, and inspector code all depend on them. */
+const TOOL_GUIDANCE={
+  select:['Select','Click an object to move, resize, duplicate, or delete it. Drag blank canvas to select several objects.'],
+  pen:['Pencil','Pick a thickness, then drag on the canvas. Use Undo if a stroke needs a quick reset.'],
+  bucket:['Paint Bucket','Click a shape, note, dot, or line to recolor it. Click blank canvas to add a color layer.'],
+  eraser:['Eraser','Choose an eraser size, then drag over Scratch Cover areas. Click other objects to delete them.'],
+  laser:['Laser Pointer','Drag to draw a temporary pointer trail during live teaching or presenting.'],
+  dotpaint:['Dot Paint','Insert a Dot Picture first, then click or drag across dots to color them.'],
+  coloringpaint:['Coloring Paint','Drag inside the selected coloring page. Paint stays clipped to that page.'],
+  line:['Line','Drag from a start point to an end point. Adjust color and thickness in Style.'],
+  arrow:['Arrow','Drag from tail to point. Use it for callouts, flow, and process diagrams.'],
+  connector:['Connector','Click one object, then another object, to attach a line that follows both objects.'],
+  rect:['Rectangle','Drag to place a rectangle. Double-click it later to type inside.'],
+  ellipse:['Ellipse','Drag to place an oval or circle. Double-click it later to type inside.'],
+  diamond:['Diamond','Drag to place a decision shape. Double-click it later to type inside.'],
+  triangle:['Triangle','Drag to place a triangle. Double-click it later to type inside.'],
+  polygon:['Polygon','Drag to place a polygon. Use Style to change stroke, fill, and opacity.'],
+  star:['Star','Drag to place a star. Use Style to change stroke, fill, and opacity.'],
+  text:['Text','Click the canvas, type your text, then click outside or choose Done to save.'],
+  sticky:['Sticky Note','Click the canvas to add a note. Change note color in Style before placing it.'],
+  callout:['Callout','Drag to place a callout box. Double-click it to add the callout text.'],
+  speech:['Speech Bubble','Drag to place a speech bubble. Double-click it to add text.'],
+  comment:['Comment','Click the canvas to leave a review comment that can be moderated later.'],
+  audio:['Audio','Click the canvas to place an audio note, then record or attach audio from the inspector.']
+};
+function toolGuidance(next){
+  if(next==='dotpaint') return panel().objects.some(o=>o.type==='dot')?['Dot Paint','Click or drag across dots in a Dot Picture, then pick a color from the palette.']:['Dot Paint','Insert a Dot Picture first, then use Paint Dots to color it.'];
+  if(next==='coloringpaint'){
+    if(coloringPaintMode==='bucket') return ['Bucket','Click a white space inside the selected coloring page to pour color.'];
+    if(coloringPaintMode==='spray') return ['Spray','Drag inside the selected coloring page to spray color.'];
+  }
+  return TOOL_GUIDANCE[next]||['Tool','Use the canvas to place or edit content.'];
+}
+function updateToolStatus(next){
+  if(!ui.toolStatus) return;
+  const [title,detail]=toolGuidance(next);
+  let heading=ui.toolStatus.querySelector('strong');
+  let body=ui.toolStatus.querySelector('span');
+  if(!heading||!body){
+    ui.toolStatus.textContent='';
+    heading=document.createElement('strong');
+    body=document.createElement('span');
+    ui.toolStatus.append(heading,body);
+  }
+  heading.textContent=title;
+  body.textContent=detail;
+}
+function announceTool(next){
+  const [title,detail]=toolGuidance(next);
+  updateToolStatus(next);
+  setStatus(`${title}: ${detail}`,next==='coloringpaint'?'success':'');
+}
 function refreshToolGroupsActive(){document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>group.classList.toggle('active',!!group.querySelector(`button.active,[data-tool="${tool}"]`)))}
 function setTool(next){
   // Restore the per-tool stored stroke width before re-rendering controls.
@@ -1130,7 +1181,7 @@ function setTool(next){
     if(next==='pen') ui.strokeWidth.value=String(penStrokeWidth);
     else if(next==='eraser') ui.strokeWidth.value=String(eraserStrokeWidth);
   }
-  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); if(next==='eraser') setStatus('Eraser: choose Small, Bigger, or Biggest, then drag over a Scratch Cover to reveal the background. Click other objects to delete them.'); else if(next==='pen') setStatus('Pencil: pick a thickness — Fine, Medium, Bold, or Marker — then drag on the canvas.'); else if(next==='bucket') setStatus('Paint Bucket: click a shape, note, dot, or line, or click blank canvas to add a color layer above the panel background.'); else if(next==='laser') setStatus('Laser pointer: drag to draw a temporary trail.'); else if(next==='dotpaint') setStatus(panel().objects.some(o=>o.type==='dot')?'Dot Paint: click or drag across dots in a Dot Picture, then pick a color from the palette.':'Dot Paint works after you insert a Dot Picture. Open Dot Pictures first, then paint its dots.'); else if(next==='coloringpaint') setStatus(coloringPaintMode==='bucket'?'Bucket: click a white space inside the selected coloring page to pour color.':(coloringPaintMode==='spray'?'Spray: drag inside the selected coloring page to spray color.':'Coloring paint: drag inside the selected coloring page. Strokes stay clipped to the page.'),'success')
+  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); announceTool(next);
 }
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function updateHeaderHeightVar(){const header=document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--drawsplat-header-height',Math.ceil(header.getBoundingClientRect().height)+'px')}
@@ -4312,6 +4363,7 @@ function registerServiceWorker(){
   initHistory();
   applyWorkspaceMode(ui.workspaceMode?.value||'productivity',true);
   applyInterfaceMode(ui.interfaceMode?.value||'simple',true);
+  updateToolStatus(tool);
   refreshViewToggle?.();
   syncSimpleStickyPalette();
   syncSimpleColor();
