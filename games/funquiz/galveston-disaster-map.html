@@ -851,13 +851,30 @@ function addLogEntry(pin) {
   entry.className = 'log-entry';
   entry.dataset.type = pin.type;
   entry.dataset.id = pin.id;
-  entry.innerHTML = `
-    <button class="delete-btn" onclick="removePin(${pin.id}, event)" title="Remove">✕</button>
-    <div class="log-type">${LABELS[pin.type]}</div>
-    <div class="log-location">${pin.loc}</div>
-    <div class="log-note">${pin.note}</div>
-    <div class="log-coords">${pin.coord.lat}° N, ${Math.abs(pin.coord.lon)}° W</div>
-  `;
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.type = 'button';
+  deleteBtn.title = 'Remove';
+  deleteBtn.textContent = '✕';
+  deleteBtn.addEventListener('click', (event) => removePin(pin.id, event));
+
+  const type = document.createElement('div');
+  type.className = 'log-type';
+  type.textContent = LABELS[pin.type];
+
+  const location = document.createElement('div');
+  location.className = 'log-location';
+  location.textContent = pin.loc;
+
+  const note = document.createElement('div');
+  note.className = 'log-note';
+  note.textContent = pin.note;
+
+  const coords = document.createElement('div');
+  coords.className = 'log-coords';
+  coords.textContent = `${pin.coord.lat}° N, ${Math.abs(pin.coord.lon)}° W`;
+
+  entry.append(deleteBtn, type, location, note, coords);
   entry.addEventListener('click', () => highlightEntry(pin.id));
   list.appendChild(entry);
   entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
