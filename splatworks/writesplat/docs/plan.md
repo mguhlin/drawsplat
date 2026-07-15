@@ -9,6 +9,26 @@ WriteSplatTM and SplatWorksTM are trademarks. In product copy, use
 `WriteSplatTM` and `SplatWorksTM` in Markdown/plain text, and
 `WriteSplat&trade;` / `SplatWorks&trade;` in HTML.
 
+## Implementation Status
+
+This plan has been built out for the current static SplatWorksTM release.
+
+- Phase 1, app foundation: complete.
+- Phase 2, editor core: complete.
+- Phase 3, readability and stats: complete.
+- Phase 4, practical export: complete for `.writesplat.json`, `.txt`, `.md`,
+  `.html`, `.rtf`, `.docx`, `.odt`, and browser print/PDF.
+- Phase 5, educator workflows: complete for templates, cloze, citations,
+  teacher/student view, teacher-only content, vocabulary highlighting,
+  read-aloud, and sentence/paragraph scramblers.
+- Phase 6, polish and distribution: complete for responsive sidebar/drawer,
+  dark mode, print styles, public page launch state, and single-file build
+  support.
+
+Remaining release validation is operational rather than product-plan work:
+run the full build/test matrix before tagging, and verify performance on the
+target low-end Chromebook hardware.
+
 ## Product Position
 
 WriteSplatTM is not a Google Docs replacement. It is a private, browser-based
@@ -303,6 +323,8 @@ splatworks/writesplat/
 
 ### Phase 1 - SplatWorksTM App Foundation
 
+Status: complete.
+
 - create `splatworks/writesplat/`
 - add README, license files, docs, package scripts, Vite config, and tests
 - static app loads at `/splatworks/writesplat/`
@@ -314,6 +336,8 @@ splatworks/writesplat/
 like it belongs beside GridSplatTM and ShowSplatTM.
 
 ### Phase 2 - Editor Core
+
+Status: complete.
 
 - ProseMirror schema for paragraphs, headings, lists, links, text marks, images,
   tables, teacher-only spans, cloze blanks, and page breaks
@@ -329,6 +353,8 @@ and export a native WriteSplatTM document.
 
 ### Phase 3 - Readability and Stats
 
+Status: complete.
+
 - Flesch-Kincaid and reading ease scoring
 - sentence splitting, word counting, syllable counting
 - passive voice, adverb/intensifier, weak phrase, and simpler alternative
@@ -343,6 +369,8 @@ separate from the document.
 
 ### Phase 4 - Practical Export
 
+Status: complete for the current classroom-writing subset.
+
 - `.txt`, `.md`, `.html`, `.rtf`, `.docx`, and `.odt` export
 - browser print path for PDF
 - export warnings for lossy formats
@@ -352,6 +380,8 @@ separate from the document.
 actually need.
 
 ### Phase 5 - Educator Workflows
+
+Status: complete.
 
 - template gallery
 - cloze builder and student/teacher export modes
@@ -363,6 +393,8 @@ actually need.
 common classroom document workflows.
 
 ### Phase 6 - Polish and Distribution
+
+Status: complete, pending only release-tag validation on target hardware.
 
 - responsive sidebar/drawer behavior
 - dark mode

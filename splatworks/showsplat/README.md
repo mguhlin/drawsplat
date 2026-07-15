@@ -27,8 +27,8 @@ The first implementation is a static browser app with:
 
 The Help menu now opens product-facing guidance inside ShowSplatTM for building
 decks, editing slide objects, using Markdown Studio, presenting, saving,
-exporting, importing, and privacy. Technical planning documents remain linked
-below the main Help items for maintainers and advanced users.
+exporting, importing, and privacy. Technical planning documents stay in
+`docs/` for maintainers rather than appearing in the user-facing Help menu.
 
 ## Import and Export Notes
 

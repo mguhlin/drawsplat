@@ -4,6 +4,27 @@ ShowSplatTM is the SplatWorksTM presentation app. It should feel consistent
 with GridSplatTM while focusing on slide authoring, live presenting, and
 single-file WebDeck export.
 
+## Implementation Status
+
+The first implementation scope has been completed for the current static
+SplatWorksTM release:
+
+- Static app at `/splatworks/showsplat/`: complete.
+- Public page at `pages/showsplat.html`: complete.
+- Navigation and launch state: complete.
+- Core editor with slide rail, 16:9 canvas, menus, toolbar, notes, templates,
+  themes, object drag/resize, text/list/image/video/audio/table insertion,
+  Markdown import/export, WebDeck export, PDF print, slideshow preview, and
+  WebDeck/PPTX/ODP workflows: complete for the current supported subset.
+- In-app Help and keyboard shortcuts: complete.
+- Development-plan links have been removed from user-facing pages and menus;
+  this document remains a maintainer artifact.
+
+Remaining improvement areas are fidelity and scale work, not blockers for the
+current launch: stronger PPTX/ODP parity, editable PDF text extraction, large
+deck storage improvements, direct deterministic PDF output, deeper object
+editing, and fixture-based regression tests.
+
 ## Feature Set
 
 The target feature set draws from WebDeck Project Instructions v2.0, common

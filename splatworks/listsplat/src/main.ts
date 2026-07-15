@@ -1268,6 +1268,7 @@ function render(): void {
   const table = activeTable();
   ensureActiveRecord(table);
   applyDocumentLanguage();
+  const studentView = project.teacher.studentView;
   appRoot.innerHTML = `
     <header class="app-header">
       <a class="brand" href="../../pages/splatworks.html" aria-label="SplatWorks home">
@@ -1325,16 +1326,20 @@ function render(): void {
           ['quality', 'Data quality check'],
         ])}
         ${createMenu('View', [
-          ['student-view', 'Student view'],
+          ['student-view', studentView ? 'Exit student view' : 'Student view'],
           ['teacher-notes', 'Teacher notes'],
         ])}
         <span class="menu-spacer"></span>
-        ${createMenu('Teacher', [
-          ['templates', 'Template Library'],
-          ['project-ideas', 'Project Ideas'],
-          ['lock-layout', 'Lock Layout'],
-          ['project-packet', 'Print Project Packet'],
-        ])}
+        ${
+          studentView
+            ? ''
+            : createMenu('Teacher', [
+                ['templates', 'Template Library'],
+                ['project-ideas', 'Project Ideas'],
+                ['lock-layout', 'Lock Layout'],
+                ['project-packet', 'Print Project Packet'],
+              ])
+        }
         ${createMenu('Help', [
           ['help-start', 'Start a database'],
           ['help-csv', 'Import and export CSV'],
@@ -1357,12 +1362,13 @@ function render(): void {
         <button type="button" data-action="add-field">${html(t('Add field'))}</button>
         <button type="button" data-action="add-record">${html(t('Add record'))}</button>
       </section>
-      <div class="workspace">
+      <div class="workspace${studentView ? ' student-workspace' : ''}">
         ${renderDatabasePanel(table)}
-        ${renderTeacherPanel(table)}
+        ${studentView ? '' : renderTeacherPanel(table)}
       </div>
       <footer class="status-bar">
         <span>${html(table.name)}: ${visibleRecords(table).length} shown of ${table.records.length} records, ${table.fields.length} fields</span>
+        ${studentView ? '<span>Student view hides teacher notes and teacher tools.</span>' : ''}
         <span>${html(lastMessage)}</span>
         <span>${saveStatus}</span>
       </footer>
@@ -1704,6 +1710,17 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'templates') {
     lastMessage = 'Template starters are in the Teacher panel.';
     render();
+  } else if (action === 'student-view') {
+    pushUndo('student view toggle');
+    lastMessage = project.teacher.studentView ? 'Teacher tools are visible again.' : 'Student view is on.';
+    setProject({
+      ...project,
+      updatedAt: new Date().toISOString(),
+      teacher: {
+        ...project.teacher,
+        studentView: !project.teacher.studentView,
+      },
+    });
   } else if (action === 'project-ideas') {
     dialog = 'projectIdeas';
     render();
@@ -1723,7 +1740,7 @@ appRoot.addEventListener('click', (event) => {
     dialog = 'help';
     render();
   } else {
-    lastMessage = 'This ListSplatTM tool is planned for a later build.';
+    lastMessage = 'That ListSplatTM control is not available in this workspace.';
     render();
   }
 });

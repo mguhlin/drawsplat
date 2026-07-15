@@ -2639,7 +2639,6 @@
     if (action === 'toggle-sidebar') els.workspace.classList.toggle('show-inspector');
     if (action === 'show-help') els.helpDialog.showModal();
     if (action === 'show-shortcuts') els.shortcutsDialog.showModal();
-    if (action === 'show-feature-plan') window.open('docs/plan.md', '_blank', 'noopener');
   }
 
   function autofitTextBox() {

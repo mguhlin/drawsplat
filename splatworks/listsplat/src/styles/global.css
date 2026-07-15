@@ -224,6 +224,10 @@ summary:focus-visible {
   padding: 14px;
 }
 
+.student-workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .database-panel,
 .teacher-panel {
   min-width: 0;

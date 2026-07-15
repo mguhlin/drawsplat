@@ -1,8 +1,7 @@
 # ListSplatTM
 
-ListSplatTM is the SplatWorksTM classroom database app. It is planned as a
-private, browser-based database builder for children, teachers, and classroom
-projects.
+ListSplatTM is the SplatWorksTM classroom database app: a private,
+browser-based database builder for children, teachers, and classroom projects.
 
 The app should help students collect, organize, search, relate, calculate,
 display, and share information without requiring accounts, servers, telemetry,
@@ -10,8 +9,7 @@ or cloud storage.
 
 ## Development
 
-ListSplatTM now has a working classroom database app foundation. See
-`docs/plan.md` for the full product plan.
+ListSplatTM now has a working classroom database app foundation.
 
 Current working surface:
 
@@ -41,9 +39,8 @@ Current working surface:
 - layout designer with per-view field order, visibility, and locking
 - basic number summaries
 
-Planned next:
-
-- tagged-release ZIP publishing for the ListSplatTM self-host package
+Remaining release work is limited to tagged-release ZIP publishing for the
+ListSplatTM self-host package.
 
 Target app path:
 

@@ -8,6 +8,30 @@ ListSplatTM and SplatWorksTM are trademarks. In product copy, use
 `ListSplatTM` and `SplatWorksTM` in Markdown/plain text, and
 `ListSplat&trade;` / `SplatWorks&trade;` in HTML.
 
+## Implementation Status
+
+This plan has been built out for the current static SplatWorksTM release.
+
+- Phase 1, project foundation: complete.
+- Phase 2, flat database core: complete.
+- Phase 3, import/export/find/sort: complete for current CSV, JSON, search,
+  sort, missing-value, duplicate-value, and previewed replace workflows.
+- Phase 4, layouts and reports: complete for table, form, card, gallery, label,
+  report, printable HTML, layout field order/visibility, and locked layouts.
+- Phase 5, calculations and summaries: complete for the curated internal
+  formula evaluator, relationship-aware lookup helpers, and basic numeric
+  summaries.
+- Phase 6, relationships: complete for one-to-many relationships and related
+  record lookup workflows.
+- Phase 7, classroom templates and teacher tools: complete for starter
+  templates, project ideas, teacher notes, project packet export, layout locks,
+  and data-quality checks.
+- Phase 8, polish and distribution: complete for public launch pages, help
+  topics, print styles, and the SplatWorksTM static package.
+
+Remaining release validation is operational: build/test before tagging, package
+the self-host ZIP, and verify performance on the target classroom hardware.
+
 ## Product Position
 
 ListSplatTM is not Microsoft Access, Airtable, FileMaker Pro, or a cloud
@@ -494,6 +518,8 @@ Requirements:
 
 ### Phase 1 - Project Foundation
 
+Status: complete.
+
 - create Vite + React + TypeScript app
 - SplatWorksTM chrome, language switcher, and menus
 - local autosave shell
@@ -505,6 +531,8 @@ Deliverable: a branded SplatWorksTM app shell that can create, save, open, and
 autosave a blank ListSplatTM project.
 
 ### Phase 2 - Flat Database Core
+
+Status: complete.
 
 - one-table project support
 - field editor
@@ -518,6 +546,8 @@ Deliverable: students can build and use a simple one-table database.
 
 ### Phase 3 - Import, Export, Find, Sort
 
+Status: complete for current classroom CSV and cleanup workflows.
+
 - CSV import wizard
 - CSV export
 - quick search
@@ -530,6 +560,8 @@ Deliverable: classroom CSV workflows work end to end.
 
 ### Phase 4 - Layout Builder and Reports
 
+Status: complete for the current simplified classroom layout model.
+
 - card, gallery, list, label, and report layouts
 - draggable field layout canvas
 - report grouping and summaries
@@ -540,6 +572,8 @@ Deliverable: students can make forms, cards, labels, and printable reports from
 their data.
 
 ### Phase 5 - Calculations and Summaries
+
+Status: complete for the curated internal evaluator and summary helpers.
 
 - calculation fields
 - summary fields
@@ -552,6 +586,8 @@ Deliverable: useful database calculations and summaries without arbitrary code.
 
 ### Phase 6 - Relationships
 
+Status: complete for one-to-many relationships and lookup-style formulas.
+
 - multiple tables
 - one-to-many relationship builder
 - lookup fields
@@ -562,6 +598,8 @@ Deliverable: useful database calculations and summaries without arbitrary code.
 Deliverable: children can move from flat lists to simple relational databases.
 
 ### Phase 7 - Classroom Templates and Teacher Tools
+
+Status: complete.
 
 - template library
 - sample data
@@ -575,6 +613,8 @@ Deliverable: the app is classroom-ready for teachers who do not want to build a
 database from scratch.
 
 ### Phase 8 - Polish and Distribution
+
+Status: complete, pending only tagged self-host packaging validation.
 
 - visual design pass
 - task-focused Help
