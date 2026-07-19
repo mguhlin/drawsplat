@@ -1386,3 +1386,14 @@ body.sidebar-collapsed .sidebar {
     display: none;
   }
 }
+
+/* ── Templates by category + emoji picker ── */
+.template-group-title { margin: 14px 0 6px; font-size: .95rem; color: var(--accent-dark, #5b21b6); }
+.emoji-modal { max-width: 560px; }
+#emojiSearch { width: 100%; padding: 10px 12px; border: 1px solid var(--line, #d8d2ff); border-radius: 10px; font-size: 1rem; margin-bottom: 8px; }
+.emoji-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.emoji-tab { border: 1px solid var(--line, #d8d2ff); border-radius: 999px; background: #fff; padding: 5px 12px; font-weight: 700; font-size: .82rem; cursor: pointer; }
+.emoji-tab.active { background: var(--accent, #7c3aed); color: #fff; border-color: var(--accent, #7c3aed); }
+.emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 4px; max-height: 320px; overflow-y: auto; padding: 4px; }
+.emoji-cell { border: 0; background: transparent; border-radius: 8px; font-size: 1.6rem; line-height: 1; padding: 6px; cursor: pointer; }
+.emoji-cell:hover { background: var(--soft, #f7f4ff); }

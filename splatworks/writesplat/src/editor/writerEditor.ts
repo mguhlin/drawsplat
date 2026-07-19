@@ -274,6 +274,7 @@ export interface WriterEditor {
   getSelectionText(): string;
   insertImage(src: string, alt: string): boolean;
   insertText(text: string): boolean;
+  tryEmojiShortcode(resolve: (code: string) => string | undefined): boolean;
   markCloze(): boolean;
   removeCloze(): boolean;
   markTeacherOnly(): boolean;
@@ -341,6 +342,21 @@ export function createWriterEditor(
     },
     insertText(text: string) {
       view.dispatch(view.state.tr.insertText(text).scrollIntoView());
+      view.focus();
+      return true;
+    },
+    tryEmojiShortcode(resolve: (code: string) => string | undefined) {
+      const { selection } = view.state;
+      if (!selection.empty) return false;
+      const cursor = selection.from;
+      const start = Math.max(0, cursor - 40);
+      const text = view.state.doc.textBetween(start, cursor, '\n', '\n');
+      const match = /:([a-z0-9_+-]+):$/i.exec(text);
+      if (!match) return false;
+      const emoji = resolve(match[1]);
+      if (!emoji) return false;
+      const from = cursor - match[0].length;
+      view.dispatch(view.state.tr.insertText(emoji, from, cursor).scrollIntoView());
       view.focus();
       return true;
     },

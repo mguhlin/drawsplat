@@ -6,7 +6,8 @@ import { createWriterEditor, type EditorCommand } from './editor/writerEditor';
 import { formatCitation, type CitationStyle } from './educator/citations';
 import { pauseReadAloud, readTextAloud, stopReadAloud } from './educator/readAloud';
 import { scrambleParagraphs, scrambleSentences } from './educator/scrambler';
-import { documentTemplates } from './educator/templates';
+import { documentTemplates, templateCategoryLabels } from './educator/templates';
+import { emojiCategories, emojiForShortcode, searchEmojis } from './educator/emojis';
 import { createStudentClozeHtml, createTeacherClozeHtml } from './export/cloze';
 import { htmlToDocxBlob } from './export/docx';
 import { createStandaloneHtml } from './export/html';
@@ -66,7 +67,9 @@ type IconName =
   | 'play'
   | 'stop'
   | 'scramble'
-  | 'vocabulary';
+  | 'vocabulary'
+  | 'emoji'
+  | 'cloud';
 
 type MenuAction = [action: string, text: string];
 type MenuSubmenu = {
@@ -286,6 +289,8 @@ function icon(name: IconName): string {
     stop: '<rect x="6" y="6" width="12" height="12" rx="2"/>',
     scramble: '<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/>',
     vocabulary: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3Z"/><path d="M9 8h6"/><path d="M9 12h4"/>',
+    emoji: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>',
+    cloud: '<path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.5 2A4 4 0 0 0 6 19z"/>',
   };
 
   return `<svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</svg>`;
@@ -538,6 +543,7 @@ function appHtml(): string {
           ['open-link-dialog', 'Link'],
           ['remove-link', 'Remove link'],
           ['open-image-dialog', 'Image'],
+          ['open-emoji-dialog', 'Emoji…'],
           {
             label: 'Table',
             items: [
@@ -647,6 +653,7 @@ function appHtml(): string {
         ${iconButton('command', 'orderedList', 'Numbered list', 'listOrdered')}
         ${iconButton('action', 'open-link-dialog', 'Link', 'link')}
         ${iconButton('action', 'open-image-dialog', 'Image', 'image')}
+        ${iconButton('action', 'open-emoji-dialog', 'Emoji', 'emoji')}
         ${iconButton('command', 'insertTable', 'Table', 'table')}
         ${iconButton('command', 'insertHorizontalRule', 'Horizontal rule', 'horizontalRule')}
         ${iconButton('command', 'insertPageBreak', 'Page break', 'pageBreak')}
@@ -765,19 +772,28 @@ function appHtml(): string {
     </div>
     <div id="templateDialog" class="modal-backdrop" hidden>
       <section class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="templateDialogTitle">
-        <h2 id="templateDialogTitle">Document templates</h2>
-        <div class="template-grid">
-          ${documentTemplates
-            .map(
-              (template) => `
-                <button class="template-card" data-template-id="${template.id}">
-                  <strong>${template.title}</strong>
-                  <span>${template.description}</span>
-                </button>
-              `,
-            )
-            .join('')}
-        </div>
+        <h2 id="templateDialogTitle">Start from a template</h2>
+        ${(['prose', 'poetry', 'academic', 'other'] as const)
+          .map((category) => {
+            const items = documentTemplates.filter((template) => template.category === category);
+            if (!items.length) return '';
+            return `
+              <h3 class="template-group-title">${templateCategoryLabels[category]}</h3>
+              <div class="template-grid">
+                ${items
+                  .map(
+                    (template) => `
+                      <button class="template-card" data-template-id="${template.id}">
+                        <strong>${template.title}</strong>
+                        <span>${template.description}</span>
+                      </button>
+                    `,
+                  )
+                  .join('')}
+              </div>
+            `;
+          })
+          .join('')}
         <div class="modal-actions">
           <button data-action="close-template-dialog">Close</button>
         </div>
@@ -816,6 +832,20 @@ function appHtml(): string {
         <div class="modal-actions">
           <button data-action="close-image-dialog">Cancel</button>
           <button class="primary-action" data-action="choose-image-file">Choose image</button>
+        </div>
+      </section>
+    </div>
+    <div id="emojiDialog" class="modal-backdrop" hidden>
+      <section class="modal wide-modal emoji-modal" role="dialog" aria-modal="true" aria-labelledby="emojiDialogTitle">
+        <h2 id="emojiDialogTitle">Insert emoji</h2>
+        <input id="emojiSearch" type="search" placeholder="Search emojis… (or type :smile: while writing)" aria-label="Search emojis" autocomplete="off">
+        <div class="emoji-tabs" id="emojiTabs">
+          <button class="emoji-tab active" data-emoji-cat="all" type="button">All</button>
+          ${emojiCategories.map((category) => `<button class="emoji-tab" data-emoji-cat="${category.id}" type="button">${category.label}</button>`).join('')}
+        </div>
+        <div class="emoji-grid" id="emojiGrid"></div>
+        <div class="modal-actions">
+          <button data-action="close-emoji-dialog">Close</button>
         </div>
       </section>
     </div>
@@ -1142,6 +1172,27 @@ function bootstrap(): void {
   const findStatus = getRequiredElement<HTMLElement>('findStatus');
   const imageDialog = getRequiredElement<HTMLElement>('imageDialog');
   const imageAlt = getRequiredElement<HTMLInputElement>('imageAlt');
+  const emojiDialog = getRequiredElement<HTMLElement>('emojiDialog');
+  const emojiSearch = getRequiredElement<HTMLInputElement>('emojiSearch');
+  const emojiGrid = getRequiredElement<HTMLElement>('emojiGrid');
+  const emojiTabs = getRequiredElement<HTMLElement>('emojiTabs');
+  let emojiCategoryId = 'all';
+
+  function renderEmojiGrid(): void {
+    const query = emojiSearch.value.trim();
+    let items: Array<{ char: string; name: string }>;
+    if (query) {
+      items = searchEmojis(query);
+    } else if (emojiCategoryId === 'all') {
+      items = emojiCategories.flatMap((category) => category.emojis.map((emoji) => ({ char: emoji.char, name: emoji.name })));
+    } else {
+      const category = emojiCategories.find((item) => item.id === emojiCategoryId);
+      items = category ? category.emojis.map((emoji) => ({ char: emoji.char, name: emoji.name })) : [];
+    }
+    emojiGrid.innerHTML = items.length
+      ? items.map((emoji) => `<button class="emoji-cell" type="button" data-emoji="${emoji.char}" title="${emoji.name}" aria-label="${emoji.name}">${emoji.char}</button>`).join('')
+      : '<p class="modal-note">No emojis match your search.</p>';
+  }
   const citationDialog = getRequiredElement<HTMLElement>('citationDialog');
   const citationPreview = getRequiredElement<HTMLElement>('citationPreview');
   const exportDialog = getRequiredElement<HTMLElement>('exportDialog');
@@ -1403,6 +1454,22 @@ function bootstrap(): void {
       return;
     }
 
+    const emojiCell = target.closest<HTMLButtonElement>('[data-emoji]');
+    if (emojiCell?.dataset.emoji) {
+      writer.insertText(emojiCell.dataset.emoji);
+      refresh();
+      return;
+    }
+
+    const emojiTab = target.closest<HTMLButtonElement>('[data-emoji-cat]');
+    if (emojiTab?.dataset.emojiCat) {
+      emojiCategoryId = emojiTab.dataset.emojiCat;
+      emojiTabs.querySelectorAll('.emoji-tab').forEach((tab) => tab.classList.toggle('active', tab === emojiTab));
+      emojiSearch.value = '';
+      renderEmojiGrid();
+      return;
+    }
+
     if (commandButton?.dataset.command) {
       writer.run(commandButton.dataset.command as EditorCommand);
       refresh();
@@ -1507,6 +1574,14 @@ function bootstrap(): void {
       imageAlt.focus();
     } else if (action === 'close-image-dialog') {
       imageDialog.hidden = true;
+      writer.view.focus();
+    } else if (action === 'open-emoji-dialog') {
+      emojiSearch.value = '';
+      renderEmojiGrid();
+      emojiDialog.hidden = false;
+      emojiSearch.focus();
+    } else if (action === 'close-emoji-dialog') {
+      emojiDialog.hidden = true;
       writer.view.focus();
     } else if (action === 'choose-image-file') {
       imageFileInput.click();
@@ -1791,6 +1866,23 @@ function bootstrap(): void {
     const src = await fileToDataUrl(file);
     writer.insertImage(src, file.name || 'Pasted image');
     refresh();
+  });
+  emojiSearch.addEventListener('input', () => {
+    emojiTabs.querySelectorAll('.emoji-tab').forEach((tab) => tab.classList.toggle('active', (tab as HTMLElement).dataset.emojiCat === 'all'));
+    emojiCategoryId = 'all';
+    renderEmojiGrid();
+  });
+  emojiSearch.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      emojiDialog.hidden = true;
+      writer.view.focus();
+    }
+  });
+  // MultiScribe-style :shortcode: conversion while typing in the editor.
+  editorMount.addEventListener('keyup', (event) => {
+    if (event.key === ':') {
+      if (writer.tryEmojiShortcode(emojiForShortcode)) refresh();
+    }
   });
 
   titleInput.addEventListener('input', refresh);

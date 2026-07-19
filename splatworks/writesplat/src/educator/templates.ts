@@ -1,11 +1,213 @@
+export type TemplateCategory = 'prose' | 'poetry' | 'academic' | 'other';
+
 export interface DocumentTemplate {
   id: string;
   title: string;
   description: string;
+  category: TemplateCategory;
   html: string;
 }
 
+export const templateCategoryLabels: Record<TemplateCategory, string> = {
+  prose: 'Prose & Stories',
+  poetry: 'Poetry',
+  academic: 'Academic & Essays',
+  other: 'Notes & Planning',
+};
+
 export const documentTemplates: DocumentTemplate[] = [
+  {
+    id: 'blank',
+    title: 'Blank Document',
+    description: 'Start from an empty page.',
+    category: 'other',
+    html: '<h1>Untitled Document</h1><p></p>',
+  },
+  // ── Prose & stories ────────────────────────────────────────────────
+  {
+    id: 'short-story',
+    title: 'Short Story',
+    description: 'Story arc: hook, rising action, climax, and resolution.',
+    category: 'prose',
+    html: `
+      <h1>My Short Story</h1>
+      <p><em>Once upon a time…</em></p>
+      <h2>Beginning — the hook</h2>
+      <p>Introduce the main character and the setting.</p>
+      <h2>Rising action</h2>
+      <p>What problem or goal appears? Build the tension.</p>
+      <h2>Climax</h2>
+      <p>The most exciting moment — the turning point.</p>
+      <h2>Resolution</h2>
+      <p>How does the problem get solved? How has the character changed?</p>
+    `,
+  },
+  {
+    id: 'personal-narrative',
+    title: 'Personal Narrative',
+    description: 'Tell a true story from your own life.',
+    category: 'prose',
+    html: `
+      <h1>A Moment I Remember</h1>
+      <p>Set the scene — where were you, and who was with you?</p>
+      <p>What happened, step by step?</p>
+      <p>How did you feel, and what did you learn?</p>
+    `,
+  },
+  {
+    id: 'descriptive-paragraph',
+    title: 'Descriptive Paragraph',
+    description: 'Paint a picture with sensory details.',
+    category: 'prose',
+    html: `
+      <h1>Describe It</h1>
+      <p><strong>What I see:</strong></p>
+      <p><strong>What I hear:</strong></p>
+      <p><strong>What I smell, taste, or touch:</strong></p>
+      <p><strong>How it makes me feel:</strong></p>
+    `,
+  },
+  {
+    id: 'friendly-letter',
+    title: 'Friendly Letter',
+    description: 'Greeting, body, closing, and signature.',
+    category: 'prose',
+    html: `
+      <p>Dear ______,</p>
+      <p>How are you? I wanted to tell you about…</p>
+      <p>Write your news and questions here.</p>
+      <p>Your friend,</p>
+      <p>______</p>
+    `,
+  },
+  {
+    id: 'journal-entry',
+    title: 'Journal Entry',
+    description: 'A dated reflection or diary entry.',
+    category: 'prose',
+    html: `
+      <h1>Journal</h1>
+      <p><em>Today's date:</em></p>
+      <p>Today I…</p>
+      <p>One thing I am thinking about is…</p>
+      <p>Tomorrow I want to…</p>
+    `,
+  },
+  // ── Poetry ─────────────────────────────────────────────────────────
+  {
+    id: 'poem-free-verse',
+    title: 'Free Verse Poem',
+    description: 'No rhyme or set rhythm — write from the heart.',
+    category: 'poetry',
+    html: `
+      <h1>Free Verse</h1>
+      <p>Line by line,</p>
+      <p>break where a breath belongs,</p>
+      <p>and let the words</p>
+      <p>find their own shape.</p>
+    `,
+  },
+  {
+    id: 'poem-haiku',
+    title: 'Haiku',
+    description: 'Three lines: 5, 7, then 5 syllables.',
+    category: 'poetry',
+    html: `
+      <h1>Haiku</h1>
+      <p>Five syllables here <em>(5)</em></p>
+      <p>Seven syllables follow <em>(7)</em></p>
+      <p>Five to close it out <em>(5)</em></p>
+    `,
+  },
+  {
+    id: 'poem-acrostic',
+    title: 'Acrostic Poem',
+    description: 'Each line starts with a letter of your topic word.',
+    category: 'poetry',
+    html: `
+      <h1>Acrostic</h1>
+      <p><strong>W</strong> — </p>
+      <p><strong>O</strong> — </p>
+      <p><strong>R</strong> — </p>
+      <p><strong>D</strong> — </p>
+      <p><strong>S</strong> — </p>
+    `,
+  },
+  {
+    id: 'poem-cinquain',
+    title: 'Cinquain',
+    description: 'Five lines: 1 word, 2 words, 3 -ing words, a phrase, 1 word.',
+    category: 'poetry',
+    html: `
+      <h1>Cinquain</h1>
+      <p>Title <em>(one noun)</em></p>
+      <p>Two describing words</p>
+      <p>Three action -ing words</p>
+      <p>A four-word feeling phrase</p>
+      <p>Another word for the title</p>
+    `,
+  },
+  {
+    id: 'poem-diamante',
+    title: 'Diamante',
+    description: 'A diamond-shaped poem contrasting two ideas.',
+    category: 'poetry',
+    html: `
+      <h1>Diamante</h1>
+      <p>Noun</p>
+      <p>Adjective, Adjective</p>
+      <p>-ing, -ing, -ing</p>
+      <p>Noun, Noun, Noun, Noun</p>
+      <p>-ing, -ing, -ing</p>
+      <p>Adjective, Adjective</p>
+      <p>Opposite Noun</p>
+    `,
+  },
+  {
+    id: 'poem-limerick',
+    title: 'Limerick',
+    description: 'A funny five-line poem with an AABBA rhyme.',
+    category: 'poetry',
+    html: `
+      <h1>Limerick</h1>
+      <p>There once was a ______ from ______ <em>(A)</em></p>
+      <p>Who ______________________ <em>(A)</em></p>
+      <p>They ____________ <em>(B)</em></p>
+      <p>And ____________ <em>(B)</em></p>
+      <p>Till ______________________ <em>(A)</em></p>
+    `,
+  },
+  {
+    id: 'poem-sonnet',
+    title: 'Sonnet',
+    description: '14 lines of iambic-ish rhythm — three quatrains and a couplet.',
+    category: 'poetry',
+    html: `
+      <h1>Sonnet</h1>
+      <p>Quatrain 1 — line 1 (a)</p>
+      <p>line 2 (b) · line 3 (a) · line 4 (b)</p>
+      <p>Quatrain 2 — line 5 (c)</p>
+      <p>line 6 (d) · line 7 (c) · line 8 (d)</p>
+      <p>Quatrain 3 — line 9 (e)</p>
+      <p>line 10 (f) · line 11 (e) · line 12 (f)</p>
+      <p>Couplet — line 13 (g) · line 14 (g)</p>
+    `,
+  },
+  {
+    id: 'poem-ode',
+    title: 'Ode',
+    description: 'A poem that celebrates a person, place, or thing.',
+    category: 'poetry',
+    html: `
+      <h1>Ode to ______</h1>
+      <p>Oh, ______, how you…</p>
+      <p>Describe why it matters to you.</p>
+      <p>Praise it with your best images and feelings.</p>
+    `,
+  },
+];
+
+const legacyTemplatesRaw: Array<Omit<DocumentTemplate, 'category'>> = [
   {
     id: 'five-paragraph-essay',
     title: 'Five-Paragraph Essay',
@@ -145,3 +347,17 @@ export const documentTemplates: DocumentTemplate[] = [
     `,
   },
 ];
+
+const legacyCategories: Record<string, TemplateCategory> = {
+  'five-paragraph-essay': 'academic',
+  'lab-report': 'academic',
+  'cornell-notes': 'other',
+  'persuasive-essay': 'academic',
+  storyboard: 'other',
+  'book-report': 'academic',
+  'research-paper': 'academic',
+};
+
+legacyTemplatesRaw.forEach((template) => {
+  documentTemplates.push({ ...template, category: legacyCategories[template.id] ?? 'other' });
+});
