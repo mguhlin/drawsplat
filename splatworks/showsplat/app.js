@@ -434,6 +434,8 @@
   function buildMiniSlide(slide, index) {
     const mini = document.createElement('span');
     mini.className = 'thumb-preview mini-slide ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '');
+    if (slide.backgroundColor) mini.style.background = slide.backgroundColor;
+    if (slide.defaultTextColor) mini.style.color = slide.defaultTextColor;
     slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).forEach(el => {
       const item = document.createElement('span');
       item.className = 'mini-obj ' + el.type;
@@ -465,6 +467,8 @@
       const footer = document.createElement('span');
       footer.className = 'mini-footer';
       footer.textContent = String(index + 1);
+      if (slide.footerColor) footer.style.background = slide.footerColor;
+      footer.style.color = slide.footerTextColor || contrastText(slide.footerColor || '#312e5f');
       mini.appendChild(footer);
     }
     return mini;
