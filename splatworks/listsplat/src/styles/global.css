@@ -1333,3 +1333,11 @@ summary:focus-visible {
 .csv-dup { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; }
 .csv-dup label { font-weight: 800; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
 .csv-dup select { min-height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: #fff; }
+
+/* ── Batch E: media cells ── */
+.image-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.file-cell, .audio-cell { display: grid; gap: 6px; padding: 8px; align-content: center; justify-items: start; }
+.file-link { color: var(--accent-dark); font-weight: 800; text-decoration: none; word-break: break-all; }
+.file-link:hover { text-decoration: underline; }
+.audio-cell audio { width: 200px; max-width: 100%; }
+.camera-video { width: 100%; max-width: 520px; border-radius: 12px; background: #000; aspect-ratio: 4/3; }

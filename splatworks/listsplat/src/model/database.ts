@@ -23,6 +23,8 @@ const FIELD_DEFAULTS: Record<FieldType, ListSplatCellValue> = {
   email: '',
   phone: '',
   image: '',
+  file: '',
+  audio: '',
   link: '',
   calculation: '',
   autoNumber: '',

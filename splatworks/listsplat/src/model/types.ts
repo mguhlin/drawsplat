@@ -14,6 +14,8 @@ export type FieldType =
   | 'email'
   | 'phone'
   | 'image'
+  | 'file'
+  | 'audio'
   | 'link'
   | 'calculation'
   | 'autoNumber'

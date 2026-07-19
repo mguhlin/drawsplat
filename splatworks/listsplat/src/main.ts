@@ -67,7 +67,8 @@ type DialogName =
   | 'sort'
   | 'views'
   | 'bulkFill'
-  | 'charts';
+  | 'charts'
+  | 'camera';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -236,6 +237,9 @@ let chartType: 'bar' | 'pie' | 'line' = 'bar';
 let chartCategoryField = '';
 let chartValueMode: 'count' | 'sum' = 'count';
 let chartValueField = '';
+let audioRecorder: MediaRecorder | null = null;
+let cameraTarget: { recordId: string; fieldId: string } | null = null;
+let cameraStream: MediaStream | null = null;
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let pendingCsvKeyField = '';
 let pendingCsvDupMode: 'add' | 'skip' | 'update' = 'add';
@@ -737,6 +741,8 @@ function fieldTypeOptions(selected: FieldType = 'text'): string {
     ['phone', 'Phone'],
     ['link', 'Web address'],
     ['image', 'Image'],
+    ['file', 'File attachment'],
+    ['audio', 'Audio recording'],
     ['calculation', 'Calculation'],
     ['autoNumber', 'Auto number'],
     ['createdAt', 'Created time'],
@@ -774,6 +780,12 @@ function formatReadValue(field: ListSplatField | undefined, value: ListSplatCell
   }
   if (field.type === 'checkbox') {
     return value === true || value === 'true' ? 'Yes' : 'No';
+  }
+  if (field.type === 'file') {
+    return parseFileValue(String(value ?? ''))?.name ?? '';
+  }
+  if (field.type === 'audio') {
+    return value ? 'Audio recording' : '';
   }
   return String(value);
 }
@@ -829,9 +841,14 @@ function imageFields(table: ListSplatTable): ListSplatField[] {
   return orderedFields(table).filter((field) => field.type === 'image');
 }
 
+function mediaUrl(value: unknown): string {
+  const raw = String(value ?? '');
+  return /^(data:|https?:|blob:)/i.test(raw) ? raw : '';
+}
+
 function firstImageValue(table: ListSplatTable, record: ListSplatRecord): string {
   const imageField = imageFields(table)[0];
-  return imageField ? String(displayValue(table, record, imageField.id) ?? '') : '';
+  return imageField ? mediaUrl(displayValue(table, record, imageField.id)) : '';
 }
 
 function updateCurrentLayout(updates: { fieldOrder?: string[]; hiddenFieldIds?: string[]; locked?: boolean; columnWidths?: Record<string, number> }): void {
@@ -901,15 +918,38 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     }</div>`;
   }
   if (field?.type === 'image') {
-    const imageSrc = String(value ?? '');
+    const raw = String(value ?? '');
+    const imageSrc = /^(data:|https?:|blob:)/i.test(raw) ? raw : '';
     return `
       <div class="image-cell" tabindex="0" role="button" title="Click here and paste an image, or use Upload image." ${common}>
-        ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : `<span>${html(t('No image yet'))}</span>`}
-        <small>Paste an image here or upload one.</small>
-        <label class="image-upload-label">
-          ${html(t('Upload image'))}
-          <input class="image-input" type="file" accept="image/*" ${common}>
-        </label>
+        ${imageSrc ? `<img src="${html(imageSrc)}" alt="${html(field.description || field.name)}">` : `<span>${html(t('No image yet'))}</span>`}
+        <small>Paste, upload, or take a photo.</small>
+        <div class="image-actions">
+          <label class="image-upload-label">
+            ${html(t('Upload image'))}
+            <input class="image-input" type="file" accept="image/*" ${common}>
+          </label>
+          <button type="button" class="button ghost" data-action="camera-capture" data-record-id="${record.id}" data-field-id="${fieldId}">Take photo</button>
+        </div>
+      </div>
+    `;
+  }
+  if (field?.type === 'file') {
+    const parsed = parseFileValue(String(value ?? ''));
+    return `
+      <div class="file-cell" ${common}>
+        ${parsed ? `<a class="file-link" href="${html(parsed.url)}" download="${html(parsed.name)}">📎 ${html(parsed.name)}</a>` : '<span>No file yet</span>'}
+        <label class="image-upload-label">${parsed ? 'Replace' : 'Add file'}<input class="file-input" type="file" data-record-id="${record.id}" data-field-id="${fieldId}"></label>
+      </div>
+    `;
+  }
+  if (field?.type === 'audio') {
+    const rawAudio = String(value ?? '');
+    const src = /^(data:|https?:|blob:)/i.test(rawAudio) ? rawAudio : '';
+    return `
+      <div class="audio-cell" data-record-id="${record.id}" data-field-id="${fieldId}">
+        ${src ? `<audio class="no-advance" src="${html(src)}" controls preload="metadata"></audio>` : '<span>No recording</span>'}
+        <button type="button" class="button ghost" data-action="record-audio" data-record-id="${record.id}" data-field-id="${fieldId}">${src ? 'Re-record' : '● Record'}</button>
       </div>
     `;
   }
@@ -1111,7 +1151,7 @@ function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string
   const renderCardField = (field: ListSplatField, record: ListSplatRecord): string => {
     const value = displayValue(table, record, field.id);
     if (field.type === 'image') {
-      const imageSrc = String(value ?? '');
+      const imageSrc = mediaUrl(value);
       return `
         <figure class="card-image-field">
           ${imageSrc ? `<img src="${html(imageSrc)}" alt="">` : '<span>No image yet</span>'}
@@ -1908,6 +1948,20 @@ function renderDialog(table: ListSplatTable): string {
   if (dialog === 'charts') {
     return renderChartsDialog(table);
   }
+  if (dialog === 'camera') {
+    return `
+      <div class="modal-backdrop">
+        <section class="modal" role="dialog" aria-modal="true" aria-label="Take a photo">
+          <h2>Take a photo</h2>
+          <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+          <div class="modal-actions">
+            <button type="button" class="button primary" data-action="camera-shoot">Capture</button>
+            <button type="button" data-action="close-dialog">Cancel</button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
 
   if (dialog === 'replace') {
     const previewRows = replacePreview.slice(0, 8);
@@ -2447,6 +2501,126 @@ function compressImageFile(file: File): Promise<string> {
     };
     reader.readAsDataURL(file);
   });
+}
+
+function parseFileValue(raw: string): { name: string; url: string } | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.url) return { name: parsed.name || 'file', url: parsed.url };
+  } catch {
+    // Not JSON — fall through.
+  }
+  if (raw.startsWith('data:')) return { name: 'file', url: raw };
+  return null;
+}
+
+function storeFileAttachment(recordId: string, fieldId: string, file: File): void {
+  const reader = new FileReader();
+  reader.onload = () => {
+    pushUndo('add file');
+    const value = JSON.stringify({ name: file.name, url: String(reader.result ?? '') });
+    project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, value));
+    saveAutosave(project);
+    const kb = Math.round(value.length / 1024);
+    lastMessage = kb > 900 ? `File attached (about ${kb} KB). Large files can slow autosave.` : 'File attached.';
+    render();
+  };
+  reader.onerror = () => { lastMessage = 'Could not read that file.'; render(); };
+  reader.readAsDataURL(file);
+}
+
+async function recordAudioToCell(recordId: string, fieldId: string): Promise<void> {
+  if (audioRecorder && audioRecorder.state === 'recording') {
+    audioRecorder.stop();
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia || typeof window.MediaRecorder === 'undefined') {
+    lastMessage = 'Audio recording is not available in this browser.';
+    render();
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const chunks: Blob[] = [];
+    const recorder = new MediaRecorder(stream);
+    audioRecorder = recorder;
+    recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+    recorder.onstop = () => {
+      stream.getTracks().forEach((track) => track.stop());
+      audioRecorder = null;
+      const reader = new FileReader();
+      reader.onload = () => {
+        pushUndo('record audio');
+        project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, String(reader.result ?? '')));
+        saveAutosave(project);
+        lastMessage = 'Recording saved.';
+        render();
+      };
+      reader.readAsDataURL(new Blob(chunks, { type: 'audio/webm' }));
+    };
+    recorder.start();
+    lastMessage = 'Recording… press the button again to stop (auto-stops at 60s).';
+    render();
+    window.setTimeout(() => {
+      if (audioRecorder && audioRecorder.state === 'recording') audioRecorder.stop();
+    }, 60_000);
+  } catch {
+    lastMessage = 'Microphone permission was blocked.';
+    render();
+  }
+}
+
+async function startCamera(): Promise<void> {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    lastMessage = 'Camera is not available in this browser.';
+    dialog = 'none';
+    render();
+    return;
+  }
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = appRoot.querySelector<HTMLVideoElement>('#cameraVideo');
+    if (video) {
+      video.srcObject = cameraStream;
+      await video.play().catch(() => undefined);
+    }
+  } catch {
+    stopCamera();
+    lastMessage = 'Camera permission was blocked.';
+    dialog = 'none';
+    render();
+  }
+}
+
+function stopCamera(): void {
+  cameraStream?.getTracks().forEach((track) => track.stop());
+  cameraStream = null;
+}
+
+function captureCameraPhoto(): void {
+  const video = appRoot.querySelector<HTMLVideoElement>('#cameraVideo');
+  if (!video || !cameraTarget || !video.videoWidth) {
+    return;
+  }
+  const canvas = document.createElement('canvas');
+  const maxDim = 1280;
+  const scale = Math.min(1, maxDim / Math.max(video.videoWidth, video.videoHeight));
+  canvas.width = Math.round(video.videoWidth * scale);
+  canvas.height = Math.round(video.videoHeight * scale);
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const { recordId, fieldId } = cameraTarget;
+  pushUndo('camera photo');
+  project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, dataUrl));
+  saveAutosave(project);
+  stopCamera();
+  cameraTarget = null;
+  dialog = 'none';
+  lastMessage = 'Photo captured.';
+  render();
 }
 
 function storeImageFile(recordId: string, fieldId: string, file: File, undoLabel: string): void {
@@ -3222,6 +3396,21 @@ appRoot.addEventListener('click', (event) => {
     activeRecordId = recordActionId;
     viewMode = 'form';
     render();
+  } else if (action === 'camera-capture') {
+    const rid = target.closest<HTMLElement>('[data-record-id]')?.dataset.recordId;
+    const fid = target.closest<HTMLElement>('[data-field-id]')?.dataset.fieldId;
+    if (rid && fid) {
+      cameraTarget = { recordId: rid, fieldId: fid };
+      dialog = 'camera';
+      render();
+      void startCamera();
+    }
+  } else if (action === 'camera-shoot') {
+    captureCameraPhoto();
+  } else if (action === 'record-audio') {
+    const rid = target.closest<HTMLElement>('[data-record-id]')?.dataset.recordId;
+    const fid = target.closest<HTMLElement>('[data-field-id]')?.dataset.fieldId;
+    if (rid && fid) void recordAudioToCell(rid, fid);
   } else if (action === 'open-related') {
     const relTable = target.closest<HTMLElement>('[data-rel-table]')?.dataset.relTable;
     const relRecord = target.closest<HTMLElement>('[data-rel-record]')?.dataset.relRecord;
@@ -3385,6 +3574,10 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'redo-change') {
     redoLastChange();
   } else if (action === 'close-dialog') {
+    if (dialog === 'camera') {
+      stopCamera();
+      cameraTarget = null;
+    }
     dialog = 'none';
     replacePreview = [];
     pendingCsvTable = null;
@@ -3511,6 +3704,10 @@ appRoot.addEventListener('change', (event) => {
     render();
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
+  } else if (target.matches('.file-input') && target instanceof HTMLInputElement && target.files?.[0]) {
+    const recordId = target.dataset.recordId;
+    const fieldId = target.dataset.fieldId;
+    if (recordId && fieldId) storeFileAttachment(recordId, fieldId, target.files[0]);
   } else if (target.matches('.multi-option') && target instanceof HTMLInputElement) {
     const cell = target.closest<HTMLElement>('.multi-cell');
     const recordId = target.dataset.recordId;
