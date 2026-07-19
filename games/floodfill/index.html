@@ -45,7 +45,7 @@
   .metric .label { display: block; font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; font-weight: 800; }
   .metric .val { display: block; font-size: 1.3rem; font-weight: 900; color: var(--accent); }
   .canvas-wrap { padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; }
-  canvas { display: block; width: 100%; max-width: 500px; aspect-ratio: 1; margin: 0 auto; image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 8px; }
+  canvas { display: block; width: 100%; max-width: min(500px, 46vh); aspect-ratio: 1; margin: 0 auto; image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 8px; }
   .palette { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 14px; }
   .swatch { width: 56px; height: 56px; border-radius: 12px; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.08); cursor: pointer; transition: transform .12s; }
   .swatch:hover { transform: scale(1.05); }

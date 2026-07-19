@@ -43,7 +43,7 @@
   .metric .label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-weight: 800; margin-right: 6px; }
   .metric .val { font-size: 1.2rem; font-weight: 900; color: var(--accent); }
   .canvas-wrap { padding: 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; }
-  canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 8/5; margin: 0 auto; touch-action: none; background: #fafaff; border-radius: 8px; cursor: grab; }
+  canvas { display: block; width: 100%; max-width: min(800px, 84vh); aspect-ratio: 8/5; margin: 0 auto; touch-action: none; background: #fafaff; border-radius: 8px; cursor: grab; }
   canvas.dragging { cursor: grabbing; }
   .hint { margin-top: 10px; text-align: center; color: var(--muted); font-size: .85rem; }
   .hint strong { color: var(--accent); }
