@@ -440,6 +440,21 @@
     .cm-group.dragging { cursor: grabbing; }
     .cm-group text { user-select: none; pointer-events: none; }
     .cm-rubber { pointer-events: none; }
+    .canvas-context-menu {
+      position: fixed;
+      z-index: 1000;
+      min-width: 210px;
+      padding: 7px;
+      border: 1px solid #d7d0e8;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 14px 38px rgba(30, 27, 75, .22);
+    }
+    .canvas-context-menu[hidden] { display: none; }
+    .canvas-context-menu button { display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 7px; background: transparent; text-align: left; font-weight: 750; cursor: pointer; }
+    .canvas-context-menu button:hover:not(:disabled) { background: #f4f1ff; color: #5b21b6; }
+    .canvas-context-menu button:disabled { color: #9ca3af; cursor: default; }
+    .canvas-context-menu hr { margin: 5px 3px; border: 0; border-top: 1px solid #e5e7eb; }
     .template-select {
       width: 100%;
       min-height: 40px;
@@ -1083,6 +1098,9 @@
             <button class="tool-btn" id="groupSelectedBtn" type="button" data-i18n="button.groupSelected">Group Selected</button>
             <button class="tool-btn" id="ungroupBtn" type="button" data-i18n="button.ungroup">Ungroup</button>
             <button class="tool-btn" id="editGroupLabelBtn" type="button" data-i18n="button.editGroupLabel">Edit Group Label</button>
+            <button class="tool-btn" id="duplicateBtn" type="button">Duplicate Selected</button>
+            <button class="tool-btn" id="copyNodesBtn" type="button">Copy Selected</button>
+            <button class="tool-btn" id="pasteNodesBtn" type="button">Paste Nodes</button>
             <button class="tool-btn danger" id="deleteBtn" type="button" data-i18n="button.delete">Delete Selected</button>
             <div class="studio-menu-divider" role="separator"></div>
             <button class="button" id="copyPngBtn" type="button" data-i18n="button.copyPng">Copy PNG</button>
@@ -1199,6 +1217,19 @@
               <button class="node-popover-btn" type="button" data-click-target="clearImageBtn" title="Detach image" aria-label="Detach image">▧−</button>
             </div>
           </div>
+          <div class="canvas-context-menu" id="canvasContextMenu" hidden role="menu" aria-label="Selected bubble actions">
+            <button type="button" data-context-action="copy">Copy selected <span aria-hidden="true">⌘C</span></button>
+            <button type="button" data-context-action="duplicate">Duplicate selected <span aria-hidden="true">⌘D</span></button>
+            <button type="button" data-context-action="paste">Paste bubbles <span aria-hidden="true">⌘V</span></button>
+            <hr>
+            <button type="button" data-context-action="align-horizontal">Align horizontally</button>
+            <button type="button" data-context-action="align-vertical">Align vertically</button>
+            <button type="button" data-context-action="same-size">Make same size</button>
+            <button type="button" data-context-action="enlarge">Enlarge selected bubbles</button>
+            <button type="button" data-context-action="shrink">Shrink selected bubbles</button>
+            <hr>
+            <button type="button" data-context-action="delete">Delete selected</button>
+          </div>
         </div>
 
         <div class="control-dock instruction-dock" data-i18n-aria-label="panel.tools.aria" aria-label="Tools">
@@ -1261,6 +1292,7 @@
   const studioMenus = Array.from(document.querySelectorAll('.studio-menu-bar .studio-menu'));
   const quickMenus = Array.from(document.querySelectorAll('.quick-action-menu'));
   const nodePopover = document.getElementById('nodePopover');
+  const canvasContextMenu = document.getElementById('canvasContextMenu');
   const quickUndoBtn = document.getElementById('quickUndoBtn');
   const quickRedoBtn = document.getElementById('quickRedoBtn');
 
@@ -1384,6 +1416,9 @@
     history: {undo: [], redo: []},
     activeSection: null  // null = show all; string = focus that section, fade others
   };
+  const NODE_CLIPBOARD_TYPE = 'drawsplat-concept-map-nodes';
+  let nodeClipboard = null;
+  let pasteGeneration = 0;
 
   // Section-filter helpers — when activeSection is set, nodes outside that
   // section render with the .section-faded CSS class. Connectors fade if
@@ -2371,6 +2406,8 @@
     document.getElementById('groupSelectedBtn').disabled = !(anyNode && sel.ids.length >= 2);
     document.getElementById('ungroupBtn').disabled = !grp;
     document.getElementById('editGroupLabelBtn').disabled = !grp;
+    document.getElementById('duplicateBtn').disabled = !anyNode;
+    document.getElementById('copyNodesBtn').disabled = !anyNode;
     document.getElementById('deleteBtn').disabled = !sel.kind;
   }
 
@@ -2627,20 +2664,6 @@
       return;
     }
 
-    if (nodeLabelEl && nodeEl) {
-      const n = nodeById(nodeEl.dataset.id);
-      if (!n) return;
-      if (n.link && (e.ctrlKey || e.metaKey)) {
-        window.open(n.link, '_blank', 'noopener,noreferrer');
-        return;
-      }
-      setSelection('node', [n.id]);
-      render();
-      beginNodeInlineEdit(n.id);
-      e.preventDefault();
-      return;
-    }
-
     if (nodeEl) {
       const n = nodeById(nodeEl.dataset.id);
       if (!n) return;
@@ -2658,7 +2681,7 @@
       if (!alreadySel) setSelection('node', [n.id]);
       const dragNodes = collectDragNodeIds(n.id);
       const p = pointerToSvg(e);
-      state.drag = {kind: 'node', ids: dragNodes, lastX: p.x, lastY: p.y, moved: false};
+      state.drag = {kind: 'node', ids: dragNodes, lastX: p.x, lastY: p.y, moved: false, editOnClick: !!nodeLabelEl && state.selection.ids.length === 1};
       try { svg.setPointerCapture(e.pointerId); } catch(_) {}
       nodeEl.classList.add('dragging');
       render();
@@ -2763,8 +2786,10 @@
     if (state.pan) { endPan(e); return; }
     if (state.drag) {
       try { svg.releasePointerCapture(e.pointerId); } catch(_) {}
+      const editId = !state.drag.moved && state.drag.editOnClick ? state.drag.ids[0] : null;
       state.drag = null;
       render();
+      if (editId) beginNodeInlineEdit(editId);
       return;
     }
     if (state.rubber) {
@@ -3103,6 +3128,163 @@
     setStatus(t('status.imageCleared'), 'info');
     render();
   });
+
+  function buildNodeClipboard(){
+    const nodes = selectedNodes();
+    if (!nodes.length) return null;
+    const ids = new Set(nodes.map(n => n.id));
+    return {
+      type: NODE_CLIPBOARD_TYPE,
+      version: 1,
+      nodes: nodes.map(n => Object.assign({}, n)),
+      connectors: state.connectors.filter(c => ids.has(c.fromId) && ids.has(c.toId)).map(c => Object.assign({}, c)),
+      groups: state.groups.filter(g => g.nodeIds.length && g.nodeIds.every(id => ids.has(id))).map(g => Object.assign({}, g, {nodeIds: g.nodeIds.slice()}))
+    };
+  }
+
+  function copySelectedNodes(){
+    const payload = buildNodeClipboard();
+    if (!payload) return false;
+    nodeClipboard = payload;
+    pasteGeneration = 0;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(JSON.stringify(payload)).catch(() => {});
+      }
+    } catch (_) { /* The in-app clipboard remains available. */ }
+    setStatus('Copied ' + payload.nodes.length + ' selected node(s).', 'success');
+    return true;
+  }
+
+  function validNodeClipboard(value){
+    return value && value.type === NODE_CLIPBOARD_TYPE && Array.isArray(value.nodes) && value.nodes.length;
+  }
+
+  async function readNodeClipboard(){
+    if (validNodeClipboard(nodeClipboard)) return nodeClipboard;
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const parsed = JSON.parse(text);
+          if (validNodeClipboard(parsed)) return parsed;
+        }
+      }
+    } catch (_) { /* Fall back to the in-app clipboard. */ }
+    return null;
+  }
+
+  function insertNodeClipboard(payload, fixedOffset){
+    if (!validNodeClipboard(payload)) return false;
+    recordHistory();
+    pasteGeneration += 1;
+    const offset = fixedOffset || 36 * pasteGeneration;
+    const idMap = new Map();
+    const copies = payload.nodes.map(source => {
+      const copy = Object.assign({}, source, {
+        id: uid('n'),
+        x: Number(source.x || 0) + offset,
+        y: Number(source.y || 0) + offset,
+        isRoot: false
+      });
+      idMap.set(source.id, copy.id);
+      return copy;
+    });
+    state.nodes.push(...copies);
+    (payload.connectors || []).forEach(source => {
+      const fromId = idMap.get(source.fromId), toId = idMap.get(source.toId);
+      if (!fromId || !toId) return;
+      state.connectors.push(Object.assign({}, source, {id: uid('c'), fromId, toId}));
+    });
+    (payload.groups || []).forEach(source => {
+      const nodeIds = (source.nodeIds || []).map(id => idMap.get(id)).filter(Boolean);
+      if (nodeIds.length < 2) return;
+      state.groups.push(Object.assign({}, source, {id: uid('g'), nodeIds}));
+    });
+    setSelection('node', copies.map(n => n.id));
+    render();
+    setStatus('Pasted ' + copies.length + ' node(s). Drag any selected box to move the set.', 'success');
+    return true;
+  }
+
+  function duplicateSelectedNodes(){
+    const payload = buildNodeClipboard();
+    if (!payload) return;
+    nodeClipboard = payload;
+    pasteGeneration = 0;
+    insertNodeClipboard(payload, 36);
+  }
+
+  document.getElementById('duplicateBtn').addEventListener('click', duplicateSelectedNodes);
+  document.getElementById('copyNodesBtn').addEventListener('click', copySelectedNodes);
+  document.getElementById('pasteNodesBtn').addEventListener('click', async () => {
+    const payload = await readNodeClipboard();
+    if (!payload) return setStatus('Copy one or more nodes before pasting.', 'info');
+    insertNodeClipboard(payload);
+  });
+
+  function transformSelectedNodes(action){
+    const nodes = selectedNodes();
+    if (!nodes.length) return;
+    if ((action === 'align-horizontal' || action === 'align-vertical' || action === 'same-size') && nodes.length < 2) {
+      return setStatus('Select two or more bubbles for that layout action.', 'info');
+    }
+    recordHistory();
+    if (action === 'align-horizontal') {
+      const y = nodes.reduce((sum, n) => sum + n.y, 0) / nodes.length;
+      nodes.forEach(n => { n.y = y; });
+    } else if (action === 'align-vertical') {
+      const x = nodes.reduce((sum, n) => sum + n.x, 0) / nodes.length;
+      nodes.forEach(n => { n.x = x; });
+    } else if (action === 'same-size') {
+      const reference = nodes[0];
+      nodes.forEach(n => { n.w = reference.w; n.h = Math.max(reference.h, computeLayoutHeight(n)); });
+    } else {
+      const factor = action === 'enlarge' ? 1.12 : 0.89;
+      nodes.forEach(n => {
+        n.w = clampNumber(n.w * factor, NODE_MIN_W, NODE_MAX_W, n.w);
+        const minH = Math.max(NODE_MIN_H, computeLayoutHeight(n));
+        n.h = clampNumber(n.h * factor, minH, NODE_MAX_H, n.h);
+      });
+    }
+    render();
+    setStatus('Updated ' + nodes.length + ' selected bubble(s).', 'success');
+  }
+
+  function hideCanvasContextMenu(){ canvasContextMenu.hidden = true; }
+  svg.addEventListener('contextmenu', event => {
+    if (document.body.classList.contains('embed-mode')) return;
+    event.preventDefault();
+    const nodeEl = event.target.closest('.cm-node');
+    if (nodeEl && !isSelected('node', nodeEl.dataset.id)) setSelection('node', [nodeEl.dataset.id]);
+    render();
+    const count = selectedNodes().length;
+    canvasContextMenu.querySelectorAll('[data-context-action="copy"],[data-context-action="duplicate"],[data-context-action="delete"]').forEach(button => { button.disabled = !count; });
+    canvasContextMenu.querySelectorAll('[data-context-action="align-horizontal"],[data-context-action="align-vertical"],[data-context-action="same-size"]').forEach(button => { button.disabled = count < 2; });
+    canvasContextMenu.querySelectorAll('[data-context-action="enlarge"],[data-context-action="shrink"]').forEach(button => { button.disabled = !count; });
+    canvasContextMenu.hidden = false;
+    const rect = canvasContextMenu.getBoundingClientRect();
+    canvasContextMenu.style.left = Math.max(8, Math.min(event.clientX, innerWidth - rect.width - 8)) + 'px';
+    canvasContextMenu.style.top = Math.max(8, Math.min(event.clientY, innerHeight - rect.height - 8)) + 'px';
+  });
+  canvasContextMenu.addEventListener('click', async event => {
+    const button = event.target.closest('[data-context-action]');
+    if (!button || button.disabled) return;
+    const action = button.dataset.contextAction;
+    hideCanvasContextMenu();
+    if (action === 'copy') await copySelectedNodes();
+    else if (action === 'duplicate') duplicateSelectedNodes();
+    else if (action === 'paste') {
+      const payload = await readNodeClipboard();
+      if (payload) insertNodeClipboard(payload);
+      else setStatus('Copy one or more bubbles before pasting.', 'info');
+    } else if (action === 'delete') document.getElementById('deleteBtn').click();
+    else transformSelectedNodes(action);
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('#canvasContextMenu')) hideCanvasContextMenu();
+  });
+  document.addEventListener('scroll', hideCanvasContextMenu, true);
 
   document.getElementById('deleteBtn').addEventListener('click', () => {
     const sel = state.selection;
@@ -4174,7 +4356,7 @@
     if (!state.panToggle) canvasShell.classList.remove('pan-mode');
   });
 
-  document.addEventListener('keydown', e => {
+  document.addEventListener('keydown', async e => {
     if (state.editing) return;
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
@@ -4186,6 +4368,21 @@
     }
     if (ctrl && (e.key === 'y' || e.key === 'Y')) {
       e.preventDefault(); redo(); return;
+    }
+    if (ctrl && (e.key === 'c' || e.key === 'C') && selectedNodes().length) {
+      e.preventDefault();
+      await copySelectedNodes();
+      return;
+    }
+    if (ctrl && (e.key === 'v' || e.key === 'V')) {
+      e.preventDefault();
+      const payload = await readNodeClipboard();
+      if (payload) insertNodeClipboard(payload);
+      else setStatus('Copy one or more nodes before pasting.', 'info');
+      return;
+    }
+    if (ctrl && (e.key === 'd' || e.key === 'D') && selectedNodes().length) {
+      e.preventDefault(); duplicateSelectedNodes(); return;
     }
     if (ctrl && (e.key === 'a' || e.key === 'A')) {
       e.preventDefault();

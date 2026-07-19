@@ -45,6 +45,10 @@
     slideBgColor: document.getElementById('slideBgColor'),
     slideBarColor: document.getElementById('slideBarColor'),
     slideDefaultTextColor: document.getElementById('slideDefaultTextColor'),
+    themeAccentColor: document.getElementById('themeAccentColor'),
+    themeHighlightColor: document.getElementById('themeHighlightColor'),
+    themeDarkColor: document.getElementById('themeDarkColor'),
+    themeCanvasColor: document.getElementById('themeCanvasColor'),
     imageFile: document.getElementById('imageFileInput'),
     videoFile: document.getElementById('videoFileInput'),
     audioFile: document.getElementById('audioFileInput'),
@@ -150,6 +154,54 @@
       slide.title = 'Table';
       slide.elements.push(textElement('Table title', 90, 82, 820, 92, 46, true));
       slide.elements.push(tableElement(140, 180, 1080, 420));
+    } else if (template === 'agenda') {
+      slide.title = 'Agenda';
+      slide.elements.push(textElement('Today’s agenda', 90, 82, 900, 92, 46, true));
+      slide.elements.push(listElement(['Opening idea', 'Key concepts', 'Practice or discussion', 'Next steps'], 135, 200, 980, 430));
+    } else if (template === 'two-column') {
+      slide.title = 'Two Columns';
+      slide.elements.push(textElement('Two-part story', 90, 82, 900, 92, 46, true));
+      slide.elements.push(textElement('Left idea\nAdd evidence or examples here.', 110, 210, 620, 390, 32, true));
+      slide.elements.push(textElement('Right idea\nAdd evidence or examples here.', 870, 210, 620, 390, 32, true));
+    } else if (template === 'three-cards') {
+      slide.title = 'Three Cards';
+      slide.elements.push(textElement('Three key ideas', 90, 82, 900, 92, 46, true));
+      [120, 580, 1040].forEach((x, i) => {
+        const card = shapeElement(x, 220, 360, 350, 'Idea ' + (i + 1) + '\nShort explanation');
+        card.fill = ['#ede9fe', '#dbeafe', '#dcfce7'][i];
+        slide.elements.push(card);
+      });
+    } else if (template === 'steps') {
+      slide.title = 'Numbered Steps';
+      slide.elements.push(textElement('A clear process', 90, 82, 900, 92, 46, true));
+      slide.elements.push(textElement('1', 130, 220, 100, 100, 58, true, '#7c3aed'));
+      slide.elements.push(textElement('Start\nDescribe the first action.', 250, 220, 300, 170, 30, true));
+      slide.elements.push(textElement('2', 600, 220, 100, 100, 58, true, '#7c3aed'));
+      slide.elements.push(textElement('Build\nDescribe the middle action.', 720, 220, 300, 170, 30, true));
+      slide.elements.push(textElement('3', 1070, 220, 100, 100, 58, true, '#7c3aed'));
+      slide.elements.push(textElement('Finish\nDescribe the result.', 1190, 220, 300, 170, 30, true));
+    } else if (template === 'do-dont') {
+      slide.title = 'Do and Do Not';
+      slide.elements.push(textElement('Helpful guardrails', 90, 82, 900, 92, 46, true));
+      const yes = shapeElement(120, 210, 620, 410, 'DO\n- Recommended action\n- Recommended action\n- Recommended action');
+      yes.fill = '#dcfce7'; yes.color = '#14532d';
+      const no = shapeElement(860, 210, 620, 410, 'DO NOT\n- Avoid this choice\n- Avoid this choice\n- Avoid this choice');
+      no.fill = '#fee2e2'; no.color = '#7f1d1d';
+      slide.elements.push(yes, no);
+    } else if (template === 'callout') {
+      slide.title = 'Key Callout';
+      slide.elements.push(textElement('KEY IDEA', 150, 170, 400, 60, 26, true, '#7c3aed'));
+      slide.elements.push(textElement('One memorable statement belongs here.', 150, 260, 1200, 240, 62, true));
+    } else if (template === 'image-caption') {
+      slide.title = 'Image and Caption';
+      slide.elements.push(shapeElement(80, 70, 1000, 700, 'Drop an image here'));
+      slide.elements.push(textElement('Image headline', 1140, 180, 360, 100, 42, true));
+      slide.elements.push(textElement('Use this space for context, a caption, or the key takeaway.', 1140, 310, 350, 260, 28));
+    } else if (template === 'reflection') {
+      slide.title = 'Reflection Prompt';
+      slide.bg = 'section';
+      slide.elements.push(textElement('Pause and reflect', 150, 180, 900, 90, 34, true, '#ddd6fe'));
+      slide.elements.push(textElement('What will you try next—and why?', 150, 290, 1180, 220, 62, true, '#ffffff'));
     } else if (template === 'resources') {
       slide.title = 'Resources';
       slide.elements.push(textElement('Resources', 90, 82, 820, 92, 46, true));
@@ -262,6 +314,7 @@
       version: 1,
       title: value.title || 'Untitled ShowSplat Deck',
       theme: value.theme || 'violet',
+      themeColors: value.themeColors && typeof value.themeColors === 'object' ? value.themeColors : null,
       footer: value.footer || 'ShowSplat™ by DrawSplat™',
       globalAudio: normalizeAudio(value.globalAudio),
       slides: value.slides.map(slide => ({
@@ -337,9 +390,13 @@
     els.status.textContent = message;
   }
 
+  function getDeckTheme() {
+    return Object.assign({}, themes[deck.theme] || themes.violet, deck.themeColors || {});
+  }
+
   function render() {
     normalizeSlideSelection();
-    const theme = themes[deck.theme] || themes.violet;
+    const theme = getDeckTheme();
     document.documentElement.style.setProperty('--accent', theme.accent);
     document.documentElement.style.setProperty('--accent-2', theme.accent2);
     document.documentElement.style.setProperty('--dark', theme.dark);
@@ -539,7 +596,7 @@
         });
       });
     } else if (el.type === 'html') {
-      content.innerHTML = '<div class="imported-webdeck-slide" contenteditable="true">' + sanitizeImportedHtml(el.html || '') + '</div>';
+      content.innerHTML = '<div class="imported-webdeck-slide ' + escapeAttr(el.importedClasses || '') + '" contenteditable="true">' + sanitizeImportedHtml(el.html || '') + '</div>';
       const importedRoot = content.querySelector('.imported-webdeck-slide');
       applyImportedScale(importedRoot, el.importScale || 1);
       if (el.autoFit !== false) {
@@ -918,9 +975,8 @@
       slide.footerTextColor = contrastText(bar);
       slide.defaultTextColor = text;
       slide.elements.forEach(el => {
-        if (el.type === 'text' || el.type === 'list' || el.type === 'shape' || el.type === 'link') {
-          if (!el.color || el.color === '#1f2937' || el.color === '#ffffff') el.color = text;
-        }
+        if (el.type === 'text' || el.type === 'list' || el.type === 'link') el.color = text;
+        if (el.type === 'shape' && (!el.color || el.color === '#1f2937' || el.color === '#ffffff')) el.color = text;
       });
     }, 'Applied slide colors.');
   }
@@ -1389,7 +1445,7 @@
   }
 
   function webDeckHtmlToDeck(html, fileName, baseUrl) {
-    const sourceSlides = extractWebDeckSlides(html);
+    const sourceSlides = extractAnyWebDeckSlides(html);
     if (!sourceSlides.length) throw new Error('No WebDeck slides found.');
     const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
@@ -1409,7 +1465,8 @@
   }
 
   function webDeckSlideToShowSplatSlide(source, importedCss, index, baseUrl) {
-    const bg = source.bg === 'hero' || source.bg === 'section' ? 'section' : source.bg === 'dark' ? 'dark' : 'light';
+    const sourceClasses = String(source.classes || source.bg || '');
+    const bg = /\b(hero|section|cover|divider)\b/.test(sourceClasses) ? 'section' : /\bdark\b/.test(sourceClasses) ? 'dark' : 'light';
     const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
     const footerInfo = extractImportedFooter(source.html);
     const html = sanitizeImportedHtml(footerInfo.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl);
@@ -1432,6 +1489,7 @@
         w: 1600,
         h: footerInfo.hasFooter ? 850 : 900,
         html,
+        importedClasses: sourceClasses.replace(/\b(current|active|slide)\b/g, '').trim(),
         autoFit: true,
         importScale: 1,
         fontFamily: 'Inter, Arial, sans-serif',
@@ -1449,7 +1507,7 @@
 
   function extractImportedFooter(html) {
     const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
-    const footer = doc.querySelector('.footer, [data-showsplat-footer="true"]');
+    const footer = doc.querySelector('.footer, .slide-footer, [data-showsplat-footer="true"]');
     if (!footer) return { hasFooter: false, html: String(html || ''), text: '', background: '', color: '' };
     const spans = Array.from(footer.querySelectorAll('span'));
     const text = (spans[0]?.textContent || footer.textContent || '').replace(/\s+\d+\s*\/\s*\d+\s*$/, '').trim();
@@ -1474,9 +1532,35 @@
     return parseSlideArraySource(slideSource);
   }
 
+  function extractStaticWebDeckSlides(html) {
+    const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+    return Array.from(doc.querySelectorAll('.deck > section.slide, section.slide')).map((section, index) => {
+      const copy = section.cloneNode(true);
+      const notes = copy.querySelector('.notes');
+      const footer = copy.querySelector('.slide-footer');
+      const heading = copy.querySelector('h1,h2,h3,.slide-title');
+      const title = (heading?.textContent || 'Slide ' + (index + 1)).trim();
+      const noteText = (notes?.textContent || '').trim();
+      notes?.remove();
+      return {
+        title,
+        notes: noteText,
+        bg: /\b(cover|divider)\b/.test(section.className) ? 'section' : 'light',
+        classes: section.className,
+        html: copy.innerHTML,
+        staticFooter: footer?.outerHTML || ''
+      };
+    });
+  }
+
+  function extractAnyWebDeckSlides(html) {
+    const dataSlides = extractWebDeckSlides(html);
+    return dataSlides.length ? dataSlides : extractStaticWebDeckSlides(html);
+  }
+
   async function resolveImportHtml(html) {
     try {
-      if (extractWebDeckSlides(html).length) return { html, baseUrl: extractBaseUrl(html) };
+      if (extractAnyWebDeckSlides(html).length) return { html, baseUrl: extractBaseUrl(html) };
     } catch (err) {
       console.warn(err);
     }
@@ -2336,7 +2420,9 @@
       if (!selector || selector.startsWith('@')) return selector + '{' + body + '}';
       const scoped = selector.split(',').map(part => {
         const trimmed = part.trim();
-        if (!trimmed || /^(html|body|#deck|\.slide(?:[.:#\s]|$)|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
+        if (!trimmed || /^(html|body|#deck|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
+        if (trimmed === ':root') return '.imported-webdeck-slide';
+        if (/^\.slide(?:[.:#\s]|$)/.test(trimmed)) return trimmed.replace(/^\.slide/, '.imported-webdeck-slide');
         return '.imported-webdeck-slide ' + trimmed;
       }).filter(Boolean).join(',');
       return scoped ? scoped + '{' + body + '}' : '';
@@ -2365,18 +2451,16 @@
   }
 
   function buildWebDeck(passwordHash) {
-    const theme = themes[deck.theme] || themes.violet;
+    const theme = getDeckTheme();
     const exportSlides = deck.slides.filter(slide => !slide.hidden);
-    const slides = exportSlides.map((slide, index) => ({
-      title: slide.title,
-      notes: slide.notes,
-      bg: slide.bg,
-      html: '<div class="slide-bg" style="position:absolute;inset:0;background:' + escapeAttr(slide.backgroundColor || 'transparent') + ';color:' + escapeAttr(slide.defaultTextColor || 'inherit') + '">' + slideToWebDeckHtml(slide, index, exportSlides.length) + '</div>'
-    }));
+    const sections = exportSlides.map((slide, index) => {
+      const kind = slide.bg === 'section' ? (index === 0 ? 'cover' : 'divider') : slide.bg === 'dark' ? 'dark' : '';
+      return '<section class="slide ' + kind + (index === 0 ? ' current' : '') + '" data-title="' + escapeAttr(slide.title) + '"><div class="slide-body" style="background:' + escapeAttr(slide.backgroundColor || 'transparent') + ';color:' + escapeAttr(slide.defaultTextColor || 'inherit') + '">' + slideToWebDeckHtml(slide, index, exportSlides.length) + '</div><div class="notes"><p>' + escapeHtml(slide.notes || '') + '</p></div></section>';
+    }).join('');
     const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
     return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title><style>' +
       webDeckCss(theme) + importedCssForDeck() +
-      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><main id="deck"></main>' + globalAudio + '<div class="progress"><span id="progress"></span></div><nav class="bar"><strong>' + escapeHtml(deck.title) + '</strong><button id="prev">‹</button><div id="dots"></div><span id="count"></span><button id="next">›</button><button id="notesBtn">Notes</button><button id="fullBtn">Full</button></nav><aside id="notes"></aside><script>const PASSWORD_HASH="' + passwordHash + '";const SLIDES=' + JSON.stringify(slides) + ';' + webDeckJs() + '<\/script></body></html>';
+      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><div class="deck">' + sections + '</div>' + globalAudio + '<script>const PASSWORD_HASH="' + passwordHash + '";' + webDeckSpecJs() + '<\/script></body></html>';
   }
 
   function slideToWebDeckHtml(slide, index, totalSlides) {
@@ -2390,7 +2474,7 @@
       if (el.type === 'html') {
         const scale = clamp(Number(el.importScale) || 1, 0.1, 1);
         const scaleStyle = 'transform-origin:top left;transform:scale(' + scale + ');width:' + (100 / scale) + '%;height:' + (100 / scale) + '%;';
-        return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
+        return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide ' + escapeAttr(el.importedClasses || '') + '" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
       }
       if (el.type === 'list') return '<div class="obj" style="' + style + '"><ul>' + String(el.text || '').split('\n').filter(Boolean).map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul></div>';
       if (el.type === 'link') return '<a class="obj" style="' + style + '" href="' + escapeAttr(el.href || '#') + '" target="_blank" rel="noopener">' + escapeHtml(el.text || 'Link') + '</a>';
@@ -2405,17 +2489,39 @@
 
   function webDeckCss(theme) {
     return [
-      ':root{--accent:' + theme.accent + ';--dark:' + theme.dark + ';font-family:Inter,Arial,sans-serif;color:#1f2937;background:#111827}',
-      'body{margin:0;overflow:hidden}',
-      '.slide{position:fixed;inset:0;display:none;background:#fff}.slide.active{display:block}.slide.section,.slide.dark{background:linear-gradient(135deg,var(--dark),var(--accent));color:#fff}',
+      ':root{--navy:' + theme.dark + ';--gold:' + theme.accent + ';--gold-lt:' + theme.accent2 + ';--accent:' + theme.accent + ';--dark:' + theme.dark + ';--canvas:' + theme.bg + ';font-family:Inter,Arial,sans-serif;color:#1f2937;background:#111827}',
+      '*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#111827}.deck{position:fixed;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center}.slide{position:absolute;inset:0;display:none;overflow:hidden;background:var(--canvas)}.slide.current{display:flex;flex-direction:column}.slide.cover,.slide.divider,.slide.dark{background:linear-gradient(135deg,var(--dark),var(--accent));color:#fff}.slide-body{position:relative;flex:1;min-height:0}.notes{display:none}',
       '.obj{position:absolute;overflow:hidden;padding:8px;line-height:1.18}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.obj table{width:100%;height:100%;border-collapse:collapse}.obj td{border:1px solid #c7d2fe;padding:6px}',
       '.slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px}.slide-audio audio{width:260px}.global-audio{position:fixed;left:18px;bottom:18px;z-index:3;width:240px}',
-      '.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}',
+      '.footer,.slide-footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}',
       '.bar{position:fixed;left:50%;bottom:18px;z-index:5;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(17,24,39,.76);backdrop-filter:blur(12px);color:#fff;opacity:1;transition:opacity .18s,transform .18s}.bar:hover{opacity:1;transform:translateX(-50%)}body.controls-hidden .bar{opacity:0;pointer-events:none;transform:translate(-50%,130%)}.bar button{border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:7px 10px;font-weight:800}.bar strong{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.dot{width:10px;height:10px;border-radius:99px;border:0;background:#fff8;vertical-align:middle}.dot.active{width:28px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}',
       '#notes{position:fixed;left:24px;top:72px;width:min(420px,calc(100vw - 48px));max-height:calc(100vh - 110px);overflow:auto;border-radius:14px;background:#fff;color:#1f2937;box-shadow:0 18px 44px #0004;transform:translateY(-130%);pointer-events:none;transition:.2s;z-index:6}#notes.open{transform:translateY(0);pointer-events:auto}.notes-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;background:#f3f4f6;cursor:move;font-weight:800}.notes-head button{border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;padding:4px 8px}.notes-body{padding:16px}.notes-body p{white-space:pre-wrap}',
       '#lock{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:#111827;color:#fff}body.locked #lock{display:grid}',
-      '@media(max-width:640px){.bar strong{display:none}.bar{gap:5px}.dot{width:8px;height:8px}.dot.active{width:20px}.obj{font-size:max(16px,.8em)!important}.global-audio{display:none}}'
+      '#help{position:fixed;inset:0;z-index:8;display:none;place-items:center;background:#0009}#help.open{display:grid}#help>div{max-width:560px;padding:24px;border-radius:16px;background:#fff;color:#111827;line-height:1.55}#live{position:fixed;left:-9999px}.presenter-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;padding:18px}.presenter-notes{white-space:pre-wrap;font-size:22px;line-height:1.5}',
+      '@media(max-width:700px),(min-resolution:2dppx) and (max-width:900px){body{overflow:auto;background:#eef2f7}.deck{position:static;width:auto;height:auto;transform:none!important}.slide,.slide.current{position:relative;display:flex;min-height:100vh;margin:0 0 18px}.obj{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;transform:none!important;font-size:max(18px,.72em)!important}.slide-body{padding:24px}.global-audio{display:none}.bar{position:fixed}.footer,.slide-footer{position:relative;margin-top:auto}}',
+      '@media print{@page{size:landscape;margin:0}body{overflow:visible;background:#fff}.deck{position:static;width:1280px;height:auto;transform:none!important}.slide{position:relative;display:flex;width:1280px;height:720px;page-break-after:always}.bar,.progress,#help,.global-audio{display:none!important}}'
+    ].join('');
+  }
+
+  function webDeckSpecJs() {
+    return [
+      'let i=Math.max(0,(parseInt(location.hash.slice(1),10)||1)-1),presenterWin=null,start=Date.now();',
+      'const deck=document.querySelector(".deck"),slides=[...document.querySelectorAll(".slide")];',
+      'document.body.insertAdjacentHTML("beforeend",`<div class="progress"><span id="progress"></span></div><nav class="bar" aria-label="Presentation controls"><button id="prev">‹</button><span id="count"></span><button id="next">›</button><button id="notesBtn" title="Notes (S)">🗒</button><button id="presentBtn" title="Presenter (V)">🖥</button><button id="fullBtn" title="Fullscreen (F)">⛶</button><button id="helpBtn">?</button></nav><aside id="notes"></aside><div id="help"><div><h2>WebDeck shortcuts</h2><p>←/→ or Space: navigate · Home/End: first/last · S: notes · V: presenter · F: fullscreen · P: print/PDF · ?: help</p><button id="helpClose">Close</button></div></div><div id="live" aria-live="polite"></div>`);',
+      'const count=document.getElementById("count"),prog=document.getElementById("progress"),notes=document.getElementById("notes"),help=document.getElementById("help");',
+      'async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}',
+      'async function unlock(){if(!PASSWORD_HASH)return;document.body.classList.add("locked");const p=prompt("Password");if(await sha(p||"")===PASSWORD_HASH)document.body.classList.remove("locked");else document.getElementById("lock").textContent="Password required. Reload to try again."}',
+      'function esc(s){return String(s||"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\"\\\"\":\"&quot;\"}[c]))}',
+      'function title(){return slides[i].dataset.title||slides[i].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+1)}function note(){return slides[i].querySelector(".notes")?.textContent.trim()||"No notes."}',
+      'function fit(){if(innerWidth<700)return deck.style.transform="none";const s=Math.min(innerWidth/1280,innerHeight/720);deck.style.transform=`translate(-50%,-50%) scale(${s})`}',
+      'function updateNotes(){notes.innerHTML=`<div class="notes-head"><span>Notes</span><button id="closeNotes">Close</button></div><div class="notes-body"><strong>${esc(title())}</strong><p>${esc(note())}</p></div>`;document.getElementById("closeNotes").onclick=()=>notes.classList.remove("open")}',
+      'function sendPresenter(){if(!presenterWin||presenterWin.closed)return;presenterWin.document.body.innerHTML=`<main><h1>${esc(title())}</h1><p>Slide ${i+1} of ${slides.length} · ${Math.floor((Date.now()-start)/60000)} min</p><hr><div>${esc(note())}</div></main>`}',
+      'function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,x)=>s.classList.toggle("current",x===i));count.textContent=(i+1)+" / "+slides.length;prog.style.width=((i+1)/slides.length*100)+"%";location.hash=String(i+1);document.getElementById("live").textContent=`Slide ${i+1} of ${slides.length}: ${title()}`;updateNotes();sendPresenter()}',
+      'function openPresenter(){presenterWin=window.open("","webdeck-presenter","popup=yes,width=1100,height=700");if(presenterWin){presenterWin.document.head.innerHTML=`<title>Presenter</title><style>body{margin:0;padding:36px;background:#071527;color:#e7eefb;font:22px/1.5 Arial}hr{border-color:#ffffff33}div{white-space:pre-wrap;font-size:26px}</style>`;sendPresenter()}}',
+      'prev.onclick=()=>show(i-1);next.onclick=()=>show(i+1);notesBtn.onclick=()=>notes.classList.toggle("open");presentBtn.onclick=openPresenter;fullBtn.onclick=()=>document.documentElement.requestFullscreen?.();helpBtn.onclick=()=>help.classList.add("open");helpClose.onclick=()=>help.classList.remove("open");',
+      'document.addEventListener("keydown",e=>{if(["ArrowRight"," ","PageDown"].includes(e.key))show(i+1);if(["ArrowLeft","PageUp"].includes(e.key))show(i-1);if(e.key==="Home")show(0);if(e.key==="End")show(slides.length-1);if(e.key.toLowerCase()==="s")notes.classList.toggle("open");if(e.key.toLowerCase()==="v")openPresenter();if(e.key.toLowerCase()==="f")document.documentElement.requestFullscreen?.();if(e.key.toLowerCase()==="p")print();if(e.key==="?")help.classList.toggle("open")});',
+      'addEventListener("resize",fit);addEventListener("hashchange",()=>{const n=parseInt(location.hash.slice(1),10);if(n&&n-1!==i)show(n-1)});unlock();fit();show(i);window.__deck={show,next:()=>show(i+1),prev:()=>show(i-1),presenter:openPresenter};'
     ].join('');
   }
 
@@ -2611,8 +2717,24 @@
     }
     if (action === 'theme-gallery') {
       els.footerText.value = deck.footer || '';
+      const theme = getDeckTheme();
+      els.themeAccentColor.value = normalizeColor(theme.accent);
+      els.themeHighlightColor.value = normalizeColor(theme.accent2);
+      els.themeDarkColor.value = normalizeColor(theme.dark);
+      els.themeCanvasColor.value = normalizeColor(theme.bg);
       syncSlideColorInputs();
       els.themeDialog.showModal();
+    }
+    if (action === 'apply-theme-colors') {
+      deck.themeColors = {
+        accent: els.themeAccentColor.value,
+        accent2: els.themeHighlightColor.value,
+        dark: els.themeDarkColor.value,
+        bg: els.themeCanvasColor.value
+      };
+      saveSoon();
+      render();
+      setStatus('Applied custom colors to the deck theme.');
     }
     if (action === 'apply-footer') {
       deck.footer = els.footerText.value;
@@ -2806,6 +2928,7 @@
     const themeTarget = event.target.closest('[data-theme]');
     if (themeTarget) {
       deck.theme = themeTarget.dataset.theme;
+      deck.themeColors = null;
       saveSoon();
       render();
     }

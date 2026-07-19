@@ -8,7 +8,7 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260718-2">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -137,7 +137,7 @@
       <button data-action="set-selected-bg-section">Selected slides: purple</button>
       <button data-action="toggle-sidebar">Toggle inspector</button>
     </div></details>
-    <details class="menu"><summary>Templates</summary><div class="menu-panel">
+    <details class="menu templates-menu"><summary>Templates</summary><div class="menu-panel">
       <button data-template="title">Title slide</button>
       <button data-template="title-content">Title and content</button>
       <button data-template="section">Section break</button>
@@ -150,6 +150,14 @@
       <button data-template="quote">Quote</button>
       <button data-template="table">Table slide</button>
       <button data-template="resources">Closing resources</button>
+      <button data-template="agenda">Agenda</button>
+      <button data-template="two-column">Two columns</button>
+      <button data-template="three-cards">Three cards</button>
+      <button data-template="steps">Numbered steps</button>
+      <button data-template="do-dont">Do / Do not</button>
+      <button data-template="callout">Key callout</button>
+      <button data-template="image-caption">Image and caption</button>
+      <button data-template="reflection">Reflection prompt</button>
     </div></details>
     <details class="menu"><summary>Help</summary><div class="menu-panel">
       <button data-action="show-help">ShowSplat help</button>
@@ -318,14 +326,22 @@
       <button type="button" data-theme="forest">Forest</button>
       <button type="button" data-theme="slate">Slate</button>
     </div>
+    <h3 class="dialog-subhead">Deck theme colors</h3>
+    <div class="color-grid">
+      <label>Accent <input id="themeAccentColor" type="color" value="#7c3aed"></label>
+      <label>Highlight <input id="themeHighlightColor" type="color" value="#ff9f2f"></label>
+      <label>Dark <input id="themeDarkColor" type="color" value="#1e1b4b"></label>
+      <label>Canvas <input id="themeCanvasColor" type="color" value="#ffffff"></label>
+    </div>
+    <button type="button" data-action="apply-theme-colors">Apply deck theme colors</button>
     <h3 class="dialog-subhead">Selected slide colors</h3>
     <div class="slide-palette" aria-label="Slide color palettes">
-      <button type="button" data-slide-palette="paper">Paper</button>
-      <button type="button" data-slide-palette="lavender">Lavender</button>
-      <button type="button" data-slide-palette="mint">Mint</button>
-      <button type="button" data-slide-palette="sky">Sky</button>
-      <button type="button" data-slide-palette="peach">Peach</button>
-      <button type="button" data-slide-palette="charcoal">Charcoal</button>
+      <button type="button" data-slide-palette="paper"><span>Paper</span></button>
+      <button type="button" data-slide-palette="lavender"><span>Lavender</span></button>
+      <button type="button" data-slide-palette="mint"><span>Mint</span></button>
+      <button type="button" data-slide-palette="sky"><span>Sky</span></button>
+      <button type="button" data-slide-palette="peach"><span>Peach</span></button>
+      <button type="button" data-slide-palette="charcoal"><span>Charcoal</span></button>
     </div>
     <div class="color-grid">
       <label>Slide <input id="slideBgColor" type="color" value="#ffffff"></label>
@@ -346,6 +362,6 @@
 
 <script src="../../vendor/jszip.min.js"></script>
 <script src="../../vendor/pdf.min.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=20260718-2"></script>
 </body>
 </html>

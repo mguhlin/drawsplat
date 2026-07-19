@@ -15,6 +15,9 @@ The first implementation is a static browser app with:
 - WebDeck HTML, PDF, ODP, and PowerPoint/PPTX import options
 - WebDeck HTML export with optional frontend password hash
 - WebDeck HTML import for compatible `SLIDES` array decks
+- canonical WebDeck import/export using direct `<section class="slide">` markup,
+  embedded speaker notes, presenter view, reflow, print/PDF, and offline runtime
+- twenty starter slide templates and editable deck-wide theme colors
 - ODP and PowerPoint/PPTX export
 - AI-ready JSON instructions for generating editable ShowSplat/WebDeck content
 - browser print-to-PDF export
