@@ -34,6 +34,7 @@ import type { SheetMatrix } from './io/matrix';
 import { PictureGraph } from './picturegraph/PictureGraph';
 import { PresentationMode } from './present/PresentationMode';
 import { strings } from './i18n/strings';
+import { languages, useI18n } from './i18n/context';
 import { TemplatesLibrary } from './templates/TemplatesLibrary';
 import {
   spreadsheetTemplates,
@@ -167,18 +168,19 @@ type MenuItemConfig = string | { children: string[]; label: string };
 function buildMenuItems(
   items: MenuItemConfig[],
   onSelect: (label: string) => void,
+  t: (value: string) => string,
 ): DropdownMenuItem[] {
   return items.map((item) =>
     typeof item === 'string'
       ? {
-        label: item,
+        label: t(item),
         icon: menuIcons[item],
         onSelect: () => onSelect(item),
       }
     : {
-        label: item.label,
+        label: t(item.label),
         children: item.children.map((child) => ({
-          label: child,
+          label: t(child),
           icon: menuIcons[child],
           onSelect: () => onSelect(child),
         })),
@@ -187,6 +189,7 @@ function buildMenuItems(
 }
 
 export function App() {
+  const { lang, setLang, t } = useI18n();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState('');
   const [dialogKind, setDialogKind] = useState<DialogKind>(null);
@@ -427,36 +430,48 @@ export function App() {
           </div>
         </div>
         <div className="header-actions" aria-label="Quick actions">
-          <Tooltip text="Start a new classroom sheet">
+          <Tooltip text={t('Start a new classroom sheet')}>
             <IconButton
               icon={<FilePlus2 aria-hidden="true" size={22} />}
               onClick={() => dispatchGridAction({ action: 'new-sheet' })}
             >
-              New
+              {t('New')}
             </IconButton>
           </Tooltip>
-          <Tooltip text="Open a spreadsheet file">
+          <Tooltip text={t('Open a spreadsheet file')}>
             <IconButton
               icon={<FolderOpen aria-hidden="true" size={22} />}
               onClick={() => dispatchGridAction({ action: 'open-file' })}
             >
-              Open
+              {t('Open')}
             </IconButton>
           </Tooltip>
-          <Tooltip text="Save work to this device">
+          <Tooltip text={t('Save work to this device')}>
             <IconButton
               icon={<Save aria-hidden="true" size={22} />}
               onClick={() => dispatchGridAction({ action: 'save-file' })}
             >
-              Save
+              {t('Save')}
             </IconButton>
           </Tooltip>
+          <select
+            className="language-select"
+            aria-label="Language / Idioma / Ngôn ngữ / اللغة / 语言 / زبان"
+            value={lang}
+            onChange={(event) => setLang(event.target.value as typeof lang)}
+          >
+            {languages.map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
       </header>
 
       <section className="chart-picker top-chart-tools" aria-label="Chart tools">
         <label className="chart-title-field">
-          Chart title
+          {t('Chart title')}
           <input
             value={chartTitle}
             onChange={(event) => changeChartTitle(event.target.value)}
@@ -470,8 +485,7 @@ export function App() {
             onClick={() => makeChart(type)}
           >
             <span className={`chart-preview ${type}`} aria-hidden="true" />
-            {type[0].toUpperCase()}
-            {type.slice(1)}
+            {t(type[0].toUpperCase() + type.slice(1))}
           </button>
         ))}
       </section>
@@ -479,9 +493,9 @@ export function App() {
       <nav className="top-toolbar" aria-label="Main toolbar">
         {toolbarMenus.map((menu) => (
           <DropdownMenu
-            items={buildMenuItems(menu.items, handleMenuAction)}
+            items={buildMenuItems(menu.items, handleMenuAction, t)}
             key={menu.label}
-            label={menu.label}
+            label={t(menu.label)}
           />
         ))}
       </nav>
@@ -502,7 +516,7 @@ export function App() {
               src={`${import.meta.env.BASE_URL}gridsplat_splash.png`}
             />
             <div className="splash-content">
-              <p className="eyebrow">Welcome</p>
+              <p className="eyebrow">{t('Welcome')}</p>
               <h2 id="welcome-title">GridSplat™</h2>
               <p className="splash-copy">
                 GridSplat™ by{' '}
@@ -511,12 +525,12 @@ export function App() {
                 >
                   DrawSplat™
                 </a>
-                . {strings.tagline}
+                . {t(strings.tagline)}
               </p>
               <div className="tour-list" aria-label="First tour steps">
-                <span>1. Type data in the grid.</span>
-                <span>2. Make a chart or picture graph.</span>
-                <span>3. Save locally or present to the class.</span>
+                <span>{t('1. Type data in the grid.')}</span>
+                <span>{t('2. Make a chart or picture graph.')}</span>
+                <span>{t('3. Save locally or present to the class.')}</span>
               </div>
               <div className="splash-actions">
                 <BigButton
@@ -526,7 +540,7 @@ export function App() {
                     showToast('New sheet ready.');
                   }}
                 >
-                  New Sheet
+                  {t('New Sheet')}
                 </BigButton>
                 <BigButton
                   icon={<FolderOpen aria-hidden="true" size={24} />}
@@ -536,14 +550,14 @@ export function App() {
                     dispatchGridAction({ action: 'open-file' });
                   }}
                 >
-                  Open a File
+                  {t('Open a File')}
                 </BigButton>
                 <BigButton
                   icon={<Sparkles aria-hidden="true" size={24} />}
                   variant="secondary"
                   onClick={() => setDialogKind('activity')}
                 >
-                  Try an Activity
+                  {t('Try an Activity')}
                 </BigButton>
               </div>
             </div>
@@ -553,7 +567,7 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'activity'}
-        title="Classroom Activities"
+        title={t('Classroom Activities')}
         onClose={() => setDialogKind(null)}
         variant="wide"
       >
@@ -562,7 +576,7 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'picture'}
-        title="Picture Graph"
+        title={t('Picture Graph')}
         onClose={() => setDialogKind(null)}
         variant="wide"
       >
@@ -571,7 +585,7 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'templates'}
-        title="Spreadsheet Templates"
+        title={t('Spreadsheet Templates')}
         onClose={() => setDialogKind(null)}
         variant="wide"
       >
@@ -580,7 +594,7 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'slides'}
-        title="Whiteboard Slides"
+        title={t('Whiteboard Slides')}
         onClose={() => setDialogKind(null)}
         variant="wide"
       >
@@ -589,38 +603,37 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'help'}
-        title="GridSplat™ Help"
+        title={t('GridSplat™ Help')}
         onClose={() => setDialogKind(null)}
       >
         <div className="help-list">
           <section>
-            <h3>Sheet basics</h3>
-            <p>Use arrow keys to move around the sheet.</p>
-            <p>Press Enter to edit a selected cell.</p>
-            <p>Paste a copied table to fill many cells at once.</p>
-            <p>Use Undo when you want to try again.</p>
+            <h3>{t('Sheet basics')}</h3>
+            <p>{t('Use arrow keys to move around the sheet.')}</p>
+            <p>{t('Press Enter to edit a selected cell.')}</p>
+            <p>{t('Paste a copied table to fill many cells at once.')}</p>
+            <p>{t('Use Undo when you want to try again.')}</p>
           </section>
           <section>
-            <h3>Charts and picture graphs</h3>
-            <p>Select data, choose a chart type, then export a PNG.</p>
+            <h3>{t('Charts and picture graphs')}</h3>
+            <p>{t('Select data, choose a chart type, then export a PNG.')}</p>
             <p>
-              Use the pictograph scale box to change what each picture means.
+              {t('Use the pictograph scale box to change what each picture means.')}
             </p>
           </section>
           <section>
-            <h3>Templates</h3>
+            <h3>{t('Templates')}</h3>
             <p>
-              Use everyday templates for reading logs, homework, science
-              observations, allowance tracking, check registers, budgets, and
-              gradebooks.
+              {t(
+                'Use everyday templates for reading logs, homework, science observations, allowance tracking, check registers, budgets, and gradebooks.',
+              )}
             </p>
           </section>
           <section>
-            <h3>Presentation and offline use</h3>
-            <p>Build whiteboard slides from the presentation panel.</p>
+            <h3>{t('Presentation and offline use')}</h3>
+            <p>{t('Build whiteboard slides from the presentation panel.')}</p>
             <p>
-              GridSplat™ can load again offline after the first successful
-              visit.
+              {t('GridSplat™ can load again offline after the first successful visit.')}
             </p>
           </section>
         </div>
@@ -628,23 +641,22 @@ export function App() {
 
       <Dialog
         isOpen={dialogKind === 'privacy'}
-        title="Privacy & Safety"
+        title={t('Privacy & Safety')}
         onClose={() => setDialogKind(null)}
       >
         <div className="help-list">
           <section>
-            <h3>No default cloud storage</h3>
+            <h3>{t('No default cloud storage')}</h3>
             <p>
-              Student work stays in the browser unless someone saves a file or
-              connects their own cloud account.
+              {t('Student work stays in the browser unless someone saves a file or connects their own cloud account.')}
             </p>
           </section>
           <section>
-            <h3>No trackers</h3>
-            <p>{strings.privacyNoTrackers}</p>
+            <h3>{t('No trackers')}</h3>
+            <p>{t(strings.privacyNoTrackers)}</p>
           </section>
           <section>
-            <h3>Teacher review</h3>
+            <h3>{t('Teacher review')}</h3>
             <p>
               TEKS tags are included as source-linked classroom metadata and
               coded math standards were checked against TEA/TAC sources on June

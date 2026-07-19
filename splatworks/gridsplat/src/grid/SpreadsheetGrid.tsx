@@ -52,6 +52,7 @@ import {
 } from '../io/markdown';
 import { matrixToSheet, sheetToMatrix, type SheetMatrix } from '../io/matrix';
 import { strings } from '../i18n/strings';
+import { useI18n } from '../i18n/context';
 import {
   clearCells,
   applyCellFormat,
@@ -230,6 +231,7 @@ function getChartSourceRows(
 }
 
 export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
+  const { t } = useI18n();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chartPanelRef = useRef<HTMLElement>(null);
@@ -1770,8 +1772,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       <div className="sheet-toolbar" aria-label="Sheet tools">
         <button
           className="big-action"
-          aria-label="Undo"
-          title="Undo"
+          aria-label={t("Undo")}
+          title={t("Undo")}
           type="button"
           onClick={undo}
           disabled={history.length === 0}
@@ -1780,8 +1782,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         </button>
         <button
           className="big-action"
-          aria-label="Redo"
-          title="Redo"
+          aria-label={t("Redo")}
+          title={t("Redo")}
           type="button"
           onClick={redo}
           disabled={future.length === 0}
@@ -1791,7 +1793,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         <label className="format-control compact-select">
           <span className="visually-hidden">Font family</span>
           <select
-            aria-label="Font family"
+            aria-label={t("Font family")}
             value={selectedFormat.fontFamily ?? FONT_FAMILIES[0].value}
             onChange={(event) => setCellFontFamily(event.target.value)}
           >
@@ -1804,87 +1806,87 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         </label>
         <div className="format-button-group" aria-label="Cell formatting">
           <button
-            aria-label="Decrease font size"
+            aria-label={t("Decrease font size")}
             className="format-button"
-            title="Decrease font size"
+            title={t("Decrease font size")}
             type="button"
             onClick={() => setCellFontSize((selectedFormat.fontSize ?? 20) - 1)}
           >
             <Minus aria-hidden="true" size={16} />
           </button>
           <button
-            aria-label="Borders"
+            aria-label={t("Borders")}
             aria-pressed={Boolean(selectedFormat.border)}
             className="format-button"
-            title="Borders"
+            title={t("Borders")}
             type="button"
             onClick={() => toggleBooleanFormat('border')}
           >
             <Square aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Bold"
+            aria-label={t("Bold")}
             aria-pressed={Boolean(selectedFormat.bold)}
             className="format-button"
-            title="Bold"
+            title={t("Bold")}
             type="button"
             onClick={() => toggleBooleanFormat('bold')}
           >
             B
           </button>
           <button
-            aria-label="Italic"
+            aria-label={t("Italic")}
             aria-pressed={Boolean(selectedFormat.italic)}
             className="format-button italic"
-            title="Italic"
+            title={t("Italic")}
             type="button"
             onClick={() => toggleBooleanFormat('italic')}
           >
             I
           </button>
           <button
-            aria-label="Underline"
+            aria-label={t("Underline")}
             aria-pressed={Boolean(selectedFormat.underline)}
             className="format-button underline"
-            title="Underline"
+            title={t("Underline")}
             type="button"
             onClick={() => toggleBooleanFormat('underline')}
           >
             U
           </button>
           <button
-            aria-label="Strikethrough"
+            aria-label={t("Strikethrough")}
             aria-pressed={Boolean(selectedFormat.strikethrough)}
             className="format-button strike"
-            title="Strikethrough"
+            title={t("Strikethrough")}
             type="button"
             onClick={() => toggleBooleanFormat('strikethrough')}
           >
             S
           </button>
           <button
-            aria-label="Wrap text"
+            aria-label={t("Wrap text")}
             aria-pressed={Boolean(selectedFormat.wrapText)}
             className="format-button"
-            title="Wrap text"
+            title={t("Wrap text")}
             type="button"
             onClick={() => toggleBooleanFormat('wrapText')}
           >
             <WrapText aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Merge cells"
+            aria-label={t("Merge cells")}
             className="format-button"
-            title="Merge cells"
+            title={t("Merge cells")}
             type="button"
             onClick={mergeSelectedCells}
           >
             <Merge aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Clear formatting"
+            aria-label={t("Clear formatting")}
             className="format-button"
-            title="Clear formatting"
+            title={t("Clear formatting")}
             type="button"
             onClick={clearSelectedFormatting}
           >
@@ -1893,7 +1895,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           <label className="font-size-control">
             <span className="visually-hidden">Font size</span>
             <input
-              aria-label="Font size"
+              aria-label={t("Font size")}
               min="8"
               max="32"
               type="number"
@@ -1904,9 +1906,9 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             />
           </label>
           <button
-            aria-label="Increase font size"
+            aria-label={t("Increase font size")}
             className="format-button"
-            title="Increase font size"
+            title={t("Increase font size")}
             type="button"
             onClick={() => setCellFontSize((selectedFormat.fontSize ?? 20) + 1)}
           >
@@ -1925,11 +1927,11 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
               return (
                 <button
-                  aria-label={`Align ${align}`}
+                  aria-label={t(`Align ${align}`)}
                   aria-pressed={selectedFormat.align === align}
                   className="format-button"
                   key={align}
-                  title={`Align ${align}`}
+                  title={t(`Align ${align}`)}
                   type="button"
                   onClick={() => setAlignment(align)}
                 >
@@ -1949,11 +1951,11 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
               return (
                 <button
-                  aria-label={`Align ${verticalAlign}`}
+                  aria-label={t(`Align ${verticalAlign}`)}
                   aria-pressed={selectedFormat.verticalAlign === verticalAlign}
                   className="format-button"
                   key={verticalAlign}
-                  title={`Align ${verticalAlign}`}
+                  title={t(`Align ${verticalAlign}`)}
                   type="button"
                   onClick={() => setVerticalAlignment(verticalAlign)}
                 >
@@ -1965,47 +1967,47 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         </div>
         <div className="format-button-group" aria-label="Sheet operations">
           <button
-            aria-label="AutoSum"
+            aria-label={t("AutoSum")}
             className="format-button"
-            title="AutoSum"
+            title={t("AutoSum")}
             type="button"
             onClick={autoSumSelection}
           >
             <Sigma aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Sort A to Z"
+            aria-label={t("Sort A to Z")}
             className="format-button"
-            title="Sort A to Z"
+            title={t("Sort A to Z")}
             type="button"
             onClick={() => sortSelectedRows('ascending')}
           >
             <ArrowDownAZ aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Sort Z to A"
+            aria-label={t("Sort Z to A")}
             className="format-button"
-            title="Sort Z to A"
+            title={t("Sort Z to A")}
             type="button"
             onClick={() => sortSelectedRows('descending')}
           >
             <ArrowDownZA aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Currency format"
+            aria-label={t("Currency format")}
             aria-pressed={numberFormat === 'currency'}
             className="format-button"
-            title="Currency format"
+            title={t("Currency format")}
             type="button"
             onClick={() => setNumberFormat('currency')}
           >
             <DollarSign aria-hidden="true" size={18} />
           </button>
           <button
-            aria-label="Percent format"
+            aria-label={t("Percent format")}
             aria-pressed={numberFormat === 'percent'}
             className="format-button"
-            title="Percent format"
+            title={t("Percent format")}
             type="button"
             onClick={() => setNumberFormat('percent')}
           >
@@ -2014,27 +2016,27 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         </div>
         <div className="format-button-group" aria-label="View zoom">
           <button
-            aria-label="Zoom out"
+            aria-label={t("Zoom out")}
             className="format-button"
-            title="Zoom out"
+            title={t("Zoom out")}
             type="button"
             onClick={() => setZoom(sheetZoom - 10)}
           >
             <Minus aria-hidden="true" size={16} />
           </button>
           <button
-            aria-label="Reset zoom to 100%"
+            aria-label={t("Reset zoom to 100%")}
             className="zoom-reset-button"
-            title="Reset zoom to 100%"
+            title={t("Reset zoom to 100%")}
             type="button"
             onClick={() => setZoom(100)}
           >
             {sheetZoom}%
           </button>
           <button
-            aria-label="Zoom in"
+            aria-label={t("Zoom in")}
             className="format-button"
-            title="Zoom in"
+            title={t("Zoom in")}
             type="button"
             onClick={() => setZoom(sheetZoom + 10)}
           >
@@ -2045,7 +2047,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           <Type aria-hidden="true" size={18} />
           <span className="visually-hidden">Text color</span>
           <input
-            aria-label="Text color"
+            aria-label={t("Text color")}
             type="color"
             value={selectedFormat.textColor ?? '#1f2937'}
             onChange={(event) => setCellTextColor(event.target.value)}
@@ -2055,7 +2057,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           <PaintBucket aria-hidden="true" size={18} />
           <span className="visually-hidden">Fill color</span>
           <input
-            aria-label="Fill color"
+            aria-label={t("Fill color")}
             type="color"
             value={selectedFormat.backgroundColor ?? '#ffffff'}
             onChange={(event) => setCellFillColor(event.target.value)}
@@ -2063,7 +2065,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         </label>
         <input
           ref={fileInputRef}
-          aria-label="Import spreadsheet file"
+          aria-label={t("Import spreadsheet file")}
           className="visually-hidden"
           type="file"
           accept=".csv,.json,.gridsplat.json,.md,.markdown,.xlsx,text/csv,application/json,text/markdown,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -2075,21 +2077,21 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             checked={isPlainHeaders}
             onChange={(event) => setIsPlainHeaders(event.target.checked)}
           />
-          Hide headers
+          {t('Hide headers')}
         </label>
         <label className="format-control">
-          Number format
+          {t('Number format')}
           <select
             value={numberFormat}
             onChange={(event) =>
               setNumberFormat(event.target.value as NumberFormat)
             }
           >
-            <option value="plain">Plain</option>
-            <option value="whole">Whole numbers</option>
-            <option value="decimal">Decimals</option>
-            <option value="currency">Currency</option>
-            <option value="percent">Percent</option>
+            <option value="plain">{t('Plain')}</option>
+            <option value="whole">{t('Whole numbers')}</option>
+            <option value="decimal">{t('Decimals')}</option>
+            <option value="currency">{t('Currency')}</option>
+            <option value="percent">{t('Percent')}</option>
           </select>
         </label>
         <p aria-live="polite" className="file-message">
@@ -2098,7 +2100,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       </div>
       <div className="formula-bar">
         <input
-          aria-label="Active cell reference"
+          aria-label={t("Active cell reference")}
           className="name-box"
           key={activeCellRef}
           defaultValue={activeCellRef}
@@ -2113,9 +2115,9 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           fx
         </span>
         <input
-          aria-label="Formula and cell contents"
+          aria-label={t("Formula and cell contents")}
           className="formula-input"
-          placeholder="Type a value or =SUM(A1:A5)"
+          placeholder={t("Type a value or =SUM(A1:A5)")}
           value={formulaBarValue}
           onChange={(event) => handleFormulaBarChange(event.target.value)}
           onKeyDown={(event) => {
@@ -2346,22 +2348,22 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         <span className="status-ref">{activeCellRef}</span>
         {selectionSummary.numericCount > 0 ? (
           <>
-            <span>Sum {roundForDisplay(selectionSummary.sum)}</span>
+            <span>{t('Sum')} {roundForDisplay(selectionSummary.sum)}</span>
             <span>
-              Avg{' '}
+              {t('Avg')}{' '}
               {roundForDisplay(
                 selectionSummary.sum / selectionSummary.numericCount,
               )}
             </span>
-            <span>Min {roundForDisplay(selectionSummary.min)}</span>
-            <span>Max {roundForDisplay(selectionSummary.max)}</span>
-            <span>Numbers {selectionSummary.numericCount}</span>
+            <span>{t('Min')} {roundForDisplay(selectionSummary.min)}</span>
+            <span>{t('Max')} {roundForDisplay(selectionSummary.max)}</span>
+            <span>{t('Numbers')} {selectionSummary.numericCount}</span>
           </>
         ) : null}
         <span>
-          {selectionSummary.filledCount} filled
+          {selectionSummary.filledCount} {t('filled')}
           {selectionSummary.cellCount > 1
-            ? ` of ${selectionSummary.cellCount} selected`
+            ? ' ' + t('of {n} selected', { n: selectionSummary.cellCount })
             : ''}
         </span>
       </div>
