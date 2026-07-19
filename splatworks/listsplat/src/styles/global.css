@@ -1368,3 +1368,15 @@ summary:focus-visible {
 .version-list li { display: flex; align-items: center; gap: 10px; }
 .version-list time { color: var(--muted); }
 .muted { color: var(--muted); }
+
+/* ── Batch G: maintenance, a11y, guided builder ── */
+.maint-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.maint-row:last-child { border-bottom: 0; }
+.a11y-list { display: grid; gap: 6px; padding-left: 4px; list-style: none; }
+.a11y-list li { border: 1px solid #fed7aa; background: #fff7ed; border-radius: 8px; padding: 8px 10px; }
+.a11y-ok { color: var(--green); font-weight: 800; }
+.guided-kinds { display: grid; gap: 8px; margin: 10px 0; }
+.guided-kind { text-align: left; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 12px; cursor: pointer; display: grid; gap: 3px; }
+.guided-kind:hover { border-color: var(--accent); box-shadow: 0 6px 16px rgba(76,29,149,.12); }
+.guided-kind strong { color: var(--accent-dark); }
+.guided-kind span { color: var(--muted); font-size: .82rem; }

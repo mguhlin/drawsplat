@@ -9,16 +9,21 @@ import {
   convertValueForType,
   createField,
   createId,
+  brokenRelationships,
   createRecord,
   createStarterProject,
   deleteRecord,
   deleteTable,
   duplicateRecord,
+  duplicateRecordIds,
   duplicateTable,
   moveTable,
+  removeBrokenRelationships,
+  removeDuplicateRecords,
   renameTable,
   replaceTable,
   structureOnlyProject,
+  unusedFields,
   updateCell,
   updateField,
 } from './model/database';
@@ -70,7 +75,10 @@ type DialogName =
   | 'bulkFill'
   | 'charts'
   | 'camera'
-  | 'rubric';
+  | 'rubric'
+  | 'maintenance'
+  | 'accessibility'
+  | 'guided';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -473,6 +481,40 @@ function saveFoundCsv(): void {
     .join('\n');
   downloadFile(`${table.name}-found.csv`, `${header}\n${body}`, 'text/csv;charset=utf-8');
   lastMessage = `Exported ${rows.length} shown record${rows.length === 1 ? '' : 's'} to CSV.`;
+  render();
+}
+
+async function sha256(text: string): Promise<string> {
+  const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// A self-contained read-only HTML page of the shown records, with an optional
+// front-end password gate (a classroom convenience, not encryption).
+async function shareHtml(): Promise<void> {
+  const table = activeTable();
+  const fields = table.fields.filter((field) => !field.hidden && field.type !== 'image');
+  const imageField = table.fields.find((field) => field.type === 'image' && !field.hidden);
+  const rows = visibleRecords(table);
+  const password = window.prompt('Optional password to view (leave blank for none). This is a convenience gate, not encryption.') ?? '';
+  const hash = password ? await sha256(password) : '';
+  const cards = rows
+    .map((record) => {
+      const image = imageField ? mediaUrl(displayValue(table, record, imageField.id)) : '';
+      return `<article class="card">${image ? `<img src="${html(image)}" alt="">` : ''}<h3>${html(recordTitle(table, record))}</h3>${fields
+        .map((field) => `<p><strong>${html(field.name)}:</strong> ${html(String(formatReadValue(field, displayValue(table, record, field.id))))}</p>`)
+        .join('')}</article>`;
+    })
+    .join('');
+  const doc = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${html(project.metadata.title)} — ${html(table.name)}</title>
+<style>body{margin:0;font-family:system-ui,sans-serif;color:#1f2937;background:#f4f1ff}header{background:linear-gradient(110deg,#6d28d9,#a855f7);color:#fff;padding:20px 24px}main{max-width:1000px;margin:0 auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.card{background:#fff;border:1px solid #e5e0ff;border-radius:12px;padding:14px;box-shadow:0 8px 18px rgba(31,41,55,.06)}.card img{width:100%;border-radius:8px;margin-bottom:8px}.card h3{margin:0 0 8px;color:#5b21b6}.card p{margin:2px 0;font-size:.9rem}#gate{position:fixed;inset:0;display:none;place-items:center;background:#0b1d33;color:#fff}body.locked #gate{display:grid}body.locked main,body.locked header{filter:blur(6px)}</style></head>
+<body data-hash="${hash}"><div id="gate"><div style="text-align:center"><p>This page is password protected.</p><input id="pw" type="password" placeholder="Password"> <button id="go">View</button></div></div>
+<header><h1>${html(project.metadata.title)}</h1><p>${html(table.name)} · ${rows.length} record${rows.length === 1 ? '' : 's'} · read-only</p></header>
+<main>${cards}</main>
+<script>const HASH=document.body.dataset.hash;async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}if(HASH){document.body.classList.add('locked');document.getElementById('go').onclick=async()=>{if(await sha(document.getElementById('pw').value)===HASH)document.body.classList.remove('locked')};document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('go').click()})}<\/script>
+</body></html>`;
+  downloadFile(`${table.name}-shared.html`, doc, 'text/html;charset=utf-8');
+  lastMessage = `Exported a read-only page with ${rows.length} record${rows.length === 1 ? '' : 's'}${hash ? ' (password protected)' : ''}.`;
   render();
 }
 
@@ -2027,6 +2069,97 @@ function renderChartsDialog(table: ListSplatTable): string {
   `;
 }
 
+// ── Maintenance, accessibility, guided builder (Batch G) ─────────────────────
+function renderMaintenanceDialog(table: ListSplatTable): string {
+  const dupes = duplicateRecordIds(table);
+  const empty = unusedFields(table);
+  const broken = brokenRelationships(project);
+  const storageKb = Math.round(JSON.stringify(project).length / 1024);
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Database maintenance">
+        <h2>Database maintenance</h2>
+        <div class="maint-row">
+          <div><strong>${dupes.length}</strong> duplicate record${dupes.length === 1 ? '' : 's'}</div>
+          <button type="button" class="button" data-action="remove-duplicates" ${dupes.length ? '' : 'disabled'}>Remove duplicates</button>
+        </div>
+        <div class="maint-row">
+          <div><strong>${empty.length}</strong> always-empty field${empty.length === 1 ? '' : 's'}${empty.length ? ': ' + html(empty.map((field) => field.name).join(', ')) : ''}</div>
+          <span class="muted">${empty.length ? 'Hide or delete them in field settings.' : ''}</span>
+        </div>
+        <div class="maint-row">
+          <div><strong>${broken.length}</strong> broken relationship${broken.length === 1 ? '' : 's'}</div>
+          <button type="button" class="button" data-action="remove-broken" ${broken.length ? '' : 'disabled'}>Remove broken</button>
+        </div>
+        <div class="maint-row"><div>Project size in this browser: <strong>${storageKb} KB</strong></div></div>
+        <div class="maint-row">
+          <button type="button" class="button" data-action="duplicate-project">Save a copy (.json)</button>
+          <button type="button" class="button" data-action="structure-copy">Save structure-only copy</button>
+        </div>
+        <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+      </section>
+    </div>
+  `;
+}
+
+function accessibilityIssues(table: ListSplatTable): string[] {
+  const issues: string[] = [];
+  const imageFieldsList = table.fields.filter((field) => field.type === 'image');
+  imageFieldsList.forEach((field) => {
+    if (!field.description.trim()) issues.push(`Image field "${field.name}" has no description to use as alt text.`);
+  });
+  const noHint = table.fields.filter((field) => !field.hidden && !field.description.trim() && !['autoNumber', 'createdAt', 'updatedAt'].includes(field.type));
+  if (noHint.length) issues.push(`${noHint.length} field${noHint.length === 1 ? '' : 's'} have no student-friendly description.`);
+  if (!project.metadata.title.trim()) issues.push('The database has no title.');
+  const requiredMissing = tableValidationIssues(table).filter((issue) => /required/i.test(issue.message)).length;
+  if (requiredMissing) issues.push(`${requiredMissing} required value${requiredMissing === 1 ? ' is' : 's are'} still empty.`);
+  return issues;
+}
+
+function renderAccessibilityDialog(table: ListSplatTable): string {
+  const issues = accessibilityIssues(table);
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Accessibility check">
+        <h2>Accessibility check</h2>
+        <p>Quick checks a database creator can act on. ListSplat itself supports keyboard use, visible focus, and screen readers.</p>
+        ${
+          issues.length
+            ? `<ul class="a11y-list">${issues.map((issue) => `<li>⚠️ ${html(issue)}</li>`).join('')}</ul>`
+            : '<p class="a11y-ok">✅ No issues found. Nice work.</p>'
+        }
+        <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+      </section>
+    </div>
+  `;
+}
+
+const GUIDED_KINDS: Array<{ id: string; label: string; fields: Array<[string, FieldType]> }> = [
+  { id: 'collection', label: 'A collection (books, rocks, artifacts)', fields: [['Name', 'text'], ['Category', 'choice'], ['Notes', 'longText'], ['Picture', 'image']] },
+  { id: 'log', label: 'A log or journal (observations, reading)', fields: [['Date', 'date'], ['Entry', 'longText'], ['Rating', 'rating']] },
+  { id: 'people', label: 'A directory of people', fields: [['Name', 'text'], ['Email', 'email'], ['Phone', 'phone'], ['Notes', 'longText']] },
+  { id: 'inventory', label: 'An inventory or checkout list', fields: [['Item', 'text'], ['Quantity', 'number'], ['Location', 'text'], ['Status', 'choice']] },
+  { id: 'tracker', label: 'A tracker with status columns', fields: [['Title', 'text'], ['Status', 'choice'], ['Owner', 'text'], ['Due date', 'date'], ['Notes', 'longText']] },
+];
+
+function renderGuidedDialog(): string {
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Guided database builder">
+        <h2>Build a database</h2>
+        <p>Tell me what you want to track and I'll set up a table with useful fields. You can change anything afterward.</p>
+        <label>Name it <input data-guided-name placeholder="e.g. Rock collection"></label>
+        <div class="guided-kinds">
+          ${GUIDED_KINDS.map(
+            (kind) => `<button type="button" class="guided-kind" data-action="guided-create" data-guided-kind="${kind.id}"><strong>${html(kind.label)}</strong><span>${kind.fields.map(([name]) => html(name)).join(' · ')}</span></button>`,
+          ).join('')}
+        </div>
+        <div class="modal-actions"><button type="button" data-action="close-dialog">Cancel</button></div>
+      </section>
+    </div>
+  `;
+}
+
 function renderDialog(table: ListSplatTable): string {
   if (dialog === 'none') {
     return '';
@@ -2046,6 +2179,15 @@ function renderDialog(table: ListSplatTable): string {
   }
   if (dialog === 'charts') {
     return renderChartsDialog(table);
+  }
+  if (dialog === 'maintenance') {
+    return renderMaintenanceDialog(table);
+  }
+  if (dialog === 'accessibility') {
+    return renderAccessibilityDialog(table);
+  }
+  if (dialog === 'guided') {
+    return renderGuidedDialog();
   }
   if (dialog === 'rubric') {
     return `
@@ -2506,6 +2648,8 @@ function render(): void {
           ['relationships', 'Relationships'],
           ['charts', 'Charts'],
           ['quality', 'Data quality check'],
+          ['maintenance', 'Database maintenance'],
+          ['accessibility', 'Accessibility check'],
         ])}
         ${createMenu('View', [
           ['student-view', studentView ? 'Exit student view' : 'Student view'],
@@ -2516,8 +2660,10 @@ function render(): void {
           studentView
             ? ''
             : createMenu('Teacher', [
+                ['guided', 'Guided database builder'],
                 ['templates', 'Template Library'],
                 ['project-ideas', 'Project Ideas'],
+                ['share-html', 'Publish read-only page'],
                 ['lock-layout', 'Lock Layout'],
                 ['project-packet', 'Print Project Packet'],
               ])
@@ -3786,6 +3932,58 @@ appRoot.addEventListener('click', (event) => {
     }
     dialog = 'charts';
     render();
+  } else if (action === 'maintenance') {
+    dialog = 'maintenance';
+    render();
+  } else if (action === 'accessibility') {
+    dialog = 'accessibility';
+    render();
+  } else if (action === 'guided') {
+    dialog = 'guided';
+    render();
+  } else if (action === 'share-html') {
+    void shareHtml();
+  } else if (action === 'remove-duplicates') {
+    pushUndo('remove duplicates');
+    const before = activeTable().records.length;
+    const next = removeDuplicateRecords(activeTable());
+    dialog = 'none';
+    lastMessage = `Removed ${before - next.records.length} duplicate record${before - next.records.length === 1 ? '' : 's'}.`;
+    setActiveTable(next);
+  } else if (action === 'remove-broken') {
+    pushUndo('remove broken relationships');
+    dialog = 'none';
+    lastMessage = 'Removed broken relationships.';
+    setProject(removeBrokenRelationships(project));
+  } else if (action === 'duplicate-project') {
+    saveJson({ ...project, metadata: { ...project.metadata, title: `${project.metadata.title} copy` } });
+    lastMessage = 'Saved a copy of the whole project.';
+    render();
+  } else if (action === 'guided-create') {
+    const kindId = target.closest<HTMLElement>('[data-guided-kind]')?.dataset.guidedKind;
+    const kind = GUIDED_KINDS.find((item) => item.id === kindId);
+    if (kind) {
+      const name = appRoot.querySelector<HTMLInputElement>('[data-guided-name]')?.value.trim() || kind.label;
+      pushUndo('guided build');
+      let next = addTable(project, name);
+      const newTableId = next.schema.tables.at(-1)!.id;
+      let builtTable = next.schema.tables.find((item) => item.id === newTableId)!;
+      // Replace the default two fields with the kind's fields.
+      builtTable = { ...builtTable, fields: [], records: [] };
+      kind.fields.forEach(([fieldName, fieldType]) => {
+        builtTable = addField(builtTable, fieldName, fieldType);
+      });
+      builtTable = { ...builtTable, records: [createRecord(builtTable.fields)] };
+      next = replaceTable(next, builtTable);
+      activeTableId = newTableId;
+      activeRecordId = builtTable.records[0].id;
+      clearFind();
+      sortKeys = [];
+      dialog = 'none';
+      viewMode = 'table';
+      lastMessage = `Built the "${name}" table. Add records and adjust fields any time.`;
+      setProject(next);
+    }
   } else if (action === 'functions') {
     dialog = 'functions';
     render();

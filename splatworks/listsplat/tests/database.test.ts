@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { addField, addRecord, createStarterProject, updateCell } from '../src/model/database';
+import { addField, addRecord, createStarterProject, duplicateRecord, duplicateRecordIds, removeDuplicateRecords, unusedFields, updateCell } from '../src/model/database';
+
+describe('maintenance helpers', () => {
+  it('finds and removes duplicate records', () => {
+    const table = createStarterProject().schema.tables[0];
+    const withDupe = duplicateRecord(table, table.records[0].id);
+    expect(duplicateRecordIds(withDupe).length).toBe(1);
+    expect(removeDuplicateRecords(withDupe).records.length).toBe(table.records.length);
+  });
+
+  it('finds always-empty fields', () => {
+    let table = createStarterProject().schema.tables[0];
+    table = addField(table, 'Never used', 'text');
+    expect(unusedFields(table).some((field) => field.name === 'Never used')).toBe(true);
+  });
+});
 
 describe('database model', () => {
   it('creates a starter project with a table, fields, records, and layouts', () => {

@@ -435,6 +435,60 @@ export function structureOnlyProject(project: ListSplatFile): ListSplatFile {
   };
 }
 
+function recordSignature(table: ListSplatTable, record: ListSplatRecord): string {
+  return table.fields
+    .filter((field) => !['autoNumber', 'createdAt', 'updatedAt', 'calculation'].includes(field.type))
+    .map((field) => String(record.values[field.id] ?? '').trim().toLowerCase())
+    .join('');
+}
+
+// Records that are exact duplicates of an earlier record (all editable fields equal).
+export function duplicateRecordIds(table: ListSplatTable): string[] {
+  const seen = new Set<string>();
+  const duplicates: string[] = [];
+  table.records.forEach((record) => {
+    const signature = recordSignature(table, record);
+    if (seen.has(signature)) duplicates.push(record.id);
+    else seen.add(signature);
+  });
+  return duplicates;
+}
+
+export function removeDuplicateRecords(table: ListSplatTable): ListSplatTable {
+  const drop = new Set(duplicateRecordIds(table));
+  if (!drop.size) return table;
+  const kept = table.records.filter((record) => !drop.has(record.id));
+  return { ...table, records: kept.length ? kept : [table.records[0]] };
+}
+
+// Fields that are empty in every record (candidates for removal).
+export function unusedFields(table: ListSplatTable): ListSplatField[] {
+  return table.fields.filter(
+    (field) =>
+      !['autoNumber', 'createdAt', 'updatedAt', 'calculation'].includes(field.type) &&
+      table.records.every((record) => String(record.values[field.id] ?? '').trim() === ''),
+  );
+}
+
+export function brokenRelationships(project: ListSplatFile): ListSplatFile['schema']['relationships'] {
+  return project.schema.relationships.filter((relationship) => {
+    const fromTable = project.schema.tables.find((table) => table.id === relationship.fromTableId);
+    const toTable = project.schema.tables.find((table) => table.id === relationship.toTableId);
+    const fromOk = fromTable?.fields.some((field) => field.id === relationship.fromFieldId);
+    const toOk = toTable?.fields.some((field) => field.id === relationship.toFieldId);
+    return !fromOk || !toOk;
+  });
+}
+
+export function removeBrokenRelationships(project: ListSplatFile): ListSplatFile {
+  const broken = new Set(brokenRelationships(project).map((relationship) => relationship.id));
+  return {
+    ...project,
+    updatedAt: new Date().toISOString(),
+    schema: { ...project.schema, relationships: project.schema.relationships.filter((relationship) => !broken.has(relationship.id)) },
+  };
+}
+
 export function assertListSplatFile(value: unknown): asserts value is ListSplatFile {
   if (!value || typeof value !== 'object') {
     throw new Error('This is not a ListSplatTM project file.');
