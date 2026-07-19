@@ -8,6 +8,7 @@ import { pauseReadAloud, readTextAloud, stopReadAloud } from './educator/readAlo
 import { scrambleParagraphs, scrambleSentences } from './educator/scrambler';
 import { documentTemplates, templateCategoryLabels } from './educator/templates';
 import { emojiCategories, emojiForShortcode, searchEmojis } from './educator/emojis';
+import { buildWordCloud, type WordCloudEntry } from './analysis/wordCloud';
 import { createStudentClozeHtml, createTeacherClozeHtml } from './export/cloze';
 import { htmlToDocxBlob } from './export/docx';
 import { createStandaloneHtml } from './export/html';
@@ -546,6 +547,7 @@ function appHtml(): string {
           ['remove-link', 'Remove link'],
           ['open-image-dialog', 'Image'],
           ['open-emoji-dialog', 'Emoji…'],
+          ['open-word-cloud', 'Word cloud…'],
           {
             label: 'Table',
             items: [
@@ -586,6 +588,7 @@ function appHtml(): string {
         ${menu('View', [
           ['toggle-sidebar', 'Toggle sidebar'],
           ['toggle-theme', 'Toggle theme'],
+          ['toggle-focus-mode', 'Focus mode (distraction-free)'],
           {
             label: 'Markdown mode',
             items: [
@@ -754,6 +757,7 @@ function appHtml(): string {
       <footer class="status-bar">
         <span>Words: <strong id="statusWords">0</strong></span>
         <span>Sentences: <strong id="statusSentences">0</strong></span>
+        <span>Read time: <strong id="statusReadTime">1 min</strong></span>
         <span>Grade estimate: <strong id="statusGrade">0</strong></span>
         <span id="statusSaved">Saved locally</span>
       </footer>
@@ -849,6 +853,18 @@ function appHtml(): string {
         <div class="emoji-grid" id="emojiGrid"></div>
         <div class="modal-actions">
           <button data-action="close-emoji-dialog">Close</button>
+        </div>
+      </section>
+    </div>
+    <div id="wordCloudDialog" class="modal-backdrop" hidden>
+      <section class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="wordCloudDialogTitle">
+        <h2 id="wordCloudDialogTitle">Word cloud</h2>
+        <p class="modal-note">The biggest words appear most often in your writing. Common words like “the” and “and” are left out.</p>
+        <div id="wordCloudCanvas" class="word-cloud-canvas"></div>
+        <div class="modal-actions">
+          <button data-action="close-word-cloud">Close</button>
+          <button data-action="insert-word-cloud">Insert into document</button>
+          <button class="primary-action" data-action="save-word-cloud-png">Save as PNG</button>
         </div>
       </section>
     </div>
@@ -1113,6 +1129,51 @@ function escapeHtml(value: string): string {
   });
 }
 
+const WORD_CLOUD_COLORS = ['#7c3aed', '#0ea5e9', '#16a34a', '#f59e0b', '#dc2626', '#9333ea', '#0891b2', '#db2777', '#ea580c', '#4f46e5'];
+
+// Lay word-cloud words into centered wrapping rows and return an SVG string plus
+// its dimensions so it can be shown, rasterized to PNG, or embedded as an image.
+function buildWordCloudSvg(entries: WordCloudEntry[]): { svg: string; width: number; height: number } {
+  const maxWidth = 700;
+  const padding = 24;
+  const placed = entries.map((entry, index) => {
+    const size = Math.round(16 + entry.weight * 52);
+    const width = Math.ceil(entry.word.length * size * 0.6) + 18;
+    return { ...entry, size, width, color: WORD_CLOUD_COLORS[index % WORD_CLOUD_COLORS.length] };
+  });
+  const rows: Array<{ items: typeof placed; width: number; height: number }> = [];
+  let current: { items: typeof placed; width: number; height: number } = { items: [], width: 0, height: 0 };
+  for (const item of placed) {
+    if (current.items.length && current.width + item.width > maxWidth) {
+      rows.push(current);
+      current = { items: [], width: 0, height: 0 };
+    }
+    current.items.push(item);
+    current.width += item.width;
+    current.height = Math.max(current.height, item.size + 10);
+  }
+  if (current.items.length) rows.push(current);
+  const contentWidth = Math.max(200, ...rows.map((row) => row.width));
+  const totalHeight = rows.reduce((sum, row) => sum + row.height, 0);
+  const width = contentWidth + padding * 2;
+  const height = totalHeight + padding * 2;
+  let y = padding;
+  const texts: string[] = [];
+  for (const row of rows) {
+    let x = (width - row.width) / 2;
+    const baseline = y + row.height - 8;
+    for (const item of row.items) {
+      texts.push(
+        `<text x="${Math.round(x + item.width / 2)}" y="${Math.round(baseline)}" font-size="${item.size}" fill="${item.color}" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800">${escapeHtml(item.word)}</text>`,
+      );
+      x += item.width;
+    }
+    y += row.height;
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="${width}" height="${height}" fill="#ffffff"/>${texts.join('')}</svg>`;
+  return { svg, width, height };
+}
+
 function isEditorCommand(value: string): value is EditorCommand {
   return [
     'bold',
@@ -1180,7 +1241,41 @@ function bootstrap(): void {
   const emojiSearch = getRequiredElement<HTMLInputElement>('emojiSearch');
   const emojiGrid = getRequiredElement<HTMLElement>('emojiGrid');
   const emojiTabs = getRequiredElement<HTMLElement>('emojiTabs');
+  const wordCloudDialog = getRequiredElement<HTMLElement>('wordCloudDialog');
+  const wordCloudCanvas = getRequiredElement<HTMLElement>('wordCloudCanvas');
   let emojiCategoryId = 'all';
+  let lastWordCloud: { svg: string; width: number; height: number } | null = null;
+
+  function renderWordCloud(): void {
+    const text = htmlToPlainText(writer.getHtml());
+    const entries = buildWordCloud(text, 45);
+    if (!entries.length) {
+      wordCloudCanvas.innerHTML = '<p class="modal-note">Write some words first, then build a word cloud.</p>';
+      lastWordCloud = null;
+      return;
+    }
+    lastWordCloud = buildWordCloudSvg(entries);
+    wordCloudCanvas.innerHTML = lastWordCloud.svg;
+  }
+
+  async function wordCloudPngDataUrl(): Promise<string | null> {
+    if (!lastWordCloud) return null;
+    const { svg, width, height } = lastWordCloud;
+    const image = new Image();
+    const svgUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = svgUrl;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+    context.drawImage(image, 0, 0);
+    return canvas.toDataURL('image/png');
+  }
 
   function renderEmojiGrid(): void {
     const query = emojiSearch.value.trim();
@@ -1280,6 +1375,8 @@ function bootstrap(): void {
     getRequiredElement('readingTime').textContent = formatReadingTime(readingSeconds);
     getRequiredElement('statusWords').textContent = String(stats.words);
     getRequiredElement('statusSentences').textContent = String(stats.sentences);
+    const readMinutes = Math.max(1, Math.round(stats.words / 200));
+    getRequiredElement('statusReadTime').textContent = `${readMinutes} min`;
     getRequiredElement('readabilityGradeLabel').textContent = `Grade ${readability.fleschKincaidGrade}`;
     getRequiredElement('readabilityStatus').textContent = readability.fleschKincaidGrade <= targetGrade + 1 ? 'Good.' : 'Needs a little smoothing.';
     getRequiredElement('readingEase').textContent = String(readability.fleschReadingEase);
@@ -1586,6 +1683,28 @@ function bootstrap(): void {
       emojiSearch.focus();
     } else if (action === 'close-emoji-dialog') {
       emojiDialog.hidden = true;
+      writer.view.focus();
+    } else if (action === 'open-word-cloud') {
+      renderWordCloud();
+      wordCloudDialog.hidden = false;
+    } else if (action === 'close-word-cloud') {
+      wordCloudDialog.hidden = true;
+      writer.view.focus();
+    } else if (action === 'save-word-cloud-png') {
+      const dataUrl = await wordCloudPngDataUrl();
+      if (dataUrl) {
+        const response = await fetch(dataUrl);
+        downloadBlob(`${(titleInput.value || 'word-cloud').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-word-cloud.png`, await response.blob());
+      }
+    } else if (action === 'insert-word-cloud') {
+      const dataUrl = await wordCloudPngDataUrl();
+      if (dataUrl) {
+        writer.insertImage(dataUrl, 'Word cloud of this document');
+        wordCloudDialog.hidden = true;
+        refresh();
+      }
+    } else if (action === 'toggle-focus-mode') {
+      root.classList.toggle('focus-mode');
       writer.view.focus();
     } else if (action === 'import-file') {
       importFileInput.click();

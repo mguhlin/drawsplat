@@ -1400,3 +1400,13 @@ body.sidebar-collapsed .sidebar {
 
 /* ── Import drop target ── */
 #editor.drop-active { outline: 3px dashed var(--accent, #7c3aed); outline-offset: -6px; background: rgba(124,58,237,.04); }
+
+/* ── Word cloud + focus mode ── */
+.word-cloud-canvas { display: grid; place-items: center; border: 1px solid var(--line, #d8d2ff); border-radius: 12px; background: #fff; padding: 8px; max-height: 60vh; overflow: auto; }
+.word-cloud-canvas svg { max-width: 100%; height: auto; }
+.focus-mode #sidebar { display: none; }
+.focus-mode .menu-bar { opacity: .25; transition: opacity .2s; }
+.focus-mode .menu-bar:hover, .focus-mode .menu-bar:focus-within { opacity: 1; }
+.focus-mode .app-header { opacity: .4; transition: opacity .2s; }
+.focus-mode .app-header:hover { opacity: 1; }
+.focus-mode .write-app { max-width: 860px; margin: 0 auto; }
