@@ -18,9 +18,23 @@ export function validateCell(
   table?: ListSplatTable,
   recordId?: string,
 ): string {
+  const message = validateCellRaw(field, value, table, recordId);
+  return message && field.customMessage ? field.customMessage : message;
+}
+
+function validateCellRaw(field: ListSplatField, value: ListSplatCellValue, table?: ListSplatTable, recordId?: string): string {
   const text = cellText(value).trim();
   if (text === '') {
     return field.required ? 'This field is required.' : '';
+  }
+  if (field.maxLength && text.length > field.maxLength) {
+    return `Keep this ${field.maxLength} characters or fewer.`;
+  }
+  if (field.type === 'email' && !PATTERNS.email.test(text)) {
+    return 'Enter a valid email address.';
+  }
+  if (field.type === 'phone' && !PATTERNS.phone.test(text)) {
+    return 'Enter a valid phone number.';
   }
   if (['number', 'currency', 'percent', 'rating'].includes(field.type)) {
     const numeric = Number(text);

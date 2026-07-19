@@ -1214,3 +1214,31 @@ summary:focus-visible {
 .rel-arrow { color: var(--ink); font-weight: 700; }
 .rel-arrow b { color: var(--accent); }
 .rel-empty { color: var(--muted); }
+
+/* ── Batch A: multi-select cells ── */
+.multi-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  min-height: 54px;
+  align-items: center;
+}
+.multi-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #fff;
+}
+.multi-chip.on {
+  background: var(--soft);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+.multi-chip input { width: 14px; height: 14px; }

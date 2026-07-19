@@ -12,8 +12,13 @@ import {
   createRecord,
   createStarterProject,
   deleteRecord,
+  deleteTable,
   duplicateRecord,
+  duplicateTable,
+  moveTable,
+  renameTable,
   replaceTable,
+  structureOnlyProject,
   updateCell,
   updateField,
 } from './model/database';
@@ -219,6 +224,7 @@ let sortDraft: SortKey[] = [];
 let fieldDialogType: FieldType | '' = '';
 let selectedRecordIds = new Set<string>();
 let cellRange: { anchor: { r: string; f: string }; focus: { r: string; f: string } } | null = null;
+let showArchived = false;
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
@@ -286,11 +292,16 @@ function activeTable(): ListSplatTable {
 
 function visibleRecords(table: ListSplatTable): ListSplatRecord[] {
   let records = findRecords(table, { query: searchQuery, fieldId: searchFieldId });
+  records = records.filter((record) => (showArchived ? record.archived : !record.archived));
   records = filterAdvanced(records, findQuery);
   if (highlightedRecordIds.size > 0) {
     records = records.filter((record) => highlightedRecordIds.has(record.id));
   }
   return sortRecordsByKeys(records, sortKeys.filter((key) => table.fields.some((field) => field.id === key.fieldId)));
+}
+
+function archivedCount(table: ListSplatTable): number {
+  return table.records.filter((record) => record.archived).length;
 }
 
 function findIsActive(): boolean {
@@ -402,10 +413,10 @@ function updateTitle(value: string): void {
   });
 }
 
-function saveJson(): void {
+function saveJson(which: ListSplatFile = project): void {
   downloadFile(
-    `${project.metadata.title || 'listsplat-project'}.listsplat.json`,
-    JSON.stringify(project, null, 2),
+    `${which.metadata.title || 'listsplat-project'}.listsplat.json`,
+    JSON.stringify(which, null, 2),
     'application/json',
   );
 }
@@ -643,11 +654,16 @@ function fieldTypeOptions(selected: FieldType = 'text'): string {
     ['currency', 'Currency'],
     ['percent', 'Percent'],
     ['date', 'Date'],
+    ['time', 'Time'],
+    ['dateTime', 'Date and time'],
     ['checkbox', 'Checkbox'],
     ['rating', 'Rating'],
-    ['choice', 'Choice'],
+    ['choice', 'Single choice'],
+    ['multiSelect', 'Multiple choice'],
+    ['email', 'Email'],
+    ['phone', 'Phone'],
+    ['link', 'Web address'],
     ['image', 'Image'],
-    ['link', 'Link'],
     ['calculation', 'Calculation'],
     ['autoNumber', 'Auto number'],
     ['createdAt', 'Created time'],
@@ -772,14 +788,42 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     : '';
   const cellClass = invalid ? 'cell-input cell-invalid' : 'cell-input';
   const invalidAttr = invalid ? ` title="${html(invalid)}"` : '';
+  const readonlyAttr = field?.readonly ? ' readonly disabled' : '';
+  const maxLenAttr = field?.maxLength ? ` maxlength="${field.maxLength}"` : '';
+  const extra = `${invalidAttr}${readonlyAttr}${maxLenAttr}`;
 
   if (field?.type === 'checkbox') {
-    return `<input class="cell-checkbox" type="checkbox" ${common} ${value === true || value === 'true' ? 'checked' : ''}>`;
+    return `<input class="cell-checkbox" type="checkbox" ${common} ${field.readonly ? 'disabled' : ''} ${value === true || value === 'true' ? 'checked' : ''}>`;
+  }
+  if (field?.type === 'multiSelect') {
+    const options = field.options?.length ? field.options : ['Yes', 'No'];
+    const selected = new Set(String(value ?? '').split(',').map((item) => item.trim()).filter(Boolean));
+    return `<div class="multi-cell${invalid ? ' cell-invalid' : ''}" ${common}${invalid ? ` title="${html(invalid)}"` : ''}>${options
+      .map(
+        (option) =>
+          `<label class="multi-chip${selected.has(option) ? ' on' : ''}"><input type="checkbox" class="multi-option" data-record-id="${record.id}" data-field-id="${fieldId}" data-multi-option="${html(option)}" ${selected.has(option) ? 'checked' : ''} ${field.readonly ? 'disabled' : ''}>${html(option)}</label>`,
+      )
+      .join('')}</div>`;
+  }
+  if (field?.type === 'time') {
+    return `<input class="${cellClass}" type="time" ${common}${extra} value="${html(value)}">`;
+  }
+  if (field?.type === 'dateTime') {
+    return `<input class="${cellClass}" type="datetime-local" ${common}${extra} value="${html(value)}">`;
+  }
+  if (field?.type === 'email') {
+    const addr = String(value ?? '');
+    return `<div class="link-cell"><input class="${cellClass}" type="email" ${common}${extra} value="${html(addr)}" placeholder="name@example.com">${
+      addr && !invalid ? `<a class="link-open" href="mailto:${html(addr)}" title="Send email" aria-label="Send email">✉</a>` : ''
+    }</div>`;
+  }
+  if (field?.type === 'phone') {
+    return `<input class="${cellClass}" type="tel" ${common}${extra} value="${html(value)}" placeholder="(555) 555-5555">`;
   }
   if (field?.type === 'link') {
     const raw = String(value ?? '');
     const href = /^https?:\/\//i.test(raw) ? raw : raw ? `https://${raw}` : '';
-    return `<div class="link-cell"><input class="${cellClass}" type="url" ${common}${invalidAttr} value="${html(raw)}" placeholder="https://…">${
+    return `<div class="link-cell"><input class="${cellClass}" type="url" ${common}${extra} value="${html(raw)}" placeholder="https://…">${
       href ? `<a class="link-open" href="${html(href)}" target="_blank" rel="noopener" title="Open link" aria-label="Open link">↗</a>` : ''
     }</div>`;
   }
@@ -797,11 +841,11 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     `;
   }
   if (field?.type === 'rating') {
-    return `<input class="${cellClass}" type="number" min="0" max="5" step="1" ${common}${invalidAttr} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="number" min="0" max="5" step="1" ${common}${extra} value="${html(value)}">`;
   }
   if (field?.type === 'choice') {
     const options = field.options?.length ? field.options : ['Yes', 'No'];
-    return `<select class="${cellClass}" ${common}${invalidAttr}><option value=""${value === '' ? ' selected' : ''}>—</option>${options
+    return `<select class="${cellClass}" ${common}${invalidAttr}${field.readonly ? ' disabled' : ''}><option value=""${value === '' ? ' selected' : ''}>—</option>${options
       .map((option) => `<option value="${html(option)}" ${String(value) === option ? 'selected' : ''}>${html(option)}</option>`)
       .join('')}</select>`;
   }
@@ -809,20 +853,20 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     return `<output class="calc-output">${html(value)}</output>`;
   }
   if (field?.type === 'longText') {
-    return `<textarea class="${cellClass}" ${common}${invalidAttr}>${html(value)}</textarea>`;
+    return `<textarea class="${cellClass}" ${common}${extra}>${html(value)}</textarea>`;
   }
   if (field?.type === 'date') {
-    return `<input class="${cellClass}" type="date" ${common}${invalidAttr} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="date" ${common}${extra} value="${html(value)}">`;
   }
   if (field?.type === 'number' || field?.type === 'currency' || field?.type === 'percent') {
     const prefix = field.type === 'currency' ? '<span class="cell-affix">$</span>' : '';
     const suffix = field.type === 'percent' ? '<span class="cell-affix">%</span>' : '';
-    return `<span class="num-cell">${prefix}<input class="${cellClass}" type="number" step="any" ${common}${invalidAttr} value="${html(value)}">${suffix}</span>`;
+    return `<span class="num-cell">${prefix}<input class="${cellClass}" type="number" step="any" ${common}${extra} value="${html(value)}">${suffix}</span>`;
   }
   if (field?.type === 'calculation') {
     return `<output class="calc-output">${html(value)}</output>`;
   }
-  return `<input class="${cellClass}" ${common}${invalidAttr} value="${html(value)}">`;
+  return `<input class="${cellClass}" ${common}${extra} value="${html(value)}">`;
 }
 
 function renderTableTabs(table: ListSplatTable): string {
@@ -1105,6 +1149,9 @@ function renderDatabasePanel(table: ListSplatTable): string {
 
 function renderFilterChips(): string {
   const chips: string[] = [];
+  if (showArchived) {
+    chips.push('<button type="button" class="chip chip-button" data-action="toggle-archived" title="Back to active records">Archived view — click to exit</button>');
+  }
   if (searchQuery) {
     chips.push(`<span class="chip">Search: “${html(searchQuery)}”</span>`);
   }
@@ -1139,6 +1186,9 @@ function renderBulkBar(table: ListSplatTable): string {
       <strong>${count} selected</strong>
       <button type="button" class="button" data-action="bulk-fill">Fill a field…</button>
       <button type="button" class="button" data-action="bulk-duplicate">Duplicate</button>
+      ${showArchived
+        ? '<button type="button" class="button" data-action="bulk-restore">Restore</button>'
+        : '<button type="button" class="button" data-action="bulk-archive">Archive</button>'}
       <button type="button" class="button danger" data-action="bulk-delete">Delete</button>
       <button type="button" class="button ghost" data-action="bulk-clear">Clear selection</button>
     </div>
@@ -1238,6 +1288,7 @@ function renderRelationshipDiagram(): string {
 function renderFieldConstraints(field: ListSplatField, type: FieldType): string {
   const numeric = ['number', 'currency', 'percent', 'rating'].includes(type);
   const textish = ['text', 'longText', 'link'].includes(type);
+  const lengthy = ['text', 'longText', 'email', 'phone', 'link'].includes(type);
   if (['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
     return '';
   }
@@ -1245,6 +1296,7 @@ function renderFieldConstraints(field: ListSplatField, type: FieldType): string 
     <fieldset class="constraints">
       <legend>Rules and default</legend>
       <label class="check-row"><input type="checkbox" data-field-unique ${field.unique ? 'checked' : ''}> No duplicate values (unique)</label>
+      <label class="check-row"><input type="checkbox" data-field-readonly ${field.readonly ? 'checked' : ''}> Read-only (students cannot change it)</label>
       ${
         numeric
           ? `<div class="grid-two">
@@ -1253,6 +1305,7 @@ function renderFieldConstraints(field: ListSplatField, type: FieldType): string 
             </div>`
           : ''
       }
+      ${lengthy ? `<label>Character limit <input data-field-maxlength type="number" min="1" value="${field.maxLength != null ? html(String(field.maxLength)) : ''}" placeholder="no limit"></label>` : ''}
       ${
         textish
           ? `<label>Format <select data-field-pattern>${(['none', 'email', 'url', 'phone', 'custom'] as const)
@@ -1262,6 +1315,7 @@ function renderFieldConstraints(field: ListSplatField, type: FieldType): string 
           : ''
       }
       <label>Default value for new records <input data-field-default value="${html(field.defaultValue ?? '')}" placeholder="optional"></label>
+      <label>Custom message when a value breaks a rule <input data-field-message value="${html(field.customMessage ?? '')}" placeholder="optional friendly message"></label>
     </fieldset>
   `;
 }
@@ -1818,9 +1872,16 @@ function render(): void {
         ])}
         ${createMenu('Data', [
           ['add-table', 'New table'],
+          ['rename-table', 'Rename this table'],
+          ['duplicate-table', 'Duplicate this table'],
+          ['move-table-left', 'Move table left'],
+          ['move-table-right', 'Move table right'],
+          ['delete-table', 'Delete this table'],
           ['sort', 'Sort records'],
           ['missing', 'Find missing values'],
           ['duplicates', 'Find duplicates'],
+          ['toggle-archived', showArchived ? 'Show active records' : `Show archived records (${archivedCount(table)})`],
+          ['structure-copy', 'Save structure-only copy'],
           ['clear-find', 'Show all records'],
         ])}
         ${createMenu('Layout', [
@@ -2007,6 +2068,10 @@ function runFieldSettingsSave(): void {
   const pattern = (appRoot.querySelector<HTMLSelectElement>('[data-field-pattern]')?.value as ListSplatField['pattern']) ?? 'none';
   const customPattern = appRoot.querySelector<HTMLInputElement>('[data-field-custom-pattern]')?.value ?? '';
   const defaultValue = appRoot.querySelector<HTMLInputElement>('[data-field-default]')?.value ?? '';
+  const readonly = appRoot.querySelector<HTMLInputElement>('[data-field-readonly]')?.checked ?? false;
+  const maxLengthRaw = appRoot.querySelector<HTMLInputElement>('[data-field-maxlength]')?.value ?? '';
+  const maxLength = maxLengthRaw.trim() === '' ? undefined : Number(maxLengthRaw);
+  const customMessage = appRoot.querySelector<HTMLInputElement>('[data-field-message]')?.value ?? '';
   const typeChanged = type !== field.type;
   let nextTable = updateField(table, field.id, {
     name,
@@ -2022,6 +2087,9 @@ function runFieldSettingsSave(): void {
     pattern,
     customPattern,
     defaultValue,
+    readonly,
+    maxLength,
+    customMessage,
   });
   if (typeChanged && !['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
     nextTable = convertFieldValues(nextTable, field.id, type, options);
@@ -2700,6 +2768,60 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'bulk-clear') {
     selectedRecordIds = new Set();
     render();
+  } else if (action === 'bulk-archive' || action === 'bulk-restore') {
+    const archive = action === 'bulk-archive';
+    const ids = new Set(selectedInTable(activeTable()));
+    if (ids.size) {
+      pushUndo(archive ? 'archive records' : 'restore records');
+      const table = activeTable();
+      selectedRecordIds = new Set();
+      lastMessage = `${archive ? 'Archived' : 'Restored'} ${ids.size} record${ids.size === 1 ? '' : 's'}.`;
+      setActiveTable({ ...table, records: table.records.map((record) => (ids.has(record.id) ? { ...record, archived: archive } : record)) });
+    }
+  } else if (action === 'toggle-archived') {
+    showArchived = !showArchived;
+    selectedRecordIds = new Set();
+    lastMessage = showArchived ? 'Showing archived records.' : 'Showing active records.';
+    render();
+  } else if (action === 'rename-table') {
+    const current = activeTable();
+    const name = window.prompt('Rename table', current.name);
+    if (name && name.trim()) {
+      pushUndo('rename table');
+      setProject(renameTable(project, current.id, name));
+    }
+  } else if (action === 'duplicate-table') {
+    pushUndo('duplicate table');
+    const result = duplicateTable(project, activeTableId);
+    activeTableId = result.newTableId;
+    clearFind();
+    sortKeys = [];
+    selectedRecordIds = new Set();
+    lastMessage = 'Duplicated the table.';
+    setProject(result.project);
+  } else if (action === 'move-table-left' || action === 'move-table-right') {
+    pushUndo('move table');
+    setProject(moveTable(project, activeTableId, action === 'move-table-left' ? -1 : 1));
+  } else if (action === 'delete-table') {
+    if (project.schema.tables.length <= 1) {
+      lastMessage = 'A database needs at least one table.';
+      render();
+      return;
+    }
+    if (window.confirm(`Delete the table "${activeTable().name}" and all its records? You can undo right after.`)) {
+      pushUndo('delete table');
+      const next = deleteTable(project, activeTableId);
+      activeTableId = next.schema.tables[0].id;
+      clearFind();
+      sortKeys = [];
+      selectedRecordIds = new Set();
+      lastMessage = 'Deleted the table.';
+      setProject(next);
+    }
+  } else if (action === 'structure-copy') {
+    saveJson(structureOnlyProject(project));
+    lastMessage = 'Saved a structure-only copy (no records).';
+    render();
   } else if (action === 'highlight-invalid') {
     const issues = tableValidationIssues(activeTable());
     highlightedRecordIds = new Set(issues.map((issue) => issue.record.id));
@@ -2858,6 +2980,17 @@ appRoot.addEventListener('change', (event) => {
     render();
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
+  } else if (target.matches('.multi-option') && target instanceof HTMLInputElement) {
+    const cell = target.closest<HTMLElement>('.multi-cell');
+    const recordId = target.dataset.recordId;
+    const fieldId = target.dataset.fieldId;
+    if (cell && recordId && fieldId) {
+      const chosen = Array.from(cell.querySelectorAll<HTMLInputElement>('.multi-option:checked')).map((box) => box.dataset.multiOption ?? '');
+      noteCellEdit(recordId, fieldId);
+      project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, chosen.join(', ')));
+      saveAutosave(project);
+      render();
+    }
   } else if (
     target.matches('.cell-input, .cell-checkbox, .image-input') &&
     (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)

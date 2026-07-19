@@ -14,9 +14,14 @@ const FIELD_DEFAULTS: Record<FieldType, ListSplatCellValue> = {
   currency: 0,
   percent: 0,
   date: '',
+  time: '',
+  dateTime: '',
   checkbox: false,
   rating: 0,
   choice: '',
+  multiSelect: '',
+  email: '',
+  phone: '',
   image: '',
   link: '',
   calculation: '',
@@ -37,7 +42,7 @@ export function createField(name: string, type: FieldType = 'text'): ListSplatFi
     description: '',
     required: false,
     hidden: false,
-    options: type === 'choice' ? ['Yes', 'No'] : undefined,
+    options: type === 'choice' || type === 'multiSelect' ? ['Yes', 'No'] : undefined,
   };
 }
 
@@ -334,6 +339,97 @@ export function addTable(project: ListSplatFile, name: string): ListSplatFile {
         locked: false,
       },
     ],
+  };
+}
+
+export function renameTable(project: ListSplatFile, tableId: string, name: string): ListSplatFile {
+  const clean = name.trim() || 'Table';
+  return {
+    ...project,
+    updatedAt: new Date().toISOString(),
+    schema: {
+      ...project.schema,
+      tables: project.schema.tables.map((table) => (table.id === tableId ? { ...table, name: clean } : table)),
+    },
+  };
+}
+
+export function duplicateTable(project: ListSplatFile, tableId: string): { project: ListSplatFile; newTableId: string } {
+  const source = project.schema.tables.find((table) => table.id === tableId);
+  if (!source) {
+    return { project, newTableId: tableId };
+  }
+  // Remap field ids so the copy is independent, then rewrite record values to match.
+  const fieldMap = new Map(source.fields.map((field) => [field.id, createId('field')]));
+  const fields = source.fields.map((field) => ({ ...field, id: fieldMap.get(field.id)! }));
+  const records = source.records.map((record) => ({
+    id: createId('record'),
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    values: Object.fromEntries(Object.entries(record.values).map(([key, value]) => [fieldMap.get(key) ?? key, value])),
+  }));
+  const newTable: ListSplatTable = { id: createId('table'), name: `${source.name} copy`, fields, records };
+  const index = project.schema.tables.findIndex((table) => table.id === tableId);
+  const tables = [...project.schema.tables];
+  tables.splice(index + 1, 0, newTable);
+  return {
+    project: {
+      ...project,
+      updatedAt: new Date().toISOString(),
+      schema: { ...project.schema, tables },
+      layouts: [
+        ...project.layouts,
+        { id: createId('layout'), name: `${newTable.name} Table`, tableId: newTable.id, mode: 'table', locked: false },
+        { id: createId('layout'), name: `${newTable.name} Form`, tableId: newTable.id, mode: 'form', locked: false },
+      ],
+    },
+    newTableId: newTable.id,
+  };
+}
+
+export function moveTable(project: ListSplatFile, tableId: string, delta: number): ListSplatFile {
+  const tables = [...project.schema.tables];
+  const index = tables.findIndex((table) => table.id === tableId);
+  const target = index + delta;
+  if (index < 0 || target < 0 || target >= tables.length) {
+    return project;
+  }
+  [tables[index], tables[target]] = [tables[target], tables[index]];
+  return { ...project, updatedAt: new Date().toISOString(), schema: { ...project.schema, tables } };
+}
+
+export function deleteTable(project: ListSplatFile, tableId: string): ListSplatFile {
+  if (project.schema.tables.length <= 1) {
+    return project;
+  }
+  return {
+    ...project,
+    updatedAt: new Date().toISOString(),
+    schema: {
+      ...project.schema,
+      tables: project.schema.tables.filter((table) => table.id !== tableId),
+      relationships: project.schema.relationships.filter(
+        (relationship) => relationship.fromTableId !== tableId && relationship.toTableId !== tableId,
+      ),
+    },
+    layouts: project.layouts.filter((layout) => layout.tableId !== tableId),
+    views: (project.views ?? []).filter((view) => view.tableId !== tableId),
+  };
+}
+
+// Structure-only copy: same schema, no records.
+export function structureOnlyProject(project: ListSplatFile): ListSplatFile {
+  const now = new Date().toISOString();
+  return {
+    ...project,
+    createdAt: now,
+    updatedAt: now,
+    metadata: { ...project.metadata, title: `${project.metadata.title} (template)` },
+    schema: {
+      ...project.schema,
+      tables: project.schema.tables.map((table) => ({ ...table, records: [createRecord(table.fields)] })),
+    },
+    views: [],
   };
 }
 

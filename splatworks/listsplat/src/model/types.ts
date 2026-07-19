@@ -5,9 +5,14 @@ export type FieldType =
   | 'currency'
   | 'percent'
   | 'date'
+  | 'time'
+  | 'dateTime'
   | 'checkbox'
   | 'rating'
   | 'choice'
+  | 'multiSelect'
+  | 'email'
+  | 'phone'
   | 'image'
   | 'link'
   | 'calculation'
@@ -32,6 +37,9 @@ export interface ListSplatField {
   pattern?: ValidationPattern;
   customPattern?: string;
   defaultValue?: string;
+  maxLength?: number;
+  readonly?: boolean;
+  customMessage?: string;
 }
 
 export type ListSplatCellValue = string | number | boolean | null;
@@ -40,6 +48,7 @@ export interface ListSplatRecord {
   id: string;
   createdAt: string;
   updatedAt: string;
+  archived?: boolean;
   values: Record<string, ListSplatCellValue>;
 }
 
