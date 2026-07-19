@@ -66,7 +66,8 @@ type DialogName =
   | 'find'
   | 'sort'
   | 'views'
-  | 'bulkFill';
+  | 'bulkFill'
+  | 'charts';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -231,6 +232,10 @@ let calendarFieldId = '';
 let calendarMonth = '';
 let wrapText = false;
 let draggedRecordId: string | null = null;
+let chartType: 'bar' | 'pie' | 'line' = 'bar';
+let chartCategoryField = '';
+let chartValueMode: 'count' | 'sum' = 'count';
+let chartValueField = '';
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
@@ -1497,6 +1502,32 @@ function renderRelationshipDiagram(): string {
   return `<div class="rel-diagram"><div class="rel-boxes">${boxes}</div><div class="rel-links">${links}</div></div>`;
 }
 
+function renderFormulaBuilder(table: ListSplatTable): string {
+  const snippets: Array<[string, string]> = [
+    ['Combine text', 'JOIN(A, " ", B)'],
+    ['Add', 'ADD(A, B)'],
+    ['Multiply', 'MULTIPLY(A, B)'],
+    ['Percent', 'PERCENT(A, B)'],
+    ['If / then', 'IF(CONTAINS(A, "x"), "yes", "no")'],
+    ['Sum column', 'SUM(A)'],
+    ['Average', 'AVERAGE(A)'],
+    ['Count', 'COUNT(A)'],
+    ['Years since', 'YEARS_BETWEEN(A)'],
+    ['Uppercase', 'UPPER(A)'],
+  ];
+  const fields = table.fields.filter((field) => !['calculation'].includes(field.type)).slice(0, 12);
+  return `
+    <div class="formula-builder">
+      <div class="fb-row"><span>Functions</span>${snippets
+        .map(([label, snippet]) => `<button type="button" class="fb-chip" data-formula-insert="${html(snippet)}">${html(label)}</button>`)
+        .join('')}</div>
+      <div class="fb-row"><span>Insert field</span>${fields
+        .map((field) => `<button type="button" class="fb-chip field" data-formula-insert="${html(field.name)}">${html(field.name)}</button>`)
+        .join('')}</div>
+    </div>
+  `;
+}
+
 function renderFieldConstraints(field: ListSplatField, type: FieldType): string {
   const numeric = ['number', 'currency', 'percent', 'rating'].includes(type);
   const textish = ['text', 'longText', 'link'].includes(type);
@@ -1690,6 +1721,110 @@ function renderBulkFillDialog(table: ListSplatTable): string {
   `;
 }
 
+// ── Charts (Batch C) ─────────────────────────────────────────────────────────
+function chartData(table: ListSplatTable): Array<{ label: string; value: number }> {
+  const categoryField = table.fields.find((field) => field.id === chartCategoryField);
+  if (!categoryField) {
+    return [];
+  }
+  const rows = visibleRecords(table);
+  const buckets = new Map<string, number>();
+  rows.forEach((record) => {
+    const label = String(displayValue(table, record, categoryField.id) ?? '').trim() || '(empty)';
+    let value = 1;
+    if (chartValueMode === 'sum' && chartValueField) {
+      const numeric = Number(displayValue(table, record, chartValueField));
+      value = Number.isFinite(numeric) ? numeric : 0;
+    }
+    buckets.set(label, (buckets.get(label) ?? 0) + value);
+  });
+  return [...buckets.entries()].map(([label, value]) => ({ label, value })).slice(0, 24);
+}
+
+const CHART_COLORS = ['#7c3aed', '#0ea5e9', '#16a34a', '#f59e0b', '#dc2626', '#9333ea', '#0891b2', '#65a30d', '#ea580c', '#db2777'];
+
+function renderChartSvg(data: Array<{ label: string; value: number }>): string {
+  if (!data.length) {
+    return '<p class="empty-panel">Choose a category field to build a chart.</p>';
+  }
+  const max = Math.max(...data.map((item) => item.value), 1);
+  const total = data.reduce((sum, item) => sum + item.value, 0) || 1;
+  if (chartType === 'pie') {
+    const cx = 150;
+    const cy = 130;
+    const radius = 110;
+    let angle = -Math.PI / 2;
+    const slices = data
+      .map((item, index) => {
+        const slice = (item.value / total) * Math.PI * 2;
+        const x1 = cx + radius * Math.cos(angle);
+        const y1 = cy + radius * Math.sin(angle);
+        angle += slice;
+        const x2 = cx + radius * Math.cos(angle);
+        const y2 = cy + radius * Math.sin(angle);
+        const large = slice > Math.PI ? 1 : 0;
+        return `<path d="M${cx} ${cy} L${x1.toFixed(1)} ${y1.toFixed(1)} A${radius} ${radius} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z" fill="${CHART_COLORS[index % CHART_COLORS.length]}"></path>`;
+      })
+      .join('');
+    return `<svg viewBox="0 0 300 260" class="chart-svg" role="img" aria-label="Pie chart">${slices}</svg>`;
+  }
+  const width = 520;
+  const height = 260;
+  const pad = 30;
+  const barW = (width - pad * 2) / data.length;
+  if (chartType === 'line') {
+    const points = data
+      .map((item, index) => {
+        const x = pad + barW * index + barW / 2;
+        const y = height - pad - (item.value / max) * (height - pad * 2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(' ');
+    return `<svg viewBox="0 0 ${width} ${height}" class="chart-svg" role="img" aria-label="Line chart">
+      <polyline fill="none" stroke="#7c3aed" stroke-width="3" points="${points}"></polyline>
+      ${data.map((item, index) => { const x = pad + barW * index + barW / 2; const y = height - pad - (item.value / max) * (height - pad * 2); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="#5b21b6"></circle>`; }).join('')}
+    </svg>`;
+  }
+  const bars = data
+    .map((item, index) => {
+      const x = pad + barW * index + 4;
+      const barHeight = (item.value / max) * (height - pad * 2);
+      const y = height - pad - barHeight;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 8).toFixed(1)}" height="${barHeight.toFixed(1)}" rx="4" fill="${CHART_COLORS[index % CHART_COLORS.length]}"></rect>`;
+    })
+    .join('');
+  return `<svg viewBox="0 0 ${width} ${height}" class="chart-svg" role="img" aria-label="Bar chart">${bars}<line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#d8d2ff"></line></svg>`;
+}
+
+function renderChartsDialog(table: ListSplatTable): string {
+  const categorical = table.fields.filter((field) => !field.hidden && !['image', 'longText', 'calculation'].includes(field.type));
+  const numberFields = table.fields.filter((field) => ['number', 'currency', 'percent', 'rating'].includes(field.type));
+  const data = chartData(table);
+  return `
+    <div class="modal-backdrop">
+      <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Charts">
+        <h2>Charts</h2>
+        <p>Charts use the records currently shown (${visibleRecords(table).length}). Change filters to focus a chart.</p>
+        <div class="chart-controls">
+          <label>Type <select data-chart-type>${(['bar', 'pie', 'line'] as const).map((option) => `<option value="${option}" ${chartType === option ? 'selected' : ''}>${option}</option>`).join('')}</select></label>
+          <label>Category <select data-chart-category><option value="">Choose a field</option>${categorical.map((field) => `<option value="${field.id}" ${chartCategoryField === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('')}</select></label>
+          <label>Measure <select data-chart-value-mode><option value="count" ${chartValueMode === 'count' ? 'selected' : ''}>count records</option><option value="sum" ${chartValueMode === 'sum' ? 'selected' : ''}>sum a number</option></select></label>
+          ${chartValueMode === 'sum' ? `<label>Number field <select data-chart-value-field><option value="">Choose</option>${numberFields.map((field) => `<option value="${field.id}" ${chartValueField === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('')}</select></label>` : ''}
+        </div>
+        <div class="chart-area">${renderChartSvg(data)}</div>
+        ${
+          data.length
+            ? `<table class="chart-table"><caption class="sr-only">Chart data</caption><thead><tr><th>Category</th><th>Value</th></tr></thead><tbody>${data
+                .map((item) => `<tr><td>${html(item.label)}</td><td>${item.value.toLocaleString()}</td></tr>`)
+                .join('')}</tbody></table>`
+            : ''
+        }
+        <div class="modal-actions"><button type="button" data-action="close-dialog">Close</button></div>
+      </section>
+    </div>
+  `;
+}
+
 function renderDialog(table: ListSplatTable): string {
   if (dialog === 'none') {
     return '';
@@ -1706,6 +1841,9 @@ function renderDialog(table: ListSplatTable): string {
   }
   if (dialog === 'bulkFill') {
     return renderBulkFillDialog(table);
+  }
+  if (dialog === 'charts') {
+    return renderChartsDialog(table);
   }
 
   if (dialog === 'replace') {
@@ -1757,6 +1895,7 @@ function renderDialog(table: ListSplatTable): string {
           <label class="check-row"><input type="checkbox" data-field-hidden ${field.hidden ? 'checked' : ''}> Hide field</label>
           ${renderFieldConstraints(field, previewType)}
           <label>Calculation formula <input data-field-formula value="${html(field.formula ?? '')}" placeholder='JOIN(First Name, " ", Last Name)'></label>
+          ${previewType === 'calculation' ? renderFormulaBuilder(table) : ''}
           <p>Try <code>FIELD(Animal)</code>, <code>JOIN(Animal, " lives in ", Habitat)</code>, <code>UPPER(Animal)</code>, <code>ADD(Score, Bonus)</code>, <code>AVERAGE(Score)</code>, or <code>LOOKUP("Book reviews", Rating)</code>.</p>
           <div class="modal-actions">
             <button type="button" data-action="save-field-settings">Save field</button>
@@ -2108,6 +2247,7 @@ function render(): void {
         ${createMenu('Tools', [
           ['functions', 'Functions'],
           ['relationships', 'Relationships'],
+          ['charts', 'Charts'],
           ['quality', 'Data quality check'],
         ])}
         ${createMenu('View', [
@@ -2838,6 +2978,17 @@ appRoot.addEventListener('click', (event) => {
     return;
   }
 
+  const formulaInsert = target.closest<HTMLElement>('[data-formula-insert]')?.dataset.formulaInsert;
+  if (formulaInsert) {
+    const input = appRoot.querySelector<HTMLInputElement>('[data-field-formula]');
+    if (input) {
+      const at = input.selectionStart ?? input.value.length;
+      input.value = input.value.slice(0, at) + formulaInsert + input.value.slice(input.selectionEnd ?? at);
+      input.focus();
+    }
+    return;
+  }
+
   if (qualityTarget) {
     const fieldId = qualityTarget.dataset.qualityFieldId;
     const kind = qualityTarget.dataset.qualityKind;
@@ -3152,6 +3303,13 @@ appRoot.addEventListener('click', (event) => {
   } else if (action === 'relationships') {
     dialog = 'relationship';
     render();
+  } else if (action === 'charts') {
+    if (!chartCategoryField) {
+      const first = activeTable().fields.find((field) => !field.hidden && !['image', 'longText', 'calculation'].includes(field.type));
+      chartCategoryField = first?.id ?? '';
+    }
+    dialog = 'charts';
+    render();
   } else if (action === 'functions') {
     dialog = 'functions';
     render();
@@ -3203,6 +3361,18 @@ appRoot.addEventListener('change', (event) => {
     render();
   } else if (target.matches('[data-wrap-toggle]') && target instanceof HTMLInputElement) {
     wrapText = target.checked;
+    render();
+  } else if (target.matches('[data-chart-type]')) {
+    chartType = target.value as 'bar' | 'pie' | 'line';
+    render();
+  } else if (target.matches('[data-chart-category]')) {
+    chartCategoryField = target.value;
+    render();
+  } else if (target.matches('[data-chart-value-mode]')) {
+    chartValueMode = target.value as 'count' | 'sum';
+    render();
+  } else if (target.matches('[data-chart-value-field]')) {
+    chartValueField = target.value;
     render();
   } else if (target.matches('[data-select-all]') && target instanceof HTMLInputElement) {
     const ids = visibleRecords(activeTable()).map((record) => record.id);

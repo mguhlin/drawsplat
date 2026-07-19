@@ -1309,3 +1309,20 @@ summary:focus-visible {
 .cal-event { border: 0; border-radius: 6px; background: var(--soft); color: var(--accent-dark); padding: 3px 6px; font-size: .74rem; font-weight: 700; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cal-event:hover { background: var(--accent); color: #fff; }
 .cal-more { font-size: .7rem; color: var(--muted); }
+
+/* ── Batch C: charts + formula builder ── */
+.chart-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
+.chart-controls label { font-weight: 800; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.chart-controls select { min-height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: #fff; }
+.chart-area { display: grid; place-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.chart-svg { width: 100%; max-width: 560px; height: auto; }
+.chart-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.chart-table th, .chart-table td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }
+.chart-table th { background: #efe9ff; color: var(--accent-dark); }
+
+.formula-builder { display: grid; gap: 6px; margin: 4px 0 8px; }
+.fb-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.fb-row > span { font-weight: 800; color: var(--muted); font-size: .8rem; min-width: 84px; }
+.fb-chip { border: 1px solid var(--line); border-radius: 999px; background: #fff; padding: 4px 10px; font-weight: 700; font-size: .82rem; cursor: pointer; }
+.fb-chip:hover { border-color: var(--accent); color: var(--accent); }
+.fb-chip.field { background: var(--soft); color: var(--accent-dark); }

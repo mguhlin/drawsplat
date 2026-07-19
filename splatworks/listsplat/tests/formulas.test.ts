@@ -38,6 +38,19 @@ describe('calculation formulas', () => {
     expect(evaluateSimpleFormula('LENGTH(Animal)', table, record)).toBe('9');
   });
 
+  it('supports logic, more text, and date helpers', () => {
+    const table = starterTable();
+    const record = table.records[0];
+    expect(evaluateSimpleFormula('IF(CONTAINS(Diet, "worms"), "carnivore", "other")', table, record)).toBe('carnivore');
+    expect(evaluateSimpleFormula('LEFT(Animal, "3")', table, record)).toBe('Axo');
+    expect(evaluateSimpleFormula('RIGHT(Animal, "2")', table, record)).toBe('tl');
+    expect(evaluateSimpleFormula('SUBSTITUTE(Animal, "Axolotl", "Frog")', table, record)).toBe('Frog');
+    expect(evaluateSimpleFormula('AND(CONTAINS(Diet,"worms"), CONTAINS(Habitat,"lakes"))', table, record)).toBe('Yes');
+    expect(evaluateSimpleFormula('YEAR("2024-05-01")', table, record)).toBe('2024');
+    expect(evaluateSimpleFormula('DAYS_BETWEEN("2024-01-01", "2024-01-11")', table, record)).toBe('10');
+    expect(evaluateSimpleFormula('PERCENT("20", "50")', table, record)).toBe('40');
+  });
+
   it('supports row math and clear formula errors', () => {
     const table = starterTable();
     const record = table.records[0];

@@ -40,6 +40,7 @@ function splitFormulaArgs(input: string): string[] {
   const args: string[] = [];
   let current = '';
   let inQuote = false;
+  let depth = 0;
 
   for (let index = 0; index < input.length; index += 1) {
     const char = input[index];
@@ -49,7 +50,9 @@ function splitFormulaArgs(input: string): string[] {
       current += char;
       continue;
     }
-    if (char === ',' && !inQuote) {
+    if (!inQuote && char === '(') depth += 1;
+    if (!inQuote && char === ')') depth -= 1;
+    if (char === ',' && !inQuote && depth === 0) {
       args.push(current.trim());
       current = '';
       continue;
@@ -79,6 +82,11 @@ function fieldValue(table: ListSplatTable, record: ListSplatRecord, fieldName: s
 }
 
 function tokenValue(table: ListSplatTable, record: ListSplatRecord, token: string): string {
+  const trimmed = token.trim();
+  // Recursively evaluate a nested function call, e.g. IF(CONTAINS(Diet,"x"), ...).
+  if (/^[A-Z_]+\(.*\)$/i.test(trimmed)) {
+    return evaluateSimpleFormula(trimmed, table, record);
+  }
   return literalValue(token) ?? fieldValue(table, record, token);
 }
 
@@ -230,6 +238,69 @@ export function evaluateSimpleFormula(
     if (functionName === 'MIN') return formatNumber(values.length ? Math.min(...values) : 0);
     if (functionName === 'MAX') return formatNumber(values.length ? Math.max(...values) : 0);
     return String(values.length);
+  }
+
+  if (functionName === 'COUNT_UNIQUE') {
+    const requested = first.trim().toLowerCase();
+    const field = table.fields.find((item) => item.name.toLowerCase() === requested);
+    if (!field) return '0';
+    const seen = new Set(table.records.map((r) => String(r.values[field.id] ?? '').trim().toLowerCase()).filter(Boolean));
+    return String(seen.size);
+  }
+
+  if (functionName === 'PERCENT') {
+    const whole = tokenNumber(table, record, args[1] ?? '');
+    return whole === 0 ? '0' : formatNumber((tokenNumber(table, record, first) / whole) * 100);
+  }
+
+  // Text helpers
+  if (functionName === 'LEFT') return tokenValue(table, record, first).slice(0, Math.max(0, tokenNumber(table, record, args[1] ?? '"0"')));
+  if (functionName === 'RIGHT') {
+    const n = Math.max(0, tokenNumber(table, record, args[1] ?? '"0"'));
+    const text = tokenValue(table, record, first);
+    return n === 0 ? '' : text.slice(-n);
+  }
+  if (functionName === 'MID') {
+    const start = Math.max(0, tokenNumber(table, record, args[1] ?? '"1"') - 1);
+    const len = Math.max(0, tokenNumber(table, record, args[2] ?? '"0"'));
+    return tokenValue(table, record, first).slice(start, start + len);
+  }
+  if (functionName === 'SUBSTITUTE') {
+    return tokenValue(table, record, first).split(tokenValue(table, record, args[1] ?? '')).join(tokenValue(table, record, args[2] ?? ''));
+  }
+
+  // Logic helpers (truthy = non-empty and not no/false/0)
+  const truthy = (token: string): boolean => {
+    const value = tokenValue(table, record, token).trim().toLowerCase();
+    return value !== '' && !['no', 'false', '0'].includes(value);
+  };
+  if (functionName === 'IS_EMPTY') return tokenValue(table, record, first).trim() === '' ? 'Yes' : 'No';
+  if (functionName === 'NOT') return truthy(first) ? 'No' : 'Yes';
+  if (functionName === 'AND') return args.every(truthy) ? 'Yes' : 'No';
+  if (functionName === 'OR') return args.some(truthy) ? 'Yes' : 'No';
+  if (functionName === 'IF') return truthy(first) ? tokenValue(table, record, args[1] ?? '') : tokenValue(table, record, args[2] ?? '');
+
+  // Date helpers
+  const parseDate = (token: string): Date | null => {
+    const raw = tokenValue(table, record, token).trim();
+    if (!raw) return null;
+    const date = new Date(raw.length <= 10 ? `${raw}T00:00:00` : raw);
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
+  if (functionName === 'TODAY') return new Date().toISOString().slice(0, 10);
+  if (functionName === 'YEAR' || functionName === 'MONTH' || functionName === 'DAY') {
+    const date = parseDate(first);
+    if (!date) return '';
+    if (functionName === 'YEAR') return String(date.getFullYear());
+    if (functionName === 'MONTH') return String(date.getMonth() + 1);
+    return String(date.getDate());
+  }
+  if (functionName === 'DAYS_BETWEEN' || functionName === 'YEARS_BETWEEN') {
+    const start = parseDate(first);
+    const end = args[1] ? parseDate(args[1]) : new Date();
+    if (!start || !end) return '';
+    const days = Math.round((end.getTime() - start.getTime()) / 86_400_000);
+    return functionName === 'DAYS_BETWEEN' ? String(days) : String(Math.floor(days / 365.25));
   }
 
   return `Formula error: ${functionName} is not supported`;
