@@ -5,6 +5,10 @@ import {
   addRecord,
   addTable,
   assertListSplatFile,
+  convertFieldValues,
+  convertValueForType,
+  createField,
+  createId,
   createRecord,
   createStarterProject,
   deleteRecord,
@@ -14,9 +18,29 @@ import {
   updateField,
 } from './model/database';
 import { evaluateSimpleFormula, summarizeTable } from './model/formulas';
-import { previewReplaceValues, findDuplicateRecords, findMissingRecords, findRecords, replaceValues, sortRecords } from './model/query';
+import {
+  filterAdvanced,
+  findDuplicateRecords,
+  findMissingRecords,
+  findRecords,
+  previewReplaceValues,
+  replaceValues,
+  sortRecordsByKeys,
+} from './model/query';
 import { addRelationship, createRelationship, relatedRecords, relationshipLabel } from './model/relationships';
-import type { FieldType, ListSplatCellValue, ListSplatField, ListSplatFile, ListSplatRecord, ListSplatTable } from './model/types';
+import type {
+  FieldType,
+  FindOperator,
+  FindQuery,
+  FindRule,
+  ListSplatCellValue,
+  ListSplatField,
+  ListSplatFile,
+  ListSplatRecord,
+  ListSplatTable,
+  SavedView,
+  SortKey,
+} from './model/types';
 import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
@@ -32,7 +56,11 @@ type DialogName =
   | 'layout'
   | 'functions'
   | 'quality'
-  | 'teacherNotes';
+  | 'teacherNotes'
+  | 'find'
+  | 'sort'
+  | 'views'
+  | 'bulkFill';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -183,8 +211,13 @@ let viewMode: ViewMode = 'table';
 let saveStatus = 'Saved locally';
 let searchQuery = '';
 let searchFieldId = 'all';
-let sortFieldId = '';
-let sortDirection: 'asc' | 'desc' = 'asc';
+let sortKeys: SortKey[] = [];
+let findQuery: FindQuery | null = null;
+let findDraft: FindQuery = { match: 'all', rules: [] };
+let sortDraft: SortKey[] = [];
+let fieldDialogType: FieldType | '' = '';
+let selectedRecordIds = new Set<string>();
+let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
 let selectedFieldId = '';
@@ -250,8 +283,22 @@ function activeTable(): ListSplatTable {
 }
 
 function visibleRecords(table: ListSplatTable): ListSplatRecord[] {
-  const records = findRecords(table, { query: searchQuery, fieldId: searchFieldId });
-  return highlightedRecordIds.size > 0 ? records.filter((record) => highlightedRecordIds.has(record.id)) : records;
+  let records = findRecords(table, { query: searchQuery, fieldId: searchFieldId });
+  records = filterAdvanced(records, findQuery);
+  if (highlightedRecordIds.size > 0) {
+    records = records.filter((record) => highlightedRecordIds.has(record.id));
+  }
+  return sortRecordsByKeys(records, sortKeys.filter((key) => table.fields.some((field) => field.id === key.fieldId)));
+}
+
+function findIsActive(): boolean {
+  return Boolean(searchQuery) || Boolean(findQuery && findQuery.rules.length) || highlightedRecordIds.size > 0;
+}
+
+function clearFind(): void {
+  searchQuery = '';
+  findQuery = null;
+  highlightedRecordIds = new Set();
 }
 
 function ensureActiveRecord(table: ListSplatTable): void {
@@ -448,6 +495,17 @@ function importCsv(file: File): void {
     const table = tableFromCsv(file.name.replace(/\.csv$/i, ''), text);
     pendingCsvTable = table;
     pendingCsvFileName = file.name;
+    const existing = activeTable();
+    pendingCsvMap = table.fields.map((field) => {
+      const samples = table.records.slice(0, 12).map((record) => String(record.values[field.id] ?? ''));
+      const match = existing.fields.find((item) => item.name.trim().toLowerCase() === field.name.trim().toLowerCase());
+      return {
+        header: field.name,
+        action: match ? 'existing' : 'new',
+        type: guessFieldType(samples),
+        fieldId: match?.id ?? '',
+      };
+    });
     dialog = 'csvImport';
     lastMessage = `Previewing ${table.records.length} CSV record${table.records.length === 1 ? '' : 's'} from ${file.name}.`;
     render();
@@ -459,46 +517,75 @@ function applyCsvImport(mode: 'new' | 'append'): void {
     dialog = 'none';
     return;
   }
+  readCsvMap();
+  const source = pendingCsvTable;
 
   pushUndo('CSV import');
   if (mode === 'new') {
-    const table = pendingCsvTable;
+    // Build a new table from the columns the user chose to keep, with their types.
+    const kept = pendingCsvMap.filter((column) => column.action !== 'skip');
+    const newFields = kept.map((column, index) => {
+      const sourceField = source.fields[pendingCsvMap.indexOf(column)];
+      const field = createField(column.header || `Field ${index + 1}`, column.type);
+      return { field, sourceFieldId: sourceField.id };
+    });
+    const records = source.records.map((record) =>
+      createRecord(
+        newFields.map((entry) => entry.field),
+        Object.fromEntries(
+          newFields.map((entry) => [entry.field.id, convertValueForType(record.values[entry.sourceFieldId], entry.field.type).value]),
+        ),
+      ),
+    );
+    const table: ListSplatTable = {
+      id: createId('table'),
+      name: source.name,
+      fields: newFields.map((entry) => entry.field),
+      records: records.length ? records : [createRecord(newFields.map((entry) => entry.field))],
+    };
     activeTableId = table.id;
     activeRecordId = table.records[0]?.id ?? '';
     pendingCsvTable = null;
+    clearFind();
+    sortKeys = [];
+    selectedRecordIds = new Set();
     dialog = 'none';
     lastMessage = `Imported ${table.records.length} records from ${pendingCsvFileName}.`;
     setProject({
       ...project,
       updatedAt: new Date().toISOString(),
-      schema: {
-        ...project.schema,
-        tables: [...project.schema.tables, table],
-      },
+      schema: { ...project.schema, tables: [...project.schema.tables, table] },
       layouts: [
         ...project.layouts,
-        {
-          id: `layout_${Date.now().toString(36)}`,
-          name: `${table.name} Table`,
-          tableId: table.id,
-          mode: 'table',
-          locked: false,
-        },
+        { id: createId('layout'), name: `${table.name} Table`, tableId: table.id, mode: 'table', locked: false },
+        { id: createId('layout'), name: `${table.name} Form`, tableId: table.id, mode: 'form', locked: false },
       ],
     });
     return;
   }
 
-  const table = activeTable();
-  const importedFieldsByName = new Map(pendingCsvTable.fields.map((field) => [field.name.trim().toLowerCase(), field.id]));
-  const appendedRecords = pendingCsvTable.records.map((record) =>
+  // Append: create any "new" fields the user mapped, then map each CSV column to a target field.
+  let table = activeTable();
+  pendingCsvMap.forEach((column, index) => {
+    if (column.action === 'new') {
+      const created = createField(column.header || `Field ${index + 1}`, column.type);
+      table = { ...table, fields: [...table.fields, created] };
+      column.fieldId = created.id;
+    }
+  });
+  const targetById = new Map(table.fields.map((field) => [field.id, field]));
+  const appendedRecords = source.records.map((record) =>
     createRecord(
       table.fields,
       Object.fromEntries(
-        table.fields.map((field) => {
-          const importedFieldId = importedFieldsByName.get(field.name.trim().toLowerCase());
-          return [field.id, importedFieldId ? record.values[importedFieldId] ?? '' : ''];
-        }),
+        pendingCsvMap
+          .filter((column) => column.action !== 'skip' && column.fieldId && targetById.has(column.fieldId))
+          .map((column, position) => {
+            const sourceField = source.fields[pendingCsvMap.indexOf(column)];
+            const target = targetById.get(column.fieldId)!;
+            void position;
+            return [column.fieldId, convertValueForType(record.values[sourceField.id], target.type, target.options).value];
+          }),
       ),
     ),
   );
@@ -656,7 +743,7 @@ function firstImageValue(table: ListSplatTable, record: ListSplatRecord): string
   return imageField ? String(displayValue(table, record, imageField.id) ?? '') : '';
 }
 
-function updateCurrentLayout(updates: { fieldOrder?: string[]; hiddenFieldIds?: string[]; locked?: boolean }): void {
+function updateCurrentLayout(updates: { fieldOrder?: string[]; hiddenFieldIds?: string[]; locked?: boolean; columnWidths?: Record<string, number> }): void {
   const layout = currentLayout();
   if (!layout) {
     return;
@@ -748,7 +835,7 @@ function renderTableTabs(table: ListSplatTable): string {
 
 function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string {
   if (rows.length === 0) {
-    const cleared = searchQuery || highlightedRecordIds.size > 0;
+    const cleared = findIsActive();
     return `
       <div class="data-grid-wrap">
         <div class="empty-state">
@@ -765,19 +852,23 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
       </div>
     `;
   }
+  const fields = orderedFields(table);
+  const allVisibleSelected = rows.length > 0 && rows.every((record) => selectedRecordIds.has(record.id));
   return `
     <div class="data-grid-wrap">
       <table class="data-grid">
         <thead>
           <tr>
-            <th>#</th>
-            ${orderedFields(table)
+            <th class="select-col"><input type="checkbox" data-select-all aria-label="Select all records" ${allVisibleSelected ? 'checked' : ''}></th>
+            <th class="row-num-col">#</th>
+            ${fields
               .map(
                 (field) => `
-                  <th>
+                  <th class="col-head" data-col-field="${field.id}" draggable="true" style="${columnWidthStyle(field.id)}">
                     <button type="button" class="field-button" data-field-settings="${field.id}">
                       ${html(field.name)}${field.required ? '<span class="req" title="Required field" aria-label="required">*</span>' : ''}<br><small>${html(field.type)}</small>
                     </button>
+                    <span class="col-resize" data-col-resize="${field.id}" title="Drag to resize" aria-hidden="true"></span>
                   </th>
                 `,
               )
@@ -789,10 +880,11 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
           ${rows
             .map(
               (record, rowIndex) => `
-                <tr class="${record.id === activeRecordId ? 'active-row' : ''}" data-record-row="${record.id}">
-                  <td><button type="button" class="row-button" data-select-record="${record.id}">${rowIndex + 1}</button></td>
-                  ${orderedFields(table)
-                    .map((field) => `<td>${renderInput(table, record, field.id, rowIndex)}</td>`)
+                <tr class="${record.id === activeRecordId ? 'active-row' : ''}${selectedRecordIds.has(record.id) ? ' selected-row' : ''}" data-record-row="${record.id}">
+                  <td class="select-col"><input type="checkbox" data-select-row="${record.id}" aria-label="Select record ${rowIndex + 1}" ${selectedRecordIds.has(record.id) ? 'checked' : ''}></td>
+                  <td class="row-num-col"><button type="button" class="row-button" data-select-record="${record.id}">${rowIndex + 1}</button></td>
+                  ${fields
+                    .map((field) => `<td style="${columnWidthStyle(field.id)}">${renderInput(table, record, field.id, rowIndex)}</td>`)
                     .join('')}
                   <td class="record-actions">
                     <button type="button" data-action="duplicate-record" data-record-action-id="${record.id}">Copy</button>
@@ -806,6 +898,11 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
       </table>
     </div>
   `;
+}
+
+function columnWidthStyle(fieldId: string): string {
+  const width = currentLayout()?.columnWidths?.[fieldId];
+  return width ? `width:${width}px;min-width:${width}px;` : '';
 }
 
 function renderFormView(table: ListSplatTable): string {
@@ -994,8 +1091,52 @@ function renderDatabasePanel(table: ListSplatTable): string {
           )
           .join('')}
       </div>
+      ${renderFilterChips()}
+      ${renderBulkBar(table)}
       ${body}
     </section>
+  `;
+}
+
+function renderFilterChips(): string {
+  const chips: string[] = [];
+  if (searchQuery) {
+    chips.push(`<span class="chip">Search: “${html(searchQuery)}”</span>`);
+  }
+  if (findQuery && findQuery.rules.length) {
+    const joiner = findQuery.match === 'all' ? ' AND ' : ' OR ';
+    const text = findQuery.rules
+      .map((rule) => `${fieldNameById(rule.fieldId)} ${operatorLabel(rule.operator)}${rule.operator === 'isEmpty' || rule.operator === 'isNotEmpty' ? '' : ' ' + rule.value}${rule.operator === 'between' ? '–' + (rule.value2 ?? '') : ''}`)
+      .join(joiner);
+    chips.push(`<button type="button" class="chip chip-button" data-action="find" title="Edit find">Find: ${html(text)}</button>`);
+  }
+  if (highlightedRecordIds.size) {
+    chips.push(`<span class="chip">${highlightedRecordIds.size} highlighted</span>`);
+  }
+  sortKeys
+    .filter((key) => activeTable().fields.some((field) => field.id === key.fieldId))
+    .forEach((key) => {
+      chips.push(`<button type="button" class="chip chip-button" data-action="sort-dialog" title="Edit sort">Sort: ${html(fieldNameById(key.fieldId))} ${key.direction === 'asc' ? '↑' : '↓'}</button>`);
+    });
+  if (!chips.length) {
+    return '';
+  }
+  return `<div class="filter-chips">${chips.join('')}${findIsActive() ? '<button type="button" class="chip chip-clear" data-action="clear-find">Clear find</button>' : ''}${sortKeys.length ? '<button type="button" class="chip chip-clear" data-action="sort-dialog">Edit sort</button>' : ''}</div>`;
+}
+
+function renderBulkBar(table: ListSplatTable): string {
+  const count = selectedInTable(table).length;
+  if (count === 0 || viewMode === 'form') {
+    return '';
+  }
+  return `
+    <div class="bulk-bar" role="group" aria-label="Bulk actions">
+      <strong>${count} selected</strong>
+      <button type="button" class="button" data-action="bulk-fill">Fill a field…</button>
+      <button type="button" class="button" data-action="bulk-duplicate">Duplicate</button>
+      <button type="button" class="button danger" data-action="bulk-delete">Delete</button>
+      <button type="button" class="button ghost" data-action="bulk-clear">Clear selection</button>
+    </div>
   `;
 }
 
@@ -1056,9 +1197,180 @@ function renderTeacherPanel(table: ListSplatTable): string {
   `;
 }
 
+function renderTypeChangePreview(table: ListSplatTable, field: ListSplatField, nextType: FieldType): string {
+  if (nextType === field.type || ['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(nextType)) {
+    return '';
+  }
+  const options = (appRoot.querySelector<HTMLInputElement>('[data-field-options]')?.value ?? field.options?.join(', ') ?? '')
+    .split(',')
+    .map((option) => option.trim())
+    .filter(Boolean);
+  const samples = table.records
+    .filter((record) => String(record.values[field.id] ?? '').trim() !== '')
+    .slice(0, 4)
+    .map((record) => {
+      const before = String(record.values[field.id] ?? '');
+      const converted = convertValueForType(record.values[field.id], nextType, options);
+      const after = converted.value === true ? 'Yes' : converted.value === false ? 'No' : String(converted.value ?? '');
+      return `<li><span>${html(before)}</span> → <span class="${converted.lost ? 'preview-lost' : ''}">${converted.lost ? 'cleared' : html(after || '(empty)')}</span></li>`;
+    });
+  const lostCount = table.records.filter((record) => {
+    if (String(record.values[field.id] ?? '').trim() === '') return false;
+    return convertValueForType(record.values[field.id], nextType, options).lost;
+  }).length;
+  return `
+    <div class="type-preview">
+      <strong>Change ${html(field.type)} → ${html(nextType)}</strong>
+      ${samples.length ? `<ul>${samples.join('')}</ul>` : '<p>No values to convert yet.</p>'}
+      ${lostCount ? `<p class="preview-warn">${lostCount} value${lostCount === 1 ? '' : 's'} cannot convert and will be cleared.</p>` : '<p>All values convert cleanly.</p>'}
+    </div>
+  `;
+}
+
+function renderFindDialog(table: ListSplatTable): string {
+  const fieldOptions = (selected: string) =>
+    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+  const rows = findDraft.rules
+    .map((rule, index) => {
+      const op = FIND_OPERATORS.find((item) => item.value === rule.operator) ?? FIND_OPERATORS[0];
+      return `
+        <div class="find-rule" data-rule-index="${index}">
+          <select data-find-field aria-label="Field">${fieldOptions(rule.fieldId)}</select>
+          <select data-find-op aria-label="Condition">${FIND_OPERATORS.map(
+            (item) => `<option value="${item.value}" ${item.value === rule.operator ? 'selected' : ''}>${html(item.label)}</option>`,
+          ).join('')}</select>
+          <input data-find-value type="text" value="${html(rule.value)}" placeholder="value" ${op.needsValue ? '' : 'hidden'}>
+          <input data-find-value2 type="text" value="${html(rule.value2 ?? '')}" placeholder="and" ${op.needsSecond ? '' : 'hidden'}>
+          <button type="button" class="button ghost" data-action="find-remove-rule">Remove</button>
+        </div>
+      `;
+    })
+    .join('');
+  return `
+    <div class="modal-backdrop">
+      <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Advanced find">
+        <h2>Find records</h2>
+        <label>Match <select data-find-match>
+          <option value="all" ${findDraft.match === 'all' ? 'selected' : ''}>all conditions (AND)</option>
+          <option value="any" ${findDraft.match === 'any' ? 'selected' : ''}>any condition (OR)</option>
+        </select></label>
+        <div class="find-rules">${rows || '<p>Add a condition to start.</p>'}</div>
+        <button type="button" class="button" data-action="find-add-rule">+ Add condition</button>
+        <div class="modal-actions">
+          <button type="button" class="button primary" data-action="apply-find">Apply find</button>
+          <button type="button" data-action="clear-find">Show all</button>
+          <button type="button" data-action="close-dialog">Cancel</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderSortDialog(table: ListSplatTable): string {
+  const fieldOptions = (selected: string) =>
+    table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+  const rows = sortDraft
+    .map(
+      (key, index) => `
+        <div class="sort-level" data-level-index="${index}">
+          <span class="sort-level-num">${index === 0 ? 'Sort by' : 'then by'}</span>
+          <select data-sort-level-field aria-label="Sort field">${fieldOptions(key.fieldId)}</select>
+          <select data-sort-level-dir aria-label="Direction">
+            <option value="asc" ${key.direction === 'asc' ? 'selected' : ''}>A → Z / low → high</option>
+            <option value="desc" ${key.direction === 'desc' ? 'selected' : ''}>Z → A / high → low</option>
+          </select>
+          <button type="button" class="button ghost" data-action="sort-remove-level">Remove</button>
+        </div>
+      `,
+    )
+    .join('');
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Sort records">
+        <h2>Sort records</h2>
+        <div class="sort-levels">${rows || '<p>Add a sort level to order records.</p>'}</div>
+        <button type="button" class="button" data-action="sort-add-level">+ Add sort level</button>
+        <div class="modal-actions">
+          <button type="button" class="button primary" data-action="apply-sort">Apply sort</button>
+          <button type="button" data-action="clear-sort">Clear sort</button>
+          <button type="button" data-action="close-dialog">Cancel</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderViewsDialog(): string {
+  const views = savedViews();
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Saved views">
+        <h2>Saved views</h2>
+        <p>A view remembers the current table, layout, search, find, and sort. Save it, then reopen it any time.</p>
+        <div class="saved-views">
+          ${
+            views.length
+              ? views
+                  .map(
+                    (view) => `
+                      <div class="saved-view" data-view-id="${view.id}">
+                        <div><strong>${html(view.name)}</strong><span>${html(view.mode)}${view.sortKeys.length ? ` · sorted` : ''}${view.find && view.find.rules.length ? ` · found` : ''}</span></div>
+                        <button type="button" class="button" data-action="apply-view" data-view-id="${view.id}">Open</button>
+                        <button type="button" class="button ghost" data-action="delete-view" data-view-id="${view.id}">Delete</button>
+                      </div>
+                    `,
+                  )
+                  .join('')
+              : '<p>No saved views yet.</p>'
+          }
+        </div>
+        <label>Name this view <input data-view-name placeholder="e.g. Needs review"></label>
+        <div class="modal-actions">
+          <button type="button" class="button primary" data-action="save-view">Save current view</button>
+          <button type="button" data-action="close-dialog">Close</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderBulkFillDialog(table: ListSplatTable): string {
+  const count = selectedInTable(table).length;
+  return `
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Fill a field">
+        <h2>Fill a field</h2>
+        <p>Set the same value in ${count} selected record${count === 1 ? '' : 's'}.</p>
+        <label>Field <select data-bulk-field>${table.fields
+          .filter((field) => !['calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type))
+          .map((field) => `<option value="${field.id}">${html(field.name)}</option>`)
+          .join('')}</select></label>
+        <label>Value <input data-bulk-value type="text" placeholder="value to fill in"></label>
+        <div class="modal-actions">
+          <button type="button" class="button primary" data-action="apply-bulk-fill">Fill selected</button>
+          <button type="button" data-action="close-dialog">Cancel</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
 function renderDialog(table: ListSplatTable): string {
   if (dialog === 'none') {
     return '';
+  }
+
+  if (dialog === 'find') {
+    return renderFindDialog(table);
+  }
+  if (dialog === 'sort') {
+    return renderSortDialog(table);
+  }
+  if (dialog === 'views') {
+    return renderViewsDialog();
+  }
+  if (dialog === 'bulkFill') {
+    return renderBulkFillDialog(table);
   }
 
   if (dialog === 'replace') {
@@ -1096,12 +1408,14 @@ function renderDialog(table: ListSplatTable): string {
 
   if (dialog === 'field') {
     const field = table.fields.find((item) => item.id === selectedFieldId) ?? table.fields[0];
+    const previewType = (fieldDialogType || field.type) as FieldType;
     return `
       <div class="modal-backdrop">
         <section class="modal" role="dialog" aria-modal="true" aria-label="Field settings">
           <h2>Field settings</h2>
           <label>Name <input data-field-name value="${html(field.name)}"></label>
-          <label>Type <select data-field-type>${fieldTypeOptions(field.type)}</select></label>
+          <label>Type <select data-field-type>${fieldTypeOptions(previewType)}</select></label>
+          ${renderTypeChangePreview(table, field, previewType)}
           <label>Description <textarea data-field-description>${html(field.description)}</textarea></label>
           <label>Choice options <input data-field-options value="${html(field.options?.join(', ') ?? '')}" placeholder="Yes, No, Maybe"></label>
           <label class="check-row"><input type="checkbox" data-field-required ${field.required ? 'checked' : ''}> Required field</label>
@@ -1151,12 +1465,31 @@ function renderDialog(table: ListSplatTable): string {
   }
 
   if (dialog === 'csvImport' && pendingCsvTable) {
-    const previewRows = pendingCsvTable.records.slice(0, 5);
+    const previewRows = pendingCsvTable.records.slice(0, 4);
+    const existingOptions = (selected: string) =>
+      table.fields.map((field) => `<option value="${field.id}" ${field.id === selected ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+    const mapRows = pendingCsvMap
+      .map(
+        (column, index) => `
+          <div class="csv-map-row" data-map-index="${index}">
+            <span class="csv-map-header">${html(column.header || `Column ${index + 1}`)}</span>
+            <select data-map-action aria-label="What to do with ${html(column.header)}">
+              <option value="new" ${column.action === 'new' ? 'selected' : ''}>New field</option>
+              <option value="existing" ${column.action === 'existing' ? 'selected' : ''}>Existing field</option>
+              <option value="skip" ${column.action === 'skip' ? 'selected' : ''}>Skip</option>
+            </select>
+            <select data-map-type aria-label="Type for ${html(column.header)}" ${column.action === 'new' ? '' : 'hidden'}>${fieldTypeOptions(column.type)}</select>
+            <select data-map-existing aria-label="Existing field for ${html(column.header)}" ${column.action === 'existing' ? '' : 'hidden'}>${existingOptions(column.fieldId)}</select>
+          </div>
+        `,
+      )
+      .join('');
     return `
       <div class="modal-backdrop">
-        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="CSV import preview">
-          <h2>CSV import preview</h2>
-          <p>${html(pendingCsvFileName)} has ${pendingCsvTable.fields.length} field${pendingCsvTable.fields.length === 1 ? '' : 's'} and ${pendingCsvTable.records.length} record${pendingCsvTable.records.length === 1 ? '' : 's'}.</p>
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="CSV import">
+          <h2>Import CSV</h2>
+          <p>${html(pendingCsvFileName)} has ${pendingCsvTable.fields.length} column${pendingCsvTable.fields.length === 1 ? '' : 's'} and ${pendingCsvTable.records.length} row${pendingCsvTable.records.length === 1 ? '' : 's'}. Choose how each column maps.</p>
+          <div class="csv-map">${mapRows}</div>
           <div class="preview-table-wrap">
             <table class="preview-table">
               <thead>
@@ -1174,10 +1507,10 @@ function renderDialog(table: ListSplatTable): string {
               </tbody>
             </table>
           </div>
-          <p>New table keeps every CSV column. Append uses matching field names in the current table and leaves unmatched fields blank.</p>
+          <p><strong>Create new table</strong> builds a fresh table from the columns you keep. <strong>Append</strong> adds the rows to ${html(table.name)} using your field mapping.</p>
           <div class="modal-actions">
-            <button type="button" data-action="apply-csv-new">Create new table</button>
-            <button type="button" data-action="apply-csv-append">Append to ${html(table.name)}</button>
+            <button type="button" class="button primary" data-action="apply-csv-new">Create new table</button>
+            <button type="button" class="button" data-action="apply-csv-append">Append to ${html(table.name)}</button>
             <button type="button" data-action="close-dialog">Cancel</button>
           </div>
         </section>
@@ -1460,9 +1793,12 @@ function render(): void {
           .map((field) => `<option value="${field.id}" ${searchFieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
           .join('')}</select></label>
         <label>${html(t('Sort'))} <select data-sort-field><option value="">${html(t('Choose field'))}</option>${table.fields
-          .map((field) => `<option value="${field.id}" ${sortFieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
+          .map((field) => `<option value="${field.id}" ${sortKeys[0]?.fieldId === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
           .join('')}</select></label>
-        <button type="button" data-action="toggle-sort">${sortDirection === 'asc' ? 'A-Z' : 'Z-A'}</button>
+        <button type="button" data-action="toggle-sort" title="${html(t('Sort direction'))}">${sortKeys[0]?.direction === 'desc' ? 'Z-A' : 'A-Z'}</button>
+        <button type="button" data-action="sort-dialog" title="${html(t('Sort by more than one field'))}">${html(t('Sort…'))}</button>
+        <button type="button" data-action="find" title="${html(t('Advanced find with conditions'))}">${html(t('Find…'))}</button>
+        <button type="button" data-action="views" title="${html(t('Save and reuse this view'))}">${html(t('Views'))}</button>
         <label>${html(t('New field'))} <input data-new-field placeholder="${html(t('Field name'))}"></label>
         <label>${html(t('Type'))} <select data-new-field-type>${fieldTypeOptions()}</select></label>
         <button type="button" data-action="add-field">${html(t('Add field'))}</button>
@@ -1545,9 +1881,14 @@ function runFieldSettingsSave(): void {
     .split(',')
     .map((option) => option.trim())
     .filter(Boolean);
-  setActiveTable(updateField(table, field.id, { name, type, description, required, hidden, formula, options }));
+  const typeChanged = type !== field.type;
+  let nextTable = updateField(table, field.id, { name, type, description, required, hidden, formula, options });
+  if (typeChanged && !['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
+    nextTable = convertFieldValues(nextTable, field.id, type, options);
+  }
+  setActiveTable(nextTable);
   dialog = 'none';
-  lastMessage = `Updated ${name}.`;
+  lastMessage = typeChanged ? `Updated ${name} and converted values to ${type}.` : `Updated ${name}.`;
   render();
 }
 
@@ -1696,6 +2037,211 @@ function moveGridCell(recordId: string, fieldId: string, rowDelta: number, colDe
   focusGridCell(targetRecordId, fieldIds[targetCol] ?? fieldId);
 }
 
+// ── Advanced find ────────────────────────────────────────────────────────────
+const FIND_OPERATORS: Array<{ value: FindOperator; label: string; needsValue: boolean; needsSecond: boolean }> = [
+  { value: 'contains', label: 'contains', needsValue: true, needsSecond: false },
+  { value: 'equals', label: 'is exactly', needsValue: true, needsSecond: false },
+  { value: 'startsWith', label: 'starts with', needsValue: true, needsSecond: false },
+  { value: 'endsWith', label: 'ends with', needsValue: true, needsSecond: false },
+  { value: 'greaterThan', label: 'greater than', needsValue: true, needsSecond: false },
+  { value: 'lessThan', label: 'less than', needsValue: true, needsSecond: false },
+  { value: 'between', label: 'between', needsValue: true, needsSecond: true },
+  { value: 'isEmpty', label: 'is empty', needsValue: false, needsSecond: false },
+  { value: 'isNotEmpty', label: 'is not empty', needsValue: false, needsSecond: false },
+];
+
+function fieldNameById(fieldId: string): string {
+  return activeTable().fields.find((field) => field.id === fieldId)?.name ?? 'field';
+}
+
+function operatorLabel(operator: FindOperator): string {
+  return FIND_OPERATORS.find((item) => item.value === operator)?.label ?? operator;
+}
+
+function readFindDraft(): void {
+  const match = (appRoot.querySelector<HTMLSelectElement>('[data-find-match]')?.value as 'all' | 'any') ?? 'all';
+  const rules: FindRule[] = [];
+  appRoot.querySelectorAll<HTMLElement>('.find-rule').forEach((row) => {
+    const fieldId = row.querySelector<HTMLSelectElement>('[data-find-field]')?.value ?? '';
+    const operator = (row.querySelector<HTMLSelectElement>('[data-find-op]')?.value as FindOperator) ?? 'contains';
+    const value = row.querySelector<HTMLInputElement>('[data-find-value]')?.value ?? '';
+    const value2 = row.querySelector<HTMLInputElement>('[data-find-value2]')?.value ?? '';
+    if (fieldId) {
+      rules.push({ fieldId, operator, value, value2 });
+    }
+  });
+  findDraft = { match, rules };
+}
+
+function applyFind(): void {
+  readFindDraft();
+  findQuery = findDraft.rules.length ? findDraft : null;
+  highlightedRecordIds = new Set();
+  dialog = 'none';
+  const count = visibleRecords(activeTable()).length;
+  lastMessage = findQuery ? `Find is on: ${count} record${count === 1 ? '' : 's'} match.` : 'Find cleared.';
+  render();
+}
+
+// ── Multi-field sort ─────────────────────────────────────────────────────────
+function readSortDraft(): void {
+  const keys: SortKey[] = [];
+  appRoot.querySelectorAll<HTMLElement>('.sort-level').forEach((row) => {
+    const fieldId = row.querySelector<HTMLSelectElement>('[data-sort-level-field]')?.value ?? '';
+    const direction = (row.querySelector<HTMLSelectElement>('[data-sort-level-dir]')?.value as 'asc' | 'desc') ?? 'asc';
+    if (fieldId) {
+      keys.push({ fieldId, direction });
+    }
+  });
+  sortDraft = keys;
+}
+
+function applySort(): void {
+  readSortDraft();
+  sortKeys = sortDraft;
+  dialog = 'none';
+  lastMessage = sortKeys.length ? `Sorting by ${sortKeys.map((key) => fieldNameById(key.fieldId)).join(', ')}.` : 'Sort cleared.';
+  render();
+}
+
+// ── Saved views ──────────────────────────────────────────────────────────────
+function savedViews(): SavedView[] {
+  return project.views ?? [];
+}
+
+function saveCurrentView(): void {
+  const name = appRoot.querySelector<HTMLInputElement>('[data-view-name]')?.value.trim() || `View ${savedViews().length + 1}`;
+  const view: SavedView = {
+    id: createId('view'),
+    name,
+    tableId: activeTableId,
+    mode: viewMode,
+    search: searchQuery,
+    searchFieldId,
+    find: findQuery,
+    sortKeys,
+  };
+  pushUndo('save view');
+  lastMessage = `Saved view: ${name}.`;
+  setProject({ ...project, updatedAt: new Date().toISOString(), views: [...savedViews(), view] });
+}
+
+function applyView(viewId: string): void {
+  const view = savedViews().find((item) => item.id === viewId);
+  if (!view) {
+    return;
+  }
+  if (project.schema.tables.some((table) => table.id === view.tableId)) {
+    activeTableId = view.tableId;
+    ensureActiveRecord(activeTable());
+  }
+  viewMode = view.mode;
+  searchQuery = view.search;
+  searchFieldId = view.searchFieldId;
+  findQuery = view.find;
+  sortKeys = view.sortKeys;
+  highlightedRecordIds = new Set();
+  dialog = 'none';
+  lastMessage = `Opened view: ${view.name}.`;
+  render();
+}
+
+function deleteView(viewId: string): void {
+  pushUndo('delete view');
+  lastMessage = 'Deleted a saved view.';
+  setProject({ ...project, updatedAt: new Date().toISOString(), views: savedViews().filter((item) => item.id !== viewId) });
+}
+
+// ── Row selection + bulk actions ─────────────────────────────────────────────
+function selectedInTable(table: ListSplatTable): string[] {
+  const ids = new Set(table.records.map((record) => record.id));
+  return [...selectedRecordIds].filter((id) => ids.has(id));
+}
+
+function bulkDelete(): void {
+  const table = activeTable();
+  const ids = new Set(selectedInTable(table));
+  if (ids.size === 0) {
+    return;
+  }
+  const remaining = table.records.filter((record) => !ids.has(record.id));
+  if (remaining.length === 0) {
+    lastMessage = 'Keep at least one record. Some rows were not deleted.';
+    render();
+    return;
+  }
+  if (!window.confirm(`Delete ${ids.size} selected record${ids.size === 1 ? '' : 's'}? You can undo right after.`)) {
+    return;
+  }
+  pushUndo('bulk delete');
+  selectedRecordIds = new Set();
+  lastMessage = `Deleted ${table.records.length - remaining.length} records.`;
+  setActiveTable({ ...table, records: remaining });
+}
+
+function bulkDuplicate(): void {
+  const table = activeTable();
+  const ids = selectedInTable(table);
+  if (ids.length === 0) {
+    return;
+  }
+  pushUndo('bulk duplicate');
+  const next = ids.reduce((current, id) => duplicateRecord(current, id), table);
+  selectedRecordIds = new Set();
+  lastMessage = `Duplicated ${ids.length} record${ids.length === 1 ? '' : 's'}.`;
+  setActiveTable(next);
+}
+
+function applyBulkFill(): void {
+  const table = activeTable();
+  const ids = new Set(selectedInTable(table));
+  const fieldId = appRoot.querySelector<HTMLSelectElement>('[data-bulk-field]')?.value ?? '';
+  const rawValue = appRoot.querySelector<HTMLInputElement>('[data-bulk-value]')?.value ?? '';
+  const field = table.fields.find((item) => item.id === fieldId);
+  if (!field || ids.size === 0) {
+    dialog = 'none';
+    render();
+    return;
+  }
+  const value = convertValueForType(rawValue, field.type, field.options).value;
+  pushUndo('bulk fill');
+  const records = table.records.map((record) =>
+    ids.has(record.id) ? { ...record, updatedAt: new Date().toISOString(), values: { ...record.values, [fieldId]: value } } : record,
+  );
+  dialog = 'none';
+  lastMessage = `Filled ${field.name} for ${ids.size} record${ids.size === 1 ? '' : 's'}.`;
+  setActiveTable({ ...table, records });
+}
+
+// ── CSV column mapping ───────────────────────────────────────────────────────
+function guessFieldType(samples: string[]): FieldType {
+  const nonEmpty = samples.filter((sample) => sample.trim() !== '');
+  if (nonEmpty.length === 0) {
+    return 'text';
+  }
+  if (nonEmpty.every((sample) => !Number.isNaN(Number(sample.replace(/[$,%\s]/g, ''))))) {
+    return 'number';
+  }
+  if (nonEmpty.every((sample) => !Number.isNaN(new Date(sample).getTime()) && /\d/.test(sample))) {
+    return 'date';
+  }
+  if (nonEmpty.every((sample) => /^(yes|no|true|false)$/i.test(sample.trim()))) {
+    return 'checkbox';
+  }
+  return 'text';
+}
+
+function readCsvMap(): void {
+  appRoot.querySelectorAll<HTMLElement>('.csv-map-row').forEach((row, index) => {
+    if (!pendingCsvMap[index]) {
+      return;
+    }
+    pendingCsvMap[index].action = (row.querySelector<HTMLSelectElement>('[data-map-action]')?.value as 'new' | 'existing' | 'skip') ?? 'new';
+    pendingCsvMap[index].type = (row.querySelector<HTMLSelectElement>('[data-map-type]')?.value as FieldType) ?? 'text';
+    pendingCsvMap[index].fieldId = row.querySelector<HTMLSelectElement>('[data-map-existing]')?.value ?? '';
+  });
+}
+
 appRoot.addEventListener('click', (event) => {
   const target = event.target as HTMLElement;
   const action = target.closest<HTMLElement>('[data-action]')?.dataset.action;
@@ -1709,7 +2255,9 @@ appRoot.addEventListener('click', (event) => {
 
   if (tableId) {
     activeTableId = tableId;
-    highlightedRecordIds = new Set();
+    clearFind();
+    sortKeys = [];
+    selectedRecordIds = new Set();
     ensureActiveRecord(activeTable());
     render();
     return;
@@ -1736,6 +2284,7 @@ appRoot.addEventListener('click', (event) => {
 
   if (fieldSettings) {
     selectedFieldId = fieldSettings;
+    fieldDialogType = '';
     dialog = 'field';
     render();
     return;
@@ -1815,12 +2364,74 @@ appRoot.addEventListener('click', (event) => {
     pushUndo('delete record');
     setActiveTable(deleteRecord(activeTable(), recordActionId));
   } else if (action === 'toggle-sort') {
-    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-    render();
-  } else if (action === 'sort') {
-    if (sortFieldId) {
-      setActiveTable(sortRecords(activeTable(), sortFieldId, sortDirection));
+    if (sortKeys.length) {
+      sortKeys = [{ ...sortKeys[0], direction: sortKeys[0].direction === 'asc' ? 'desc' : 'asc' }, ...sortKeys.slice(1)];
+    } else {
+      const firstField = activeTable().fields[0];
+      if (firstField) sortKeys = [{ fieldId: firstField.id, direction: 'asc' }];
     }
+    render();
+  } else if (action === 'sort' || action === 'sort-dialog') {
+    sortDraft = sortKeys.length ? sortKeys.map((key) => ({ ...key })) : [{ fieldId: activeTable().fields[0]?.id ?? '', direction: 'asc' }];
+    dialog = 'sort';
+    render();
+  } else if (action === 'find') {
+    findDraft = findQuery
+      ? { match: findQuery.match, rules: findQuery.rules.map((rule) => ({ ...rule })) }
+      : { match: 'all', rules: [{ fieldId: activeTable().fields[0]?.id ?? '', operator: 'contains', value: '' }] };
+    dialog = 'find';
+    render();
+  } else if (action === 'views') {
+    dialog = 'views';
+    render();
+  } else if (action === 'sort-add-level') {
+    readSortDraft();
+    sortDraft.push({ fieldId: activeTable().fields[0]?.id ?? '', direction: 'asc' });
+    render();
+  } else if (action === 'sort-remove-level') {
+    readSortDraft();
+    const index = Number(target.closest<HTMLElement>('[data-level-index]')?.dataset.levelIndex ?? '-1');
+    if (index >= 0) sortDraft.splice(index, 1);
+    render();
+  } else if (action === 'apply-sort') {
+    applySort();
+  } else if (action === 'clear-sort') {
+    readSortDraft();
+    sortDraft = [];
+    render();
+  } else if (action === 'find-add-rule') {
+    readFindDraft();
+    findDraft.rules.push({ fieldId: activeTable().fields[0]?.id ?? '', operator: 'contains', value: '' });
+    render();
+  } else if (action === 'find-remove-rule') {
+    readFindDraft();
+    const index = Number(target.closest<HTMLElement>('[data-rule-index]')?.dataset.ruleIndex ?? '-1');
+    if (index >= 0) findDraft.rules.splice(index, 1);
+    render();
+  } else if (action === 'apply-find') {
+    applyFind();
+  } else if (action === 'save-view') {
+    saveCurrentView();
+  } else if (action === 'apply-view') {
+    const viewId = target.closest<HTMLElement>('[data-view-id]')?.dataset.viewId;
+    if (viewId) applyView(viewId);
+  } else if (action === 'delete-view') {
+    const viewId = target.closest<HTMLElement>('[data-view-id]')?.dataset.viewId;
+    if (viewId) deleteView(viewId);
+  } else if (action === 'bulk-delete') {
+    bulkDelete();
+  } else if (action === 'bulk-duplicate') {
+    bulkDuplicate();
+  } else if (action === 'bulk-fill') {
+    if (selectedInTable(activeTable()).length) {
+      dialog = 'bulkFill';
+      render();
+    }
+  } else if (action === 'apply-bulk-fill') {
+    applyBulkFill();
+  } else if (action === 'bulk-clear') {
+    selectedRecordIds = new Set();
+    render();
   } else if (action === 'duplicates') {
     const fieldId = searchFieldId === 'all' ? activeTable().fields[0]?.id : searchFieldId;
     highlightedRecordIds = new Set(findDuplicateRecords(activeTable(), fieldId).map((record) => record.id));
@@ -1832,8 +2443,7 @@ appRoot.addEventListener('click', (event) => {
     lastMessage = `Found ${highlightedRecordIds.size} record${highlightedRecordIds.size === 1 ? '' : 's'} with missing values.`;
     render();
   } else if (action === 'clear-find') {
-    searchQuery = '';
-    highlightedRecordIds = new Set();
+    clearFind();
     lastMessage = 'Showing all records.';
     render();
   } else if (action === 'replace') {
@@ -1951,10 +2561,27 @@ appRoot.addEventListener('change', (event) => {
     highlightedRecordIds = new Set();
     render();
   } else if (target.matches('[data-sort-field]')) {
-    sortFieldId = target.value;
-    if (sortFieldId) {
-      setActiveTable(sortRecords(activeTable(), sortFieldId, sortDirection));
-    }
+    const direction = sortKeys[0]?.direction ?? 'asc';
+    sortKeys = target.value ? [{ fieldId: target.value, direction }] : [];
+    render();
+  } else if (target.matches('[data-select-all]') && target instanceof HTMLInputElement) {
+    const ids = visibleRecords(activeTable()).map((record) => record.id);
+    selectedRecordIds = target.checked ? new Set(ids) : new Set();
+    render();
+  } else if (target.matches('[data-select-row]') && target instanceof HTMLInputElement) {
+    const id = target.dataset.selectRow ?? '';
+    if (target.checked) selectedRecordIds.add(id);
+    else selectedRecordIds.delete(id);
+    render();
+  } else if (target.matches('[data-field-type]')) {
+    fieldDialogType = target.value as FieldType;
+    render();
+  } else if (target.matches('[data-find-op]')) {
+    readFindDraft();
+    render();
+  } else if (target.matches('[data-map-action]')) {
+    readCsvMap();
+    render();
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
   } else if (
@@ -2020,6 +2647,84 @@ appRoot.addEventListener('focusout', (event) => {
   if (target.matches?.('.cell-input, .cell-checkbox')) {
     activeCellDirtyKey = '';
   }
+});
+
+// Column resize: drag the handle on a header; persist width in the layout.
+appRoot.addEventListener('pointerdown', (event) => {
+  const handle = (event.target as HTMLElement).closest<HTMLElement>('[data-col-resize]');
+  if (!handle) {
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  const fieldId = handle.dataset.colResize ?? '';
+  const th = handle.closest('th') as HTMLElement | null;
+  if (!th) {
+    return;
+  }
+  th.setAttribute('draggable', 'false');
+  const startX = event.clientX;
+  const startWidth = th.getBoundingClientRect().width;
+  let width = Math.round(startWidth);
+  const move = (moveEvent: PointerEvent) => {
+    width = Math.max(80, Math.round(startWidth + (moveEvent.clientX - startX)));
+    th.style.width = `${width}px`;
+    th.style.minWidth = `${width}px`;
+  };
+  const up = () => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    th.setAttribute('draggable', 'true');
+    const layout = currentLayout();
+    if (layout) {
+      pushUndo('resize column');
+      updateCurrentLayout({ columnWidths: { ...(layout.columnWidths ?? {}), [fieldId]: width } });
+    }
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+});
+
+// Column reorder: drag a header onto another to change the field order.
+let draggedColumnField: string | null = null;
+appRoot.addEventListener('dragstart', (event) => {
+  const target = event.target as HTMLElement;
+  if (target.closest('[data-col-resize]')) {
+    return;
+  }
+  const head = target.closest<HTMLElement>('.col-head[data-col-field]');
+  if (!head) {
+    return;
+  }
+  draggedColumnField = head.dataset.colField ?? null;
+  event.dataTransfer?.setData('text/plain', draggedColumnField ?? '');
+});
+appRoot.addEventListener('dragover', (event) => {
+  if (draggedColumnField && (event.target as HTMLElement).closest('.col-head[data-col-field]')) {
+    event.preventDefault();
+  }
+});
+appRoot.addEventListener('drop', (event) => {
+  const head = (event.target as HTMLElement).closest<HTMLElement>('.col-head[data-col-field]');
+  if (!head || !draggedColumnField) {
+    return;
+  }
+  event.preventDefault();
+  const targetField = head.dataset.colField ?? '';
+  const source = draggedColumnField;
+  draggedColumnField = null;
+  if (!targetField || targetField === source) {
+    return;
+  }
+  const order = layoutFields(activeTable()).map((field) => field.id);
+  const from = order.indexOf(source);
+  const to = order.indexOf(targetField);
+  if (from < 0 || to < 0) {
+    return;
+  }
+  order.splice(to, 0, order.splice(from, 1)[0]);
+  pushUndo('reorder columns');
+  updateCurrentLayout({ fieldOrder: order });
 });
 
 appRoot.addEventListener('keydown', (event) => {

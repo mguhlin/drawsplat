@@ -1,4 +1,4 @@
-import type { ListSplatRecord, ListSplatTable } from './types';
+import type { FindQuery, FindRule, ListSplatRecord, ListSplatTable, SortKey } from './types';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -55,6 +55,81 @@ export function sortRecords(table: ListSplatTable, fieldId: string, direction: S
       return leftText.localeCompare(rightText, undefined, { numeric: true, sensitivity: 'base' }) * multiplier;
     }),
   };
+}
+
+function compareValues(leftText: string, rightText: string): number {
+  const leftNumber = Number(leftText);
+  const rightNumber = Number(rightText);
+  if (leftText !== '' && rightText !== '' && !Number.isNaN(leftNumber) && !Number.isNaN(rightNumber)) {
+    return leftNumber - rightNumber;
+  }
+  return leftText.localeCompare(rightText, undefined, { numeric: true, sensitivity: 'base' });
+}
+
+// Non-destructive multi-key sort used by the views. Empty cells sort last.
+export function sortRecordsByKeys(records: ListSplatRecord[], keys: SortKey[]): ListSplatRecord[] {
+  if (!keys.length) {
+    return records;
+  }
+  return [...records].sort((left, right) => {
+    for (const key of keys) {
+      const leftText = cellText(left.values[key.fieldId]).trim();
+      const rightText = cellText(right.values[key.fieldId]).trim();
+      if (leftText === '' && rightText !== '') return 1;
+      if (leftText !== '' && rightText === '') return -1;
+      const result = compareValues(leftText, rightText) * (key.direction === 'asc' ? 1 : -1);
+      if (result !== 0) return result;
+    }
+    return 0;
+  });
+}
+
+export function matchesRule(record: ListSplatRecord, rule: FindRule): boolean {
+  const cell = cellText(record.values[rule.fieldId]);
+  const cellLower = cell.trim().toLowerCase();
+  const needle = rule.value.trim().toLowerCase();
+  const cellNumber = Number(cell);
+  const valueNumber = Number(rule.value);
+  const numeric = cell.trim() !== '' && rule.value.trim() !== '' && !Number.isNaN(cellNumber) && !Number.isNaN(valueNumber);
+  switch (rule.operator) {
+    case 'contains':
+      return cellLower.includes(needle);
+    case 'equals':
+      return numeric ? cellNumber === valueNumber : cellLower === needle;
+    case 'startsWith':
+      return cellLower.startsWith(needle);
+    case 'endsWith':
+      return cellLower.endsWith(needle);
+    case 'greaterThan':
+      return numeric ? cellNumber > valueNumber : cellLower > needle;
+    case 'lessThan':
+      return numeric ? cellNumber < valueNumber : cellLower < needle;
+    case 'between': {
+      const low = Number(rule.value);
+      const high = Number(rule.value2);
+      if (!Number.isNaN(low) && !Number.isNaN(high) && !Number.isNaN(cellNumber)) {
+        return cellNumber >= Math.min(low, high) && cellNumber <= Math.max(low, high);
+      }
+      return cellLower >= needle && cellLower <= (rule.value2 ?? '').trim().toLowerCase();
+    }
+    case 'isEmpty':
+      return cell.trim() === '';
+    case 'isNotEmpty':
+      return cell.trim() !== '';
+    default:
+      return true;
+  }
+}
+
+export function filterAdvanced(records: ListSplatRecord[], find: FindQuery | null): ListSplatRecord[] {
+  if (!find || find.rules.length === 0) {
+    return records;
+  }
+  return records.filter((record) =>
+    find.match === 'all'
+      ? find.rules.every((rule) => matchesRule(record, rule))
+      : find.rules.some((rule) => matchesRule(record, rule)),
+  );
 }
 
 export function findDuplicateRecords(table: ListSplatTable, fieldId: string): ListSplatRecord[] {

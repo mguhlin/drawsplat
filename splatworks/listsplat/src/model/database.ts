@@ -152,10 +152,86 @@ export function addField(table: ListSplatTable, name: string, type: FieldType = 
   };
 }
 
+export function nextAutoNumber(table: ListSplatTable, fieldId: string): number {
+  const max = table.records.reduce((highest, record) => {
+    const value = Number(record.values[fieldId]);
+    return Number.isFinite(value) ? Math.max(highest, value) : highest;
+  }, 0);
+  return max + 1;
+}
+
+function autoNumberValues(table: ListSplatTable): Record<string, ListSplatCellValue> {
+  const values: Record<string, ListSplatCellValue> = {};
+  table.fields
+    .filter((field) => field.type === 'autoNumber')
+    .forEach((field) => {
+      values[field.id] = nextAutoNumber(table, field.id);
+    });
+  return values;
+}
+
 export function addRecord(table: ListSplatTable): ListSplatTable {
   return {
     ...table,
-    records: [...table.records, createRecord(table.fields)],
+    records: [...table.records, createRecord(table.fields, autoNumberValues(table))],
+  };
+}
+
+// Convert a single value to a new field type, reporting whether the change lost
+// information (so a type change can be previewed before it is applied).
+export function convertValueForType(
+  value: ListSplatCellValue,
+  toType: FieldType,
+  options?: string[],
+): { value: ListSplatCellValue; lost: boolean } {
+  const text = value == null ? '' : String(value);
+  if (text.trim() === '') {
+    return { value: FIELD_DEFAULTS[toType], lost: false };
+  }
+  switch (toType) {
+    case 'number':
+    case 'currency':
+    case 'percent':
+    case 'rating': {
+      const parsed = Number(text.replace(/[$,%\s]/g, ''));
+      if (Number.isFinite(parsed)) {
+        const clamped = toType === 'rating' ? Math.max(0, Math.min(5, Math.round(parsed))) : parsed;
+        return { value: clamped, lost: false };
+      }
+      return { value: FIELD_DEFAULTS[toType], lost: true };
+    }
+    case 'checkbox': {
+      const lower = text.trim().toLowerCase();
+      if (['true', 'yes', '1', 'y', 'checked'].includes(lower)) return { value: true, lost: false };
+      if (['false', 'no', '0', 'n'].includes(lower)) return { value: false, lost: false };
+      return { value: false, lost: true };
+    }
+    case 'choice': {
+      const match = options?.find((option) => option.toLowerCase() === text.trim().toLowerCase());
+      if (match) return { value: match, lost: false };
+      return { value: '', lost: Boolean(options && options.length) };
+    }
+    case 'date': {
+      const date = new Date(text);
+      if (!Number.isNaN(date.getTime())) return { value: date.toISOString().slice(0, 10), lost: false };
+      return { value: '', lost: true };
+    }
+    case 'text':
+    case 'longText':
+    case 'link':
+      return { value: text, lost: false };
+    default:
+      return { value: text, lost: false };
+  }
+}
+
+export function convertFieldValues(table: ListSplatTable, fieldId: string, toType: FieldType, options?: string[]): ListSplatTable {
+  return {
+    ...table,
+    records: table.records.map((record) => ({
+      ...record,
+      values: { ...record.values, [fieldId]: convertValueForType(record.values[fieldId], toType, options).value },
+    })),
   };
 }
 
@@ -173,7 +249,7 @@ export function duplicateRecord(table: ListSplatTable, recordId: string): ListSp
   }
   return {
     ...table,
-    records: [...table.records, createRecord(table.fields, source.values)],
+    records: [...table.records, createRecord(table.fields, { ...source.values, ...autoNumberValues(table) })],
   };
 }
 

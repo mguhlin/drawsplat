@@ -51,14 +51,56 @@ export interface ListSplatRelationship {
   toFieldId: string;
 }
 
+export type LayoutMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
+
 export interface ListSplatLayout {
   id: string;
   name: string;
   tableId: string;
-  mode: 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
+  mode: LayoutMode;
   locked: boolean;
   fieldOrder?: string[];
   hiddenFieldIds?: string[];
+  columnWidths?: Record<string, number>;
+}
+
+export type FindOperator =
+  | 'contains'
+  | 'equals'
+  | 'startsWith'
+  | 'endsWith'
+  | 'greaterThan'
+  | 'lessThan'
+  | 'between'
+  | 'isEmpty'
+  | 'isNotEmpty';
+
+export interface FindRule {
+  fieldId: string;
+  operator: FindOperator;
+  value: string;
+  value2?: string;
+}
+
+export interface FindQuery {
+  match: 'all' | 'any';
+  rules: FindRule[];
+}
+
+export interface SortKey {
+  fieldId: string;
+  direction: 'asc' | 'desc';
+}
+
+export interface SavedView {
+  id: string;
+  name: string;
+  tableId: string;
+  mode: LayoutMode;
+  search: string;
+  searchFieldId: string;
+  find: FindQuery | null;
+  sortKeys: SortKey[];
 }
 
 export interface ListSplatFile {
@@ -76,6 +118,7 @@ export interface ListSplatFile {
     relationships: ListSplatRelationship[];
   };
   layouts: ListSplatLayout[];
+  views?: SavedView[];
   teacher: {
     studentView: boolean;
     notes: string[];
