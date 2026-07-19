@@ -17,6 +17,7 @@ import { htmlToPlainText } from './export/plainText';
 import { htmlToRtf } from './export/rtf';
 import { createStudentViewHtml, createTeacherViewHtml } from './export/studentView';
 import { assertWriteSplatFile, createNativeFile, type WriteSplatFile } from './storage/nativeFile';
+import { docxToHtml } from './storage/importDocx';
 import './styles/global.css';
 
 const AUTOSAVE_KEY = 'writesplat.autosave.v1';
@@ -516,6 +517,7 @@ function appHtml(): string {
           ['open-local-library', 'Open browser library'],
           ['save-json', 'Save .writesplat.json'],
           ['open-json', 'Open .writesplat.json'],
+          ['import-file', 'Import (.md, .html, .txt, .docx)'],
           {
             label: 'Export As',
             items: [
@@ -759,6 +761,7 @@ function appHtml(): string {
 
     <input id="fileInput" type="file" accept=".writesplat.json,application/json" hidden>
     <input id="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" hidden>
+    <input id="importFileInput" type="file" accept=".md,.markdown,.txt,.text,.html,.htm,.docx" hidden>
     <div id="linkDialog" class="modal-backdrop" hidden>
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="linkDialogTitle">
         <h2 id="linkDialogTitle">Insert link</h2>
@@ -1161,6 +1164,7 @@ function bootstrap(): void {
   const targetGradeSelect = getRequiredElement<HTMLSelectElement>('targetGrade');
   const fileInput = getRequiredElement<HTMLInputElement>('fileInput');
   const imageFileInput = getRequiredElement<HTMLInputElement>('imageFileInput');
+  const importFileInput = getRequiredElement<HTMLInputElement>('importFileInput');
   const linkDialog = getRequiredElement<HTMLElement>('linkDialog');
   const linkHref = getRequiredElement<HTMLInputElement>('linkHref');
   const templateDialog = getRequiredElement<HTMLElement>('templateDialog');
@@ -1583,6 +1587,8 @@ function bootstrap(): void {
     } else if (action === 'close-emoji-dialog') {
       emojiDialog.hidden = true;
       writer.view.focus();
+    } else if (action === 'import-file') {
+      importFileInput.click();
     } else if (action === 'choose-image-file') {
       imageFileInput.click();
     } else if (action === 'open-citation-dialog') {
@@ -1854,6 +1860,33 @@ function bootstrap(): void {
     imageFileInput.value = '';
     refresh();
   });
+  importFileInput.addEventListener('change', async () => {
+    const file = importFileInput.files?.[0];
+    importFileInput.value = '';
+    if (!file) return;
+    const name = file.name;
+    const baseTitle = name.replace(/\.[^.]+$/, '');
+    try {
+      if (/\.docx$/i.test(name)) {
+        writer.setHtml(await docxToHtml(await file.arrayBuffer()));
+      } else if (/\.(md|markdown)$/i.test(name)) {
+        writer.setHtml(markdownToHtml(await file.text()));
+      } else if (/\.(html?|htm)$/i.test(name)) {
+        const parsed = new DOMParser().parseFromString(await file.text(), 'text/html');
+        parsed.querySelectorAll('script, style, link, meta').forEach((node) => node.remove());
+        writer.setHtml(parsed.body.innerHTML || '<p></p>');
+      } else {
+        const text = await file.text();
+        writer.setHtml(text.split(/\n{2,}/).map((block) => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`).join('') || '<p></p>');
+      }
+      titleInput.value = baseTitle || 'Imported Document';
+      currentLocalDocumentId = null;
+      refresh();
+      getRequiredElement('statusSaved').textContent = `Imported ${name}`;
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Could not import that file.');
+    }
+  });
   editorMount.addEventListener('paste', async (event) => {
     const imageItem = Array.from(event.clipboardData?.items ?? []).find((item) => item.type.startsWith('image/'));
     const file = imageItem?.getAsFile();
@@ -1865,6 +1898,24 @@ function bootstrap(): void {
     event.preventDefault();
     const src = await fileToDataUrl(file);
     writer.insertImage(src, file.name || 'Pasted image');
+    refresh();
+  });
+  editorMount.addEventListener('dragover', (event) => {
+    if (Array.from(event.dataTransfer?.types ?? []).includes('Files')) {
+      event.preventDefault();
+      editorMount.classList.add('drop-active');
+    }
+  });
+  editorMount.addEventListener('dragleave', (event) => {
+    if (!editorMount.contains(event.relatedTarget as Node)) editorMount.classList.remove('drop-active');
+  });
+  editorMount.addEventListener('drop', async (event) => {
+    const imageFile = Array.from(event.dataTransfer?.files ?? []).find((file) => file.type.startsWith('image/'));
+    editorMount.classList.remove('drop-active');
+    if (!imageFile) return;
+    event.preventDefault();
+    const src = await fileToDataUrl(imageFile);
+    writer.insertImage(src, imageFile.name || 'Dropped image');
     refresh();
   });
   emojiSearch.addEventListener('input', () => {

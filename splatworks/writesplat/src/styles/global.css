@@ -1397,3 +1397,6 @@ body.sidebar-collapsed .sidebar {
 .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 4px; max-height: 320px; overflow-y: auto; padding: 4px; }
 .emoji-cell { border: 0; background: transparent; border-radius: 8px; font-size: 1.6rem; line-height: 1; padding: 6px; cursor: pointer; }
 .emoji-cell:hover { background: var(--soft, #f7f4ff); }
+
+/* ── Import drop target ── */
+#editor.drop-active { outline: 3px dashed var(--accent, #7c3aed); outline-offset: -6px; background: rgba(124,58,237,.04); }
