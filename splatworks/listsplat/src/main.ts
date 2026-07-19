@@ -190,6 +190,9 @@ let dialog: DialogName = 'none';
 let selectedFieldId = '';
 let lastMessage = 'Tip: Start with one table, then add relationships when your project needs them.';
 let undoStack: Array<{ label: string; project: ListSplatFile }> = [];
+let redoStack: Array<{ label: string; project: ListSplatFile }> = [];
+let activeCellDirtyKey = '';
+let pendingFocusCell: { recordId: string; fieldId: string } | null = null;
 let replacePreview: Array<{ recordId: string; fieldId: string; before: string; after: string }> = [];
 let relationshipFromTableId = activeTableId;
 let relationshipToTableId = project.schema.tables[1]?.id ?? activeTableId;
@@ -266,7 +269,40 @@ function setProject(nextProject: ListSplatFile): void {
 }
 
 function pushUndo(label: string): void {
-  undoStack = [{ label, project: structuredClone(project) }, ...undoStack].slice(0, 12);
+  undoStack = [{ label, project: structuredClone(project) }, ...undoStack].slice(0, 25);
+  redoStack = [];
+}
+
+// One undo checkpoint per cell-editing session (not per keystroke), so typing in
+// a cell can be undone as a single step.
+function noteCellEdit(recordId: string, fieldId: string): void {
+  const key = `${recordId}:${fieldId}`;
+  if (activeCellDirtyKey === key) {
+    return;
+  }
+  const fieldName = activeTable().fields.find((field) => field.id === fieldId)?.name ?? 'cell';
+  pushUndo(`edit ${fieldName}`);
+  activeCellDirtyKey = key;
+  syncHistoryButtons();
+}
+
+// Keep the Undo/Redo buttons in step with the stacks without a full re-render,
+// so typing in a cell (which does not re-render) still enables Undo immediately.
+function syncHistoryButtons(): void {
+  const undoBtn = appRoot.querySelector<HTMLButtonElement>('[data-action="undo-change"]');
+  const redoBtn = appRoot.querySelector<HTMLButtonElement>('[data-action="redo-change"]');
+  if (undoBtn) undoBtn.disabled = undoStack.length === 0;
+  if (redoBtn) redoBtn.disabled = redoStack.length === 0;
+}
+
+function restoreProjectSnapshot(snapshot: ListSplatFile): void {
+  project = snapshot;
+  activeTableId = project.schema.tables.some((table) => table.id === activeTableId)
+    ? activeTableId
+    : project.schema.tables[0].id;
+  ensureActiveRecord(activeTable());
+  saveAutosave(project);
+  render();
 }
 
 function undoLastChange(): void {
@@ -276,15 +312,23 @@ function undoLastChange(): void {
     render();
     return;
   }
+  redoStack = [{ label: last.label, project: structuredClone(project) }, ...redoStack].slice(0, 25);
   undoStack = undoStack.slice(1);
-  project = last.project;
-  activeTableId = project.schema.tables.some((table) => table.id === activeTableId)
-    ? activeTableId
-    : project.schema.tables[0].id;
-  ensureActiveRecord(activeTable());
-  saveAutosave(project);
   lastMessage = `Undid ${last.label}.`;
-  render();
+  restoreProjectSnapshot(last.project);
+}
+
+function redoLastChange(): void {
+  const next = redoStack[0];
+  if (!next) {
+    lastMessage = 'Nothing to redo.';
+    render();
+    return;
+  }
+  undoStack = [{ label: next.label, project: structuredClone(project) }, ...undoStack].slice(0, 25);
+  redoStack = redoStack.slice(1);
+  lastMessage = `Redid ${next.label}.`;
+  restoreProjectSnapshot(next.project);
 }
 
 function setActiveTable(table: ListSplatTable): void {
@@ -531,6 +575,31 @@ function displayValue(table: ListSplatTable, record: ListSplatRecord, fieldId: s
   return record.values[fieldId] ?? '';
 }
 
+// Friendly formatting for read-only views (cards, labels). Editable table/form
+// cells keep raw values so number inputs still work.
+function formatReadValue(field: ListSplatField | undefined, value: ListSplatCellValue): string {
+  if (value === '' || value === null || value === undefined) {
+    return '';
+  }
+  if (!field) {
+    return String(value);
+  }
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (field.type === 'currency' && Number.isFinite(numeric)) {
+    return numeric.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+  }
+  if (field.type === 'percent' && Number.isFinite(numeric)) {
+    return `${numeric.toLocaleString()}%`;
+  }
+  if (field.type === 'number' && Number.isFinite(numeric)) {
+    return numeric.toLocaleString();
+  }
+  if (field.type === 'checkbox') {
+    return value === true || value === 'true' ? 'Yes' : 'No';
+  }
+  return String(value);
+}
+
 function currentLayout() {
   return project.layouts.find((layout) => layout.tableId === activeTableId && layout.mode === viewMode);
 }
@@ -609,9 +678,18 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
   const field = table.fields.find((item) => item.id === fieldId);
   const value = displayValue(table, record, fieldId);
   const common = `aria-label="${html(field?.name ?? 'Field')}, record ${rowIndex + 1}" data-record-id="${record.id}" data-field-id="${fieldId}"`;
+  const reqEmpty = Boolean(field?.required) && (value === '' || value === null || value === undefined);
+  const cellClass = reqEmpty ? 'cell-input cell-required-empty' : 'cell-input';
 
   if (field?.type === 'checkbox') {
     return `<input class="cell-checkbox" type="checkbox" ${common} ${value === true || value === 'true' ? 'checked' : ''}>`;
+  }
+  if (field?.type === 'link') {
+    const raw = String(value ?? '');
+    const href = /^https?:\/\//i.test(raw) ? raw : raw ? `https://${raw}` : '';
+    return `<div class="link-cell"><input class="${cellClass}" type="url" ${common} value="${html(raw)}" placeholder="https://…">${
+      href ? `<a class="link-open" href="${html(href)}" target="_blank" rel="noopener" title="Open link" aria-label="Open link">↗</a>` : ''
+    }</div>`;
   }
   if (field?.type === 'image') {
     const imageSrc = String(value ?? '');
@@ -627,11 +705,11 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     `;
   }
   if (field?.type === 'rating') {
-    return `<input class="cell-input" type="number" min="0" max="5" step="1" ${common} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="number" min="0" max="5" step="1" ${common} value="${html(value)}">`;
   }
   if (field?.type === 'choice') {
     const options = field.options?.length ? field.options : ['Yes', 'No'];
-    return `<select class="cell-input" ${common}>${options
+    return `<select class="${cellClass}" ${common}><option value=""${value === '' ? ' selected' : ''}>—</option>${options
       .map((option) => `<option value="${html(option)}" ${String(value) === option ? 'selected' : ''}>${html(option)}</option>`)
       .join('')}</select>`;
   }
@@ -639,18 +717,20 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     return `<output class="calc-output">${html(value)}</output>`;
   }
   if (field?.type === 'longText') {
-    return `<textarea class="cell-input" ${common}>${html(value)}</textarea>`;
+    return `<textarea class="${cellClass}" ${common}>${html(value)}</textarea>`;
   }
   if (field?.type === 'date') {
-    return `<input class="cell-input" type="date" ${common} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="date" ${common} value="${html(value)}">`;
   }
   if (field?.type === 'number' || field?.type === 'currency' || field?.type === 'percent') {
-    return `<input class="cell-input" type="number" step="any" ${common} value="${html(value)}">`;
+    const prefix = field.type === 'currency' ? '<span class="cell-affix">$</span>' : '';
+    const suffix = field.type === 'percent' ? '<span class="cell-affix">%</span>' : '';
+    return `<span class="num-cell">${prefix}<input class="${cellClass}" type="number" step="any" ${common} value="${html(value)}">${suffix}</span>`;
   }
   if (field?.type === 'calculation') {
     return `<output class="calc-output">${html(value)}</output>`;
   }
-  return `<input class="cell-input" ${common} value="${html(value)}">`;
+  return `<input class="${cellClass}" ${common} value="${html(value)}">`;
 }
 
 function renderTableTabs(table: ListSplatTable): string {
@@ -667,6 +747,24 @@ function renderTableTabs(table: ListSplatTable): string {
 }
 
 function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string {
+  if (rows.length === 0) {
+    const cleared = searchQuery || highlightedRecordIds.size > 0;
+    return `
+      <div class="data-grid-wrap">
+        <div class="empty-state">
+          <h3>${cleared ? html(t('No records match your find')) : html(t('No records yet'))}</h3>
+          <p>${
+            cleared
+              ? html(t('Try a different search, or show all records.'))
+              : html(t('Add your first record to start building this database.'))
+          }</p>
+          <button type="button" class="button primary" data-action="${cleared ? 'clear-find' : 'add-record'}">${
+            cleared ? html(t('Show all records')) : `+ ${html(t('Add first record'))}`
+          }</button>
+        </div>
+      </div>
+    `;
+  }
   return `
     <div class="data-grid-wrap">
       <table class="data-grid">
@@ -678,7 +776,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
                 (field) => `
                   <th>
                     <button type="button" class="field-button" data-field-settings="${field.id}">
-                      ${html(field.name)}<br><small>${html(field.type)}</small>
+                      ${html(field.name)}${field.required ? '<span class="req" title="Required field" aria-label="required">*</span>' : ''}<br><small>${html(field.type)}</small>
                     </button>
                   </th>
                 `,
@@ -787,7 +885,12 @@ function renderCardsView(table: ListSplatTable, rows: ListSplatRecord[]): string
         </figure>
       `;
     }
-    return `<p><strong>${html(field.name)}</strong><span>${html(value)}</span></p>`;
+    if (field.type === 'link' && String(value ?? '')) {
+      const raw = String(value);
+      const href = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+      return `<p><strong>${html(field.name)}</strong><a href="${html(href)}" target="_blank" rel="noopener">${html(raw)}</a></p>`;
+    }
+    return `<p><strong>${html(field.name)}</strong><span>${html(formatReadValue(field, value))}</span></p>`;
   };
 
   return `
@@ -826,7 +929,7 @@ function renderLabelsView(table: ListSplatTable, rows: ListSplatRecord[]): strin
             <article class="print-label">
               ${orderedFields(table)
                 .slice(0, 4)
-                .map((field) => `<p><strong>${html(field.name)}:</strong> ${html(displayValue(table, record, field.id))}</p>`)
+                .map((field) => `<p><strong>${html(field.name)}:</strong> ${html(formatReadValue(field, displayValue(table, record, field.id)))}</p>`)
                 .join('')}
             </article>
           `,
@@ -1279,6 +1382,8 @@ function render(): void {
         </span>
       </a>
       <div class="quick-actions">
+        <button type="button" class="button" data-action="undo-change"${undoStack.length ? '' : ' disabled'} title="Undo (Ctrl+Z)" aria-label="Undo">↶ ${html(t('Undo'))}</button>
+        <button type="button" class="button" data-action="redo-change"${redoStack.length ? '' : ' disabled'} title="Redo (Ctrl+Y)" aria-label="Redo">↷ ${html(t('Redo'))}</button>
         <button type="button" class="button primary" data-action="new">${html(t('New'))}</button>
         <button type="button" class="button primary" data-action="save-json">${html(t('Save JSON'))}</button>
         <button type="button" class="button primary" data-action="open-json">${html(t('Open JSON'))}</button>
@@ -1299,6 +1404,7 @@ function render(): void {
         ])}
         ${createMenu('Edit', [
           ['undo-change', 'Undo last change'],
+          ['redo-change', 'Redo last change'],
           ['add-record', 'Add record'],
           ['add-field', 'Add field'],
           ['find', 'Find records'],
@@ -1377,6 +1483,12 @@ function render(): void {
     <input class="hidden-file" type="file" accept=".csv,text/csv" data-import-csv>
     ${renderDialog(table)}
   `;
+  activeCellDirtyKey = '';
+  if (pendingFocusCell) {
+    const target = pendingFocusCell;
+    pendingFocusCell = null;
+    focusGridCell(target.recordId, target.fieldId);
+  }
 }
 
 function cellValueFromInput(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): ListSplatCellValue {
@@ -1522,6 +1634,68 @@ function updateRelationshipDialogTables(): void {
   render();
 }
 
+function cssEscape(value: string): string {
+  return window.CSS && typeof CSS.escape === 'function' ? CSS.escape(value) : value.replace(/["\\]/g, '\\$&');
+}
+
+function focusGridCell(recordId: string, fieldId: string): boolean {
+  const grid = appRoot.querySelector('.data-grid');
+  if (!grid) return false;
+  const row = grid.querySelector<HTMLElement>(`tr[data-record-row="${cssEscape(recordId)}"]`);
+  if (!row) return false;
+  let cell = row.querySelector<HTMLElement>(`.cell-input[data-field-id="${cssEscape(fieldId)}"], .cell-checkbox[data-field-id="${cssEscape(fieldId)}"]`);
+  if (!cell) {
+    // The target column may be read-only (calculation/auto/image); fall back to the row's first editable cell.
+    cell = row.querySelector<HTMLElement>('.cell-input, .cell-checkbox');
+  }
+  if (!cell) return false;
+  cell.focus();
+  if (cell instanceof HTMLInputElement && cell.type !== 'checkbox') {
+    cell.select();
+  }
+  return true;
+}
+
+function addRecordAndFocus(fieldId: string): void {
+  pushUndo('add record');
+  const nextTable = addRecord(activeTable());
+  const newRecord = nextTable.records.at(-1);
+  if (newRecord) {
+    activeRecordId = newRecord.id;
+    pendingFocusCell = { recordId: newRecord.id, fieldId };
+  }
+  setActiveTable(nextTable);
+}
+
+// Move focus between grid cells. rowDelta moves up/down within a column,
+// colDelta moves left/right across columns (wrapping to the next/previous row),
+// and moving past the last cell adds a new record for fast keyboard entry.
+function moveGridCell(recordId: string, fieldId: string, rowDelta: number, colDelta: number): void {
+  const rows = Array.from(appRoot.querySelectorAll<HTMLElement>('.data-grid tbody tr[data-record-row]'));
+  const rowIndex = rows.findIndex((row) => row.dataset.recordRow === recordId);
+  const fieldIds = orderedFields(activeTable()).map((field) => field.id);
+  const colIndex = fieldIds.indexOf(fieldId);
+  if (rowIndex < 0 || colIndex < 0) return;
+
+  let targetRow = rowIndex + rowDelta;
+  let targetCol = colIndex + colDelta;
+  if (colDelta > 0 && targetCol >= fieldIds.length) {
+    targetCol = 0;
+    targetRow = rowIndex + 1;
+  } else if (colDelta < 0 && targetCol < 0) {
+    targetCol = fieldIds.length - 1;
+    targetRow = rowIndex - 1;
+  }
+
+  if (targetRow >= rows.length) {
+    addRecordAndFocus(fieldIds[targetCol] ?? fieldIds[0]);
+    return;
+  }
+  if (targetRow < 0) return;
+  const targetRecordId = rows[targetRow].dataset.recordRow ?? recordId;
+  focusGridCell(targetRecordId, fieldIds[targetCol] ?? fieldId);
+}
+
 appRoot.addEventListener('click', (event) => {
   const target = event.target as HTMLElement;
   const action = target.closest<HTMLElement>('[data-action]')?.dataset.action;
@@ -1588,6 +1762,9 @@ appRoot.addEventListener('click', (event) => {
   closeMenus();
 
   if (action === 'new') {
+    if (!window.confirm('Start a new database? Your current one is replaced here — export it first if you want to keep a copy. You can also undo right after.')) {
+      return;
+    }
     pushUndo('new database');
     const next = createStarterProject('Untitled Database');
     activeTableId = next.schema.tables[0].id;
@@ -1627,6 +1804,14 @@ appRoot.addEventListener('click', (event) => {
     pushUndo('duplicate record');
     setActiveTable(duplicateRecord(activeTable(), recordActionId));
   } else if (action === 'delete-record' && recordActionId) {
+    if (activeTable().records.length <= 1) {
+      lastMessage = 'Keep at least one record. Add another before deleting this one.';
+      render();
+      return;
+    }
+    if (!window.confirm('Delete this record? You can undo right after with Ctrl+Z.')) {
+      return;
+    }
     pushUndo('delete record');
     setActiveTable(deleteRecord(activeTable(), recordActionId));
   } else if (action === 'toggle-sort') {
@@ -1699,6 +1884,8 @@ appRoot.addEventListener('click', (event) => {
     createRelationshipFromDialog();
   } else if (action === 'undo-change') {
     undoLastChange();
+  } else if (action === 'redo-change') {
+    redoLastChange();
   } else if (action === 'close-dialog') {
     dialog = 'none';
     replacePreview = [];
@@ -1782,6 +1969,9 @@ appRoot.addEventListener('change', (event) => {
         storeImageFile(recordId, fieldId, file, 'image upload');
       }
     } else {
+      if (target.dataset.recordId && target.dataset.fieldId) {
+        noteCellEdit(target.dataset.recordId, target.dataset.fieldId);
+      }
       updateActiveCell(target);
     }
   }
@@ -1818,7 +2008,77 @@ appRoot.addEventListener('input', (event) => {
   }
 
   if (target.matches('.cell-input') && (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement)) {
+    if (target.dataset.recordId && target.dataset.fieldId) {
+      noteCellEdit(target.dataset.recordId, target.dataset.fieldId);
+    }
     updateActiveCell(target);
+  }
+});
+
+appRoot.addEventListener('focusout', (event) => {
+  const target = event.target as HTMLElement;
+  if (target.matches?.('.cell-input, .cell-checkbox')) {
+    activeCellDirtyKey = '';
+  }
+});
+
+appRoot.addEventListener('keydown', (event) => {
+  const target = event.target as HTMLElement;
+  if (!target.matches?.('.cell-input, .cell-checkbox')) {
+    return;
+  }
+  const recordId = target.dataset.recordId;
+  const fieldId = target.dataset.fieldId;
+  if (!recordId || !fieldId) {
+    return;
+  }
+  const isTextarea = target instanceof HTMLTextAreaElement;
+  const isSelect = target instanceof HTMLSelectElement;
+  switch (event.key) {
+    case 'Enter':
+      if (!isTextarea) {
+        event.preventDefault();
+        moveGridCell(recordId, fieldId, event.shiftKey ? -1 : 1, 0);
+      }
+      break;
+    case 'ArrowDown':
+      if (!isTextarea && !isSelect) {
+        event.preventDefault();
+        moveGridCell(recordId, fieldId, 1, 0);
+      }
+      break;
+    case 'ArrowUp':
+      if (!isTextarea && !isSelect) {
+        event.preventDefault();
+        moveGridCell(recordId, fieldId, -1, 0);
+      }
+      break;
+    case 'Tab':
+      event.preventDefault();
+      moveGridCell(recordId, fieldId, 0, event.shiftKey ? -1 : 1);
+      break;
+    default:
+      break;
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  const mod = event.ctrlKey || event.metaKey;
+  if (!mod) {
+    return;
+  }
+  const key = event.key.toLowerCase();
+  if (key === 'z' && !event.shiftKey) {
+    event.preventDefault();
+    undoLastChange();
+  } else if (key === 'y' || (key === 'z' && event.shiftKey)) {
+    event.preventDefault();
+    redoLastChange();
+  } else if (key === 's') {
+    event.preventDefault();
+    saveJson();
+    lastMessage = 'Saved a .listsplat.json file to your downloads.';
+    render();
   }
 });
 

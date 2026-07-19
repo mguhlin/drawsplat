@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCsv, tableFromCsv, tableToCsv } from '../src/io/csv';
+import { detectDelimiter, parseCsv, tableFromCsv, tableToCsv } from '../src/io/csv';
 
 describe('CSV utilities', () => {
   it('parses quoted cells and commas', () => {
@@ -7,6 +7,20 @@ describe('CSV utilities', () => {
       ['Name', 'Note'],
       ['Ada', 'likes math, code'],
     ]);
+  });
+
+  it('detects tab and semicolon delimiters', () => {
+    expect(detectDelimiter('Name\tRole\tCity')).toBe('\t');
+    expect(detectDelimiter('Name;Role;City')).toBe(';');
+    expect(detectDelimiter('Name,Role,City')).toBe(',');
+  });
+
+  it('parses tab and semicolon separated files', () => {
+    expect(parseCsv('Name\tRole\nAda\tMathematician')).toEqual([
+      ['Name', 'Role'],
+      ['Ada', 'Mathematician'],
+    ]);
+    expect(tableFromCsv('People', 'Name;Role\nAda;Mathematician').records).toHaveLength(1);
   });
 
   it('round-trips a table with headers and records', () => {

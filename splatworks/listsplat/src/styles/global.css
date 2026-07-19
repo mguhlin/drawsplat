@@ -359,7 +359,76 @@ summary:focus-visible {
 }
 
 .cell-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
   background: #fffdf7;
+}
+
+.cell-required-empty {
+  box-shadow: inset 0 0 0 2px var(--red);
+  background: #fef2f2;
+}
+
+.data-grid th .req {
+  color: var(--red);
+  font-weight: 900;
+  margin-left: 2px;
+}
+
+.num-cell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.num-cell .cell-input {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+}
+.cell-affix {
+  color: var(--muted);
+  font-weight: 800;
+  padding: 0 2px 0 10px;
+}
+.num-cell .cell-affix:last-child {
+  padding: 0 10px 0 2px;
+}
+
+.link-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+}
+.link-open {
+  flex: none;
+  padding: 4px;
+  text-decoration: none;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-state h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+.empty-state p {
+  margin: 0;
+  max-width: 44ch;
+}
+
+.button[disabled] {
+  opacity: .45;
+  cursor: default;
 }
 
 .cell-checkbox {

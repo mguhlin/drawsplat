@@ -1,7 +1,25 @@
 import { createField, createRecord } from '../model/database';
 import type { ListSplatTable } from '../model/types';
 
-export function parseCsv(text: string): string[][] {
+// Guess the delimiter from the first line so tab- and semicolon-separated
+// exports (common outside US English locales) import cleanly instead of
+// collapsing into one column.
+export function detectDelimiter(text: string): string {
+  const firstLine = text.split(/\r?\n/, 1)[0] ?? '';
+  const candidates = [',', '\t', ';'];
+  let best = ',';
+  let bestCount = -1;
+  for (const candidate of candidates) {
+    const count = firstLine.split(candidate).length - 1;
+    if (count > bestCount) {
+      bestCount = count;
+      best = candidate;
+    }
+  }
+  return best;
+}
+
+export function parseCsv(text: string, delimiter: string = detectDelimiter(text)): string[][] {
   const rows: string[][] = [];
   let field = '';
   let row: string[] = [];
@@ -16,7 +34,7 @@ export function parseCsv(text: string): string[][] {
       index += 1;
     } else if (char === '"') {
       quoted = !quoted;
-    } else if (!quoted && char === ',') {
+    } else if (!quoted && char === delimiter) {
       row.push(field);
       field = '';
     } else if (!quoted && (char === '\n' || char === '\r')) {
