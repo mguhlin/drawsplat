@@ -68,7 +68,7 @@ export interface ListSplatRelationship {
   toFieldId: string;
 }
 
-export type LayoutMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
+export type LayoutMode = 'table' | 'form' | 'cards' | 'gallery' | 'list' | 'kanban' | 'calendar' | 'labels' | 'report';
 
 export interface ListSplatLayout {
   id: string;

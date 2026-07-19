@@ -1242,3 +1242,70 @@ summary:focus-visible {
   color: var(--accent-dark);
 }
 .multi-chip input { width: 14px; height: 14px; }
+
+/* ── Batch B: new views ── */
+.view-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 14px;
+}
+.view-controls label { font-weight: 800; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.view-controls select { min-height: 36px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: #fff; }
+.inline-check { font-weight: 800; }
+
+.col-head { position: relative; }
+.col-sort {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .8rem;
+  padding: 2px;
+}
+.col-sort:hover { color: var(--accent); }
+.group-row td { background: #efe9ff; color: var(--accent-dark); padding: 8px 12px; font-weight: 800; }
+.group-row span { color: var(--muted); font-weight: 700; margin-left: 6px; }
+.data-grid-wrap.wrap-cells .cell-input { white-space: normal; }
+.data-grid-wrap.wrap-cells td { vertical-align: top; }
+
+.list-view { display: grid; gap: 6px; padding: 10px 14px; }
+.list-view.wrap-cells .list-main strong { white-space: normal; }
+.group-head { display: flex; justify-content: space-between; align-items: baseline; margin: 10px 0 4px; padding: 6px 10px; background: #efe9ff; border-radius: 8px; color: var(--accent-dark); }
+.group-head span { color: var(--muted); font-weight: 700; font-size: .82rem; }
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 12px;
+}
+.list-row.active { border-color: var(--accent); }
+.list-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.list-main { flex: 1; display: grid; }
+.list-main span { color: var(--muted); font-size: .85rem; }
+
+.kanban { display: flex; gap: 12px; padding: 12px 14px; overflow-x: auto; align-items: flex-start; }
+.kanban-col { min-width: 220px; max-width: 260px; background: #f4f1ff; border: 1px solid var(--line); border-radius: 12px; padding: 8px; }
+.kanban-col-head { display: flex; justify-content: space-between; font-weight: 900; color: var(--accent-dark); padding: 4px 6px; }
+.kanban-col-head span { color: var(--muted); }
+.kanban-cards { display: grid; gap: 8px; min-height: 40px; }
+.kanban-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; cursor: grab; box-shadow: 0 4px 10px rgba(31,41,55,.06); }
+.kanban-card:active { cursor: grabbing; }
+
+.calendar-view { padding: 12px 14px; }
+.cal-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-weekday { text-align: center; font-weight: 900; color: var(--muted); padding: 4px; font-size: .8rem; }
+.cal-cell { min-height: 92px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 4px; display: grid; gap: 3px; align-content: start; }
+.cal-cell.empty { background: transparent; border: 0; }
+.cal-day { font-weight: 800; color: var(--muted); font-size: .78rem; }
+.cal-event { border: 0; border-radius: 6px; background: var(--soft); color: var(--accent-dark); padding: 3px 6px; font-size: .74rem; font-weight: 700; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-event:hover { background: var(--accent); color: #fff; }
+.cal-more { font-size: .7rem; color: var(--muted); }

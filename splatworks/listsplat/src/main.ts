@@ -50,7 +50,7 @@ import type {
 import { cloneTemplateTable, listSplatTemplates } from './templates/templates';
 import './styles/global.css';
 
-type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'labels' | 'report';
+type ViewMode = 'table' | 'form' | 'cards' | 'gallery' | 'list' | 'kanban' | 'calendar' | 'labels' | 'report';
 type DialogName =
   | 'none'
   | 'replace'
@@ -225,6 +225,12 @@ let fieldDialogType: FieldType | '' = '';
 let selectedRecordIds = new Set<string>();
 let cellRange: { anchor: { r: string; f: string }; focus: { r: string; f: string } } | null = null;
 let showArchived = false;
+let groupByFieldId = '';
+let boardFieldId = '';
+let calendarFieldId = '';
+let calendarMonth = '';
+let wrapText = false;
+let draggedRecordId: string | null = null;
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
@@ -903,8 +909,37 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
   }
   const fields = orderedFields(table);
   const allVisibleSelected = rows.length > 0 && rows.every((record) => selectedRecordIds.has(record.id));
+  const sortMark = (fieldId: string) => {
+    const key = sortKeys.find((item) => item.fieldId === fieldId);
+    return key ? (key.direction === 'asc' ? '▲' : '▼') : '⇅';
+  };
+  const grouped = groupRecords(table, rows);
+  const colCount = fields.length + 3;
+  const renderRow = (record: ListSplatRecord, rowIndex: number) => `
+                <tr class="${record.id === activeRecordId ? 'active-row' : ''}${selectedRecordIds.has(record.id) ? ' selected-row' : ''}" data-record-row="${record.id}">
+                  <td class="select-col"><input type="checkbox" data-select-row="${record.id}" aria-label="Select record ${rowIndex + 1}" ${selectedRecordIds.has(record.id) ? 'checked' : ''}></td>
+                  <td class="row-num-col"><button type="button" class="row-button" data-select-record="${record.id}">${rowIndex + 1}</button></td>
+                  ${fields
+                    .map((field) => `<td style="${columnWidthStyle(field.id)}">${renderInput(table, record, field.id, rowIndex)}</td>`)
+                    .join('')}
+                  <td class="record-actions">
+                    <button type="button" title="Open record" data-action="expand-record" data-record-action-id="${record.id}">Open</button>
+                    <button type="button" data-action="duplicate-record" data-record-action-id="${record.id}">Copy</button>
+                    <button type="button" data-action="delete-record" data-record-action-id="${record.id}">Delete</button>
+                  </td>
+                </tr>
+              `;
+  let rowNumber = 0;
+  const bodyRows = grouped
+    .map((group) => {
+      const groupHeader = groupByFieldId
+        ? `<tr class="group-row"><td colspan="${colCount}"><strong>${html(group.label)}</strong> <span>${group.records.length}${groupSummary(table, group.records) ? ' · ' + groupSummary(table, group.records) : ''}</span></td></tr>`
+        : '';
+      return groupHeader + group.records.map((record) => renderRow(record, rowNumber++)).join('');
+    })
+    .join('');
   return `
-    <div class="data-grid-wrap">
+    <div class="data-grid-wrap${wrapText ? ' wrap-cells' : ''}">
       <table class="data-grid">
         <thead>
           <tr>
@@ -917,6 +952,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
                     <button type="button" class="field-button" data-field-settings="${field.id}">
                       ${html(field.name)}${field.required ? '<span class="req" title="Required field" aria-label="required">*</span>' : ''}<br><small>${html(field.type)}</small>
                     </button>
+                    <button type="button" class="col-sort" data-action="sort-toggle" data-sort-toggle="${field.id}" title="Sort by ${html(field.name)}">${sortMark(field.id)}</button>
                     <span class="col-resize" data-col-resize="${field.id}" title="Drag to resize" aria-hidden="true"></span>
                   </th>
                 `,
@@ -926,23 +962,7 @@ function renderTableView(table: ListSplatTable, rows: ListSplatRecord[]): string
           </tr>
         </thead>
         <tbody>
-          ${rows
-            .map(
-              (record, rowIndex) => `
-                <tr class="${record.id === activeRecordId ? 'active-row' : ''}${selectedRecordIds.has(record.id) ? ' selected-row' : ''}" data-record-row="${record.id}">
-                  <td class="select-col"><input type="checkbox" data-select-row="${record.id}" aria-label="Select record ${rowIndex + 1}" ${selectedRecordIds.has(record.id) ? 'checked' : ''}></td>
-                  <td class="row-num-col"><button type="button" class="row-button" data-select-record="${record.id}">${rowIndex + 1}</button></td>
-                  ${fields
-                    .map((field) => `<td style="${columnWidthStyle(field.id)}">${renderInput(table, record, field.id, rowIndex)}</td>`)
-                    .join('')}
-                  <td class="record-actions">
-                    <button type="button" data-action="duplicate-record" data-record-action-id="${record.id}">Copy</button>
-                    <button type="button" data-action="delete-record" data-record-action-id="${record.id}">Delete</button>
-                  </td>
-                </tr>
-              `,
-            )
-            .join('')}
+          ${bodyRows}
         </tbody>
       </table>
     </div>
@@ -1108,6 +1128,188 @@ function renderReportView(table: ListSplatTable, rows: ListSplatRecord[]): strin
   `;
 }
 
+// ── View helpers and new views (Batch B) ────────────────────────────────────
+function distinctValues(table: ListSplatTable, rows: ListSplatRecord[], fieldId: string): string[] {
+  const seen = new Set<string>();
+  rows.forEach((record) => {
+    const value = String(displayValue(table, record, fieldId) ?? '').trim();
+    if (value) seen.add(value);
+  });
+  return [...seen];
+}
+
+function groupRecords(
+  table: ListSplatTable,
+  rows: ListSplatRecord[],
+): Array<{ key: string; label: string; records: ListSplatRecord[] }> {
+  if (!groupByFieldId || !table.fields.some((field) => field.id === groupByFieldId)) {
+    return [{ key: '', label: '', records: rows }];
+  }
+  const groups = new Map<string, ListSplatRecord[]>();
+  rows.forEach((record) => {
+    const key = String(displayValue(table, record, groupByFieldId) ?? '').trim();
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(record);
+  });
+  return [...groups.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true }))
+    .map(([key, records]) => ({ key, label: key || '(empty)', records }));
+}
+
+function groupSummary(table: ListSplatTable, records: ListSplatRecord[]): string {
+  const numberFields = table.fields.filter((field) => ['number', 'currency', 'percent'].includes(field.type) && !field.hidden);
+  const bits = numberFields.slice(0, 3).map((field) => {
+    const values = records.map((record) => Number(displayValue(table, record, field.id))).filter((value) => Number.isFinite(value));
+    if (!values.length) return '';
+    const sum = values.reduce((total, value) => total + value, 0);
+    return `${html(field.name)}: sum ${sum.toLocaleString()}, avg ${(sum / values.length).toFixed(1)}`;
+  }).filter(Boolean);
+  return bits.join(' · ');
+}
+
+function fieldSelectOptions(fields: ListSplatField[], selected: string): string {
+  return fields.map((field) => `<option value="${field.id}" ${selected === field.id ? 'selected' : ''}>${html(field.name)}</option>`).join('');
+}
+
+function renderViewControls(table: ListSplatTable): string {
+  const parts: string[] = [];
+  if (viewMode === 'list' || viewMode === 'table') {
+    const groupable = table.fields.filter((field) => !field.hidden && !['image', 'longText'].includes(field.type));
+    parts.push(`<label>Group by <select data-group-field><option value="">No grouping</option>${fieldSelectOptions(groupable, groupByFieldId)}</select></label>`);
+    parts.push(`<label class="inline-check"><input type="checkbox" data-wrap-toggle ${wrapText ? 'checked' : ''}> Wrap long text</label>`);
+  }
+  if (viewMode === 'kanban') {
+    const columnable = table.fields.filter((field) => ['choice', 'text'].includes(field.type) && !field.hidden);
+    parts.push(`<label>Columns by <select data-board-field><option value="">Choose a status or choice field</option>${fieldSelectOptions(columnable, boardFieldId)}</select></label>`);
+  }
+  if (viewMode === 'calendar') {
+    const datey = table.fields.filter((field) => ['date', 'dateTime', 'createdAt', 'updatedAt'].includes(field.type) && !field.hidden);
+    parts.push(`<label>Dates from <select data-calendar-field><option value="">Choose a date field</option>${fieldSelectOptions(datey, calendarFieldId)}</select></label>`);
+  }
+  return parts.length ? `<div class="view-controls">${parts.join('')}</div>` : '';
+}
+
+function renderListView(table: ListSplatTable, rows: ListSplatRecord[]): string {
+  const fields = orderedFields(table);
+  const primary = fields[0];
+  const secondary = fields.find((field) => field.id !== primary?.id && !['image'].includes(field.type));
+  const groups = groupRecords(table, rows);
+  const body = groups
+    .map(
+      (group) => `
+        ${groupByFieldId ? `<div class="group-head"><strong>${html(group.label)}</strong><span>${group.records.length}${groupSummary(table, group.records) ? ' · ' + groupSummary(table, group.records) : ''}</span></div>` : ''}
+        ${group.records
+          .map((record) => {
+            const image = firstImageValue(table, record);
+            return `
+              <div class="list-row${record.id === activeRecordId ? ' active' : ''}">
+                ${image ? `<img class="list-thumb" src="${html(image)}" alt="">` : ''}
+                <div class="list-main">
+                  <strong>${html(displayValue(table, record, primary?.id ?? '') || 'Untitled')}</strong>
+                  ${secondary ? `<span>${html(formatReadValue(secondary, displayValue(table, record, secondary.id)))}</span>` : ''}
+                </div>
+                <button type="button" class="button ghost" data-action="expand-record" data-record-action-id="${record.id}">Open</button>
+              </div>
+            `;
+          })
+          .join('')}
+      `,
+    )
+    .join('');
+  return `<div class="list-view${wrapText ? ' wrap-cells' : ''}">${body || '<p class="empty-panel">No records to list.</p>'}</div>`;
+}
+
+function renderKanbanView(table: ListSplatTable, rows: ListSplatRecord[]): string {
+  const field = table.fields.find((item) => item.id === boardFieldId);
+  if (!field) {
+    return '<p class="empty-panel">Choose a status or choice field above to build a board with draggable cards.</p>';
+  }
+  const columns = ['', ...((field.options && field.options.length ? field.options : distinctValues(table, rows, field.id)).filter(Boolean))];
+  return `<div class="kanban">${columns
+    .map((column) => {
+      const cards = rows.filter((record) => String(displayValue(table, record, field.id) ?? '').trim() === column);
+      return `
+        <div class="kanban-col" data-kanban-col="${html(column)}">
+          <div class="kanban-col-head"><strong>${html(column || 'Unassigned')}</strong><span>${cards.length}</span></div>
+          <div class="kanban-cards">
+            ${cards
+              .map(
+                (record) => `
+                  <div class="kanban-card" draggable="true" data-kanban-card="${record.id}" data-action="expand-record" data-record-action-id="${record.id}">
+                    <strong>${html(recordTitle(table, record))}</strong>
+                  </div>
+                `,
+              )
+              .join('')}
+          </div>
+        </div>
+      `;
+    })
+    .join('')}</div>`;
+}
+
+function renderCalendarView(table: ListSplatTable, rows: ListSplatRecord[]): string {
+  const field = table.fields.find((item) => item.id === calendarFieldId)
+    ?? table.fields.find((item) => ['date', 'dateTime', 'createdAt', 'updatedAt'].includes(item.type) && !item.hidden);
+  if (!field) {
+    return '<p class="empty-panel">Add a date field, then choose it above to see records on a calendar.</p>';
+  }
+  const base = calendarMonth ? new Date(`${calendarMonth}-01T00:00:00`) : new Date();
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+  const first = new Date(year, month, 1);
+  const startDay = first.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const byDay = new Map<string, ListSplatRecord[]>();
+  rows.forEach((record) => {
+    const raw = String(displayValue(table, record, field.id) ?? '');
+    const day = raw.slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(day) && day.startsWith(monthKey)) {
+      if (!byDay.has(day)) byDay.set(day, []);
+      byDay.get(day)!.push(record);
+    }
+  });
+  const cells: string[] = [];
+  for (let i = 0; i < startDay; i += 1) cells.push('<div class="cal-cell empty"></div>');
+  for (let d = 1; d <= daysInMonth; d += 1) {
+    const key = `${monthKey}-${String(d).padStart(2, '0')}`;
+    const dayRecords = byDay.get(key) ?? [];
+    cells.push(`
+      <div class="cal-cell">
+        <div class="cal-day">${d}</div>
+        ${dayRecords
+          .slice(0, 4)
+          .map((record) => `<button type="button" class="cal-event" data-action="expand-record" data-record-action-id="${record.id}">${html(recordTitle(table, record))}</button>`)
+          .join('')}
+        ${dayRecords.length > 4 ? `<span class="cal-more">+${dayRecords.length - 4} more</span>` : ''}
+      </div>
+    `);
+  }
+  const monthLabel = first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return `
+    <div class="calendar-view">
+      <div class="cal-nav">
+        <button type="button" class="button" data-action="cal-prev">‹</button>
+        <strong>${html(monthLabel)}</strong>
+        <button type="button" class="button" data-action="cal-next">›</button>
+        <button type="button" class="button ghost" data-action="cal-today">Today</button>
+      </div>
+      <div class="cal-grid">
+        ${weekdays.map((day) => `<div class="cal-weekday">${day}</div>`).join('')}
+        ${cells.join('')}
+      </div>
+    </div>
+  `;
+}
+
+function shiftCalendarMonth(delta: number): void {
+  const base = calendarMonth ? new Date(`${calendarMonth}-01T00:00:00`) : new Date();
+  base.setMonth(base.getMonth() + delta);
+  calendarMonth = `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, '0')}`;
+}
+
 function renderDatabasePanel(table: ListSplatTable): string {
   const rows = visibleRecords(table);
   const viewHelp: Record<ViewMode, string> = {
@@ -1115,6 +1317,9 @@ function renderDatabasePanel(table: ListSplatTable): string {
     form: 'Form: focus on one record at a time.',
     cards: 'Cards: compact text-first record cards for browsing.',
     gallery: 'Gallery: image-first cards for collections and exhibits.',
+    list: 'List: compact rows grouped by a field.',
+    kanban: 'Board: columns by status or category, drag cards to change them.',
+    calendar: 'Calendar: records placed on a month grid by a date field.',
     labels: 'Labels: printable small cards or shelf labels.',
     report: 'Report: printable table with title and summaries.',
   };
@@ -1123,23 +1328,30 @@ function renderDatabasePanel(table: ListSplatTable): string {
       ? renderFormView(table)
       : viewMode === 'cards' || viewMode === 'gallery'
         ? renderCardsView(table, rows)
-        : viewMode === 'labels'
-          ? renderLabelsView(table, rows)
-          : viewMode === 'report'
-            ? renderReportView(table, rows)
-            : renderTableView(table, rows);
+        : viewMode === 'list'
+          ? renderListView(table, rows)
+          : viewMode === 'kanban'
+            ? renderKanbanView(table, rows)
+            : viewMode === 'calendar'
+              ? renderCalendarView(table, rows)
+              : viewMode === 'labels'
+                ? renderLabelsView(table, rows)
+                : viewMode === 'report'
+                  ? renderReportView(table, rows)
+                  : renderTableView(table, rows);
 
   return `
     <section class="database-panel" aria-label="Database table">
       ${renderTableTabs(table)}
       <div class="view-tabs" role="group" aria-label="Layout modes">
-        ${(['table', 'form', 'cards', 'gallery', 'labels', 'report'] as ViewMode[])
+        ${(['table', 'form', 'cards', 'gallery', 'list', 'kanban', 'calendar', 'labels', 'report'] as ViewMode[])
           .map(
             (mode) =>
-              `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}" title="${html(viewHelp[mode])}" aria-label="${html(viewHelp[mode])}">${html(t(mode[0].toUpperCase() + mode.slice(1)))}</button>`,
+              `<button type="button" class="${viewMode === mode ? 'active' : ''}" data-view-mode="${mode}" title="${html(viewHelp[mode])}" aria-label="${html(viewHelp[mode])}">${html(t(mode === 'kanban' ? 'Board' : mode[0].toUpperCase() + mode.slice(1)))}</button>`,
           )
           .join('')}
       </div>
+      ${renderViewControls(table)}
       ${renderFilterChips()}
       ${renderBulkBar(table)}
       ${body}
@@ -2729,6 +2941,13 @@ appRoot.addEventListener('click', (event) => {
     const index = Number(target.closest<HTMLElement>('[data-level-index]')?.dataset.levelIndex ?? '-1');
     if (index >= 0) sortDraft.splice(index, 1);
     render();
+  } else if (action === 'sort-toggle') {
+    const fieldId = target.closest<HTMLElement>('[data-sort-toggle]')?.dataset.sortToggle;
+    if (fieldId) {
+      const existing = sortKeys.find((key) => key.fieldId === fieldId);
+      sortKeys = [{ fieldId, direction: existing && existing.direction === 'asc' ? 'desc' : 'asc' }];
+      render();
+    }
   } else if (action === 'apply-sort') {
     applySort();
   } else if (action === 'clear-sort') {
@@ -2767,6 +2986,19 @@ appRoot.addEventListener('click', (event) => {
     applyBulkFill();
   } else if (action === 'bulk-clear') {
     selectedRecordIds = new Set();
+    render();
+  } else if (action === 'expand-record' && recordActionId) {
+    activeRecordId = recordActionId;
+    viewMode = 'form';
+    render();
+  } else if (action === 'cal-prev') {
+    shiftCalendarMonth(-1);
+    render();
+  } else if (action === 'cal-next') {
+    shiftCalendarMonth(1);
+    render();
+  } else if (action === 'cal-today') {
+    calendarMonth = '';
     render();
   } else if (action === 'bulk-archive' || action === 'bulk-restore') {
     const archive = action === 'bulk-archive';
@@ -2960,6 +3192,18 @@ appRoot.addEventListener('change', (event) => {
     const direction = sortKeys[0]?.direction ?? 'asc';
     sortKeys = target.value ? [{ fieldId: target.value, direction }] : [];
     render();
+  } else if (target.matches('[data-group-field]')) {
+    groupByFieldId = target.value;
+    render();
+  } else if (target.matches('[data-board-field]')) {
+    boardFieldId = target.value;
+    render();
+  } else if (target.matches('[data-calendar-field]')) {
+    calendarFieldId = target.value;
+    render();
+  } else if (target.matches('[data-wrap-toggle]') && target instanceof HTMLInputElement) {
+    wrapText = target.checked;
+    render();
   } else if (target.matches('[data-select-all]') && target instanceof HTMLInputElement) {
     const ids = visibleRecords(activeTable()).map((record) => record.id);
     selectedRecordIds = target.checked ? new Set(ids) : new Set();
@@ -3122,6 +3366,12 @@ appRoot.addEventListener('pointerdown', (event) => {
 let draggedColumnField: string | null = null;
 appRoot.addEventListener('dragstart', (event) => {
   const target = event.target as HTMLElement;
+  const card = target.closest<HTMLElement>('.kanban-card[data-kanban-card]');
+  if (card) {
+    draggedRecordId = card.dataset.kanbanCard ?? null;
+    event.dataTransfer?.setData('text/plain', draggedRecordId ?? '');
+    return;
+  }
   if (target.closest('[data-col-resize]')) {
     return;
   }
@@ -3133,11 +3383,28 @@ appRoot.addEventListener('dragstart', (event) => {
   event.dataTransfer?.setData('text/plain', draggedColumnField ?? '');
 });
 appRoot.addEventListener('dragover', (event) => {
-  if (draggedColumnField && (event.target as HTMLElement).closest('.col-head[data-col-field]')) {
+  const over = event.target as HTMLElement;
+  if (draggedColumnField && over.closest('.col-head[data-col-field]')) {
+    event.preventDefault();
+  } else if (draggedRecordId && over.closest('.kanban-col')) {
     event.preventDefault();
   }
 });
 appRoot.addEventListener('drop', (event) => {
+  // Kanban: drop a card into a column to set its status/choice field.
+  const column = (event.target as HTMLElement).closest<HTMLElement>('.kanban-col');
+  if (column && draggedRecordId && boardFieldId) {
+    event.preventDefault();
+    const recordId = draggedRecordId;
+    draggedRecordId = null;
+    const value = column.dataset.kanbanCol ?? '';
+    pushUndo('move card');
+    project = replaceTable(project, updateCell(activeTable(), recordId, boardFieldId, value));
+    saveAutosave(project);
+    lastMessage = `Moved card to ${value || 'Unassigned'}.`;
+    render();
+    return;
+  }
   const head = (event.target as HTMLElement).closest<HTMLElement>('.col-head[data-col-field]');
   if (!head || !draggedColumnField) {
     return;
