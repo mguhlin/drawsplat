@@ -2574,31 +2574,85 @@
     download(deck.title.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '.webdeck.html', buildWebDeck(passwordHash), 'text/html');
   }
 
+  // Exports a self-contained WebDeck using the reference framework (Appendix A CSS
+  // + Appendix B JS) so every deck ships the standard seven-control toolbar,
+  // slide-up notes, and two-monitor presenter view. ShowSplat renders its own
+  // positioned slide objects inside each slide's .ss-stage.
   function buildWebDeck(passwordHash) {
-    const theme = getDeckTheme();
+    const fw = window.WEBDECK_FRAMEWORK || { css: '', js: '' };
     const exportSlides = deck.slides.filter(slide => !slide.hidden);
-    const sections = exportSlides.map((slide, index) => {
-      const kind = slide.bg === 'section' ? (index === 0 ? 'cover' : 'divider') : slide.bg === 'dark' ? 'dark' : '';
-      return '<section class="slide ' + kind + (index === 0 ? ' current' : '') + '" data-title="' + escapeAttr(slide.title) + '"><div class="slide-body" style="background:' + escapeAttr(slide.backgroundColor || 'transparent') + ';color:' + escapeAttr(slide.defaultTextColor || 'inherit') + '">' + slideToWebDeckHtml(slide, index, exportSlides.length) + '</div><div class="notes"><p>' + escapeHtml(slide.notes || '') + '</p></div></section>';
-    }).join('');
-    const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
-    return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title><style>' +
-      webDeckCss(theme) + importedCssForDeck() +
-      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><div class="deck">' + sections + '</div>' + globalAudio + '<script>const PASSWORD_HASH="' + passwordHash + '";' + webDeckSpecJs() + '<\/script></body></html>';
+    const sections = exportSlides.map((slide, index) => buildFrameworkSlide(slide, index, exportSlides.length)).join('');
+    const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio no-advance" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
+    const fontLink = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">';
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title>' + fontLink + '<style>' +
+      fw.css + showSplatObjectCss() + webDeckPasswordCss() + importedCssForDeck() +
+      '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><div class="deck">' + sections + '</div>' + globalAudio +
+      '<script>' + webDeckPasswordJs(passwordHash) + fw.js + '<\/script></body></html>';
+  }
+
+  function buildFrameworkSlide(slide, index, total) {
+    const theme = getDeckTheme();
+    const bg = frameworkSlideBackground(slide, theme);
+    const current = index === 0 ? ' current' : '';
+    const title = escapeHtml(slide.title || 'Slide ' + (index + 1));
+    const stage = '<div class="ss-stage">' + slideToWebDeckHtml(slide, index, total) + '</div>';
+    const notes = '<div class="notes"><p>' + escapeHtml(slide.notes || '') + '</p></div>';
+    return '<section class="slide' + current + '" data-title="' + escapeAttr(slide.title || '') + '" style="' + bg + '"><h2 class="sr-only">' + title + '</h2>' + stage + notes + '</section>';
+  }
+
+  function frameworkSlideBackground(slide, theme) {
+    if (slide.bg === 'section') return 'background:linear-gradient(135deg,' + theme.dark + ',' + theme.accent + ');color:' + (slide.defaultTextColor || '#ffffff') + ';';
+    if (slide.bg === 'dark') return 'background:' + (slide.backgroundColor || theme.dark) + ';color:' + (slide.defaultTextColor || '#ffffff') + ';';
+    return 'background:' + (slide.backgroundColor || '#ffffff') + ';color:' + (slide.defaultTextColor || '#1f2937') + ';';
+  }
+
+  // ShowSplat's positioned-object layer, layered on top of the framework slide.
+  function showSplatObjectCss() {
+    return [
+      '.slide .ss-stage{position:absolute;inset:0;z-index:1;}',
+      '.slide .obj{position:absolute;overflow:hidden;padding:8px;line-height:1.18;}',
+      '.slide .obj img,.slide .obj video,.slide .obj iframe{width:100%;height:100%;object-fit:contain;border:0;display:block;}',
+      '.slide .obj ul{margin:0;padding-left:1.1em;}',
+      '.slide .obj table{width:100%;height:100%;border-collapse:collapse;table-layout:fixed;}',
+      '.slide .obj td{border:1px solid #c7d2fe;padding:6px;vertical-align:top;}',
+      '.slide .imported-webdeck-slide{background:transparent;}',
+      '.slide .footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:9px 22px;font-weight:800;font-family:Inter,Arial,sans-serif;z-index:2;}',
+      '.slide .slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px;z-index:3;}.slide .slide-audio audio{width:260px;}',
+      '.global-audio{position:fixed;left:18px;bottom:18px;z-index:65;width:240px;}',
+      '.deck.reflow .slide{background:var(--paper);}',
+      '.deck.reflow .slide .ss-stage{position:relative;inset:auto;min-height:60vh;}',
+      '.deck.reflow .slide .obj{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;transform:none!important;margin:0 0 14px;font-size:max(18px,.8em)!important;}',
+      '.deck.reflow .slide .obj img{height:auto!important;}',
+      '.deck.reflow .slide .footer{position:relative;margin-top:auto;}',
+      '.deck.reflow .global-audio{display:none;}',
+      '@media print{.slide .obj{overflow:visible;}}'
+    ].join('');
+  }
+
+  function webDeckPasswordCss() {
+    return '#lock{position:fixed;inset:0;z-index:200;display:none;place-items:center;padding:24px;text-align:center;background:#0b1d33;color:#fff;font:600 20px/1.5 system-ui,sans-serif;}body.locked #lock{display:grid;}body.locked .deck{filter:blur(10px);}';
+  }
+
+  function webDeckPasswordJs(passwordHash) {
+    if (!passwordHash) return '';
+    return '(async function(){var HASH="' + passwordHash + '";if(/[?&]presenter=1/.test(location.search))return;' +
+      'function sha(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")})}' +
+      'document.body.classList.add("locked");var lock=document.getElementById("lock");var p=prompt("Password");' +
+      'if(p!=null&&await sha(p)===HASH)document.body.classList.remove("locked");else if(lock)lock.textContent="Password required. Reload to try again.";})();';
   }
 
   function slideToWebDeckHtml(slide, index, totalSlides) {
     const parts = onSlideElements(slide).slice().sort((a, b) => (a.z || 0) - (b.z || 0)).map(el => {
       const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || slide.defaultTextColor || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';transform:rotate(' + (Number(el.rotate) || 0) + 'deg);transform-origin:center center;';
       if (el.type === 'image') return '<div class="obj" style="' + style + '"><img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '" style="object-fit:' + escapeAttr(el.fit || 'contain') + ';object-position:' + (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%"></div>';
-      if (el.type === 'youtube') return '<div class="obj" style="' + style + '"><iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe></div>';
-      if (el.type === 'video') return '<div class="obj" style="' + style + '"><video src="' + escapeAttr(el.src || '') + '" controls></video></div>';
-      if (el.type === 'audio') return '<div class="obj" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
-      if (el.type === 'table') return '<div class="obj table" style="' + style + '">' + tableHtml(el) + '</div>';
+      if (el.type === 'youtube') return '<div class="obj no-advance" style="' + style + '"><iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe></div>';
+      if (el.type === 'video') return '<div class="obj no-advance" style="' + style + '"><video src="' + escapeAttr(el.src || '') + '" controls></video></div>';
+      if (el.type === 'audio') return '<div class="obj no-advance" style="' + style + '"><audio src="' + escapeAttr(el.src || '') + '" controls></audio></div>';
+      if (el.type === 'table') return '<div class="obj table no-advance" style="' + style + '">' + tableHtml(el) + '</div>';
       if (el.type === 'html') {
         const scale = clamp(Number(el.importScale) || 1, 0.1, 1);
         const scaleStyle = 'transform-origin:top left;transform:scale(' + scale + ');width:' + (100 / scale) + '%;height:' + (100 / scale) + '%;';
-        return '<div class="obj html" style="' + style + '"><div class="imported-webdeck-slide ' + escapeAttr(el.importedClasses || '') + '" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
+        return '<div class="obj html no-advance" style="' + style + '"><div class="imported-webdeck-slide ' + escapeAttr(el.importedClasses || '') + '" style="' + scaleStyle + '">' + sanitizeImportedHtml(el.html || '') + '</div></div>';
       }
       if (el.type === 'list') return '<div class="obj" style="' + style + '"><ul>' + String(el.text || '').split('\n').filter(Boolean).map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul></div>';
       if (el.type === 'link') return '<a class="obj" style="' + style + '" href="' + escapeAttr(el.href || '#') + '" target="_blank" rel="noopener">' + escapeHtml(el.text || 'Link') + '</a>';
@@ -2609,79 +2663,6 @@
       parts.push('<div class="slide-audio">' + slide.audio.map(audio => '<audio src="' + escapeAttr(audio.src || '') + '" controls preload="metadata"></audio>').join('') + '</div>');
     }
     return parts.join('');
-  }
-
-  function webDeckCss(theme) {
-    return [
-      ':root{--navy:' + theme.dark + ';--gold:' + theme.accent + ';--gold-lt:' + theme.accent2 + ';--accent:' + theme.accent + ';--dark:' + theme.dark + ';--canvas:' + theme.bg + ';font-family:Inter,Arial,sans-serif;color:#1f2937;background:#111827}',
-      '*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#111827}.deck{position:fixed;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center}.slide{position:absolute;inset:0;display:none;overflow:hidden;background:var(--canvas)}.slide.current{display:flex;flex-direction:column}.slide.cover,.slide.divider,.slide.dark{background:linear-gradient(135deg,var(--dark),var(--accent));color:#fff}.slide-body{position:relative;flex:1;min-height:0}.notes{display:none}',
-      '.obj{position:absolute;overflow:hidden;padding:8px;line-height:1.18}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.obj table{width:100%;height:100%;border-collapse:collapse}.obj td{border:1px solid #c7d2fe;padding:6px}',
-      '.slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px}.slide-audio audio{width:260px}.global-audio{position:fixed;left:18px;bottom:18px;z-index:3;width:240px}',
-      '.footer,.slide-footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}',
-      '.bar{position:fixed;left:50%;bottom:18px;z-index:5;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(17,24,39,.76);backdrop-filter:blur(12px);color:#fff;opacity:1;transition:opacity .18s,transform .18s}.bar:hover{opacity:1;transform:translateX(-50%)}body.controls-hidden .bar{opacity:0;pointer-events:none;transform:translate(-50%,130%)}.bar button{border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:7px 10px;font-weight:800}.bar strong{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-      '.dots{display:flex;gap:5px;align-items:center;max-width:38vw;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.dots::-webkit-scrollbar{display:none}.dot{flex:none;width:10px;height:10px;border-radius:99px;border:0;background:#fff8;cursor:pointer;padding:0}.dot.active{width:26px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}',
-      '#notes{position:fixed;left:24px;top:72px;width:min(420px,calc(100vw - 48px));max-height:calc(100vh - 110px);overflow:auto;border-radius:14px;background:#fff;color:#1f2937;box-shadow:0 18px 44px #0004;transform:translateY(-130%);pointer-events:none;transition:.2s;z-index:6}#notes.open{transform:translateY(0);pointer-events:auto}.notes-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;background:#f3f4f6;cursor:move;font-weight:800}.notes-head button{border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;padding:4px 8px}.notes-body{padding:16px}.notes-body p{white-space:pre-wrap}',
-      '#lock{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:#111827;color:#fff}body.locked #lock{display:grid}',
-      '#help{position:fixed;inset:0;z-index:8;display:none;place-items:center;background:#0009}#help.open{display:grid}#help>div{max-width:560px;padding:24px;border-radius:16px;background:#fff;color:#111827;line-height:1.55}#live{position:fixed;left:-9999px}.presenter-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;padding:18px}.presenter-notes{white-space:pre-wrap;font-size:22px;line-height:1.5}',
-      '@media(max-width:700px),(min-resolution:2dppx) and (max-width:900px){body{overflow:auto;background:#eef2f7}.deck{position:static;width:auto;height:auto;transform:none!important}.slide,.slide.current{position:relative;display:flex;min-height:100vh;margin:0 0 18px}.obj{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;transform:none!important;font-size:max(18px,.72em)!important}.slide-body{padding:24px}.global-audio{display:none}.bar{position:fixed}#deckLabel,#dots{display:none}.footer,.slide-footer{position:relative;margin-top:auto}}',
-      '@media print{@page{size:landscape;margin:0}body{overflow:visible;background:#fff}.deck{position:static;width:1280px;height:auto;transform:none!important}.slide{position:relative;display:flex;width:1280px;height:720px;page-break-after:always}.bar,.progress,#help,.global-audio{display:none!important}}'
-    ].join('');
-  }
-
-  function webDeckSpecJs() {
-    return [
-      'let i=Math.max(0,(parseInt(location.hash.slice(1),10)||1)-1),presenterWin=null,start=Date.now(),syncing=false;',
-      'const deck=document.querySelector(".deck"),slides=[...document.querySelectorAll(".slide")];',
-      'const chan=("BroadcastChannel"in window)?new BroadcastChannel("webdeck-sync:"+location.pathname):null;',
-      'const dotsHtml=slides.map((s,n)=>`<button class="dot" type="button" data-i="${n}" aria-label="Go to slide ${n+1}"></button>`).join("");',
-      'document.body.insertAdjacentHTML("beforeend",`<div class="progress"><span id="progress"></span></div><nav class="bar" aria-label="Presentation controls"><strong id="deckLabel"></strong><button id="prev" title="Previous">‹</button><span id="dots" class="dots">${dotsHtml}</span><span id="count"></span><button id="next" title="Next">›</button><button id="notesBtn" title="Notes (S)">🗒</button><button id="presentBtn" title="Presenter view (V)">🖥</button><button id="fullBtn" title="Fullscreen (F)">⛶</button><button id="helpBtn" title="Help (?)">?</button></nav><aside id="notes"></aside><div id="help"><div><h2>WebDeck shortcuts</h2><p>←/→ or Space: navigate · Home/End: first/last · click left/right third: back/forward · S: notes · V: presenter view · F: fullscreen · P: print/PDF · ?: help · Esc: close overlays</p><p>Presenter view pops out the speaker notes, next-slide cue, and a running timer. Its Prev and Next buttons and arrow keys advance this deck, so allow pop-ups if it does not open.</p><button id="helpClose" type="button">Close</button></div></div><div id="live" aria-live="polite"></div>`);',
-      'const count=document.getElementById("count"),prog=document.getElementById("progress"),notes=document.getElementById("notes"),help=document.getElementById("help"),dots=document.getElementById("dots");',
-      'document.getElementById("deckLabel").textContent=document.title;',
-      'async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}',
-      'async function unlock(){if(!PASSWORD_HASH)return;document.body.classList.add("locked");const p=prompt("Password");if(await sha(p||"")===PASSWORD_HASH)document.body.classList.remove("locked");else document.getElementById("lock").textContent="Password required. Reload to try again."}',
-      'function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]))}',
-      'function title(){return slides[i].dataset.title||slides[i].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+1)}',
-      'function note(){return slides[i].querySelector(".notes")?.textContent.trim()||"No notes for this slide."}',
-      'function nextTitle(){return i+1<slides.length?(slides[i+1].dataset.title||slides[i+1].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+2)):"End of deck"}',
-      'function elapsed(){const s=Math.max(0,Math.floor((Date.now()-start)/1000));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}',
-      'function fit(){if(innerWidth<700)return deck.style.transform="none";const s=Math.min(innerWidth/1280,innerHeight/720);deck.style.transform=`translate(-50%,-50%) scale(${s})`}',
-      'function paintDots(){[...dots.children].forEach((d,x)=>d.classList.toggle("active",x===i))}',
-      'function updateNotes(){notes.innerHTML=`<div class="notes-head"><span>Notes</span><button id="closeNotes" type="button">Close</button></div><div class="notes-body"><strong>${esc(title())}</strong><p>${esc(note())}</p></div>`;document.getElementById("closeNotes").onclick=()=>notes.classList.remove("open")}',
-      'function presenterDoc(){return `<div class="pv-top"><h1>${esc(title())}</h1><span id="pt" class="pv-timer">${elapsed()}</span></div><p class="pv-meta">Slide ${i+1} of ${slides.length} &middot; Next: ${esc(nextTitle())}</p><hr><div class="pv-notes">${esc(note())}</div><div class="pv-bar"><button id="pp" type="button">&lsaquo; Prev</button><button id="pn" type="button">Next &rsaquo;</button></div>`}',
-      'function wirePresenter(){if(!presenterWin||presenterWin.closed)return;const d=presenterWin.document,pp=d.getElementById("pp"),pn=d.getElementById("pn");if(pp)pp.onclick=()=>show(i-1);if(pn)pn.onclick=()=>show(i+1);d.onkeydown=e=>{if(["ArrowRight"," ","PageDown","ArrowDown"].includes(e.key)){e.preventDefault();show(i+1)}else if(["ArrowLeft","PageUp","ArrowUp"].includes(e.key)){e.preventDefault();show(i-1)}else if(e.key==="Home")show(0);else if(e.key==="End")show(slides.length-1)}}',
-      'function sendPresenter(){if(!presenterWin||presenterWin.closed)return;presenterWin.document.body.innerHTML=presenterDoc();wirePresenter()}',
-      'function openPresenter(){presenterWin=window.open("","webdeck-presenter","popup=yes,width=1120,height=780");if(!presenterWin){notes.classList.add("open");document.getElementById("live").textContent="Pop-up blocked. Showing notes in this window instead.";return}const d=presenterWin.document;d.head.innerHTML=`<title>Presenter view</title><meta charset="utf-8"><style>body{margin:0;padding:26px 26px 104px;background:#071527;color:#e7eefb;font:20px/1.5 Arial,sans-serif}.pv-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}.pv-top h1{margin:0;font-size:27px}.pv-timer{font-size:30px;font-variant-numeric:tabular-nums}.pv-meta{opacity:.82;margin:6px 0 14px}hr{border:0;border-top:1px solid #ffffff33}.pv-notes{white-space:pre-wrap;font-size:25px;line-height:1.55}.pv-bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:12px;justify-content:center;padding:16px;background:#00000066}.pv-bar button{border:0;border-radius:10px;background:#2563eb;color:#fff;font-size:20px;padding:11px 26px;cursor:pointer}</style>`;sendPresenter();presenterWin.focus()}',
-      'function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,x)=>s.classList.toggle("current",x===i));count.textContent=(i+1)+" / "+slides.length;prog.style.width=((i+1)/slides.length*100)+"%";location.hash=String(i+1);paintDots();document.getElementById("live").textContent=`Slide ${i+1} of ${slides.length}: ${title()}`;updateNotes();sendPresenter();if(chan&&!syncing)chan.postMessage({i})}',
-      'if(chan)chan.onmessage=e=>{if(e.data&&typeof e.data.i==="number"&&e.data.i!==i){syncing=true;show(e.data.i);syncing=false}};',
-      'prev.onclick=()=>show(i-1);next.onclick=()=>show(i+1);notesBtn.onclick=()=>notes.classList.toggle("open");presentBtn.onclick=openPresenter;fullBtn.onclick=()=>document.documentElement.requestFullscreen?.();helpBtn.onclick=()=>help.classList.add("open");helpClose.onclick=()=>help.classList.remove("open");dots.onclick=e=>{const b=e.target.closest(".dot");if(b)show(Number(b.dataset.i))};',
-      'document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select"))return;if(["ArrowRight"," ","PageDown","ArrowDown"].includes(e.key))show(i+1);else if(["ArrowLeft","PageUp","ArrowUp"].includes(e.key))show(i-1);else if(e.key==="Home")show(0);else if(e.key==="End")show(slides.length-1);else if(e.key.toLowerCase()==="s")notes.classList.toggle("open");else if(e.key.toLowerCase()==="v")openPresenter();else if(e.key.toLowerCase()==="f")document.documentElement.requestFullscreen?.();else if(e.key.toLowerCase()==="p")print();else if(e.key==="?")help.classList.toggle("open");else if(e.key==="Escape"){help.classList.remove("open");notes.classList.remove("open")}});',
-      'document.addEventListener("click",e=>{if(e.target.closest(".bar,#notes,#help,a,button,input,textarea,select,video,audio,iframe"))return;if(getSelection&&String(getSelection()))return;const x=e.clientX/innerWidth;if(x<.33)show(i-1);else if(x>.66)show(i+1)});',
-      'setInterval(()=>{if(presenterWin&&!presenterWin.closed){const pt=presenterWin.document.getElementById("pt");if(pt)pt.textContent=elapsed()}},1000);',
-      'addEventListener("resize",fit);addEventListener("hashchange",()=>{const n=parseInt(location.hash.slice(1),10);if(n&&n-1!==i)show(n-1)});unlock();fit();show(i);window.__deck={show,next:()=>show(i+1),prev:()=>show(i-1),presenter:openPresenter};'
-    ].join('');
-  }
-
-  function webDeckJs() {
-    return [
-      'let i=0,hideTimer=null,notesWin=null,drag=null;',
-      'const deck=document.getElementById("deck"),dots=document.getElementById("dots"),count=document.getElementById("count"),prog=document.getElementById("progress"),notes=document.getElementById("notes");',
-      'async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}',
-      'async function unlock(){if(!PASSWORD_HASH)return;document.body.classList.add("locked");const p=prompt("Password");if(await sha(p||"")===PASSWORD_HASH)document.body.classList.remove("locked");else document.getElementById("lock").textContent="Password required. Reload to try again."}',
-      'function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]))}',
-      'function notesHtml(){return "<strong>"+esc(SLIDES[i].title)+"</strong><p>"+esc(SLIDES[i].notes||"No notes.")+"</p>"}',
-      'function updateNotes(){notes.innerHTML="<div class=\\"notes-head\\"><span>Notes</span><button id=\\"closeNotes\\" type=\\"button\\">Close</button></div><div class=\\"notes-body\\">"+notesHtml()+"</div>";const close=document.getElementById("closeNotes");if(close)close.onclick=()=>notes.classList.remove("open");if(notesWin&&!notesWin.closed){notesWin.document.body.innerHTML=notesHtml();notesWin.document.title="Notes - "+(SLIDES[i].title||"Slide "+(i+1));}}',
-      'function render(){deck.innerHTML=SLIDES.map((s,n)=>`<section class="slide ${s.bg||""} ${n===i?"active":""}">${s.html}</section>`).join("");dots.innerHTML=SLIDES.map((_,n)=>`<button class="dot ${n===i?"active":""}" data-i="${n}" aria-label="Slide ${n+1}"></button>`).join("");count.textContent=(i+1)+" / "+SLIDES.length;prog.style.width=((i+1)/SLIDES.length*100)+"%";updateNotes();location.hash=String(i+1)}',
-      'function go(n){i=Math.max(0,Math.min(SLIDES.length-1,n));render()}',
-      'function showControls(){document.body.classList.remove("controls-hidden");clearTimeout(hideTimer);hideTimer=setTimeout(()=>document.body.classList.add("controls-hidden"),2600)}',
-      'function openNotes(){notesWin=notesWin&&!notesWin.closed?notesWin:window.open("","showsplatNotes","popup=yes,width=440,height=620,left=80,top=80");if(notesWin){notesWin.document.head.innerHTML="<title>Notes</title><style>body{box-sizing:border-box;margin:0;padding:20px;font:18px/1.45 Inter,Arial,sans-serif;color:#111827;background:#fff}strong{display:block;margin-bottom:14px;font-size:22px}p{white-space:pre-wrap}</style>";updateNotes();notesWin.focus();return}notes.classList.toggle("open")}',
-      'document.addEventListener("mousemove",e=>{if(e.clientY>window.innerHeight-96)showControls()});document.addEventListener("touchstart",showControls,{passive:true});showControls();',
-      'document.addEventListener("click",e=>{if(e.target.closest(".bar,#notes,a,button,video,audio,iframe"))return;const x=e.clientX/window.innerWidth;if(x<.33)go(i-1);else if(x>.66)go(i+1)});',
-      'document.addEventListener("keydown",e=>{if(["ArrowRight"," ","ArrowDown"].includes(e.key))go(i+1);if(["ArrowLeft","ArrowUp"].includes(e.key))go(i-1);if(e.key==="Home")go(0);if(e.key==="End")go(SLIDES.length-1);if(e.key.toLowerCase()==="n")openNotes();if(e.key.toLowerCase()==="f")document.documentElement.requestFullscreen?.();});',
-      'document.addEventListener("pointerdown",e=>{const head=e.target.closest(".notes-head");if(!head)return;const r=notes.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top};notes.setPointerCapture?.(e.pointerId)});',
-      'document.addEventListener("pointermove",e=>{if(!drag)return;notes.style.left=Math.max(0,Math.min(window.innerWidth-80,e.clientX-drag.x))+"px";notes.style.top=Math.max(0,Math.min(window.innerHeight-60,e.clientY-drag.y))+"px";notes.style.right="auto";notes.style.bottom="auto"});document.addEventListener("pointerup",()=>drag=null);',
-      'document.getElementById("prev").onclick=()=>go(i-1);document.getElementById("next").onclick=()=>go(i+1);document.getElementById("notesBtn").onclick=openNotes;document.getElementById("fullBtn").onclick=()=>document.documentElement.requestFullscreen?.();dots.onclick=e=>{if(e.target.dataset.i)go(Number(e.target.dataset.i))};',
-      'window.onhashchange=()=>{const n=parseInt(location.hash.slice(1),10);if(n)go(n-1)};const start=parseInt(location.hash.slice(1),10);if(start)i=start-1;unlock();render();'
-    ].join('');
   }
 
   function printPdf() {

@@ -31,8 +31,12 @@ The first implementation is a static browser app with:
 - a slide-rail "Add slide" template picker for choosing a starting layout
 - paste (Ctrl/Cmd+V or right-click) and drag-and-drop of images onto a slide
 - an off-slide holding area for staging objects that stay out of the presentation
-- an exported WebDeck presenter view whose Prev/Next controls and arrow keys
-  advance the audience deck, with a next-slide cue, running timer, and slide dots
+- WebDeck HTML export built on the reference WebDeck framework (Appendix A CSS
+  and Appendix B JS embedded verbatim): every deck ships the standard seven-control
+  toolbar (prev · counter · next · notes · presenter · fullscreen · help), a
+  slide-up notes panel, top progress bar, phone reflow, print/PDF, and a
+  two-monitor presenter view with current/next-slide previews, synced speaker
+  notes, and a running timer that stays in sync via BroadcastChannel
 
 ## In-App Help
 
