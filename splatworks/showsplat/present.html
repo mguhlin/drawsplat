@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShowSplat™ Presentation</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0b1d33; color: #eaf0fb; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #msg { display: grid; place-items: center; height: 100%; padding: 24px; text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div id="msg">Loading presentation…</div>
+<script>
+/* Bootstrap for in-app Present: read the deck HTML that ShowSplat stored in
+   IndexedDB and render it in place. Because this is a real same-origin URL,
+   the WebDeck framework's presenter pop-out can reopen present.html?presenter=1
+   and stay in sync across the two windows. */
+(function () {
+  'use strict';
+  var DB = 'showsplat-present', STORE = 'decks', KEY = 'current';
+  function openDb() {
+    return new Promise(function (resolve, reject) {
+      var req = indexedDB.open(DB, 1);
+      req.onupgradeneeded = function () { req.result.createObjectStore(STORE); };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+  function read(db) {
+    return new Promise(function (resolve, reject) {
+      var req = db.transaction(STORE, 'readonly').objectStore(STORE).get(KEY);
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+  function renderDeck(html) {
+    document.open();
+    document.write(html);
+    document.close();
+  }
+  function attempt(tries) {
+    openDb().then(read).then(function (html) {
+      if (html) { renderDeck(html); return; }
+      if (tries > 0) { setTimeout(function () { attempt(tries - 1); }, 120); return; }
+      document.getElementById('msg').textContent = 'No presentation found. Return to ShowSplat and choose Present again.';
+    }).catch(function (err) {
+      document.getElementById('msg').textContent = 'Could not load the presentation. ' + (err && err.message ? err.message : err);
+    });
+  }
+  if (!window.indexedDB) {
+    document.getElementById('msg').textContent = 'This browser blocks storage for local files. Open ShowSplat from a web address, or export the WebDeck to present.';
+    return;
+  }
+  attempt(30);
+})();
+</script>
+</body>
+</html>

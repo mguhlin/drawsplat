@@ -2680,9 +2680,44 @@
 
   function present(startIndex) {
     const html = buildWebDeck('');
-    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    const win = window.open(url + '#' + (startIndex + 1), '_blank');
-    if (!win) setStatus('Allow pop-ups to present in a new window.');
+    // Route through the same-origin present.html bootstrap so the WebDeck
+    // framework's presenter view can reopen present.html?presenter=1 and stay in
+    // sync (a blob URL cannot carry the ?presenter=1 query). Fall back to a blob
+    // when IndexedDB is unavailable (e.g. some file:// contexts).
+    if (!window.indexedDB) {
+      const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      const fallbackWin = window.open(url + '#' + (startIndex + 1), '_blank');
+      if (!fallbackWin) setStatus('Allow pop-ups to present in a new window.');
+      return;
+    }
+    const win = window.open('present.html#' + (startIndex + 1), '_blank');
+    if (!win) { setStatus('Allow pop-ups to present in a new window.'); return; }
+    storePresentation(html)
+      .then(() => setStatus('Presenting. Press V or the 🖥 button for presenter view with notes.'))
+      .catch(err => {
+        console.warn(err);
+        setStatus('Could not open the presenter window. Export the WebDeck to present with two monitors.');
+      });
+  }
+
+  function storePresentation(html) {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('showsplat-present', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('decks');
+      req.onsuccess = () => {
+        const db = req.result;
+        try {
+          const tx = db.transaction('decks', 'readwrite');
+          tx.objectStore('decks').put(html, 'current');
+          tx.oncomplete = () => { db.close(); resolve(); };
+          tx.onerror = () => { db.close(); reject(tx.error); };
+        } catch (err) {
+          db.close();
+          reject(err);
+        }
+      };
+      req.onerror = () => reject(req.error);
+    });
   }
 
   function download(name, content, type) {
