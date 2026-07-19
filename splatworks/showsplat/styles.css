@@ -55,7 +55,9 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .brand strong { display: block; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.05; white-space: nowrap; }
 .brand sup { font-size: .42em; line-height: 0; position: relative; top: -.55em; }
 .brand small { display: block; margin-top: 5px; font-size: .95rem; opacity: .9; }
-.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.lang-select { min-height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font-weight: 700; font-size: .85rem; cursor: pointer; }
+.lang-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,58,237,.18); }
 .quick-actions button,
 .toolbar button,
 .rail-add,

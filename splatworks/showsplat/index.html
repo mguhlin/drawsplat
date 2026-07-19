@@ -8,7 +8,9 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260719-2">
+  <link rel="stylesheet" href="styles.css?v=20260719-3">
+  <script src="../../assets/js/widget-i18n.js"></script>
+  <script src="locales.js"></script>
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -45,144 +47,145 @@
     <span><strong>ShowSplat<sup>TM</sup></strong><small>SplatWorks<sup>TM</sup> WebDeck Studio</small></span>
   </a>
   <div class="quick-actions">
-    <button class="primary" data-action="new-deck"><svg><use href="#i-plus"/></svg> New</button>
-    <button data-action="save-deck"><svg><use href="#i-save"/></svg> Save</button>
-    <button data-action="present-first"><svg><use href="#i-play"/></svg> Present</button>
+    <button class="primary" data-action="new-deck"><svg><use href="#i-plus"/></svg> <span data-i18n="New">New</span></button>
+    <button data-action="save-deck"><svg><use href="#i-save"/></svg> <span data-i18n="Save">Save</span></button>
+    <button data-action="present-first"><svg><use href="#i-play"/></svg> <span data-i18n="Present">Present</span></button>
+    <select id="i18nSwitcher" class="lang-select" aria-label="Language / Idioma / Ngôn ngữ / اللغة / 语言 / زبان"></select>
   </div>
 </header>
 
 <main class="show-app">
   <nav class="menu-bar" aria-label="ShowSplat menus">
-    <details class="menu"><summary>File</summary><div class="menu-panel">
-      <button data-action="new-deck">New deck</button>
-      <button data-action="save-deck">Save .showsplat.json</button>
-      <button data-action="open-deck">Open .showsplat.json</button>
+    <details class="menu"><summary data-i18n="File">File</summary><div class="menu-panel">
+      <button data-action="new-deck" data-i18n="New deck">New deck</button>
+      <button data-action="save-deck" data-i18n="Save .showsplat.json">Save .showsplat.json</button>
+      <button data-action="open-deck" data-i18n="Open .showsplat.json">Open .showsplat.json</button>
       <hr>
-      <details class="submenu"><summary>Import</summary><div>
-        <button data-action="import-webdeck">WebDeck HTML (.html)</button>
-        <button data-action="open-markdown">Markdown (.md)</button>
-        <button data-action="import-pdf">PDF (.pdf)</button>
-        <button data-action="import-odp">ODP (.odp)</button>
-        <button data-action="import-pptx">PowerPoint (.pptx)</button>
+      <details class="submenu"><summary data-i18n="Import">Import</summary><div>
+        <button data-action="import-webdeck" data-i18n="WebDeck HTML (.html)">WebDeck HTML (.html)</button>
+        <button data-action="open-markdown" data-i18n="Markdown (.md)">Markdown (.md)</button>
+        <button data-action="import-pdf" data-i18n="PDF (.pdf)">PDF (.pdf)</button>
+        <button data-action="import-odp" data-i18n="ODP (.odp)">ODP (.odp)</button>
+        <button data-action="import-pptx" data-i18n="PowerPoint (.pptx)">PowerPoint (.pptx)</button>
       </div></details>
-      <details class="submenu"><summary>Export</summary><div>
-        <button data-action="export-webdeck">WebDeck HTML</button>
-        <button data-action="export-markdown">Markdown (.md)</button>
-        <button data-action="print-pdf">PDF (.pdf)</button>
-        <button data-action="export-odp">ODP (.odp)</button>
-        <button data-action="export-pptx">PowerPoint (.pptx)</button>
+      <details class="submenu"><summary data-i18n="Export">Export</summary><div>
+        <button data-action="export-webdeck" data-i18n="WebDeck HTML">WebDeck HTML</button>
+        <button data-action="export-markdown" data-i18n="Markdown (.md)">Markdown (.md)</button>
+        <button data-action="print-pdf" data-i18n="PDF (.pdf)">PDF (.pdf)</button>
+        <button data-action="export-odp" data-i18n="ODP (.odp)">ODP (.odp)</button>
+        <button data-action="export-pptx" data-i18n="PowerPoint (.pptx)">PowerPoint (.pptx)</button>
       </div></details>
     </div></details>
-    <details class="menu"><summary>Edit</summary><div class="menu-panel">
-      <button data-action="undo">Undo</button>
-      <button data-action="redo">Redo</button>
+    <details class="menu"><summary data-i18n="Edit">Edit</summary><div class="menu-panel">
+      <button data-action="undo" data-i18n="Undo">Undo</button>
+      <button data-action="redo" data-i18n="Redo">Redo</button>
       <hr>
-      <button data-action="duplicate-slide">Duplicate slide</button>
-      <button data-action="delete-slide">Delete slide</button>
-      <button data-action="delete-selected-slides">Delete selected slides</button>
-      <button data-action="delete-object">Delete selected object(s)</button>
-      <button data-action="select-all-objects">Select all objects</button>
+      <button data-action="duplicate-slide" data-i18n="Duplicate slide">Duplicate slide</button>
+      <button data-action="delete-slide" data-i18n="Delete slide">Delete slide</button>
+      <button data-action="delete-selected-slides" data-i18n="Delete selected slides">Delete selected slides</button>
+      <button data-action="delete-object" data-i18n="Delete selected object(s)">Delete selected object(s)</button>
+      <button data-action="select-all-objects" data-i18n="Select all objects">Select all objects</button>
       <hr>
-      <button data-action="bring-forward">Bring forward</button>
-      <button data-action="send-backward">Send backward</button>
+      <button data-action="bring-forward" data-i18n="Bring forward">Bring forward</button>
+      <button data-action="send-backward" data-i18n="Send backward">Send backward</button>
       <hr>
-      <button data-action="align-left">Align left</button>
-      <button data-action="align-center-h">Align centers (horizontal)</button>
-      <button data-action="align-right">Align right</button>
-      <button data-action="align-top">Align top</button>
-      <button data-action="align-middle-v">Align centers (vertical)</button>
-      <button data-action="align-bottom">Align bottom</button>
-      <button data-action="distribute-h">Distribute horizontally</button>
-      <button data-action="distribute-v">Distribute vertically</button>
+      <button data-action="align-left" data-i18n="Align left">Align left</button>
+      <button data-action="align-center-h" data-i18n="Align centers (horizontal)">Align centers (horizontal)</button>
+      <button data-action="align-right" data-i18n="Align right">Align right</button>
+      <button data-action="align-top" data-i18n="Align top">Align top</button>
+      <button data-action="align-middle-v" data-i18n="Align centers (vertical)">Align centers (vertical)</button>
+      <button data-action="align-bottom" data-i18n="Align bottom">Align bottom</button>
+      <button data-action="distribute-h" data-i18n="Distribute horizontally">Distribute horizontally</button>
+      <button data-action="distribute-v" data-i18n="Distribute vertically">Distribute vertically</button>
       <hr>
-      <button data-action="hide-selected-slides">Hide selected slides</button>
-      <button data-action="show-selected-slides">Show selected slides</button>
-      <button data-action="indent-selected-slides">Indent selected slides</button>
-      <button data-action="outdent-selected-slides">Outdent selected slides</button>
-      <button data-action="collapse-selected-slides">Collapse selected slides</button>
-      <button data-action="expand-selected-slides">Expand selected slides</button>
+      <button data-action="hide-selected-slides" data-i18n="Hide selected slides">Hide selected slides</button>
+      <button data-action="show-selected-slides" data-i18n="Show selected slides">Show selected slides</button>
+      <button data-action="indent-selected-slides" data-i18n="Indent selected slides">Indent selected slides</button>
+      <button data-action="outdent-selected-slides" data-i18n="Outdent selected slides">Outdent selected slides</button>
+      <button data-action="collapse-selected-slides" data-i18n="Collapse selected slides">Collapse selected slides</button>
+      <button data-action="expand-selected-slides" data-i18n="Expand selected slides">Expand selected slides</button>
     </div></details>
-    <details class="menu"><summary>Insert</summary><div class="menu-panel">
-      <button data-action="add-text"><svg><use href="#i-text"/></svg> Text box</button>
-      <button data-action="add-list"><svg><use href="#i-list"/></svg> Bullet list</button>
-      <button data-action="add-table"><svg><use href="#i-table"/></svg> Table</button>
-      <button data-action="add-link"><svg><use href="#i-link"/></svg> Hyperlink</button>
-      <button data-action="add-slide-number">Slide number</button>
-      <button data-action="add-header">Header</button>
+    <details class="menu"><summary data-i18n="Insert">Insert</summary><div class="menu-panel">
+      <button data-action="add-text"><svg><use href="#i-text"/></svg> <span data-i18n="Text box">Text box</span></button>
+      <button data-action="add-list"><svg><use href="#i-list"/></svg> <span data-i18n="Bullet list">Bullet list</span></button>
+      <button data-action="add-table"><svg><use href="#i-table"/></svg> <span data-i18n="Table">Table</span></button>
+      <button data-action="add-link"><svg><use href="#i-link"/></svg> <span data-i18n="Hyperlink">Hyperlink</span></button>
+      <button data-action="add-slide-number" data-i18n="Slide number">Slide number</button>
+      <button data-action="add-header" data-i18n="Header">Header</button>
       <hr>
-      <button data-action="insert-image-upload"><svg><use href="#i-image"/></svg> Image upload</button>
-      <button data-action="insert-image-url">Image by URL</button>
-      <button data-action="insert-splatimage">Image from SplatImage Studio</button>
-      <button data-action="insert-concept">Image from Concept Studio</button>
-      <button data-action="insert-graph">Graph from DrawSplat or GridSplat</button>
+      <button data-action="insert-image-upload"><svg><use href="#i-image"/></svg> <span data-i18n="Image upload">Image upload</span></button>
+      <button data-action="insert-image-url" data-i18n="Image by URL">Image by URL</button>
+      <button data-action="insert-splatimage" data-i18n="Image from SplatImage Studio">Image from SplatImage Studio</button>
+      <button data-action="insert-concept" data-i18n="Image from Concept Studio">Image from Concept Studio</button>
+      <button data-action="insert-graph" data-i18n="Graph from DrawSplat or GridSplat">Graph from DrawSplat or GridSplat</button>
       <hr>
-      <button data-action="insert-youtube"><svg><use href="#i-video"/></svg> YouTube video</button>
-      <button data-action="insert-video-url">MP4/WebM by URL</button>
-      <button data-action="insert-video-upload">MP4/WebM upload</button>
-      <button data-action="insert-audio-url"><svg><use href="#i-audio"/></svg> Audio by URL</button>
-      <button data-action="insert-audio-upload"><svg><use href="#i-audio"/></svg> Audio file on slide</button>
-      <button data-action="record-slide-audio"><svg><use href="#i-audio"/></svg> Record slide audio</button>
-      <button data-action="set-global-audio"><svg><use href="#i-audio"/></svg> Song for whole deck</button>
+      <button data-action="insert-youtube"><svg><use href="#i-video"/></svg> <span data-i18n="YouTube video">YouTube video</span></button>
+      <button data-action="insert-video-url" data-i18n="MP4/WebM by URL">MP4/WebM by URL</button>
+      <button data-action="insert-video-upload" data-i18n="MP4/WebM upload">MP4/WebM upload</button>
+      <button data-action="insert-audio-url"><svg><use href="#i-audio"/></svg> <span data-i18n="Audio by URL">Audio by URL</span></button>
+      <button data-action="insert-audio-upload"><svg><use href="#i-audio"/></svg> <span data-i18n="Audio file on slide">Audio file on slide</span></button>
+      <button data-action="record-slide-audio"><svg><use href="#i-audio"/></svg> <span data-i18n="Record slide audio">Record slide audio</span></button>
+      <button data-action="set-global-audio"><svg><use href="#i-audio"/></svg> <span data-i18n="Song for whole deck">Song for whole deck</span></button>
     </div></details>
-    <details class="menu"><summary>Format</summary><div class="menu-panel">
-      <button data-action="toggle-bold">Bold</button>
-      <button data-action="toggle-italic">Italic</button>
-      <button data-action="toggle-underline">Underline</button>
-      <button data-action="align-left">Align left</button>
-      <button data-action="align-center">Align center</button>
-      <button data-action="align-right">Align right</button>
+    <details class="menu"><summary data-i18n="Format">Format</summary><div class="menu-panel">
+      <button data-action="toggle-bold" data-i18n="Bold">Bold</button>
+      <button data-action="toggle-italic" data-i18n="Italic">Italic</button>
+      <button data-action="toggle-underline" data-i18n="Underline">Underline</button>
+      <button data-action="align-left" data-i18n="Align left">Align left</button>
+      <button data-action="align-center" data-i18n="Align center">Align center</button>
+      <button data-action="align-right" data-i18n="Align right">Align right</button>
       <hr>
-      <button data-action="autofit-textbox">Autofit text box to text</button>
-      <button data-action="fit-text-to-box">Fit text to text box</button>
+      <button data-action="autofit-textbox" data-i18n="Autofit text box to text">Autofit text box to text</button>
+      <button data-action="fit-text-to-box" data-i18n="Fit text to text box">Fit text to text box</button>
       <hr>
-      <button data-action="theme-gallery">Themes and master slide</button>
-      <button data-action="toggle-footer">Toggle information bar</button>
+      <button data-action="theme-gallery" data-i18n="Themes and master slide">Themes and master slide</button>
+      <button data-action="toggle-footer" data-i18n="Toggle information bar">Toggle information bar</button>
     </div></details>
-    <details class="menu"><summary>SlideShow</summary><div class="menu-panel">
-      <button data-action="present-first">Start from first slide</button>
-      <button data-action="present-current">Start from current slide</button>
+    <details class="menu"><summary data-i18n="SlideShow">SlideShow</summary><div class="menu-panel">
+      <button data-action="present-first" data-i18n="Start from first slide">Start from first slide</button>
+      <button data-action="present-current" data-i18n="Start from current slide">Start from current slide</button>
     </div></details>
-    <details class="menu"><summary>View</summary><div class="menu-panel">
-      <button data-action="view-normal">Normal</button>
-      <button data-action="view-sorter">Slide Sorter</button>
-      <button data-action="view-notes">Notes</button>
-      <button data-action="theme-gallery">Master Slide</button>
-      <button data-action="set-selected-bg-light">Selected slides: light</button>
-      <button data-action="set-selected-bg-dark">Selected slides: dark</button>
-      <button data-action="set-selected-bg-section">Selected slides: purple</button>
-      <button data-action="toggle-sidebar">Toggle inspector</button>
+    <details class="menu"><summary data-i18n="View">View</summary><div class="menu-panel">
+      <button data-action="view-normal" data-i18n="Normal">Normal</button>
+      <button data-action="view-sorter" data-i18n="Slide Sorter">Slide Sorter</button>
+      <button data-action="view-notes" data-i18n="Notes">Notes</button>
+      <button data-action="theme-gallery" data-i18n="Master Slide">Master Slide</button>
+      <button data-action="set-selected-bg-light" data-i18n="Selected slides: light">Selected slides: light</button>
+      <button data-action="set-selected-bg-dark" data-i18n="Selected slides: dark">Selected slides: dark</button>
+      <button data-action="set-selected-bg-section" data-i18n="Selected slides: purple">Selected slides: purple</button>
+      <button data-action="toggle-sidebar" data-i18n="Toggle inspector">Toggle inspector</button>
     </div></details>
-    <details class="menu templates-menu"><summary>Templates</summary><div class="menu-panel">
-      <button data-template="title">Title slide</button>
-      <button data-template="title-content">Title and content</button>
-      <button data-template="section">Section break</button>
-      <button data-template="comparison">Comparison</button>
-      <button data-template="media">Media focus</button>
-      <button data-template="graph">Graph or data story</button>
-      <button data-template="concept-map">Concept map explanation</button>
-      <button data-template="purple-title">Purple title slide</button>
-      <button data-template="purple-steps">Purple process slide</button>
-      <button data-template="quote">Quote</button>
-      <button data-template="table">Table slide</button>
-      <button data-template="resources">Closing resources</button>
-      <button data-template="agenda">Agenda</button>
-      <button data-template="two-column">Two columns</button>
-      <button data-template="three-cards">Three cards</button>
-      <button data-template="steps">Numbered steps</button>
-      <button data-template="do-dont">Do / Do not</button>
-      <button data-template="callout">Key callout</button>
-      <button data-template="image-caption">Image and caption</button>
-      <button data-template="reflection">Reflection prompt</button>
+    <details class="menu templates-menu"><summary data-i18n="Templates">Templates</summary><div class="menu-panel">
+      <button data-template="title" data-i18n="Title slide">Title slide</button>
+      <button data-template="title-content" data-i18n="Title and content">Title and content</button>
+      <button data-template="section" data-i18n="Section break">Section break</button>
+      <button data-template="comparison" data-i18n="Comparison">Comparison</button>
+      <button data-template="media" data-i18n="Media focus">Media focus</button>
+      <button data-template="graph" data-i18n="Graph or data story">Graph or data story</button>
+      <button data-template="concept-map" data-i18n="Concept map explanation">Concept map explanation</button>
+      <button data-template="purple-title" data-i18n="Purple title slide">Purple title slide</button>
+      <button data-template="purple-steps" data-i18n="Purple process slide">Purple process slide</button>
+      <button data-template="quote" data-i18n="Quote">Quote</button>
+      <button data-template="table" data-i18n="Table slide">Table slide</button>
+      <button data-template="resources" data-i18n="Closing resources">Closing resources</button>
+      <button data-template="agenda" data-i18n="Agenda">Agenda</button>
+      <button data-template="two-column" data-i18n="Two columns">Two columns</button>
+      <button data-template="three-cards" data-i18n="Three cards">Three cards</button>
+      <button data-template="steps" data-i18n="Numbered steps">Numbered steps</button>
+      <button data-template="do-dont" data-i18n="Do / Do not">Do / Do not</button>
+      <button data-template="callout" data-i18n="Key callout">Key callout</button>
+      <button data-template="image-caption" data-i18n="Image and caption">Image and caption</button>
+      <button data-template="reflection" data-i18n="Reflection prompt">Reflection prompt</button>
       <hr>
-      <button data-template="certificate">Certificate</button>
-      <button data-template="name-tag">Name tag</button>
-      <button data-template="flyer">Flyer</button>
-      <button data-template="poster">Poster</button>
+      <button data-template="certificate" data-i18n="Certificate">Certificate</button>
+      <button data-template="name-tag" data-i18n="Name tag">Name tag</button>
+      <button data-template="flyer" data-i18n="Flyer">Flyer</button>
+      <button data-template="poster" data-i18n="Poster">Poster</button>
       <button data-action="mail-merge">Mail merge (CSV &rarr; slides)&hellip;</button>
     </div></details>
-    <details class="menu"><summary>Help</summary><div class="menu-panel">
-      <button data-action="show-help">ShowSplat help</button>
-      <button data-action="show-shortcuts">Keyboard shortcuts</button>
+    <details class="menu"><summary data-i18n="Help">Help</summary><div class="menu-panel">
+      <button data-action="show-help" data-i18n="ShowSplat help">ShowSplat help</button>
+      <button data-action="show-shortcuts" data-i18n="Keyboard shortcuts">Keyboard shortcuts</button>
       <hr>
       <a href="docs/ai-webdeck-format-instructions.json" target="_blank" rel="noopener">AI WebDeck JSON instructions</a>
       <a href="../../pages/download.html" target="_blank" rel="noopener">Downloads</a>
@@ -192,58 +195,58 @@
   </nav>
 
   <section class="toolbar" aria-label="Formatting toolbar">
-    <button title="Undo (Ctrl+Z)" data-action="undo" disabled><svg><use href="#i-undo"/></svg></button>
-    <button title="Redo (Ctrl+Y)" data-action="redo" disabled><svg><use href="#i-redo"/></svg></button>
+    <button title="Undo (Ctrl+Z)" data-i18n-title="Undo (Ctrl+Z)" data-action="undo" disabled><svg><use href="#i-undo"/></svg></button>
+    <button title="Redo (Ctrl+Y)" data-i18n-title="Redo (Ctrl+Y)" data-action="redo" disabled><svg><use href="#i-redo"/></svg></button>
     <span class="divider"></span>
-    <button title="Add slide" data-action="add-slide"><svg><use href="#i-plus"/></svg></button>
-    <button title="Duplicate slide" data-action="duplicate-slide"><svg><use href="#i-copy"/></svg></button>
-    <button title="Delete slide" data-action="delete-slide"><svg><use href="#i-trash"/></svg></button>
+    <button title="Add slide" data-i18n-title="Add slide" data-action="add-slide"><svg><use href="#i-plus"/></svg></button>
+    <button title="Duplicate slide" data-i18n-title="Duplicate slide" data-action="duplicate-slide"><svg><use href="#i-copy"/></svg></button>
+    <button title="Delete slide" data-i18n-title="Delete slide" data-action="delete-slide"><svg><use href="#i-trash"/></svg></button>
     <span class="divider"></span>
-    <button title="Text box" data-action="add-text"><svg><use href="#i-text"/></svg></button>
-    <button title="Bullet list" data-action="add-list"><svg><use href="#i-list"/></svg></button>
-    <button title="Image" data-action="insert-image-upload"><svg><use href="#i-image"/></svg></button>
-    <button title="Video" data-action="insert-youtube"><svg><use href="#i-video"/></svg></button>
-    <button title="Table" data-action="add-table"><svg><use href="#i-table"/></svg></button>
-    <button title="Markdown Studio" data-action="open-markdown"><svg><use href="#i-markdown"/></svg></button>
+    <button title="Text box" data-i18n-title="Text box" data-action="add-text"><svg><use href="#i-text"/></svg></button>
+    <button title="Bullet list" data-i18n-title="Bullet list" data-action="add-list"><svg><use href="#i-list"/></svg></button>
+    <button title="Image" data-i18n-title="Image" data-action="insert-image-upload"><svg><use href="#i-image"/></svg></button>
+    <button title="Video" data-i18n-title="Video" data-action="insert-youtube"><svg><use href="#i-video"/></svg></button>
+    <button title="Table" data-i18n-title="Table" data-action="add-table"><svg><use href="#i-table"/></svg></button>
+    <button title="Markdown Studio" data-i18n-title="Markdown Studio" data-action="open-markdown"><svg><use href="#i-markdown"/></svg></button>
     <span class="divider"></span>
-    <select id="fontFamily" title="Font family">
+    <select id="fontFamily" title="Font family" data-i18n-title="Font family">
       <option value="Inter, Arial, sans-serif">Inter</option>
       <option value="Georgia, serif">Georgia</option>
       <option value="Arial, sans-serif">Arial</option>
       <option value="'Courier New', monospace">Mono</option>
     </select>
-    <button title="Decrease font size" data-action="decrease-font-size">A-</button>
-    <input id="fontSize" title="Font size" type="number" min="12" max="96" value="34">
-    <button title="Increase font size" data-action="increase-font-size">A+</button>
-    <button title="Bold" data-action="toggle-bold"><svg><use href="#i-bold"/></svg></button>
-    <button title="Italic" data-action="toggle-italic"><svg><use href="#i-italic"/></svg></button>
-    <button title="Underline" data-action="toggle-underline"><svg><use href="#i-underline"/></svg></button>
-    <button title="Align left" data-action="align-left"><svg><use href="#i-align-left"/></svg></button>
-    <button title="Align center" data-action="align-center"><svg><use href="#i-align-center"/></svg></button>
-    <button title="Align right" data-action="align-right"><svg><use href="#i-align-right"/></svg></button>
-    <button title="Autofit text box to text" data-action="autofit-textbox">↔</button>
-    <button title="Fit text to text box" data-action="fit-text-to-box">Aa</button>
-    <label class="color-tool" title="Text color"><span>A</span><input id="textColor" type="color" value="#1f2937"></label>
-    <label class="color-tool" title="Fill color"><svg><use href="#i-palette"/></svg><input id="fillColor" type="color" value="#ffffff"></label>
+    <button title="Decrease font size" data-i18n-title="Decrease font size" data-action="decrease-font-size">A-</button>
+    <input id="fontSize" title="Font size" data-i18n-title="Font size" type="number" min="12" max="96" value="34">
+    <button title="Increase font size" data-i18n-title="Increase font size" data-action="increase-font-size">A+</button>
+    <button title="Bold" data-i18n-title="Bold" data-action="toggle-bold"><svg><use href="#i-bold"/></svg></button>
+    <button title="Italic" data-i18n-title="Italic" data-action="toggle-italic"><svg><use href="#i-italic"/></svg></button>
+    <button title="Underline" data-i18n-title="Underline" data-action="toggle-underline"><svg><use href="#i-underline"/></svg></button>
+    <button title="Align left" data-i18n-title="Align left" data-action="align-left"><svg><use href="#i-align-left"/></svg></button>
+    <button title="Align center" data-i18n-title="Align center" data-action="align-center"><svg><use href="#i-align-center"/></svg></button>
+    <button title="Align right" data-i18n-title="Align right" data-action="align-right"><svg><use href="#i-align-right"/></svg></button>
+    <button title="Autofit text box to text" data-i18n-title="Autofit text box to text" data-action="autofit-textbox">↔</button>
+    <button title="Fit text to text box" data-i18n-title="Fit text to text box" data-action="fit-text-to-box">Aa</button>
+    <label class="color-tool" title="Text color" data-i18n-title="Text color"><span>A</span><input id="textColor" type="color" value="#1f2937"></label>
+    <label class="color-tool" title="Fill color" data-i18n-title="Fill color"><svg><use href="#i-palette"/></svg><input id="fillColor" type="color" value="#ffffff"></label>
     <span class="divider"></span>
-    <label class="zoom-tool" title="Slide zoom">Zoom <input id="zoomSlider" type="range" min="0" max="100" value="50"><output id="zoomValue">100%</output></label>
+    <label class="zoom-tool" title="Slide zoom" data-i18n-title="Slide zoom">Zoom <input id="zoomSlider" type="range" min="0" max="100" value="50"><output id="zoomValue">100%</output></label>
     <span class="divider"></span>
-    <button title="Present" data-action="present-current"><svg><use href="#i-play"/></svg></button>
-    <button title="Export WebDeck" data-action="export-webdeck"><svg><use href="#i-download"/></svg></button>
+    <button title="Present" data-i18n-title="Present" data-action="present-current"><svg><use href="#i-play"/></svg></button>
+    <button title="Export WebDeck" data-i18n-title="Export WebDeck" data-action="export-webdeck"><svg><use href="#i-download"/></svg></button>
   </section>
 
   <section class="workspace">
     <aside class="slide-rail" aria-label="Slide thumbnails">
-      <div class="rail-title">Slides</div>
+      <div class="rail-title" data-i18n="Slides">Slides</div>
       <div id="thumbnailList" class="thumbnail-list"></div>
-      <button class="rail-add" data-action="pick-template"><svg><use href="#i-plus"/></svg> Add slide</button>
+      <button class="rail-add" data-action="pick-template"><svg><use href="#i-plus"/></svg> <span data-i18n="Add slide">Add slide</span></button>
     </aside>
     <div id="railSplitter" class="rail-splitter" role="separator" aria-label="Resize slide thumbnails" aria-orientation="horizontal" tabindex="0"></div>
 
     <section class="stage-wrap">
       <div class="status-row">
         <input id="deckTitle" class="deck-title-input" aria-label="Deck title">
-        <span id="statusText">Ready.</span>
+        <span id="statusText" data-i18n="Ready.">Ready.</span>
       </div>
       <div id="slideSorter" class="slide-sorter" hidden></div>
       <div class="stage" id="stage">
@@ -255,14 +258,14 @@
 
     <aside id="inspector" class="inspector">
       <div class="panel">
-        <h2>Notes</h2>
+        <h2 data-i18n="Notes">Notes</h2>
         <textarea id="speakerNotes" aria-label="Speaker notes"></textarea>
       </div>
       <div class="panel">
-        <h2>Selection</h2>
+        <h2 data-i18n="Selection">Selection</h2>
         <div id="selectionInfo" class="selection-info">No object selected.</div>
         <div id="arrangePanel" class="arrange-panel" hidden>
-          <div class="arrange-label">Align</div>
+          <div class="arrange-label" data-i18n="Align">Align</div>
           <div class="arrange-grid">
             <button type="button" data-action="align-left" title="Align left edges">Left</button>
             <button type="button" data-action="align-center-h" title="Align horizontal centers">Center</button>
