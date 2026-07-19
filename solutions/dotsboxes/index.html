@@ -95,7 +95,7 @@
     @keyframes winnerPop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
 
     .board-wrap { display: grid; place-items: center; margin-top: 18px; padding: 18px; border: 2px solid var(--border); border-radius: var(--radius); background: #fbfcff; box-shadow: var(--shadow); }
-    svg.board { width: 100%; max-width: 720px; height: auto; touch-action: manipulation; }
+    svg.board { width: 100%; max-width: min(720px, 42vh); height: auto; touch-action: manipulation; }
     .dot { fill: var(--gray-90); }
     .line-hit { fill: transparent; cursor: pointer; }
     .line-hit:hover + .line-ghost,

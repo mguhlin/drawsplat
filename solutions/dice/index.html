@@ -304,7 +304,7 @@
 
     body.simple-mode .dice-board {
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      min-height: 360px;
+      min-height: min(360px, 40vh);
     }
 
     .die {
@@ -327,7 +327,7 @@
     }
 
     body.simple-mode .die {
-      width: min(64vw, 280px);
+      width: min(64vw, 280px, 34vh);
       border-radius: 26px;
       font-size: clamp(5rem, 18vw, 9rem);
     }
@@ -344,7 +344,7 @@
 
     body.simple-mode .die-scene {
       --die-half: 140px;
-      width: min(64vw, 280px);
+      width: min(64vw, 280px, 34vh);
       perspective: 1400px;
     }
 
