@@ -9,9 +9,14 @@
 <!-- /DrawSplat favicons -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GilaSplat — DrawSplat Games</title>
+<title data-i18n="doc.title">GilaSplat — DrawSplat Games</title>
 <meta name="description" content="A retro underground maze arcade — guide a gila monster through desert burrows eating eggs and hatchlings before the timer runs out.">
+<script src="../../assets/js/widget-i18n.js"></script>
+<script src="locales.js"></script>
 <style>
+  .ds-games-header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .i18n-picker select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; min-height: 36px; }
+  .i18n-picker select:focus { border-color: #7c3aed; outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, .18); }
   /* DrawSplat Games header (shared shell) */
   .ds-games-topbar { height: 10px; background: linear-gradient(90deg, #7c3aed 0 32%, #a855f7 32% 52%, #f97316 52% 64%, #ef4444 64% 76%, #6d28d9 76% 88%, #22c55e 88% 96%, #facc15 96% 100%); }
   .ds-games-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 10px 22px; background: #ffffff; color: #111827; font-family: Arial, Helvetica, sans-serif; border-bottom: 2px solid #eef2ff; }
@@ -183,10 +188,13 @@
 <div class="ds-games-topbar"></div>
 <header class="ds-games-header">
   <div class="ds-games-title">
-    <p class="ds-games-eyebrow"><a href="../../pages/features.html">DrawSplat&trade; Games</a></p>
+    <p class="ds-games-eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat&trade; Games</a></p>
     <h1 class="ds-games-h1">GilaSplat</h1>
   </div>
-  <a class="ds-games-home" href="../../index.html">Home</a>
+  <div class="ds-games-header-actions">
+    <div class="i18n-picker" data-i18n-picker></div>
+    <a class="ds-games-home" href="../../index.html" data-i18n="header.home">Home</a>
+  </div>
 </header>
 
 <div class="shell">
@@ -196,69 +204,69 @@
     <div class="setup-hero">
       <div class="face"><img src="./assets/gila-face.png" alt="Cute iridescent purple gila monster face"></div>
       <div>
-        <h2 class="setup-h1">Slither, snack, survive.</h2>
-        <p class="setup-sub">You are a gila monster threading desert burrows, tunnels, and old chicken coops. Eat eggs and the hatchlings they turn into before the sun goes down.</p>
+        <h2 class="setup-h1" data-i18n="setup.h1">Slither, snack, survive.</h2>
+        <p class="setup-sub" data-i18n="setup.sub">You are a gila monster threading desert burrows, tunnels, and old chicken coops. Eat eggs and the hatchlings they turn into before the sun goes down.</p>
       </div>
     </div>
 
     <div class="blurb-row">
       <div class="blurb">
-        <h3>Eat eggs</h3>
-        <p>Common chicken eggs are 10 points. Speckled eggs are 15. Clear the level to advance.</p>
+        <h3 data-i18n="blurb1.h">Eat eggs</h3>
+        <p data-i18n="blurb1.p">Common chicken eggs are 10 points. Speckled eggs are 15. Clear the level to advance.</p>
       </div>
       <div class="blurb">
-        <h3>Watch the timer</h3>
-        <p>Eggs hatch into chicks worth 25 points — but they wander, and they're harder to corner.</p>
+        <h3 data-i18n="blurb2.h">Watch the timer</h3>
+        <p data-i18n="blurb2.p">Eggs hatch into chicks worth 25 points — but they wander, and they're harder to corner.</p>
       </div>
       <div class="blurb">
-        <h3>Beat the clock</h3>
-        <p>Run out of time and the maze closes. Predators arrive in later updates.</p>
+        <h3 data-i18n="blurb3.h">Beat the clock</h3>
+        <p data-i18n="blurb3.p">Run out of time and the maze closes. Predators arrive in later updates.</p>
       </div>
     </div>
 
-    <label class="field-label">Starting difficulty</label>
+    <label class="field-label" data-i18n="field.difficulty">Starting difficulty</label>
     <div class="mode-grid">
       <button type="button" class="mode-btn active" data-diff="beginner">
-        <div class="icon">🥚</div><div class="label">Beginner</div><div class="desc">Slow hatching, generous timer</div>
+        <div class="icon">🥚</div><div class="label" data-i18n="diff.beginner.label">Beginner</div><div class="desc" data-i18n="diff.beginner.desc">Slow hatching, generous timer</div>
       </button>
       <button type="button" class="mode-btn" data-diff="easy">
-        <div class="icon">🐣</div><div class="label">Easy</div><div class="desc">Hatchlings move; clock is shorter</div>
+        <div class="icon">🐣</div><div class="label" data-i18n="diff.easy.label">Easy</div><div class="desc" data-i18n="diff.easy.desc">Hatchlings move; clock is shorter</div>
       </button>
       <button type="button" class="mode-btn" data-diff="medium">
-        <div class="icon">🦎</div><div class="label">Medium</div><div class="desc">Fast hatching, tight clock</div>
+        <div class="icon">🦎</div><div class="label" data-i18n="diff.medium.label">Medium</div><div class="desc" data-i18n="diff.medium.desc">Fast hatching, tight clock</div>
       </button>
     </div>
 
-    <label class="field-label" for="startLevel">Start from level</label>
+    <label class="field-label" for="startLevel" data-i18n="field.startLevel">Start from level</label>
     <div class="start-level-row">
       <select id="startLevel"></select>
-      <span class="start-level-hint" id="startLevelHint">All 15 levels unlocked.</span>
+      <span class="start-level-hint" id="startLevelHint" data-i18n="start.hint">All 15 levels unlocked.</span>
     </div>
 
     <div class="start-row">
-      <button type="button" class="btn big" id="startBtn">Enter the burrow →</button>
+      <button type="button" class="btn big" id="startBtn" data-i18n="start.btn">Enter the burrow →</button>
     </div>
   </section>
 
   <!-- ===== Game ===== -->
   <section class="screen" id="game">
     <div class="hud">
-      <div class="cell score"><span class="label">Score</span><span class="val" id="hudScore">0</span></div>
-      <div class="cell hiscore"><span class="label">Hi-Score</span><span class="val" id="hudHiScore">0</span></div>
-      <div class="cell level"><span class="label">Level</span><span class="val" id="hudLevel">1</span></div>
-      <div class="cell eggs"><span class="label">Eggs eaten</span><span class="val" id="hudEggs">0</span></div>
-      <div class="cell chicks"><span class="label">Hatchlings</span><span class="val" id="hudChicks">0</span></div>
-      <div class="cell lives"><span class="label">Lives</span><span class="val" id="hudLives"></span></div>
-      <div class="cell combo" id="hudComboCell"><span class="label">Combo</span><span class="val" id="hudCombo">×1</span></div>
-      <div class="cell power" id="hudPowerCell"><span class="label">Power</span><span class="val" id="hudPowerLabel">—</span><span class="ring"><i id="hudPowerBar"></i></span></div>
-      <div class="cell keys" id="hudKeysCell"><span class="label">Keys</span><span class="val"><span class="keyicon"></span>×<span id="hudKeys">0</span></span></div>
-      <div class="cell time"><span class="label">Time</span><span class="val" id="hudTime">60</span></div>
+      <div class="cell score"><span class="label" data-i18n="hud.score">Score</span><span class="val" id="hudScore">0</span></div>
+      <div class="cell hiscore"><span class="label" data-i18n="hud.hiscore">Hi-Score</span><span class="val" id="hudHiScore">0</span></div>
+      <div class="cell level"><span class="label" data-i18n="hud.level">Level</span><span class="val" id="hudLevel">1</span></div>
+      <div class="cell eggs"><span class="label" data-i18n="hud.eggs">Eggs eaten</span><span class="val" id="hudEggs">0</span></div>
+      <div class="cell chicks"><span class="label" data-i18n="hud.chicks">Hatchlings</span><span class="val" id="hudChicks">0</span></div>
+      <div class="cell lives"><span class="label" data-i18n="hud.lives">Lives</span><span class="val" id="hudLives"></span></div>
+      <div class="cell combo" id="hudComboCell"><span class="label" data-i18n="hud.combo">Combo</span><span class="val" id="hudCombo">×1</span></div>
+      <div class="cell power" id="hudPowerCell"><span class="label" data-i18n="hud.power">Power</span><span class="val" id="hudPowerLabel">—</span><span class="ring"><i id="hudPowerBar"></i></span></div>
+      <div class="cell keys" id="hudKeysCell"><span class="label" data-i18n="hud.keys">Keys</span><span class="val"><span class="keyicon"></span>×<span id="hudKeys">0</span></span></div>
+      <div class="cell time"><span class="label" data-i18n="hud.time">Time</span><span class="val" id="hudTime">60</span></div>
     </div>
 
     <div class="court-wrap">
       <canvas id="maze" width="1024" height="768" aria-label="GilaSplat maze"></canvas>
       <div class="overlay" id="overlay">
-        <div class="big" id="overlayTitle">Get ready…</div>
+        <div class="big" id="overlayTitle" data-i18n="overlay.getready">Get ready…</div>
         <div class="sub" id="overlaySub"></div>
         <div class="countdown" id="countdown"></div>
         <div class="overlay-actions" id="overlayActions"></div>
@@ -267,17 +275,17 @@
 
     <div class="banner-strip">
       <div class="mini-gila"><img src="./assets/gila.png" alt=""></div>
-      <div class="msg" id="bannerMsg">Eat all the eggs before they hatch!</div>
+      <div class="msg" id="bannerMsg" data-i18n="banner.default">Eat all the eggs before they hatch!</div>
     </div>
 
     <div class="game-toolbar">
-      <span class="controls-hint">Move: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
-      <span class="controls-hint">Or: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span>
+      <span class="controls-hint"><span data-i18n="controls.move">Move:</span> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
+      <span class="controls-hint"><span data-i18n="controls.or">Or:</span> <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span>
       <span class="spacer"></span>
-      <button type="button" class="legend-btn" id="legendBtn">📖 Legend</button>
-      <button type="button" class="sound-toggle on" id="soundBtn">🔊 Sound on</button>
-      <button type="button" class="btn ghost" id="pauseBtn">⏸ Pause</button>
-      <button type="button" class="btn danger" id="quitBtn">Quit</button>
+      <button type="button" class="legend-btn" id="legendBtn" data-i18n="toolbar.legend">📖 Legend</button>
+      <button type="button" class="sound-toggle on" id="soundBtn" data-i18n="sound.on">🔊 Sound on</button>
+      <button type="button" class="btn ghost" id="pauseBtn" data-i18n="toolbar.pause">⏸ Pause</button>
+      <button type="button" class="btn danger" id="quitBtn" data-i18n="toolbar.quit">Quit</button>
     </div>
   </section>
 
@@ -285,8 +293,8 @@
   <div class="legend-backdrop" id="legendBackdrop" role="dialog" aria-modal="true" aria-labelledby="legendTitle">
     <div class="legend-modal" id="legendModal">
       <button type="button" class="close" id="legendCloseBtn" aria-label="Close legend">×</button>
-      <h2 id="legendTitle">Legend</h2>
-      <p class="sub">Everything that moves, glows, or sparkles. The rest of the desert art is scenery.</p>
+      <h2 id="legendTitle" data-i18n="legend.title">Legend</h2>
+      <p class="sub" data-i18n="legend.sub">Everything that moves, glows, or sparkles. The rest of the desert art is scenery.</p>
       <div id="legendBody"></div>
     </div>
   </div>
@@ -298,8 +306,8 @@
       <h2 id="endBanner"></h2>
       <div class="final" id="finalScore"></div>
       <div class="end-actions">
-        <button type="button" class="btn big" id="playAgainBtn">Play again ↻</button>
-        <button type="button" class="btn ghost" id="newRunBtn">← Main menu</button>
+        <button type="button" class="btn big" id="playAgainBtn" data-i18n="end.playAgain">Play again ↻</button>
+        <button type="button" class="btn ghost" id="newRunBtn" data-i18n="end.mainMenu">← Main menu</button>
       </div>
     </div>
   </section>
@@ -426,6 +434,10 @@ const LEVELS = [
   { name: "Hatchstorm",            svg: "./mazes/maze_level14.svg", timeLimit: 55, hatchSeconds: 4,  eggCount: 40, eggMix: [["chicken", 30], ["speckled", 30], ["tortoise", 20], ["lizard", 20]],                  predators: [{ kind: "predator-coyote", spawn: [0, 0], speed: 0.85 }, { kind: "predator-hawk", spawn: [18, 0], speed: 0.85 }, { kind: "predator-owl", spawn: [9, 11], speed: 0.70 }] },
   { name: "GilaSplat Gauntlet",    svg: "./mazes/maze_level15.svg", timeLimit: 50, hatchSeconds: 5,  eggCount: 42, eggMix: [["chicken", 20], ["speckled", 15], ["tortoise", 15], ["lizard", 15], ["snake", 25], ["golden", 10]], predators: [{ kind: "predator-fox", spawn: [0, 0], speed: 0.75 }, { kind: "predator-coyote", spawn: [18, 0], speed: 0.85 }, { kind: "predator-badger", spawn: [0, 11], speed: 0.80 }, { kind: "predator-hawk", spawn: [18, 11], speed: 0.90 }, { kind: "predator-owl", spawn: [9, 6], speed: 0.75 }] },
 ];
+
+// Localized level name lookup (falls back to the English name in the array
+// via the i18n key default when a translation is missing).
+const levelName = (i) => WidgetI18n.t('level' + (i + 1) + '.name');
 
 // ========== State ==========
 const state = {
@@ -928,7 +940,12 @@ const END_SAYINGS = {
   ],
 };
 function pickEndSaying(pool) {
-  const arr = END_SAYINGS[pool] || END_SAYINGS.time;
+  // Pull the translated pool (newline-joined in the dictionary); fall back to
+  // the English END_SAYINGS array if a locale omits it.
+  const translated = WidgetI18n.t('end.saying.' + pool);
+  const arr = (translated && translated.indexOf('\n') !== -1)
+    ? translated.split('\n').filter(Boolean)
+    : (END_SAYINGS[pool] || END_SAYINGS.time);
   return arr[Math.floor(Math.random() * arr.length)];
 }
 function emitQuip(kind) {
@@ -948,12 +965,11 @@ document.querySelectorAll(".mode-btn").forEach(b => {
 });
 
 const startBtn = $("startBtn");
-const startBtnLabel = startBtn.textContent;
 startBtn.disabled = true;
-startBtn.textContent = "Loading sprites…";
+startBtn.textContent = WidgetI18n.t("start.loading");
 loadAssets().then(() => {
   startBtn.disabled = false;
-  startBtn.textContent = startBtnLabel;
+  startBtn.textContent = WidgetI18n.t("start.btn");
 });
 function readStartLevel() {
   const sel = $("startLevel");
@@ -992,7 +1008,7 @@ $("soundBtn").addEventListener("click", () => {
   state.soundOn = !state.soundOn;
   $("soundBtn").classList.toggle("on", state.soundOn);
   $("soundBtn").classList.toggle("off", !state.soundOn);
-  $("soundBtn").textContent = state.soundOn ? "🔊 Sound on" : "🔇 Sound off";
+  $("soundBtn").textContent = state.soundOn ? WidgetI18n.t("sound.on") : WidgetI18n.t("sound.off");
   if (state.soundOn) {
     if (state.running && !state.paused) startMusic();
   } else {
@@ -1135,7 +1151,7 @@ async function loadLevel(idx) {
   state.lastTime = performance.now();
   setBannerForLevel(lvl);
   updateHUD();
-  beginCountdown(3, `Level ${idx + 1} — ${lvl.name}`);
+  beginCountdown(3, WidgetI18n.t('overlay.levelIntro', { n: idx + 1, name: levelName(idx) }));
   stopMusic();
   setTimeout(() => { if (state.running && !state.paused) startMusic(); }, 3200);
   cancelAnimationFrame(state.rafId);
@@ -1344,8 +1360,8 @@ function beginCountdown(secs, title) {
   state.countdown = secs;
   const overlay = $("overlay");
   overlay.classList.add("show");
-  $("overlayTitle").textContent = title || "Get ready…";
-  $("overlaySub").textContent = "Eat every egg before the timer runs out.";
+  $("overlayTitle").textContent = title || WidgetI18n.t("overlay.getready");
+  $("overlaySub").textContent = WidgetI18n.t("overlay.getreadySub");
   $("countdown").textContent = secs;
   $("overlayActions").innerHTML = "";
   sfx.count();
@@ -1371,12 +1387,12 @@ function beginCountdown(secs, title) {
 function togglePause() {
   if (!state.running) return;
   state.paused = !state.paused;
-  $("pauseBtn").textContent = state.paused ? "▶ Resume" : "⏸ Pause";
+  $("pauseBtn").textContent = state.paused ? WidgetI18n.t("toolbar.resume") : WidgetI18n.t("toolbar.pause");
   const overlay = $("overlay");
   if (state.paused) {
     overlay.classList.add("show");
-    $("overlayTitle").textContent = "Paused";
-    $("overlaySub").textContent = "Take a breath. The eggs aren't going anywhere… much.";
+    $("overlayTitle").textContent = WidgetI18n.t("overlay.paused");
+    $("overlaySub").textContent = WidgetI18n.t("overlay.pausedSub");
     $("countdown").textContent = "";
     $("overlayActions").innerHTML = "";
     stopMusic();
@@ -1861,20 +1877,20 @@ function levelComplete() {
   const overlay = $("overlay");
   overlay.classList.add("show");
   if (next >= LEVELS.length) {
-    $("overlayTitle").textContent = "All burrows cleared!";
-    $("overlaySub").textContent = `You sweep the desert with ${state.score} points — final level conquered.`;
+    $("overlayTitle").textContent = WidgetI18n.t("clear.allTitle");
+    $("overlaySub").textContent = WidgetI18n.t("clear.allSub", { score: state.score });
     $("countdown").textContent = "";
     $("overlayActions").innerHTML = "";
     setTimeout(() => endRun(true), 1600);
     return;
   }
-  $("overlayTitle").textContent = "Level cleared!";
-  $("overlaySub").textContent = `Score so far: ${state.score} · Time bonus banked for later updates.`;
+  $("overlayTitle").textContent = WidgetI18n.t("clear.title");
+  $("overlaySub").textContent = WidgetI18n.t("clear.sub", { score: state.score });
   $("countdown").textContent = "";
   $("overlayActions").innerHTML = "";
   const btn = document.createElement("button");
   btn.className = "btn big";
-  btn.textContent = `Next: ${LEVELS[next].name} →`;
+  btn.textContent = WidgetI18n.t("clear.next", { name: levelName(next) });
   btn.addEventListener("click", () => {
     state.levelIdx = next;
     loadLevel(next);
@@ -1908,8 +1924,8 @@ function endRun(victorious, reason) {
   }
   const pool = victorious ? "victory" : (reason === "Predator!" ? "predator" : "time");
   $("endBanner").textContent = pickEndSaying(pool);
-  const recordTag = newRecord ? " · 🏅 New record!" : ` · Hi-Score ${state.hiScore}`;
-  $("finalScore").textContent = `Score ${state.score} · Eggs ${state.eggsEaten} · Hatchlings ${state.chicksEaten}${recordTag}`;
+  const recordTag = newRecord ? " · " + WidgetI18n.t("end.newRecord") : " · " + WidgetI18n.t("end.hiScore", { score: state.hiScore });
+  $("finalScore").textContent = WidgetI18n.t("end.final", { score: state.score, eggs: state.eggsEaten, chicks: state.chicksEaten }) + recordTag;
   setScreen("end");
 }
 
@@ -1973,9 +1989,9 @@ function setBannerForLevel(lvl) {
   const banner = $("bannerMsg");
   if (!banner) return;
   const messages = [
-    `Level ${state.levelIdx + 1} — <span class="level-name">${lvl.name}</span>`,
-    "Eat every egg before the timer runs out!",
-    state.predators.length ? "Watch your back — predators are out." : "No predators here. Just eggs.",
+    `${WidgetI18n.t("hud.level")} ${state.levelIdx + 1} — <span class="level-name">${levelName(state.levelIdx)}</span>`,
+    WidgetI18n.t("banner.eatEggs"),
+    state.predators.length ? WidgetI18n.t("banner.predators") : WidgetI18n.t("banner.noPredators"),
   ];
   banner.innerHTML = messages.join(" · ");
 }
@@ -2430,20 +2446,36 @@ try {
 } catch (e) { /* localStorage may be blocked */ }
 
 // Populate the level-select with all 15 levels, restoring the saved choice.
-(function initStartLevelSelect() {
+// Named + re-runnable so it re-labels when the language changes.
+function initStartLevelSelect() {
   const sel = $("startLevel");
   if (!sel) return;
+  const previous = sel.value;
   let saved = 0;
   try { saved = parseInt(localStorage.getItem("gilasplat.startLevel") || "0", 10); } catch (e) {}
   if (!Number.isFinite(saved) || saved < 0 || saved >= LEVELS.length) saved = 0;
+  if (previous !== "") saved = parseInt(previous, 10) || saved;
+  sel.innerHTML = "";
   for (let i = 0; i < LEVELS.length; i++) {
     const opt = document.createElement("option");
     opt.value = String(i);
-    opt.textContent = `L${i + 1} — ${LEVELS[i].name}`;
+    opt.textContent = WidgetI18n.t("start.levelOption", { n: i + 1, name: levelName(i) });
     if (i === saved) opt.selected = true;
     sel.appendChild(opt);
   }
-})();
+}
+initStartLevelSelect();
+
+// Re-apply dynamic (JS-built) text when the language changes. The static
+// data-i18n nodes are handled by widget-i18n's own apply(); this covers the
+// level-select options, the toolbar/HUD dynamic labels, and the live banner.
+window.addEventListener("widget-i18n:changed", () => {
+  initStartLevelSelect();
+  if ($("soundBtn")) $("soundBtn").textContent = state.soundOn ? WidgetI18n.t("sound.on") : WidgetI18n.t("sound.off");
+  if ($("pauseBtn")) $("pauseBtn").textContent = state.paused ? WidgetI18n.t("toolbar.resume") : WidgetI18n.t("toolbar.pause");
+  if (state.running && LEVELS[state.levelIdx]) setBannerForLevel(LEVELS[state.levelIdx]);
+});
+
 updateHUD();
 </script>
 </body>
