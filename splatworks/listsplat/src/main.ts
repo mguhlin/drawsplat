@@ -1,4 +1,4 @@
-import { tableFromCsv, tableToCsv } from './io/csv';
+import { escapeCsvCell, tableFromCsv, tableToCsv } from './io/csv';
 import { downloadFile, loadAutosave, saveAutosave } from './io/storage';
 import {
   addField,
@@ -237,6 +237,8 @@ let chartCategoryField = '';
 let chartValueMode: 'count' | 'sum' = 'count';
 let chartValueField = '';
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
+let pendingCsvKeyField = '';
+let pendingCsvDupMode: 'add' | 'skip' | 'update' = 'add';
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
 let selectedFieldId = '';
@@ -436,6 +438,35 @@ function saveCsv(): void {
   downloadFile(`${activeTable().name}.csv`, tableToCsv(activeTable()), 'text/csv;charset=utf-8');
 }
 
+// Export only the records currently shown (found set), respecting hidden fields.
+function saveFoundCsv(): void {
+  const table = activeTable();
+  const fields = table.fields.filter((field) => !field.hidden);
+  const rows = visibleRecords(table);
+  const header = fields.map((field) => escapeCsvCell(field.name)).join(',');
+  const body = rows
+    .map((record) => fields.map((field) => escapeCsvCell(displayValue(table, record, field.id))).join(','))
+    .join('\n');
+  downloadFile(`${table.name}-found.csv`, `${header}\n${body}`, 'text/csv;charset=utf-8');
+  lastMessage = `Exported ${rows.length} shown record${rows.length === 1 ? '' : 's'} to CSV.`;
+  render();
+}
+
+function saveMarkdown(): void {
+  const table = activeTable();
+  const fields = table.fields.filter((field) => !field.hidden);
+  const rows = visibleRecords(table);
+  const escapeCell = (value: unknown) => String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  const header = `| ${fields.map((field) => escapeCell(field.name)).join(' | ')} |`;
+  const divider = `| ${fields.map(() => '---').join(' | ')} |`;
+  const body = rows
+    .map((record) => `| ${fields.map((field) => escapeCell(displayValue(table, record, field.id))).join(' | ')} |`)
+    .join('\n');
+  downloadFile(`${table.name}.md`, `# ${table.name}\n\n${header}\n${divider}\n${body}\n`, 'text/markdown;charset=utf-8');
+  lastMessage = 'Exported a Markdown table.';
+  render();
+}
+
 function exportReport(): void {
   const table = activeTable();
   const rows = visibleRecords(table);
@@ -530,6 +561,8 @@ function importCsv(file: File): void {
         fieldId: match?.id ?? '',
       };
     });
+    pendingCsvKeyField = '';
+    pendingCsvDupMode = 'add';
     dialog = 'csvImport';
     lastMessage = `Previewing ${table.records.length} CSV record${table.records.length === 1 ? '' : 's'} from ${file.name}.`;
     render();
@@ -615,6 +648,35 @@ function applyCsvImport(mode: 'new' | 'append'): void {
   );
   pendingCsvTable = null;
   dialog = 'none';
+  // Duplicate handling on a chosen key field: add all, skip matches, or update matches.
+  const keyField = pendingCsvKeyField && targetById.has(pendingCsvKeyField) ? pendingCsvKeyField : '';
+  if (keyField && pendingCsvDupMode !== 'add') {
+    const keyOf = (record: ListSplatRecord) => String(record.values[keyField] ?? '').trim().toLowerCase();
+    const byKey = new Map(table.records.map((record) => [keyOf(record), record.id]));
+    let existingRecords = [...table.records];
+    let added = 0;
+    let updated = 0;
+    let skipped = 0;
+    appendedRecords.forEach((incoming) => {
+      const key = keyOf(incoming);
+      const matchId = key ? byKey.get(key) : undefined;
+      if (matchId && pendingCsvDupMode === 'skip') {
+        skipped += 1;
+      } else if (matchId && pendingCsvDupMode === 'update') {
+        existingRecords = existingRecords.map((record) =>
+          record.id === matchId ? { ...record, updatedAt: new Date().toISOString(), values: { ...record.values, ...incoming.values } } : record,
+        );
+        updated += 1;
+      } else {
+        existingRecords.push(incoming);
+        if (key) byKey.set(key, incoming.id);
+        added += 1;
+      }
+    });
+    lastMessage = `Import: ${added} added, ${updated} updated, ${skipped} skipped.`;
+    setActiveTable({ ...table, records: existingRecords });
+    return;
+  }
   lastMessage = `Appended ${appendedRecords.length} CSV record${appendedRecords.length === 1 ? '' : 's'} to ${table.name}.`;
   setActiveTable({ ...table, records: [...table.records, ...appendedRecords] });
 }
@@ -996,10 +1058,10 @@ function renderFormView(table: ListSplatTable): string {
           ${
             rows.length
               ? `<div class="related-grid">${rows
-                  .slice(0, 6)
+                  .slice(0, 8)
                   .map(
                     (relatedRecord) => `
-                      <article>
+                      <article class="related-card" data-action="open-related" data-rel-record="${relatedRecord.id}" data-rel-table="${targetTable!.id}">
                         <strong>${html(recordTitle(targetTable!, relatedRecord))}</strong>
                         ${targetTable!.fields
                           .filter((field) => !field.hidden)
@@ -1012,6 +1074,7 @@ function renderFormView(table: ListSplatTable): string {
                   .join('')}</div>`
               : '<p>No matches yet. Make sure the match fields use the same value.</p>'
           }
+          <button type="button" class="button" data-action="add-related" data-rel-id="${relationship.id}">+ Add ${html(targetTable?.name ?? 'related')} record</button>
         </section>
       `;
     })
@@ -1983,6 +2046,17 @@ function renderDialog(table: ListSplatTable): string {
             </table>
           </div>
           <p><strong>Create new table</strong> builds a fresh table from the columns you keep. <strong>Append</strong> adds the rows to ${html(table.name)} using your field mapping.</p>
+          <div class="csv-dup">
+            <label>When appending, match on <select data-csv-key><option value="">nothing (always add)</option>${table.fields
+              .filter((field) => !['image', 'calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type))
+              .map((field) => `<option value="${field.id}" ${pendingCsvKeyField === field.id ? 'selected' : ''}>${html(field.name)}</option>`)
+              .join('')}</select></label>
+            <label>Duplicates <select data-csv-dup ${pendingCsvKeyField ? '' : 'disabled'}>
+              <option value="add" ${pendingCsvDupMode === 'add' ? 'selected' : ''}>always add</option>
+              <option value="skip" ${pendingCsvDupMode === 'skip' ? 'selected' : ''}>skip matches</option>
+              <option value="update" ${pendingCsvDupMode === 'update' ? 'selected' : ''}>update matches</option>
+            </select></label>
+          </div>
           <div class="modal-actions">
             <button type="button" class="button primary" data-action="apply-csv-new">Create new table</button>
             <button type="button" class="button" data-action="apply-csv-append">Append to ${html(table.name)}</button>
@@ -2208,8 +2282,10 @@ function render(): void {
           ['new', 'New database'],
           ['save-json', 'Save .listsplat.json'],
           ['open-json', 'Open .listsplat.json'],
-          ['import-csv', 'Import CSV'],
-          ['export-csv', 'Export CSV'],
+          ['import-csv', 'Import CSV or TSV'],
+          ['export-csv', 'Export table CSV'],
+          ['export-found-csv', 'Export shown records CSV'],
+          ['export-markdown', 'Export Markdown table'],
           ['export-report', 'Export report HTML'],
           ['print', 'Print'],
         ])}
@@ -3027,6 +3103,10 @@ appRoot.addEventListener('click', (event) => {
     appRoot.querySelector<HTMLInputElement>('[data-import-csv]')?.click();
   } else if (action === 'export-csv') {
     saveCsv();
+  } else if (action === 'export-found-csv') {
+    saveFoundCsv();
+  } else if (action === 'export-markdown') {
+    saveMarkdown();
   } else if (action === 'export-report') {
     exportReport();
   } else if (action === 'project-packet') {
@@ -3142,6 +3222,35 @@ appRoot.addEventListener('click', (event) => {
     activeRecordId = recordActionId;
     viewMode = 'form';
     render();
+  } else if (action === 'open-related') {
+    const relTable = target.closest<HTMLElement>('[data-rel-table]')?.dataset.relTable;
+    const relRecord = target.closest<HTMLElement>('[data-rel-record]')?.dataset.relRecord;
+    if (relTable && relRecord) {
+      activeTableId = relTable;
+      activeRecordId = relRecord;
+      clearFind();
+      sortKeys = [];
+      viewMode = 'form';
+      render();
+    }
+  } else if (action === 'add-related') {
+    const relId = target.closest<HTMLElement>('[data-rel-id]')?.dataset.relId;
+    const relationship = project.schema.relationships.find((item) => item.id === relId);
+    const parent = activeTable().records.find((item) => item.id === activeRecordId);
+    const targetTable = relationship ? project.schema.tables.find((item) => item.id === relationship.toTableId) : undefined;
+    if (relationship && parent && targetTable) {
+      pushUndo('add related record');
+      const matchValue = parent.values[relationship.fromFieldId] ?? '';
+      const child = createRecord(targetTable.fields, { [relationship.toFieldId]: matchValue });
+      const nextProject = replaceTable(project, { ...targetTable, records: [...targetTable.records, child] });
+      activeTableId = targetTable.id;
+      activeRecordId = child.id;
+      clearFind();
+      sortKeys = [];
+      viewMode = 'form';
+      lastMessage = `Added a ${targetTable.name} record linked to ${recordTitle(activeTable(), parent)}.`;
+      setProject(nextProject);
+    }
   } else if (action === 'cal-prev') {
     shiftCalendarMonth(-1);
     render();
@@ -3391,6 +3500,14 @@ appRoot.addEventListener('change', (event) => {
     render();
   } else if (target.matches('[data-map-action]')) {
     readCsvMap();
+    render();
+  } else if (target.matches('[data-csv-key]')) {
+    readCsvMap();
+    pendingCsvKeyField = target.value;
+    render();
+  } else if (target.matches('[data-csv-dup]')) {
+    readCsvMap();
+    pendingCsvDupMode = target.value as 'add' | 'skip' | 'update';
     render();
   } else if (target.matches('[data-relationship-from-table], [data-relationship-to-table]')) {
     updateRelationshipDialogTables();
