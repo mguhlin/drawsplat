@@ -851,6 +851,22 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   color: var(--accent);
   box-shadow: 0 8px 18px rgba(76, 29, 149, .12);
 }
+.template-picker-hint {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f4f1ff;
+  color: var(--muted, #5b5570);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.template-picker-hint code {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+  font-size: .82em;
+}
 .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .dialog-subhead { margin: 14px 0 8px; font-size: 1rem; color: var(--ink); }
 .slide-palette {

@@ -8,7 +8,7 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260718-5">
+  <link rel="stylesheet" href="styles.css?v=20260719-1">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -163,6 +163,12 @@
       <button data-template="callout">Key callout</button>
       <button data-template="image-caption">Image and caption</button>
       <button data-template="reflection">Reflection prompt</button>
+      <hr>
+      <button data-template="certificate">Certificate</button>
+      <button data-template="name-tag">Name tag</button>
+      <button data-template="flyer">Flyer</button>
+      <button data-template="poster">Poster</button>
+      <button data-action="mail-merge">Mail merge (CSV &rarr; slides)&hellip;</button>
     </div></details>
     <details class="menu"><summary>Help</summary><div class="menu-panel">
       <button data-action="show-help">ShowSplat help</button>
@@ -286,7 +292,12 @@
       <button type="button" data-template="purple-title">Purple title slide</button>
       <button type="button" data-template="reflection">Reflection prompt</button>
       <button type="button" data-template="resources">Closing resources</button>
+      <button type="button" data-template="certificate">Certificate</button>
+      <button type="button" data-template="name-tag">Name tag</button>
+      <button type="button" data-template="flyer">Flyer</button>
+      <button type="button" data-template="poster">Poster</button>
     </div>
+    <p class="template-picker-hint">Tip: put <code>{{Name}}</code>, <code>{{Award}}</code> and other placeholders in a slide, then use <strong>Templates &rsaquo; Mail merge</strong> to generate one slide per row of a CSV.</p>
     <footer><button value="close">Cancel</button></footer>
   </form>
 </dialog>
@@ -351,7 +362,7 @@
       <div><dt>N</dt><dd>Add a title/content slide</dd></div>
       <div><dt>D</dt><dd>Duplicate the current slide</dd></div>
       <div><dt>Delete / Backspace</dt><dd>Delete the selected object</dd></div>
-      <div><dt>Arrow Up / Arrow Down</dt><dd>Move between slides in the rail</dd></div>
+      <div><dt>Arrow keys</dt><dd>Nudge the selected object (Shift = larger step); with nothing selected, Up/Down move between slides</dd></div>
       <div><dt>P</dt><dd>Present from the current slide</dd></div>
       <div><dt>Escape</dt><dd>Close open menus</dd></div>
     </dl>
@@ -401,10 +412,11 @@
 <input id="audioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
 <input id="globalAudioFileInput" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/webm" hidden>
 <input id="deckFileInput" type="file" accept="application/json,text/html,application/pdf,.json,.showsplat.json,.html,.htm,.pdf,.pptx,.odp,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.oasis.opendocument.presentation" hidden>
+<input id="csvFileInput" type="file" accept="text/csv,.csv" hidden>
 
 <script src="../../vendor/jszip.min.js"></script>
 <script src="../../vendor/pdf.min.js"></script>
 <script src="webdeck-framework-embed.js?v=20260718-5"></script>
-<script src="app.js?v=20260718-6"></script>
+<script src="app.js?v=20260719-1"></script>
 </body>
 </html>

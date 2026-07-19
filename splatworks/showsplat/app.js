@@ -57,7 +57,8 @@
     videoFile: document.getElementById('videoFileInput'),
     audioFile: document.getElementById('audioFileInput'),
     globalAudioFile: document.getElementById('globalAudioFileInput'),
-    deckFile: document.getElementById('deckFileInput')
+    deckFile: document.getElementById('deckFileInput'),
+    csvFile: document.getElementById('csvFileInput')
   };
 
   let deck = loadDeck();
@@ -213,6 +214,38 @@
       slide.title = 'Resources';
       slide.elements.push(textElement('Resources', 90, 82, 820, 92, 46, true));
       slide.elements.push(textElement('- Link or next step\n- Link or next step\n- Link or next step', 130, 190, 850, 260, 34));
+    } else if (template === 'certificate') {
+      slide.title = 'Certificate';
+      slide.bg = 'light';
+      slide.backgroundColor = '#fffef7';
+      slide.footer = false;
+      slide.elements.push(shapeElement(60, 50, 1480, 800, ''));
+      slide.elements.push(textElement('Certificate of Achievement', 200, 130, 1200, 110, 58, true, '#5b21b6'));
+      slide.elements.push(textElement('This certificate is proudly presented to', 200, 280, 1200, 60, 30, false, '#374151'));
+      slide.elements.push(textElement('{{Name}}', 200, 350, 1200, 120, 72, true, '#111827'));
+      slide.elements.push(textElement('for {{Award}}', 200, 500, 1200, 70, 36, false, '#374151'));
+      slide.elements.push(textElement('Date: {{Date}}', 200, 700, 500, 60, 26, false, '#6b7280'));
+      slide.elements.push(textElement('Signed: {{Teacher}}', 900, 700, 500, 60, 26, false, '#6b7280'));
+    } else if (template === 'name-tag') {
+      slide.title = 'Name Tag';
+      slide.bg = 'section';
+      slide.footer = false;
+      slide.elements.push(textElement('HELLO', 150, 150, 1300, 120, 64, true, '#ffffff'));
+      slide.elements.push(textElement('my name is', 150, 300, 1300, 70, 36, false, '#ede9fe'));
+      slide.elements.push(textElement('{{Name}}', 150, 400, 1300, 200, 96, true, '#ffffff'));
+      slide.elements.push(textElement('{{Class}}', 150, 640, 1300, 80, 40, false, '#ede9fe'));
+    } else if (template === 'flyer') {
+      slide.title = 'Flyer';
+      slide.elements.push(textElement('{{Headline}}', 120, 90, 1360, 160, 84, true, '#5b21b6'));
+      slide.elements.push(shapeElement(120, 280, 700, 480, 'Add an image'));
+      slide.elements.push(textElement('What: {{What}}\nWhen: {{When}}\nWhere: {{Where}}', 900, 300, 580, 300, 40, false));
+      slide.elements.push(textElement('{{Details}}', 900, 620, 580, 160, 28, false, '#374151'));
+    } else if (template === 'poster') {
+      slide.title = 'Poster';
+      slide.bg = 'section';
+      slide.footer = false;
+      slide.elements.push(textElement('{{Headline}}', 120, 240, 1360, 300, 120, true, '#ffffff'));
+      slide.elements.push(textElement('{{Subtext}}', 120, 580, 1360, 160, 44, false, '#ede9fe'));
     } else {
       slide.title = 'Title and Content';
       slide.elements.push(textElement('Slide title', 90, 82, 860, 92, 46, true));
@@ -968,6 +1001,91 @@
     lastSlideSelectionIndex = activeSlide;
     saveSoon();
     render();
+  }
+
+  // Parse CSV text into an array of row objects keyed by the header row.
+  // Handles quoted fields, embedded commas/newlines, and "" escapes.
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+    const src = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    for (let i = 0; i < src.length; i += 1) {
+      const ch = src[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (src[i + 1] === '"') { field += '"'; i += 1; }
+          else inQuotes = false;
+        } else field += ch;
+      } else if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        row.push(field); field = '';
+      } else if (ch === '\n') {
+        row.push(field); field = '';
+        rows.push(row); row = [];
+      } else field += ch;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    const nonEmpty = rows.filter(r => r.some(c => c.trim() !== ''));
+    if (!nonEmpty.length) return [];
+    const headers = nonEmpty[0].map(h => h.trim());
+    return nonEmpty.slice(1).map(cells => {
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = (cells[idx] ?? '').trim(); });
+      return obj;
+    });
+  }
+
+  // Replace {{Header}} tokens (case-insensitive, whitespace-tolerant) in a
+  // string using values from a CSV row object.
+  function fillMergeTokens(str, rowObj) {
+    if (typeof str !== 'string' || str.indexOf('{{') === -1) return str;
+    return str.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (match, key) => {
+      const wanted = key.trim().toLowerCase();
+      const found = Object.keys(rowObj).find(k => k.toLowerCase() === wanted);
+      return found !== undefined ? rowObj[found] : match;
+    });
+  }
+
+  // Mail merge: use the current slide as a template and generate one new slide
+  // per CSV data row, substituting {{Header}} tokens in text/list/html fields.
+  function mailMergeFromCsv(csvText) {
+    let rows;
+    try {
+      rows = parseCsv(csvText);
+    } catch (err) {
+      console.warn(err);
+      setStatus('Could not read that CSV file.');
+      return;
+    }
+    if (!rows.length) {
+      setStatus('No data rows found in that CSV. The first row should be column headers.');
+      return;
+    }
+    const template = currentSlide();
+    const generated = rows.map((rowObj, rowIndex) => {
+      const clone = JSON.parse(JSON.stringify(template));
+      clone.id = uid('slide');
+      clone.title = fillMergeTokens(template.title || 'Slide', rowObj) + ' ' + (rowIndex + 1);
+      clone.elements.forEach(el => {
+        el.id = uid('obj');
+        if (typeof el.text === 'string') el.text = fillMergeTokens(el.text, rowObj);
+        if (typeof el.html === 'string') el.html = fillMergeTokens(el.html, rowObj);
+        if (typeof el.href === 'string') el.href = fillMergeTokens(el.href, rowObj);
+        if (Array.isArray(el.items)) el.items = el.items.map(item => fillMergeTokens(item, rowObj));
+      });
+      return clone;
+    });
+    deck.slides.splice(activeSlide + 1, 0, ...generated);
+    activeSlide += 1;
+    selectedSlideIds = new Set([generated[0].id]);
+    lastSlideSelectionIndex = activeSlide;
+    selectedId = null;
+    saveSoon();
+    render();
+    setStatus('Mail merge created ' + generated.length + ' slide' + (generated.length === 1 ? '' : 's') + ' from your CSV.');
   }
 
   function deleteSlide() {
@@ -2805,6 +2923,7 @@
     }
     if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pdf' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');
+    if (action === 'mail-merge') els.csvFile.click();
     if (action === 'pick-template') els.templatePickerDialog.showModal();
     if (action === 'duplicate-slide') duplicateSlide();
     if (action === 'delete-slide') deleteSlide();
@@ -3223,6 +3342,20 @@
     if (mod && (event.key === 'z' || event.key === 'Z')) { event.preventDefault(); if (event.shiftKey) redo(); else undo(); return; }
     if (mod && (event.key === 'y' || event.key === 'Y')) { event.preventDefault(); redo(); return; }
     if (mod) return;
+    // Arrow keys nudge the selected object; with no object selected they move
+    // between slides. Shift = coarse (large) step, plain = fine step.
+    const nudgeObj = selectedObject();
+    if (nudgeObj && (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+      event.preventDefault();
+      const step = event.shiftKey ? 20 : 4;
+      if (event.key === 'ArrowUp') nudgeObj.y = Math.max(0, (nudgeObj.y || 0) - step);
+      if (event.key === 'ArrowDown') nudgeObj.y = Math.min(SLIDE_H, (nudgeObj.y || 0) + step);
+      if (event.key === 'ArrowLeft') nudgeObj.x = Math.max(0, (nudgeObj.x || 0) - step);
+      if (event.key === 'ArrowRight') nudgeObj.x = Math.min(SLIDE_W, (nudgeObj.x || 0) + step);
+      saveSoon();
+      render();
+      return;
+    }
     if (event.key === 'Delete' || event.key === 'Backspace') deleteObject();
     if (event.key.toLowerCase() === 'n') addSlide('title-content');
     if (event.key.toLowerCase() === 'd') duplicateSlide();
@@ -3350,6 +3483,16 @@
       setStatus('Could not open that deck file.');
     });
     els.deckFile.value = '';
+  });
+  els.csvFile.addEventListener('change', () => {
+    const file = els.csvFile.files[0];
+    if (file) {
+      file.text().then(text => mailMergeFromCsv(text)).catch(err => {
+        console.warn(err);
+        setStatus('Could not read that CSV file.');
+      });
+    }
+    els.csvFile.value = '';
   });
 
   window.addEventListener('beforeunload', () => {
