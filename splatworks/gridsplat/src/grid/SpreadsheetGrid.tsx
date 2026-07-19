@@ -462,6 +462,89 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const activeChartRows = chart
     ? getChartSourceRows(sheet, activeChartSelection)
     : [];
+  const activeCellRef = `${getColumnName(selection.end.col)}${selection.end.row + 1}`;
+  const activeCellRaw =
+    sheet[selection.end.row]?.[selection.end.col]?.rawValue ?? '';
+  const isEditingActiveCell = Boolean(
+    editingCell &&
+      editingCell.row === selection.end.row &&
+      editingCell.col === selection.end.col,
+  );
+  const formulaBarValue = isEditingActiveCell ? draftValue : activeCellRaw;
+  // Sum / average / count of the current selection, shown in the status bar so
+  // students get instant feedback the way a real spreadsheet gives it.
+  const selectionSummary = useMemo(() => {
+    const normalized = normalizeSelection(selection);
+    let filledCount = 0;
+    let numericCount = 0;
+    let sum = 0;
+    let min = Infinity;
+    let max = -Infinity;
+
+    for (
+      let row = normalized.start.row;
+      row <= normalized.end.row;
+      row += 1
+    ) {
+      for (
+        let col = normalized.start.col;
+        col <= normalized.end.col;
+        col += 1
+      ) {
+        const text = (sheet[row]?.[col]?.displayValue ?? '').trim();
+
+        if (text === '') {
+          continue;
+        }
+
+        filledCount += 1;
+        const numeric = Number.parseFloat(text.replace(/[^0-9.-]/g, ''));
+
+        if (Number.isFinite(numeric) && /\d/.test(text)) {
+          numericCount += 1;
+          sum += numeric;
+          min = Math.min(min, numeric);
+          max = Math.max(max, numeric);
+        }
+      }
+    }
+
+    const cellCount =
+      (normalized.end.row - normalized.start.row + 1) *
+      (normalized.end.col - normalized.start.col + 1);
+
+    return { cellCount, filledCount, numericCount, sum, min, max };
+  }, [selection, sheet]);
+
+  function roundForDisplay(value: number) {
+    return Number.isInteger(value)
+      ? String(value)
+      : (Math.round(value * 1000) / 1000).toString();
+  }
+
+  function navigateToReference(reference: string) {
+    const match = /^([A-Za-z]+)(\d+)$/.exec(reference.trim());
+
+    if (!match) {
+      return;
+    }
+
+    let col = 0;
+
+    for (const character of match[1].toUpperCase()) {
+      col = col * 26 + (character.charCodeAt(0) - 64);
+    }
+
+    selectCell({ row: Number.parseInt(match[2], 10) - 1, col: col - 1 });
+  }
+
+  function handleFormulaBarChange(value: string) {
+    if (!isEditingActiveCell) {
+      setEditingCell({ row: selection.end.row, col: selection.end.col });
+    }
+
+    setDraftValue(value);
+  }
 
   function remember(currentSheet: SheetData) {
     setHistory((previous) => [...previous.slice(-24), currentSheet]);
@@ -713,6 +796,24 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     if (isShortcut && event.key.toLowerCase() === 'y') {
       event.preventDefault();
       redo();
+      return;
+    }
+
+    if (isShortcut && event.key.toLowerCase() === 'b') {
+      event.preventDefault();
+      toggleBooleanFormat('bold');
+      return;
+    }
+
+    if (isShortcut && event.key.toLowerCase() === 'i') {
+      event.preventDefault();
+      toggleBooleanFormat('italic');
+      return;
+    }
+
+    if (isShortcut && event.key.toLowerCase() === 'u') {
+      event.preventDefault();
+      toggleBooleanFormat('underline');
       return;
     }
 
@@ -1995,6 +2096,39 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           {fileMessage}
         </p>
       </div>
+      <div className="formula-bar">
+        <input
+          aria-label="Active cell reference"
+          className="name-box"
+          key={activeCellRef}
+          defaultValue={activeCellRef}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              navigateToReference(event.currentTarget.value);
+            }
+          }}
+        />
+        <span aria-hidden="true" className="formula-bar-fx">
+          fx
+        </span>
+        <input
+          aria-label="Formula and cell contents"
+          className="formula-input"
+          placeholder="Type a value or =SUM(A1:A5)"
+          value={formulaBarValue}
+          onChange={(event) => handleFormulaBarChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              commitEditing(true);
+            } else if (event.key === 'Escape') {
+              event.preventDefault();
+              cancelEditing();
+            }
+          }}
+        />
+      </div>
       <div
         ref={scrollerRef}
         className="sheet-scroller"
@@ -2207,6 +2341,29 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             onPointerUp={stopFreezeDrag}
           />
         </div>
+      </div>
+      <div className="status-bar" aria-live="polite">
+        <span className="status-ref">{activeCellRef}</span>
+        {selectionSummary.numericCount > 0 ? (
+          <>
+            <span>Sum {roundForDisplay(selectionSummary.sum)}</span>
+            <span>
+              Avg{' '}
+              {roundForDisplay(
+                selectionSummary.sum / selectionSummary.numericCount,
+              )}
+            </span>
+            <span>Min {roundForDisplay(selectionSummary.min)}</span>
+            <span>Max {roundForDisplay(selectionSummary.max)}</span>
+            <span>Numbers {selectionSummary.numericCount}</span>
+          </>
+        ) : null}
+        <span>
+          {selectionSummary.filledCount} filled
+          {selectionSummary.cellCount > 1
+            ? ` of ${selectionSummary.cellCount} selected`
+            : ''}
+        </span>
       </div>
       {activeChart && isChartPanelOpen ? (
         <section

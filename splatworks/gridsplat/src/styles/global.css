@@ -791,6 +791,68 @@ h1 {
   max-width: 100%;
 }
 
+.formula-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  padding: var(--space-1) var(--space-2);
+}
+
+.name-box {
+  width: 88px;
+  min-height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  font-weight: 800;
+  text-align: center;
+  color: var(--color-primary);
+  background: var(--color-surface-strong);
+}
+
+.formula-bar-fx {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--color-muted);
+  padding: 0 var(--space-1);
+}
+
+.formula-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  padding: 0 var(--space-3);
+  font: inherit;
+}
+
+.formula-input:focus,
+.name-box:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-6, 1.25rem);
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-strong);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.status-bar .status-ref {
+  color: var(--color-primary);
+  font-weight: 900;
+}
+
 .big-action,
 .header-toggle,
 .format-control {
