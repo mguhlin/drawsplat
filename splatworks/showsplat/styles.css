@@ -200,6 +200,13 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   z-index: 900;
 }
 .toolbar button { min-width: 38px; padding: 7px 9px; }
+.toolbar button:disabled,
+.menu-panel button:disabled {
+  opacity: .4;
+  cursor: default;
+  color: var(--muted);
+  background: transparent;
+}
 .toolbar select,
 .toolbar input[type="number"] {
   height: 38px;
@@ -348,23 +355,12 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   border: 0;
   background: #fff;
   color: inherit;
-  font-size: 5px;
   padding: 0;
 }
-.mini-obj.html img,
-.mini-obj.html video,
-.mini-obj.html iframe {
-  width: 100%;
-  height: 100%;
-  display: block;
-  border: 0;
-  object-fit: contain;
-}
-.mini-html-content {
-  display: block;
-  width: 100%;
-  height: 100%;
+.mini-html-scale {
+  position: relative;
   overflow: hidden;
+  transform: scale(0.12);
 }
 .mini-footer {
   position: absolute;
@@ -417,10 +413,36 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   padding: 14px;
   overflow: auto;
   --canvas-zoom: 1;
+}
+.slide-board {
+  position: relative;
+  padding: 150px 280px;
+  border-radius: 18px;
   background:
     linear-gradient(90deg, rgba(124,58,237,.08) 1px, transparent 1px),
     linear-gradient(rgba(124,58,237,.08) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+.stage.drop-active .slide-board {
+  outline: 3px dashed var(--accent-2);
+  outline-offset: -6px;
+  background-color: rgba(255,159,47,.06);
+}
+.slide-board::before {
+  content: "Holding area · items here stay out of the presentation";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(124,58,237,.1);
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .03em;
+  white-space: nowrap;
+  pointer-events: none;
 }
 .slide-canvas {
   position: relative;
@@ -432,7 +454,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   border-radius: 10px;
   background: #fff;
   box-shadow: var(--shadow);
-  overflow: hidden;
+  overflow: visible;
 }
 .slide-canvas.dark { background: var(--dark); color: #fff; }
 .slide-canvas.section { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
@@ -484,6 +506,23 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .slide-object.selected {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(255,159,47,.7);
+}
+.slide-object.off-slide {
+  outline: 2px dashed rgba(124,58,237,.5);
+  outline-offset: 3px;
+  opacity: .94;
+}
+.slide-object.off-slide::after {
+  content: "holding";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  pointer-events: none;
 }
 .slide-object:focus-within {
   border-color: var(--accent);
@@ -791,6 +830,26 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .shortcut-list dd {
   margin: 0;
   color: var(--ink);
+}
+.template-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.template-picker-grid button {
+  min-height: 66px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fff, #f4f1ff);
+  color: var(--ink);
+  font-weight: 850;
+  text-align: left;
+  padding: 12px;
+}
+.template-picker-grid button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 8px 18px rgba(76, 29, 149, .12);
 }
 .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .dialog-subhead { margin: 14px 0 8px; font-size: 1rem; color: var(--ink); }

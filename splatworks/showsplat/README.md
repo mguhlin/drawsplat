@@ -25,6 +25,14 @@ The first implementation is a static browser app with:
 - presentation controls that auto-hide and a pop-out notes window
 - task-focused in-app Help and keyboard shortcuts dialogs
 - last-slide delete safety that replaces the final slide with a blank title slide
+- undo and redo (Ctrl/Cmd+Z and Ctrl/Cmd+Y) across slide and object edits
+- faithful slide-rail thumbnails that mirror imported WebDeck styling
+- automatic contrast repair for faint imported text so it stays readable
+- a slide-rail "Add slide" template picker for choosing a starting layout
+- paste (Ctrl/Cmd+V or right-click) and drag-and-drop of images onto a slide
+- an off-slide holding area for staging objects that stay out of the presentation
+- an exported WebDeck presenter view whose Prev/Next controls and arrow keys
+  advance the audience deck, with a next-slide cue, running timer, and slide dots
 
 ## In-App Help
 

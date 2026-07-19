@@ -4,6 +4,9 @@
   const STORAGE_KEY = 'showsplat.deck.v1';
   const SLIDE_W = 1600;
   const SLIDE_H = 900;
+  // How far objects may sit outside the slide, on the surrounding "holding area".
+  const BOARD_MARGIN_X = 560;
+  const BOARD_MARGIN_Y = 340;
   const FOOTER_ID = '__showsplat_footer__';
   const themes = {
     violet: { accent: '#7c3aed', accent2: '#ff9f2f', dark: '#1e1b4b', bg: '#ffffff' },
@@ -36,6 +39,7 @@
     posY: document.getElementById('posY'),
     posW: document.getElementById('posW'),
     posH: document.getElementById('posH'),
+    templatePickerDialog: document.getElementById('templatePickerDialog'),
     markdownDialog: document.getElementById('markdownDialog'),
     markdownInput: document.getElementById('markdownInput'),
     helpDialog: document.getElementById('helpDialog'),
@@ -61,6 +65,9 @@
   let selectedId = null;
   let viewMode = 'normal';
   let autosaveTimer = null;
+  let history = [];
+  let historyIndex = -1;
+  const HISTORY_LIMIT = 100;
   let cropTargetId = null;
   let zoomLevel = Number(localStorage.getItem('showsplat.zoomLevel') || 50);
   let draggedSlideIndex = null;
@@ -376,14 +383,61 @@
   function saveSoon() {
     clearTimeout(autosaveTimer);
     autosaveTimer = setTimeout(() => {
+      const json = JSON.stringify(deck);
+      recordHistory(json);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+        localStorage.setItem(STORAGE_KEY, json);
         setStatus('Autosaved in this browser.');
       } catch (err) {
         console.warn(err);
         setStatus('Deck is too large for browser autosave. Use File > Save .showsplat.json.');
       }
     }, 250);
+  }
+
+  function recordHistory(json) {
+    if (json === history[historyIndex]) return;
+    history = history.slice(0, historyIndex + 1);
+    history.push(json);
+    if (history.length > HISTORY_LIMIT) history.shift();
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+  }
+
+  function updateHistoryButtons() {
+    const canUndo = historyIndex > 0;
+    const canRedo = historyIndex < history.length - 1;
+    document.querySelectorAll('[data-action="undo"]').forEach(btn => { btn.disabled = !canUndo; });
+    document.querySelectorAll('[data-action="redo"]').forEach(btn => { btn.disabled = !canRedo; });
+  }
+
+  function undo() {
+    if (historyIndex <= 0) { setStatus('Nothing to undo.'); return; }
+    historyIndex--;
+    restoreHistory('Undid the last change.');
+  }
+
+  function redo() {
+    if (historyIndex >= history.length - 1) { setStatus('Nothing to redo.'); return; }
+    historyIndex++;
+    restoreHistory('Redid the change.');
+  }
+
+  function restoreHistory(message) {
+    const json = history[historyIndex];
+    deck = JSON.parse(json);
+    activeSlide = clamp(activeSlide, 0, deck.slides.length - 1);
+    selectedId = null;
+    cropTargetId = null;
+    selectedSlideIds = new Set();
+    try {
+      localStorage.setItem(STORAGE_KEY, json);
+    } catch (err) {
+      console.warn(err);
+    }
+    render();
+    updateHistoryButtons();
+    setStatus(message);
   }
 
   function setStatus(message) {
@@ -406,10 +460,26 @@
     renderCanvas();
     renderInspector();
     renderSorter();
+    requestAnimationFrame(scaleMiniHtmlPreviews);
+  }
+
+  function scaleMiniHtmlPreviews() {
+    document.querySelectorAll('.mini-html-scale').forEach(inner => {
+      const host = inner.parentElement;
+      if (!host) return;
+      const width = host.clientWidth;
+      if (width > 0) inner.style.transform = 'scale(' + (width / SLIDE_W) + ')';
+    });
   }
 
   function renderThumbs() {
     els.thumbs.innerHTML = '';
+    const previewCss = importedCssForDeck();
+    if (previewCss) {
+      const style = document.createElement('style');
+      style.textContent = previewCss;
+      els.thumbs.appendChild(style);
+    }
     deck.slides.forEach((slide, index) => {
       if (isCollapsedChild(index)) return;
       const button = document.createElement('button');
@@ -436,7 +506,7 @@
     mini.className = 'thumb-preview mini-slide ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '');
     if (slide.backgroundColor) mini.style.background = slide.backgroundColor;
     if (slide.defaultTextColor) mini.style.color = slide.defaultTextColor;
-    slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).forEach(el => {
+    onSlideElements(slide).slice().sort((a, b) => (a.z || 0) - (b.z || 0)).forEach(el => {
       const item = document.createElement('span');
       item.className = 'mini-obj ' + el.type;
       item.style.left = (el.x / SLIDE_W * 100) + '%';
@@ -457,7 +527,14 @@
       } else if (el.type === 'table') {
         item.textContent = 'Table';
       } else if (el.type === 'html') {
-        item.innerHTML = miniHtmlPreview(el.html || '');
+        const inner = document.createElement('div');
+        inner.className = 'imported-webdeck-slide mini-html-scale ' + (el.importedClasses || '');
+        inner.style.width = SLIDE_W + 'px';
+        inner.style.height = SLIDE_H + 'px';
+        inner.style.fontSize = (el.fontSize || 30) + 'px';
+        inner.style.transformOrigin = 'top left';
+        inner.innerHTML = sanitizeImportedHtml(el.html || '');
+        item.appendChild(inner);
       } else {
         item.textContent = String(el.text || '').slice(0, 80);
       }
@@ -472,18 +549,6 @@
       mini.appendChild(footer);
     }
     return mini;
-  }
-
-  function miniHtmlPreview(html) {
-    const doc = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html');
-    const media = doc.querySelector('img, video, iframe');
-    if (media) {
-      const tag = media.tagName.toLowerCase();
-      if (tag === 'img') return '<img src="' + escapeAttr(media.getAttribute('src') || '') + '" alt="">';
-      if (tag === 'video') return '<video src="' + escapeAttr(media.getAttribute('src') || '') + '"></video>';
-      return '<iframe src="' + escapeAttr(media.getAttribute('src') || '') + '" title=""></iframe>';
-    }
-    return '<span class="mini-html-content">' + sanitizeImportedHtml(html) + '</span>';
   }
 
   function renderCanvas() {
@@ -530,7 +595,7 @@
 
   function renderObject(el) {
     const node = document.createElement('div');
-    node.className = 'slide-object ' + el.type + (el.id === selectedId ? ' selected' : '');
+    node.className = 'slide-object ' + el.type + (el.id === selectedId ? ' selected' : '') + (isOnSlide(el) ? '' : ' off-slide');
     node.dataset.id = el.id;
     node.style.left = (el.x / SLIDE_W * 100) + '%';
     node.style.top = (el.y / SLIDE_H * 100) + '%';
@@ -1067,14 +1132,16 @@
         renderCanvas();
         return;
       }
-      obj.x = clamp(start.objX + (ev.clientX - start.x) / rect.width * SLIDE_W, 0, SLIDE_W - obj.w);
-      obj.y = clamp(start.objY + (ev.clientY - start.y) / rect.height * SLIDE_H, 0, SLIDE_H - obj.h);
+      obj.x = clamp(start.objX + (ev.clientX - start.x) / rect.width * SLIDE_W, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40);
+      obj.y = clamp(start.objY + (ev.clientY - start.y) / rect.height * SLIDE_H, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40);
       renderCanvas();
       renderInspector();
     }
 
     function stop() {
       document.removeEventListener('pointermove', move);
+      const moved = selectedObject();
+      if (moved) setStatus(isOnSlide(moved) ? 'Moved object.' : 'Object is on the holding area — it will not appear when you present.');
       saveSoon();
       render();
     }
@@ -1102,15 +1169,15 @@
     function move(ev) {
       const dx = (ev.clientX - start.x) / rect.width * SLIDE_W;
       const dy = (ev.clientY - start.y) / rect.height * SLIDE_H;
-      if (handle.includes('e')) obj.w = clamp(start.w + dx, 60, SLIDE_W - obj.x);
-      if (handle.includes('s')) obj.h = clamp(start.h + dy, 40, SLIDE_H - obj.y);
+      if (handle.includes('e')) obj.w = clamp(start.w + dx, 60, SLIDE_W + BOARD_MARGIN_X - obj.x);
+      if (handle.includes('s')) obj.h = clamp(start.h + dy, 40, SLIDE_H + BOARD_MARGIN_Y - obj.y);
       if (handle.includes('w')) {
-        const nextX = clamp(start.objX + dx, 0, start.objX + start.w - 60);
+        const nextX = clamp(start.objX + dx, -BOARD_MARGIN_X, start.objX + start.w - 60);
         obj.w = start.w + (start.objX - nextX);
         obj.x = nextX;
       }
       if (handle.includes('n')) {
-        const nextY = clamp(start.objY + dy, 0, start.objY + start.h - 40);
+        const nextY = clamp(start.objY + dy, -BOARD_MARGIN_Y, start.objY + start.h - 40);
         obj.h = start.h + (start.objY - nextY);
         obj.y = nextY;
       }
@@ -1192,6 +1259,47 @@
       alt: file.name,
       fill: 'transparent'
     })));
+  }
+
+  // Is an element's center inside the slide? Off-slide elements live on the
+  // holding area and are excluded from presentation and exports.
+  function isOnSlide(el) {
+    const cx = el.x + el.w / 2;
+    const cy = el.y + el.h / 2;
+    return cx >= 0 && cx <= SLIDE_W && cy >= 0 && cy <= SLIDE_H;
+  }
+
+  function onSlideElements(slide) {
+    return slide.elements.filter(isOnSlide);
+  }
+
+  // Convert a viewport point to slide coordinates (may be negative / off-slide).
+  function pointToSlide(clientX, clientY) {
+    if (clientX == null || clientY == null) return null;
+    const rect = els.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    return {
+      x: (clientX - rect.left) / rect.width * SLIDE_W,
+      y: (clientY - rect.top) / rect.height * SLIDE_H
+    };
+  }
+
+  function insertImageAt(src, alt, clientX, clientY) {
+    const w = 640;
+    const h = 360;
+    const point = pointToSlide(clientX, clientY);
+    const x = point ? clamp(point.x - w / 2, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40) : 180;
+    const y = point ? clamp(point.y - h / 2, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40) : 150;
+    addObject(Object.assign(textElement('', x, y, w, h, 24), { type: 'image', src, alt: alt || 'Image', fill: 'transparent' }));
+  }
+
+  function insertVideoAt(src, title, clientX, clientY) {
+    const w = 720;
+    const h = 405;
+    const point = pointToSlide(clientX, clientY);
+    const x = point ? clamp(point.x - w / 2, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40) : 200;
+    const y = point ? clamp(point.y - h / 2, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40) : 180;
+    addObject(Object.assign(textElement('', x, y, w, h, 24), { type: 'video', src, title: title || 'Video' }));
   }
 
   function insertVideoFile(file) {
@@ -1473,7 +1581,13 @@
     const bg = /\b(hero|section|cover|divider)\b/.test(sourceClasses) ? 'section' : /\bdark\b/.test(sourceClasses) ? 'dark' : 'light';
     const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
     const footerInfo = extractImportedFooter(source.html);
-    const html = sanitizeImportedHtml(footerInfo.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl);
+    const importedClasses = sourceClasses.replace(/\b(current|active|slide)\b/g, '').trim();
+    const html = enhanceImportedContrast(
+      sanitizeImportedHtml(footerInfo.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl),
+      importedClasses,
+      importedCss,
+      bg
+    );
     return {
       id: uid('slide'),
       title: source.title || 'Slide ' + (index + 1),
@@ -1493,7 +1607,8 @@
         w: 1600,
         h: footerInfo.hasFooter ? 850 : 900,
         html,
-        importedClasses: sourceClasses.replace(/\b(current|active|slide)\b/g, '').trim(),
+        importedClasses,
+        contrastFixed: true,
         autoFit: true,
         importScale: 1,
         fontFamily: 'Inter, Arial, sans-serif',
@@ -2411,7 +2526,12 @@
   }
 
   function importedCssForDeck() {
-    const css = deck.slides.map(slide => slide.importedCss || '').filter(Boolean);
+    const seen = new Set();
+    const css = deck.slides.map(slide => slide.importedCss || '').filter(css => {
+      if (!css || seen.has(css)) return false;
+      seen.add(css);
+      return true;
+    });
     return css.length ? css.map(scopeImportedCss).join('\n') : '';
   }
 
@@ -2468,7 +2588,7 @@
   }
 
   function slideToWebDeckHtml(slide, index, totalSlides) {
-    const parts = slide.elements.slice().sort((a, b) => (a.z || 0) - (b.z || 0)).map(el => {
+    const parts = onSlideElements(slide).slice().sort((a, b) => (a.z || 0) - (b.z || 0)).map(el => {
       const style = 'left:' + (el.x / SLIDE_W * 100) + '%;top:' + (el.y / SLIDE_H * 100) + '%;width:' + (el.w / SLIDE_W * 100) + '%;height:' + (el.h / SLIDE_H * 100) + '%;font-family:' + escapeAttr(el.fontFamily || 'Inter,Arial,sans-serif') + ';font-size:' + (el.fontSize || 30) + 'px;font-weight:' + (el.bold ? '900' : '600') + ';font-style:' + (el.italic ? 'italic' : 'normal') + ';text-decoration:' + (el.underline ? 'underline' : 'none') + ';color:' + escapeAttr(el.color || slide.defaultTextColor || '#1f2937') + ';background:' + escapeAttr(el.fill || 'transparent') + ';text-align:' + escapeAttr(el.align || 'left') + ';transform:rotate(' + (Number(el.rotate) || 0) + 'deg);transform-origin:center center;';
       if (el.type === 'image') return '<div class="obj" style="' + style + '"><img src="' + escapeAttr(el.src || '') + '" alt="' + escapeAttr(el.alt || '') + '" style="object-fit:' + escapeAttr(el.fit || 'contain') + ';object-position:' + (el.cropX ?? 50) + '% ' + (el.cropY ?? 50) + '%"></div>';
       if (el.type === 'youtube') return '<div class="obj" style="' + style + '"><iframe src="' + escapeAttr(el.src || '') + '" title="' + escapeAttr(el.title || 'YouTube video') + '" allowfullscreen></iframe></div>';
@@ -2499,32 +2619,44 @@
       '.slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px}.slide-audio audio{width:260px}.global-audio{position:fixed;left:18px;bottom:18px;z-index:3;width:240px}',
       '.footer,.slide-footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:rgba(17,24,39,.9);color:#fff;font-weight:800}',
       '.bar{position:fixed;left:50%;bottom:18px;z-index:5;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(17,24,39,.76);backdrop-filter:blur(12px);color:#fff;opacity:1;transition:opacity .18s,transform .18s}.bar:hover{opacity:1;transform:translateX(-50%)}body.controls-hidden .bar{opacity:0;pointer-events:none;transform:translate(-50%,130%)}.bar button{border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:7px 10px;font-weight:800}.bar strong{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-      '.dot{width:10px;height:10px;border-radius:99px;border:0;background:#fff8;vertical-align:middle}.dot.active{width:28px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}',
+      '.dots{display:flex;gap:5px;align-items:center;max-width:38vw;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.dots::-webkit-scrollbar{display:none}.dot{flex:none;width:10px;height:10px;border-radius:99px;border:0;background:#fff8;cursor:pointer;padding:0}.dot.active{width:26px;background:#fff}.progress{position:fixed;top:0;left:0;right:0;height:4px;background:#0003}.progress span{display:block;height:100%;background:var(--accent)}',
       '#notes{position:fixed;left:24px;top:72px;width:min(420px,calc(100vw - 48px));max-height:calc(100vh - 110px);overflow:auto;border-radius:14px;background:#fff;color:#1f2937;box-shadow:0 18px 44px #0004;transform:translateY(-130%);pointer-events:none;transition:.2s;z-index:6}#notes.open{transform:translateY(0);pointer-events:auto}.notes-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;background:#f3f4f6;cursor:move;font-weight:800}.notes-head button{border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;padding:4px 8px}.notes-body{padding:16px}.notes-body p{white-space:pre-wrap}',
       '#lock{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:#111827;color:#fff}body.locked #lock{display:grid}',
       '#help{position:fixed;inset:0;z-index:8;display:none;place-items:center;background:#0009}#help.open{display:grid}#help>div{max-width:560px;padding:24px;border-radius:16px;background:#fff;color:#111827;line-height:1.55}#live{position:fixed;left:-9999px}.presenter-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;padding:18px}.presenter-notes{white-space:pre-wrap;font-size:22px;line-height:1.5}',
-      '@media(max-width:700px),(min-resolution:2dppx) and (max-width:900px){body{overflow:auto;background:#eef2f7}.deck{position:static;width:auto;height:auto;transform:none!important}.slide,.slide.current{position:relative;display:flex;min-height:100vh;margin:0 0 18px}.obj{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;transform:none!important;font-size:max(18px,.72em)!important}.slide-body{padding:24px}.global-audio{display:none}.bar{position:fixed}.footer,.slide-footer{position:relative;margin-top:auto}}',
+      '@media(max-width:700px),(min-resolution:2dppx) and (max-width:900px){body{overflow:auto;background:#eef2f7}.deck{position:static;width:auto;height:auto;transform:none!important}.slide,.slide.current{position:relative;display:flex;min-height:100vh;margin:0 0 18px}.obj{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;transform:none!important;font-size:max(18px,.72em)!important}.slide-body{padding:24px}.global-audio{display:none}.bar{position:fixed}#deckLabel,#dots{display:none}.footer,.slide-footer{position:relative;margin-top:auto}}',
       '@media print{@page{size:landscape;margin:0}body{overflow:visible;background:#fff}.deck{position:static;width:1280px;height:auto;transform:none!important}.slide{position:relative;display:flex;width:1280px;height:720px;page-break-after:always}.bar,.progress,#help,.global-audio{display:none!important}}'
     ].join('');
   }
 
   function webDeckSpecJs() {
     return [
-      'let i=Math.max(0,(parseInt(location.hash.slice(1),10)||1)-1),presenterWin=null,start=Date.now();',
+      'let i=Math.max(0,(parseInt(location.hash.slice(1),10)||1)-1),presenterWin=null,start=Date.now(),syncing=false;',
       'const deck=document.querySelector(".deck"),slides=[...document.querySelectorAll(".slide")];',
-      'document.body.insertAdjacentHTML("beforeend",`<div class="progress"><span id="progress"></span></div><nav class="bar" aria-label="Presentation controls"><button id="prev">‹</button><span id="count"></span><button id="next">›</button><button id="notesBtn" title="Notes (S)">🗒</button><button id="presentBtn" title="Presenter (V)">🖥</button><button id="fullBtn" title="Fullscreen (F)">⛶</button><button id="helpBtn">?</button></nav><aside id="notes"></aside><div id="help"><div><h2>WebDeck shortcuts</h2><p>←/→ or Space: navigate · Home/End: first/last · S: notes · V: presenter · F: fullscreen · P: print/PDF · ?: help</p><button id="helpClose">Close</button></div></div><div id="live" aria-live="polite"></div>`);',
-      'const count=document.getElementById("count"),prog=document.getElementById("progress"),notes=document.getElementById("notes"),help=document.getElementById("help");',
+      'const chan=("BroadcastChannel"in window)?new BroadcastChannel("webdeck-sync:"+location.pathname):null;',
+      'const dotsHtml=slides.map((s,n)=>`<button class="dot" type="button" data-i="${n}" aria-label="Go to slide ${n+1}"></button>`).join("");',
+      'document.body.insertAdjacentHTML("beforeend",`<div class="progress"><span id="progress"></span></div><nav class="bar" aria-label="Presentation controls"><strong id="deckLabel"></strong><button id="prev" title="Previous">‹</button><span id="dots" class="dots">${dotsHtml}</span><span id="count"></span><button id="next" title="Next">›</button><button id="notesBtn" title="Notes (S)">🗒</button><button id="presentBtn" title="Presenter view (V)">🖥</button><button id="fullBtn" title="Fullscreen (F)">⛶</button><button id="helpBtn" title="Help (?)">?</button></nav><aside id="notes"></aside><div id="help"><div><h2>WebDeck shortcuts</h2><p>←/→ or Space: navigate · Home/End: first/last · click left/right third: back/forward · S: notes · V: presenter view · F: fullscreen · P: print/PDF · ?: help · Esc: close overlays</p><p>Presenter view pops out the speaker notes, next-slide cue, and a running timer. Its Prev and Next buttons and arrow keys advance this deck, so allow pop-ups if it does not open.</p><button id="helpClose" type="button">Close</button></div></div><div id="live" aria-live="polite"></div>`);',
+      'const count=document.getElementById("count"),prog=document.getElementById("progress"),notes=document.getElementById("notes"),help=document.getElementById("help"),dots=document.getElementById("dots");',
+      'document.getElementById("deckLabel").textContent=document.title;',
       'async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}',
       'async function unlock(){if(!PASSWORD_HASH)return;document.body.classList.add("locked");const p=prompt("Password");if(await sha(p||"")===PASSWORD_HASH)document.body.classList.remove("locked");else document.getElementById("lock").textContent="Password required. Reload to try again."}',
-      'function esc(s){return String(s||"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\"\\\"\":\"&quot;\"}[c]))}',
-      'function title(){return slides[i].dataset.title||slides[i].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+1)}function note(){return slides[i].querySelector(".notes")?.textContent.trim()||"No notes."}',
+      'function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]))}',
+      'function title(){return slides[i].dataset.title||slides[i].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+1)}',
+      'function note(){return slides[i].querySelector(".notes")?.textContent.trim()||"No notes for this slide."}',
+      'function nextTitle(){return i+1<slides.length?(slides[i+1].dataset.title||slides[i+1].querySelector("h1,h2,h3")?.textContent||"Slide "+(i+2)):"End of deck"}',
+      'function elapsed(){const s=Math.max(0,Math.floor((Date.now()-start)/1000));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}',
       'function fit(){if(innerWidth<700)return deck.style.transform="none";const s=Math.min(innerWidth/1280,innerHeight/720);deck.style.transform=`translate(-50%,-50%) scale(${s})`}',
-      'function updateNotes(){notes.innerHTML=`<div class="notes-head"><span>Notes</span><button id="closeNotes">Close</button></div><div class="notes-body"><strong>${esc(title())}</strong><p>${esc(note())}</p></div>`;document.getElementById("closeNotes").onclick=()=>notes.classList.remove("open")}',
-      'function sendPresenter(){if(!presenterWin||presenterWin.closed)return;presenterWin.document.body.innerHTML=`<main><h1>${esc(title())}</h1><p>Slide ${i+1} of ${slides.length} · ${Math.floor((Date.now()-start)/60000)} min</p><hr><div>${esc(note())}</div></main>`}',
-      'function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,x)=>s.classList.toggle("current",x===i));count.textContent=(i+1)+" / "+slides.length;prog.style.width=((i+1)/slides.length*100)+"%";location.hash=String(i+1);document.getElementById("live").textContent=`Slide ${i+1} of ${slides.length}: ${title()}`;updateNotes();sendPresenter()}',
-      'function openPresenter(){presenterWin=window.open("","webdeck-presenter","popup=yes,width=1100,height=700");if(presenterWin){presenterWin.document.head.innerHTML=`<title>Presenter</title><style>body{margin:0;padding:36px;background:#071527;color:#e7eefb;font:22px/1.5 Arial}hr{border-color:#ffffff33}div{white-space:pre-wrap;font-size:26px}</style>`;sendPresenter()}}',
-      'prev.onclick=()=>show(i-1);next.onclick=()=>show(i+1);notesBtn.onclick=()=>notes.classList.toggle("open");presentBtn.onclick=openPresenter;fullBtn.onclick=()=>document.documentElement.requestFullscreen?.();helpBtn.onclick=()=>help.classList.add("open");helpClose.onclick=()=>help.classList.remove("open");',
-      'document.addEventListener("keydown",e=>{if(["ArrowRight"," ","PageDown"].includes(e.key))show(i+1);if(["ArrowLeft","PageUp"].includes(e.key))show(i-1);if(e.key==="Home")show(0);if(e.key==="End")show(slides.length-1);if(e.key.toLowerCase()==="s")notes.classList.toggle("open");if(e.key.toLowerCase()==="v")openPresenter();if(e.key.toLowerCase()==="f")document.documentElement.requestFullscreen?.();if(e.key.toLowerCase()==="p")print();if(e.key==="?")help.classList.toggle("open")});',
+      'function paintDots(){[...dots.children].forEach((d,x)=>d.classList.toggle("active",x===i))}',
+      'function updateNotes(){notes.innerHTML=`<div class="notes-head"><span>Notes</span><button id="closeNotes" type="button">Close</button></div><div class="notes-body"><strong>${esc(title())}</strong><p>${esc(note())}</p></div>`;document.getElementById("closeNotes").onclick=()=>notes.classList.remove("open")}',
+      'function presenterDoc(){return `<div class="pv-top"><h1>${esc(title())}</h1><span id="pt" class="pv-timer">${elapsed()}</span></div><p class="pv-meta">Slide ${i+1} of ${slides.length} &middot; Next: ${esc(nextTitle())}</p><hr><div class="pv-notes">${esc(note())}</div><div class="pv-bar"><button id="pp" type="button">&lsaquo; Prev</button><button id="pn" type="button">Next &rsaquo;</button></div>`}',
+      'function wirePresenter(){if(!presenterWin||presenterWin.closed)return;const d=presenterWin.document,pp=d.getElementById("pp"),pn=d.getElementById("pn");if(pp)pp.onclick=()=>show(i-1);if(pn)pn.onclick=()=>show(i+1);d.onkeydown=e=>{if(["ArrowRight"," ","PageDown","ArrowDown"].includes(e.key)){e.preventDefault();show(i+1)}else if(["ArrowLeft","PageUp","ArrowUp"].includes(e.key)){e.preventDefault();show(i-1)}else if(e.key==="Home")show(0);else if(e.key==="End")show(slides.length-1)}}',
+      'function sendPresenter(){if(!presenterWin||presenterWin.closed)return;presenterWin.document.body.innerHTML=presenterDoc();wirePresenter()}',
+      'function openPresenter(){presenterWin=window.open("","webdeck-presenter","popup=yes,width=1120,height=780");if(!presenterWin){notes.classList.add("open");document.getElementById("live").textContent="Pop-up blocked. Showing notes in this window instead.";return}const d=presenterWin.document;d.head.innerHTML=`<title>Presenter view</title><meta charset="utf-8"><style>body{margin:0;padding:26px 26px 104px;background:#071527;color:#e7eefb;font:20px/1.5 Arial,sans-serif}.pv-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}.pv-top h1{margin:0;font-size:27px}.pv-timer{font-size:30px;font-variant-numeric:tabular-nums}.pv-meta{opacity:.82;margin:6px 0 14px}hr{border:0;border-top:1px solid #ffffff33}.pv-notes{white-space:pre-wrap;font-size:25px;line-height:1.55}.pv-bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:12px;justify-content:center;padding:16px;background:#00000066}.pv-bar button{border:0;border-radius:10px;background:#2563eb;color:#fff;font-size:20px;padding:11px 26px;cursor:pointer}</style>`;sendPresenter();presenterWin.focus()}',
+      'function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,x)=>s.classList.toggle("current",x===i));count.textContent=(i+1)+" / "+slides.length;prog.style.width=((i+1)/slides.length*100)+"%";location.hash=String(i+1);paintDots();document.getElementById("live").textContent=`Slide ${i+1} of ${slides.length}: ${title()}`;updateNotes();sendPresenter();if(chan&&!syncing)chan.postMessage({i})}',
+      'if(chan)chan.onmessage=e=>{if(e.data&&typeof e.data.i==="number"&&e.data.i!==i){syncing=true;show(e.data.i);syncing=false}};',
+      'prev.onclick=()=>show(i-1);next.onclick=()=>show(i+1);notesBtn.onclick=()=>notes.classList.toggle("open");presentBtn.onclick=openPresenter;fullBtn.onclick=()=>document.documentElement.requestFullscreen?.();helpBtn.onclick=()=>help.classList.add("open");helpClose.onclick=()=>help.classList.remove("open");dots.onclick=e=>{const b=e.target.closest(".dot");if(b)show(Number(b.dataset.i))};',
+      'document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select"))return;if(["ArrowRight"," ","PageDown","ArrowDown"].includes(e.key))show(i+1);else if(["ArrowLeft","PageUp","ArrowUp"].includes(e.key))show(i-1);else if(e.key==="Home")show(0);else if(e.key==="End")show(slides.length-1);else if(e.key.toLowerCase()==="s")notes.classList.toggle("open");else if(e.key.toLowerCase()==="v")openPresenter();else if(e.key.toLowerCase()==="f")document.documentElement.requestFullscreen?.();else if(e.key.toLowerCase()==="p")print();else if(e.key==="?")help.classList.toggle("open");else if(e.key==="Escape"){help.classList.remove("open");notes.classList.remove("open")}});',
+      'document.addEventListener("click",e=>{if(e.target.closest(".bar,#notes,#help,a,button,input,textarea,select,video,audio,iframe"))return;if(getSelection&&String(getSelection()))return;const x=e.clientX/innerWidth;if(x<.33)show(i-1);else if(x>.66)show(i+1)});',
+      'setInterval(()=>{if(presenterWin&&!presenterWin.closed){const pt=presenterWin.document.getElementById("pt");if(pt)pt.textContent=elapsed()}},1000);',
       'addEventListener("resize",fit);addEventListener("hashchange",()=>{const n=parseInt(location.hash.slice(1),10);if(n&&n-1!==i)show(n-1)});unlock();fit();show(i);window.__deck={show,next:()=>show(i+1),prev:()=>show(i-1),presenter:openPresenter};'
     ].join('');
   }
@@ -2642,6 +2774,8 @@
 
   function runAction(action, target) {
     closeMenus();
+    if (action === 'undo') undo();
+    if (action === 'redo') redo();
     if (action === 'new-deck' && confirm('Start a new deck?')) {
       deck = defaultDeck();
       activeSlide = 0;
@@ -2655,6 +2789,7 @@
     }
     if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pdf' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
     if (action === 'add-slide') addSlide('title-content');
+    if (action === 'pick-template') els.templatePickerDialog.showModal();
     if (action === 'duplicate-slide') duplicateSlide();
     if (action === 'delete-slide') deleteSlide();
     if (action === 'delete-selected-slides') deleteSelectedSlides();
@@ -2829,6 +2964,14 @@
     }
   }
 
+  function centerSlideInStage() {
+    if (!els.stage || !els.canvas) return;
+    const stageRect = els.stage.getBoundingClientRect();
+    const canvasRect = els.canvas.getBoundingClientRect();
+    els.stage.scrollLeft += (canvasRect.left + canvasRect.width / 2) - (stageRect.left + stageRect.width / 2);
+    els.stage.scrollTop += (canvasRect.top + canvasRect.height / 2) - (stageRect.top + stageRect.height / 2);
+  }
+
   function applyZoom() {
     zoomLevel = clamp(Number(zoomLevel) || 50, 0, 100);
     const scale = 0.5 + (zoomLevel / 100);
@@ -2917,6 +3060,123 @@
     return escapeHtml(value).replace(/`/g, '&#96;');
   }
 
+  // Imported WebDeck/AI decks often ship low-contrast "muted" text (light gray or
+  // low opacity) that is hard to read once it lands on a ShowSplat slide. This
+  // measures the rendered contrast of each text element against its real
+  // background and bakes in a readable color where it falls below WCAG AA.
+  function enhanceImportedContrast(html, importedClasses, importedCss, bg) {
+    const source = String(html || '');
+    if (!source.trim() || typeof document === 'undefined' || !document.body) return source;
+    const baseBg = bg === 'light' ? '#ffffff' : '#1e1b4b';
+    const host = document.createElement('div');
+    host.setAttribute('aria-hidden', 'true');
+    host.style.cssText = 'position:fixed;left:-99999px;top:0;width:1600px;height:900px;overflow:hidden;pointer-events:none;opacity:0;';
+    if (importedCss) {
+      const style = document.createElement('style');
+      style.textContent = scopeImportedCss(importedCss);
+      host.appendChild(style);
+    }
+    const root = document.createElement('div');
+    root.className = 'imported-webdeck-slide ' + (importedClasses || '');
+    root.style.width = '1600px';
+    root.style.height = '900px';
+    root.style.background = baseBg;
+    root.innerHTML = source;
+    host.appendChild(root);
+    document.body.appendChild(host);
+    try {
+      root.querySelectorAll('*').forEach(node => {
+        const tag = node.tagName.toLowerCase();
+        if (['img', 'video', 'iframe', 'svg', 'br', 'hr'].includes(tag)) return;
+        const hasOwnText = Array.from(node.childNodes).some(child => child.nodeType === 3 && child.textContent.trim());
+        if (!hasOwnText) return;
+        const styles = getComputedStyle(node);
+        const fg = parseRenderedColor(styles.color);
+        if (!fg) return;
+        const opacity = clamp(Number(styles.opacity) || 1, 0, 1);
+        const effectiveBg = nearestOpaqueBackground(node, baseBg);
+        const shown = blendColors(fg, effectiveBg, fg.a * opacity);
+        if (contrastRatio(shown, effectiveBg) >= 4.5) return;
+        node.style.setProperty('color', relativeLuminance(effectiveBg) > 0.4 ? '#1f2937' : '#f8fafc', 'important');
+        if (opacity < 0.85) node.style.setProperty('opacity', '1', 'important');
+      });
+      return root.innerHTML;
+    } catch (err) {
+      console.warn(err);
+      return source;
+    } finally {
+      host.remove();
+    }
+  }
+
+  function migrateImportedContrast() {
+    if (typeof document === 'undefined' || !document.body) return;
+    let changed = false;
+    deck.slides.forEach(slide => {
+      if (!slide.importedCss) return;
+      slide.elements.forEach(el => {
+        if (el.type !== 'html' || el.contrastFixed) return;
+        el.html = enhanceImportedContrast(el.html || '', el.importedClasses || '', slide.importedCss, slide.bg);
+        el.contrastFixed = true;
+        changed = true;
+      });
+    });
+    if (changed) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  }
+
+  function nearestOpaqueBackground(node, fallback) {
+    let el = node;
+    while (el && el.nodeType === 1) {
+      const bg = parseRenderedColor(getComputedStyle(el).backgroundColor);
+      if (bg && bg.a > 0.2) return { r: bg.r, g: bg.g, b: bg.b };
+      el = el.parentElement;
+    }
+    return parseRenderedColor(fallback) || { r: 255, g: 255, b: 255 };
+  }
+
+  function parseRenderedColor(value) {
+    const str = String(value || '').trim();
+    let match = str.match(/^rgba?\(([^)]+)\)$/i);
+    if (match) {
+      const parts = match[1].split(',').map(part => parseFloat(part.trim()));
+      if (parts.length >= 3) return { r: parts[0], g: parts[1], b: parts[2], a: parts.length >= 4 ? parts[3] : 1 };
+    }
+    match = str.match(/^#([0-9a-f]{6})$/i);
+    if (match) return { r: parseInt(match[1].slice(0, 2), 16), g: parseInt(match[1].slice(2, 4), 16), b: parseInt(match[1].slice(4, 6), 16), a: 1 };
+    match = str.match(/^#([0-9a-f]{3})$/i);
+    if (match) return { r: parseInt(match[1][0] + match[1][0], 16), g: parseInt(match[1][1] + match[1][1], 16), b: parseInt(match[1][2] + match[1][2], 16), a: 1 };
+    return null;
+  }
+
+  function blendColors(fg, bg, alpha) {
+    const a = clamp(alpha, 0, 1);
+    return {
+      r: fg.r * a + bg.r * (1 - a),
+      g: fg.g * a + bg.g * (1 - a),
+      b: fg.b * a + bg.b * (1 - a)
+    };
+  }
+
+  function relativeLuminance(color) {
+    const channel = value => {
+      const scaled = clamp(value, 0, 255) / 255;
+      return scaled <= 0.03928 ? scaled / 12.92 : Math.pow((scaled + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * channel(color.r) + 0.7152 * channel(color.g) + 0.0722 * channel(color.b);
+  }
+
+  function contrastRatio(a, b) {
+    const la = relativeLuminance(a);
+    const lb = relativeLuminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+
   document.addEventListener('click', event => {
     if (cropTargetId && !event.target.closest('.slide-object[data-id="' + cropTargetId + '"]')) {
       cropTargetId = null;
@@ -2927,6 +3187,7 @@
     const templateTarget = event.target.closest('[data-template]');
     if (templateTarget) {
       closeMenus();
+      if (els.templatePickerDialog?.open) els.templatePickerDialog.close();
       addSlide(templateTarget.dataset.template);
     }
     const themeTarget = event.target.closest('[data-theme]');
@@ -2942,6 +3203,10 @@
 
   document.addEventListener('keydown', event => {
     if (event.target.matches('input, textarea, [contenteditable="true"]')) return;
+    const mod = event.ctrlKey || event.metaKey;
+    if (mod && (event.key === 'z' || event.key === 'Z')) { event.preventDefault(); if (event.shiftKey) redo(); else undo(); return; }
+    if (mod && (event.key === 'y' || event.key === 'Y')) { event.preventDefault(); redo(); return; }
+    if (mod) return;
     if (event.key === 'Delete' || event.key === 'Backspace') deleteObject();
     if (event.key.toLowerCase() === 'n') addSlide('title-content');
     if (event.key.toLowerCase() === 'd') duplicateSlide();
@@ -2949,6 +3214,63 @@
     if (event.key === 'ArrowDown') selectSlide(activeSlide + 1);
     if (event.key.toLowerCase() === 'p') present(activeSlide);
     if (event.key === 'Escape') closeMenus();
+  });
+
+  document.addEventListener('paste', event => {
+    const items = event.clipboardData && event.clipboardData.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type && item.type.indexOf('image/') === 0) {
+        const file = item.getAsFile();
+        if (file) {
+          event.preventDefault();
+          readAsDataUrl(file).then(src => {
+            insertImageAt(src, 'Pasted image');
+            setStatus('Pasted image onto the slide.');
+          });
+          return;
+        }
+      }
+    }
+  });
+
+  ['dragenter', 'dragover'].forEach(type => els.stage.addEventListener(type, event => {
+    const types = event.dataTransfer ? Array.from(event.dataTransfer.types) : [];
+    if (types.includes('Files') || types.includes('text/uri-list')) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+      els.stage.classList.add('drop-active');
+    }
+  }));
+  els.stage.addEventListener('dragleave', event => {
+    if (!els.stage.contains(event.relatedTarget)) els.stage.classList.remove('drop-active');
+  });
+  els.stage.addEventListener('drop', event => {
+    els.stage.classList.remove('drop-active');
+    const dt = event.dataTransfer;
+    if (!dt) return;
+    const files = Array.from(dt.files || []);
+    const imageFile = files.find(file => file.type.indexOf('image/') === 0);
+    const videoFile = files.find(file => file.type.indexOf('video/') === 0);
+    if (imageFile) {
+      event.preventDefault();
+      readAsDataUrl(imageFile).then(src => {
+        insertImageAt(src, imageFile.name, event.clientX, event.clientY);
+        setStatus('Dropped image onto the slide.');
+      });
+      return;
+    }
+    if (videoFile) {
+      event.preventDefault();
+      readAsDataUrl(videoFile).then(src => insertVideoAt(src, videoFile.name, event.clientX, event.clientY));
+      return;
+    }
+    const uri = dt.getData('text/uri-list') || dt.getData('text/plain');
+    if (uri && /^https?:\/\/\S+/.test(uri.trim())) {
+      event.preventDefault();
+      insertImageAt(uri.trim(), 'Image from URL', event.clientX, event.clientY);
+      setStatus('Dropped image link onto the slide.');
+    }
   });
 
   els.deckTitle.addEventListener('input', () => {
@@ -2968,6 +3290,7 @@
       zoomLevel = Number(els.zoomSlider.value) || 0;
       localStorage.setItem('showsplat.zoomLevel', String(zoomLevel));
       applyZoom();
+      requestAnimationFrame(centerSlideInStage);
     });
   }
   [els.altText, els.linkUrl, els.posX, els.posY, els.posW, els.posH].forEach(input => input.addEventListener('change', () => {
@@ -3022,5 +3345,8 @@
   });
   initRailSplitter();
   initMenus();
+  migrateImportedContrast();
+  recordHistory(JSON.stringify(deck));
   render();
+  requestAnimationFrame(centerSlideInStage);
 })();

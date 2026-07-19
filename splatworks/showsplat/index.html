@@ -8,7 +8,7 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260718-3">
+  <link rel="stylesheet" href="styles.css?v=20260718-4">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -35,6 +35,8 @@
   <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 4a8 8 0 0 0 0 16h2a2 2 0 0 0 1.5-3.3c-.8-.9-.2-2.7 1-2.7H18a4 4 0 0 0 0-8z"/><circle cx="8" cy="10" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="14" cy="10" r="1"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-markdown" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 15V9l3 4 3-4v6"/><path d="M15 9v6"/><path d="M13 13l2 2 2-2"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-3"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h3"/></symbol>
 </svg>
 
 <header class="app-header">
@@ -72,6 +74,9 @@
       </div></details>
     </div></details>
     <details class="menu"><summary>Edit</summary><div class="menu-panel">
+      <button data-action="undo">Undo</button>
+      <button data-action="redo">Redo</button>
+      <hr>
       <button data-action="duplicate-slide">Duplicate slide</button>
       <button data-action="delete-slide">Delete slide</button>
       <button data-action="delete-selected-slides">Delete selected slides</button>
@@ -171,6 +176,9 @@
   </nav>
 
   <section class="toolbar" aria-label="Formatting toolbar">
+    <button title="Undo (Ctrl+Z)" data-action="undo" disabled><svg><use href="#i-undo"/></svg></button>
+    <button title="Redo (Ctrl+Y)" data-action="redo" disabled><svg><use href="#i-redo"/></svg></button>
+    <span class="divider"></span>
     <button title="Add slide" data-action="add-slide"><svg><use href="#i-plus"/></svg></button>
     <button title="Duplicate slide" data-action="duplicate-slide"><svg><use href="#i-copy"/></svg></button>
     <button title="Delete slide" data-action="delete-slide"><svg><use href="#i-trash"/></svg></button>
@@ -212,7 +220,7 @@
     <aside class="slide-rail" aria-label="Slide thumbnails">
       <div class="rail-title">Slides</div>
       <div id="thumbnailList" class="thumbnail-list"></div>
-      <button class="rail-add" data-action="add-slide"><svg><use href="#i-plus"/></svg> Add slide</button>
+      <button class="rail-add" data-action="pick-template"><svg><use href="#i-plus"/></svg> Add slide</button>
     </aside>
     <div id="railSplitter" class="rail-splitter" role="separator" aria-label="Resize slide thumbnails" aria-orientation="horizontal" tabindex="0"></div>
 
@@ -223,7 +231,9 @@
       </div>
       <div id="slideSorter" class="slide-sorter" hidden></div>
       <div class="stage" id="stage">
-        <div id="slideCanvas" class="slide-canvas" aria-label="Current slide canvas"></div>
+        <div class="slide-board">
+          <div id="slideCanvas" class="slide-canvas" aria-label="Current slide canvas"></div>
+        </div>
       </div>
     </section>
 
@@ -250,6 +260,36 @@
     </aside>
   </section>
 </main>
+
+<dialog id="templatePickerDialog" class="studio-dialog">
+  <form method="dialog">
+    <header><h2>Add a slide</h2><button value="close" aria-label="Close">x</button></header>
+    <p>Pick a starting layout. You can edit everything after it is added.</p>
+    <div class="template-picker-grid">
+      <button type="button" data-template="title-content">Title and content</button>
+      <button type="button" data-template="title">Title slide</button>
+      <button type="button" data-template="section">Section break</button>
+      <button type="button" data-template="agenda">Agenda</button>
+      <button type="button" data-template="comparison">Comparison</button>
+      <button type="button" data-template="two-column">Two columns</button>
+      <button type="button" data-template="three-cards">Three cards</button>
+      <button type="button" data-template="steps">Numbered steps</button>
+      <button type="button" data-template="purple-steps">Purple process slide</button>
+      <button type="button" data-template="do-dont">Do / Do not</button>
+      <button type="button" data-template="callout">Key callout</button>
+      <button type="button" data-template="quote">Quote</button>
+      <button type="button" data-template="media">Media focus</button>
+      <button type="button" data-template="image-caption">Image and caption</button>
+      <button type="button" data-template="graph">Graph or data story</button>
+      <button type="button" data-template="concept-map">Concept map explanation</button>
+      <button type="button" data-template="table">Table slide</button>
+      <button type="button" data-template="purple-title">Purple title slide</button>
+      <button type="button" data-template="reflection">Reflection prompt</button>
+      <button type="button" data-template="resources">Closing resources</button>
+    </div>
+    <footer><button value="close">Cancel</button></footer>
+  </form>
+</dialog>
 
 <dialog id="markdownDialog" class="studio-dialog">
   <form method="dialog">
@@ -306,6 +346,8 @@
   <form method="dialog">
     <header><h2>Keyboard shortcuts</h2><button value="close" aria-label="Close">x</button></header>
     <dl class="shortcut-list">
+      <div><dt>Ctrl / ⌘ + Z</dt><dd>Undo the last change</dd></div>
+      <div><dt>Ctrl / ⌘ + Y (or Shift+Z)</dt><dd>Redo the change</dd></div>
       <div><dt>N</dt><dd>Add a title/content slide</dd></div>
       <div><dt>D</dt><dd>Duplicate the current slide</dd></div>
       <div><dt>Delete / Backspace</dt><dd>Delete the selected object</dd></div>
@@ -362,6 +404,6 @@
 
 <script src="../../vendor/jszip.min.js"></script>
 <script src="../../vendor/pdf.min.js"></script>
-<script src="app.js?v=20260718-3"></script>
+<script src="app.js?v=20260718-4"></script>
 </body>
 </html>
