@@ -44,6 +44,7 @@ import type {
   ListSplatFile,
   ListSplatRecord,
   ListSplatTable,
+  RubricCriterion,
   SavedView,
   SortKey,
 } from './model/types';
@@ -68,7 +69,8 @@ type DialogName =
   | 'views'
   | 'bulkFill'
   | 'charts'
-  | 'camera';
+  | 'camera'
+  | 'rubric';
 type LanguageCode = 'en' | 'es' | 'vi' | 'ar' | 'zh' | 'uh';
 
 const LANGUAGE_KEY = 'drawsplat.language';
@@ -224,6 +226,7 @@ let findQuery: FindQuery | null = null;
 let findDraft: FindQuery = { match: 'all', rules: [] };
 let sortDraft: SortKey[] = [];
 let fieldDialogType: FieldType | '' = '';
+let rubricDraft: RubricCriterion[] = [];
 let selectedRecordIds = new Set<string>();
 let cellRange: { anchor: { r: string; f: string }; focus: { r: string; f: string } } | null = null;
 let showArchived = false;
@@ -411,6 +414,23 @@ function redoLastChange(): void {
 function setActiveTable(table: ListSplatTable): void {
   activeTableId = table.id;
   setProject(replaceTable(project, table));
+}
+
+function updateActiveRecordWith(updater: (record: ListSplatRecord) => ListSplatRecord, label: string): void {
+  const table = activeTable();
+  pushUndo(label);
+  setActiveTable({ ...table, records: table.records.map((record) => (record.id === activeRecordId ? updater(record) : record)) });
+}
+
+function readRubricDraft(): void {
+  const rows: RubricCriterion[] = [];
+  appRoot.querySelectorAll<HTMLElement>('.rubric-def-row').forEach((row) => {
+    const id = row.dataset.critId ?? createId('crit');
+    const label = row.querySelector<HTMLInputElement>('[data-crit-label]')?.value.trim() ?? '';
+    const max = Number(row.querySelector<HTMLInputElement>('[data-crit-max]')?.value) || 4;
+    if (label) rows.push({ id, label, max });
+  });
+  rubricDraft = rows;
 }
 
 function closeMenus(): void {
@@ -1081,6 +1101,84 @@ function columnWidthStyle(fieldId: string): string {
   return width ? `width:${width}px;min-width:${width}px;` : '';
 }
 
+function currentUserName(): string {
+  return project.metadata.author.trim() || 'You';
+}
+
+function renderRecordExtras(record: ListSplatRecord): string {
+  const studentView = project.teacher.studentView;
+  const comments = (record.comments ?? []).filter((comment) => !comment.teacherOnly || !studentView);
+  const criteria = project.rubricCriteria ?? [];
+  const scores = record.rubricScores ?? {};
+  const total = criteria.reduce((sum, criterion) => sum + (Number(scores[criterion.id]) || 0), 0);
+  const maxTotal = criteria.reduce((sum, criterion) => sum + criterion.max, 0);
+  const history = record.history ?? [];
+  return `
+    <section class="record-extras">
+      ${
+        criteria.length
+          ? `<div class="record-block">
+              <h3>Rubric ${studentView ? '' : '<button type="button" class="button ghost" data-action="edit-rubric">Edit</button>'}</h3>
+              <div class="rubric-grid">
+                ${criteria
+                  .map(
+                    (criterion) => `<label class="rubric-row"><span>${html(criterion.label)}</span><input type="number" min="0" max="${criterion.max}" data-rubric-criterion="${criterion.id}" value="${scores[criterion.id] != null ? html(String(scores[criterion.id])) : ''}"> / ${criterion.max}</label>`,
+                  )
+                  .join('')}
+              </div>
+              <p class="rubric-total"><strong>Total: ${total} / ${maxTotal}</strong></p>
+            </div>`
+          : studentView
+            ? ''
+            : '<div class="record-block"><h3>Rubric</h3><button type="button" class="button" data-action="edit-rubric">Set up a rubric</button></div>'
+      }
+      <div class="record-block">
+        <h3>Comments</h3>
+        <div class="comment-list">
+          ${
+            comments.length
+              ? comments
+                  .map(
+                    (comment) => `
+                      <div class="comment${comment.teacherOnly ? ' teacher' : ''}">
+                        <div class="comment-head"><strong>${html(comment.author)}</strong>${comment.teacherOnly ? '<span class="badge">teacher only</span>' : ''}<time>${html(new Date(comment.at).toLocaleString())}</time></div>
+                        <p>${html(comment.text)}</p>
+                        ${studentView && comment.author !== currentUserName() ? '' : `<button type="button" class="link-btn" data-action="delete-comment" data-comment-id="${comment.id}">Delete</button>`}
+                      </div>
+                    `,
+                  )
+                  .join('')
+              : '<p class="muted">No comments yet.</p>'
+          }
+        </div>
+        <div class="comment-add">
+          <textarea data-comment-text rows="2" placeholder="Add a comment or feedback…"></textarea>
+          <div class="comment-add-row">
+            ${studentView ? '' : '<label class="inline-check"><input type="checkbox" data-comment-teacher> Teacher only</label>'}
+            <button type="button" class="button" data-action="add-comment">Add comment</button>
+          </div>
+        </div>
+      </div>
+      ${
+        studentView
+          ? ''
+          : `<div class="record-block">
+              <h3>Version history <button type="button" class="button ghost" data-action="save-version">Save version</button></h3>
+              ${
+                history.length
+                  ? `<ul class="version-list">${history
+                      .slice()
+                      .reverse()
+                      .map((version, index) => `<li><time>${html(new Date(version.at).toLocaleString())}</time> <button type="button" class="link-btn" data-action="restore-version" data-version-index="${history.length - 1 - index}">Restore</button></li>`)
+                      .join('')}</ul>`
+                  : '<p class="muted">Save a version to keep a snapshot you can restore.</p>'
+              }
+            </div>`
+      }
+    </section>
+  `;
+}
+
 function renderFormView(table: ListSplatTable): string {
   const record = table.records.find((item) => item.id === activeRecordId) ?? table.records[0];
   if (!record) {
@@ -1142,6 +1240,7 @@ function renderFormView(table: ListSplatTable): string {
           )
           .join('')}
         ${relatedSections}
+        ${renderRecordExtras(record)}
       </div>
     </div>
   `;
@@ -1947,6 +2046,34 @@ function renderDialog(table: ListSplatTable): string {
   }
   if (dialog === 'charts') {
     return renderChartsDialog(table);
+  }
+  if (dialog === 'rubric') {
+    return `
+      <div class="modal-backdrop">
+        <section class="modal" role="dialog" aria-modal="true" aria-label="Rubric">
+          <h2>Rubric criteria</h2>
+          <p>Score each criterion on every record's form. The total adds up automatically.</p>
+          <div class="rubric-def">
+            ${rubricDraft
+              .map(
+                (criterion, index) => `
+                  <div class="rubric-def-row" data-crit-id="${criterion.id}" data-crit-index="${index}">
+                    <input data-crit-label value="${html(criterion.label)}" placeholder="Criterion">
+                    <label>out of <input data-crit-max type="number" min="1" value="${criterion.max}"></label>
+                    <button type="button" class="button ghost" data-action="rubric-remove">Remove</button>
+                  </div>
+                `,
+              )
+              .join('')}
+          </div>
+          <button type="button" class="button" data-action="rubric-add">+ Add criterion</button>
+          <div class="modal-actions">
+            <button type="button" class="button primary" data-action="save-rubric">Save rubric</button>
+            <button type="button" data-action="close-dialog">Cancel</button>
+          </div>
+        </section>
+      </div>
+    `;
   }
   if (dialog === 'camera') {
     return `
@@ -3411,6 +3538,53 @@ appRoot.addEventListener('click', (event) => {
     const rid = target.closest<HTMLElement>('[data-record-id]')?.dataset.recordId;
     const fid = target.closest<HTMLElement>('[data-field-id]')?.dataset.fieldId;
     if (rid && fid) void recordAudioToCell(rid, fid);
+  } else if (action === 'add-comment') {
+    const text = appRoot.querySelector<HTMLTextAreaElement>('[data-comment-text]')?.value.trim() ?? '';
+    const teacherOnly = appRoot.querySelector<HTMLInputElement>('[data-comment-teacher]')?.checked ?? false;
+    if (text) {
+      updateActiveRecordWith((record) => ({
+        ...record,
+        comments: [...(record.comments ?? []), { id: createId('comment'), author: currentUserName(), text, at: new Date().toISOString(), teacherOnly }],
+      }), 'add comment');
+    }
+  } else if (action === 'delete-comment') {
+    const commentId = target.closest<HTMLElement>('[data-comment-id]')?.dataset.commentId;
+    if (commentId) {
+      updateActiveRecordWith((record) => ({ ...record, comments: (record.comments ?? []).filter((comment) => comment.id !== commentId) }), 'delete comment');
+    }
+  } else if (action === 'save-version') {
+    updateActiveRecordWith((record) => ({
+      ...record,
+      history: [...(record.history ?? []), { at: new Date().toISOString(), values: { ...record.values } }].slice(-20),
+    }), 'save version');
+    lastMessage = 'Saved a version snapshot.';
+  } else if (action === 'restore-version') {
+    const index = Number(target.closest<HTMLElement>('[data-version-index]')?.dataset.versionIndex ?? '-1');
+    updateActiveRecordWith((record) => {
+      const version = (record.history ?? [])[index];
+      return version ? { ...record, updatedAt: new Date().toISOString(), values: { ...record.values, ...version.values } } : record;
+    }, 'restore version');
+    lastMessage = 'Restored an earlier version.';
+  } else if (action === 'edit-rubric') {
+    rubricDraft = (project.rubricCriteria ?? []).map((criterion) => ({ ...criterion }));
+    if (!rubricDraft.length) rubricDraft = [{ id: createId('crit'), label: 'Ideas', max: 4 }];
+    dialog = 'rubric';
+    render();
+  } else if (action === 'rubric-add') {
+    readRubricDraft();
+    rubricDraft.push({ id: createId('crit'), label: 'New criterion', max: 4 });
+    render();
+  } else if (action === 'rubric-remove') {
+    readRubricDraft();
+    const index = Number(target.closest<HTMLElement>('[data-crit-index]')?.dataset.critIndex ?? '-1');
+    if (index >= 0) rubricDraft.splice(index, 1);
+    render();
+  } else if (action === 'save-rubric') {
+    readRubricDraft();
+    pushUndo('rubric');
+    dialog = 'none';
+    lastMessage = 'Saved the rubric.';
+    setProject({ ...project, updatedAt: new Date().toISOString(), rubricCriteria: rubricDraft });
   } else if (action === 'open-related') {
     const relTable = target.closest<HTMLElement>('[data-rel-table]')?.dataset.relTable;
     const relRecord = target.closest<HTMLElement>('[data-rel-record]')?.dataset.relRecord;
@@ -3676,6 +3850,15 @@ appRoot.addEventListener('change', (event) => {
   } else if (target.matches('[data-chart-value-field]')) {
     chartValueField = target.value;
     render();
+  } else if (target.matches('[data-rubric-criterion]') && target instanceof HTMLInputElement) {
+    const criterionId = target.dataset.rubricCriterion ?? '';
+    const score = target.value === '' ? undefined : Number(target.value);
+    updateActiveRecordWith((record) => {
+      const scores = { ...(record.rubricScores ?? {}) };
+      if (score == null || Number.isNaN(score)) delete scores[criterionId];
+      else scores[criterionId] = score;
+      return { ...record, rubricScores: scores };
+    }, 'rubric score');
   } else if (target.matches('[data-select-all]') && target instanceof HTMLInputElement) {
     const ids = visibleRecords(activeTable()).map((record) => record.id);
     selectedRecordIds = target.checked ? new Set(ids) : new Set();

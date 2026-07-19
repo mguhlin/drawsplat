@@ -1341,3 +1341,30 @@ summary:focus-visible {
 .file-link:hover { text-decoration: underline; }
 .audio-cell audio { width: 200px; max-width: 100%; }
 .camera-video { width: 100%; max-width: 520px; border-radius: 12px; background: #000; aspect-ratio: 4/3; }
+
+/* ── Batch F: comments, rubric, versions ── */
+.record-extras { display: grid; gap: 14px; margin-top: 16px; }
+.record-block { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 12px 14px; }
+.record-block h3 { margin: 0 0 8px; color: var(--accent-dark); display: flex; align-items: center; gap: 10px; }
+.rubric-grid { display: grid; gap: 8px; }
+.rubric-row { display: grid; grid-template-columns: 1fr 90px auto; align-items: center; gap: 8px; font-weight: 700; }
+.rubric-row input { border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+.rubric-total { margin: 8px 0 0; color: var(--accent-dark); }
+.rubric-def { display: grid; gap: 8px; margin: 8px 0; }
+.rubric-def-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rubric-def-row input[data-crit-label] { flex: 1; min-width: 140px; border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+.rubric-def-row input[data-crit-max] { width: 64px; border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+.comment-list { display: grid; gap: 8px; margin-bottom: 10px; }
+.comment { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--soft); }
+.comment.teacher { background: #fff7ed; border-color: #fed7aa; }
+.comment-head { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+.comment-head time { color: var(--muted); margin-left: auto; }
+.comment .badge { background: #f59e0b; color: #fff; border-radius: 999px; padding: 1px 8px; font-size: .7rem; font-weight: 800; }
+.comment p { margin: 4px 0 2px; }
+.comment-add textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.comment-add-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+.link-btn { border: 0; background: transparent; color: var(--accent); cursor: pointer; font-weight: 700; padding: 2px 4px; }
+.version-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.version-list li { display: flex; align-items: center; gap: 10px; }
+.version-list time { color: var(--muted); }
+.muted { color: var(--muted); }

@@ -46,12 +46,34 @@ export interface ListSplatField {
 
 export type ListSplatCellValue = string | number | boolean | null;
 
+export interface ListSplatComment {
+  id: string;
+  author: string;
+  text: string;
+  at: string;
+  teacherOnly?: boolean;
+}
+
+export interface ListSplatVersion {
+  at: string;
+  values: Record<string, ListSplatCellValue>;
+}
+
 export interface ListSplatRecord {
   id: string;
   createdAt: string;
   updatedAt: string;
   archived?: boolean;
   values: Record<string, ListSplatCellValue>;
+  comments?: ListSplatComment[];
+  history?: ListSplatVersion[];
+  rubricScores?: Record<string, number>;
+}
+
+export interface RubricCriterion {
+  id: string;
+  label: string;
+  max: number;
 }
 
 export interface ListSplatTable {
@@ -138,6 +160,7 @@ export interface ListSplatFile {
   };
   layouts: ListSplatLayout[];
   views?: SavedView[];
+  rubricCriteria?: RubricCriterion[];
   teacher: {
     studentView: boolean;
     notes: string[];
