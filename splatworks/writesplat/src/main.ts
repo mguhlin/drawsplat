@@ -519,6 +519,8 @@ function appHtml(): string {
           ['save-json', 'Save .writesplat.json'],
           ['open-json', 'Open .writesplat.json'],
           ['import-file', 'Import (.md, .html, .txt, .docx)'],
+          ['export-pdf', 'Print / Save as PDF'],
+          ['delete-all-data', 'Delete all local data'],
           {
             label: 'Export As',
             items: [
@@ -548,6 +550,8 @@ function appHtml(): string {
           ['open-image-dialog', 'Image'],
           ['open-emoji-dialog', 'Emoji…'],
           ['open-word-cloud', 'Word cloud…'],
+          ['toggle-dictation', 'Dictate (speech to text)'],
+          ['insert-writing-idea', 'Writing idea starter'],
           {
             label: 'Table',
             items: [
@@ -589,6 +593,23 @@ function appHtml(): string {
           ['toggle-sidebar', 'Toggle sidebar'],
           ['toggle-theme', 'Toggle theme'],
           ['toggle-focus-mode', 'Focus mode (distraction-free)'],
+          {
+            label: 'Line spacing',
+            items: [
+              ['line-spacing-1', 'Single'],
+              ['line-spacing-15', '1.5 lines'],
+              ['line-spacing-2', 'Double'],
+            ],
+          },
+          {
+            label: 'Reading & access',
+            items: [
+              ['toggle-spellcheck', 'Spellcheck on/off'],
+              ['toggle-dyslexia-font', 'Dyslexia-friendly font'],
+              ['toggle-high-contrast', 'High contrast'],
+              ['toggle-reduced-motion', 'Reduce motion'],
+            ],
+          },
           {
             label: 'Markdown mode',
             items: [
@@ -756,6 +777,7 @@ function appHtml(): string {
 
       <footer class="status-bar">
         <span>Words: <strong id="statusWords">0</strong></span>
+        <span>Characters: <strong id="statusChars">0</strong></span>
         <span>Sentences: <strong id="statusSentences">0</strong></span>
         <span>Read time: <strong id="statusReadTime">1 min</strong></span>
         <span>Grade estimate: <strong id="statusGrade">0</strong></span>
@@ -1131,6 +1153,21 @@ function escapeHtml(value: string): string {
 
 const WORD_CLOUD_COLORS = ['#7c3aed', '#0ea5e9', '#16a34a', '#f59e0b', '#dc2626', '#9333ea', '#0891b2', '#db2777', '#ea580c', '#4f46e5'];
 
+const WRITING_IDEAS = [
+  'Write about a day when everything went wrong — but ended well.',
+  'Describe your favorite place using all five senses.',
+  'A mysterious door appears in your classroom. What happens next?',
+  'Interview an animal about its day.',
+  'Explain how to do something you are really good at.',
+  'You wake up with one superpower for a day. Which one, and what do you do?',
+  'Write a letter to yourself in ten years.',
+  'Two friends disagree. Tell the story from both sides.',
+  'Invent a new holiday and explain how people celebrate it.',
+  'Describe a storm as if you were standing in it.',
+  'Your backpack can talk. What does it say?',
+  'Write about a small act of kindness that changed a day.',
+];
+
 // Lay word-cloud words into centered wrapping rows and return an SVG string plus
 // its dimensions so it can be shown, rasterized to PNG, or embedded as an image.
 function buildWordCloudSvg(entries: WordCloudEntry[]): { svg: string; width: number; height: number } {
@@ -1172,6 +1209,58 @@ function buildWordCloudSvg(entries: WordCloudEntry[]): { svg: string; width: num
   }
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}"><rect width="${width}" height="${height}" fill="#ffffff"/>${texts.join('')}</svg>`;
   return { svg, width, height };
+}
+
+// Speech-to-text dictation using the browser's SpeechRecognition, when present.
+function startDictation(onText: (text: string) => void, onEnd: () => void): { stop(): void } | null {
+  const globalWindow = window as unknown as { SpeechRecognition?: new () => SpeechRecognitionLike; webkitSpeechRecognition?: new () => SpeechRecognitionLike };
+  const Recognition = globalWindow.SpeechRecognition ?? globalWindow.webkitSpeechRecognition;
+  if (!Recognition) {
+    return null;
+  }
+  const recognition = new Recognition();
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.lang = document.documentElement.lang || 'en-US';
+  recognition.onresult = (event: SpeechRecognitionResultLike) => {
+    for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      const result = event.results[index];
+      if (result.isFinal) {
+        onText(`${result[0].transcript.trim()} `);
+      }
+    }
+  };
+  recognition.onend = onEnd;
+  recognition.onerror = onEnd;
+  try {
+    recognition.start();
+  } catch {
+    return null;
+  }
+  return {
+    stop() {
+      try {
+        recognition.stop();
+      } catch {
+        // Ignore.
+      }
+    },
+  };
+}
+
+interface SpeechRecognitionResultLike {
+  resultIndex: number;
+  results: Array<{ isFinal: boolean; 0: { transcript: string } } & ArrayLike<{ transcript: string }>>;
+}
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: SpeechRecognitionResultLike) => void;
+  onend: () => void;
+  onerror: () => void;
+  start(): void;
+  stop(): void;
 }
 
 function isEditorCommand(value: string): value is EditorCommand {
@@ -1245,6 +1334,7 @@ function bootstrap(): void {
   const wordCloudCanvas = getRequiredElement<HTMLElement>('wordCloudCanvas');
   let emojiCategoryId = 'all';
   let lastWordCloud: { svg: string; width: number; height: number } | null = null;
+  let dictation: { stop(): void } | null = null;
 
   function renderWordCloud(): void {
     const text = htmlToPlainText(writer.getHtml());
@@ -1315,6 +1405,7 @@ function bootstrap(): void {
   const sidebar = getRequiredElement<HTMLElement>('sidebar');
   let analysisTimer = 0;
   let saveTimer = 0;
+  let pendingSave = false;
   let initialHtml = starterBody;
   let markdownMode: MarkdownMode = 'wysiwyg';
   let syncingMarkdown = false;
@@ -1375,6 +1466,7 @@ function bootstrap(): void {
     getRequiredElement('readingTime').textContent = formatReadingTime(readingSeconds);
     getRequiredElement('statusWords').textContent = String(stats.words);
     getRequiredElement('statusSentences').textContent = String(stats.sentences);
+    getRequiredElement('statusChars').textContent = String(htmlToPlainText(html).replace(/\s/g, '').length);
     const readMinutes = Math.max(1, Math.round(stats.words / 200));
     getRequiredElement('statusReadTime').textContent = `${readMinutes} min`;
     getRequiredElement('readabilityGradeLabel').textContent = `Grade ${readability.fleschKincaidGrade}`;
@@ -1387,6 +1479,7 @@ function bootstrap(): void {
 
   function autosave(): void {
     window.clearTimeout(saveTimer);
+    pendingSave = true;
     getRequiredElement('saveState').textContent = 'Saving...';
       getRequiredElement('statusSaved').textContent = 'Saving...';
     saveTimer = window.setTimeout(() => {
@@ -1395,10 +1488,17 @@ function bootstrap(): void {
       if (currentLocalDocumentId) {
         saveLocalDocument(currentLocalDocumentId, file);
       }
+      pendingSave = false;
       getRequiredElement('saveState').textContent = 'Saved locally';
       getRequiredElement('statusSaved').textContent = 'Saved locally';
     }, 600);
   }
+  window.addEventListener('beforeunload', (event) => {
+    if (pendingSave) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  });
 
   function scheduleStatsUpdate(): void {
     window.clearTimeout(analysisTimer);
@@ -1706,6 +1806,63 @@ function bootstrap(): void {
     } else if (action === 'toggle-focus-mode') {
       root.classList.toggle('focus-mode');
       writer.view.focus();
+    } else if (action === 'line-spacing-1' || action === 'line-spacing-15' || action === 'line-spacing-2') {
+      const value = action === 'line-spacing-2' ? '2' : action === 'line-spacing-15' ? '1.5' : '1.25';
+      (writer.view.dom as HTMLElement).style.lineHeight = value;
+      closeMenus();
+    } else if (action === 'toggle-spellcheck') {
+      const dom = writer.view.dom as HTMLElement;
+      const on = dom.getAttribute('spellcheck') !== 'false';
+      dom.setAttribute('spellcheck', on ? 'false' : 'true');
+      getRequiredElement('statusSaved').textContent = on ? 'Spellcheck off' : 'Spellcheck on';
+      closeMenus();
+    } else if (action === 'toggle-dyslexia-font') {
+      root.classList.toggle('dyslexia-font');
+      closeMenus();
+    } else if (action === 'toggle-high-contrast') {
+      root.classList.toggle('high-contrast');
+      closeMenus();
+    } else if (action === 'toggle-reduced-motion') {
+      root.classList.toggle('reduced-motion');
+      closeMenus();
+    } else if (action === 'insert-writing-idea') {
+      const idea = WRITING_IDEAS[Math.floor(Math.random() * WRITING_IDEAS.length)];
+      writer.insertText(`💡 ${idea}\n`);
+      refresh();
+      closeMenus();
+    } else if (action === 'toggle-dictation') {
+      if (dictation) {
+        dictation.stop();
+        dictation = null;
+        getRequiredElement('statusSaved').textContent = 'Dictation stopped';
+      } else {
+        dictation = startDictation(
+          (text) => {
+            writer.insertText(text);
+            refresh();
+          },
+          () => {
+            dictation = null;
+          },
+        );
+        getRequiredElement('statusSaved').textContent = dictation ? 'Listening… speak now' : 'Dictation is not available in this browser';
+      }
+      closeMenus();
+    } else if (action === 'export-pdf') {
+      window.print();
+      closeMenus();
+    } else if (action === 'delete-all-data') {
+      if (window.confirm('Delete ALL WriteSplat documents and settings saved in this browser? This cannot be undone.')) {
+        try {
+          Object.keys(localStorage)
+            .filter((key) => key.startsWith('writesplat'))
+            .forEach((key) => localStorage.removeItem(key));
+        } catch {
+          // Ignore storage errors.
+        }
+        window.location.reload();
+      }
+      closeMenus();
     } else if (action === 'import-file') {
       importFileInput.click();
     } else if (action === 'choose-image-file') {

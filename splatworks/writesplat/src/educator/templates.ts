@@ -205,6 +205,82 @@ export const documentTemplates: DocumentTemplate[] = [
       <p>Praise it with your best images and feelings.</p>
     `,
   },
+  // ── Project starters (newsletters, cards, certificates, etc.) ──────
+  {
+    id: 'newsletter',
+    title: 'Class Newsletter',
+    description: 'Masthead, headline stories, and announcements.',
+    category: 'other',
+    html: `
+      <h1>Room ___ News</h1>
+      <p><em>Volume 1 · This Week</em></p>
+      <hr>
+      <h2>Top Story</h2>
+      <p>Write the biggest news of the week here.</p>
+      <h2>What We're Learning</h2>
+      <ul><li>Reading:</li><li>Math:</li><li>Science:</li></ul>
+      <h2>Announcements</h2>
+      <p>Reminders and important dates.</p>
+    `,
+  },
+  {
+    id: 'flyer',
+    title: 'Event Flyer',
+    description: 'A bold flyer to announce an event.',
+    category: 'other',
+    html: `
+      <h1 style="text-align:center">Big Event!</h1>
+      <p style="text-align:center"><strong>What:</strong> ______</p>
+      <p style="text-align:center"><strong>When:</strong> ______</p>
+      <p style="text-align:center"><strong>Where:</strong> ______</p>
+      <p style="text-align:center">Add a picture and the details everyone needs to know.</p>
+    `,
+  },
+  {
+    id: 'certificate',
+    title: 'Certificate',
+    description: 'An award certificate to fill in and print.',
+    category: 'other',
+    html: `
+      <h1 style="text-align:center">Certificate of Achievement</h1>
+      <p style="text-align:center">This certificate is proudly presented to</p>
+      <h2 style="text-align:center">______________________</h2>
+      <p style="text-align:center">for</p>
+      <p style="text-align:center"><em>outstanding ______________________</em></p>
+      <p style="text-align:center">Date: __________ · Signed: __________</p>
+    `,
+  },
+  {
+    id: 'greeting-card',
+    title: 'Greeting Card',
+    description: 'A folded-style card front and inside message.',
+    category: 'other',
+    html: `
+      <h1 style="text-align:center">Happy ______!</h1>
+      <p style="text-align:center">(front of the card — add a picture)</p>
+      <hr>
+      <p>Dear ______,</p>
+      <p>Write your warm message here.</p>
+      <p>From, ______</p>
+    `,
+  },
+  {
+    id: 'report',
+    title: 'Simple Report',
+    description: 'Title, introduction, sections, and a conclusion.',
+    category: 'academic',
+    html: `
+      <h1>Report Title</h1>
+      <h2>Introduction</h2>
+      <p>Tell the reader what this report is about.</p>
+      <h2>Main Idea 1</h2>
+      <p>Facts and details.</p>
+      <h2>Main Idea 2</h2>
+      <p>Facts and details.</p>
+      <h2>Conclusion</h2>
+      <p>Sum up what you learned.</p>
+    `,
+  },
 ];
 
 const legacyTemplatesRaw: Array<Omit<DocumentTemplate, 'category'>> = [

@@ -1410,3 +1410,16 @@ body.sidebar-collapsed .sidebar {
 .focus-mode .app-header { opacity: .4; transition: opacity .2s; }
 .focus-mode .app-header:hover { opacity: 1; }
 .focus-mode .write-app { max-width: 860px; margin: 0 auto; }
+
+/* ── Accessibility toggles ── */
+.dyslexia-font #editor .ProseMirror, .dyslexia-font #markdownSource {
+  font-family: "Comic Sans MS", "Trebuchet MS", Verdana, sans-serif !important;
+  letter-spacing: .03em;
+  word-spacing: .12em;
+  line-height: 1.7;
+}
+.high-contrast #editor .ProseMirror { background: #fff; color: #000; }
+.high-contrast #editor .ProseMirror a { color: #0000ee; }
+.high-contrast .app-header { background: #000; }
+.high-contrast .icon-button, .high-contrast .menu-bar { color: #000; }
+.reduced-motion * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
