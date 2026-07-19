@@ -949,7 +949,12 @@ function pickEndSaying(pool) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 function emitQuip(kind) {
-  const pool = QUIPS[kind] || QUIPS.egg;
+  // Pull the translated quip pool (newline-joined in the dictionary); fall
+  // back to the English QUIPS array when a locale omits it.
+  const translated = WidgetI18n.t('quip.' + kind);
+  const pool = (translated && translated.indexOf('\n') !== -1)
+    ? translated.split('\n').filter(Boolean)
+    : (QUIPS[kind] || QUIPS.egg);
   const text = pool[Math.floor(Math.random() * pool.length)];
   state.quipText = text;
   state.quipUntil = performance.now() + 1800;
@@ -2350,67 +2355,45 @@ const PREDATORS_INFO = [
 function buildLegend() {
   const body = $("legendBody");
   if (!body) return;
+  const t = (k, v) => WidgetI18n.t(k, v);
   const sections = [];
 
   // ----- Eggs -----
   const eggRows = Object.entries(EGG_KINDS).map(([kind, spec]) => {
-    const name = ({
-      chicken: "Chicken egg", speckled: "Speckled chicken egg",
-      tortoise: "Tortoise egg", lizard: "Lizard egg", snake: "Snake egg",
-      golden: "Golden egg",
-    })[kind] || kind;
+    const name = t('legend.egg.' + kind);
     const effect = kind === "golden"
-      ? `${spec.score} pts — vanishes if you don't grab it fast`
-      : `${spec.score} pts — hatches into ${spec.hatchTo || "nothing"}`;
+      ? t('legend.effect.golden', { score: spec.score })
+      : t('legend.effect.hatches', { score: spec.score, into: spec.hatchTo ? t('legend.hatch.' + spec.hatchTo) : t('legend.nothing') });
     return itemRow(spec.sprite, name, effect);
   }).join("");
-  sections.push(section("Eggs · eat these", eggRows));
+  sections.push(section(t('legend.sec.eggs'), eggRows));
 
   // ----- Hatchlings -----
   const hatchRows = Object.entries(HATCHLING_KINDS).map(([kind, spec]) => {
-    const name = ({
-      "chick": "Chick", "h-tortoise": "Tortoise hatchling",
-      "h-lizard": "Lizard hatchling", "h-snake": "Snake hatchling",
-    })[kind] || kind;
-    const speedLabel = spec.speed >= 1.2 ? "fast" : spec.speed >= 0.9 ? "medium" : "slow";
-    return itemRow(spec.sprite, name, `${spec.score} pts — wanders (${speedLabel})`);
+    const name = t('legend.hatch.' + kind);
+    const speedKey = spec.speed >= 1.2 ? "fast" : spec.speed >= 0.9 ? "medium" : "slow";
+    return itemRow(spec.sprite, name, t('legend.effect.wanders', { score: spec.score, speed: t('legend.speed.' + speedKey) }));
   }).join("");
-  sections.push(section("Hatchlings · they move, but worth more", hatchRows));
+  sections.push(section(t('legend.sec.hatchlings'), hatchRows));
 
   // ----- Power-ups -----
   const powerRows = Object.entries(POWER_KINDS).map(([kind, spec]) => {
-    const friendly = ({
-      sunstone: "Sunstone", cactus: "Cactus fruit", "shed-skin": "Shed skin",
-      dust: "Dust cloud", key: "Burrow key", beetle: "Desert beetle",
-      "warm-rock": "Warm rock", moon: "Moon glow",
-    })[kind] || kind;
-    const effectText = ({
-      sunstone: "5s speed boost",
-      cactus: "Adds 5 seconds to the timer",
-      "shed-skin": "4s predator phasing — they pass through",
-      dust: "5s predator slow (×3 slower)",
-      key: "Break one wall by pushing into it",
-      beetle: "+100 bonus + chime",
-      "warm-rock": "8s hatch-timer freeze",
-      moon: "3s screen reveal flash",
-    })[kind] || spec.label;
-    return itemRow(spec.sprite, friendly, effectText);
+    return itemRow(spec.sprite, t('legend.power.' + kind), t('legend.powereffect.' + kind));
   }).join("");
-  sections.push(section("Power-ups · pick up to use", powerRows));
+  sections.push(section(t('legend.sec.powerups'), powerRows));
 
   // ----- Predators -----
-  const predRows = PREDATORS_INFO.map(p => itemRow(p.kind, p.name, p.note)).join("");
-  sections.push(section("Predators · avoid", predRows));
+  const predRows = PREDATORS_INFO.map(p => {
+    const key = p.kind.replace('predator-', '');
+    return itemRow(p.kind, t('legend.pred.' + key), t('legend.prednote.' + key));
+  }).join("");
+  sections.push(section(t('legend.sec.predators'), predRows));
 
   // ----- Decoration -----
   sections.push(`
     <div class="legend-section">
-      <h3>Decoration <span class="accent">— not edible</span></h3>
-      <div class="legend-decoration">
-        <b>Bones, skulls, crystals, cactus, sprouts, spiders, centipedes,</b> and the dirt-clump walls
-        themselves are scenery painted into each maze. They don't add points, don't hurt you, and the
-        gila monster passes right through the artwork (collision is set by the maze walls only).
-      </div>
+      <h3>${t('legend.sec.decoration')} <span class="accent">${t('legend.decoration.notEdible')}</span></h3>
+      <div class="legend-decoration">${t('legend.decoration.body')}</div>
     </div>
   `);
 
@@ -2471,6 +2454,7 @@ initStartLevelSelect();
 // level-select options, the toolbar/HUD dynamic labels, and the live banner.
 window.addEventListener("widget-i18n:changed", () => {
   initStartLevelSelect();
+  buildLegend();
   if ($("soundBtn")) $("soundBtn").textContent = state.soundOn ? WidgetI18n.t("sound.on") : WidgetI18n.t("sound.off");
   if ($("pauseBtn")) $("pauseBtn").textContent = state.paused ? WidgetI18n.t("toolbar.resume") : WidgetI18n.t("toolbar.pause");
   if (state.running && LEVELS[state.levelIdx]) setBannerForLevel(LEVELS[state.levelIdx]);
