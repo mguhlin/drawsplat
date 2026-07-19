@@ -28,6 +28,7 @@ import {
   sortRecordsByKeys,
 } from './model/query';
 import { addRelationship, createRelationship, relatedRecords, relationshipLabel } from './model/relationships';
+import { tableValidationIssues, validateCell } from './model/validation';
 import type {
   FieldType,
   FindOperator,
@@ -217,6 +218,7 @@ let findDraft: FindQuery = { match: 'all', rules: [] };
 let sortDraft: SortKey[] = [];
 let fieldDialogType: FieldType | '' = '';
 let selectedRecordIds = new Set<string>();
+let cellRange: { anchor: { r: string; f: string }; focus: { r: string; f: string } } | null = null;
 let pendingCsvMap: Array<{ header: string; action: 'new' | 'existing' | 'skip'; type: FieldType; fieldId: string }> = [];
 let highlightedRecordIds = new Set<string>();
 let dialog: DialogName = 'none';
@@ -765,8 +767,11 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
   const field = table.fields.find((item) => item.id === fieldId);
   const value = displayValue(table, record, fieldId);
   const common = `aria-label="${html(field?.name ?? 'Field')}, record ${rowIndex + 1}" data-record-id="${record.id}" data-field-id="${fieldId}"`;
-  const reqEmpty = Boolean(field?.required) && (value === '' || value === null || value === undefined);
-  const cellClass = reqEmpty ? 'cell-input cell-required-empty' : 'cell-input';
+  const invalid = field && !['checkbox', 'image', 'calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type)
+    ? validateCell(field, value, table, record.id)
+    : '';
+  const cellClass = invalid ? 'cell-input cell-invalid' : 'cell-input';
+  const invalidAttr = invalid ? ` title="${html(invalid)}"` : '';
 
   if (field?.type === 'checkbox') {
     return `<input class="cell-checkbox" type="checkbox" ${common} ${value === true || value === 'true' ? 'checked' : ''}>`;
@@ -774,7 +779,7 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
   if (field?.type === 'link') {
     const raw = String(value ?? '');
     const href = /^https?:\/\//i.test(raw) ? raw : raw ? `https://${raw}` : '';
-    return `<div class="link-cell"><input class="${cellClass}" type="url" ${common} value="${html(raw)}" placeholder="https://…">${
+    return `<div class="link-cell"><input class="${cellClass}" type="url" ${common}${invalidAttr} value="${html(raw)}" placeholder="https://…">${
       href ? `<a class="link-open" href="${html(href)}" target="_blank" rel="noopener" title="Open link" aria-label="Open link">↗</a>` : ''
     }</div>`;
   }
@@ -792,11 +797,11 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     `;
   }
   if (field?.type === 'rating') {
-    return `<input class="${cellClass}" type="number" min="0" max="5" step="1" ${common} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="number" min="0" max="5" step="1" ${common}${invalidAttr} value="${html(value)}">`;
   }
   if (field?.type === 'choice') {
     const options = field.options?.length ? field.options : ['Yes', 'No'];
-    return `<select class="${cellClass}" ${common}><option value=""${value === '' ? ' selected' : ''}>—</option>${options
+    return `<select class="${cellClass}" ${common}${invalidAttr}><option value=""${value === '' ? ' selected' : ''}>—</option>${options
       .map((option) => `<option value="${html(option)}" ${String(value) === option ? 'selected' : ''}>${html(option)}</option>`)
       .join('')}</select>`;
   }
@@ -804,20 +809,20 @@ function renderInput(table: ListSplatTable, record: ListSplatRecord, fieldId: st
     return `<output class="calc-output">${html(value)}</output>`;
   }
   if (field?.type === 'longText') {
-    return `<textarea class="${cellClass}" ${common}>${html(value)}</textarea>`;
+    return `<textarea class="${cellClass}" ${common}${invalidAttr}>${html(value)}</textarea>`;
   }
   if (field?.type === 'date') {
-    return `<input class="${cellClass}" type="date" ${common} value="${html(value)}">`;
+    return `<input class="${cellClass}" type="date" ${common}${invalidAttr} value="${html(value)}">`;
   }
   if (field?.type === 'number' || field?.type === 'currency' || field?.type === 'percent') {
     const prefix = field.type === 'currency' ? '<span class="cell-affix">$</span>' : '';
     const suffix = field.type === 'percent' ? '<span class="cell-affix">%</span>' : '';
-    return `<span class="num-cell">${prefix}<input class="${cellClass}" type="number" step="any" ${common} value="${html(value)}">${suffix}</span>`;
+    return `<span class="num-cell">${prefix}<input class="${cellClass}" type="number" step="any" ${common}${invalidAttr} value="${html(value)}">${suffix}</span>`;
   }
   if (field?.type === 'calculation') {
     return `<output class="calc-output">${html(value)}</output>`;
   }
-  return `<input class="${cellClass}" ${common} value="${html(value)}">`;
+  return `<input class="${cellClass}" ${common}${invalidAttr} value="${html(value)}">`;
 }
 
 function renderTableTabs(table: ListSplatTable): string {
@@ -1197,6 +1202,70 @@ function renderTeacherPanel(table: ListSplatTable): string {
   `;
 }
 
+function renderRelationshipDiagram(): string {
+  const tables = project.schema.tables;
+  const relationships = project.schema.relationships;
+  const tableName = (id: string) => tables.find((table) => table.id === id)?.name ?? 'table';
+  const fieldName = (tableId: string, fieldId: string) =>
+    tables.find((table) => table.id === tableId)?.fields.find((field) => field.id === fieldId)?.name ?? 'field';
+  const relatedIds = new Set(relationships.flatMap((relationship) => [relationship.fromTableId, relationship.toTableId]));
+  const boxes = tables
+    .map(
+      (table) => `
+        <div class="rel-box${table.id === activeTableId ? ' active' : ''}${relatedIds.has(table.id) ? ' linked' : ''}">
+          <strong>${html(table.name)}</strong>
+          <span>${table.records.length} record${table.records.length === 1 ? '' : 's'} · ${table.fields.length} field${table.fields.length === 1 ? '' : 's'}</span>
+        </div>
+      `,
+    )
+    .join('');
+  const links = relationships.length
+    ? relationships
+        .map(
+          (relationship) => `
+            <div class="rel-link">
+              <span class="rel-badge">${html(tableName(relationship.fromTableId))}</span>
+              <span class="rel-arrow">${html(fieldName(relationship.fromTableId, relationship.fromFieldId))} <b>1 → &#8734;</b> ${html(fieldName(relationship.toTableId, relationship.toFieldId))}</span>
+              <span class="rel-badge">${html(tableName(relationship.toTableId))}</span>
+            </div>
+          `,
+        )
+        .join('')
+    : '<p class="rel-empty">No links yet. Create one below to connect two tables.</p>';
+  return `<div class="rel-diagram"><div class="rel-boxes">${boxes}</div><div class="rel-links">${links}</div></div>`;
+}
+
+function renderFieldConstraints(field: ListSplatField, type: FieldType): string {
+  const numeric = ['number', 'currency', 'percent', 'rating'].includes(type);
+  const textish = ['text', 'longText', 'link'].includes(type);
+  if (['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
+    return '';
+  }
+  return `
+    <fieldset class="constraints">
+      <legend>Rules and default</legend>
+      <label class="check-row"><input type="checkbox" data-field-unique ${field.unique ? 'checked' : ''}> No duplicate values (unique)</label>
+      ${
+        numeric
+          ? `<div class="grid-two">
+              <label>Minimum <input data-field-min type="number" step="any" value="${field.min != null ? html(String(field.min)) : ''}"></label>
+              <label>Maximum <input data-field-max type="number" step="any" value="${field.max != null ? html(String(field.max)) : ''}"></label>
+            </div>`
+          : ''
+      }
+      ${
+        textish
+          ? `<label>Format <select data-field-pattern>${(['none', 'email', 'url', 'phone', 'custom'] as const)
+              .map((option) => `<option value="${option}" ${(field.pattern ?? 'none') === option ? 'selected' : ''}>${option}</option>`)
+              .join('')}</select></label>
+            <label>Custom pattern (advanced) <input data-field-custom-pattern value="${html(field.customPattern ?? '')}" placeholder="regular expression"></label>`
+          : ''
+      }
+      <label>Default value for new records <input data-field-default value="${html(field.defaultValue ?? '')}" placeholder="optional"></label>
+    </fieldset>
+  `;
+}
+
 function renderTypeChangePreview(table: ListSplatTable, field: ListSplatField, nextType: FieldType): string {
   if (nextType === field.type || ['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(nextType)) {
     return '';
@@ -1420,6 +1489,7 @@ function renderDialog(table: ListSplatTable): string {
           <label>Choice options <input data-field-options value="${html(field.options?.join(', ') ?? '')}" placeholder="Yes, No, Maybe"></label>
           <label class="check-row"><input type="checkbox" data-field-required ${field.required ? 'checked' : ''}> Required field</label>
           <label class="check-row"><input type="checkbox" data-field-hidden ${field.hidden ? 'checked' : ''}> Hide field</label>
+          ${renderFieldConstraints(field, previewType)}
           <label>Calculation formula <input data-field-formula value="${html(field.formula ?? '')}" placeholder='JOIN(First Name, " ", Last Name)'></label>
           <p>Try <code>FIELD(Animal)</code>, <code>JOIN(Animal, " lives in ", Habitat)</code>, <code>UPPER(Animal)</code>, <code>ADD(Score, Bonus)</code>, <code>AVERAGE(Score)</code>, or <code>LOOKUP("Book reviews", Rating)</code>.</p>
           <div class="modal-actions">
@@ -1547,9 +1617,10 @@ function renderDialog(table: ListSplatTable): string {
       .join('');
     return `
       <div class="modal-backdrop">
-        <section class="modal" role="dialog" aria-modal="true" aria-label="Relationships">
+        <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Relationships">
           <h2>Relationships</h2>
           <p>Create a simple one-to-many relationship by matching values in two fields, such as Books:Title to Reviews:Book.</p>
+          ${renderRelationshipDiagram()}
           <label>Name <input data-relationship-name placeholder="Books to reviews"></label>
           <label>Parent table <select data-relationship-from-table>${project.schema.tables
             .map((item) => `<option value="${item.id}" ${item.id === fromTable.id ? 'selected' : ''}>${html(item.name)}</option>`)
@@ -1630,6 +1701,7 @@ function renderDialog(table: ListSplatTable): string {
     const errors = formulaErrorCount(table);
     const totalMissing = rows.reduce((total, row) => total + row.missing, 0);
     const totalDuplicates = rows.reduce((total, row) => total + row.duplicates, 0);
+    const invalidCount = tableValidationIssues(table).length;
     return `
       <div class="modal-backdrop">
         <section class="modal wide-modal" role="dialog" aria-modal="true" aria-label="Data quality check">
@@ -1639,6 +1711,7 @@ function renderDialog(table: ListSplatTable): string {
             <div><strong>${totalMissing}</strong><span>missing values</span></div>
             <div><strong>${totalDuplicates}</strong><span>duplicate values</span></div>
             <div><strong>${errors}</strong><span>formula errors</span></div>
+            <div><button type="button" data-action="highlight-invalid" ${invalidCount ? '' : 'disabled'}><strong>${invalidCount}</strong><span>rule problems</span></button></div>
           </div>
           <div class="quality-table" role="table" aria-label="Field quality">
             <div class="quality-row quality-head" role="row">
@@ -1825,6 +1898,7 @@ function render(): void {
     pendingFocusCell = null;
     focusGridCell(target.recordId, target.fieldId);
   }
+  paintCellRange();
 }
 
 function cellValueFromInput(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): ListSplatCellValue {
@@ -1848,21 +1922,65 @@ function updateActiveCell(input: HTMLInputElement | HTMLTextAreaElement | HTMLSe
   saveStatus = 'Saved locally';
 }
 
+// Shrink and re-encode large images before storing so they do not bloat the
+// browser autosave. Small images are kept as-is.
+function compressImageFile(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const dataUrl = String(reader.result ?? '');
+      if (file.size <= 350_000) {
+        resolve(dataUrl);
+        return;
+      }
+      const image = new Image();
+      image.onerror = () => resolve(dataUrl);
+      image.onload = () => {
+        const maxDim = 1280;
+        const longest = Math.max(image.width, image.height);
+        const scale = longest > maxDim ? maxDim / longest : 1;
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext('2d');
+        if (!context) {
+          resolve(dataUrl);
+          return;
+        }
+        context.drawImage(image, 0, 0, width, height);
+        const compressed = canvas.toDataURL('image/jpeg', 0.82);
+        resolve(compressed.length < dataUrl.length ? compressed : dataUrl);
+      };
+      image.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function storeImageFile(recordId: string, fieldId: string, file: File, undoLabel: string): void {
   if (!file.type.startsWith('image/')) {
     lastMessage = 'That clipboard item is not an image.';
     render();
     return;
   }
-  const reader = new FileReader();
-  reader.addEventListener('load', () => {
-    pushUndo(undoLabel);
-    project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, String(reader.result ?? '')));
-    saveAutosave(project);
-    lastMessage = 'Image saved in this field.';
-    render();
-  });
-  reader.readAsDataURL(file);
+  compressImageFile(file)
+    .then((src) => {
+      pushUndo(undoLabel);
+      project = replaceTable(project, updateCell(activeTable(), recordId, fieldId, src));
+      saveAutosave(project);
+      const kb = Math.round(src.length / 1024);
+      lastMessage = kb > 900
+        ? `Image saved (about ${kb} KB). Very large pictures can slow autosave — a smaller image is fine for most projects.`
+        : 'Image saved in this field.';
+      render();
+    })
+    .catch(() => {
+      lastMessage = 'Could not read that image.';
+      render();
+    });
 }
 
 function runFieldSettingsSave(): void {
@@ -1881,8 +1999,30 @@ function runFieldSettingsSave(): void {
     .split(',')
     .map((option) => option.trim())
     .filter(Boolean);
+  const unique = appRoot.querySelector<HTMLInputElement>('[data-field-unique]')?.checked ?? false;
+  const minRaw = appRoot.querySelector<HTMLInputElement>('[data-field-min]')?.value ?? '';
+  const maxRaw = appRoot.querySelector<HTMLInputElement>('[data-field-max]')?.value ?? '';
+  const min = minRaw.trim() === '' ? undefined : Number(minRaw);
+  const max = maxRaw.trim() === '' ? undefined : Number(maxRaw);
+  const pattern = (appRoot.querySelector<HTMLSelectElement>('[data-field-pattern]')?.value as ListSplatField['pattern']) ?? 'none';
+  const customPattern = appRoot.querySelector<HTMLInputElement>('[data-field-custom-pattern]')?.value ?? '';
+  const defaultValue = appRoot.querySelector<HTMLInputElement>('[data-field-default]')?.value ?? '';
   const typeChanged = type !== field.type;
-  let nextTable = updateField(table, field.id, { name, type, description, required, hidden, formula, options });
+  let nextTable = updateField(table, field.id, {
+    name,
+    type,
+    description,
+    required,
+    hidden,
+    formula,
+    options,
+    unique,
+    min,
+    max,
+    pattern,
+    customPattern,
+    defaultValue,
+  });
   if (typeChanged && !['calculation', 'autoNumber', 'createdAt', 'updatedAt', 'image'].includes(type)) {
     nextTable = convertFieldValues(nextTable, field.id, type, options);
   }
@@ -2035,6 +2175,133 @@ function moveGridCell(recordId: string, fieldId: string, rowDelta: number, colDe
   if (targetRow < 0) return;
   const targetRecordId = rows[targetRow].dataset.recordRow ?? recordId;
   focusGridCell(targetRecordId, fieldIds[targetCol] ?? fieldId);
+}
+
+// ── Cell-range selection (Excel-style) ───────────────────────────────────────
+function rangeBounds(): { rows: string[]; cols: string[]; r1: number; r2: number; c1: number; c2: number } | null {
+  if (!cellRange) {
+    return null;
+  }
+  const rows = visibleRecords(activeTable()).map((record) => record.id);
+  const cols = orderedFields(activeTable()).map((field) => field.id);
+  const ar = rows.indexOf(cellRange.anchor.r);
+  const fr = rows.indexOf(cellRange.focus.r);
+  const ac = cols.indexOf(cellRange.anchor.f);
+  const fc = cols.indexOf(cellRange.focus.f);
+  if (ar < 0 || fr < 0 || ac < 0 || fc < 0) {
+    return null;
+  }
+  return { rows, cols, r1: Math.min(ar, fr), r2: Math.max(ar, fr), c1: Math.min(ac, fc), c2: Math.max(ac, fc) };
+}
+
+function paintCellRange(): void {
+  appRoot.querySelectorAll('.data-grid td.cell-range').forEach((cell) => cell.classList.remove('cell-range'));
+  const bounds = rangeBounds();
+  if (!bounds) {
+    return;
+  }
+  const cellCount = (bounds.r2 - bounds.r1 + 1) * (bounds.c2 - bounds.c1 + 1);
+  if (cellCount <= 1) {
+    return;
+  }
+  for (let r = bounds.r1; r <= bounds.r2; r += 1) {
+    for (let c = bounds.c1; c <= bounds.c2; c += 1) {
+      const holder = appRoot.querySelector<HTMLElement>(
+        `.data-grid [data-record-id="${cssEscape(bounds.rows[r])}"][data-field-id="${cssEscape(bounds.cols[c])}"]`,
+      );
+      holder?.closest('td')?.classList.add('cell-range');
+    }
+  }
+}
+
+function extendCellRange(key: string): void {
+  if (!cellRange) {
+    return;
+  }
+  const rows = visibleRecords(activeTable()).map((record) => record.id);
+  const cols = orderedFields(activeTable()).map((field) => field.id);
+  let r = rows.indexOf(cellRange.focus.r);
+  let c = cols.indexOf(cellRange.focus.f);
+  if (r < 0 || c < 0) {
+    return;
+  }
+  if (key === 'ArrowUp') r = Math.max(0, r - 1);
+  else if (key === 'ArrowDown') r = Math.min(rows.length - 1, r + 1);
+  else if (key === 'ArrowLeft') c = Math.max(0, c - 1);
+  else if (key === 'ArrowRight') c = Math.min(cols.length - 1, c + 1);
+  cellRange = { anchor: cellRange.anchor, focus: { r: rows[r], f: cols[c] } };
+  paintCellRange();
+}
+
+function copyCellRange(): boolean {
+  const bounds = rangeBounds();
+  if (!bounds) {
+    return false;
+  }
+  if ((bounds.r2 - bounds.r1) === 0 && (bounds.c2 - bounds.c1) === 0) {
+    return false;
+  }
+  const table = activeTable();
+  const byId = new Map(table.records.map((record) => [record.id, record]));
+  const lines: string[] = [];
+  for (let r = bounds.r1; r <= bounds.r2; r += 1) {
+    const record = byId.get(bounds.rows[r]);
+    if (!record) continue;
+    const cells: string[] = [];
+    for (let c = bounds.c1; c <= bounds.c2; c += 1) {
+      cells.push(String(displayValue(table, record, bounds.cols[c]) ?? '').replace(/\t/g, ' ').replace(/\n/g, ' '));
+    }
+    lines.push(cells.join('\t'));
+  }
+  const tsv = lines.join('\n');
+  navigator.clipboard?.writeText(tsv).catch(() => undefined);
+  const count = (bounds.r2 - bounds.r1 + 1) * (bounds.c2 - bounds.c1 + 1);
+  const messageSpan = appRoot.querySelector('.status-bar span:nth-last-child(2)');
+  if (messageSpan) messageSpan.textContent = `Copied ${count} cells.`;
+  return true;
+}
+
+function pasteIntoGrid(text: string, startRecordId: string, startFieldId: string): void {
+  const table = activeTable();
+  const visible = visibleRecords(table);
+  const cols = orderedFields(table).map((field) => field.id);
+  const startR = visible.findIndex((record) => record.id === startRecordId);
+  const startC = cols.indexOf(startFieldId);
+  if (startR < 0 || startC < 0) {
+    return;
+  }
+  const matrix = text.replace(/\r/g, '').replace(/\n$/, '').split('\n').map((line) => line.split('\t'));
+  pushUndo('paste');
+  const byId = new Map(table.records.map((record) => [record.id, record]));
+  const order = table.records.map((record) => record.id);
+  let added = 0;
+  matrix.forEach((cells, rowOffset) => {
+    let targetId: string;
+    if (startR + rowOffset < visible.length) {
+      targetId = visible[startR + rowOffset].id;
+    } else {
+      const created = createRecord(table.fields);
+      byId.set(created.id, created);
+      order.push(created.id);
+      targetId = created.id;
+      added += 1;
+    }
+    const target = byId.get(targetId);
+    if (!target) return;
+    const values = { ...target.values };
+    cells.forEach((cell, colOffset) => {
+      const fieldId = cols[startC + colOffset];
+      const field = fieldId ? table.fields.find((item) => item.id === fieldId) : undefined;
+      if (!field || ['calculation', 'autoNumber', 'createdAt', 'updatedAt'].includes(field.type)) {
+        return;
+      }
+      values[field.id] = convertValueForType(cell, field.type, field.options).value;
+    });
+    byId.set(targetId, { ...target, updatedAt: new Date().toISOString(), values });
+  });
+  cellRange = null;
+  lastMessage = `Pasted ${matrix.length} row${matrix.length === 1 ? '' : 's'}${added ? ` (${added} new)` : ''}.`;
+  setActiveTable({ ...table, records: order.map((id) => byId.get(id)!).filter(Boolean) });
 }
 
 // ── Advanced find ────────────────────────────────────────────────────────────
@@ -2258,6 +2525,7 @@ appRoot.addEventListener('click', (event) => {
     clearFind();
     sortKeys = [];
     selectedRecordIds = new Set();
+    cellRange = null;
     ensureActiveRecord(activeTable());
     render();
     return;
@@ -2431,6 +2699,12 @@ appRoot.addEventListener('click', (event) => {
     applyBulkFill();
   } else if (action === 'bulk-clear') {
     selectedRecordIds = new Set();
+    render();
+  } else if (action === 'highlight-invalid') {
+    const issues = tableValidationIssues(activeTable());
+    highlightedRecordIds = new Set(issues.map((issue) => issue.record.id));
+    dialog = 'none';
+    lastMessage = `Highlighted ${highlightedRecordIds.size} record${highlightedRecordIds.size === 1 ? '' : 's'} with rule problems.`;
     render();
   } else if (action === 'duplicates') {
     const fieldId = searchFieldId === 'all' ? activeTable().fields[0]?.id : searchFieldId;
@@ -2607,17 +2881,28 @@ appRoot.addEventListener('change', (event) => {
 appRoot.addEventListener('paste', (event) => {
   const target = event.target as HTMLElement;
   const imageCell = target.closest<HTMLElement>('.image-cell');
-  if (!imageCell) {
+  if (imageCell) {
+    const recordId = imageCell.dataset.recordId;
+    const fieldId = imageCell.dataset.fieldId;
+    const item = Array.from(event.clipboardData?.items ?? []).find((clipboardItem) => clipboardItem.type.startsWith('image/'));
+    const file = item?.getAsFile();
+    if (recordId && fieldId && file) {
+      event.preventDefault();
+      storeImageFile(recordId, fieldId, file, 'image paste');
+    }
     return;
   }
-  const recordId = imageCell.dataset.recordId;
-  const fieldId = imageCell.dataset.fieldId;
-  const item = Array.from(event.clipboardData?.items ?? []).find((clipboardItem) => clipboardItem.type.startsWith('image/'));
-  const file = item?.getAsFile();
-  if (recordId && fieldId && file) {
-    event.preventDefault();
-    storeImageFile(recordId, fieldId, file, 'image paste');
+  // Multi-cell paste from a spreadsheet or another range (tab/newline separated).
+  const holder = target.closest<HTMLElement>('.cell-input');
+  if (!holder || !holder.closest('.data-grid') || !holder.dataset.recordId || !holder.dataset.fieldId) {
+    return;
   }
+  const text = event.clipboardData?.getData('text/plain') ?? '';
+  if (!/[\t\n]/.test(text.replace(/\n$/, ''))) {
+    return; // a single value: let the browser paste it into the cell normally
+  }
+  event.preventDefault();
+  pasteIntoGrid(text, holder.dataset.recordId, holder.dataset.fieldId);
 });
 
 appRoot.addEventListener('input', (event) => {
@@ -2647,6 +2932,21 @@ appRoot.addEventListener('focusout', (event) => {
   if (target.matches?.('.cell-input, .cell-checkbox')) {
     activeCellDirtyKey = '';
   }
+});
+
+appRoot.addEventListener('mousedown', (event) => {
+  const holder = (event.target as HTMLElement).closest<HTMLElement>('[data-record-id][data-field-id]');
+  if (!holder || !holder.closest('.data-grid') || !holder.dataset.recordId || !holder.dataset.fieldId) {
+    return;
+  }
+  const point = { r: holder.dataset.recordId, f: holder.dataset.fieldId };
+  if ((event as MouseEvent).shiftKey && cellRange) {
+    event.preventDefault();
+    cellRange = { anchor: cellRange.anchor, focus: point };
+  } else {
+    cellRange = { anchor: point, focus: point };
+  }
+  paintCellRange();
 });
 
 // Column resize: drag the handle on a header; persist width in the layout.
@@ -2739,6 +3039,20 @@ appRoot.addEventListener('keydown', (event) => {
   }
   const isTextarea = target instanceof HTMLTextAreaElement;
   const isSelect = target instanceof HTMLSelectElement;
+  // Shift + arrows extend the cell-range selection instead of moving.
+  if (event.shiftKey && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key) && !isTextarea && !isSelect) {
+    if (!cellRange) {
+      cellRange = { anchor: { r: recordId, f: fieldId }, focus: { r: recordId, f: fieldId } };
+    }
+    event.preventDefault();
+    extendCellRange(event.key);
+    return;
+  }
+  if (event.key === 'Escape' && cellRange) {
+    cellRange = null;
+    paintCellRange();
+    return;
+  }
   switch (event.key) {
     case 'Enter':
       if (!isTextarea) {
@@ -2773,6 +3087,13 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   const key = event.key.toLowerCase();
+  if (key === 'c') {
+    // Copy a multi-cell selection as TSV; single cells fall through to native copy.
+    if (copyCellRange()) {
+      event.preventDefault();
+    }
+    return;
+  }
   if (key === 'z' && !event.shiftKey) {
     event.preventDefault();
     undoLastChange();

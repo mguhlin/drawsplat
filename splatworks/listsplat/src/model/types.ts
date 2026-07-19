@@ -15,6 +15,8 @@ export type FieldType =
   | 'createdAt'
   | 'updatedAt';
 
+export type ValidationPattern = 'none' | 'email' | 'url' | 'phone' | 'custom';
+
 export interface ListSplatField {
   id: string;
   name: string;
@@ -24,6 +26,12 @@ export interface ListSplatField {
   hidden: boolean;
   options?: string[];
   formula?: string;
+  unique?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: ValidationPattern;
+  customPattern?: string;
+  defaultValue?: string;
 }
 
 export type ListSplatCellValue = string | number | boolean | null;

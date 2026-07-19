@@ -51,6 +51,9 @@ export function createRecord(fields: ListSplatField[], values: Record<string, Li
       if (field.type === 'autoNumber') {
         return [field.id, values[field.id] ?? index + 1];
       }
+      if (values[field.id] === undefined && field.defaultValue != null && field.defaultValue !== '') {
+        return [field.id, convertValueForType(field.defaultValue, field.type, field.options).value];
+      }
       return [field.id, values[field.id] ?? FIELD_DEFAULTS[field.type]];
     }),
   );
