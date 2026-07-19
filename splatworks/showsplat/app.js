@@ -27,6 +27,7 @@
     status: document.getElementById('statusText'),
     notes: document.getElementById('speakerNotes'),
     selectionInfo: document.getElementById('selectionInfo'),
+    arrangePanel: document.getElementById('arrangePanel'),
     fontFamily: document.getElementById('fontFamily'),
     fontSize: document.getElementById('fontSize'),
     textColor: document.getElementById('textColor'),
@@ -64,6 +65,10 @@
   let deck = loadDeck();
   let activeSlide = 0;
   let selectedId = null;
+  // All selected object ids on the current slide. `selectedId` is the primary
+  // (anchor) selection used for the inspector, resize/rotate, and text editing.
+  // Invariant: a real object id in `selectedId` is also in `selectedObjectIds`.
+  let selectedObjectIds = new Set();
   let viewMode = 'normal';
   let autosaveTimer = null;
   let history = [];
@@ -338,6 +343,32 @@
     return slide.elements.find(el => el.id === selectedId) || null;
   }
 
+  // All selected elements on the current slide, in slide (z-order) order.
+  function selectedObjects() {
+    return currentSlide().elements.filter(el => selectedObjectIds.has(el.id));
+  }
+
+  // Make `id` the only selected object (or clear when falsy/footer).
+  function selectOnly(id) {
+    selectedId = id || null;
+    selectedObjectIds = new Set(id && id !== FOOTER_ID ? [id] : []);
+  }
+
+  // Clear every selection.
+  function clearSelection() {
+    selectedId = null;
+    selectedObjectIds.clear();
+  }
+
+  // Drop ids that no longer exist on the current slide (e.g. after a slide
+  // switch or deletion) so multi-selection state can never leak across slides.
+  function pruneSelection() {
+    const ids = new Set(currentSlide().elements.map(el => el.id));
+    selectedObjectIds.forEach(id => { if (!ids.has(id)) selectedObjectIds.delete(id); });
+    if (selectedId && selectedId !== FOOTER_ID && !ids.has(selectedId)) selectedId = null;
+    if (!selectedId && selectedObjectIds.size) selectedId = [...selectedObjectIds][selectedObjectIds.size - 1];
+  }
+
   function loadDeck() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -586,7 +617,8 @@
 
   function renderCanvas() {
     const slide = currentSlide();
-    els.canvas.className = 'slide-canvas ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '');
+    pruneSelection();
+    els.canvas.className = 'slide-canvas ' + (slide.bg === 'section' ? 'section' : slide.bg === 'dark' ? 'dark' : '') + (selectedObjectIds.size > 1 ? ' multi-select' : '');
     els.canvas.style.background = slide.backgroundColor || '';
     els.canvas.style.color = slide.defaultTextColor || '';
     els.canvas.innerHTML = '';
@@ -606,6 +638,8 @@
       footer.innerHTML = '<span class="footer-text" contenteditable="true" spellcheck="true">' + escapeHtml(deck.footer || '') + '</span><span class="footer-count">' + (activeSlide + 1) + ' / ' + deck.slides.length + '</span>';
       footer.addEventListener('pointerdown', () => {
         selectedId = FOOTER_ID;
+        selectedObjectIds.clear();
+        els.canvas.classList.remove('multi-select');
         els.canvas.querySelectorAll('.slide-object.selected').forEach(node => node.classList.remove('selected'));
         footer.classList.add('selected');
         renderInspector();
@@ -628,7 +662,7 @@
 
   function renderObject(el) {
     const node = document.createElement('div');
-    node.className = 'slide-object ' + el.type + (el.id === selectedId ? ' selected' : '') + (isOnSlide(el) ? '' : ' off-slide');
+    node.className = 'slide-object ' + el.type + (selectedObjectIds.has(el.id) ? ' selected' : '') + (el.id === selectedId ? ' sel-primary' : '') + (isOnSlide(el) ? '' : ' off-slide');
     node.dataset.id = el.id;
     node.style.left = (el.x / SLIDE_W * 100) + '%';
     node.style.top = (el.y / SLIDE_H * 100) + '%';
@@ -643,7 +677,7 @@
     if (el.type === 'image') {
       node.addEventListener('dblclick', event => {
         event.preventDefault();
-        selectedId = el.id;
+        selectOnly(el.id);
         cropTargetId = el.id;
         el.fit = 'cover';
         el.cropX = el.cropX ?? 50;
@@ -804,9 +838,15 @@
     if (!obj) {
       els.selectionInfo.textContent = 'No object selected.';
       [els.altText, els.linkUrl, els.posX, els.posY, els.posW, els.posH].forEach(input => input.value = '');
+      if (els.arrangePanel) els.arrangePanel.hidden = true;
       return;
     }
-    els.selectionInfo.textContent = obj.type + ' object selected. Drag to move, use corner handles to resize, and use the top handle to rotate.';
+    if (els.arrangePanel) els.arrangePanel.hidden = selectedObjectIds.size < 2;
+    if (selectedObjectIds.size > 1) {
+      els.selectionInfo.textContent = selectedObjectIds.size + ' objects selected. Drag to move them together, or use Arrange to align and distribute. Color and font changes apply to all.';
+    } else {
+      els.selectionInfo.textContent = obj.type + ' object selected. Drag to move, use corner handles to resize, and use the top handle to rotate. Shift+click another object to multi-select.';
+    }
     els.altText.value = obj.alt || '';
     els.linkUrl.value = obj.href || '';
     if (els.posX) els.posX.value = Math.round(obj.x);
@@ -1184,15 +1224,17 @@
 
   function addObject(el) {
     currentSlide().elements.push(el);
-    selectedId = el.id;
+    selectOnly(el.id);
     saveSoon();
     render();
   }
 
   function deleteObject() {
-    if (!selectedId) return;
-    currentSlide().elements = currentSlide().elements.filter(el => el.id !== selectedId);
-    selectedId = null;
+    // Delete every selected object (supports multi-select), footer excepted.
+    const ids = selectedObjectIds.size ? new Set(selectedObjectIds) : (selectedId && selectedId !== FOOTER_ID ? new Set([selectedId]) : null);
+    if (!ids || !ids.size) return;
+    currentSlide().elements = currentSlide().elements.filter(el => !ids.has(el.id));
+    clearSelection();
     saveSoon();
     render();
   }
@@ -1206,7 +1248,7 @@
     const lines = String(obj.text || '').split('\n').map(line => line.replace(/^\s*(?:[-*•]\s*)?/, '')).filter(Boolean);
     obj.text = lines.join('\n') || 'First point';
     obj.type = obj.type === 'list' ? 'text' : 'list';
-    selectedId = obj.id;
+    selectOnly(obj.id);
     saveSoon();
     render();
     setStatus(obj.type === 'list' ? 'Bullets on.' : 'Bullets off.');
@@ -1215,43 +1257,75 @@
   function objectPointerDown(event) {
     const target = event.currentTarget;
     const id = target.dataset.id;
-    selectedId = id;
+    const additive = event.shiftKey || event.ctrlKey || event.metaKey;
+
+    // Resize/rotate handles imply a single object; let their own handlers run.
+    if (event.target.classList.contains('resize-handle') || event.target.classList.contains('rotate-handle')) {
+      selectOnly(id);
+      return;
+    }
+
+    // Shift/Ctrl/Cmd-click toggles this object in the selection (no drag).
+    if (additive) {
+      event.preventDefault();
+      if (selectedObjectIds.has(id) && selectedObjectIds.size > 1) {
+        selectedObjectIds.delete(id);
+        if (selectedId === id) selectedId = [...selectedObjectIds][selectedObjectIds.size - 1] || null;
+      } else {
+        selectedObjectIds.add(id);
+        selectedId = id;
+      }
+      if (cropTargetId) cropTargetId = null;
+      render();
+      return;
+    }
+
+    // Plain click: keep an existing multi-selection if this object is part of
+    // it (so you can drag the whole group); otherwise select just this one.
+    if (!(selectedObjectIds.has(id) && selectedObjectIds.size > 1)) {
+      selectOnly(id);
+    } else {
+      selectedId = id;
+    }
     if (cropTargetId && cropTargetId !== id) cropTargetId = null;
-    els.canvas.querySelectorAll('.slide-object.selected').forEach(node => {
-      if (node !== target) node.classList.remove('selected');
-    });
     els.canvas.querySelector('.slide-footer.selected')?.classList.remove('selected');
-    target.classList.add('selected');
+    els.canvas.classList.toggle('multi-select', selectedObjectIds.size > 1);
+    els.canvas.querySelectorAll('.slide-object').forEach(node => {
+      node.classList.toggle('selected', selectedObjectIds.has(node.dataset.id));
+      node.classList.toggle('sel-primary', node.dataset.id === selectedId);
+    });
     renderInspector();
-    if (event.target.classList.contains('resize-handle') || event.target.classList.contains('rotate-handle')) return;
+
     if (event.target.closest('[contenteditable="true"]')) {
       setStatus('Editing ' + (selectedObject()?.type || 'object') + '. Use the grip above it to move.');
       return;
     }
     event.preventDefault();
-    const obj = selectedObject();
+    const primary = selectedObject();
     const rect = els.canvas.getBoundingClientRect();
+    const starts = selectedObjects().map(o => ({ o, x: o.x, y: o.y }));
     const start = {
       x: event.clientX,
       y: event.clientY,
-      objX: obj.x,
-      objY: obj.y,
-      cropX: obj.cropX ?? 50,
-      cropY: obj.cropY ?? 50
+      cropX: primary.cropX ?? 50,
+      cropY: primary.cropY ?? 50
     };
     document.addEventListener('pointermove', move);
     document.addEventListener('pointerup', stop, { once: true });
-    target.classList.add('selected');
 
     function move(ev) {
-      if (cropTargetId === obj.id && obj.type === 'image') {
-        obj.cropX = clamp(start.cropX - (ev.clientX - start.x) / rect.width * 100, 0, 100);
-        obj.cropY = clamp(start.cropY - (ev.clientY - start.y) / rect.height * 100, 0, 100);
+      if (cropTargetId === primary.id && primary.type === 'image') {
+        primary.cropX = clamp(start.cropX - (ev.clientX - start.x) / rect.width * 100, 0, 100);
+        primary.cropY = clamp(start.cropY - (ev.clientY - start.y) / rect.height * 100, 0, 100);
         renderCanvas();
         return;
       }
-      obj.x = clamp(start.objX + (ev.clientX - start.x) / rect.width * SLIDE_W, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40);
-      obj.y = clamp(start.objY + (ev.clientY - start.y) / rect.height * SLIDE_H, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40);
+      const dx = (ev.clientX - start.x) / rect.width * SLIDE_W;
+      const dy = (ev.clientY - start.y) / rect.height * SLIDE_H;
+      starts.forEach(s => {
+        s.o.x = clamp(s.x + dx, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40);
+        s.o.y = clamp(s.y + dy, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40);
+      });
       renderCanvas();
       renderInspector();
     }
@@ -1259,7 +1333,7 @@
     function stop() {
       document.removeEventListener('pointermove', move);
       const moved = selectedObject();
-      if (moved) setStatus(isOnSlide(moved) ? 'Moved object.' : 'Object is on the holding area — it will not appear when you present.');
+      if (moved) setStatus(starts.length > 1 ? 'Moved ' + starts.length + ' objects.' : isOnSlide(moved) ? 'Moved object.' : 'Object is on the holding area — it will not appear when you present.');
       saveSoon();
       render();
     }
@@ -1269,7 +1343,7 @@
     event.preventDefault();
     event.stopPropagation();
     const target = event.currentTarget.closest('.slide-object');
-    selectedId = target.dataset.id;
+    selectOnly(target.dataset.id);
     const obj = selectedObject();
     const rect = els.canvas.getBoundingClientRect();
     const handle = event.currentTarget.dataset.handle || 'se';
@@ -1314,7 +1388,7 @@
     event.preventDefault();
     event.stopPropagation();
     const target = event.currentTarget.closest('.slide-object');
-    selectedId = target.dataset.id;
+    selectOnly(target.dataset.id);
     const obj = selectedObject();
     const rect = target.getBoundingClientRect();
     const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
@@ -1340,14 +1414,58 @@
       setStatus('Information bar selected. Use text color, fill color, or edit the bar text directly.');
       return;
     }
-    const obj = selectedObject();
-    if (!obj) {
+    const targets = selectedObjects();
+    if (!targets.length) {
       setStatus('Select a slide object first.');
       return;
     }
-    mutator(obj);
+    targets.forEach(mutator);
     saveSoon();
     render();
+  }
+
+  // Align every selected object (need 2+) relative to the group's bounding box.
+  function alignSelected(mode) {
+    const objs = selectedObjects();
+    if (objs.length < 2) {
+      setStatus('Select two or more objects (Shift+click or drag a box) to align them.');
+      return;
+    }
+    const minX = Math.min(...objs.map(o => o.x));
+    const maxX = Math.max(...objs.map(o => o.x + o.w));
+    const minY = Math.min(...objs.map(o => o.y));
+    const maxY = Math.max(...objs.map(o => o.y + o.h));
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    objs.forEach(o => {
+      if (mode === 'left') o.x = minX;
+      else if (mode === 'right') o.x = maxX - o.w;
+      else if (mode === 'center-h') o.x = cx - o.w / 2;
+      else if (mode === 'top') o.y = minY;
+      else if (mode === 'bottom') o.y = maxY - o.h;
+      else if (mode === 'middle-v') o.y = cy - o.h / 2;
+    });
+    saveSoon();
+    render();
+    setStatus('Aligned ' + objs.length + ' objects.');
+  }
+
+  // Evenly space selected objects (need 3+) between the first and last centers.
+  function distributeSelected(axis) {
+    const objs = selectedObjects();
+    if (objs.length < 3) {
+      setStatus('Select three or more objects to distribute them evenly.');
+      return;
+    }
+    const key = axis === 'h' ? 'x' : 'y';
+    const size = axis === 'h' ? 'w' : 'h';
+    const sorted = objs.slice().sort((a, b) => (a[key] + a[size] / 2) - (b[key] + b[size] / 2));
+    const firstCenter = sorted[0][key] + sorted[0][size] / 2;
+    const lastCenter = sorted[sorted.length - 1][key] + sorted[sorted.length - 1][size] / 2;
+    const step = (lastCenter - firstCenter) / (sorted.length - 1);
+    sorted.forEach((o, i) => { o[key] = firstCenter + i * step - o[size] / 2; });
+    saveSoon();
+    render();
+    setStatus('Distributed ' + objs.length + ' objects ' + (axis === 'h' ? 'horizontally' : 'vertically') + '.');
   }
 
   function applyTextColor(value) {
@@ -2975,6 +3093,21 @@
     if (action === 'fit-text-to-box') fitTextToBox();
     if (action === 'bring-forward') applyToSelected(obj => obj.z = Date.now());
     if (action === 'send-backward') applyToSelected(obj => obj.z = 1);
+    if (action === 'select-all-objects') {
+      const ids = currentSlide().elements.map(el => el.id);
+      selectedObjectIds = new Set(ids);
+      selectedId = ids[ids.length - 1] || null;
+      render();
+      setStatus(ids.length ? 'Selected ' + ids.length + ' objects.' : 'This slide has no objects yet.');
+    }
+    if (action === 'align-left') alignSelected('left');
+    if (action === 'align-center-h') alignSelected('center-h');
+    if (action === 'align-right') alignSelected('right');
+    if (action === 'align-top') alignSelected('top');
+    if (action === 'align-middle-v') alignSelected('middle-v');
+    if (action === 'align-bottom') alignSelected('bottom');
+    if (action === 'distribute-h') distributeSelected('h');
+    if (action === 'distribute-v') distributeSelected('v');
     if (action === 'hide-selected-slides') updateSelectedSlides(slide => { slide.hidden = true; }, 'Hid selected slides.');
     if (action === 'show-selected-slides') updateSelectedSlides(slide => { slide.hidden = false; }, 'Showed selected slides.');
     if (action === 'indent-selected-slides') indentSelectedSlides(1);
@@ -3341,17 +3474,20 @@
     const mod = event.ctrlKey || event.metaKey;
     if (mod && (event.key === 'z' || event.key === 'Z')) { event.preventDefault(); if (event.shiftKey) redo(); else undo(); return; }
     if (mod && (event.key === 'y' || event.key === 'Y')) { event.preventDefault(); redo(); return; }
+    if (mod && (event.key === 'a' || event.key === 'A')) { event.preventDefault(); runAction('select-all-objects'); return; }
     if (mod) return;
-    // Arrow keys nudge the selected object; with no object selected they move
+    // Arrow keys nudge every selected object; with none selected they move
     // between slides. Shift = coarse (large) step, plain = fine step.
-    const nudgeObj = selectedObject();
-    if (nudgeObj && (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+    const nudgeObjs = selectedObjects();
+    if (nudgeObjs.length && (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
       event.preventDefault();
       const step = event.shiftKey ? 20 : 4;
-      if (event.key === 'ArrowUp') nudgeObj.y = Math.max(0, (nudgeObj.y || 0) - step);
-      if (event.key === 'ArrowDown') nudgeObj.y = Math.min(SLIDE_H, (nudgeObj.y || 0) + step);
-      if (event.key === 'ArrowLeft') nudgeObj.x = Math.max(0, (nudgeObj.x || 0) - step);
-      if (event.key === 'ArrowRight') nudgeObj.x = Math.min(SLIDE_W, (nudgeObj.x || 0) + step);
+      const dx = event.key === 'ArrowLeft' ? -step : event.key === 'ArrowRight' ? step : 0;
+      const dy = event.key === 'ArrowUp' ? -step : event.key === 'ArrowDown' ? step : 0;
+      nudgeObjs.forEach(o => {
+        o.x = clamp((o.x || 0) + dx, -BOARD_MARGIN_X, SLIDE_W + BOARD_MARGIN_X - 40);
+        o.y = clamp((o.y || 0) + dy, -BOARD_MARGIN_Y, SLIDE_H + BOARD_MARGIN_Y - 40);
+      });
       saveSoon();
       render();
       return;
@@ -3362,7 +3498,7 @@
     if (event.key === 'ArrowUp') selectSlide(activeSlide - 1);
     if (event.key === 'ArrowDown') selectSlide(activeSlide + 1);
     if (event.key.toLowerCase() === 'p') present(activeSlide);
-    if (event.key === 'Escape') closeMenus();
+    if (event.key === 'Escape') { if (selectedObjectIds.size) { clearSelection(); render(); } closeMenus(); }
   });
 
   document.addEventListener('paste', event => {
@@ -3420,6 +3556,61 @@
       insertImageAt(uri.trim(), 'Image from URL', event.clientX, event.clientY);
       setStatus('Dropped image link onto the slide.');
     }
+  });
+
+  // Marquee-select: drag on blank canvas to rubber-band a group of objects.
+  // A plain click on blank canvas deselects. Shift/Ctrl/Cmd adds to selection.
+  els.canvas.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    if (event.target !== els.canvas && !event.target.classList.contains('slide-board')) return;
+    const additive = event.shiftKey || event.ctrlKey || event.metaKey;
+    const rect = els.canvas.getBoundingClientRect();
+    const startX = event.clientX, startY = event.clientY;
+    const base = new Set(selectedObjectIds);
+    const box = document.createElement('div');
+    box.className = 'marquee-box';
+    els.canvas.appendChild(box);
+    let moved = false;
+
+    function toSlide(clientX, clientY) {
+      return {
+        x: (clientX - rect.left) / rect.width * SLIDE_W,
+        y: (clientY - rect.top) / rect.height * SLIDE_H
+      };
+    }
+
+    function move(ev) {
+      if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) > 4) moved = true;
+      const x1 = Math.min(startX, ev.clientX), y1 = Math.min(startY, ev.clientY);
+      const x2 = Math.max(startX, ev.clientX), y2 = Math.max(startY, ev.clientY);
+      box.style.left = (x1 - rect.left) + 'px';
+      box.style.top = (y1 - rect.top) + 'px';
+      box.style.width = (x2 - x1) + 'px';
+      box.style.height = (y2 - y1) + 'px';
+      const a = toSlide(x1, y1), b = toSlide(x2, y2);
+      const hits = currentSlide().elements.filter(el =>
+        !(b.x < el.x || a.x > el.x + el.w || b.y < el.y || a.y > el.y + el.h)
+      ).map(el => el.id);
+      selectedObjectIds = new Set(additive ? [...base, ...hits] : hits);
+      selectedId = hits.length ? hits[hits.length - 1] : (additive ? selectedId : null);
+      els.canvas.classList.toggle('multi-select', selectedObjectIds.size > 1);
+      els.canvas.querySelectorAll('.slide-object').forEach(node => {
+        node.classList.toggle('selected', selectedObjectIds.has(node.dataset.id));
+        node.classList.toggle('sel-primary', node.dataset.id === selectedId);
+      });
+    }
+
+    function stop() {
+      document.removeEventListener('pointermove', move);
+      box.remove();
+      if (!moved && !additive) clearSelection();
+      renderCanvas();
+      renderInspector();
+      if (selectedObjectIds.size > 1) setStatus('Selected ' + selectedObjectIds.size + ' objects. Use Arrange to align or distribute them.');
+    }
+
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', stop, { once: true });
   });
 
   els.deckTitle.addEventListener('input', () => {

@@ -672,6 +672,63 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 .slide-object:focus-within .rotate-handle {
   opacity: 1;
 }
+/* In a multi-selection, resize/rotate handles don't apply — only group move. */
+.slide-canvas.multi-select .resize-handle,
+.slide-canvas.multi-select .rotate-handle {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.slide-object.selected.sel-primary {
+  box-shadow: 0 0 0 3px rgba(255,159,47,.95);
+}
+.marquee-box {
+  position: absolute;
+  border: 1.5px solid var(--accent);
+  background: rgba(124,58,237,.12);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 9000;
+}
+.arrange-panel {
+  margin: 6px 0 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f7f5ff;
+}
+.arrange-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #6b6580;
+  font-weight: 800;
+  margin: 2px 0 5px;
+}
+.arrange-label + .arrange-grid {
+  margin-bottom: 8px;
+}
+.arrange-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.arrange-grid-two {
+  grid-template-columns: repeat(2, 1fr);
+}
+.arrange-grid button {
+  padding: 7px 4px;
+  font-size: .8rem;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+.arrange-grid button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .slide-audio-bar {
   position: absolute;
   right: 16px;

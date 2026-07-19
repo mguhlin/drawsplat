@@ -8,7 +8,7 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260719-1">
+  <link rel="stylesheet" href="styles.css?v=20260719-2">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true">
@@ -80,10 +80,20 @@
       <button data-action="duplicate-slide">Duplicate slide</button>
       <button data-action="delete-slide">Delete slide</button>
       <button data-action="delete-selected-slides">Delete selected slides</button>
-      <button data-action="delete-object">Delete selected object</button>
+      <button data-action="delete-object">Delete selected object(s)</button>
+      <button data-action="select-all-objects">Select all objects</button>
       <hr>
       <button data-action="bring-forward">Bring forward</button>
       <button data-action="send-backward">Send backward</button>
+      <hr>
+      <button data-action="align-left">Align left</button>
+      <button data-action="align-center-h">Align centers (horizontal)</button>
+      <button data-action="align-right">Align right</button>
+      <button data-action="align-top">Align top</button>
+      <button data-action="align-middle-v">Align centers (vertical)</button>
+      <button data-action="align-bottom">Align bottom</button>
+      <button data-action="distribute-h">Distribute horizontally</button>
+      <button data-action="distribute-v">Distribute vertically</button>
       <hr>
       <button data-action="hide-selected-slides">Hide selected slides</button>
       <button data-action="show-selected-slides">Show selected slides</button>
@@ -251,6 +261,22 @@
       <div class="panel">
         <h2>Selection</h2>
         <div id="selectionInfo" class="selection-info">No object selected.</div>
+        <div id="arrangePanel" class="arrange-panel" hidden>
+          <div class="arrange-label">Align</div>
+          <div class="arrange-grid">
+            <button type="button" data-action="align-left" title="Align left edges">Left</button>
+            <button type="button" data-action="align-center-h" title="Align horizontal centers">Center</button>
+            <button type="button" data-action="align-right" title="Align right edges">Right</button>
+            <button type="button" data-action="align-top" title="Align top edges">Top</button>
+            <button type="button" data-action="align-middle-v" title="Align vertical centers">Middle</button>
+            <button type="button" data-action="align-bottom" title="Align bottom edges">Bottom</button>
+          </div>
+          <div class="arrange-label">Distribute (3+)</div>
+          <div class="arrange-grid arrange-grid-two">
+            <button type="button" data-action="distribute-h" title="Space evenly left to right">Horizontal</button>
+            <button type="button" data-action="distribute-v" title="Space evenly top to bottom">Vertical</button>
+          </div>
+        </div>
         <label>Alt text <input id="altText" type="text"></label>
         <label>Link URL <input id="linkUrl" type="url"></label>
         <details class="advanced-position">
@@ -417,6 +443,6 @@
 <script src="../../vendor/jszip.min.js"></script>
 <script src="../../vendor/pdf.min.js"></script>
 <script src="webdeck-framework-embed.js?v=20260718-5"></script>
-<script src="app.js?v=20260719-1"></script>
+<script src="app.js?v=20260719-2"></script>
 </body>
 </html>
