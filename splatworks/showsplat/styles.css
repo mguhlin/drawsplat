@@ -330,6 +330,8 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .mini-slide.section,
 .mini-slide.dark { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
+.mini-slide.section .imported-webdeck-slide,
+.mini-slide.dark .imported-webdeck-slide { background: transparent !important; }
 .mini-obj {
   position: absolute;
   display: block;
@@ -460,6 +462,11 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .slide-canvas.dark { background: var(--dark); color: #fff; }
 .slide-canvas.section { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
+/* On dark/section slides, let the canvas background show through imported
+   WebDeck content: a dark cover slide's own light "paper" wrapper background
+   would otherwise cover the dark canvas and hide the light imported text. */
+.slide-canvas.dark .imported-webdeck-slide,
+.slide-canvas.section .imported-webdeck-slide { background: transparent !important; }
 .slide-footer {
   position: absolute;
   left: 0;

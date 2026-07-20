@@ -1853,7 +1853,12 @@
         italic: false,
         underline: false,
         color: textColor,
-        fill: '#ffffff',
+        // Light slides get a white object fill as a neutral page; dark/section
+        // slides stay transparent so the slide's dark background shows through
+        // (a white fill would hide it and make the light imported cover text
+        // invisible). Paired with the .slide-canvas.section/.dark rule below
+        // that also clears the imported wrapper's own background.
+        fill: bg === 'light' ? '#ffffff' : 'transparent',
         align: 'left',
         z: Date.now() + index
       }]
