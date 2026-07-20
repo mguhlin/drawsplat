@@ -1853,12 +1853,12 @@
         italic: false,
         underline: false,
         color: textColor,
-        // Light slides get a white object fill as a neutral page; dark/section
-        // slides stay transparent so the slide's dark background shows through
-        // (a white fill would hide it and make the light imported cover text
-        // invisible). Paired with the .slide-canvas.section/.dark rule below
-        // that also clears the imported wrapper's own background.
-        fill: bg === 'light' ? '#ffffff' : 'transparent',
+        // Transparent object fill: the imported `.imported-webdeck-slide`
+        // wrapper carries the deck's own background (paper for content slides,
+        // the dark gradient for cover/section slides) via the scoped CSS, so a
+        // white fill here would just hide a dark cover. The canvas bg is the
+        // fallback for slides whose imported CSS sets no wrapper background.
+        fill: 'transparent',
         align: 'left',
         z: Date.now() + index
       }]
@@ -2777,21 +2777,44 @@
   }
 
   function scopeImportedCss(css) {
-    return String(css || '').split('}').map(block => {
-      const parts = block.split('{');
-      if (parts.length < 2) return '';
-      const selector = parts.shift().trim();
-      const body = parts.join('{').trim();
-      if (!selector || selector.startsWith('@')) return selector + '{' + body + '}';
-      const scoped = selector.split(',').map(part => {
-        const trimmed = part.trim();
-        if (!trimmed || /^(html|body|#deck|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
-        if (trimmed === ':root') return '.imported-webdeck-slide';
-        if (/^\.slide(?:[.:#\s]|$)/.test(trimmed)) return trimmed.replace(/^\.slide/, '.imported-webdeck-slide');
-        return '.imported-webdeck-slide ' + trimmed;
-      }).filter(Boolean).join(',');
-      return scoped ? scoped + '{' + body + '}' : '';
-    }).filter(Boolean).join('\n');
+    // Scope every imported WebDeck rule under `.imported-webdeck-slide`. The old
+    // implementation used a naive split('}') which desynced on nested at-rules
+    // (@media/@keyframes) and comments, leaving rules like `.slide.cover`
+    // un-scoped so imported dark cover slides lost their background. This walks
+    // the CSS tracking brace depth (comments stripped first) and drops at-rule
+    // blocks entirely: @media queries key off the browser window, not the fixed
+    // slide, so they'd fire wrongly inside the scaled object; @keyframes/@print
+    // aren't needed for a static slide (ShowSplat neutralizes the imported
+    // `.slide` box model itself — see .imported-webdeck-slide in styles.css).
+    const src = String(css || '').replace(/\/\*[\s\S]*?\*\//g, '');
+    const scopeSelector = (selector) => selector.split(',').map(part => {
+      const trimmed = part.trim();
+      if (!trimmed || /^(html|body|#deck|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
+      if (trimmed === ':root') return '.imported-webdeck-slide';
+      if (/^\.slide(?:[.:#\s]|$)/.test(trimmed)) return trimmed.replace(/^\.slide/, '.imported-webdeck-slide');
+      return '.imported-webdeck-slide ' + trimmed;
+    }).filter(Boolean).join(',');
+    const out = [];
+    let i = 0;
+    const n = src.length;
+    while (i < n) {
+      const start = i;
+      while (i < n && src[i] !== '{' && src[i] !== '}') i += 1;
+      if (i >= n) break;
+      if (src[i] === '}') { i += 1; continue; }
+      const prelude = src.slice(start, i).trim();
+      let depth = 0;
+      const bodyStart = i;
+      do {
+        if (src[i] === '{') depth += 1;
+        else if (src[i] === '}') depth -= 1;
+        i += 1;
+      } while (i < n && depth > 0);
+      if (prelude.startsWith('@')) continue;
+      const scoped = scopeSelector(prelude);
+      if (scoped) out.push(scoped + '{' + src.slice(bodyStart + 1, i - 1).trim() + '}');
+    }
+    return out.join('\n');
   }
 
   function exportMarkdown() {
@@ -2856,7 +2879,10 @@
       '.slide .obj ul{margin:0;padding-left:1.1em;}',
       '.slide .obj table{width:100%;height:100%;border-collapse:collapse;table-layout:fixed;}',
       '.slide .obj td{border:1px solid #c7d2fe;padding:6px;vertical-align:top;}',
-      '.slide .imported-webdeck-slide{background:transparent;}',
+      // Neutralize the imported .slide box model in exports too — the source
+      // decks keep slides display:none/absolute and rely on a @media print rule
+      // that scopeImportedCss now drops, so force the wrapper visible and static.
+      '.slide .imported-webdeck-slide{background:transparent;display:flex!important;flex-direction:column!important;position:relative!important;inset:auto!important;width:100%;height:100%;}',
       '.slide .footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:9px 22px;font-weight:800;font-family:Inter,Arial,sans-serif;z-index:2;}',
       '.slide .slide-audio{position:absolute;right:20px;bottom:54px;display:grid;gap:6px;z-index:3;}.slide .slide-audio audio{width:260px;}',
       '.global-audio{position:fixed;left:18px;bottom:18px;z-index:65;width:240px;}',
@@ -2916,7 +2942,7 @@
 
   function buildPrintDeck() {
     const exportSlides = deck.slides.filter(slide => !slide.hidden);
-    return '<!doctype html><html><head><meta charset="utf-8"><title>' + escapeHtml(deck.title) + '</title><style>@page{size:landscape;margin:0}body{margin:0}.slide{position:relative;width:100vw;height:100vh;page-break-after:always;overflow:hidden;background:#fff}.slide.section,.slide.dark{background:#1e1b4b;color:#fff}.obj{position:absolute;padding:8px;overflow:hidden}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:#111827;color:#fff}' + importedCssForDeck() + '</style></head><body>' + exportSlides.map((slide, i) => '<section class="slide ' + escapeAttr(slide.bg) + '">' + slideToWebDeckHtml(slide, i, exportSlides.length) + '</section>').join('') + '</body></html>';
+    return '<!doctype html><html><head><meta charset="utf-8"><title>' + escapeHtml(deck.title) + '</title><style>@page{size:landscape;margin:0}body{margin:0}.slide{position:relative;width:100vw;height:100vh;page-break-after:always;overflow:hidden;background:#fff}.slide.section,.slide.dark{background:#1e1b4b;color:#fff}.obj{position:absolute;padding:8px;overflow:hidden}.obj img,.obj video,.obj iframe{width:100%;height:100%;object-fit:contain;border:0}.footer{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:9px 22px;background:#111827;color:#fff}.imported-webdeck-slide{display:flex!important;flex-direction:column!important;position:relative!important;inset:auto!important;width:100%;height:100%;background:transparent!important;}' + importedCssForDeck() + '</style></head><body>' + exportSlides.map((slide, i) => '<section class="slide ' + escapeAttr(slide.bg) + '">' + slideToWebDeckHtml(slide, i, exportSlides.length) + '</section>').join('') + '</body></html>';
   }
 
   function present(startIndex) {

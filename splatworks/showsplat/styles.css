@@ -330,8 +330,6 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .mini-slide.section,
 .mini-slide.dark { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
-.mini-slide.section .imported-webdeck-slide,
-.mini-slide.dark .imported-webdeck-slide { background: transparent !important; }
 .mini-obj {
   position: absolute;
   display: block;
@@ -462,11 +460,6 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 }
 .slide-canvas.dark { background: var(--dark); color: #fff; }
 .slide-canvas.section { background: linear-gradient(135deg, var(--dark), var(--accent)); color: #fff; }
-/* On dark/section slides, let the canvas background show through imported
-   WebDeck content: a dark cover slide's own light "paper" wrapper background
-   would otherwise cover the dark canvas and hide the light imported text. */
-.slide-canvas.dark .imported-webdeck-slide,
-.slide-canvas.section .imported-webdeck-slide { background: transparent !important; }
 .slide-footer {
   position: absolute;
   left: 0;
@@ -562,10 +555,22 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   padding: 0;
 }
 .imported-webdeck-slide {
-  background: #fff;
+  background: transparent;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+/* Neutralize the imported `.slide` box model. Source WebDecks keep every slide
+   position:absolute and display:none (only .current shows) and rely on a
+   @media print rule to flatten them; ShowSplat renders one slide's content in a
+   fixed object and drops @media, so force the wrapper visible, static, and
+   full-size here regardless of what the imported CSS says. Width/height/
+   transform come from the object's own inline fit style, so they're left alone. */
+.imported-webdeck-slide {
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  inset: auto !important;
 }
 .imported-webdeck-slide:focus { outline: none; }
 .imported-webdeck-slide img,
