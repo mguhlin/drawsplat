@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CipherSplat encrypts files, folders, and text locally with AES-256-GCM.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self' blob:">
+  <title>CipherSplat — Private browser encryption</title>
+  <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <style>:root{--purple:#1769e8;--violet:#79aef4;--cyan:#77d4ff;--ink:#0a1d3a;--line:#d8e2ee}.picker-actions{display:flex;gap:8px;margin-top:8px}.picker-actions button{font:800 10px Manrope;border:1px solid #c8d6e8;border-radius:5px;padding:7px 10px;color:#1769e8;background:#fff;cursor:pointer}.hero{min-height:640px}.hero-art{position:absolute;z-index:-1;width:min(62vw,760px);right:-90px;top:30px;mask-image:linear-gradient(90deg,transparent 0,#000 30%);border-radius:30px;opacity:.94}.primary,.run-button{background:linear-gradient(100deg,#0a56c8,#438be7)}.brand em{color:#4f7fb8}.orb{background:conic-gradient(from 40deg,#0b55c6,#74a8df,#c8d7e8,#0b55c6)}@media(max-width:800px){.hero-art{width:100%;right:-28%;top:105px;opacity:.3;mask-image:linear-gradient(180deg,#000,transparent)}.hero{min-height:auto}.picker-actions{flex-wrap:wrap;justify-content:center}.picker-actions button{min-height:42px;padding:10px 14px}.drop-zone{min-height:220px}.run-button{min-height:50px}.control-panel input,.control-panel textarea{font-size:16px}}@media(max-width:500px){.hero-art{right:-35%;top:140px;width:125%}.trust-row{display:grid;grid-template-columns:repeat(3,1fr)}.app-shell{border-radius:9px}.mode-tabs{padding:0 6px}.mode-tab{padding:18px 12px}}</style>
+  <style>html,body{overflow-x:hidden}.hero h1{max-width:690px}.hero>p{max-width:570px}.skip-link{position:fixed;z-index:999;left:12px;top:12px;transform:translateY(-160%);background:#fff;color:#082657;border:2px solid #1769e8;padding:12px 16px;border-radius:6px;font-weight:800}.skip-link:focus{transform:none}button,a,[tabindex]:not([tabindex="-1"]){outline-offset:3px}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #0b67dc}.mini-action,.password-wrap button,.picker-actions button,.file-card button{min-width:44px;min-height:44px}.mini-action{font-size:12px}.kicker,.verified,.strength span,.progress-label,.checks small,.result-panel p{font-size:11px}.verified{color:#176f5a}.status-panel[aria-busy="true"] .orb{animation-duration:1s}.progress-track{position:relative}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}@media(max-width:800px){.hero h1{max-width:none}}</style>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to secure workspace</a>
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="nav wrap">
+    <a class="brand" href="#" aria-label="CipherSplat home">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span>CIPHER<em>SPLAT</em></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#workspace">Workspace</a><a href="#security">Security</a><a href="#how">How it works</a>
+    </nav>
+    <a class="drawsplat-pill" href="../../pages/tools.html" aria-label="Back to DrawSplat Tools"><img src="../../assets/brand/DrawSplat_logo.png" alt=""> DrawSplat Tool</a>
+    <div class="local-pill"><i></i> Local engine online</div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div class="eyebrow"><span>✦</span> A private-by-design DrawSplat Tool</div>
+      <img class="hero-art" src="assets/ciphersplat-hero.png" alt="A silver digital shield protecting a luminous blue data core">
+      <h1>Your data.<br><span>Your keys.</span> Your rules.</h1>
+      <p>Lock sensitive files and text with authenticated AES-256 encryption—entirely inside your browser. Nothing is uploaded. Nothing is tracked.</p>
+      <div class="hero-actions"><a class="primary" href="#workspace">Open secure workspace <b>→</b></a><a class="text-link" href="#how">See how it works ↓</a></div>
+      <div class="trust-row">
+        <div><strong>256</strong><span>BIT ENCRYPTION</span></div>
+        <div><strong>0</strong><span>BYTES UPLOADED</span></div>
+        <div><strong>100%</strong><span>CLIENT-SIDE</span></div>
+      </div>
+    </section>
+
+    <section id="workspace" class="workspace-section wrap">
+      <div class="section-heading"><div><span class="kicker">SECURE WORKSPACE</span><h2>What are we protecting?</h2></div><p>Your browser becomes the vault. Choose a mode and your data never leaves this device.</p></div>
+      <div class="app-shell">
+        <div class="mode-tabs" role="tablist" aria-label="Vault input type">
+          <button id="fileTab" class="mode-tab active" data-mode="file" role="tab" aria-selected="true" aria-controls="fileInputArea" tabindex="0"><span aria-hidden="true">▱</span> File vault</button>
+          <button id="textTab" class="mode-tab" data-mode="text" role="tab" aria-selected="false" aria-controls="textInputArea" tabindex="-1"><span aria-hidden="true">¶</span> Text vault</button>
+        </div>
+
+        <div class="app-grid">
+          <div class="control-panel">
+            <div class="operation-toggle" role="group" aria-label="Encryption operation">
+              <button class="op active" data-op="encrypt" aria-pressed="true">Encrypt</button><button class="op" data-op="decrypt" aria-pressed="false">Decrypt</button>
+            </div>
+
+            <div id="fileInputArea" role="tabpanel" aria-labelledby="fileTab">
+              <div id="dropZone" class="drop-zone" aria-label="File and folder drop area">
+                <input id="fileInput" type="file" multiple hidden>
+                <input id="folderInput" type="file" webkitdirectory directory multiple hidden>
+                <span class="upload-icon">↥</span>
+                <strong id="dropTitle">Drop files or a folder into the vault</strong>
+                <small id="dropSub">recursive paths are detected automatically</small>
+                <span class="picker-actions"><button id="chooseFiles" type="button">Choose files</button><button id="chooseFolder" type="button">Choose folder</button></span>
+              </div>
+              <div id="fileCard" class="file-card hidden"><span class="file-icon">◆</span><div><strong id="fileName"></strong><small id="fileSize"></small></div><button id="removeFile" aria-label="Remove file">×</button></div>
+            </div>
+
+            <div id="textInputArea" class="hidden" role="tabpanel" aria-labelledby="textTab">
+              <label class="field-label" for="textInput">Text to protect</label>
+              <textarea id="textInput" placeholder="Paste a private note, recovery code, or message…" spellcheck="false"></textarea>
+              <div class="char-count"><span id="charCount">0</span> characters</div>
+            </div>
+
+            <div class="password-row">
+              <label class="field-label" for="password">Vault password</label>
+              <button id="generatePassword" class="mini-action" type="button">Generate strong password</button>
+            </div>
+            <div class="password-wrap"><input id="password" type="password" autocomplete="new-password" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
+            <div class="strength"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
+            <p class="password-note">Your password cannot be recovered. Store it safely and test decryption before deleting the original.</p>
+
+            <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
+            <p id="errorMessage" class="error" role="alert"></p>
+          </div>
+
+          <aside class="status-panel" aria-busy="false">
+            <div class="status-top"><span class="kicker">LIVE SECURITY MONITOR</span><span id="statusChip" class="status-chip">READY</span></div>
+            <div class="orb-wrap"><div id="orb" class="orb"><div class="orb-core">⌾</div></div><div class="orbit-dot"></div></div>
+            <div role="status" aria-live="polite" aria-atomic="true"><h3 id="statusTitle">Vault standing by</h3><p id="statusCopy">Select a file or enter text to begin. All processing stays within this tab.</p></div>
+            <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><div id="progressTrack" class="progress-track" role="progressbar" aria-label="Vault operation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progressBar"></i></div></div>
+            <div class="checks">
+              <div><span class="check">✓</span><p><strong>AES-256-GCM</strong><small>Authenticated encryption</small></p><span class="lock">▣</span></div>
+              <div><span class="check">✓</span><p><strong>PBKDF2-SHA-256</strong><small>600,000 derivation rounds</small></p><span class="lock">▣</span></div>
+              <div><span class="check">✓</span><p><strong>Local processing</strong><small>Network-free by design</small></p><span class="lock">▣</span></div>
+            </div>
+          </aside>
+        </div>
+
+        <div id="resultPanel" class="result-panel hidden" role="status" aria-live="polite" tabindex="-1">
+          <div class="result-badge">✓</div><div><span class="kicker">VAULT OPERATION COMPLETE</span><h3 id="resultTitle">Encryption complete</h3><p id="resultMeta"></p></div>
+          <button id="copyResult" class="secondary hidden">Copy encrypted text</button><button id="downloadResult" class="primary">Download result ↓</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="security" class="security wrap">
+      <div class="section-heading"><div><span class="kicker">VERIFIABLE PROTECTION</span><h2>Built like a vault.<br>Open like a window.</h2></div><p>Modern browser cryptography with clear, inspectable guarantees. No mystery server and no account required.</p></div>
+      <div class="security-grid">
+        <article class="feature-main"><div class="feature-icon">⬡</div><span>ENCRYPTION ENGINE</span><h3>AES-256-GCM</h3><p>A modern authenticated cipher that protects confidentiality and detects changes or incorrect passwords before releasing data.</p><div class="cipher"><span>KEY SIZE <b>256 bit</b></span><span>NONCE <b>96 bit</b></span><span>AUTH TAG <b>128 bit</b></span></div></article>
+        <article><div class="icon-box purple">⌁</div><h3>Password hardened</h3><p>PBKDF2-SHA-256 stretches every password through 600,000 rounds with a unique 128-bit salt.</p><span class="verified">✓ SECURITY PROPERTY</span></article>
+        <article><div class="icon-box green">◌</div><h3>Zero-knowledge flow</h3><p>Files, text, passwords, and keys stay in browser memory. The app contains no upload code.</p><span class="verified">✓ LOCAL BY DESIGN</span></article>
+        <article><div class="icon-box orange">◈</div><h3>Tamper detection</h3><p>GCM authentication rejects altered ciphertext and incorrect passwords without exposing partial content.</p><span class="verified">✓ INTEGRITY CHECKED</span></article>
+      </div>
+    </section>
+
+    <section id="how" class="how wrap">
+      <span class="kicker">THREE STEPS. ONE PRIVATE RESULT.</span><h2>How the vault works</h2>
+      <div class="steps"><article><b>01</b><h3>Choose your data</h3><p>Drop a file or paste text. It stays on your device.</p></article><i>→</i><article><b>02</b><h3>Create the key</h3><p>Your password and random salt derive a one-time vault key.</p></article><i>→</i><article><b>03</b><h3>Lock & save</h3><p>AES-GCM encrypts and authenticates your data for download.</p></article></div>
+    </section>
+  </main>
+  <footer class="wrap"><a class="brand" href="#"><span class="brand-mark"><span></span></span><span>CIPHER<em>SPLAT</em></span></a><p>Private by architecture. Powered by the Web Crypto API.</p><a class="footer-link" href="../../pages/tools.html">More DrawSplat Tools →</a><span>CS2 CHUNKED FORMAT</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

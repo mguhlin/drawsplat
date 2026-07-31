@@ -281,6 +281,7 @@ TOOLS_SOLUTIONS=(
   animated-gif
   big-link
   chart-studio
+  CipherSplat
   coloring-book
   concept-map
   dicebreakers
