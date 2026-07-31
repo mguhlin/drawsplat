@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CipherSplat encrypts files, folders, and text locally with AES-256-GCM.">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self' blob:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self' blob:">
   <title>CipherSplat — Private browser encryption</title>
   <link rel="icon" href="assets/tools.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
-  <style>:root{--purple:#1769e8;--violet:#79aef4;--cyan:#77d4ff;--ink:#0a1d3a;--line:#d8e2ee}.picker-actions{display:flex;gap:8px;margin-top:8px}.picker-actions button{font:800 10px Manrope;border:1px solid #c8d6e8;border-radius:5px;padding:7px 10px;color:#1769e8;background:#fff;cursor:pointer}.hero{min-height:640px}.hero-art{position:absolute;z-index:-1;width:min(62vw,760px);right:-90px;top:30px;mask-image:linear-gradient(90deg,transparent 0,#000 30%);border-radius:30px;opacity:.94}.primary,.run-button{background:linear-gradient(100deg,#0a56c8,#438be7)}.brand em{color:#4f7fb8}.orb{background:conic-gradient(from 40deg,#0b55c6,#74a8df,#c8d7e8,#0b55c6)}@media(max-width:800px){.hero-art{width:100%;right:-28%;top:105px;opacity:.3;mask-image:linear-gradient(180deg,#000,transparent)}.hero{min-height:auto}.picker-actions{flex-wrap:wrap;justify-content:center}.picker-actions button{min-height:42px;padding:10px 14px}.drop-zone{min-height:220px}.run-button{min-height:50px}.control-panel input,.control-panel textarea{font-size:16px}}@media(max-width:500px){.hero-art{right:-35%;top:140px;width:125%}.trust-row{display:grid;grid-template-columns:repeat(3,1fr)}.app-shell{border-radius:9px}.mode-tabs{padding:0 6px}.mode-tab{padding:18px 12px}}</style>
-  <style>html,body{overflow-x:hidden}.hero h1{max-width:690px}.hero>p{max-width:570px}.skip-link{position:fixed;z-index:999;left:12px;top:12px;transform:translateY(-160%);background:#fff;color:#082657;border:2px solid #1769e8;padding:12px 16px;border-radius:6px;font-weight:800}.skip-link:focus{transform:none}button,a,[tabindex]:not([tabindex="-1"]){outline-offset:3px}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #0b67dc}.mini-action,.password-wrap button,.picker-actions button,.file-card button{min-width:44px;min-height:44px}.mini-action{font-size:12px}.kicker,.verified,.strength span,.progress-label,.checks small,.result-panel p{font-size:11px}.verified{color:#176f5a}.status-panel[aria-busy="true"] .orb{animation-duration:1s}.progress-track{position:relative}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}@media(max-width:800px){.hero h1{max-width:none}}</style>
+  <link rel="stylesheet" href="security.css">
 </head>
 <body>
   <a class="skip-link" href="#workspace">Skip to secure workspace</a>
@@ -52,8 +51,12 @@
 
         <div class="app-grid">
           <div class="control-panel">
+            <div class="crypto-method" role="group" aria-label="Vault key method">
+              <button class="method active" data-method="password" aria-pressed="true">Password vault</button>
+              <button class="method" data-method="openpgp" aria-pressed="false">OpenPGP keys</button>
+            </div>
             <div class="operation-toggle" role="group" aria-label="Encryption operation">
-              <button class="op active" data-op="encrypt" aria-pressed="true">Encrypt</button><button class="op" data-op="decrypt" aria-pressed="false">Decrypt</button>
+              <button class="op active" data-op="encrypt" aria-pressed="true">Encrypt</button><button class="op" data-op="decrypt" aria-pressed="false">Decrypt</button><button class="op" data-op="verify" aria-pressed="false">Verify only</button>
             </div>
 
             <div id="fileInputArea" role="tabpanel" aria-labelledby="fileTab">
@@ -74,13 +77,23 @@
               <div class="char-count"><span id="charCount">0</span> characters</div>
             </div>
 
-            <div class="password-row">
-              <label class="field-label" for="password">Vault password</label>
-              <button id="generatePassword" class="mini-action" type="button">Generate strong password</button>
+            <div id="passwordCredentials">
+              <div class="password-row">
+                <label class="field-label" for="password">Vault password</label>
+                <button id="generatePassword" class="mini-action" type="button">Generate strong password</button>
+              </div>
+              <div class="password-wrap"><input id="password" type="password" autocomplete="new-password" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
+              <div class="strength strength-0"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
+              <p class="password-note">Your password cannot be recovered. Store it safely and test decryption before deleting the original.</p>
             </div>
-            <div class="password-wrap"><input id="password" type="password" autocomplete="new-password" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
-            <div class="strength"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
-            <p class="password-note">Your password cannot be recovered. Store it safely and test decryption before deleting the original.</p>
+
+            <div id="pgpCredentials" class="pgp-credentials hidden">
+              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
+              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
+              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
+              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="current-password" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
+              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
+            </div>
 
             <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
             <p id="errorMessage" class="error" role="alert"></p>
@@ -90,10 +103,10 @@
             <div class="status-top"><span class="kicker">LIVE SECURITY MONITOR</span><span id="statusChip" class="status-chip">READY</span></div>
             <div class="orb-wrap"><div id="orb" class="orb"><div class="orb-core">⌾</div></div><div class="orbit-dot"></div></div>
             <div role="status" aria-live="polite" aria-atomic="true"><h3 id="statusTitle">Vault standing by</h3><p id="statusCopy">Select a file or enter text to begin. All processing stays within this tab.</p></div>
-            <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><div id="progressTrack" class="progress-track" role="progressbar" aria-label="Vault operation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progressBar"></i></div></div>
+            <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
             <div class="checks">
-              <div><span class="check">✓</span><p><strong>AES-256-GCM</strong><small>Authenticated encryption</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong>PBKDF2-SHA-256</strong><small>600,000 derivation rounds</small></p><span class="lock">▣</span></div>
+              <div><span class="check">✓</span><p><strong id="algorithmLabel">AES-256-GCM</strong><small id="algorithmCopy">Authenticated encryption</small></p><span class="lock">▣</span></div>
+              <div><span class="check">✓</span><p><strong id="keyMethodLabel">PBKDF2-SHA-256</strong><small id="keyMethodCopy">600,000 derivation rounds</small></p><span class="lock">▣</span></div>
               <div><span class="check">✓</span><p><strong>Local processing</strong><small>Network-free by design</small></p><span class="lock">▣</span></div>
             </div>
           </aside>
@@ -113,6 +126,29 @@
         <article><div class="icon-box purple">⌁</div><h3>Password hardened</h3><p>PBKDF2-SHA-256 stretches every password through 600,000 rounds with a unique 128-bit salt.</p><span class="verified">✓ SECURITY PROPERTY</span></article>
         <article><div class="icon-box green">◌</div><h3>Zero-knowledge flow</h3><p>Files, text, passwords, and keys stay in browser memory. The app contains no upload code.</p><span class="verified">✓ LOCAL BY DESIGN</span></article>
         <article><div class="icon-box orange">◈</div><h3>Tamper detection</h3><p>GCM authentication rejects altered ciphertext and incorrect passwords without exposing partial content.</p><span class="verified">✓ INTEGRITY CHECKED</span></article>
+      </div>
+      <div class="security-overview" aria-labelledby="security-overview-title">
+        <div class="security-overview-head"><div><span class="kicker">SECURITY OVERVIEW</span><h2 id="security-overview-title">Exact claims. Clear limits.</h2></div><p>CipherSplat has one deployment mode: local browser processing. It has no Google, MySQL, hosted-vault, account, sync, upload, analytics, or tracking mode.</p></div>
+        <dl class="security-facts">
+          <div><dt>Password packages</dt><dd>AES-256-GCM; PBKDF2-HMAC-SHA-256 with 600,000 rounds and a fresh 128-bit salt.</dd></div>
+          <div><dt>File package format</dt><dd>CS2 records use a random 64-bit IV prefix, monotonic 32-bit counter, 96-bit GCM IV, 128-bit tag, and counter-bound additional data.</dd></div>
+          <div><dt>OpenPGP option</dt><dd>OpenPGP.js 6.3.1 is pinned and served locally. Encryption follows the recipient key's supported algorithm preferences; keys are never uploaded or persisted.</dd></div>
+          <div><dt>Key lifetime</dt><dd>Derived AES keys exist only inside the active operation. Passwords, imported keys, source text, and selected-file references clear after each result; downloadable results clear after 10 idle minutes.</dd></div>
+          <div><dt>Application storage</dt><dd>No cookies, localStorage, sessionStorage, IndexedDB, service API, or server database is used by CipherSplat.</dd></div>
+          <div><dt>Supply chain</dt><dd>No remote scripts, fonts, or cryptographic services. A strict CSP blocks connections and inline code; published SHA-256 hashes cover shipped code and assets.</dd></div>
+        </dl>
+
+        <div class="data-flow" aria-label="CipherSplat local data flow">
+          <div><b>1</b><strong>Your input</strong><span>File, folder, text, password, or key</span></div><i aria-hidden="true">→</i><div><b>2</b><strong>Browser memory</strong><span>Web Crypto or pinned OpenPGP.js</span></div><i aria-hidden="true">→</i><div><b>3</b><strong>Your download</strong><span>Authenticated package or restored data</span></div>
+          <p><strong>Network boundary:</strong> no application data crosses it. The downloaded edition's connection switch controls optional website links only.</p>
+        </div>
+
+        <div class="threat-grid">
+          <article><span class="kicker">PROTECTS AGAINST</span><h3>Designed security boundary</h3><ul><li>Network interception and server-side data breaches</li><li>Package tampering and incorrect passwords</li><li>Path traversal during folder restoration</li><li>Accidental persistence by the application</li></ul></article>
+          <article><span class="kicker">OUT OF SCOPE</span><h3>Device trust still matters</h3><ul><li>Malicious extensions, injected scripts, or a compromised browser</li><li>Keyloggers, screen capture, OS malware, or device administrators</li><li>Someone with access while this tab is unlocked</li><li>A modified offline copy or replaced production files</li></ul></article>
+          <article><span class="kicker">ASSURANCE STATUS</span><h3>No borrowed trust claims</h3><p>CipherSplat has automated functional checks and public source, but no current independent audit, SOC 2 attestation, paid bug bounty, or formal certification. Those are not implied by the security badges.</p></article>
+        </div>
+        <div class="security-links"><a href="integrity.json">Published source hashes</a><a class="online-link" href="../../.well-known/security.txt" data-online-href="https://drawsplat.org/.well-known/security.txt">Report a vulnerability</a><a class="online-link" href="../../SECURITY.md" data-online-href="https://drawsplat.org/SECURITY.md">Disclosure policy</a><a class="online-link" href="../../legal/combined-policy.html" data-online-href="https://drawsplat.org/legal/combined-policy.html">Annual review commitment</a></div>
       </div>
     </section>
 
@@ -173,6 +209,7 @@
     </form>
   </dialog>
   <footer class="wrap"><a class="brand" href="#"><span class="brand-mark"><span></span></span><span>CIPHER<em>SPLAT</em></span></a><p>Private by architecture. Powered by the Web Crypto API.</p><a class="footer-link online-link" href="../../pages/tools.html" data-online-href="https://drawsplat.org/pages/tools">More DrawSplat Tools →</a><span>CS2 CHUNKED FORMAT</span></footer>
+  <script src="vendor/openpgp/openpgp.min.js" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
   <script src="app.js"></script>
 </body>
 </html>

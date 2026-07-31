@@ -18,12 +18,15 @@ For a ready-to-download local edition, run `../../scripts/build-ciphersplat-offl
 
 - AES-256-GCM authenticated encryption (confidentiality, integrity, and wrong-password detection)
 - PBKDF2-SHA-256 with 600,000 iterations and a fresh random 128-bit salt
+- Optional OpenPGP public-key encryption and private-key decryption through pinned, locally vendored OpenPGP.js 6.3.1
 - Fresh random 96-bit GCM nonce for every package
 - Chunked file, multi-file, text, and recursively discovered folder encryption
 - Folder paths, filenames, MIME types, and contents are inside the encrypted payload
 - Full folder restoration through the File System Access API where supported
 - No analytics, accounts, cookies, backend, upload request, or stored key
 - Responsive security dashboard with honest progress/status indicators
+- Verification-only mode that authenticates a CS2 or OpenPGP package and discards restored plaintext
+- Automatic clearing of passwords, imported keys, source input, file references, and results
 
 ## Folder workflow
 
@@ -64,6 +67,12 @@ There is still no honest claim of “unlimited” size in a browser. Real limits
 - The application includes a restrictive in-document Content Security Policy and makes no third-party font or analytics requests. Production hosting should additionally send CSP (including `frame-ancestors 'none'`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, and an appropriate `Permissions-Policy` as HTTP response headers.
 - CS2 validates package algorithms, KDF rounds, salt/nonce lengths, chunk sizes, metadata size, file count, record count, authenticated file sizes, and safe relative paths before restoration.
 - Folder restoration warns before any existing destination file can be overwritten. Choose a new or empty destination directory for the safest restore.
+- OpenPGP keys are imported for one operation only. CipherSplat does not generate, discover, upload, persist, or synchronize keys. Protect private keys with a passphrase and verify recipient fingerprints out of band.
+- The application clears source input and credentials after a completed result and clears the workspace after 10 minutes without interaction. JavaScript garbage collection ultimately controls physical memory reclamation.
+- The production route has a strict CSP with no `unsafe-inline`, no allowed network connections, and no remote script sources. OpenPGP.js is vendored with its license and version metadata.
+- `integrity.json` publishes SHA-256 hashes for the source, styles, assets, and OpenPGP dependency. `../../scripts/build-ciphersplat-offline.sh` normalizes timestamps and ZIP metadata for reproducible offline archives.
+- CipherSplat does not protect against malicious browser extensions, compromised browsers or operating systems, keyloggers, screen capture, device administrators, or modified application files.
+- CipherSplat has not received an independent security audit and does not claim SOC 2 certification, a paid bug bounty, or formal cryptographic certification.
 
 ## Accessibility
 

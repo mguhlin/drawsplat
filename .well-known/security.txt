@@ -1,0 +1,7 @@
+Contact: mailto:drawsplat@gmail.com
+Contact: https://drawsplat.org/pages/contact.html
+Expires: 2027-07-31T23:59:59Z
+Preferred-Languages: en
+Canonical: https://drawsplat.org/.well-known/security.txt
+Policy: https://drawsplat.org/SECURITY.md
+

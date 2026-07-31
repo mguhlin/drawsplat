@@ -9,6 +9,18 @@ Encryption, decryption, password generation, and file handling are local in
 both switch positions. The switch only enables or disables optional links to
 DrawSplat.org; CipherSplat contains no upload, analytics, or tracking code.
 
+Password vaults and optional OpenPGP public/private-key operations both work
+offline. Imported keys and key passphrases are held for one operation and are
+not saved. Verify recipient fingerprints through a separate trusted channel.
+
+The included integrity.json contains SHA-256 hashes for the shipped source,
+styles, images, and pinned OpenPGP.js dependency.
+
+Browsers cannot enforce HTML Subresource Integrity for file:// scripts because
+local files have an opaque origin. The online edition uses SRI; this downloaded
+edition omits that one HTML attribute and supplies matching SHA-256 hashes in
+integrity.json instead.
+
 If a browser blocks Web Crypto for pages opened directly from disk, start a
 local static server in the folder instead. For example:
 
@@ -19,4 +31,3 @@ needed for a localhost server.
 
 Always test decryption before deleting the original data. CipherSplat cannot
 recover a forgotten password.
-

@@ -1,0 +1,17 @@
+{
+  "schema": "drawsplat-ciphersplat-integrity-v1",
+  "openpgpVersion": "6.3.1",
+  "hashAlgorithm": "SHA-256",
+  "files": {
+    "app.js": "d54ae41052eaebd98fc311b379cb00fa0e06ed4f981179abe57b4ffa438ea6be",
+    "index.html": "1647b17738be1752577c18c82700d4563b95f467db1361d6014cd8b0c9f555d5",
+    "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
+    "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
+    "assets/ciphersplat-hero.png": "7933236ff1528d1f0c1111a4645efa08ddab604fcf94ede033e4241c49d8dae9",
+    "assets/drawsplat-logo.png": "2b8132b94621190e5b900a7c6034f925eb6cd292d1ad4117d2f5ed4596eb5208",
+    "assets/tools.svg": "0322b0e7ecbf5750bf478051523f885aecc4709c77a5d72705104d0aec1c3008",
+    "vendor/openpgp/openpgp.min.js": "9736f49e81790af972029cd8416a8f9e5be7c4bddfb041676ab93fcad8332f5e",
+    "vendor/openpgp/LICENSE": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+    "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb"
+  }
+}
