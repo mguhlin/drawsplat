@@ -7,7 +7,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self' blob:">
   <title>CipherSplat — Private browser encryption</title>
-  <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/tools.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <style>:root{--purple:#1769e8;--violet:#79aef4;--cyan:#77d4ff;--ink:#0a1d3a;--line:#d8e2ee}.picker-actions{display:flex;gap:8px;margin-top:8px}.picker-actions button{font:800 10px Manrope;border:1px solid #c8d6e8;border-radius:5px;padding:7px 10px;color:#1769e8;background:#fff;cursor:pointer}.hero{min-height:640px}.hero-art{position:absolute;z-index:-1;width:min(62vw,760px);right:-90px;top:30px;mask-image:linear-gradient(90deg,transparent 0,#000 30%);border-radius:30px;opacity:.94}.primary,.run-button{background:linear-gradient(100deg,#0a56c8,#438be7)}.brand em{color:#4f7fb8}.orb{background:conic-gradient(from 40deg,#0b55c6,#74a8df,#c8d7e8,#0b55c6)}@media(max-width:800px){.hero-art{width:100%;right:-28%;top:105px;opacity:.3;mask-image:linear-gradient(180deg,#000,transparent)}.hero{min-height:auto}.picker-actions{flex-wrap:wrap;justify-content:center}.picker-actions button{min-height:42px;padding:10px 14px}.drop-zone{min-height:220px}.run-button{min-height:50px}.control-panel input,.control-panel textarea{font-size:16px}}@media(max-width:500px){.hero-art{right:-35%;top:140px;width:125%}.trust-row{display:grid;grid-template-columns:repeat(3,1fr)}.app-shell{border-radius:9px}.mode-tabs{padding:0 6px}.mode-tab{padding:18px 12px}}</style>
   <style>html,body{overflow-x:hidden}.hero h1{max-width:690px}.hero>p{max-width:570px}.skip-link{position:fixed;z-index:999;left:12px;top:12px;transform:translateY(-160%);background:#fff;color:#082657;border:2px solid #1769e8;padding:12px 16px;border-radius:6px;font-weight:800}.skip-link:focus{transform:none}button,a,[tabindex]:not([tabindex="-1"]){outline-offset:3px}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #0b67dc}.mini-action,.password-wrap button,.picker-actions button,.file-card button{min-width:44px;min-height:44px}.mini-action{font-size:12px}.kicker,.verified,.strength span,.progress-label,.checks small,.result-panel p{font-size:11px}.verified{color:#176f5a}.status-panel[aria-busy="true"] .orb{animation-duration:1s}.progress-track{position:relative}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}@media(max-width:800px){.hero h1{max-width:none}}</style>
@@ -23,7 +23,8 @@
     <nav aria-label="Primary navigation">
       <a href="#workspace">Workspace</a><a href="#security">Security</a><a href="#how">How it works</a>
     </nav>
-    <a class="drawsplat-pill" href="../../pages/tools.html" aria-label="Back to DrawSplat Tools"><img src="../../assets/brand/DrawSplat_logo.png" alt=""> DrawSplat Tool</a>
+    <a class="drawsplat-pill online-link" href="../../pages/tools.html" data-online-href="https://drawsplat.org/pages/tools" aria-label="Back to DrawSplat Tools"><img src="assets/drawsplat-logo.png" alt=""> DrawSplat Tool</a>
+    <a class="offline-download" href="downloads/CipherSplat-offline.zip" download>Download offline ↓</a>
     <div class="local-pill"><i></i> Local engine online</div>
   </header>
 
@@ -120,7 +121,58 @@
       <div class="steps"><article><b>01</b><h3>Choose your data</h3><p>Drop a file or paste text. It stays on your device.</p></article><i>→</i><article><b>02</b><h3>Create the key</h3><p>Your password and random salt derive a one-time vault key.</p></article><i>→</i><article><b>03</b><h3>Lock & save</h3><p>AES-GCM encrypts and authenticates your data for download.</p></article></div>
     </section>
   </main>
-  <footer class="wrap"><a class="brand" href="#"><span class="brand-mark"><span></span></span><span>CIPHER<em>SPLAT</em></span></a><p>Private by architecture. Powered by the Web Crypto API.</p><a class="footer-link" href="../../pages/tools.html">More DrawSplat Tools →</a><span>CS2 CHUNKED FORMAT</span></footer>
+  <section id="offlineControls" class="offline-controls hidden" aria-label="Offline edition connection control">
+    <div><span class="kicker">DOWNLOADED EDITION</span><strong id="connectionLabel">Internet Connection — OFF</strong><small>Encryption never uses the network. Turn this on only to enable links to DrawSplat.org.</small></div>
+    <label class="connection-switch"><input id="internetToggle" type="checkbox" role="switch" aria-describedby="connectionHelp"><span aria-hidden="true"></span><span class="sr-only">Allow links to the internet</span></label>
+    <p id="connectionHelp" class="sr-only">This setting controls optional website links only. CipherSplat encryption is always local.</p>
+  </section>
+  <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
+    <form method="dialog" class="generator-card">
+      <div class="generator-head">
+        <div><span class="kicker">LOCAL PASSWORD LAB</span><h2 id="generatorTitle">Create a vault password</h2></div>
+        <button class="generator-close" value="cancel" aria-label="Close password generator">×</button>
+      </div>
+      <p class="generator-intro">Generated only on this device with cryptographically secure randomness. CipherSplat never stores or sends it.</p>
+      <fieldset class="generator-modes">
+        <legend class="sr-only">Password type</legend>
+        <label><input type="radio" name="generatorMode" value="password" checked> Password</label>
+        <label><input type="radio" name="generatorMode" value="passphrase"> Passphrase</label>
+      </fieldset>
+
+      <div id="passwordOptions" class="generator-options">
+        <label class="range-label" for="passwordLength"><span>Characters</span><output id="passwordLengthValue">24</output></label>
+        <input id="passwordLength" type="range" min="12" max="64" value="24">
+        <div class="generator-checks">
+          <label><input id="includeUpper" type="checkbox" checked> A–Z</label>
+          <label><input id="includeLower" type="checkbox" checked> a–z</label>
+          <label><input id="includeNumbers" type="checkbox" checked> 0–9</label>
+          <label><input id="includeSymbols" type="checkbox" checked> Symbols</label>
+        </div>
+      </div>
+
+      <div id="passphraseOptions" class="generator-options hidden">
+        <label class="range-label" for="wordCount"><span>Words</span><output id="wordCountValue">10</output></label>
+        <input id="wordCount" type="range" min="4" max="12" value="10">
+        <div class="generator-checks">
+          <label for="wordSeparator">Separator <select id="wordSeparator"><option value="-">Hyphen</option><option value=".">Period</option><option value=" ">Space</option></select></label>
+          <label><input id="capitalizeWords" type="checkbox"> Capitalize</label>
+          <label><input id="includeWordNumber" type="checkbox" checked> Add number</label>
+        </div>
+      </div>
+
+      <div class="generated-display">
+        <output id="generatedPassword" aria-live="polite"></output>
+        <div><span>Password strength: <strong id="generatedStrength">Strong</strong></span><span>Estimated entropy: <strong id="generatedEntropy">—</strong></span></div>
+      </div>
+      <p id="generatorError" class="generator-error" role="alert"></p>
+      <div class="generator-actions">
+        <button id="copyGenerated" class="secondary" type="button">Copy</button>
+        <button id="regeneratePassword" class="secondary" type="button">↻ Regenerate</button>
+        <button id="useGenerated" class="primary" type="button">Use this password →</button>
+      </div>
+    </form>
+  </dialog>
+  <footer class="wrap"><a class="brand" href="#"><span class="brand-mark"><span></span></span><span>CIPHER<em>SPLAT</em></span></a><p>Private by architecture. Powered by the Web Crypto API.</p><a class="footer-link online-link" href="../../pages/tools.html" data-online-href="https://drawsplat.org/pages/tools">More DrawSplat Tools →</a><span>CS2 CHUNKED FORMAT</span></footer>
   <script src="app.js"></script>
 </body>
 </html>

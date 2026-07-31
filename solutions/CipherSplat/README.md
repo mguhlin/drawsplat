@@ -12,6 +12,8 @@ python3 -m http.server 8080
 
 Open `http://localhost:8080` in a current browser. There is no build step and no application dependency.
 
+For a ready-to-download local edition, run `../../scripts/build-ciphersplat-offline.sh`. It creates `downloads/CipherSplat-offline.zip`. The packaged app can be opened directly from disk and shows an Internet Connection switch that defaults to OFF. That switch controls optional DrawSplat.org links only; cryptographic operations never use the network.
+
 ## Features
 
 - AES-256-GCM authenticated encryption (confidentiality, integrity, and wrong-password detection)
