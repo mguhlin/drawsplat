@@ -1,4 +1,4 @@
-CipherSplat™ v1.0.0 Offline Edition
+CipherSplat™ v1.0.1 Offline Edition
 ===================================
 
 1. Keep this entire CipherSplat folder together.

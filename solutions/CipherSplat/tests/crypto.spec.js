@@ -42,6 +42,21 @@ test('text parser rejects a mismatched authenticated format version', async ({ p
   expect(rejected).toBe(true);
 });
 
+test('legacy vault metadata rejects unsafe paths and inconsistent sizes', async ({ page }) => {
+  const rejected = await page.evaluate(() => {
+    const cases = [
+      { meta: { kind: 'folder', name: 'vault', entries: [{ path: '../escape.txt', size: 1, type: 'text/plain' }] }, size: 1 },
+      { meta: { kind: 'file', name: 'vault', entries: [{ path: 'safe.txt', size: 2, type: 'text/plain' }] }, size: 1 },
+      { meta: { kind: 'file', name: 'vault', entries: [{ path: 'safe.txt', size: 1, type: 7 }] }, size: 1 },
+    ];
+    return cases.every(({ meta, size }) => {
+      try { validatePlainMetadata(meta, size); return false; }
+      catch { return true; }
+    });
+  });
+  expect(rejected).toBe(true);
+});
+
 test('chunked v4 authenticates its header for every record', async ({ page }) => {
   const result = await page.evaluate(async () => {
     selectedEntries = [{ file: new File([enc.encode('chunk data')], 'audit.txt'), path: 'audit.txt' }];

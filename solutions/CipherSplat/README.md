@@ -1,6 +1,6 @@
-# CipherSplat™ v1.0.0
+# CipherSplat™ v1.0.1
 
-CipherSplat™ v1.0.0 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
+CipherSplat™ v1.0.1 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
 
 ## Run it
 
@@ -37,7 +37,7 @@ When decrypting a folder package, **Restore folder** asks for a destination dire
 
 ## Container formats
 
-The application release is v1.0.0. This is separate from the current CS4 encrypted-container format version.
+The application release is v1.0.1. This is separate from the current CS4 encrypted-container format version.
 
 New files and folders use the chunked CS4 binary package:
 
