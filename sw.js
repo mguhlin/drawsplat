@@ -49,6 +49,7 @@ const SHELL = [
   './solutions/CipherSplat/index.html',
   './solutions/CipherSplat/styles.css',
   './solutions/CipherSplat/security.css',
+  './solutions/CipherSplat/mobile.css',
   './solutions/CipherSplat/app.js',
   './solutions/CipherSplat/integrity.json',
   './solutions/CipherSplat/assets/ciphersplat-hero.png',

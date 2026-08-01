@@ -1,0 +1,18 @@
+/* Keep the offline package available when the desktop navigation collapses. */
+@media (max-width: 800px) {
+  .offline-download {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .local-pill {
+    display: none;
+  }
+}
+
+/* The download is irrelevant inside the already-downloaded edition. */
+@media (max-width: 800px) {
+  .offline-edition .offline-download {
+    display: none;
+  }
+}

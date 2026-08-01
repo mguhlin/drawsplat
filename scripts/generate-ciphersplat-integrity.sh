@@ -9,6 +9,7 @@ FILES=(
   index.html
   security.css
   styles.css
+  mobile.css
   assets/ciphersplat-hero.png
   assets/drawsplat-logo.png
   assets/tools.svg
