@@ -1,10 +1,12 @@
 {
   "schema": "drawsplat-ciphersplat-integrity-v1",
   "openpgpVersion": "6.3.1",
+  "argon2Version": "hash-wasm 4.12.0",
   "hashAlgorithm": "SHA-256",
   "files": {
-    "app.js": "d54ae41052eaebd98fc311b379cb00fa0e06ed4f981179abe57b4ffa438ea6be",
-    "index.html": "56281ff930dda1b7c393a270c5f2b8c9c1450614aa1504d2ff80304964ec652f",
+    "app.js": "d49b8494017e7269b033ef41afca5364dfc976223e451c65e4279ea9556788c8",
+    "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
+    "index.html": "709b94132de8e8ab25313d1f492d389a75fcf5f41e8a3e99768951c453b9a915",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
     "mobile.css": "63d50281cbb7b735ccf6b57770b08be4e9e4b3cbafb6b7e040b35be11d667b85",
@@ -13,6 +15,9 @@
     "assets/tools.svg": "0322b0e7ecbf5750bf478051523f885aecc4709c77a5d72705104d0aec1c3008",
     "vendor/openpgp/openpgp.min.js": "9736f49e81790af972029cd8416a8f9e5be7c4bddfb041676ab93fcad8332f5e",
     "vendor/openpgp/LICENSE": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
-    "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb"
+    "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb",
+    "vendor/hash-wasm/argon2.umd.min.js": "dcec617a2e1b700fa132d1583a186cb70611113395e869f2dd6cc82b415d3094",
+    "vendor/hash-wasm/LICENSE": "c14dea172f72f2714284a0ac2ab1b00b5352a01409d58255a46227ffc541debd",
+    "vendor/hash-wasm/package.json": "bdb86309706014e1e3062ce78aa7a2e8b196a44d5a22ceec8978d864e28116f7"
   }
 }

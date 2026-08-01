@@ -20,6 +20,7 @@ cp "$SOURCE_DIR/styles.css" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/security.css" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/mobile.css" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/app.js" "$STAGING_DIR/CipherSplat/"
+cp "$SOURCE_DIR/argon2-worker.js" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/OFFLINE-README.txt" "$STAGING_DIR/CipherSplat/"
 cp "$SOURCE_DIR/assets/ciphersplat-hero.png" "$STAGING_DIR/CipherSplat/assets/"
 cp "$SOURCE_DIR/assets/drawsplat-logo.png" "$STAGING_DIR/CipherSplat/assets/"
@@ -28,6 +29,10 @@ mkdir -p "$STAGING_DIR/CipherSplat/vendor/openpgp"
 cp "$SOURCE_DIR/vendor/openpgp/openpgp.min.js" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
 cp "$SOURCE_DIR/vendor/openpgp/LICENSE" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
 cp "$SOURCE_DIR/vendor/openpgp/package.json" "$STAGING_DIR/CipherSplat/vendor/openpgp/"
+mkdir -p "$STAGING_DIR/CipherSplat/vendor/hash-wasm"
+cp "$SOURCE_DIR/vendor/hash-wasm/argon2.umd.min.js" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
+cp "$SOURCE_DIR/vendor/hash-wasm/LICENSE" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
+cp "$SOURCE_DIR/vendor/hash-wasm/package.json" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
 
 # file:// scripts cannot use browser SRI because local files have an opaque
 # origin. The offline edition verifies the same vendored file via its local
