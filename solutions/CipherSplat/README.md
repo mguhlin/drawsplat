@@ -1,6 +1,6 @@
-# CipherSplat
+# CipherSplat™ v1.0.0
 
-CipherSplat is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
+CipherSplat™ v1.0.0 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
 
 ## Run it
 
@@ -31,11 +31,13 @@ For a ready-to-download local edition, run `../../scripts/build-ciphersplat-offl
 
 ## Folder workflow
 
-Use **Choose folder** or drag a directory into the drop zone. CipherSplat walks every nested directory, records relative paths and sizes, then encrypts each file in bounded chunks as one `.ciphersplat` package. Empty directories are not retained because the container records files, not directory entries.
+Use **Choose folder** or drag a directory into the drop zone. CipherSplat walks every nested directory, records relative paths and sizes, then encrypts each file in bounded chunks as one `.csplat` package. Empty directories are not retained because the container records files, not directory entries. Existing `.ciphersplat` packages remain readable; the filename extension is only a type hint, while authenticated container magic and metadata determine the actual format.
 
 When decrypting a folder package, **Restore folder** asks for a destination directory and recreates the nested tree. This uses `showDirectoryPicker`, currently best supported by Chromium-family browsers. On browsers without that API, files are downloaded individually and `/` is replaced with `__` in fallback filenames.
 
 ## Container formats
+
+The application release is v1.0.0. This is separate from the current CS4 encrypted-container format version.
 
 New files and folders use the chunked CS4 binary package:
 

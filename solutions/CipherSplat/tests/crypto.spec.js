@@ -54,13 +54,14 @@ test('chunked v4 authenticates its header for every record', async ({ page }) =>
     try { await decryptFilesChunked(new File([changed], 'changed.ciphersplat')); }
     catch { headerRejected = true; }
     return {
+      name: encrypted.name,
       magic: dec.decode(original.slice(0, 8)),
       text: await opened.files[0].blob.text(),
       headerRejected,
     };
   });
 
-  expect(result).toEqual({ magic: 'CSPCS4!!', text: 'chunk data', headerRejected: true });
+  expect(result).toEqual({ name: 'audit.txt.csplat', magic: 'CSPCS4!!', text: 'chunk data', headerRejected: true });
 });
 
 test('chunked v4 rejects ciphertext mutation, truncation, and appended data', async ({ page }) => {

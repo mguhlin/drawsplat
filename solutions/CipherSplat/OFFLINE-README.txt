@@ -1,5 +1,5 @@
-CipherSplat Offline Edition
-===========================
+CipherSplat™ v1.0.0 Offline Edition
+===================================
 
 1. Keep this entire CipherSplat folder together.
 2. Open index.html in a current Chrome, Edge, Firefox, or Safari browser.
@@ -32,3 +32,6 @@ needed for a localhost server.
 
 Always test decryption before deleting the original data. CipherSplat cannot
 recover a forgotten password.
+
+New file and folder packages use the .csplat extension. Legacy .ciphersplat
+packages remain readable.

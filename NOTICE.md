@@ -1,6 +1,6 @@
-# DrawSplatTM Notice
+# DrawSplat™ and CipherSplat™ Notice
 
-DrawSplatTM is created by DrawSplat Developer(s).
+DrawSplat™ and CipherSplat™ are created by DrawSplat Developer(s).
 
 Official website: https://drawsplat.org
 
@@ -13,7 +13,7 @@ DrawSplatTM is available in two ways:
 
 ## Brand
 
-The DrawSplatTM name, logo, splash artwork, and visual identity are associated with DrawSplat Developer(s) and the DrawSplatTM project. Do not use them in a way that implies endorsement, sponsorship, or official status without written permission.
+The DrawSplat™ and CipherSplat™ names, logos, splash artwork, and visual identities are associated with DrawSplat Developer(s) and their respective projects. Do not use them in a way that implies endorsement, sponsorship, or official status without written permission. The ™ symbol identifies claimed trademarks; it is not a representation of federal registration.
 
 ## User Content
 
