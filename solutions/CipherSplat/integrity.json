@@ -8,7 +8,8 @@
   "files": {
     "app.js": "c541eae13ab40104af9844ac57405b70a751a58a6f9ffd04bb79dff16cb40594",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
-    "index.html": "1ec3dd641fc945cb2f9e98ffe3a6db606c0d57ed0eccc0c47c1f854c30550d68",
+    "index.html": "090007d3333c2d006a3af9f50c703fbe1ccab30112e3c0cbd93e9184687a559b",
+    "manifest.webmanifest": "d6362f1965a02c471821dcb55d37359615762759f5c2760ac367cc74eec26960",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
     "mobile.css": "63d50281cbb7b735ccf6b57770b08be4e9e4b3cbafb6b7e040b35be11d667b85",

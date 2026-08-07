@@ -8,6 +8,7 @@ FILES=(
   app.js
   argon2-worker.js
   index.html
+  manifest.webmanifest
   security.css
   styles.css
   mobile.css

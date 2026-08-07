@@ -1,0 +1,16 @@
+{
+  "name": "CipherSplat — Private Browser Encryption",
+  "short_name": "CipherSplat",
+  "description": "Encrypt files, folders, and text locally with AES-256-GCM and Argon2id. Nothing is uploaded.",
+  "id": "/solutions/CipherSplat/",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#7958f5",
+  "background_color": "#fbfaff",
+  "icons": [
+    { "src": "assets/tools.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "assets/drawsplat-logo.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any" }
+  ]
+}
