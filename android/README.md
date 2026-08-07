@@ -97,3 +97,6 @@ UpdateCheckMode: Tags ^v[0-9.]+-android$
 First working scaffold. Needs a build + on-device pass with the Android SDK
 (encrypt/decrypt a file, save to Downloads, OpenPGP round trip) before release,
 plus the from-source crypto-dependency work above for a clean F-Droid inclusion.
+
+**See [`NEXT-STEPS.md`](NEXT-STEPS.md)** for the full pickup checklist, including
+how to finish this on a Windows 11 + Docker (WSL2) machine.
