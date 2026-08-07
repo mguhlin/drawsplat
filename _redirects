@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects
+# Vanity short URLs for CipherSplat. The canonical app lives at
+# /solutions/CipherSplat/ so it keeps the strict per-route security
+# headers defined in _headers. These 301s let people type a short path
+# and land on the real one.
+/ciphersplat        /solutions/CipherSplat/          301
+/ciphersplat/       /solutions/CipherSplat/          301
+/ciphersplat/*      /solutions/CipherSplat/:splat    301
+/CipherSplat        /solutions/CipherSplat/          301
+/CipherSplat/       /solutions/CipherSplat/          301
+/CipherSplat/*      /solutions/CipherSplat/:splat    301
