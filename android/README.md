@@ -48,12 +48,19 @@ Licensing is clean: the app and web code are **AGPL-3.0-or-later**; `hash-wasm`
 is MIT; OpenPGP.js is LGPL-3.0+. The app pulls in only `androidx.activity` and
 `androidx.webkit`.
 
-The one item reviewers will scrutinise is that `vendor/hash-wasm/argon2.umd.min.js`
+The item reviewers scrutinise is that `vendor/hash-wasm/argon2.umd.min.js`
 embeds a **prebuilt WebAssembly blob** and `vendor/openpgp/openpgp.min.js` is
-minified. F-Droid prefers building such artifacts from source in the pipeline.
-Either add a build step that compiles hash-wasm's Argon2 WASM and bundles
-OpenPGP.js from source, or expect the app to carry a `Prebuilt` note until that
-is wired up.
+minified. Both can now be rebuilt from source with the scripts in
+[`../vendor/build/`](../vendor/build/README.md):
+
+- **OpenPGP.js** — `vendor/build/build-openpgp.sh` builds it from the pinned
+  `v6.3.1` tag with `node`/`npm` only. This runs on the F-Droid buildserver.
+- **hash-wasm Argon2** — `vendor/build/build-hash-wasm.sh` recompiles the wasm
+  from C via hash-wasm's own Docker toolchain. F-Droid's buildserver does not
+  provide Docker, so this step needs either the wasi-sdk/clang toolchain
+  installed via `sudo` in the recipe, or the wasm compiled and committed with
+  documented provenance. Until that is wired up, the app may still carry a note
+  for the Argon2 wasm specifically.
 
 A starting point for `fdroiddata/metadata/org.drawsplat.ciphersplat.yml`:
 
@@ -73,6 +80,11 @@ Builds:
     versionCode: 1
     commit: v1.0.2-android
     subdir: android/app
+    prebuild:
+      # Rebuild OpenPGP.js from source over the vendored bundle (node/npm).
+      - ../../vendor/build/build-openpgp.sh $$PWD/opgp
+      - cp $$PWD/opgp/openpgp.min.js ../../solutions/CipherSplat/vendor/openpgp/openpgp.min.js
+      # Argon2 wasm-from-source needs a wasm toolchain on the builder; see above.
     gradle:
       - yes
 
