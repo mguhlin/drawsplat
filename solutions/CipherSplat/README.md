@@ -1,6 +1,6 @@
-# CipherSplat™ v1.0.1
+# CipherSplat™ v1.0.2
 
-CipherSplat™ v1.0.1 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
+CipherSplat™ v1.0.2 is a standalone, browser-only encryption dashboard for files, recursive folders, and text. It was designed as a modernized alternative to the core FileLock workflow: data is encrypted locally and is never uploaded.
 
 ## Run it
 
@@ -37,7 +37,7 @@ When decrypting a folder package, **Restore folder** asks for a destination dire
 
 ## Container formats
 
-The application release is v1.0.1. This is separate from the current CS4 encrypted-container format version.
+The application release is v1.0.2. This is separate from the current CS4 encrypted-container format version.
 
 New files and folders use the chunked CS4 binary package:
 
@@ -72,7 +72,8 @@ There is still no honest claim of “unlimited” size in a browser. Real limits
 - Folder restoration warns before any existing destination file can be overwritten. Choose a new or empty destination directory for the safest restore.
 - OpenPGP keys are imported for one operation only. CipherSplat does not generate, discover, upload, persist, or synchronize keys. Protect private keys with a passphrase and verify recipient fingerprints out of band.
 - The application clears source input and credentials after a completed result and clears the workspace after 10 minutes without interaction. JavaScript garbage collection ultimately controls physical memory reclamation.
-- The production route has a strict CSP with no `unsafe-inline`, no allowed network connections, and no remote script sources. Its narrowly scoped `wasm-unsafe-eval` permission enables the local Argon2id WebAssembly module. OpenPGP.js and hash-wasm are vendored with their licenses and version metadata.
+- The production route has a strict CSP with no `unsafe-inline`, no allowed network connections, and no remote script sources. `img-src` and `worker-src` are pinned to `'self'` with no `data:`/`blob:` allowances, and the document requires Trusted Types (`require-trusted-types-for 'script'`) with a single policy that permits only the local Argon2id worker URL and blocks every HTML/script-injection sink. Its narrowly scoped `wasm-unsafe-eval` permission enables the local Argon2id WebAssembly module. OpenPGP.js and hash-wasm are vendored with their licenses and version metadata.
+- Response headers on the production route add `Cross-Origin-Embedder-Policy: require-corp` (cross-origin isolation for an all-same-origin app), `X-Permitted-Cross-Domain-Policies: none`, and a broadened `Permissions-Policy` that denies every sensor, capture, and device feature the tool does not use.
 - Argon2id normally runs in a short-lived Web Worker. Terminating the worker releases its WASM instance; a main-thread fallback supports environments that cannot start a local worker. Browser garbage collection ultimately controls physical memory reclamation.
 - `integrity.json` publishes SHA-256 hashes for the source, worker, styles, assets, OpenPGP dependency, and Argon2id dependency. `../../scripts/build-ciphersplat-offline.sh` normalizes timestamps and ZIP metadata for reproducible offline archives.
 - CipherSplat does not protect against malicious browser extensions, compromised browsers or operating systems, keyloggers, screen capture, device administrators, or modified application files.

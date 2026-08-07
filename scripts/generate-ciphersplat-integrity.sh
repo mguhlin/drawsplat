@@ -25,7 +25,7 @@ FILES=(
 {
   printf '{\n  "schema": "drawsplat-ciphersplat-integrity-v1",\n'
   printf '  "application": "CipherSplat",\n'
-  printf '  "applicationVersion": "1.0.1",\n'
+  printf '  "applicationVersion": "1.0.2",\n'
   printf '  "openpgpVersion": "6.3.1",\n'
   printf '  "argon2Version": "hash-wasm 4.12.0",\n'
   printf '  "hashAlgorithm": "SHA-256",\n'

@@ -73,3 +73,25 @@ The browser is intentionally the trusted execution boundary for local encryption
 7. **Parser assurance:** Coverage should be extended with continuous fuzzing, dependency scanning, and an independent review. No bounded review can prove the absence of all defects.
 
 These limitations should remain visible; they cannot be honestly “removed” through client-side code alone.
+
+## Addendum — CipherSplat™ v1.0.2 hardening (2026-08-07)
+
+These changes tighten the browser execution boundary further. They are defense-in-depth; the v1.0.1 controls above already met the stated threat model.
+
+### WEB-05 — Unused `data:`/`blob:` sources removed from CSP
+
+**Severity:** Low
+
+The application never assigns a `data:` or `blob:` URL to an image, and no code path (application or vendored OpenPGP.js/hash-wasm) creates a `Blob`-backed worker. `img-src` and `worker-src` are now pinned to `'self'` in both the in-document meta CSP and the production response header, removing allowances that widened the sink surface without being used.
+
+### WEB-06 — Trusted Types enforced on the document
+
+**Severity:** Low
+
+The document now sends `require-trusted-types-for 'script'; trusted-types default`. A single `default` policy permits only the literal `argon2-worker.js` script URL and throws on every `createHTML`/`createScript` sink, converting any future DOM-injection or dynamic-script mistake into a hard failure instead of a code-execution path. The directive is applied via the meta CSP so it governs the document only; the Argon2id worker response is intentionally left unaffected so its same-origin `importScripts` continues to function. Browsers without Trusted Types support ignore the directive with no functional change.
+
+### WEB-07 — Additional response-header hardening
+
+**Severity:** Low
+
+The production route now also sends `Cross-Origin-Embedder-Policy: require-corp` (enabling cross-origin isolation for an application whose every subresource is same-origin), `X-Permitted-Cross-Domain-Policies: none`, and a broadened `Permissions-Policy` denying accelerometer, autoplay, bluetooth, camera, display-capture, encrypted-media, geolocation, gyroscope, hid, idle-detection, local-fonts, magnetometer, microphone, midi, payment, publickey-credentials-get, screen-wake-lock, serial, usb, and xr-spatial-tracking. Clipboard-write is intentionally left at its default so the copy-result control keeps working.

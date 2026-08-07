@@ -1,14 +1,14 @@
 {
   "schema": "drawsplat-ciphersplat-integrity-v1",
   "application": "CipherSplat",
-  "applicationVersion": "1.0.1",
+  "applicationVersion": "1.0.2",
   "openpgpVersion": "6.3.1",
   "argon2Version": "hash-wasm 4.12.0",
   "hashAlgorithm": "SHA-256",
   "files": {
-    "app.js": "da1d5387f36c00bde43e07de43d061c48fff75e91e4f732bb0e3fe2fee213d50",
+    "app.js": "c541eae13ab40104af9844ac57405b70a751a58a6f9ffd04bb79dff16cb40594",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
-    "index.html": "0ba38abb47bd4ddb6d6fcd0007cf26e8c6efbc6373486fa52baef1437c593613",
+    "index.html": "1ec3dd641fc945cb2f9e98ffe3a6db606c0d57ed0eccc0c47c1f854c30550d68",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
     "mobile.css": "63d50281cbb7b735ccf6b57770b08be4e9e4b3cbafb6b7e040b35be11d667b85",
