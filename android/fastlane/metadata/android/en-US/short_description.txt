@@ -1,0 +1,1 @@
+Offline file, folder and text encryption with AES-256-GCM and Argon2id.

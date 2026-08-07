@@ -1,0 +1,22 @@
+CipherSplat encrypts files, folders, and text entirely on your device.
+
+The app has no INTERNET permission, so nothing you encrypt can leave the phone.
+Your password, keys, and plaintext are processed in a local WebView and are
+never uploaded or synced.
+
+Features:
+
+* AES-256-GCM authenticated encryption with wrong-password and tamper detection
+* Argon2id v1.3 password hardening (64 MiB, 3 passes, unique salt)
+* File, multi-file, and text encryption; encrypted output saves to Downloads
+* Optional OpenPGP public-key encryption and private-key decryption
+* Integrity-check mode that authenticates a package without restoring it
+* A built-in high-entropy password and passphrase generator
+* No accounts, no cookies, no analytics, no trackers, no network access
+
+CipherSplat is the same open-source tool published at drawsplat.org, packaged as
+a self-contained Android app. Cryptography runs through the system WebView's Web
+Crypto engine plus vendored, pinned Argon2 (hash-wasm) and OpenPGP.js builds.
+
+Note: your password cannot be recovered. Store it safely and test decryption
+before deleting an original.

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CipherSplat</string>
+    <string name="choose_files">Choose files</string>
+    <string name="saved_to_downloads">Saved %1$s to Downloads</string>
+    <string name="save_failed">Could not save the file.</string>
+</resources>

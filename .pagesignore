@@ -42,3 +42,7 @@ yarn-error.log*
 Thumbs.db
 *.swp
 *.swo
+
+# Native Android app source is not part of the web deploy
+android/
+android/**
