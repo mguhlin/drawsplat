@@ -31,6 +31,10 @@ AudioSplat V1 is implemented in this repository as of 2026-08-11.
   system share sheet where Web Share Target is supported. Browser security
   still requires an explicit selection before AudioSplat can read a downloaded
   file.
+- Waveform-body pointer dragging creates a visible clip-relative time selection;
+  effects inherit that range, Delete removes and closes the selected audio with
+  Undo support, and View includes Zoom to Selection and Fit Project to Window.
+  Clip labels remain dedicated drag handles for moving clips between tracks.
 - Remaining release validation is operational: exercise physical microphones,
   permission revocation, USB/Bluetooth device removal, long recordings, storage
   pressure, and current Safari/ChromeOS devices. These require real hardware and

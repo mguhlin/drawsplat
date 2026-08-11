@@ -34,6 +34,7 @@ const app: HTMLDivElement = appNode;
 let project = createProject();
 let sources = new Map<string, AudioSourceRecord>();
 let selectedClipId: string | null = null;
+let selectedRange: { clipId: string; start: number; end: number } | null = null;
 let selectedTrackId = project.tracks[0].id;
 let playing = false;
 let recorder: MediaRecorder | null = null;
@@ -92,6 +93,8 @@ function shell(): void {
       ${menu("view", [
         ["zoom-in", "zoomIn"],
         ["zoom-out", "zoomOut"],
+        ["zoom-selection", "zoomSelection"],
+        ["fit-project", "fitProject"],
       ])}
     </nav>
     <section class="transport" aria-label="Transport controls">
@@ -345,7 +348,7 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "redo") redo();
   else if (action === "split") splitClip();
   else if (action === "duplicate") duplicateClip();
-  else if (action === "delete-clip") deleteClip();
+  else if (action === "delete-clip") await deleteClip();
   else if (action === "trim-start") trimClip("start");
   else if (action === "trim-end") trimClip("end");
   else if (action === "normalize") normalizeClip();
@@ -355,6 +358,8 @@ async function handleAction(event: Event): Promise<void> {
     showEffectEditor(action.slice(7) as EffectKind);
   else if (action === "zoom-in") setZoom(project.view.zoom * 1.25);
   else if (action === "zoom-out") setZoom(project.view.zoom / 1.25);
+  else if (action === "zoom-selection") zoomToSelection();
+  else if (action === "fit-project") fitProject();
   else if (action === "record") await requestRecording("microphone");
   else if (action === "record-system") await requestRecording("system");
   else if (action === "pause-record") toggleRecordingPause();
@@ -398,7 +403,7 @@ function handleShortcut(event: KeyboardEvent): void {
     splitClip();
   } else if (event.key === "Delete" || event.key === "Backspace") {
     event.preventDefault();
-    deleteClip();
+    void deleteClip();
   } else if (event.key === "Home") {
     event.preventDefault();
     setPlayhead(0);
@@ -446,7 +451,11 @@ function renderTrack(trackId: string, width: number): string {
 }
 
 function renderClip(clip: AudioClip): string {
-  return `<button class="clip${clip.id === selectedClipId ? " selected" : ""}" data-clip="${clip.id}" style="left:${clip.start * project.view.zoom}px;width:${Math.max(8, clip.duration * project.view.zoom)}px" aria-label="${escapeHtml(clip.name)}, ${formatTime(clip.start)}, ${formatTime(clip.duration)}"><span class="clip-label">${escapeHtml(clip.name)}</span><canvas></canvas></button>`;
+  const range = selectedRange?.clipId === clip.id ? selectedRange : null;
+  const rangeStyle = range
+    ? `left:${(range.start / clip.duration) * 100}%;width:${((range.end - range.start) / clip.duration) * 100}%`
+    : "";
+  return `<button class="clip${clip.id === selectedClipId ? " selected" : ""}" data-clip="${clip.id}" style="left:${clip.start * project.view.zoom}px;width:${Math.max(8, clip.duration * project.view.zoom)}px" aria-label="${escapeHtml(clip.name)}, ${formatTime(clip.start)}, ${formatTime(clip.duration)}"><span class="clip-label">${escapeHtml(clip.name)}</span><canvas title="${t("dragToSelect" as never)}"></canvas><span class="range-selection${range ? " show" : ""}" data-range-selection style="${rangeStyle}"></span></button>`;
 }
 
 function bindTrack(trackId: string): void {
@@ -503,6 +512,7 @@ function bindTrack(trackId: string): void {
         }
         selectedTrackId = project.tracks[0].id;
         selectedClipId = null;
+        selectedRange = null;
         cleanupUnusedSources();
       });
   });
@@ -511,11 +521,14 @@ function bindTrack(trackId: string): void {
       event.stopPropagation();
       selectedClipId = node.dataset.clip ?? null;
       selectedTrackId = trackId;
+      if (selectedRange?.clipId !== selectedClipId) selectedRange = null;
       renderWorkspace();
     });
-    node.addEventListener("pointerdown", (event) =>
-      startClipDrag(event, node, trackId),
-    );
+    node.addEventListener("pointerdown", (event) => {
+      if ((event.target as HTMLElement).matches("canvas"))
+        startRangeSelection(event, node, trackId);
+      else startClipDrag(event, node, trackId);
+    });
   });
   row.querySelector("[data-lane]")?.addEventListener("pointerdown", (event) => {
     if ((event.target as HTMLElement).closest("[data-clip]")) return;
@@ -578,6 +591,61 @@ function startClipDrag(
         }
       });
     } else renderWorkspace();
+  };
+  node.addEventListener("pointermove", move);
+  node.addEventListener("pointerup", up);
+}
+
+function startRangeSelection(
+  event: PointerEvent,
+  node: HTMLElement,
+  trackId: string,
+): void {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const clipId = node.dataset.clip;
+  const found = clipId ? findClip(clipId) : null;
+  if (!found) return;
+  selectedClipId = clipId!;
+  selectedTrackId = trackId;
+  const rect = node.getBoundingClientRect();
+  const timeAt = (clientX: number) =>
+    Math.max(
+      0,
+      Math.min(
+        found.clip.duration,
+        ((clientX - rect.left) / Math.max(1, rect.width)) * found.clip.duration,
+      ),
+    );
+  const anchor = timeAt(event.clientX);
+  const overlay = node.querySelector<HTMLElement>("[data-range-selection]");
+  node.setPointerCapture(event.pointerId);
+  const update = (clientX: number) => {
+    const current = timeAt(clientX);
+    const start = Math.min(anchor, current);
+    const end = Math.max(anchor, current);
+    selectedRange = { clipId: clipId!, start, end };
+    if (overlay) {
+      overlay.classList.add("show");
+      overlay.style.left = `${(start / found.clip.duration) * 100}%`;
+      overlay.style.width = `${((end - start) / found.clip.duration) * 100}%`;
+    }
+  };
+  update(event.clientX);
+  const move = (next: PointerEvent) => update(next.clientX);
+  const up = (next: PointerEvent) => {
+    update(next.clientX);
+    node.removeEventListener("pointermove", move);
+    node.removeEventListener("pointerup", up);
+    if (selectedRange && selectedRange.end - selectedRange.start < 0.01)
+      selectedRange = null;
+    renderWorkspace();
+    setStatus(
+      selectedRange
+        ? `${t("selectedRange" as never)} ${formatTime(selectedRange.start)}–${formatTime(selectedRange.end)}`
+        : t("ready"),
+    );
   };
   node.addEventListener("pointermove", move);
   node.addEventListener("pointerup", up);
@@ -858,17 +926,95 @@ function duplicateClip(): void {
     selectedClipId = copy.id;
   });
 }
-function deleteClip(): void {
+async function deleteClip(): Promise<void> {
   const found = selectedClipId ? findClip(selectedClipId) : null;
   if (!found) {
     toast(t("noSelection"));
+    return;
+  }
+  const range = selectedRange?.clipId === found.clip.id ? selectedRange : null;
+  if (range && range.end - range.start >= 0.01) {
+    const source = sources.get(found.clip.sourceId);
+    if (!source) return;
+    try {
+      const original = await engine.loadSource(source);
+      const clipBuffer = sliceBuffer(
+        original,
+        found.clip.sourceOffset,
+        found.clip.duration,
+      );
+      const processed = removeBufferRange(clipBuffer, range.start, range.end);
+      if (processed.length <= 1) {
+        selectedRange = null;
+        commit(() => {
+          const track = project.tracks.find(
+            (item) => item.id === found.trackId,
+          )!;
+          track.clips = track.clips.filter((item) => item.id !== found.clip.id);
+          selectedClipId = null;
+        });
+        return;
+      }
+      const id = uid("source");
+      const blob = encodeWav(processed);
+      const record: AudioSourceRecord = {
+        id,
+        name: `${found.clip.name} – ${t("deletedSelection" as never)}`,
+        mimeType: "audio/wav",
+        duration: processed.duration,
+        channels: processed.numberOfChannels,
+        sampleRate: processed.sampleRate,
+        blob,
+      };
+      sources.set(id, record);
+      engine.setBuffer(id, processed);
+      selectedRange = null;
+      commit(() => {
+        found.clip.sourceId = id;
+        found.clip.sourceOffset = 0;
+        found.clip.duration = processed.duration;
+        found.clip.name = record.name;
+      });
+      setStatus(t("selectionDeleted" as never));
+    } catch {
+      toast(t("deleteSelectionFailed" as never), true);
+    }
     return;
   }
   commit(() => {
     const track = project.tracks.find((item) => item.id === found.trackId)!;
     track.clips = track.clips.filter((item) => item.id !== found.clip.id);
     selectedClipId = null;
+    selectedRange = null;
+    selectedRange = null;
   });
+}
+
+function removeBufferRange(
+  buffer: AudioBuffer,
+  startSeconds: number,
+  endSeconds: number,
+): AudioBuffer {
+  const start = Math.max(
+    0,
+    Math.min(buffer.length, Math.floor(startSeconds * buffer.sampleRate)),
+  );
+  const end = Math.max(
+    start,
+    Math.min(buffer.length, Math.ceil(endSeconds * buffer.sampleRate)),
+  );
+  const output = new AudioBuffer({
+    length: Math.max(1, buffer.length - (end - start)),
+    numberOfChannels: buffer.numberOfChannels,
+    sampleRate: buffer.sampleRate,
+  });
+  for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+    const source = buffer.getChannelData(channel);
+    const target = output.getChannelData(channel);
+    target.set(source.subarray(0, start));
+    target.set(source.subarray(end), start);
+  }
+  return output;
 }
 function trimClip(edge: "start" | "end"): void {
   const found = selectedClipId ? findClip(selectedClipId) : null;
@@ -984,11 +1130,14 @@ function showEffectEditor(kind: EffectKind): void {
     return;
   }
   const definition = effectDefinitions[kind];
+  const range = selectedRange?.clipId === found.clip.id ? selectedRange : null;
+  const rangeStart = range?.start ?? 0;
+  const rangeEnd = range?.end ?? found.clip.duration;
   const field = (name: string, spec: [string, number, number, number]) =>
     `<label><span data-i18n="${spec[0]}">${t(spec[0] as never)}</span><input name="${name}" type="number" min="${spec[1]}" max="${spec[2]}" step="0.01" value="${spec[3]}"></label>`;
   showDialog(
     t(definition.label as never),
-    `<form id="effect-form" class="effect-form"><div class="effect-range"><label><span data-i18n="selectionStart">${t("selectionStart" as never)}</span><input name="start" type="number" min="0" max="${found.clip.duration}" step="0.01" value="0"></label><label><span data-i18n="selectionEnd">${t("selectionEnd" as never)}</span><input name="end" type="number" min="0" max="${found.clip.duration}" step="0.01" value="${found.clip.duration.toFixed(2)}"></label></div>${kind === "silence" ? "" : `${field("amount", definition.amount)}${kind === "amplify" || kind === "noise-gate" ? "" : field("secondary", definition.secondary)}`}<p class="effect-note" data-i18n="effectsSelectionNote">${t("effectsSelectionNote" as never)}</p><div class="dialog-actions"><button type="button" class="btn" id="effect-preview" data-i18n="preview">${t("preview" as never)}</button><button type="submit" class="btn primary" data-i18n="apply">${t("apply" as never)}</button><button type="button" class="btn" data-dialog-close data-i18n="cancel">${t("cancel" as never)}</button></div></form>`,
+    `<form id="effect-form" class="effect-form"><div class="effect-range"><label><span data-i18n="selectionStart">${t("selectionStart" as never)}</span><input name="start" type="number" min="0" max="${found.clip.duration}" step="0.01" value="${rangeStart.toFixed(2)}"></label><label><span data-i18n="selectionEnd">${t("selectionEnd" as never)}</span><input name="end" type="number" min="0" max="${found.clip.duration}" step="0.01" value="${rangeEnd.toFixed(2)}"></label></div>${kind === "silence" ? "" : `${field("amount", definition.amount)}${kind === "amplify" || kind === "noise-gate" ? "" : field("secondary", definition.secondary)}`}<p class="effect-note" data-i18n="effectsSelectionNote">${t("effectsSelectionNote" as never)}</p><div class="dialog-actions"><button type="button" class="btn" id="effect-preview" data-i18n="preview">${t("preview" as never)}</button><button type="submit" class="btn primary" data-i18n="apply">${t("apply" as never)}</button><button type="button" class="btn" data-dialog-close data-i18n="cancel">${t("cancel" as never)}</button></div></form>`,
   );
   const form = document.querySelector<HTMLFormElement>("#effect-form");
   document
@@ -1057,6 +1206,7 @@ async function runEffect(
     };
     sources.set(id, record);
     engine.setBuffer(id, processed);
+    selectedRange = null;
     commit(() => {
       found.clip.sourceId = id;
       found.clip.sourceOffset = 0;
@@ -1099,6 +1249,41 @@ function sliceBuffer(
 function setZoom(value: number): void {
   project.view.zoom = Math.max(20, Math.min(400, Math.round(value)));
   renderWorkspace();
+}
+
+function zoomToSelection(): void {
+  if (!selectedRange) {
+    toast(t("selectRangeFirst" as never));
+    return;
+  }
+  const found = findClip(selectedRange.clipId);
+  const selectionStart = selectedRange.start;
+  const workspace = document.querySelector<HTMLElement>("#workspace");
+  if (!found || !workspace) return;
+  const duration = Math.max(0.05, selectedRange.end - selectedRange.start);
+  project.view.zoom = Math.max(
+    20,
+    Math.min(400, Math.floor((workspace.clientWidth - 260) / duration)),
+  );
+  renderWorkspace();
+  requestAnimationFrame(() => {
+    workspace.scrollLeft = Math.max(
+      0,
+      (found.clip.start + selectionStart) * project.view.zoom,
+    );
+  });
+}
+
+function fitProject(): void {
+  const workspace = document.querySelector<HTMLElement>("#workspace");
+  const duration = projectDuration(project);
+  if (!workspace || duration <= 0) return;
+  project.view.zoom = Math.max(
+    20,
+    Math.min(400, Math.floor((workspace.clientWidth - 250) / duration)),
+  );
+  renderWorkspace();
+  workspace.scrollLeft = 0;
 }
 
 function commit(change: () => void): void {
@@ -1509,6 +1694,7 @@ async function openProject(file?: File): Promise<void> {
     history = [];
     future = [];
     selectedClipId = null;
+    selectedRange = null;
     selectedTrackId = project.tracks[0]?.id ?? "";
     for (const source of sources.values()) await engine.loadSource(source);
     syncProjectTitle();
@@ -1600,6 +1786,7 @@ async function newProject(): Promise<void> {
   history = [];
   future = [];
   selectedClipId = null;
+  selectedRange = null;
   selectedTrackId = project.tracks[0].id;
   syncProjectTitle();
   renderWorkspace();

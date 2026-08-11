@@ -197,7 +197,7 @@ test("imports, edits, undoes, and exports a real WAV project", async ({
   );
   await page.getByRole("button", { name: "Add track" }).first().click();
   await expect(page.locator("[data-track]")).toHaveCount(2);
-  const clipBox = await page.locator("[data-clip]").boundingBox();
+  const clipBox = await page.locator("[data-clip] .clip-label").boundingBox();
   const destinationBox = await page.locator("[data-lane]").nth(1).boundingBox();
   if (!clipBox || !destinationBox) throw new Error("Clip drag targets missing");
   await page.mouse.move(
@@ -254,6 +254,21 @@ test("applies an effect to a selected time range and supports undo", async ({
     mimeType: "audio/wav",
     buffer: makeWav(1, 8000),
   });
+  const waveform = page.locator("[data-clip] canvas");
+  const waveformBox = await waveform.boundingBox();
+  if (!waveformBox) throw new Error("Waveform selection target missing");
+  await page.mouse.move(
+    waveformBox.x + waveformBox.width * 0.2,
+    waveformBox.y + 55,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    waveformBox.x + waveformBox.width * 0.8,
+    waveformBox.y + 55,
+    { steps: 5 },
+  );
+  await page.mouse.up();
+  await expect(page.locator("[data-range-selection]")).toHaveClass(/show/);
   await page.getByText("Effects", { exact: true }).click();
   for (const effect of [
     "Amplify",
@@ -271,8 +286,16 @@ test("applies an effect to a selected time range and supports undo", async ({
     ).toBeVisible();
   await page.getByRole("button", { name: "Silence", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Silence" });
-  await dialog.getByLabel("Selection start (seconds)").fill("0.20");
-  await dialog.getByLabel("Selection end (seconds)").fill("0.80");
+  const selectedStart = Number(
+    await dialog.getByLabel("Selection start (seconds)").inputValue(),
+  );
+  const selectedEnd = Number(
+    await dialog.getByLabel("Selection end (seconds)").inputValue(),
+  );
+  expect(selectedStart).toBeGreaterThan(0.15);
+  expect(selectedStart).toBeLessThan(0.35);
+  expect(selectedEnd).toBeGreaterThan(0.65);
+  expect(selectedEnd).toBeLessThan(0.85);
   await dialog.getByRole("button", { name: "Apply" }).click();
   await expect(page.locator("[data-clip]")).toHaveAttribute(
     "aria-label",
@@ -282,6 +305,45 @@ test("applies an effect to a selected time range and supports undo", async ({
   await expect(page.locator("[data-clip]")).toHaveAttribute(
     "aria-label",
     /effect-source\.wav/,
+  );
+});
+
+test("deletes a visual waveform range, undoes it, and zooms long projects", async ({
+  page,
+}) => {
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.locator("#audio-input").setInputFiles({
+    name: "long-recording.wav",
+    mimeType: "audio/wav",
+    buffer: makeWav(10, 8000),
+  });
+  const waveform = page.locator("[data-clip] canvas");
+  const box = await waveform.boundingBox();
+  if (!box) throw new Error("Waveform selection target missing");
+  await page.mouse.move(box.x + box.width * 0.25, box.y + 55);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.5, box.y + 55, { steps: 5 });
+  await page.mouse.up();
+  await expect(page.locator("#status")).toContainText("Selected:");
+
+  await page.getByText("View", { exact: true }).click();
+  await page.getByRole("button", { name: "Zoom to selection" }).click();
+  await expect(page.locator("#zoom")).toHaveText(/px\/s/);
+  await page.getByText("View", { exact: true }).click();
+  await page.getByRole("button", { name: "Fit project to window" }).click();
+
+  await page
+    .getByRole("button", { name: "Delete", exact: true })
+    .first()
+    .click();
+  await expect(page.locator("[data-clip]")).toHaveAttribute(
+    "aria-label",
+    /0:07\.[45-6][0-9]/,
+  );
+  await page.getByTitle("Undo").click();
+  await expect(page.locator("[data-clip]")).toHaveAttribute(
+    "aria-label",
+    /0:10\.00/,
   );
 });
 
