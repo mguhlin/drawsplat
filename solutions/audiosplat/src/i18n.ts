@@ -28,6 +28,9 @@ const en = {
   recordingFailed: 'Recording stopped before usable audio was captured. Try again and record for at least one second.',
   playbackFailed: 'Audio playback could not start. Check this tab\'s sound permission and output device, then try again.',
   recordingReady: 'Recording ready. Press Play to listen.',
+  microphoneInput: 'Microphone input',
+  defaultMicrophone: 'Default microphone',
+  noSignal: 'No microphone signal was detected. Choose another microphone input, check the Linux sound input level, and record again.',
   projectFailed: 'That AudioSplat project is invalid or damaged.', exportDone: 'WAV export complete.', projectSaved: 'Project downloaded.',
   confirmNew: 'Start a new project? Download your current project first if you need a durable copy.',
   confirmDeleteTrack: 'Delete this track and all of its clips?', untitled: 'Untitled Audio Project', trackDefault: 'Track', recordingDefault: 'Recording',
@@ -77,6 +80,9 @@ export const applyLanguage = (): void => {
   });
   document.querySelectorAll<HTMLElement>('[data-i18n-title]').forEach((node) => {
     node.title = t(node.dataset.i18nTitle as Key);
+  });
+  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((node) => {
+    node.setAttribute('aria-label', t(node.dataset.i18nAria as Key));
   });
 };
 export const languageOptions = (): string => languages.map((item) =>

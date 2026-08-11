@@ -21,6 +21,14 @@ test('applies Arabic RTL while retaining a left-to-right timeline contract', asy
   await expect(page.getByRole('button', { name: 'تسجيل' }).first()).toBeVisible();
 });
 
+test('keeps recording controls usable at a phone viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/solutions/audiosplat/?lang=en');
+  await expect(page.getByRole('button', { name: 'Record' }).first()).toBeVisible();
+  await expect(page.locator('#mic-input')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Play' })).toBeVisible();
+});
+
 test('opens help with local privacy guidance', async ({ page }) => {
   await page.goto('/solutions/audiosplat/?lang=en');
   await page.getByRole('button', { name: 'Help' }).click();
@@ -56,6 +64,7 @@ test('records from a permitted microphone and creates a recoverable clip', async
   await expect(page.getByRole('dialog')).toContainText('microphone access');
   await page.getByRole('button', { name: 'Continue to microphone' }).click();
   await expect(page.locator('#status')).toHaveText('Recording');
+  await expect.poll(async () => page.locator('#mic-input option').count()).toBeGreaterThan(1);
   await page.waitForTimeout(1200);
   await page.getByRole('button', { name: 'Stop' }).click();
   await expect(page.locator('[data-clip]')).toHaveCount(1, { timeout: 10000 });
