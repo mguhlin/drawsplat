@@ -53,13 +53,7 @@ function shell(): void {
     <header class="site-header"><div class="title-block"><p class="eyebrow" data-i18n="tools"></p><h1 data-i18n="title"></h1><input class="project-title" id="project-title" value="${escapeHtml(project.metadata.title)}" aria-label="${t("projectTitle")}"><p class="tagline" data-i18n="tagline"></p></div>
       <div class="header-actions"><label class="visually-hidden" for="language" data-i18n="language"></label><select id="language" aria-label="Language">${languageOptions()}</select><button class="header-link" data-action="help" data-i18n="help"></button><a class="header-link primary" href="../../index.html" data-i18n="home"></a></div></header>
     <nav class="menu-bar" aria-label="Application menu">
-      ${menu("file", [
-        ["new", "newProject"],
-        ["open-project", "openProject"],
-        ["download-project", "saveProject"],
-        ["import", "importAudio"],
-        ["export", "exportWav"],
-      ])}
+      ${fileMenu()}
       ${menu("edit", [
         ["undo", "undo"],
         ["redo", "redo"],
@@ -67,7 +61,6 @@ function shell(): void {
         ["duplicate", "duplicate"],
         ["delete-clip", "delete"],
       ])}
-      ${menu("tracks", [["add-track", "addTrack"]])}
       ${menu("clip", [
         ["split", "split"],
         ["trim-start", "trimStart"],
@@ -90,7 +83,7 @@ function shell(): void {
       <button class="btn record" data-action="record" data-i18n-aria="record" aria-label="${t("record")}">${icon("●", "record")}</button><button class="btn" data-action="record-system" data-i18n="recordDeviceAudio">${t("recordDeviceAudio")}</button><button class="btn" data-action="pause-record" data-i18n-aria="pause" aria-label="${t("pause")}" disabled>${icon("❚❚", "pause")}</button><button class="btn" data-action="play" data-i18n-aria="play" aria-label="${t("play")}">${icon("▶", "play")}</button><button class="btn icon" data-action="stop" title="${t("stop")}">■<span class="visually-hidden" data-i18n="stop"></span></button><button class="btn icon" data-action="start" title="${t("start")}">|◀<span class="visually-hidden" data-i18n="start"></span></button>
       <span class="transport-time" id="time">0:00.00</span><div class="meter" role="meter" aria-label="Input level" aria-valuemin="0" aria-valuemax="100"><div class="meter-fill" id="meter"></div></div><label class="visually-hidden" for="mic-input" data-i18n="microphoneInput"></label><select class="mic-input" id="mic-input" aria-label="${t("microphoneInput")}"><option value="">${t("defaultMicrophone")}</option></select>
       <button class="btn icon" data-action="undo" title="${t("undo")}">↶</button><button class="btn icon" data-action="redo" title="${t("redo")}">↷</button>
-      <button class="btn" data-action="import" data-i18n="importAudio"></button><button class="btn" data-action="add-track" data-i18n="addTrack"></button><button class="btn" data-action="split" data-i18n="split"></button><button class="btn" data-action="duplicate" data-i18n="duplicate"></button><button class="btn" data-action="delete-clip" data-i18n="delete"></button><select id="export-format" aria-label="${t("exportFormat")}">${exportOptions()}</select><button class="btn primary" data-action="export" data-i18n="exportAudio"></button>
+      <button class="btn" data-action="split" data-i18n="split"></button><button class="btn" data-action="duplicate" data-i18n="duplicate"></button><button class="btn" data-action="delete-clip" data-i18n="delete"></button><select class="visually-hidden" id="export-format" aria-label="${t("exportFormat")}">${exportOptions()}</select>
       <div class="zoom"><button class="btn icon" data-action="zoom-out" aria-label="${t("zoomOut")}">−</button><output id="zoom">${project.view.zoom}px/s</output><button class="btn icon" data-action="zoom-in" aria-label="${t("zoomIn")}">+</button></div>
     </section>
     <section class="workspace" id="workspace"></section>
@@ -105,23 +98,92 @@ function menu(label: string, items: string[][]): string {
   return `<details class="menu"><summary data-i18n="${label}">${t(label as never)}</summary><div class="menu-panel">${items.map(([action, key]) => `<button data-action="${action}" data-i18n="${key}">${t(key as never)}</button>`).join("")}</div></details>`;
 }
 
+function fileMenu(): string {
+  const formats = exportFormats();
+  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
+}
+
 const soundEffectSources = [
-  ["BBC Sound Effects", "https://sound-effects.bbcrewind.co.uk/", "Historical recordings, nature, transportation and Foley — Free for personal, educational and research projects; commercial use requires licensing"],
-  ["BigSoundBank", "https://bigsoundbank.com/", "Field recordings, Foley, machinery and nature — Many files are CC0/public domain; an optional account removes download delays"],
-  ["Kenney Audio Assets", "https://kenney.nl/assets/category:Audio", "Game sounds, interface cues and classroom coding projects — CC0; attribution not required"],
-  ["Mixkit Sound Effects", "https://mixkit.co/free-sound-effects/", "General effects, transitions, animals, technology and games — Commercial and personal use; no attribution required"],
-  ["NASA Historical Sounds", "https://www.nasa.gov/historical-sounds/", "Spaceflight, mission control, launches and spacecraft — Generally usable for educational and informational purposes; acknowledge NASA and check for third-party material"],
-  ["National Park Service Sound Gallery", "https://www.nps.gov/subjects/sound/gallery.htm", "Animals, weather, water, geology and historical sounds — Public domain; credit the National Park Service"],
-  ["NOAA Ocean Sounds", "https://www.fisheries.noaa.gov/national/science-data/sounds-ocean-environmental-and-anthropogenic", "Marine animals, weather, ships and underwater environments — Includes citation guidance; check the source information accompanying each clip"],
-  ["OpenGameArt Sound Effects", "https://opengameart.org/art-search-advanced?keys=&field_art_type_tid%5B%5D=13", "Games, fantasy, science fiction and interfaces — License varies by item; use its CC0 collection for the simplest reuse"],
-  ["Pixabay Sound Effects", "https://pixabay.com/sound-effects/", "Large, searchable general-purpose collection — No attribution required; do not redistribute files unchanged"],
-  ["Sonniss GameAudioGDC Archive", "https://sonniss.com/gameaudiogdc/", "Large professional sound-effect bundles — Commercial media production allowed; no attribution; AI training prohibited"],
-  ["SoundBible", "https://soundbible.com/", "Quick WAV and MP3 downloads — License varies by sound; many require attribution"],
-  ["SoundEffects+", "https://www.soundeffectsplus.com/", "Professionally recorded Foley, ambience, vehicles and cartoons — Commercial and educational use permitted; review its license restrictions"],
-  ["SoundGator", "https://www.soundgator.com/", "Everyday effects, interfaces, animals and machines — No registration or attribution required"],
-  ["Tabletop Audio", "https://tabletopaudio.com/", "Ten-minute environmental and story ambiences — Ambiences are CC BY-NC-ND; SoundPad clips may only be played on the site"],
-  ["Wikimedia Commons Audio", "https://commons.wikimedia.org/wiki/Category:Audio_files", "Historical recordings, spoken audio, instruments and miscellaneous sounds — License varies by file; attribution is often required"],
-  ["Yellowstone Sound Library", "https://www.nps.gov/yell/learn/photosmultimedia/soundlibrary.htm", "Wildlife and natural soundscapes — Public domain and downloadable without limitation"],
+  [
+    "BBC Sound Effects",
+    "https://sound-effects.bbcrewind.co.uk/",
+    "Historical recordings, nature, transportation and Foley — Free for personal, educational and research projects; commercial use requires licensing",
+  ],
+  [
+    "BigSoundBank",
+    "https://bigsoundbank.com/",
+    "Field recordings, Foley, machinery and nature — Many files are CC0/public domain; an optional account removes download delays",
+  ],
+  [
+    "Kenney Audio Assets",
+    "https://kenney.nl/assets/category:Audio",
+    "Game sounds, interface cues and classroom coding projects — CC0; attribution not required",
+  ],
+  [
+    "Mixkit Sound Effects",
+    "https://mixkit.co/free-sound-effects/",
+    "General effects, transitions, animals, technology and games — Commercial and personal use; no attribution required",
+  ],
+  [
+    "NASA Historical Sounds",
+    "https://www.nasa.gov/historical-sounds/",
+    "Spaceflight, mission control, launches and spacecraft — Generally usable for educational and informational purposes; acknowledge NASA and check for third-party material",
+  ],
+  [
+    "National Park Service Sound Gallery",
+    "https://www.nps.gov/subjects/sound/gallery.htm",
+    "Animals, weather, water, geology and historical sounds — Public domain; credit the National Park Service",
+  ],
+  [
+    "NOAA Ocean Sounds",
+    "https://www.fisheries.noaa.gov/national/science-data/sounds-ocean-environmental-and-anthropogenic",
+    "Marine animals, weather, ships and underwater environments — Includes citation guidance; check the source information accompanying each clip",
+  ],
+  [
+    "OpenGameArt Sound Effects",
+    "https://opengameart.org/art-search-advanced?keys=&field_art_type_tid%5B%5D=13",
+    "Games, fantasy, science fiction and interfaces — License varies by item; use its CC0 collection for the simplest reuse",
+  ],
+  [
+    "Pixabay Sound Effects",
+    "https://pixabay.com/sound-effects/",
+    "Large, searchable general-purpose collection — No attribution required; do not redistribute files unchanged",
+  ],
+  [
+    "Sonniss GameAudioGDC Archive",
+    "https://sonniss.com/gameaudiogdc/",
+    "Large professional sound-effect bundles — Commercial media production allowed; no attribution; AI training prohibited",
+  ],
+  [
+    "SoundBible",
+    "https://soundbible.com/",
+    "Quick WAV and MP3 downloads — License varies by sound; many require attribution",
+  ],
+  [
+    "SoundEffects+",
+    "https://www.soundeffectsplus.com/",
+    "Professionally recorded Foley, ambience, vehicles and cartoons — Commercial and educational use permitted; review its license restrictions",
+  ],
+  [
+    "SoundGator",
+    "https://www.soundgator.com/",
+    "Everyday effects, interfaces, animals and machines — No registration or attribution required",
+  ],
+  [
+    "Tabletop Audio",
+    "https://tabletopaudio.com/",
+    "Ten-minute environmental and story ambiences — Ambiences are CC BY-NC-ND; SoundPad clips may only be played on the site",
+  ],
+  [
+    "Wikimedia Commons Audio",
+    "https://commons.wikimedia.org/wiki/Category:Audio_files",
+    "Historical recordings, spoken audio, instruments and miscellaneous sounds — License varies by file; attribution is often required",
+  ],
+  [
+    "Yellowstone Sound Library",
+    "https://www.nps.gov/yell/learn/photosmultimedia/soundlibrary.htm",
+    "Wildlife and natural soundscapes — Public domain and downloadable without limitation",
+  ],
 ] as const;
 
 function soundSourcesMenu(): string {
@@ -129,6 +191,12 @@ function soundSourcesMenu(): string {
 }
 
 function exportOptions(): string {
+  return exportFormats()
+    .map(([value, label]) => `<option value="${value}">${label}</option>`)
+    .join("");
+}
+
+function exportFormats(): string[][] {
   const options = [
     ["wav", "WAV"],
     ["mp3", "MP3"],
@@ -148,9 +216,7 @@ function exportOptions(): string {
     MediaRecorder.isTypeSupported("audio/mp4")
   )
     options.push(["m4a", "M4A/AAC"]);
-  return options
-    .map(([value, label]) => `<option value="${value}">${label}</option>`)
-    .join("");
+  return options;
 }
 
 function bindShell(): void {
@@ -242,14 +308,19 @@ async function handleAction(event: Event): Promise<void> {
   document
     .querySelectorAll<HTMLDetailsElement>("details.menu[open]")
     .forEach((detail) => (detail.open = false));
-  if (action === "new") newProject();
+  if (action === "new") await newProject();
   else if (action === "open-project")
     document.querySelector<HTMLInputElement>("#project-input")?.click();
   else if (action === "download-project") await downloadProject();
   else if (action === "import")
     document.querySelector<HTMLInputElement>("#audio-input")?.click();
-  else if (action === "export") await exportMix();
-  else if (action === "add-track") addTrack();
+  else if (action === "export") {
+    const format = button.dataset.format;
+    const selector =
+      document.querySelector<HTMLSelectElement>("#export-format");
+    if (format && selector) selector.value = format;
+    await exportMix();
+  } else if (action === "add-track") addTrack();
   else if (action === "undo") undo();
   else if (action === "redo") redo();
   else if (action === "split") splitClip();
@@ -328,7 +399,7 @@ function renderWorkspace(): void {
     workspace.clientWidth - 230,
     Math.ceil((projectDuration(project) + 10) * project.view.zoom),
   );
-  workspace.innerHTML = `<div class="timeline" style="width:${width + 230}px"><div class="ruler-row"><div class="ruler-label"></div><div class="ruler" data-ruler>${renderTicks(width)}</div></div>${project.tracks.map((track) => renderTrack(track.id, width)).join("")}<div class="playhead" style="left:${230 + project.view.playhead * project.view.zoom}px"></div></div>`;
+  workspace.innerHTML = `<div class="timeline" style="width:${width + 230}px"><div class="ruler-row"><div class="ruler-label"><button class="btn add-track-sidebar" data-action="add-track" data-i18n="addTrack">${t("addTrack")}</button></div><div class="ruler" data-ruler>${renderTicks(width)}</div></div>${project.tracks.map((track) => renderTrack(track.id, width)).join("")}<div class="playhead" style="left:${230 + project.view.playhead * project.view.zoom}px"></div></div>`;
   workspace
     .querySelector("[data-ruler]")
     ?.addEventListener("pointerdown", seekFromPointer);
@@ -894,10 +965,10 @@ async function startRecording(
           "audio/webm",
         ].find((type) => MediaRecorder.isTypeSupported(type))
       : undefined;
-    recorder = new MediaRecorder(
-      recordingStream,
-      { ...(mime ? { mimeType: mime } : {}), audioBitsPerSecond: 256000 },
-    );
+    recorder = new MediaRecorder(recordingStream, {
+      ...(mime ? { mimeType: mime } : {}),
+      audioBitsPerSecond: 256000,
+    });
     recordingChunks = [];
     recorder.ondataavailable = (event) => {
       if (event.data.size > 0) recordingChunks.push(event.data);
@@ -966,7 +1037,9 @@ async function finishRecording(): Promise<void> {
     setPlayhead(recordingInsertAt);
     if (hasAudioSignal(buffer)) {
       const channels = buffer.numberOfChannels > 1 ? t("stereo") : t("mono");
-      setStatus(`${t("recordingReady")} ${channels}, ${buffer.sampleRate / 1000} kHz`);
+      setStatus(
+        `${t("recordingReady")} ${channels}, ${buffer.sampleRate / 1000} kHz`,
+      );
     } else {
       toast(t("noSignal"), true);
       setStatus(t("noSignal"));
@@ -1251,10 +1324,11 @@ function download(blob: Blob, name: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function newProject(): void {
+async function newProject(): Promise<void> {
   if (!confirm(t("confirmNew"))) return;
   stopAll();
-  void clearWorkspace();
+  window.clearTimeout(saveTimer);
+  await clearWorkspace();
   project = createProject();
   project.metadata.title = t("untitled");
   sources = new Map();
@@ -1334,6 +1408,8 @@ void loadWorkspace()
     project = stored.project;
     sources = new Map(stored.sources.map((source) => [source.id, source]));
     selectedTrackId = project.tracks[0]?.id ?? "";
+    syncProjectTitle();
+    renderWorkspace();
     for (const source of sources.values()) {
       try {
         await engine.loadSource(source);
@@ -1341,9 +1417,6 @@ void loadWorkspace()
         /* preserve metadata and let UI recover */
       }
     }
-    if (workspaceTouched) return;
-    syncProjectTitle();
-    renderWorkspace();
   })
   .catch(() => setStatus(t("ready")));
 if ("serviceWorker" in navigator && import.meta.env.PROD) {

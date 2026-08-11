@@ -1,4 +1,37 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function expectOneSavedClip(target: Page): Promise<void> {
+  await expect
+    .poll(() =>
+      target.evaluate(async () => {
+        const tabId = sessionStorage.getItem("audiosplat.workspace-tab");
+        if (!tabId) return 0;
+        const database = await new Promise<IDBDatabase>((resolve, reject) => {
+          const request = indexedDB.open("audiosplat");
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+        return await new Promise<number>((resolve, reject) => {
+          const request = database
+            .transaction("workspace")
+            .objectStore("workspace")
+            .get(`tab:${tabId}`);
+          request.onsuccess = () => {
+            database.close();
+            resolve(
+              request.result?.project?.tracks?.reduce(
+                (count: number, track: { clips: unknown[] }) =>
+                  count + track.clips.length,
+                0,
+              ) ?? 0,
+            );
+          };
+          request.onerror = () => reject(request.error);
+        });
+      }),
+    )
+    .toBe(1);
+}
 
 test("loads the production AudioSplat shell and changes language", async ({
   page,
@@ -96,18 +129,28 @@ test("opens help with local privacy guidance", async ({ page }) => {
   );
 });
 
-test("keeps only one application menu open and dismisses it outside", async ({ page }) => {
+test("keeps only one application menu open and dismisses it outside", async ({
+  page,
+}) => {
   await page.goto("/solutions/audiosplat/?lang=en");
   await page.getByText("File", { exact: true }).click();
   await expect(page.locator("details.menu").nth(0)).toHaveAttribute("open", "");
   await page.getByText("Edit", { exact: true }).click();
-  await expect(page.locator("details.menu").nth(0)).not.toHaveAttribute("open", "");
+  await expect(page.locator("details.menu").nth(0)).not.toHaveAttribute(
+    "open",
+    "",
+  );
   await expect(page.locator("details.menu").nth(1)).toHaveAttribute("open", "");
   await page.locator("#workspace").click({ position: { x: 10, y: 10 } });
-  await expect(page.locator("details.menu").nth(1)).not.toHaveAttribute("open", "");
+  await expect(page.locator("details.menu").nth(1)).not.toHaveAttribute(
+    "open",
+    "",
+  );
 });
 
-test("lists sound-effect sources alphabetically as safe external links", async ({ page }) => {
+test("lists sound-effect sources alphabetically as safe external links", async ({
+  page,
+}) => {
   await page.goto("/solutions/audiosplat/?lang=en");
   await page.getByText("Sound-Effect Sources", { exact: true }).click();
   const links = page.locator(".source-menu .source-link");
@@ -132,7 +175,10 @@ test("lists sound-effect sources alphabetically as safe external links", async (
   ]);
   await expect(links.first()).toHaveAttribute("target", "_blank");
   await expect(links.first()).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(links.nth(8)).toHaveAttribute("href", "https://pixabay.com/sound-effects/");
+  await expect(links.nth(8)).toHaveAttribute(
+    "href",
+    "https://pixabay.com/sound-effects/",
+  );
 });
 
 test("imports, edits, undoes, and exports a real WAV project", async ({
@@ -184,18 +230,69 @@ test("imports, edits, undoes, and exports a real WAV project", async ({
   await page.getByText("Effects", { exact: true }).click();
   await page.getByRole("button", { name: "Fade in" }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export audio" }).first().click();
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "WAV", exact: true }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.wav$/);
-  await page.locator("#export-format").selectOption("mp3");
   const mp3Promise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export audio" }).first().click();
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "MP3", exact: true }).click();
   const mp3 = await mp3Promise;
   expect(mp3.suggestedFilename()).toMatch(/\.mp3$/);
   const mp3Stream = await mp3.createReadStream();
   let mp3Bytes = 0;
   for await (const chunk of mp3Stream) mp3Bytes += chunk.length;
   expect(mp3Bytes).toBeGreaterThan(1000);
+});
+
+test("keeps autosaved projects isolated by browser tab and clears only the active tab", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.locator("#audio-input").setInputFiles({
+    name: "first-tab.wav",
+    mimeType: "audio/wav",
+    buffer: makeWav(1, 8000),
+  });
+  await expect(page.locator("[data-clip]")).toHaveCount(1);
+  await expectOneSavedClip(page);
+  const firstTabId = await page.evaluate(() =>
+    sessionStorage.getItem("audiosplat.workspace-tab"),
+  );
+
+  const secondPage = await context.newPage();
+  await secondPage.goto("/solutions/audiosplat/?lang=en");
+  await expect(secondPage.locator("[data-clip]")).toHaveCount(0);
+  await secondPage.locator("#audio-input").setInputFiles({
+    name: "second-tab.wav",
+    mimeType: "audio/wav",
+    buffer: makeWav(1, 8000),
+  });
+  await expect(secondPage.locator("[data-clip]")).toHaveCount(1);
+  await expectOneSavedClip(secondPage);
+  const secondTabId = await secondPage.evaluate(() =>
+    sessionStorage.getItem("audiosplat.workspace-tab"),
+  );
+  expect(secondTabId).not.toBe(firstTabId);
+
+  await page.reload();
+  expect(
+    await page.evaluate(() =>
+      sessionStorage.getItem("audiosplat.workspace-tab"),
+    ),
+  ).toBe(firstTabId);
+  await expect(page.locator("[data-clip]")).toHaveCount(1);
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "New project", exact: true }).click();
+  await expect(page.locator("[data-clip]")).toHaveCount(0);
+  await page.waitForTimeout(500);
+  await page.reload();
+  await expect(page.locator("[data-clip]")).toHaveCount(0);
+
+  await secondPage.reload();
+  await expect(secondPage.locator("[data-clip]")).toHaveCount(1);
 });
 
 test("records from a permitted microphone and creates a recoverable clip", async ({
