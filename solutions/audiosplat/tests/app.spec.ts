@@ -59,10 +59,15 @@ test('records from a permitted microphone and creates a recoverable clip', async
   await page.waitForTimeout(1200);
   await page.getByRole('button', { name: 'Stop' }).click();
   await expect(page.locator('[data-clip]')).toHaveCount(1, { timeout: 10000 });
+  await expect(page.locator('#status')).toHaveText('Recording ready. Press Play to listen.');
+  await page.getByRole('button', { name: 'Play' }).click();
+  await expect.poll(async () => page.locator('#status-time').textContent()).not.toBe('0:00.00');
+  await page.getByRole('button', { name: 'Stop' }).click();
   await expect(page.locator('#save-state')).toHaveText('Saved locally');
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('[data-delete-track]').click();
   await expect(page.locator('[data-clip]')).toHaveCount(0);
+  await expect(page.locator('#status-time')).toHaveText('0:00.00');
   await page.getByRole('button', { name: 'Record' }).first().click();
   await page.getByRole('button', { name: 'Continue to microphone' }).click();
   await page.waitForTimeout(1100);

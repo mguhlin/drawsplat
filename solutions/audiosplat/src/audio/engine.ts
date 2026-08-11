@@ -10,7 +10,8 @@ export class AudioEngine {
 
   async ensureContext(): Promise<AudioContext> {
     this.context ??= new AudioContext();
-    if (this.context.state === 'suspended') await this.context.resume();
+    if (this.context.state !== 'running') await this.context.resume();
+    if (this.context.state !== 'running') throw new Error('Audio output is not available');
     return this.context;
   }
 
@@ -28,7 +29,7 @@ export class AudioEngine {
   getBuffer(id: string): AudioBuffer | undefined { return this.buffers.get(id); }
   removeBuffer(id: string): void { this.buffers.delete(id); }
 
-  async play(project: AudioProject, sources: Map<string, AudioSourceRecord>, from: number, onTick: (time: number) => void, onEnded: () => void): Promise<void> {
+  async play(project: AudioProject, sources: Map<string, AudioSourceRecord>, from: number, onTick: (time: number) => void, onEnded: () => void): Promise<boolean> {
     this.stop();
     const context = await this.ensureContext();
     const anySolo = project.tracks.some((track) => track.solo);
@@ -63,6 +64,7 @@ export class AudioEngine {
         }
       }
     }
+    if (this.active.length === 0) return false;
     const tick = (): void => {
       if (!this.context || this.active.length === 0) return;
       const time = this.startedFrom + (this.context.currentTime - this.startedAt);
@@ -71,6 +73,7 @@ export class AudioEngine {
       this.timer = requestAnimationFrame(tick);
     };
     this.timer = requestAnimationFrame(tick);
+    return true;
   }
 
   stop(): void {
