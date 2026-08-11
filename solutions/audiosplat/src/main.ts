@@ -1,5 +1,10 @@
 import "./styles.css";
 import { AudioEngine } from "./audio/engine";
+import {
+  processEffect,
+  type EffectKind,
+  type EffectSettings,
+} from "./audio/effects";
 import { encodeMp3 } from "./audio/mp3";
 import { encodeWav, formatTime } from "./audio/wav";
 import { applyLanguage, languageOptions, setLanguage, t } from "./i18n";
@@ -42,6 +47,7 @@ let workspaceTouched = false;
 let recordingStartedAt = 0;
 let recordingClock = 0;
 let recordingInsertAt = 0;
+let effectPreview: HTMLAudioElement | null = null;
 const engine = new AudioEngine();
 const MIC_STORAGE_KEY = "audiosplat.microphone";
 
@@ -72,6 +78,15 @@ function shell(): void {
         ["normalize", "normalize"],
         ["fade-in", "fadeIn"],
         ["fade-out", "fadeOut"],
+        ["effect-amplify", "amplify"],
+        ["effect-adjustable-fade", "adjustableFade"],
+        ["effect-bass-treble", "bassTreble"],
+        ["effect-echo", "echo"],
+        ["effect-noise-gate", "noiseGate"],
+        ["effect-noise-reduction", "noiseReduction"],
+        ["effect-reverb", "reverb"],
+        ["effect-silence", "silence"],
+        ["effect-truncate-silence", "truncateSilence"],
       ])}
       ${soundSourcesMenu()}
       ${menu("view", [
@@ -331,6 +346,8 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "normalize") normalizeClip();
   else if (action === "fade-in") setClipFade("in");
   else if (action === "fade-out") setClipFade("out");
+  else if (action?.startsWith("effect-"))
+    showEffectEditor(action.slice(7) as EffectKind);
   else if (action === "zoom-in") setZoom(project.view.zoom * 1.25);
   else if (action === "zoom-out") setZoom(project.view.zoom / 1.25);
   else if (action === "record") await requestRecording("microphone");
@@ -830,6 +847,181 @@ function setClipFade(edge: "in" | "out"): void {
     if (edge === "in") found.clip.fadeIn = duration;
     else found.clip.fadeOut = duration;
   });
+}
+
+const effectDefinitions: Record<
+  EffectKind,
+  {
+    label: string;
+    amount: [string, number, number, number];
+    secondary: [string, number, number, number];
+  }
+> = {
+  amplify: {
+    label: "amplify",
+    amount: ["gainDb", -24, 24, 3],
+    secondary: ["mix", 0, 1, 1],
+  },
+  "adjustable-fade": {
+    label: "adjustableFade",
+    amount: ["startGainDb", -60, 12, -60],
+    secondary: ["endGainDb", -60, 12, 0],
+  },
+  echo: {
+    label: "echo",
+    amount: ["delaySeconds", 0.05, 2, 0.3],
+    secondary: ["decay", 0, 0.9, 0.45],
+  },
+  "noise-reduction": {
+    label: "noiseReduction",
+    amount: ["thresholdDb", -80, -10, -42],
+    secondary: ["reductionDb", 0, 40, 18],
+  },
+  reverb: {
+    label: "reverb",
+    amount: ["wetMix", 0, 1, 0.3],
+    secondary: ["decay", 0.1, 0.95, 0.65],
+  },
+  silence: {
+    label: "silence",
+    amount: ["gainDb", 0, 0, 0],
+    secondary: ["mix", 0, 0, 0],
+  },
+  "truncate-silence": {
+    label: "truncateSilence",
+    amount: ["thresholdDb", -80, -10, -40],
+    secondary: ["minimumSilence", 0.1, 5, 0.5],
+  },
+  "noise-gate": {
+    label: "noiseGate",
+    amount: ["thresholdDb", -80, -10, -42],
+    secondary: ["mix", 0, 0, 0],
+  },
+  "bass-treble": {
+    label: "bassTreble",
+    amount: ["bassDb", -18, 18, 0],
+    secondary: ["trebleDb", -18, 18, 0],
+  },
+};
+
+function showEffectEditor(kind: EffectKind): void {
+  const found = selectedClipId ? findClip(selectedClipId) : null;
+  if (!found) {
+    toast(t("noSelection"));
+    return;
+  }
+  const definition = effectDefinitions[kind];
+  const field = (name: string, spec: [string, number, number, number]) =>
+    `<label><span data-i18n="${spec[0]}">${t(spec[0] as never)}</span><input name="${name}" type="number" min="${spec[1]}" max="${spec[2]}" step="0.01" value="${spec[3]}"></label>`;
+  showDialog(
+    t(definition.label as never),
+    `<form id="effect-form" class="effect-form"><div class="effect-range"><label><span data-i18n="selectionStart">${t("selectionStart" as never)}</span><input name="start" type="number" min="0" max="${found.clip.duration}" step="0.01" value="0"></label><label><span data-i18n="selectionEnd">${t("selectionEnd" as never)}</span><input name="end" type="number" min="0" max="${found.clip.duration}" step="0.01" value="${found.clip.duration.toFixed(2)}"></label></div>${kind === "silence" ? "" : `${field("amount", definition.amount)}${kind === "amplify" || kind === "noise-gate" ? "" : field("secondary", definition.secondary)}`}<p class="effect-note" data-i18n="effectsSelectionNote">${t("effectsSelectionNote" as never)}</p><div class="dialog-actions"><button type="button" class="btn" id="effect-preview" data-i18n="preview">${t("preview" as never)}</button><button type="submit" class="btn primary" data-i18n="apply">${t("apply" as never)}</button><button type="button" class="btn" data-dialog-close data-i18n="cancel">${t("cancel" as never)}</button></div></form>`,
+  );
+  const form = document.querySelector<HTMLFormElement>("#effect-form");
+  document
+    .querySelector("#effect-preview")
+    ?.addEventListener(
+      "click",
+      () =>
+        void runEffect(kind, found.clip.id, readEffectSettings(form!), false),
+    );
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void runEffect(kind, found.clip.id, readEffectSettings(form), true);
+  });
+}
+
+function readEffectSettings(form: HTMLFormElement): EffectSettings {
+  const data = new FormData(form);
+  return {
+    start: Number(data.get("start")),
+    end: Number(data.get("end")),
+    amount: Number(data.get("amount") ?? 0),
+    secondary: Number(data.get("secondary") ?? 0),
+  };
+}
+
+async function runEffect(
+  kind: EffectKind,
+  clipId: string,
+  settings: EffectSettings,
+  apply: boolean,
+): Promise<void> {
+  const found = findClip(clipId);
+  if (!found || settings.end <= settings.start) {
+    toast(t("invalidSelection" as never), true);
+    return;
+  }
+  const source = sources.get(found.clip.sourceId);
+  if (!source) return;
+  try {
+    setStatus(t("processingEffect" as never));
+    const original = await engine.loadSource(source);
+    const clipBuffer = sliceBuffer(
+      original,
+      found.clip.sourceOffset,
+      found.clip.duration,
+    );
+    const processed = await processEffect(clipBuffer, kind, settings);
+    const wav = encodeWav(processed);
+    if (!apply) {
+      effectPreview?.pause();
+      if (effectPreview?.src) URL.revokeObjectURL(effectPreview.src);
+      effectPreview = new Audio(URL.createObjectURL(wav));
+      await effectPreview.play();
+      setStatus(t("previewing" as never));
+      return;
+    }
+    const id = uid("source");
+    const record: AudioSourceRecord = {
+      id,
+      name: `${found.clip.name} – ${t(effectDefinitions[kind].label as never)}`,
+      mimeType: "audio/wav",
+      duration: processed.duration,
+      channels: processed.numberOfChannels,
+      sampleRate: processed.sampleRate,
+      blob: wav,
+    };
+    sources.set(id, record);
+    engine.setBuffer(id, processed);
+    commit(() => {
+      found.clip.sourceId = id;
+      found.clip.sourceOffset = 0;
+      found.clip.duration = processed.duration;
+      found.clip.gain = 1;
+      found.clip.fadeIn = 0;
+      found.clip.fadeOut = 0;
+      found.clip.name = record.name;
+    });
+    closeDialog();
+    setStatus(t("effectApplied" as never));
+  } catch {
+    toast(t("effectFailed" as never), true);
+    setStatus(t("ready"));
+  }
+}
+
+function sliceBuffer(
+  buffer: AudioBuffer,
+  offset: number,
+  duration: number,
+): AudioBuffer {
+  const start = Math.floor(offset * buffer.sampleRate);
+  const length = Math.max(
+    1,
+    Math.min(buffer.length - start, Math.ceil(duration * buffer.sampleRate)),
+  );
+  const output = new AudioBuffer({
+    length,
+    numberOfChannels: buffer.numberOfChannels,
+    sampleRate: buffer.sampleRate,
+  });
+  for (let channel = 0; channel < buffer.numberOfChannels; channel += 1)
+    output.copyToChannel(
+      buffer.getChannelData(channel).subarray(start, start + length),
+      channel,
+    );
+  return output;
 }
 function setZoom(value: number): void {
   project.view.zoom = Math.max(20, Math.min(400, Math.round(value)));
@@ -1351,6 +1543,9 @@ function showDialog(title: string, body: string): void {
     .forEach((node) => node.addEventListener("click", closeDialog));
 }
 function closeDialog(): void {
+  effectPreview?.pause();
+  if (effectPreview?.src) URL.revokeObjectURL(effectPreview.src);
+  effectPreview = null;
   document.querySelector("#dialog-backdrop")?.remove();
 }
 function toast(message: string, error = false): void {

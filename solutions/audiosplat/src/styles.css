@@ -168,6 +168,8 @@ details.menu[open] > summary {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
 }
 .menu-panel button,
 .menu-panel a {
@@ -533,6 +535,38 @@ details.menu[open] > summary {
   gap: 9px;
   margin-top: 18px;
   flex-wrap: wrap;
+}
+.effect-form {
+  display: grid;
+  gap: 12px;
+}
+.effect-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--ink);
+  font-weight: 800;
+}
+.effect-form input {
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+}
+.effect-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.effect-note {
+  margin: 0;
+  font-size: 0.9rem;
+}
+@media (max-width: 480px) {
+  .effect-range {
+    grid-template-columns: 1fr;
+  }
 }
 .toast {
   position: fixed;

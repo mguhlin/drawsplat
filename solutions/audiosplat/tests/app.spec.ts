@@ -245,6 +245,46 @@ test("imports, edits, undoes, and exports a real WAV project", async ({
   expect(mp3Bytes).toBeGreaterThan(1000);
 });
 
+test("applies an effect to a selected time range and supports undo", async ({
+  page,
+}) => {
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.locator("#audio-input").setInputFiles({
+    name: "effect-source.wav",
+    mimeType: "audio/wav",
+    buffer: makeWav(1, 8000),
+  });
+  await page.getByText("Effects", { exact: true }).click();
+  for (const effect of [
+    "Amplify",
+    "Adjustable fade",
+    "Bass and treble",
+    "Echo",
+    "Noise gate",
+    "Noise reduction",
+    "Reverb",
+    "Silence",
+    "Truncate silence",
+  ])
+    await expect(
+      page.getByRole("button", { name: effect, exact: true }),
+    ).toBeVisible();
+  await page.getByRole("button", { name: "Silence", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Silence" });
+  await dialog.getByLabel("Selection start (seconds)").fill("0.20");
+  await dialog.getByLabel("Selection end (seconds)").fill("0.80");
+  await dialog.getByRole("button", { name: "Apply" }).click();
+  await expect(page.locator("[data-clip]")).toHaveAttribute(
+    "aria-label",
+    /Silence/,
+  );
+  await page.getByTitle("Undo").click();
+  await expect(page.locator("[data-clip]")).toHaveAttribute(
+    "aria-label",
+    /effect-source\.wav/,
+  );
+});
+
 test("keeps autosaved projects isolated by browser tab and clears only the active tab", async ({
   page,
   context,

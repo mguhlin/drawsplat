@@ -21,6 +21,11 @@ AudioSplat V1 is implemented in this repository as of 2026-08-11.
 - Phase 8 automated gates pass: strict TypeScript, production build, unit tests,
   browser shell/localization/RTL tests, real WAV import/edit/undo/export test,
   and production dependency audit.
+- The post-V1 editor now includes tab-isolated autosave, format-specific export
+  commands, clip-range effect dialogs with Preview/Apply/Cancel, and undoable
+  Amplify, Adjustable Fade, Bass/Treble, Echo, Noise Gate, Noise Reduction,
+  Reverb, Silence, and Truncate Silence processing. Normalize and linear Fade
+  In/Out remain available as quick clip effects.
 - Remaining release validation is operational: exercise physical microphones,
   permission revocation, USB/Bluetooth device removal, long recordings, storage
   pressure, and current Safari/ChromeOS devices. These require real hardware and
@@ -648,14 +653,11 @@ documented and non-blocking.
 Prioritize only after V1 telemetry-free user feedback and defect stabilization:
 
 1. Fade handles and crossfades.
-2. Normalize/amplify, reverse, silence, fade in/out, and adjustable playback
-   speed using offline, reversible processing.
-3. Noise gate or carefully labeled noise reduction with before/after preview.
-4. MP3 and Ogg/Opus export after license and compatibility review.
-5. Markers/labels, notes, and chapter/cue export.
-6. Punch-in recording and count-in/metronome.
-7. Project templates for podcast, oral response, interview, and narration.
-8. Optional handoff of exported audio to ShowSplat or DrawSplat without adding a
+2. Reverse and adjustable playback speed using offline, reversible processing.
+3. Markers/labels, notes, and chapter/cue export.
+4. Punch-in recording and count-in/metronome.
+5. Project templates for podcast, oral response, interview, and narration.
+6. Optional handoff of exported audio to ShowSplat or DrawSplat without adding a
    required cloud service.
 
 ## 17. Definition of done for every feature
