@@ -35,6 +35,10 @@ AudioSplat V1 is implemented in this repository as of 2026-08-11.
   effects inherit that range, Delete removes and closes the selected audio with
   Undo support, and View includes Zoom to Selection and Fit Project to Window.
   Clip labels remain dedicated drag handles for moving clips between tracks.
+- Optional Google Drive export uses Google Identity Services and the narrow
+  `drive.file` scope. A user can save any supported export format privately or
+  explicitly request an Anyone-with-the-link permission, share URL, and Drive
+  preview iframe. Workspace policy failures do not discard a successful save.
 - Remaining release validation is operational: exercise physical microphones,
   permission revocation, USB/Bluetooth device removal, long recordings, storage
   pressure, and current Safari/ChromeOS devices. These require real hardware and

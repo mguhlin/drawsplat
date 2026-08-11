@@ -51,6 +51,36 @@ let recordingInsertAt = 0;
 let effectPreview: HTMLAudioElement | null = null;
 const engine = new AudioEngine();
 const MIC_STORAGE_KEY = "audiosplat.microphone";
+const GOOGLE_CLIENT_ID =
+  "963195660019-rk8867orle2cs0kk6si705en68t55cos.apps.googleusercontent.com";
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+
+type GoogleTokenResponse = {
+  access_token?: string;
+  error?: string;
+  error_description?: string;
+};
+
+type GoogleTokenClient = {
+  requestAccessToken: (options?: { prompt?: string }) => void;
+};
+
+declare global {
+  interface Window {
+    google?: {
+      accounts?: {
+        oauth2?: {
+          initTokenClient: (config: {
+            client_id: string;
+            scope: string;
+            callback: (response: GoogleTokenResponse) => void;
+            error_callback?: (error: unknown) => void;
+          }) => GoogleTokenClient;
+        };
+      };
+    };
+  }
+}
 
 const icon = (symbol: string, label: string): string =>
   `<span aria-hidden="true">${symbol}</span><span class="label" data-i18n="${label}">${t(label as never)}</span>`;
@@ -118,7 +148,7 @@ function menu(label: string, items: string[][]): string {
 
 function fileMenu(): string {
   const formats = exportFormats();
-  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><button data-action="import-url" data-i18n="importUrl">${t("importUrl" as never)}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
+  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="save-drive" data-i18n="saveToDrive">${t("saveToDrive" as never)}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><button data-action="import-url" data-i18n="importUrl">${t("importUrl" as never)}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
 }
 
 const soundEffectSources = [
@@ -337,6 +367,7 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "import")
     document.querySelector<HTMLInputElement>("#audio-input")?.click();
   else if (action === "import-url") showUrlImporter();
+  else if (action === "save-drive") showDriveSaveDialog();
   else if (action === "export") {
     const format = button.dataset.format;
     const selector =
@@ -1710,27 +1741,155 @@ async function exportMix(): Promise<void> {
     document.querySelector<HTMLSelectElement>("#export-format")?.value ?? "wav";
   setStatus(t("renderingAudio"));
   try {
-    const buffer = await engine.render(project, sources);
-    let blob: Blob;
-    let extension = format;
-    if (format === "wav") blob = encodeWav(buffer);
-    else if (format === "mp3") blob = encodeMp3(buffer);
-    else {
-      const config =
-        format === "ogg"
-          ? { mime: "audio/ogg;codecs=opus", extension: "ogg" }
-          : format === "m4a"
-            ? { mime: "audio/mp4", extension: "m4a" }
-            : { mime: "audio/webm;codecs=opus", extension: "webm" };
-      blob = await encodeWithMediaRecorder(buffer, config.mime);
-      extension = config.extension;
-    }
-    download(blob, `${safeName(project.metadata.title)}.${extension}`);
+    const rendered = await renderExport(format);
+    download(rendered.blob, rendered.name);
     toast(t("exportDone"));
   } catch {
     toast(t("exportFailed"), true);
   }
   setStatus(t("ready"));
+}
+
+type RenderedExport = {
+  blob: Blob;
+  name: string;
+  mimeType: string;
+};
+
+async function renderExport(format: string): Promise<RenderedExport> {
+  const buffer = await engine.render(project, sources);
+  let blob: Blob;
+  let extension = format;
+  if (format === "wav") blob = encodeWav(buffer);
+  else if (format === "mp3") blob = encodeMp3(buffer);
+  else {
+    const config =
+      format === "ogg"
+        ? { mime: "audio/ogg;codecs=opus", extension: "ogg" }
+        : format === "m4a"
+          ? { mime: "audio/mp4", extension: "m4a" }
+          : { mime: "audio/webm;codecs=opus", extension: "webm" };
+    blob = await encodeWithMediaRecorder(buffer, config.mime);
+    extension = config.extension;
+  }
+  return {
+    blob,
+    name: `${safeName(project.metadata.title)}.${extension}`,
+    mimeType: blob.type.split(";")[0] || `audio/${extension}`,
+  };
+}
+
+function showDriveSaveDialog(): void {
+  if (projectDuration(project) <= 0) {
+    toast(t("driveNeedsAudio" as never), true);
+    return;
+  }
+  showDialog(
+    t("saveToDrive" as never),
+    `<form id="drive-save-form" class="effect-form"><label><span data-i18n="exportFormat">${t("exportFormat")}</span><select name="format">${exportOptions()}</select></label><label class="check-row"><input name="share" type="checkbox"><span data-i18n="createShareLink">${t("createShareLink" as never)}</span></label><p data-i18n="drivePrivacyNote">${t("drivePrivacyNote" as never)}</p><p data-i18n="workspaceSharingNote">${t("workspaceSharingNote" as never)}</p><div class="dialog-actions"><button class="btn primary" type="submit" data-i18n="saveToDrive">${t("saveToDrive" as never)}</button><button class="btn" type="button" data-dialog-close data-i18n="cancel">${t("cancel")}</button></div></form>`,
+  );
+  document.querySelector("#drive-save-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    void saveMixToDrive(String(form.get("format") || "mp3"), form.get("share") === "on");
+  });
+}
+
+async function saveMixToDrive(format: string, share: boolean): Promise<void> {
+  const submit = document.querySelector<HTMLButtonElement>("#drive-save-form button[type=submit]");
+  if (submit) submit.disabled = true;
+  setStatus(t("renderingAudio"));
+  try {
+    const token = await requestDriveToken();
+    const rendered = await renderExport(format);
+    setStatus(t("uploadingToDrive" as never));
+    const file = await uploadDriveFile(token, rendered);
+    let sharingError = false;
+    if (share) {
+      try {
+        await createDrivePermission(token, file.id);
+      } catch {
+        sharingError = true;
+      }
+    }
+    showDriveResult(file.id, file.webViewLink, rendered.name, share, sharingError);
+    toast(t("driveSaveDone" as never));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    toast(message || t("driveSaveFailed" as never), true);
+    if (submit) submit.disabled = false;
+  } finally {
+    setStatus(t("ready"));
+  }
+}
+
+function requestDriveToken(): Promise<string> {
+  const oauth = window.google?.accounts?.oauth2;
+  if (!oauth) return Promise.reject(new Error(t("googleUnavailable" as never)));
+  return new Promise((resolve, reject) => {
+    const client = oauth.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: DRIVE_SCOPE,
+      callback: (response) => {
+        if (response.access_token) resolve(response.access_token);
+        else reject(new Error(response.error_description || t("driveAuthFailed" as never)));
+      },
+      error_callback: () => reject(new Error(t("driveAuthFailed" as never))),
+    });
+    client.requestAccessToken();
+  });
+}
+
+async function uploadDriveFile(token: string, rendered: RenderedExport): Promise<{ id: string; webViewLink?: string }> {
+  const boundary = `audiosplat_${crypto.randomUUID()}`;
+  const body = new Blob([
+    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`,
+    JSON.stringify({ name: rendered.name, mimeType: rendered.mimeType }),
+    `\r\n--${boundary}\r\nContent-Type: ${rendered.mimeType}\r\n\r\n`,
+    rendered.blob,
+    `\r\n--${boundary}--`,
+  ]);
+  const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id%2CwebViewLink", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": `multipart/related; boundary=${boundary}` },
+    body,
+  });
+  if (!response.ok) throw new Error(await driveError(response));
+  return response.json() as Promise<{ id: string; webViewLink?: string }>;
+}
+
+async function createDrivePermission(token: string, fileId: string): Promise<void> {
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}/permissions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "anyone", role: "reader", allowFileDiscovery: false }),
+  });
+  if (!response.ok) throw new Error(await driveError(response));
+}
+
+async function driveError(response: Response): Promise<string> {
+  try {
+    const data = await response.json() as { error?: { message?: string } };
+    return data.error?.message || t("driveSaveFailed" as never);
+  } catch {
+    return t("driveSaveFailed" as never);
+  }
+}
+
+function showDriveResult(fileId: string, webViewLink: string | undefined, name: string, shared: boolean, sharingError: boolean): void {
+  const link = webViewLink || `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/view`;
+  const preview = `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview`;
+  const embed = `<iframe src="${preview}" width="640" height="120" allow="autoplay"></iframe>`;
+  const sharing = sharingError
+    ? `<p class="drive-warning" data-i18n="sharingBlocked">${t("sharingBlocked" as never)}</p>`
+    : shared
+      ? `<label><span data-i18n="shareLink">${t("shareLink" as never)}</span><input class="copy-field" readonly value="${escapeHtml(link)}"></label><label><span data-i18n="embedCode">${t("embedCode" as never)}</span><textarea class="copy-field" readonly rows="4">${escapeHtml(embed)}</textarea></label><div class="dialog-actions"><button class="btn" type="button" data-copy="link" data-i18n="copyLink">${t("copyLink" as never)}</button><button class="btn" type="button" data-copy="embed" data-i18n="copyEmbed">${t("copyEmbed" as never)}</button></div>`
+      : `<p data-i18n="privateDriveFile">${t("privateDriveFile" as never)}</p>`;
+  showDialog(t("driveSaveDone" as never), `<div class="effect-form"><p><strong>${escapeHtml(name)}</strong></p>${sharing}<div class="dialog-actions"><a class="btn primary" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" data-i18n="openInDrive">${t("openInDrive" as never)}</a><button class="btn" type="button" data-dialog-close data-i18n="close">${t("close")}</button></div></div>`);
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => button.addEventListener("click", () => {
+    const value = button.dataset.copy === "embed" ? embed : link;
+    void navigator.clipboard.writeText(value).then(() => toast(t("copied" as never))).catch(() => toast(t("copyFailed" as never), true));
+  }));
 }
 async function encodeWithMediaRecorder(
   buffer: AudioBuffer,

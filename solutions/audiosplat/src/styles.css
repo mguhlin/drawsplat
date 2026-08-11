@@ -570,6 +570,22 @@ details.menu[open] > summary {
   border-radius: 8px;
   font: inherit;
 }
+.effect-form select,
+.effect-form textarea {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+}
+.effect-form .check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.effect-form .check-row input { width: auto; margin-top: 0.2rem; }
+.copy-field { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.drive-warning { color: #9a3412; font-weight: 700; }
 .effect-range {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

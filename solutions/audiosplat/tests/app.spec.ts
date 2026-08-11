@@ -129,6 +129,67 @@ test("opens help with local privacy guidance", async ({ page }) => {
   );
 });
 
+test("saves an exported mix to Drive and creates opt-in sharing and embed code", async ({
+  page,
+}) => {
+  await page.route("https://accounts.google.com/gsi/client", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/javascript",
+      body: `window.google={accounts:{oauth2:{initTokenClient:(config)=>({requestAccessToken:()=>config.callback({access_token:"test-drive-token"})})}}};`,
+    });
+  });
+  let uploadAuthorized = false;
+  let permissionBody: unknown;
+  await page.route("https://www.googleapis.com/upload/drive/v3/files**", async (route) => {
+    uploadAuthorized =
+      route.request().headers().authorization === "Bearer test-drive-token";
+    expect(route.request().headers()["content-type"]).toContain(
+      "multipart/related",
+    );
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        id: "drive-audio-123",
+        webViewLink:
+          "https://drive.google.com/file/d/drive-audio-123/view",
+      }),
+    });
+  });
+  await page.route(
+    "https://www.googleapis.com/drive/v3/files/drive-audio-123/permissions",
+    async (route) => {
+      permissionBody = route.request().postDataJSON();
+      await route.fulfill({ status: 200, contentType: "application/json", body: "{}" });
+    },
+  );
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.locator("#audio-input").setInputFiles({
+    name: "drive-source.wav",
+    mimeType: "audio/wav",
+    buffer: makeWav(1, 8000),
+  });
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "Save audio to Google Drive" }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "AudioSplat uploads only the exported mix",
+  );
+  await page.getByRole("dialog").locator('select[name="format"]').selectOption("wav");
+  await page.getByRole("dialog").getByText("Create an Anyone-with-the-link").click();
+  await page.getByRole("dialog").getByRole("button", { name: "Save audio to Google Drive" }).click();
+  await expect(page.getByRole("dialog")).toContainText("Saved to Google Drive");
+  await expect(page.getByRole("dialog").locator("textarea")).toHaveValue(
+    /drive\.google\.com\/file\/d\/drive-audio-123\/preview/,
+  );
+  expect(uploadAuthorized).toBe(true);
+  expect(permissionBody).toEqual({
+    type: "anyone",
+    role: "reader",
+    allowFileDiscovery: false,
+  });
+});
+
 test("keeps only one application menu open and dismisses it outside", async ({
   page,
 }) => {
