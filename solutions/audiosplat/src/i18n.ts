@@ -1,95 +1,559 @@
-import type { LanguageCode } from './types';
+import type { LanguageCode } from "./types";
 
-const STORAGE_KEY = 'drawsplat.language';
-const languages: Array<{ code: LanguageCode; label: string; htmlLang: string; dir: 'ltr' | 'rtl' }> = [
-  { code: 'en', label: 'English', htmlLang: 'en', dir: 'ltr' },
-  { code: 'es', label: 'Español', htmlLang: 'es', dir: 'ltr' },
-  { code: 'vi', label: 'Tiếng Việt', htmlLang: 'vi', dir: 'ltr' },
-  { code: 'ar', label: 'العربية', htmlLang: 'ar', dir: 'rtl' },
-  { code: 'zh', label: '中文', htmlLang: 'zh', dir: 'ltr' },
-  { code: 'uh', label: 'हिन्दी / اردو', htmlLang: 'hi', dir: 'ltr' },
+const STORAGE_KEY = "drawsplat.language";
+const languages: Array<{
+  code: LanguageCode;
+  label: string;
+  htmlLang: string;
+  dir: "ltr" | "rtl";
+}> = [
+  { code: "en", label: "English", htmlLang: "en", dir: "ltr" },
+  { code: "es", label: "Español", htmlLang: "es", dir: "ltr" },
+  { code: "vi", label: "Tiếng Việt", htmlLang: "vi", dir: "ltr" },
+  { code: "ar", label: "العربية", htmlLang: "ar", dir: "rtl" },
+  { code: "zh", label: "中文", htmlLang: "zh", dir: "ltr" },
+  { code: "uh", label: "हिन्दी / اردو", htmlLang: "hi", dir: "ltr" },
 ];
 
 const en = {
-  title: 'AudioSplat', tagline: 'Record, arrange, and mix audio privately in your browser.', tools: 'DrawSplat Tools',
-  home: 'Home', help: 'Help', language: 'Language', file: 'File', edit: 'Edit', tracks: 'Tracks', clip: 'Clip',
-  view: 'View', newProject: 'New project', openProject: 'Open project', saveProject: 'Download project', importAudio: 'Import audio',
-  exportWav: 'Export WAV', undo: 'Undo', redo: 'Redo', addTrack: 'Add track', split: 'Split', duplicate: 'Duplicate',
-  delete: 'Delete', trimStart: 'Trim start', trimEnd: 'Trim end', zoomIn: 'Zoom in', zoomOut: 'Zoom out',
-  record: 'Record', pause: 'Pause', resume: 'Resume', stop: 'Stop', play: 'Play', start: 'Return to start',
-  emptyTitle: 'Start your audio project', emptyBody: 'Record with your microphone or import an audio file. Your audio stays on this device.',
-  privacy: 'Private by default', localOnly: 'Audio is processed locally and is not uploaded.', ready: 'Ready', saved: 'Saved locally', saving: 'Saving…',
-  trackName: 'Track name', mute: 'Mute', solo: 'Solo', volume: 'Volume', pan: 'Pan', microphone: 'Microphone',
-  micIntro: 'AudioSplat needs microphone access only while you record. Your recording stays in this browser.',
-  allowMic: 'Continue to microphone', cancel: 'Cancel', close: 'Close', projectTitle: 'Project title', noSelection: 'Select a clip first.',
-  recording: 'Recording', paused: 'Recording paused', permissionDenied: 'Microphone access was denied. Allow it in browser settings, then try again.',
-  micUnavailable: 'No microphone is available, or another app is using it.', importFailed: 'That audio file could not be opened.',
-  micUnsupported: 'This browser cannot record audio here. Try the latest Chrome, Edge, Firefox, or Safari over HTTPS.',
-  recordingFailed: 'Recording stopped before usable audio was captured. Try again and record for at least one second.',
-  playbackFailed: 'Audio playback could not start. Check this tab\'s sound permission and output device, then try again.',
-  recordingReady: 'Recording ready. Press Play to listen.',
-  microphoneInput: 'Microphone input',
-  defaultMicrophone: 'Default microphone',
-  noSignal: 'No microphone signal was detected. Choose another microphone input, check the Linux sound input level, and record again.',
-  recordDeviceAudio: 'Record device audio',
-  deviceAudio: 'Device audio',
-  systemAudioIntro: 'Choose a browser tab, window, or screen and enable its Share audio option. Browser and operating-system support varies.',
-  chooseSharedAudio: 'Choose shared audio',
-  systemAudioUnavailable: 'This browser or selected share does not provide an audio track. Try sharing a browser tab with Share audio enabled in Chrome or Edge.',
-  projectFailed: 'That AudioSplat project is invalid or damaged.', exportDone: 'WAV export complete.', projectSaved: 'Project downloaded.',
-  confirmNew: 'Start a new project? Download your current project first if you need a durable copy.',
-  confirmDeleteTrack: 'Delete this track and all of its clips?', untitled: 'Untitled Audio Project', trackDefault: 'Track', recordingDefault: 'Recording',
-  time: 'Time', duration: 'Duration', sampleRate: 'Sample rate', autosave: 'Autosave', shortcuts: 'Keyboard shortcuts',
-  helpBody: 'Record or import audio, add tracks, select a clip to edit it, then export a WAV mix. Space plays or pauses. R records. S splits at the playhead. Delete removes the selected clip. Ctrl or Command plus Z undoes.',
+  title: "AudioSplat",
+  tagline: "Record, arrange, and mix audio privately in your browser.",
+  tools: "DrawSplat Tools",
+  home: "Home",
+  help: "Help",
+  language: "Language",
+  file: "File",
+  edit: "Edit",
+  tracks: "Tracks",
+  clip: "Clip",
+  view: "View",
+  newProject: "New project",
+  openProject: "Open project",
+  saveProject: "Download project",
+  importAudio: "Import audio",
+  exportWav: "Export WAV",
+  exportAudio: "Export audio",
+  exportFormat: "Export format",
+  effects: "Effects",
+  normalize: "Normalize",
+  fadeIn: "Fade in",
+  fadeOut: "Fade out",
+  renderingAudio: "Rendering audio…",
+  exportFailed: "Audio export failed.",
+  undo: "Undo",
+  redo: "Redo",
+  addTrack: "Add track",
+  split: "Split",
+  duplicate: "Duplicate",
+  delete: "Delete",
+  trimStart: "Trim start",
+  trimEnd: "Trim end",
+  zoomIn: "Zoom in",
+  zoomOut: "Zoom out",
+  record: "Record",
+  pause: "Pause",
+  resume: "Resume",
+  stop: "Stop",
+  play: "Play",
+  start: "Return to start",
+  emptyTitle: "Start your audio project",
+  emptyBody:
+    "Record with your microphone or import an audio file. Your audio stays on this device.",
+  privacy: "Private by default",
+  localOnly: "Audio is processed locally and is not uploaded.",
+  ready: "Ready",
+  saved: "Saved locally",
+  saving: "Saving…",
+  trackName: "Track name",
+  mute: "Mute",
+  solo: "Solo",
+  volume: "Volume",
+  pan: "Pan",
+  microphone: "Microphone",
+  micIntro:
+    "AudioSplat needs microphone access only while you record. Your recording stays in this browser.",
+  allowMic: "Continue to microphone",
+  cancel: "Cancel",
+  close: "Close",
+  projectTitle: "Project title",
+  noSelection: "Select a clip first.",
+  recording: "Recording",
+  paused: "Recording paused",
+  permissionDenied:
+    "Microphone access was denied. Allow it in browser settings, then try again.",
+  micUnavailable: "No microphone is available, or another app is using it.",
+  importFailed: "That audio file could not be opened.",
+  micUnsupported:
+    "This browser cannot record audio here. Try the latest Chrome, Edge, Firefox, or Safari over HTTPS.",
+  recordingFailed:
+    "Recording stopped before usable audio was captured. Try again and record for at least one second.",
+  playbackFailed:
+    "Audio playback could not start. Check this tab's sound permission and output device, then try again.",
+  recordingReady: "Recording ready. Press Play to listen.",
+  stereo: "Stereo",
+  mono: "Mono",
+  microphoneInput: "Microphone input",
+  defaultMicrophone: "Default microphone",
+  noSignal:
+    "No microphone signal was detected. Choose another microphone input, check the Linux sound input level, and record again.",
+  recordDeviceAudio: "Record device audio",
+  deviceAudio: "Device audio",
+  systemAudioIntro:
+    "Choose a browser tab, window, or screen and enable its Share audio option. Browser and operating-system support varies.",
+  chooseSharedAudio: "Choose shared audio",
+  systemAudioUnavailable:
+    "This browser or selected share does not provide an audio track. Try sharing a browser tab with Share audio enabled in Chrome or Edge.",
+  projectFailed: "That AudioSplat project is invalid or damaged.",
+  exportDone: "WAV export complete.",
+  projectSaved: "Project downloaded.",
+  confirmNew:
+    "Start a new project? Download your current project first if you need a durable copy.",
+  confirmDeleteTrack: "Delete this track and all of its clips?",
+  untitled: "Untitled Audio Project",
+  trackDefault: "Track",
+  recordingDefault: "Recording",
+  time: "Time",
+  duration: "Duration",
+  sampleRate: "Sample rate",
+  autosave: "Autosave",
+  shortcuts: "Keyboard shortcuts",
+  helpBody:
+    "Record or import audio, add tracks, select a clip to edit it, then export a WAV mix. Space plays or pauses. R records. S splits at the playhead. Delete removes the selected clip. Ctrl or Command plus Z undoes.",
 };
 
 type Key = keyof typeof en;
 type Dictionary = Partial<Record<Key, string>>;
 const dictionaries: Record<LanguageCode, Dictionary> = {
   en,
-  es: { title:'AudioSplat', tagline:'Graba, organiza y mezcla audio de forma privada en tu navegador.', tools:'Herramientas DrawSplat', home:'Inicio', help:'Ayuda', language:'Idioma', file:'Archivo', edit:'Editar', tracks:'Pistas', clip:'Clip', view:'Vista', newProject:'Proyecto nuevo', openProject:'Abrir proyecto', saveProject:'Descargar proyecto', importAudio:'Importar audio', exportWav:'Exportar WAV', undo:'Deshacer', redo:'Rehacer', addTrack:'Añadir pista', split:'Dividir', duplicate:'Duplicar', delete:'Eliminar', trimStart:'Recortar inicio', trimEnd:'Recortar final', zoomIn:'Acercar', zoomOut:'Alejar', record:'Grabar', pause:'Pausar', resume:'Continuar', stop:'Detener', play:'Reproducir', start:'Volver al inicio', emptyTitle:'Comienza tu proyecto de audio', emptyBody:'Graba con el micrófono o importa un archivo. El audio permanece en este dispositivo.', privacy:'Privado de forma predeterminada', localOnly:'El audio se procesa localmente y no se sube.', ready:'Listo', saved:'Guardado localmente', saving:'Guardando…', trackName:'Nombre de pista', mute:'Silenciar', solo:'Solo', volume:'Volumen', pan:'Balance', microphone:'Micrófono', allowMic:'Continuar al micrófono', cancel:'Cancelar', close:'Cerrar', projectTitle:'Título del proyecto', noSelection:'Selecciona primero un clip.', recording:'Grabando', paused:'Grabación pausada', permissionDenied:'Se denegó el acceso al micrófono. Permítelo en el navegador e inténtalo de nuevo.', micUnavailable:'No hay micrófono disponible o está en uso.', importFailed:'No se pudo abrir ese archivo de audio.', projectFailed:'El proyecto AudioSplat no es válido o está dañado.', exportDone:'Exportación WAV completada.', projectSaved:'Proyecto descargado.', confirmNew:'¿Comenzar un proyecto nuevo? Descarga primero el proyecto actual si necesitas una copia.', confirmDeleteTrack:'¿Eliminar esta pista y todos sus clips?', untitled:'Proyecto de audio sin título', trackDefault:'Pista', recordingDefault:'Grabación', time:'Tiempo', duration:'Duración', sampleRate:'Frecuencia de muestreo', autosave:'Autoguardado', shortcuts:'Atajos de teclado', helpBody:'Graba o importa audio, añade pistas, selecciona un clip para editarlo y exporta una mezcla WAV.' },
-  vi: { title:'AudioSplat', tagline:'Ghi âm, sắp xếp và trộn âm thanh riêng tư trong trình duyệt.', tools:'Công cụ DrawSplat', home:'Trang chủ', help:'Trợ giúp', language:'Ngôn ngữ', file:'Tệp', edit:'Sửa', tracks:'Bản nhạc', clip:'Đoạn âm thanh', view:'Xem', newProject:'Dự án mới', openProject:'Mở dự án', saveProject:'Tải dự án xuống', importAudio:'Nhập âm thanh', exportWav:'Xuất WAV', undo:'Hoàn tác', redo:'Làm lại', addTrack:'Thêm bản nhạc', split:'Tách', duplicate:'Nhân bản', delete:'Xóa', trimStart:'Cắt đầu', trimEnd:'Cắt cuối', zoomIn:'Phóng to', zoomOut:'Thu nhỏ', record:'Ghi âm', pause:'Tạm dừng', resume:'Tiếp tục', stop:'Dừng', play:'Phát', start:'Về đầu', emptyTitle:'Bắt đầu dự án âm thanh', emptyBody:'Ghi bằng micrô hoặc nhập tệp âm thanh. Âm thanh nằm trên thiết bị này.', privacy:'Riêng tư theo mặc định', localOnly:'Âm thanh được xử lý cục bộ và không được tải lên.', ready:'Sẵn sàng', saved:'Đã lưu cục bộ', saving:'Đang lưu…', trackName:'Tên bản nhạc', mute:'Tắt tiếng', solo:'Độc tấu', volume:'Âm lượng', pan:'Cân bằng', microphone:'Micrô', allowMic:'Tiếp tục đến micrô', cancel:'Hủy', close:'Đóng', projectTitle:'Tên dự án', noSelection:'Hãy chọn một đoạn âm thanh.', recording:'Đang ghi', paused:'Đã tạm dừng ghi', permissionDenied:'Quyền truy cập micrô bị từ chối. Hãy cho phép trong trình duyệt rồi thử lại.', micUnavailable:'Không có micrô hoặc micrô đang được ứng dụng khác sử dụng.', importFailed:'Không thể mở tệp âm thanh đó.', projectFailed:'Dự án AudioSplat không hợp lệ hoặc bị hỏng.', exportDone:'Đã xuất WAV.', projectSaved:'Đã tải dự án.', confirmNew:'Bắt đầu dự án mới?', confirmDeleteTrack:'Xóa bản nhạc này và tất cả đoạn âm thanh?', untitled:'Dự án âm thanh chưa đặt tên', trackDefault:'Bản nhạc', recordingDefault:'Bản ghi', time:'Thời gian', duration:'Thời lượng', sampleRate:'Tần số lấy mẫu', autosave:'Tự động lưu', shortcuts:'Phím tắt', helpBody:'Ghi hoặc nhập âm thanh, thêm bản nhạc, chọn một đoạn để chỉnh sửa rồi xuất bản trộn WAV.' },
-  ar: { title:'AudioSplat', tagline:'سجّل الصوت ورتّبه وامزجه بخصوصية في متصفحك.', tools:'أدوات DrawSplat', home:'الرئيسية', help:'مساعدة', language:'اللغة', file:'ملف', edit:'تحرير', tracks:'المسارات', clip:'المقطع', view:'عرض', newProject:'مشروع جديد', openProject:'فتح مشروع', saveProject:'تنزيل المشروع', importAudio:'استيراد صوت', exportWav:'تصدير WAV', undo:'تراجع', redo:'إعادة', addTrack:'إضافة مسار', split:'تقسيم', duplicate:'تكرار', delete:'حذف', trimStart:'قص البداية', trimEnd:'قص النهاية', zoomIn:'تكبير', zoomOut:'تصغير', record:'تسجيل', pause:'إيقاف مؤقت', resume:'متابعة', stop:'إيقاف', play:'تشغيل', start:'العودة للبداية', emptyTitle:'ابدأ مشروعك الصوتي', emptyBody:'سجّل بالميكروفون أو استورد ملفًا صوتيًا. يبقى الصوت على هذا الجهاز.', privacy:'خصوصي افتراضيًا', localOnly:'تتم معالجة الصوت محليًا ولا يُرفع.', ready:'جاهز', saved:'محفوظ محليًا', saving:'جارٍ الحفظ…', trackName:'اسم المسار', mute:'كتم', solo:'منفرد', volume:'الصوت', pan:'التوازن', microphone:'الميكروفون', allowMic:'المتابعة إلى الميكروفون', cancel:'إلغاء', close:'إغلاق', projectTitle:'عنوان المشروع', noSelection:'اختر مقطعًا أولًا.', recording:'جارٍ التسجيل', paused:'التسجيل متوقف مؤقتًا', permissionDenied:'رُفض الوصول إلى الميكروفون. اسمح به في إعدادات المتصفح ثم حاول مجددًا.', micUnavailable:'لا يوجد ميكروفون أو يستخدمه تطبيق آخر.', importFailed:'تعذر فتح ملف الصوت.', projectFailed:'مشروع AudioSplat غير صالح أو تالف.', exportDone:'اكتمل تصدير WAV.', projectSaved:'تم تنزيل المشروع.', confirmNew:'هل تبدأ مشروعًا جديدًا؟', confirmDeleteTrack:'هل تريد حذف المسار وكل مقاطعه؟', untitled:'مشروع صوتي بلا عنوان', trackDefault:'مسار', recordingDefault:'تسجيل', time:'الوقت', duration:'المدة', sampleRate:'معدل العينات', autosave:'الحفظ التلقائي', shortcuts:'اختصارات لوحة المفاتيح', helpBody:'سجّل الصوت أو استورده، وأضف المسارات، واختر مقطعًا لتحريره، ثم صدّر مزيج WAV.' },
-  zh: { title:'AudioSplat', tagline:'在浏览器中私密地录制、编排和混合音频。', tools:'DrawSplat 工具', home:'主页', help:'帮助', language:'语言', file:'文件', edit:'编辑', tracks:'音轨', clip:'片段', view:'视图', newProject:'新建项目', openProject:'打开项目', saveProject:'下载项目', importAudio:'导入音频', exportWav:'导出 WAV', undo:'撤销', redo:'重做', addTrack:'添加音轨', split:'分割', duplicate:'复制', delete:'删除', trimStart:'裁剪开头', trimEnd:'裁剪结尾', zoomIn:'放大', zoomOut:'缩小', record:'录音', pause:'暂停', resume:'继续', stop:'停止', play:'播放', start:'返回开头', emptyTitle:'开始音频项目', emptyBody:'使用麦克风录音或导入音频文件。音频保留在此设备上。', privacy:'默认私密', localOnly:'音频在本地处理，不会上传。', ready:'就绪', saved:'已保存到本地', saving:'正在保存…', trackName:'音轨名称', mute:'静音', solo:'独奏', volume:'音量', pan:'声像', microphone:'麦克风', allowMic:'继续使用麦克风', cancel:'取消', close:'关闭', projectTitle:'项目标题', noSelection:'请先选择一个片段。', recording:'正在录音', paused:'录音已暂停', permissionDenied:'麦克风访问被拒绝。请在浏览器设置中允许，然后重试。', micUnavailable:'没有可用的麦克风，或其他应用正在使用。', importFailed:'无法打开该音频文件。', projectFailed:'AudioSplat 项目无效或已损坏。', exportDone:'WAV 导出完成。', projectSaved:'项目已下载。', confirmNew:'开始新项目吗？', confirmDeleteTrack:'删除此音轨及其所有片段吗？', untitled:'未命名音频项目', trackDefault:'音轨', recordingDefault:'录音', time:'时间', duration:'时长', sampleRate:'采样率', autosave:'自动保存', shortcuts:'键盘快捷键', helpBody:'录制或导入音频，添加音轨，选择片段进行编辑，然后导出 WAV 混音。' },
-  uh: { title:'AudioSplat', tagline:'اپنے براؤزر میں نجی طور پر آڈیو ریکارڈ، ترتیب اور مکس کریں۔', tools:'DrawSplat उपकरण / ٹولز', home:'होम / ہوم', help:'मदद / مدد', language:'भाषा / زبان', file:'फ़ाइल / فائل', edit:'संपादन / ترمیم', tracks:'ट्रैक / ٹریکس', clip:'क्लिप / کلپ', view:'दृश्य / منظر', newProject:'नया प्रोजेक्ट / نیا پروجیکٹ', openProject:'प्रोजेक्ट खोलें / پروجیکٹ کھولیں', saveProject:'प्रोजेक्ट डाउनलोड / پروجیکٹ ڈاؤن لوڈ', importAudio:'ऑडियो आयात / آڈیو درآمد', exportWav:'WAV निर्यात / برآمد', undo:'पूर्ववत / واپس', redo:'फिर करें / دوبارہ', addTrack:'ट्रैक जोड़ें / ٹریک شامل', split:'बाँटें / تقسیم', duplicate:'कॉपी / نقل', delete:'हटाएँ / حذف', trimStart:'शुरुआत काटें / آغاز تراشیں', trimEnd:'अंत काटें / آخر تراشیں', zoomIn:'ज़ूम इन / بڑا', zoomOut:'ज़ूम आउट / چھوٹا', record:'रिकॉर्ड / ریکارڈ', pause:'रोकें / وقفہ', resume:'जारी / جاری', stop:'बंद / روکیں', play:'चलाएँ / چلائیں', start:'शुरू पर / آغاز', emptyTitle:'ऑडियो प्रोजेक्ट शुरू करें / آڈیو پروجیکٹ شروع کریں', emptyBody:'माइक से रिकॉर्ड करें या ऑडियो फ़ाइल आयात करें। ऑडियो इसी डिवाइस पर रहता है।', privacy:'डिफ़ॉल्ट रूप से निजी / نجی', localOnly:'ऑडियो स्थानीय रूप से संसाधित होता है और अपलोड नहीं होता।', ready:'तैयार / تیار', saved:'स्थानीय रूप से सहेजा / مقامی محفوظ', saving:'सहेज रहे हैं / محفوظ ہو رہا ہے…', trackName:'ट्रैक नाम / ٹریک نام', mute:'म्यूट / خاموش', solo:'सोलो / سولو', volume:'आवाज़ / آواز', pan:'पैन / توازن', microphone:'माइक्रोफ़ोन / مائیکروفون', allowMic:'माइक जारी रखें / مائیک جاری', cancel:'रद्द / منسوخ', close:'बंद / بند', projectTitle:'प्रोजेक्ट शीर्षक / پروجیکٹ عنوان', noSelection:'पहले क्लिप चुनें / پہلے کلپ چنیں', recording:'रिकॉर्ड हो रहा है / ریکارڈنگ', paused:'रिकॉर्डिंग रुकी / ریکارڈنگ موقوف', permissionDenied:'माइक्रोफ़ोन अनुमति नहीं मिली। ब्राउज़र सेटिंग में अनुमति देकर फिर कोशिश करें।', micUnavailable:'माइक्रोफ़ोन उपलब्ध नहीं है या किसी अन्य ऐप में उपयोग हो रहा है।', importFailed:'ऑडियो फ़ाइल नहीं खुल सकी।', projectFailed:'AudioSplat प्रोजेक्ट अमान्य या खराब है।', exportDone:'WAV निर्यात पूरा हुआ।', projectSaved:'प्रोजेक्ट डाउनलोड हुआ।', confirmNew:'नया प्रोजेक्ट शुरू करें?', confirmDeleteTrack:'यह ट्रैक और सभी क्लिप हटाएँ?', untitled:'बिना नाम ऑडियो प्रोजेक्ट', trackDefault:'ट्रैक', recordingDefault:'रिकॉर्डिंग', time:'समय / وقت', duration:'अवधि / مدت', sampleRate:'सैंपल दर / سیمپل ریٹ', autosave:'ऑटोसेव / خودکار محفوظ', shortcuts:'कीबोर्ड शॉर्टकट / کی بورڈ شارٹ کٹس', helpBody:'ऑडियो रिकॉर्ड या आयात करें, ट्रैक जोड़ें, क्लिप चुनकर संपादित करें और WAV मिक्स निर्यात करें।' },
+  es: {
+    title: "AudioSplat",
+    tagline: "Graba, organiza y mezcla audio de forma privada en tu navegador.",
+    tools: "Herramientas DrawSplat",
+    home: "Inicio",
+    help: "Ayuda",
+    language: "Idioma",
+    file: "Archivo",
+    edit: "Editar",
+    tracks: "Pistas",
+    clip: "Clip",
+    view: "Vista",
+    newProject: "Proyecto nuevo",
+    openProject: "Abrir proyecto",
+    saveProject: "Descargar proyecto",
+    importAudio: "Importar audio",
+    exportWav: "Exportar WAV",
+    undo: "Deshacer",
+    redo: "Rehacer",
+    addTrack: "Añadir pista",
+    split: "Dividir",
+    duplicate: "Duplicar",
+    delete: "Eliminar",
+    trimStart: "Recortar inicio",
+    trimEnd: "Recortar final",
+    zoomIn: "Acercar",
+    zoomOut: "Alejar",
+    record: "Grabar",
+    pause: "Pausar",
+    resume: "Continuar",
+    stop: "Detener",
+    play: "Reproducir",
+    start: "Volver al inicio",
+    emptyTitle: "Comienza tu proyecto de audio",
+    emptyBody:
+      "Graba con el micrófono o importa un archivo. El audio permanece en este dispositivo.",
+    privacy: "Privado de forma predeterminada",
+    localOnly: "El audio se procesa localmente y no se sube.",
+    ready: "Listo",
+    saved: "Guardado localmente",
+    saving: "Guardando…",
+    trackName: "Nombre de pista",
+    mute: "Silenciar",
+    solo: "Solo",
+    volume: "Volumen",
+    pan: "Balance",
+    microphone: "Micrófono",
+    allowMic: "Continuar al micrófono",
+    cancel: "Cancelar",
+    close: "Cerrar",
+    projectTitle: "Título del proyecto",
+    noSelection: "Selecciona primero un clip.",
+    recording: "Grabando",
+    paused: "Grabación pausada",
+    permissionDenied:
+      "Se denegó el acceso al micrófono. Permítelo en el navegador e inténtalo de nuevo.",
+    micUnavailable: "No hay micrófono disponible o está en uso.",
+    importFailed: "No se pudo abrir ese archivo de audio.",
+    projectFailed: "El proyecto AudioSplat no es válido o está dañado.",
+    exportDone: "Exportación WAV completada.",
+    projectSaved: "Proyecto descargado.",
+    confirmNew:
+      "¿Comenzar un proyecto nuevo? Descarga primero el proyecto actual si necesitas una copia.",
+    confirmDeleteTrack: "¿Eliminar esta pista y todos sus clips?",
+    untitled: "Proyecto de audio sin título",
+    trackDefault: "Pista",
+    recordingDefault: "Grabación",
+    time: "Tiempo",
+    duration: "Duración",
+    sampleRate: "Frecuencia de muestreo",
+    autosave: "Autoguardado",
+    shortcuts: "Atajos de teclado",
+    helpBody:
+      "Graba o importa audio, añade pistas, selecciona un clip para editarlo y exporta una mezcla WAV.",
+  },
+  vi: {
+    title: "AudioSplat",
+    tagline: "Ghi âm, sắp xếp và trộn âm thanh riêng tư trong trình duyệt.",
+    tools: "Công cụ DrawSplat",
+    home: "Trang chủ",
+    help: "Trợ giúp",
+    language: "Ngôn ngữ",
+    file: "Tệp",
+    edit: "Sửa",
+    tracks: "Bản nhạc",
+    clip: "Đoạn âm thanh",
+    view: "Xem",
+    newProject: "Dự án mới",
+    openProject: "Mở dự án",
+    saveProject: "Tải dự án xuống",
+    importAudio: "Nhập âm thanh",
+    exportWav: "Xuất WAV",
+    undo: "Hoàn tác",
+    redo: "Làm lại",
+    addTrack: "Thêm bản nhạc",
+    split: "Tách",
+    duplicate: "Nhân bản",
+    delete: "Xóa",
+    trimStart: "Cắt đầu",
+    trimEnd: "Cắt cuối",
+    zoomIn: "Phóng to",
+    zoomOut: "Thu nhỏ",
+    record: "Ghi âm",
+    pause: "Tạm dừng",
+    resume: "Tiếp tục",
+    stop: "Dừng",
+    play: "Phát",
+    start: "Về đầu",
+    emptyTitle: "Bắt đầu dự án âm thanh",
+    emptyBody:
+      "Ghi bằng micrô hoặc nhập tệp âm thanh. Âm thanh nằm trên thiết bị này.",
+    privacy: "Riêng tư theo mặc định",
+    localOnly: "Âm thanh được xử lý cục bộ và không được tải lên.",
+    ready: "Sẵn sàng",
+    saved: "Đã lưu cục bộ",
+    saving: "Đang lưu…",
+    trackName: "Tên bản nhạc",
+    mute: "Tắt tiếng",
+    solo: "Độc tấu",
+    volume: "Âm lượng",
+    pan: "Cân bằng",
+    microphone: "Micrô",
+    allowMic: "Tiếp tục đến micrô",
+    cancel: "Hủy",
+    close: "Đóng",
+    projectTitle: "Tên dự án",
+    noSelection: "Hãy chọn một đoạn âm thanh.",
+    recording: "Đang ghi",
+    paused: "Đã tạm dừng ghi",
+    permissionDenied:
+      "Quyền truy cập micrô bị từ chối. Hãy cho phép trong trình duyệt rồi thử lại.",
+    micUnavailable:
+      "Không có micrô hoặc micrô đang được ứng dụng khác sử dụng.",
+    importFailed: "Không thể mở tệp âm thanh đó.",
+    projectFailed: "Dự án AudioSplat không hợp lệ hoặc bị hỏng.",
+    exportDone: "Đã xuất WAV.",
+    projectSaved: "Đã tải dự án.",
+    confirmNew: "Bắt đầu dự án mới?",
+    confirmDeleteTrack: "Xóa bản nhạc này và tất cả đoạn âm thanh?",
+    untitled: "Dự án âm thanh chưa đặt tên",
+    trackDefault: "Bản nhạc",
+    recordingDefault: "Bản ghi",
+    time: "Thời gian",
+    duration: "Thời lượng",
+    sampleRate: "Tần số lấy mẫu",
+    autosave: "Tự động lưu",
+    shortcuts: "Phím tắt",
+    helpBody:
+      "Ghi hoặc nhập âm thanh, thêm bản nhạc, chọn một đoạn để chỉnh sửa rồi xuất bản trộn WAV.",
+  },
+  ar: {
+    title: "AudioSplat",
+    tagline: "سجّل الصوت ورتّبه وامزجه بخصوصية في متصفحك.",
+    tools: "أدوات DrawSplat",
+    home: "الرئيسية",
+    help: "مساعدة",
+    language: "اللغة",
+    file: "ملف",
+    edit: "تحرير",
+    tracks: "المسارات",
+    clip: "المقطع",
+    view: "عرض",
+    newProject: "مشروع جديد",
+    openProject: "فتح مشروع",
+    saveProject: "تنزيل المشروع",
+    importAudio: "استيراد صوت",
+    exportWav: "تصدير WAV",
+    undo: "تراجع",
+    redo: "إعادة",
+    addTrack: "إضافة مسار",
+    split: "تقسيم",
+    duplicate: "تكرار",
+    delete: "حذف",
+    trimStart: "قص البداية",
+    trimEnd: "قص النهاية",
+    zoomIn: "تكبير",
+    zoomOut: "تصغير",
+    record: "تسجيل",
+    pause: "إيقاف مؤقت",
+    resume: "متابعة",
+    stop: "إيقاف",
+    play: "تشغيل",
+    start: "العودة للبداية",
+    emptyTitle: "ابدأ مشروعك الصوتي",
+    emptyBody:
+      "سجّل بالميكروفون أو استورد ملفًا صوتيًا. يبقى الصوت على هذا الجهاز.",
+    privacy: "خصوصي افتراضيًا",
+    localOnly: "تتم معالجة الصوت محليًا ولا يُرفع.",
+    ready: "جاهز",
+    saved: "محفوظ محليًا",
+    saving: "جارٍ الحفظ…",
+    trackName: "اسم المسار",
+    mute: "كتم",
+    solo: "منفرد",
+    volume: "الصوت",
+    pan: "التوازن",
+    microphone: "الميكروفون",
+    allowMic: "المتابعة إلى الميكروفون",
+    cancel: "إلغاء",
+    close: "إغلاق",
+    projectTitle: "عنوان المشروع",
+    noSelection: "اختر مقطعًا أولًا.",
+    recording: "جارٍ التسجيل",
+    paused: "التسجيل متوقف مؤقتًا",
+    permissionDenied:
+      "رُفض الوصول إلى الميكروفون. اسمح به في إعدادات المتصفح ثم حاول مجددًا.",
+    micUnavailable: "لا يوجد ميكروفون أو يستخدمه تطبيق آخر.",
+    importFailed: "تعذر فتح ملف الصوت.",
+    projectFailed: "مشروع AudioSplat غير صالح أو تالف.",
+    exportDone: "اكتمل تصدير WAV.",
+    projectSaved: "تم تنزيل المشروع.",
+    confirmNew: "هل تبدأ مشروعًا جديدًا؟",
+    confirmDeleteTrack: "هل تريد حذف المسار وكل مقاطعه؟",
+    untitled: "مشروع صوتي بلا عنوان",
+    trackDefault: "مسار",
+    recordingDefault: "تسجيل",
+    time: "الوقت",
+    duration: "المدة",
+    sampleRate: "معدل العينات",
+    autosave: "الحفظ التلقائي",
+    shortcuts: "اختصارات لوحة المفاتيح",
+    helpBody:
+      "سجّل الصوت أو استورده، وأضف المسارات، واختر مقطعًا لتحريره، ثم صدّر مزيج WAV.",
+  },
+  zh: {
+    title: "AudioSplat",
+    tagline: "在浏览器中私密地录制、编排和混合音频。",
+    tools: "DrawSplat 工具",
+    home: "主页",
+    help: "帮助",
+    language: "语言",
+    file: "文件",
+    edit: "编辑",
+    tracks: "音轨",
+    clip: "片段",
+    view: "视图",
+    newProject: "新建项目",
+    openProject: "打开项目",
+    saveProject: "下载项目",
+    importAudio: "导入音频",
+    exportWav: "导出 WAV",
+    undo: "撤销",
+    redo: "重做",
+    addTrack: "添加音轨",
+    split: "分割",
+    duplicate: "复制",
+    delete: "删除",
+    trimStart: "裁剪开头",
+    trimEnd: "裁剪结尾",
+    zoomIn: "放大",
+    zoomOut: "缩小",
+    record: "录音",
+    pause: "暂停",
+    resume: "继续",
+    stop: "停止",
+    play: "播放",
+    start: "返回开头",
+    emptyTitle: "开始音频项目",
+    emptyBody: "使用麦克风录音或导入音频文件。音频保留在此设备上。",
+    privacy: "默认私密",
+    localOnly: "音频在本地处理，不会上传。",
+    ready: "就绪",
+    saved: "已保存到本地",
+    saving: "正在保存…",
+    trackName: "音轨名称",
+    mute: "静音",
+    solo: "独奏",
+    volume: "音量",
+    pan: "声像",
+    microphone: "麦克风",
+    allowMic: "继续使用麦克风",
+    cancel: "取消",
+    close: "关闭",
+    projectTitle: "项目标题",
+    noSelection: "请先选择一个片段。",
+    recording: "正在录音",
+    paused: "录音已暂停",
+    permissionDenied: "麦克风访问被拒绝。请在浏览器设置中允许，然后重试。",
+    micUnavailable: "没有可用的麦克风，或其他应用正在使用。",
+    importFailed: "无法打开该音频文件。",
+    projectFailed: "AudioSplat 项目无效或已损坏。",
+    exportDone: "WAV 导出完成。",
+    projectSaved: "项目已下载。",
+    confirmNew: "开始新项目吗？",
+    confirmDeleteTrack: "删除此音轨及其所有片段吗？",
+    untitled: "未命名音频项目",
+    trackDefault: "音轨",
+    recordingDefault: "录音",
+    time: "时间",
+    duration: "时长",
+    sampleRate: "采样率",
+    autosave: "自动保存",
+    shortcuts: "键盘快捷键",
+    helpBody: "录制或导入音频，添加音轨，选择片段进行编辑，然后导出 WAV 混音。",
+  },
+  uh: {
+    title: "AudioSplat",
+    tagline: "اپنے براؤزر میں نجی طور پر آڈیو ریکارڈ، ترتیب اور مکس کریں۔",
+    tools: "DrawSplat उपकरण / ٹولز",
+    home: "होम / ہوم",
+    help: "मदद / مدد",
+    language: "भाषा / زبان",
+    file: "फ़ाइल / فائل",
+    edit: "संपादन / ترمیم",
+    tracks: "ट्रैक / ٹریکس",
+    clip: "क्लिप / کلپ",
+    view: "दृश्य / منظر",
+    newProject: "नया प्रोजेक्ट / نیا پروجیکٹ",
+    openProject: "प्रोजेक्ट खोलें / پروجیکٹ کھولیں",
+    saveProject: "प्रोजेक्ट डाउनलोड / پروجیکٹ ڈاؤن لوڈ",
+    importAudio: "ऑडियो आयात / آڈیو درآمد",
+    exportWav: "WAV निर्यात / برآمد",
+    undo: "पूर्ववत / واپس",
+    redo: "फिर करें / دوبارہ",
+    addTrack: "ट्रैक जोड़ें / ٹریک شامل",
+    split: "बाँटें / تقسیم",
+    duplicate: "कॉपी / نقل",
+    delete: "हटाएँ / حذف",
+    trimStart: "शुरुआत काटें / آغاز تراشیں",
+    trimEnd: "अंत काटें / آخر تراشیں",
+    zoomIn: "ज़ूम इन / بڑا",
+    zoomOut: "ज़ूम आउट / چھوٹا",
+    record: "रिकॉर्ड / ریکارڈ",
+    pause: "रोकें / وقفہ",
+    resume: "जारी / جاری",
+    stop: "बंद / روکیں",
+    play: "चलाएँ / چلائیں",
+    start: "शुरू पर / آغاز",
+    emptyTitle: "ऑडियो प्रोजेक्ट शुरू करें / آڈیو پروجیکٹ شروع کریں",
+    emptyBody:
+      "माइक से रिकॉर्ड करें या ऑडियो फ़ाइल आयात करें। ऑडियो इसी डिवाइस पर रहता है।",
+    privacy: "डिफ़ॉल्ट रूप से निजी / نجی",
+    localOnly: "ऑडियो स्थानीय रूप से संसाधित होता है और अपलोड नहीं होता।",
+    ready: "तैयार / تیار",
+    saved: "स्थानीय रूप से सहेजा / مقامی محفوظ",
+    saving: "सहेज रहे हैं / محفوظ ہو رہا ہے…",
+    trackName: "ट्रैक नाम / ٹریک نام",
+    mute: "म्यूट / خاموش",
+    solo: "सोलो / سولو",
+    volume: "आवाज़ / آواز",
+    pan: "पैन / توازن",
+    microphone: "माइक्रोफ़ोन / مائیکروفون",
+    allowMic: "माइक जारी रखें / مائیک جاری",
+    cancel: "रद्द / منسوخ",
+    close: "बंद / بند",
+    projectTitle: "प्रोजेक्ट शीर्षक / پروجیکٹ عنوان",
+    noSelection: "पहले क्लिप चुनें / پہلے کلپ چنیں",
+    recording: "रिकॉर्ड हो रहा है / ریکارڈنگ",
+    paused: "रिकॉर्डिंग रुकी / ریکارڈنگ موقوف",
+    permissionDenied:
+      "माइक्रोफ़ोन अनुमति नहीं मिली। ब्राउज़र सेटिंग में अनुमति देकर फिर कोशिश करें।",
+    micUnavailable:
+      "माइक्रोफ़ोन उपलब्ध नहीं है या किसी अन्य ऐप में उपयोग हो रहा है।",
+    importFailed: "ऑडियो फ़ाइल नहीं खुल सकी।",
+    projectFailed: "AudioSplat प्रोजेक्ट अमान्य या खराब है।",
+    exportDone: "WAV निर्यात पूरा हुआ।",
+    projectSaved: "प्रोजेक्ट डाउनलोड हुआ।",
+    confirmNew: "नया प्रोजेक्ट शुरू करें?",
+    confirmDeleteTrack: "यह ट्रैक और सभी क्लिप हटाएँ?",
+    untitled: "बिना नाम ऑडियो प्रोजेक्ट",
+    trackDefault: "ट्रैक",
+    recordingDefault: "रिकॉर्डिंग",
+    time: "समय / وقت",
+    duration: "अवधि / مدت",
+    sampleRate: "सैंपल दर / سیمپل ریٹ",
+    autosave: "ऑटोसेव / خودکار محفوظ",
+    shortcuts: "कीबोर्ड शॉर्टकट / کی بورڈ شارٹ کٹس",
+    helpBody:
+      "ऑडियो रिकॉर्ड या आयात करें, ट्रैक जोड़ें, क्लिप चुनकर संपादित करें और WAV मिक्स निर्यात करें।",
+  },
 };
 
 const normalize = (raw: string | null | undefined): LanguageCode | null => {
-  const value = raw?.toLowerCase() ?? '';
-  if (value.startsWith('es')) return 'es'; if (value.startsWith('vi')) return 'vi';
-  if (value.startsWith('ar')) return 'ar'; if (value.startsWith('zh')) return 'zh';
-  if (value === 'uh' || value.startsWith('hi') || value.startsWith('ur')) return 'uh';
-  if (value.startsWith('en')) return 'en'; return null;
+  const value = raw?.toLowerCase() ?? "";
+  if (value.startsWith("es")) return "es";
+  if (value.startsWith("vi")) return "vi";
+  if (value.startsWith("ar")) return "ar";
+  if (value.startsWith("zh")) return "zh";
+  if (value === "uh" || value.startsWith("hi") || value.startsWith("ur"))
+    return "uh";
+  if (value.startsWith("en")) return "en";
+  return null;
 };
 
-let current: LanguageCode = 'en';
+let current: LanguageCode = "en";
 try {
-  const query = new URLSearchParams(location.search).get('lang');
-  current = normalize(query) ?? normalize(localStorage.getItem(STORAGE_KEY)) ?? normalize(navigator.language) ?? 'en';
-} catch { current = 'en'; }
+  const query = new URLSearchParams(location.search).get("lang");
+  current =
+    normalize(query) ??
+    normalize(localStorage.getItem(STORAGE_KEY)) ??
+    normalize(navigator.language) ??
+    "en";
+} catch {
+  current = "en";
+}
 
 export const t = (key: Key): string => dictionaries[current][key] ?? en[key];
 export const getLanguage = (): LanguageCode => current;
 export const setLanguage = (code: LanguageCode): void => {
   current = code;
-  try { localStorage.setItem(STORAGE_KEY, code); } catch { /* storage may be blocked */ }
+  try {
+    localStorage.setItem(STORAGE_KEY, code);
+  } catch {
+    /* storage may be blocked */
+  }
   applyLanguage();
-  window.dispatchEvent(new CustomEvent('audiosplat:language'));
+  window.dispatchEvent(new CustomEvent("audiosplat:language"));
 };
 export const applyLanguage = (): void => {
-  const config = languages.find((item) => item.code === current) ?? languages[0];
+  const config =
+    languages.find((item) => item.code === current) ?? languages[0];
   document.documentElement.lang = config.htmlLang;
   document.documentElement.dir = config.dir;
-  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
+  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((node) => {
     node.textContent = t(node.dataset.i18n as Key);
   });
-  document.querySelectorAll<HTMLElement>('[data-i18n-title]').forEach((node) => {
-    node.title = t(node.dataset.i18nTitle as Key);
-  });
-  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((node) => {
-    node.setAttribute('aria-label', t(node.dataset.i18nAria as Key));
+  document
+    .querySelectorAll<HTMLElement>("[data-i18n-title]")
+    .forEach((node) => {
+      node.title = t(node.dataset.i18nTitle as Key);
+    });
+  document.querySelectorAll<HTMLElement>("[data-i18n-aria]").forEach((node) => {
+    node.setAttribute("aria-label", t(node.dataset.i18nAria as Key));
   });
 };
-export const languageOptions = (): string => languages.map((item) =>
-  `<option value="${item.code}"${item.code === current ? ' selected' : ''}>${item.label}</option>`,
-).join('');
+export const languageOptions = (): string =>
+  languages
+    .map(
+      (item) =>
+        `<option value="${item.code}"${item.code === current ? " selected" : ""}>${item.label}</option>`,
+    )
+    .join("");
