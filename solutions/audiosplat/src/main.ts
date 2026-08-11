@@ -52,7 +52,7 @@ let effectPreview: HTMLAudioElement | null = null;
 const engine = new AudioEngine();
 const MIC_STORAGE_KEY = "audiosplat.microphone";
 const GOOGLE_CLIENT_ID =
-  "963195660019-rk8867orle2cs0kk6si705en68t55cos.apps.googleusercontent.com";
+  "31274545407-l338d2doafet21gv8u4qmq2jk3j03jq3.apps.googleusercontent.com";
 const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
 
 type GoogleTokenResponse = {
