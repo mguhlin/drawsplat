@@ -107,6 +107,34 @@ test("keeps only one application menu open and dismisses it outside", async ({ p
   await expect(page.locator("details.menu").nth(1)).not.toHaveAttribute("open", "");
 });
 
+test("lists sound-effect sources alphabetically as safe external links", async ({ page }) => {
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.getByText("Sound-Effect Sources", { exact: true }).click();
+  const links = page.locator(".source-menu .source-link");
+  await expect(links).toHaveCount(16);
+  expect(await links.allTextContents()).toEqual([
+    "BBC Sound Effects",
+    "BigSoundBank",
+    "Kenney Audio Assets",
+    "Mixkit Sound Effects",
+    "NASA Historical Sounds",
+    "National Park Service Sound Gallery",
+    "NOAA Ocean Sounds",
+    "OpenGameArt Sound Effects",
+    "Pixabay Sound Effects",
+    "Sonniss GameAudioGDC Archive",
+    "SoundBible",
+    "SoundEffects+",
+    "SoundGator",
+    "Tabletop Audio",
+    "Wikimedia Commons Audio",
+    "Yellowstone Sound Library",
+  ]);
+  await expect(links.first()).toHaveAttribute("target", "_blank");
+  await expect(links.first()).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(links.nth(8)).toHaveAttribute("href", "https://pixabay.com/sound-effects/");
+});
+
 test("imports, edits, undoes, and exports a real WAV project", async ({
   page,
 }) => {

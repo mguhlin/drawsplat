@@ -35,6 +35,7 @@ const en = {
   exportAudio: "Export audio",
   exportFormat: "Export format",
   effects: "Effects",
+  soundEffectSources: "Sound-Effect Sources",
   normalize: "Normalize",
   fadeIn: "Fade in",
   fadeOut: "Fade out",

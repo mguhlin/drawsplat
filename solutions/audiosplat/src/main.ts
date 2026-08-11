@@ -80,6 +80,7 @@ function shell(): void {
         ["fade-in", "fadeIn"],
         ["fade-out", "fadeOut"],
       ])}
+      ${soundSourcesMenu()}
       ${menu("view", [
         ["zoom-in", "zoomIn"],
         ["zoom-out", "zoomOut"],
@@ -102,6 +103,29 @@ function shell(): void {
 
 function menu(label: string, items: string[][]): string {
   return `<details class="menu"><summary data-i18n="${label}">${t(label as never)}</summary><div class="menu-panel">${items.map(([action, key]) => `<button data-action="${action}" data-i18n="${key}">${t(key as never)}</button>`).join("")}</div></details>`;
+}
+
+const soundEffectSources = [
+  ["BBC Sound Effects", "https://sound-effects.bbcrewind.co.uk/", "Historical recordings, nature, transportation and Foley — Free for personal, educational and research projects; commercial use requires licensing"],
+  ["BigSoundBank", "https://bigsoundbank.com/", "Field recordings, Foley, machinery and nature — Many files are CC0/public domain; an optional account removes download delays"],
+  ["Kenney Audio Assets", "https://kenney.nl/assets/category:Audio", "Game sounds, interface cues and classroom coding projects — CC0; attribution not required"],
+  ["Mixkit Sound Effects", "https://mixkit.co/free-sound-effects/", "General effects, transitions, animals, technology and games — Commercial and personal use; no attribution required"],
+  ["NASA Historical Sounds", "https://www.nasa.gov/historical-sounds/", "Spaceflight, mission control, launches and spacecraft — Generally usable for educational and informational purposes; acknowledge NASA and check for third-party material"],
+  ["National Park Service Sound Gallery", "https://www.nps.gov/subjects/sound/gallery.htm", "Animals, weather, water, geology and historical sounds — Public domain; credit the National Park Service"],
+  ["NOAA Ocean Sounds", "https://www.fisheries.noaa.gov/national/science-data/sounds-ocean-environmental-and-anthropogenic", "Marine animals, weather, ships and underwater environments — Includes citation guidance; check the source information accompanying each clip"],
+  ["OpenGameArt Sound Effects", "https://opengameart.org/art-search-advanced?keys=&field_art_type_tid%5B%5D=13", "Games, fantasy, science fiction and interfaces — License varies by item; use its CC0 collection for the simplest reuse"],
+  ["Pixabay Sound Effects", "https://pixabay.com/sound-effects/", "Large, searchable general-purpose collection — No attribution required; do not redistribute files unchanged"],
+  ["Sonniss GameAudioGDC Archive", "https://sonniss.com/gameaudiogdc/", "Large professional sound-effect bundles — Commercial media production allowed; no attribution; AI training prohibited"],
+  ["SoundBible", "https://soundbible.com/", "Quick WAV and MP3 downloads — License varies by sound; many require attribution"],
+  ["SoundEffects+", "https://www.soundeffectsplus.com/", "Professionally recorded Foley, ambience, vehicles and cartoons — Commercial and educational use permitted; review its license restrictions"],
+  ["SoundGator", "https://www.soundgator.com/", "Everyday effects, interfaces, animals and machines — No registration or attribution required"],
+  ["Tabletop Audio", "https://tabletopaudio.com/", "Ten-minute environmental and story ambiences — Ambiences are CC BY-NC-ND; SoundPad clips may only be played on the site"],
+  ["Wikimedia Commons Audio", "https://commons.wikimedia.org/wiki/Category:Audio_files", "Historical recordings, spoken audio, instruments and miscellaneous sounds — License varies by file; attribution is often required"],
+  ["Yellowstone Sound Library", "https://www.nps.gov/yell/learn/photosmultimedia/soundlibrary.htm", "Wildlife and natural soundscapes — Public domain and downloadable without limitation"],
+] as const;
+
+function soundSourcesMenu(): string {
+  return `<details class="menu source-menu"><summary data-i18n="soundEffectSources">${t("soundEffectSources")}</summary><div class="menu-panel">${soundEffectSources.map(([title, url, note]) => `<a class="source-link" href="${url}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(note)}">${escapeHtml(title)}</a>`).join("")}</div></details>`;
 }
 
 function exportOptions(): string {
@@ -204,7 +228,10 @@ async function handleAction(event: Event): Promise<void> {
     "[data-action]",
   );
   if (!button) {
-    if (!(event.target as HTMLElement).closest("details.menu"))
+    if (
+      (event.target as HTMLElement).closest(".source-link") ||
+      !(event.target as HTMLElement).closest("details.menu")
+    )
       document
         .querySelectorAll<HTMLDetailsElement>("details.menu[open]")
         .forEach((detail) => (detail.open = false));
