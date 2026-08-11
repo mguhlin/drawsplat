@@ -1,0 +1,11 @@
+{
+  "name": "AudioSplat",
+  "short_name": "AudioSplat",
+  "description": "Private browser-based multitrack audio recorder and editor.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "icons": [{ "src": "audiosplat-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "audiosplat",
+  "version": "0.1.0",
+  "private": false,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "node node_modules/vite/bin/vite.js --host 127.0.0.1",
+    "build": "cp index.vite.html index.html && node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build && node scripts/publish.mjs",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "@types/node": "24.10.1",
+    "jsdom": "29.1.1",
+    "typescript": "6.0.3",
+    "vite": "8.0.16",
+    "vitest": "4.1.8"
+  }
+}
