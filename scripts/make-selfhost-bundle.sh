@@ -12,6 +12,7 @@
 #   - dist/drawsplat-tools-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/drawsplat-widgets-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/drawsplat-games-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/audiosplat-selfhost-YYYYMMDD-<shortsha>.zip
 #
 # The DrawSplatTM bundle contains the full static site, backends, and compliance
 # docs. SplatWorksTM, tools, widgets, and games also ship as drop-in modules so
@@ -52,6 +53,7 @@ SPLATWORKS_SUITE_ROOT="$STAGE_DIR/splatworks-suite-selfhost-$VERSION_LABEL"
 TOOLS_ROOT="$STAGE_DIR/drawsplat-tools-selfhost-$VERSION_LABEL"
 WIDGETS_ROOT="$STAGE_DIR/drawsplat-widgets-selfhost-$VERSION_LABEL"
 GAMES_ROOT="$STAGE_DIR/drawsplat-games-selfhost-$VERSION_LABEL"
+AUDIOSPLAT_ROOT="$STAGE_DIR/audiosplat-selfhost-$VERSION_LABEL"
 DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
 GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
 SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
@@ -61,6 +63,7 @@ SPLATWORKS_SUITE_OUT_NAME="splatworks-suite-selfhost-$VERSION_LABEL.zip"
 TOOLS_OUT_NAME="drawsplat-tools-selfhost-$VERSION_LABEL.zip"
 WIDGETS_OUT_NAME="drawsplat-widgets-selfhost-$VERSION_LABEL.zip"
 GAMES_OUT_NAME="drawsplat-games-selfhost-$VERSION_LABEL.zip"
+AUDIOSPLAT_OUT_NAME="audiosplat-selfhost-$VERSION_LABEL.zip"
 CHECKSUM_OUT_NAME="SHA256SUMS-$VERSION_LABEL.txt"
 DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
 GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
@@ -71,10 +74,11 @@ SPLATWORKS_SUITE_OUT_PATH="$OUT_DIR/$SPLATWORKS_SUITE_OUT_NAME"
 TOOLS_OUT_PATH="$OUT_DIR/$TOOLS_OUT_NAME"
 WIDGETS_OUT_PATH="$OUT_DIR/$WIDGETS_OUT_NAME"
 GAMES_OUT_PATH="$OUT_DIR/$GAMES_OUT_NAME"
+AUDIOSPLAT_OUT_PATH="$OUT_DIR/$AUDIOSPLAT_OUT_NAME"
 CHECKSUM_OUT_PATH="$OUT_DIR/$CHECKSUM_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$CHECKSUM_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -103,6 +107,7 @@ EXCLUDES=(
   "drawsplat-tools-selfhost-*.zip"
   "drawsplat-widgets-selfhost-*.zip"
   "drawsplat-games-selfhost-*.zip"
+  "audiosplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -279,6 +284,7 @@ MODULE_EXCLUDES=(
 
 TOOLS_SOLUTIONS=(
   animated-gif
+  audiosplat
   big-link
   chart-studio
   CipherSplat
@@ -602,6 +608,46 @@ This module intentionally keeps the same /games/ paths used by the full
 DrawSplatTM download so links connect when modules are placed together.
 EOF
 
+copy_tree solutions/audiosplat "$AUDIOSPLAT_ROOT/solutions/audiosplat" "${MODULE_EXCLUDES[@]}"
+
+cat > "$AUDIOSPLAT_ROOT/AUDIOSPLAT-SELFHOST-README.txt" <<EOF
+AudioSplat Self-Hosted Solution
+===============================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+What's in this zip
+------------------
+- solutions/audiosplat/ — the built static AudioSplat multitrack recorder and
+  editor plus source, tests, documentation, package metadata, and license.
+
+Deployment
+----------
+AudioSplat must be served over HTTPS (or localhost during development) for
+microphone, screen/tab audio, service-worker, and clipboard features.
+
+1. Upload the included solutions/ folder to your static host.
+2. Open https://your-domain.example/solutions/audiosplat/.
+3. To rebuild from source:
+     cd solutions/audiosplat
+     npm install
+     npm run build
+
+Google Drive configuration
+--------------------------
+Recording, editing, local autosave, project download, and audio export work
+without an account. The included production build authorizes Google Drive only
+from https://drawsplat.org. A different self-host domain must create its own
+Google OAuth Web client, authorize that HTTPS origin, enable Google Drive API,
+add the non-sensitive drive.file scope, replace GOOGLE_CLIENT_ID in
+solutions/audiosplat/src/main.ts, and rebuild the app.
+
+License
+-------
+AudioSplat is AGPL-3.0-or-later. See solutions/audiosplat/LICENSE.md.
+EOF
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
@@ -613,6 +659,7 @@ if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$TOOLS_OUT_PATH" "drawsplat-tools-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$WIDGETS_OUT_PATH" "drawsplat-widgets-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$GAMES_OUT_PATH" "drawsplat-games-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$AUDIOSPLAT_OUT_PATH" "audiosplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
@@ -637,6 +684,8 @@ WIDGETS_SIZE_HUMAN="$(du -h "$WIDGETS_OUT_PATH" | cut -f1)"
 WIDGETS_SHA="$(sha256sum "$WIDGETS_OUT_PATH" | cut -d' ' -f1)"
 GAMES_SIZE_HUMAN="$(du -h "$GAMES_OUT_PATH" | cut -f1)"
 GAMES_SHA="$(sha256sum "$GAMES_OUT_PATH" | cut -d' ' -f1)"
+AUDIOSPLAT_SIZE_HUMAN="$(du -h "$AUDIOSPLAT_OUT_PATH" | cut -f1)"
+AUDIOSPLAT_SHA="$(sha256sum "$AUDIOSPLAT_OUT_PATH" | cut -d' ' -f1)"
 
 sha256sum \
   "$DRAWSPLAT_OUT_PATH" \
@@ -647,7 +696,8 @@ sha256sum \
   "$SPLATWORKS_SUITE_OUT_PATH" \
   "$TOOLS_OUT_PATH" \
   "$WIDGETS_OUT_PATH" \
-  "$GAMES_OUT_PATH" > "$CHECKSUM_OUT_PATH"
+  "$GAMES_OUT_PATH" \
+  "$AUDIOSPLAT_OUT_PATH" > "$CHECKSUM_OUT_PATH"
 
 echo ""
 echo "Built bundles:"
@@ -677,6 +727,9 @@ echo "  sha256: $WIDGETS_SHA"
 echo ""
 echo "  $GAMES_OUT_PATH ($GAMES_SIZE_HUMAN)"
 echo "  sha256: $GAMES_SHA"
+echo ""
+echo "  $AUDIOSPLAT_OUT_PATH ($AUDIOSPLAT_SIZE_HUMAN)"
+echo "  sha256: $AUDIOSPLAT_SHA"
 echo ""
 echo "  $CHECKSUM_OUT_PATH"
 echo ""

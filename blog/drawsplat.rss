@@ -8,7 +8,19 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 09 Jun 2026 10:40:58 GMT</lastBuildDate>
+			<lastBuildDate>Tue, 11 Aug 2026 19:30:00 GMT</lastBuildDate>
+			<item>
+		<title>DrawSplat v3.1.19: AudioSplat Multitrack Recording, Editing, Google Drive, and Standalone Download</title>
+		<link>https://drawsplat.org/solutions/audiosplat/</link>
+		<description><![CDATA[<img src="https://drawsplat.org/solutions/audiosplat/audiosplat-icon.svg" /><br/>AudioSplat is now a production DrawSplat Tool for private-by-default browser audio recording and multitrack editing. Record microphones or supported shared tab/device audio, place successive takes on new tracks, drag clips between tracks, select visible waveform ranges, split and trim, zoom long recordings, undo edits, mix with mute/solo/volume/pan, and apply classroom-friendly effects. Export MP3, WAV, and additional browser-supported formats; optionally save the finished mix to Google Drive and create a share link or preview embed code. AudioSplat works without an account for local recording and editing and now ships as its own checksummed v3.1.19 self-host ZIP.]]></description>
+		<pubDate>Tue, 11 Aug 2026 19:30:00 GMT</pubDate>
+		<guid isPermaLink="false">drawsplat-release-v3-1-19-audiosplat</guid>
+		<source url="https://drawsplat.org/">DrawSplat Updates</source>
+		<category>release-notes</category>
+		<category>drawsplat</category>
+		<category>audiosplat</category>
+		<category>self-hosting</category>
+	</item>
 			<item>
 		<title>DrawSplat v3.1.18 Update: Typing Games, Markdown Studio, Visual Cards, and SplatWorks Hub Refresh</title>
 		<link>https://drawsplat.org/pages/release-notes.html</link>
