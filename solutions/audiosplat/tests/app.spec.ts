@@ -60,6 +60,15 @@ test('records from a permitted microphone and creates a recoverable clip', async
   await page.getByRole('button', { name: 'Stop' }).click();
   await expect(page.locator('[data-clip]')).toHaveCount(1, { timeout: 10000 });
   await expect(page.locator('#save-state')).toHaveText('Saved locally');
+  page.once('dialog', (dialog) => void dialog.accept());
+  await page.locator('[data-delete-track]').click();
+  await expect(page.locator('[data-clip]')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Record' }).first().click();
+  await page.getByRole('button', { name: 'Continue to microphone' }).click();
+  await page.waitForTimeout(1100);
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await expect(page.locator('[data-clip]')).toHaveCount(1, { timeout: 10000 });
+  await expect(page.locator('[data-track-name]')).toHaveValue('Track 1');
 });
 
 function makeWav(seconds: number, sampleRate: number): Buffer {

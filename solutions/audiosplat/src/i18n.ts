@@ -24,6 +24,8 @@ const en = {
   allowMic: 'Continue to microphone', cancel: 'Cancel', close: 'Close', projectTitle: 'Project title', noSelection: 'Select a clip first.',
   recording: 'Recording', paused: 'Recording paused', permissionDenied: 'Microphone access was denied. Allow it in browser settings, then try again.',
   micUnavailable: 'No microphone is available, or another app is using it.', importFailed: 'That audio file could not be opened.',
+  micUnsupported: 'This browser cannot record audio here. Try the latest Chrome, Edge, Firefox, or Safari over HTTPS.',
+  recordingFailed: 'Recording stopped before usable audio was captured. Try again and record for at least one second.',
   projectFailed: 'That AudioSplat project is invalid or damaged.', exportDone: 'WAV export complete.', projectSaved: 'Project downloaded.',
   confirmNew: 'Start a new project? Download your current project first if you need a durable copy.',
   confirmDeleteTrack: 'Delete this track and all of its clips?', untitled: 'Untitled Audio Project', trackDefault: 'Track', recordingDefault: 'Recording',
