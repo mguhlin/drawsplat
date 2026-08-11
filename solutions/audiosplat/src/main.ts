@@ -265,6 +265,8 @@ function handleShortcut(event: KeyboardEvent): void {
   if (modifier && event.key.toLowerCase() === "z") {
     event.preventDefault();
     event.shiftKey ? redo() : undo();
+  } else if (modifier || event.altKey) {
+    return;
   } else if (event.code === "Space") {
     event.preventDefault();
     void togglePlay();

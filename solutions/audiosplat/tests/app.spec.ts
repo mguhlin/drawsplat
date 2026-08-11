@@ -37,6 +37,26 @@ test("applies Arabic RTL while retaining a left-to-right timeline contract", asy
   ).toBeVisible();
 });
 
+test("does not treat the Firefox hard-refresh shortcut as Record", async ({
+  page,
+}) => {
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.evaluate(() =>
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "R",
+        code: "KeyR",
+        ctrlKey: true,
+        shiftKey: true,
+        bubbles: true,
+      }),
+    ),
+  );
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.keyboard.press("r");
+  await expect(page.getByRole("dialog")).toContainText("microphone access");
+});
+
 test("keeps recording controls usable at a phone viewport", async ({
   page,
 }) => {
