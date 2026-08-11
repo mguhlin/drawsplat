@@ -29,6 +29,21 @@ test('keeps recording controls usable at a phone viewport', async ({ page }) => 
   await expect(page.getByRole('button', { name: 'Play' })).toBeVisible();
 });
 
+test('records a shared device-audio stream when the browser provides one', async ({ page }) => {
+  await page.goto('/solutions/audiosplat/?lang=en');
+  await page.evaluate(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', {
+    configurable: true,
+    value: () => navigator.mediaDevices.getUserMedia({ audio: true }),
+  }));
+  await page.getByRole('button', { name: 'Record device audio' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Share audio');
+  await page.getByRole('button', { name: 'Choose shared audio' }).click();
+  await expect(page.locator('#status')).toHaveText('Recording');
+  await page.waitForTimeout(1100);
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await expect(page.locator('[data-clip]')).toHaveCount(1, { timeout: 10000 });
+});
+
 test('opens help with local privacy guidance', async ({ page }) => {
   await page.goto('/solutions/audiosplat/?lang=en');
   await page.getByRole('button', { name: 'Help' }).click();
@@ -44,6 +59,15 @@ test('imports, edits, undoes, and exports a real WAV project', async ({ page }) 
   await expect(page.locator('[data-clip]')).toHaveAttribute('aria-label', /classroom-voice/);
   await page.getByRole('button', { name: 'Add track' }).first().click();
   await expect(page.locator('[data-track]')).toHaveCount(2);
+  const clipBox = await page.locator('[data-clip]').boundingBox();
+  const destinationBox = await page.locator('[data-lane]').nth(1).boundingBox();
+  if (!clipBox || !destinationBox) throw new Error('Clip drag targets missing');
+  await page.mouse.move(clipBox.x + clipBox.width / 2, clipBox.y + clipBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(destinationBox.x + 60, destinationBox.y + destinationBox.height / 2, { steps: 5 });
+  await page.mouse.up();
+  await expect(page.locator('[data-track]').nth(0).locator('[data-clip]')).toHaveCount(0);
+  await expect(page.locator('[data-track]').nth(1).locator('[data-clip]')).toHaveCount(1);
   const ruler = page.locator('[data-ruler]');
   const box = await ruler.boundingBox();
   if (!box) throw new Error('Timeline ruler missing');
