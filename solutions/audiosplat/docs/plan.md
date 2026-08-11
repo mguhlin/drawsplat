@@ -26,6 +26,11 @@ AudioSplat V1 is implemented in this repository as of 2026-08-11.
   Amplify, Adjustable Fade, Bass/Treble, Echo, Noise Gate, Noise Reduction,
   Reverb, Silence, and Truncate Silence processing. Normalize and linear Fade
   In/Out remain available as quick clip effects.
+- Audio can be brought in with the file picker, multi-file drag and drop,
+  CORS-permitted direct URLs, installed-PWA file handling, and the operating
+  system share sheet where Web Share Target is supported. Browser security
+  still requires an explicit selection before AudioSplat can read a downloaded
+  file.
 - Remaining release validation is operational: exercise physical microphones,
   permission revocation, USB/Bluetooth device removal, long recordings, storage
   pressure, and current Safari/ChromeOS devices. These require real hardware and

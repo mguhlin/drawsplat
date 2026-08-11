@@ -31,6 +31,18 @@ const en = {
   openProject: "Open project",
   saveProject: "Download project",
   importAudio: "Import audio",
+  importUrl: "Import from URL",
+  audioUrl: "Direct audio URL",
+  urlCorsNote:
+    "The source site must permit direct browser access to the audio file.",
+  downloadingAudio: "Downloading audio…",
+  importComplete: "Audio imported.",
+  urlImportFailed:
+    "That URL could not be imported. Download the file and then drop or select it instead.",
+  dropAudio: "Drop audio files to import",
+  dropAudioOnly:
+    "Drop an audio file such as MP3, Ogg, WAV, M4A, AAC, FLAC, Opus, or WebM.",
+  sharedImportFailed: "The shared audio could not be imported.",
   exportWav: "Export WAV",
   exportAudio: "Export audio",
   exportFormat: "Export format",

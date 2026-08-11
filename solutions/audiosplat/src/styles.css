@@ -587,6 +587,22 @@ details.menu[open] > summary {
 .toast.error {
   background: #991b1b;
 }
+.drop-overlay {
+  position: fixed;
+  z-index: 110;
+  inset: 18px;
+  display: none;
+  place-items: center;
+  border: 4px dashed var(--purple);
+  border-radius: 18px;
+  background: rgb(245 243 255 / 94%);
+  color: var(--purple-dark);
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  pointer-events: none;
+}
+.drop-overlay.show {
+  display: grid;
+}
 .visually-hidden {
   position: absolute;
   width: 1px;

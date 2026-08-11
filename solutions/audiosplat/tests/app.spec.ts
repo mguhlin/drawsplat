@@ -285,6 +285,54 @@ test("applies an effect to a selected time range and supports undo", async ({
   );
 });
 
+test("imports audio by drop and direct URL and advertises platform handoff", async ({
+  page,
+}) => {
+  const wav = makeWav(1, 8000);
+  await page.route("https://assets.example/sound.wav", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "audio/wav",
+      body: wav,
+      headers: { "access-control-allow-origin": "*" },
+    }),
+  );
+  await page.goto("/solutions/audiosplat/?lang=en");
+  await page.evaluate(
+    (bytes) => {
+      const transfer = new DataTransfer();
+      transfer.items.add(
+        new File([new Uint8Array(bytes)], "dropped.wav", { type: "audio/wav" }),
+      );
+      window.dispatchEvent(
+        new DragEvent("drop", {
+          dataTransfer: transfer,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    },
+    [...wav],
+  );
+  await expect(page.locator("[data-clip]")).toHaveCount(1);
+
+  await page.getByText("File", { exact: true }).click();
+  await page.getByRole("button", { name: "Import from URL" }).click();
+  const dialog = page.getByRole("dialog", { name: "Import from URL" });
+  await dialog
+    .getByLabel("Direct audio URL")
+    .fill("https://assets.example/sound.wav");
+  await dialog.getByRole("button", { name: "Import audio" }).click();
+  await expect(page.locator("[data-clip]")).toHaveCount(2);
+  await expect(page.locator("[data-track]")).toHaveCount(2);
+
+  const manifest = await page.evaluate(async () =>
+    fetch("./manifest.webmanifest").then((response) => response.json()),
+  );
+  expect(manifest.share_target.params.files[0].accept).toContain("audio/*");
+  expect(manifest.file_handlers[0].accept["audio/*"]).toContain(".mp3");
+});
+
 test("keeps autosaved projects isolated by browser tab and clears only the active tab", async ({
   page,
   context,

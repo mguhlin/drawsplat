@@ -103,7 +103,7 @@ function shell(): void {
     </section>
     <section class="workspace" id="workspace"></section>
     <footer class="statusbar"><span><span data-i18n="time"></span>: <strong id="status-time">0:00.00</strong></span><span class="optional"><span data-i18n="duration"></span>: <strong id="duration">0:00.00</strong></span><span class="optional"><span data-i18n="sampleRate"></span>: <strong>${project.metadata.sampleRate / 1000} kHz</strong></span><span><span data-i18n="autosave"></span>: <strong id="save-state" data-i18n="saved"></strong></span><span class="status-message" id="status" aria-live="polite" data-i18n="ready"></span></footer>
-  </main><input class="visually-hidden" id="audio-input" type="file" accept="audio/*,.mp3,.ogg,.oga,.wav,.wave,.webm,.m4a,.mp4,.aac,.flac,.opus" multiple><input class="visually-hidden" id="project-input" type="file" accept=".json,.audiosplat.json,application/json"><div class="toast" id="toast" role="status" aria-live="polite"></div>`;
+  </main><input class="visually-hidden" id="audio-input" type="file" accept="audio/*,.mp3,.ogg,.oga,.wav,.wave,.webm,.m4a,.mp4,.aac,.flac,.opus" multiple><input class="visually-hidden" id="project-input" type="file" accept=".json,.audiosplat.json,application/json"><div class="drop-overlay" id="drop-overlay" aria-hidden="true"><strong data-i18n="dropAudio">${t("dropAudio" as never)}</strong></div><div class="toast" id="toast" role="status" aria-live="polite"></div>`;
   applyLanguage();
   bindShell();
   renderWorkspace();
@@ -115,7 +115,7 @@ function menu(label: string, items: string[][]): string {
 
 function fileMenu(): string {
   const formats = exportFormats();
-  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
+  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><button data-action="import-url" data-i18n="importUrl">${t("importUrl" as never)}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
 }
 
 const soundEffectSources = [
@@ -284,6 +284,10 @@ function bindShell(): void {
     setStatus(t("ready"));
   });
   window.addEventListener("keydown", handleShortcut);
+  window.addEventListener("dragenter", showDropTarget);
+  window.addEventListener("dragover", showDropTarget);
+  window.addEventListener("dragleave", hideDropTarget);
+  window.addEventListener("drop", handleAudioDrop);
   window.addEventListener("beforeunload", stopRecordingStream);
   document
     .querySelector<HTMLSelectElement>("#mic-input")
@@ -329,6 +333,7 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "download-project") await downloadProject();
   else if (action === "import")
     document.querySelector<HTMLInputElement>("#audio-input")?.click();
+  else if (action === "import-url") showUrlImporter();
   else if (action === "export") {
     const format = button.dataset.format;
     const selector =
@@ -644,10 +649,78 @@ function drawWaveform(
 async function importFiles(files: File[]): Promise<void> {
   for (const file of files) {
     try {
-      await addBlob(file, file.name);
+      await addBlob(file, file.name, true);
     } catch {
       toast(t("importFailed"), true);
     }
+  }
+}
+
+function showDropTarget(event: DragEvent): void {
+  if (!event.dataTransfer?.types.includes("Files")) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
+  document.querySelector("#drop-overlay")?.classList.add("show");
+}
+
+function hideDropTarget(event: DragEvent): void {
+  if (event.relatedTarget) return;
+  document.querySelector("#drop-overlay")?.classList.remove("show");
+}
+
+function handleAudioDrop(event: DragEvent): void {
+  event.preventDefault();
+  document.querySelector("#drop-overlay")?.classList.remove("show");
+  const files = Array.from(event.dataTransfer?.files ?? []).filter(isAudioFile);
+  if (!files.length) {
+    toast(t("dropAudioOnly" as never), true);
+    return;
+  }
+  void importFiles(files);
+}
+
+function isAudioFile(file: File): boolean {
+  return (
+    file.type.startsWith("audio/") ||
+    /\.(mp3|ogg|oga|wav|wave|webm|m4a|mp4|aac|flac|opus)$/i.test(file.name)
+  );
+}
+
+function showUrlImporter(): void {
+  showDialog(
+    t("importUrl" as never),
+    `<form id="url-import-form" class="effect-form"><label><span data-i18n="audioUrl">${t("audioUrl" as never)}</span><input name="url" type="url" inputmode="url" required placeholder="https://example.org/sound.mp3"></label><p data-i18n="urlCorsNote">${t("urlCorsNote" as never)}</p><div class="dialog-actions"><button class="btn primary" type="submit" data-i18n="importAudio">${t("importAudio")}</button><button class="btn" type="button" data-dialog-close data-i18n="cancel">${t("cancel")}</button></div></form>`,
+  );
+  document
+    .querySelector<HTMLFormElement>("#url-import-form")
+    ?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget as HTMLFormElement;
+      const url = String(new FormData(form).get("url") ?? "");
+      void importAudioUrl(url);
+    });
+}
+
+async function importAudioUrl(value: string): Promise<void> {
+  try {
+    const url = new URL(value);
+    if (!/^https?:$/.test(url.protocol)) throw new Error("Invalid protocol");
+    setStatus(t("downloadingAudio" as never));
+    const response = await fetch(url.href, { mode: "cors" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    const name = decodeURIComponent(
+      url.pathname.split("/").pop() || "downloaded-audio",
+    );
+    const file = new File([blob], name, {
+      type: blob.type || response.headers.get("content-type") || "audio/*",
+    });
+    await importFiles([file]);
+    closeDialog();
+    setStatus(t("importComplete" as never));
+  } catch {
+    toast(t("urlImportFailed" as never), true);
+    setStatus(t("ready"));
   }
 }
 async function addBlob(
@@ -1597,6 +1670,21 @@ function escapeHtml(value: string): string {
 }
 
 shell();
+void importSharedAudio();
+const platformLaunchQueue = (
+  window as Window & {
+    launchQueue?: {
+      setConsumer(
+        consumer: (params: { files: FileSystemFileHandle[] }) => void,
+      ): void;
+    };
+  }
+).launchQueue;
+platformLaunchQueue?.setConsumer((params) => {
+  void Promise.all(params.files.map((handle) => handle.getFile())).then(
+    importFiles,
+  );
+});
 void loadWorkspace()
   .then(async (stored) => {
     if (workspaceTouched || !stored || !validateProject(stored.project)) return;
@@ -1619,4 +1707,37 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
     "load",
     () => void navigator.serviceWorker.register("./sw.js"),
   );
+}
+
+async function importSharedAudio(): Promise<void> {
+  if (!new URLSearchParams(location.search).has("shared")) return;
+  try {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open("audiosplat-shares", 1);
+      request.onupgradeneeded = () =>
+        request.result.createObjectStore("files", { autoIncrement: true });
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const records = await new Promise<
+      Array<{ name: string; type: string; blob: Blob }>
+    >((resolve, reject) => {
+      const transaction = database.transaction("files", "readwrite");
+      const store = transaction.objectStore("files");
+      const request = store.getAll();
+      request.onsuccess = () => {
+        store.clear();
+        resolve(request.result);
+      };
+      request.onerror = () => reject(request.error);
+    });
+    database.close();
+    const files = records.map(
+      (record) => new File([record.blob], record.name, { type: record.type }),
+    );
+    if (files.length) await importFiles(files.filter(isAudioFile));
+    window.history.replaceState({}, "", location.pathname);
+  } catch {
+    toast(t("sharedImportFailed" as never), true);
+  }
 }

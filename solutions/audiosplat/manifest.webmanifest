@@ -7,5 +7,57 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#7c3aed",
-  "icons": [{ "src": "audiosplat-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "icons": [
+    {
+      "src": "audiosplat-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "./share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "audio",
+          "accept": [
+            "audio/*",
+            ".mp3",
+            ".ogg",
+            ".wav",
+            ".m4a",
+            ".aac",
+            ".flac",
+            ".opus",
+            ".webm"
+          ]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "./",
+      "accept": {
+        "audio/*": [
+          ".mp3",
+          ".ogg",
+          ".oga",
+          ".wav",
+          ".wave",
+          ".webm",
+          ".m4a",
+          ".aac",
+          ".flac",
+          ".opus"
+        ]
+      }
+    }
+  ]
 }
