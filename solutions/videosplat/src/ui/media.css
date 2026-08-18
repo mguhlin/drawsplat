@@ -40,6 +40,8 @@
 .timeline-clip.selected { border-color: #f4b942; box-shadow: 0 0 0 2px #f4b94266; }
 .track.locked .track-lane { background-color: #161925; }
 .track-label button[aria-pressed="true"] { color: #fff; background: var(--purple); border-color: var(--purple); }
+.track-label input { width: 100%; min-width: 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #e8ecf7; font-size: .78rem; font-weight: 750; }
+.track-label input:focus { border-bottom-color: var(--purple-2); }
 .clip-inspector { padding: 14px; display: grid; gap: 8px; }
 .clip-inspector > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clip-inspector > small { color: var(--muted); margin-bottom: 7px; }
