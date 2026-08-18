@@ -1,4 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#6d5dfc"/>
-  <path d="M17 18h8l7 25 7-25h8L36 50h-8z" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="VideoSplat video editor">
+  <defs>
+    <linearGradient id="tile" x1="68" y1="48" x2="446" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#5b3fd4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#tile)"/>
+  <rect x="74" y="126" width="364" height="260" rx="42" fill="none" stroke="#fff" stroke-width="28"/>
+  <path d="M74 190h364M74 322h364M144 126v64M220 126v64M296 126v64M372 126v64M144 322v64M220 322v64M296 322v64M372 322v64" fill="none" stroke="#fff" stroke-width="22"/>
+  <path d="M226 210c0-14 15-23 27-16l79 46c12 7 12 25 0 32l-79 46c-12 7-27-2-27-16z" fill="#fff"/>
+  <circle cx="418" cy="104" r="42" fill="#faa634"/>
 </svg>

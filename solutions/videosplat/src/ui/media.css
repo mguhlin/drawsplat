@@ -440,3 +440,121 @@
   border-color: #8f83ff;
   background: #332a75;
 }
+.brand span {
+  overflow: hidden;
+}
+.brand span img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.brand sup {
+  align-self: flex-start;
+  margin-top: 5px;
+  color: #c9c3ff;
+  font-size: 0.48em;
+}
+.launch-splash {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 42%, #382b80 0, #14132d 34%, #080b15 72%),
+    #080b15;
+  animation: splash-exit 0.35s ease 1.55s both;
+}
+.launch-splash-glow {
+  position: absolute;
+  width: 34rem;
+  height: 34rem;
+  border: 1px solid #9d91ff35;
+  border-radius: 50%;
+  box-shadow:
+    0 0 80px #7667ff2b,
+    inset 0 0 80px #7667ff1c;
+  animation: splash-pulse 1.8s ease-in-out infinite;
+}
+.launch-splash img {
+  position: relative;
+  width: clamp(96px, 13vw, 144px);
+  filter: drop-shadow(0 20px 35px #0008);
+  animation: splash-rise 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.launch-splash h1 {
+  position: relative;
+  margin: 22px 0 5px;
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  letter-spacing: -0.055em;
+  animation: splash-rise 0.65s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.launch-splash h1 sup {
+  margin-left: 0.12em;
+  color: #faa634;
+  font-size: 0.3em;
+  vertical-align: super;
+}
+.launch-splash p {
+  position: relative;
+  margin: 0;
+  color: #d8d4ff;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  animation: splash-rise 0.65s 0.14s both;
+}
+.launch-splash > span {
+  position: relative;
+  margin-top: 13px;
+  color: #8ee9bd;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  animation: splash-rise 0.65s 0.2s both;
+}
+.launch-splash button {
+  position: relative;
+  margin-top: 25px;
+  border-color: #8f83ff;
+  background: #7467ff;
+  font-weight: 800;
+  animation: splash-rise 0.65s 0.26s both;
+}
+@keyframes splash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes splash-pulse {
+  50% {
+    opacity: 0.65;
+    transform: scale(1.06);
+  }
+}
+@keyframes splash-exit {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .launch-splash,
+  .launch-splash img,
+  .launch-splash h1,
+  .launch-splash p,
+  .launch-splash > span,
+  .launch-splash button,
+  .launch-splash-glow {
+    animation: none;
+  }
+}

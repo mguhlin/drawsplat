@@ -1,6 +1,6 @@
 {
-  "name": "VideoSplat — Private Video Editor",
-  "short_name": "VideoSplat",
+  "name": "VideoSplat™ — Private Video Editor",
+  "short_name": "VideoSplat™",
   "description": "A private, local-first video editor that runs in your browser.",
   "id": "/solutions/videosplat/",
   "start_url": "/solutions/videosplat/",
@@ -8,5 +8,12 @@
   "display": "standalone",
   "background_color": "#0b1020",
   "theme_color": "#111827",
-  "icons": [{ "src": "/solutions/videosplat/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "icons": [
+    {
+      "src": "/solutions/videosplat/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

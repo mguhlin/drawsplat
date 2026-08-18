@@ -63,6 +63,7 @@ const formatBytes = (bytes: number) =>
 
 export function App() {
   const history = useRef(new History(createProject()));
+  const [showSplash, setShowSplash] = useState(true);
   const [project, setProject] = useState(history.current.value);
   const [status, setStatus] = useState(
     "Ready — everything stays on this device",
@@ -103,6 +104,11 @@ export function App() {
   const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
   const capabilities = useMemo(getCapabilities, []);
+
+  useEffect(() => {
+    const handle = window.setTimeout(() => setShowSplash(false), 1800);
+    return () => window.clearTimeout(handle);
+  }, []);
 
   const commit = (next: VideoSplatProject) => {
     history.current.commit(next);
@@ -794,13 +800,32 @@ export function App() {
 
   return (
     <div className="app-shell">
+      {showSplash && (
+        <section
+          className="launch-splash"
+          aria-label="VideoSplat loading"
+          onClick={() => setShowSplash(false)}
+        >
+          <div className="launch-splash-glow" aria-hidden="true" />
+          <img src="./icon.svg" alt="" />
+          <h1>
+            VideoSplat<sup>™</sup>
+          </h1>
+          <p>Private video editing. Right in your browser.</p>
+          <span>Local-first · No media uploads</span>
+          <button onClick={() => setShowSplash(false)}>Start editing</button>
+        </section>
+      )}
       <header className="topbar">
         <button
           className="brand"
           onClick={newProject}
           aria-label="Create a new VideoSplat project"
         >
-          <span>V</span> VideoSplat
+          <span>
+            <img src="./icon.svg" alt="" />
+          </span>{" "}
+          VideoSplat<sup>™</sup>
         </button>
         <label className="project-name">
           <span className="sr-only">Project name</span>
@@ -2142,9 +2167,9 @@ export function App() {
               <>
                 <h2 id="dialog-title">Privacy & device storage</h2>
                 <p className="lead">
-                  Core editing is local. VideoSplat does not require an account
-                  and does not include analytics, advertising, tracking, or
-                  remote media processing.
+                  Core editing is local. VideoSplat™ does not require an
+                  account and does not include analytics, advertising, tracking,
+                  or remote media processing.
                 </p>
                 <div className="privacy-grid">
                   <div>
