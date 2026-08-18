@@ -1,4 +1,34 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+const createTestVideo = async (page: Page) =>
+  Buffer.from(
+    await page.evaluate(async () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 160;
+      canvas.height = 90;
+      const context = canvas.getContext("2d")!;
+      const stream = canvas.captureStream(10);
+      const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+      const chunks: Blob[] = [];
+      recorder.ondataavailable = (event) => chunks.push(event.data);
+      recorder.start();
+      context.fillStyle = "#d62424";
+      context.fillRect(0, 0, 160, 90);
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      context.fillStyle = "#246bd6";
+      context.fillRect(0, 0, 160, 90);
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      recorder.stop();
+      await new Promise((resolve) =>
+        recorder.addEventListener("stop", resolve, { once: true }),
+      );
+      return Array.from(
+        new Uint8Array(
+          await new Blob(chunks, { type: "video/webm" }).arrayBuffer(),
+        ),
+      );
+    }),
+  );
 
 test("loads the local-first editor without external requests", async ({
   page,
@@ -12,6 +42,33 @@ test("loads the local-first editor without external requests", async ({
   await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Timeline" })).toBeVisible();
   expect(external).toEqual([]);
+});
+
+test("reloads offline and supports keyboard dialog dismissal", async ({
+  page,
+  context,
+}) => {
+  await page.goto("./");
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await expect(page.locator('[role="status"]')).toBeVisible();
+  await page.getByRole("button", { name: "Local only" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Privacy & device storage" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("heading", { name: "Privacy & device storage" }),
+  ).toBeHidden();
+  // The first navigation installs the worker; the next is controlled by it.
+  await page.reload();
+  await expect
+    .poll(() =>
+      page.evaluate(() => Boolean(navigator.serviceWorker.controller)),
+    )
+    .toBe(true);
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
 });
 
 test("renames, autosaves, and exposes privacy details", async ({ page }) => {
@@ -43,6 +100,32 @@ test("imports an image locally and places it on the timeline", async ({
   await expect(page.getByText("private-frame.svg").first()).toBeVisible();
   await expect(page.locator(".timeline-clip")).toHaveCount(1);
   await expect(page.locator(".visual-layer > img")).toBeVisible();
+});
+
+test("seeks a newly mounted video preview after metadata loads", async ({
+  page,
+}) => {
+  await page.goto("./");
+  const video = await createTestVideo(page);
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "preview.webm",
+    mimeType: "video/webm",
+    buffer: video,
+  });
+  await page.getByLabel("Timeline start").fill("1");
+  const timelineClip = page.locator(".timeline-clip").first();
+  const clipBox = await timelineClip.boundingBox();
+  await timelineClip.click({
+    position: { x: Math.max(2, clipBox!.width * 0.6), y: 20 },
+  });
+  const preview = page.locator(".visual-layer > video");
+  await expect(preview).toBeVisible();
+  await expect
+    .poll(() => preview.evaluate((element) => element.currentTime))
+    .toBeGreaterThan(0.05);
+  await expect
+    .poll(() => preview.evaluate((element) => element.readyState))
+    .toBeGreaterThanOrEqual(2);
 });
 
 test("splits, duplicates, trims, and deletes timeline clips", async ({

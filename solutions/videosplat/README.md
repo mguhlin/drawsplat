@@ -34,6 +34,9 @@ npm run test:e2e
 
 See `PRODUCT_ANALYSIS.md`, `IMPLEMENTATION_PLAN.md`, and
 `docs/privacy/PRIVACY_AUDIT.md` for product and privacy decisions.
+Release boundaries and recovery procedures are documented in
+`docs/BROWSER_SUPPORT.md`, `docs/NETWORK_INVENTORY.md`, and
+`docs/USER_RECOVERY_GUIDE.md`.
 
 The production app is hosted at `/solutions/videosplat/` and is designed for static
 hosting with no required backend.

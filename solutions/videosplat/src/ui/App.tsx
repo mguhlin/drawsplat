@@ -151,6 +151,10 @@ export function App() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && dialog) {
+        event.preventDefault();
+        setDialog(null);
+      }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
         downloadProject(project);
@@ -234,7 +238,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [project, selectedClipId, time, rippleEditing]);
+  }, [project, selectedClipId, time, rippleEditing, dialog]);
 
   useEffect(() => {
     for (const track of project.tracks.filter((item) => item.kind === "audio"))
@@ -1073,6 +1077,16 @@ export function App() {
                     {asset?.kind === "video" && (
                       <video
                         src={url}
+                        preload="auto"
+                        playsInline
+                        onLoadedMetadata={(event) => {
+                          const offset = Math.min(
+                            location.clip.duration,
+                            Math.max(0, time - location.clip.start),
+                          );
+                          event.currentTarget.currentTime =
+                            location.clip.sourceStart + offset;
+                        }}
                         ref={(node) => {
                           if (node) {
                             visualMedia.current.set(location.clip.id, node);
@@ -2004,7 +2018,9 @@ export function App() {
         </section>
       </main>
       <footer className="statusbar">
-        <span>{status}</span>
+        <span role="status" aria-live="polite">
+          {status}
+        </span>
         <span>{savedAt ? `Saved ${savedAt}` : "Saving locally…"}</span>
         <span className="status-right">
           Schema v{project.version} · Offline-ready

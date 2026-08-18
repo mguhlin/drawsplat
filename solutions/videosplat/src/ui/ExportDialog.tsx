@@ -1,10 +1,17 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { VideoSplatProject } from "../domain/project";
 import {
   DEFAULT_EXPORT,
   exportProject,
   type ExportOptions,
 } from "../export/exporter";
+import {
+  createExportReport,
+  downloadExportReport,
+  exportPreflight,
+  type ExportReport,
+} from "../export/preflight";
+import { projectDuration } from "../timeline/engine";
 
 const bytes = (value: number) =>
   value < 1024 * 1024
@@ -26,17 +33,28 @@ export function ExportDialog({
     width: Math.min(1920, project.canvas.width),
     height: Math.min(1080, project.canvas.height),
     frameRate: project.canvas.frameRate,
+    rangeStart: 0,
+    rangeEnd: projectDuration(project),
   });
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<Blob>();
+  const [report, setReport] = useState<ExportReport>();
+  const issues = useMemo(
+    () => exportPreflight(project, urls, options),
+    [project, urls, options],
+  );
+  const hasErrors = issues.some((issue) => issue.severity === "error");
   const controller = useRef<AbortController | undefined>(undefined);
   const run = async () => {
     setBusy(true);
     setResult(undefined);
+    setReport(undefined);
     setProgress(0);
     controller.current = new AbortController();
     try {
+      if (hasErrors)
+        throw new Error("Resolve export preflight errors before rendering.");
       const blob = await exportProject(
         project,
         urls,
@@ -45,6 +63,7 @@ export function ExportDialog({
         controller.current.signal,
       );
       setResult(blob);
+      setReport(await createExportReport(project, options, blob, issues));
       onStatus(`Local export ready · ${bytes(blob.size)}`);
     } catch (error) {
       onStatus(error instanceof Error ? error.message : "Export failed");
@@ -63,7 +82,12 @@ export function ExportDialog({
   };
   return (
     <>
-      <button className="dialog-close" onClick={onClose} aria-label="Close">
+      <button
+        className="dialog-close"
+        onClick={onClose}
+        aria-label="Close"
+        autoFocus
+      >
         ×
       </button>
       <h2 id="export-title">Export video locally</h2>
@@ -125,6 +149,32 @@ export function ExportDialog({
             }
           />
         </label>
+        <label>
+          Range start
+          <input
+            aria-label="Export range start"
+            type="number"
+            min="0"
+            step="0.1"
+            value={options.rangeStart}
+            onChange={(event) =>
+              setOptions({ ...options, rangeStart: Number(event.target.value) })
+            }
+          />
+        </label>
+        <label>
+          Range end
+          <input
+            aria-label="Export range end"
+            type="number"
+            min="0"
+            step="0.1"
+            value={options.rangeEnd}
+            onChange={(event) =>
+              setOptions({ ...options, rangeEnd: Number(event.target.value) })
+            }
+          />
+        </label>
       </div>
       <label>
         <input
@@ -136,6 +186,19 @@ export function ExportDialog({
         />{" "}
         Include timeline audio
       </label>
+      <div className="export-preflight" aria-label="Export preflight">
+        <strong>Preflight</strong>
+        <ul>
+          {issues.map((issue) => (
+            <li
+              className={issue.severity}
+              key={`${issue.code}-${issue.message}`}
+            >
+              {issue.severity}: {issue.message}
+            </li>
+          ))}
+        </ul>
+      </div>
       {busy && (
         <>
           <progress max="1" value={progress} />
@@ -149,7 +212,7 @@ export function ExportDialog({
         </>
       )}
       {!busy && !result && (
-        <button className="primary wide" onClick={run}>
+        <button className="primary wide" onClick={run} disabled={hasErrors}>
           Render local WebM
         </button>
       )}
@@ -160,6 +223,11 @@ export function ExportDialog({
             Download WebM
           </button>
           <button onClick={run}>Render again</button>
+          {report && (
+            <button onClick={() => downloadExportReport(report)}>
+              Download export report
+            </button>
+          )}
         </div>
       )}
     </>
