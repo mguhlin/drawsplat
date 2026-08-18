@@ -6,8 +6,9 @@ import { downloadProject, readProject } from "../persistence/files";
 import { getCapabilities, storageEstimate } from "../privacy/capabilities";
 import { importMedia } from "../media/importer";
 import { duplicateClip, findClip, moveClip, projectDuration, removeClip, splitClip, trimClip, updateClip, updateTrack } from "../timeline/engine";
+import { OptimizerDialog } from "./OptimizerDialog";
 
-type Dialog = "projects" | "privacy" | "shortcuts" | null;
+type Dialog = "projects" | "privacy" | "shortcuts" | "optimizer" | null;
 const formatBytes = (bytes: number) => bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
 export function App() {
@@ -116,6 +117,7 @@ export function App() {
     </header>
     <nav className="toolbar" aria-label="Editor tools">
       <button onClick={() => mediaInput.current?.click()} disabled={importing}>＋ {importing ? "Importing…" : "Import media"}</button>
+      <button onClick={() => setDialog("optimizer")}>⇩ Optimize video</button>
       <span className="divider" />
       <button onClick={() => setProject(history.current.undo())} disabled={!history.current.canUndo} aria-label="Undo">↶ Undo</button>
       <button onClick={() => setProject(history.current.redo())} disabled={!history.current.canRedo} aria-label="Redo">↷ Redo</button>
@@ -136,8 +138,9 @@ export function App() {
     <footer className="statusbar"><span>{status}</span><span>{savedAt ? `Saved ${savedAt}` : "Saving locally…"}</span><span className="status-right">Schema v{project.version} · Offline-ready</span></footer>
     <input ref={fileInput} type="file" hidden accept=".json,.videosplat.json,application/json" onChange={(event) => importProject(event.target.files?.[0])} />
     <input ref={mediaInput} type="file" hidden multiple accept="video/*,audio/*,image/*" onChange={(event) => event.target.files && addFiles(event.target.files)} />
-    {dialog && <div className="backdrop" onMouseDown={() => setDialog(null)}><section className="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" onMouseDown={(event) => event.stopPropagation()}>
-      <button className="dialog-close" onClick={() => setDialog(null)} aria-label="Close">×</button>
+    {dialog && <div className="backdrop" onMouseDown={() => setDialog(null)}><section className={`dialog ${dialog === "optimizer" ? "optimizer-dialog" : ""}`} role="dialog" aria-modal="true" aria-labelledby={dialog === "optimizer" ? "optimizer-title" : "dialog-title"} onMouseDown={(event) => event.stopPropagation()}>
+      {dialog !== "optimizer" && <button className="dialog-close" onClick={() => setDialog(null)} aria-label="Close">×</button>}
+      {dialog === "optimizer" && <OptimizerDialog onClose={() => setDialog(null)} onAdd={async (file) => addFiles([file])} onStatus={setStatus} />}
       {dialog === "projects" && <><h2 id="dialog-title">Open a local project</h2><button className="primary wide" onClick={() => fileInput.current?.click()}>Open .videosplat.json file</button><p className="hint">Portable project files contain edit instructions, not the source media. Media stored by this browser reconnects automatically; otherwise import the original files again.</p><h3>Autosaved projects</h3>{recent.length ? <ul className="recent-list">{recent.map((item) => <li key={item.id}><button onClick={() => openRecent(item)}><strong>{item.name}</strong><small>{new Date(item.updatedAt).toLocaleString()} · {item.assets.length} media</small></button><button className="danger" aria-label={`Delete ${item.name}`} onClick={async () => { await deleteProject(item.id); refreshProjects(); }}>Delete</button></li>)}</ul> : <p>No autosaved projects yet.</p>}</>}
       {dialog === "privacy" && <><h2 id="dialog-title">Privacy & device storage</h2><p className="lead">Core editing is local. VideoSplat does not require an account and does not include analytics, advertising, tracking, or remote media processing.</p><div className="privacy-grid"><div><strong>Network</strong><span>Same-origin app files only</span></div><div><strong>Permissions</strong><span>File access only after selection</span></div><div><strong>Storage used</strong><span>{storage ? formatBytes(storage.usage) : "Unavailable"}</span></div><div><strong>Storage quota</strong><span>{storage ? formatBytes(storage.quota) : "Unavailable"}</span></div></div><h3>Browser capabilities</h3><ul className="capabilities">{capabilities.map((capability) => <li key={capability.name}><span className={capability.available ? "ok" : "warn"}>{capability.available ? "✓" : "–"}</span><span><strong>{capability.name}</strong><small>{capability.detail}</small></span></li>)}</ul><button className="danger wide" onClick={async () => { if (confirm("Delete every autosaved VideoSplat project and stored media file from this browser? Download copies first if needed.")) { await clearAllLocalData(); newProject(); setDialog(null); setStatus("All local VideoSplat projects and media deleted"); } }}>Clear all local project data and media</button></>}
       {dialog === "shortcuts" && <><h2 id="dialog-title">Keyboard shortcuts</h2><dl className="shortcuts"><div><dt>Save project copy</dt><dd>Ctrl/⌘ S</dd></div><div><dt>Undo</dt><dd>Ctrl/⌘ Z</dd></div><div><dt>Redo</dt><dd>Ctrl/⌘ Shift Z</dd></div><div><dt>Split selected clip</dt><dd>S</dd></div><div><dt>Delete selected clip</dt><dd>Delete</dd></div></dl></>}

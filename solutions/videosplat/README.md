@@ -8,8 +8,8 @@ and initial timeline placement.
 
 The timeline now supports clip selection, seeking, zoom, split, duplicate, delete,
 numeric move/trim/source-offset editing, bounded undo/redo, and track visibility,
-mute, and lock controls. A planned offline optimizer will create editing proxies or
-smaller downloadable copies without overwriting or uploading original footage; see
+mute, and lock controls. The offline optimizer creates editing proxies or smaller
+downloadable WebM copies without overwriting or uploading original footage; see
 `docs/decisions/0002-local-video-optimization.md`.
 
 ## Development

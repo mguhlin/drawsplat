@@ -46,3 +46,11 @@ test("splits, duplicates, trims, and deletes timeline clips", async ({ page }) =
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.locator(".timeline-clip")).toHaveCount(2);
 });
+
+test("opens the offline video optimizer", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: "Optimize video" }).click();
+  await expect(page.getByRole("heading", { name: "Optimize video locally" })).toBeVisible();
+  await expect(page.getByText("without uploading or changing the original")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create optimized copy" })).toBeDisabled();
+});

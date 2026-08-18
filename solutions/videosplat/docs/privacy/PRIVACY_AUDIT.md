@@ -11,6 +11,10 @@ Status: milestone 1 baseline. Update this document whenever runtime behavior cha
 - Media import uses local Blob URLs, browser decoders, Canvas, Web Audio, and Web
   Crypto. Video/image thumbnails, audio waveform peaks, metadata, and SHA-256
   content hashes are generated locally. No imported bytes are sent over a network.
+- The optional optimizer decodes the user-selected video into a local canvas and
+  records a smaller WebM copy through `MediaRecorder`. Audio, when supported, is
+  routed through a local Web Audio graph. The result remains a Blob until the user
+  downloads it or explicitly adds it to the project.
 - No camera, microphone, screen capture, cloud provider, analytics, advertising,
   telemetry, authentication, or remote inference exists yet.
 - No cookies or `localStorage` keys are used.
