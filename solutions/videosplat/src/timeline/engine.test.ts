@@ -1,0 +1,18 @@
+import { describe, expect, it } from "vitest";
+import { createProject, type Clip } from "../domain/project";
+import { activeVisualClip, duplicateClip, moveClip, projectDuration, removeClip, splitClip, trimClip, updateTrack } from "./engine";
+
+const fixture = () => {
+  const project = createProject();
+  const clip: Clip = { id: "clip", assetId: "asset", name: "Scene", kind: "video", start: 2, duration: 8, sourceStart: 1, properties: {} };
+  project.tracks[0].clips.push(clip); return project;
+};
+
+describe("timeline engine", () => {
+  it("computes duration and active visual clips", () => { const project = fixture(); expect(projectDuration(project)).toBe(10); expect(activeVisualClip(project, 5)?.clip.id).toBe("clip"); expect(activeVisualClip(project, 11)).toBeUndefined(); });
+  it("moves and clamps clips", () => expect(moveClip(fixture(), "clip", -4).tracks[0].clips[0].start).toBe(0));
+  it("trims while preserving the source-time relationship", () => { const clip = trimClip(fixture(), "clip", 4, 3).tracks[0].clips[0]; expect(clip).toMatchObject({ start: 4, duration: 3, sourceStart: 3 }); });
+  it("splits clips at sequence time", () => { const result = splitClip(fixture(), "clip", 6); expect(result.project.tracks[0].clips).toHaveLength(2); expect(result.project.tracks[0].clips[0].duration).toBe(4); expect(result.project.tracks[0].clips[1]).toMatchObject({ start: 6, duration: 4, sourceStart: 5 }); });
+  it("duplicates and removes clips", () => { const duplicated = duplicateClip(fixture(), "clip"); expect(duplicated.project.tracks[0].clips[1].start).toBe(10); expect(removeClip(duplicated.project, "clip").tracks[0].clips).toHaveLength(1); });
+  it("updates track controls", () => { const project = fixture(); expect(updateTrack(project, project.tracks[0].id, { hidden: true }).tracks[0].hidden).toBe(true); });
+});
