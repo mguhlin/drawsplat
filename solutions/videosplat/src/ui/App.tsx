@@ -631,6 +631,55 @@ export function App() {
       `${asset.name} inserted at the playhead; later clips moved right`,
     );
   };
+  const addTitle = () => {
+    const existing = project.tracks.find(
+      (track) => track.kind === "text" && !track.locked,
+    );
+    const trackId = existing?.id ?? crypto.randomUUID();
+    const clip: Clip = {
+      id: crypto.randomUUID(),
+      name: "Title",
+      kind: "text",
+      start: time,
+      duration: 5,
+      sourceStart: 0,
+      properties: {
+        text: "Your title",
+        fontSize: 64,
+        color: "#ffffff",
+        background: "transparent",
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotation: 0,
+        opacity: 1,
+        transitionIn: 0.5,
+        transitionOut: 0.5,
+      },
+    };
+    const tracks = existing
+      ? project.tracks.map((track) =>
+          track.id === trackId
+            ? { ...track, clips: [...track.clips, clip] }
+            : track,
+        )
+      : [
+          ...project.tracks,
+          {
+            id: trackId,
+            name: "Titles 1",
+            kind: "text" as const,
+            hidden: false,
+            locked: false,
+            muted: false,
+            clips: [clip],
+          },
+        ];
+    commit(touchProject(project, { tracks }));
+    setSelectedAssetId(undefined);
+    setSelectedClipId(clip.id);
+    setStatus("Title added at the playhead");
+  };
   const beginClipDrag = (
     event: ReactPointerEvent,
     clip: Clip,
@@ -829,6 +878,7 @@ export function App() {
         >
           ＋ Audio track
         </button>
+        <button onClick={addTitle}>＋ Title</button>
         <button onClick={() => mltInput.current?.click()}>Open MLT</button>
         <button onClick={() => downloadMlt(project)}>Save MLT</button>
         <span className="toolbar-spacer" />
@@ -940,12 +990,26 @@ export function App() {
                     )
                   : undefined;
                 const url = asset ? mediaUrls[asset.id] : undefined;
-                if (!asset || !url) return null;
+                const isText = location.clip.kind === "text";
+                if (!isText && (!asset || !url)) return null;
                 const properties = location.clip.properties;
+                const localTime = time - location.clip.start;
+                const transitionIn = Number(properties.transitionIn ?? 0);
+                const transitionOut = Number(properties.transitionOut ?? 0);
+                const transitionOpacity = Math.min(
+                  1,
+                  transitionIn > 0 ? localTime / transitionIn : 1,
+                  transitionOut > 0
+                    ? (location.clip.duration - localTime) / transitionOut
+                    : 1,
+                );
                 const style = {
                   zIndex: layer + 1,
-                  opacity: Number(properties.opacity ?? 1),
+                  opacity:
+                    Number(properties.opacity ?? 1) *
+                    Math.max(0, transitionOpacity),
                   transform: `translate(${Number(properties.x ?? 0)}px, ${Number(properties.y ?? 0)}px) scale(${Number(properties.scale ?? 1)}) rotate(${Number(properties.rotation ?? 0)}deg)`,
+                  filter: `brightness(${Number(properties.brightness ?? 1)}) contrast(${Number(properties.contrast ?? 1)}) saturate(${Number(properties.saturation ?? 1)}) hue-rotate(${Number(properties.hue ?? 0)}deg) grayscale(${Number(properties.grayscale ?? 0)}) blur(${Number(properties.blur ?? 0)}px)`,
                 };
                 return (
                   <div
@@ -953,7 +1017,7 @@ export function App() {
                     style={style}
                     key={location.clip.id}
                   >
-                    {asset.kind === "video" && (
+                    {asset?.kind === "video" && (
                       <video
                         src={url}
                         ref={(node) => {
@@ -965,8 +1029,22 @@ export function App() {
                         }}
                       />
                     )}
-                    {asset.kind === "image" && (
+                    {asset?.kind === "image" && (
                       <img src={url} alt={asset.name} />
+                    )}
+                    {isText && (
+                      <div
+                        className="title-layer"
+                        style={{
+                          fontSize: `${Number(properties.fontSize ?? 64)}px`,
+                          color: String(properties.color ?? "#ffffff"),
+                          background: String(
+                            properties.background ?? "transparent",
+                          ),
+                        }}
+                      >
+                        {String(properties.text ?? "Title")}
+                      </div>
                     )}
                   </div>
                 );
@@ -1250,6 +1328,267 @@ export function App() {
                             properties: {
                               ...selectedLocation.clip.properties,
                               opacity: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              )}
+              {selectedLocation.clip.kind === "text" && (
+                <div className="property-grid title-properties">
+                  <label>
+                    Title text
+                    <input
+                      aria-label="Title text"
+                      value={String(
+                        selectedLocation.clip.properties.text ?? "",
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            name: event.target.value || "Title",
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              text: event.target.value,
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Font size
+                    <input
+                      aria-label="Font size"
+                      type="number"
+                      min="8"
+                      value={Number(
+                        selectedLocation.clip.properties.fontSize ?? 64,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              fontSize: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Text color
+                    <input
+                      aria-label="Text color"
+                      type="color"
+                      value={String(
+                        selectedLocation.clip.properties.color ?? "#ffffff",
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              color: event.target.value,
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Background
+                    <input
+                      aria-label="Title background"
+                      value={String(
+                        selectedLocation.clip.properties.background ??
+                          "transparent",
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              background: event.target.value,
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              )}
+              {selectedLocation.clip.kind !== "audio" && (
+                <div className="property-grid effects-grid">
+                  <label>
+                    Transition in
+                    <input
+                      aria-label="Transition in"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.transitionIn ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              transitionIn: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Transition out
+                    <input
+                      aria-label="Transition out"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.transitionOut ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              transitionOut: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Brightness
+                    <input
+                      aria-label="Brightness"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.brightness ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              brightness: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Contrast
+                    <input
+                      aria-label="Contrast"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.contrast ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              contrast: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Saturation
+                    <input
+                      aria-label="Saturation"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.saturation ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              saturation: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Hue
+                    <input
+                      aria-label="Hue"
+                      type="number"
+                      step="1"
+                      value={Number(selectedLocation.clip.properties.hue ?? 0)}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              hue: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Grayscale
+                    <input
+                      aria-label="Grayscale"
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.grayscale ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              grayscale: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Blur
+                    <input
+                      aria-label="Blur"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={Number(selectedLocation.clip.properties.blur ?? 0)}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              blur: Number(event.target.value),
                             },
                           }),
                         )
