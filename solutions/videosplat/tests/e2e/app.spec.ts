@@ -39,7 +39,16 @@ test("loads the local-first editor without external requests", async ({
     if (url.hostname !== "127.0.0.1") external.push(request.url());
   });
   await page.goto("./");
+  await expect(page.getByLabel("VideoSplat loading")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "VideoSplat™" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Start editing" }).click();
+  await expect(page.getByLabel("VideoSplat loading")).toBeHidden();
   await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Create a new VideoSplat project" }),
+  ).toContainText("VideoSplat™");
   await expect(page.getByRole("region", { name: "Timeline" })).toBeVisible();
   expect(external).toEqual([]);
 });

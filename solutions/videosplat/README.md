@@ -1,6 +1,6 @@
-# VideoSplat
+# VideoSplat™
 
-VideoSplat is DrawSplat's private, local-first video editor for the browser. The current milestone
+VideoSplat™ is DrawSplat's private, local-first video editor for the browser. The current milestone
 implements the offline editor shell, versioned project documents, autosave,
 recovery, portable project files, privacy diagnostics, zero-egress controls, and
 local video/audio/image ingestion with metadata, thumbnails, waveforms, preview,
