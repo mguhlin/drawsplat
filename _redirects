@@ -9,3 +9,9 @@
 /CipherSplat        /solutions/CipherSplat/          301
 /CipherSplat/       /solutions/CipherSplat/          301
 /CipherSplat/*      /solutions/CipherSplat/:splat    301
+
+# VideoSplat vanity URL. Keep a matching /videosplat/index.html fallback for
+# static hosts such as GitHub Pages that do not process this file.
+/videosplat         /solutions/videosplat/           301
+/videosplat/        /solutions/videosplat/           301
+/videosplat/*       /solutions/videosplat/:splat     301
