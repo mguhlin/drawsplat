@@ -26,6 +26,29 @@ OpenShot while keeping all media processing on the user's device:
 6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
    range export, quality presets, worker execution, and privacy preflight.
 
+### Professional editing and MLT interoperability
+
+This work follows the timeline-precision primitives and is split into independently
+testable slices:
+
+- Source-player and timeline trimming with an explicit ripple toggle.
+- Clipboard commands for cut, copy, and paste, preserving clip properties and source
+  timing while generating new stable clip identifiers on paste.
+- Append, insert, overwrite, lift, ripple delete, and replace operations on targeted
+  tracks, with previews of affected ranges before destructive edits.
+- Three-point editing using source In/Out plus a timeline In or Out point, including
+  duration conflict feedback.
+- Unlimited tracks with thumbnails/waveforms, rename/reorder controls, and visible
+  hide, mute, solo, and lock states.
+- Existing bounded undo/redo and autosave extended to every new edit command.
+- MLT XML import/export as an optional local interoperability adapter: project XML,
+  trimmed-clip XML, and complex MLT-as-clip playback when all referenced services and
+  codecs are browser-supported. Unknown producers, filters, transitions, and paths
+  are preserved where safe and reported as unsupported instead of silently changed.
+- VideoSplat's JSON project remains the canonical lossless browser format. MLT XML
+  support must not require a server, upload media, execute embedded commands, or
+  resolve remote URLs automatically.
+
 Browser constraints: Blender-style 3D title rendering and unrestricted FFmpeg format
 support remain deferred. They would require large optional local runtimes and must not
 become a network service or weaken the default zero-egress experience.

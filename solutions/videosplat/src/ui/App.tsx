@@ -5,7 +5,7 @@ import { clearAllLocalData, deleteMedia, deleteProject, listProjects, loadMedia,
 import { downloadProject, readProject } from "../persistence/files";
 import { getCapabilities, storageEstimate } from "../privacy/capabilities";
 import { importMedia } from "../media/importer";
-import { activeVisualClip, addTrack, duplicateClip, findClip, moveClip, projectDuration, removeClip, snappedClipStart, splitClip, trimClip, updateClip, updateTrack } from "../timeline/engine";
+import { activeVisualClip, addTrack, duplicateClip, findClip, moveClip, placeClip, projectDuration, removeClip, rippleDeleteClip, snappedClipStart, splitClip, trimClip, updateClip, updateTrack, type TimelineEditMode } from "../timeline/engine";
 import { OptimizerDialog } from "./OptimizerDialog";
 
 type Dialog = "projects" | "privacy" | "shortcuts" | "optimizer" | null;
@@ -27,6 +27,9 @@ export function App() {
   const [selectedClipId, setSelectedClipId] = useState<string>();
   const [timelineZoom, setTimelineZoom] = useState(1);
   const [snapping, setSnapping] = useState(true);
+  const [rippleEditing, setRippleEditing] = useState(true);
+  const [editMode, setEditMode] = useState<TimelineEditMode>("insert");
+  const clipboard = useRef<Clip | undefined>(undefined);
   const drag = useRef<{ mode: "move" | "left" | "right"; clip: Clip; startX: number; project: VideoSplatProject } | undefined>(undefined);
   const dragProject = useRef<VideoSplatProject | undefined>(undefined);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -55,12 +58,13 @@ export function App() {
     const onKey = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") { event.preventDefault(); downloadProject(project); setStatus("Project copy downloaded"); }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); setProject(event.shiftKey ? history.current.redo() : history.current.undo()); }
-      if ((event.key === "Delete" || event.key === "Backspace") && selectedClipId && !(event.target instanceof HTMLInputElement)) { event.preventDefault(); commit(removeClip(project, selectedClipId)); setSelectedClipId(undefined); setStatus("Clip deleted"); }
+      if ((event.key === "Delete" || event.key === "Backspace") && selectedClipId && !(event.target instanceof HTMLInputElement)) { event.preventDefault(); commit(rippleEditing ? rippleDeleteClip(project, selectedClipId) : removeClip(project, selectedClipId)); setSelectedClipId(undefined); setStatus(rippleEditing ? "Clip ripple-deleted; track gap closed" : "Clip lifted; timeline gap preserved"); }
+      if ((event.ctrlKey || event.metaKey) && ["c","x"].includes(event.key.toLowerCase()) && selectedClipId && !(event.target instanceof HTMLInputElement)) { const location=findClip(project,selectedClipId); if(location){event.preventDefault();clipboard.current=structuredClone(location.clip);if(event.key.toLowerCase()==="x"){commit(rippleEditing?rippleDeleteClip(project,selectedClipId):removeClip(project,selectedClipId));setSelectedClipId(undefined);}setStatus(event.key.toLowerCase()==="x"?"Clip cut":"Clip copied");} }
       if (event.key.toLowerCase() === "s" && !event.ctrlKey && !event.metaKey && selectedClipId && !(event.target instanceof HTMLInputElement)) { const result = splitClip(project, selectedClipId, time); if (result.rightId) { commit(result.project); setSelectedClipId(result.rightId); setStatus("Clip split at playhead"); } }
       if ((event.key === "ArrowLeft" || event.key === "ArrowRight") && !(event.target instanceof HTMLInputElement)) { event.preventDefault(); setPlaying(false); setTime((current) => Math.max(0, current + (event.key === "ArrowLeft" ? -1 : 1) / project.canvas.frameRate)); }
     };
     window.addEventListener("keydown", onKey); return () => window.removeEventListener("keydown", onKey);
-  }, [project, selectedClipId, time]);
+  }, [project, selectedClipId, time, rippleEditing]);
 
   useEffect(() => {
     for (const track of project.tracks.filter((item) => item.kind === "audio")) for (const clip of track.clips) {
@@ -141,7 +145,10 @@ export function App() {
   const timelineWidth = Math.max(700, Math.ceil(Math.max(20, totalDuration) * pixelsPerSecond));
   const splitSelected = () => { if (!selectedClipId) return; const result = splitClip(project, selectedClipId, time); if (!result.rightId) { setStatus("Move the playhead inside the selected clip to split"); return; } commit(result.project); setSelectedClipId(result.rightId); setStatus("Clip split at playhead"); };
   const duplicateSelected = () => { if (!selectedClipId) return; const result = duplicateClip(project, selectedClipId); if (result.duplicateId) { commit(result.project); setSelectedClipId(result.duplicateId); setStatus("Clip duplicated"); } };
-  const deleteSelected = () => { if (!selectedClipId) return; commit(removeClip(project, selectedClipId)); setSelectedClipId(undefined); setStatus("Clip deleted"); };
+  const deleteSelected = () => { if (!selectedClipId) return; commit(rippleEditing ? rippleDeleteClip(project, selectedClipId) : removeClip(project, selectedClipId)); setSelectedClipId(undefined); setStatus(rippleEditing ? "Clip ripple-deleted; track gap closed" : "Clip lifted; timeline gap preserved"); };
+  const copySelected = () => { if (!selectedLocation) return; clipboard.current = structuredClone(selectedLocation.clip); setStatus(`${selectedLocation.clip.name} copied`); };
+  const cutSelected = () => { if (!selectedLocation) return; clipboard.current = structuredClone(selectedLocation.clip); deleteSelected(); };
+  const pasteClip = () => { const source=clipboard.current; if(!source){setStatus("Copy or cut a clip first");return;} const kind=source.kind === "image" ? "video" : source.kind; const track=project.tracks.find((item)=>item.kind===kind&&!item.locked); if(!track){setStatus(`No unlocked ${kind} track is available`);return;} const result=placeClip(project,track.id,source,time,editMode); if(result.clipId){commit(result.project);setSelectedClipId(result.clipId);setSelectedAssetId(source.assetId);setStatus(`${source.name} pasted using ${editMode} edit`);} };
   const insertAsset = (asset: Asset) => {
     const kind = asset.kind === "image" ? "video" : asset.kind;
     const track = project.tracks.find((item) => item.kind === kind && !item.locked);
@@ -192,6 +199,11 @@ export function App() {
       <button onClick={splitSelected} disabled={!selectedClipId}>Split</button>
       <button onClick={duplicateSelected} disabled={!selectedClipId}>Duplicate</button>
       <button onClick={deleteSelected} disabled={!selectedClipId}>Delete</button>
+      <button onClick={cutSelected} disabled={!selectedClipId}>Cut</button>
+      <button onClick={copySelected} disabled={!selectedClipId}>Copy</button>
+      <button onClick={pasteClip}>Paste</button>
+      <select aria-label="Timeline edit mode" value={editMode} onChange={(event)=>setEditMode(event.target.value as TimelineEditMode)}><option value="append">Append</option><option value="insert">Insert</option><option value="overwrite">Overwrite</option></select>
+      <button aria-pressed={rippleEditing} onClick={()=>setRippleEditing((value)=>!value)}>Ripple {rippleEditing ? "on" : "off"}</button>
       <button className={snapping ? "active" : ""} aria-pressed={snapping} onClick={() => setSnapping((value) => !value)}>Snap {snapping ? "on" : "off"}</button>
       <button aria-label="Add video track" onClick={() => commit(addTrack(project, "video"))}>＋ Video track</button>
       <button aria-label="Add audio track" onClick={() => commit(addTrack(project, "audio"))}>＋ Audio track</button>

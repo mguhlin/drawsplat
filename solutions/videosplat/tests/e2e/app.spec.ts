@@ -86,3 +86,16 @@ test("respects timeline gaps and exposes precision controls", async ({ page }) =
   await expect(page.locator(".track")).toHaveCount(3);
   await expect(page.getByRole("button", { name: "Snap on" })).toHaveAttribute("aria-pressed", "true");
 });
+
+test("supports clipboard edits and ripple or lift deletion", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({ name: "clipboard.svg", mimeType: "image/svg+xml", buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"/>') });
+  await page.getByRole("button", { name: "Copy", exact: true }).click();
+  await page.getByRole("button", { name: "Paste", exact: true }).click();
+  await expect(page.locator(".timeline-clip")).toHaveCount(2);
+  await expect(page.getByText("pasted using insert edit")).toBeVisible();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect(page.getByText("track gap closed")).toBeVisible();
+  await page.getByRole("button", { name: "Ripple on" }).click();
+  await expect(page.getByRole("button", { name: "Ripple off" })).toHaveAttribute("aria-pressed", "false");
+});

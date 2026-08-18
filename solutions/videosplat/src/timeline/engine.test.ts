@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createProject, type Clip } from "../domain/project";
-import { activeVisualClip, addTrack, duplicateClip, moveClip, projectDuration, removeClip, removeEmptyTrack, reorderTrack, snappedClipStart, splitClip, trimClip, updateTrack } from "./engine";
+import { activeVisualClip, addTrack, duplicateClip, moveClip, placeClip, projectDuration, removeClip, removeEmptyTrack, reorderTrack, rippleDeleteClip, snappedClipStart, splitClip, trimClip, updateTrack } from "./engine";
 
 const fixture = () => {
   const project = createProject();
@@ -17,4 +17,6 @@ describe("timeline engine", () => {
   it("updates track controls", () => { const project = fixture(); expect(updateTrack(project, project.tracks[0].id, { hidden: true }).tracks[0].hidden).toBe(true); });
   it("snaps clip starts and ends to nearby edit points", () => { const project = fixture(); project.tracks[0].clips.push({ ...project.tracks[0].clips[0], id: "next", start: 12 }); expect(snappedClipStart(project, "clip", 3.9, 0, .2)).toBe(4); expect(snappedClipStart(project, "clip", 1.9, 2, .2)).toBe(2); });
   it("adds, reorders, and removes empty tracks", () => { const project = addTrack(fixture(), "video"); const added = project.tracks.at(-1)!; expect(added.name).toBe("Video 2"); expect(reorderTrack(project, added.id, -1).tracks.at(-2)?.id).toBe(added.id); expect(removeEmptyTrack(project, added.id).tracks).toHaveLength(2); });
+  it("ripple deletes and closes the resulting track gap", () => { const project = fixture(); project.tracks[0].clips.push({ ...project.tracks[0].clips[0], id: "next", start: 12 }); expect(rippleDeleteClip(project,"clip").tracks[0].clips[0].start).toBe(4); });
+  it("places clipboard clips using append, insert, and overwrite modes", () => { const project = fixture(); const source = project.tracks[0].clips[0]; const appended = placeClip(project,project.tracks[0].id,source,0,"append"); expect(appended.project.tracks[0].clips.at(-1)?.start).toBe(10); const inserted = placeClip(project,project.tracks[0].id,source,2,"insert"); expect(inserted.project.tracks[0].clips.find((clip)=>clip.id==="clip")?.start).toBe(10); expect(placeClip(project,project.tracks[0].id,source,2,"overwrite").project.tracks[0].clips).toHaveLength(1); });
 });
