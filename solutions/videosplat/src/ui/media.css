@@ -58,3 +58,5 @@
 .optimizer-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
 .optimizer-results strong { grid-column: 1/-1; color: #b8f4d8; }
 @media(max-width:580px){.optimizer-grid,.optimizer-results{grid-template-columns:1fr}}
+.toolbar select { border: 1px solid var(--line); border-radius: 7px; background: #171f33; color: #e8ecf7; padding: .45rem .55rem; }
+.toolbar button[aria-pressed="true"], .toolbar button.active { border-color: #8f83ff; background: #332a75; }

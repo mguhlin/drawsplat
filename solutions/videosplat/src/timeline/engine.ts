@@ -54,6 +54,24 @@ export function removeClip(project: VideoSplatProject, clipId: string): VideoSpl
   return touchProject(project, { tracks: project.tracks.map((track) => ({ ...track, clips: track.clips.filter((clip) => clip.id !== clipId) })) });
 }
 
+export function rippleDeleteClip(project: VideoSplatProject, clipId: string): VideoSplatProject {
+  const location = findClip(project, clipId); if (!location) return project;
+  const end = location.clip.start + location.clip.duration;
+  return touchProject(project, { tracks: project.tracks.map((track) => track.id === location.track.id ? { ...track, clips: track.clips.filter((clip) => clip.id !== clipId).map((clip) => clip.start >= end ? { ...clip, start: Math.max(location.clip.start, clip.start - location.clip.duration) } : clip) } : track) });
+}
+
+export type TimelineEditMode = "append" | "insert" | "overwrite";
+
+export function placeClip(project: VideoSplatProject, trackId: string, source: Clip, time: number, mode: TimelineEditMode): { project: VideoSplatProject; clipId?: string } {
+  const track = project.tracks.find((item) => item.id === trackId); if (!track || track.locked) return { project };
+  const start = mode === "append" ? track.clips.reduce((end, clip) => Math.max(end, clip.start + clip.duration), 0) : Math.max(0, time);
+  const clip = { ...source, id: crypto.randomUUID(), start };
+  let clips = track.clips;
+  if (mode === "insert") clips = clips.map((item) => item.start >= start ? { ...item, start: item.start + clip.duration } : item);
+  if (mode === "overwrite") clips = clips.filter((item) => item.start + item.duration <= start || item.start >= start + clip.duration);
+  return { clipId: clip.id, project: touchProject(project, { tracks: project.tracks.map((item) => item.id === trackId ? { ...item, clips: [...clips, clip] } : item) }) };
+}
+
 export function updateTrack(project: VideoSplatProject, trackId: string, patch: Partial<Track>): VideoSplatProject {
   return touchProject(project, { tracks: project.tracks.map((track) => track.id === trackId ? { ...track, ...patch, id: track.id, clips: track.clips } : track) });
 }
