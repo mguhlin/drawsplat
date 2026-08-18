@@ -46,12 +46,13 @@ export function activeVisualClips(
 ): ClipLocation[] {
   return project.tracks
     .filter((track) => !track.hidden && track.kind !== "audio")
-    .flatMap((track) => {
-      const clip = track.clips.find(
-        (item) => time >= item.start && time < item.start + item.duration,
-      );
-      return clip ? [{ track, clip }] : [];
-    });
+    .flatMap((track) =>
+      track.clips
+        .filter(
+          (item) => time >= item.start && time < item.start + item.duration,
+        )
+        .map((clip) => ({ track, clip })),
+    );
 }
 
 export function updateClip(

@@ -17,6 +17,9 @@
 .canvas > video, .canvas > img { grid-area: 1/1; z-index: 1; max-width: 100%; max-height: 100%; object-fit: contain; }
 .visual-layer { grid-area: 1/1; width: min(75%,800px); aspect-ratio: 16/9; display: grid; place-items: center; transform-origin: center; pointer-events: none; }
 .visual-layer > video, .visual-layer > img { width: 100%; height: 100%; object-fit: contain; }
+.title-layer { max-width: 90%; padding: .2em .45em; line-height: 1.1; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; text-shadow: 0 2px 8px #000b; }
+.title-properties { grid-template-columns: 1fr 1fr; }
+.title-properties label:first-child { grid-column: 1/-1; }
 .audio-preview { grid-area: 1/1; z-index: 1; width: min(75%,800px); aspect-ratio: 16/9; display: grid; place-items: center; background: linear-gradient(145deg,#141b31,#090c17); padding: 10%; }
 .audio-preview audio { display: none; }
 .timeline-audio { display: none; }
@@ -30,6 +33,7 @@
 .timeline-clip:hover .trim-handle, .timeline-clip.selected .trim-handle { opacity: .9; }
 .timeline-clip.audio { border-color: #8a61be; background: #40285d; }
 .timeline-clip.image { border-color: #4c9a81; background: #1e5141; }
+.timeline-clip.text, .timeline-clip.caption { border-color: #d79b45; background: #68451c; }
 .timeline-clip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .38; }
 .timeline-clip span { position: relative; z-index: 1; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 6px; font-size: .7rem; font-weight: 750; text-shadow: 0 1px 2px #000; }
 .hint { font-size: .78rem !important; color: var(--muted); }

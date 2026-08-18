@@ -27,6 +27,11 @@ On-canvas handles, crop/fit, panning, normalization, ducking, and detached audio
 5. **Animation and effects:** deterministic keyframes, linear/constant/Bezier
    interpolation, speed changes, freeze frames, color controls, blur/pixelation,
    and chroma key.
+
+Current titles/effects status: editable local text clips, font/color/background,
+overlap-aware layer evaluation, fade-in/fade-out transitions, brightness, contrast,
+saturation, hue, grayscale, and blur are implemented. Caption file interchange,
+additional transition geometries, keyframes, speed/freeze, and chroma key remain.
 6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
    range export, quality presets, worker execution, and privacy preflight.
 

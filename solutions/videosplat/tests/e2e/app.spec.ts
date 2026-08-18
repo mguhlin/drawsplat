@@ -201,11 +201,28 @@ test("applies clip transforms in the layered preview", async ({ page }) => {
     ),
   });
   await page.getByLabel("X position").fill("24");
-  await page.getByLabel("Scale").fill("0.5");
+  await page.getByLabel("Scale", { exact: true }).fill("0.5");
   await page.getByLabel("Opacity").fill("0.6");
   await expect(page.locator(".visual-layer")).toHaveCSS("opacity", "0.6");
   await expect(page.locator(".visual-layer")).toHaveAttribute(
     "style",
     /translate\(24px, 0px\) scale\(0.5\)/,
   );
+});
+
+test("creates titles with transitions and visual effects", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: "Title" }).click();
+  await page.getByLabel("Title text").fill("Private local title");
+  await page.getByLabel("Font size").fill("48");
+  await page.getByLabel("Transition in").fill("1");
+  await page.getByLabel("Brightness").fill("0.8");
+  await page.getByLabel("Blur").fill("2");
+  await expect(page.locator(".title-layer")).toHaveText("Private local title");
+  await expect(page.locator(".title-layer")).toHaveCSS("font-size", "48px");
+  await expect(page.locator(".visual-layer")).toHaveAttribute(
+    "style",
+    /brightness\(0.8\).*blur\(2px\)/,
+  );
+  await expect(page.locator(".timeline-clip.text")).toHaveCount(1);
 });

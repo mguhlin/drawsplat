@@ -56,6 +56,18 @@ describe("timeline engine", () => {
     project.tracks.find((track) => track.id === "overlay")!.hidden = true;
     expect(activeVisualClips(project, 5)).toHaveLength(1);
   });
+  it("returns overlapping clips for transition compositing", () => {
+    const project = fixture();
+    project.tracks[0].clips.push({
+      ...project.tracks[0].clips[0],
+      id: "overlap",
+      start: 4,
+    });
+    expect(activeVisualClips(project, 5).map((item) => item.clip.id)).toEqual([
+      "clip",
+      "overlap",
+    ]);
+  });
   it("moves and clamps clips", () =>
     expect(moveClip(fixture(), "clip", -4).tracks[0].clips[0].start).toBe(0));
   it("trims while preserving the source-time relationship", () => {
