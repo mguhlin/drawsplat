@@ -153,4 +153,28 @@ describe("timeline engine", () => {
         .tracks[0].clips,
     ).toHaveLength(1);
   });
+  it("evaluates dense multitrack timelines deterministically", () => {
+    const project = createProject("Stress fixture");
+    project.tracks = Array.from({ length: 10 }, (_, trackIndex) => ({
+      id: `track-${trackIndex}`,
+      name: `Layer ${trackIndex + 1}`,
+      kind: "video" as const,
+      hidden: false,
+      locked: false,
+      muted: false,
+      clips: Array.from({ length: 100 }, (_, clipIndex) => ({
+        id: `clip-${trackIndex}-${clipIndex}`,
+        assetId: `asset-${trackIndex}`,
+        name: `Scene ${clipIndex + 1}`,
+        kind: "video" as const,
+        start: clipIndex * 0.5,
+        duration: 0.5,
+        sourceStart: clipIndex * 0.5,
+        properties: {},
+      })),
+    }));
+    expect(projectDuration(project)).toBe(50);
+    expect(activeVisualClips(project, 25.25)).toHaveLength(10);
+    expect(snappedClipStart(project, "clip-0-0", 49.91, 0, 0.1)).toBe(50);
+  });
 });

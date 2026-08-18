@@ -7,6 +7,8 @@ export interface ExportOptions {
   frameRate: number;
   videoBitsPerSecond: number;
   includeAudio: boolean;
+  rangeStart?: number;
+  rangeEnd?: number;
 }
 export const DEFAULT_EXPORT: ExportOptions = {
   width: 1280,
@@ -78,7 +80,10 @@ export async function exportProject(
     );
   const mimeType = recorderType();
   if (!mimeType) throw new Error("This browser has no supported WebM encoder.");
-  const duration = projectDuration(project);
+  const fullDuration = projectDuration(project);
+  const rangeStart = Math.max(0, options.rangeStart ?? 0);
+  const rangeEnd = Math.min(fullDuration, options.rangeEnd ?? fullDuration);
+  const duration = rangeEnd - rangeStart;
   if (duration <= 0)
     throw new Error("Add at least one timeline clip before exporting.");
   const missing = project.assets.filter(
@@ -164,8 +169,9 @@ export async function exportProject(
     recorder.start(1000);
     await new Promise<void>((resolve) => {
       const draw = async () => {
-        const time = (performance.now() - started) / 1000;
-        if (signal?.aborted || time >= duration) {
+        const elapsed = (performance.now() - started) / 1000;
+        const time = rangeStart + elapsed;
+        if (signal?.aborted || elapsed >= duration) {
           finish();
           resolve();
           return;
@@ -232,7 +238,10 @@ export async function exportProject(
               ),
             );
           } else {
-            const source = (images.get(clip.id) ?? media.get(clip.id)) as HTMLImageElement | HTMLVideoElement | undefined;
+            const source = (images.get(clip.id) ?? media.get(clip.id)) as
+              | HTMLImageElement
+              | HTMLVideoElement
+              | undefined;
             if (source) {
               const sourceWidth =
                 source instanceof HTMLVideoElement
@@ -257,7 +266,7 @@ export async function exportProject(
           }
           context.restore();
         }
-        onProgress(Math.min(1, time / duration));
+        onProgress(Math.min(1, elapsed / duration));
         frame = requestAnimationFrame(draw);
       };
       frame = requestAnimationFrame(draw);

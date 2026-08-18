@@ -21,24 +21,22 @@ OpenShot while keeping all media processing on the user's device:
 
 Current composition/audio status: layered image/video preview, numeric position,
 scale, rotation, opacity, per-clip gain, and fade-in/fade-out playback are implemented.
-On-canvas handles, crop/fit, panning, normalization, ducking, and detached audio remain.
-4. **Titles and transitions:** SVG title/lower-third templates, SRT/WebVTT captions,
-   crossfades, fades, wipes, slides, dissolves, and dip-to-black.
-5. **Animation and effects:** deterministic keyframes, linear/constant/Bezier
-   interpolation, speed changes, freeze frames, color controls, blur/pixelation,
-   and chroma key.
+On-canvas handles, crop/fit, panning, normalization, ducking, and detached audio remain. 4. **Titles and transitions:** SVG title/lower-third templates, SRT/WebVTT captions,
+crossfades, fades, wipes, slides, dissolves, and dip-to-black. 5. **Animation and effects:** deterministic keyframes, linear/constant/Bezier
+interpolation, speed changes, freeze frames, color controls, blur/pixelation,
+and chroma key.
 
 Current titles/effects status: editable local text clips, font/color/background,
 overlap-aware layer evaluation, fade-in/fade-out transitions, brightness, contrast,
 saturation, hue, grayscale, and blur are implemented. Caption file interchange,
-additional transition geometries, keyframes, speed/freeze, and chroma key remain.
-6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
-   range export, quality presets, worker execution, and privacy preflight.
+additional transition geometries, keyframes, speed/freeze, and chroma key remain. 6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
+range export, quality presets, worker execution, and privacy preflight.
 
-Current caption/export status: SRT and WebVTT parsing/generation and local WebM
-composition export are implemented, including visual layers, text/captions, current
-effects/transitions, and mixed clip audio. Range export, MP4 capability paths,
-worker execution, detailed preflight/reporting, and preview/export golden frames remain.
+Current caption/export status: SRT and WebVTT parsing/generation, range controls,
+preflight, content-hashed privacy reports, and local WebM composition export are
+implemented, including visual layers, text/captions, current effects/transitions,
+and mixed clip audio. MP4 capability paths, worker execution, and preview/export
+golden frames remain future performance and compatibility work.
 
 ### Professional editing and MLT interoperability
 

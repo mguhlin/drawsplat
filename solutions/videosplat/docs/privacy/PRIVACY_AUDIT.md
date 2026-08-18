@@ -21,7 +21,10 @@ Status: milestone 1 baseline. Update this document whenever runtime behavior cha
 - SRT and WebVTT caption files are parsed and generated locally.
 - Composition export creates local media elements and a Canvas, mixes audio through
   Web Audio, and records the resulting same-device stream with `MediaRecorder`.
-  The WebM remains a local Blob until the user explicitly downloads it.
+  The WebM remains a local Blob until the user explicitly downloads it. Preflight
+  checks missing media, range validity, browser support, storage headroom, and hidden
+  redaction tracks. The optional JSON export report is generated locally and records
+  settings, warnings, and a SHA-256 output hash without biometric identity data.
 - No camera, microphone, screen capture, cloud provider, analytics, advertising,
   telemetry, authentication, or remote inference exists yet.
 - No cookies or `localStorage` keys are used.
