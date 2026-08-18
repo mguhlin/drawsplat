@@ -20,6 +20,7 @@ step. To combine modules, unzip them into the same web root.
 | DrawSplatTM Widgets | `/pages/tools.html#widgets`, `/solutions/` selected widgets | You only need quick classroom utilities. |
 | DrawSplatTM Games | `/games/` | You only need standalone classroom games. |
 | AudioSplat | `/solutions/audiosplat/` | You only need the multitrack browser recorder/editor. |
+| VideoSplat | `/solutions/videosplat/` | You only need the private browser video editor and anonymization workflow. |
 
 ## Combining modules
 
@@ -72,9 +73,13 @@ From the repository root:
 
 The command produces the full DrawSplatTM package, individual SplatWorksTM app
 packages, the SplatWorksTM suite package, and standalone Tools, Widgets, and
-Games modules, plus an independent AudioSplat solution package.
+Games modules, plus independent AudioSplat and VideoSplat solution packages.
 
 AudioSplat recording and editing require HTTPS (or localhost for development).
 Its included Google Drive client is authorized for `drawsplat.org`; another
 self-host domain must provide its own Google OAuth Web client, authorize that
 origin, enable Google Drive API, request `drive.file`, and rebuild AudioSplat.
+
+VideoSplat editing, project storage, media analysis, and export are designed to
+remain local. Serve it over HTTPS (or localhost during development) so the PWA,
+workers, browser storage, and high-performance media APIs are available.

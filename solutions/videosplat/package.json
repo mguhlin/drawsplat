@@ -1,0 +1,31 @@
+{
+  "name": "videosplat",
+  "version": "0.1.0",
+  "private": false,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/prepare-build.mjs && node node_modules/vite/bin/vite.js --host 127.0.0.1",
+    "build": "node scripts/prepare-build.mjs && node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build && node scripts/publish.mjs",
+    "preview": "node node_modules/vite/bin/vite.js preview",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:watch": "node node_modules/vitest/vitest.mjs",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "jsdom": "26.1.0",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
