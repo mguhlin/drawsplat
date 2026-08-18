@@ -28,6 +28,10 @@ OpenShot while keeping all media processing on the user's device:
 
 ### Professional editing and MLT interoperability
 
+Status: clipboard/ripple modes, track creation/rename/reorder/removal, MLT project
+export, trimmed-clip export, and guarded MLT import are implemented. Complex MLT
+filters/transitions are detected and reported but await the shared effects renderer.
+
 This work follows the timeline-precision primitives and is split into independently
 testable slices:
 

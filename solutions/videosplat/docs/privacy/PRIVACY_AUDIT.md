@@ -15,6 +15,9 @@ Status: milestone 1 baseline. Update this document whenever runtime behavior cha
   records a smaller WebM copy through `MediaRecorder`. Audio, when supported, is
   routed through a local Web Audio graph. The result remains a Blob until the user
   downloads it or explicitly adds it to the project.
+- Optional MLT XML import and export is parsed and generated locally. Remote, data,
+  and executable resource URLs found in MLT producers are blocked rather than
+  fetched; imported local media references must be relinked by the user.
 - No camera, microphone, screen capture, cloud provider, analytics, advertising,
   telemetry, authentication, or remote inference exists yet.
 - No cookies or `localStorage` keys are used.
