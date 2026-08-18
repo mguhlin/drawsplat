@@ -35,6 +35,11 @@ additional transition geometries, keyframes, speed/freeze, and chroma key remain
 6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
    range export, quality presets, worker execution, and privacy preflight.
 
+Current caption/export status: SRT and WebVTT parsing/generation and local WebM
+composition export are implemented, including visual layers, text/captions, current
+effects/transitions, and mixed clip audio. Range export, MP4 capability paths,
+worker execution, detailed preflight/reporting, and preview/export golden frames remain.
+
 ### Professional editing and MLT interoperability
 
 Status: clipboard/ripple modes, track creation/rename/reorder/removal, MLT project

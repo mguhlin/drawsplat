@@ -46,8 +46,16 @@ import {
   type TimelineEditMode,
 } from "../timeline/engine";
 import { OptimizerDialog } from "./OptimizerDialog";
+import { ExportDialog } from "./ExportDialog";
+import { addCaptionFile, downloadCaptions } from "../captions/captions";
 
-type Dialog = "projects" | "privacy" | "shortcuts" | "optimizer" | null;
+type Dialog =
+  | "projects"
+  | "privacy"
+  | "shortcuts"
+  | "optimizer"
+  | "export"
+  | null;
 const formatBytes = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.round(bytes / 1024)} KB`
@@ -90,6 +98,7 @@ export function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const mediaInput = useRef<HTMLInputElement>(null);
   const mltInput = useRef<HTMLInputElement>(null);
+  const captionInput = useRef<HTMLInputElement>(null);
   const previewMedia = useRef<HTMLVideoElement | HTMLAudioElement>(null);
   const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
@@ -338,6 +347,29 @@ export function App() {
       );
     } finally {
       if (mltInput.current) mltInput.current.value = "";
+    }
+  };
+  const importCaptions = async (file?: File) => {
+    if (!file) return;
+    try {
+      const next = addCaptionFile(
+        project,
+        await file.text(),
+        file.name.replace(/\.[^.]+$/, "") || "Captions",
+      );
+      commit(next);
+      const captionTrack = next.tracks.find(
+        (track) => track.kind === "caption",
+      );
+      setSelectedClipId(captionTrack?.clips.at(-1)?.id);
+      setSelectedAssetId(undefined);
+      setStatus(`${file.name} imported locally`);
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Caption import failed",
+      );
+    } finally {
+      if (captionInput.current) captionInput.current.value = "";
     }
   };
 
@@ -879,11 +911,30 @@ export function App() {
           ＋ Audio track
         </button>
         <button onClick={addTitle}>＋ Title</button>
+        <button onClick={() => captionInput.current?.click()}>
+          Import captions
+        </button>
+        <button
+          onClick={() => {
+            try {
+              downloadCaptions(project, "srt");
+              setStatus("SRT captions downloaded");
+            } catch (error) {
+              setStatus(
+                error instanceof Error
+                  ? error.message
+                  : "Caption export failed",
+              );
+            }
+          }}
+        >
+          Save SRT
+        </button>
         <button onClick={() => mltInput.current?.click()}>Open MLT</button>
         <button onClick={() => downloadMlt(project)}>Save MLT</button>
         <span className="toolbar-spacer" />
         <button onClick={() => setDialog("shortcuts")}>Shortcuts</button>
-        <button disabled title="Export arrives after the rendering milestone">
+        <button className="primary" onClick={() => setDialog("export")}>
           Export video
         </button>
       </nav>
@@ -990,7 +1041,9 @@ export function App() {
                     )
                   : undefined;
                 const url = asset ? mediaUrls[asset.id] : undefined;
-                const isText = location.clip.kind === "text";
+                const isText =
+                  location.clip.kind === "text" ||
+                  location.clip.kind === "caption";
                 if (!isText && (!asset || !url)) return null;
                 const properties = location.clip.properties;
                 const localTime = time - location.clip.start;
@@ -1336,7 +1389,8 @@ export function App() {
                   </label>
                 </div>
               )}
-              {selectedLocation.clip.kind === "text" && (
+              {(selectedLocation.clip.kind === "text" ||
+                selectedLocation.clip.kind === "caption") && (
                 <div className="property-grid title-properties">
                   <label>
                     Title text
@@ -1978,18 +2032,29 @@ export function App() {
         accept=".mlt,.xml,application/xml,text/xml"
         onChange={(event) => importMlt(event.target.files?.[0])}
       />
+      <input
+        ref={captionInput}
+        type="file"
+        hidden
+        accept=".srt,.vtt,application/x-subrip,text/vtt,text/plain"
+        onChange={(event) => importCaptions(event.target.files?.[0])}
+      />
       {dialog && (
         <div className="backdrop" onMouseDown={() => setDialog(null)}>
           <section
-            className={`dialog ${dialog === "optimizer" ? "optimizer-dialog" : ""}`}
+            className={`dialog ${dialog === "optimizer" || dialog === "export" ? "optimizer-dialog" : ""}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby={
-              dialog === "optimizer" ? "optimizer-title" : "dialog-title"
+              dialog === "optimizer"
+                ? "optimizer-title"
+                : dialog === "export"
+                  ? "export-title"
+                  : "dialog-title"
             }
             onMouseDown={(event) => event.stopPropagation()}
           >
-            {dialog !== "optimizer" && (
+            {dialog !== "optimizer" && dialog !== "export" && (
               <button
                 className="dialog-close"
                 onClick={() => setDialog(null)}
@@ -2002,6 +2067,14 @@ export function App() {
               <OptimizerDialog
                 onClose={() => setDialog(null)}
                 onAdd={async (file) => addFiles([file])}
+                onStatus={setStatus}
+              />
+            )}
+            {dialog === "export" && (
+              <ExportDialog
+                project={project}
+                urls={mediaUrls}
+                onClose={() => setDialog(null)}
                 onStatus={setStatus}
               />
             )}
