@@ -13,6 +13,7 @@
 #   - dist/drawsplat-widgets-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/drawsplat-games-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/audiosplat-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/videosplat-selfhost-YYYYMMDD-<shortsha>.zip
 #
 # The DrawSplatTM bundle contains the full static site, backends, and compliance
 # docs. SplatWorksTM, tools, widgets, and games also ship as drop-in modules so
@@ -54,6 +55,7 @@ TOOLS_ROOT="$STAGE_DIR/drawsplat-tools-selfhost-$VERSION_LABEL"
 WIDGETS_ROOT="$STAGE_DIR/drawsplat-widgets-selfhost-$VERSION_LABEL"
 GAMES_ROOT="$STAGE_DIR/drawsplat-games-selfhost-$VERSION_LABEL"
 AUDIOSPLAT_ROOT="$STAGE_DIR/audiosplat-selfhost-$VERSION_LABEL"
+VIDEOSPLAT_ROOT="$STAGE_DIR/videosplat-selfhost-$VERSION_LABEL"
 DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
 GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
 SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
@@ -64,6 +66,7 @@ TOOLS_OUT_NAME="drawsplat-tools-selfhost-$VERSION_LABEL.zip"
 WIDGETS_OUT_NAME="drawsplat-widgets-selfhost-$VERSION_LABEL.zip"
 GAMES_OUT_NAME="drawsplat-games-selfhost-$VERSION_LABEL.zip"
 AUDIOSPLAT_OUT_NAME="audiosplat-selfhost-$VERSION_LABEL.zip"
+VIDEOSPLAT_OUT_NAME="videosplat-selfhost-$VERSION_LABEL.zip"
 CHECKSUM_OUT_NAME="SHA256SUMS-$VERSION_LABEL.txt"
 DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
 GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
@@ -75,10 +78,11 @@ TOOLS_OUT_PATH="$OUT_DIR/$TOOLS_OUT_NAME"
 WIDGETS_OUT_PATH="$OUT_DIR/$WIDGETS_OUT_NAME"
 GAMES_OUT_PATH="$OUT_DIR/$GAMES_OUT_NAME"
 AUDIOSPLAT_OUT_PATH="$OUT_DIR/$AUDIOSPLAT_OUT_NAME"
+VIDEOSPLAT_OUT_PATH="$OUT_DIR/$VIDEOSPLAT_OUT_NAME"
 CHECKSUM_OUT_PATH="$OUT_DIR/$CHECKSUM_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$VIDEOSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -108,6 +112,7 @@ EXCLUDES=(
   "drawsplat-widgets-selfhost-*.zip"
   "drawsplat-games-selfhost-*.zip"
   "audiosplat-selfhost-*.zip"
+  "videosplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -285,6 +290,7 @@ MODULE_EXCLUDES=(
 TOOLS_SOLUTIONS=(
   animated-gif
   audiosplat
+  videosplat
   big-link
   chart-studio
   CipherSplat
@@ -648,6 +654,43 @@ License
 AudioSplat is AGPL-3.0-or-later. See solutions/audiosplat/LICENSE.md.
 EOF
 
+copy_tree solutions/videosplat "$VIDEOSPLAT_ROOT/solutions/videosplat" "${MODULE_EXCLUDES[@]}"
+
+cat > "$VIDEOSPLAT_ROOT/VIDEOSPLAT-SELFHOST-README.txt" <<EOF
+VideoSplat Self-Hosted Solution
+===============================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+What's in this zip
+------------------
+- solutions/videosplat/ — the built static VideoSplat editor plus source,
+  tests, documentation, package metadata, and AGPL license notice.
+
+Deployment
+----------
+VideoSplat should be served over HTTPS (or localhost during development) for
+service-worker, browser-storage, worker, and high-performance media features.
+
+1. Upload the included solutions/ folder to your static host.
+2. Open https://your-domain.example/solutions/videosplat/.
+3. To rebuild from source:
+     cd solutions/videosplat
+     npm install
+     npm run build
+
+Privacy boundary
+----------------
+Core project storage, media analysis, editing, anonymization, and export run in
+the browser. VideoSplat includes no required account, analytics, advertising,
+tracking, backend, or remote media processing.
+
+License
+-------
+VideoSplat is AGPL-3.0-or-later. See solutions/videosplat/LICENSE.md.
+EOF
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
@@ -660,6 +703,7 @@ if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$WIDGETS_OUT_PATH" "drawsplat-widgets-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$GAMES_OUT_PATH" "drawsplat-games-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$AUDIOSPLAT_OUT_PATH" "audiosplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$VIDEOSPLAT_OUT_PATH" "videosplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
@@ -686,6 +730,8 @@ GAMES_SIZE_HUMAN="$(du -h "$GAMES_OUT_PATH" | cut -f1)"
 GAMES_SHA="$(sha256sum "$GAMES_OUT_PATH" | cut -d' ' -f1)"
 AUDIOSPLAT_SIZE_HUMAN="$(du -h "$AUDIOSPLAT_OUT_PATH" | cut -f1)"
 AUDIOSPLAT_SHA="$(sha256sum "$AUDIOSPLAT_OUT_PATH" | cut -d' ' -f1)"
+VIDEOSPLAT_SIZE_HUMAN="$(du -h "$VIDEOSPLAT_OUT_PATH" | cut -f1)"
+VIDEOSPLAT_SHA="$(sha256sum "$VIDEOSPLAT_OUT_PATH" | cut -d' ' -f1)"
 
 sha256sum \
   "$DRAWSPLAT_OUT_PATH" \
@@ -697,7 +743,8 @@ sha256sum \
   "$TOOLS_OUT_PATH" \
   "$WIDGETS_OUT_PATH" \
   "$GAMES_OUT_PATH" \
-  "$AUDIOSPLAT_OUT_PATH" > "$CHECKSUM_OUT_PATH"
+  "$AUDIOSPLAT_OUT_PATH" \
+  "$VIDEOSPLAT_OUT_PATH" > "$CHECKSUM_OUT_PATH"
 
 echo ""
 echo "Built bundles:"
@@ -730,6 +777,9 @@ echo "  sha256: $GAMES_SHA"
 echo ""
 echo "  $AUDIOSPLAT_OUT_PATH ($AUDIOSPLAT_SIZE_HUMAN)"
 echo "  sha256: $AUDIOSPLAT_SHA"
+echo ""
+echo "  $VIDEOSPLAT_OUT_PATH ($VIDEOSPLAT_SIZE_HUMAN)"
+echo "  sha256: $VIDEOSPLAT_SHA"
 echo ""
 echo "  $CHECKSUM_OUT_PATH"
 echo ""

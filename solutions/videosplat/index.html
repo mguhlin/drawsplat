@@ -6,14 +6,13 @@
     <meta name="theme-color" content="#111827" />
     <meta name="description" content="VideoSplat — DrawSplat's private, local-first video editor." />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
-    <link rel="manifest" href="/solutions/videosplat/manifest.webmanifest" />
-    <link rel="icon" href="/solutions/videosplat/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <link rel="icon" href="%BASE_URL%icon.svg" type="image/svg+xml" />
     <title>VideoSplat — Private video editor</title>
-    <script type="module" crossorigin src="/solutions/videosplat/assets/index-DiW-J7oz.js"></script>
-    <link rel="stylesheet" crossorigin href="/solutions/videosplat/assets/index-KLd2HLiy.css">
   </head>
   <body>
     <noscript>VideoSplat requires JavaScript to edit video locally in your browser.</noscript>
     <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
