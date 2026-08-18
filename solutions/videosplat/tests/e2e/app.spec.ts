@@ -54,3 +54,21 @@ test("opens the offline video optimizer", async ({ page }) => {
   await expect(page.getByText("without uploading or changing the original")).toBeVisible();
   await expect(page.getByRole("button", { name: "Create optimized copy" })).toBeDisabled();
 });
+
+test("moves, trims, and inserts clips directly on the timeline", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({ name: "movable.svg", mimeType: "image/svg+xml", buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" fill="#246"/></svg>') });
+  const clip = page.locator(".timeline-clip").first();
+  await clip.click({ position: { x: 100, y: 25 } });
+  await expect(page.getByText(/Previewing movable.svg at/)).toBeVisible();
+  await clip.hover();
+  await page.mouse.down(); await page.mouse.move((await clip.boundingBox())!.x + 130, (await clip.boundingBox())!.y + 25); await page.mouse.up();
+  await expect(page.getByLabel("Timeline start")).not.toHaveValue("0");
+  const before = await page.getByLabel("Clip duration").inputValue();
+  const right = clip.locator(".trim-handle.right"); const box = await right.boundingBox();
+  await page.mouse.move(box!.x + 2, box!.y + 20); await page.mouse.down(); await page.mouse.move(box!.x - 40, box!.y + 20); await page.mouse.up();
+  await expect(page.getByLabel("Clip duration")).not.toHaveValue(before);
+  await page.getByRole("button", { name: "Insert movable.svg at playhead" }).click();
+  await expect(page.locator(".timeline-clip")).toHaveCount(2);
+  await expect(page.getByText("later clips moved right")).toBeVisible();
+});
