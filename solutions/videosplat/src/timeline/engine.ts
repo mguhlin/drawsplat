@@ -1,4 +1,4 @@
-import { touchProject, type Clip, type Track, type VideoSplatProject } from "../domain/project";
+import { touchProject, type Clip, type Track, type TrackKind, type VideoSplatProject } from "../domain/project";
 
 export interface ClipLocation { track: Track; clip: Clip }
 
@@ -21,6 +21,14 @@ export function updateClip(project: VideoSplatProject, clipId: string, patch: Pa
 
 export function moveClip(project: VideoSplatProject, clipId: string, start: number): VideoSplatProject {
   return updateClip(project, clipId, { start: Math.max(0, start) });
+}
+
+export function snappedClipStart(project: VideoSplatProject, clipId: string, proposedStart: number, playhead: number, tolerance: number): number {
+  const location = findClip(project, clipId); if (!location) return Math.max(0, proposedStart);
+  const duration = location.clip.duration;
+  const targets = [0, playhead, ...project.tracks.flatMap((track) => track.clips.filter((clip) => clip.id !== clipId).flatMap((clip) => [clip.start, clip.start + clip.duration]))];
+  const candidates = targets.flatMap((target) => [{ distance: Math.abs(proposedStart - target), start: target }, { distance: Math.abs(proposedStart + duration - target), start: target - duration }]).sort((a, b) => a.distance - b.distance);
+  return Math.max(0, candidates[0] && candidates[0].distance <= tolerance ? candidates[0].start : proposedStart);
 }
 
 export function trimClip(project: VideoSplatProject, clipId: string, start: number, duration: number): VideoSplatProject {
@@ -48,4 +56,23 @@ export function removeClip(project: VideoSplatProject, clipId: string): VideoSpl
 
 export function updateTrack(project: VideoSplatProject, trackId: string, patch: Partial<Track>): VideoSplatProject {
   return touchProject(project, { tracks: project.tracks.map((track) => track.id === trackId ? { ...track, ...patch, id: track.id, clips: track.clips } : track) });
+}
+
+export function addTrack(project: VideoSplatProject, kind: Extract<TrackKind, "video" | "audio">): VideoSplatProject {
+  const count = project.tracks.filter((track) => track.kind === kind).length + 1;
+  const track: Track = { id: crypto.randomUUID(), name: `${kind === "video" ? "Video" : "Audio"} ${count}`, kind, hidden: false, locked: false, muted: false, clips: [] };
+  return touchProject(project, { tracks: [...project.tracks, track] });
+}
+
+export function reorderTrack(project: VideoSplatProject, trackId: string, direction: -1 | 1): VideoSplatProject {
+  const index = project.tracks.findIndex((track) => track.id === trackId); const target = index + direction;
+  if (index < 0 || target < 0 || target >= project.tracks.length) return project;
+  const tracks = [...project.tracks]; [tracks[index], tracks[target]] = [tracks[target], tracks[index]];
+  return touchProject(project, { tracks });
+}
+
+export function removeEmptyTrack(project: VideoSplatProject, trackId: string): VideoSplatProject {
+  const track = project.tracks.find((item) => item.id === trackId);
+  if (!track || track.clips.length || project.tracks.filter((item) => item.kind === track.kind).length === 1) return project;
+  return touchProject(project, { tracks: project.tracks.filter((item) => item.id !== trackId) });
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createProject, type Clip } from "../domain/project";
-import { activeVisualClip, duplicateClip, moveClip, projectDuration, removeClip, splitClip, trimClip, updateTrack } from "./engine";
+import { activeVisualClip, addTrack, duplicateClip, moveClip, projectDuration, removeClip, removeEmptyTrack, reorderTrack, snappedClipStart, splitClip, trimClip, updateTrack } from "./engine";
 
 const fixture = () => {
   const project = createProject();
@@ -15,4 +15,6 @@ describe("timeline engine", () => {
   it("splits clips at sequence time", () => { const result = splitClip(fixture(), "clip", 6); expect(result.project.tracks[0].clips).toHaveLength(2); expect(result.project.tracks[0].clips[0].duration).toBe(4); expect(result.project.tracks[0].clips[1]).toMatchObject({ start: 6, duration: 4, sourceStart: 5 }); });
   it("duplicates and removes clips", () => { const duplicated = duplicateClip(fixture(), "clip"); expect(duplicated.project.tracks[0].clips[1].start).toBe(10); expect(removeClip(duplicated.project, "clip").tracks[0].clips).toHaveLength(1); });
   it("updates track controls", () => { const project = fixture(); expect(updateTrack(project, project.tracks[0].id, { hidden: true }).tracks[0].hidden).toBe(true); });
+  it("snaps clip starts and ends to nearby edit points", () => { const project = fixture(); project.tracks[0].clips.push({ ...project.tracks[0].clips[0], id: "next", start: 12 }); expect(snappedClipStart(project, "clip", 3.9, 0, .2)).toBe(4); expect(snappedClipStart(project, "clip", 1.9, 2, .2)).toBe(2); });
+  it("adds, reorders, and removes empty tracks", () => { const project = addTrack(fixture(), "video"); const added = project.tracks.at(-1)!; expect(added.name).toBe("Video 2"); expect(reorderTrack(project, added.id, -1).tracks.at(-2)?.id).toBe(added.id); expect(removeEmptyTrack(project, added.id).tracks).toHaveLength(2); });
 });
