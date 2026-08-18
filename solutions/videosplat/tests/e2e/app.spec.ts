@@ -30,6 +30,13 @@ const createTestVideo = async (page: Page) =>
     }),
   );
 
+test.beforeEach(async ({ page }, testInfo) => {
+  if (!testInfo.title.startsWith("loads the local-first editor"))
+    await page.addInitScript(() =>
+      sessionStorage.setItem("videosplat-splash-seen", "1"),
+    );
+});
+
 test("loads the local-first editor without external requests", async ({
   page,
 }) => {
@@ -43,6 +50,8 @@ test("loads the local-first editor without external requests", async ({
   await expect(
     page.getByRole("heading", { name: "VideoSplat™" }),
   ).toBeVisible();
+  await page.waitForTimeout(2000);
+  await expect(page.getByLabel("VideoSplat loading")).toBeVisible();
   await page.getByRole("button", { name: "Start editing" }).click();
   await expect(page.getByLabel("VideoSplat loading")).toBeHidden();
   await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
