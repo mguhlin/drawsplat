@@ -15,6 +15,8 @@
 .mini-wave, .large-wave { display: flex; align-items: center; justify-content: center; gap: 1px; width: 100%; height: 100%; }
 .mini-wave i, .large-wave i { display: block; width: 2px; min-height: 2px; background: var(--purple-2); border-radius: 2px; }
 .canvas > video, .canvas > img { grid-area: 1/1; z-index: 1; max-width: 100%; max-height: 100%; object-fit: contain; }
+.visual-layer { grid-area: 1/1; width: min(75%,800px); aspect-ratio: 16/9; display: grid; place-items: center; transform-origin: center; pointer-events: none; }
+.visual-layer > video, .visual-layer > img { width: 100%; height: 100%; object-fit: contain; }
 .audio-preview { grid-area: 1/1; z-index: 1; width: min(75%,800px); aspect-ratio: 16/9; display: grid; place-items: center; background: linear-gradient(145deg,#141b31,#090c17); padding: 10%; }
 .audio-preview audio { display: none; }
 .timeline-audio { display: none; }
@@ -47,6 +49,7 @@
 .clip-inspector > small { color: var(--muted); margin-bottom: 7px; }
 .clip-inspector label { display: grid; gap: 5px; color: #aeb9cc; font-size: .75rem; font-weight: 700; }
 .clip-inspector input { width: 100%; border: 1px solid var(--line); border-radius: 7px; background: #0e1423; color: #e7ebf5; padding: 8px; }
+.property-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
 .inspector-actions { display: grid; gap: 7px; margin-top: 9px; }
 .optimizer-dialog { width: min(680px,100%); }
 .optimizer-dialog > label, .optimizer-grid label { display: grid; gap: 6px; margin: 13px 0; color: #aeb9cc; font-size: .8rem; font-weight: 700; }

@@ -42,7 +42,7 @@ test("imports an image locally and places it on the timeline", async ({
   ).toBeVisible();
   await expect(page.getByText("private-frame.svg").first()).toBeVisible();
   await expect(page.locator(".timeline-clip")).toHaveCount(1);
-  await expect(page.locator(".canvas > img")).toBeVisible();
+  await expect(page.locator(".visual-layer > img")).toBeVisible();
 });
 
 test("splits, duplicates, trims, and deletes timeline clips", async ({
@@ -189,4 +189,23 @@ test("supports clipboard edits and ripple or lift deletion", async ({
   await expect(
     page.getByRole("button", { name: "Ripple off" }),
   ).toHaveAttribute("aria-pressed", "false");
+});
+
+test("applies clip transforms in the layered preview", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "overlay.svg",
+    mimeType: "image/svg+xml",
+    buffer: Buffer.from(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" fill="red"/></svg>',
+    ),
+  });
+  await page.getByLabel("X position").fill("24");
+  await page.getByLabel("Scale").fill("0.5");
+  await page.getByLabel("Opacity").fill("0.6");
+  await expect(page.locator(".visual-layer")).toHaveCSS("opacity", "0.6");
+  await expect(page.locator(".visual-layer")).toHaveAttribute(
+    "style",
+    /translate\(24px, 0px\) scale\(0.5\)/,
+  );
 });

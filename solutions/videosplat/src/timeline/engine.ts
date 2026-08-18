@@ -37,16 +37,21 @@ export function activeVisualClip(
   project: VideoSplatProject,
   time: number,
 ): ClipLocation | undefined {
-  const visualTracks = project.tracks
+  return activeVisualClips(project, time).at(-1);
+}
+
+export function activeVisualClips(
+  project: VideoSplatProject,
+  time: number,
+): ClipLocation[] {
+  return project.tracks
     .filter((track) => !track.hidden && track.kind !== "audio")
-    .slice()
-    .reverse();
-  for (const track of visualTracks) {
-    const clip = track.clips.find(
-      (item) => time >= item.start && time < item.start + item.duration,
-    );
-    if (clip) return { track, clip };
-  }
+    .flatMap((track) => {
+      const clip = track.clips.find(
+        (item) => time >= item.start && time < item.start + item.duration,
+      );
+      return clip ? [{ track, clip }] : [];
+    });
 }
 
 export function updateClip(

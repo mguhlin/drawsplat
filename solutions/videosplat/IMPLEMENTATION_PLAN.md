@@ -18,6 +18,10 @@ OpenShot while keeping all media processing on the user's device:
    fit/fill presets, overlays, logos, and watermarks.
 3. **Audio:** clip/track gain, fades, waveforms in clips, detached video audio,
    panning, normalization, and optional local speech ducking.
+
+Current composition/audio status: layered image/video preview, numeric position,
+scale, rotation, opacity, per-clip gain, and fade-in/fade-out playback are implemented.
+On-canvas handles, crop/fit, panning, normalization, ducking, and detached audio remain.
 4. **Titles and transitions:** SVG title/lower-third templates, SRT/WebVTT captions,
    crossfades, fades, wipes, slides, dissolves, and dip-to-black.
 5. **Animation and effects:** deterministic keyframes, linear/constant/Bezier
