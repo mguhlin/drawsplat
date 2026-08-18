@@ -4,7 +4,6 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
-  type RefObject,
 } from "react";
 import {
   createProject,
@@ -28,7 +27,7 @@ import { downloadMlt, readMlt } from "../persistence/mlt";
 import { getCapabilities, storageEstimate } from "../privacy/capabilities";
 import { importMedia } from "../media/importer";
 import {
-  activeVisualClip,
+  activeVisualClips,
   addTrack,
   duplicateClip,
   findClip,
@@ -92,6 +91,7 @@ export function App() {
   const mediaInput = useRef<HTMLInputElement>(null);
   const mltInput = useRef<HTMLInputElement>(null);
   const previewMedia = useRef<HTMLVideoElement | HTMLAudioElement>(null);
+  const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
   const capabilities = useMemo(getCapabilities, []);
 
@@ -243,6 +243,16 @@ export function App() {
           continue;
         }
         const expected = clip.sourceStart + time - clip.start;
+        const localTime = time - clip.start;
+        const gain = Number(clip.properties.volume ?? 1);
+        const fadeIn = Number(clip.properties.fadeIn ?? 0);
+        const fadeOut = Number(clip.properties.fadeOut ?? 0);
+        const fadeGain = Math.min(
+          1,
+          fadeIn > 0 ? localTime / fadeIn : 1,
+          fadeOut > 0 ? (clip.duration - localTime) / fadeOut : 1,
+        );
+        media.volume = Math.max(0, Math.min(1, gain * fadeGain));
         if (Math.abs(media.currentTime - expected) > 0.4)
           media.currentTime = expected;
         if (media.paused)
@@ -446,37 +456,53 @@ export function App() {
   const selectedLocation = selectedClipId
     ? findClip(project, selectedClipId)
     : undefined;
-  const timelineVisual = activeVisualClip(project, time);
-  const previewLocation =
-    timelineVisual ?? (!playing ? selectedLocation : undefined);
+  const timelineVisuals = activeVisualClips(project, time);
+  const previewLocations = timelineVisuals.length
+    ? timelineVisuals
+    : !playing && selectedLocation && selectedLocation.clip.kind !== "audio"
+      ? [selectedLocation]
+      : [];
+  const previewLocation = previewLocations.at(-1);
   const previewAsset = previewLocation?.clip.assetId
     ? project.assets.find((asset) => asset.id === previewLocation.clip.assetId)
     : selectedAsset;
-  const previewUrl = previewAsset ? mediaUrls[previewAsset.id] : undefined;
   useEffect(() => {
-    const media = previewMedia.current;
-    if (!media || !previewLocation || previewAsset?.kind !== "video") return;
-    const offset = Math.min(
-      previewLocation.clip.duration,
-      Math.max(0, time - previewLocation.clip.start),
-    );
-    const sourceTime = previewLocation.clip.sourceStart + offset;
-    if (
-      media.readyState >= 1 &&
-      Math.abs(media.currentTime - sourceTime) > 0.12
-    )
-      media.currentTime = sourceTime;
-    if (playing && media.paused)
-      media
-        .play()
-        .catch(() =>
-          setStatus("Browser blocked video playback — press Play again"),
-        );
-    if (!playing && !media.paused) media.pause();
-  }, [time, previewLocation, previewAsset?.kind, playing]);
+    previewLocations.forEach((location) => {
+      const media = visualMedia.current.get(location.clip.id);
+      if (!media) return;
+      const offset = Math.min(
+        location.clip.duration,
+        Math.max(0, time - location.clip.start),
+      );
+      const sourceTime = location.clip.sourceStart + offset;
+      if (
+        media.readyState >= 1 &&
+        Math.abs(media.currentTime - sourceTime) > 0.12
+      )
+        media.currentTime = sourceTime;
+      const localTime = time - location.clip.start;
+      const gain = Number(location.clip.properties.volume ?? 1);
+      const fadeIn = Number(location.clip.properties.fadeIn ?? 0);
+      const fadeOut = Number(location.clip.properties.fadeOut ?? 0);
+      const fadeGain = Math.min(
+        1,
+        fadeIn > 0 ? localTime / fadeIn : 1,
+        fadeOut > 0 ? (location.clip.duration - localTime) / fadeOut : 1,
+      );
+      media.volume = Math.max(0, Math.min(1, gain * fadeGain));
+      if (playing && media.paused)
+        media
+          .play()
+          .catch(() =>
+            setStatus("Browser blocked video playback — press Play again"),
+          );
+      if (!playing && !media.paused) media.pause();
+    });
+  }, [time, previewLocations, playing]);
   const togglePlayback = async () => {
     if (playing) {
       previewMedia.current?.pause();
+      visualMedia.current.forEach((media) => media.pause());
       timelineAudio.current.forEach((media) => media.pause());
       setPlaying(false);
       return;
@@ -906,31 +932,56 @@ export function App() {
         </aside>
         <section className="stage" aria-label="Video preview">
           <div className="canvas">
-            {previewAsset && previewUrl && previewLocation ? (
-              <>
-                {previewAsset.kind === "video" && (
-                  <video
-                    key={`${previewUrl}-${previewLocation.clip.id}`}
-                    ref={previewMedia as RefObject<HTMLVideoElement>}
-                    src={previewUrl}
-                  />
-                )}
-                {previewAsset.kind === "audio" && (
-                  <div className="audio-preview">
-                    <div className="large-wave">
-                      {previewAsset.waveform?.map((peak, index) => (
-                        <i
-                          key={index}
-                          style={{ height: `${Math.max(3, peak * 100)}px` }}
-                        />
-                      ))}
-                    </div>
+            {previewLocations.length ? (
+              previewLocations.map((location, layer) => {
+                const asset = location.clip.assetId
+                  ? project.assets.find(
+                      (item) => item.id === location.clip.assetId,
+                    )
+                  : undefined;
+                const url = asset ? mediaUrls[asset.id] : undefined;
+                if (!asset || !url) return null;
+                const properties = location.clip.properties;
+                const style = {
+                  zIndex: layer + 1,
+                  opacity: Number(properties.opacity ?? 1),
+                  transform: `translate(${Number(properties.x ?? 0)}px, ${Number(properties.y ?? 0)}px) scale(${Number(properties.scale ?? 1)}) rotate(${Number(properties.rotation ?? 0)}deg)`,
+                };
+                return (
+                  <div
+                    className="visual-layer"
+                    style={style}
+                    key={location.clip.id}
+                  >
+                    {asset.kind === "video" && (
+                      <video
+                        src={url}
+                        ref={(node) => {
+                          if (node) {
+                            visualMedia.current.set(location.clip.id, node);
+                            if (location.clip.id === previewLocation?.clip.id)
+                              previewMedia.current = node;
+                          } else visualMedia.current.delete(location.clip.id);
+                        }}
+                      />
+                    )}
+                    {asset.kind === "image" && (
+                      <img src={url} alt={asset.name} />
+                    )}
                   </div>
-                )}
-                {previewAsset.kind === "image" && (
-                  <img src={previewUrl} alt={previewAsset.name} />
-                )}
-              </>
+                );
+              })
+            ) : previewAsset?.kind === "audio" ? (
+              <div className="audio-preview">
+                <div className="large-wave">
+                  {previewAsset.waveform?.map((peak, index) => (
+                    <i
+                      key={index}
+                      style={{ height: `${Math.max(3, peak * 100)}px` }}
+                    />
+                  ))}
+                </div>
+              </div>
             ) : (
               <div className="canvas-mark">
                 <span>V</span>
@@ -1101,6 +1152,184 @@ export function App() {
                   }
                 />
               </label>
+              {selectedLocation.clip.kind !== "audio" && (
+                <div className="property-grid">
+                  <label>
+                    X position
+                    <input
+                      aria-label="X position"
+                      type="number"
+                      value={Number(selectedLocation.clip.properties.x ?? 0)}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              x: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Y position
+                    <input
+                      aria-label="Y position"
+                      type="number"
+                      value={Number(selectedLocation.clip.properties.y ?? 0)}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              y: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Scale
+                    <input
+                      aria-label="Scale"
+                      type="number"
+                      min="0.05"
+                      step="0.05"
+                      value={Number(
+                        selectedLocation.clip.properties.scale ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              scale: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Rotation
+                    <input
+                      aria-label="Rotation"
+                      type="number"
+                      step="1"
+                      value={Number(
+                        selectedLocation.clip.properties.rotation ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              rotation: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Opacity
+                    <input
+                      aria-label="Opacity"
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={Number(
+                        selectedLocation.clip.properties.opacity ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              opacity: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              )}
+              {(selectedLocation.clip.kind === "audio" ||
+                selectedLocation.clip.kind === "video") && (
+                <div className="property-grid">
+                  <label>
+                    Volume
+                    <input
+                      aria-label="Volume"
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={Number(
+                        selectedLocation.clip.properties.volume ?? 1,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              volume: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Fade in
+                    <input
+                      aria-label="Fade in"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.fadeIn ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              fadeIn: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Fade out
+                    <input
+                      aria-label="Fade out"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={Number(
+                        selectedLocation.clip.properties.fadeOut ?? 0,
+                      )}
+                      onChange={(event) =>
+                        commit(
+                          updateClip(project, selectedLocation.clip.id, {
+                            properties: {
+                              ...selectedLocation.clip.properties,
+                              fadeOut: Number(event.target.value),
+                            },
+                          }),
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              )}
               <div className="inspector-actions">
                 <button onClick={splitSelected}>Split at playhead</button>
                 <button onClick={duplicateSelected}>Duplicate</button>

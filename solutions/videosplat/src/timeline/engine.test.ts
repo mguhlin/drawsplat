@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createProject, type Clip } from "../domain/project";
 import {
   activeVisualClip,
+  activeVisualClips,
   addTrack,
   duplicateClip,
   moveClip,
@@ -39,6 +40,21 @@ describe("timeline engine", () => {
     expect(projectDuration(project)).toBe(10);
     expect(activeVisualClip(project, 5)?.clip.id).toBe("clip");
     expect(activeVisualClip(project, 11)).toBeUndefined();
+  });
+  it("returns every active visible layer in track order", () => {
+    const project = fixture();
+    project.tracks.push({
+      ...project.tracks[0],
+      id: "overlay",
+      name: "Overlay",
+      clips: [{ ...project.tracks[0].clips[0], id: "overlay-clip" }],
+    });
+    expect(activeVisualClips(project, 5).map((item) => item.clip.id)).toEqual([
+      "clip",
+      "overlay-clip",
+    ]);
+    project.tracks.find((track) => track.id === "overlay")!.hidden = true;
+    expect(activeVisualClips(project, 5)).toHaveLength(1);
   });
   it("moves and clamps clips", () =>
     expect(moveClip(fixture(), "clip", -4).tracks[0].clips[0].start).toBe(0));
