@@ -12,6 +12,10 @@ mute, and lock controls. The offline optimizer creates editing proxies or smalle
 downloadable WebM copies without overwriting or uploading original footage; see
 `docs/decisions/0002-local-video-optimization.md`.
 
+VideoSplat also imports/exports SRT and WebVTT captions and renders the layered
+timeline—including transforms, titles, effects, transitions, and mixed audio—to a
+local WebM. Export uses browser Canvas, Web Audio, and MediaRecorder without uploads.
+
 ## Development
 
 ```bash

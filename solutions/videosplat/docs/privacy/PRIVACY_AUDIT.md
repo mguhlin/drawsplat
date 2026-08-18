@@ -18,6 +18,10 @@ Status: milestone 1 baseline. Update this document whenever runtime behavior cha
 - Optional MLT XML import and export is parsed and generated locally. Remote, data,
   and executable resource URLs found in MLT producers are blocked rather than
   fetched; imported local media references must be relinked by the user.
+- SRT and WebVTT caption files are parsed and generated locally.
+- Composition export creates local media elements and a Canvas, mixes audio through
+  Web Audio, and records the resulting same-device stream with `MediaRecorder`.
+  The WebM remains a local Blob until the user explicitly downloads it.
 - No camera, microphone, screen capture, cloud provider, analytics, advertising,
   telemetry, authentication, or remote inference exists yet.
 - No cookies or `localStorage` keys are used.

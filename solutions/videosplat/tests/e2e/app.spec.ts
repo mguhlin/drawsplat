@@ -226,3 +226,33 @@ test("creates titles with transitions and visual effects", async ({ page }) => {
   );
   await expect(page.locator(".timeline-clip.text")).toHaveCount(1);
 });
+
+test("imports captions and exposes the local composition exporter", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.locator('input[accept*=".srt"]').setInputFiles({
+    name: "local.srt",
+    mimeType: "application/x-subrip",
+    buffer: Buffer.from("1\n00:00:00,000 --> 00:00:02,000\nLocal caption"),
+  });
+  await expect(page.getByText("local.srt imported locally")).toBeVisible();
+  await expect(page.locator(".title-layer")).toHaveText("Local caption");
+  await expect(page.locator(".timeline-clip.caption")).toHaveCount(1);
+  await page.getByRole("button", { name: "Export video" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Export video locally" }),
+  ).toBeVisible();
+  await expect(page.getByText("Media is not uploaded")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Render local WebM" }),
+  ).toBeEnabled();
+  await page.getByLabel("Export width").fill("160");
+  await page.getByLabel("Export height").fill("90");
+  await page.getByLabel("Export frame rate").fill("10");
+  await page.getByText("Include timeline audio").click();
+  await page.getByRole("button", { name: "Render local WebM" }).click();
+  await expect(page.getByRole("button", { name: "Download WebM" })).toBeVisible(
+    { timeout: 10000 },
+  );
+});
