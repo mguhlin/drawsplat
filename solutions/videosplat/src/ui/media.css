@@ -468,7 +468,6 @@
   background:
     radial-gradient(circle at 50% 42%, #382b80 0, #14132d 34%, #080b15 72%),
     #080b15;
-  animation: splash-exit 0.35s ease 1.55s both;
 }
 .launch-splash-glow {
   position: absolute;
@@ -539,12 +538,6 @@
   50% {
     opacity: 0.65;
     transform: scale(1.06);
-  }
-}
-@keyframes splash-exit {
-  to {
-    visibility: hidden;
-    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
