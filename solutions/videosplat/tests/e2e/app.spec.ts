@@ -72,3 +72,17 @@ test("moves, trims, and inserts clips directly on the timeline", async ({ page }
   await expect(page.locator(".timeline-clip")).toHaveCount(2);
   await expect(page.getByText("later clips moved right")).toBeVisible();
 });
+
+test("respects timeline gaps and exposes precision controls", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({ name: "delayed.svg", mimeType: "image/svg+xml", buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" fill="#135"/></svg>') });
+  await page.getByLabel("Timeline start").fill("2");
+  await page.locator(".ruler").click({ position: { x: 1, y: 15 } });
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.getByText("Timeline gap")).toBeVisible();
+  await page.getByRole("button", { name: "Pause", exact: true }).click();
+  await page.getByRole("button", { name: "Next frame" }).click();
+  await page.getByRole("button", { name: "Add video track" }).click();
+  await expect(page.locator(".track")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "Snap on" })).toHaveAttribute("aria-pressed", "true");
+});

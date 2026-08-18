@@ -2,6 +2,34 @@
 
 Date: 2026-08-18
 
+## Current status and next delivery sequence
+
+Completed foundations include the static local-first application, IndexedDB project
+and media persistence, portable project files, browser media import, timeline split,
+move and edge trimming, ripple insertion at the playhead, synchronized multi-track
+audio preview, click-to-frame video preview, and the offline WebM optimizer.
+
+The next milestones incorporate the most useful browser-suitable capabilities from
+OpenShot while keeping all media processing on the user's device:
+
+1. **Timeline precision:** magnetic snapping, frame stepping, user-created tracks,
+   track reorder/delete, drag-to-track, ripple delete, markers, and multi-selection.
+2. **Composition:** layered preview, on-canvas position/scale/crop/rotation, opacity,
+   fit/fill presets, overlays, logos, and watermarks.
+3. **Audio:** clip/track gain, fades, waveforms in clips, detached video audio,
+   panning, normalization, and optional local speech ducking.
+4. **Titles and transitions:** SVG title/lower-third templates, SRT/WebVTT captions,
+   crossfades, fades, wipes, slides, dissolves, and dip-to-black.
+5. **Animation and effects:** deterministic keyframes, linear/constant/Bezier
+   interpolation, speed changes, freeze frames, color controls, blur/pixelation,
+   and chroma key.
+6. **Local export:** shared preview/export scene graph, WebM and capability-gated MP4,
+   range export, quality presets, worker execution, and privacy preflight.
+
+Browser constraints: Blender-style 3D title rendering and unrestricted FFmpeg format
+support remain deferred. They would require large optional local runtimes and must not
+become a network service or weaken the default zero-egress experience.
+
 This plan intentionally establishes trust and rendering invariants before adding
 broad editor surface area. Each phase ends with a demonstrable, tested slice.
 
@@ -218,18 +246,16 @@ videosplat/
     fixtures/
 ```
 
-## First implementation milestone
+## Active implementation milestone — Timeline precision
 
-After approval, implement Phases 0-2 as the first milestone. That produces an
-installable, auditable local-only shell with a durable project format before media
-decoding and ML make architectural changes expensive.
+Implement magnetic snapping, frame stepping, and user-managed tracks first. Follow
+with drag-to-track, ripple delete, markers, and multi-selection once these primitives
+are stable.
 
 The milestone is complete only when:
 
 1. `npm run build`, unit tests, and browser tests pass.
-2. The app loads once online and then opens offline.
-3. A project can be created, autosaved, exported, imported, migrated, recovered,
-   and deleted locally.
-4. A Playwright test fails if the app requests an unapproved external origin.
-5. The privacy panel accurately lists current storage, permissions, and network
-   behavior.
+2. Clip motion snaps to the playhead and nearby clip edges, with a visible toggle.
+3. Previous/next-frame controls seek by the configured project frame rate.
+4. Users can add, rename, reorder, lock, and remove empty tracks.
+5. Every timeline mutation remains undoable and is covered by engine/browser tests.
