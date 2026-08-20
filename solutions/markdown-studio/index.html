@@ -10,9 +10,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-i18n="doc.title">Markdown Studio — DrawSplatTM</title>
-<meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML or WordPress block code. Strip AI writing tells. Save .md or .html.">
+<meta name="description" content="Clean, find/replace, preview, and convert Markdown to HTML, WordPress block code, Microsoft Word DOCX, or OpenDocument ODT.">
 <script src="../../assets/js/widget-i18n.js"></script>
 <script src="../../assets/js/cm-md-handoff.js"></script>
+<script src="../../vendor/jszip.min.js"></script>
 <style>
 .i18n-picker select{padding:6px 10px;border:1px solid #d9ddec;border-radius:8px;background:#fff;color:#172033;font-weight:700;font-size:.82rem;cursor:pointer}
 .i18n-picker select:focus{border-color:#7c3aed;outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.18)}
@@ -721,6 +722,8 @@ Custom HTML block.</p>
       <button class="btn" id="btn-paste-html" data-i18n="btn.pasteHtml" data-i18n-title="btn.pasteHtml.title" title="Paste HTML and convert it to Markdown or WordPress block code">Paste HTML</button>
       <button class="btn" id="btn-save-md" data-i18n="btn.saveMd" data-i18n-title="btn.saveMd.title" title="Download as .md (Ctrl+S)">Save .md</button>
       <button class="btn" id="btn-save-html" data-i18n="btn.saveHtml" data-i18n-title="btn.saveHtml.title" title="Download as .html">Save .html</button>
+      <button class="btn" id="btn-save-docx" title="Download as a Microsoft Word document">Save .docx</button>
+      <button class="btn" id="btn-save-odt" title="Download as an OpenDocument Text document">Save .odt</button>
     </div>
     <div class="toolbar-divider"></div>
     <div class="toolbar-group">
@@ -1842,6 +1845,111 @@ def hello():
     setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
+  function downloadBlob(filename, blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  }
+
+  function escapeXml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;'
+    })[ch]);
+  }
+
+  function documentTitle() {
+    return (input.value.match(/^#\s+(.+)$/m) || [, 'Document'])[1].trim();
+  }
+
+  function inlineOfficeXml(element, format) {
+    return Array.from(element.childNodes).map(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = escapeXml(node.textContent || '');
+        return format === 'docx'
+          ? '<w:r><w:t xml:space="preserve">' + text + '</w:t></w:r>' : text;
+      }
+      if (!(node instanceof HTMLElement)) return '';
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') return format === 'docx' ? '<w:r><w:br/></w:r>' : '<text:line-break/>';
+      if (tag === 'img') {
+        const label = '[Image: ' + (node.getAttribute('alt') || 'image') + ']';
+        return format === 'docx'
+          ? '<w:r><w:t>' + escapeXml(label) + '</w:t></w:r>' : escapeXml(label);
+      }
+      const content = inlineOfficeXml(node, format);
+      if (format === 'odt') {
+        if (tag === 'a') return '<text:a xlink:type="simple" xlink:href="' + escapeXml(node.getAttribute('href') || '') + '">' + content + '</text:a>';
+        const style = ({strong:'Bold',b:'Bold',em:'Italic',i:'Italic',s:'Strike',del:'Strike',strike:'Strike',code:'Code'})[tag];
+        return style ? '<text:span text:style-name="' + style + '">' + content + '</text:span>' : content;
+      }
+      const props = [];
+      if (tag === 'strong' || tag === 'b') props.push('<w:b/>');
+      if (tag === 'em' || tag === 'i') props.push('<w:i/>');
+      if (tag === 's' || tag === 'del' || tag === 'strike') props.push('<w:strike/>');
+      if (tag === 'code') props.push('<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/>');
+      const text = escapeXml(node.textContent || '');
+      return '<w:r>' + (props.length ? '<w:rPr>' + props.join('') + '</w:rPr>' : '') + '<w:t xml:space="preserve">' + text + '</w:t></w:r>';
+    }).join('');
+  }
+
+  function htmlBlocksToOffice(format) {
+    const host = document.createElement('div');
+    host.innerHTML = rawOutput.value;
+    function convert(node, listKind) {
+      if (!(node instanceof HTMLElement)) return '';
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'ul' || tag === 'ol') return Array.from(node.children).map(child => convert(child, tag)).join('');
+      if (tag === 'table') {
+        if (format === 'odt') return '<table:table>' + Array.from(node.rows).map(row => '<table:table-row>' + Array.from(row.cells).map(cell => '<table:table-cell office:value-type="string"><text:p>' + inlineOfficeXml(cell, 'odt') + '</text:p></table:table-cell>').join('') + '</table:table-row>').join('') + '</table:table>';
+        return '<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single"/><w:left w:val="single"/><w:bottom w:val="single"/><w:right w:val="single"/><w:insideH w:val="single"/><w:insideV w:val="single"/></w:tblBorders></w:tblPr>' + Array.from(node.rows).map(row => '<w:tr>' + Array.from(row.cells).map(cell => '<w:tc><w:p>' + inlineOfficeXml(cell, 'docx') + '</w:p></w:tc>').join('') + '</w:tr>').join('') + '</w:tbl>';
+      }
+      if (format === 'odt') {
+        if (/^h[1-6]$/.test(tag)) return '<text:h text:outline-level="' + tag.slice(1) + '">' + inlineOfficeXml(node, 'odt') + '</text:h>';
+        if (tag === 'li') return '<text:list><text:list-item><text:p>' + inlineOfficeXml(node, 'odt') + '</text:p></text:list-item></text:list>';
+        const style = tag === 'blockquote' ? ' text:style-name="Blockquote"' : (tag === 'pre' ? ' text:style-name="Code"' : '');
+        if (tag === 'hr') return '<text:p>────────</text:p>';
+        return '<text:p' + style + '>' + inlineOfficeXml(node, 'odt') + '</text:p>';
+      }
+      let pPr = '';
+      if (/^h[1-6]$/.test(tag)) pPr = '<w:pStyle w:val="Heading' + tag.slice(1) + '"/>';
+      if (tag === 'blockquote') pPr += '<w:ind w:left="720"/>';
+      if (tag === 'li') pPr += '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + (listKind === 'ol' ? '2' : '1') + '"/></w:numPr>';
+      if (tag === 'pre') return '<w:p><w:pPr><w:pStyle w:val="NoSpacing"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/></w:rPr><w:t xml:space="preserve">' + escapeXml(node.textContent || '') + '</w:t></w:r></w:p>';
+      if (tag === 'hr') return '<w:p><w:r><w:t>────────</w:t></w:r></w:p>';
+      return '<w:p>' + (pPr ? '<w:pPr>' + pPr + '</w:pPr>' : '') + inlineOfficeXml(node, 'docx') + '</w:p>';
+    }
+    return Array.from(host.children).map(node => convert(node, '')).join('');
+  }
+
+  async function saveDocx() {
+    const zip = new JSZip();
+    const title = documentTitle();
+    zip.file('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>');
+    zip.folder('_rels').file('.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>');
+    zip.folder('docProps').file('core.xml', '<?xml version="1.0" encoding="UTF-8"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>DrawSplat Markdown Studio</dc:creator></cp:coreProperties>');
+    const word = zip.folder('word');
+    word.file('document.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + htmlBlocksToOffice('docx') + '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>');
+    word.file('styles.xml', '<?xml version="1.0" encoding="UTF-8"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>' + [1,2,3,4,5,6].map(n => '<w:style w:type="paragraph" w:styleId="Heading' + n + '"><w:name w:val="heading ' + n + '"/><w:basedOn w:val="Normal"/><w:pPr><w:outlineLvl w:val="' + (n-1) + '"/></w:pPr><w:rPr><w:b/><w:sz w:val="' + (34-n*2) + '"/></w:rPr></w:style>').join('') + '<w:style w:type="paragraph" w:styleId="NoSpacing"><w:name w:val="No Spacing"/></w:style></w:styles>');
+    word.file('numbering.xml', '<?xml version="1.0" encoding="UTF-8"?><w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/></w:lvl></w:abstractNum><w:abstractNum w:abstractNumId="1"><w:lvl w:ilvl="0"><w:numFmt w:val="decimal"/><w:lvlText w:val="%1."/></w:lvl></w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num><w:num w:numId="2"><w:abstractNumId w:val="1"/></w:num></w:numbering>');
+    word.folder('_rels').file('document.xml.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/></Relationships>');
+    downloadBlob(suggestFilename('docx'), await zip.generateAsync({type:'blob', compression:'DEFLATE', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}));
+    showToast('Downloaded Microsoft Word document');
+  }
+
+  async function saveOdt() {
+    const zip = new JSZip();
+    const title = documentTitle();
+    zip.file('mimetype', 'application/vnd.oasis.opendocument.text', {compression:'STORE'});
+    zip.file('content.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.2"><office:body><office:text>' + htmlBlocksToOffice('odt') + '</office:text></office:body></office:document-content>');
+    zip.file('styles.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.2"><office:styles><style:style style:name="Bold" style:family="text"><style:text-properties fo:font-weight="bold"/></style:style><style:style style:name="Italic" style:family="text"><style:text-properties fo:font-style="italic"/></style:style><style:style style:name="Strike" style:family="text"><style:text-properties style:text-line-through-style="solid"/></style:style><style:style style:name="Code" style:family="text"><style:text-properties style:font-name="monospace"/></style:style><style:style style:name="Blockquote" style:family="paragraph"><style:paragraph-properties fo:margin-left="0.3in"/></style:style></office:styles></office:document-styles>');
+    zip.file('meta.xml', '<?xml version="1.0" encoding="UTF-8"?><office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" office:version="1.2"><office:meta><dc:title>' + escapeXml(title) + '</dc:title><dc:creator>DrawSplat Markdown Studio</dc:creator></office:meta></office:document-meta>');
+    zip.folder('META-INF').file('manifest.xml', '<?xml version="1.0" encoding="UTF-8"?><manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2"><manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.text"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="meta.xml" manifest:media-type="text/xml"/></manifest:manifest>');
+    downloadBlob(suggestFilename('odt'), await zip.generateAsync({type:'blob', compression:'DEFLATE', mimeType:'application/vnd.oasis.opendocument.text'}));
+    showToast('Downloaded OpenDocument text document');
+  }
+
   function suggestFilename(ext) {
     const firstHeading = (input.value.match(/^#\s+(.+)$/m) || [, ''])[1];
     const slug = firstHeading
@@ -1946,6 +2054,8 @@ def hello():
   });
   $('btn-save-md').addEventListener('click', saveMd);
   $('btn-save-html').addEventListener('click', saveHtml);
+  $('btn-save-docx').addEventListener('click', saveDocx);
+  $('btn-save-odt').addEventListener('click', saveOdt);
   $('btn-sample').addEventListener('click', () => {
     if (input.value.trim() && !confirm(t('confirm.replaceSample'))) return;
     const s = currentSample();
