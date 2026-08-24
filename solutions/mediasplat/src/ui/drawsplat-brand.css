@@ -1,0 +1,14 @@
+:root { --drawsplat-purple:#7c3aed; --drawsplat-violet:#a855f7; --drawsplat-deep:#5b21b6; --drawsplat-gold:#faa634; }
+body { background:radial-gradient(circle at 20% 0,#35205f 0,transparent 42%),#0d0818; }
+header { background:linear-gradient(90deg,#5b21b6ee,#7c3aedee 58%,#a855f7ee); border-bottom-color:#c4b5fd44; }
+.privacy { border-color:#d8b4fe66; color:#f3e8ff; background:#5b21b688; }
+.hero .eyebrow,.tool-tabs button>span,.drop-icon,.link-button,.file-symbol,.status>span,.trust strong { color:#c084fc; }
+.hero h1 { background:linear-gradient(100deg,#fff 22%,#d8b4fe 60%,#a855f7); background-clip:text; color:transparent; }
+.tool-tabs button[aria-pressed=true],.mode-cards label.selected { border-color:#a855f7; background:#291443; box-shadow:0 0 0 1px #a855f744; }
+.workspace { box-shadow:0 24px 70px #4c1d9566; }
+.file-symbol { background:#321854; }
+.range,.mode-cards input { accent-color:#a855f7; }
+.primary,.download { background:linear-gradient(120deg,#7c3aed,#a855f7); color:#fff; }
+.presets button { border-color:#7c3aed; background:#291443; color:#f3e8ff; }
+.segmented button[aria-pressed=true] { background:#5b21b6; }
+:focus-visible { outline:3px solid #a855f7; outline-offset:2px; }
