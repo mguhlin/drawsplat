@@ -1,0 +1,33 @@
+{
+  "name": "mediasplat",
+  "version": "0.1.0",
+  "private": false,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/prepare-build.mjs && node node_modules/vite/bin/vite.js --host 127.0.0.1",
+    "build": "node scripts/prepare-build.mjs && node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build && node scripts/publish.mjs",
+    "preview": "node node_modules/vite/bin/vite.js preview",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "0.12.10",
+    "@ffmpeg/ffmpeg": "0.12.15",
+    "@ffmpeg/util": "0.12.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "@vitejs/plugin-react": "latest",
+    "jsdom": "26.1.0",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  }
+}
