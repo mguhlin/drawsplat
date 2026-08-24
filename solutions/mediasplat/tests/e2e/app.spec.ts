@@ -21,3 +21,6 @@ test("shows arbitrary time and MB or GB split controls", async ({ page }) => {
 test("joins two compatible clips in the browser", async ({ page }) => {
   await page.goto("./"); await page.getByRole("button", { name: /Join/ }).click(); const bytes = await makeClip(page); await page.locator('input[type="file"]').setInputFiles([{ name: "one.webm", mimeType: "video/webm", buffer: bytes }, { name: "two.webm", mimeType: "video/webm", buffer: bytes }]); await page.getByRole("button", { name: "Join media" }).click(); await expect(page.getByRole("region", { name: "Output files" })).toBeVisible({ timeout: 60_000 }); await expect(page.getByText("joined-media.webm")).toBeVisible();
 });
+test("downloads all split parts as one ZIP", async ({ page }) => {
+  await page.goto("./"); await page.getByRole("button", { name: /Split/ }).click(); const bytes = await makeClip(page); await page.locator('input[type="file"]').setInputFiles({ name: "lesson.webm", mimeType: "video/webm", buffer: bytes }); await page.getByRole("button", { name: "Split media" }).click(); await expect(page.getByRole("button", { name: "Download all as ZIP" })).toBeVisible({ timeout: 60_000 }); const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Download all as ZIP" }).click(); expect((await download).suggestedFilename()).toBe("lesson-parts.zip");
+});

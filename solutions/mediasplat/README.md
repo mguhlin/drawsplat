@@ -8,7 +8,7 @@ MediaSplat is a private, browser-based media splitter, trimmer, and joiner. It r
 - Split into equal parts, arbitrary hours/minutes/seconds, 5/6/10-minute presets, approximate MB/GB targets, or custom ranges.
 - Join compatible streams without re-encoding or normalize mismatched inputs to MP4/MP3.
 - Process MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, MPEG transport streams, and other formats included in the bundled FFmpeg core.
-- Reorder inputs, cancel processing, monitor progress, and download each result.
+- Reorder inputs, cancel processing, monitor progress, download each result, or package all split parts into one local ZIP.
 - Installable offline PWA after the app and processing engine have been cached.
 
 ## Important behavior

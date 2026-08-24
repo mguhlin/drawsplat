@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { acceptedMedia, inspectMedia, type MediaInfo } from "../media/metadata";
 import { cancelProcessing, joinMedia, splitMedia, type ResultFile } from "../media/processor";
-import { durationRanges, equalRanges, formatTime, sizeRanges, type ProcessingMode, type TimeRange } from "../media/commands";
+import { durationRanges, equalRanges, formatTime, safeStem, sizeRanges, type ProcessingMode, type TimeRange } from "../media/commands";
+import { createZip } from "../media/archive";
 
 type Tool = "trim" | "split" | "join";
 interface Selected { id: string; file: File; info: MediaInfo }
@@ -32,6 +33,7 @@ export function App() {
     finally { setBusy(false); }
   };
   const download = (result: ResultFile) => { const url = URL.createObjectURL(result.blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = result.name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+  const downloadAll = async () => { setStatus("Packaging all parts locally…"); try { const zip = await createZip(results); download({ name: `${safeStem(primary?.file.name ?? "mediasplat")}-parts.zip`, blob: zip }); setStatus(`${results.length} files packaged and ready`); } catch (caught) { setError(caught instanceof Error ? caught.message : "The ZIP could not be created."); } };
   const accept = "video/*,audio/*,.mkv,.avi,.wmv,.ogm,.m4v,.mov,.flac,.m2ts,.mts,.ts";
   return <div className="app-shell">
     <header><a className="brand" href="../../"><img src={`${import.meta.env.BASE_URL}icon.svg`} alt=""/><span><strong>MediaSplat™</strong><small>Private splitter & joiner</small></span></a><button className="privacy" onClick={() => alert("MediaSplat processes media in your browser. No media is uploaded, and there are no accounts, analytics, ads, or tracking. The app shell and local FFmpeg engine may be cached for offline use.")}>● Local only</button></header>
@@ -57,7 +59,7 @@ export function App() {
           </div>
           {error && <div className="error" role="alert">{error}</div>}
           <div className="action-bar"><div className="status" role="status"><span>{busy ? "◌" : results.length ? "✓" : "●"}</span><div>{status}<progress max="1" value={progress}/></div></div>{busy ? <button className="danger" onClick={() => { cancelProcessing(); setBusy(false); setStatus("Processing cancelled"); }}>Cancel</button> : <button className="primary" disabled={!primary || (tool === "join" && items.length < 2)} onClick={() => void process()}>{tool === "trim" ? "Trim media" : tool === "split" ? "Split media" : "Join media"}</button>}</div>
-          {results.length > 0 && <section className="results" aria-label="Output files"><h2>Downloads ready</h2>{results.map(result => <article key={result.name}><div><strong>{result.name}</strong><small>{formatBytes(result.blob.size)}</small></div><button className="download" onClick={() => download(result)}>Download</button></article>)}</section>}
+          {results.length > 0 && <section className="results" aria-label="Output files"><div className="results-head"><h2>Downloads ready</h2>{results.length > 1 && <button className="download-all" onClick={() => void downloadAll()}>Download all as ZIP</button>}</div>{results.map(result => <article key={result.name}><div><strong>{result.name}</strong><small>{formatBytes(result.blob.size)}</small></div><button className="download" onClick={() => download(result)}>Download</button></article>)}</section>}
         </div>}
       </section>
       <section className="trust"><div><strong>⌂ On-device</strong><p>Processing happens in this tab with a locally hosted FFmpeg engine.</p></div><div><strong>◎ Broad format support</strong><p>A file can be processable even when your browser cannot preview it.</p></div><div><strong>◇ Honest quality choices</strong><p>Choose lossless keyframe cuts or precise re-encoded output.</p></div></section>
