@@ -1,8 +1,11 @@
-import { copyFile, mkdir } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 await copyFile(resolve(root, "index.vite.html"), resolve(root, "index.html"));
 await mkdir(resolve(root, "public/ffmpeg"), { recursive: true });
-for (const file of ["ffmpeg-core.js", "ffmpeg-core.wasm"]) {
-  await copyFile(resolve(root, `node_modules/@ffmpeg/core/dist/esm/${file}`), resolve(root, `public/ffmpeg/${file}`));
-}
+await copyFile(resolve(root, "node_modules/@ffmpeg/core/dist/esm/ffmpeg-core.js"), resolve(root, "public/ffmpeg/ffmpeg-core.js"));
+const wasm = await readFile(resolve(root, "node_modules/@ffmpeg/core/dist/esm/ffmpeg-core.wasm"));
+const midpoint = Math.ceil(wasm.length / 2);
+await writeFile(resolve(root, "public/ffmpeg/ffmpeg-core.part-01"), wasm.subarray(0, midpoint));
+await writeFile(resolve(root, "public/ffmpeg/ffmpeg-core.part-02"), wasm.subarray(midpoint));
+await rm(resolve(root, "public/ffmpeg/ffmpeg-core.wasm"), { force: true });

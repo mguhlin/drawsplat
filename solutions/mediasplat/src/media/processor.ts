@@ -6,14 +6,22 @@ export interface ResultFile { name: string; blob: Blob }
 export type ProcessorEvent = { kind: "progress"; value: number } | { kind: "log"; message: string };
 let ffmpeg: FFmpeg | undefined;
 let loaded = false;
+let wasmObjectURL: string | undefined;
 const coreBase = `${import.meta.env.BASE_URL}ffmpeg`;
+const localWasmURL = async () => {
+  if (wasmObjectURL) return wasmObjectURL;
+  const responses = await Promise.all([1, 2].map(part => fetch(`${coreBase}/ffmpeg-core.part-0${part}`)));
+  if (responses.some(response => !response.ok)) throw new Error("The local media engine could not be downloaded. Check the connection and retry.");
+  wasmObjectURL = URL.createObjectURL(new Blob(await Promise.all(responses.map(response => response.arrayBuffer())), { type: "application/wasm" }));
+  return wasmObjectURL;
+};
 const getEngine = async (notify: (event: ProcessorEvent) => void) => {
   if (!ffmpeg) {
     ffmpeg = new FFmpeg();
     ffmpeg.on("progress", ({ progress }) => notify({ kind: "progress", value: Math.max(0, Math.min(1, progress)) }));
     ffmpeg.on("log", ({ message }) => notify({ kind: "log", message }));
   }
-  if (!loaded) { notify({ kind: "log", message: "Loading the local media engine…" }); await ffmpeg.load({ coreURL: `${coreBase}/ffmpeg-core.js`, wasmURL: `${coreBase}/ffmpeg-core.wasm` }); loaded = true; }
+  if (!loaded) { notify({ kind: "log", message: "Loading the local media engine…" }); await ffmpeg.load({ coreURL: `${coreBase}/ffmpeg-core.js`, wasmURL: await localWasmURL() }); loaded = true; }
   return ffmpeg;
 };
 const mimeFor = (ext: string) => ({ mp4: "video/mp4", webm: "video/webm", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", oga: "audio/ogg", m4a: "audio/mp4" }[ext] ?? "application/octet-stream");
@@ -28,4 +36,4 @@ export async function joinMedia(files: File[], mode: ProcessingMode, notify: (ev
   if (files.length < 2) throw new Error("Choose at least two files to join."); const engine = await getEngine(notify); const ext = mode === "fast" ? extensionOf(files[0].name) : outputExtension(files[0], mode); const inputs = files.map((file, i) => `join-${i}.${extensionOf(file.name)}`); const manifest = "join-list.txt"; const output = `joined-media.${ext}`; const names = [...inputs, manifest, output];
   try { for (let i = 0; i < files.length; i++) { notify({ kind: "log", message: `Preparing file ${i + 1} of ${files.length}…` }); await engine.writeFile(inputs[i], await fetchFile(files[i])); } await engine.writeFile(manifest, concatManifest(inputs)); const code = await engine.exec(joinCommand(manifest, output, mode)); if (code !== 0) throw new Error(mode === "fast" ? "These streams are not compatible for lossless joining. Choose Normalize mode." : "The selected files could not be normalized and joined."); return [await readResult(engine, output)]; } finally { await cleanup(engine, names); }
 }
-export const cancelProcessing = () => { ffmpeg?.terminate(); ffmpeg = undefined; loaded = false; };
+export const cancelProcessing = () => { ffmpeg?.terminate(); ffmpeg = undefined; loaded = false; if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL); wasmObjectURL = undefined; };
