@@ -7,8 +7,8 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.19, featuring AudioSplat multitrack recording/editing and an independent self-host package; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and newly hardened (OAuth, RBAC, SSE, cron, Clever connector, parent portal, privacy packet, migration CLI, rate limits, safer CORS, admin bootstrap controls)
-- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, an AudioSplat-only solution, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
+- **Status:** v3.1.20, featuring MediaSplat and VideoSplat browser media tools, Markdown Studio DOCX/ODT export, and current independent self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
+- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
 
@@ -29,7 +29,14 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.19 — Latest stable self-host release, centered on AudioSplat, the browser-based multitrack recorder and editor.** AudioSplat records microphone and supported tab/device audio, arranges clips across tracks, provides visual range editing and effects, exports MP3/WAV and other browser-supported formats, and optionally saves an exported mix to Google Drive with link/embed controls. It ships inside DrawSplat Tools and as `audiosplat-selfhost-v3.1.19.zip`. Pinned stable release: [v3.1.19](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.19). Previous milestone: [v3.1.18](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.18) (Typing Games, Passage Coach, Markdown Studio, visual cards, and SplatWorks hub refresh).
+**DrawSplatTM v3.1.20 — Latest stable self-host release, centered on private browser media workflows.** MediaSplat handles inspection, conversion, trimming, splitting, and archive creation; VideoSplat provides browser video editing, analysis, anonymization, and export; Markdown Studio adds DOCX and ODT export. MediaSplat, VideoSplat, and AudioSplat ship inside DrawSplat Tools and as independent ZIPs. Pinned stable release: [v3.1.20](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.20). Previous milestone: [v3.1.19](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.19) (AudioSplat multitrack recording and editing).
+
+## Recent improvements (v3.1.20)
+
+- **MediaSplat.** Added private browser media inspection, conversion, trimming, splitting, multi-part ZIP output, and a Cloudflare-deployable split FFmpeg runtime.
+- **VideoSplat.** Added browser video editing, analysis, anonymization, export, private project storage, recovery guidance, and a standalone self-host package.
+- **Markdown Studio documents.** Added DOCX and ODT export alongside existing Markdown, HTML, and WordPress output.
+- **Independent downloads.** Added `mediasplat-selfhost-v3.1.20.zip` and `videosplat-selfhost-v3.1.20.zip`, included both tools in the Tools/full bundles, and refreshed all v3.1.20 packages and checksums.
 
 ## Recent improvements (v3.1.19)
 
