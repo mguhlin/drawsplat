@@ -31,6 +31,12 @@ Other docs that pair with setup:
 
 **DrawSplatTM v3.1.20 — Latest stable self-host release, centered on private browser media workflows.** MediaSplat handles inspection, conversion, trimming, splitting, and archive creation; VideoSplat provides browser video editing, analysis, anonymization, and export; Markdown Studio adds DOCX and ODT export. MediaSplat, VideoSplat, and AudioSplat ship inside DrawSplat Tools and as independent ZIPs. Pinned stable release: [v3.1.20](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.20). Previous milestone: [v3.1.19](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.19) (AudioSplat multitrack recording and editing).
 
+## Current main-branch additions
+
+- **PDFsplat™.** Added a private browser PDF workspace for merging, separating ranges/pages, reordering, rotating, duplicating, deleting, extracting, annotating, and exporting PDFs.
+- **CipherSplat™ PDF protection.** PDFsplat™ can protect edited output as authenticated CS4 `.csplat` packages and decrypt compatible single-PDF packages locally using Argon2id and AES-256-GCM.
+- **Production safeguards.** Added lazy thumbnail rendering, bounded undo history, mobile page navigation, local-only dependencies, explicit limitations, dependency licensing, route-specific no-network security headers, self-host bundle inclusion, and end-to-end browser coverage.
+
 ## Recent improvements (v3.1.20)
 
 - **MediaSplat.** Added private browser media inspection, conversion, trimming, splitting, multi-part ZIP output, and a Cloudflare-deployable split FFmpeg runtime.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">PDFsplat™</title>
+  <rect width="128" height="128" rx="26" fill="#eee9ff"/>
+  <path d="M35 20h39l21 21v67H35z" fill="#fff" stroke="#6d3ce7" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M74 20v22h21" fill="none" stroke="#6d3ce7" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M47 61h36M47 75h28M47 89h21" stroke="#172033" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="91" cy="91" r="22" fill="#f5b942" stroke="#fff" stroke-width="5"/>
+  <path d="m82 98 4-12 14-6-6 14z" fill="#5025bd"/>
+</svg>

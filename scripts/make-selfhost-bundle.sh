@@ -307,6 +307,7 @@ TOOLS_SOLUTIONS=(
   markdown-studio
   mermaid
   picture-graph
+  pdfsplat
   rubric-builder
   splatimage-studio
   sketchspace-VR

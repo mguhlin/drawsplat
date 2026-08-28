@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Open, organize, annotate, and export PDFs locally in your browser.">
+  <title>PDFsplat™ | DrawSplat</title>
+  <link rel="icon" href="./pdfsplat-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to document</a>
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">DrawSplat</span>
+      <strong>PDFsplat™</strong>
+    </div>
+    <div class="actions" role="toolbar" aria-label="Document actions">
+      <button id="openButton" class="primary" type="button">Open PDF</button>
+      <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
+      <button id="mergeButton" type="button" disabled>Add PDF</button>
+      <button id="exportButton" type="button" disabled>Export</button>
+      <button id="protectButton" type="button" disabled>Protect</button>
+      <button id="unlockButton" type="button">Unlock .csplat</button>
+      <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
+      <button id="redoButton" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
+      <a class="button-link" href="../../pages/tools.html">All Tools</a>
+    </div>
+    <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden>
+    <input id="mergeInput" type="file" accept="application/pdf,.pdf" hidden>
+    <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+    <input id="vaultInput" type="file" accept=".csplat,.ciphersplat,application/octet-stream" hidden>
+  </header>
+
+  <main id="workspace" class="workspace empty" tabindex="-1">
+    <aside id="sidebar" class="sidebar" aria-label="Page thumbnails">
+      <div class="panel-heading"><strong>Pages</strong><span id="pageCount">0</span></div>
+      <ol id="thumbnails" class="thumbnails"></ol>
+    </aside>
+
+    <section class="stage" aria-label="PDF document">
+      <div id="dropZone" class="drop-zone">
+        <div class="drop-card">
+          <div class="drop-icon" aria-hidden="true">PDF</div>
+          <h1>Open a PDF. Keep it private.</h1>
+          <p>Drop a PDF here or choose a file. Processing happens on this device.</p>
+          <button id="chooseButton" class="primary" type="button">Choose PDF</button>
+        </div>
+      </div>
+      <div id="documentView" class="document-view" hidden>
+        <div id="pageShell" class="page-shell">
+          <canvas id="pdfCanvas"></canvas>
+          <div id="annotationLayer" class="annotation-layer" aria-label="Editable annotations"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="tools" aria-label="Editing tools">
+      <div class="panel-heading"><strong>Tools</strong></div>
+      <button id="addTextButton" type="button" disabled>Add text</button>
+      <button id="highlightButton" type="button" disabled>Highlight</button>
+      <button id="drawButton" type="button" disabled>Draw</button>
+      <button id="addImageButton" type="button" disabled>Add image</button>
+      <button id="rotateLeftButton" type="button" disabled>Rotate left</button>
+      <button id="rotateRightButton" type="button" disabled>Rotate right</button>
+      <button id="duplicatePageButton" type="button" disabled>Duplicate page</button>
+      <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
+      <button id="extractPageButton" type="button" disabled>Extract page</button>
+      <button id="splitButton" type="button" disabled>Separate / Split</button>
+      <p class="tool-hint">Drag thumbnails to reorder. Text, highlights, and images remain editable until export.</p>
+      <fieldset id="textProperties" disabled>
+        <legend>Selected text</legend>
+        <label>Text <textarea id="textValue" rows="4"></textarea></label>
+        <label>Size <input id="fontSize" type="number" min="8" max="96" value="18"></label>
+        <label>Color <input id="textColor" type="color" value="#172033"></label>
+        <button id="deleteTextButton" class="danger" type="button">Delete text</button>
+      </fieldset>
+      <fieldset id="objectProperties" disabled>
+        <legend>Selected object</legend>
+        <label>Opacity <input id="objectOpacity" type="range" min="10" max="100" value="100"></label>
+        <button id="deleteObjectButton" class="danger" type="button">Delete object</button>
+      </fieldset>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span id="status" role="status" aria-live="polite">Ready</span>
+    <div class="status-controls">
+      <button id="zoomOutButton" type="button" disabled aria-label="Zoom out">−</button>
+      <span id="zoomLabel">100%</span>
+      <button id="zoomInButton" type="button" disabled aria-label="Zoom in">+</button>
+      <button id="fitButton" type="button" disabled>Fit width</button>
+      <button id="privacyButton" class="privacy" type="button">🔒 Local Processing</button>
+    </div>
+  </footer>
+
+  <dialog id="privacyDialog">
+    <form method="dialog">
+      <h2>Your files stay here</h2>
+      <p>PDF bytes, page images, extracted text, and edits are processed in this browser. DrawSplat does not upload your PDF.</p>
+      <p>This prototype stores no document or recovery data after the tab closes.</p>
+      <button class="primary" value="close">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="splitDialog">
+    <form id="splitForm">
+      <h2>Separate PDF</h2>
+      <p>Create new PDFs without changing the open document.</p>
+      <label><input type="radio" name="splitMode" value="ranges" checked> Page ranges</label>
+      <label class="dialog-field">Ranges <input id="splitRanges" type="text" placeholder="1-3, 5, 8-10" autocomplete="off"></label>
+      <label><input type="radio" name="splitMode" value="every"> One PDF for every page</label>
+      <div class="dialog-actions">
+        <button type="button" value="cancel">Cancel</button>
+        <button class="primary" type="submit">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="vaultDialog">
+    <form id="vaultForm">
+      <h2 id="vaultTitle">Protect PDF</h2>
+      <p id="vaultCopy">Export the edited PDF into a CipherSplat authenticated encrypted package.</p>
+      <label class="dialog-field">Password <input id="vaultPassword" type="password" minlength="12" required autocomplete="new-password"></label>
+      <label id="vaultConfirmRow" class="dialog-field">Confirm password <input id="vaultConfirm" type="password" minlength="12" autocomplete="new-password"></label>
+      <p class="tool-hint">Argon2id + AES-256-GCM. The password cannot be recovered. Test unlocking before deleting the original.</p>
+      <div class="dialog-actions">
+        <button id="vaultCancel" type="button">Cancel</button>
+        <button id="vaultRun" class="primary" type="submit">Protect and download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../../vendor/pdf.min.js"></script>
+  <script src="../../vendor/jszip.min.js"></script>
+  <script src="./vendor/pdf-lib.min.js"></script>
+  <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
