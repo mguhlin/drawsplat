@@ -25,8 +25,10 @@
     .text-dialog{width:min(720px,calc(100vw - 28px))}.text-grid{display:grid;grid-template-columns:1fr 240px;gap:12px}.text-grid textarea{width:100%;min-height:190px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff;color:var(--ink);line-height:1.35}.text-preview{min-height:126px;border:1px solid var(--line);border-radius:8px;padding:14px;background:#f8fafc;white-space:pre-wrap;overflow:auto}.text-size-row{display:grid;grid-template-columns:1fr 74px;gap:8px;align-items:center}.format-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.format-row button,.align-row button{min-height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;font-weight:900}.format-row button.active,.align-row button.active{border-color:var(--navy);background:var(--soft);color:var(--navy)}.align-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}@media(max-width:720px){.text-grid{grid-template-columns:1fr}}
     .working-overlay{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.42)}.working-overlay[hidden]{display:none}.working-box{width:min(380px,100%);border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:var(--shadow);padding:22px;text-align:center}.working-spinner{width:42px;height:42px;margin:0 auto 14px;border:5px solid #ddd6fe;border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite}.working-box h2{margin:0 0 8px;color:var(--navy);font-size:1.1rem}.working-box p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.4;font-weight:700}@keyframes spin{to{transform:rotate(360deg)}}
   </style>
+  <link rel="stylesheet" href="../../assets/css/tool-launcher.css"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
 </head>
 <body>
+  <button class="ds-apps-link ds-apps-floating" type="button" data-ds-app-launcher aria-label="Open DrawSplat apps">Apps ▦</button>
   <div class="top-bar" aria-hidden="true"></div>
   <div class="shell">
     <header class="header">
@@ -414,5 +416,6 @@
   init();
 })();
   </script>
+  <script type="module" src="../../assets/js/tool-launcher.js"></script>
 </body>
 </html>

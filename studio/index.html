@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Search every DrawSplat app, workspace, classroom tool, and game by what you want to do.">
+  <meta name="theme-color" content="#6d38e8">
+  <title>DrawSplat Studio | Find the right tool</title>
+  <link rel="icon" href="../assets/favicons/drawsplat.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/tool-dashboard.css">
+  <link rel="stylesheet" href="../assets/css/tool-launcher.css">
+  <link rel="stylesheet" href="../assets/css/launcher-trigger.css">
+</head>
+<body class="ds-directory">
+  <a class="ds-skip" href="#toolSearch">Skip to tool search</a>
+  <header class="ds-header">
+    <a class="ds-brand" href="../"><img src="../assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat Studio</span></a>
+    <nav class="ds-nav" aria-label="Primary navigation">
+      <a href="../app/whiteboard.html">Whiteboard</a><button class="ds-apps-link" type="button" data-ds-app-launcher>Apps ▦</button><a href="../pages/splatworks.html">SplatWorks</a><a href="../guides/">For Educators</a><a href="../pages/support.html">Support</a>
+    </nav>
+  </header>
+  <main class="ds-main">
+    <section class="ds-directory-hero">
+      <p class="ds-eyebrow">What do you want to do?</p>
+      <h1>DrawSplat Studio</h1>
+      <p>Everything in DrawSplat, in one place. Search by task, familiar product, or plain language.</p>
+      <label class="ds-search-wrap" for="toolSearch"><span>Search DrawSplat apps, tools, widgets, and games</span><input id="toolSearch" type="search" placeholder="Try “picture graph,” “make slides,” or “random picker”" autocomplete="off"></label>
+    </section>
+    <div class="ds-controls">
+      <div id="categoryFilters" class="ds-chips" aria-label="Filter by function"><button type="button" data-category="all" aria-pressed="true">All</button></div>
+      <label>Type <select id="typeFilter"><option value="all">All types</option><option value="workspace">Full workspace</option><option value="tool">Tool</option><option value="widget">Quick utility</option><option value="game">Game</option><option value="admin">Educator admin</option><option value="support">Support</option></select></label>
+    </div>
+    <div class="ds-shelves" aria-label="Your DrawSplat">
+      <section id="favoritesShelf" class="ds-shelf" hidden><h2>★ Favorites</h2><div class="ds-shelf-grid"></div></section>
+      <section id="recentsShelf" class="ds-shelf" hidden><h2>Recently used</h2><div class="ds-shelf-grid"></div></section>
+    </div>
+    <div class="ds-result-row"><h2>Find a tool</h2><span id="resultStatus" role="status" aria-live="polite">Loading tools…</span></div>
+    <section id="toolGrid" class="ds-tool-grid" aria-label="DrawSplat tools"></section>
+    <footer class="ds-footer"><span>Favorites and recents stay only in this browser.</span><span><a href="../legal/terms-privacy.html">Privacy</a> · <a href="../legal/accessibility.html">Accessibility</a> · <a href="../pages/contact.html">Contact</a></span></footer>
+  </main>
+  <script type="module" src="../assets/js/tool-dashboard.js"></script>
+  <script type="module" src="../assets/js/tool-launcher.js"></script>
+</body>
+</html>

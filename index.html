@@ -1,442 +1,79 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- DrawSplat favicons -->
-<link rel="icon" href="assets/favicons/drawsplat.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="assets/brand/DrawSplat_logo.png" />
-<link rel="manifest" href="site.webmanifest" />
-<meta name="theme-color" content="#7c3aed" />
-<!-- /DrawSplat favicons -->
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM | Whiteboard, SplatWorks, Tools, Widgets, and Games</title>
-<meta name="description" content="DrawSplatTM is a static-first classroom universe with an interactive whiteboard, SplatWorks office apps, standalone creation tools, quick widgets, games, multilingual entry pages, and self-hosted education options." />
-<meta name="deploy-check" content="pages-autodeploy-2026-07-03" />
-<link rel="canonical" href="https://drawsplat.org/" />
-<link rel="stylesheet" href="assets/css/app.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Create, teach, explain, organize, visualize, and play with privacy-first browser tools from DrawSplat.">
+  <meta name="theme-color" content="#6d38e8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>DrawSplat | What do you want to create?</title>
+  <link rel="canonical" href="https://drawsplat.org/">
+  <link rel="icon" href="assets/favicons/drawsplat.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/DrawSplat_logo.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="assets/css/home-discovery.css">
+  <link rel="stylesheet" href="assets/css/tool-launcher.css">
+  <link rel="stylesheet" href="assets/css/launcher-trigger.css">
 </head>
-<body class="admin-page start-page">
-<header class="landing-header">
-  <a class="landing-brand" href="index.html" aria-label="DrawSplatTM start">
-    <img src="assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat<sup class="tm">TM</sup></span>
-  </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers &amp; Families</summary>
-      <div class="landing-nav-menu">
-        <a href="app/whiteboard.html">Open Whiteboard</a>
-        <a href="admin/admin.html">Teacher Admin</a>
-        <a href="pages/features.html">Features</a>
-        <a href="pages/background-templates.html">Background Templates</a>
-        <a href="guides/">Teacher Guides</a>
-        <hr class="landing-nav-divider">
-        <a href="parents/index.html">Family Access Tools</a>
-        <a href="legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <a href="pages/contact.html">Contact / Information Request</a>
+<body>
+  <a class="home-skip" href="#homeSearch">Skip to search</a>
+  <header class="home-header">
+    <a class="home-brand" href="./"><img src="assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup>™</sup></span></a>
+    <nav aria-label="Primary navigation"><a href="app/whiteboard.html">Whiteboard</a><button class="ds-apps-link" type="button" data-ds-app-launcher>Apps ▦</button><a href="pages/splatworks.html">SplatWorks</a><a href="guides/">For Educators</a><a href="pages/support.html">Support</a></nav>
+  </header>
+  <main>
+    <section class="home-hero">
+      <div class="hero-orb" aria-hidden="true">✦</div>
+      <p class="home-eyebrow">One platform. Many possibilities.</p>
+      <h1>DrawSplat</h1>
+      <p class="home-tagline">Create, teach, explain, organize, visualize, and play—right in your browser.</p>
+      <div class="hero-actions"><a class="home-primary" href="app/whiteboard.html">Open Whiteboard</a><a class="home-secondary" href="studio/">Browse all apps</a></div>
+      <div class="home-search-zone">
+        <label for="homeSearch">What do you want to do?</label>
+        <input id="homeSearch" type="search" placeholder="Find a DrawSplat tool… Try “make slides” or “picture graph”" autocomplete="off" aria-controls="homeSearchResults">
+        <div id="homeSearchResults" class="home-search-results" hidden></div>
       </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Technical</summary>
-      <div class="landing-nav-menu">
-        <a href="pages/pricing.html">Pricing</a>
-        <a href="pages/download.html">Download for Self-Hosting</a>
-        <a href="legal/combined-policy.html">Get all documents below</a>
-        <a href="legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
-        <hr class="landing-nav-divider">
-        <a href="legal/accessibility.html">Accessibility Statement</a>
-        <a href="legal/district-addendum.html">District Privacy Addendum</a>
-        <a href="legal/gdpr-compliance.html">GDPR Compliance Summary</a>
-        <hr class="landing-nav-divider">
-        <a href="legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-        <a href="legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
-        <a href="legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="legal/texas-compliance.html">Texas Compliance</a>
-        <a href="legal/widgets-security.html">Widget Security Boundary</a>
+      <div class="intent-grid" aria-label="Browse by function">
+        <a href="studio/?category=create"><span>🖍</span><strong>Create</strong><small>Draw and make visuals</small></a>
+        <a href="studio/?category=data"><span>📊</span><strong>Graph</strong><small>Chart and explore data</small></a>
+        <a href="studio/?category=organize"><span>🧠</span><strong>Organize</strong><small>Connect and sort ideas</small></a>
+        <a href="studio/?category=media"><span>🎬</span><strong>Media</strong><small>Edit audio and video</small></a>
+        <a href="studio/?category=assessment"><span>✅</span><strong>Teach</strong><small>Assess and practice</small></a>
+        <a href="studio/?category=games"><span>🎲</span><strong>Play</strong><small>Games and puzzles</small></a>
       </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Support</summary>
-      <div class="landing-nav-menu">
-        <a href="blog/">Blogs About DrawSplat</a>
-        <a href="community/index.html">Community Board</a>
-        <hr class="landing-nav-divider">
-        <a href="guides/google-setup.html">Apps Script Setup Guide</a>
-        <a href="guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="guides/mysql-setup.html">MySQL Setup Guide</a>
-        <a href="pages/support.html">Support &amp; Guides Hub</a>
+    </section>
+
+    <section class="home-section workspaces">
+      <div class="home-section-head"><p class="home-eyebrow">Start with a workspace</p><h2>Room to build something bigger</h2><p>Open the whiteboard or choose a focused SplatWorks environment.</p></div>
+      <div class="workspace-grid">
+        <a class="workspace-card whiteboard" href="app/whiteboard.html"><img src="assets/favicons/whiteboard.svg" alt=""><div><h3>DrawSplat Whiteboard</h3><p>A collaborative visual workspace for lessons, explanations, media, and activities.</p></div><span>Open →</span></a>
+        <a class="workspace-card" href="splatworks/gridsplat/"><img src="assets/icons/splatworks/gridsplat-nav.png" alt=""><div><h3>GridSplat</h3><p>Spreadsheets, formulas, tables, and charts.</p></div></a>
+        <a class="workspace-card" href="splatworks/showsplat/"><img src="assets/icons/splatworks/showsplat-nav.png" alt=""><div><h3>ShowSplat</h3><p>Slides and browser presentations.</p></div></a>
+        <a class="workspace-card" href="splatworks/writesplat/"><img src="assets/icons/splatworks/writesplat-nav.png" alt=""><div><h3>WriteSplat</h3><p>Classroom documents and writing.</p></div></a>
+        <a class="workspace-card" href="splatworks/listsplat/"><img src="assets/icons/splatworks/listsplat-nav.png" alt=""><div><h3>ListSplat</h3><p>Friendly lists and database projects.</p></div></a>
       </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>SplatWorks&trade;</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="pages/writesplat.html">WriteSplat&trade;</a>
-          <a href="pages/listsplat.html">ListSplat&trade;</a>
-          <a href="pages/showsplat.html">ShowSplat&trade;</a>
-          <a href="pages/gridsplat.html">GridSplat&trade;</a>
-        </div>
-        <div class="studio-nav-icons" aria-label="SplatWorks apps">
-          <a class="studio-nav-icon-card" href="pages/writesplat.html"><img src="assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="pages/listsplat.html"><img src="assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="pages/showsplat.html"><img src="assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="pages/gridsplat.html"><img src="assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
-        </div>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>DrawSplat</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="pages/tools.html">Tools</a>
-          <a href="pages/tools.html">View All Tools</a>
-          <a href="solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
-          <a href="solutions/audiosplat/" target="_blank" rel="noopener noreferrer">AudioSplat™</a>
-          <a href="solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-          <a href="solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
-          <a href="solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
-          <a href="solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
-          <a href="solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-          <a href="solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
-          <a href="solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-          <a href="solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-          <a href="solutions/mediasplat/" target="_blank" rel="noopener noreferrer">MediaSplat™</a>
-          <a href="solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
-          <a href="solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
-          <a href="solutions/pdfsplat/" target="_blank" rel="noopener noreferrer">PDFsplat™</a>
-          <a href="solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
-          <a href="solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
-          <a href="solutions/splatimage-studio/" target="_blank" rel="noopener noreferrer">SplatImage Studio</a>
-          <a href="solutions/videosplat/" target="_blank" rel="noopener noreferrer">VideoSplat™</a>
-          <a href="solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="pages/tools.html#widgets">Widgets</a>
-          <a href="pages/tools.html#widgets">View All Widgets</a>
-          <a href="solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
-          <a href="solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
-          <a href="solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
-          <a href="solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
-          <a href="solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
-          <a href="solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
-          <a href="solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
-          <a href="solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
-          <a href="solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
-          <a href="solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-          <a href="solutions/splatbot-studio/" target="_blank" rel="noopener noreferrer">SplatBot Studio</a>
-          <a href="solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
-          <a href="solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
-          <a href="solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
-          <a href="solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
-          <a href="solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="games/">Games</a>
-          <a href="games/">View All Games</a>
-          <a href="games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
-          <a href="solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
-          <a href="games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
-          <a href="games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
-          <a href="games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
-          <a href="games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
-          <a href="games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
-          <a href="games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
-          <a href="games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
-          <a href="games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
-          <a href="games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
-          <a href="games/typing-games/" target="_blank" rel="noopener noreferrer">Typing Games</a>
-          <a href="games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
-        </div>
-      </div>
-    </details>
-  </nav>
-  <a class="landing-signin" href="pages/tools.html">Browse Studio</a>
-</header>
+    </section>
 
-<main class="landing-shell">
-  <section class="landing-hero universe-hero mainpage-hero">
-    <img src="assets/brand/mainpage_splash.png" class="universe-hero-image mainpage-hero-image" alt="DrawSplat: one creative workspace for classrooms and teams, showing the whiteboard, SplatWorks apps, tools, widgets, games, and multilingual entry options">
-    <div class="landing-hero-copy universe-hero-copy mainpage-hero-copy">
-      <p class="landing-eyebrow">The DrawSplat universe</p>
-      <h1>One creative workspace for classrooms and teams.</h1>
-      <p class="landing-lede">Whiteboards, SplatWorks apps, tools, widgets, games, and multilingual entry pages in one browser-first platform.</p>
-    </div>
-  </section>
+    <section class="home-section tools-preview">
+      <div class="home-section-head"><p class="home-eyebrow">Popular starting points</p><h2>Find the right tool without learning its name</h2></div>
+      <div id="homeFeatured" class="home-tool-grid" aria-live="polite"></div>
+      <a class="home-view-all" href="studio/">Search all DrawSplat tools →</a>
+    </section>
 
-  <section class="landing-trust universe-trust" aria-label="DrawSplatTM areas">
-    <a href="app/whiteboard.html">Whiteboard</a>
-    <a href="pages/splatworks.html">SplatWorks</a>
-    <a href="pages/tools.html">Creation Tools</a>
-    <a href="pages/tools.html#widgets">Quick Widgets</a>
-    <a href="games/">Games</a>
-    <a href="languages/index-sp.html">Languages</a>
-    <a href="admin/admin.html">Teacher Admin</a>
-  </section>
+    <section id="yourDrawSplat" class="home-section your-drawsplat" hidden>
+      <div class="home-section-head"><p class="home-eyebrow">Your DrawSplat</p><h2>Pick up where you left off</h2><p>Favorites and recents are stored only in this browser.</p></div>
+      <div class="your-columns"><section id="homeFavorites" hidden><h3>★ Favorites</h3><div></div></section><section id="homeRecents" hidden><h3>Recently used</h3><div></div></section></div>
+    </section>
 
-  <section class="featured-tool-pills" aria-label="Featured DrawSplat tools">
-    <a href="solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-    <a href="solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-    <a href="solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-    <a href="solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-    <a href="solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-    <a href="solutions/splatimage-studio/" target="_blank" rel="noopener noreferrer">SplatImage Studio</a>
-    <a href="solutions/audiosplat/" target="_blank" rel="noopener noreferrer">AudioSplat™</a>
-    <a href="solutions/mediasplat/" target="_blank" rel="noopener noreferrer">MediaSplat™</a>
-    <a href="solutions/videosplat/" target="_blank" rel="noopener noreferrer">VideoSplat™</a>
-  </section>
-
-  <section class="landing-section universe-map-section" aria-label="DrawSplatTM universe map">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Start Anywhere</p>
-      <h2>A broader toolset, still anchored by the whiteboard.</h2>
-      <p>The whiteboard remains the shared canvas. The surrounding studios and apps let teachers, students, and families jump straight into the work they need.</p>
-    </div>
-    <div class="universe-map-grid">
-      <a class="universe-map-card whiteboard" href="app/whiteboard.html">
-        <img src="assets/favicons/whiteboard.svg" alt="">
-        <span>Interactive Whiteboard</span>
-        <p>Draw, annotate, add media, use panels, graphs, concept maps, templates, turn-ins, and classroom controls.</p>
-      </a>
-      <a class="universe-map-card splatworks" href="pages/splatworks.html">
-        <img src="splatworks/gridsplat/gridsplat_icon.png" alt="">
-        <span>SplatWorks&trade;</span>
-        <p>Launch GridSplat, ShowSplat, WriteSplat, and ListSplat as a classroom office suite beside DrawSplat.</p>
-      </a>
-      <a class="universe-map-card tools" href="pages/tools.html">
-        <img src="assets/favicons/tools.svg" alt="">
-        <span>Creation Tools</span>
-        <p>Open SplatImage Studio, Chart Studio, Markdown Studio, Graph Maker, Concept Map, Rubric Builder, and more.</p>
-      </a>
-      <a class="universe-map-card widgets" href="pages/tools.html#widgets">
-        <img src="assets/icons/tools/insert-widgets.png" alt="">
-        <span>Quick Widgets</span>
-        <p>Use small focused utilities for dice, spinners, bingo, clocks, SplatBot, flashcards, tone shifts, and prompts.</p>
-      </a>
-      <a class="universe-map-card games" href="games/">
-        <img src="assets/favicons/games.svg" alt="">
-        <span>Games</span>
-        <p>Launch classroom-friendly games and puzzles without opening the whiteboard first.</p>
-      </a>
-      <a class="universe-map-card admin" href="admin/admin.html">
-        <img src="assets/favicons/admin.svg" alt="">
-        <span>Teacher Admin</span>
-        <p>Keep setup, storage, class links, and provider testing away from the student-facing workspace.</p>
-      </a>
-    </div>
-  </section>
-
-  <section class="language-strip" aria-label="DrawSplatTM language entry pages">
-    <p>DrawSplat<sup class="tm">TM</sup> interface entry pages are available where possible in English, Spanish, Vietnamese, Arabic, Chinese, and Urdu/Hindi.</p>
-    <div class="language-links">
-      <a href="app/whiteboard.html">English</a>
-      <a href="languages/index-sp.html">Spanish</a>
-      <a href="languages/index-vn.html">Vietnamese</a>
-      <a href="languages/index-ab.html">Arabic</a>
-      <a href="languages/index-cn.html">Chinese</a>
-      <a href="languages/index.uh.html">Urdu/Hindi</a>
-    </div>
-  </section>
-
-  <section class="landing-section standalone-tools-section" aria-label="DrawSplat Studio">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">DrawSplat Studio</p>
-      <h2>From quick classroom utilities to full app workspaces.</h2>
-      <p>SplatWorks&trade; is the GPL-covered office app family: GridSplat&trade; for spreadsheets, ShowSplat&trade; for slide decks and WebDecks, WriteSplat&trade; for classroom writing, and ListSplat&trade; for child-friendly database projects. DrawSplat also keeps standalone tools, widgets, and games close enough to use during the same lesson.</p>
-    </div>
-    <div class="standalone-tool-grid">
-      <a class="standalone-tool-card studio-card-featured" href="pages/splatworks.html">
-        <span>SplatWorks&trade;</span>
-        <p>Open the classroom office suite hub for GridSplat&trade;, ShowSplat&trade;, WriteSplat&trade;, and ListSplat&trade;.</p>
-      </a>
-      <a class="standalone-tool-card" href="pages/tools.html">
-        <span>DrawSplat Tools</span>
-        <p>Browse standalone creation workspaces such as SplatImage Studio, Chart Studio, Markdown Studio, Graph Maker, Concept Map, and more.</p>
-      </a>
-      <a class="standalone-tool-card" href="pages/tools.html#widgets">
-        <span>Widgets</span>
-        <p>Open quick classroom utilities such as dice, spinners, bingo tools, virtual robotics, tone helpers, and prompt builders.</p>
-      </a>
-      <a class="standalone-tool-card" href="games/">
-        <span>Games</span>
-        <p>See every standalone DrawSplat game from one page, with direct launch links for classroom-friendly play.</p>
-      </a>
-    </div>
-  </section>
-
-  <section id="features" class="landing-section">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Feature Set</p>
-      <h2>Built for active whiteboard work</h2>
-      <p>DrawSplat<sup class="tm">TM</sup> combines everyday whiteboard tools with classroom controls, media support, and flexible save options.</p>
-    </div>
-    <div class="feature-grid">
-      <article class="feature-card">
-        <span class="feature-icon">Pen</span>
-        <h3>Drawing and Annotation</h3>
-        <p>Use pen, shapes, arrows, text, sticky notes, selection tools, image crop, and object styling for live visual thinking.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon green">Panels</span>
-        <h3>Multi-Panel Boards</h3>
-        <p>Organize lessons, stations, brainstorming rounds, or project phases across multiple board panels.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon orange">Class</span>
-        <h3>Education Mode</h3>
-        <p>Reveal class, student, assignment, answer-key, moderation, and turn-in tools only when they are needed.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon blue">Media</span>
-        <h3>Rich Content</h3>
-        <p>Add images, audio notes, emojis, GIFs, mosaics, collages, word clouds, concept maps, Mermaid diagrams, and picture graphs.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon purple">Graphs</span>
-        <h3>Classroom Graph Makers</h3>
-        <p>Create bar, line, area, pie, and picture graphs. Picture graphs can use per-category images, including locally bundled Smithsonian Open Access animal photos.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon gold">Save</span>
-        <h3>Flexible Persistence</h3>
-        <p>Autosave locally, use Google Apps Script with Drive and Sheets, or prepare for a MySQL or standalone storage backend.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon green">Tools</span>
-        <h3>Student-Friendly Creation Tools</h3>
-        <p>Use Dot Pictures, Dot Paint, editable concept maps, classroom background templates, grouped shapes, alignment tools, duplication shortcuts, and resizable inserted content.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-icon red">Reset</span>
-        <h3>Session Cleanup</h3>
-        <p>Use reset controls or browser-session expiration to clear temporary work after a set window, such as 24 hours.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section tool-preview-section" aria-label="DrawSplatTM tool previews">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Tool Previews</p>
-      <h2>Visual tools students and teachers can recognize quickly</h2>
-      <p>DrawSplat<sup class="tm">TM</sup> includes graphing, picture-first graphing, diagrams, dot pictures, stickers, and collage tools inside the whiteboard.</p>
-    </div>
-    <div class="tool-preview-grid">
-      <article class="tool-preview-card wide">
-        <img src="assets/feature-graph-creator.svg" alt="Graph Creator interface preview">
-        <h3>Graph Creator</h3>
-        <p>Create bar, line, area, and pie charts from simple classroom data.</p>
-      </article>
-      <article class="tool-preview-card wide">
-        <img src="assets/feature-picture-graph.svg" alt="Picture Graph interface preview">
-        <h3>Picture Graph</h3>
-        <p>Use pictures to build and count graph categories visually.</p>
-      </article>
-      <article class="tool-preview-card">
-        <img src="assets/feature-mermaid.svg" alt="Mermaid Diagram interface preview">
-        <h3>Mermaid Diagrams</h3>
-        <p>Turn diagram syntax into editable whiteboard images.</p>
-      </article>
-      <article class="tool-preview-card">
-        <img src="assets/feature-dot-pictures.svg" alt="Dot Pictures gallery preview">
-        <h3>Dot Pictures</h3>
-        <p>Place structured dot art and paint dots for pattern work.</p>
-      </article>
-      <article class="tool-preview-card">
-        <img src="assets/feature-sticker-library.svg" alt="Sticker Library preview">
-        <h3>Sticker Library</h3>
-        <p>Add quick visual markers for feedback, prompts, and grouping.</p>
-      </article>
-      <article class="tool-preview-card">
-        <img src="assets/feature-collage.svg" alt="Collage builder preview">
-        <h3>Collage</h3>
-        <p>Combine selected images into a single visual with labels and banners.</p>
-      </article>
-    </div>
-  </section>
-
-  <section id="paths" class="landing-section path-section">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Choose Your Path</p>
-      <h2>One front door, separate workspaces</h2>
-      <p>Students get the whiteboard. Teachers and facilitators get setup, share links, and storage controls.</p>
-    </div>
-    <div class="path-grid">
-      <a class="path-card" href="app/whiteboard.html">
-        <span class="path-kicker">Students and collaborators</span>
-        <strong>Open Whiteboard</strong>
-        <p>Draw, add content, interact with panels, and work in the room or assignment configured by the teacher.</p>
-      </a>
-      <a class="path-card teacher" href="admin/admin.html">
-        <span class="path-kicker">Teachers and facilitators</span>
-        <strong>Open Teacher Admin</strong>
-        <p>Configure Google, choose storage behavior, test the backend, create share links, and keep settings off the student screen.</p>
-      </a>
-      <a class="path-card adult" href="app/whiteboard.html?workspace=productivity">
-        <span class="path-kicker">Single users and small teams</span>
-        <strong>Use Productivity Mode</strong>
-        <p>Work without classroom-specific controls for planning, diagrams, notes, facilitation, and shared visual work.</p>
-      </a>
-    </div>
-  </section>
-
-  <section id="storage" class="landing-section storage-section">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Storage Choices</p>
-      <h2>Pick the level of persistence you need</h2>
-    </div>
-    <div class="storage-grid">
-      <article class="storage-card">
-        <h3>Google Apps Script + Drive</h3>
-        <p>Saves boards, rooms, templates, and turn-ins through Google Drive and Sheets. This is the current cloud-backed classroom path.</p>
-      </article>
-      <article class="storage-card">
-        <h3>Browser-Only Timed Session</h3>
-        <p>Keeps autosave in the browser and expires it after the selected time. It works now, but it is local to each browser profile.</p>
-      </article>
-      <article class="storage-card">
-        <h3>MySQL Backend</h3>
-        <p>Planned self-hosted option for schools that want SQL-backed rooms, users, submissions, and session expiration while keeping Google Apps available.</p>
-      </article>
-      <article class="storage-card">
-        <h3>Standalone Folder Storage</h3>
-        <p>Requires a small backend API because static pages cannot write files into a server folder. The admin UI is ready for that future endpoint.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section" aria-label="DrawSplatTM community">
-    <div class="landing-section-head">
-      <p class="landing-eyebrow">Community</p>
-      <h2>Connect with other educators using DrawSplat<sup class="tm">TM</sup></h2>
-      <p>Trade lesson ideas, share tools and workflows, talk shop with administrators, and drop suggestions in the box. Sign in with your Google or Microsoft account &mdash; no passwords to remember.</p>
-    </div>
-    <div class="landing-actions" style="justify-content:center">
-      <a class="landing-cta primary" href="community/index.html">Open the Community Board</a>
-    </div>
-  </section>
-</main>
-
-<footer class="landing-footer">
-  <img src="assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later or a separate commercial license.</span>
-  <a href="https://drawsplat.org/" target="_blank" rel="noopener noreferrer">DrawSplat<sup class="tm">TM</sup>.org</a>
-  <a href="README.md">Read the README</a>
-  <a href="pages/release-notes.html">Release Notes</a>
-  <a href="pages/support.html">Support</a>
-  <a href="pages/gridsplat.html">GridSplat&trade;</a>
-  <a href="pages/tools.html">Tools</a>
-  <a href="games/">Games</a>
-  <a href="community/index.html">Community</a>
-  <a href="parents/index.html">For Families</a>
-  <a href="pages/background-templates.html">Background Templates</a>
-  <a href="pages/pricing.html">Pricing</a>
-  <a href="legal/terms-privacy.html">Terms & Privacy</a>
-  <a href="legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-</footer>
-<script src="assets/js/games-filter.js"></script><script src="assets/js/consent-banner.js" defer></script>
+    <section class="home-section institutional">
+      <div><h2>For schools & districts</h2><a href="legal/terms-privacy.html">Privacy</a><a href="legal/texas-compliance.html">Texas compliance</a><a href="legal/district-addendum.html">District addendum</a><a href="legal/accessibility.html">Accessibility</a><a href="pages/download.html">Self-hosting & deployment</a><a href="pages/pricing.html">Pricing & support</a></div>
+      <div><h2>For families</h2><a href="parents/">Family access tools</a><a href="legal/terms-privacy.html">Privacy information</a><a href="pages/contact.html">Contact</a><a href="languages/index-sp.html">Español</a></div>
+      <div><h2>Help</h2><a href="guides/">Teacher guides</a><a href="pages/support.html">Support & setup</a><a href="community/">Community</a><a href="admin/admin.html">Teacher Admin</a><a href="pages/background-templates.html">Templates</a></div>
+    </section>
+  </main>
+  <footer class="home-footer"><span>DrawSplat™ · Privacy-first tools for classrooms and creators.</span><span><a href="legal/terms-privacy.html">Privacy</a> · <a href="legal/accessibility.html">Accessibility</a> · <a href="pages/contact.html">Contact</a></span></footer>
+  <script type="module" src="assets/js/home-discovery.js"></script>
+  <script type="module" src="assets/js/tool-launcher.js"></script>
 </body>
 </html>
