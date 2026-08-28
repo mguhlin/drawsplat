@@ -75,6 +75,17 @@ test('multi-selects thumbnails and applies page actions to the selection', async
   await thumbs.nth(2).click({ modifiers:['Control'] });
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
+  await thumbs.nth(2).click({ button:'right' });
+  await expect(page.getByRole('heading', { name:'Move selected pages' })).toBeVisible();
+  await page.locator('#movePagePosition').fill('2');
+  await page.getByRole('button', { name:'Move pages' }).click();
+  await expect(page.locator('#status')).toContainText('positions 2–3');
+  await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
+
+  await page.locator('.thumbnail.selected').first().dragTo(page.locator('.thumbnail').last());
+  await expect(page.locator('#status')).toContainText('positions 3–4');
+  await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
+
   await page.getByRole('button', { name:'Rotate right' }).click();
   await page.getByRole('button', { name:'Duplicate page' }).click();
   await expect(page.locator('.thumbnail')).toHaveCount(6);

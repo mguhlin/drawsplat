@@ -70,7 +70,7 @@
       <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
       <button id="extractPageButton" type="button" disabled>Extract page</button>
       <button id="splitButton" type="button" disabled>Separate / Split</button>
-      <p class="tool-hint">Ctrl/Cmd-click thumbnails to select multiple pages; Shift-click selects a range. Drag to reorder. Remove area creates a visual cover, not secure redaction.</p>
+      <p class="tool-hint">Ctrl/Cmd-click thumbnails to select multiple pages; Shift-click selects a range. Drag selected pages to reorder, or right-click to move them to an exact page. Remove area creates a visual cover, not secure redaction.</p>
       <fieldset id="textProperties" disabled>
         <legend>Selected text</legend>
         <label>Text <textarea id="textValue" rows="4"></textarea></label>
@@ -116,6 +116,18 @@
       <div class="dialog-actions">
         <button type="button" value="cancel">Cancel</button>
         <button class="primary" type="submit">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="movePagesDialog">
+    <form id="movePagesForm">
+      <h2>Move selected pages</h2>
+      <p id="movePagesCopy">Choose the position where the selected page should begin.</p>
+      <label class="dialog-field">Move to page <input id="movePagePosition" type="number" min="1" step="1" required inputmode="numeric"></label>
+      <div class="dialog-actions">
+        <button id="movePagesCancel" type="button">Cancel</button>
+        <button class="primary" type="submit">Move pages</button>
       </div>
     </form>
   </dialog>
