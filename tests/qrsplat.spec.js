@@ -39,6 +39,30 @@ test('QRSplat adds and cartoon-stylizes a custom center image locally', async ({
   await expect(page.locator('#qrPreview svg image')).toHaveCount(0);
 });
 
+test('Reset clears the current QR without deleting saved designs', async ({ page }) => {
+  await page.goto('/solutions/qrsplat/');
+  await page.locator('#qrContent').fill('https://example.org/finished');
+  await page.locator('#designName').fill('Keep this saved design');
+  await page.locator('#saveDesign').click();
+  await page.locator('#template').selectOption('drawsplat');
+  await page.locator('#centerImage').setInputFiles('assets/brand/DrawSplat_logo_transparent.png');
+  await page.locator('#centerImageSize').fill('22');
+
+  await page.getByRole('button', { name:'Reset' }).click();
+
+  await expect(page.locator('[data-mode="standard"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#contentType')).toHaveValue('url');
+  await expect(page.locator('#qrContent')).toHaveValue('');
+  await expect(page.locator('#payloadPreview')).toHaveText('Nothing yet');
+  await expect(page.locator('#qrPreview svg')).toHaveCount(0);
+  await expect(page.locator('#template')).toHaveValue('classic');
+  await expect(page.locator('#errorLevel')).toHaveValue('M');
+  await expect(page.locator('#centerImageSize')).toHaveValue('18');
+  await expect(page.locator('#centerImageControls')).toBeHidden();
+  await expect(page.locator('#designName')).toHaveValue('My QR code');
+  await expect(page.locator('#savedDesigns')).toContainText('Keep this saved design');
+});
+
 test('QRSplat generates Wi-Fi payloads and downloads SVG and PNG files', async ({ page }) => {
   await page.goto('/solutions/qrsplat/');
   await page.locator('#contentType').selectOption('wifi');
