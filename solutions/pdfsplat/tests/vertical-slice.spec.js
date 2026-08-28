@@ -19,6 +19,9 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name: 'lesson.pdf', mimeType: 'application/pdf', buffer: Buffer.from(bytes) });
   await expect(page.locator('#status')).toContainText('2 pages');
+  await expect(page.locator('#dropZone')).toBeHidden();
+  await expect(page.locator('#documentView')).toBeVisible();
+  await expect(page.locator('#pdfCanvas')).toBeVisible();
   await page.getByRole('button', { name: 'Add text' }).click();
   await page.locator('#textValue').fill('Teacher directions');
   await page.locator('#textValue').press('Tab');
