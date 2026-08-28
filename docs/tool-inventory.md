@@ -8,7 +8,7 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | --- | ---: | --- |
 | Main workspace | 1 | DrawSplat Whiteboard |
 | SplatWorks workspaces | 4 | GridSplat, ShowSplat, WriteSplat, ListSplat |
-| Standalone solutions | 36 | Every public `/solutions/` directory, including PDFsplat and CipherSplat |
+| Standalone solutions | 37 | Every public `/solutions/` directory, including PDFsplat, QRSplat, and CipherSplat |
 | Games and puzzles | 12 | Every game card currently listed on `/games/`; Dots and Boxes is hosted under `/solutions/` |
 | Educator/family/support destinations | 5 | Teacher Admin, Family Access, templates, guides, and support |
 

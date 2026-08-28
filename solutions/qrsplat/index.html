@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Create, brand, copy, and update QR codes locally in your browser.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>QRSplat Studio | DrawSplat</title>
+  <link rel="icon" href="qrsplat-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/tool-launcher.css">
+  <link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <a class="skip" href="#qrContent">Skip to QR settings</a>
+  <header class="app-header">
+    <a class="brand" href="../../"><img src="qrsplat-icon.svg" alt=""><span><small>DrawSplat</small><strong>QRSplat Studio</strong></span></a>
+    <nav aria-label="Application actions"><span class="local-badge">🔒 Local by default</span><button type="button" data-ds-app-launcher>Apps ▦</button><a href="#help">Help</a></nav>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">QR codes without the clutter</p><h1>Create, brand, copy, and update QR codes.</h1><p>Make polished QR codes in your browser. Nothing is uploaded unless you explicitly use an administrator-configured editable redirect.</p></div>
+      <div class="mode-switch" role="group" aria-label="QR code type"><button class="active" data-mode="standard" aria-pressed="true">Standard QR</button><button data-mode="editable" aria-pressed="false">Editable QR</button></div>
+    </section>
+
+    <section class="studio" aria-label="QR code studio">
+      <form id="qrForm" class="controls">
+        <div id="standardFields">
+          <label>Content type<select id="contentType"><option value="url">Website URL</option><option value="text">Plain text</option><option value="email">Email</option><option value="phone">Phone</option><option value="wifi">Wi-Fi</option></select></label>
+          <label id="primaryField">Destination URL<input id="qrContent" type="url" value="https://drawsplat.org/" required spellcheck="false"></label>
+          <div id="wifiFields" hidden><label>Network name<input id="wifiName" autocomplete="off"></label><label>Password<input id="wifiPassword" autocomplete="off"></label><label>Security<select id="wifiSecurity"><option>WPA</option><option>WEP</option><option value="nopass">None</option></select></label><label class="check"><input id="wifiHidden" type="checkbox"> Hidden network</label></div>
+        </div>
+        <div id="editableFields" hidden>
+          <div class="editable-notice"><strong>Editable QR codes use an optional redirect service.</strong><p>The QR stores a permanent redirect address. Updating its destination later does not change the printed QR image.</p><button id="backendSetup" type="button">Configure editable QR service</button></div>
+          <label>Destination URL<input id="editableDestination" type="url" placeholder="https://example.org/new-resource"></label>
+          <div class="edit-tabs" role="group" aria-label="Editable QR action"><button type="button" class="active" data-edit-action="create">Create new</button><button type="button" data-edit-action="update">Update existing</button></div>
+          <label id="codeField" hidden>QR code ID<input id="editableCode" pattern="[A-Za-z0-9_-]{4,32}" autocomplete="off"></label>
+          <button id="editableRun" class="primary full" type="button" disabled>Create editable QR</button>
+          <p id="editableStatus" role="status" aria-live="polite"></p>
+        </div>
+
+        <fieldset><legend>Style</legend>
+          <label>Template<select id="template"><option value="classic">Classic</option><option value="drawsplat">DrawSplat</option><option value="tcea">TCEA</option><option value="custom">Custom</option></select></label>
+          <div class="two"><label>Dots<input id="darkColor" type="color" value="#172033"></label><label>Background<input id="lightColor" type="color" value="#ffffff"></label></div>
+          <div class="two"><label>Size<select id="qrSize"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option></select></label><label>Error correction<select id="errorLevel"><option value="L">Low</option><option value="M" selected>Medium</option><option value="Q">Quartile</option><option value="H">High</option></select></label></div>
+          <label>Quiet zone<input id="quietZone" type="range" min="2" max="8" value="4"><output id="quietOutput">4 modules</output></label>
+          <label class="check"><input id="brandMark" type="checkbox"> Add template mark in center</label>
+        </fieldset>
+        <label>Design name<input id="designName" value="My QR code" maxlength="80"></label>
+        <div class="button-row"><button id="saveDesign" type="button">Save design locally</button><button id="newDesign" type="button">Reset</button></div>
+        <label>Saved designs<select id="savedDesigns"><option value="">Choose a saved design…</option></select></label>
+      </form>
+
+      <section class="preview" aria-label="QR code preview">
+        <div class="preview-card"><div id="qrPreview" aria-label="Generated QR code"></div><p id="scanMessage" role="status" aria-live="polite">Ready to scan</p></div>
+        <div class="export-actions"><button id="copyPng" class="primary" type="button">Copy PNG</button><button id="downloadPng" type="button">Download PNG</button><button id="copySvg" type="button">Copy SVG</button><button id="downloadSvg" type="button">Download SVG</button></div>
+        <details><summary>QR contents</summary><code id="payloadPreview"></code></details>
+      </section>
+    </section>
+
+    <section id="help" class="help-grid">
+      <article><h2>Standard QR</h2><p>The destination is stored directly in the QR. Generation and export stay entirely on this device.</p></article>
+      <article><h2>Editable QR</h2><p>The QR stores a redirect URL. This requires an administrator-managed service and should have a long-term maintenance plan.</p></article>
+      <article><h2>Print safely</h2><p>Keep a clear quiet zone, use strong contrast, and test the final printed code with more than one device before distributing it.</p></article>
+    </section>
+  </main>
+
+  <dialog id="backendDialog"><form method="dialog"><button class="dialog-close" value="cancel" aria-label="Close">×</button><h2>Editable QR service</h2><p>Enter the deployed Google Apps Script web-app URL supplied by your administrator. The administrative key is kept only for this browser session.</p><label>Apps Script endpoint<input id="backendUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec"></label><label>Public redirect base<input id="redirectBase" type="url" placeholder="https://script.google.com/macros/s/.../exec?code="></label><label>Administrative key<input id="adminKey" type="password" autocomplete="off"></label><p class="security-note">Share the public QR redirect URL, never the administrative key. Use a password manager and rotate exposed keys.</p><div class="dialog-actions"><button value="cancel">Cancel</button><button id="saveBackend" class="primary" value="default">Save configuration</button></div></form></dialog>
+  <canvas id="renderCanvas" hidden></canvas>
+  <footer>QRSplat Studio · Local-first static QR generation · <a href="README.md">Setup documentation</a></footer>
+  <script src="vendor/qrcode.js"></script>
+  <script src="app.js"></script>
+  <script type="module" src="../../assets/js/tool-launcher.js"></script>
+</body>
+</html>
