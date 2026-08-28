@@ -23,6 +23,15 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await expect(page.locator('#documentView')).toBeVisible();
   await expect(page.locator('#pdfCanvas')).toBeVisible();
   await page.getByRole('button', { name: 'Add text' }).click();
+  const textBoxBefore = await page.locator('.text-object').boundingBox();
+  const resizeHandle = await page.getByRole('button', { name:'Resize text' }).boundingBox();
+  await page.mouse.move(resizeHandle.x + resizeHandle.width / 2, resizeHandle.y + resizeHandle.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(resizeHandle.x + 90, resizeHandle.y + 45, { steps:5 });
+  await page.mouse.up();
+  const textBoxAfter = await page.locator('.text-object').boundingBox();
+  expect(textBoxAfter.width).toBeGreaterThan(textBoxBefore.width + 50);
+  expect(textBoxAfter.height).toBeGreaterThan(textBoxBefore.height + 20);
   await page.locator('#textValue').fill('Teacher directions');
   await page.locator('#textValue').press('Tab');
 

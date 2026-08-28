@@ -551,6 +551,15 @@ function renderAnnotations() {
       height: `${object.h * 100}%`,
       opacity: object.opacity ?? 1,
     });
+    if (["text", "highlight", "mask"].includes(object.type)) {
+      const handle = document.createElement("button");
+      handle.type = "button";
+      handle.className = "resize-handle";
+      handle.contentEditable = "false";
+      handle.setAttribute("aria-label", `Resize ${object.type}`);
+      handle.onpointerdown = (event) => startResize(event, node, object);
+      node.append(handle);
+    }
     node.onpointerdown = (e) => startDrag(e, node, object);
     node.onclick = (e) => {
       e.stopPropagation();
@@ -705,6 +714,28 @@ function syncSize(node, o) {
   o.h = rect.height / parent.height;
   clampObject(o);
   commit(before, "Resize object");
+}
+function startResize(event, node, object) {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const before = snapshot(), parent = els.annotationLayer.getBoundingClientRect(), startX = event.clientX, startY = event.clientY, startWidth = object.w, startHeight = object.h, handle = event.currentTarget;
+  handle.setPointerCapture(event.pointerId);
+  const move = (next) => {
+    object.w = startWidth + (next.clientX - startX) / parent.width;
+    object.h = startHeight + (next.clientY - startY) / parent.height;
+    clampObject(object);
+    node.style.width = `${object.w * 100}%`;
+    node.style.height = `${object.h * 100}%`;
+  };
+  const up = () => {
+    handle.removeEventListener("pointermove", move);
+    commit(before, "Resize object");
+    renderAnnotations();
+    announce(`${object.type === "text" ? "Text box" : "Object"} resized.`);
+  };
+  handle.addEventListener("pointermove", move);
+  handle.addEventListener("pointerup", up, { once: true });
 }
 function startDrag(event, node, o) {
   if (event.button !== 0 || state.mode !== "select" || event.target.isContentEditable) return;

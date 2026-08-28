@@ -13,13 +13,14 @@
 .mobile-only{display:none}
 .editable-object{position:absolute;border:1px dashed transparent;cursor:move;touch-action:none}
 .editable-object:hover,.editable-object.selected{border-color:var(--purple);outline:2px solid rgb(109 60 231/.18)}
-.text-object{position:absolute;min-width:80px;min-height:32px;padding:4px 7px;white-space:pre-wrap;overflow:hidden;resize:both}
+.text-object{position:absolute;min-width:80px;min-height:32px;padding:4px 7px;white-space:pre-wrap;overflow:hidden;resize:none}
 .text-object.replacement-object{min-width:0;min-height:0;padding:0 2px;white-space:pre;overflow:hidden}
 .text-object.replacement-object[contenteditable="true"]{cursor:text}
 .text-object.replacement-object[contenteditable="true"]:focus{outline:2px solid var(--purple);border-color:var(--purple)}
 .mask-object{min-width:8px;min-height:8px;background:#fff;resize:both}
 .highlight-object{min-width:24px;min-height:12px;background:#ffe45c;mix-blend-mode:multiply;resize:both}
 .image-object{min-width:40px;min-height:40px;object-fit:contain;resize:both;overflow:hidden}
+.resize-handle{display:none;position:absolute;right:-7px;bottom:-7px;z-index:4;width:16px;height:16px;min-height:0;padding:0;border:2px solid #fff;border-radius:3px;background:var(--purple);box-shadow:0 0 0 1px var(--purple);cursor:nwse-resize;touch-action:none}.editable-object.selected>.resize-handle,.editable-object:focus>.resize-handle{display:block}
 .drawing-object{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .annotation-layer.drawing{cursor:crosshair}
 .annotation-layer.drawing .editable-object{pointer-events:none}
