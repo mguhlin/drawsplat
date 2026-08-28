@@ -31,7 +31,7 @@ Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers a
 - CipherSplat™ protection uses its CS4 chunked format: Argon2id v1.3 (64 MiB, three passes, one lane) and AES-256-GCM with authenticated metadata and records.
 - Unlock accepts current CS4 packages containing exactly one PDF. Password fields are cleared after every attempt and passwords are never stored.
 
-The production headers for `/solutions/pdfsplat/*` deny network connections and unnecessary browser permissions. `wasm-unsafe-eval` is limited to the locally bundled Argon2id WebAssembly engine.
+The production headers for `/solutions/pdfsplat/*` allow only same-origin connections for bundled application data and deny cross-origin connections and unnecessary browser permissions. `wasm-unsafe-eval` is limited to the locally bundled Argon2id WebAssembly engine.
 
 ## Honest limitations
 
