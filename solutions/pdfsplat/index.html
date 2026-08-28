@@ -8,6 +8,7 @@
   <link rel="icon" href="./pdfsplat-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
+  <link rel="stylesheet" href="../../assets/css/app-language.css">
 </head>
 <body>
   <a class="skip-link" href="#workspace">Skip to document</a>
@@ -25,6 +26,7 @@
       <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
       <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
       <button id="redoButton" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
+      <label class="ds-language-control ds-language-inline"><span>🌐 Language</span><select data-pdf-language aria-label="Language"><option value="en">English</option><option value="es">Español</option><option value="vi">Tiếng Việt</option><option value="ar">العربية</option><option value="zh">中文</option><option value="uh">हिन्दी / اردو</option></select></label>
       <button class="ds-apps-link" type="button" data-ds-app-launcher aria-label="Open DrawSplat apps">Apps ▦</button>
     </div>
     <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden>
@@ -182,5 +184,6 @@
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
   <script type="module" src="./src/app.js"></script>
   <script type="module" src="../../assets/js/tool-launcher.js"></script>
+  <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>
 </html>

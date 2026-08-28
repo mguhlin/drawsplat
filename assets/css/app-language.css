@@ -1,0 +1,48 @@
+.ds-language-control {
+  position: fixed;
+  z-index: 10000;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid rgb(124 58 237 / 35%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+  color: #172033;
+  box-shadow: 0 8px 28px rgb(23 32 51 / 20%);
+  font: 700 13px/1 system-ui, sans-serif;
+}
+.ds-language-control select {
+  min-height: 32px;
+  max-width: 132px;
+  border: 1px solid #d7dce7;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  padding: 4px 7px;
+  font: inherit;
+}
+.ds-language-control select:focus-visible { outline: 3px solid #f5b942; outline-offset: 2px; }
+.ds-language-control.ds-language-inline {
+  position: static;
+  z-index: auto;
+  min-height: 42px;
+  padding: 4px 6px;
+  box-shadow: none;
+}
+.ds-language-inline > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+.ds-language-inline select { width: 106px; }
+@media (max-width: 600px) {
+  .ds-language-control { right: 8px; bottom: 8px; }
+  .ds-language-control span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+}
+@media (prefers-reduced-motion: reduce) { .ds-language-control * { scroll-behavior: auto; } }

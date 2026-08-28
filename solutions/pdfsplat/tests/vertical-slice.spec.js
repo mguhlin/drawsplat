@@ -93,7 +93,8 @@ test('multi-selects thumbnails and applies page actions to the selection', async
   await expect(page.locator('#status')).toContainText('positions 2–3');
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
-  await page.locator('.thumbnail.selected').first().dragTo(page.locator('.thumbnail').last());
+  await page.locator('.thumbnail').last().scrollIntoViewIfNeeded();
+  await page.locator('.thumbnail.selected').last().dragTo(page.locator('.thumbnail').last());
   await expect(page.locator('#status')).toContainText('positions 3–4');
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
