@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Open, organize, annotate, and export PDFs locally in your browser.">
   <title>PDFsplat™ | DrawSplat</title>
-  <link rel="icon" href="./pdfsplat-icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./pdfsplat.png" type="image/png">
+  <link rel="apple-touch-icon" href="./pdfsplat.png">
   <link rel="stylesheet" href="./css/app.css">
+  <link rel="stylesheet" href="./css/branding.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
 </head>
@@ -14,6 +16,7 @@
   <a class="skip-link" href="#workspace">Skip to document</a>
   <header class="topbar">
     <div class="brand">
+      <img src="./pdfsplat.png" alt="">
       <span class="eyebrow">DrawSplat</span>
       <strong>PDFsplat™</strong>
     </div>
@@ -44,7 +47,7 @@
     <section class="stage" aria-label="PDF document">
       <div id="dropZone" class="drop-zone">
         <div class="drop-card">
-          <div class="drop-icon" aria-hidden="true">PDF</div>
+          <img class="drop-logo" src="./pdfsplat.png" alt="PDFsplat logo">
           <h1>Open a PDF. Keep it private.</h1>
           <p>Drop a PDF here or choose a file. Processing happens on this device.</p>
           <button id="chooseButton" class="primary" type="button">Choose PDF</button>

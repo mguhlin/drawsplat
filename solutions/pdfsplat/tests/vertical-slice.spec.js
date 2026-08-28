@@ -9,6 +9,14 @@ async function makePdf(label, size = [300, 500]) {
   return document.save();
 }
 
+test('uses the supplied PDFsplat artwork for app and splash branding', async ({ page }) => {
+  await page.goto('/solutions/pdfsplat/');
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', './pdfsplat.png');
+  await expect(page.locator('.brand img')).toHaveAttribute('src', './pdfsplat.png');
+  await expect(page.locator('.drop-logo')).toBeVisible();
+  await expect(page.locator('.drop-logo')).toHaveJSProperty('naturalWidth', 1254);
+});
+
 test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ page }) => {
   const source = await PDFDocument.create();
   const font = await source.embedFont(StandardFonts.Helvetica);
