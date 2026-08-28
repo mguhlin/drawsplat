@@ -5,7 +5,7 @@ const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -341,7 +341,7 @@ async function renderThumbnails() {
     };
     li.oncontextmenu = (e) => {
       e.preventDefault();
-      openMovePagesDialog(index);
+      openPageActions(index);
     };
     state.thumbnailObserver.observe(li);
   }
@@ -382,6 +382,20 @@ function moveSelectedPages(to) {
   const end = destination + moved.length;
   announce(moved.length === 1 ? `Page moved to position ${destination + 1}.` : `${moved.length} pages moved to positions ${destination + 1}–${end}.`);
 }
+let pageActionsIndex = 0;
+function openPageActions(index) {
+  if (!state.selectedPageIds.has(state.pages[index].id)) {
+    selectOnlyPage(index);
+    state.current = index;
+    renderAll();
+  }
+  pageActionsIndex = index;
+  const count = selectedPageIndexes().length;
+  els.pageActionsTitle.textContent = count === 1 ? `Page ${index + 1} actions` : `${count} selected pages`;
+  els.pageActionsCopy.textContent = count === 1 ? "Choose an action for this page." : "This action will apply to every selected page.";
+  els.pageActionsDialog.showModal();
+  els.contextMoveButton.focus();
+}
 function openMovePagesDialog(index) {
   if (!state.selectedPageIds.has(state.pages[index].id)) {
     selectOnlyPage(index);
@@ -395,6 +409,28 @@ function openMovePagesDialog(index) {
   els.movePagePosition.value = String(Math.min(index + 1, max));
   els.movePagesDialog.showModal();
   els.movePagePosition.select();
+}
+function selectedRangesText() {
+  const indexes = selectedPageIndexes().map((index) => index + 1),
+    ranges = [];
+  let start = indexes[0],
+    end = start;
+  for (const page of indexes.slice(1)) {
+    if (page === end + 1) end = page;
+    else {
+      ranges.push(start === end ? `${start}` : `${start}-${end}`);
+      start = end = page;
+    }
+  }
+  ranges.push(start === end ? `${start}` : `${start}-${end}`);
+  return ranges.join(", ");
+}
+function openSelectedSplit() {
+  els.pageActionsDialog.close();
+  els.splitForm.querySelector('[name="splitMode"][value="ranges"]').checked = true;
+  els.splitRanges.value = selectedRangesText();
+  els.splitDialog.showModal();
+  els.splitRanges.focus();
 }
 function submitMovePages(event) {
   event.preventDefault();
@@ -1058,6 +1094,24 @@ els.extractPageButton.onclick = extractPages;
 els.splitButton.onclick = () => els.splitDialog.showModal();
 els.splitForm.onsubmit = splitPdf;
 els.splitDialog.querySelector('[value="cancel"]').onclick = () => els.splitDialog.close();
+els.contextMoveButton.onclick = () => {
+  els.pageActionsDialog.close();
+  openMovePagesDialog(pageActionsIndex);
+};
+els.contextDuplicateButton.onclick = () => {
+  els.pageActionsDialog.close();
+  duplicatePage();
+};
+els.contextExtractButton.onclick = () => {
+  els.pageActionsDialog.close();
+  extractPages();
+};
+els.contextSplitButton.onclick = openSelectedSplit;
+els.contextDeleteButton.onclick = () => {
+  els.pageActionsDialog.close();
+  deletePage();
+};
+els.contextCancelButton.onclick = () => els.pageActionsDialog.close();
 els.movePagesForm.onsubmit = submitMovePages;
 els.movePagesCancel.onclick = () => els.movePagesDialog.close();
 els.deleteTextButton.onclick = deleteSelected;

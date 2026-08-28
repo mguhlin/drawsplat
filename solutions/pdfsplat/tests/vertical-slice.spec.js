@@ -76,6 +76,8 @@ test('multi-selects thumbnails and applies page actions to the selection', async
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
   await thumbs.nth(2).click({ button:'right' });
+  await expect(page.getByRole('heading', { name:'2 selected pages' })).toBeVisible();
+  await page.getByRole('menuitem', { name:'Move to page…' }).click();
   await expect(page.getByRole('heading', { name:'Move selected pages' })).toBeVisible();
   await page.locator('#movePagePosition').fill('2');
   await page.getByRole('button', { name:'Move pages' }).click();
@@ -87,20 +89,28 @@ test('multi-selects thumbnails and applies page actions to the selection', async
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
   await page.getByRole('button', { name:'Rotate right' }).click();
-  await page.getByRole('button', { name:'Duplicate page' }).click();
+  await page.locator('.thumbnail.selected').first().click({ button:'right' });
+  await page.getByRole('menuitem', { name:'Duplicate' }).click();
   await expect(page.locator('.thumbnail')).toHaveCount(6);
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
-  await page.getByRole('button', { name:'Delete page' }).click();
+  await page.locator('.thumbnail.selected').first().click({ button:'right' });
+  await page.getByRole('menuitem', { name:'Delete' }).click();
   await expect(page.locator('.thumbnail')).toHaveCount(4);
 
   await page.locator('.thumbnail').nth(0).click();
   await page.locator('.thumbnail').nth(2).click({ modifiers:['Shift'] });
   await expect(page.locator('.thumbnail.selected')).toHaveCount(3);
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name:'Extract page' }).click();
+  await page.locator('.thumbnail.selected').first().click({ button:'right' });
+  await page.getByRole('menuitem', { name:'Extract' }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('packet-selected-pages.pdf');
   expect((await PDFDocument.load(await require('fs/promises').readFile(await download.path()))).getPageCount()).toBe(3);
+
+  await page.locator('.thumbnail.selected').first().click({ button:'right' });
+  await page.getByRole('menuitem', { name:'Separate / Split' }).click();
+  await expect(page.getByRole('heading', { name:'Separate PDF' })).toBeVisible();
+  await expect(page.locator('#splitRanges')).toHaveValue('1-3');
 });
 
 test('visually removes any selected page area and keeps the cover editable', async ({ page }) => {
