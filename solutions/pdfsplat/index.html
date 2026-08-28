@@ -20,8 +20,8 @@
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
       <button id="exportButton" type="button" disabled>Export</button>
-      <button id="protectButton" type="button" disabled>Protect</button>
-      <button id="unlockButton" type="button">Unlock .csplat</button>
+      <button id="protectButton" type="button">Protect / Unprotect</button>
+      <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
       <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
       <button id="redoButton" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
       <a class="button-link" href="../../pages/tools.html">All Tools</a>
@@ -122,14 +122,29 @@
 
   <dialog id="vaultDialog">
     <form id="vaultForm">
-      <h2 id="vaultTitle">Protect PDF</h2>
-      <p id="vaultCopy">Export the edited PDF into a CipherSplat authenticated encrypted package.</p>
-      <label class="dialog-field">Password <input id="vaultPassword" type="password" minlength="12" required autocomplete="new-password"></label>
-      <label id="vaultConfirmRow" class="dialog-field">Confirm password <input id="vaultConfirm" type="password" minlength="12" autocomplete="new-password"></label>
-      <p class="tool-hint">Argon2id + AES-256-GCM. The password cannot be recovered. Test unlocking before deleting the original.</p>
+      <h2 id="vaultTitle">Protect or unprotect a PDF</h2>
+      <div id="vaultIntro">
+        <p>PDFsplat uses CipherSplat to protect a PDF inside an authenticated, encrypted <code>.csplat</code> package. The PDF is encrypted locally with AES-256-GCM; neither the PDF nor its password leaves this device.</p>
+        <div class="vault-choices">
+          <button id="vaultProtectChoice" type="button">Protect this PDF</button>
+          <button id="vaultUnlockChoice" type="button">Unprotect a PDF</button>
+        </div>
+        <h3>Password safety</h3>
+        <ul class="security-guidance">
+          <li>Use a unique password of at least 12 characters. A password manager can create and store one.</li>
+          <li>Send the protected file and password through different channels—for example, email the file and share the password by phone.</li>
+          <li>PDFsplat cannot recover a forgotten password. Test unprotecting the download before deleting the original PDF.</li>
+        </ul>
+      </div>
+      <div id="vaultFields" hidden>
+        <p id="vaultCopy"></p>
+        <label class="dialog-field">Password <input id="vaultPassword" type="password" minlength="12" autocomplete="new-password"></label>
+        <label id="vaultConfirmRow" class="dialog-field">Confirm password <input id="vaultConfirm" type="password" minlength="12" autocomplete="new-password"></label>
+        <p class="tool-hint">CipherSplat derives the encryption key with Argon2id and protects the PDF with authenticated AES-256-GCM encryption.</p>
+      </div>
       <div class="dialog-actions">
         <button id="vaultCancel" type="button">Cancel</button>
-        <button id="vaultRun" class="primary" type="submit">Protect and download</button>
+        <button id="vaultRun" class="primary" type="submit" hidden>Continue</button>
       </div>
     </form>
   </dialog>

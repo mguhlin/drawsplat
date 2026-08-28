@@ -102,7 +102,9 @@ test('protects an edited PDF with CipherSplat and unlocks it back into the edito
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'private.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Private')) });
   await expect(page.locator('#status')).toContainText('1 pages');
-  await page.getByRole('button', { name:'Protect' }).click();
+  await page.getByRole('button', { name:'Protect / Unprotect' }).click();
+  await expect(page.locator('#vaultIntro')).toContainText('AES-256-GCM');
+  await page.getByRole('button', { name:'Protect this PDF' }).click();
   await page.locator('#vaultPassword').fill('classroom-safe-password');
   await page.locator('#vaultConfirm').fill('classroom-safe-password');
   const encryptedDownload = page.waitForEvent('download');
@@ -110,9 +112,11 @@ test('protects an edited PDF with CipherSplat and unlocks it back into the edito
   const encrypted = await encryptedDownload;
   expect(encrypted.suggestedFilename()).toBe('private-edited.pdf.csplat');
 
+  await page.getByRole('button', { name:'Protect / Unprotect' }).click();
+  await page.getByRole('button', { name:'Unprotect a PDF' }).click();
   await page.locator('#vaultInput').setInputFiles(await encrypted.path());
   await page.locator('#vaultPassword').fill('classroom-safe-password');
-  await page.getByRole('button', { name:'Unlock and open' }).click();
+  await page.getByRole('button', { name:'Unprotect and open' }).click();
   await expect(page.locator('#status')).toContainText('authenticated, decrypted, and opened locally', { timeout:120000 });
   await expect(page.locator('.thumbnail')).toHaveCount(1);
 });

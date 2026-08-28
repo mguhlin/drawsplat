@@ -27,4 +27,5 @@
 .dialog-field{display:grid;gap:.35rem;margin:1rem 0;font-weight:650}
 .dialog-field input{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:8px}
 .dialog-actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:1.25rem}
+.vault-choices{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.25rem 0}.vault-choices button{min-height:54px}.security-guidance{padding-left:1.25rem;color:var(--muted)}.security-guidance li+li{margin-top:.45rem}dialog code{font-size:.9em}
 @media(max-width:800px){.mobile-only{display:inline-block}.sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}.actions{flex-wrap:nowrap;overflow-x:auto;max-width:100%}.topbar{min-width:0}.topbar button,.topbar .button-link{white-space:nowrap}}
