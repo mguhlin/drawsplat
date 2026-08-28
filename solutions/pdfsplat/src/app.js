@@ -13,6 +13,8 @@ const state = {
   assets: new Map(),
   pages: [],
   current: 0,
+  selectedPageIds: new Set(),
+  selectionAnchor: 0,
   zoom: 1,
   renderScale: 1,
   selectedId: null,
@@ -32,11 +34,19 @@ function uid() {
 function currentPage() {
   return state.pages[state.current];
 }
+function selectedPageIndexes() {
+  const indexes = state.pages.map((page, index) => (state.selectedPageIds.has(page.id) ? index : -1)).filter((index) => index >= 0);
+  return indexes.length ? indexes : state.pages.length ? [state.current] : [];
+}
+function selectOnlyPage(index) {
+  state.selectedPageIds = new Set(state.pages[index] ? [state.pages[index].id] : []);
+  state.selectionAnchor = index;
+}
 function selectedObject() {
   return currentPage()?.annotations.find((o) => o.id === state.selectedId);
 }
 function snapshot() {
-  return JSON.stringify({ pages: state.pages, current: state.current });
+  return JSON.stringify({ pages: state.pages, current: state.current, selectedPageIds: [...state.selectedPageIds] });
 }
 function commit(before, label) {
   const after = snapshot();
@@ -59,6 +69,8 @@ function restore(value) {
   const data = JSON.parse(value);
   state.pages = data.pages;
   state.current = Math.max(0, Math.min(data.current, state.pages.length - 1));
+  state.selectedPageIds = new Set(data.selectedPageIds || (state.pages[state.current] ? [state.pages[state.current].id] : []));
+  state.selectionAnchor = state.current;
   state.selectedId = null;
   setMode("select");
   renderAll();
@@ -105,6 +117,7 @@ async function openFile(file) {
     state.pages = pagesFor(source);
     state.fileName = file.name;
     state.current = 0;
+    selectOnlyPage(0);
     state.zoom = 1;
     state.selectedId = null;
     state.history = [];
@@ -131,6 +144,7 @@ async function mergeFile(file) {
     state.sources.set(source.id, source);
     state.pages.push(...pagesFor(source));
     state.current = state.pages.length - source.pdf.numPages;
+    selectOnlyPage(state.current);
     commit(before, "Add PDF");
     await renderAll();
     announce(`${source.pdf.numPages} pages from ${file.name} added.`);
@@ -176,7 +190,11 @@ async function renderCurrent() {
   await renderTextHits(page, viewport, token);
   renderAnnotations();
   els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
-  [...els.thumbnails.children].forEach((node, i) => node.classList.toggle("selected", i === state.current));
+  [...els.thumbnails.children].forEach((node, i) => {
+    node.classList.toggle("selected", state.selectedPageIds.has(state.pages[i].id));
+    node.classList.toggle("current", i === state.current);
+    node.setAttribute("aria-selected", String(state.selectedPageIds.has(state.pages[i].id)));
+  });
 }
 async function renderTextHits(page, viewport, token) {
   els.textHitLayer.replaceChildren();
@@ -289,21 +307,22 @@ async function renderThumbnails() {
     const li = document.createElement("li"),
       canvas = document.createElement("canvas"),
       label = document.createElement("span");
-    li.className = `thumbnail${index === state.current ? " selected" : ""}`;
+    li.className = `thumbnail${state.selectedPageIds.has(state.pages[index].id) ? " selected" : ""}${index === state.current ? " current" : ""}`;
     li.draggable = true;
     li.dataset.index = index;
     li.tabIndex = 0;
     li.setAttribute("aria-label", `Page ${index + 1}`);
+    li.setAttribute("aria-selected", String(state.selectedPageIds.has(state.pages[index].id)));
     canvas.width = 120;
     canvas.height = 160;
     label.textContent = `Page ${index + 1}`;
     li.append(canvas, label);
     els.thumbnails.append(li);
-    li.onclick = () => selectPage(index);
+    li.onclick = (event) => selectPage(index, event);
     li.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        selectPage(index);
+        selectPage(index, e);
       }
     };
     li.ondragstart = (e) => {
@@ -319,14 +338,25 @@ async function renderThumbnails() {
     state.thumbnailObserver.observe(li);
   }
 }
-function selectPage(index) {
+function selectPage(index, event = {}) {
+  if (event.shiftKey) {
+    const start = Math.min(state.selectionAnchor, index),
+      end = Math.max(state.selectionAnchor, index);
+    state.selectedPageIds = new Set(state.pages.slice(start, end + 1).map((page) => page.id));
+  } else if (event.ctrlKey || event.metaKey) {
+    const id = state.pages[index].id;
+    if (state.selectedPageIds.has(id)) state.selectedPageIds.delete(id);
+    else state.selectedPageIds.add(id);
+    state.selectionAnchor = index;
+  } else selectOnlyPage(index);
   state.current = index;
   state.selectedId = null;
   setMode("select");
   $("sidebar").classList.remove("open");
   els.pagesButton.setAttribute("aria-expanded", "false");
-  renderCurrent();
-  announce(`Page ${index + 1} of ${state.pages.length}`);
+  renderAll();
+  const count = selectedPageIndexes().length;
+  announce(count > 1 ? `${count} pages selected. Page ${index + 1} is active.` : `Page ${index + 1} of ${state.pages.length}`);
 }
 function reorderPage(from, to) {
   if (from === to || !Number.isInteger(from) || from < 0 || from >= state.pages.length) return;
@@ -334,39 +364,57 @@ function reorderPage(from, to) {
     const [moved] = state.pages.splice(from, 1);
     state.pages.splice(to, 0, moved);
     state.current = to;
+    selectOnlyPage(to);
   });
   renderAll();
   announce(`Page moved to position ${to + 1}.`);
 }
 function rotate(delta) {
-  mutate("Rotate page", () => (currentPage().rotation = (currentPage().rotation + delta + 360) % 360));
+  const indexes = selectedPageIndexes();
+  mutate("Rotate pages", () => indexes.forEach((index) => (state.pages[index].rotation = (state.pages[index].rotation + delta + 360) % 360)));
   renderAll();
-  announce(`Page ${state.current + 1} rotated.`);
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} rotated.`);
 }
 function duplicatePage() {
-  mutate("Duplicate page", () => {
-    const copy = structuredClone(currentPage());
-    copy.id = uid();
-    copy.annotations.forEach((o) => (o.id = uid()));
-    state.pages.splice(state.current + 1, 0, copy);
-    state.current++;
+  const indexes = selectedPageIndexes(),
+    insertAt = Math.max(...indexes) + 1;
+  mutate("Duplicate pages", () => {
+    const copies = indexes.map((index) => {
+      const copy = structuredClone(state.pages[index]);
+      copy.id = uid();
+      copy.annotations.forEach((o) => (o.id = uid()));
+      return copy;
+    });
+    state.pages.splice(insertAt, 0, ...copies);
+    state.selectedPageIds = new Set(copies.map((page) => page.id));
+    state.current = insertAt;
+    state.selectionAnchor = insertAt;
   });
   renderAll();
-  announce(`Page duplicated as page ${state.current + 1}.`);
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} duplicated.`);
 }
 function deletePage() {
-  if (state.pages.length === 1) {
-    announce("A PDF must contain at least one page.");
+  const indexes = selectedPageIndexes();
+  if (indexes.length >= state.pages.length) {
+    announce("A PDF must contain at least one page. Select fewer pages to delete.");
     return;
   }
-  const deleted = state.current + 1;
-  mutate("Delete page", () => {
-    state.pages.splice(state.current, 1);
-    state.current = Math.min(state.current, state.pages.length - 1);
+  const first = indexes[0];
+  mutate("Delete pages", () => {
+    const ids = new Set(indexes.map((index) => state.pages[index].id));
+    state.pages = state.pages.filter((page) => !ids.has(page.id));
+    state.current = Math.min(first, state.pages.length - 1);
+    selectOnlyPage(state.current);
     state.selectedId = null;
   });
   renderAll();
-  announce(`Page ${deleted} deleted. Undo is available.`);
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} deleted. Undo is available.`);
+}
+function extractPages() {
+  const indexes = selectedPageIndexes(),
+    pages = indexes.map((index) => state.pages[index]),
+    suffix = indexes.length === 1 ? `-page-${indexes[0] + 1}` : "-selected-pages";
+  exportPdf(pages, suffix);
 }
 
 function renderAnnotations() {
@@ -967,7 +1015,7 @@ els.rotateLeftButton.onclick = () => rotate(-90);
 els.rotateRightButton.onclick = () => rotate(90);
 els.duplicatePageButton.onclick = duplicatePage;
 els.deletePageButton.onclick = deletePage;
-els.extractPageButton.onclick = () => exportPdf([currentPage()], `-page-${state.current + 1}`);
+els.extractPageButton.onclick = extractPages;
 els.splitButton.onclick = () => els.splitDialog.showModal();
 els.splitForm.onsubmit = splitPdf;
 els.splitDialog.querySelector('[value="cancel"]').onclick = () => els.splitDialog.close();

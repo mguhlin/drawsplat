@@ -63,6 +63,35 @@ test('turns clicked extractable PDF text into an editable replacement', async ({
   await expect(page.locator('.text-object')).toContainText('Replacement text');
 });
 
+test('multi-selects thumbnails and applies page actions to the selection', async ({ page }) => {
+  const source = await PDFDocument.create();
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  for (let index = 1; index <= 4; index++) source.addPage([300, 500]).drawText(`Page ${index}`, { x:30, y:450, font, size:20 });
+
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'packet.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  const thumbs = page.locator('.thumbnail');
+  await thumbs.nth(0).click();
+  await thumbs.nth(2).click({ modifiers:['Control'] });
+  await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
+
+  await page.getByRole('button', { name:'Rotate right' }).click();
+  await page.getByRole('button', { name:'Duplicate page' }).click();
+  await expect(page.locator('.thumbnail')).toHaveCount(6);
+  await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
+  await page.getByRole('button', { name:'Delete page' }).click();
+  await expect(page.locator('.thumbnail')).toHaveCount(4);
+
+  await page.locator('.thumbnail').nth(0).click();
+  await page.locator('.thumbnail').nth(2).click({ modifiers:['Shift'] });
+  await expect(page.locator('.thumbnail.selected')).toHaveCount(3);
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Extract page' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('packet-selected-pages.pdf');
+  expect((await PDFDocument.load(await require('fs/promises').readFile(await download.path()))).getPageCount()).toBe(3);
+});
+
 test('visually removes any selected page area and keeps the cover editable', async ({ page }) => {
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'remove.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Remove this object')) });
