@@ -42,13 +42,20 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
 });
 
 test('turns clicked extractable PDF text into an editable replacement', async ({ page }) => {
+  const source = await PDFDocument.create();
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  const sourcePage = source.addPage([500, 300]);
+  const firstRun = 'QualityFix Ap';
+  const secondRun = 'pliance Repair Service';
+  sourcePage.drawText(firstRun, { x:30, y:240, size:20, font });
+  sourcePage.drawText(secondRun, { x:30 + font.widthOfTextAtSize(firstRun, 20), y:240, size:20, font });
   await page.goto('/solutions/pdfsplat/');
-  await page.locator('#fileInput').setInputFiles({ name:'editable.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Click this text')) });
+  await page.locator('#fileInput').setInputFiles({ name:'editable.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
   await page.getByRole('button', { name:'Edit PDF text' }).click();
-  const textRun = page.getByRole('button', { name:'Edit text: Click this text' });
+  const textRun = page.getByRole('button', { name:'Edit text: QualityFix Appliance Repair Service' });
   await expect(textRun).toBeVisible();
   await textRun.click();
-  await expect(page.locator('#textValue')).toHaveValue('Click this text');
+  await expect(page.locator('#textValue')).toHaveValue('QualityFix Appliance Repair Service');
   await page.locator('#textValue').fill('Replacement text');
   await page.locator('#textValue').press('Tab');
   await expect(page.locator('.text-object')).toContainText('Replacement text');
