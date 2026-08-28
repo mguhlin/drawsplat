@@ -18,5 +18,6 @@ test('production opens a PDF and enables editing', async ({ page }) => {
   await expect(page.locator('#addTextButton')).toBeEnabled();
   await page.locator('#addTextButton').click();
   await expect(page.locator('.text-object')).toHaveCount(1);
-  expect(errors).toEqual([]);
+  const applicationErrors = errors.filter(message => !message.includes('static.cloudflareinsights.com/beacon.min.js'));
+  expect(applicationErrors).toEqual([]);
 });
