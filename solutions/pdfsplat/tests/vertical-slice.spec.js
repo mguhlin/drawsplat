@@ -41,6 +41,19 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   expect(exported.getPage(1).getRotation().angle).toBe(90);
 });
 
+test('turns clicked extractable PDF text into an editable replacement', async ({ page }) => {
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'editable.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Click this text')) });
+  await page.getByRole('button', { name:'Edit PDF text' }).click();
+  const textRun = page.getByRole('button', { name:'Edit text: Click this text' });
+  await expect(textRun).toBeVisible();
+  await textRun.click();
+  await expect(page.locator('#textValue')).toHaveValue('Click this text');
+  await page.locator('#textValue').fill('Replacement text');
+  await page.locator('#textValue').press('Tab');
+  await expect(page.locator('.text-object')).toContainText('Replacement text');
+});
+
 test('merges PDFs and separates page ranges into a ZIP', async ({ page }) => {
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'one.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('One')) });

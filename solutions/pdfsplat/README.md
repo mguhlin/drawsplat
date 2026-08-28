@@ -9,6 +9,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Rotate, duplicate, delete, and extract pages.
 - Separate page ranges or create one PDF per page in a ZIP.
 - Add movable/resizable text, highlights, PNG/JPEG images, and freehand drawing.
+- Click extractable PDF text and turn it into a covered, editable replacement text object.
 - Undo and redo document and annotation changes.
 - Export a new `-edited.pdf` copy without overwriting the source.
 - Protect the edited result as a CipherSplat™ `.csplat` package.
@@ -36,6 +37,7 @@ The production headers for `/solutions/pdfsplat/*` deny network connections and 
 - Password-protected source PDFs are not opened in this release.
 - Added objects are flattened during export and are no longer editable after reopening.
 - Existing PDF text is not edited semantically.
+- Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages, outlined text, missing character maps, and complex font/layout runs require manual text boxes or future OCR support.
 - Secure content-removing redaction, OCR, forms, search, compression, and accessibility certification are not claimed.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
 - Browser memory and download limits still apply to very large documents.

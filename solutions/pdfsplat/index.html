@@ -50,6 +50,7 @@
       <div id="documentView" class="document-view" hidden>
         <div id="pageShell" class="page-shell">
           <canvas id="pdfCanvas"></canvas>
+          <div id="textHitLayer" class="text-hit-layer" aria-label="Detected PDF text"></div>
           <div id="annotationLayer" class="annotation-layer" aria-label="Editable annotations"></div>
         </div>
       </div>
@@ -57,6 +58,7 @@
 
     <aside class="tools" aria-label="Editing tools">
       <div class="panel-heading"><strong>Tools</strong></div>
+      <button id="editTextButton" type="button" disabled aria-pressed="false">Edit PDF text</button>
       <button id="addTextButton" type="button" disabled>Add text</button>
       <button id="highlightButton" type="button" disabled>Highlight</button>
       <button id="drawButton" type="button" disabled>Draw</button>
