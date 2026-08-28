@@ -59,6 +59,7 @@
     <aside class="tools" aria-label="Editing tools">
       <div class="panel-heading"><strong>Tools</strong></div>
       <button id="editTextButton" type="button" disabled aria-pressed="false">Edit PDF text</button>
+      <button id="removeAreaButton" type="button" disabled aria-pressed="false">Remove area</button>
       <button id="addTextButton" type="button" disabled>Add text</button>
       <button id="highlightButton" type="button" disabled>Highlight</button>
       <button id="drawButton" type="button" disabled>Draw</button>
@@ -69,7 +70,7 @@
       <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
       <button id="extractPageButton" type="button" disabled>Extract page</button>
       <button id="splitButton" type="button" disabled>Separate / Split</button>
-      <p class="tool-hint">Drag thumbnails to reorder. Text, highlights, and images remain editable until export.</p>
+      <p class="tool-hint">Drag thumbnails to reorder. Remove area creates a visual cover, not secure redaction.</p>
       <fieldset id="textProperties" disabled>
         <legend>Selected text</legend>
         <label>Text <textarea id="textValue" rows="4"></textarea></label>

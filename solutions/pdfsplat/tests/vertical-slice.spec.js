@@ -56,9 +56,28 @@ test('turns clicked extractable PDF text into an editable replacement', async ({
   await expect(textRun).toBeVisible();
   await textRun.click();
   await expect(page.locator('#textValue')).toHaveValue('QualityFix Appliance Repair Service');
-  await page.locator('#textValue').fill('Replacement text');
-  await page.locator('#textValue').press('Tab');
+  const inPlaceEditor = page.getByRole('textbox', { name:'Edit replacement text in place' });
+  await expect(inPlaceEditor).toBeFocused();
+  await inPlaceEditor.fill('Replacement text');
+  await inPlaceEditor.press('Tab');
   await expect(page.locator('.text-object')).toContainText('Replacement text');
+});
+
+test('visually removes any selected page area and keeps the cover editable', async ({ page }) => {
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'remove.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Remove this object')) });
+  await page.getByRole('button', { name:'Remove area' }).click();
+  const layer = page.locator('#annotationLayer');
+  const box = await layer.boundingBox();
+  await page.mouse.move(box.x + 30, box.y + 30);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 180, box.y + 90);
+  await page.mouse.up();
+  await expect(page.locator('.mask-object')).toHaveCount(1);
+  await expect(page.locator('#status')).toContainText('not secure redaction');
+  await page.locator('.mask-object').click();
+  await page.keyboard.press('Delete');
+  await expect(page.locator('.mask-object')).toHaveCount(0);
 });
 
 test('merges PDFs and separates page ranges into a ZIP', async ({ page }) => {
