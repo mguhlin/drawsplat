@@ -2,6 +2,8 @@
 
 QRSplat creates standard QR codes entirely in the browser. No account, upload, analytics, or remote API is required. Designs saved with **Save design locally** use this browser's `localStorage` only. Wi-Fi passwords are deliberately excluded from saved designs.
 
+The DrawSplat template embeds DrawSplat's transparent logo. Users can also add a PNG, JPEG, or WebP center image up to 2 MB, resize it within a scan-conscious range, and optionally apply a local posterized cartoon effect. Uploaded images remain in the current tab and are not stored with saved designs.
+
 ## Editable QR service (optional)
 
 Editable QR codes require a redirect service with a durable owner and maintenance plan. The included Google Apps Script example is optional and is not enabled by default.

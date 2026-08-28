@@ -40,11 +40,17 @@
         </div>
 
         <fieldset><legend>Style</legend>
-          <label>Template<select id="template"><option value="classic">Classic</option><option value="drawsplat">DrawSplat</option><option value="tcea">TCEA</option><option value="custom">Custom</option></select></label>
+          <label>Template<select id="template"><option value="classic">Classic</option><option value="drawsplat">DrawSplat logo</option><option value="custom">Custom colors</option></select></label>
           <div class="two"><label>Dots<input id="darkColor" type="color" value="#172033"></label><label>Background<input id="lightColor" type="color" value="#ffffff"></label></div>
           <div class="two"><label>Size<select id="qrSize"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option></select></label><label>Error correction<select id="errorLevel"><option value="L">Low</option><option value="M" selected>Medium</option><option value="Q">Quartile</option><option value="H">High</option></select></label></div>
           <label>Quiet zone<input id="quietZone" type="range" min="2" max="8" value="4"><output id="quietOutput">4 modules</output></label>
-          <label class="check"><input id="brandMark" type="checkbox"> Add template mark in center</label>
+          <label>Custom center image<input id="centerImage" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <div id="centerImageControls" hidden>
+            <label>Center image size<input id="centerImageSize" type="range" min="12" max="24" value="18"><output id="centerImageSizeOutput">18% of QR width</output></label>
+            <label class="check"><input id="cartoonEffect" type="checkbox"> Cartoon effect</label>
+            <button id="removeCenterImage" type="button">Remove center image</button>
+          </div>
+          <small id="centerImageHelp">PNG, JPEG, or WebP, up to 2 MB. The image stays on this device. Test the finished QR before sharing.</small>
         </fieldset>
         <label>Design name<input id="designName" value="My QR code" maxlength="80"></label>
         <div class="button-row"><button id="saveDesign" type="button">Save design locally</button><button id="newDesign" type="button">Reset</button></div>
@@ -61,7 +67,7 @@
     <section id="help" class="help-grid">
       <article><h2>Standard QR</h2><p>The destination is stored directly in the QR. Generation and export stay entirely on this device.</p></article>
       <article><h2>Editable QR</h2><p>The QR stores a redirect URL. This requires an administrator-managed service and should have a long-term maintenance plan.</p></article>
-      <article><h2>Print safely</h2><p>Keep a clear quiet zone, use strong contrast, and test the final printed code with more than one device before distributing it.</p></article>
+      <article><h2>Print safely</h2><p>Keep a clear quiet zone, use strong contrast, and test the final printed code with more than one device before distributing it. Center images cover QR modules, so smaller is safer.</p></article>
     </section>
   </main>
 

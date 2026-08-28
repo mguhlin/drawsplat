@@ -8,8 +8,9 @@ test('QRSplat creates styled standard QR codes and saves designs locally', async
   await page.locator('#qrContent').fill('https://example.org/classroom');
   await page.locator('#template').selectOption('drawsplat');
   await expect(page.locator('#darkColor')).toHaveValue('#6d38e8');
-  await expect(page.locator('#brandMark')).toBeChecked();
-  await expect(page.locator('#qrPreview svg circle')).toHaveCount(1);
+  await expect(page.locator('#errorLevel')).toHaveValue('H');
+  await expect(page.locator('#qrPreview svg image')).toHaveCount(1);
+  await expect(page.locator('#qrPreview svg image')).toHaveAttribute('href', /data:image\/png;base64,/);
   await expect(page.locator('#payloadPreview')).toHaveText('https://example.org/classroom');
 
   await page.locator('#designName').fill('Classroom link');
@@ -17,6 +18,25 @@ test('QRSplat creates styled standard QR codes and saves designs locally', async
   await expect(page.locator('#savedDesigns')).toContainText('Classroom link');
   await page.reload();
   await expect(page.locator('#savedDesigns')).toContainText('Classroom link');
+});
+
+test('QRSplat adds and cartoon-stylizes a custom center image locally', async ({ page }) => {
+  await page.goto('/solutions/qrsplat/');
+  await page.locator('#centerImage').setInputFiles('assets/brand/DrawSplat_logo_transparent.png');
+  await expect(page.locator('#centerImageControls')).toBeVisible();
+  await expect(page.locator('#errorLevel')).toHaveValue('H');
+  await expect(page.locator('#qrPreview svg image')).toHaveCount(1);
+  const original = await page.locator('#qrPreview svg image').getAttribute('href');
+
+  await page.locator('#cartoonEffect').check();
+  await expect(page.locator('#centerImageHelp')).toContainText('Cartoon effect applied locally');
+  const cartoon = await page.locator('#qrPreview svg image').getAttribute('href');
+  expect(cartoon).not.toBe(original);
+
+  await page.locator('#centerImageSize').fill('22');
+  await expect(page.locator('#centerImageSizeOutput')).toHaveText('22% of QR width');
+  await page.getByRole('button', { name:'Remove center image' }).click();
+  await expect(page.locator('#qrPreview svg image')).toHaveCount(0);
 });
 
 test('QRSplat generates Wi-Fi payloads and downloads SVG and PNG files', async ({ page }) => {
