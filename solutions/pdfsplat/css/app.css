@@ -30,4 +30,5 @@
 .vault-choices{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.25rem 0}.vault-choices button{min-height:54px}.security-guidance{padding-left:1.25rem;color:var(--muted)}.security-guidance li+li{margin-top:.45rem}dialog code{font-size:.9em}
 .thumbnail.selected{background:#eee9ff}.thumbnail.current{box-shadow:0 0 0 2px #f5b942}
 .page-actions-dialog{padding:1rem;min-width:240px}.page-actions-dialog h2{margin:.25rem 0}.page-actions-dialog [role="menu"]{display:grid;gap:.4rem}.page-actions-dialog button{text-align:left}.page-actions-dialog #contextCancelButton{margin-top:.4rem;text-align:center}
+#vaultGeneratorLink a{display:inline-block;color:var(--purple-dark);font-weight:700}
 @media(max-width:800px){.mobile-only{display:inline-block}.sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}.actions{flex-wrap:nowrap;overflow-x:auto;max-width:100%}.topbar{min-width:0}.topbar button,.topbar .button-link{white-space:nowrap}}

@@ -155,6 +155,14 @@ test('protects an edited PDF with CipherSplat and unlocks it back into the edito
   await page.getByRole('button', { name:'Protect / Unprotect' }).click();
   await expect(page.locator('#vaultIntro')).toContainText('AES-256-GCM');
   await page.getByRole('button', { name:'Protect this PDF' }).click();
+  const generatorLink = page.getByRole('link', { name:'Generate a secure password with CipherSplat' });
+  await expect(generatorLink).toHaveAttribute('target', '_blank');
+  await expect(generatorLink).toHaveAttribute('rel', /noopener/);
+  const generatorTabPromise = page.waitForEvent('popup');
+  await generatorLink.click();
+  const generatorTab = await generatorTabPromise;
+  await expect(generatorTab.getByRole('heading', { name:'Create a vault password' })).toBeVisible();
+  await generatorTab.close();
   await page.locator('#vaultPassword').fill('classroom-safe-password');
   await page.locator('#vaultConfirm').fill('classroom-safe-password');
   const encryptedDownload = page.waitForEvent('download');

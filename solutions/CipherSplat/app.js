@@ -93,6 +93,9 @@ function generatePassphraseValue(){const count=Number($('#wordCount').value),sep
 function renderGenerated(){generatorError.textContent='';try{const result=passwordGeneratorMode()==='password'?generatePasswordValue():generatePassphraseValue(),bits=Math.floor(result.entropy),label=bits<45?'Weak':bits<60?'Fair':bits<80?'Strong':'Excellent';generated.textContent=result.value;$('#generatedEntropy').textContent=`${bits} bits`;$('#generatedStrength').textContent=label}catch(error){generated.textContent='';$('#generatedEntropy').textContent='—';$('#generatedStrength').textContent='Unavailable';generatorError.textContent=error.message}}
 function syncGeneratorMode(){const passphrase=passwordGeneratorMode()==='passphrase';$('#passwordOptions').classList.toggle('hidden',passphrase);$('#passphraseOptions').classList.toggle('hidden',!passphrase);renderGenerated()}
 function openPasswordGenerator(){generator.showModal();syncGeneratorMode();requestAnimationFrame(()=>generator.querySelector('input[name="generatorMode"]:checked').focus())}
+function openLinkedPasswordGenerator(){if(location.hash==='#password-generator'&&!generator.open)openPasswordGenerator()}
+window.addEventListener('hashchange',openLinkedPasswordGenerator);
+requestAnimationFrame(openLinkedPasswordGenerator);
 generator.querySelectorAll('input[name="generatorMode"]').forEach(input=>input.addEventListener('change',syncGeneratorMode));
 ['passwordLength','wordCount'].forEach(id=>$('#'+id).addEventListener('input',event=>{$('#'+id+'Value').textContent=event.target.value;renderGenerated()}));
 ['includeUpper','includeLower','includeNumbers','includeSymbols','wordSeparator','capitalizeWords','includeWordNumber'].forEach(id=>$('#'+id).addEventListener('change',renderGenerated));

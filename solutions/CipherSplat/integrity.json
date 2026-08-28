@@ -6,9 +6,9 @@
   "argon2Version": "hash-wasm 4.12.0",
   "hashAlgorithm": "SHA-256",
   "files": {
-    "app.js": "c541eae13ab40104af9844ac57405b70a751a58a6f9ffd04bb79dff16cb40594",
+    "app.js": "f6f16119220f5964659677a0e1de50abc8abfe95e2fca3ff97b59ad7b37b65c6",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
-    "index.html": "090007d3333c2d006a3af9f50c703fbe1ccab30112e3c0cbd93e9184687a559b",
+    "index.html": "2fab83c2512e578cd6dc32c13ef867e15e552d19cda6d95372862e85ec568d8b",
     "manifest.webmanifest": "d6362f1965a02c471821dcb55d37359615762759f5c2760ac367cc74eec26960",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
