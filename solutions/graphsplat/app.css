@@ -351,6 +351,80 @@ body {
 #canvas [data-drag-axis="x"] {
   cursor: ew-resize;
 }
+#canvas [data-quick-row] {
+  cursor: context-menu;
+}
+#canvas [data-expression-index] {
+  cursor: ns-resize;
+  touch-action: none;
+}
+.quick-edit-dialog {
+  width: min(360px, calc(100% - 2rem));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 24px 70px rgb(24 32 51 / 0.24);
+}
+.quick-edit-dialog::backdrop {
+  background: rgb(24 32 51 / 0.42);
+}
+.quick-edit-dialog form {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dialog-head button {
+  min-width: 44px;
+  padding: 0.35rem;
+  font-size: 1.25rem;
+}
+.example-dialog {
+  width: min(960px, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1rem;
+}
+.example-dialog::backdrop {
+  background: rgb(24 32 51 / 0.46);
+}
+.example-dialog .dialog-head p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+}
+.example-group h3 {
+  margin-bottom: 0.55rem;
+}
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.example-card {
+  min-height: 92px;
+  text-align: left;
+  background: #faf9fe;
+}
+.example-card strong,
+.example-card span {
+  display: block;
+}
+.example-card span {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+@media (max-width: 720px) {
+  .example-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 #trace {
   min-height: 22px;
   text-align: center;

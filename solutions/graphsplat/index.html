@@ -27,6 +27,7 @@
       >
       <nav aria-label="Application actions">
         <span class="local">🔒 Local processing</span
+        ><button id="openExamples" type="button">Examples</button
         ><button
           type="button"
           data-ds-app-launcher
@@ -53,6 +54,7 @@
             <option value="picture">Picture graph</option>
             <option value="coordinate">Coordinate plane</option>
             <option value="expression">Expression calculator</option>
+            <option value="geometry">Geometry</option>
             <option value="specialty">Specialty chart</option>
           </select></label
         >
@@ -87,8 +89,7 @@
 Reading,12
 Science,9
 Art,14
-Music,7</textarea
-              >
+Music,7</textarea>
             </label>
           </section>
 
@@ -127,8 +128,7 @@ Music,7</textarea
               ><textarea id="pointData">
 2,3,A
 -4,1,B
-5,-2,C</textarea
-              >
+5,-2,C</textarea>
             </label>
             <div class="checks">
               <label
@@ -169,8 +169,7 @@ Music,7</textarea
               >Expressions <span>one per line; use x, a, b, c</span
               ><textarea id="expressions">
 sin(x)
-0.25*x^2-2</textarea
-              >
+0.25*x^2-2</textarea>
             </label>
             <div class="slider-grid">
               <label
@@ -217,10 +216,39 @@ sin(x)
             <button id="expressionTable" type="button">Show value table</button>
             <div id="valueTable" hidden></div>
             <p class="hint">
-              Supported: + − × ÷ ^, parentheses, sin, cos, tan, sqrt, abs, log,
-              ln, exp, floor, ceil, min, max, π and e. No JavaScript is
-              executed.
+              Drag a plotted curve up or down to change its vertical offset. No
+              JavaScript is executed.
             </p>
+            <details class="function-reference">
+              <summary>GraphSplat function reference</summary>
+              <p><strong>Constants:</strong> pi (π), tau, e, phi</p>
+              <p>
+                <strong>Trigonometry:</strong> sin, cos, tan, cot, sec, csc,
+                asin/arcsin, acos/arccos, atan/arctan, atan2
+              </p>
+              <p>
+                <strong>Hyperbolic:</strong> sinh, cosh, tanh, sech, csch, coth,
+                asinh, acosh, atanh
+              </p>
+              <p>
+                <strong>Numeric:</strong> sqrt, cbrt, root, abs, log, logbase,
+                ln, exp, floor, ceil, round, sign, mod, clamp, hypot
+              </p>
+              <p>
+                <strong>Combinatorics:</strong> factorial, ncr, npr, gcd, lcm
+              </p>
+              <p>
+                <strong>Statistics:</strong> mean, median, sum/total, product,
+                variance, stdev, mad, min, max, erf, gamma
+              </p>
+              <p>
+                Use variables x, a, b, and c, implicit multiplication such as
+                2x, and a domain restriction such as <code>{x&gt;0}</code>.
+                GraphSplat evaluates scalar curves locally; list, distribution,
+                regression, and simulation workflows belong in the Data and
+                Specialty workspaces.
+              </p>
+            </details>
           </section>
 
           <section id="specialtyControls" class="mode-controls" hidden>
@@ -241,8 +269,48 @@ Creativity,8,4
 Collaboration,6,7
 Research,9,5
 Presentation,7,8
-Reflection,5,6</textarea
+Reflection,5,6</textarea>
+            </label>
+          </section>
+
+          <section id="geometryControls" class="mode-controls" hidden>
+            <label
+              >Geometry tool<select id="geometryTool">
+                <option value="move">Move points</option>
+                <option value="point">Point</option>
+                <option value="segment">Segment</option>
+                <option value="polygon">Polygon</option>
+                <option value="circle">Circle</option>
+              </select></label
+            >
+            <p class="hint" id="geometryHint">
+              Choose a tool, then work directly on the coordinate plane.
+            </p>
+            <div class="checks">
+              <label
+                ><input id="geometrySnap" type="checkbox" checked /> Snap to
+                grid</label
               >
+              <label
+                ><input id="geometryLabels" type="checkbox" checked />
+                Labels</label
+              >
+              <label
+                ><input id="geometryMeasures" type="checkbox" checked />
+                Measurements</label
+              >
+            </div>
+            <div class="button-row">
+              <button id="finishPolygon" type="button">Finish polygon</button>
+              <button id="undoGeometry" type="button">Undo last</button>
+              <button id="clearGeometry" type="button">Clear geometry</button>
+            </div>
+            <label
+              >Points <span>x,y,label — editable</span
+              ><textarea id="geometryData">
+-4,-2,A
+2,-2,B
+0,3,C</textarea>
             </label>
           </section>
 
@@ -397,6 +465,40 @@ Reflection,5,6</textarea
       </section>
     </main>
     <canvas id="raster" hidden></canvas>
+    <dialog id="quickEditDialog" class="quick-edit-dialog">
+      <form method="dialog">
+        <div class="dialog-head">
+          <strong id="quickEditTitle">Edit chart item</strong>
+          <button value="cancel" aria-label="Close">×</button>
+        </div>
+        <label
+          >Value<input id="quickEditValue" type="number" step="0.1"
+        /></label>
+        <label>Color<input id="quickEditColor" type="color" /></label>
+        <div class="button-row">
+          <button value="cancel">Cancel</button>
+          <button id="quickEditApply" class="primary" value="default">
+            Apply
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="exampleDialog" class="example-dialog">
+      <div class="dialog-head">
+        <div>
+          <strong>GraphSplat Example Library</strong>
+          <p>What would you like to create today?</p>
+        </div>
+        <button
+          id="closeExamples"
+          type="button"
+          aria-label="Close example library"
+        >
+          ×
+        </button>
+      </div>
+      <div id="exampleLibrary"></div>
+    </dialog>
     <footer>
       GraphSplat · Local-first graph creation · No account required
     </footer>

@@ -1,3 +1,58 @@
+const factorial = (value) => {
+  if (!Number.isInteger(value) || value < 0 || value > 170) return NaN;
+  let result = 1;
+  for (let number = 2; number <= value; number++) result *= number;
+  return result;
+};
+const gcd = (first, second) => {
+  let a = Math.abs(Math.trunc(first)),
+    b = Math.abs(Math.trunc(second));
+  while (b) [a, b] = [b, a % b];
+  return a;
+};
+const mean = (...values) =>
+  values.reduce((sum, value) => sum + value, 0) / values.length;
+const variance = (...values) => {
+  const average = mean(...values);
+  return mean(...values.map((value) => (value - average) ** 2));
+};
+const median = (...values) => {
+  const sorted = [...values].sort((a, b) => a - b),
+    middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+};
+const erf = (value) => {
+  const sign = Math.sign(value),
+    x = Math.abs(value),
+    t = 1 / (1 + 0.3275911 * x);
+  return (
+    sign *
+    (1 -
+      ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) *
+        t +
+        0.254829592) *
+        t *
+        Math.exp(-x * x))
+  );
+};
+const gamma = (value) => {
+  const coefficients = [
+    676.5203681218851, -1259.1392167224028, 771.3234287776531,
+    -176.6150291621406, 12.507343278686905, -0.13857109526572012,
+    9.984369578019571e-6, 1.5056327351493116e-7,
+  ];
+  if (value < 0.5)
+    return Math.PI / (Math.sin(Math.PI * value) * gamma(1 - value));
+  let x = 0.9999999999998099,
+    adjusted = value - 1;
+  coefficients.forEach((coefficient, index) => {
+    x += coefficient / (adjusted + index + 1);
+  });
+  const t = adjusted + coefficients.length - 0.5;
+  return Math.sqrt(2 * Math.PI) * t ** (adjusted + 0.5) * Math.exp(-t) * x;
+};
 const FUNCTIONS = {
   sin: Math.sin,
   cos: Math.cos,
@@ -5,18 +60,65 @@ const FUNCTIONS = {
   asin: Math.asin,
   acos: Math.acos,
   atan: Math.atan,
+  arcsin: Math.asin,
+  arccos: Math.acos,
+  arctan: Math.atan,
+  atan2: Math.atan2,
+  cot: (value) => 1 / Math.tan(value),
+  sec: (value) => 1 / Math.cos(value),
+  csc: (value) => 1 / Math.sin(value),
+  sinh: Math.sinh,
+  cosh: Math.cosh,
+  tanh: Math.tanh,
+  asinh: Math.asinh,
+  acosh: Math.acosh,
+  atanh: Math.atanh,
+  sech: (value) => 1 / Math.cosh(value),
+  csch: (value) => 1 / Math.sinh(value),
+  coth: (value) => 1 / Math.tanh(value),
   sqrt: Math.sqrt,
+  cbrt: Math.cbrt,
   abs: Math.abs,
   log: Math.log10,
+  logbase: (value, base) => Math.log(value) / Math.log(base),
   ln: Math.log,
   exp: Math.exp,
   floor: Math.floor,
   ceil: Math.ceil,
   round: Math.round,
+  sign: Math.sign,
+  mod: (value, divisor) => ((value % divisor) + divisor) % divisor,
+  clamp: (value, minimum, maximum) =>
+    Math.min(maximum, Math.max(minimum, value)),
+  hypot: Math.hypot,
+  root: (value, degree) => Math.sign(value) * Math.abs(value) ** (1 / degree),
+  factorial,
+  ncr: (n, r) => factorial(n) / (factorial(r) * factorial(n - r)),
+  npr: (n, r) => factorial(n) / factorial(n - r),
+  gcd,
+  lcm: (a, b) => Math.abs(a * b) / gcd(a, b),
+  mean,
+  median,
+  total: (...values) => values.reduce((sum, value) => sum + value, 0),
+  sum: (...values) => values.reduce((sum, value) => sum + value, 0),
+  product: (...values) => values.reduce((result, value) => result * value, 1),
+  variance,
+  stdev: (...values) => Math.sqrt(variance(...values)),
+  mad: (...values) => {
+    const average = mean(...values);
+    return mean(...values.map((value) => Math.abs(value - average)));
+  },
+  erf,
+  gamma,
   min: Math.min,
   max: Math.max,
 };
-const CONSTANTS = { pi: Math.PI, e: Math.E };
+const CONSTANTS = {
+  pi: Math.PI,
+  tau: Math.PI * 2,
+  e: Math.E,
+  phi: (1 + Math.sqrt(5)) / 2,
+};
 
 function normalize(source) {
   return source

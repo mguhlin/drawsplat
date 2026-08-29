@@ -27,6 +27,8 @@ const esc = (value) =>
       })[char],
   );
 const n = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
+const itemColor = (settings, row, series, fallback) =>
+  settings.itemColors?.[`${row}:${series}`] || fallback;
 export function parseRows(text) {
   return text
     .trim()
@@ -122,8 +124,8 @@ export function renderQuick(type, rows, settings) {
         x2 = cx + Math.cos(next) * r,
         y2 = cy + Math.sin(next) * r,
         large = part > 0.5 ? 1 : 0,
-        color = colors[index % colors.length];
-      body += `<path d="M${cx} ${cy}L${x1} ${y1}A${r} ${r} 0 ${large} 1 ${x2} ${y2}Z" fill="${color}"/>`;
+        color = itemColor(settings, index, 0, colors[index % colors.length]);
+      body += `<path data-quick-row="${index}" data-quick-series="0" d="M${cx} ${cy}L${x1} ${y1}A${r} ${r} 0 ${large} 1 ${x2} ${y2}Z" fill="${color}"/>`;
       angle = next;
     });
     if (type === "donut")
@@ -140,8 +142,13 @@ export function renderQuick(type, rows, settings) {
         .map((row, index) => {
           const y = top + index * rowH,
             width = (w * Math.max(0, row.values[0])) / max,
-            color = colors[index % colors.length];
-          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><rect data-drag-row="${index}" data-drag-series="0" data-drag-axis="x" x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
+            color = itemColor(
+              settings,
+              index,
+              0,
+              colors[index % colors.length],
+            );
+          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><rect data-quick-row="${index}" data-quick-series="0" data-drag-row="${index}" data-drag-series="0" data-drag-axis="x" x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
         })
         .join("");
     return svgShell(body, settings);
@@ -163,10 +170,15 @@ export function renderQuick(type, rows, settings) {
       row.values.forEach((value, series) => {
         const y = frame.y(Math.max(0, value)),
           height = frame.top + frame.h - y,
-          color = colors[series % colors.length],
+          color = itemColor(
+            settings,
+            index,
+            series,
+            colors[series % colors.length],
+          ),
           fill = settings.patterns ? `url(#diagonal)` : color,
           x = frame.left + slot * index + slot * 0.14 + barWidth * series;
-        body += `<g color="${color}"><rect data-drag-row="${index}" data-drag-series="${series}" data-drag-axis="y" x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
+        body += `<g color="${color}"><rect data-quick-row="${index}" data-quick-series="${series}" data-drag-row="${index}" data-drag-series="${series}" data-drag-axis="y" x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
       }),
     );
   } else {
@@ -192,8 +204,8 @@ export function renderQuick(type, rows, settings) {
       body += `<path d="${path}" fill="none" stroke="${color}" stroke-width="4" stroke-linejoin="round"/>`;
       body += points
         .map(
-          (point) =>
-            `<circle cx="${point[0]}" cy="${point[1]}" r="5" fill="${color}"/>`,
+          (point, index) =>
+            `<circle data-quick-row="${index}" data-quick-series="${series}" cx="${point[0]}" cy="${point[1]}" r="7" fill="${itemColor(settings, index, series, color)}"/>`,
         )
         .join("");
     }
@@ -223,7 +235,7 @@ function renderScatter(rows, settings) {
     ink = settings.ink || "#172033";
   let body = `<path d="M${left} ${top}V${top + h}H${left + w}" fill="none" stroke="${ink}" stroke-width="2"/>`;
   points.forEach((row, index) => {
-    body += `<circle cx="${sx(row.values[0])}" cy="${sy(row.values[1])}" r="8" fill="${settings.colors[index % settings.colors.length]}"/><text x="${sx(row.values[0]) + 11}" y="${sy(row.values[1]) - 8}" font-size="12" fill="${ink}">${esc(row.label)}</text>`;
+    body += `<circle data-quick-row="${index}" data-quick-series="1" cx="${sx(row.values[0])}" cy="${sy(row.values[1])}" r="8" fill="${itemColor(settings, index, 1, settings.colors[index % settings.colors.length])}"/><text x="${sx(row.values[0]) + 11}" y="${sy(row.values[1]) - 8}" font-size="12" fill="${ink}">${esc(row.label)}</text>`;
   });
   return svgShell(body, settings);
 }
@@ -353,6 +365,46 @@ export function renderCoordinate(
   });
 }
 
+export function renderGeometry(points, constructions, settings, options = {}) {
+  const base = coordinateBase(settings),
+    colors = settings.colors;
+  let body = base.body;
+  constructions.forEach((shape, index) => {
+    const color = colors[index % colors.length],
+      vertices = shape.points.map((point) => points[point]).filter(Boolean);
+    if (shape.type === "segment" && vertices.length === 2) {
+      const [first, second] = vertices;
+      body += `<line x1="${base.sx(first.x)}" y1="${base.sy(first.y)}" x2="${base.sx(second.x)}" y2="${base.sy(second.y)}" stroke="${color}" stroke-width="4"/>`;
+      if (options.measures)
+        body += `<text x="${(base.sx(first.x) + base.sx(second.x)) / 2}" y="${(base.sy(first.y) + base.sy(second.y)) / 2 - 8}" text-anchor="middle" font-size="12">${Math.hypot(second.x - first.x, second.y - first.y).toFixed(2)}</text>`;
+    } else if (shape.type === "polygon" && vertices.length > 2) {
+      body += `<polygon points="${vertices.map((point) => `${base.sx(point.x)},${base.sy(point.y)}`).join(" ")}" fill="${color}" fill-opacity=".16" stroke="${color}" stroke-width="4"/>`;
+      if (options.measures) {
+        const area = Math.abs(
+          vertices.reduce((sum, point, vertex) => {
+            const next = vertices[(vertex + 1) % vertices.length];
+            return sum + point.x * next.y - next.x * point.y;
+          }, 0) / 2,
+        );
+        body += `<text x="${vertices.reduce((sum, point) => sum + base.sx(point.x), 0) / vertices.length}" y="${vertices.reduce((sum, point) => sum + base.sy(point.y), 0) / vertices.length}" text-anchor="middle" font-size="13" font-weight="700">Area ${area.toFixed(2)}</text>`;
+      }
+    } else if (shape.type === "circle" && vertices.length === 2) {
+      const [center, edge] = vertices,
+        radius = Math.hypot(edge.x - center.x, edge.y - center.y),
+        pixelRadius = Math.abs(base.sx(center.x + radius) - base.sx(center.x));
+      body += `<circle cx="${base.sx(center.x)}" cy="${base.sy(center.y)}" r="${pixelRadius}" fill="${color}" fill-opacity=".12" stroke="${color}" stroke-width="4"/>`;
+      if (options.measures)
+        body += `<text x="${base.sx(center.x)}" y="${base.sy(center.y) - pixelRadius - 8}" text-anchor="middle" font-size="12">r = ${radius.toFixed(2)}</text>`;
+    }
+  });
+  points.forEach((point, index) => {
+    const x = base.sx(point.x),
+      y = base.sy(point.y);
+    body += `<circle data-geometry-point="${index}" cx="${x}" cy="${y}" r="8" fill="${colors[index % colors.length]}" stroke="#fff" stroke-width="2"/>${options.labels ? `<text x="${x + 11}" y="${y - 10}" font-size="13" font-weight="700">${esc(point.label || String.fromCharCode(65 + index))} (${point.x}, ${point.y})</text>` : ""}`;
+  });
+  return svgShell(body, settings, { width: base.width, height: base.height });
+}
+
 export function renderExpressions(
   sources,
   settings,
@@ -390,7 +442,7 @@ export function renderExpressions(
       path += `${drawing ? "L" : "M"}${base.sx(point.x).toFixed(2)} ${base.sy(point.y).toFixed(2)} `;
       drawing = true;
     });
-    body += `<path d="${path}" fill="none" stroke="${settings.colors[index % settings.colors.length]}" stroke-width="4" clip-path="url(#plotClip)"/>`;
+    body += `<path data-expression-index="${index}" d="${path}" fill="none" stroke="${settings.colors[index % settings.colors.length]}" stroke-width="8" stroke-opacity=".92" clip-path="url(#plotClip)"/>`;
     if (roots)
       findRoots(item.points).forEach((root) => {
         if (root >= settings.xMin && root <= settings.xMax)

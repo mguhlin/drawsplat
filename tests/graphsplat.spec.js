@@ -6,12 +6,79 @@ test("GraphSplat renders every graph workspace", async ({ page }) => {
   await expect(page.locator(".mode-controls:visible")).toHaveCount(1);
   await expect(page.locator("#viewportControls")).toBeHidden();
 
-  for (const mode of ["picture", "coordinate", "expression", "specialty"]) {
+  for (const mode of [
+    "picture",
+    "coordinate",
+    "expression",
+    "geometry",
+    "specialty",
+  ]) {
     await page.locator("#mode").selectOption(mode);
     await expect(page.locator(`#${mode}Controls`)).toBeVisible();
     await expect(page.locator(".mode-controls:visible")).toHaveCount(1);
     await expect(page.locator("#canvas svg")).toBeVisible();
   }
+});
+
+test("quick marks support right-click value and color editing", async ({
+  page,
+}) => {
+  await page.goto("/solutions/graphsplat/");
+  const bar = page.locator('#canvas [data-quick-row="0"]').first();
+  await bar.click({ button: "right" });
+  await expect(page.locator("#quickEditDialog")).toBeVisible();
+  await page.locator("#quickEditValue").fill("25");
+  await page.locator("#quickEditColor").fill("#ef4444");
+  await page.locator("#quickEditApply").click();
+  await expect(page.locator("#quickData")).toHaveValue(/Reading,25/);
+  await expect(
+    page.locator('#canvas [data-quick-row="0"]').first(),
+  ).toHaveAttribute("fill", "#ef4444");
+});
+
+test("expression curves drag vertically and geometry points remain editable", async ({
+  page,
+}) => {
+  await page.goto("/solutions/graphsplat/?mode=expression");
+  const curve = page.locator('#canvas [data-expression-index="0"]');
+  const curvePoint = await curve.evaluate((path) => {
+    const point = path.getPointAtLength(path.getTotalLength() * 0.35),
+      screen = new DOMPoint(point.x, point.y).matrixTransform(
+        path.getScreenCTM(),
+      );
+    return { x: screen.x, y: screen.y };
+  });
+  await page.mouse.move(curvePoint.x, curvePoint.y);
+  await page.mouse.down();
+  await page.mouse.move(curvePoint.x, curvePoint.y - 60, { steps: 4 });
+  await page.mouse.up();
+  await expect(page.locator("#expressions")).toHaveValue(/^\(sin\(x\)\)\+/);
+
+  await page.locator("#mode").selectOption("geometry");
+  await expect(page.locator("#canvas [data-geometry-point]")).toHaveCount(3);
+  await expect(page.locator("#canvas polygon")).not.toHaveCount(0);
+  const point = page.locator('#canvas [data-geometry-point="0"]');
+  const pointBox = await point.boundingBox();
+  const before = await page.locator("#geometryData").inputValue();
+  await page.mouse.move(
+    pointBox.x + pointBox.width / 2,
+    pointBox.y + pointBox.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(pointBox.x + 50, pointBox.y - 35, { steps: 4 });
+  await page.mouse.up();
+  await expect(page.locator("#geometryData")).not.toHaveValue(before);
+});
+
+test("example library is organized by GraphSplat creation mode", async ({
+  page,
+}) => {
+  await page.goto("/solutions/graphsplat/");
+  await page.locator("#openExamples").click();
+  await expect(page.locator("#exampleDialog .example-group")).toHaveCount(6);
+  await page.getByRole("button", { name: /Wave lab/ }).click();
+  await expect(page.locator("#mode")).toHaveValue("expression");
+  await expect(page.locator("#expressions")).toHaveValue("sin(x)\ncos(x)");
 });
 
 test("GraphSplat supports scatter data, pictographs, and safe expressions", async ({

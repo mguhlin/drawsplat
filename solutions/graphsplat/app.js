@@ -3,6 +3,7 @@ import {
   renderQuick,
   renderPicture,
   renderCoordinate,
+  renderGeometry,
   renderExpressions,
   renderSpecialty,
   accessibleTable,
@@ -73,11 +74,147 @@ const THEMES = {
     ink: "#000000",
   },
 };
+const EXAMPLES = [
+  {
+    mode: "quick",
+    name: "Favorite subjects",
+    description: "A colorful classroom bar chart.",
+    values: {
+      quickType: "bar",
+      quickData: "Reading,18\nScience,14\nArt,21\nMath,16",
+      title: "Our Favorite Subjects",
+    },
+  },
+  {
+    mode: "quick",
+    name: "Weather comparison",
+    description: "A two-series line chart.",
+    values: {
+      quickType: "line",
+      quickData: "Monday,72,51\nTuesday,75,54\nWednesday,68,49\nThursday,77,56",
+      title: "High and Low Temperatures",
+    },
+  },
+  {
+    mode: "picture",
+    name: "Classroom pets",
+    description: "A friendly animal pictograph.",
+    pictureRows: [
+      { label: "Dogs", value: 8, icon: "🐶", image: "" },
+      { label: "Cats", value: 6, icon: "🐱", image: "" },
+      { label: "Fish", value: 4, icon: "🐟", image: "" },
+    ],
+    title: "Our Classroom Pets",
+  },
+  {
+    mode: "picture",
+    name: "Books read",
+    description: "A book represents two titles.",
+    pictureRows: [
+      { label: "Week 1", value: 8, icon: "📚", image: "" },
+      { label: "Week 2", value: 12, icon: "📚", image: "" },
+      { label: "Week 3", value: 10, icon: "📚", image: "" },
+    ],
+    values: { pictureKey: "2" },
+    title: "Books We Read",
+  },
+  {
+    mode: "coordinate",
+    name: "Constellation",
+    description: "Connected labeled coordinate points.",
+    values: {
+      pointData: "-6,1,A\n-3,5,B\n0,2,C\n4,6,D\n6,0,E",
+      connectPoints: true,
+      showPointLabels: true,
+    },
+    title: "Coordinate Constellation",
+  },
+  {
+    mode: "coordinate",
+    name: "Linear relationship",
+    description: "Points with y = 2x + 1.",
+    values: {
+      pointData: "-3,-5\n-1,-1\n0,1\n2,5\n4,9",
+      linearEnabled: true,
+      slope: "2",
+      intercept: "1",
+    },
+    title: "Linear Relationship",
+  },
+  {
+    mode: "expression",
+    name: "Wave lab",
+    description: "Compare sine and cosine.",
+    values: {
+      expressions: "sin(x)\ncos(x)",
+      xMin: "-7",
+      xMax: "7",
+      yMin: "-2",
+      yMax: "2",
+    },
+    title: "Wave Lab",
+  },
+  {
+    mode: "expression",
+    name: "Quadratic family",
+    description: "Use sliders a, b, and c.",
+    values: {
+      expressions: "a*x^2+b*x+c",
+      paramA: "1",
+      paramB: "0",
+      paramC: "-4",
+    },
+    title: "Quadratic Family",
+  },
+  {
+    mode: "geometry",
+    name: "Triangle explorer",
+    description: "Drag vertices and watch the area.",
+    geometryData: "-4,-2,A\n3,-2,B\n0,4,C",
+    constructions: [{ type: "polygon", points: [0, 1, 2] }],
+    title: "Triangle Explorer",
+  },
+  {
+    mode: "geometry",
+    name: "Circle and radius",
+    description: "A draggable center and radius point.",
+    geometryData: "0,0,O\n4,0,R",
+    constructions: [
+      { type: "circle", points: [0, 1] },
+      { type: "segment", points: [0, 1] },
+    ],
+    title: "Circle Explorer",
+  },
+  {
+    mode: "specialty",
+    name: "Learning skills radar",
+    description: "Compare several classroom skills.",
+    values: {
+      specialtyType: "radar",
+      specialtyData:
+        "Creativity,8\nCommunication,6\nCollaboration,9\nResearch,7",
+    },
+    title: "Learning Skills",
+  },
+  {
+    mode: "specialty",
+    name: "Project stages",
+    description: "A stacked project summary.",
+    values: {
+      specialtyType: "stackedBar",
+      specialtyData: "Plan,3,2\nCreate,5,4\nReview,2,3\nShare,4,2",
+    },
+    title: "Project Stages",
+  },
+];
 let pictureRows = [
     { label: "Apples", value: 6, icon: "🍎", image: "" },
     { label: "Bananas", value: 4, icon: "🍌", image: "" },
     { label: "Oranges", value: 3, icon: "🍊", image: "" },
   ],
+  quickColors = {},
+  geometryConstructions = [{ type: "polygon", points: [0, 1, 2] }],
+  geometryPending = [],
   lastSvg = "",
   lastRows = [],
   expressionResult = null,
@@ -121,6 +258,7 @@ function settings() {
     yMin: numeric("yMin", -10),
     yMax: numeric("yMax", 10),
     step: Math.max(0.1, numeric("gridStep", 1)),
+    itemColors: quickColors,
     ...colors,
   };
 }
@@ -131,6 +269,20 @@ function parsePoints() {
     .map((line) => {
       const [x, y, ...label] = line.split(",");
       return { x: Number(x), y: Number(y), label: label.join(",").trim() };
+    })
+    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+}
+function parseGeometryPoints() {
+  return $("geometryData")
+    .value.trim()
+    .split(/\n+/)
+    .map((line, index) => {
+      const [x, y, ...label] = line.split(",");
+      return {
+        x: Number(x),
+        y: Number(y),
+        label: label.join(",").trim() || String.fromCharCode(65 + index),
+      };
     })
     .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
 }
@@ -150,6 +302,11 @@ function currentRows() {
   if (mode() === "coordinate")
     return parsePoints().map((point) => ({
       label: point.label || `(${point.x}, ${point.y})`,
+      values: [point.x, point.y],
+    }));
+  if (mode() === "geometry")
+    return parseGeometryPoints().map((point) => ({
+      label: point.label,
       values: [point.x, point.y],
     }));
   if (mode() === "expression")
@@ -218,8 +375,17 @@ function render() {
       lastSvg = expressionResult.svg;
       if (expressionResult.errors.length)
         $("status").textContent = expressionResult.errors.join(" · ");
-    } else
-      lastSvg = renderSpecialty($("specialtyType").value, lastRows, config);
+    } else if (mode() === "geometry")
+      lastSvg = renderGeometry(
+        parseGeometryPoints(),
+        geometryConstructions,
+        config,
+        {
+          labels: $("geometryLabels").checked,
+          measures: $("geometryMeasures").checked,
+        },
+      );
+    else lastSvg = renderSpecialty($("specialtyType").value, lastRows, config);
     $("canvas").innerHTML = lastSvg;
     qualityChecks(config, lastRows);
     if (!expressionResult?.errors.length)
@@ -253,7 +419,11 @@ function syncMode() {
     .querySelectorAll(".mode-controls")
     .forEach((section) => (section.hidden = true));
   $(`${mode()}Controls`).hidden = false;
-  $("viewportControls").hidden = !["coordinate", "expression"].includes(mode());
+  $("viewportControls").hidden = ![
+    "coordinate",
+    "expression",
+    "geometry",
+  ].includes(mode());
   if (mode() === "coordinate" && $("oneQuadrant").checked) {
     $("xMin").value = 0;
     $("yMin").value = 0;
@@ -469,6 +639,8 @@ function project() {
         ]),
     ),
     pictureRows,
+    quickColors,
+    geometryConstructions,
   };
 }
 function applyProject(item) {
@@ -490,6 +662,17 @@ function applyProject(item) {
       icon: String(row.icon || "●").slice(0, 8),
       image: safeImage(row.image),
     }));
+  quickColors =
+    item.quickColors && typeof item.quickColors === "object"
+      ? Object.fromEntries(
+          Object.entries(item.quickColors).filter(([, color]) =>
+            /^#[0-9a-f]{6}$/i.test(color),
+          ),
+        )
+      : {};
+  geometryConstructions = Array.isArray(item.geometryConstructions)
+    ? item.geometryConstructions.slice(0, 100)
+    : [];
   renderPictureRows();
   syncLevel();
   syncMode();
@@ -549,6 +732,7 @@ function reset() {
   const chosen = mode();
   $("quickData").value = "Reading,12\nScience,9\nArt,14\nMusic,7";
   $("pointData").value = "-4,2,Point A\n0,0,Origin\n3,5,Point B";
+  $("geometryData").value = "-4,-2,A\n2,-2,B\n0,3,C";
   $("expressions").value = "sin(x)\n0.25*x^2-2";
   $("specialtyData").value =
     "Creativity,8,4\nCommunication,6,7\nCollaboration,9,5\nCritical thinking,7,8";
@@ -558,6 +742,10 @@ function reset() {
   $("yLabel").value = "Value";
   $("altDescription").value = "";
   delete $("altDescription").dataset.edited;
+  quickColors = {};
+  geometryConstructions = [{ type: "polygon", points: [0, 1, 2] }];
+  geometryPending = [];
+  $("geometryTool").value = "move";
   pictureRows = [
     { label: "Apples", value: 6, icon: "🍎", image: "" },
     { label: "Bananas", value: 4, icon: "🍌", image: "" },
@@ -644,6 +832,168 @@ function updateDataDrag(event) {
   $("status").textContent =
     `${drag.rows[drag.row]?.label || pictureRows[drag.row]?.label}: ${value}`;
 }
+function writeGeometryPoints(points) {
+  $("geometryData").value = points
+    .map((point) => `${point.x},${point.y},${point.label}`)
+    .join("\n");
+}
+function geometryPoint(event) {
+  const point = graphCoordinates(event),
+    step = $("geometrySnap").checked
+      ? Math.max(0.1, numeric("gridStep", 1))
+      : 0.01;
+  return {
+    x: Math.round(point.x / step) * step,
+    y: Math.round(point.y / step) * step,
+  };
+}
+function addGeometryPoint(event) {
+  const points = parseGeometryPoints(),
+    point = geometryPoint(event),
+    index = points.length,
+    tool = $("geometryTool").value;
+  points.push({ ...point, label: String.fromCharCode(65 + (index % 26)) });
+  writeGeometryPoints(points);
+  if (tool === "segment" || tool === "circle") {
+    geometryPending.push(index);
+    if (geometryPending.length === 2) {
+      geometryConstructions.push({ type: tool, points: [...geometryPending] });
+      geometryPending = [];
+    }
+  } else if (tool === "polygon") geometryPending.push(index);
+  render();
+}
+function finishGeometryPolygon() {
+  if (geometryPending.length > 2)
+    geometryConstructions.push({
+      type: "polygon",
+      points: [...geometryPending],
+    });
+  geometryPending = [];
+  render();
+}
+function loadExample(example) {
+  $("mode").value = example.mode;
+  Object.entries(example.values || {}).forEach(([id, value]) => {
+    const input = $(id);
+    if (!input) return;
+    if (input.type === "checkbox") input.checked = Boolean(value);
+    else input.value = value;
+  });
+  if (example.pictureRows) {
+    pictureRows = example.pictureRows.map((row) => ({ ...row }));
+    renderPictureRows();
+  }
+  if (example.geometryData !== undefined)
+    $("geometryData").value = example.geometryData;
+  if (example.constructions)
+    geometryConstructions = example.constructions.map((shape) => ({
+      ...shape,
+      points: [...shape.points],
+    }));
+  $("title").value = example.title || example.name;
+  quickColors = {};
+  geometryPending = [];
+  $("exampleDialog").close();
+  syncMode();
+  $("status").textContent = `${example.name} loaded.`;
+}
+function buildExampleLibrary() {
+  const labels = {
+      quick: "Quick Chart",
+      picture: "Picture Graph",
+      coordinate: "Coordinate Plane",
+      expression: "Expression Calculator",
+      geometry: "Geometry",
+      specialty: "Specialty Chart",
+    },
+    library = $("exampleLibrary");
+  library.replaceChildren();
+  Object.entries(labels).forEach(([modeId, label]) => {
+    const section = document.createElement("section"),
+      heading = document.createElement("h3"),
+      grid = document.createElement("div");
+    section.className = "example-group";
+    heading.textContent = label;
+    grid.className = "example-grid";
+    EXAMPLES.filter((example) => example.mode === modeId).forEach((example) => {
+      const button = document.createElement("button"),
+        name = document.createElement("strong"),
+        description = document.createElement("span");
+      button.type = "button";
+      button.className = "example-card";
+      name.textContent = example.name;
+      description.textContent = example.description;
+      button.append(name, description);
+      button.onclick = () => loadExample(example);
+      grid.append(button);
+    });
+    section.append(heading, grid);
+    library.append(section);
+  });
+}
+function openQuickEditor(event, target) {
+  const rows = parseRows($("quickData").value),
+    row = Number(target.dataset.quickRow),
+    series = Number(target.dataset.quickSeries),
+    item = rows[row];
+  if (!item || !Number.isFinite(item.values[series])) return;
+  event.preventDefault();
+  const fallback = target.getAttribute("fill");
+  $("quickEditDialog").dataset.row = row;
+  $("quickEditDialog").dataset.series = series;
+  $("quickEditTitle").textContent = `Edit ${item.label}`;
+  $("quickEditValue").value = item.values[series];
+  $("quickEditColor").value = /^#[0-9a-f]{6}$/i.test(fallback)
+    ? fallback
+    : quickColors[`${row}:${series}`] || PALETTE[series % PALETTE.length];
+  $("quickEditDialog").showModal();
+}
+function applyQuickEditor(event) {
+  event.preventDefault();
+  const dialog = $("quickEditDialog"),
+    row = Number(dialog.dataset.row),
+    series = Number(dialog.dataset.series),
+    rows = parseRows($("quickData").value),
+    value = Number($("quickEditValue").value);
+  if (!rows[row] || !Number.isFinite(value)) return;
+  rows[row].values[series] = value;
+  quickColors[`${row}:${series}`] = $("quickEditColor").value;
+  $("quickData").value = rows
+    .map((item) => [item.label, ...item.values].join(","))
+    .join("\n");
+  dialog.close();
+  render();
+  $("status").textContent = `${rows[row].label} updated.`;
+}
+function beginExpressionDrag(event, target) {
+  const index = Number(target.dataset.expressionIndex),
+    sources = expressionSources();
+  if (!sources[index]) return false;
+  drag = {
+    kind: "expression",
+    index,
+    sources,
+    source: sources[index],
+    startY: event.clientY,
+    yRange: numeric("yMax", 10) - numeric("yMin", -10),
+  };
+  $("canvas").setPointerCapture(event.pointerId);
+  $("status").textContent = "Drag the curve vertically to change its offset.";
+  return true;
+}
+function updateExpressionDrag(event) {
+  const height = $("canvas").getBoundingClientRect().height,
+    offset = ((drag.startY - event.clientY) / height) * drag.yRange,
+    rounded = Math.round(offset * 1000) / 1000;
+  drag.sources[drag.index] =
+    Math.abs(rounded) < 0.001
+      ? drag.source
+      : `(${drag.source})${rounded >= 0 ? "+" : ""}${rounded}`;
+  $("expressions").value = drag.sources.join("\n");
+  render();
+  $("status").textContent = `Expression offset: ${rounded}`;
+}
 function bind() {
   document
     .querySelectorAll(".controls input,.controls select,.controls textarea")
@@ -655,6 +1005,8 @@ function bind() {
         });
     });
   $("mode").onchange = syncMode;
+  $("openExamples").onclick = () => $("exampleDialog").showModal();
+  $("closeExamples").onclick = () => $("exampleDialog").close();
   $("level").onchange = () => {
     syncLevel();
     render();
@@ -720,6 +1072,19 @@ function bind() {
     if (item) applyProject(item);
   };
   $("reset").onclick = reset;
+  $("quickEditApply").onclick = applyQuickEditor;
+  $("finishPolygon").onclick = finishGeometryPolygon;
+  $("undoGeometry").onclick = () => {
+    if (geometryPending.length) geometryPending.pop();
+    else geometryConstructions.pop();
+    render();
+  };
+  $("clearGeometry").onclick = () => {
+    geometryPending = [];
+    geometryConstructions = [];
+    $("geometryData").value = "";
+    render();
+  };
   ["paramA", "paramB", "paramC"].forEach((id) =>
     $(id).addEventListener("input", () => {
       $(`${id}Out`).textContent = $(id).value;
@@ -736,8 +1101,26 @@ function bind() {
     { passive: false },
   );
   $("canvas").addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) return;
     const dataTarget = event.target.closest("[data-drag-row]");
     if (dataTarget && beginDataDrag(event, dataTarget)) {
+      event.preventDefault();
+      return;
+    }
+    const expressionTarget = event.target.closest("[data-expression-index]");
+    if (expressionTarget && beginExpressionDrag(event, expressionTarget)) {
+      event.preventDefault();
+      return;
+    }
+    if (mode() === "geometry") {
+      const pointTarget = event.target.closest("[data-geometry-point]");
+      if (pointTarget) {
+        drag = {
+          kind: "geometry",
+          index: Number(pointTarget.dataset.geometryPoint),
+        };
+        $("canvas").setPointerCapture(event.pointerId);
+      } else if ($("geometryTool").value !== "move") addGeometryPoint(event);
       event.preventDefault();
       return;
     }
@@ -767,6 +1150,20 @@ function bind() {
       updateDataDrag(event);
       return;
     }
+    if (drag.kind === "expression") {
+      updateExpressionDrag(event);
+      return;
+    }
+    if (drag.kind === "geometry") {
+      const points = parseGeometryPoints(),
+        point = geometryPoint(event);
+      if (points[drag.index]) {
+        points[drag.index] = { ...points[drag.index], ...point };
+        writeGeometryPoints(points);
+        render();
+      }
+      return;
+    }
     const rect = $("canvas").getBoundingClientRect(),
       dx =
         ((event.clientX - drag.startX) / rect.width) * (drag.xMax - drag.xMin),
@@ -791,20 +1188,35 @@ function bind() {
       render();
     }
     if (drag?.kind === "data") $("status").textContent = "Value updated.";
+    if (drag?.kind === "expression")
+      $("status").textContent = "Expression updated.";
+    if (drag?.kind === "geometry")
+      $("status").textContent = "Geometry point updated.";
     drag = null;
+  });
+  $("canvas").addEventListener("contextmenu", (event) => {
+    if (mode() !== "quick") return;
+    const target = event.target.closest("[data-quick-row]");
+    if (target) openQuickEditor(event, target);
   });
 }
 
 const query = new URLSearchParams(location.search),
   requested = query.get("mode");
 if (
-  ["quick", "picture", "coordinate", "expression", "specialty"].includes(
-    requested,
-  )
+  [
+    "quick",
+    "picture",
+    "coordinate",
+    "expression",
+    "geometry",
+    "specialty",
+  ].includes(requested)
 )
   $("mode").value = requested;
 renderPictureRows();
 seedEmojiPalette();
+buildExampleLibrary();
 refreshProjects();
 bind();
 syncLevel();
