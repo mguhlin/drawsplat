@@ -3,10 +3,13 @@ const { test, expect } = require("@playwright/test");
 test("GraphSplat renders every graph workspace", async ({ page }) => {
   await page.goto("/solutions/graphsplat/");
   await expect(page.locator("#canvas svg")).toBeVisible();
+  await expect(page.locator(".mode-controls:visible")).toHaveCount(1);
+  await expect(page.locator("#viewportControls")).toBeHidden();
 
   for (const mode of ["picture", "coordinate", "expression", "specialty"]) {
     await page.locator("#mode").selectOption(mode);
     await expect(page.locator(`#${mode}Controls`)).toBeVisible();
+    await expect(page.locator(".mode-controls:visible")).toHaveCount(1);
     await expect(page.locator("#canvas svg")).toBeVisible();
   }
 });
