@@ -11,7 +11,7 @@ GraphSplat consolidates DrawSplat's Graph Maker and Picture Graph Maker into one
 - Geometry: draggable points, segments, polygons, circles, labels, snapping, lengths, and polygon areas
 - Specialty charts: bubble, radar, polar, stacked bar, stacked area, and pyramid
 
-The built-in GraphSplat Example Library provides ready-to-edit starting points organized by these six workspaces.
+The built-in **GraphSplat Examples** library provides colorful illustrated, ready-to-edit starting points organized by these six workspaces. It also links to integrated Science and Mathematics lesson plans for grades 3–5, 6–8, and 9–12, with TEKS correlations, instructional sequences, assessments, differentiation, and extensions.
 
 Graphs export as PNG, JPEG, SVG, printable PDF, or CSV. Projects can be saved locally or moved between devices as JSON. No graph data or uploaded picture is sent to a server.
 

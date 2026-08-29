@@ -27,7 +27,6 @@
       >
       <nav aria-label="Application actions">
         <span class="local">🔒 Local processing</span
-        ><button id="openExamples" type="button">Examples</button
         ><button
           type="button"
           data-ds-app-launcher
@@ -41,23 +40,28 @@
     <main>
       <section class="hero">
         <div>
-          <p class="eyebrow">One graph studio. Five ways to explore.</p>
+          <p class="eyebrow">One graph studio. Six ways to explore.</p>
           <h1>Make data visible.</h1>
           <p>
             Create playful classroom charts, pictographs, coordinate planes,
             specialty visualizations, and interactive function graphs.
           </p>
         </div>
-        <label class="mode-label" for="mode"
-          >What would you like to create?<select id="mode">
-            <option value="quick">Quick chart</option>
-            <option value="picture">Picture graph</option>
-            <option value="coordinate">Coordinate plane</option>
-            <option value="expression">Expression calculator</option>
-            <option value="geometry">Geometry</option>
-            <option value="specialty">Specialty chart</option>
-          </select></label
-        >
+        <div class="mode-actions">
+          <label class="mode-label" for="mode"
+            >What would you like to create?<select id="mode">
+              <option value="quick">Quick chart</option>
+              <option value="picture">Picture graph</option>
+              <option value="coordinate">Coordinate plane</option>
+              <option value="expression">Expression calculator</option>
+              <option value="geometry">Geometry</option>
+              <option value="specialty">Specialty chart</option>
+            </select></label
+          >
+          <button id="openExamples" class="examples-button" type="button">
+            GraphSplat Examples
+          </button>
+        </div>
       </section>
 
       <section class="studio">
@@ -443,8 +447,8 @@ Reflection,5,6</textarea>
           <p>
             Use Quick Chart for everyday data, Picture Graph for concrete
             quantities, Coordinate Plane for plotted points, Expression
-            Calculator for functions, and Specialty Chart for less common visual
-            forms.
+            Calculator for functions, Geometry for spatial investigations, and
+            Specialty Chart for less common visual forms.
           </p>
         </article>
         <article>
@@ -486,8 +490,11 @@ Reflection,5,6</textarea>
     <dialog id="exampleDialog" class="example-dialog">
       <div class="dialog-head">
         <div>
-          <strong>GraphSplat Example Library</strong>
+          <strong>GraphSplat Examples</strong>
           <p>What would you like to create today?</p>
+          <a class="lesson-link" href="lesson-plans.html"
+            >TEKS-aligned Science + Mathematics lesson plans →</a
+          >
         </div>
         <button
           id="closeExamples"

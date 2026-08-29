@@ -114,6 +114,23 @@ body {
   gap: 0.35rem;
   font-weight: 900;
 }
+.mode-actions {
+  display: grid;
+  gap: 0.55rem;
+  min-width: min(390px, 100%);
+}
+.examples-button {
+  width: 100%;
+  border-color: #b7a3f5;
+  background: #f1ecff;
+  color: #5420cf;
+}
+.lesson-link {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: #5420cf;
+  font-weight: 750;
+}
 .studio {
   display: grid;
   grid-template-columns: minmax(320px, 460px) minmax(420px, 1fr);
@@ -410,6 +427,19 @@ body {
   min-height: 92px;
   text-align: left;
   background: #faf9fe;
+}
+.example-thumbnail {
+  display: block;
+  margin: -0.75rem -0.75rem 0.15rem;
+  overflow: hidden;
+  border-radius: 10px 10px 4px 4px;
+  background: #f7f3ff;
+}
+.example-thumbnail svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 7.5;
 }
 .example-card strong,
 .example-card span {

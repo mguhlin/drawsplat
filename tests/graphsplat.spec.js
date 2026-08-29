@@ -76,6 +76,13 @@ test("example library is organized by GraphSplat creation mode", async ({
   await page.goto("/solutions/graphsplat/");
   await page.locator("#openExamples").click();
   await expect(page.locator("#exampleDialog .example-group")).toHaveCount(6);
+  await expect(
+    page.locator("#exampleDialog .example-thumbnail svg"),
+  ).toHaveCount(12);
+  await expect(page.locator("#exampleDialog .lesson-link")).toHaveAttribute(
+    "href",
+    "lesson-plans.html",
+  );
   await page.getByRole("button", { name: /Wave lab/ }).click();
   await expect(page.locator("#mode")).toHaveValue("expression");
   await expect(page.locator("#expressions")).toHaveValue("sin(x)\ncos(x)");
@@ -174,4 +181,17 @@ test("GraphSplat is discoverable by graph aliases", async ({ page }) => {
       "GraphSplat",
     );
   }
+});
+
+test("GraphSplat publishes TEKS-aligned lesson plans for three grade bands", async ({
+  page,
+}) => {
+  await page.goto("/solutions/graphsplat/lesson-plans.html");
+  await expect(page.locator("article.lesson")).toHaveCount(3);
+  await expect(page.locator("#grades-3-5")).toContainText("3.8(A)–(B)");
+  await expect(page.locator("#grades-6-8")).toContainText("8.11(A)–(C)");
+  await expect(page.locator("#grades-9-12")).toContainText("A.4(A)–(C)");
+  await expect(
+    page.getByRole("link", { name: /Open GraphSplat/ }),
+  ).toHaveAttribute("href", "./");
 });
