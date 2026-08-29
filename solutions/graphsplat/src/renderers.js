@@ -148,7 +148,7 @@ export function renderQuick(type, rows, settings) {
               0,
               colors[index % colors.length],
             );
-          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><rect data-quick-row="${index}" data-quick-series="0" data-drag-row="${index}" data-drag-series="0" data-drag-axis="x" x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
+          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><g class="draggable-mark"><rect data-quick-row="${index}" data-quick-series="0" data-drag-row="${index}" data-drag-series="0" data-drag-axis="x" x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/><g class="drag-indicator" aria-hidden="true" transform="translate(${Math.max(left + 22, left + width - 28)} ${y + rowH / 2})" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-12 0H12M7-6l6 6-6 6M-7-6l-6 6 6 6"/></g></g>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
         })
         .join("");
     return svgShell(body, settings);
@@ -178,7 +178,7 @@ export function renderQuick(type, rows, settings) {
           ),
           fill = settings.patterns ? `url(#diagonal)` : color,
           x = frame.left + slot * index + slot * 0.14 + barWidth * series;
-        body += `<g color="${color}"><rect data-quick-row="${index}" data-quick-series="${series}" data-drag-row="${index}" data-drag-series="${series}" data-drag-axis="y" x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
+        body += `<g class="draggable-mark" color="${color}"><rect data-quick-row="${index}" data-quick-series="${series}" data-drag-row="${index}" data-drag-series="${series}" data-drag-axis="y" x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/><g class="drag-indicator" aria-hidden="true" transform="translate(${x + Math.max(2, barWidth - 2) / 2} ${Math.min(frame.top + frame.h - 24, y + 30)})" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M0-15V15M-6-10l6-6 6 6M-6 10l6 6 6-6"/></g>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
       }),
     );
   } else {

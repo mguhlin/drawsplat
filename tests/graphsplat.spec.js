@@ -115,6 +115,11 @@ test("bars and picture symbols can be dragged to change their values", async ({
 }) => {
   await page.goto("/solutions/graphsplat/");
   const bar = page.locator('#canvas [data-drag-row="0"]').first();
+  await expect(page.locator("#canvas .drag-indicator")).toHaveCount(4);
+  await bar.hover();
+  await expect(
+    page.locator("#canvas .draggable-mark").first().locator(".drag-indicator"),
+  ).toHaveCSS("opacity", "1");
   const barBox = await bar.boundingBox();
   await page.mouse.move(barBox.x + barBox.width / 2, barBox.y + 5);
   await page.mouse.down();
