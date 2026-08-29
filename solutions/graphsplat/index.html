@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Create charts, picture graphs, coordinate planes, and interactive function graphs locally in your browser."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>GraphSplat | DrawSplat</title>
+    <link rel="icon" href="graphsplat-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/css/tool-launcher.css" />
+    <link rel="stylesheet" href="../../assets/css/launcher-trigger.css" />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#mode">Skip to graph controls</a>
+    <header class="app-header">
+      <a class="brand" href="../../"
+        ><img src="graphsplat-icon.svg" alt="" /><span
+          ><small>DrawSplat</small><strong>GraphSplat</strong></span
+        ></a
+      >
+      <nav aria-label="Application actions">
+        <span class="local">🔒 Local processing</span
+        ><button
+          type="button"
+          data-ds-app-launcher
+          aria-label="Open DrawSplat apps"
+        >
+          Apps ▦</button
+        ><a href="#help">Help</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">One graph studio. Five ways to explore.</p>
+          <h1>Make data visible.</h1>
+          <p>
+            Create playful classroom charts, pictographs, coordinate planes,
+            specialty visualizations, and interactive function graphs.
+          </p>
+        </div>
+        <label class="mode-label" for="mode"
+          >What would you like to create?<select id="mode">
+            <option value="quick">Quick chart</option>
+            <option value="picture">Picture graph</option>
+            <option value="coordinate">Coordinate plane</option>
+            <option value="expression">Expression calculator</option>
+            <option value="specialty">Specialty chart</option>
+          </select></label
+        >
+      </section>
+
+      <section class="studio">
+        <aside class="controls" aria-label="Graph controls">
+          <div class="simple-row">
+            <label
+              >Editing level<select id="level">
+                <option value="simple">Simple</option>
+                <option value="advanced">Advanced</option>
+              </select></label
+            ><button id="reset" type="button">Reset</button>
+          </div>
+
+          <section id="quickControls" class="mode-controls">
+            <label
+              >Chart type<select id="quickType">
+                <option value="bar">Bar</option>
+                <option value="hbar">Horizontal bar</option>
+                <option value="line">Line</option>
+                <option value="area">Area</option>
+                <option value="pie">Pie</option>
+                <option value="donut">Donut</option>
+                <option value="scatter">Scatter / XY</option>
+              </select></label
+            >
+            <label
+              >Data <span>one row per line: label,value</span
+              ><textarea id="quickData">
+Reading,12
+Science,9
+Art,14
+Music,7</textarea
+              >
+            </label>
+          </section>
+
+          <section id="pictureControls" class="mode-controls" hidden>
+            <div class="section-head">
+              <strong>Picture rows</strong
+              ><button id="addPictureRow" type="button">+ Add row</button>
+            </div>
+            <div id="pictureRows"></div>
+            <label
+              >Each picture equals<input
+                id="pictureKey"
+                type="number"
+                min="0.1"
+                step="0.1"
+                value="1"
+            /></label>
+            <div class="checks">
+              <label
+                ><input id="showPictureValues" type="checkbox" /> Show
+                values</label
+              ><label
+                ><input id="showPictureKey" type="checkbox" checked /> Show
+                key</label
+              >
+            </div>
+            <details>
+              <summary>Emoji palette</summary>
+              <div id="emojiPalette" class="emoji-palette"></div>
+            </details>
+          </section>
+
+          <section id="coordinateControls" class="mode-controls" hidden>
+            <label
+              >Points <span>x,y,label — one per line</span
+              ><textarea id="pointData">
+2,3,A
+-4,1,B
+5,-2,C</textarea
+              >
+            </label>
+            <div class="checks">
+              <label
+                ><input id="connectPoints" type="checkbox" /> Connect
+                points</label
+              ><label
+                ><input id="showPointLabels" type="checkbox" checked /> Show
+                labels</label
+              ><label
+                ><input id="oneQuadrant" type="checkbox" /> Positive quadrant
+                only</label
+              >
+            </div>
+            <label class="advanced"
+              >Linear equation, y = mx + b<input
+                id="linearEnabled"
+                type="checkbox"
+            /></label>
+            <div class="two advanced">
+              <label
+                >Slope m<input
+                  id="slope"
+                  type="number"
+                  step="0.1"
+                  value="1" /></label
+              ><label
+                >Intercept b<input
+                  id="intercept"
+                  type="number"
+                  step="0.1"
+                  value="0"
+              /></label>
+            </div>
+          </section>
+
+          <section id="expressionControls" class="mode-controls" hidden>
+            <label
+              >Expressions <span>one per line; use x, a, b, c</span
+              ><textarea id="expressions">
+sin(x)
+0.25*x^2-2</textarea
+              >
+            </label>
+            <div class="slider-grid">
+              <label
+                >a
+                <input
+                  id="paramA"
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.1"
+                  value="1"
+                /><output id="paramAOut">1</output></label
+              ><label
+                >b
+                <input
+                  id="paramB"
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.1"
+                  value="0"
+                /><output id="paramBOut">0</output></label
+              ><label
+                >c
+                <input
+                  id="paramC"
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.1"
+                  value="0"
+                /><output id="paramCOut">0</output></label
+              >
+            </div>
+            <div class="checks">
+              <label><input id="degrees" type="checkbox" /> Degrees</label
+              ><label
+                ><input id="showRoots" type="checkbox" checked /> Roots</label
+              ><label
+                ><input id="showIntersections" type="checkbox" checked />
+                Intersections</label
+              >
+            </div>
+            <button id="expressionTable" type="button">Show value table</button>
+            <div id="valueTable" hidden></div>
+            <p class="hint">
+              Supported: + − × ÷ ^, parentheses, sin, cos, tan, sqrt, abs, log,
+              ln, exp, floor, ceil, min, max, π and e. No JavaScript is
+              executed.
+            </p>
+          </section>
+
+          <section id="specialtyControls" class="mode-controls" hidden>
+            <label
+              >Specialty type<select id="specialtyType">
+                <option value="bubble">Bubble</option>
+                <option value="radar">Radar</option>
+                <option value="polar">Polar</option>
+                <option value="stackedBar">Stacked bar</option>
+                <option value="stackedArea">Stacked area</option>
+                <option value="pyramid">Pyramid</option>
+              </select></label
+            >
+            <label
+              >Data <span>label,value[,second value]</span
+              ><textarea id="specialtyData">
+Creativity,8,4
+Collaboration,6,7
+Research,9,5
+Presentation,7,8
+Reflection,5,6</textarea
+              >
+            </label>
+          </section>
+
+          <fieldset>
+            <legend>Labels</legend>
+            <label
+              >Graph title<input id="title" value="My Graph" maxlength="100"
+            /></label>
+            <div class="two advanced">
+              <label>X-axis label<input id="xLabel" /></label
+              ><label>Y-axis label<input id="yLabel" /></label>
+            </div>
+            <label class="advanced"
+              >Source / attribution<input id="source"
+            /></label>
+          </fieldset>
+          <fieldset>
+            <legend>Style</legend>
+            <label
+              >Theme<select id="theme">
+                <option value="drawsplat">DrawSplat</option>
+                <option value="bright">Bright classroom</option>
+                <option value="pastel">Pastel</option>
+                <option value="notebook">Notebook</option>
+                <option value="chalkboard">Chalkboard</option>
+                <option value="highContrast">High contrast</option>
+                <option value="printer">Printer friendly</option>
+              </select></label
+            >
+            <div class="two advanced">
+              <label
+                >Primary color<input
+                  id="primaryColor"
+                  type="color"
+                  value="#6d38e8" /></label
+              ><label
+                >Background<input
+                  id="backgroundColor"
+                  type="color"
+                  value="#ffffff"
+              /></label>
+            </div>
+            <div class="checks advanced">
+              <label><input id="showGrid" type="checkbox" checked /> Grid</label
+              ><label
+                ><input id="showLegend" type="checkbox" checked /> Legend</label
+              ><label
+                ><input id="showNumbers" type="checkbox" checked />
+                Values</label
+              ><label
+                ><input id="patterns" type="checkbox" /> Pattern fills</label
+              >
+            </div>
+          </fieldset>
+          <fieldset id="viewportControls">
+            <legend>Graph window</legend>
+            <div class="four">
+              <label>x min<input id="xMin" type="number" value="-10" /></label
+              ><label>x max<input id="xMax" type="number" value="10" /></label
+              ><label>y min<input id="yMin" type="number" value="-10" /></label
+              ><label>y max<input id="yMax" type="number" value="10" /></label>
+            </div>
+            <label
+              >Grid interval<input
+                id="gridStep"
+                type="number"
+                min="0.1"
+                step="0.5"
+                value="1"
+            /></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Accessibility</legend>
+            <label
+              >Graph description<textarea
+                id="altDescription"
+                placeholder="Generated automatically; edit before exporting."
+              ></textarea></label
+            ><button id="copyTable" type="button">
+              Copy accessible data table
+            </button>
+            <div id="checks" class="quality" role="status"></div>
+          </fieldset>
+          <label
+            >Project name<input
+              id="projectName"
+              value="My Graph"
+              maxlength="80"
+          /></label>
+          <div class="button-row">
+            <button id="saveProject" type="button">Save locally</button
+            ><button id="downloadProject" type="button">Project JSON</button
+            ><button id="openProject" type="button">Open JSON / CSV</button>
+          </div>
+          <label
+            >Saved projects<select id="savedProjects">
+              <option value="">Choose a project…</option>
+            </select></label
+          >
+          <input
+            id="projectFile"
+            type="file"
+            accept=".json,.csv,.tsv,application/json,text/csv,text/tab-separated-values"
+            hidden
+          />
+        </aside>
+
+        <section class="preview" aria-label="Graph preview">
+          <div class="preview-head">
+            <strong>Live preview</strong
+            ><span id="status" role="status" aria-live="polite">Ready</span>
+          </div>
+          <div id="canvas" tabindex="0" aria-label="Rendered graph"></div>
+          <div id="trace" aria-live="polite"></div>
+          <div class="export-row">
+            <button id="copyPng" class="primary" type="button">Copy PNG</button
+            ><button id="downloadPng" type="button">PNG</button
+            ><button id="downloadSvg" type="button">SVG</button
+            ><button id="downloadJpg" type="button">JPEG</button
+            ><button id="print" type="button">Print / PDF</button
+            ><button id="exportCsv" type="button">CSV</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="help" class="help">
+        <article>
+          <h2>Choose by purpose</h2>
+          <p>
+            Use Quick Chart for everyday data, Picture Graph for concrete
+            quantities, Coordinate Plane for plotted points, Expression
+            Calculator for functions, and Specialty Chart for less common visual
+            forms.
+          </p>
+        </article>
+        <article>
+          <h2>Privacy first</h2>
+          <p>
+            Data, expressions, and uploaded pictures stay in this browser.
+            Nothing is sent to DrawSplat servers.
+          </p>
+        </article>
+        <article>
+          <h2>Graph responsibly</h2>
+          <p>
+            Label axes, use honest scales, include a source, and review the
+            generated accessible description. Always verify mathematical results
+            before assessment use.
+          </p>
+        </article>
+      </section>
+    </main>
+    <canvas id="raster" hidden></canvas>
+    <footer>
+      GraphSplat · Local-first graph creation · No account required
+    </footer>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="../../assets/js/tool-launcher.js"></script>
+  </body>
+</html>

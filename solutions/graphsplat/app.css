@@ -1,0 +1,478 @@
+:root {
+  --purple: #6d38e8;
+  --purple-dark: #4920ae;
+  --ink: #172033;
+  --muted: #657085;
+  --line: #ddd9e8;
+  --panel: #fff;
+  --soft: #f7f5fc;
+  --green: #087a45;
+  --danger: #b42318;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #fbfaff;
+  color: var(--ink);
+  font:
+    15px/1.45 system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+.skip {
+  position: fixed;
+  top: -5rem;
+  left: 1rem;
+  z-index: 100;
+  background: #fff;
+  padding: 0.7rem;
+}
+.skip:focus {
+  top: 1rem;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: inherit;
+  text-decoration: none;
+}
+.brand img {
+  width: 44px;
+  height: 44px;
+}
+.brand span {
+  display: grid;
+}
+.brand small,
+.eyebrow {
+  color: var(--purple);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.brand strong {
+  font-size: 1.15rem;
+}
+.app-header nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.app-header button,
+.app-header nav a {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.55rem 0.75rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+}
+.local {
+  color: var(--green);
+  font-weight: 800;
+}
+.hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  width: min(1380px, calc(100% - 2rem));
+  margin: 2.2rem auto 1.2rem;
+}
+.hero h1 {
+  margin: 0.2rem 0;
+  font-size: clamp(2rem, 5vw, 4.3rem);
+  line-height: 1;
+}
+.hero p {
+  max-width: 720px;
+  color: var(--muted);
+}
+.mode-label {
+  display: grid;
+  min-width: min(390px, 100%);
+  gap: 0.35rem;
+  font-weight: 900;
+}
+.studio {
+  display: grid;
+  grid-template-columns: minmax(320px, 460px) minmax(420px, 1fr);
+  gap: 1.2rem;
+  width: min(1380px, calc(100% - 2rem));
+  margin: auto;
+}
+.controls,
+.preview {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 34px #28154f0d;
+}
+.controls {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: 1.1rem;
+}
+.controls label {
+  display: grid;
+  gap: 0.3rem;
+  color: #354052;
+  font-weight: 750;
+}
+.controls label span,
+.hint {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+.controls input,
+.controls select,
+.controls textarea,
+.mode-label select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #cdd2df;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.5rem 0.65rem;
+  color: var(--ink);
+  font: inherit;
+}
+.controls textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.controls input[type="color"] {
+  padding: 0.18rem;
+}
+.controls input[type="checkbox"] {
+  width: 18px;
+  min-height: 18px;
+}
+.controls input[type="range"] {
+  min-height: auto;
+  padding: 0;
+}
+.controls button,
+.export-row button {
+  min-height: 42px;
+  border: 1px solid #cdd2df;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.55rem 0.75rem;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+.controls button:hover,
+.export-row button:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+}
+.primary {
+  border-color: var(--purple) !important;
+  background: var(--purple) !important;
+  color: #fff !important;
+}
+.simple-row,
+.section-head,
+.preview-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+.simple-row label {
+  flex: 1;
+}
+.mode-controls {
+  display: grid;
+  gap: 0.8rem;
+  border-left: 4px solid var(--purple);
+  border-radius: 8px;
+  background: #faf9fe;
+  padding: 0.9rem;
+}
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+.four {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.checks label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.controls fieldset {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem;
+}
+.controls legend {
+  padding: 0 0.35rem;
+  font-weight: 900;
+}
+.button-row,
+.export-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.picture-row {
+  display: grid;
+  grid-template-columns: 44px minmax(80px, 1fr) 80px auto;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0.4rem 0;
+}
+.picture-row input {
+  min-width: 0;
+}
+.picture-row .emoji {
+  font-size: 1.2rem;
+  text-align: center;
+}
+.picture-row img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.picture-row button {
+  min-height: 38px;
+  padding: 0.3rem 0.5rem;
+}
+.picture-image {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.picture-image input {
+  display: none;
+}
+.emoji-palette {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.3rem;
+  padding: 0.6rem;
+}
+.emoji-palette button {
+  padding: 0.25rem;
+  font-size: 1.25rem;
+}
+.slider-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+.slider-grid label {
+  grid-template-columns: 18px 1fr 44px;
+  align-items: center;
+}
+.quality {
+  border-radius: 8px;
+  background: #f4f7fb;
+  padding: 0.7rem;
+  color: var(--muted);
+}
+.quality.warning {
+  background: #fff7e8;
+  color: #834b00;
+}
+.preview {
+  position: sticky;
+  top: 0.8rem;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-height: 720px;
+  padding: 1rem;
+}
+.preview-head {
+  align-items: center;
+}
+.preview-head span {
+  color: var(--green);
+  font-weight: 800;
+}
+#canvas {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 570px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: #eee9ff;
+  touch-action: none;
+}
+#canvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 680px;
+}
+#trace {
+  min-height: 22px;
+  text-align: center;
+  color: var(--muted);
+}
+.export-row {
+  justify-content: center;
+}
+#valueTable {
+  max-height: 240px;
+  overflow: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  border: 1px solid var(--line);
+  padding: 0.35rem;
+  text-align: right;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+.help {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: min(1380px, calc(100% - 2rem));
+  margin: 2.5rem auto;
+}
+.help article {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 1rem;
+}
+.help h2 {
+  margin-top: 0;
+}
+.help p {
+  color: var(--muted);
+}
+footer {
+  margin-top: 2rem;
+  padding: 1.3rem;
+  text-align: center;
+  background: #21173c;
+  color: #e8e1f5;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+#canvas:focus-visible {
+  outline: 3px solid #f5b942;
+  outline-offset: 2px;
+}
+@media (max-width: 940px) {
+  .hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .studio {
+    grid-template-columns: 1fr;
+  }
+  .preview {
+    position: static;
+    min-height: 0;
+  }
+  .help {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .local {
+    display: none;
+  }
+  .brand small {
+    display: none;
+  }
+  .hero {
+    margin-top: 1.4rem;
+  }
+  .four,
+  .two {
+    grid-template-columns: 1fr 1fr;
+  }
+  .picture-row {
+    grid-template-columns: 42px 1fr 72px auto;
+  }
+  .preview {
+    padding: 0.6rem;
+  }
+  #canvas {
+    min-height: 400px;
+  }
+  .export-row button {
+    flex: 1 1 28%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+@media print {
+  .app-header,
+  .hero,
+  .controls,
+  .preview-head,
+  .export-row,
+  #trace,
+  .help,
+  footer {
+    display: none !important;
+  }
+  .studio,
+  .preview {
+    display: block;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+  }
+  .preview {
+    min-height: 0;
+  }
+  #canvas {
+    background: #fff;
+    min-height: 0;
+  }
+}

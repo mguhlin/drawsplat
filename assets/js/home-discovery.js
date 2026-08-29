@@ -7,7 +7,7 @@ function resultLink(tool, card = false) { const link = document.createElement("a
 function renderShelf(selector, ids) { const section = $(selector), tools = ids.map((id) => registry.tools.find((tool) => tool.id === id)).filter(Boolean).slice(0, 5); section.hidden = !tools.length; $("div", section).replaceChildren(...tools.map((tool) => resultLink(tool))); return tools.length; }
 async function init() {
   registry = await getRegistry(); categoryLookup = new Map(registry.categories.map((category) => [category.id, category]));
-  const preferred = ["concept-map", "splatimage", "picture-graph", "quiz-flashcards", "videosplat", "markdown-studio"];
+  const preferred = ["concept-map", "splatimage", "graphsplat", "quiz-flashcards", "videosplat", "markdown-studio"];
   $("#homeFeatured").replaceChildren(...preferred.map((id) => registry.tools.find((tool) => tool.id === id)).filter(Boolean).map((tool) => resultLink(tool, true)));
   const search = $("#homeSearch"), results = $("#homeSearchResults");
   search.oninput = () => { const query = search.value.trim(); if (!query) { results.hidden = true; results.replaceChildren(); return; } const tools = searchTools(registry.tools, query, [], categoryLookup).slice(0, 7); results.replaceChildren(...tools.map((tool) => resultLink(tool))); results.hidden = false; };
