@@ -58,8 +58,8 @@ test("bars and picture symbols can be dragged to change their values", async ({
   );
   await page.mouse.down();
   await page.mouse.move(
-    pictureBox.x + pictureBox.width / 2,
-    pictureBox.y - 90,
+    pictureBox.x + pictureBox.width + 90,
+    pictureBox.y + pictureBox.height / 2,
     { steps: 5 },
   );
   await page.mouse.up();

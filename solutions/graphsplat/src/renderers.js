@@ -268,7 +268,7 @@ export function renderPicture(rows, key, settings, { showValues, showKey }) {
         ? `<image href="${esc(row.image)}" x="${x}" y="${y - iconSize * 0.42}" width="${iconSize * 0.88}" height="${iconSize * 0.88}" preserveAspectRatio="xMidYMid meet"/>`
         : `<text x="${x + iconSize * 0.42}" y="${y + iconSize * 0.28}" text-anchor="middle" font-size="${iconSize * 0.72}">${esc(row.icon || "●")}</text>`;
       body.push(
-        `<g data-drag-row="${index}" data-drag-series="0" data-drag-axis="y"${isPartial ? ` clip-path="url(#${clip})"` : ""}>${content}</g>`,
+        `<g data-drag-row="${index}" data-drag-series="0" data-drag-axis="x"${isPartial ? ` clip-path="url(#${clip})"` : ""}>${content}</g>`,
       );
     }
     if (showValues)
