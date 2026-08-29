@@ -593,6 +593,57 @@ function graphCoordinates(event) {
         (numeric("yMax") - numeric("yMin"));
   return { x, y };
 }
+function beginDataDrag(event, target) {
+  const row = Number(target.dataset.dragRow),
+    series = Number(target.dataset.dragSeries),
+    rows = parseRows($("quickData").value),
+    startValue =
+      mode() === "picture"
+        ? pictureRows[row]?.value
+        : rows[row]?.values[series];
+  if (!Number.isFinite(startValue)) return false;
+  drag = {
+    kind: "data",
+    row,
+    series,
+    axis: target.dataset.dragAxis,
+    startX: event.clientX,
+    startY: event.clientY,
+    startValue,
+    rows,
+    scale: Math.max(
+      5,
+      ...currentRows().flatMap((item) => item.values.map(Math.abs)),
+    ),
+  };
+  $("canvas").setPointerCapture(event.pointerId);
+  $("status").textContent = "Drag to change the value.";
+  return true;
+}
+function updateDataDrag(event) {
+  const rect = $("canvas").getBoundingClientRect(),
+    pixels =
+      drag.axis === "x"
+        ? event.clientX - drag.startX
+        : drag.startY - event.clientY,
+    dimension = drag.axis === "x" ? rect.width : rect.height,
+    raw = Math.max(0, drag.startValue + (pixels / dimension) * drag.scale),
+    step = event.shiftKey ? 0.1 : 1,
+    value = Math.round(raw / step) * step;
+  if (mode() === "picture") {
+    pictureRows[drag.row].value = value;
+    const input = $("pictureRows").children[drag.row]?.querySelector(".value");
+    if (input) input.value = value;
+  } else {
+    drag.rows[drag.row].values[drag.series] = value;
+    $("quickData").value = drag.rows
+      .map((row) => [row.label, ...row.values].join(","))
+      .join("\n");
+  }
+  render();
+  $("status").textContent =
+    `${drag.rows[drag.row]?.label || pictureRows[drag.row]?.label}: ${value}`;
+}
 function bind() {
   document
     .querySelectorAll(".controls input,.controls select,.controls textarea")
@@ -685,8 +736,14 @@ function bind() {
     { passive: false },
   );
   $("canvas").addEventListener("pointerdown", (event) => {
+    const dataTarget = event.target.closest("[data-drag-row]");
+    if (dataTarget && beginDataDrag(event, dataTarget)) {
+      event.preventDefault();
+      return;
+    }
     if (!["expression", "coordinate"].includes(mode())) return;
     drag = {
+      kind: "viewport",
       startX: event.clientX,
       startY: event.clientY,
       xMin: numeric("xMin"),
@@ -704,6 +761,10 @@ function bind() {
         $("trace").textContent =
           `x ${point.x.toFixed(3)} · y ${point.y.toFixed(3)}`;
       }
+      return;
+    }
+    if (drag.kind === "data") {
+      updateDataDrag(event);
       return;
     }
     const rect = $("canvas").getBoundingClientRect(),
@@ -724,11 +785,12 @@ function bind() {
     render();
   });
   $("canvas").addEventListener("pointerup", (event) => {
-    if (mode() === "coordinate" && drag && !drag.moved) {
+    if (mode() === "coordinate" && drag?.kind === "viewport" && !drag.moved) {
       const point = graphCoordinates(event);
       $("pointData").value += `\n${point.x.toFixed(2)},${point.y.toFixed(2)}`;
       render();
     }
+    if (drag?.kind === "data") $("status").textContent = "Value updated.";
     drag = null;
   });
 }

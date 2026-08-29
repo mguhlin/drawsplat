@@ -141,7 +141,7 @@ export function renderQuick(type, rows, settings) {
           const y = top + index * rowH,
             width = (w * Math.max(0, row.values[0])) / max,
             color = colors[index % colors.length];
-          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><rect x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
+          return `<text x="${left - 12}" y="${y + rowH * 0.58}" text-anchor="end" font-size="14">${esc(row.label)}</text><rect data-drag-row="${index}" data-drag-series="0" data-drag-axis="x" x="${left}" y="${y + 8}" width="${width}" height="${rowH - 16}" rx="8" fill="${color}"/>${settings.numbers ? `<text x="${left + width + 8}" y="${y + rowH * 0.58}" font-size="13">${row.values[0]}</text>` : ""}`;
         })
         .join("");
     return svgShell(body, settings);
@@ -166,7 +166,7 @@ export function renderQuick(type, rows, settings) {
           color = colors[series % colors.length],
           fill = settings.patterns ? `url(#diagonal)` : color,
           x = frame.left + slot * index + slot * 0.14 + barWidth * series;
-        body += `<g color="${color}"><rect x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
+        body += `<g color="${color}"><rect data-drag-row="${index}" data-drag-series="${series}" data-drag-axis="y" x="${x}" y="${y}" width="${Math.max(2, barWidth - 2)}" height="${height}" rx="4" fill="${fill}" stroke="${color}"/>${settings.numbers ? `<text x="${x + barWidth / 2}" y="${y - 7}" text-anchor="middle" font-size="11">${value}</text>` : ""}</g>`;
       }),
     );
   } else {
@@ -268,7 +268,7 @@ export function renderPicture(rows, key, settings, { showValues, showKey }) {
         ? `<image href="${esc(row.image)}" x="${x}" y="${y - iconSize * 0.42}" width="${iconSize * 0.88}" height="${iconSize * 0.88}" preserveAspectRatio="xMidYMid meet"/>`
         : `<text x="${x + iconSize * 0.42}" y="${y + iconSize * 0.28}" text-anchor="middle" font-size="${iconSize * 0.72}">${esc(row.icon || "●")}</text>`;
       body.push(
-        `<g${isPartial ? ` clip-path="url(#${clip})"` : ""}>${content}</g>`,
+        `<g data-drag-row="${index}" data-drag-series="0" data-drag-axis="y"${isPartial ? ` clip-path="url(#${clip})"` : ""}>${content}</g>`,
       );
     }
     if (showValues)

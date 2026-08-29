@@ -64,6 +64,26 @@ test("Studio accepts category deep links", async ({ page }) => {
   );
 });
 
+test("Studio presents recent tools as a compact three-column link list", async ({
+  page,
+}) => {
+  await page.goto("/studio/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "drawsplat.recents",
+      JSON.stringify(["pdfsplat", "qrsplat", "graphsplat", "videosplat"]),
+    ),
+  );
+  await page.reload();
+  await expect(page.locator("#recentsShelf .ds-tool-card")).toHaveCount(0);
+  await expect(page.locator("#recentsShelf .ds-recent-links a")).toHaveCount(4);
+  await expect(page.locator("#recentsShelf")).toContainText("GraphSplat");
+  await expect(page.locator("#recentsShelf")).toHaveCSS(
+    "grid-column-start",
+    "1",
+  );
+});
+
 test("major apps expose the shared app launcher", async ({ page }) => {
   for (const url of [
     "/app/whiteboard.html",

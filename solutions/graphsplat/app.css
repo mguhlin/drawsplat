@@ -341,6 +341,13 @@ body {
   height: auto;
   max-height: 680px;
 }
+#canvas [data-drag-row] {
+  cursor: ns-resize;
+  touch-action: none;
+}
+#canvas [data-drag-axis="x"] {
+  cursor: ew-resize;
+}
 #trace {
   min-height: 22px;
   text-align: center;

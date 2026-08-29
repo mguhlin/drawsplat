@@ -33,6 +33,41 @@ test("GraphSplat supports scatter data, pictographs, and safe expressions", asyn
   );
 });
 
+test("bars and picture symbols can be dragged to change their values", async ({
+  page,
+}) => {
+  await page.goto("/solutions/graphsplat/");
+  const bar = page.locator('#canvas [data-drag-row="0"]').first();
+  const barBox = await bar.boundingBox();
+  await page.mouse.move(barBox.x + barBox.width / 2, barBox.y + 5);
+  await page.mouse.down();
+  await page.mouse.move(barBox.x + barBox.width / 2, barBox.y - 100, {
+    steps: 5,
+  });
+  await page.mouse.up();
+  await expect(page.locator("#quickData")).not.toHaveValue(
+    /Reading,12(?:\n|$)/,
+  );
+
+  await page.locator("#mode").selectOption("picture");
+  const picture = page.locator('#canvas [data-drag-row="0"]').first();
+  const pictureBox = await picture.boundingBox();
+  await page.mouse.move(
+    pictureBox.x + pictureBox.width / 2,
+    pictureBox.y + pictureBox.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    pictureBox.x + pictureBox.width / 2,
+    pictureBox.y - 90,
+    { steps: 5 },
+  );
+  await page.mouse.up();
+  await expect(page.locator(".picture-row .value").first()).not.toHaveValue(
+    "6",
+  );
+});
+
 test("GraphSplat saves locally, resets cleanly, and exports", async ({
   page,
 }) => {
