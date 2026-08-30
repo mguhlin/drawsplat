@@ -1154,8 +1154,11 @@ function toolGuidance(next){
   return TOOL_GUIDANCE[next]||['Tool','Use the canvas to place or edit content.'];
 }
 function updateToolStatus(next){
-  if(!ui.toolStatus) return;
   const [title,detail]=toolGuidance(next);
+  const hudName=gid('canvasToolName'), hudHelp=gid('canvasToolHelp');
+  if(hudName) hudName.textContent=title;
+  if(hudHelp) hudHelp.textContent=detail;
+  if(!ui.toolStatus) return;
   let heading=ui.toolStatus.querySelector('strong');
   let body=ui.toolStatus.querySelector('span');
   if(!heading||!body){
@@ -1181,7 +1184,7 @@ function setTool(next){
     if(next==='pen') ui.strokeWidth.value=String(penStrokeWidth);
     else if(next==='eraser') ui.strokeWidth.value=String(eraserStrokeWidth);
   }
-  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool)); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); announceTool(next);
+  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>{const active=b.dataset.tool===tool;b.classList.toggle('active',active);if(b.dataset.tool)b.setAttribute('aria-pressed',String(active))}); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); announceTool(next);
 }
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function updateHeaderHeightVar(){const header=document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--drawsplat-header-height',Math.ceil(header.getBoundingClientRect().height)+'px')}
@@ -4625,6 +4628,26 @@ function registerServiceWorker(){
       const lbl=el.closest('.row,.checkrow')?.querySelector('label')?.textContent?.trim();
       if(lbl) el.setAttribute('aria-label',lbl);
     });
+    const sidebar=document.querySelector('.sidebar'), inspector=document.querySelector('.inspector');
+    const workspace=document.querySelector('.stage-wrap'), canvasShell=document.querySelector('.canvas-shell');
+    if(sidebar) sidebar.setAttribute('aria-label','Whiteboard tools');
+    if(inspector) inspector.setAttribute('aria-label','Board and selected item settings');
+    if(workspace) workspace.setAttribute('aria-label','Whiteboard workspace');
+    if(canvasShell&&!gid('canvasToolHud')){
+      const hud=document.createElement('div');
+      hud.id='canvasToolHud';
+      hud.className='canvas-tool-hud';
+      hud.setAttribute('role','status');
+      hud.setAttribute('aria-live','polite');
+      hud.innerHTML='<span class="canvas-tool-icon" aria-hidden="true">✦</span><span><strong id="canvasToolName">Select</strong><small id="canvasToolHelp">Choose something on the board to move or edit it.</small></span>';
+      canvasShell.appendChild(hud);
+    }
+    const boardCanvas=gid('boardSvg');
+    if(boardCanvas){boardCanvas.setAttribute('tabindex','0');boardCanvas.setAttribute('aria-label','DrawSplat whiteboard drawing area')}
+    document.querySelector('.canvas-toolbar')?.setAttribute('role','toolbar');
+    document.querySelector('.canvas-toolbar')?.setAttribute('aria-label','Canvas zoom');
+    document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.tool===tool)));
+    updateToolStatus(tool);
     updateHeaderHeightVar?.();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyIcons); else applyIcons();

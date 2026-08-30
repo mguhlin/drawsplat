@@ -1137,3 +1137,23 @@ sup.tm{font-size:.45em;line-height:0;vertical-align:super;font-weight:800;letter
   .template-gallery,.template-howto,.scratchart-example-grid{grid-template-columns:1fr}
   .template-actions{grid-template-columns:1fr}
 }
+
+/* Classroom usability: strong landmarks, persistent next-step guidance, and
+   calmer responsive controls for young learners and shared touch devices. */
+.skip-link{position:fixed;left:12px;top:8px;z-index:10000;transform:translateY(-150%);padding:10px 14px;border-radius:10px;background:#111827;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 8px 24px #0004}
+.skip-link:focus{transform:translateY(0)}
+.canvas-tool-hud{position:absolute;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:9px;max-width:min(440px,calc(100% - 28px));padding:9px 12px;border:1px solid #d8d2ff;border-radius:12px;background:#fffffff2;box-shadow:0 8px 24px #1118271f;pointer-events:none;color:var(--ink)}
+.canvas-tool-hud .canvas-tool-icon{display:grid;place-items:center;flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:#f1edff;color:#6d28d9;font-weight:900}
+.canvas-tool-hud strong,.canvas-tool-hud small{display:block}
+.canvas-tool-hud strong{font-size:13px;color:#5b21b6}
+.canvas-tool-hud small{margin-top:1px;color:#4b5563;font-size:12px;line-height:1.3}
+#boardSvg:focus-visible{outline:4px solid var(--focus);outline-offset:-4px;border-radius:16px}
+button.active,[aria-pressed="true"]{font-weight:800}
+@media (forced-colors:active){button.active,[aria-pressed="true"]{outline:3px solid Highlight}.canvas-tool-hud{border:2px solid CanvasText}}
+@media(max-width:760px){
+  .canvas-tool-hud{left:8px;bottom:8px;max-width:calc(100% - 16px);padding:7px 9px}
+  .canvas-tool-hud small{max-width:48vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  dialog{width:calc(100% - 16px);max-height:calc(100dvh - 16px);overflow:auto;padding:16px}
+  .welcome-dialog .welcome-grid{grid-template-columns:1fr;gap:8px}
+}
+@media(max-height:620px){.canvas-tool-hud small{display:none}}
