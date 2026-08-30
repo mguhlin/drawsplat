@@ -193,6 +193,13 @@ test("GraphSplat publishes TEKS-aligned lesson plans for three grade bands", asy
 }) => {
   await page.goto("/solutions/graphsplat/lesson-plans.html");
   await expect(page.locator("article.lesson")).toHaveCount(3);
+  await expect(
+    page.locator("#artful-analytics .starter-grid article"),
+  ).toHaveCount(6);
+  await expect(page.locator("#analysis-checklist img")).toHaveAttribute(
+    "src",
+    "assets/guiding-questions-graph-analysis.png",
+  );
   await expect(page.locator("#grades-3-5")).toContainText("3.8(A)–(B)");
   await expect(page.locator("#grades-6-8")).toContainText("8.11(A)–(C)");
   await expect(page.locator("#grades-9-12")).toContainText("A.4(A)–(C)");

@@ -76,6 +76,54 @@ h1 {
   padding: clamp(1.25rem, 4vw, 2.5rem);
   margin: 1.5rem 0;
 }
+.resource,
+.starter-section {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  margin: 1.5rem 0;
+}
+.resource {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+  gap: clamp(1rem, 4vw, 2.5rem);
+  align-items: start;
+}
+.resource img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgb(40 25 90 / 0.14);
+}
+.kicker {
+  color: var(--purple);
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.starter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.starter-grid article {
+  padding: 1rem;
+  border: 1px solid #ddd2ff;
+  border-radius: 14px;
+  background: var(--soft);
+}
+.starter-grid article p {
+  margin: 0.45rem 0;
+}
+.starter-grid article span {
+  color: #5f687c;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 .meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -83,6 +131,12 @@ h1 {
   padding: 1rem;
   background: var(--soft);
   border-radius: 14px;
+}
+@media (max-width: 760px) {
+  .resource,
+  .starter-grid {
+    grid-template-columns: 1fr;
+  }
 }
 h2 {
   font-size: clamp(1.65rem, 4vw, 2.35rem);
