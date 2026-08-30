@@ -36,6 +36,8 @@
     <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden>
     <input id="mergeInput" type="file" accept="application/pdf,.pdf" hidden>
     <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+    <input id="imagePagesInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+    <input id="signatureImageInput" type="file" accept="image/png,image/jpeg" hidden>
     <input id="vaultInput" type="file" accept=".csplat,.ciphersplat,application/octet-stream" hidden>
   </header>
 
@@ -71,8 +73,18 @@
       <button id="highlightButton" type="button" disabled>Highlight</button>
       <button id="drawButton" type="button" disabled>Draw</button>
       <button id="addImageButton" type="button" disabled>Add image</button>
+      <button id="signatureButton" type="button" disabled>Add signature</button>
+      <button id="cropButton" type="button" disabled>Crop pages</button>
+      <button id="customRotateButton" type="button" disabled>Deskew / custom rotation</button>
       <button id="rotateLeftButton" type="button" disabled>Rotate left</button>
       <button id="rotateRightButton" type="button" disabled>Rotate right</button>
+      <button id="reversePagesButton" type="button" disabled>Reverse page order</button>
+      <button id="blankPageButton" type="button" disabled>Insert blank page</button>
+      <button id="imagePagesButton" type="button" disabled>Images to PDF pages</button>
+      <button id="exportImagesButton" type="button" disabled>Export pages as images</button>
+      <button id="removeBlankPagesButton" type="button" disabled>Remove blank pages</button>
+      <button id="decorateButton" type="button" disabled>Headers, footers & numbers</button>
+      <button id="sanitizeButton" type="button" disabled>Sanitize PDF copy</button>
       <button id="duplicatePageButton" type="button" disabled>Duplicate page</button>
       <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
       <button id="extractPageButton" type="button" disabled>Extract page</button>
@@ -127,6 +139,53 @@
         <button type="button" value="cancel">Cancel</button>
         <button class="primary" type="submit">Download</button>
       </div>
+    </form>
+  </dialog>
+
+  <dialog id="cropDialog">
+    <form id="cropForm">
+      <h2>Crop selected pages</h2>
+      <p>Enter margins as percentages of each page. Cropping changes the exported page boundary without changing the source file.</p>
+      <div class="dialog-grid"><label>Top % <input id="cropTop" type="number" min="0" max="45" step="0.5" value="0"></label><label>Right % <input id="cropRight" type="number" min="0" max="45" step="0.5" value="0"></label><label>Bottom % <input id="cropBottom" type="number" min="0" max="45" step="0.5" value="0"></label><label>Left % <input id="cropLeft" type="number" min="0" max="45" step="0.5" value="0"></label></div>
+      <div class="dialog-actions"><button id="cropReset" type="button">Reset crop</button><button id="cropCancel" type="button">Cancel</button><button class="primary" type="submit">Apply crop</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="customRotateDialog">
+    <form id="customRotateForm">
+      <h2>Deskew / custom rotation</h2>
+      <p>Use a small positive or negative angle to straighten selected scanned pages.</p>
+      <label class="dialog-field">Angle in degrees <input id="customRotation" type="number" min="-45" max="45" step="0.1" value="0" required></label>
+      <div class="dialog-actions"><button id="customRotateCancel" type="button">Cancel</button><button class="primary" type="submit">Apply rotation</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="signatureDialog">
+    <form id="signatureForm">
+      <h2>Add signature</h2>
+      <p>Add a typed signature or place a PNG/JPEG signature image. It remains movable and resizable until export.</p>
+      <label class="dialog-field">Typed signature <input id="signatureText" type="text" maxlength="200" placeholder="Your name"></label>
+      <div class="dialog-actions"><button id="signatureUpload" type="button">Use signature image</button><button id="signatureCancel" type="button">Cancel</button><button class="primary" type="submit">Add typed signature</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="decorateDialog">
+    <form id="decorateForm">
+      <h2>Headers, footers and page numbers</h2>
+      <p>Apply text to the selected pages. Use <code>{page}</code> and <code>{pages}</code> as placeholders.</p>
+      <label class="dialog-field">Header <input id="headerText" type="text" maxlength="300" placeholder="Document title"></label>
+      <label class="dialog-field">Footer <input id="footerText" type="text" maxlength="300" placeholder="Page {page} of {pages}"></label>
+      <label class="dialog-field">Position <select id="decorationAlignment"><option value="center">Centered</option><option value="left">Left</option><option value="right">Right</option></select></label>
+      <div class="dialog-actions"><button id="decorateCancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="sanitizeDialog">
+    <form id="sanitizeForm">
+      <h2>Sanitize PDF copy</h2>
+      <p>PDFSplat will rasterize the edited pages into a new PDF. This removes document metadata, scripts, attachments, forms, annotations and hidden content.</p>
+      <p class="security-warning">The sanitized copy will no longer contain searchable or selectable text. Keep the original until you verify the result.</p>
+      <div class="dialog-actions"><button id="sanitizeCancel" type="button">Cancel</button><button class="primary" type="submit">Sanitize and download</button></div>
     </form>
   </dialog>
 

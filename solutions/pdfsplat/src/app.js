@@ -6,7 +6,7 @@ const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -77,7 +77,7 @@ function restore(value) {
   renderAll();
 }
 function setEnabled(on) {
-  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -178,7 +178,7 @@ async function renderCurrent() {
   syncPageNavigation();
   const page = await sourcePage(item);
   if (token !== state.renderToken) return;
-  const rotation = (page.rotate + item.rotation) % 360,
+  const rotation = (page.rotate + item.rotation + (item.fineRotation || 0)) % 360,
     base = page.getViewport({ scale: 1, rotation }),
     available = Math.max(320, els.documentView.clientWidth - 64),
     scale = Math.min(2.2, available / base.width) * state.zoom,
@@ -293,7 +293,7 @@ async function renderThumbnail(li) {
     page = await sourcePage(item),
     vp = page.getViewport({
       scale: 0.2,
-      rotation: (page.rotate + item.rotation) % 360,
+      rotation: (page.rotate + item.rotation + (item.fineRotation || 0)) % 360,
     });
   canvas.width = vp.width;
   canvas.height = vp.height;
@@ -464,6 +464,116 @@ function rotate(delta) {
   mutate("Rotate pages", () => indexes.forEach((index) => (state.pages[index].rotation = (state.pages[index].rotation + delta + 360) % 360)));
   renderAll();
   announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} rotated.`);
+}
+function reversePages() {
+  mutate("Reverse page order", () => {
+    state.pages.reverse();
+    state.current = state.pages.length - 1 - state.current;
+    selectOnlyPage(state.current);
+  });
+  renderAll();
+  announce("Page order reversed. Undo is available.");
+}
+async function insertBlankPage() {
+  const document = await PDFDocument.create(), reference = currentPage() ? await sourcePage(currentPage()) : null;
+  const viewport = reference?.getViewport({ scale: 1, rotation: 0 });
+  document.addPage(viewport ? [viewport.width, viewport.height] : [612, 792]);
+  const file = new File([await document.save()], "blank-page.pdf", { type: "application/pdf" }), source = await loadSource(file), page = pagesFor(source)[0], before = snapshot(), position = state.current + 1;
+  state.sources.set(source.id, source);
+  state.pages.splice(position, 0, page);
+  state.current = position;
+  selectOnlyPage(position);
+  commit(before, "Insert blank page");
+  await renderAll();
+  announce(`Blank page inserted at page ${position + 1}.`);
+}
+function openCropDialog() {
+  const crop = currentPage()?.crop || { top: 0, right: 0, bottom: 0, left: 0 };
+  for (const side of ["Top", "Right", "Bottom", "Left"]) els[`crop${side}`].value = (crop[side.toLowerCase()] * 100).toFixed(1).replace(/\.0$/, "");
+  els.cropDialog.showModal();
+}
+function applyCrop(event, reset = false) {
+  event?.preventDefault();
+  const crop = reset ? null : Object.fromEntries(["top", "right", "bottom", "left"].map((side) => [side, Number(els[`crop${side[0].toUpperCase()}${side.slice(1)}`].value) / 100]));
+  if (crop && (crop.left + crop.right >= .9 || crop.top + crop.bottom >= .9)) return announce("Crop margins leave too little page area.");
+  const indexes = selectedPageIndexes();
+  mutate(reset ? "Reset crop" : "Crop pages", () => indexes.forEach((index) => (state.pages[index].crop = crop)));
+  els.cropDialog.close();
+  renderAll();
+  announce(`${indexes.length} page(s) ${reset ? "crop reset" : "cropped"}.`);
+}
+function applyCustomRotation(event) {
+  event.preventDefault();
+  const angle = Number(els.customRotation.value), indexes = selectedPageIndexes();
+  if (!Number.isFinite(angle) || Math.abs(angle) > 45) return announce("Enter an angle from -45 to 45 degrees.");
+  mutate("Deskew pages", () => indexes.forEach((index) => (state.pages[index].fineRotation = angle)));
+  els.customRotateDialog.close();
+  renderAll();
+  announce(`${indexes.length} page(s) set to ${angle}° fine rotation.`);
+}
+async function addImagePages(files) {
+  const chosen = [...(files || [])].filter((file) => ["image/png", "image/jpeg"].includes(file.type));
+  if (!chosen.length) return announce("Choose one or more PNG or JPEG images.");
+  try {
+    announce(`Creating ${chosen.length} PDF page(s) from images…`);
+    const document = await PDFDocument.create();
+    for (const file of chosen) {
+      const bytes = new Uint8Array(await file.arrayBuffer()), bitmap = await createImageBitmap(file), image = file.type === "image/png" ? await document.embedPng(bytes) : await document.embedJpg(bytes);
+      const max = 792, scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height)), width = bitmap.width * scale, height = bitmap.height * scale;
+      document.addPage([width, height]).drawImage(image, { x: 0, y: 0, width, height });
+      bitmap.close();
+    }
+    const file = new File([await document.save()], "image-pages.pdf", { type: "application/pdf" }), source = await loadSource(file), additions = pagesFor(source), before = snapshot(), position = state.current + 1;
+    state.sources.set(source.id, source);
+    state.pages.splice(position, 0, ...additions);
+    state.current = position;
+    state.selectedPageIds = new Set(additions.map((page) => page.id));
+    commit(before, "Add image pages");
+    await renderAll();
+    announce(`${additions.length} image page(s) inserted.`);
+  } catch (error) {
+    console.error(error);
+    announce("The image pages could not be created.");
+  } finally { els.imagePagesInput.value = ""; }
+}
+async function renderPdfPageToBlob(page, scale = 2) {
+  const viewport = page.getViewport({ scale }), canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
+  await page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport, background: "#ffffff" }).promise;
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(Error("Image export failed.")), "image/png"));
+}
+async function exportPageImages() {
+  try {
+    const indexes = selectedPageIndexes(), bytes = await buildPdf(indexes.map((index) => state.pages[index])), document = await pdfjs.getDocument({ data: bytes.slice() }).promise, base = state.fileName.replace(/\.pdf$/i, "");
+    announce(`Rendering ${document.numPages} page(s) as PNG…`);
+    if (document.numPages === 1) downloadBytes(await renderPdfPageToBlob(await document.getPage(1)), `${base}-page-${indexes[0] + 1}.png`, "image/png");
+    else {
+      const zip = new globalThis.JSZip();
+      for (let number = 1; number <= document.numPages; number++) zip.file(`page-${indexes[number - 1] + 1}.png`, await renderPdfPageToBlob(await document.getPage(number)));
+      downloadBytes(await zip.generateAsync({ type: "blob", compression: "DEFLATE" }), `${base}-images.zip`, "application/zip");
+    }
+    await document.destroy();
+    announce(`${indexes.length} page image(s) downloaded.`);
+  } catch (error) { console.error(error); announce("Page image export failed."); }
+}
+async function removeBlankPages() {
+  announce("Checking pages for blank content…");
+  const blank = [];
+  for (let index = 0; index < state.pages.length; index++) {
+    const page = await sourcePage(state.pages[index]), viewport = page.getViewport({ scale: .2, rotation: (page.rotate + state.pages[index].rotation + (state.pages[index].fineRotation || 0)) % 360 }), canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.ceil(viewport.width)); canvas.height = Math.max(1, Math.ceil(viewport.height));
+    const context = canvas.getContext("2d", { alpha: false });
+    await page.render({ canvasContext: context, viewport, background: "#ffffff" }).promise;
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    let marks = 0;
+    for (let offset = 0; offset < pixels.length; offset += 4) if (pixels[offset] < 245 || pixels[offset + 1] < 245 || pixels[offset + 2] < 245) marks++;
+    if (marks / (pixels.length / 4) < .001 && !state.pages[index].annotations.length) blank.push(index);
+  }
+  if (!blank.length) return announce("No blank pages detected.");
+  if (blank.length === state.pages.length) return announce("Every page appears blank; nothing was removed.");
+  const before = snapshot(), ids = new Set(blank.map((index) => state.pages[index].id));
+  state.pages = state.pages.filter((page) => !ids.has(page.id)); state.current = Math.min(state.current, state.pages.length - 1); selectOnlyPage(state.current); commit(before, "Remove blank pages");
+  await renderAll(); announce(`${blank.length} blank page(s) removed. Undo is available.`);
 }
 function duplicatePage() {
   const indexes = selectedPageIndexes(),
@@ -706,6 +816,28 @@ async function addImage(file) {
   announce("Image added.");
   els.imageInput.value = "";
 }
+function addTypedSignature(event) {
+  event.preventDefault();
+  const text = els.signatureText.value.trim();
+  if (!text) return announce("Enter a signature name or choose a signature image.");
+  mutate("Add signature", () => {
+    const object = { id: uid(), type: "text", text, x: .55, y: .78, w: .32, h: .09, fontSize: 26, fontFamily: "cursive", color: "#172033", opacity: 1, signature: true };
+    currentPage().annotations.push(object); state.selectedId = object.id;
+  });
+  els.signatureDialog.close(); renderAnnotations(); announce("Typed signature added. Drag and resize it into place.");
+}
+function applyDecorations(event) {
+  event.preventDefault();
+  const header = els.headerText.value.trim(), footer = els.footerText.value.trim(), alignment = els.decorationAlignment.value, indexes = selectedPageIndexes();
+  if (!header && !footer) return announce("Enter header or footer text.");
+  const x = alignment === "left" ? .05 : alignment === "right" ? .65 : .25, width = alignment === "center" ? .5 : .3;
+  mutate("Add headers and footers", () => indexes.forEach((index) => {
+    const values = { page: index + 1, pages: state.pages.length }, expand = (text) => text.replace(/\{page\}/gi, values.page).replace(/\{pages\}/gi, values.pages);
+    if (header) state.pages[index].annotations.push({ id: uid(), type: "text", text: expand(header), x, y: .025, w: width, h: .035, fontSize: 10, color: "#172033", opacity: 1, decoration: true });
+    if (footer) state.pages[index].annotations.push({ id: uid(), type: "text", text: expand(footer), x, y: .94, w: width, h: .035, fontSize: 10, color: "#172033", opacity: 1, decoration: true });
+  }));
+  els.decorateDialog.close(); renderAll(); announce(`Headers and footers applied to ${indexes.length} page(s).`);
+}
 function deleteSelected() {
   if (!selectedObject()) return;
   mutate("Delete object", () => {
@@ -946,7 +1078,17 @@ async function buildPdf(items) {
         }
     }
   }
-  return output.save();
+  const baseBytes = await output.save();
+  if (!items.some((item) => item.crop || item.fineRotation)) return baseBytes;
+  const base = await PDFDocument.load(baseBytes), transformed = await PDFDocument.create();
+  for (let index = 0; index < items.length; index++) {
+    const source = base.getPage(index), { width, height } = source.getSize(), crop = items[index].crop || { top: 0, right: 0, bottom: 0, left: 0 };
+    const left = crop.left * width, bottom = crop.bottom * height, croppedWidth = width * (1 - crop.left - crop.right), croppedHeight = height * (1 - crop.top - crop.bottom);
+    const embedded = await transformed.embedPage(source, { left, bottom, right: left + croppedWidth, top: bottom + croppedHeight }), angle = items[index].fineRotation || 0, radians = angle * Math.PI / 180;
+    const corners = [[0, 0], [croppedWidth, 0], [0, croppedHeight], [croppedWidth, croppedHeight]].map(([x, y]) => [x * Math.cos(radians) - y * Math.sin(radians), x * Math.sin(radians) + y * Math.cos(radians)]), xs = corners.map(([x]) => x), ys = corners.map(([, y]) => y), minX = Math.min(...xs), minY = Math.min(...ys), pageWidth = Math.max(...xs) - minX, pageHeight = Math.max(...ys) - minY;
+    transformed.addPage([pageWidth, pageHeight]).drawPage(embedded, { x: -minX, y: -minY, width: croppedWidth, height: croppedHeight, rotate: degrees(angle) });
+  }
+  return transformed.save();
 }
 function downloadBytes(bytes, name, type = "application/pdf") {
   const url = URL.createObjectURL(new Blob([bytes], { type })),
@@ -972,6 +1114,24 @@ async function exportPdf(items = state.pages, suffix = "-edited") {
   } finally {
     els.exportButton.disabled = false;
   }
+}
+
+async function sanitizePdf(event) {
+  event.preventDefault();
+  els.sanitizeForm.querySelector('[type="submit"]').disabled = true;
+  try {
+    announce("Flattening and sanitizing the edited PDF…");
+    const edited = await buildPdf(state.pages), source = await pdfjs.getDocument({ data: edited.slice() }).promise, output = await PDFDocument.create();
+    for (let number = 1; number <= source.numPages; number++) {
+      announce(`Sanitizing page ${number} of ${source.numPages}…`);
+      const page = await source.getPage(number), viewport = page.getViewport({ scale: 1.5 }), blob = await renderPdfPageToBlob(page, 1.5), image = await output.embedPng(new Uint8Array(await blob.arrayBuffer()));
+      output.addPage([viewport.width, viewport.height]).drawImage(image, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+    }
+    output.setTitle(""); output.setAuthor(""); output.setSubject(""); output.setKeywords([]); output.setProducer("PDFSplat sanitized copy"); output.setCreator("PDFSplat");
+    const name = `${state.fileName.replace(/\.pdf$/i, "")}-sanitized.pdf`;
+    downloadBytes(await output.save(), name); await source.destroy(); els.sanitizeDialog.close(); announce(`${name} downloaded. Verify it before deleting the original.`);
+  } catch (error) { console.error(error); announce("Sanitization failed; the source PDF is unchanged."); }
+  finally { els.sanitizeForm.querySelector('[type="submit"]').disabled = false; }
 }
 
 function openEpubDialog() {
@@ -1183,8 +1343,32 @@ els.drawButton.onclick = () => {
 };
 els.addImageButton.onclick = () => els.imageInput.click();
 els.imageInput.onchange = (e) => addImage(e.target.files[0]);
+els.signatureButton.onclick = () => { els.signatureText.value = ""; els.signatureDialog.showModal(); els.signatureText.focus(); };
+els.signatureForm.onsubmit = addTypedSignature;
+els.signatureCancel.onclick = () => els.signatureDialog.close();
+els.signatureUpload.onclick = () => els.signatureImageInput.click();
+els.signatureImageInput.onchange = async (e) => { const file = e.target.files[0]; if (file) { els.signatureDialog.close(); await addImage(file); if (selectedObject()) selectedObject().signature = true; announce("Signature image added. Drag and resize it into place."); } els.signatureImageInput.value = ""; };
+els.cropButton.onclick = openCropDialog;
+els.cropForm.onsubmit = applyCrop;
+els.cropReset.onclick = (event) => applyCrop(event, true);
+els.cropCancel.onclick = () => els.cropDialog.close();
+els.customRotateButton.onclick = () => { els.customRotation.value = currentPage()?.fineRotation || 0; els.customRotateDialog.showModal(); els.customRotation.select(); };
+els.customRotateForm.onsubmit = applyCustomRotation;
+els.customRotateCancel.onclick = () => els.customRotateDialog.close();
 els.rotateLeftButton.onclick = () => rotate(-90);
 els.rotateRightButton.onclick = () => rotate(90);
+els.reversePagesButton.onclick = reversePages;
+els.blankPageButton.onclick = insertBlankPage;
+els.imagePagesButton.onclick = () => els.imagePagesInput.click();
+els.imagePagesInput.onchange = (e) => addImagePages(e.target.files);
+els.exportImagesButton.onclick = exportPageImages;
+els.removeBlankPagesButton.onclick = removeBlankPages;
+els.decorateButton.onclick = () => { els.headerText.value = ""; els.footerText.value = "Page {page} of {pages}"; els.decorateDialog.showModal(); els.headerText.focus(); };
+els.decorateForm.onsubmit = applyDecorations;
+els.decorateCancel.onclick = () => els.decorateDialog.close();
+els.sanitizeButton.onclick = () => els.sanitizeDialog.showModal();
+els.sanitizeForm.onsubmit = sanitizePdf;
+els.sanitizeCancel.onclick = () => els.sanitizeDialog.close();
 els.duplicatePageButton.onclick = duplicatePage;
 els.deletePageButton.onclick = deletePage;
 els.extractPageButton.onclick = extractPages;

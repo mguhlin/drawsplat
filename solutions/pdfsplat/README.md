@@ -9,6 +9,10 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Rotate, duplicate, delete, and extract pages.
 - Separate page ranges or create one PDF per page in a ZIP.
 - Add movable/resizable text, highlights, PNG/JPEG images, and freehand drawing.
+- Add typed or uploaded signatures, headers, footers, and dynamic page numbers.
+- Crop selected pages and apply manual fine rotation to straighten scans.
+- Reverse page order, insert blank pages, and detect/remove visually blank pages with undo support.
+- Insert PNG/JPEG files as new PDF pages and export selected PDF pages as PNG files.
 - Click extractable PDF text and turn it into a covered, editable replacement text object.
 - Edit replacement text directly in place on the PDF canvas.
 - Drag over any PDF region with Remove area to create a movable/resizable visual cover.
@@ -17,6 +21,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Convert the edited document into a locally generated, reflowable EPUB 3 ebook with publishing metadata, optional cover artwork, structure-aware section names, table of contents, page list, landmarks, and an honest preflight report.
 - Protect the edited result as a CipherSplat™ `.csplat` package.
 - Authenticate, decrypt, and reopen a current CS4 CipherSplat™ PDF package.
+- Create a rasterized sanitized copy that strips document metadata, scripts, attachments, forms, annotations, layers, and hidden content.
 
 Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers and Web Crypto require HTTPS, localhost, or an equivalent secure context.
 
@@ -47,6 +52,9 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 - Remove area is visual removal only. It does not delete underlying PDF content and must not be treated as secure redaction.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
 - Browser memory and download limits still apply to very large documents.
+- Blank-page detection uses a conservative low-resolution visual check; review the result and use Undo if a deliberately sparse page was removed.
+- Deskew is a manual fine-rotation control, not automatic skew detection.
+- Sanitization intentionally rasterizes pages, so the sanitized copy loses searchable/selectable text and may be larger than the edited PDF.
 
 ## Dependency licensing
 

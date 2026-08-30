@@ -48,7 +48,7 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await page.getByRole('button', { name: 'Rotate right' }).click();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export' }).click();
+  await page.getByRole('button', { name: 'Export', exact:true }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('lesson-edited.pdf');
   const exported = await PDFDocument.load(await require('fs/promises').readFile(await download.path()));
@@ -77,6 +77,74 @@ test('navigates pages with visible arrows and keyboard arrow keys', async ({ pag
   await page.locator('#textValue').focus();
   await page.keyboard.press('ArrowLeft');
   await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
+});
+
+test('reverses pages, inserts and removes blank pages, and adds publishing marks', async ({ page }) => {
+  const source = await PDFDocument.create(), font = await source.embedFont(StandardFonts.Helvetica);
+  source.addPage([300, 500]).drawText('First', { x:30, y:450, font, size:20 });
+  source.addPage([300, 500]);
+  source.addPage([300, 500]).drawText('Last', { x:30, y:450, font, size:20 });
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'organize.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await page.getByRole('button', { name:'Reverse page order' }).click();
+  await expect(page.locator('#status')).toContainText('Page order reversed');
+  await page.getByRole('button', { name:'Insert blank page' }).click();
+  await expect(page.locator('.thumbnail')).toHaveCount(4);
+  await page.getByRole('button', { name:'Remove blank pages' }).click();
+  await expect(page.locator('.thumbnail')).toHaveCount(2);
+  await page.locator('.thumbnail').first().click();
+  await page.locator('.thumbnail').last().click({ modifiers:['Shift'] });
+  await page.getByRole('button', { name:'Headers, footers & numbers' }).click();
+  await page.locator('#headerText').fill('Class packet');
+  await page.getByRole('button', { name:'Apply', exact:true }).click();
+  await page.getByRole('button', { name:'Add signature' }).click();
+  await page.locator('#signatureText').fill('Teacher Name');
+  await page.getByRole('button', { name:'Add typed signature' }).click();
+  await expect(page.locator('.text-object').filter({ hasText:'Teacher Name' })).toBeVisible();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Export', exact:true }).click();
+  const exported = await PDFDocument.load(await require('fs/promises').readFile(await (await downloadPromise).path()));
+  expect(exported.getPageCount()).toBe(2);
+});
+
+test('crops pages and applies fine deskew rotation', async ({ page }) => {
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'crop.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Crop me', [400, 600])) });
+  await page.getByRole('button', { name:'Crop pages' }).click();
+  for (const id of ['cropTop','cropRight','cropBottom','cropLeft']) await page.locator(`#${id}`).fill('10');
+  await page.getByRole('button', { name:'Apply crop' }).click();
+  await page.getByRole('button', { name:'Deskew / custom rotation' }).click();
+  await page.locator('#customRotation').fill('2');
+  await page.getByRole('button', { name:'Apply rotation' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Export', exact:true }).click();
+  const exported = await PDFDocument.load(await require('fs/promises').readFile(await (await downloadPromise).path()));
+  const size = exported.getPage(0).getSize();
+  expect(size.width).toBeGreaterThan(320);
+  expect(size.width).toBeLessThan(340);
+  expect(size.height).toBeGreaterThan(480);
+  expect(size.height).toBeLessThan(495);
+});
+
+test('imports image pages, exports PNG, and creates a rasterized sanitized copy', async ({ page }) => {
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+  const source = await PDFDocument.create(); source.setTitle('Sensitive metadata'); source.addPage([300, 500]);
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'safe.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await page.locator('#imagePagesInput').setInputFiles({ name:'photo.png', mimeType:'image/png', buffer:png });
+  await expect(page.locator('.thumbnail')).toHaveCount(2);
+  await page.locator('.thumbnail').first().click();
+  const pngDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Export pages as images' }).click();
+  expect((await pngDownload).suggestedFilename()).toBe('safe-page-1.png');
+  const sanitizeDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Sanitize PDF copy' }).click();
+  await page.getByRole('button', { name:'Sanitize and download' }).click();
+  const sanitizedFile = await sanitizeDownload;
+  expect(sanitizedFile.suggestedFilename()).toBe('safe-sanitized.pdf');
+  const sanitized = await PDFDocument.load(await require('fs/promises').readFile(await sanitizedFile.path()));
+  expect(sanitized.getTitle() || '').not.toContain('Sensitive');
+  expect(sanitized.getPageCount()).toBe(2);
 });
 
 test('turns clicked extractable PDF text into an editable replacement', async ({ page }) => {
