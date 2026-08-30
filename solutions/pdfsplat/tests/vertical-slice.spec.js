@@ -58,6 +58,27 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   expect(exported.getPage(1).getRotation().angle).toBe(90);
 });
 
+test('navigates pages with visible arrows and keyboard arrow keys', async ({ page }) => {
+  const source = await PDFDocument.create();
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  for (let number = 1; number <= 3; number++) source.addPage([300, 500]).drawText(`Page ${number}`, { x:30, y:450, font, size:20 });
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'navigation.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await expect(page.locator('#pagePosition')).toHaveText('1 / 3');
+  await expect(page.getByRole('button', { name:'Previous page' })).toBeDisabled();
+  await page.getByRole('button', { name:'Next page' }).click();
+  await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('#pagePosition')).toHaveText('3 / 3');
+  await expect(page.getByRole('button', { name:'Next page' })).toBeDisabled();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
+  await page.getByRole('button', { name:'Add text' }).click();
+  await page.locator('#textValue').focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
+});
+
 test('turns clicked extractable PDF text into an editable replacement', async ({ page }) => {
   const source = await PDFDocument.create();
   const font = await source.embedFont(StandardFonts.Helvetica);
@@ -164,6 +185,51 @@ test('merges PDFs and separates page ranges into a ZIP', async ({ page }) => {
   const archive = await JSZip.loadAsync(await require('fs/promises').readFile(await download.path()));
   expect(Object.keys(archive.files).sort()).toEqual(['part-1.pdf', 'part-2.pdf']);
   expect((await PDFDocument.load(await archive.file('part-1.pdf').async('uint8array'))).getPageCount()).toBe(1);
+});
+
+test('converts the edited PDF to a reflowable EPUB 3 locally', async ({ page }) => {
+  const source = await PDFDocument.create();
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  source.addPage([400, 600]).drawText('Chapter One', { x:40, y:540, font, size:26 });
+  source.getPage(0).drawText('A readable first paragraph.', { x:40, y:500, font, size:14 });
+  source.addPage([400, 600]).drawText('Chapter Two', { x:40, y:540, font, size:26 });
+  source.getPage(1).drawText('A readable second paragraph.', { x:40, y:500, font, size:14 });
+
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'reader.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await page.getByRole('button', { name:'Convert to EPUB' }).click();
+  await expect(page.getByRole('heading', { name:'Convert PDF to EPUB' })).toBeVisible();
+  await page.locator('#epubTitle').fill('Reader Edition');
+  await page.locator('#epubAuthor').fill('Test Author');
+  await page.locator('#epubPublisher').fill('PDFSplat Press');
+  await page.locator('#epubDescription').fill('A test publication.');
+  await page.locator('#epubRights').fill('© 2026 Test Author');
+  await page.locator('#epubLanguage').fill('en-US');
+  await page.locator('#epubCover').setInputFiles({ name:'cover.png', mimeType:'image/png', buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') });
+  await page.locator('#epubCoverAlt').fill('A simple test cover');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Convert and download' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('Reader Edition.epub');
+  const bytes = await require('fs/promises').readFile(await download.path());
+  expect(bytes.subarray(0, 2).toString()).toBe('PK');
+  const epub = await JSZip.loadAsync(bytes);
+  expect(await epub.file('mimetype').async('string')).toBe('application/epub+zip');
+  const packageXml = await epub.file('EPUB/package.opf').async('string');
+  expect(packageXml).toContain('<dc:title>Reader Edition</dc:title>');
+  expect(packageXml).toContain('<dc:creator>Test Author</dc:creator>');
+  expect(packageXml).toContain('<dc:language>en-US</dc:language>');
+  expect(packageXml).toContain('<dc:publisher>PDFSplat Press</dc:publisher>');
+  expect(packageXml).toContain('schema:accessMode');
+  expect(packageXml).toContain('properties="cover-image"');
+  expect(await epub.file('EPUB/nav.xhtml').async('string')).toContain('chapter-2.xhtml');
+  expect(await epub.file('EPUB/nav.xhtml').async('string')).toContain('epub:type="page-list"');
+  const firstChapter = await epub.file('EPUB/chapter-1.xhtml').async('string');
+  expect(firstChapter).toContain('A readable first paragraph.');
+  expect(firstChapter).toContain('epub:type="pagebreak"');
+  expect(await epub.file('EPUB/cover.xhtml').async('string')).toContain('A simple test cover');
+  await expect(page.locator('#status')).toContainText('Reader Edition.epub downloaded');
+  await expect(page.locator('#epubPreflight')).toContainText('EPUB 3 package');
 });
 
 test('protects an edited PDF with CipherSplat and unlocks it back into the editor', async ({ page }) => {

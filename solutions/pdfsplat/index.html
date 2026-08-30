@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Open, organize, annotate, and export PDFs locally in your browser.">
+  <meta name="description" content="Open, organize, annotate, export, and convert PDFs to EPUB locally in your browser.">
   <title>PDFsplat™ | DrawSplat</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
@@ -25,6 +25,7 @@
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
       <button id="exportButton" type="button" disabled>Export</button>
+      <button id="epubButton" type="button" disabled>Convert to EPUB</button>
       <button id="protectButton" type="button">Protect / Unprotect</button>
       <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
       <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
@@ -95,6 +96,9 @@
   <footer class="statusbar">
     <span id="status" role="status" aria-live="polite">Ready</span>
     <div class="status-controls">
+      <button id="previousPageButton" type="button" disabled aria-label="Previous page" title="Previous page (Left Arrow)">←</button>
+      <span id="pagePosition" aria-live="polite">0 / 0</span>
+      <button id="nextPageButton" type="button" disabled aria-label="Next page" title="Next page (Right Arrow)">→</button>
       <button id="zoomOutButton" type="button" disabled aria-label="Zoom out">−</button>
       <span id="zoomLabel">100%</span>
       <button id="zoomInButton" type="button" disabled aria-label="Zoom in">+</button>
@@ -122,6 +126,29 @@
       <div class="dialog-actions">
         <button type="button" value="cancel">Cancel</button>
         <button class="primary" type="submit">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="epubDialog">
+    <form id="epubForm">
+      <h2>Convert PDF to EPUB</h2>
+      <p>Create a reflowable EPUB 3 ebook from the open PDF. Conversion happens entirely on this device.</p>
+      <label class="dialog-field">Book title <input id="epubTitle" type="text" required maxlength="200"></label>
+      <label class="dialog-field">Author <input id="epubAuthor" type="text" maxlength="200" placeholder="Unknown author"></label>
+      <label class="dialog-field">Publisher <input id="epubPublisher" type="text" maxlength="200"></label>
+      <label class="dialog-field">Description <textarea id="epubDescription" rows="3" maxlength="2000"></textarea></label>
+      <label class="dialog-field">Rights <input id="epubRights" type="text" maxlength="300" placeholder="For example: © 2026 Author name"></label>
+      <label class="dialog-field">Language <input id="epubLanguage" type="text" value="en" required maxlength="35" inputmode="text" aria-describedby="epubLanguageHint"></label>
+      <p id="epubLanguageHint" class="tool-hint">Use a language tag such as <code>en</code>, <code>es</code>, or <code>en-US</code>.</p>
+      <label><input id="epubPageChapters" type="checkbox" checked> Put each PDF page in its own EPUB section</label>
+      <label class="dialog-field">Cover image <input id="epubCover" type="file" accept="image/png,image/jpeg"></label>
+      <label id="epubCoverAltRow" class="dialog-field" hidden>Cover description <input id="epubCoverAlt" type="text" maxlength="500" placeholder="Describe meaningful cover artwork"></label>
+      <p class="tool-hint">Best for searchable, single-column, text-first PDFs. Scans need OCR first; tables, columns, equations, and precise page layout may be simplified.</p>
+      <section id="epubPreflight" class="preflight" aria-live="polite" hidden></section>
+      <div class="dialog-actions">
+        <button id="epubCancel" type="button">Cancel</button>
+        <button id="epubRun" class="primary" type="submit">Convert and download</button>
       </div>
     </form>
   </dialog>

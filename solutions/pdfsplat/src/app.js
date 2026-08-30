@@ -1,11 +1,12 @@
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
+import { createEpub } from "./epub-export.js";
 
 const pdfjs = globalThis.pdfjsLib;
 const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -76,7 +77,14 @@ function restore(value) {
   renderAll();
 }
 function setEnabled(on) {
-  ["pagesButton", "mergeButton", "exportButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "rotateLeftButton", "rotateRightButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  syncPageNavigation();
+}
+function syncPageNavigation() {
+  const count = state.pages.length;
+  els.pagePosition.textContent = count ? `${state.current + 1} / ${count}` : "0 / 0";
+  els.previousPageButton.disabled = !count || state.current <= 0;
+  els.nextPageButton.disabled = !count || state.current >= count - 1;
 }
 function setMode(mode) {
   state.mode = mode;
@@ -167,6 +175,7 @@ async function renderCurrent() {
   const token = ++state.renderToken,
     item = currentPage();
   if (!item) return;
+  syncPageNavigation();
   const page = await sourcePage(item);
   if (token !== state.renderToken) return;
   const rotation = (page.rotate + item.rotation) % 360,
@@ -365,6 +374,12 @@ function selectPage(index, event = {}) {
   renderAll();
   const count = selectedPageIndexes().length;
   announce(count > 1 ? `${count} pages selected. Page ${index + 1} is active.` : `Page ${index + 1} of ${state.pages.length}`);
+}
+function navigatePage(delta) {
+  if (!state.pages.length) return;
+  const index = Math.max(0, Math.min(state.current + delta, state.pages.length - 1));
+  if (index === state.current) return;
+  selectPage(index);
 }
 function moveSelectedPages(to) {
   const indexes = selectedPageIndexes(),
@@ -958,6 +973,49 @@ async function exportPdf(items = state.pages, suffix = "-edited") {
     els.exportButton.disabled = false;
   }
 }
+
+function openEpubDialog() {
+  els.epubTitle.value = state.fileName.replace(/\.pdf$/i, "");
+  els.epubAuthor.value = "";
+  els.epubPublisher.value = "";
+  els.epubDescription.value = "";
+  els.epubRights.value = "";
+  els.epubLanguage.value = document.documentElement.lang || "en";
+  els.epubCover.value = "";
+  els.epubCoverAlt.value = "";
+  els.epubCoverAltRow.hidden = true;
+  els.epubPreflight.hidden = true;
+  els.epubDialog.showModal();
+  els.epubTitle.select();
+}
+
+async function exportEpub(event) {
+  event.preventDefault();
+  const title = els.epubTitle.value.trim(), author = els.epubAuthor.value.trim(), language = els.epubLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) {
+    announce("Enter a title and a valid language tag such as en or en-US.");
+    return;
+  }
+  els.epubRun.disabled = true;
+  els.epubButton.disabled = true;
+  try {
+    announce("Preparing the edited PDF for EPUB conversion…");
+    const pdfBytes = await buildPdf(state.pages);
+    const coverFile = els.epubCover.files[0] || null;
+    const result = await createEpub({ pdfjs, pdfBytes, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
+    const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document";
+    downloadBytes(result.blob, `${safeName}.epub`, "application/epub+zip");
+    els.epubPreflight.innerHTML = `<h3>EPUB preflight</h3><ul>${result.checks.map((check) => `<li class="${check.level}">${check.message}</li>`).join("")}</ul>`;
+    els.epubPreflight.hidden = false;
+    announce(`${safeName}.epub downloaded. Preflight found ${result.checks.filter((check) => check.level === "warning").length} warning(s).`);
+  } catch (error) {
+    console.error(error);
+    announce(error.message || "The EPUB could not be created.");
+  } finally {
+    els.epubRun.disabled = false;
+    els.epubButton.disabled = false;
+  }
+}
 function parseRanges(value) {
   const parts = value
     .split(",")
@@ -1078,6 +1136,13 @@ els.fileInput.onchange = (e) => openFile(e.target.files[0]);
 els.mergeButton.onclick = () => els.mergeInput.click();
 els.mergeInput.onchange = (e) => mergeFile(e.target.files[0]);
 els.exportButton.onclick = () => exportPdf();
+els.epubButton.onclick = openEpubDialog;
+els.epubForm.onsubmit = exportEpub;
+els.epubCancel.onclick = () => els.epubDialog.close();
+els.epubCover.onchange = () => {
+  els.epubCoverAltRow.hidden = !els.epubCover.files.length;
+  if (!els.epubCover.files.length) els.epubCoverAlt.value = "";
+};
 els.protectButton.onclick = () => openVaultDialog();
 els.unlockButton.onclick = () => els.vaultInput.click();
 els.vaultProtectChoice.onclick = () => {
@@ -1199,6 +1264,8 @@ els.fitButton.onclick = () => {
   state.zoom = 1;
   renderCurrent();
 };
+els.previousPageButton.onclick = () => navigatePage(-1);
+els.nextPageButton.onclick = () => navigatePage(1);
 els.privacyButton.onclick = () => els.privacyDialog.showModal();
 for (const name of ["dragenter", "dragover"])
   els.dropZone.addEventListener(name, (e) => {
@@ -1214,6 +1281,9 @@ els.dropZone.addEventListener("drop", (e) => openFile(e.dataTransfer.files[0]));
 window.addEventListener("keydown", (e) => {
   const mod = e.ctrlKey || e.metaKey,
     key = e.key.toLowerCase();
+  const target = e.target;
+  const editing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+  const modalOpen = Boolean(document.querySelector("dialog[open]"));
   if (mod && key === "o") {
     e.preventDefault();
     els.fileInput.click();
@@ -1233,6 +1303,14 @@ window.addEventListener("keydown", (e) => {
   if (!mod && e.key === "+" && state.pages.length) els.zoomInButton.click();
   if (!mod && e.key === "-" && state.pages.length) els.zoomOutButton.click();
   if (!mod && e.key === "0" && state.pages.length) els.fitButton.click();
+  if (!mod && !e.altKey && !editing && !modalOpen && e.key === "ArrowLeft" && state.pages.length) {
+    e.preventDefault();
+    navigatePage(-1);
+  }
+  if (!mod && !e.altKey && !editing && !modalOpen && e.key === "ArrowRight" && state.pages.length) {
+    e.preventDefault();
+    navigatePage(1);
+  }
   if (e.key === "Escape" && state.mode === "draw") setMode("select");
 });
 window.addEventListener("resize", () => {

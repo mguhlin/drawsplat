@@ -14,6 +14,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Drag over any PDF region with Remove area to create a movable/resizable visual cover.
 - Undo and redo document and annotation changes.
 - Export a new `-edited.pdf` copy without overwriting the source.
+- Convert the edited document into a locally generated, reflowable EPUB 3 ebook with publishing metadata, optional cover artwork, structure-aware section names, table of contents, page list, landmarks, and an honest preflight report.
 - Protect the edited result as a CipherSplat™ `.csplat` package.
 - Authenticate, decrypt, and reopen a current CS4 CipherSplat™ PDF package.
 
@@ -28,6 +29,7 @@ Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers a
 - Object URLs hold inserted image previews and are revoked when the tab closes.
 - No document or recovery data is written to localStorage or IndexedDB.
 - Multi-file separation uses locally bundled JSZip.
+- EPUB conversion extracts searchable text with PDF.js and packages standards-based EPUB 3, legacy NCX navigation, and EPUB Accessibility discoverability metadata with locally bundled JSZip.
 - CipherSplat™ protection uses its CS4 chunked format: Argon2id v1.3 (64 MiB, three passes, one lane) and AES-256-GCM with authenticated metadata and records.
 - Unlock accepts current CS4 packages containing exactly one PDF. Password fields are cleared after every attempt and passwords are never stored.
 
@@ -41,6 +43,7 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 - Existing PDF text is not edited semantically.
 - Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages, outlined text, missing character maps, and complex font/layout runs require manual text boxes or future OCR support.
 - Secure content-removing redaction, OCR, forms, search, compression, and accessibility certification are not claimed.
+- EPUB conversion works best with searchable, single-column PDFs. Scans require OCR first, and complex columns, tables, equations, images, and fixed layouts are simplified or omitted.
 - Remove area is visual removal only. It does not delete underlying PDF content and must not be treated as secure redaction.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
 - Browser memory and download limits still apply to very large documents.
