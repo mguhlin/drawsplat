@@ -492,7 +492,7 @@ ${t}
 
     <input id="fileInput" type="file" accept=".writesplat.json,application/json" hidden>
     <input id="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" hidden>
-    <input id="importFileInput" type="file" accept=".md,.markdown,.txt,.text,.html,.htm,.docx,.odt,application/vnd.oasis.opendocument.text" hidden>
+    <input id="importFileInput" type="file" accept=".odt,application/vnd.oasis.opendocument.text,application/x-vnd.oasis.opendocument.text,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.md,.markdown,text/markdown,.txt,.text,text/plain,.html,.htm,text/html" hidden>
     <div id="linkDialog" class="modal-backdrop" hidden>
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="linkDialogTitle">
         <h2 id="linkDialogTitle">Insert link</h2>

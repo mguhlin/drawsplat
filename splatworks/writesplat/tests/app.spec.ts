@@ -223,6 +223,14 @@ test('exports OpenDocument text files', async ({ page }) => {
   expect(download.suggestedFilename()).toBe('odt-draft.odt');
 });
 
+test('offers LibreOffice ODT files in the document import chooser', async ({ page }) => {
+  await page.goto('/');
+  const accept = await page.locator('#importFileInput').getAttribute('accept');
+  expect(accept).toContain('.odt');
+  expect(accept).toContain('application/vnd.oasis.opendocument.text');
+  expect(accept).toContain('application/x-vnd.oasis.opendocument.text');
+});
+
 test('loads templates and runs find replace', async ({ page }) => {
   await page.goto('/');
 
