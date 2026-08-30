@@ -177,10 +177,18 @@ test("legacy graph URLs preserve bookmarks through mode redirects", async ({
   await expect(page).toHaveURL(/graphsplat\/\?mode=coordinate/);
   await page.goto("/solutions/picture-graph/");
   await expect(page).toHaveURL(/graphsplat\/\?mode=picture/);
+  await page.goto("/solutions/chart-studio/");
+  await expect(page).toHaveURL(/graphsplat\/\?mode=quick/);
 });
 
 test("GraphSplat is discoverable by graph aliases", async ({ page }) => {
-  for (const query of ["picture graph", "graphing calculator", "pictograph"]) {
+  for (const query of [
+    "picture graph",
+    "graphing calculator",
+    "pictograph",
+    "chart studio",
+    "csv chart",
+  ]) {
     await page.goto(`/studio/?q=${encodeURIComponent(query)}`);
     await expect(page.locator(".ds-tool-card h3").first()).toHaveText(
       "GraphSplat",

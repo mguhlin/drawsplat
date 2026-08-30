@@ -1,4 +1,4 @@
-import { getRegistry } from "./tool-registry.js?v=2";
+import { getRegistry } from "./tool-registry.js?v=3";
 import { searchTools } from "./tool-search.js";
 import {
   addRecent,

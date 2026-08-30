@@ -8,7 +8,7 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | --- | ---: | --- |
 | Main workspace | 1 | DrawSplat Whiteboard |
 | SplatWorks workspaces | 4 | GridSplat, ShowSplat, WriteSplat, ListSplat |
-| Standalone solutions | 37 | Every public `/solutions/` directory, including PDFsplat, QRSplat, and CipherSplat |
+| Standalone solutions | 36 | Public `/solutions/` destinations, including PDFsplat, QRSplat, and CipherSplat; legacy graph URLs route to GraphSplat |
 | Games and puzzles | 12 | Every game card currently listed on `/games/`; Dots and Boxes is hosted under `/solutions/` |
 | Educator/family/support destinations | 5 | Teacher Admin, Family Access, templates, guides, and support |
 
@@ -25,9 +25,9 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 
 | Intent | Primary destination | Nearby choices |
 | --- | --- | --- |
-| Quick conventional chart | Chart Studio | GridSplat, Picture Graph |
-| Picture-first elementary graph | Picture Graph | Chart Studio, Whiteboard |
-| Coordinates and equations | Graph Maker | GridSplat, Chart Studio |
+| Quick conventional or CSV chart | GraphSplat — Quick Chart | GridSplat |
+| Picture-first elementary graph | GraphSplat — Picture Graph | Whiteboard |
+| Coordinates and equations | GraphSplat — Coordinate Plane or Expression Calculator | GridSplat |
 | Visual idea relationships | Concept Map Studio | Whiteboard, Mermaid Diagram |
 | Slides and presentation | ShowSplat | Whiteboard, SplatImage Studio |
 | Image editing | SplatImage Studio | Draw & Sketch, Whiteboard |
