@@ -1,6 +1,6 @@
 import { countDocumentStats } from './app/stats';
 import { analyzeWritingWarnings, type WritingWarnings } from './analysis/detectors';
-import { analyzeReadability } from './analysis/scorer';
+import { analyzeReadability, formatReadabilityGrade } from './analysis/scorer';
 import { parseVocabularyTerms } from './analysis/vocabulary';
 import { createWriterEditor, type EditorCommand } from './editor/writerEditor';
 import { formatCitation, type CitationStyle } from './educator/citations';
@@ -716,7 +716,7 @@ function appHtml(): string {
             <div class="readability-head">
               <div>
                 <p class="eyebrow">Readability</p>
-                <h2 id="readabilityGradeLabel">Grade 0</h2>
+                <h2 id="readabilityGradeLabel">Start writing</h2>
                 <p id="readabilityStatus" class="readability-status">Start writing.</p>
               </div>
               <label class="target-grade-control" title="Target grade">
@@ -734,6 +734,7 @@ function appHtml(): string {
                 <div><span>Paragraphs</span><strong id="paragraphCount">0</strong></div>
                 <div><span>Reading time</span><strong id="readingTime">0s</strong></div>
                 <div><span>Reading ease</span><strong id="readingEase">0</strong></div>
+                <div title="Raw Flesch–Kincaid result; this can exceed K–12 grades."><span>Formula grade</span><strong id="formulaGrade">0</strong></div>
                 <div><span>Syllables</span><strong id="syllableCount">0</strong></div>
               </div>
             </details>
@@ -779,7 +780,7 @@ function appHtml(): string {
         <span>Characters: <strong id="statusChars">0</strong></span>
         <span>Sentences: <strong id="statusSentences">0</strong></span>
         <span>Read time: <strong id="statusReadTime">1 min</strong></span>
-        <span>Grade estimate: <strong id="statusGrade">0</strong></span>
+        <span>Reading level: <strong id="statusGrade">Start writing</strong></span>
         <span id="statusSaved">Saved locally</span>
       </footer>
     </main>
@@ -1468,11 +1469,16 @@ function bootstrap(): void {
     getRequiredElement('statusChars').textContent = String(htmlToPlainText(html).replace(/\s/g, '').length);
     const readMinutes = Math.max(1, Math.round(stats.words / 200));
     getRequiredElement('statusReadTime').textContent = `${readMinutes} min`;
-    getRequiredElement('readabilityGradeLabel').textContent = `Grade ${readability.fleschKincaidGrade}`;
+    const readingLevel = formatReadabilityGrade(readability.fleschKincaidGrade, readability.words);
+    const gradeDetail = `Flesch–Kincaid estimate: grade ${readability.fleschKincaidGrade}. Tables, fragments, abbreviations, and specialized terms can raise this estimate.`;
+    getRequiredElement('readabilityGradeLabel').textContent = readingLevel;
+    getRequiredElement('readabilityGradeLabel').setAttribute('title', gradeDetail);
     getRequiredElement('readabilityStatus').textContent = readability.fleschKincaidGrade <= targetGrade + 1 ? 'Good.' : 'Needs a little smoothing.';
     getRequiredElement('readingEase').textContent = String(readability.fleschReadingEase);
+    getRequiredElement('formulaGrade').textContent = String(readability.fleschKincaidGrade);
     getRequiredElement('syllableCount').textContent = String(readability.syllables);
-    getRequiredElement('statusGrade').textContent = String(readability.fleschKincaidGrade);
+    getRequiredElement('statusGrade').textContent = readingLevel;
+    getRequiredElement('statusGrade').setAttribute('title', gradeDetail);
     updateWarningSummary(warnings);
   }
 

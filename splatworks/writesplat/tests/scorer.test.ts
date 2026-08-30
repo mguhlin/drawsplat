@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyzeReadability, countSyllables } from '../src/analysis/scorer';
+import { analyzeReadability, countSyllables, formatReadabilityGrade } from '../src/analysis/scorer';
 
 describe('readability scorer', () => {
   it('counts syllables with common English corrections', () => {
@@ -27,5 +27,12 @@ describe('readability scorer', () => {
       fleschKincaidGrade: 0,
       fleschReadingEase: 0,
     });
+  });
+
+  it('turns out-of-range formula results into honest reading-level labels', () => {
+    expect(formatReadabilityGrade(0, 0)).toBe('Start writing');
+    expect(formatReadabilityGrade(7.4, 100)).toBe('Grade 7.4');
+    expect(formatReadabilityGrade(14.2, 100)).toBe('College level');
+    expect(formatReadabilityGrade(28.7, 100)).toBe('Postgraduate / very complex');
   });
 });

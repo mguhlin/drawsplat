@@ -6,6 +6,14 @@ export interface ReadabilityScore {
   fleschReadingEase: number;
 }
 
+export function formatReadabilityGrade(grade: number, wordCount: number): string {
+  if (wordCount === 0) return 'Start writing';
+  if (grade <= 1) return 'Kindergarten–Grade 1';
+  if (grade <= 12) return `Grade ${Math.max(1, grade).toFixed(1)}`;
+  if (grade <= 16) return 'College level';
+  return 'Postgraduate / very complex';
+}
+
 export function analyzeReadability(text: string): ReadabilityScore {
   const words = getWords(text);
   const sentenceCount = countSentences(text, words.length);
