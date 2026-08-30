@@ -85,6 +85,7 @@
       <button id="removeBlankPagesButton" type="button" disabled>Remove blank pages</button>
       <button id="decorateButton" type="button" disabled>Headers, footers & numbers</button>
       <button id="sanitizeButton" type="button" disabled>Sanitize PDF copy</button>
+      <button id="accessibilityButton" type="button" disabled>Accessibility check</button>
       <button id="duplicatePageButton" type="button" disabled>Duplicate page</button>
       <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
       <button id="extractPageButton" type="button" disabled>Extract page</button>
@@ -100,6 +101,7 @@
       <fieldset id="objectProperties" disabled>
         <legend>Selected object</legend>
         <label>Opacity <input id="objectOpacity" type="range" min="10" max="100" value="100"></label>
+        <label id="imageAltRow" hidden>Image description <textarea id="imageAltText" rows="3" maxlength="500" placeholder="Describe meaningful content, or leave blank only if decorative"></textarea></label>
         <button id="deleteObjectButton" class="danger" type="button">Delete object</button>
       </fieldset>
     </aside>
@@ -186,6 +188,17 @@
       <p>PDFSplat will rasterize the edited pages into a new PDF. This removes document metadata, scripts, attachments, forms, annotations and hidden content.</p>
       <p class="security-warning">The sanitized copy will no longer contain searchable or selectable text. Keep the original until you verify the result.</p>
       <div class="dialog-actions"><button id="sanitizeCancel" type="button">Cancel</button><button class="primary" type="submit">Sanitize and download</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accessibilityDialog" class="wide-dialog">
+    <form id="accessibilityForm">
+      <h2>PDF accessibility check</h2>
+      <p>Review the document against the supplied local-government guide. Automated checks cannot certify WCAG conformance or replace assistive-technology testing.</p>
+      <div class="dialog-grid"><label>Document title <input id="documentTitle" type="text" required maxlength="300"></label><label>Document language <input id="documentLanguage" type="text" value="en" required maxlength="35"></label></div>
+      <section id="accessibilityResults" class="preflight" aria-live="polite"><p>Run the check to inspect document structure, text, images, forms, metadata, and annotation contrast.</p></section>
+      <p class="security-warning"><strong>Tagged PDF limitation:</strong> PDFSplat can preserve or flatten visual content, but its current PDF engine cannot author a complete tagged structure tree with headings, lists, tables, reading order, and artifact tags. Use the semantic HTML alternative or remediate the exported PDF in a dedicated tagged-PDF tool before public distribution.</p>
+      <div class="dialog-actions"><button id="accessibilityCancel" type="button">Close</button><button id="accessibleHtmlButton" type="button">Download accessible HTML</button><button class="primary" type="submit">Run check</button></div>
     </form>
   </dialog>
 

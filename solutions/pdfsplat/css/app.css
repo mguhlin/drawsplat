@@ -34,4 +34,5 @@
 #vaultGeneratorLink a{display:inline-block;color:var(--purple-dark);font-weight:700}
 .preflight{margin-top:1rem;border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:.75rem}.preflight h3{margin:0 0 .4rem}.preflight ul{margin:.25rem 0;padding-left:1.25rem}.preflight .warning{color:#8a4b00}.preflight .pass{color:#08783e}
 .dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.dialog-grid label{display:grid;gap:.3rem;font-weight:650}.dialog-grid input,.dialog-field select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:8px}.security-warning{border-left:4px solid #f5b942;padding:.6rem .8rem;background:#fff8e6}
+.wide-dialog{max-width:760px}.preflight .error{color:var(--danger);font-weight:650}.preflight .info{color:var(--ink)}
 @media(max-width:800px){.mobile-only{display:inline-block}.sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}.actions{flex-wrap:nowrap;overflow-x:auto;max-width:100%}.topbar{min-width:0}.topbar button,.topbar .button-link{white-space:nowrap}}

@@ -300,6 +300,35 @@ test('converts the edited PDF to a reflowable EPUB 3 locally', async ({ page }) 
   await expect(page.locator('#epubPreflight')).toContainText('EPUB 3 package');
 });
 
+test('audits accessibility risks and exports a semantic HTML alternative', async ({ page }) => {
+  const source = await PDFDocument.create();
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  source.addPage([400, 600]).drawText('Public meeting notice', { x:40, y:540, font, size:22 });
+  source.getPage(0).drawText('The meeting begins at 6 PM.', { x:40, y:500, font, size:14 });
+  source.addPage([400, 600]);
+
+  await page.goto('/solutions/pdfsplat/');
+  await page.locator('#fileInput').setInputFiles({ name:'notice.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await page.getByRole('button', { name:'Accessibility check' }).click();
+  await page.locator('#documentTitle').fill('Public Meeting Notice');
+  await page.locator('#documentLanguage').fill('en-US');
+  await page.getByRole('button', { name:'Run check' }).click();
+  await expect(page.locator('#accessibilityResults')).toContainText('do not report a tagged structure tree');
+  await expect(page.locator('#accessibilityResults')).toContainText('1 page(s) have no extractable text');
+  await expect(page.locator('#accessibilityResults')).toContainText('Manual review is still required');
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name:'Download accessible HTML' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('notice-accessible.html');
+  const html = await require('fs/promises').readFile(await download.path(), 'utf8');
+  expect(html).toContain('<html lang="en-US">');
+  expect(html).toContain('<h1>Public Meeting Notice</h1>');
+  expect(html).toContain('<main id="content">');
+  expect(html).toContain('Public meeting notice');
+  expect(html).toContain('No extractable text was available for this page.');
+});
+
 test('protects an edited PDF with CipherSplat and unlocks it back into the editor', async ({ page }) => {
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'private.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Private')) });

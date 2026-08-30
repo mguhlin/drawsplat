@@ -6,7 +6,7 @@ const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -24,6 +24,8 @@ const state = {
   future: [],
   renderToken: 0,
   thumbnailObserver: null,
+  documentTitle: "",
+  documentLanguage: "en",
 };
 
 function announce(message) {
@@ -77,7 +79,7 @@ function restore(value) {
   renderAll();
 }
 function setEnabled(on) {
-  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -124,6 +126,8 @@ async function openFile(file) {
     state.assets.clear();
     state.pages = pagesFor(source);
     state.fileName = file.name;
+    state.documentTitle = file.name.replace(/\.pdf$/i, "");
+    state.documentLanguage = document.documentElement.lang || "en";
     state.current = 0;
     selectOnlyPage(0);
     state.zoom = 1;
@@ -711,12 +715,14 @@ function updateProperties() {
     isText = o?.type === "text";
   els.textProperties.disabled = !isText;
   els.objectProperties.disabled = !o || o.type === "drawing";
+  els.imageAltRow.hidden = o?.type !== "image";
   if (isText) {
     els.textValue.value = o.text;
     els.fontSize.value = o.fontSize;
     els.textColor.value = o.color;
   }
   if (o) els.objectOpacity.value = Math.round((o.opacity ?? 1) * 100);
+  if (o?.type === "image") els.imageAltText.value = o.altText || "";
 }
 function addText() {
   mutate("Add text", () => {
@@ -1009,6 +1015,9 @@ async function buildPdf(items) {
     font = await output.embedFont(StandardFonts.Helvetica),
     docs = new Map(),
     images = new Map();
+  output.setTitle(state.documentTitle || state.fileName.replace(/\.pdf$/i, ""));
+  output.setLanguage(state.documentLanguage || "en");
+  output.setCreator("PDFSplat");
   for (const item of items) {
     if (!docs.has(item.sourceId)) docs.set(item.sourceId, await PDFDocument.load(state.sources.get(item.sourceId).bytes));
     const [page] = await output.copyPages(docs.get(item.sourceId), [item.sourceIndex]);
@@ -1132,6 +1141,67 @@ async function sanitizePdf(event) {
     downloadBytes(await output.save(), name); await source.destroy(); els.sanitizeDialog.close(); announce(`${name} downloaded. Verify it before deleting the original.`);
   } catch (error) { console.error(error); announce("Sanitization failed; the source PDF is unchanged."); }
   finally { els.sanitizeForm.querySelector('[type="submit"]').disabled = false; }
+}
+
+function contrastAgainstWhite(hex) {
+  const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255).map((value) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
+  const luminance = .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+  return 1.05 / (luminance + .05);
+}
+function openAccessibilityDialog() {
+  els.documentTitle.value = state.documentTitle || state.fileName.replace(/\.pdf$/i, "");
+  els.documentLanguage.value = state.documentLanguage || "en";
+  els.accessibilityResults.innerHTML = "<p>Run the check to inspect document structure, text, images, forms, metadata, and annotation contrast.</p>";
+  els.accessibilityDialog.showModal();
+}
+async function runAccessibilityCheck(event) {
+  event.preventDefault();
+  const title = els.documentTitle.value.trim(), language = els.documentLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) return announce("Enter a descriptive title and valid language tag such as en or en-US.");
+  state.documentTitle = title; state.documentLanguage = language;
+  els.accessibilityForm.querySelector('[type="submit"]').disabled = true;
+  const results = [], sourceReports = new Map();
+  try {
+    announce("Checking PDF accessibility…");
+    for (const [id, source] of state.sources) {
+      const metadata = await source.pdf.getMetadata().catch(() => ({ info: {} })), markInfo = source.pdf.getMarkInfo ? await source.pdf.getMarkInfo().catch(() => null) : null, fields = source.pdf.getFieldObjects ? await source.pdf.getFieldObjects().catch(() => null) : null;
+      sourceReports.set(id, { tagged: Boolean(markInfo?.Marked), title: metadata?.info?.Title || "", fields });
+    }
+    const untagged = [...sourceReports.values()].filter((report) => !report.tagged).length;
+    results.push({ level: untagged ? "error" : "pass", message: untagged ? `${untagged} source document(s) do not report a tagged structure tree. Logical reading order, headings, lists, tables, and decorative artifacts cannot be verified.` : "All source documents report tagged PDF structure." });
+    results.push({ level: "pass", message: `Export metadata will include the title “${title}” and language “${language}”.` });
+    let emptyPages = 0;
+    for (const item of state.pages) if (!(await (await sourcePage(item)).getTextContent()).items.some((entry) => entry.str?.trim())) emptyPages++;
+    results.push({ level: emptyPages ? "error" : "pass", message: emptyPages ? `${emptyPages} page(s) have no extractable text and may be scans requiring OCR or an accessible alternative.` : "Every page contains extractable text." });
+    const images = state.pages.flatMap((page) => page.annotations.filter((object) => object.type === "image")), missingAlt = images.filter((image) => !image.altText).length;
+    results.push({ level: missingAlt ? "warning" : "pass", message: missingAlt ? `${missingAlt} added image(s) have no description. Leave descriptions blank only for decorative images.` : `${images.length} added image(s) have descriptions or no added images are present.` });
+    const lowContrast = state.pages.flatMap((page) => page.annotations.filter((object) => object.type === "text" && contrastAgainstWhite(object.color || "#000000") < 4.5)).length;
+    results.push({ level: lowContrast ? "warning" : "pass", message: lowContrast ? `${lowContrast} text annotation(s) are below the guide's expected 4.5:1 normal-text contrast against white.` : "Text annotations meet 4.5:1 contrast against white." });
+    const fields = [...sourceReports.values()].flatMap((report) => Object.values(report.fields || {}).flat());
+    results.push({ level: fields.length ? "warning" : "pass", message: fields.length ? `${fields.length} form field(s) detected. Verify programmatic labels and logical keyboard tab order in a dedicated PDF accessibility tool.` : "No interactive form fields detected." });
+    results.push({ level: "info", message: "Manual review is still required for reading order, heading hierarchy, meaningful link text, table headers, list nesting, image-description quality, color use, and assistive-technology behavior." });
+    els.accessibilityResults.innerHTML = `<h3>Accessibility preflight</h3><ul>${results.map((result) => `<li class="${result.level}">${escapeHtml(result.message)}</li>`).join("")}</ul>`;
+    announce(`Accessibility check complete: ${results.filter((result) => result.level === "error").length} error(s), ${results.filter((result) => result.level === "warning").length} warning(s).`);
+  } catch (error) { console.error(error); announce("Accessibility check could not be completed."); }
+  finally { els.accessibilityForm.querySelector('[type="submit"]').disabled = false; }
+}
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+async function exportAccessibleHtml() {
+  const title = els.documentTitle.value.trim(), language = els.documentLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) return announce("Enter a descriptive title and valid language before exporting HTML.");
+  state.documentTitle = title; state.documentLanguage = language; announce("Creating accessible HTML alternative…");
+  const edited = await buildPdf(state.pages), source = await pdfjs.getDocument({ data: edited.slice() }).promise, sections = [];
+  for (let number = 1; number <= source.numPages; number++) {
+    const content = await (await source.getPage(number)).getTextContent(), lines = [], current = [];
+    for (const item of content.items) { if (item.str) current.push(item.str); if (item.hasEOL && current.length) { lines.push(current.join(" ").replace(/\s+/g, " ").trim()); current.length = 0; } }
+    if (current.length) lines.push(current.join(" ").replace(/\s+/g, " ").trim());
+    const imageDescriptions = state.pages[number - 1]?.annotations.filter((object) => object.type === "image" && object.altText).map((object) => `<figure role="img" aria-label="${escapeHtml(object.altText)}"><figcaption>Image: ${escapeHtml(object.altText)}</figcaption></figure>`).join("") || "";
+    sections.push(`<section aria-labelledby="page-${number}"><h2 id="page-${number}">Page ${number}</h2>${lines.filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join("") || "<p>No extractable text was available for this page.</p>"}${imageDescriptions}</section>`);
+  }
+  await source.destroy();
+  const html = `<!doctype html><html lang="${escapeHtml(language)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title><style>body{font:1.1rem/1.6 system-ui,sans-serif;max-width:70ch;margin:auto;padding:1.5rem;color:#111;background:#fff}.skip{position:absolute;left:-9999px}.skip:focus{left:1rem;top:1rem;background:#fff;padding:.75rem}section{border-top:1px solid #bbb;margin-top:2rem}a{color:#0645ad}</style></head><body><a class="skip" href="#content">Skip to content</a><header><h1>${escapeHtml(title)}</h1><p>Accessible HTML alternative generated locally from ${escapeHtml(state.fileName)}.</p></header><main id="content">${sections.join("")}</main></body></html>`;
+  downloadBytes(new Blob([html], { type: "text/html;charset=utf-8" }), `${state.fileName.replace(/\.pdf$/i, "")}-accessible.html`, "text/html");
+  announce("Accessible HTML alternative downloaded. Review reading order and descriptions before publishing.");
 }
 
 function openEpubDialog() {
@@ -1369,6 +1439,10 @@ els.decorateCancel.onclick = () => els.decorateDialog.close();
 els.sanitizeButton.onclick = () => els.sanitizeDialog.showModal();
 els.sanitizeForm.onsubmit = sanitizePdf;
 els.sanitizeCancel.onclick = () => els.sanitizeDialog.close();
+els.accessibilityButton.onclick = openAccessibilityDialog;
+els.accessibilityForm.onsubmit = runAccessibilityCheck;
+els.accessibilityCancel.onclick = () => els.accessibilityDialog.close();
+els.accessibleHtmlButton.onclick = exportAccessibleHtml;
 els.duplicatePageButton.onclick = duplicatePage;
 els.deletePageButton.onclick = deletePage;
 els.extractPageButton.onclick = extractPages;
@@ -1435,6 +1509,10 @@ els.objectOpacity.onchange = () => {
     mutate("Change opacity", () => (o.opacity = Number(els.objectOpacity.value) / 100));
     renderAnnotations();
   }
+};
+els.imageAltText.onchange = () => {
+  const object = selectedObject();
+  if (object?.type === "image") mutate("Change image description", () => (object.altText = els.imageAltText.value.trim()));
 };
 els.zoomInButton.onclick = () => {
   state.zoom = Math.min(3, state.zoom + 0.1);

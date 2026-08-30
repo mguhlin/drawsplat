@@ -22,6 +22,8 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Protect the edited result as a CipherSplat™ `.csplat` package.
 - Authenticate, decrypt, and reopen a current CS4 CipherSplat™ PDF package.
 - Create a rasterized sanitized copy that strips document metadata, scripts, attachments, forms, annotations, layers, and hidden content.
+- Run a guide-based accessibility preflight for tagged structure, extractable text/OCR needs, document title and language, added-image descriptions, annotation contrast, and form-review needs.
+- Export a semantic HTML alternative with a document language, descriptive title, skip link, one H1, page sections, readable text, and descriptions supplied for added images.
 
 Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers and Web Crypto require HTTPS, localhost, or an equivalent secure context.
 
@@ -55,6 +57,8 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 - Blank-page detection uses a conservative low-resolution visual check; review the result and use Undo if a deliberately sparse page was removed.
 - Deskew is a manual fine-rotation control, not automatic skew detection.
 - Sanitization intentionally rasterizes pages, so the sanitized copy loses searchable/selectable text and may be larger than the edited PDF.
+- The accessibility preflight is an aid, not a WCAG 2.1 AA certification. Reading order, heading hierarchy, links, lists, tables, color use, description quality, and screen-reader behavior still require human review.
+- pdf-lib cannot author a complete tagged PDF structure tree. PDFSplat reports missing tags but does not claim to repair them; publish the semantic HTML alternative or remediate the exported PDF with a dedicated tagged-PDF tool.
 
 ## Dependency licensing
 
@@ -73,4 +77,4 @@ The pdf-lib and hash-wasm license files are bundled with their assets. No AGPL P
 npx playwright test -c solutions/pdfsplat/playwright.config.js
 ```
 
-The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, range separation into ZIP, and CipherSplat™ protect/unlock round trips.
+The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, range separation into ZIP, accessibility auditing and semantic HTML export, and CipherSplat™ protect/unlock round trips.
