@@ -38,7 +38,7 @@ function readUint32(view: DataView, offset: number): number {
 }
 
 // Extract a single file from a ZIP archive by name (supports stored + deflate).
-async function extractZipEntry(buffer: ArrayBuffer, name: string): Promise<string | null> {
+export async function extractZipEntry(buffer: ArrayBuffer, name: string): Promise<string | null> {
   const bytes = new Uint8Array(buffer);
   const view = new DataView(buffer);
   // Find End Of Central Directory record (signature 0x06054b50) scanning from the end.

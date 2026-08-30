@@ -19,6 +19,7 @@ import { htmlToRtf } from './export/rtf';
 import { createStudentViewHtml, createTeacherViewHtml } from './export/studentView';
 import { assertWriteSplatFile, createNativeFile, type WriteSplatFile } from './storage/nativeFile';
 import { docxToHtml } from './storage/importDocx';
+import { odtToHtml } from './storage/importOdt';
 import './styles/global.css';
 
 const AUTOSAVE_KEY = 'writesplat.autosave.v1';
@@ -504,8 +505,6 @@ function appHtml(): string {
         <button class="primary" data-action="new-document">New</button>
         <button data-action="save-local-document">Save Local</button>
         <button data-action="open-local-library">Library</button>
-        <button data-action="save-json">Save JSON</button>
-        <button data-action="open-json">Open JSON</button>
         <select id="languageSwitcher" class="lang-switcher" aria-label="Language">${languageOptions(language)}</select>
       </div>
     </header>
@@ -518,7 +517,7 @@ function appHtml(): string {
           ['open-local-library', 'Open browser library'],
           ['save-json', 'Save .writesplat.json'],
           ['open-json', 'Open .writesplat.json'],
-          ['import-file', 'Import (.md, .html, .txt, .docx)'],
+          ['import-file', 'Import (.odt, .docx, .md, .html, .txt)'],
           ['export-pdf', 'Print / Save as PDF'],
           ['delete-all-data', 'Delete all local data'],
           {
@@ -787,7 +786,7 @@ function appHtml(): string {
 
     <input id="fileInput" type="file" accept=".writesplat.json,application/json" hidden>
     <input id="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" hidden>
-    <input id="importFileInput" type="file" accept=".md,.markdown,.txt,.text,.html,.htm,.docx" hidden>
+    <input id="importFileInput" type="file" accept=".md,.markdown,.txt,.text,.html,.htm,.docx,.odt,application/vnd.oasis.opendocument.text" hidden>
     <div id="linkDialog" class="modal-backdrop" hidden>
       <section class="modal" role="dialog" aria-modal="true" aria-labelledby="linkDialogTitle">
         <h2 id="linkDialogTitle">Insert link</h2>
@@ -2145,6 +2144,8 @@ function bootstrap(): void {
     try {
       if (/\.docx$/i.test(name)) {
         writer.setHtml(await docxToHtml(await file.arrayBuffer()));
+      } else if (/\.odt$/i.test(name)) {
+        writer.setHtml(await odtToHtml(await file.arrayBuffer()));
       } else if (/\.(md|markdown)$/i.test(name)) {
         writer.setHtml(markdownToHtml(await file.text()));
       } else if (/\.(html?|htm)$/i.test(name)) {

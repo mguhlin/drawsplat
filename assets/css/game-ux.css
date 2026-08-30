@@ -1,0 +1,13 @@
+:root{--game-ux-purple:#6d28d9;--game-ux-ink:#172033;--game-ux-line:#d8d2ff}
+.game-ux-skip{position:fixed;top:8px;left:10px;z-index:9999;transform:translateY(-160%);padding:10px 14px;border-radius:10px;background:#111827;color:#fff;font:800 14px/1.2 system-ui;text-decoration:none}
+.game-ux-skip:focus{transform:translateY(0)}
+.game-ux-coach{display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:1380px;margin:10px auto;padding:10px 14px;border:1px solid var(--game-ux-line);border-radius:14px;background:#fff;color:var(--game-ux-ink);box-shadow:0 7px 20px #11182712;font-family:Inter,system-ui,sans-serif}
+.game-ux-coach p{margin:0;font-size:14px;line-height:1.35}.game-ux-coach strong{color:var(--game-ux-purple)}
+.game-ux-help-button{flex:0 0 auto;min-width:44px;min-height:44px;padding:8px 13px;border:2px solid var(--game-ux-line);border-radius:10px;background:#f7f4ff;color:var(--game-ux-purple);font:800 14px/1 system-ui;cursor:pointer}
+.game-ux-help-button:hover{background:#eee8ff}.game-ux-help-button:focus-visible,:where(button,a,input,select,[tabindex]):focus-visible{outline:4px solid #f59e0b!important;outline-offset:3px!important}
+.game-ux-dialog{width:min(560px,calc(100% - 24px));border:0;border-radius:18px;padding:0;box-shadow:0 25px 70px #0006;color:var(--game-ux-ink);font-family:Inter,system-ui,sans-serif}
+.game-ux-dialog::backdrop{background:#111827aa}.game-ux-dialog article{padding:22px}.game-ux-dialog h2{margin:0 0 8px;color:var(--game-ux-purple)}.game-ux-dialog p{line-height:1.5}.game-ux-dialog ul{padding-left:22px;line-height:1.55}.game-ux-dialog footer{display:flex;justify-content:flex-end;margin-top:18px}.game-ux-dialog footer button{min-height:44px;padding:9px 18px;border:0;border-radius:10px;background:var(--game-ux-purple);color:#fff;font-weight:900;cursor:pointer}
+.game-ux-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:640px){.game-ux-coach{margin:6px 8px;padding:8px 10px}.game-ux-coach p{font-size:12px}.game-ux-help-button{font-size:12px;padding:7px 10px}.game-ux-dialog article{padding:18px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+@media(forced-colors:active){.game-ux-coach,.game-ux-help-button{border:2px solid CanvasText}}

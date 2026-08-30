@@ -66,8 +66,8 @@ a:focus-visible {
   justify-content: space-between;
   align-items: center;
   gap: 18px;
-  min-height: 88px;
-  padding: 16px 24px;
+  min-height: 72px;
+  padding: 10px 20px;
   color: #fff;
   background: linear-gradient(110deg, #5b21b6, #7c3aed 58%, #a855f7);
 }
@@ -82,8 +82,8 @@ a:focus-visible {
 }
 
 .brand-icon {
-  width: 54px;
-  height: 54px;
+  width: 46px;
+  height: 46px;
   border-radius: 8px;
   background: #fff;
   object-fit: contain;
@@ -91,7 +91,7 @@ a:focus-visible {
 
 .brand strong {
   display: block;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
   line-height: 1.05;
   white-space: nowrap;
 }
@@ -172,8 +172,8 @@ a:focus-visible {
 .write-app {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  height: calc(100vh - 88px);
-  min-height: 680px;
+  height: calc(100dvh - 72px);
+  min-height: 620px;
   max-width: 100%;
   overflow-x: clip;
 }
@@ -184,8 +184,8 @@ a:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: 6px;
+  padding: 7px 12px;
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--panel) 94%, transparent);
   box-shadow: 0 10px 28px rgba(76, 29, 149, .06);
@@ -208,13 +208,6 @@ a:focus-visible {
 .menu summary::-webkit-details-marker,
 .menu-submenu summary::-webkit-details-marker {
   display: none;
-}
-
-.menu summary::after {
-  content: "v";
-  margin-left: 8px;
-  color: var(--muted);
-  font-size: .8rem;
 }
 
 .menu[open] summary {
@@ -318,7 +311,7 @@ html[dir="rtl"] .document-meta {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 10px 14px;
+  padding: 7px 12px;
   border-bottom: 1px solid var(--line);
   background: var(--soft);
   contain: layout paint;
@@ -349,8 +342,8 @@ html[dir="rtl"] .document-meta {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  min-height: 50px;
-  padding: 8px 14px;
+  min-height: 44px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--soft) 72%, var(--panel));
 }

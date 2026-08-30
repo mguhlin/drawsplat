@@ -25,7 +25,7 @@ This static Vite + TypeScript app currently includes:
 - cloze marking with student/teacher HTML export modes
 - MLA, APA, and Chicago citation assistant with maintained Works Cited section insertion
 - teacher-only marking, Student View, and student/teacher view HTML exports
-- RTF, DOCX, and ODT exports with documented limitations
+- RTF and DOCX exports, plus ODT import/export for LibreOffice with documented limitations
 - export options dialog with lossy-format notes
 - read-aloud controls using browser SpeechSynthesis with current-word highlighting
 - sentence and paragraph scrambler tools with preserved teacher answer keys
