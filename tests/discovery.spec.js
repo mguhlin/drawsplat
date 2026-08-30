@@ -52,6 +52,22 @@ test("Studio searches aliases, filters functions, and saves favorites locally", 
   expect(resultCount).toBeLessThan(58);
 });
 
+test("Studio consolidates legacy graph tools under GraphSplat", async ({
+  page,
+}) => {
+  await page.goto("/studio/?category=data");
+  await expect(
+    page.locator('.ds-tool-card[data-id="graphsplat"] h3'),
+  ).toHaveText("GraphSplat");
+  await expect(
+    page.locator('.ds-tool-card[data-id="graph-maker"]'),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.ds-tool-card[data-id="picture-graph"]'),
+  ).toHaveCount(0);
+  await expect(page.locator("#resultStatus")).not.toContainText("can't access");
+});
+
 test("Studio accepts category deep links", async ({ page }) => {
   await page.goto("/studio/?category=data&q=graph");
   await expect(page.locator("#toolSearch")).toHaveValue("graph");

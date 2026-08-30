@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.16';
+const CACHE = 'drawsplat-v3.1.17';
 const SHELL = [
   './',
   './index.html',
@@ -136,7 +136,8 @@ self.addEventListener('fetch', e => {
   /* Same-origin only — never intercept Apps Script POSTs or any third-party. */
   const url = new URL(req.url);
   if(url.origin !== self.location.origin) return;
-  const isShellScript = NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
+  const isDiscoveryAsset = url.pathname.startsWith('/assets/js/tool-') || url.pathname === '/data/drawsplat-tools.json';
+  const isShellScript = isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
   e.respondWith((async()=>{
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){
