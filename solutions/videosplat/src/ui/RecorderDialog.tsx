@@ -89,13 +89,6 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
 
   const begin = async () => {
     setError(undefined);
-    if (countdown) {
-      for (let value = countdown; value > 0; value--) {
-        setCounting(value);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-      setCounting(undefined);
-    }
     try {
       session.current = await startCapture(
         {
@@ -103,9 +96,11 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
           microphone,
           microphoneDeviceId: microphoneDeviceId || undefined,
           systemAudio: mode !== "camera" && systemAudio,
+          countdownSeconds: countdown,
         },
         canvas.current!,
         () => void stop(),
+        setCounting,
       );
       setElapsed(0);
       setState("recording");

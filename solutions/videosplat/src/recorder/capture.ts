@@ -8,6 +8,7 @@ export interface CaptureOptions {
   width?: number;
   height?: number;
   frameRate?: number;
+  countdownSeconds?: number;
 }
 
 export interface CaptureSession {
@@ -62,6 +63,7 @@ export async function startCapture(
   options: CaptureOptions,
   previewCanvas: HTMLCanvasElement,
   onScreenEnded?: () => void,
+  onCountdown?: (remaining?: number) => void,
 ): Promise<CaptureSession> {
   if (!navigator.mediaDevices || !("MediaRecorder" in window))
     throw new Error("This browser does not support local screen and camera recording.");
@@ -206,6 +208,11 @@ export async function startCapture(
     };
     if (screenTrack && onScreenEnded)
       screenTrack.addEventListener("ended", screenEnded, { once: true });
+    for (let value = options.countdownSeconds ?? 0; value > 0; value--) {
+      onCountdown?.(value);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    onCountdown?.(undefined);
     recorder.start(1000);
     const startedAt = Date.now();
 
