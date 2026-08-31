@@ -1,3 +1,4 @@
+(() => {
 const STORAGE_KEY = "drawsplat.language";
 const languages = [
   ["en", "English", "en", "ltr"], ["es", "Español", "es", "ltr"],
@@ -35,10 +36,32 @@ const appStrings = {
     zh: {"Private video editing. Right in your browser.":"直接在浏览器中私密编辑视频。","LOCAL-FIRST · NO MEDIA UPLOADS":"本地优先 · 不上传媒体","Start editing":"开始编辑","Import media":"导入媒体","Optimize video":"优化视频","Cut":"剪切","Copy":"复制","Paste":"粘贴","Append":"追加","Insert":"插入","Overwrite":"覆盖","Ripple on":"波纹开启","Snap on":"吸附开启","Video track":"视频轨道","Audio track":"音频轨道","Title":"标题","Import captions":"导入字幕","Shortcuts":"快捷键","Export video":"导出视频","MEDIA":"媒体","Drop media here":"将媒体拖到此处","Video, audio, and images are analyzed and stored only in this browser.":"视频、音频和图片仅在此浏览器中分析和存储。","Preview canvas":"预览画布","PROJECT":"项目","Canvas":"画布","Landscape 16:9":"横向 16:9","Portrait 9:16":"纵向 9:16","Square 1:1":"方形 1:1","Frame rate":"帧率","Privacy by design":"隐私设计","No account, analytics, ads, trackers, or media uploads.":"无需账户，无分析、广告、跟踪器或媒体上传。","View privacy details":"查看隐私详情","TIMELINE":"时间线","Autosaved locally":"已在本地自动保存"},
     uh: {"Private video editing. Right in your browser.":"ब्राउज़र में निजी वीडियो संपादन। / براؤزر میں نجی ویڈیو تدوین۔","LOCAL-FIRST · NO MEDIA UPLOADS":"स्थानीय प्रथम · कोई मीडिया अपलोड नहीं / مقامی اول · میڈیا اپ لوڈ نہیں","Start editing":"संपादन शुरू करें / تدوین شروع کریں","Import media":"मीडिया आयात / میڈیا درآمد","Optimize video":"वीडियो अनुकूलित करें / ویڈیو بہتر کریں","Cut":"काटें / کاٹیں","Copy":"कॉपी / نقل","Paste":"चिपकाएँ / چسپاں","Append":"अंत में जोड़ें / آخر میں شامل","Insert":"सम्मिलित / داخل","Overwrite":"अधिलेखित / اوور رائٹ","Video track":"वीडियो ट्रैक / ویڈیو ٹریک","Audio track":"ऑडियो ट्रैक / آڈیو ٹریک","Title":"शीर्षक / عنوان","Import captions":"कैप्शन आयात / کیپشن درآمد","Shortcuts":"शॉर्टकट / شارٹ کٹس","Export video":"वीडियो निर्यात / ویڈیو برآمد","MEDIA":"मीडिया / میڈیا","Drop media here":"मीडिया यहाँ छोड़ें / میڈیا یہاں چھوڑیں","Preview canvas":"पूर्वावलोकन कैनवास / پیش منظر کینوس","PROJECT":"परियोजना / پروجیکٹ","Canvas":"कैनवास / کینوس","Landscape 16:9":"लैंडस्केप 16:9 / افقی 16:9","Portrait 9:16":"पोर्ट्रेट 9:16 / عمودی 9:16","Square 1:1":"वर्ग 1:1 / مربع 1:1","Frame rate":"फ़्रेम दर / فریم ریٹ","Privacy by design":"डिज़ाइन द्वारा गोपनीयता / ڈیزائن سے رازداری","View privacy details":"गोपनीयता विवरण / رازداری کی تفصیل","TIMELINE":"समयरेखा / ٹائم لائن","Autosaved locally":"स्थानीय स्वतः सहेजा / مقامی خودکار محفوظ"},
   },
+  graphsplat: {
+    es: {"Local processing":"Procesamiento local","Help":"Ayuda","Make data visible.":"Haz visibles los datos.","What would you like to create?":"¿Qué te gustaría crear?","Quick chart":"Gráfico rápido","Picture graph":"Pictograma","Coordinate plane":"Plano cartesiano","Expression calculator":"Calculadora de expresiones","Geometry":"Geometría","Specialty chart":"Gráfico especial","Editing level":"Nivel de edición","Simple":"Simple","Advanced":"Avanzado","Reset":"Restablecer","Chart type":"Tipo de gráfico","Data":"Datos","Export":"Exportar","Download PNG":"Descargar PNG","Download SVG":"Descargar SVG"},
+    vi: {"Local processing":"Xử lý cục bộ","Help":"Trợ giúp","Make data visible.":"Làm dữ liệu trở nên trực quan.","What would you like to create?":"Bạn muốn tạo gì?","Quick chart":"Biểu đồ nhanh","Picture graph":"Biểu đồ hình ảnh","Coordinate plane":"Mặt phẳng tọa độ","Expression calculator":"Máy tính biểu thức","Geometry":"Hình học","Specialty chart":"Biểu đồ chuyên biệt","Editing level":"Mức chỉnh sửa","Simple":"Đơn giản","Advanced":"Nâng cao","Reset":"Đặt lại","Chart type":"Loại biểu đồ","Data":"Dữ liệu","Download PNG":"Tải PNG","Download SVG":"Tải SVG"},
+    ar: {"Local processing":"معالجة محلية","Help":"مساعدة","Make data visible.":"اجعل البيانات مرئية.","What would you like to create?":"ماذا تريد أن تنشئ؟","Quick chart":"مخطط سريع","Picture graph":"مخطط مصور","Coordinate plane":"المستوى الإحداثي","Expression calculator":"حاسبة التعبيرات","Geometry":"الهندسة","Specialty chart":"مخطط متخصص","Editing level":"مستوى التحرير","Simple":"بسيط","Advanced":"متقدم","Reset":"إعادة ضبط","Chart type":"نوع المخطط","Data":"البيانات","Download PNG":"تنزيل PNG","Download SVG":"تنزيل SVG"},
+    zh: {"Local processing":"本地处理","Help":"帮助","Make data visible.":"让数据清晰可见。","What would you like to create?":"您想创建什么？","Quick chart":"快速图表","Picture graph":"象形图","Coordinate plane":"坐标平面","Expression calculator":"表达式计算器","Geometry":"几何","Specialty chart":"专用图表","Editing level":"编辑级别","Simple":"简单","Advanced":"高级","Reset":"重置","Chart type":"图表类型","Data":"数据","Download PNG":"下载 PNG","Download SVG":"下载 SVG"},
+    uh: {"Local processing":"स्थानीय प्रक्रिया / مقامی عمل","Help":"सहायता / مدد","Make data visible.":"डेटा को दृश्य बनाएँ। / ڈیٹا نمایاں کریں۔","What would you like to create?":"आप क्या बनाना चाहेंगे? / آپ کیا بنانا چاہتے ہیں؟","Quick chart":"त्वरित चार्ट / فوری چارٹ","Picture graph":"चित्र ग्राफ / تصویری گراف","Coordinate plane":"निर्देशांक तल / محدد سطح","Geometry":"ज्यामिति / ہندسہ","Editing level":"संपादन स्तर / تدوین سطح","Simple":"सरल / سادہ","Advanced":"उन्नत / اعلیٰ","Reset":"रीसेट / دوبارہ ترتیب","Data":"डेटा / ڈیٹا","Download PNG":"PNG डाउनलोड / PNG ڈاؤن لوڈ","Download SVG":"SVG डाउनलोड / SVG ڈاؤن لوڈ"},
+  },
+  qrsplat: {
+    es: {"Local by default":"Local por defecto","Help":"Ayuda","QR codes without the clutter":"Códigos QR sin complicaciones","Create, brand, copy, and update QR codes.":"Crea, personaliza, copia y actualiza códigos QR.","Standard QR":"QR estándar","Editable QR":"QR editable","Content type":"Tipo de contenido","Website URL":"URL del sitio web","Plain text":"Texto sin formato","Style":"Estilo","Template":"Plantilla","Size":"Tamaño","Design name":"Nombre del diseño","Copy PNG":"Copiar PNG","Download PNG":"Descargar PNG","Copy SVG":"Copiar SVG","Download SVG":"Descargar SVG","Ready to scan":"Listo para escanear","Reset":"Restablecer"},
+    vi: {"Local by default":"Mặc định cục bộ","Help":"Trợ giúp","QR codes without the clutter":"Mã QR gọn gàng","Create, brand, copy, and update QR codes.":"Tạo, tùy chỉnh, sao chép và cập nhật mã QR.","Standard QR":"QR tiêu chuẩn","Editable QR":"QR có thể sửa","Content type":"Loại nội dung","Website URL":"URL trang web","Plain text":"Văn bản thuần","Style":"Kiểu dáng","Template":"Mẫu","Size":"Kích thước","Design name":"Tên thiết kế","Copy PNG":"Sao chép PNG","Download PNG":"Tải PNG","Copy SVG":"Sao chép SVG","Download SVG":"Tải SVG","Ready to scan":"Sẵn sàng quét","Reset":"Đặt lại"},
+    ar: {"Local by default":"محلي افتراضيًا","Help":"مساعدة","QR codes without the clutter":"رموز QR بلا تعقيد","Create, brand, copy, and update QR codes.":"أنشئ رموز QR وخصصها وانسخها وحدّثها.","Standard QR":"QR قياسي","Editable QR":"QR قابل للتعديل","Content type":"نوع المحتوى","Website URL":"رابط الموقع","Plain text":"نص عادي","Style":"النمط","Template":"القالب","Size":"الحجم","Design name":"اسم التصميم","Copy PNG":"نسخ PNG","Download PNG":"تنزيل PNG","Copy SVG":"نسخ SVG","Download SVG":"تنزيل SVG","Ready to scan":"جاهز للمسح","Reset":"إعادة ضبط"},
+    zh: {"Local by default":"默认本地处理","Help":"帮助","QR codes without the clutter":"简洁的二维码工具","Create, brand, copy, and update QR codes.":"创建、定制、复制和更新二维码。","Standard QR":"标准二维码","Editable QR":"可编辑二维码","Content type":"内容类型","Website URL":"网站网址","Plain text":"纯文本","Style":"样式","Template":"模板","Size":"尺寸","Design name":"设计名称","Copy PNG":"复制 PNG","Download PNG":"下载 PNG","Copy SVG":"复制 SVG","Download SVG":"下载 SVG","Ready to scan":"可供扫描","Reset":"重置"},
+    uh: {"Local by default":"डिफ़ॉल्ट रूप से स्थानीय / طے شدہ مقامی","Help":"सहायता / مدد","QR codes without the clutter":"सरल QR कोड / سادہ QR کوڈ","Create, brand, copy, and update QR codes.":"QR कोड बनाएँ, सजाएँ, कॉपी और अपडेट करें। / QR کوڈ بنائیں، سجائیں، نقل اور تازہ کریں۔","Standard QR":"मानक QR / معیاری QR","Editable QR":"संपादन योग्य QR / قابل ترمیم QR","Content type":"सामग्री प्रकार / مواد کی قسم","Website URL":"वेबसाइट URL / ویب سائٹ URL","Plain text":"सादा पाठ / سادہ متن","Style":"शैली / انداز","Template":"टेम्पलेट / سانچہ","Size":"आकार / سائز","Design name":"डिज़ाइन नाम / ڈیزائن نام","Copy PNG":"PNG कॉपी / PNG نقل","Download PNG":"PNG डाउनलोड / PNG ڈاؤن لوڈ","Ready to scan":"स्कैन के लिए तैयार / اسکین کے لیے تیار","Reset":"रीसेट / دوبارہ ترتیب"},
+  },
+  ciphersplat: {
+    es: {"Workspace":"Espacio de trabajo","Security":"Seguridad","How it works":"Cómo funciona","Download offline ↓":"Descargar sin conexión ↓","Local engine online":"Motor local activo","Your data.":"Tus datos.","Your keys.":"Tus claves.","Your rules.":"Tus reglas.","What are we protecting?":"¿Qué vamos a proteger?","File vault":"Bóveda de archivos","Text vault":"Bóveda de texto","Password vault":"Bóveda con contraseña","Encrypt":"Cifrar","Decrypt":"Descifrar","Check integrity":"Comprobar integridad","Choose files":"Elegir archivos","Choose folder":"Elegir carpeta","Vault password":"Contraseña de la bóveda","Generate strong password":"Generar contraseña segura"},
+    vi: {"Workspace":"Không gian làm việc","Security":"Bảo mật","How it works":"Cách hoạt động","Download offline ↓":"Tải bản ngoại tuyến ↓","Local engine online":"Bộ máy cục bộ đang hoạt động","Your data.":"Dữ liệu của bạn.","Your keys.":"Khóa của bạn.","Your rules.":"Quy tắc của bạn.","What are we protecting?":"Bạn muốn bảo vệ gì?","File vault":"Kho tệp","Text vault":"Kho văn bản","Password vault":"Kho mật khẩu","Encrypt":"Mã hóa","Decrypt":"Giải mã","Check integrity":"Kiểm tra toàn vẹn","Choose files":"Chọn tệp","Choose folder":"Chọn thư mục","Vault password":"Mật khẩu kho","Generate strong password":"Tạo mật khẩu mạnh"},
+    ar: {"Workspace":"مساحة العمل","Security":"الأمان","How it works":"كيف يعمل","Download offline ↓":"تنزيل دون اتصال ↓","Local engine online":"المحرك المحلي يعمل","Your data.":"بياناتك.","Your keys.":"مفاتيحك.","Your rules.":"قواعدك.","What are we protecting?":"ماذا سنحمي؟","File vault":"خزنة الملفات","Text vault":"خزنة النص","Password vault":"خزنة كلمة المرور","Encrypt":"تشفير","Decrypt":"فك التشفير","Check integrity":"فحص السلامة","Choose files":"اختيار ملفات","Choose folder":"اختيار مجلد","Vault password":"كلمة مرور الخزنة","Generate strong password":"إنشاء كلمة مرور قوية"},
+    zh: {"Workspace":"工作区","Security":"安全","How it works":"工作原理","Download offline ↓":"下载离线版 ↓","Local engine online":"本地引擎已运行","Your data.":"您的数据。","Your keys.":"您的密钥。","Your rules.":"您的规则。","What are we protecting?":"要保护什么？","File vault":"文件保险库","Text vault":"文本保险库","Password vault":"密码保险库","Encrypt":"加密","Decrypt":"解密","Check integrity":"检查完整性","Choose files":"选择文件","Choose folder":"选择文件夹","Vault password":"保险库密码","Generate strong password":"生成强密码"},
+    uh: {"Workspace":"कार्यस्थान / کام کی جگہ","Security":"सुरक्षा / حفاظت","How it works":"यह कैसे काम करता है / یہ کیسے کام کرتا ہے","Download offline ↓":"ऑफ़लाइन डाउनलोड ↓ / آف لائن ڈاؤن لوڈ ↓","Local engine online":"स्थानीय इंजन सक्रिय / مقامی انجن فعال","Your data.":"आपका डेटा। / آپ کا ڈیٹا۔","Your keys.":"आपकी कुंजियाँ। / آپ کی کلیدیں۔","Your rules.":"आपके नियम। / آپ کے اصول۔","What are we protecting?":"हम क्या सुरक्षित कर रहे हैं? / ہم کیا محفوظ کر رہے ہیں؟","File vault":"फ़ाइल तिजोरी / فائل والٹ","Text vault":"पाठ तिजोरी / متن والٹ","Password vault":"पासवर्ड तिजोरी / پاس ورڈ والٹ","Encrypt":"एन्क्रिप्ट / خفیہ کریں","Decrypt":"डिक्रिप्ट / کھولیں","Choose files":"फ़ाइलें चुनें / فائلیں چنیں","Choose folder":"फ़ोल्डर चुनें / فولڈر چنیں","Vault password":"तिजोरी पासवर्ड / والٹ پاس ورڈ"},
+  },
 };
 
 const script = document.querySelector("script[data-ds-language]");
 const app = script?.dataset.dsLanguage || "";
+const storesPreference = script?.dataset.dsLanguageStorage !== "none";
 const originals = new WeakMap();
 let current = "en";
 let observer;
@@ -84,18 +107,32 @@ function applyLanguage(code) {
   window.dispatchEvent(new CustomEvent("drawsplat:language", {detail:{language:current}}));
 }
 function preferredLanguage() {
-  const stored = localStorage.getItem(STORAGE_KEY); if (languages.some(([code]) => code === stored)) return stored;
+  let stored = null;
+  if (storesPreference) {
+    try { stored = localStorage.getItem(STORAGE_KEY); } catch (_) { /* storage can be unavailable */ }
+  }
+  if (languages.some(([code]) => code === stored)) return stored;
   const browser = navigator.language.toLowerCase(); return languages.find(([code, , html]) => browser.startsWith(code === "uh" ? "hi" : html))?.[0] || "en";
 }
 function addSwitcher() {
   let label = document.querySelector(".ds-language-control");
   if (!label) {
     label = document.createElement("label"); label.className = "ds-language-control";
-    label.innerHTML = `<span>🌐 Language</span><select aria-label="Language">${languages.map(([code,name])=>`<option value="${code}">${name}</option>`).join("")}</select>`;
+    const caption = document.createElement("span"); caption.textContent = "🌐 Language";
+    const picker = document.createElement("select"); picker.setAttribute("aria-label", "Language");
+    for (const [code, name] of languages) {
+      const option = document.createElement("option"); option.value = code; option.textContent = name; picker.append(option);
+    }
+    label.append(caption, picker);
     document.body.append(label);
   }
   const select = label.querySelector("select"); select.value = current;
-  select.addEventListener("change", () => { localStorage.setItem(STORAGE_KEY, select.value); applyLanguage(select.value); label.querySelector("span").textContent = `🌐 ${translateValue("Language", dictionary())}`; });
+  select.addEventListener("change", () => {
+    if (storesPreference) {
+      try { localStorage.setItem(STORAGE_KEY, select.value); } catch (_) { /* storage can be unavailable */ }
+    }
+    applyLanguage(select.value); label.querySelector("span").textContent = `🌐 ${translateValue("Language", dictionary())}`;
+  });
   label.querySelector("span").textContent = `🌐 ${translateValue("Language", dictionary())}`;
 }
 
@@ -104,3 +141,4 @@ observer = new MutationObserver((records) => { const map = dictionary(); observe
 if (current !== "en") applyLanguage(current);
 else if (app !== "pdfsplat") observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 addSwitcher();
+})();

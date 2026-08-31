@@ -7,7 +7,7 @@
 WidgetI18n.register('toneshifter', {
 
   en: {
-    'doc.title': 'Toneshifter — DrawSplat Tools',
+    'doc.title': 'Toneshifter — DrawSplat™ Tools',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'Toneshifter',
     'header.tagline.html': 'Paste any draft and shift it to the tone you actually meant — formal, friendly, concise, diplomatic, encouraging, or plain English. Slide <strong>intensity</strong> for a light tweak vs. a full structural rewrite.',

@@ -4,7 +4,7 @@
 WidgetI18n.register('vibe-check', {
 
   en: {
-    'doc.title': 'Vibe Check — DrawSplat Tools',
+    'doc.title': 'Vibe Check — DrawSplat™ Tools',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'Vibe Check',
     'header.tagline': 'Paste a message you received and get an honest read on its tone — so you can stop spiraling about what your boss / mom / professor "really meant."',

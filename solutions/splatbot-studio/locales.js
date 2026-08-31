@@ -1,7 +1,7 @@
 /* SplatBot Studio locale dictionary. Missing strings fall back to English. */
 WidgetI18n.register("splatbot-studio", {
   en: {
-    "doc.title": "SplatBot Studio | DrawSplat Widgets",
+    "doc.title": "SplatBot Studio | DrawSplat™ Widgets",
     "splash.eyebrow": "SplatLab Presents",
     "splash.h1": "The Signal Garden",
     "splash.copy": "SplatBot has entered a living city-lab where lights, sounds, routes, and messages keep the whole garden awake. Each chapter asks you to program a virtual robot, test your idea, and improve it until the next station comes online.",
@@ -13,7 +13,7 @@ WidgetI18n.register("splatbot-studio", {
     "splash.chapter2.copy": "Signals, sounds, sensors, and virtual IoT devices.",
     "splash.chapter3.title": "Carry it forward",
     "splash.chapter3.copy": "Export readable code for Python, JavaScript, micro:bit, Dash, LEGO, and VEX.",
-    "header.eyebrow": "DrawSplat Tools",
+    "header.eyebrow": "DrawSplat™ Tools",
     "header.h1": "SplatBot Studio",
     "header.subtitle": "Program a virtual classroom robot with blocks, word commands, missions, and shareable project files.",
     "header.allTools": "All Tools",
@@ -132,7 +132,7 @@ WidgetI18n.register("splatbot-studio", {
     "thinking.summary": "思维实验室"
   },
   uh: {
-    "doc.title": "SplatBot Studio | DrawSplat Widgets",
+    "doc.title": "SplatBot Studio | DrawSplat™ Widgets",
     "header.h1": "SplatBot Studio",
     "header.subtitle": "Blocks, word commands, missions, aur shareable project files se virtual classroom robot program karein.",
     "header.allTools": "All Tools",

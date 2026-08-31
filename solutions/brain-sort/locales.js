@@ -7,7 +7,7 @@ WidgetI18n.register('brain-sort', {
   //  ENGLISH (source of truth)
   // ===========================================================
   en: {
-    'doc.title': 'Brain Sort — DrawSplat Tools',
+    'doc.title': 'Brain Sort — DrawSplat™ Tools',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'Brain Sort',
     'header.tagline': "Dump everything that's in your head — one thought per line. Brain Sort groups it into a tidy checklist by category, so you can stop juggling.",

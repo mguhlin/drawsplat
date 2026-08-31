@@ -18,7 +18,7 @@ const languages: Array<{
 const en = {
   title: "AudioSplat",
   tagline: "Record, arrange, and mix audio privately in your browser.",
-  tools: "DrawSplat Tools",
+  tools: "DrawSplat™ Tools",
   home: "Home",
   help: "Help",
   language: "Language",

@@ -9,7 +9,7 @@ WidgetI18n.register('step-splat', {
   //  ENGLISH (source of truth)
   // ===========================================================
   en: {
-    'doc.title': 'Step-Splat — DrawSplat Tools',
+    'doc.title': 'Step-Splat — DrawSplat™ Tools',
 
     // Header
     'header.eyebrow': 'DrawSplat™ Tools',

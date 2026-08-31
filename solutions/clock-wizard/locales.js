@@ -7,7 +7,7 @@ WidgetI18n.register('clock-wizard', {
   //  ENGLISH (source of truth)
   // ===========================================================
   en: {
-    'doc.title': 'Clock Wizard — DrawSplat Tools',
+    'doc.title': 'Clock Wizard — DrawSplat™ Tools',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'Clock Wizard',
     'header.tagline': "Describe a task, get an honest time estimate — with phase breakdown and an ADHD-tax allowance so you don't over-promise.",
