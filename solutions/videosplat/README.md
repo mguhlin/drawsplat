@@ -33,9 +33,10 @@ storage after splash setup. The recorder distinguishes this reusable session gra
 from the browser-mandated screen/tab chooser required for every display capture.
 After capture stops, a local visual crop review lets the user drag over the
 recorded frame, apply common crop presets, and either re-encode only that region
-or keep the full recording before adding it to the timeline. Crop re-encoding
-preserves the recording's decoded microphone/system-audio track directly, with a
-Web Audio compatibility fallback where media-element capture is unavailable.
+or keep the full recording before adding it to the timeline. The crop encoder
+keeps its decoder attached off-screen and routes the recording's decoded
+microphone/system audio through a stable Web Audio clock to prevent stutter, with
+direct media-track capture as a compatibility fallback.
 MediaRecorder WebM files with missing duration headers are probed to their encoded
 end during import so cropped recordings retain their full timeline length instead
 of receiving the generic ten-second fallback.

@@ -48,6 +48,19 @@ export async function cropRecording(
   video.src = url;
   video.preload = "auto";
   video.playsInline = true;
+  video.setAttribute("aria-hidden", "true");
+  Object.assign(video.style, {
+    position: "fixed",
+    width: "2px",
+    height: "2px",
+    left: "-10px",
+    bottom: "0",
+    opacity: "0.001",
+    pointerEvents: "none",
+  });
+  // Chromium can throttle audio delivery from detached media elements. Keep
+  // this local playback element attached off-screen for a stable decoder clock.
+  document.body.append(video);
   await loaded(video);
   const source = cropPixels(rect, video.videoWidth, video.videoHeight);
   const canvas = document.createElement("canvas");
@@ -56,23 +69,25 @@ export async function cropRecording(
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) throw new Error("Canvas rendering is unavailable.");
   const output = canvas.captureStream(30);
-  const mediaCapture = (
-    video as HTMLVideoElement & { captureStream?: () => MediaStream }
-  ).captureStream?.bind(video);
-  const playbackStream = mediaCapture?.();
+  let playbackStream: MediaStream | undefined;
   let audioContext: AudioContext | undefined;
-  const decodedAudioTracks = playbackStream?.getAudioTracks() ?? [];
-  if (decodedAudioTracks.length) {
-    decodedAudioTracks.forEach((track) => output.addTrack(track));
-  } else {
-    // Firefox and older engines may not expose media-element captureStream.
-    // Keep Web Audio as a compatibility fallback, but prefer the decoded media
-    // track above because it preserves microphone audio reliably in Chrome.
-    audioContext = new AudioContext();
+  try {
+    audioContext = new AudioContext({ latencyHint: "playback" });
     const destination = audioContext.createMediaStreamDestination();
     audioContext.createMediaElementSource(video).connect(destination);
     destination.stream.getAudioTracks().forEach((track) => output.addTrack(track));
     await audioContext.resume();
+  } catch {
+    await audioContext?.close().catch(() => {});
+    audioContext = undefined;
+    const mediaCapture = (
+      video as HTMLVideoElement & { captureStream?: () => MediaStream }
+    ).captureStream?.bind(video);
+    playbackStream = mediaCapture?.();
+    const decodedAudioTracks = playbackStream?.getAudioTracks() ?? [];
+    if (!decodedAudioTracks.length)
+      throw new Error("This browser could not preserve recording audio while cropping.");
+    decodedAudioTracks.forEach((track) => output.addTrack(track));
   }
   const recorder = new MediaRecorder(output, {
     mimeType,
@@ -122,6 +137,7 @@ export async function cropRecording(
     playbackStream?.getTracks().forEach((track) => track.stop());
     output.getTracks().forEach((track) => track.stop());
     await audioContext?.close();
+    video.remove();
     URL.revokeObjectURL(url);
   }
 }
