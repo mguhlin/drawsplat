@@ -401,6 +401,26 @@
   color: #ffbdc3 !important;
   padding: 9px 11px;
 }
+.recorder-permission-state {
+  display: grid;
+  gap: 3px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: .78rem;
+}
+.recorder-permission-state span { color: var(--muted); }
+.recorder-permission-state.ready {
+  border-color: #267b59;
+  background: #0e2a20;
+  color: #b5f5d5;
+}
+.recorder-permission-state.pending {
+  border-color: #806128;
+  background: #2c230f;
+  color: #ffe09a;
+}
 @media (width <= 580px) {
   .recorder-settings { grid-template-columns: 1fr; }
   .recorder-settings .wide { grid-column: auto; }

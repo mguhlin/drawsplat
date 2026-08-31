@@ -74,8 +74,12 @@ export function App() {
   const [splashPermissionStatus, setSplashPermissionStatus] = useState<string>();
   const [requestingSplashPermissions, setRequestingSplashPermissions] = useState(false);
   const [splashMicrophones, setSplashMicrophones] = useState<MediaDeviceInfo[]>([]);
-  const [recordingMicrophoneId, setRecordingMicrophoneId] = useState("");
-  const [splashRecordingReady, setSplashRecordingReady] = useState(false);
+  const [recordingMicrophoneId, setRecordingMicrophoneId] = useState(
+    () => sessionStorage.getItem("videosplat-microphone-id") ?? "",
+  );
+  const [splashRecordingReady, setSplashRecordingReady] = useState(
+    () => sessionStorage.getItem("videosplat-recording-permissions") === "ready",
+  );
   const [project, setProject] = useState(history.current.value);
   const [status, setStatus] = useState(
     "Ready — everything stays on this device",
@@ -880,7 +884,12 @@ export function App() {
           )
         : [];
       setSplashMicrophones(devices);
-      setRecordingMicrophoneId(devices[0]?.deviceId ?? "");
+      const selected = devices.find((device) => device.deviceId === recordingMicrophoneId)?.deviceId
+        ?? devices[0]?.deviceId
+        ?? "";
+      setRecordingMicrophoneId(selected);
+      sessionStorage.setItem("videosplat-microphone-id", selected);
+      sessionStorage.setItem("videosplat-recording-permissions", "ready");
       setSplashRecordingReady(true);
       setSplashPermissionStatus("Permission granted. Select the microphone you want VideoSplat to record.");
     } catch (error) {
@@ -911,7 +920,10 @@ export function App() {
             {splashRecordingReady && (
               <label>
                 Microphone to record
-                <select aria-label="Splash microphone source" value={recordingMicrophoneId} onChange={(event) => setRecordingMicrophoneId(event.target.value)}>
+                <select aria-label="Splash microphone source" value={recordingMicrophoneId} onChange={(event) => {
+                  setRecordingMicrophoneId(event.target.value);
+                  sessionStorage.setItem("videosplat-microphone-id", event.target.value);
+                }}>
                   {splashMicrophones.length ? splashMicrophones.map((device, index) => (
                     <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>
                   )) : <option value="">System default microphone</option>}
@@ -920,10 +932,9 @@ export function App() {
             )}
           </div>
           <div className="launch-splash-actions">
-            <button onClick={finishSplash}>Start editing</button>
             {!splashRecordingReady ? (
               <button className="splash-record" onClick={setUpRecording} disabled={requestingSplashPermissions}>
-                {requestingSplashPermissions ? "Requesting permission…" : "Check camera & microphone permissions"}
+                {requestingSplashPermissions ? "Requesting permission…" : "Set up recording permissions"}
               </button>
             ) : (
               <button className="splash-record" onClick={() => {
@@ -932,6 +943,7 @@ export function App() {
                 setStatus("Recording setup ready with the selected microphone");
               }}>Continue with selected microphone</button>
             )}
+            <button onClick={finishSplash}>{splashRecordingReady ? "Continue to editor" : "Edit without recording setup"}</button>
           </div>
           <small>Screen sharing is selected securely by your browser when each recording starts.</small>
           {splashPermissionStatus && <p className={splashRecordingReady ? "splash-permission-ready" : "splash-permission-error"} role={splashRecordingReady ? "status" : "alert"}>{splashPermissionStatus}</p>}
@@ -2307,6 +2319,7 @@ export function App() {
             {dialog === "recorder" && (
               <RecorderDialog
                 initialMicrophoneDeviceId={recordingMicrophoneId}
+                permissionsPrepared={splashRecordingReady}
                 onClose={() => setDialog(null)}
                 onAdd={async (file) => addFiles([file])}
                 onStatus={setStatus}

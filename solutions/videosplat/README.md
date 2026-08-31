@@ -28,6 +28,9 @@ continues when the user switches to the selected tab; camera-overlay composition
 is documented as requiring VideoSplat to remain visible.
 The browser screen-share chooser opens directly from the Start recording gesture;
 the optional countdown begins only after the user has selected a capture source.
+Camera/microphone readiness and the selected input are remembered in session
+storage after splash setup. The recorder distinguishes this reusable session grant
+from the browser-mandated screen/tab chooser required for every display capture.
 After capture stops, a local visual crop review lets the user drag over the
 recorded frame, apply common crop presets, and either re-encode only that region
 or keep the full recording before adding it to the timeline. Crop re-encoding

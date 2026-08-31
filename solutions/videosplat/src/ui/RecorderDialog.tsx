@@ -9,6 +9,7 @@ import { cropRecording, type CropRect } from "../recorder/crop";
 
 interface RecorderDialogProps {
   initialMicrophoneDeviceId?: string;
+  permissionsPrepared?: boolean;
   onClose(): void;
   onAdd(file: File): Promise<void>;
   onStatus(message: string): void;
@@ -17,7 +18,7 @@ interface RecorderDialogProps {
 const clock = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
-export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd, onStatus }: RecorderDialogProps) {
+export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const session = useRef<CaptureSession | undefined>(undefined);
   const [mode, setMode] = useState<CaptureMode>("screen");
@@ -198,6 +199,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
       {state === "cropping" && <><progress max="1" value={cropProgress} /><p role="status">Cropping locally… {Math.round(cropProgress * 100)}%</p></>}
     </div>}
     {error && <p className="recorder-error" role="alert">{error}</p>}
+    {state === "setup" && <div className={`recorder-permission-state ${permissionsPrepared ? "ready" : "pending"}`} role="status">
+      <strong>{permissionsPrepared ? "✓ Camera and microphone ready for this session" : "Camera and microphone setup was skipped"}</strong>
+      <span>{permissionsPrepared ? "Your selected microphone is remembered. The browser will only ask you to choose which screen or tab to share." : "The browser may request camera or microphone access when recording starts."}</span>
+    </div>}
     {state === "setup" && <div className="recorder-settings">
       <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
@@ -212,6 +217,6 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
       <button className="danger" onClick={close}>Cancel</button>
     </div>}
     {state === "saving" && <p role="status">Finishing the recording locally…</p>}
-    <p className="hint">Choose your headset under Microphone source. For recording another tab, use Screen only and select that tab in the browser share dialog; recording then continues when you switch to it. Keep VideoSplat visible when using the camera-overlay compositor. System audio support varies by browser and operating system.</p>
+    <p className="hint">Choose your headset under Microphone source. Browsers require the screen/tab chooser for every new screen capture; VideoSplat cannot bypass it. For recording another tab, use Screen only and select that tab in the chooser. Keep VideoSplat visible when using the camera-overlay compositor.</p>
   </>;
 }

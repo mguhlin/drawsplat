@@ -55,7 +55,7 @@ test("loads the local-first editor without external requests", async ({
   ).toBeVisible();
   await page.waitForTimeout(2000);
   await expect(page.getByLabel("VideoSplat loading")).toBeVisible();
-  await page.getByRole("button", { name: "Start editing" }).click();
+  await page.getByRole("button", { name: "Edit without recording setup" }).click();
   await expect(page.getByLabel("VideoSplat loading")).toBeHidden();
   await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
   await expect(
@@ -85,10 +85,11 @@ test("can request camera and microphone setup from the splash", async ({ page })
     });
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Check camera & microphone permissions" }).click();
+  await page.getByRole("button", { name: "Set up recording permissions" }).click();
   await expect(page.getByLabel("Splash microphone source")).toHaveValue("headset");
   await page.getByRole("button", { name: "Continue with selected microphone" }).click();
   await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
+  await expect(page.getByText("Camera and microphone ready for this session")).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { __stoppedSetupTracks: string[] }).__stoppedSetupTracks)).toEqual(["video", "audio"]);
 });
 
