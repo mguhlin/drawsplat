@@ -78,11 +78,16 @@ test("can request camera and microphone setup from the splash", async ({ page })
             { stop: () => stopped.push("audio") },
           ],
         }),
+        enumerateDevices: () => Promise.resolve([
+          { kind: "audioinput", deviceId: "headset", label: "USB Headset Microphone" },
+        ]),
       },
     });
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Set up camera & microphone" }).click();
+  await page.getByRole("button", { name: "Check camera & microphone permissions" }).click();
+  await expect(page.getByLabel("Splash microphone source")).toHaveValue("headset");
+  await page.getByRole("button", { name: "Continue with selected microphone" }).click();
   await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { __stoppedSetupTracks: string[] }).__stoppedSetupTracks)).toEqual(["video", "audio"]);
 });
@@ -194,6 +199,24 @@ test("imports an image locally and places it on the timeline", async ({
   await expect(page.getByText("private-frame.svg").first()).toBeVisible();
   await expect(page.locator(".timeline-clip")).toHaveCount(1);
   await expect(page.locator(".visual-layer > img")).toBeVisible();
+});
+
+test("fits, fills, or stretches visual clips in the preview", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "portrait.svg",
+    mimeType: "image/svg+xml",
+    buffer: Buffer.from(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="360" height="640"><rect width="360" height="640" fill="#7467ff"/></svg>',
+    ),
+  });
+
+  const preview = page.locator(".visual-layer > img");
+  await expect(preview).toHaveCSS("object-fit", "contain");
+  await page.getByLabel("Frame fit").selectOption("fill");
+  await expect(preview).toHaveCSS("object-fit", "cover");
+  await page.getByLabel("Frame fit").selectOption("stretch");
+  await expect(preview).toHaveCSS("object-fit", "fill");
 });
 
 test("seeks a newly mounted video preview after metadata loads", async ({
@@ -366,6 +389,31 @@ test("supports clipboard edits and ripple or lift deletion", async ({
   await expect(
     page.getByRole("button", { name: "Ripple off" }),
   ).toHaveAttribute("aria-pressed", "false");
+});
+
+test("selects a clip waveform range and pastes only that section", async ({ page }) => {
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "range.svg",
+    mimeType: "image/svg+xml",
+    buffer: Buffer.from(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"/>',
+    ),
+  });
+  await page.getByRole("button", { name: "Range select off" }).click();
+  const clip = page.locator(".timeline-clip").first();
+  const box = await clip.boundingBox();
+  await page.mouse.move(box!.x + box!.width * 0.2, box!.y + 25);
+  await page.mouse.down();
+  await page.mouse.move(box!.x + box!.width * 0.6, box!.y + 25);
+  await page.mouse.up();
+  await expect(page.locator(".clip-range-selection")).toBeVisible();
+  await expect(page.getByText(/second range selected/)).toBeVisible();
+  await page.getByRole("button", { name: "Copy", exact: true }).click();
+  await page.locator(".ruler").click({ position: { x: 250, y: 15 } });
+  await page.getByRole("button", { name: "Paste", exact: true }).click();
+  await expect(page.locator(".timeline-clip")).toHaveCount(2);
+  await expect(page.getByLabel("Clip duration")).toHaveValue("2");
 });
 
 test("applies clip transforms in the layered preview", async ({ page }) => {

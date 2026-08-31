@@ -237,6 +237,33 @@
   font-weight: 750;
   text-shadow: 0 1px 2px #000;
 }
+.timeline-clip .clip-waveform {
+  position: absolute;
+  z-index: 1;
+  inset: 6px 5px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 0;
+  opacity: .55;
+}
+.clip-waveform i {
+  flex: 1;
+  min-width: 1px;
+  max-width: 3px;
+  border-radius: 2px;
+  background: #c8d5ff;
+}
+.timeline-clip .clip-range-selection {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+  border-inline: 2px solid #ffe18a;
+  background: #ffd34d59;
+  pointer-events: none;
+}
 .hint {
   font-size: 0.78rem !important;
   color: var(--muted);
@@ -548,7 +575,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: auto;
+  padding-block: 24px;
   color: #fff;
   text-align: center;
   background:
@@ -625,6 +653,41 @@
   margin-top: 13px;
   color: #aeb8ce;
 }
+.splash-recording-steps {
+  position: relative;
+  width: min(36rem, calc(100vw - 32px));
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid #33425d;
+  border-radius: 10px;
+  background: #0d1525e8;
+  color: #d7deec;
+  text-align: left;
+}
+.splash-recording-steps strong { color: #fff; }
+.splash-recording-steps ol {
+  margin: 8px 0 0;
+  padding-left: 1.25rem;
+  color: #aeb8ce;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.splash-recording-steps label {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  color: #b5f5d5;
+  font-size: .8rem;
+  font-weight: 750;
+}
+.splash-recording-steps select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #4dba89;
+  border-radius: 7px;
+  background: #0b2119;
+  color: #fff;
+}
 .launch-splash .splash-permission-error {
   position: relative;
   max-width: 34rem;
@@ -634,6 +697,13 @@
   background: #351820;
   color: #ffc1c7;
   padding: 9px 12px;
+  font-size: .82rem;
+}
+.launch-splash .splash-permission-ready {
+  position: relative;
+  max-width: 34rem;
+  margin: 12px 18px 0;
+  color: #b5f5d5;
   font-size: .82rem;
 }
 @media (width <= 580px) {

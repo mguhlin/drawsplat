@@ -20,7 +20,9 @@ The local recorder captures a shared screen, camera, or screen with a camera ove
 plus an optional microphone and browser-supported shared tab/system audio. Recordings
 can be paused, resumed, canceled, or added directly to the media bin and timeline.
 Permissions are requested only after the user presses Start recording; captured media
-uses the same private browser storage and editing workflow as imported files.
+uses the same private browser storage and editing workflow as imported files. The
+launch checklist grants permission before device discovery, lets the user choose a
+specific headset microphone, and carries that choice into the recorder.
 
 ## Development
 

@@ -209,6 +209,73 @@ export function removeClip(
   });
 }
 
+export function clipRange(
+  project: VideoSplatProject,
+  clipId: string,
+  from: number,
+  to: number,
+): Clip | undefined {
+  const location = findClip(project, clipId);
+  if (!location) return;
+  const start = Math.max(0, Math.min(from, to, location.clip.duration));
+  const end = Math.max(start, Math.min(Math.max(from, to), location.clip.duration));
+  if (end - start < 0.1) return;
+  return {
+    ...location.clip,
+    id: crypto.randomUUID(),
+    name: `${location.clip.name} selection`,
+    start: 0,
+    sourceStart: location.clip.sourceStart + start,
+    duration: end - start,
+  };
+}
+
+export function cutClipRange(
+  project: VideoSplatProject,
+  clipId: string,
+  from: number,
+  to: number,
+  ripple: boolean,
+): { project: VideoSplatProject; clipboard?: Clip } {
+  const location = findClip(project, clipId);
+  const clipboard = clipRange(project, clipId, from, to);
+  if (!location || !clipboard) return { project };
+  const start = Math.max(0, Math.min(from, to, location.clip.duration));
+  const end = Math.min(Math.max(from, to), location.clip.duration);
+  const removedDuration = end - start;
+  const originalEnd = location.clip.start + location.clip.duration;
+  const pieces: Clip[] = [];
+  if (start >= 0.1)
+    pieces.push({ ...location.clip, duration: start });
+  if (location.clip.duration - end >= 0.1)
+    pieces.push({
+      ...location.clip,
+      id: crypto.randomUUID(),
+      name: `${location.clip.name} (continued)`,
+      start: location.clip.start + (ripple ? start : end),
+      sourceStart: location.clip.sourceStart + end,
+      duration: location.clip.duration - end,
+    });
+  return {
+    clipboard,
+    project: touchProject(project, {
+      tracks: project.tracks.map((track) =>
+        track.id === location.track.id
+          ? {
+              ...track,
+              clips: track.clips.flatMap((clip) => {
+                if (clip.id === clipId) return pieces;
+                if (ripple && clip.start >= originalEnd)
+                  return [{ ...clip, start: clip.start - removedDuration }];
+                return [clip];
+              }),
+            }
+          : track,
+      ),
+    }),
+  };
+}
+
 export function rippleDeleteClip(
   project: VideoSplatProject,
   clipId: string,

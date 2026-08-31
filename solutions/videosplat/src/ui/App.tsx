@@ -29,6 +29,8 @@ import { importMedia } from "../media/importer";
 import {
   activeVisualClips,
   addTrack,
+  clipRange,
+  cutClipRange,
   duplicateClip,
   findClip,
   moveClip,
@@ -71,6 +73,9 @@ export function App() {
   );
   const [splashPermissionStatus, setSplashPermissionStatus] = useState<string>();
   const [requestingSplashPermissions, setRequestingSplashPermissions] = useState(false);
+  const [splashMicrophones, setSplashMicrophones] = useState<MediaDeviceInfo[]>([]);
+  const [recordingMicrophoneId, setRecordingMicrophoneId] = useState("");
+  const [splashRecordingReady, setSplashRecordingReady] = useState(false);
   const [project, setProject] = useState(history.current.value);
   const [status, setStatus] = useState(
     "Ready — everything stays on this device",
@@ -92,6 +97,12 @@ export function App() {
   const [snapping, setSnapping] = useState(true);
   const [rippleEditing, setRippleEditing] = useState(true);
   const [editMode, setEditMode] = useState<TimelineEditMode>("insert");
+  const [rangeSelecting, setRangeSelecting] = useState(false);
+  const [clipSelection, setClipSelection] = useState<{
+    clipId: string;
+    from: number;
+    to: number;
+  }>();
   const clipboard = useRef<Clip | undefined>(undefined);
   const drag = useRef<
     | {
@@ -601,11 +612,30 @@ export function App() {
   };
   const copySelected = () => {
     if (!selectedLocation) return;
-    clipboard.current = structuredClone(selectedLocation.clip);
-    setStatus(`${selectedLocation.clip.name} copied`);
+    const selection = clipSelection?.clipId === selectedLocation.clip.id
+      ? clipRange(project, selectedLocation.clip.id, clipSelection.from, clipSelection.to)
+      : undefined;
+    clipboard.current = structuredClone(selection ?? selectedLocation.clip);
+    setStatus(selection ? `${selection.duration.toFixed(1)} second range copied` : `${selectedLocation.clip.name} copied`);
   };
   const cutSelected = () => {
     if (!selectedLocation) return;
+    if (clipSelection?.clipId === selectedLocation.clip.id) {
+      const result = cutClipRange(
+        project,
+        selectedLocation.clip.id,
+        clipSelection.from,
+        clipSelection.to,
+        rippleEditing,
+      );
+      if (!result.clipboard) return;
+      clipboard.current = result.clipboard;
+      commit(result.project);
+      setClipSelection(undefined);
+      setSelectedClipId(undefined);
+      setStatus(`${result.clipboard.duration.toFixed(1)} second range cut and copied`);
+      return;
+    }
     clipboard.current = structuredClone(selectedLocation.clip);
     deleteSelected();
   };
@@ -800,6 +830,37 @@ export function App() {
     window.addEventListener("pointerup", onUp, { once: true });
   };
 
+  const beginRangeSelection = (
+    event: ReactPointerEvent<HTMLDivElement>,
+    clip: Clip,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const offset = (clientX: number) =>
+      Math.min(clip.duration, Math.max(0, ((clientX - rect.left) / rect.width) * clip.duration));
+    const anchor = offset(event.clientX);
+    setSelectedAssetId(clip.assetId);
+    setSelectedClipId(clip.id);
+    setClipSelection({ clipId: clip.id, from: anchor, to: anchor });
+    const onMove = (moveEvent: PointerEvent) =>
+      setClipSelection({ clipId: clip.id, from: anchor, to: offset(moveEvent.clientX) });
+    const onUp = (upEvent: PointerEvent) => {
+      window.removeEventListener("pointermove", onMove);
+      const end = offset(upEvent.clientX);
+      if (Math.abs(end - anchor) < 0.1) {
+        setClipSelection(undefined);
+        setTime(clip.start + end);
+        setStatus(`Previewing ${clip.name} at ${formatTime(clip.start + end)}`);
+      } else {
+        setClipSelection({ clipId: clip.id, from: anchor, to: end });
+        setStatus(`${Math.abs(end - anchor).toFixed(1)} second range selected — Cut or Copy, then move the playhead and Paste`);
+      }
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp, { once: true });
+  };
+
   const finishSplash = () => {
     sessionStorage.setItem("videosplat-splash-seen", "1");
     setShowSplash(false);
@@ -813,9 +874,15 @@ export function App() {
         throw new Error("This browser does not support camera and microphone recording.");
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       stream.getTracks().forEach((track) => track.stop());
-      finishSplash();
-      setDialog("recorder");
-      setStatus("Camera and microphone ready; choose recording options");
+      const devices = navigator.mediaDevices.enumerateDevices
+        ? (await navigator.mediaDevices.enumerateDevices()).filter(
+            (device) => device.kind === "audioinput",
+          )
+        : [];
+      setSplashMicrophones(devices);
+      setRecordingMicrophoneId(devices[0]?.deviceId ?? "");
+      setSplashRecordingReady(true);
+      setSplashPermissionStatus("Permission granted. Select the microphone you want VideoSplat to record.");
     } catch (error) {
       setSplashPermissionStatus(captureErrorMessage(error));
     } finally {
@@ -834,14 +901,40 @@ export function App() {
           </h1>
           <p>Private video editing. Right in your browser.</p>
           <span>Local-first · No media uploads</span>
+          <div className="splash-recording-steps">
+            <strong>Getting ready to record</strong>
+            <ol>
+              <li>Connect your headset and choose it as your computer input.</li>
+              <li>Grant camera and microphone permission below.</li>
+              <li>Select the exact microphone, then continue to the recorder.</li>
+            </ol>
+            {splashRecordingReady && (
+              <label>
+                Microphone to record
+                <select aria-label="Splash microphone source" value={recordingMicrophoneId} onChange={(event) => setRecordingMicrophoneId(event.target.value)}>
+                  {splashMicrophones.length ? splashMicrophones.map((device, index) => (
+                    <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>
+                  )) : <option value="">System default microphone</option>}
+                </select>
+              </label>
+            )}
+          </div>
           <div className="launch-splash-actions">
             <button onClick={finishSplash}>Start editing</button>
-            <button className="splash-record" onClick={setUpRecording} disabled={requestingSplashPermissions}>
-              {requestingSplashPermissions ? "Requesting permission…" : "Set up camera & microphone"}
-            </button>
+            {!splashRecordingReady ? (
+              <button className="splash-record" onClick={setUpRecording} disabled={requestingSplashPermissions}>
+                {requestingSplashPermissions ? "Requesting permission…" : "Check camera & microphone permissions"}
+              </button>
+            ) : (
+              <button className="splash-record" onClick={() => {
+                finishSplash();
+                setDialog("recorder");
+                setStatus("Recording setup ready with the selected microphone");
+              }}>Continue with selected microphone</button>
+            )}
           </div>
           <small>Screen sharing is selected securely by your browser when each recording starts.</small>
-          {splashPermissionStatus && <p className="splash-permission-error" role="alert">{splashPermissionStatus}</p>}
+          {splashPermissionStatus && <p className={splashRecordingReady ? "splash-permission-ready" : "splash-permission-error"} role={splashRecordingReady ? "status" : "alert"}>{splashPermissionStatus}</p>}
         </section>
       )}
       <header className="topbar">
@@ -1104,6 +1197,7 @@ export function App() {
                   location.clip.kind === "caption";
                 if (!isText && (!asset || !url)) return null;
                 const properties = location.clip.properties;
+                const fit = String(properties.fit ?? "fit");
                 const localTime = time - location.clip.start;
                 const transitionIn = Number(properties.transitionIn ?? 0);
                 const transitionOut = Number(properties.transitionOut ?? 0);
@@ -1133,6 +1227,7 @@ export function App() {
                         src={url}
                         preload="auto"
                         playsInline
+                        style={{ objectFit: fit === "fit" ? "contain" : fit === "fill" ? "cover" : "fill" }}
                         onLoadedMetadata={(event) => {
                           const offset = Math.min(
                             location.clip.duration,
@@ -1151,7 +1246,11 @@ export function App() {
                       />
                     )}
                     {asset?.kind === "image" && (
-                      <img src={url} alt={asset.name} />
+                      <img
+                        src={url}
+                        alt={asset.name}
+                        style={{ objectFit: fit === "fit" ? "contain" : fit === "fill" ? "cover" : "fill" }}
+                      />
                     )}
                     {isText && (
                       <div
@@ -1353,6 +1452,30 @@ export function App() {
               </label>
               {selectedLocation.clip.kind !== "audio" && (
                 <div className="property-grid">
+                  {selectedLocation.clip.kind !== "text" &&
+                    selectedLocation.clip.kind !== "caption" && (
+                    <label>
+                      Frame fit
+                      <select
+                        aria-label="Frame fit"
+                        value={String(selectedLocation.clip.properties.fit ?? "fit")}
+                        onChange={(event) =>
+                          commit(
+                            updateClip(project, selectedLocation.clip.id, {
+                              properties: {
+                                ...selectedLocation.clip.properties,
+                                fit: event.target.value,
+                              },
+                            }),
+                          )
+                        }
+                      >
+                        <option value="fit">Fit · show all</option>
+                        <option value="fill">Fill · crop edges</option>
+                        <option value="stretch">Stretch</option>
+                      </select>
+                    </label>
+                  )}
                   <label>
                     X position
                     <input
@@ -1869,7 +1992,7 @@ export function App() {
             style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
           >
             <div className="timeline-tools">
-              <span>Timeline</span>
+              <span className="sr-only">Timeline controls</span>
               <button
                 onClick={() =>
                   setTimelineZoom((zoom) => Math.max(0.5, zoom - 0.25))
@@ -1886,6 +2009,17 @@ export function App() {
                 aria-label="Zoom in"
               >
                 ＋
+              </button>
+              <button
+                aria-label={`Range select ${rangeSelecting ? "on" : "off"}`}
+                aria-pressed={rangeSelecting}
+                onClick={() => {
+                  setRangeSelecting((value) => !value);
+                  setClipSelection(undefined);
+                }}
+                title="Drag across a clip waveform to select part of it"
+              >
+                {rangeSelecting ? "↔✓" : "↔"}
               </button>
             </div>
             <div
@@ -2023,11 +2157,14 @@ export function App() {
                         left: `${clip.start * pixelsPerSecond}px`,
                         width: `${Math.max(24, clip.duration * pixelsPerSecond)}px`,
                       }}
-                      onPointerDown={(event) =>
-                        !track.locked && beginClipDrag(event, clip, "move")
-                      }
+                      onPointerDown={(event) => {
+                        if (track.locked) return;
+                        if (rangeSelecting) beginRangeSelection(event, clip);
+                        else beginClipDrag(event, clip, "move");
+                      }}
                       onClick={(event) => {
                         event.stopPropagation();
+                        if (rangeSelecting) return;
                         const rect =
                           event.currentTarget.getBoundingClientRect();
                         const offset = Math.min(
@@ -2055,6 +2192,23 @@ export function App() {
                         }
                       />
                       {asset?.thumbnail && <img src={asset.thumbnail} alt="" />}
+                      {asset?.waveform && (
+                        <span className="clip-waveform" aria-hidden="true">
+                          {asset.waveform.map((peak, index) => (
+                            <i key={index} style={{ height: `${Math.max(8, peak * 100)}%` }} />
+                          ))}
+                        </span>
+                      )}
+                      {clipSelection?.clipId === clip.id && (
+                        <span
+                          className="clip-range-selection"
+                          aria-label={`Selected range ${Math.min(clipSelection.from, clipSelection.to).toFixed(1)} to ${Math.max(clipSelection.from, clipSelection.to).toFixed(1)} seconds`}
+                          style={{
+                            left: `${(Math.min(clipSelection.from, clipSelection.to) / clip.duration) * 100}%`,
+                            width: `${(Math.abs(clipSelection.to - clipSelection.from) / clip.duration) * 100}%`,
+                          }}
+                        />
+                      )}
                       <span>{clip.name}</span>
                       <i
                         className="trim-handle right"
@@ -2152,6 +2306,7 @@ export function App() {
             )}
             {dialog === "recorder" && (
               <RecorderDialog
+                initialMicrophoneDeviceId={recordingMicrophoneId}
                 onClose={() => setDialog(null)}
                 onAdd={async (file) => addFiles([file])}
                 onStatus={setStatus}

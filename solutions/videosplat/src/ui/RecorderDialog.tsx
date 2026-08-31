@@ -7,6 +7,7 @@ import {
 } from "../recorder/capture";
 
 interface RecorderDialogProps {
+  initialMicrophoneDeviceId?: string;
   onClose(): void;
   onAdd(file: File): Promise<void>;
   onStatus(message: string): void;
@@ -15,11 +16,13 @@ interface RecorderDialogProps {
 const clock = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
-export function RecorderDialog({ onClose, onAdd, onStatus }: RecorderDialogProps) {
+export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd, onStatus }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const session = useRef<CaptureSession | undefined>(undefined);
   const [mode, setMode] = useState<CaptureMode>("screen-camera");
   const [microphone, setMicrophone] = useState(true);
+  const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
+  const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
   const [systemAudio, setSystemAudio] = useState(true);
   const [countdown, setCountdown] = useState(3);
   const [counting, setCounting] = useState<number>();
@@ -37,6 +40,24 @@ export function RecorderDialog({ onClose, onAdd, onStatus }: RecorderDialogProps
   }, [state]);
 
   useEffect(() => () => session.current?.cancel(), []);
+
+  useEffect(() => {
+    const refresh = async () => {
+      if (!navigator.mediaDevices?.enumerateDevices) return;
+      const devices = (await navigator.mediaDevices.enumerateDevices()).filter(
+        (device) => device.kind === "audioinput",
+      );
+      setMicrophones(devices);
+      setMicrophoneDeviceId((current) =>
+        current && devices.some((device) => device.deviceId === current)
+          ? current
+          : devices[0]?.deviceId ?? "",
+      );
+    };
+    void refresh();
+    navigator.mediaDevices?.addEventListener?.("devicechange", refresh);
+    return () => navigator.mediaDevices?.removeEventListener?.("devicechange", refresh);
+  }, []);
 
   const stop = async () => {
     if (!session.current || state === "saving") return;
@@ -65,7 +86,12 @@ export function RecorderDialog({ onClose, onAdd, onStatus }: RecorderDialogProps
     }
     try {
       session.current = await startCapture(
-        { mode, microphone, systemAudio: mode !== "camera" && systemAudio },
+        {
+          mode,
+          microphone,
+          microphoneDeviceId: microphoneDeviceId || undefined,
+          systemAudio: mode !== "camera" && systemAudio,
+        },
         canvas.current!,
         () => void stop(),
       );
@@ -99,6 +125,7 @@ export function RecorderDialog({ onClose, onAdd, onStatus }: RecorderDialogProps
     {state === "setup" && <div className="recorder-settings">
       <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen-camera">Screen + camera</option><option value="screen">Screen only</option><option value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
+      {microphone && <label>Microphone source<select aria-label="Microphone source" value={microphoneDeviceId} onChange={(event) => setMicrophoneDeviceId(event.target.value)}>{microphones.length ? microphones.map((device, index) => <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>) : <option value="">System default microphone</option>}</select></label>}
       <label className="check"><input type="checkbox" disabled={mode === "camera"} checked={mode !== "camera" && systemAudio} onChange={(event) => setSystemAudio(event.target.checked)} /> Shared tab/system audio when available</label>
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
       <button className="primary wide" disabled={counting !== undefined} onClick={begin}>{counting ? "Get ready…" : "Start recording"}</button>
@@ -109,6 +136,6 @@ export function RecorderDialog({ onClose, onAdd, onStatus }: RecorderDialogProps
       <button className="danger" onClick={close}>Cancel</button>
     </div>}
     {state === "saving" && <p role="status">Finishing and importing the recording locally…</p>}
-    <p className="hint">System audio depends on the browser and the surface you share. Chrome and Edge usually offer tab audio; operating-system audio support varies.</p>
+    <p className="hint">Choose your headset under Microphone source. System audio depends on the browser and the surface you share. Chrome and Edge usually offer tab audio; operating-system audio support varies.</p>
   </>;
 }

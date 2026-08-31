@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { captureErrorMessage, supportedRecordingType } from "./capture";
+import { captureErrorMessage, microphoneConstraints, supportedRecordingType } from "./capture";
 
 describe("local recorder capability helpers", () => {
   it("chooses the first browser-supported WebM format", () => {
@@ -19,5 +19,15 @@ describe("local recorder capability helpers", () => {
     expect(captureErrorMessage(new Error("Encoder unavailable"))).toBe(
       "Encoder unavailable",
     );
+  });
+
+  it("requests the chosen headset microphone exactly", () => {
+    expect(microphoneConstraints("headset-mic")).toMatchObject({
+      deviceId: { exact: "headset-mic" },
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    });
+    expect(microphoneConstraints()).not.toHaveProperty("deviceId");
   });
 });

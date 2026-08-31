@@ -4,6 +4,8 @@ import {
   activeVisualClip,
   activeVisualClips,
   addTrack,
+  clipRange,
+  cutClipRange,
   duplicateClip,
   moveClip,
   placeClip,
@@ -90,6 +92,20 @@ describe("timeline engine", () => {
     expect(removeClip(duplicated.project, "clip").tracks[0].clips).toHaveLength(
       1,
     );
+  });
+  it("copies and cuts a selected clip range while preserving source timing", () => {
+    const project = fixture();
+    const copied = clipRange(project, "clip", 2, 5)!;
+    expect(copied).toMatchObject({ start: 0, duration: 3, sourceStart: 3 });
+    const cut = cutClipRange(project, "clip", 2, 5, true);
+    expect(cut.clipboard).toMatchObject({ duration: 3, sourceStart: 3 });
+    expect(cut.project.tracks[0].clips).toHaveLength(2);
+    expect(cut.project.tracks[0].clips[0]).toMatchObject({ start: 2, duration: 2 });
+    expect(cut.project.tracks[0].clips[1]).toMatchObject({
+      start: 4,
+      duration: 3,
+      sourceStart: 6,
+    });
   });
   it("updates track controls", () => {
     const project = fixture();

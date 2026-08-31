@@ -1,5 +1,6 @@
 import { activeVisualClips, projectDuration } from "../timeline/engine";
 import type { Clip, VideoSplatProject } from "../domain/project";
+import { renderRect, type FitMode } from "../render/geometry";
 
 export interface ExportOptions {
   width: number;
@@ -251,16 +252,19 @@ export async function exportProject(
                 source instanceof HTMLVideoElement
                   ? source.videoHeight
                   : source.naturalHeight;
-              const scale = Math.min(
-                canvas.width / sourceWidth,
-                canvas.height / sourceHeight,
+              const rect = renderRect(
+                sourceWidth,
+                sourceHeight,
+                canvas.width,
+                canvas.height,
+                String(p.fit ?? "fit") as FitMode,
               );
               context.drawImage(
                 source,
-                (-sourceWidth * scale) / 2,
-                (-sourceHeight * scale) / 2,
-                sourceWidth * scale,
-                sourceHeight * scale,
+                rect.x,
+                rect.y,
+                rect.width,
+                rect.height,
               );
             }
           }

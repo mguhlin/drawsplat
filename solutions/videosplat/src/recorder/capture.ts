@@ -3,6 +3,7 @@ export type CaptureMode = "screen" | "camera" | "screen-camera";
 export interface CaptureOptions {
   mode: CaptureMode;
   microphone: boolean;
+  microphoneDeviceId?: string;
   systemAudio: boolean;
   width?: number;
   height?: number;
@@ -27,6 +28,15 @@ export function supportedRecordingType() {
     "video/webm;codecs=vp8,opus",
     "video/webm",
   ].find((type) => MediaRecorder.isTypeSupported(type));
+}
+
+export function microphoneConstraints(deviceId?: string): MediaTrackConstraints {
+  return {
+    ...(deviceId ? { deviceId: { exact: deviceId } } : {}),
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true,
+  };
 }
 
 export function captureErrorMessage(error: unknown) {
@@ -84,7 +94,7 @@ export async function startCapture(
     if (options.microphone) {
       microphone = await navigator.mediaDevices.getUserMedia({
         video: false,
-        audio: { echoCancellation: true, noiseSuppression: true },
+        audio: microphoneConstraints(options.microphoneDeviceId),
       });
     }
 
@@ -146,12 +156,15 @@ export async function startCapture(
       options.systemAudio ? screen : undefined,
       microphone,
     ].filter((item): item is MediaStream => Boolean(item?.getAudioTracks().length));
-    if (audioStreams.length) {
+    if (audioStreams.length === 1) {
+      audioStreams[0].getAudioTracks().forEach((track) => output.addTrack(track));
+    } else if (audioStreams.length > 1) {
       audioContext = new AudioContext();
       const destination = audioContext.createMediaStreamDestination();
       for (const stream of audioStreams)
         audioContext.createMediaStreamSource(stream).connect(destination);
       destination.stream.getAudioTracks().forEach((track) => output.addTrack(track));
+      await audioContext.resume();
     }
 
     const chunks: Blob[] = [];
