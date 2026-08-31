@@ -2190,7 +2190,7 @@ export function App() {
                   </div>
                   <div>
                     <strong>Permissions</strong>
-                    <span>File access only after selection</span>
+                    <span>Files or recording devices only after your action</span>
                   </div>
                   <div>
                     <strong>Storage used</strong>
