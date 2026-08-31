@@ -2278,7 +2278,7 @@ export function App() {
       {dialog && (
         <div className="backdrop" onMouseDown={() => setDialog(null)}>
           <section
-            className={`dialog ${dialog === "optimizer" || dialog === "export" || dialog === "recorder" ? "optimizer-dialog" : ""}`}
+            className={`dialog ${dialog === "optimizer" || dialog === "export" || dialog === "recorder" ? "optimizer-dialog" : ""} ${dialog === "recorder" ? "recorder-dialog" : ""}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby={

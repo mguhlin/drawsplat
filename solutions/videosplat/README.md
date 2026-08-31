@@ -31,6 +31,10 @@ the optional countdown begins only after the user has selected a capture source.
 Camera/microphone readiness and the selected input are remembered in session
 storage after splash setup. The recorder distinguishes this reusable session grant
 from the browser-mandated screen/tab chooser required for every display capture.
+The recorder uses a compact, non-scrolling setup layout on shorter laptop and
+tablet viewports while retaining the larger preview on taller screens.
+Large Browser tab, Application window, and Entire screen cards provide a clear
+display-surface preference before the browser's mandatory secure chooser opens.
 After capture stops, a local visual crop review lets the user drag over the
 recorded frame, apply common crop presets, and either re-encode only that region
 or keep the full recording before adding it to the timeline. The crop encoder

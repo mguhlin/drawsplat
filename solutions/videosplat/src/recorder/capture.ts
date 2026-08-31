@@ -1,4 +1,5 @@
 export type CaptureMode = "screen" | "camera" | "screen-camera";
+export type DisplaySurfacePreference = "browser" | "window" | "monitor";
 
 export interface CaptureOptions {
   mode: CaptureMode;
@@ -9,6 +10,7 @@ export interface CaptureOptions {
   height?: number;
   frameRate?: number;
   countdownSeconds?: number;
+  displaySurface?: DisplaySurfacePreference;
 }
 
 export interface CaptureSession {
@@ -81,10 +83,17 @@ export async function startCapture(
 
   try {
     if (wantsScreen) {
-      screen = await navigator.mediaDevices.getDisplayMedia({
-        video: { frameRate: { ideal: options.frameRate ?? 30 } },
+      const displayOptions = {
+        video: {
+          frameRate: { ideal: options.frameRate ?? 30 },
+          displaySurface: options.displaySurface ?? "browser",
+        },
         audio: options.systemAudio,
-      });
+        preferCurrentTab: options.displaySurface === "browser",
+        selfBrowserSurface: "exclude",
+        surfaceSwitching: "include",
+      } as DisplayMediaStreamOptions;
+      screen = await navigator.mediaDevices.getDisplayMedia(displayOptions);
     }
     if (wantsCamera) {
       camera = await navigator.mediaDevices.getUserMedia({

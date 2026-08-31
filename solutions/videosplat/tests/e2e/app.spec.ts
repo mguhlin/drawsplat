@@ -144,6 +144,20 @@ test("opens the private recorder and handles denied permission", async ({ page }
   await expect(page.getByRole("alert")).toContainText("permission was not granted");
 });
 
+test("keeps recorder setup controls visible on a short screen", async ({ page }) => {
+  await page.setViewportSize({ width: 655, height: 894 });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Record", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Record locally" });
+  await expect(page.getByRole("button", { name: /Browser tab/ })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: /Application window/ }).click();
+  await expect(page.getByRole("button", { name: /Application window/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Start recording" })).toBeVisible();
+  expect(
+    await dialog.evaluate((element) => element.scrollHeight <= element.clientHeight),
+  ).toBe(true);
+});
+
 test("reloads offline and supports keyboard dialog dismissal", async ({
   page,
   context,

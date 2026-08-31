@@ -4,6 +4,7 @@ import {
   startCapture,
   type CaptureMode,
   type CaptureSession,
+  type DisplaySurfacePreference,
 } from "../recorder/capture";
 import { cropRecording, type CropRect } from "../recorder/crop";
 
@@ -22,6 +23,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const canvas = useRef<HTMLCanvasElement>(null);
   const session = useRef<CaptureSession | undefined>(undefined);
   const [mode, setMode] = useState<CaptureMode>("screen");
+  const [displaySurface, setDisplaySurface] = useState<DisplaySurfacePreference>("browser");
   const [microphone, setMicrophone] = useState(true);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
@@ -98,6 +100,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
           microphoneDeviceId: microphoneDeviceId || undefined,
           systemAudio: mode !== "camera" && systemAudio,
           countdownSeconds: countdown,
+          displaySurface,
         },
         canvas.current!,
         () => void stop(),
@@ -206,6 +209,21 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     {state === "setup" && <div className="recorder-settings">
       <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
+      {mode !== "camera" && <fieldset className="surface-choices">
+        <legend>What do you want to share?</legend>
+        {([
+          ["browser", "▣", "Browser tab", "Best for a website or video"],
+          ["window", "▤", "Application window", "One open application"],
+          ["monitor", "▧", "Entire screen", "Everything on one display"],
+        ] as const).map(([value, icon, title, detail]) => <button
+          type="button"
+          key={value}
+          className={displaySurface === value ? "selected" : ""}
+          aria-pressed={displaySurface === value}
+          onClick={() => setDisplaySurface(value)}
+        ><b aria-hidden="true">{icon}</b><strong>{title}</strong><small>{detail}</small></button>)}
+        <p>The browser's secure chooser opens next and makes the final selection.</p>
+      </fieldset>}
       {microphone && <label>Microphone source<select aria-label="Microphone source" value={microphoneDeviceId} onChange={(event) => setMicrophoneDeviceId(event.target.value)}>{microphones.length ? microphones.map((device, index) => <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>) : <option value="">System default microphone</option>}</select></label>}
       <label className="check"><input type="checkbox" disabled={mode === "camera"} checked={mode !== "camera" && systemAudio} onChange={(event) => setSystemAudio(event.target.checked)} /> Shared tab/system audio when available</label>
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
