@@ -62,6 +62,26 @@ test("loads the local-first editor without external requests", async ({
   expect(external).toEqual([]);
 });
 
+test("keeps toolbar labels and the project inspector inside the viewport", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto("./");
+
+  const toolbar = page.getByRole("navigation", { name: "Editor tools" });
+  const importButton = page.getByRole("button", { name: "Import media" });
+  const inspector = page.locator(".inspector");
+
+  await expect(toolbar).toBeVisible();
+  await expect(importButton).toHaveCSS("white-space", "nowrap");
+  await expect(inspector).toBeVisible();
+  expect(
+    await inspector.evaluate(
+      (element) => element.getBoundingClientRect().right <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
 test("reloads offline and supports keyboard dialog dismissal", async ({
   page,
   context,

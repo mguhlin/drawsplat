@@ -29,8 +29,8 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | Picture-first elementary graph | GraphSplat — Picture Graph | Whiteboard |
 | Coordinates and equations | GraphSplat — Coordinate Plane or Expression Calculator | GridSplat |
 | Visual idea relationships | Concept Map Studio | Whiteboard, Mermaid Diagram |
-| Slides and presentation | ShowSplat | Whiteboard, SplatImage Studio |
-| Image editing | SplatImage Studio | Draw & Sketch, Whiteboard |
+| Slides and presentation | ShowSplat | Whiteboard, ImageSplat™ |
+| Image editing | ImageSplat™ | Draw & Sketch, Whiteboard |
 | Video editing | VideoSplat | MediaSplat, Animated GIF Maker |
 | Random student choice | Wheel Spinner | Fortune Wheel, Dice Roller |
 

@@ -110,7 +110,7 @@ Other docs that pair with setup:
 - **GridSplatTM integration.** Added the GridSplatTM spreadsheet as a built static app at `splatworks/gridsplat/`, with a dedicated public page at `pages/gridsplat.html`.
 - **SplatWorksTM app family.** Standardized the GPL-covered suite language around SplatWorksTM, WriteSplatTM, ListSplatTM, ShowSplatTM, and GridSplatTM across the site and documentation.
 - **Navigation refresh.** Separated SplatWorksTM into its own menu and grouped Tools, Widgets, and Games under DrawSplatTM, plus dedicated Games and Tools collection pages.
-- **DrawSplatTM classroom tools.** Big Link, Concept Map, Markdown Studio, Rubric Builder, SplatImage Studio, and Word Search Maker now stay under DrawSplatTM Tools instead of SplatWorksTM.
+- **DrawSplatTM classroom tools.** Big Link, Concept Map, Markdown Studio, Rubric Builder, ImageSplat™, and Word Search Maker now stay under DrawSplatTM Tools instead of SplatWorksTM.
 - **Self-host bundle refresh.** Updated README, release notes, download metadata, and the self-host bundle for the integrated DrawSplat Studio build.
 
 ## Recent improvements (v3.1.10)
@@ -118,21 +118,21 @@ Other docs that pair with setup:
 - **Super Star Trek browser edition.** Added `games/super-star-trek/` to DrawSplat Games, the Games dropdown, the Features games grid, Teacher Admin Game Access, and the self-host bundle.
 - **Squirrel Run feedback polish.** Added low-volume movement sounds, a splat sound on life loss, a classroom-friendly sound toggle, squirrel-point-of-view speech bubbles after collisions, and a short congratulatory dance when the squirrel reaches the tree.
 - **Mobile smoke test.** Verified Squirrel Run in a phone-sized Playwright run: start, touch movement, sound toggle, pause/resume, and no browser console/page errors.
-- **Blog RSS refresh.** Checked Raindrop and added the new Squirrel Run and SketchSpace VR posts, kept the newer SplatImage Studio post, and added a local Super Star Trek update item.
+- **Blog RSS refresh.** Checked Raindrop and added the new Squirrel Run and SketchSpace VR posts, kept the newer ImageSplat™ post, and added a local Super Star Trek update item.
 - **Self-host bundle refresh.** Updated README, release notes, blog RSS, download metadata, admin game access, and the self-host bundle for the latest DrawSplat Games build.
 
 ## Recent improvements (v3.1.9)
 
 - **SketchSpace VR.** Added `solutions/sketchspace-VR/`, a standalone DrawSplat Tool for printing a flat 4x3 room template, drawing six active panels, photographing the page, uploading it, and exploring the result as a virtual room in the browser.
 - **SketchSpace VR teaching materials.** Added a Teacher Guide, Play examples page, image prompt pattern, curriculum starter guidance, full-screen starter links, corrected process visual, and six image-backed curriculum starters for citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle.
-- **SplatImage Studio text workflow.** Replaced the simple text-label flow with a richer text dialog that supports adjustable font size, bold, italic, underline, alignment, and live preview before insertion.
-- **SplatImage Studio background cutout.** Added Smart background cutout and Remove edge background actions, kept the interface free of AI labeling, and added a visible Working dialog during longer cutout processing.
-- **SplatImage Studio clipboard and export polish.** Improved image paste/import for copied images from tools such as Canva and kept selected-object PNG copy/export focused on the selected object bounds.
+- **ImageSplat™ text workflow.** Replaced the simple text-label flow with a richer text dialog that supports adjustable font size, bold, italic, underline, alignment, and live preview before insertion.
+- **ImageSplat™ background cutout.** Added Smart background cutout and Remove edge background actions, kept the interface free of AI labeling, and added a visible Working dialog during longer cutout processing.
+- **ImageSplat™ clipboard and export polish.** Improved image paste/import for copied images from tools such as Canva and kept selected-object PNG copy/export focused on the selected object bounds.
 - **Blog RSS refresh.** Updated the bundled blog RSS snapshot with the latest DrawSplat release/update items for self-hosted copies.
 
 ## Recent improvements (v3.1.8)
 
-- **SplatImage Studio.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
+- **ImageSplat™.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
 - **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
 - **SplatImage selected-copy fix.** Copy PNG now copies the selected object bounds when one or more objects are selected, instead of bringing along the full white canvas.
 - **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, Google OAuth admin access for approved accounts, the new Hub banner, guided admin setup, teacher folder/config creation in Drive, and an Apps Script instance registry starter.
@@ -287,7 +287,7 @@ timeline
          : Concept Map Studio full-width canvas layout + localized T-Chart template
          : Quiz & Flashcard Studio standalone widget + versioned CSV/JSON import templates
   v3.1.8 : Classroom tools self-host bundle
-         : SplatImage Studio, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
+         : ImageSplat™, Concept Map Markdown import/text controls/dropdown menus, Quiz science sample sets
   v3.1.9 : Latest classroom tools self-host bundle
          : SketchSpace VR, SplatImage text/cutout/clipboard upgrades, current blog RSS snapshot
   v3.1.10: Squirrel Run game polish

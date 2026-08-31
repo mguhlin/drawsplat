@@ -47,7 +47,7 @@ PowerPoint, and HTML slide tools such as reveal.js.
 
 - Text boxes, headings, bullet lists, tables, hyperlinks, slide numbers,
   headers, footers, and information bars.
-- Image insertion from upload, URL, SplatImage Studio handoff, and DrawSplat
+- Image insertion from upload, URL, ImageSplat™ handoff, and DrawSplat
   Concept Studio handoff when those tools expose compatible local handoff data.
 - Video insertion for YouTube embeds, MP4, and WebM.
 - Audio insertion for common browser-playable audio files.

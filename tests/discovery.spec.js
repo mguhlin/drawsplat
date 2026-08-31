@@ -34,22 +34,22 @@ test("Studio searches aliases, filters functions, and saves favorites locally", 
   page,
 }) => {
   await page.goto("/studio/");
-  await expect(page.locator(".ds-tool-card")).toHaveCount(58);
+  await expect(page.locator(".ds-tool-card")).toHaveCount(57);
   await page.locator("#toolSearch").fill("photo editor");
   await expect(page.locator(".ds-tool-card h3").first()).toHaveText(
-    "SplatImage Studio",
+    "ImageSplat™",
   );
   await page.locator(".ds-tool-card").first().locator(".ds-favorite").click();
   await expect(page.locator("#favoritesShelf")).toBeVisible();
   await page.reload();
   await expect(page.locator("#favoritesShelf")).toContainText(
-    "SplatImage Studio",
+    "ImageSplat™",
   );
   await page.locator("#toolSearch").fill("");
   await page.locator('#categoryFilters [data-category="games"]').click();
   const resultCount = await page.locator(".ds-tool-card").count();
   expect(resultCount).toBeGreaterThan(10);
-  expect(resultCount).toBeLessThan(58);
+  expect(resultCount).toBeLessThan(57);
 });
 
 test("Studio consolidates legacy graph tools under GraphSplat", async ({

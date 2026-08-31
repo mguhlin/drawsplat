@@ -9,10 +9,10 @@
 <!-- /DrawSplat favicons -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="doc.title">SplatImage Studio - DrawSplatTM</title>
+  <title data-i18n="doc.title">ImageSplat™ - DrawSplatTM</title>
   <script src="../../assets/js/widget-i18n.js"></script>
   <script src="../../assets/js/gif-encoder.js"></script>
-  <meta name="description" content="SplatImage Studio is a browser-based screenshot and image editor with annotations, crop, layers, grouping, clipboard import/export, and GIF frame export.">
+  <meta name="description" content="ImageSplat™ is a browser-based screenshot and image editor with annotations, crop, layers, grouping, clipboard import/export, and GIF frame export.">
   <style>
     :root{--navy:#7c3aed;--gold:#a855f7;--red:#ef4444;--blue:#2563eb;--green:#16a34a;--yellow:#facc15;--orange:#f97316;--ink:#111827;--muted:#64748b;--line:#cbd5e1;--soft:#eef2ff;--panel:#fff;--bg:#fff;--radius:8px;--shadow:0 16px 34px rgba(64,64,65,.12)}
     *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}.top-bar{height:10px;background:linear-gradient(90deg,var(--navy) 0 28%,var(--gold) 28% 46%,var(--orange) 46% 58%,var(--red) 58% 70%,var(--blue) 70% 84%,var(--green) 84% 94%,var(--yellow) 94% 100%)}
@@ -33,8 +33,8 @@
   <div class="shell">
     <header class="header">
       <div class="title">
-        <p class="eyebrow"><a href="../../pages/features.html" data-i18n="header.eyebrow">DrawSplat(TM) Tools</a></p>
-        <h1 data-i18n="header.h1">SplatImage Studio</h1>
+        <p class="eyebrow"><a href="../../index.html" data-i18n="header.eyebrow">DrawSplat(TM) Tools</a></p>
+        <h1 data-i18n="header.h1">ImageSplat™</h1>
         <p class="subtitle" data-i18n="header.subtitle">A browser-based image editor for screenshots, classroom visuals, annotations, layers, crops, and GIF-ready frame exports. Nothing is uploaded.</p>
       </div>
       <div class="header-actions">
@@ -150,7 +150,7 @@
         </section>
       </aside>
 
-      <section class="stage-wrap" data-i18n-aria-label="stage.aria" aria-label="SplatImage Studio canvas">
+      <section class="stage-wrap" data-i18n-aria-label="stage.aria" aria-label="ImageSplat™ canvas">
         <div class="toolbar">
           <button data-action="undo" data-i18n="edit.undo">Undo</button>
           <button data-action="redo" data-i18n="edit.redo">Redo</button>
@@ -298,6 +298,7 @@
   function showWorking(k,vars){updateWorking(k,vars);$('workingOverlay').hidden=false}
   function hideWorking(){$('workingOverlay').hidden=true}
   function nextPaint(){return new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res)))}
+  function nextVideoFrame(video){return new Promise(resolve=>{if(typeof video.requestVideoFrameCallback==='function')video.requestVideoFrameCallback(()=>resolve());else setTimeout(resolve,100)})}
   function wait(ms){return new Promise(res=>setTimeout(res,ms))}
   async function countdown(seconds){for(let s=seconds;s>0;s--){setStatus('status.captureDelay',{seconds:s});await wait(1000)}}
   function snapshot(){state.undo.push(JSON.stringify(state.objects.map(o=>serialize(o))));if(state.undo.length>60)state.undo.shift();state.redo=[]}
@@ -343,7 +344,7 @@
   function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
   function loadImg(src){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>res(img);img.onerror=rej;img.src=src})}
   async function newLayer(){const c=document.createElement('canvas');c.width=320;c.height=220;const src=c.toDataURL('image/png'),img=await loadImg(src);addObject({type:'image',name:'Blank layer',x:60,y:60,w:c.width,h:c.height,img,src});setStatus('status.layerAdded')}
-  async function captureScreen(cropAfter=false,delayMs=0){if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia)return setStatus('status.captureUnsupported');let stream=null;try{const controller=window.CaptureController?new CaptureController():null,opts={video:{cursor:'always'},audio:false};if(controller)opts.controller=controller;stream=await navigator.mediaDevices.getDisplayMedia(opts);if(controller&&controller.setFocusBehavior){try{controller.setFocusBehavior('focus-capturing-application')}catch(_){}}const video=document.createElement('video');video.srcObject=stream;video.muted=true;await video.play();if(!video.videoWidth)await new Promise(res=>video.addEventListener('loadedmetadata',res,{once:true}));if(delayMs>0)await countdown(Math.ceil(delayMs/1000));await nextPaint();const c=document.createElement('canvas');c.width=video.videoWidth||1280;c.height=video.videoHeight||720;c.getContext('2d').drawImage(video,0,0,c.width,c.height);stream.getTracks().forEach(track=>track.stop());const src=c.toDataURL('image/png'),img=await loadImg(src),scale=Math.min(1,(canvas.width*.85)/c.width,(canvas.height*.85)/c.height),obj=addObject({type:'image',name:'Screen capture',x:40,y:40,w:c.width*scale,h:c.height*scale,img,src});setTool('select');if(cropAfter){beginImageCrop(obj);setStatus(delayMs>0?'status.captureAreaDelayDone':'status.captureArea')}else setStatus('status.captured');window.focus()}catch(err){if(stream)stream.getTracks().forEach(track=>track.stop());setStatus('status.captureCanceled')}}
+  async function captureScreen(cropAfter=false,delayMs=0){if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia)return setStatus('status.captureUnsupported');let stream=null;try{const controller=window.CaptureController?new CaptureController():null,opts={video:{cursor:'always'},audio:false};if(controller)opts.controller=controller;stream=await navigator.mediaDevices.getDisplayMedia(opts);if(controller&&controller.setFocusBehavior){try{controller.setFocusBehavior('focus-capturing-application')}catch(_){}}const video=document.createElement('video');video.srcObject=stream;video.muted=true;video.playsInline=true;await video.play();if(!video.videoWidth)await new Promise(res=>video.addEventListener('loadedmetadata',res,{once:true}));await nextVideoFrame(video);if(delayMs>0){await countdown(Math.ceil(delayMs/1000));await nextVideoFrame(video)}const c=document.createElement('canvas');c.width=video.videoWidth||1280;c.height=video.videoHeight||720;c.getContext('2d').drawImage(video,0,0,c.width,c.height);const src=c.toDataURL('image/png'),img=await loadImg(src),scale=Math.min(1,(canvas.width*.85)/c.width,(canvas.height*.85)/c.height),obj=addObject({type:'image',name:'Screen capture',x:40,y:40,w:c.width*scale,h:c.height*scale,img,src});setTool('select');if(cropAfter){beginImageCrop(obj);setStatus(delayMs>0?'status.captureAreaDelayDone':'status.captureArea')}else setStatus('status.captured');window.focus()}catch(err){console.error(err);setStatus('status.captureCanceled')}finally{if(stream)stream.getTracks().forEach(track=>track.stop())}}
   function cropChanged(c){const a=norm(c.original),b=norm(c.rect);return Math.abs(a.x-b.x)>1||Math.abs(a.y-b.y)>1||Math.abs(a.w-b.w)>1||Math.abs(a.h-b.h)>1}
   function beginImageCrop(o){if(!o||o.type!=='image')return;state.tool='select';document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool==='select'));state.crop=null;state.selected.clear();state.selected.add(o.id);const b=norm(bounds(o));state.imageCrop={target:o.id,rect:{...b},original:{...b}};setStatus('status.ready');render()}
   async function finishImageCrop(){const c=state.imageCrop;if(!c)return;const o=state.objects.find(x=>x.id===c.target);if(!o||!cropChanged(c)){state.imageCrop=null;render();return}const r=clampCropBox(c.rect,bounds(o)),sx=(r.x-o.x)/o.w*o.img.naturalWidth,sy=(r.y-o.y)/o.h*o.img.naturalHeight,sw=r.w/o.w*o.img.naturalWidth,sh=r.h/o.h*o.img.naturalHeight,out=document.createElement('canvas');out.width=Math.max(1,Math.round(sw));out.height=Math.max(1,Math.round(sh));out.getContext('2d').drawImage(o.img,sx,sy,sw,sh,0,0,out.width,out.height);snapshot();const src=out.toDataURL('image/png'),img=await loadImg(src);o.x=r.x;o.y=r.y;o.w=r.w;o.h=r.h;o.img=img;o.src=src;state.imageCrop=null;setStatus('status.crop');render()}
@@ -384,7 +385,7 @@
   function downloadCanvas(c,name){c.toBlob(b=>downloadBlob(b,name),'image/png')}
   function exportCanvas(){downloadCanvas(renderFullCanvas(),'splatimage-studio.png');setStatus('status.exported')}
   function exportSelection(){const objs=selectedObjects();if(!objs.length)return setStatus('status.needSelection');downloadCanvas(renderToCanvas(objs),'splatimage-selection.png')}
-  function copyCanvas(){const objs=selectedObjects(), out=objs.length?renderToCanvas(objs):renderFullCanvas(), name=objs.length?'splatimage-selection.png':'splatimage-studio.png';out.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('status.copied')}catch(_){downloadBlob(b,name)}},'image/png')}
+  function copyCanvas(){const out=renderFullCanvas();out.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('status.copied')}catch(_){downloadBlob(b,'imagesplat.png')}},'image/png')}
   function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
   function imageFrames(){return selectedObjects().filter(o=>o.type==='image'&&o.img)}
   async function exportGif(){const imgs=imageFrames();if(!imgs.length)return setStatus('status.needImages');const maxW=Math.max(...imgs.map(o=>o.w)),maxH=Math.max(...imgs.map(o=>o.h));const frames=imgs.map(o=>{const c=document.createElement('canvas');c.width=maxW;c.height=maxH;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(o.img,(maxW-o.w)/2,(maxH-o.h)/2,o.w,o.h);return c});const blob=window.DrawSplatGifEncoder.encode(frames,{delayMs:+$('delayInput').value||500,loopCount:0,mode:'best',dither:true});downloadBlob(blob,'splatimage-frames.gif');setStatus('status.gif',{n:frames.length})}

@@ -4,15 +4,15 @@ DrawSplatTM v3.1.8 refreshes the self-host bundle with the latest classroom tool
 
 ## Highlights
 
-- SplatImage Studio is now included in the Tools dropdown as a standalone browser-only image editor with resize and crop handles for quick classroom image cleanup.
-- SplatImage Studio arrowheads now scale with thicker annotation lines so large arrows keep a clear, proportional head.
-- SplatImage Studio image cropping now supports double-click-to-crop on an image, crop handles around that image, and Crop now lives in the Edit menu.
-- SplatImage Studio image-crop handles now stay active even when clicked on the part of the handle just outside the image edge.
-- SplatImage Studio paste/import now displays images immediately from a temporary object URL, then backfills the data URL in the background for smoother large screenshot pastes.
-- SplatImage Studio paste/import trims transparent or near-white outer margins so copied images do not arrive with oversized empty selection bounds.
-- SplatImage Studio adds a Masks dropdown that crops selected image layers into circle, oval, ellipse, square, rectangle, diamond, pentagon, and star shapes.
-- SplatImage Studio star and pentagon masks now scale to rectangular image bounds instead of leaving wide transparent margins around the masked image.
-- SplatImage Studio adds File > New layer plus visible New layer and Duplicate layer buttons in the Layers panel, per-layer opacity from 0-100%, text alignment for text boxes, and expanded Effects: sharpen, lighten, darken, pixelate, mosaic, and Picasso cubism, with an Effect strength slider.
+- ImageSplat™ is now included in the Tools dropdown as a standalone browser-only image editor with resize and crop handles for quick classroom image cleanup.
+- ImageSplat™ arrowheads now scale with thicker annotation lines so large arrows keep a clear, proportional head.
+- ImageSplat™ image cropping now supports double-click-to-crop on an image, crop handles around that image, and Crop now lives in the Edit menu.
+- ImageSplat™ image-crop handles now stay active even when clicked on the part of the handle just outside the image edge.
+- ImageSplat™ paste/import now displays images immediately from a temporary object URL, then backfills the data URL in the background for smoother large screenshot pastes.
+- ImageSplat™ paste/import trims transparent or near-white outer margins so copied images do not arrive with oversized empty selection bounds.
+- ImageSplat™ adds a Masks dropdown that crops selected image layers into circle, oval, ellipse, square, rectangle, diamond, pentagon, and star shapes.
+- ImageSplat™ star and pentagon masks now scale to rectangular image bounds instead of leaving wide transparent margins around the masked image.
+- ImageSplat™ adds File > New layer plus visible New layer and Duplicate layer buttons in the Layers panel, per-layer opacity from 0-100%, text alignment for text boxes, and expanded Effects: sharpen, lighten, darken, pixelate, mosaic, and Picasso cubism, with an Effect strength slider.
 - Adds the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus the first school-specific instance scaffold at `hub/hubcampus/`, including classroom-teacher, campus, and district grouping support, the DrawSplat Hub banner, campus hero image, guided instance admin wizard, optional Buy Me a Coffee support on the admin page, Google OAuth admin access for approved accounts, teacher folder/config creation in Drive, and `apps-script/InstanceRegistry.gs` starter backend for one-time setup password plus Google account binding.
 - Concept Map Studio adds Markdown import, text controls, dropdown menus, improved import collision layout, and cleaner selected-node editing.
 - Quiz & Flashcard Studio now ships with selectable science sample data sets for Grade 3 Science TEKS, Grade 5 Science TEKS, and Grade 10 Biology TEKS.
