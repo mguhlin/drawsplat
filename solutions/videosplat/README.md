@@ -30,7 +30,9 @@ The browser screen-share chooser opens directly from the Start recording gesture
 the optional countdown begins only after the user has selected a capture source.
 After capture stops, a local visual crop review lets the user drag over the
 recorded frame, apply common crop presets, and either re-encode only that region
-or keep the full recording before adding it to the timeline.
+or keep the full recording before adding it to the timeline. Crop re-encoding
+preserves the recording's decoded microphone/system-audio track directly, with a
+Web Audio compatibility fallback where media-element capture is unavailable.
 
 ## Development
 

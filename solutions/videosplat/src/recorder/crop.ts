@@ -27,6 +27,10 @@ export function cropPixels(
 
 const loaded = (video: HTMLVideoElement) =>
   new Promise<void>((resolve, reject) => {
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      resolve();
+      return;
+    }
     video.onloadedmetadata = () => resolve();
     video.onerror = () => reject(new Error("The recording could not be opened for cropping."));
   });
@@ -52,11 +56,24 @@ export async function cropRecording(
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) throw new Error("Canvas rendering is unavailable.");
   const output = canvas.captureStream(30);
-  const audioContext = new AudioContext();
-  const destination = audioContext.createMediaStreamDestination();
-  audioContext.createMediaElementSource(video).connect(destination);
-  destination.stream.getAudioTracks().forEach((track) => output.addTrack(track));
-  await audioContext.resume();
+  const mediaCapture = (
+    video as HTMLVideoElement & { captureStream?: () => MediaStream }
+  ).captureStream?.bind(video);
+  const playbackStream = mediaCapture?.();
+  let audioContext: AudioContext | undefined;
+  const decodedAudioTracks = playbackStream?.getAudioTracks() ?? [];
+  if (decodedAudioTracks.length) {
+    decodedAudioTracks.forEach((track) => output.addTrack(track));
+  } else {
+    // Firefox and older engines may not expose media-element captureStream.
+    // Keep Web Audio as a compatibility fallback, but prefer the decoded media
+    // track above because it preserves microphone audio reliably in Chrome.
+    audioContext = new AudioContext();
+    const destination = audioContext.createMediaStreamDestination();
+    audioContext.createMediaElementSource(video).connect(destination);
+    destination.stream.getAudioTracks().forEach((track) => output.addTrack(track));
+    await audioContext.resume();
+  }
   const recorder = new MediaRecorder(output, {
     mimeType,
     videoBitsPerSecond: 4_000_000,
@@ -102,8 +119,9 @@ export async function cropRecording(
   } finally {
     cancelAnimationFrame(frame);
     video.pause();
+    playbackStream?.getTracks().forEach((track) => track.stop());
     output.getTracks().forEach((track) => track.stop());
-    await audioContext.close();
+    await audioContext?.close();
     URL.revokeObjectURL(url);
   }
 }
