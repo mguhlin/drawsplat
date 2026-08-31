@@ -26,6 +26,9 @@ specific headset microphone, and carries that choice into the recorder.
 Screen-only recording preserves the browser display track directly so capture
 continues when the user switches to the selected tab; camera-overlay composition
 is documented as requiring VideoSplat to remain visible.
+After capture stops, a local visual crop review lets the user drag over the
+recorded frame, apply common crop presets, and either re-encode only that region
+or keep the full recording before adding it to the timeline.
 
 ## Development
 

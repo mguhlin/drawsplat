@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import {
   captureErrorMessage,
   startCapture,
   type CaptureMode,
   type CaptureSession,
 } from "../recorder/capture";
+import { cropRecording, type CropRect } from "../recorder/crop";
 
 interface RecorderDialogProps {
   initialMicrophoneDeviceId?: string;
@@ -27,8 +28,12 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
   const [countdown, setCountdown] = useState(3);
   const [counting, setCounting] = useState<number>();
   const [elapsed, setElapsed] = useState(0);
-  const [state, setState] = useState<"setup" | "recording" | "paused" | "saving">("setup");
+  const [state, setState] = useState<"setup" | "recording" | "paused" | "saving" | "review" | "cropping">("setup");
   const [error, setError] = useState<string>();
+  const [recording, setRecording] = useState<File>();
+  const [recordingUrl, setRecordingUrl] = useState("");
+  const [crop, setCrop] = useState<CropRect>({ x: 0, y: 0, width: 1, height: 1 });
+  const [cropProgress, setCropProgress] = useState(0);
 
   useEffect(() => {
     if (state !== "recording") return;
@@ -39,7 +44,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
     return () => clearInterval(timer);
   }, [state]);
 
-  useEffect(() => () => session.current?.cancel(), []);
+  useEffect(() => () => {
+    session.current?.cancel();
+    if (recordingUrl) URL.revokeObjectURL(recordingUrl);
+  }, [recordingUrl]);
 
   useEffect(() => {
     const refresh = async () => {
@@ -65,10 +73,14 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
     try {
       const blob = await session.current.stop();
       const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-      await onAdd(new File([blob], `VideoSplat-recording-${stamp}.webm`, { type: blob.type }));
-      onStatus("Recording saved locally and added to the timeline");
+      const file = new File([blob], `VideoSplat-recording-${stamp}.webm`, { type: blob.type });
+      const url = URL.createObjectURL(file);
+      setRecording(file);
+      setRecordingUrl(url);
+      setCrop({ x: 0, y: 0, width: 1, height: 1 });
       session.current = undefined;
-      onClose();
+      setState("review");
+      onStatus("Recording finished — select the portion to keep");
     } catch (reason) {
       setError(captureErrorMessage(reason));
       setState("setup");
@@ -111,16 +123,85 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
     onClose();
   };
 
+  const addRecording = async (file: File, message: string) => {
+    await onAdd(file);
+    onStatus(message);
+    onClose();
+  };
+
+  const applyCrop = async () => {
+    if (!recording) return;
+    setState("cropping");
+    setCropProgress(0);
+    setError(undefined);
+    try {
+      const blob = await cropRecording(recording, crop, setCropProgress);
+      const cropped = new File(
+        [blob],
+        recording.name.replace(/\.webm$/i, "-cropped.webm"),
+        { type: blob.type },
+      );
+      await addRecording(cropped, "Cropped recording saved locally and added to the timeline");
+    } catch (reason) {
+      setError(captureErrorMessage(reason));
+      setState("review");
+    }
+  };
+
+  const beginCropSelection = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const point = (clientX: number, clientY: number) => ({
+      x: Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
+      y: Math.max(0, Math.min(1, (clientY - rect.top) / rect.height)),
+    });
+    const start = point(event.clientX, event.clientY);
+    setCrop({ ...start, width: .02, height: .02 });
+    const move = (moveEvent: PointerEvent) => {
+      const end = point(moveEvent.clientX, moveEvent.clientY);
+      setCrop({
+        x: Math.min(start.x, end.x),
+        y: Math.min(start.y, end.y),
+        width: Math.max(.02, Math.abs(end.x - start.x)),
+        height: Math.max(.02, Math.abs(end.y - start.y)),
+      });
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up, { once: true });
+  };
+
   return <>
     <button className="dialog-close" onClick={close} aria-label="Close recorder">×</button>
     <h2 id="recorder-title">Record locally</h2>
     <p className="lead">Capture your screen, camera, and audio directly into this project. Permission is requested only when you start; the recording is not uploaded.</p>
-    <div className="recorder-preview">
+    {state !== "review" && state !== "cropping" && <div className="recorder-preview">
       <canvas ref={canvas} aria-label="Recording preview" />
       {state === "setup" && !counting && <span>Preview appears after permission is granted</span>}
       {counting && <strong className="recorder-countdown" aria-live="assertive">{counting}</strong>}
       {state !== "setup" && <output>{state === "paused" ? "Paused · " : "● "}{clock(elapsed)}</output>}
-    </div>
+    </div>}
+    {(state === "review" || state === "cropping") && recording && <div className="crop-review">
+      <p>Drag over the preview to select the part of the recorded tab you want to keep.</p>
+      <div className="crop-stage" onPointerDown={state === "review" ? beginCropSelection : undefined}>
+        <video src={recordingUrl} playsInline muted aria-label="Recorded screen crop preview" />
+        <i className="crop-selection" style={{ left: `${crop.x * 100}%`, top: `${crop.y * 100}%`, width: `${crop.width * 100}%`, height: `${crop.height * 100}%` }} />
+      </div>
+      <div className="crop-presets" aria-label="Crop presets">
+        <button onClick={() => setCrop({ x: 0, y: 0, width: 1, height: 1 })}>Full frame</button>
+        <button onClick={() => setCrop({ x: .125, y: 0, width: .75, height: 1 })}>Center</button>
+        <button onClick={() => setCrop({ x: 0, y: 0, width: .5, height: 1 })}>Left half</button>
+        <button onClick={() => setCrop({ x: .5, y: 0, width: .5, height: 1 })}>Right half</button>
+      </div>
+      {state === "review" && <div className="recorder-actions">
+        <button className="primary" onClick={applyCrop}>Crop and add to timeline</button>
+        <button onClick={() => addRecording(recording, "Full recording saved locally and added to the timeline")}>Use full recording</button>
+        <button className="danger" onClick={close}>Discard</button>
+      </div>}
+      {state === "cropping" && <><progress max="1" value={cropProgress} /><p role="status">Cropping locally… {Math.round(cropProgress * 100)}%</p></>}
+    </div>}
     {error && <p className="recorder-error" role="alert">{error}</p>}
     {state === "setup" && <div className="recorder-settings">
       <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
@@ -132,10 +213,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
     </div>}
     {(state === "recording" || state === "paused") && <div className="recorder-actions">
       <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>
-      <button className="primary" onClick={stop}>Stop and add to timeline</button>
+      <button className="primary" onClick={stop}>Stop and choose crop</button>
       <button className="danger" onClick={close}>Cancel</button>
     </div>}
-    {state === "saving" && <p role="status">Finishing and importing the recording locally…</p>}
+    {state === "saving" && <p role="status">Finishing the recording locally…</p>}
     <p className="hint">Choose your headset under Microphone source. For recording another tab, use Screen only and select that tab in the browser share dialog; recording then continues when you switch to it. Keep VideoSplat visible when using the camera-overlay compositor. System audio support varies by browser and operating system.</p>
   </>;
 }

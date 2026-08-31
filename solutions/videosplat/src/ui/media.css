@@ -342,6 +342,58 @@
   gap: 8px;
   margin-top: 14px;
 }
+.crop-review > p {
+  color: var(--muted);
+  font-size: .82rem;
+}
+.crop-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #050609;
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+.crop-stage video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.crop-selection {
+  position: absolute;
+  border: 3px solid #ffe16b;
+  background: #ffe16b24;
+  box-shadow: 0 0 0 9999px #02040a9c;
+  pointer-events: none;
+}
+.crop-selection::after {
+  content: "Keep this area";
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: #1b1605d9;
+  color: #fff1a8;
+  font-size: .68rem;
+  font-style: normal;
+  white-space: nowrap;
+}
+.crop-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+.crop-review progress {
+  width: 100%;
+  margin-top: 14px;
+}
 .recorder-error {
   border: 1px solid #71323c;
   border-radius: 7px;

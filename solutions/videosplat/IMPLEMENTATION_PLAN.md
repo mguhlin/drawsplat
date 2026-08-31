@@ -38,7 +38,9 @@ range export, quality presets, worker execution, and privacy preflight.
 Current caption/export status: SRT and WebVTT parsing/generation, range controls,
 preflight, content-hashed privacy reports, and local WebM composition export are
 implemented, including visual layers, text/captions, current effects/transitions,
-and mixed clip audio. MP4 capability paths, worker execution, and preview/export
+and mixed clip audio. Screen recordings also support a post-capture visual crop
+review with local audio-preserving re-encoding before timeline import. MP4
+capability paths, worker execution, and preview/export
 golden frames remain future performance and compatibility work.
 
 ### Professional editing and MLT interoperability
