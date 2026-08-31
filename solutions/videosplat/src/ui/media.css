@@ -241,6 +241,92 @@
   font-size: 0.78rem !important;
   color: var(--muted);
 }
+.record-button {
+  color: #ffd9dd;
+  border-color: #8b3441;
+  background: #3a1820;
+  font-weight: 800;
+}
+.recorder-preview {
+  position: relative;
+  aspect-ratio: 16/9;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #050609;
+  color: var(--muted);
+}
+.recorder-preview canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.recorder-preview > span,
+.recorder-preview > strong,
+.recorder-preview > output {
+  position: absolute;
+}
+.recorder-preview output {
+  top: 10px;
+  left: 10px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #090b10d9;
+  color: #ffbbc2;
+  font: 800 .78rem ui-monospace, monospace;
+}
+.recorder-countdown {
+  font-size: 5rem;
+  color: #fff;
+  text-shadow: 0 3px 20px #000;
+}
+.recorder-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+.recorder-settings label:not(.check) {
+  display: grid;
+  gap: 6px;
+  color: #cbd3e3;
+  font-size: .8rem;
+  font-weight: 750;
+}
+.recorder-settings select {
+  color: #e7ebf5;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #0e1423;
+  padding: 8px;
+}
+.recorder-settings .check {
+  align-self: end;
+  padding-bottom: 8px;
+  color: #cbd3e3;
+  font-size: .8rem;
+}
+.recorder-settings .wide { grid-column: 1 / -1; }
+.recorder-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.recorder-error {
+  border: 1px solid #71323c;
+  border-radius: 7px;
+  background: #30161c;
+  color: #ffbdc3 !important;
+  padding: 9px 11px;
+}
+@media (width <= 580px) {
+  .recorder-settings { grid-template-columns: 1fr; }
+  .recorder-settings .wide { grid-column: auto; }
+  .recorder-actions { flex-direction: column; }
+}
 .timeline-tools {
   display: flex;
   align-items: center;

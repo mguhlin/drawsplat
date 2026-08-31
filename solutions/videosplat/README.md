@@ -16,6 +16,12 @@ VideoSplat also imports/exports SRT and WebVTT captions and renders the layered
 timeline—including transforms, titles, effects, transitions, and mixed audio—to a
 local WebM. Export uses browser Canvas, Web Audio, and MediaRecorder without uploads.
 
+The local recorder captures a shared screen, camera, or screen with a camera overlay,
+plus an optional microphone and browser-supported shared tab/system audio. Recordings
+can be paused, resumed, canceled, or added directly to the media bin and timeline.
+Permissions are requested only after the user presses Start recording; captured media
+uses the same private browser storage and editing workflow as imported files.
+
 ## Development
 
 ```bash

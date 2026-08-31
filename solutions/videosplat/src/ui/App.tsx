@@ -48,6 +48,7 @@ import {
 import { OptimizerDialog } from "./OptimizerDialog";
 import { ExportDialog } from "./ExportDialog";
 import { addCaptionFile, downloadCaptions } from "../captions/captions";
+import { RecorderDialog } from "./RecorderDialog";
 
 type Dialog =
   | "projects"
@@ -55,6 +56,7 @@ type Dialog =
   | "shortcuts"
   | "optimizer"
   | "export"
+  | "recorder"
   | null;
 const formatBytes = (bytes: number) =>
   bytes < 1024 * 1024
@@ -864,6 +866,7 @@ export function App() {
         </div>
       </header>
       <nav className="toolbar" aria-label="Editor tools">
+        <button className="record-button" aria-label="Record" onClick={() => setDialog("recorder")}>● Record</button>
         <button
           onClick={() => mediaInput.current?.click()}
           disabled={importing}
@@ -2083,7 +2086,7 @@ export function App() {
       {dialog && (
         <div className="backdrop" onMouseDown={() => setDialog(null)}>
           <section
-            className={`dialog ${dialog === "optimizer" || dialog === "export" ? "optimizer-dialog" : ""}`}
+            className={`dialog ${dialog === "optimizer" || dialog === "export" || dialog === "recorder" ? "optimizer-dialog" : ""}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby={
@@ -2091,11 +2094,13 @@ export function App() {
                 ? "optimizer-title"
                 : dialog === "export"
                   ? "export-title"
+                  : dialog === "recorder"
+                    ? "recorder-title"
                   : "dialog-title"
             }
             onMouseDown={(event) => event.stopPropagation()}
           >
-            {dialog !== "optimizer" && dialog !== "export" && (
+            {dialog !== "optimizer" && dialog !== "export" && dialog !== "recorder" && (
               <button
                 className="dialog-close"
                 onClick={() => setDialog(null)}
@@ -2116,6 +2121,13 @@ export function App() {
                 project={project}
                 urls={mediaUrls}
                 onClose={() => setDialog(null)}
+                onStatus={setStatus}
+              />
+            )}
+            {dialog === "recorder" && (
+              <RecorderDialog
+                onClose={() => setDialog(null)}
+                onAdd={async (file) => addFiles([file])}
                 onStatus={setStatus}
               />
             )}

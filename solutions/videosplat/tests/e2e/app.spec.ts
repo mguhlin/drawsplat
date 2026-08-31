@@ -82,6 +82,27 @@ test("keeps toolbar labels and the project inspector inside the viewport", async
   ).toBe(true);
 });
 
+test("opens the private recorder and handles denied permission", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        getDisplayMedia: () =>
+          Promise.reject(new DOMException("Denied", "NotAllowedError")),
+        getUserMedia: () =>
+          Promise.reject(new DOMException("Denied", "NotAllowedError")),
+      },
+    });
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Record", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
+  await expect(page.getByText("the recording is not uploaded")).toBeVisible();
+  await page.getByLabel("Recording countdown").selectOption("0");
+  await page.getByRole("button", { name: "Start recording" }).click();
+  await expect(page.getByRole("alert")).toContainText("permission was not granted");
+});
+
 test("reloads offline and supports keyboard dialog dismissal", async ({
   page,
   context,
