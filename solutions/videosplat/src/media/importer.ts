@@ -20,6 +20,50 @@ function loadElement(element: HTMLMediaElement, url: string): Promise<void> {
   });
 }
 
+async function recoverMediaDuration(element: HTMLMediaElement): Promise<number | undefined> {
+  if (Number.isFinite(element.duration) && element.duration > 0)
+    return element.duration;
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      const duration = Number.isFinite(element.duration) && element.duration > 0
+        ? element.duration
+        : Number.isFinite(element.currentTime) && element.currentTime > 0
+          ? element.currentTime
+          : undefined;
+      if (!duration || settled) return;
+      settled = true;
+      cleanup();
+      element.currentTime = 0;
+      resolve(duration);
+    };
+    const timeout = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(undefined);
+    }, 2000);
+    const cleanup = () => {
+      clearTimeout(timeout);
+      element.removeEventListener("durationchange", finish);
+      element.removeEventListener("timeupdate", finish);
+      element.removeEventListener("seeked", finish);
+    };
+    element.addEventListener("durationchange", finish);
+    element.addEventListener("timeupdate", finish);
+    element.addEventListener("seeked", finish);
+    // MediaRecorder WebM blobs frequently omit a duration header. Chromium
+    // discovers the encoded end when asked to seek beyond it.
+    try {
+      element.currentTime = Number.MAX_SAFE_INTEGER;
+    } catch {
+      settled = true;
+      cleanup();
+      resolve(undefined);
+    }
+  });
+}
+
 async function videoThumbnail(video: HTMLVideoElement): Promise<string | undefined> {
   const canvas = document.createElement("canvas");
   const scale = Math.min(1, 320 / Math.max(1, video.videoWidth));
@@ -61,8 +105,8 @@ export async function importMedia(file: File): Promise<ImportedMedia> {
   const id = crypto.randomUUID(); const url = URL.createObjectURL(file);
   try {
     let duration: number | undefined; let width: number | undefined; let height: number | undefined; let thumbnail: string | undefined; let waveform: number[] | undefined;
-    if (kind === "video") { const video = document.createElement("video"); await loadElement(video, url); duration = Number.isFinite(video.duration) ? video.duration : undefined; width = video.videoWidth; height = video.videoHeight; thumbnail = await videoThumbnail(video); video.removeAttribute("src"); video.load(); }
-    if (kind === "audio") { const audio = document.createElement("audio"); await loadElement(audio, url); duration = Number.isFinite(audio.duration) ? audio.duration : undefined; waveform = await audioWaveform(file); audio.removeAttribute("src"); audio.load(); }
+    if (kind === "video") { const video = document.createElement("video"); await loadElement(video, url); duration = await recoverMediaDuration(video); width = video.videoWidth; height = video.videoHeight; thumbnail = await videoThumbnail(video); video.removeAttribute("src"); video.load(); }
+    if (kind === "audio") { const audio = document.createElement("audio"); await loadElement(audio, url); duration = await recoverMediaDuration(audio); waveform = await audioWaveform(file); audio.removeAttribute("src"); audio.load(); }
     if (kind === "image") ({ width, height, thumbnail } = await imageMetadata(url));
     return { blob: file, asset: { id, name: file.name, kind, size: file.size, mimeType: file.type, duration, width, height, thumbnail, waveform, contentHash: await hashBlob(file), storedLocally: true } };
   } finally { URL.revokeObjectURL(url); }

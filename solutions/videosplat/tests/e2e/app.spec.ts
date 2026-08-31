@@ -246,6 +246,19 @@ test("seeks a newly mounted video preview after metadata loads", async ({
     .toBeGreaterThanOrEqual(2);
 });
 
+test("recovers the real duration of browser-recorded WebM media", async ({ page }) => {
+  await page.goto("./");
+  const video = await createTestVideo(page);
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "browser-recording.webm",
+    mimeType: "video/webm",
+    buffer: video,
+  });
+  const duration = Number(await page.getByLabel("Clip duration").inputValue());
+  expect(duration).toBeGreaterThan(0.1);
+  expect(duration).toBeLessThan(2);
+});
+
 test("splits, duplicates, trims, and deletes timeline clips", async ({
   page,
 }) => {

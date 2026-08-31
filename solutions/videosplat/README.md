@@ -36,6 +36,9 @@ recorded frame, apply common crop presets, and either re-encode only that region
 or keep the full recording before adding it to the timeline. Crop re-encoding
 preserves the recording's decoded microphone/system-audio track directly, with a
 Web Audio compatibility fallback where media-element capture is unavailable.
+MediaRecorder WebM files with missing duration headers are probed to their encoded
+end during import so cropped recordings retain their full timeline length instead
+of receiving the generic ten-second fallback.
 
 ## Development
 
