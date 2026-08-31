@@ -132,7 +132,7 @@ Other docs that pair with setup:
 
 ## Recent improvements (v3.1.8)
 
-- **ImageSplat™.** Added `solutions/splatimage-studio/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
+- **ImageSplat™.** Added `solutions/imagesplat/`, a standalone browser-only image editor in the Tools dropdown for quick resize, crop, shape masks, layer duplication, opacity, text alignment, and art-effect work before images move into classroom materials.
 - **SplatImage handles.** Added resize and crop handles so students and teachers can adjust images visually instead of relying on numeric-only controls.
 - **SplatImage selected-copy fix.** Copy PNG now copies the selected object bounds when one or more objects are selected, instead of bringing along the full white canvas.
 - **DrawSplat Hub instance scaffold.** Added the DrawSplat Hub splash page at `hub/index.html`, protected Instances Admin at `hub/admin.html`, plus `hub/hubcampus/` as the first school-specific instance example, with classroom-teacher, campus, and district grouping support, Google OAuth admin access for approved accounts, the new Hub banner, guided admin setup, teacher folder/config creation in Drive, and an Apps Script instance registry starter.

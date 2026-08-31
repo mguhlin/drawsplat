@@ -29,7 +29,7 @@ function relativeHref(fromFile, assetPath) {
 function iconFor(filePath) {
   const file = webPath(filePath);
   if (file === 'games/squirrel-run-game/index.html') return 'assets/favicons/squirrel-run.svg';
-  if (file.startsWith('solutions/splatimage-studio/')) return 'assets/favicons/splatimage-studio.svg';
+  if (file.startsWith('solutions/imagesplat/')) return 'assets/favicons/splatimage-studio.svg';
   if (file.startsWith('solutions/markdown-studio/')) return 'assets/favicons/markdown.svg';
   if (file.startsWith('games/') || file.startsWith('solutions/dotsboxes/')) return 'assets/favicons/games.svg';
   if (file.startsWith('solutions/')) return 'assets/favicons/tools.svg';

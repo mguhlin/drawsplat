@@ -1,5 +1,13 @@
 const { expect, test } = require("@playwright/test");
 
+test("the former ImageSplat URL redirects to the canonical route", async ({
+  page,
+}) => {
+  await page.goto("/solutions/splatimage-studio/");
+  await expect(page).toHaveURL(/\/solutions\/imagesplat\/$/);
+  await expect(page.getByRole("heading", { name: "ImageSplat™" })).toBeVisible();
+});
+
 test("ImageSplat copies the complete annotated canvas", async ({
   page,
 }) => {
@@ -18,7 +26,7 @@ test("ImageSplat copies the complete annotated canvas", async ({
       },
     });
   });
-  await page.goto("/solutions/splatimage-studio/");
+  await page.goto("/solutions/imagesplat/");
 
   await expect(page.getByRole("heading", { name: "ImageSplat™" })).toBeVisible();
 
