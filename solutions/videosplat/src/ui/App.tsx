@@ -49,6 +49,7 @@ import { OptimizerDialog } from "./OptimizerDialog";
 import { ExportDialog } from "./ExportDialog";
 import { addCaptionFile, downloadCaptions } from "../captions/captions";
 import { RecorderDialog } from "./RecorderDialog";
+import { captureErrorMessage } from "../recorder/capture";
 
 type Dialog =
   | "projects"
@@ -68,6 +69,8 @@ export function App() {
   const [showSplash, setShowSplash] = useState(
     () => sessionStorage.getItem("videosplat-splash-seen") !== "1",
   );
+  const [splashPermissionStatus, setSplashPermissionStatus] = useState<string>();
+  const [requestingSplashPermissions, setRequestingSplashPermissions] = useState(false);
   const [project, setProject] = useState(history.current.value);
   const [status, setStatus] = useState(
     "Ready — everything stays on this device",
@@ -797,6 +800,29 @@ export function App() {
     window.addEventListener("pointerup", onUp, { once: true });
   };
 
+  const finishSplash = () => {
+    sessionStorage.setItem("videosplat-splash-seen", "1");
+    setShowSplash(false);
+  };
+
+  const setUpRecording = async () => {
+    setRequestingSplashPermissions(true);
+    setSplashPermissionStatus(undefined);
+    try {
+      if (!navigator.mediaDevices?.getUserMedia)
+        throw new Error("This browser does not support camera and microphone recording.");
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      finishSplash();
+      setDialog("recorder");
+      setStatus("Camera and microphone ready; choose recording options");
+    } catch (error) {
+      setSplashPermissionStatus(captureErrorMessage(error));
+    } finally {
+      setRequestingSplashPermissions(false);
+    }
+  };
+
   return (
     <div className="app-shell">
       {showSplash && (
@@ -808,14 +834,14 @@ export function App() {
           </h1>
           <p>Private video editing. Right in your browser.</p>
           <span>Local-first · No media uploads</span>
-          <button
-            onClick={() => {
-              sessionStorage.setItem("videosplat-splash-seen", "1");
-              setShowSplash(false);
-            }}
-          >
-            Start editing
-          </button>
+          <div className="launch-splash-actions">
+            <button onClick={finishSplash}>Start editing</button>
+            <button className="splash-record" onClick={setUpRecording} disabled={requestingSplashPermissions}>
+              {requestingSplashPermissions ? "Requesting permission…" : "Set up camera & microphone"}
+            </button>
+          </div>
+          <small>Screen sharing is selected securely by your browser when each recording starts.</small>
+          {splashPermissionStatus && <p className="splash-permission-error" role="alert">{splashPermissionStatus}</p>}
         </section>
       )}
       <header className="topbar">
@@ -863,6 +889,10 @@ export function App() {
           >
             Save copy
           </button>
+          <button className="primary" onClick={() => setDialog("export")}>
+            Export video
+          </button>
+          <button onClick={() => setDialog("shortcuts")}>Shortcuts</button>
         </div>
       </header>
       <nav className="toolbar" aria-label="Editor tools">
@@ -965,10 +995,6 @@ export function App() {
         <button onClick={() => mltInput.current?.click()}>Open MLT</button>
         <button onClick={() => downloadMlt(project)}>Save MLT</button>
         <span className="toolbar-spacer" />
-        <button onClick={() => setDialog("shortcuts")}>Shortcuts</button>
-        <button className="primary" onClick={() => setDialog("export")}>
-          Export video
-        </button>
       </nav>
       <main className="workspace">
         <aside

@@ -31,7 +31,10 @@ const createTestVideo = async (page: Page) =>
   );
 
 test.beforeEach(async ({ page }, testInfo) => {
-  if (!testInfo.title.startsWith("loads the local-first editor"))
+  if (
+    !testInfo.title.startsWith("loads the local-first editor") &&
+    !testInfo.title.startsWith("can request camera")
+  )
     await page.addInitScript(() =>
       sessionStorage.setItem("videosplat-splash-seen", "1"),
     );
@@ -62,6 +65,28 @@ test("loads the local-first editor without external requests", async ({
   expect(external).toEqual([]);
 });
 
+test("can request camera and microphone setup from the splash", async ({ page }) => {
+  await page.addInitScript(() => {
+    const stopped: string[] = [];
+    Object.defineProperty(window, "__stoppedSetupTracks", { value: stopped });
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        getUserMedia: () => Promise.resolve({
+          getTracks: () => [
+            { stop: () => stopped.push("video") },
+            { stop: () => stopped.push("audio") },
+          ],
+        }),
+      },
+    });
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Set up camera & microphone" }).click();
+  await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { __stoppedSetupTracks: string[] }).__stoppedSetupTracks)).toEqual(["video", "audio"]);
+});
+
 test("keeps toolbar labels and the project inspector inside the viewport", async ({
   page,
 }) => {
@@ -73,6 +98,16 @@ test("keeps toolbar labels and the project inspector inside the viewport", async
   const inspector = page.locator(".inspector");
 
   await expect(toolbar).toBeVisible();
+  await expect(page.locator(".topbar").getByRole("button", { name: "Export video" })).toBeVisible();
+  await expect(page.locator(".topbar").getByRole("button", { name: "Shortcuts" })).toBeVisible();
+  await page.setViewportSize({ width: 1920, height: 900 });
+  const finalToolbarButton = toolbar.getByRole("button", { name: "Save MLT" });
+  await expect(finalToolbarButton).toBeVisible();
+  expect(
+    await finalToolbarButton.evaluate(
+      (element) => element.getBoundingClientRect().right <= window.innerWidth,
+    ),
+  ).toBe(true);
   await expect(importButton).toHaveCSS("white-space", "nowrap");
   await expect(inspector).toBeVisible();
   expect(

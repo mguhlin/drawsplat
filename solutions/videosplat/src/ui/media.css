@@ -602,13 +602,42 @@
   text-transform: uppercase;
   animation: splash-rise 0.65s 0.2s both;
 }
+.launch-splash-actions {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  animation: splash-rise 0.65s 0.26s both;
+}
 .launch-splash button {
   position: relative;
-  margin-top: 25px;
   border-color: #8f83ff;
   background: #7467ff;
   font-weight: 800;
-  animation: splash-rise 0.65s 0.26s both;
+}
+.launch-splash button.splash-record {
+  border-color: #4dba89;
+  background: #123d2c;
+}
+.launch-splash small {
+  position: relative;
+  max-width: 34rem;
+  margin-top: 13px;
+  color: #aeb8ce;
+}
+.launch-splash .splash-permission-error {
+  position: relative;
+  max-width: 34rem;
+  margin: 12px 18px 0;
+  border: 1px solid #85404b;
+  border-radius: 8px;
+  background: #351820;
+  color: #ffc1c7;
+  padding: 9px 12px;
+  font-size: .82rem;
+}
+@media (width <= 580px) {
+  .launch-splash-actions { flex-direction: column; }
 }
 @keyframes splash-rise {
   from {
@@ -633,6 +662,7 @@
   .launch-splash p,
   .launch-splash > span,
   .launch-splash button,
+  .launch-splash-actions,
   .launch-splash-glow {
     animation: none;
   }
