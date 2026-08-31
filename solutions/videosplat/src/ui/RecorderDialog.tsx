@@ -19,7 +19,7 @@ const clock = (seconds: number) =>
 export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd, onStatus }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const session = useRef<CaptureSession | undefined>(undefined);
-  const [mode, setMode] = useState<CaptureMode>("screen-camera");
+  const [mode, setMode] = useState<CaptureMode>("screen");
   const [microphone, setMicrophone] = useState(true);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
@@ -123,7 +123,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
     </div>
     {error && <p className="recorder-error" role="alert">{error}</p>}
     {state === "setup" && <div className="recorder-settings">
-      <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen-camera">Screen + camera</option><option value="screen">Screen only</option><option value="camera">Camera only</option></select></label>
+      <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
       {microphone && <label>Microphone source<select aria-label="Microphone source" value={microphoneDeviceId} onChange={(event) => setMicrophoneDeviceId(event.target.value)}>{microphones.length ? microphones.map((device, index) => <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>) : <option value="">System default microphone</option>}</select></label>}
       <label className="check"><input type="checkbox" disabled={mode === "camera"} checked={mode !== "camera" && systemAudio} onChange={(event) => setSystemAudio(event.target.checked)} /> Shared tab/system audio when available</label>
@@ -136,6 +136,6 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", onClose, onAdd,
       <button className="danger" onClick={close}>Cancel</button>
     </div>}
     {state === "saving" && <p role="status">Finishing and importing the recording locally…</p>}
-    <p className="hint">Choose your headset under Microphone source. System audio depends on the browser and the surface you share. Chrome and Edge usually offer tab audio; operating-system audio support varies.</p>
+    <p className="hint">Choose your headset under Microphone source. For recording another tab, use Screen only and select that tab in the browser share dialog; recording then continues when you switch to it. Keep VideoSplat visible when using the camera-overlay compositor. System audio support varies by browser and operating system.</p>
   </>;
 }

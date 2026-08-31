@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { captureErrorMessage, microphoneConstraints, supportedRecordingType } from "./capture";
+import { captureErrorMessage, microphoneConstraints, needsCanvasComposition, supportedRecordingType } from "./capture";
 
 describe("local recorder capability helpers", () => {
   it("chooses the first browser-supported WebM format", () => {
@@ -29,5 +29,11 @@ describe("local recorder capability helpers", () => {
       autoGainControl: true,
     });
     expect(microphoneConstraints()).not.toHaveProperty("deviceId");
+  });
+
+  it("uses direct browser video tracks unless a camera overlay is requested", () => {
+    expect(needsCanvasComposition("screen")).toBe(false);
+    expect(needsCanvasComposition("camera")).toBe(false);
+    expect(needsCanvasComposition("screen-camera")).toBe(true);
   });
 });

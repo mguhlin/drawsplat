@@ -23,6 +23,9 @@ Permissions are requested only after the user presses Start recording; captured 
 uses the same private browser storage and editing workflow as imported files. The
 launch checklist grants permission before device discovery, lets the user choose a
 specific headset microphone, and carries that choice into the recorder.
+Screen-only recording preserves the browser display track directly so capture
+continues when the user switches to the selected tab; camera-overlay composition
+is documented as requiring VideoSplat to remain visible.
 
 ## Development
 

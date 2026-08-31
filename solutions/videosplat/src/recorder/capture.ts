@@ -39,6 +39,9 @@ export function microphoneConstraints(deviceId?: string): MediaTrackConstraints 
   };
 }
 
+export const needsCanvasComposition = (mode: CaptureMode) =>
+  mode === "screen-camera";
+
 export function captureErrorMessage(error: unknown) {
   if (error instanceof DOMException) {
     if (error.name === "NotAllowedError")
@@ -71,7 +74,7 @@ export async function startCapture(
   let camera: MediaStream | undefined;
   let microphone: MediaStream | undefined;
   let audioContext: AudioContext | undefined;
-  let frame = 0;
+  let frameTimer = 0;
   let canceled = false;
 
   try {
@@ -147,11 +150,16 @@ export async function startCapture(
         );
         context.restore();
       }
-      frame = requestAnimationFrame(draw);
     };
     draw();
+    frameTimer = window.setInterval(draw, 1000 / (options.frameRate ?? 30));
 
-    const output = previewCanvas.captureStream(options.frameRate ?? 30);
+    // Preserve the browser-owned source track whenever no camera overlay is
+    // required. Unlike canvas animation, display/camera tracks continue while
+    // the VideoSplat tab is hidden and the user works in the tab being recorded.
+    const output = needsCanvasComposition(options.mode)
+      ? previewCanvas.captureStream(options.frameRate ?? 30)
+      : new MediaStream([primaryTrack]);
     const audioStreams = [
       options.systemAudio ? screen : undefined,
       microphone,
@@ -187,7 +195,7 @@ export async function startCapture(
     const screenEnded = () => onScreenEnded?.();
     const cleanup = () => {
       screenTrack?.removeEventListener("ended", screenEnded);
-      cancelAnimationFrame(frame);
+      clearInterval(frameTimer);
       screenVideo?.pause();
       cameraVideo?.pause();
       stopTracks(screen);
@@ -227,7 +235,7 @@ export async function startCapture(
       },
     };
   } catch (error) {
-    cancelAnimationFrame(frame);
+    clearInterval(frameTimer);
     stopTracks(screen);
     stopTracks(camera);
     stopTracks(microphone);
