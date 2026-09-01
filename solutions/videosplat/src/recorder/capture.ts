@@ -45,6 +45,24 @@ export function microphoneConstraints(deviceId?: string): MediaTrackConstraints 
   };
 }
 
+export function displayCaptureOptions(
+  surface: DisplaySurfacePreference = "browser",
+  systemAudio = true,
+  frameRate = 30,
+): DisplayMediaStreamOptions {
+  const prefersCurrentTab = surface === "browser";
+  return {
+    video: {
+      frameRate: { ideal: frameRate },
+      displaySurface: surface,
+    },
+    audio: systemAudio,
+    preferCurrentTab: prefersCurrentTab,
+    selfBrowserSurface: prefersCurrentTab ? "include" : "exclude",
+    surfaceSwitching: "include",
+  } as DisplayMediaStreamOptions;
+}
+
 export const needsCanvasComposition = (mode: CaptureMode, hasBackground = false) =>
   mode === "screen-camera" || (mode === "camera" && hasBackground);
 
@@ -164,16 +182,11 @@ export async function startCapture(
 
   try {
     if (wantsScreen) {
-      const displayOptions = {
-        video: {
-          frameRate: { ideal: options.frameRate ?? 30 },
-          displaySurface: options.displaySurface ?? "browser",
-        },
-        audio: options.systemAudio,
-        preferCurrentTab: options.displaySurface === "browser",
-        selfBrowserSurface: "exclude",
-        surfaceSwitching: "include",
-      } as DisplayMediaStreamOptions;
+      const displayOptions = displayCaptureOptions(
+        options.displaySurface,
+        options.systemAudio,
+        options.frameRate,
+      );
       screen = await navigator.mediaDevices.getDisplayMedia(displayOptions);
     }
     if (wantsCamera) {

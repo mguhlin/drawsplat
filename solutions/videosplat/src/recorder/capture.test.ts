@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { captureErrorMessage, microphoneConstraints, needsCanvasComposition, supportedRecordingType } from "./capture";
+import { captureErrorMessage, displayCaptureOptions, microphoneConstraints, needsCanvasComposition, supportedRecordingType } from "./capture";
 
 describe("local recorder capability helpers", () => {
   it("chooses the first browser-supported WebM format", () => {
@@ -36,5 +36,20 @@ describe("local recorder capability helpers", () => {
     expect(needsCanvasComposition("camera")).toBe(false);
     expect(needsCanvasComposition("camera", true)).toBe(true);
     expect(needsCanvasComposition("screen-camera")).toBe(true);
+  });
+
+  it("does not contradict Chrome's current-tab display constraints", () => {
+    expect(displayCaptureOptions("browser")).toMatchObject({
+      preferCurrentTab: true,
+      selfBrowserSurface: "include",
+    });
+    expect(displayCaptureOptions("window")).toMatchObject({
+      preferCurrentTab: false,
+      selfBrowserSurface: "exclude",
+    });
+    expect(displayCaptureOptions("monitor", false, 60)).toMatchObject({
+      audio: false,
+      video: { frameRate: { ideal: 60 }, displaySurface: "monitor" },
+    });
   });
 });
