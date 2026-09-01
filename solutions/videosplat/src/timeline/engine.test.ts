@@ -126,11 +126,10 @@ describe("timeline engine", () => {
   });
   it("adds, reorders, and removes empty tracks", () => {
     const project = addTrack(fixture(), "video");
-    const added = project.tracks.at(-1)!;
+    const added = project.tracks.find((track) => track.name === "Video 2")!;
     expect(added.name).toBe("Video 2");
-    expect(reorderTrack(project, added.id, -1).tracks.at(-2)?.id).toBe(
-      added.id,
-    );
+    expect(project.tracks.map((track) => track.name)).toEqual(["Video 1", "Video 2", "Audio 1"]);
+    expect(reorderTrack(project, added.id, -1).tracks[0]?.id).toBe(added.id);
     expect(removeEmptyTrack(project, added.id).tracks).toHaveLength(2);
   });
   it("ripple deletes and closes the resulting track gap", () => {

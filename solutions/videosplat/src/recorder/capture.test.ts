@@ -34,6 +34,7 @@ describe("local recorder capability helpers", () => {
   it("uses direct browser video tracks unless a camera overlay is requested", () => {
     expect(needsCanvasComposition("screen")).toBe(false);
     expect(needsCanvasComposition("camera")).toBe(false);
+    expect(needsCanvasComposition("camera", true)).toBe(true);
     expect(needsCanvasComposition("screen-camera")).toBe(true);
   });
 });

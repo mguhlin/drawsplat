@@ -1,3 +1,5 @@
+import { FilesetResolver, ImageSegmenter, type ImageSegmenterResult } from "@mediapipe/tasks-vision";
+
 export type CaptureMode = "screen" | "camera" | "screen-camera";
 export type DisplaySurfacePreference = "browser" | "window" | "monitor";
 
@@ -11,6 +13,7 @@ export interface CaptureOptions {
   frameRate?: number;
   countdownSeconds?: number;
   displaySurface?: DisplaySurfacePreference;
+  backgroundImage?: ImageBitmap;
 }
 
 export interface CaptureSession {
@@ -42,8 +45,86 @@ export function microphoneConstraints(deviceId?: string): MediaTrackConstraints 
   };
 }
 
-export const needsCanvasComposition = (mode: CaptureMode) =>
-  mode === "screen-camera";
+export const needsCanvasComposition = (mode: CaptureMode, hasBackground = false) =>
+  mode === "screen-camera" || (mode === "camera" && hasBackground);
+
+let segmenterPromise: Promise<ImageSegmenter> | undefined;
+
+const getSegmenter = () => segmenterPromise ??= (async () => {
+  const vision = await FilesetResolver.forVisionTasks("./mediapipe/wasm");
+  return ImageSegmenter.createFromOptions(vision, {
+    baseOptions: { modelAssetPath: "./mediapipe/models/selfie_segmenter.tflite" },
+    runningMode: "VIDEO",
+    outputConfidenceMasks: true,
+    outputCategoryMask: false,
+  });
+})();
+
+const drawCover = (
+  context: CanvasRenderingContext2D,
+  image: CanvasImageSource,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) => {
+  const sourceWidth = image instanceof ImageBitmap ? image.width : 1;
+  const sourceHeight = image instanceof ImageBitmap ? image.height : 1;
+  const scale = Math.max(width / sourceWidth, height / sourceHeight);
+  const drawnWidth = sourceWidth * scale;
+  const drawnHeight = sourceHeight * scale;
+  context.drawImage(image, x + (width - drawnWidth) / 2, y + (height - drawnHeight) / 2, drawnWidth, drawnHeight);
+};
+
+const createBackgroundCompositor = async (background: ImageBitmap) => {
+  const segmenter = await getSegmenter();
+  const foreground = document.createElement("canvas");
+  const maskCanvas = document.createElement("canvas");
+  const foregroundContext = foreground.getContext("2d")!;
+  const maskContext = maskCanvas.getContext("2d")!;
+  let lastMask: ImageData | undefined;
+  let lastSegmentedAt = 0;
+
+  return (context: CanvasRenderingContext2D, video: HTMLVideoElement, x: number, y: number, width: number, height: number) => {
+    foreground.width = width;
+    foreground.height = height;
+    foregroundContext.globalCompositeOperation = "source-over";
+    foregroundContext.drawImage(video, 0, 0, width, height);
+
+    const now = performance.now();
+    if (now - lastSegmentedAt >= 66 || !lastMask) {
+      const result: ImageSegmenterResult = segmenter.segmentForVideo(video, now);
+      const mask = result.confidenceMasks?.[0];
+      if (mask) {
+        const values = mask.getAsFloat32Array();
+        const pixels = new Uint8ClampedArray(values.length * 4);
+        for (let index = 0; index < values.length; index++) {
+          const alpha = Math.max(0, Math.min(255, Math.round((values[index] - .15) / .7 * 255)));
+          pixels[index * 4] = pixels[index * 4 + 1] = pixels[index * 4 + 2] = 255;
+          pixels[index * 4 + 3] = alpha;
+        }
+        lastMask = new ImageData(pixels, mask.width, mask.height);
+        lastSegmentedAt = now;
+      }
+      result.close();
+    }
+
+    if (lastMask) {
+      maskCanvas.width = lastMask.width;
+      maskCanvas.height = lastMask.height;
+      maskContext.putImageData(lastMask, 0, 0);
+      foregroundContext.globalCompositeOperation = "destination-in";
+      foregroundContext.drawImage(maskCanvas, 0, 0, width, height);
+    }
+    context.save();
+    context.beginPath();
+    context.rect(x, y, width, height);
+    context.clip();
+    drawCover(context, background, x, y, width, height);
+    context.drawImage(foreground, x, y, width, height);
+    context.restore();
+  };
+};
 
 export function captureErrorMessage(error: unknown) {
   if (error instanceof DOMException) {
@@ -133,11 +214,18 @@ export async function startCapture(
     };
     const screenVideo = await makeVideo(screen);
     const cameraVideo = await makeVideo(camera);
+    const backgroundCompositor = options.backgroundImage
+      ? await createBackgroundCompositor(options.backgroundImage)
+      : undefined;
     const draw = () => {
       context.fillStyle = "#050609";
       context.fillRect(0, 0, width, height);
       const primary = screenVideo ?? cameraVideo;
-      if (primary) context.drawImage(primary, 0, 0, width, height);
+      if (primary) {
+        if (!screenVideo && cameraVideo && backgroundCompositor)
+          backgroundCompositor(context, cameraVideo, 0, 0, width, height);
+        else context.drawImage(primary, 0, 0, width, height);
+      }
       if (screenVideo && cameraVideo) {
         const bubbleWidth = Math.round(width * 0.22);
         const bubbleHeight = Math.round((bubbleWidth * 9) / 16);
@@ -152,13 +240,9 @@ export async function startCapture(
           Math.max(8, Math.round(width * 0.012)),
         );
         context.clip();
-        context.drawImage(
-          cameraVideo,
-          width - bubbleWidth - margin,
-          height - bubbleHeight - margin,
-          bubbleWidth,
-          bubbleHeight,
-        );
+        if (backgroundCompositor)
+          backgroundCompositor(context, cameraVideo, width - bubbleWidth - margin, height - bubbleHeight - margin, bubbleWidth, bubbleHeight);
+        else context.drawImage(cameraVideo, width - bubbleWidth - margin, height - bubbleHeight - margin, bubbleWidth, bubbleHeight);
         context.restore();
       }
     };
@@ -168,7 +252,7 @@ export async function startCapture(
     // Preserve the browser-owned source track whenever no camera overlay is
     // required. Unlike canvas animation, display/camera tracks continue while
     // the VideoSplat tab is hidden and the user works in the tab being recorded.
-    const output = needsCanvasComposition(options.mode)
+    const output = needsCanvasComposition(options.mode, Boolean(options.backgroundImage))
       ? previewCanvas.captureStream(options.frameRate ?? 30)
       : new MediaStream([primaryTrack]);
     const audioStreams = [
@@ -214,6 +298,7 @@ export async function startCapture(
       stopTracks(microphone);
       stopTracks(output);
       void audioContext?.close();
+      options.backgroundImage?.close();
     };
     if (screenTrack && onScreenEnded)
       screenTrack.addEventListener("ended", screenEnded, { once: true });
@@ -256,6 +341,7 @@ export async function startCapture(
     stopTracks(camera);
     stopTracks(microphone);
     void audioContext?.close();
+    options.backgroundImage?.close();
     throw error;
   }
 }

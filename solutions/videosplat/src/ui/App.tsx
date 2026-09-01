@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useMemo,
   useRef,
@@ -65,6 +66,7 @@ const formatBytes = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.round(bytes / 1024)} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+const APP_VERSION = "v1";
 
 export function App() {
   const history = useRef(new History(createProject()));
@@ -86,6 +88,7 @@ export function App() {
   );
   const [savedAt, setSavedAt] = useState<string>();
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [openMenu, setOpenMenu] = useState<"file" | "edit" | "about">();
   const [recent, setRecent] = useState<VideoSplatProject[]>([]);
   const [storage, setStorage] = useState<{
     usage: number;
@@ -122,10 +125,34 @@ export function App() {
   const mediaInput = useRef<HTMLInputElement>(null);
   const mltInput = useRef<HTMLInputElement>(null);
   const captionInput = useRef<HTMLInputElement>(null);
+  const languageMenu = useRef<HTMLDivElement>(null);
   const previewMedia = useRef<HTMLVideoElement | HTMLAudioElement>(null);
   const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
   const capabilities = useMemo(getCapabilities, []);
+
+  useEffect(() => {
+    const placeLanguageControl = () => {
+      const control = document.querySelector<HTMLElement>(".ds-language-control");
+      if (control && languageMenu.current && control.parentElement !== languageMenu.current) {
+        control.classList.add("ds-language-inline");
+        languageMenu.current.append(control);
+      }
+    };
+    placeLanguageControl();
+    const observer = new MutationObserver(placeLanguageControl);
+    observer.observe(document.body, { childList: true });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!openMenu) return;
+    const close = (event: PointerEvent) => {
+      if (!(event.target as Element).closest(".editor-menu")) setOpenMenu(undefined);
+    };
+    window.addEventListener("pointerdown", close);
+    return () => window.removeEventListener("pointerdown", close);
+  }, [openMenu]);
 
   const commit = (next: VideoSplatProject) => {
     history.current.commit(next);
@@ -174,9 +201,10 @@ export function App() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && dialog) {
+      if (event.key === "Escape" && (dialog || openMenu)) {
         event.preventDefault();
         setDialog(null);
+        setOpenMenu(undefined);
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
@@ -261,7 +289,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [project, selectedClipId, time, rippleEditing, dialog]);
+  }, [project, selectedClipId, time, rippleEditing, dialog, openMenu]);
 
   useEffect(() => {
     for (const track of project.tracks.filter((item) => item.kind === "audio"))
@@ -575,6 +603,10 @@ export function App() {
     return `00:${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}:${String(frames).padStart(2, "0")}`;
   };
   const totalDuration = projectDuration(project);
+  const menuAction = (action: () => void) => {
+    action();
+    setOpenMenu(undefined);
+  };
   const pixelsPerSecond = 42 * timelineZoom;
   const timelineWidth = Math.max(
     700,
@@ -637,7 +669,7 @@ export function App() {
       commit(result.project);
       setClipSelection(undefined);
       setSelectedClipId(undefined);
-      setStatus(`${result.clipboard.duration.toFixed(1)} second range cut and copied`);
+      setStatus(`${result.clipboard.duration.toFixed(1)} second range removed from video and its audio; excerpt copied`);
       return;
     }
     clipboard.current = structuredClone(selectedLocation.clip);
@@ -908,6 +940,7 @@ export function App() {
           <h1>
             VideoSplat<sup>™</sup>
           </h1>
+          <b className="splash-version">{APP_VERSION}</b>
           <p>Private video editing. Right in your browser.</p>
           <span>Local-first · No media uploads</span>
           <div className="splash-recording-steps">
@@ -967,49 +1000,47 @@ export function App() {
             onChange={(event) => rename(event.target.value)}
           />
         </label>
-        <div className="top-actions">
-          <button
-            className="privacy-badge"
-            onClick={async () => {
-              setStorage(await storageEstimate());
-              setDialog("privacy");
-            }}
-          >
-            <span aria-hidden="true">●</span> Local only
-          </button>
-          <button
-            onClick={() => {
-              refreshProjects();
-              setDialog("projects");
-            }}
-          >
-            Open
-          </button>
-          <button
-            className="primary"
-            onClick={() => {
-              downloadProject(project);
-              setStatus("Project copy downloaded");
-            }}
-          >
-            Save copy
-          </button>
-          <button className="primary" onClick={() => setDialog("export")}>
-            Export video
-          </button>
-          <button onClick={() => setDialog("shortcuts")}>Shortcuts</button>
-        </div>
+        <div className="top-actions"><span className="local-indicator"><i aria-hidden="true">●</i> Local only</span></div>
       </header>
       <nav className="toolbar" aria-label="Editor tools">
-        <button className="record-button" aria-label="Record" onClick={() => setDialog("recorder")}>● Record</button>
-        <button
-          onClick={() => mediaInput.current?.click()}
-          disabled={importing}
-        >
-          ＋ {importing ? "Importing…" : "Import media"}
-        </button>
-        <button onClick={() => setDialog("optimizer")}>⇩ Optimize video</button>
+        <div className="editor-menus" role="menubar" aria-label="Application menu">
+          <div className="editor-menu">
+            <button role="menuitem" aria-haspopup="menu" aria-expanded={openMenu === "file"} onClick={() => setOpenMenu(openMenu === "file" ? undefined : "file")}>File</button>
+            {openMenu === "file" && <div className="editor-menu-popover" role="menu">
+              <button role="menuitem" onClick={() => menuAction(newProject)}>New project</button>
+              <button role="menuitem" onClick={() => menuAction(() => { void refreshProjects(); setDialog("projects"); })}>Open project…</button>
+              <button role="menuitem" onClick={() => menuAction(() => { downloadProject(project); setStatus("Project copy downloaded"); })}>Save project copy</button>
+              <hr />
+              <button role="menuitem" disabled={importing} onClick={() => menuAction(() => mediaInput.current?.click())}>{importing ? "Importing…" : "Import media…"}</button>
+              <button role="menuitem" onClick={() => menuAction(() => setDialog("optimizer"))}>Optimize video…</button>
+              <button role="menuitem" onClick={() => menuAction(() => setDialog("export"))}>Export video…</button>
+            </div>}
+          </div>
+          <div className="editor-menu">
+            <button role="menuitem" aria-haspopup="menu" aria-expanded={openMenu === "edit"} onClick={() => setOpenMenu(openMenu === "edit" ? undefined : "edit")}>Edit</button>
+            {openMenu === "edit" && <div className="editor-menu-popover" role="menu">
+              <button role="menuitemcheckbox" aria-checked={rippleEditing} onClick={() => setRippleEditing((value) => !value)}>{rippleEditing ? "✓ " : "　"}Ripple editing</button>
+              <button role="menuitemcheckbox" aria-checked={snapping} onClick={() => setSnapping((value) => !value)}>{snapping ? "✓ " : "　"}Timeline snapping</button>
+              <hr />
+              <button role="menuitem" onClick={() => menuAction(() => captionInput.current?.click())}>Import captions…</button>
+              <button role="menuitem" onClick={() => menuAction(() => { try { downloadCaptions(project, "srt"); setStatus("SRT captions downloaded"); } catch (error) { setStatus(error instanceof Error ? error.message : "Caption export failed"); } })}>Save captions as SRT</button>
+              <button role="menuitem" onClick={() => menuAction(() => mltInput.current?.click())}>Open MLT…</button>
+              <button role="menuitem" onClick={() => menuAction(() => downloadMlt(project))}>Save MLT</button>
+              <hr />
+              <button role="menuitem" onClick={() => menuAction(() => setDialog("shortcuts"))}>Keyboard shortcuts</button>
+            </div>}
+          </div>
+          <div className="editor-menu">
+            <button role="menuitem" aria-haspopup="menu" aria-expanded={openMenu === "about"} onClick={() => setOpenMenu(openMenu === "about" ? undefined : "about")}>About</button>
+            <div className="editor-menu-popover about-menu" role="menu" hidden={openMenu !== "about"}>
+              <div className="about-version">VideoSplat™ <strong>{APP_VERSION}</strong></div>
+              <button role="menuitem" onClick={() => menuAction(() => { void storageEstimate().then(setStorage); setDialog("privacy"); })}>View privacy details</button>
+              <div className="menu-language" ref={languageMenu} />
+            </div>
+          </div>
+        </div>
         <span className="divider" />
+        <button className="record-button" aria-label="Record" onClick={() => setDialog("recorder")}>● Record</button>
         <button
           onClick={() => setProject(history.current.undo())}
           disabled={!history.current.canUndo}
@@ -1035,7 +1066,7 @@ export function App() {
           Delete
         </button>
         <button onClick={cutSelected} disabled={!selectedClipId}>
-          Cut
+          {clipSelection ? "Remove range" : "Cut"}
         </button>
         <button onClick={copySelected} disabled={!selectedClipId}>
           Copy
@@ -1052,53 +1083,7 @@ export function App() {
           <option value="insert">Insert</option>
           <option value="overwrite">Overwrite</option>
         </select>
-        <button
-          aria-pressed={rippleEditing}
-          onClick={() => setRippleEditing((value) => !value)}
-        >
-          Ripple {rippleEditing ? "on" : "off"}
-        </button>
-        <button
-          className={snapping ? "active" : ""}
-          aria-pressed={snapping}
-          onClick={() => setSnapping((value) => !value)}
-        >
-          Snap {snapping ? "on" : "off"}
-        </button>
-        <button
-          aria-label="Add video track"
-          onClick={() => commit(addTrack(project, "video"))}
-        >
-          ＋ Video track
-        </button>
-        <button
-          aria-label="Add audio track"
-          onClick={() => commit(addTrack(project, "audio"))}
-        >
-          ＋ Audio track
-        </button>
         <button onClick={addTitle}>＋ Title</button>
-        <button onClick={() => captionInput.current?.click()}>
-          Import captions
-        </button>
-        <button
-          onClick={() => {
-            try {
-              downloadCaptions(project, "srt");
-              setStatus("SRT captions downloaded");
-            } catch (error) {
-              setStatus(
-                error instanceof Error
-                  ? error.message
-                  : "Caption export failed",
-              );
-            }
-          }}
-        >
-          Save SRT
-        </button>
-        <button onClick={() => mltInput.current?.click()}>Open MLT</button>
-        <button onClick={() => downloadMlt(project)}>Save MLT</button>
         <span className="toolbar-spacer" />
       </nav>
       <main className="workspace">
@@ -1294,7 +1279,7 @@ export function App() {
               </div>
             ) : (
               <div className="canvas-mark">
-                <span>V</span>
+                <span><img src="./icon.svg" alt="" /></span>
                 <p>
                   {playing
                     ? "Timeline gap"
@@ -2029,9 +2014,9 @@ export function App() {
                   setRangeSelecting((value) => !value);
                   setClipSelection(undefined);
                 }}
-                title="Drag across a clip waveform to select part of it"
+                title="Select range: drag across a video clip, then remove the highlighted excerpt"
               >
-                {rangeSelecting ? "↔✓" : "↔"}
+                {rangeSelecting ? "Range ✓" : "Range"}
               </button>
             </div>
             <div
@@ -2056,11 +2041,10 @@ export function App() {
               )}
             </div>
           </div>
-          {project.tracks.map((track) => (
+          {project.tracks.map((track, trackIndex) => <Fragment key={track.id}>
             <div
               className={`track ${track.locked ? "locked" : ""}`}
               style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
-              key={track.id}
             >
               <div className="track-label">
                 <input
@@ -2234,7 +2218,18 @@ export function App() {
                 })}
               </div>
             </div>
-          ))}
+            {(track.kind === "video" || track.kind === "audio") && project.tracks[trackIndex + 1]?.kind !== track.kind && <div
+              className={`track-add-row ${track.kind}`}
+              style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
+            >
+              <div><button
+                aria-label={`Add ${track.kind} track`}
+                title={`Add ${track.kind} track`}
+                onClick={() => commit(addTrack(project, track.kind as "video" | "audio"))}
+              >＋</button></div>
+              <span aria-hidden="true" />
+            </div>}
+          </Fragment>)}
         </section>
       </main>
       <footer className="statusbar">

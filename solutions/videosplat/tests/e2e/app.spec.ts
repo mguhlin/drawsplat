@@ -30,6 +30,11 @@ const createTestVideo = async (page: Page) =>
     }),
   );
 
+const openPrivacy = async (page: Page) => {
+  await page.getByRole("menuitem", { name: "About" }).click();
+  await page.getByRole("menuitem", { name: "View privacy details" }).click();
+};
+
 test.beforeEach(async ({ page }, testInfo) => {
   if (
     !testInfo.title.startsWith("loads the local-first editor") &&
@@ -53,11 +58,12 @@ test("loads the local-first editor without external requests", async ({
   await expect(
     page.getByRole("heading", { name: "VideoSplat™" }),
   ).toBeVisible();
+  await expect(page.locator(".splash-version")).toHaveText("v1");
   await page.waitForTimeout(2000);
   await expect(page.getByLabel("VideoSplat loading")).toBeVisible();
   await page.getByRole("button", { name: "Edit without recording setup" }).click();
   await expect(page.getByLabel("VideoSplat loading")).toBeHidden();
-  await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
+  await expect(page.locator(".local-indicator")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Create a new VideoSplat project" }),
   ).toContainText("VideoSplat™");
@@ -100,21 +106,17 @@ test("keeps toolbar labels and the project inspector inside the viewport", async
   await page.goto("./");
 
   const toolbar = page.getByRole("navigation", { name: "Editor tools" });
-  const importButton = page.getByRole("button", { name: "Import media" });
   const inspector = page.locator(".inspector");
 
   await expect(toolbar).toBeVisible();
-  await expect(page.locator(".topbar").getByRole("button", { name: "Export video" })).toBeVisible();
-  await expect(page.locator(".topbar").getByRole("button", { name: "Shortcuts" })).toBeVisible();
-  await page.setViewportSize({ width: 1920, height: 900 });
-  const finalToolbarButton = toolbar.getByRole("button", { name: "Save MLT" });
-  await expect(finalToolbarButton).toBeVisible();
-  expect(
-    await finalToolbarButton.evaluate(
-      (element) => element.getBoundingClientRect().right <= window.innerWidth,
-    ),
-  ).toBe(true);
-  await expect(importButton).toHaveCSS("white-space", "nowrap");
+  await expect(page.getByRole("menuitem", { name: "File" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Edit" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "About" })).toBeVisible();
+  await page.getByRole("menuitem", { name: "About" }).click();
+  await expect(page.locator(".about-version")).toContainText("v1");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Add video track" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add audio track" })).toBeVisible();
   await expect(inspector).toBeVisible();
   expect(
     await inspector.evaluate(
@@ -165,7 +167,7 @@ test("reloads offline and supports keyboard dialog dismissal", async ({
   await page.goto("./");
   await page.evaluate(() => navigator.serviceWorker.ready);
   await expect(page.locator('[role="status"]')).toBeVisible();
-  await page.getByRole("button", { name: "Local only" }).click();
+  await openPrivacy(page);
   await expect(
     page.getByRole("heading", { name: "Privacy & device storage" }),
   ).toBeVisible();
@@ -182,7 +184,7 @@ test("reloads offline and supports keyboard dialog dismissal", async ({
     .toBe(true);
   await context.setOffline(true);
   await page.reload();
-  await expect(page.getByRole("button", { name: "Local only" })).toBeVisible();
+  await expect(page.locator(".local-indicator")).toBeVisible();
 });
 
 test("renames, autosaves, and exposes privacy details", async ({ page }) => {
@@ -190,7 +192,7 @@ test("renames, autosaves, and exposes privacy details", async ({ page }) => {
   const name = page.getByLabel("Project name");
   await name.fill("Private interview");
   await expect(page.getByText("Autosaved locally")).toBeVisible();
-  await page.getByRole("button", { name: "Local only" }).click();
+  await openPrivacy(page);
   await expect(
     page.getByRole("heading", { name: "Privacy & device storage" }),
   ).toBeVisible();
@@ -301,7 +303,8 @@ test("splits, duplicates, trims, and deletes timeline clips", async ({
 
 test("opens the offline video optimizer", async ({ page }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Optimize video" }).click();
+  await page.getByRole("menuitem", { name: "File" }).click();
+  await page.getByRole("menuitem", { name: "Optimize video…" }).click();
   await expect(
     page.getByRole("heading", { name: "Optimize video locally" }),
   ).toBeVisible();
@@ -373,10 +376,9 @@ test("respects timeline gaps and exposes precision controls", async ({
   await page.getByRole("button", { name: "Move Overlay up" }).click();
   await page.getByRole("button", { name: "Remove Overlay" }).click();
   await expect(page.locator(".track")).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Snap on" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await page.getByRole("menuitem", { name: "Edit" }).click();
+  await expect(page.getByRole("menuitemcheckbox", { name: "Timeline snapping" })).toHaveAttribute("aria-checked", "true");
+  await page.keyboard.press("Escape");
 });
 
 test("imports MLT XML locally and reports blocked resources", async ({
@@ -413,10 +415,9 @@ test("supports clipboard edits and ripple or lift deletion", async ({
   await expect(page.getByText("pasted using insert edit")).toBeVisible();
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.getByText("track gap closed")).toBeVisible();
-  await page.getByRole("button", { name: "Ripple on" }).click();
-  await expect(
-    page.getByRole("button", { name: "Ripple off" }),
-  ).toHaveAttribute("aria-pressed", "false");
+  await page.getByRole("menuitem", { name: "Edit" }).click();
+  await page.getByRole("menuitemcheckbox", { name: "Ripple editing" }).click();
+  await expect(page.getByRole("menuitemcheckbox", { name: "Ripple editing" })).toHaveAttribute("aria-checked", "false");
 });
 
 test("selects a clip waveform range and pastes only that section", async ({ page }) => {
@@ -492,7 +493,8 @@ test("imports captions and exposes the local composition exporter", async ({
   await expect(page.getByText("local.srt imported locally")).toBeVisible();
   await expect(page.locator(".title-layer")).toHaveText("Local caption");
   await expect(page.locator(".timeline-clip.caption")).toHaveCount(1);
-  await page.getByRole("button", { name: "Export video" }).click();
+  await page.getByRole("menuitem", { name: "File" }).click();
+  await page.getByRole("menuitem", { name: "Export video…" }).click();
   await expect(
     page.getByRole("heading", { name: "Export video locally" }),
   ).toBeVisible();

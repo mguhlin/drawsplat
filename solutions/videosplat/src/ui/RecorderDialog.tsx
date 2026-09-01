@@ -28,6 +28,8 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
   const [systemAudio, setSystemAudio] = useState(true);
+  const [backgroundFile, setBackgroundFile] = useState<File>();
+  const [backgroundUrl, setBackgroundUrl] = useState("");
   const [countdown, setCountdown] = useState(3);
   const [counting, setCounting] = useState<number>();
   const [elapsed, setElapsed] = useState(0);
@@ -51,6 +53,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     session.current?.cancel();
     if (recordingUrl) URL.revokeObjectURL(recordingUrl);
   }, [recordingUrl]);
+
+  useEffect(() => () => {
+    if (backgroundUrl) URL.revokeObjectURL(backgroundUrl);
+  }, [backgroundUrl]);
 
   useEffect(() => {
     const refresh = async () => {
@@ -93,6 +99,9 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const begin = async () => {
     setError(undefined);
     try {
+      const backgroundImage = mode !== "screen" && backgroundFile
+        ? await createImageBitmap(backgroundFile)
+        : undefined;
       session.current = await startCapture(
         {
           mode,
@@ -101,6 +110,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
           systemAudio: mode !== "camera" && systemAudio,
           countdownSeconds: countdown,
           displaySurface,
+          backgroundImage,
         },
         canvas.current!,
         () => void stop(),
@@ -225,6 +235,28 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         <p>The browser's secure chooser opens next and makes the final selection.</p>
       </fieldset>}
       {microphone && <label>Microphone source<select aria-label="Microphone source" value={microphoneDeviceId} onChange={(event) => setMicrophoneDeviceId(event.target.value)}>{microphones.length ? microphones.map((device, index) => <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>) : <option value="">System default microphone</option>}</select></label>}
+      {mode !== "screen" && <div className="camera-background-setting">
+        <label>Virtual background<input
+          aria-label="Virtual background image"
+          type="file"
+          accept="image/*"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            if (backgroundUrl) URL.revokeObjectURL(backgroundUrl);
+            setBackgroundFile(file);
+            setBackgroundUrl(file ? URL.createObjectURL(file) : "");
+          }}
+        /></label>
+        {backgroundUrl && <div className="camera-background-preview">
+          <img src={backgroundUrl} alt="Selected virtual background" />
+          <button type="button" onClick={() => {
+            URL.revokeObjectURL(backgroundUrl);
+            setBackgroundFile(undefined);
+            setBackgroundUrl("");
+          }}>Remove</button>
+        </div>}
+        <small>Your image and person-segmentation processing stay on this device.</small>
+      </div>}
       <label className="check"><input type="checkbox" disabled={mode === "camera"} checked={mode !== "camera" && systemAudio} onChange={(event) => setSystemAudio(event.target.checked)} /> Shared tab/system audio when available</label>
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
       <button className="primary wide" disabled={counting !== undefined} onClick={begin}>{counting ? "Get ready…" : "Start recording"}</button>

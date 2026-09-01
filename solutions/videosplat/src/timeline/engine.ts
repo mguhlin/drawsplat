@@ -378,7 +378,13 @@ export function addTrack(
     muted: false,
     clips: [],
   };
-  return touchProject(project, { tracks: [...project.tracks, track] });
+  const tracks = [...project.tracks];
+  let lastMatching = -1;
+  tracks.forEach((item, index) => {
+    if (item.kind === kind) lastMatching = index;
+  });
+  tracks.splice(lastMatching + 1, 0, track);
+  return touchProject(project, { tracks });
 }
 
 export function reorderTrack(
