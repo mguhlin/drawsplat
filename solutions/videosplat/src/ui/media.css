@@ -689,6 +689,13 @@
 .export-preflight .warning {
   color: #f6c760;
 }
+.export-error {
+  padding: 0.75rem;
+  border: 1px solid #a43d49;
+  border-radius: 0.5rem;
+  color: #ffc3ca;
+  background: #351920;
+}
 @media (max-width: 580px) {
   .optimizer-grid,
   .optimizer-results {

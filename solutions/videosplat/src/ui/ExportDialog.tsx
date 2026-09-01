@@ -17,6 +17,18 @@ const bytes = (value: number) =>
   value < 1024 * 1024
     ? `${Math.round(value / 1024)} KB`
     : `${(value / 1024 / 1024).toFixed(1)} MB`;
+const exportName = (projectName: string, format: ExportOptions["format"]) =>
+  `${projectName.replace(/[^a-z0-9-_]+/gi, "-") || "videosplat-export"}.${format}`;
+const saveBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1_000);
+};
 export function ExportDialog({
   project,
   urls,
@@ -38,8 +50,10 @@ export function ExportDialog({
   });
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<Blob>();
+  const [result, setResult] = useState<{ blob: Blob; format: ExportOptions["format"] }>();
   const [report, setReport] = useState<ExportReport>();
+  const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
   const issues = useMemo(
     () => exportPreflight(project, urls, options),
     [project, urls, options],
@@ -50,6 +64,8 @@ export function ExportDialog({
     setBusy(true);
     setResult(undefined);
     setReport(undefined);
+    setError("");
+    setSaved(false);
     setProgress(0);
     controller.current = new AbortController();
     try {
@@ -62,23 +78,29 @@ export function ExportDialog({
         setProgress,
         controller.current.signal,
       );
-      setResult(blob);
+      const format = options.format;
+      setResult({ blob, format });
       setReport(await createExportReport(project, options, blob, issues));
-      onStatus(`Local export ready · ${bytes(blob.size)}`);
+      saveBlob(blob, exportName(project.name, format));
+      setSaved(true);
+      onStatus(`Export saved to Downloads · ${bytes(blob.size)}`);
     } catch (error) {
-      onStatus(error instanceof Error ? error.message : "Export failed");
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "Export failed";
+      setError(message);
+      onStatus(message);
     } finally {
       setBusy(false);
     }
   };
   const download = () => {
     if (!result) return;
-    const url = URL.createObjectURL(result);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${project.name.replace(/[^a-z0-9-_]+/gi, "-") || "videosplat-export"}.${options.format}`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    saveBlob(result.blob, exportName(project.name, result.format));
+    setSaved(true);
   };
   return (
     <>
@@ -237,7 +259,11 @@ export function ExportDialog({
       {busy && (
         <>
           <progress max="1" value={progress} />
-          <p>{Math.round(progress * 100)}% rendered</p>
+          <p role="status">
+            {options.format !== "webm" && progress >= 0.85
+              ? `Converting to ${options.format.toUpperCase()} · ${Math.round((progress - 0.85) / 0.15 * 100)}%`
+              : `Rendering timeline · ${Math.round(progress * (options.format === "webm" ? 100 : 100 / 0.85))}%`}
+          </p>
           <button
             className="danger wide"
             onClick={() => controller.current?.abort()}
@@ -246,6 +272,7 @@ export function ExportDialog({
           </button>
         </>
       )}
+      {error && <div className="export-error" role="alert">Export failed: {error}</div>}
       {!busy && !result && (
         <button className="primary wide" onClick={run} disabled={hasErrors}>
           Render local {options.format.toUpperCase()}
@@ -253,9 +280,9 @@ export function ExportDialog({
       )}
       {result && (
         <div className="optimizer-results">
-          <strong>Export ready · {bytes(result.size)}</strong>
+          <strong>{saved ? "Saved to your Downloads folder" : "Export ready"} · {bytes(result.blob.size)}</strong>
           <button className="primary" onClick={download}>
-            Download {options.format.toUpperCase()}
+            Save another {result.format.toUpperCase()} copy
           </button>
           <button onClick={run}>Render again</button>
           {report && (

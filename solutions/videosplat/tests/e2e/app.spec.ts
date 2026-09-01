@@ -510,7 +510,10 @@ test("imports captions and exposes the local composition exporter", async ({
   await page.getByLabel("Export frame rate").fill("10");
   await page.getByText("Include timeline audio").click();
   await page.getByRole("button", { name: "Render local WebM" }).click();
-  await expect(page.getByRole("button", { name: "Download WebM" })).toBeVisible(
-    { timeout: 10000 },
-  );
+  await expect(page.getByText("Saved to your Downloads folder")).toBeVisible({
+    timeout: 10000,
+  });
+  await expect(
+    page.getByRole("button", { name: "Save another WebM copy" }),
+  ).toBeVisible();
 });
