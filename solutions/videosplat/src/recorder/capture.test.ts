@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { captureErrorMessage, displayCaptureOptions, microphoneConstraints, needsCanvasComposition, supportedRecordingType } from "./capture";
+import { captureErrorMessage, displayCaptureOptions, isScreenSelectionCanceled, microphoneConstraints, needsCanvasComposition, supportedRecordingType } from "./capture";
 
 describe("local recorder capability helpers", () => {
   it("chooses the first browser-supported WebM format", () => {
@@ -19,6 +19,11 @@ describe("local recorder capability helpers", () => {
     expect(captureErrorMessage(new Error("Encoder unavailable"))).toBe(
       "Encoder unavailable",
     );
+  });
+
+  it("distinguishes a canceled screen chooser from a recording failure", () => {
+    expect(isScreenSelectionCanceled(new DOMException("Canceled", "AbortError"))).toBe(true);
+    expect(isScreenSelectionCanceled(new DOMException("Denied", "NotAllowedError"))).toBe(false);
   });
 
   it("requests the chosen headset microphone exactly", () => {

@@ -157,6 +157,9 @@ export function captureErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Recording could not start.";
 }
 
+export const isScreenSelectionCanceled = (error: unknown) =>
+  error instanceof DOMException && error.name === "AbortError";
+
 const stopTracks = (stream?: MediaStream) =>
   stream?.getTracks().forEach((track) => track.stop());
 

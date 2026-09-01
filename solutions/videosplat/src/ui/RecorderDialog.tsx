@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import {
   captureErrorMessage,
+  isScreenSelectionCanceled,
   startCapture,
   type CaptureMode,
   type CaptureSession,
@@ -107,7 +108,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
           mode,
           microphone,
           microphoneDeviceId: microphoneDeviceId || undefined,
-          systemAudio: mode !== "camera" && systemAudio,
+          systemAudio: mode !== "camera" && displaySurface === "browser" && systemAudio,
           countdownSeconds: countdown,
           displaySurface,
           backgroundImage,
@@ -120,6 +121,12 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       setState("recording");
       onStatus("Recording locally — no media is being uploaded");
     } catch (reason) {
+      if (isScreenSelectionCanceled(reason)) {
+        setError(undefined);
+        onStatus("Screen selection canceled; no recording was started");
+        setState("setup");
+        return;
+      }
       setError(captureErrorMessage(reason));
       setState("setup");
     }
@@ -257,7 +264,13 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         </div>}
         <small>Your image and person-segmentation processing stay on this device.</small>
       </div>}
-      <label className="check"><input type="checkbox" disabled={mode === "camera"} checked={mode !== "camera" && systemAudio} onChange={(event) => setSystemAudio(event.target.checked)} /> Shared tab/system audio when available</label>
+      <label className="check"><input
+        type="checkbox"
+        disabled={mode === "camera" || displaySurface !== "browser"}
+        checked={mode !== "camera" && displaySurface === "browser" && systemAudio}
+        onChange={(event) => setSystemAudio(event.target.checked)}
+      /> Shared browser-tab audio when available</label>
+      {mode !== "camera" && displaySurface !== "browser" && <small className="audio-capture-note">Chrome on this system only offers shared audio when you select a browser tab.</small>}
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
       <button className="primary wide" disabled={counting !== undefined} onClick={begin}>{counting ? "Get ready…" : "Start recording"}</button>
     </div>}
