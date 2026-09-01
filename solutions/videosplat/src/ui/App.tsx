@@ -90,6 +90,7 @@ export function App() {
   );
   const [savedAt, setSavedAt] = useState<string>();
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [recorderFloating, setRecorderFloating] = useState(false);
   const [openMenu, setOpenMenu] = useState<"file" | "edit" | "about">();
   const [recent, setRecent] = useState<VideoSplatProject[]>([]);
   const [storage, setStorage] = useState<{
@@ -2340,7 +2341,10 @@ export function App() {
         </button>
       </div>}
       {dialog && (
-        <div className="backdrop" onMouseDown={() => setDialog(null)}>
+        <div
+          className={`backdrop ${dialog === "recorder" && recorderFloating ? "recorder-floated" : ""}`}
+          onMouseDown={() => { if (!recorderFloating) setDialog(null); }}
+        >
           <section
             className={`dialog ${dialog === "optimizer" || dialog === "export" || dialog === "recorder" ? "optimizer-dialog" : ""} ${dialog === "recorder" ? "recorder-dialog" : ""}`}
             role="dialog"
@@ -2384,9 +2388,10 @@ export function App() {
               <RecorderDialog
                 initialMicrophoneDeviceId={recordingMicrophoneId}
                 permissionsPrepared={splashRecordingReady}
-                onClose={() => setDialog(null)}
+                onClose={() => { setRecorderFloating(false); setDialog(null); }}
                 onAdd={async (file) => addFiles([file])}
                 onStatus={setStatus}
+                onFloatingChange={setRecorderFloating}
               />
             )}
             {dialog === "projects" && (

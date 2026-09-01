@@ -166,6 +166,45 @@ test("keeps recorder setup controls visible on a short screen", async ({ page })
   ).toBe(true);
 });
 
+test("floats an active recorder in a cross-browser popup", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "documentPictureInPicture", {
+      configurable: true,
+      value: undefined,
+    });
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        getUserMedia: async () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = 160;
+          canvas.height = 90;
+          canvas.getContext("2d")!.fillRect(0, 0, 160, 90);
+          return canvas.captureStream(10);
+        },
+        enumerateDevices: async () => [],
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      },
+    });
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Record video", exact: true }).click();
+  await page.getByLabel("Recording source").selectOption("camera");
+  await page.getByText("Microphone", { exact: true }).click();
+  await page.getByLabel("Recording countdown").selectOption("0");
+  await page.getByRole("button", { name: "Start recording" }).click();
+  await expect(page.getByRole("button", { name: "Float recorder" })).toBeVisible();
+  const popupPromise = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Float recorder" }).click();
+  const popup = await popupPromise;
+  await expect(popup.getByRole("dialog", { name: "Floating VideoSplat recorder" })).toBeVisible();
+  await expect(popup.getByText(/Recording/)).toBeVisible();
+  await popup.getByRole("button", { name: "Return to editor" }).click();
+  await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel" }).click();
+});
+
 test("reloads offline and supports keyboard dialog dismissal", async ({
   page,
   context,

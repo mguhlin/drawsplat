@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { createPortal } from "react-dom";
 import {
   captureErrorMessage,
   isScreenSelectionCanceled,
@@ -15,12 +16,17 @@ interface RecorderDialogProps {
   onClose(): void;
   onAdd(file: File): Promise<void>;
   onStatus(message: string): void;
+  onFloatingChange?(floating: boolean): void;
+}
+
+interface DocumentPictureInPictureController {
+  requestWindow(options: { width: number; height: number }): Promise<Window>;
 }
 
 const clock = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
-export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus }: RecorderDialogProps) {
+export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus, onFloatingChange }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const session = useRef<CaptureSession | undefined>(undefined);
   const [mode, setMode] = useState<CaptureMode>("screen");
@@ -40,6 +46,44 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [recordingUrl, setRecordingUrl] = useState("");
   const [crop, setCrop] = useState<CropRect>({ x: 0, y: 0, width: 1, height: 1 });
   const [cropProgress, setCropProgress] = useState(0);
+  const [floatingWindow, setFloatingWindow] = useState<Window>();
+  const floatingPreview = useRef<HTMLVideoElement>(null);
+
+  const dockRecorder = () => {
+    const target = floatingWindow;
+    setFloatingWindow(undefined);
+    onFloatingChange?.(false);
+    if (target && !target.closed) target.close();
+  };
+
+  const floatRecorder = async () => {
+    setError(undefined);
+    try {
+      const controller = (window as Window & {
+        documentPictureInPicture?: DocumentPictureInPictureController;
+      }).documentPictureInPicture;
+      const target = controller
+        ? await controller.requestWindow({ width: 520, height: 420 })
+        : window.open("", "videosplat-recorder", "popup=yes,width=520,height=420,resizable=yes");
+      if (!target) throw new Error("The browser blocked the recorder window. Allow popups for VideoSplat and retry.");
+      target.document.title = "VideoSplat Recorder";
+      target.document.documentElement.className = document.documentElement.className;
+      target.document.body.className = "recorder-floating-body";
+      document.querySelectorAll('link[rel="stylesheet"], style').forEach((node) =>
+        target.document.head.append(node.cloneNode(true)),
+      );
+      const returned = () => {
+        setFloatingWindow(undefined);
+        onFloatingChange?.(false);
+      };
+      target.addEventListener("pagehide", returned, { once: true });
+      setFloatingWindow(target);
+      onFloatingChange?.(true);
+      target.focus();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "The recorder window could not be opened.");
+    }
+  };
 
   useEffect(() => {
     if (state !== "recording") return;
@@ -54,6 +98,18 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     session.current?.cancel();
     if (recordingUrl) URL.revokeObjectURL(recordingUrl);
   }, [recordingUrl]);
+
+  useEffect(() => () => {
+    if (floatingWindow && !floatingWindow.closed) floatingWindow.close();
+  }, [floatingWindow]);
+
+  useEffect(() => {
+    const preview = floatingPreview.current;
+    if (!preview || !floatingWindow || !session.current) return;
+    preview.srcObject = session.current.previewStream;
+    void preview.play();
+    return () => { preview.srcObject = null; };
+  }, [floatingWindow, state]);
 
   useEffect(() => () => {
     if (backgroundUrl) URL.revokeObjectURL(backgroundUrl);
@@ -136,6 +192,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     session.current?.cancel();
     session.current = undefined;
     onStatus("Recording canceled; no recording was saved");
+    dockRecorder();
     onClose();
   };
 
@@ -278,8 +335,22 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>
       <button className="primary" onClick={stop}>Stop and choose crop</button>
       <button className="danger" onClick={close}>Cancel</button>
+      {!floatingWindow && <button onClick={() => void floatRecorder()}>Float recorder</button>}
     </div>}
     {state === "saving" && <p role="status">Finishing the recording locally…</p>}
     <p className="hint">Choose your headset under Microphone source. Browsers require the screen/tab chooser for every new screen capture; VideoSplat cannot bypass it. For recording another tab, use Screen only and select that tab in the chooser. Keep VideoSplat visible when using the camera-overlay compositor.</p>
+    {floatingWindow && createPortal(
+      <section className="recorder-floating-controller" role="dialog" aria-label="Floating VideoSplat recorder">
+        <header><strong>VideoSplat Recorder</strong><button onClick={dockRecorder}>Return to editor</button></header>
+        <video ref={floatingPreview} muted playsInline autoPlay aria-label="Floating recording preview" />
+        <output>{state === "paused" ? "Paused · " : "● Recording · "}{clock(elapsed)}</output>
+        <div className="recorder-actions">
+          <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>
+          <button className="primary" onClick={() => { dockRecorder(); void stop(); }}>Stop and choose crop</button>
+          <button className="danger" onClick={close}>Cancel</button>
+        </div>
+      </section>,
+      floatingWindow.document.body,
+    )}
   </>;
 }
