@@ -4,22 +4,7 @@ export type ExportFormat = "webm" | "mp4" | "ogm";
 
 let engine: FFmpeg | undefined;
 let loaded = false;
-let wasmUrl: string | undefined;
 const engineBase = "/solutions/mediasplat/ffmpeg";
-
-const loadWasm = async () => {
-  if (wasmUrl) return wasmUrl;
-  const responses = await Promise.all(
-    [1, 2].map((part) => fetch(`${engineBase}/ffmpeg-core.part-0${part}`)),
-  );
-  if (responses.some((response) => !response.ok))
-    throw new Error("The local format engine could not be loaded. Make sure MediaSplat is installed beside VideoSplat.");
-  wasmUrl = URL.createObjectURL(new Blob(
-    await Promise.all(responses.map((response) => response.arrayBuffer())),
-    { type: "application/wasm" },
-  ));
-  return wasmUrl;
-};
 
 const getEngine = async (onProgress: (ratio: number) => void) => {
   if (!engine) {
@@ -27,7 +12,10 @@ const getEngine = async (onProgress: (ratio: number) => void) => {
     engine.on("progress", ({ progress }) => onProgress(Math.max(0, Math.min(1, progress))));
   }
   if (!loaded) {
-    await engine.load({ coreURL: `${engineBase}/ffmpeg-core.js`, wasmURL: await loadWasm() });
+    await engine.load({
+      coreURL: `${engineBase}/ffmpeg-core.js`,
+      wasmURL: `${engineBase}/ffmpeg-core.wasm`,
+    });
     loaded = true;
   }
   return engine;
