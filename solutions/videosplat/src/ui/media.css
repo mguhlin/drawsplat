@@ -915,10 +915,29 @@
 }
 .splash-version {
   position: relative;
-  margin-top: -14px;
+  display: block;
+  min-height: 1em;
+  margin-top: -10px;
   color: #c9c3ff;
   font-size: .78rem;
   letter-spacing: .12em;
+}
+.splash-language {
+  position: relative;
+  min-height: 42px;
+  margin-top: 3px;
+}
+.splash-language .ds-language-control {
+  border-color: #7467ff80;
+  background: #11182a;
+  color: #e8ecf7;
+  box-shadow: 0 10px 28px #0005;
+}
+.splash-language .ds-language-control > span { position: static; width: auto; height: auto; clip: auto; }
+.splash-language .ds-language-control select {
+  background: #171f33;
+  color: #e8ecf7;
+  border-color: #465474;
 }
 .launch-splash h1 sup {
   margin-left: 0.12em;

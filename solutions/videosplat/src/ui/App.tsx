@@ -126,6 +126,7 @@ export function App() {
   const mltInput = useRef<HTMLInputElement>(null);
   const captionInput = useRef<HTMLInputElement>(null);
   const languageMenu = useRef<HTMLDivElement>(null);
+  const splashLanguage = useRef<HTMLDivElement>(null);
   const previewMedia = useRef<HTMLVideoElement | HTMLAudioElement>(null);
   const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
@@ -134,16 +135,17 @@ export function App() {
   useEffect(() => {
     const placeLanguageControl = () => {
       const control = document.querySelector<HTMLElement>(".ds-language-control");
-      if (control && languageMenu.current && control.parentElement !== languageMenu.current) {
+      const target = showSplash ? splashLanguage.current : languageMenu.current;
+      if (control && target && control.parentElement !== target) {
         control.classList.add("ds-language-inline");
-        languageMenu.current.append(control);
+        target.append(control);
       }
     };
     placeLanguageControl();
     const observer = new MutationObserver(placeLanguageControl);
     observer.observe(document.body, { childList: true });
     return () => observer.disconnect();
-  }, []);
+  }, [showSplash]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -898,6 +900,8 @@ export function App() {
   };
 
   const finishSplash = () => {
+    const control = document.querySelector<HTMLElement>(".ds-language-control");
+    if (control && languageMenu.current) languageMenu.current.append(control);
     sessionStorage.setItem("videosplat-splash-seen", "1");
     setShowSplash(false);
   };
@@ -979,6 +983,7 @@ export function App() {
             <button onClick={finishSplash}>{splashRecordingReady ? "Continue to editor" : "Edit without recording setup"}</button>
           </div>
           <small>Screen sharing is selected securely by your browser when each recording starts.</small>
+          <div className="splash-language" ref={splashLanguage} />
           {splashPermissionStatus && <p className={splashRecordingReady ? "splash-permission-ready" : "splash-permission-error"} role={splashRecordingReady ? "status" : "alert"}>{splashPermissionStatus}</p>}
         </section>
       )}
