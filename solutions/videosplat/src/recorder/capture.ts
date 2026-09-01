@@ -51,16 +51,20 @@ export function displayCaptureOptions(
   frameRate = 30,
 ): DisplayMediaStreamOptions {
   const prefersCurrentTab = surface === "browser";
-  return {
+  const options: DisplayMediaStreamOptions = {
     video: {
       frameRate: { ideal: frameRate },
       displaySurface: surface,
     },
     audio: systemAudio,
-    preferCurrentTab: prefersCurrentTab,
-    selfBrowserSurface: prefersCurrentTab ? "include" : "exclude",
-    surfaceSwitching: "include",
-  } as DisplayMediaStreamOptions;
+  };
+  if (prefersCurrentTab)
+    Object.assign(options, {
+      preferCurrentTab: true,
+      selfBrowserSurface: "include",
+      surfaceSwitching: "include",
+    });
+  return options;
 }
 
 export const needsCanvasComposition = (mode: CaptureMode, hasBackground = false) =>
