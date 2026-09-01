@@ -54,7 +54,7 @@ export function displayCaptureOptions(
   const options: DisplayMediaStreamOptions = {
     video: {
       frameRate: { ideal: frameRate },
-      displaySurface: surface,
+      ...(prefersCurrentTab ? { displaySurface: "browser" } : {}),
     },
     audio: systemAudio,
   };

@@ -1,4 +1,4 @@
-const CACHE = "videosplat-shell-v13";
+const CACHE = "videosplat-shell-v14";
 const BASE = "/solutions/videosplat/";
 const SHELL = [BASE, `${BASE}manifest.webmanifest`, `${BASE}icon.svg`];
 self.addEventListener("install", (event) =>
