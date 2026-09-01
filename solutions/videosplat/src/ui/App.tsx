@@ -1055,7 +1055,10 @@ export function App() {
             onChange={(event) => rename(event.target.value)}
           />
         </label>
-        <div className="top-actions"><span className="local-indicator"><i aria-hidden="true">●</i> Local only</span></div>
+        <div className="top-actions">
+          <span className="local-indicator"><i aria-hidden="true">●</i> Local only</span>
+          <button aria-label="Record video" className="record-button top-record-button" onClick={() => setDialog("recorder")}>● Record video</button>
+        </div>
       </header>
       <nav className="toolbar" aria-label="Editor tools">
         <div className="editor-menus" role="menubar" aria-label="Application menu">
@@ -1095,7 +1098,6 @@ export function App() {
           </div>
         </div>
         <span className="divider" />
-        <button className="record-button" aria-label="Record" onClick={() => setDialog("recorder")}>● Record</button>
         <button
           onClick={() => setProject(history.current.undo())}
           disabled={!history.current.canUndo}

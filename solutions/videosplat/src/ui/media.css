@@ -636,6 +636,20 @@
   padding: 4px 8px;
   background: #11182a;
 }
+.top-record-button {
+  padding: 8px 13px;
+  border-color: #b84155;
+  background: #6b1f2d;
+  color: #fff;
+  font-weight: 800;
+}
+.top-record-button:hover:not(:disabled) {
+  border-color: #ef6b7e;
+  background: #84283a;
+}
+@media (width <= 850px) {
+  .top-actions button.top-record-button:not(.privacy-badge):not(.primary) { display: block; }
+}
 .track-add-row {
   display: grid;
   height: 30px;

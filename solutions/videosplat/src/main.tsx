@@ -6,7 +6,7 @@ import "./ui/media.css";
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", async () => {
-    const reloadKey = "videosplat-worker-reloaded-v12";
+    const reloadKey = "videosplat-worker-reloaded-v13";
     const replacingExistingWorker = Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       if (!replacingExistingWorker) return;
@@ -15,7 +15,7 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
       window.location.reload();
     });
     const registration = await navigator.serviceWorker.register(
-      `${import.meta.env.BASE_URL}sw.js?v=12`,
+      `${import.meta.env.BASE_URL}sw.js?v=13`,
       { updateViaCache: "none" },
     );
     await registration.update();

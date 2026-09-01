@@ -60,7 +60,7 @@ test("loads the local-first editor without external requests", async ({
   ).toBeVisible();
   await expect(page.locator(".splash-version")).toHaveText("v1");
   await expect(page.getByText("Getting ready to record")).toBeHidden();
-  await expect(page.getByRole("button", { name: "Record video" })).toBeVisible();
+  await expect(page.getByLabel("What would you like to do?").getByRole("button", { name: "Record video" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Edit video" })).toBeVisible();
   await page.waitForTimeout(2000);
   await expect(page.getByLabel("VideoSplat loading")).toBeVisible();
@@ -94,7 +94,7 @@ test("can request camera and microphone setup from the splash", async ({ page })
     });
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Record video" }).click();
+  await page.getByLabel("What would you like to do?").getByRole("button", { name: "Record video" }).click();
   await expect(page.getByText("Getting ready to record")).toBeVisible();
   await page.getByRole("button", { name: "Set up recording permissions" }).click();
   await expect(page.getByLabel("Splash microphone source")).toHaveValue("headset");
@@ -117,6 +117,7 @@ test("keeps toolbar labels and the project inspector inside the viewport", async
   await expect(page.getByRole("menuitem", { name: "File" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "Edit" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "About" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Record video", exact: true })).toBeVisible();
   await page.getByRole("menuitem", { name: "About" }).click();
   await expect(page.locator(".about-version")).toContainText("v1");
   await page.keyboard.press("Escape");
@@ -143,7 +144,7 @@ test("opens the private recorder and handles denied permission", async ({ page }
     });
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Record", exact: true }).click();
+  await page.getByRole("button", { name: "Record video", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
   await expect(page.getByText("the recording is not uploaded")).toBeVisible();
   await page.getByLabel("Recording countdown").selectOption("0");
@@ -154,7 +155,7 @@ test("opens the private recorder and handles denied permission", async ({ page }
 test("keeps recorder setup controls visible on a short screen", async ({ page }) => {
   await page.setViewportSize({ width: 655, height: 894 });
   await page.goto("./");
-  await page.getByRole("button", { name: "Record", exact: true }).click();
+  await page.getByRole("button", { name: "Record video", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Record locally" });
   await expect(page.getByRole("button", { name: /Browser tab/ })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: /Application window/ }).click();
