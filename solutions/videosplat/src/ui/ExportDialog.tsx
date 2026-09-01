@@ -76,7 +76,7 @@ export function ExportDialog({
     const url = URL.createObjectURL(result);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${project.name.replace(/[^a-z0-9-_]+/gi, "-") || "videosplat-export"}.webm`;
+    link.download = `${project.name.replace(/[^a-z0-9-_]+/gi, "-") || "videosplat-export"}.${options.format}`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
@@ -96,6 +96,41 @@ export function ExportDialog({
         Export runs in real time while this dialog stays open.
       </p>
       <div className="optimizer-grid">
+        <label>
+          Quality preset
+          <select
+            aria-label="Export quality preset"
+            defaultValue="custom"
+            onChange={(event) => {
+              const presets = {
+                draft: { width: 854, height: 480, videoBitsPerSecond: 1_500_000 },
+                hd: { width: 1280, height: 720, videoBitsPerSecond: 4_000_000 },
+                fullhd: { width: 1920, height: 1080, videoBitsPerSecond: 8_000_000 },
+              } as const;
+              const preset = presets[event.target.value as keyof typeof presets];
+              if (preset) setOptions({ ...options, ...preset });
+            }}
+          >
+            <option value="custom">Custom</option>
+            <option value="draft">Draft · 480p</option>
+            <option value="hd">HD · 720p</option>
+            <option value="fullhd">Full HD · 1080p</option>
+          </select>
+        </label>
+        <label>
+          Format
+          <select
+            aria-label="Export format"
+            value={options.format}
+            onChange={(event) =>
+              setOptions({ ...options, format: event.target.value as ExportOptions["format"] })
+            }
+          >
+            <option value="webm">WebM · fastest</option>
+            <option value="mp4">MP4 · widest compatibility</option>
+            <option value="ogm">OGM · open Theora/Vorbis</option>
+          </select>
+        </label>
         <label>
           Width
           <input
@@ -213,14 +248,14 @@ export function ExportDialog({
       )}
       {!busy && !result && (
         <button className="primary wide" onClick={run} disabled={hasErrors}>
-          Render local WebM
+          Render local {options.format.toUpperCase()}
         </button>
       )}
       {result && (
         <div className="optimizer-results">
           <strong>Export ready · {bytes(result.size)}</strong>
           <button className="primary" onClick={download}>
-            Download WebM
+            Download {options.format.toUpperCase()}
           </button>
           <button onClick={run}>Render again</button>
           {report && (

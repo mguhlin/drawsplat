@@ -500,6 +500,11 @@ test("imports captions and exposes the local composition exporter", async ({
   await expect(
     page.getByRole("button", { name: "Render local WebM" }),
   ).toBeEnabled();
+  await page.getByLabel("Export format").selectOption("mp4");
+  await expect(page.getByRole("button", { name: "Render local MP4" })).toBeVisible();
+  await page.getByLabel("Export format").selectOption("ogm");
+  await expect(page.getByRole("button", { name: "Render local OGM" })).toBeVisible();
+  await page.getByLabel("Export format").selectOption("webm");
   await page.getByLabel("Export width").fill("160");
   await page.getByLabel("Export height").fill("90");
   await page.getByLabel("Export frame rate").fill("10");

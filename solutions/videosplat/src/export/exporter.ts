@@ -1,6 +1,7 @@
 import { activeVisualClips, projectDuration } from "../timeline/engine";
 import type { Clip, VideoSplatProject } from "../domain/project";
 import { renderRect, type FitMode } from "../render/geometry";
+import { transcodeExport, type ExportFormat } from "./transcoder";
 
 export interface ExportOptions {
   width: number;
@@ -8,6 +9,7 @@ export interface ExportOptions {
   frameRate: number;
   videoBitsPerSecond: number;
   includeAudio: boolean;
+  format: ExportFormat;
   rangeStart?: number;
   rangeEnd?: number;
 }
@@ -17,6 +19,7 @@ export const DEFAULT_EXPORT: ExportOptions = {
   frameRate: 30,
   videoBitsPerSecond: 4_000_000,
   includeAudio: true,
+  format: "webm",
 };
 export const transitionGain = (clip: Clip, time: number) => {
   const local = time - clip.start;
@@ -103,12 +106,24 @@ export async function exportProject(
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) throw new Error("Canvas rendering is unavailable.");
   const stream = canvas.captureStream(options.frameRate);
-  const audioContext = options.includeAudio ? new AudioContext() : undefined;
+  const audioContext = options.includeAudio
+    ? new AudioContext({ latencyHint: "playback" })
+    : undefined;
   const audioDestination = audioContext?.createMediaStreamDestination();
+  const audioLimiter = audioContext?.createDynamicsCompressor();
+  if (audioLimiter && audioDestination) {
+    audioLimiter.threshold.value = -3;
+    audioLimiter.knee.value = 6;
+    audioLimiter.ratio.value = 12;
+    audioLimiter.attack.value = 0.003;
+    audioLimiter.release.value = 0.25;
+    audioLimiter.connect(audioDestination);
+  }
   audioDestination?.stream
     .getAudioTracks()
     .forEach((track) => stream.addTrack(track));
   const media = new Map<string, HTMLMediaElement>();
+  const audioGains = new Map<string, GainNode>();
   const images = new Map<string, HTMLImageElement>();
   try {
     for (const track of project.tracks)
@@ -129,13 +144,28 @@ export async function exportProject(
           element.src = url;
           element.preload = "auto";
           if (element instanceof HTMLVideoElement) element.playsInline = true;
+          element.setAttribute("aria-hidden", "true");
+          Object.assign(element.style, {
+            position: "fixed",
+            width: "2px",
+            height: "2px",
+            left: "-10px",
+            bottom: "0",
+            opacity: "0.001",
+            pointerEvents: "none",
+          });
+          // Detached media elements can be throttled by Chromium, producing
+          // missing or stuttering audio in a real-time MediaRecorder export.
+          document.body.append(element);
           await waitMedia(element);
           media.set(clip.id, element);
-          if (audioContext && audioDestination) {
+          if (audioContext && audioLimiter) {
             try {
-              audioContext
-                .createMediaElementSource(element)
-                .connect(audioDestination);
+              const gain = audioContext.createGain();
+              gain.gain.value = 0;
+              audioContext.createMediaElementSource(element).connect(gain);
+              gain.connect(audioLimiter);
+              audioGains.set(clip.id, gain);
             } catch {
               /* Video-only export remains available. */
             }
@@ -146,6 +176,7 @@ export async function exportProject(
     const recorder = new MediaRecorder(stream, {
       mimeType,
       videoBitsPerSecond: options.videoBitsPerSecond,
+      audioBitsPerSecond: 128_000,
     });
     const chunks: Blob[] = [];
     const result = new Promise<Blob>((resolve, reject) => {
@@ -182,20 +213,25 @@ export async function exportProject(
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.restore();
         for (const [clipId, element] of media) {
-          const location = project.tracks
-            .flatMap((track) => track.clips)
-            .find((clip) => clip.id === clipId);
+          const track = project.tracks.find((item) =>
+            item.clips.some((clip) => clip.id === clipId),
+          );
+          const location = track?.clips.find((clip) => clip.id === clipId);
+          const gain = audioGains.get(clipId);
           if (!location) continue;
           const active =
             time >= location.start && time < location.start + location.duration;
           if (!active) {
+            if (gain) gain.gain.value = 0;
             if (!element.paused) element.pause();
             continue;
           }
           const expected = location.sourceStart + time - location.start;
           if (Math.abs(element.currentTime - expected) > 0.25)
             element.currentTime = expected;
-          element.volume = audioGain(location, time);
+          element.volume = 1;
+          if (gain)
+            gain.gain.value = track?.muted ? 0 : audioGain(location, time);
           if (element.paused) element.play().catch(() => {});
         }
         for (const { clip } of activeVisualClips(project, time)) {
@@ -270,7 +306,10 @@ export async function exportProject(
           }
           context.restore();
         }
-        onProgress(Math.min(1, elapsed / duration));
+        onProgress(
+          Math.min(1, elapsed / duration) *
+            (options.format === "webm" ? 1 : 0.85),
+        );
         frame = requestAnimationFrame(draw);
       };
       frame = requestAnimationFrame(draw);
@@ -278,13 +317,19 @@ export async function exportProject(
     const blob = await result;
     if (signal?.aborted)
       throw new DOMException("Export canceled", "AbortError");
-    onProgress(1);
-    return blob;
+    if (options.format === "webm") {
+      onProgress(1);
+      return blob;
+    }
+    return transcodeExport(blob, options.format, (ratio) =>
+      onProgress(0.85 + ratio * 0.15),
+    );
   } finally {
     media.forEach((element) => {
       element.pause();
       element.removeAttribute("src");
       element.load();
+      element.remove();
     });
     stream.getTracks().forEach((track) => track.stop());
     await audioContext?.close();

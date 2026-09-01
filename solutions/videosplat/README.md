@@ -15,6 +15,11 @@ downloadable WebM copies without overwriting or uploading original footage; see
 VideoSplat also imports/exports SRT and WebVTT captions and renders the layered
 timeline—including transforms, titles, effects, transitions, and mixed audio—to a
 local WebM. Export uses browser Canvas, Web Audio, and MediaRecorder without uploads.
+Composition export keeps decoders attached off-screen and mixes every active clip
+through dedicated Web Audio gain nodes on a stable clock and a master peak
+limiter, preventing microphone audio loss, clipping, or stutter. WebM renders
+directly; MP4 and OGM are converted locally through the self-hosted MediaSplat
+engine, with no media uploaded.
 
 The local recorder captures a shared screen, camera, or screen with a camera overlay,
 plus an optional microphone and browser-supported shared tab/system audio. Recordings
