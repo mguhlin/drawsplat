@@ -73,6 +73,7 @@ export function App() {
   const [showSplash, setShowSplash] = useState(
     () => sessionStorage.getItem("videosplat-splash-seen") !== "1",
   );
+  const [splashMode, setSplashMode] = useState<"record" | "edit">();
   const [splashPermissionStatus, setSplashPermissionStatus] = useState<string>();
   const [requestingSplashPermissions, setRequestingSplashPermissions] = useState(false);
   const [splashMicrophones, setSplashMicrophones] = useState<MediaDeviceInfo[]>([]);
@@ -947,6 +948,17 @@ export function App() {
           <b className="splash-version">{APP_VERSION}</b>
           <p>Private video editing. Right in your browser.</p>
           <span>Local-first · No media uploads</span>
+          {!splashMode && <div className="splash-choice" aria-labelledby="splash-choice-title">
+            <strong id="splash-choice-title">What would you like to do?</strong>
+            <div>
+              <button className="splash-record" onClick={() => setSplashMode("record")}>● Record video</button>
+              <button onClick={() => {
+                setSplashMode("edit");
+                finishSplash();
+              }}>✎ Edit video</button>
+            </div>
+          </div>}
+          {splashMode === "record" && <>
           <div className="splash-recording-steps">
             <strong>Getting ready to record</strong>
             <ol>
@@ -980,9 +992,13 @@ export function App() {
                 setStatus("Recording setup ready with the selected microphone");
               }}>Continue with selected microphone</button>
             )}
-            <button onClick={finishSplash}>{splashRecordingReady ? "Continue to editor" : "Edit without recording setup"}</button>
+            <button className="splash-back" onClick={() => {
+              setSplashMode(undefined);
+              setSplashPermissionStatus(undefined);
+            }}>← Back</button>
           </div>
           <small>Screen sharing is selected securely by your browser when each recording starts.</small>
+          </>}
           <div className="splash-language" ref={splashLanguage} />
           {splashPermissionStatus && <p className={splashRecordingReady ? "splash-permission-ready" : "splash-permission-error"} role={splashRecordingReady ? "status" : "alert"}>{splashPermissionStatus}</p>}
         </section>

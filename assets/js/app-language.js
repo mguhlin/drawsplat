@@ -59,6 +59,16 @@ const appStrings = {
   },
 };
 
+const videoSplatChoiceStrings = {
+  es: {"What would you like to do?":"¿Qué deseas hacer?","Record video":"Grabar video","Edit video":"Editar video","Back":"Atrás"},
+  vi: {"What would you like to do?":"Bạn muốn làm gì?","Record video":"Ghi video","Edit video":"Chỉnh sửa video","Back":"Quay lại"},
+  ar: {"What would you like to do?":"ماذا تريد أن تفعل؟","Record video":"تسجيل فيديو","Edit video":"تحرير فيديو","Back":"رجوع"},
+  zh: {"What would you like to do?":"你想做什么？","Record video":"录制视频","Edit video":"编辑视频","Back":"返回"},
+  uh: {"What would you like to do?":"आप क्या करना चाहेंगे? / آپ کیا کرنا چاہیں گے؟","Record video":"वीडियो रिकॉर्ड करें / ویڈیو ریکارڈ کریں","Edit video":"वीडियो संपादित करें / ویڈیو تدوین کریں","Back":"वापस / واپس"},
+};
+for (const [code, strings] of Object.entries(videoSplatChoiceStrings))
+  Object.assign(appStrings.videosplat[code], strings);
+
 const script = document.querySelector("script[data-ds-language]");
 const app = script?.dataset.dsLanguage || "";
 const storesPreference = script?.dataset.dsLanguageStorage !== "none";
