@@ -320,7 +320,10 @@ export function App() {
           fadeOut > 0 ? (clip.duration - localTime) / fadeOut : 1,
         );
         media.volume = Math.max(0, Math.min(1, gain * fadeGain));
-        if (Math.abs(media.currentTime - expected) > 0.4)
+        // Let the media element's decoder clock run during playback. Repeated
+        // small seeks interrupt Opus decoding and are heard as audio stutter.
+        const syncTolerance = media.paused ? 0.05 : 1;
+        if (Math.abs(media.currentTime - expected) > syncTolerance)
           media.currentTime = expected;
         if (media.paused)
           media
@@ -567,7 +570,7 @@ export function App() {
       const sourceTime = location.clip.sourceStart + offset;
       if (
         media.readyState >= 1 &&
-        Math.abs(media.currentTime - sourceTime) > 0.12
+        Math.abs(media.currentTime - sourceTime) > (media.paused ? 0.05 : 1)
       )
         media.currentTime = sourceTime;
       const localTime = time - location.clip.start;
@@ -1076,34 +1079,6 @@ export function App() {
         >
           ↷ Redo
         </button>
-        <span className="divider" />
-        <button onClick={splitSelected} disabled={!selectedClipId}>
-          Split
-        </button>
-        <button onClick={duplicateSelected} disabled={!selectedClipId}>
-          Duplicate
-        </button>
-        <button onClick={deleteSelected} disabled={!selectedClipId}>
-          Delete
-        </button>
-        <button onClick={cutSelected} disabled={!selectedClipId}>
-          {clipSelection ? "Remove range" : "Cut"}
-        </button>
-        <button onClick={copySelected} disabled={!selectedClipId}>
-          Copy
-        </button>
-        <button onClick={pasteClip}>Paste</button>
-        <select
-          aria-label="Timeline edit mode"
-          value={editMode}
-          onChange={(event) =>
-            setEditMode(event.target.value as TimelineEditMode)
-          }
-        >
-          <option value="append">Append</option>
-          <option value="insert">Insert</option>
-          <option value="overwrite">Overwrite</option>
-        </select>
         <button onClick={addTitle}>＋ Title</button>
         <span className="toolbar-spacer" />
       </nav>
@@ -2048,7 +2023,24 @@ export function App() {
                   Math.max(0, (event.clientX - rect.left) / pixelsPerSecond),
                 );
               }}
-            >
+              >
+              <div className="timeline-edit-tools" onClick={(event) => event.stopPropagation()}>
+                <button onClick={splitSelected} disabled={!selectedClipId}>Split</button>
+                <button onClick={duplicateSelected} disabled={!selectedClipId}>Duplicate</button>
+                <button onClick={deleteSelected} disabled={!selectedClipId}>Delete</button>
+                <button onClick={cutSelected} disabled={!selectedClipId}>{clipSelection ? "Remove range" : "Cut"}</button>
+                <button onClick={copySelected} disabled={!selectedClipId}>Copy</button>
+                <button onClick={pasteClip}>Paste</button>
+                <select
+                  aria-label="Timeline edit mode"
+                  value={editMode}
+                  onChange={(event) => setEditMode(event.target.value as TimelineEditMode)}
+                >
+                  <option value="append">Append</option>
+                  <option value="insert">Insert</option>
+                  <option value="overwrite">Overwrite</option>
+                </select>
+              </div>
               {Array.from(
                 { length: Math.floor(Math.max(20, totalDuration) / 5) + 1 },
                 (_, index) => (

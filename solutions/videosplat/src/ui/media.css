@@ -676,6 +676,28 @@
   font-size: 0.65rem;
   color: var(--muted);
 }
+.timeline-head { height: 68px; }
+.timeline-edit-tools {
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  left: 7px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.timeline-edit-tools button,
+.timeline-edit-tools select {
+  min-height: 28px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  color: #e8ecf7;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #171f33;
+  font-size: .76rem;
+}
+.timeline-edit-tools button:disabled { opacity: .42; }
 .ruler {
   position: relative;
   display: block;

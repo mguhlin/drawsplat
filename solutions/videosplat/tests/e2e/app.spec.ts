@@ -292,12 +292,12 @@ test("splits, duplicates, trims, and deletes timeline clips", async ({
     ),
   });
   await expect(page.locator(".timeline-clip")).toHaveCount(1);
-  await page.locator(".ruler").click({ position: { x: 84, y: 15 } });
+  await page.locator(".ruler").click({ position: { x: 84, y: 55 } });
   await page.getByRole("button", { name: "Split", exact: true }).click();
   await expect(page.locator(".timeline-clip")).toHaveCount(2);
   await page
-    .getByRole("navigation", { name: "Editor tools" })
-    .getByRole("button", { name: "Duplicate" })
+    .getByLabel("Timeline", { exact: true })
+    .getByRole("button", { name: "Duplicate", exact: true })
     .click();
   await expect(page.locator(".timeline-clip")).toHaveCount(3);
   await page.getByLabel("Clip duration").fill("1.5");
@@ -444,7 +444,7 @@ test("selects a clip waveform range and pastes only that section", async ({ page
   await expect(page.locator(".clip-range-selection")).toBeVisible();
   await expect(page.getByText(/second range selected/)).toBeVisible();
   await page.getByRole("button", { name: "Copy", exact: true }).click();
-  await page.locator(".ruler").click({ position: { x: 250, y: 15 } });
+  await page.locator(".ruler").click({ position: { x: 250, y: 55 } });
   await page.getByRole("button", { name: "Paste", exact: true }).click();
   await expect(page.locator(".timeline-clip")).toHaveCount(2);
   await expect(page.getByLabel("Clip duration")).toHaveValue("2");
