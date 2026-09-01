@@ -4,7 +4,30 @@ export type ExportFormat = "webm" | "mp4" | "ogm";
 
 let engine: FFmpeg | undefined;
 let loaded = false;
+let wasmObjectURL: string | undefined;
 const engineBase = "/solutions/mediasplat/ffmpeg";
+
+export const fetchWasmChunks = async (
+  base = engineBase,
+  fetcher: typeof fetch = fetch,
+) => {
+  const responses = await Promise.all(
+    [1, 2].map((part) => fetcher(`${base}/ffmpeg-core.part-0${part}`)),
+  );
+  if (responses.some((response) => !response.ok))
+    throw new Error("The local MP4/OGM engine could not be downloaded. Check the connection and retry.");
+  const parts = await Promise.all(responses.map((response) => response.arrayBuffer()));
+  const header = new Uint8Array(parts[0], 0, Math.min(4, parts[0].byteLength));
+  if (header.length < 4 || header[0] !== 0 || header[1] !== 0x61 || header[2] !== 0x73 || header[3] !== 0x6d)
+    throw new Error("The local MP4/OGM engine download was invalid. Refresh VideoSplat and retry.");
+  return new Blob(parts, { type: "application/wasm" });
+};
+
+const localWasmURL = async () => {
+  if (!wasmObjectURL)
+    wasmObjectURL = URL.createObjectURL(await fetchWasmChunks());
+  return wasmObjectURL;
+};
 
 const getEngine = async (onProgress: (ratio: number) => void) => {
   if (!engine) {
@@ -12,11 +35,20 @@ const getEngine = async (onProgress: (ratio: number) => void) => {
     engine.on("progress", ({ progress }) => onProgress(Math.max(0, Math.min(1, progress))));
   }
   if (!loaded) {
-    await engine.load({
-      coreURL: `${engineBase}/ffmpeg-core.js`,
-      wasmURL: `${engineBase}/ffmpeg-core.wasm`,
-    });
-    loaded = true;
+    try {
+      await engine.load({
+        coreURL: `${engineBase}/ffmpeg-core.js`,
+        wasmURL: await localWasmURL(),
+      });
+      loaded = true;
+    } catch (error) {
+      engine.terminate();
+      engine = undefined;
+      loaded = false;
+      if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL);
+      wasmObjectURL = undefined;
+      throw error;
+    }
   }
   return engine;
 };

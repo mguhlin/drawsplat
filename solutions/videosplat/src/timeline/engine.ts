@@ -197,6 +197,76 @@ export function duplicateClip(
   };
 }
 
+export function detachClipAudio(
+  project: VideoSplatProject,
+  clipId: string,
+): { project: VideoSplatProject; audioClipId?: string } {
+  const location = findClip(project, clipId);
+  if (
+    !location ||
+    location.track.kind !== "video" ||
+    location.clip.kind !== "video" ||
+    location.clip.properties.audioDetached === true
+  )
+    return { project };
+
+  const audioClipId = crypto.randomUUID();
+  const originalVolume = Number(location.clip.properties.volume ?? 1);
+  const audioClip: Clip = {
+    ...location.clip,
+    id: audioClipId,
+    name: `${location.clip.name} audio`,
+    kind: "audio",
+    properties: {
+      ...location.clip.properties,
+      volume: originalVolume,
+      detachedFrom: location.clip.id,
+    },
+  };
+  const existingAudioTrack = project.tracks.find(
+    (track) => track.kind === "audio" && !track.locked,
+  );
+  const audioTrackId = existingAudioTrack?.id ?? crypto.randomUUID();
+  const tracks = project.tracks.map((track) => {
+    if (track.id === location.track.id)
+      return {
+        ...track,
+        clips: track.clips.map((clip) =>
+          clip.id === clipId
+            ? {
+                ...clip,
+                properties: {
+                  ...clip.properties,
+                  volume: 0,
+                  audioDetached: true,
+                },
+              }
+            : clip,
+        ),
+      };
+    if (track.id === audioTrackId)
+      return { ...track, clips: [...track.clips, audioClip] };
+    return track;
+  });
+  if (!existingAudioTrack) {
+    const audioTrack: Track = {
+      id: audioTrackId,
+      name: `Audio ${project.tracks.filter((track) => track.kind === "audio").length + 1}`,
+      kind: "audio",
+      hidden: false,
+      locked: false,
+      muted: false,
+      clips: [audioClip],
+    };
+    let insertAt = tracks.reduce(
+      (last, track, index) => track.kind === "audio" ? index + 1 : last,
+      tracks.length,
+    );
+    tracks.splice(insertAt, 0, audioTrack);
+  }
+  return { audioClipId, project: touchProject(project, { tracks }) };
+}
+
 export function removeClip(
   project: VideoSplatProject,
   clipId: string,

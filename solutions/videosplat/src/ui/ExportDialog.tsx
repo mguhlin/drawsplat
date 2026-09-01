@@ -144,9 +144,16 @@ export function ExportDialog({
           <select
             aria-label="Export format"
             value={options.format}
-            onChange={(event) =>
-              setOptions({ ...options, format: event.target.value as ExportOptions["format"] })
-            }
+            onChange={(event) => {
+              const format = event.target.value as ExportOptions["format"];
+              setOptions({ ...options, format });
+              if (result?.format !== format) {
+                setResult(undefined);
+                setReport(undefined);
+                setSaved(false);
+                setProgress(0);
+              }
+            }}
           >
             <option value="webm">WebM · fastest</option>
             <option value="mp4">MP4 · widest compatibility</option>

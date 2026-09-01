@@ -32,6 +32,7 @@ import {
   addTrack,
   clipRange,
   cutClipRange,
+  detachClipAudio,
   duplicateClip,
   findClip,
   moveClip,
@@ -111,6 +112,11 @@ export function App() {
     from: number;
     to: number;
   }>();
+  const [clipContextMenu, setClipContextMenu] = useState<{
+    clipId: string;
+    x: number;
+    y: number;
+  }>();
   const clipboard = useRef<Clip | undefined>(undefined);
   const drag = useRef<
     | {
@@ -156,6 +162,20 @@ export function App() {
     window.addEventListener("pointerdown", close);
     return () => window.removeEventListener("pointerdown", close);
   }, [openMenu]);
+
+  useEffect(() => {
+    if (!clipContextMenu) return;
+    const close = () => setClipContextMenu(undefined);
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    window.addEventListener("pointerdown", close);
+    window.addEventListener("keydown", escape);
+    return () => {
+      window.removeEventListener("pointerdown", close);
+      window.removeEventListener("keydown", escape);
+    };
+  }, [clipContextMenu]);
 
   const commit = (next: VideoSplatProject) => {
     history.current.commit(next);
@@ -637,6 +657,17 @@ export function App() {
       setSelectedClipId(result.duplicateId);
       setStatus("Clip duplicated");
     }
+  };
+  const detachAudio = (clipId: string) => {
+    const result = detachClipAudio(project, clipId);
+    setClipContextMenu(undefined);
+    if (!result.audioClipId) {
+      setStatus("Audio is already detached from this clip");
+      return;
+    }
+    commit(result.project);
+    setSelectedClipId(result.audioClipId);
+    setStatus("Audio detached to a synchronized audio-track clip");
   };
   const deleteSelected = () => {
     if (!selectedClipId) return;
@@ -2167,9 +2198,21 @@ export function App() {
                         width: `${Math.max(24, clip.duration * pixelsPerSecond)}px`,
                       }}
                       onPointerDown={(event) => {
-                        if (track.locked) return;
+                        if (track.locked || event.button !== 0) return;
                         if (rangeSelecting) beginRangeSelection(event, clip);
                         else beginClipDrag(event, clip, "move");
+                      }}
+                      onContextMenu={(event) => {
+                        if (track.locked || track.kind !== "video" || clip.kind !== "video") return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setPlaying(false);
+                        setSelectedClipId(clip.id);
+                        setClipContextMenu({
+                          clipId: clip.id,
+                          x: Math.min(event.clientX, window.innerWidth - 190),
+                          y: Math.min(event.clientY, window.innerHeight - 60),
+                        });
                       }}
                       onClick={(event) => {
                         event.stopPropagation();
@@ -2283,6 +2326,17 @@ export function App() {
         accept=".srt,.vtt,application/x-subrip,text/vtt,text/plain"
         onChange={(event) => importCaptions(event.target.files?.[0])}
       />
+      {clipContextMenu && <div
+        className="clip-context-menu"
+        role="menu"
+        aria-label="Video clip actions"
+        style={{ left: clipContextMenu.x, top: clipContextMenu.y }}
+        onPointerDown={(event) => event.stopPropagation()}
+      >
+        <button role="menuitem" onClick={() => detachAudio(clipContextMenu.clipId)}>
+          Detach audio
+        </button>
+      </div>}
       {dialog && (
         <div className="backdrop" onMouseDown={() => setDialog(null)}>
           <section

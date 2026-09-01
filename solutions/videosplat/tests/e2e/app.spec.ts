@@ -280,6 +280,23 @@ test("recovers the real duration of browser-recorded WebM media", async ({ page 
   expect(duration).toBeLessThan(2);
 });
 
+test("detaches a video clip's audio from its context menu", async ({ page }) => {
+  await page.goto("./");
+  const video = await createTestVideo(page);
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({
+    name: "detach-audio.webm",
+    mimeType: "video/webm",
+    buffer: video,
+  });
+  await page.locator(".timeline-clip.video").click({ button: "right" });
+  await expect(page.getByRole("menu", { name: "Video clip actions" })).toBeVisible();
+  await page.getByRole("menuitem", { name: "Detach audio" }).click();
+  await expect(page.locator(".timeline-clip.video")).toHaveCount(1);
+  await expect(page.locator(".timeline-clip.audio")).toHaveCount(1);
+  await expect(page.getByText("Audio detached to a synchronized audio-track clip")).toBeVisible();
+  await expect(page.getByLabel("Volume")).toHaveValue("1");
+});
+
 test("splits, duplicates, trims, and deletes timeline clips", async ({
   page,
 }) => {
@@ -523,4 +540,9 @@ test("imports captions and exposes the local composition exporter", async ({
   await expect(
     page.getByRole("button", { name: "Save another WebM copy" }),
   ).toBeVisible();
+  await page.getByLabel("Export format").selectOption("mp4");
+  await expect(
+    page.getByRole("button", { name: "Save another WebM copy" }),
+  ).toBeHidden();
+  await expect(page.getByRole("button", { name: "Render local MP4" })).toBeVisible();
 });

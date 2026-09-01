@@ -6,6 +6,7 @@ import {
   addTrack,
   clipRange,
   cutClipRange,
+  detachClipAudio,
   duplicateClip,
   moveClip,
   placeClip,
@@ -92,6 +93,25 @@ describe("timeline engine", () => {
     expect(removeClip(duplicated.project, "clip").tracks[0].clips).toHaveLength(
       1,
     );
+  });
+  it("detaches synchronized audio and silences the source video clip", () => {
+    const project = fixture();
+    project.tracks[0].clips[0].properties = { volume: 0.7, fadeIn: 1 };
+    const result = detachClipAudio(project, "clip");
+    expect(result.audioClipId).toBeTruthy();
+    expect(result.project.tracks[0].clips[0].properties).toMatchObject({
+      volume: 0,
+      audioDetached: true,
+    });
+    expect(result.project.tracks[1].clips[0]).toMatchObject({
+      id: result.audioClipId,
+      kind: "audio",
+      start: 2,
+      duration: 8,
+      sourceStart: 1,
+      properties: { volume: 0.7, fadeIn: 1, detachedFrom: "clip" },
+    });
+    expect(detachClipAudio(result.project, "clip").audioClipId).toBeUndefined();
   });
   it("copies and cuts a selected clip range while preserving source timing", () => {
     const project = fixture();
