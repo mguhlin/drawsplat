@@ -19,7 +19,7 @@
     <section class="panel controls" aria-label="Meme controls">
       <label>Template<select id="template">
         <option value="choice">Choice Panic</option><option value="classic">Classic gradient</option><option value="blank">Blank canvas</option>
-        <optgroup label="PuzzleMaker Library examples">
+        <optgroup label="Finished library examples (captions included)">
           <option value="../memepuzzle/library/images/plant-needs-meme.jpg">Plant Needs</option>
           <option value="../memepuzzle/library/images/equivalent-fractions-meme.jpg">Equivalent Fractions</option>
           <option value="../memepuzzle/library/images/earth-star-patterns-meme.jpg">Earth and Star Patterns</option>
@@ -31,9 +31,9 @@
         </optgroup>
       </select></label>
       <label class="upload">Choose your own image<input id="upload" type="file" accept="image/*"></label>
-      <label>Top caption<input id="topText" type="text" value="FINISH THE ASSIGNMENT" maxlength="120"></label>
-      <label>Bottom caption<input id="bottomText" type="text" value="OR PERFECT THE MEME" maxlength="120"></label>
-      <label>Small label / character<input id="labelText" type="text" value="ME, WITH 5 MINUTES LEFT" maxlength="100"></label>
+      <label>Top caption<input id="topText" type="text" value="START EARLY AND RELAX" maxlength="120"></label>
+      <label>Bottom caption<input id="bottomText" type="text" value="WAIT UNTIL 11:58 PM" maxlength="120"></label>
+      <label>Small label / character<input id="labelText" type="text" value="ME, AT 11:57 PM" maxlength="100"></label>
       <div class="row"><label>Font<select id="font"><option value="Impact, Haettenschweiler, sans-serif">Impact</option><option value="Arial Black, Arial, sans-serif">Arial Black</option><option value="Georgia, serif">Georgia</option></select></label><label>Size<input id="fontSize" type="number" min="24" max="110" value="62"></label></div>
       <div class="row"><label>Text color<input id="fill" type="color" value="#ffffff"></label><label>Outline<input id="stroke" type="color" value="#000000"></label></div>
       <div class="row"><label>Outline width<input id="strokeWidth" type="number" min="0" max="16" value="7"></label><label>Canvas<select id="ratio"><option value="1200,750">Landscape 16:10</option><option value="1080,1080">Square</option><option value="1080,1350">Portrait 4:5</option></select></label></div>
@@ -64,17 +64,20 @@
     function caption(text,y,fromBottom=false,size=62){if(!text.trim())return;ctx.font=`900 ${size}px ${$("#font").value}`;ctx.textAlign="center";ctx.textBaseline="top";ctx.lineJoin="round";ctx.fillStyle=$("#fill").value;ctx.strokeStyle=$("#stroke").value;ctx.lineWidth=Number($("#strokeWidth").value)*2;const lines=wrap(text,canvas.width*.91),lh=size*1.04;const start=fromBottom?canvas.height-y-lines.length*lh:y;lines.forEach((line,i)=>{const yy=start+i*lh;if(ctx.lineWidth)ctx.strokeText(line,canvas.width/2,yy);ctx.fillText(line,canvas.width/2,yy)})}
     function render(){const [w,h]=$("#ratio").value.split(",").map(Number);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}drawBase(w,h);const size=Number($("#fontSize").value);caption($("#topText").value,h*.035,false,size);caption($("#bottomText").value,h*.035,true,size);caption($("#labelText").value,h*.71,false,Math.max(24,size*.48))}
     controls.forEach(id=>$("#"+id).addEventListener("input",render));
-    $("#template").addEventListener("change",()=>{
+    function loadTemplate(){
       const value=$("#template").value;
       if(!value.startsWith("../")){uploaded=null;render();return}
+      $("#topText").value="";$("#bottomText").value="";$("#labelText").value="";
+      $("#status").textContent="This finished example already includes captions. Add new text only if you want another overlay.";
       const image=new Image();image.onload=()=>{uploaded=image;render()};image.onerror=()=>{$("#status").textContent="That example could not be loaded."};image.src=value;
-    });
+    }
+    $("#template").addEventListener("change",loadTemplate);
     $("#upload").addEventListener("change",event=>{const file=event.target.files[0];if(!file)return;const image=new Image();image.onload=()=>{uploaded=image;URL.revokeObjectURL(image.src);render()};image.src=URL.createObjectURL(file)});
     function filename(){return `memesplat-${new Date().toISOString().slice(0,10)}.png`}
     $("#download").addEventListener("click",()=>canvas.toBlob(blob=>{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#status").textContent="PNG saved to Downloads."},"image/png"));
     $("#copy").addEventListener("click",async()=>{try{const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);$("#status").textContent="Meme copied to the clipboard."}catch{$("#status").textContent="Clipboard copy is unavailable here; use Download PNG."}});
-    $("#reset").addEventListener("click",()=>{uploaded=null;$("#template").value="choice";$("#topText").value="FINISH THE ASSIGNMENT";$("#bottomText").value="OR PERFECT THE MEME";$("#labelText").value="ME, WITH 5 MINUTES LEFT";render()});
-    render();
+    $("#reset").addEventListener("click",()=>{uploaded=null;$("#template").value="choice";$("#topText").value="START EARLY AND RELAX";$("#bottomText").value="WAIT UNTIL 11:58 PM";$("#labelText").value="ME, AT 11:57 PM";render()});
+    if($("#template").value.startsWith("../"))loadTemplate();else render();
   </script>
 </body>
 </html>

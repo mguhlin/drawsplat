@@ -64,7 +64,7 @@ const SHELL = [
   './solutions/mermaid/index.html',
   './solutions/memepuzzle/index.html',
   './solutions/memepuzzle/student.html',
-  './solutions/mememaker/index.html',
+  './solutions/memesplat/index.html',
   './solutions/wordsearch/index.html',
   './solutions/storywheel/index.html',
   './solutions/dicebreakers/index.html',
