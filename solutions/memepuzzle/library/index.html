@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PuzzleMaker Library — DrawSplat</title>
+  <link rel="icon" href="../../../assets/favicons/tools.svg" type="image/svg+xml">
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#172033;background:#f8f7ff;--purple:#7c3aed;--line:#ddd6fe}
+    *{box-sizing:border-box}body{margin:0}.stripe{height:8px;background:linear-gradient(90deg,#7c3aed 0 28%,#a855f7 28% 48%,#f97316 48% 65%,#ef4444 65% 82%,#22c55e 82%)}
+    main{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:34px 0 60px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}h1{color:var(--purple);font-size:clamp(2rem,5vw,3.6rem);margin:0}header p{color:#64748b;max-width:720px;line-height:1.5}.back{color:var(--purple);font-weight:800;text-decoration:none;border:2px solid var(--line);border-radius:10px;padding:10px 14px;background:white;white-space:nowrap}
+    .filters{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0}.filters label{font-weight:800;font-size:.85rem}.filters select{display:block;margin-top:5px;min-width:180px;padding:10px;border:2px solid var(--line);border-radius:9px;background:white}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}.card{background:white;border:2px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 12px 30px #4c1d9510}.card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#eef2ff}.body{padding:17px}.body h2{margin:0 0 6px;font-size:1.2rem}.meta{color:#64748b;font-size:.82rem}.standards{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}.standards span{background:#ede9fe;color:#5b21b6;border-radius:999px;padding:5px 8px;font-size:.72rem;font-weight:800}.download{display:block;text-align:center;text-decoration:none;color:white;background:var(--purple);border-radius:9px;padding:10px;font-weight:850}.empty{color:#64748b;padding:24px;border:2px dashed var(--line);border-radius:12px}
+    @media(max-width:650px){header{display:block}.back{display:inline-block;margin-top:12px}}
+  </style>
+</head>
+<body>
+  <div class="stripe"></div>
+  <main>
+    <header>
+      <div><h1>PuzzleMaker Library</h1><p>Download classroom-ready Meme Puzzle JSON setups. Every activity includes its image, question set, answer key, tile layout, grade band, subject, and standards connections.</p></div>
+      <a class="back" href="../">← Meme Puzzle Maker</a>
+    </header>
+    <section class="filters" aria-label="Library filters">
+      <label>Grade band<select id="grade"><option value="">All grade bands</option></select></label>
+      <label>Content area<select id="subject"><option value="">All content areas</option></select></label>
+    </section>
+    <section class="grid" id="library" aria-live="polite"></section>
+  </main>
+  <script>
+    const files=["plant-needs-k2.json","equivalent-fractions-35.json","earth-star-patterns-35.json","text-evidence-68.json","cellular-energy-912.json"];
+    const library=document.querySelector("#library");
+    const grade=document.querySelector("#grade");
+    const subject=document.querySelector("#subject");
+    let activities=[];
+    const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    function options(select,values){values.sort().forEach(value=>select.insertAdjacentHTML("beforeend",`<option>${escapeHtml(value)}</option>`))}
+    function render(){
+      const shown=activities.filter(item=>(!grade.value||item.data.metadata.gradeBand===grade.value)&&(!subject.value||item.data.metadata.subject===subject.value));
+      library.innerHTML=shown.length?shown.map(item=>`<article class="card"><img src="${item.data.image}" alt="Illustration for ${escapeHtml(item.data.title)}"><div class="body"><h2>${escapeHtml(item.data.title)}</h2><div class="meta">Grades ${escapeHtml(item.data.metadata.gradeBand)} · ${escapeHtml(item.data.metadata.subject)} · ${item.data.questions.length} questions</div><div class="standards">${item.data.metadata.standards.map(value=>`<span>${escapeHtml(value)}</span>`).join("")}</div><a class="download" href="./${item.file}" download>Download JSON setup</a></div></article>`).join(""):"<p class='empty'>No activities match those filters.</p>";
+    }
+    Promise.all(files.map(async file=>({file,data:await fetch(`./${file}`).then(response=>{if(!response.ok)throw Error(file);return response.json()})}))).then(items=>{
+      activities=items;
+      options(grade,[...new Set(items.map(item=>item.data.metadata.gradeBand))]);
+      options(subject,[...new Set(items.map(item=>item.data.metadata.subject))]);
+      render();
+    }).catch(()=>{library.innerHTML="<p class='empty'>The activity library could not be loaded.</p>"});
+    grade.addEventListener("change",render);subject.addEventListener("change",render);
+  </script>
+</body>
+</html>

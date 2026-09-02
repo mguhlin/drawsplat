@@ -108,7 +108,7 @@
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const latestPuzzleKey = "drawsplat.memepuzzle.latest";
-    const state = { title: "", image: "", questions: [], index: 0, correct: 0, opened: 0 };
+    const state = { title: "", image: "", questions: [], tileOrder: [], index: 0, correct: 0, opened: 0 };
 
     function b64urlDecode(s) {
       const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
@@ -148,6 +148,13 @@
         state.title = cfg.title || state.title;
         state.image = cfg.image || "";
         state.questions = Array.isArray(cfg.questions) ? cfg.questions : [];
+        const requestedOrder = Array.isArray(cfg.tileOrder) ? cfg.tileOrder.map(Number) : [];
+        state.tileOrder = requestedOrder.filter((index, position) =>
+          index >= 0 && index < state.questions.length && requestedOrder.indexOf(index) === position
+        );
+        for (let index = 0; index < state.questions.length; index += 1) {
+          if (!state.tileOrder.includes(index)) state.tileOrder.push(index);
+        }
         return state.questions.length > 0 && state.image;
       } catch {
         return false;
@@ -159,7 +166,10 @@
       const shape = gridShape(count);
       $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
       $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
-      $("#tileGrid").innerHTML = Array.from({ length: count }, (_, i) => `<div class="cover-tile${i < state.opened ? " open" : ""}">${i + 1}</div>`).join("");
+      const order = state.tileOrder.length ? state.tileOrder : Array.from({ length: count }, (_, index) => index);
+      $("#tileGrid").innerHTML = order.map(questionIndex =>
+        `<div class="cover-tile${questionIndex < state.opened ? " open" : ""}">${questionIndex + 1}</div>`
+      ).join("");
     }
 
     function render() {

@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="doc.title">Meme Puzzle Maker</title>
   <script src="../../assets/js/widget-i18n.js"></script>
+  <script src="../../vendor/jszip.min.js"></script>
   <style>
     .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #ddd6fe); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
     .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
@@ -180,6 +181,18 @@
       gap: 10px;
     }
 
+    .sample-downloads {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      color: var(--gray-60);
+      font-size: .78rem;
+    }
+
+    .sample-downloads .btn { min-height: 34px; padding: 5px 9px; font-size: .76rem; }
+
     .btn {
       min-height: 42px;
       border: 2px solid rgba(30, 57, 141, .22);
@@ -233,7 +246,13 @@
       border: 1px solid rgba(255, 255, 255, .35);
       font-weight: 900;
       font-size: clamp(.85rem, 2vw, 1.4rem);
+      cursor: grab;
+      user-select: none;
     }
+
+    .cover-tile:active { cursor: grabbing; }
+    .cover-tile.dragging { opacity: .45; }
+    .cover-tile.drag-target { outline: 4px solid var(--yellow); outline-offset: -4px; }
 
     .cover-tile.open {
       opacity: 0;
@@ -344,15 +363,23 @@
           <button class="btn primary" id="previewBtn" data-i18n="button.preview">Update Preview</button>
           <button class="btn gold" id="copyLinkBtn" data-i18n="button.copyLink">Copy Student Link</button>
           <button class="btn" id="openStudentBtn" data-i18n="button.openStudent">Open Student Page</button>
-          <button class="btn" id="loadBtn" data-i18n="button.load">Load Setup</button>
+          <button class="btn" id="loadBtn" data-i18n="button.load">Load JSON, CSV, or Excel</button>
           <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
+          <a class="btn" href="./library/" data-i18n="button.library">PuzzleMaker Library</a>
         </div>
-        <input id="setupUpload" type="file" accept=".json,application/json" hidden>
+        <input id="setupUpload" type="file" accept=".json,.csv,.xlsx,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+        <div class="sample-downloads">
+          <span data-i18n="samples.label">Import templates:</span>
+          <button class="btn" type="button" data-sample-format="json" data-i18n="samples.json">Sample JSON</button>
+          <button class="btn" type="button" data-sample-format="csv" data-i18n="samples.csv">Sample CSV</button>
+          <button class="btn" type="button" data-sample-format="xlsx" data-i18n="samples.xlsx">Sample Excel</button>
+        </div>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
       <section class="preview" data-i18n-aria-label="panel.preview.aria" aria-label="Puzzle preview">
         <h2 data-i18n="preview.h2">Preview</h2>
+        <p class="help" data-i18n="preview.dragHelp">Drag numbered squares to choose which part of the image each question reveals.</p>
         <div class="puzzle-wrap">
           <div class="image-board">
             <img id="previewImage" data-i18n-alt="preview.imgAlt" alt="Hidden puzzle image">
@@ -380,6 +407,8 @@
     const $ = (sel) => document.querySelector(sel);
     const latestPuzzleKey = "drawsplat.memepuzzle.latest";
     let uploadedImage = "";
+    let tileOrder = [];
+    let activityMetadata = null;
     // Track last-applied translated defaults so language switches refresh
     // them without overwriting custom teacher content.
     let lastTitleDefault = "";
@@ -407,10 +436,19 @@
     function config() {
       const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 10));
       const questions = parseQA($("#qaInput").value, total);
+      const order = tileOrder.filter((index, position, values) =>
+        index >= 0 && index < questions.length && values.indexOf(index) === position
+      );
+      for (let index = 0; index < questions.length; index += 1) {
+        if (!order.includes(index)) order.push(index);
+      }
+      tileOrder = order;
       return {
         title: $("#titleInput").value.trim() || t("field.titleDefault"),
         image: uploadedImage || $("#imageUrl").value.trim(),
-        questions
+        questions,
+        tileOrder: [...tileOrder],
+        ...(activityMetadata ? { metadata: activityMetadata } : {}),
       };
     }
 
@@ -432,7 +470,9 @@
       $("#questionList").innerHTML = data.questions.map(item => `<li>${escapeHTML(item.question)}</li>`).join("");
       $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
       $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
-      $("#tileGrid").innerHTML = Array.from({ length: count }, (_, i) => `<div class="cover-tile${i < openCount ? " open" : ""}">${i + 1}</div>`).join("");
+      $("#tileGrid").innerHTML = tileOrder.map((questionIndex, position) =>
+        `<div class="cover-tile${questionIndex < openCount ? " open" : ""}" draggable="true" data-position="${position}">${questionIndex + 1}</div>`
+      ).join("");
       $("#status").textContent = t("status.ready", { n: data.questions.length });
     }
 
@@ -508,9 +548,168 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
+    const sampleQuestions = [
+      { question: "What planet is known as the Red Planet?", answer: "Mars" },
+      { question: "What process lets plants make food?", answer: "photosynthesis" },
+      { question: "What is the largest ocean on Earth?", answer: "Pacific Ocean" },
+    ];
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function csvCell(value) {
+      return `"${String(value).replace(/"/g, '""')}"`;
+    }
+
+    function xmlText(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;",
+      }[character]));
+    }
+
+    async function downloadSample(format) {
+      if (format === "json") {
+        const sample = {
+          title: "Sample Science Meme Puzzle",
+          image: "https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg",
+          questions: sampleQuestions,
+          tileOrder: [0, 1, 2],
+        };
+        downloadBlob(new Blob([JSON.stringify(sample, null, 2)], { type: "application/json" }), "meme-puzzle-import-template.json");
+        return;
+      }
+      const rows = [["question", "answer"], ...sampleQuestions.map(item => [item.question, item.answer])];
+      if (format === "csv") {
+        const csv = rows.map(row => row.map(csvCell).join(",")).join("\r\n");
+        downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), "meme-puzzle-import-template.csv");
+        return;
+      }
+      const zip = new JSZip();
+      const sheetRows = rows.map((row, rowIndex) =>
+        `<row r="${rowIndex + 1}">${row.map((cell, columnIndex) =>
+          `<c r="${String.fromCharCode(65 + columnIndex)}${rowIndex + 1}" t="inlineStr"><is><t>${xmlText(cell)}</t></is></c>`
+        ).join("")}</row>`
+      ).join("");
+      zip.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>');
+      zip.file("_rels/.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+      zip.file("xl/workbook.xml", '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Questions" sheetId="1" r:id="rId1"/></sheets></workbook>');
+      zip.file("xl/_rels/workbook.xml.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>');
+      zip.file("xl/worksheets/sheet1.xml", `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetRows}</sheetData></worksheet>`);
+      const workbook = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      downloadBlob(workbook, "meme-puzzle-import-template.xlsx");
+    }
+
+    function questionsFromRows(rows) {
+      if (!rows.length) return [];
+      const headings = rows[0].map(value => String(value).trim().toLowerCase());
+      const questionIndex = headings.findIndex(value => ["question", "questions", "prompt"].includes(value));
+      const answerIndex = headings.findIndex(value => ["answer", "answers", "response"].includes(value));
+      const hasHeader = questionIndex >= 0 && answerIndex >= 0;
+      const qIndex = hasHeader ? questionIndex : 0;
+      const aIndex = hasHeader ? answerIndex : 1;
+      return rows
+        .slice(hasHeader ? 1 : 0)
+        .map(values => ({
+          question: String(values[qIndex] ?? "").trim(),
+          answer: String(values[aIndex] ?? "").trim(),
+        }))
+        .filter(item => item.question && item.answer)
+        .slice(0, 30);
+    }
+
+    function parseCsvQuestions(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let quoted = false;
+      for (let index = 0; index < text.length; index += 1) {
+        const character = text[index];
+        if (quoted) {
+          if (character === '"' && text[index + 1] === '"') {
+            field += '"';
+            index += 1;
+          } else if (character === '"') quoted = false;
+          else field += character;
+        } else if (character === '"' && field === "") quoted = true;
+        else if (character === ",") {
+          row.push(field);
+          field = "";
+        } else if (character === "\n") {
+          row.push(field.replace(/\r$/, ""));
+          if (row.some(value => value.trim())) rows.push(row);
+          row = [];
+          field = "";
+        } else field += character;
+      }
+      row.push(field.replace(/\r$/, ""));
+      if (row.some(value => value.trim())) rows.push(row);
+      return questionsFromRows(rows);
+    }
+
+    async function parseXlsxQuestions(file) {
+      if (!window.JSZip) throw new Error("Excel reader unavailable");
+      const zip = await JSZip.loadAsync(await file.arrayBuffer());
+      const sharedStrings = [];
+      const sharedFile = zip.file("xl/sharedStrings.xml");
+      if (sharedFile) {
+        const xml = new DOMParser().parseFromString(await sharedFile.async("text"), "application/xml");
+        xml.querySelectorAll("si").forEach(item => {
+          sharedStrings.push(Array.from(item.querySelectorAll("t")).map(node => node.textContent || "").join(""));
+        });
+      }
+      const sheetFile = zip.file("xl/worksheets/sheet1.xml") ||
+        Object.values(zip.files).find(entry => /^xl\/worksheets\/sheet\d+\.xml$/.test(entry.name));
+      if (!sheetFile) throw new Error("No Excel worksheet found");
+      const xml = new DOMParser().parseFromString(await sheetFile.async("text"), "application/xml");
+      const rows = [];
+      xml.querySelectorAll("row").forEach(rowNode => {
+        const row = [];
+        rowNode.querySelectorAll("c").forEach(cell => {
+          const letters = (cell.getAttribute("r") || "A").match(/[A-Z]+/i)?.[0].toUpperCase() || "A";
+          let column = 0;
+          for (const letter of letters) column = column * 26 + letter.charCodeAt(0) - 64;
+          column -= 1;
+          const type = cell.getAttribute("t");
+          const raw = type === "inlineStr"
+            ? Array.from(cell.querySelectorAll("t")).map(node => node.textContent || "").join("")
+            : cell.querySelector("v")?.textContent || "";
+          row[column] = type === "s" ? sharedStrings[Number(raw)] || "" : raw;
+        });
+        if (row.some(value => String(value || "").trim())) rows.push(row);
+      });
+      return questionsFromRows(rows);
+    }
+
     async function loadSetup(file) {
       try {
-        const data = JSON.parse(await file.text());
+        const lowerName = file.name.toLowerCase();
+        const isSpreadsheet = lowerName.endsWith(".csv") || lowerName.endsWith(".xlsx") || file.type === "text/csv";
+        const text = lowerName.endsWith(".xlsx") ? "" : await file.text();
+        if (isSpreadsheet) {
+          const questions = lowerName.endsWith(".xlsx")
+            ? await parseXlsxQuestions(file)
+            : parseCsvQuestions(text);
+          if (!questions.length) throw new Error("Invalid spreadsheet question set");
+          $("#questionCount").value = String(questions.length);
+          tileOrder = questions.map((_, index) => index);
+          activityMetadata = null;
+          $("#qaInput").value = questions
+            .map(item => `${item.question}\t${item.answer}`)
+            .join("\n");
+          renderPreview();
+          $("#status").textContent = t("status.sheetLoaded", { n: questions.length });
+          return;
+        }
+
+        const data = JSON.parse(text);
         if (
           !data ||
           typeof data.title !== "string" ||
@@ -525,6 +724,8 @@
 
         $("#titleInput").value = data.title;
         $("#questionCount").value = String(data.questions.length);
+        tileOrder = Array.isArray(data.tileOrder) ? data.tileOrder.map(Number) : [];
+        activityMetadata = data.metadata && typeof data.metadata === "object" ? data.metadata : null;
         $("#qaInput").value = data.questions
           .map(item => `${item.question}\t${item.answer}`)
           .join("\n");
@@ -570,6 +771,35 @@
       }
     });
     $("#previewBtn").addEventListener("click", () => renderPreview());
+    let draggedTilePosition = null;
+    $("#tileGrid").addEventListener("dragstart", event => {
+      const tile = event.target.closest(".cover-tile");
+      if (!tile) return;
+      draggedTilePosition = Number(tile.dataset.position);
+      tile.classList.add("dragging");
+      event.dataTransfer.effectAllowed = "move";
+    });
+    $("#tileGrid").addEventListener("dragover", event => {
+      const tile = event.target.closest(".cover-tile");
+      if (!tile || draggedTilePosition === null) return;
+      event.preventDefault();
+      $("#tileGrid").querySelectorAll(".drag-target").forEach(item => item.classList.remove("drag-target"));
+      tile.classList.add("drag-target");
+    });
+    $("#tileGrid").addEventListener("drop", event => {
+      const tile = event.target.closest(".cover-tile");
+      if (!tile || draggedTilePosition === null) return;
+      event.preventDefault();
+      const targetPosition = Number(tile.dataset.position);
+      const [moved] = tileOrder.splice(draggedTilePosition, 1);
+      tileOrder.splice(targetPosition, 0, moved);
+      draggedTilePosition = null;
+      renderPreview();
+    });
+    $("#tileGrid").addEventListener("dragend", () => {
+      draggedTilePosition = null;
+      $("#tileGrid").querySelectorAll(".dragging, .drag-target").forEach(item => item.classList.remove("dragging", "drag-target"));
+    });
     $("#copyLinkBtn").addEventListener("click", copyLink);
     $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
     $("#loadBtn").addEventListener("click", () => $("#setupUpload").click());
@@ -579,6 +809,9 @@
       event.target.value = "";
     });
     $("#downloadBtn").addEventListener("click", downloadSetup);
+    document.querySelectorAll("[data-sample-format]").forEach(button => {
+      button.addEventListener("click", () => downloadSample(button.dataset.sampleFormat));
+    });
 
     function seedDefaults() {
       const titleEl = $("#titleInput");
