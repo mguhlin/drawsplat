@@ -344,8 +344,10 @@
           <button class="btn primary" id="previewBtn" data-i18n="button.preview">Update Preview</button>
           <button class="btn gold" id="copyLinkBtn" data-i18n="button.copyLink">Copy Student Link</button>
           <button class="btn" id="openStudentBtn" data-i18n="button.openStudent">Open Student Page</button>
+          <button class="btn" id="loadBtn" data-i18n="button.load">Load Setup</button>
           <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
         </div>
+        <input id="setupUpload" type="file" accept=".json,application/json" hidden>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
@@ -489,15 +491,60 @@
     }
 
     function downloadSetup() {
-      const blob = new Blob([JSON.stringify(config(), null, 2)], { type: "application/json" });
+      const data = config();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "meme-puzzle.json";
+      const slug = data.title
+        .normalize("NFKD")
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
+        .replace(/^-+|-+$/g, "")
+        .toLowerCase();
+      a.download = `${slug || "meme-puzzle"}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function loadSetup(file) {
+      try {
+        const data = JSON.parse(await file.text());
+        if (
+          !data ||
+          typeof data.title !== "string" ||
+          typeof data.image !== "string" ||
+          !Array.isArray(data.questions) ||
+          !data.questions.length ||
+          data.questions.length > 30 ||
+          data.questions.some(item =>
+            !item || typeof item.question !== "string" || typeof item.answer !== "string"
+          )
+        ) throw new Error("Invalid Meme Puzzle setup");
+
+        $("#titleInput").value = data.title;
+        $("#questionCount").value = String(data.questions.length);
+        $("#qaInput").value = data.questions
+          .map(item => `${item.question}\t${item.answer}`)
+          .join("\n");
+
+        if (data.image.startsWith("data:image/")) {
+          uploadedImage = data.image;
+          $("#imageSelect").value = "custom";
+          $("#imageUrl").value = t("image.uploadedLabel");
+        } else {
+          uploadedImage = "";
+          $("#imageUrl").value = data.image;
+          const matchingOption = Array.from($("#imageSelect").options)
+            .find(option => option.value === data.image);
+          $("#imageSelect").value = matchingOption ? data.image : "custom";
+        }
+        renderPreview();
+        $("#status").textContent = t("status.setupLoaded", { n: data.questions.length });
+      } catch {
+        $("#status").textContent = t("status.loadFailed");
+      }
     }
 
     function escapeHTML(str) {
@@ -525,6 +572,12 @@
     $("#previewBtn").addEventListener("click", () => renderPreview());
     $("#copyLinkBtn").addEventListener("click", copyLink);
     $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
+    $("#loadBtn").addEventListener("click", () => $("#setupUpload").click());
+    $("#setupUpload").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) loadSetup(file);
+      event.target.value = "";
+    });
     $("#downloadBtn").addEventListener("click", downloadSetup);
 
     function seedDefaults() {
