@@ -275,6 +275,18 @@ test("fits, fills, or stretches visual clips in the preview", async ({ page }) =
 
   const preview = page.locator(".visual-layer > img");
   await expect(preview).toHaveCSS("object-fit", "contain");
+  await expect
+    .poll(() =>
+      preview.evaluate((element) => {
+        const media = element.getBoundingClientRect();
+        const layer = element.parentElement!.getBoundingClientRect();
+        return {
+          inside: media.width <= layer.width && media.height <= layer.height,
+          ratio: Math.round((media.width / media.height) * 100),
+        };
+      }),
+    )
+    .toEqual({ inside: true, ratio: 56 });
   await page.getByLabel("Frame fit").selectOption("fill");
   await expect(preview).toHaveCSS("object-fit", "cover");
   await page.getByLabel("Frame fit").selectOption("stretch");

@@ -519,7 +519,7 @@ export function App() {
           start,
           duration: imported.asset.duration || (kind === "image" ? 5 : 10),
           sourceStart: 0,
-          properties: {},
+          properties: { fit: "fit", x: 0, y: 0, scale: 1, rotation: 0 },
         };
         next = touchProject(next, {
           assets: [...next.assets, imported.asset],
@@ -753,7 +753,7 @@ export function App() {
       start: time,
       duration,
       sourceStart: 0,
-      properties: {},
+      properties: { fit: "fit", x: 0, y: 0, scale: 1, rotation: 0 },
     };
     const next = touchProject(project, {
       tracks: project.tracks.map((item) =>
@@ -1254,7 +1254,21 @@ export function App() {
                         src={url}
                         preload="auto"
                         playsInline
-                        style={{ objectFit: fit === "fit" ? "contain" : fit === "fill" ? "cover" : "fill" }}
+                        style={
+                          fit === "fit"
+                            ? {
+                                width: "auto",
+                                height: "auto",
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                objectFit: "contain",
+                              }
+                            : {
+                                width: "100%",
+                                height: "100%",
+                                objectFit: fit === "fill" ? "cover" : "fill",
+                              }
+                        }
                         onLoadedMetadata={(event) => {
                           const offset = Math.min(
                             location.clip.duration,
@@ -1276,7 +1290,21 @@ export function App() {
                       <img
                         src={url}
                         alt={asset.name}
-                        style={{ objectFit: fit === "fit" ? "contain" : fit === "fill" ? "cover" : "fill" }}
+                        style={
+                          fit === "fit"
+                            ? {
+                                width: "auto",
+                                height: "auto",
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                objectFit: "contain",
+                              }
+                            : {
+                                width: "100%",
+                                height: "100%",
+                                objectFit: fit === "fill" ? "cover" : "fill",
+                              }
+                        }
                       />
                     )}
                     {isText && (
