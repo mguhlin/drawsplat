@@ -376,6 +376,7 @@
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
+    const latestPuzzleKey = "drawsplat.memepuzzle.latest";
     let uploadedImage = "";
     // Track last-applied translated defaults so language switches refresh
     // them without overwriting custom teacher content.
@@ -419,6 +420,9 @@
 
     function renderPreview(openCount = 0) {
       const data = config();
+      // Keep the most recent setup available to the student route in this
+      // browser. The encoded URL remains the portable, cross-device link.
+      try { localStorage.setItem(latestPuzzleKey, JSON.stringify(data)); } catch {}
       const count = data.questions.length || 1;
       const shape = gridShape(count);
       $("#previewImage").src = data.image;
@@ -435,6 +439,33 @@
       let bin = "";
       for (const b of bytes) bin += String.fromCharCode(b);
       return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function prepareUploadedImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error || new Error("Image could not be read."));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("Image could not be decoded."));
+          image.onload = () => {
+            // Student links carry the image with them. Bound its dimensions
+            // and encode it efficiently so the complete link remains usable
+            // when pasted into another browser or device.
+            const scale = Math.min(1, 1024 / image.naturalWidth, 768 / image.naturalHeight);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext("2d");
+            context.fillStyle = "#fff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.76));
+          };
+          image.src = String(reader.result || "");
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     function studentUrl() {
@@ -480,16 +511,16 @@
       }
       renderPreview();
     });
-    $("#imageUpload").addEventListener("change", event => {
+    $("#imageUpload").addEventListener("change", async event => {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        uploadedImage = reader.result;
+      try {
+        uploadedImage = await prepareUploadedImage(file);
         $("#imageUrl").value = t("image.uploadedLabel");
         renderPreview();
-      };
-      reader.readAsDataURL(file);
+      } catch {
+        uploadedImage = "";
+      }
     });
     $("#previewBtn").addEventListener("click", () => renderPreview());
     $("#copyLinkBtn").addEventListener("click", copyLink);

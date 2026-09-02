@@ -107,6 +107,7 @@
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
+    const latestPuzzleKey = "drawsplat.memepuzzle.latest";
     const state = { title: "", image: "", questions: [], index: 0, correct: 0, opened: 0 };
 
     function b64urlDecode(s) {
@@ -135,9 +136,15 @@
       const payload = hash.startsWith("#p=")
         ? hash.slice(3)
         : new URLSearchParams(window.location.search).get("p");
-      if (!payload) return false;
       try {
-        const cfg = JSON.parse(b64urlDecode(payload));
+        // A portable teacher link carries its setup in `p`. When this route
+        // is opened without that payload, recover the teacher's latest setup
+        // from this browser instead of displaying an empty student page.
+        const saved = localStorage.getItem(latestPuzzleKey);
+        const cfg = payload
+          ? JSON.parse(b64urlDecode(payload))
+          : saved ? JSON.parse(saved) : null;
+        if (!cfg) return false;
         state.title = cfg.title || state.title;
         state.image = cfg.image || "";
         state.questions = Array.isArray(cfg.questions) ? cfg.questions : [];
