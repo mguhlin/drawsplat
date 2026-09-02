@@ -438,7 +438,10 @@
     }
 
     function studentUrl() {
-      const url = new URL("student.html", window.location.href);
+      // Cloudflare canonicalizes student.html to /student. Link directly to
+      // that route so the fragment-encoded puzzle is never exposed to a
+      // redirect that may discard it.
+      const url = new URL("student", window.location.href);
       url.hash = "p=" + b64urlEncode(JSON.stringify(config()));
       return url.toString();
     }
@@ -446,7 +449,9 @@
     function copyLink() {
       const url = studentUrl();
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => $("#status").textContent = t("status.linkCopied"));
+        navigator.clipboard.writeText(url)
+          .then(() => $("#status").textContent = t("status.linkCopied"))
+          .catch(() => window.prompt(t("prompt.copyLink"), url));
       } else {
         window.prompt(t("prompt.copyLink"), url);
       }

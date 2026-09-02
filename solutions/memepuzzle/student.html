@@ -130,9 +130,14 @@
 
     function loadConfig() {
       const hash = window.location.hash || "";
-      if (!hash.startsWith("#p=")) return false;
+      // Query support keeps older/shared integrations working, while current
+      // teacher links use the fragment so puzzle data never reaches a server.
+      const payload = hash.startsWith("#p=")
+        ? hash.slice(3)
+        : new URLSearchParams(window.location.search).get("p");
+      if (!payload) return false;
       try {
-        const cfg = JSON.parse(b64urlDecode(hash.slice(3)));
+        const cfg = JSON.parse(b64urlDecode(payload));
         state.title = cfg.title || state.title;
         state.image = cfg.image || "";
         state.questions = Array.isArray(cfg.questions) ? cfg.questions : [];
