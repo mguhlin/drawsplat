@@ -1,14 +1,46 @@
 {
   "title": "Equivalent Fractions",
-  "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='lavender'/%3E%3Ccircle cx='250' cy='270' r='150' fill='white' stroke='purple' stroke-width='10'/%3E%3Cpath d='M250 120A150 150 0 0 1 250 420Z' fill='violet'/%3E%3Crect x='500' y='120' width='180' height='300' fill='white' stroke='navy' stroke-width='10'/%3E%3Crect x='500' y='120' width='180' height='150' fill='deepskyblue'/%3E%3Cpath d='M500 195H680M500 270H680M500 345H680' stroke='navy' stroke-width='6'/%3E%3Ctext x='45' y='65' font-size='38' font-family='Arial' font-weight='bold' fill='indigo'%3EEQUIVALENT FRACTIONS%3C/text%3E%3C/svg%3E",
+  "image": "./images/equivalent-fractions-meme.jpg",
   "questions": [
-    {"question": "What fraction is equivalent to one half with denominator 4?", "answer": "2/4"},
-    {"question": "What fraction is equivalent to two thirds with denominator 6?", "answer": "4/6"},
-    {"question": "Simplify three sixths.", "answer": "1/2"},
-    {"question": "What number multiplies both parts of one half to make three sixths?", "answer": "3"},
-    {"question": "Are four eighths and one half equivalent?", "answer": "yes"},
-    {"question": "Simplify six ninths.", "answer": "2/3"}
+    {
+      "question": "What fraction is equivalent to one half with denominator 4?",
+      "answer": "2/4"
+    },
+    {
+      "question": "What fraction is equivalent to two thirds with denominator 6?",
+      "answer": "4/6"
+    },
+    {
+      "question": "Simplify three sixths.",
+      "answer": "1/2"
+    },
+    {
+      "question": "What number multiplies both parts of one half to make three sixths?",
+      "answer": "3"
+    },
+    {
+      "question": "Are four eighths and one half equivalent?",
+      "answer": "yes"
+    },
+    {
+      "question": "Simplify six ninths.",
+      "answer": "2/3"
+    }
   ],
-  "tileOrder": [0, 1, 2, 3, 4, 5],
-  "metadata": {"gradeBand": "3-5", "subject": "Mathematics", "standards": ["CCSS 4.NF.A.1", "TEKS 4.3(C)"]}
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Mathematics",
+    "standards": [
+      "CCSS 4.NF.A.1",
+      "TEKS 4.3(C)"
+    ]
+  }
 }

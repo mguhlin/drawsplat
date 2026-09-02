@@ -1,14 +1,46 @@
 {
   "title": "Cellular Energy",
-  "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='honeydew'/%3E%3Cellipse cx='250' cy='270' rx='170' ry='110' fill='lightgreen' stroke='forestgreen' stroke-width='10'/%3E%3Cpath d='M140 270Q250 160 360 270Q250 380 140 270Z' fill='green'/%3E%3Cellipse cx='590' cy='270' rx='150' ry='95' fill='lightsalmon' stroke='maroon' stroke-width='10'/%3E%3Cpath d='M485 270Q535 200 590 270T695 270' fill='none' stroke='maroon' stroke-width='12'/%3E%3Cpath d='M390 220H450M450 220L425 195M450 220L425 245M450 320H390M390 320L415 295M390 320L415 345' stroke='navy' stroke-width='10' fill='none'/%3E%3Ctext x='155' y='70' font-size='38' font-family='Arial' font-weight='bold' fill='darkgreen'%3ECELLULAR ENERGY%3C/text%3E%3C/svg%3E",
+  "image": "./images/cellular-energy-meme.jpg",
   "questions": [
-    {"question": "What organelle carries out photosynthesis?", "answer": "chloroplast"},
-    {"question": "What molecule stores usable cellular energy?", "answer": "ATP"},
-    {"question": "What gas is released during photosynthesis?", "answer": "oxygen"},
-    {"question": "What sugar is produced during photosynthesis?", "answer": "glucose"},
-    {"question": "What process releases energy from glucose?", "answer": "cellular respiration"},
-    {"question": "What organelle is a main site of cellular respiration?", "answer": "mitochondrion"}
+    {
+      "question": "What organelle carries out photosynthesis?",
+      "answer": "chloroplast"
+    },
+    {
+      "question": "What molecule stores usable cellular energy?",
+      "answer": "ATP"
+    },
+    {
+      "question": "What gas is released during photosynthesis?",
+      "answer": "oxygen"
+    },
+    {
+      "question": "What sugar is produced during photosynthesis?",
+      "answer": "glucose"
+    },
+    {
+      "question": "What process releases energy from glucose?",
+      "answer": "cellular respiration"
+    },
+    {
+      "question": "What organelle is a main site of cellular respiration?",
+      "answer": "mitochondrion"
+    }
   ],
-  "tileOrder": [0, 1, 2, 3, 4, 5],
-  "metadata": {"gradeBand": "9-12", "subject": "Biology", "standards": ["NGSS HS-LS1-5", "NGSS HS-LS1-7"]}
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "9-12",
+    "subject": "Biology",
+    "standards": [
+      "NGSS HS-LS1-5",
+      "NGSS HS-LS1-7"
+    ]
+  }
 }

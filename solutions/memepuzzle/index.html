@@ -181,17 +181,15 @@
       gap: 10px;
     }
 
-    .sample-downloads {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-      color: var(--gray-60);
-      font-size: .78rem;
-    }
-
-    .sample-downloads .btn { min-height: 34px; padding: 5px 9px; font-size: .76rem; }
+    .resource-menu { position: relative; }
+    .resource-menu summary { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; padding: 0 13px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--navy); font-weight: 800; cursor: pointer; list-style: none; }
+    .resource-menu summary::-webkit-details-marker { display: none; }
+    .resource-menu summary::after { content: "▾"; font-size: .72rem; }
+    .resource-menu[open] summary::after { transform: rotate(180deg); }
+    .resource-popover { position: absolute; z-index: 20; top: calc(100% + 7px); right: 0; width: 230px; display: grid; gap: 5px; padding: 8px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .resource-popover strong { padding: 7px 8px 3px; color: var(--gray-50); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    .resource-popover a, .resource-popover button { width: 100%; min-height: 38px; display: flex; align-items: center; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--gray-90); font: inherit; font-size: .84rem; font-weight: 750; text-align: left; text-decoration: none; cursor: pointer; }
+    .resource-popover a:hover, .resource-popover button:hover { background: var(--gray-10); color: var(--navy); }
 
     .btn {
       min-height: 42px;
@@ -311,6 +309,16 @@
         <p class="subtitle" data-i18n="header.subtitle">Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.</p>
       </div>
       <div class="header-actions">
+        <details class="resource-menu" id="resourceMenu">
+          <summary data-i18n="resources.menu">Resources</summary>
+          <div class="resource-popover">
+            <a href="./library/" data-i18n="button.library">PuzzleMaker Library</a>
+            <strong data-i18n="samples.label">Import templates:</strong>
+            <button type="button" data-sample-format="json" data-i18n="samples.json">Sample JSON</button>
+            <button type="button" data-sample-format="csv" data-i18n="samples.csv">Sample CSV</button>
+            <button type="button" data-sample-format="xlsx" data-i18n="samples.xlsx">Sample Excel</button>
+          </div>
+        </details>
         <div class="i18n-picker" data-i18n-picker></div>
         <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
       </div>
@@ -365,15 +373,8 @@
           <button class="btn" id="openStudentBtn" data-i18n="button.openStudent">Open Student Page</button>
           <button class="btn" id="loadBtn" data-i18n="button.load">Load JSON, CSV, or Excel</button>
           <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
-          <a class="btn" href="./library/" data-i18n="button.library">PuzzleMaker Library</a>
         </div>
         <input id="setupUpload" type="file" accept=".json,.csv,.xlsx,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
-        <div class="sample-downloads">
-          <span data-i18n="samples.label">Import templates:</span>
-          <button class="btn" type="button" data-sample-format="json" data-i18n="samples.json">Sample JSON</button>
-          <button class="btn" type="button" data-sample-format="csv" data-i18n="samples.csv">Sample CSV</button>
-          <button class="btn" type="button" data-sample-format="xlsx" data-i18n="samples.xlsx">Sample Excel</button>
-        </div>
         <div class="status" id="status" role="status" aria-live="polite"></div>
       </section>
 
@@ -810,7 +811,14 @@
     });
     $("#downloadBtn").addEventListener("click", downloadSetup);
     document.querySelectorAll("[data-sample-format]").forEach(button => {
-      button.addEventListener("click", () => downloadSample(button.dataset.sampleFormat));
+      button.addEventListener("click", () => {
+        downloadSample(button.dataset.sampleFormat);
+        $("#resourceMenu").removeAttribute("open");
+      });
+    });
+    document.addEventListener("pointerdown", event => {
+      const menu = $("#resourceMenu");
+      if (menu.open && !menu.contains(event.target)) menu.removeAttribute("open");
     });
 
     function seedDefaults() {

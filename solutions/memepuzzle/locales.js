@@ -15,6 +15,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    'Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.',
     'header.subtitle.student':'Answer each question correctly to reveal the hidden image.',
     'header.home':        'Home',
+    'resources.menu':     'Resources',
 
     'panel.setup.aria':   'Teacher setup',
     'panel.preview.aria': 'Puzzle preview',
@@ -86,6 +87,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    'Crea un rompecabezas tipo cuestionario de bajo riesgo donde cada respuesta correcta retira una pieza y revela una imagen meme oculta.',
     'header.subtitle.student':'Responde cada pregunta correctamente para revelar la imagen oculta.',
     'header.home':        'Inicio',
+    'resources.menu':     'Recursos',
 
     'panel.setup.aria':   'Configuración del docente',
     'panel.preview.aria': 'Vista previa del rompecabezas',
@@ -156,6 +158,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    'Tạo một câu đố dạng trắc nghiệm nhẹ nhàng, mỗi câu trả lời đúng sẽ gỡ bỏ một ô và để lộ hình ảnh meme ẩn.',
     'header.subtitle.student':'Trả lời đúng mỗi câu hỏi để hé lộ hình ảnh ẩn.',
     'header.home':        'Trang chủ',
+    'resources.menu':     'Tài nguyên',
 
     'panel.setup.aria':   'Thiết lập giáo viên',
     'panel.preview.aria': 'Xem trước câu đố',
@@ -226,6 +229,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    'أنشئ لغزًا تدريبيًا منخفض المخاطر — كل إجابة صحيحة تزيل مربعًا وتكشف صورة ميم مخفية.',
     'header.subtitle.student':'أجب عن كل سؤال بشكل صحيح لكشف الصورة المخفية.',
     'header.home':        'الرئيسية',
+    'resources.menu':     'الموارد',
 
     'panel.setup.aria':   'إعداد المعلم',
     'panel.preview.aria': 'معاينة اللغز',
@@ -296,6 +300,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    '制作一个低压力的拼图测验：每答对一题即移除一块拼板，逐渐露出隐藏的梗图。',
     'header.subtitle.student':'答对每个问题以揭示隐藏的图像。',
     'header.home':        '首页',
+    'resources.menu':     '资源',
 
     'panel.setup.aria':   '教师设置',
     'panel.preview.aria': '拼图预览',
@@ -366,6 +371,7 @@ WidgetI18n.register('memepuzzle', {
     'header.subtitle':    'एक कम-दबाव वाली प्रश्नोत्तरी पहेली बनाएँ जहाँ हर सही उत्तर एक टाइल हटाता है और एक छिपी मीम छवि प्रकट करता है।',
     'header.subtitle.student':'छिपी छवि प्रकट करने के लिए हर प्रश्न का सही उत्तर दें।',
     'header.home':        'मुख पृष्ठ',
+    'resources.menu':     'संसाधन',
 
     'panel.setup.aria':   'शिक्षक सेटअप',
     'panel.preview.aria': 'पहेली पूर्वावलोकन',

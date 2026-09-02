@@ -1,14 +1,46 @@
 {
   "title": "Inference and Text Evidence",
-  "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='cornsilk'/%3E%3Cpath d='M120 100H390Q430 100 430 140V420Q390 380 120 400Z' fill='white' stroke='darkslateblue' stroke-width='10'/%3E%3Cpath d='M680 100H410Q370 100 370 140V420Q410 380 680 400Z' fill='white' stroke='darkslateblue' stroke-width='10'/%3E%3Cg stroke='slategray' stroke-width='7'%3E%3Cpath d='M160 170H340M160 220H340M160 270H340M460 170H640M460 220H640M460 270H640'/%3E%3C/g%3E%3Ctext x='115' y='70' font-size='38' font-family='Arial' font-weight='bold' fill='indigo'%3ECLAIM plus EVIDENCE%3C/text%3E%3C/svg%3E",
+  "image": "./images/text-evidence-meme.jpg",
   "questions": [
-    {"question": "What is a conclusion based on clues and prior knowledge?", "answer": "inference"},
-    {"question": "What supports an inference from a text?", "answer": "text evidence"},
-    {"question": "What kind of evidence uses the author's exact words?", "answer": "direct quotation"},
-    {"question": "What should a reader explain after citing evidence?", "answer": "reasoning"},
-    {"question": "What is the central point an author wants readers to understand?", "answer": "central idea"},
-    {"question": "What details directly support the central idea?", "answer": "supporting details"}
+    {
+      "question": "What is a conclusion based on clues and prior knowledge?",
+      "answer": "inference"
+    },
+    {
+      "question": "What supports an inference from a text?",
+      "answer": "text evidence"
+    },
+    {
+      "question": "What kind of evidence uses the author's exact words?",
+      "answer": "direct quotation"
+    },
+    {
+      "question": "What should a reader explain after citing evidence?",
+      "answer": "reasoning"
+    },
+    {
+      "question": "What is the central point an author wants readers to understand?",
+      "answer": "central idea"
+    },
+    {
+      "question": "What details directly support the central idea?",
+      "answer": "supporting details"
+    }
   ],
-  "tileOrder": [0, 1, 2, 3, 4, 5],
-  "metadata": {"gradeBand": "6-8", "subject": "English Language Arts", "standards": ["CCSS RI.6.1", "CCSS RI.6.2"]}
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "English Language Arts",
+    "standards": [
+      "CCSS RI.6.1",
+      "CCSS RI.6.2"
+    ]
+  }
 }

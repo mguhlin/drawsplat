@@ -37,7 +37,7 @@
     function options(select,values){values.sort().forEach(value=>select.insertAdjacentHTML("beforeend",`<option>${escapeHtml(value)}</option>`))}
     function render(){
       const shown=activities.filter(item=>(!grade.value||item.data.metadata.gradeBand===grade.value)&&(!subject.value||item.data.metadata.subject===subject.value));
-      library.innerHTML=shown.length?shown.map(item=>`<article class="card"><img src="${item.data.image}" alt="Illustration for ${escapeHtml(item.data.title)}"><div class="body"><h2>${escapeHtml(item.data.title)}</h2><div class="meta">Grades ${escapeHtml(item.data.metadata.gradeBand)} · ${escapeHtml(item.data.metadata.subject)} · ${item.data.questions.length} questions</div><div class="standards">${item.data.metadata.standards.map(value=>`<span>${escapeHtml(value)}</span>`).join("")}</div><a class="download" href="./${item.file}" download>Download JSON setup</a></div></article>`).join(""):"<p class='empty'>No activities match those filters.</p>";
+      library.innerHTML=shown.length?shown.map(item=>`<article class="card"><img src="${item.data.image}" alt="Meme for ${escapeHtml(item.data.title)}"><div class="body"><h2>${escapeHtml(item.data.title)}</h2><div class="meta">Grades ${escapeHtml(item.data.metadata.gradeBand)} · ${escapeHtml(item.data.metadata.subject)} · ${item.data.questions.length} questions</div><div class="standards">${item.data.metadata.standards.map(value=>`<span>${escapeHtml(value)}</span>`).join("")}</div><a class="download" href="./${item.file}" data-download="${item.file}">Download JSON setup</a></div></article>`).join(""):"<p class='empty'>No activities match those filters.</p>";
     }
     Promise.all(files.map(async file=>({file,data:await fetch(`./${file}`).then(response=>{if(!response.ok)throw Error(file);return response.json()})}))).then(items=>{
       activities=items;
@@ -46,6 +46,28 @@
       render();
     }).catch(()=>{library.innerHTML="<p class='empty'>The activity library could not be loaded.</p>"});
     grade.addEventListener("change",render);subject.addEventListener("change",render);
+    const blobToDataUrl=blob=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+    library.addEventListener("click",async event=>{
+      const link=event.target.closest("[data-download]");
+      if(!link)return;
+      event.preventDefault();
+      const original=link.textContent;
+      link.textContent="Preparing download…";
+      try{
+        const file=link.dataset.download;
+        const data=await fetch(`./${file}`).then(response=>{if(!response.ok)throw Error(file);return response.json()});
+        if(data.image&&!data.image.startsWith("data:")){
+          const imageResponse=await fetch(new URL(data.image,location.href));
+          if(!imageResponse.ok)throw Error(data.image);
+          data.image=await blobToDataUrl(await imageResponse.blob());
+        }
+        const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+        const download=document.createElement("a");
+        download.href=url;download.download=file;download.click();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+      }catch(error){alert("The activity download could not be prepared. Please try again.")}
+      finally{link.textContent=original}
+    });
   </script>
 </body>
 </html>
