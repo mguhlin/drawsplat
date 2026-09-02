@@ -1,0 +1,45 @@
+{
+  "title": "The Revision Process",
+  "image": "./images/revision-process-meme.jpg",
+  "questions": [
+    {
+      "question": "What stage improves ideas, organization, and clarity?",
+      "answer": "revision"
+    },
+    {
+      "question": "What stage corrects grammar and punctuation?",
+      "answer": "editing"
+    },
+    {
+      "question": "What is the first version of a composition called?",
+      "answer": "draft"
+    },
+    {
+      "question": "What connects ideas smoothly between sentences?",
+      "answer": "transitions"
+    },
+    {
+      "question": "What feedback comes from another writer or classmate?",
+      "answer": "peer feedback"
+    },
+    {
+      "question": "What should a writer check before publishing?",
+      "answer": "final proofread"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "9-12",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.36(c)(9)"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Main Idea and Supporting Details",
+  "image": "./images/main-idea-meme.jpg",
+  "questions": [
+    {
+      "question": "What tells what a text is mostly about?",
+      "answer": "main idea"
+    },
+    {
+      "question": "What facts explain or support the main idea?",
+      "answer": "supporting details"
+    },
+    {
+      "question": "What sentence often states a paragraph’s focus?",
+      "answer": "topic sentence"
+    },
+    {
+      "question": "What should a summary include from the text?",
+      "answer": "key ideas"
+    },
+    {
+      "question": "Should a summary include every minor detail?",
+      "answer": "no"
+    },
+    {
+      "question": "What can repeated words reveal about a passage?",
+      "answer": "main idea"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.5(b)(9)"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Water Cycle",
+  "image": "./images/water-cycle-meme.jpg",
+  "questions": [
+    {
+      "question": "What process changes liquid water into water vapor?",
+      "answer": "evaporation"
+    },
+    {
+      "question": "What process forms clouds from water vapor?",
+      "answer": "condensation"
+    },
+    {
+      "question": "What is water falling from clouds called?",
+      "answer": "precipitation"
+    },
+    {
+      "question": "What powers most of the water cycle?",
+      "answer": "Sun"
+    },
+    {
+      "question": "What is water gathering in lakes and oceans called?",
+      "answer": "collection"
+    },
+    {
+      "question": "In what state is water vapor?",
+      "answer": "gas"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.6(b)(10)"
+    ]
+  }
+}

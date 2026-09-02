@@ -1,0 +1,46 @@
+{
+  "title": "El ciclo del agua / Water Cycle",
+  "image": "./images/water-cycle-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué proceso convierte agua líquida en vapor? / What turns liquid water into vapor?",
+      "answer": "evaporación"
+    },
+    {
+      "question": "¿Qué proceso forma nubes del vapor? / What forms clouds from vapor?",
+      "answer": "condensación"
+    },
+    {
+      "question": "¿Cómo se llama el agua que cae de las nubes? / What is water falling from clouds called?",
+      "answer": "precipitación"
+    },
+    {
+      "question": "¿Qué impulsa la mayor parte del ciclo del agua? / What powers most of the water cycle?",
+      "answer": "Sol"
+    },
+    {
+      "question": "¿Cómo se llama el agua reunida en lagos y océanos? / What is water gathered in lakes and oceans called?",
+      "answer": "acumulación"
+    },
+    {
+      "question": "¿En qué estado está el vapor de agua? / What state is water vapor?",
+      "answer": "gas"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science / Ciencias",
+    "standards": [
+      "TEKS §112.6(b)(10)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

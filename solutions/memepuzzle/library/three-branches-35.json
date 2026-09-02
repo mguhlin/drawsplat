@@ -1,0 +1,45 @@
+{
+  "title": "Three Branches of Government",
+  "image": "./images/three-branches-meme.jpg",
+  "questions": [
+    {
+      "question": "Which branch makes laws?",
+      "answer": "legislative"
+    },
+    {
+      "question": "Which branch carries out laws?",
+      "answer": "executive"
+    },
+    {
+      "question": "Which branch interprets laws?",
+      "answer": "judicial"
+    },
+    {
+      "question": "What prevents one branch from becoming too powerful?",
+      "answer": "checks and balances"
+    },
+    {
+      "question": "What is the national legislature called?",
+      "answer": "Congress"
+    },
+    {
+      "question": "What is the highest U.S. court?",
+      "answer": "Supreme Court"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.16(b)(15)"
+    ]
+  }
+}

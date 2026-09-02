@@ -1,0 +1,45 @@
+{
+  "title": "Point of View",
+  "image": "./images/point-of-view-meme.jpg",
+  "questions": [
+    {
+      "question": "Which point of view uses I, me, and my?",
+      "answer": "first person"
+    },
+    {
+      "question": "Which point of view uses you?",
+      "answer": "second person"
+    },
+    {
+      "question": "Which point of view uses he, she, and they?",
+      "answer": "third person"
+    },
+    {
+      "question": "Who tells a story?",
+      "answer": "narrator"
+    },
+    {
+      "question": "What do we call the narrator’s position in a story?",
+      "answer": "point of view"
+    },
+    {
+      "question": "Can different narrators describe the same event differently?",
+      "answer": "yes"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.6(b)(10)"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "title": "Tres poderes / Three Branches",
+  "image": "./images/three-branches-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué poder crea las leyes? / Which branch makes laws?",
+      "answer": "legislativo"
+    },
+    {
+      "question": "¿Qué poder ejecuta las leyes? / Which branch carries out laws?",
+      "answer": "ejecutivo"
+    },
+    {
+      "question": "¿Qué poder interpreta las leyes? / Which branch interprets laws?",
+      "answer": "judicial"
+    },
+    {
+      "question": "¿Qué impide que un poder domine? / What keeps one branch from dominating?",
+      "answer": "frenos y contrapesos"
+    },
+    {
+      "question": "¿Cómo se llama la legislatura nacional? / What is the national legislature called?",
+      "answer": "Congreso"
+    },
+    {
+      "question": "¿Cuál es el tribunal más alto? / What is the highest court?",
+      "answer": "Corte Suprema"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies / Estudios Sociales",
+    "standards": [
+      "TEKS §113.16(b)(15)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Theme in Literature",
+  "image": "./images/theme-meme.jpg",
+  "questions": [
+    {
+      "question": "What is the central message of a literary work?",
+      "answer": "theme"
+    },
+    {
+      "question": "Is a theme usually a single topic word or a complete idea?",
+      "answer": "complete idea"
+    },
+    {
+      "question": "What story elements help reveal theme?",
+      "answer": "characters and events"
+    },
+    {
+      "question": "What should support a statement about theme?",
+      "answer": "text evidence"
+    },
+    {
+      "question": "Can two readers state a theme differently and both be correct?",
+      "answer": "yes"
+    },
+    {
+      "question": "What lesson may a character learn through conflict?",
+      "answer": "theme"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.22(b)(7)"
+    ]
+  }
+}

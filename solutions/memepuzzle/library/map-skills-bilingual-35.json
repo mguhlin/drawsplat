@@ -1,0 +1,46 @@
+{
+  "title": "Destrezas de mapas / Map Skills",
+  "image": "./images/map-skills-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué explica los símbolos de un mapa? / What explains map symbols?",
+      "answer": "leyenda"
+    },
+    {
+      "question": "¿Qué muestra las direcciones principales? / What shows the main directions?",
+      "answer": "rosa de los vientos"
+    },
+    {
+      "question": "¿Qué compara la distancia del mapa con la real? / What compares map and real distance?",
+      "answer": "escala"
+    },
+    {
+      "question": "¿Qué dirección es opuesta al este? / What direction is opposite east?",
+      "answer": "oeste"
+    },
+    {
+      "question": "¿Qué línea divide los hemisferios norte y sur? / What divides the Northern and Southern Hemispheres?",
+      "answer": "ecuador"
+    },
+    {
+      "question": "¿Cómo se llaman norte, sur, este y oeste? / What are north, south, east, and west called?",
+      "answer": "puntos cardinales"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies / Estudios Sociales",
+    "standards": [
+      "TEKS §113.14(b)(4)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Food Web Connections",
+  "image": "./images/food-web-meme.jpg",
+  "questions": [
+    {
+      "question": "What organism makes its own food?",
+      "answer": "producer"
+    },
+    {
+      "question": "What do arrows in a food web show?",
+      "answer": "energy flow"
+    },
+    {
+      "question": "What animal hunts another animal for food?",
+      "answer": "predator"
+    },
+    {
+      "question": "What is an animal hunted for food called?",
+      "answer": "prey"
+    },
+    {
+      "question": "What organism breaks down dead matter?",
+      "answer": "decomposer"
+    },
+    {
+      "question": "What is a group of connected food chains?",
+      "answer": "food web"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.6(b)(12)"
+    ]
+  }
+}

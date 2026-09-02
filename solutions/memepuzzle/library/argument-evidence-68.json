@@ -1,0 +1,45 @@
+{
+  "title": "Argument and Evidence",
+  "image": "./images/argument-evidence-meme.jpg",
+  "questions": [
+    {
+      "question": "What is a writer’s main position called?",
+      "answer": "claim"
+    },
+    {
+      "question": "What supports a claim with facts and examples?",
+      "answer": "evidence"
+    },
+    {
+      "question": "What explains how evidence supports a claim?",
+      "answer": "reasoning"
+    },
+    {
+      "question": "What opposing viewpoint does an argument address?",
+      "answer": "counterclaim"
+    },
+    {
+      "question": "What makes a source dependable?",
+      "answer": "credibility"
+    },
+    {
+      "question": "Should relevant evidence connect directly to the claim?",
+      "answer": "yes"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.24(b)(8)"
+    ]
+  }
+}

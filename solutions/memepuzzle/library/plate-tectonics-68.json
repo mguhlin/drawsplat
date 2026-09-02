@@ -1,0 +1,45 @@
+{
+  "title": "Plate Tectonics",
+  "image": "./images/plate-tectonics-meme.jpg",
+  "questions": [
+    {
+      "question": "What rigid pieces make up Earth’s outer shell?",
+      "answer": "tectonic plates"
+    },
+    {
+      "question": "What layer do tectonic plates move over?",
+      "answer": "mantle"
+    },
+    {
+      "question": "What boundary forms when plates move apart?",
+      "answer": "divergent boundary"
+    },
+    {
+      "question": "What boundary forms when plates collide?",
+      "answer": "convergent boundary"
+    },
+    {
+      "question": "What boundary forms when plates slide past?",
+      "answer": "transform boundary"
+    },
+    {
+      "question": "What sudden event often occurs along faults?",
+      "answer": "earthquake"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.27(b)(10)"
+    ]
+  }
+}

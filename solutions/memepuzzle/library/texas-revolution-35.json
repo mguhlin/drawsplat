@@ -1,0 +1,45 @@
+{
+  "title": "Texas Revolution",
+  "image": "./images/texas-revolution-meme.jpg",
+  "questions": [
+    {
+      "question": "At which town did the Texas Revolution begin in 1835?",
+      "answer": "Gonzales"
+    },
+    {
+      "question": "What mission became the site of a famous 1836 battle?",
+      "answer": "Alamo"
+    },
+    {
+      "question": "Who commanded the Texian army at San Jacinto?",
+      "answer": "Sam Houston"
+    },
+    {
+      "question": "Who led Mexico during the Texas Revolution?",
+      "answer": "Santa Anna"
+    },
+    {
+      "question": "Which battle secured Texas independence?",
+      "answer": "San Jacinto"
+    },
+    {
+      "question": "What document declared Texas independent from Mexico?",
+      "answer": "Texas Declaration of Independence"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.15(b)(3)"
+    ]
+  }
+}

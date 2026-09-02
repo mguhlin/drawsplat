@@ -1,0 +1,45 @@
+{
+  "title": "Westward Expansion",
+  "image": "./images/westward-expansion-meme.jpg",
+  "questions": [
+    {
+      "question": "What belief held that U.S. expansion westward was destined?",
+      "answer": "Manifest Destiny"
+    },
+    {
+      "question": "What land deal doubled the United States in 1803?",
+      "answer": "Louisiana Purchase"
+    },
+    {
+      "question": "What trail carried many settlers to the Pacific Northwest?",
+      "answer": "Oregon Trail"
+    },
+    {
+      "question": "What discovery drew migrants to California in 1849?",
+      "answer": "gold"
+    },
+    {
+      "question": "What law offered western land to settlers in 1862?",
+      "answer": "Homestead Act"
+    },
+    {
+      "question": "Which peoples were displaced by westward expansion?",
+      "answer": "Native Americans"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.20(b)(6)"
+    ]
+  }
+}

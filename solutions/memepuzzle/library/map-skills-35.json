@@ -1,0 +1,45 @@
+{
+  "title": "Map Skills",
+  "image": "./images/map-skills-meme.jpg",
+  "questions": [
+    {
+      "question": "What explains symbols on a map?",
+      "answer": "legend"
+    },
+    {
+      "question": "What shows the main directions on a map?",
+      "answer": "compass rose"
+    },
+    {
+      "question": "What map feature compares map distance to real distance?",
+      "answer": "scale"
+    },
+    {
+      "question": "Which direction is opposite east?",
+      "answer": "west"
+    },
+    {
+      "question": "What imaginary line divides the Northern and Southern Hemispheres?",
+      "answer": "equator"
+    },
+    {
+      "question": "What are north, south, east, and west called?",
+      "answer": "cardinal directions"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.14(b)(4)"
+    ]
+  }
+}

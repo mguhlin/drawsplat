@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MemeSplat™ — Local Meme Maker</title>
+  <link rel="icon" href="../../assets/favicons/tools.svg" type="image/svg+xml">
+  <style>
+    :root{font-family:Inter,Arial,sans-serif;color:#172033;background:#f8f7ff;--purple:#7c3aed;--line:#ddd6fe;--muted:#64748b}*{box-sizing:border-box}body{margin:0}.stripe{height:9px;background:linear-gradient(90deg,#7c3aed 0 30%,#a855f7 30% 52%,#f97316 52% 70%,#ef4444 70% 86%,#22c55e 86%)}
+    header{display:flex;justify-content:space-between;gap:20px;align-items:center;width:min(1240px,calc(100% - 30px));margin:auto;padding:22px 0 16px}h1{margin:0;color:var(--purple);font-size:clamp(2rem,5vw,3.5rem)}header p{margin:6px 0;color:var(--muted)}.home{border:2px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--purple);font-weight:800;text-decoration:none;background:white}
+    main{width:min(1240px,calc(100% - 30px));margin:auto;display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:20px;padding-bottom:50px}.panel{background:white;border:2px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 12px 28px #4c1d9510}.controls{display:grid;gap:14px}label{display:grid;gap:6px;font-size:.83rem;font-weight:800}input,select,button{font:inherit}input[type=text],input[type=number],select{width:100%;border:2px solid var(--line);border-radius:9px;padding:10px;background:white;color:#172033}input[type=color]{width:100%;height:42px;border:2px solid var(--line);border-radius:9px;background:white;padding:3px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.upload{position:relative;border:2px dashed #c4b5fd;border-radius:10px;padding:13px;text-align:center;color:#5b21b6;font-weight:800;cursor:pointer}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{border:2px solid var(--line);border-radius:9px;padding:10px;background:white;color:#5b21b6;font-weight:850;cursor:pointer}.btn.primary{grid-column:1/-1;background:var(--purple);color:white;border-color:var(--purple)}.privacy{font-size:.78rem;line-height:1.45;color:var(--muted);background:#f5f3ff;border-radius:9px;padding:10px}.stage{display:grid;place-items:center;min-height:560px;background:#111827}.stage canvas{display:block;max-width:100%;max-height:72vh;box-shadow:0 10px 35px #0008}.status{min-height:1.2em;color:#166534;font-size:.82rem;font-weight:700}.tip{margin:14px 0 0;color:var(--muted);font-size:.82rem;line-height:1.5}
+    @media(max-width:800px){header{align-items:flex-start}.home{margin-top:5px}main{grid-template-columns:1fr}.stage{min-height:300px}.stage canvas{max-height:none}}
+  </style>
+</head>
+<body>
+  <div class="stripe"></div>
+  <header><div><h1>MemeSplat™</h1><p>Create captioned memes privately in your browser.</p></div><a class="home" href="../../index.html">Home</a></header>
+  <main>
+    <section class="panel controls" aria-label="Meme controls">
+      <label>Template<select id="template">
+        <option value="choice">Choice Panic</option><option value="classic">Classic gradient</option><option value="blank">Blank canvas</option>
+        <optgroup label="PuzzleMaker Library examples">
+          <option value="../memepuzzle/library/images/plant-needs-meme.jpg">Plant Needs</option>
+          <option value="../memepuzzle/library/images/equivalent-fractions-meme.jpg">Equivalent Fractions</option>
+          <option value="../memepuzzle/library/images/earth-star-patterns-meme.jpg">Earth and Star Patterns</option>
+          <option value="../memepuzzle/library/images/text-evidence-meme.jpg">Text Evidence</option>
+          <option value="../memepuzzle/library/images/cellular-energy-meme.jpg">Cellular Energy</option>
+          <option value="../memepuzzle/library/images/magnet-mayhem-meme.jpg">Magnet Mayhem</option>
+          <option value="../memepuzzle/library/images/map-skills-meme.jpg">Map Skills</option>
+          <option value="../memepuzzle/library/images/context-clues-meme.jpg">Context Clues</option>
+        </optgroup>
+      </select></label>
+      <label class="upload">Choose your own image<input id="upload" type="file" accept="image/*"></label>
+      <label>Top caption<input id="topText" type="text" value="FINISH THE ASSIGNMENT" maxlength="120"></label>
+      <label>Bottom caption<input id="bottomText" type="text" value="OR PERFECT THE MEME" maxlength="120"></label>
+      <label>Small label / character<input id="labelText" type="text" value="ME, WITH 5 MINUTES LEFT" maxlength="100"></label>
+      <div class="row"><label>Font<select id="font"><option value="Impact, Haettenschweiler, sans-serif">Impact</option><option value="Arial Black, Arial, sans-serif">Arial Black</option><option value="Georgia, serif">Georgia</option></select></label><label>Size<input id="fontSize" type="number" min="24" max="110" value="62"></label></div>
+      <div class="row"><label>Text color<input id="fill" type="color" value="#ffffff"></label><label>Outline<input id="stroke" type="color" value="#000000"></label></div>
+      <div class="row"><label>Outline width<input id="strokeWidth" type="number" min="0" max="16" value="7"></label><label>Canvas<select id="ratio"><option value="1200,750">Landscape 16:10</option><option value="1080,1080">Square</option><option value="1080,1350">Portrait 4:5</option></select></label></div>
+      <div class="actions"><button class="btn primary" id="download">Download PNG</button><button class="btn" id="copy">Copy image</button><button class="btn" id="reset">Reset</button></div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <div class="privacy">✓ Local only — your uploaded image and finished meme stay in this browser.</div>
+    </section>
+    <section class="panel stage" aria-label="Meme preview"><canvas id="canvas" width="1200" height="750"></canvas></section>
+  </main>
+  <script>
+    const $=s=>document.querySelector(s),canvas=$("#canvas"),ctx=canvas.getContext("2d");let uploaded=null;
+    const controls=["template","topText","bottomText","labelText","font","fontSize","fill","stroke","strokeWidth","ratio"];
+    function rounded(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+    function drawChoice(w,h){
+      const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,"#1e1b4b");g.addColorStop(1,"#581c87");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+      ctx.fillStyle="#111827";rounded(w*.08,h*.30,w*.84,h*.48,30);ctx.fillStyle="#374151";rounded(w*.13,h*.37,w*.74,h*.31,24);
+      ctx.fillStyle="#ef4444";rounded(w*.20,h*.43,w*.23,h*.16,45);rounded(w*.57,h*.43,w*.23,h*.16,45);
+      ctx.fillStyle="#fca5a5";rounded(w*.22,h*.44,w*.19,h*.035,20);rounded(w*.59,h*.44,w*.19,h*.035,20);
+      ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(w*.5,h*.75,52,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.font=`900 ${Math.max(22,w*.027)}px Arial`;ctx.textAlign="center";ctx.fillText("?",w*.5,h*.765);
+    }
+    function drawBase(w,h){
+      if(uploaded){ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);const scale=Math.min(w/uploaded.width,h/uploaded.height),dw=uploaded.width*scale,dh=uploaded.height*scale;ctx.drawImage(uploaded,(w-dw)/2,(h-dh)/2,dw,dh);return}
+      if($("#template").value==="choice")return drawChoice(w,h);
+      if($("#template").value==="classic"){const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,"#2563eb");g.addColorStop(.5,"#7c3aed");g.addColorStop(1,"#ef4444");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);return}
+      ctx.fillStyle="#111827";ctx.fillRect(0,0,w,h);
+    }
+    function wrap(text,maxWidth){const words=text.trim().toUpperCase().split(/\s+/),lines=[];let line="";for(const word of words){const test=line?`${line} ${word}`:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);return lines.slice(0,3)}
+    function caption(text,y,fromBottom=false,size=62){if(!text.trim())return;ctx.font=`900 ${size}px ${$("#font").value}`;ctx.textAlign="center";ctx.textBaseline="top";ctx.lineJoin="round";ctx.fillStyle=$("#fill").value;ctx.strokeStyle=$("#stroke").value;ctx.lineWidth=Number($("#strokeWidth").value)*2;const lines=wrap(text,canvas.width*.91),lh=size*1.04;const start=fromBottom?canvas.height-y-lines.length*lh:y;lines.forEach((line,i)=>{const yy=start+i*lh;if(ctx.lineWidth)ctx.strokeText(line,canvas.width/2,yy);ctx.fillText(line,canvas.width/2,yy)})}
+    function render(){const [w,h]=$("#ratio").value.split(",").map(Number);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}drawBase(w,h);const size=Number($("#fontSize").value);caption($("#topText").value,h*.035,false,size);caption($("#bottomText").value,h*.035,true,size);caption($("#labelText").value,h*.71,false,Math.max(24,size*.48))}
+    controls.forEach(id=>$("#"+id).addEventListener("input",render));
+    $("#template").addEventListener("change",()=>{
+      const value=$("#template").value;
+      if(!value.startsWith("../")){uploaded=null;render();return}
+      const image=new Image();image.onload=()=>{uploaded=image;render()};image.onerror=()=>{$("#status").textContent="That example could not be loaded."};image.src=value;
+    });
+    $("#upload").addEventListener("change",event=>{const file=event.target.files[0];if(!file)return;const image=new Image();image.onload=()=>{uploaded=image;URL.revokeObjectURL(image.src);render()};image.src=URL.createObjectURL(file)});
+    function filename(){return `memesplat-${new Date().toISOString().slice(0,10)}.png`}
+    $("#download").addEventListener("click",()=>canvas.toBlob(blob=>{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#status").textContent="PNG saved to Downloads."},"image/png"));
+    $("#copy").addEventListener("click",async()=>{try{const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);$("#status").textContent="Meme copied to the clipboard."}catch{$("#status").textContent="Clipboard copy is unavailable here; use Download PNG."}});
+    $("#reset").addEventListener("click",()=>{uploaded=null;$("#template").value="choice";$("#topText").value="FINISH THE ASSIGNMENT";$("#bottomText").value="OR PERFECT THE MEME";$("#labelText").value="ME, WITH 5 MINUTES LEFT";render()});
+    render();
+  </script>
+</body>
+</html>

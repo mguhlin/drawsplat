@@ -1,0 +1,45 @@
+{
+  "title": "Natural Selection",
+  "image": "./images/natural-selection-meme.jpg",
+  "questions": [
+    {
+      "question": "What process favors helpful inherited traits?",
+      "answer": "natural selection"
+    },
+    {
+      "question": "What is a heritable difference among individuals?",
+      "answer": "variation"
+    },
+    {
+      "question": "What does biological fitness measure?",
+      "answer": "reproductive success"
+    },
+    {
+      "question": "What trait improves survival or reproduction?",
+      "answer": "adaptation"
+    },
+    {
+      "question": "What changes in a population over generations?",
+      "answer": "allele frequency"
+    },
+    {
+      "question": "Who independently developed ideas about natural selection with Darwin?",
+      "answer": "Alfred Russel Wallace"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "9-12",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.42(c)(10)"
+    ]
+  }
+}

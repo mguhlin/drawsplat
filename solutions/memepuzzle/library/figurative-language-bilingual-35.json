@@ -1,0 +1,46 @@
+{
+  "title": "Lenguaje figurado / Figurative Language",
+  "image": "./images/figurative-language-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué comparación usa como? / What comparison uses like or as?",
+      "answer": "símil"
+    },
+    {
+      "question": "¿Qué comparación dice que una cosa es otra? / What says one thing is another?",
+      "answer": "metáfora"
+    },
+    {
+      "question": "¿Qué da rasgos humanos a cosas no humanas? / What gives human traits to nonhuman things?",
+      "answer": "personificación"
+    },
+    {
+      "question": "¿Cómo se llama una exageración intencional? / What is deliberate exaggeration?",
+      "answer": "hipérbole"
+    },
+    {
+      "question": "¿Qué frase tiene un significado no literal? / What phrase has a nonliteral meaning?",
+      "answer": "modismo"
+    },
+    {
+      "question": "¿“Llueven perros y gatos” es literal o figurado? / Is “raining cats and dogs” literal or figurative?",
+      "answer": "figurado"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts / Artes del Lenguaje",
+    "standards": [
+      "TEKS §110.7(b)(10)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

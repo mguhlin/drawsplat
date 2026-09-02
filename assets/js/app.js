@@ -2178,6 +2178,7 @@ const CLASSROOM_TOOL_LINKS=[
   {title:'Markdown Studio',summary:'Clean, preview, convert, and export Markdown for classroom publishing.',url:appPath('solutions/markdown-studio/index.html')},
   {title:'Mermaid Diagram Studio',summary:'Compose flowcharts, sequence diagrams, mind maps, Gantt, timelines, class, and state diagrams with live preview.',url:appPath('solutions/mermaid/index.html')},
   {title:'Meme Puzzle',summary:'Build an image reveal puzzle with student questions.',url:appPath('solutions/memepuzzle/index.html')},
+  {title:'MemeSplat™',summary:'Create captioned memes locally from templates or your own images.',url:appPath('solutions/mememaker/index.html')},
   {title:'Quiz & Flashcard Studio',summary:'Create, import, export, play, and review classroom quizzes, then transfer questions into flashcards.',url:appPath('solutions/quiz-flashcard-studio/index.html')},
   {title:'Rubric Builder',summary:'Build printable rubrics with criteria, levels, points, and feedback descriptors.',url:appPath('solutions/rubric-builder/index.html')},
   {title:'ImageSplat™',summary:'Edit screenshots and images with annotations, layers, crop, clipboard import/export, GIF creation, and frame downloads.',url:appPath('solutions/imagesplat/index.html')},

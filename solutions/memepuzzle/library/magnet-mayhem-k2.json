@@ -1,0 +1,45 @@
+{
+  "title": "Magnet Mayhem",
+  "image": "./images/magnet-mayhem-meme.jpg",
+  "questions": [
+    {
+      "question": "Which force can push or pull without touching?",
+      "answer": "magnetism"
+    },
+    {
+      "question": "What are the two ends of a magnet called?",
+      "answer": "poles"
+    },
+    {
+      "question": "What happens when opposite magnetic poles meet?",
+      "answer": "attract"
+    },
+    {
+      "question": "What happens when like magnetic poles meet?",
+      "answer": "repel"
+    },
+    {
+      "question": "Which metal is strongly attracted to a magnet?",
+      "answer": "iron"
+    },
+    {
+      "question": "Can a magnet attract every material?",
+      "answer": "no"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "K-2",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.2(b)(7)"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Complete Electric Circuits",
+  "image": "./images/electric-circuits-meme.jpg",
+  "questions": [
+    {
+      "question": "What must a circuit have for current to flow?",
+      "answer": "complete path"
+    },
+    {
+      "question": "What component supplies electrical energy?",
+      "answer": "battery"
+    },
+    {
+      "question": "What material allows electric current to pass easily?",
+      "answer": "conductor"
+    },
+    {
+      "question": "What device opens or closes a circuit?",
+      "answer": "switch"
+    },
+    {
+      "question": "Will a bulb light in an open circuit?",
+      "answer": "no"
+    },
+    {
+      "question": "What form of energy does a glowing bulb produce?",
+      "answer": "light energy"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.6(b)(8)"
+    ]
+  }
+}

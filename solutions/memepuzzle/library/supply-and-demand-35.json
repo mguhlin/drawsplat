@@ -1,0 +1,45 @@
+{
+  "title": "Supply and Demand",
+  "image": "./images/supply-and-demand-meme.jpg",
+  "questions": [
+    {
+      "question": "What is the amount of a product available called?",
+      "answer": "supply"
+    },
+    {
+      "question": "What is consumers’ willingness to buy called?",
+      "answer": "demand"
+    },
+    {
+      "question": "What often happens to price when demand rises and supply stays low?",
+      "answer": "increases"
+    },
+    {
+      "question": "What often happens to price when supply rises and demand stays the same?",
+      "answer": "decreases"
+    },
+    {
+      "question": "What is a person who buys goods or services?",
+      "answer": "consumer"
+    },
+    {
+      "question": "What is a person or business that sells goods or services?",
+      "answer": "producer"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.14(b)(6)"
+    ]
+  }
+}

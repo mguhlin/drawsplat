@@ -1,0 +1,45 @@
+{
+  "title": "Context Clues",
+  "image": "./images/context-clues-meme.jpg",
+  "questions": [
+    {
+      "question": "What nearby information helps define an unfamiliar word?",
+      "answer": "context clues"
+    },
+    {
+      "question": "What clue directly tells a word’s meaning?",
+      "answer": "definition clue"
+    },
+    {
+      "question": "What clue gives a word with a similar meaning?",
+      "answer": "synonym clue"
+    },
+    {
+      "question": "What clue gives an opposite meaning?",
+      "answer": "antonym clue"
+    },
+    {
+      "question": "What clue lists instances of an unfamiliar word?",
+      "answer": "example clue"
+    },
+    {
+      "question": "What should you do after inferring a meaning?",
+      "answer": "reread the sentence"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.5(b)(3)"
+    ]
+  }
+}

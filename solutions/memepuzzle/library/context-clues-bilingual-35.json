@@ -1,0 +1,46 @@
+{
+  "title": "Pistas de contexto / Context Clues",
+  "image": "./images/context-clues-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué información cercana ayuda con una palabra desconocida? / What nearby information helps with an unknown word?",
+      "answer": "pistas de contexto"
+    },
+    {
+      "question": "¿Qué pista dice directamente el significado? / What clue directly gives the meaning?",
+      "answer": "definición"
+    },
+    {
+      "question": "¿Qué pista da una palabra similar? / What clue gives a similar word?",
+      "answer": "sinónimo"
+    },
+    {
+      "question": "¿Qué pista da un significado opuesto? / What clue gives an opposite meaning?",
+      "answer": "antónimo"
+    },
+    {
+      "question": "¿Qué pista presenta casos de una palabra? / What clue gives instances of a word?",
+      "answer": "ejemplo"
+    },
+    {
+      "question": "¿Qué debes hacer después de inferir? / What should you do after inferring?",
+      "answer": "releer"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts / Artes del Lenguaje",
+    "standards": [
+      "TEKS §110.5(b)(3)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

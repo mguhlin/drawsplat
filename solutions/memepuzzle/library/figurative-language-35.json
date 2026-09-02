@@ -1,0 +1,45 @@
+{
+  "title": "Figurative Language",
+  "image": "./images/figurative-language-meme.jpg",
+  "questions": [
+    {
+      "question": "What comparison uses like or as?",
+      "answer": "simile"
+    },
+    {
+      "question": "What comparison says one thing is another?",
+      "answer": "metaphor"
+    },
+    {
+      "question": "What gives human traits to nonhuman things?",
+      "answer": "personification"
+    },
+    {
+      "question": "What is deliberate exaggeration called?",
+      "answer": "hyperbole"
+    },
+    {
+      "question": "What phrase has a meaning different from its literal words?",
+      "answer": "idiom"
+    },
+    {
+      "question": "Is “raining cats and dogs” literal or figurative?",
+      "answer": "figurative"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "English Language Arts",
+    "standards": [
+      "TEKS §110.7(b)(10)"
+    ]
+  }
+}

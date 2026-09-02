@@ -1,0 +1,46 @@
+{
+  "title": "Magnetismo / Magnet Mayhem",
+  "image": "./images/magnet-mayhem-bilingual-meme.jpg",
+  "questions": [
+    {
+      "question": "¿Qué fuerza puede empujar o jalar sin tocar? / What force can push or pull without touching?",
+      "answer": "magnetismo"
+    },
+    {
+      "question": "¿Cómo se llaman los dos extremos de un imán? / What are a magnet’s two ends called?",
+      "answer": "polos"
+    },
+    {
+      "question": "¿Qué hacen los polos opuestos? / What do opposite poles do?",
+      "answer": "atraer"
+    },
+    {
+      "question": "¿Qué hacen los polos iguales? / What do like poles do?",
+      "answer": "repeler"
+    },
+    {
+      "question": "¿Qué metal atrae fuertemente un imán? / What metal is strongly attracted to a magnet?",
+      "answer": "hierro"
+    },
+    {
+      "question": "¿Un imán atrae todos los materiales? / Does a magnet attract every material?",
+      "answer": "no"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "K-2",
+    "subject": "Science / Ciencias",
+    "standards": [
+      "TEKS §112.2(b)(7)",
+      "Bilingual EN/ES"
+    ]
+  }
+}

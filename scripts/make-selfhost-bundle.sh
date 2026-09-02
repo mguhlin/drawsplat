@@ -324,6 +324,7 @@ WIDGET_SOLUTIONS=(
   drawsketch
   fortune
   memepuzzle
+  mememaker
   quiz-flashcard-studio
   step-splat
   storywheel

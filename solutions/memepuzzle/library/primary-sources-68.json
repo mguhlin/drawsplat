@@ -1,0 +1,45 @@
+{
+  "title": "Primary Sources",
+  "image": "./images/primary-sources-meme.jpg",
+  "questions": [
+    {
+      "question": "What source was created during the time being studied?",
+      "answer": "primary source"
+    },
+    {
+      "question": "Is a diary usually a primary or secondary source?",
+      "answer": "primary source"
+    },
+    {
+      "question": "Is a modern textbook usually a primary or secondary source?",
+      "answer": "secondary source"
+    },
+    {
+      "question": "What should historians check before trusting a source?",
+      "answer": "credibility"
+    },
+    {
+      "question": "What is the creator’s perspective or preference called?",
+      "answer": "bias"
+    },
+    {
+      "question": "What process compares evidence from multiple sources?",
+      "answer": "corroboration"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "Social Studies",
+    "standards": [
+      "TEKS §113.20(b)(29)"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "States of Matter",
+  "image": "./images/states-of-matter-meme.jpg",
+  "questions": [
+    {
+      "question": "What state of matter has a definite shape and volume?",
+      "answer": "solid"
+    },
+    {
+      "question": "What state has a definite volume but takes its container’s shape?",
+      "answer": "liquid"
+    },
+    {
+      "question": "What state spreads out to fill its container?",
+      "answer": "gas"
+    },
+    {
+      "question": "What change turns a solid into a liquid?",
+      "answer": "melting"
+    },
+    {
+      "question": "What change turns a liquid into a gas?",
+      "answer": "evaporation"
+    },
+    {
+      "question": "What change turns a gas into a liquid?",
+      "answer": "condensation"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science",
+    "standards": [
+      "TEKS §112.5(b)(6)"
+    ]
+  }
+}
