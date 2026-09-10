@@ -8,8 +8,15 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Tue, 09 Jun 2026 10:40:58 GMT</lastBuildDate>
+			<lastBuildDate>Thu, 10 Sep 2026 11:02:50 GMT</lastBuildDate>
 			<item>
+<title>DrawSplat v3.1.21: Burn Subtitles into Video with MediaSplat and VideoSplat</title>
+<link>https://drawsplat.org/blog/subtitle-burn-in.html</link>
+<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Make SRT or VTT subtitles permanently visible in exported video. MediaSplat offers a video-plus-subtitles-to-MP4 workflow; VideoSplat imports styled captions onto the timeline and lets you choose burn-in during export. Adjust font size, bottom margin, outline, background, and timing offset while keeping media on your device. All twelve v3.1.21 self-host ZIPs are rebuilt with fresh SHA-256 checksums.]]></description>
+<pubDate>Thu, 10 Sep 2026 11:02:50 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-21-subtitle-burn-in</guid>
+<source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>mediasplat</category><category>videosplat</category><category>self-hosting</category>
+</item>
+<item>
 		<title>DrawSplat v3.1.20: MediaSplat, VideoSplat, and Current Self-Host Downloads</title>
 		<link>https://drawsplat.org/pages/release-notes.html</link>
 		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.20 brings MediaSplat and VideoSplat into the current self-host release. MediaSplat inspects, converts, trims, splits, and packages media locally with a browser-based FFmpeg runtime. VideoSplat supports private browser video editing, analysis, anonymization, project recovery, and export. Markdown Studio also adds DOCX and ODT export. All DrawSplat, SplatWorks, Tools, Widgets, Games, and independent media-tool ZIPs have been rebuilt with a matching SHA-256 checksum file.]]></description>

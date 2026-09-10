@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.20, featuring MediaSplat and VideoSplat browser media tools, Markdown Studio DOCX/ODT export, and current independent self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
+- **Status:** v3.1.21, featuring SRT/VTT subtitle burn-in in MediaSplat and VideoSplat and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -29,9 +29,9 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.20 — Latest stable self-host release, centered on private browser media workflows.** MediaSplat handles inspection, conversion, trimming, splitting, and archive creation; VideoSplat provides browser video editing, analysis, anonymization, and export; Markdown Studio adds DOCX and ODT export. MediaSplat, VideoSplat, and AudioSplat ship inside DrawSplat Tools and as independent ZIPs. Pinned stable release: [v3.1.20](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.20). Previous milestone: [v3.1.19](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.19) (AudioSplat multitrack recording and editing).
+**DrawSplatTM v3.1.21 — Subtitle burn-in.** Import SRT/VTT captions in MediaSplat or VideoSplat, adjust appearance and timing, and permanently render subtitles into exported video locally. All twelve self-host packages are refreshed. [Walkthrough](blog/subtitle-burn-in.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.21.md) · [Stable release v3.1.21](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.21).
 
-## Current main-branch additions
+## Additional tools included in v3.1.21
 
 - **PDFsplat™.** Added a private browser PDF workspace for merging, separating ranges/pages, reordering, rotating, duplicating, deleting, extracting, annotating, and exporting PDFs.
 - **CipherSplat™ PDF protection.** PDFsplat™ can protect edited output as authenticated CS4 `.csplat` packages and decrypt compatible single-PDF packages locally using Argon2id and AES-256-GCM.

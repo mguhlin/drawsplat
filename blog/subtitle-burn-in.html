@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM v3.1.21 Release Notes</title>
+<title>Burn Subtitles into Video — MediaSplat and VideoSplat</title>
 <meta name="description" content="DrawSplat v3.1.21 adds local SRT and VTT subtitle burn-in to MediaSplat and VideoSplat, with updated self-host downloads." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
@@ -164,29 +164,18 @@
 </header>
 
 <main class="landing-shell support-shell">
-  <section class="support-hero">
-    <p class="landing-eyebrow">Released September 10, 2026</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.21: Subtitle burn-in</h1>
-    <p>Make SRT or VTT subtitles permanently visible in exported video with MediaSplat and VideoSplat. Your media stays on your device.</p>
-    <div class="landing-actions"><a class="landing-cta primary" href="download.html">Download v3.1.21</a><a class="landing-cta" href="../blog/subtitle-burn-in.html">Read the walkthrough</a><a class="landing-cta" href="../docs/release-notes/RELEASE_NOTES_v3.1.21.md">Markdown release notes</a></div>
-  </section>
-  <section class="landing-section">
-    <div class="release-grid">
-      <article class="release-card"><h2>MediaSplat: video + subtitles → MP4</h2><p>Open Subtitles, choose a video and an SRT/VTT file, and select Burn subtitles to MP4. The local engine creates H.264/AAC output with a bundled subtitle font.</p><a href="../solutions/mediasplat/">Open MediaSplat</a></article>
-      <article class="release-card"><h2>VideoSplat: captions on your timeline</h2><p>Use File → Burn in subtitles… to import captions. Preview them, then keep Burn in subtitles checked during export. Uncheck it to export without captions. Hidden caption tracks are excluded.</p><a href="../solutions/videosplat/">Open VideoSplat</a></article>
-      <article class="release-card"><h2>Appearance and timing</h2><p>Adjust font size, bottom margin, outline width, optional black background, and timing offset. Positive offsets delay captions; negative offsets advance them. Sizes scale from a 1080p reference.</p></article>
-      <article class="release-card"><h2>Local processing</h2><p>No upload or account is required. Burn-in re-encodes the video and can take time for long recordings. Import an existing subtitle file; this feature does not transcribe audio.</p></article>
-    </div>
-  </section>
-  <section class="landing-section"><h2>Current self-host packages</h2><p>All twelve ZIPs are rebuilt, including standalone MediaSplat and VideoSplat, Tools, the full DrawSplat package, AudioSplat, Widgets, Games, and the SplatWorks suite and individual apps. Existing tools, including PDFsplat, remain in their applicable packages.</p><p>Verify downloaded ZIPs with <a href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.21/SHA256SUMS-v3.1.21.txt">SHA256SUMS-v3.1.21.txt</a>. See the <a href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.21">GitHub release</a> for all assets.</p></section>
-  <section class="landing-section"><h2>Verification</h2><p>The subtitle implementation passed 71 unit tests and 11 browser tests, including decoded output frames, landscape and portrait video, repeated exports, and VideoSplat exports with captions enabled and disabled.</p><p><a href="../docs/release-notes/RELEASE_NOTES_v3.1.20.md">Previous release: v3.1.20</a></p></section>
+<section class="support-hero"><p class="landing-eyebrow">September 10, 2026 · DrawSplat v3.1.21</p><h1>Burn subtitles into video with MediaSplat and VideoSplat</h1><p>Have a video and an SRT file? You can now combine them into a video whose subtitles are always visible, using either of DrawSplat’s local browser media tools.</p></section>
+<section class="landing-section"><h2>What “burn in” means</h2><p>Burned-in subtitles become part of the picture. Viewers do not need a separate subtitle file or a caption switch, and the text stays visible when the video is shared. Because the text is permanent in that exported copy, keep your original video and subtitle file for future changes.</p></section>
+<section class="landing-section"><h2>The quick route: MediaSplat</h2><ol><li>Open <a href="../solutions/mediasplat/">MediaSplat</a> and choose <strong>Subtitles</strong>.</li><li>Select your video and an <strong>SRT or VTT</strong> file.</li><li>Adjust the font size, bottom margin, outline, and optional black background.</li><li>If the captions appear too early or late, set a timing offset. A positive number delays them; a negative number advances them.</li><li>Choose <strong>Burn subtitles to MP4</strong> and download the finished file.</li></ol><p>MediaSplat renders the text with a bundled font and exports H.264/AAC MP4. Layout adjusts for landscape and portrait footage.</p></section>
+<section class="landing-section"><h2>The editing route: VideoSplat</h2><ol><li>Open <a href="../solutions/videosplat/">VideoSplat</a>, choose <strong>Edit video</strong> on the welcome screen if shown, and add your video to the timeline.</li><li>Choose <strong>File → Burn in subtitles…</strong>, select the SRT/VTT file, and adjust appearance and timing.</li><li>Choose <strong>Add subtitles to timeline</strong>, then play or scrub through the captions to check placement.</li><li>Open <strong>File → Export video…</strong> and leave <strong>Burn in subtitles</strong> checked.</li><li>Render and download the video in your chosen export format.</li></ol><p>Uncheck burn-in to export without captions. Hidden caption tracks are excluded. Caption timing is relative to the project timeline, so check synchronization after trimming or rearranging footage. Imports append to existing captions; remove the old caption track first if you are replacing it. You can still save a separate SRT through the Edit menu.</p></section>
+<section class="landing-section"><h2>Keep the work on your device</h2><p>These workflows do not require an upload or an account. They import existing subtitle files, rather than generating a transcript. Formatting tags are removed on import; the appearance controls set the rendered style. Burn-in requires re-encoding, so long videos take more time and browser memory.</p><p>For self-hosting, <a href="../pages/download.html">download v3.1.21</a>. MediaSplat and VideoSplat are available separately and inside the Tools and full DrawSplat packages. All twelve packages have fresh SHA-256 checksums. Read the <a href="../pages/release-notes.html">release notes</a> for details.</p></section>
 </main>
 
 <footer class="landing-footer">
   <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
   <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
   <a href="../index.html">Home</a>
-  <a href="download.html">Download</a>
+  <a href="../pages/download.html">Download</a>
   <a href="../blog/">Blog</a>
   <a href="../community/index.html">Community</a>
   <a href="../legal/terms-privacy.html">Privacy</a>

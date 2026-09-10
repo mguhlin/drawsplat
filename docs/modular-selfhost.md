@@ -20,7 +20,7 @@ step. To combine modules, unzip them into the same web root.
 | DrawSplatTM Widgets | `/pages/tools.html#widgets`, `/solutions/` selected widgets | You only need quick classroom utilities. |
 | DrawSplatTM Games | `/games/` | You only need standalone classroom games. |
 | AudioSplat | `/solutions/audiosplat/` | You only need the multitrack browser recorder/editor. |
-| VideoSplat | `/solutions/videosplat/` | You only need the private browser video editor and anonymization workflow. |
+| VideoSplat | `/solutions/videosplat/` | You only need the private browser video editor, subtitle burn-in, and anonymization workflow. |
 
 ## Combining modules
 
@@ -83,3 +83,7 @@ origin, enable Google Drive API, request `drive.file`, and rebuild AudioSplat.
 VideoSplat editing, project storage, media analysis, and export are designed to
 remain local. Serve it over HTTPS (or localhost during development) so the PWA,
 workers, browser storage, and high-performance media APIs are available.
+
+## Subtitle burn-in (v3.1.21)
+
+MediaSplat and VideoSplat standalone packages, the Tools module, and the full DrawSplat package include SRT/VTT burn-in. Keep MediaSplat’s `ffmpeg/DejaVuSans.ttf` and `ffmpeg/FONT-LICENSE.txt` with its split runtime files. Update the complete app folder so the HTML, hashed assets, service worker, and font stay together. See the [subtitle walkthrough](../blog/subtitle-burn-in.html).
