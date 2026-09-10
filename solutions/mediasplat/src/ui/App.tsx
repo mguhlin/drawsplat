@@ -1,3 +1,4 @@
+import { AboutInfo } from "./AboutInfo";
 import { ProcessingProgress } from "./ProcessingProgress";
 import { SubtitleGenerationDialog } from '@splat/local-subtitles';
 import { cuesToSrt } from '@splat/local-subtitles/core';
@@ -44,7 +45,7 @@ export function App() {
   const downloadAll = async () => { setStatus("Packaging all parts locally…"); try { const zip = await createZip(results); download({ name: `${safeStem(primary?.file.name ?? "mediasplat")}-parts.zip`, blob: zip }); setStatus(`${results.length} files packaged and ready`); } catch (caught) { setError(caught instanceof Error ? caught.message : "The ZIP could not be created."); } };
   const accept = "video/*,audio/*,.mkv,.avi,.wmv,.ogm,.m4v,.mov,.flac,.m2ts,.mts,.ts";
   return <div className="app-shell">
-    <header><a className="brand" href="../../"><img src={`${import.meta.env.BASE_URL}icon.svg`} alt=""/><span><strong>MediaSplat™</strong><small>Private splitter & joiner</small></span></a><button className="privacy" onClick={() => alert("MediaSplat processes media in your browser. No media is uploaded, and there are no accounts, analytics, ads, or tracking. The app shell and local FFmpeg engine may be cached for offline use.")}>● Local only</button></header>
+    <header><a className="brand" href="../../"><img src={`${import.meta.env.BASE_URL}icon.svg`} alt=""/><span><strong>MediaSplat™</strong><small>Private splitter & joiner</small></span></a><div className="header-actions"><AboutInfo/><button className="privacy" onClick={() => alert("MediaSplat processes media in your browser. No media is uploaded, and there are no accounts, analytics, ads, or tracking. The app shell and local FFmpeg engine may be cached for offline use.")}>● Local only</button></div></header>
     <main>
       <section className="hero"><p className="eyebrow">Your media never leaves this device</p><h1>Cut and combine media without the upload.</h1><p>Trim, split, join, or permanently burn subtitles into video. MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG, OGM, MP3, WAV, FLAC, and more.</p></section>
       <nav className="tool-tabs" aria-label="Media tools">{(["trim", "split", "join", "subtitles"] as Tool[]).map(name => <button key={name} aria-pressed={tool === name} onClick={() => changeTool(name)}><span>{name === "trim" ? "✂" : name === "split" ? "▥" : "⛓"}</span>{name === "subtitles" ? "Subtitles" : name[0].toUpperCase() + name.slice(1)}<small>{name === "trim" ? "Keep one section" : name === "split" ? "Create multiple parts" : name === "subtitles" ? "Generate or import captions" : "Combine in order"}</small></button>)}</nav>

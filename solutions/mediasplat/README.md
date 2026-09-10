@@ -22,6 +22,30 @@ Size splitting estimates time boundaries from the source file's average bitrate.
 
 A file may be processable even when the browser cannot preview it. MediaSplat labels that state as **Process only**.
 
+## Video size, length, and processing limits
+
+These limits are also available from **About** in the app header.
+
+| Operation | Current limit or behavior |
+| --- | --- |
+| Generate automatic captions | Up to 30 minutes and 512 MB per source file. English speech and browser-decodable audio are required. |
+| Trim, split, join, or burn in existing subtitles | No fixed app-level file-size or duration cap. Available browser memory and storage determine practical limits; large files can still fail. |
+| Resolution and frame rate | No fixed app-level cap for these processing tools. Higher resolutions increase memory and encoding demands. |
+| Automatic splitting | Equal-parts, by-time, and by-size splitting support up to 100 output parts. |
+| Split by size | MB/GB targets are estimates based on average source bitrate, not guaranteed maximum sizes. Check each downloaded file. |
+
+For automatic captions on a longer or larger video, **split the video, download
+the parts, and load each part separately**. Each part must be no longer than
+30 minutes and no larger than 512 MB. The caption limits do not apply when
+importing an existing SRT/VTT file for burn-in. Unlike VideoSplat's timeline
+importer, MediaSplat does not impose a general 512 MB input limit.
+
+Fast, lossless cuts and joins avoid re-encoding. Precise cuts, normalized joins,
+and subtitle burn-in re-encode locally. Processing time depends on the source,
+codec, resolution, and device; there is **no fixed minutes-per-minute rule**.
+Keep the tab open until processing finishes. Browser memory holds input and
+output data, so several large join inputs or split outputs can exhaust memory.
+
 ## Development
 
 ```bash
@@ -41,7 +65,7 @@ MediaSplat source is AGPL-3.0-or-later. FFmpeg and codec licensing details are r
 
 Choose **Subtitles**, select a video and an SRT/VTT file, adjust font size, bottom margin, outline, optional black background, and timing offset, then choose **Burn subtitles to MP4**. The output is H.264/AAC MP4 with permanently visible subtitles. The bundled DejaVu Sans font and FFmpeg engine run locally.
 
-Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. This feature imports existing subtitles; it does not transcribe audio.
+Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. To transcribe speech before burn-in, use Automatic subtitles below.
 
 ## Automatic subtitles
 

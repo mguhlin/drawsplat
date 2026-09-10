@@ -53,6 +53,34 @@ MediaRecorder WebM files with missing duration headers are probed to their encod
 end during import so cropped recordings retain their full timeline length instead
 of receiving the generic ten-second fallback.
 
+## Video size, length, and export limits
+
+These limits are also available under **About → Video size & length limits**.
+
+| Operation | Current limit or behavior |
+| --- | --- |
+| Import media or add a recording to the timeline | 512 MB per file. |
+| Generate automatic captions | Up to 30 minutes per selected clip; the source file must also be no larger than 512 MB. English speech and browser-decodable audio are required. |
+| Record, edit a timeline, or export | No fixed duration cap. Available browser memory and storage determine practical limits; large or long videos can still fail. |
+| Export resolution | A warning appears above the pixel count of 4K (3840 × 2160); this is a memory warning, not a hard resolution cap. |
+| Export frame rate | The interface offers 1–60 fps. |
+
+For longer caption jobs, split the timeline clip into sections of **30 minutes or
+less** and generate captions separately for each section. Trimming or splitting
+timeline clips does not reduce the underlying source file's size; a source larger
+than 512 MB must first be made into smaller files. Audio decoding reads the full
+source audio, so selecting a shorter section does not eliminate memory pressure.
+
+Timeline rendering runs in real time: a **30-minute timeline takes roughly 30
+minutes to render**. MP4 and OGM require additional local conversion time after
+rendering. Keep the export dialog open until the output is ready. Browser memory
+and storage can run out even when a job meets the explicit limits.
+
+Generated captions are permanently embedded in an exported video after choosing
+**Add subtitles to timeline** and exporting with **Burn in subtitles** enabled
+(the default). The 30-minute caption-generation limit is separate from export
+duration; a longer timeline can contain captions generated for multiple clips.
+
 ## Development
 
 ```bash

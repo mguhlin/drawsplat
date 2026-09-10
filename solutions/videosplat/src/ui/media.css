@@ -1208,3 +1208,6 @@
 .export-progress-note { font-size:.8rem; }
 @keyframes export-progress-sweep { to { transform:translateX(100%); } }
 @media(prefers-reduced-motion:reduce) { .export-progress-shimmer { animation:none; transform:none; opacity:.35; }.export-progress-fill { transition:none; } }
+
+.limits-list { padding-left: 22px; line-height: 1.6; }
+.limits-list li { margin-bottom: 12px; }
