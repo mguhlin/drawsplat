@@ -214,7 +214,8 @@ test("floats an active recorder in a cross-browser popup", async ({ page }) => {
   await page.getByRole("button", { name: "Float recorder" }).click();
   const popup = await popupPromise;
   await expect(popup.getByRole("dialog", { name: "Floating VideoSplat recorder" })).toBeVisible();
-  await expect(popup.getByText(/Recording/)).toBeVisible();
+  await expect(popup.getByText(/● Recording ·/)).toBeVisible();
+  await expect(popup.getByText("No audio source connected. This recording will be silent.")).toBeVisible();
   await popup.getByRole("button", { name: "Return to editor" }).click();
   await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
   await page.getByRole("button", { name: "Cancel" }).click();
@@ -637,4 +638,85 @@ test("imports styled subtitles and burns them into exported frames", async ({pag
  await (await plain).saveAs("/tmp/videosplat-no-subtitles-test.webm");
  expect(await whitePixels(page, "/tmp/videosplat-subtitle-test.webm")).toBeGreaterThan(20);
  expect(await whitePixels(page, "/tmp/videosplat-no-subtitles-test.webm")).toBe(0);
+});
+
+for (const crop of [false, true]) test(`new ${crop ? "cropped" : "full"} recording retains audible sound when added after an existing video`, async ({page})=>{
+ test.setTimeout(60000);
+ await page.addInitScript(()=>{
+  Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{
+   enumerateDevices:async()=>[{kind:'audioinput',deviceId:'tone',label:'Test microphone'}],
+   addEventListener:()=>{},removeEventListener:()=>{},
+   getUserMedia:async (constraints:MediaStreamConstraints)=>{
+    if(constraints.audio){
+     const context=new AudioContext();await context.resume();
+     const tone=context.createOscillator(),destination=context.createMediaStreamDestination();
+     tone.connect(destination);tone.start();return destination.stream;
+    }
+    const canvas=document.createElement('canvas');canvas.width=160;canvas.height=90;
+    const context=canvas.getContext('2d')!;
+    context.fillStyle='green';context.fillRect(0,0,160,90);
+    const stream=canvas.captureStream(15);
+    const timer=setInterval(()=>{if(stream.getVideoTracks()[0].readyState==='ended'){clearInterval(timer);return;}context.fillRect(0,0,160,90);},60);
+    return stream;
+   }
+  }});
+ });
+ await page.goto('./');
+ const old=await createTestVideo(page);
+ await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({name:'existing.webm',mimeType:'video/webm',buffer:old});
+ await expect(page.locator('.timeline-clip.video')).toHaveCount(1);
+ await page.getByRole('button',{name:'Record video',exact:true}).click();
+ await page.getByLabel('Recording source').selectOption('camera');
+ await page.getByLabel('Recording countdown').selectOption('0');
+ await page.getByRole('button',{name:'Start recording',exact:true}).click();
+ await expect(page.getByText('Audio detected',{exact:true})).toBeVisible();
+ await page.waitForTimeout(1300);
+ await page.getByRole('button',{name:'Stop and choose crop',exact:true}).click();
+ await page.getByRole('button',{name:'Play recording with sound',exact:true}).click();
+ await expect.poll(()=>page.getByLabel('Recorded screen crop preview').evaluate(el=>(el as HTMLVideoElement).muted)).toBe(false);
+ await page.getByRole('button',{name:crop ? 'Crop and add to timeline' : 'Use full recording',exact:true}).click();
+ await expect(page.locator('.timeline-clip.video')).toHaveCount(2);
+ await expect.poll(()=>page.locator('.visual-layer video').evaluate(el=>{
+  const video=el as HTMLVideoElement;if(video.readyState<2)return false;
+  const canvas=document.createElement('canvas');canvas.width=160;canvas.height=90;const context=canvas.getContext('2d')!;context.drawImage(video,0,0,160,90);const [r,g,b]=context.getImageData(40,40,1,1).data;return g>r+40&&g>b+40;
+ })).toBe(true);
+ await page.getByRole('menuitem',{name:'File',exact:true}).click();await page.getByRole('menuitem',{name:'Export video…'}).click();
+ await page.getByLabel('Export width').fill('320');await page.getByLabel('Export height').fill('180');
+ const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Render local WebM'}).click();
+ const download=await pending;const path=await download.path();
+ const bytes=[...await readFile(path!)];
+ const rms=await page.evaluate(async bytes=>{
+  const context=new AudioContext();
+  try{const audio=await context.decodeAudioData(new Uint8Array(bytes).buffer);const channel=audio.getChannelData(0);const from=Math.floor(audio.sampleRate*.9),to=Math.min(channel.length,Math.floor(audio.sampleRate*1.3));let sum=0;for(let i=from;i<to;i++)sum+=channel[i]*channel[i];return Math.sqrt(sum/(to-from));}
+  finally{await context.close();}
+ },bytes);
+ expect(rms).toBeGreaterThan(.01);
+});
+
+test("export reports audio connection failures instead of saving silent video",async({page})=>{
+ await page.goto('./');
+ const video=await createTestVideo(page);
+ await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({name:'source.webm',mimeType:'video/webm',buffer:video});
+ await expect(page.locator('.timeline-clip.video')).toHaveCount(1);
+ await page.evaluate(()=>{AudioContext.prototype.createMediaElementSource=()=>{throw new DOMException('Unavailable','NotSupportedError');};});
+ await page.getByRole('menuitem',{name:'File',exact:true}).click();await page.getByRole('menuitem',{name:'Export video…'}).click();
+ await page.getByRole('button',{name:'Render local WebM'}).click();
+ await expect(page.getByRole('alert')).toContainText('Export stopped to avoid creating a silent video');
+ await expect(page.getByRole('button',{name:'Save another WebM copy'})).toHaveCount(0);
+});
+
+test("recorder remembers a selected microphone when reopened",async({page})=>{
+ await page.addInitScript(()=>{
+  Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{enumerateDevices:async()=>[
+   {kind:'audioinput',deviceId:'default-mic',label:'Built-in microphone'},
+   {kind:'audioinput',deviceId:'headset-mic',label:'Headset microphone'},
+  ],addEventListener:()=>{},removeEventListener:()=>{}}});
+ });
+ await page.goto('./');
+ await page.getByRole('button',{name:'Record video',exact:true}).click();
+ await page.getByLabel('Microphone source',{exact:true}).selectOption('headset-mic');
+ await page.getByRole('button',{name:'Close recorder',exact:true}).click();
+ await page.getByRole('button',{name:'Record video',exact:true}).click();
+ await expect(page.getByLabel('Microphone source',{exact:true})).toHaveValue('headset-mic');
+ await expect.poll(()=>page.evaluate(()=>sessionStorage.getItem('videosplat-microphone-id'))).toBe('headset-mic');
 });

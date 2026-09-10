@@ -1,3 +1,4 @@
+import { BASE_PIXELS_PER_SECOND, MIN_ZOOM, MAX_ZOOM, clampZoom, fitTimelineZoom, rulerInterval } from "../timeline/zoom";
 import { SubtitleDialog } from "./SubtitleDialog";
 import { SubtitlePreview } from "./SubtitlePreview";
 import type { SubtitleOptions } from "../captions/subtitles";
@@ -107,6 +108,31 @@ export function App() {
   const [time, setTime] = useState(0);
   const [selectedClipId, setSelectedClipId] = useState<string>();
   const [timelineZoom, setTimelineZoom] = useState(1);
+  const timelineScroll = useRef<HTMLDivElement>(null);
+  const pendingTimelineScroll = useRef<number | undefined>(undefined);
+  const [timelineViewportWidth, setTimelineViewportWidth] = useState(900);
+  useEffect(() => {
+    const viewport = timelineScroll.current;
+    if (!viewport) return;
+    const resize = () => setTimelineViewportWidth(Math.max(80, viewport.clientWidth - 190));
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    if (timelineScroll.current && pendingTimelineScroll.current !== undefined) {
+      timelineScroll.current.scrollLeft = pendingTimelineScroll.current;
+      pendingTimelineScroll.current = undefined;
+    }
+  }, [timelineZoom]);
+  const zoomTimeline = (factor: number) => {
+    const next = clampZoom(timelineZoom * factor);
+    if (next === timelineZoom) return;
+    const center = ((timelineScroll.current?.scrollLeft ?? 0) + timelineViewportWidth / 2) / (BASE_PIXELS_PER_SECOND * timelineZoom);
+    pendingTimelineScroll.current = Math.max(0, center * BASE_PIXELS_PER_SECOND * next - timelineViewportWidth / 2);
+    setTimelineZoom(next);
+  };
   const [snapping, setSnapping] = useState(true);
   const [rippleEditing, setRippleEditing] = useState(true);
   const [editMode, setEditMode] = useState<TimelineEditMode>("insert");
@@ -460,7 +486,7 @@ export function App() {
     }
   };
 
-  const addFiles = async (files: FileList | File[]) => {
+  const addFiles = async (files: FileList | File[], focusImported = false) => {
     if (!files.length) return;
     setImporting(true);
     try {
@@ -536,6 +562,7 @@ export function App() {
         });
         setSelectedAssetId(imported.asset.id);
         setSelectedClipId(clip.id);
+        if (focusImported) { setPlaying(false); setTime(clip.start); }
       }
       commit(next);
       setStatus(
@@ -639,10 +666,11 @@ export function App() {
     action();
     setOpenMenu(undefined);
   };
-  const pixelsPerSecond = 42 * timelineZoom;
+  const pixelsPerSecond = BASE_PIXELS_PER_SECOND * timelineZoom;
+  const tickInterval = rulerInterval(pixelsPerSecond);
   const timelineWidth = Math.max(
-    700,
-    Math.ceil(Math.max(20, totalDuration) * pixelsPerSecond),
+    timelineViewportWidth,
+    Math.ceil(Math.max(1, totalDuration) * pixelsPerSecond),
   );
   const splitSelected = () => {
     if (!selectedClipId) return;
@@ -1063,7 +1091,7 @@ export function App() {
         </label>
         <div className="top-actions">
           <span className="local-indicator"><i aria-hidden="true">●</i> Local only</span>
-          <button aria-label="Record video" className="record-button top-record-button" onClick={() => setDialog("recorder")}>● Record video</button>
+          <button aria-label="Record video" className="record-button top-record-button" onClick={() => { setPlaying(false); setDialog("recorder"); }}>● Record video</button>
         </div>
       </header>
       <nav className="toolbar" aria-label="Editor tools">
@@ -2052,24 +2080,31 @@ export function App() {
         <section className="timeline" aria-label="Timeline">
           <div className="timeline-toolbar" role="toolbar" aria-label="Timeline editing">
             <div className="timeline-tools">
-              <span className="sr-only">Timeline controls</span>
+              <span className="timeline-zoom-label">Timeline zoom</span>
               <button
                 onClick={() =>
-                  setTimelineZoom((zoom) => Math.max(0.5, zoom - 0.25))
+                  zoomTimeline(1 / 1.5)
                 }
                 aria-label="Zoom out"
+                title="Shrink the timeline view only" disabled={timelineZoom <= MIN_ZOOM}
               >
                 −
               </button>
-              <output>{Math.round(timelineZoom * 100)}%</output>
+              <output aria-label="Timeline zoom percentage">{Number((timelineZoom * 100).toPrecision(3))}%</output>
               <button
                 onClick={() =>
-                  setTimelineZoom((zoom) => Math.min(4, zoom + 0.25))
+                  zoomTimeline(1.5)
                 }
                 aria-label="Zoom in"
+                title="Enlarge the timeline view only" disabled={timelineZoom >= MAX_ZOOM}
               >
                 ＋
               </button>
+              <button title="Show the entire sequence without changing the video" onClick={() => {
+                pendingTimelineScroll.current = 0;
+                if (timelineScroll.current) timelineScroll.current.scrollLeft = 0;
+                setTimelineZoom(fitTimelineZoom(totalDuration, timelineViewportWidth));
+              }}>Fit timeline</button>
               <button
                 aria-label={`Range select ${rangeSelecting ? "on" : "off"}`}
                 aria-pressed={rangeSelecting}
@@ -2100,7 +2135,7 @@ export function App() {
                 </select>
               </div>
           </div>
-          <div className="timeline-scroll" aria-label="Timeline tracks">
+          <div ref={timelineScroll} className="timeline-scroll" aria-label="Timeline tracks">
           <div
             className="timeline-head"
             style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
@@ -2117,13 +2152,13 @@ export function App() {
               >
 
               {Array.from(
-                { length: Math.floor(Math.max(20, totalDuration) / 5) + 1 },
+                { length: Math.floor(Math.max(1, totalDuration) / tickInterval) + 1 },
                 (_, index) => (
                   <span
                     key={index}
-                    style={{ left: index * 5 * pixelsPerSecond }}
+                    style={{ left: index * tickInterval * pixelsPerSecond }}
                   >
-                    {formatTime(index * 5).slice(3, 8)}
+                    {formatTime(index * tickInterval).slice(3, 8)}
                   </span>
                 ),
               )}
@@ -2415,7 +2450,7 @@ export function App() {
             {dialog === "optimizer" && (
               <OptimizerDialog
                 onClose={() => setDialog(null)}
-                onAdd={async (file) => addFiles([file])}
+                onAdd={async (file) => addFiles([file], true)}
                 onStatus={setStatus}
               />
             )}
@@ -2430,9 +2465,10 @@ export function App() {
             {dialog === "recorder" && (
               <RecorderDialog
                 initialMicrophoneDeviceId={recordingMicrophoneId}
+                onMicrophoneChange={setRecordingMicrophoneId}
                 permissionsPrepared={splashRecordingReady}
                 onClose={() => { setRecorderFloating(false); setDialog(null); }}
-                onAdd={async (file) => addFiles([file])}
+                onAdd={async (file) => addFiles([file], true)}
                 onStatus={setStatus}
                 onFloatingChange={setRecorderFloating}
               />

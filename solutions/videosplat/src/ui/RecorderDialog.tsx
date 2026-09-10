@@ -1,3 +1,4 @@
+import { RecordingAudioMeter } from "./RecordingAudioMeter";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -17,6 +18,7 @@ interface RecorderDialogProps {
   onAdd(file: File): Promise<void>;
   onStatus(message: string): void;
   onFloatingChange?(floating: boolean): void;
+  onMicrophoneChange?(deviceId: string): void;
 }
 
 interface DocumentPictureInPictureController {
@@ -26,14 +28,21 @@ interface DocumentPictureInPictureController {
 const clock = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
-export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus, onFloatingChange }: RecorderDialogProps) {
+export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus, onFloatingChange, onMicrophoneChange }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const reviewVideo = useRef<HTMLVideoElement>(null);
+  const [reviewPlaying, setReviewPlaying] = useState(false);
+  const [recordingStream, setRecordingStream] = useState<MediaStream>();
   const session = useRef<CaptureSession | undefined>(undefined);
   const [mode, setMode] = useState<CaptureMode>("screen");
   const [displaySurface, setDisplaySurface] = useState<DisplaySurfacePreference>("browser");
   const [microphone, setMicrophone] = useState(true);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(initialMicrophoneDeviceId);
+  useEffect(() => {
+    sessionStorage.setItem("videosplat-microphone-id", microphoneDeviceId);
+    onMicrophoneChange?.(microphoneDeviceId);
+  }, [microphoneDeviceId, onMicrophoneChange]);
   const [systemAudio, setSystemAudio] = useState(true);
   const [backgroundFile, setBackgroundFile] = useState<File>();
   const [backgroundUrl, setBackgroundUrl] = useState("");
@@ -173,6 +182,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         () => void stop(),
         setCounting,
       );
+      setRecordingStream(session.current.previewStream);
       setElapsed(0);
       setState("recording");
       onStatus("Recording locally — no media is being uploaded");
@@ -197,6 +207,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   };
 
   const addRecording = async (file: File, message: string) => {
+    reviewVideo.current?.pause();
     await onAdd(file);
     onStatus(message);
     onClose();
@@ -204,6 +215,8 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   const applyCrop = async () => {
     if (!recording) return;
+    reviewVideo.current?.pause();
+    setReviewPlaying(false);
     setState("cropping");
     setCropProgress(0);
     setError(undefined);
@@ -259,9 +272,16 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     {(state === "review" || state === "cropping") && recording && <div className="crop-review">
       <p>Drag over the preview to select the part of the recorded tab you want to keep.</p>
       <div className="crop-stage" onPointerDown={state === "review" ? beginCropSelection : undefined}>
-        <video src={recordingUrl} playsInline muted aria-label="Recorded screen crop preview" />
+        <video ref={reviewVideo} src={recordingUrl} playsInline onEnded={() => setReviewPlaying(false)} aria-label="Recorded screen crop preview" />
         <i className="crop-selection" style={{ left: `${crop.x * 100}%`, top: `${crop.y * 100}%`, width: `${crop.width * 100}%`, height: `${crop.height * 100}%` }} />
       </div>
+      {state === "review" && <div className="recorder-audio-review"><button onClick={async () => {
+        const video=reviewVideo.current; if(!video)return;
+        if(reviewPlaying){video.pause();setReviewPlaying(false);return;}
+        video.muted=false;video.volume=1;
+        if(video.ended)video.currentTime=0;
+        try{await video.play();setReviewPlaying(true);}catch{setError("The recording could not play. Try Play recording with sound again.");}
+      }}>{reviewPlaying ? "Pause recording review" : "Play recording with sound"}</button><p>Listen before adding this recording to your project. A silent source cannot gain audio from timeline edits.</p></div>}
       <div className="crop-presets" aria-label="Crop presets">
         <button onClick={() => setCrop({ x: 0, y: 0, width: 1, height: 1 })}>Full frame</button>
         <button onClick={() => setCrop({ x: .125, y: 0, width: .75, height: 1 })}>Center</button>
@@ -337,6 +357,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       <button className="danger" onClick={close}>Cancel</button>
       {!floatingWindow && <button onClick={() => void floatRecorder()}>Float recorder</button>}
     </div>}
+    {recordingStream && !floatingWindow && (state === "recording" || state === "paused") && <RecordingAudioMeter stream={recordingStream} paused={state === "paused"}/>}
     {state === "saving" && <p role="status">Finishing the recording locally…</p>}
     <p className="hint">Choose your headset under Microphone source. Browsers require the screen/tab chooser for every new screen capture; VideoSplat cannot bypass it. For recording another tab, use Screen only and select that tab in the chooser. Keep VideoSplat visible when using the camera-overlay compositor.</p>
     {floatingWindow && createPortal(
@@ -344,6 +365,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         <header><strong>VideoSplat Recorder</strong><button onClick={dockRecorder}>Return to editor</button></header>
         <video ref={floatingPreview} muted playsInline autoPlay aria-label="Floating recording preview" />
         <output>{state === "paused" ? "Paused · " : "● Recording · "}{clock(elapsed)}</output>
+        {recordingStream && <RecordingAudioMeter stream={recordingStream} paused={state === "paused"}/>}
         <div className="recorder-actions">
           <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>
           <button className="primary" onClick={() => { dockRecorder(); void stop(); }}>Stop and choose crop</button>

@@ -213,6 +213,8 @@ export async function startCapture(
       });
     }
 
+    if (options.microphone && !microphone?.getAudioTracks().some(track => track.readyState === "live"))
+      throw new Error("The selected microphone did not provide an audio track. Choose a working microphone or turn Microphone off for a silent recording.");
     const primaryTrack = (screen ?? camera)!.getVideoTracks()[0];
     if (!primaryTrack) throw new Error("No video source was selected.");
     const settings = primaryTrack.getSettings();

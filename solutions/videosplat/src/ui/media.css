@@ -1188,3 +1188,11 @@
 .timeline-scroll { flex: 1; min-height: 0; overflow: auto; }
 .timeline-head { height: 32px; }
 .timeline-corner { position: sticky; left: 0; z-index: 2; background: #11182a; }
+
+.timeline-tools > .timeline-zoom-label { margin-right: 4px; white-space: nowrap; }
+.recording-audio-meter { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; }
+.recording-audio-meter label { display: flex; gap: 10px; align-items: center; }
+.recording-audio-meter meter { flex: 1; min-width: 100px; }
+.recording-audio-meter p, .recorder-audio-review p { font-size: .8rem; margin: 6px 0; }
+
+.ruler { overflow: hidden; }

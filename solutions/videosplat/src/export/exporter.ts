@@ -170,7 +170,7 @@ export async function exportProject(
               gain.connect(audioLimiter);
               audioGains.set(clip.id, gain);
             } catch {
-              /* Video-only export remains available. */
+              throw new Error(`Audio could not be connected for ${clip.name}. Export stopped to avoid creating a silent video. Retry, or turn off Include timeline audio to deliberately export without sound.`);
             }
           }
         }

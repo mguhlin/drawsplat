@@ -16,3 +16,22 @@ test("editing controls remain usable after scrolling a long timeline", async ({p
  await toolbar.getByRole('button',{name:'Delete',exact:true}).click();
  await expect(page.locator('.timeline-clip')).toHaveCount(1);
 });
+
+test("timeline zoom fits a long sequence without changing the video canvas", async ({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem("videosplat-splash-seen","1"));
+ await page.goto("./");
+ await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({name:"long.svg",mimeType:"image/svg+xml",buffer:Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" fill="green"/></svg>')});
+ await page.locator('.timeline-clip').click({position:{x:30,y:25}});
+ await page.getByLabel('Clip duration',{exact:true}).fill('7200');
+ const before=await page.locator('.canvas').boundingBox();
+ await page.getByRole('button',{name:'Fit timeline',exact:true}).click();
+ const scroll=page.getByLabel('Timeline tracks',{exact:true});
+ await expect.poll(()=>scroll.evaluate(el=>el.scrollWidth-el.clientWidth)).toBeLessThanOrEqual(2);
+ await expect(page.getByLabel('Clip duration',{exact:true})).toHaveValue('7200');
+ const width=await page.locator('.timeline-clip').evaluate(el=>el.getBoundingClientRect().width);
+ await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+ await expect.poll(()=>page.locator('.timeline-clip').evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThan(width);
+ await page.getByRole('button',{name:'Zoom out',exact:true}).click();
+ const after=await page.locator('.canvas').boundingBox();
+ expect(after!.width).toBe(before!.width); expect(after!.height).toBe(before!.height);
+});
