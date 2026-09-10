@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.22, featuring automatic English subtitle generation and SRT/VTT burn-in in MediaSplat and VideoSplat and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
+- **Status:** v3.1.23, featuring automatic English subtitle generation and SRT/VTT burn-in in MediaSplat and VideoSplat and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -29,9 +29,9 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.22 — Automatic subtitles.** Generate English captions on-device in VideoSplat or MediaSplat, review text and timing, and download SRT or burn captions into video. VideoSplat also adds fixed timeline controls, timeline zoom, and recording audio checks. All twelve self-host packages are refreshed. [Walkthrough](blog/automatic-subtitles.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.22.md) · [Stable release v3.1.22](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.22).
+**DrawSplatTM v3.1.23 — Automatic subtitles.** Generate English captions on-device in VideoSplat or MediaSplat, review text and timing, and download SRT or burn captions into video. VideoSplat also adds fixed timeline controls, timeline zoom, and recording audio checks. All twelve self-host packages are refreshed. [Walkthrough](blog/automatic-subtitles.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.23.md) · [Stable release v3.1.23](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.23).
 
-## Additional tools included in v3.1.22
+## Additional tools included in v3.1.23
 
 - **PDFsplat™.** Added a private browser PDF workspace for merging, separating ranges/pages, reordering, rotating, duplicating, deleting, extracting, annotating, and exporting PDFs.
 - **CipherSplat™ PDF protection.** PDFsplat™ can protect edited output as authenticated CS4 `.csplat` packages and decrypt compatible single-PDF packages locally using Argon2id and AES-256-GCM.

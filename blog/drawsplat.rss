@@ -10,10 +10,10 @@
 			
 			<lastBuildDate>Thu, 10 Sep 2026 15:57:37 GMT</lastBuildDate>
 			<item>
-<title>DrawSplat v3.1.22: Generate Subtitles from Speech in VideoSplat and MediaSplat</title>
+<title>DrawSplat v3.1.23: Generate Subtitles from Speech in VideoSplat and MediaSplat</title>
 <link>https://drawsplat.org/blog/automatic-subtitles.html</link>
 <description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Turn English speech into editable timed subtitles on your device. Generate after recording in VideoSplat or from an existing video in MediaSplat, then download SRT or burn captions into video. This release also includes timeline zoom, fixed editing controls, recording audio checks, and refreshed self-host downloads. The speech model downloads on first use; no media is uploaded.]]></description>
-<pubDate>Thu, 10 Sep 2026 15:57:37 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-22-automatic-subtitles</guid>
+<pubDate>Thu, 10 Sep 2026 15:57:37 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-23-automatic-subtitles</guid>
 <source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>videosplat</category><category>mediasplat</category><category>self-hosting</category>
 </item>
 <item>

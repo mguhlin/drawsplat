@@ -88,7 +88,7 @@ workers, browser storage, and high-performance media APIs are available.
 
 MediaSplat and VideoSplat standalone packages, the Tools module, and the full DrawSplat package include SRT/VTT burn-in. Keep MediaSplat’s `ffmpeg/DejaVuSans.ttf` and `ffmpeg/FONT-LICENSE.txt` with its split runtime files. Update the complete app folder so the HTML, hashed assets, service worker, and font stay together. See the [subtitle walkthrough](../blog/subtitle-burn-in.html).
 
-## Automatic subtitles (v3.1.22)
+## Automatic subtitles (v3.1.23)
 
 VideoSplat, MediaSplat, Tools, and full packages include the bundled ONNX speech
 runtime and `solutions/shared/subtitles` source package. Keep that sibling package
