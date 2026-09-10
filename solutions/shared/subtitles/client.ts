@@ -34,7 +34,7 @@ export async function transcribe(source: Source, signal: AbortSignal, onProgress
     worker.onmessage = ({ data }) => {
       if (data.type === 'progress') onProgress(data.message);
       else if (data.type === 'complete') finish(undefined, data.cues);
-      else if (data.type === 'error') finish(new Error(`Could not generate subtitles: ${data.message} If the model could not download, check your connection and retry.`));
+      else if (data.type === 'error') finish(new Error(`Could not generate subtitles: ${data.message}`));
     };
     worker.onerror = () => finish(new Error('The local speech engine could not start. Reload and try again in a current desktop browser.'));
     worker.postMessage({ audio }, [audio.buffer]);

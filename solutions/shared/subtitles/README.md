@@ -30,6 +30,12 @@ native audio decoding may finish in the background after cancellation, but canno
 publish captions. Generated times and words need review, especially with noise,
 music, names, and accents. This is transcription, not translation.
 
+If a section produces no usable captions with segment timestamps, the worker
+retries that section with word alignment using the same model. This recovers
+clear speech that timestamp-token decoding sometimes returns as empty. Aligned
+words are grouped into readable captions before timing validation, preserving
+short words with identical start and end times. The retry remains on-device.
+
 VideoSplat adds a separate editable caption track aligned to the selected clip.
 Captions are ordinary timeline clips: moving or trimming the source video later
 does not automatically move its caption track. Download SRT in the generation

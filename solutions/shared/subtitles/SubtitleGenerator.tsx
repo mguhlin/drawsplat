@@ -20,7 +20,7 @@ export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabe
       const result = await transcribe(source, job.signal, setStatus);
       if (!job.signal.aborted) { setCues(result); setStatus(`${result.length} captions ready. Review the words and timing before using them.`); }
     } catch (error) {
-      if (!job.signal.aborted) setError(error instanceof Error ? error.message : 'Subtitle generation failed.');
+      if (!job.signal.aborted) { setStatus(''); setError(error instanceof Error ? error.message : 'Subtitle generation failed.'); }
     } finally { if (controller.current === job) { controller.current = null; setBusy(false); } }
   };
   const cancel = () => { controller.current?.abort(); controller.current = null; setBusy(false); setStatus('Subtitle generation cancelled.'); };

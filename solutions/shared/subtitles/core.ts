@@ -17,6 +17,27 @@ export function normalizeCues(chunks: { timestamp: [number | null, number | null
     return [{ start, end, text }];
   });
 }
+
+// Word alignment can give adjacent words identical timestamps. Group before
+// validating cue durations so short words such as "I" are not discarded.
+export function groupWordCues(words: { timestamp: [number | null, number | null]; text: string }[], duration: number): Cue[] {
+  const groups: { timestamp: [number | null, number | null]; text: string }[] = [];
+  for (const word of words) {
+    if (!word.text.trim()) continue;
+    const previous = groups.at(-1);
+    const gap = previous && word.timestamp[0] !== null && previous.timestamp[1] !== null
+      ? word.timestamp[0] - previous.timestamp[1] : 0;
+    const span = previous && previous.timestamp[0] !== null && previous.timestamp[1] !== null
+      ? previous.timestamp[1] - previous.timestamp[0] : 0;
+    if (!previous || (span > 0 && (/[.!?]$/.test(previous.text) || gap > .8 || previous.text.length >= 64 || span >= 5))) {
+      groups.push({ timestamp: [...word.timestamp], text: word.text.trim() });
+    } else {
+      previous.text += ` ${word.text.trim()}`;
+      previous.timestamp[1] = word.timestamp[1];
+    }
+  }
+  return normalizeCues(groups, duration);
+}
 export function validateCues(cues: Cue[]) {
   if (!cues.length) throw new Error('No captions to use. Generate subtitles first.');
   let previousEnd = 0;
