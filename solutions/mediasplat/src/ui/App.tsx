@@ -1,3 +1,4 @@
+import { ProcessingProgress } from "./ProcessingProgress";
 import { SubtitleGenerationDialog } from '@splat/local-subtitles';
 import { cuesToSrt } from '@splat/local-subtitles/core';
 import { defaultSubtitles } from "../captions/subtitles";
@@ -35,7 +36,7 @@ export function App() {
   const process = async () => {
     setError(""); clearResults(); setBusy(true); setProgress(0); setStatus("Starting local media engine…");
     const notify = (event: { kind: "progress"; value: number } | { kind: "log"; message: string }) => event.kind === "progress" ? setProgress(event.value) : setStatus(event.message);
-    try { const output = tool === "subtitles" ? await burnSubtitles(primary.file, await subtitle!.text(), subtitleOptions, notify) : tool === "join" ? await joinMedia(items.map(i => i.file), mode, notify) : await splitMedia(primary.file, computedRanges(), mode, notify); setResults(output); setProgress(1); setStatus(`${output.length} output file${output.length === 1 ? "" : "s"} ready to download`); }
+    try { const output = tool === "subtitles" ? await burnSubtitles(primary.file, await subtitle!.text(), subtitleOptions, notify, duration) : tool === "join" ? await joinMedia(items.map(i => i.file), mode, notify) : await splitMedia(primary.file, computedRanges(), mode, notify); setResults(output); setProgress(1); setStatus(`${output.length} output file${output.length === 1 ? "" : "s"} ready to download`); }
     catch (caught) { setError(caught instanceof Error ? caught.message : "Media processing failed."); setStatus("Processing stopped"); }
     finally { setBusy(false); }
   };
@@ -67,7 +68,7 @@ export function App() {
             {tool !== "subtitles" && <fieldset><legend>{tool === "join" ? "Join quality" : "Cut quality"}</legend><div className="mode-cards"><label className={mode === "fast" ? "selected" : ""}><input type="radio" name="mode" checked={mode === "fast"} onChange={() => setMode("fast")}/><strong>Fast & lossless</strong><small>No re-encoding. Cuts may align to keyframes; joined streams must match.</small></label><label className={mode === "precise" ? "selected" : ""}><input type="radio" name="mode" checked={mode === "precise"} onChange={() => setMode("precise")}/><strong>{tool === "join" ? "Normalize & join" : "Precise cut"}</strong><small>Re-encodes to {primary.file.type.startsWith("audio/") ? "MP3" : "MP4"} for exact cuts and broader compatibility.</small></label></div></fieldset>}
           </div>
           {error && <div className="error" role="alert">{error}</div>}
-          <div className="action-bar"><div className="status" role="status"><span>{busy ? "◌" : results.length ? "✓" : "●"}</span><div>{status}<progress max="1" value={progress}/></div></div>{busy ? <button className="danger" onClick={() => { cancelProcessing(); setStatus("Processing cancelled"); }}>Cancel</button> : <button className="primary" disabled={!primary || (tool === "subtitles" && !subtitle) || (tool === "join" && items.length < 2)} onClick={() => void process()}>{tool === "trim" ? "Trim media" : tool === "split" ? "Split media" : tool === "subtitles" ? "Burn subtitles to MP4" : "Join media"}</button>}</div>
+          <div className="action-bar"><ProcessingProgress busy={busy} progress={progress} status={status} estimate={tool === "subtitles"}/>{busy ? <button className="danger" onClick={() => { cancelProcessing(); setStatus("Processing cancelled"); }}>Cancel</button> : <button className="primary" disabled={!primary || (tool === "subtitles" && !subtitle) || (tool === "join" && items.length < 2)} onClick={() => void process()}>{tool === "trim" ? "Trim media" : tool === "split" ? "Split media" : tool === "subtitles" ? "Burn subtitles to MP4" : "Join media"}</button>}</div>
           {results.length > 0 && <section className="results" aria-label="Output files"><div className="results-head"><h2>Downloads ready</h2>{results.length > 1 && <button className="download-all" onClick={() => void downloadAll()}>Download all as ZIP</button>}</div>{results.map(result => <article key={result.name}><div><strong>{result.name}</strong><small>{formatBytes(result.blob.size)}</small></div><button className="download" onClick={() => download(result)}>Download</button></article>)}</section>}
         </div>}
       </section>

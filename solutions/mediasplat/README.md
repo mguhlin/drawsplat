@@ -47,3 +47,14 @@ Choose **Subtitles**, load a video, then click **Generate subtitles…**. Review
 English speech is transcribed locally. First use downloads a roughly 42 MB speech model from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 30 minutes per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
 
 Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.
+
+## Processing progress and time estimates
+
+Burn-in displays an animated purple progress bar, percentage, elapsed time, and
+approximate remaining/total time in minutes or hours and minutes. Estimates start
+after enough real encoding progress has arrived: total time ≈ elapsed / completed
+fraction. They vary with video resolution, duration, codec, and device speed.
+There is no universal minutes-per-minute multiplier. If encoding updates stop,
+the UI reports that it is waiting and hides the estimate. Animation indicates an
+active operation in the interface, not proof that the encoder is advancing.
+The percentage reaches 100% only after the output is ready to download.
