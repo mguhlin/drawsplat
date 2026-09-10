@@ -39,3 +39,11 @@ MediaSplat source is AGPL-3.0-or-later. FFmpeg and codec licensing details are r
 Choose **Subtitles**, select a video and an SRT/VTT file, adjust font size, bottom margin, outline, optional black background, and timing offset, then choose **Burn subtitles to MP4**. The output is H.264/AAC MP4 with permanently visible subtitles. The bundled DejaVu Sans font and FFmpeg engine run locally.
 
 Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. This feature imports existing subtitles; it does not transcribe audio.
+
+## Automatic subtitles
+
+Choose **Subtitles**, load a video, then click **Generate subtitles…**. Review and edit the text and timing. Download SRT directly, or choose **Use subtitles for burn-in** followed by **Burn subtitles to MP4**.
+
+English speech is transcribed locally. First use downloads a roughly 42 MB speech model from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 30 minutes per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
+
+Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.

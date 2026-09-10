@@ -90,3 +90,11 @@ Sizes and margins scale from a 1080p reference. Positive timing offsets delay ca
 The fixed timeline toolbar includes **− / +** to shrink or enlarge only the timeline view, and **Fit timeline** to show the full sequence. Zoom does not change clip duration, output resolution, or the video preview.
 
 The recorder remembers the chosen microphone across recorder openings in the browser session and shows an audio level meter, including in its floating controller. If it reports no audio, check the selected microphone and whether shared-tab sound is enabled. New recordings are appended after existing clips, and the playhead moves to the new recording for review. Starting the recorder pauses existing timeline playback. After stopping, use **Play recording with sound** to check the recording before adding it to the existing timeline. Exports stop with an error if an audio source cannot be connected, rather than silently continuing without it.
+
+## Automatic subtitles
+
+Select a video or audio clip on the timeline, then choose **File → Generate subtitles…**. In the recorder review, you can also check **Generate subtitles when adding this recording (English)**. Review the words and timing, download a clip-relative SRT, or add a new caption track at the clip’s timeline position. Use **File → Save captions as SRT** for project-relative timestamps and the export dialog to burn captions into video.
+
+English speech is transcribed locally. First use downloads a roughly 42 MB speech model from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 30 minutes per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
+
+Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.

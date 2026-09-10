@@ -1,0 +1,10 @@
+{
+  "name": "@splat/local-subtitles",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": { ".": "./SubtitleGenerator.tsx", "./core": "./core.ts", "./client": "./client.ts" },
+  "dependencies": { "@huggingface/transformers": "3.8.1" },
+  "peerDependencies": { "react": ">=19" }
+}

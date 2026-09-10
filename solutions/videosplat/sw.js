@@ -1,4 +1,4 @@
-const CACHE = "videosplat-shell-v18";
+const CACHE = "videosplat-shell-v19";
 const BASE = "/solutions/videosplat/";
 const SHELL = [BASE, `${BASE}manifest.webmanifest`, `${BASE}icon.svg`];
 self.addEventListener("install", (event) =>
@@ -15,7 +15,7 @@ self.addEventListener("activate", (event) =>
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)),
+          keys.filter((key) => key.startsWith("videosplat-shell-") && key !== CACHE).map((key) => caches.delete(key)),
         ),
       )
       .then(() => self.clients.claim()),

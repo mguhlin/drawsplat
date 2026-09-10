@@ -87,3 +87,14 @@ workers, browser storage, and high-performance media APIs are available.
 ## Subtitle burn-in (v3.1.21)
 
 MediaSplat and VideoSplat standalone packages, the Tools module, and the full DrawSplat package include SRT/VTT burn-in. Keep MediaSplat’s `ffmpeg/DejaVuSans.ttf` and `ffmpeg/FONT-LICENSE.txt` with its split runtime files. Update the complete app folder so the HTML, hashed assets, service worker, and font stay together. See the [subtitle walkthrough](../blog/subtitle-burn-in.html).
+
+## Automatic subtitles (v3.1.22)
+
+VideoSplat, MediaSplat, Tools, and full packages include the bundled ONNX speech
+runtime and `solutions/shared/subtitles` source package. Keep that sibling package
+when rebuilding either app with npm. The model downloads on first generation
+from Hugging Face (about 42 MB) and is cached separately by the browser. Media and
+caption text are never uploaded. Offline transcription requires a cached model
+and runtime. If you add a host CSP, permit the model download hosts listed in
+`solutions/videosplat/docs/NETWORK_INVENTORY.md`; keep runtime scripts same-origin.
+See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).

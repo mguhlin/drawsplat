@@ -1,0 +1,17 @@
+.subtitle-generator { min-width:0; }
+.subtitle-generator p { line-height:1.5; }
+.subtitle-generator-actions { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.subtitle-cue-list { max-height:340px; overflow:auto; border:1px solid #354b68; border-radius:8px; padding:10px; }
+.subtitle-cue { display:grid; grid-template-columns:1fr 1fr; gap:8px; border-bottom:1px solid #354b68; padding:10px 0; }
+.subtitle-cue label { display:grid; gap:4px; min-width:0; }
+.subtitle-cue input,.subtitle-cue textarea { width:100%; min-width:0; background:#07111f; color:#fff; border:1px solid #354b68; border-radius:6px; padding:8px; font:inherit; }
+.subtitle-cue .subtitle-cue-text { grid-column:1 / -1; }
+.subtitle-cue textarea { min-height:65px; resize:vertical; }
+.subtitle-cue button { justify-self:start; }
+.subtitle-generator [role=alert] { color:#ffbcc4; }
+
+.subtitle-generation-backdrop { position:fixed; inset:0; z-index:50; background:#03050acc; display:grid; place-items:center; padding:18px; }
+.subtitle-generation-dialog { background:#121a2c; color:#e8eef8; border:1px solid #36415a; border-radius:14px; width:min(660px,100%); max-height:88vh; padding:24px; overflow:auto; box-shadow:0 25px 80px #000a; }
+.subtitle-generation-dialog button { background:#291443; border:1px solid #a855f7; color:#e8eef8; border-radius:7px; padding:8px 12px; cursor:pointer; font:inherit; }
+.subtitle-generation-dialog button:disabled { opacity:.5; cursor:default; }
+.subtitle-generation-dialog p { color:#a9b8ca; line-height:1.5; }

@@ -15,7 +15,7 @@ interface RecorderDialogProps {
   initialMicrophoneDeviceId?: string;
   permissionsPrepared?: boolean;
   onClose(): void;
-  onAdd(file: File): Promise<void>;
+  onAdd(file: File, generateSubtitles?: boolean): Promise<void>;
   onStatus(message: string): void;
   onFloatingChange?(floating: boolean): void;
   onMicrophoneChange?(deviceId: string): void;
@@ -31,6 +31,7 @@ const clock = (seconds: number) =>
 export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus, onFloatingChange, onMicrophoneChange }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const reviewVideo = useRef<HTMLVideoElement>(null);
+  const [generateSubtitles, setGenerateSubtitles] = useState(false);
   const [reviewPlaying, setReviewPlaying] = useState(false);
   const [recordingStream, setRecordingStream] = useState<MediaStream>();
   const session = useRef<CaptureSession | undefined>(undefined);
@@ -208,7 +209,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   const addRecording = async (file: File, message: string) => {
     reviewVideo.current?.pause();
-    await onAdd(file);
+    await onAdd(file, generateSubtitles);
     onStatus(message);
     onClose();
   };
@@ -288,6 +289,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         <button onClick={() => setCrop({ x: 0, y: 0, width: .5, height: 1 })}>Left half</button>
         <button onClick={() => setCrop({ x: .5, y: 0, width: .5, height: 1 })}>Right half</button>
       </div>
+      {state === "review" && <label><input type="checkbox" checked={generateSubtitles} onChange={event => setGenerateSubtitles(event.target.checked)}/> Generate subtitles when adding this recording (English)</label>}
       {state === "review" && <div className="recorder-actions">
         <button className="primary" onClick={applyCrop}>Crop and add to timeline</button>
         <button onClick={() => addRecording(recording, "Full recording saved locally and added to the timeline")}>Use full recording</button>

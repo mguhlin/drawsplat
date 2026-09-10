@@ -8,8 +8,15 @@
 			<generator>raindrop.io</generator>
 			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
 			
-			<lastBuildDate>Thu, 10 Sep 2026 11:02:50 GMT</lastBuildDate>
+			<lastBuildDate>Thu, 10 Sep 2026 15:57:37 GMT</lastBuildDate>
 			<item>
+<title>DrawSplat v3.1.22: Generate Subtitles from Speech in VideoSplat and MediaSplat</title>
+<link>https://drawsplat.org/blog/automatic-subtitles.html</link>
+<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Turn English speech into editable timed subtitles on your device. Generate after recording in VideoSplat or from an existing video in MediaSplat, then download SRT or burn captions into video. This release also includes timeline zoom, fixed editing controls, recording audio checks, and refreshed self-host downloads. The speech model downloads on first use; no media is uploaded.]]></description>
+<pubDate>Thu, 10 Sep 2026 15:57:37 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-22-automatic-subtitles</guid>
+<source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>videosplat</category><category>mediasplat</category><category>self-hosting</category>
+</item>
+<item>
 <title>DrawSplat v3.1.21: Burn Subtitles into Video with MediaSplat and VideoSplat</title>
 <link>https://drawsplat.org/blog/subtitle-burn-in.html</link>
 <description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Make SRT or VTT subtitles permanently visible in exported video. MediaSplat offers a video-plus-subtitles-to-MP4 workflow; VideoSplat imports styled captions onto the timeline and lets you choose burn-in during export. Adjust font size, bottom margin, outline, background, and timing offset while keeping media on your device. All twelve v3.1.21 self-host ZIPs are rebuilt with fresh SHA-256 checksums.]]></description>

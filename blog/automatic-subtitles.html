@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- DrawSplat favicons -->
+<link rel="icon" href="../assets/favicons/drawsplat.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="../assets/brand/DrawSplat_logo.png" />
+<link rel="manifest" href="../site.webmanifest" />
+<meta name="theme-color" content="#7c3aed" />
+<!-- /DrawSplat favicons -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+<title>Generate Subtitles from Speech — VideoSplat and MediaSplat</title>
+<meta name="description" content="Generate and edit English subtitles locally in VideoSplat and MediaSplat, then download SRT or burn captions into video." />
+<link rel="canonical" href="https://drawsplat.org/blog/automatic-subtitles.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .release-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+  .release-pill{display:inline-flex;align-items:center;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:6px 10px;font-size:.86rem;font-weight:800}
+  .release-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .release-card{border:2px solid #e2e6f0;border-radius:12px;background:#fff;padding:18px;box-shadow:0 8px 22px rgba(64,64,65,.06)}
+  .release-card h2{margin:0 0 8px;color:var(--navy,#7c3aed);font-size:1.15rem}
+  .release-card p{margin:0;color:#374151;line-height:1.55}
+  .release-list{display:grid;gap:10px;max-width:900px;margin:0 auto;padding-left:1.2rem}
+  .release-list li{color:#374151;line-height:1.5}
+  .release-note{max-width:900px;margin:18px auto 0;padding:16px 18px;border-left:6px solid #7c3aed;border-radius:10px;background:#fbfaff;color:#4c1d95;line-height:1.5}
+</style>
+</head>
+<body class="admin-page start-page support-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers &amp; Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+        <a href="../guides/">Teacher Guides</a>
+        <hr class="landing-nav-divider">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Technical</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/pricing.html">Pricing</a>
+        <a href="../pages/download.html">Download for Self-Hosting</a>
+        <a href="../legal/combined-policy.html">Get all documents below</a>
+        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/accessibility.html">Accessibility Statement</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
+        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../blog/">Blogs About DrawSplat</a>
+        <a href="../community/index.html">Community Board</a>
+        <hr class="landing-nav-divider">
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>SplatWorks&trade;</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
+          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
+          <a href="../pages/listsplat.html">ListSplat&trade;</a>
+          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
+          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
+        </div>
+        <div class="studio-nav-icons" aria-label="SplatWorks apps">
+          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
+        </div>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>DrawSplat</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
+          <a href="../pages/tools.html">View All Tools</a>
+          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
+          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
+          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
+          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
+          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
+          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
+          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
+          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
+          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
+          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
+          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
+          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
+          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
+          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
+          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
+          <a href="../pages/tools.html#widgets">View All Widgets</a>
+          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
+          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
+          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
+          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
+          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
+          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
+          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
+          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
+          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
+          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
+          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
+          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
+          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
+          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
+          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../games/">Games</a>
+          <a href="../games/">View All Games</a>
+          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
+          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
+          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
+          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
+          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
+          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
+          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
+          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
+          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
+          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
+          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
+          <a href="../games/typing-games/" target="_blank" rel="noopener noreferrer">Typing Games</a>
+          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
+        </div>
+      </div>
+    </details>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-shell support-shell">
+  <section class="support-hero">
+    <p class="landing-eyebrow">Released September 10, 2026</p>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.22: Generate subtitles from speech</h1>
+    <p>Record or import a video, generate English captions on your device, review the text and timing, then download SRT or burn the subtitles into your video.</p>
+    <div class="landing-actions"><a class="landing-cta primary" href="../solutions/videosplat/">Open VideoSplat</a><a class="landing-cta" href="../solutions/mediasplat/">Open MediaSplat</a><a class="landing-cta" href="../pages/download.html">Download v3.1.22</a></div>
+  </section>
+  <section class="landing-section"><div class="release-grid">
+    <article class="release-card"><h2>VideoSplat: record, generate, review</h2><p>Select a video or audio clip on the timeline and choose File → Generate subtitles…. After recording, you can also check Generate subtitles when adding this recording (English). Review the words and timing, then add captions to a new timeline track. Existing captions stay in place.</p></article>
+    <article class="release-card"><h2>MediaSplat: captions for an existing video</h2><p>Choose Subtitles, load a video, and click Generate subtitles…. Edit the generated captions and download SRT, or choose Use subtitles for burn-in followed by Burn subtitles to MP4.</p></article>
+    <article class="release-card"><h2>Your media stays on your device</h2><p>First use downloads a roughly 42 MB public speech model from Hugging Face and loads the app’s bundled speech engine. The download host sees normal connection metadata, but audio, video, and caption text are never uploaded. The model is cached when browser storage permits and can then work offline.</p></article>
+    <article class="release-card"><h2>Review before sharing</h2><p>This release transcribes English speech, up to 30 minutes per clip and 512 MB per source file, using browser-decodable audio. Names, accents, noise, and music can affect accuracy. Silent files cannot be transcribed. Progress and cancellation controls are included.</p></article>
+    <article class="release-card"><h2>Easier timeline navigation</h2><p>VideoSplat now keeps Split, Delete, and other editing controls visible while you scroll. Timeline zoom −/+, plus Fit timeline, make long sequences easier to navigate without changing the video canvas or output resolution.</p></article>
+    <article class="release-card"><h2>Check recording audio</h2><p>The recorder remembers your microphone choice, shows an audio meter, and lets you play a recording with sound before adding it. Export reports audio connection failures instead of silently saving video without the expected audio.</p></article>
+  </div></section>
+  <section class="landing-section"><h2>Subtitle timing in VideoSplat</h2><p>The generation dialog downloads SRT with times relative to the selected clip. After adding captions, File → Save captions as SRT exports project-relative times. Captions are editable timeline clips; moving a source video later does not automatically move its caption track. Keep Burn in subtitles enabled when exporting to make captions permanent.</p></section>
+  <section class="landing-section"><h2>Self-hosting and verification</h2><p>All twelve self-host ZIPs are refreshed. MediaSplat and VideoSplat packages include the local speech engine and shared source package; the speech model downloads on first generation. Keep the included folders and runtime assets together.</p><p>Verified with real speech transcription in both apps, cached offline transcription, editing and SRT downloads, silent-audio rejection, cancellation, recording-triggered generation, and a MediaSplat MP4 containing edited generated captions.</p><p><a href="../docs/release-notes/RELEASE_NOTES_v3.1.22.md">Release notes</a> · <a href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.22">GitHub release and checksums</a> · <a href="../blog/subtitle-burn-in.html">Earlier subtitle import and burn-in walkthrough</a></p></section>
+</main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="../pages/download.html">Download</a>
+  <a href="../blog/">Blog</a>
+  <a href="../community/index.html">Community</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script>
+</body>
+</html>

@@ -293,6 +293,7 @@ MODULE_EXCLUDES=(
 )
 
 TOOLS_SOLUTIONS=(
+  shared
   animated-gif
   audiosplat
   videosplat
@@ -663,6 +664,7 @@ AudioSplat is AGPL-3.0-or-later. See solutions/audiosplat/LICENSE.md.
 EOF
 
 copy_tree solutions/videosplat "$VIDEOSPLAT_ROOT/solutions/videosplat" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/shared/subtitles "$VIDEOSPLAT_ROOT/solutions/shared/subtitles" "${MODULE_EXCLUDES[@]}"
 
 cat > "$VIDEOSPLAT_ROOT/VIDEOSPLAT-SELFHOST-README.txt" <<EOF
 VideoSplat Self-Hosted Solution
@@ -700,6 +702,7 @@ VideoSplat is AGPL-3.0-or-later. See solutions/videosplat/LICENSE.md.
 EOF
 
 copy_tree solutions/mediasplat "$MEDIASPLAT_ROOT/solutions/mediasplat" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/shared/subtitles "$MEDIASPLAT_ROOT/solutions/shared/subtitles" "${MODULE_EXCLUDES[@]}"
 
 cat > "$MEDIASPLAT_ROOT/MEDIASPLAT-SELFHOST-README.txt" <<EOF
 MediaSplat Self-Hosted Solution

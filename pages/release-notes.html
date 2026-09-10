@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM v3.1.21 Release Notes</title>
-<meta name="description" content="DrawSplat v3.1.21 adds local SRT and VTT subtitle burn-in to MediaSplat and VideoSplat, with updated self-host downloads." />
+<title>DrawSplatTM v3.1.22 Release Notes</title>
+<meta name="description" content="DrawSplat v3.1.22 adds automatic local English subtitles, timeline zoom, and recording audio checks." />
 <link rel="canonical" href="https://drawsplat.org/pages/release-notes.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <style>
@@ -166,20 +166,20 @@
 <main class="landing-shell support-shell">
   <section class="support-hero">
     <p class="landing-eyebrow">Released September 10, 2026</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.21: Subtitle burn-in</h1>
-    <p>Make SRT or VTT subtitles permanently visible in exported video with MediaSplat and VideoSplat. Your media stays on your device.</p>
-    <div class="landing-actions"><a class="landing-cta primary" href="download.html">Download v3.1.21</a><a class="landing-cta" href="../blog/subtitle-burn-in.html">Read the walkthrough</a><a class="landing-cta" href="../docs/release-notes/RELEASE_NOTES_v3.1.21.md">Markdown release notes</a></div>
+    <h1>DrawSplat<sup class="tm">TM</sup> v3.1.22: Generate subtitles from speech</h1>
+    <p>Record or import a video, generate English captions on your device, review the text and timing, then download SRT or burn the subtitles into your video.</p>
+    <div class="landing-actions"><a class="landing-cta primary" href="../solutions/videosplat/">Open VideoSplat</a><a class="landing-cta" href="../solutions/mediasplat/">Open MediaSplat</a><a class="landing-cta" href="../pages/download.html">Download v3.1.22</a></div>
   </section>
-  <section class="landing-section">
-    <div class="release-grid">
-      <article class="release-card"><h2>MediaSplat: video + subtitles → MP4</h2><p>Open Subtitles, choose a video and an SRT/VTT file, and select Burn subtitles to MP4. The local engine creates H.264/AAC output with a bundled subtitle font.</p><a href="../solutions/mediasplat/">Open MediaSplat</a></article>
-      <article class="release-card"><h2>VideoSplat: captions on your timeline</h2><p>Use File → Burn in subtitles… to import captions. Preview them, then keep Burn in subtitles checked during export. Uncheck it to export without captions. Hidden caption tracks are excluded.</p><a href="../solutions/videosplat/">Open VideoSplat</a></article>
-      <article class="release-card"><h2>Appearance and timing</h2><p>Adjust font size, bottom margin, outline width, optional black background, and timing offset. Positive offsets delay captions; negative offsets advance them. Sizes scale from a 1080p reference.</p></article>
-      <article class="release-card"><h2>Local processing</h2><p>No upload or account is required. Burn-in re-encodes the video and can take time for long recordings. Import an existing subtitle file; this feature does not transcribe audio.</p></article>
-    </div>
-  </section>
-  <section class="landing-section"><h2>Current self-host packages</h2><p>All twelve ZIPs are rebuilt, including standalone MediaSplat and VideoSplat, Tools, the full DrawSplat package, AudioSplat, Widgets, Games, and the SplatWorks suite and individual apps. Existing tools, including PDFsplat, remain in their applicable packages.</p><p>Verify downloaded ZIPs with <a href="https://github.com/mguhlin/drawsplat/releases/download/v3.1.21/SHA256SUMS-v3.1.21.txt">SHA256SUMS-v3.1.21.txt</a>. See the <a href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.21">GitHub release</a> for all assets.</p></section>
-  <section class="landing-section"><h2>Verification</h2><p>The subtitle implementation passed 71 unit tests and 11 browser tests, including decoded output frames, landscape and portrait video, repeated exports, and VideoSplat exports with captions enabled and disabled.</p><p><a href="../docs/release-notes/RELEASE_NOTES_v3.1.20.md">Previous release: v3.1.20</a></p></section>
+  <section class="landing-section"><div class="release-grid">
+    <article class="release-card"><h2>VideoSplat: record, generate, review</h2><p>Select a video or audio clip on the timeline and choose File → Generate subtitles…. After recording, you can also check Generate subtitles when adding this recording (English). Review the words and timing, then add captions to a new timeline track. Existing captions stay in place.</p></article>
+    <article class="release-card"><h2>MediaSplat: captions for an existing video</h2><p>Choose Subtitles, load a video, and click Generate subtitles…. Edit the generated captions and download SRT, or choose Use subtitles for burn-in followed by Burn subtitles to MP4.</p></article>
+    <article class="release-card"><h2>Your media stays on your device</h2><p>First use downloads a roughly 42 MB public speech model from Hugging Face and loads the app’s bundled speech engine. The download host sees normal connection metadata, but audio, video, and caption text are never uploaded. The model is cached when browser storage permits and can then work offline.</p></article>
+    <article class="release-card"><h2>Review before sharing</h2><p>This release transcribes English speech, up to 30 minutes per clip and 512 MB per source file, using browser-decodable audio. Names, accents, noise, and music can affect accuracy. Silent files cannot be transcribed. Progress and cancellation controls are included.</p></article>
+    <article class="release-card"><h2>Easier timeline navigation</h2><p>VideoSplat now keeps Split, Delete, and other editing controls visible while you scroll. Timeline zoom −/+, plus Fit timeline, make long sequences easier to navigate without changing the video canvas or output resolution.</p></article>
+    <article class="release-card"><h2>Check recording audio</h2><p>The recorder remembers your microphone choice, shows an audio meter, and lets you play a recording with sound before adding it. Export reports audio connection failures instead of silently saving video without the expected audio.</p></article>
+  </div></section>
+  <section class="landing-section"><h2>Subtitle timing in VideoSplat</h2><p>The generation dialog downloads SRT with times relative to the selected clip. After adding captions, File → Save captions as SRT exports project-relative times. Captions are editable timeline clips; moving a source video later does not automatically move its caption track. Keep Burn in subtitles enabled when exporting to make captions permanent.</p></section>
+  <section class="landing-section"><h2>Self-hosting and verification</h2><p>All twelve self-host ZIPs are refreshed. MediaSplat and VideoSplat packages include the local speech engine and shared source package; the speech model downloads on first generation. Keep the included folders and runtime assets together.</p><p>Verified with real speech transcription in both apps, cached offline transcription, editing and SRT downloads, silent-audio rejection, cancellation, recording-triggered generation, and a MediaSplat MP4 containing edited generated captions.</p><p><a href="../docs/release-notes/RELEASE_NOTES_v3.1.22.md">Release notes</a> · <a href="https://github.com/mguhlin/drawsplat/releases/tag/v3.1.22">GitHub release and checksums</a> · <a href="../blog/subtitle-burn-in.html">Earlier subtitle import and burn-in walkthrough</a></p></section>
 </main>
 
 <footer class="landing-footer">

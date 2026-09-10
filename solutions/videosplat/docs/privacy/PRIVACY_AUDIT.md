@@ -1,6 +1,6 @@
 # VideoSplat Privacy Audit
 
-Status: milestone 1 baseline. Update this document whenever runtime behavior changes.
+Status: updated for local recording and automatic subtitle generation.
 
 ## Current data flow
 
@@ -25,19 +25,25 @@ Status: milestone 1 baseline. Update this document whenever runtime behavior cha
   checks missing media, range validity, browser support, storage headroom, and hidden
   redaction tracks. The optional JSON export report is generated locally and records
   settings, warnings, and a SHA-256 output hash without biometric identity data.
-- No camera, microphone, screen capture, cloud provider, analytics, advertising,
-  telemetry, authentication, or remote inference exists yet.
+- Camera, microphone, and screen capture are requested only through the recording
+  workflow. There is no cloud rendering, analytics, advertising, telemetry,
+  authentication, or remote inference.
+- Automatic subtitles download a public speech model on demand, then transcribe
+  locally in a worker. Source media and caption text are never uploaded.
 - No cookies or `localStorage` keys are used.
 - The service worker caches same-origin application shell resources for offline use.
-- File access happens only after picker, drag/drop, or relink actions. The app
-  requests no camera, microphone, screen, location, notification, or account
-  permissions.
+- File access happens after picker, drag/drop, or relink actions. Recording can
+  request camera, microphone, and screen permissions; it does not request location,
+  notification, or account permissions.
 
 ## Network inventory
 
-Production runtime requests are limited to same-origin application assets and
-navigation. The Content Security Policy sets `connect-src 'self'`. An end-to-end
-test records requests and fails if a different hostname is observed.
+Normal editing requests only same-origin assets. Automatic subtitle generation
+adds GET downloads of pinned public model files from Hugging Face and its CDN.
+The download host sees normal connection metadata, including IP address, but no
+user media or transcription. Runtime code stays same-origin. The CSP and complete
+host inventory are documented in `../NETWORK_INVENTORY.md`. Browser tests verify
+initial-load privacy and actual model downloads/cached offline transcription.
 
 Development mode connects to the same-origin Vite development server for hot reload.
 

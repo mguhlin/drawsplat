@@ -1,3 +1,6 @@
+import { GenerateSubtitlesDialog } from './GenerateSubtitlesDialog';
+import type { Source } from '@splat/local-subtitles';
+import { addGeneratedCaptions } from '../captions/generated';
 import { BASE_PIXELS_PER_SECOND, MIN_ZOOM, MAX_ZOOM, clampZoom, fitTimelineZoom, rulerInterval } from "../timeline/zoom";
 import { SubtitleDialog } from "./SubtitleDialog";
 import { SubtitlePreview } from "./SubtitlePreview";
@@ -162,6 +165,7 @@ export function App() {
   const mediaInput = useRef<HTMLInputElement>(null);
   const mltInput = useRef<HTMLInputElement>(null);
   const [subtitleDialog, setSubtitleDialog] = useState(false);
+  const [generation, setGeneration] = useState<{ source: Source; clipId: string; autoStart?: boolean }>();
   const captionInput = useRef<HTMLInputElement>(null);
   const languageMenu = useRef<HTMLDivElement>(null);
   const splashLanguage = useRef<HTMLDivElement>(null);
@@ -486,7 +490,7 @@ export function App() {
     }
   };
 
-  const addFiles = async (files: FileList | File[], focusImported = false) => {
+  const addFiles = async (files: FileList | File[], focusImported = false, generateSubtitles = false) => {
     if (!files.length) return;
     setImporting(true);
     try {
@@ -563,6 +567,7 @@ export function App() {
         setSelectedAssetId(imported.asset.id);
         setSelectedClipId(clip.id);
         if (focusImported) { setPlaying(false); setTime(clip.start); }
+        if (generateSubtitles) setGeneration({ clipId: clip.id, source: { name: clip.name, load: async () => file, duration: clip.duration }, autoStart: true });
       }
       commit(next);
       setStatus(
@@ -1105,6 +1110,13 @@ export function App() {
               <hr />
               <button role="menuitem" disabled={importing} onClick={() => menuAction(() => mediaInput.current?.click())}>{importing ? "Importing…" : "Import media…"}</button>
               <button role="menuitem" onClick={() => menuAction(() => setDialog("optimizer"))}>Optimize video…</button>
+              <button role="menuitem" onClick={() => menuAction(() => {
+                const clip = selectedLocation?.clip;
+                const url = clip?.assetId ? mediaUrls[clip.assetId] : undefined;
+                if (!clip || !url || !['video', 'audio'].includes(clip.kind)) { setStatus('Select a video or audio clip on the timeline to generate subtitles.'); return; }
+                setPlaying(false);
+                setGeneration({ clipId: clip.id, source: { name: clip.name, start: clip.sourceStart, duration: clip.duration, load: async () => { const response = await fetch(url); if (!response.ok) throw new Error('The source media is unavailable. Reimport it and try again.'); return response.blob(); } } });
+              })}>Generate subtitles…</button>
               <button role="menuitem" onClick={() => menuAction(() => setSubtitleDialog(true))}>Burn in subtitles…</button>
               <button role="menuitem" onClick={() => menuAction(() => setDialog("export"))}>Export video…</button>
             </div>}
@@ -2399,6 +2411,7 @@ export function App() {
         accept=".mlt,.xml,application/xml,text/xml"
         onChange={(event) => importMlt(event.target.files?.[0])}
       />
+      {generation && <GenerateSubtitlesDialog source={generation.source} autoStart={generation.autoStart} onClose={() => setGeneration(undefined)} onUse={cues => { const next = addGeneratedCaptions(project, generation.clipId, cues); commit(next); setStatus(`${cues.length} generated captions added. Review them before exporting.`); setGeneration(undefined); }}/>}
       {subtitleDialog && <SubtitleDialog onClose={() => setSubtitleDialog(false)} onImport={importCaptions}/>}
       <input
         ref={captionInput}
@@ -2468,7 +2481,7 @@ export function App() {
                 onMicrophoneChange={setRecordingMicrophoneId}
                 permissionsPrepared={splashRecordingReady}
                 onClose={() => { setRecorderFloating(false); setDialog(null); }}
-                onAdd={async (file) => addFiles([file], true)}
+                onAdd={async (file, generateSubtitles) => addFiles([file], true, generateSubtitles)}
                 onStatus={setStatus}
                 onFloatingChange={setRecorderFloating}
               />

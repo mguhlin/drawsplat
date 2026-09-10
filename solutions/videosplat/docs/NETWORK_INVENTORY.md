@@ -1,18 +1,24 @@
 # Production network inventory
 
-Approved runtime traffic is limited to same-origin navigation and static application
-assets. The production Content Security Policy limits `connect-src` to `'self'`.
-VideoSplat has no analytics, advertising, authentication, telemetry, cloud render,
-remote inference, font CDN, or media-upload endpoint.
+Normal editing and recording use only same-origin static assets and local Blob
+URLs. Starting automatic subtitle generation additionally downloads pinned public
+Whisper model files from `huggingface.co` and its `*.huggingface.co` /
+`*.xethub.hf.co` CDN redirects. These are GET requests for model data; audio, video,
+caption text, and project metadata are never uploaded. The download host sees the
+ordinary connection metadata, including IP address. Runtime JavaScript and WASM
+are bundled and served from our origin, not a third-party script CDN.
 
-Blob URLs represent bytes already held by the browser and do not create network
-requests. IndexedDB, Canvas, Web Audio, Web Crypto, and MediaRecorder processing is
-local. The service worker caches only same-origin shell assets. MLT resources using
-remote, data, or executable URL schemes are reported and blocked.
+The production CSP allows those model hosts in `connect-src`, plus self and local
+Blob URLs. The same restrictions are included in the standalone HTML. No remote
+inference, analytics, advertising, authentication, or media-upload endpoint is used.
 
-Development mode uses the same-origin Vite server and its hot-reload connection.
-That development-only connection is not included in production output.
+IndexedDB, Canvas, Web Audio, Web Crypto, and MediaRecorder processing remains
+local. The service worker caches same-origin assets. Transformers.js separately
+caches the model in browser storage; workers preserve that cache during app
+updates. Cache eviction or clearing site data requires another model download.
+MLT resources with remote, data, or executable URL schemes remain blocked.
 
-Release verification includes a browser test that records every request and rejects
-non-loopback hosts, plus a repository scan for unexpected remote URLs. Any future
-external service requires an explicit privacy review and an update to this inventory.
+Tests verify that the editor makes no external requests on initial load and that
+actual subtitle generation sends only GET requests to remote hosts and works with
+the cached model offline. See `solutions/shared/subtitles/README.md` for the model
+revision, limits, and runtime details.
