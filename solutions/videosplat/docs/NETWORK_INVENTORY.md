@@ -3,7 +3,7 @@
 Normal editing and recording use only same-origin static assets and local Blob
 URLs. Starting automatic subtitle generation additionally downloads pinned public
 Whisper model files from `huggingface.co` and its `*.huggingface.co` /
-`*.xethub.hf.co` CDN redirects. These are GET requests for model data; audio, video,
+`*.xethub.hf.co` / `*.cdn.hf.co` CDN redirects. These are GET requests for model data; audio, video,
 caption text, and project metadata are never uploaded. The download host sees the
 ordinary connection metadata, including IP address. Runtime JavaScript and WASM
 are bundled and served from our origin, not a third-party script CDN.

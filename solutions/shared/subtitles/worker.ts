@@ -6,6 +6,8 @@ import { audioSections, hasAudio, normalizeCues, SAMPLE_RATE, type Cue } from '.
 env.allowLocalModels = false;
 env.backends.onnx.wasm!.wasmPaths = { wasm: wasmUrl, mjs: wasmModuleUrl };
 env.backends.onnx.wasm!.numThreads = 1;
+// Already running in our own worker; avoid a nested runtime proxy worker.
+env.backends.onnx.wasm!.proxy = false;
 self.onmessage = async (event: MessageEvent<{ audio: Float32Array }>) => {
   let transcriber;
   try {
