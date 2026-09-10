@@ -29,28 +29,23 @@ const localWasmURL = async () => {
   return wasmObjectURL;
 };
 
-const getEngine = async (onProgress: (ratio: number) => void) => {
-  if (!engine) {
-    engine = new FFmpeg();
-    engine.on("progress", ({ progress }) => onProgress(Math.max(0, Math.min(1, progress))));
-  }
+const getEngine = async (signal?: AbortSignal) => {
+  signal?.throwIfAborted();
+  const instance = engine ?? (engine = new FFmpeg());
   if (!loaded) {
     try {
-      await engine.load({
-        coreURL: `${engineBase}/ffmpeg-core.js`,
-        wasmURL: await localWasmURL(),
-      });
+      const wasmURL = await localWasmURL();
+      signal?.throwIfAborted();
+      await instance.load({ coreURL: `${engineBase}/ffmpeg-core.js`, wasmURL });
+      signal?.throwIfAborted();
       loaded = true;
     } catch (error) {
-      engine.terminate();
-      engine = undefined;
-      loaded = false;
-      if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL);
-      wasmObjectURL = undefined;
+      instance.terminate();
+      if (engine === instance) { engine = undefined; loaded = false; }
       throw error;
     }
   }
-  return engine;
+  return instance;
 };
 
 const commands = {
@@ -62,19 +57,42 @@ export async function transcodeExport(
   source: Blob,
   format: Exclude<ExportFormat, "webm">,
   onProgress: (ratio: number) => void,
+  duration?: number,
+  signal?: AbortSignal,
 ): Promise<Blob> {
-  const ffmpeg = await getEngine(onProgress);
+  signal?.throwIfAborted();
+  let ffmpeg: FFmpeg | undefined;
+  let completed = 0;
+  const progress = ({ progress: ratio, time }: { progress: number; time: number }) => {
+    const value = duration && duration > 0 ? time / 1000000 / duration : ratio;
+    if (!Number.isFinite(value) || value < 0) return;
+    completed = Math.max(completed, Math.min(.99, value));
+    onProgress(completed);
+  };
+  const abort = () => { engine?.terminate(); engine = undefined; loaded = false; };
+  signal?.addEventListener('abort', abort, { once: true });
   const input = "videosplat-master.webm";
   const output = `videosplat-export.${format}`;
   try {
+    ffmpeg = await getEngine(signal);
+    signal?.throwIfAborted();
+    ffmpeg.on('progress', progress);
     await ffmpeg.writeFile(input, new Uint8Array(await source.arrayBuffer()));
+    signal?.throwIfAborted();
     const code = await ffmpeg.exec(["-i", input, ...commands[format], output]);
     if (code !== 0) throw new Error(`Local ${format.toUpperCase()} conversion failed.`);
     const data = await ffmpeg.readFile(output);
+    signal?.throwIfAborted();
     if (typeof data === "string") throw new Error("The local format engine returned invalid media.");
+    onProgress(1);
     return new Blob([new Uint8Array(data)], { type: format === "mp4" ? "video/mp4" : "video/ogg" });
+  } catch (error) {
+    signal?.throwIfAborted();
+    throw error;
   } finally {
+    signal?.removeEventListener('abort', abort);
+    ffmpeg?.off('progress', progress);
     for (const name of [input, output])
-      try { await ffmpeg.deleteFile(name); } catch { /* best effort */ }
+      try { await ffmpeg?.deleteFile(name); } catch { /* best effort */ }
   }
 }

@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { ExportProgress } from "./ExportProgress";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { VideoSplatProject } from "../domain/project";
 import {
   DEFAULT_EXPORT,
@@ -60,6 +61,7 @@ export function ExportDialog({
   );
   const hasErrors = issues.some((issue) => issue.severity === "error");
   const controller = useRef<AbortController | undefined>(undefined);
+  useEffect(() => () => controller.current?.abort(), []);
   const run = async () => {
     setBusy(true);
     setResult(undefined);
@@ -81,6 +83,7 @@ export function ExportDialog({
       const format = options.format;
       setResult({ blob, format });
       setReport(await createExportReport(project, options, blob, issues));
+      controller.current.signal.throwIfAborted();
       saveBlob(blob, exportName(project.name, format));
       setSaved(true);
       onStatus(`Export saved to Downloads · ${bytes(blob.size)}`);
@@ -115,8 +118,9 @@ export function ExportDialog({
       <h2 id="export-title">Export video locally</h2>
       <p className="lead">
         Render the complete timeline in this browser. Media is not uploaded.
-        Export runs in real time while this dialog stays open.
+        Timeline rendering runs in real time. MP4 and OGM conversion follows afterward and is estimated separately. Keep this dialog open until the export finishes.
       </p>
+      <fieldset className="export-settings" disabled={busy}>
       <div className="optimizer-grid">
         <label>
           Quality preset
@@ -265,14 +269,10 @@ export function ExportDialog({
           ))}
         </ul>
       </div>
+      </fieldset>
+      {(busy || result || error) && <ExportProgress progress={progress} format={options.format} busy={busy} finished={saved}/>}
       {busy && (
         <>
-          <progress max="1" value={progress} />
-          <p role="status">
-            {options.format !== "webm" && progress >= 0.85
-              ? `Converting to ${options.format.toUpperCase()} · ${Math.round((progress - 0.85) / 0.15 * 100)}%`
-              : `Rendering timeline · ${Math.round(progress * (options.format === "webm" ? 100 : 100 / 0.85))}%`}
-          </p>
           <button
             className="danger wide"
             onClick={() => controller.current?.abort()}

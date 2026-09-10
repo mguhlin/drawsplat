@@ -200,13 +200,16 @@ export async function exportProject(
       media.forEach((element) => element.pause());
       if (recorder.state !== "inactive") recorder.stop();
     };
-    signal?.addEventListener("abort", finish, { once: true });
     recorder.start(1000);
     await new Promise<void>((resolve) => {
+      const stop = () => { finish(); resolve(); };
+      signal?.addEventListener("abort", stop, { once: true });
+      if (signal?.aborted) { stop(); return; }
       const draw = async () => {
         const elapsed = (performance.now() - started) / 1000;
         const time = rangeStart + elapsed;
         if (signal?.aborted || elapsed >= duration) {
+          signal?.removeEventListener("abort", stop);
           finish();
           resolve();
           return;
@@ -323,15 +326,17 @@ export async function exportProject(
       };
       frame = requestAnimationFrame(draw);
     });
-    const blob = await result;
+    let blob: Blob;
+    try { blob = await result; } catch (error) { signal?.throwIfAborted(); throw error; }
     if (signal?.aborted)
       throw new DOMException("Export canceled", "AbortError");
     if (options.format === "webm") {
       onProgress(1);
       return blob;
     }
-    return transcodeExport(blob, options.format, (ratio) =>
-      onProgress(0.85 + ratio * 0.15),
+    onProgress(0.85);
+    return await transcodeExport(blob, options.format, (ratio) =>
+      onProgress(0.85 + ratio * 0.15), duration, signal,
     );
   } finally {
     media.forEach((element) => {

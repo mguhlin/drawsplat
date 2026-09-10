@@ -1,0 +1,31 @@
+import { act, cleanup, render, screen } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { clockTime, estimatedTime, exportStage, ExportProgress } from './ExportProgress';
+afterEach(() => { cleanup(); vi.useRealTimers(); });
+it('formats hours and treats the two progress ranges as separate stages', () => {
+  expect(clockTime(3661)).toBe('1:01:01');
+  expect(estimatedTime(5401)).toBe('1 hr 31 min');
+  expect(exportStage(.425, 'mp4')).toEqual({ conversion: false, fraction: .5 });
+  expect(exportStage(.925, 'mp4').fraction).toBeCloseTo(.5);
+});
+it('resets estimates when conversion starts, hides stale estimates, and waits for completion', () => {
+  vi.useFakeTimers();
+  const { rerender } = render(<ExportProgress progress={0} format="mp4" busy finished={false}/>);
+  act(() => vi.advanceTimersByTime(10000));
+  rerender(<ExportProgress progress={.425} format="mp4" busy finished={false}/>);
+  expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
+  expect(screen.getByText('Estimated remaining: less than 1 min')).toBeVisible();
+  rerender(<ExportProgress progress={.85} format="mp4" busy finished={false}/>);
+  expect(screen.getByRole('progressbar', {name:'Conversion progress'})).toHaveAttribute('aria-valuenow', '0');
+  expect(screen.getByText('Calculating time remaining…')).toBeVisible();
+  act(() => vi.advanceTimersByTime(6000));
+  rerender(<ExportProgress progress={.925} format="mp4" busy finished={false}/>);
+  expect(screen.getByText('Estimated remaining: less than 1 min')).toBeVisible();
+  act(() => vi.advanceTimersByTime(16000));
+  expect(screen.getByText('Waiting for the next progress update…')).toBeVisible();
+  expect(screen.queryByText(/Estimated remaining:/)).toBeNull();
+  rerender(<ExportProgress progress={1} format="mp4" busy finished={false}/>);
+  expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '99');
+  rerender(<ExportProgress progress={1} format="mp4" busy={false} finished/>);
+  expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
+});

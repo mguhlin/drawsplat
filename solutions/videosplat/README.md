@@ -98,3 +98,5 @@ Select a video or audio clip on the timeline, then choose **File → Generate su
 English speech is transcribed locally. First use downloads a roughly 42 MB speech model from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 30 minutes per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
 
 Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.
+
+Export progress uses an animated purple bar with a percentage and elapsed time. After enough progress is available, it estimates the current stage’s remaining time and total in minutes or hours. WebM renders the timeline in real time; MP4 and OGM show timeline rendering and local conversion as separate stages with separate estimates. Estimates adapt to the measured speed and pause when progress updates stop arriving. Cancel stops rendering or conversion, and you can retry the export.
