@@ -1179,3 +1179,12 @@
     animation: none;
   }
 }
+
+/* Keep editing controls outside the timeline's horizontal and vertical scroll area. */
+.timeline { display: flex; flex-direction: column; overflow: hidden; }
+.timeline-toolbar { display: flex; flex: none; flex-wrap: wrap; align-items: center; gap: 4px; padding: 4px; background: #11182a; border-bottom: 1px solid var(--line); }
+.timeline-toolbar .timeline-tools { padding: 0 4px; }
+.timeline-toolbar .timeline-edit-tools { position: static; flex-wrap: wrap; }
+.timeline-scroll { flex: 1; min-height: 0; overflow: auto; }
+.timeline-head { height: 32px; }
+.timeline-corner { position: sticky; left: 0; z-index: 2; background: #11182a; }

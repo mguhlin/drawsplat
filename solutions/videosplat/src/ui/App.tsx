@@ -2050,10 +2050,7 @@ export function App() {
           )}
         </aside>
         <section className="timeline" aria-label="Timeline">
-          <div
-            className="timeline-head"
-            style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
-          >
+          <div className="timeline-toolbar" role="toolbar" aria-label="Timeline editing">
             <div className="timeline-tools">
               <span className="sr-only">Timeline controls</span>
               <button
@@ -2085,15 +2082,6 @@ export function App() {
                 {rangeSelecting ? "Range ✓" : "Range"}
               </button>
             </div>
-            <div
-              className="ruler"
-              onClick={(event) => {
-                const rect = event.currentTarget.getBoundingClientRect();
-                setTime(
-                  Math.max(0, (event.clientX - rect.left) / pixelsPerSecond),
-                );
-              }}
-              >
               <div className="timeline-edit-tools" onClick={(event) => event.stopPropagation()}>
                 <button onClick={splitSelected} disabled={!selectedClipId}>Split</button>
                 <button onClick={duplicateSelected} disabled={!selectedClipId}>Duplicate</button>
@@ -2111,6 +2099,23 @@ export function App() {
                   <option value="overwrite">Overwrite</option>
                 </select>
               </div>
+          </div>
+          <div className="timeline-scroll" aria-label="Timeline tracks">
+          <div
+            className="timeline-head"
+            style={{ gridTemplateColumns: `190px ${timelineWidth}px` }}
+          >
+            <div className="timeline-corner" />
+            <div
+              className="ruler"
+              onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                setTime(
+                  Math.max(0, (event.clientX - rect.left) / pixelsPerSecond),
+                );
+              }}
+              >
+
               {Array.from(
                 { length: Math.floor(Math.max(20, totalDuration) / 5) + 1 },
                 (_, index) => (
@@ -2325,6 +2330,7 @@ export function App() {
               <span aria-hidden="true" />
             </div>}
           </Fragment>)}
+          </div>
         </section>
       </main>
       <footer className="statusbar">
