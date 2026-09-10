@@ -1,3 +1,5 @@
+import { subtitlesToAss, type SubtitleOptions } from "../captions/subtitles";
+import { burnSubtitlesCommand } from "./commands";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 import { concatManifest, extensionOf, joinCommand, outputExtension, safeStem, trimCommand, type ProcessingMode, type TimeRange } from "./commands";
@@ -37,3 +39,30 @@ export async function joinMedia(files: File[], mode: ProcessingMode, notify: (ev
   try { for (let i = 0; i < files.length; i++) { notify({ kind: "log", message: `Preparing file ${i + 1} of ${files.length}…` }); await engine.writeFile(inputs[i], await fetchFile(files[i])); } await engine.writeFile(manifest, concatManifest(inputs)); const code = await engine.exec(joinCommand(manifest, output, mode)); if (code !== 0) throw new Error(mode === "fast" ? "These streams are not compatible for lossless joining. Choose Normalize mode." : "The selected files could not be normalized and joined."); return [await readResult(engine, output)]; } finally { await cleanup(engine, names); }
 }
 export const cancelProcessing = () => { ffmpeg?.terminate(); ffmpeg = undefined; loaded = false; if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL); wasmObjectURL = undefined; };
+
+export async function burnSubtitles(file: File, source: string, options: SubtitleOptions, notify: (event: ProcessorEvent) => void): Promise<ResultFile[]> {
+  subtitlesToAss(source, options); // Validate before loading the engine.
+  const engine = await getEngine(notify);
+  const input = `source.${extensionOf(file.name)}`, output = `${safeStem(file.name)}-subtitled.mp4`;
+  try {
+    await engine.createDir("fonts");
+    const font = await fetch(`${coreBase}/DejaVuSans.ttf`);
+    if (!font.ok) throw new Error("The local subtitle font could not be loaded.");
+    await engine.writeFile("fonts/DejaVuSans.ttf", new Uint8Array(await font.arrayBuffer()));
+    await engine.writeFile(input, await fetchFile(file));
+    await engine.ffprobe(["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:stream_side_data=rotation", "-of", "json", input, "-o", "subtitle-probe.json"]);
+    // This core leaves ffprobe.ret at -1 on success; validate its JSON output instead.
+    const probe = await engine.readFile("subtitle-probe.json", "utf8");
+    const video = JSON.parse(String(probe)).streams?.[0];
+    if (!(video?.width > 0 && video?.height > 0)) throw new Error("Choose a file containing video to burn subtitles into.");
+    const rotation = Number(video.side_data_list?.find((entry: { rotation?: number }) => entry.rotation !== undefined)?.rotation ?? 0);
+    const aspect = Math.abs(rotation) % 180 === 90 ? video.height / video.width : video.width / video.height;
+    await engine.writeFile("captions.ass", subtitlesToAss(source, options, aspect));
+    notify({ kind: "log", message: "Burning subtitles into MP4 locally…" });
+    if (await engine.exec(burnSubtitlesCommand(input, output)) !== 0) throw new Error("Subtitle export failed. Check that the source contains video and try a smaller file.");
+    return [await readResult(engine, output)];
+  } finally {
+    await cleanup(engine, [input, output, "subtitle-probe.json", "captions.ass", "fonts/DejaVuSans.ttf"]);
+    try { await engine.deleteDir("fonts"); } catch { /* cancelled engine */ }
+  }
+}

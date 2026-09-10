@@ -33,3 +33,9 @@ The production app is hosted at `/solutions/mediasplat/` on static HTTPS hosting
 ## License
 
 MediaSplat source is AGPL-3.0-or-later. FFmpeg and codec licensing details are recorded in [docs/credits.md](docs/credits.md).
+
+## Burn in subtitles
+
+Choose **Subtitles**, select a video and an SRT/VTT file, adjust font size, bottom margin, outline, optional black background, and timing offset, then choose **Burn subtitles to MP4**. The output is H.264/AAC MP4 with permanently visible subtitles. The bundled DejaVu Sans font and FFmpeg engine run locally.
+
+Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. This feature imports existing subtitles; it does not transcribe audio.

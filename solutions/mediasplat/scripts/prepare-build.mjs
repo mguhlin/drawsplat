@@ -9,3 +9,6 @@ const midpoint = Math.ceil(wasm.length / 2);
 await writeFile(resolve(root, "public/ffmpeg/ffmpeg-core.part-01"), wasm.subarray(0, midpoint));
 await writeFile(resolve(root, "public/ffmpeg/ffmpeg-core.part-02"), wasm.subarray(midpoint));
 await rm(resolve(root, "public/ffmpeg/ffmpeg-core.wasm"), { force: true });
+
+// Keep the licensed subtitle font in the standalone package and build output.
+for (const name of ["DejaVuSans.ttf", "FONT-LICENSE.txt"]) await copyFile(resolve(root, "ffmpeg", name), resolve(root, "public/ffmpeg", name));

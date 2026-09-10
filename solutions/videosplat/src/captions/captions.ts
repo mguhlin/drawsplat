@@ -1,3 +1,4 @@
+import { defaultSubtitles, parseSubtitleFile, validateSubtitleOptions, type SubtitleOptions } from "./subtitles";
 import {
   touchProject,
   type Clip,
@@ -5,16 +6,6 @@ import {
   type VideoSplatProject,
 } from "../domain/project";
 
-const timestamp = (value: string) => {
-  const match = value.trim().match(/(?:(\d+):)?(\d{2}):(\d{2})[,.](\d{3})/);
-  if (!match) throw new Error(`Invalid caption timestamp: ${value}`);
-  return (
-    Number(match[1] ?? 0) * 3600 +
-    Number(match[2]) * 60 +
-    Number(match[3]) +
-    Number(match[4]) / 1000
-  );
-};
 const format = (seconds: number, separator = ",") => {
   const ms = Math.max(0, Math.round(seconds * 1000));
   const hours = Math.floor(ms / 3600000);
@@ -23,58 +14,26 @@ const format = (seconds: number, separator = ",") => {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}${separator}${String(ms % 1000).padStart(3, "0")}`;
 };
 
-export function parseCaptions(source: string): Clip[] {
-  const normalized = source
-    .replace(/^\uFEFF/, "")
-    .replace(/^WEBVTT[^\n]*\n+/i, "")
-    .replace(/\r/g, "");
-  return normalized.split(/\n{2,}/).flatMap((block) => {
-    const lines = block.trim().split("\n");
-    const timingIndex = lines.findIndex((line) => line.includes("-->"));
-    if (timingIndex < 0) return [];
-    const [from, toRaw] = lines[timingIndex].split("-->");
-    const to = toRaw.trim().split(/\s+/)[0];
-    const start = timestamp(from);
-    const end = timestamp(to);
-    const text = lines
-      .slice(timingIndex + 1)
-      .join("\n")
-      .trim();
-    if (!text || end <= start) return [];
-    return [
-      {
-        id: crypto.randomUUID(),
-        name: text.split("\n")[0].slice(0, 40) || "Caption",
-        kind: "caption" as const,
-        start,
-        duration: end - start,
-        sourceStart: 0,
-        properties: {
-          text,
-          fontSize: 42,
-          color: "#ffffff",
-          background: "#000000aa",
-          x: 0,
-          y: 260,
-          scale: 1,
-          rotation: 0,
-          opacity: 1,
-        },
-      },
-    ];
-  });
+export function parseCaptions(source: string, options: SubtitleOptions = defaultSubtitles): Clip[] {
+  validateSubtitleOptions(options);
+  return parseSubtitleFile(source, options.offset).map(cue => ({
+    id: crypto.randomUUID(), name: cue.text.split("\n")[0].slice(0, 40), kind: "caption", start: cue.start,
+    duration: cue.end - cue.start, sourceStart: 0,
+    properties: { text: cue.text, fontSize: options.fontSize, color: "#ffffff", background: options.background ? "#000000aa" : "transparent", margin: options.margin, outline: options.outline, subtitleLayout: true, x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 },
+  }));
 }
 
 export function addCaptionFile(
   project: VideoSplatProject,
   source: string,
   name = "Captions",
+  options: SubtitleOptions = defaultSubtitles,
 ) {
-  const clips = parseCaptions(source);
+  const clips = parseCaptions(source, options);
   if (!clips.length) throw new Error("No valid captions were found.");
   const existing = project.tracks.find((track) => track.kind === "caption");
   const track: Track = existing
-    ? { ...existing, clips: [...existing.clips, ...clips] }
+    ? { ...existing, hidden: false, clips: [...existing.clips, ...clips] }
     : {
         id: crypto.randomUUID(),
         name,

@@ -1,3 +1,18 @@
+import { readFile } from "node:fs/promises";
+async function whitePixels(page: import("@playwright/test").Page, path: string) {
+ const bytes = [...await readFile(path)];
+ return page.evaluate(async (bytes) => {
+  const video = document.createElement("video"); const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)]));
+  try {
+   await new Promise<void>((resolve, reject) => { video.onloadeddata = () => resolve(); video.onerror = () => reject(new Error("Export cannot be decoded")); video.src = url; video.load(); });
+   await new Promise<void>(resolve => { video.onseeked = () => resolve(); video.currentTime = 0.0001; });
+   const canvas = document.createElement("canvas"); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+   const context = canvas.getContext("2d")!; context.drawImage(video, 0, 0); const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
+   let white = 0; for (let i = 0; i < data.length; i += 4) if (Math.min(data[i], data[i + 1], data[i + 2]) > 180) white++;
+   return white;
+  } finally { video.removeAttribute("src"); video.load(); URL.revokeObjectURL(url); }
+ }, bytes);
+}
 import { expect, test, type Page } from "@playwright/test";
 
 const createTestVideo = async (page: Page) =>
@@ -565,7 +580,7 @@ test("imports captions and exposes the local composition exporter", async ({
     buffer: Buffer.from("1\n00:00:00,000 --> 00:00:02,000\nLocal caption"),
   });
   await expect(page.getByText("local.srt imported locally")).toBeVisible();
-  await expect(page.locator(".title-layer")).toHaveText("Local caption");
+  await expect(page.getByLabel("Local caption", {exact: true})).toBeVisible();
   await expect(page.locator(".timeline-clip.caption")).toHaveCount(1);
   await page.getByRole("menuitem", { name: "File" }).click();
   await page.getByRole("menuitem", { name: "Export video…" }).click();
@@ -597,4 +612,29 @@ test("imports captions and exposes the local composition exporter", async ({
     page.getByRole("button", { name: "Save another WebM copy" }),
   ).toBeHidden();
   await expect(page.getByRole("button", { name: "Render local MP4" })).toBeVisible();
+});
+
+test("imports styled subtitles and burns them into exported frames", async ({page}) => {
+ await page.goto("./");
+ await page.getByRole("menuitem", {name: "File", exact: true}).click();
+ await page.getByRole("menuitem", {name: "Burn in subtitles…"}).click();
+ const dialog = page.getByRole("dialog", {name: "Burn in subtitles"});
+ await dialog.getByLabel("Subtitle file", {exact: true}).setInputFiles({name: "burn.srt", mimeType: "application/x-subrip", buffer: Buffer.from("1\n00:00:00,000 --> 00:00:01,500\nHELLO SUBTITLES")});
+ await dialog.getByLabel("Font size").fill("100");
+ await dialog.getByRole("button", {name: "Add subtitles to timeline"}).click();
+ await expect(dialog).toBeHidden();
+ await expect(page.getByLabel("HELLO SUBTITLES", {exact:true})).toBeVisible();
+ await page.getByRole("menuitem", {name: "File", exact:true}).click();
+ await page.getByRole("menuitem", {name: "Export video…"}).click();
+ await expect(page.getByLabel("Burn in subtitles", {exact:true})).toBeChecked();
+ await page.getByLabel("Export width").fill("640"); await page.getByLabel("Export height").fill("360");
+ await page.getByLabel("Include timeline audio").uncheck();
+ const pending = page.waitForEvent("download");
+ await page.getByRole("button", {name: "Render local WebM"}).click();
+ await (await pending).saveAs("/tmp/videosplat-subtitle-test.webm");
+ await page.getByLabel("Burn in subtitles", {exact:true}).uncheck();
+ const plain = page.waitForEvent("download"); await page.getByRole("button", {name: "Render again"}).click();
+ await (await plain).saveAs("/tmp/videosplat-no-subtitles-test.webm");
+ expect(await whitePixels(page, "/tmp/videosplat-subtitle-test.webm")).toBeGreaterThan(20);
+ expect(await whitePixels(page, "/tmp/videosplat-no-subtitles-test.webm")).toBe(0);
 });

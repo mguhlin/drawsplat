@@ -1,3 +1,6 @@
+import { SubtitleDialog } from "./SubtitleDialog";
+import { SubtitlePreview } from "./SubtitlePreview";
+import type { SubtitleOptions } from "../captions/subtitles";
 import {
   Fragment,
   useEffect,
@@ -132,6 +135,7 @@ export function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const mediaInput = useRef<HTMLInputElement>(null);
   const mltInput = useRef<HTMLInputElement>(null);
+  const [subtitleDialog, setSubtitleDialog] = useState(false);
   const captionInput = useRef<HTMLInputElement>(null);
   const languageMenu = useRef<HTMLDivElement>(null);
   const splashLanguage = useRef<HTMLDivElement>(null);
@@ -431,13 +435,14 @@ export function App() {
       if (mltInput.current) mltInput.current.value = "";
     }
   };
-  const importCaptions = async (file?: File) => {
+  const importCaptions = async (file?: File, options?: SubtitleOptions) => {
     if (!file) return;
     try {
       const next = addCaptionFile(
         project,
         await file.text(),
         file.name.replace(/\.[^.]+$/, "") || "Captions",
+        options,
       );
       commit(next);
       const captionTrack = next.tracks.find(
@@ -1072,6 +1077,7 @@ export function App() {
               <hr />
               <button role="menuitem" disabled={importing} onClick={() => menuAction(() => mediaInput.current?.click())}>{importing ? "Importing…" : "Import media…"}</button>
               <button role="menuitem" onClick={() => menuAction(() => setDialog("optimizer"))}>Optimize video…</button>
+              <button role="menuitem" onClick={() => menuAction(() => setSubtitleDialog(true))}>Burn in subtitles…</button>
               <button role="menuitem" onClick={() => menuAction(() => setDialog("export"))}>Export video…</button>
             </div>}
           </div>
@@ -1236,11 +1242,12 @@ export function App() {
                     : 1,
                 );
                 const style = {
+                  aspectRatio: `${project.canvas.width} / ${project.canvas.height}`,
                   zIndex: layer + 1,
                   opacity:
                     Number(properties.opacity ?? 1) *
                     Math.max(0, transitionOpacity),
-                  transform: `translate(${Number(properties.x ?? 0)}px, ${Number(properties.y ?? 0)}px) scale(${Number(properties.scale ?? 1)}) rotate(${Number(properties.rotation ?? 0)}deg)`,
+                  transform: location.clip.properties.subtitleLayout ? "none" : `translate(${Number(properties.x ?? 0)}px, ${Number(properties.y ?? 0)}px) scale(${Number(properties.scale ?? 1)}) rotate(${Number(properties.rotation ?? 0)}deg)`,
                   filter: `brightness(${Number(properties.brightness ?? 1)}) contrast(${Number(properties.contrast ?? 1)}) saturate(${Number(properties.saturation ?? 1)}) hue-rotate(${Number(properties.hue ?? 0)}deg) grayscale(${Number(properties.grayscale ?? 0)}) blur(${Number(properties.blur ?? 0)}px)`,
                 };
                 return (
@@ -1307,7 +1314,8 @@ export function App() {
                         }
                       />
                     )}
-                    {isText && (
+                    {isText && location.clip.properties.subtitleLayout && <SubtitlePreview clip={location.clip} width={project.canvas.width} height={project.canvas.height}/>}
+                    {isText && !location.clip.properties.subtitleLayout && (
                       <div
                         className="title-layer"
                         style={{
@@ -2350,6 +2358,7 @@ export function App() {
         accept=".mlt,.xml,application/xml,text/xml"
         onChange={(event) => importMlt(event.target.files?.[0])}
       />
+      {subtitleDialog && <SubtitleDialog onClose={() => setSubtitleDialog(false)} onImport={importCaptions}/>}
       <input
         ref={captionInput}
         type="file"

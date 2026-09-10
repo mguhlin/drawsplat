@@ -250,6 +250,8 @@ export function ExportDialog({
         />{" "}
         Include timeline audio
       </label>
+      <label><input type="checkbox" disabled={busy} checked={options.burnSubtitles !== false} onChange={event => setOptions({...options, burnSubtitles: event.target.checked})}/> Burn in subtitles</label>
+      <p>Visible caption tracks become permanent text in the exported video. Hidden caption tracks are excluded. Import SRT/VTT using File → Burn in subtitles.</p>
       <div className="export-preflight" aria-label="Export preflight">
         <strong>Preflight</strong>
         <ul>

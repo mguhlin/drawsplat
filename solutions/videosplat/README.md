@@ -78,3 +78,9 @@ hosting with no required backend.
 ## License
 
 VideoSplat is part of DrawSplat and is licensed under AGPL-3.0-or-later.
+
+## Burn in subtitles
+
+Choose **File → Burn in subtitles…**, select an SRT/VTT file, and adjust font size, bottom margin, outline, optional black background, and timing offset. Add the captions to the timeline and preview them. In **File → Export video…**, keep **Burn in subtitles** checked to make visible captions permanent in the output; uncheck it to export without captions. Hidden caption tracks are excluded. Captions remain editable in saved projects, and **Save captions as SRT** still exports a separate subtitle file.
+
+Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. This feature imports existing subtitles; it does not transcribe audio.

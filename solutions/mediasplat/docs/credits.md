@@ -7,3 +7,5 @@
 - Vite — https://vite.dev/ — MIT.
 
 Pinned versions are recorded in `package-lock.json`. A distributor must review the exact FFmpeg core configuration and provide the corresponding notices/source offer required by its enabled components.
+
+Subtitle rendering bundles DejaVu Sans. The Bitstream Vera license and DejaVu notice are included in `ffmpeg/FONT-LICENSE.txt`.

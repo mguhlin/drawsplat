@@ -1,3 +1,4 @@
+import { drawSubtitle } from "../captions/render";
 import { activeVisualClips, projectDuration } from "../timeline/engine";
 import type { Clip, VideoSplatProject } from "../domain/project";
 import { renderRect, type FitMode } from "../render/geometry";
@@ -9,6 +10,7 @@ export interface ExportOptions {
   frameRate: number;
   videoBitsPerSecond: number;
   includeAudio: boolean;
+  burnSubtitles?: boolean;
   format: ExportFormat;
   rangeStart?: number;
   rangeEnd?: number;
@@ -19,6 +21,7 @@ export const DEFAULT_EXPORT: ExportOptions = {
   frameRate: 30,
   videoBitsPerSecond: 4_000_000,
   includeAudio: true,
+  burnSubtitles: true,
   format: "webm",
 };
 export const transitionGain = (clip: Clip, time: number) => {
@@ -235,10 +238,16 @@ export async function exportProject(
           if (element.paused) element.play().catch(() => {});
         }
         for (const { clip } of activeVisualClips(project, time)) {
+          if (clip.kind === "caption" && options.burnSubtitles === false) continue;
           const p = clip.properties;
           context.save();
           context.globalAlpha =
             Number(p.opacity ?? 1) * transitionGain(clip, time);
+          if (clip.kind === "caption" && p.subtitleLayout) {
+            drawSubtitle(context, clip, canvas.width, canvas.height);
+            context.restore();
+            continue;
+          }
           context.filter = `brightness(${Number(p.brightness ?? 1)}) contrast(${Number(p.contrast ?? 1)}) saturate(${Number(p.saturation ?? 1)}) hue-rotate(${Number(p.hue ?? 0)}deg) grayscale(${Number(p.grayscale ?? 0)}) blur(${Number(p.blur ?? 0)}px)`;
           context.translate(
             canvas.width / 2 + Number(p.x ?? 0),

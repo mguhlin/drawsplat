@@ -40,3 +40,5 @@ export const outputExtension = (file: File, mode: ProcessingMode) => {
   const ext = extensionOf(file.name); if (mode === "fast") return ext;
   return file.type.startsWith("audio/") || ["mp3", "wav", "ogg", "oga", "flac", "m4a", "aac"].includes(ext) ? "mp3" : "mp4";
 };
+
+export const burnSubtitlesCommand = (input: string, output: string) => ["-i", input, "-map", "0:v:0", "-map", "0:a:0?", "-vf", "subtitles=captions.ass:fontsdir=fonts,scale=trunc(iw/2)*2:trunc(ih/2)*2", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", "-c:a", "aac", "-movflags", "+faststart", output];
