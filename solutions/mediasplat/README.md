@@ -1,5 +1,8 @@
 # MediaSplat™
 
+Current self-host release: **v3.1.24** — animated processing progress and time estimates. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.24.md)
+
+
 MediaSplat is a private, browser-based media splitter, trimmer, and joiner. It runs a same-origin FFmpeg WebAssembly build inside the browser; source media is not uploaded.
 
 ## Features

@@ -1,5 +1,8 @@
 # VideoSplat™
 
+Current self-host release: **v3.1.24** — animated processing progress and time estimates. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.24.md)
+
+
 VideoSplat™ is DrawSplat's private, local-first video editor for the browser. The current milestone
 implements the offline editor shell, versioned project documents, autosave,
 recovery, portable project files, privacy diagnostics, zero-egress controls, and
