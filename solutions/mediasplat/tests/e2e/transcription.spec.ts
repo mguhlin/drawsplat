@@ -1,0 +1,69 @@
+import { test, expect } from '@playwright/test';
+import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { fakeTranscriber, silentWav } from '../../../shared/subtitles/tests/browser';
+
+for (const extension of ['mp3', 'ogg', 'm4a']) {
+  test(`transcribes ${extension} and exports reviewed SRT and text`, async ({ page }) => {
+    await fakeTranscriber(page);
+    await page.goto('./');
+    await page.getByRole('button', { name: 'Transcribe' }).click();
+    await page.locator('.drop-zone input').setInputFiles(resolve(`tests/fixtures/speech.${extension}`));
+    await expect(page.getByRole('button', { name: 'Burn subtitles to MP4' })).toHaveCount(0);
+    await expect(page.getByText('Cut quality', { exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+    await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+    await page.getByLabel('Caption 1 text').fill('Reviewed speech');
+    for (const [label, suffix] of [['Download SRT', 'srt'], ['Download transcript (.txt)', 'txt']]) {
+      const pending = page.waitForEvent('download');
+      await page.getByRole('button', { name: label, exact: true }).click();
+      const download = await pending;
+      expect(download.suggestedFilename()).toBe(`speech.${suffix}`);
+      const contents = await readFile((await download.path())!, 'utf8');
+      expect(contents).toContain('Reviewed speech');
+      if (suffix === 'srt') expect(contents).toContain('00:00:00,200 --> 00:00:01,200');
+      else expect(contents).toBe('Reviewed speech\n\nReview this caption\n');
+    }
+    await page.locator('.drop-zone input').setInputFiles({ name: 'replacement.mp3', mimeType: 'audio/mpeg', buffer: await readFile(resolve('tests/fixtures/speech.mp3')) });
+    await expect(page.getByLabel('Caption 1 text')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Download SRT' })).toHaveCount(0);
+  });
+}
+test('cancels transcription on tool switch and preserves audio editing', async ({ page }) => {
+  await fakeTranscriber(page, 10000);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).subtitleJobs.length)).toBe(1);
+  await page.getByRole('button', { name: 'Trim', exact: false }).first().click();
+  await expect.poll(() => page.evaluate(() => (window as any).subtitleTerminated)).toBe(true);
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await expect(page.getByRole('button', { name: 'Trim media', exact: true })).toBeEnabled();
+});
+test('reports silent and undecodable audio without starting speech recognition', async ({ page }) => {
+  await fakeTranscriber(page);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  for (const [name, mimeType, buffer, error] of [
+    ['silent.wav', 'audio/wav', silentWav(), 'This audio is silent'],
+    ['broken.mp3', 'audio/mpeg', Buffer.from('invalid audio'), 'No decodable audio was found'],
+  ] as const) {
+    await page.locator('.drop-zone input').setInputFiles({ name, mimeType, buffer });
+    await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText(error);
+  }
+  expect(await page.evaluate(() => (window as any).subtitleJobs)).toEqual([]);
+});
+test('real MP3 speech recognition exports a transcript', async ({ page }) => {
+  test.skip(!process.env.RUN_SPEECH_MODEL_TESTS, 'Opt-in real model test');
+  test.setTimeout(180000);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue(/fellow Americans/i, { timeout: 120000 });
+  const pending = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download transcript (.txt)' }).click();
+  expect(await readFile((await (await pending).path())!, 'utf8')).toMatch(/fellow Americans/i);
+});

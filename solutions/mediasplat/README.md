@@ -67,6 +67,12 @@ Choose **Subtitles**, select a video and an SRT/VTT file, adjust font size, bott
 
 Sizes and margins scale from a 1080p reference. Positive timing offsets delay captions; negative offsets advance them and clip cues at time zero. Imports use plain text (formatting tags are removed). In VideoSplat, timing is relative to the project timeline, and imports append to existing captions. Burn-in requires re-encoding and can take time on long videos. To transcribe speech before burn-in, use Automatic subtitles below.
 
+## Audio and video transcription
+
+Choose **Transcribe**, load an MP3, OGG, M4A, WAV, or other browser-decodable audio/video file, and click **Generate subtitles**. Review and edit the words and timing, then choose **Download SRT** for timed captions or **Download transcript (.txt)** for text without timestamps. This does not require converting audio to video or burning captions. Replacing/removing the source or switching tools cancels generation and clears its captions.
+
+Transcription uses the same local English speech engine and limits described below. Codec support depends on your browser; an undecodable or silent file displays an error.
+
 ## Automatic subtitles
 
 Choose **Subtitles**, load a video, then click **Generate subtitles…**. Review and edit the text and timing. Download SRT directly, or choose **Use subtitles for burn-in** followed by **Burn subtitles to MP4**.

@@ -7,7 +7,7 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:4179',
     trace: 'retain-on-failure',
     permissions: ['microphone'],
-    launchOptions: { args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] },
+    launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH, args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] },
   },
   webServer: {
     command: 'python3 -m http.server 4179 --directory ../..',

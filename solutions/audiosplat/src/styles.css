@@ -707,3 +707,10 @@ details.menu[open] > summary {
     background: Highlight;
   }
 }
+
+.transcription-form [hidden] { display: none !important; }
+.transcription-form audio { width: 100%; }
+.transcription-cues { min-width: 0; }
+.transcription-cue-list { max-height: 40vh; overflow-y: auto; }
+.transcription-cue { display: grid; gap: .65rem; padding: 1rem 0; border-bottom: 1px solid var(--border, #555); }
+.transcription-cue textarea { width: 100%; min-height: 4rem; font: inherit; }

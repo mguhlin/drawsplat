@@ -19,6 +19,7 @@
     "vitest": "4.1.8"
   },
   "dependencies": {
-    "@breezystack/lamejs": "^1.2.7"
+    "@breezystack/lamejs": "^1.2.7",
+    "@splat/local-subtitles": "file:../shared/subtitles"
   }
 }

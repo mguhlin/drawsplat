@@ -62,6 +62,7 @@ const en = {
   dropAudioOnly:
     "Drop an audio file such as MP3, Ogg, WAV, M4A, AAC, FLAC, Opus, or WebM.",
   sharedImportFailed: "The shared audio could not be imported.",
+  transcribeAudio: "Transcribe audio…",
   exportWav: "Export WAV",
   exportAudio: "Export audio",
   exportFormat: "Export format",

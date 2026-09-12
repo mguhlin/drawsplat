@@ -6,19 +6,19 @@ export async function transcribe(source: Source, signal: AbortSignal, onProgress
   onProgress('Reading audio locally…');
   const blob = await source.load();
   signal.throwIfAborted();
-  if (blob.size > 512 * 1024 * 1024) throw new Error('This file exceeds the 512 MB subtitle generation limit. Use a smaller video.');
+  if (blob.size > 512 * 1024 * 1024) throw new Error('This file exceeds the 512 MB subtitle generation limit. Use a smaller audio or video file.');
   const bytes = await blob.arrayBuffer();
   signal.throwIfAborted();
   // Offline decoding resamples to 16 kHz without playing any audio.
   const context = new OfflineAudioContext(1, 1, SAMPLE_RATE);
   let decoded: AudioBuffer;
   try { decoded = await context.decodeAudioData(bytes); }
-  catch { throw new Error('No decodable audio was found. Try a WebM or MP4 with an audible audio track.'); }
+  catch { throw new Error('No decodable audio was found. Try a browser-playable MP3, OGG, M4A, WAV, or video with audible speech.'); }
   signal.throwIfAborted();
   const start = Math.max(0, Math.round((source.start ?? 0) * SAMPLE_RATE));
   const end = Math.min(decoded.length, source.duration === undefined ? decoded.length : start + Math.round(source.duration * SAMPLE_RATE));
   if (end <= start) throw new Error('This clip has no audio in the selected time range.');
-  if ((end - start) / SAMPLE_RATE > MAX_SECONDS) throw new Error('Generate subtitles for up to 30 minutes at a time. Split this video into shorter sections first.');
+  if ((end - start) / SAMPLE_RATE > MAX_SECONDS) throw new Error('Generate subtitles for up to 30 minutes at a time. Split this clip into shorter sections first.');
   const audio = new Float32Array(end - start);
   for (let channel = 0; channel < decoded.numberOfChannels; channel++) {
     const data = decoded.getChannelData(channel);

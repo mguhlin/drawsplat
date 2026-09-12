@@ -624,6 +624,7 @@ DrawSplatTM download so links connect when modules are placed together.
 EOF
 
 copy_tree solutions/audiosplat "$AUDIOSPLAT_ROOT/solutions/audiosplat" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/shared/subtitles "$AUDIOSPLAT_ROOT/solutions/shared/subtitles" "${MODULE_EXCLUDES[@]}"
 
 cat > "$AUDIOSPLAT_ROOT/AUDIOSPLAT-SELFHOST-README.txt" <<EOF
 AudioSplat Self-Hosted Solution

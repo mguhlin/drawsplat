@@ -3,8 +3,8 @@ import { transcribe, type Source } from './client';
 import { cuesToSrt, validateCues, type Cue } from './core';
 import './styles.css';
 export type { Source, Cue };
-export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabel = 'Use these subtitles' }: {
-  source: Source; onUse: (cues: Cue[]) => void | Promise<void>; autoStart?: boolean; actionLabel?: string;
+export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabel = 'Use these subtitles', downloadTranscript = false }: {
+  source: Source; onUse?: (cues: Cue[]) => void | Promise<void>; autoStart?: boolean; actionLabel?: string; downloadTranscript?: boolean;
 }) {
   const [cues, setCues] = useState<Cue[]>([]);
   const [busy, setBusy] = useState(false);
@@ -30,7 +30,7 @@ export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabe
   return <section className="subtitle-generator" aria-label="Automatic subtitles">
     <h3>Generate subtitles</h3>
     <p>Transcribe English speech in <strong>{source.name}</strong> on this device. First use downloads a speech model from Hugging Face (about 42 MB), then caches it when browser storage allows. Your audio and video are never uploaded.</p>
-    <p>Up to 30 minutes per clip and 512 MB per file. Long videos can take several minutes. Keep this tab open and review automatic captions for mistakes.</p>
+    <p>Up to 30 minutes per clip and 512 MB per file. Long clips can take several minutes. Keep this tab open and review automatic captions for mistakes.</p>
     <div className="subtitle-generator-actions">{busy ? <button type="button" onClick={cancel}>Cancel generation</button> : <button type="button" onClick={() => void generate()}>{cues.length ? 'Generate again' : 'Generate subtitles'}</button>}</div>
     <p role="status" aria-live="polite">{status}</p>
     {busy && <progress aria-label="Subtitle generation progress" />}
@@ -42,10 +42,13 @@ export function SubtitleGenerator({ source, onUse, autoStart = false, actionLabe
         <label className="subtitle-cue-text">Caption {index + 1}<textarea aria-label={`Caption ${index + 1} text`} disabled={busy} value={cue.text} onChange={e => edit(index, { text: e.target.value })}/></label>
         <button type="button" disabled={busy} onClick={() => setCues(current => current.filter((_, i) => i !== index))} aria-label={`Delete caption ${index + 1}`}>Delete</button>
       </div>)}</div>
-      <div className="subtitle-generator-actions"><button type="button" disabled={busy} onClick={() => void attempt(() => onUse(cues))}>{actionLabel}</button><button type="button" disabled={busy} onClick={() => void attempt(() => {
+      <div className="subtitle-generator-actions">{onUse && <button type="button" disabled={busy} onClick={() => void attempt(() => onUse(cues))}>{actionLabel}</button>}<button type="button" disabled={busy} onClick={() => void attempt(() => {
         const url = URL.createObjectURL(new Blob([cuesToSrt(cues)], { type: 'application/x-subrip' }));
         const link = document.createElement('a'); link.href = url; link.download = `${source.name.replace(/\.[^.]+$/, '') || 'subtitles'}.srt`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-      })}>Download SRT</button></div>
+      })}>Download SRT</button>{downloadTranscript && <button type="button" disabled={busy} onClick={() => void attempt(() => {
+        const url = URL.createObjectURL(new Blob([cues.map(cue => cue.text.trim()).join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' }));
+        const link = document.createElement('a'); link.href = url; link.download = `${source.name.replace(/\.[^.]+$/, '') || 'transcript'}.txt`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      })}>Download transcript (.txt)</button>}</div>
     </>}
   </section>;
 }

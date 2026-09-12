@@ -1,4 +1,5 @@
 import "./styles.css";
+import { mountTranscription } from "./transcription";
 import { AudioEngine } from "./audio/engine";
 import {
   processEffect,
@@ -49,6 +50,7 @@ let recordingStartedAt = 0;
 let recordingClock = 0;
 let recordingInsertAt = 0;
 let effectPreview: HTMLAudioElement | null = null;
+let transcriptionCleanup: (() => void) | undefined;
 const engine = new AudioEngine();
 const MIC_STORAGE_KEY = "audiosplat.microphone";
 const GOOGLE_CLIENT_ID =
@@ -148,7 +150,7 @@ function menu(label: string, items: string[][]): string {
 
 function fileMenu(): string {
   const formats = exportFormats();
-  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="save-drive" data-i18n="saveToDrive">${t("saveToDrive" as never)}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><button data-action="import-url" data-i18n="importUrl">${t("importUrl" as never)}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
+  return `<details class="menu"><summary data-i18n="file">${t("file")}</summary><div class="menu-panel"><button data-action="new" data-i18n="newProject">${t("newProject")}</button><button data-action="open-project" data-i18n="openProject">${t("openProject")}</button><button data-action="download-project" data-i18n="saveProject">${t("saveProject")}</button><button data-action="save-drive" data-i18n="saveToDrive">${t("saveToDrive" as never)}</button><button data-action="import" data-i18n="importAudio">${t("importAudio")}</button><button data-action="import-url" data-i18n="importUrl">${t("importUrl" as never)}</button><button data-action="transcribe" data-i18n="transcribeAudio">${t("transcribeAudio")}</button><div class="menu-group-label" data-i18n="exportAudio">${t("exportAudio")}</div>${formats.map(([value, label]) => `<button class="submenu-item" data-action="export" data-format="${value}">${label}</button>`).join("")}</div></details>`;
 }
 
 const soundEffectSources = [
@@ -356,7 +358,7 @@ async function handleAction(event: Event): Promise<void> {
     return;
   }
   const action = button.dataset.action;
-  if (action !== "help") workspaceTouched = true;
+  if (action !== "help" && action !== "transcribe") workspaceTouched = true;
   document
     .querySelectorAll<HTMLDetailsElement>("details.menu[open]")
     .forEach((detail) => (detail.open = false));
@@ -367,6 +369,11 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "import")
     document.querySelector<HTMLInputElement>("#audio-input")?.click();
   else if (action === "import-url") showUrlImporter();
+  else if (action === "transcribe") {
+    showDialog(t("transcribeAudio"), '<div id="audio-transcription"></div>');
+    const host = document.querySelector<HTMLElement>("#audio-transcription")!;
+    transcriptionCleanup = mountTranscription(host, download, closeDialog);
+  }
   else if (action === "save-drive") showDriveSaveDialog();
   else if (action === "export") {
     const format = button.dataset.format;
@@ -1962,6 +1969,8 @@ function showDialog(title: string, body: string): void {
     .forEach((node) => node.addEventListener("click", closeDialog));
 }
 function closeDialog(): void {
+  transcriptionCleanup?.();
+  transcriptionCleanup = undefined;
   effectPreview?.pause();
   if (effectPreview?.src) URL.revokeObjectURL(effectPreview.src);
   effectPreview = null;
