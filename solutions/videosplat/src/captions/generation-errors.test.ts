@@ -69,3 +69,24 @@ it('keeps successful sections and offsets captions recovered in a later section'
   expect(cues[1]).toEqual({ start: 21.05, end: 22.05, text: 'Later.' });
   expect(transcriber).toHaveBeenCalledTimes(3);
 });
+
+it('keeps the model loaded across streaming windows and permits windows without speech', async () => {
+  const transcriber = Object.assign(vi.fn()
+    .mockResolvedValueOnce({ text: '', chunks: [] })
+    .mockResolvedValueOnce({ text: '', chunks: [] })
+    .mockResolvedValue({ text: 'Later speech.', chunks: [{ text: 'Later speech.', timestamp: [0, .9] }] }), { dispose: vi.fn() });
+  pipeline.mockResolvedValue(transcriber);
+  const worker = { onmessage: undefined as unknown as (event: unknown) => Promise<void>, postMessage: vi.fn() };
+  vi.stubGlobal('self', worker);
+  await import('../../node_modules/@splat/local-subtitles/worker');
+  const audio = new Float32Array(16000).fill(.1);
+  await worker.onmessage({ data: { audio, allowEmpty: true, keepAlive: true } });
+  await worker.onmessage({ data: { audio, allowEmpty: true, keepAlive: true } });
+  const complete = worker.postMessage.mock.calls.map(([message]) => message).filter(message => message.type === 'complete');
+  expect(complete.map(message => message.cues)).toEqual([[], [{ start: 0, end: .9, text: 'Later speech.' }]]);
+  expect(pipeline).toHaveBeenCalledTimes(1);
+  expect(transcriber.dispose).not.toHaveBeenCalled();
+  // A legacy one-shot request still releases its model when it finishes.
+  await worker.onmessage({ data: { audio } });
+  expect(transcriber.dispose).toHaveBeenCalledTimes(1);
+});

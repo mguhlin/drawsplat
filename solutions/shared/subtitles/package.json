@@ -4,7 +4,16 @@
   "private": true,
   "type": "module",
   "license": "AGPL-3.0-or-later",
-  "exports": { ".": "./SubtitleGenerator.tsx", "./core": "./core.ts", "./client": "./client.ts" },
-  "dependencies": { "@huggingface/transformers": "3.8.1" },
-  "peerDependencies": { "react": ">=19" }
+  "exports": {
+    ".": "./SubtitleGenerator.tsx",
+    "./core": "./core.ts",
+    "./client": "./client.ts"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "3.8.1",
+    "mediabunny": "1.56.2"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  }
 }

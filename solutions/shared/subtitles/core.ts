@@ -1,6 +1,6 @@
 export interface Cue { start: number; end: number; text: string }
 export const SAMPLE_RATE = 16000;
-export const MAX_SECONDS = 30 * 60;
+export const MAX_SECONDS = 120 * 60;
 export function hasAudio(samples: Float32Array) {
   let energy = 0;
   for (const sample of samples) energy += sample * sample;
@@ -76,4 +76,18 @@ export function audioSections(audio: Float32Array): { start: number; end: number
     sections.push({ start, end }); start = end;
   }
   return sections;
+}
+
+// Choose a quiet boundary for a full streaming window; the final shorter window
+// is consumed completely. Positions remain integer samples across resumes.
+export function quietSectionLength(audio: Float32Array): number {
+  if (audio.length < 25 * SAMPLE_RATE) return audio.length;
+  const window = Math.round(.1 * SAMPLE_RATE);
+  let end = audio.length, quietest = Infinity;
+  for (let from = 20 * SAMPLE_RATE; from + window <= audio.length; from += window) {
+    let energy = 0;
+    for (let i = from; i < from + window; i++) energy += audio[i] * audio[i];
+    if (energy < quietest) { quietest = energy; end = from + Math.floor(window / 2); }
+  }
+  return end;
 }

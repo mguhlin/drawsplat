@@ -9,7 +9,7 @@ export function AboutInfo() {
       <h2 id="about-title">About MediaSplat</h2>
       <h3>Video size, length, and processing limits</h3>
       <ul>
-        <li><strong>Automatic captions:</strong> up to 30 minutes and 512 MB per source file. English speech and browser-decodable audio are required.</li>
+        <li><strong>Automatic captions:</strong> up to 120 minutes (2 hours) and 512 MB per source file. English speech and browser-decodable audio are required.</li>
         <li><strong>Longer caption jobs:</strong> split the video, download the parts, then load and caption each part separately. Each part must meet both limits.</li>
         <li><strong>Trim, split, join, and burn-in:</strong> no fixed app-level file-size, duration, resolution, or frame-rate cap. Available browser memory and storage determine practical limits; large files can still fail.</li>
         <li><strong>Automatic splitting:</strong> equal-parts, by-time, and by-size splitting support up to 100 output parts. Size targets are estimates, not guaranteed maximums; check downloaded sizes.</li>

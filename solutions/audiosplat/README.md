@@ -54,14 +54,33 @@ Open **File → Transcribe audio…**, choose an MP3, OGG, M4A, WAV, or other
 browser-decodable audio file, then click **Generate transcript**. Review/edit the
 words and timestamps and download **SRT** or a **plain-text (.txt) transcript**.
 This separate file workflow leaves your current project, clips, and mix unchanged.
-Transcripts are temporary; download them before closing the dialog or replacing
-the source. Cancel generation or close the dialog to stop the worker.
+Generated progress can be resumed; download reviewed edits before closing the
+dialog or replacing the source. Cancel generation or close the dialog to stop the worker.
 
 English speech recognition runs locally using the shared subtitle engine. First
 use downloads about 42 MB of model files from Hugging Face, cached when browser
-storage allows. Audio and transcript text are never uploaded. Limits: 30 minutes
+storage allows. Audio and transcript text are never uploaded. Limits: 120 minutes (2 hours)
 and 512 MB per file. Codec support depends on your browser. Automatic transcripts
 need review; silent/undecodable files show an error.
 
 Rebuilding also requires the sibling `solutions/shared/subtitles` package. See
 its README for model attribution, licensing, privacy, and caching details.
+
+### Long recordings and resuming
+
+Streaming transcription processes at most 25 seconds of decoded audio at a time.
+Completed sections are saved on this device when browser storage allows. After
+cancelling, closing, or reloading, select the same file and generate again to
+resume. **Start over** regenerates from the beginning. Partial SRT/text downloads
+are available during processing and use `.partial` filenames. Review controls
+show 50 captions per page; exports include all generated captions.
+
+Progress contains generated text/timing, not source audio. Resume is available
+for 30 days; saves retain at most 20 recent recordings/ranges and prune expired
+entries. Clear the site's browser data to remove it. Download reviewed edits to
+keep them; checkpoints store the original generated text. If saving fails, the
+interface reports it and downloads remain available.
+
+The two-hour limit requires a stream-decodable format in your browser. A legacy
+fallback supports whole-file decoding only for sources up to 30 minutes and
+64 MiB; it never loads multi-hour recordings as one decoded buffer.

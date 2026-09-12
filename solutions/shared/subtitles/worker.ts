@@ -8,18 +8,21 @@ env.backends.onnx.wasm!.wasmPaths = { wasm: wasmUrl, mjs: wasmModuleUrl };
 env.backends.onnx.wasm!.numThreads = 1;
 // Already running in our own worker; avoid a nested runtime proxy worker.
 env.backends.onnx.wasm!.proxy = false;
-self.onmessage = async (event: MessageEvent<{ audio: Float32Array }>) => {
-  let transcriber;
-  let loadingModel = true;
+let transcriber: import('@huggingface/transformers').AutomaticSpeechRecognitionPipeline | undefined;
+self.onmessage = async (event: MessageEvent<{ audio: Float32Array; allowEmpty?: boolean; keepAlive?: boolean }>) => {
+  let loadingModel = !transcriber;
   let recognizedText = false;
   try {
-    transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en', {
-      device: 'wasm', dtype: 'q8', revision: '79fb389fc764e7c395bd330e9531d9d32ada7049',
-      progress_callback: (progress) => {
-        if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading speech model: ${Math.round(progress.progress)}% (${progress.file})` });
-        else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: 'Loading speech model…' });
-      },
-    });
+    if (!transcriber) {
+      const loaded = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en', {
+        device: 'wasm', dtype: 'q8', revision: '79fb389fc764e7c395bd330e9531d9d32ada7049',
+        progress_callback: (progress) => {
+          if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading speech model: ${Math.round(progress.progress)}% (${progress.file})` });
+          else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: 'Loading speech model…' });
+        },
+      });
+      transcriber = loaded;
+    }
     loadingModel = false;
     const sections = audioSections(event.data.audio);
     const cues: Cue[] = [];
@@ -46,12 +49,14 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array }>) => {
       }
       cues.push(...sectionCues.map(cue => ({ ...cue, start: Math.round((cue.start + section.start / SAMPLE_RATE) * 1000) / 1000, end: Math.round((cue.end + section.start / SAMPLE_RATE) * 1000) / 1000 })));
     }
-    if (!cues.length) throw new Error(recognizedText
-      ? 'Speech was recognized, but caption timings could not be generated. Try a shorter clip and generate again.'
+    if (!cues.length && (recognizedText || !event.data.allowEmpty)) throw new Error(recognizedText
+      ? 'Speech was recognized, but caption timings could not be generated. Try again to resume this section.'
       : 'The speech model loaded, but did not recognize English speech. Play the selected clip and check that your voice is audible. If it is missing, check the microphone selection and record again. If speech is clear, try a shorter clip and generate again.');
     self.postMessage({ type: 'complete', cues });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Speech recognition failed.';
     self.postMessage({ type: 'error', message: loadingModel ? `The speech model could not load. Check your connection and retry. ${message}` : message });
-  } finally { await transcriber?.dispose(); }
+  } finally {
+    if (!event.data.keepAlive) { await transcriber?.dispose(); transcriber = undefined; }
+  }
 };

@@ -84,3 +84,27 @@ test('real speech engine exports an audio transcript', async ({ page }) => {
   await page.getByRole('button', { name: 'Download transcript (.txt)' }).click();
   expect(await readFile((await (await pending).path())!, 'utf8')).toMatch(/fellow Americans/i);
 });
+
+test('keeps partial downloads and resumes generated progress after closing and reloading', async ({ page }) => {
+  await fakeTranscriber(page, 1500);
+  const longFile = resolve('../shared/subtitles/tests/resume.mp3');
+  await openTranscription(page);
+  await page.getByLabel('Audio file for transcription').setInputFiles(longFile);
+  await page.getByRole('button', { name: 'Generate transcript', exact: true }).click();
+  await expect(page.getByLabel('Caption 1 text')).toBeVisible({ timeout: 15000 });
+  const pending = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download transcript (.txt)' }).click();
+  expect((await pending).suggestedFilename()).toBe('resume.partial.txt');
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await openTranscription(page);
+  await page.getByLabel('Audio file for transcription').setInputFiles(longFile);
+  await page.getByRole('button', { name: 'Generate transcript', exact: true }).click();
+  await expect(page.getByText(/^Complete transcript/)).toBeVisible({ timeout: 20000 });
+  const completed = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download SRT', exact: true }).click();
+  const download = await completed;
+  expect(download.suggestedFilename()).toBe('resume.srt');
+  const contents = await readFile((await download.path())!, 'utf8');
+  expect(contents.match(/00:00:00,200/g)).toHaveLength(1);
+  await expect(page.getByRole('button', { name: 'Start over', exact: true })).toBeVisible();
+});

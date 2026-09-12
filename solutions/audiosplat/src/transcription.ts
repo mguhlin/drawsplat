@@ -5,11 +5,11 @@ import { cuesToSrt, validateCues, type Cue } from '@splat/local-subtitles/core';
 export function mountTranscription(host: HTMLElement, download: (blob: Blob, name: string) => void, close: () => void): () => void {
   host.innerHTML = `<div class="effect-form transcription-form">
     <p>Choose an MP3, OGG, M4A, WAV, or other browser-playable audio file. Transcribe English speech locally, review the captions, and download SRT or plain text. This does not change your project.</p>
-    <p>First use downloads a speech model from Hugging Face (about 42 MB), cached when storage allows. Your audio and transcript are never uploaded. Up to 30 minutes and 512 MB per file; processing can take several minutes.</p>
+    <p>First use downloads a speech model from Hugging Face (about 42 MB), cached when storage allows. Your audio and transcript are never uploaded. Up to 120 minutes (2 hours) and 512 MB per file; processing can take several minutes. Generated progress is saved locally when storage allows. Choose the same file and generate again to resume. Download reviewed edits to keep them.</p>
     <label>Audio file for transcription<input type="file" accept="audio/*,.mp3,.ogg,.oga,.m4a,.wav,.flac,.aac" /></label>
     <audio controls hidden aria-label="Transcription audio preview"></audio>
-    <div class="dialog-actions"><button class="btn primary" type="button" id="transcription-start" disabled>Generate transcript</button><button class="btn" type="button" id="transcription-cancel" hidden>Cancel generation</button></div>
-    <p role="status" aria-live="polite"></p><progress aria-label="Transcription progress" hidden></progress><p role="alert" hidden></p>
+    <div class="dialog-actions"><button class="btn primary" type="button" id="transcription-start" disabled>Generate transcript</button><button class="btn" type="button" id="transcription-cancel" hidden>Cancel generation</button><button class="btn" type="button" id="transcription-restart" hidden>Start over</button></div>
+    <p id="transcription-saved"></p><p role="status" aria-live="polite"></p><progress aria-label="Transcription progress" hidden></progress><p role="alert" hidden></p>
     <fieldset class="transcription-cues" hidden><legend>Review words and timing</legend><div class="transcription-cue-list"></div></fieldset>
     <div class="dialog-actions" id="transcription-downloads" hidden><button class="btn" type="button" id="transcription-srt">Download SRT</button><button class="btn" type="button" id="transcription-txt">Download transcript (.txt)</button></div>
   </div>`;
@@ -17,12 +17,16 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
   const preview = host.querySelector<HTMLAudioElement>('audio')!;
   const start = host.querySelector<HTMLButtonElement>('#transcription-start')!;
   const cancel = host.querySelector<HTMLButtonElement>('#transcription-cancel')!;
+  const savedStatus = host.querySelector<HTMLElement>('#transcription-saved')!;
+  const restart = host.querySelector<HTMLButtonElement>('#transcription-restart')!;
   const status = host.querySelector<HTMLElement>('[role="status"]')!;
   const error = host.querySelector<HTMLElement>('[role="alert"]')!;
   const progress = host.querySelector<HTMLProgressElement>('progress')!;
   const editor = host.querySelector<HTMLFieldSetElement>('fieldset')!;
   const list = host.querySelector<HTMLElement>('.transcription-cue-list')!;
   const downloads = host.querySelector<HTMLElement>('#transcription-downloads')!;
+  let complete = false;
+  let page = 0;
   let file: File | undefined;
   let cues: Cue[] = [];
   let controller: AbortController | undefined;
@@ -31,13 +35,15 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
   const setBusy = (busy: boolean) => {
     start.disabled = busy || !file; cancel.hidden = !busy; progress.hidden = !busy;
     editor.disabled = busy;
-    downloads.querySelectorAll<HTMLButtonElement>('button').forEach(button => { button.disabled = busy; });
+    restart.hidden = busy || !cues.length;
   };
   const abort = () => { controller?.abort(); controller = undefined; setBusy(false); };
   const releasePreview = () => { preview.pause(); preview.removeAttribute('src'); if (url) URL.revokeObjectURL(url); url = undefined; };
   const renderCues = () => {
     list.replaceChildren(); editor.hidden = downloads.hidden = cues.length === 0;
-    cues.forEach((cue, index) => {
+    page = Math.min(page, Math.max(0, Math.ceil(cues.length / 50) - 1));
+    cues.slice(page * 50, (page + 1) * 50).forEach((cue, offset) => {
+      const index = page * 50 + offset;
       const row = document.createElement('div'); row.className = 'transcription-cue';
       for (const field of ['start', 'end', 'text'] as const) {
         const label = document.createElement('label'); label.textContent = `Caption ${index + 1} ${field}`;
@@ -53,32 +59,49 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
       const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'btn'; remove.textContent = `Delete caption ${index + 1}`;
       remove.addEventListener('click', () => { cues.splice(index, 1); renderCues(); }); row.append(remove); list.append(row);
     });
+    if (cues.length > 50) {
+      const navigation = document.createElement('div'); navigation.className = 'dialog-actions';
+      const label = document.createElement('span'); label.textContent = `Page ${page + 1} of ${Math.ceil(cues.length / 50)}`;
+      for (const [text, direction] of [['Previous captions', -1], ['Next captions', 1]] as const) {
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'btn'; button.textContent = text;
+        button.disabled = direction < 0 ? page === 0 : (page + 1) * 50 >= cues.length;
+        button.addEventListener('click', () => { page += direction; renderCues(); }); navigation.append(button);
+      }
+      navigation.append(label); list.append(navigation);
+    }
   };
   input.addEventListener('change', () => {
-    abort(); releasePreview(); file = input.files?.[0]; cues = []; renderCues(); showError(''); status.textContent = '';
+    abort(); releasePreview(); file = input.files?.[0]; cues = []; complete = false; page = 0; renderCues(); showError(''); status.textContent = ''; savedStatus.textContent = '';
     preview.hidden = !file;
     if (file) { url = URL.createObjectURL(file); preview.src = url; }
     setBusy(false);
   });
-  start.addEventListener('click', async () => {
+  const generate = async (fromBeginning = false) => {
     if (!file || controller) return;
     const source = file;
-    const job = new AbortController(); controller = job; setBusy(true); showError('');
+    const job = new AbortController(); controller = job; page = 0; setBusy(true); showError('');
     try {
-      const result = await transcribe({ name: source.name, load: async () => source }, job.signal, message => { if (!job.signal.aborted) status.textContent = message; });
+      const result = await transcribe({ name: source.name, load: async () => source }, job.signal, message => { if (!job.signal.aborted) status.textContent = message; }, { restart: fromBeginning, onPartial: update => {
+        if (job.signal.aborted) return;
+        cues = update.cues; complete = update.complete; renderCues();
+        progress.max = update.totalSeconds || 1; progress.value = update.processedSeconds;
+        savedStatus.textContent = `${complete ? 'Complete transcript' : 'Partial transcript'} · ${(update.processedSeconds / 60).toFixed(1)} of ${(update.totalSeconds / 60).toFixed(1)} minutes processed. ${update.saved ? 'Generated progress is saved locally. Resume is available for 30 days (20 recent recordings).' : 'Saving is unavailable. Download partial results before closing this tab.'}`;
+      } });
       if (!job.signal.aborted) { cues = result; renderCues(); status.textContent = `${cues.length} captions ready. Review the words and timing before downloading.`; }
     } catch (caught) {
       if (!job.signal.aborted) { status.textContent = ''; showError(caught instanceof Error ? caught.message : 'Transcription failed.'); }
     } finally { if (controller === job) { controller = undefined; setBusy(false); } }
-  });
-  cancel.addEventListener('click', () => { abort(); status.textContent = 'Transcription cancelled.'; });
+  };
+  start.addEventListener('click', () => void generate());
+  restart.addEventListener('click', () => void generate(true));
+  cancel.addEventListener('click', () => { abort(); status.textContent = 'Transcription cancelled. Generate again to resume completed sections.'; });
   for (const extension of ['srt', 'txt']) {
     host.querySelector(`#transcription-${extension}`)!.addEventListener('click', () => {
-      if (!file || controller) return;
+      if (!file) return;
       try {
         validateCues(cues); showError('');
         const body = extension === 'srt' ? cuesToSrt(cues) : cues.map(cue => cue.text.trim()).join('\n\n') + '\n';
-        download(new Blob([body], { type: extension === 'srt' ? 'application/x-subrip' : 'text/plain;charset=utf-8' }), `${file.name.replace(/\.[^.]+$/, '') || 'transcript'}.${extension}`);
+        download(new Blob([body], { type: extension === 'srt' ? 'application/x-subrip' : 'text/plain;charset=utf-8' }), `${file.name.replace(/\.[^.]+$/, '') || 'transcript'}${complete ? '' : '.partial'}.${extension}`);
       } catch (caught) { showError(caught instanceof Error ? caught.message : 'Could not download transcript.'); }
     });
   }
