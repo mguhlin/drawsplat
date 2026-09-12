@@ -58,7 +58,7 @@ Generated progress can be resumed; download reviewed edits before closing the
 dialog or replacing the source. Cancel generation or close the dialog to stop the worker.
 
 English speech recognition runs locally using the shared subtitle engine. First
-use downloads about 42 MB of model files from Hugging Face, cached when browser
+use downloads the selected Whisper model (Tiny ≈42 MB, Small ≈250 MB, or Medium ≈990 MB) from Hugging Face, cached when browser
 storage allows. Audio and transcript text are never uploaded. Limits: 120 minutes (2 hours)
 and 512 MB per file. Codec support depends on your browser. Automatic transcripts
 need review; silent/undecodable files show an error.
@@ -84,3 +84,5 @@ interface reports it and downloads remain available.
 The two-hour limit requires a stream-decodable format in your browser. A legacy
 fallback supports whole-file decoding only for sources up to 30 minutes and
 64 MiB; it never loads multi-hour recordings as one decoded buffer.
+
+Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, and Medium offers a larger accuracy-focused engine for capable desktops. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.

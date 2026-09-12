@@ -10,11 +10,12 @@ npm ci --prefix solutions/mediasplat
 npm ci --prefix solutions/audiosplat
 ```
 
-The worker runs Transformers.js 3.8.1 with the quantized English Whisper Tiny model
-`Xenova/whisper-tiny.en`, pinned to revision
-`79fb389fc764e7c395bd330e9531d9d32ada7049`. ONNX Runtime's JavaScript and WebAssembly
-are bundled with each app and served from the same origin. Model data (roughly
-42 MB) is downloaded from Hugging Face only when the user starts generation,
+The worker runs Transformers.js 3.8.1 with quantized English Whisper models.
+The model registry in `models.ts` pins Tiny (~42 MB), Small (~250 MB, default),
+and Medium (~990 MB) to specific Hugging Face revisions. Larger models need
+more memory and processing time. The selector remembers the user's preference.
+ONNX Runtime's JavaScript and WebAssembly are bundled with each app and served
+from the same origin. Model data is downloaded only when generation starts,
 including by choosing the recorder's generation option. No source media or
 transcribed text is sent to Hugging Face. Model caching uses Transformers.js's
 browser cache; site-data removal or storage eviction can require another download.
@@ -40,7 +41,7 @@ terminated when the job finishes or is cancelled.
 
 Completed windows are checkpointed in IndexedDB after every section, including
 silence. A SHA-256 fingerprint of all file bytes (read in 1 MiB chunks), selected
-range, and engine version identifies a recording. No source media is stored or
+range, selected model, and engine version identifies a recording. No source media is stored or
 uploaded. Selecting the same file/range and generating again restores completed
 sections and resumes at the exact saved sample boundary. Completed transcripts
 can also be restored; **Start over** discards that checkpoint and regenerates.
@@ -79,7 +80,10 @@ for real model-download/transcription/cache tests in the apps' Playwright suites
 
 Mediabunny API references: [media sinks](https://mediabunny.dev/guide/media-sinks) and [BlobSource](https://mediabunny.dev/api/BlobSource).
 
-Dependencies: Mediabunny (MPL-2.0), Transformers.js (Apache-2.0), ONNX Runtime (MIT), converted Whisper model weights (Apache-2.0 per the pinned Hugging Face
-model card; upstream OpenAI Whisper is MIT). No remote executable scripts are loaded. `sharp` is a transitive
+Dependencies: Mediabunny (MPL-2.0), Transformers.js (Apache-2.0), ONNX Runtime (MIT), converted Whisper model weights (Tiny/Small Apache-2.0 model cards; Medium timestamped export MIT; upstream OpenAI Whisper MIT). No remote executable scripts are loaded. `sharp` is a transitive
 Node-only dependency of Transformers.js; it is not bundled or executed by these
 browser applications.
+
+Checkpoints are isolated by model. Tiny retains its original fingerprint namespace so existing progress can be restored by selecting Tiny. Small and Medium include their pinned revision and quantization in the namespace.
+
+Medium uses the pinned `onnx-community/whisper-medium.en_timestamped` export with WASM memory arena/pattern retention disabled. Real browser integration covers recognition across multiple windows. Run `RUN_ALL_WHISPER_MODELS=1 npm run test:e2e` in MediaSplat to test all three actual engines.

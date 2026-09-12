@@ -17,7 +17,8 @@ test('generates for a trimmed clip, validates edits, downloads SRT and adds capt
   await page.getByLabel('Source start', { exact: true }).fill('2');
   await openGeneration(page);
   await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
-  expect(await page.evaluate(() => (window as any).subtitleJobs[0].samples)).toBe(64000);
+  expect(await page.evaluate(() => (window as any).subtitleJobs[0])).toEqual({ samples: 64000, model: 'small' });
+  await expect(page.getByLabel('English speech model')).toHaveValue('small');
   await page.getByLabel('Caption 1 text').fill('Corrected speech');
   await page.getByLabel('Caption 1 end').fill('0');
   await page.getByRole('button', { name: 'Add subtitles to timeline' }).click();
@@ -58,7 +59,7 @@ test('rejects silent audio without starting the speech model', async ({ page }) 
 });
 test('real local speech model produces captions and reuses its cache offline', async ({ page, context }) => {
   test.skip(!process.env.RUN_SPEECH_MODEL_TESTS, 'Opt-in real model download test');
-  test.setTimeout(180000);
+  test.setTimeout(600000);
   await page.addInitScript(() => sessionStorage.setItem('videosplat-splash-seen', '1'));
   const remoteMethods: string[] = [];
   context.on('request', request => { if (/^https:/.test(request.url())) remoteMethods.push(request.method()); });
@@ -66,12 +67,12 @@ test('real local speech model produces captions and reuses its cache offline', a
   await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles(speech);
   await expect(page.locator('.timeline-clip')).toHaveCount(1);
   await openGeneration(page);
-  await expect(page.getByLabel('Caption 1 text')).toContainText(/fellow Americans/i, { timeout: 120000 });
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue(/fellow Americans/i, { timeout: 300000 });
   await context.setOffline(true);
-  await page.getByRole('button', { name: 'Generate again' }).click();
-  await expect(page.getByRole('button', { name: 'Cancel generation' })).toHaveCount(0, { timeout: 60000 });
+  await page.getByRole('button', { name: 'Start over' }).click();
+  await expect(page.getByRole('button', { name: 'Cancel generation' })).toHaveCount(0, { timeout: 300000 });
   await expect(page.getByRole('alert')).toHaveCount(0);
-  await expect(page.getByLabel('Caption 1 text')).toContainText(/fellow Americans/i);
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue(/fellow Americans/i);
   expect(remoteMethods.every(method => method === 'GET')).toBe(true);
 });
 
@@ -108,14 +109,14 @@ test('recording option starts subtitle generation automatically after adding the
 
 test('real model retains repeated speech after the first 30 seconds', async ({ page }) => {
   test.skip(!process.env.RUN_SPEECH_MODEL_TESTS, 'Opt-in long audio regression');
-  test.setTimeout(180000);
+  test.setTimeout(600000);
   await page.addInitScript(() => sessionStorage.setItem('videosplat-splash-seen', '1'));
   await page.goto('./');
   await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles(resolve('../shared/subtitles/tests/long-speech.mp4'));
   await expect(page.locator('.timeline-clip')).toHaveCount(1);
   await openGeneration(page);
-  await expect(page.getByRole('button', { name: 'Add subtitles to timeline' })).toBeVisible({ timeout: 120000 });
+  await expect(page.getByRole('button', { name: 'Add subtitles to timeline' })).toBeEnabled({ timeout: 300000 });
   const starts = await page.locator('.subtitle-cue input[aria-label$=" start"]').evaluateAll(inputs => inputs.map(input => Number((input as HTMLInputElement).value)));
   expect(Math.max(...starts)).toBeGreaterThan(35);
-  expect(await page.locator('.subtitle-cue textarea').count()).toBeGreaterThanOrEqual(7);
+  expect((await page.locator('.subtitle-cue textarea').evaluateAll(inputs => inputs.map(input => (input as HTMLTextAreaElement).value))).join(' ')).toMatch(/fellow Americans/i);
 });

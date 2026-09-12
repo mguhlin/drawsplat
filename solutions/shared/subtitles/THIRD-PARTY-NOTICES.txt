@@ -608,3 +608,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
+
+Additional quantized English Whisper models:
+Whisper Small (Apache-2.0): https://huggingface.co/Xenova/whisper-small.en/tree/fa16a75f5d91e83ecb6a2ccb690f14d91ef00ca4
+Whisper Medium timestamped export (MIT): https://huggingface.co/onnx-community/whisper-medium.en_timestamped/tree/475d02b986111e8e2d28206d82e64bb820f5c6db

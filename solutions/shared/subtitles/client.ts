@@ -1,11 +1,13 @@
+import { DEFAULT_MODEL, getWhisperModel, type WhisperModelId } from './models';
 import { quietSectionLength, hasAudio, SAMPLE_RATE, type Cue } from './core';
 import { openAudio } from './decoder';
 import { fingerprint, readCheckpoint, saveCheckpoint, deleteCheckpoint, type Checkpoint } from './checkpoints';
 export interface Source { name: string; load: () => Promise<Blob>; start?: number; duration?: number }
 export interface TranscriptionProgress { cues: Cue[]; processedSeconds: number; totalSeconds: number; complete: boolean; saved: boolean }
-export interface TranscriptionOptions { restart?: boolean; onPartial?: (progress: TranscriptionProgress) => void }
+export interface TranscriptionOptions { model?: WhisperModelId; restart?: boolean; onPartial?: (progress: TranscriptionProgress) => void }
 export async function transcribe(source: Source, signal: AbortSignal, onProgress: (message: string) => void, options: TranscriptionOptions = {}): Promise<Cue[]> {
   signal.throwIfAborted();
+  const model = getWhisperModel(options.model ?? DEFAULT_MODEL);
   onProgress('Reading audio locally…');
   const blob = await source.load();
   signal.throwIfAborted();
@@ -15,7 +17,7 @@ export async function transcribe(source: Source, signal: AbortSignal, onProgress
   try {
     const totalSamples = Math.round(reader.duration * SAMPLE_RATE);
     onProgress('Checking for saved progress…');
-    const key = await fingerprint(blob, source.start ?? 0, totalSamples / SAMPLE_RATE, signal);
+    const key = await fingerprint(blob, source.start ?? 0, totalSamples / SAMPLE_RATE, signal, model.id);
     signal.throwIfAborted();
     const run = async (): Promise<Cue[]> => {
       let saved = true;
@@ -48,7 +50,7 @@ export async function transcribe(source: Source, signal: AbortSignal, onProgress
           else if (data.type === 'error') finish(new Error(`Could not generate subtitles: ${data.message}`));
         };
         worker.onerror = () => finish(new Error('The local speech engine could not start. Reload and try again in a current desktop browser.'));
-        worker.postMessage({ audio, allowEmpty: true, keepAlive: true }, [audio.buffer]);
+        worker.postMessage({ audio, model: model.id, allowEmpty: true, keepAlive: true }, [audio.buffer]);
       });
       while (nextSample < totalSamples) {
         signal.throwIfAborted();

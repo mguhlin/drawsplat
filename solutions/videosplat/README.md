@@ -60,16 +60,15 @@ These limits are also available under **About → Video size & length limits**.
 | Operation | Current limit or behavior |
 | --- | --- |
 | Import media or add a recording to the timeline | 512 MB per file. |
-| Generate automatic captions | Up to 30 minutes per selected clip; the source file must also be no larger than 512 MB. English speech and browser-decodable audio are required. |
+| Generate automatic captions | Up to 120 minutes (2 hours) per selected clip; the source file must also be no larger than 512 MB. English speech and browser-decodable audio are required. |
 | Record, edit a timeline, or export | No fixed duration cap. Available browser memory and storage determine practical limits; large or long videos can still fail. |
 | Export resolution | A warning appears above the pixel count of 4K (3840 × 2160); this is a memory warning, not a hard resolution cap. |
 | Export frame rate | The interface offers 1–60 fps. |
 
-For longer caption jobs, split the timeline clip into sections of **30 minutes or
+For longer caption jobs, split the timeline clip into sections of **120 minutes or
 less** and generate captions separately for each section. Trimming or splitting
 timeline clips does not reduce the underlying source file's size; a source larger
-than 512 MB must first be made into smaller files. Audio decoding reads the full
-source audio, so selecting a shorter section does not eliminate memory pressure.
+than 512 MB must first be made into smaller files. Audio is decoded in windows of at most 25 seconds. Completed sections are saved locally for resume, with partial SRT downloads available. Compatibility decoding for older browsers is limited to 30 minutes and 64 MiB; longer sources require streaming codec support.
 
 Timeline rendering runs in real time: a **30-minute timeline takes roughly 30
 minutes to render**. MP4 and OGM require additional local conversion time after
@@ -78,7 +77,7 @@ and storage can run out even when a job meets the explicit limits.
 
 Generated captions are permanently embedded in an exported video after choosing
 **Add subtitles to timeline** and exporting with **Burn in subtitles** enabled
-(the default). The 30-minute caption-generation limit is separate from export
+(the default). The 120-minute caption-generation limit is separate from export
 duration; a longer timeline can contain captions generated for multiple clips.
 
 ## Development
@@ -126,8 +125,10 @@ The recorder remembers the chosen microphone across recorder openings in the bro
 
 Select a video or audio clip on the timeline, then choose **File → Generate subtitles…**. In the recorder review, you can also check **Generate subtitles when adding this recording (English)**. Review the words and timing, download a clip-relative SRT, or add a new caption track at the clip’s timeline position. Use **File → Save captions as SRT** for project-relative timestamps and the export dialog to burn captions into video.
 
-English speech is transcribed locally. First use downloads a roughly 42 MB speech model from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 30 minutes per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
+English speech is transcribed locally. First use downloads the selected Whisper model (Tiny ≈42 MB, Small ≈250 MB, or Medium ≈990 MB) from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 120 minutes (2 hours) per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
 
 Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.
 
 Export progress uses an animated purple bar with a percentage and elapsed time. After enough progress is available, it estimates the current stage’s remaining time and total in minutes or hours. WebM renders the timeline in real time; MP4 and OGM show timeline rendering and local conversion as separate stages with separate estimates. Estimates adapt to the measured speed and pause when progress updates stop arriving. Cancel stops rendering or conversion, and you can retry the export.
+
+Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, and Medium offers a larger accuracy-focused engine for capable desktops. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.

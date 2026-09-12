@@ -90,3 +90,23 @@ it('keeps the model loaded across streaming windows and permits windows without 
   await worker.onmessage({ data: { audio } });
   expect(transcriber.dispose).toHaveBeenCalledTimes(1);
 });
+
+it('loads the selected pinned model and replaces the pipeline when switching models', async () => {
+  const { WHISPER_MODELS } = await import('../../../shared/subtitles/models');
+  const transcriber = Object.assign(vi.fn().mockResolvedValue({ text: 'Hello.', chunks: [{ text: 'Hello.', timestamp: [0, .9] }] }), { dispose: vi.fn() });
+  pipeline.mockResolvedValue(transcriber);
+  const worker = { onmessage: undefined as unknown as (event: unknown) => Promise<void>, postMessage: vi.fn() };
+  vi.stubGlobal('self', worker);
+  await import('../../node_modules/@splat/local-subtitles/worker');
+  for (const model of ['small', 'small', 'medium', 'tiny'] as const) {
+    await worker.onmessage({ data: { audio: new Float32Array(16000).fill(.1), model, keepAlive: true } });
+  }
+  expect(pipeline).toHaveBeenCalledTimes(3);
+  expect(pipeline.mock.calls[1][2].session_options).toEqual({ enableCpuMemArena: false, enableMemPattern: false });
+  expect(pipeline.mock.calls[0][2].session_options).toBeUndefined();
+  expect(transcriber.dispose).toHaveBeenCalledTimes(2);
+  for (const [index, model] of ['small', 'medium', 'tiny'].entries()) {
+    const configuration = WHISPER_MODELS[model as keyof typeof WHISPER_MODELS];
+    expect(pipeline.mock.calls[index]).toEqual(['automatic-speech-recognition', configuration.repo, expect.objectContaining({ revision: configuration.revision, dtype: 'q8' })]);
+  }
+});

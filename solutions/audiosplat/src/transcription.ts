@@ -1,12 +1,16 @@
+import { WHISPER_MODELS, preferredModel, rememberModel, getWhisperModel } from '@splat/local-subtitles/models';
 import { transcribe } from '@splat/local-subtitles/client';
 import { cuesToSrt, validateCues, type Cue } from '@splat/local-subtitles/core';
 
 /** A separate file workflow: never writes to the editor's project or audio sources. */
 export function mountTranscription(host: HTMLElement, download: (blob: Blob, name: string) => void, close: () => void): () => void {
+  let model = preferredModel();
   host.innerHTML = `<div class="effect-form transcription-form">
     <p>Choose an MP3, OGG, M4A, WAV, or other browser-playable audio file. Transcribe English speech locally, review the captions, and download SRT or plain text. This does not change your project.</p>
-    <p>First use downloads a speech model from Hugging Face (about 42 MB), cached when storage allows. Your audio and transcript are never uploaded. Up to 120 minutes (2 hours) and 512 MB per file; processing can take several minutes. Generated progress is saved locally when storage allows. Choose the same file and generate again to resume. Download reviewed edits to keep them.</p>
+    <p>First use downloads the selected model from Hugging Face, cached when browser storage allows. Your audio and transcript are never uploaded. Up to 120 minutes (2 hours) and 512 MB per file; processing can take several minutes. Generated progress is saved locally when storage allows. Choose the same file and generate again to resume. Download reviewed edits to keep them.</p>
     <label>Audio file for transcription<input type="file" accept="audio/*,.mp3,.ogg,.oga,.m4a,.wav,.flac,.aac" /></label>
+    <label>English speech model<select id="transcription-model" aria-describedby="transcription-model-help">${Object.values(WHISPER_MODELS).map(option => `<option value="${option.id}">${option.label}</option>`).join('')}</select></label>
+    <p id="transcription-model-help"></p>
     <audio controls hidden aria-label="Transcription audio preview"></audio>
     <div class="dialog-actions"><button class="btn primary" type="button" id="transcription-start" disabled>Generate transcript</button><button class="btn" type="button" id="transcription-cancel" hidden>Cancel generation</button><button class="btn" type="button" id="transcription-restart" hidden>Start over</button></div>
     <p id="transcription-saved"></p><p role="status" aria-live="polite"></p><progress aria-label="Transcription progress" hidden></progress><p role="alert" hidden></p>
@@ -14,6 +18,11 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
     <div class="dialog-actions" id="transcription-downloads" hidden><button class="btn" type="button" id="transcription-srt">Download SRT</button><button class="btn" type="button" id="transcription-txt">Download transcript (.txt)</button></div>
   </div>`;
   const input = host.querySelector<HTMLInputElement>('input')!;
+  const selector = host.querySelector<HTMLSelectElement>('#transcription-model')!;
+  selector.value = model;
+  const modelHelp = host.querySelector<HTMLElement>('#transcription-model-help')!;
+  const describeModel = () => { const selected = getWhisperModel(model); modelHelp.textContent = `${selected.description} First download: about ${selected.downloadMB} MB. Progress is saved separately for each model. Select Tiny to resume work created before model selection was added.`; };
+  describeModel();
   const preview = host.querySelector<HTMLAudioElement>('audio')!;
   const start = host.querySelector<HTMLButtonElement>('#transcription-start')!;
   const cancel = host.querySelector<HTMLButtonElement>('#transcription-cancel')!;
@@ -34,7 +43,7 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
   const showError = (message: string) => { error.textContent = message; error.hidden = !message; };
   const setBusy = (busy: boolean) => {
     start.disabled = busy || !file; cancel.hidden = !busy; progress.hidden = !busy;
-    editor.disabled = busy;
+    editor.disabled = busy; selector.disabled = busy;
     restart.hidden = busy || !cues.length;
   };
   const abort = () => { controller?.abort(); controller = undefined; setBusy(false); };
@@ -70,6 +79,10 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
       navigation.append(label); list.append(navigation);
     }
   };
+  selector.addEventListener('change', () => {
+    model = getWhisperModel(selector.value).id; rememberModel(model); describeModel();
+    cues = []; complete = false; page = 0; renderCues(); showError(''); savedStatus.textContent = ''; status.textContent = 'Model changed. Generate to start or restore progress for this model.'; setBusy(false);
+  });
   input.addEventListener('change', () => {
     abort(); releasePreview(); file = input.files?.[0]; cues = []; complete = false; page = 0; renderCues(); showError(''); status.textContent = ''; savedStatus.textContent = '';
     preview.hidden = !file;
@@ -81,7 +94,7 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
     const source = file;
     const job = new AbortController(); controller = job; page = 0; setBusy(true); showError('');
     try {
-      const result = await transcribe({ name: source.name, load: async () => source }, job.signal, message => { if (!job.signal.aborted) status.textContent = message; }, { restart: fromBeginning, onPartial: update => {
+      const result = await transcribe({ name: source.name, load: async () => source }, job.signal, message => { if (!job.signal.aborted) status.textContent = message; }, { model, restart: fromBeginning, onPartial: update => {
         if (job.signal.aborted) return;
         cues = update.cues; complete = update.complete; renderCues();
         progress.max = update.totalSeconds || 1; progress.value = update.processedSeconds;
@@ -110,7 +123,7 @@ export function mountTranscription(host: HTMLElement, download: (blob: Blob, nam
     event.stopPropagation();
     if (event.key === 'Escape') { event.preventDefault(); close(); }
     if (event.key === 'Tab') {
-      const controls = [...dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),textarea:not(:disabled),audio[controls]')].filter(node => node.getClientRects().length > 0);
+      const controls = [...dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),textarea:not(:disabled),select:not(:disabled),audio[controls]')].filter(node => node.getClientRects().length > 0);
       const first = controls[0], last = controls.at(-1);
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }

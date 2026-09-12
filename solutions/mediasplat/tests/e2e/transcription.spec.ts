@@ -67,3 +67,53 @@ test('real MP3 speech recognition exports a transcript', async ({ page }) => {
   await page.getByRole('button', { name: 'Download transcript (.txt)' }).click();
   expect(await readFile((await (await pending).path())!, 'utf8')).toMatch(/fellow Americans/i);
 });
+
+ test('selects models, isolates saved transcripts and remembers the choice', async ({ page }) => {
+  await fakeTranscriber(page, 500);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  const selector = page.getByLabel('English speech model');
+  await expect(selector).toHaveValue('small');
+  for (const model of ['small', 'medium', 'tiny']) {
+    await selector.selectOption(model);
+    await expect(page.getByLabel('Caption 1 text')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+    await expect(selector).toBeDisabled();
+    await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+    await expect(selector).toBeEnabled();
+  }
+  expect(await page.evaluate(() => (window as any).subtitleJobs.map((job: any) => job.model))).toEqual(['small', 'medium', 'tiny']);
+  await selector.selectOption('small');
+  await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+  expect(await page.evaluate(() => (window as any).subtitleJobs.length)).toBe(3);
+  await selector.selectOption('medium');
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await expect(page.getByLabel('English speech model')).toHaveValue('medium');
+ });
+
+test('all three real Whisper engines transcribe English speech', async ({ page }) => {
+  test.skip(!process.env.RUN_ALL_WHISPER_MODELS, 'Opt-in full model integration');
+  test.setTimeout(1200000);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  for (const model of ['tiny', 'small', 'medium']) {
+    if (model === 'medium') await page.locator('.drop-zone input').setInputFiles(resolve('../shared/subtitles/tests/resume.mp3'));
+    await page.getByLabel('English speech model').selectOption(model);
+    await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Cancel generation' })).toHaveCount(0, { timeout: 900000 });
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    const text = await page.locator('.subtitle-cue textarea').evaluateAll(inputs => inputs.map(input => (input as HTMLTextAreaElement).value).join(' '));
+    expect(text).toMatch(/fellow Americans/i);
+    expect(text).toMatch(/country/i);
+    if (model === 'medium') {
+      const starts = await page.locator('.subtitle-cue input[aria-label$=" start"]').evaluateAll(inputs => inputs.map(input => Number((input as HTMLInputElement).value)));
+      expect(Math.max(...starts)).toBeGreaterThan(25);
+    }
+    console.log(`${model}: ${text}`);
+  }
+});

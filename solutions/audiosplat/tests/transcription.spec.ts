@@ -108,3 +108,28 @@ test('keeps partial downloads and resumes generated progress after closing and r
   expect(contents.match(/00:00:00,200/g)).toHaveLength(1);
   await expect(page.getByRole('button', { name: 'Start over', exact: true })).toBeVisible();
 });
+
+ test('selects models, isolates saved transcripts and remembers the choice', async ({ page }) => {
+  await fakeTranscriber(page, 500);
+  await openTranscription(page);
+  await page.getByLabel('Audio file for transcription').setInputFiles(fixture('mp3'));
+  const selector = page.getByLabel('English speech model');
+  await expect(selector).toHaveValue('small');
+  for (const model of ['small', 'medium', 'tiny']) {
+    await selector.selectOption(model);
+    await expect(page.getByLabel('Caption 1 text')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Generate transcript', exact: true }).click();
+    await expect(selector).toBeDisabled();
+    await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+    await expect(selector).toBeEnabled();
+  }
+  expect(await page.evaluate(() => (window as any).subtitleJobs.map((job: any) => job.model))).toEqual(['small', 'medium', 'tiny']);
+  await selector.selectOption('small');
+  await page.getByRole('button', { name: 'Generate transcript', exact: true }).click();
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+  expect(await page.evaluate(() => (window as any).subtitleJobs.length)).toBe(3);
+  await selector.selectOption('medium');
+  await openTranscription(page);
+  await page.getByLabel('Audio file for transcription').setInputFiles(fixture('mp3'));
+  await expect(page.getByLabel('English speech model')).toHaveValue('medium');
+ });

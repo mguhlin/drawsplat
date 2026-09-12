@@ -15,3 +15,6 @@
 .subtitle-generation-dialog button { background:#291443; border:1px solid #a855f7; color:#e8eef8; border-radius:7px; padding:8px 12px; cursor:pointer; font:inherit; }
 .subtitle-generation-dialog button:disabled { opacity:.5; cursor:default; }
 .subtitle-generation-dialog p { color:#a9b8ca; line-height:1.5; }
+
+.subtitle-model { display:grid; gap:6px; margin:12px 0; }
+.subtitle-model select { width:100%; min-width:0; padding:9px; border-radius:6px; background:#07111f; color:#fff; border:1px solid #354b68; font:inherit; }

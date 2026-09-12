@@ -1,3 +1,4 @@
+import { getWhisperModel, type WhisperModelId } from './models';
 import { env, pipeline, TextStreamer } from '@huggingface/transformers';
 import wasmUrl from 'onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm?url';
 import wasmModuleUrl from 'onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.mjs?url';
@@ -9,19 +10,25 @@ env.backends.onnx.wasm!.numThreads = 1;
 // Already running in our own worker; avoid a nested runtime proxy worker.
 env.backends.onnx.wasm!.proxy = false;
 let transcriber: import('@huggingface/transformers').AutomaticSpeechRecognitionPipeline | undefined;
-self.onmessage = async (event: MessageEvent<{ audio: Float32Array; allowEmpty?: boolean; keepAlive?: boolean }>) => {
-  let loadingModel = !transcriber;
+let loadedModel: WhisperModelId | undefined;
+self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: WhisperModelId; allowEmpty?: boolean; keepAlive?: boolean }>) => {
+  const requestedModel = event.data.model ?? 'tiny';
+  let loadingModel = !transcriber || loadedModel !== requestedModel;
   let recognizedText = false;
   try {
+    const model = getWhisperModel(requestedModel);
+    if (transcriber && loadedModel !== model.id) { await transcriber.dispose(); transcriber = undefined; loadedModel = undefined; }
     if (!transcriber) {
-      const loaded = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en', {
-        device: 'wasm', dtype: 'q8', revision: '79fb389fc764e7c395bd330e9531d9d32ada7049',
+      const loaded = await pipeline('automatic-speech-recognition', model.repo, {
+        device: 'wasm', dtype: 'q8', revision: model.revision,
+        // Avoid retaining large intermediate allocations for the desktop-sized model.
+        ...(model.id === 'medium' ? { session_options: { enableCpuMemArena: false, enableMemPattern: false } } : {}),
         progress_callback: (progress) => {
-          if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading speech model: ${Math.round(progress.progress)}% (${progress.file})` });
-          else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: 'Loading speech model…' });
+          if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading ${model.name}: ${Math.round(progress.progress)}% (${progress.file})` });
+          else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: `Loading ${model.name}…` });
         },
       });
-      transcriber = loaded;
+      transcriber = loaded; loadedModel = model.id;
     }
     loadingModel = false;
     const sections = audioSections(event.data.audio);
@@ -54,9 +61,9 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; allowEmpty?: 
       : 'The speech model loaded, but did not recognize English speech. Play the selected clip and check that your voice is audible. If it is missing, check the microphone selection and record again. If speech is clear, try a shorter clip and generate again.');
     self.postMessage({ type: 'complete', cues });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Speech recognition failed.';
-    self.postMessage({ type: 'error', message: loadingModel ? `The speech model could not load. Check your connection and retry. ${message}` : message });
+    const message = error instanceof Error ? error.message : 'The speech engine could not process this audio. Try a smaller model or reload to release browser memory.';
+    self.postMessage({ type: 'error', message: loadingModel ? `The speech model could not load. Check your connection and retry, or choose a smaller model if memory is limited. ${message}` : message });
   } finally {
-    if (!event.data.keepAlive) { await transcriber?.dispose(); transcriber = undefined; }
+    if (!event.data.keepAlive) { await transcriber?.dispose(); transcriber = undefined; loadedModel = undefined; }
   }
 };

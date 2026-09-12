@@ -32,3 +32,29 @@ describe('resumable long transcription', () => {
     expect(cuesToSrt([{start:7190,end:7199,text:'End'}])).toContain('01:59:50,000 --> 01:59:59,000');
   });
 });
+
+it('isolates models while preserving legacy Tiny checkpoints', async () => {
+  vi.stubGlobal('crypto', webcrypto);
+  const file = new NodeBlob(['same audio']) as unknown as Blob;
+  const signal = new AbortController().signal;
+  const legacy = await fingerprint(file, 0, 60, signal);
+  expect(await fingerprint(file, 0, 60, signal, 'tiny')).toBe(legacy);
+  const small = await fingerprint(file, 0, 60, signal, 'small');
+  const medium = await fingerprint(file, 0, 60, signal, 'medium');
+  expect(new Set([legacy, small, medium]).size).toBe(3);
+});
+
+it('defaults to Small and tolerates unavailable or invalid saved preferences', async () => {
+  const { preferredModel, rememberModel, getWhisperModel } = await import('../../../shared/subtitles/models');
+  const values = new Map<string, string>();
+  vi.stubGlobal('localStorage', { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) });
+  expect(preferredModel()).toBe('small');
+  rememberModel('medium');
+  expect(preferredModel()).toBe('medium');
+  values.set('splat.transcription.model', 'unsupported');
+  expect(preferredModel()).toBe('small');
+  expect(() => getWhisperModel('__proto__')).toThrow('supported Whisper model');
+  vi.stubGlobal('localStorage', { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } });
+  expect(preferredModel()).toBe('small');
+  expect(() => rememberModel('tiny')).not.toThrow();
+});
