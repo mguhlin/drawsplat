@@ -13,7 +13,7 @@ export function AboutInfo() {
         <li><strong>Longer caption jobs:</strong> split the video, download the parts, then load and caption each part separately. Each part must meet both limits.</li>
         <li><strong>Trim, split, join, and burn-in:</strong> no fixed app-level file-size, duration, resolution, or frame-rate cap. Available browser memory and storage determine practical limits; large files can still fail.</li>
         <li><strong>Automatic splitting:</strong> equal-parts, by-time, and by-size splitting support up to 100 output parts. Size targets are estimates, not guaranteed maximums; check downloaded sizes.</li>
-        <li><strong>Speech models:</strong> choose Whisper Small (default), Tiny for speed, or Medium for a larger accuracy-focused engine. Larger models need more memory and time.</li>
+        <li><strong>Speech models:</strong> choose Whisper Small (default), Tiny for speed, Medium for a larger accuracy-focused engine, or a local Whisper GGML .bin model from your device. Larger models need more memory and time.</li>
         <li><strong>Processing time:</strong> fast, lossless operations avoid re-encoding. Precise cuts, normalized joins, and subtitle burn-in re-encode locally; speed depends on the video and device, with no fixed minutes-per-minute rule.</li>
       </ul>
       <p>Keep this tab open until processing finishes. Importing an existing SRT/VTT file for burn-in does not use the automatic-caption limits.</p>

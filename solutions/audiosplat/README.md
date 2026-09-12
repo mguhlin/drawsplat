@@ -86,3 +86,10 @@ fallback supports whole-file decoding only for sources up to 30 minutes and
 64 MiB; it never loads multi-hour recordings as one decoded buffer.
 
 Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, and Medium offers a larger accuracy-focused engine for capable desktops. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.
+
+To use a model already on your device, select **English speech model → Use local
+GGML model (.bin)…**, choose your Whisper `.bin` file, and generate. This uses the
+bundled whisper.cpp engine, with no model download or upload. Models may be up to
+2 GB; Medium needs substantial memory and can take much longer than the recording. Smaller or quantized
+models are more suitable for limited devices. Reselect the model after reopening
+to resume saved progress. GGUF/ONNX files are not supported by this option.

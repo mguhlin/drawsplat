@@ -23,17 +23,18 @@ export const WHISPER_MODELS = {
   },
 } as const;
 export type WhisperModelId = keyof typeof WHISPER_MODELS;
+export type SpeechModelId = WhisperModelId | 'local';
 export const DEFAULT_MODEL: WhisperModelId = 'small';
 const PREFERENCE_KEY = 'splat.transcription.model';
 export function getWhisperModel(id: unknown) {
   if (typeof id !== 'string' || !Object.hasOwn(WHISPER_MODELS, id)) throw new Error('Choose a supported Whisper model: Tiny, Small, or Medium.');
   return WHISPER_MODELS[id as WhisperModelId];
 }
-export function preferredModel(): WhisperModelId {
-  try { return getWhisperModel(localStorage.getItem(PREFERENCE_KEY)).id; }
+export function preferredModel(): SpeechModelId {
+  try { const saved = localStorage.getItem(PREFERENCE_KEY); return saved === 'local' ? 'local' : getWhisperModel(saved).id; }
   catch { return DEFAULT_MODEL; }
 }
-export function rememberModel(id: WhisperModelId): void {
-  getWhisperModel(id);
+export function rememberModel(id: SpeechModelId): void {
+  if (id !== 'local') getWhisperModel(id);
   try { localStorage.setItem(PREFERENCE_KEY, id); } catch { /* Selection still works without persistent storage. */ }
 }

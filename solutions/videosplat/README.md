@@ -132,3 +132,10 @@ Rebuilding requires the sibling `solutions/shared/subtitles` source package, inc
 Export progress uses an animated purple bar with a percentage and elapsed time. After enough progress is available, it estimates the current stage’s remaining time and total in minutes or hours. WebM renders the timeline in real time; MP4 and OGM show timeline rendering and local conversion as separate stages with separate estimates. Estimates adapt to the measured speed and pause when progress updates stop arriving. Cancel stops rendering or conversion, and you can retry the export.
 
 Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, and Medium offers a larger accuracy-focused engine for capable desktops. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.
+
+To use a model already on your device, select **English speech model → Use local
+GGML model (.bin)…**, choose your Whisper `.bin` file, and generate. This uses the
+bundled whisper.cpp engine, with no model download or upload. Models may be up to
+2 GB; Medium needs substantial memory and can take much longer than the recording. Smaller or quantized
+models are more suitable for limited devices. Reselect the model after reopening
+to resume saved progress. GGUF/ONNX files are not supported by this option.

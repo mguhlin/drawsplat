@@ -51,6 +51,8 @@ it('defaults to Small and tolerates unavailable or invalid saved preferences', a
   expect(preferredModel()).toBe('small');
   rememberModel('medium');
   expect(preferredModel()).toBe('medium');
+  rememberModel('local');
+  expect(preferredModel()).toBe('local');
   values.set('splat.transcription.model', 'unsupported');
   expect(preferredModel()).toBe('small');
   expect(() => getWhisperModel('__proto__')).toThrow('supported Whisper model');

@@ -87,3 +87,28 @@ browser applications.
 Checkpoints are isolated by model. Tiny retains its original fingerprint namespace so existing progress can be restored by selecting Tiny. Small and Medium include their pinned revision and quantization in the namespace.
 
 Medium uses the pinned `onnx-community/whisper-medium.en_timestamped` export with WASM memory arena/pattern retention disabled. Real browser integration covers recognition across multiple windows. Run `RUN_ALL_WHISPER_MODELS=1 npm run test:e2e` in MediaSplat to test all three actual engines.
+
+## Use a GGML model already on the device
+
+All three apps offer **English speech model → Use local GGML model (.bin)…**.
+Select the separate **Local Whisper model (.bin)** file, then generate normally.
+Models up to 2 GiB are accepted independently of the 512 MiB media-file limit.
+Both English-only and multilingual Whisper GGML models can transcribe English;
+this option does not add translation or other transcription languages. GGUF and
+ONNX files are not compatible. Header validation catches incompatible formats;
+the native loader checks the model contents. Larger/quantized models remain
+subject to available browser memory, and speed depends on the device.
+
+The pinned whisper.cpp engine runs in a separate worker, with no model download
+or upload. The selected model is read directly through WORKERFS and is not saved
+in browser storage. The local choice is remembered, but the model must be
+reselected after closing/reloading. Resume identities include the model's entire
+contents and engine version, not its name or modification date. Different model
+files cannot accidentally restore one another's captions. Cancellation, partial
+SRT/text downloads, review, timeline insertion, and burn-in use the existing
+shared workflow. See `ggml/README.md` for reproducible runtime build instructions.
+
+Run real local-model integration tests in each app with
+`LOCAL_GGML_MODEL=/absolute/path/to/ggml-medium.bin npm run test:e2e`.
+The model stays outside the repository. Deterministic tests cover missing files,
+invalid headers, model switches, cancellation, and model-specific restoration.

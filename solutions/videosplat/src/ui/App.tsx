@@ -2537,7 +2537,7 @@ export function App() {
               <ul className="limits-list">
                 <li><strong>Import:</strong> 512 MB per file, including recordings added to the timeline.</li>
                 <li><strong>Automatic captions:</strong> up to 120 minutes (2 hours) per selected clip, with a source file no larger than 512 MB. English speech and browser-decodable audio are required.</li>
-                <li><strong>Speech models:</strong> choose Whisper Small (default), Tiny for speed, or Medium for a larger accuracy-focused engine. Larger models need more memory and time. Progress is saved locally for each model; partial SRT downloads are available.</li>
+                <li><strong>Speech models:</strong> choose Whisper Small (default), Tiny for speed, Medium for a larger accuracy-focused engine, or a local Whisper GGML .bin model from your device. Larger models need more memory and time. Progress is saved locally for each model; partial SRT downloads are available.</li>
                 <li><strong>Longer caption jobs:</strong> split the timeline clip into sections of 120 minutes or less and generate captions for each section. Trimming a timeline clip does not reduce its source file size.</li>
                 <li><strong>Recording and export:</strong> no fixed duration cap. Browser memory and storage determine practical limits; large or long videos can still fail.</li>
                 <li><strong>Resolution and frame rate:</strong> exports above 4K (3840 × 2160 pixels in total) show a memory warning. The export frame-rate field offers 1–60 fps.</li>

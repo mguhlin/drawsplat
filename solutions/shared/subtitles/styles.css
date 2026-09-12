@@ -18,3 +18,4 @@
 
 .subtitle-model { display:grid; gap:6px; margin:12px 0; }
 .subtitle-model select { width:100%; min-width:0; padding:9px; border-radius:6px; background:#07111f; color:#fff; border:1px solid #354b68; font:inherit; }
+.subtitle-model input[type="file"] { width:100%; min-width:0; }

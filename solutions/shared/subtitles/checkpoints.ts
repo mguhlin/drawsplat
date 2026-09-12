@@ -58,6 +58,9 @@ export async function deleteCheckpoint(key: string): Promise<void> {
 }
 /** Hash all bytes in bounded chunks; names/mtime alone can match different recordings. */
 export async function fingerprint(blob: Blob, start: number, duration: number, signal: AbortSignal, model: WhisperModelId = 'tiny'): Promise<string> {
+  return fingerprintWithNamespace(blob, start, duration, signal, getWhisperModel(model).checkpointNamespace);
+}
+export async function fingerprintWithNamespace(blob: Blob, start: number, duration: number, signal: AbortSignal, namespace: string): Promise<string> {
   const hashes: Uint8Array[] = [];
   for (let offset = 0; offset < blob.size; offset += 1024 * 1024) {
     signal.throwIfAborted();
@@ -65,7 +68,7 @@ export async function fingerprint(blob: Blob, start: number, duration: number, s
     hashes.push(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)));
   }
   signal.throwIfAborted();
-  const meta = new TextEncoder().encode(`${getWhisperModel(model).checkpointNamespace}:${blob.size}:${start}:${duration}:`);
+  const meta = new TextEncoder().encode(`${namespace}:${blob.size}:${start}:${duration}:`);
   const joined = new Uint8Array(meta.length + hashes.length * 32); joined.set(meta);
   hashes.forEach((hash, index) => joined.set(hash, meta.length + index * 32));
   const digest = await crypto.subtle.digest('SHA-256', joined);

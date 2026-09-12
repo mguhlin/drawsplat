@@ -8,7 +8,8 @@
     ".": "./SubtitleGenerator.tsx",
     "./core": "./core.ts",
     "./client": "./client.ts",
-    "./models": "./models.ts"
+    "./models": "./models.ts",
+    "./local-model": "./local-model.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",

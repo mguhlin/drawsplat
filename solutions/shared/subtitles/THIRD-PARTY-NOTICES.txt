@@ -612,3 +612,8 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 Additional quantized English Whisper models:
 Whisper Small (Apache-2.0): https://huggingface.co/Xenova/whisper-small.en/tree/fa16a75f5d91e83ecb6a2ccb690f14d91ef00ca4
 Whisper Medium timestamped export (MIT): https://huggingface.co/onnx-community/whisper-medium.en_timestamped/tree/475d02b986111e8e2d28206d82e64bb820f5c6db
+
+whisper.cpp v1.8.3 and GGML (MIT)
+https://github.com/ggml-org/whisper.cpp/tree/2eeeba56e9edd762b4b38467bab96c2517163158
+Bundled runtime built with Emscripten 3.1.74. See ggml/LICENSE and ggml/README.md.
+No GGML model weights are distributed with these applications.
