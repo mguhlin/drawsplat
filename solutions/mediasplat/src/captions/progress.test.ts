@@ -41,7 +41,8 @@ it('isolates models while preserving legacy Tiny checkpoints', async () => {
   expect(await fingerprint(file, 0, 60, signal, 'tiny')).toBe(legacy);
   const small = await fingerprint(file, 0, 60, signal, 'small');
   const medium = await fingerprint(file, 0, 60, signal, 'medium');
-  expect(new Set([legacy, small, medium]).size).toBe(3);
+  const turbo = await fingerprint(file, 0, 60, signal, 'turbo');
+  expect(new Set([legacy, small, medium, turbo]).size).toBe(4);
 });
 
 it('defaults to Small and tolerates unavailable or invalid saved preferences', async () => {
@@ -51,6 +52,8 @@ it('defaults to Small and tolerates unavailable or invalid saved preferences', a
   expect(preferredModel()).toBe('small');
   rememberModel('medium');
   expect(preferredModel()).toBe('medium');
+  rememberModel('turbo');
+  expect(preferredModel()).toBe('turbo');
   rememberModel('local');
   expect(preferredModel()).toBe('local');
   values.set('splat.transcription.model', 'unsupported');

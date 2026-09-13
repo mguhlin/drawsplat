@@ -22,7 +22,7 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
       const loaded = await pipeline('automatic-speech-recognition', model.repo, {
         device: 'wasm', dtype: 'q8', revision: model.revision,
         // Avoid retaining large intermediate allocations for the desktop-sized model.
-        ...(model.id === 'medium' ? { session_options: { enableCpuMemArena: false, enableMemPattern: false } } : {}),
+        ...((model.id === 'medium' || model.id === 'turbo') ? { session_options: { enableCpuMemArena: false, enableMemPattern: false } } : {}),
         progress_callback: (progress) => {
           if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading ${model.name}: ${Math.round(progress.progress)}% (${progress.file})` });
           else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: `Loading ${model.name}…` });
@@ -31,6 +31,8 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
       transcriber = loaded; loadedModel = model.id;
     }
     loadingModel = false;
+    // Turbo is multilingual; keep the existing English-transcription workflow explicit.
+    const languageOptions = model.id === 'turbo' ? { language: 'en', task: 'transcribe' as const } : {};
     const sections = audioSections(event.data.audio);
     const cues: Cue[] = [];
     for (const [index, section] of sections.entries()) {
@@ -40,7 +42,7 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
       self.postMessage({ type: 'progress', message: `${message}…` });
       let partial = '';
       const streamer = new TextStreamer(transcriber.tokenizer, { skip_prompt: true, skip_special_tokens: true, callback_function: text => { partial += text; self.postMessage({ type: 'progress', message: `${message}… ${partial.slice(-80)}` }); } });
-      const result = await transcriber(audio, { return_timestamps: true, streamer });
+      const result = await transcriber(audio, { ...languageOptions, return_timestamps: true, streamer });
       const output = Array.isArray(result) ? result[0] : result;
       recognizedText ||= Boolean(output.text?.trim());
       let sectionCues = normalizeCues(output.chunks ?? [], audio.length / SAMPLE_RATE);
@@ -49,7 +51,7 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
         // Word alignment decodes text without those tokens, then aligns the words
         // to the audio using the same local model.
         self.postMessage({ type: 'progress', message: `${message}… Retrying with word timing…` });
-        const retry = await transcriber(audio, { return_timestamps: 'word' });
+        const retry = await transcriber(audio, { ...languageOptions, return_timestamps: 'word' });
         const aligned = Array.isArray(retry) ? retry[0] : retry;
         recognizedText ||= Boolean(aligned.text?.trim());
         sectionCues = groupWordCues(aligned.chunks ?? [], audio.length / SAMPLE_RATE);

@@ -617,3 +617,5 @@ whisper.cpp v1.8.3 and GGML (MIT)
 https://github.com/ggml-org/whisper.cpp/tree/2eeeba56e9edd762b4b38467bab96c2517163158
 Bundled runtime built with Emscripten 3.1.74. See ggml/LICENSE and ggml/README.md.
 No GGML model weights are distributed with these applications.
+
+Whisper Large v3 Turbo timestamped export (MIT): https://huggingface.co/onnx-community/whisper-large-v3-turbo_timestamped/tree/b3f77bf9a8c4d5ea3415827033d1ffea7955fd9a

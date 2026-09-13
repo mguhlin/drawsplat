@@ -120,3 +120,23 @@ test('real model retains repeated speech after the first 30 seconds', async ({ p
   expect(Math.max(...starts)).toBeGreaterThan(35);
   expect((await page.locator('.subtitle-cue textarea').evaluateAll(inputs => inputs.map(input => (input as HTMLTextAreaElement).value))).join(' ')).toMatch(/fellow Americans/i);
 });
+
+
+test('keeps Turbo and local models optional and isolates Turbo saved progress', async ({ page }) => {
+  await fakeTranscriber(page);
+  await page.goto('./');
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles(speech);
+  await expect(page.locator('.timeline-clip')).toHaveCount(1);
+  await page.getByRole('menuitem', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Generate subtitles…', exact: true }).click();
+  const selector = page.getByLabel('English speech model');
+  await expect(selector).toHaveValue('small');
+  await expect(selector.locator('option[value="local"]')).toHaveCount(1);
+  for (const model of ['small', 'turbo', 'small']) {
+    await selector.selectOption(model);
+    await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+    await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+    await expect(selector).toBeEnabled();
+  }
+  expect(await page.evaluate(() => (window as any).subtitleJobs.map((job: any) => job.model))).toEqual(['small', 'turbo']);
+});

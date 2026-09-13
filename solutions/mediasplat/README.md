@@ -77,7 +77,7 @@ Transcription uses the same local English speech engine and limits described bel
 
 Choose **Subtitles**, load a video, then click **Generate subtitles…**. Review and edit the text and timing. Download SRT directly, or choose **Use subtitles for burn-in** followed by **Burn subtitles to MP4**.
 
-English speech is transcribed locally. First use downloads the selected Whisper model (Tiny ≈42 MB, Small ≈250 MB, or Medium ≈990 MB) from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 120 minutes (2 hours) per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
+English speech is transcribed locally. First use downloads the selected Whisper model (Tiny ≈42 MB, Small ≈250 MB, Medium ≈990 MB, or optional Large v3 Turbo ≈1.1 GB) from Hugging Face; the app also loads its bundled speech engine. Model files are cached when storage permits. No media or caption text is uploaded. Requires browser-decodable audio, up to 120 minutes (2 hours) per clip and 512 MB per file. Progress and cancellation are available; automatic captions need review.
 
 Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.
 
@@ -111,7 +111,7 @@ The two-hour limit requires a stream-decodable format in your browser. A legacy
 fallback supports whole-file decoding only for sources up to 30 minutes and
 64 MiB; it never loads multi-hour recordings as one decoded buffer.
 
-Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, and Medium offers a larger accuracy-focused engine for capable desktops. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.
+Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, Medium offers a larger accuracy-focused engine, and Large v3 Turbo is an optional advanced choice for capable desktops. Unselected models do not load or run; keeping these choices does not slow down transcription with another model. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.
 
 To use a model already on your device, select **English speech model → Use local
 GGML model (.bin)…**, choose your Whisper `.bin` file, and generate. This uses the

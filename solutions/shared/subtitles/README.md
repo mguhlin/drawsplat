@@ -10,9 +10,9 @@ npm ci --prefix solutions/mediasplat
 npm ci --prefix solutions/audiosplat
 ```
 
-The worker runs Transformers.js 3.8.1 with quantized English Whisper models.
+The worker runs Transformers.js 3.8.1 with quantized Whisper models for English transcription.
 The model registry in `models.ts` pins Tiny (~42 MB), Small (~250 MB, default),
-and Medium (~990 MB) to specific Hugging Face revisions. Larger models need
+Medium (~990 MB), and optional Large v3 Turbo (~1.1 GB) to specific Hugging Face revisions. Larger models need
 more memory and processing time. The selector remembers the user's preference.
 ONNX Runtime's JavaScript and WebAssembly are bundled with each app and served
 from the same origin. Model data is downloaded only when generation starts,
@@ -80,13 +80,13 @@ for real model-download/transcription/cache tests in the apps' Playwright suites
 
 Mediabunny API references: [media sinks](https://mediabunny.dev/guide/media-sinks) and [BlobSource](https://mediabunny.dev/api/BlobSource).
 
-Dependencies: Mediabunny (MPL-2.0), Transformers.js (Apache-2.0), ONNX Runtime (MIT), converted Whisper model weights (Tiny/Small Apache-2.0 model cards; Medium timestamped export MIT; upstream OpenAI Whisper MIT). No remote executable scripts are loaded. `sharp` is a transitive
+Dependencies: Mediabunny (MPL-2.0), Transformers.js (Apache-2.0), ONNX Runtime (MIT), converted Whisper model weights (Tiny/Small Apache-2.0 model cards; Medium/Turbo timestamped exports MIT; upstream OpenAI Whisper MIT). No remote executable scripts are loaded. `sharp` is a transitive
 Node-only dependency of Transformers.js; it is not bundled or executed by these
 browser applications.
 
-Checkpoints are isolated by model. Tiny retains its original fingerprint namespace so existing progress can be restored by selecting Tiny. Small and Medium include their pinned revision and quantization in the namespace.
+Checkpoints are isolated by model. Tiny retains its original fingerprint namespace so existing progress can be restored by selecting Tiny. Small, Medium, and Turbo include their pinned revision and quantization in the namespace.
 
-Medium uses the pinned `onnx-community/whisper-medium.en_timestamped` export with WASM memory arena/pattern retention disabled. Real browser integration covers recognition across multiple windows. Run `RUN_ALL_WHISPER_MODELS=1 npm run test:e2e` in MediaSplat to test all three actual engines.
+Medium and Turbo use pinned timestamped exports with WASM memory arena/pattern retention disabled. Real browser integration covers recognition across multiple windows. Run `RUN_ALL_WHISPER_MODELS=1 npm run test:e2e` in MediaSplat to test all four actual engines.
 
 ## Use a GGML model already on the device
 
@@ -112,3 +112,7 @@ Run real local-model integration tests in each app with
 `LOCAL_GGML_MODEL=/absolute/path/to/ggml-medium.bin npm run test:e2e`.
 The model stays outside the repository. Deterministic tests cover missing files,
 invalid headers, model switches, cancellation, and model-specific restoration.
+
+Large v3 Turbo uses `onnx-community/whisper-large-v3-turbo_timestamped`, q8, with explicit English transcription (also for word-timing fallback). It shares the existing ONNX runtime and downloads only when selected for generation. GGML remains a separate worker loaded only for local-model generation. Small remains the default.
+
+To run only the real Turbo multi-window integration test in MediaSplat: `RUN_ALL_WHISPER_MODELS=1 WHISPER_TEST_MODEL=turbo npm run test:e2e -- --grep "all four real"`.
