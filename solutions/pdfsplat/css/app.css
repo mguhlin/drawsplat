@@ -42,3 +42,19 @@
 @media(max-width:800px){.topbar .actions{justify-content:flex-start}.topbar .actions>*{flex-shrink:0}}
 
 .scan-heading{position:sticky;top:0;background:var(--panel);z-index:5;padding:.5rem 0}
+
+/* Keep selection controls visible while browsing grouped tools. */
+@media(min-width:801px){.workspace{grid-template-columns:190px minmax(0,1fr) 280px}}
+.tools{display:flex;flex-direction:column;gap:.5rem;overflow:hidden;padding:.65rem}
+.selection-properties{flex:0 1 auto;min-height:0;max-height:60%;overflow:auto;border-bottom:1px solid var(--line)}
+.tools .selection-properties fieldset{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:0 0 .6rem;padding:.65rem;min-width:0}
+.selection-properties label:has(textarea),.selection-properties label:has(input[type=range]),.selection-properties fieldset>button{grid-column:1/-1}
+.selection-properties label{min-width:0}.selection-properties textarea{resize:vertical;min-height:70px;max-height:150px}.selection-properties input[type=color]{height:36px}
+.tool-groups{min-height:0;overflow:auto;flex:1}.tool-group{border:1px solid var(--line);border-radius:10px;margin-bottom:.55rem;padding:.5rem}.tool-group summary{cursor:pointer;font-weight:750;padding:.25rem;min-height:36px}.tool-group summary:focus-visible{outline:3px solid #f5b942;outline-offset:2px}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.4rem}.tool-grid button{width:100%;min-width:0;margin:0;padding:.5rem;font-size:.85rem;white-space:normal}.tool-grid button.active{border-color:var(--purple);background:#eee9ff;color:var(--purple-dark)}
+.tool-group .tool-hint{font-size:.78rem;margin:.6rem .2rem}.tools .selection-properties .tool-hint{font-size:.8rem;margin:.3rem 0 .6rem}
+@media(max-width:800px){.workspace{grid-template-rows:minmax(140px,1fr) auto}.tools{max-height:42dvh;min-height:0;display:flex;flex-direction:column;gap:.3rem}.selection-properties{max-height:25dvh;flex-shrink:0}.tools .selection-properties .tool-hint{display:block}.tools .tool-groups{display:flex;gap:.5rem;overflow:auto;align-items:flex-start}.tool-group{min-width:240px;flex:1;margin:0}.tool-group:not([open]){min-width:100px;flex:0}.tool-grid{min-width:220px}.tools .tool-group .tool-hint{display:block}}
+
+body{grid-template-columns:minmax(0,1fr)}.workspace,.tools{min-width:0}.tools{align-items:stretch}.selection-properties{max-height:65%}
+@media(max-width:800px){.selection-properties{max-height:30dvh}.statusbar{min-width:0;flex-direction:column;align-items:stretch;gap:.2rem}.status-controls{min-width:0;max-width:100%;overflow-x:auto;white-space:nowrap;justify-content:flex-start}.status-controls>*{flex-shrink:0}}
+body{position:fixed;inset:0}

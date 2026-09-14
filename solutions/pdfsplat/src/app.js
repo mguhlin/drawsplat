@@ -713,10 +713,22 @@ function selectObject(id) {
   els.annotationLayer.querySelectorAll(".editable-object").forEach((node) => node.classList.toggle("selected", node.dataset.id === id));
   updateProperties();
 }
+let propertySelection;
 function updateProperties() {
   const o = selectedObject(),
     isText = o?.type === "text";
+  if (propertySelection !== o?.id) {
+    document.querySelector(".selection-properties").scrollTop = 0;
+    propertySelection = o?.id;
+  }
   els.textProperties.disabled = !isText;
+  els.textProperties.hidden = !isText;
+  els.objectProperties.hidden = !o || isText || o.type === "drawing";
+  const opacityParent = isText ? els.textProperties : els.objectProperties;
+  if ($("opacityProperty").parentElement !== opacityParent)
+    opacityParent.insertBefore($("opacityProperty"), isText ? els.deleteTextButton : opacityParent.firstElementChild.nextElementSibling);
+  els.deleteObjectButton.hidden = isText;
+  $("selectionHint").hidden = Boolean(o && o.type !== "drawing");
   els.objectProperties.disabled = !o || o.type === "drawing";
   els.imageAltRow.hidden = o?.type !== "image";
   if (isText) {

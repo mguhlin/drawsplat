@@ -28,6 +28,13 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 
 Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers and Web Crypto require HTTPS, localhost, or an equivalent secure context.
 
+## Editing sidebar
+
+Tools are grouped into collapsible **Edit & annotate**, **Pages**, and **Output**
+sections. Selecting a text box reveals text, size, color, and opacity controls at
+the top of the sidebar. Selection controls stay in place while tool groups scroll.
+On narrow screens the same controls appear below the document instead of being hidden.
+
 ## Scan to PDF
 
 Choose **Scan to PDF** in the toolbar or **Scan paper or photos** on the opening

@@ -2,6 +2,11 @@ const { test, expect } = require('@playwright/test');
 const { PDFDocument, StandardFonts } = require('../vendor/pdf-lib.min.js');
 const JSZip = require('../../../vendor/jszip.min.js');
 
+async function openToolGroup(page, name) {
+  const group = page.locator(`#toolGroup-${name}`);
+  if (await group.getAttribute('open') === null) await group.locator('summary').click();
+}
+
 async function makePdf(label, size = [300, 500]) {
   const document = await PDFDocument.create();
   const font = await document.embedFont(StandardFonts.Helvetica);
@@ -31,6 +36,7 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await expect(page.locator('#documentView')).toBeVisible();
   await expect(page.locator('#pdfCanvas')).toBeVisible();
   await page.getByRole('button', { name: 'Add text' }).click();
+  await expect(page.locator('#textValue')).toBeInViewport();
   const textBoxBefore = await page.locator('.text-object').boundingBox();
   const resizeHandle = await page.getByRole('button', { name:'Resize text' }).boundingBox();
   await page.mouse.move(resizeHandle.x + resizeHandle.width / 2, resizeHandle.y + resizeHandle.height / 2);
@@ -45,6 +51,7 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
 
   const thumbs = page.locator('.thumbnail');
   await thumbs.nth(0).dragTo(thumbs.nth(1));
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name: 'Rotate right' }).click();
 
   const downloadPromise = page.waitForEvent('download');
@@ -86,14 +93,18 @@ test('reverses pages, inserts and removes blank pages, and adds publishing marks
   source.addPage([300, 500]).drawText('Last', { x:30, y:450, font, size:20 });
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'organize.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Reverse page order' }).click();
   await expect(page.locator('#status')).toContainText('Page order reversed');
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Insert blank page' }).click();
   await expect(page.locator('.thumbnail')).toHaveCount(4);
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Remove blank pages' }).click();
   await expect(page.locator('.thumbnail')).toHaveCount(2);
   await page.locator('.thumbnail').first().click();
   await page.locator('.thumbnail').last().click({ modifiers:['Shift'] });
+  await openToolGroup(page, 'output');
   await page.getByRole('button', { name:'Headers, footers & numbers' }).click();
   await page.locator('#headerText').fill('Class packet');
   await page.getByRole('button', { name:'Apply', exact:true }).click();
@@ -110,9 +121,11 @@ test('reverses pages, inserts and removes blank pages, and adds publishing marks
 test('crops pages and applies fine deskew rotation', async ({ page }) => {
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'crop.pdf', mimeType:'application/pdf', buffer:Buffer.from(await makePdf('Crop me', [400, 600])) });
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Crop pages' }).click();
   for (const id of ['cropTop','cropRight','cropBottom','cropLeft']) await page.locator(`#${id}`).fill('10');
   await page.getByRole('button', { name:'Apply crop' }).click();
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Deskew / custom rotation' }).click();
   await page.locator('#customRotation').fill('2');
   await page.getByRole('button', { name:'Apply rotation' }).click();
@@ -135,9 +148,11 @@ test('imports image pages, exports PNG, and creates a rasterized sanitized copy'
   await expect(page.locator('.thumbnail')).toHaveCount(2);
   await page.locator('.thumbnail').first().click();
   const pngDownload = page.waitForEvent('download');
+  await openToolGroup(page, 'output');
   await page.getByRole('button', { name:'Export pages as images' }).click();
   expect((await pngDownload).suggestedFilename()).toBe('safe-page-1.png');
   const sanitizeDownload = page.waitForEvent('download');
+  await openToolGroup(page, 'output');
   await page.getByRole('button', { name:'Sanitize PDF copy' }).click();
   await page.getByRole('button', { name:'Sanitize and download' }).click();
   const sanitizedFile = await sanitizeDownload;
@@ -195,6 +210,7 @@ test('multi-selects thumbnails and applies page actions to the selection', async
   await expect(page.locator('#status')).toContainText('positions 3–4');
   await expect(page.locator('.thumbnail.selected')).toHaveCount(2);
 
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Rotate right' }).click();
   await page.locator('.thumbnail.selected').first().click({ button:'right' });
   await page.getByRole('menuitem', { name:'Duplicate' }).click();
@@ -245,6 +261,7 @@ test('merges PDFs and separates page ranges into a ZIP', async ({ page }) => {
   await expect(page.locator('#status')).toContainText('pages from two.pdf added');
   await expect(page.locator('.thumbnail')).toHaveCount(2);
 
+  await openToolGroup(page, 'pages');
   await page.getByRole('button', { name:'Separate / Split' }).click();
   await page.locator('#splitRanges').fill('1, 2');
   const downloadPromise = page.waitForEvent('download');
@@ -309,6 +326,7 @@ test('audits accessibility risks and exports a semantic HTML alternative', async
 
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'notice.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await openToolGroup(page, 'output');
   await page.getByRole('button', { name:'Accessibility check' }).click();
   await page.locator('#documentTitle').fill('Public Meeting Notice');
   await page.locator('#documentLanguage').fill('en-US');
