@@ -47,6 +47,8 @@ let future: AudioProject[] = [];
 let saveTimer = 0;
 let workspaceTouched = false;
 let recordingStartedAt = 0;
+let recordingPausedAt: number | null = null;
+let recordingPausedMs = 0;
 let recordingClock = 0;
 let recordingInsertAt = 0;
 let effectPreview: HTMLAudioElement | null = null;
@@ -1468,6 +1470,8 @@ async function startRecording(
     recorder.onstop = () => void finishRecording();
     recorder.start(250);
     recordingStartedAt = performance.now();
+    recordingPausedAt = null;
+    recordingPausedMs = 0;
     startRecordingClock();
     startMeter(recordingStream);
     document
@@ -1498,9 +1502,14 @@ async function startRecording(
 function toggleRecordingPause(): void {
   if (!recorder) return;
   if (recorder.state === "recording") {
+    recordingPausedAt = performance.now();
     recorder.pause();
     setStatus(t("paused"));
+    updateRecordingClock();
   } else if (recorder.state === "paused") {
+    if (recordingPausedAt !== null)
+      recordingPausedMs += performance.now() - recordingPausedAt;
+    recordingPausedAt = null;
     recorder.resume();
     setStatus(t("recording"));
   }
@@ -1553,12 +1562,15 @@ function stopRecordingStream(): void {
   const meter = document.querySelector<HTMLElement>("#meter");
   if (meter) meter.style.width = "0";
 }
+function updateRecordingClock(): void {
+  const elapsed = ((recordingPausedAt ?? performance.now()) - recordingStartedAt - recordingPausedMs) / 1000;
+  const time = document.querySelector("#time");
+  if (time) time.textContent = formatTime(elapsed);
+}
 function startRecordingClock(): void {
   const tick = () => {
     if (!recorder || recorder.state === "inactive") return;
-    const elapsed = (performance.now() - recordingStartedAt) / 1000;
-    const time = document.querySelector("#time");
-    if (time) time.textContent = formatTime(elapsed);
+    updateRecordingClock();
     recordingClock = requestAnimationFrame(tick);
   };
   tick();

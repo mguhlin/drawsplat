@@ -10,12 +10,16 @@ let ffmpeg: FFmpeg | undefined;
 let loaded = false;
 let currentNotify: (event: ProcessorEvent) => void = () => {};
 let wasmObjectURL: string | undefined;
+let loadingController: AbortController | undefined;
+let processingGeneration = 0;
 const coreBase = `${import.meta.env.BASE_URL}ffmpeg`;
-const localWasmURL = async () => {
+const localWasmURL = async (signal: AbortSignal) => {
   if (wasmObjectURL) return wasmObjectURL;
-  const responses = await Promise.all([1, 2].map(part => fetch(`${coreBase}/ffmpeg-core.part-0${part}`)));
+  const responses = await Promise.all([1, 2].map(part => fetch(`${coreBase}/ffmpeg-core.part-0${part}`, { signal })));
   if (responses.some(response => !response.ok)) throw new Error("The local media engine could not be downloaded. Check the connection and retry.");
-  wasmObjectURL = URL.createObjectURL(new Blob(await Promise.all(responses.map(response => response.arrayBuffer())), { type: "application/wasm" }));
+  const parts = await Promise.all(responses.map(response => response.arrayBuffer()));
+  signal.throwIfAborted();
+  wasmObjectURL = URL.createObjectURL(new Blob(parts, { type: "application/wasm" }));
   return wasmObjectURL;
 };
 const getEngine = async (notify: (event: ProcessorEvent) => void) => {
@@ -25,8 +29,27 @@ const getEngine = async (notify: (event: ProcessorEvent) => void) => {
     ffmpeg.on("progress", ({ progress, time }) => currentNotify({ kind: "progress", value: progress, time: time / 1000000 }));
     ffmpeg.on("log", ({ message }) => currentNotify({ kind: "log", message }));
   }
-  if (!loaded) { notify({ kind: "log", message: "Loading the local media engine…" }); await ffmpeg.load({ coreURL: `${coreBase}/ffmpeg-core.js`, wasmURL: await localWasmURL() }); loaded = true; }
-  return ffmpeg;
+  const instance = ffmpeg;
+  const generation = processingGeneration;
+  if (!loaded) {
+    const controller = new AbortController();
+    loadingController = controller;
+    try {
+      notify({ kind: "log", message: "Loading the local media engine…" });
+      const wasmURL = await localWasmURL(controller.signal);
+      controller.signal.throwIfAborted();
+      await instance.load({ coreURL: `${coreBase}/ffmpeg-core.js`, wasmURL });
+      if (generation !== processingGeneration) throw new DOMException("Processing cancelled", "AbortError");
+      loaded = true;
+    } catch (error) {
+      instance.terminate();
+      if (ffmpeg === instance) { ffmpeg = undefined; loaded = false; }
+      throw error;
+    } finally {
+      if (loadingController === controller) loadingController = undefined;
+    }
+  }
+  return instance;
 };
 const mimeFor = (ext: string) => ({ mp4: "video/mp4", webm: "video/webm", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", oga: "audio/ogg", m4a: "audio/mp4" }[ext] ?? "application/octet-stream");
 const readResult = async (engine: FFmpeg, name: string): Promise<ResultFile> => { const data = await engine.readFile(name); if (typeof data === "string") throw new Error("The media engine returned an invalid output."); return { name, blob: new Blob([new Uint8Array(data)], { type: mimeFor(extensionOf(name)) }) }; };
@@ -40,7 +63,13 @@ export async function joinMedia(files: File[], mode: ProcessingMode, notify: (ev
   if (files.length < 2) throw new Error("Choose at least two files to join."); const engine = await getEngine(notify); const ext = mode === "fast" ? extensionOf(files[0].name) : outputExtension(files[0], mode); const inputs = files.map((file, i) => `join-${i}.${extensionOf(file.name)}`); const manifest = "join-list.txt"; const output = `joined-media.${ext}`; const names = [...inputs, manifest, output];
   try { for (let i = 0; i < files.length; i++) { notify({ kind: "log", message: `Preparing file ${i + 1} of ${files.length}…` }); await engine.writeFile(inputs[i], await fetchFile(files[i])); } await engine.writeFile(manifest, concatManifest(inputs)); const code = await engine.exec(joinCommand(manifest, output, mode)); if (code !== 0) throw new Error(mode === "fast" ? "These streams are not compatible for lossless joining. Choose Normalize mode." : "The selected files could not be normalized and joined."); return [await readResult(engine, output)]; } finally { await cleanup(engine, names); }
 }
-export const cancelProcessing = () => { ffmpeg?.terminate(); ffmpeg = undefined; loaded = false; if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL); wasmObjectURL = undefined; };
+export const cancelProcessing = () => {
+  processingGeneration++;
+  loadingController?.abort(); loadingController = undefined;
+  ffmpeg?.terminate(); ffmpeg = undefined; loaded = false;
+  if (wasmObjectURL) URL.revokeObjectURL(wasmObjectURL);
+  wasmObjectURL = undefined;
+};
 
 export async function burnSubtitles(file: File, source: string, options: SubtitleOptions, notify: (event: ProcessorEvent) => void, knownDuration?: number): Promise<ResultFile[]> {
   subtitlesToAss(source, options); // Validate before loading the engine.

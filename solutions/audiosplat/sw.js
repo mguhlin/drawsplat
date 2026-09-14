@@ -1,4 +1,4 @@
-const CACHE = "audiosplat-v0.1.1";
+const CACHE = "audiosplat-v0.1.2";
 const SHELL = [
   "./",
   "./index.html",
@@ -21,7 +21,7 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)),
+          keys.filter((key) => key.startsWith("audiosplat-") && key !== CACHE).map((key) => caches.delete(key)),
         ),
       )
       .then(() => self.clients.claim()),
