@@ -58,3 +58,7 @@
 body{grid-template-columns:minmax(0,1fr)}.workspace,.tools{min-width:0}.tools{align-items:stretch}.selection-properties{max-height:65%}
 @media(max-width:800px){.selection-properties{max-height:30dvh}.statusbar{min-width:0;flex-direction:column;align-items:stretch;gap:.2rem}.status-controls{min-width:0;max-width:100%;overflow-x:auto;white-space:nowrap;justify-content:flex-start}.status-controls>*{flex-shrink:0}}
 body{position:fixed;inset:0}
+
+.quick-start{text-align:left;margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1rem}.quick-start h2{font-size:1.1rem;margin:0 0 .7rem}.quick-start ol{padding-left:1.25rem;margin:0;display:grid;gap:.65rem;font-size:.9rem}.quick-start p{font-size:.82rem;margin:.9rem 0 0}.drop-zone{align-items:safe center}.drop-card{padding:1.5rem}.drop-card .drop-logo{width:min(110px,30vw)}
+.workspace:has(#dropZone:not([hidden])){grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.workspace:has(#dropZone:not([hidden]))>.sidebar,.workspace:has(#dropZone:not([hidden]))>.tools{display:none}
