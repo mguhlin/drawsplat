@@ -6,6 +6,7 @@ export type CaptureMode = "screen" | "camera" | "screen-camera";
 export type DisplaySurfacePreference = "browser" | "window" | "monitor";
 
 export interface CaptureOptions {
+  signal?: AbortSignal;
   mode: CaptureMode;
   microphone: boolean;
   microphoneDeviceId?: string;
@@ -48,7 +49,7 @@ export function displayCaptureOptions(
   const options: DisplayMediaStreamOptions = {
     video: {
       frameRate: { ideal: frameRate },
-      ...(prefersCurrentTab ? { displaySurface: "browser" } : {}),
+      displaySurface: surface,
     },
     audio: systemAudio,
   };
@@ -166,6 +167,7 @@ export async function startCapture(
   previewCanvas: HTMLCanvasElement,
   onScreenEnded?: () => void,
   onCountdown?: (remaining?: number) => void,
+  onProgress?: (message: string) => void,
 ): Promise<CaptureSession> {
   if (!navigator.mediaDevices || !("MediaRecorder" in window))
     throw new Error("This browser does not support local screen and camera recording.");
@@ -175,21 +177,35 @@ export async function startCapture(
   const wantsCamera = options.mode !== "screen";
   let screen: MediaStream | undefined;
   let camera: MediaStream | undefined;
+  let output: MediaStream | undefined;
   let microphone: MediaStream | undefined;
   let audioContext: AudioContext | undefined;
   let frameTimer = 0;
   let canceled = false;
+  const videos: HTMLVideoElement[] = [];
+  let stage = "Screen sharing";
+  const progress = (message: string) => { stage = message; onProgress?.(message); };
+  const ensureActive = () => {
+    if (options.signal?.aborted) throw new Error("Recording startup canceled.");
+  };
+  const clearVideos = () => videos.forEach(video => {
+    video.pause(); video.srcObject = null; video.remove();
+  });
 
   try {
+    ensureActive();
     if (wantsScreen) {
+      progress("Choose a source in the browser sharing dialog…");
       const displayOptions = displayCaptureOptions(
         options.displaySurface,
         options.systemAudio,
         options.frameRate,
       );
       screen = await navigator.mediaDevices.getDisplayMedia(displayOptions);
+      ensureActive();
     }
     if (wantsCamera) {
+      progress("Opening camera…");
       camera = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 1280 },
@@ -199,13 +215,17 @@ export async function startCapture(
         audio: false,
       });
     }
+    ensureActive();
     if (options.microphone) {
+      progress("Opening microphone — check for a browser permission prompt…");
       microphone = await navigator.mediaDevices.getUserMedia({
         video: false,
         audio: microphoneConstraints(options.microphoneDeviceId),
       });
     }
 
+    ensureActive();
+    progress("Preparing recording…");
     if (options.microphone && !microphone?.getAudioTracks().some(track => track.readyState === "live"))
       throw new Error("The selected microphone did not provide an audio track. Choose a working microphone or turn Microphone off for a silent recording.");
     const primaryTrack = (screen ?? camera)!.getVideoTracks()[0];
@@ -224,7 +244,24 @@ export async function startCapture(
       video.srcObject = stream;
       video.muted = true;
       video.playsInline = true;
-      await video.play();
+      videos.push(video);
+      video.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none";
+      video.setAttribute("aria-hidden", "true");
+      document.body.append(video);
+      const playback = video.play();
+      if (needsCanvasComposition(options.mode, Boolean(options.backgroundImage))) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          await Promise.race([playback, new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error("Preview did not start. Return to VideoSplat and try again.")), 15000);
+          })]);
+        } finally { clearTimeout(timer); }
+        ensureActive();
+      } else {
+        // Recording uses the live source track, so a delayed preview must not
+        // block startup when Chrome focuses the tab selected for sharing.
+        void playback.catch(() => {});
+      }
       return video;
     };
     const screenVideo = await makeVideo(screen);
@@ -236,12 +273,12 @@ export async function startCapture(
       context.fillStyle = "#050609";
       context.fillRect(0, 0, width, height);
       const primary = screenVideo ?? cameraVideo;
-      if (primary) {
+      if (primary && primary.readyState >= 2) {
         if (!screenVideo && cameraVideo && backgroundCompositor)
           backgroundCompositor(context, cameraVideo, 0, 0, width, height);
         else context.drawImage(primary, 0, 0, width, height);
       }
-      if (screenVideo && cameraVideo) {
+      if (screenVideo && cameraVideo && cameraVideo.readyState >= 2) {
         const bubbleWidth = Math.round(width * 0.22);
         const bubbleHeight = Math.round((bubbleWidth * 9) / 16);
         const margin = Math.round(width * 0.025);
@@ -267,7 +304,7 @@ export async function startCapture(
     // Preserve the browser-owned source track whenever no camera overlay is
     // required. Unlike canvas animation, display/camera tracks continue while
     // the VideoSplat tab is hidden and the user works in the tab being recorded.
-    const output = needsCanvasComposition(options.mode, Boolean(options.backgroundImage))
+    output = needsCanvasComposition(options.mode, Boolean(options.backgroundImage))
       ? previewCanvas.captureStream(options.frameRate ?? 30)
       : new MediaStream([primaryTrack]);
     const audioStreams = [
@@ -275,13 +312,13 @@ export async function startCapture(
       microphone,
     ].filter((item): item is MediaStream => Boolean(item?.getAudioTracks().length));
     if (audioStreams.length === 1) {
-      audioStreams[0].getAudioTracks().forEach((track) => output.addTrack(track));
+      for (const track of audioStreams[0].getAudioTracks()) output.addTrack(track);
     } else if (audioStreams.length > 1) {
       audioContext = new AudioContext();
       const destination = audioContext.createMediaStreamDestination();
       for (const stream of audioStreams)
         audioContext.createMediaStreamSource(stream).connect(destination);
-      destination.stream.getAudioTracks().forEach((track) => output.addTrack(track));
+      for (const track of destination.stream.getAudioTracks()) output.addTrack(track);
       await audioContext.resume();
     }
 
@@ -310,8 +347,7 @@ export async function startCapture(
     const cleanup = () => {
       primaryTrack.removeEventListener("ended", screenEnded);
       clearInterval(frameTimer);
-      screenVideo?.pause();
-      cameraVideo?.pause();
+      clearVideos();
       stopTracks(screen);
       stopTracks(camera);
       stopTracks(microphone);
@@ -321,10 +357,15 @@ export async function startCapture(
     };
     if (onScreenEnded)
       primaryTrack.addEventListener("ended", screenEnded, { once: true });
+    ensureActive();
     for (let value = options.countdownSeconds ?? 0; value > 0; value--) {
+      ensureActive();
+      progress("Starting recording after countdown…");
       onCountdown?.(value);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+    ensureActive();
+    if (primaryTrack.readyState !== "live") throw new Error("Sharing ended before recording started. Select the source again and keep sharing enabled.");
     onCountdown?.(undefined);
     recorder.start(1000);
     const startedAt = Date.now();
@@ -358,12 +399,17 @@ export async function startCapture(
       },
     };
   } catch (error) {
+    clearVideos();
     clearInterval(frameTimer);
     stopTracks(screen);
     stopTracks(camera);
     stopTracks(microphone);
+    stopTracks(output);
     void audioContext?.close();
     options.backgroundImage?.close();
-    throw error;
+    const detail = error instanceof DOMException && error.name === "AbortError"
+      ? `The browser interrupted this step${error.message ? ` (${error.message})` : ""}. Try recording again.`
+      : captureErrorMessage(error);
+    throw new Error(`${stage.replace(/…$/, "")}: ${detail}`);
   }
 }

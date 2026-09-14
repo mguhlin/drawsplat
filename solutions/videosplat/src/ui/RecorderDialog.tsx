@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import { createPortal } from "react-dom";
 import {
   captureErrorMessage,
-  isScreenSelectionCanceled,
   startCapture,
   type CaptureMode,
   type CaptureSession,
@@ -36,6 +35,9 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [recordingStream, setRecordingStream] = useState<MediaStream>();
   const session = useRef<CaptureSession | undefined>(undefined);
   const stopping = useRef(false);
+  const startup = useRef<AbortController | undefined>(undefined);
+  const [starting, setStarting] = useState(false);
+  const [startupMessage, setStartupMessage] = useState("");
   const stopCurrent = useRef<() => Promise<void>>(async () => {});
   const [mode, setMode] = useState<CaptureMode>("screen");
   const [displaySurface, setDisplaySurface] = useState<DisplaySurfacePreference>("browser");
@@ -117,6 +119,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   }, [state]);
 
   useEffect(() => () => {
+    startup.current?.abort();
     session.current?.cancel();
   }, []);
 
@@ -185,13 +188,19 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   useEffect(() => { stopCurrent.current = stop; });
 
   const begin = async () => {
+    if (startup.current || session.current) return;
+    const controller = new AbortController();
+    startup.current = controller;
+    setStarting(true);
+    setStartupMessage("Opening browser sharing dialog…");
     setError(undefined);
     try {
       const backgroundImage = mode !== "screen" && backgroundFile
         ? await createImageBitmap(backgroundFile)
         : undefined;
-      session.current = await startCapture(
+      const captured = await startCapture(
         {
+          signal: controller.signal,
           mode,
           microphone,
           microphoneDeviceId: microphoneDeviceId || undefined,
@@ -203,24 +212,26 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         canvas.current!,
         () => void stopCurrent.current(),
         setCounting,
+        setStartupMessage,
       );
+      if (controller.signal.aborted) { captured.cancel(); return; }
+      session.current = captured;
       setRecordingStream(session.current.previewStream);
       setElapsed(0);
       setState("recording");
       onStatus("Recording locally — no media is being uploaded");
     } catch (reason) {
-      if (isScreenSelectionCanceled(reason)) {
-        setError(undefined);
-        onStatus("Screen selection canceled; no recording was started");
-        setState("setup");
-        return;
-      }
+      if (controller.signal.aborted) return;
       setError(captureErrorMessage(reason));
       setState("setup");
+    } finally {
+      startup.current = undefined;
+      if (!controller.signal.aborted) { setStarting(false); setCounting(undefined); }
     }
   };
 
   const close = () => {
+    startup.current?.abort();
     session.current?.cancel();
     session.current = undefined;
     onStatus("Recording canceled; no recording was saved");
@@ -287,7 +298,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     <p className="lead">Capture your screen, camera, and audio directly into this project. Permission is requested only when you start; the recording is not uploaded.</p>
     {state !== "review" && state !== "cropping" && <div className="recorder-preview">
       <canvas ref={canvas} aria-label="Recording preview" />
-      {state === "setup" && !counting && <span>Preview appears after permission is granted</span>}
+      {state === "setup" && !starting && !counting && <span>Preview appears after permission is granted</span>}
       {counting && <strong className="recorder-countdown" aria-live="assertive">{counting}</strong>}
       {state !== "setup" && <output>{state === "paused" ? "Paused · " : "● "}{clock(elapsed)}</output>}
     </div>}
@@ -323,7 +334,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       <strong>{permissionsPrepared ? "✓ Camera and microphone ready for this session" : "Camera and microphone setup was skipped"}</strong>
       <span>{permissionsPrepared ? "Your selected microphone is remembered. The browser will only ask you to choose which screen or tab to share." : "The browser may request camera or microphone access when recording starts."}</span>
     </div>}
-    {state === "setup" && <div className="recorder-settings">
+    {state === "setup" && <fieldset disabled={starting} className="recorder-settings" style={{ border: 0, padding: 0, margin: 0 }}>
       <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
       {mode !== "camera" && <fieldset className="surface-choices">
@@ -372,8 +383,9 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       /> Shared browser-tab audio when available</label>
       {mode !== "camera" && displaySurface !== "browser" && <small className="audio-capture-note">Chrome on this system only offers shared audio when you select a browser tab.</small>}
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
-      <button className="primary wide" disabled={counting !== undefined} onClick={begin}>{counting ? "Get ready…" : "Start recording"}</button>
-    </div>}
+      <button className="primary wide" disabled={starting} onClick={begin}>{starting ? (counting ? "Get ready…" : "Starting…") : "Start recording"}</button>
+    </fieldset>}
+    {starting && <p role="status">{startupMessage}</p>}
     {(state === "recording" || state === "paused") && <div className="recorder-actions">
       <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>
       <button className="primary" onClick={stop}>Stop and choose crop</button>

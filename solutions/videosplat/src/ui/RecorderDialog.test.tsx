@@ -11,6 +11,7 @@ vi.mock("./RecordingAudioMeter", () => ({ RecordingAudioMeter: () => null }));
 
 let session: CaptureSession;
 beforeEach(() => {
+  vi.clearAllMocks();
   vi.useFakeTimers();
   vi.stubGlobal("URL", class extends URL {
     static createObjectURL = vi.fn(() => "blob:recording");
@@ -64,4 +65,36 @@ it("reports encoding failure instead of leaving the timer running", async () => 
   await act(async () => { await vi.advanceTimersByTimeAsync(250); });
   expect(screen.getByRole("alert")).toHaveTextContent("browser recorder failed");
   expect(screen.getByRole("button", { name: "Start recording" })).toBeVisible();
+});
+
+
+it("prevents another startup while waiting for the browser and then starts recording", async () => {
+  let finish!: (session: CaptureSession) => void;
+  vi.mocked(startCapture).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  await begin();
+  expect(screen.getByRole("button", { name: "Starting…" })).toBeDisabled();
+  expect(screen.getByText("Opening browser sharing dialog…")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Starting…" }));
+  expect(startCapture).toHaveBeenCalledTimes(1);
+  await act(async () => { finish(session); });
+  expect(screen.getByRole("button", { name: "Stop and choose crop" })).toBeVisible();
+});
+
+it("shows startup errors and permits retry rather than silently returning to setup", async () => {
+  vi.mocked(startCapture).mockRejectedValueOnce(new Error("Opening microphone: device interrupted"));
+  await begin();
+  expect(screen.getByRole("alert")).toHaveTextContent("Opening microphone: device interrupted");
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Start recording" })); });
+  expect(screen.getByRole("button", { name: "Stop and choose crop" })).toBeVisible();
+});
+
+it("cancels a capture that finishes opening after the dialog closes", async () => {
+  let finish!: (session: CaptureSession) => void;
+  vi.mocked(startCapture).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  await begin();
+  fireEvent.click(screen.getByRole("button", { name: "Close recorder" }));
+  expect(vi.mocked(startCapture).mock.calls.at(-1)![0].signal?.aborted).toBe(true);
+  await act(async () => { finish(session); });
+  expect(session.cancel).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole("button", { name: "Stop and choose crop" })).toBeNull();
 });

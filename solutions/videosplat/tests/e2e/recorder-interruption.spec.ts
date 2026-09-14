@@ -1,7 +1,16 @@
 import { expect, test } from "@playwright/test";
 
-for (const includeAudio of [true, false]) test(`an unexpected browser recorder stop opens review with audio=${includeAudio}`, async ({ page }) => {
-  await page.addInitScript(() => {
+for (const delayedPreview of [false, true]) for (const includeAudio of [true, false]) test(`an unexpected browser recorder stop opens review with audio=${includeAudio}, delayed preview=${delayedPreview}`, async ({ page }) => {
+  await page.addInitScript((delayedPreview) => {
+    if (delayedPreview) {
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        const result = play.call(this);
+        if (!this.srcObject) return result;
+        void result.catch(() => {});
+        return new Promise<void>(() => {});
+      };
+    }
     sessionStorage.setItem("videosplat-splash-seen", "1");
     const NativeRecorder = MediaRecorder;
     (window as unknown as { MediaRecorder: typeof MediaRecorder }).MediaRecorder = class extends NativeRecorder {
@@ -33,7 +42,7 @@ for (const includeAudio of [true, false]) test(`an unexpected browser recorder s
       stream.getVideoTracks()[0].addEventListener("ended", () => clearInterval(timer));
       return stream;
     } });
-  });
+  }, delayedPreview);
   await page.goto("./");
   await page.getByRole("button", { name: "Record video", exact: true }).click();
   if (!includeAudio) await page.getByRole("checkbox", { name: "Microphone", exact: true }).uncheck();
@@ -47,4 +56,27 @@ for (const includeAudio of [true, false]) test(`an unexpected browser recorder s
   await expect(page.getByRole("button", { name: "Stop and choose crop" })).toHaveCount(0);
   await page.getByRole("button", { name: "Use full recording" }).click();
   await expect(page.locator(".timeline-clip.video")).toHaveCount(1);
+});
+
+
+test("microphone startup abort is visible and releases screen sharing", async ({ page }) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("videosplat-splash-seen", "1");
+    Object.defineProperty(navigator.mediaDevices, "getDisplayMedia", { value: async () => {
+      const canvas = document.createElement("canvas");
+      const stream = canvas.captureStream(15);
+      (window as unknown as { capturedTrack: MediaStreamTrack }).capturedTrack = stream.getVideoTracks()[0];
+      return stream;
+    } });
+    Object.defineProperty(navigator.mediaDevices, "getUserMedia", { value: async () => {
+      throw new DOMException("Microphone startup failed", "AbortError");
+    } });
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Record video", exact: true }).click();
+  await page.getByRole("button", { name: "Start recording", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Opening microphone");
+  await expect(page.getByRole("alert")).toContainText("Microphone startup failed");
+  await expect(page.getByRole("button", { name: "Start recording", exact: true })).toBeEnabled();
+  expect(await page.evaluate(() => (window as unknown as { capturedTrack: MediaStreamTrack }).capturedTrack.readyState)).toBe("ended");
 });

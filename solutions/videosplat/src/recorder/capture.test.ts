@@ -48,7 +48,7 @@ describe("local recorder capability helpers", () => {
       preferCurrentTab: true,
       selfBrowserSurface: "include",
     });
-    expect(displayCaptureOptions("window")).not.toHaveProperty("video.displaySurface");
+    expect(displayCaptureOptions("window")).toHaveProperty("video.displaySurface", "window");
     expect(displayCaptureOptions("window")).not.toHaveProperty("preferCurrentTab");
     expect(displayCaptureOptions("window")).not.toHaveProperty("selfBrowserSurface");
     expect(displayCaptureOptions("window")).not.toHaveProperty("surfaceSwitching");
@@ -56,7 +56,7 @@ describe("local recorder capability helpers", () => {
       audio: false,
       video: { frameRate: { ideal: 60 } },
     });
-    expect(displayCaptureOptions("monitor", false, 60)).not.toHaveProperty("video.displaySurface");
+    expect(displayCaptureOptions("monitor", false, 60)).toHaveProperty("video.displaySurface", "monitor");
     expect(displayCaptureOptions("monitor", false, 60)).not.toHaveProperty("surfaceSwitching");
   });
 });
