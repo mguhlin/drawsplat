@@ -62,3 +62,6 @@ body{position:fixed;inset:0}
 .quick-start{text-align:left;margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1rem}.quick-start h2{font-size:1.1rem;margin:0 0 .7rem}.quick-start ol{padding-left:1.25rem;margin:0;display:grid;gap:.65rem;font-size:.9rem}.quick-start p{font-size:.82rem;margin:.9rem 0 0}.drop-zone{align-items:safe center}.drop-card{padding:1.5rem}.drop-card .drop-logo{width:min(110px,30vw)}
 .workspace:has(#dropZone:not([hidden])){grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 .workspace:has(#dropZone:not([hidden]))>.sidebar,.workspace:has(#dropZone:not([hidden]))>.tools{display:none}
+
+.drop-card .quick-start,.drop-card .quick-start h2,.drop-card .quick-start li,.drop-card .quick-start p{text-align:start}
+.quick-start ol{padding-inline-start:1.5rem;line-height:1.55;gap:.85rem}.quick-start li{padding-inline-start:.25rem}.quick-start li strong{display:block;margin-bottom:.1rem}.quick-start li::marker{font-weight:700;color:var(--purple)}
