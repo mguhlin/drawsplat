@@ -21,6 +21,7 @@
       <strong>PDFsplat™</strong>
     </div>
     <div class="actions" role="toolbar" aria-label="Document actions">
+      <button id="scanButton" type="button">Scan to PDF</button>
       <button id="openButton" class="primary" type="button">Open PDF</button>
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
@@ -53,6 +54,7 @@
           <img class="drop-logo" src="./pdfsplat.png" alt="PDFsplat logo">
           <h1>Open a PDF. Keep it private.</h1>
           <p>Drop a PDF here or choose a file. Processing happens on this device.</p>
+          <button id="scanStartButton" type="button">Scan paper or photos</button>
           <button id="chooseButton" class="primary" type="button">Choose PDF</button>
         </div>
       </div>
@@ -278,6 +280,32 @@
         <button id="vaultRun" class="primary" type="submit" hidden>Continue</button>
       </div>
     </form>
+  </dialog>
+
+
+  <dialog id="scanDialog" aria-labelledby="scanTitle" class="scan-dialog">
+    <div class="scan-heading"><h2 id="scanTitle">Scan to PDF</h2><button id="scanClose" type="button" aria-label="Close scanner">Close</button></div>
+    <p>Photograph paper, adjust its corners, and combine the pages into a PDF. Photos stay on this device. Scans are images; text recognition (OCR) is not included.</p>
+    <p id="scanStatus" role="status" aria-live="polite"></p>
+    <fieldset id="scanControls" class="scan-controls">
+      <legend class="sr-only">Scan controls</legend>
+      <div class="scan-actions"><button id="scanUpload" type="button">Choose photos</button><button id="scanTakePhoto" type="button">Take a photo</button><button id="scanCamera" type="button">Open camera</button></div>
+      <input id="scanFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      <input id="scanCapture" type="file" accept="image/*" capture="environment" hidden>
+      <p class="tool-hint">Choose or drop JPEG, PNG or WebP photos · up to 20 pages · 40 MB per photo. Take a photo opens the camera on supported phones.</p>
+      <section id="scanCameraPanel" hidden><video id="scanVideo" muted playsinline aria-label="Document camera preview"></video><div class="scan-actions"><button id="scanSnapshot" type="button">Capture page</button><button id="scanStopCamera" type="button">Stop camera</button></div></section>
+      <ol id="scanPages" class="scan-pages" aria-label="Scanned pages"></ol>
+      <section id="scanEditor" hidden>
+        <h3>Adjust page corners</h3><p>Drag each corner to the paper edge. With a corner focused, use arrow keys for fine adjustment, or Shift + arrow for larger steps.</p>
+        <div id="scanPhotoStage" class="scan-photo-stage"><img id="scanPhoto" alt="Original document photo"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon id="scanOutline" /></svg>
+        <button type="button" class="scan-corner" aria-label="Top left corner">1</button><button type="button" class="scan-corner" aria-label="Top right corner">2</button><button type="button" class="scan-corner" aria-label="Bottom right corner">3</button><button type="button" class="scan-corner" aria-label="Bottom left corner">4</button></div>
+        <div class="scan-actions"><label>Appearance <select id="scanFilter"><option value="color">Original color</option><option value="clean">Clean up contrast</option><option value="gray">Grayscale</option><option value="bw">Black and white</option></select></label><button id="scanResetCorners" type="button">Reset corners</button><button id="scanRotate" type="button">Rotate output 90°</button><button id="scanSave" class="primary" type="button">Save page</button></div>
+        <img id="scanResult" class="scan-result" alt="Corrected scan preview" hidden>
+      </section>
+      <label>PDF page size <select id="scanPaper"><option value="a4">A4</option><option value="letter">US Letter</option><option value="photo">Fit scan</option></select></label>
+      <div class="scan-actions"><button id="scanDownload" class="primary" type="button" disabled>Download scanned PDF</button><button id="scanAdd" type="button" disabled>Add scans to editor</button></div>
+      <p class="tool-hint">Save each page before creating the PDF. Adding scans appends them to an open document. Closing the scanner discards this scan session.</p>
+    </fieldset>
   </dialog>
 
   <script src="../../vendor/pdf.min.js"></script>

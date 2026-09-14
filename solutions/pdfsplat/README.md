@@ -4,6 +4,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 
 ## Public-release workflow
 
+- Scan paper with a camera or import photos, adjust four page corners with pointer or keyboard controls, correct perspective, rotate and clean up scans, reorder pages, and create a local PDF.
 - Open or drop a local PDF.
 - Add another PDF and reorder pages across documents.
 - Rotate, duplicate, delete, and extract pages.
@@ -26,6 +27,30 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Export a semantic HTML alternative with a document language, descriptive title, skip link, one H1, page sections, readable text, and descriptions supplied for added images.
 
 Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers and Web Crypto require HTTPS, localhost, or an equivalent secure context.
+
+## Scan to PDF
+
+Choose **Scan to PDF** in the toolbar or **Scan paper or photos** on the opening
+screen. Choose/drop photos, use **Take a photo** on a supported phone, or explicitly
+open the live camera. Camera access is requested only when you press Open camera;
+no microphone is requested. Close, Stop camera, PDF creation, and leaving the page
+stop the camera. Photos and PDF bytes stay in browser memory.
+
+Adjust the four corners clockwise (top left, top right, bottom right, bottom left)
+and choose original color, contrast cleanup, grayscale, or black and white. Arrow
+keys move a focused corner; Shift moves it farther. Save each page to preview the
+perspective correction. Review every page, reorder or remove pages, and download
+A4, US Letter, or fit-to-scan PDFs. **Add scans to editor** opens a new document or
+appends to the current document with undo support. Closing the scanner discards
+the scan session; download or add the pages first.
+
+Up to 20 photos, 40 MB each; decoded photos are reduced to a 2,200-pixel longest
+edge for predictable browser memory use. JPEG, PNG, and WebP are supported; other
+phone formats depend on the browser decoder. Perspective correction uses the
+manually chosen corners, not automatic document detection. The result is an
+image-only PDF, with no OCR or searchable text layer. Cleanup does not restore
+blurred or missing detail. Desktop Chrome and Firefox are tested; native mobile
+camera/file-picker behavior still requires device-specific verification.
 
 ## Architecture and privacy
 
@@ -74,6 +99,8 @@ The pdf-lib and hash-wasm license files are bundled with their assets. No AGPL P
 ## Tests
 
 ```bash
+npm install
+npx playwright install chrome firefox
 npx playwright test -c solutions/pdfsplat/playwright.config.js
 ```
 

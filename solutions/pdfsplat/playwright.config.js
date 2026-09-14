@@ -2,6 +2,11 @@ const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './tests',
+  outputDir: './test-results',
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium', channel: 'chrome' } },
+    { name: 'firefox', use: { browserName: 'firefox' } },
+  ],
   timeout: 30_000,
   use: { baseURL: 'http://127.0.0.1:4182' },
   webServer: {

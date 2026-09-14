@@ -1,3 +1,4 @@
+import { setupScanner } from "./scan-to-pdf.js";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
 import { createEpub } from "./epub-export.js";
 
@@ -141,6 +142,7 @@ async function openFile(file) {
     syncHistory();
     await renderAll();
     announce(`${file.name} opened. ${state.pages.length} pages.`);
+    return true;
   } catch (error) {
     console.error(error);
     announce(error?.name === "PasswordException" ? "This encrypted PDF needs password support not available in this release." : error.message || "The PDF could not be opened.");
@@ -160,6 +162,7 @@ async function mergeFile(file) {
     commit(before, "Add PDF");
     await renderAll();
     announce(`${source.pdf.numPages} pages from ${file.name} added.`);
+    return true;
   } catch (error) {
     console.error(error);
     announce(error.message || "The additional PDF could not be opened.");
@@ -1546,6 +1549,7 @@ window.addEventListener("keydown", (e) => {
   const target = e.target;
   const editing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
   const modalOpen = Boolean(document.querySelector("dialog[open]"));
+  if (document.getElementById("scanDialog").open) return;
   if (mod && key === "o") {
     e.preventDefault();
     els.fileInput.click();
@@ -1581,3 +1585,8 @@ window.addEventListener("resize", () => {
 window.addEventListener("beforeunload", () => {
   for (const asset of state.assets.values()) URL.revokeObjectURL(asset.url);
 });
+
+setupScanner({ addPdf: async file => {
+  const added = await (state.pages.length ? mergeFile(file) : openFile(file));
+  if (!added) throw new Error("The scan could not be added. Download the scanned PDF to keep a copy.");
+} });
