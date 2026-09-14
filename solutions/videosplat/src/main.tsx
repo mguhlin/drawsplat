@@ -6,7 +6,7 @@ import "./ui/media.css";
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", async () => {
-    const reloadKey = "videosplat-worker-reloaded-v21";
+    const reloadKey = "videosplat-worker-reloaded-v24";
     const replacingExistingWorker = Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       if (!replacingExistingWorker) return;
@@ -15,10 +15,10 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
       window.location.reload();
     });
     const registration = await navigator.serviceWorker.register(
-      `${import.meta.env.BASE_URL}sw.js?v=21`,
+      `${import.meta.env.BASE_URL}sw.js?v=24`,
       { updateViaCache: "none" },
     );
-    await registration.update();
+    await registration?.update();
   });
 }
 createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);

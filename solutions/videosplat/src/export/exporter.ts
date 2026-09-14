@@ -3,6 +3,7 @@ import { activeVisualClips, projectDuration } from "../timeline/engine";
 import type { Clip, VideoSplatProject } from "../domain/project";
 import { renderRect, type FitMode } from "../render/geometry";
 import { transcodeExport, type ExportFormat } from "./transcoder";
+import { supportedRecordingType } from "../media/recording";
 
 export interface ExportOptions {
   width: number;
@@ -52,12 +53,6 @@ export const audioGain = (clip: Clip, time: number) => {
   );
 };
 
-const recorderType = () =>
-  [
-    "video/webm;codecs=vp9,opus",
-    "video/webm;codecs=vp8,opus",
-    "video/webm",
-  ].find((type) => MediaRecorder.isTypeSupported(type));
 const waitMedia = (media: HTMLMediaElement) =>
   new Promise<void>((resolve, reject) => {
     media.onloadedmetadata = () => resolve();
@@ -85,7 +80,7 @@ export async function exportProject(
     throw new Error(
       "This browser cannot export a local composition. Try current Chrome or Edge.",
     );
-  const mimeType = recorderType();
+  const mimeType = supportedRecordingType(options.includeAudio);
   if (!mimeType) throw new Error("This browser has no supported WebM encoder.");
   const fullDuration = projectDuration(project);
   const rangeStart = Math.max(0, options.rangeStart ?? 0);

@@ -35,6 +35,8 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [reviewPlaying, setReviewPlaying] = useState(false);
   const [recordingStream, setRecordingStream] = useState<MediaStream>();
   const session = useRef<CaptureSession | undefined>(undefined);
+  const stopping = useRef(false);
+  const stopCurrent = useRef<() => Promise<void>>(async () => {});
   const [mode, setMode] = useState<CaptureMode>("screen");
   const [displaySurface, setDisplaySurface] = useState<DisplaySurfacePreference>("browser");
   const [microphone, setMicrophone] = useState(true);
@@ -96,9 +98,19 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   };
 
   useEffect(() => {
-    if (state !== "recording") return;
+    if (state !== "recording" && state !== "paused") return;
     const timer = window.setInterval(
-      () => setElapsed(Math.floor((Date.now() - session.current!.startedAt) / 1000)),
+      () => {
+        const active = session.current;
+        if (!active || stopping.current) return;
+        if (active.state === "stopped") {
+          setError("The browser stopped recording before you pressed Stop. Review the saved portion before using it; it may be incomplete.");
+          void stopCurrent.current();
+          return;
+        }
+        if (state === "recording")
+          setElapsed(Math.floor((Date.now() - active.startedAt) / 1000));
+      },
       250,
     );
     return () => clearInterval(timer);
@@ -106,6 +118,9 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   useEffect(() => () => {
     session.current?.cancel();
+  }, []);
+
+  useEffect(() => () => {
     if (recordingUrl) URL.revokeObjectURL(recordingUrl);
   }, [recordingUrl]);
 
@@ -144,7 +159,8 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   }, []);
 
   const stop = async () => {
-    if (!session.current || state === "saving") return;
+    if (!session.current || stopping.current) return;
+    stopping.current = true;
     setState("saving");
     try {
       const blob = await session.current.stop();
@@ -158,10 +174,15 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       setState("review");
       onStatus("Recording finished — select the portion to keep");
     } catch (reason) {
+      session.current = undefined;
       setError(captureErrorMessage(reason));
       setState("setup");
+    } finally {
+      stopping.current = false;
     }
   };
+
+  useEffect(() => { stopCurrent.current = stop; });
 
   const begin = async () => {
     setError(undefined);
@@ -180,7 +201,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
           backgroundImage,
         },
         canvas.current!,
-        () => void stop(),
+        () => void stopCurrent.current(),
         setCounting,
       );
       setRecordingStream(session.current.previewStream);

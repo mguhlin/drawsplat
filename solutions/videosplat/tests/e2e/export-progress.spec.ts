@@ -1,13 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { resolve, basename } from 'node:path';
 
 test.use({ serviceWorkers: 'block' });
-test('export progress survives cancellation and repeated MP4 conversion', async ({ page, context }) => {
+test('export progress survives cancellation and repeated MP4 conversion', async ({ page }) => {
   test.setTimeout(90000);
-  await context.route('**/solutions/mediasplat/ffmpeg/**', route => route.fulfill({
-    path: resolve('../mediasplat/ffmpeg', basename(new URL(route.request().url()).pathname)),
-    headers: { 'Content-Type': route.request().url().endsWith('.js') ? 'text/javascript' : 'application/octet-stream' },
-  }));
   await page.addInitScript(() => sessionStorage.setItem('videosplat-splash-seen', '1'));
   await page.goto('./');
   await page.getByRole('menuitem', { name: 'File', exact: true }).click();

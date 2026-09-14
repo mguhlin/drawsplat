@@ -216,7 +216,12 @@ test("floats an active recorder in a cross-browser popup", async ({ page }) => {
   await expect(popup.getByRole("dialog", { name: "Floating VideoSplat recorder" })).toBeVisible();
   await expect(popup.getByText(/● Recording ·/)).toBeVisible();
   await expect(popup.getByText("No audio source connected. This recording will be silent.")).toBeVisible();
-  await popup.getByRole("button", { name: "Return to editor" }).click();
+  // Firefox may close the target before Playwright acknowledges the click.
+  const closed = popup.waitForEvent("close");
+  await popup.getByRole("button", { name: "Return to editor" }).click({ noWaitAfter: true }).catch(error => {
+    if (!popup.isClosed()) throw error;
+  });
+  await closed;
   await expect(page.getByRole("heading", { name: "Record locally" })).toBeVisible();
   await page.getByRole("button", { name: "Cancel" }).click();
 });
@@ -548,10 +553,7 @@ test("applies clip transforms in the layered preview", async ({ page }) => {
   await page.getByLabel("Scale", { exact: true }).fill("0.5");
   await page.getByLabel("Opacity").fill("0.6");
   await expect(page.locator(".visual-layer")).toHaveCSS("opacity", "0.6");
-  await expect(page.locator(".visual-layer")).toHaveAttribute(
-    "style",
-    /translate\(24px, 0px\) scale\(0.5\)/,
-  );
+  await expect(page.locator(".visual-layer")).toHaveCSS("transform", "matrix(0.5, 0, 0, 0.5, 24, 0)");
 });
 
 test("creates titles with transitions and visual effects", async ({ page }) => {

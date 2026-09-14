@@ -1,4 +1,6 @@
 import { FilesetResolver, ImageSegmenter, type ImageSegmenterResult } from "@mediapipe/tasks-vision";
+import { supportedRecordingType } from "../media/recording";
+export { supportedRecordingType } from "../media/recording";
 
 export type CaptureMode = "screen" | "camera" | "screen-camera";
 export type DisplaySurfacePreference = "browser" | "window" | "monitor";
@@ -27,14 +29,6 @@ export interface CaptureSession {
 }
 
 type RecordingState = "recording" | "paused" | "stopped";
-
-export function supportedRecordingType() {
-  return [
-    "video/webm;codecs=vp9,opus",
-    "video/webm;codecs=vp8,opus",
-    "video/webm",
-  ].find((type) => MediaRecorder.isTypeSupported(type));
-}
 
 export function microphoneConstraints(deviceId?: string): MediaTrackConstraints {
   return {
@@ -175,8 +169,7 @@ export async function startCapture(
 ): Promise<CaptureSession> {
   if (!navigator.mediaDevices || !("MediaRecorder" in window))
     throw new Error("This browser does not support local screen and camera recording.");
-  const mimeType = supportedRecordingType();
-  if (!mimeType) throw new Error("This browser cannot create a WebM recording.");
+  if (!supportedRecordingType()) throw new Error("This browser cannot create a WebM recording.");
 
   const wantsScreen = options.mode !== "camera";
   const wantsCamera = options.mode !== "screen";
@@ -293,6 +286,8 @@ export async function startCapture(
     }
 
     const chunks: Blob[] = [];
+    const mimeType = supportedRecordingType(output.getAudioTracks().length > 0);
+    if (!mimeType) throw new Error("This browser cannot encode the selected recording tracks.");
     const recorder = new MediaRecorder(output, {
       mimeType,
       videoBitsPerSecond: 4_000_000,
@@ -308,10 +303,12 @@ export async function startCapture(
           ? resolve(new Blob(chunks, { type: mimeType }))
           : reject(new Error("The recorder produced an empty file."));
     });
-    const screenTrack = screen?.getVideoTracks()[0];
+    // A recorder error can arrive long before the user asks for the result.
+    // Keep the rejection handled now; stop() still reports the original error.
+    void result.catch(() => {});
     const screenEnded = () => onScreenEnded?.();
     const cleanup = () => {
-      screenTrack?.removeEventListener("ended", screenEnded);
+      primaryTrack.removeEventListener("ended", screenEnded);
       clearInterval(frameTimer);
       screenVideo?.pause();
       cameraVideo?.pause();
@@ -322,8 +319,8 @@ export async function startCapture(
       void audioContext?.close();
       options.backgroundImage?.close();
     };
-    if (screenTrack && onScreenEnded)
-      screenTrack.addEventListener("ended", screenEnded, { once: true });
+    if (onScreenEnded)
+      primaryTrack.addEventListener("ended", screenEnded, { once: true });
     for (let value = options.countdownSeconds ?? 0; value > 0; value--) {
       onCountdown?.(value);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -346,10 +343,13 @@ export async function startCapture(
       },
       async stop() {
         if (recorder.state !== "inactive") recorder.stop();
-        const blob = await result;
-        cleanup();
-        if (canceled) throw new DOMException("Recording canceled", "AbortError");
-        return blob;
+        try {
+          const blob = await result;
+          if (canceled) throw new DOMException("Recording canceled", "AbortError");
+          return blob;
+        } finally {
+          cleanup();
+        }
       },
       cancel() {
         canceled = true;
