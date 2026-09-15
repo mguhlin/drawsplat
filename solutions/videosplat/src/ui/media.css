@@ -1211,3 +1211,17 @@
 
 .limits-list { padding-left: 22px; line-height: 1.6; }
 .limits-list li { margin-bottom: 12px; }
+
+.mobile-panels { display:none; }
+@media(max-width:850px) {
+  .app-shell { height:100dvh; grid-template-rows:auto auto minmax(0,1fr) 30px; }
+  .toolbar { flex-wrap:wrap; overflow:visible; padding:6px; }
+  .mobile-panels { display:flex; flex-basis:100%; gap:6px; }
+  .mobile-panels button { flex:1; min-height:40px; }
+  .mobile-panels button[aria-pressed="true"] { background:var(--purple); }
+  .workspace { grid-template:"pane" minmax(150px,1fr) "timeline" minmax(150px,35%)/minmax(0,1fr); }
+  .workspace > .media-panel, .workspace > .stage, .workspace > .inspector { display:none; grid-area:pane; overflow:auto; }
+  .workspace[data-mobile-panel="media"] > .media-panel,
+  .workspace[data-mobile-panel="inspector"] > .inspector { display:block; }
+  .workspace[data-mobile-panel="preview"] > .stage { display:grid; }
+}

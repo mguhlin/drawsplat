@@ -1,3 +1,5 @@
+import { recordingResult } from "../media/recording";
+import { waitForMedia } from "../media/ready";
 import { chromaSettings, createChromaRenderer } from "../render/chroma";
 import { drawSubtitle } from "../captions/render";
 import { activeVisualClips, projectDuration } from "../timeline/engine";
@@ -54,19 +56,6 @@ export const audioGain = (clip: Clip, time: number) => {
   );
 };
 
-const waitMedia = (media: HTMLMediaElement) =>
-  new Promise<void>((resolve, reject) => {
-    media.onloadedmetadata = () => resolve();
-    media.onerror = () =>
-      reject(new Error("A timeline media file could not be decoded."));
-  });
-const waitImage = (image: HTMLImageElement) =>
-  new Promise<void>((resolve, reject) => {
-    image.onload = () => resolve();
-    image.onerror = () =>
-      reject(new Error("A timeline image could not be decoded."));
-  });
-
 export async function exportProject(
   project: VideoSplatProject,
   urls: Record<string, string>,
@@ -106,26 +95,29 @@ export async function exportProject(
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) throw new Error("Canvas rendering is unavailable.");
   const stream = canvas.captureStream(options.frameRate);
-  const audioContext = options.includeAudio
-    ? new AudioContext({ latencyHint: "playback" })
-    : undefined;
-  const audioDestination = audioContext?.createMediaStreamDestination();
-  const audioLimiter = audioContext?.createDynamicsCompressor();
-  if (audioLimiter && audioDestination) {
-    audioLimiter.threshold.value = -3;
-    audioLimiter.knee.value = 6;
-    audioLimiter.ratio.value = 12;
-    audioLimiter.attack.value = 0.003;
-    audioLimiter.release.value = 0.25;
-    audioLimiter.connect(audioDestination);
-  }
-  audioDestination?.stream
-    .getAudioTracks()
-    .forEach((track) => stream.addTrack(track));
+  let audioContext: AudioContext | undefined;
+  let activeRecorder: MediaRecorder | undefined;
+  let frame = 0;
   const media = new Map<string, HTMLMediaElement>();
   const audioGains = new Map<string, GainNode>();
   const images = new Map<string, HTMLImageElement>();
   try {
+    audioContext = options.includeAudio
+      ? new AudioContext({ latencyHint: "playback" })
+      : undefined;
+    const audioDestination = audioContext?.createMediaStreamDestination();
+    const audioLimiter = audioContext?.createDynamicsCompressor();
+    if (audioLimiter && audioDestination) {
+      audioLimiter.threshold.value = -3;
+      audioLimiter.knee.value = 6;
+      audioLimiter.ratio.value = 12;
+      audioLimiter.attack.value = 0.003;
+      audioLimiter.release.value = 0.25;
+      audioLimiter.connect(audioDestination);
+    }
+    audioDestination?.stream
+      .getAudioTracks()
+      .forEach((track) => stream.addTrack(track));
     for (const track of project.tracks)
       for (const clip of track.clips) {
         if (!clip.assetId) continue;
@@ -135,7 +127,7 @@ export async function exportProject(
         if (asset.kind === "image") {
           const image = new Image();
           image.src = url;
-          await waitImage(image);
+          await waitForMedia(image, signal);
           images.set(clip.id, image);
         } else {
           const element = document.createElement(
@@ -157,8 +149,8 @@ export async function exportProject(
           // Detached media elements can be throttled by Chromium, producing
           // missing or stuttering audio in a real-time MediaRecorder export.
           document.body.append(element);
-          await waitMedia(element);
           media.set(clip.id, element);
+          await waitForMedia(element, signal);
           if (audioContext && audioLimiter) {
             try {
               const gain = audioContext.createGain();
@@ -178,19 +170,8 @@ export async function exportProject(
       videoBitsPerSecond: options.videoBitsPerSecond,
       audioBitsPerSecond: 128_000,
     });
-    const chunks: Blob[] = [];
-    const result = new Promise<Blob>((resolve, reject) => {
-      recorder.ondataavailable = (event) => {
-        if (event.data.size) chunks.push(event.data);
-      };
-      recorder.onerror = () =>
-        reject(new Error("Local composition encoding failed."));
-      recorder.onstop = () =>
-        chunks.length
-          ? resolve(new Blob(chunks, { type: mimeType }))
-          : reject(new Error("The exporter produced an empty file."));
-    });
-    let frame = 0;
+    activeRecorder = recorder;
+    const result = recordingResult(recorder, mimeType);
     const started = performance.now();
     const finish = () => {
       cancelAnimationFrame(frame);
@@ -198,131 +179,146 @@ export async function exportProject(
       if (recorder.state !== "inactive") recorder.stop();
     };
     recorder.start(1000);
-    await new Promise<void>((resolve) => {
-      const stop = () => { finish(); resolve(); };
+    await new Promise<void>((resolve, reject) => {
+      let finished = false;
+      const complete = (error?: unknown) => {
+        if (finished) return;
+        finished = true;
+        signal?.removeEventListener("abort", stop);
+        recorder.removeEventListener("error", failed);
+        recorder.removeEventListener("stop", interrupted);
+        finish();
+        error ? reject(error) : resolve();
+      };
+      const stop = () => complete();
+      const failed = () => complete(new Error("Local composition encoding failed."));
+      const interrupted = () => complete(new Error("The browser stopped exporting early. Retry with a smaller export."));
+      recorder.addEventListener("error", failed);
+      recorder.addEventListener("stop", interrupted);
       signal?.addEventListener("abort", stop, { once: true });
       if (signal?.aborted) { stop(); return; }
-      const draw = async () => {
-        const elapsed = (performance.now() - started) / 1000;
-        const time = rangeStart + elapsed;
-        if (signal?.aborted || elapsed >= duration) {
-          signal?.removeEventListener("abort", stop);
-          finish();
-          resolve();
-          return;
-        }
-        context.save();
-        context.fillStyle = project.canvas.background;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.restore();
-        for (const [clipId, element] of media) {
-          const track = project.tracks.find((item) =>
-            item.clips.some((clip) => clip.id === clipId),
-          );
-          const location = track?.clips.find((clip) => clip.id === clipId);
-          const gain = audioGains.get(clipId);
-          if (!location) continue;
-          const active =
-            time >= location.start && time < location.start + location.duration;
-          if (!active) {
-            if (gain) gain.gain.value = 0;
-            if (!element.paused) element.pause();
-            continue;
+      const draw = () => {
+        if (finished) return;
+        try {
+          const elapsed = (performance.now() - started) / 1000;
+          const time = rangeStart + elapsed;
+          if (signal?.aborted || elapsed >= duration) {
+            complete();
+            return;
           }
-          const expected = location.sourceStart + time - location.start;
-          if (Math.abs(element.currentTime - expected) > 0.25)
-            element.currentTime = expected;
-          element.volume = 1;
-          if (gain)
-            gain.gain.value = track?.muted ? 0 : audioGain(location, time);
-          if (element.paused) element.play().catch(() => {});
-        }
-        for (const { clip } of activeVisualClips(project, time)) {
-          if (clip.kind === "caption" && options.burnSubtitles === false) continue;
-          const p = clip.properties;
           context.save();
-          context.globalAlpha =
-            Number(p.opacity ?? 1) * transitionGain(clip, time);
-          if (clip.kind === "caption" && p.subtitleLayout) {
-            drawSubtitle(context, clip, canvas.width, canvas.height);
-            context.restore();
-            continue;
-          }
-          context.filter = `brightness(${Number(p.brightness ?? 1)}) contrast(${Number(p.contrast ?? 1)}) saturate(${Number(p.saturation ?? 1)}) hue-rotate(${Number(p.hue ?? 0)}deg) grayscale(${Number(p.grayscale ?? 0)}) blur(${Number(p.blur ?? 0)}px)`;
-          context.translate(
-            canvas.width / 2 + Number(p.x ?? 0),
-            canvas.height / 2 + Number(p.y ?? 0),
-          );
-          context.rotate((Number(p.rotation ?? 0) * Math.PI) / 180);
-          context.scale(Number(p.scale ?? 1), Number(p.scale ?? 1));
-          if (clip.kind === "text" || clip.kind === "caption") {
-            const text = String(p.text ?? clip.name);
-            const fontSize = Number(p.fontSize ?? 48);
-            context.font = `700 ${fontSize}px system-ui`;
-            context.textAlign = "center";
-            context.textBaseline = "middle";
-            const lines = text.split("\n");
-            const width =
-              Math.max(
-                ...lines.map((line) => context.measureText(line).width),
-              ) + 32;
-            if (String(p.background ?? "transparent") !== "transparent") {
-              context.fillStyle = String(p.background);
-              context.fillRect(
-                -width / 2,
-                (-fontSize * lines.length) / 2 - 12,
-                width,
-                fontSize * lines.length + 24,
-              );
-            }
-            context.fillStyle = String(p.color ?? "#ffffff");
-            lines.forEach((line, index) =>
-              context.fillText(
-                line,
-                0,
-                (index - (lines.length - 1) / 2) * fontSize * 1.15,
-              ),
-            );
-          } else {
-            const source = (images.get(clip.id) ?? media.get(clip.id)) as
-              | HTMLImageElement
-              | HTMLVideoElement
-              | undefined;
-            if (source) {
-              const sourceWidth =
-                source instanceof HTMLVideoElement
-                  ? source.videoWidth
-                  : source.naturalWidth;
-              const sourceHeight =
-                source instanceof HTMLVideoElement
-                  ? source.videoHeight
-                  : source.naturalHeight;
-              const rect = renderRect(
-                sourceWidth,
-                sourceHeight,
-                canvas.width,
-                canvas.height,
-                String(p.fit ?? "fit") as FitMode,
-              );
-              const key = chromaSettings(p);
-              const factor = Math.min(1, Math.max(canvas.width, canvas.height) / Math.max(sourceWidth, sourceHeight));
-              const renderedSource = key.enabled ? renderChroma(source, sourceWidth * factor, sourceHeight * factor, key) : source;
-              context.drawImage(
-                renderedSource,
-                rect.x,
-                rect.y,
-                rect.width,
-                rect.height,
-              );
-            }
-          }
+          context.fillStyle = project.canvas.background;
+          context.fillRect(0, 0, canvas.width, canvas.height);
           context.restore();
-        }
-        onProgress(
-          Math.min(1, elapsed / duration) *
-            (options.format === "webm" ? 1 : 0.85),
-        );
-        frame = requestAnimationFrame(draw);
+          for (const [clipId, element] of media) {
+            const track = project.tracks.find((item) =>
+              item.clips.some((clip) => clip.id === clipId),
+            );
+            const location = track?.clips.find((clip) => clip.id === clipId);
+            const gain = audioGains.get(clipId);
+            if (!location) continue;
+            const active =
+              time >= location.start && time < location.start + location.duration;
+            if (!active) {
+              if (gain) gain.gain.value = 0;
+              if (!element.paused) element.pause();
+              continue;
+            }
+            const expected = location.sourceStart + time - location.start;
+            if (Math.abs(element.currentTime - expected) > 0.25)
+              element.currentTime = expected;
+            element.volume = 1;
+            if (gain)
+              gain.gain.value = track?.muted ? 0 : audioGain(location, time);
+            if (element.paused) element.play().catch(error => { if (!finished) complete(error); });
+          }
+          for (const { clip } of activeVisualClips(project, time)) {
+            if (clip.kind === "caption" && options.burnSubtitles === false) continue;
+            const p = clip.properties;
+            context.save();
+            context.globalAlpha =
+              Number(p.opacity ?? 1) * transitionGain(clip, time);
+            if (clip.kind === "caption" && p.subtitleLayout) {
+              drawSubtitle(context, clip, canvas.width, canvas.height);
+              context.restore();
+              continue;
+            }
+            context.filter = `brightness(${Number(p.brightness ?? 1)}) contrast(${Number(p.contrast ?? 1)}) saturate(${Number(p.saturation ?? 1)}) hue-rotate(${Number(p.hue ?? 0)}deg) grayscale(${Number(p.grayscale ?? 0)}) blur(${Number(p.blur ?? 0)}px)`;
+            context.translate(
+              canvas.width / 2 + Number(p.x ?? 0),
+              canvas.height / 2 + Number(p.y ?? 0),
+            );
+            context.rotate((Number(p.rotation ?? 0) * Math.PI) / 180);
+            context.scale(Number(p.scale ?? 1), Number(p.scale ?? 1));
+            if (clip.kind === "text" || clip.kind === "caption") {
+              const text = String(p.text ?? clip.name);
+              const fontSize = Number(p.fontSize ?? 48);
+              context.font = `700 ${fontSize}px system-ui`;
+              context.textAlign = "center";
+              context.textBaseline = "middle";
+              const lines = text.split("\n");
+              const width =
+                Math.max(
+                  ...lines.map((line) => context.measureText(line).width),
+                ) + 32;
+              if (String(p.background ?? "transparent") !== "transparent") {
+                context.fillStyle = String(p.background);
+                context.fillRect(
+                  -width / 2,
+                  (-fontSize * lines.length) / 2 - 12,
+                  width,
+                  fontSize * lines.length + 24,
+                );
+              }
+              context.fillStyle = String(p.color ?? "#ffffff");
+              lines.forEach((line, index) =>
+                context.fillText(
+                  line,
+                  0,
+                  (index - (lines.length - 1) / 2) * fontSize * 1.15,
+                ),
+              );
+            } else {
+              const source = (images.get(clip.id) ?? media.get(clip.id)) as
+                | HTMLImageElement
+                | HTMLVideoElement
+                | undefined;
+              if (source) {
+                const sourceWidth =
+                  source instanceof HTMLVideoElement
+                    ? source.videoWidth
+                    : source.naturalWidth;
+                const sourceHeight =
+                  source instanceof HTMLVideoElement
+                    ? source.videoHeight
+                    : source.naturalHeight;
+                const rect = renderRect(
+                  sourceWidth,
+                  sourceHeight,
+                  canvas.width,
+                  canvas.height,
+                  String(p.fit ?? "fit") as FitMode,
+                );
+                const key = chromaSettings(p);
+                const factor = Math.min(1, Math.max(canvas.width, canvas.height) / Math.max(sourceWidth, sourceHeight));
+                const renderedSource = key.enabled ? renderChroma(source, sourceWidth * factor, sourceHeight * factor, key) : source;
+                context.drawImage(
+                  renderedSource,
+                  rect.x,
+                  rect.y,
+                  rect.width,
+                  rect.height,
+                );
+              }
+            }
+            context.restore();
+          }
+          onProgress(
+            Math.min(1, elapsed / duration) *
+              (options.format === "webm" ? 1 : 0.85),
+          );
+          frame = requestAnimationFrame(draw);
+        } catch (error) { complete(error); }
       };
       frame = requestAnimationFrame(draw);
     });
@@ -339,6 +335,8 @@ export async function exportProject(
       onProgress(0.85 + ratio * 0.15), duration, signal,
     );
   } finally {
+    cancelAnimationFrame(frame);
+    if (activeRecorder && activeRecorder.state !== "inactive") activeRecorder.stop();
     media.forEach((element) => {
       element.pause();
       element.removeAttribute("src");
@@ -346,6 +344,6 @@ export async function exportProject(
       element.remove();
     });
     stream.getTracks().forEach((track) => track.stop());
-    await audioContext?.close();
+    await audioContext?.close().catch(() => {});
   }
 }

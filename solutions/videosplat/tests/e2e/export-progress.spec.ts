@@ -40,3 +40,22 @@ test('export progress survives cancellation and repeated MP4 conversion', async 
     await expect(page.getByText('Export complete', { exact: true })).toBeVisible();
   }
 });
+
+for (const failure of ['drawing', 'encoder']) test(`export recovers from ${failure} failure`, async ({page}) => {
+  await page.addInitScript(() => sessionStorage.setItem('videosplat-splash-seen', '1'));
+  await page.goto('./');
+  await page.getByRole('button', {name:'＋ Title',exact:true}).click();
+  await page.getByRole('menuitem',{name:'File',exact:true}).click();
+  await page.getByRole('menuitem',{name:'Export video…'}).click();
+  await page.getByLabel('Include timeline audio').uncheck();
+  await page.evaluate(failure => {
+    if(failure==='drawing') CanvasRenderingContext2D.prototype.fillText = () => {throw new Error('Test draw failed')};
+    else {
+      const start = MediaRecorder.prototype.start;
+      MediaRecorder.prototype.start = function(...args) {start.apply(this,args);setTimeout(()=>{if(this.state!=='inactive')this.stop()},100)};
+    }
+  },failure);
+  await page.getByRole('button',{name:'Render local WebM'}).click();
+  await expect(page.getByLabel('Export format')).toBeEnabled();
+  await expect(page.getByRole('alert')).toContainText(failure==='drawing'?'Test draw failed':'browser stopped exporting early');
+});

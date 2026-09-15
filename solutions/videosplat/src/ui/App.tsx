@@ -103,6 +103,7 @@ export function App() {
   const [savedAt, setSavedAt] = useState<string>();
   const [dialog, setDialog] = useState<Dialog>(null);
   const [recorderFloating, setRecorderFloating] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState("preview");
   const [openMenu, setOpenMenu] = useState<"file" | "edit" | "about">();
   const [recent, setRecent] = useState<VideoSplatProject[]>([]);
   const [storage, setStorage] = useState<{
@@ -1177,8 +1178,12 @@ export function App() {
         </button>
         <button onClick={addTitle}>＋ Title</button>
         <span className="toolbar-spacer" />
+        <div className="mobile-panels" role="group" aria-label="Editor panels">
+          {[["media", "Media"], ["preview", "Preview"], ["inspector", "Clip controls"]].map(([panel, label]) =>
+            <button key={panel} aria-pressed={mobilePanel === panel} onClick={() => setMobilePanel(panel)}>{label}</button>)}
+        </div>
       </nav>
-      <main className="workspace">
+      <main className="workspace" data-mobile-panel={mobilePanel}>
         <aside
           className="media-panel"
           onDragOver={(event) => event.preventDefault()}

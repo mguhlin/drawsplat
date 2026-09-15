@@ -1,3 +1,5 @@
+import { recordingResult } from "../media/recording";
+import { waitForMedia } from "../media/ready";
 import { supportedRecordingType } from "../media/recording";
 
 export type OptimizerPreset = "editing" | "share" | "tiny" | "custom";
@@ -51,14 +53,8 @@ export async function optimizeVideo(file: File, options: OptimizeOptions, onProg
   let animation = 0;
   let removeAbort = () => {};
   try {
-    await new Promise<void>((resolve, reject) => {
-      const abort = () => reject(signal?.reason ?? new DOMException("Optimization canceled", "AbortError"));
-      removeAbort = () => signal?.removeEventListener("abort", abort);
-      signal?.addEventListener("abort", abort, { once: true });
-      video.onloadedmetadata = () => { removeAbort(); resolve(); };
-      video.onerror = () => { removeAbort(); reject(new Error("The browser could not decode this video.")); };
-      video.src = sourceUrl;
-    });
+    video.src = sourceUrl;
+    await waitForMedia(video, signal);
     signal?.throwIfAborted();
     const size = outputDimensions(video.videoWidth, video.videoHeight, options);
     const canvas = document.createElement("canvas");
@@ -81,7 +77,7 @@ export async function optimizeVideo(file: File, options: OptimizeOptions, onProg
     signal?.throwIfAborted();
     recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: options.videoBitsPerSecond, audioBitsPerSecond: options.audioBitsPerSecond });
     const encoder = recorder;
-    const chunks: Blob[] = [];
+    const result = recordingResult(encoder, mimeType);
     const blob = await new Promise<Blob>((resolve, reject) => {
       const stop = () => { if (encoder.state !== "inactive") encoder.stop(); };
       const abort = () => {
@@ -90,21 +86,26 @@ export async function optimizeVideo(file: File, options: OptimizeOptions, onProg
       };
       removeAbort = () => signal?.removeEventListener("abort", abort);
       signal?.addEventListener("abort", abort, { once: true });
-      encoder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
       encoder.onerror = () => reject(new Error("Local video encoding failed."));
-      encoder.onstop = () => chunks.length
-        ? resolve(new Blob(chunks, { type: mimeType }))
-        : reject(new Error("The encoder produced an empty file."));
+      encoder.onstop = () => {
+        if (!video.ended) reject(new Error("The browser stopped optimization early. Retry with a shorter source."));
+        else result.then(resolve, reject);
+      };
       video.onended = stop;
       video.onerror = () => reject(new Error("The video could not be decoded completely."));
       const draw = () => {
         if (signal?.aborted || encoder.state === "inactive") return;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        onProgress(Number.isFinite(video.duration) && video.duration > 0 ? Math.min(1, video.currentTime / video.duration) : 0);
-        if (!video.ended) animation = requestAnimationFrame(draw);
+        try {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          onProgress(Number.isFinite(video.duration) && video.duration > 0 ? Math.min(1, video.currentTime / video.duration) : 0);
+          if (!video.ended) animation = requestAnimationFrame(draw);
+        } catch (error) { reject(error); }
       };
+      // Publish a decoded frame before playback so encoder startup has pixels.
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
       encoder.start(1000);
-      void video.play().then(draw, reject);
+      draw();
+      void video.play().catch(reject);
     });
     signal?.throwIfAborted();
     onProgress(1);

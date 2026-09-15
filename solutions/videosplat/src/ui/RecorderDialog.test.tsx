@@ -1,18 +1,22 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { startCapture, type CaptureSession } from "../recorder/capture";
+import { cropRecording } from "../recorder/crop";
 import { RecorderDialog } from "./RecorderDialog";
 
 vi.mock("../recorder/capture", async (original) => ({
   ...await original<typeof import("../recorder/capture")>(),
   startCapture: vi.fn(),
 }));
+vi.mock("../recorder/crop", () => ({ cropRecording: vi.fn() }));
 vi.mock("./RecordingAudioMeter", () => ({ RecordingAudioMeter: () => null }));
 
 let session: CaptureSession;
 beforeEach(() => {
   vi.clearAllMocks();
   vi.useFakeTimers();
+  vi.stubGlobal("MediaRecorder", { isTypeSupported: () => true });
+  Object.defineProperty(navigator, "mediaDevices", { configurable: true, value: { getUserMedia: vi.fn(), getDisplayMedia: vi.fn() } });
   vi.stubGlobal("URL", class extends URL {
     static createObjectURL = vi.fn(() => "blob:recording");
     static revokeObjectURL = vi.fn();
@@ -97,4 +101,32 @@ it("cancels a capture that finishes opening after the dialog closes", async () =
   await act(async () => { finish(session); });
   expect(session.cancel).toHaveBeenCalledTimes(1);
   expect(screen.queryByRole("button", { name: "Stop and choose crop" })).toBeNull();
+});
+
+it("defaults to camera when screen sharing is unavailable", () => {
+  Object.defineProperty(navigator.mediaDevices, "getDisplayMedia", { value: undefined });
+  render(<RecorderDialog onClose={vi.fn()} onAdd={vi.fn()} onStatus={vi.fn()}/>);
+  expect(screen.getByLabelText("Recording source")).toHaveValue("camera");
+  expect(screen.getByText(/Screen sharing is unavailable/)).toBeVisible();
+});
+it("explains missing encoder support before starting", () => {
+  vi.stubGlobal("MediaRecorder", undefined);
+  render(<RecorderDialog onClose={vi.fn()} onAdd={vi.fn()} onStatus={vi.fn()}/>);
+  expect(screen.getByRole("button", { name: "Start recording" })).toBeDisabled();
+  expect(screen.getByRole("alert")).toHaveTextContent("cannot encode WebM");
+});
+
+it("closing a pending crop cancels it and prevents a late timeline addition", async () => {
+  const onAdd = vi.fn();
+  let finish!: (blob: Blob) => void;
+  vi.mocked(cropRecording).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+  render(<RecorderDialog onClose={vi.fn()} onAdd={onAdd} onStatus={vi.fn()}/>);
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Start recording" })); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Stop and choose crop" })); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Crop and add to timeline" })); });
+  fireEvent.click(screen.getByRole("button", { name: "Close recorder" }));
+  expect(vi.mocked(cropRecording).mock.calls.at(-1)![3]?.aborted).toBe(true);
+  await act(async () => { finish(new Blob(["late crop"])); });
+  expect(onAdd).not.toHaveBeenCalled();
 });

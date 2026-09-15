@@ -4,6 +4,7 @@ import { RecordingAudioMeter } from "./RecordingAudioMeter";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 import {
+  supportedRecordingType,
   captureErrorMessage,
   startCapture,
   type CaptureMode,
@@ -37,11 +38,15 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [recordingStream, setRecordingStream] = useState<MediaStream>();
   const session = useRef<CaptureSession | undefined>(undefined);
   const stopping = useRef(false);
+  const cropping = useRef<AbortController | undefined>(undefined);
+  const screenAvailable = typeof navigator.mediaDevices?.getDisplayMedia === "function";
+  const cameraAvailable = typeof navigator.mediaDevices?.getUserMedia === "function";
+  const encoderAvailable = !!supportedRecordingType(false);
   const startup = useRef<AbortController | undefined>(undefined);
   const [starting, setStarting] = useState(false);
   const [startupMessage, setStartupMessage] = useState("");
   const stopCurrent = useRef<() => Promise<void>>(async () => {});
-  const [mode, setMode] = useState<CaptureMode>("screen");
+  const [mode, setMode] = useState<CaptureMode>(screenAvailable ? "screen" : "camera");
   const [displaySurface, setDisplaySurface] = useState<DisplaySurfacePreference>("browser");
   const [microphone, setMicrophone] = useState(true);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
@@ -123,6 +128,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   useEffect(() => () => {
     startup.current?.abort();
+    cropping.current?.abort();
     session.current?.cancel();
   }, []);
 
@@ -236,6 +242,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   const close = () => {
     startup.current?.abort();
+    cropping.current?.abort();
     session.current?.cancel();
     session.current = undefined;
     onStatus("Recording canceled; no recording was saved");
@@ -257,8 +264,11 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     setState("cropping");
     setCropProgress(0);
     setError(undefined);
+    const controller = new AbortController();
+    cropping.current = controller;
     try {
-      const blob = await cropRecording(recording, crop, setCropProgress);
+      const blob = await cropRecording(recording, crop, setCropProgress, controller.signal);
+      controller.signal.throwIfAborted();
       const cropped = new File(
         [blob],
         recording.name.replace(/\.webm$/i, "-cropped.webm"),
@@ -266,6 +276,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       );
       await addRecording(cropped, "Cropped recording saved locally and added to the timeline");
     } catch (reason) {
+      if (controller.signal.aborted) return;
       setError(captureErrorMessage(reason));
       setState("review");
     }
@@ -339,7 +350,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       <span>{permissionsPrepared ? "Your selected microphone is remembered. The browser will only ask you to choose which screen or tab to share." : "The browser may request camera or microphone access when recording starts."}</span>
     </div>}
     {state === "setup" && <fieldset disabled={starting} className="recorder-settings" style={{ border: 0, padding: 0, margin: 0 }}>
-      <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option value="screen">Screen only · best for switching tabs</option><option value="screen-camera">Screen + camera overlay</option><option value="camera">Camera only</option></select></label>
+      <label>Record<select aria-label="Recording source" value={mode} onChange={(event) => setMode(event.target.value as CaptureMode)}><option disabled={!screenAvailable} value="screen">Screen only · best for switching tabs</option><option disabled={!screenAvailable || !cameraAvailable} value="screen-camera">Screen + camera overlay</option><option disabled={!cameraAvailable} value="camera">Camera only</option></select></label>
       <label className="check"><input type="checkbox" checked={microphone} onChange={(event) => setMicrophone(event.target.checked)} /> Microphone</label>
       {mode !== "camera" && <fieldset className="surface-choices">
         <legend>What do you want to share?</legend>
@@ -388,8 +399,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       /> Shared browser-tab audio when available</label>
       {mode !== "camera" && displaySurface !== "browser" && <small className="audio-capture-note">Chrome on this system only offers shared audio when you select a browser tab.</small>}
       <label>Countdown<select aria-label="Recording countdown" value={countdown} onChange={(event) => setCountdown(Number(event.target.value))}><option value="0">None</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select></label>
-      <button className="primary wide" disabled={starting} onClick={begin}>{starting ? (counting ? "Get ready…" : "Starting…") : "Start recording"}</button>
+      <button className="primary wide" disabled={starting || !encoderAvailable || (mode === "camera" ? !cameraAvailable : !screenAvailable)} onClick={begin}>{starting ? (counting ? "Get ready…" : "Starting…") : "Start recording"}</button>
     </fieldset>}
+    {!screenAvailable && <p>Screen sharing is unavailable in this browser. Use the camera or import a video recorded on your device.</p>}
+    {!encoderAvailable && <p role="alert">This browser cannot encode WebM recordings. You can still import and edit videos; use Chrome or Firefox on a computer to record and export.</p>}
     {starting && <p role="status">{startupMessage}</p>}
     {(state === "recording" || state === "paused") && <div className="recorder-actions">
       <button onClick={() => { if (state === "recording") { session.current?.pause(); setState("paused"); } else { session.current?.resume(); setState("recording"); } }}>{state === "recording" ? "Pause" : "Resume"}</button>

@@ -1,3 +1,4 @@
+import { recordingResult } from "../media/recording";
 import { createChromaRenderer, type ChromaSettings } from "../render/chroma";
 import { FilesetResolver, ImageSegmenter, type ImageSegmenterResult } from "@mediapipe/tasks-vision";
 import { supportedRecordingType } from "../media/recording";
@@ -177,6 +178,10 @@ export async function startCapture(
 
   const wantsScreen = options.mode !== "camera";
   const wantsCamera = options.mode !== "screen";
+  if (wantsScreen && typeof navigator.mediaDevices.getDisplayMedia !== "function")
+    throw new Error("Screen sharing is unavailable. Select Camera only or import a recording.");
+  if ((wantsCamera || options.microphone) && typeof navigator.mediaDevices.getUserMedia !== "function")
+    throw new Error("Camera and microphone access is unavailable in this browser.");
   let screen: MediaStream | undefined;
   let camera: MediaStream | undefined;
   let output: MediaStream | undefined;
@@ -329,7 +334,6 @@ export async function startCapture(
       await audioContext.resume();
     }
 
-    const chunks: Blob[] = [];
     const mimeType = supportedRecordingType(output.getAudioTracks().length > 0);
     if (!mimeType) throw new Error("This browser cannot encode the selected recording tracks.");
     const recorder = new MediaRecorder(output, {
@@ -337,19 +341,7 @@ export async function startCapture(
       videoBitsPerSecond: 4_000_000,
       audioBitsPerSecond: 128_000,
     });
-    recorder.ondataavailable = (event) => {
-      if (event.data.size) chunks.push(event.data);
-    };
-    const result = new Promise<Blob>((resolve, reject) => {
-      recorder.onerror = () => reject(new Error("The browser recorder failed."));
-      recorder.onstop = () =>
-        chunks.length
-          ? resolve(new Blob(chunks, { type: mimeType }))
-          : reject(new Error("The recorder produced an empty file."));
-    });
-    // A recorder error can arrive long before the user asks for the result.
-    // Keep the rejection handled now; stop() still reports the original error.
-    void result.catch(() => {});
+    const result = recordingResult(recorder, mimeType);
     const screenEnded = () => onScreenEnded?.();
     const cleanup = () => {
       primaryTrack.removeEventListener("ended", screenEnded);
