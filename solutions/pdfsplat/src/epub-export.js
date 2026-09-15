@@ -1,6 +1,6 @@
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[character]);
 
-function joinRuns(items) {
+export function joinRuns(items) {
   const runs = items.filter((item) => item.str?.trim()).map((item) => ({
     text: item.str.trim(),
     x: item.transform[4],
@@ -62,21 +62,21 @@ const xhtml = (title, body, language) => `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${esc(language)}" lang="${esc(language)}"><head><meta charset="utf-8"/><title>${esc(title)}</title><link rel="stylesheet" type="text/css" href="styles.css"/></head><body>${body}</body></html>`;
 
-export async function createEpub({ pdfjs, pdfBytes, title, author, publisher = "", description = "", rights = "", language = "en", pageChapters = true, coverFile = null, coverAlt = "", onProgress = () => {} }) {
-  const document = await pdfjs.getDocument({ data: pdfBytes.slice() }).promise;
+export async function createEpub({ pdfjs, pdfBytes, title, author, publisher = "", description = "", rights = "", language = "en", pageChapters = true, coverFile = null, coverAlt = "", textDocument = null, onProgress = () => {} }) {
+  const document = textDocument ? null : await pdfjs.getDocument({ data: pdfBytes.slice() }).promise;
   const pages = [];
   let emptyPages = 0;
-  for (let number = 1; number <= document.numPages; number++) {
-    onProgress(number, document.numPages);
-    const page = await document.getPage(number);
-    const lines = joinRuns((await page.getTextContent()).items);
+  for (let number = 1; number <= (textDocument?.pages.length ?? document.numPages); number++) {
+    onProgress(number, textDocument?.pages.length ?? document.numPages);
+    const page = document ? await document.getPage(number) : null;
+    const lines = textDocument ? textDocument.pages[number - 1].lines : joinRuns((await page.getTextContent()).items);
     if (!lines.length) emptyPages++;
     const sizes = lines.map((line) => line.size).sort((a, b) => a - b), median = sizes[Math.floor((sizes.length - 1) / 2)] || 12;
     const heading = lines.find((line) => line.size >= median * 1.35 && line.text.length < 140)?.text;
     pages.push({ number, title: heading || `Page ${number}`, html: linesToHtml(lines) });
-    page.cleanup();
+    page?.cleanup();
   }
-  await document.destroy();
+  await document?.destroy();
 
   const marker = (number) => `<span id="page-${number}" epub:type="pagebreak" role="doc-pagebreak" aria-label="Page ${number}" xmlns:epub="http://www.idpf.org/2007/ops"></span>`;
   const sections = pageChapters ? pages.map((page) => ({ title: page.title, html: `${marker(page.number)}${page.html}`, page: page.number })) : [{ title, html: pages.map((page) => `<section aria-label="PDF page ${page.number}">${marker(page.number)}${page.html}</section>`).join("\n"), page: 1 }];

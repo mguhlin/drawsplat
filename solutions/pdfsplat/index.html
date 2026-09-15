@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=20260914-phone-camera">
+  <link rel="stylesheet" href="./css/app.css?v=20260914-save-as">
   <link rel="stylesheet" href="./css/branding.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -21,12 +21,19 @@
       <strong>PDFsplat™</strong>
     </div>
     <div class="actions" role="toolbar" aria-label="Document actions">
-      <button id="scanButton" type="button">Scan to PDF</button>
       <button id="openButton" class="primary" type="button">Open PDF</button>
+      <select id="saveAsSelect" class="save-as-select" aria-label="Save as" disabled>
+        <option value="">Save as…</option>
+        <option value="pdf">PDF (.pdf)</option>
+        <option value="markdown">Markdown (.md)</option>
+        <option value="docx">Word — DOCX (.docx)</option>
+        <option value="odt">OpenDocument — ODF (.odt)</option>
+        <option value="epub">EPUB (.epub)</option>
+        <option value="json">JSON (.json)</option>
+      </select>
+      <button id="scanButton" type="button">Scan to PDF</button>
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
-      <button id="exportButton" type="button" disabled>Export</button>
-      <button id="epubButton" type="button" disabled>Convert to EPUB</button>
       <button id="protectButton" type="button">Protect / Unprotect</button>
       <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
       <button id="undoButton" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
@@ -62,9 +69,9 @@
               <li><strong>Open or scan.</strong> Choose a PDF, drop one here, or scan paper and photos into a new document.</li>
               <li><strong>Edit.</strong> Open Edit &amp; annotate for text, highlights, images, and signatures. Select a text box to change its text, size, color, or opacity at the top of the tools panel.</li>
               <li><strong>Organize.</strong> Drag page thumbnails to reorder them. Open Pages for rotation, cropping, duplication, or splitting.</li>
-              <li><strong>Save a copy.</strong> Use Undo to reverse an edit, then Export to download your edited PDF. Your original file stays unchanged.</li>
+              <li><strong>Save a copy.</strong> Use Undo to reverse an edit, then choose Save as… for PDF, Markdown, Word, OpenDocument, EPUB, or JSON. Your original file stays unchanged.</li>
             </ol>
-            <p>Your work stays in this browser. Export before closing the tab.</p>
+            <p>Your work stays in this browser. Save a copy before closing the tab.</p>
           </section>
         </div>
       </div>
@@ -231,9 +238,21 @@
     </form>
   </dialog>
 
+  <dialog id="textSaveDialog" aria-labelledby="textSaveHeading">
+    <form id="textSaveForm">
+      <h2 id="textSaveHeading">Save as</h2>
+      <p>Save editable text from the current pages, including your text edits and page order. Processing stays on this device.</p>
+      <p class="tool-hint">Images, drawings, tables, and exact layout are not preserved. Scanned pages need OCR first. Choose PDF to keep the visual document.</p>
+      <label class="dialog-field">Document title <input id="textSaveTitle" required maxlength="200"></label>
+      <label class="dialog-field">Language <input id="textSaveLanguage" value="en" required maxlength="35"></label>
+      <p id="textSaveStatus" role="status" aria-live="polite"></p>
+      <div class="dialog-actions"><button id="textSaveClose" type="button">Close</button><button id="textSaveRun" class="primary" type="submit">Save and download</button></div>
+    </form>
+  </dialog>
+
   <dialog id="epubDialog">
     <form id="epubForm">
-      <h2>Convert PDF to EPUB</h2>
+      <h2>Save as EPUB</h2>
       <p>Create a reflowable EPUB 3 ebook from the open PDF. Conversion happens entirely on this device.</p>
       <label class="dialog-field">Book title <input id="epubTitle" type="text" required maxlength="200"></label>
       <label class="dialog-field">Author <input id="epubAuthor" type="text" maxlength="200" placeholder="Unknown author"></label>
@@ -249,7 +268,7 @@
       <section id="epubPreflight" class="preflight" aria-live="polite" hidden></section>
       <div class="dialog-actions">
         <button id="epubCancel" type="button">Cancel</button>
-        <button id="epubRun" class="primary" type="submit">Convert and download</button>
+        <button id="epubRun" class="primary" type="submit">Save and download</button>
       </div>
     </form>
   </dialog>
@@ -342,7 +361,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script type="module" src="./src/app.js?v=20260914-phone-camera"></script>
+  <script type="module" src="./src/app.js?v=20260914-save-as"></script>
   <script type="module" src="../../assets/js/tool-launcher.js"></script>
   <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>

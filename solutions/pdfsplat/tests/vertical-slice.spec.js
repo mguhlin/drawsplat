@@ -55,7 +55,7 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await page.getByRole('button', { name: 'Rotate right' }).click();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export', exact:true }).click();
+  await page.getByRole('combobox', { name: 'Save as', exact:true }).selectOption('pdf');
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('lesson-edited.pdf');
   const exported = await PDFDocument.load(await require('fs/promises').readFile(await download.path()));
@@ -113,7 +113,7 @@ test('reverses pages, inserts and removes blank pages, and adds publishing marks
   await page.getByRole('button', { name:'Add typed signature' }).click();
   await expect(page.locator('.text-object').filter({ hasText:'Teacher Name' })).toBeVisible();
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name:'Export', exact:true }).click();
+  await page.getByRole('combobox', { name: 'Save as', exact:true }).selectOption('pdf');
   const exported = await PDFDocument.load(await require('fs/promises').readFile(await (await downloadPromise).path()));
   expect(exported.getPageCount()).toBe(2);
 });
@@ -130,7 +130,7 @@ test('crops pages and applies fine deskew rotation', async ({ page }) => {
   await page.locator('#customRotation').fill('2');
   await page.getByRole('button', { name:'Apply rotation' }).click();
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name:'Export', exact:true }).click();
+  await page.getByRole('combobox', { name: 'Save as', exact:true }).selectOption('pdf');
   const exported = await PDFDocument.load(await require('fs/promises').readFile(await (await downloadPromise).path()));
   const size = exported.getPage(0).getSize();
   expect(size.width).toBeGreaterThan(320);
@@ -282,8 +282,8 @@ test('converts the edited PDF to a reflowable EPUB 3 locally', async ({ page }) 
 
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'reader.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
-  await page.getByRole('button', { name:'Convert to EPUB' }).click();
-  await expect(page.getByRole('heading', { name:'Convert PDF to EPUB' })).toBeVisible();
+  await page.getByRole('combobox', { name: 'Save as', exact:true }).selectOption('epub');
+  await expect(page.getByRole('heading', { name:'Save as EPUB' })).toBeVisible();
   await page.locator('#epubTitle').fill('Reader Edition');
   await page.locator('#epubAuthor').fill('Test Author');
   await page.locator('#epubPublisher').fill('PDFSplat Press');
@@ -293,7 +293,7 @@ test('converts the edited PDF to a reflowable EPUB 3 locally', async ({ page }) 
   await page.locator('#epubCover').setInputFiles({ name:'cover.png', mimeType:'image/png', buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') });
   await page.locator('#epubCoverAlt').fill('A simple test cover');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name:'Convert and download' }).click();
+  await page.getByRole('button', { name:'Save and download' }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('Reader Edition.epub');
   const bytes = await require('fs/promises').readFile(await download.path());

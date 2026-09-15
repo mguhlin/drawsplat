@@ -1,13 +1,15 @@
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
-import { createEpub } from "./epub-export.js";
+import { createEpub } from "./epub-export.js?v=20260914-save-as";
+import { formats, collectTextDocument, createTextFile } from "./document-export.js?v=20260914-save-as";
 
 const pdfjs = globalThis.pdfjsLib;
 const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "exportButton", "epubButton", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+ids.push("textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -80,7 +82,7 @@ function restore(value) {
   renderAll();
 }
 function setEnabled(on) {
-  ["pagesButton", "mergeButton", "exportButton", "epubButton", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -645,7 +647,7 @@ function renderAnnotations() {
       els.annotationLayer.append(svg);
       continue;
     }
-    const node = object.type === "image" ? document.createElement("img") : document.createElement("div");
+    const node = document.createElement("div");
     node.className = `editable-object ${object.type}-object${object.cover ? " replacement-object" : ""}${state.selectedId === object.id ? " selected" : ""}`;
     node.dataset.id = object.id;
     node.tabIndex = 0;
@@ -673,15 +675,19 @@ function renderAnnotations() {
         };
       }
     } else if (object.type === "image") {
-      node.src = state.assets.get(object.assetId)?.url || "";
-      node.alt = "";
+      const image = document.createElement("img");
+      image.src = state.assets.get(object.assetId)?.url || "";
+      image.alt = object.altText || "";
+      image.draggable = false;
+      image.style.opacity = object.opacity ?? 1;
+      node.append(image);
     } else node.style.background = object.color || "#ffffff";
     Object.assign(node.style, {
       left: `${object.x * 100}%`,
       top: `${object.y * 100}%`,
       width: `${object.w * 100}%`,
       height: `${object.h * 100}%`,
-      opacity: object.opacity ?? 1,
+      opacity: object.type === "image" ? 1 : object.opacity ?? 1,
     });
     if (["text", "highlight", "mask"].includes(object.type)) {
       const handle = document.createElement("button");
@@ -691,6 +697,26 @@ function renderAnnotations() {
       handle.setAttribute("aria-label", `Resize ${object.type}`);
       handle.onpointerdown = (event) => startResize(event, node, object);
       node.append(handle);
+    }
+    if (object.type === "image") {
+      for (const [corner, label] of [["nw", "top left"], ["ne", "top right"], ["se", "bottom right"], ["sw", "bottom left"]]) {
+        const handle = document.createElement("button");
+        handle.type = "button";
+        handle.className = `resize-handle image-resize-handle ${corner}`;
+        handle.setAttribute("aria-label", `Resize image from ${label}`);
+        handle.title = "Drag to resize proportionally. Arrow keys resize; Shift makes larger adjustments.";
+        handle.onpointerdown = event => startImageResize(event, node, object, corner);
+        handle.onkeydown = event => {
+          if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+          event.preventDefault(); event.stopPropagation();
+          const before = snapshot(), amount = event.shiftKey ? .1 : .02;
+          const grow = event.key === "ArrowRight" ? corner.includes("e") : event.key === "ArrowLeft" ? corner.includes("w") : event.key === "ArrowDown" ? corner.includes("s") : corner.includes("n");
+          resizeImage(object, { ...object }, corner, 1 + (grow ? amount : -amount));
+          commit(before, "Resize image"); renderAnnotations();
+          els.annotationLayer.querySelector(`[data-id="${object.id}"] .${corner}`).focus();
+        };
+        node.append(handle);
+      }
     }
     node.onpointerdown = (e) => startDrag(e, node, object);
     node.onclick = (e) => {
@@ -812,13 +838,18 @@ async function addImage(file) {
     announce("Choose a PNG or JPEG image.");
     return;
   }
-  const bytes = new Uint8Array(await file.arrayBuffer()),
-    assetId = uid();
-  state.assets.set(assetId, {
-    bytes,
-    type: file.type,
-    url: URL.createObjectURL(new Blob([bytes], { type: file.type })),
-  });
+  const target = currentPage();
+  if (!target) return;
+  const bytes = new Uint8Array(await file.arrayBuffer()), assetId = uid();
+  const url = URL.createObjectURL(new Blob([bytes], { type: file.type }));
+  const image = new Image(); image.src = url;
+  try { await image.decode(); }
+  catch { URL.revokeObjectURL(url); announce("This image could not be opened. Try another PNG or JPEG."); return; }
+  if (currentPage() !== target) { URL.revokeObjectURL(url); announce("The page changed. Add the image again on the desired page."); return; }
+  const bounds = els.annotationLayer.getBoundingClientRect();
+  let imageWidth = .3, imageHeight = imageWidth * bounds.width / bounds.height * image.naturalHeight / image.naturalWidth;
+  if (imageHeight > .6) { imageWidth *= .6 / imageHeight; imageHeight = .6; }
+  state.assets.set(assetId, { bytes, type: file.type, url });
   mutate("Add image", () => {
     const o = {
       id: uid(),
@@ -826,15 +857,15 @@ async function addImage(file) {
       assetId,
       x: 0.2,
       y: 0.2,
-      w: 0.3,
-      h: 0.25,
+      w: imageWidth,
+      h: imageHeight,
       opacity: 1,
     };
     currentPage().annotations.push(o);
     state.selectedId = o.id;
   });
   renderAnnotations();
-  announce("Image added.");
+  announce("Image added. Drag a corner handle to resize; drag the image to move it.");
   els.imageInput.value = "";
 }
 function addTypedSignature(event) {
@@ -883,6 +914,45 @@ function syncSize(node, o) {
   clampObject(o);
   commit(before, "Resize object");
 }
+function resizeImage(object, initial, corner, scale) {
+  const west = corner.includes("w"), north = corner.includes("n");
+  const anchorX = west ? initial.x + initial.w : initial.x;
+  const anchorY = north ? initial.y + initial.h : initial.y;
+  const maxScale = Math.min((west ? anchorX : 1 - anchorX) / initial.w, (north ? anchorY : 1 - anchorY) / initial.h);
+  const parent = els.annotationLayer.getBoundingClientRect();
+  const minScale = Math.min(maxScale, Math.max(24 / parent.width / initial.w, 24 / parent.height / initial.h));
+  scale = Math.max(minScale, Math.min(maxScale, scale));
+  object.w = initial.w * scale; object.h = initial.h * scale;
+  object.x = west ? anchorX - object.w : anchorX;
+  object.y = north ? anchorY - object.h : anchorY;
+}
+function startImageResize(event, node, object, corner) {
+  if (event.button !== 0) return;
+  event.preventDefault(); event.stopPropagation();
+  const before = snapshot(), initial = { ...object }, parent = els.annotationLayer.getBoundingClientRect();
+  const startX = event.clientX, startY = event.clientY, handle = event.currentTarget;
+  handle.setPointerCapture(event.pointerId);
+  const move = next => {
+    const dx = (next.clientX - startX) * (corner.includes("w") ? -1 : 1);
+    const dy = (next.clientY - startY) * (corner.includes("n") ? -1 : 1);
+    const width = initial.w * parent.width, height = initial.h * parent.height;
+    resizeImage(object, initial, corner, 1 + (dx * width + dy * height) / (width * width + height * height));
+    Object.assign(node.style, { left: `${object.x * 100}%`, top: `${object.y * 100}%`, width: `${object.w * 100}%`, height: `${object.h * 100}%` });
+  };
+  const finish = next => {
+    handle.removeEventListener("pointermove", move);
+    handle.removeEventListener("pointerup", finish);
+    handle.removeEventListener("pointercancel", finish);
+    if (next.type === "pointercancel") Object.assign(object, initial);
+    else commit(before, "Resize image");
+    renderAnnotations();
+    announce(next.type === "pointercancel" ? "Resize cancelled." : "Image resized. Undo is available.");
+  };
+  handle.addEventListener("pointermove", move);
+  handle.addEventListener("pointerup", finish);
+  handle.addEventListener("pointercancel", finish);
+}
+
 function startResize(event, node, object) {
   if (event.button !== 0) return;
   event.preventDefault();
@@ -1119,13 +1189,15 @@ function downloadBytes(bytes, name, type = "application/pdf") {
     a = document.createElement("a");
   a.href = url;
   a.download = name;
+  document.body.append(a);
   a.click();
+  a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 async function exportPdf(items = state.pages, suffix = "-edited") {
   try {
     announce("Exporting PDF…");
-    els.exportButton.disabled = true;
+    els.saveAsSelect.disabled = true;
     const bytes = await buildPdf(items),
       name = `${state.fileName.replace(/\.pdf$/i, "")}${suffix}.pdf`;
     downloadBytes(bytes, name);
@@ -1136,7 +1208,7 @@ async function exportPdf(items = state.pages, suffix = "-edited") {
     announce("Export failed. The source PDF is unchanged.");
     return null;
   } finally {
-    els.exportButton.disabled = false;
+    els.saveAsSelect.disabled = false;
   }
 }
 
@@ -1219,6 +1291,49 @@ async function exportAccessibleHtml() {
   announce("Accessible HTML alternative downloaded. Review reading order and descriptions before publishing.");
 }
 
+function currentTextDocument(title, language) {
+  return collectTextDocument({ pages: state.pages, sources: state.sources, title, language, sourceName: state.fileName,
+    onProgress: (page, total) => announce(`Reading page ${page} of ${total}…`) });
+}
+let textSaveFormat = "markdown", textSaveBusy = false;
+function openTextSaveDialog(format) {
+  textSaveFormat = format;
+  els.textSaveHeading.textContent = `Save as ${formats[format].label}`;
+  els.textSaveTitle.value = state.documentTitle || state.fileName.replace(/\.pdf$/i, "");
+  els.textSaveLanguage.value = state.documentLanguage || "en";
+  els.textSaveStatus.textContent = format === "json" ? "JSON includes document metadata and numbered page text; it is not a restorable editing project." : "";
+  els.textSaveDialog.showModal();
+  els.textSaveTitle.select();
+}
+els.textSaveClose.onclick = () => els.textSaveDialog.close();
+els.textSaveDialog.addEventListener("cancel", event => { if (textSaveBusy) event.preventDefault(); });
+els.textSaveForm.onsubmit = async event => {
+  event.preventDefault();
+  if (textSaveBusy) return;
+  const title = els.textSaveTitle.value.trim(), language = els.textSaveLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) {
+    els.textSaveStatus.textContent = "Enter a title and language tag such as en or en-US.";
+    return;
+  }
+  textSaveBusy = true;
+  els.textSaveRun.disabled = els.textSaveClose.disabled = els.saveAsSelect.disabled = true;
+  els.textSaveStatus.textContent = "Preparing your document…";
+  try {
+    const document = await currentTextDocument(title, language);
+    const blob = await createTextFile(textSaveFormat, document);
+    const name = `${title.replace(/[\\/:*?"<>|]+/g, "-") || "document"}.${formats[textSaveFormat].extension}`;
+    downloadBytes(blob, name, formats[textSaveFormat].mime);
+    els.textSaveStatus.textContent = `${name} downloaded. ${document.warnings.join(" ")}`;
+    announce(`${name} downloaded.`);
+  } catch (error) {
+    console.error(error);
+    els.textSaveStatus.textContent = "The document could not be saved. Please try again or choose PDF.";
+  } finally {
+    textSaveBusy = false;
+    els.textSaveRun.disabled = els.textSaveClose.disabled = els.saveAsSelect.disabled = false;
+  }
+};
+
 function openEpubDialog() {
   els.epubTitle.value = state.fileName.replace(/\.pdf$/i, "");
   els.epubAuthor.value = "";
@@ -1242,12 +1357,12 @@ async function exportEpub(event) {
     return;
   }
   els.epubRun.disabled = true;
-  els.epubButton.disabled = true;
+  els.saveAsSelect.disabled = true;
   try {
     announce("Preparing the edited PDF for EPUB conversion…");
-    const pdfBytes = await buildPdf(state.pages);
+    const textDocument = await currentTextDocument(title, language);
     const coverFile = els.epubCover.files[0] || null;
-    const result = await createEpub({ pdfjs, pdfBytes, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
+    const result = await createEpub({ textDocument, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
     const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document";
     downloadBytes(result.blob, `${safeName}.epub`, "application/epub+zip");
     els.epubPreflight.innerHTML = `<h3>EPUB preflight</h3><ul>${result.checks.map((check) => `<li class="${check.level}">${check.message}</li>`).join("")}</ul>`;
@@ -1258,7 +1373,7 @@ async function exportEpub(event) {
     announce(error.message || "The EPUB could not be created.");
   } finally {
     els.epubRun.disabled = false;
-    els.epubButton.disabled = false;
+    els.saveAsSelect.disabled = false;
   }
 }
 function parseRanges(value) {
@@ -1380,8 +1495,13 @@ els.pagesButton.onclick = () => {
 els.fileInput.onchange = (e) => openFile(e.target.files[0]);
 els.mergeButton.onclick = () => els.mergeInput.click();
 els.mergeInput.onchange = (e) => mergeFile(e.target.files[0]);
-els.exportButton.onclick = () => exportPdf();
-els.epubButton.onclick = openEpubDialog;
+els.saveAsSelect.onchange = () => {
+  const format = els.saveAsSelect.value;
+  els.saveAsSelect.value = "";
+  if (format === "pdf") void exportPdf();
+  else if (format === "epub") openEpubDialog();
+  else if (formats[format]) openTextSaveDialog(format);
+};
 els.epubForm.onsubmit = exportEpub;
 els.epubCancel.onclick = () => els.epubDialog.close();
 els.epubCover.onchange = () => {
