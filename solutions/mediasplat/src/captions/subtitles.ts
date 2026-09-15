@@ -1,5 +1,5 @@
 export interface SubtitleOptions { fontSize: number; margin: number; outline: number; background: boolean; offset: number }
-export const defaultSubtitles: SubtitleOptions = { fontSize: 42, margin: 54, outline: 2, background: false, offset: 0 };
+export const defaultSubtitles: SubtitleOptions = { fontSize: 42, margin: 54, outline: 2, background: true, offset: 0 };
 export interface Cue { start: number; end: number; text: string }
 export function validateSubtitleOptions(options: SubtitleOptions) {
   for (const [key, min, max] of [["fontSize", 12, 120], ["margin", 0, 300], ["outline", 0, 10], ["offset", -86400, 86400]] as const) {
