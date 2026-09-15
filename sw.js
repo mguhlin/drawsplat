@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.19';
+const CACHE = 'drawsplat-v3.1.20';
 const SHELL = [
   './',
   './index.html',
@@ -144,7 +144,22 @@ self.addEventListener('fetch', e => {
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){
       try{ const fresh = await fetch(req); if(fresh && fresh.ok){ const c = await caches.open(CACHE); c.put(req, fresh.clone()) } return fresh }
-      catch(_){ const cached = await caches.match(req) || (isShellScript ? await caches.match(req, {ignoreSearch:true}) : null); return cached || (req.mode==='navigate'?caches.match('./index.html'):new Response('', {status: 504})) }
+      catch(_){
+        let cached = await caches.match(req) || (isShellScript ? await caches.match(req, {ignoreSearch:true}) : null);
+        if(req.mode === 'navigate'){
+          // Static hosts redirect .html URLs to extensionless paths. The initial
+          // precache still uses the .html key, before this client is controlled.
+          if(!cached && !url.pathname.endsWith('/') && !/\.[^/]+$/.test(url.pathname)){
+            const htmlUrl = new URL(url); htmlUrl.pathname += '.html';
+            cached = await caches.match(htmlUrl.href, {ignoreSearch:true});
+          }
+          cached = cached || await caches.match('./index.html');
+          // A navigation with manual redirect mode cannot reuse the redirected
+          // Response stored by cache.addAll; serve its final HTML as a fresh response.
+          if(cached) return new Response(cached.body, {status:cached.status, statusText:cached.statusText, headers:cached.headers});
+        }
+        return cached || new Response('', {status:504});
+      }
     }
     /* Cache first for vendor and other static assets. */
     const cached = await caches.match(req);

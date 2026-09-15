@@ -19,7 +19,7 @@ Green Screen Studio; those changes are included in this delivery.
   publishes GitHub Pages; Cloudflare is the custom-domain deployment verified here.
 - Whiteboard is served directly as static HTML/CSS/JavaScript; it has no compiled
   production build. Revised shared assets and entry-point cache stamps are the
-  production assets. Whiteboard version: `3.0.96`; cache: `drawsplat-v3.1.19`.
+  production assets. Whiteboard version: `3.0.96`; cache: `drawsplat-v3.1.20`.
 - Baseline `npx playwright test --reporter=line`: **52 passed, 2 failed, 0 skipped**
   (54 total, 21 seconds). The two existing Whiteboard tests passed.
 - Baseline failures: Studio discovery expected 57 tools but found 58;
@@ -45,6 +45,7 @@ Green Screen Studio; those changes are included in this delivery.
 | High | Click Record Audio twice while permission is pending, or make recorder creation fail after a stream opens. Duplicate requests occur and failure can leave tracks running. | Guard startup, release tracks on failure/stop/page exit, and attach completed audio to the original still-existing object instead of whichever object happens to be selected later. Controlled API tests cover duplicate requests, failed creation, denied permission and unavailable MediaRecorder. No physical microphone is certified. |
 | High | Activate Whiteboard's root service worker with another app's cache present. It deletes every cache except its own current cache, including audio and model caches. | Restrict deletion to the `drawsplat-v` namespace. An isolated activation test with foreign cache names reproduces the old deletion and verifies the boundary. |
 | High | First offline reload requests versioned JS/CSS that were precached without a query string, so the shell can fail to start. | Fall back to the same cached shell path ignoring only its version query, and precache the missing safety, consent, timer and GIF helpers. Chrome/Firefox offline checks exercise first activation followed by offline reload. |
+| High | On Cloudflare, the first offline reload uses `/app/whiteboard`, while precaching used the redirected `.html` URL. Chrome rejects the redirected cached navigation or misses its key. | Resolve extensionless navigation to its cached HTML and return a fresh, non-redirected response. Reproduced with a local 308-redirect server; eight repeated Chrome/Firefox navigation and response checks passed after correction. |
 | High | First service-worker activation/update fires while drawing or a dialog is open; the handler reloads the page and interrupts the operation. | Keep the active page intact; show an update notice for existing controlled sessions. A controller-change regression checks that the dialog survives without navigation, alongside actual offline activation checks. |
 | Medium | Phone portrait reserves three stacked rows for Undo/Redo/Audio; short screens can hide lower tool-rail controls. | Put these actions in one compact row on phone layouts and allow the tool rail to scroll. Tests check row height, scrolling, canvas area and touch selection. Screenshots were inspected. |
 
@@ -188,8 +189,8 @@ Reviewed screenshots: [phone Chrome](images/whiteboard-phone-chrome.png),
 [tablet Firefox](images/whiteboard-tablet-firefox.png),
 [Green Screen Studio after dragging](images/green-screen-drag.png).
 
-Full Whiteboard release counts and production evidence are appended below after
-publication.
+The full Whiteboard release run finished with **77 passed, 0 failed, 1 skipped**
+(78 cases, 1.5 minutes). The skip is the documented Linux WebKit offline issue.
 
 Reproduce the dedicated checks with:
 
@@ -202,3 +203,34 @@ npx playwright test --workers=2
 Set `WHITEBOARD_URL=https://drawsplat.org` to run the dedicated configurations
 against production. Their imports, storage and controlled permissions operate
 in isolated browser contexts; they do not save to a classroom backend.
+
+## Production deployment evidence
+
+- Application commit: [`a65a76561e71ad32bd7ad66174dfed4fe1cb55c3`](https://github.com/mguhlin/drawsplat/commit/a65a76561e71ad32bd7ad66174dfed4fe1cb55c3).
+- Cloudflare production deployment: `92e3e1f6-f576-4f69-9fb1-d970d0252721`,
+  [deployment URL](https://92e3e1f6.drawsplat.pages.dev).
+- Queued, initialization, repository clone, build and deployment stages all
+  reported **success**. Deployment completed at `2026-09-15T20:07:54.875009Z`.
+- The separate GitHub Pages build/deployment check also succeeded for this commit.
+- Production returned HTTP 200 and byte-for-byte SHA-256 matches for all six
+  checked assets: Whiteboard HTML, shared app.js, shared app.css, ImageSplat HTML,
+  green-screen.js and sw.js. Checked their actual versioned request URLs.
+- Live entry points: [Whiteboard](https://drawsplat.org/app/whiteboard) and
+  [ImageSplat](https://drawsplat.org/solutions/imagesplat/).
+
+### Production-only offline correction
+
+The first production Whiteboard run returned **76 passed, 1 failed, 1 skipped**.
+Chrome's offline navigation failed with `net::ERR_FAILED`; Firefox passed, and
+WebKit retained its known skip. A local server reproducing Cloudflare's 308
+`.html` → extensionless redirect also failed before correction. The worker now
+finds the `.html` precache entry and returns its HTML through a non-redirected
+Response. **Eight repeated Chrome/Firefox checks passed** with the redirecting
+server. The cache version advances to `drawsplat-v3.1.20`.
+
+The Green Screen Studio production suite passed **all 39 tests** (58.1 seconds),
+including mouse positioning, synthetic touch cancellation, warm-detail/fringe
+pixels, and actual PNG exports.
+
+[MDN's FetchEvent.respondWith reference](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith)
+describes the response restrictions relevant to cached navigation handling.

@@ -286,3 +286,15 @@ test('service-worker activation keeps an open editing dialog intact',async({page
   await page.waitForTimeout(150);
   await expect(page.locator('#conceptMapDialog')).toBeVisible();expect(navigations).toBe(0);
 });
+
+test('offline extensionless navigation resolves the precached HTML without a redirected response',async({request})=>{
+  const vm=require('node:vm');let handleFetch;
+  const cached=new Response('<h1>Whiteboard offline</h1>',{headers:{'Content-Type':'text/html'}});
+  Object.defineProperty(cached,'redirected',{value:true});
+  vm.runInNewContext(await (await request.get('/sw.js')).text(),{
+    URL,Response,self:{location:{origin:'https://audit.test'},addEventListener:(name,fn)=>{if(name==='fetch')handleFetch=fn}},
+    caches:{match:async key=>key==='https://audit.test/app/whiteboard.html'?cached:undefined},fetch:async()=>{throw new Error('offline')}
+  });
+  const response=await new Promise(resolve=>handleFetch({request:{url:'https://audit.test/app/whiteboard',method:'GET',mode:'navigate',destination:'document'},respondWith:resolve}));
+  expect(response.status).toBe(200);expect(response.redirected).toBe(false);expect(await response.text()).toContain('Whiteboard offline');
+});
