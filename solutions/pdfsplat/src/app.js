@@ -1323,8 +1323,9 @@ els.textSaveForm.onsubmit = async event => {
     const blob = await createTextFile(textSaveFormat, document);
     const name = `${title.replace(/[\\/:*?"<>|]+/g, "-") || "document"}.${formats[textSaveFormat].extension}`;
     downloadBytes(blob, name, formats[textSaveFormat].mime);
-    els.textSaveStatus.textContent = `${name} downloaded. ${document.warnings.join(" ")}`;
-    announce(`${name} downloaded.`);
+    const emptyPages = document.pages.filter(page => !page.text).length;
+    announce(`${name} downloaded.${emptyPages ? ` ${emptyPages} of ${document.pages.length} pages have no selectable text; scans require OCR.` : ""}`);
+    els.textSaveDialog.close();
   } catch (error) {
     console.error(error);
     els.textSaveStatus.textContent = "The document could not be saved. Please try again or choose PDF.";
@@ -1367,7 +1368,8 @@ async function exportEpub(event) {
     downloadBytes(result.blob, `${safeName}.epub`, "application/epub+zip");
     els.epubPreflight.innerHTML = `<h3>EPUB preflight</h3><ul>${result.checks.map((check) => `<li class="${check.level}">${check.message}</li>`).join("")}</ul>`;
     els.epubPreflight.hidden = false;
-    announce(`${safeName}.epub downloaded. Preflight found ${result.checks.filter((check) => check.level === "warning").length} warning(s).`);
+    announce(`${safeName}.epub downloaded. Preflight found ${result.checks.filter((check) => check.level === "warning").length} warning(s).${result.emptyPages ? ` ${result.emptyPages} page(s) have no selectable text; scans require OCR.` : ""}`);
+    els.epubDialog.close();
   } catch (error) {
     console.error(error);
     announce(error.message || "The EPUB could not be created.");

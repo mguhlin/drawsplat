@@ -314,7 +314,7 @@ test('converts the edited PDF to a reflowable EPUB 3 locally', async ({ page }) 
   expect(firstChapter).toContain('epub:type="pagebreak"');
   expect(await epub.file('EPUB/cover.xhtml').async('string')).toContain('A simple test cover');
   await expect(page.locator('#status')).toContainText('Reader Edition.epub downloaded');
-  await expect(page.locator('#epubPreflight')).toContainText('EPUB 3 package');
+  await expect(page.locator('#epubDialog')).toBeHidden();
 });
 
 test('audits accessibility risks and exports a semantic HTML alternative', async ({ page }) => {

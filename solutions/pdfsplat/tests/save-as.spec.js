@@ -28,7 +28,8 @@ for (const format of ['markdown', 'docx', 'odt', 'json']) {
     const bytes = await fs.readFile(await download.path());
     const extension = format === 'markdown' ? 'md' : format;
     expect(download.suggestedFilename()).toBe(`Example & title.${extension}`);
-    await expect(page.locator('#textSaveStatus')).toContainText('downloaded');
+    await expect(page.locator('#textSaveDialog')).toBeHidden();
+    await expect(page.locator('#status')).toContainText('downloaded');
     if (testInfo.project.name === 'chromium') {
       await fs.mkdir('/tmp/pdfsplat-formats', { recursive: true });
       await fs.writeFile(`/tmp/pdfsplat-formats/example.${extension}`, bytes);
@@ -90,8 +91,8 @@ test('blank scans report missing text without inventing OCR output', async ({ pa
   await openDocument(page, true);
   await page.locator('#saveAsSelect').selectOption('json');
   await page.locator('#textSaveRun').click();
-  await expect(page.locator('#textSaveStatus')).toContainText('1 of 1 pages have no selectable text');
-  await page.locator('#textSaveClose').click();
+  await expect(page.locator('#textSaveDialog')).toBeHidden();
+  await expect(page.locator('#status')).toContainText('1 of 1 pages have no selectable text');
   await expect(page.locator('#saveAsSelect')).toHaveValue('');
 });
 
