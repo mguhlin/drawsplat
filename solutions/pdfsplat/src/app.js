@@ -1,7 +1,7 @@
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
-import { createEpub } from "./epub-export.js?v=20260914-save-as";
-import { formats, collectTextDocument, createTextFile } from "./document-export.js?v=20260914-save-as";
+import { createEpub } from "./epub-export.js?v=20260914-formatting";
+import { formats, collectTextDocument, createTextFile } from "./document-export.js?v=20260914-formatting";
 
 const pdfjs = globalThis.pdfjsLib;
 const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
@@ -9,7 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
 const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
-ids.push("textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
+ids.push("textSaveLayout", "textSaveLayoutRow", "epubLayout", "textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
   fileName: "document.pdf",
@@ -108,7 +108,7 @@ function setMode(mode) {
 async function loadSource(file) {
   if (!file || !file.name.toLowerCase().endsWith(".pdf")) throw Error("Choose a PDF file.");
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const pdf = await pdfjs.getDocument({ data: bytes.slice() }).promise;
+  const pdf = await pdfjs.getDocument({ data: bytes.slice(), fontExtraProperties: true }).promise;
   return { id: uid(), name: file.name, bytes, pdf };
 }
 function pagesFor(source) {
@@ -549,7 +549,10 @@ async function renderPdfPageToBlob(page, scale = 2) {
   const viewport = page.getViewport({ scale }), canvas = document.createElement("canvas");
   canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
   await page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport, background: "#ffffff" }).promise;
-  return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(Error("Image export failed.")), "image/png"));
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => {
+    canvas.width = canvas.height = 0;
+    blob ? resolve(blob) : reject(Error("Image export failed."));
+  }, "image/png"));
 }
 async function exportPageImages() {
   try {
@@ -1295,9 +1298,27 @@ function currentTextDocument(title, language) {
   return collectTextDocument({ pages: state.pages, sources: state.sources, title, language, sourceName: state.fileName,
     onProgress: (page, total) => announce(`Reading page ${page} of ${total}…`) });
 }
+async function currentAppearanceDocument(title, language) {
+  const bytes = await buildPdf(state.pages);
+  const source = await pdfjs.getDocument({ data: bytes }).promise;
+  const pages = [];
+  try {
+    for (let number = 1; number <= source.numPages; number++) {
+      announce(`Preserving page ${number} of ${source.numPages}…`);
+      const page = await source.getPage(number), viewport = page.getViewport({ scale: 1 });
+      const scale = Math.min(2, 2200 / Math.max(viewport.width, viewport.height));
+      const image = new Uint8Array(await (await renderPdfPageToBlob(page, scale)).arrayBuffer());
+      pages.push({ number, width: viewport.width, height: viewport.height, image, text: "", lines: [], blocks: [] });
+      page.cleanup();
+    }
+    return { title, language, layout: "appearance", pages };
+  } finally { await source.destroy(); }
+}
 let textSaveFormat = "markdown", textSaveBusy = false;
 function openTextSaveDialog(format) {
   textSaveFormat = format;
+  els.textSaveLayoutRow.hidden = !["docx", "odt"].includes(format);
+  els.textSaveLayout.value = "formatted";
   els.textSaveHeading.textContent = `Save as ${formats[format].label}`;
   els.textSaveTitle.value = state.documentTitle || state.fileName.replace(/\.pdf$/i, "");
   els.textSaveLanguage.value = state.documentLanguage || "en";
@@ -1316,14 +1337,15 @@ els.textSaveForm.onsubmit = async event => {
     return;
   }
   textSaveBusy = true;
-  els.textSaveRun.disabled = els.textSaveClose.disabled = els.saveAsSelect.disabled = true;
+  els.textSaveRun.disabled = els.textSaveClose.disabled = els.textSaveLayout.disabled = els.saveAsSelect.disabled = true;
   els.textSaveStatus.textContent = "Preparing your document…";
   try {
-    const document = await currentTextDocument(title, language);
+    const appearance = ["docx", "odt"].includes(textSaveFormat) && els.textSaveLayout.value === "appearance";
+    const document = await (appearance ? currentAppearanceDocument : currentTextDocument)(title, language);
     const blob = await createTextFile(textSaveFormat, document);
     const name = `${title.replace(/[\\/:*?"<>|]+/g, "-") || "document"}.${formats[textSaveFormat].extension}`;
     downloadBytes(blob, name, formats[textSaveFormat].mime);
-    const emptyPages = document.pages.filter(page => !page.text).length;
+    const emptyPages = appearance ? 0 : document.pages.filter(page => !page.text).length;
     announce(`${name} downloaded.${emptyPages ? ` ${emptyPages} of ${document.pages.length} pages have no selectable text; scans require OCR.` : ""}`);
     els.textSaveDialog.close();
   } catch (error) {
@@ -1331,11 +1353,13 @@ els.textSaveForm.onsubmit = async event => {
     els.textSaveStatus.textContent = "The document could not be saved. Please try again or choose PDF.";
   } finally {
     textSaveBusy = false;
-    els.textSaveRun.disabled = els.textSaveClose.disabled = els.saveAsSelect.disabled = false;
+    els.textSaveRun.disabled = els.textSaveClose.disabled = els.textSaveLayout.disabled = els.saveAsSelect.disabled = false;
   }
 };
 
 function openEpubDialog() {
+  els.epubLayout.value = "formatted";
+  els.epubPageChapters.disabled = false;
   els.epubTitle.value = state.fileName.replace(/\.pdf$/i, "");
   els.epubAuthor.value = "";
   els.epubPublisher.value = "";
@@ -1357,11 +1381,11 @@ async function exportEpub(event) {
     announce("Enter a title and a valid language tag such as en or en-US.");
     return;
   }
-  els.epubRun.disabled = true;
+  els.epubRun.disabled = els.epubCancel.disabled = els.epubLayout.disabled = true;
   els.saveAsSelect.disabled = true;
   try {
     announce("Preparing the edited PDF for EPUB conversion…");
-    const textDocument = await currentTextDocument(title, language);
+    const textDocument = await (els.epubLayout.value === "appearance" ? currentAppearanceDocument : currentTextDocument)(title, language);
     const coverFile = els.epubCover.files[0] || null;
     const result = await createEpub({ textDocument, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
     const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document";
@@ -1374,7 +1398,7 @@ async function exportEpub(event) {
     console.error(error);
     announce(error.message || "The EPUB could not be created.");
   } finally {
-    els.epubRun.disabled = false;
+    els.epubRun.disabled = els.epubCancel.disabled = els.epubLayout.disabled = false;
     els.saveAsSelect.disabled = false;
   }
 }
@@ -1505,6 +1529,8 @@ els.saveAsSelect.onchange = () => {
   else if (formats[format]) openTextSaveDialog(format);
 };
 els.epubForm.onsubmit = exportEpub;
+els.epubDialog.addEventListener("cancel", event => { if (els.epubRun.disabled) event.preventDefault(); });
+els.epubLayout.onchange = () => { els.epubPageChapters.disabled = els.epubLayout.value === "appearance"; };
 els.epubCancel.onclick = () => els.epubDialog.close();
 els.epubCover.onchange = () => {
   els.epubCoverAltRow.hidden = !els.epubCover.files.length;

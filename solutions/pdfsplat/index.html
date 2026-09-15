@@ -241,8 +241,9 @@
   <dialog id="textSaveDialog" aria-labelledby="textSaveHeading">
     <form id="textSaveForm">
       <h2 id="textSaveHeading">Save as</h2>
-      <p>Save editable text from the current pages, including your text edits and page order. Processing stays on this device.</p>
-      <p class="tool-hint">Images, drawings, tables, and exact layout are not preserved. Scanned pages need OCR first. Choose PDF to keep the visual document.</p>
+      <p>Keep detected headings, bold/italic text, paragraphs, lists, and links from the current pages. Processing stays on this device.</p>
+      <label id="textSaveLayoutRow" class="dialog-field">Formatting <select id="textSaveLayout"><option value="formatted">Editable text with formatting</option><option value="appearance">Keep page appearance (page images)</option></select></label>
+      <p class="tool-hint">Editable formatting is reconstructed; review complex layouts and tables. Markdown supports text structure, not exact fonts or page layout. Keep page appearance preserves the visual pages, including graphics, as images; text in those images is not editable. Scans need OCR for editable text.</p>
       <label class="dialog-field">Document title <input id="textSaveTitle" required maxlength="200"></label>
       <label class="dialog-field">Language <input id="textSaveLanguage" value="en" required maxlength="35"></label>
       <p id="textSaveStatus" role="status" aria-live="polite"></p>
@@ -253,7 +254,8 @@
   <dialog id="epubDialog">
     <form id="epubForm">
       <h2>Save as EPUB</h2>
-      <p>Create a reflowable EPUB 3 ebook from the open PDF. Conversion happens entirely on this device.</p>
+      <p>Create an EPUB 3 ebook from the current PDF. Conversion happens entirely on this device.</p>
+      <label class="dialog-field">Formatting <select id="epubLayout"><option value="formatted">Reflowable text with formatting</option><option value="appearance">Keep page appearance (page images)</option></select></label>
       <label class="dialog-field">Book title <input id="epubTitle" type="text" required maxlength="200"></label>
       <label class="dialog-field">Author <input id="epubAuthor" type="text" maxlength="200" placeholder="Unknown author"></label>
       <label class="dialog-field">Publisher <input id="epubPublisher" type="text" maxlength="200"></label>
@@ -264,7 +266,7 @@
       <label><input id="epubPageChapters" type="checkbox" checked> Put each PDF page in its own EPUB section</label>
       <label class="dialog-field">Cover image <input id="epubCover" type="file" accept="image/png,image/jpeg"></label>
       <label id="epubCoverAltRow" class="dialog-field" hidden>Cover description <input id="epubCoverAlt" type="text" maxlength="500" placeholder="Describe meaningful cover artwork"></label>
-      <p class="tool-hint">Best for searchable, single-column, text-first PDFs. Scans need OCR first; tables, columns, equations, and precise page layout may be simplified.</p>
+      <p class="tool-hint">Reflowable text retains detected headings, emphasis, paragraphs, lists, and links. Complex layouts may be simplified. Keep page appearance preserves all visual content as page images; text will not be selectable or reflowable. Scans need OCR for selectable text.</p>
       <section id="epubPreflight" class="preflight" aria-live="polite" hidden></section>
       <div class="dialog-actions">
         <button id="epubCancel" type="button">Cancel</button>
@@ -361,7 +363,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script type="module" src="./src/app.js?v=20260914-save-close"></script>
+  <script type="module" src="./src/app.js?v=20260914-formatting"></script>
   <script type="module" src="../../assets/js/tool-launcher.js"></script>
   <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>
