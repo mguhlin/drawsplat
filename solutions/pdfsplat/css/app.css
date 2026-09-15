@@ -65,3 +65,10 @@ body{position:fixed;inset:0}
 
 .drop-card .quick-start,.drop-card .quick-start h2,.drop-card .quick-start li,.drop-card .quick-start p{text-align:start}
 .quick-start ol{padding-inline-start:1.5rem;line-height:1.55;gap:.85rem}.quick-start li{padding-inline-start:.25rem}.quick-start li strong{display:block;margin-bottom:.1rem}.quick-start li::marker{font-weight:700;color:var(--purple)}
+
+/* Keep the real file input under the finger: no scripted click on a hidden input. */
+.scan-file-button{position:relative;display:inline-flex;align-items:center;overflow:hidden;min-height:48px}
+.scan-file-button input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.scan-file-button:focus-within{outline:3px solid #f5b942;outline-offset:2px}
+.scan-controls:disabled .scan-file-button{opacity:.45;cursor:not-allowed}
+.scan-camera-help{font-size:.9rem;margin:.75rem 0}.scan-camera-help summary{cursor:pointer;padding:.5rem 0}.scan-camera-help p{line-height:1.5}

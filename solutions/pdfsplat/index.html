@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=20260914-guide-alignment">
+  <link rel="stylesheet" href="./css/app.css?v=20260914-phone-camera">
   <link rel="stylesheet" href="./css/branding.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -316,10 +316,13 @@
     <p id="scanStatus" role="status" aria-live="polite"></p>
     <fieldset id="scanControls" class="scan-controls">
       <legend class="sr-only">Scan controls</legend>
-      <div class="scan-actions"><button id="scanUpload" type="button">Choose photos</button><button id="scanTakePhoto" type="button">Take a photo</button><button id="scanCamera" type="button">Open camera</button></div>
-      <input id="scanFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
-      <input id="scanCapture" type="file" accept="image/*" capture="environment" hidden>
-      <p class="tool-hint">Choose or drop JPEG, PNG or WebP photos · up to 20 pages · 40 MB per photo. Take a photo opens the camera on supported phones.</p>
+      <div class="scan-actions">
+        <label class="button-link primary scan-file-button" id="scanTakePhoto">Take a photo<input id="scanCapture" type="file" accept="image/*" capture="environment" aria-describedby="scanCameraHelp"></label>
+        <label class="button-link scan-file-button" id="scanUpload">Choose photos<input id="scanFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+        <button id="scanCamera" type="button">Live camera preview</button>
+      </div>
+      <p id="scanCameraHelp" class="tool-hint">On your phone, tap Take a photo and choose Camera if prompted. Take the picture, then confirm it to return here. You can also choose or drop JPEG, PNG or WebP photos · up to 20 pages · 40 MB per photo.</p>
+      <details class="scan-camera-help"><summary>Camera not opening?</summary><p>In Android Settings, open Apps → Firefox (or your browser) → Permissions → Camera and allow access. For the live preview, also allow this site's camera request in your browser. If it still will not open, take a picture with your phone's Camera app, return here, and tap Choose photos.</p></details>
       <section id="scanCameraPanel" hidden><video id="scanVideo" muted playsinline aria-label="Document camera preview"></video><div class="scan-actions"><button id="scanSnapshot" type="button">Capture page</button><button id="scanStopCamera" type="button">Stop camera</button></div></section>
       <ol id="scanPages" class="scan-pages" aria-label="Scanned pages"></ol>
       <section id="scanEditor" hidden>
@@ -339,7 +342,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script type="module" src="./src/app.js"></script>
+  <script type="module" src="./src/app.js?v=20260914-phone-camera"></script>
   <script type="module" src="../../assets/js/tool-launcher.js"></script>
   <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>

@@ -40,7 +40,7 @@ export function setupScanner({ addPdf }) {
     $("scanResult").hidden = true;
     $("scanResult").removeAttribute("src");
     renderList();
-    message("Choose photos or open your camera to start.");
+    message("Tap Take a photo to use your phone camera, or Choose photos.");
   };
   const lock = (value) => {
     busy = value;
@@ -190,8 +190,15 @@ export function setupScanner({ addPdf }) {
     event.preventDefault();
     void run(() => addPhotos([...event.dataTransfer.files]));
   });
-  $("scanUpload").onclick = () => $("scanFiles").click();
-  $("scanTakePhoto").onclick = () => $("scanCapture").click();
+  // A native input receives the tap itself, including in Firefox for Android.
+  // Release any live preview before handing the camera to the phone's app.
+  for (const id of ["scanFiles", "scanCapture"])
+    $(id).onclick = () => {
+      stopCamera();
+      message(id === "scanCapture"
+        ? "Take a photo, then confirm it to return here. If no camera opens, expand Camera not opening? below."
+        : "Choose document photos from your device.");
+    };
   $("scanCamera").onclick = async () => {
     const request = ++cameraRequest;
     $("scanCamera").disabled = true;
@@ -221,9 +228,10 @@ export function setupScanner({ addPdf }) {
     } catch (error) {
       if (request === cameraRequest) {
         stopCamera();
-        message(
-          `Camera could not start: ${error.message}. You can choose an existing photo instead.`,
-        );
+        const denied = ["NotAllowedError", "SecurityError"].includes(error.name);
+        message(denied
+          ? "Live camera access is blocked. Allow Camera for your browser in Android Settings → Apps → Permissions and allow this site's camera request. You can also tap Take a photo or Choose photos."
+          : "Live camera could not start. Tap Take a photo to use your phone's camera, or take a picture in the Camera app and tap Choose photos.");
       }
     }
   };
@@ -375,7 +383,7 @@ export function setupScanner({ addPdf }) {
   for (const id of ["scanButton", "scanStartButton"])
     document.getElementById(id).onclick = () => {
       dialog.showModal();
-      message("Choose photos or open your camera to start.");
+      message("Tap Take a photo to use your phone camera, or Choose photos.");
     };
   renderList();
 }
