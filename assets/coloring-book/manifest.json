@@ -5,20 +5,7 @@
     "label": "Allosaurus",
     "path": "assets/coloring-book/allosaurus.jpg",
     "paths": [
-      "assets/coloring-book/allosaurus.jpg",
-      "assets/coloring-book/allosaurus.jpeg",
-      "assets/coloring-book/allosaurus.png"
-    ]
-  },
-  {
-    "id": "anteater",
-    "category": "animals",
-    "label": "Anteater",
-    "path": "assets/coloring-book/anteater.png",
-    "paths": [
-      "assets/coloring-book/anteater.png",
-      "assets/coloring-book/anteater.jpg",
-      "assets/coloring-book/anteater.jpeg"
+      "assets/coloring-book/allosaurus.jpg"
     ]
   },
   {
@@ -27,9 +14,7 @@
     "label": "Apatosaurus",
     "path": "assets/coloring-book/apatosaurus.jpg",
     "paths": [
-      "assets/coloring-book/apatosaurus.jpg",
-      "assets/coloring-book/apatosaurus.jpeg",
-      "assets/coloring-book/apatosaurus.png"
+      "assets/coloring-book/apatosaurus.jpg"
     ]
   },
   {
@@ -38,9 +23,7 @@
     "label": "Archaeopteryx",
     "path": "assets/coloring-book/archaopteryx.jpg",
     "paths": [
-      "assets/coloring-book/archaopteryx.jpg",
-      "assets/coloring-book/archaopteryx.jpeg",
-      "assets/coloring-book/archaopteryx.png"
+      "assets/coloring-book/archaopteryx.jpg"
     ]
   },
   {
@@ -49,31 +32,7 @@
     "label": "Bear",
     "path": "assets/coloring-book/bear.jpg",
     "paths": [
-      "assets/coloring-book/bear.jpg",
-      "assets/coloring-book/bear.jpeg",
-      "assets/coloring-book/bear.png"
-    ]
-  },
-  {
-    "id": "beaver",
-    "category": "animals",
-    "label": "Beaver",
-    "path": "assets/coloring-book/beaver.png",
-    "paths": [
-      "assets/coloring-book/beaver.png",
-      "assets/coloring-book/beaver.jpg",
-      "assets/coloring-book/beaver.jpeg"
-    ]
-  },
-  {
-    "id": "beaverpup",
-    "category": "animals",
-    "label": "Beaverpup",
-    "path": "assets/coloring-book/beaverpup.png",
-    "paths": [
-      "assets/coloring-book/beaverpup.png",
-      "assets/coloring-book/beaverpup.jpg",
-      "assets/coloring-book/beaverpup.jpeg"
+      "assets/coloring-book/bear.jpg"
     ]
   },
   {
@@ -82,9 +41,7 @@
     "label": "Brachiosaurus",
     "path": "assets/coloring-book/brachiosaurus.jpg",
     "paths": [
-      "assets/coloring-book/brachiosaurus.jpg",
-      "assets/coloring-book/brachiosaurus.jpeg",
-      "assets/coloring-book/brachiosaurus.png"
+      "assets/coloring-book/brachiosaurus.jpg"
     ]
   },
   {
@@ -93,9 +50,7 @@
     "label": "Ceratosaurus",
     "path": "assets/coloring-book/ceratosaurus.jpg",
     "paths": [
-      "assets/coloring-book/ceratosaurus.jpg",
-      "assets/coloring-book/ceratosaurus.jpeg",
-      "assets/coloring-book/ceratosaurus.png"
+      "assets/coloring-book/ceratosaurus.jpg"
     ]
   },
   {
@@ -104,9 +59,7 @@
     "label": "Compsognathus",
     "path": "assets/coloring-book/copsognathus.jpg",
     "paths": [
-      "assets/coloring-book/copsognathus.jpg",
-      "assets/coloring-book/copsognathus.jpeg",
-      "assets/coloring-book/copsognathus.png"
+      "assets/coloring-book/copsognathus.jpg"
     ]
   },
   {
@@ -115,9 +68,7 @@
     "label": "Diplodocus",
     "path": "assets/coloring-book/diplodocus.jpg",
     "paths": [
-      "assets/coloring-book/diplodocus.jpg",
-      "assets/coloring-book/diplodocus.jpeg",
-      "assets/coloring-book/diplodocus.png"
+      "assets/coloring-book/diplodocus.jpg"
     ]
   },
   {
@@ -126,64 +77,7 @@
     "label": "Elephant",
     "path": "assets/coloring-book/elephant.jpg",
     "paths": [
-      "assets/coloring-book/elephant.jpg",
-      "assets/coloring-book/elephant.jpeg",
-      "assets/coloring-book/elephant.png"
-    ]
-  },
-  {
-    "id": "giraffe",
-    "category": "animals",
-    "label": "Giraffe",
-    "path": "assets/coloring-book/giraffe.png",
-    "paths": [
-      "assets/coloring-book/giraffe.png",
-      "assets/coloring-book/giraffe.jpg",
-      "assets/coloring-book/giraffe.jpeg"
-    ]
-  },
-  {
-    "id": "goat",
-    "category": "animals",
-    "label": "Goat",
-    "path": "assets/coloring-book/goat.png",
-    "paths": [
-      "assets/coloring-book/goat.png",
-      "assets/coloring-book/goat.jpg",
-      "assets/coloring-book/goat.jpeg"
-    ]
-  },
-  {
-    "id": "leopard",
-    "category": "animals",
-    "label": "Leopard",
-    "path": "assets/coloring-book/leopard.png",
-    "paths": [
-      "assets/coloring-book/leopard.png",
-      "assets/coloring-book/leopard.jpg",
-      "assets/coloring-book/leopard.jpeg"
-    ]
-  },
-  {
-    "id": "meerkats",
-    "category": "animals",
-    "label": "Meerkats",
-    "path": "assets/coloring-book/meerkats.png",
-    "paths": [
-      "assets/coloring-book/meerkats.png",
-      "assets/coloring-book/meerkats.jpg",
-      "assets/coloring-book/meerkats.jpeg"
-    ]
-  },
-  {
-    "id": "platypus",
-    "category": "animals",
-    "label": "Platypus",
-    "path": "assets/coloring-book/platypus.png",
-    "paths": [
-      "assets/coloring-book/platypus.png",
-      "assets/coloring-book/platypus.jpg",
-      "assets/coloring-book/platypus.jpeg"
+      "assets/coloring-book/elephant.jpg"
     ]
   },
   {
@@ -192,20 +86,7 @@
     "label": "Pterosaur",
     "path": "assets/coloring-book/pterosaur.jpg",
     "paths": [
-      "assets/coloring-book/pterosaur.jpg",
-      "assets/coloring-book/pterosaur.jpeg",
-      "assets/coloring-book/pterosaur.png"
-    ]
-  },
-  {
-    "id": "raccoon",
-    "category": "animals",
-    "label": "Raccoon",
-    "path": "assets/coloring-book/raccoon.png",
-    "paths": [
-      "assets/coloring-book/raccoon.png",
-      "assets/coloring-book/raccoon.jpg",
-      "assets/coloring-book/raccoon.jpeg"
+      "assets/coloring-book/pterosaur.jpg"
     ]
   },
   {
@@ -214,9 +95,7 @@
     "label": "Sauropod Eggs",
     "path": "assets/coloring-book/sauropod_eggs.jpg",
     "paths": [
-      "assets/coloring-book/sauropod_eggs.jpg",
-      "assets/coloring-book/sauropod_eggs.jpeg",
-      "assets/coloring-book/sauropod_eggs.png"
+      "assets/coloring-book/sauropod_eggs.jpg"
     ]
   },
   {
@@ -225,20 +104,115 @@
     "label": "Stegosaurus",
     "path": "assets/coloring-book/stegosaurus.jpg",
     "paths": [
-      "assets/coloring-book/stegosaurus.jpg",
-      "assets/coloring-book/stegosaurus.jpeg",
-      "assets/coloring-book/stegosaurus.png"
+      "assets/coloring-book/stegosaurus.jpg"
     ]
   },
   {
-    "id": "wolves",
+    "id": "wildlife-anteater",
     "category": "animals",
-    "label": "Wolves",
-    "path": "assets/coloring-book/wolves.png",
+    "label": "Anteater",
+    "path": "assets/coloring-book/wildlife-anteater.png",
     "paths": [
-      "assets/coloring-book/wolves.png",
-      "assets/coloring-book/wolves.jpg",
-      "assets/coloring-book/wolves.jpeg"
+      "assets/coloring-book/wildlife-anteater.png"
+    ]
+  },
+  {
+    "id": "space-lunar-rover",
+    "category": "space",
+    "label": "Lunar Exploration",
+    "path": "assets/coloring-book/space-lunar-rover.png",
+    "paths": [
+      "assets/coloring-book/space-lunar-rover.png"
+    ]
+  },
+  {
+    "id": "technology-robotics",
+    "category": "technology",
+    "label": "Robotics Lab",
+    "path": "assets/coloring-book/technology-robotics.png",
+    "paths": [
+      "assets/coloring-book/technology-robotics.png"
+    ]
+  },
+  {
+    "id": "energy-solar-wind",
+    "category": "energy",
+    "label": "Solar and Wind Energy",
+    "path": "assets/coloring-book/energy-solar-wind.png",
+    "paths": [
+      "assets/coloring-book/energy-solar-wind.png"
+    ]
+  },
+  {
+    "id": "nature-pollinator-garden",
+    "category": "nature",
+    "label": "Pollinator Garden",
+    "path": "assets/coloring-book/nature-pollinator-garden.png",
+    "paths": [
+      "assets/coloring-book/nature-pollinator-garden.png"
+    ]
+  },
+  {
+    "id": "ocean-coral-reef",
+    "category": "ocean",
+    "label": "Coral Reef",
+    "path": "assets/coloring-book/ocean-coral-reef.png",
+    "paths": [
+      "assets/coloring-book/ocean-coral-reef.png"
+    ]
+  },
+  {
+    "id": "community-accessible-playground",
+    "category": "community",
+    "label": "Inclusive Playground",
+    "path": "assets/coloring-book/community-accessible-playground.png",
+    "paths": [
+      "assets/coloring-book/community-accessible-playground.png"
+    ]
+  },
+  {
+    "id": "sports-soccer",
+    "category": "sports",
+    "label": "Soccer Practice",
+    "path": "assets/coloring-book/sports-soccer.png",
+    "paths": [
+      "assets/coloring-book/sports-soccer.png"
+    ]
+  },
+  {
+    "id": "farming-rangelands",
+    "category": "farming",
+    "label": "Healthy Rangelands",
+    "path": "assets/coloring-book/farming-rangelands.png",
+    "paths": [
+      "assets/coloring-book/farming-rangelands.png"
+    ]
+  },
+  {
+    "id": "science-space-telescope",
+    "category": "science",
+    "label": "Space Telescope",
+    "path": "assets/coloring-book/science-space-telescope.png",
+    "paths": [
+      "assets/coloring-book/science-space-telescope.png"
+    ]
+  },
+  {
+    "id": "community-repair-cafe",
+    "category": "community",
+    "label": "Repair and Reuse",
+    "path": "assets/coloring-book/community-repair-cafe.png",
+    "paths": [
+      "assets/coloring-book/community-repair-cafe.png"
+    ]
+  },
+  {
+    "id": "nature-community-garden",
+    "category": "nature",
+    "label": "Community Garden",
+    "path": "assets/coloring-book/nature-community-garden.png",
+    "paths": [
+      "assets/coloring-book/nature-community-garden.png"
     ]
   }
 ]

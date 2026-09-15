@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.96';
+const VERSION='3.0.97';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -80,34 +80,35 @@ const DOT_PICTURES=[
   {id:'sun',label:'Sun',rows:['X..X..X','..XXX..','XXXXXXX','.XXXXX.','XXXXXXX','..XXX..','X..X..X'],color:'#fde68a'},
   {id:'boat',label:'Boat',rows:['...X...','..XX...','.XXX...','XXXXXXX','.XXXXX.','..XXX..'],color:'#bfdbfe'}
 ];
-const COLORING_BOOK_EXTENSIONS=['jpg','jpeg','png'];
 function assetSlug(label){return String(label).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 const COLORING_BOOK_ITEMS=[
-  ['allosaurus','dinosaurs','Allosaurus','allosaurus'],
-  ['anteater','animals','Anteater','anteater'],
-  ['apatosaurus','dinosaurs','Apatosaurus','apatosaurus'],
-  ['archaopteryx','dinosaurs','Archaeopteryx','archaopteryx'],
-  ['bear','animals','Bear','bear'],
-  ['beaver','animals','Beaver','beaver'],
-  ['beaverpup','animals','Beaver Pup','beaverpup'],
-  ['brachiosaurus','dinosaurs','Brachiosaurus','brachiosaurus'],
-  ['ceratosaurus','dinosaurs','Ceratosaurus','ceratosaurus'],
-  ['copsognathus','dinosaurs','Compsognathus','copsognathus'],
-  ['diplodocus','dinosaurs','Diplodocus','diplodocus'],
-  ['elephant','animals','Elephant','elephant'],
-  ['giraffe','animals','Giraffe','giraffe'],
-  ['goat','animals','Goat','goat'],
-  ['leopard','animals','Leopard','leopard'],
-  ['meerkats','animals','Meerkats','meerkats'],
-  ['platypus','animals','Platypus','platypus'],
-  ['pterosaur','dinosaurs','Pterosaur','pterosaur'],
-  ['raccoon','animals','Raccoon','raccoon'],
-  ['sauropod-eggs','dinosaurs','Sauropod Eggs','sauropod_eggs'],
-  ['stegosaurus','dinosaurs','Stegosaurus','stegosaurus'],
-  ['wolves','animals','Wolves','wolves']
+  ["allosaurus","dinosaurs","Allosaurus","allosaurus.jpg"],
+  ["apatosaurus","dinosaurs","Apatosaurus","apatosaurus.jpg"],
+  ["archaopteryx","dinosaurs","Archaeopteryx","archaopteryx.jpg"],
+  ["bear","animals","Bear","bear.jpg"],
+  ["brachiosaurus","dinosaurs","Brachiosaurus","brachiosaurus.jpg"],
+  ["ceratosaurus","dinosaurs","Ceratosaurus","ceratosaurus.jpg"],
+  ["copsognathus","dinosaurs","Compsognathus","copsognathus.jpg"],
+  ["diplodocus","dinosaurs","Diplodocus","diplodocus.jpg"],
+  ["elephant","animals","Elephant","elephant.jpg"],
+  ["pterosaur","dinosaurs","Pterosaur","pterosaur.jpg"],
+  ["sauropod-eggs","dinosaurs","Sauropod Eggs","sauropod_eggs.jpg"],
+  ["stegosaurus","dinosaurs","Stegosaurus","stegosaurus.jpg"],
+  ["wildlife-anteater","animals","Anteater","wildlife-anteater.png"],
+  ["space-lunar-rover","space","Lunar Exploration","space-lunar-rover.png"],
+  ["technology-robotics","technology","Robotics Lab","technology-robotics.png"],
+  ["energy-solar-wind","energy","Solar and Wind Energy","energy-solar-wind.png"],
+  ["nature-pollinator-garden","nature","Pollinator Garden","nature-pollinator-garden.png"],
+  ["ocean-coral-reef","ocean","Coral Reef","ocean-coral-reef.png"],
+  ["community-accessible-playground","community","Inclusive Playground","community-accessible-playground.png"],
+  ["sports-soccer","sports","Soccer Practice","sports-soccer.png"],
+  ["farming-rangelands","farming","Healthy Rangelands","farming-rangelands.png"],
+  ["science-space-telescope","science","Space Telescope","science-space-telescope.png"],
+  ["community-repair-cafe","community","Repair and Reuse","community-repair-cafe.png"],
+  ["nature-community-garden","nature","Community Garden","nature-community-garden.png"]
 ];
 const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
-function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,fileBase])=>{const base=appPath('assets/coloring-book/'+fileBase), paths=COLORING_BOOK_EXTENSIONS.map(ext=>base+'.'+ext); return {id:idv,category,label,path:paths[0],paths}})}
+function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,file])=>{const path=appPath('assets/coloring-book/'+file); return {id:idv,category,label,path,paths:[path]}})}
 
 let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, liveDrawingPathEl=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
@@ -1866,16 +1867,16 @@ const PICTURE_GRAPH_ICON_CATALOG=[
   ['Food',[['pizza','Pizza','🍕'],['taco','Taco','🌮'],['salad','Salad','🥗'],['sandwich','Sandwich','🥪'],['apple','Apple','🍎'],['banana','Banana','🍌'],['carrot','Carrot','🥕']]],
   ['Animals',[['dog','Dog','🐕'],['cat','Cat','🐈'],['dolphin','Dolphin','🐬'],['whale','Whale','🐋'],['shark','Shark','🦈'],['parrot','Parrot','🦜'],['bird','Bird','🐦'],['toucan','Toucan','🦜'],['fish','Fish','🐟'],['turtle','Turtle','🐢'],['frog','Frog','🐸'],['butterfly','Butterfly','🦋']]],
   ['Smithsonian Open Access Animals',[
-    ['smithsonian-clouded-leopard-cub','Clouded leopard cub','./assets/smithsonian-animals/clouded-leopard-cub.jpg'],
-    ['smithsonian-african-lion-cub','African lion cub','./assets/smithsonian-animals/african-lion-cub.jpg'],
-    ['smithsonian-asian-elephant','Asian elephant','./assets/smithsonian-animals/asian-elephant.jpg'],
-    ['smithsonian-cheetah','Cheetah','./assets/smithsonian-animals/cheetah.jpg'],
-    ['smithsonian-california-sea-lion','California sea lion','./assets/smithsonian-animals/california-sea-lion.jpg'],
-    ['smithsonian-alpaca','Alpaca','./assets/smithsonian-animals/alpaca.jpg'],
-    ['smithsonian-giant-panda','Giant panda','./assets/smithsonian-animals/giant-panda.jpg'],
-    ['smithsonian-grevys-zebra',"Grevy's zebra",'./assets/smithsonian-animals/grevys-zebra.jpg'],
-    ['smithsonian-elds-deer',"Eld's deer",'./assets/smithsonian-animals/elds-deer.jpg'],
-    ['smithsonian-fennec-fox','Fennec fox','./assets/smithsonian-animals/fennec-fox.jpg']
+    ['smithsonian-clouded-leopard-cub','Clouded leopard cub',appPath('assets/smithsonian-animals/clouded-leopard-cub.jpg')],
+    ['smithsonian-african-lion-cub','African lion cub',appPath('assets/smithsonian-animals/african-lion-cub.jpg')],
+    ['smithsonian-asian-elephant','Asian elephant',appPath('assets/smithsonian-animals/asian-elephant.jpg')],
+    ['smithsonian-cheetah','Cheetah',appPath('assets/smithsonian-animals/cheetah.jpg')],
+    ['smithsonian-california-sea-lion','California sea lion',appPath('assets/smithsonian-animals/california-sea-lion.jpg')],
+    ['smithsonian-alpaca','Alpaca',appPath('assets/smithsonian-animals/alpaca.jpg')],
+    ['smithsonian-giant-panda','Giant panda',appPath('assets/smithsonian-animals/giant-panda.jpg')],
+    ['smithsonian-grevys-zebra',"Grevy's zebra",appPath('assets/smithsonian-animals/grevys-zebra.jpg')],
+    ['smithsonian-elds-deer',"Eld's deer",appPath('assets/smithsonian-animals/elds-deer.jpg')],
+    ['smithsonian-fennec-fox','Fennec fox',appPath('assets/smithsonian-animals/fennec-fox.jpg')]
   ]],
   ['Life Science',[['vertebrate','Vertebrate','🦴'],['invertebrate','Invertebrate','🪱'],['mammal','Mammal','🐾'],['reptile','Reptile','🦎'],['amphibian','Amphibian','🐸'],['insect','Insect','🐞'],['plant','Plant','🌱']]],
   ['Colored Candies',[['red-candy','Red candy','🔴'],['orange-candy','Orange candy','🟠'],['yellow-candy','Yellow candy','🟡'],['green-candy','Green candy','🟢'],['blue-candy','Blue candy','🔵'],['purple-candy','Purple candy','🟣'],['brown-candy','Brown candy','🟤']]],
@@ -1883,7 +1884,7 @@ const PICTURE_GRAPH_ICON_CATALOG=[
   ['Weather',[['sun','Sun','☀️'],['cloud','Cloud','☁️'],['rain','Rain','🌧️'],['snow','Snow','❄️'],['storm','Storm','⛈️'],['rainbow','Rainbow','🌈']]]
 ];
 const PICTURE_GRAPH_PRESET_IMAGE_CACHE={};
-function pictureGraphPresetIsImage(value){return /^(data:image\/|blob:|https?:\/\/|\.?\/?assets\/)/i.test(String(value||''))}
+function pictureGraphPresetIsImage(value){return /^(data:image\/|blob:|https?:\/\/|(?:\.{1,2}\/)?\/?assets\/)/i.test(String(value||''))}
 function pictureGraphIconOptions(selected=''){
   return '<option value="">'+esc(gtf('choosePreset','Choose preset'))+'</option>'+PICTURE_GRAPH_ICON_CATALOG.map(([group,items])=>`<optgroup label="${esc(group)}">${items.map(([idv,label,icon])=>{const image=pictureGraphPresetIsImage(icon), prefix=image?'Photo: ':icon+' '; return `<option value="${esc(icon)}" ${icon===selected?'selected':''}>${esc(prefix+label)}</option>`}).join('')}</optgroup>`).join('');
 }
@@ -3078,16 +3079,16 @@ buildDotPictureUI();
 
 const IMAGE_GALLERY_CATALOG=[
   ['Smithsonian Open Access Animals',[
-    ['smithsonian-clouded-leopard-cub','Clouded leopard cub','./assets/smithsonian-animals/clouded-leopard-cub.jpg'],
-    ['smithsonian-african-lion-cub','African lion cub','./assets/smithsonian-animals/african-lion-cub.jpg'],
-    ['smithsonian-asian-elephant','Asian elephant','./assets/smithsonian-animals/asian-elephant.jpg'],
-    ['smithsonian-cheetah','Cheetah','./assets/smithsonian-animals/cheetah.jpg'],
-    ['smithsonian-california-sea-lion','California sea lion','./assets/smithsonian-animals/california-sea-lion.jpg'],
-    ['smithsonian-alpaca','Alpaca','./assets/smithsonian-animals/alpaca.jpg'],
-    ['smithsonian-giant-panda','Giant panda','./assets/smithsonian-animals/giant-panda.jpg'],
-    ['smithsonian-grevys-zebra',"Grevy's zebra",'./assets/smithsonian-animals/grevys-zebra.jpg'],
-    ['smithsonian-elds-deer',"Eld's deer",'./assets/smithsonian-animals/elds-deer.jpg'],
-    ['smithsonian-fennec-fox','Fennec fox','./assets/smithsonian-animals/fennec-fox.jpg']
+    ['smithsonian-clouded-leopard-cub','Clouded leopard cub',appPath('assets/smithsonian-animals/clouded-leopard-cub.jpg')],
+    ['smithsonian-african-lion-cub','African lion cub',appPath('assets/smithsonian-animals/african-lion-cub.jpg')],
+    ['smithsonian-asian-elephant','Asian elephant',appPath('assets/smithsonian-animals/asian-elephant.jpg')],
+    ['smithsonian-cheetah','Cheetah',appPath('assets/smithsonian-animals/cheetah.jpg')],
+    ['smithsonian-california-sea-lion','California sea lion',appPath('assets/smithsonian-animals/california-sea-lion.jpg')],
+    ['smithsonian-alpaca','Alpaca',appPath('assets/smithsonian-animals/alpaca.jpg')],
+    ['smithsonian-giant-panda','Giant panda',appPath('assets/smithsonian-animals/giant-panda.jpg')],
+    ['smithsonian-grevys-zebra',"Grevy's zebra",appPath('assets/smithsonian-animals/grevys-zebra.jpg')],
+    ['smithsonian-elds-deer',"Eld's deer",appPath('assets/smithsonian-animals/elds-deer.jpg')],
+    ['smithsonian-fennec-fox','Fennec fox',appPath('assets/smithsonian-animals/fennec-fox.jpg')]
   ]]
 ];
 function imageGalleryGroupHtml(group,items){

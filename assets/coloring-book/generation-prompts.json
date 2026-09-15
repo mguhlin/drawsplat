@@ -1,0 +1,67 @@
+{
+  "date": "2026-09-15",
+  "tool": "Built-in image_gen",
+  "template": "Use case: illustration-story. Asset type: printable children's coloring book page. Subject: {subject} Style: crisp professional black ink outlines on pure white, closed contours, consistent bold lines, large white regions for coloring, moderate detail, no gray shading, no hatching, no solid dark backgrounds, no text or watermark. Portrait 1024x1536 or higher, complete scene inside generous white print margins.",
+  "pages": [
+    {
+      "file": "wildlife-anteater.png",
+      "label": "Anteater",
+      "subject": "A giant anteater in side view with its long snout, bushy tail and four anatomically plausible legs beside a termite mound, a few broad tropical leaves."
+    },
+    {
+      "file": "space-lunar-rover.png",
+      "label": "Lunar Exploration",
+      "subject": "An astronaut beside a six-wheeled lunar rover on the Moon, large craters and Earth in the sky. An imaginative future exploration scene, no mission logos."
+    },
+    {
+      "file": "technology-robotics.png",
+      "label": "Robotics Lab",
+      "subject": "Two children assembling a small wheeled educational robot at a tidy workbench, a laptop with simple geometric shapes on screen, clearly separated hands and tools."
+    },
+    {
+      "file": "energy-solar-wind.png",
+      "label": "Solar and Wind Energy",
+      "subject": "A welcoming home with rooftop solar panels, two wind turbines on distant rolling hills, a tree and sun."
+    },
+    {
+      "file": "nature-pollinator-garden.png",
+      "label": "Pollinator Garden",
+      "subject": "A butterfly and bee visiting large sunflowers and coneflowers in a garden, distinct petals and leaves, generous open spaces."
+    },
+    {
+      "file": "ocean-coral-reef.png",
+      "label": "Coral Reef",
+      "subject": "A sea turtle swimming above a coral reef with three small fish, varied simple coral shapes and bubbles."
+    },
+    {
+      "file": "community-accessible-playground.png",
+      "label": "Inclusive Playground",
+      "subject": "Three children enjoying an accessible playground together, one child in a manual wheelchair beside a wide gently sloping play ramp and two friends on the ground, cheerful trees."
+    },
+    {
+      "file": "sports-soccer.png",
+      "label": "Soccer Practice",
+      "subject": "Three children practicing soccer on a field with one ball and a goal, one dribbling and two nearby teammates, clear separate limbs, no team branding."
+    },
+    {
+      "file": "farming-rangelands.png",
+      "label": "Healthy Rangelands",
+      "subject": "A shepherd tending a small flock of sheep on open grassy rolling hills with a water trough and scattered wildflowers."
+    },
+    {
+      "file": "science-space-telescope.png",
+      "label": "Space Telescope",
+      "subject": "A large space telescope with a segmented hexagonal mirror and folded sunshield floating above Earth, stars and one distant spiral galaxy, simplified readable engineering."
+    },
+    {
+      "file": "community-repair-cafe.png",
+      "label": "Repair and Reuse",
+      "subject": "An adult and child repairing a bicycle together at a community workshop, simple toolbox and a potted plant, carefully drawn separate tools and hands."
+    },
+    {
+      "file": "nature-community-garden.png",
+      "label": "Community Garden",
+      "subject": "Two children planting seedlings in raised garden beds with tomatoes, carrots and a watering can, a small compost bin and friendly sun."
+    }
+  ]
+}
