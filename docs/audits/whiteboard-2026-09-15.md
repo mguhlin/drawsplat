@@ -173,9 +173,9 @@ Local checks:
 | Check | Passed | Failed | Skipped |
 | --- | ---: | ---: | ---: |
 | Initial root suite | 52 | 2 | 0 |
-| Final Whiteboard release suite, three browsers (78 cases) | 77 | 0 | 1 WebKit offline |
+| Final Whiteboard release suite, three browsers (81 cases) | 80 | 0 | 1 WebKit offline |
 | Repeated Chrome cancellation/startup/controller-change checks | 9 | 0 | 0 |
-| Final broader root suite (81 cases) | 79 | 2 existing | 0 |
+| Final broader root suite (82 cases) | 80 | 2 existing | 0 |
 | Green Screen Studio + remove-color, three browsers | 39 | 0 | 0 |
 | WebKit camera track-state checks, repeated three times | 6 | 0 | 0 |
 | Final targeted cache/export checks, three browsers | 14 | 0 | 1 WebKit offline |
@@ -189,8 +189,9 @@ Reviewed screenshots: [phone Chrome](images/whiteboard-phone-chrome.png),
 [tablet Firefox](images/whiteboard-tablet-firefox.png),
 [Green Screen Studio after dragging](images/green-screen-drag.png).
 
-The full Whiteboard release run finished with **77 passed, 0 failed, 1 skipped**
-(78 cases, 1.5 minutes). The skip is the documented Linux WebKit offline issue.
+The final Whiteboard release run finished with **80 passed, 0 failed, 1 skipped**
+(81 cases, 2.1 minutes). The final root suite had **80 passed, 2 existing failures,
+0 skipped** (82 cases, 1.7 minutes). The skip is the documented Linux WebKit offline issue.
 
 Reproduce the dedicated checks with:
 
@@ -206,7 +207,7 @@ in isolated browser contexts; they do not save to a classroom backend.
 
 ## Production deployment evidence
 
-- Application commit: [`a65a76561e71ad32bd7ad66174dfed4fe1cb55c3`](https://github.com/mguhlin/drawsplat/commit/a65a76561e71ad32bd7ad66174dfed4fe1cb55c3).
+- Initial application commit: [`a65a76561e71ad32bd7ad66174dfed4fe1cb55c3`](https://github.com/mguhlin/drawsplat/commit/a65a76561e71ad32bd7ad66174dfed4fe1cb55c3).
 - Cloudflare production deployment: `92e3e1f6-f576-4f69-9fb1-d970d0252721`,
   [deployment URL](https://92e3e1f6.drawsplat.pages.dev).
 - Queued, initialization, repository clone, build and deployment stages all
@@ -234,3 +235,27 @@ pixels, and actual PNG exports.
 
 [MDN's FetchEvent.respondWith reference](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith)
 describes the response restrictions relevant to cached navigation handling.
+
+### Corrected production deployment
+
+- Final application commit: [`edcc6eff1772f2db5e5885a4ad15e492761a4134`](https://github.com/mguhlin/drawsplat/commit/edcc6eff1772f2db5e5885a4ad15e492761a4134),
+  which includes the preceding Whiteboard and Green Screen Studio changes.
+- Cloudflare production deployment: `4d464d62-069f-4c45-b062-a55d75ca8fa5`,
+  [deployment URL](https://4d464d62.drawsplat.pages.dev). All five stages succeeded;
+  deployment completed at `2026-09-15T20:14:16.718392Z`.
+- Production `sw.js` returns HTTP 200 and matches the corrected local file exactly.
+  The other five application assets are unchanged from the verified initial
+  deployment.
+
+### Final live workflow results
+
+The corrected production Whiteboard suite completed with **80 passed, 0 failed,
+1 skipped** (81 cases, 2.3 minutes). Chrome and Firefox each passed 27 cases;
+WebKit passed 26 and skipped its independently reproduced offline navigation
+limitation. The Cloudflare-specific Chrome offline reload now passes. Green
+Screen Studio and remove-color passed **39/39** production cases (13 per engine).
+
+Both code commits are pushed to `origin/main`. The final report-only revision
+changes no runtime assets. The unrelated `pages/audit_instructions.md` remains
+untracked and untouched. No physical-device or blanket browser-compatibility
+claim is made.
