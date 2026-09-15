@@ -1,3 +1,4 @@
+import { createChromaRenderer, type ChromaSettings } from "../render/chroma";
 import { FilesetResolver, ImageSegmenter, type ImageSegmenterResult } from "@mediapipe/tasks-vision";
 import { supportedRecordingType } from "../media/recording";
 export { supportedRecordingType } from "../media/recording";
@@ -17,6 +18,7 @@ export interface CaptureOptions {
   countdownSeconds?: number;
   displaySurface?: DisplaySurfacePreference;
   backgroundImage?: ImageBitmap;
+  chroma?: ChromaSettings;
 }
 
 export interface CaptureSession {
@@ -249,7 +251,7 @@ export async function startCapture(
       video.setAttribute("aria-hidden", "true");
       document.body.append(video);
       const playback = video.play();
-      if (needsCanvasComposition(options.mode, Boolean(options.backgroundImage))) {
+      if (needsCanvasComposition(options.mode, Boolean(options.backgroundImage || options.chroma?.enabled))) {
         let timer: ReturnType<typeof setTimeout> | undefined;
         try {
           await Promise.race([playback, new Promise<never>((_, reject) => {
@@ -266,9 +268,14 @@ export async function startCapture(
     };
     const screenVideo = await makeVideo(screen);
     const cameraVideo = await makeVideo(camera);
-    const backgroundCompositor = options.backgroundImage
-      ? await createBackgroundCompositor(options.backgroundImage)
-      : undefined;
+    const renderChroma = createChromaRenderer();
+    const backgroundCompositor = options.chroma?.enabled
+      ? (target: CanvasRenderingContext2D, video: HTMLVideoElement, x: number, y: number, w: number, h: number) => {
+          target.save(); target.beginPath(); target.rect(x, y, w, h); target.clip();
+          if (options.backgroundImage) drawCover(target, options.backgroundImage, x, y, w, h);
+          target.drawImage(renderChroma(video, w, h, options.chroma!), x, y, w, h); target.restore();
+        }
+      : options.backgroundImage ? await createBackgroundCompositor(options.backgroundImage) : undefined;
     const draw = () => {
       context.fillStyle = "#050609";
       context.fillRect(0, 0, width, height);
@@ -304,7 +311,7 @@ export async function startCapture(
     // Preserve the browser-owned source track whenever no camera overlay is
     // required. Unlike canvas animation, display/camera tracks continue while
     // the VideoSplat tab is hidden and the user works in the tab being recorded.
-    output = needsCanvasComposition(options.mode, Boolean(options.backgroundImage))
+    output = needsCanvasComposition(options.mode, Boolean(options.backgroundImage || options.chroma?.enabled))
       ? previewCanvas.captureStream(options.frameRate ?? 30)
       : new MediaStream([primaryTrack]);
     const audioStreams = [

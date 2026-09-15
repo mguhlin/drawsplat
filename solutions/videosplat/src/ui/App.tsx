@@ -1,3 +1,6 @@
+import { ChromaControls } from "./ChromaControls";
+import { ChromaPreview } from "./ChromaPreview";
+import { chromaSettings, chromaProperties } from "../render/chroma";
 import { GenerateSubtitlesDialog } from './GenerateSubtitlesDialog';
 import type { Source } from '@splat/local-subtitles';
 import { addGeneratedCaptions } from '../captions/generated';
@@ -12,6 +15,7 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type CSSProperties,
 } from "react";
 import {
   createProject,
@@ -170,6 +174,16 @@ export function App() {
   const captionInput = useRef<HTMLInputElement>(null);
   const languageMenu = useRef<HTMLDivElement>(null);
   const splashLanguage = useRef<HTMLDivElement>(null);
+  const previewContainer = useRef<HTMLDivElement>(null);
+  const [previewBounds, setPreviewBounds] = useState({ width: 640, height: 360 });
+  useEffect(() => {
+    const element = previewContainer.current;
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => setPreviewBounds({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  const previewFrameWidth = Math.max(1, Math.min(800, previewBounds.width * .9, previewBounds.height * project.canvas.width / project.canvas.height));
   const previewMedia = useRef<HTMLVideoElement | HTMLAudioElement>(null);
   const visualMedia = useRef(new Map<string, HTMLVideoElement>());
   const timelineAudio = useRef(new Map<string, HTMLAudioElement>());
@@ -1258,7 +1272,7 @@ export function App() {
           )}
         </aside>
         <section className="stage" aria-label="Video preview">
-          <div className="canvas">
+          <div className="canvas" ref={previewContainer} style={{ "--preview-width": `${previewFrameWidth}px`, "--preview-ratio": `${project.canvas.width} / ${project.canvas.height}` } as CSSProperties}>
             {previewLocations.length ? (
               previewLocations.map((location, layer) => {
                 const asset = location.clip.assetId
@@ -1284,6 +1298,7 @@ export function App() {
                     : 1,
                 );
                 const style = {
+                  width: `${previewFrameWidth}px`,
                   aspectRatio: `${project.canvas.width} / ${project.canvas.height}`,
                   zIndex: layer + 1,
                   opacity:
@@ -1294,7 +1309,7 @@ export function App() {
                 };
                 return (
                   <div
-                    className="visual-layer"
+                    className={`visual-layer${properties.chromaEnabled === true ? " chroma-active" : ""}`}
                     style={style}
                     key={location.clip.id}
                   >
@@ -1306,8 +1321,8 @@ export function App() {
                         style={
                           fit === "fit"
                             ? {
-                                width: "auto",
-                                height: "auto",
+                                width: (asset.width ?? project.canvas.width) / (asset.height ?? project.canvas.height) >= project.canvas.width / project.canvas.height ? "100%" : "auto",
+                                height: (asset.width ?? project.canvas.width) / (asset.height ?? project.canvas.height) >= project.canvas.width / project.canvas.height ? "auto" : "100%",
                                 maxWidth: "100%",
                                 maxHeight: "100%",
                                 objectFit: "contain",
@@ -1342,8 +1357,8 @@ export function App() {
                         style={
                           fit === "fit"
                             ? {
-                                width: "auto",
-                                height: "auto",
+                                width: (asset.width ?? project.canvas.width) / (asset.height ?? project.canvas.height) >= project.canvas.width / project.canvas.height ? "100%" : "auto",
+                                height: (asset.width ?? project.canvas.width) / (asset.height ?? project.canvas.height) >= project.canvas.width / project.canvas.height ? "auto" : "100%",
                                 maxWidth: "100%",
                                 maxHeight: "100%",
                                 objectFit: "contain",
@@ -1356,6 +1371,7 @@ export function App() {
                         }
                       />
                     )}
+                    {(asset?.kind === "video" || asset?.kind === "image") && properties.chromaEnabled === true && <ChromaPreview properties={properties} width={project.canvas.width} height={project.canvas.height}/>}
                     {isText && location.clip.properties.subtitleLayout && <SubtitlePreview clip={location.clip} width={project.canvas.width} height={project.canvas.height}/>}
                     {isText && !location.clip.properties.subtitleLayout && (
                       <div
@@ -1555,6 +1571,10 @@ export function App() {
                   }
                 />
               </label>
+              {(selectedLocation.clip.kind === "video" || selectedLocation.clip.kind === "image") && <>
+                <ChromaControls value={chromaSettings(selectedLocation.clip.properties)} onChange={value => commit(updateClip(project, selectedLocation.clip.id, { properties: { ...selectedLocation.clip.properties, ...chromaProperties(value) } }))}/>
+                <small>Put the replacement image or video on a track before the keyed subject in the track list, with both clips covering the same time. Later tracks appear in front. Green-screen settings are saved in your VideoSplat project.</small>
+              </>}
               {selectedLocation.clip.kind !== "audio" && (
                 <div className="property-grid">
                   {selectedLocation.clip.kind !== "text" &&

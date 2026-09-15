@@ -1,3 +1,5 @@
+import { ChromaControls } from "./ChromaControls";
+import { defaultChroma } from "../render/chroma";
 import { RecordingAudioMeter } from "./RecordingAudioMeter";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
@@ -49,6 +51,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     onMicrophoneChange?.(microphoneDeviceId);
   }, [microphoneDeviceId, onMicrophoneChange]);
   const [systemAudio, setSystemAudio] = useState(true);
+  const [chroma, setChroma] = useState(defaultChroma);
   const [backgroundFile, setBackgroundFile] = useState<File>();
   const [backgroundUrl, setBackgroundUrl] = useState("");
   const [countdown, setCountdown] = useState(3);
@@ -208,6 +211,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
           countdownSeconds: countdown,
           displaySurface,
           backgroundImage,
+          chroma: mode !== "screen" && chroma.enabled ? chroma : undefined,
         },
         canvas.current!,
         () => void stopCurrent.current(),
@@ -354,6 +358,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       </fieldset>}
       {microphone && <label>Microphone source<select aria-label="Microphone source" value={microphoneDeviceId} onChange={(event) => setMicrophoneDeviceId(event.target.value)}>{microphones.length ? microphones.map((device, index) => <option value={device.deviceId} key={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>) : <option value="">System default microphone</option>}</select></label>}
       {mode !== "screen" && <div className="camera-background-setting">
+        <ChromaControls value={chroma} onChange={setChroma}/>
         <label>Virtual background<input
           aria-label="Virtual background image"
           type="file"
@@ -373,7 +378,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
             setBackgroundUrl("");
           }}>Remove</button>
         </div>}
-        <small>Your image and person-segmentation processing stay on this device.</small>
+        <small>{chroma.enabled ? "Green-screen removal is applied to the recorded camera video. Choose a replacement image above; without one, the screen or a black background shows through. Settings are fixed when recording starts." : "Choose an image for automatic person-background replacement, or enable Green screen to remove a colored backdrop. Processing stays on this device."}</small>
       </div>}
       <label className="check"><input
         type="checkbox"

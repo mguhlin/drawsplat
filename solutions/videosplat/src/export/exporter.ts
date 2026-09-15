@@ -1,3 +1,4 @@
+import { chromaSettings, createChromaRenderer } from "../render/chroma";
 import { drawSubtitle } from "../captions/render";
 import { activeVisualClips, projectDuration } from "../timeline/engine";
 import type { Clip, VideoSplatProject } from "../domain/project";
@@ -98,6 +99,7 @@ export async function exportProject(
     throw new Error(
       `Relink missing media before export: ${missing.map((asset) => asset.name).join(", ")}`,
     );
+  const renderChroma = createChromaRenderer();
   const canvas = document.createElement("canvas");
   canvas.width = options.width;
   canvas.height = options.height;
@@ -302,8 +304,11 @@ export async function exportProject(
                 canvas.height,
                 String(p.fit ?? "fit") as FitMode,
               );
+              const key = chromaSettings(p);
+              const factor = Math.min(1, Math.max(canvas.width, canvas.height) / Math.max(sourceWidth, sourceHeight));
+              const renderedSource = key.enabled ? renderChroma(source, sourceWidth * factor, sourceHeight * factor, key) : source;
               context.drawImage(
-                source,
+                renderedSource,
                 rect.x,
                 rect.y,
                 rect.width,
