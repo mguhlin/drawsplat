@@ -26,6 +26,7 @@ The app previously swallowed import errors, allowing the recording dialog to ann
 - Subtitle inference uses a deterministic worker double; encoding and media decoding are native. Subtitle generation begins after recording stops.
 - Production build and TypeScript checks pass. Existing large-bundle advisory remains.
 - Unit suite: 89 passed.
+- Full Chrome/Firefox suite: 116 passed, 0 failed, 8 skipped (six optional real-model tests and two opt-in nine-minute soaks), 2.8 minutes.
 
 ## Browser coverage and limitations
 
@@ -40,4 +41,6 @@ No physical camera, microphone, native screen-sharing chooser, hardware codec, d
 
 ## Publication
 
-VideoSplat shell cache and registration advance to v29. Live URL: https://drawsplat.org/solutions/videosplat/ . Final commit/deployment evidence accompanies the publication summary.
+VideoSplat shell cache and registration advance to v29. Live URL: https://drawsplat.org/solutions/videosplat/ . Fix commit: `214bf719c47b9a04e440dffe3cd5e7206036b724` (pushed to main). Cloudflare deployment `9668c7cf-8dd7-4a3a-bc0f-a38dd533b61f` succeeded at 21:50:00 UTC. Live index, service worker and both changed JavaScript bundles matched local SHA-256 hashes.
+
+Production checks: **8 passed, 0 failed, 0 skipped**, 27.7 seconds across Chrome and Firefox. These repeat native WebM import, forced metadata failure recovering the full 51.11-second fixture, 12.5-second recording followed by test subtitle generation, and failed-import review retention/retry. The audit report update is published separately; it does not change production assets.
