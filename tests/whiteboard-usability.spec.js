@@ -1,9 +1,10 @@
 const { test, expect } = require('@playwright/test');
+test.use({ serviceWorkers: 'block' });
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('drawsplat.welcomed', '1');
-    localStorage.setItem('drawsplat.consent.v1', 'accepted');
+    localStorage.setItem('drawsplat.consent.accepted', '1');
   });
   await page.goto('/app/whiteboard.html');
 });

@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.94';
+const VERSION='3.0.96';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -257,7 +257,7 @@ function scheduleStartupTip(delay=900){
    collaboration status, and short-lived toast messages. */
 function askConfirm(msg,opts={}){return new Promise(resolve=>{const dlg=document.getElementById('confirmDialog'); if(!dlg||typeof dlg.showModal!=='function'){resolve(window.confirm(tr(msg))); return} const m=document.getElementById('confirmDialogMsg'),ok=document.getElementById('confirmDialogOk'),cancel=document.getElementById('confirmDialogCancel'); if(m) m.textContent=tr(msg); if(ok) ok.textContent=tr(opts.okLabel||'OK'); if(cancel) cancel.textContent=tr(opts.cancelLabel||'Cancel'); const cleanup=()=>{ok.onclick=null; cancel.onclick=null; dlg.removeEventListener('cancel',onCancel)}; const onOk=()=>{cleanup(); dlg.close(); resolve(true)}; const onCancel=(e)=>{if(e&&e.preventDefault) e.preventDefault(); cleanup(); dlg.close(); resolve(false)}; ok.onclick=onOk; cancel.onclick=onCancel; dlg.addEventListener('cancel',onCancel); dlg.showModal()})}
 let _savedAt=null,_saveStateTimer=null;
-function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved'); chip.className='save-state saved'} else if(state==='error'){chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved'):sec<60?tr('Saved ') + sec + tr('s ago'):sec<3600?tr('Saved ') + Math.round(sec/60) + tr('m ago'):tr('Saved ') + Math.round(sec/3600) + tr('h ago')}}
+function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved'); chip.className='save-state saved'} else if(state==='error'){_savedAt=0; chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved'):sec<60?tr('Saved ') + sec + tr('s ago'):sec<3600?tr('Saved ') + Math.round(sec/60) + tr('m ago'):tr('Saved ') + Math.round(sec/3600) + tr('h ago')}}
 if(!_saveStateTimer) _saveStateTimer=setInterval(()=>setSaveState('tick'),30000);
 function ensureConnectorLabelToolbarButton(){
   const tb=document.getElementById('selectionToolbar');
@@ -991,7 +991,7 @@ function refreshSessionExpiry(){
 }
 function clearAutosaveStorage(){
   try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
-  try{if(typeof idbPut==='function') idbPut(null)}catch(_){}
+  try{if(typeof idbPut==='function') idbPut(null).catch(()=>{})}catch(_){}
 }
 function expireBrowserSessionIfNeeded(){
   if(storageMode()!=='browser-session') return false;
@@ -1188,8 +1188,10 @@ function setTool(next){
 }
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function updateHeaderHeightVar(){const header=document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--drawsplat-header-height',Math.ceil(header.getBoundingClientRect().height)+'px')}
-function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||localStorage.getItem('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; localStorage.setItem('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); updateHeaderHeightVar(); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
-function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||localStorage.getItem('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; localStorage.setItem('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
+function readPreference(key){try{return localStorage.getItem(key)}catch(_){return null}}
+function writePreference(key,value){try{localStorage.setItem(key,value)}catch(_){}}
+function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||readPreference('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; writePreference('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); updateHeaderHeightVar(); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
+function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||readPreference('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; writePreference('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
 
 function pt(evt){const r=svg.getBoundingClientRect();return{x:(evt.clientX-r.left)/zoom,y:(evt.clientY-r.top)/zoom}}
 function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
@@ -1316,7 +1318,18 @@ function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o|
 function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; if(o.type==='connector'){o.connectorLabel=ta.value}else{o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o)} positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id&&o.type!=='connector') ui.richEditor.innerHTML=o.html}
 function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); let blockReason=''; if(save&&o&&ta&&window.DrawSplatSafety){const surface=o.type==='sticky'?'sticky':(o.type==='text'?'text':(o.type==='comment'?'comment':'text')); const r=window.DrawSplatSafety.checkAll(ta.value,surface); if(!r.allowed){blockReason=r.reason; save=false}} if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){if(o.type==='connector') o.connectorLabel=inlineEditOriginal.connectorLabel; else{o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html}} inlineEditId=null; inlineEditOriginal=null; if(wrap){wrap.classList.remove('show','connector-label-edit'); wrap.style.transform=''} if(ta){ta.style.textAlign=''; ta.style.fontWeight=''} render(); if(blockReason) setStatus(blockReason,'danger'); else if(save) saveState()}
 
-function migrateBoard(b){if(!b||!Array.isArray(b.panels))return;b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
+function validateBoard(b){
+  if(!b||typeof b!=='object'||!Array.isArray(b.panels)) throw new Error('Invalid board');
+  for(const p of b.panels){
+    if(!p||typeof p!=='object'||(p.objects!==undefined&&!Array.isArray(p.objects))) throw new Error('Invalid panel');
+    for(const o of p.objects||[]){
+      if(!o||typeof o!=='object'||typeof o.type!=='string') throw new Error('Invalid object');
+      for(const key of ['x','y','w','h']) if(o[key]!==undefined&&!Number.isFinite(o[key])) throw new Error('Invalid object geometry');
+    }
+  }
+  if(b.title!==undefined&&typeof b.title!=='string') throw new Error('Invalid title');
+}
+function migrateBoard(b){validateBoard(b);b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
 function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=Math.abs(o.w),h=Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
@@ -1324,7 +1337,7 @@ function normalizeObject(o){if(!o||['line','arrow','path','connector'].includes(
 function resetInteractionState(){commitInlineTextEditor?.(true); selectedIds=[]; connectorPendingFrom=null; marquee=null; drawing=null; liveDrawingPathEl=null; drag=null; scratchErase=null; eraserDirty=false}
 
 function switchPanel(panelId){ensureActivePanel(); const panelKey=String(panelId||''); let idx=board.panels.findIndex(p=>String(p.id)===panelKey); if(idx<0&&/^\d+$/.test(panelKey)) idx=parseInt(panelKey,10); if(idx<0||idx>=board.panels.length)return; if(idx===board.active){syncPanelSelect();return} resetInteractionState(); board.active=idx; render(); saveState(false); setStatus('Switched to '+(board.panels[idx]?.name||('Panel '+(idx+1)))+'.','success')}
-function ensureActivePanel(){if(!board.panels.length) board.panels=[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]; board.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(!Array.isArray(p.objects)) p.objects=[]}); if(board.active<0||board.active>=board.panels.length) board.active=0}
+function ensureActivePanel(target=board){if(!target.panels.length) target.panels=[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]; target.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(!Array.isArray(p.objects)) p.objects=[]}); if(!Number.isInteger(target.active)||target.active<0||target.active>=target.panels.length) target.active=0}
 function renderTabs(){ensureActivePanel();const tabs=gid('tabs');if(tabs){tabs.innerHTML='';board.panels.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='tab '+(i===board.active?'active':'');b.textContent=p.name||('Panel '+(i+1));b.dataset.panelId=p.id;b.dataset.panelIndex=String(i);b.setAttribute('aria-label','Switch to '+(p.name||('Panel '+(i+1))));tabs.appendChild(b)});const plus=document.createElement('button');plus.type='button';plus.className='tab';plus.textContent='+';plus.dataset.action='add-panel';plus.setAttribute('aria-label','Add panel');tabs.appendChild(plus)} syncPanelSelect()}
 function syncPanelSelect(){ensureActivePanel();const sel=gid('panelSelect');if(!sel)return;const currentId=board.panels[board.active]?.id||'';sel.innerHTML=board.panels.map((p,i)=>`<option value="${esc(p.id)}">${esc(p.name||('Panel '+(i+1)))}</option>`).join('');sel.value=currentId;const hint=gid('panelCurrentHint');if(hint) hint.textContent=`Current panel: ${board.panels[board.active]?.name||('Panel '+(board.active+1))} (${board.active+1} of ${board.panels.length})`}
 function handleTabsClick(evt){const btn=evt.target.closest('button'); if(!btn||!gid('tabs')?.contains(btn)) return; evt.preventDefault(); evt.stopPropagation(); if(btn.dataset.action==='add-panel') return addPanel(); switchPanel(btn.dataset.panelId||btn.dataset.panelIndex)}
@@ -3346,8 +3359,8 @@ gid('inlineTextEditor').addEventListener('input',()=>updateInlineTextObject(true
 gid('inlineTextEditor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault(); commitInlineTextEditor(true)} if(e.key==='Escape'){e.preventDefault(); commitInlineTextEditor(false)}});
 gid('inlineTextEditor').addEventListener('blur',()=>{if(inlineEditId) commitInlineTextEditor(true)});
 
-if(ui.workspaceMode){ui.workspaceMode.value=localStorage.getItem('drawsplat.workspaceMode')||'productivity'; ui.workspaceMode.addEventListener('change',()=>applyWorkspaceMode(ui.workspaceMode.value))}
-if(ui.interfaceMode){ui.interfaceMode.value=localStorage.getItem('drawsplat.interfaceMode')||'simple'; ui.interfaceMode.addEventListener('change',()=>{applyInterfaceMode(ui.interfaceMode.value); refreshViewToggle()})}
+if(ui.workspaceMode){ui.workspaceMode.value=readPreference('drawsplat.workspaceMode')||'productivity'; ui.workspaceMode.addEventListener('change',()=>applyWorkspaceMode(ui.workspaceMode.value))}
+if(ui.interfaceMode){ui.interfaceMode.value=readPreference('drawsplat.interfaceMode')||'simple'; ui.interfaceMode.addEventListener('change',()=>{applyInterfaceMode(ui.interfaceMode.value); refreshViewToggle()})}
 
 gid('deleteBtn').onclick=deleteSelected;
 gid('duplicateBtn').onclick=duplicateSelected;
@@ -3707,10 +3720,46 @@ function edgePoint(box,tx,ty,type){const cx=box.cx,cy=box.cy,dx=tx-cx,dy=ty-cy; 
 
 /* Export and animated-GIF helpers rasterize the current SVG board or selected
    objects through canvas so output works in common document/slides apps. */
-async function exportCanvas(){const keep=[...selectedIds]; clearSelection(); render(); const clone=svg.cloneNode(true); clone.setAttribute('width',svg.clientWidth); clone.setAttribute('height',svg.clientHeight); const data='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(clone)), img=new Image(); await new Promise((res,rej)=>{img.onload=res; img.onerror=rej; img.src=data}); const c=document.createElement('canvas'); c.width=svg.clientWidth*2; c.height=svg.clientHeight*2; const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height); ctx.scale(2,2); ctx.drawImage(img,0,0); selectedIds=keep; render(); return c}
+async function exportCanvas(){
+  render();
+  const width=svg.clientWidth,height=svg.clientHeight,clone=svg.cloneNode(true);
+  clone.setAttribute('width',width); clone.setAttribute('height',height);
+  // An SVG loaded as an image cannot fetch its own styles or linked images.
+  const originals=svg.querySelectorAll('foreignObject *'),copies=clone.querySelectorAll('foreignObject *');
+  originals.forEach((node,i)=>{const style=getComputedStyle(node); for(const key of style) copies[i].style.setProperty(key,style.getPropertyValue(key))});
+  clone.querySelectorAll('.selection,.handle,.laser-trail,.marquee').forEach(el=>el.remove());
+  await Promise.all([...clone.querySelectorAll('image,img')].map(async el=>{
+    const attr=el.localName==='image'?'href':'src',source=el.getAttribute(attr)||el.getAttribute('xlink:href');
+    if(!source||source.startsWith('data:')) return;
+    const response=await fetch(new URL(source,document.baseURI));
+    if(!response.ok) throw new Error('An image could not be loaded for export.');
+    const blob=await response.blob();
+    const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('Could not read an export image.'));reader.readAsDataURL(blob)});
+    el.removeAttribute('xlink:href');el.setAttribute(attr,data);
+  }));
+  const img=new Image();
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Could not render the board.'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(clone))});
+  const canvas=document.createElement('canvas');canvas.width=width*2;canvas.height=height*2;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.scale(2,2);ctx.drawImage(img,0,0);
+  return canvas;
+}
 async function exportPng(){return (await exportCanvas()).toDataURL('image/png')}
-gid('exportBtn').onclick=async()=>download(await exportPng(),(board.title||'drawsplat').replace(/\W+/g,'-')+'.png');
-gid('exportPdfBtn').onclick=async()=>{const canvas=await exportCanvas(); const pdfBlob=canvasToPdfBlob(canvas); download(URL.createObjectURL(pdfBlob),(board.title||'drawsplat').replace(/\W+/g,'-')+'.pdf',true)};
+let boardExportRunning=false;
+async function downloadBoardExport(format){
+  if(boardExportRunning) return;
+  boardExportRunning=true;
+  const title=(board.title||'drawsplat').replace(/\W+/g,'-');
+  try{
+    setStatus('Preparing '+format.toUpperCase()+'…');
+    const canvas=await exportCanvas();
+    if(format==='pdf') download(URL.createObjectURL(canvasToPdfBlob(canvas)),title+'.pdf',true);
+    else download(canvas.toDataURL('image/png'),title+'.png');
+    setStatus(format.toUpperCase()+' download ready.','success');
+  }catch(err){setStatus('Export failed. '+err.message,'danger')}
+  finally{boardExportRunning=false}
+}
+gid('exportBtn').onclick=()=>downloadBoardExport('png');
+gid('exportPdfBtn').onclick=()=>downloadBoardExport('pdf');
 
 function selectedGifFrameSets(){
   const sets=[], seen=new Set();
@@ -3761,11 +3810,22 @@ function encodeGif(canvases, delayMs=450, opts){
   const o = Object.assign({delayMs, loopCount:0, mode:'fast', dither:false}, opts||{});
   return window.DrawSplatGifEncoder.encode(canvases, o);
 }
+let gifGeneration=0;
+function clearGifPreview(){
+  const dl=gid('downloadGifBtn'),img=gid('gifPreview');
+  if(dl?.dataset.gifUrl) URL.revokeObjectURL(dl.dataset.gifUrl);
+  if(dl){delete dl.dataset.gifUrl; dl.disabled=true}
+  if(img){img.removeAttribute('src'); img.hidden=true}
+}
 async function createGifFromSelection(){
+  const generation=++gifGeneration,targetBoard=board;
+  clearGifPreview();
   try{
     const btn=gid('createGifBtn'); if(btn) btn.disabled=true;
     setStatus('Creating GIF...');
-    const canvases=await selectedObjectsToGifCanvases(), delay=+gid('gifDelay')?.value||450, mode=(gid('gifQuality')?.value==='fast')?'fast':'best', dither=!!gid('gifDither')?.checked, blob=encodeGif(canvases,delay,{mode,dither}), url=URL.createObjectURL(blob);
+    const canvases=await selectedObjectsToGifCanvases();
+    if(generation!==gifGeneration||board!==targetBoard) return;
+    const delay=+gid('gifDelay')?.value||450, mode=(gid('gifQuality')?.value==='fast')?'fast':'best', dither=!!gid('gifDither')?.checked, blob=encodeGif(canvases,delay,{mode,dither}), url=URL.createObjectURL(blob);
     const img=gid('gifPreview'); if(img){img.onload=()=>setStatus('GIF ready.','success'); img.onerror=()=>setStatus('GIF preview could not be decoded.','danger'); img.src=url; img.hidden=false}
     const dl=gid('downloadGifBtn'); if(dl){dl.disabled=false; dl.dataset.gifUrl=url}
     setStatus('GIF ready.','success');
@@ -3774,11 +3834,35 @@ async function createGifFromSelection(){
 }
 gid('openGifDialogBtn')?.addEventListener('click',()=>gid('gifDialog')?.showModal());
 gid('createGifBtn')?.addEventListener('click',createGifFromSelection);
-gid('downloadGifBtn')?.addEventListener('click',()=>{const url=gid('downloadGifBtn')?.dataset.gifUrl; if(url) download(url,(board.title||'drawsplat').replace(/\W+/g,'-')+'.gif',true)});
+gid('downloadGifBtn')?.addEventListener('click',()=>{const url=gid('downloadGifBtn')?.dataset.gifUrl; if(url) download(url,(board.title||'drawsplat').replace(/\W+/g,'-')+'.gif',false)});
+gid('gifDialog')?.addEventListener('close',()=>{gifGeneration++;clearGifPreview()});
 gid('closeGifDialog')?.addEventListener('click',()=>gid('gifDialog')?.close());
 gid('touchMultiSelectBtn')?.addEventListener('click',()=>{touchMultiSelect=!touchMultiSelect; gid('touchMultiSelectBtn')?.classList.toggle('active',touchMultiSelect); setStatus(touchMultiSelect?'Multi-select on. Tap items to add/remove.':'Multi-select off.','success')});
 function download(data,name,isBlobUrl){const a=document.createElement('a'); a.href=data; a.download=name; document.body.appendChild(a); a.click(); a.remove(); if(isBlobUrl) setTimeout(()=>URL.revokeObjectURL(data),2000)}
-function canvasToPdfBlob(canvas){const jpegData=canvas.toDataURL('image/jpeg',0.92); const bin=atob(jpegData.split(',')[1]); const imgBytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) imgBytes[i]=bin.charCodeAt(i); const W=canvas.width, H=canvas.height; const pageW=612, pageH=Math.max(200,Math.round(pageW*(H/W))); const content=`q\n${pageW} 0 0 ${pageH} 0 0 cm\n/Im0 Do\nQ`; const enc=new TextEncoder(); const parts=[]; const add=s=>parts.push(enc.encode(s)); add('%PDF-1.4\n'); const offsets=[0]; let len=parts[0].length; function pushObj(str,binArr){offsets.push(len); const head=enc.encode(str); parts.push(head); len+=head.length; if(binArr){parts.push(binArr); len+=binArr.length; const tail=enc.encode('\nendstream\nendobj\n'); parts.push(tail); len+=tail.length}} add('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n'); add('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n'); add(`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 4 0 R >> /ProcSet [/PDF /ImageC] >> /Contents 5 0 R >>\nendobj\n`); offsets.push(len); const o4h=enc.encode(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${W} /Height ${H} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgBytes.length} >>\nstream\n`); parts.push(o4h); len+=o4h.length; parts.push(imgBytes); len+=imgBytes.length; const o4t=enc.encode('\nendstream\nendobj\n'); parts.push(o4t); len+=o4t.length; offsets.push(len); const contBytes=enc.encode(content); const o5h=enc.encode(`5 0 obj\n<< /Length ${contBytes.length} >>\nstream\n`); parts.push(o5h); len+=o5h.length; parts.push(contBytes); len+=contBytes.length; const o5t=enc.encode('\nendstream\nendobj\n'); parts.push(o5t); len+=o5t.length; const xrefStart=len; const count=6; let xref='xref\n0 '+count+'\n0000000000 65535 f \n'; for(let i=1;i<count;i++) xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n'; xref+=`trailer\n<< /Size ${count} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`; parts.push(enc.encode(xref)); return new Blob(parts,{type:'application/pdf'}) }
+function canvasToPdfBlob(canvas){
+  const bin=atob(canvas.toDataURL('image/jpeg',0.92).split(',')[1]);
+  const imgBytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  const W=canvas.width,H=canvas.height,pageW=612,pageH=Math.max(200,Math.round(pageW*H/W));
+  const enc=new TextEncoder(),parts=[enc.encode('%PDF-1.4\n')],offsets=[0];
+  let length=parts[0].length;
+  function append(value){const bytes=typeof value==='string'?enc.encode(value):value; parts.push(bytes); length+=bytes.length}
+  function object(number,body,stream){
+    offsets[number]=length; append(number+' 0 obj\n'+body);
+    if(stream){append('\nstream\n'); append(stream); append('\nendstream')}
+    append('\nendobj\n');
+  }
+  object(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  object(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  object(3,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+  object(4,`<< /Type /XObject /Subtype /Image /Width ${W} /Height ${H} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgBytes.length} >>`,imgBytes);
+  const content=enc.encode(`q\n${pageW} 0 0 ${pageH} 0 0 cm\n/Im0 Do\nQ`);
+  object(5,`<< /Length ${content.length} >>`,content);
+  const xrefStart=length;
+  append('xref\n0 6\n0000000000 65535 f \n');
+  for(let i=1;i<=5;i++) append(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+  append(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+  return new Blob(parts,{type:'application/pdf'});
+}
 
 /* v2.5: IndexedDB autosave fallback when localStorage hits quota. */
 const IDB_DB='drawsplat',IDB_STORE='kv',IDB_KEY='autosave';
@@ -3789,23 +3873,40 @@ function openIdb(){
     const req=indexedDB.open(IDB_DB,1);
     req.onupgradeneeded=()=>{ req.result.createObjectStore(IDB_STORE) };
     req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
+    req.onerror=()=>{idbReady=null; reject(req.error)};
+    req.onblocked=()=>{idbReady=null; reject(new Error('Storage is blocked'))};
   });
   return idbReady;
 }
-async function idbPut(value){try{const db=await openIdb(); return new Promise((resolve,reject)=>{ const tx=db.transaction(IDB_STORE,'readwrite'); tx.objectStore(IDB_STORE).put(value,IDB_KEY); tx.oncomplete=()=>resolve(); tx.onerror=()=>reject(tx.error) })}catch(_){}}
+async function idbPut(value){const db=await openIdb(); return new Promise((resolve,reject)=>{
+  const tx=db.transaction(IDB_STORE,'readwrite'); tx.objectStore(IDB_STORE).put(value,IDB_KEY);
+  tx.oncomplete=()=>resolve(); tx.onerror=tx.onabort=()=>reject(tx.error||new Error('Save aborted'));
+})}
+
 async function idbGet(){try{const db=await openIdb(); return new Promise((resolve)=>{ const tx=db.transaction(IDB_STORE,'readonly'); const r=tx.objectStore(IDB_STORE).get(IDB_KEY); r.onsuccess=()=>resolve(r.result||null); r.onerror=()=>resolve(null) })}catch(_){return null}}
 
 function cloneBoardForRestore(){const c=JSON.parse(JSON.stringify(board)); c.restorePoints=[]; return c}
 function snapshot(){return JSON.stringify(board)}
+let localSaveSequence=0;
 function persistLocal(){
-  const snap=snapshot();
-  try{ localStorage.setItem('drawsplat.autosave',snap); setSaveState('saved') }
-  catch(err){ idbPut(snap); setSaveState('saved') /* falls back when localStorage quota exceeds */ }
-  /* always mirror to IDB on big boards so a future load works even if LS was wiped. */
-  if(snap.length>2_000_000) idbPut(snap);
+  const snap=snapshot(), sequence=++localSaveSequence;
+  try{localStorage.setItem('drawsplat.autosave',snap); setSaveState('saved')}
+  catch(err){
+    setSaveState('saving');
+    idbPut(snap).then(()=>{
+      if(sequence!==localSaveSequence) return;
+      // The old smaller localStorage board must not shadow this committed fallback.
+      try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
+      setSaveState('saved');
+    }).catch(()=>{
+      if(sequence!==localSaveSequence) return;
+      setSaveState('error','Not saved — download a file');
+      setStatus('Browser storage is unavailable or full. Use File → Save File to keep your work.','danger');
+    });
+  }
   refreshSessionExpiry();
 }
+
 function initHistory(){const snap=snapshot(); history=[snap]; future=[]; lastSnapshot=snap}
 function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} broadcastLocal(); pushCloudRoom()}
 function undo(){if(history.length<2)return; future.push(history.pop()); board=JSON.parse(history[history.length-1]); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=history[history.length-1]; persistLocal(); render(); broadcastLocal()}
@@ -3828,7 +3929,7 @@ refreshAudioToggleBtn();
    is migrated immediately so old boards pick up new default fields. */
 gid('saveLocalBtn').onclick=()=>download('data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(board,null,2)),(board.title||'drawsplat').replace(/\W+/g,'-')+'.drawsplat.json');
 gid('loadLocalBtn').onclick=()=>gid('jsonInput').click();
-gid('jsonInput').onchange=e=>{const f=e.target.files[0]; if(!f)return; if(f.size>MAX_BOARD_BYTES){setStatus('Board import blocked. Maximum board file size is '+Math.round(MAX_BOARD_BYTES/1024/1024)+' MB.','danger'); e.target.value=''; return} const r=new FileReader(); r.onload=()=>{try{const loaded=JSON.parse(r.result); board=loaded; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Board loaded.','success')}catch(err){setStatus('Board import failed. The file is not valid DrawSplatTM JSON.','danger')}}; r.readAsText(f); e.target.value=''};
+gid('jsonInput').onchange=e=>{const f=e.target.files[0]; if(!f)return; if(f.size>MAX_BOARD_BYTES){setStatus('Board import blocked. Maximum board file size is '+Math.round(MAX_BOARD_BYTES/1024/1024)+' MB.','danger'); e.target.value=''; return} const r=new FileReader(); r.onload=()=>{try{const loaded=JSON.parse(r.result); migrateBoard(loaded); board=loaded; ensurePendingImagePoller(); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Board loaded.','success')}catch(err){setStatus('Board import failed. The file is not valid DrawSplatTM JSON.','danger')}}; r.onerror=()=>setStatus('Board import failed. Could not read the file.','danger'); r.readAsText(f); e.target.value=''};
 
 /* Panel import: PDF (rendered to bgImage per page), PPTX/ODP (text + images extracted per slide). */
 const PANEL_IMPORT_MAX_PAGES=100;
@@ -3851,19 +3952,25 @@ function showImportProgress(label){
   const dlg=gid('importProgressDialog'); if(!dlg) return null;
   const labelEl=gid('importProgressLabel'); if(labelEl) labelEl.textContent=label||'Importing…';
   const bar=gid('importProgressBar'); if(bar) bar.value=0;
-  const state={cancelled:false};
+  const state={cancelled:false},controller=new AbortController();
   const cancelBtn=gid('importProgressCancel');
-  if(cancelBtn) cancelBtn.onclick=()=>{state.cancelled=true};
+  const cancel=()=>{state.cancelled=true;controller.abort()};
+  if(cancelBtn) cancelBtn.onclick=cancel;
+  dlg.addEventListener('cancel',cancel);
+  dlg.addEventListener('close',cancel);
   try{if(!dlg.open) dlg.showModal()}catch(_){}
   return {
     update(text,frac){if(labelEl&&text) labelEl.textContent=text; if(bar&&typeof frac==='number') bar.value=Math.max(0,Math.min(1,frac))*100;},
+    signal:controller.signal,
     cancelled(){return state.cancelled},
-    close(){try{dlg.close()}catch(_){}}
+    close(){dlg.removeEventListener('cancel',cancel); dlg.removeEventListener('close',cancel); try{dlg.close()}catch(_){}}
   };
 }
 function fileToArrayBuffer(f){return new Promise((res,rej)=>{const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('read failed')); r.readAsArrayBuffer(f)})}
+let panelImportRunning=false;
 async function importPanelsFromFile(file){
   if(!file) return;
+  if(panelImportRunning){setStatus('An import is already running. Cancel it or wait for it to finish.','danger'); return}
   if(file.size>PANEL_IMPORT_MAX_FILE_BYTES){setStatus('Import blocked: file is larger than '+Math.round(PANEL_IMPORT_MAX_FILE_BYTES/1024/1024)+' MB.','danger'); return}
   const format=detectPanelImportFormat(file);
   if(!format){setStatus('Unsupported file. Use PDF, PPTX, or ODP.','danger'); return}
@@ -3871,19 +3978,22 @@ async function importPanelsFromFile(file){
     setStatus(format==='pdf'?'PDF import unavailable: vendor/pdf.min.js is missing.':'Slide import unavailable: vendor/jszip.min.js is missing.','danger');
     return;
   }
+  const targetBoard=board;
+  panelImportRunning=true;
   const progress=showImportProgress('Reading '+file.name+'…');
   try{
     let result;
     if(format==='pdf')  result=await importPdfAsPanels(file,progress);
     else if(format==='pptx') result=await importPptxAsPanels(file,progress);
     else if(format==='odp')  result=await importOdpAsPanels(file,progress);
-    progress&&progress.close();
+    if(progress?.cancelled()||board!==targetBoard||result?.cancelled){setStatus('Import cancelled.','danger'); return}
     if(result&&result.added){
+      board.panels.push(...result.panels); board.active=board.panels.length-result.added;
       clearSelection(); render(); saveState(); persistLocal();
       const msg=format==='pdf'
         ? 'Imported '+result.added+' PDF page'+(result.added===1?'':'s')+' as panels.'
         : 'Imported '+result.added+' slide'+(result.added===1?'':'s')+'. Text, images, and slide background images extracted where supported — for full fidelity, export to PDF and import that.';
-      setStatus(msg,'success');
+      setStatus(msg+(result.truncated?' Only the first '+PANEL_IMPORT_MAX_PAGES+' pages/slides were imported; split the source file to import the rest.':''),result.truncated?'danger':'success');
     } else if(result&&result.cancelled){
       setStatus('Import cancelled.','danger');
     } else {
@@ -3891,13 +4001,20 @@ async function importPanelsFromFile(file){
     }
   } catch(err){
     progress&&progress.close();
-    setStatus('Import failed: '+(err&&err.message?err.message:String(err)),'danger');
-  }
+    setStatus(progress?.cancelled()?'Import cancelled.':'Import failed: '+(err&&err.message?err.message:String(err)),'danger');
+  } finally {progress&&progress.close(); panelImportRunning=false}
 }
 async function importPdfAsPanels(file,progress){
+  const panels=[];
   pdfjsLib.GlobalWorkerOptions.workerSrc=appPath('vendor/pdf.worker.min.js');
   const buf=await fileToArrayBuffer(file);
-  const pdf=await pdfjsLib.getDocument({data:buf,disableFontFace:false,useSystemFonts:false,isEvalSupported:false}).promise;
+  if(progress?.cancelled()) return {cancelled:true};
+  const loading=pdfjsLib.getDocument({data:buf,disableFontFace:false,useSystemFonts:false,isEvalSupported:false});
+  const stop=()=>{Promise.resolve(loading.destroy?.()).catch(()=>{})};
+  progress?.signal.addEventListener('abort',stop,{once:true});
+  let pdf;
+  try{
+  pdf=await loading.promise;
   const total=Math.min(pdf.numPages,PANEL_IMPORT_MAX_PAGES);
   const baseName=(file.name||'PDF').replace(/\.[^.]+$/,'');
   let added=0;
@@ -3915,13 +4032,13 @@ async function importPdfAsPanels(file,progress){
     cx.fillStyle='#fff'; cx.fillRect(0,0,cv.width,cv.height);
     await page.render({canvasContext:cx,viewport:vp}).promise;
     const dataUrl=cv.toDataURL('image/jpeg',0.85);
-    board.panels.push({id:'panel_'+id(),name:baseName+' p.'+i,bg:'blank',bgImage:dataUrl,objects:[]});
+    panels.push({id:'panel_'+id(),name:baseName+' p.'+i,bg:'blank',bgImage:dataUrl,objects:[]});
     added++;
     if(page.cleanup) page.cleanup();
   }
-  if(added>0) board.active=board.panels.length-added;
   progress&&progress.update('Done',1);
-  return {added};
+  return {added,panels,truncated:pdf.numPages>PANEL_IMPORT_MAX_PAGES};
+  } finally {progress?.signal.removeEventListener('abort',stop); if(pdf) await pdf.destroy(); else await loading.destroy?.()}
 }
 function _xmlLocal(el){return el&&(el.localName||(el.tagName||'').replace(/^[^:]+:/,''))}
 function _emuToPx(v){const n=parseInt(v||'0',10); return Math.round((n/914400)*96)}
@@ -4030,6 +4147,7 @@ async function _pptxBackgroundImageFromPart(zip,partPath,seen=new Set()){
   return '';
 }
 async function importPptxAsPanels(file,progress){
+  const panels=[];
   _pptxResetDiag();
   const buf=await fileToArrayBuffer(file);
   const zip=await JSZip.loadAsync(buf);
@@ -4077,18 +4195,18 @@ async function importPptxAsPanels(file,progress){
       objects.push(makeObj('image',Math.max(0,x),Math.max(0,y),Math.max(40,w),Math.max(40,h),{src:dataUrl,fill:'none',stroke:'none',strokeWidth:0}));
       totalImgs++;
     }
-    board.panels.push({id:'panel_'+id(),name:baseName+' #'+(i+1),bg:'blank',bgImage:panelBgImage,objects});
+    panels.push({id:'panel_'+id(),name:baseName+' #'+(i+1),bg:'blank',bgImage:panelBgImage,objects});
     added++;
   }
-  if(added>0) board.active=board.panels.length-added;
   console.info('[DrawSplatTM import] PPTX summary:',{slides:added,imagesExtracted:totalImgs,skipped:_PPTX_IMG_DIAG.skipped,unsupportedFormat:_PPTX_IMG_DIAG.warned});
   if(_PPTX_IMG_DIAG.warned.length){
     const fmts=[...new Set(_PPTX_IMG_DIAG.warned.map(w=>w.ext.toUpperCase()))].join(', ');
     setStatus('Imported '+added+' slides. '+_PPTX_IMG_DIAG.warned.length+' image(s) in '+fmts+' format were skipped — browsers can\'t render those. Re-export images as PNG/JPEG.','danger');
   }
-  return {added};
+  return {added,panels,truncated:slideEntries.length>PANEL_IMPORT_MAX_PAGES};
 }
 async function importOdpAsPanels(file,progress){
+  const panels=[];
   const buf=await fileToArrayBuffer(file);
   const zip=await JSZip.loadAsync(buf);
   const contentEntry=zip.file('content.xml');
@@ -4136,11 +4254,10 @@ async function importOdpAsPanels(file,progress){
         }
       }
     }
-    board.panels.push({id:'panel_'+id(),name:baseName+' #'+(i+1),bg:'blank',bgImage:'',objects});
+    panels.push({id:'panel_'+id(),name:baseName+' #'+(i+1),bg:'blank',bgImage:'',objects});
     added++;
   }
-  if(added>0) board.active=board.panels.length-added;
-  return {added};
+  return {added,panels,truncated:pages.length>PANEL_IMPORT_MAX_PAGES};
 }
 gid('importPanelsBtn')&&(gid('importPanelsBtn').onclick=()=>gid('importPanelsInput')&&gid('importPanelsInput').click());
 gid('more_importPanelsBtn')&&(gid('more_importPanelsBtn').onclick=()=>{gid('moreOptionsDialog')&&gid('moreOptionsDialog').close(); gid('importPanelsInput')&&gid('importPanelsInput').click()});
@@ -4214,7 +4331,7 @@ gid('resetBoardBtn')?.addEventListener('click',()=>{
     board={version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
     clearSelection(); resetInteractionState();
     try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
-    try{if(typeof idbPut==='function') idbPut(null)}catch(_){}
+    try{if(typeof idbPut==='function') idbPut(null).catch(()=>{})}catch(_){}
     initHistory(); render(); persistLocal();
     setStatus('Board reset.','success');
   });
@@ -4290,7 +4407,37 @@ function clearCurrentPanelCompletely(){
 function runTntReset(){askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{clearCurrentPanelCompletely(); render(); saveState(); setStatus('Boom! Panel cleared completely.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
 
 function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name; render(); saveState(); setStatus('Audio attached.','success')}
-async function startAudioRecording(){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return} if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger'); try{const stream=await navigator.mediaDevices.getUserMedia({audio:true}); recordChunks=[]; mediaRecorder=new MediaRecorder(stream); mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size) recordChunks.push(e.data)}; mediaRecorder.onstop=()=>{const blob=new Blob(recordChunks,{type:mediaRecorder.mimeType||'audio/webm'}); const r=new FileReader(); r.onload=()=>setAudioOnCurrent(r.result,'Recorded audio'); r.readAsDataURL(blob); stream.getTracks().forEach(t=>t.stop()); setButtonChrome('recordAudioBtn','Record Audio')}; mediaRecorder.start(); setButtonChrome('recordAudioBtn','Stop Recording'); setStatus('Recording audio... click again to stop.','success')}catch(err){setStatus('Audio recording failed. '+err.message,'danger')}}
+let audioStarting=false;
+async function startAudioRecording(){
+  if(audioStarting) return;
+  if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return}
+  const o=currentObj(), targetBoard=board, targetPanel=panel();
+  if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger');
+  if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger');
+  audioStarting=true;
+  let stream;
+  const release=()=>stream?.getTracks().forEach(t=>t.stop());
+  const targetExists=()=>board===targetBoard&&targetBoard.panels.includes(targetPanel)&&targetPanel.objects.includes(o);
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    if(!targetExists()){release(); return}
+    const chunks=[], recorder=new MediaRecorder(stream); mediaRecorder=recorder;
+    recorder.ondataavailable=e=>{if(e.data&&e.data.size) chunks.push(e.data)};
+    recorder.onerror=()=>{release(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
+    recorder.onstop=()=>{
+      release(); setButtonChrome('recordAudioBtn','Record Audio');
+      if(!targetExists()) return;
+      const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'}), reader=new FileReader();
+      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio'; render(); saveState(); setStatus('Audio attached.','success')};
+      reader.onerror=()=>setStatus('Could not save recorded audio. Please retry.','danger');
+      reader.readAsDataURL(blob);
+    };
+    recorder.start(); setButtonChrome('recordAudioBtn','Stop Recording'); setStatus('Recording audio... click again to stop.','success');
+  }catch(err){release(); setStatus('Audio recording failed. '+err.message,'danger')}
+  finally{audioStarting=false}
+}
+window.addEventListener('pagehide',()=>{if(mediaRecorder&&mediaRecorder.state!=='inactive'){mediaRecorder.stop(); mediaRecorder.stream?.getTracks().forEach(t=>t.stop())}});
+
 function playSelectedAudio(){const o=currentObj(); if(!o||o.type!=='audio'||!o.audioSrc) return setStatus('Select an audio note with audio attached.','danger'); new Audio(o.audioSrc).play().catch(err=>setStatus('Playback failed. '+err.message,'danger'))}
 
 /* v2.5: keyboard shortcuts dialog. Opened by '?' key or by the new button if present. */
@@ -4333,17 +4480,17 @@ async function loadAutosnapshot(){
   let s=null;
   try{ s=localStorage.getItem('drawsplat.autosave') }catch(_){}
   if(!s) s=await idbGet();
-  if(s){try{board=JSON.parse(s); migrateBoard(board)}catch{}} else migrateBoard(board);
+  if(s){try{const loaded=JSON.parse(s); migrateBoard(loaded); board=loaded; ensurePendingImagePoller()}catch(_){migrateBoard(board); setStatus('Saved board could not be opened. Load a saved file to recover it.','danger')}} else migrateBoard(board);
 }
 
-function installServiceWorkerReloadHandler(){
+function installServiceWorkerUpdateHandler(){
   if(!('serviceWorker' in navigator)||window.__drawsplatSwReloadHandler) return;
   window.__drawsplatSwReloadHandler=true;
-  let reloaded=false;
+  let controlled=!!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(reloaded) return;
-    reloaded=true;
-    location.reload();
+    // Installing/updating the offline shell must not reload an active drawing or dialog.
+    if(controlled) setStatus('An update is ready. Reload when you have finished your current work.');
+    controlled=true;
   });
 }
 
@@ -4376,7 +4523,7 @@ function registerServiceWorker(){
   render();
   try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function') w.showModal()},700)} scheduleStartupTip(900)}catch(_){scheduleStartupTip(900)}
   ensureWidgetTimerTick();
-  installServiceWorkerReloadHandler();
+  installServiceWorkerUpdateHandler();
   registerServiceWorker();
   if(shouldAutoCloudJoin()) setTimeout(()=>startCloudSync(),500);
   /* v2.5: replay-friendly version stamp the user can read in DevTools. */

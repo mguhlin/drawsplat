@@ -536,6 +536,9 @@ body[data-view="advanced"] #inspectorToggleBtn{display:inline-flex}
   body[data-view="simple"] .sidebar .grid.simple-only{display:none!important}
   body[data-view="simple"] .stage-wrap{grid-column:2;grid-row:2;order:initial;min-height:0;height:auto}
   body[data-view="simple"] .canvas-shell{min-height:0}
+  body[data-view="simple"] .sidebar .section.simple-tools .sidebar-undo-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:0}
+  body[data-view="simple"] .sidebar-undo-row button{font-size:12px;padding:6px 4px}
+  body[data-view="simple"] #toolButtons{overflow-y:auto;overscroll-behavior:contain}
   body[data-view="simple"] .sidebar .icon-btn{width:42px;min-width:42px;flex:0 0 auto}
   body[data-view="simple"] .sidebar .grid.simple-only .icon-btn{width:auto}
 }

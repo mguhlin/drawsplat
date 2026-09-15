@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.18';
+const CACHE = 'drawsplat-v3.1.19';
 const SHELL = [
   './',
   './index.html',
@@ -36,6 +36,7 @@ const SHELL = [
   './admin/mysql-setup.html',
   './app/whiteboard.html','./languages/index-sp.html','./languages/index-vn.html','./languages/index-ab.html','./languages/index-cn.html','./languages/index.uh.html',
   './admin/admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
+  './assets/js/gif-encoder.js','./assets/js/consent-banner.js','./assets/js/safety.js?v=0.1','./assets/js/timelimits.js?v=0.1',
   './assets/js/app.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/js/privacy-builder.js','./assets/brand/DrawSplat_logo.png','./assets/brand/DrawSplat_Terms_Privacy.png','./assets/brand/DrawSplat_Privacy_Builder.png',
   './blog/index.html',
   './blog/blog.js',
@@ -125,7 +126,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil((async()=>{
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+    await Promise.all(keys.filter(k=>k.startsWith('drawsplat-v')&&k!==CACHE).map(k=>caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -143,7 +144,7 @@ self.addEventListener('fetch', e => {
     /* Network first for HTML and app-shell scripts so edits land on next reload. */
     if(req.mode === 'navigate' || req.destination === 'document' || isShellScript){
       try{ const fresh = await fetch(req); if(fresh && fresh.ok){ const c = await caches.open(CACHE); c.put(req, fresh.clone()) } return fresh }
-      catch(_){ const cached = await caches.match(req); return cached || (req.mode==='navigate'?caches.match('./index.html'):new Response('', {status: 504})) }
+      catch(_){ const cached = await caches.match(req) || (isShellScript ? await caches.match(req, {ignoreSearch:true}) : null); return cached || (req.mode==='navigate'?caches.match('./index.html'):new Response('', {status: 504})) }
     }
     /* Cache first for vendor and other static assets. */
     const cached = await caches.match(req);
