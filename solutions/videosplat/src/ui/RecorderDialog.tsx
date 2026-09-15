@@ -252,9 +252,14 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
 
   const addRecording = async (file: File, message: string) => {
     reviewVideo.current?.pause();
-    await onAdd(file, generateSubtitles);
-    onStatus(message);
-    onClose();
+    try {
+      await onAdd(file, generateSubtitles);
+      onStatus(message);
+      onClose();
+    } catch (reason) {
+      setError(captureErrorMessage(reason));
+      setState("review");
+    }
   };
 
   const applyCrop = async () => {

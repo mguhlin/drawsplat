@@ -506,7 +506,7 @@ export function App() {
     }
   };
 
-  const addFiles = async (files: FileList | File[], focusImported = false, generateSubtitles = false) => {
+  const addFiles = async (files: FileList | File[], focusImported = false, generateSubtitles = false, reportFailure = false) => {
     if (!files.length) return;
     setImporting(true);
     try {
@@ -568,7 +568,7 @@ export function App() {
           name: imported.asset.name,
           kind,
           start,
-          duration: imported.asset.duration || (kind === "image" ? 5 : 10),
+          duration: kind === "image" ? 5 : imported.asset.duration!,
           sourceStart: 0,
           properties: { fit: "fit", x: 0, y: 0, scale: 1, rotation: 0 },
         };
@@ -591,6 +591,7 @@ export function App() {
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Media import failed");
+      if (reportFailure) throw error;
     } finally {
       setImporting(false);
       if (mediaInput.current) mediaInput.current.value = "";
@@ -798,7 +799,11 @@ export function App() {
       setStatus(`Unlock or create a ${kind} track before inserting`);
       return;
     }
-    const duration = asset.duration || (asset.kind === "image" ? 5 : 10);
+    if (asset.kind !== "image" && !(asset.duration && Number.isFinite(asset.duration) && asset.duration > 0)) {
+      setStatus(`The duration of ${asset.name} is missing. Import the original file again before inserting it.`);
+      return;
+    }
+    const duration = asset.kind === "image" ? 5 : asset.duration!;
     const clip: Clip = {
       id: crypto.randomUUID(),
       assetId: asset.id,
@@ -2508,7 +2513,7 @@ export function App() {
                 onMicrophoneChange={setRecordingMicrophoneId}
                 permissionsPrepared={splashRecordingReady}
                 onClose={() => { setRecorderFloating(false); setDialog(null); }}
-                onAdd={async (file, generateSubtitles) => addFiles([file], true, generateSubtitles)}
+                onAdd={async (file, generateSubtitles) => addFiles([file], true, generateSubtitles, true)}
                 onStatus={setStatus}
                 onFloatingChange={setRecorderFloating}
               />

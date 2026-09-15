@@ -11,7 +11,7 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
     // effect when the user next opens or reloads VideoSplat.
     try {
       const registration = await navigator.serviceWorker.register(
-        `${import.meta.env.BASE_URL}sw.js?v=28`,
+        `${import.meta.env.BASE_URL}sw.js?v=29`,
         { updateViaCache: "none" },
       );
       await registration.update();

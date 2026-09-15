@@ -54,6 +54,20 @@ for (const delayedPreview of [false, true]) for (const includeAudio of [true, fa
   await expect(page.getByRole("alert")).toContainText("browser stopped recording");
   await expect(page.getByRole("button", { name: "Use full recording" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Stop and choose crop" })).toHaveCount(0);
+  if (!includeAudio && !delayedPreview) {
+    // An import failure must preserve the only copy of an unsaved recording.
+    await page.evaluate(() => {
+      const digest = crypto.subtle.digest.bind(crypto.subtle);
+      crypto.subtle.digest = async (...args) => {
+        crypto.subtle.digest = digest;
+        throw new Error("Temporary import failure");
+      };
+    });
+    await page.getByRole("button", { name: "Use full recording" }).click();
+    await expect(page.getByRole("alert")).toContainText("Temporary import failure");
+    await expect(page.getByRole("button", { name: "Use full recording" })).toBeVisible();
+    await expect(page.locator(".timeline-clip.video")).toHaveCount(0);
+  }
   await page.getByRole("button", { name: "Use full recording" }).click();
   await expect(page.locator(".timeline-clip.video")).toHaveCount(1);
 });

@@ -20,17 +20,24 @@ function loadElement(element: HTMLMediaElement, url: string): Promise<void> {
   });
 }
 
-async function recoverMediaDuration(element: HTMLMediaElement): Promise<number | undefined> {
+async function recoverMediaDuration(element: HTMLMediaElement, file: File): Promise<number | undefined> {
   if (Number.isFinite(element.duration) && element.duration > 0)
     return element.duration;
+  // Read encoded timestamps without decoding or trusting a speculative seek.
+  // MediaRecorder WebM often has no duration header, especially across browsers.
+  const { Input, ALL_FORMATS, BlobSource } = await import("mediabunny");
+  const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(file, { maxCacheSize: 8 * 1024 * 1024 }) });
+  try {
+    const duration = await input.computeDuration();
+    if (Number.isFinite(duration) && duration > 0) return duration;
+  } catch { /* A browser may support a format the demuxer does not. */ }
+  finally { input.dispose(); }
   return new Promise((resolve) => {
     let settled = false;
     const finish = () => {
       const duration = Number.isFinite(element.duration) && element.duration > 0
         ? element.duration
-        : Number.isFinite(element.currentTime) && element.currentTime > 0
-          ? element.currentTime
-          : undefined;
+        : undefined;
       if (!duration || settled) return;
       settled = true;
       cleanup();
@@ -105,9 +112,11 @@ export async function importMedia(file: File): Promise<ImportedMedia> {
   const id = crypto.randomUUID(); const url = URL.createObjectURL(file);
   try {
     let duration: number | undefined; let width: number | undefined; let height: number | undefined; let thumbnail: string | undefined; let waveform: number[] | undefined;
-    if (kind === "video") { const video = document.createElement("video"); await loadElement(video, url); duration = await recoverMediaDuration(video); width = video.videoWidth; height = video.videoHeight; thumbnail = await videoThumbnail(video); video.removeAttribute("src"); video.load(); }
-    if (kind === "audio") { const audio = document.createElement("audio"); await loadElement(audio, url); duration = await recoverMediaDuration(audio); waveform = await audioWaveform(file); audio.removeAttribute("src"); audio.load(); }
+    if (kind === "video") { const video = document.createElement("video"); await loadElement(video, url); duration = await recoverMediaDuration(video, file); width = video.videoWidth; height = video.videoHeight; thumbnail = await videoThumbnail(video); video.removeAttribute("src"); video.load(); }
+    if (kind === "audio") { const audio = document.createElement("audio"); await loadElement(audio, url); duration = await recoverMediaDuration(audio, file); waveform = await audioWaveform(file); audio.removeAttribute("src"); audio.load(); }
     if (kind === "image") ({ width, height, thumbnail } = await imageMetadata(url));
+    if (kind !== "image" && !(duration && Number.isFinite(duration) && duration > 0))
+      throw new Error(`Could not determine the full duration of ${file.name}. The file was not added; try exporting it again.`);
     return { blob: file, asset: { id, name: file.name, kind, size: file.size, mimeType: file.type, duration, width, height, thumbnail, waveform, contentHash: await hashBlob(file), storedLocally: true } };
   } finally { URL.revokeObjectURL(url); }
 }

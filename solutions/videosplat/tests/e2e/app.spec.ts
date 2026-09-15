@@ -722,3 +722,23 @@ test("recorder remembers a selected microphone when reopened",async({page})=>{
  await expect(page.getByLabel('Microphone source',{exact:true})).toHaveValue('headset-mic');
  await expect.poll(()=>page.evaluate(()=>sessionStorage.getItem('videosplat-microphone-id'))).toBe('headset-mic');
 });
+
+
+test("recovers encoded duration when browser metadata and seeking cannot", async ({ page }) => {
+  await page.addInitScript(() => {
+    const duration = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "duration")!;
+    const currentTime = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "currentTime")!;
+    Object.defineProperty(HTMLMediaElement.prototype, "duration", { configurable: true, get() {
+      return !this.isConnected && this.src.startsWith("blob:") ? Infinity : duration.get!.call(this);
+    } });
+    Object.defineProperty(HTMLMediaElement.prototype, "currentTime", { configurable: true, get: currentTime.get, set(value) {
+      if (!this.isConnected && value === Number.MAX_SAFE_INTEGER) throw new DOMException("Seek unavailable", "InvalidStateError");
+      currentTime.set!.call(this, value);
+    } });
+  });
+  await page.goto("./");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles("../shared/subtitles/tests/long-speech.mp4");
+  await expect(page.locator(".timeline-clip.video")).toHaveCount(1);
+  // ffprobe reports 51.109609 seconds for this checked-in fixture.
+  expect(Number(await page.getByLabel("Clip duration").inputValue())).toBeCloseTo(51.11, 1);
+});

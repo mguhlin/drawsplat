@@ -97,7 +97,8 @@ test('recording option starts subtitle generation automatically after adding the
   await page.getByLabel('Recording countdown').selectOption('0');
   await page.getByRole('button', { name: 'Start recording', exact: true }).click();
   await expect(page.getByText('Audio detected', { exact: true })).toBeVisible();
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(12500);
+  await expect(page.getByRole('button', { name: 'Stop and choose crop', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Stop and choose crop', exact: true }).click();
   await page.getByLabel('Generate subtitles when adding this recording (English)').check();
   await page.getByRole('button', { name: 'Use full recording', exact: true }).click();
@@ -105,6 +106,8 @@ test('recording option starts subtitle generation automatically after adding the
   await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
   await page.getByRole('button', { name: 'Add subtitles to timeline' }).click();
   await expect(page.locator('.timeline-clip')).toHaveCount(3);
+  await page.locator('.timeline-clip.video').click();
+  expect(Number(await page.getByLabel('Clip duration', { exact: true }).inputValue())).toBeGreaterThan(12);
 });
 
 test('real model retains repeated speech after the first 30 seconds', async ({ page }) => {
