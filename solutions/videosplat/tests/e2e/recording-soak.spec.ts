@@ -27,5 +27,14 @@ test('nine-minute recording retains duration, final frames and audio', async ({ 
     const blob=await fetch(v.src).then(r=>r.blob()),a=new AudioContext();const audio=await a.decodeAudioData(await blob.arrayBuffer()),samples=audio.getChannelData(0);let sum=0;for(let i=Math.max(0,samples.length-audio.sampleRate);i<samples.length;i++)sum+=samples[i]*samples[i];const audioDuration=audio.duration;await a.close();return{duration,audioDuration,final,finalSecondRms:Math.sqrt(sum/audio.sampleRate),bytes:blob.size};
   });
   console.log(JSON.stringify({browser:info.project.name,...result}));await info.attach('recording-measurements.json',{body:JSON.stringify(result,null,2),contentType:'application/json'});
-  expect(result.duration).toBeGreaterThan(535);expect(result.audioDuration).toBeGreaterThan(535);expect(result.final[2]).toBeGreaterThan(200);expect(result.finalSecondRms).toBeGreaterThan(.01);await other?.close();
+  expect(result.duration).toBeGreaterThan(535);expect(result.audioDuration).toBeGreaterThan(535);expect(result.final[2]).toBeGreaterThan(200);expect(result.finalSecondRms).toBeGreaterThan(.01);
+  // Review alone cannot catch a complete recording becoming a short timeline
+  // clip during metadata import. Check the actual editing duration as well.
+  await page.getByRole('button', { name: 'Use full recording', exact: true }).click();
+  await expect(page.locator('.timeline-clip.video')).toHaveCount(1, { timeout: 20000 });
+  const clipDuration = Number(await page.getByLabel('Clip duration', { exact: true }).inputValue());
+  console.log(JSON.stringify({browser:info.project.name,clipDuration}));
+  expect(clipDuration).toBeGreaterThan(535);
+  expect(Math.abs(clipDuration - result.duration)).toBeLessThan(1);
+  await other?.close();
 });
