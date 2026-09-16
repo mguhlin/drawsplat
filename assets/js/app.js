@@ -4677,6 +4677,31 @@ function registerServiceWorker(){
     isometric:svg(`<path ${S} d="M12 3v18M4 8l8 4 8-4M4 16l8-4 8 4"/>`),
     reset:svg(`<path ${S} d="M9 5H5v4"/><path ${S} d="M5 9a8 8 0 1 0 2.3-5.7L5 6"/><path ${S} d="M9 12h6M12 9v6"/>`)
   };
+  Object.assign(icons, {
+    pop_graph:icons.chart, pop_picgraph:icons.pictureGraph,
+    pop_mermaid:icons.mermaid, pop_wordcloud:icons.wordcloud, pop_concept:icons.concept,
+    pop_widgets:svg(`<rect ${S} x="3" y="4" width="18" height="16" rx="2"/><circle ${S} cx="8" cy="10" r="2"/><path ${S} d="M5 16c0-3 6-3 6 0M14 9h4M14 13h4M14 17h3"/>`),
+    pop_spinner:svg(`<path d="M12 12V4a8 8 0 0 1 8 8z" fill="#f59e0b"/><path d="M12 12h8a8 8 0 0 1-8 8z" fill="#38bdf8"/><path d="M12 12v8a8 8 0 0 1-8-8z" fill="#a78bfa"/><path d="M12 12H4a8 8 0 0 1 8-8z" fill="#34d399"/><circle ${S} cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.5" fill="#fff"/><path d="M10 2h4l-2 4z" fill="#111827"/>`),
+    pop_mosaic:svg(`<rect ${S} x="3" y="3" width="18" height="18" rx="2"/><path ${S} d="M3 9h18M3 15h18M9 3v18M15 3v18"/><path d="M4 4h4v4H4zM10 10h4v4h-4zM16 16h4v4h-4z" fill="#38bdf8"/>`),
+    pop_collage:svg(`<rect ${S} x="3" y="4" width="18" height="16" rx="2"/><path ${S} d="M13 4v16M13 12h8M4 17l4-5 4 5"/><circle cx="8" cy="8" r="1.5" fill="#f59e0b"/>`),
+    pop_emoji:svg(`<path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="#facc15" stroke="#b45309" stroke-width="1.2" stroke-linejoin="round"/><circle cx="10" cy="11" r=".8" fill="#78350f"/><circle cx="14" cy="11" r=".8" fill="#78350f"/><path d="M10 14q2 2 4 0" fill="none" stroke="#78350f" stroke-linecap="round"/>`)
+  });
+  const insertToolHelp={
+    simpleImageBtn:'Upload a picture to the board.',
+    simpleColoringBookBtn:'Choose a coloring page to paint.',
+    simpleGraphBtn:'Build a bar, line, or pie chart from data.',
+    simplePictureGraphBtn:'Compare quantities with repeated pictures.',
+    simpleClassroomWidgetsBtn:'Add timers, polls, scoreboards, and more.',
+    simpleWheelSpinnerBtn:'Spin to pick a random name or choice.',
+    simpleMosaicBtn:'Combine selected pictures in an even grid.',
+    simpleCollageBtn:'Arrange selected pictures with a text banner.',
+    simpleEmojiBtn:'Combine emojis into a custom sticker.',
+    simpleGifBtn:'Create an animated GIF.',
+    simpleMermaidBtn:'Create a diagram from Mermaid text.',
+    simpleWordCloudBtn:'Show words sized by frequency.',
+    simpleConceptMapBtn:'Connect ideas in a branching map.',
+    simpleDotPicturesBtn:'Choose a dot picture to color.'
+  };
   const toolIcons={select:['select','Select'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],polygon:['polygon','Polygon'],star:['shape_star','Star'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
     undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp','Save to Google'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['pop_tnt','TNT Reset'],
@@ -4724,9 +4749,13 @@ function registerServiceWorker(){
       summary.innerHTML=`<span class="icon-symbol" aria-hidden="true">${icons[icon]}</span><span class="icon-label">${esc(tr(label))}</span>`;
       const panelEl=document.createElement('div');
       panelEl.className='tool-popover-panel';
+      if(groupId==='insertToolGroup') panelEl.setAttribute('popover','manual');
       items.forEach(item=>{
         const el=typeof item==='string'&&item.startsWith('#')?gid(item.slice(1)):tools.querySelector(`[data-tool="${item}"]`)||gid(item);
-        if(el){el.classList.add(className||groupId); panelEl.appendChild(el)}
+        if(el){
+          el.classList.add(className||groupId);
+          panelEl.appendChild(el);
+        }
       });
       if(groupId==='drawToolGroup'){
         panelEl.appendChild(buildToolColorPalette());
@@ -4735,6 +4764,17 @@ function registerServiceWorker(){
       }
       details.append(summary,panelEl);
       details.addEventListener('toggle',()=>{
+        if(groupId==='insertToolGroup'){
+          if(details.open){
+            const rect=summary.getBoundingClientRect();
+            const panelWidth=Math.min(340,window.innerWidth-82);
+            const top=Math.max(8,Math.min(rect.top,window.innerHeight-Math.min(600,window.innerHeight-16)-8));
+            panelEl.style.left=Math.max(8,Math.min(rect.right+10,window.innerWidth-panelWidth-8))+'px';
+            panelEl.style.top=top+'px';
+            panelEl.style.maxHeight=(window.innerHeight-top-8)+'px';
+            panelEl.showPopover();
+          }else panelEl.hidePopover();
+        }
         if(!details.open) return;
         tools.querySelectorAll('.tool-popover-group[open]').forEach(other=>{
           if(other!==details) other.open=false;
@@ -4771,6 +4811,17 @@ function registerServiceWorker(){
     document.body.classList.add('tool-palette-condensed');
     document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>{const data=toolIcons[btn.dataset.tool];if(data) iconize(btn,data[0],data[1],false)});
     Object.entries(buttonIcons).forEach(([elid,data])=>{const el=document.getElementById(elid);if(el) iconize(el,data[0],data[1],keepTextIds.has(elid))});
+    Object.entries(insertToolHelp).forEach(([buttonId,help])=>{
+      const el=gid(buttonId);
+      if(!el||el.querySelector('.insert-tool-description')) return;
+      el.classList.add('icon-with-text');
+      const description=document.createElement('span');
+      description.className='insert-tool-description';
+      description.id=buttonId+'Help';
+      description.textContent=tr(help);
+      el.setAttribute('aria-describedby',description.id);
+      el.appendChild(description);
+    });
     document.querySelectorAll('[data-bg]').forEach(btn=>{const label=currentLabel(btn,'Background');const map={blank:'blank',grid:'grid',dots:'dots',graph:'graph',lines:'lines',isometric:'isometric'};iconize(btn,map[btn.dataset.bg]||'grid',label,false)});
     document.querySelectorAll('input,select,textarea').forEach(el=>{
       if(el.getAttribute('aria-label')) return;
