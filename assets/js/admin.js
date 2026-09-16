@@ -36,30 +36,64 @@
     syncStorageModeUi();
   }
 
-  function saveSettings(){
-    const url=cleanUrl();
+  let connectionRequest=0;
+  let connectionController=null;
+  function connectionState(message){const el=$('googleConnectionState');if(el)el.textContent=message}
+  function validatedUrl(){
+    const raw=cleanUrl();
+    if(!raw)throw new Error('Paste your published Google connection link first.');
+    let url;try{url=new URL(raw)}catch(_){throw new Error('That does not look like a link. Copy the Web app URL from Google’s Deploy window.')}
+    if(url.hostname==='script.google.com'&&url.pathname.endsWith('/dev'))throw new Error('This is a test link. Choose Deploy → New deployment and copy the Web app URL ending in /exec.');
+    if(url.hostname==='script.google.com'&&url.pathname.includes('/projects/'))throw new Error('This is the editor link. Open Deploy → Manage deployments and copy the Web app URL ending in /exec.');
+    if(url.protocol!=='https:'||url.hostname!=='script.google.com'||url.username||url.password||!/^\/macros\/(?:u\/\d+\/)?s\/[-\w]+\/exec$/.test(url.pathname))throw new Error('Use the published Google Web app URL: https://script.google.com/macros/s/…/exec.');
+    // Ignore copied query arguments; the connection only needs the deployment URL.
+    return url.origin+url.pathname;
+  }
+  function invalidateConnection(){
+    connectionRequest++;
+    connectionController?.abort();
+    connectionState('Not checked yet');
+  }
+  scriptInput?.addEventListener('input',invalidateConnection);
+  async function testConnection(){
+    if(document.body.classList.contains('admin-viewer')||document.body.classList.contains('admin-locked'))return;
+    let url;try{url=validatedUrl()}catch(err){connectionState('Not connected');return setStatus(err.message,'danger')}
+    connectionController?.abort();
+    const request=++connectionRequest;
+    const controller=new AbortController();connectionController=controller;
+    const buttons=[$('saveScriptUrlBtn'),$('testScriptUrlBtn')].filter(Boolean);
+    buttons.forEach(btn=>btn.disabled=true);
+    const timer=setTimeout(()=>controller.abort(),15000);
+    setStatus('Checking your Google connection…');connectionState('Checking…');
     try{
-      if(url) localStorage.setItem(SCRIPT_URL_STORAGE_KEY,url);
-      else localStorage.removeItem(SCRIPT_URL_STORAGE_KEY);
-      setStatus(url?'Google Apps Script URL saved for this browser.':'Google Apps Script URL cleared.','success');
+      const res=await fetch(url+'?action=ping',{method:'GET',signal:controller.signal});
+      if(!res.ok)throw new Error('Google could not open this connection. Check the deployment’s access setting with your technology team, then try again.');
+      let out;try{out=await res.json()}catch(_){throw new Error('Google returned a sign-in or permission page. Check Who has access in your deployment settings, then copy the published /exec link again.')}
+      if(!out?.ok||out.app!=='DrawSplatTM')throw new Error('This link is not responding as DrawSplat. Install the DrawSplat setup script and publish it as a Web app.');
+      if(out.setupReady===false)throw new Error('The script is online, but storage is not ready. In your Sheet, choose DrawSplat → Prepare classroom storage, then check again.');
+      if(request!==connectionRequest||document.body.classList.contains('admin-locked')||document.body.classList.contains('admin-viewer'))return;
+      try{localStorage.setItem(SCRIPT_URL_STORAGE_KEY,url)}catch(_){throw new Error('Google responded, but this browser cannot save your connection. Allow browser storage and check again.')}
+      localStorage.setItem(STORAGE_MODE_KEY,'google');
+      localStorage.removeItem(SESSION_EXPIRES_KEY);
+      if(scriptInput)scriptInput.value=url;
+      if(storageMode)storageMode.value='google';syncStorageModeUi();
+      connectionState('Connected');
+      setStatus(out.setupReady===true?'Connected. Google storage is ready and this browser’s connection is saved. Open your whiteboard to save your first board.':'Connected and saved on this browser. This older script cannot report storage readiness; run setup in Google before saving boards.','success');
     }catch(err){
-      setStatus('Could not save settings: '+err.message,'danger');
+      if(request!==connectionRequest)return;
+      connectionState('Not connected');
+      setStatus(err.name==='AbortError'?'Google took too long to respond. Check your internet connection and deployment access setting, then try again.':err instanceof TypeError?'Could not reach Google. Check your internet connection and the deployment’s access setting; your technology team can help.':err.message,'danger');
+    }finally{
+      clearTimeout(timer);
+      // An edit cancels the request but must still release its buttons.
+      if(connectionController===controller){buttons.forEach(btn=>btn.disabled=false);connectionController=null}
     }
   }
-
-  async function testConnection(){
-    const url=cleanUrl();
-    if(!url) return setStatus('Paste and save a Google Apps Script URL first.','danger');
-    setStatus('Testing connection...');
-    try{
-      const res=await fetch(url+(url.includes('?')?'&':'?')+'action=ping',{method:'GET'});
-      const out=await res.json();
-      if(out&&out.ok&&out.app==='DrawSplatTM') setStatus('Connection works. DrawSplat backend version '+(out.version||'unknown')+' responded at '+(out.time||'unknown time')+'.','success');
-      else if(out&&out.ok) setStatus('That URL is not the DrawSplat whiteboard backend. Paste the Web App URL for apps-script/Code.gs; this one reports "'+(out.app||'unknown app')+'".','danger');
-      else setStatus((out&&out.error)||'Backend responded, but not with ok=true.','danger');
-    }catch(err){
-      setStatus('Connection failed: '+err.message,'danger');
-    }
+  function saveSettings(){return testConnection()}
+  function clearConnection(){
+    invalidateConnection();
+    if(scriptInput)scriptInput.value='';
+    try{localStorage.removeItem(SCRIPT_URL_STORAGE_KEY);connectionState('Disconnected');setStatus('Disconnected on this browser. Your Google files have not been deleted.','success')}catch(_){setStatus('Could not update browser settings. Check whether browser storage is allowed.','danger')}
   }
 
   function sessionExpiryFromHours(){
@@ -138,7 +172,7 @@
 
   $('saveScriptUrlBtn')?.addEventListener('click',saveSettings);
   $('testScriptUrlBtn')?.addEventListener('click',testConnection);
-  $('clearScriptUrlBtn')?.addEventListener('click',()=>{if(scriptInput) scriptInput.value=''; saveSettings()});
+  $('clearScriptUrlBtn')?.addEventListener('click',clearConnection);
   $('copyStudentLinkBtn')?.addEventListener('click',copyStudentLink);
   $('copyTeacherLinkBtn')?.addEventListener('click',copyTeacherLink);
   $('saveStorageBtn')?.addEventListener('click',saveStorageSettings);

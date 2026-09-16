@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>DrawSplatTM Teacher Admin</title>
-<link rel="stylesheet" href="../assets/css/app.css" />
+<link rel="stylesheet" href="../assets/css/app.css?v=3.0.101" />
 </head>
 <body class="admin-page admin-locked">
 <header>
@@ -48,36 +48,80 @@
 
 <main class="admin-shell">
   <section class="admin-hero">
-    <h2>Teacher and Integration Management</h2>
-    <p>Use this page for Google setup, classroom room links, and deployment notes. Students should work from the board page and should not need to see provider URLs or setup instructions.</p>
-    <div class="admin-actions">
-      <a class="admin-button" href="../guides/apps-script-web-app-url.html" target="_blank" rel="noopener noreferrer">Apps Script Web App URL Tutorial</a>
-      <a class="admin-button" href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">Open Code.gs</a>
+    <h2>Connect your classroom to Google</h2>
+    <p>Save boards and classroom work in your Google Drive. Follow four small steps using your teacher account. Your students will only need their board link.</p>
+    <p class="hint">Already connected? Choose step 4 to check your existing connection. Setup is saved on this browser; repeat the connection step on another device.</p>
+  </section>
+  <section class="admin-panel google-setup" id="googleSetup" aria-labelledby="googleSetupTitle">
+    <h2 id="googleSetupTitle">Google setup</h2>
+    <nav class="setup-steps" aria-label="Google setup steps">
+      <button type="button" data-viewer-ok data-setup-step="1" aria-current="step">1. Classroom file</button>
+      <button type="button" data-viewer-ok data-setup-step="2">2. Prepare storage</button>
+      <button type="button" data-viewer-ok data-setup-step="3">3. Publish</button>
+      <button type="button" data-viewer-ok data-setup-step="4">4. Connect</button>
+    </nav>
+    <p id="setupProgress" class="hint" role="status" aria-live="polite">Step 1 of 4</p>
+    <div data-setup-panel="1">
+      <h3>Create your classroom file</h3>
+      <div id="setupTemplateRoute" hidden>
+        <p>Make your own copy of the classroom template. The Google Sheet and its setup script are already included.</p>
+        <a id="setupTemplateLink" class="admin-button" target="_blank" rel="noopener noreferrer">Copy classroom template</a>
+      </div>
+      <div id="setupManualRoute">
+        <p>Start with a new Google Sheet named <strong>DrawSplat Saves</strong>. A ready-made template is not available yet, so install the setup script once using the copy button below.</p>
+        <div class="admin-actions"><a class="admin-button" href="https://sheets.google.com/create" target="_blank" rel="noopener noreferrer">Create classroom file</a><button id="copySetupScriptBtn" type="button">Copy setup script</button></div>
+        <ol class="admin-checklist"><li>In your new Sheet, choose <strong>Extensions → Apps Script</strong>.</li><li>Select all the starter text in the editor, then paste the copied script.</li><li>Click <strong>Save</strong>, then return to your Sheet and reload it.</li></ol>
+        <p id="copySetupScriptStatus" class="hint" role="status" aria-live="polite"></p>
+        <details><summary>Copy button not working?</summary><p>Select and copy the script below, then paste it in the Google editor.</p><textarea id="setupScriptFallback" readonly aria-label="DrawSplat setup script"></textarea><a href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">Open script in a new tab</a></details>
+      </div>
+      <div class="admin-actions"><button type="button" data-viewer-ok data-setup-next="2" class="primary">My classroom file is ready →</button></div>
+    </div>
+    <div data-setup-panel="2" hidden>
+      <h3>Prepare your storage</h3>
+      <p>In your classroom Sheet, open the new <strong>DrawSplat → Prepare classroom storage</strong> menu. One click creates the tabs and Drive folder DrawSplat needs.</p>
+      <div class="setup-instruction-card"><span>In Google Sheets</span><strong>DrawSplat → Prepare classroom storage</strong></div>
+      <p>Google will ask you to approve access to your Sheet and Drive. Use the teacher account that will own the classroom work. Review the permissions before allowing them.</p>
+      <p class="hint">School account blocked? Ask your technology team to allow the script. If Google shows an unverified-app message, follow your school's approval process.</p>
+      <details><summary>I do not see the DrawSplat menu</summary><p>Reload your Sheet. If the menu is still missing, reopen Extensions → Apps Script, select <strong>setup</strong> in the function list, and click <strong>Run</strong>. Approve Google's permissions, then return here.</p></details>
+      <div class="admin-actions"><button type="button" data-viewer-ok data-setup-next="3" class="primary">Google says storage is ready →</button></div>
+    </div>
+    <div data-setup-panel="3" hidden>
+      <h3>Publish your connection</h3>
+      <p>Open <strong>Extensions → Apps Script</strong> in your classroom Sheet. Follow these choices in Google's publishing window:</p>
+      <div class="setup-publish-guide"><div class="setup-instruction-card"><span>1. Open publishing</span><strong>Deploy → New deployment</strong></div><div class="setup-instruction-card"><span>2. Select type (gear icon)</span><strong>Web app</strong></div><div class="setup-instruction-card"><span>3. Execute as</span><strong>Me — your teacher account</strong></div><div class="setup-instruction-card"><span>4. Who has access</span><strong>Your school's approved classroom setting</strong></div></div>
+      <p class="hint">DrawSplat's connection test needs to reach the web app without a Google sign-in redirect. Ask your technology team which access setting your school allows; a restricted deployment may not work with the browser connection.</p>
+      <p>Click <strong>Deploy</strong> and approve any requested permissions. Copy the <strong>Web app URL</strong> ending in <strong>/exec</strong>, then come back here.</p>
+      <a href="../guides/apps-script-web-app-url.html" target="_blank" rel="noopener noreferrer">See the detailed publishing guide</a>
+      <div class="admin-actions"><button type="button" data-viewer-ok data-setup-next="4" class="primary">I have my connection link →</button></div>
+    </div>
+    <div data-setup-panel="4" hidden>
+      <h3>Check and save your connection</h3>
+      <p>Paste the published Web app URL. We will check it before saving anything. A successful check also selects Google as your storage mode.</p>
+      <label class="admin-label" for="adminScriptUrl">Google connection link</label><input id="adminScriptUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" aria-describedby="connectionHelp">
+      <p id="connectionHelp" class="hint">Use the Web app URL ending in /exec, not the editor address or a /dev test link.</p>
+      <div class="admin-actions"><button id="saveScriptUrlBtn" class="primary" type="button">Check &amp; save connection</button><button id="testScriptUrlBtn" type="button">Check again</button><button id="clearScriptUrlBtn" type="button">Disconnect this browser</button></div>
+      <p id="adminStatus" class="hint" role="status" aria-live="polite"></p><p id="googleConnectionState" class="setup-connection-state" role="status" aria-live="polite">Not checked yet</p>
+      <a class="admin-button" href="../app/whiteboard.html">Open your whiteboard</a>
     </div>
   </section>
-
-  <section class="admin-section-heading">
-    <p class="landing-eyebrow">Primary Classroom Setup</p>
-    <h2>Google Apps Script + Sheets/Drive</h2>
-    <p>Most teachers should start here. This path lets DrawSplat save boards, rooms, templates, and turn-ins through a Google Apps Script Web App connected to Google Drive and Sheets.</p>
-  </section>
-
   <section class="admin-grid">
     <article class="admin-panel">
-      <h3>Google Drive + Sheets</h3>
-      <p class="hint">Paste the deployed Google Apps Script Web App URL here. It is stored in this browser and used by the board page for Save to Google, Load from Google, Cloud Sync, templates, and turn-ins.</p>
-      <label class="admin-label" for="adminScriptUrl">Apps Script Web App URL</label>
-      <input id="adminScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+      <h3>Classroom Links</h3>
+      <p class="hint">Create room-specific links after the teacher has configured the backend. Student links open in student mode and hide teacher/admin controls.</p>
+      <label class="admin-label" for="adminRoom">Room name</label>
+      <input id="adminRoom" type="text" placeholder="algebra-team-a" autocomplete="off">
+      <label class="admin-label" for="adminStudentName">Optional student name</label>
+      <input id="adminStudentName" type="text" placeholder="Student name">
       <div class="admin-actions">
-        <a class="admin-button" href="../guides/apps-script-web-app-url.html" target="_blank" rel="noopener noreferrer">Create Web App URL</a>
-        <a class="admin-button" href="../apps-script/Code.gs" target="_blank" rel="noopener noreferrer">Open Code.gs</a>
-        <button id="saveScriptUrlBtn" class="primary" type="button">Save URL</button>
-        <button id="testScriptUrlBtn" type="button">Test Connection</button>
-        <button id="clearScriptUrlBtn" type="button">Clear</button>
+        <button id="copyStudentLinkBtn" class="primary" type="button">Copy Student Link</button>
+        <button id="copyTeacherLinkBtn" type="button">Copy Teacher Link</button>
       </div>
-      <p id="adminStatus" class="hint" role="status" aria-live="polite"></p>
+      <p class="hint">Room passwords are still entered on the board page. Do not place shared passwords in links.</p>
     </article>
 
+  </section>
+  <details class="admin-advanced"><summary>Advanced settings — storage, servers, and game access</summary>
+  <section class="admin-grid">
     <article class="admin-panel">
       <h3>Storage Mode</h3>
       <p class="hint">Choose how this browser-backed deployment should preserve work. Google is best for cross-device classroom rooms. Browser-only timed sessions are useful for simple shared devices or temporary workshops.</p>
@@ -107,33 +151,7 @@
       <p class="hint">MySQL and standalone folder options are forward-compatible settings for future backend endpoints. They are not used by static hosting until that API exists.</p>
     </article>
 
-    <article class="admin-panel">
-      <h3>Classroom Links</h3>
-      <p class="hint">Create room-specific links after the teacher has configured the backend. Student links open in student mode and hide teacher/admin controls.</p>
-      <label class="admin-label" for="adminRoom">Room name</label>
-      <input id="adminRoom" type="text" placeholder="algebra-team-a" autocomplete="off">
-      <label class="admin-label" for="adminStudentName">Optional student name</label>
-      <input id="adminStudentName" type="text" placeholder="Student name">
-      <div class="admin-actions">
-        <button id="copyStudentLinkBtn" class="primary" type="button">Copy Student Link</button>
-        <button id="copyTeacherLinkBtn" type="button">Copy Teacher Link</button>
-      </div>
-      <p class="hint">Room passwords are still entered on the board page. Do not place shared passwords in links.</p>
-    </article>
-
-    <article class="admin-panel">
-      <h3>Setup Checklist</h3>
-      <ol class="admin-checklist">
-        <li>Create a Google Sheet named <b>DrawSplat<sup class="tm">TM</sup> Saves</b>.</li>
-        <li>Open <span class="kbd">Extensions -> Apps Script</span>.</li>
-        <li>Paste the code from <span class="kbd">apps-script/Code.gs</span>.</li>
-        <li>Run <span class="kbd">setup()</span> once and approve permissions.</li>
-        <li>Deploy as a Web App, running as the teacher/admin account.</li>
-        <li>Paste the Web App URL in this admin page.</li>
-      </ol>
-    </article>
   </section>
-
   <section class="admin-section-heading admin-section-divider">
     <p class="landing-eyebrow">Advanced / Self-Hosted</p>
     <h2>MySQL Backend</h2>
@@ -176,10 +194,11 @@
     </article>
 
   </section>
+  </details>
 </main>
 
 <script src="../assets/js/admin-gate.js?v=1.2"></script>
 <script src="../assets/js/games-filter.js"></script>
 <script src="../assets/js/admin-games-access.js"></script>
-<script src="../assets/js/admin.js?v=1.0"></script></body>
+<script src="../assets/js/admin.js?v=1.1"></script><script src="../assets/js/google-setup.js?v=1.0"></script></body>
 </html>

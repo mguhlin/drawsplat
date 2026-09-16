@@ -1,4 +1,4 @@
-// DS_VERSION = '1.9.0'  (bump this when Code.gs changes — see CHANGELOG below)
+// DS_VERSION = '1.10.0'  (bump this when Code.gs changes — see CHANGELOG below)
 /* DrawSplatTM Google Apps Script backend.
  *
  * Deploy as a Web app:
@@ -8,6 +8,7 @@
  * Run setup() once before using the web app.
  *
  * VERSION HISTORY (bump DS_VERSION on every edit):
+ *   1.10.0 Guided teacher setup menu and storage readiness checks.
  *   1.9.0  Days 1.3 / 1.4 — Image upload approval queue. New ImageQueue
  *          sheet tab + uploadImage / imageQueueResolve / imageQueueList /
  *          setImageStatus endpoints. Student uploads start as pending and
@@ -33,7 +34,7 @@
  *   1.0.0  Baseline whiteboard backend (boards, rooms, templates,
  *          turn-ins).
  */
-const DS_VERSION = '1.9.0';
+const DS_VERSION = '1.10.0';
 
 const DS_FOLDER_NAME = 'DrawSplatTM Saves';
 const DS_PROPS = PropertiesService.getScriptProperties();
@@ -62,6 +63,12 @@ const ALLOWED_AGE_BANDS = ['under_13', '13_to_17', '18_plus', 'unknown_minor'];
 /* One-time initializer. Creates or repairs the spreadsheet tabs and the Drive
  * folder used by every backend action below. */
 function setup() {
+  // Each copied classroom Sheet must use its own storage, not the template's.
+  const bound = SpreadsheetApp.getActiveSpreadsheet();
+  if (bound && DS_PROPS.getProperty('SPREADSHEET_ID') !== bound.getId()) {
+    DS_PROPS.setProperty('SPREADSHEET_ID', bound.getId());
+    DS_PROPS.deleteProperty('FOLDER_ID');
+  }
   const ss = getSpreadsheet_();
   getFolder_();
   ensureSheet_(ss, DS_SHEETS.boards, ['boardId', 'title', 'className', 'updatedAt', 'jsonFileId', 'pngFileId', 'folderUrl', 'frozen', 'frozenBy', 'frozenAt', 'frozenReason']);
@@ -78,6 +85,34 @@ function setup() {
   return 'DrawSplatTM setup complete.';
 }
 
+/* Teacher-friendly setup controls appear in a bound classroom Sheet. */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('DrawSplat')
+    .addItem('Prepare classroom storage', 'prepareClassroomStorage')
+    .addItem('Show my connection link', 'showConnectionLink')
+    .addToUi();
+}
+function prepareClassroomStorage() {
+  const ui = SpreadsheetApp.getUi();
+  try { setup(); ui.alert('Storage is ready', 'Your classroom tabs and Google Drive folder are ready. Return to DrawSplat and continue with Publish.', ui.ButtonSet.OK); }
+  catch (err) { ui.alert('Storage needs attention', 'Could not prepare storage. Ask your technology team to check Google permissions. Details: ' + err.message, ui.ButtonSet.OK); }
+}
+function showConnectionLink() {
+  const ui = SpreadsheetApp.getUi();
+  const url = ScriptApp.getService().getUrl();
+  ui.alert('Your Google connection', url ? 'Copy this link into step 4 of DrawSplat setup:\n\n' + url : 'Publish first: open Extensions → Apps Script, then Deploy → New deployment → Web app. Copy the published Web app URL ending in /exec.', ui.ButtonSet.OK);
+}
+function setupReady_() {
+  try {
+    const sheetId = DS_PROPS.getProperty('SPREADSHEET_ID');
+    const folderId = DS_PROPS.getProperty('FOLDER_ID');
+    if (!sheetId || !folderId) return false;
+    const ss = SpreadsheetApp.openById(sheetId);
+    const folder = DriveApp.getFolderById(folderId);
+    return !folder.isTrashed() && Object.keys(DS_SHEETS).every(function(key) { return !!ss.getSheetByName(DS_SHEETS[key]); });
+  } catch (_) { return false; }
+}
+
 /* Read endpoints for board loads, room polling, template gallery, and turn-in
  * review. All responses are JSON so the static front end can call them with
  * fetch() from any hosted DrawSplatTM page. */
@@ -91,7 +126,7 @@ function doGet(e) {
       case 'templateLoad': return json_(loadTemplate_(p.templateId));
       case 'turnInList': return json_(listTurnIns_());
       case 'turnInLoad': return json_(loadTurnIn_(p.turninId));
-      case 'ping': return json_({ ok: true, app: 'DrawSplatTM', version: DS_VERSION, time: now_() });
+      case 'ping': return json_({ ok: true, app: 'DrawSplatTM', version: DS_VERSION, time: now_(), setupReady: setupReady_() });
       case 'auditList': return json_(adminAuditList_(p));
       case 'parentRequestList': return json_(adminParentRequestList_(p));
       case 'privacyPacket': return privacyPacketResponse_(p);
