@@ -30,29 +30,43 @@ test('provides keyboard navigation landmarks', async ({ page }) => {
 });
 
 for (const width of [1280, 390]) {
-  test(`insert tools have visible explanations and remain usable at ${width}px`, async ({ page }) => {
+  test(`toolbar menus explain their tools and remain usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    for (const group of ['drawToolGroup','shapeToolGroup','textToolGroup','insertToolGroup','backgroundToolGroup','moreToolGroup']) {
+      await page.locator(`#${group} > summary`).click();
+      const menu = page.locator(`#${group} .tool-popover-panel`);
+      await expect(menu).toBeVisible();
+      const actions = menu.locator('.toolbar-action');
+      const count = await actions.count();
+      await expect(menu.locator('.toolbar-action-description')).toHaveCount(count);
+      const bounds = await menu.boundingBox();
+      expect(bounds.x).toBeGreaterThanOrEqual(0);
+      expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+      expect(bounds.y + bounds.height).toBeLessThanOrEqual(900);
+      for (const action of await actions.filter({ visible: true }).all()) {
+        await action.scrollIntoViewIfNeeded();
+        await expect(action.locator('.icon-label')).toBeVisible();
+        await expect(action.locator('.toolbar-action-description')).not.toHaveText('');
+        expect(await action.evaluate(el => {
+          const rect = el.getBoundingClientRect();
+          return el.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+        })).toBe(true);
+      }
+      await page.locator(`#${group} > summary`).click();
+      await expect(menu).toBeHidden();
+    }
     await page.locator('#insertToolGroup > summary').click();
-    const menu = page.locator('#insertToolGroup .tool-popover-panel');
-    await expect(menu).toBeVisible();
-    await expect(menu.locator('.insert-tool-description')).toHaveCount(14);
-    await expect(page.locator('#simpleMosaicBtn')).toContainText('even grid');
-    await expect(page.locator('#simpleCollageBtn')).toContainText('text banner');
-    const bounds = await menu.boundingBox();
-    expect(bounds.x).toBeGreaterThanOrEqual(0);
-    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
-    expect(bounds.y + bounds.height).toBeLessThanOrEqual(900);
-    const emoji = page.locator('#simpleEmojiBtn');
-    await emoji.scrollIntoViewIfNeeded();
-    await expect(emoji.locator('.icon-label')).toBeVisible();
-    // Hit testing catches menus clipped by the scrolling rail or covered by the canvas.
-    expect(await emoji.evaluate(el => {
-      const rect = el.getBoundingClientRect();
-      return el.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
-    })).toBe(true);
-    await expect(emoji.locator('svg')).toBeVisible();
-    await page.locator('#simpleWheelSpinnerBtn').click();
-    await expect(menu).toBeHidden();
-    await expect(page.locator('#boardSvg')).toContainText('Wheel Spinner');
+    const insert = page.locator('#insertToolGroup .tool-popover-panel');
+    await expect(insert.locator('button')).toHaveCount(5);
+    await expect(insert.locator('.icon-label')).toHaveText(['Add Image','Coloring Book','Graph Creator','Picture Graph','Classroom Widgets']);
+    await page.locator('#simpleGraphBtn').click();
+    await expect(insert).toBeHidden();
+    await expect(page.locator('#graphDialog')).toBeVisible();
+    await page.locator('#graphCancelBtn').click();
+    await page.locator('#drawToolGroup > summary').click();
+    await page.locator('#toolButtons [data-tool="eraser"]').click();
+    await expect(page.locator('#eraserSizeControls')).toBeVisible();
+    await page.locator('[data-eraser-width]').first().click();
+    await expect(page.locator('#eraserSizeControls')).toBeVisible();
   });
 }

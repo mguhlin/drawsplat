@@ -4686,21 +4686,19 @@ function registerServiceWorker(){
     pop_collage:svg(`<rect ${S} x="3" y="4" width="18" height="16" rx="2"/><path ${S} d="M13 4v16M13 12h8M4 17l4-5 4 5"/><circle cx="8" cy="8" r="1.5" fill="#f59e0b"/>`),
     pop_emoji:svg(`<path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="#facc15" stroke="#b45309" stroke-width="1.2" stroke-linejoin="round"/><circle cx="10" cy="11" r=".8" fill="#78350f"/><circle cx="14" cy="11" r=".8" fill="#78350f"/><path d="M10 14q2 2 4 0" fill="none" stroke="#78350f" stroke-linecap="round"/>`)
   });
-  const insertToolHelp={
+  const toolbarButtonHelp={
     simpleImageBtn:'Upload a picture to the board.',
     simpleColoringBookBtn:'Choose a coloring page to paint.',
-    simpleGraphBtn:'Build a bar, line, or pie chart from data.',
+    simpleGraphBtn:'Build a bar, line, area, or pie chart from data.',
     simplePictureGraphBtn:'Compare quantities with repeated pictures.',
-    simpleClassroomWidgetsBtn:'Add timers, polls, scoreboards, and more.',
-    simpleWheelSpinnerBtn:'Spin to pick a random name or choice.',
-    simpleMosaicBtn:'Combine selected pictures in an even grid.',
-    simpleCollageBtn:'Arrange selected pictures with a text banner.',
-    simpleEmojiBtn:'Combine emojis into a custom sticker.',
-    simpleGifBtn:'Create an animated GIF.',
-    simpleMermaidBtn:'Create a diagram from Mermaid text.',
-    simpleWordCloudBtn:'Show words sized by frequency.',
-    simpleConceptMapBtn:'Connect ideas in a branching map.',
-    simpleDotPicturesBtn:'Choose a dot picture to color.'
+    simpleClassroomWidgetsBtn:'Add timers, polls, a wheel spinner, and more.',
+    dotPictureToolBtn:'Choose a dot picture to color.',
+    simpleBgImageBtn:'Use a picture as the board background.',
+    simpleScratchCoverBtn:'Cover the board, then erase to reveal it.',
+    simpleClearBgBtn:'Remove the board background picture.',
+    simpleRemoveBgColorBtn:'Make a color in the selected picture transparent.',
+    simpleDeleteBtn:'Remove the selected items from the board.',
+    simpleTntBtn:'Clear all panels and start a fresh board.'
   };
   const toolIcons={select:['select','Select'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],polygon:['polygon','Polygon'],star:['shape_star','Star'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
@@ -4749,11 +4747,11 @@ function registerServiceWorker(){
       summary.innerHTML=`<span class="icon-symbol" aria-hidden="true">${icons[icon]}</span><span class="icon-label">${esc(tr(label))}</span>`;
       const panelEl=document.createElement('div');
       panelEl.className='tool-popover-panel';
-      if(groupId==='insertToolGroup') panelEl.setAttribute('popover','manual');
+      panelEl.setAttribute('popover','manual');
       items.forEach(item=>{
         const el=typeof item==='string'&&item.startsWith('#')?gid(item.slice(1)):tools.querySelector(`[data-tool="${item}"]`)||gid(item);
         if(el){
-          el.classList.add(className||groupId);
+          el.classList.add(className||groupId,'toolbar-action');
           panelEl.appendChild(el);
         }
       });
@@ -4764,17 +4762,15 @@ function registerServiceWorker(){
       }
       details.append(summary,panelEl);
       details.addEventListener('toggle',()=>{
-        if(groupId==='insertToolGroup'){
-          if(details.open){
-            const rect=summary.getBoundingClientRect();
-            const panelWidth=Math.min(340,window.innerWidth-82);
-            const top=Math.max(8,Math.min(rect.top,window.innerHeight-Math.min(600,window.innerHeight-16)-8));
-            panelEl.style.left=Math.max(8,Math.min(rect.right+10,window.innerWidth-panelWidth-8))+'px';
-            panelEl.style.top=top+'px';
-            panelEl.style.maxHeight=(window.innerHeight-top-8)+'px';
-            panelEl.showPopover();
-          }else panelEl.hidePopover();
-        }
+        if(details.open){
+          const rect=summary.getBoundingClientRect();
+          const panelWidth=Math.min(340,window.innerWidth-82);
+          const top=Math.max(8,Math.min(rect.top,window.innerHeight-Math.min(600,window.innerHeight-16)-8));
+          panelEl.style.left=Math.max(8,Math.min(rect.right+10,window.innerWidth-panelWidth-8))+'px';
+          panelEl.style.top=top+'px';
+          panelEl.style.maxHeight=(window.innerHeight-top-8)+'px';
+          panelEl.showPopover();
+        }else panelEl.hidePopover();
         if(!details.open) return;
         tools.querySelectorAll('.tool-popover-group[open]').forEach(other=>{
           if(other!==details) other.open=false;
@@ -4792,7 +4788,7 @@ function registerServiceWorker(){
     const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','triangle','diamond','polygon','star','connector','callout','speech'],className:'tool-group-shapes'});
     const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'textgroup',items:['text','sticky','comment','audio'],className:'tool-group-text'});
-    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#simpleWheelSpinnerBtn','#simpleMosaicBtn','#simpleCollageBtn','#simpleEmojiBtn','#simpleGifBtn','#simpleMermaidBtn','#simpleWordCloudBtn','#simpleConceptMapBtn','#simpleDotPicturesBtn'],className:'tool-group-insert'});
+    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn'],className:'tool-group-insert'});
     const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
     const moreGroup=makeGroup({id:'moreToolGroup',label:'More Actions',icon:'options',items:['#simpleDeleteBtn','#simpleTntBtn'],className:'tool-group-more'});
     tools.append(drawGroup,shapeGroup,textGroup,insertGroup,bgGroup,moreGroup);
@@ -4811,14 +4807,13 @@ function registerServiceWorker(){
     document.body.classList.add('tool-palette-condensed');
     document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>{const data=toolIcons[btn.dataset.tool];if(data) iconize(btn,data[0],data[1],false)});
     Object.entries(buttonIcons).forEach(([elid,data])=>{const el=document.getElementById(elid);if(el) iconize(el,data[0],data[1],keepTextIds.has(elid))});
-    Object.entries(insertToolHelp).forEach(([buttonId,help])=>{
-      const el=gid(buttonId);
-      if(!el||el.querySelector('.insert-tool-description')) return;
+    document.querySelectorAll('#toolButtons .toolbar-action').forEach(el=>{
+      if(el.querySelector('.toolbar-action-description')) return;
       el.classList.add('icon-with-text');
       const description=document.createElement('span');
-      description.className='insert-tool-description';
-      description.id=buttonId+'Help';
-      description.textContent=tr(help);
+      description.className='toolbar-action-description';
+      description.id=(el.id||'tool-'+el.dataset.tool)+'Help';
+      description.textContent=tr(el.dataset.tool?toolGuidance(el.dataset.tool)[1]:toolbarButtonHelp[el.id]);
       el.setAttribute('aria-describedby',description.id);
       el.appendChild(description);
     });
