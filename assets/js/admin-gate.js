@@ -2,10 +2,10 @@
   const ACCESS_KEY='drawsplat.adminAccess';
   const LOCAL_HASH_KEY='drawsplat.localAdminPasswordHash';
   const LOCAL_CREATED_KEY='drawsplat.localAdminPasswordCreatedAt';
-  // Public builds do not include a working admin password. Set this to the
-  // SHA-256 hash of your deployment password, or use server-side auth/SSO.
+  // SHA-256 hash of the deployment admin password.
+  // Self-hosted deployments can replace this or use server-side auth/SSO.
   // Anyone with this password gets FULL read/write access.
-  const PASSWORD_HASH='fbf9c2374caa0e0c94f22526b9ca813f007999031a9f60488ac048998a8d3865';
+  const PASSWORD_HASH='2f76d4739486901db54d90915a595070fa7a9eb93db12ef87e20d393cbce3f81';
   // Viewer mode is a zero-config "preview as viewer" — anyone clicking the
   // gate's Preview button enters a read-only UI tour. No password is needed
   // because no real backend data is loaded in viewer mode (every Load /
