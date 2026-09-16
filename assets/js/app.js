@@ -4462,11 +4462,9 @@ gid('inspectorBackdrop').onclick=()=>setInspectorOpen(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&_isInspectorMobile()&&document.querySelector('.inspector')?.classList.contains('show')) setInspectorOpen(false)});
 async function loadTurnInById(turninId){const url=googleScriptUrl(); if(!url||!turninId) return; const load=await fetch(url+'?action=turnInLoad&turninId='+encodeURIComponent(turninId)); const loaded=await load.json(); if(loaded.ok&&loaded.turnin&&loaded.turnin.board){board=loaded.turnin.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); gid('moderationDialog').close(); setStatus('Loaded turn-in from '+(loaded.turnin.studentName||'student')+'.','success')}}
 async function openModerationDashboard(){const comments=[]; board.panels.forEach((p,pi)=>p.objects.filter(o=>o.type==='comment').forEach(o=>comments.push({panelIndex:pi,panelName:p.name,obj:o}))); const unresolved=comments.filter(c=>!c.obj.resolved).length, resolved=comments.length-unresolved; gid('moderationSummary').innerHTML=`<span class="pill warn">${esc(unresolved)} unresolved</span> <span class="pill ok">${esc(resolved)} resolved</span> <span class="pill">${esc(comments.length)} total comments</span>`; gid('moderationComments').innerHTML=comments.length?comments.map((c,i)=>`<div class="list-item"><h4>${esc(c.panelName)} — ${c.obj.resolved?'Resolved':'Open'}</h4><p>${esc(c.obj.text||htmlToPlainText(c.obj.html)||'No text')}</p><button data-jump-comment="${i}">Jump to Comment</button></div>`).join(''):'<div class="list-item">No comments on this board.</div>'; gid('moderationComments').querySelectorAll('[data-jump-comment]').forEach(btn=>btn.onclick=()=>{const c=comments[+btn.dataset.jumpComment]; board.active=c.panelIndex; setSingleSelection(c.obj.id); gid('moderationDialog').close(); render()}); let turnins=[]; const url=googleScriptUrl(); if(url){ try{const res=await fetch(url+'?action=turnInList'); const out=await res.json(); if(out.ok&&out.turnins) turnins=out.turnins}catch(err){} } gid('moderationTurnins').innerHTML=turnins.length?turnins.map(t=>`<div class="list-item"><h4>${esc(t.studentName||'Student')} — ${esc(t.title||'Untitled')}</h4><p>${esc(t.className||'No class')} · ${esc(t.updatedAt||'')}</p><button data-load-turnin="${esc(t.turninId)}">Load Turn-In</button></div>`).join(''):'<div class="list-item">No Google turn-ins found yet.</div>'; gid('moderationTurnins').querySelectorAll('[data-load-turnin]').forEach(btn=>btn.onclick=()=>loadTurnInById(btn.dataset.loadTurnin)); gid('moderationDialog').showModal()}
-// Whiteboard TNT detonation uses a single CC0 Red Library MP3 ("Huge
-// Explosion with Long Decay") for a dramatic blast that matches the
-// canvas-shake visual. Cached after the first play so repeat detonations
-// fire instantly. Source and license live at
-// assets/audio/explosions/README.md.
+// Whiteboard TNT uses a brief CC0 Red Library blast, faded and stopped
+// after 1.2 seconds so each detonation is a separate burst.
+// Source and license: assets/audio/explosions/README.md.
 // Global mute applies to DrawSplat-generated sound effects only (TNT today,
 // future game/UI cues). User-recorded audio notes are intentionally exempt —
 // muting a teacher's recording is a footgun.
@@ -4474,6 +4472,7 @@ const AUDIO_MUTE_KEY='drawsplat.audioMuted';
 function isAudioMuted(){ try{ return localStorage.getItem(AUDIO_MUTE_KEY)==='1'; }catch(_){ return false; } }
 function setAudioMuted(muted){
   try{ localStorage.setItem(AUDIO_MUTE_KEY, muted?'1':'0'); }catch(_){}
+  if(muted) stopTntBoom();
   refreshAudioToggleBtn();
 }
 function refreshAudioToggleBtn(){
@@ -4482,20 +4481,29 @@ function refreshAudioToggleBtn(){
   btn.textContent = muted ? 'Audio: Off' : 'Audio: On';
   btn.setAttribute('aria-pressed', muted ? 'true' : 'false');
 }
-let _tntBoomAudio=null;
+let _tntBoomAudio=null, _tntBoomFade=null, _tntBoomStop=null;
+function stopTntBoom(){
+  clearInterval(_tntBoomFade); clearTimeout(_tntBoomStop);
+  _tntBoomFade=null; _tntBoomStop=null;
+  if(_tntBoomAudio){ _tntBoomAudio.pause(); _tntBoomAudio.currentTime=0; }
+}
 function playTntBoom(){
+  stopTntBoom();
   if(isAudioMuted()) return;
   try{
     if(!_tntBoomAudio){
-      _tntBoomAudio=new Audio('../assets/audio/explosions/r09-52-huge-explosion-with-long-decay.mp3');
+      _tntBoomAudio=new Audio('../assets/audio/explosions/r09-49-short-explosion-with-debris.mp3');
       _tntBoomAudio.preload='auto';
     }
-    // Clone so a second TNT click while the first is still playing doesn't
-    // cut the previous sample short.
-    const node=_tntBoomAudio.cloneNode();
-    node.volume=0.85;
-    node.play().catch(()=>{});
-  }catch(_){/* audio unavailable — visual still plays */}
+    _tntBoomAudio.volume=0.85;
+    _tntBoomAudio.play().catch(()=>{});
+    const started=performance.now();
+    _tntBoomFade=setInterval(()=>{
+      const elapsed=performance.now()-started;
+      _tntBoomAudio.volume=0.85*Math.max(0,Math.min(1,(1200-elapsed)/300));
+    },50);
+    _tntBoomStop=setTimeout(stopTntBoom,1200);
+  }catch(_){stopTntBoom(); /* audio unavailable — visual still plays */}
 }
 function playCanvasDetonation(){
   const shell=document.querySelector('.canvas-shell');
@@ -4503,7 +4511,7 @@ function playCanvasDetonation(){
   shell.classList.remove('tnt-detonating');
   void shell.offsetWidth;
   shell.classList.add('tnt-detonating');
-  // Kick off the layered explosion audio in parallel with the visual.
+  // Play one short explosion burst alongside the visual.
   playTntBoom();
   setTimeout(()=>shell.classList.remove('tnt-detonating'),1700);
 }
