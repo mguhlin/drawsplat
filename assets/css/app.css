@@ -1172,3 +1172,16 @@ button.active,[aria-pressed="true"]{font-weight:800}
 
 #toolButtons details.tool-popover-group .tool-popover-panel[popover]{position:fixed;margin:0;inset:auto;color:#4f46e5}
 #toolButtons details.tool-popover-group .tool-popover-panel[popover]:not(:popover-open){display:none}
+
+/* Application menus share the toolbar's visible action guidance. */
+#topMenuBar .top-menu-list[popover]{position:fixed;inset:auto;margin:0;width:min(360px,calc(100vw - 16px));min-width:0;overflow-y:auto;overscroll-behavior:contain;gap:4px}
+#topMenuBar .top-menu-list[popover]:not(:popover-open){display:none}
+#topMenuBar .top-menu-action{display:grid;grid-template-columns:30px minmax(0,1fr);gap:3px 10px;min-height:58px;padding:8px 10px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;white-space:normal}
+#topMenuBar .top-menu-action:hover,#topMenuBar .top-menu-action:focus-visible{background:#e0e7ff}
+#topMenuBar .top-menu-action .icon-symbol{grid-row:1 / 3;width:30px;height:30px;color:#4f46e5}
+#topMenuBar .top-menu-action .icon-symbol img,#topMenuBar .top-menu-action .icon-symbol svg{width:28px;height:28px;object-fit:contain}
+#topMenuBar .top-menu-action .icon-label{font-size:13px;line-height:1.25;font-weight:700;color:#4f46e5}
+#topMenuBar .menu-action-description{grid-column:2;color:#475569;font-size:12px;line-height:1.35;font-weight:400}
+#topMenuBar .top-menu-action::after{display:none}
+#topMenuBar .top-menu-submenu>button .icon-label::after{content:' ›';font-size:16px}
+#topMenuBar .top-submenu-list{position:static;margin:4px 0 4px 12px;min-width:0;box-shadow:none;border-color:#e5e7eb;padding:4px}

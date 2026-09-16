@@ -802,9 +802,20 @@ function ensureTopMenus(){
     const summary=document.createElement('summary');
     summary.textContent=title;
     details.appendChild(summary);
-    details.addEventListener('toggle',()=>{if(details.open) nav.querySelectorAll('details[open]').forEach(d=>{if(d!==details)d.open=false})});
     const list=document.createElement('div');
     list.className='top-menu-list';
+    list.setAttribute('popover','manual');
+    details.addEventListener('toggle',()=>{
+      if(!details.open){list.hidePopover();return}
+      nav.querySelectorAll('details[open]').forEach(d=>{if(d!==details)d.open=false});
+      const rect=summary.getBoundingClientRect();
+      const width=Math.min(360,window.innerWidth-16);
+      const top=Math.min(rect.bottom+8,window.innerHeight-80);
+      list.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-width-8))+'px';
+      list.style.top=top+'px';
+      list.style.maxHeight=(window.innerHeight-top-8)+'px';
+      list.showPopover();
+    });
     items.forEach(([label,target,submenu])=>{
       if(label==='divider'){
         const divider=document.createElement('div');
@@ -4736,6 +4747,13 @@ function registerServiceWorker(){
     const tools=gid('toolButtons');
     if(!tools||tools.dataset.grouped==='1') return;
     tools.dataset.grouped='1';
+    function closeToolMenus(){tools.querySelectorAll('.tool-popover-group[open]').forEach(group=>{group.open=false})}
+    document.addEventListener('click',event=>{
+      const openGroup=tools.querySelector('.tool-popover-group[open]');
+      if(openGroup&&!openGroup.contains(event.target)) closeToolMenus();
+    });
+    document.addEventListener('keydown',event=>{if(event.key==='Escape') closeToolMenus()});
+
     function makeGroup({id:groupId,label,icon,items,className=''}){
       const details=document.createElement('details');
       details.id=groupId;
@@ -4779,7 +4797,7 @@ function registerServiceWorker(){
       panelEl.addEventListener('click',event=>{
         const btn=event.target.closest('button');
         if(!btn) return;
-        if(btn.dataset.tool==='eraser'||btn.closest('.eraser-size-controls')) return;
+        if(btn.dataset.tool==='eraser'||btn.closest('.eraser-size-controls,.tool-color-palette')) return;
         details.open=false;
       });
       return details;
@@ -4807,6 +4825,48 @@ function registerServiceWorker(){
     document.body.classList.add('tool-palette-condensed');
     document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>{const data=toolIcons[btn.dataset.tool];if(data) iconize(btn,data[0],data[1],false)});
     Object.entries(buttonIcons).forEach(([elid,data])=>{const el=document.getElementById(elid);if(el) iconize(el,data[0],data[1],keepTextIds.has(elid))});
+    const menuHelp={
+      saveLocalBtn:'Download an editable copy of your board.',loadLocalBtn:'Open a previously saved board file.',
+      importPanelsBtn:'Add frames from a PDF, presentation, or board file.',exportBtn:'Download the current frame as a picture.',exportPdfBtn:'Download the board as a PDF.',
+      saveDriveBtn:'Save your board using your Google connection.',loadDriveBtn:'Open a board saved through Google.',
+      saveRestorePointBtn:'Keep a snapshot to return to later.',restorePointBtn:'Return to a saved board snapshot.',
+      undoBtn:'Reverse your last change.',redoBtn:'Reapply a change you undid.',duplicateBtn:'Make a copy of the selected items.',deleteBtn:'Remove the selected items.',
+      groupBtn:'Keep selected items together when moving them.',ungroupBtn:'Separate the selected group into individual items.',
+      alignLeftBtn:'Line up the left edges of selected items.',alignCenterHBtn:'Line up selected items by their horizontal centers.',alignRightBtn:'Line up the right edges of selected items.',
+      alignTopBtn:'Line up the top edges of selected items.',alignMiddleVBtn:'Line up selected items by their vertical centers.',alignBottomBtn:'Line up the bottom edges of selected items.',
+      frontBtn:'Place selected items above other objects.',backBtn:'Place selected items behind other objects.',
+      imageBtn:'Upload a picture to the board.',openColoringBookDialogBtn:'Choose a coloring page to paint.',openMosaicDialogBtn:'Combine selected pictures in an even grid.',
+      openCollageDialogBtn:'Arrange selected pictures with a text banner.',openGraphDialogBtn:'Build a bar, line, area, or pie chart from data.',openPictureGraphDialogBtn:'Compare quantities with repeated pictures.',
+      insertMermaidBtn:'Create a diagram from Mermaid text.',insertWordCloudBtn:'Show words sized by frequency.',openConceptMapDialogBtn:'Connect ideas in a branching map.',
+      openEmojiDialogBtn:'Combine emojis into a custom sticker.',scratchCoverBtn:'Cover the board, then erase to reveal it.',openDotPictureLibraryBtn:'Choose a dot picture to color.',
+      insertStickerBtn:'Place the chosen sticker on the board.',createCustomStickerBtn:'Make a sticker from your own picture.',
+      openGifDialogBtn:'Create an animated GIF.',openClassroomWidgetsBtn:'Add timers, polls, a wheel spinner, and more.',
+      loadBgImageBtn:'Use a picture as the board background.',clearBgImageBtn:'Remove the board background picture.',removeBgColorBtn:'Make a color in the selected picture transparent.',
+      insertTemplateBtn:'Choose a ready-made layout for a frame.',saveTemplateBtn:'Save this frame as a layout to use again.',loadTemplateGalleryBtn:'Browse your saved frame layouts.',tntBtn:'Clear all panels and start a fresh board.',
+      viewToggleBtn:'Choose the simple or advanced workspace.',inspectorToggleBtn:'Show or hide settings for selected items.',shortcutsBtn:'See keys that speed up common actions.',optionsBtn:'Choose workspace, role, and interface settings.',aboutBtn:'Learn about DrawSplat and its features.'
+    };
+    const submenuHelp={
+      'Simple View':'Use the compact toolbar for everyday drawing.','Advanced View':'Show additional editing and classroom controls.',
+      'Add to Current Frame':'Place this layout in the current frame.','New Frame from Layout':'Create a new frame using this layout.',
+      'Open Library':'Browse available dot pictures.','Paint Dots':'Color the dots in an inserted dot picture.',
+      'Open Builder':'Choose pictures, a layout, and a text banner.',
+      'Two Column':'Arrange pictures side by side.','Feature + Two':'Use one large picture and two smaller pictures.',
+      'Four Grid':'Arrange four pictures in a grid.','Story Strip':'Arrange three pictures in a row.'
+    };
+    document.querySelectorAll('#topMenuBar .top-menu-list button').forEach((el,index)=>{
+      const target=el.dataset.menuTarget;
+      const label=el.textContent.trim();
+      iconize(el,buttonIcons[target]?.[0]||'template',label,true);
+      el.classList.add('top-menu-action');
+      if(el.querySelector('.menu-action-description')) return;
+      const description=document.createElement('span');
+      description.className='menu-action-description';
+      description.id='topMenuActionHelp'+index;
+      description.textContent=tr(menuHelp[target]||submenuHelp[label]||
+        (el.closest('.top-submenu-list')?.parentElement.querySelector('[data-menu-target="openDotPictureLibraryBtn"]')?`Insert the ${label} dot picture.`:`Choose the ${label} layout.`));
+      el.setAttribute('aria-describedby',description.id);
+      el.appendChild(description);
+    });
     document.querySelectorAll('#toolButtons .toolbar-action').forEach(el=>{
       if(el.querySelector('.toolbar-action-description')) return;
       el.classList.add('icon-with-text');

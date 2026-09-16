@@ -70,3 +70,41 @@ for (const width of [1280, 390]) {
     await expect(page.locator('#eraserSizeControls')).toBeVisible();
   });
 }
+
+for (const width of [1280,390]) {
+  test(`application menus explain actions and dismiss outside at ${width}px`,async ({page})=>{
+    await page.setViewportSize({width,height:900});
+    for(const title of ['File','Edit','Insert','Tools','Options']){
+      const group=page.locator('.top-menu').filter({has:page.locator('summary',{hasText:new RegExp('^'+title+'$')})});
+      await group.locator('summary').click();
+      const menu=group.locator('.top-menu-list');
+      await expect(menu).toBeVisible();
+      const actions=menu.locator('.top-menu-action').filter({visible:true});
+      for(const action of await actions.all()){
+        await action.scrollIntoViewIfNeeded();
+        await expect(action.locator('.icon-label')).toBeVisible();
+        await expect(action.locator('.menu-action-description')).not.toHaveText('');
+      }
+      const bounds=await menu.boundingBox();
+      expect(bounds.x).toBeGreaterThanOrEqual(0);
+      expect(bounds.x+bounds.width).toBeLessThanOrEqual(width);
+      expect(bounds.y+bounds.height).toBeLessThanOrEqual(900);
+      await page.mouse.click(width-4,895);
+      await expect(menu).toBeHidden();
+    }
+    await page.locator('#drawToolGroup > summary').click();
+    const drawing=page.locator('#drawToolGroup .tool-popover-panel');
+    await expect(drawing).toBeVisible();
+    await page.locator('[data-tool-color]').first().click();
+    await expect(drawing).toBeVisible();
+    await page.mouse.click(width-4,895);
+    await expect(drawing).toBeHidden();
+    await page.locator('#drawToolGroup > summary').click();
+    await page.keyboard.press('Escape');
+    await expect(drawing).toBeHidden();
+    const insert=page.locator('.top-menu').filter({has:page.locator('summary',{hasText:/^Insert$/})});
+    await insert.locator('summary').click();
+    await insert.locator('[data-menu-target="openGraphDialogBtn"]').click();
+    await expect(page.locator('#graphDialog')).toBeVisible();
+  });
+}
