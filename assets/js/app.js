@@ -782,6 +782,105 @@ function ensureAdvancedStickyPalette(){
   row.insertAdjacentElement('afterend',palette);
   syncSimpleStickyPalette();
 }
+function ensureOptionsPresentation(){
+  const dialog=gid('optionsDialog');
+  if(!dialog||dialog.dataset.cardsReady) return;
+  dialog.dataset.cardsReady='1';
+  dialog.classList.add('options-cards-dialog');
+  dialog.setAttribute('aria-labelledby','optionsTitle');
+  const title=dialog.querySelector('.modal-head h2');
+  if(title) title.id='optionsTitle';
+  const intro=document.createElement('p');intro.className='options-intro';
+  intro.textContent=tr('Make this workspace your own. Choose the tools you need, adjust how much you see, and connect your classroom when you are ready.');
+  dialog.querySelector('.modal-head')?.insertAdjacentElement('afterend',intro);
+  function card(anchor,heading,symbol,choices=[]){
+    if(!anchor) return;
+    const section=document.createElement('section');section.className='options-card';
+    if(anchor.classList.contains('teacher-only'))section.classList.add('teacher-only');
+    const header=document.createElement('div');header.className='options-card-heading';
+    const icon=document.createElement('span');icon.className='options-card-icon';icon.setAttribute('aria-hidden','true');icon.textContent=symbol;
+    const name=document.createElement('h3');name.textContent=tr(heading);header.append(icon,name);
+    const hint=anchor.nextElementSibling;
+    anchor.insertAdjacentElement('beforebegin',section);section.append(header,anchor);
+    if(hint?.matches('p'))section.append(hint);
+    if(choices.length){const details=document.createElement('div');details.className='options-choice-guide';choices.forEach(([label,help])=>{const choice=document.createElement('p');const strong=document.createElement('strong');strong.textContent=tr(label);const text=document.createElement('span');text.textContent=tr(help);choice.append(strong,text);details.append(choice)});section.append(details)}
+    return section;
+  }
+  const workspace=gid('workspaceMode');if(workspace){workspace.setAttribute('aria-describedby','workspaceStatus');workspace.closest('.row')?.querySelector('label')?.setAttribute('for','workspaceMode')}
+  card(workspace?.closest('.row'),'Choose your workspace','✦',[
+    ['Productivity','Draw, brainstorm, annotate pictures, and create diagrams with a focused set of tools.'],
+    ['Education Tools','Add class and student fields, answer keys, assignments, turn-ins, and moderation controls. Google setup is managed separately in Teacher Admin.']
+  ]);
+  const view=gid('interfaceMode');if(view){view.closest('.row')?.querySelector('label')?.setAttribute('for','interfaceMode');const hint=view.closest('.row')?.nextElementSibling;if(hint){hint.id='optionsViewHelp';view.setAttribute('aria-describedby',hint.id)}}
+  if(view){const updateViewHelp=()=>{const hint=gid('optionsViewHelp');if(hint)hint.textContent=tr(view.value==='advanced'?'Advanced shows the full editing panels. Your board stays intact when you change views.':'Simple keeps the toolbar compact. Use the explained menus to find extra tools when you need them.')};view.addEventListener('change',updateViewHelp);updateViewHelp()}
+  card(view?.closest('.row'),'Choose how much you see','▤',[
+    ['Simple','Use the compact drawing toolbar and explained menus for everyday work.'],
+    ['Advanced','Reveal the full editing panels for styling, templates, layers, and classroom workflows. Switching views keeps your board intact.']
+  ]);
+  const teacher=gid('settingsBtn')?.closest('.grid');if(teacher){teacher.previousElementSibling?.matches('h3')&&teacher.previousElementSibling.remove();card(teacher,'Connect your classroom','⚙',[
+    ['Teacher Admin','Follow the guided Google setup, test your connection, and create classroom links. The connection is saved on this browser.'],
+    ['Teacher Setup Tutorial','Read the step-by-step guide in a new tab while keeping this board open.']
+  ])}
+  const reset=gid('resetBoardBtn')?.closest('.grid');if(reset){reset.previousElementSibling?.matches('h3')&&reset.previousElementSibling.remove();const section=card(reset,'Start a fresh board','↺');section?.classList.add('options-reset-card');const note=document.createElement('p');note.className='hint';note.textContent=tr('Need to keep your work? Use File → Save File before resetting. Reset asks for confirmation before deleting your panels.');section?.append(note)}
+  dialog.querySelectorAll(':scope > h3.teacher-only').forEach(heading=>heading.remove());
+}
+function ensureWhiteboardPresentation(){
+  document.body.classList.add('whiteboard-ui');
+  const descriptions={
+    graphDialog:'Turn your data into a chart. Choose a chart type, enter categories and values, then check the preview before inserting.',
+    pictureGraphDialog:'Compare quantities using repeated pictures. Choose a symbol for each category and preview the graph before adding it to the board.',
+    wordCloudDialog:'Highlight the words that appear most often. Paste text, adjust the look, and insert the finished word cloud as a picture.',
+    mermaidDialog:'Build flowcharts and other diagrams from text. Start with a template, edit the diagram source, then insert the preview.',
+    conceptMapDialog:'Organize a topic into connected ideas. Add a main idea and child ideas, then choose a layout and preview your map.',
+    emojiDialog:'Create a playful sticker by combining emojis. Choose your mix, then insert it on the current frame.',
+    gifDialog:'Create an animation from selected images. Choose the frame delay, preview the result, and download or insert your GIF.',
+    mosaicDialog:'Combine two or more selected pictures into evenly sized tiles. Set the columns, spacing, and background before creating the mosaic.',
+    collageDialog:'Tell a story with selected pictures. Choose a layout and add a text banner, then create one combined picture.',
+    dotPictureDialog:'Choose a dot picture, insert it on the board, and use Dot Paint to color its dots.',
+    stickerDialog:'Browse ready-made stickers or create one from your own picture. Choose a sticker, then place it on your board.',
+    coloringBookDialog:'Pick a coloring page and add it to the board. Use the coloring tools to fill areas or paint inside the page.',
+    scratchArtDialog:'Hide content under a scratch cover. Erase the cover on the board to reveal the picture or answer beneath it.',
+    classroomWidgetDialog:'Add an interactive classroom activity. Choose a tool such as a timer, poll, scoreboard, or wheel spinner, then customize its settings.',
+    cropDialog:'Trim the selected picture to focus on the part you need. Adjust the crop area, then apply your changes.',
+    bgRemoveDialog:'Make a background color transparent in the selected picture. Pick the color and adjust the tolerance before applying.',
+    imageSourceDialog:'Add a picture from your device or browse the built-in image gallery. Imported files appear on the current board.',
+    backgroundSourceDialog:'Choose a background picture for this frame. Backgrounds sit behind your drawing and other board items.',
+    imageGalleryDialog:'Browse the built-in pictures and choose one to add to your board.',
+    shortcutsDialog:'Use these keyboard shortcuts to draw, select, and edit faster. Your browser may reserve some key combinations.',
+    setupDialog:'Connect Google storage on the Teacher Admin page, then return here to save and load your classroom work.',
+    moderationDialog:'Review classroom activity and student contributions. Use the available review actions to manage your connected classroom.',
+    moreOptionsDialog:'Save your work, import frames, or export a copy to share. Choose the format that fits your next step.'
+  };
+  function enhanceDialogs(){
+    document.querySelectorAll('dialog').forEach(dialog=>{
+      const heading=dialog.querySelector('.modal-head');
+      if(!heading||!descriptions[dialog.id]||dialog.querySelector('.whiteboard-dialog-intro'))return;
+      const intro=document.createElement('p');intro.className='whiteboard-dialog-intro';intro.textContent=tr(descriptions[dialog.id]);heading.insertAdjacentElement('afterend',intro);
+      observer.observe(dialog,{childList:true});
+    });
+  }
+  const observer=new MutationObserver(enhanceDialogs);
+  observer.observe(document.body,{childList:true});
+  enhanceDialogs();
+  const sectionHelp={
+    boardTitle:'Name this board so you can recognize it when saving or sharing.',
+    assignmentModeToggle:'Keep teacher content and student work on separate layers. Choose the active layer before editing.',
+    showAnswerKeyToggle:'Show or hide items marked as answers when presenting your lesson.',
+    openModerationBtn:'Review activity and contributions in your connected classroom.',
+    selectedInfo:'Select an item on the board to edit its text, appearance, alignment, and other available actions.',
+    strokeColor:'Set the appearance of new drawings or selected items. Some settings depend on the active tool or selection.',
+    templateSelect:'Start with a ready-made layout. Add it to this frame or create a new frame from the layout.',
+    restorePointSelect:'Save a snapshot before a big change. Restore a saved snapshot if you need to return to that version.',
+    saveLocalBtn:'Save an editable board file to keep working later, or export a picture or PDF to share.',
+    startSyncBtn:'Choose local or Google sync to share updates between connected boards.'
+  };
+  Object.entries(sectionHelp).forEach(([id,help])=>{
+    const section=gid(id)?.closest('.section');
+    if(!section||section.classList.contains('simple-tools')||section.querySelector('.whiteboard-section-intro'))return;
+    const heading=section.querySelector(':scope > h2,:scope > summary');if(!heading)return;
+    const intro=document.createElement('p');intro.className='hint whiteboard-section-intro';intro.textContent=tr(help);heading.insertAdjacentElement('afterend',intro);
+  });
+}
 function ensureTopMenus(){
   const header=document.querySelector('header');
   if(!header||gid('topMenuBar')) return;
@@ -4740,7 +4839,7 @@ function registerServiceWorker(){
     wcGenerate:['wordcloud','Generate'],wcCopyPng:['image','Copy PNG'],wcCancel:['close','Cancel'],wcInsert:['check','Insert'],conceptAddChildBtn:['plus','Add Child'],conceptSetLinkBtn:['concept','Set Link'],conceptOpenLinkBtn:['openLink','Open Link'],conceptAttachImageBtn:['image','Attach Image'],conceptMapSampleBtn:['file','Sample'],conceptMapImageBtn:['image','Add image to line'],conceptMapCancelBtn:['close','Cancel'],conceptMapInsertBtn:['check','Insert Concept Map'],mermaidCopyPng:['image','Copy PNG'],mermaidCancel:['close','Cancel'],mermaidInsert:['check','Insert'],
     cropReset:['reset','Reset'],cropCancel:['close','Cancel'],cropApply:['crop','Apply'],bgRemoveCancel:['close','Cancel'],bgRemoveApply:['magic','Apply'],confirmDialogCancel:['close','Cancel'],confirmDialogOk:['check','OK'],welcomeDismiss:['check','Got it']
   };
-  const keepTextIds=new Set(['saveDriveBtn','exportBtn','exportPdfBtn','tntBtn','submitTurnInBtn','reviewTurnInsBtn','openModerationBtn','refreshModerationBtn','settingsBtn','loadDriveBtn','saveLocalBtn','loadLocalBtn','importPanelsBtn','inlineTextSaveBtn','inlineTextCancelBtn','optionsBtn','aboutBtn','viewToggleBtn','zoomResetBtn','confirmDialogOk','confirmDialogCancel','welcomeDismiss']);
+  const keepTextIds=new Set(['resetBoardBtn','saveDriveBtn','exportBtn','exportPdfBtn','tntBtn','submitTurnInBtn','reviewTurnInsBtn','openModerationBtn','refreshModerationBtn','settingsBtn','loadDriveBtn','saveLocalBtn','loadLocalBtn','importPanelsBtn','inlineTextSaveBtn','inlineTextCancelBtn','optionsBtn','aboutBtn','viewToggleBtn','zoomResetBtn','confirmDialogOk','confirmDialogCancel','welcomeDismiss']);
   function currentLabel(el,fallback){const text=(el.textContent||'').trim();return el.getAttribute('aria-label')||el.getAttribute('title')||text||fallback}
   function iconize(el,iconKey,label,withText=false){if(!el||el.dataset.iconized==='1') return;const finalLabel=currentLabel(el,label);el.dataset.iconized='1';el.classList.add('icon-btn');if(withText) el.classList.add('icon-with-text');el.setAttribute('aria-label',finalLabel);el.removeAttribute('title');el.setAttribute('data-tooltip',finalLabel);el.innerHTML=`<span class="icon-symbol" aria-hidden="true">${icons[iconKey]||iconKey}</span><span class="icon-label">${esc(finalLabel)}</span>`}
   function groupToolPalette(){
@@ -4821,10 +4920,12 @@ function registerServiceWorker(){
     ensureConceptMapButton?.();
     ensureAdvancedStickyPalette?.();
     ensureTopMenus?.();
+    ensureOptionsPresentation();
+    ensureWhiteboardPresentation();
     groupToolPalette();
     document.body.classList.add('tool-palette-condensed');
     document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>{const data=toolIcons[btn.dataset.tool];if(data) iconize(btn,data[0],data[1],false)});
-    Object.entries(buttonIcons).forEach(([elid,data])=>{const el=document.getElementById(elid);if(el) iconize(el,data[0],data[1],keepTextIds.has(elid))});
+    Object.entries(buttonIcons).forEach(([elid,data])=>{const el=document.getElementById(elid);if(el) iconize(el,data[0],data[1],keepTextIds.has(elid)||!!el.closest('dialog,.inspector,.sidebar .section:not(.simple-tools)'))});
     const menuHelp={
       saveLocalBtn:'Download an editable copy of your board.',loadLocalBtn:'Open a previously saved board file.',
       importPanelsBtn:'Add frames from a PDF, presentation, or board file.',exportBtn:'Download the current frame as a picture.',exportPdfBtn:'Download the board as a PDF.',
@@ -4843,7 +4944,7 @@ function registerServiceWorker(){
       openGifDialogBtn:'Create an animated GIF.',openClassroomWidgetsBtn:'Add timers, polls, a wheel spinner, and more.',
       loadBgImageBtn:'Use a picture as the board background.',clearBgImageBtn:'Remove the board background picture.',removeBgColorBtn:'Make a color in the selected picture transparent.',
       insertTemplateBtn:'Choose a ready-made layout for a frame.',saveTemplateBtn:'Save this frame as a layout to use again.',loadTemplateGalleryBtn:'Browse your saved frame layouts.',tntBtn:'Clear all panels and start a fresh board.',
-      viewToggleBtn:'Choose the simple or advanced workspace.',inspectorToggleBtn:'Show or hide settings for selected items.',shortcutsBtn:'See keys that speed up common actions.',optionsBtn:'Choose workspace, role, and interface settings.',aboutBtn:'Learn about DrawSplat and its features.'
+      viewToggleBtn:'Choose the simple or advanced workspace.',inspectorToggleBtn:'Show or hide settings for selected items.',shortcutsBtn:'See keys that speed up common actions.',optionsBtn:'Choose your workspace and how many editing controls you see.',aboutBtn:'Learn about DrawSplat and its features.'
     };
     const submenuHelp={
       'Simple View':'Use the compact toolbar for everyday drawing.','Advanced View':'Show additional editing and classroom controls.',
@@ -4903,6 +5004,7 @@ function registerServiceWorker(){
     document.querySelector('.canvas-toolbar')?.setAttribute('aria-label','Canvas zoom');
     document.querySelectorAll('#toolButtons [data-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.tool===tool)));
     updateToolStatus(tool);
+    applyModeUI();
     updateHeaderHeightVar?.();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyIcons); else applyIcons();
