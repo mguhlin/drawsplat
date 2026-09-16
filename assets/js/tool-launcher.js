@@ -3,7 +3,7 @@ import { searchTools } from "./tool-search.js";
 import { addRecent, getFavorites, getRecents } from "./tool-preferences.js";
 
 let launcher;
-function toolLink(tool) { const link = document.createElement("a"); link.href = tool.url; link.onclick = () => addRecent(tool.id); const image = document.createElement("img"); image.src = tool.icon; image.alt = ""; const label = document.createElement("span"); label.textContent = tool.name; link.append(image, label); return link; }
+function toolLink(tool) { const link = document.createElement("a"); link.href = tool.url; link.onclick = () => addRecent(tool.id); const image = document.createElement("img"); image.src = tool.icon; image.alt = ""; const label = document.createElement("span"); label.textContent = tool.name; const description=document.createElement("small"); description.textContent=tool.description; link.append(image, label, description); return link; }
 async function createLauncher() {
   if (launcher) return launcher;
   const registry = await getRegistry(), lookup = new Map(registry.tools.map((tool) => [tool.id, tool])), categoryLookup = new Map(registry.categories.map((category) => [category.id, category]));

@@ -34,7 +34,7 @@ test("Studio searches aliases, filters functions, and saves favorites locally", 
   page,
 }) => {
   await page.goto("/studio/");
-  await expect(page.locator(".ds-tool-card")).toHaveCount(57);
+  await expect(page.locator(".ds-tool-card")).toHaveCount(require("../data/drawsplat-tools.json").tools.length);
   await page.locator("#toolSearch").fill("photo editor");
   await expect(page.locator(".ds-tool-card h3").first()).toHaveText(
     "ImageSplat™",

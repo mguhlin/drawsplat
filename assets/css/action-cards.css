@@ -1,0 +1,41 @@
+/* DrawSplat illustrated action cards: icon, name, and a useful explanation. */
+:root{--ds-action-purple:#6035d8;--ds-action-ink:#28334b;--ds-action-line:#cdc8ff;--ds-action-soft:#f0f2ff}
+.ds-action-card.ds-action-card{position:relative;display:block;box-sizing:border-box;min-height:64px;min-width:0;width:100%;padding:12px 14px 12px 52px;border:1px solid var(--ds-action-line);border-radius:13px;background:var(--ds-action-soft);color:var(--ds-action-purple);font:750 14px/1.35 system-ui,sans-serif;text-align:left;text-decoration:none;white-space:normal;overflow-wrap:normal;word-break:normal;cursor:pointer;box-shadow:0 2px 5px rgb(89 59 163 / 4%);transition:background .15s,border-color .15s,box-shadow .15s}
+.ds-action-card::before{content:"";position:absolute;left:14px;top:16px;width:25px;height:25px;background:var(--ds-action-icon) center/contain no-repeat}
+.ds-action-card::after{content:attr(data-action-description) / "";display:block;margin-top:4px;color:#4c5870;font:400 12px/1.45 system-ui,sans-serif;white-space:normal;text-transform:none;letter-spacing:normal}
+.ds-action-card>svg,.ds-action-card>img{display:none}
+.ds-action-card.ds-action-card:hover{background:#e8e9ff;border-color:#987ff0;box-shadow:0 5px 15px rgb(89 59 163 / 12%)}
+.ds-action-card.ds-action-card:focus-visible{outline:3px solid #f3b731;outline-offset:3px}
+.ds-action-card:disabled,.ds-action-card[aria-disabled="true"]{opacity:.55;cursor:default}
+.ds-action-card.danger{border-color:#efc6d0;color:#b4233e;background:#fff3f5}
+body:not(.whiteboard-ui) :is(.menu-panel,.landing-nav-menu){box-sizing:border-box;padding:9px;gap:6px;border:1px solid #d5c9ff;border-radius:17px;background:#fff;box-shadow:0 16px 50px rgb(55 32 104 / 22%);max-height:calc(100dvh - var(--ds-menu-top,100px) - 16px);overflow:auto;overscroll-behavior:contain}
+body:not(.whiteboard-ui) :is(details.menu[open],details.landing-nav-dropdown[open],.menu.ds-menu-open)>:is(.menu-panel,.landing-nav-menu){position:fixed;left:var(--ds-menu-left,12px);top:var(--ds-menu-top,90px);width:var(--ds-menu-width,350px);max-width:calc(100vw - 24px);display:grid;z-index:1000}
+body:not(.whiteboard-ui) .menu:has(>button + .menu-panel):not(.ds-menu-open)>.menu-panel{display:none}
+body:not(.whiteboard-ui) :is(.menu-panel,.landing-nav-menu) .ds-action-card{margin:0 0 5px}
+body:not(.whiteboard-ui) .menu-panel .submenu{position:static}
+body:not(.whiteboard-ui) .menu-panel .submenu>div{position:static;padding:5px 0 5px 8px;max-width:100%;border-left:2px solid #d7c8ff;box-shadow:none}
+body:not(.whiteboard-ui) .menu-panel .submenu:not([open])>div{display:none}
+body:not(.whiteboard-ui) .menu-panel .submenu>summary{padding:10px;color:#6035d8;font-weight:750;cursor:pointer}
+body:not(.whiteboard-ui) :is(.admin-panel,.admin-gate-card,.access-card,.ds-tool-card){border:1px solid #ddd3fa;border-radius:20px;box-shadow:0 7px 24px rgb(69 38 127 / 7%)}
+body:not(.whiteboard-ui) :is(.admin-panel,.admin-gate-card){background:linear-gradient(140deg,#fbf8ff,#fff 55%)}
+body:not(.whiteboard-ui) dialog{box-sizing:border-box;border:1px solid #d8cefa;border-radius:22px;box-shadow:0 25px 80px rgb(45 24 85 / 25%);max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);overflow:auto}
+body:not(.whiteboard-ui) dialog::backdrop{background:rgb(32 25 60 / 45%);backdrop-filter:blur(3px)}
+body:not(.whiteboard-ui) :is(.admin-actions,.quick-actions){gap:8px;flex-wrap:wrap}
+body:not(.whiteboard-ui) :is(.admin-actions,.quick-actions)>.ds-action-card{flex:1 1 200px;width:auto}
+.ds-tool-card{background:linear-gradient(145deg,#f5f1ff,#fff 65%)}
+.ds-tool-card .ds-tool-link h3{color:#6035d8}
+@media(prefers-reduced-motion:reduce){.ds-action-card.ds-action-card{transition:none}}
+@media(max-width:560px){body:not(.whiteboard-ui) :is(.admin-actions,.quick-actions)>.ds-action-card{flex-basis:100%}}
+body:not(.whiteboard-ui) .menu-popover[role="menu"]{position:fixed;box-sizing:border-box;left:var(--ds-menu-left,12px);top:var(--ds-menu-top,100px);width:var(--ds-menu-width,350px);max-width:calc(100vw - 24px);max-height:calc(100dvh - var(--ds-menu-top,100px) - 16px);padding:9px;overflow:auto;border:1px solid #d5c9ff;border-radius:17px;background:#fff;box-shadow:0 16px 50px rgb(55 32 104 / 22%);z-index:1000}
+.ds-action-card .menu-item-icon{display:none}
+.menu-popover .ds-action-card{margin-bottom:5px}
+body:not(.whiteboard-ui) .submenu-popover[role="menu"]{position:static;margin:5px 0 5px 8px;padding-left:8px;border-left:2px solid #d7c8ff;background:#fff;box-shadow:none;max-width:100%}
+:is(.workspace-card,.intent-grid>a,.home-tool-card){border-color:#d5c9ff;background:linear-gradient(140deg,#f2edff,#fff 65%);border-radius:18px;box-shadow:0 5px 18px rgb(69 38 127 / 7%)}
+:is(.workspace-card,.intent-grid>a,.home-tool-card):hover{border-color:#a68bea;box-shadow:0 8px 22px rgb(69 38 127 / 13%)}
+body:not(.whiteboard-ui) :is(.controls,.settings-panel,.splash-card){border-radius:18px;border-color:#d8cef5}
+.game-ux-coach{border:1px solid #d5c9ff;border-radius:18px;background:linear-gradient(135deg,#f3eeff,#fff);box-shadow:0 5px 18px rgb(69 38 127 / 7%)}
+.game-ux-help-button.ds-action-card{width:230px;flex-shrink:0}
+@media(max-width:560px){.game-ux-help-button.ds-action-card{width:100%}}
+/* Layout containment would anchor fixed menus to the toolbar instead of the viewport. */
+.top-toolbar:has(.menu-popover[role="menu"]){contain:none}
+.ds-action-card .button-icon{display:none}
