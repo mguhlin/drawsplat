@@ -18,3 +18,7 @@ DrawSplatTM v3.1.11 brings GridSplatTM into SplatWorksTM, separates SplatWorksTM
 The self-host ZIP is labeled `drawsplat-selfhost-v3.1.11.zip`. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, DrawSplat Games, standalone classroom tools, the integrated GridSplatTM app, ImageSplat™, SketchSpace VR, and the generic DrawSplat Hub dashboard with the `hubcampus` demo instance.
 
 Real Hub campus folders are intentionally excluded from self-host bundles.
+
+## Whiteboard response improvements (September 17, 2026)
+
+My response now uses illustrated cards with a short explanation of drawing, typing, voice, and video. The chooser respects the teacher’s lesson tools and explains when no response methods are available. Voice notes can be named before adding; names appear on audio cards, in Find an item, and in saved boards. Unfinished voice notes offer Return to my recording page and prevent adding to the wrong page.

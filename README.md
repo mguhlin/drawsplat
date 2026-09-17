@@ -115,6 +115,8 @@ Other docs that pair with setup:
 
 ## Whiteboard voice-note improvements (September 17, 2026)
 
+- **Clear response choices.** Illustrated Draw, Type, Voice, and Video cards respect lesson tools. Voice notes can be named, and unfinished answers can return to their recording page.
+
 - **Review before adding.** Record → Listen → Add, with Try again, Discard, and a Finish voice shortcut for unfinished recordings. No empty board items are created by permission failures.
 - **Short student answers.** A one-minute countdown, microphone cleanup, larger phone controls, and one undo step when a finished answer is added.
 

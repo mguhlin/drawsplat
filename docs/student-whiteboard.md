@@ -75,3 +75,9 @@ Video notes now show a **Record → Watch → Add** guide and a progress bar wit
 Choose **My response → Record my voice**, record up to one minute, then press **Stop**. Use **Listen** and the audio controls to review or pause. Choose **Try again**, **Discard**, or **Add to board**. Recording does not create an empty board item, and adding a finished answer creates one undo step.
 
 Closing the recorder stops recording and releases the microphone. The **Finish voice** button returns to an unfinished recording while this page stays open. Add it before reloading; unfinished recordings are held in memory. Return to the original board page before adding a draft. Teachers control student access to audio in **Student tools**. Voice and video recording cannot run together.
+
+### Choose and name a response
+
+**My response** now shows illustrated cards explaining drawing, typing, voice, and video. Only methods allowed by the lesson appear. If none are available, the dialog explains this.
+
+Voice recording includes **Name my note (optional)**. The name appears on the finished audio card and in **Find an item**, and stays in saved boards. If you open a voice draft from another page, **Return to my recording page** takes you back before adding it.
