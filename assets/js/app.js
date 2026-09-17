@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.0.97';
+const VERSION='3.1.0';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -258,7 +258,7 @@ function scheduleStartupTip(delay=900){
    collaboration status, and short-lived toast messages. */
 function askConfirm(msg,opts={}){return new Promise(resolve=>{const dlg=document.getElementById('confirmDialog'); if(!dlg||typeof dlg.showModal!=='function'){resolve(window.confirm(tr(msg))); return} const m=document.getElementById('confirmDialogMsg'),ok=document.getElementById('confirmDialogOk'),cancel=document.getElementById('confirmDialogCancel'); if(m) m.textContent=tr(msg); if(ok) ok.textContent=tr(opts.okLabel||'OK'); if(cancel) cancel.textContent=tr(opts.cancelLabel||'Cancel'); const cleanup=()=>{ok.onclick=null; cancel.onclick=null; dlg.removeEventListener('cancel',onCancel)}; const onOk=()=>{cleanup(); dlg.close(); resolve(true)}; const onCancel=(e)=>{if(e&&e.preventDefault) e.preventDefault(); cleanup(); dlg.close(); resolve(false)}; ok.onclick=onOk; cancel.onclick=onCancel; dlg.addEventListener('cancel',onCancel); dlg.showModal()})}
 let _savedAt=null,_saveStateTimer=null;
-function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved'); chip.className='save-state saved'} else if(state==='error'){_savedAt=0; chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved'):sec<60?tr('Saved ') + sec + tr('s ago'):sec<3600?tr('Saved ') + Math.round(sec/60) + tr('m ago'):tr('Saved ') + Math.round(sec/3600) + tr('h ago')}}
+function setSaveState(state,msg){const chip=document.getElementById('saveStateChip'); if(!chip) return; if(state==='saving'){chip.textContent=tr('Saving…'); chip.className='save-state saving'} else if(state==='saved'){_savedAt=Date.now(); chip.textContent=tr(msg||'Saved on this device'); chip.className='save-state saved'} else if(state==='error'){_savedAt=0; chip.textContent=tr(msg||'Save failed'); chip.className='save-state error'} else if(state==='tick'){if(!_savedAt) return; const sec=Math.round((Date.now()-_savedAt)/1000); chip.textContent=sec<5?tr('Saved on this device'):sec<60?tr('Device copy: saved ') + sec + tr('s ago'):sec<3600?tr('Device copy: saved ') + Math.round(sec/60) + tr('m ago'):tr('Device copy: saved ') + Math.round(sec/3600) + tr('h ago')}}
 if(!_saveStateTimer) _saveStateTimer=setInterval(()=>setSaveState('tick'),30000);
 function ensureConnectorLabelToolbarButton(){
   const tb=document.getElementById('selectionToolbar');
@@ -501,9 +501,9 @@ function refreshSelectionAlignPopover(){
   const shellRect=shell.getBoundingClientRect();
   const svgRect=svg.getBoundingClientRect();
   const popRect=pop.getBoundingClientRect();
-  const centerX=svgRect.left-shellRect.left+(b.x+b.w/2)*zoom;
-  const selectionTop=svgRect.top-shellRect.top+b.y*zoom;
-  const selectionBottom=svgRect.top-shellRect.top+(b.y+b.h)*zoom;
+  const centerX=svgRect.left-shellRect.left+(b.x+b.w/2)*zoom+learnerPan.x;
+  const selectionTop=svgRect.top-shellRect.top+b.y*zoom+learnerPan.y;
+  const selectionBottom=svgRect.top-shellRect.top+(b.y+b.h)*zoom+learnerPan.y;
   const w=popRect.width||330, h=popRect.height||120, margin=10;
   const maxLeft=Math.max(margin,shellRect.width-w-margin);
   const left=Math.min(maxLeft,Math.max(margin,centerX-w/2));
@@ -812,16 +812,17 @@ function ensureOptionsPresentation(){
     ['Education Tools','Add class and student fields, answer keys, assignments, turn-ins, and moderation controls. Google setup is managed separately in Teacher Admin.']
   ]);
   const view=gid('interfaceMode');if(view){view.closest('.row')?.querySelector('label')?.setAttribute('for','interfaceMode');const hint=view.closest('.row')?.nextElementSibling;if(hint){hint.id='optionsViewHelp';view.setAttribute('aria-describedby',hint.id)}}
-  if(view){const updateViewHelp=()=>{const hint=gid('optionsViewHelp');if(hint)hint.textContent=tr(view.value==='advanced'?'Advanced shows the full editing panels. Your board stays intact when you change views.':'Simple keeps the toolbar compact. Use the explained menus to find extra tools when you need them.')};view.addEventListener('change',updateViewHelp);updateViewHelp()}
+  if(view){const updateViewHelp=()=>{const hint=gid('optionsViewHelp');if(hint)hint.textContent=tr(view.value==='beginner'?'Beginner uses big everyday buttons and a roomy canvas. Use Show me how for help.':view.value==='advanced'?'Full shows the full editing panels. Your board stays intact when you change views.':'Simple keeps the toolbar compact. Use the explained menus to find extra tools when you need them.')};view.addEventListener('change',updateViewHelp);updateViewHelp()}
   card(view?.closest('.row'),'Choose how much you see','▤',[
-    ['Simple','Use the compact drawing toolbar and explained menus for everyday work.'],
-    ['Advanced','Reveal the full editing panels for styling, templates, layers, and classroom workflows. Switching views keeps your board intact.']
+    ['Beginner','Use large labeled drawing buttons, optional demonstrations, and a roomy canvas.'],
+    ['Growing','Use the compact drawing toolbar and explained menus for everyday work.'],
+    ['Full','Reveal the full editing panels for styling, templates, layers, and classroom workflows. Switching views keeps your board intact.']
   ]);
   const teacher=gid('settingsBtn')?.closest('.grid');if(teacher){teacher.previousElementSibling?.matches('h3')&&teacher.previousElementSibling.remove();card(teacher,'Connect your classroom','⚙',[
     ['Teacher Admin','Follow the guided Google setup, test your connection, and create classroom links. The connection is saved on this browser.'],
     ['Teacher Setup Tutorial','Read the step-by-step guide in a new tab while keeping this board open.']
   ])}
-  const reset=gid('resetBoardBtn')?.closest('.grid');if(reset){reset.previousElementSibling?.matches('h3')&&reset.previousElementSibling.remove();const section=card(reset,'Start a fresh board','↺');section?.classList.add('options-reset-card');const note=document.createElement('p');note.className='hint';note.textContent=tr('Need to keep your work? Use File → Save File before resetting. Reset asks for confirmation before deleting your panels.');section?.append(note)}
+  const reset=gid('resetBoardBtn')?.closest('.grid');if(reset){reset.previousElementSibling?.matches('h3')&&reset.previousElementSibling.remove();const section=card(reset,'Start a fresh board','↺');section?.classList.add('options-reset-card');const note=document.createElement('p');note.className='hint';note.textContent=tr('Need to keep your work? Use File → Save File before resetting. Reset asks first and saves a recovery checkpoint. Undo can bring your work back.');section?.append(note)}
   dialog.querySelectorAll(':scope > h3.teacher-only').forEach(heading=>heading.remove());
 }
 function ensureWhiteboardPresentation(){
@@ -932,7 +933,7 @@ function ensureTopMenus(){
         btn.dataset.menuTarget=target;
         const panel=document.createElement('div');
         panel.className='top-submenu-list';
-        [['Simple View','simple'],['Advanced View','advanced']].forEach(([choiceLabel,mode])=>{
+        [['Beginner View','beginner'],['Growing View','simple'],['Full View','advanced']].forEach(([choiceLabel,mode])=>{
           const choice=document.createElement('button');
           choice.type='button';
           choice.textContent=choiceLabel;
@@ -1212,6 +1213,8 @@ function applyLaunchParams(){
     clearSelection();
     localizeBackgroundTemplate(bgTemplate,p);
   }
+  const tools=params.get('tools');const view=params.get('learner');
+  if(tools||view)board.studentWorkspace=normalizedLearnerPolicy({tools:tools?tools.split(','):undefined,view,allowTnt:params.get('tnt')==='1'});
   enforceRoleLock();
 }
 function copyStudentShareLink(){
@@ -1222,6 +1225,7 @@ function copyStudentShareLink(){
   url.hash='';
   url.searchParams.set('role','student');
   url.searchParams.set('room',room);
+  const policy=learnerPolicy();url.searchParams.set('learner',policy.view);url.searchParams.set('tools',policy.tools.join(','));if(policy.allowTnt)url.searchParams.set('tnt','1');
   if(!DEFAULT_GOOGLE_SCRIPT_URL&&googleScriptUrl()) url.searchParams.set('script',googleScriptUrl());
   const link=url.toString();
   const done=()=>setStatus('Student link copied. Students will enter the room password when they join.','success');
@@ -1230,10 +1234,142 @@ function copyStudentShareLink(){
 }
 function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).get('room')&&googleScriptUrl()&&roleLock==='student')}
 
+/* Student workspace: lesson tools travel with the board and student link. */
+const LEARNER_TOOLS=[['select','Move'],['pen','Pencil'],['bucket','Paint'],['eraser','Eraser'],['text','Type'],['sticky','Note'],['rect','Rectangle'],['ellipse','Circle'],['line','Line'],['arrow','Arrow'],['star','Star'],['diamond','Diamond'],['triangle','Triangle'],['polygon','Polygon'],['dotpaint','Dot Paint'],['laser','Pointer'],['connector','Connect'],['image','Pictures'],['graph','Graphs'],['widget','Classroom widgets'],['audio','Audio']];
+const LEARNER_PRESETS={everyday:['select','pen','bucket','eraser','text','image'],art:['select','pen','bucket','eraser','image','dotpaint','rect','ellipse','star'],explain:['select','pen','eraser','text','sticky','arrow','image','audio'],data:['select','pen','eraser','text','graph','widget']};
+let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0;
+function normalizedLearnerPolicy(value){
+  const p=value&&typeof value==='object'?value:{};
+  const tools=Array.isArray(p.tools)?p.tools.filter(t=>LEARNER_TOOLS.some(([key])=>key===t)):LEARNER_PRESETS.everyday;
+  return {view:['beginner','simple','advanced'].includes(p.view)?p.view:'simple',tools:[...new Set(['select',...tools])],allowTnt:p.allowTnt===true};
+}
+function learnerPolicy(){return normalizedLearnerPolicy(board.studentWorkspace)}
+function learnerAllows(key){return board.mode!=='student'||key==='pan'||learnerPolicy().tools.includes(key)||key==='coloringpaint'&&learnerPolicy().tools.includes('image')}
+function learnerActionKey(target){
+  if(/Graph|Mermaid|Concept|WordCloud/.test(target))return 'graph';
+  if(/Widget/.test(target))return 'widget';
+  if(/Image|image|Coloring|Sticker|Emoji|Mosaic|Collage|Gif|DotPicture|scratch/i.test(target))return 'image';
+  return '';
+}
+function addLearnerDialog(id,title,content){
+  const dlg=document.createElement('dialog');dlg.id=id;dlg.className='learner-dialog';dlg.setAttribute('aria-labelledby',id+'Title');
+  dlg.innerHTML=`<div class="modal-head"><h2 id="${id}Title">${title}</h2><button type="button" class="close" aria-label="Close">Close</button></div>${content}`;
+  dlg.querySelector('.close').onclick=()=>dlg.close();document.body.append(dlg);return dlg;
+}
+function ensureLearnerWorkspace(){
+  if(gid('learnerToolbar'))return;
+  const mode=ui.interfaceMode;if(mode){mode.querySelector('[value="simple"]').textContent='Growing';mode.querySelector('[value="advanced"]').textContent='Full';const o=document.createElement('option');o.value='beginner';o.textContent='Beginner';mode.prepend(o)}
+  const viewCard=mode?.closest('.options-card');
+  if(viewCard){
+    const teaching=document.createElement('details');teaching.className='learner-teaching teacher-only';teaching.innerHTML=`<summary>Student lesson tools</summary><p>Choose the starting view and tools students receive with this board or its student link. Students can change their view; the lesson tool choices stay in place.</p><label for="learnerStartView">Starting view</label><select id="learnerStartView"><option value="beginner">Beginner — big everyday buttons</option><option value="simple">Growing — compact tools and menus</option><option value="advanced">Full — all editing panels</option></select><label for="learnerPreset">Tool set</label><select id="learnerPreset"><option value="everyday">Everyday drawing</option><option value="art">Art and coloring</option><option value="explain">Draw, type, and explain</option><option value="data">Graphs and data</option><option value="custom">Custom tools</option></select><fieldset id="learnerToolChoices"><legend>Tools for this lesson</legend>${LEARNER_TOOLS.map(([key,name])=>`<label><input type="checkbox" value="${key}" ${key==='select'?'disabled':''}>${name}</label>`).join('')}</fieldset><label class="learner-check"><input id="learnerAllowTnt" type="checkbox">Allow students to use TNT on their editable work</label><p class="hint">TNT is off for students by default. Teacher-layer items stay protected.</p><button id="learnerSaveTools" type="button" class="primary">Save lesson tools</button><p id="learnerToolsMessage" role="status"></p>`;
+    viewCard.append(teaching);
+    gid('learnerPreset').onchange=()=>{const values=LEARNER_PRESETS[gid('learnerPreset').value];if(values)gid('learnerToolChoices').querySelectorAll('input').forEach(el=>el.checked=values.includes(el.value))};
+    gid('learnerSaveTools').onclick=()=>{if(board.mode==='student')return;board.studentWorkspace=normalizedLearnerPolicy({view:gid('learnerStartView').value,tools:[...gid('learnerToolChoices').querySelectorAll('input:checked')].map(el=>el.value),allowTnt:gid('learnerAllowTnt').checked});saveState();gid('learnerToolsMessage').textContent='Saved with this board. Copy a student link to share these choices.';refreshLearnerWorkspace()};
+    const fillChoices=()=>{const p=learnerPolicy();gid('learnerStartView').value=p.view;gid('learnerAllowTnt').checked=p.allowTnt;gid('learnerPreset').value='custom';gid('learnerToolChoices').querySelectorAll('input').forEach(el=>el.checked=p.tools.includes(el.value))};
+    fillChoices();gid('optionsBtn').addEventListener('click',fillChoices);
+  }
+  const toolbar=document.createElement('div');toolbar.id='learnerToolbar';toolbar.className='learner-toolbar';toolbar.setAttribute('role','toolbar');toolbar.setAttribute('aria-label','Everyday tools');
+  toolbar.innerHTML=`<div id="learnerPrimaryTools">${[['select','↖','Move'],['pen','✎','Pencil'],['eraser','⌫','Eraser'],['text','T','Type']].map(([key,symbol,label])=>`<button type="button" data-learner-tool="${key}"><span aria-hidden="true">${symbol}</span>${label}</button>`).join('')}<label class="learner-color">Colors<input id="learnerColor" type="color" aria-label="Choose a color" value="#7c3aed"></label><button type="button" id="learnerPicture">Picture</button><label id="learnerPenSizeLabel" class="learner-pen-size" hidden>Pencil size<select id="learnerPenSize" aria-label="Pencil size"><option value="2">Thin</option><option value="4" selected>Medium</option><option value="8">Thick</option><option value="12">Extra thick</option></select></label></div><div class="learner-secondary-tools"><button type="button" id="learnerUndo">Undo that</button><button type="button" id="learnerResponse">My response</button><button type="button" id="learnerHelp">Show me how</button><button type="button" id="learnerObjects">Find an item</button><button type="button" id="learnerPan" aria-pressed="false">Move view</button><button type="button" id="learnerHome">Center view</button><button type="button" id="learnerStarters" class="teacher-only">Lesson starters</button><button type="button" id="learnerTurnIn" data-workspace="education">Check &amp; turn in</button></div>`;
+  document.querySelector('.stage-wrap').prepend(toolbar);
+  toolbar.querySelectorAll('[data-learner-tool]').forEach(btn=>btn.onclick=()=>setTool(btn.dataset.learnerTool));
+  gid('learnerPenSize').onchange=()=>setPenWidth(+gid('learnerPenSize').value);
+  gid('learnerPicture').onclick=()=>gid('imageBtn').click();gid('learnerUndo').onclick=undo;
+  gid('learnerColor').oninput=e=>{const input=gid('simpleColorInput');input.value=e.target.value;input.dispatchEvent(new Event('input',{bubbles:true}))};
+  gid('learnerPan').onclick=()=>{commitInlineTextEditor();clearSelection();setTool(tool==='pan'?'select':'pan');render()};
+  gid('learnerHome').onclick=()=>{learnerPan={x:0,y:0};zoom=1;render();setStatus('View centered. Your work has not moved.','success')};
+  const recovery=document.createElement('div');recovery.id='clearRecoveryBanner';recovery.className='learner-recovery';recovery.hidden=true;recovery.innerHTML='<span>Work cleared. Undo can bring it back. A recovery checkpoint is saved with the board.</span><button id="learnerUndoClear" type="button">Undo clearing</button>';toolbar.after(recovery);gid('learnerUndoClear').onclick=()=>{undo();recovery.hidden=true};
+  const cloud=document.createElement('span');cloud.id='classroomSaveChip';cloud.className='save-state';cloud.setAttribute('role','status');cloud.textContent='Classroom: not sent';gid('saveStateChip').after(cloud);
+  const help=addLearnerDialog('learnerHelpDialog','Show me how','<p id="learnerHelpText"></p><div class="learner-demo" aria-hidden="true"><span class="learner-demo-cursor">✎</span><span class="learner-demo-line"></span></div><div class="learner-dialog-actions"><button id="learnerReadHelp" type="button">Read instructions aloud</button><button id="learnerTryTool" type="button" class="primary">Let me try</button></div>');
+  gid('learnerHelp').onclick=()=>{gid('learnerHelpText').textContent=toolGuidance(tool).join('. ');help.dataset.demo=tool;help.querySelector('.learner-demo-cursor').textContent=({select:'↖',eraser:'⌫',text:'T'})[tool]||'✎';help.showModal()};gid('learnerTryTool').onclick=()=>help.close();
+  gid('learnerReadHelp').disabled=!('speechSynthesis' in window);gid('learnerReadHelp').onclick=()=>{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(gid('learnerHelpText').textContent);utterance.lang=document.documentElement.lang||'en';speechSynthesis.speak(utterance)};help.addEventListener('close',()=>window.speechSynthesis?.cancel());
+  const items=addLearnerDialog('learnerObjectsDialog','Find an item','<p>Choose an item to select it. Use arrow keys to move editable items, or Enter to edit their text. Teacher items stay protected.</p><div id="learnerObjectList"></div>');
+  gid('learnerObjects').onclick=()=>{const list=gid('learnerObjectList');list.replaceChildren();panel().objects.filter(o=>!o.answerKey||board.showAnswerKey).forEach((o,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=(o.text||o.audioName||o.name||LEARNER_TOOLS.find(([key])=>key===o.type)?.[1]||o.type)+' '+(i+1)+(canEditObject(o)?'':' — teacher item');btn.onclick=()=>{setTool('select');setSingleSelection(o.id);render();items.close();svg.setAttribute('tabindex','0');svg.focus()};list.append(btn)});if(!list.children.length)list.textContent='No items yet. Try drawing or typing on this page.';items.showModal()};
+  const response=addLearnerDialog('learnerResponseDialog','How would you like to respond?','<p>Draw, type, or explain with your voice.</p><div class="learner-dialog-actions"><button id="learnerDrawResponse" type="button">Draw my answer</button><button id="learnerTypeResponse" type="button">Type my answer</button><button id="learnerVoiceResponse" type="button">Record my answer</button></div>');gid('learnerResponse').onclick=()=>response.showModal();gid('learnerDrawResponse').onclick=()=>{setTool('pen');response.close()};gid('learnerTypeResponse').onclick=()=>{setTool('text');response.close()};
+  const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Press Record when you are ready. Your browser will ask to use the microphone. Stop to keep the recording on this page.</p><p id="learnerAudioStatus" role="status">Ready to record.</p><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button></div>');
+  gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();const o=makeObj('audio',60,60,220,75,{audioName:'My answer'});panel().objects.push(o);setSingleSelection(o.id);render();saveState();audio.showModal();refreshLearnerAudioControls()};
+  gid('learnerRecordAudio').onclick=async()=>{await startAudioRecording();refreshLearnerAudioControls();const toast=gid('statusToast');if(mediaRecorder?.state!=='recording'&&toast?.classList.contains('danger'))gid('learnerAudioStatus').textContent=toast.textContent};gid('learnerPlayAudio').onclick=playSelectedAudio;audio.addEventListener('close',()=>{learnerAudioSession++;if(mediaRecorder?.state==='recording')mediaRecorder.stop()});
+  const starters=addLearnerDialog('learnerStartersDialog','Lesson starters','<p>Start on a new page. Your existing pages stay intact.</p><div id="learnerStarterList"></div>');
+  [['draw','Draw and explain','Sketch an idea and add an explanation.'],['compare','Compare two ideas','Show how two things are alike or different.'],['label','Label this picture','Add a picture, then name its parts.'],['math','Show your math','Show your steps and explain your thinking.']].forEach(([key,title,detail])=>{const button=document.createElement('button');button.type='button';button.className='learner-starter-card';const strong=document.createElement('strong');strong.textContent=title;const span=document.createElement('span');span.textContent=detail;button.append(strong,span);button.onclick=()=>{insertLearnerStarter(key,title);starters.close()};gid('learnerStarterList').append(button)});gid('learnerStarters').onclick=()=>starters.showModal();
+  const turn=addLearnerDialog('learnerTurnInDialog','Check and turn in','<ol class="learner-turn-steps"><li>Check my work</li><li>Send to teacher</li><li>Received</li></ol><label for="learnerStudentName">Your name</label><input id="learnerStudentName" autocomplete="name"><p>Have you answered the question and checked every page?</p><label class="learner-check"><input id="learnerCheckedWork" type="checkbox">I checked my work.</label><p id="learnerTurnInStatus" role="status" aria-live="polite">Ready when you are.</p><div class="learner-dialog-actions"><button id="learnerSendWork" type="button" class="primary" disabled>Send to teacher</button><button id="learnerDownloadWork" type="button">Download a backup</button></div>');
+  gid('learnerTurnIn').onclick=openLearnerTurnIn;gid('learnerCheckedWork').onchange=()=>gid('learnerSendWork').disabled=!gid('learnerCheckedWork').checked||turnInPending;gid('learnerSendWork').onclick=sendLearnerTurnIn;gid('learnerDownloadWork').onclick=()=>gid('saveLocalBtn').click();
+  turn.addEventListener('cancel',e=>{if(turnInPending){e.preventDefault();setStatus('Still sending. Keep this board open until your teacher receives it.')}});turn.querySelector('.close').onclick=()=>{if(!turnInPending)turn.close()};
+  window.addEventListener('beforeunload',e=>{if(turnInPending){e.preventDefault();e.returnValue=''}});
+  svg.addEventListener('pointerdown',e=>{if(tool!=='pan')return;e.preventDefault();e.stopImmediatePropagation();learnerPanDrag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:learnerPan.x,startY:learnerPan.y};svg.setPointerCapture(e.pointerId)},true);
+  svg.addEventListener('pointermove',e=>{if(!learnerPanDrag||e.pointerId!==learnerPanDrag.id)return;e.preventDefault();e.stopImmediatePropagation();learnerPan.x=learnerPanDrag.startX+e.clientX-learnerPanDrag.x;learnerPan.y=learnerPanDrag.startY+e.clientY-learnerPanDrag.y;requestRender()},true);
+  const stopPan=e=>{if(!learnerPanDrag||e.pointerId!==learnerPanDrag.id)return;e.stopImmediatePropagation();learnerPanDrag=null};svg.addEventListener('pointerup',stopPan,true);svg.addEventListener('pointercancel',stopPan,true);
+  document.addEventListener('click',e=>{if(board.mode!=='student')return;const button=e.target.closest('button');if(!button)return;const key=learnerActionKey(button.dataset.menuTarget||button.id);if(key&&!learnerAllows(key)){e.preventDefault();e.stopImmediatePropagation();setStatus('That tool is not in this lesson. Choose one of your lesson tools.')}},true);
+  refreshLearnerWorkspace();
+}
+function refreshLearnerAudioControls(){
+  if(!gid('learnerAudioStatus'))return;
+  const recording=mediaRecorder?.state==='recording';gid('learnerRecordAudio').textContent=recording?'Stop and keep recording':'Record';gid('learnerAudioStatus').textContent=recording?'Recording. Press Stop when you finish.':currentObj()?.audioSrc?'Your recording is saved on this page.':'Ready to record.';gid('learnerPlayAudio').disabled=!currentObj()?.audioSrc;
+}
+function refreshLearnerWorkspace(){
+  if(!gid('learnerToolbar'))return;
+  setButtonChrome(document.querySelector('#toolButtons [data-tool="select"]'),'Move');
+  const p=learnerPolicy(),stamp=JSON.stringify(p);
+  if(board.mode==='student'&&stamp!==learnerPolicyStamp){learnerPolicyStamp=stamp;applyInterfaceMode(p.view,true);applyWorkspaceMode('education',true)}
+  if(board.mode!=='student')learnerPolicyStamp='';
+  document.querySelectorAll('#toolButtons [data-tool],#learnerPrimaryTools [data-learner-tool]').forEach(btn=>{const key=btn.dataset.tool||btn.dataset.learnerTool;btn.classList.toggle('student-tool-hidden',!learnerAllows(key));if(btn.dataset.learnerTool)btn.setAttribute('aria-pressed',String(tool===key))});
+  document.querySelectorAll('[data-menu-target],#toolButtons button[id]').forEach(btn=>{const key=learnerActionKey(btn.dataset.menuTarget||btn.id);if(key)btn.classList.toggle('student-tool-hidden',!learnerAllows(key))});
+  document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>{const buttons=[...group.querySelectorAll('button[data-tool],button.toolbar-action')];group.classList.toggle('student-tool-hidden',board.mode==='student'&&buttons.length>0&&buttons.every(b=>b.classList.contains('student-tool-hidden')))});
+  ['tntBtn','simpleTntBtn','more_tntBtn'].forEach(key=>gid(key)?.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));document.querySelectorAll('[data-menu-target="tntBtn"]').forEach(el=>el.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));
+  gid('learnerPicture').hidden=!learnerAllows('image');gid('learnerDrawResponse').hidden=!learnerAllows('pen');gid('learnerTypeResponse').hidden=!learnerAllows('text');gid('learnerVoiceResponse').hidden=!learnerAllows('audio');
+  gid('learnerPan').setAttribute('aria-pressed',String(tool==='pan'));
+  gid('learnerPenSizeLabel').hidden=tool!=='pen';gid('learnerPenSize').value=String(penStrokeWidth);
+  gid('learnerColor').value=ui.strokeColor?.value||'#7c3aed';
+  if(board.mode==='student'&&!learnerAllows(tool))setTool('select');
+  const chip=gid('classroomSaveChip');chip.hidden=!googleScriptUrl();if(classroomSavedSnapshot&&snapshot()!==classroomSavedSnapshot&&chip.dataset.state==='saved')setClassroomSaveState('pending');
+  const banner=gid('clearRecoveryBanner');if(banner.dataset.snapshot&&banner.dataset.snapshot!==snapshot())banner.hidden=true;
+}
+function setClassroomSaveState(state,sentSnapshot){
+  if(state==='saved'&&sentSnapshot&&snapshot()!==sentSnapshot)state='pending';
+  const chip=gid('classroomSaveChip');if(!chip)return;
+  chip.hidden=!googleScriptUrl();chip.dataset.state=state;chip.textContent=state==='saved'?'Saved to classroom':state==='saving'?'Sending to classroom…':state==='error'?'Classroom save failed — check device copy':'Classroom: changes not sent';chip.className='save-state '+(state==='error'?'error':state==='saved'?'saved':'saving');
+  if(state==='saved')classroomSavedSnapshot=sentSnapshot||snapshot();
+}
+function rememberBeforeClearing(){
+  const point={name:'Before clearing '+(panel().name||'page'),at:new Date().toISOString(),state:cloneBoardForRestore()};board.restorePoints=[point,...(board.restorePoints||[])].slice(0,20);return point;
+}
+function showClearRecovery(){const banner=gid('clearRecoveryBanner');if(banner){banner.dataset.snapshot=snapshot();banner.hidden=false}}
+function openLearnerTurnIn(){
+  const dlg=gid('learnerTurnInDialog');if(!dlg)return;
+  if(!turnInPending){gid('learnerStudentName').value=board.studentName||'';gid('learnerCheckedWork').checked=false;gid('learnerSendWork').disabled=true;gid('learnerTurnInStatus').textContent=googleScriptUrl()?'Check every page, then send your work.':'Your teacher has not connected turn-in yet. Keep a downloaded backup and ask your teacher how to share it.';dlg.dataset.step='check'}
+  if(!dlg.open)dlg.showModal();
+}
+async function sendLearnerTurnIn(){
+  if(turnInPending||!gid('learnerCheckedWork').checked)return;
+  const url=googleScriptUrl(),name=gid('learnerStudentName').value.trim(),status=gid('learnerTurnInStatus');
+  if(!url){status.textContent='Turn-in is not connected yet. Download a backup and ask your teacher for help.';return}
+  if(!name){status.textContent='Add your name so your teacher knows whose work this is.';gid('learnerStudentName').focus();return}
+  commitInlineTextEditor();board.studentName=name;ui.studentName.value=name;saveState(false);
+  const sentBoard=JSON.parse(snapshot());turnInPending=true;gid('learnerSendWork').disabled=true;gid('learnerTurnInDialog').dataset.step='sending';status.textContent='Sending… Keep this board open.';
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);
+  try{
+    const png=await Promise.race([exportPng(),new Promise((_,reject)=>controller.signal.addEventListener('abort',()=>reject(new Error('Sending timed out.')),{once:true}))]);const res=await fetch(url,{method:'POST',signal:controller.signal,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'turnInSave',turnin:{studentName:name,className:sentBoard.className,title:sentBoard.title,board:sentBoard},png})});
+    const out=await res.json();if(!res.ok||!out.ok)throw new Error(out.error||'The teacher’s classroom did not confirm receipt.');
+    gid('learnerTurnInDialog').dataset.step='received';status.textContent='Received! Your teacher has your work. You can close this board.';setStatus('Received! Your teacher has your work.','success');
+  }catch(err){gid('learnerTurnInDialog').dataset.step='check';status.textContent='Receipt was not confirmed. '+(gid('saveStateChip').classList.contains('error')?'Download a backup now.':'Your device copy is kept. Download a backup, then retry or ask your teacher.');setStatus('Turn-in was not confirmed. Download a backup and ask your teacher if you need help.','danger')}
+  finally{clearTimeout(timeout);turnInPending=false;gid('learnerSendWork').disabled=gid('learnerTurnInDialog').dataset.step==='received'||!gid('learnerCheckedWork').checked}
+}
+function insertLearnerStarter(key,title){
+  if(board.mode==='student'||!addPanel())return;
+  const p=panel();p.name=title;p.bg='blank';const objects=[];
+  const text=(x,y,w,h,value,size=24)=>objects.push(makeObj('text',x,y,w,h,{text:value,html:esc(value),fontSize:size,textColor:'#352064',layer:'teacher'}));
+  const box=(x,y,w,h)=>objects.push(makeObj('rect',x,y,w,h,{fill:'#f8f5ff',stroke:'#b5a0ec',strokeWidth:2,layer:'teacher'}));
+  text(25,15,700,55,title,30);
+  if(key==='compare'){box(25,100,330,310);box(375,100,330,310);text(40,110,300,45,'Idea A');text(390,110,300,45,'Idea B');text(25,425,680,60,'What is alike? What is different?',22)}
+  else if(key==='math'){box(25,100,680,250);text(40,110,640,45,'Show your steps here');text(25,375,680,85,'Explain: I solved it by…',24)}
+  else if(key==='label'){box(25,100,680,300);text(40,110,640,60,'Add a picture, then label its parts.');text(25,425,680,60,'Use arrows and words to explain.',22)}
+  else{box(25,100,680,250);text(40,110,640,45,'Draw your idea here');text(25,375,680,85,'My drawing shows…',24)}
+  if(!board.studentWorkspace)board.studentWorkspace=normalizedLearnerPolicy({tools:LEARNER_PRESETS.explain});
+  p.objects.push(...objects);fitTemplateObjectsToFrame(objects);clearSelection();render();saveState();setStatus(title+' is ready on a new page.','success');
+}
+
 /* Tool, workspace, and selection primitives. These are intentionally small
    because drawing, editing, grouping, and inspector code all depend on them. */
 const TOOL_GUIDANCE={
-  select:['Select','Click an object to move, resize, duplicate, or delete it. Drag blank canvas to select several objects.'],
+  select:['Move','Click an object to move, resize, duplicate, or delete it. Drag blank canvas to select several objects.'],
   pen:['Pencil','Pick a thickness, then drag on the canvas. Use Undo if a stroke needs a quick reset.'],
   bucket:['Paint Bucket','Click a shape, note, dot, or line to recolor it. Click blank canvas to add a color layer.'],
   eraser:['Eraser','Choose an eraser size, then drag over Scratch Cover areas. Click other objects to delete them.'],
@@ -1262,6 +1398,7 @@ function toolGuidance(next){
     if(coloringPaintMode==='bucket') return ['Bucket','Click a white space inside the selected coloring page to pour color.'];
     if(coloringPaintMode==='spray') return ['Spray','Drag inside the selected coloring page to spray color.'];
   }
+  if(next==='pan')return ['Move view','Drag the page to look around. Your work stays in place. Choose Center view to return.'];
   return TOOL_GUIDANCE[next]||['Tool','Use the canvas to place or edit content.'];
 }
 function updateToolStatus(next){
@@ -1284,10 +1421,11 @@ function updateToolStatus(next){
 function announceTool(next){
   const [title,detail]=toolGuidance(next);
   updateToolStatus(next);
-  setStatus(`${title}: ${detail}`,next==='coloringpaint'?'success':'');
+  if(document.body.dataset.learnerView!=='beginner')setStatus(`${title}: ${detail}`,next==='coloringpaint'?'success':'');
 }
 function refreshToolGroupsActive(){document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>group.classList.toggle('active',!!group.querySelector(`button.active,[data-tool="${tool}"]`)))}
 function setTool(next){
+  if(!learnerAllows(next))return setStatus("That tool is not in this lesson. Choose one of your lesson tools.");
   // Restore the per-tool stored stroke width before re-rendering controls.
   // Pen and eraser each keep their own width so the slider reflects the
   // active tool's choice instead of carrying the previous tool's value.
@@ -1295,16 +1433,24 @@ function setTool(next){
     if(next==='pen') ui.strokeWidth.value=String(penStrokeWidth);
     else if(next==='eraser') ui.strokeWidth.value=String(eraserStrokeWidth);
   }
-  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>{const active=b.dataset.tool===tool;b.classList.toggle('active',active);if(b.dataset.tool)b.setAttribute('aria-pressed',String(active))}); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); announceTool(next);
+  tool=next; document.body.dataset.tool=next; document.querySelectorAll('#toolButtons button').forEach(b=>{const active=b.dataset.tool===tool;b.classList.toggle('active',active);if(b.dataset.tool)b.setAttribute('aria-pressed',String(active))}); refreshToolGroupsActive(); gid('activateDotPaintBtn')?.classList.toggle('active',tool==='dotpaint'); if(tool!=='connector') connectorPendingFrom=null; if(tool!=='dotpaint') closeDotPaintPalette(); applyToolContext(); syncSimpleColor(); refreshColoringPaintToolbar?.(); refreshEraserSizeControls?.(); refreshPenSizeControls?.(); announceTool(next); refreshLearnerWorkspace();
 }
 function applyToolContext(){const o=(selectedIds.length===1)?currentObj():null; const objType=o?o.type:null; document.querySelectorAll('.ctx-group').forEach(el=>{const ctx=el.dataset.context; const active=(tool===ctx)||(objType===ctx); el.open=active; el.classList.toggle('context-active',active)})}
 function updateHeaderHeightVar(){const header=document.querySelector('header'); if(!header) return; document.documentElement.style.setProperty('--drawsplat-header-height',Math.ceil(header.getBoundingClientRect().height)+'px')}
 function readPreference(key){try{return localStorage.getItem(key)}catch(_){return null}}
 function writePreference(key,value){try{localStorage.setItem(key,value)}catch(_){}}
-function applyInterfaceMode(mode,quiet=false){mode=mode||ui.interfaceMode?.value||readPreference('drawsplat.interfaceMode')||'simple'; if(ui.interfaceMode) ui.interfaceMode.value=mode; writePreference('drawsplat.interfaceMode',mode); document.body.dataset.view=mode; document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core'; el.classList.toggle('simple-hidden',mode==='simple'&&level==='advanced')}); if(mode==='simple'&&ADVANCED_TOOLS.includes(tool)) setTool('select'); updateHeaderHeightVar(); if(!quiet) setStatus(mode==='simple'?'Simple interface enabled.':'Advanced interface enabled.','success')}
+function applyInterfaceMode(mode,quiet=false){
+  mode=mode||ui.interfaceMode?.value||readPreference('drawsplat.interfaceMode')||'simple';
+  if(!['beginner','simple','advanced'].includes(mode))mode='simple';
+  if(ui.interfaceMode)ui.interfaceMode.value=mode;writePreference('drawsplat.interfaceMode',mode);
+  document.body.dataset.view=mode==='advanced'?'advanced':'simple';document.body.dataset.learnerView=mode==='beginner'?'beginner':mode==='advanced'?'full':'growing';
+  document.querySelectorAll('[data-ui],[data-ui-section]').forEach(el=>{const level=el.dataset.uiSection||el.dataset.ui||'core';el.classList.toggle('simple-hidden',mode!=='advanced'&&level==='advanced')});
+  if(mode!=='advanced'&&ADVANCED_TOOLS.includes(tool))setTool('select');updateHeaderHeightVar();refreshViewToggle();
+  if(!quiet)setStatus((mode==='beginner'?'Beginner':mode==='advanced'?'Full':'Growing')+' view enabled.','success');
+}
 function applyWorkspaceMode(mode,quiet=false){mode=mode||ui.workspaceMode?.value||readPreference('drawsplat.workspaceMode')||'productivity'; if(mode!=='education') mode='productivity'; document.body.dataset.workspace=mode; if(ui.workspaceMode) ui.workspaceMode.value=mode; writePreference('drawsplat.workspaceMode',mode); const msg=mode==='education'?'Education tools enabled.':'Productivity workspace enabled. Education-only controls are hidden.'; const ws=gid('workspaceStatus'); if(ws) ws.textContent=mode==='education'?'Education Tools shows class, student, answer-key, turn-in, assignment, and moderation controls.':'Productivity hides classroom-only controls. Choose Education Tools to reveal class, student, answer-key, turn-in, and moderation features.'; if(!quiet) setStatus(msg,'success')}
 
-function pt(evt){const r=svg.getBoundingClientRect();return{x:(evt.clientX-r.left)/zoom,y:(evt.clientY-r.top)/zoom}}
+function pt(evt){const r=svg.getBoundingClientRect();return{x:(evt.clientX-r.left-learnerPan.x)/zoom,y:(evt.clientY-r.top-learnerPan.y)/zoom}}
 function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
 function style(){return{stroke:ui.strokeColor.value,strokeWidth:+ui.strokeWidth.value,fill:fillEnabled?ui.fillColor.value:'none',fillPattern:ui.fillPattern?ui.fillPattern.value:'',opacity:+ui.opacity.value/100}}
 function defaultTextProps(type){const shape=SHAPE_TEXT_TYPES.includes(type);return{html:'',text:'',textColor:'#111827',fontSize:type==='sticky'?16:(type==='text'?24:20),hAlign:shape?'center':'left',vAlign:shape?'middle':'top',textRotation:0,autoScaleText:shape}}
@@ -1424,7 +1570,7 @@ function fitPlainTextBoxToContent(o){
   o.w=Math.max(80,Math.round(desiredW));
   o.h=Math.max(Math.round(fontSize*1.25+padY),Math.round(visualLineCount*fontSize*1.25+padY));
 }
-function positionInlineTextEditor(){if(!inlineEditId) return; const o=findObj(inlineEditId); const wrap=gid('inlineTextEditorWrap'); if(!o||!wrap) return commitInlineTextEditor(false); const box=objectTextEditBox(o); const left=Math.max(0,box.x*zoom), top=Math.max(0,box.y*zoom), width=Math.max(60,box.w*zoom), height=Math.max(34,box.h*zoom); wrap.style.left=left+'px'; wrap.style.top=top+'px'; wrap.style.width=width+'px'; wrap.style.height=height+'px'; wrap.style.transform=o.type==='connector'?`rotate(${box.angle||0}deg)`:''; wrap.style.transformOrigin='center center'; wrap.classList.toggle('connector-label-edit',o.type==='connector'); const ta=gid('inlineTextEditor'); ta.style.minHeight='0'; ta.style.height=height+'px'}
+function positionInlineTextEditor(){if(!inlineEditId) return; const o=findObj(inlineEditId); const wrap=gid('inlineTextEditorWrap'); if(!o||!wrap) return commitInlineTextEditor(false); const box=objectTextEditBox(o); const left=Math.max(0,box.x*zoom+learnerPan.x), top=Math.max(0,box.y*zoom+learnerPan.y), width=Math.max(60,box.w*zoom), height=Math.max(34,box.h*zoom); wrap.style.left=left+'px'; wrap.style.top=top+'px'; wrap.style.width=width+'px'; wrap.style.height=height+'px'; wrap.style.transform=o.type==='connector'?`rotate(${box.angle||0}deg)`:''; wrap.style.transformOrigin='center center'; wrap.classList.toggle('connector-label-edit',o.type==='connector'); const ta=gid('inlineTextEditor'); ta.style.minHeight='0'; ta.style.height=height+'px'}
 function openInlineTextEditor(objId,starter=null){const o=findObj(objId); if(!o||!(TEXTABLE_TYPES.includes(o.type)||o.type==='connector')) return; if(inlineEditId&&inlineEditId!==objId) commitInlineTextEditor(); inlineEditId=objId; inlineEditOriginal={html:o.html||'',text:o.text||'',connectorLabel:o.connectorLabel||''}; setSingleSelection(objId); const wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); const startVal=starter!==null?starter:(o.type==='connector'?(o.connectorLabel||''):(o.text||'')); ta.value=startVal; ta.style.fontSize=(o.type==='connector'?(o.connectorLabelSize||14):(o.fontSize||16))+'px'; ta.style.color=o.type==='connector'?(o.connectorLabelColor||o.stroke||'#334155'):(o.textColor||'#111827'); ta.style.fontFamily='Inter, Arial, sans-serif'; ta.style.textAlign=o.type==='connector'?'center':''; ta.style.fontWeight=o.type==='connector'?'700':''; ta.placeholder=o.type==='connector'?'relationship phrase':(o.type==='sticky'?'Add note...':(o.type==='audio'?'Voice note':(o.type==='comment'?'Add feedback...':(o.type==='text'?'Type here...':'Type here...')))); wrap.classList.add('show'); updateInlineTextObject(false); render(); setTimeout(()=>{ta.focus(); ta.select()},0)}
 function updateInlineTextObject(updateInspectorToo=true){if(!inlineEditId) return; const o=findObj(inlineEditId), ta=gid('inlineTextEditor'); if(!o||!ta) return; if(o.type==='connector'){o.connectorLabel=ta.value}else{o.text=ta.value; o.html=plainTextToHtml(ta.value); fitPlainTextBoxToContent(o)} positionInlineTextEditor(); requestRender(); if(updateInspectorToo&&ui.richEditor&&selectedIds.length===1&&selectedIds[0]===o.id&&o.type!=='connector') ui.richEditor.innerHTML=o.html}
 function commitInlineTextEditor(save=true){if(!inlineEditId) return; const o=findObj(inlineEditId), wrap=gid('inlineTextEditorWrap'), ta=gid('inlineTextEditor'); let blockReason=''; if(save&&o&&ta&&window.DrawSplatSafety){const surface=o.type==='sticky'?'sticky':(o.type==='text'?'text':(o.type==='comment'?'comment':'text')); const r=window.DrawSplatSafety.checkAll(ta.value,surface); if(!r.allowed){blockReason=r.reason; save=false}} if(save){updateInlineTextObject(true)}else if(o&&inlineEditOriginal){if(o.type==='connector') o.connectorLabel=inlineEditOriginal.connectorLabel; else{o.text=inlineEditOriginal.text;o.html=inlineEditOriginal.html}} inlineEditId=null; inlineEditOriginal=null; if(wrap){wrap.classList.remove('show','connector-label-edit'); wrap.style.transform=''} if(ta){ta.style.textAlign=''; ta.style.fontWeight=''} render(); if(blockReason) setStatus(blockReason,'danger'); else if(save) saveState()}
@@ -1480,7 +1626,7 @@ function render(){
   syncScratchCoversToFrame(p);
   const bgImageSvg=p.bgImage?`<image x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" href="${esc(p.bgImage)}"/>`:'';
   const canvasFillSvg=p.canvasFill?`<rect width="100%" height="100%" fill="${esc(p.canvasFill.color||'#ffffff')}" opacity="${clamp(+(p.canvasFill.opacity??1),0,1)}"/>`:'';
-  svg.innerHTML='<defs>'+bgDefs(p.bg)+fillPatternDefs()+'</defs>'+(p.bg==='blank'?'<rect width="100%" height="100%" fill="#fff"/>':'<rect width="100%" height="100%" fill="url(#bgp)"/>')+bgImageSvg+canvasFillSvg+'<g id="viewport" transform="scale('+zoom+')"></g>';
+  svg.innerHTML='<defs>'+bgDefs(p.bg)+fillPatternDefs()+'</defs>'+(p.bg==='blank'?'<rect width="100%" height="100%" fill="#fff"/>':'<rect width="100%" height="100%" fill="url(#bgp)"/>')+bgImageSvg+canvasFillSvg+'<g id="viewport" transform="translate('+learnerPan.x+' '+learnerPan.y+') scale('+zoom+')"></g>';
   _lasers.forEach(l=>svg.appendChild(l));
   const g=svg.querySelector('#viewport');
   const layerOrder={teacher:0,shared:1,student:2};
@@ -1489,6 +1635,7 @@ function render(){
   drawSelection();
   if(marquee&&marquee.active) g.appendChild(svgEl(`<rect class="marquee" x="${Math.min(marquee.x1,marquee.x2)}" y="${Math.min(marquee.y1,marquee.y2)}" width="${Math.abs(marquee.x2-marquee.x1)}" height="${Math.abs(marquee.y2-marquee.y1)}"/>`));
   updateInspector();
+  refreshLearnerWorkspace();
   applyToolContext();
   refreshSelectionToolbar();
   if(inlineEditId) positionInlineTextEditor();
@@ -1652,7 +1799,7 @@ function svgEl(s){const t=document.createElementNS(NS,'g');t.innerHTML=s.trim();
 
 function selectionBounds(ids=selectedIds){const objs=ids.map(findObj).filter(Boolean);if(!objs.length)return null;const boxes=objs.map(normBox);const x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y)),r=Math.max(...boxes.map(b=>b.x+b.w)),bt=Math.max(...boxes.map(b=>b.y+b.h));return{x,y,w:r-x,h:bt-y}}
 function selectedResizableIds(){return selectedIds.filter(idv=>{const o=findObj(idv);return o&&o.type!=='connector'&&o.type!=='scratch'&&canEditObject(o)&&!o.locked})}
-function drawSelection(){const g=svg.querySelector('#viewport');if(!selectedIds.length||!g)return;selectedIds.forEach(idv=>{const o=findObj(idv);if(!o)return;const b=normBox(o),pad=(o.type==='image'||o.type==='stamp')?1:4;g.appendChild(svgEl(`<rect class="selection" x="${b.x-pad}" y="${b.y-pad}" width="${b.w+pad*2}" height="${b.h+pad*2}"/>`))});const resizeIds=selectedResizableIds();if(selectedIds.length===1){const o=findObj(selectedIds[0]);if(o&&resizeIds.length){const b=normBox(o),sz=22;const h=svgEl(`<rect class="handle" x="${b.x+b.w-sz/2}" y="${b.y+b.h-sz/2}" width="${sz}" height="${sz}" rx="4"/>`);h.addEventListener('pointerdown',resizeDown);g.appendChild(h)}}else{const b=selectionBounds(resizeIds); if(b){g.appendChild(svgEl(`<rect class="selection group-selection" x="${b.x-8}" y="${b.y-8}" width="${b.w+16}" height="${b.h+16}"/>`));const sz=24,h=svgEl(`<rect class="handle group-handle" x="${b.x+b.w-sz/2}" y="${b.y+b.h-sz/2}" width="${sz}" height="${sz}" rx="5"/>`);h.addEventListener('pointerdown',resizeDown);g.appendChild(h)}}}
+function drawSelection(){const g=svg.querySelector('#viewport');if(!selectedIds.length||!g)return;selectedIds.forEach(idv=>{const o=findObj(idv);if(!o)return;const b=normBox(o),pad=(o.type==='image'||o.type==='stamp')?1:4;g.appendChild(svgEl(`<rect class="selection" x="${b.x-pad}" y="${b.y-pad}" width="${b.w+pad*2}" height="${b.h+pad*2}"/>`))});const resizeIds=selectedResizableIds();if(selectedIds.length===1){const o=findObj(selectedIds[0]);if(o&&resizeIds.length){const b=normBox(o),sz=(document.body.dataset.learnerView==='beginner'||matchMedia('(pointer:coarse)').matches?44:22)/zoom;const h=svgEl(`<rect class="handle" x="${b.x+b.w-sz/2}" y="${b.y+b.h-sz/2}" width="${sz}" height="${sz}" rx="4"/>`);h.addEventListener('pointerdown',resizeDown);g.appendChild(h)}}else{const b=selectionBounds(resizeIds); if(b){g.appendChild(svgEl(`<rect class="selection group-selection" x="${b.x-8}" y="${b.y-8}" width="${b.w+16}" height="${b.h+16}"/>`));const sz=(document.body.dataset.learnerView==='beginner'||matchMedia('(pointer:coarse)').matches?44:24)/zoom,h=svgEl(`<rect class="handle group-handle" x="${b.x+b.w-sz/2}" y="${b.y+b.h-sz/2}" width="${sz}" height="${sz}" rx="5"/>`);h.addEventListener('pointerdown',resizeDown);g.appendChild(h)}}}
 function groupMembers(o){if(!o||!o.groupId)return[o?.id].filter(Boolean);return panel().objects.filter(x=>x.groupId===o.groupId).map(x=>x.id)}
 function coloringPaintIdsFor(ids){return panel().objects.filter(o=>ids.includes(o.coloringPaintFor)&&canEditObject(o)&&!o.locked).map(o=>o.id)}
 function idsWithColoringPaint(ids){return [...new Set([...ids,...coloringPaintIdsFor(ids)])]}
@@ -1698,7 +1845,7 @@ function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=f
   render()}
 function resizeDown(e){e.stopPropagation();const ids=selectedResizableIds();if(!ids.length)return;ids.forEach(idv=>{const o=findObj(idv); if(o?.type==='text') o.textAutoFitBox=false});const b=selectionBounds(ids),p=pt(e);if(!b)return;const dragIds=idsWithColoringPaint(ids);drag={resize:true,ids:dragIds,sx:p.x,sy:p.y,ox:b.x,oy:b.y,ow:b.w,oh:b.h,starts:dragIds.map(idv=>{const s=findObj(idv);return{id:s.id,x:s.x,y:s.y,w:s.w,h:s.h,fontSize:s.fontSize||20,d:s.d,clipBox:s.clipBox?{...s.clipBox}:null}})}}
 
-svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(tool==='dotpaint'){if(e.target.closest('.object')) return; const o=dotAtPoint(p.x,p.y); if(o){dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set}; paintDotAtPoint(p.x,p.y); return} setStatus('Dot Paint: drag across dots or click a dot to choose a color.','danger'); return} if(tool==='bucket'){const objEl=e.target.closest('.object'); if(objEl){applyBucketFill(findObj(objEl.dataset.id)); return} applyCanvasBucketFill(); return} if(tool==='eraser'){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o?.type==='scratch'){startScratchErase(o,p); return} if(o&&canEditObject(o)&&!o.locked){cleanupConnectors([o.id]); cleanupColoringPaint([o.id]); panel().objects=panel().objects.filter(x=>x.id!==o.id); clearSelection(); render(); saveState(); setStatus('Erased.','success')} else if(o&&o.locked) setStatus('That item is locked.','danger')} else setStatus('Drag on a Scratch Cover, or click an object to erase it.','danger'); return} if(tool==='laser'){drawing={id:'laser_'+id(),type:'laser',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1}; const path=svgEl(`<path class="laser-trail" d="${drawing.d}" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>`); svg.appendChild(path); drawing._laserPath=path; return} if(tool==='select'){if(!e.target.closest('.object')){clearSelection(); connectorPendingFrom=null; marquee={active:true,x1:p.x,y1:p.y,x2:p.x,y2:p.y}; render()} return} if(['rect','ellipse','line','arrow','diamond','triangle','callout','speech','polygon','star'].includes(tool)){const extra=TEXTABLE_TYPES.includes(tool)?{html:'',text:'',textColor:ui.textColor.value,fontSize:+ui.fontSize.value||20,hAlign:'center',vAlign:'middle',textRotation:0,autoScaleText:true}:{}; drawing=makeObj(tool,p.x,p.y,1,1,extra); panel().objects.push(drawing); setSingleSelection(drawing.id); render(); return} if(tool==='pen'){drawing={id:id(),type:'path',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1,locked:false,...style()}; panel().objects.push(drawing); setSingleSelection(drawing.id); const g=svg.querySelector('#viewport'); liveDrawingPathEl=svgEl(`<path d="${esc(drawing.d)}" fill="none" stroke="${esc(drawing.stroke||'#111827')}" stroke-width="${drawing.strokeWidth||2}" opacity="${drawing.opacity??1}" stroke-linecap="round" stroke-linejoin="round"/>`); if(g&&liveDrawingPathEl) g.appendChild(liveDrawingPathEl); else requestRender(); return} if(tool==='text'){const fontSize=+ui.fontSize.value||24; const obj=makeObj('text',p.x,p.y,Math.max(96,fontSize*4),Math.round(fontSize*1.25+12),{fill:'none',stroke:'none',html:'',text:'',fontSize,textColor:ui.textColor.value,hAlign:'left',vAlign:'top',autoScaleText:true,textAutoFitBox:true}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='sticky'){const obj=makeObj('sticky',p.x,p.y,180,160,{fill:ui.stickyColor.value,stroke:'#111827',strokeWidth:1,html:'',text:'',fontSize:+ui.fontSize.value||16,textColor:ui.textColor.value,autoScaleText:true,imageSrc:''}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='comment'){const obj=makeObj('comment',p.x,p.y,220,120,{fill:'#fff7e6',stroke:'#f59e0b',strokeWidth:2,html:'',text:'',fontSize:16,textColor:'#111827',resolved:false}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='audio'){addObj(makeObj('audio',p.x,p.y,220,100,{fill:'#eff6ff',stroke:'#93c5fd',strokeWidth:2,html:'',text:'',fontSize:18,textColor:'#111827',audioSrc:'',audioName:''})); return} if(tool==='connector'){connectorPendingFrom=null; setStatus('Connector: click first shape, then second shape.'); return}});
+svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(tool==='dotpaint'){if(e.target.closest('.object')) return; const o=dotAtPoint(p.x,p.y); if(o){dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set}; paintDotAtPoint(p.x,p.y); return} setStatus('Dot Paint: drag across dots or click a dot to choose a color.','danger'); return} if(tool==='bucket'){const objEl=e.target.closest('.object'); if(objEl){applyBucketFill(findObj(objEl.dataset.id)); return} applyCanvasBucketFill(); return} if(tool==='eraser'){const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o?.type==='scratch'){startScratchErase(o,p); return} if(o&&canEditObject(o)&&!o.locked){cleanupConnectors([o.id]); cleanupColoringPaint([o.id]); panel().objects=panel().objects.filter(x=>x.id!==o.id); clearSelection(); render(); saveState(); setStatus('Erased.','success')} else if(o&&o.locked) setStatus('That item is locked.','danger')} else setStatus('Drag on a Scratch Cover, or click an object to erase it.','danger'); return} if(tool==='laser'){drawing={id:'laser_'+id(),type:'laser',d:`M ${p.x} ${p.y}`,x:p.x,y:p.y,w:1,h:1}; const path=svgEl(`<path class="laser-trail" d="${drawing.d}" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>`); svg.appendChild(path); drawing._laserPath=path; return} if(tool==='select'){if(!e.target.closest('.object')){clearSelection(); connectorPendingFrom=null; marquee={active:true,x1:p.x,y1:p.y,x2:p.x,y2:p.y}; render()} return} if(['rect','ellipse','line','arrow','diamond','triangle','callout','speech','polygon','star'].includes(tool)){const extra=TEXTABLE_TYPES.includes(tool)?{html:'',text:'',textColor:ui.textColor.value,fontSize:+ui.fontSize.value||20,hAlign:'center',vAlign:'middle',textRotation:0,autoScaleText:true}:{}; drawing=makeObj(tool,p.x,p.y,1,1,extra); panel().objects.push(drawing); setSingleSelection(drawing.id); render(); return} if(tool==='pen'){drawing=makeObj('path',p.x,p.y,1,1,{d:`M ${p.x} ${p.y}`}); panel().objects.push(drawing); setSingleSelection(drawing.id); const g=svg.querySelector('#viewport'); liveDrawingPathEl=svgEl(`<path d="${esc(drawing.d)}" fill="none" stroke="${esc(drawing.stroke||'#111827')}" stroke-width="${drawing.strokeWidth||2}" opacity="${drawing.opacity??1}" stroke-linecap="round" stroke-linejoin="round"/>`); if(g&&liveDrawingPathEl) g.appendChild(liveDrawingPathEl); else requestRender(); return} if(tool==='text'){const fontSize=+ui.fontSize.value||24; const obj=makeObj('text',p.x,p.y,Math.max(96,fontSize*4),Math.round(fontSize*1.25+12),{fill:'none',stroke:'none',html:'',text:'',fontSize,textColor:ui.textColor.value,hAlign:'left',vAlign:'top',autoScaleText:true,textAutoFitBox:true}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='sticky'){const obj=makeObj('sticky',p.x,p.y,180,160,{fill:ui.stickyColor.value,stroke:'#111827',strokeWidth:1,html:'',text:'',fontSize:+ui.fontSize.value||16,textColor:ui.textColor.value,autoScaleText:true,imageSrc:''}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='comment'){const obj=makeObj('comment',p.x,p.y,220,120,{fill:'#fff7e6',stroke:'#f59e0b',strokeWidth:2,html:'',text:'',fontSize:16,textColor:'#111827',resolved:false}); addObj(obj); openInlineTextEditor(obj.id); return} if(tool==='audio'){addObj(makeObj('audio',p.x,p.y,220,100,{fill:'#eff6ff',stroke:'#93c5fd',strokeWidth:2,html:'',text:'',fontSize:18,textColor:'#111827',audioSrc:'',audioName:''})); return} if(tool==='connector'){connectorPendingFrom=null; setStatus('Connector: click first shape, then second shape.'); return}});
 
 /* v2.5: pointermove uses requestRender (RAF coalescing). */
 let lastCursorBroadcast=0;
@@ -1871,7 +2018,7 @@ function groupSelected(){const ids=selectedIds.filter(idv=>findObj(idv)?.type!==
 function ungroupSelected(){const gids=[...new Set(selectedIds.map(i=>findObj(i)?.groupId).filter(Boolean))]; if(!gids.length)return; panel().objects.forEach(o=>{if(gids.includes(o.groupId)) delete o.groupId}); render(); saveState(); setStatus('Ungrouped selection.','success')}
 function selectCurrentGroup(){const o=currentObj(); if(!o) return setStatus('Select an item first.','danger'); if(!o.groupId){selectedIds=[o.id]; render(); return setStatus('This item is not grouped.','danger')} selectedIds=groupMembers(o); render(); setStatus('Group selected.','success')}
 
-document.addEventListener('keydown',e=>{const tag=(e.target&&e.target.tagName?e.target.tagName.toLowerCase():'');if(tag==='textarea'||tag==='input'||e.target?.isContentEditable)return; const meta=e.ctrlKey||e.metaKey; const o=currentObj();
+document.addEventListener('keydown',e=>{const tag=(e.target&&e.target.tagName?e.target.tagName.toLowerCase():'');if(document.querySelector('dialog[open]')||tag==='textarea'||tag==='input'||tag==='select'||e.target?.isContentEditable)return; const meta=e.ctrlKey||e.metaKey; const o=currentObj();
   if(!meta&&!e.altKey&&e.key==='?'&&!e.shiftKey){/* shift+/ on US */}
   if(!meta&&!e.altKey&&(e.key==='?'||(e.shiftKey&&e.key==='/'))){e.preventDefault(); openShortcutsDialog(); return}
   if(e.key==='Escape'&&gid('dotPaintPalette')?.classList.contains('show')){e.preventDefault(); closeDotPaintPalette(); return}
@@ -3542,7 +3689,7 @@ ui.userMode.onchange=()=>{board.mode=ui.userMode.value; if(board.mode==='student
 ui.assignmentModeToggle.onchange=()=>{board.assignmentMode=ui.assignmentModeToggle.checked; if(board.assignmentMode && board.currentLayer==='shared') board.currentLayer='teacher'; if(!board.assignmentMode) board.currentLayer='shared'; render(); saveState()};
 ui.activeLayerSelect.onchange=()=>{board.currentLayer=ui.activeLayerSelect.value; render(); saveState(false)};
 ui.showAnswerKeyToggle.onchange=()=>{board.showAnswerKey=ui.showAnswerKeyToggle.checked; render(); saveState(false)};
-function applyModeUI(){enforceRoleLock(); document.querySelectorAll('.teacher-only').forEach(el=>el.classList.toggle('hidden-by-mode',board.mode==='student')); ['bgSelectSimple','clearFrameBtn','frameNavAdd'].forEach(idv=>gid(idv)?.classList.toggle('hidden-by-mode',board.mode==='student')); if(ui.userMode) ui.userMode.disabled=roleLock==='student'; ui.assignmentModeToggle.disabled=board.mode==='student'; ui.activeLayerSelect.disabled=board.mode==='student' || !board.assignmentMode; ui.showAnswerKeyToggle.disabled=(board.mode==='student'); if(board.mode==='student'&&board.assignmentMode) ui.layerBadge.textContent='Layer: Student'}
+function applyModeUI(){enforceRoleLock(); document.querySelectorAll('.teacher-only').forEach(el=>el.classList.toggle('hidden-by-mode',board.mode==='student')); ['bgSelectSimple','clearFrameBtn','frameNavAdd'].forEach(idv=>gid(idv)?.classList.toggle('hidden-by-mode',board.mode==='student')); if(ui.userMode) ui.userMode.disabled=roleLock==='student'; if(ui.workspaceMode)ui.workspaceMode.disabled=roleLock==='student'; ui.assignmentModeToggle.disabled=board.mode==='student'; ui.activeLayerSelect.disabled=board.mode==='student' || !board.assignmentMode; ui.showAnswerKeyToggle.disabled=(board.mode==='student'); if(board.mode==='student'&&board.assignmentMode) ui.layerBadge.textContent='Layer: Student'}
 
 function addPanel(){if(board.mode==='student'){setStatus('Students cannot add panels to this shared board.','danger'); return false} ensureActivePanel(); resetInteractionState(); const newPanel={id:'panel_'+id(),name:'Panel '+(board.panels.length+1),bg:'grid',objects:[]}; board.panels.push(newPanel); board.active=board.panels.length-1; render(); saveState(); setStatus('Added '+newPanel.name+'.','success'); return true}
 gid('addPanelBtn').onclick=addPanel;
@@ -3550,7 +3697,7 @@ gid('frameNavPrev')?.addEventListener('click',()=>{if(board.active>0) switchPane
 gid('frameNavNext')?.addEventListener('click',()=>{if(board.active<board.panels.length-1) switchPanel(board.panels[board.active+1].id)});
 gid('frameNavAdd')?.addEventListener('click',addPanel);
 gid('floatDeselectBtn')?.addEventListener('click',()=>{clearSelection(); render(); setStatus('Selection cleared.','success')});
-gid('clearFrameBtn')?.addEventListener('click',()=>{if(board.mode==='student') return setStatus('Students cannot clear shared panels.','danger'); askConfirm('Clear this frame?',{okLabel:'Clear'}).then(ok=>{if(ok){panel().objects=[]; clearSelection(); render(); saveState(); setStatus('Frame cleared.','success')}})});
+gid('clearFrameBtn')?.addEventListener('click',()=>{if(board.mode==='student') return setStatus('Students cannot clear shared panels.','danger'); askConfirm('Clear this page? Undo can bring it back.',{okLabel:'Clear'}).then(ok=>{if(ok){rememberBeforeClearing();panel().objects=[]; clearSelection(); render(); saveState(); showClearRecovery(); setStatus('Frame cleared.','success')}})});
 gid('bgSelectSimple')?.addEventListener('change',e=>{if(board.mode==='student'){e.target.value=panel().bg||'grid'; return setStatus('Students cannot change the panel background.','danger')} panel().bg=e.target.value; render(); saveState()});
 gid('moreOptionsBtn')?.addEventListener('click',()=>gid('moreOptionsDialog').showModal());
 gid('closeMoreOptions')?.addEventListener('click',()=>gid('moreOptionsDialog').close());
@@ -3816,12 +3963,12 @@ gid('cropReset')?.addEventListener('click',()=>{gid('cropTop').value=0; gid('cro
 gid('cropApply')?.addEventListener('click',()=>{const id=gid('cropDialog').dataset.objectId; const o=findObj(id); if(!o){gid('cropDialog').close(); return} const top=+gid('cropTop').value, right=+gid('cropRight').value, bottom=+gid('cropBottom').value, left=+gid('cropLeft').value, shape=gid('cropShape')?.value||'none'; if(top+bottom>=95||left+right>=95){setStatus('Crop too aggressive — leave at least 5% visible.','danger'); return} if(top===0&&right===0&&bottom===0&&left===0){delete o.crop} else {o.crop={x:left/100,y:top/100,w:(100-left-right)/100,h:(100-top-bottom)/100}} if(shape==='none') delete o.maskShape; else o.maskShape=shape; render(); saveState(); setStatus(shape==='none'?'Image cropped.':'Image shape applied.','success'); gid('cropDialog').close()});
 gid('welcomeDismiss')?.addEventListener('click',()=>{try{localStorage.setItem('drawsplat.welcomed','1')}catch(_){} const dlg=gid('welcomeDialog'); if(dlg) dlg.close(); document.dispatchEvent(new CustomEvent('drawsplat:welcome-dismissed'))});
 gid('simpleColorInput')?.addEventListener('input',e=>{const v=e.target.value; if(tool==='sticky'){if(ui.stickyColor){ui.stickyColor.value=v; ui.stickyColor.dispatchEvent(new Event('change',{bubbles:true}))}} else {setPaintColor(v); ui.strokeColor?.dispatchEvent(new Event('input',{bubbles:true}))}});
-function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='simple'?'Simple':'Advanced'; const tip=m==='simple'?'Switch to Advanced view':'Switch to Simple view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
+function refreshViewToggle(){const btn=gid('viewToggleBtn'); if(!btn) return; const m=ui.interfaceMode?.value||'simple'; const text=m==='beginner'?'Beginner':m==='simple'?'Growing':'Full'; const tip=m==='advanced'?'Switch to Growing view':'Switch to Full view'; setButtonChrome(btn,text); btn.setAttribute('title',tip); btn.setAttribute('aria-label',tip); btn.setAttribute('data-tooltip',tip)}
 gid('viewToggleBtn')?.addEventListener('click',()=>{const next=(ui.interfaceMode?.value||'simple')==='simple'?'advanced':'simple'; if(ui.interfaceMode) ui.interfaceMode.value=next; applyInterfaceMode(next); refreshViewToggle()});
-function refreshFrameNav(){const c=gid('frameCounter'); if(c){const p=panel(); const name=p?.name||('Panel '+(board.active+1)); c.textContent=name+' · '+(board.active+1)+'/'+board.panels.length; c.title=name+' ('+(board.active+1)+' of '+board.panels.length+')'} const prev=gid('frameNavPrev'),next=gid('frameNavNext'); if(prev){prev.disabled=board.active<=0; prev.setAttribute('aria-disabled',prev.disabled?'true':'false')} if(next){next.disabled=board.active>=board.panels.length-1; next.setAttribute('aria-disabled',next.disabled?'true':'false')} const bs=gid('bgSelectSimple'); if(bs) bs.value=panel().bg||'grid'}
+function refreshFrameNav(){const c=gid('frameCounter'); if(c){const p=panel(); const name=(p?.name||('Page '+(board.active+1))).replace(/^Panel (\d+)$/,'Page $1'); c.textContent=name+' · '+(board.active+1)+'/'+board.panels.length; c.title=name+' ('+(board.active+1)+' of '+board.panels.length+')'} const prev=gid('frameNavPrev'),next=gid('frameNavNext'); if(prev){prev.disabled=board.active<=0; prev.setAttribute('aria-disabled',prev.disabled?'true':'false')} if(next){next.disabled=board.active>=board.panels.length-1; next.setAttribute('aria-disabled',next.disabled?'true':'false')} const bs=gid('bgSelectSimple'); if(bs) bs.value=panel().bg||'grid'}
 gid('renamePanelBtn').onclick=()=>{const n=prompt('Panel name:',panel().name); if(n){panel().name=n; render(); saveState()}};
 gid('deletePanelBtn').onclick=()=>{if(board.panels.length<2){setStatus('Keep at least one panel.','danger'); return} askConfirm('Delete this panel?',{okLabel:'Delete'}).then(ok=>{if(!ok) return; const deletedId=panel().id; board.panels=board.panels.filter(p=>p.id!==deletedId); board.active=Math.max(0,Math.min(board.active,board.panels.length-1)); resetInteractionState(); render(); saveState(); setStatus('Panel deleted.','success')})};
-gid('clearPanelBtn').onclick=()=>{askConfirm('Clear this panel?',{okLabel:'Clear'}).then(ok=>{if(ok){panel().objects=[]; clearSelection(); render(); saveState()}})};
+gid('clearPanelBtn').onclick=()=>{if(board.mode==='student')return;askConfirm('Clear this page? Undo can bring it back.',{okLabel:'Clear'}).then(ok=>{if(ok){rememberBeforeClearing();panel().objects=[]; clearSelection(); render(); saveState(); showClearRecovery()}})};
 gid('zoomInBtn').onclick=()=>{zoom=Math.min(2,zoom+.1); render()};
 gid('zoomOutBtn').onclick=()=>{zoom=Math.max(.4,zoom-.1); render()};
 gid('zoomResetBtn').onclick=()=>{zoom=1; render()};
@@ -3838,6 +3985,7 @@ async function exportCanvas(){
   // An SVG loaded as an image cannot fetch its own styles or linked images.
   const originals=svg.querySelectorAll('foreignObject *'),copies=clone.querySelectorAll('foreignObject *');
   originals.forEach((node,i)=>{const style=getComputedStyle(node); for(const key of style) copies[i].style.setProperty(key,style.getPropertyValue(key))});
+  const exportViewport=clone.querySelector('#viewport');if(exportViewport){exportViewport.setAttribute('transform','scale('+zoom+')');exportViewport.style.transform='matrix('+zoom+',0,0,'+zoom+',0,0)'}
   clone.querySelectorAll('.selection,.handle,.laser-trail,.marquee').forEach(el=>el.remove());
   await Promise.all([...clone.querySelectorAll('image,img')].map(async el=>{
     const attr=el.localName==='image'?'href':'src',source=el.getAttribute(attr)||el.getAttribute('xlink:href');
@@ -4001,14 +4149,14 @@ function snapshot(){return JSON.stringify(board)}
 let localSaveSequence=0;
 function persistLocal(){
   const snap=snapshot(), sequence=++localSaveSequence;
-  try{localStorage.setItem('drawsplat.autosave',snap); setSaveState('saved')}
+  try{localStorage.setItem('drawsplat.autosave',snap); setSaveState('saved','Saved on this device')}
   catch(err){
     setSaveState('saving');
     idbPut(snap).then(()=>{
       if(sequence!==localSaveSequence) return;
       // The old smaller localStorage board must not shadow this committed fallback.
       try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
-      setSaveState('saved');
+      setSaveState('saved','Saved on this device');
     }).catch(()=>{
       if(sequence!==localSaveSequence) return;
       setSaveState('error','Not saved — download a file');
@@ -4019,7 +4167,7 @@ function persistLocal(){
 }
 
 function initHistory(){const snap=snapshot(); history=[snap]; future=[]; lastSnapshot=snap}
-function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} broadcastLocal(); pushCloudRoom()}
+function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} refreshLearnerWorkspace(); broadcastLocal(); pushCloudRoom()}
 function undo(){if(history.length<2)return; future.push(history.pop()); board=JSON.parse(history[history.length-1]); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=history[history.length-1]; persistLocal(); render(); broadcastLocal()}
 function redo(){if(!future.length)return; const snap=future.pop(); history.push(snap); board=JSON.parse(snap); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=snap; persistLocal(); render(); broadcastLocal()}
 function refreshRestorePoints(){const pts=board.restorePoints||[]; ui.restorePointSelect.innerHTML=pts.map((p,i)=>`<option value="${i}">${esc(p.name)} — ${new Date(p.at).toLocaleString()}</option>`).join(''); ui.restorePointHint.textContent=pts.length?`${pts.length} restore point${pts.length===1?'':'s'} available.`:'No restore points yet.'}
@@ -4383,7 +4531,17 @@ function broadcastCursor(x,y){if(localChannel) localChannel.postMessage({type:'c
 
 async function startCloudSync(){stopSync('cloud'); if(!storageAllowsGoogle())return setSyncStatus('Cloud sync requires Google storage mode in Teacher Admin.','danger'); enforceRoleLock(); collabRoom=ui.collabRoom.value.trim(); const url=googleScriptUrl(); if(!collabRoom)return setSyncStatus('Enter a room name first.','danger'); if(!url)return setSyncStatus('Add your Google Apps Script URL for cloud sync.','danger'); if(roleLock==='student'&&!cloudPassword()) return setSyncStatus('Enter the room password first.','danger'); await pullCloudRoom(true); cloudTimer=setInterval(()=>pullCloudRoom(false),4000); setSyncStatus('Cloud sync active for room: '+collabRoom,'success'); if(roleLock!=='student') pushCloudRoom()}
 let cloudPushPending=false;
-async function pushCloudRoom(){if(!cloudTimer&& !ui.syncStatus.textContent.includes('Cloud sync active')) return; enforceRoleLock(); const url=googleScriptUrl(); if(!url||!collabRoom||cloudPushPending) return; cloudPushPending=true; try{const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'roomSave',room:collabRoom,password:cloudPassword(),role:board.mode||'teacher',instanceId,board})}); const out=await res.json(); if(out.ok && out.updatedAt) lastCloudTs=out.updatedAt; else if(out.error) setSyncStatus(out.error,'danger')}catch(err){} finally{cloudPushPending=false}}
+async function pushCloudRoom(){
+  if(!cloudTimer&&!ui.syncStatus.textContent.includes('Cloud sync active'))return;
+  enforceRoleLock();const url=googleScriptUrl();if(!url||!collabRoom||cloudPushPending)return;
+  cloudPushPending=true;const sentSnapshot=snapshot();setClassroomSaveState('saving');
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'roomSave',room:collabRoom,password:cloudPassword(),role:board.mode||'teacher',instanceId,board:JSON.parse(sentSnapshot)})});
+    const out=await res.json();if(!res.ok||!out.ok)throw new Error(out.error||'Classroom did not confirm saving.');
+    if(out.updatedAt)lastCloudTs=out.updatedAt;setClassroomSaveState('saved',sentSnapshot);
+  }catch(err){setClassroomSaveState('error');setSyncStatus('Classroom saving failed. '+err.message,'danger')}
+  finally{cloudPushPending=false}
+}
 async function pullCloudRoom(force){const url=googleScriptUrl(); if(!url||!collabRoom) return; try{const ref='?action=roomLoad&room='+encodeURIComponent(collabRoom)+'&password='+encodeURIComponent(cloudPassword())+(force?'':'&since='+encodeURIComponent(lastCloudTs||'')); const res=await fetch(url+ref); const out=await res.json(); if(out.ok && out.board && out.updatedAt && out.updatedAt!==lastCloudTs && out.instanceId!==instanceId){board=out.board; migrateBoard(board); enforceRoleLock(); clearSelection(); connectorPendingFrom=null; persistLocal(); lastSnapshot=snapshot(); lastCloudTs=out.updatedAt; render(); setSyncStatus('Cloud sync active for room: '+collabRoom,'success')} else if(out.ok && out.updatedAt){lastCloudTs=out.updatedAt} else if(out.error){setSyncStatus(out.error,'danger')}}catch(err){setSyncStatus('Cloud sync error: '+err.message,'danger')}}
 gid('startSyncBtn').onclick=startLocalSync;
 gid('startCloudSyncBtn').onclick=startCloudSync;
@@ -4422,29 +4580,36 @@ function insertTemplate(newPanel){const name=ui.templateSelect.value; if(newPane
 gid('insertTemplateBtn').onclick=()=>insertTemplate(false);
 gid('newTemplatePanelBtn').onclick=()=>insertTemplate(true);
 
-async function saveToGoogle(){const url=googleScriptUrl(); if(!url)return setStatus('Add your Google Apps Script Web App URL first.','danger'); setStatus('Saving board to Google Drive and Sheets...'); try{const png=await exportPng(); const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'save',board,png})}); const out=await res.json(); if(out.ok)setStatus('Saved: '+(out.folderUrl||out.fileUrl),'success'); else setStatus(out.error||'Save failed.','danger')}catch(err){setStatus('Google save failed. '+err.message,'danger')}}
+async function saveToGoogle(){
+  const url=googleScriptUrl();if(!url)return setStatus(board.mode==='student'?'Your teacher has not connected classroom saving yet. Download a backup.':'Connect Google in Teacher Admin first.','danger');
+  const sentSnapshot=snapshot();setClassroomSaveState('saving');setStatus('Sending your board to the classroom…');
+  try{const png=await exportPng();const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'save',board:JSON.parse(sentSnapshot),png})});const out=await res.json();if(!res.ok||!out.ok)throw new Error(out.error||'Classroom did not confirm saving.');setClassroomSaveState('saved',sentSnapshot);setStatus(snapshot()===sentSnapshot?'Saved to classroom.':'Submitted copy saved. New changes are still on this device.','success')}
+  catch(err){setClassroomSaveState('error');setStatus('Classroom save failed. Check your device copy and download a backup.','danger')}
+}
 async function saveCurrentAsTemplate(){const url=googleScriptUrl(); if(!url)return setStatus('Add your Google Apps Script URL first.','danger'); const name=prompt('Template name:', board.title+' Template'); if(!name)return; const payload={name,bg:panel().bg,objects:JSON.parse(JSON.stringify(panel().objects))}; try{const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'templateSave',template:payload})}); const out=await res.json(); if(out.ok) setStatus('Template saved to Google Drive.','success'); else setStatus(out.error||'Template save failed.','danger')}catch(err){setStatus('Template save failed. '+err.message,'danger')}}
 async function loadTemplateGallery(){const url=googleScriptUrl(); if(!url)return setStatus('Add your Google Apps Script URL first.','danger'); try{const res=await fetch(url+'?action=templateList'); const out=await res.json(); if(!out.ok||!out.templates||!out.templates.length) return setStatus('No templates found in Google Drive.','danger'); const menu=out.templates.map((t,i)=>`${i+1}. ${t.name}`).join('\n'); const choice=prompt('Choose a template number:\n'+menu); const idx=Math.max(1,parseInt(choice||'0',10))-1; if(!out.templates[idx]) return; const load=await fetch(url+'?action=templateLoad&templateId='+encodeURIComponent(out.templates[idx].templateId)); const loaded=await load.json(); if(loaded.ok&&loaded.template){const tpl=loaded.template; panel().bg=tpl.bg||panel().bg; panel().objects=(tpl.objects||[]).map(o=>migrateObject(o)); clearSelection(); render(); saveState(); setStatus('Template loaded: '+tpl.name,'success')} else setStatus(loaded.error||'Template load failed.','danger')}catch(err){setStatus('Template gallery failed. '+err.message,'danger')}}
-async function submitTurnIn(){const url=googleScriptUrl(); if(!url)return setStatus('Add your Google Apps Script URL first.','danger'); const student=board.studentName||prompt('Student name:',board.studentName||''); if(!student)return setStatus('Enter a student name first.','danger'); board.studentName=student; ui.studentName.value=student; try{const png=await exportPng(); const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'turnInSave',turnin:{studentName:student,className:board.className,title:board.title,board},png})}); const out=await res.json(); if(out.ok) setStatus('Turn-in submitted.','success'); else setStatus(out.error||'Turn-in failed.','danger')}catch(err){setStatus('Turn-in failed. '+err.message,'danger')}}
+function submitTurnIn(){openLearnerTurnIn()}
 async function reviewTurnIns(){const url=googleScriptUrl(); if(!url)return setStatus('Add your Google Apps Script URL first.','danger'); try{const res=await fetch(url+'?action=turnInList'); const out=await res.json(); if(!out.ok||!out.turnins||!out.turnins.length) return setStatus('No turn-ins found.','danger'); const menu=out.turnins.map((t,i)=>`${i+1}. ${t.studentName} — ${t.title} (${t.className||'No class'})`).join('\n'); const choice=prompt('Choose a turn-in number to load:\n'+menu); const idx=Math.max(1,parseInt(choice||'0',10))-1; if(!out.turnins[idx]) return; const load=await fetch(url+'?action=turnInLoad&turninId='+encodeURIComponent(out.turnins[idx].turninId)); const loaded=await load.json(); if(loaded.ok&&loaded.turnin&&loaded.turnin.board){board=loaded.turnin.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded turn-in from '+(loaded.turnin.studentName||'student')+'.','success')} else setStatus(loaded.error||'Turn-in load failed.','danger')}catch(err){setStatus('Turn-in review failed. '+err.message,'danger')}}
 gid('saveDriveBtn').onclick=saveToGoogle;
 gid('saveTemplateBtn').onclick=saveCurrentAsTemplate;
 gid('loadTemplateGalleryBtn').onclick=loadTemplateGallery;
-gid('submitTurnInBtn').onclick=submitTurnIn;
+gid('submitTurnInBtn').onclick=openLearnerTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
 gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplatTM boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
 gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin/admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
-  askConfirm('Wipe every panel and start with a blank board? This can\'t be undone.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
+  if(board.mode==='student')return;
+  askConfirm('Start a blank board? Undo or the saved recovery checkpoint can bring this work back.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
     if(!ok) return;
     const optionsDlg=gid('optionsDialog'); if(optionsDlg&&optionsDlg.open) optionsDlg.close();
+    const recovery=rememberBeforeClearing();const policy=board.studentWorkspace;
     stopSync('both');
-    board={version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
+    board={version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',studentWorkspace:policy,restorePoints:[recovery],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
     clearSelection(); resetInteractionState();
     try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
     try{if(typeof idbPut==='function') idbPut(null).catch(()=>{})}catch(_){}
-    initHistory(); render(); persistLocal();
-    setStatus('Board reset.','success');
+    render(); saveState(); showClearRecovery();
+    setStatus('Board reset. Undo can bring it back.','success');
   });
 });
 gid('closeSetup')&&(gid('closeSetup').onclick=()=>gid('setupDialog')?.close());
@@ -4517,20 +4682,21 @@ function playCanvasDetonation(){
 }
 function clearCurrentPanelCompletely(){
   const p=panel();
+  if(board.mode==='student'){p.objects=p.objects.filter(o=>!canEditObject(o));clearSelection();return}
   p.objects=[];
   p.bg='blank';
   p.bgImage='';
   p.canvasFill=null;
   clearSelection();
 }
-function runTntReset(){askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{clearCurrentPanelCompletely(); render(); saveState(); setStatus('Boom! Panel cleared completely.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
+function runTntReset(){if(board.mode==='student'&&!learnerPolicy().allowTnt)return setStatus('TNT is off for this lesson. Use Undo to fix a mistake.');askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; rememberBeforeClearing(); const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{clearCurrentPanelCompletely(); render(); saveState(); showClearRecovery(); setStatus('Boom! Panel cleared. Undo can bring it back.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
 
-function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name; render(); saveState(); setStatus('Audio attached.','success')}
+function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')}
 let audioStarting=false;
 async function startAudioRecording(){
   if(audioStarting) return;
   if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return}
-  const o=currentObj(), targetBoard=board, targetPanel=panel();
+  const o=currentObj(), targetBoard=board, targetPanel=panel(), learnerSession=gid('learnerAudioDialog')?.open?learnerAudioSession:null;
   if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger');
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger');
   audioStarting=true;
@@ -4539,15 +4705,15 @@ async function startAudioRecording(){
   const targetExists=()=>board===targetBoard&&targetBoard.panels.includes(targetPanel)&&targetPanel.objects.includes(o);
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    if(!targetExists()){release(); return}
+    if(!targetExists()||(learnerSession!==null&&(learnerSession!==learnerAudioSession||!gid('learnerAudioDialog')?.open))){release(); return}
     const chunks=[], recorder=new MediaRecorder(stream); mediaRecorder=recorder;
     recorder.ondataavailable=e=>{if(e.data&&e.data.size) chunks.push(e.data)};
-    recorder.onerror=()=>{release(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
+    recorder.onerror=()=>{release();refreshLearnerAudioControls(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
     recorder.onstop=()=>{
-      release(); setButtonChrome('recordAudioBtn','Record Audio');
+      release(); setButtonChrome('recordAudioBtn','Record Audio');refreshLearnerAudioControls();
       if(!targetExists()) return;
       const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'}), reader=new FileReader();
-      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio'; render(); saveState(); setStatus('Audio attached.','success')};
+      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio'; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
       reader.onerror=()=>setStatus('Could not save recorded audio. Please retry.','danger');
       reader.readAsDataURL(blob);
     };
@@ -4628,6 +4794,8 @@ function registerServiceWorker(){
   ensureClassroomWidgetButton();
   ensureAdvancedStickyPalette();
   ensureTopMenus();
+  ensureOptionsPresentation();
+  ensureLearnerWorkspace();
   updateHeaderHeightVar();
   window.addEventListener('resize',updateHeaderHeightVar);
   applyGraphLocale();
@@ -4818,14 +4986,14 @@ function registerServiceWorker(){
     simpleDeleteBtn:'Remove the selected items from the board.',
     simpleTntBtn:'Clear all panels and start a fresh board.'
   };
-  const toolIcons={select:['select','Select'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],polygon:['polygon','Polygon'],star:['shape_star','Star'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
+  const toolIcons={select:['select','Move'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],polygon:['polygon','Polygon'],star:['shape_star','Star'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
     undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp','Save to Google'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['pop_tnt','TNT Reset'],
     imageBtn:['adv_image','Load Image'],openColoringBookDialogBtn:['pop_coloring','Coloring Book'],openGraphDialogBtn:['adv_graph','Graph Creator'],openPictureGraphDialogBtn:['adv_picgraph','Picture Graph'],openClassroomWidgetsBtn:['pop_widgets','Classroom Widgets'],openMosaicDialogBtn:['adv_mosaic','Mosaic Images'],openCollageDialogBtn:['adv_collage','Collage'],openEmojiDialogBtn:['star','Emoji Mixer'],openGifDialogBtn:['play','Create GIF'],duplicateBtn:['duplicate','Duplicate'],frontBtn:['front','Bring Front'],backBtn:['back','Send Back'],groupBtn:['group','Group'],ungroupBtn:['adv_ungroup','Ungroup'],
     dotPictureToolBtn:['dotheart','Dot Pictures'],openDotPictureLibraryBtn:['dotheart','Open Dot Picture Library'],insertDotPictureBtn:['plus','Insert Dot Picture'],activateDotPaintBtn:['dotpaint','Paint Dots'],resetDotPictureBtn:['reset','Reset Dot Picture Colors'],simpleDotPicturesBtn:['pop_dotpic','Dot Pictures'],
     openStickerLibraryBtn:['stamp','Open Sticker Library'],insertStickerBtn:['stamp','Insert Sticker'],createCustomStickerBtn:['adv_share','Create Custom Sticker'],
     insertTemplateBtn:['template','Insert Template'],newTemplatePanelBtn:['panel','New Template Panel'],saveTemplateBtn:['save','Save as Template'],loadTemplateGalleryBtn:['library','Load Gallery'],
-    addPanelBtn:['plus','Add Panel'],renamePanelBtn:['edit','Rename Panel'],deletePanelBtn:['pop_trash','Delete Panel'],clearPanelBtn:['clear','Clear Panel'],
+    addPanelBtn:['plus','Add Page'],renamePanelBtn:['edit','Rename Page'],deletePanelBtn:['pop_trash','Delete Page'],clearPanelBtn:['clear','Clear Page'],
     saveRestorePointBtn:['comment','Save Restore Point'],restorePointBtn:['restore','Restore Point'],applyTextBtn:['check','Apply Text'],noFillBtn:['noFill','No fill'],
     attachStickyImageBtn:['image','Attach Sticky Image'],toggleCommentResolvedBtn:['check','Resolve/Reopen Comment'],recordAudioBtn:['mic','Record Audio'],loadAudioBtn:['music','Load Audio'],playAudioBtn:['play','Play Audio'],
     selectGroupBtn:['group','Select Group'],answerKeyBtn:['check','Answer Key'],lockBtn:['lock','Lock'],unlockBtn:['unlock','Unlock'],deleteBtn:['pop_trash','Delete'],
@@ -4834,14 +5002,14 @@ function registerServiceWorker(){
     submitTurnInBtn:['submit','Submit Turn-In'],reviewTurnInsBtn:['review','Review Turn-Ins'],openModerationBtn:['shield','Open Moderation Dashboard'],refreshModerationBtn:['refresh','Refresh Data'],
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['adv_bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
-    frameNavAdd:['plus','Add Frame'],clearFrameBtn:['clear','Clear Frame'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
+    frameNavAdd:['plus','Add Page'],clearFrameBtn:['clear','Clear Page'],moreOptionsBtn:['more','More Options'],inspectorToggleBtn:['inspector','Toggle Inspector'],
     simpleImageBtn:['pop_image','Add Image'],simpleColoringBookBtn:['pop_coloring','Coloring Book'],simpleGraphBtn:['pop_graph','Graph Creator'],simplePictureGraphBtn:['pop_picgraph','Picture Graph'],simpleClassroomWidgetsBtn:['pop_widgets','Classroom Widgets'],simpleWheelSpinnerBtn:['pop_spinner','Wheel Spinner'],simpleMosaicBtn:['pop_mosaic','Mosaic Images'],simpleCollageBtn:['pop_collage','Collage'],simpleMermaidBtn:['pop_mermaid','Mermaid Diagram'],simpleWordCloudBtn:['pop_wordcloud','Word Cloud'],simpleConceptMapBtn:['pop_concept','Concept Map'],simpleEmojiBtn:['pop_emoji','Emoji Mixer'],simpleGifBtn:['pop_gif','Create GIF'],simpleTntBtn:['pop_tnt','TNT Reset'],simpleBgImageBtn:['bg','Set Background'],scratchCoverBtn:['adv_eraser','Scratch Cover'],simpleScratchCoverBtn:['eraser','Scratch Cover'],simpleClearBgBtn:['clearBg','Clear Background'],simpleRemoveBgColorBtn:['magic','Remove BG Color'],
     removeBgColorBtn:['magic','Remove BG Color'],simpleDeleteBtn:['pop_trash','Delete Selected'],floatDeselectBtn:['close','Deselect'],floatDeleteBtn:['pop_trash','Delete'],floatDuplicateBtn:['duplicate','Duplicate'],floatSaveBtn:['save','Download selected content'],floatEditBtn:['edit','Edit Text'],floatCropBtn:['crop','Crop Image'],floatConceptChildBtn:['plus','Add Concept Child'],floatConceptLinkBtn:['concept','Set Concept Link'],
     insertMermaidBtn:['adv_mermaid','Mermaid Diagram'],insertWordCloudBtn:['adv_wordcloud','Word Cloud'],openConceptMapDialogBtn:['connector','Concept Map'],resetBoardBtn:['reset','Reset Board'],
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
     closeOptions:['close','Close'],closeAbout:['close','Close'],closeMoreOptions:['close','Close'],closeMermaid:['close','Close'],closeWordCloud:['close','Close'],
     more_saveLocalBtn:['save','Save File'],more_loadLocalBtn:['folder','Load File'],more_importPanelsBtn:['import','Import Panels'],more_exportBtn:['image','Export PNG'],more_exportPdfBtn:['pdf','Export PDF'],
-    more_saveDriveBtn:['cloudUp','Save to Google'],more_loadDriveBtn:['cloudDown','Load from Google'],more_deletePanelBtn:['pop_trash','Delete Frame'],more_tntBtn:['pop_tnt','TNT Reset'],
+    more_saveDriveBtn:['cloudUp','Save to Google'],more_loadDriveBtn:['cloudDown','Load from Google'],more_deletePanelBtn:['pop_trash','Delete Page'],more_tntBtn:['pop_tnt','TNT Reset'],
     graphInsertBtn:['plus','Insert Graph'],graphCancelBtn:['close','Close'],pictureGraphInsertBtn:['plus','Insert Picture Graph'],pictureGraphCancelBtn:['close','Close'],mosaicCreateBtn:['plus','Create Mosaic'],mosaicCancelBtn:['close','Cancel'],collageCreateBtn:['plus','Create Collage'],collageCancelBtn:['close','Cancel'],touchMultiSelectBtn:['check','Multi-Select'],insertEmojiMixBtn:['plus','Insert Mix'],mixSelectedEmojiBtn:['magic','Mix Selected Emojis'],createGifBtn:['play','Create GIF'],downloadGifBtn:['download','Download GIF'],
     pictureGraphLoadSymbolBtn:['image','Load picture symbol'],pictureGraphClearSymbolBtn:['text','Use typed symbol'],
     wcGenerate:['wordcloud','Generate'],wcCopyPng:['image','Copy PNG'],wcCancel:['close','Cancel'],wcInsert:['check','Insert'],conceptAddChildBtn:['plus','Add Child'],conceptSetLinkBtn:['concept','Set Link'],conceptOpenLinkBtn:['openLink','Open Link'],conceptAttachImageBtn:['image','Attach Image'],conceptMapSampleBtn:['file','Sample'],conceptMapImageBtn:['image','Add image to line'],conceptMapCancelBtn:['close','Cancel'],conceptMapInsertBtn:['check','Insert Concept Map'],mermaidCopyPng:['image','Copy PNG'],mermaidCancel:['close','Cancel'],mermaidInsert:['check','Insert'],
