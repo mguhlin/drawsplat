@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.1';
+const VERSION='3.1.2';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -1589,7 +1589,7 @@ function validateBoard(b){
 function migrateBoard(b){validateBoard(b);b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
-function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=Math.abs(o.w),h=Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
+function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=o.type==='audio'?Math.max(220,Math.abs(o.w)):Math.abs(o.w),h=o.type==='audio'?Math.max(156,Math.abs(o.h)):Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
 function normalizeObject(o){if(!o||['line','arrow','path','connector'].includes(o.type))return;const b=normBox(o);o.x=b.x;o.y=b.y;o.w=b.w;o.h=b.h}
 function resetInteractionState(){commitInlineTextEditor?.(true); selectedIds=[]; connectorPendingFrom=null; marquee=null; drawing=null; liveDrawingPathEl=null; drag=null; scratchErase=null; eraserDirty=false}
 
@@ -1797,26 +1797,36 @@ function createStickyObject(o,b){const fo=document.createElementNS(NS,'foreignOb
 function createCommentObject(o,b){const g=document.createElementNS(NS,'g');const pinFill=o.resolved?'#9ca3af':'#ef4444';g.appendChild(svgEl(`<line x1="${b.x+14}" y1="${b.y+16}" x2="${b.x+14}" y2="${b.y+b.h}" stroke="${pinFill}" stroke-width="3" opacity="${o.opacity}"/>`));g.appendChild(svgEl(`<circle cx="${b.x+14}" cy="${b.y+14}" r="10" fill="${pinFill}" opacity="${o.opacity}"/>`));const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x+24);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(120,b.w-24));fo.setAttribute('height',Math.max(50,b.h));const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',background:o.resolved?'#f3f4f6':'#fff7e6',border:'1px solid '+(o.resolved?'#d1d5db':'#f59e0b'),borderRadius:'10px',padding:'10px',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:'space-between'});const badge=document.createElementNS(XHTML,'div');badge.textContent=o.resolved?'Resolved Comment':'Feedback Pin';badge.style.fontWeight='700';badge.style.fontSize='12px';badge.style.marginBottom='6px';const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add feedback...');content.style.flex='1';content.style.wordBreak='break-word';d.appendChild(badge);d.appendChild(content);fo.appendChild(d);g.appendChild(fo);return g}
 function createStampObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(30,b.w));fo.setAttribute('height',Math.max(30,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',border:o.emojiParts?'2px solid rgba(124,58,237,.18)':'2px solid rgba(0,0,0,.08)',borderRadius:'18px',background:o.stampBg||'#eef2ff',overflow:'hidden'});let icon;if(o.stampSrc){icon=document.createElementNS(XHTML,'img');icon.setAttribute('src',o.stampSrc);Object.assign(icon.style,{maxWidth:'70%',maxHeight:'56%',objectFit:'contain'})}else if(o.emojiParts?.length){icon=document.createElementNS(XHTML,'div');Object.assign(icon.style,{position:'relative',width:'78%',height:'68%',minHeight:'44px'});o.emojiParts.slice(0,4).forEach((emoji,i)=>{const part=document.createElementNS(XHTML,'span');part.textContent=emoji;Object.assign(part.style,{position:'absolute',left:[8,34,18,44][i%4]+'%',top:[4,22,36,6][i%4]+'%',fontSize:Math.max(24,Math.min(b.w,b.h)*[.5,.44,.38,.34][i%4])+'px',transform:`rotate(${[-10,12,0,-18][i%4]}deg)`,filter:'drop-shadow(0 2px 1px rgba(0,0,0,.12))'});icon.appendChild(part)})}else{icon=document.createElementNS(XHTML,'div');icon.textContent=o.stampIcon||'⭐';icon.style.fontSize=Math.max(26,Math.min(b.w,b.h)*0.56)+'px';}const label=document.createElementNS(XHTML,'div');label.textContent=o.stampLabel||'Sticker';label.style.fontSize='12px';label.style.fontWeight='700';label.style.marginTop='4px';d.appendChild(icon);d.appendChild(label);fo.appendChild(d);return fo}
 let notePlayback=null;
+const noteLengths=new Map();
+function audioTime(seconds){seconds=Math.max(0,Math.floor(Number.isFinite(seconds)?seconds:0));return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
+function noteDuration(o,audio){if(Number.isFinite(audio?.duration)&&audio.duration>0){noteLengths.set(o.audioSrc,audio.duration);return audio.duration}return Number.isFinite(o?.audioDuration)&&o.audioDuration>0?o.audioDuration:noteLengths.get(o?.audioSrc)||0}
 function refreshNotePlayback(){
-  document.querySelectorAll('.audio-controls').forEach(controls=>{const active=notePlayback?.id===controls.dataset.audioId,playing=active&&!notePlayback.audio.paused;controls.querySelector('[data-audio-action="play"]').disabled=playing;controls.querySelector('[data-audio-action="pause"]').disabled=!playing;controls.querySelector('[data-audio-action="stop"]').disabled=!active;controls.querySelector('.audio-playback-status').textContent=playing?'Playing':active?'Paused':'Ready to listen'});
+  document.querySelectorAll('.audio-controls[data-audio-id]').forEach(controls=>{const active=notePlayback?.id===controls.dataset.audioId,audio=active?notePlayback.audio:null,playing=active&&!audio.paused,o=findObj(controls.dataset.audioId),duration=noteDuration(o,audio),elapsed=audio?.currentTime||0;
+    controls.querySelector('[data-audio-action="play"]').disabled=playing;controls.querySelector('[data-audio-action="pause"]').disabled=!playing;controls.querySelector('[data-audio-action="stop"]').disabled=!active;controls.querySelector('.audio-playback-status').textContent=playing?'Playing':active?'Paused':'Ready to listen';
+    const progress=controls.querySelector('.audio-progress');progress.disabled=!active||!duration;progress.max=duration||1;progress.value=Math.min(elapsed,duration||0);progress.setAttribute('aria-valuetext',audioTime(elapsed)+(duration?' of '+audioTime(duration):''));controls.querySelector('.audio-time').textContent=audioTime(elapsed)+(duration?' / '+audioTime(duration):'');
+  });
 }
+function openNoteRecording(o){if(!canEditObject(o)||!learnerAllows('audio'))return;stopNotePlayback();setTool('select');setSingleSelection(o.id);render();gid('learnerAudioDialog').showModal();refreshLearnerAudioControls()}
+
 function stopNotePlayback(){if(notePlayback){notePlayback.audio.pause();notePlayback.audio.currentTime=0;notePlayback=null}refreshNotePlayback()}
 function controlNotePlayback(o,action){
   if(action==='stop'){if(notePlayback?.id===o.id)stopNotePlayback();return}
   if(action==='pause'){if(notePlayback?.id===o.id)notePlayback.audio.pause();refreshNotePlayback();return}
   if(!o.audioSrc)return;
-  if(notePlayback?.id!==o.id||notePlayback?.src!==o.audioSrc){stopNotePlayback();const audio=new Audio(o.audioSrc);notePlayback={id:o.id,src:o.audioSrc,audio};audio.addEventListener('play',refreshNotePlayback);audio.addEventListener('pause',refreshNotePlayback);audio.addEventListener('ended',()=>{if(notePlayback?.audio===audio)stopNotePlayback()});audio.addEventListener('error',()=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('This audio could not be played. Try loading or recording it again.','danger')}})}
+  if(notePlayback?.id!==o.id||notePlayback?.src!==o.audioSrc){stopNotePlayback();const audio=new Audio(o.audioSrc);notePlayback={id:o.id,src:o.audioSrc,audio};for(const event of ['loadedmetadata','durationchange','timeupdate','seeked'])audio.addEventListener(event,refreshNotePlayback);audio.addEventListener('play',refreshNotePlayback);audio.addEventListener('pause',refreshNotePlayback);audio.addEventListener('ended',()=>{if(notePlayback?.audio===audio)stopNotePlayback()});audio.addEventListener('error',()=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('This audio could not be played. Try loading or recording it again.','danger')}})}
   const audio=notePlayback.audio;audio.play().then(refreshNotePlayback).catch(err=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('Playback failed. '+err.message,'danger')}});
 }
 function createAudioObject(o,b){
-  const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(80,b.w));fo.setAttribute('height',Math.max(100,b.h));fo.setAttribute('opacity',o.opacity);
+  const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(80,b.w));fo.setAttribute('height',b.h);fo.setAttribute('opacity',o.opacity);
   const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);d.className='audio-card';Object.assign(d.style,{width:'100%',height:'100%',background:o.fill&&o.fill!=='none'?o.fill:'#eff6ff',border:'1px solid #bfdbfe'});
   const title=document.createElementNS(XHTML,'div');title.className='audio-note-title';title.innerHTML=objectHtml(o,'Voice note');d.appendChild(title);
   if(o.audioSrc){const controls=document.createElementNS(XHTML,'div');controls.className='audio-controls';controls.dataset.audioId=o.id;controls.setAttribute('role','group');controls.setAttribute('aria-label','Voice note playback');
     for(const action of ['play','pause','stop']){const button=document.createElementNS(XHTML,'button');button.type='button';button.dataset.audioAction=action;button.textContent=action[0].toUpperCase()+action.slice(1);button.setAttribute('aria-label',button.textContent+' voice note');button.onclick=()=>controlNotePlayback(o,action);controls.appendChild(button)}
+    const progress=document.createElementNS(XHTML,'input');progress.type='range';progress.className='audio-progress';progress.min='0';progress.step='0.1';progress.setAttribute('aria-label','Playback position');progress.oninput=()=>{if(notePlayback?.id!==o.id)return;const duration=noteDuration(o,notePlayback.audio);if(duration){notePlayback.audio.currentTime=Math.max(0,Math.min(duration,+progress.value));refreshNotePlayback()}};controls.appendChild(progress);
+    const time=document.createElementNS(XHTML,'span');time.className='audio-time';controls.appendChild(time);
     const status=document.createElementNS(XHTML,'span');status.className='audio-playback-status';status.setAttribute('role','status');controls.appendChild(status);
-    for(const event of ['pointerdown','click','dblclick'])controls.addEventListener(event,e=>e.stopPropagation());d.appendChild(controls);
-  }else{const meta=document.createElementNS(XHTML,'div');meta.className='audio-playback-status';meta.textContent='Record or load audio to listen here.';d.appendChild(meta)}
+    for(const event of ['pointerdown','pointerup','pointercancel','click','dblclick'])controls.addEventListener(event,e=>e.stopPropagation());d.appendChild(controls);
+  }else{const controls=document.createElementNS(XHTML,'div');controls.className='audio-controls';if(canEditObject(o)&&learnerAllows('audio')){const record=document.createElementNS(XHTML,'button');record.type='button';record.textContent='Record my voice';record.onclick=()=>openNoteRecording(o);controls.appendChild(record)}const meta=document.createElementNS(XHTML,'span');meta.className='audio-playback-status';meta.textContent=canEditObject(o)&&learnerAllows('audio')?'Record a message, then listen here.':'No recording attached.';controls.appendChild(meta);for(const event of ['pointerdown','pointerup','pointercancel','click','dblclick'])controls.addEventListener(event,e=>e.stopPropagation());d.appendChild(controls)}
   fo.appendChild(d);return fo;
 }
 function svgEl(s){const t=document.createElementNS(NS,'g');t.innerHTML=s.trim();return t.firstChild}
@@ -4715,13 +4725,14 @@ function clearCurrentPanelCompletely(){
 }
 function runTntReset(){if(board.mode==='student'&&!learnerPolicy().allowTnt)return setStatus('TNT is off for this lesson. Use Undo to fix a mistake.');askConfirm('Blow up the current panel and start over?',{okLabel:'Blow up!'}).then(ok=>{if(!ok) return; rememberBeforeClearing(); const overlay=gid('boomOverlay'); overlay.classList.add('show'); playCanvasDetonation(); setTimeout(()=>{clearCurrentPanelCompletely(); render(); saveState(); showClearRecovery(); setStatus('Boom! Panel cleared. Undo can bring it back.','success')},1100); setTimeout(()=>overlay.classList.remove('show'),1700)})}
 
-function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')}
+function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name;delete o.audioDuration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')}
 let audioStarting=false;
 async function startAudioRecording(){
   if(audioStarting) return;
   if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return}
   const o=currentObj(), targetBoard=board, targetPanel=panel(), learnerSession=gid('learnerAudioDialog')?.open?learnerAudioSession:null;
   if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger');
+  if(!canEditObject(o)||!learnerAllows('audio'))return setStatus('This note is protected. Record your answer in your own note.','danger');
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger');
   audioStarting=true;
   let stream;
@@ -4730,14 +4741,15 @@ async function startAudioRecording(){
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:true});
     if(!targetExists()||(learnerSession!==null&&(learnerSession!==learnerAudioSession||!gid('learnerAudioDialog')?.open))){release(); return}
-    const chunks=[], recorder=new MediaRecorder(stream); mediaRecorder=recorder;
+    const chunks=[], recorder=new MediaRecorder(stream),recordedAt=Date.now(); mediaRecorder=recorder;
     recorder.ondataavailable=e=>{if(e.data&&e.data.size) chunks.push(e.data)};
     recorder.onerror=()=>{release();refreshLearnerAudioControls(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
     recorder.onstop=()=>{
       release(); setButtonChrome('recordAudioBtn','Record Audio');refreshLearnerAudioControls();
       if(!targetExists()) return;
+      const duration=Math.max(0,(Date.now()-recordedAt)/1000);
       const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'}), reader=new FileReader();
-      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio'; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
+      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio';o.audioDuration=duration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
       reader.onerror=()=>setStatus('Could not save recorded audio. Please retry.','danger');
       reader.readAsDataURL(blob);
     };
