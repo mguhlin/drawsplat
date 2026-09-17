@@ -1375,3 +1375,6 @@ body[data-workspace="education"] #learnerTurnIn{order:-1;background:#6d38e8;colo
 .stamp-active-bar select{padding:7px;border:1px solid #d5c9ff;border-radius:8px;min-height:44px;background:#fff}
 body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{cursor:crosshair!important}
 @media(max-width:560px){.fun-stamp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stamp-tray-filters{grid-template-columns:1fr}.stamp-active-bar strong{flex-basis:100%}}
+.stamp-preview,.stamp-preview *{pointer-events:none!important}
+#stampFlip[aria-pressed="true"]{border-color:#6d38e8;background:#ede9fe;color:#5425bd}
+#stampActiveLabel{min-width:120px}
