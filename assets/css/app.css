@@ -1325,3 +1325,13 @@ body[data-learner-view="beginner"] .status-toast{top:auto;bottom:90px}
 #classroomSaveChip[hidden]{display:none}
 /* Keep submission discoverable on a narrow student toolbar. */
 body[data-workspace="education"] #learnerTurnIn{order:-1;background:#6d38e8;color:#fff;border-color:#6d38e8}
+
+/* Playback stays on the note, including in Beginner view. */
+.audio-card{box-sizing:border-box;gap:5px;padding:8px}
+.audio-note-title{font-weight:700;max-width:100%;max-height:24px;overflow:hidden;text-overflow:ellipsis}
+.audio-controls{display:flex;flex-wrap:wrap;gap:4px;width:100%}
+.audio-controls button{min-height:32px;padding:4px 8px;border:1px solid #c4b5fd;border-radius:8px;background:#fff;color:#5425bd;font-size:12px;font-weight:700;cursor:pointer}
+.audio-controls button:first-child{background:#6d38e8;color:#fff}
+.audio-controls button:disabled{opacity:.45;cursor:default}
+.audio-controls button:focus-visible{outline:3px solid #faa634;outline-offset:1px}
+.audio-playback-status{font-size:11px;color:#475569;flex-basis:100%}

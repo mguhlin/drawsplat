@@ -95,3 +95,14 @@ test('closing an active voice recording keeps the answer and releases the microp
   });
   await page.locator('#learnerResponse').click();await page.locator('#learnerVoiceResponse').click();await page.locator('#learnerRecordAudio').click();await expect(page.locator('#learnerAudioStatus')).toContainText('Recording.');await page.locator('#learnerAudioDialog .close').click();await expect.poll(async()=>!!(await saved(page)).panels[0].objects.at(-1).audioSrc).toBe(true);expect(await page.evaluate(()=>window.micStopped)).toBe(true);
 });
+test('recorded notes offer play pause and stop on the canvas without editing the board',async({page})=>{
+  const b=fixture({view:'beginner',tools:['select','pen','eraser','audio']});b.panels[0].objects.push({id:'voice1',type:'audio',x:230,y:120,w:220,h:100,fill:'#eff6ff',opacity:1,layer:'student',audioSrc:'data:audio/wav;base64,UklGRg==',text:'My answer'});await load(page,b);await page.goto('/app/whiteboard.html?role=student');
+  await page.evaluate(()=>{window.Audio=class extends EventTarget {constructor(src){super();this.src=src;this.paused=true;this.currentTime=0;window.testPlayer=this;window.playersCreated=(window.playersCreated||0)+1}play(){this.paused=false;this.dispatchEvent(new Event('play'));return Promise.resolve()}pause(){this.paused=true;this.dispatchEvent(new Event('pause'))}}});
+  const controls=page.locator('.audio-controls');await expect(controls).toBeVisible();await expect(controls.getByRole('button',{name:'Pause voice note',exact:true})).toBeDisabled();
+  await page.locator('[data-learner-tool=eraser]').click();await controls.getByRole('button',{name:'Play voice note',exact:true}).click();await expect(controls).toContainText('Playing');expect((await saved(page)).panels[0].objects).toHaveLength(2);
+  await page.locator('#boardTitle').evaluate(el=>{el.value='Updated title';el.dispatchEvent(new Event('input',{bubbles:true}))});await click(page,'learnerHome');await expect(controls).toContainText('Playing');
+  await controls.getByRole('button',{name:'Pause voice note',exact:true}).click();await expect(controls).toContainText('Paused');expect(await page.evaluate(()=>window.testPlayer.paused)).toBe(true);
+  await page.evaluate(()=>window.testPlayer.currentTime=2);await controls.getByRole('button',{name:'Play voice note',exact:true}).click();expect(await page.evaluate(()=>window.playersCreated)).toBe(1);expect(await page.evaluate(()=>window.testPlayer.currentTime)).toBe(2);
+  await controls.getByRole('button',{name:'Stop voice note',exact:true}).click();await expect(controls).toContainText('Ready to listen');expect(await page.evaluate(()=>window.testPlayer.currentTime)).toBe(0);
+  await controls.getByRole('button',{name:'Play voice note',exact:true}).click();await page.evaluate(()=>window.testPlayer.dispatchEvent(new Event('ended')));await expect(controls).toContainText('Ready to listen');
+});
