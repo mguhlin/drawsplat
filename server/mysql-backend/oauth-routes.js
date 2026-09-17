@@ -102,7 +102,8 @@ function attachOAuthRoutes(app, pool, options) {
     try {
       const idToken = String((req.body && req.body.idToken) || '');
       if (!idToken) return res.status(400).json({ ok: false, error: 'idToken_required' });
-      const profile = await verifyGoogle(idToken, googleClientId || null);
+      if (!googleClientId) return res.status(503).json({ ok: false, error: 'Google sign-in is not configured. Use email sign-in.' });
+      const profile = await verifyGoogle(idToken, googleClientId);
       const user = await upsertProviderUser(pool, profile, (req.body && req.body.role) || 'teacher');
       const { token, expiresAt } = await issueSession(pool, user, req, sessionTtlHours);
       await logEvent('LOGIN', { actor: user.email, actorUserId: user.id, actorRole: user.role, targetType: 'session', metadata: { provider: 'google' } });

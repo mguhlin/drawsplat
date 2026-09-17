@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>DrawSplatTM MySQL Setup Wizard</title>
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
@@ -50,24 +50,24 @@
 <main class="admin-shell mysql-wizard">
   <section class="admin-hero">
     <h2>MySQL Backend Setup Wizard</h2>
-    <p>Use this page to prepare a self-hosted DrawSplat<sup class="tm">TM</sup> backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
+    <p>Choose Railway, DigitalOcean, or another MySQL host. Connect the public saving service here; boards stay private to each signed-in account. Use this page to prepare a DrawSplat<sup class="tm">TM</sup> backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
   </section>
 
   <section class="wizard-steps" aria-label="MySQL setup steps">
     <article class="wizard-step">
       <span>1</span>
       <h3>Install Backend</h3>
-      <p>Deploy the starter backend in <code>server/mysql-backend</code> on a server that can reach MySQL.</p>
+      <p>Deploy the saving service in <code>server/mysql-backend</code> on a server that can reach MySQL.</p>
     </article>
     <article class="wizard-step">
       <span>2</span>
       <h3>Create Database</h3>
-      <p>Run <code>schema.sql</code>, then put the database credentials in the server-side <code>.env</code> file.</p>
+      <p>Create an empty MySQL database and give its credentials to the saving service. Tables are created automatically at startup; existing databases receive tracked migrations.</p>
     </article>
     <article class="wizard-step">
       <span>3</span>
       <h3>Connect DrawSplat<sup class="tm">TM</sup></h3>
-      <p>Save the public API endpoint here. Do not put the MySQL password in this browser page.</p>
+      <p>Test the public API address, enable online saving, then sign in on the whiteboard. Keep database credentials on the server.</p>
     </article>
   </section>
 
@@ -78,12 +78,31 @@
       <label class="admin-label" for="mysqlEndpoint">MySQL backend API endpoint</label>
       <input id="mysqlEndpoint" type="url" placeholder="https://drawsplat.example.org/api/drawsplat/mysql" autocomplete="off">
       <div class="admin-actions">
-        <button id="saveMysqlEndpointBtn" class="primary" type="button">Save Endpoint</button>
+        <button id="saveMysqlEndpointBtn" class="primary" type="button">Test &amp; Enable Online Saving</button>
         <button id="testMysqlEndpointBtn" type="button">Test Endpoint</button>
       </div>
       <p id="mysqlWizardStatus" class="hint" role="status" aria-live="polite"></p>
     </article>
 
+    <article class="admin-panel">
+      <h3>Choose your host</h3>
+      <p><strong>Railway:</strong> Deploy <code>server/mysql-backend</code> from GitHub and add a MySQL service in the same project. Reference its <code>MYSQL_URL</code> in the API service.</p>
+      <p><strong>DigitalOcean:</strong> Run the bundled Docker Compose setup on a Droplet, or deploy the API on App Platform and connect a managed database.</p>
+      <p><strong>Existing MySQL:</strong> Run this same API wherever Node.js or Docker is available. Set a database URL or individual host, port, database, username, and password settings.</p>
+      <a class="admin-button" href="../docs/setup-mysql.md">Step-by-step hosting guide</a>
+    </article>
+    <article class="admin-panel">
+      <h3>Create your saving account</h3>
+      <p class="hint">For teachers setting up their own saving account. Student accounts should be provisioned by the school. This password is separate from the Teacher Admin password.</p>
+      <label class="admin-label" for="mysqlAccountEmail">Teacher email</label>
+      <input id="mysqlAccountEmail" type="email" autocomplete="username">
+      <label class="admin-label" for="mysqlAccountName">Your name</label>
+      <input id="mysqlAccountName" type="text" autocomplete="name">
+      <label class="admin-label" for="mysqlAccountPassword">New account password (at least 8 characters)</label>
+      <input id="mysqlAccountPassword" type="password" autocomplete="new-password" minlength="8">
+      <button id="mysqlCreateAccount" type="button">Create teacher saving account</button>
+      <p>Then open the whiteboard and choose <strong>File → Save online</strong>. Use <strong>File → Online account</strong> to sign out on a shared device.</p>
+    </article>
     <article class="admin-panel">
       <h3>Server-Side Database Settings</h3>
       <p class="hint">Use these fields to generate a server-only <code>.env</code> template. The password is not saved in the browser.</p>
@@ -117,12 +136,11 @@
     <article class="admin-panel">
       <h3>Backend Endpoint Contract</h3>
       <ol class="admin-checklist">
-        <li><code>GET /health</code> verifies the backend is alive.</li>
-        <li><code>GET /rooms/:roomId/board</code> loads the current room board.</li>
-        <li><code>PUT /rooms/:roomId/board</code> saves board JSON.</li>
-        <li><code>POST /templates</code> saves reusable templates.</li>
-        <li><code>POST /turnins</code> stores student submissions.</li>
-        <li><code>DELETE /sessions/:sessionId</code> clears temporary sessions.</li>
+        <li><code>GET /health</code> checks the database and supported features.</li>
+        <li><code>POST /auth/login</code> signs in to an account.</li>
+        <li><code>GET /boards</code> lists only your saved boards.</li>
+        <li><code>GET /boards/:key</code> opens your board.</li>
+        <li><code>PUT /boards/:key</code> saves your board with conflict detection.</li>
       </ol>
       <div class="admin-actions">
         <a class="admin-button" href="../server/mysql-backend/README.md">Read Backend Guide</a>
@@ -133,5 +151,6 @@
 </main>
 
 <script src="../assets/js/admin-gate.js?v=1.2"></script>
-<script src="../assets/js/mysql-setup.js"></script></body>
+<script src="../assets/js/mysql-cloud.js?v=3.1.12"></script>
+<script src="../assets/js/mysql-setup.js?v=3.1.12"></script></body>
 </html>

@@ -1463,3 +1463,17 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 
 .response-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.learner-dialog .response-choice-card{display:flex;gap:12px;align-items:flex-start;text-align:left;min-height:110px;padding:16px!important;border:1px solid #d8ccff!important;border-radius:16px!important;background:linear-gradient(135deg,#f4f0ff,#fff)!important}.response-choice-icon{font-size:30px;line-height:1.2;flex-shrink:0}.response-choice-card strong{display:block;color:#6534c7;font-size:16px}.response-choice-card small{display:block;margin-top:6px;line-height:1.4;color:#526077;font-size:14px}.response-choice-card:hover{background:#eee7ff!important}.response-choice-card:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}.response-choice-card[hidden]{display:none}#learnerAudioDetails{margin-top:14px}#learnerAudioDetails label{display:block;margin:10px 0 6px}#learnerAudioName{width:100%;box-sizing:border-box}#learnerAudioReturnPage{min-height:48px;width:100%}
 @media(max-width:560px){.response-choice-grid{grid-template-columns:1fr}.learner-dialog .response-choice-card{min-height:86px;padding:12px!important}.response-choice-icon{font-size:28px}}
+
+#videoNoteReturnPage{min-height:48px;width:100%}#videoNoteDraftStatus:empty,#learnerAudioDraftStatus:empty{display:none}
+
+/* Online saving follows the same labeled card style as the whiteboard tools. */
+.mysql-cloud-dialog{width:min(520px,94vw);max-height:90dvh;padding:24px;border:1px solid #d8cfff;border-radius:22px;box-shadow:0 20px 70px #34206435;overflow:auto}
+.mysql-cloud-dialog::backdrop{background:#23143c66}
+.mysql-cloud-dialog h2{color:#6d28d9;padding-right:70px}
+.mysql-cloud-dialog form{display:grid;gap:16px}
+.mysql-cloud-dialog label{display:grid;gap:6px;font-weight:700}
+.mysql-cloud-dialog input,.mysql-cloud-dialog button{min-height:48px}
+.mysql-cloud-close{float:right}
+.mysql-board-list{display:grid;gap:10px;margin-top:16px}
+.mysql-board-card{display:grid;gap:5px;text-align:left;padding:14px;background:#f5f0ff;border:1px solid #d8cfff;border-radius:14px}
+.mysql-board-card span{font-size:.85rem;color:#64748b}

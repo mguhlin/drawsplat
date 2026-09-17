@@ -107,25 +107,27 @@
     if(folderEndpoint) folderEndpoint.disabled=!(mode==='standalone-folder'||mode==='mysql');
   }
 
-  function saveStorageSettings(){
-    const mode=storageMode?.value||'google';
+  async function saveStorageSettings(){
+    const mode=storageMode?.value||'google',requestedEndpoint=(folderEndpoint?.value||'').trim();
+    const button=$('saveStorageBtn');if(button.disabled)return;button.disabled=true;
     try{
+      if(mode==='mysql'){await window.DrawSplatMySQL.test(requestedEndpoint);if(mode!==storageMode.value||requestedEndpoint!==folderEndpoint.value.trim())throw new Error('The connection changed. Test the new settings before enabling.');}
       localStorage.setItem(STORAGE_MODE_KEY,mode);
       localStorage.setItem(SESSION_HOURS_KEY,sessionHours?.value||'24');
-      localStorage.setItem(FOLDER_ENDPOINT_KEY,(folderEndpoint?.value||'').trim());
+      localStorage.setItem(FOLDER_ENDPOINT_KEY,mode==='mysql'?window.DrawSplatMySQL.endpoint(requestedEndpoint):requestedEndpoint);
       if(mode==='browser-session') localStorage.setItem(SESSION_EXPIRES_KEY,sessionExpiryFromHours());
       else localStorage.removeItem(SESSION_EXPIRES_KEY);
       const msg=mode==='browser-session'
         ? 'Browser-only timed session saved. Current autosave will expire after '+(sessionHours?.value||'24')+' hour(s).'
         : mode==='mysql'
-          ? 'MySQL backend mode saved. A server API endpoint is required before the board can use it.'
+          ? 'MySQL online saving enabled. Open the board and choose File → Save online to sign in.'
         : mode==='standalone-folder'
           ? 'Standalone folder mode saved. A backend endpoint is required before the board can use it.'
           : 'Google storage mode saved.';
       setStatus(msg,'success');
     }catch(err){
       setStatus('Could not save storage mode: '+err.message,'danger');
-    }
+    }finally{button.disabled=false}
     syncStorageModeUi();
   }
 

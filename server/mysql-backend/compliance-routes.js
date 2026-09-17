@@ -72,7 +72,7 @@ function attachComplianceRoutes(app, pool, options = {}) {
       `SELECT s.id AS session_id, s.expires_at, u.*
        FROM sessions s
        JOIN users u ON u.id = s.user_id
-       WHERE s.session_token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > NOW()
+       WHERE s.session_token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > NOW() AND u.deleted_at IS NULL
        LIMIT 1`,
       [tokenHash]
     );
@@ -80,7 +80,8 @@ function attachComplianceRoutes(app, pool, options = {}) {
   }
   function requireRole(roles) {
     return async function(req, res, next) {
-      const user = await sessionUserFromRequest(req);
+      let user;
+      try { user = await sessionUserFromRequest(req); } catch (err) { return next(err); }
       if (!user) return res.status(401).json({ ok: false, error: 'auth_required' });
       if (Array.isArray(roles) && roles.length && roles.indexOf(user.role) === -1) {
         return res.status(403).json({ ok: false, error: 'forbidden', role: user.role });
@@ -396,15 +397,16 @@ function attachComplianceRoutes(app, pool, options = {}) {
       const [user] = await pool.query('SELECT id, email, student_name FROM users WHERE id = ? LIMIT 1', [id]);
       if (!user[0]) return res.status(404).json({ ok: false, error: 'user_not_found' });
       const [turnins] = await pool.execute('DELETE FROM turnins WHERE student_name = ?', [user[0].student_name]);
+      const [cloudBoards] = await pool.execute('DELETE FROM cloud_boards WHERE user_id = ?', [id]);
       const [sessions] = await pool.execute('DELETE FROM sessions WHERE user_id = ?', [id]);
       const [usage] = await pool.execute('DELETE FROM time_usage WHERE user_id = ?', [id]);
       await pool.execute('UPDATE users SET deleted_at = NOW(), email = NULL, student_name = NULL, password_hash = NULL, password_salt = NULL, parent_code_hash = NULL WHERE id = ?', [id]);
       await logEvent(pool, 'DATA_DELETED', {
         actor: req.dsUser.email, actorUserId: req.dsUser.id, actorRole: req.dsUser.role,
         targetType: 'user', targetId: String(id),
-        metadata: { reason, turninsDeleted: turnins.affectedRows, sessionsDeleted: sessions.affectedRows, usageDeleted: usage.affectedRows }
+        metadata: { reason, turninsDeleted: turnins.affectedRows, sessionsDeleted: sessions.affectedRows, usageDeleted: usage.affectedRows, boardsDeleted: cloudBoards.affectedRows }
       });
-      res.json({ ok: true, deleted: { turnins: turnins.affectedRows, sessions: sessions.affectedRows, usage: usage.affectedRows } });
+      res.json({ ok: true, deleted: { turnins: turnins.affectedRows, sessions: sessions.affectedRows, usage: usage.affectedRows, boards: cloudBoards.affectedRows } });
     } catch (err) {
       res.status(500).json({ ok: false, error: 'Server error' });
     }
@@ -421,7 +423,8 @@ function attachComplianceRoutes(app, pool, options = {}) {
         targetType: 'user', targetId: String(id),
         metadata: { turninsExported: turnins.length }
       });
-      res.json({ ok: true, user: user[0], turnins });
+      const boards = (req.dsUser.id === id || ['district_admin','campus_admin'].includes(req.dsUser.role)) ? (await pool.query('SELECT board_key, title, board_json, updated_at FROM cloud_boards WHERE user_id = ?', [id]))[0] : [];
+      res.json({ ok: true, user: user[0], turnins, boards });
     } catch (err) {
       res.status(500).json({ ok: false, error: 'Server error' });
     }
@@ -429,9 +432,9 @@ function attachComplianceRoutes(app, pool, options = {}) {
 
   /* --- Parent's view of their own requests ----------------------------- */
 
-  app.get(basePath + '/parent/requests', async (req, res) => {
+  app.get(basePath + '/parent/requests', requireRole(['parent']), async (req, res) => {
     try {
-      const email = normalizeEmail(req.query.email);
+      const email = normalizeEmail(req.dsUser.email);
       if (!isValidEmail(email)) return res.status(400).json({ ok: false, error: 'email_required' });
       const [rows] = await pool.query('SELECT id, request_type, status, created_at, decided_at FROM parent_requests WHERE LOWER(parent_email) = ? ORDER BY created_at DESC LIMIT 50', [email]);
       res.json({ ok: true, requests: rows });

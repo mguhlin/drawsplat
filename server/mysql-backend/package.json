@@ -5,12 +5,17 @@
   "description": "Starter MySQL backend API for DrawSplatTM self-hosted deployments.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "node migrate.js",
+    "test": "node --test ../../tests/mysql-backend.test.cjs"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.18.3",
     "mysql2": "^3.11.5"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

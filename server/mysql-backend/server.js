@@ -18,23 +18,15 @@ const apiBasePath = (process.env.API_BASE_PATH || '/api/drawsplat/mysql').replac
 const port = Number(process.env.PORT || 8787);
 const sessionTtlHours = Number(process.env.SESSION_TTL_HOURS || 24);
 
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || '127.0.0.1',
-  port: Number(process.env.MYSQL_PORT || 3306),
-  database: process.env.MYSQL_DATABASE || 'drawsplat',
-  user: process.env.MYSQL_USER || 'drawsplat_app',
-  password: process.env.MYSQL_PASSWORD || '',
-  waitForConnections: true,
-  connectionLimit: 10,
-  namedPlaceholders: true,
-  ssl: process.env.MYSQL_SSL === 'true' ? {} : undefined
-});
+const { databaseConfig } = require('./db-config');
+const pool = mysql.createPool(databaseConfig());
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === 'true') app.set('trust proxy', 1);
 app.use(securityHeaders);
 app.use(cors(buildCorsOptions()));
 app.use(express.json({ limit: '25mb' }));
+app.use(apiBasePath, (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 app.use(apiBasePath, createRateLimiter({ scope: 'api', windowMs: 60 * 1000, max: Number(process.env.API_RATE_LIMIT_PER_MINUTE || 300) }));
 
 // Serve the bundled parent portal HTML + JS so districts get the family-facing
@@ -53,7 +45,7 @@ try {
   dsLogEvent = handle.logEvent;
   dsCheckBoardSafety = handle.checkBoardSafety;
 } catch (err) {
-  console.error('Failed to attach compliance routes:', err.message);
+  throw new Error('Cannot start without authentication routes: ' + err.message);
 }
 
 // OAuth (Google + Microsoft).
@@ -98,6 +90,13 @@ try {
   console.error('Failed to attach privacy packet route:', err.message);
 }
 
+// Private cloud boards work identically on any host that can reach MySQL.
+require('./cloud-routes').attachCloudRoutes(app, pool, { basePath: apiBasePath, auth: dsAuth, checkBoardSafety: dsCheckBoardSafety });
+// Older room/template/turn-in APIs are administrative until membership is configured.
+for (const resource of ['rooms', 'templates', 'turnins', 'sessions']) {
+  app.use(apiBasePath + '/' + resource, dsAuth.requireRoles(['district_admin', 'campus_admin']));
+}
+
 function expiresAt(hours = sessionTtlHours){
   const date = new Date(Date.now() + Math.max(1, Number(hours || sessionTtlHours)) * 60 * 60 * 1000);
   return date.toISOString().slice(0, 19).replace('T', ' ');
@@ -135,7 +134,7 @@ function asyncRoute(handler){
 
 app.get(apiBasePath + '/health', asyncRoute(async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, provider: 'mysql', time: new Date().toISOString() });
+  res.json({ ok: true, provider: 'mysql', capabilities: ['private-boards-v1'], time: new Date().toISOString() });
 }));
 
 app.post(apiBasePath + '/rooms', asyncRoute(async (req, res) => {
@@ -262,6 +261,15 @@ if (process.env.DRAWSPLAT_CRON !== '0') {
   }
 }
 
-app.listen(port, () => {
-  console.log(`DrawSplatTM MySQL backend listening on http://localhost:${port}${apiBasePath}`);
-});
+async function start() {
+  if (process.env.NODE_ENV === 'production') {
+    if (!process.env.CORS_ORIGIN || !process.env.DRAWSPLAT_PEPPER || /change|replace|^.{0,31}$/i.test(process.env.DRAWSPLAT_PEPPER)) {
+      throw new Error('Set CORS_ORIGIN and a unique DRAWSPLAT_PEPPER of at least 32 characters before production deployment.');
+    }
+  }
+  if (process.env.AUTO_MIGRATE !== 'false') await require('./migrate').migrate(pool);
+  await pool.query('SELECT 1');
+  const listener = app.listen(port, '0.0.0.0', () => console.log(`DrawSplat MySQL API listening on port ${port}${apiBasePath}`));
+  for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => listener.close(async () => { await pool.end(); process.exit(0); }));
+}
+start().catch(err => { console.error('Backend startup failed:', err.message); process.exit(1); });

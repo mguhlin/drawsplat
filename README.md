@@ -115,6 +115,9 @@ Other docs that pair with setup:
 
 ## Whiteboard voice-note improvements (September 17, 2026)
 
+- **Recover unfinished recordings.** Reviewed voice/video drafts survive refresh on the same browser, with expiry and lesson/view separation. Video drafts can return to their original page.
+- **One note plays at a time.** Voice and video playback pause one another while keeping their positions.
+
 - **Clear response choices.** Illustrated Draw, Type, Voice, and Video cards respect lesson tools. Voice notes can be named, and unfinished answers can return to their recording page.
 
 - **Review before adding.** Record → Listen → Add, with Try again, Discard, and a Finish voice shortcut for unfinished recordings. No empty board items are created by permission failures.
@@ -1312,3 +1315,5 @@ Recommended public-hosting protections:
 - Use long, unguessable room or board IDs if cloud sharing is enabled.
 - Review Apps Script permissions and logs regularly.
 - Provide a way to clear local browser data on shared devices.
+
+MySQL online saving now connects the whiteboard to account-owned Save/Open through a portable Node.js API. Railway, DigitalOcean, and existing MySQL 8 deployments use the same service. See [the hosting guide](docs/setup-mysql.md) for configuration, verified TLS, migrations, and backups.

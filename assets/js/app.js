@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.11';
+const VERSION='3.1.12';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -145,7 +145,7 @@ const COLORING_BOOK_ITEMS=[
 const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
 function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,file])=>{const path=appPath('assets/coloring-book/'+file); return {id:idv,category,label,path,paths:[path]}})}
 
-let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
+let board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, liveDrawingPathEl=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
 let dotPaintTargetId=null;
 let touchMultiSelect=false;
@@ -911,7 +911,7 @@ function ensureTopMenus(){
   const header=document.querySelector('header');
   if(!header||gid('topMenuBar')) return;
   const menuDefs=[
-    ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],['Save to Google','saveDriveBtn'],['Load from Google','loadDriveBtn'],['divider'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn']]],
+    ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],[storageMode()==='mysql'?'Save online':'Save to Google','saveDriveBtn'],[storageMode()==='mysql'?'Open online board':'Load from Google','loadDriveBtn'],...(storageMode()==='mysql'?[['Online account','onlineAccountBtn']]:[]),['divider'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
     ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['divider'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Emoji Mixer','openEmojiDialogBtn'],['ScratchArt','scratchCoverBtn'],['divider'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['divider'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Classroom Widgets','openClassroomWidgetsBtn'],['divider'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['divider'],['Built-in Layouts','insertTemplateBtn','layoutSubmenu'],['Save Current Frame as Reusable Template','saveTemplateBtn'],['Open Reusable Frame Templates','loadTemplateGalleryBtn'],['divider'],['TNT Reset','tntBtn']]],
@@ -1117,8 +1117,10 @@ function hideSidebarTemplateSection(){
 /* Classroom launch/session helpers. Student share links can lock the UI into
    student mode, prefill the collaboration room, and hide Google admin fields. */
 function storageMode(){try{return localStorage.getItem(STORAGE_MODE_KEY)||'google'}catch(_){return 'google'}}
+function mysqlEnabled(){return storageMode()==='mysql'}
+function onlineSavingConnected(){try{return mysqlEnabled()?!!window.DrawSplatMySQL.endpoint():!!googleScriptUrl()}catch(_){return false}}
 function storageAllowsGoogle(){return storageMode()==='google'}
-function googleScriptUrl(){if(!storageAllowsGoogle()) return ''; const url=(ui.scriptUrl?.value||DEFAULT_GOOGLE_SCRIPT_URL||'').trim(); return url===GOOGLE_SCRIPT_URL_PLACEHOLDER?'':url}
+function googleScriptUrl(){if(mysqlEnabled())return '';if(!storageAllowsGoogle()) return ''; const url=(ui.scriptUrl?.value||DEFAULT_GOOGLE_SCRIPT_URL||'').trim(); return url===GOOGLE_SCRIPT_URL_PLACEHOLDER?'':url}
 function refreshSessionExpiry(){
   if(storageMode()!=='browser-session') return;
   try{
@@ -1135,7 +1137,7 @@ function expireBrowserSessionIfNeeded(){
   try{
     const expires=parseInt(localStorage.getItem(SESSION_EXPIRES_KEY)||'0',10);
     if(expires&&Date.now()>expires){
-      clearAutosaveStorage();
+      clearAutosaveStorage();window.DrawSplatRecordingSupport?.drafts.clear().catch(()=>{});
       localStorage.removeItem(SESSION_EXPIRES_KEY);
       setStatus('Previous browser-only session expired and was cleared.','success');
       return true;
@@ -1244,16 +1246,16 @@ function applyLaunchParams(){
 }
 function copyStudentShareLink(){
   const room=(ui.collabRoom?.value||'').trim();
-  if(!room) return setStatus('Enter a room name before creating a student link.','danger');
+  if(!mysqlEnabled()&&!room) return setStatus('Enter a room name before creating a student link.','danger');
   const url=new URL(location.href);
   url.search='';
   url.hash='';
   url.searchParams.set('role','student');
-  url.searchParams.set('room',room);
+  if(mysqlEnabled()){try{url.searchParams.set('storage','mysql');url.searchParams.set('api',window.DrawSplatMySQL.endpoint())}catch(err){return setStatus(err.message,'danger')}}else url.searchParams.set('room',room);
   const policy=learnerPolicy();url.searchParams.set('learner',policy.view);url.searchParams.set('tools',policy.tools.join(','));if(policy.allowTnt)url.searchParams.set('tnt','1');
   if(!DEFAULT_GOOGLE_SCRIPT_URL&&googleScriptUrl()) url.searchParams.set('script',googleScriptUrl());
   const link=url.toString();
-  const done=()=>setStatus('Student link copied. Students will enter the room password when they join.','success');
+  const done=()=>setStatus(mysqlEnabled()?'Student saving link copied. Students sign in to their own accounts. This does not share your board.':'Student link copied. Students will enter the room password when they join.','success');
   if(navigator.clipboard?.writeText) navigator.clipboard.writeText(link).then(done).catch(()=>prompt('Student link:',link));
   else prompt('Student link:',link);
 }
@@ -1262,7 +1264,24 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 /* Student workspace: lesson tools travel with the board and student link. */
 const LEARNER_TOOLS=[['select','Move'],['pen','Pencil'],['bucket','Paint'],['eraser','Eraser'],['text','Type'],['sticky','Note'],['rect','Rectangle'],['ellipse','Circle'],['line','Line'],['arrow','Arrow'],['star','Star'],['diamond','Diamond'],['triangle','Triangle'],['polygon','Polygon'],['dotpaint','Dot Paint'],['laser','Pointer'],['connector','Connect'],['image','Pictures and Stamps'],['graph','Graphs'],['widget','Classroom widgets'],['audio','Audio'],['video','Video notes (allow student recording)']];
 const LEARNER_PRESETS={everyday:['select','pen','bucket','eraser','text','image'],art:['select','pen','bucket','eraser','image','dotpaint','rect','ellipse','star'],explain:['select','pen','eraser','text','sticky','arrow','image','audio'],data:['select','pen','eraser','text','graph','widget']};
-let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0,videoNotes=null,learnerAudioTarget=null,learnerAudioDraft=null,learnerAudioFinishing=false,learnerAudioTimer=null,learnerAudioError='';
+let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0,videoNotes=null,learnerAudioTarget=null,learnerAudioDraft=null,learnerAudioFinishing=false,learnerAudioTimer=null,learnerAudioError='',learnerAudioDraftSaved=false;
+function recordingDraftKey(kind){const params=new URLSearchParams(location.search);return JSON.stringify([board.recordingBoardId,board.mode,board.studentName||'',params.get('room')||'',params.get('script')||'',kind])}
+function recordingDraftExpiry(){let hours=24;try{hours=Math.max(1,Math.min(168,+localStorage.getItem(SESSION_HOURS_KEY)||24))}catch(_){}return Date.now()+hours*3600000}
+function clearVoiceDraft(key=learnerAudioTarget?.context||recordingDraftKey('voice')){return window.DrawSplatRecordingSupport.drafts.remove(key).catch(()=>setStatus('Could not clear the saved voice draft. Browser storage is unavailable.','danger'))}
+let voiceDraftWrite=0;
+function persistVoiceDraft(){
+  if(!learnerAudioDraft||!learnerAudioTarget)return;
+  const sequence=++voiceDraftWrite;learnerAudioDraftSaved=false;gid('learnerAudioDraftStatus').textContent='Keeping your unfinished note on this device…';
+  const target=learnerAudioTarget;persistLocal();
+  window.DrawSplatRecordingSupport.drafts.put(target.context||recordingDraftKey('voice'),{draft:learnerAudioDraft,panelId:target.panelId,object:target.object,existing:target.existing,name:gid('learnerAudioName').value},recordingDraftExpiry()).then(()=>{if(sequence!==voiceDraftWrite||learnerAudioTarget!==target)return;learnerAudioDraftSaved=true;gid('learnerAudioDraftStatus').textContent='Unfinished note kept on this device. You can return after a refresh.'}).catch(()=>{if(sequence!==voiceDraftWrite||learnerAudioTarget!==target)return;gid('learnerAudioDraftStatus').textContent='This device could not keep your draft. Add it to your board before leaving.'})
+}
+async function restoreVoiceDraft(){
+  if(!learnerAllows('audio')||learnerAudioTarget)return;
+  const targetBoard=board,key=recordingDraftKey('voice');let saved;try{saved=await window.DrawSplatRecordingSupport.drafts.get(key)}catch(_){return}
+  if(board!==targetBoard||key!==recordingDraftKey('voice')||!learnerAllows('audio')||learnerAudioTarget||!saved)return;
+  if(!board.panels.some(p=>p.id===saved.panelId)||saved.object?.type!=='audio'||typeof saved.draft?.src!=='string'||saved.draft.src.length>7400000||!/^data:audio\/(webm|mp4|ogg|wav|mpeg|aac);base64,[a-z0-9+/]+=*$/i.test(saved.draft.src))return;
+  const existing=board.panels.find(p=>p.id===saved.panelId).objects.find(o=>o.id===saved.object.id),keepExisting=!!saved.existing&&!!existing&&canEditObject(existing);const object=saved.existing&&!keepExisting?makeObj('audio',60,60,220,75,{audioName:saved.name||'My answer'}):saved.object;learnerAudioTarget={board,boardId:board.recordingBoardId,context:recordingDraftKey('voice'),panelId:saved.panelId,object,existing:keepExisting};learnerAudioDraft=saved.draft;learnerAudioDraftSaved=true;gid('learnerAudioName').value=saved.name||'My answer';gid('learnerAudioDraftStatus').textContent='Recovered your unfinished voice note. Listen, then add or discard it.';refreshLearnerAudioControls()
+}
 function normalizedLearnerPolicy(value){
   const p=value&&typeof value==='object'?value:{};
   const tools=Array.isArray(p.tools)?p.tools.filter(t=>LEARNER_TOOLS.some(([key])=>key===t)):LEARNER_PRESETS.everyday;
@@ -1383,7 +1402,7 @@ function refreshEntryRoleButton(){
 }
 function ensureVideoNotes(){
   if(videoNotes)return;
-  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>audioStarting||learnerAudioFinishing||mediaRecorder?.state==='recording',canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:addObj,status:setStatus,draftChanged:hasDraft=>{gid('learnerVideoNoteLabel').textContent=hasDraft?'Finish video':'Video note';gid('learnerVideoNote').classList.toggle('has-draft',hasDraft);gid('learnerVideoNote').title=hasDraft?'An unfinished clip is waiting. Watch, add, or discard it.':'Record a short video note'}});
+  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>audioStarting||learnerAudioFinishing||mediaRecorder?.state==='recording',draftKey:()=>recordingDraftKey('video'),draftExpiry:recordingDraftExpiry,persistBoard:persistLocal,returnToPanel:switchPanel,canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:o=>{const existing=panel().objects.find(x=>x.id===o.id);if(existing){Object.assign(existing,o);render();return saveState()}return addObj(o)},status:setStatus,draftChanged:hasDraft=>{gid('learnerVideoNoteLabel').textContent=hasDraft?'Finish video':'Video note';gid('learnerVideoNote').classList.toggle('has-draft',hasDraft);gid('learnerVideoNote').title=hasDraft?'An unfinished clip is waiting. Watch, add, or discard it.':'Record a short video note'}});
   const button=document.createElement('button');button.id='learnerVideoNote';button.type='button';button.className='everyday-action';button.innerHTML='<svg class="everyday-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m16 9 6-3v12l-6-3z"/></svg><span id="learnerVideoNoteLabel">Video note</span>';button.onclick=videoNotes.open;gid('learnerToolbar').querySelector('.learner-secondary-tools').insertBefore(button,gid('learnerStarters'));
 }
 function prepareVideoNoteExport(clone){
@@ -1430,21 +1449,22 @@ function ensureLearnerWorkspace(){
   ensureVideoNotes();
   ensureLearnerSelection();
   const recovery=document.createElement('div');recovery.id='clearRecoveryBanner';recovery.className='learner-recovery';recovery.hidden=true;recovery.innerHTML='<span>Work cleared. Undo can bring it back. A recovery checkpoint is saved with the board.</span><button id="learnerUndoClear" type="button">Undo clearing</button>';toolbar.after(recovery);gid('learnerUndoClear').onclick=()=>{undo();recovery.hidden=true};
-  const cloud=document.createElement('span');cloud.id='classroomSaveChip';cloud.className='save-state';cloud.setAttribute('role','status');cloud.textContent='Classroom: not sent';gid('saveStateChip').after(cloud);
+  const cloud=document.createElement('span');cloud.id='classroomSaveChip';cloud.className='save-state';cloud.setAttribute('role','status');cloud.textContent=mysqlEnabled()?'Online: not saved yet':'Classroom: not sent';gid('saveStateChip').after(cloud);
   const help=addLearnerDialog('learnerHelpDialog','Show me how','<p id="learnerHelpText"></p><div class="learner-demo" aria-hidden="true"><span class="learner-demo-cursor">✎</span><span class="learner-demo-line"></span></div><div class="learner-dialog-actions"><button id="learnerReadHelp" type="button">Read instructions aloud</button><button id="learnerTryTool" type="button" class="primary">Let me try</button></div>');
   gid('learnerHelp').onclick=()=>{gid('learnerHelpText').textContent=toolGuidance(tool).join('. ');help.dataset.demo=tool;help.querySelector('.learner-demo-cursor').textContent=({select:'↖',eraser:'⌫',text:'T'})[tool]||'✎';help.showModal()};gid('learnerTryTool').onclick=()=>help.close();
   gid('learnerReadHelp').disabled=!('speechSynthesis' in window);gid('learnerReadHelp').onclick=()=>{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(gid('learnerHelpText').textContent);utterance.lang=document.documentElement.lang||'en';speechSynthesis.speak(utterance)};help.addEventListener('close',()=>window.speechSynthesis?.cancel());
   const items=addLearnerDialog('learnerObjectsDialog','Find an item','<p>Choose an item to select it. Use arrow keys to move editable items, or Enter to edit their text. Teacher items stay protected.</p><div id="learnerObjectList"></div>');
   gid('learnerObjects').onclick=()=>{const list=gid('learnerObjectList');list.replaceChildren();panel().objects.filter(o=>!o.answerKey||board.showAnswerKey).forEach((o,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=(o.text||o.videoName||o.audioName||o.stampLabel||o.name||LEARNER_TOOLS.find(([key])=>key===o.type)?.[1]||o.type)+' '+(i+1)+(canEditObject(o)?'':o.locked?' — locked item':' — teacher item');btn.onclick=()=>{setTool('select');setSingleSelection(o.id);render();items.close();svg.setAttribute('tabindex','0');svg.focus()};list.append(btn)});if(!list.children.length)list.textContent='No items yet. Try drawing or typing on this page.';items.showModal()};
   const response=addLearnerDialog('learnerResponseDialog','My response','<p>Choose how to share your idea.</p><div class="response-choice-grid"><button id="learnerDrawResponse" class="response-choice-card" type="button"><span class="response-choice-icon" aria-hidden="true">✏️</span><span><strong>Draw my answer</strong><small>Use the pencil to sketch your idea.</small></span></button><button id="learnerTypeResponse" class="response-choice-card" type="button"><span class="response-choice-icon" aria-hidden="true">🔤</span><span><strong>Type my answer</strong><small>Add words to explain your thinking.</small></span></button><button id="learnerVoiceResponse" class="response-choice-card" type="button"><span class="response-choice-icon" aria-hidden="true">🎙️</span><span><strong>Record my voice</strong><small>Record, listen, then add your answer.</small></span></button><button id="learnerVideoResponse" class="response-choice-card" type="button"><span class="response-choice-icon" aria-hidden="true">🎥</span><span><strong>Record a video</strong><small>Record a short clip, watch, then add it.</small></span></button></div><p id="learnerResponseEmpty" role="status" hidden>Your teacher has not enabled response tools for this lesson. You can still explore the board.</p>');gid('learnerResponse').onclick=()=>response.showModal();gid('learnerDrawResponse').onclick=()=>{setTool('pen');response.close()};gid('learnerTypeResponse').onclick=()=>{setTool('text');response.close()};
-  const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Tell us your idea. Listen, then add it when you are ready.</p><ol class="video-note-steps"><li>Record</li><li>Listen</li><li>Add</li></ol><p id="learnerAudioStatus" role="status">Ready to record.</p><audio id="learnerAudioPreview" controls hidden aria-label="Listen to your voice recording"></audio><p class="hint">Up to one minute. A finished note stays with your board. An unfinished note stays here until you add it, discard it, or reload.</p><button id="learnerAudioReturnPage" type="button" hidden>Return to my recording page</button><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button><button id="learnerDiscardAudio" type="button">Discard</button><button id="learnerAddAudio" type="button">Add to board</button></div><details id="learnerAudioDetails"><summary>Name my note (optional)</summary><label for="learnerAudioName">Voice note name</label><input id="learnerAudioName" maxlength="80" value="My answer" placeholder="For example: My water-cycle explanation"></details>');
+  const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Tell us your idea. Listen, then add it when you are ready.</p><ol class="video-note-steps"><li>Record</li><li>Listen</li><li>Add</li></ol><p id="learnerAudioStatus" role="status">Ready to record.</p><audio id="learnerAudioPreview" controls hidden aria-label="Listen to your voice recording"></audio><p class="hint">Up to one minute. A finished note stays with your board. Stopped recordings can be recovered on this device after a refresh.</p><p id="learnerAudioDraftStatus" class="hint" role="status"></p><button id="learnerAudioReturnPage" type="button" hidden>Return to my recording page</button><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button><button id="learnerDiscardAudio" type="button">Discard</button><button id="learnerAddAudio" type="button">Add to board</button></div><details id="learnerAudioDetails"><summary>Name my note (optional)</summary><label for="learnerAudioName">Voice note name</label><input id="learnerAudioName" maxlength="80" value="My answer" placeholder="For example: My water-cycle explanation"></details>');
+  window.DrawSplatRecordingSupport.register(gid('learnerAudioPreview'));gid('learnerAudioName').oninput=persistVoiceDraft;
   const resume=document.createElement('button');resume.id='learnerFinishVoice';resume.type='button';resume.textContent='🎙 Finish voice';resume.hidden=true;gid('learnerToolbar').append(resume);resume.onclick=()=>{audio.showModal();refreshLearnerAudioControls()};
-  gid('learnerVideoResponse').onclick=()=>{response.close();videoNotes.open()};gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();if(!learnerAudioTarget){gid('learnerAudioName').value='My answer';learnerAudioTarget={board,panelId:panel().id,object:makeObj('audio',60,60,220,75,{audioName:'My answer'}),existing:false}};audio.showModal();refreshLearnerAudioControls()};
+  gid('learnerVideoResponse').onclick=()=>{response.close();videoNotes.open()};gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();if(!learnerAudioTarget){gid('learnerAudioName').value='My answer';learnerAudioTarget={board,boardId:board.recordingBoardId,context:recordingDraftKey('voice'),panelId:panel().id,object:makeObj('audio',60,60,220,75,{audioName:'My answer'}),existing:false}};audio.showModal();refreshLearnerAudioControls()};
   gid('learnerRecordAudio').onclick=async()=>{gid('learnerAudioPreview').pause();await startAudioRecording();refreshLearnerAudioControls();const toast=gid('statusToast');if(mediaRecorder?.state!=='recording'&&toast?.classList.contains('danger'))gid('learnerAudioStatus').textContent=toast.textContent};
   gid('learnerPlayAudio').onclick=()=>{const preview=gid('learnerAudioPreview');preview.play().catch(()=>{gid('learnerAudioStatus').textContent='Could not play this recording. Try recording again.'})};
-  gid('learnerDiscardAudio').onclick=()=>{learnerAudioSession++;gid('learnerAudioPreview').pause();learnerAudioTarget=null;learnerAudioDraft=null;learnerAudioError='';gid('learnerAudioName').value='My answer';gid('learnerAudioDetails').open=false;refreshLearnerAudioControls();audio.close()};
-  gid('learnerAddAudio').onclick=()=>{const target=learnerAudioTarget,draft=learnerAudioDraft;if(!target||!draft||!learnerAllows('audio'))return;const targetPanel=board.panels.find(p=>p.id===target.panelId);const existing=targetPanel?.objects.find(o=>o.id===target.object.id);if(board!==target.board||panel()!==targetPanel||(target.existing&&(!existing||!canEditObject(existing))))return setStatus('Return to the page where you started this note to add it.','danger');const o=existing||target.object;Object.assign(o,{audioSrc:draft.src,audioDuration:draft.duration,audioName:gid('learnerAudioName').value.trim().slice(0,80)||'My answer'});gid('learnerAudioPreview').pause();learnerAudioTarget=null;learnerAudioDraft=null;gid('learnerAudioName').value='My answer';gid('learnerAudioDetails').open=false;if(existing){render();saveState()}else addObj(o);refreshLearnerAudioControls();audio.close();setStatus('Voice note added to your board.','success')};
-  gid('learnerAudioReturnPage').onclick=()=>{const target=learnerAudioTarget;if(!target||board!==target.board)return;const index=board.panels.findIndex(p=>p.id===target.panelId);if(index<0)return;switchPanel(target.panelId);refreshLearnerAudioControls()};
+  gid('learnerDiscardAudio').onclick=()=>{learnerAudioSession++;gid('learnerAudioPreview').pause();clearVoiceDraft();voiceDraftWrite++;learnerAudioTarget=null;learnerAudioDraft=null;gid('learnerAudioDraftStatus').textContent='';learnerAudioError='';gid('learnerAudioName').value='My answer';gid('learnerAudioDetails').open=false;refreshLearnerAudioControls();audio.close()};
+  gid('learnerAddAudio').onclick=async()=>{const target=learnerAudioTarget,draft=learnerAudioDraft;if(!target||!draft||learnerAudioFinishing||!learnerAllows('audio'))return;const targetPanel=board.panels.find(p=>p.id===target.panelId);const existing=targetPanel?.objects.find(o=>o.id===target.object.id);if(board.recordingBoardId!==target.boardId||target.context!==recordingDraftKey('voice')||panel()!==targetPanel||(target.existing&&(!existing||!canEditObject(existing))))return setStatus('Return to the page where you started this note to add it.','danger');const o=existing||target.object;Object.assign(o,{audioSrc:draft.src,audioDuration:draft.duration,audioName:gid('learnerAudioName').value.trim().slice(0,80)||'My answer'});gid('learnerAudioPreview').pause();learnerAudioFinishing=true;refreshLearnerAudioControls();let committed;if(existing){render();committed=saveState()}else committed=addObj(o);const saved=await committed;learnerAudioFinishing=false;if(!saved){refreshLearnerAudioControls();gid('learnerAudioDraftStatus').textContent='The board could not be saved. Close this window and use File → Save File. Your voice draft is still kept.';return}await clearVoiceDraft(target.context);if(learnerAudioTarget!==target)return;voiceDraftWrite++;learnerAudioTarget=null;learnerAudioDraft=null;learnerAudioDraftSaved=false;gid('learnerAudioDraftStatus').textContent='';gid('learnerAudioName').value='My answer';gid('learnerAudioDetails').open=false;refreshLearnerAudioControls();audio.close();setStatus('Voice note added to your board.','success')};
+  gid('learnerAudioReturnPage').onclick=()=>{const target=learnerAudioTarget;if(!target||board.recordingBoardId!==target.boardId)return;const index=board.panels.findIndex(p=>p.id===target.panelId);if(index<0)return;switchPanel(target.panelId);refreshLearnerAudioControls()};
   audio.addEventListener('close',()=>{learnerAudioSession++;gid('learnerAudioPreview').pause();if(mediaRecorder?.state==='recording')mediaRecorder.stop()});
   const starters=addLearnerDialog('learnerStartersDialog','Lesson starters','<p>Start on a new page. Your existing pages stay intact.</p><h3>Quick lesson ideas</h3><div id="learnerStarterList"></div><h3>Built-in layouts</h3><p>Choose an organizer, drawing layout, or celebration page.</p><div id="learnerLayoutList"></div>');
   [['draw','Draw and explain','Sketch an idea and add an explanation.'],['compare','Compare two ideas','Show how two things are alike or different.'],['label','Label this picture','Add a picture, then name its parts.'],['math','Show your math','Show your steps and explain your thinking.']].forEach(([key,title,detail])=>{const button=document.createElement('button');button.type='button';button.className='learner-starter-card';const strong=document.createElement('strong');strong.textContent=title;const span=document.createElement('span');span.textContent=detail;button.append(strong,span);button.onclick=()=>{insertLearnerStarter(key,title);starters.close()};gid('learnerStarterList').append(button)});gid('learnerStarters').onclick=()=>starters.showModal();
@@ -1453,7 +1473,7 @@ function ensureLearnerWorkspace(){
   const turn=addLearnerDialog('learnerTurnInDialog','Check and turn in','<ol class="learner-turn-steps"><li>Check my work</li><li>Send to teacher</li><li>Received</li></ol><label for="learnerStudentName">Your name</label><input id="learnerStudentName" autocomplete="name"><p>Have you answered the question and checked every page?</p><label class="learner-check"><input id="learnerCheckedWork" type="checkbox">I checked my work.</label><p id="learnerTurnInStatus" role="status" aria-live="polite">Ready when you are.</p><div class="learner-dialog-actions"><button id="learnerSendWork" type="button" class="primary" disabled>Send to teacher</button><button id="learnerDownloadWork" type="button">Download a backup</button></div>');
   gid('learnerTurnIn').onclick=openLearnerTurnIn;gid('learnerCheckedWork').onchange=()=>gid('learnerSendWork').disabled=!gid('learnerCheckedWork').checked||turnInPending;gid('learnerSendWork').onclick=sendLearnerTurnIn;gid('learnerDownloadWork').onclick=()=>gid('saveLocalBtn').click();
   turn.addEventListener('cancel',e=>{if(turnInPending){e.preventDefault();setStatus('Still sending. Keep this board open until your teacher receives it.')}});turn.querySelector('.close').onclick=()=>{if(!turnInPending)turn.close()};
-  window.addEventListener('beforeunload',e=>{if(turnInPending){e.preventDefault();e.returnValue=''}});
+  window.addEventListener('beforeunload',e=>{if(turnInPending||mediaRecorder?.state==='recording'||learnerAudioFinishing||localSavePending>0||window.DrawSplatRecordingSupport.drafts.pending()||learnerAudioDraft&&!learnerAudioDraftSaved||videoNotes?.needsProtection()){e.preventDefault();e.returnValue=''}});
   svg.addEventListener('pointerdown',e=>{if(tool!=='pan'||e.target.closest('.audio-controls'))return;e.preventDefault();e.stopImmediatePropagation();learnerPanDrag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:learnerPan.x,startY:learnerPan.y};svg.setPointerCapture(e.pointerId)},true);
   svg.addEventListener('pointermove',e=>{if(!learnerPanDrag||e.pointerId!==learnerPanDrag.id)return;e.preventDefault();e.stopImmediatePropagation();learnerPan.x=learnerPanDrag.startX+e.clientX-learnerPanDrag.x;learnerPan.y=learnerPanDrag.startY+e.clientY-learnerPanDrag.y;requestRender()},true);
   const stopPan=e=>{if(!learnerPanDrag||e.pointerId!==learnerPanDrag.id)return;e.stopImmediatePropagation();learnerPanDrag=null};svg.addEventListener('pointerup',stopPan,true);svg.addEventListener('pointercancel',stopPan,true);
@@ -1465,7 +1485,7 @@ function refreshLearnerAudioControls(){
   const recording=mediaRecorder?.state==='recording',draft=learnerAudioDraft,busy=recording||audioStarting||learnerAudioFinishing;
   gid('learnerRecordAudio').textContent=recording?'Stop':draft?'Try again':'Record';gid('learnerRecordAudio').disabled=audioStarting||learnerAudioFinishing;
   gid('learnerAudioStatus').textContent=recording?'Recording. Press Stop when you finish.':audioStarting?'Opening your microphone…':learnerAudioError?learnerAudioError:learnerAudioFinishing?'Getting your recording ready…':draft?'Ready to listen. Add your answer when you are happy with it.':'Ready to record.';
-  const target=learnerAudioTarget,onOriginalPage=!target||(board===target.board&&panel().id===target.panelId);gid('learnerAudioReturnPage').hidden=!draft||onOriginalPage||board!==target?.board||!board.panels.some(p=>p.id===target.panelId);if(draft&&!onOriginalPage)gid('learnerAudioStatus').textContent='Your note belongs on the page where you started it. Return to that page to add your answer.';
+  const target=learnerAudioTarget,onOriginalPage=!target||(board.recordingBoardId===target.boardId&&panel().id===target.panelId);gid('learnerAudioReturnPage').hidden=!draft||onOriginalPage||board.recordingBoardId!==target?.boardId||!board.panels.some(p=>p.id===target.panelId);if(draft&&!onOriginalPage)gid('learnerAudioStatus').textContent='Your note belongs on the page where you started it. Return to that page to add your answer.';
   gid('learnerPlayAudio').disabled=!draft||busy;gid('learnerAddAudio').disabled=!draft||busy||!onOriginalPage;gid('learnerDiscardAudio').disabled=busy;
   gid('learnerAudioDialog').querySelectorAll('.video-note-steps li').forEach((step,index)=>{if(index===(draft?1:0))step.setAttribute('aria-current','step');else step.removeAttribute('aria-current')});
   const preview=gid('learnerAudioPreview');preview.hidden=!draft;if(draft&&preview.getAttribute('src')!==draft.src)preview.src=draft.src;
@@ -1473,6 +1493,7 @@ function refreshLearnerAudioControls(){
 }
 function refreshLearnerWorkspace(){
   if(!gid('learnerToolbar'))return;
+  if(learnerAudioTarget&&learnerAudioTarget.context!==recordingDraftKey('voice')){if(gid('learnerAudioDialog')?.open)gid('learnerAudioDialog').close();voiceDraftWrite++;learnerAudioTarget=null;learnerAudioDraft=null;learnerAudioDraftSaved=false;gid('learnerAudioDraftStatus').textContent='';restoreVoiceDraft()}
   setButtonChrome(document.querySelector('#toolButtons [data-tool="select"]'),'Move');
   const p=learnerPolicy(),stamp=JSON.stringify(p);
   if(board.mode==='student'&&stamp!==learnerPolicyStamp){learnerPolicyStamp=stamp;applyInterfaceMode(p.view,true);applyWorkspaceMode('education',true)}
@@ -1489,13 +1510,13 @@ function refreshLearnerWorkspace(){
   gid('learnerPenSizeLabel').hidden=tool!=='pen';gid('learnerPenSize').value=String(penStrokeWidth);
   gid('learnerColor').value=ui.strokeColor?.value||'#7c3aed';
   if(board.mode==='student'&&!learnerAllows(tool))setTool('select');
-  const chip=gid('classroomSaveChip');chip.hidden=!googleScriptUrl();if(classroomSavedSnapshot&&snapshot()!==classroomSavedSnapshot&&chip.dataset.state==='saved')setClassroomSaveState('pending');
+  const chip=gid('classroomSaveChip');chip.hidden=!onlineSavingConnected();if(classroomSavedSnapshot&&snapshot()!==classroomSavedSnapshot&&chip.dataset.state==='saved')setClassroomSaveState('pending');
   const banner=gid('clearRecoveryBanner');if(banner.dataset.snapshot&&banner.dataset.snapshot!==snapshot())banner.hidden=true;
 }
 function setClassroomSaveState(state,sentSnapshot){
   if(state==='saved'&&sentSnapshot&&snapshot()!==sentSnapshot)state='pending';
   const chip=gid('classroomSaveChip');if(!chip)return;
-  chip.hidden=!googleScriptUrl();chip.dataset.state=state;chip.textContent=state==='saved'?'Saved to classroom':state==='saving'?'Sending to classroom…':state==='error'?'Classroom save failed — check device copy':'Classroom: changes not sent';chip.className='save-state '+(state==='error'?'error':state==='saved'?'saved':'saving');
+  chip.hidden=!onlineSavingConnected();chip.dataset.state=state;chip.textContent=state==='saved'?(mysqlEnabled()?'Saved online':'Saved to classroom'):state==='saving'?(mysqlEnabled()?'Saving online…':'Sending to classroom…'):state==='error'?'Online save failed — check device copy':(mysqlEnabled()?'Online: changes not sent':'Classroom: changes not sent');chip.className='save-state '+(state==='error'?'error':state==='saved'?'saved':'saving');
   if(state==='saved')classroomSavedSnapshot=sentSnapshot||snapshot();
 }
 function rememberBeforeClearing(){
@@ -1758,7 +1779,7 @@ function validateBoard(b){
   }
   if(b.title!==undefined&&typeof b.title!=='string') throw new Error('Invalid title');
 }
-function migrateBoard(b){validateBoard(b);b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
+function migrateBoard(b){validateBoard(b);if(typeof b.recordingBoardId!=='string'||!b.recordingBoardId)b.recordingBoardId=id();b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
 function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=o.type==='audio'?Math.max(220,Math.abs(o.w)):Math.abs(o.w),h=o.type==='audio'?Math.max(156,Math.abs(o.h)):Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
@@ -1805,6 +1826,7 @@ function render(){
   const layerOrder={teacher:0,shared:1,student:2};
   [...p.objects].filter(o=>!o.hiddenForGif&&!(o.answerKey && !board.showAnswerKey)).sort((a,b)=>((a.type==='connector'?-10:0)+(layerOrder[a.layer]??1))-((b.type==='connector'?-10:0)+(layerOrder[b.layer]??1))).forEach(o=>g.appendChild(drawObject(o)));
   if(notePlayback&&!p.objects.some(o=>o.id===notePlayback.id&&o.audioSrc===notePlayback.src&&!o.hiddenForGif&&!(o.answerKey&&!board.showAnswerKey)))stopNotePlayback();
+  notePlayers.forEach((player,key)=>{if(!p.objects.some(o=>o.id===key&&o.audioSrc===player.src&&!o.hiddenForGif&&!(o.answerKey&&!board.showAnswerKey))){player.audio.pause();window.DrawSplatRecordingSupport.unregister(player.audio);notePlayers.delete(key)}});
   refreshNotePlayback();
   drawLiveCursors(g);
   drawStampPreview();
@@ -1971,24 +1993,24 @@ function createTextObject(o,b){const fo=document.createElementNS(NS,'foreignObje
 function createStickyObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);d.className='postit';Object.assign(d.style,{background:o.fill,width:'100%',height:'100%',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:(o.vAlign||'top')==='top'?'flex-start':((o.vAlign||'top')==='middle'?'center':'flex-end'),textAlign:o.hAlign||'left',alignItems:(o.hAlign||'left')==='left'?'flex-start':((o.hAlign||'left')==='center'?'center':'flex-end'),transform:`rotate(${o.textRotation||0}deg)`,transformOrigin:'center center',gap:'8px'});if(o.imageSrc){const img=document.createElementNS(XHTML,'img');img.setAttribute('src',o.imageSrc);Object.assign(img.style,{width:'100%',maxHeight:'45%',objectFit:'cover',borderRadius:'8px',border:'1px solid rgba(0,0,0,.12)'});d.appendChild(img)}const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add note...');content.style.width='100%';d.appendChild(content);fo.appendChild(d);return fo}
 function createCommentObject(o,b){const g=document.createElementNS(NS,'g');const pinFill=o.resolved?'#9ca3af':'#ef4444';g.appendChild(svgEl(`<line x1="${b.x+14}" y1="${b.y+16}" x2="${b.x+14}" y2="${b.y+b.h}" stroke="${pinFill}" stroke-width="3" opacity="${o.opacity}"/>`));g.appendChild(svgEl(`<circle cx="${b.x+14}" cy="${b.y+14}" r="10" fill="${pinFill}" opacity="${o.opacity}"/>`));const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x+24);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(120,b.w-24));fo.setAttribute('height',Math.max(50,b.h));const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',background:o.resolved?'#f3f4f6':'#fff7e6',border:'1px solid '+(o.resolved?'#d1d5db':'#f59e0b'),borderRadius:'10px',padding:'10px',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:'space-between'});const badge=document.createElementNS(XHTML,'div');badge.textContent=o.resolved?'Resolved Comment':'Feedback Pin';badge.style.fontWeight='700';badge.style.fontSize='12px';badge.style.marginBottom='6px';const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add feedback...');content.style.flex='1';content.style.wordBreak='break-word';d.appendChild(badge);d.appendChild(content);fo.appendChild(d);g.appendChild(fo);return g}
 function createStampObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(30,b.w));fo.setAttribute('height',Math.max(30,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',border:o.emojiParts?'2px solid rgba(124,58,237,.18)':'2px solid rgba(0,0,0,.08)',borderRadius:'18px',background:o.stampBg||'#eef2ff',overflow:'hidden'});let icon;if(o.stampSrc){icon=document.createElementNS(XHTML,'img');icon.setAttribute('src',o.stampSrc);Object.assign(icon.style,{maxWidth:'70%',maxHeight:'56%',objectFit:'contain'})}else if(o.emojiParts?.length){icon=document.createElementNS(XHTML,'div');Object.assign(icon.style,{position:'relative',width:'78%',height:'68%',minHeight:'44px'});o.emojiParts.slice(0,4).forEach((emoji,i)=>{const part=document.createElementNS(XHTML,'span');part.textContent=emoji;Object.assign(part.style,{position:'absolute',left:[8,34,18,44][i%4]+'%',top:[4,22,36,6][i%4]+'%',fontSize:Math.max(24,Math.min(b.w,b.h)*[.5,.44,.38,.34][i%4])+'px',transform:`rotate(${[-10,12,0,-18][i%4]}deg)`,filter:'drop-shadow(0 2px 1px rgba(0,0,0,.12))'});icon.appendChild(part)})}else{icon=document.createElementNS(XHTML,'div');icon.textContent=o.stampIcon||'⭐';icon.style.fontSize=Math.max(26,Math.min(b.w,b.h)*0.56)+'px';}if(o.stampPlain&&o.stampSrc){icon.style.maxWidth='100%';icon.style.maxHeight='100%';icon.style.width='100%';icon.style.height='100%'}if(o.stampPlain){d.style.border='none';d.style.background='transparent';d.style.borderRadius='0';if(icon){const rotation=Number.isFinite(o.stampRotation)?o.stampRotation:0;icon.style.fontSize=Math.max(18,Math.min(b.w,b.h)*(rotation%90?.62:.88))+'px';icon.style.lineHeight='1';icon.style.transform='rotate('+rotation+'deg) scaleX('+(o.stampFlipped?-1:1)+')';icon.style.transformOrigin='center'}}const label=document.createElementNS(XHTML,'div');label.textContent=o.stampLabel||'Sticker';if(o.stampPlain)label.hidden=true;label.style.fontSize='12px';label.style.fontWeight='700';label.style.marginTop='4px';d.appendChild(icon);d.appendChild(label);fo.appendChild(d);return fo}
-let notePlayback=null;
+let notePlayback=null;const notePlayers=new Map();
 const noteLengths=new Map();
 function audioTime(seconds){seconds=Math.max(0,Math.floor(Number.isFinite(seconds)?seconds:0));return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
 function noteDuration(o,audio){if(Number.isFinite(audio?.duration)&&audio.duration>0){noteLengths.set(o.audioSrc,audio.duration);return audio.duration}return Number.isFinite(o?.audioDuration)&&o.audioDuration>0?o.audioDuration:noteLengths.get(o?.audioSrc)||0}
 function refreshNotePlayback(){
-  document.querySelectorAll('.audio-controls[data-audio-id]').forEach(controls=>{const active=notePlayback?.id===controls.dataset.audioId,audio=active?notePlayback.audio:null,playing=active&&!audio.paused,o=findObj(controls.dataset.audioId),duration=noteDuration(o,audio),elapsed=audio?.currentTime||0;
-    controls.querySelector('[data-audio-action="play"]').disabled=playing;controls.querySelector('[data-audio-action="pause"]').disabled=!playing;controls.querySelector('[data-audio-action="stop"]').disabled=!active;controls.querySelector('.audio-playback-status').textContent=playing?'Playing':active?'Paused':'Ready to listen';
-    const progress=controls.querySelector('.audio-progress');progress.disabled=!active||!duration;progress.max=duration||1;progress.value=Math.min(elapsed,duration||0);progress.setAttribute('aria-valuetext',audioTime(elapsed)+(duration?' of '+audioTime(duration):''));controls.querySelector('.audio-time').textContent=audioTime(elapsed)+(duration?' / '+audioTime(duration):'');
+  document.querySelectorAll('.audio-controls[data-audio-id]').forEach(controls=>{const active=notePlayback?.id===controls.dataset.audioId,audio=notePlayers.get(controls.dataset.audioId)?.audio||null,playing=!!audio&&!audio.paused,o=findObj(controls.dataset.audioId),duration=noteDuration(o,audio),elapsed=audio?.currentTime||0;
+    controls.querySelector('[data-audio-action="play"]').disabled=playing;controls.querySelector('[data-audio-action="pause"]').disabled=!playing;controls.querySelector('[data-audio-action="stop"]').disabled=!audio||audio.paused&&!audio.currentTime;controls.querySelector('.audio-playback-status').textContent=playing?'Playing':active||elapsed?'Paused':'Ready to listen';
+    const progress=controls.querySelector('.audio-progress');progress.disabled=!active||!duration||(typeof audio?.readyState==='number'&&audio.readyState<1);progress.max=duration||1;progress.value=Math.min(elapsed,duration||0);progress.setAttribute('aria-valuetext',audioTime(elapsed)+(duration?' of '+audioTime(duration):''));controls.querySelector('.audio-time').textContent=audioTime(elapsed)+(duration?' / '+audioTime(duration):'');
   });
 }
-function openNoteRecording(o){if(!canEditObject(o)||!learnerAllows('audio'))return;if(learnerAudioDraft){gid('learnerAudioDialog').showModal();refreshLearnerAudioControls();return}stopNotePlayback();setTool('select');setSingleSelection(o.id);render();learnerAudioTarget={board,panelId:panel().id,object:o,existing:true};learnerAudioDraft=null;gid('learnerAudioName').value=o.audioName||'My answer';gid('learnerAudioDialog').showModal();refreshLearnerAudioControls()}
+function openNoteRecording(o){if(!canEditObject(o)||!learnerAllows('audio'))return;if(learnerAudioDraft){gid('learnerAudioDialog').showModal();refreshLearnerAudioControls();return}stopNotePlayback();setTool('select');setSingleSelection(o.id);render();learnerAudioTarget={board,boardId:board.recordingBoardId,context:recordingDraftKey('voice'),panelId:panel().id,object:o,existing:true};learnerAudioDraft=null;gid('learnerAudioName').value=o.audioName||'My answer';gid('learnerAudioDialog').showModal();refreshLearnerAudioControls()}
 
 function stopNotePlayback(){if(notePlayback){notePlayback.audio.pause();notePlayback.audio.currentTime=0;notePlayback=null}refreshNotePlayback()}
 function controlNotePlayback(o,action){
-  if(action==='stop'){if(notePlayback?.id===o.id)stopNotePlayback();return}
+  if(action==='stop'){const player=notePlayers.get(o.id);if(player){player.audio.pause();player.audio.currentTime=0}if(notePlayback?.id===o.id)notePlayback=null;refreshNotePlayback();return}
   if(action==='pause'){if(notePlayback?.id===o.id)notePlayback.audio.pause();refreshNotePlayback();return}
   if(!o.audioSrc)return;
-  if(notePlayback?.id!==o.id||notePlayback?.src!==o.audioSrc){stopNotePlayback();const audio=new Audio(o.audioSrc);notePlayback={id:o.id,src:o.audioSrc,audio};for(const event of ['loadedmetadata','durationchange','timeupdate','seeked'])audio.addEventListener(event,refreshNotePlayback);audio.addEventListener('play',refreshNotePlayback);audio.addEventListener('pause',refreshNotePlayback);audio.addEventListener('ended',()=>{if(notePlayback?.audio===audio)stopNotePlayback()});audio.addEventListener('error',()=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('This audio could not be played. Try loading or recording it again.','danger')}})}
+  if(notePlayback?.id!==o.id||notePlayback?.src!==o.audioSrc){notePlayback?.audio.pause();let player=notePlayers.get(o.id);if(player&&player.src!==o.audioSrc){player.audio.pause();window.DrawSplatRecordingSupport.unregister(player.audio);notePlayers.delete(o.id);player=null}if(player){notePlayback=player}else{const audio=window.DrawSplatRecordingSupport.register(new Audio(o.audioSrc));notePlayback={id:o.id,src:o.audioSrc,audio};notePlayers.set(o.id,notePlayback);for(const event of ['loadedmetadata','durationchange','timeupdate','seeked'])audio.addEventListener(event,refreshNotePlayback);audio.addEventListener('play',refreshNotePlayback);audio.addEventListener('pause',refreshNotePlayback);audio.addEventListener('ended',()=>{if(notePlayback?.audio===audio)stopNotePlayback()});audio.addEventListener('error',()=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('This audio could not be played. Try loading or recording it again.','danger')}})}}
   const audio=notePlayback.audio;audio.play().then(refreshNotePlayback).catch(err=>{if(notePlayback?.audio===audio){stopNotePlayback();setStatus('Playback failed. '+err.message,'danger')}});
 }
 function createAudioObject(o,b){
@@ -2064,7 +2086,7 @@ window.addEventListener('pointerup',e=>{if(dotPaintDrag?.active){const wasMoved=
 
 svg.addEventListener('dblclick',e=>{const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(!o) return; if(o.type==='widget'){e.stopPropagation(); openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){e.stopPropagation(); openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){e.stopPropagation(); openGraphDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){e.stopPropagation(); openWordCloudDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){e.stopPropagation(); openMermaidDialog(o.id); return} if((TEXTABLE_TYPES.includes(o.type)||o.type==='connector')&&canEditObject(o)){e.stopPropagation(); openInlineTextEditor(o.id)}});
 document.addEventListener('pointerdown',e=>{const pop=gid('dotPaintPalette'); if(pop?.classList.contains('show')&&!pop.contains(e.target)&&!e.target.closest('.object')) closeDotPaintPalette()});
-function addObj(o){panel().objects.push(o); setSingleSelection(o.id); render(); saveState()}
+function addObj(o){panel().objects.push(o); setSingleSelection(o.id); render(); return saveState()}
 function cleanupConnectors(ids){panel().objects=panel().objects.filter(o=>o.type!=='connector'||(!ids.includes(o.id)&&!ids.includes(o.fromId)&&!ids.includes(o.toId)))}
 function cleanupColoringPaint(ids){panel().objects=panel().objects.filter(o=>!ids.includes(o.coloringPaintFor))}
 function deleteSelected(){if(!selectedIds.length)return; const editable=selectedIds.filter(idv=>canEditObject(findObj(idv))); cleanupConnectors(editable); cleanupColoringPaint(editable); panel().objects=panel().objects.filter(o=>!editable.includes(o.id)); clearSelection(); render(); saveState()}
@@ -4360,28 +4382,28 @@ async function idbGet(){try{const db=await openIdb(); return new Promise((resolv
 
 function cloneBoardForRestore(){const c=JSON.parse(JSON.stringify(board)); c.restorePoints=[]; return c}
 function snapshot(){return JSON.stringify(board)}
-let localSaveSequence=0;
+let localSaveSequence=0,localSavePending=0;
 function persistLocal(){
-  const snap=snapshot(), sequence=++localSaveSequence;
+  const snap=snapshot(), sequence=++localSaveSequence;let committed=Promise.resolve(true);
   try{localStorage.setItem('drawsplat.autosave',snap); setSaveState('saved','Saved on this device')}
   catch(err){
     setSaveState('saving');
-    idbPut(snap).then(()=>{
-      if(sequence!==localSaveSequence) return;
+    localSavePending++;committed=idbPut(snap).then(()=>{
+      if(sequence!==localSaveSequence) return true;
       // The old smaller localStorage board must not shadow this committed fallback.
       try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
-      setSaveState('saved','Saved on this device');
+      setSaveState('saved','Saved on this device');return true;
     }).catch(()=>{
-      if(sequence!==localSaveSequence) return;
+      if(sequence!==localSaveSequence) return false;
       setSaveState('error','Not saved — download a file');
-      setStatus('Browser storage is unavailable or full. Use File → Save File to keep your work.','danger');
-    });
+      setStatus('Browser storage is unavailable or full. Use File → Save File to keep your work.','danger');return false;
+    }).finally(()=>localSavePending--);
   }
-  refreshSessionExpiry();
+  refreshSessionExpiry();return committed;
 }
 
 function initHistory(){const snap=snapshot(); history=[snap]; future=[]; lastSnapshot=snap}
-function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} refreshLearnerWorkspace();if(gid('coloringPaintToolbar')&&!gid('coloringPaintToolbar').hidden)refreshColoringPaintToolbar(); broadcastLocal(); pushCloudRoom()}
+function saveState(pushHistory=true){const committed=persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} refreshLearnerWorkspace();if(gid('coloringPaintToolbar')&&!gid('coloringPaintToolbar').hidden)refreshColoringPaintToolbar(); broadcastLocal(); pushCloudRoom();return committed}
 function undo(){if(history.length<2)return; future.push(history.pop()); board=JSON.parse(history[history.length-1]); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=history[history.length-1]; persistLocal(); render(); broadcastLocal()}
 function redo(){if(!future.length)return; const snap=future.pop(); history.push(snap); board=JSON.parse(snap); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=snap; persistLocal(); render(); broadcastLocal()}
 function refreshRestorePoints(){const pts=board.restorePoints||[]; ui.restorePointSelect.innerHTML=pts.map((p,i)=>`<option value="${i}">${esc(p.name)} — ${new Date(p.at).toLocaleString()}</option>`).join(''); ui.restorePointHint.textContent=pts.length?`${pts.length} restore point${pts.length===1?'':'s'} available.`:'No restore points yet.'}
@@ -4795,6 +4817,11 @@ gid('insertTemplateBtn').onclick=()=>insertTemplate(false);
 gid('newTemplatePanelBtn').onclick=()=>insertTemplate(true);
 
 async function saveToGoogle(){
+  if(mysqlEnabled()){
+    commitInlineTextEditor();const sentSnapshot=snapshot();setClassroomSaveState('saving');
+    try{const out=await window.DrawSplatMySQL.save(JSON.parse(sentSnapshot));if(!out){setClassroomSaveState('pending');return}setClassroomSaveState('saved',sentSnapshot);setStatus(snapshot()===sentSnapshot?'Saved to your online account.':'Online copy saved. New changes are still on this device.','success')}
+    catch(err){setClassroomSaveState('error');setStatus('Online save failed. '+err.message,'danger')}return;
+  }
   const url=googleScriptUrl();if(!url)return setStatus(board.mode==='student'?'Your teacher has not connected classroom saving yet. Download a backup.':'Connect Google in Teacher Admin first.','danger');
   const sentSnapshot=snapshot();setClassroomSaveState('saving');setStatus('Sending your board to the classroom…');
   try{const png=await exportPng();const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'save',board:JSON.parse(sentSnapshot),png})});const out=await res.json();if(!res.ok||!out.ok)throw new Error(out.error||'Classroom did not confirm saving.');setClassroomSaveState('saved',sentSnapshot);setStatus(snapshot()===sentSnapshot?'Saved to classroom.':'Submitted copy saved. New changes are still on this device.','success')}
@@ -4809,7 +4836,7 @@ gid('saveTemplateBtn').onclick=saveCurrentAsTemplate;
 gid('loadTemplateGalleryBtn').onclick=loadTemplateGallery;
 gid('submitTurnInBtn').onclick=openLearnerTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
-gid('loadDriveBtn').onclick=async()=>{const url=googleScriptUrl(),boardId=prompt('Paste DrawSplatTM boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
+gid('loadDriveBtn').onclick=async()=>{if(mysqlEnabled()){try{const loaded=await window.DrawSplatMySQL.load();if(!loaded)return;stopSync('both');board=loaded;migrateBoard(board);enforceRoleLock();clearSelection();initHistory();render();await persistLocal();setClassroomSaveState('saved',snapshot());setStatus('Opened your online board.','success')}catch(err){setStatus('Online load failed. '+err.message,'danger')}return}const url=googleScriptUrl(),boardId=prompt('Paste DrawSplatTM boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
 gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin/admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
   if(board.mode==='student')return;
@@ -4818,7 +4845,7 @@ gid('resetBoardBtn')?.addEventListener('click',()=>{
     const optionsDlg=gid('optionsDialog'); if(optionsDlg&&optionsDlg.open) optionsDlg.close();
     const recovery=rememberBeforeClearing();const policy=board.studentWorkspace;
     stopSync('both');
-    board={version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',studentWorkspace:policy,restorePoints:[recovery],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
+    board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',studentWorkspace:policy,restorePoints:[recovery],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
     clearSelection(); resetInteractionState();
     try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
     try{if(typeof idbPut==='function') idbPut(null).catch(()=>{})}catch(_){}
@@ -4915,7 +4942,7 @@ async function startAudioRecording(){
   if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger');
   if(!canEditObject(o)||!learnerAllows('audio'))return setStatus('This note is protected. Record your answer in your own note.','danger');
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger');
-  audioStarting=true;learnerAudioError='';stopNotePlayback();refreshLearnerAudioControls();
+  audioStarting=true;learnerAudioError='';window.DrawSplatRecordingSupport.pauseAll();refreshLearnerAudioControls();
   let stream;
   const release=()=>stream?.getTracks().forEach(t=>t.stop());
   const targetExists=()=>board===targetBoard&&targetBoard.panels.includes(targetPanel)&&(staged?learnerAudioTarget===staged:targetPanel.objects.includes(o));
@@ -4931,7 +4958,7 @@ async function startAudioRecording(){
       if(!chunks.length||bytes>5*1024*1024){learnerAudioFinishing=false;learnerAudioError=bytes>5*1024*1024?'That recording was too large. Try a shorter answer.':'No sound was recorded. Please try again.';refreshLearnerAudioControls();return}
       const duration=Math.max(0,(Date.now()-recordedAt)/1000);
       const blob=new Blob(chunks,{type:(recorder.mimeType||'audio/webm').split(';')[0]}), reader=new FileReader();
-      reader.onload=()=>{learnerAudioFinishing=false;if(!targetExists()){refreshLearnerAudioControls();return}if(staged){learnerAudioDraft={src:reader.result,duration};refreshLearnerAudioControls();return}o.audioSrc=reader.result; o.audioName='Recorded audio';o.audioDuration=duration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
+      reader.onload=()=>{learnerAudioFinishing=false;if(!targetExists()){refreshLearnerAudioControls();return}if(staged){learnerAudioDraft={src:reader.result,duration};refreshLearnerAudioControls();persistVoiceDraft();return}o.audioSrc=reader.result; o.audioName='Recorded audio';o.audioDuration=duration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
       reader.onerror=()=>{learnerAudioFinishing=false;refreshLearnerAudioControls();setStatus('Could not save recorded audio. Please retry.','danger')};
       reader.readAsDataURL(blob);
     };
@@ -5027,7 +5054,7 @@ function registerServiceWorker(){
   syncSimpleStickyPalette();
   syncSimpleColor();
   render();
-  const firstRoleVisit=ensureEntryRoleChooser();
+  const firstRoleVisit=ensureEntryRoleChooser();await restoreVoiceDraft();await videoNotes.restoreDraft();
   const showWelcome=()=>{try{if(!localStorage.getItem('drawsplat.welcomed')){setTimeout(()=>{const w=gid('welcomeDialog'); if(w&&typeof w.showModal==='function')w.showModal()},700)}scheduleStartupTip(900)}catch(_){scheduleStartupTip(900)}};
   if(firstRoleVisit)document.addEventListener('drawsplat:entry-role-chosen',showWelcome,{once:true});else showWelcome();
   ensureWidgetTimerTick();
@@ -5209,7 +5236,7 @@ function registerServiceWorker(){
   };
   const toolIcons={select:['select','Move'],pen:['pen','Pen'],bucket:['bucket','Paint Bucket'],dotpaint:['dotpaint','Dot Paint'],eraser:['eraser','Eraser'],laser:['laser','Laser Pointer'],line:['line','Line'],arrow:['arrow','Arrow'],rect:['rect','Rectangle'],ellipse:['ellipse','Ellipse'],text:['text','Text'],sticky:['sticky','Sticky Note'],connector:['connector','Connector'],diamond:['diamond','Diamond'],triangle:['triangle','Triangle'],polygon:['polygon','Polygon'],star:['shape_star','Star'],callout:['callout','Callout'],speech:['speech','Speech'],comment:['comment','Comment'],audio:['audio','Audio']};
   const buttonIcons={
-    undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp','Save to Google'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['pop_tnt','TNT Reset'],
+    undoBtn:['undo','Undo'],redoBtn:['redo','Redo'],saveDriveBtn:['cloudUp',mysqlEnabled()?'Save online':'Save to Google'],onlineAccountBtn:['settings','Online account'],exportBtn:['image','Export PNG'],exportPdfBtn:['pdf','Export PDF'],tntBtn:['pop_tnt','TNT Reset'],
     imageBtn:['adv_image','Load Image'],openColoringBookDialogBtn:['pop_coloring','Coloring Book'],openGraphDialogBtn:['adv_graph','Graph Creator'],openPictureGraphDialogBtn:['adv_picgraph','Picture Graph'],openClassroomWidgetsBtn:['pop_widgets','Classroom Widgets'],openMosaicDialogBtn:['adv_mosaic','Mosaic Images'],openCollageDialogBtn:['adv_collage','Collage'],openEmojiDialogBtn:['star','Emoji Mixer'],openGifDialogBtn:['play','Create GIF'],duplicateBtn:['duplicate','Duplicate'],frontBtn:['front','Bring Front'],backBtn:['back','Send Back'],groupBtn:['group','Group'],ungroupBtn:['adv_ungroup','Ungroup'],
     dotPictureToolBtn:['dotheart','Dot Pictures'],openDotPictureLibraryBtn:['dotheart','Open Dot Picture Library'],insertDotPictureBtn:['plus','Insert Dot Picture'],activateDotPaintBtn:['dotpaint','Paint Dots'],resetDotPictureBtn:['reset','Reset Dot Picture Colors'],simpleDotPicturesBtn:['pop_dotpic','Dot Pictures'],
     openStickerLibraryBtn:['stamp','Open Sticker Library'],insertStickerBtn:['stamp','Insert Sticker'],createCustomStickerBtn:['adv_share','Create Custom Sticker'],
@@ -5219,7 +5246,7 @@ function registerServiceWorker(){
     attachStickyImageBtn:['image','Attach Sticky Image'],toggleCommentResolvedBtn:['check','Resolve/Reopen Comment'],recordAudioBtn:['mic','Record Audio'],loadAudioBtn:['music','Load Audio'],playAudioBtn:['play','Play Audio'],
     selectGroupBtn:['group','Select Group'],answerKeyBtn:['check','Answer Key'],lockBtn:['lock','Lock'],unlockBtn:['unlock','Unlock'],deleteBtn:['pop_trash','Delete'],
     startSyncBtn:['sync','Start Local Sync'],startCloudSyncBtn:['cloudSync','Start Cloud Sync'],stopSyncBtn:['stop','Stop Sync'],refreshCloudBtn:['cloudDown','Pull Cloud'],
-    saveLocalBtn:['save','Save File'],loadLocalBtn:['folder','Load File'],importPanelsBtn:['import','Import Panels'],loadDriveBtn:['cloudDown','Load from Google'],settingsBtn:['settings','Open Teacher Admin'],
+    saveLocalBtn:['save','Save File'],loadLocalBtn:['folder','Load File'],importPanelsBtn:['import','Import Panels'],loadDriveBtn:['cloudDown',mysqlEnabled()?'Open online board':'Load from Google'],settingsBtn:['settings','Open Teacher Admin'],
     submitTurnInBtn:['submit','Submit Turn-In'],reviewTurnInsBtn:['review','Review Turn-Ins'],openModerationBtn:['shield','Open Moderation Dashboard'],refreshModerationBtn:['refresh','Refresh Data'],
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['adv_bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],
@@ -5230,7 +5257,7 @@ function registerServiceWorker(){
     closeSetup:['close','Close'],closeEmojiDialog:['close','Close'],closeGifDialog:['close','Close'],closeDotPictureDialog:['close','Close'],closeStickerDialog:['close','Close'],closeModerationDialog:['close','Close'],inlineTextCancelBtn:['close','Cancel'],inlineTextSaveBtn:['check','Done'],
     closeOptions:['close','Close'],closeAbout:['close','Close'],closeMoreOptions:['close','Close'],closeMermaid:['close','Close'],closeWordCloud:['close','Close'],
     more_saveLocalBtn:['save','Save File'],more_loadLocalBtn:['folder','Load File'],more_importPanelsBtn:['import','Import Panels'],more_exportBtn:['image','Export PNG'],more_exportPdfBtn:['pdf','Export PDF'],
-    more_saveDriveBtn:['cloudUp','Save to Google'],more_loadDriveBtn:['cloudDown','Load from Google'],more_deletePanelBtn:['pop_trash','Delete Page'],more_tntBtn:['pop_tnt','TNT Reset'],
+    more_saveDriveBtn:['cloudUp',mysqlEnabled()?'Save online':'Save to Google'],more_loadDriveBtn:['cloudDown',mysqlEnabled()?'Open online board':'Load from Google'],more_deletePanelBtn:['pop_trash','Delete Page'],more_tntBtn:['pop_tnt','TNT Reset'],
     graphInsertBtn:['plus','Insert Graph'],graphCancelBtn:['close','Close'],pictureGraphInsertBtn:['plus','Insert Picture Graph'],pictureGraphCancelBtn:['close','Close'],mosaicCreateBtn:['plus','Create Mosaic'],mosaicCancelBtn:['close','Cancel'],collageCreateBtn:['plus','Create Collage'],collageCancelBtn:['close','Cancel'],touchMultiSelectBtn:['check','Multi-Select'],insertEmojiMixBtn:['plus','Insert Mix'],mixSelectedEmojiBtn:['magic','Mix Selected Emojis'],createGifBtn:['play','Create GIF'],downloadGifBtn:['download','Download GIF'],
     pictureGraphLoadSymbolBtn:['image','Load picture symbol'],pictureGraphClearSymbolBtn:['text','Use typed symbol'],
     wcGenerate:['wordcloud','Generate'],wcCopyPng:['image','Copy PNG'],wcCancel:['close','Cancel'],wcInsert:['check','Insert'],conceptAddChildBtn:['plus','Add Child'],conceptSetLinkBtn:['concept','Set Link'],conceptOpenLinkBtn:['openLink','Open Link'],conceptAttachImageBtn:['image','Attach Image'],conceptMapSampleBtn:['file','Sample'],conceptMapImageBtn:['image','Add image to line'],conceptMapCancelBtn:['close','Cancel'],conceptMapInsertBtn:['check','Insert Concept Map'],mermaidCopyPng:['image','Copy PNG'],mermaidCancel:['close','Cancel'],mermaidInsert:['check','Insert'],
@@ -5327,7 +5354,7 @@ function registerServiceWorker(){
     const menuHelp={
       saveLocalBtn:'Download an editable copy of your board.',loadLocalBtn:'Open a previously saved board file.',
       importPanelsBtn:'Add frames from a PDF, presentation, or board file.',exportBtn:'Download the current frame as a picture.',exportPdfBtn:'Download the board as a PDF.',
-      saveDriveBtn:'Save your board using your Google connection.',loadDriveBtn:'Open a board saved through Google.',
+      saveDriveBtn:mysqlEnabled()?'Save a private copy to your online account.':'Save your board using your Google connection.',loadDriveBtn:mysqlEnabled()?'Choose a saved board from your online account.':'Open a board saved through Google.',onlineAccountBtn:'Sign in or sign out of online saving on this device.',
       saveRestorePointBtn:'Keep a snapshot to return to later.',restorePointBtn:'Return to a saved board snapshot.',
       undoBtn:'Reverse your last change.',redoBtn:'Reapply a change you undid.',duplicateBtn:'Make a copy of the selected items.',deleteBtn:'Remove the selected items.',
       groupBtn:'Keep selected items together when moving them.',ungroupBtn:'Separate the selected group into individual items.',

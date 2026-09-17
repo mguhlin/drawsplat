@@ -1,0 +1,8 @@
+# API only, for an existing or managed MySQL server. Credentials come from .env.
+services:
+  api:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-8787}:${PORT:-8787}"

@@ -68,16 +68,24 @@ For existing Google classrooms, replace the copied Apps Script with the current 
 
 **Student tools** above the canvas opens the teacher’s lesson settings directly, including the video-recording checkbox. It is hidden in student view.
 
-Video notes now show a **Record → Watch → Add** guide and a progress bar with seconds remaining. After stopping, **Watch clip**, **Try again**, **Discard clip**, and **Add to board** give clear next steps. Closing a reviewed clip changes the toolbar action to **Finish video**, so the unfinished recording is easy to find. Naming and descriptions are under **Name & describe (optional)**, keeping the phone recording controls visible. Drafts stay on this open page until added or discarded; they are not saved across a browser reload. Adding or discarding resets the title and description for a fresh note. Playing another video note pauses the previous video.
+Video notes now show a **Record → Watch → Add** guide and a progress bar with seconds remaining. After stopping, **Watch clip**, **Try again**, **Discard clip**, and **Add to board** give clear next steps. Closing a reviewed clip changes the toolbar action to **Finish video**, so the unfinished recording is easy to find. Naming and descriptions are under **Name & describe (optional)**, keeping the phone recording controls visible. Stopped recordings are kept locally and can be recovered after a browser reload, until the draft expires. Adding or discarding resets the title and description for a fresh note. Playing another voice or video note pauses other note playback and preserves its position.
 
 ### Review a voice answer
 
 Choose **My response → Record my voice**, record up to one minute, then press **Stop**. Use **Listen** and the audio controls to review or pause. Choose **Try again**, **Discard**, or **Add to board**. Recording does not create an empty board item, and adding a finished answer creates one undo step.
 
-Closing the recorder stops recording and releases the microphone. The **Finish voice** button returns to an unfinished recording while this page stays open. Add it before reloading; unfinished recordings are held in memory. Return to the original board page before adding a draft. Teachers control student access to audio in **Student tools**. Voice and video recording cannot run together.
+Closing the recorder stops recording and releases the microphone. The **Finish voice** button returns to an unfinished recording, including a stopped recording recovered after a refresh. The draft status tells you when local recovery is ready. Return to the original board page before adding a draft. Teachers control student access to audio in **Student tools**. Voice and video recording cannot run together.
 
 ### Choose and name a response
 
 **My response** now shows illustrated cards explaining drawing, typing, voice, and video. Only methods allowed by the lesson appear. If none are available, the dialog explains this.
 
 Voice recording includes **Name my note (optional)**. The name appears on the finished audio card and in **Find an item**, and stays in saved boards. If you open a voice draft from another page, **Return to my recording page** takes you back before adding it.
+
+### Recover unfinished recordings
+
+After stopping, wait for **kept on this device**. A refreshed page restores **Finish voice** or **Finish video**, without opening the microphone or camera. Names and video descriptions are recovered too. **Add** and **Discard** remove the recovery copy. Drafts are specific to the board, teacher/student view, student name, and classroom link context. Student recording permissions are checked again before recovery. Drafts expire after the configured browser-session duration (24 hours by default, capped at seven days), and an expired browser-only session clears recovery storage.
+
+An active recording or a draft still being saved prompts before you leave. If browser storage fails, the recorder asks you to add the recording before leaving. Recovery stays on this browser and device; adding a note keeps it in the board for sharing or saving a file.
+
+Video drafts now offer **Return to my recording page** when opened from a different page. Voice notes, video notes, and their review players pause one another so only one plays at a time. Pause keeps the current position. Recording pauses existing note playback.

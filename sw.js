@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.33';
+const CACHE = 'drawsplat-v3.1.34';
 const SHELL = [
   './',
   './index.html',
@@ -38,7 +38,7 @@ const SHELL = [
   './admin/admin.html','./assets/js/admin.js','./assets/js/admin-gate.js','./assets/js/mysql-setup.js',
   './assets/js/gif-encoder.js','./assets/js/consent-banner.js','./assets/js/safety.js?v=0.1','./assets/js/timelimits.js?v=0.1',
   './assets/js/app.js',
-  './assets/js/video-notes.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/js/privacy-builder.js','./assets/brand/DrawSplat_logo.png','./assets/brand/DrawSplat_Terms_Privacy.png','./assets/brand/DrawSplat_Privacy_Builder.png',
+  './assets/js/mysql-cloud.js','./assets/js/recording-support.js','./assets/js/video-notes.js','./assets/css/app.css','./assets/js/i18n.js','./assets/js/locales.js','./assets/js/template-gallery.js','./assets/js/privacy-builder.js','./assets/brand/DrawSplat_logo.png','./assets/brand/DrawSplat_Terms_Privacy.png','./assets/brand/DrawSplat_Privacy_Builder.png',
   './blog/index.html',
   './blog/blog.js',
   './blog/drawsplat.rss',
@@ -132,7 +132,7 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
+const NETWORK_FIRST_PATHS = ['/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;

@@ -26,13 +26,18 @@ function loadSafetyConfig(complianceConfig) {
   };
 }
 
-function extractStrings(value, out) {
+const mediaFields = new Set(['audioSrc','videoSrc','videoPoster','src','stampSrc','bgImage','imageSrc']);
+function extractStrings(value, out, key = '') {
   if (value == null) return;
-  if (typeof value === 'string') { out.push(value); return; }
+  if (typeof value === 'string') {
+    // Encoded media bytes are not learner text; do not match words in base64.
+    if (mediaFields.has(key) && /^data:(audio|video|image)\//i.test(value)) return;
+    out.push(value); return;
+  }
   if (typeof value === 'number' || typeof value === 'boolean') return;
-  if (Array.isArray(value)) { for (const v of value) extractStrings(v, out); return; }
+  if (Array.isArray(value)) { for (const v of value) extractStrings(v, out, key); return; }
   if (typeof value === 'object') {
-    for (const k of Object.keys(value)) extractStrings(value[k], out);
+    for (const k of Object.keys(value)) extractStrings(value[k], out, k);
   }
 }
 

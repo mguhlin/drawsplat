@@ -1,26 +1,50 @@
-# DrawSplatTM MySQL Backend (Phase 4)
+# DrawSplat MySQL saving service
 
-Self-hosted Node.js + MySQL backend for districts that want a local database, real-time session enforcement, OAuth, SIS roster sync, and a parent portal. Pairs with the same static DrawSplatTM frontend as the Apps Script path.
+The current static whiteboard connects to this host-independent API for private
+account-owned **Save online / Open online board**. Deploy it on Railway,
+DigitalOcean, or any Node.js/Docker host that can reach MySQL 8.
 
-> **Status:** scaffold built end-to-end (auth, OAuth, roster import, parent flow, time limits, SSE, retention cron, privacy packet, Clever connector). Has not yet been exercised against a live database in production. Run the integration test suite (TODO) before relying on it for a real district deployment.
+**Start here:** [portable hosting and connection guide](../../docs/setup-mysql.md).
+Use `MYSQL_URL` / `DATABASE_URL` or separate database settings. Schema migrations
+run automatically; managed databases support verified TLS and custom CA certificates.
+The Docker image uses Node.js 22 and Railway deployment configuration is included.
 
-## One-command deployment
+The browser's backend is selected by its public API address, not a database hostname.
+Database credentials and the password pepper stay on the server. API health checks
+include the `private-boards-v1` capability required by the frontend wizard.
 
-```
-cp .env.example .env
-# Edit .env — at minimum change MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD,
-# DRAWSPLAT_PEPPER, GOOGLE_CLIENT_ID, CORS_ORIGIN to real values.
-docker compose up -d
-```
+## Private whiteboard endpoints
 
-That brings up MySQL 8.4 with `schema.sql` + `migrations/002_compliance.sql` + `migrations/003_freeze_and_polish.sql` applied on first boot, plus the Node API on port 8787 (override with `API_HOST_PORT`).
+All paths below follow `/api/drawsplat/mysql` (or `API_BASE_PATH`). Board endpoints
+require a signed-in teacher/student/admin and always scope data to that account.
 
-Sanity check:
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/health` | Database readiness and capabilities |
+| POST | `/auth/register` | Teacher/parent account creation |
+| POST | `/auth/login` | Email/password sign-in |
+| POST | `/auth/logout` | Revoke the current token |
+| GET | `/boards` | Your saved board list |
+| GET | `/boards/:key` | Your board JSON and revision |
+| PUT | `/boards/:key` | Save `{board, revision}`; 0 creates a board |
+| DELETE | `/boards/:key` | Delete your saved board |
 
-```
-curl http://localhost:8787/api/drawsplat/mysql/health
-# {"ok":true,"provider":"mysql","time":"..."}
-```
+A stale revision returns 409 and preserves the existing online copy. Board keys
+are scoped to accounts; knowing another account's key does not grant access.
+The current copy is updated in place, avoiding unlimited snapshot growth.
+
+`npm test` runs configuration checks. Set `MYSQL_TEST_URL` to a disposable database
+to also exercise migrations, authentication, ownership, simultaneous saves, CORS,
+and session revocation against real MySQL. Never use classroom data for these tests.
+
+## Advanced service modules
+
+These pre-existing modules remain available for separately configured district
+installations. The frontend connection above does **not** enable classroom sharing,
+SIS, realtime collaboration, or teacher turn-in review. Advanced integrations still
+need production validation. Legacy room/template/turn-in/session endpoints now
+require district/campus admin authentication until scoped classroom membership is
+implemented.
 
 ## What's included
 
@@ -46,7 +70,7 @@ curl http://localhost:8787/api/drawsplat/mysql/health
 
 All paths prefixed with `API_BASE_PATH` (default `/api/drawsplat/mysql`).
 
-### Public
+### Legacy / separately configured
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -56,10 +80,10 @@ All paths prefixed with `API_BASE_PATH` (default `/api/drawsplat/mysql`).
 | POST | `/auth/google` | Google ID token → bearer token |
 | POST | `/auth/microsoft` | Microsoft Graph access token → bearer token |
 | POST | `/parent/request` | Submit Family Access Tools ticket (with optional verification code) |
-| GET  | `/parent/requests` | List a parent's own request history (by email) |
-| POST | `/rooms` / `GET /rooms/:roomKey/board` / `PUT /rooms/:roomKey/board` | Board CRUD (compliance-gated) |
-| GET / POST | `/templates` | Template CRUD |
-| GET / POST | `/turnins` | Turn-in CRUD (compliance-gated) |
+| GET  | `/parent/requests` | List a signed-in parent's own request history |
+| POST | `/rooms` / `GET /rooms/:roomKey/board` / `PUT /rooms/:roomKey/board` | Legacy board CRUD (administrator-only) |
+| GET / POST | `/templates` | Legacy template CRUD (administrator-only) |
+| GET / POST | `/turnins` | Legacy turn-in CRUD (administrator-only) |
 | POST | `/maintenance/delete-expired` | Manual expiry sweep |
 
 ### Authenticated (bearer)

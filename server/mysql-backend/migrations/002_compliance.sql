@@ -115,11 +115,10 @@ CREATE TABLE IF NOT EXISTS rate_limits (
 );
 
 -- Add user references to existing audit_events.
-ALTER TABLE audit_events
-  ADD COLUMN actor_user_id BIGINT UNSIGNED NULL AFTER actor,
-  ADD COLUMN actor_role VARCHAR(40) NULL AFTER actor_user_id,
-  ADD INDEX idx_audit_actor_user (actor_user_id),
-  ADD INDEX idx_audit_action_created (action, created_at);
+ALTER TABLE audit_events ADD COLUMN actor_user_id BIGINT UNSIGNED NULL AFTER actor;
+ALTER TABLE audit_events ADD COLUMN actor_role VARCHAR(40) NULL AFTER actor_user_id;
+ALTER TABLE audit_events ADD INDEX idx_audit_actor_user (actor_user_id);
+ALTER TABLE audit_events ADD INDEX idx_audit_action_created (action, created_at);
 
 -- Helpful seed: insert the default compliance config row if absent.
 INSERT INTO compliance_config (config_key, config_json)

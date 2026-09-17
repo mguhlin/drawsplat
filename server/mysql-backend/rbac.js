@@ -85,7 +85,7 @@ function buildAuth(pool) {
       `SELECT s.id AS session_id, s.expires_at, u.*
        FROM sessions s
        JOIN users u ON u.id = s.user_id
-       WHERE s.session_token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > NOW()
+       WHERE s.session_token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > NOW() AND u.deleted_at IS NULL
        LIMIT 1`,
       [sha256(token)]
     );
@@ -94,7 +94,8 @@ function buildAuth(pool) {
 
   function requireRoles(roles) {
     return async function(req, res, next) {
-      const user = await sessionUserFromRequest(req);
+      let user;
+      try { user = await sessionUserFromRequest(req); } catch (err) { return next(err); }
       if (!user) return res.status(401).json({ ok: false, error: 'auth_required' });
       if (Array.isArray(roles) && roles.length && roles.indexOf(user.role) === -1) {
         return res.status(403).json({ ok: false, error: 'forbidden', role: user.role });

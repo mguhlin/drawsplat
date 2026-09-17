@@ -20,3 +20,11 @@ DrawSplatTM v3.1.12 separates self-host download artifacts for DrawSplatTM and S
 ## Licensing
 
 The DrawSplatTM package remains AGPL-3.0-or-later unless a file or subdirectory says otherwise. The GridSplatTM / SplatWorksTM spreadsheet package remains GPL-3.0-only.
+
+## Whiteboard recording recovery (September 17, 2026)
+
+Stopped voice and video recordings now have local recovery across refreshes, including their names and descriptions. Recovery copies use IndexedDB, are scoped to their board and classroom/view context, expire, and are removed when added or discarded. Student lesson permissions are rechecked on recovery. Active recording, pending saving, and storage failures receive appropriate navigation protection and visible status.
+
+Voice and video playback now share a single playback coordinator: starting another note pauses existing playback while retaining its position. Video drafts offer Return to my recording page, and adding on the wrong page is disabled. The offline shell and all language entry points include the recording helper.
+
+- Portable MySQL online Save/Open with signed-in account ownership, revision conflict checks, connection testing, automatic migrations, verified database TLS, and Railway/DigitalOcean deployment guides. Hosting credentials must be configured before a live database can be connected.

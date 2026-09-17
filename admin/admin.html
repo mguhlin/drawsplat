@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://script.google.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>DrawSplatTM Teacher Admin</title>
 <link rel="stylesheet" href="../assets/css/app.css?v=3.0.101" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
@@ -131,7 +131,7 @@
       <select id="storageMode">
         <option value="google">Google Apps Script + Drive</option>
         <option value="browser-session">Browser-only timed session</option>
-        <option value="mysql">MySQL backend (requires API)</option>
+        <option value="mysql">MySQL online saving</option>
         <option value="standalone-folder">Standalone server folder (requires backend)</option>
       </select>
       <label class="admin-label" for="sessionHours">Browser session expiration</label>
@@ -143,14 +143,14 @@
         <option value="72">72 hours</option>
         <option value="168">7 days</option>
       </select>
-      <label class="admin-label" for="folderEndpoint">Standalone folder API endpoint</label>
+      <label class="admin-label" for="folderEndpoint">Public saving API address</label>
       <input id="folderEndpoint" type="url" placeholder="/api/drawsplat/session or /api/drawsplat/mysql" autocomplete="off">
       <div class="admin-actions">
         <button id="saveStorageBtn" class="primary" type="button">Save Storage Mode</button>
         <button id="resetSessionBtn" type="button">Reset Session Timer</button>
         <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
       </div>
-      <p class="hint">MySQL and standalone folder options are forward-compatible settings for future backend endpoints. They are not used by static hosting until that API exists.</p>
+      <p class="hint">MySQL online saving works with Railway, DigitalOcean, or your own server. Use the MySQL Wizard to test and enable the connection. Standalone folder storage still needs its own backend.</p>
     </article>
 
   </section>
@@ -202,5 +202,6 @@
 <script src="../assets/js/admin-gate.js?v=1.2"></script>
 <script src="../assets/js/games-filter.js"></script>
 <script src="../assets/js/admin-games-access.js"></script>
-<script src="../assets/js/admin.js?v=1.1"></script><script src="../assets/js/google-setup.js?v=1.0"></script></body>
+<script src="../assets/js/mysql-cloud.js?v=3.1.12"></script>
+<script src="../assets/js/admin.js?v=1.2"></script><script src="../assets/js/google-setup.js?v=1.0"></script></body>
 </html>

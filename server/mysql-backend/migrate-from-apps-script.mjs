@@ -73,16 +73,7 @@ async function tryRead(srcDir, name) {
 
 async function main() {
   const srcDir = path.resolve(opts.src);
-  const pool = mysql.createPool({
-    host: process.env.MYSQL_HOST || '127.0.0.1',
-    port: Number(process.env.MYSQL_PORT || 3306),
-    database: process.env.MYSQL_DATABASE || 'drawsplat',
-    user: process.env.MYSQL_USER || 'drawsplat_app',
-    password: process.env.MYSQL_PASSWORD || '',
-    namedPlaceholders: true,
-    waitForConnections: true,
-    connectionLimit: 4
-  });
+  const pool = mysql.createPool(require('./db-config').databaseConfig());
 
   const stats = { users: 0, parentRequests: 0, audit: 0, timeUsage: 0, contactRequests: 0, boards: 0 };
   const importStudents = async (rows) => {
