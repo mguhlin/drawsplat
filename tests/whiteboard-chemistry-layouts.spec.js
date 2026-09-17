@@ -1,0 +1,24 @@
+const {test,expect}=require('@playwright/test');
+const fs=require('node:fs/promises');
+const chemistry=require('../assets/stamps/chemistry/manifest.json');
+const saved=page=>page.evaluate(()=>JSON.parse(localStorage.getItem('drawsplat.autosave')));
+test.beforeEach(async({page})=>{await page.addInitScript(()=>{localStorage.setItem('drawsplat.welcomed','1');localStorage.setItem('drawsplat.consent.accepted','1');localStorage.setItem('drawsplat.startupTipDate',new Date().toISOString().slice(0,10))});await page.goto('/app/whiteboard.html');await expect(page.locator('#learnerToolbar')).toBeVisible()});
+test('chemistry tray has readable models and accepts ordinary typed formulas',async({page})=>{
+ await page.locator('#funStampToolBtn').click();await page.locator('#stampTheme').selectOption('Chemistry');
+ await expect(page.locator('#funStampGrid button')).toHaveCount(chemistry.length);await expect(page.locator('#stampChemistryGuide')).toBeVisible();
+ for(const image of await page.locator('#funStampGrid img').all())await expect.poll(()=>image.evaluate(e=>e.naturalWidth)).toBeGreaterThan(0);
+ await page.locator('#stampSearch').fill('H2O');await expect(page.locator('#funStampGrid button')).toHaveCount(1);await expect(page.locator('#funStampGrid button')).toHaveAttribute('aria-label','Water (H₂O) stamp');
+ await page.locator('#stampSearch').fill('O2');await expect(page.locator('#funStampGrid button')).toHaveCount(2); // O₂ and CO₂
+ await page.locator('#stampSearch').fill('tetrahedral');await expect(page.locator('#funStampGrid button')).toHaveCount(1);await expect(page.locator('#funStampGrid button')).toHaveAttribute('aria-label','Methane (CH₄) stamp');
+});
+test('molecular stamps retain diagrams through placement saving rotation and PNG export',async({page})=>{
+ await page.locator('#funStampToolBtn').click();await page.locator('#stampTheme').selectOption('Chemistry');await page.getByRole('button',{name:'Water (H₂O) stamp',exact:true}).click();await expect(page.locator('#stampSize')).toHaveValue('160');
+ await page.locator('#stampTurnRight').click();await page.locator('#stampMiddle').click();const stamp=(await saved(page)).panels[0].objects.at(-1);expect(stamp.stampFormula).toBe('H₂O');expect(stamp.stampModelShape).toBe('Bent');expect(stamp.stampRotation).toBe(45);expect(stamp.stampSrc).toMatch(/^data:image\/svg\+xml/);
+ await expect.poll(()=>page.locator('.object[data-id="'+stamp.id+'"] img').evaluate(e=>e.naturalWidth)).toBe(160);
+ const download=page.waitForEvent('download');await page.locator('#exportBtn').evaluate(e=>e.click());const bytes=await fs.readFile(await (await download).path());
+ const redPixels=await page.evaluate(async data=>{const image=new Image;image.src='data:image/png;base64,'+data;await image.decode();const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const ctx=c.getContext('2d');ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,c.width,c.height).data;let red=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>180&&pixels[i+1]<110&&pixels[i+2]<110&&pixels[i+3]>200)red++;return red},bytes.toString('base64'));expect(redPixels).toBeGreaterThan(100);
+ const board=await saved(page);await page.locator('#jsonInput').setInputFiles({name:'chemistry.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(board))});await expect.poll(()=>page.locator('.object[data-id="'+stamp.id+'"] img').evaluate(e=>e.naturalWidth)).toBe(160);expect((await saved(page)).panels[0].objects.at(-1).stampFormula).toBe('H₂O');
+});
+for(const layout of ['frayer','kwl','tchart','storyboard','venn','brainstorm','timeline','comic','certificate'])test('Lesson Starters opens '+layout+' on a new page and preserves existing work',async({page})=>{
+ await page.locator('#jsonInput').setInputFiles({name:'existing-work.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({title:'Existing work',mode:'teacher',active:0,panels:[{id:'keep-page',name:'Keep my drawing',bg:'blank',objects:[{id:'keep-rectangle',type:'rect',x:60,y:80,w:100,h:70,fill:'#22c55e',stroke:'#111827',strokeWidth:2,opacity:1,layer:'shared'}]}]}))});await expect(page.locator('#statusToast')).toContainText('Board loaded');const before=await saved(page);await page.locator('#learnerStarters').click();await expect(page.locator('[data-starter-layout]')).toHaveCount(9);const button=page.locator('[data-starter-layout="'+layout+'"]');const title=await button.locator('strong').textContent();await button.click();await expect(page.locator('#learnerStartersDialog')).toBeHidden();const board=await saved(page);expect(board.panels).toHaveLength(before.panels.length+1);expect(board.panels[0]).toEqual(before.panels[0]);expect(board.panels.at(-1).name).toBe(title);expect(board.panels.at(-1).objects.length).toBeGreaterThan(0);expect(board.panels.at(-1).objects.every(o=>o.groupId)).toBe(true);await page.locator('#learnerUndo').click();expect((await saved(page)).panels).toEqual(before.panels);
+});

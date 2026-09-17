@@ -1,0 +1,339 @@
+[
+  {
+    "id": "chemistry-atom-h",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Hydrogen atom (H)",
+    "formula": "H",
+    "shape": "Atom",
+    "atoms": [
+      "H"
+    ],
+    "path": "assets/stamps/chemistry/atom-h.svg"
+  },
+  {
+    "id": "chemistry-atom-he",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Helium atom (He)",
+    "formula": "He",
+    "shape": "Atom",
+    "atoms": [
+      "He"
+    ],
+    "path": "assets/stamps/chemistry/atom-he.svg"
+  },
+  {
+    "id": "chemistry-atom-c",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Carbon atom (C)",
+    "formula": "C",
+    "shape": "Atom",
+    "atoms": [
+      "C"
+    ],
+    "path": "assets/stamps/chemistry/atom-c.svg"
+  },
+  {
+    "id": "chemistry-atom-n",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Nitrogen atom (N)",
+    "formula": "N",
+    "shape": "Atom",
+    "atoms": [
+      "N"
+    ],
+    "path": "assets/stamps/chemistry/atom-n.svg"
+  },
+  {
+    "id": "chemistry-atom-o",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Oxygen atom (O)",
+    "formula": "O",
+    "shape": "Atom",
+    "atoms": [
+      "O"
+    ],
+    "path": "assets/stamps/chemistry/atom-o.svg"
+  },
+  {
+    "id": "chemistry-atom-f",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Fluorine atom (F)",
+    "formula": "F",
+    "shape": "Atom",
+    "atoms": [
+      "F"
+    ],
+    "path": "assets/stamps/chemistry/atom-f.svg"
+  },
+  {
+    "id": "chemistry-atom-na",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Sodium atom (Na)",
+    "formula": "Na",
+    "shape": "Atom",
+    "atoms": [
+      "Na"
+    ],
+    "path": "assets/stamps/chemistry/atom-na.svg"
+  },
+  {
+    "id": "chemistry-atom-mg",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Magnesium atom (Mg)",
+    "formula": "Mg",
+    "shape": "Atom",
+    "atoms": [
+      "Mg"
+    ],
+    "path": "assets/stamps/chemistry/atom-mg.svg"
+  },
+  {
+    "id": "chemistry-atom-al",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Aluminum atom (Al)",
+    "formula": "Al",
+    "shape": "Atom",
+    "atoms": [
+      "Al"
+    ],
+    "path": "assets/stamps/chemistry/atom-al.svg"
+  },
+  {
+    "id": "chemistry-atom-si",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Silicon atom (Si)",
+    "formula": "Si",
+    "shape": "Atom",
+    "atoms": [
+      "Si"
+    ],
+    "path": "assets/stamps/chemistry/atom-si.svg"
+  },
+  {
+    "id": "chemistry-atom-s",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Sulfur atom (S)",
+    "formula": "S",
+    "shape": "Atom",
+    "atoms": [
+      "S"
+    ],
+    "path": "assets/stamps/chemistry/atom-s.svg"
+  },
+  {
+    "id": "chemistry-atom-cl",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Chlorine atom (Cl)",
+    "formula": "Cl",
+    "shape": "Atom",
+    "atoms": [
+      "Cl"
+    ],
+    "path": "assets/stamps/chemistry/atom-cl.svg"
+  },
+  {
+    "id": "chemistry-hydrogen",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Hydrogen molecule (H₂)",
+    "formula": "H₂",
+    "shape": "Diatomic molecule",
+    "atoms": [
+      "H",
+      "H"
+    ],
+    "path": "assets/stamps/chemistry/hydrogen.svg"
+  },
+  {
+    "id": "chemistry-oxygen",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Oxygen molecule (O₂)",
+    "formula": "O₂",
+    "shape": "Diatomic molecule",
+    "atoms": [
+      "O",
+      "O"
+    ],
+    "path": "assets/stamps/chemistry/oxygen.svg"
+  },
+  {
+    "id": "chemistry-nitrogen",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Nitrogen molecule (N₂)",
+    "formula": "N₂",
+    "shape": "Diatomic molecule",
+    "atoms": [
+      "N",
+      "N"
+    ],
+    "path": "assets/stamps/chemistry/nitrogen.svg"
+  },
+  {
+    "id": "chemistry-chlorine",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Chlorine molecule (Cl₂)",
+    "formula": "Cl₂",
+    "shape": "Diatomic molecule",
+    "atoms": [
+      "Cl",
+      "Cl"
+    ],
+    "path": "assets/stamps/chemistry/chlorine.svg"
+  },
+  {
+    "id": "chemistry-water",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Water (H₂O)",
+    "formula": "H₂O",
+    "shape": "Bent",
+    "atoms": [
+      "O",
+      "H",
+      "H"
+    ],
+    "path": "assets/stamps/chemistry/water.svg"
+  },
+  {
+    "id": "chemistry-carbon-dioxide",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Carbon dioxide (CO₂)",
+    "formula": "CO₂",
+    "shape": "Linear",
+    "atoms": [
+      "C",
+      "O",
+      "O"
+    ],
+    "path": "assets/stamps/chemistry/carbon-dioxide.svg"
+  },
+  {
+    "id": "chemistry-methane",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Methane (CH₄)",
+    "formula": "CH₄",
+    "shape": "Tetrahedral",
+    "atoms": [
+      "C",
+      "H",
+      "H",
+      "H",
+      "H"
+    ],
+    "path": "assets/stamps/chemistry/methane.svg"
+  },
+  {
+    "id": "chemistry-ammonia",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Ammonia (NH₃)",
+    "formula": "NH₃",
+    "shape": "Trigonal pyramidal",
+    "atoms": [
+      "N",
+      "H",
+      "H",
+      "H"
+    ],
+    "path": "assets/stamps/chemistry/ammonia.svg"
+  },
+  {
+    "id": "chemistry-boron-trifluoride",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Boron trifluoride (BF₃)",
+    "formula": "BF₃",
+    "shape": "Trigonal planar",
+    "atoms": [
+      "B",
+      "F",
+      "F",
+      "F"
+    ],
+    "path": "assets/stamps/chemistry/boron-trifluoride.svg"
+  },
+  {
+    "id": "chemistry-hydrogen-chloride",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Hydrogen chloride (HCl)",
+    "formula": "HCl",
+    "shape": "Linear",
+    "atoms": [
+      "H",
+      "Cl"
+    ],
+    "path": "assets/stamps/chemistry/hydrogen-chloride.svg"
+  },
+  {
+    "id": "chemistry-sodium-chloride",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Sodium chloride lattice (NaCl)",
+    "formula": "NaCl",
+    "shape": "Ionic lattice",
+    "atoms": [
+      "Na⁺",
+      "Cl⁻",
+      "Cl⁻",
+      "Na⁺"
+    ],
+    "path": "assets/stamps/chemistry/sodium-chloride.svg"
+  },
+  {
+    "id": "chemistry-proton",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Proton (p⁺)",
+    "formula": "p⁺",
+    "shape": "Subatomic particle",
+    "atoms": [],
+    "path": "assets/stamps/chemistry/proton.svg",
+    "particles": [
+      "p⁺"
+    ]
+  },
+  {
+    "id": "chemistry-neutron",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Neutron (n⁰)",
+    "formula": "n⁰",
+    "shape": "Subatomic particle",
+    "atoms": [],
+    "path": "assets/stamps/chemistry/neutron.svg",
+    "particles": [
+      "n⁰"
+    ]
+  },
+  {
+    "id": "chemistry-electron",
+    "theme": "Chemistry",
+    "icon": "⚛",
+    "label": "Electron (e⁻)",
+    "formula": "e⁻",
+    "shape": "Subatomic particle",
+    "atoms": [],
+    "path": "assets/stamps/chemistry/electron.svg",
+    "particles": [
+      "e⁻"
+    ]
+  }
+]
