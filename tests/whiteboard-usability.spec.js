@@ -32,7 +32,7 @@ test('provides keyboard navigation landmarks', async ({ page }) => {
 for (const width of [1280, 390]) {
   test(`toolbar menus explain their tools and remain usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const group of ['drawToolGroup','shapeToolGroup','textToolGroup','insertToolGroup','backgroundToolGroup','moreToolGroup']) {
+    for (const group of ['drawToolGroup','shapeToolGroup','textToolGroup','insertToolGroup','backgroundToolGroup']) {
       await page.locator(`#${group} > summary`).click();
       const menu = page.locator(`#${group} .tool-popover-panel`);
       await expect(menu).toBeVisible();
@@ -108,3 +108,23 @@ for (const width of [1280,390]) {
     await expect(page.locator('#graphDialog')).toBeVisible();
   });
 }
+
+test('everyday controls share one illustrated toolbar and main actions are direct', async ({ page }) => {
+  const top=page.locator('#learnerToolbar');
+  await expect(top.locator('#learnerUndo')).toHaveText('Undo');
+  await expect(top.locator('#sidebarRedoBtn')).toBeVisible();
+  await expect(top.locator('#sidebarAudioToggleBtn')).toBeVisible();
+  await expect(page.locator('#sidebarUndoRow')).toBeHidden();
+  await expect(top.getByRole('button',{name:'Stamps',exact:true})).toHaveCount(0);
+  for(const id of ['learnerUndo','sidebarRedoBtn','sidebarAudioToggleBtn','learnerHelp','learnerPan'])await expect(top.locator('#'+id+' svg')).toHaveCount(1);
+  for(const selector of ['#funStampToolBtn','[data-tool="bucket"]','#simpleDeleteBtn','#simpleTntBtn']){
+    const button=page.locator('#toolButtons > '+selector);await expect(button).toBeVisible();
+    const bounds=await button.boundingBox();expect(bounds.width).toBeGreaterThanOrEqual(40);expect(bounds.height).toBeGreaterThanOrEqual(40);
+  }
+  await page.locator('#toolButtons > [data-tool="bucket"]').click();await expect(page.locator('body')).toHaveAttribute('data-tool','bucket');
+  await page.locator('#drawToolGroup > summary').click();await page.locator('[data-tool="pen"]').click();
+  const canvas=await page.locator('#boardSvg').boundingBox();await page.mouse.move(canvas.x+100,canvas.y+100);await page.mouse.down();await page.mouse.move(canvas.x+170,canvas.y+160,{steps:4});await page.mouse.up();
+  await expect(page.locator('#boardSvg .object')).toHaveCount(1);
+  await top.locator('#learnerUndo').click();await expect(page.locator('#boardSvg .object')).toHaveCount(0);
+  await top.locator('#sidebarRedoBtn').click();await expect(page.locator('#boardSvg .object')).toHaveCount(1);
+});

@@ -1404,3 +1404,16 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 #toolButtons [data-tool="dotpaint"][hidden]{display:none!important}
 @media(max-width:560px){.coloring-paint-toolbar{padding:10px;margin:0 7px 7px;width:calc(100% - 14px)}.coloring-simple-colors{gap:7px}.coloring-simple-head strong{font-size:16px}#coloringSimpleSizes{border-left:0;padding-left:0;flex-basis:100%}}
 .coloring-paint-toolbar button:disabled{opacity:.45;cursor:default}
+
+/* One illustrated everyday toolbar, with direct access to paint and stamps. */
+.learner-secondary-tools .everyday-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;white-space:nowrap}
+.everyday-icon{width:21px;height:21px;flex:none;color:currentColor}
+.learner-secondary-tools .everyday-action:disabled{opacity:.45;cursor:default}
+#sidebarUndoRow[hidden]{display:none!important}
+#funStampToolBtn{overflow:visible;min-height:58px!important;height:58px!important;padding:2px!important;gap:2px}
+#funStampToolBtn .icon-symbol{width:34px;height:34px}
+#funStampToolBtn .icon-symbol img{width:34px!important;height:34px!important}
+#funStampToolBtn .tool-short-label{font-size:10px;line-height:14px;letter-spacing:0;white-space:nowrap;width:100%;text-align:center}
+
+#toolButtons :is(.direct-delete-tool,.direct-tnt-tool){width:44px;min-height:44px;padding:6px;flex:none;background:#fff1ed;border:1px solid #ffc9ba;border-radius:10px}
+#toolButtons .direct-tnt-tool .icon-symbol,#toolButtons .direct-tnt-tool svg{width:30px;height:30px;overflow:visible}
