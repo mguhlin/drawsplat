@@ -51,3 +51,15 @@ The everyday toolbar above the canvas has illustrated Undo, Redo, and Audio cont
 Choose **Stamps → Chemistry** for labeled atoms, H₂O, O₂, CO₂, and other common molecules, ionic-lattice and subatomic-particle models. Search using either plain formulas (`H2O`) or subscripts (`H₂O`), names, or geometry names. Chemistry stamps start larger for readable symbols. The tray explains bond and wedge notation; the models support [TEA’s chemistry progression](https://tea.texas.gov/curriculum-and-instruction/curriculum-standards/k-12-vertical-alignment-chemistry.pdf).
 
 **Lesson starters → Built-in layouts** includes all nine built-in layouts, with descriptions. Each starts a named new page and keeps existing pages intact. The original Tools menu still offers the same layouts for the current frame or a new frame.
+
+## Teacher and student entry views
+
+On first entry, **Are you a teacher or student?** offers two illustrated choices. Teacher view exposes lesson starters and teaching controls; student view follows this board’s lesson tools and starting view. DrawSplat remembers the choice on this browser. Click **Teacher view** or **Student view** above the canvas to change it later. The choice changes the interface and is not authentication; Teacher Admin keeps its password. Student classroom links skip the chooser, remain in student mode, and retain the teacher’s assigned tools.
+
+## Short video notes
+
+Teachers can choose **Video note** above the canvas. To allow student recording, open **Options → Student lesson tools**, check **Video notes (allow student recording)**, and save the lesson tools. The permission is stored in board files and student links; it starts off for students. Existing teacher video notes remain playable when recording is off.
+
+Click **Record** to request the camera and optional microphone. Clips stop at 30 seconds or 5 MB. Stop turns off the camera, then lets you watch, retake, name, describe, and add the clip. Closing, changing tabs, or leaving the page also releases the camera. Added cards offer Play, Pause, Stop, and native seeking/volume controls. Move or resize the card using its title. Recorded sound is unaffected by the sound-effects Audio switch. Saved board JSON and classroom state retain the clip; PNG/PDF exports show its still picture. Recording formats depend on the browser; use a current browser that supports WebM or MP4.
+
+For existing Google classrooms, replace the copied Apps Script with the current `apps-script/Code.gs` and update its web-app deployment to enforce the teacher’s video setting in room merges. Publishing DrawSplat updates the installer’s script, but cannot update scripts already installed in educators’ Google accounts.

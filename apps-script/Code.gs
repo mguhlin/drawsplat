@@ -403,6 +403,8 @@ function mergeStudentBoard_(baseBoard, studentBoard) {
     const studentMap = {};
     (panel.objects || []).filter(o => (o.layer || 'shared') === 'student').forEach(o => studentMap[o.id] = o);
     (incoming.objects || []).filter(o => !o.layer || o.layer === 'student').forEach(o => {
+      const allowVideo = base.studentWorkspace && Array.isArray(base.studentWorkspace.tools) && base.studentWorkspace.tools.indexOf('video') >= 0;
+      if (o.type === 'video' && !allowVideo && (!studentMap[o.id] || studentMap[o.id].type !== 'video' || studentMap[o.id].videoSrc !== o.videoSrc)) return;
       o.layer = 'student';
       o.locked = false;
       studentMap[o.id] = o;

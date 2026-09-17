@@ -1428,3 +1428,16 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 .fun-stamp-grid:has(.fun-stamp-icon img){grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 .fun-stamp-icon:has(img){height:120px}
 .fun-stamp-icon img{width:120px;height:120px}
+
+/* Video notes use explicit recording controls and ordinary media playback. */
+#videoNotePreview{display:block;width:100%;max-height:300px;aspect-ratio:4/3;object-fit:contain;background:#172033;border-radius:14px;margin:12px 0}
+#videoNoteDialog :is(input[type=text],#videoNoteName,textarea){box-sizing:border-box;width:100%;max-width:100%}
+#videoNoteStatus{min-height:24px;font-weight:700;color:#5d32d5}
+.video-note-card{box-sizing:border-box;display:flex;flex-direction:column;gap:5px;width:100%;height:100%;padding:8px;border:1px solid #c9b9ff;border-radius:12px;background:#f6f2ff;color:#302348;overflow:hidden;font:14px Arial,sans-serif}
+.video-note-card strong{cursor:move;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.video-note-card video{display:block;width:100%;min-height:60px;flex:1;object-fit:contain;background:#172033;border-radius:8px}
+.video-note-actions{display:flex;justify-content:flex-start;flex:none}
+.video-note-actions button{min-height:36px;padding:5px 12px;color:#5d32d5;background:#fff;border:1px solid #c9b9ff;border-radius:8px;font-weight:700}
+.video-note-caption{margin:0;font-size:12px;line-height:1.3;max-height:32px;overflow:auto;flex:none}
+
+.entry-role-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.entry-role-choices .learner-starter-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;text-align:left;border:1px solid #d5c7ff;border-radius:16px;background:linear-gradient(145deg,#faf5ff,#eff6ff);min-height:170px}.entry-role-choices .learner-starter-card .entry-role-icon{font-size:38px;line-height:1.2}.entry-role-choices strong{color:#6634dc;font-size:20px}.entry-role-choices button:hover{border-color:#7c3aed;background:#f1eaff}.entry-role-choices button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}.video-note-actions{gap:6px}@media(max-width:480px){.entry-role-choices{grid-template-columns:1fr}.entry-role-choices .learner-starter-card{min-height:130px}}
