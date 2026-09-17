@@ -19,7 +19,16 @@ function databaseConfig(env = process.env) {
     waitForConnections: true,
     connectionLimit: Number(env.MYSQL_CONNECTION_LIMIT || 5),
     namedPlaceholders: true,
+    timezone: 'Z',
     enableKeepAlive: true
   };
 }
-module.exports = { databaseConfig };
+function createDatabasePool(env = process.env) {
+  const pool = require('mysql2/promise').createPool(databaseConfig(env));
+  // Keep NOW(), Date bindings, and TIMESTAMP results consistent across hosts.
+  pool.on('connection', connection => {
+    connection.query("SET time_zone = '+00:00'", error => { if (error) connection.destroy(); });
+  });
+  return pool;
+}
+module.exports = { databaseConfig, createDatabasePool };

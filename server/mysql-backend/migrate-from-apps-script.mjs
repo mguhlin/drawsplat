@@ -24,7 +24,6 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const mysql = require('mysql2/promise');
 
 const argv = process.argv.slice(2);
 const opts = {};
@@ -73,7 +72,7 @@ async function tryRead(srcDir, name) {
 
 async function main() {
   const srcDir = path.resolve(opts.src);
-  const pool = mysql.createPool(require('./db-config').databaseConfig());
+  const pool = require('./db-config').createDatabasePool();
 
   const stats = { users: 0, parentRequests: 0, audit: 0, timeUsage: 0, contactRequests: 0, boards: 0 };
   const importStudents = async (rows) => {

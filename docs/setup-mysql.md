@@ -156,6 +156,8 @@ and network use. Dedicated object storage is a future improvement, not part of t
 connection. Private boards retain their current copy until deleted; there is no
 automatic expiry applied to this new table.
 
+API connections use UTC for session expiration and timestamps, regardless of the database host’s default timezone.
+
 The health endpoint tests the database connection and advertises `private-boards-v1`.
 Use that path for host health checks. For restricted runtime database users, run
 `npm run migrate` with a schema-capable user first, then deploy with `AUTO_MIGRATE=false`.

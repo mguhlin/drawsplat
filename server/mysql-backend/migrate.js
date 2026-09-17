@@ -30,6 +30,6 @@ async function migrate(pool) {
 module.exports = { migrate };
 if (require.main === module) {
   require('dotenv').config();
-  const pool = require('mysql2/promise').createPool(require('./db-config').databaseConfig());
+  const pool = require('./db-config').createDatabasePool();
   migrate(pool).then(() => pool.end()).catch(async err => { console.error(err.message); await pool.end(); process.exitCode = 1; });
 }

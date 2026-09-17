@@ -3,7 +3,6 @@ require('dotenv').config();
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
-const mysql = require('mysql2/promise');
 const {
   buildCorsOptions,
   securityHeaders,
@@ -18,8 +17,8 @@ const apiBasePath = (process.env.API_BASE_PATH || '/api/drawsplat/mysql').replac
 const port = Number(process.env.PORT || 8787);
 const sessionTtlHours = Number(process.env.SESSION_TTL_HOURS || 24);
 
-const { databaseConfig } = require('./db-config');
-const pool = mysql.createPool(databaseConfig());
+const { createDatabasePool } = require('./db-config');
+const pool = createDatabasePool();
 
 app.disable('x-powered-by');
 if (process.env.TRUST_PROXY === 'true') app.set('trust proxy', 1);

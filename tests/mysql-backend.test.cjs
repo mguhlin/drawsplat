@@ -66,9 +66,8 @@ test('real MySQL: boards persist, remain account-owned, and reject stale or conc
   assert.equal((await call('/boards/lesson', 'PUT', { board, revision: -1 }, token)).status, 400);
   assert.equal((await call('/boards/lesson', 'PUT', { board: { panels: [] }, revision: 2 }, token)).status, 400);
   const cors = await fetch(base + '/health', { headers: { Origin: 'https://unapproved.example' } });assert.equal(cors.status, 403);
-  const mysql = require('../server/mysql-backend/node_modules/mysql2/promise');
-  const pool = mysql.createPool(databaseConfig({ MYSQL_URL: process.env.MYSQL_TEST_URL }));
-  try { await require('../server/mysql-backend/migrate').migrate(pool);assert.equal((await call('/boards/lesson', 'GET', null, token)).status, 200); } finally { await pool.end(); }
+  const pool = require('../server/mysql-backend/db-config').createDatabasePool({ MYSQL_URL: process.env.MYSQL_TEST_URL });
+  try { const [clock]=await pool.query('SELECT @@session.time_zone AS timezone');assert.equal(clock[0].timezone,'+00:00');await require('../server/mysql-backend/migrate').migrate(pool);assert.equal((await call('/boards/lesson', 'GET', null, token)).status, 200); } finally { await pool.end(); }
   assert.equal((await call('/auth/logout', 'POST', {}, token)).status, 200);
   assert.equal((await call('/boards', 'GET', null, token)).status, 401);
 });
