@@ -57,8 +57,8 @@ for (const width of [1280, 390]) {
     }
     await page.locator('#insertToolGroup > summary').click();
     const insert = page.locator('#insertToolGroup .tool-popover-panel');
-    await expect(insert.locator('button')).toHaveCount(5);
-    await expect(insert.locator('.icon-label')).toHaveText(['Add Image','Coloring Book','Graph Creator','Picture Graph','Classroom Widgets']);
+    await expect(insert.locator('button')).toHaveCount(6);
+    await expect(insert.locator('.icon-label')).toHaveText(['Add Image','Coloring Book','Graph Creator','Picture Graph','Classroom Widgets','Dot Pictures']);
     await page.locator('#simpleGraphBtn').click();
     await expect(insert).toBeHidden();
     await expect(page.locator('#graphDialog')).toBeVisible();

@@ -18,6 +18,7 @@ test('TNT bursts stop promptly, restart without overlap, and respect mute',async
   }
   const state=()=>page.evaluate(()=>window.blasts.filter(a=>a.src.includes('/explosions/')).map(a=>({paused:a.paused,plays:a.plays,volume:a.volume,currentTime:a.currentTime})));
   await detonate();
+  expect(await page.evaluate(()=>window.blasts.find(a=>a.src.includes('/explosions/')).src)).toContain('/tnt-burst.mp3');
   expect((await state())[0].paused).toBe(false);
   await expect.poll(async()=>(await state())[0].paused,{timeout:2500,intervals:[100]}).toBe(true);
   expect((await state())[0].currentTime).toBe(0);

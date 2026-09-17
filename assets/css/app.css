@@ -1378,3 +1378,29 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 .stamp-preview,.stamp-preview *{pointer-events:none!important}
 #stampFlip[aria-pressed="true"]{border-color:#6d38e8;background:#ede9fe;color:#5425bd}
 #stampActiveLabel{min-width:120px}
+
+/* A K–3 coloring station stays above the picture instead of covering it. */
+.coloring-paint-toolbar{box-sizing:border-box;width:calc(100% - 24px);max-width:none;margin:0 12px 10px;padding:12px;border:1px solid #d5c9ff;border-radius:16px;background:#fff9ed;overflow:visible;color:#5425bd}
+.coloring-paint-toolbar[hidden]{display:none!important}
+.coloring-simple-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.coloring-simple-head strong{font-size:18px}
+.coloring-paint-toolbar button{min-height:44px;border:1px solid #d5c9ff;border-radius:10px;background:#fff;color:#5425bd;padding:8px 12px;font-weight:700}
+.coloring-paint-toolbar button:focus-visible{outline:3px solid #6d38e8;outline-offset:3px}
+#coloringSimpleHint{margin:6px 0 10px;font-size:14px;color:#475569}
+.coloring-simple-colors{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.coloring-simple-colors .coloring-swatch{width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border:2px solid #a6acbd!important}
+.coloring-swatch span{display:none;color:white;text-shadow:0 1px 3px #111;font-size:24px}
+.coloring-swatch.active span{display:inline}
+.coloring-swatch.active{outline:3px solid #6d38e8;outline-offset:2px}
+.coloring-simple-actions,#coloringSimpleSizes{display:flex;flex-wrap:wrap;gap:8px}
+.coloring-paint-toolbar button[aria-pressed=true]:not(.coloring-swatch){border-color:#6d38e8;background:#ede9fe}
+.coloring-paint-toolbar [hidden]{display:none!important}
+#coloringSimpleSizes{border-left:1px solid #d5c9ff;padding-left:8px}
+#coloringExtraTools{margin-top:10px;font-size:13px}
+#coloringExtraTools summary{cursor:pointer;padding:6px 0;color:#637083}
+#coloringExtraTools input[type=color]{width:44px;height:44px;vertical-align:middle;margin:6px 8px}
+#coloringExtraTools button{margin:6px}
+.selection-toolbar.coloring-focus{display:none!important}
+#toolButtons [data-tool="dotpaint"][hidden]{display:none!important}
+@media(max-width:560px){.coloring-paint-toolbar{padding:10px;margin:0 7px 7px;width:calc(100% - 14px)}.coloring-simple-colors{gap:7px}.coloring-simple-head strong{font-size:16px}#coloringSimpleSizes{border-left:0;padding-left:0;flex-basis:100%}}
+.coloring-paint-toolbar button:disabled{opacity:.45;cursor:default}

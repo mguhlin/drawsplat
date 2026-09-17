@@ -17,3 +17,8 @@ or rename anything, update the lookup arrays in:
 
 Keep new additions CC0 (or another compatible license) so the project stays
 AGPL-3.0-or-later-clean.
+
+`tnt-burst.mp3` is a 1.3-second excerpt from 0.70–2.00 seconds of
+`r09-49-short-explosion-with-debris.mp3`, with a short fade at the end and a 9.5 dB gain increase (without clipping).
+It skips the quiet lead-in so the whiteboard burst begins at the explosion.
+The whiteboard also stops playback after 1.2 seconds and respects mute.

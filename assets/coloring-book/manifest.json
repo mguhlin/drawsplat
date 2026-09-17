@@ -214,5 +214,320 @@
     "paths": [
       "assets/coloring-book/nature-community-garden.png"
     ]
+  },
+  {
+    "id": "space-happy-rocket",
+    "category": "space",
+    "label": "Rocket Adventure",
+    "path": "assets/coloring-book/space-happy-rocket.png",
+    "paths": [
+      "assets/coloring-book/space-happy-rocket.png"
+    ]
+  },
+  {
+    "id": "space-astronaut-moon",
+    "category": "space",
+    "label": "Astronaut on the Moon",
+    "path": "assets/coloring-book/space-astronaut-moon.png",
+    "paths": [
+      "assets/coloring-book/space-astronaut-moon.png"
+    ]
+  },
+  {
+    "id": "space-planet-parade",
+    "category": "space",
+    "label": "Planet Parade",
+    "path": "assets/coloring-book/space-planet-parade.png",
+    "paths": [
+      "assets/coloring-book/space-planet-parade.png"
+    ]
+  },
+  {
+    "id": "space-sleepy-moon",
+    "category": "space",
+    "label": "Sleepy Moon",
+    "path": "assets/coloring-book/space-sleepy-moon.png",
+    "paths": [
+      "assets/coloring-book/space-sleepy-moon.png"
+    ]
+  },
+  {
+    "id": "space-space-station",
+    "category": "space",
+    "label": "Space Station",
+    "path": "assets/coloring-book/space-space-station.png",
+    "paths": [
+      "assets/coloring-book/space-space-station.png"
+    ]
+  },
+  {
+    "id": "technology-friendly-robot",
+    "category": "technology",
+    "label": "Friendly Robot",
+    "path": "assets/coloring-book/technology-friendly-robot.png",
+    "paths": [
+      "assets/coloring-book/technology-friendly-robot.png"
+    ]
+  },
+  {
+    "id": "technology-computer-corner",
+    "category": "technology",
+    "label": "Computer Corner",
+    "path": "assets/coloring-book/technology-computer-corner.png",
+    "paths": [
+      "assets/coloring-book/technology-computer-corner.png"
+    ]
+  },
+  {
+    "id": "technology-build-a-bridge",
+    "category": "technology",
+    "label": "Build a Bridge",
+    "path": "assets/coloring-book/technology-build-a-bridge.png",
+    "paths": [
+      "assets/coloring-book/technology-build-a-bridge.png"
+    ]
+  },
+  {
+    "id": "technology-helpful-drone",
+    "category": "technology",
+    "label": "Helpful Drone",
+    "path": "assets/coloring-book/technology-helpful-drone.png",
+    "paths": [
+      "assets/coloring-book/technology-helpful-drone.png"
+    ]
+  },
+  {
+    "id": "technology-inventors-workbench",
+    "category": "technology",
+    "label": "Inventors Workbench",
+    "path": "assets/coloring-book/technology-inventors-workbench.png",
+    "paths": [
+      "assets/coloring-book/technology-inventors-workbench.png"
+    ]
+  },
+  {
+    "id": "energy-water-wheel",
+    "category": "energy",
+    "label": "Water Wheel",
+    "path": "assets/coloring-book/energy-water-wheel.png",
+    "paths": [
+      "assets/coloring-book/energy-water-wheel.png"
+    ]
+  },
+  {
+    "id": "energy-solar-house",
+    "category": "energy",
+    "label": "Solar House",
+    "path": "assets/coloring-book/energy-solar-house.png",
+    "paths": [
+      "assets/coloring-book/energy-solar-house.png"
+    ]
+  },
+  {
+    "id": "energy-windy-hill",
+    "category": "energy",
+    "label": "Windy Hill",
+    "path": "assets/coloring-book/energy-windy-hill.png",
+    "paths": [
+      "assets/coloring-book/energy-windy-hill.png"
+    ]
+  },
+  {
+    "id": "energy-pedal-power",
+    "category": "energy",
+    "label": "Pedal Power",
+    "path": "assets/coloring-book/energy-pedal-power.png",
+    "paths": [
+      "assets/coloring-book/energy-pedal-power.png"
+    ]
+  },
+  {
+    "id": "energy-electric-bus",
+    "category": "energy",
+    "label": "Electric Bus",
+    "path": "assets/coloring-book/energy-electric-bus.png",
+    "paths": [
+      "assets/coloring-book/energy-electric-bus.png"
+    ]
+  },
+  {
+    "id": "ocean-friendly-octopus",
+    "category": "ocean",
+    "label": "Friendly Octopus",
+    "path": "assets/coloring-book/ocean-friendly-octopus.png",
+    "paths": [
+      "assets/coloring-book/ocean-friendly-octopus.png"
+    ]
+  },
+  {
+    "id": "ocean-dolphin-day",
+    "category": "ocean",
+    "label": "Dolphin Day",
+    "path": "assets/coloring-book/ocean-dolphin-day.png",
+    "paths": [
+      "assets/coloring-book/ocean-dolphin-day.png"
+    ]
+  },
+  {
+    "id": "ocean-sea-turtle",
+    "category": "ocean",
+    "label": "Sea Turtle",
+    "path": "assets/coloring-book/ocean-sea-turtle.png",
+    "paths": [
+      "assets/coloring-book/ocean-sea-turtle.png"
+    ]
+  },
+  {
+    "id": "ocean-seahorse-garden",
+    "category": "ocean",
+    "label": "Seahorse Garden",
+    "path": "assets/coloring-book/ocean-seahorse-garden.png",
+    "paths": [
+      "assets/coloring-book/ocean-seahorse-garden.png"
+    ]
+  },
+  {
+    "id": "ocean-whale-waves",
+    "category": "ocean",
+    "label": "Whale and Waves",
+    "path": "assets/coloring-book/ocean-whale-waves.png",
+    "paths": [
+      "assets/coloring-book/ocean-whale-waves.png"
+    ]
+  },
+  {
+    "id": "sports-basketball-friends",
+    "category": "sports",
+    "label": "Basketball Friends",
+    "path": "assets/coloring-book/sports-basketball-friends.png",
+    "paths": [
+      "assets/coloring-book/sports-basketball-friends.png"
+    ]
+  },
+  {
+    "id": "sports-baseball-day",
+    "category": "sports",
+    "label": "Baseball Day",
+    "path": "assets/coloring-book/sports-baseball-day.png",
+    "paths": [
+      "assets/coloring-book/sports-baseball-day.png"
+    ]
+  },
+  {
+    "id": "sports-tennis-time",
+    "category": "sports",
+    "label": "Tennis Time",
+    "path": "assets/coloring-book/sports-tennis-time.png",
+    "paths": [
+      "assets/coloring-book/sports-tennis-time.png"
+    ]
+  },
+  {
+    "id": "sports-swimming-fun",
+    "category": "sports",
+    "label": "Swimming Fun",
+    "path": "assets/coloring-book/sports-swimming-fun.png",
+    "paths": [
+      "assets/coloring-book/sports-swimming-fun.png"
+    ]
+  },
+  {
+    "id": "sports-bicycle-ride",
+    "category": "sports",
+    "label": "Bicycle Ride",
+    "path": "assets/coloring-book/sports-bicycle-ride.png",
+    "paths": [
+      "assets/coloring-book/sports-bicycle-ride.png"
+    ]
+  },
+  {
+    "id": "farming-tractor-day",
+    "category": "farming",
+    "label": "Tractor Day",
+    "path": "assets/coloring-book/farming-tractor-day.png",
+    "paths": [
+      "assets/coloring-book/farming-tractor-day.png"
+    ]
+  },
+  {
+    "id": "farming-vegetable-harvest",
+    "category": "farming",
+    "label": "Vegetable Harvest",
+    "path": "assets/coloring-book/farming-vegetable-harvest.png",
+    "paths": [
+      "assets/coloring-book/farming-vegetable-harvest.png"
+    ]
+  },
+  {
+    "id": "farming-barnyard-friends",
+    "category": "farming",
+    "label": "Barnyard Friends",
+    "path": "assets/coloring-book/farming-barnyard-friends.png",
+    "paths": [
+      "assets/coloring-book/farming-barnyard-friends.png"
+    ]
+  },
+  {
+    "id": "farming-apple-orchard",
+    "category": "farming",
+    "label": "Apple Orchard",
+    "path": "assets/coloring-book/farming-apple-orchard.png",
+    "paths": [
+      "assets/coloring-book/farming-apple-orchard.png"
+    ]
+  },
+  {
+    "id": "farming-growing-grain",
+    "category": "farming",
+    "label": "Growing Grain",
+    "path": "assets/coloring-book/farming-growing-grain.png",
+    "paths": [
+      "assets/coloring-book/farming-growing-grain.png"
+    ]
+  },
+  {
+    "id": "science-magnet-discovery",
+    "category": "science",
+    "label": "Magnet Discovery",
+    "path": "assets/coloring-book/science-magnet-discovery.png",
+    "paths": [
+      "assets/coloring-book/science-magnet-discovery.png"
+    ]
+  },
+  {
+    "id": "science-seed-to-sprout",
+    "category": "science",
+    "label": "Seed to Sprout",
+    "path": "assets/coloring-book/science-seed-to-sprout.png",
+    "paths": [
+      "assets/coloring-book/science-seed-to-sprout.png"
+    ]
+  },
+  {
+    "id": "science-magnifier-bug",
+    "category": "science",
+    "label": "Magnifier Bug",
+    "path": "assets/coloring-book/science-magnifier-bug.png",
+    "paths": [
+      "assets/coloring-book/science-magnifier-bug.png"
+    ]
+  },
+  {
+    "id": "science-weather-watch",
+    "category": "science",
+    "label": "Weather Watch",
+    "path": "assets/coloring-book/science-weather-watch.png",
+    "paths": [
+      "assets/coloring-book/science-weather-watch.png"
+    ]
+  },
+  {
+    "id": "science-volcano-model",
+    "category": "science",
+    "label": "Volcano Model",
+    "path": "assets/coloring-book/science-volcano-model.png",
+    "paths": [
+      "assets/coloring-book/science-volcano-model.png"
+    ]
   }
 ]

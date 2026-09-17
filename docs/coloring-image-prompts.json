@@ -1,0 +1,286 @@
+{
+  "tool": "Built-in image_gen",
+  "commonPrompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: ",
+  "images": [
+    {
+      "id": "space-happy-rocket",
+      "category": "space",
+      "label": "Rocket Adventure",
+      "scene": "a cheerful rocket launching above a grassy hill with clouds, a smiling sun and three stars",
+      "path": "assets/coloring-book/space-happy-rocket.png",
+      "prompt": "Use case: illustration-story. Asset type: a DrawSplat digital coloring-book page for K–3 learners. Subject: a cheerful rocket launching gently above a grassy hill, a few fluffy clouds, a smiling sun, and three large stars. Original friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions. One complete scene with generous white margins, no panels. Minimal detail, no shading, no gray, no color, no solid black fills, no hatching, no text, no labels, no border, no logos, no watermark. All shapes clearly separated and fully inside the page. Make this easy for ages 5–9 to color with a digital fill bucket."
+    },
+    {
+      "id": "space-astronaut-moon",
+      "category": "space",
+      "label": "Astronaut on the Moon",
+      "scene": "a friendly astronaut waving on the moon beside a rover and three craters with Earth in the sky",
+      "path": "assets/coloring-book/space-astronaut-moon.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly astronaut waving on the moon beside a rover and three craters with Earth in the sky."
+    },
+    {
+      "id": "space-planet-parade",
+      "category": "space",
+      "label": "Planet Parade",
+      "scene": "five large planets with simple stripes, dots or rings floating among a few large stars",
+      "path": "assets/coloring-book/space-planet-parade.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: five large planets with simple stripes, dots or rings floating among a few large stars."
+    },
+    {
+      "id": "space-sleepy-moon",
+      "category": "space",
+      "label": "Sleepy Moon",
+      "scene": "a smiling crescent moon, five big stars and two clouds above gentle hills",
+      "path": "assets/coloring-book/space-sleepy-moon.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a smiling crescent moon, five big stars and two clouds above gentle hills."
+    },
+    {
+      "id": "space-space-station",
+      "category": "space",
+      "label": "Space Station",
+      "scene": "a simple space station with broad solar panels, an astronaut waving through a round window and Earth below",
+      "path": "assets/coloring-book/space-space-station.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a simple space station with broad solar panels, an astronaut waving through a round window and Earth below."
+    },
+    {
+      "id": "technology-friendly-robot",
+      "category": "technology",
+      "label": "Friendly Robot",
+      "scene": "a friendly box-shaped robot with large buttons beside two broad gears",
+      "path": "assets/coloring-book/technology-friendly-robot.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly box-shaped robot with large buttons beside two broad gears."
+    },
+    {
+      "id": "technology-computer-corner",
+      "category": "technology",
+      "label": "Computer Corner",
+      "scene": "a desktop computer showing a smile, a mouse, a keyboard with a few broad keys and a plant",
+      "path": "assets/coloring-book/technology-computer-corner.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a desktop computer showing a smile, a mouse, a keyboard with a few broad keys and a plant."
+    },
+    {
+      "id": "technology-build-a-bridge",
+      "category": "technology",
+      "label": "Build a Bridge",
+      "scene": "two children assembling a toy bridge from large blocks over a little toy river",
+      "path": "assets/coloring-book/technology-build-a-bridge.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children assembling a toy bridge from large blocks over a little toy river."
+    },
+    {
+      "id": "technology-helpful-drone",
+      "category": "technology",
+      "label": "Helpful Drone",
+      "scene": "a small four-propeller drone carrying a parcel above a simple house and a tree",
+      "path": "assets/coloring-book/technology-helpful-drone.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a small four-propeller drone carrying a parcel above a simple house and a tree."
+    },
+    {
+      "id": "technology-inventors-workbench",
+      "category": "technology",
+      "label": "Inventors Workbench",
+      "scene": "a child inventor at a workbench with a wind-up toy car, a broad gear, a screwdriver and a light bulb",
+      "path": "assets/coloring-book/technology-inventors-workbench.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a child inventor at a workbench with a wind-up toy car, a broad gear, a screwdriver and a light bulb."
+    },
+    {
+      "id": "energy-water-wheel",
+      "category": "energy",
+      "label": "Water Wheel",
+      "scene": "a water wheel beside a flowing stream and a small house with broad windows",
+      "path": "assets/coloring-book/energy-water-wheel.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a water wheel beside a flowing stream and a small house with broad windows."
+    },
+    {
+      "id": "energy-solar-house",
+      "category": "energy",
+      "label": "Solar House",
+      "scene": "a house with four large solar panels on its roof, a smiling sun and a tree",
+      "path": "assets/coloring-book/energy-solar-house.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a house with four large solar panels on its roof, a smiling sun and a tree."
+    },
+    {
+      "id": "energy-windy-hill",
+      "category": "energy",
+      "label": "Windy Hill",
+      "scene": "two simple three-blade wind turbines on grassy hills under fluffy clouds",
+      "path": "assets/coloring-book/energy-windy-hill.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two simple three-blade wind turbines on grassy hills under fluffy clouds."
+    },
+    {
+      "id": "energy-pedal-power",
+      "category": "energy",
+      "label": "Pedal Power",
+      "scene": "a child on a stationary bicycle connected by a simple cable to a glowing lamp",
+      "path": "assets/coloring-book/energy-pedal-power.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a child on a stationary bicycle connected by a simple cable to a glowing lamp."
+    },
+    {
+      "id": "energy-electric-bus",
+      "category": "energy",
+      "label": "Electric Bus",
+      "scene": "a friendly electric school bus at a charging post beside a tree",
+      "path": "assets/coloring-book/energy-electric-bus.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly electric school bus at a charging post beside a tree."
+    },
+    {
+      "id": "ocean-friendly-octopus",
+      "category": "ocean",
+      "label": "Friendly Octopus",
+      "scene": "a cheerful octopus with eight separated arms beside broad seashells and bubbles",
+      "path": "assets/coloring-book/ocean-friendly-octopus.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a cheerful octopus with eight separated arms beside broad seashells and bubbles."
+    },
+    {
+      "id": "ocean-dolphin-day",
+      "category": "ocean",
+      "label": "Dolphin Day",
+      "scene": "two friendly dolphins leaping over a broad ocean wave under a smiling sun",
+      "path": "assets/coloring-book/ocean-dolphin-day.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two friendly dolphins leaping over a broad ocean wave under a smiling sun."
+    },
+    {
+      "id": "ocean-sea-turtle",
+      "category": "ocean",
+      "label": "Sea Turtle",
+      "scene": "a friendly sea turtle with broad shell sections beside seaweed and three fish",
+      "path": "assets/coloring-book/ocean-sea-turtle.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly sea turtle with broad shell sections beside seaweed and three fish."
+    },
+    {
+      "id": "ocean-seahorse-garden",
+      "category": "ocean",
+      "label": "Seahorse Garden",
+      "scene": "two seahorses beside broad sea plants, shells and bubbles",
+      "path": "assets/coloring-book/ocean-seahorse-garden.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two seahorses beside broad sea plants, shells and bubbles."
+    },
+    {
+      "id": "ocean-whale-waves",
+      "category": "ocean",
+      "label": "Whale and Waves",
+      "scene": "a happy whale at the ocean surface making a small spout beside broad waves and two clouds",
+      "path": "assets/coloring-book/ocean-whale-waves.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a happy whale at the ocean surface making a small spout beside broad waves and two clouds."
+    },
+    {
+      "id": "sports-basketball-friends",
+      "category": "sports",
+      "label": "Basketball Friends",
+      "scene": "two children playing basketball beside a hoop with a large ball and broad court lines",
+      "path": "assets/coloring-book/sports-basketball-friends.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children playing basketball beside a hoop with a large ball and broad court lines."
+    },
+    {
+      "id": "sports-baseball-day",
+      "category": "sports",
+      "label": "Baseball Day",
+      "scene": "a child with a baseball glove beside a large baseball, a bat and a simple baseball diamond",
+      "path": "assets/coloring-book/sports-baseball-day.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a child with a baseball glove beside a large baseball, a bat and a simple baseball diamond."
+    },
+    {
+      "id": "sports-tennis-time",
+      "category": "sports",
+      "label": "Tennis Time",
+      "scene": "two children playing tennis with broad racquets, a low net and large tennis balls",
+      "path": "assets/coloring-book/sports-tennis-time.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children playing tennis with broad racquets, a low net and large tennis balls."
+    },
+    {
+      "id": "sports-swimming-fun",
+      "category": "sports",
+      "label": "Swimming Fun",
+      "scene": "two children swimming in a shallow pool with broad waves, a ladder and a beach ball",
+      "path": "assets/coloring-book/sports-swimming-fun.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children swimming in a shallow pool with broad waves, a ladder and a beach ball."
+    },
+    {
+      "id": "sports-bicycle-ride",
+      "category": "sports",
+      "label": "Bicycle Ride",
+      "scene": "two children wearing bicycle helmets riding simple bicycles on a park path beside a tree",
+      "path": "assets/coloring-book/sports-bicycle-ride.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children wearing bicycle helmets riding simple bicycles on a park path beside a tree."
+    },
+    {
+      "id": "farming-tractor-day",
+      "category": "farming",
+      "label": "Tractor Day",
+      "scene": "a friendly tractor with large wheels in a field beside a barn and a smiling sun",
+      "path": "assets/coloring-book/farming-tractor-day.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly tractor with large wheels in a field beside a barn and a smiling sun."
+    },
+    {
+      "id": "farming-vegetable-harvest",
+      "category": "farming",
+      "label": "Vegetable Harvest",
+      "scene": "a child farmer with a basket of large carrots, pumpkins and leafy vegetables in a garden",
+      "path": "assets/coloring-book/farming-vegetable-harvest.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a child farmer with a basket of large carrots, pumpkins and leafy vegetables in a garden."
+    },
+    {
+      "id": "farming-barnyard-friends",
+      "category": "farming",
+      "label": "Barnyard Friends",
+      "scene": "a friendly cow, a sheep and a chicken in front of a simple barn",
+      "path": "assets/coloring-book/farming-barnyard-friends.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a friendly cow, a sheep and a chicken in front of a simple barn."
+    },
+    {
+      "id": "farming-apple-orchard",
+      "category": "farming",
+      "label": "Apple Orchard",
+      "scene": "two apple trees with large apples and a basket on a gentle grassy hill",
+      "path": "assets/coloring-book/farming-apple-orchard.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two apple trees with large apples and a basket on a gentle grassy hill."
+    },
+    {
+      "id": "farming-growing-grain",
+      "category": "farming",
+      "label": "Growing Grain",
+      "scene": "a few large stalks of corn and wheat beside a friendly scarecrow",
+      "path": "assets/coloring-book/farming-growing-grain.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a few large stalks of corn and wheat beside a friendly scarecrow."
+    },
+    {
+      "id": "science-magnet-discovery",
+      "category": "science",
+      "label": "Magnet Discovery",
+      "scene": "two children observing a large horseshoe magnet attracting three paper clips on a tabletop",
+      "path": "assets/coloring-book/science-magnet-discovery.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children observing a large horseshoe magnet attracting three paper clips on a tabletop."
+    },
+    {
+      "id": "science-seed-to-sprout",
+      "category": "science",
+      "label": "Seed to Sprout",
+      "scene": "three large plant pots showing a seed in soil, a young sprout and a leafy plant beside a watering can",
+      "path": "assets/coloring-book/science-seed-to-sprout.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: three large plant pots showing a seed in soil, a young sprout and a leafy plant beside a watering can."
+    },
+    {
+      "id": "science-magnifier-bug",
+      "category": "science",
+      "label": "Magnifier Bug",
+      "scene": "a child looking through a large magnifying glass at a friendly beetle on a broad leaf",
+      "path": "assets/coloring-book/science-magnifier-bug.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a child looking through a large magnifying glass at a friendly beetle on a broad leaf."
+    },
+    {
+      "id": "science-weather-watch",
+      "category": "science",
+      "label": "Weather Watch",
+      "scene": "a rain cloud above a hill, a rainbow, a smiling sun and a large thermometer without numbers",
+      "path": "assets/coloring-book/science-weather-watch.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: a rain cloud above a hill, a rainbow, a smiling sun and a large thermometer without numbers."
+    },
+    {
+      "id": "science-volcano-model",
+      "category": "science",
+      "label": "Volcano Model",
+      "scene": "two children studying a tabletop model volcano making gentle bubbly foam beside a measuring cup",
+      "path": "assets/coloring-book/science-volcano-model.png",
+      "prompt": "Use case: illustration-story. Asset type: original DrawSplat digital coloring-book page for K–3 learners. Style: friendly children's black-and-white line drawing, portrait 1024x1536, bold smooth black outlines on pure white, large simple completely enclosed white coloring regions, minimal details. One full scene with generous white margins, all shapes clearly separated and entirely inside the page. No panels, text, labels, numbers, logos, watermark, border, shading, gray, color, solid black fills or hatching. Keep faces friendly and people varied. Easy for ages 5–9 to color with a digital fill bucket. Subject: two children studying a tabletop model volcano making gentle bubbly foam beside a measuring cup."
+    }
+  ]
+}

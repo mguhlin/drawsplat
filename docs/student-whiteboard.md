@@ -34,8 +34,14 @@ The device-save indicator explicitly says **Saved on this device**. Classroom sa
 
 ## Picture buttons and fun stamps
 
-The toolbar now separates **ADD** (a picture with a plus, for pictures and learning tools) from **PAGE** (a page with a paint roller, for backgrounds and reveal effects). The Add menu retains Add Image, Coloring Book, Graph Creator, Picture Graph, and Classroom Widgets.
+The toolbar now separates **ADD** (a picture with a plus, for pictures and learning tools) from **PAGE** (a page with a paint roller, for backgrounds and reveal effects). The Add menu includes Add Image, Coloring Book, Graph Creator, Picture Graph, Classroom Widgets, and Dot Pictures.
 
 Choose **Stamps** from the toolbar or everyday tool row. Eight searchable trays contain 80 named stamps: Animals, Nature, Space, School, Food, Sports, Music, and Silly. Recent remembers up to 12 picks on this device. Pick a stamp, choose Small/Medium/Large, and tap repeatedly to place it. The active strip offers Change stamp, Stamp in middle, and Done stamping. Desktop pointers show a faint placement preview that never enters saves or downloads. Turn left/right rotates by 45 degrees; Flip stamp mirrors the picture. Reset stamp returns to Medium size with no rotation or flip. Placed stamps retain their orientation in board saves. With the canvas focused, Enter or Space stamps in the middle, and Escape returns to Move.
 
 Stamps have transparent backgrounds and stay separate editable objects. Each placement can be undone; stamps persist in board saves and classroom state. Student stamps use the student layer and owner. The teacher’s Pictures and Stamps lesson setting controls access. Built-in stamps use emoji artwork provided by the device, so appearance can vary between operating systems.
+
+## Coloring for younger learners
+
+Choosing a coloring page opens a dedicated **Color my picture** station above the canvas. Ten big named color swatches, **Fill a space**, **Brush**, **Undo color**, and **Done coloring** replace the crowded floating image toolbar. New pages start with Fill a space and fit the available canvas, including phones. Brush shows Small, Medium, and Big brush buttons. Custom colors, Spray paint, and Picture options live under More colors & tools. Undo keeps the picture selected so children can keep coloring.
+
+**ADD → Dot Pictures** opens the dot-picture picker. **Color my dot picture** then offers the same named swatches and **Paint dots** with “Pick a color. Tap or drag over the dots.” A single tap applies the chosen color without opening another palette. Dot Paint no longer occupies the Draw menu. Picture options selects the entire dot picture. Pictures-enabled student lessons allow dot coloring; teacher-protected dots remain read-only.

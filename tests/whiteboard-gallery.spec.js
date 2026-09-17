@@ -64,7 +64,7 @@ test('curated coloring picker matches manifest and every image is full size', as
     await expect.poll(() => tile.locator('img').evaluate(img => img.naturalWidth)).toBeGreaterThanOrEqual(800);
   }
   await page.locator('[data-coloring-category="space"]').click();
-  await expect(tiles).toHaveCount(1);
+  await expect(tiles).toHaveCount(manifest.filter(item => item.category === 'space').length);
   await tiles.first().click();
   await expect(page.locator('#coloringBookDialog')).not.toBeVisible();
   const board = await saved(page);

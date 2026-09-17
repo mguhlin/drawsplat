@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.4';
+const VERSION='3.1.5';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -105,7 +105,42 @@ const COLORING_BOOK_ITEMS=[
   ["farming-rangelands","farming","Healthy Rangelands","farming-rangelands.png"],
   ["science-space-telescope","science","Space Telescope","science-space-telescope.png"],
   ["community-repair-cafe","community","Repair and Reuse","community-repair-cafe.png"],
-  ["nature-community-garden","nature","Community Garden","nature-community-garden.png"]
+  ["nature-community-garden","nature","Community Garden","nature-community-garden.png"],
+  ["space-happy-rocket","space","Rocket Adventure","space-happy-rocket.png"],
+  ["space-astronaut-moon","space","Astronaut on the Moon","space-astronaut-moon.png"],
+  ["space-planet-parade","space","Planet Parade","space-planet-parade.png"],
+  ["space-sleepy-moon","space","Sleepy Moon","space-sleepy-moon.png"],
+  ["space-space-station","space","Space Station","space-space-station.png"],
+  ["technology-friendly-robot","technology","Friendly Robot","technology-friendly-robot.png"],
+  ["technology-computer-corner","technology","Computer Corner","technology-computer-corner.png"],
+  ["technology-build-a-bridge","technology","Build a Bridge","technology-build-a-bridge.png"],
+  ["technology-helpful-drone","technology","Helpful Drone","technology-helpful-drone.png"],
+  ["technology-inventors-workbench","technology","Inventors Workbench","technology-inventors-workbench.png"],
+  ["energy-water-wheel","energy","Water Wheel","energy-water-wheel.png"],
+  ["energy-solar-house","energy","Solar House","energy-solar-house.png"],
+  ["energy-windy-hill","energy","Windy Hill","energy-windy-hill.png"],
+  ["energy-pedal-power","energy","Pedal Power","energy-pedal-power.png"],
+  ["energy-electric-bus","energy","Electric Bus","energy-electric-bus.png"],
+  ["ocean-friendly-octopus","ocean","Friendly Octopus","ocean-friendly-octopus.png"],
+  ["ocean-dolphin-day","ocean","Dolphin Day","ocean-dolphin-day.png"],
+  ["ocean-sea-turtle","ocean","Sea Turtle","ocean-sea-turtle.png"],
+  ["ocean-seahorse-garden","ocean","Seahorse Garden","ocean-seahorse-garden.png"],
+  ["ocean-whale-waves","ocean","Whale and Waves","ocean-whale-waves.png"],
+  ["sports-basketball-friends","sports","Basketball Friends","sports-basketball-friends.png"],
+  ["sports-baseball-day","sports","Baseball Day","sports-baseball-day.png"],
+  ["sports-tennis-time","sports","Tennis Time","sports-tennis-time.png"],
+  ["sports-swimming-fun","sports","Swimming Fun","sports-swimming-fun.png"],
+  ["sports-bicycle-ride","sports","Bicycle Ride","sports-bicycle-ride.png"],
+  ["farming-tractor-day","farming","Tractor Day","farming-tractor-day.png"],
+  ["farming-vegetable-harvest","farming","Vegetable Harvest","farming-vegetable-harvest.png"],
+  ["farming-barnyard-friends","farming","Barnyard Friends","farming-barnyard-friends.png"],
+  ["farming-apple-orchard","farming","Apple Orchard","farming-apple-orchard.png"],
+  ["farming-growing-grain","farming","Growing Grain","farming-growing-grain.png"],
+  ["science-magnet-discovery","science","Magnet Discovery","science-magnet-discovery.png"],
+  ["science-seed-to-sprout","science","Seed to Sprout","science-seed-to-sprout.png"],
+  ["science-magnifier-bug","science","Magnifier Bug","science-magnifier-bug.png"],
+  ["science-weather-watch","science","Weather Watch","science-weather-watch.png"],
+  ["science-volcano-model","science","Volcano Model","science-volcano-model.png"]
 ];
 const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
 function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,file])=>{const path=appPath('assets/coloring-book/'+file); return {id:idv,category,label,path,paths:[path]}})}
@@ -114,7 +149,7 @@ let board={version:VERSION,title:'',className:'',studentName:'',mode:'teacher',a
 let tool='select', selectedIds=[], drawing=null, liveDrawingPathEl=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
 let dotPaintTargetId=null;
 let touchMultiSelect=false;
-let coloringPaintColor='#f97316', coloringPaintWidth=28, coloringPaintMode='brush';
+let coloringPaintColor='#f97316', coloringPaintWidth=28, coloringPaintMode='bucket';
 let imageGalleryMode='insert';
 let history=[], future=[], lastSnapshot=''; let localChannel=null, cloudTimer=null, collabRoom='', instanceId=id(), lastCloudTs='', roleLock=''; let liveCursors={}, mediaRecorder=null, recordChunks=[]; let inlineEditId=null, inlineEditOriginal=null;
 
@@ -337,46 +372,35 @@ function selectedColoringPage(){
   const o=currentObj();
   return o&&o.type==='image'&&o.coloringBookId&&canEditObject(o)?o:null;
 }
+let colorUndoSnapshot='',colorUndoBoard=null;
+function canUndoPictureColor(o,dots){
+  if((!o&&!dots.length)||history.length<2)return false;const previous=history[history.length-2];if(colorUndoSnapshot!==previous){colorUndoSnapshot=previous;try{colorUndoBoard=JSON.parse(previous)}catch(_){colorUndoBoard=null}}const older=colorUndoBoard?.panels.find(p=>p.id===panel().id);if(!older)return false;
+  if(o){if(!older.objects.some(x=>x.id===o.id))return false;const oldIds=older.objects.filter(x=>x.coloringPaintFor===o.id).map(x=>x.id).sort().join(','),newIds=panel().objects.filter(x=>x.coloringPaintFor===o.id).map(x=>x.id).sort().join(',');return oldIds!==newIds}
+  return dots.some(dot=>{const old=older.objects.find(x=>x.id===dot.id);return old&&(old.fill!==dot.fill||old.fillPattern!==dot.fillPattern)});
+}
 function ensureColoringPaintToolbar(){
-  const tb=document.getElementById('selectionToolbar');
-  if(!tb) return null;
-  let bar=document.getElementById('coloringPaintToolbar');
-  if(bar) return bar;
-  bar=document.createElement('div');
-  bar.id='coloringPaintToolbar';
-  bar.className='coloring-paint-toolbar';
-  const colors=['#ef4444','#f97316','#facc15','#22c55e','#14b8a6','#3b82f6','#8b5cf6','#ec4899','#a16207','#111827','#ffffff'];
-  bar.innerHTML=colors.map(color=>`<button type="button" class="coloring-swatch" data-coloring-color="${color}" aria-label="Paint ${color}" style="--swatch:${color}"></button>`).join('')+
-    '<input id="coloringCustomColor" type="color" aria-label="Custom coloring color" title="Custom color">'+
-    '<select id="coloringBrushSize" aria-label="Brush size"><option value="14">Small</option><option value="28" selected>Medium</option><option value="46">Large</option></select>'+
-    '<select id="coloringPaintMode" aria-label="Coloring tool"><option value="brush">Brush</option><option value="bucket">Bucket</option><option value="spray">Spray</option></select>'+
-    '<button type="button" id="coloringPaintModeBtn">Paint</button>';
-  bar.addEventListener('pointerdown',e=>e.stopPropagation());
-  bar.querySelectorAll('[data-coloring-color]').forEach(btn=>btn.addEventListener('click',()=>{
-    coloringPaintColor=btn.dataset.coloringColor;
-    bar.querySelector('#coloringCustomColor').value=coloringPaintColor;
-    setTool('coloringpaint');
-    refreshColoringPaintToolbar();
-  }));
-  bar.querySelector('#coloringCustomColor').addEventListener('input',e=>{coloringPaintColor=e.target.value; setTool('coloringpaint'); refreshColoringPaintToolbar()});
-  bar.querySelector('#coloringBrushSize').addEventListener('change',e=>{coloringPaintWidth=+e.target.value||28; setTool('coloringpaint'); refreshColoringPaintToolbar()});
-  bar.querySelector('#coloringPaintMode').addEventListener('change',e=>{coloringPaintMode=e.target.value||'brush'; setTool('coloringpaint'); refreshColoringPaintToolbar()});
-  bar.querySelector('#coloringPaintModeBtn').addEventListener('click',()=>{setTool('coloringpaint'); refreshColoringPaintToolbar()});
-  const dup=document.getElementById('floatDuplicateBtn');
-  tb.insertBefore(bar,dup||null);
-  return bar;
+  let bar=gid('coloringPaintToolbar');if(bar)return bar;
+  bar=document.createElement('section');bar.id='coloringPaintToolbar';bar.className='coloring-paint-toolbar';bar.hidden=true;bar.setAttribute('aria-label','Color my picture');
+  const colors=[['#ef4444','Red'],['#f97316','Orange'],['#facc15','Yellow'],['#22c55e','Green'],['#3b82f6','Blue'],['#8b5cf6','Purple'],['#ec4899','Pink'],['#a16207','Brown'],['#111827','Black'],['#ffffff','White']];
+  bar.innerHTML='<div class="coloring-simple-head"><strong id="coloringSimpleTitle">Color my picture</strong><button type="button" id="coloringDoneBtn">✓ Done coloring</button></div><p id="coloringSimpleHint">Pick a color. Tap a space to fill it.</p><div class="coloring-simple-colors" role="group" aria-label="Pick a color">'+colors.map(([color,name])=>`<button type="button" class="coloring-swatch" data-coloring-color="${color}" aria-label="${name}" aria-pressed="false" title="${name}" style="--swatch:${color}"><span aria-hidden="true">✓</span></button>`).join('')+'</div><div class="coloring-simple-actions"><button type="button" id="coloringFillBtn" aria-pressed="false">🪣 Fill a space</button><button type="button" id="coloringBrushBtn" aria-pressed="false">🖌️ Brush</button><button type="button" id="coloringDotsBtn">● Paint dots</button><button type="button" id="coloringUndoBtn">↶ Undo color</button><div id="coloringSimpleSizes" role="group" aria-label="Brush size">'+[['14','Small'],['28','Medium'],['46','Big']].map(([size,name])=>`<button type="button" data-coloring-size="${size}" aria-pressed="false">${name} brush</button>`).join('')+'</div></div><details id="coloringExtraTools"><summary>More colors &amp; tools</summary><label>Choose another color <input id="coloringCustomColor" type="color" aria-label="Another coloring color"></label><button type="button" id="coloringSprayBtn">Spray paint</button><button type="button" id="coloringPictureOptionsBtn">Picture options</button></details>';
+  const targetTool=()=>bar.dataset.kind==='dots'?'dotpaint':'coloringpaint';
+  bar.querySelectorAll('[data-coloring-color]').forEach(btn=>btn.onclick=()=>{if(targetTool()==='dotpaint')setPaintColor(btn.dataset.coloringColor);else coloringPaintColor=btn.dataset.coloringColor;setTool(targetTool());refreshColoringPaintToolbar()});
+  gid('learnerToolbar')?.after(bar);if(!bar.isConnected)document.querySelector('.stage-wrap').prepend(bar);
+  gid('coloringCustomColor').oninput=e=>{if(targetTool()==='dotpaint')setPaintColor(e.target.value);else coloringPaintColor=e.target.value;setTool(targetTool());refreshColoringPaintToolbar()};
+  const mode=value=>{coloringPaintMode=value;setTool('coloringpaint');refreshColoringPaintToolbar()};gid('coloringFillBtn').onclick=()=>mode('bucket');gid('coloringBrushBtn').onclick=()=>mode('brush');gid('coloringSprayBtn').onclick=()=>mode('spray');gid('coloringDotsBtn').onclick=()=>setTool('dotpaint');
+  bar.querySelectorAll('[data-coloring-size]').forEach(btn=>btn.onclick=()=>{coloringPaintWidth=+btn.dataset.coloringSize;setTool('coloringpaint');refreshColoringPaintToolbar()});
+  gid('coloringUndoBtn').onclick=()=>{if(!canUndoPictureColor(selectedColoringPage(),selectedDotPictureDots()))return;const target=selectedColoringPage()?.id||selectedDotPictureDots()[0]?.id,kind=targetTool();undo();if(target&&findObj(target)){selectedIds=[target];setTool(kind);render()}};gid('coloringDoneBtn').onclick=()=>{setTool('select');clearSelection();render()};gid('coloringPictureOptionsBtn').onclick=()=>{if(bar.dataset.kind==='dots'){selectedIds=selectedDotPictureDots().map(o=>o.id);render()}gid('learnerSelection').click()};return bar;
 }
 function refreshColoringPaintToolbar(){
-  const o=selectedColoringPage(), bar=ensureColoringPaintToolbar();
-  if(!bar) return;
-  bar.style.display=o?'inline-flex':'none';
-  if(!o) return;
-  bar.querySelectorAll('[data-coloring-color]').forEach(btn=>btn.classList.toggle('active',btn.dataset.coloringColor.toLowerCase()===coloringPaintColor.toLowerCase()));
-  const custom=bar.querySelector('#coloringCustomColor'); if(custom) custom.value=coloringPaintColor;
-  const size=bar.querySelector('#coloringBrushSize'); if(size) size.value=String(coloringPaintWidth);
-  const mode=bar.querySelector('#coloringPaintMode'); if(mode) mode.value=coloringPaintMode;
-  bar.querySelector('#coloringPaintModeBtn')?.classList.toggle('active',tool==='coloringpaint');
-  bar.querySelector('#coloringPaintModeBtn').textContent=coloringPaintMode==='bucket'?'Pour':(coloringPaintMode==='spray'?'Spray':'Paint');
+  const o=selectedColoringPage(),dots=selectedDotPictureDots().length>0&&learnerAllows('dotpaint'),bar=ensureColoringPaintToolbar();if(!bar)return;
+  gid('coloringUndoBtn').disabled=!canUndoPictureColor(o,selectedDotPictureDots());
+  const visible=!inlineEditId&&(o&&learnerAllows('coloringpaint')||dots);bar.hidden=!visible;bar.style.display=visible?'block':'none';if(!visible){gid('selectionToolbar')?.classList.remove('coloring-focus');return}
+  bar.dataset.kind=o?'coloring':'dots';gid('selectionToolbar')?.classList.add('coloring-focus');const color=o?coloringPaintColor:paintColor();
+  bar.querySelectorAll('[data-coloring-color]').forEach(btn=>{const active=btn.dataset.coloringColor.toLowerCase()===color.toLowerCase();btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active))});gid('coloringCustomColor').value=color;
+  gid('coloringSimpleTitle').textContent=o?'Color my picture':'Color my dot picture';gid('coloringSimpleHint').textContent=!o?'Pick a color. Tap or drag over the dots.':coloringPaintMode==='bucket'?'Pick a color. Tap a space to fill it.':'Pick a color. Drag inside your picture to paint.';
+  for(const id of ['coloringFillBtn','coloringBrushBtn','coloringSprayBtn'])gid(id).hidden=!o;gid('coloringDotsBtn').hidden=!!o;gid('coloringSimpleSizes').hidden=!o||coloringPaintMode==='bucket';
+  gid('coloringFillBtn').setAttribute('aria-pressed',String(!!o&&coloringPaintMode==='bucket'));gid('coloringBrushBtn').setAttribute('aria-pressed',String(!!o&&coloringPaintMode==='brush'));
+  bar.querySelectorAll('[data-coloring-size]').forEach(btn=>btn.setAttribute('aria-pressed',String(+btn.dataset.coloringSize===coloringPaintWidth)));
 }
 function pointInBox(p,b){return p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h}
 function transformPathData(d,fn){
@@ -515,7 +539,7 @@ function refreshSelectionAlignPopover(){
 function refreshSelectionToolbar(){
   const tb=document.getElementById('selectionToolbar');
   if(!tb) return;
-  const visible=selectedIds.length>0&&!inlineEditId;
+  const visible=selectedIds.length>0&&!inlineEditId&&!selectedColoringPage()&&!selectedDotPictureDots().length;
   tb.classList.toggle('show',visible);
   if(visible){
     const o=currentObj(), editable=o&&TEXTABLE_TYPES.includes(o.type)&&canEditObject(o), cropable=o&&o.type==='image'&&canEditObject(o), concept=o&&o.conceptNode&&canEditObject(o), connector=o&&o.type==='connector'&&canEditObject(o);
@@ -838,7 +862,7 @@ function ensureWhiteboardPresentation(){
     gifDialog:'Create an animation from selected images. Choose the frame delay, preview the result, and download or insert your GIF.',
     mosaicDialog:'Combine two or more selected pictures into evenly sized tiles. Set the columns, spacing, and background before creating the mosaic.',
     collageDialog:'Tell a story with selected pictures. Choose a layout and add a text banner, then create one combined picture.',
-    dotPictureDialog:'Choose a dot picture, insert it on the board, and use Dot Paint to color its dots.',
+    dotPictureDialog:'Pick a picture, then choose a color and tap its dots.',
     stickerDialog:'Browse ready-made stickers or create one from your own picture. Choose a sticker, then place it on your board.',
     coloringBookDialog:'Pick a coloring page and add it to the board. Use the coloring tools to fill areas or paint inside the page.',
     scratchArtDialog:'Hide content under a scratch cover. Erase the cover on the board to reveal the picture or answer beneath it.',
@@ -1245,7 +1269,7 @@ function normalizedLearnerPolicy(value){
   return {view:['beginner','simple','advanced'].includes(p.view)?p.view:'simple',tools:[...new Set(['select',...tools])],allowTnt:p.allowTnt===true};
 }
 function learnerPolicy(){return normalizedLearnerPolicy(board.studentWorkspace)}
-function learnerAllows(key){return board.mode!=='student'||key==='pan'||key==='stamp'&&learnerPolicy().tools.includes('image')||learnerPolicy().tools.includes(key)||key==='coloringpaint'&&learnerPolicy().tools.includes('image')}
+function learnerAllows(key){return board.mode!=='student'||key==='pan'||(key==='stamp'||key==='dotpaint')&&learnerPolicy().tools.includes('image')||learnerPolicy().tools.includes(key)||key==='coloringpaint'&&learnerPolicy().tools.includes('image')}
 function learnerActionKey(target){
   if(/Graph|Mermaid|Concept|WordCloud/.test(target))return 'graph';
   if(/Widget/.test(target))return 'widget';
@@ -1462,7 +1486,7 @@ const TOOL_GUIDANCE={
   stamp:['Stamps','Choose a picture from the stamp tray. Tap the page repeatedly to build a scene. Change the size, use Undo for a do-over, or choose Done stamping.']
 };
 function toolGuidance(next){
-  if(next==='dotpaint') return panel().objects.some(o=>o.type==='dot')?['Dot Paint','Click or drag across dots in a Dot Picture, then pick a color from the palette.']:['Dot Paint','Insert a Dot Picture first, then use Paint Dots to color it.'];
+  if(next==='dotpaint') return panel().objects.some(o=>o.type==='dot')?['Paint dots','Pick a color above your dot picture, then tap or drag over its dots.']:['Paint dots','Choose ADD, then Dot Pictures. Pick a picture to start coloring.'];
   if(next==='coloringpaint'){
     if(coloringPaintMode==='bucket') return ['Bucket','Click a white space inside the selected coloring page to pour color.'];
     if(coloringPaintMode==='spray') return ['Spray','Drag inside the selected coloring page to spray color.'];
@@ -1936,7 +1960,7 @@ function appendScratchErasePoint(p){
   else requestRender();
   return true;
 }
-function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='bucket'){applyBucketFill(o); return} if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id]; render(); return} if(tool==='select'&&handleWheelSpinnerScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
+function objectDown(e){if(tool==='eraser') return; e.stopPropagation();const o=findObj(e.currentTarget.dataset.id);if(!o)return; const p=pt(e); if(tool==='bucket'){applyBucketFill(o); return} if(tool==='coloringpaint'){if(startColoringStroke(p)) return; setStatus('Select a coloring page, then drag inside it to paint.','danger'); return} if(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher'){setStatus('Teacher-layer items are protected in assignment mode.','danger'); return} if(tool==='dotpaint'){if(o.type!=='dot') return setStatus('Dot Paint colors dot-picture dots only.','danger'); if(!canEditObject(o)) return setStatus('That dot is locked.','danger'); dotPaintDrag={active:true,moved:false,startX:p.x,startY:p.y,color:paintColor(),painted:new Set,clickDotId:o.id}; selectedIds=[o.id];paintDotAtPoint(p.x,p.y);render();return} if(tool==='select'&&handleWheelSpinnerScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} if(tool==='select'&&handleScoreboardScreenAction(o,p)){_lastObjClick={id:null,t:0}; return} const _now=performance.now(); if(tool==='select'&&_lastObjClick.id===o.id&&(_now-_lastObjClick.t)<500){_lastObjClick={id:null,t:0}; if(TEXTABLE_TYPES.includes(o.type)){openInlineTextEditor(o.id); return} if(o.type==='widget'){openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){openGraphDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){openMermaidDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){openWordCloudDialog(o.id); return}} _lastObjClick={id:o.id,t:_now}; if(tool==='connector'){if(o.type==='connector')return; if(!connectorPendingFrom){connectorPendingFrom=o.id; setSingleSelection(o.id); render(); setStatus('Connector: select the second shape.','success'); return}else if(connectorPendingFrom!==o.id){panel().objects.push(makeObj('connector',0,0,0,0,{fromId:connectorPendingFrom,toId:o.id,fill:'none'})); connectorPendingFrom=null; render(); saveState(); setStatus('Connector added.','success'); return}else{connectorPendingFrom=null; setStatus('Connector cancelled.'); return}}
   const multi=e.shiftKey||touchMultiSelect;
   const keepCurrentSelection=!multi&&selectedIds.length>1&&isSelected(o.id);
   const ids=multi?(toggleSelection(o.id),selectedIds):(keepCurrentSelection?selectedIds:((o.groupId&&!e.altKey)?groupMembers(o):[o.id]));
@@ -1955,7 +1979,7 @@ svg.addEventListener('pointerdown',e=>{const p=pt(e); if(tool==='coloringpaint')
 let lastCursorBroadcast=0;
 svg.addEventListener('pointermove',e=>{const p=pt(e); const now=performance.now(); if(localChannel && now-lastCursorBroadcast>50){ broadcastCursor(p.x,p.y); lastCursorBroadcast=now } if(dotPaintDrag?.active&&e.buttons>0){if(Math.hypot(p.x-dotPaintDrag.startX,p.y-dotPaintDrag.startY)>4) dotPaintDrag.moved=true; paintDotAtPoint(p.x,p.y); return} if(tool==='eraser'&&e.buttons>0){if(scratchErase){appendScratchErasePoint(p); return} const objEl=e.target.closest('.object'); if(objEl){const o=findObj(objEl.dataset.id); if(o?.type==='scratch'){startScratchErase(o,p); return} if(o&&o.type==='path'&&canEditObject(o)&&!o.locked){panel().objects=panel().objects.filter(x=>x.id!==o.id); eraserDirty=true; requestRender()}} return} if(marquee&&marquee.active){marquee.x2=p.x; marquee.y2=p.y; requestRender(); return} if(drag){if(drag.candidateEdit&&Math.hypot(p.x-drag.startX,p.y-drag.startY)>4) drag.candidateEdit=null; if(drag.resize){const nextW=Math.max(20,drag.ow+(p.x-drag.sx)),nextH=Math.max(20,drag.oh+(p.y-drag.sy)),scaleX=nextW/Math.max(1,drag.ow),scaleY=nextH/Math.max(1,drag.oh),fontScale=Math.min(scaleX,scaleY);drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=drag.ox+(s.x-drag.ox)*scaleX; o.y=drag.oy+(s.y-drag.oy)*scaleY; o.w=Math.max(20,s.w*scaleX); o.h=Math.max(20,s.h*scaleY); if(o.type==='path'&&s.d){o.d=scaledPathData(s.d,drag.ox,drag.oy,scaleX,scaleY); if(s.clipBox)o.clipBox={x:drag.ox+(s.clipBox.x-drag.ox)*scaleX,y:drag.oy+(s.clipBox.y-drag.oy)*scaleY,w:s.clipBox.w*scaleX,h:s.clipBox.h*scaleY}} if(TEXTABLE_TYPES.includes(o.type)&&o.autoScaleText) o.fontSize=clamp(Math.round(s.fontSize*fontScale),8,96)}); requestRender(); return}else{const dx=p.x-drag.startX,dy=p.y-drag.startY; drag.starts.forEach(s=>{const o=findObj(s.id); if(!o||o.locked||o.type==='connector')return; o.x=s.x+dx; o.y=s.y+dy; if(o.type==='path'&&s.d){o.d=translatedPathData(s.d,dx,dy); if(s.clipBox)o.clipBox={x:s.clipBox.x+dx,y:s.clipBox.y+dy,w:s.clipBox.w,h:s.clipBox.h}}}); requestRender(); return}} if(drawing){if(drawing.type==='laser'){drawing.d+=` L ${p.x} ${p.y}`; if(drawing._laserPath) drawing._laserPath.setAttribute('d',drawing.d); return} if(drawing.type==='path'){if(drawing.coloringSpray) appendSprayDots(drawing,p); else drawing.d+=` L ${p.x} ${p.y}`; drawing.w=Math.max(drawing.w,p.x-drawing.x); drawing.h=Math.max(drawing.h,p.y-drawing.y); if(liveDrawingPathEl&&!drawing.coloringSpray){liveDrawingPathEl.setAttribute('d',drawing.d); return}} else {drawing.w=p.x-drawing.x; drawing.h=p.y-drawing.y} requestRender()}});
 
-window.addEventListener('pointerup',e=>{if(dotPaintDrag?.active){const wasMoved=dotPaintDrag.moved, painted=dotPaintDrag.painted?.size||0, targetId=selectedIds[0]; dotPaintDrag=null; if(wasMoved){if(painted) saveState(); render(); return} const o=findObj(targetId); if(o&&o.type==='dot') openDotPaintPalette(o.id,e); return} if(tool==='eraser'){scratchErase=null; if(eraserDirty) saveState(); else saveState(false); eraserDirty=false; return} if(marquee&&marquee.active){const m={x:Math.min(marquee.x1,marquee.x2),y:Math.min(marquee.y1,marquee.y2),w:Math.abs(marquee.x2-marquee.x1),h:Math.abs(marquee.y2-marquee.y1)}; selectedIds=panel().objects.filter(o=>{const b=normBox(o); return !(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher') && b.x<=m.x+m.w && b.x+b.w>=m.x && b.y<=m.y+m.h && b.y+b.h>=m.y}).map(o=>o.id); marquee=null; render(); return} if(drawing&&drawing.type==='laser'){const path=drawing._laserPath; if(path){setTimeout(()=>{path.style.transition='opacity 1.2s ease-out'; path.style.opacity='0'; setTimeout(()=>path.remove(),1300)},1500)} drawing=null; return} if(drag&&drag.candidateEdit&&!drag.resize){const editId=drag.candidateEdit; drag=null; openInlineTextEditor(editId); return} if(drawing)normalizeObject(drawing); if(drag) drag.ids.forEach(i=>normalizeObject(findObj(i))); if(drag||drawing)saveState(); liveDrawingPathEl=null; drag=null; drawing=null; render()});
+window.addEventListener('pointerup',e=>{if(dotPaintDrag?.active){const wasMoved=dotPaintDrag.moved, painted=dotPaintDrag.painted?.size||0, targetId=selectedIds[0]; dotPaintDrag=null; if(wasMoved){if(painted) saveState(); render(); return} const o=findObj(targetId);if(gid('coloringPaintToolbar')?.dataset.kind==='dots'&&!gid('coloringPaintToolbar').hidden){if(painted)saveState();render();return} if(o&&o.type==='dot') openDotPaintPalette(o.id,e); return} if(tool==='eraser'){scratchErase=null; if(eraserDirty) saveState(); else saveState(false); eraserDirty=false; return} if(marquee&&marquee.active){const m={x:Math.min(marquee.x1,marquee.x2),y:Math.min(marquee.y1,marquee.y2),w:Math.abs(marquee.x2-marquee.x1),h:Math.abs(marquee.y2-marquee.y1)}; selectedIds=panel().objects.filter(o=>{const b=normBox(o); return !(board.assignmentMode&&board.mode==='student'&&o.layer==='teacher') && b.x<=m.x+m.w && b.x+b.w>=m.x && b.y<=m.y+m.h && b.y+b.h>=m.y}).map(o=>o.id); marquee=null; render(); return} if(drawing&&drawing.type==='laser'){const path=drawing._laserPath; if(path){setTimeout(()=>{path.style.transition='opacity 1.2s ease-out'; path.style.opacity='0'; setTimeout(()=>path.remove(),1300)},1500)} drawing=null; return} if(drag&&drag.candidateEdit&&!drag.resize){const editId=drag.candidateEdit; drag=null; openInlineTextEditor(editId); return} if(drawing)normalizeObject(drawing); if(drag) drag.ids.forEach(i=>normalizeObject(findObj(i))); if(drag||drawing)saveState(); liveDrawingPathEl=null; drag=null; drawing=null; render()});
 
 svg.addEventListener('dblclick',e=>{const objEl=e.target.closest('.object'); if(!objEl) return; const o=findObj(objEl.dataset.id); if(!o) return; if(o.type==='widget'){e.stopPropagation(); openClassroomWidgetDialog(o.id); return} if(o.type==='image'&&o.pictureGraphConfig){e.stopPropagation(); openPictureGraphDialog(o.id); return} if(o.type==='image'&&o.graphConfig){e.stopPropagation(); openGraphDialog(o.id); return} if(o.type==='image'&&o.wordCloudSource){e.stopPropagation(); openWordCloudDialog(o.id); return} if(o.type==='image'&&o.mermaidSource){e.stopPropagation(); openMermaidDialog(o.id); return} if((TEXTABLE_TYPES.includes(o.type)||o.type==='connector')&&canEditObject(o)){e.stopPropagation(); openInlineTextEditor(o.id)}});
 document.addEventListener('pointerdown',e=>{const pop=gid('dotPaintPalette'); if(pop?.classList.contains('show')&&!pop.contains(e.target)&&!e.target.closest('.object')) closeDotPaintPalette()});
@@ -2207,7 +2231,10 @@ async function insertColoringBookPage(itemId){
     const naturalW=meta.w||900, naturalH=meta.h||1200;
     const maxW=520, maxH=560, scale=Math.min(1,maxW/naturalW,maxH/naturalH);
     const w=Math.max(80,Math.round(naturalW*scale)), h=Math.max(80,Math.round(naturalH*scale));
-    addObj(makeObj('image',140,70,w,h,{src,naturalW,naturalH,fill:'none',stroke:'none',strokeWidth:0,coloringBookId:item.id,coloringBookLabel:item.label,coloringBookCategory:item.category,coloringBookPath:loadedPath}));
+    coloringPaintMode='bucket';
+    const picture=makeObj('image',16,24,w,h,{src,naturalW,naturalH,fill:'none',stroke:'none',strokeWidth:0,coloringBookId:item.id,coloringBookLabel:item.label,coloringBookCategory:item.category,coloringBookPath:loadedPath});panel().objects.push(picture);setSingleSelection(picture.id);render();
+    const fitted=Math.min(1,Math.max(80,svg.clientWidth-32)/naturalW,Math.max(100,svg.clientHeight-48)/naturalH,520/naturalW,560/naturalH);picture.w=Math.round(naturalW*fitted);picture.h=Math.round(naturalH*fitted);picture.x=Math.max(16,(svg.clientWidth-picture.w)/2);render();saveState();
+    setTool('coloringpaint');
     gid('coloringBookDialog')?.close();
     setStatus('Coloring page inserted: '+item.label+'.','success');
   }catch(err){
@@ -3410,6 +3437,7 @@ function insertDotPicture(idv){
   panel().objects.push(...objects);
   selectedIds=objects.map(o=>o.id);
   render();
+  const bounds=selectionBounds(),fit=Math.min(1.5,Math.max(80,svg.clientWidth-32)/bounds.w,Math.max(100,svg.clientHeight-48)/bounds.h);const startX=Math.max(16,(svg.clientWidth-bounds.w*fit)/2);objects.forEach(o=>{o.x=startX+(o.x-bounds.x)*fit;o.y=24+(o.y-bounds.y)*fit;o.w*=fit;o.h*=fit});render();
   saveState();
   setTool('dotpaint');
   setStatus(tpl.label+' dot picture inserted. Choose a color, then click dots to color them.','success');
@@ -4271,7 +4299,7 @@ function persistLocal(){
 }
 
 function initHistory(){const snap=snapshot(); history=[snap]; future=[]; lastSnapshot=snap}
-function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} refreshLearnerWorkspace(); broadcastLocal(); pushCloudRoom()}
+function saveState(pushHistory=true){persistLocal(); if(pushHistory){const snap=snapshot(); if(snap!==lastSnapshot){history.push(snap); if(history.length>50) history.shift(); future=[]; lastSnapshot=snap}} refreshLearnerWorkspace();if(gid('coloringPaintToolbar')&&!gid('coloringPaintToolbar').hidden)refreshColoringPaintToolbar(); broadcastLocal(); pushCloudRoom()}
 function undo(){if(history.length<2)return; future.push(history.pop()); board=JSON.parse(history[history.length-1]); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=history[history.length-1]; persistLocal(); render(); broadcastLocal()}
 function redo(){if(!future.length)return; const snap=future.pop(); history.push(snap); board=JSON.parse(snap); migrateBoard(board); clearSelection(); connectorPendingFrom=null; lastSnapshot=snap; persistLocal(); render(); broadcastLocal()}
 function refreshRestorePoints(){const pts=board.restorePoints||[]; ui.restorePointSelect.innerHTML=pts.map((p,i)=>`<option value="${i}">${esc(p.name)} — ${new Date(p.at).toLocaleString()}</option>`).join(''); ui.restorePointHint.textContent=pts.length?`${pts.length} restore point${pts.length===1?'':'s'} available.`:'No restore points yet.'}
@@ -4761,7 +4789,7 @@ function playTntBoom(){
   if(isAudioMuted()) return;
   try{
     if(!_tntBoomAudio){
-      _tntBoomAudio=new Audio('../assets/audio/explosions/r09-49-short-explosion-with-debris.mp3');
+      _tntBoomAudio=new Audio('../assets/audio/explosions/tnt-burst.mp3');
       _tntBoomAudio.preload='auto';
     }
     _tntBoomAudio.volume=0.85;
@@ -5185,13 +5213,14 @@ function registerServiceWorker(){
       return details;
     }
     const selectBtn=tools.querySelector('[data-tool="select"]');
-    const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
+    const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','triangle','diamond','polygon','star','connector','callout','speech'],className:'tool-group-shapes'});
     const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'textgroup',items:['text','sticky','comment','audio'],className:'tool-group-text'});
-    const insertGroup=makeGroup({id:'insertToolGroup',label:'Add Pictures and Learning Tools',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn'],className:'tool-group-insert'});
+    const insertGroup=makeGroup({id:'insertToolGroup',label:'Add Pictures and Learning Tools',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn','#dotPictureToolBtn'],className:'tool-group-insert'});
     const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Page Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
     const moreGroup=makeGroup({id:'moreToolGroup',label:'More Actions',icon:'options',items:['#simpleDeleteBtn','#simpleTntBtn'],className:'tool-group-more'});
     for(const [group,label] of [[insertGroup,'ADD'],[bgGroup,'PAGE']]){const short=document.createElement('span');short.className='tool-short-label';short.setAttribute('aria-hidden','true');short.textContent=label;group.querySelector('summary').append(short)}
+    const oldDotPaint=tools.querySelector('[data-tool="dotpaint"]');if(oldDotPaint)oldDotPaint.hidden=true;
     tools.append(drawGroup,shapeGroup,textGroup,insertGroup,bgGroup,moreGroup);
     if(selectBtn) selectBtn.classList.add('tool-group-nav');
     refreshToolGroupsActive();
