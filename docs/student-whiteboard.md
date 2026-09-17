@@ -63,3 +63,9 @@ Teachers can choose **Video note** above the canvas. To allow student recording,
 Click **Record** to request the camera and optional microphone. Clips stop at 30 seconds or 5 MB. Stop turns off the camera, then lets you watch, retake, name, describe, and add the clip. Closing, changing tabs, or leaving the page also releases the camera. Added cards offer Play, Pause, Stop, and native seeking/volume controls. Move or resize the card using its title. Recorded sound is unaffected by the sound-effects Audio switch. Saved board JSON and classroom state retain the clip; PNG/PDF exports show its still picture. Recording formats depend on the browser; use a current browser that supports WebM or MP4.
 
 For existing Google classrooms, replace the copied Apps Script with the current `apps-script/Code.gs` and update its web-app deployment to enforce the teacher’s video setting in room merges. Publishing DrawSplat updates the installer’s script, but cannot update scripts already installed in educators’ Google accounts.
+
+### Easier recording and lesson setup
+
+**Student tools** above the canvas opens the teacher’s lesson settings directly, including the video-recording checkbox. It is hidden in student view.
+
+Video notes now show a **Record → Watch → Add** guide and a progress bar with seconds remaining. After stopping, **Watch clip**, **Try again**, **Discard clip**, and **Add to board** give clear next steps. Closing a reviewed clip changes the toolbar action to **Finish video**, so the unfinished recording is easy to find. Naming and descriptions are under **Name & describe (optional)**, keeping the phone recording controls visible. Drafts stay on this open page until added or discarded; they are not saved across a browser reload. Adding or discarding resets the title and description for a fresh note. Playing another video note pauses the previous video.

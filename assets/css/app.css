@@ -1441,3 +1441,19 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 .video-note-caption{margin:0;font-size:12px;line-height:1.3;max-height:32px;overflow:auto;flex:none}
 
 .entry-role-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.entry-role-choices .learner-starter-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:18px;text-align:left;border:1px solid #d5c7ff;border-radius:16px;background:linear-gradient(145deg,#faf5ff,#eff6ff);min-height:170px}.entry-role-choices .learner-starter-card .entry-role-icon{font-size:38px;line-height:1.2}.entry-role-choices strong{color:#6634dc;font-size:20px}.entry-role-choices button:hover{border-color:#7c3aed;background:#f1eaff}.entry-role-choices button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}.video-note-actions{gap:6px}@media(max-width:480px){.entry-role-choices{grid-template-columns:1fr}.entry-role-choices .learner-starter-card{min-height:130px}}
+
+/* Guided recording keeps the next step visible for younger learners. */
+.video-note-steps{display:flex;gap:8px;list-style:none;padding:0;counter-reset:video-step}
+.video-note-steps li{flex:1;padding:10px;border-radius:12px;background:#eeebff;color:#6547a4;font-weight:700;counter-increment:video-step}
+.video-note-steps li::before{content:counter(video-step) ". "}
+.video-note-steps [aria-current=step]{background:#743aed;color:#fff}
+#videoNoteCountdown{display:flex;align-items:center;gap:12px;margin:12px 0;color:#6634dc}
+#videoNoteCountdown[hidden]{display:none}
+#videoNoteProgress{flex:1;min-width:0;accent-color:#7c3aed;height:16px}
+#videoNoteDialog .learner-dialog-actions button{min-height:48px;font-size:16px}
+#learnerVideoNote.has-draft{background:#fff4d9;border-color:#e6b448;color:#70440d}
+
+#videoNoteDetails,.video-note-help{margin-top:14px;border-top:1px solid #e1d8fc;padding-top:12px}
+#videoNoteDetails summary,.video-note-help summary{cursor:pointer;color:#6634dc;font-weight:700;min-height:30px}
+#videoNoteDetails label{display:block;margin:10px 0 5px}
+@media(max-width:560px){#videoNotePreview{max-height:200px}#videoNoteDialog .learner-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.8';
+const VERSION='3.1.9';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -1383,8 +1383,8 @@ function refreshEntryRoleButton(){
 }
 function ensureVideoNotes(){
   if(videoNotes)return;
-  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>mediaRecorder?.state==='recording',canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:addObj,status:setStatus});
-  const button=document.createElement('button');button.id='learnerVideoNote';button.type='button';button.className='everyday-action';button.innerHTML='<svg class="everyday-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m16 9 6-3v12l-6-3z"/></svg>Video note';button.onclick=videoNotes.open;gid('learnerToolbar').querySelector('.learner-secondary-tools').insertBefore(button,gid('learnerStarters'));
+  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>mediaRecorder?.state==='recording',canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:addObj,status:setStatus,draftChanged:hasDraft=>{gid('learnerVideoNoteLabel').textContent=hasDraft?'Finish video':'Video note';gid('learnerVideoNote').classList.toggle('has-draft',hasDraft);gid('learnerVideoNote').title=hasDraft?'An unfinished clip is waiting. Watch, add, or discard it.':'Record a short video note'}});
+  const button=document.createElement('button');button.id='learnerVideoNote';button.type='button';button.className='everyday-action';button.innerHTML='<svg class="everyday-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m16 9 6-3v12l-6-3z"/></svg><span id="learnerVideoNoteLabel">Video note</span>';button.onclick=videoNotes.open;gid('learnerToolbar').querySelector('.learner-secondary-tools').insertBefore(button,gid('learnerStarters'));
 }
 function prepareVideoNoteExport(clone){
   for(const card of clone.querySelectorAll('.video-note-card')){
@@ -1394,7 +1394,7 @@ function prepareVideoNoteExport(clone){
   }
 }
 function everydayToolIcon(kind){
-  const shapes={teacher:'<rect x="6" y="3" width="15" height="12" rx="2"/><circle cx="5" cy="12" r="3"/><path d="M1 22v-3a4 4 0 0 1 8 0v3M12 8h6M12 11h3"/>',student:'<path d="m2 8 10-5 10 5-10 5zM6 10v6c4 3 8 3 12 0v-6M22 8v8"/>',undo:'<path d="M8 7H3V2M3 7a9 9 0 1 1-1 9"/>',redo:'<path d="M16 7h5V2m0 5a9 9 0 1 0 1 9"/>',response:'<path d="M4 4h16v12H9l-5 4zM8 8h8M8 12h5"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 1-2 3M12 17h.01"/>',find:'<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',pan:'<path d="M12 2v20M2 12h20M9 5l3-3 3 3M9 19l3 3 3-3M5 9l-3 3 3 3M19 9l3 3-3 3"/>',home:'<path d="M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"/><circle cx="12" cy="12" r="3"/>',lesson:'<path d="M3 4h7l2 2 2-2h7v16h-7l-2 2-2-2H3zM12 6v16M6 8h3M15 8h3M6 12h3M15 12h3"/>',check:'<path d="m4 12 5 5L20 6"/>',sound:'<path d="M3 9h4l5-4v14l-5-4H3zM16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/>',muted:'<path d="M3 9h4l5-4v14l-5-4H3zM16 9l6 6M16 15l6-6"/>'};
+  const shapes={settings:'<path d="M4 3v18M12 3v18M20 3v18"/><circle cx="4" cy="8" r="2" fill="white"/><circle cx="12" cy="16" r="2" fill="white"/><circle cx="20" cy="10" r="2" fill="white"/>',teacher:'<rect x="6" y="3" width="15" height="12" rx="2"/><circle cx="5" cy="12" r="3"/><path d="M1 22v-3a4 4 0 0 1 8 0v3M12 8h6M12 11h3"/>',student:'<path d="m2 8 10-5 10 5-10 5zM6 10v6c4 3 8 3 12 0v-6M22 8v8"/>',undo:'<path d="M8 7H3V2M3 7a9 9 0 1 1-1 9"/>',redo:'<path d="M16 7h5V2m0 5a9 9 0 1 0 1 9"/>',response:'<path d="M4 4h16v12H9l-5 4zM8 8h8M8 12h5"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 1-2 3M12 17h.01"/>',find:'<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',pan:'<path d="M12 2v20M2 12h20M9 5l3-3 3 3M9 19l3 3 3-3M5 9l-3 3 3 3M19 9l3 3-3 3"/>',home:'<path d="M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"/><circle cx="12" cy="12" r="3"/>',lesson:'<path d="M3 4h7l2 2 2-2h7v16h-7l-2 2-2-2H3zM12 6v16M6 8h3M15 8h3M6 12h3M15 12h3"/>',check:'<path d="m4 12 5 5L20 6"/>',sound:'<path d="M3 9h4l5-4v14l-5-4H3zM16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/>',muted:'<path d="M3 9h4l5-4v14l-5-4H3zM16 9l6 6M16 15l6-6"/>'};
   return '<svg class="everyday-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(shapes[kind]||shapes.help)+'</svg>';
 }
 function ensureLearnerWorkspace(){
@@ -1424,6 +1424,9 @@ function ensureLearnerWorkspace(){
   gid('learnerColor').oninput=e=>{const input=gid('simpleColorInput');input.value=e.target.value;input.dispatchEvent(new Event('input',{bubbles:true}))};
   gid('learnerPan').onclick=()=>{commitInlineTextEditor();clearSelection();setTool(tool==='pan'?'select':'pan');render()};
   gid('learnerHome').onclick=()=>{learnerPan={x:0,y:0};zoom=1;render();setStatus('View centered. Your work has not moved.','success')};
+  const lessonTools=document.createElement('button');lessonTools.id='learnerLessonTools';lessonTools.type='button';lessonTools.className='everyday-action teacher-only';lessonTools.innerHTML=everydayToolIcon('settings')+'Student tools';lessonTools.title='Choose students’ starting view and tools, including video recording';
+  everyday.insertBefore(lessonTools,gid('learnerStarters'));
+  lessonTools.onclick=()=>{if(board.mode==='student')return;gid('optionsBtn').click();const teaching=document.querySelector('.learner-teaching');teaching.open=true;gid('learnerStartView').scrollIntoView({block:'center'});gid('learnerStartView').focus({preventScroll:true})};
   ensureVideoNotes();
   ensureLearnerSelection();
   const recovery=document.createElement('div');recovery.id='clearRecoveryBanner';recovery.className='learner-recovery';recovery.hidden=true;recovery.innerHTML='<span>Work cleared. Undo can bring it back. A recovery checkpoint is saved with the board.</span><button id="learnerUndoClear" type="button">Undo clearing</button>';toolbar.after(recovery);gid('learnerUndoClear').onclick=()=>{undo();recovery.hidden=true};
