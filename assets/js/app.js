@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.2';
+const VERSION='3.1.3';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -526,6 +526,7 @@ function refreshSelectionToolbar(){
     const imageBtn=ensureConceptImageToolbarButton(); if(imageBtn) imageBtn.style.display=concept?'inline-flex':'none';
     const labelBtn=ensureConnectorLabelToolbarButton(); if(labelBtn) labelBtn.style.display=connector?'inline-flex':'none';
   }
+  refreshLearnerSelection();
   refreshSelectionAlignPopover();
   refreshColoringPaintToolbar();
   refreshConceptCanvasControls?.();
@@ -1235,7 +1236,7 @@ function copyStudentShareLink(){
 function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).get('room')&&googleScriptUrl()&&roleLock==='student')}
 
 /* Student workspace: lesson tools travel with the board and student link. */
-const LEARNER_TOOLS=[['select','Move'],['pen','Pencil'],['bucket','Paint'],['eraser','Eraser'],['text','Type'],['sticky','Note'],['rect','Rectangle'],['ellipse','Circle'],['line','Line'],['arrow','Arrow'],['star','Star'],['diamond','Diamond'],['triangle','Triangle'],['polygon','Polygon'],['dotpaint','Dot Paint'],['laser','Pointer'],['connector','Connect'],['image','Pictures'],['graph','Graphs'],['widget','Classroom widgets'],['audio','Audio']];
+const LEARNER_TOOLS=[['select','Move'],['pen','Pencil'],['bucket','Paint'],['eraser','Eraser'],['text','Type'],['sticky','Note'],['rect','Rectangle'],['ellipse','Circle'],['line','Line'],['arrow','Arrow'],['star','Star'],['diamond','Diamond'],['triangle','Triangle'],['polygon','Polygon'],['dotpaint','Dot Paint'],['laser','Pointer'],['connector','Connect'],['image','Pictures and Stamps'],['graph','Graphs'],['widget','Classroom widgets'],['audio','Audio']];
 const LEARNER_PRESETS={everyday:['select','pen','bucket','eraser','text','image'],art:['select','pen','bucket','eraser','image','dotpaint','rect','ellipse','star'],explain:['select','pen','eraser','text','sticky','arrow','image','audio'],data:['select','pen','eraser','text','graph','widget']};
 let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0;
 function normalizedLearnerPolicy(value){
@@ -1244,17 +1245,75 @@ function normalizedLearnerPolicy(value){
   return {view:['beginner','simple','advanced'].includes(p.view)?p.view:'simple',tools:[...new Set(['select',...tools])],allowTnt:p.allowTnt===true};
 }
 function learnerPolicy(){return normalizedLearnerPolicy(board.studentWorkspace)}
-function learnerAllows(key){return board.mode!=='student'||key==='pan'||learnerPolicy().tools.includes(key)||key==='coloringpaint'&&learnerPolicy().tools.includes('image')}
+function learnerAllows(key){return board.mode!=='student'||key==='pan'||key==='stamp'&&learnerPolicy().tools.includes('image')||learnerPolicy().tools.includes(key)||key==='coloringpaint'&&learnerPolicy().tools.includes('image')}
 function learnerActionKey(target){
   if(/Graph|Mermaid|Concept|WordCloud/.test(target))return 'graph';
   if(/Widget/.test(target))return 'widget';
-  if(/Image|image|Coloring|Sticker|Emoji|Mosaic|Collage|Gif|DotPicture|scratch/i.test(target))return 'image';
+  if(/Image|image|Coloring|Sticker|Stamp|Emoji|Mosaic|Collage|Gif|DotPicture|scratch/i.test(target))return 'image';
   return '';
 }
 function addLearnerDialog(id,title,content){
   const dlg=document.createElement('dialog');dlg.id=id;dlg.className='learner-dialog';dlg.setAttribute('aria-labelledby',id+'Title');
   dlg.innerHTML=`<div class="modal-head"><h2 id="${id}Title">${title}</h2><button type="button" class="close" aria-label="Close">Close</button></div>${content}`;
   dlg.querySelector('.close').onclick=()=>dlg.close();document.body.append(dlg);return dlg;
+}
+const STAMP_THEMES={
+  Animals:[['🐶','Dog'],['🐱','Cat'],['🐸','Frog'],['🦋','Butterfly'],['🐢','Turtle'],['🦖','Dinosaur'],['🐙','Octopus'],['🦉','Owl'],['🐝','Bee'],['🦊','Fox']],
+  Nature:[['🌳','Tree'],['🌻','Sunflower'],['🌵','Cactus'],['🍄','Mushroom'],['🌈','Rainbow'],['☀️','Sun'],['🌧️','Rain'],['❄️','Snowflake'],['🍁','Leaf'],['🌊','Wave']],
+  Space:[['🚀','Rocket'],['🛸','Flying saucer'],['👽','Alien'],['🪐','Planet'],['🌎','Earth'],['🌙','Moon'],['⭐','Star'],['☄️','Comet'],['🧑‍🚀','Astronaut'],['🔭','Telescope']],
+  School:[['📚','Books'],['✏️','Pencil'],['💡','Idea'],['🔬','Microscope'],['🧲','Magnet'],['🧮','Abacus'],['⏰','Clock'],['✅','Check'],['❓','Question'],['🏆','Trophy']],
+  Food:[['🍎','Apple'],['🍌','Banana'],['🍓','Strawberry'],['🥕','Carrot'],['🍕','Pizza'],['🌮','Taco'],['🍿','Popcorn'],['🍦','Ice cream'],['🍉','Watermelon'],['🥨','Pretzel']],
+  Sports:[['⚽','Soccer ball'],['🏀','Basketball'],['🏈','Football'],['⚾','Baseball'],['🎾','Tennis ball'],['🏸','Badminton'],['🛹','Skateboard'],['🚲','Bicycle'],['🏅','Medal'],['🎯','Target']],
+  Music:[['🎵','Music notes'],['🎸','Guitar'],['🥁','Drum'],['🎺','Trumpet'],['🎹','Piano'],['🎻','Violin'],['🎤','Microphone'],['🎧','Headphones'],['💃','Dancer'],['🎭','Theater']],
+  Silly:[['😀','Smile'],['😎','Cool face'],['🤩','Star eyes'],['🤪','Silly face'],['🥳','Party face'],['🤖','Robot'],['👾','Space monster'],['🦄','Unicorn'],['🐉','Dragon'],['🎈','Balloon']]
+};
+const FUN_STAMPS=Object.entries(STAMP_THEMES).flatMap(([theme,items])=>items.map(([icon,label],index)=>({id:theme.toLowerCase()+'_'+index,theme,icon,label})));
+let chosenStamp=FUN_STAMPS[0],stampSize=80,stampRecent=[];
+function refreshStampTools(){if(!gid('learnerStamps'))return;gid('learnerStamps').hidden=!learnerAllows('stamp');gid('stampActiveBar').hidden=tool!=='stamp'||!learnerAllows('stamp');const text=chosenStamp.icon+' '+chosenStamp.label;const label=gid('stampActiveLabel');if(label.textContent!==text)label.textContent=text;gid('stampSize').value=String(stampSize)}
+function renderStampTray(){
+  const query=gid('stampSearch').value.trim().toLowerCase(),theme=gid('stampTheme').value,grid=gid('funStampGrid');grid.replaceChildren();
+  const stamps=(theme==='Recent'?stampRecent.map(id=>FUN_STAMPS.find(s=>s.id===id)).filter(Boolean):FUN_STAMPS).filter(s=>(theme==='All'||theme==='Recent'||s.theme===theme)&&(!query||(s.label+' '+s.theme).toLowerCase().includes(query)));
+  gid('stampTrayCount').textContent=stamps.length?stamps.length+' stamps. Pick one, then tap the page.':'No stamps here yet. Try another category or search.';
+  for(const stamp of stamps){const button=document.createElement('button');button.type='button';button.className='fun-stamp-tile';button.setAttribute('aria-label',stamp.label+' stamp');const icon=document.createElement('span');icon.className='fun-stamp-icon';icon.textContent=stamp.icon;icon.setAttribute('aria-hidden','true');const label=document.createElement('span');label.textContent=stamp.label;button.append(icon,label);button.onclick=()=>{if(!learnerAllows('stamp'))return;chosenStamp=stamp;stampRecent=[stamp.id,...stampRecent.filter(id=>id!==stamp.id)].slice(0,12);writePreference('drawsplat.stamps.recent',JSON.stringify(stampRecent));clearSelection();setTool('stamp');gid('funStampDialog').close();svg.focus();setStatus(stamp.label+' stamp ready. Tap the page again and again, or press Enter to stamp in the middle.','success')};grid.append(button)}
+}
+function openStampTray(){if(!learnerAllows('stamp'))return setStatus('Pictures and stamps are not in this lesson.','danger');document.querySelectorAll('#toolButtons details[open]').forEach(d=>d.open=false);renderStampTray();gid('funStampDialog').showModal()}
+function placeFunStamp(p){if(!learnerAllows('stamp'))return;const stamp=makeObj('stamp',p.x-stampSize/2,p.y-stampSize/2,stampSize,stampSize,{stampId:chosenStamp.id,stampIcon:chosenStamp.icon,stampLabel:chosenStamp.label,stampPlain:true,stampBg:'transparent',fill:'none',stroke:'none',strokeWidth:0});panel().objects.push(stamp);clearSelection();render();saveState()}
+function stampAtCenter(){const r=svg.getBoundingClientRect();placeFunStamp(pt({clientX:r.left+r.width/2,clientY:r.top+r.height/2}))}
+function ensureFunStamps(){
+  try{stampRecent=JSON.parse(readPreference('drawsplat.stamps.recent')||'[]');if(!Array.isArray(stampRecent))stampRecent=[];stampRecent=stampRecent.filter(id=>FUN_STAMPS.some(s=>s.id===id)).slice(0,12)}catch(_){stampRecent=[]}
+  const button=document.createElement('button');button.id='learnerStamps';button.type='button';button.textContent='Stamps';button.onclick=openStampTray;gid('learnerToolbar').querySelector('.learner-secondary-tools').append(button);
+  const side=document.createElement('button');side.id='funStampToolBtn';side.type='button';side.dataset.tool='stamp';side.className='icon-btn fun-stamp-tool';side.setAttribute('aria-label','Stamps');side.setAttribute('data-tooltip','Stamps: pick a picture and stamp it on your page');side.innerHTML='<span class="icon-symbol" aria-hidden="true"><img src="../assets/icons/tools/fun-stamps.svg" alt=""></span><span class="tool-short-label" aria-hidden="true">STAMPS</span>';side.onclick=openStampTray;gid('toolButtons').insertBefore(side,gid('insertToolGroup'));
+  const active=document.createElement('div');active.id='stampActiveBar';active.className='stamp-active-bar';active.hidden=true;active.innerHTML='<strong id="stampActiveLabel"></strong><label>Size <select id="stampSize"><option value="48">Small</option><option value="80" selected>Medium</option><option value="120">Large</option></select></label><button type="button" id="stampChoose">Change stamp</button><button type="button" id="stampMiddle">Stamp in middle</button><button type="button" id="stampDone">Done stamping</button>';gid('learnerToolbar').append(active);gid('stampSize').onchange=()=>stampSize=+gid('stampSize').value||80;gid('stampChoose').onclick=openStampTray;gid('stampMiddle').onclick=stampAtCenter;gid('stampDone').onclick=()=>setTool('select');
+  const dlg=addLearnerDialog('funStampDialog','Fun Stamps','<p>Pick a stamp, then tap anywhere on your page. Keep tapping to make a scene, pattern, or picture graph. Use Undo for a do-over.</p><div class="stamp-tray-filters"><label>Find a stamp<input id="stampSearch" type="search" placeholder="Try frog, rocket, music…" autocomplete="off"></label><label>Tray<select id="stampTheme"><option>All</option><option>Recent</option>'+Object.keys(STAMP_THEMES).map(t=>'<option>'+t+'</option>').join('')+'</select></label></div><p id="stampTrayCount" role="status"></p><div id="funStampGrid" class="fun-stamp-grid"></div>');gid('stampSearch').oninput=renderStampTray;gid('stampTheme').onchange=renderStampTray;
+  let outside=false;dlg.addEventListener('pointerdown',e=>{const r=dlg.getBoundingClientRect();outside=e.target===dlg&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)});dlg.addEventListener('click',()=>{if(outside)dlg.close();outside=false});dlg.addEventListener('close',()=>outside=false);
+  svg.addEventListener('pointerdown',e=>{if(tool!=='stamp'||e.button!==0||e.target.closest('.audio-controls'))return;e.preventDefault();e.stopImmediatePropagation();placeFunStamp(pt(e))},true);svg.addEventListener('keydown',e=>{if(tool==='stamp'&&!document.querySelector('dialog[open]')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();stampAtCenter()}if(tool==='stamp'&&e.key==='Escape'){e.preventDefault();e.stopPropagation();setTool('select')} });refreshStampTools();
+}
+
+function learnerSelectionObjects(){return selectedIds.map(findObj).filter(Boolean)}
+function refreshLearnerSelection(){
+  const button=gid('learnerSelection'),dlg=gid('learnerSelectionDialog');if(!button||!dlg)return;
+  const objects=learnerSelectionObjects(),editable=objects.filter(canEditObject),one=objects.length===1?objects[0]:null;
+  button.hidden=!objects.length;const label=objects.length>1?'Edit '+objects.length+' items':'Edit selected item';if(button.textContent!==label)button.textContent=label;
+  gid('learnerSelectionSummary').textContent=!editable.length?'This selection is protected. You can look at it, but cannot change it.':editable.length<objects.length?'Only editable items will change. Protected items stay safe.':objects.length===1?'Choose what to do with this item. You can undo your changes.':'Choose what to do with these '+objects.length+' items. You can undo your changes.';
+  gid('learnerSelectionText').hidden=!(one&&canEditObject(one)&&TEXTABLE_TYPES.includes(one.type));
+  dlg.querySelectorAll('[data-selection-edit]').forEach(el=>el.disabled=!editable.length);
+  dlg.querySelectorAll('[data-selection-nudge]').forEach(el=>el.disabled=!selectedMovableObjects().length);
+  for(const id of ['floatDuplicateBtn','floatDeleteBtn']){const el=gid(id);if(el)el.disabled=!editable.length}
+}
+function reorderEditableSelection(front){const ids=new Set(selectedIds.filter(id=>canEditObject(findObj(id))));if(!ids.size)return;const chosen=panel().objects.filter(o=>ids.has(o.id)),others=panel().objects.filter(o=>!ids.has(o.id));panel().objects=front?[...others,...chosen]:[...chosen,...others];render();saveState()}
+function ensureLearnerSelection(){
+  const button=document.createElement('button');button.id='learnerSelection';button.type='button';button.hidden=true;gid('learnerToolbar').querySelector('.learner-secondary-tools').prepend(button);
+  const cards=[['Text','✎','Edit words','Change the words on this item.'],['Copy','⧉','Make a copy','Keep this item and add another one.'],['Front','↑','Bring forward','Put editable items in front of others in their layer.'],['Back','↓','Send backward','Put editable items behind others in their layer.'],['Remove','⌫','Remove item','Take editable items off the page. Undo that brings them back.']];
+  const dlg=addLearnerDialog('learnerSelectionDialog','My selected items','<p id="learnerSelectionSummary"></p><div class="learner-selection-cards">'+cards.map(([key,icon,title,desc])=>`<button type="button" id="learnerSelection${key}" class="learner-starter-card${key==='Remove'?' learner-remove':''}" data-selection-edit><span class="learner-action-icon" aria-hidden="true">${icon}</span><strong>${title}</strong><span>${desc}</span></button>`).join('')+'</div><fieldset class="learner-nudge"><legend>Move a little</legend><p>Place your work exactly where you want it.</p><label>Move by <select id="learnerNudgeStep"><option value="1">Small step</option><option value="10">Bigger step</option></select></label><div>'+[['left','←'],['up','↑'],['down','↓'],['right','→']].map(([dir,icon])=>`<button type="button" data-selection-nudge="${dir}" aria-label="Move ${dir}">${icon}</button>`).join('')+'</div></fieldset><div class="learner-dialog-actions"><button type="button" id="learnerSelectionDone">Done selecting</button></div>');
+  button.onclick=()=>{refreshLearnerSelection();dlg.showModal()};
+  gid('learnerSelectionText').onclick=()=>{const o=currentObj();if(selectedIds.length===1&&o&&canEditObject(o)&&TEXTABLE_TYPES.includes(o.type)){dlg.close();openInlineTextEditor(o.id)}};
+  gid('learnerSelectionCopy').onclick=()=>{if(!learnerSelectionObjects().some(canEditObject))return;duplicateSelected();dlg.close()};
+  gid('learnerSelectionRemove').onclick=()=>{if(!learnerSelectionObjects().some(canEditObject))return;deleteSelected();dlg.close();setStatus('Item removed. Undo that brings it back.','success')};
+  gid('learnerSelectionFront').onclick=()=>{reorderEditableSelection(true);dlg.close()};gid('learnerSelectionBack').onclick=()=>{reorderEditableSelection(false);dlg.close()};
+  dlg.querySelectorAll('[data-selection-nudge]').forEach(el=>el.onclick=()=>{const step=+gid('learnerNudgeStep').value||1,offset={left:[-step,0],up:[0,-step],down:[0,step],right:[step,0]};nudgeSelected(...offset[el.dataset.selectionNudge])});
+  gid('learnerSelectionDone').onclick=()=>{clearSelection();render();dlg.close()};
+  let backdropPressed=false;dlg.addEventListener('pointerdown',e=>{const r=dlg.getBoundingClientRect();backdropPressed=e.target===dlg&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)});dlg.addEventListener('click',()=>{if(backdropPressed)dlg.close();backdropPressed=false});dlg.addEventListener('close',()=>backdropPressed=false);
+  const float=document.createElement('button');float.type='button';float.id='floatLearnerActions';float.textContent='Actions';float.onclick=()=>button.click();gid('selectionToolbar').prepend(float);
 }
 function ensureLearnerWorkspace(){
   if(gid('learnerToolbar'))return;
@@ -1277,13 +1336,14 @@ function ensureLearnerWorkspace(){
   gid('learnerColor').oninput=e=>{const input=gid('simpleColorInput');input.value=e.target.value;input.dispatchEvent(new Event('input',{bubbles:true}))};
   gid('learnerPan').onclick=()=>{commitInlineTextEditor();clearSelection();setTool(tool==='pan'?'select':'pan');render()};
   gid('learnerHome').onclick=()=>{learnerPan={x:0,y:0};zoom=1;render();setStatus('View centered. Your work has not moved.','success')};
+  ensureLearnerSelection();
   const recovery=document.createElement('div');recovery.id='clearRecoveryBanner';recovery.className='learner-recovery';recovery.hidden=true;recovery.innerHTML='<span>Work cleared. Undo can bring it back. A recovery checkpoint is saved with the board.</span><button id="learnerUndoClear" type="button">Undo clearing</button>';toolbar.after(recovery);gid('learnerUndoClear').onclick=()=>{undo();recovery.hidden=true};
   const cloud=document.createElement('span');cloud.id='classroomSaveChip';cloud.className='save-state';cloud.setAttribute('role','status');cloud.textContent='Classroom: not sent';gid('saveStateChip').after(cloud);
   const help=addLearnerDialog('learnerHelpDialog','Show me how','<p id="learnerHelpText"></p><div class="learner-demo" aria-hidden="true"><span class="learner-demo-cursor">✎</span><span class="learner-demo-line"></span></div><div class="learner-dialog-actions"><button id="learnerReadHelp" type="button">Read instructions aloud</button><button id="learnerTryTool" type="button" class="primary">Let me try</button></div>');
   gid('learnerHelp').onclick=()=>{gid('learnerHelpText').textContent=toolGuidance(tool).join('. ');help.dataset.demo=tool;help.querySelector('.learner-demo-cursor').textContent=({select:'↖',eraser:'⌫',text:'T'})[tool]||'✎';help.showModal()};gid('learnerTryTool').onclick=()=>help.close();
   gid('learnerReadHelp').disabled=!('speechSynthesis' in window);gid('learnerReadHelp').onclick=()=>{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(gid('learnerHelpText').textContent);utterance.lang=document.documentElement.lang||'en';speechSynthesis.speak(utterance)};help.addEventListener('close',()=>window.speechSynthesis?.cancel());
   const items=addLearnerDialog('learnerObjectsDialog','Find an item','<p>Choose an item to select it. Use arrow keys to move editable items, or Enter to edit their text. Teacher items stay protected.</p><div id="learnerObjectList"></div>');
-  gid('learnerObjects').onclick=()=>{const list=gid('learnerObjectList');list.replaceChildren();panel().objects.filter(o=>!o.answerKey||board.showAnswerKey).forEach((o,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=(o.text||o.audioName||o.name||LEARNER_TOOLS.find(([key])=>key===o.type)?.[1]||o.type)+' '+(i+1)+(canEditObject(o)?'':' — teacher item');btn.onclick=()=>{setTool('select');setSingleSelection(o.id);render();items.close();svg.setAttribute('tabindex','0');svg.focus()};list.append(btn)});if(!list.children.length)list.textContent='No items yet. Try drawing or typing on this page.';items.showModal()};
+  gid('learnerObjects').onclick=()=>{const list=gid('learnerObjectList');list.replaceChildren();panel().objects.filter(o=>!o.answerKey||board.showAnswerKey).forEach((o,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=(o.text||o.audioName||o.stampLabel||o.name||LEARNER_TOOLS.find(([key])=>key===o.type)?.[1]||o.type)+' '+(i+1)+(canEditObject(o)?'':o.locked?' — locked item':' — teacher item');btn.onclick=()=>{setTool('select');setSingleSelection(o.id);render();items.close();svg.setAttribute('tabindex','0');svg.focus()};list.append(btn)});if(!list.children.length)list.textContent='No items yet. Try drawing or typing on this page.';items.showModal()};
   const response=addLearnerDialog('learnerResponseDialog','How would you like to respond?','<p>Draw, type, or explain with your voice.</p><div class="learner-dialog-actions"><button id="learnerDrawResponse" type="button">Draw my answer</button><button id="learnerTypeResponse" type="button">Type my answer</button><button id="learnerVoiceResponse" type="button">Record my answer</button></div>');gid('learnerResponse').onclick=()=>response.showModal();gid('learnerDrawResponse').onclick=()=>{setTool('pen');response.close()};gid('learnerTypeResponse').onclick=()=>{setTool('text');response.close()};
   const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Press Record when you are ready. Your browser will ask to use the microphone. Stop to keep the recording on this page.</p><p id="learnerAudioStatus" role="status">Ready to record.</p><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button></div>');
   gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();const o=makeObj('audio',60,60,220,75,{audioName:'My answer'});panel().objects.push(o);setSingleSelection(o.id);render();saveState();audio.showModal();refreshLearnerAudioControls()};
@@ -1315,6 +1375,7 @@ function refreshLearnerWorkspace(){
   document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>{const buttons=[...group.querySelectorAll('button[data-tool],button.toolbar-action')];group.classList.toggle('student-tool-hidden',board.mode==='student'&&buttons.length>0&&buttons.every(b=>b.classList.contains('student-tool-hidden')))});
   ['tntBtn','simpleTntBtn','more_tntBtn'].forEach(key=>gid(key)?.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));document.querySelectorAll('[data-menu-target="tntBtn"]').forEach(el=>el.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));
   gid('learnerPicture').hidden=!learnerAllows('image');gid('learnerDrawResponse').hidden=!learnerAllows('pen');gid('learnerTypeResponse').hidden=!learnerAllows('text');gid('learnerVoiceResponse').hidden=!learnerAllows('audio');
+  refreshStampTools();
   gid('learnerPan').setAttribute('aria-pressed',String(tool==='pan'));
   gid('learnerPenSizeLabel').hidden=tool!=='pen';gid('learnerPenSize').value=String(penStrokeWidth);
   gid('learnerColor').value=ui.strokeColor?.value||'#7c3aed';
@@ -1390,7 +1451,8 @@ const TOOL_GUIDANCE={
   callout:['Callout','Drag to place a callout box. Double-click it to add the callout text.'],
   speech:['Speech Bubble','Drag to place a speech bubble. Double-click it to add text.'],
   comment:['Comment','Click the canvas to leave a review comment that can be moderated later.'],
-  audio:['Audio','Click the canvas to place an audio note, then record or attach audio from the inspector.']
+  audio:['Audio','Click the canvas to place an audio note. Choose Record my voice on the note, then use Play, Pause, and Stop to listen.'],
+  stamp:['Stamps','Choose a picture from the stamp tray. Tap the page repeatedly to build a scene. Change the size, use Undo for a do-over, or choose Done stamping.']
 };
 function toolGuidance(next){
   if(next==='dotpaint') return panel().objects.some(o=>o.type==='dot')?['Dot Paint','Click or drag across dots in a Dot Picture, then pick a color from the palette.']:['Dot Paint','Insert a Dot Picture first, then use Paint Dots to color it.'];
@@ -1795,7 +1857,7 @@ function createConnectorLabelObject(o){
 function createTextObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);fo.appendChild(createStyledDiv(o));return fo}
 function createStickyObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(20,b.w));fo.setAttribute('height',Math.max(20,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);d.className='postit';Object.assign(d.style,{background:o.fill,width:'100%',height:'100%',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:(o.vAlign||'top')==='top'?'flex-start':((o.vAlign||'top')==='middle'?'center':'flex-end'),textAlign:o.hAlign||'left',alignItems:(o.hAlign||'left')==='left'?'flex-start':((o.hAlign||'left')==='center'?'center':'flex-end'),transform:`rotate(${o.textRotation||0}deg)`,transformOrigin:'center center',gap:'8px'});if(o.imageSrc){const img=document.createElementNS(XHTML,'img');img.setAttribute('src',o.imageSrc);Object.assign(img.style,{width:'100%',maxHeight:'45%',objectFit:'cover',borderRadius:'8px',border:'1px solid rgba(0,0,0,.12)'});d.appendChild(img)}const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add note...');content.style.width='100%';d.appendChild(content);fo.appendChild(d);return fo}
 function createCommentObject(o,b){const g=document.createElementNS(NS,'g');const pinFill=o.resolved?'#9ca3af':'#ef4444';g.appendChild(svgEl(`<line x1="${b.x+14}" y1="${b.y+16}" x2="${b.x+14}" y2="${b.y+b.h}" stroke="${pinFill}" stroke-width="3" opacity="${o.opacity}"/>`));g.appendChild(svgEl(`<circle cx="${b.x+14}" cy="${b.y+14}" r="10" fill="${pinFill}" opacity="${o.opacity}"/>`));const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x+24);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(120,b.w-24));fo.setAttribute('height',Math.max(50,b.h));const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',background:o.resolved?'#f3f4f6':'#fff7e6',border:'1px solid '+(o.resolved?'#d1d5db':'#f59e0b'),borderRadius:'10px',padding:'10px',fontSize:(o.fontSize||16)+'px',color:o.textColor||'#111827',display:'flex',flexDirection:'column',justifyContent:'space-between'});const badge=document.createElementNS(XHTML,'div');badge.textContent=o.resolved?'Resolved Comment':'Feedback Pin';badge.style.fontWeight='700';badge.style.fontSize='12px';badge.style.marginBottom='6px';const content=document.createElementNS(XHTML,'div');content.innerHTML=objectHtml(o,'Add feedback...');content.style.flex='1';content.style.wordBreak='break-word';d.appendChild(badge);d.appendChild(content);fo.appendChild(d);g.appendChild(fo);return g}
-function createStampObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(30,b.w));fo.setAttribute('height',Math.max(30,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',border:o.emojiParts?'2px solid rgba(124,58,237,.18)':'2px solid rgba(0,0,0,.08)',borderRadius:'18px',background:o.stampBg||'#eef2ff',overflow:'hidden'});let icon;if(o.stampSrc){icon=document.createElementNS(XHTML,'img');icon.setAttribute('src',o.stampSrc);Object.assign(icon.style,{maxWidth:'70%',maxHeight:'56%',objectFit:'contain'})}else if(o.emojiParts?.length){icon=document.createElementNS(XHTML,'div');Object.assign(icon.style,{position:'relative',width:'78%',height:'68%',minHeight:'44px'});o.emojiParts.slice(0,4).forEach((emoji,i)=>{const part=document.createElementNS(XHTML,'span');part.textContent=emoji;Object.assign(part.style,{position:'absolute',left:[8,34,18,44][i%4]+'%',top:[4,22,36,6][i%4]+'%',fontSize:Math.max(24,Math.min(b.w,b.h)*[.5,.44,.38,.34][i%4])+'px',transform:`rotate(${[-10,12,0,-18][i%4]}deg)`,filter:'drop-shadow(0 2px 1px rgba(0,0,0,.12))'});icon.appendChild(part)})}else{icon=document.createElementNS(XHTML,'div');icon.textContent=o.stampIcon||'⭐';icon.style.fontSize=Math.max(26,Math.min(b.w,b.h)*0.56)+'px';}const label=document.createElementNS(XHTML,'div');label.textContent=o.stampLabel||'Sticker';label.style.fontSize='12px';label.style.fontWeight='700';label.style.marginTop='4px';d.appendChild(icon);d.appendChild(label);fo.appendChild(d);return fo}
+function createStampObject(o,b){const fo=document.createElementNS(NS,'foreignObject');fo.setAttribute('x',b.x);fo.setAttribute('y',b.y);fo.setAttribute('width',Math.max(30,b.w));fo.setAttribute('height',Math.max(30,b.h));fo.setAttribute('opacity',o.opacity);const d=document.createElementNS(XHTML,'div');d.setAttribute('xmlns',XHTML);Object.assign(d.style,{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',border:o.emojiParts?'2px solid rgba(124,58,237,.18)':'2px solid rgba(0,0,0,.08)',borderRadius:'18px',background:o.stampBg||'#eef2ff',overflow:'hidden'});let icon;if(o.stampSrc){icon=document.createElementNS(XHTML,'img');icon.setAttribute('src',o.stampSrc);Object.assign(icon.style,{maxWidth:'70%',maxHeight:'56%',objectFit:'contain'})}else if(o.emojiParts?.length){icon=document.createElementNS(XHTML,'div');Object.assign(icon.style,{position:'relative',width:'78%',height:'68%',minHeight:'44px'});o.emojiParts.slice(0,4).forEach((emoji,i)=>{const part=document.createElementNS(XHTML,'span');part.textContent=emoji;Object.assign(part.style,{position:'absolute',left:[8,34,18,44][i%4]+'%',top:[4,22,36,6][i%4]+'%',fontSize:Math.max(24,Math.min(b.w,b.h)*[.5,.44,.38,.34][i%4])+'px',transform:`rotate(${[-10,12,0,-18][i%4]}deg)`,filter:'drop-shadow(0 2px 1px rgba(0,0,0,.12))'});icon.appendChild(part)})}else{icon=document.createElementNS(XHTML,'div');icon.textContent=o.stampIcon||'⭐';icon.style.fontSize=Math.max(26,Math.min(b.w,b.h)*0.56)+'px';}if(o.stampPlain){d.style.border='none';d.style.background='transparent';d.style.borderRadius='0';if(icon)icon.style.fontSize=Math.max(18,Math.min(b.w,b.h)*.88)+'px'}const label=document.createElementNS(XHTML,'div');label.textContent=o.stampLabel||'Sticker';if(o.stampPlain)label.hidden=true;label.style.fontSize='12px';label.style.fontWeight='700';label.style.marginTop='4px';d.appendChild(icon);d.appendChild(label);fo.appendChild(d);return fo}
 let notePlayback=null;
 const noteLengths=new Map();
 function audioTime(seconds){seconds=Math.max(0,Math.floor(Number.isFinite(seconds)?seconds:0));return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
@@ -2024,10 +2086,10 @@ function alignSelectedObjects(mode){
   setStatus((objs.length===1?'Aligned to frame.':'Aligned selected objects.'),'success');
 }
 function nudgeSelected(dx,dy){
-  const objs=selectedMovableObjects();
+  const objs=idsWithColoringPaint(selectedMovableObjects().map(o=>o.id)).map(findObj).filter(canEditObject);
   if(!objs.length) return false;
-  objs.forEach(o=>{o.x+=dx; o.y+=dy});
-  render(); saveState(false);
+  objs.forEach(o=>{o.x+=dx;o.y+=dy;if(o.type==='path'&&o.d)o.d=translatedPathData(o.d,dx,dy);if(o.clipBox){o.clipBox.x+=dx;o.clipBox.y+=dy}});
+  render(); saveState();
   return true;
 }
 function pasteBlobAsImage(blob,label){return new Promise(async resolve=>{if(!blob||!(await validateImageDeep(blob))){resolve(false); return} const reader=new FileReader(); reader.onload=async()=>{let dataUrl=reader.result, pendingImageId=''; if(imageNeedsModeration()){const m=await submitImageForApproval(dataUrl,'paste.png'); if(m.blocked){resolve(false); return} dataUrl=m.dataUrl; pendingImageId=m.imageId||''} const probe=new Image(); probe.onload=()=>{let w=probe.width,h=probe.height; const maxDim=600; if(Math.max(w,h)>maxDim){const s=maxDim/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s)} const extra=pendingImageId?{pendingImageId}:{}; addObj(makeObj('image',120,120,Math.max(40,w),Math.max(40,h),{src:dataUrl,fill:'none',stroke:'#000',strokeWidth:1,...extra})); if(pendingImageId) ensurePendingImagePoller(); else setStatus(label||'Image pasted.','success'); resolve(true)}; probe.onerror=()=>resolve(false); probe.src=dataUrl}; reader.onerror=()=>resolve(false); reader.readAsDataURL(blob)})}
@@ -3671,8 +3733,8 @@ gid('recordAudioBtn').onclick=()=>startAudioRecording();
 gid('loadAudioBtn').onclick=()=>{const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); gid('audioInput').click()};
 gid('playAudioBtn').onclick=()=>playSelectedAudio();
 gid('answerKeyBtn').onclick=()=>{const editable=selectedIds.map(idv=>findObj(idv)).filter(o=>o&&canEditObject(o)); if(!editable.length) return setStatus('Select one or more editable objects first.','danger'); const next=!editable.every(o=>o.answerKey); editable.forEach(o=>o.answerKey=next); render(); saveState(); setStatus(next?'Marked as answer key.':'Removed from answer key.','success')};
-gid('frontBtn').onclick=()=>{if(!selectedIds.length)return; const sel=panel().objects.filter(o=>selectedIds.includes(o.id)), others=panel().objects.filter(o=>!selectedIds.includes(o.id)); panel().objects=[...others,...sel]; render(); saveState()};
-gid('backBtn').onclick=()=>{if(!selectedIds.length)return; const sel=panel().objects.filter(o=>selectedIds.includes(o.id)), others=panel().objects.filter(o=>!selectedIds.includes(o.id)); panel().objects=[...sel,...others]; render(); saveState()};
+gid('frontBtn').onclick=()=>reorderEditableSelection(true);
+gid('backBtn').onclick=()=>reorderEditableSelection(false);
 gid('refreshModerationBtn').onclick=()=>openModerationDashboard();
 gid('openModerationBtn').onclick=()=>openModerationDashboard();
 gid('closeModerationDialog').onclick=()=>gid('moderationDialog').close();
@@ -4832,6 +4894,7 @@ function registerServiceWorker(){
   ensureTopMenus();
   ensureOptionsPresentation();
   ensureLearnerWorkspace();
+  ensureFunStamps();
   updateHeaderHeightVar();
   window.addEventListener('resize',updateHeaderHeightVar);
   applyGraphLocale();
@@ -4957,9 +5020,9 @@ function registerServiceWorker(){
     options:svg(`<circle ${F} cx="12" cy="5" r="1.8"/><circle ${F} cx="12" cy="12" r="1.8"/><circle ${F} cx="12" cy="19" r="1.8"/>`),
     info:svg(`<circle ${S} cx="12" cy="12" r="9"/><path ${S} d="M12 11v6M12 7h.01"/>`),
     switch:svg(`<path ${S} d="M7 7h13l-4-4M17 17H4l4 4"/>`),
-    bg:'<img src="../assets/icons/tools/bg.png" alt="">',
+    bg:'<img src="../assets/icons/tools/page-background.svg" alt="">',
     textgroup:'<img src="../assets/icons/tools/textgroup.png" alt="">',
-    imagegroup:'<img src="../assets/icons/tools/imagegroup.png" alt="">',
+    imagegroup:'<img src="../assets/icons/tools/add-pictures.svg" alt="">',
     pop_image:'<img src="../assets/icons/tools/insert-image.png" alt="">',
     pop_coloring:'<img src="../assets/icons/tools/insert-coloring.png" alt="">',
     pop_graph:'<img src="../assets/icons/tools/insert-graph.png" alt="">',
@@ -5117,9 +5180,10 @@ function registerServiceWorker(){
     const drawGroup=makeGroup({id:'drawToolGroup',label:'Draw Tools',icon:'pen',items:['pen','bucket','eraser','laser','dotpaint','#dotPictureToolBtn'],className:'tool-group-draw'});
     const shapeGroup=makeGroup({id:'shapeToolGroup',label:'Shapes and Lines',icon:'shapeGroup',items:['line','arrow','rect','ellipse','triangle','diamond','polygon','star','connector','callout','speech'],className:'tool-group-shapes'});
     const textGroup=makeGroup({id:'textToolGroup',label:'Text and Notes',icon:'textgroup',items:['text','sticky','comment','audio'],className:'tool-group-text'});
-    const insertGroup=makeGroup({id:'insertToolGroup',label:'Images and Diagrams',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn'],className:'tool-group-insert'});
-    const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
+    const insertGroup=makeGroup({id:'insertToolGroup',label:'Add Pictures and Learning Tools',icon:'imagegroup',items:['#simpleImageBtn','#simpleColoringBookBtn','#simpleGraphBtn','#simplePictureGraphBtn','#simpleClassroomWidgetsBtn'],className:'tool-group-insert'});
+    const bgGroup=makeGroup({id:'backgroundToolGroup',label:'Page Background and Reveal',icon:'bg',items:['#simpleBgImageBtn','#simpleScratchCoverBtn','#simpleClearBgBtn','#simpleRemoveBgColorBtn'],className:'tool-group-bg'});
     const moreGroup=makeGroup({id:'moreToolGroup',label:'More Actions',icon:'options',items:['#simpleDeleteBtn','#simpleTntBtn'],className:'tool-group-more'});
+    for(const [group,label] of [[insertGroup,'ADD'],[bgGroup,'PAGE']]){const short=document.createElement('span');short.className='tool-short-label';short.setAttribute('aria-hidden','true');short.textContent=label;group.querySelector('summary').append(short)}
     tools.append(drawGroup,shapeGroup,textGroup,insertGroup,bgGroup,moreGroup);
     if(selectBtn) selectBtn.classList.add('tool-group-nav');
     refreshToolGroupsActive();

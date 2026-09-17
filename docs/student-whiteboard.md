@@ -16,6 +16,8 @@ The choices are stored in the board JSON and classroom room state. **Copy Studen
 
 **Find an item** lists page objects, including text where available. Selecting an item focuses the canvas: arrow keys move editable items and Enter edits text. Teacher-layer items remain protected. Beginner and touch input use larger resize handles.
 
+Select an item, then choose **Edit selected item** (or **Actions** on the floating selection bar). Explained cards offer Edit words, Make a copy, Bring forward, Send backward, and Remove item. **Move a little** provides Small step and Bigger step direction buttons. Protected selections disable editing; mixed selections change only editable items. **Done selecting** clears the selection. Pencil strokes and their clipping regions move together, and both button and keyboard movement can be undone.
+
 **Move view** pans the workspace without changing object positions. **Center view** resets the view. Downloads use the board coordinates rather than the temporary pan offset.
 
 ## Recover mistakes and submit work
@@ -29,3 +31,11 @@ The device-save indicator explicitly says **Saved on this device**. Classroom sa
 ## Lesson starters
 
 **Lesson starters** creates a new page for Draw and explain, Compare two ideas, Label this picture, or Show your math. Existing pages stay intact. Prompts use the teacher layer, and the initial response tool set includes drawing, typing, arrows, pictures, and voice notes.
+
+## Picture buttons and fun stamps
+
+The toolbar now separates **ADD** (a picture with a plus, for pictures and learning tools) from **PAGE** (a page with a paint roller, for backgrounds and reveal effects). The Add menu retains Add Image, Coloring Book, Graph Creator, Picture Graph, and Classroom Widgets.
+
+Choose **Stamps** from the toolbar or everyday tool row. Eight searchable trays contain 80 named stamps: Animals, Nature, Space, School, Food, Sports, Music, and Silly. Recent remembers up to 12 picks on this device. Pick a stamp, choose Small/Medium/Large, and tap repeatedly to place it. The active strip offers Change stamp, Stamp in middle, and Done stamping. With the canvas focused, Enter or Space stamps in the middle, and Escape returns to Move.
+
+Stamps have transparent backgrounds and stay separate editable objects. Each placement can be undone; stamps persist in board saves and classroom state. Student stamps use the student layer and owner. The teacher’s Pictures and Stamps lesson setting controls access. Built-in stamps use emoji artwork provided by the device, so appearance can vary between operating systems.

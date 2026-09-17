@@ -1339,3 +1339,39 @@ body[data-workspace="education"] #learnerTurnIn{order:-1;background:#6d38e8;colo
 .audio-progress{flex:1 1 100%;min-width:0;width:100%;height:24px;margin:0;accent-color:#6d38e8;cursor:pointer}
 .audio-time{font-variant-numeric:tabular-nums;font-size:12px;color:#475569}
 .audio-controls .audio-playback-status{flex-basis:auto;margin-left:auto}
+
+/* Student selection actions use the same explained cards as lesson menus. */
+.learner-selection-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.learner-selection-cards button{position:relative;padding-left:48px;min-height:88px}
+.learner-action-icon{position:absolute;left:14px;top:17px;font-size:25px;color:#6d38e8}
+.learner-selection-cards button:disabled,.learner-nudge button:disabled{opacity:.45;cursor:default}
+.learner-selection-cards .learner-remove{border-color:#fecaca;background:#fff4f4;color:#9f2626}
+.learner-remove .learner-action-icon{color:#9f2626}
+.learner-nudge{margin:16px 0 0;border:1px solid #d5c9ff;border-radius:14px;padding:12px}
+.learner-nudge legend{font-weight:700;color:#6035d8}
+.learner-nudge p{margin:0 0 8px;font-size:13px}
+.learner-nudge select{padding:7px;border:1px solid #cdc8ff;border-radius:8px;min-height:44px}
+.learner-nudge>div{display:flex;gap:8px;margin-top:10px}
+.learner-nudge button{min-width:48px;border:1px solid #cdc8ff;border-radius:10px;background:#f0f2ff;color:#6035d8;font-size:22px}
+#learnerSelection{order:-2;border-color:#a78bfa;background:#ede9fe;color:#5425bd}
+.selection-toolbar{max-width:calc(100% - 24px);flex-wrap:wrap;justify-content:center}
+#floatLearnerActions{font-weight:700;color:#6035d8}
+@media(max-width:560px){.learner-selection-cards{grid-template-columns:1fr}.learner-selection-cards button{min-height:76px}}
+
+/* Distinct page/add symbols and a repeat-stamping tray. */
+#insertToolGroup>summary,#backgroundToolGroup>summary,#funStampToolBtn{position:relative;flex-direction:column;gap:0;padding:3px!important;min-height:50px!important;height:50px!important}
+#insertToolGroup>summary .icon-symbol,#backgroundToolGroup>summary .icon-symbol,#funStampToolBtn .icon-symbol{width:30px;height:30px}
+.tool-short-label{display:block;font-size:9px;font-weight:800;line-height:12px;letter-spacing:.4px;color:currentColor}
+#funStampToolBtn{color:#6d38e8;background:#fff8e8;border:1px solid #f5dca5}
+.stamp-tray-filters{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.stamp-tray-filters label{font-size:13px;font-weight:700;color:#6035d8}
+.stamp-tray-filters input,.stamp-tray-filters select{box-sizing:border-box;display:block;width:100%;min-height:44px;margin-top:5px;padding:9px;border:1px solid #d5c9ff;border-radius:10px;background:#fff;font:inherit}
+.fun-stamp-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.fun-stamp-tile{padding:8px 3px;border:1px solid #d5c9ff;border-radius:12px;background:#f5f2ff;color:#5425bd;font-size:11px}
+.fun-stamp-icon{display:block;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;font-size:34px;line-height:44px}
+.fun-stamp-tile:hover{background:#fff0cc;border-color:#ffb32c}
+.stamp-active-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;padding:10px;border:1px solid #d5c9ff;border-radius:12px;background:#fff8e8;color:#5425bd;font-size:13px}
+.stamp-active-bar[hidden]{display:none}
+.stamp-active-bar select{padding:7px;border:1px solid #d5c9ff;border-radius:8px;min-height:44px;background:#fff}
+body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{cursor:crosshair!important}
+@media(max-width:560px){.fun-stamp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stamp-tray-filters{grid-template-columns:1fr}.stamp-active-bar strong{flex-basis:100%}}
