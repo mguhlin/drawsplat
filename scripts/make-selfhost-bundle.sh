@@ -208,13 +208,19 @@ Deployment paths
      Follow guides/google-setup.html. Paste apps-script/Code.gs into a new
      Apps Script project bound to a Google Sheet, deploy as Web App.
 
-3. Self-hosted MySQL (recommended for districts wanting local storage):
-     cd server/mysql-backend
-     cp .env.example .env
-     # edit .env — change MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD, DRAWSPLAT_PEPPER
-     docker compose up -d
-     curl http://localhost:8787/api/drawsplat/mysql/health
-     Then point the static site at the MySQL backend via the in-app setup wizard.
+3. Portable MySQL (private account-owned online Save/Open):
+     Follow guides/mysql-setup.html and docs/setup-mysql.md for Railway,
+     DigitalOcean, or an existing MySQL 8 server. Docker or Node.js 22+ required.
+     The browser uses an HTTPS API; database credentials stay on the server.
+     In admin/mysql-setup.html enter the public API address, choose
+     Test & Enable Online Saving, and create a teacher saving account.
+     Use File > Save online / Open online board / Online account.
+     Student accounts must be school-provisioned. Added audio/video notes
+     are included in board JSON. Saving is explicit, with revision checks.
+     Google shared rooms, galleries, moderation, and turn-in/review remain
+     separate; advanced district modules require their own validation.
+     Configure backups before classroom use. Moving providers does not
+     migrate data automatically; follow the guide's restore instructions.
 
 Compliance
 ----------

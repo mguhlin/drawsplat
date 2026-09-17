@@ -33,9 +33,9 @@ A stale revision returns 409 and preserves the existing online copy. Board keys
 are scoped to accounts; knowing another account's key does not grant access.
 The current copy is updated in place, avoiding unlimited snapshot growth.
 
-`npm test` runs configuration checks. Set `MYSQL_TEST_URL` to a disposable database
+`npm test` runs configuration and media safety checks. Set `MYSQL_TEST_URL` to a disposable database
 to also exercise migrations, authentication, ownership, simultaneous saves, CORS,
-and session revocation against real MySQL. Never use classroom data for these tests.
+UTC sessions and session revocation against real MySQL. Set `MYSQL_TEST_CA_FILE` as well to exercise trusted CA, untrusted CA, and hostname verification against a TLS-enabled test server. Never use classroom data for these tests.
 
 ## Advanced service modules
 
@@ -50,6 +50,10 @@ implemented.
 
 | File | Purpose |
 |---|---|
+| `cloud-routes.js` | Account-owned board Save/Open and revision conflict protection |
+| `db-config.js` | Portable database settings, verified TLS, connection pool, UTC sessions |
+| `migrate.js` + `migrations/004_cloud_boards.sql` | Serialized automatic migrations and private board storage |
+| `railway.toml` + `docker-compose.external.yml` + `docker-compose.https.yml` + `Caddyfile` | Railway, existing database, and HTTPS deployment options |
 | `schema.sql` | Original rooms / boards / templates / turnins / media / audit tables |
 | `migrations/002_compliance.sql` | Users, sessions, parent_requests, time_usage, image_queue, compliance_config, rate_limits |
 | `migrations/003_freeze_and_polish.sql` | Board freeze columns, parent_email index |
@@ -116,7 +120,7 @@ All paths prefixed with `API_BASE_PATH` (default `/api/drawsplat/mysql`).
 
 ## Family Access Portal
 
-`http://localhost:8787/parent-portal/parent-portal.html` (override `DRAWSPLAT_API_BASE` on `window` if the API is on another origin). Parents sign in with the one-time verification code their teacher issued; the portal then renders the student's account snapshot and any existing requests, and lets the parent submit additional requests.
+`http://localhost:8787/parent-portal/parent-portal.html` (override `DRAWSPLAT_API_BASE` on `window` if the API is on another origin). This legacy portal is separate from private board saving and needs authenticated parent sign-in integration and end-to-end validation before deployment. A teacher-issued verification code is not a substitute for the bearer authentication required by protected parent routes.
 
 ## Migrating from Apps Script
 
@@ -127,7 +131,9 @@ node migrate-from-apps-script.mjs --src ./apps-script-export
 
 Drop the Sheet tabs into a folder as `Users.csv`, `ParentRequests.csv`, `Audit.csv`, `TimeUsage.csv`, plus an optional `boards/` directory of per-board JSON files. The CLI upserts everything into MySQL using the same schema.
 
-## Compliance feature parity vs Apps Script
+## Advanced backend module inventory vs Apps Script
+
+The checkmarks below indicate backend code exists, not validated whiteboard feature parity. These modules are not enabled by selecting MySQL private Save/Open; classroom membership, frontend integration, and operational validation remain separate work.
 
 | Capability | Apps Script | MySQL |
 |---|---|---|

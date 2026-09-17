@@ -140,4 +140,4 @@ Apps Script has hard quotas — be aware before scaling beyond a few hundred use
 - **Sheet reads / writes**: efficient for thousands of rows, slow above ~50 K rows.
 - **Daily request volume**: roughly 20 K requests / day on consumer accounts.
 
-If you outgrow these, the MySQL backend ([`setup-mysql.md`](setup-mysql.md)) is the next step.
+For private account-owned online Save/Open on your own database, see the MySQL backend ([`setup-mysql.md`](setup-mysql.md)). It does not currently replace Google classroom rooms, templates, moderation, or turn-in/review; plan those workflows separately before switching.

@@ -85,7 +85,7 @@ will not protect against loss of that server.
 
 ## DigitalOcean App Platform or an existing MySQL server
 
-Deploy `server/mysql-backend` as a Docker service, or run it with Node.js 22 or newer:
+Deploy the repository’s `server/mysql-backend` directory as a Docker service (set the platform’s source/root directory to this folder), or run it with Node.js 22 or newer:
 
 ```bash
 npm ci --omit=dev

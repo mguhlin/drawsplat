@@ -1,13 +1,13 @@
 # DrawSplatTM
 
-DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website, works in the browser, and can optionally save boards, templates, collaboration rooms, and turn-ins to Google Drive and Google Sheets — or to your own MySQL-backed server.
+DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website and works in the browser. Google Apps Script optionally provides Drive/Sheets saves, classroom rooms, templates, and turn-ins. A separate portable MySQL service provides private, account-owned online Save/Open on Railway, DigitalOcean, or your own MySQL server.
 
 **Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://buymeacoffee.com/drawsplat).
 
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.24, featuring animated export progress and time estimates in MediaSplat and VideoSplat, automatic English subtitles, and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Phase 4 (MySQL) scaffolded end-to-end and hardened.
+- **Status:** v3.1.24, featuring animated export progress and time estimates in MediaSplat and VideoSplat, automatic English subtitles, and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -18,7 +18,7 @@ Pick the scenario that fits and skip the others:
 |---|---|---|
 | **Browser-only** — a teacher demo, single user, no accounts, no backend. | [`docs/setup-browser.md`](docs/setup-browser.md) | 1 minute |
 | **Google Apps Script** — cloud saves, classroom rooms, full Compliance Console, parent request center. *The supported production path.* | [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md) | 10–15 minutes |
-| **MySQL backend** — self-hosted, district-scale, true RBAC. *Scaffolded; production hardening still TODO.* | [`docs/setup-mysql.md`](docs/setup-mysql.md) | 15–30 minutes |
+| **MySQL backend** — private online Save/Open on Railway, DigitalOcean, or an existing MySQL 8 server. | [`docs/setup-mysql.md`](docs/setup-mysql.md) | Depends on hosting |
 
 Other docs that pair with setup:
 
@@ -30,6 +30,18 @@ Other docs that pair with setup:
 ## Current build
 
 **DrawSplatTM v3.1.24 — See your export progress.** MediaSplat and VideoSplat now show animated purple progress bars, percentages, elapsed time, and estimates in minutes or hours. VideoSplat estimates timeline rendering and MP4/OGM conversion separately and fixes cancellation and repeated-export progress. All twelve self-host packages are refreshed. [Walkthrough](blog/export-progress.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.24.md) · [Stable release v3.1.24](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.24).
+
+## Latest whiteboard: portable saving and recording recovery
+
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The separately versioned v3.1.24 download bundles listed above predate these changes; use current source or build a fresh bundle for these features.
+
+- **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
+- **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.
+- **Private copies:** online saving is explicit; revision checks protect newer copies from competing saves. Student links configure the service, not access to the teacher’s board. Student accounts must be school-provisioned.
+- **Recording recovery:** stopped voice/video drafts can be recovered on the same device after refresh, normally for 24 hours. Use **Add** to put a recording into the board before saving or sharing it. Recording controls include Play, Pause, and Stop; student video recording starts off and is enabled by the teacher.
+- **Provider boundaries:** Google collaboration, template galleries, moderation, and turn-in/review are not routed to MySQL. Switching providers does not migrate data or save to both services.
+
+Database credentials stay on the server. Verified database TLS, automatic migrations, backups, and moving hosts are covered in [the MySQL hosting guide](docs/setup-mysql.md). A database service must still be deployed and configured; drawsplat.org does not supply a default MySQL account or database.
 
 ## Additional tools included in v3.1.24
 
@@ -334,11 +346,13 @@ timeline
 - `admin/admin.html` — Teacher Admin setup surface for Google Apps Script + Sheets/Drive, MySQL, storage mode, backend testing, and classroom links
 - `admin/compliance.html` — unlinked internal Compliance Console surface (Safety Review, Family Access Tools, Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet)
 - `admin/access.html` — admin-access request page
-- `admin/mysql-setup.html` — MySQL backend setup wizard for endpoint testing and `.env` template generation
+- `admin/mysql-setup.html` — MySQL setup wizard for compatible API testing, enabling online saving, teacher account creation, and server configuration templates
 - `languages/` — translated whiteboard entry pages (Spanish, Vietnamese, Arabic, Chinese, Urdu / Hindi)
 - `assets/js/admin-gate.js` — static admin password gate for Teacher Admin and MySQL setup
 - `assets/js/admin.js` — admin-page settings, backend ping, link generation, and internal Compliance Console wiring
 - `assets/js/mysql-setup.js` — MySQL wizard behavior
+- `assets/js/mysql-cloud.js` — private MySQL Save/Open, tab-scoped sign-in, and revision conflict handling
+- `assets/js/recording-support.js` — device-local voice/video draft recovery and coordinated playback
 - `assets/js/safety.js` — client-side text + link safety pre-check
 - `assets/js/timelimits.js` — client-side active-time tracker + workspace lock
 - `assets/js/parents.js` — Family Access Tools client
@@ -350,7 +364,7 @@ timeline
 - `assets/brand/` — logo and cover artwork, including the new pricing + Texas Privacy hero infographics + Buy Me a Coffee QR
 - `sw.js` — service worker for offline shell
 - `apps-script/Code.gs` — Google Apps Script backend (v1.8.0): boards, rooms, turn-ins, parent requests, compliance config, audit, retention, contact requests
-- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes `server.js`, `security.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
+- `server/mysql-backend/` — Node.js + MySQL backend with Docker compose. Includes portable Railway/Docker/HTTPS deployment configuration, `db-config.js`, `migrate.js`, `cloud-routes.js`, `server.js`, `security.js`, `compliance-routes.js`, `oauth-routes.js`, `rbac.js`, `safety.js`, `realtime.js`, `sis-clever.js`, `cron-jobs.js`, `privacy-packet.js`, `static/parent-portal.{html,js}`, `migrate-from-apps-script.mjs`, and the migration SQL files.
 - `assets/backgrounds/` — original DrawSplatTM SVG panel backgrounds for education templates
 - `solutions/` — standalone classroom tools opened from Classroom Widgets (Coin Flipper, Dice Roller, Markdown Studio, Meme Puzzle, Word Search Maker, Story Wheel, Dicebreaker Creator, Rubric Builder, Bingo Card Generator, Bingo Caller, Quiz & Flashcard Studio)
 - `compliance.config.json` — default safety / retention / privacy configuration (client baseline; server-authoritative copy lives in Apps Script Script Property or the MySQL `compliance_config` table)
@@ -374,7 +388,7 @@ What is built today (Phases 1&ndash;3 of the roadmap, on the Apps Script backend
 - **Compliance Console** &mdash; unlinked internal operator surface at `admin/compliance.html` (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention, Privacy Settings, Activity Records, District Privacy Packet) wired to a single `COMPLIANCE_CONFIG` Script Property.
 - **District Privacy Packet** &mdash; one-click ZIP bundling config snapshot, 90 days of Activity Records, parent-request log, and a README pointing at Terms &amp; Privacy + the District Addendum.
 
-Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend/`:
+The connected MySQL provider supports private account-owned Save/Open, authenticated access, and revision conflict protection; it has been checked against real MySQL 8.4, including verified TLS and UTC sessions. Separately, these advanced district modules exist in `server/mysql-backend/` and require their own frontend integration and operational validation:
 
 - **OAuth** (Google ID tokens + Microsoft Graph access tokens) issuing the same HMAC bearer session as the email/password path.
 - **RBAC tree** (district / campus / teacher / student / parent) via a permission matrix and `requireRoles` / `requirePermission` middleware applied across compliance, SIS, and realtime routes.
@@ -386,7 +400,7 @@ Phase 4 (MySQL / district) is now scaffolded end-to-end in `server/mysql-backend
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-Districts that want to deploy this path can grab the latest DrawSplatTM bundle from the [Download page](pages/download.html) or [GitHub Releases](https://github.com/mguhlin/drawsplat/releases/latest) and follow [`server/mysql-backend/README.md`](server/mysql-backend/README.md). Install separate SplatWorksTM app bundles beside it when GridSplatTM, ShowSplatTM, WriteSplatTM, or ListSplatTM is needed. Integration test coverage and multi-instance Redis pub/sub for SSE are still TODO.
+For current private online saving, use the current repository and follow [`docs/setup-mysql.md`](docs/setup-mysql.md). The published versioned bundles predate this connection. Legacy room/template/turn-in/session endpoints require district/campus administrator authentication pending scoped classroom membership. Advanced district integration coverage and multi-instance Redis pub/sub for SSE remain future work.
 
 ## Core features
 
@@ -464,7 +478,7 @@ Teacher Admin supports four storage choices:
 
 - **Google Apps Script + Drive**: current cross-device classroom option. Save/load, cloud sync, templates, and turn-ins use the Apps Script backend.
 - **Browser-only timed session**: stores work in the browser autosave and refreshes an expiration timer on each save. When the timer expires, the next board load clears the local autosave. This is useful for temporary sessions such as workshops, labs, or shared devices.
-- **MySQL backend**: starter self-hosted database option for schools or districts that want SQL-backed rooms, boards, templates, turn-ins, audit records, and scheduled retention while keeping Google Apps Script available as another provider. The browser calls an HTTPS backend API; it never connects directly to MySQL.
+- **MySQL backend**: connected private online Save/Open through a portable HTTPS API on Railway, DigitalOcean, or an existing MySQL 8 server. Boards, including added audio/video notes, belong to the signed-in account. Saving is explicit, with revision conflict checks; Google classroom features remain separate. The browser never connects directly to MySQL.
 - **Standalone server folder**: planned backend mode for self-hosted deployments. Static HTML cannot write into a server sub-folder by itself; this mode needs an API endpoint such as `/api/drawsplat/session` to accept board JSON/media and expire it after 24 hours or another configured TTL.
 
 ## Backend setup
@@ -473,13 +487,13 @@ Setup instructions live in scenario-specific docs so you only read what's releva
 
 - **Browser-only** &mdash; [`docs/setup-browser.md`](docs/setup-browser.md). No backend, no accounts. Boards autosave to `localStorage`.
 - **Google Apps Script** &mdash; [`docs/setup-google-apps-script.md`](docs/setup-google-apps-script.md). Cloud saves, collaboration rooms, full Compliance Console, Family Access Tools. The supported production path today.
-- **MySQL** &mdash; [`docs/setup-mysql.md`](docs/setup-mysql.md). Self-hosted, district-scale. Scaffolded but not yet exercised against a live database; the Apps Script path remains the recommended option until this is hardened.
+- **MySQL** &mdash; [`docs/setup-mysql.md`](docs/setup-mysql.md). Private account-owned Save/Open, tested against real MySQL 8.4. Includes hosting, verified TLS, migration, and backup instructions; advanced district features require separate validation.
 
 A side-by-side capability comparison and a quick "which one are you?" router lives in [`docs/setup.md`](docs/setup.md).
 
-The Teacher Admin page (`admin/admin.html`) is the teacher configuration surface once you've finished any of the three setups. It hides provider URLs from students &mdash; the board page (`app/whiteboard.html`) reads the saved settings without exposing them in the student URL. Compliance operators can use the unlinked internal console at `admin/compliance.html`.
+The Teacher Admin page (`admin/admin.html`) is the teacher configuration surface once you've finished any of the three setups. It keeps database credentials on the server. MySQL student launch links include only the public API URL and lesson settings; account tokens and database passwords are never included. Compliance operators can use the unlinked internal console at `admin/compliance.html`.
 
-### Shared classroom board workflow
+### Shared classroom board workflow (Google Apps Script)
 
 1. Teacher opens DrawSplatTM, switches to **Education Tools**, and enables assignment mode.
 2. Teacher creates the panels needed for table groups, adds backgrounds/templates/prompts, and starts **Cloud Sync** with a unique room name.
@@ -1315,5 +1329,3 @@ Recommended public-hosting protections:
 - Use long, unguessable room or board IDs if cloud sharing is enabled.
 - Review Apps Script permissions and logs regularly.
 - Provide a way to clear local browser data on shared devices.
-
-MySQL online saving now connects the whiteboard to account-owned Save/Open through a portable Node.js API. Railway, DigitalOcean, and existing MySQL 8 deployments use the same service. See [the hosting guide](docs/setup-mysql.md) for configuration, verified TLS, migrations, and backups.

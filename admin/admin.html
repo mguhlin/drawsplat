@@ -163,14 +163,14 @@
   <section class="admin-grid">
     <article class="admin-panel">
       <h3>MySQL Backend</h3>
-      <p class="hint">Use this option for a self-hosted SQL-backed deployment. The browser stores only the public API endpoint. Database host, username, and password stay on the backend server in an environment file.</p>
+      <p class="hint">Use Railway, DigitalOcean, or an existing MySQL server for private account-owned Save/Open. The browser stores only the public API endpoint. Database host, username, and password stay on the backend server in an environment file.</p>
       <label class="admin-label" for="mysqlAdminEndpoint">Configured MySQL API endpoint</label>
       <input id="mysqlAdminEndpoint" type="url" placeholder="/api/drawsplat/mysql" autocomplete="off" disabled>
       <div class="admin-actions">
         <a class="admin-button" href="mysql-setup.html">Open MySQL Wizard</a>
         <a class="admin-button" href="../server/mysql-backend/README.md">Backend Guide</a>
       </div>
-      <p class="hint">Google Apps Script and MySQL are separate provider choices. You do not have to remove Google to prepare a MySQL backend.</p>
+      <p class="hint">Google Apps Script and MySQL are separate provider choices. MySQL does not enable Google classroom rooms or turn-in/review, and changing providers does not migrate saved boards.</p>
     </article>
 
     <article class="admin-panel">

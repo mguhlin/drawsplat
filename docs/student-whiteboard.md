@@ -89,3 +89,11 @@ After stopping, wait for **kept on this device**. A refreshed page restores **Fi
 An active recording or a draft still being saved prompts before you leave. If browser storage fails, the recorder asks you to add the recording before leaving. Recovery stays on this browser and device; adding a note keeps it in the board for sharing or saving a file.
 
 Video drafts now offer **Return to my recording page** when opened from a different page. Voice notes, video notes, and their review players pause one another so only one plays at a time. Pause keeps the current position. Recording pauses existing note playback.
+
+## Private MySQL online saving
+
+When your school configures MySQL saving, **File → Save online** keeps a private copy in your signed-in saving account. **Open online board** lists your own saved work; saving is explicit, so device autosave alone does not upload changes. Add voice/video notes to the board before saving them online.
+
+A student link configures the saving service and lesson tools; it does not open the teacher’s private board. Your school supplies student accounts. Google classroom turn-in and shared-room sync are separate features.
+
+If another device saved a newer copy, keep your work with **Save File**, then open the online copy before continuing. On shared devices, use **File → Online account → Sign out**; signing out leaves device copies, so follow your school’s device cleanup routine.

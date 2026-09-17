@@ -12,7 +12,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>DrawSplatTM MySQL Setup Guide</title>
-<meta name="description" content="Set up the DrawSplatTM starter MySQL backend for self-hosted room, board, template, turn-in, and retention storage." />
+<meta name="description" content="Set up private DrawSplat online Save/Open on Railway, DigitalOcean, or an existing MySQL server." />
 <link rel="canonical" href="https://drawsplat.org/guides/mysql-setup.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
@@ -164,77 +164,50 @@
     <img class="guide-hero-image" src="images/mysql-setup-guide.png" alt="MySQL setup in DrawSplatTM showing browser app, secure API server, MySQL database, and safe server-side credentials">
     <p class="landing-eyebrow">Setup Guide</p>
     <h1>DrawSplat<sup class="tm">TM</sup> MySQL Setup and How It Works</h1>
-    <p class="article-lede">The MySQL backend is for self-hosted DrawSplat<sup class="tm">TM</sup> deployments that want local database storage for rooms, boards, templates, student turn-ins, retention metadata, and audit-ready server records.</p>
+    <p class="article-lede">Keep your whiteboard on drawsplat.org and save private boards to a database you control. The same saving service works on Railway, DigitalOcean, or a server that can reach MySQL 8.</p>
 
-    <h2>How the MySQL Option Works</h2>
-    <p>The DrawSplat<sup class="tm">TM</sup> browser app never connects directly to MySQL. The browser talks to a backend API over HTTP or HTTPS, and the backend talks to the database.</p>
-    <pre><code>DrawSplat<sup class="tm">TM</sup> browser app -> HTTPS backend API -> MySQL</code></pre>
-    <p>This matters because database hostnames, usernames, and passwords must stay on the server. Students and teachers should only receive the public backend API endpoint.</p>
-
-    <h2>What the Starter Backend Provides</h2>
-    <p>The starter backend in <code>server/mysql-backend/</code> includes API routes for:</p>
+    <h2>Choose where saving lives</h2>
     <ul>
-      <li>health checks</li>
-      <li>room creation</li>
-      <li>board load and save</li>
-      <li>reusable templates</li>
-      <li>student turn-ins</li>
-      <li>temporary session deletes</li>
-      <li>expired-session maintenance</li>
+      <li><strong>Railway:</strong> a managed deployment with the least server administration. Add a MySQL service and deploy the API from the repository’s <code>server/mysql-backend</code> directory.</li>
+      <li><strong>DigitalOcean Droplet:</strong> run the API, MySQL, and the included HTTPS proxy together with Docker Compose. You manage server updates and backups.</li>
+      <li><strong>DigitalOcean App Platform or an existing MySQL server:</strong> deploy the API separately and configure its database connection. Remote managed databases support verified TLS and a provider CA certificate.</li>
     </ul>
-    <p>The starter stores board JSON in MySQL. For large image or audio uploads, a production deployment should add object storage or a protected filesystem location and store only metadata or file pointers in MySQL.</p>
+    <p>The software is free; your provider charges for hosting, database resources, and storage. There is no default DrawSplat-hosted MySQL database. Ask your school’s technical support to deploy the service once, then teachers can use the connection wizard.</p>
+    <p><a class="landing-cta" href="../docs/setup-mysql.md">Detailed hosting, TLS, and backup instructions</a></p>
 
-    <h2>1. Create the Database</h2>
-    <p>Create a MySQL database and application user on the database server:</p>
-    <pre><code>CREATE DATABASE drawsplat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'drawsplat_app'@'%' IDENTIFIED BY 'CHANGE_ME';
-GRANT SELECT, INSERT, UPDATE, DELETE ON drawsplat.* TO 'drawsplat_app'@'%';
-FLUSH PRIVILEGES;</code></pre>
-    <p>Use a strong password and restrict the database host permissions for your deployment.</p>
+    <h2>How it works</h2>
+    <pre><code>Whiteboard → HTTPS saving API → MySQL 8</code></pre>
+    <p>The browser never connects directly to MySQL. Database passwords and the server’s password pepper stay on the server. Teachers and students receive only the public API address and sign in with their own saving accounts.</p>
+    <p>Use current repository source and Docker or Node.js 22+. The versioned v3.1.24 ZIP downloads predate this connected Save/Open feature. Migrations run automatically; the technical guide explains database permissions and restricted runtime users.</p>
 
-    <h2>2. Run the Schema</h2>
-    <p>From the backend folder, load the schema into the database:</p>
-    <pre><code>mysql -u drawsplat_app -p drawsplat &lt; schema.sql</code></pre>
-    <p>The schema prepares the tables needed for rooms, boards, templates, turn-ins, retention metadata, and audit records.</p>
-
-    <h2>3. Install and Configure the Backend</h2>
-    <p>Install the Node backend dependencies in <code>server/mysql-backend/</code>:</p>
-    <pre><code>npm install</code></pre>
-    <p>Create the server-only environment file:</p>
-    <pre><code>cp .env.example .env</code></pre>
-    <p>Edit <code>.env</code> with the real database host, port, database name, user, password, TLS setting, and allowed DrawSplat<sup class="tm">TM</sup> origin. Keep this file out of Git and do not share it with students.</p>
-
-    <h2>4. Start and Test the Backend</h2>
-    <p>Start the backend server:</p>
-    <pre><code>npm start</code></pre>
-    <p>Then test the health route:</p>
-    <pre><code>curl http://localhost:8787/api/drawsplat/mysql/health</code></pre>
-    <p>A healthy backend returns JSON similar to:</p>
-    <pre><code>{"ok":true,"provider":"mysql","time":"2026-05-16T00:00:00.000Z"}</code></pre>
-
-    <h2>5. Connect DrawSplat<sup class="tm">TM</sup> to the Backend</h2>
+    <h2>Connect your whiteboard</h2>
     <ol>
-      <li>Open <a href="../admin/mysql-setup.html">DrawSplat<sup class="tm">TM</sup> MySQL Setup Wizard</a>.</li>
-      <li>Enter the public backend API endpoint, such as <code>https://drawsplat.example.org/api/drawsplat/mysql</code>.</li>
-      <li>Use <strong>Test Endpoint</strong> to verify the backend responds.</li>
-      <li>Use <strong>Save Endpoint</strong> to store the endpoint in the current browser.</li>
+      <li>Open <a href="../admin/mysql-setup.html">Teacher Admin’s MySQL Setup Wizard</a>.</li>
+      <li>Enter the public HTTPS API address, including <code>/api/drawsplat/mysql</code>, such as <code>https://your-api.example/api/drawsplat/mysql</code>.</li>
+      <li>Choose <strong>Test &amp; Enable Online Saving</strong>. The wizard checks both database readiness and the <code>private-boards-v1</code> capability. A failed or incompatible test preserves your previous storage choice.</li>
+      <li>Create a teacher saving account in the wizard, or use one your school provided. This is separate from the Teacher Admin password. Student accounts must be school-provisioned.</li>
+      <li>Open the whiteboard, choose <strong>File → Save online</strong>, and sign in when prompted.</li>
+      <li>Reload and choose <strong>File → Open online board</strong> to check that your saved work opens.</li>
     </ol>
-    <p>The wizard saves the endpoint and can generate a server-side <code>.env</code> template. It does not save the MySQL password in the browser.</p>
+    <p>Configure each browser, or use a school-provided launch link. <strong>Create Student Link</strong> includes the public saving connection and lesson settings; it does not share the teacher’s private board or include account tokens or database passwords.</p>
 
-    <h2>Current Integration Status</h2>
-    <p>The MySQL backend and setup wizard are the foundation for a self-hosted storage provider. The current static app can save the MySQL endpoint setting without breaking Google Apps Script. Full board sync through the MySQL API requires wiring the board save, load, cloud-sync, template, and turn-in calls to the MySQL provider.</p>
+    <h2>What gets saved?</h2>
+    <p>Your board’s pages, objects, and added audio/video notes are saved to your account. Saving is explicit: device autosave alone does not send changes online. Stopped recording drafts can recover locally after refresh, normally for 24 hours; choose <strong>Add</strong> to put a recording into the board before saving it online.</p>
+    <p>Each board keeps its current online copy until deleted. The default size limit is 20 MB per board; video notes increase upload size. Recordings currently remain inside board JSON. Separate object storage is a future improvement.</p>
+    <p>If another device saved a newer copy, DrawSplat rejects the competing save. Use <strong>Save File</strong> to keep your work, then open the online copy before continuing.</p>
 
-    <h2>Production Checklist</h2>
+    <h2>Which classroom features stay with Google?</h2>
+    <p>Google shared-room sync, reusable template galleries, moderation, and student turn-in/teacher review are separate and are not routed to MySQL. Private online saving does not provide automatic collaboration or share a teacher’s board with students.</p>
+    <p>Advanced district modules exist in the backend, but require separate integration and operational validation. Legacy room/template/turn-in/session endpoints are restricted to district/campus administrators until scoped classroom membership is implemented.</p>
+
+    <h2>Keep work safe and move hosts</h2>
     <ul>
-      <li>Serve the backend over HTTPS.</li>
-      <li>Keep <code>.env</code> out of Git.</li>
-      <li>Do not expose MySQL directly to browsers.</li>
-      <li>Add authentication before public use.</li>
-      <li>Add role checks for teacher, student, and admin actions.</li>
-      <li>Set request-size limits appropriate for your deployment.</li>
-      <li>Put media files in object storage or a protected filesystem path.</li>
-      <li>Run expired-session cleanup as a scheduled job.</li>
-      <li>Log administrative deletes and exports in audit records.</li>
+      <li>Use <strong>File → Save File</strong> for an independent board backup, especially before changing providers.</li>
+      <li>Use <strong>File → Online account → Sign out</strong> on shared devices. Signing out revokes the account session but leaves device copies; follow your school’s cleanup routine.</li>
+      <li>Keep the API on HTTPS, database credentials server-only, and remote database certificate verification enabled.</li>
+      <li>Arrange off-server database backups and test restoring them. The guide includes a Docker backup example.</li>
+      <li>To change hosts, restore the database backup and preserve the same password pepper, then update the public API address in the wizard. Changing that address alone does not migrate data.</li>
+      <li>For a fresh empty database, create new accounts, use <strong>Load File</strong> for saved board files, then <strong>Save online</strong>.</li>
     </ul>
 
     <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>

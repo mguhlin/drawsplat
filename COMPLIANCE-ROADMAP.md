@@ -6,7 +6,13 @@ This document is the authoritative implementation plan for compliance work in Dr
 - Each day has explicit **deliverables**, **acceptance criteria**, **files touched**, and **docs to update**.
 - Each day starts with an unchecked checkbox `[ ]`. Mark complete with `[x]` when the change is committed.
 - **Phases 1–3** are buildable on the current static-site + Google Apps Script stack.
-- **Phase 4** ("MySQL / District") parks every item that needs a real backend. Districts that buy a self-hosted DrawSplat license get Phase 4 enabled. Public deployments stay on Phases 1–3.
+- **Phase 4** ("MySQL / District") parks every item that needs a real backend. All backend software is free under AGPL-3.0-or-later; deploying it requires hosting and configuration, not a paid license.
+
+## Current MySQL scope — September 17, 2026
+
+Whiteboard v3.1.12 connects private account-owned Save/Open to the portable Node.js 22 API on Railway, DigitalOcean, or an existing MySQL 8 server. This path has real MySQL 8.4 integration coverage for migrations, ownership, revision conflicts, authentication, UTC sessions, and verified TLS. See [setup-mysql.md](docs/setup-mysql.md).
+
+The Phase 4 checkmarks and comparison below record backend module work and architecture targets, not validated frontend feature parity. Google classroom rooms, template galleries, moderation, and turn-in/review are not connected to MySQL. Legacy room/template/turn-in/session routes require district/campus administrators pending scoped membership. Advanced OAuth/SIS, parent portal integration, district policy, and realtime enforcement require separate operational validation. Private Save/Open is explicit, not automatic cross-device sync.
 
 ## How to use this document
 
@@ -24,9 +30,9 @@ DrawSplat&trade; runs in one of three modes. Compliance features are scoped to t
 |---|---|---|---|
 | **Local-only browser** | None &mdash; `localStorage` only | Teacher demos, single users | No account, no data leaves the browser. Filtering still runs client-side. |
 | **Teacher-managed classroom** | Google Apps Script + Sheets + Drive | Normal K–12 use | Everything in Phases 1–3 below. |
-| **District-hosted** | MySQL/Postgres + DrawSplat&trade; server | District deployments under DPA | Phases 1–3 plus the Phase 4 items that require a real backend (SSO, real-time enforcement, true RBAC, etc.). |
+| **MySQL-backed saving** | MySQL 8 + Node.js API | School-managed private saving accounts | Connected private Save/Open; advanced district modules need separate integration and validation. PostgreSQL is not supported by the bundled service. |
 
-## Architecture split: Apps Script vs MySQL
+## Architecture targets: Apps Script vs advanced MySQL modules
 
 | Capability | Apps Script (Phases 1–3) | MySQL/District (Phase 4) |
 |---|---|---|
@@ -108,13 +114,13 @@ Phase totals are calendar-day estimates assuming one focused session per day. Ad
 
 ### Phase 4 &mdash; MySQL / District (deferred)
 
-Triggered when a district decides to run the self-hosted MySQL deployment. Each item assumes the MySQL backend exists.
+The checklist records backend module implementation; see the current-scope note above before treating any item as a deployable classroom workflow.
 
 | Day | Item | Status | Commit |
 |---|---|---|---|
 | 4.1 | MySQL schema for users, sessions, boards, audit, rate limits | [x] | 63a4306 |
 | 4.2 | Auth: port Community OAuth + email/password to MySQL | [x] | (pending) oauth-routes.js verifies Google ID tokens and Microsoft Graph access tokens, issues HMAC bearer sessions |
-| 4.3 | Whiteboard save/load via MySQL backend | [x] | (pending) board CRUD now gated by safety + freeze, publishes board.updated to SSE, migrate CLI imports Apps Script exports |
+| 4.3 | Private whiteboard Save/Open via MySQL backend | [x] | 4c29ee9, e778ca4 — account-scoped boards, revision checks, portable configuration, verified TLS, UTC sessions, and real-database tests; Google classroom sync/turn-in remain separate |
 | 4.4 | RBAC tree (district / campus / teacher / student / parent) | [x] | (pending) rbac.js role+permission matrix, requireRoles / requirePermission middleware, applied across compliance + SIS routes |
 | 4.5 | Roster CSV import | [x] | 63a4306 |
 | 4.6 | SSO/roster API integration &mdash; Clever connector | [x] | (pending) sis-clever.js stores district token, runs roster sync, exposes /sis/clever/connect, /sync, /status |

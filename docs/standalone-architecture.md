@@ -286,40 +286,30 @@ Implementations:
 
 ## MySQL Storage Option
 
-MySQL can be added without removing Google Apps Script. Treat it as another backend provider behind the same board API. The browser should never connect directly to MySQL; it should call a server endpoint, and the server should validate permissions before reading or writing database rows.
+### Implemented connection
 
-Recommended shape:
+The current whiteboard uses `assets/js/mysql-cloud.js` for private, account-owned online Save/Open through `server/mysql-backend`. See [the hosting guide](setup-mysql.md) for Railway, DigitalOcean, and existing MySQL deployment. The browser calls HTTPS; database credentials stay on the server.
+
+Implemented endpoints beneath `/api/drawsplat/mysql`:
 
 ```text
-POST /api/drawsplat/mysql/rooms
-GET /api/drawsplat/mysql/rooms/:roomId/board
-PUT /api/drawsplat/mysql/rooms/:roomId/board
-POST /api/drawsplat/mysql/rooms/:roomId/media
-GET /api/drawsplat/mysql/templates
-POST /api/drawsplat/mysql/templates
-POST /api/drawsplat/mysql/turnins
-GET /api/drawsplat/mysql/turnins
-DELETE /api/drawsplat/mysql/sessions/:sessionId
+GET /health
+POST /auth/register
+POST /auth/login
+POST /auth/logout
+GET /boards
+GET /boards/:key
+PUT /boards/:key
+DELETE /boards/:key
 ```
 
-Minimal MySQL tables:
+Private boards use `cloud_boards` with account-scoped keys and revision checks, plus `users`, `sessions`, and `drawsplat_migrations`. The current copy is retained until deleted; recordings remain embedded in board JSON. This is explicit saving, not automatic shared-room sync.
 
-- `organizations`: district, school, team, or personal workspace.
-- `users`: teacher, student, admin, or adult team member identities when auth is enabled.
-- `rooms`: classroom or team whiteboard rooms with role and retention settings.
-- `boards`: current board metadata, owner, room, title, and version.
-- `board_snapshots`: serialized board JSON for restore points and autosave.
-- `media_assets`: image/audio metadata with file/object-storage pointers.
-- `templates`: reusable teacher or organization templates.
-- `turnins`: student submissions and review status.
-- `audit_events`: admin and retention actions, especially deletes and exports.
+### Future standalone architecture
 
-Retention:
+The `StorageProvider` interface above and organization/snapshot/object-storage model are design targets, not the current frontend API. Future classroom sharing requires explicit membership checks before opening the legacy room/template/turn-in endpoints beyond district/campus administrators. Google collaboration, moderation, galleries, and turn-in/review are not routed through the private MySQL connection.
 
-- Store `expires_at` on rooms, sessions, snapshots, media, and turn-ins when they are temporary.
-- Run a scheduled cleanup job that deletes expired rows and associated media files.
-- Map the whiteboard Reset button to a backend delete request when a room is server-backed.
-- Keep Google export optional by writing to both MySQL and `GoogleDriveProvider` only when the teacher or organization enables it.
+Organization storage, separate media uploads, temporary server-backed room expiry, backend deletion on Reset, and optional simultaneous Google/MySQL writes remain proposals. Switching providers today does not migrate data or enable dual saving.
 
 ## Temporary Session Storage
 

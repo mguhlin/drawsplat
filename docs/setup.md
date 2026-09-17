@@ -8,7 +8,7 @@ Pick the scenario that matches what you're trying to do. Each one is its own foc
 |---|---|---|
 | A single-user / projector / "just let me draw" deployment with no accounts and no backend. | [**Browser-only**](setup-browser.md) | 1 minute |
 | Cloud saves to Google Drive + Sheets, classroom collaboration rooms, student turn-ins, the full Compliance Console, parent request center. **The supported production path today.** | [**Google Apps Script**](setup-google-apps-script.md) | 10–15 minutes |
-| A self-hosted, district-scale deployment with a real database, true RBAC, and your own infrastructure. **Scaffolded but not yet production-ready.** | [**MySQL backend**](setup-mysql.md) | 15–30 minutes (Docker) |
+| Private account-owned online Save/Open using Railway, DigitalOcean, or an existing MySQL 8 server. | [**MySQL backend**](setup-mysql.md) | Depends on hosting |
 
 ## Common follow-ups after setup
 
@@ -22,26 +22,27 @@ Pick the scenario that matches what you're trying to do. Each one is its own foc
 
 If you're not sure which scenario fits, here's the same picture from a different angle:
 
-| Capability | Browser-only | Apps Script | MySQL |
+| Capability | Browser-only | Apps Script | MySQL connection |
 |---|---|---|---|
-| Draw, autosave locally | ✅ | ✅ | ✅ |
-| Export PNG / PDF / JSON | ✅ | ✅ | ✅ |
-| Cross-device cloud saves | ❌ | ✅ | ✅ |
-| Collaboration rooms (shared boards) | ❌ | ✅ | ✅ |
-| Student turn-ins | ❌ | ✅ | ✅ |
-| Activity Records (audit log) | ❌ | ✅ | ✅ |
-| Safety filters server-enforced | ❌ (client-side only) | ✅ | ✅ |
-| Age Band Lock + Family Access Tools | ❌ | ✅ | ✅ |
-| Time-limit enforcement | ❌ | ✅ | ✅ |
-| District Privacy Packet | ❌ | ✅ | ⚠️ TODO |
-| Google / Microsoft SSO | ❌ | ✅ (community only) | ⚠️ TODO |
-| True role-based access (RBAC) | ❌ | ⚠️ limited | ✅ |
-| Real-time session enforcement | ❌ | ❌ (polling only) | ⚠️ TODO |
-| Scale ceiling (rough) | 1 user | hundreds | thousands |
-| Infrastructure you have to run | none | none (uses your Google account) | a Linux server, MySQL, reverse proxy |
-| Cost | free | free | server cost |
+| Drawing, device autosave, file/snapshot export | Yes | Yes | Yes |
+| Cross-device Save/Open | No | Yes | Yes, signed-in account’s private boards |
+| Automatic shared-room sync | No | Yes | Not connected |
+| Student turn-in and teacher review | No | Yes | Not connected |
+| Cloud reusable template galleries / moderation | No | Yes | Not connected |
+| Classroom Compliance Console and family workflow | No | Yes | Advanced backend modules require separate validation |
+| Recording notes and device-local draft recovery | Yes | Yes | Yes; added notes are included in saved board JSON |
+| Infrastructure to operate | None | Your Google deployment | Node.js 22 API + MySQL 8 + HTTPS |
+| Software cost | Free | Free | Free; hosting/storage billed by your provider |
 
-⚠️ = scaffolded but needs work before it's production-ready. ❌ = not feasible in that mode.
+The MySQL setup wizard tests the API’s `private-boards-v1` capability before enabling
+it. Create a teacher saving account, then use **File → Save online / Open online board**.
+Student accounts must be school-provisioned. A student launch link configures saving;
+it does not share the teacher’s board. See [the hosting guide](setup-mysql.md).
+
+Switching providers does not migrate existing work or enable simultaneous saving to
+both providers. Keep **Save File** backups. MySQL private boards retain their current
+copy until deleted; browser timed sessions and recording drafts have separate expiry.
+The published site needs a separately deployed API/database to use MySQL saving.
 
 ## The free-pricing posture
 

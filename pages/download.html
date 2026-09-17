@@ -320,14 +320,14 @@
       </article>
       <article class="support-resource-card featured">
         <span class="support-resource-type">Path 3</span>
-        <h3>Self-hosted MySQL (Phase 4)</h3>
-        <p>For districts that need a local database, real-time session enforcement, SSO/SIS sync (Clever scaffold included), stronger backend guardrails, and a parent portal. One <code>docker compose up</code> brings up MySQL + Node API.</p>
+        <h3>Portable MySQL online saving</h3>
+        <p>Private account-owned Save/Open through the same API on Railway, DigitalOcean, or an existing MySQL server. Added audio/video notes travel with the board; revision checks protect newer online copies.</p>
         <ul class="admin-checklist">
-          <li>Requires Docker (or Node 20+ &amp; MySQL 8+).</li>
-          <li>OAuth (Google + Microsoft), RBAC tree (district/campus/teacher/student/parent).</li>
-          <li>Server-side safety filter, board freeze, age-band lock, time-limit enforcement (SSE push), retention cron, privacy packet generator.</li>
-          <li>Security headers, configurable CORS allowlist, rate limits, admin bootstrap controls, protected maintenance cleanup, room-key validation, and payload caps.</li>
-          <li>Follow <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>.</li>
+          <li>Use the <a href="https://github.com/mguhlin/drawsplat">current repository source</a> or build a fresh bundle. The versioned downloads on this page predate this connection.</li>
+          <li>Requires Docker or Node.js 22+, MySQL 8, and a public HTTPS API.</li>
+          <li>Includes verified database TLS, automatic migrations, Railway configuration, and Docker Compose with an optional HTTPS proxy.</li>
+          <li>Google classroom rooms, templates, moderation, and turn-in/review are not connected to MySQL. Advanced district modules need separate validation.</li>
+          <li>Follow the <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>, then <a href="../admin/mysql-setup.html">Test &amp; Enable Online Saving</a>.</li>
         </ul>
       </article>
     </div>

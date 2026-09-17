@@ -12,9 +12,8 @@ Use this when you want **the simplest possible deployment**: a single user (or a
 
 ## What you do **not** get
 
-These all require either the Apps Script or MySQL backend:
+Private cross-device Save/Open is available with either Apps Script or the connected MySQL service. The following classroom/compliance workflows use Apps Script; selecting MySQL does not enable them:
 
-- Cross-device sync (a board you made at school won't be on your laptop at home).
 - Cloud collaboration rooms.
 - Activity Records / audit log.
 - Parent request center.
@@ -59,4 +58,4 @@ This is the safest local-only setup — it gives you HTTP semantics without any 
 
 ## Upgrading later
 
-You can move from browser-only to Google Apps Script or MySQL at any time without losing your boards — both backends let you upload an existing `.drawsplat.json` via **Load File**, then save it to the cloud the same session. See [`setup-google-apps-script.md`](setup-google-apps-script.md) or [`setup-mysql.md`](setup-mysql.md) when you're ready.
+You can move from browser-only to Google Apps Script or MySQL at any time without losing your boards — both backends let you upload an existing `.drawsplat.json` via **Load File**, then save it to the cloud in the same session. For MySQL, configure and test the API in the MySQL Wizard, sign in to a saving account, and choose **File → Save online**. Switching modes does not upload local work automatically. See [`setup-google-apps-script.md`](setup-google-apps-script.md) or [`setup-mysql.md`](setup-mysql.md) when you're ready.

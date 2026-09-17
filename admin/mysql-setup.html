@@ -50,7 +50,7 @@
 <main class="admin-shell mysql-wizard">
   <section class="admin-hero">
     <h2>MySQL Backend Setup Wizard</h2>
-    <p>Choose Railway, DigitalOcean, or another MySQL host. Connect the public saving service here; boards stay private to each signed-in account. Use this page to prepare a DrawSplat<sup class="tm">TM</sup> backend that stores rooms, boards, templates, media references, turn-ins, and retention metadata in MySQL. Google Apps Script can stay enabled as a separate storage option.</p>
+    <p>Choose Railway, DigitalOcean, or another MySQL host. Connect the public saving service here; boards stay private to each signed-in account. Save and reopen boards, including added audio and video notes, through an HTTPS API. Google classroom rooms, templates, moderation, and turn-ins remain separate features.</p>
   </section>
 
   <section class="wizard-steps" aria-label="MySQL setup steps">
@@ -89,7 +89,7 @@
       <p><strong>Railway:</strong> Deploy <code>server/mysql-backend</code> from GitHub and add a MySQL service in the same project. Reference its <code>MYSQL_URL</code> in the API service.</p>
       <p><strong>DigitalOcean:</strong> Run the bundled Docker Compose setup on a Droplet, or deploy the API on App Platform and connect a managed database.</p>
       <p><strong>Existing MySQL:</strong> Run this same API wherever Node.js or Docker is available. Set a database URL or individual host, port, database, username, and password settings.</p>
-      <a class="admin-button" href="../docs/setup-mysql.md">Step-by-step hosting guide</a>
+      <a class="admin-button" href="../guides/mysql-setup.html">Step-by-step hosting guide</a>
     </article>
     <article class="admin-panel">
       <h3>Create your saving account</h3>
