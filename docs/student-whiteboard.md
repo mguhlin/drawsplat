@@ -69,3 +69,9 @@ For existing Google classrooms, replace the copied Apps Script with the current 
 **Student tools** above the canvas opens the teacher’s lesson settings directly, including the video-recording checkbox. It is hidden in student view.
 
 Video notes now show a **Record → Watch → Add** guide and a progress bar with seconds remaining. After stopping, **Watch clip**, **Try again**, **Discard clip**, and **Add to board** give clear next steps. Closing a reviewed clip changes the toolbar action to **Finish video**, so the unfinished recording is easy to find. Naming and descriptions are under **Name & describe (optional)**, keeping the phone recording controls visible. Drafts stay on this open page until added or discarded; they are not saved across a browser reload. Adding or discarding resets the title and description for a fresh note. Playing another video note pauses the previous video.
+
+### Review a voice answer
+
+Choose **My response → Record my voice**, record up to one minute, then press **Stop**. Use **Listen** and the audio controls to review or pause. Choose **Try again**, **Discard**, or **Add to board**. Recording does not create an empty board item, and adding a finished answer creates one undo step.
+
+Closing the recorder stops recording and releases the microphone. The **Finish voice** button returns to an unfinished recording while this page stays open. Add it before reloading; unfinished recordings are held in memory. Return to the original board page before adding a draft. Teachers control student access to audio in **Student tools**. Voice and video recording cannot run together.

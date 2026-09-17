@@ -1457,3 +1457,6 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 #videoNoteDetails summary,.video-note-help summary{cursor:pointer;color:#6634dc;font-weight:700;min-height:30px}
 #videoNoteDetails label{display:block;margin:10px 0 5px}
 @media(max-width:560px){#videoNotePreview{max-height:200px}#videoNoteDialog .learner-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+#learnerAudioPreview{width:100%;margin:8px 0}#learnerAudioDialog .learner-dialog-actions button{min-height:48px;font-size:16px}#learnerAddAudio{background:#743aed;color:white}#learnerFinishVoice{background:#fff2ca}
+@media(max-width:560px){#learnerAudioDialog .learner-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}

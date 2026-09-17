@@ -35,7 +35,7 @@
    Replace the placeholder below after deploying apps-script/Code.gs. */
 const DEFAULT_GOOGLE_SCRIPT_URL='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
 const GOOGLE_SCRIPT_URL_PLACEHOLDER='PUT GOOGLE APPS SCRIPT WEB APP URL HERE';
-const VERSION='3.1.9';
+const VERSION='3.1.10';
 const APP_ROOT=/\/(app|languages)\//.test(location.pathname)?'../':'';
 const appPath=path=>APP_ROOT+path;
 const SCRIPT_URL_STORAGE_KEY='drawsplat.googleScriptUrl';
@@ -1262,7 +1262,7 @@ function shouldAutoCloudJoin(){return !!(new URLSearchParams(location.search).ge
 /* Student workspace: lesson tools travel with the board and student link. */
 const LEARNER_TOOLS=[['select','Move'],['pen','Pencil'],['bucket','Paint'],['eraser','Eraser'],['text','Type'],['sticky','Note'],['rect','Rectangle'],['ellipse','Circle'],['line','Line'],['arrow','Arrow'],['star','Star'],['diamond','Diamond'],['triangle','Triangle'],['polygon','Polygon'],['dotpaint','Dot Paint'],['laser','Pointer'],['connector','Connect'],['image','Pictures and Stamps'],['graph','Graphs'],['widget','Classroom widgets'],['audio','Audio'],['video','Video notes (allow student recording)']];
 const LEARNER_PRESETS={everyday:['select','pen','bucket','eraser','text','image'],art:['select','pen','bucket','eraser','image','dotpaint','rect','ellipse','star'],explain:['select','pen','eraser','text','sticky','arrow','image','audio'],data:['select','pen','eraser','text','graph','widget']};
-let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0,videoNotes=null;
+let learnerPolicyStamp='', learnerPan={x:0,y:0}, learnerPanDrag=null, turnInPending=false, classroomSavedSnapshot='', learnerAudioSession=0,videoNotes=null,learnerAudioTarget=null,learnerAudioDraft=null,learnerAudioFinishing=false,learnerAudioTimer=null,learnerAudioError='';
 function normalizedLearnerPolicy(value){
   const p=value&&typeof value==='object'?value:{};
   const tools=Array.isArray(p.tools)?p.tools.filter(t=>LEARNER_TOOLS.some(([key])=>key===t)):LEARNER_PRESETS.everyday;
@@ -1383,7 +1383,7 @@ function refreshEntryRoleButton(){
 }
 function ensureVideoNotes(){
   if(videoNotes)return;
-  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>mediaRecorder?.state==='recording',canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:addObj,status:setStatus,draftChanged:hasDraft=>{gid('learnerVideoNoteLabel').textContent=hasDraft?'Finish video':'Video note';gid('learnerVideoNote').classList.toggle('has-draft',hasDraft);gid('learnerVideoNote').title=hasDraft?'An unfinished clip is waiting. Watch, add, or discard it.':'Record a short video note'}});
+  videoNotes=window.DrawSplatVideoNotes.init({getBoard:()=>board,getPanel:panel,allowed:()=>learnerAllows('video'),otherRecording:()=>audioStarting||learnerAudioFinishing||mediaRecorder?.state==='recording',canvasWidth:()=>svg.clientWidth,makeObject:makeObj,addObject:addObj,status:setStatus,draftChanged:hasDraft=>{gid('learnerVideoNoteLabel').textContent=hasDraft?'Finish video':'Video note';gid('learnerVideoNote').classList.toggle('has-draft',hasDraft);gid('learnerVideoNote').title=hasDraft?'An unfinished clip is waiting. Watch, add, or discard it.':'Record a short video note'}});
   const button=document.createElement('button');button.id='learnerVideoNote';button.type='button';button.className='everyday-action';button.innerHTML='<svg class="everyday-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m16 9 6-3v12l-6-3z"/></svg><span id="learnerVideoNoteLabel">Video note</span>';button.onclick=videoNotes.open;gid('learnerToolbar').querySelector('.learner-secondary-tools').insertBefore(button,gid('learnerStarters'));
 }
 function prepareVideoNoteExport(clone){
@@ -1437,9 +1437,14 @@ function ensureLearnerWorkspace(){
   const items=addLearnerDialog('learnerObjectsDialog','Find an item','<p>Choose an item to select it. Use arrow keys to move editable items, or Enter to edit their text. Teacher items stay protected.</p><div id="learnerObjectList"></div>');
   gid('learnerObjects').onclick=()=>{const list=gid('learnerObjectList');list.replaceChildren();panel().objects.filter(o=>!o.answerKey||board.showAnswerKey).forEach((o,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=(o.text||o.videoName||o.audioName||o.stampLabel||o.name||LEARNER_TOOLS.find(([key])=>key===o.type)?.[1]||o.type)+' '+(i+1)+(canEditObject(o)?'':o.locked?' — locked item':' — teacher item');btn.onclick=()=>{setTool('select');setSingleSelection(o.id);render();items.close();svg.setAttribute('tabindex','0');svg.focus()};list.append(btn)});if(!list.children.length)list.textContent='No items yet. Try drawing or typing on this page.';items.showModal()};
   const response=addLearnerDialog('learnerResponseDialog','How would you like to respond?','<p>Draw, type, or explain with a voice or video note.</p><div class="learner-dialog-actions"><button id="learnerDrawResponse" type="button">Draw my answer</button><button id="learnerTypeResponse" type="button">Type my answer</button><button id="learnerVoiceResponse" type="button">Record my voice</button><button id="learnerVideoResponse" type="button">Record a video</button></div>');gid('learnerResponse').onclick=()=>response.showModal();gid('learnerDrawResponse').onclick=()=>{setTool('pen');response.close()};gid('learnerTypeResponse').onclick=()=>{setTool('text');response.close()};
-  const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Press Record when you are ready. Your browser will ask to use the microphone. Stop to keep the recording on this page.</p><p id="learnerAudioStatus" role="status">Ready to record.</p><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button></div>');
-  gid('learnerVideoResponse').onclick=()=>{response.close();videoNotes.open()};gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();const o=makeObj('audio',60,60,220,75,{audioName:'My answer'});panel().objects.push(o);setSingleSelection(o.id);render();saveState();audio.showModal();refreshLearnerAudioControls()};
-  gid('learnerRecordAudio').onclick=async()=>{await startAudioRecording();refreshLearnerAudioControls();const toast=gid('statusToast');if(mediaRecorder?.state!=='recording'&&toast?.classList.contains('danger'))gid('learnerAudioStatus').textContent=toast.textContent};gid('learnerPlayAudio').onclick=playSelectedAudio;audio.addEventListener('close',()=>{learnerAudioSession++;if(mediaRecorder?.state==='recording')mediaRecorder.stop()});
+  const audio=addLearnerDialog('learnerAudioDialog','Record my answer','<p>Tell us your idea. Listen, then add it when you are ready.</p><ol class="video-note-steps"><li>Record</li><li>Listen</li><li>Add</li></ol><p id="learnerAudioStatus" role="status">Ready to record.</p><audio id="learnerAudioPreview" controls hidden aria-label="Listen to your voice recording"></audio><p class="hint">Up to one minute. A finished note stays with your board. An unfinished note stays here until you add it, discard it, or reload.</p><div class="learner-dialog-actions"><button id="learnerRecordAudio" type="button">Record</button><button id="learnerPlayAudio" type="button">Listen</button><button id="learnerDiscardAudio" type="button">Discard</button><button id="learnerAddAudio" type="button">Add to board</button></div>');
+  const resume=document.createElement('button');resume.id='learnerFinishVoice';resume.type='button';resume.textContent='🎙 Finish voice';resume.hidden=true;gid('learnerToolbar').append(resume);resume.onclick=()=>{audio.showModal();refreshLearnerAudioControls()};
+  gid('learnerVideoResponse').onclick=()=>{response.close();videoNotes.open()};gid('learnerVoiceResponse').onclick=()=>{if(!learnerAllows('audio'))return;response.close();if(!learnerAudioTarget)learnerAudioTarget={board,panelId:panel().id,object:makeObj('audio',60,60,220,75,{audioName:'My answer'}),existing:false};audio.showModal();refreshLearnerAudioControls()};
+  gid('learnerRecordAudio').onclick=async()=>{gid('learnerAudioPreview').pause();await startAudioRecording();refreshLearnerAudioControls();const toast=gid('statusToast');if(mediaRecorder?.state!=='recording'&&toast?.classList.contains('danger'))gid('learnerAudioStatus').textContent=toast.textContent};
+  gid('learnerPlayAudio').onclick=()=>{const preview=gid('learnerAudioPreview');preview.play().catch(()=>{gid('learnerAudioStatus').textContent='Could not play this recording. Try recording again.'})};
+  gid('learnerDiscardAudio').onclick=()=>{learnerAudioSession++;gid('learnerAudioPreview').pause();learnerAudioTarget=null;learnerAudioDraft=null;learnerAudioError='';refreshLearnerAudioControls();audio.close()};
+  gid('learnerAddAudio').onclick=()=>{const target=learnerAudioTarget,draft=learnerAudioDraft;if(!target||!draft||!learnerAllows('audio'))return;const targetPanel=board.panels.find(p=>p.id===target.panelId);const existing=targetPanel?.objects.find(o=>o.id===target.object.id);if(board!==target.board||panel()!==targetPanel||(target.existing&&(!existing||!canEditObject(existing))))return setStatus('Return to the page where you started this note to add it.','danger');const o=existing||target.object;Object.assign(o,{audioSrc:draft.src,audioDuration:draft.duration,audioName:'My answer'});gid('learnerAudioPreview').pause();learnerAudioTarget=null;learnerAudioDraft=null;if(existing){render();saveState()}else addObj(o);refreshLearnerAudioControls();audio.close();setStatus('Voice note added to your board.','success')};
+  audio.addEventListener('close',()=>{learnerAudioSession++;gid('learnerAudioPreview').pause();if(mediaRecorder?.state==='recording')mediaRecorder.stop()});
   const starters=addLearnerDialog('learnerStartersDialog','Lesson starters','<p>Start on a new page. Your existing pages stay intact.</p><h3>Quick lesson ideas</h3><div id="learnerStarterList"></div><h3>Built-in layouts</h3><p>Choose an organizer, drawing layout, or celebration page.</p><div id="learnerLayoutList"></div>');
   [['draw','Draw and explain','Sketch an idea and add an explanation.'],['compare','Compare two ideas','Show how two things are alike or different.'],['label','Label this picture','Add a picture, then name its parts.'],['math','Show your math','Show your steps and explain your thinking.']].forEach(([key,title,detail])=>{const button=document.createElement('button');button.type='button';button.className='learner-starter-card';const strong=document.createElement('strong');strong.textContent=title;const span=document.createElement('span');span.textContent=detail;button.append(strong,span);button.onclick=()=>{insertLearnerStarter(key,title);starters.close()};gid('learnerStarterList').append(button)});gid('learnerStarters').onclick=()=>starters.showModal();
   const layoutDetails={frayer:'Define a concept with examples and non-examples.',kwl:'Organize what we know, wonder, and learn.',tchart:'Compare ideas in two columns.',storyboard:'Plan a story or process in four panels.',venn:'Show similarities and differences.',brainstorm:'Collect ideas around a central topic.',timeline:'Put events or steps in order.',comic:'Tell a story in three panels.',certificate:'Celebrate an achievement.'};
@@ -1456,7 +1461,13 @@ function ensureLearnerWorkspace(){
 }
 function refreshLearnerAudioControls(){
   if(!gid('learnerAudioStatus'))return;
-  const recording=mediaRecorder?.state==='recording';gid('learnerRecordAudio').textContent=recording?'Stop and keep recording':'Record';gid('learnerAudioStatus').textContent=recording?'Recording. Press Stop when you finish.':currentObj()?.audioSrc?'Your recording is saved on this page.':'Ready to record.';gid('learnerPlayAudio').disabled=!currentObj()?.audioSrc;
+  const recording=mediaRecorder?.state==='recording',draft=learnerAudioDraft,busy=recording||audioStarting||learnerAudioFinishing;
+  gid('learnerRecordAudio').textContent=recording?'Stop':draft?'Try again':'Record';gid('learnerRecordAudio').disabled=audioStarting||learnerAudioFinishing;
+  gid('learnerAudioStatus').textContent=recording?'Recording. Press Stop when you finish.':audioStarting?'Opening your microphone…':learnerAudioError?learnerAudioError:learnerAudioFinishing?'Getting your recording ready…':draft?'Ready to listen. Add your answer when you are happy with it.':'Ready to record.';
+  gid('learnerPlayAudio').disabled=!draft||busy;gid('learnerAddAudio').disabled=!draft||busy;gid('learnerDiscardAudio').disabled=busy;
+  gid('learnerAudioDialog').querySelectorAll('.video-note-steps li').forEach((step,index)=>{if(index===(draft?1:0))step.setAttribute('aria-current','step');else step.removeAttribute('aria-current')});
+  const preview=gid('learnerAudioPreview');preview.hidden=!draft;if(draft&&preview.getAttribute('src')!==draft.src)preview.src=draft.src;
+  gid('learnerFinishVoice').hidden=!learnerAllows('audio')||!learnerAudioDraft;
 }
 function refreshLearnerWorkspace(){
   if(!gid('learnerToolbar'))return;
@@ -1468,7 +1479,7 @@ function refreshLearnerWorkspace(){
   document.querySelectorAll('[data-menu-target],#toolButtons button[id]').forEach(btn=>{const key=learnerActionKey(btn.dataset.menuTarget||btn.id);if(key)btn.classList.toggle('student-tool-hidden',!learnerAllows(key))});
   document.querySelectorAll('#toolButtons .tool-popover-group').forEach(group=>{const buttons=[...group.querySelectorAll('button[data-tool],button.toolbar-action')];group.classList.toggle('student-tool-hidden',board.mode==='student'&&buttons.length>0&&buttons.every(b=>b.classList.contains('student-tool-hidden')))});
   ['tntBtn','simpleTntBtn','more_tntBtn'].forEach(key=>gid(key)?.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));document.querySelectorAll('[data-menu-target="tntBtn"]').forEach(el=>el.classList.toggle('student-tool-hidden',board.mode==='student'&&!p.allowTnt));
-  gid('learnerPicture').hidden=!learnerAllows('image');gid('learnerDrawResponse').hidden=!learnerAllows('pen');gid('learnerTypeResponse').hidden=!learnerAllows('text');gid('learnerVoiceResponse').hidden=!learnerAllows('audio');gid('learnerVideoResponse').hidden=!learnerAllows('video');gid('learnerVideoNote').hidden=!learnerAllows('video');videoNotes?.refreshPermissions();
+  gid('learnerPicture').hidden=!learnerAllows('image');gid('learnerDrawResponse').hidden=!learnerAllows('pen');gid('learnerTypeResponse').hidden=!learnerAllows('text');gid('learnerVoiceResponse').hidden=!learnerAllows('audio');gid('learnerVideoResponse').hidden=!learnerAllows('video');gid('learnerVideoNote').hidden=!learnerAllows('video');videoNotes?.refreshPermissions();if(gid('learnerFinishVoice'))gid('learnerFinishVoice').hidden=!learnerAllows('audio')||!learnerAudioDraft;if(!learnerAllows('audio')&&gid('learnerAudioDialog')?.open)gid('learnerAudioDialog').close();
   refreshStampTools();
   refreshEntryRoleButton();
   gid('learnerUndo').disabled=history.length<2;gid('sidebarRedoBtn').disabled=!future.length;
@@ -1968,7 +1979,7 @@ function refreshNotePlayback(){
     const progress=controls.querySelector('.audio-progress');progress.disabled=!active||!duration;progress.max=duration||1;progress.value=Math.min(elapsed,duration||0);progress.setAttribute('aria-valuetext',audioTime(elapsed)+(duration?' of '+audioTime(duration):''));controls.querySelector('.audio-time').textContent=audioTime(elapsed)+(duration?' / '+audioTime(duration):'');
   });
 }
-function openNoteRecording(o){if(!canEditObject(o)||!learnerAllows('audio'))return;stopNotePlayback();setTool('select');setSingleSelection(o.id);render();gid('learnerAudioDialog').showModal();refreshLearnerAudioControls()}
+function openNoteRecording(o){if(!canEditObject(o)||!learnerAllows('audio'))return;if(learnerAudioDraft){gid('learnerAudioDialog').showModal();refreshLearnerAudioControls();return}stopNotePlayback();setTool('select');setSingleSelection(o.id);render();learnerAudioTarget={board,panelId:panel().id,object:o,existing:true};learnerAudioDraft=null;gid('learnerAudioDialog').showModal();refreshLearnerAudioControls()}
 
 function stopNotePlayback(){if(notePlayback){notePlayback.audio.pause();notePlayback.audio.currentTime=0;notePlayback=null}refreshNotePlayback()}
 function controlNotePlayback(o,action){
@@ -4895,34 +4906,36 @@ function runTntReset(){if(board.mode==='student'&&!learnerPolicy().allowTnt)retu
 function setAudioOnCurrent(dataUrl,name='Audio note'){const o=currentObj(); if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger'); o.audioSrc=dataUrl; o.audioName=name;delete o.audioDuration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')}
 let audioStarting=false;
 async function startAudioRecording(){
-  if(audioStarting) return;
+  if(audioStarting||learnerAudioFinishing) return;
+  if(videoNotes?.busy())return setStatus('Stop your video recording before starting a voice note.','danger');
   if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop(); return}
-  const o=currentObj(), targetBoard=board, targetPanel=panel(), learnerSession=gid('learnerAudioDialog')?.open?learnerAudioSession:null;
+  const staged=gid('learnerAudioDialog')?.open?learnerAudioTarget:null,o=staged?.object||currentObj(), targetBoard=board, targetPanel=panel(), learnerSession=staged?learnerAudioSession:null;
   if(!o||o.type!=='audio') return setStatus('Select an audio note first.','danger');
   if(!canEditObject(o)||!learnerAllows('audio'))return setStatus('This note is protected. Record your answer in your own note.','danger');
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined') return setStatus('Audio recording is not supported in this browser.','danger');
-  audioStarting=true;
+  audioStarting=true;learnerAudioError='';stopNotePlayback();refreshLearnerAudioControls();
   let stream;
   const release=()=>stream?.getTracks().forEach(t=>t.stop());
-  const targetExists=()=>board===targetBoard&&targetBoard.panels.includes(targetPanel)&&targetPanel.objects.includes(o);
+  const targetExists=()=>board===targetBoard&&targetBoard.panels.includes(targetPanel)&&(staged?learnerAudioTarget===staged:targetPanel.objects.includes(o));
   try{
     stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    if(!targetExists()||(learnerSession!==null&&(learnerSession!==learnerAudioSession||!gid('learnerAudioDialog')?.open))){release(); return}
+    if(!learnerAllows('audio')||!canEditObject(o)||!targetExists()||(learnerSession!==null&&(learnerSession!==learnerAudioSession||!gid('learnerAudioDialog')?.open))){release(); return}
     const chunks=[], recorder=new MediaRecorder(stream),recordedAt=Date.now(); mediaRecorder=recorder;
-    recorder.ondataavailable=e=>{if(e.data&&e.data.size) chunks.push(e.data)};
-    recorder.onerror=()=>{release();refreshLearnerAudioControls(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
+    let bytes=0;recorder.ondataavailable=e=>{if(e.data&&e.data.size){bytes+=e.data.size;if(bytes<=5*1024*1024)chunks.push(e.data);else if(recorder.state==='recording')recorder.stop()}};
+    recorder.onerror=()=>{release();clearInterval(learnerAudioTimer);learnerAudioFinishing=false;refreshLearnerAudioControls(); setButtonChrome('recordAudioBtn','Record Audio'); setStatus('Audio recording failed. Please retry.','danger')};
     recorder.onstop=()=>{
-      release(); setButtonChrome('recordAudioBtn','Record Audio');refreshLearnerAudioControls();
-      if(!targetExists()) return;
+      release();clearInterval(learnerAudioTimer);learnerAudioFinishing=!!staged;setButtonChrome('recordAudioBtn','Record Audio');refreshLearnerAudioControls();
+      if(!targetExists()){learnerAudioFinishing=false;refreshLearnerAudioControls();return}
+      if(!chunks.length||bytes>5*1024*1024){learnerAudioFinishing=false;learnerAudioError=bytes>5*1024*1024?'That recording was too large. Try a shorter answer.':'No sound was recorded. Please try again.';refreshLearnerAudioControls();return}
       const duration=Math.max(0,(Date.now()-recordedAt)/1000);
-      const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'}), reader=new FileReader();
-      reader.onload=()=>{if(!targetExists()) return; o.audioSrc=reader.result; o.audioName='Recorded audio';o.audioDuration=duration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
-      reader.onerror=()=>setStatus('Could not save recorded audio. Please retry.','danger');
+      const blob=new Blob(chunks,{type:(recorder.mimeType||'audio/webm').split(';')[0]}), reader=new FileReader();
+      reader.onload=()=>{learnerAudioFinishing=false;if(!targetExists()){refreshLearnerAudioControls();return}if(staged){learnerAudioDraft={src:reader.result,duration};refreshLearnerAudioControls();return}o.audioSrc=reader.result; o.audioName='Recorded audio';o.audioDuration=duration; render(); saveState(); refreshLearnerAudioControls(); setStatus('Audio attached.','success')};
+      reader.onerror=()=>{learnerAudioFinishing=false;refreshLearnerAudioControls();setStatus('Could not save recorded audio. Please retry.','danger')};
       reader.readAsDataURL(blob);
     };
-    recorder.start(); setButtonChrome('recordAudioBtn','Stop Recording'); setStatus('Recording audio... click again to stop.','success');
+    recorder.start(250);if(staged){learnerAudioTimer=setInterval(()=>{const seconds=Math.floor((Date.now()-recordedAt)/1000);if(recorder.state!=='recording'){clearInterval(learnerAudioTimer);return}gid('learnerAudioStatus').textContent='Recording. '+Math.max(0,60-seconds)+' seconds left. Press Stop when you finish.';if(seconds>=60)recorder.stop()},250)}setButtonChrome('recordAudioBtn','Stop Recording'); setStatus('Recording audio... click again to stop.','success');
   }catch(err){release(); setStatus('Audio recording failed. '+err.message,'danger')}
-  finally{audioStarting=false}
+  finally{audioStarting=false;refreshLearnerAudioControls()}
 }
 window.addEventListener('pagehide',()=>{if(mediaRecorder&&mediaRecorder.state!=='inactive'){mediaRecorder.stop(); mediaRecorder.stream?.getTracks().forEach(t=>t.stop())}});
 

@@ -113,6 +113,11 @@ Other docs that pair with setup:
 - **DrawSplatTM classroom tools.** Big Link, Concept Map, Markdown Studio, Rubric Builder, ImageSplat™, and Word Search Maker now stay under DrawSplatTM Tools instead of SplatWorksTM.
 - **Self-host bundle refresh.** Updated README, release notes, download metadata, and the self-host bundle for the integrated DrawSplat Studio build.
 
+## Whiteboard voice-note improvements (September 17, 2026)
+
+- **Review before adding.** Record → Listen → Add, with Try again, Discard, and a Finish voice shortcut for unfinished recordings. No empty board items are created by permission failures.
+- **Short student answers.** A one-minute countdown, microphone cleanup, larger phone controls, and one undo step when a finished answer is added.
+
 ## Recent improvements (v3.1.10)
 
 - **Super Star Trek browser edition.** Added `games/super-star-trek/` to DrawSplat Games, the Games dropdown, the Features games grid, Teacher Admin Game Access, and the self-host bundle.

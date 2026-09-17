@@ -97,7 +97,7 @@ window.DrawSplatVideoNotes=(()=>{
     dialog.addEventListener('cancel',e=>{e.preventDefault();close()});dialog.addEventListener('close',()=>{token++;stopRecording();get('videoNotePreview').pause()});
     window.addEventListener('pagehide',()=>{token++;stopRecording();players.forEach(p=>p.video.pause())});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){if(recorder?.state==='recording')poster=posterFrame();token++;stopRecording();players.forEach(p=>p.video.pause())}});
-    return {open,refreshPermissions,createObject,beforeRender,afterRender};
+    return {open,refreshPermissions,createObject,beforeRender,afterRender,busy:()=>finishing||!!stream||recorder?.state==='recording'};
   }
   function refreshPermissions(){if(!api.allowed()&&dialog.open){close();api.status('Video recording is off for this lesson.','danger')}}
   function createObject(object,box){

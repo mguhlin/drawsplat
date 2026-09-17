@@ -17,3 +17,9 @@ DrawSplatTM v3.1.10 refreshes the self-host bundle with Super Star Trek, the lat
 The self-host ZIP is labeled `drawsplat-selfhost-v3.1.10.zip`. It includes the static site, Apps Script backend, MySQL backend, documentation, legal/compliance pages, standalone classroom tools, DrawSplat Games including Super Star Trek and Squirrel Run, ImageSplat™, SketchSpace VR, and the generic DrawSplat Hub dashboard with the `hubcampus` demo instance.
 
 Real Hub campus folders are intentionally excluded from self-host bundles.
+
+## Whiteboard voice-response update (September 17, 2026)
+
+Voice responses now use Record → Listen → Add, with Try again and Discard before any change to the board. Closing a recording releases the microphone and keeps its draft available through Finish voice while the page remains open. A one-minute countdown stops short responses automatically; adding an answer creates one undo step. Existing empty notes can be filled through the same review flow.
+
+The recorder has larger phone-friendly controls, reports permission errors in its dialog, rejects empty or oversized recordings, and prevents voice and video recording from running together. Existing teacher notes remain protected.
