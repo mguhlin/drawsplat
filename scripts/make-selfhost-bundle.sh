@@ -762,6 +762,20 @@ See solutions/mediasplat/README.md and docs/credits.md for project and bundled
 dependency licensing details.
 EOF
 
+# Independent media apps use shared menus, localization, and launcher modules.
+# Keep these runtime dependencies without copying the full whiteboard asset tree.
+for media_root in "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT"; do
+  copy_tree assets/icons "$media_root/assets/icons" "${MODULE_EXCLUDES[@]}"
+  copy_tree assets/favicons "$media_root/assets/favicons" "${MODULE_EXCLUDES[@]}"
+  for css_file in action-cards.css app-language.css tool-launcher.css; do
+    copy_file "assets/css/$css_file" "$media_root/assets/css/$css_file"
+  done
+  for js_file in action-cards.js app-language.js tool-launcher-loader.js tool-launcher.js tool-registry.js tool-search.js tool-preferences.js; do
+    copy_file "assets/js/$js_file" "$media_root/assets/js/$js_file"
+  done
+  copy_file data/drawsplat-tools.json "$media_root/data/drawsplat-tools.json"
+done
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"

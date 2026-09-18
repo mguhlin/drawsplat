@@ -30,7 +30,7 @@ Applicable packages include browser-local PDF camera/photo scanning and export
 improvements; ImageSplat and VideoSplat green-screen removal; layered green-screen
 studio; and recent AudioSplat, VideoSplat, and MediaSplat recording, duration,
 cancellation, and startup fixes. Subtitle generation and export progress from
-v3.1.24 remain included. Apps still depend on browser support and their documented
+v3.1.24 remain included. Local transcription, selectable Whisper models, and saved transcription progress are also included. Apps still depend on browser support and their documented
 runtime/model requirements.
 
 ## Downloads
@@ -41,6 +41,8 @@ runtime/model requirements.
 - Independent AudioSplat, VideoSplat, and MediaSplat packages
 
 The full DrawSplat package keeps SplatWorks apps as separate drop-in downloads.
+Independent media downloads now include the shared illustrated menu, language, and launcher runtime dependencies referenced by their entry pages. Launcher links to other apps require those apps to be installed in the same web root.
+
 All twelve ZIPs have SHA-256 hashes in `SHA256SUMS-v3.1.25.txt`. Preserve project
 files and database backups, finish recordings/exports, then replace matching
 package files while retaining server-only configuration. Do not mix old shared
