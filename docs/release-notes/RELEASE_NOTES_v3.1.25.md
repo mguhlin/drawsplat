@@ -41,7 +41,7 @@ runtime/model requirements.
 - Independent AudioSplat, VideoSplat, and MediaSplat packages
 
 The full DrawSplat package keeps SplatWorks apps as separate drop-in downloads.
-Independent media downloads now include the shared illustrated menu, language, and launcher runtime dependencies referenced by their entry pages. Launcher links to other apps require those apps to be installed in the same web root.
+Individual app downloads now include the shared illustrated menu, language, and launcher runtime dependencies referenced by their entry pages. Public module pages also include their manifest and launcher registry. Launcher links to other apps require those apps to be installed in the same web root.
 
 All twelve ZIPs have SHA-256 hashes in `SHA256SUMS-v3.1.25.txt`. Preserve project
 files and database backups, finish recordings/exports, then replace matching
