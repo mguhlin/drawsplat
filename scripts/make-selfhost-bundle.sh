@@ -321,6 +321,9 @@ TOOLS_SOLUTIONS=(
   pdfsplat
   rubric-builder
   splatimage-studio
+  imagesplat
+  graphsplat
+  qrsplat
   sketchspace-VR
   wordsearch
 )
@@ -338,6 +341,7 @@ WIDGET_SOLUTIONS=(
   memesplat
   quiz-flashcard-studio
   step-splat
+  splatbot-studio
   storywheel
   toneshifter
   vibe-check
@@ -618,6 +622,7 @@ EOF
 
 copy_tree assets "$GAMES_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree games "$GAMES_ROOT/games" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/dotsboxes "$GAMES_ROOT/solutions/dotsboxes" "${MODULE_EXCLUDES[@]}"
 
 cat > "$GAMES_ROOT/DRAWSPLAT-GAMES-README.txt" <<EOF
 DrawSplatTM Games Self-Hosted Module
