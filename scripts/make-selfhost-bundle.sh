@@ -622,6 +622,7 @@ EOF
 
 copy_tree assets "$GAMES_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree games "$GAMES_ROOT/games" "${MODULE_EXCLUDES[@]}"
+copy_tree vendor "$GAMES_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_tree solutions/dotsboxes "$GAMES_ROOT/solutions/dotsboxes" "${MODULE_EXCLUDES[@]}"
 
 cat > "$GAMES_ROOT/DRAWSPLAT-GAMES-README.txt" <<EOF
