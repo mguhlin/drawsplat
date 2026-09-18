@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.24, featuring animated export progress and time estimates in MediaSplat and VideoSplat, automatic English subtitles, and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** v3.1.25, featuring animated export progress and time estimates in MediaSplat and VideoSplat, automatic English subtitles, and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -29,11 +29,11 @@ Other docs that pair with setup:
 
 ## Current build
 
-**DrawSplatTM v3.1.24 — See your export progress.** MediaSplat and VideoSplat now show animated purple progress bars, percentages, elapsed time, and estimates in minutes or hours. VideoSplat estimates timeline rendering and MP4/OGM conversion separately and fixes cancellation and repeated-export progress. All twelve self-host packages are refreshed. [Walkthrough](blog/export-progress.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.24.md) · [Stable release v3.1.24](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.24).
+**DrawSplatTM v3.1.25 — Current downloads for every package.** All twelve self-host ZIPs are rebuilt from the current source, including the whiteboard’s illustrated menus, learner tools, stamps, video notes, recording recovery, and portable MySQL Save/Open. The applicable packages also include recent PDF scanning/export, image and video green-screen tools, and media recording/export fixes. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.25.md) · [Stable release v3.1.25](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.25).
 
 ## Latest whiteboard: portable saving and recording recovery
 
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The separately versioned v3.1.24 download bundles listed above predate these changes; use current source or build a fresh bundle for these features.
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.25 full download now includes these changes. The suite/package version is independent of the whiteboard’s version.
 
 - **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
 - **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.
@@ -400,7 +400,7 @@ The connected MySQL provider supports private account-owned Save/Open, authentic
 - **Server-side District Privacy Packet** ZIP generator and **Family Access Portal** HTML served from the backend itself.
 - **Apps-Script → MySQL migration CLI** for districts switching paths.
 
-For current private online saving, use the current repository and follow [`docs/setup-mysql.md`](docs/setup-mysql.md). The published versioned bundles predate this connection. Legacy room/template/turn-in/session endpoints require district/campus administrator authentication pending scoped classroom membership. Advanced district integration coverage and multi-instance Redis pub/sub for SSE remain future work.
+For current private online saving, use the current repository and follow [`docs/setup-mysql.md`](docs/setup-mysql.md). The v3.1.25 full bundle includes this connection. Legacy room/template/turn-in/session endpoints require district/campus administrator authentication pending scoped classroom membership. Advanced district integration coverage and multi-instance Redis pub/sub for SSE remain future work.
 
 ## Core features
 

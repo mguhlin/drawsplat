@@ -98,3 +98,7 @@ caption text are never uploaded. Offline transcription requires a cached model
 and runtime. If you add a host CSP, permit the model download hosts listed in
 `solutions/videosplat/docs/NETWORK_INVENTORY.md`; keep runtime scripts same-origin.
 See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).
+
+## Current release: v3.1.25
+
+All twelve packages are refreshed from the current source: full DrawSplat, SplatWorks suite and four individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, and MediaSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.25.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.

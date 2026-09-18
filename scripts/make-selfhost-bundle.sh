@@ -98,6 +98,9 @@ EXCLUDES=(
   "tmp"
   "build"
   "coverage"
+  ".tmp"
+  "test-results"
+  "playwright-report"
   ".DS_Store"
   ".env"
   ".env.local"
@@ -172,6 +175,7 @@ DrawSplatTM Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -348,6 +352,7 @@ SplatWorksTM GridSplatTM Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -385,6 +390,7 @@ SplatWorksTM ShowSplatTM Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -417,6 +423,7 @@ SplatWorksTM WriteSplatTM Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -457,6 +464,7 @@ SplatWorksTM ListSplatTM Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -506,6 +514,7 @@ SplatWorksTM Suite Self-Hosted Bundle
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -555,6 +564,7 @@ DrawSplatTM Tools Self-Hosted Module
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -587,6 +597,7 @@ DrawSplatTM Widgets Self-Hosted Module
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -614,6 +625,7 @@ DrawSplatTM Games Self-Hosted Module
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -638,6 +650,7 @@ AudioSplat Self-Hosted Solution
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -679,6 +692,7 @@ VideoSplat Self-Hosted Solution
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
@@ -717,6 +731,7 @@ MediaSplat Self-Hosted Solution
 
 Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
 
 What's in this zip
 ------------------
