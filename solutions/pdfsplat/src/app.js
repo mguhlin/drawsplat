@@ -1,3 +1,4 @@
+import { setupWebsitePdf } from "./website-to-pdf.js";
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
 import { createEpub } from "./epub-export.js?v=20260914-formatting";
@@ -1749,4 +1750,9 @@ window.addEventListener("beforeunload", () => {
 setupScanner({ addPdf: async file => {
   const added = await (state.pages.length ? mergeFile(file) : openFile(file));
   if (!added) throw new Error("The scan could not be added. Download the scanned PDF to keep a copy.");
+} });
+
+setupWebsitePdf({ addPdf: async file => {
+  const added = await (state.pages.length ? mergeFile(file) : openFile(file));
+  if (!added) throw new Error("Could not add captures. Download the PDF to keep a copy.");
 } });

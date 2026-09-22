@@ -112,3 +112,22 @@ npx playwright test -c solutions/pdfsplat/playwright.config.js
 ```
 
 The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, range separation into ZIP, accessibility auditing and semantic HTML export, and CipherSplat™ protect/unlock round trips.
+
+## Website to PDF
+
+Choose **Website to PDF** to open an HTTP(S) URL in a new tab. Use that tab's
+Print → Save as PDF command for the full page, then open the saved PDF here.
+Sign in on the source site or open an unpublished preview before printing.
+The source website controls its print layout; browser isolation prevents this
+static app from automatically fetching or printing arbitrary sites.
+
+On desktop browsers supporting screen sharing, **Choose tab or window** lets you
+explicitly share an already-open page, including authenticated or unpublished
+content. Capture the visible area, scroll the source, and capture additional
+sections. Review/remove captures, download a PDF, or append it to the editor.
+These are image-only pages (no OCR), limited to 20 captures with a 2,200-pixel
+longest edge. No audio is requested. Stop sharing, closing the dialog, adding or
+downloading the PDF, and leaving the page stop the shared stream. Closing the
+dialog discards captures. No credentials or page content go to a conversion server.
+Mobile/unsupported browsers can use the print workflow. URLs are opened only;
+they are not fetched by PDFsplat or sent to a third-party conversion service.
