@@ -38,9 +38,19 @@ test('video key previews, persists and exports background video with foreground 
   const bytes=[...await readFile(path)];
   const result=await page.evaluate(async bytes=>{
     const buffer=new Uint8Array(bytes),url=URL.createObjectURL(new Blob([buffer],{type:'video/webm'})),video=document.createElement('video');video.muted=true;video.src=url;document.body.append(video);
-    await new Promise<void>((r,j)=>{video.onloadeddata=()=>r();video.onerror=()=>j(new Error('decode'));});await new Promise<void>(r=>{video.onseeked=()=>r();video.currentTime=.5});
+    await new Promise<void>((r,j)=>{video.onloadeddata=()=>r();video.onerror=()=>j(new Error('decode'));});
+    // Firefox can fire seeked before a paused frame is presented. Inspect a presented frame.
+    const present = (time: number) => new Promise<void>((resolve,reject) => {
+      const timer=setTimeout(()=>reject(new Error('Frame was not presented')),5000);
+      const frame: VideoFrameRequestCallback = (_now, metadata) => {
+        if(metadata.mediaTime < time-.02) { video.requestVideoFrameCallback(frame); return; }
+        clearTimeout(timer);video.pause();resolve();
+      };
+      video.currentTime=time;video.requestVideoFrameCallback(frame);void video.play().catch(reject);
+    });
+    await present(.5);
     const canvas=document.createElement('canvas');canvas.width=video.videoWidth;canvas.height=video.videoHeight;const x=canvas.getContext('2d')!;x.drawImage(video,0,0);const left=[...x.getImageData(10,10,1,1).data],center=[...x.getImageData(canvas.width/2,canvas.height/2,1,1).data];
-    await new Promise<void>(r=>{video.onseeked=()=>r();video.currentTime=1.2});x.drawImage(video,0,0);const later=[...x.getImageData(canvas.width/2,canvas.height/2,1,1).data];
+    await present(1.2);x.drawImage(video,0,0);const later=[...x.getImageData(canvas.width/2,canvas.height/2,1,1).data];
     const audio=new AudioContext();const decoded=await audio.decodeAudioData(buffer.buffer);const samples=decoded.getChannelData(0);let sum=0;for(const n of samples)sum+=n*n;await audio.close();video.remove();URL.revokeObjectURL(url);return{left,center,later,rms:Math.sqrt(sum/samples.length),duration:decoded.duration};
   },bytes);
   expect(result.left[2]).toBeGreaterThan(200);expect(result.left[1]).toBeLessThan(40);expect(result.center[0]).toBeGreaterThan(200);expect(result.center[1]).toBeLessThan(40);expect(result.later[0]).toBeGreaterThan(200);expect(result.later[1]).toBeGreaterThan(200);expect(result.rms).toBeGreaterThan(.01);expect(result.duration).toBeGreaterThan(1);

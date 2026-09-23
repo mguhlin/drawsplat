@@ -79,7 +79,7 @@ const formatBytes = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.round(bytes / 1024)} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-const APP_VERSION = "v1";
+const APP_VERSION = "v1.1";
 
 export function App() {
   const history = useRef(new History(createProject()));
@@ -2571,7 +2571,7 @@ export function App() {
                 <li><strong>Longer caption jobs:</strong> split the timeline clip into sections of 120 minutes or less and generate captions for each section. Trimming a timeline clip does not reduce its source file size.</li>
                 <li><strong>Recording and export:</strong> no fixed duration cap. Browser memory and storage determine practical limits; large or long videos can still fail.</li>
                 <li><strong>Resolution and frame rate:</strong> exports above 4K (3840 × 2160 pixels in total) show a memory warning. The export frame-rate field offers 1–60 fps.</li>
-                <li><strong>Export time:</strong> timeline rendering runs in real time. A 30-minute timeline takes roughly 30 minutes to render; MP4 and OGM need additional conversion time. Keep the export dialog open until it finishes.</li>
+                <li><strong>Export time:</strong> Auto exports frames as quickly as the device allows and prefers hardware encoding. Compatible export runs in real time; OGM needs additional conversion time. Keep the export dialog open until it finishes.</li>
               </ul>
               <p>For permanent captions, choose <strong>Add subtitles to timeline</strong> and leave <strong>Burn in subtitles</strong> enabled when exporting (the default).</p>
             </>}

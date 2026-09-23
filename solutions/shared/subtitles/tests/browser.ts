@@ -13,9 +13,9 @@ export async function fakeTranscriber(page: Page, delay = 20) {
         // FFmpeg's worker is separate and must remain real for burn-in tests.
         if (String(url).includes('ffmpeg')) return new Original(url, options) as any;
       }
-      postMessage(data: { audio?: Float32Array; model?: string }) {
+      postMessage(data: { audio?: Float32Array; model?: string; acceleration?: string }) {
         if (!data.audio) return;
-        (window as any).subtitleJobs.push({ samples: data.audio.length, model: data.model });
+        (window as any).subtitleJobs.push({ samples: data.audio.length, model: data.model, acceleration: data.acceleration });
         this.timer = window.setTimeout(() => this.onmessage?.({ data: { type: 'complete', cues: [{ start: .2, end: 1.2, text: 'Generated speech' }, { start: 1.3, end: 2.2, text: 'Review this caption' }] } }), delay);
       }
       terminate() { clearTimeout(this.timer); (window as any).subtitleTerminated = true; }

@@ -133,3 +133,18 @@ test('optional model choices do not fetch speech engines or weights before gener
   await page.waitForLoadState('networkidle');
   expect(speechRequests).toEqual([]);
 });
+
+test('CPU preference reaches the worker and persists across visits', async ({ page }) => {
+  await fakeTranscriber(page);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await page.getByRole('combobox', { name: 'Processing', exact: true }).selectOption('cpu');
+  await page.getByRole('button', { name: 'Generate subtitles', exact: true }).click();
+  await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
+  expect(await page.evaluate(() => (window as any).subtitleJobs[0].acceleration)).toBe('cpu');
+  await page.reload();
+  await page.getByRole('button', { name: 'Transcribe' }).click();
+  await page.locator('.drop-zone input').setInputFiles(resolve('tests/fixtures/speech.mp3'));
+  await expect(page.getByRole('combobox', { name: 'Processing', exact: true })).toHaveValue('cpu');
+});

@@ -15,8 +15,8 @@ export function exportStage(progress: number, format: ExportFormat) {
   const conversion = format !== 'webm' && value >= .85;
   return { conversion, fraction: conversion ? (value - .85) / .15 : value / (format === 'webm' ? 1 : .85) };
 }
-export function ExportProgress({ progress, format, busy, finished }: { progress: number; format: ExportFormat; busy: boolean; finished: boolean }) {
-  const { conversion, fraction } = exportStage(progress, format);
+export function ExportProgress({ progress, format, busy, finished, direct = false }: { progress: number; format: ExportFormat; busy: boolean; finished: boolean; direct?: boolean }) {
+  const { conversion, fraction } = exportStage(progress, direct ? 'webm' : format);
   const [now, setNow] = useState(Date.now());
   const started = useRef(now), stageStarted = useRef(now), updated = useRef(now);
   useEffect(() => {
@@ -32,13 +32,13 @@ export function ExportProgress({ progress, format, busy, finished }: { progress:
   const waiting = busy && now - updated.current > 15000;
   const percentage = finished ? 100 : Math.max(0, Math.min(99, Math.floor(fraction * 100 + 1e-6)));
   const remaining = busy && !waiting && stageElapsed >= 5 && fraction >= .02 && fraction < .99 ? stageElapsed * (1 - fraction) / fraction : undefined;
-  const title = finished ? 'Export complete' : conversion ? `Converting to ${format.toUpperCase()} · step 2 of 2` : `Rendering timeline${format === 'webm' ? '' : ' · step 1 of 2'}`;
+  const title = finished ? 'Export complete' : conversion ? `Converting to ${format.toUpperCase()} · step 2 of 2` : `Rendering timeline${direct || format === 'webm' ? '' : ' · step 1 of 2'}`;
   return <section className="export-progress" aria-label="Export progress" aria-busy={busy}>
     <div className="export-progress-heading"><span role="status">{title}</span><strong aria-label="Export percentage">{percentage}%</strong></div>
     <div className={`export-progress-meter${busy ? ' is-active' : ''}`} role="progressbar" aria-label={conversion ? 'Conversion progress' : 'Timeline rendering progress'} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentage}>
       <div className="export-progress-fill" style={{ width: `${percentage}%` }}/>{busy && <div className="export-progress-shimmer"/>}
     </div>
     <div className="export-progress-details"><span>Elapsed {clockTime(elapsed)}</span><span>{finished ? 'Ready to download' : !busy ? 'Stopped' : waiting ? 'Waiting for the next progress update…' : percentage >= 99 ? 'Finishing the output file…' : remaining !== undefined ? `Estimated remaining: ${estimatedTime(remaining)}` : 'Calculating time remaining…'}</span>{remaining !== undefined && <span>Estimated stage total: {estimatedTime(stageElapsed + remaining)}</span>}</div>
-    {busy && format !== 'webm' && <p className="export-progress-note">Estimates cover the current stage. Conversion is timed separately from timeline rendering.</p>}
+    {busy && !direct && format !== 'webm' && <p className="export-progress-note">Estimates cover the current stage. Conversion is timed separately from timeline rendering.</p>}
   </section>;
 }

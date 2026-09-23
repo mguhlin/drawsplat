@@ -1,3 +1,4 @@
+import { gpuPrecision, type Acceleration } from './acceleration';
 import { getWhisperModel, type WhisperModelId } from './models';
 import { env, pipeline, TextStreamer } from '@huggingface/transformers';
 import wasmUrl from 'onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm?url';
@@ -11,8 +12,16 @@ env.backends.onnx.wasm!.numThreads = 1;
 env.backends.onnx.wasm!.proxy = false;
 let transcriber: import('@huggingface/transformers').AutomaticSpeechRecognitionPipeline | undefined;
 let loadedModel: WhisperModelId | undefined;
-self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: WhisperModelId; allowEmpty?: boolean; keepAlive?: boolean }>) => {
+let backend: 'webgpu' | 'wasm' | undefined;
+let gpuFailed = false;
+let precision: 'fp16' | 'fp32' | undefined;
+type Request = { audio: Float32Array; model?: WhisperModelId; allowEmpty?: boolean; keepAlive?: boolean; acceleration?: Acceleration };
+const handle = async (event: MessageEvent<Request>): Promise<void> => {
   const requestedModel = event.data.model ?? 'tiny';
+  if (!backend) {
+    precision = event.data.acceleration !== 'cpu' && !gpuFailed ? await gpuPrecision() : undefined;
+    backend = precision ? 'webgpu' : 'wasm';
+  }
   let loadingModel = !transcriber || loadedModel !== requestedModel;
   let recognizedText = false;
   try {
@@ -20,9 +29,13 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
     if (transcriber && loadedModel !== model.id) { await transcriber.dispose(); transcriber = undefined; loadedModel = undefined; }
     if (!transcriber) {
       const loaded = await pipeline('automatic-speech-recognition', model.repo, {
-        device: 'wasm', dtype: 'q8', revision: model.revision,
+        device: backend,
+        // q8 integer matmuls do not run on WebGPU. Keep the encoder floating-point
+        // and use GPU-supported 4-bit decoder matmuls, with f16 only when supported.
+        dtype: backend === 'webgpu' ? { encoder_model: precision!, decoder_model_merged: precision === 'fp16' ? 'q4f16' : 'q4' } : 'q8',
+        revision: model.revision,
         // Avoid retaining large intermediate allocations for the desktop-sized model.
-        ...((model.id === 'medium' || model.id === 'turbo') ? { session_options: { enableCpuMemArena: false, enableMemPattern: false } } : {}),
+        ...((backend === 'wasm' && (model.id === 'medium' || model.id === 'turbo')) ? { session_options: { enableCpuMemArena: false, enableMemPattern: false } } : {}),
         progress_callback: (progress) => {
           if (progress.status === 'progress') self.postMessage({ type: 'progress', message: `Downloading ${model.name}: ${Math.round(progress.progress)}% (${progress.file})` });
           else if (progress.status === 'initiate') self.postMessage({ type: 'progress', message: `Loading ${model.name}…` });
@@ -30,6 +43,7 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
       });
       transcriber = loaded; loadedModel = model.id;
     }
+    self.postMessage({ type: 'backend', message: backend === 'webgpu' ? 'Transcribing with GPU acceleration' : gpuFailed ? 'CPU processing · GPU unavailable for this model; resumed automatically' : event.data.acceleration === 'cpu' ? 'CPU processing · selected compatibility mode' : 'CPU processing · hardware WebGPU unavailable' });
     loadingModel = false;
     // Turbo is multilingual; keep the existing English-transcription workflow explicit.
     const languageOptions = model.id === 'turbo' ? { language: 'en', task: 'transcribe' as const } : {};
@@ -63,9 +77,20 @@ self.onmessage = async (event: MessageEvent<{ audio: Float32Array; model?: Whisp
       : 'The speech model loaded, but did not recognize English speech. Play the selected clip and check that your voice is audible. If it is missing, check the microphone selection and record again. If speech is clear, try a shorter clip and generate again.');
     self.postMessage({ type: 'complete', cues });
   } catch (error) {
+    if (backend === 'webgpu') {
+      // Retry this window exactly once. Its partial cues were never committed.
+      gpuFailed = true;
+      try { await transcriber?.dispose(); } catch { /* The GPU device may already be lost. */ }
+      transcriber = undefined; loadedModel = undefined; backend = 'wasm';
+      self.postMessage({ type: 'backend', message: 'GPU processing unavailable · retrying this section on CPU' });
+      await handle(event);
+      return;
+    }
     const message = error instanceof Error ? error.message : 'The speech engine could not process this audio. Try a smaller model or reload to release browser memory.';
     self.postMessage({ type: 'error', message: loadingModel ? `The speech model could not load. Check your connection and retry, or choose a smaller model if memory is limited. ${message}` : message });
   } finally {
-    if (!event.data.keepAlive) { await transcriber?.dispose(); transcriber = undefined; loadedModel = undefined; }
+    if (!event.data.keepAlive && transcriber) { try { await transcriber.dispose(); } finally { transcriber = undefined; loadedModel = undefined; backend = undefined; } }
   }
 };
+
+self.onmessage = handle;

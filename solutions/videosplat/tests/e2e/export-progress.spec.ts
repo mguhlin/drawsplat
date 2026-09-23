@@ -11,6 +11,7 @@ test('export progress survives cancellation and repeated MP4 conversion', async 
   await page.getByRole('button', { name: 'Add subtitles to timeline' }).click();
   await page.getByRole('menuitem', { name: 'File', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Export video…' }).click();
+  await page.getByLabel('Export processing').selectOption('compatible');
   await page.getByLabel('Export width').fill('320');
   await page.getByLabel('Export height').fill('180');
   await page.getByLabel('Include timeline audio').uncheck();
@@ -47,6 +48,7 @@ for (const failure of ['drawing', 'encoder']) test(`export recovers from ${failu
   await page.getByRole('button', {name:'＋ Title',exact:true}).click();
   await page.getByRole('menuitem',{name:'File',exact:true}).click();
   await page.getByRole('menuitem',{name:'Export video…'}).click();
+  await page.getByLabel('Export processing').selectOption('compatible');
   await page.getByLabel('Include timeline audio').uncheck();
   await page.evaluate(failure => {
     if(failure==='drawing') CanvasRenderingContext2D.prototype.fillText = () => {throw new Error('Test draw failed')};

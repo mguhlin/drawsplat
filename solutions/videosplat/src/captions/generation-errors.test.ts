@@ -110,3 +110,57 @@ it('loads the selected pinned model and replaces the pipeline when switching mod
     expect(pipeline.mock.calls[index]).toEqual(['automatic-speech-recognition', configuration.repo, expect.objectContaining({ revision: configuration.revision, dtype: 'q8' })]);
   }
 });
+
+it('uses the GPU when an adapter is available', async () => {
+  vi.stubGlobal('navigator', { gpu: { requestAdapter: vi.fn().mockResolvedValue({}) } });
+  pipeline.mockResolvedValue(Object.assign(vi.fn().mockResolvedValue({ text: 'Hello.', chunks: [{ text: 'Hello.', timestamp: [0, .9] }] }), { dispose: vi.fn() }));
+  const messages = await runWorkerMessages();
+  expect(pipeline.mock.calls[0][2].device).toBe('webgpu');
+  expect(pipeline.mock.calls[0][2].dtype).toEqual({ encoder_model: 'fp32', decoder_model_merged: 'q4' });
+  expect(messages).toContainEqual({ type: 'backend', message: 'Transcribing with GPU acceleration' });
+});
+
+it('retries GPU inference failure on CPU once, with no duplicate cues', async () => {
+  vi.stubGlobal('navigator', { gpu: { requestAdapter: vi.fn().mockResolvedValue({}) } });
+  const gpu = Object.assign(vi.fn().mockRejectedValue(new Error('Device lost')), { dispose: vi.fn().mockRejectedValue(new Error('Lost')) });
+  const cpu = Object.assign(vi.fn().mockResolvedValue({ text: 'Recovered.', chunks: [{ text: 'Recovered.', timestamp: [0, .9] }] }), { dispose: vi.fn() });
+  pipeline.mockResolvedValueOnce(gpu).mockResolvedValueOnce(cpu);
+  const messages = await runWorkerMessages();
+  expect(pipeline.mock.calls.map(call => call[2].device)).toEqual(['webgpu', 'wasm']);
+  expect(messages.filter(m => m.type === 'complete')).toEqual([{ type: 'complete', cues: [{ start: 0, end: .9, text: 'Recovered.' }] }]);
+  expect(messages.some(m => m.type === 'error')).toBe(false);
+});
+
+it('honors CPU override even when a GPU is available', async () => {
+  const requestAdapter = vi.fn().mockResolvedValue({});
+  vi.stubGlobal('navigator', { gpu: { requestAdapter } });
+  pipeline.mockResolvedValue(Object.assign(vi.fn().mockResolvedValue({ text: 'Hello.', chunks: [{ text: 'Hello.', timestamp: [0, .9] }] }), { dispose: vi.fn() }));
+  const worker = { onmessage: undefined as unknown as (event: unknown) => Promise<void>, postMessage: vi.fn() };
+  vi.stubGlobal('self', worker);
+  await import('../../node_modules/@splat/local-subtitles/worker');
+  await worker.onmessage({ data: { audio: new Float32Array(16000).fill(.1), acceleration: 'cpu' } });
+  expect(requestAdapter).not.toHaveBeenCalled();
+  expect(pipeline.mock.calls[0][2].device).toBe('wasm');
+});
+
+it('skips a software GPU emulator and uses the CPU engine', async () => {
+  vi.stubGlobal('navigator', { gpu: { requestAdapter: vi.fn().mockResolvedValue({ info: { architecture: 'swiftshader' } }) } });
+  pipeline.mockResolvedValue(Object.assign(vi.fn().mockResolvedValue({ text: 'Hello.', chunks: [{ text: 'Hello.', timestamp: [0, .9] }] }), { dispose: vi.fn() }));
+  await runWorkerMessages();
+  expect(pipeline.mock.calls[0][2].device).toBe('wasm');
+});
+
+it('falls back after GPU initialization fails and reports CPU failure without looping', async () => {
+  vi.stubGlobal('navigator', { gpu: { requestAdapter: vi.fn().mockResolvedValue({}) } });
+  pipeline.mockRejectedValue(new Error('Insufficient memory'));
+  const messages = await runWorkerMessages();
+  expect(pipeline.mock.calls.map(call => call[2].device)).toEqual(['webgpu', 'wasm']);
+  expect(messages.filter(m => m.type === 'error')).toHaveLength(1);
+});
+
+it('uses smaller half-precision GPU variants only with shader-f16 support', async () => {
+  vi.stubGlobal('navigator', { gpu: { requestAdapter: vi.fn().mockResolvedValue({ features: new Set(['shader-f16']) }) } });
+  pipeline.mockResolvedValue(Object.assign(vi.fn().mockResolvedValue({ text: 'Hello.', chunks: [{ text: 'Hello.', timestamp: [0, .9] }] }), { dispose: vi.fn() }));
+  await runWorkerMessages();
+  expect(pipeline.mock.calls[0][2].dtype).toEqual({ encoder_model: 'fp16', decoder_model_merged: 'q4f16' });
+});

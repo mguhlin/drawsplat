@@ -1,3 +1,4 @@
+import type { Acceleration } from './acceleration';
 import { DEFAULT_MODEL, getWhisperModel, type SpeechModelId } from './models';
 import { localModelNamespace } from './local-model';
 import { quietSectionLength, hasAudio, SAMPLE_RATE, type Cue } from './core';
@@ -5,7 +6,7 @@ import { openAudio } from './decoder';
 import { fingerprint, fingerprintWithNamespace, readCheckpoint, saveCheckpoint, deleteCheckpoint, type Checkpoint } from './checkpoints';
 export interface Source { name: string; load: () => Promise<Blob>; start?: number; duration?: number }
 export interface TranscriptionProgress { cues: Cue[]; processedSeconds: number; totalSeconds: number; complete: boolean; saved: boolean }
-export interface TranscriptionOptions { model?: SpeechModelId; modelFile?: Blob; restart?: boolean; onPartial?: (progress: TranscriptionProgress) => void }
+export interface TranscriptionOptions { acceleration?: Acceleration; onBackend?: (message: string) => void; model?: SpeechModelId; modelFile?: Blob; restart?: boolean; onPartial?: (progress: TranscriptionProgress) => void }
 export async function transcribe(source: Source, signal: AbortSignal, onProgress: (message: string) => void, options: TranscriptionOptions = {}): Promise<Cue[]> {
   signal.throwIfAborted();
   const model = options.model ?? DEFAULT_MODEL;
@@ -57,11 +58,13 @@ export async function transcribe(source: Source, signal: AbortSignal, onProgress
         signal.addEventListener('abort', abort, { once: true });
         worker.onmessage = ({ data }) => {
           if (data.type === 'progress') onProgress(data.message);
+          else if (data.type === 'backend') options.onBackend?.(data.message);
           else if (data.type === 'complete') finish(undefined, data.cues);
           else if (data.type === 'error') finish(new Error(`Could not generate subtitles: ${data.message}`));
         };
         worker.onerror = () => finish(new Error('The local speech engine could not start. Reload and try again in a current desktop browser.'));
-        worker.postMessage({ audio, model, ...(model === 'local' && firstWindow ? { modelFile: options.modelFile } : {}), allowEmpty: true, keepAlive: true }, [audio.buffer]);
+        if (model === 'local') options.onBackend?.('CPU processing · local GGML model');
+        worker.postMessage({ audio, model, acceleration: options.acceleration ?? 'auto', ...(model === 'local' && firstWindow ? { modelFile: options.modelFile } : {}), allowEmpty: true, keepAlive: true }, [audio.buffer]);
       });
       while (nextSample < totalSamples) {
         signal.throwIfAborted();

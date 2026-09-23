@@ -702,6 +702,7 @@ test("export reports audio connection failures instead of saving silent video",a
  await expect(page.locator('.timeline-clip.video')).toHaveCount(1);
  await page.evaluate(()=>{AudioContext.prototype.createMediaElementSource=()=>{throw new DOMException('Unavailable','NotSupportedError');};});
  await page.getByRole('menuitem',{name:'File',exact:true}).click();await page.getByRole('menuitem',{name:'Export video…'}).click();
+ await page.getByLabel('Export processing').selectOption('compatible');
  await page.getByRole('button',{name:'Render local WebM'}).click();
  await expect(page.getByRole('alert')).toContainText('Export stopped to avoid creating a silent video');
  await expect(page.getByRole('button',{name:'Save another WebM copy'})).toHaveCount(0);

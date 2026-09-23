@@ -49,6 +49,7 @@ export function ExportDialog({
     rangeStart: 0,
     rangeEnd: projectDuration(project),
   });
+  const [engineStatus, setEngineStatus] = useState('');
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<{ blob: Blob; format: ExportOptions["format"] }>();
@@ -79,6 +80,7 @@ export function ExportDialog({
         options,
         setProgress,
         controller.current.signal,
+        setEngineStatus,
       );
       const format = options.format;
       setResult({ blob, format });
@@ -118,9 +120,15 @@ export function ExportDialog({
       <h2 id="export-title">Export video locally</h2>
       <p className="lead">
         Render the complete timeline in this browser. Media is not uploaded.
-        Timeline rendering runs in real time. MP4 and OGM conversion follows afterward and is estimated separately. Keep this dialog open until the export finishes.
+        Auto uses fast frame export and requests hardware encoding when supported. Compatible export runs in real time; OGM also needs conversion afterward. Keep this dialog open until the export finishes.
       </p>
       <fieldset className="export-settings" disabled={busy}>
+      <label>Processing<select aria-label="Export processing" value={options.acceleration ?? 'auto'} onChange={event => setOptions({ ...options, acceleration: event.target.value as ExportOptions['acceleration'] })}>
+        <option value="auto">Auto · prefer hardware acceleration</option>
+        <option value="software">CPU · software frame encoding</option>
+        <option value="compatible">Compatible · original real-time export</option>
+      </select></label>
+      <p>If fast export is unavailable or fails, export restarts automatically in compatible mode. The browser controls hardware availability.</p>
       <div className="optimizer-grid">
         <label>
           Quality preset
@@ -270,7 +278,8 @@ export function ExportDialog({
         </ul>
       </div>
       </fieldset>
-      {(busy || result || error) && <ExportProgress progress={progress} format={options.format} busy={busy} finished={saved}/>}
+      {engineStatus && <p role="status">{engineStatus}</p>}
+      {(busy || result || error) && <ExportProgress progress={progress} format={options.format} busy={busy} finished={saved} direct={engineStatus.startsWith('Fast frame') || engineStatus.startsWith('Preparing frame')}/>}
       {busy && (
         <>
           <button

@@ -71,8 +71,8 @@ export function exportPreflight(
         });
     }
   if (
-    !("MediaRecorder" in window) ||
-    !("captureStream" in HTMLCanvasElement.prototype)
+    (!("MediaRecorder" in window) || !("captureStream" in HTMLCanvasElement.prototype)) &&
+    !("VideoEncoder" in window)
   )
     issues.push({
       severity: "error",
@@ -109,7 +109,7 @@ export function exportPreflight(
     severity: "info",
     code: "local-only",
     message:
-      "Rendering uses local browser media, Canvas, Web Audio, and MediaRecorder.",
+      "Rendering uses local browser media, Canvas, Web Audio, and WebCodecs or MediaRecorder.",
   });
   return issues;
 }

@@ -1,10 +1,10 @@
 import { recordingResult } from "../media/recording";
 import { waitForMedia } from "../media/ready";
-import { chromaSettings, createChromaRenderer } from "../render/chroma";
-import { drawSubtitle } from "../captions/render";
-import { activeVisualClips, projectDuration } from "../timeline/engine";
-import type { Clip, VideoSplatProject } from "../domain/project";
-import { renderRect, type FitMode } from "../render/geometry";
+import { createChromaRenderer } from "../render/chroma";
+import { projectDuration } from "../timeline/engine";
+import type { VideoSplatProject } from "../domain/project";
+import { audioGain, drawComposition, type VisualSource } from "./composition";
+export { audioGain, transitionGain } from "./composition";
 import { transcodeExport, type ExportFormat } from "./transcoder";
 import { supportedRecordingType } from "../media/recording";
 
@@ -18,6 +18,7 @@ export interface ExportOptions {
   format: ExportFormat;
   rangeStart?: number;
   rangeEnd?: number;
+  acceleration?: "auto" | "software" | "compatible";
 }
 export const DEFAULT_EXPORT: ExportOptions = {
   width: 1280,
@@ -27,36 +28,9 @@ export const DEFAULT_EXPORT: ExportOptions = {
   includeAudio: true,
   burnSubtitles: true,
   format: "webm",
+  acceleration: "auto",
 };
-export const transitionGain = (clip: Clip, time: number) => {
-  const local = time - clip.start;
-  const fadeIn = Number(clip.properties.transitionIn ?? 0);
-  const fadeOut = Number(clip.properties.transitionOut ?? 0);
-  return Math.max(
-    0,
-    Math.min(
-      1,
-      fadeIn > 0 ? local / fadeIn : 1,
-      fadeOut > 0 ? (clip.duration - local) / fadeOut : 1,
-    ),
-  );
-};
-export const audioGain = (clip: Clip, time: number) => {
-  const local = time - clip.start;
-  const fadeIn = Number(clip.properties.fadeIn ?? 0);
-  const fadeOut = Number(clip.properties.fadeOut ?? 0);
-  return Math.max(
-    0,
-    Math.min(
-      1,
-      Number(clip.properties.volume ?? 1),
-      fadeIn > 0 ? local / fadeIn : 1,
-      fadeOut > 0 ? (clip.duration - local) / fadeOut : 1,
-    ),
-  );
-};
-
-export async function exportProject(
+async function exportCompatible(
   project: VideoSplatProject,
   urls: Record<string, string>,
   options: ExportOptions,
@@ -206,10 +180,6 @@ export async function exportProject(
             complete();
             return;
           }
-          context.save();
-          context.fillStyle = project.canvas.background;
-          context.fillRect(0, 0, canvas.width, canvas.height);
-          context.restore();
           for (const [clipId, element] of media) {
             const track = project.tracks.find((item) =>
               item.clips.some((clip) => clip.id === clipId),
@@ -232,87 +202,7 @@ export async function exportProject(
               gain.gain.value = track?.muted ? 0 : audioGain(location, time);
             if (element.paused) element.play().catch(error => { if (!finished) complete(error); });
           }
-          for (const { clip } of activeVisualClips(project, time)) {
-            if (clip.kind === "caption" && options.burnSubtitles === false) continue;
-            const p = clip.properties;
-            context.save();
-            context.globalAlpha =
-              Number(p.opacity ?? 1) * transitionGain(clip, time);
-            if (clip.kind === "caption" && p.subtitleLayout) {
-              drawSubtitle(context, clip, canvas.width, canvas.height);
-              context.restore();
-              continue;
-            }
-            context.filter = `brightness(${Number(p.brightness ?? 1)}) contrast(${Number(p.contrast ?? 1)}) saturate(${Number(p.saturation ?? 1)}) hue-rotate(${Number(p.hue ?? 0)}deg) grayscale(${Number(p.grayscale ?? 0)}) blur(${Number(p.blur ?? 0)}px)`;
-            context.translate(
-              canvas.width / 2 + Number(p.x ?? 0),
-              canvas.height / 2 + Number(p.y ?? 0),
-            );
-            context.rotate((Number(p.rotation ?? 0) * Math.PI) / 180);
-            context.scale(Number(p.scale ?? 1), Number(p.scale ?? 1));
-            if (clip.kind === "text" || clip.kind === "caption") {
-              const text = String(p.text ?? clip.name);
-              const fontSize = Number(p.fontSize ?? 48);
-              context.font = `700 ${fontSize}px system-ui`;
-              context.textAlign = "center";
-              context.textBaseline = "middle";
-              const lines = text.split("\n");
-              const width =
-                Math.max(
-                  ...lines.map((line) => context.measureText(line).width),
-                ) + 32;
-              if (String(p.background ?? "transparent") !== "transparent") {
-                context.fillStyle = String(p.background);
-                context.fillRect(
-                  -width / 2,
-                  (-fontSize * lines.length) / 2 - 12,
-                  width,
-                  fontSize * lines.length + 24,
-                );
-              }
-              context.fillStyle = String(p.color ?? "#ffffff");
-              lines.forEach((line, index) =>
-                context.fillText(
-                  line,
-                  0,
-                  (index - (lines.length - 1) / 2) * fontSize * 1.15,
-                ),
-              );
-            } else {
-              const source = (images.get(clip.id) ?? media.get(clip.id)) as
-                | HTMLImageElement
-                | HTMLVideoElement
-                | undefined;
-              if (source) {
-                const sourceWidth =
-                  source instanceof HTMLVideoElement
-                    ? source.videoWidth
-                    : source.naturalWidth;
-                const sourceHeight =
-                  source instanceof HTMLVideoElement
-                    ? source.videoHeight
-                    : source.naturalHeight;
-                const rect = renderRect(
-                  sourceWidth,
-                  sourceHeight,
-                  canvas.width,
-                  canvas.height,
-                  String(p.fit ?? "fit") as FitMode,
-                );
-                const key = chromaSettings(p);
-                const factor = Math.min(1, Math.max(canvas.width, canvas.height) / Math.max(sourceWidth, sourceHeight));
-                const renderedSource = key.enabled ? renderChroma(source, sourceWidth * factor, sourceHeight * factor, key) : source;
-                context.drawImage(
-                  renderedSource,
-                  rect.x,
-                  rect.y,
-                  rect.width,
-                  rect.height,
-                );
-              }
-            }
-            context.restore();
-          }
+          drawComposition(project, time, canvas, context, new Map([...images, ...media] as [string, VisualSource][]), renderChroma, options);
           onProgress(
             Math.min(1, elapsed / duration) *
               (options.format === "webm" ? 1 : 0.85),
@@ -346,4 +236,22 @@ export async function exportProject(
     stream.getTracks().forEach((track) => track.stop());
     await audioContext?.close().catch(() => {});
   }
+}
+
+export async function exportProject(
+  project: VideoSplatProject, urls: Record<string, string>, options: ExportOptions,
+  onProgress: (ratio: number) => void, signal?: AbortSignal, onStatus: (message: string) => void = () => {},
+): Promise<Blob> {
+  signal?.throwIfAborted();
+  if (options.acceleration !== 'compatible' && options.format !== 'ogm') {
+    try {
+      const { exportFrames } = await import('./frames');
+      return await exportFrames(project, urls, options, onProgress, signal, onStatus);
+    } catch (error) {
+      signal?.throwIfAborted();
+      onProgress(0);
+      onStatus(`Fast export unavailable (${error instanceof Error ? error.message : 'browser limitation'}). Restarting with compatible export.`);
+    }
+  } else onStatus('Compatible export · renders in real time');
+  return exportCompatible(project, urls, options, onProgress, signal);
 }
