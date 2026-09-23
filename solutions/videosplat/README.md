@@ -1,6 +1,6 @@
 # VideoSplat™
 
-Current self-host release: **v3.1.24** — animated processing progress and time estimates. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.24.md)
+Latest packaged release: **v3.1.25**. The September 23 live/source acceleration features below are newer than those ZIPs; build from current source to self-host them. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
 
 
 VideoSplat™ is DrawSplat's private, local-first video editor for the browser. The current milestone
@@ -17,12 +17,9 @@ downloadable WebM copies without overwriting or uploading original footage; see
 
 VideoSplat also imports/exports SRT and WebVTT captions and renders the layered
 timeline—including transforms, titles, effects, transitions, and mixed audio—to a
-local WebM. Export uses browser Canvas, Web Audio, and MediaRecorder without uploads.
-Composition export keeps decoders attached off-screen and mixes every active clip
-through dedicated Web Audio gain nodes on a stable clock and a master peak
-limiter, preventing microphone audio loss, clipping, or stutter. WebM renders
-directly; MP4 and OGM are converted locally through the self-hosted MediaSplat
-engine, with no media uploaded.
+local video file. **Auto** export tries hardware-preferred WebCodecs encoding, then software encoding, and falls back to the compatible Canvas/MediaRecorder path if needed. Supported WebM (VP8/VP9 with Opus) and MP4 (AVC/AAC) can export directly with frame-based processing and mixed audio. Hardware selection is a browser hint, not proof of a particular GPU.
+
+Choose **CPU · software frame encoding** or **Compatible** when needed. Compatible export renders on a playback clock; MP4/OGM conversion uses the local MediaSplat engine when required. OGM always uses this compatible path. No media is uploaded.
 
 The local recorder captures a shared screen, camera, or screen with a camera overlay,
 plus an optional microphone and browser-supported shared tab/system audio. Recordings
@@ -129,7 +126,7 @@ English speech is transcribed locally. First use downloads the selected Whisper 
 
 Rebuilding requires the sibling `solutions/shared/subtitles` source package, included in self-host bundles. See its README for model licensing, privacy, cache behavior, and detailed limits.
 
-Export progress uses an animated purple bar with a percentage and elapsed time. After enough progress is available, it estimates the current stage’s remaining time and total in minutes or hours. WebM renders the timeline in real time; MP4 and OGM show timeline rendering and local conversion as separate stages with separate estimates. Estimates adapt to the measured speed and pause when progress updates stop arriving. Cancel stops rendering or conversion, and you can retry the export.
+Export progress uses an animated purple bar with a percentage and elapsed time. After enough progress is available, it estimates the current stage’s remaining time and total in minutes or hours. Fast export reports processed frames and can run faster than playback. Compatible exports use playback-time rendering and show local conversion as a separate stage when required. Estimates adapt to the measured speed and pause when progress updates stop arriving. Cancel stops rendering or conversion, and you can retry the export.
 
 Choose **English speech model** before generating: Small is the default balance of accuracy and speed, Tiny is fastest, Medium offers a larger accuracy-focused engine, and Large v3 Turbo is an optional advanced choice for capable desktops. Unselected models do not load or run; keeping these choices does not slow down transcription with another model. All run locally. Larger models need more memory and time. Your choice is remembered, and saved progress is separate for each model; choose Tiny to restore transcripts made before model selection was added.
 
@@ -139,3 +136,11 @@ bundled whisper.cpp engine, with no model download or upload. Models may be up t
 2 GB; Medium needs substantial memory and can take much longer than the recording. Smaller or quantized
 models are more suitable for limited devices. Reselect the model after reopening
 to resume saved progress. GGUF/ONNX files are not supported by this option.
+
+## GPU-assisted transcription
+
+**Auto** checks for a usable WebGPU adapter and uses it for English speech recognition when supported. NVIDIA is not required. **CPU · compatibility mode** skips GPU detection; local GGML models also remain CPU-based. If GPU initialization or inference fails, transcription retries the current window on CPU while keeping completed checkpoints.
+
+Backend status shows the selected engine. GPU model variants can require larger downloads and more memory than the CPU sizes listed above; the model picker shows GPU download estimates. CPU fallback may download a separate variant. Media and transcript text stay on your device. Performance depends on the browser, drivers, model, and hardware; GPU availability does not guarantee faster results.
+
+See [local acceleration details](../../docs/media-acceleration.md). MediaSplat's FFmpeg trimming, joining, and subtitle burn-in are unchanged.

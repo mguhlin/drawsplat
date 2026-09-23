@@ -132,3 +132,11 @@ downloading the PDF, and leaving the page stop the shared stream. Closing the
 dialog discards captures. No credentials or page content go to a conversion server.
 Mobile/unsupported browsers can use the print workflow. URLs are opened only;
 they are not fetched by PDFsplat or sent to a third-party conversion service.
+
+## Handwriting and touch signatures
+
+Open a PDF, then choose **Add signature → Draw signature on PDF** or **Draw**. Write directly on the page with a finger, stylus, or mouse; lifting between strokes leaves the pen active. Choose a color and Fine/Medium/Thick width. **Undo stroke** removes the most recent drawing stroke.
+
+On phones, drawing hides the editing panel to give the PDF more room. Touch gestures draw while the pen is active; choose **Done drawing** (or Escape with a keyboard) before scrolling. Use **Save as → PDF** to retain marks in a downloaded copy. Freehand marks stay where you draw them; typed and uploaded signature objects remain movable and resizable.
+
+Browser checks include Chrome, Firefox, iPhone WebKit emulation, touch cancellation, multiple pointers, and saving/reopening ink. Physical phone/tablet testing is still unverified. [September 23 walkthrough](../../blog/touch-signing-media-acceleration.html).

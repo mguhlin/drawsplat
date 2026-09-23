@@ -1,6 +1,6 @@
 # MediaSplat™
 
-Current self-host release: **v3.1.24** — animated processing progress and time estimates. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.24.md)
+Latest packaged release: **v3.1.25**. The September 23 live/source acceleration features below are newer than those ZIPs; build from current source to self-host them. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
 
 
 MediaSplat is a private, browser-based media splitter, trimmer, and joiner. It runs a same-origin FFmpeg WebAssembly build inside the browser; source media is not uploaded.
@@ -119,3 +119,11 @@ bundled whisper.cpp engine, with no model download or upload. Models may be up t
 2 GB; Medium needs substantial memory and can take much longer than the recording. Smaller or quantized
 models are more suitable for limited devices. Reselect the model after reopening
 to resume saved progress. GGUF/ONNX files are not supported by this option.
+
+## GPU-assisted transcription
+
+**Auto** checks for a usable WebGPU adapter and uses it for English speech recognition when supported. NVIDIA is not required. **CPU · compatibility mode** skips GPU detection; local GGML models also remain CPU-based. If GPU initialization or inference fails, transcription retries the current window on CPU while keeping completed checkpoints.
+
+Backend status shows the selected engine. GPU model variants can require larger downloads and more memory than the CPU sizes listed above; the model picker shows GPU download estimates. CPU fallback may download a separate variant. Media and transcript text stay on your device. Performance depends on the browser, drivers, model, and hardware; GPU availability does not guarantee faster results.
+
+See [local acceleration details](../../docs/media-acceleration.md). MediaSplat's FFmpeg trimming, joining, and subtitle burn-in are unchanged.

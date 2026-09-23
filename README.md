@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** v3.1.25, featuring animated export progress and time estimates in MediaSplat and VideoSplat, automatic English subtitles, and refreshed self-host packages; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** live tools updated September 23, 2026 with touch PDF signing, GPU-assisted English captions, and accelerated video export. Latest packaged release: v3.1.25; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -27,9 +27,20 @@ Other docs that pair with setup:
 - [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
 - [`docs/HANDOFF-v3.1.0.md`](docs/HANDOFF-v3.1.0.md) — portable handoff for any AI assistant (Codex, Cursor, etc.) picking up the repo; covers what shipped at v3.1.0 and known gaps.
 
-## Current build
+## Latest live updates — September 23, 2026
 
-**DrawSplatTM v3.1.25 — Current downloads for every package.** All twelve self-host ZIPs are rebuilt from the current source, including the whiteboard’s illustrated menus, learner tools, stamps, video notes, recording recovery, and portable MySQL Save/Open. The applicable packages also include recent PDF scanning/export, image and video green-screen tools, and media recording/export fixes. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.25.md) · [Stable release v3.1.25](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.25).
+- **PDFSplat:** sign and mark PDFs with a finger, stylus, or mouse. Continuous strokes, pen color/width, stroke undo, and a phone writing layout keep signing practical; save the result as a PDF. Website to PDF offers browser printing and private, permission-based capture of visible website sections.
+- **MediaSplat and VideoSplat captions:** Auto checks for a usable WebGPU adapter and falls back to CPU if GPU processing fails. CPU compatibility mode is available. English transcripts and SRT files stay local; model downloads and device limits still apply.
+- **VideoSplat export:** Auto tries hardware-preferred WebCodecs encoding, then software, with the original compatible exporter as fallback. Supported WebM/MP4 exports can process frames faster than playback; speed depends on the device and browser.
+- **Scope:** MediaSplat trimming, joining, and subtitle burn-in still use its existing FFmpeg path. These updates do not require NVIDIA and do not guarantee GPU acceleration on every device.
+
+[Feature walkthrough](blog/touch-signing-media-acceleration.html) · [Dated release notes](docs/release-notes/2026-09-23-tool-updates.md) · [Acceleration details](docs/media-acceleration.md)
+
+These features are live on drawsplat.org and in the current source. The v3.1.25 ZIPs below predate these changes; self-hosters need the current source and fresh builds/bundles for the new features.
+
+## Latest packaged release
+
+**DrawSplatTM v3.1.25 — Current downloads for every package.** All twelve v3.1.25 self-host ZIPs were rebuilt from the September 18 release source, including the whiteboard’s illustrated menus, learner tools, stamps, video notes, recording recovery, and portable MySQL Save/Open. The applicable packages also include recent PDF scanning/export, image and video green-screen tools, and media recording/export fixes. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.25.md) · [Stable release v3.1.25](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.25).
 
 ## Latest whiteboard: portable saving and recording recovery
 
