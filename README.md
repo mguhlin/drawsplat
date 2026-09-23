@@ -29,7 +29,7 @@ Other docs that pair with setup:
 
 ## Latest live updates — September 23, 2026
 
-- **PDFSplat:** sign and mark PDFs with a finger, stylus, or mouse. Continuous strokes, pen color/width, stroke undo, and a phone writing layout keep signing practical; save the result as a PDF. Website to PDF offers browser printing and private, permission-based capture of visible website sections.
+- **PDFSplat:** sign and mark PDFs with a finger, stylus, or mouse. Continuous strokes, pen color/width, stroke undo, and a phone writing layout keep signing practical; save the result as a PDF. Capture to PDF offers private, permission-based capture of visible sections from an open tab or window.
 - **MediaSplat and VideoSplat captions:** Auto checks for a usable WebGPU adapter and falls back to CPU if GPU processing fails. CPU compatibility mode is available. English transcripts and SRT files stay local; model downloads and device limits still apply.
 - **VideoSplat export:** Auto tries hardware-preferred WebCodecs encoding, then software, with the original compatible exporter as fallback. Supported WebM/MP4 exports can process frames faster than playback; speed depends on the device and browser.
 - **Scope:** MediaSplat trimming, joining, and subtitle burn-in still use its existing FFmpeg path. These updates do not require NVIDIA and do not guarantee GPU acceleration on every device.

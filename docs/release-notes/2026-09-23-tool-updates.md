@@ -8,7 +8,7 @@ These updates are live on drawsplat.org and in current source. They are newer th
 - Drawing mode captures touch gestures; leaving it restores scrolling. The phone editing panel hides to give the page more space.
 - Pointer identity and cancellation handling avoid stray marks from interrupted or secondary touches.
 - Corrected drawing proportions on rectangular pages; exported PDF ink retains its position and round stroke ends.
-- Website to PDF supports browser printing and optional desktop tab/window capture. Captures are local image-only pages, limited to 20 at a maximum 2,200-pixel longest edge. Mobile printing remains the alternative.
+- Capture to PDF supports desktop tab/window capture. Captures are local image-only pages, limited to 20 at a maximum 2,200-pixel longest edge. The URL/print workflow has been removed; unsupported browsers show a capture availability message.
 
 ## MediaSplat and VideoSplat
 

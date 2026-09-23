@@ -1,17 +1,15 @@
 const { test, expect } = require('@playwright/test');
 const { PDFDocument } = require('../vendor/pdf-lib.min.js');
 
-test('validates URLs and opens public websites without an opener', async ({ page }) => {
+test('unsupported browsers explain capture availability without a URL or print workflow', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { configurable: true, value: undefined }));
   await page.goto('/solutions/pdfsplat/');
-  await page.getByRole('button', { name: 'Website to PDF', exact: true }).click();
-  await page.evaluate(() => { window.open = (...args) => { window.openArgs = args; }; });
-  await page.locator('#websiteUrl').fill('javascript:alert(1)');
-  await page.getByRole('button', { name: 'Open website to print', exact: true }).click();
-  await expect(page.locator('#websiteStatus')).toContainText('valid HTTP');
-  expect(await page.evaluate(() => window.openArgs)).toBeUndefined();
-  await page.locator('#websiteUrl').fill('example.com/draft');
-  await page.getByRole('button', { name: 'Open website to print', exact: true }).click();
-  expect(await page.evaluate(() => window.openArgs)).toEqual(['https://example.com/draft', '_blank', 'noopener,noreferrer']);
+  await page.getByRole('button', { name: 'Capture to PDF', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Capture an open tab or window', exact: true })).toBeVisible();
+  await expect(page.locator('#websiteShare')).toBeDisabled();
+  await expect(page.locator('#websiteStatus')).toContainText('desktop browser');
+  await expect(page.locator('#websiteUrl')).toHaveCount(0);
+  await expect(page.locator('#websiteDialog')).not.toContainText('Print');
 });
 
 async function fakeSharing(page) {
@@ -69,7 +67,7 @@ test('adds captures into editor and clears the closed session', async ({ page })
   await expect(page.locator('#websitePages li')).toHaveCount(0);
 });
 
-test('canceling sharing leaves a usable retry and print fallback', async ({ page }) => {
+test('canceling sharing leaves a usable retry', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { value: async () => { throw new DOMException('Denied', 'NotAllowedError'); } }));
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#websiteButton').click();

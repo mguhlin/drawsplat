@@ -1,4 +1,4 @@
-import { setupWebsitePdf } from "./website-to-pdf.js";
+import { setupWebsitePdf } from "./website-to-pdf.js?v=20260923-capture-only";
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
 import { createEpub } from "./epub-export.js?v=20260914-formatting";

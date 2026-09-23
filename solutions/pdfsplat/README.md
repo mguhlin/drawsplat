@@ -114,24 +114,13 @@ npx playwright test -c solutions/pdfsplat/playwright.config.js
 
 The browser suite verifies open/edit/reorder/rotate/export/reopen, PDF merging, range separation into ZIP, accessibility auditing and semantic HTML export, and CipherSplat™ protect/unlock round trips.
 
-## Website to PDF
+## Capture an open tab or window
 
-Choose **Website to PDF** to open an HTTP(S) URL in a new tab. Use that tab's
-Print → Save as PDF command for the full page, then open the saved PDF here.
-Sign in on the source site or open an unpublished preview before printing.
-The source website controls its print layout; browser isolation prevents this
-static app from automatically fetching or printing arbitrary sites.
+Choose **Capture to PDF**, then **Choose tab or window** in a desktop browser that supports screen sharing. Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text becomes an image without OCR.
 
-On desktop browsers supporting screen sharing, **Choose tab or window** lets you
-explicitly share an already-open page, including authenticated or unpublished
-content. Capture the visible area, scroll the source, and capture additional
-sections. Review/remove captures, download a PDF, or append it to the editor.
-These are image-only pages (no OCR), limited to 20 captures with a 2,200-pixel
-longest edge. No audio is requested. Stop sharing, closing the dialog, adding or
-downloading the PDF, and leaving the page stop the shared stream. Closing the
-dialog discards captures. No credentials or page content go to a conversion server.
-Mobile/unsupported browsers can use the print workflow. URLs are opened only;
-they are not fetched by PDFsplat or sent to a third-party conversion service.
+Review/remove captures, download a PDF, or append it to the editor. Each capture becomes one PDF page, with a limit of 20 captures and a 2,200-pixel longest edge. No audio is requested. Stop sharing, closing the dialog, adding or downloading the PDF, and leaving the page stop the shared stream. Closing the dialog discards captures.
+
+Captures stay on your device. PDFSplat does not automatically scroll the source page or fetch websites. Unsupported browsers show an availability message and disable sharing; PDF editing and touch signing remain available independently.
 
 ## Handwriting and touch signatures
 

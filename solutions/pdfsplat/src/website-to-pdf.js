@@ -1,12 +1,3 @@
-export function websiteUrl(value) {
-  const input = value.trim();
-  const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(input) ? input : `https://${input}`);
-  if (!['http:', 'https:'].includes(url.protocol) || !url.hostname || url.username || url.password) {
-    throw new Error('Enter an HTTP or HTTPS website URL without embedded login credentials.');
-  }
-  return url.href;
-}
-
 export function setupWebsitePdf({ addPdf }) {
   const $ = id => document.getElementById(id);
   const dialog = $('websiteDialog'), video = $('websiteVideo'), pages = [];
@@ -47,7 +38,7 @@ export function setupWebsitePdf({ addPdf }) {
   for (const id of ['websiteButton', 'websiteStartButton']) $(id).onclick = () => {
     dialog.showModal();
     update();
-    message(navigator.mediaDevices?.getDisplayMedia ? '' : 'Screen sharing is unavailable in this browser. Use the full-page Print → Save as PDF workflow above.');
+    message(navigator.mediaDevices?.getDisplayMedia ? '' : 'Tab or window capture is unavailable in this browser. Open PDFSplat in a desktop browser that supports screen sharing.');
   };
   $('websiteClose').onclick = () => dialog.close();
   dialog.addEventListener('cancel', event => { if (busy) event.preventDefault(); });
@@ -57,15 +48,6 @@ export function setupWebsitePdf({ addPdf }) {
     render();
   });
   window.addEventListener('pagehide', stop);
-  $('websiteForm').onsubmit = event => {
-    event.preventDefault();
-    try {
-      const url = websiteUrl($('websiteUrl').value);
-      window.open(url, '_blank', 'noopener,noreferrer');
-      message('In the website tab, choose Print → Save as PDF. If no tab opened, allow pop-ups for PDFsplat and try again.');
-    } catch { message('Enter a valid HTTP or HTTPS URL, such as https://example.com, without embedded login credentials.'); }
-  };
-  $('websiteImport').onclick = () => { dialog.close(); $('fileInput').click(); };
   $('websiteStop').onclick = () => { stop(); message('Sharing stopped. Your captured pages are still available.'); };
   $('websiteShare').onclick = async () => {
     const ticket = ++request;
@@ -83,7 +65,7 @@ export function setupWebsitePdf({ addPdf }) {
     } catch (error) {
       if (ticket !== request) return;
       stop();
-      message(error.name === 'NotAllowedError' ? 'Sharing was canceled or denied. Try again, or use Print → Save as PDF.' : 'Could not share this screen. Try a desktop browser, or use Print → Save as PDF.');
+      message(error.name === 'NotAllowedError' ? 'Sharing was canceled or denied. Choose tab or window to try again.' : 'Could not share this screen. Try a desktop browser that supports screen sharing.');
     } finally { if (ticket === request) update(); }
   };
   $('websiteCapture').onclick = async () => {

@@ -33,7 +33,7 @@
         <option value="epub">EPUB (.epub)</option>
         <option value="json">JSON (.json)</option>
       </select>
-      <button id="websiteButton" type="button">Website to PDF</button>
+      <button id="websiteButton" type="button">Capture to PDF</button>
       <button id="scanButton" type="button">Scan to PDF</button>
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
       <button id="mergeButton" type="button" disabled>Add PDF</button>
@@ -64,7 +64,7 @@
           <img class="drop-logo" src="./pdfsplat.png" alt="PDFsplat logo">
           <h1>Open a PDF. Keep it private.</h1>
           <p>Drop a PDF here or choose a file. Processing happens on this device.</p>
-          <button id="websiteStartButton" type="button">Website or browser window to PDF</button>
+          <button id="websiteStartButton" type="button">Capture an open tab or window</button>
           <button id="scanStartButton" type="button">Scan paper or photos</button>
           <button id="chooseButton" class="primary" type="button">Choose PDF</button>
           <section class="quick-start" aria-labelledby="quickStartTitle">
@@ -344,18 +344,9 @@
 
 
   <dialog id="websiteDialog" aria-labelledby="websiteTitle" class="scan-dialog">
-    <div class="scan-heading"><h2 id="websiteTitle">Website to PDF</h2><button id="websiteClose" type="button">Close</button></div>
-    <h3>Full page from a URL</h3>
-    <p>Open a website, then use its browser menu → Print → Save as PDF (Ctrl+P or ⌘P). Sign in on that website if needed. For unpublished work, open its preview first. Return here to edit the saved PDF.</p>
-    <form id="websiteForm">
-      <label class="dialog-field">Website URL <input id="websiteUrl" type="text" inputmode="url" placeholder="https://example.com" required autocomplete="off" spellcheck="false"></label>
-      <button type="submit">Open website to print</button>
-      <button id="websiteImport" type="button">Open saved PDF in editor</button>
-    </form>
-    <p class="tool-hint">The website controls its print layout. PDFsplat cannot automatically read or print other sites from a URL.</p>
-    <h3>Capture an open tab or window</h3>
+    <div class="scan-heading"><h2 id="websiteTitle">Capture an open tab or window</h2><button id="websiteClose" type="button">Close</button></div>
     <p>Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text becomes an image without OCR.</p>
-    <p class="tool-hint">Choose only the content you want in your PDF. Captures stay on this device. Desktop screen sharing is required; on unsupported browsers, use Print → Save as PDF above.</p>
+    <p class="tool-hint">Choose only the content you want in your PDF. Captures stay on this device. Requires a desktop browser that supports tab or window sharing.</p>
     <div class="scan-actions"><button id="websiteShare" type="button">Choose tab or window</button><button id="websiteStop" type="button" disabled>Stop sharing</button><button id="websiteCapture" type="button" disabled>Capture visible page</button></div>
     <video id="websiteVideo" muted playsinline aria-label="Shared page preview" hidden style="max-width:100%;max-height:240px"></video>
     <p id="websiteStatus" role="status" aria-live="polite"></p>
@@ -396,7 +387,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script type="module" src="./src/app.js?v=20260923-touch-ink"></script>
+  <script type="module" src="./src/app.js?v=20260923-capture-only"></script>
   <script type="module" src="../../assets/js/tool-launcher.js?v=2"></script>
   <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>
