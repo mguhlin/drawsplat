@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=20260914-save-as">
+  <link rel="stylesheet" href="./css/app.css?v=20260923-touch-ink">
   <link rel="stylesheet" href="./css/branding.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -78,6 +78,13 @@
             <p>Your work stays in this browser. Save a copy before closing the tab.</p>
           </section>
         </div>
+      </div>
+      <div id="inkTools" class="ink-tools" aria-label="Pen controls" hidden>
+        <span>Write on the PDF with your finger, stylus, or mouse.</span>
+        <label>Pen color <input id="inkColor" type="color" value="#172033"></label>
+        <label>Pen width <select id="inkWidth"><option value="1">Fine</option><option value="2" selected>Medium</option><option value="4">Thick</option></select></label>
+        <button id="inkUndo" type="button">Undo stroke</button>
+        <button id="inkDone" type="button" class="primary">Done drawing</button>
       </div>
       <div id="documentView" class="document-view" hidden>
         <div id="pageShell" class="page-shell">
@@ -205,7 +212,8 @@
   <dialog id="signatureDialog">
     <form id="signatureForm">
       <h2>Add signature</h2>
-      <p>Add a typed signature or place a PNG/JPEG signature image. It remains movable and resizable until export.</p>
+      <button id="signatureDraw" type="button" class="primary">Draw signature on PDF</button>
+      <p>Draw directly on the page with your finger, stylus, or mouse. Or add a typed signature or place a PNG/JPEG signature image. It remains movable and resizable until export.</p>
       <label class="dialog-field">Typed signature <input id="signatureText" type="text" maxlength="200" placeholder="Your name"></label>
       <div class="dialog-actions"><button id="signatureUpload" type="button">Use signature image</button><button id="signatureCancel" type="button">Cancel</button><button class="primary" type="submit">Add typed signature</button></div>
     </form>
@@ -388,7 +396,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script type="module" src="./src/app.js?v=20260922-website"></script>
+  <script type="module" src="./src/app.js?v=20260923-touch-ink"></script>
   <script type="module" src="../../assets/js/tool-launcher.js?v=2"></script>
   <script src="../../assets/js/pdf-language-loader.js"></script>
 </body>

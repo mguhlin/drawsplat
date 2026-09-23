@@ -78,3 +78,17 @@ body{position:fixed;inset:0}
 .image-object{resize:none;overflow:visible;min-width:0;min-height:0}.image-object>img{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}.image-resize-handle{width:26px;height:26px;min-height:26px;right:auto;bottom:auto;border-radius:50%}.image-resize-handle.nw{left:0;top:0;cursor:nwse-resize}.image-resize-handle.ne{right:0;top:0;cursor:nesw-resize}.image-resize-handle.se{right:0;bottom:0;cursor:nwse-resize}.image-resize-handle.sw{left:0;bottom:0;cursor:nesw-resize}
 
 @media(max-width:800px){.save-as-select{width:145px}}
+
+/* Touch ink captures gestures only while the pen is active. */
+.annotation-layer.drawing{touch-action:none;user-select:none;-webkit-user-select:none}
+.ink-tools{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px;background:var(--panel,#fff);color:var(--text,#172033);border-bottom:1px solid #cbd5e1}
+.ink-tools[hidden]{display:none}
+.ink-tools span{flex:1 1 200px}
+.ink-tools label{display:flex;align-items:center;gap:6px}
+.ink-tools button,.ink-tools select,.ink-tools input{min-height:44px}
+
+.stage{display:flex;flex-direction:column}
+.document-view{min-height:0;flex:1}
+.ink-tools{flex-shrink:0}
+
+@media(max-width:800px){body.inking .tools{display:none}body.inking .workspace{grid-template-rows:minmax(0,1fr)}.ink-tools span{flex-basis:100%;font-size:13px}.ink-tools{gap:6px;padding:8px}.ink-tools label{font-size:13px}.ink-tools button{padding:.45rem .6rem}}

@@ -10,6 +10,7 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Rotate, duplicate, delete, and extract pages.
 - Separate page ranges or create one PDF per page in a ZIP.
 - Add movable/resizable text, highlights, PNG/JPEG images, and freehand drawing.
+- Sign directly on the PDF with a finger, stylus, or mouse: choose **Add signature → Draw signature on PDF** (or **Draw**), write multiple strokes, then choose **Done drawing** to resume scrolling. Pen color, width, and stroke undo are available; Save as PDF retains the ink locally.
 - Add typed or uploaded signatures, headers, footers, and dynamic page numbers.
 - Crop selected pages and apply manual fine rotation to straighten scans.
 - Reverse page order, insert blank pages, and detect/remove visually blank pages with undo support.

@@ -70,6 +70,7 @@ function mutate(label, fn) {
 }
 function syncHistory() {
   els.undoButton.disabled = !state.history.length;
+  $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
   els.redoButton.disabled = !state.future.length;
 }
 function restore(value) {
@@ -92,8 +93,13 @@ function syncPageNavigation() {
   els.previousPageButton.disabled = !count || state.current <= 0;
   els.nextPageButton.disabled = !count || state.current >= count - 1;
 }
+let cancelInk = null;
 function setMode(mode) {
+  cancelInk?.();
+  $("inkTools").hidden = mode !== "draw";
+  $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
   state.mode = mode;
+  document.body.classList.toggle("inking", mode === "draw");
   els.annotationLayer.classList.toggle("drawing", mode === "draw");
   els.annotationLayer.classList.toggle("masking", mode === "mask");
   els.annotationLayer.classList.toggle("editing-text", mode === "edit-text");
@@ -182,6 +188,7 @@ async function renderAll() {
   await Promise.all([renderCurrent(), renderThumbnails()]);
 }
 async function renderCurrent() {
+  cancelInk?.();
   const token = ++state.renderToken,
     item = currentPage();
   if (!item) return;
@@ -639,8 +646,9 @@ function renderAnnotations() {
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
         path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
       svg.classList.add("drawing-object");
-      svg.setAttribute("viewBox", "0 0 1000 1000");
-      path.setAttribute("points", object.points.map(([x, y]) => `${x * 1000},${y * 1000}`).join(" "));
+      const aspect = els.annotationLayer.clientHeight / els.annotationLayer.clientWidth;
+      svg.setAttribute("viewBox", `0 0 1000 ${1000 * aspect}`);
+      path.setAttribute("points", object.points.map(([x, y]) => `${x * 1000},${y * 1000 * aspect}`).join(" "));
       path.setAttribute("fill", "none");
       path.setAttribute("stroke", object.color);
       path.setAttribute("stroke-width", String(object.width * 1000));
@@ -1023,37 +1031,56 @@ function objectKeydown(event, o) {
   renderAnnotations();
 }
 function startDrawing(event) {
-  if (state.mode !== "draw" || event.button !== 0) return;
+  if (state.mode !== "draw" || event.button !== 0 || event.isPrimary === false || cancelInk) return;
   event.preventDefault();
-  const before = snapshot(),
-    rect = els.annotationLayer.getBoundingClientRect(),
-    drawing = {
-      id: uid(),
-      type: "drawing",
-      points: [],
-      color: "#d92d20",
-      width: 0.006,
-      opacity: 1,
-    };
-  currentPage().annotations.push(drawing);
-  els.annotationLayer.setPointerCapture(event.pointerId);
+  const target = currentPage(), before = snapshot();
+  const layer = els.annotationLayer, rect = layer.getBoundingClientRect();
+  const drawing = {
+    id: uid(), type: "drawing", points: [],
+    color: $("inkColor").value,
+    width: Number($("inkWidth").value) * state.renderScale / rect.width,
+    opacity: 1,
+  };
+  target.annotations.push(drawing);
   const add = (e) => {
-      drawing.points.push([Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)), Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))]);
-      renderAnnotations();
-    },
-    move = (e) => add(e),
-    up = () => {
-      els.annotationLayer.removeEventListener("pointermove", move);
-      if (drawing.points.length < 2) currentPage().annotations = currentPage().annotations.filter((o) => o.id !== drawing.id);
-      commit(before, "Draw");
-      setMode("select");
-      renderAnnotations();
-      announce("Drawing added.");
-    };
+    drawing.points.push([Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)), Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))]);
+  };
   add(event);
-  els.annotationLayer.addEventListener("pointermove", move);
-  els.annotationLayer.addEventListener("pointerup", up, { once: true });
+  // A tiny segment makes a tap visible as a round dot, both on screen and in PDF.
+  drawing.points.push([drawing.points[0][0] + 0.000001, drawing.points[0][1]]);
+  renderAnnotations();
+  const path = layer.lastElementChild.querySelector("polyline");
+  const paint = () => path.setAttribute("points", drawing.points.map(([x, y]) => `${x * 1000},${y * 1000 * rect.height / rect.width}`).join(" "));
+  const move = (e) => {
+    if (e.pointerId !== event.pointerId) return;
+    e.preventDefault();
+    const samples = e.getCoalescedEvents?.();
+    for (const sample of samples?.length ? samples : [e]) add(sample);
+    paint();
+  };
+  const finish = (keep) => {
+    cancelInk = null;
+    layer.removeEventListener("pointermove", move);
+    layer.removeEventListener("pointerup", up);
+    layer.removeEventListener("pointercancel", cancel);
+    layer.removeEventListener("lostpointercapture", cancel);
+    if (layer.hasPointerCapture(event.pointerId)) layer.releasePointerCapture(event.pointerId);
+    if (keep) {
+      commit(before, "Draw");
+      announce("Stroke added. Keep drawing, or choose Done drawing to scroll.");
+    } else target.annotations = target.annotations.filter(o => o !== drawing);
+    renderAnnotations();
+  };
+  const up = (e) => { if (e.pointerId === event.pointerId) { add(e); finish(true); } };
+  const cancel = (e) => { if (e.pointerId === event.pointerId) finish(false); };
+  cancelInk = () => finish(false);
+  layer.addEventListener("pointermove", move);
+  layer.addEventListener("pointerup", up);
+  layer.addEventListener("pointercancel", cancel);
+  layer.addEventListener("lostpointercapture", cancel);
+  layer.setPointerCapture(event.pointerId);
 }
+window.addEventListener("blur", () => cancelInk?.());
 function startMask(event) {
   if (state.mode !== "mask" || event.button !== 0) return;
   event.preventDefault();
@@ -1170,6 +1197,7 @@ async function buildPdf(items) {
             start: { x: x1 * width, y: height - y1 * height },
             end: { x: x2 * width, y: height - y2 * height },
             thickness: Math.max(1, o.width * width),
+            lineCap: globalThis.PDFLib.LineCapStyle.Round,
             color: hexColor(o.color),
             opacity: o.opacity ?? 1,
           });
@@ -1497,6 +1525,7 @@ async function runVault(event) {
   }
 }
 function undo() {
+  cancelInk?.();
   const c = state.history.pop();
   if (!c) return;
   state.future.push(c);
@@ -1505,6 +1534,7 @@ function undo() {
   announce(`Undid ${c.label}.`);
 }
 function redo() {
+  cancelInk?.();
   const c = state.future.pop();
   if (!c) return;
   state.history.push(c);
@@ -1573,7 +1603,14 @@ els.addTextButton.onclick = addText;
 els.highlightButton.onclick = addHighlight;
 els.drawButton.onclick = () => {
   setMode(state.mode === "draw" ? "select" : "draw");
-  announce(state.mode === "draw" ? "Draw on the page. Release to finish." : "Drawing cancelled.");
+  announce(state.mode === "draw" ? "Write with your finger, stylus, or mouse. Choose Done drawing to scroll." : "Drawing cancelled.");
+};
+$("inkDone").onclick = () => setMode("select");
+$("inkUndo").onclick = () => { if (state.history.at(-1)?.label === "Draw") undo(); setMode("draw"); };
+$("signatureDraw").onclick = () => {
+  els.signatureDialog.close();
+  setMode("draw");
+  announce("Write your signature directly on the PDF, then choose Done drawing.");
 };
 els.addImageButton.onclick = () => els.imageInput.click();
 els.imageInput.onchange = (e) => addImage(e.target.files[0]);
