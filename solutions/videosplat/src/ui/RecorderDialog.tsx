@@ -1,3 +1,4 @@
+import { recordingWarning } from "../media/recording-integrity";
 import { ChromaControls } from "./ChromaControls";
 import { defaultChroma } from "../render/chroma";
 import { RecordingAudioMeter } from "./RecordingAudioMeter";
@@ -64,6 +65,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   const [elapsed, setElapsed] = useState(0);
   const [state, setState] = useState<"setup" | "recording" | "paused" | "saving" | "review" | "cropping">("setup");
   const [error, setError] = useState<string>();
+  const [adding, setAdding] = useState(false);
   const [recording, setRecording] = useState<File>();
   const [recordingUrl, setRecordingUrl] = useState("");
   const [crop, setCrop] = useState<CropRect>({ x: 0, y: 0, width: 1, height: 1 });
@@ -175,7 +177,10 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     stopping.current = true;
     setState("saving");
     try {
-      const blob = await session.current.stop();
+      const active = session.current;
+      const blob = await active.stop();
+      const warning = await recordingWarning(blob, active.durationSeconds ?? elapsed).catch(() => "The saved recording could not be verified. Download the original recording before closing this window.");
+      if (warning) setError(warning);
       const stamp = new Date().toISOString().replace(/[:.]/g, "-");
       const file = new File([blob], `VideoSplat-recording-${stamp}.webm`, { type: blob.type });
       const url = URL.createObjectURL(file);
@@ -251,14 +256,19 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
   };
 
   const addRecording = async (file: File, message: string) => {
+    if (adding) return;
+    setAdding(true);
+    setError(undefined);
     reviewVideo.current?.pause();
     try {
       await onAdd(file, generateSubtitles);
       onStatus(message);
       onClose();
     } catch (reason) {
-      setError(captureErrorMessage(reason));
+      setError(`${captureErrorMessage(reason)} Download the original recording below to keep a copy.`);
       setState("review");
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -343,10 +353,12 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       </div>
       {state === "review" && <label><input type="checkbox" checked={generateSubtitles} onChange={event => setGenerateSubtitles(event.target.checked)}/> Generate subtitles when adding this recording (English)</label>}
       {state === "review" && <div className="recorder-actions">
-        <button className="primary" onClick={applyCrop}>Crop and add to timeline</button>
-        <button onClick={() => addRecording(recording, "Full recording saved locally and added to the timeline")}>Use full recording</button>
+        <button className="primary" disabled={adding} onClick={applyCrop}>Crop and add to timeline</button>
+        <button disabled={adding} onClick={() => addRecording(recording, "Full recording saved locally and added to the timeline")}>Use full recording</button>
         <button className="danger" onClick={close}>Discard</button>
       </div>}
+      <p><a href={recordingUrl} download={recording.name}>Download original recording</a> · {(recording.size / 1024 / 1024).toFixed(1)} MB</p>
+      {adding && <p role="status">Adding recording to the timeline… You can download the original while this finishes.</p>}
       {state === "cropping" && <><progress max="1" value={cropProgress} /><p role="status">Cropping locally… {Math.round(cropProgress * 100)}%</p></>}
     </div>}
     {error && <p className="recorder-error" role="alert">{error}</p>}

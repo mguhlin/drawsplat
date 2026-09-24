@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cropPixels } from "./crop";
+import { cropRecording, cropPixels } from "./crop";
 
 describe("recording crop geometry", () => {
   it("converts a normalized visual selection to source pixels", () => {
@@ -19,4 +19,9 @@ describe("recording crop geometry", () => {
       height: 50,
     });
   });
+});
+
+it("preserves original bytes for full-frame recordings without a second encoder", async () => {
+  const file = new File(["original twenty-minute recording"], "recording.webm", { type: "video/webm" });
+  expect(await cropRecording(file, { x: 0, y: 0, width: 1, height: 1 }, () => {})).toBe(file);
 });

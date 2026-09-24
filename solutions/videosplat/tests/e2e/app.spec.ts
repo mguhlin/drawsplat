@@ -73,7 +73,7 @@ test("loads the local-first editor without external requests", async ({
   await expect(
     page.getByRole("heading", { name: "VideoSplat™" }),
   ).toBeVisible();
-  await expect(page.locator(".splash-version")).toHaveText("v1");
+  await expect(page.locator(".splash-version")).toHaveText("v1.1");
   await expect(page.getByText("Getting ready to record")).toBeHidden();
   await expect(page.getByLabel("What would you like to do?").getByRole("button", { name: "Record video" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Edit video" })).toBeVisible();
@@ -742,4 +742,23 @@ test("recovers encoded duration when browser metadata and seeking cannot", async
   await expect(page.locator(".timeline-clip.video")).toHaveCount(1);
   // ffprobe reports 51.109609 seconds for this checked-in fixture.
   expect(Number(await page.getByLabel("Clip duration").inputValue())).toBeCloseTo(51.11, 1);
+});
+
+test("does not shorten a recording when browser metadata reports a finite fragment duration", async ({ page }) => {
+  await page.addInitScript(() => {
+    const duration = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "duration")!;
+    Object.defineProperty(HTMLMediaElement.prototype, "duration", { configurable: true, get() {
+      return !this.isConnected && this.src.startsWith("blob:") ? 0.05 : duration.get!.call(this);
+    } });
+  });
+  await page.goto("./");
+  const video = await readFile("tests/fixtures/tone.webm");
+  await page.locator('input[accept="video/*,audio/*,image/*"]').setInputFiles({ name: "recording.webm", mimeType: "video/webm", buffer: video });
+  await expect(page.locator('.timeline-clip.video')).toHaveCount(1);
+  expect(Number(await page.getByLabel("Clip duration", { exact: true }).inputValue())).toBeGreaterThan(1.7);
+  await page.getByRole('menuitem', { name: 'File', exact: true }).click();
+  const download = page.waitForEvent('download');
+  await page.getByRole('menuitem', { name: 'Download original media' }).click();
+  const path = await (await download).path();
+  expect(await readFile(path!)).toEqual(video);
 });

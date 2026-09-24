@@ -67,6 +67,9 @@ for (const delayedPreview of [false, true]) for (const includeAudio of [true, fa
     await expect(page.getByRole("alert")).toContainText("Temporary import failure");
     await expect(page.getByRole("button", { name: "Use full recording" })).toBeVisible();
     await expect(page.locator(".timeline-clip.video")).toHaveCount(0);
+    const download = page.waitForEvent("download");
+    await page.getByRole("link", { name: "Download original recording" }).click();
+    expect(await (await download).failure()).toBeNull();
   }
   await page.getByRole("button", { name: "Use full recording" }).click();
   await expect(page.locator(".timeline-clip.video")).toHaveCount(1);

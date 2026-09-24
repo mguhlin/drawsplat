@@ -1,12 +1,22 @@
 import type { Asset } from "../domain/project";
 
 const SUPPORTED = /^(video|audio|image)\//;
-// Web Crypto hashes whole buffers; cap imports until the worker/chunked hashing path lands.
+// Audio and image processing still require full-file decoding.
 const MAX_IMPORT_BYTES = 512 * 1024 * 1024;
 
 export interface ImportedMedia { asset: Asset; blob: Blob }
 
 export async function hashBlob(blob: Blob): Promise<string> {
+  // Bound hashing memory even for long recordings. Keep SHA-256 compatible
+  // with saved project hashes so relinking existing media continues to work.
+  if (blob.size > 8 * 1024 * 1024) {
+    const { createSHA256 } = await import("hash-wasm");
+    const hash = await createSHA256();
+    for (let offset = 0; offset < blob.size; offset += 4 * 1024 * 1024) {
+      hash.update(new Uint8Array(await blob.slice(offset, offset + 4 * 1024 * 1024).arrayBuffer()));
+    }
+    return hash.digest();
+  }
   const digest = await crypto.subtle.digest("SHA-256", await blob.arrayBuffer());
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
@@ -21,7 +31,9 @@ function loadElement(element: HTMLMediaElement, url: string): Promise<void> {
 }
 
 async function recoverMediaDuration(element: HTMLMediaElement, file: File): Promise<number | undefined> {
-  if (Number.isFinite(element.duration) && element.duration > 0)
+  // WebM metadata may describe only the first fragment, even when finite.
+  // Probe encoded packets before trusting it for a recording's timeline length.
+  if (!file.type.includes("webm") && Number.isFinite(element.duration) && element.duration > 0)
     return element.duration;
   // Read encoded timestamps without decoding or trusting a speculative seek.
   // MediaRecorder WebM often has no duration header, especially across browsers.
@@ -107,7 +119,7 @@ async function audioWaveform(file: File): Promise<number[] | undefined> {
 
 export async function importMedia(file: File): Promise<ImportedMedia> {
   if (!SUPPORTED.test(file.type)) throw new Error(`${file.name} is not a supported video, audio, or image file.`);
-  if (file.size > MAX_IMPORT_BYTES) throw new Error(`${file.name} is larger than the current 512 MB import limit.`);
+  if (!file.type.startsWith("video/") && file.size > MAX_IMPORT_BYTES) throw new Error(`${file.name} is larger than the current 512 MB import limit.`);
   const kind = file.type.split("/")[0] as Asset["kind"];
   const id = crypto.randomUUID(); const url = URL.createObjectURL(file);
   try {

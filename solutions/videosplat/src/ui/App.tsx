@@ -1130,6 +1130,14 @@ export function App() {
               <button role="menuitem" onClick={() => menuAction(() => { downloadProject(project); setStatus("Project copy downloaded"); })}>Save project copy</button>
               <hr />
               <button role="menuitem" disabled={importing} onClick={() => menuAction(() => mediaInput.current?.click())}>{importing ? "Importing…" : "Import media…"}</button>
+              <button role="menuitem" disabled={!selectedAsset || !mediaUrls[selectedAsset.id]} onClick={() => menuAction(() => {
+                if (!selectedAsset || !mediaUrls[selectedAsset.id]) return;
+                const link = document.createElement("a");
+                link.href = mediaUrls[selectedAsset.id];
+                link.download = selectedAsset.name;
+                link.click();
+                setStatus("Original media downloaded without timeline edits");
+              })}>Download original media</button>
               <button role="menuitem" onClick={() => menuAction(() => setDialog("optimizer"))}>Optimize video…</button>
               <button role="menuitem" onClick={() => menuAction(() => {
                 const clip = selectedLocation?.clip;
@@ -2565,7 +2573,7 @@ export function App() {
             {dialog === "limits" && <>
               <h2 id="dialog-title">VideoSplat limits &amp; export time</h2>
               <ul className="limits-list">
-                <li><strong>Import:</strong> 512 MB per file, including recordings added to the timeline.</li>
+                <li><strong>Import:</strong> Video imports and recordings have no fixed file-size cap; available browser storage and memory still apply. Audio and image imports are limited to 512 MB.</li>
                 <li><strong>Automatic captions:</strong> up to 120 minutes (2 hours) per selected clip, with a source file no larger than 512 MB. English speech and browser-decodable audio are required.</li>
                 <li><strong>Speech models:</strong> choose Whisper Small (default), Tiny for speed, Medium for accuracy-focused work, optional Large v3 Turbo for capable desktops, or a local Whisper GGML .bin model from your device. Larger models need more memory and time. Progress is saved locally for each model; partial SRT downloads are available.</li>
                 <li><strong>Longer caption jobs:</strong> split the timeline clip into sections of 120 minutes or less and generate captions for each section. Trimming a timeline clip does not reduce its source file size.</li>

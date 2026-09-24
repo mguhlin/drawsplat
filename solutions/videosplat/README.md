@@ -56,7 +56,7 @@ These limits are also available under **About → Video size & length limits**.
 
 | Operation | Current limit or behavior |
 | --- | --- |
-| Import media or add a recording to the timeline | 512 MB per file. |
+| Import media or add a recording to the timeline | Videos and recordings have no fixed file-size cap; browser storage and memory apply. Audio and images: 512 MB per file. |
 | Generate automatic captions | Up to 120 minutes (2 hours) per selected clip; the source file must also be no larger than 512 MB. English speech and browser-decodable audio are required. |
 | Record, edit a timeline, or export | No fixed duration cap. Available browser memory and storage determine practical limits; large or long videos can still fail. |
 | Export resolution | A warning appears above the pixel count of 4K (3840 × 2160); this is a memory warning, not a hard resolution cap. |
@@ -144,3 +144,9 @@ to resume saved progress. GGUF/ONNX files are not supported by this option.
 Backend status shows the selected engine. GPU model variants can require larger downloads and more memory than the CPU sizes listed above; the model picker shows GPU download estimates. CPU fallback may download a separate variant. Media and transcript text stay on your device. Performance depends on the browser, drivers, model, and hardware; GPU availability does not guarantee faster results.
 
 See [local acceleration details](../../docs/media-acceleration.md). MediaSplat's FFmpeg trimming, joining, and subtitle burn-in are unchanged.
+
+Recording review includes **Download original recording**, available before adding to the timeline and after an import or storage failure. Save this copy before closing the recorder. Large videos are hashed in small chunks without allocating a whole-file buffer.
+
+The September 24 recording follow-up checks encoded WebM duration even when browser metadata reports a finite value, and warns in review when saved video is substantially shorter than active capture time. See [findings and validation limits](docs/RECORDING_FOLLOWUP_2026-09-24.md). Existing timeline clips are not automatically extended because they may have been intentionally trimmed.
+
+To recover the source from an existing project, select its item in **Media**, then choose **File → Download original media**. This saves the stored source bytes without applying the timeline’s trim or duration.

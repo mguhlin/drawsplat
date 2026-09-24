@@ -30,6 +30,7 @@ export interface CaptureSession {
   cancel(): void;
   readonly state: RecordingState;
   readonly startedAt: number;
+  readonly durationSeconds?: number;
 }
 
 type RecordingState = "recording" | "paused" | "stopped";
@@ -368,20 +369,28 @@ export async function startCapture(
     onCountdown?.(undefined);
     recorder.start(1000);
     const startedAt = Date.now();
+    let pausedAt: number | undefined;
+    let pausedMs = 0;
+    let stoppedAt: number | undefined;
+    recorder.addEventListener("stop", () => { stoppedAt ??= Date.now(); }, { once: true });
 
     return {
       previewStream: output,
       startedAt,
+      get durationSeconds() {
+        return Math.max(0, ((Math.min(stoppedAt ?? Date.now(), pausedAt ?? Date.now())) - startedAt - pausedMs) / 1000);
+      },
       get state() {
         return recorder.state === "inactive" ? "stopped" : recorder.state;
       },
       pause() {
-        if (recorder.state === "recording") recorder.pause();
+        if (recorder.state === "recording") { recorder.pause(); pausedAt = Date.now(); }
       },
       resume() {
-        if (recorder.state === "paused") recorder.resume();
+        if (recorder.state === "paused") { recorder.resume(); pausedMs += Date.now() - (pausedAt ?? Date.now()); pausedAt = undefined; }
       },
       async stop() {
+        stoppedAt ??= pausedAt ?? Date.now();
         if (recorder.state !== "inactive") recorder.stop();
         try {
           const blob = await result;

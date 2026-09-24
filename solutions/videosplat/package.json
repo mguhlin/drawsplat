@@ -17,6 +17,7 @@
     "@mediapipe/tasks-vision": "^1.0.1",
     "@splat/local-subtitles": "file:../shared/subtitles",
     "@vitejs/plugin-react": "latest",
+    "hash-wasm": "4.12.0",
     "mediabunny": "1.56.2",
     "react": "latest",
     "react-dom": "latest",

@@ -34,6 +34,10 @@ export async function cropRecording(
   signal?: AbortSignal,
 ): Promise<Blob> {
   signal?.throwIfAborted();
+  if (rect.x === 0 && rect.y === 0 && rect.width === 1 && rect.height === 1) {
+    onProgress(1);
+    return file;
+  }
   const mimeType = supportedRecordingType();
   if (!mimeType || !("captureStream" in HTMLCanvasElement.prototype))
     throw new Error("This browser cannot crop the recording locally.");

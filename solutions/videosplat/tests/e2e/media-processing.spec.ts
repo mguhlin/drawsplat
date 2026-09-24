@@ -78,6 +78,7 @@ test('closing a crop stops its encoder and never adds a late clip', async ({page
   await expect(page.getByRole('button',{name:'Stop and choose crop'})).toBeVisible();
   await page.waitForTimeout(1600);
   await page.getByRole('button',{name:'Stop and choose crop'}).click();
+  await page.getByRole('button', { name: 'Center', exact: true }).click();
   await page.getByRole('button',{name:'Crop and add to timeline'}).click();
   await expect.poll(()=>page.evaluate(()=>(window as any).lastCropRecorder.state)).toBe('recording');
   await page.getByRole('button',{name:'Close recorder'}).click();
