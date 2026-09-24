@@ -102,6 +102,7 @@ EXCLUDES=(
   "test-results"
   "playwright-report"
   ".DS_Store"
+  "audit_instructions.md"
   ".env"
   ".env.local"
   "/package.json"

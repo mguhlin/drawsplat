@@ -36,15 +36,15 @@ Other docs that pair with setup:
 
 [Feature walkthrough](blog/touch-signing-media-acceleration.html) · [Dated release notes](docs/release-notes/2026-09-23-tool-updates.md) · [Acceleration details](docs/media-acceleration.md)
 
-These features are live on drawsplat.org and in the current source. The v3.1.25 ZIPs below predate these changes; self-hosters need the current source and fresh builds/bundles for the new features.
+These features are live on drawsplat.org and in the current source. The v3.1.26 ZIPs include these updates and the September 24 VideoSplat recording fixes.
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.25 — Current downloads for every package.** All twelve v3.1.25 self-host ZIPs were rebuilt from the September 18 release source, including the whiteboard’s illustrated menus, learner tools, stamps, video notes, recording recovery, and portable MySQL Save/Open. The applicable packages also include recent PDF scanning/export, image and video green-screen tools, and media recording/export fixes. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.25.md) · [Stable release v3.1.25](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.25).
+**DrawSplatTM v3.1.26 — Recording fixes and refreshed downloads.** All twelve self-host ZIPs include current source as of September 24, including VideoSplat encoded-duration checks, original-media downloads, large-video import support, touch PDF signing, GPU-assisted captions, and accelerated export. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.26.md) · [Stable release v3.1.26](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.26).
 
 ## Latest whiteboard: portable saving and recording recovery
 
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.25 full download now includes these changes. The suite/package version is independent of the whiteboard’s version.
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.26 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
 
 - **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
 - **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.
