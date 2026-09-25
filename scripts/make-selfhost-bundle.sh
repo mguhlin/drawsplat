@@ -15,6 +15,7 @@
 #   - dist/audiosplat-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/videosplat-selfhost-YYYYMMDD-<shortsha>.zip
 #   - dist/mediasplat-selfhost-YYYYMMDD-<shortsha>.zip
+#   - dist/pdfsplat-selfhost-YYYYMMDD-<shortsha>.zip
 #
 # The DrawSplatTM bundle contains the full static site, backends, and compliance
 # docs. SplatWorksTM, tools, widgets, and games also ship as drop-in modules so
@@ -58,6 +59,7 @@ GAMES_ROOT="$STAGE_DIR/drawsplat-games-selfhost-$VERSION_LABEL"
 AUDIOSPLAT_ROOT="$STAGE_DIR/audiosplat-selfhost-$VERSION_LABEL"
 VIDEOSPLAT_ROOT="$STAGE_DIR/videosplat-selfhost-$VERSION_LABEL"
 MEDIASPLAT_ROOT="$STAGE_DIR/mediasplat-selfhost-$VERSION_LABEL"
+PDFSPLAT_ROOT="$STAGE_DIR/pdfsplat-selfhost-$VERSION_LABEL"
 DRAWSPLAT_OUT_NAME="drawsplat-selfhost-$VERSION_LABEL.zip"
 GRID_OUT_NAME="splatworks-gridsplat-selfhost-$VERSION_LABEL.zip"
 SHOW_OUT_NAME="splatworks-showsplat-selfhost-$VERSION_LABEL.zip"
@@ -70,6 +72,7 @@ GAMES_OUT_NAME="drawsplat-games-selfhost-$VERSION_LABEL.zip"
 AUDIOSPLAT_OUT_NAME="audiosplat-selfhost-$VERSION_LABEL.zip"
 VIDEOSPLAT_OUT_NAME="videosplat-selfhost-$VERSION_LABEL.zip"
 MEDIASPLAT_OUT_NAME="mediasplat-selfhost-$VERSION_LABEL.zip"
+PDFSPLAT_OUT_NAME="pdfsplat-selfhost-$VERSION_LABEL.zip"
 CHECKSUM_OUT_NAME="SHA256SUMS-$VERSION_LABEL.txt"
 DRAWSPLAT_OUT_PATH="$OUT_DIR/$DRAWSPLAT_OUT_NAME"
 GRID_OUT_PATH="$OUT_DIR/$GRID_OUT_NAME"
@@ -83,10 +86,11 @@ GAMES_OUT_PATH="$OUT_DIR/$GAMES_OUT_NAME"
 AUDIOSPLAT_OUT_PATH="$OUT_DIR/$AUDIOSPLAT_OUT_NAME"
 VIDEOSPLAT_OUT_PATH="$OUT_DIR/$VIDEOSPLAT_OUT_NAME"
 MEDIASPLAT_OUT_PATH="$OUT_DIR/$MEDIASPLAT_OUT_NAME"
+PDFSPLAT_OUT_PATH="$OUT_DIR/$PDFSPLAT_OUT_NAME"
 CHECKSUM_OUT_PATH="$OUT_DIR/$CHECKSUM_OUT_NAME"
 
-mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT"
-rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$VIDEOSPLAT_OUT_PATH" "$MEDIASPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
+mkdir -p "$OUT_DIR" "$DRAWSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT" "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAMES_ROOT" "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT"
+rm -f "$DRAWSPLAT_OUT_PATH" "$GRID_OUT_PATH" "$SHOW_OUT_PATH" "$WRITE_OUT_PATH" "$LIST_OUT_PATH" "$SPLATWORKS_SUITE_OUT_PATH" "$TOOLS_OUT_PATH" "$WIDGETS_OUT_PATH" "$GAMES_OUT_PATH" "$AUDIOSPLAT_OUT_PATH" "$VIDEOSPLAT_OUT_PATH" "$MEDIASPLAT_OUT_PATH" "$PDFSPLAT_OUT_PATH" "$CHECKSUM_OUT_PATH"
 
 EXCLUDES=(
   ".git"
@@ -122,6 +126,7 @@ EXCLUDES=(
   "audiosplat-selfhost-*.zip"
   "videosplat-selfhost-*.zip"
   "mediasplat-selfhost-*.zip"
+  "pdfsplat-selfhost-*.zip"
 )
 
 RSYNC_ARGS=(-a --delete)
@@ -769,9 +774,40 @@ See solutions/mediasplat/README.md and docs/credits.md for project and bundled
 dependency licensing details.
 EOF
 
+copy_tree solutions/pdfsplat "$PDFSPLAT_ROOT/solutions/pdfsplat" "${MODULE_EXCLUDES[@]}"
+for pdf_vendor in pdf.min.js pdf.worker.min.js jszip.min.js; do
+  copy_file "vendor/$pdf_vendor" "$PDFSPLAT_ROOT/vendor/$pdf_vendor"
+done
+copy_file assets/js/pdf-language-loader.js "$PDFSPLAT_ROOT/assets/js/pdf-language-loader.js"
+copy_file LICENSE "$PDFSPLAT_ROOT/LICENSE"
+copy_file docs/credits.md "$PDFSPLAT_ROOT/docs/credits.md"
+copy_file docs/pdfsplat-save-as.md "$PDFSPLAT_ROOT/docs/pdfsplat-save-as.md"
+cat > "$PDFSPLAT_ROOT/PDFSPLAT-SELFHOST-README.txt" <<EOF
+PDFSplat Self-Hosted Solution
+===========================
+
+Version: $VERSION_LABEL
+Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+Source:  $SHORT_SHA
+
+Includes the PDF editor, touch signing, scan/capture tools, local encryption,
+source, tests, and bundled PDF.js, PDF-Lib, JSZip, and Argon2 dependencies.
+The shared app launcher, menus, and language controls are included.
+
+Upload all included folders together, keeping their names unchanged.
+Open https://your-domain.example/solutions/pdfsplat/ on an HTTPS static host
+(or localhost during development). No build step or backend is required.
+PDFs, edits, and passwords are processed locally in the browser.
+
+The Apps menu and optional CipherSplat password-generator link require the
+corresponding apps to be installed separately in the same web root.
+See solutions/pdfsplat/README.md, LICENSE, and docs/credits.md for workflows,
+limitations, project licensing, and third-party notices.
+EOF
+
 # Individual apps use shared menus, localization, and launcher modules.
 # Keep these runtime dependencies without copying the full whiteboard asset tree.
-for media_root in "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"; do
+for media_root in "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"; do
   copy_tree assets/icons "$media_root/assets/icons" "${MODULE_EXCLUDES[@]}"
   copy_tree assets/favicons "$media_root/assets/favicons" "${MODULE_EXCLUDES[@]}"
   for css_file in action-cards.css app-language.css tool-launcher.css launcher-trigger.css; do
@@ -803,6 +839,7 @@ if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$AUDIOSPLAT_OUT_PATH" "audiosplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$VIDEOSPLAT_OUT_PATH" "videosplat-selfhost-$VERSION_LABEL"
   zip -rq "$REPO_ROOT/$MEDIASPLAT_OUT_PATH" "mediasplat-selfhost-$VERSION_LABEL"
+  zip -rq "$REPO_ROOT/$PDFSPLAT_OUT_PATH" "pdfsplat-selfhost-$VERSION_LABEL"
 else
   echo "zip not found; please install zip or run this on Linux/macOS" >&2
   exit 1
@@ -833,6 +870,8 @@ VIDEOSPLAT_SIZE_HUMAN="$(du -h "$VIDEOSPLAT_OUT_PATH" | cut -f1)"
 VIDEOSPLAT_SHA="$(sha256sum "$VIDEOSPLAT_OUT_PATH" | cut -d' ' -f1)"
 MEDIASPLAT_SIZE_HUMAN="$(du -h "$MEDIASPLAT_OUT_PATH" | cut -f1)"
 MEDIASPLAT_SHA="$(sha256sum "$MEDIASPLAT_OUT_PATH" | cut -d' ' -f1)"
+PDFSPLAT_SIZE_HUMAN="$(du -h "$PDFSPLAT_OUT_PATH" | cut -f1)"
+PDFSPLAT_SHA="$(sha256sum "$PDFSPLAT_OUT_PATH" | cut -d' ' -f1)"
 
 sha256sum \
   "$DRAWSPLAT_OUT_PATH" \
@@ -846,7 +885,8 @@ sha256sum \
   "$GAMES_OUT_PATH" \
   "$AUDIOSPLAT_OUT_PATH" \
   "$VIDEOSPLAT_OUT_PATH" \
-  "$MEDIASPLAT_OUT_PATH" > "$CHECKSUM_OUT_PATH"
+  "$MEDIASPLAT_OUT_PATH" \
+  "$PDFSPLAT_OUT_PATH" > "$CHECKSUM_OUT_PATH"
 
 echo ""
 echo "Built bundles:"
@@ -885,6 +925,9 @@ echo "  sha256: $VIDEOSPLAT_SHA"
 echo ""
 echo "  $MEDIASPLAT_OUT_PATH ($MEDIASPLAT_SIZE_HUMAN)"
 echo "  sha256: $MEDIASPLAT_SHA"
+echo ""
+echo "  $PDFSPLAT_OUT_PATH ($PDFSPLAT_SIZE_HUMAN)"
+echo "  sha256: $PDFSPLAT_SHA"
 echo ""
 echo "  $CHECKSUM_OUT_PATH"
 echo ""

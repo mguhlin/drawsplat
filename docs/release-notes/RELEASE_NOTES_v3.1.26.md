@@ -1,6 +1,6 @@
 # DrawSplat v3.1.26 — Recording fixes and current downloads
 
-Released September 24, 2026. All twelve self-host ZIPs are refreshed from current source. Package versions are independent of whiteboard v3.1.12 and individual app versions.
+Released September 24, 2026. All thirteen self-host ZIPs are refreshed from current source. Package versions are independent of whiteboard v3.1.12 and individual app versions.
 
 ## VideoSplat
 
@@ -16,9 +16,13 @@ The reported native twenty-minute unplayable capture was not available for inspe
 
 Touch PDF handwriting/signing, permission-based tab/window capture to PDF, GPU-assisted English captions with CPU fallback, and accelerated VideoSplat WebCodecs export with compatible fallback. GPU support and performance depend on the device/browser. Current whiteboard, portable MySQL saving, media tools, shared runtimes, and module dependencies remain included.
 
+## New standalone PDFSplat package
+
+PDFSplat now has its own ZIP with the editor, touch signing, scan/capture tools, PDF.js worker, PDF-Lib, JSZip, Argon2, shared menus, language controls, and hosting instructions. It remains included in Tools and full DrawSplat. The download page separates complete packages, individual apps, the office suite, and smaller collections.
+
 ## Downloads
 
-Full DrawSplat; SplatWorks suite; individual GridSplat, ShowSplat, WriteSplat, and ListSplat; Tools, Widgets, and Games; AudioSplat, VideoSplat, and MediaSplat. Verify all twelve ZIPs against `SHA256SUMS-v3.1.26.txt`. Previous releases remain available unchanged.
+Full DrawSplat; SplatWorks suite; individual GridSplat, ShowSplat, WriteSplat, and ListSplat; Tools, Widgets, and Games; AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Verify all thirteen ZIPs against `SHA256SUMS-v3.1.26.txt`. Previous releases remain available unchanged.
 
 Finish recording/exporting and save project copies before updating. Install matching module versions and preserve private server configuration. MySQL requires a separately deployed API/database.
 

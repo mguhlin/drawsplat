@@ -1,5 +1,7 @@
 # PDFsplat™
 
+Standalone package: **pdfsplat-selfhost-v3.1.26.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
 ## Public-release workflow

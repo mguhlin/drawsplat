@@ -8,7 +8,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
 - **Status:** live tools updated September 23, 2026 with touch PDF signing, GPU-assisted English captions, and accelerated video export. Latest packaged release: v3.1.25; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
-- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, and AudioSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
+- **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
 
@@ -40,7 +40,7 @@ These features are live on drawsplat.org and in the current source. The v3.1.26 
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.26 — Recording fixes and refreshed downloads.** All twelve self-host ZIPs include current source as of September 24, including VideoSplat encoded-duration checks, original-media downloads, large-video import support, touch PDF signing, GPU-assisted captions, and accelerated export. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.26.md) · [Stable release v3.1.26](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.26).
+**DrawSplatTM v3.1.26 — Recording fixes and refreshed downloads.** All thirteen self-host ZIPs include current source as of September 24, including VideoSplat encoded-duration checks, original-media downloads, large-video import support, touch PDF signing, GPU-assisted captions, and accelerated export. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.26.md) · [Stable release v3.1.26](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.26).
 
 ## Latest whiteboard: portable saving and recording recovery
 
