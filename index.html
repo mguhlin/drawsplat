@@ -14,6 +14,7 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="assets/css/home-discovery.css">
   <link rel="stylesheet" href="assets/css/home-brand.css">
+  <link rel="stylesheet" href="assets/css/home-guestbook.css">
   <link rel="stylesheet" href="assets/css/tool-launcher.css?v=2">
   <link rel="stylesheet" href="assets/css/launcher-trigger.css">
 <link rel="stylesheet" href="assets/css/action-cards.css?v=1.0" />
@@ -23,7 +24,7 @@
   <a class="home-skip" href="#homeSearch">Skip to search</a>
   <header class="home-header">
     <a class="home-brand" href="./"><img src="assets/brand/DrawSplat_logo.png" alt=""><span>DrawSplat<sup>™</sup></span></a>
-    <nav aria-label="Primary navigation"><a href="app/whiteboard.html">Whiteboard</a><button class="ds-apps-link" type="button" data-ds-app-launcher>Apps ▦</button><a href="pages/splatworks.html">SplatWorks</a><a href="guides/">For Educators</a><a href="pages/support.html">Support</a></nav>
+    <nav aria-label="Primary navigation"><a href="app/whiteboard.html">Whiteboard</a><button class="ds-apps-link" type="button" data-ds-app-launcher>Apps ▦</button><a href="pages/splatworks.html">SplatWorks</a><a href="guides/">For Educators</a><a href="#guestbook">Guestbook</a><a href="pages/support.html">Support</a></nav>
   </header>
   <main>
     <section class="home-hero">
@@ -58,6 +59,16 @@
       </div>
     </section>
 
+    <section id="guestbook" class="home-section home-guestbook" aria-labelledby="guestbookTitle">
+      <a class="guestbook-banner" href="https://docs.google.com/forms/d/e/1FAIpQLScKMAisoSYC6F4M2OvE2BSWfHQNGFetTrGX-ZoyeSc4yEvWiQ/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" aria-label="Sign the DrawSplat guestbook (Google Form, opens in a new tab)">
+        <img src="assets/brand/drawsplat-guestbook.png" width="2048" height="768" loading="lazy" decoding="async" alt="DrawSplat.org Guestbook — leave a note, share your thoughts, or just say hi.">
+      </a>
+      <div class="guestbook-copy">
+        <div><h2 id="guestbookTitle">Sign the guestbook</h2><p>Tell us what you’re creating, share a thought, or just say hello. Signing is completely optional.</p></div>
+        <div class="guestbook-actions"><a class="home-primary" href="https://docs.google.com/forms/d/e/1FAIpQLScKMAisoSYC6F4M2OvE2BSWfHQNGFetTrGX-ZoyeSc4yEvWiQ/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Sign the guestbook</a><small>Opens a Google Form in a new tab.</small></div>
+      </div>
+    </section>
+
     <section class="home-section tools-preview">
       <div class="home-section-head"><p class="home-eyebrow">Popular starting points</p><h2>Find the right tool without learning its name</h2></div>
       <div id="homeFeatured" class="home-tool-grid" aria-live="polite"></div>
@@ -75,7 +86,7 @@
       <div><h2>Help</h2><a href="guides/">Teacher guides</a><a href="pages/support.html">Support & setup</a><a href="community/">Community</a><a href="admin/admin.html">Teacher Admin</a><a href="pages/background-templates.html">Templates</a></div>
     </section>
   </main>
-  <footer class="home-footer"><span>DrawSplat™ · Privacy-first tools for classrooms and creators.</span><span><a href="legal/terms-privacy.html">Privacy</a> · <a href="legal/accessibility.html">Accessibility</a> · <a href="pages/contact.html">Contact</a></span></footer>
+  <footer class="home-footer"><span>DrawSplat™ · Privacy-first tools for classrooms and creators.</span><span><a href="legal/terms-privacy.html">Privacy</a> · <a href="legal/accessibility.html">Accessibility</a> · <a href="pages/contact.html">Contact</a> · <a href="#guestbook">Guestbook</a></span></footer>
   <script type="module" src="assets/js/home-discovery.js"></script>
   <script type="module" src="assets/js/tool-launcher.js?v=2"></script>
 </body>
