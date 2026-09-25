@@ -32,6 +32,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 REPO_ROOT="$(pwd)"
+node scripts/build-pdfsplat.mjs
+bash scripts/build-ciphersplat-offline.sh
 
 VERSION_LABEL="${1:-}"
 DATE="$(date -u +%Y%m%d)"
@@ -111,7 +113,7 @@ EXCLUDES=(
   ".env.local"
   "/package.json"
   "/package-lock.json"
-  "splatworks"
+  "/splatworks"
   "*.log"
   "*.swp"
   "drawsplat-selfhost-*.zip"
@@ -212,7 +214,8 @@ whiteboard/tools/widgets/games releases.
 Deployment paths
 ----------------
 1. Browser-only (no accounts):
-     Open index.html in a browser, or upload the whole tree to a static host.
+     Open START-HERE.html and use the included local launcher (Python 3),
+     or upload the whole tree to a static host.
 
 2. Google Apps Script (recommended for teachers and most districts):
      Follow guides/google-setup.html. Paste apps-script/Code.gs into a new
@@ -560,6 +563,8 @@ License
 SplatWorksTM apps are GPL-3.0-only unless a file or subdirectory says otherwise.
 EOF
 
+copy_file splatworks_hero_image.png "$SPLATWORKS_SUITE_ROOT/splatworks_hero_image.png"
+
 copy_tree assets "$TOOLS_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree vendor "$TOOLS_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/tools.html "$TOOLS_ROOT/pages/tools.html"
@@ -775,7 +780,8 @@ dependency licensing details.
 EOF
 
 copy_tree solutions/pdfsplat "$PDFSPLAT_ROOT/solutions/pdfsplat" "${MODULE_EXCLUDES[@]}"
-copy_tree solutions/CipherSplat "$PDFSPLAT_ROOT/solutions/CipherSplat" "${MODULE_EXCLUDES[@]}"
+unzip -q solutions/CipherSplat/downloads/CipherSplat-offline.zip -d "$PDFSPLAT_ROOT/solutions"
+copy_file scripts/build-pdfsplat.mjs "$PDFSPLAT_ROOT/scripts/build-pdfsplat.mjs"
 for pdf_vendor in pdf.min.js pdf.worker.min.js jszip.min.js; do
   copy_file "vendor/$pdf_vendor" "$PDFSPLAT_ROOT/vendor/$pdf_vendor"
 done
@@ -825,6 +831,20 @@ for module_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAME
   copy_file site.webmanifest "$module_root/site.webmanifest"
   copy_file data/drawsplat-tools.json "$module_root/data/drawsplat-tools.json"
 done
+
+python3 scripts/add-offline-launcher.py "${DRAWSPLAT_ROOT}" DrawSplat "index.html"
+python3 scripts/add-offline-launcher.py "${GRID_ROOT}" GridSplat "splatworks/gridsplat/"
+python3 scripts/add-offline-launcher.py "${SHOW_ROOT}" ShowSplat "splatworks/showsplat/"
+python3 scripts/add-offline-launcher.py "${WRITE_ROOT}" WriteSplat "splatworks/writesplat/"
+python3 scripts/add-offline-launcher.py "${LIST_ROOT}" ListSplat "splatworks/listsplat/"
+python3 scripts/add-offline-launcher.py "${SPLATWORKS_SUITE_ROOT}" SplatWorks "pages/splatworks.html"
+python3 scripts/add-offline-launcher.py "${TOOLS_ROOT}" Tools "pages/tools.html"
+python3 scripts/add-offline-launcher.py "${WIDGETS_ROOT}" Widgets "pages/tools.html#widgets"
+python3 scripts/add-offline-launcher.py "${GAMES_ROOT}" Games "games/"
+python3 scripts/add-offline-launcher.py "${AUDIOSPLAT_ROOT}" AudioSplat "solutions/audiosplat/"
+python3 scripts/add-offline-launcher.py "${VIDEOSPLAT_ROOT}" VideoSplat "solutions/videosplat/"
+python3 scripts/add-offline-launcher.py "${MEDIASPLAT_ROOT}" MediaSplat "solutions/mediasplat/"
+python3 scripts/add-offline-launcher.py "${PDFSPLAT_ROOT}" PDFSplat "solutions/pdfsplat/"
 
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then

@@ -49,7 +49,7 @@ async function argon2Bytes(password, salt, header) {
   const passwordBytes = encoder.encode(password);
   const saltBytes = salt.slice();
   try {
-    if (typeof Worker === 'function') {
+    if (typeof Worker === 'function' && location.protocol !== 'file:') {
       return await new Promise((resolve, reject) => {
         const worker = new Worker('./argon2-worker.js');
         const timer = setTimeout(() => { worker.terminate(); reject(Error('Argon2id timed out.')); }, 120000);

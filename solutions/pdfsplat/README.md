@@ -1,6 +1,6 @@
 # PDFsplat™
 
-Standalone package: **pdfsplat-selfhost-v3.1.26.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.27.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -29,7 +29,9 @@ A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images,
 - Run a guide-based accessibility preflight for tagged structure, extractable text/OCR needs, document title and language, added-image descriptions, annotation contrast, and form-review needs.
 - Export a semantic HTML alternative with a document language, descriptive title, skip link, one H1, page sections, readable text, and descriptions supplied for added images.
 
-Serve the repository over HTTP and open `/solutions/pdfsplat/`. PDF.js workers and Web Crypto require HTTPS, localhost, or an equivalent secure context.
+For offline use, extract the entire standalone ZIP and open `solutions/pdfsplat/index.html` in desktop Chrome or Firefox. Keep the sibling vendor and assets folders. The included `START-HERE.html` explains the local-server alternative for browsers that restrict file access: Windows, macOS, and Linux launchers require Python 3, but no internet connection. Core PDF editing, saving, and encryption are tested with networking disabled; capture/camera permissions depend on the browser.
+
+Developers: `npm install` and `npm run build` in this directory regenerate the bundled classic script. The bundle builder also performs this build. Hosted pages retain a PDF worker; file pages load the bundled PDF.js worker implementation on the main thread.
 
 ## Editing sidebar
 

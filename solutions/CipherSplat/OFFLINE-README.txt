@@ -23,11 +23,10 @@ edition omits that one HTML attribute and supplies matching SHA-256 hashes in
 integrity.json instead.
 
 If a browser blocks Web Crypto for pages opened directly from disk, start a
-local static server in the folder instead. For example:
-
-  python3 -m http.server 8080
-
-Then open http://localhost:8080/ in that browser. No internet connection is
+included local launcher instead: START-WINDOWS.bat, START-MAC.command,
+or sh start-local.sh on Linux. Python 3 is required; no extra packages are
+needed. The launcher opens a stable 127.0.0.1 address only on this computer.
+Read START-HERE.html for details. No internet connection is
 needed for a localhost server.
 
 Always test decryption before deleting the original data. CipherSplat cannot

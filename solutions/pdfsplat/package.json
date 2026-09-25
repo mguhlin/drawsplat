@@ -1,0 +1,6 @@
+{
+  "name": "pdfsplat",
+  "private": true,
+  "scripts": { "build": "node ../../scripts/build-pdfsplat.mjs" },
+  "devDependencies": { "rolldown": "1.2.4" }
+}

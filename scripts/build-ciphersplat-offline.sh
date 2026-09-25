@@ -35,6 +35,15 @@ cp "$SOURCE_DIR/vendor/hash-wasm/argon2.umd.min.js" "$STAGING_DIR/CipherSplat/ve
 cp "$SOURCE_DIR/vendor/hash-wasm/LICENSE" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
 cp "$SOURCE_DIR/vendor/hash-wasm/package.json" "$STAGING_DIR/CipherSplat/vendor/hash-wasm/"
 
+# Keep all referenced language/menu assets inside the offline folder.
+mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/css" "$STAGING_DIR/CipherSplat/shared/assets/js"
+for name in action-cards app-language; do
+  cp "$ROOT_DIR/assets/css/$name.css" "$STAGING_DIR/CipherSplat/shared/assets/css/"
+  cp "$ROOT_DIR/assets/js/$name.js" "$STAGING_DIR/CipherSplat/shared/assets/js/"
+done
+sed -i 's|../../assets/|./shared/assets/|g' "$STAGING_DIR/CipherSplat/index.html"
+python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" CipherSplat 'index.html?offline=1'
+
 # file:// scripts cannot use browser SRI because local files have an opaque
 # origin. The offline edition verifies the same vendored file via its local
 # integrity.json instead, generated after this intentional HTML transform.

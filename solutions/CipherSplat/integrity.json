@@ -8,9 +8,7 @@
   "files": {
     "app.js": "f6f16119220f5964659677a0e1de50abc8abfe95e2fca3ff97b59ad7b37b65c6",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
-    "index.html": "a90f14ad79f912fb8db34582de89655fe4b407189e5010cbbf658465d4d31ce8",
-    "../../assets/js/app-language.js": "9f9addb61feb2760e2da6fc4d4f14f694ead2ef6dcc26f9360a6afe29927ae86",
-    "../../assets/css/app-language.css": "dbf94be48a864912bc2283c491741966a04a761f4a474ff19388ac9fcff2549f",
+    "index.html": "cd3ed3d7ab7e5c7814b84df88781c7a2d57443938d68cabc5b41b64a2a2a7f8e",
     "manifest.webmanifest": "d6362f1965a02c471821dcb55d37359615762759f5c2760ac367cc74eec26960",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "d7e836f8585934580d2a8ce8d2c403d6aae49f8aee60b25ac20f0633e92fc307",
@@ -23,6 +21,10 @@
     "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb",
     "vendor/hash-wasm/argon2.umd.min.js": "dcec617a2e1b700fa132d1583a186cb70611113395e869f2dd6cc82b415d3094",
     "vendor/hash-wasm/LICENSE": "c14dea172f72f2714284a0ac2ab1b00b5352a01409d58255a46227ffc541debd",
-    "vendor/hash-wasm/package.json": "bdb86309706014e1e3062ce78aa7a2e8b196a44d5a22ceec8978d864e28116f7"
+    "vendor/hash-wasm/package.json": "bdb86309706014e1e3062ce78aa7a2e8b196a44d5a22ceec8978d864e28116f7",
+    "../../assets/js/app-language.js": "b7f6bf5b56f57c9063abd6fa0537a72c40eae034189a297c8b5251be56d97a63",
+    "../../assets/css/app-language.css": "dbf94be48a864912bc2283c491741966a04a761f4a474ff19388ac9fcff2549f",
+    "../../assets/js/action-cards.js": "5ed7777868e4a2cd9789721b8bb44849a9f9fc28e11885e06c1f17059a7c471d",
+    "../../assets/css/action-cards.css": "c23363f8dccbb525b87523a9af0f482dec8c861da8c337df7683e100250c1a39"
   }
 }

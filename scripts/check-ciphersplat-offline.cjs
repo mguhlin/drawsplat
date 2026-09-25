@@ -1,0 +1,6 @@
+const {chromium,firefox}=require('@playwright/test');
+(async()=>{for(const [name,type] of Object.entries({chromium,firefox})){
+const browser=await type.launch();const context=await browser.newContext({offline:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto(require('node:url').pathToFileURL(require('node:path').resolve(process.argv[2], 'index.html')).href);await page.locator('#password').fill('offline round trip password');
+const result=await page.evaluate(async()=>{const source=await encryptData(enc.encode('offline round trip'),'text','test.txt',[]);const opened=await decryptData(source);selectedEntries=[{file:new File(['local file contents'],'local.txt'),path:'local.txt'}];const encrypted=await encryptFilesChunked();const file=await decryptFilesChunked(new File([encrypted.blob],'local.csplat'));return {text:dec.decode(opened.data),file:await file.files[0].blob.text()};});
+if(result.text!=='offline round trip'||result.file!=='local file contents'||errors.length)throw Error(JSON.stringify({name,result,errors}));console.log(name,'CipherSplat direct-file offline text and file encryption/decryption passed');await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
