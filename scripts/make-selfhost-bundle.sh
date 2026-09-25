@@ -775,12 +775,13 @@ dependency licensing details.
 EOF
 
 copy_tree solutions/pdfsplat "$PDFSPLAT_ROOT/solutions/pdfsplat" "${MODULE_EXCLUDES[@]}"
+copy_tree solutions/CipherSplat "$PDFSPLAT_ROOT/solutions/CipherSplat" "${MODULE_EXCLUDES[@]}"
 for pdf_vendor in pdf.min.js pdf.worker.min.js jszip.min.js; do
   copy_file "vendor/$pdf_vendor" "$PDFSPLAT_ROOT/vendor/$pdf_vendor"
 done
 copy_file assets/js/pdf-language-loader.js "$PDFSPLAT_ROOT/assets/js/pdf-language-loader.js"
 copy_file LICENSE "$PDFSPLAT_ROOT/LICENSE"
-copy_file docs/credits.md "$PDFSPLAT_ROOT/docs/credits.md"
+copy_file NOTICE.md "$PDFSPLAT_ROOT/NOTICE.md"
 copy_file docs/pdfsplat-save-as.md "$PDFSPLAT_ROOT/docs/pdfsplat-save-as.md"
 cat > "$PDFSPLAT_ROOT/PDFSPLAT-SELFHOST-README.txt" <<EOF
 PDFSplat Self-Hosted Solution
@@ -799,9 +800,9 @@ Open https://your-domain.example/solutions/pdfsplat/ on an HTTPS static host
 (or localhost during development). No build step or backend is required.
 PDFs, edits, and passwords are processed locally in the browser.
 
-The Apps menu and optional CipherSplat password-generator link require the
-corresponding apps to be installed separately in the same web root.
-See solutions/pdfsplat/README.md, LICENSE, and docs/credits.md for workflows,
+CipherSplat is included for the linked local password generator.
+Other Apps-menu destinations require those apps to be installed separately.
+See solutions/pdfsplat/README.md, LICENSE, and NOTICE.md for workflows,
 limitations, project licensing, and third-party notices.
 EOF
 

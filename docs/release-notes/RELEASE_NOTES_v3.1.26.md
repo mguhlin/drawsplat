@@ -29,3 +29,5 @@ Finish recording/exporting and save project copies before updating. Install matc
 ## Validation
 
 105 VideoSplat unit tests, 78 Chrome/Firefox integration checks including a playable twenty-minute, 513 MB import/reopen fixture, and two additional byte-identical original-media download checks. The large fixture is padded with an MP4 free box; it is not a twenty-minute live screen-capture soak. Packages are checked for ZIP integrity, SHA-256 checksums, current VideoSplat assets, source provenance, and shared runtime references before publication.
+
+The grouped download page shows measured ZIP and unpacked sizes for all thirteen packages. Standalone PDFSplat includes the linked local CipherSplat password generator; isolated Chrome/Firefox checks cover opening/editing/exporting PDFs, continuous signing strokes, and protecting/unprotecting PDFs. Twelve VideoSplat production checks passed on drawsplat.org.

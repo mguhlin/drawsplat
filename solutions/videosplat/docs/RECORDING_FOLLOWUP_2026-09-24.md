@@ -10,4 +10,4 @@ Also fixed an independent long-file limitation: video imports no longer reject f
 
 Validation includes unit tests for bounded hashing, short-recording warnings, and full-frame preservation; Chrome/Firefox checks for finite incorrect duration, recording-to-editor audio, failure recovery and original-file download; and import/reopen of a playable twenty-minute MP4 padded with a valid free box to 513 MB. That fixture checks file size, duration, and storage, not twenty minutes of live screen capture or physical devices.
 
-Checks: 105 unit tests passed; 78 Chrome/Firefox integration checks passed, including the 513 MB import/reopen cases. A final two-browser regression verifies that **File → Download original media** retrieves byte-identical source media from an existing project. Production verification follows publication.
+Checks: 105 unit tests passed; 78 Chrome/Firefox integration checks passed, including the 513 MB import/reopen cases. A final two-browser regression verifies that **File → Download original media** retrieves byte-identical source media from an existing project. Twelve Chrome/Firefox checks also passed against the published drawsplat.org build.
