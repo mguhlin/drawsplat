@@ -846,6 +846,11 @@ python3 scripts/add-offline-launcher.py "${VIDEOSPLAT_ROOT}" VideoSplat "solutio
 python3 scripts/add-offline-launcher.py "${MEDIASPLAT_ROOT}" MediaSplat "solutions/mediasplat/"
 python3 scripts/add-offline-launcher.py "${PDFSPLAT_ROOT}" PDFSplat "solutions/pdfsplat/"
 
+# Catalog scripts are tailored to each package, so refresh dependent integrity files.
+for module_root in "$DRAWSPLAT_ROOT" "$TOOLS_ROOT"; do
+  bash scripts/generate-ciphersplat-integrity.sh "$module_root/solutions/CipherSplat"
+done
+
 cd "$STAGE_DIR"
 if command -v zip >/dev/null 2>&1; then
   zip -rq "$REPO_ROOT/$DRAWSPLAT_OUT_PATH" "drawsplat-selfhost-$VERSION_LABEL"
