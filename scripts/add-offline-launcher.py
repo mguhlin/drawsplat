@@ -98,3 +98,6 @@ if cards.exists():
         routes = [route for route in routes if (local_target(route['url'], folder / 'index.html') or folder).is_file()]
         return 'const toolRoutes=' + json.dumps(routes) + ';'
     cards.write_text(re.sub(r'const toolRoutes=(\[.*?\]);', filter_card_routes, content))
+
+from package_entry_pages import add_entry_pages
+add_entry_pages(folder, name, entry)

@@ -832,6 +832,14 @@ for module_root in "$SPLATWORKS_SUITE_ROOT" "$TOOLS_ROOT" "$WIDGETS_ROOT" "$GAME
   copy_file data/drawsplat-tools.json "$module_root/data/drawsplat-tools.json"
 done
 
+# Keep the hosted CipherSplat intact and include its direct-file edition beside it.
+for module_root in "$DRAWSPLAT_ROOT" "$TOOLS_ROOT"; do
+  mkdir -p "$module_root/solutions/CipherSplat/offline"
+  unzip -q solutions/CipherSplat/downloads/CipherSplat-offline.zip -d "$module_root/solutions/CipherSplat/offline"
+  mv "$module_root/solutions/CipherSplat/offline/CipherSplat/"* "$module_root/solutions/CipherSplat/offline/"
+  rmdir "$module_root/solutions/CipherSplat/offline/CipherSplat"
+done
+
 python3 scripts/add-offline-launcher.py "${DRAWSPLAT_ROOT}" DrawSplat "index.html"
 python3 scripts/add-offline-launcher.py "${GRID_ROOT}" GridSplat "splatworks/gridsplat/"
 python3 scripts/add-offline-launcher.py "${SHOW_ROOT}" ShowSplat "splatworks/showsplat/"

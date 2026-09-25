@@ -1,6 +1,6 @@
 # Live tool updates — September 23, 2026
 
-These updates are live on drawsplat.org and in current source. Initially newer than the v3.1.25 downloads, they are now included in the September 24 v3.1.27 packages.
+These updates are live on drawsplat.org and in current source. Initially newer than the v3.1.25 downloads, they are now included in the September 24 v3.1.28 packages.
 
 ## PDFSplat
 

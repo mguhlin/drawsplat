@@ -1,6 +1,6 @@
 # VideoSplat™
 
-Latest packaged release: **v3.1.27**. The ZIPs include the September 23 acceleration updates and September 24 VideoSplat recording fixes. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
+Latest packaged release: **v3.1.28**. The ZIPs include the September 23 acceleration updates and September 24 VideoSplat recording fixes. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
 
 
 VideoSplat™ is DrawSplat's private, local-first video editor for the browser. The current milestone

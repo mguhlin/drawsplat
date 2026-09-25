@@ -101,8 +101,14 @@ and runtime. If you add a host CSP, permit the model download hosts listed in
 `solutions/videosplat/docs/NETWORK_INVENTORY.md`; keep runtime scripts same-origin.
 See the [automatic subtitle walkthrough](../blog/automatic-subtitles.html).
 
-## Current release: v3.1.27
+## Current release: v3.1.28
 
-All thirteen packages are refreshed from the current source: full DrawSplat, SplatWorks suite and four individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.27.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
+All thirteen packages are refreshed from the current source: full DrawSplat, SplatWorks suite and four individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from [the download page](../pages/download.html) and verify them with the release’s `SHA256SUMS-v3.1.28.txt`. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.
 
 The download page shows approximate ZIP and unpacked sizes, measured from release archives in decimal MB. Run `python3 scripts/update-download-sizes.py vX.Y.Z` after building a release, rebuild with the updated page, then use `--check` to verify displayed sizes against the final archives.
+
+## Offline entry points
+
+Extract the entire ZIP and keep the folder structure intact. Every package includes `OPEN-APP.html`; individual packages also have a root `index.html` shortcut when that name is not already used. Complete DrawSplat and Tools include `Open-VideoSplat.html`, `Open-MediaSplat.html`, `Open-AudioSplat.html`, `Open-PDFSplat.html`, and `Open-CipherSplat.html`.
+
+PDFSplat and CipherSplat’s dedicated offline edition open directly from disk in desktop Chrome and Firefox. The complete package’s CipherSplat shortcut selects its included offline edition for file access and its hosted app for HTTP access. AudioSplat, VideoSplat, and MediaSplat require the supplied local launcher (Python 3); their file shortcuts show `START-HERE.html`. A web page cannot automatically start Python or bypass file-origin browser restrictions. Once running locally, core editing does not need internet. Online services and first-time speech-model downloads still do.

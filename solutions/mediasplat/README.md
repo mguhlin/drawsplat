@@ -1,6 +1,6 @@
 # MediaSplat™
 
-Latest packaged release: **v3.1.27**. The ZIPs include the September 23 acceleration updates and September 24 VideoSplat recording fixes. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
+Latest packaged release: **v3.1.28**. The ZIPs include the September 23 acceleration updates and September 24 VideoSplat recording fixes. [Downloads](../../pages/download.html) · [Live update notes](../../docs/release-notes/2026-09-23-tool-updates.md)
 
 
 MediaSplat is a private, browser-based media splitter, trimmer, and joiner. It runs a same-origin FFmpeg WebAssembly build inside the browser; source media is not uploaded.

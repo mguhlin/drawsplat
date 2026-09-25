@@ -17,9 +17,9 @@ count = 0
 def replace(match):
     global count
     filename = match.group(1)
-    if not filename.endswith(f'-{args.version}.zip'):
+    if filename != 'CipherSplat-offline.zip' and not filename.endswith(f'-{args.version}.zip'):
         raise ValueError(f'Unexpected package version: {filename}')
-    archive = root / 'dist' / filename
+    archive = root / 'solutions/CipherSplat/downloads' / filename if filename == 'CipherSplat-offline.zip' else root / 'dist' / filename
     with zipfile.ZipFile(archive) as package:
         unpacked = sum(item.file_size for item in package.infolist())
     count += 1
@@ -27,12 +27,12 @@ def replace(match):
     return f'<small class="download-size" data-package="{filename}">{label}</small>'
 
 updated = re.sub(r'<small class="download-size" data-package="([^"]+)">[^<]*</small>', replace, html)
-if count != 13:
-    raise ValueError(f'Expected 13 package sizes, found {count}')
+if count != 14:
+    raise ValueError(f'Expected 14 package sizes, found {count}')
 if args.check:
     if updated != html:
         raise SystemExit('Download sizes differ from the measured packages; regenerate them.')
-    print('All 13 displayed ZIP and unpacked sizes match the measured packages.')
+    print('All 14 displayed ZIP and unpacked sizes match the measured packages.')
 else:
     page.write_text(updated)
-    print('Updated all 13 package sizes (decimal MB, rounded to one decimal place).')
+    print('Updated all 14 package sizes (decimal MB, rounded to one decimal place).')
