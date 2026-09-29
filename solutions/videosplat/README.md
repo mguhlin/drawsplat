@@ -152,3 +152,10 @@ The September 24 recording follow-up checks encoded WebM duration even when brow
 To recover the source from an existing project, select its item in **Media**, then choose **File → Download original media**. This saves the stored source bytes without applying the timeline’s trim or duration.
 
 September 29 functionality audit: insert/overwrite now preserve unaffected footage, track locks protect selected clips, and invalid project files are rejected before replacing the current edit. See [audit findings and verification limits](docs/BUG_HUNT_2026-09-29.md).
+
+The September 29 media-safety follow-up preserves source media when removing it
+from a project, so Undo and other saved projects can still use it. To permanently
+remove stored sources, use **About → View privacy details → Clear all local project
+data and media** (this clears every local project and source). Locked tracks are
+also protected during media import/removal, completed files survive a later batch
+import failure, and autosave reports success only after storage commits.

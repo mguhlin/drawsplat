@@ -27,7 +27,6 @@ import {
 import { History } from "../domain/history";
 import {
   clearAllLocalData,
-  deleteMedia,
   deleteProject,
   listProjects,
   loadMedia,
@@ -536,6 +535,7 @@ export function App() {
             ),
           });
           setSelectedAssetId(missingMatch.id);
+          commit(next);
           continue;
         }
         await saveMedia(imported.asset.id, imported.blob);
@@ -544,12 +544,12 @@ export function App() {
         const kind =
           imported.asset.kind === "audio" ? "audio" : imported.asset.kind;
         let track = next.tracks.find(
-          (item) => item.kind === (kind === "image" ? "video" : kind),
+          (item) => item.kind === (kind === "image" ? "video" : kind) && !item.locked,
         );
         if (!track) {
           track = {
             id: crypto.randomUUID(),
-            name: `${kind[0].toUpperCase()}${kind.slice(1)} 1`,
+            name: `${kind === "audio" ? "Audio" : "Video"} ${next.tracks.filter((item) => item.kind === (kind === "image" ? "video" : kind)).length + 1}`,
             kind: kind === "image" ? "video" : kind,
             hidden: false,
             locked: false,
@@ -580,12 +580,12 @@ export function App() {
               : item,
           ),
         });
+        commit(next);
         setSelectedAssetId(imported.asset.id);
         setSelectedClipId(clip.id);
         if (focusImported) { setPlaying(false); setTime(clip.start); }
         if (generateSubtitles) setGeneration({ clipId: clip.id, source: { name: clip.name, load: async () => file, duration: clip.duration }, autoStart: true });
       }
-      commit(next);
       setStatus(
         `${files.length} media file${files.length === 1 ? "" : "s"} imported and stored locally`,
       );
@@ -597,15 +597,16 @@ export function App() {
       if (mediaInput.current) mediaInput.current.value = "";
     }
   };
-  const removeAsset = async (asset: Asset) => {
-    await deleteMedia(asset.id);
-    const url = mediaUrls[asset.id];
-    if (url) URL.revokeObjectURL(url);
-    setMediaUrls((current) => {
-      const next = { ...current };
-      delete next[asset.id];
-      return next;
-    });
+  const assetIsLocked = (asset: Asset) => project.tracks.some(
+    (track) => track.locked && track.clips.some((clip) => clip.assetId === asset.id),
+  );
+  const removeAsset = (asset: Asset) => {
+    if (assetIsLocked(asset)) {
+      setStatus("Unlock tracks using this media before removing it");
+      return;
+    }
+    // History and other saved projects may still reference this source. Keep
+    // both the stored blob and its URL available for Undo and project recovery.
     commit(
       touchProject(project, {
         assets: project.assets.filter((item) => item.id !== asset.id),
@@ -616,7 +617,7 @@ export function App() {
       }),
     );
     setSelectedAssetId(project.assets.find((item) => item.id !== asset.id)?.id);
-    setStatus(`${asset.name} removed from this project and local storage`);
+    setStatus(`${asset.name} removed from this project — source retained for Undo and saved projects`);
   };
   const selectedAsset = project.assets.find(
     (asset) => asset.id === selectedAssetId,
@@ -1252,6 +1253,8 @@ export function App() {
                   <button
                     className="asset-delete"
                     aria-label={`Remove ${asset.name}`}
+                    disabled={assetIsLocked(asset)}
+                    title={assetIsLocked(asset) ? "Unlock tracks using this media before removing it" : "Remove from project (source retained for Undo)"}
                     onClick={() => removeAsset(asset)}
                   >
                     ×

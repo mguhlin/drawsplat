@@ -19,20 +19,25 @@ function openDatabase(): Promise<IDBDatabase> {
 
 const transaction = async <T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> => {
   const database = await openDatabase();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE, mode);
-    const request = action(tx.objectStore(STORE));
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error("Local storage operation failed."));
-    tx.oncomplete = () => database.close();
-  });
+  try {
+    return await new Promise<T>((resolve, reject) => {
+      const tx = database.transaction(STORE, mode);
+      const request = action(tx.objectStore(STORE));
+      let failure: DOMException | null = null;
+      request.onerror = () => { failure = request.error; };
+      // Request success only means the operation was queued. Quota failures,
+      // explicit aborts, or later requests can still roll back the transaction.
+      tx.oncomplete = () => resolve(request.result);
+      tx.onabort = () => reject(failure ?? tx.error ?? new Error("Local storage operation failed."));
+    });
+  } finally { database.close(); }
 };
 
 export const saveProject = (project: VideoSplatProject) => transaction("readwrite", (store) => store.put(project));
 export const loadProject = (projectId: string) => transaction<VideoSplatProject | undefined>("readonly", (store) => store.get(projectId));
 export const listProjects = () => transaction<VideoSplatProject[]>("readonly", (store) => store.getAll());
 export const deleteProject = (projectId: string) => transaction("readwrite", (store) => store.delete(projectId));
-export const clearProjects = async () => { const database = await openDatabase(); await new Promise<void>((resolve, reject) => { const tx = database.transaction(STORE, "readwrite"); tx.objectStore(STORE).clear(); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); database.close(); };
+export const clearProjects = () => transaction("readwrite", (store) => store.clear());
 
 interface StoredMediaBytes { format: "videosplat-media-bytes"; bytes: ArrayBuffer; type: string }
 
