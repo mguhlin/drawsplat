@@ -18,6 +18,7 @@ import {
   snappedClipStart,
   splitClip,
   trimClip,
+  updateClip,
   updateTrack,
 } from "./engine";
 
@@ -211,5 +212,45 @@ describe("timeline engine", () => {
     expect(projectDuration(project)).toBe(50);
     expect(activeVisualClips(project, 25.25)).toHaveLength(10);
     expect(snappedClipStart(project, "clip-0-0", 49.91, 0, 0.1)).toBe(50);
+  });
+});
+
+
+describe("edit safety regressions", () => {
+  it("inserts inside a clip without overlapping or losing source footage", () => {
+    const project = fixture();
+    const source = { ...project.tracks[0].clips[0], duration: 2 };
+    const result = placeClip(project, project.tracks[0].id, source, 5, "insert");
+    expect(result.project.tracks[0].clips).toEqual([
+      expect.objectContaining({ id: "clip", start: 2, duration: 3, sourceStart: 1 }),
+      expect.objectContaining({ start: 7, duration: 5, sourceStart: 4 }),
+      expect.objectContaining({ id: result.clipId, start: 5, duration: 2 }),
+    ]);
+    expect(new Set(result.project.tracks[0].clips.map(clip => clip.id)).size).toBe(3);
+  });
+
+  it.each([ [5, 2, [[2, 3, 1], [7, 3, 6]]], [0, 4, [[4, 6, 3]]], [8, 4, [[2, 6, 1]]] ])(
+    "overwrites only the covered interval at %s for %s seconds",
+    (start, duration, expected) => {
+      const project = fixture();
+      const source = { ...project.tracks[0].clips[0], duration: duration as number };
+      const result = placeClip(project, project.tracks[0].id, source, start as number, "overwrite");
+      expect(result.project.tracks[0].clips.filter(clip => clip.id !== result.clipId)
+        .map(clip => [clip.start, clip.duration, clip.sourceStart])).toEqual(expected);
+    },
+  );
+
+  it("protects a selected clip when its track is subsequently locked", () => {
+    const project = fixture();
+    project.tracks[0].locked = true;
+    expect(updateClip(project, "clip", { name: "Changed" })).toBe(project);
+    expect(moveClip(project, "clip", 4)).toBe(project);
+    expect(trimClip(project, "clip", 4, 2)).toBe(project);
+    expect(splitClip(project, "clip", 5).project).toBe(project);
+    expect(duplicateClip(project, "clip").project).toBe(project);
+    expect(detachClipAudio(project, "clip").project).toBe(project);
+    expect(cutClipRange(project, "clip", 1, 3, true).project).toBe(project);
+    expect(removeClip(project, "clip")).toBe(project);
+    expect(rippleDeleteClip(project, "clip")).toBe(project);
   });
 });

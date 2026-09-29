@@ -60,6 +60,8 @@ export function updateClip(
   clipId: string,
   patch: Partial<Clip>,
 ): VideoSplatProject {
+  const location = findClip(project, clipId);
+  if (!location || location.track.locked) return project;
   return touchProject(project, {
     tracks: project.tracks.map((track) => ({
       ...track,
@@ -121,7 +123,7 @@ export function trimClip(
   duration: number,
 ): VideoSplatProject {
   const location = findClip(project, clipId);
-  if (!location) return project;
+  if (!location || location.track.locked) return project;
   const safeStart = Math.max(0, start);
   const delta = safeStart - location.clip.start;
   return updateClip(project, clipId, {
@@ -139,6 +141,7 @@ export function splitClip(
   const location = findClip(project, clipId);
   if (
     !location ||
+    location.track.locked ||
     time <= location.clip.start ||
     time >= location.clip.start + location.clip.duration
   )
@@ -177,7 +180,7 @@ export function duplicateClip(
   clipId: string,
 ): { project: VideoSplatProject; duplicateId?: string } {
   const location = findClip(project, clipId);
-  if (!location) return { project };
+  if (!location || location.track.locked) return { project };
   const duplicateId = crypto.randomUUID();
   const duplicate = {
     ...location.clip,
@@ -204,6 +207,7 @@ export function detachClipAudio(
   const location = findClip(project, clipId);
   if (
     !location ||
+    location.track.locked ||
     location.track.kind !== "video" ||
     location.clip.kind !== "video" ||
     location.clip.properties.audioDetached === true
@@ -271,6 +275,8 @@ export function removeClip(
   project: VideoSplatProject,
   clipId: string,
 ): VideoSplatProject {
+  const location = findClip(project, clipId);
+  if (!location || location.track.locked) return project;
   return touchProject(project, {
     tracks: project.tracks.map((track) => ({
       ...track,
@@ -309,7 +315,7 @@ export function cutClipRange(
 ): { project: VideoSplatProject; clipboard?: Clip } {
   const location = findClip(project, clipId);
   const clipboard = clipRange(project, clipId, from, to);
-  if (!location || !clipboard) return { project };
+  if (!location || location.track.locked || !clipboard) return { project };
   const start = Math.max(0, Math.min(from, to, location.clip.duration));
   const end = Math.min(Math.max(from, to), location.clip.duration);
   const removedDuration = end - start;
@@ -351,7 +357,7 @@ export function rippleDeleteClip(
   clipId: string,
 ): VideoSplatProject {
   const location = findClip(project, clipId);
-  if (!location) return project;
+  if (!location || location.track.locked) return project;
   const end = location.clip.start + location.clip.duration;
   return touchProject(project, {
     tracks: project.tracks.map((track) =>
@@ -398,17 +404,33 @@ export function placeClip(
   const clip = { ...source, id: crypto.randomUUID(), start };
   let clips = track.clips;
   if (mode === "insert")
-    clips = clips.map((item) =>
-      item.start >= start
-        ? { ...item, start: item.start + clip.duration }
-        : item,
-    );
+    clips = clips.flatMap((item) => {
+      if (item.start >= start)
+        return [{ ...item, start: item.start + clip.duration }];
+      const end = item.start + item.duration;
+      if (end <= start) return [item];
+      // Make room at the playhead, preserving both halves of the source.
+      const leftDuration = start - item.start;
+      return [
+        { ...item, duration: leftDuration },
+        { ...item, id: crypto.randomUUID(), start: start + clip.duration,
+          sourceStart: item.sourceStart + leftDuration, duration: end - start },
+      ];
+    });
   if (mode === "overwrite")
-    clips = clips.filter(
-      (item) =>
-        item.start + item.duration <= start ||
-        item.start >= start + clip.duration,
-    );
+    clips = clips.flatMap((item) => {
+      const end = item.start + item.duration;
+      const overwriteEnd = start + clip.duration;
+      if (end <= start || item.start >= overwriteEnd) return [item];
+      const pieces: Clip[] = [];
+      if (item.start < start)
+        pieces.push({ ...item, duration: start - item.start });
+      if (end > overwriteEnd)
+        pieces.push({ ...item, id: pieces.length ? crypto.randomUUID() : item.id,
+          start: overwriteEnd, sourceStart: item.sourceStart + overwriteEnd - item.start,
+          duration: end - overwriteEnd });
+      return pieces;
+    });
   return {
     clipId: clip.id,
     project: touchProject(project, {

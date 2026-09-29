@@ -28,12 +28,43 @@ export function validateProject(value: unknown): VideoSplatProject {
   const candidate = value as Partial<VideoSplatProject> & { schema?: string };
   if (candidate.schema !== "videosplat-project" && candidate.schema !== "ved-project") throw new Error("This is not a VideoSplat project file.");
   const project = { ...candidate, schema: "videosplat-project" } as Partial<VideoSplatProject>;
-  if ((project.version as number | undefined) === 1) {
-    const legacy = project as unknown as Omit<VideoSplatProject, "version"> & { version: 1 };
-    return { ...legacy, version: PROJECT_VERSION, assets: (legacy.assets ?? []).map((asset) => ({ ...asset, storedLocally: false })) } as VideoSplatProject;
-  }
-  if (project.version !== PROJECT_VERSION) throw new Error(`Unsupported project version: ${String(project.version)}.`);
-  if (typeof project.id !== "string" || typeof project.name !== "string" || !Array.isArray(project.tracks) || !Array.isArray(project.assets)) throw new Error("Project file is incomplete.");
+  const legacy = (project.version as number | undefined) === 1;
+  if (!legacy && project.version !== PROJECT_VERSION) throw new Error(`Unsupported project version: ${String(project.version)}.`);
+  const record = (item: unknown): item is Record<string, unknown> => Boolean(item) && typeof item === "object" && !Array.isArray(item);
+  const number = (item: unknown, minimum: number): item is number => typeof item === "number" && Number.isFinite(item) && item >= minimum;
+  const kinds = ["video", "audio", "image", "text", "caption", "redaction"];
+  const ids = new Set<string>();
+  const uniqueId = (item: unknown, namespace: string) => {
+    if (typeof item !== "string" || !item || ids.has(`${namespace}:${item}`)) return false;
+    ids.add(`${namespace}:${item}`);
+    return true;
+  };
+  if (
+    typeof project.id !== "string" || !project.id || typeof project.name !== "string" ||
+    !record(project.canvas) || !number(project.canvas.width, 1) || !number(project.canvas.height, 1) ||
+    !number(project.canvas.frameRate, Number.MIN_VALUE) || typeof project.canvas.background !== "string" ||
+    !record(project.settings) || project.settings.localOnly !== true ||
+    !["auto", "always", "never"].includes(project.settings.proxyMode) ||
+    !Array.isArray(project.assets) || !project.assets.every(asset =>
+      record(asset) && uniqueId(asset.id, "asset") && typeof asset.name === "string" &&
+      ["video", "audio", "image"].includes(asset.kind) && number(asset.size, 0) &&
+      typeof asset.mimeType === "string" && (legacy || typeof asset.storedLocally === "boolean") &&
+      (asset.duration === undefined || number(asset.duration, 0)) &&
+      (asset.waveform === undefined || (Array.isArray(asset.waveform) && asset.waveform.every(value => number(value, 0))))
+    ) ||
+    !Array.isArray(project.tracks) || !project.tracks.every(track =>
+      record(track) && uniqueId(track.id, "track") && typeof track.name === "string" && kinds.includes(track.kind) &&
+      typeof track.hidden === "boolean" && typeof track.locked === "boolean" && typeof track.muted === "boolean" &&
+      Array.isArray(track.clips) && track.clips.every(clip =>
+        record(clip) && uniqueId(clip.id, "clip") && typeof clip.name === "string" && kinds.includes(clip.kind) &&
+        (clip.assetId === undefined || typeof clip.assetId === "string") &&
+        number(clip.start, 0) && number(clip.duration, Number.MIN_VALUE) && number(clip.sourceStart, 0) &&
+        record(clip.properties) && Object.values(clip.properties).every(value =>
+          typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value)))
+      )
+    )
+  ) throw new Error("Project file is incomplete or contains invalid canvas, media, or timeline data.");
+  if (legacy) return { ...project, version: PROJECT_VERSION, assets: project.assets.map(asset => ({ ...asset, storedLocally: false })) } as VideoSplatProject;
   return project as VideoSplatProject;
 }
 

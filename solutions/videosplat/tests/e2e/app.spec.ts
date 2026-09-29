@@ -444,7 +444,7 @@ test("moves, trims, and inserts clips directly on the timeline", async ({
   await page
     .getByRole("button", { name: "Insert movable.svg at playhead" })
     .click();
-  await expect(page.locator(".timeline-clip")).toHaveCount(2);
+  await expect(page.locator(".timeline-clip")).toHaveCount(3);
   await expect(page.getByText("later clips moved right")).toBeVisible();
 });
 

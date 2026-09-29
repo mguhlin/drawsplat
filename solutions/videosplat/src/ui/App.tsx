@@ -814,26 +814,10 @@ export function App() {
       sourceStart: 0,
       properties: { fit: "fit", x: 0, y: 0, scale: 1, rotation: 0 },
     };
-    const next = touchProject(project, {
-      tracks: project.tracks.map((item) =>
-        item.id === track.id
-          ? {
-              ...item,
-              clips: [
-                ...item.clips.map((existing) =>
-                  existing.start >= time
-                    ? { ...existing, start: existing.start + duration }
-                    : existing,
-                ),
-                clip,
-              ],
-            }
-          : item,
-      ),
-    });
-    commit(next);
+    const result = placeClip(project, track.id, clip, time, "insert");
+    commit(result.project);
     setSelectedAssetId(asset.id);
-    setSelectedClipId(clip.id);
+    setSelectedClipId(result.clipId);
     setStatus(
       `${asset.name} inserted at the playhead; later clips moved right`,
     );
@@ -2275,13 +2259,13 @@ export function App() {
                   </button>
                   <button
                     aria-pressed={track.locked}
-                    onClick={() =>
-                      commit(
-                        updateTrack(project, track.id, {
-                          locked: !track.locked,
-                        }),
-                      )
-                    }
+                    onClick={() => {
+                      commit(updateTrack(project, track.id, { locked: !track.locked }));
+                      if (!track.locked && track.clips.some((clip) => clip.id === selectedClipId)) {
+                        setSelectedClipId(undefined);
+                        setClipSelection(undefined);
+                      }
+                    }}
                     aria-label={`Lock ${track.name}`}
                   >
                     {track.locked ? "▣" : "⌑"}

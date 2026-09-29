@@ -17,7 +17,7 @@ test('generates for a trimmed clip, validates edits, downloads SRT and adds capt
   await page.getByLabel('Source start', { exact: true }).fill('2');
   await openGeneration(page);
   await expect(page.getByLabel('Caption 1 text')).toHaveValue('Generated speech');
-  expect(await page.evaluate(() => (window as any).subtitleJobs[0])).toEqual({ samples: 64000, model: 'small' });
+  expect(await page.evaluate(() => (window as any).subtitleJobs[0])).toEqual({ samples: 64000, model: 'small', acceleration: 'auto' });
   await expect(page.getByLabel('English speech model')).toHaveValue('small');
   await page.getByLabel('Caption 1 text').fill('Corrected speech');
   await page.getByLabel('Caption 1 end').fill('0');

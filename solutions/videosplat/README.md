@@ -150,3 +150,5 @@ Recording review includes **Download original recording**, available before addi
 The September 24 recording follow-up checks encoded WebM duration even when browser metadata reports a finite value, and warns in review when saved video is substantially shorter than active capture time. See [findings and validation limits](docs/RECORDING_FOLLOWUP_2026-09-24.md). Existing timeline clips are not automatically extended because they may have been intentionally trimmed.
 
 To recover the source from an existing project, select its item in **Media**, then choose **File → Download original media**. This saves the stored source bytes without applying the timeline’s trim or duration.
+
+September 29 functionality audit: insert/overwrite now preserve unaffected footage, track locks protect selected clips, and invalid project files are rejected before replacing the current edit. See [audit findings and verification limits](docs/BUG_HUNT_2026-09-29.md).
