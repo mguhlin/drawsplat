@@ -1,3 +1,4 @@
+import { encodeWithMediaRecorder } from "./audio/encode";
 import "./styles.css";
 import { mountTranscription } from "./transcription";
 import { AudioEngine } from "./audio/engine";
@@ -1910,40 +1911,7 @@ function showDriveResult(fileId: string, webViewLink: string | undefined, name: 
     void navigator.clipboard.writeText(value).then(() => toast(t("copied" as never))).catch(() => toast(t("copyFailed" as never), true));
   }));
 }
-async function encodeWithMediaRecorder(
-  buffer: AudioBuffer,
-  mimeType: string,
-): Promise<Blob> {
-  const context = new AudioContext({ sampleRate: buffer.sampleRate });
-  await context.resume();
-  const source = context.createBufferSource();
-  const destination = context.createMediaStreamDestination();
-  source.buffer = buffer;
-  source.connect(destination);
-  const chunks: Blob[] = [];
-  const mediaRecorder = new MediaRecorder(destination.stream, {
-    mimeType,
-    audioBitsPerSecond: 256000,
-  });
-  return new Promise((resolve, reject) => {
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size) chunks.push(event.data);
-    };
-    mediaRecorder.onerror = () => {
-      void context.close();
-      reject(new Error("Encoding failed"));
-    };
-    mediaRecorder.onstop = () => {
-      void context.close();
-      resolve(new Blob(chunks, { type: mimeType }));
-    };
-    source.onended = () => {
-      if (mediaRecorder.state !== "inactive") mediaRecorder.stop();
-    };
-    mediaRecorder.start(250);
-    source.start();
-  });
-}
+
 function download(blob: Blob, name: string): void {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");

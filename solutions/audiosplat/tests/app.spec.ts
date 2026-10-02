@@ -575,3 +575,25 @@ function makeWav(seconds: number, sampleRate: number): Buffer {
   }
   return output;
 }
+
+test('native audio export completes without animation callbacks', async ({ page }) => {
+  await page.goto('/solutions/audiosplat/?lang=en');
+  await page.locator('#audio-input').setInputFiles({ name: 'native.wav', mimeType: 'audio/wav', buffer: makeWav(2, 8000) });
+  await expect(page.locator('[data-clip]')).toHaveCount(1);
+  await page.evaluate(() => {
+    window.requestAnimationFrame = () => 0;
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  const pending = page.waitForEvent('download');
+  await page.getByText('File', { exact: true }).click();
+  await page.getByRole('button', { name: /WebM\/Opus|Ogg\/Opus/ }).first().click();
+  const output = await pending;
+  const path = await output.path();
+  const { execFileSync } = await import('node:child_process');
+  const packets = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_packets', '-show_entries', 'packet=pts_time', '-of', 'json', path!], { encoding: 'utf8' })).packets;
+  expect(packets.length).toBeGreaterThan(20);
+  expect(Number(packets[0].pts_time)).toBeLessThan(.1);
+  expect(Number(packets.at(-1).pts_time)).toBeGreaterThan(1.8);
+  expect(Number(packets.at(-1).pts_time)).toBeLessThan(2.3);
+});

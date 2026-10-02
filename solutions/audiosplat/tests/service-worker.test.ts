@@ -8,12 +8,12 @@ it("upgrading AudioSplat preserves other apps' offline and speech-model caches",
   runInNewContext(readFileSync("public/sw.js", "utf8"), {
     self: { addEventListener: (event: string, handler: typeof handlers[string]) => { handlers[event] = handler; }, clients: { claim: async () => {} } },
     caches: {
-      keys: async () => ["audiosplat-v0.1.1", "audiosplat-v0.1.2", "videosplat-shell-v24", "mediasplat-v9", "transformers-cache"],
+      keys: async () => ["audiosplat-v0.1.1", "audiosplat-v0.1.2", "audiosplat-v0.1.3", "videosplat-shell-v24", "mediasplat-v9", "transformers-cache"],
       delete: remove,
     },
   });
   let activation: Promise<unknown> | undefined;
   handlers.activate({ waitUntil: promise => { activation = promise; } });
   await activation;
-  expect(remove.mock.calls.map(call => call[0])).toEqual(["audiosplat-v0.1.1"]);
+  expect(remove.mock.calls.map(call => call[0])).toEqual(["audiosplat-v0.1.1", "audiosplat-v0.1.2"]);
 });
