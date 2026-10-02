@@ -1,3 +1,4 @@
+import { validateSubtitleExport } from "./validate-export";
 import { subtitlesToAss, type SubtitleOptions } from "../captions/subtitles";
 import { burnSubtitlesCommand } from "./commands";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -108,9 +109,11 @@ export async function burnSubtitles(file: File, source: string, options: Subtitl
     if (await engine.exec(burnSubtitlesCommand(input, output)) !== 0) throw new Error("Subtitle export failed. Check that the source contains video and try a smaller file.");
     encoding = false;
     notify({ kind: "log", message: "Finishing the MP4 download…" });
+    await engine.ffprobe(["-v", "error", "-count_packets", "-show_entries", "stream=codec_type,width,height,start_time,duration,nb_read_packets", "-of", "json", output, "-o", "subtitle-output-probe.json"]);
+    validateSubtitleExport(JSON.parse(String(await engine.readFile("subtitle-output-probe.json", "utf8"))), total);
     return [await readResult(engine, output)];
   } finally {
-    await cleanup(engine, [input, output, "subtitle-probe.json", "captions.ass", "fonts/DejaVuSans.ttf"]);
+    await cleanup(engine, [input, output, "subtitle-output-probe.json", "subtitle-probe.json", "captions.ass", "fonts/DejaVuSans.ttf"]);
     try { await engine.deleteDir("fonts"); } catch { /* cancelled engine */ }
   }
 }
