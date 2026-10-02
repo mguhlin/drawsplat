@@ -36,6 +36,7 @@ async function exportCompatible(
   options: ExportOptions,
   onProgress: (ratio: number) => void,
   signal?: AbortSignal,
+  onStatus: (message: string) => void = () => {},
 ): Promise<Blob> {
   if (
     !("MediaRecorder" in window) ||
@@ -146,8 +147,13 @@ async function exportCompatible(
     });
     activeRecorder = recorder;
     const result = recordingResult(recorder, mimeType);
-    const started = performance.now();
+    let started = performance.now();
+    let pausedAt: number | undefined;
+    let lastDraw = performance.now();
+    let releaseVisibility = () => {};
+
     const finish = () => {
+      releaseVisibility();
       cancelAnimationFrame(frame);
       media.forEach((element) => element.pause());
       if (recorder.state !== "inactive") recorder.stop();
@@ -171,10 +177,37 @@ async function exportCompatible(
       recorder.addEventListener("stop", interrupted);
       signal?.addEventListener("abort", stop, { once: true });
       if (signal?.aborted) { stop(); return; }
-      const draw = () => {
+      const visibilityChanged = () => {
         if (finished) return;
         try {
-          const elapsed = (performance.now() - started) / 1000;
+          if (document.hidden) {
+            if (pausedAt !== undefined) return;
+            pausedAt = performance.now();
+            cancelAnimationFrame(frame);
+            if (recorder.state === "recording") recorder.pause();
+            media.forEach(element => element.pause());
+            onStatus("Export paused · return to this tab to continue");
+          } else if (pausedAt !== undefined) {
+            started += performance.now() - pausedAt;
+            pausedAt = undefined;
+            lastDraw = performance.now();
+            if (recorder.state === "paused") recorder.resume();
+            onStatus("Compatible export · renders in real time");
+            frame = requestAnimationFrame(draw);
+          }
+        } catch (error) { complete(error); }
+      };
+      document.addEventListener("visibilitychange", visibilityChanged);
+      releaseVisibility = () => document.removeEventListener("visibilitychange", visibilityChanged);
+      const draw = () => {
+        if (finished || pausedAt !== undefined) return;
+        // Visibility can change before its event is delivered.
+        if (document.hidden) { visibilityChanged(); return; }
+        try {
+          const now = performance.now();
+          if (now - lastDraw > 2000) throw new Error("Video export was interrupted by the browser. Keep this tab visible and retry, or use fast frame export.");
+          lastDraw = now;
+          const elapsed = (now - started) / 1000;
           const time = rangeStart + elapsed;
           if (signal?.aborted || elapsed >= duration) {
             complete();
@@ -210,7 +243,8 @@ async function exportCompatible(
           frame = requestAnimationFrame(draw);
         } catch (error) { complete(error); }
       };
-      frame = requestAnimationFrame(draw);
+      if (document.hidden) visibilityChanged();
+      else frame = requestAnimationFrame(draw);
     });
     let blob: Blob;
     try { blob = await result; } catch (error) { signal?.throwIfAborted(); throw error; }
@@ -253,5 +287,5 @@ export async function exportProject(
       onStatus(`Fast export unavailable (${error instanceof Error ? error.message : 'browser limitation'}). Restarting with compatible export.`);
     }
   } else onStatus('Compatible export · renders in real time');
-  return exportCompatible(project, urls, options, onProgress, signal);
+  return exportCompatible(project, urls, options, onProgress, signal, onStatus);
 }
