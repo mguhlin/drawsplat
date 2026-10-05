@@ -362,3 +362,7 @@ video.source {
 .language-control select { min-height: 44px; margin: 0; max-width: 155px; }
 [dir=rtl] .guides span { left: auto; right: 8px; }
 @media(max-width:760px) { header { flex-wrap: wrap; gap: 12px; } .header-actions { gap: 10px; } .header-actions a { font-size: 12px; } .brand { font-size: 21px; } }
+
+.brand { direction: ltr; }
+#dimensions, input[type=number] { direction: ltr; }
+.step { margin-right: 0; margin-inline-end: 8px; }

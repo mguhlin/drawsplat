@@ -1,9 +1,10 @@
 import "./style.css";
+import { translate as tr, initializeLanguage } from "./i18n.js";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { PRESETS, timeline, videoFilter } from "./model.js";
 const $ = (id) => document.getElementById(id);
 $("app").innerHTML = `
-<header><a class="brand" href="./"><img src="./icon.svg" alt="">ClipSplat<sup>™</sup></a><span>LOCAL VIDEO STUDIO \xB7 BY DRAWSPLAT</span><a href="../../pages/tools.html">All tools \u2197</a></header>
+<header><a class="brand" href="./"><img src="./icon.svg" alt="">ClipSplat<sup>™</sup></a><span>LOCAL VIDEO STUDIO \xB7 BY DRAWSPLAT</span><div class="header-actions"><label class="language-control"><select id="language" aria-label="Language"></select></label><a href="../../pages/tools.html">All tools \u2197</a></div></header>
 <main><div class="intro"><div><div class="eyebrow">A little video. A clear message.</div><h1>Record. Bookend. Share.</h1><p>Make short videos for Instagram with an opening and a closing title panel.</p></div><span class="tag">Private by design \xB7 No account needed</span></div>
 <div class="workspace"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
@@ -20,8 +21,10 @@ document.body.append(video);
 let source, sourceURL, outputURL, originalURL, stream, recorder, recordTimer, duration = 0, mode = "intro", busy = false, playing = false, playbackStart = 0, currentPlan, engine, cancelled = false;
 const number = (id) => Number($(id).value), preset = () => PRESETS[$("preset").value];
 const plan = () => timeline(duration, number("start"), number("end"), number("intro-duration"), number("outro-duration"), $("preset").value);
-const message = (text) => {
-  $("status").textContent = text;
+let statusState = { text: "Your videos stay on this device.", params: {} }, sourceName;
+const message = (text, params = {}) => {
+  statusState = { text, params };
+  $("status").textContent = tr(text, params);
 };
 function invalidate() {
   if (outputURL) URL.revokeObjectURL(outputURL);
@@ -41,11 +44,11 @@ function update() {
   $("guides").style.display = $("safe").checked ? "block" : "none";
   try {
     const t = plan();
-    $("summary").textContent = `${t.intro}s opening + ${(t.end - t.start).toFixed(1)}s video + ${t.outro}s closing = ${t.total.toFixed(1)}s`;
+    $("summary").textContent = tr("{intro}s opening + {clip}s video + {outro}s closing = {total}s", {intro:t.intro,clip:(t.end-t.start).toFixed(1),outro:t.outro,total:t.total.toFixed(1)});
     $("export").disabled = busy || !source;
     $("play").disabled = busy || !source;
   } catch (error) {
-    $("summary").textContent = source ? error.message : "Add a video to get started.";
+    $("summary").textContent = tr(source ? error.message : "Add a video to get started.");
     $("export").disabled = true;
     $("play").disabled = true;
   }
@@ -77,13 +80,17 @@ function wrap(text, maxWidth, fontSize) {
 }
 function panel(kind) {
   const w = canvas.width, h = canvas.height, bg = $("color").value;
+  const rtl = document.documentElement.dir === "rtl";
+  const textX = rtl ? w * .80 : w * .12;
+  ctx.direction = rtl ? "rtl" : "ltr";
+  ctx.textAlign = rtl ? "right" : "left";
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
   const rgb = [1, 3, 5].map((i) => parseInt(bg.slice(i, i + 2), 16)), light = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114 > 150;
   const fg = light ? "#4720a4" : "#faf8ff", accent = light ? "#4720a4" : "#f5b942";
   ctx.fillStyle = accent;
   ctx.fillRect(w * 0.12, h * 0.24, w * 0.1, 8);
-  const title = $(kind + "-text").value.trim() || (kind === "intro" ? "Welcome" : "Thanks for watching");
+  const title = $(kind + "-text").value.trim() || tr(kind === "intro" ? "Welcome" : "Thanks for watching");
   let size = 76, lines = wrap(title, w * 0.68, size);
   while (lines.length * size * 1.22 > h * 0.28 && size > 34) {
     size -= 2;
@@ -93,13 +100,13 @@ function panel(kind) {
   ctx.font = `750 ${size}px system-ui`;
   ctx.textBaseline = "top";
   const top = h * 0.43 - lines.length * size * 1.22 / 2;
-  lines.forEach((line, i) => ctx.fillText(line, w * 0.12, top + i * size * 1.22));
+  lines.forEach((line, i) => ctx.fillText(line, textX, top + i * size * 1.22));
   const creator = $("creator").value.trim();
   if (creator) {
     ctx.fillStyle = accent;
-    const names = wrap(`by ${creator}`, w * 0.68, 35);
+    const names = wrap(tr("by {name}",{name:creator}), w * 0.68, 35);
     ctx.font = "500 35px system-ui";
-    names.forEach((line, i) => ctx.fillText(line, w * 0.12, h * 0.64 + i * 44));
+    names.forEach((line, i) => ctx.fillText(line, textX, h * 0.64 + i * 44));
   }
 }
 function drawVideo() {
@@ -110,7 +117,7 @@ function drawVideo() {
     ctx.fillStyle = "#f5b942";
     ctx.font = "650 44px system-ui";
     ctx.textAlign = "center";
-    ctx.fillText("Your video goes here", w / 2, h / 2);
+    ctx.fillText(tr("Your video goes here"), w / 2, h / 2);
     ctx.textAlign = "left";
     return;
   }
@@ -120,7 +127,7 @@ function drawVideo() {
 function stopPreview() {
   playing = false;
   if (!stream) video.pause();
-  $("play").textContent = "\u25B6 Preview all";
+  $("play").textContent = tr("▶ Preview all");
 }
 function show(kind) {
   stopPreview();
@@ -152,6 +159,7 @@ function render() {
 }
 function controls(locked) {
   busy = locked;
+  $("language").disabled = locked;
   for (const el of $("settings").querySelectorAll("input,textarea,select,button")) el.disabled = locked;
   $("cancel").disabled = false;
   $("cancel").style.display = locked ? "inline-block" : "none";
@@ -226,7 +234,8 @@ async function load(blob, name) {
   duration = video.duration;
   $("start").value = "0";
   $("end").value = Math.min(duration, preset().max - number("intro-duration") - number("outro-duration")).toFixed(2);
-  $("source-name").textContent = `${name} \xB7 ${duration.toFixed(1)} seconds`;
+  sourceName = name;
+  $("source-name").textContent = tr("{name} · {duration} seconds",{name:sourceName === "Camera recording" ? tr(sourceName) : sourceName,duration:duration.toFixed(1)});
   $("start").disabled = false;
   $("end").disabled = false;
   mode = "clip";
@@ -266,7 +275,7 @@ $("camera").onclick = async () => {
     message("Camera ready. Frame your shot and press Record.");
   } catch (error) {
     closeCamera();
-    message(`Camera unavailable: ${error.message}`);
+    message("Camera unavailable: {error}",{error:error.message});
   }
 };
 $("close-camera").onclick = () => {
@@ -306,7 +315,7 @@ $("record").onclick = () => {
         await load(blob, "Camera recording");
       } catch (error) {
         closeCamera();
-        message(error.message + " You can save the original recording.");
+        message(tr(error.message) + " " + tr("You can save the original recording."));
       } finally {
         controls(false);
       }
@@ -319,7 +328,7 @@ $("record").onclick = () => {
     const began = performance.now();
     recordTimer = setInterval(() => {
       const seconds = (performance.now() - began) / 1e3;
-      $("recording").textContent = `\u25CF Recording \xB7 ${seconds.toFixed(0)}s`;
+      $("recording").textContent = tr("● Recording · {seconds}s",{seconds:seconds.toFixed(0)});
       const max = preset().max - number("intro-duration") - number("outro-duration");
       if (seconds >= max && recorder.state === "recording") recorder.stop();
     }, 200);
@@ -346,7 +355,7 @@ $("play").onclick = async () => {
     video.pause();
     playing = true;
     playbackStart = performance.now();
-    $("play").textContent = "\u25A0 Stop preview";
+    $("play").textContent = tr("■ Stop preview");
   } catch (error) {
     message(error.message);
   }
@@ -420,7 +429,7 @@ $("export").onclick = async () => {
       const image = `${kind}.png`, output2 = `${kind}.mp4`;
       files.push(image, output2);
       await ffmpeg.writeFile(image, await png(kind));
-      await run(["-loop", "1", "-framerate", "30", "-i", image, "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", String(seconds), "-vf", "setsar=1", ...codec, "-y", output2], output2, `Creating ${kind === "intro" ? "opening" : "closing"} panel\u2026`);
+      await run(["-loop", "1", "-framerate", "30", "-i", image, "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", String(seconds), "-vf", "setsar=1", ...codec, "-y", output2], output2, kind === "intro" ? "Creating opening panel…" : "Creating closing panel…");
     }
     await title("intro", t.intro);
     $("progress").value = 0.15;
@@ -457,7 +466,7 @@ $("export").onclick = async () => {
       }
     };
     $("progress").value = 1;
-    message(`MP4 ready \xB7 ${t.total.toFixed(1)}s \xB7 ${(blob.size / 1024 / 1024).toFixed(1)} MB. Download, then upload in Instagram.`);
+    message("MP4 ready · {duration}s · {size} MB. Download, then upload in Instagram.",{duration:t.total.toFixed(1),size:(blob.size/1024/1024).toFixed(1)});
   } catch (error) {
     message(cancelled ? "Export cancelled. Your video is still available." : error.message);
   } finally {
@@ -483,6 +492,14 @@ window.addEventListener("beforeunload", (event) => {
 window.addEventListener("pagehide", () => {
   stream?.getTracks().forEach((t) => t.stop());
   engine?.terminate();
+});
+initializeLanguage(({titlesChanged}) => {
+  stopPreview();
+  if(titlesChanged) invalidate();
+  update();
+  message(statusState.text,statusState.params);
+  if(sourceName) $("source-name").textContent = tr("{name} · {duration} seconds",{name:sourceName === "Camera recording" ? tr(sourceName) : sourceName,duration:duration.toFixed(1)});
+  else $("source-name").textContent = tr("Camera and microphone require your browser permission.");
 });
 update();
 render();
