@@ -652,6 +652,129 @@ const IMAGE_STRINGS = {
   }
 };
 for (const code of Object.keys(IMAGE_STRINGS)) Object.assign(STRINGS[code], IMAGE_STRINGS[code]);
+const TIMELINE_STRINGS = {
+  "es": {
+    "Video timeline": "Línea de tiempo del video",
+    "Cut your video": "Recorta tu video",
+    "Delete selection": "Eliminar selección",
+    "Undo": "Deshacer",
+    "Reset cuts": "Restaurar cortes",
+    "Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.": "Arrastra sobre el video para seleccionar una sección y eliminarla. Haz clic o desplaza el control para previsualizar. Los cortes eliminan el video y su audio juntos.",
+    "Select a section of video": "Seleccionar una sección del video",
+    "Selection start (seconds)": "Inicio de selección (segundos)",
+    "Selection end (seconds)": "Fin de selección (segundos)",
+    "Preview position": "Posición de vista previa",
+    "Add a video to start editing.": "Añade un video para empezar a editar.",
+    "Opening · {seconds}s": "Inicio · {seconds}s",
+    "Closing · {seconds}s": "Final · {seconds}s",
+    "Video · {start}–{end}s": "Video · {start}–{end}s",
+    "Selected {start}–{end}s · {length}s to delete": "Selección {start}–{end}s · {length}s para eliminar",
+    "Remaining video: {duration}s. Selection times refer to the edited video.": "Video restante: {duration}s. Los tiempos de selección corresponden al video editado.",
+    "{seconds} seconds": "{seconds} segundos",
+    "Select at least 0.1 seconds to delete.": "Selecciona al menos 0.1 segundos para eliminar.",
+    "Keep at least one frame of video.": "Conserva al menos un fotograma del video.",
+    "Selection deleted. Undo restores it; the original recording is unchanged.": "Selección eliminada. Deshacer la restaura; la grabación original no cambia.",
+    "Last cut undone.": "Último corte deshecho.",
+    "All deleted sections restored.": "Se restauraron todas las secciones eliminadas."
+  },
+  "vi": {
+    "Video timeline": "Dòng thời gian video",
+    "Cut your video": "Cắt video",
+    "Delete selection": "Xóa phần đã chọn",
+    "Undo": "Hoàn tác",
+    "Reset cuts": "Khôi phục các đoạn cắt",
+    "Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.": "Kéo trên video để chọn một đoạn rồi xóa. Nhấp hoặc kéo thanh để xem trước. Đoạn cắt loại bỏ cả video và âm thanh.",
+    "Select a section of video": "Chọn một đoạn video",
+    "Selection start (seconds)": "Bắt đầu lựa chọn (giây)",
+    "Selection end (seconds)": "Kết thúc lựa chọn (giây)",
+    "Preview position": "Vị trí xem trước",
+    "Add a video to start editing.": "Thêm video để bắt đầu chỉnh sửa.",
+    "Opening · {seconds}s": "Mở đầu · {seconds}s",
+    "Closing · {seconds}s": "Kết thúc · {seconds}s",
+    "Video · {start}–{end}s": "Video · {start}–{end}s",
+    "Selected {start}–{end}s · {length}s to delete": "Đã chọn {start}–{end}s · {length}s để xóa",
+    "Remaining video: {duration}s. Selection times refer to the edited video.": "Video còn lại: {duration}s. Thời gian lựa chọn tính theo video đã chỉnh sửa.",
+    "{seconds} seconds": "{seconds} giây",
+    "Select at least 0.1 seconds to delete.": "Chọn ít nhất 0.1 giây để xóa.",
+    "Keep at least one frame of video.": "Giữ ít nhất một khung hình video.",
+    "Selection deleted. Undo restores it; the original recording is unchanged.": "Đã xóa phần chọn. Hoàn tác sẽ khôi phục; bản ghi gốc không thay đổi.",
+    "Last cut undone.": "Đã hoàn tác lần cắt cuối.",
+    "All deleted sections restored.": "Đã khôi phục mọi đoạn đã xóa."
+  },
+  "ar": {
+    "Video timeline": "المخطط الزمني للفيديو",
+    "Cut your video": "قص الفيديو",
+    "Delete selection": "حذف التحديد",
+    "Undo": "تراجع",
+    "Reset cuts": "استعادة المقاطع",
+    "Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.": "اسحب فوق الفيديو لتحديد مقطع ثم حذفه. انقر أو حرّك شريط المعاينة. يحذف القص الفيديو والصوت معًا.",
+    "Select a section of video": "تحديد مقطع من الفيديو",
+    "Selection start (seconds)": "بداية التحديد (ثوانٍ)",
+    "Selection end (seconds)": "نهاية التحديد (ثوانٍ)",
+    "Preview position": "موضع المعاينة",
+    "Add a video to start editing.": "أضف فيديو لبدء التحرير.",
+    "Opening · {seconds}s": "البداية · {seconds}s",
+    "Closing · {seconds}s": "النهاية · {seconds}s",
+    "Video · {start}–{end}s": "فيديو · {start}–{end}s",
+    "Selected {start}–{end}s · {length}s to delete": "التحديد {start}–{end}s · {length}s للحذف",
+    "Remaining video: {duration}s. Selection times refer to the edited video.": "الفيديو المتبقي: {duration}s. أوقات التحديد تخص الفيديو المعدّل.",
+    "{seconds} seconds": "{seconds} ثانية",
+    "Select at least 0.1 seconds to delete.": "حدد 0.1 ثانية على الأقل للحذف.",
+    "Keep at least one frame of video.": "احتفظ بإطار واحد من الفيديو على الأقل.",
+    "Selection deleted. Undo restores it; the original recording is unchanged.": "تم حذف التحديد. التراجع يستعيده؛ التسجيل الأصلي لم يتغير.",
+    "Last cut undone.": "تم التراجع عن آخر قص.",
+    "All deleted sections restored.": "تمت استعادة جميع المقاطع المحذوفة."
+  },
+  "zh": {
+    "Video timeline": "视频时间轴",
+    "Cut your video": "剪辑视频",
+    "Delete selection": "删除所选部分",
+    "Undo": "撤销",
+    "Reset cuts": "重置剪切",
+    "Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.": "在视频上拖动以选中片段，然后删除。点击或拖动滑块可预览。剪切会同时删除视频和对应音频。",
+    "Select a section of video": "选择视频片段",
+    "Selection start (seconds)": "选区开始（秒）",
+    "Selection end (seconds)": "选区结束（秒）",
+    "Preview position": "预览位置",
+    "Add a video to start editing.": "添加视频以开始编辑。",
+    "Opening · {seconds}s": "开场 · {seconds}s",
+    "Closing · {seconds}s": "结束 · {seconds}s",
+    "Video · {start}–{end}s": "视频 · {start}–{end}s",
+    "Selected {start}–{end}s · {length}s to delete": "已选 {start}–{end}s · 将删除{length}s",
+    "Remaining video: {duration}s. Selection times refer to the edited video.": "剩余视频：{duration}s。选区时间以编辑后的视频为准。",
+    "{seconds} seconds": "{seconds}秒",
+    "Select at least 0.1 seconds to delete.": "请至少选择0.1秒来删除。",
+    "Keep at least one frame of video.": "请至少保留一帧视频。",
+    "Selection deleted. Undo restores it; the original recording is unchanged.": "所选部分已删除。撤销可恢复；原始录像不变。",
+    "Last cut undone.": "已撤销上次剪切。",
+    "All deleted sections restored.": "已恢复所有删除的片段。"
+  },
+  "uh": {
+    "Video timeline": "वीडियो टाइमलाइन / ویڈیو ٹائم لائن",
+    "Cut your video": "वीडियो काटें / ویڈیو کاٹیں",
+    "Delete selection": "चयन हटाएँ / انتخاب حذف کریں",
+    "Undo": "पूर्ववत / کالعدم کریں",
+    "Reset cuts": "कट रीसेट करें / کٹ ری سیٹ کریں",
+    "Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.": "वीडियो पर खींचकर भाग चुनें और हटाएँ। देखने के लिए क्लिक करें या स्लाइडर चलाएँ। वीडियो और ऑडियो साथ हटते हैं। / ویڈیو پر کھینچ کر حصہ چنیں اور حذف کریں۔ دیکھنے کے لیے کلک کریں یا سلائیڈر چلائیں۔ ویڈیو اور آڈیو ساتھ حذف ہوتے ہیں۔",
+    "Select a section of video": "वीडियो भाग चुनें / ویڈیو کا حصہ چنیں",
+    "Selection start (seconds)": "चयन आरंभ (सेकंड) / انتخاب شروع (سیکنڈ)",
+    "Selection end (seconds)": "चयन अंत (सेकंड) / انتخاب آخر (سیکنڈ)",
+    "Preview position": "पूर्वावलोकन स्थिति / پیش نظارے کی جگہ",
+    "Add a video to start editing.": "संपादन के लिए वीडियो जोड़ें। / تدوین کے لیے ویڈیو شامل کریں۔",
+    "Opening · {seconds}s": "आरंभ / ابتدا · {seconds}s",
+    "Closing · {seconds}s": "समापन / اختتام · {seconds}s",
+    "Video · {start}–{end}s": "वीडियो / ویڈیو · {start}–{end}s",
+    "Selected {start}–{end}s · {length}s to delete": "चयन / انتخاب {start}–{end}s · हटाएँ / حذف {length}s",
+    "Remaining video: {duration}s. Selection times refer to the edited video.": "बाकी वीडियो: {duration}s। समय संपादित वीडियो का है। / باقی ویڈیو: {duration}s۔ وقت تدوین شدہ ویڈیو کا ہے۔",
+    "{seconds} seconds": "{seconds} सेकंड / سیکنڈ",
+    "Select at least 0.1 seconds to delete.": "कम से कम 0.1 सेकंड चुनें। / کم از کم 0.1 سیکنڈ چنیں۔",
+    "Keep at least one frame of video.": "कम से कम एक वीडियो फ़्रेम रखें। / کم از کم ایک ویڈیو فریم رکھیں۔",
+    "Selection deleted. Undo restores it; the original recording is unchanged.": "चयन हटा दिया। पूर्ववत से लौटाएँ; मूल रिकॉर्डिंग नहीं बदली। / انتخاب حذف ہو گیا۔ کالعدم سے واپس لائیں؛ اصل ریکارڈنگ نہیں بدلی۔",
+    "Last cut undone.": "पिछला कट पूर्ववत हुआ। / پچھلا کٹ کالعدم ہو گیا۔",
+    "All deleted sections restored.": "सभी हटाए भाग लौट आए। / تمام حذف شدہ حصے واپس آ گئے۔"
+  }
+};
+for (const code of Object.keys(TIMELINE_STRINGS)) Object.assign(STRINGS[code], TIMELINE_STRINGS[code]);
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {
@@ -666,7 +789,7 @@ function initializeLanguage(onChange) {
   const picker = document.getElementById("language");
   for (const [code, name] of LANGUAGES) picker.add(new Option(name, code));
   const nodes = [], attributes = [];
-  const dynamic = "#intro-image-name,#outro-image-name,#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
+  const dynamic = "#timeline-track,#timeline-ruler,#timeline-panel-start,#timeline-panel-end,#timeline-selection-summary,#intro-image-name,#outro-image-name,#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
   const walker = document.createTreeWalker(document.getElementById("app"), NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const node = walker.currentNode;

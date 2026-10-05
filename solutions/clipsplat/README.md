@@ -1,6 +1,6 @@
 # ClipSplat™
 
-A focused, private short-video recorder for Instagram: camera or local import → trim → opening/closing panels → MP4. No account or Instagram API is required. Upload the resulting file manually, or use your device's share sheet when available.
+A focused, private short-video recorder for Instagram: camera or local import → trim and cut → opening/closing panels → MP4. No account or Instagram API is required. Upload the resulting file manually, or use your device's share sheet when available.
 
 | Preset | Output | ClipSplat duration limit, including panels |
 | --- | --- | --- |
@@ -12,13 +12,19 @@ All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/
 
 These are conservative app limits, not Instagram's full account-dependent maximums. Sources are limited to 200 MB; final MP4s to 300 MB. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
 
+## Select and delete video sections
+
+The timeline beneath the preview shows the remaining video between the opening and closing panels. Drag across the video track to highlight a section, or enter Selection start/end times, then use Delete selection. Click the track or use Preview position to scrub. Selection times refer to the edited video; each remaining segment shows its original source times. A cut deletes that section's video and audio together. Preview all and MP4 export follow the remaining segments in order, with both title panels included.
+
+Undo restores the last cut; Reset cuts restores all deleted sections and can itself be undone. With the timeline focused, Delete/Backspace deletes the selection, Ctrl/Cmd+Z undoes, arrows scrub, and Escape clears selection. Cuts leave the original file unchanged and reset when a new video is loaded. Projects are not automatically saved. At least one video frame must remain; the usual minimum total length and placement limits still apply. This is a single video track with its original audio.
+
 ## Development and hosting
 
-Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
+Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs` and `node tests/timeline.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
 
 The encoder reuses VideoSplat's existing shared engine at `/solutions/mediasplat/ffmpeg/ffmpeg-core.js` and `ffmpeg-core.part-01`/`ffmpeg-core.part-02`. Self-hosting requires those files at those paths. No VideoSplat editor, timeline, caption models or persistence is imported. Camera and microphone require HTTPS or localhost.
 
-Browser checks cover camera/microphone recording, actual MP4 exports with/without source audio, Reel/feed dimensions, skipped panels, cancellation/retry, trim limits and mobile layout. Native ffprobe verifies codecs, dimensions, frame rate and audio. Upload into an Instagram account is not automated or tested.
+Browser checks cover camera/microphone recording, actual MP4 exports with/without source audio, Reel/feed dimensions, skipped panels, cancellation/retry, trim limits and mobile layout. Timeline checks verify drag/numeric/keyboard selection, repeated cuts across joins, undo/reset, scrubbing and repeated playback, original import reset, and the actual colors and audio tones surviving in the exported MP4. Native ffprobe verifies codecs, dimensions, frame rate and audio. Upload into an Instagram account is not automated or tested.
 
 ## Name and sources — October 5, 2026
 

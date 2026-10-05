@@ -2,12 +2,13 @@ import "./style.css";
 import logoUrl from "../icon.svg";
 import { translate as tr, initializeLanguage } from "./i18n.js";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { PRESETS, timeline, videoFilter } from "./model.js";
+import { PRESETS, timeline, videoFilter, retainedSegments, selectionCuts, sourceTimeAt } from "./model.js";
+import { TIMELINE_MARKUP, createTimelineEditor } from "./timeline-editor.js";
 const $ = (id) => document.getElementById(id);
 $("app").innerHTML = `
 <header><a class="brand" href="./"><img src="${logoUrl}" alt="">ClipSplat<sup>™</sup></a><span>LOCAL VIDEO STUDIO \xB7 BY DRAWSPLAT</span><div class="header-actions"><label class="language-control"><select id="language" aria-label="Language"></select></label><a href="../../pages/tools.html">All tools \u2197</a></div></header>
 <main><div class="intro"><div><div class="eyebrow">A little video. A clear message.</div><h1>Record. Bookend. Share.</h1><p>Make short videos for Instagram with an opening and a closing title panel.</p></div><span class="tag">Private by design \xB7 No account needed</span></div>
-<div class="workspace"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>
+<div class="workspace"><div class="preview-column"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>${TIMELINE_MARKUP}</div>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
 <section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 3 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small></section>
 <section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Titles stay inside a conservative safe area.</small></section>
@@ -21,9 +22,10 @@ video.className = "source";
 document.body.append(video);
 let source, sourceURL, outputURL, originalURL, stream, recorder, recordTimer, duration = 0, mode = "intro", busy = false, playing = false, playbackStart = 0, currentPlan, engine, cancelled = false;
 const panelImages = { intro: null, outro: null };
-let imagesLoading = 0;
+let imagesLoading = 0, cuts = [], cutHistory = [], editor;
+let previewPhase = "intro", previewSegment = 0;
 const number = (id) => Number($(id).value), preset = () => PRESETS[$("preset").value];
-const plan = () => timeline(duration, number("start"), number("end"), number("intro-duration"), number("outro-duration"), $("preset").value);
+const plan = () => timeline(duration, number("start"), number("end"), number("intro-duration"), number("outro-duration"), $("preset").value, cuts);
 let statusState = { text: "Your videos stay on this device.", params: {} }, sourceName;
 const message = (text, params = {}) => {
   statusState = { text, params };
@@ -47,7 +49,7 @@ function update() {
   $("guides").style.display = $("safe").checked ? "block" : "none";
   try {
     const t = plan();
-    $("summary").textContent = tr("{intro}s opening + {clip}s video + {outro}s closing = {total}s", {intro:t.intro,clip:(t.end-t.start).toFixed(1),outro:t.outro,total:t.total.toFixed(1)});
+    $("summary").textContent = tr("{intro}s opening + {clip}s video + {outro}s closing = {total}s", {intro:t.intro,clip:t.clipDuration.toFixed(1),outro:t.outro,total:t.total.toFixed(1)});
     $("export").disabled = busy || imagesLoading > 0 || !source;
     $("play").disabled = busy || imagesLoading > 0 || !source;
   } catch (error) {
@@ -55,6 +57,7 @@ function update() {
     $("export").disabled = true;
     $("play").disabled = true;
   }
+  editor?.update();
 }
 function wrap(text, maxWidth, fontSize) {
   ctx.font = `750 ${fontSize}px system-ui`;
@@ -142,28 +145,35 @@ function show(kind) {
   stopPreview();
   mode = kind;
   if (kind === "clip" && stream) video.play().catch((error) => message(error.message));
-  if (kind === "clip" && source && !stream) video.currentTime = number("start");
+  if (kind === "clip" && source && !stream) video.currentTime = sourceTimeAt(retainedSegments(duration, number("start"), number("end"), cuts), 0);
+}
+function beginPreviewClip() {
+  previewPhase = "clip";
+  previewSegment = 0;
+  mode = "clip";
+  video.currentTime = currentPlan.segments[0].start;
+  video.play().catch(error => { stopPreview(); message(error.message); });
 }
 function render() {
   if (playing && currentPlan) {
-    const elapsed = (performance.now() - playbackStart) / 1e3;
-    if (elapsed < currentPlan.intro) mode = "intro";
-    else if (elapsed < currentPlan.intro + currentPlan.end - currentPlan.start) {
-      mode = "clip";
-      if (video.paused) {
-        video.currentTime = currentPlan.start;
-        video.play().catch((error) => {
-          stopPreview();
-          message(error.message);
-        });
+    if (previewPhase === "intro" && (performance.now() - playbackStart) / 1000 >= currentPlan.intro) beginPreviewClip();
+    else if (previewPhase === "clip" && !video.seeking && (video.currentTime >= currentPlan.segments[previewSegment].end - .015 || video.ended)) {
+      previewSegment++;
+      if (previewSegment < currentPlan.segments.length) {
+        video.currentTime = currentPlan.segments[previewSegment].start;
+        video.play().catch(error => { stopPreview(); message(error.message); });
+      } else {
+        video.pause();
+        previewPhase = "outro";
+        mode = "outro";
+        playbackStart = performance.now();
+        if (!currentPlan.outro) stopPreview();
       }
-    } else if (elapsed < currentPlan.total) {
-      mode = "outro";
-      video.pause();
-    } else stopPreview();
+    } else if (previewPhase === "outro" && (performance.now() - playbackStart) / 1000 >= currentPlan.outro) stopPreview();
   }
   if (mode === "clip") drawVideo();
   else panel(mode);
+  if (source && !stream) editor?.setPlayhead(mode === "intro" ? number("start") : mode === "outro" ? number("end") : video.currentTime);
   requestAnimationFrame(render);
 }
 function controls(locked) {
@@ -233,6 +243,9 @@ async function load(blob, name) {
   invalidate();
   source = void 0;
   duration = 0;
+  cuts = [];
+  cutHistory = [];
+  editor?.resetSelection();
   update();
   if (sourceURL) URL.revokeObjectURL(sourceURL);
   sourceURL = URL.createObjectURL(blob);
@@ -281,6 +294,7 @@ $("camera").onclick = async () => {
     mode = "clip";
     $("record").disabled = false;
     $("close-camera").disabled = false;
+    update();
     message("Camera ready. Frame your shot and press Record.");
   } catch (error) {
     closeCamera();
@@ -289,6 +303,7 @@ $("camera").onclick = async () => {
 };
 $("close-camera").onclick = () => {
   closeCamera();
+  update();
   message("Camera closed.");
 };
 $("record").onclick = () => {
@@ -359,12 +374,15 @@ $("play").onclick = async () => {
   try {
     currentPlan = plan();
     video.muted = false;
-    video.currentTime = currentPlan.start;
+    video.currentTime = currentPlan.segments[0].start;
     await video.play();
     video.pause();
     playing = true;
     playbackStart = performance.now();
     $("play").textContent = tr("■ Stop preview");
+    previewPhase = "intro";
+    mode = "intro";
+    if (!currentPlan.intro) beginPreviewClip();
   } catch (error) {
     message(error.message);
   }
@@ -373,6 +391,7 @@ for (const [id, kind] of [["intro-preview", "intro"], ["show-opening", "intro"],
 for (const id of ["start", "end", "preset", "fit", "creator", "color", "intro-text", "outro-text", "intro-duration", "outro-duration"]) $(id).addEventListener("input", () => {
   stopPreview();
   invalidate();
+  if (id === "start" || id === "end") editor.resetSelection();
   update();
 });
 for (const kind of ["intro", "outro"]) {
@@ -496,12 +515,15 @@ $("export").onclick = async () => {
     }
     await title("intro", t.intro);
     $("progress").value = 0.15;
-    const clip = "clip.mp4";
-    files.push(clip);
-    const args = ["-ss", String(t.start), "-i", input];
-    if (!hasAudio) args.push("-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo");
-    args.push("-t", String(t.end - t.start), "-map", "0:v:0", "-map", hasAudio ? "0:a:0" : "1:a:0", "-vf", videoFilter(width, height, $("fit").value), "-af", "apad", ...codec, "-y", clip);
-    await run(args, clip, "Encoding your video\u2026 Keep this tab open.");
+    for (const [index, part] of t.segments.entries()) {
+      const clip = `clip-${index}.mp4`;
+      files.push(clip);
+      const args = ["-ss", String(part.start), "-i", input];
+      if (!hasAudio) args.push("-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo");
+      args.push("-t", String(part.end - part.start), "-map", "0:v:0", "-map", hasAudio ? "0:a:0" : "1:a:0", "-vf", videoFilter(width, height, $("fit").value), "-af", "apad", ...codec, "-y", clip);
+      await run(args, clip, "Encoding your video… Keep this tab open.");
+      $("progress").value = .15 + .6 * (index + 1) / t.segments.length;
+    }
     $("progress").value = 0.75;
     await title("outro", t.outro);
     $("progress").value = 0.9;
@@ -555,6 +577,50 @@ window.addEventListener("beforeunload", (event) => {
 window.addEventListener("pagehide", () => {
   stream?.getTracks().forEach((t) => t.stop());
   engine?.terminate();
+});
+editor = createTimelineEditor({
+  getState: () => ({
+    segments: source ? retainedSegments(duration, number("start"), number("end"), cuts) : [],
+    intro: number("intro-duration"), outro: number("outro-duration"),
+    locked: busy || imagesLoading > 0 || !!stream || !source,
+    canUndo: cutHistory.length > 0, hasCuts: cuts.length > 0
+  }),
+  onSeek: time => {
+    if (busy || stream || !source) return;
+    stopPreview();
+    mode = "clip";
+    const parts = retainedSegments(duration, number("start"), number("end"), cuts);
+    video.currentTime = sourceTimeAt(parts, time);
+  },
+  onDelete: (start, end) => {
+    try {
+      if (busy || stream || !source) return;
+      const parts = retainedSegments(duration, number("start"), number("end"), cuts);
+      const nextCuts = [...cuts, ...selectionCuts(parts, start, end)];
+      if (!retainedSegments(duration, number("start"), number("end"), nextCuts).length) throw new Error("Keep at least one frame of video.");
+      cutHistory.push(cuts);
+      cuts = nextCuts;
+      stopPreview();
+      invalidate();
+      editor.resetSelection();
+      show("clip");
+      update();
+      message("Selection deleted. Undo restores it; the original recording is unchanged.");
+    } catch (error) { message(error.message); editor.notify(error.message); }
+  },
+  onUndo: () => {
+    if (busy || stream || !cutHistory.length) return;
+    cuts = cutHistory.pop();
+    stopPreview(); invalidate(); editor.resetSelection(); show("clip"); update();
+    message("Last cut undone.");
+  },
+  onReset: () => {
+    if (busy || stream || !cuts.length) return;
+    cutHistory.push(cuts);
+    cuts = [];
+    stopPreview(); invalidate(); editor.resetSelection(); show("clip"); update();
+    message("All deleted sections restored.");
+  }
 });
 initializeLanguage(({titlesChanged}) => {
   stopPreview();
