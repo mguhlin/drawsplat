@@ -8,7 +8,7 @@ A focused, private short-video recorder for Instagram: camera or local import �
 | Story | 1080 × 1920, 9:16 | 3–60 seconds |
 | Feed portrait | 1080 × 1350, 4:5 | 3–180 seconds |
 
-All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/128 kbps, and fast-start metadata. Silent sources receive silence so all segments have compatible tracks. Panels last 0–10 seconds (0 skips). Each panel can include a local photo or logo above its title; images fit without cropping and appear in previews and exported MP4s. Use Add image to choose or replace, and Remove image to clear. Images are limited to 15 MB and 40 million pixels; they stay on your device and are not saved after leaving the page. Framing supports full-image fit or center crop. The safe-area guide is approximate.
+All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/128 kbps, and fast-start metadata. Silent sources receive silence so all segments have compatible tracks. Panels last 0–10 seconds (0 skips). Each panel can include a local photo or logo above its title; images fit without cropping and appear in previews and exported MP4s. Use Add image to choose or replace, and Remove image to clear. Each panel also has its own frame picker: Plain, Party confetti, Star sparkle, Paint splats or Movie night. Decorations stay around the edges to keep titles and images readable and are included in exported panels. Images are limited to 15 MB and 40 million pixels; they stay on your device and are not saved after leaving the page. Framing supports full-image fit or center crop. The safe-area guide is approximate.
 
 These are conservative app limits, not Instagram's full account-dependent maximums. Sources are limited to 200 MB; final MP4s to 300 MB. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
 
@@ -20,7 +20,7 @@ Undo restores the last cut; Reset cuts restores all deleted sections and can its
 
 ## Development and hosting
 
-Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs` and `node tests/timeline.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
+Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs`, `node tests/timeline.cjs`, and `node tests/frames.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
 
 The encoder reuses VideoSplat's existing shared engine at `/solutions/mediasplat/ffmpeg/ffmpeg-core.js` and `ffmpeg-core.part-01`/`ffmpeg-core.part-02`. Self-hosting requires those files at those paths. No VideoSplat editor, timeline, caption models or persistence is imported. Camera and microphone require HTTPS or localhost.
 

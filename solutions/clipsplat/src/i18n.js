@@ -775,6 +775,49 @@ const TIMELINE_STRINGS = {
   }
 };
 for (const code of Object.keys(TIMELINE_STRINGS)) Object.assign(STRINGS[code], TIMELINE_STRINGS[code]);
+const FRAME_STRINGS = {
+  "es": {
+    "Panel frame": "Marco del panel",
+    "Plain · no frame": "Simple · sin marco",
+    "Party confetti": "Confeti de fiesta",
+    "Star sparkle": "Estrellas brillantes",
+    "Paint splats": "Salpicaduras de pintura",
+    "Movie night": "Noche de cine"
+  },
+  "vi": {
+    "Panel frame": "Khung bảng",
+    "Plain · no frame": "Đơn giản · không khung",
+    "Party confetti": "Giấy màu lễ hội",
+    "Star sparkle": "Sao lấp lánh",
+    "Paint splats": "Vệt sơn",
+    "Movie night": "Đêm điện ảnh"
+  },
+  "ar": {
+    "Panel frame": "إطار اللوحة",
+    "Plain · no frame": "بسيط · بلا إطار",
+    "Party confetti": "قصاصات الاحتفال",
+    "Star sparkle": "نجوم لامعة",
+    "Paint splats": "بقع الطلاء",
+    "Movie night": "ليلة سينمائية"
+  },
+  "zh": {
+    "Panel frame": "面板边框",
+    "Plain · no frame": "简洁 · 无边框",
+    "Party confetti": "派对彩纸",
+    "Star sparkle": "闪耀星星",
+    "Paint splats": "颜料飞溅",
+    "Movie night": "电影之夜"
+  },
+  "uh": {
+    "Panel frame": "पैनल फ़्रेम / پینل فریم",
+    "Plain · no frame": "सादा · बिना फ़्रेम / سادہ · بغیر فریم",
+    "Party confetti": "पार्टी कंफ़ेटी / پارٹی کنفیٹی",
+    "Star sparkle": "चमकते तारे / چمکتے ستارے",
+    "Paint splats": "रंग के छींटे / رنگ کے چھینٹے",
+    "Movie night": "फ़िल्म रात / فلمی رات"
+  }
+};
+for (const code of Object.keys(FRAME_STRINGS)) Object.assign(STRINGS[code], FRAME_STRINGS[code]);
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {

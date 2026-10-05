@@ -34,6 +34,9 @@ function tone(file, time) {
       await page.locator('#'+kind+'-image').setInputFiles(file);
       await page.waitForFunction(kind=>!document.getElementById(kind+'-choose-image').disabled,kind);
     }
+    await page.locator('#intro-frame').selectOption('film');
+    await page.locator('#outro-frame').selectOption('stars');
+    const closingFramePixel = await page.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(30,200,1,1).data].slice(0,3);});
     const select = async(start,end)=>{await page.locator('#selection-start').fill(String(start));await page.locator('#selection-end').fill(String(end));};
     async function drag(from,to,total) {
       await page.locator('#timeline-track').scrollIntoViewIfNeeded();
@@ -80,6 +83,8 @@ function tone(file, time) {
     assert.ok(Math.abs(Number(metadata.format.duration)-6)<.2);
     assert.equal(metadata.streams.find(s=>s.codec_type==='video').codec_name,'h264');
     assert.equal(metadata.streams.find(s=>s.codec_type==='audio').codec_name,'aac');
+    near(rgb(output,.5,20,20),[23,32,51]);
+    near(rgb(output,5.5,30,200),closingFramePixel,20);
     near(rgb(output,.5,496,526),[255,255,0]);
     near(rgb(output,1.5),[254,0,0]);
     near(rgb(output,3.5),[0,0,254]);
@@ -102,6 +107,6 @@ function tone(file, time) {
     assert.ok(await page.locator('#timeline-undo').isDisabled());
     assert.ok(await page.locator('#intro-image-details').isVisible());
     assert.deepEqual(errors,[]);
-    console.log(`PASS: drag/numeric/keyboard cuts, cross-join selection, undo/reset, seek/repeated preview, exported video/audio content and panel images, import reset, mobile/RTL; ${origin}; artifacts ${artifacts}`);
+    console.log(`PASS: drag/numeric/keyboard cuts, cross-join selection, undo/reset, seek/repeated preview, exported video/audio content and panel images/frames, import reset, mobile/RTL; ${origin}; artifacts ${artifacts}`);
   } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});
