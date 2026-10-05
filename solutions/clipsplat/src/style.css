@@ -189,14 +189,50 @@ canvas {
   margin-bottom: 14px;
 }
 .panel h2 {
+  display: flex;
+  align-items: center;
   font-size: 17px;
-  margin: 0 0 14px;
+  line-height: 1.4;
+  margin: -20px -20px 18px;
+  padding: 14px 20px;
+  border-radius: 15px 15px 0 0;
+  border-bottom: 1px solid #d8ccef;
+  background: #eee8ff;
+  color: #4720a4;
 }
 .step {
-  color: #6d38e8;
-  font-size: 12px;
-  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #6d38e8;
+  color: white;
+  font-size: 13px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  margin-inline-end: 10px;
 }
+.title-panel {
+  min-width: 0;
+  margin: 8px 0 18px;
+  padding: 14px 12px 0;
+  border: 1px solid #d8ccef;
+  border-radius: 12px;
+  background: #f8f6fc;
+}
+.title-panel legend {
+  padding: 0 8px;
+  color: #4720a4;
+  font-size: 15px;
+  font-weight: 750;
+}
+.title-panel textarea { background: white; }
+.title-panel .row { flex-wrap: wrap; }
+.title-panel .row > * { flex-basis: 140px; }
+.title-panel .row button { margin-bottom: 12px; }
+
 .row {
   display: flex;
   gap: 10px;

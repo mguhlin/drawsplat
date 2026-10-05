@@ -584,6 +584,16 @@ const EXTRA = {
   }
 };
 for (const code of Object.keys(EXTRA)) Object.assign(STRINGS[code], EXTRA[code]);
+const PANEL_LABELS = {
+  es: ["Panel de apertura", "Panel de cierre"],
+  vi: ["Bảng mở đầu", "Bảng kết thúc"],
+  ar: ["لوحة البداية", "لوحة النهاية"],
+  zh: ["开场面板", "结束面板"],
+  uh: ["आरंभ पैनल / ابتدائی پینل", "समापन पैनल / اختتامی پینل"]
+};
+for (const [code, [opening, closing]] of Object.entries(PANEL_LABELS)) {
+  Object.assign(STRINGS[code], { "Opening Panel": opening, "Closing Panel": closing });
+}
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {
