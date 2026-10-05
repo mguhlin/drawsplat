@@ -402,3 +402,11 @@ video.source {
 .brand { direction: ltr; }
 #dimensions, input[type=number] { direction: ltr; }
 .step { margin-right: 0; margin-inline-end: 8px; }
+
+.panel-image-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.panel-image-controls button { padding: 9px 12px; font-size: 13px; }
+.panel-image-details { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.panel-image-details img { width: 64px; height: 64px; object-fit: contain; border: 1px solid #d8ccef; border-radius: 8px; background: white; }
+.panel-image-details span { min-width: 0; overflow-wrap: anywhere; font-size: 12px; color: #4720a4; }
+.panel-image-controls [hidden], .panel-image-details[hidden] { display: none; }
+.image-hint { margin-bottom: 14px; }

@@ -12,6 +12,14 @@ const audio = join(artifacts, 'audio.mp4'), silent = join(artifacts, 'silent.mp4
 const common = ['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'color=c=red:s=320x240:r=30'];
 execFileSync('ffmpeg', [...common, '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000', '-t', '3', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-y', audio]);
 execFileSync('ffmpeg', [...common, '-t', '3', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-y', silent]);
+const openingImage = join(artifacts, 'opening.png'), closingImage = join(artifacts, 'closing.png');
+for (const [file, color, size] of [[openingImage, 'blue', '320x80'], [closingImage, 'lime', '80x320']]) {
+  execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', `color=c=${color}:s=${size}`, '-frames:v', '1', '-threads', '1', '-y', file]);
+}
+function imagePixel(file, seconds, expected) {
+  const rgb = execFileSync('ffmpeg', ['-v', 'error', '-ss', String(seconds), '-i', file, '-vf', 'crop=2:2:496:526', '-frames:v', '1', '-pix_fmt', 'rgb24', '-f', 'rawvideo', '-']);
+  assert.ok(expected.every((value, i) => Math.abs(rgb[i] - value) < 12), `Exported panel pixel ${[...rgb.subarray(0,3)]} should match ${expected}`);
+}
 function probe(file, height, duration) {
   const data = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-show_format', '-of', 'json', file], { encoding: 'utf8' }));
   const video = data.streams.find(s => s.codec_type === 'video'), audio = data.streams.find(s => s.codec_type === 'audio');
@@ -40,7 +48,31 @@ function probe(file, height, duration) {
       const path = join(artifacts, name); await (await download).saveAs(path); return path;
     }
     await load(audio);
-    probe(await exportMP4('reel.mp4'), 1920, 5);
+    await page.locator('#intro-image').setInputFiles(openingImage);
+    await page.locator('#intro-image-thumbnail').waitFor({state:'visible'});
+    await page.waitForFunction(() => !document.getElementById('intro-choose-image').disabled);
+    await page.locator('#outro-image').setInputFiles(closingImage);
+    await page.locator('#outro-image-thumbnail').waitFor({state:'visible'});
+    await page.waitForFunction(() => !document.getElementById('outro-choose-image').disabled);
+    const previewPixel = () => page.locator('#canvas').evaluate(async canvas => { await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); return [...canvas.getContext('2d').getImageData(496, 526, 1, 1).data].slice(0,3); });
+    assert.deepEqual(await previewPixel(), [0,254,0]);
+    await page.locator('#show-opening').click();
+    assert.deepEqual(await previewPixel(), [0,0,254]);
+    await page.locator('#intro-image').setInputFiles({name:'broken.png',mimeType:'image/png',buffer:Buffer.from('invalid image')});
+    await page.waitForFunction(() => document.getElementById('status').textContent.includes('could not be opened'));
+    assert.deepEqual(await previewPixel(), [0,0,254]);
+    await page.locator('#intro-image').setInputFiles(openingImage);
+    await page.waitForFunction(() => !document.getElementById('intro-choose-image').disabled);
+    const reel = await exportMP4('reel.mp4');
+    probe(reel, 1920, 5);
+    imagePixel(reel, .5, [0,0,254]);
+    imagePixel(reel, 4.5, [0,255,0]);
+    await page.locator('#intro-remove-image').click();
+    assert.ok(await page.locator('#intro-image-details').isHidden());
+    assert.ok(await page.locator('#download').isHidden());
+    assert.deepEqual(await previewPixel(), [71,32,164]);
+    await page.locator('#outro-remove-image').click();
+    assert.ok(await page.locator('#outro-image-details').isHidden());
     // The middle must retain actual source audio; a track filled with silence is insufficient.
     const analysis = require('node:child_process').spawnSync('ffmpeg', ['-hide_banner', '-i', join(artifacts, 'reel.mp4'), '-ss', '1.5', '-t', '1', '-af', 'volumedetect', '-vn', '-f', 'null', '-'], { encoding: 'utf8' }).stderr;
     const volume = Number(analysis.match(/mean_volume: ([\d.-]+) dB/)[1]); assert.ok(volume > -35);
@@ -64,6 +96,6 @@ function probe(file, height, duration) {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.screenshot({ path: join(artifacts, 'mobile.png'), fullPage: true });
     assert.deepEqual(errors, []);
-    console.log(`PASS: Reel/audio, silent feed/crop, Story/skipped panels, cancel/retry, invalid trims, camera MP4, mobile layout; ${origin}; artifacts ${artifacts}`);
+    console.log(`PASS: panel image previews/export pixels, replacement/removal/invalid image, Reel/audio, silent feed/crop, Story/skipped panels, cancel/retry, invalid trims, camera MP4, mobile layout; ${origin}; artifacts ${artifacts}`);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

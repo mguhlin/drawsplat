@@ -10,7 +10,7 @@ $("app").innerHTML = `
 <div class="workspace"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
 <section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 3 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small></section>
-<section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Titles stay inside a conservative safe area.</small></section>
+<section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Titles stay inside a conservative safe area.</small></section>
 <section class="panel"><h2><span class="step">04</span>Ready to share</h2><p class="notice">Download your finished video, then upload it in Instagram. Export includes both panels and your trimmed clip.</p><button id="export" class="dark export" disabled>Create MP4</button><button id="cancel">Cancel export</button><progress id="progress" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite">Your videos stay on this device.</p><a id="download" class="file" download="clipsplat.mp4">Download MP4 \u2193</a><button id="share" hidden>Share video</button><video id="result" controls playsinline hidden style="width:100%;max-height:320px;margin-top:12px"></video></section></div></div>
 <details class="details"><summary>Format notes, privacy & sources</summary><p>These are conservative short-video presets, not every upload limit Instagram supports. ClipSplat™ limits Reels and feed videos to 3 minutes and Stories to 60 seconds, including panels. Account features and upload limits can vary. The guide is approximate: Instagram\u2019s interface and cropping differ across placements. Check the upload preview before posting.</p><p>The first export downloads the local video encoder from DrawSplat (about 32 MB). Recording, trimming and encoding happen in your browser. No video is uploaded, and projects are not automatically saved. Save your original recording before leaving. Longer or high-resolution clips may exceed a mobile device\u2019s available memory; this tool accepts source files up to 200 MB.</p><p>ClipSplat™ is an independent DrawSplat tool for Instagram; it is not affiliated with or endorsed by Meta. <a href="https://help.instagram.com/1038071743007909" target="_blank" rel="noopener">Instagram aspect ratio guidance</a> \xB7 <a href="https://github.com/fbsamples/reels_publishing_apis/tree/main/insta_reels_publishing_api_sample" target="_blank" rel="noopener">Meta video specifications</a> \xB7 <a href="https://www.meta.com/brand/resources/instagram/instagram-brand/" target="_blank" rel="noopener">Meta branding guidance</a></p></details></main><footer>ClipSplat™ 1.1 \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
 const canvas = $("canvas"), ctx = canvas.getContext("2d", { alpha: false });
@@ -20,6 +20,8 @@ video.preload = "auto";
 video.className = "source";
 document.body.append(video);
 let source, sourceURL, outputURL, originalURL, stream, recorder, recordTimer, duration = 0, mode = "intro", busy = false, playing = false, playbackStart = 0, currentPlan, engine, cancelled = false;
+const panelImages = { intro: null, outro: null };
+let imagesLoading = 0;
 const number = (id) => Number($(id).value), preset = () => PRESETS[$("preset").value];
 const plan = () => timeline(duration, number("start"), number("end"), number("intro-duration"), number("outro-duration"), $("preset").value);
 let statusState = { text: "Your videos stay on this device.", params: {} }, sourceName;
@@ -46,8 +48,8 @@ function update() {
   try {
     const t = plan();
     $("summary").textContent = tr("{intro}s opening + {clip}s video + {outro}s closing = {total}s", {intro:t.intro,clip:(t.end-t.start).toFixed(1),outro:t.outro,total:t.total.toFixed(1)});
-    $("export").disabled = busy || !source;
-    $("play").disabled = busy || !source;
+    $("export").disabled = busy || imagesLoading > 0 || !source;
+    $("play").disabled = busy || imagesLoading > 0 || !source;
   } catch (error) {
     $("summary").textContent = tr(source ? error.message : "Add a video to get started.");
     $("export").disabled = true;
@@ -89,25 +91,31 @@ function panel(kind) {
   ctx.fillRect(0, 0, w, h);
   const rgb = [1, 3, 5].map((i) => parseInt(bg.slice(i, i + 2), 16)), light = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114 > 150;
   const fg = light ? "#4720a4" : "#faf8ff", accent = light ? "#4720a4" : "#f5b942";
+  const image = panelImages[kind]?.image;
+  if (image) {
+    const scale = Math.min(w * .68 / image.naturalWidth, h * .23 / image.naturalHeight);
+    const iw = image.naturalWidth * scale, ih = image.naturalHeight * scale;
+    ctx.drawImage(image, w * .46 - iw / 2, h * .275 - ih / 2, iw, ih);
+  }
   ctx.fillStyle = accent;
-  ctx.fillRect(w * 0.12, h * 0.24, w * 0.1, 8);
+  ctx.fillRect(w * 0.12, h * (image ? .415 : .24), w * 0.1, 8);
   const title = $(kind + "-text").value.trim() || tr(kind === "intro" ? "Welcome" : "Thanks for watching");
   let size = 76, lines = wrap(title, w * 0.68, size);
-  while (lines.length * size * 1.22 > h * 0.28 && size > 34) {
+  while (lines.length * size * 1.22 > h * (image ? .18 : .28) && size > 34) {
     size -= 2;
     lines = wrap(title, w * 0.68, size);
   }
   ctx.fillStyle = fg;
   ctx.font = `750 ${size}px system-ui`;
   ctx.textBaseline = "top";
-  const top = h * 0.43 - lines.length * size * 1.22 / 2;
+  const top = h * (image ? .54 : .43) - lines.length * size * 1.22 / 2;
   lines.forEach((line, i) => ctx.fillText(line, textX, top + i * size * 1.22));
   const creator = $("creator").value.trim();
   if (creator) {
     ctx.fillStyle = accent;
     const names = wrap(tr("by {name}",{name:creator}), w * 0.68, 35);
     ctx.font = "500 35px system-ui";
-    names.forEach((line, i) => ctx.fillText(line, textX, h * 0.64 + i * 44));
+    names.forEach((line, i) => ctx.fillText(line, textX, h * (image ? .70 : .64) + i * 44));
   }
 }
 function drawVideo() {
@@ -367,6 +375,59 @@ for (const id of ["start", "end", "preset", "fit", "creator", "color", "intro-te
   invalidate();
   update();
 });
+for (const kind of ["intro", "outro"]) {
+  const input = $(kind + "-image"), choose = $(kind + "-choose-image"), remove = $(kind + "-remove-image");
+  choose.onclick = () => input.click();
+  remove.onclick = () => {
+    stopPreview();
+    URL.revokeObjectURL(panelImages[kind].url);
+    panelImages[kind] = null;
+    $(kind + "-image-thumbnail").removeAttribute("src");
+    $(kind + "-image-details").hidden = true;
+    remove.hidden = true;
+    invalidate();
+    show(kind);
+  };
+  input.onchange = async () => {
+    const file = input.files[0];
+    input.value = "";
+    if (!file || busy) return;
+    if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'].includes(file.type)) {
+      message("This image could not be opened. Try a PNG, JPEG or WebP image.");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      message("Choose an image smaller than 15 MB.");
+      return;
+    }
+    imagesLoading++;
+    choose.disabled = remove.disabled = true;
+    update();
+    const url = URL.createObjectURL(file), image = new Image();
+    image.src = url;
+    try {
+      await image.decode();
+      if (image.naturalWidth * image.naturalHeight > 40000000) throw new Error("large-image");
+      if (panelImages[kind]) URL.revokeObjectURL(panelImages[kind].url);
+      panelImages[kind] = { image, url };
+      $(kind + "-image-thumbnail").src = url;
+      $(kind + "-image-name").textContent = file.name;
+      $(kind + "-image-details").hidden = false;
+      remove.hidden = false;
+      stopPreview();
+      invalidate();
+      show(kind);
+      message("Image added. Preview the panel to see it with your title.");
+    } catch (error) {
+      URL.revokeObjectURL(url);
+      message(error.message === "large-image" ? "Choose an image with fewer than 40 million pixels." : "This image could not be opened. Try a PNG, JPEG or WebP image.");
+    } finally {
+      imagesLoading--;
+      choose.disabled = remove.disabled = busy;
+      update();
+    }
+  };
+}
 $("safe").onchange = update;
 async function getEngine() {
   message("Loading local MP4 encoder\u2026");
@@ -394,6 +455,7 @@ $("cancel").onclick = () => {
   message("Export cancelled. Your source video is still available.");
 };
 $("export").onclick = async () => {
+  if (imagesLoading || busy) return;
   let ffmpeg;
   stopPreview();
   if (stream) closeCamera();

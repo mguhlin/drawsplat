@@ -594,6 +594,64 @@ const PANEL_LABELS = {
 for (const [code, [opening, closing]] of Object.entries(PANEL_LABELS)) {
   Object.assign(STRINGS[code], { "Opening Panel": opening, "Closing Panel": closing });
 }
+const IMAGE_STRINGS = {
+  "es": {
+    "Add image": "Añadir imagen",
+    "Remove image": "Quitar imagen",
+    "Opening panel image": "Imagen del panel de apertura",
+    "Closing panel image": "Imagen del panel de cierre",
+    "Optional photo or logo. Fits above your title without cropping.": "Foto o logotipo opcional. Se ajusta sobre el título sin recortar.",
+    "Choose an image smaller than 15 MB.": "Elige una imagen de menos de 15 MB.",
+    "Choose an image with fewer than 40 million pixels.": "Elige una imagen con menos de 40 millones de píxeles.",
+    "This image could not be opened. Try a PNG, JPEG or WebP image.": "No se pudo abrir esta imagen. Prueba una imagen PNG, JPEG o WebP.",
+    "Image added. Preview the panel to see it with your title.": "Imagen añadida. Previsualiza el panel para verla con tu título."
+  },
+  "vi": {
+    "Add image": "Thêm ảnh",
+    "Remove image": "Xóa ảnh",
+    "Opening panel image": "Ảnh bảng mở đầu",
+    "Closing panel image": "Ảnh bảng kết thúc",
+    "Optional photo or logo. Fits above your title without cropping.": "Ảnh hoặc logo tùy chọn. Hiển thị phía trên tiêu đề, không cắt ảnh.",
+    "Choose an image smaller than 15 MB.": "Chọn ảnh nhỏ hơn 15 MB.",
+    "Choose an image with fewer than 40 million pixels.": "Chọn ảnh dưới 40 triệu điểm ảnh.",
+    "This image could not be opened. Try a PNG, JPEG or WebP image.": "Không thể mở ảnh này. Thử ảnh PNG, JPEG hoặc WebP.",
+    "Image added. Preview the panel to see it with your title.": "Đã thêm ảnh. Xem trước bảng để thấy ảnh cùng tiêu đề."
+  },
+  "ar": {
+    "Add image": "إضافة صورة",
+    "Remove image": "إزالة الصورة",
+    "Opening panel image": "صورة لوحة البداية",
+    "Closing panel image": "صورة لوحة النهاية",
+    "Optional photo or logo. Fits above your title without cropping.": "صورة أو شعار اختياري. تظهر فوق العنوان دون قص.",
+    "Choose an image smaller than 15 MB.": "اختر صورة أصغر من 15 MB.",
+    "Choose an image with fewer than 40 million pixels.": "اختر صورة بأقل من 40 مليون بكسل.",
+    "This image could not be opened. Try a PNG, JPEG or WebP image.": "تعذر فتح الصورة. جرّب صورة PNG أو JPEG أو WebP.",
+    "Image added. Preview the panel to see it with your title.": "تمت إضافة الصورة. عاين اللوحة لرؤيتها مع العنوان."
+  },
+  "zh": {
+    "Add image": "添加图片",
+    "Remove image": "移除图片",
+    "Opening panel image": "开场面板图片",
+    "Closing panel image": "结束面板图片",
+    "Optional photo or logo. Fits above your title without cropping.": "可选照片或标志。完整显示在标题上方，不裁剪。",
+    "Choose an image smaller than 15 MB.": "请选择小于15 MB的图片。",
+    "Choose an image with fewer than 40 million pixels.": "请选择少于4000万像素的图片。",
+    "This image could not be opened. Try a PNG, JPEG or WebP image.": "无法打开此图片。请尝试PNG、JPEG或WebP图片。",
+    "Image added. Preview the panel to see it with your title.": "图片已添加。预览面板以查看图片和标题。"
+  },
+  "uh": {
+    "Add image": "चित्र जोड़ें / تصویر شامل کریں",
+    "Remove image": "चित्र हटाएँ / تصویر ہٹائیں",
+    "Opening panel image": "आरंभ पैनल चित्र / ابتدائی پینل کی تصویر",
+    "Closing panel image": "समापन पैनल चित्र / اختتامی پینل کی تصویر",
+    "Optional photo or logo. Fits above your title without cropping.": "वैकल्पिक चित्र या लोगो, शीर्षक के ऊपर बिना काटे। / اختیاری تصویر یا لوگو، عنوان کے اوپر بغیر کاٹے۔",
+    "Choose an image smaller than 15 MB.": "15 MB से छोटा चित्र चुनें। / 15 MB سے چھوٹی تصویر چنیں۔",
+    "Choose an image with fewer than 40 million pixels.": "4 करोड़ पिक्सेल से छोटा चित्र चुनें। / 4 کروڑ پکسل سے چھوٹی تصویر چنیں۔",
+    "This image could not be opened. Try a PNG, JPEG or WebP image.": "चित्र नहीं खुला। PNG, JPEG या WebP चुनें। / تصویر نہیں کھلی۔ PNG، JPEG یا WebP چنیں۔",
+    "Image added. Preview the panel to see it with your title.": "चित्र जुड़ गया। पैनल का पूर्वावलोकन देखें। / تصویر شامل ہو گئی۔ پینل کا پیش نظارہ دیکھیں۔"
+  }
+};
+for (const code of Object.keys(IMAGE_STRINGS)) Object.assign(STRINGS[code], IMAGE_STRINGS[code]);
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {
@@ -608,7 +666,7 @@ function initializeLanguage(onChange) {
   const picker = document.getElementById("language");
   for (const [code, name] of LANGUAGES) picker.add(new Option(name, code));
   const nodes = [], attributes = [];
-  const dynamic = "#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
+  const dynamic = "#intro-image-name,#outro-image-name,#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
   const walker = document.createTreeWalker(document.getElementById("app"), NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const node = walker.currentNode;

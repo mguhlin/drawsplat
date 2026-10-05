@@ -8,7 +8,7 @@ A focused, private short-video recorder for Instagram: camera or local import �
 | Story | 1080 × 1920, 9:16 | 3–60 seconds |
 | Feed portrait | 1080 × 1350, 4:5 | 3–180 seconds |
 
-All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/128 kbps, and fast-start metadata. Silent sources receive silence so all segments have compatible tracks. Panels last 0–10 seconds (0 skips). Framing supports full-image fit or center crop. The safe-area guide is approximate.
+All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/128 kbps, and fast-start metadata. Silent sources receive silence so all segments have compatible tracks. Panels last 0–10 seconds (0 skips). Each panel can include a local photo or logo above its title; images fit without cropping and appear in previews and exported MP4s. Use Add image to choose or replace, and Remove image to clear. Images are limited to 15 MB and 40 million pixels; they stay on your device and are not saved after leaving the page. Framing supports full-image fit or center crop. The safe-area guide is approximate.
 
 These are conservative app limits, not Instagram's full account-dependent maximums. Sources are limited to 200 MB; final MP4s to 300 MB. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
 
