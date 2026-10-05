@@ -5,8 +5,8 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  color: #183239;
-  background: #f4f5ef;
+  color: #172033;
+  background: #f8f6fc;
   font-synthesis: none;
 }
 * {
@@ -30,28 +30,28 @@ textarea {
 }
 button {
   cursor: pointer;
-  border: 1px solid #c4cfc5;
+  border: 1px solid #e2deed;
   border-radius: 10px;
   background: white;
-  color: #183239;
+  color: #172033;
   padding: .75rem 1rem;
   font-weight: 650;
 }
 button:hover {
-  border-color: #506b41;
+  border-color: #6d38e8;
 }
 button:disabled {
   opacity: .45;
   cursor: default;
 }
 .primary {
-  background: #bcf17b;
-  border-color: #bcf17b;
+  background: #6d38e8;
+  border-color: #6d38e8;
 }
 .dark {
-  background: #183239;
+  background: #172033;
   color: white;
-  border-color: #183239;
+  border-color: #172033;
 }
 a {
   color: inherit;
@@ -63,7 +63,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #d5ded4;
+  border-bottom: 1px solid #e2deed;
 }
 .brand {
   display: flex;
@@ -78,7 +78,7 @@ header {
 }
 header span {
   font-size: 13px;
-  color: #52665c;
+  color: #667085;
 }
 main {
   max-width: 1250px;
@@ -97,7 +97,7 @@ main {
   letter-spacing: .15em;
   text-transform: uppercase;
   font-weight: 750;
-  color: #597348;
+  color: #6d38e8;
 }
 h1 {
   font-size: clamp(30px, 4vw, 48px);
@@ -106,14 +106,14 @@ h1 {
   margin: 10px 0;
 }
 p {
-  color: #52665c;
+  color: #667085;
   line-height: 1.6;
   margin: 8px 0;
 }
 .tag {
   padding: 8px 12px;
   border-radius: 20px;
-  border: 1px solid #c4cfc5;
+  border: 1px solid #e2deed;
   font-size: 12px;
   white-space: nowrap;
 }
@@ -124,8 +124,8 @@ p {
   align-items: start;
 }
 .stage {
-  background: #e1e8dc;
-  border: 1px solid #c9d4c4;
+  background: #eee8ff;
+  border: 1px solid #d8ccef;
   border-radius: 20px;
   padding: 22px;
 }
@@ -140,10 +140,10 @@ p {
   position: relative;
   max-width: 300px;
   margin: auto;
-  box-shadow: 0 16px 35px #18323922;
+  box-shadow: 0 16px 35px #17203322;
   border-radius: 12px;
   overflow: hidden;
-  background: #122c32;
+  background: #4720a4;
   aspect-ratio: 9/16;
 }
 canvas {
@@ -154,7 +154,7 @@ canvas {
 .guides {
   position: absolute;
   inset: 14% 14% 23% 10%;
-  border: 1px dashed #b9ee7380;
+  border: 1px dashed #f5b94280;
   pointer-events: none;
   display: none;
 }
@@ -162,7 +162,7 @@ canvas {
   position: absolute;
   top: 6px;
   left: 8px;
-  color: #b9ee73;
+  color: #f5b942;
   font-size: 10px;
 }
 .stage-controls {
@@ -183,7 +183,7 @@ canvas {
 }
 .panel {
   background: white;
-  border: 1px solid #d5ded4;
+  border: 1px solid #e2deed;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 14px;
@@ -193,7 +193,7 @@ canvas {
   margin: 0 0 14px;
 }
 .step {
-  color: #5a774a;
+  color: #6d38e8;
   font-size: 12px;
   margin-right: 8px;
 }
@@ -219,17 +219,17 @@ select {
   width: 100%;
   margin-top: 6px;
   padding: 10px;
-  border: 1px solid #c9d4c4;
+  border: 1px solid #d8ccef;
   border-radius: 8px;
-  background: #fbfcf9;
-  color: #183239;
+  background: #faf8ff;
+  color: #172033;
 }
 textarea {
   resize: vertical;
   min-height: 67px;
 }
 input[type=checkbox] {
-  accent-color: #527735;
+  accent-color: #6d38e8;
 }
 .check {
   display: flex;
@@ -242,7 +242,7 @@ input[type=color] {
 }
 small {
   display: block;
-  color: #617166;
+  color: #667085;
   font-size: 11px;
   line-height: 1.5;
 }
@@ -252,7 +252,7 @@ small {
   margin: 0;
   padding: .75rem 1rem;
   background: white;
-  border: 1px solid #c4cfc5;
+  border: 1px solid #e2deed;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
@@ -271,7 +271,7 @@ small {
 }
 progress {
   width: 100%;
-  accent-color: #527735;
+  accent-color: #6d38e8;
   margin-top: 12px;
 }
 #status {
@@ -288,7 +288,7 @@ progress {
 }
 .details {
   margin-top: 25px;
-  border-top: 1px solid #d5ded4;
+  border-top: 1px solid #e2deed;
   padding-top: 20px;
   font-size: 13px;
 }
@@ -299,7 +299,7 @@ footer {
   padding: 20px 28px;
   text-align: center;
   font-size: 12px;
-  color: #617166;
+  color: #667085;
 }
 video.source {
   position: fixed;
@@ -349,3 +349,16 @@ video.source {
     max-width: 420px;
   }
 }
+
+/* DrawSplat homepage palette: purple, deep purple, warm gold, and soft lavender. */
+.primary { color: #fff; }
+.dark { background: #4720a4; border-color: #4720a4; }
+:focus-visible { outline: 3px solid #f5b942; }
+.brand { gap: 8px; }
+.brand img { width: 44px; height: 44px; }
+.brand sup { font-size: .5em; align-self: start; margin-top: 6px; }
+.header-actions { display: flex; gap: 16px; align-items: center; }
+.language-control { margin: 0; }
+.language-control select { min-height: 44px; margin: 0; max-width: 155px; }
+[dir=rtl] .guides span { left: auto; right: 8px; }
+@media(max-width:760px) { header { flex-wrap: wrap; gap: 12px; } .header-actions { gap: 10px; } .header-actions a { font-size: 12px; } .brand { font-size: 21px; } }

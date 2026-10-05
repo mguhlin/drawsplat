@@ -10,7 +10,7 @@ function timeline(duration, start, end, intro, outro, preset) {
   return { start, end, intro, outro, total };
 }
 function videoFilter(width, height, fit) {
-  return fit === "crop" ? `scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height},setsar=1,fps=30,format=yuv420p` : `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=0x122c32,setsar=1,fps=30,format=yuv420p`;
+  return fit === "crop" ? `scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height},setsar=1,fps=30,format=yuv420p` : `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=0x4720a4,setsar=1,fps=30,format=yuv420p`;
 }
 export {
   PRESETS,
