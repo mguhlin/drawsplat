@@ -926,6 +926,49 @@ const CARD_STRINGS = {
   }
 };
 for (const code of Object.keys(CARD_STRINGS)) Object.assign(STRINGS[code], CARD_STRINGS[code]);
+const ILLUSTRATED_FRAME_STRINGS = {
+  "es": {
+    "Paint Party · illustrated": "Fiesta de pintura · ilustrado",
+    "Celestial Magic · illustrated": "Magia celestial · ilustrado",
+    "Botanical Garden · illustrated": "Jardín botánico · ilustrado",
+    "Loading illustrated frame…": "Cargando marco ilustrado…",
+    "Illustrated frame ready.": "Marco ilustrado listo.",
+    "This frame could not be loaded. Please select it again to retry.": "No se pudo cargar el marco. Selecciónalo de nuevo para reintentar."
+  },
+  "vi": {
+    "Paint Party · illustrated": "Lễ hội màu sắc · minh họa",
+    "Celestial Magic · illustrated": "Phép màu thiên thể · minh họa",
+    "Botanical Garden · illustrated": "Vườn hoa · minh họa",
+    "Loading illustrated frame…": "Đang tải khung minh họa…",
+    "Illustrated frame ready.": "Khung minh họa đã sẵn sàng.",
+    "This frame could not be loaded. Please select it again to retry.": "Không tải được khung. Chọn lại để thử lần nữa."
+  },
+  "ar": {
+    "Paint Party · illustrated": "حفلة الألوان · إطار مرسوم",
+    "Celestial Magic · illustrated": "السحر السماوي · إطار مرسوم",
+    "Botanical Garden · illustrated": "الحديقة النباتية · إطار مرسوم",
+    "Loading illustrated frame…": "جارٍ تحميل الإطار المرسوم…",
+    "Illustrated frame ready.": "الإطار المرسوم جاهز.",
+    "This frame could not be loaded. Please select it again to retry.": "تعذر تحميل الإطار. اختره مرة أخرى للمحاولة."
+  },
+  "zh": {
+    "Paint Party · illustrated": "颜料派对 · 插画",
+    "Celestial Magic · illustrated": "星空魔法 · 插画",
+    "Botanical Garden · illustrated": "植物花园 · 插画",
+    "Loading illustrated frame…": "正在加载插画边框…",
+    "Illustrated frame ready.": "插画边框已就绪。",
+    "This frame could not be loaded. Please select it again to retry.": "无法加载边框。请重新选择以重试。"
+  },
+  "uh": {
+    "Paint Party · illustrated": "रंगों की पार्टी · चित्रित / رنگوں کی پارٹی · مصور",
+    "Celestial Magic · illustrated": "आकाशीय जादू · चित्रित / آسمانی جادو · مصور",
+    "Botanical Garden · illustrated": "फूलों का बगीचा · चित्रित / پھولوں کا باغ · مصور",
+    "Loading illustrated frame…": "चित्रित फ़्रेम लोड हो रहा है… / مصور فریم لوڈ ہو رہا ہے…",
+    "Illustrated frame ready.": "चित्रित फ़्रेम तैयार है। / مصور فریم تیار ہے۔",
+    "This frame could not be loaded. Please select it again to retry.": "फ़्रेम नहीं लोड हुआ। दोबारा चुनें। / فریم لوڈ نہیں ہوا۔ دوبارہ چنیں۔"
+  }
+};
+for (const code of Object.keys(ILLUSTRATED_FRAME_STRINGS)) Object.assign(STRINGS[code], ILLUSTRATED_FRAME_STRINGS[code]);
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {

@@ -6,6 +6,7 @@ const {mkdtempSync} = require('node:fs');
 const {join} = require('node:path');
 const {tmpdir} = require('node:os');
 const origin = process.env.CLIPSPLAT_ORIGIN || 'http://127.0.0.1:4186';
+const illustrated = process.env.CLIPSPLAT_ILLUSTRATED === '1';
 const artifacts = mkdtempSync(join(tmpdir(), 'clipsplat-cuts-'));
 const source = join(artifacts, 'three-sections.mp4');
 execFileSync('ffmpeg', ['-v','error','-f','lavfi','-i','color=c=red:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=lime:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=blue:s=320x240:r=30:d=2','-f','lavfi','-i',"aevalsrc='0.2*sin(2*PI*if(lt(t,2),440,if(lt(t,4),880,1320))*t)':s=48000:d=6",'-filter_complex','[0:v][1:v][2:v]concat=n=3:v=1:a=0[v]','-map','[v]','-map','3:a','-c:v','libx264','-pix_fmt','yuv420p','-c:a','aac','-y',source]);
@@ -34,8 +35,11 @@ function tone(file, time) {
       await page.locator('#'+kind+'-image').setInputFiles(file);
       await page.waitForFunction(kind=>!document.getElementById(kind+'-choose-image').disabled,kind);
     }
-    await page.locator('#intro-frame').selectOption('film');
-    await page.locator('#outro-frame').selectOption('stars');
+    await page.locator('#intro-frame').selectOption(illustrated ? 'paint-party' : 'film');
+    await page.waitForFunction(()=>!document.getElementById('intro-frame').disabled);
+    const openingFramePixel = await page.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(20,20,1,1).data].slice(0,3);});
+    await page.locator('#outro-frame').selectOption(illustrated ? 'botanical' : 'stars');
+    await page.waitForFunction(()=>!document.getElementById('outro-frame').disabled);
     const closingFramePixel = await page.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(30,200,1,1).data].slice(0,3);});
     const select = async(start,end)=>{await page.locator('#selection-start').fill(String(start));await page.locator('#selection-end').fill(String(end));};
     async function drag(from,to,total) {
@@ -83,7 +87,7 @@ function tone(file, time) {
     assert.ok(Math.abs(Number(metadata.format.duration)-6)<.2);
     assert.equal(metadata.streams.find(s=>s.codec_type==='video').codec_name,'h264');
     assert.equal(metadata.streams.find(s=>s.codec_type==='audio').codec_name,'aac');
-    near(rgb(output,.5,20,20),[23,32,51]);
+    near(rgb(output,.5,20,20),openingFramePixel);
     near(rgb(output,5.5,30,200),closingFramePixel,20);
     near(rgb(output,.5,496,526),[255,255,0]);
     near(rgb(output,1.5),[254,0,0]);

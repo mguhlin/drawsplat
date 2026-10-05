@@ -1,5 +1,39 @@
+import paintParty from '../artwork/paint-party.png';
+import celestialMagic from '../artwork/celestial-magic.png';
+import botanicalGarden from '../artwork/botanical-garden.png';
+const FRAME_ARTWORK = {'paint-party':paintParty, celestial:celestialMagic, botanical:botanicalGarden};
+const frameCache = new Map();
+export const isIllustratedFrame = style => Object.hasOwn(FRAME_ARTWORK, style);
+export function loadIllustratedFrame(style) {
+  if (!isIllustratedFrame(style)) return Promise.resolve();
+  if (frameCache.has(style)) return frameCache.get(style).ready;
+  const image = new Image();
+  image.src = FRAME_ARTWORK[style];
+  const ready = image.decode().catch(error => { frameCache.delete(style); throw error; });
+  frameCache.set(style,{image,ready});
+  return ready;
+}
+function drawIllustratedFrame(ctx, width, height, style) {
+  const image = frameCache.get(style)?.image;
+  if (!image?.complete || !image.naturalWidth) return;
+  const sw = image.naturalWidth, sh = image.naturalHeight;
+  const scale = Math.min(width / sw, height / sh);
+  const cw = sw * .25 * scale, ch = sh * .25 * scale;
+  const sx=[0,sw*.25,sw*.75,sw], sy=[0,sh*.25,sh*.75,sh];
+  const dx=[0,cw,width-cw,width], dy=[0,ch,height-ch,height];
+  // Nine-slice keeps corner artwork proportional and adapts the edges for feed cards.
+  ctx.save();
+  for(let row=0;row<3;row++) for(let col=0;col<3;col++) {
+    if(row===1&&col===1)continue;
+    ctx.drawImage(image,sx[col],sy[row],sx[col+1]-sx[col],sy[row+1]-sy[row],dx[col],dy[row],dx[col+1]-dx[col],dy[row+1]-dy[row]);
+  }
+  ctx.restore();
+}
 export const FRAME_OPTIONS = [
   ['none', 'Plain · no frame'],
+  ['paint-party', 'Paint Party · illustrated'],
+  ['celestial', 'Celestial Magic · illustrated'],
+  ['botanical', 'Botanical Garden · illustrated'],
   ['confetti', 'Party confetti'],
   ['stars', 'Star sparkle'],
   ['splat', 'Paint splats'],
@@ -9,6 +43,7 @@ export const FRAME_OPTIONS = [
 // Deterministic decorations stay outside the title/image area, in every format.
 export function drawPanelFrame(ctx, width, height, style, foreground, accent) {
   if (style === 'none' || !FRAME_OPTIONS.some(([key]) => key === style)) return;
+  if (isIllustratedFrame(style)) { drawIllustratedFrame(ctx,width,height,style); return; }
   ctx.save();
   const unit = Math.min(width, height);
   const colors = [accent, '#c4b5fd', '#fb7185', '#a3e635', '#38bdf8'];

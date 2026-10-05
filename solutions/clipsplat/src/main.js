@@ -1,5 +1,5 @@
 import "./style.css";
-import { FRAME_OPTIONS, drawPanelFrame } from "./panel-frames.js";
+import { FRAME_OPTIONS, drawPanelFrame, loadIllustratedFrame, isIllustratedFrame } from "./panel-frames.js";
 import logoUrl from "../icon.svg";
 import { translate as tr, initializeLanguage } from "./i18n.js";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -62,6 +62,7 @@ function update() {
     $("export").disabled = true;
     $("play").disabled = true;
   }
+  for (const kind of ["intro","outro"]) $(kind+"-frame").disabled = busy || imagesLoading > 0;
   editor?.update();
   cardsEditor?.update();
 }
@@ -94,27 +95,30 @@ function panel(kind) {
   const card = imageCards.find(item=>item.id === kind);
   const w = canvas.width, h = canvas.height, bg = card?.color || $("color").value;
   const rtl = document.documentElement.dir === "rtl";
-  const textX = rtl ? w * .80 : w * .12;
+  const frame = card ? card.frame : $(kind + "-frame").value;
+  const illustrated = isIllustratedFrame(frame);
+  const textX = rtl ? w * (illustrated ? .74 : .80) : w * (illustrated ? .26 : .12);
+  const textWidth = w * (illustrated ? .48 : .68);
   ctx.direction = rtl ? "rtl" : "ltr";
   ctx.textAlign = rtl ? "right" : "left";
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
   const rgb = [1, 3, 5].map((i) => parseInt(bg.slice(i, i + 2), 16)), light = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114 > 150;
   const fg = light ? "#4720a4" : "#faf8ff", accent = light ? "#4720a4" : "#f5b942";
-  drawPanelFrame(ctx, w, h, card ? card.frame : $(kind + "-frame").value, fg, accent);
+  drawPanelFrame(ctx, w, h, frame, fg, accent);
   const image = card ? card.image : panelImages[kind]?.image;
   const title = card ? card.title.trim() : $(kind + "-text").value.trim() || tr(kind === "intro" ? "Welcome" : "Thanks for watching");
   if (image) {
-    const scale = Math.min(w * .68 / image.naturalWidth, h * (card && !title ? .48 : .23) / image.naturalHeight);
+    const scale = Math.min(textWidth / image.naturalWidth, h * (card && !title ? (illustrated ? .42 : .48) : illustrated ? .22 : .23) / image.naturalHeight);
     const iw = image.naturalWidth * scale, ih = image.naturalHeight * scale;
-    ctx.drawImage(image, w * .46 - iw / 2, h * (card && !title ? .40 : .275) - ih / 2, iw, ih);
+    ctx.drawImage(image, w * (illustrated ? .5 : .46) - iw / 2, h * (card && !title ? (illustrated ? .43 : .40) : illustrated ? .32 : .275) - ih / 2, iw, ih);
   }
   ctx.fillStyle = accent;
-  if (title) ctx.fillRect(w * 0.12, h * (image ? .415 : .24), w * 0.1, 8);
-  let size = 76, lines = wrap(title, w * 0.68, size);
-  while (lines.length * size * 1.22 > h * (image ? .18 : .28) && size > 34) {
+  if (title) ctx.fillRect(w * (illustrated ? .26 : .12), h * (image ? (illustrated ? .445 : .415) : .24), w * 0.1, 8);
+  let size = 76, lines = wrap(title, textWidth, size);
+  while (lines.length * size * 1.22 > h * (image ? (illustrated ? .16 : .18) : .28) && size > (illustrated ? 20 : 34)) {
     size -= 2;
-    lines = wrap(title, w * 0.68, size);
+    lines = wrap(title, textWidth, size);
   }
   ctx.fillStyle = fg;
   ctx.font = `750 ${size}px system-ui`;
@@ -124,9 +128,12 @@ function panel(kind) {
   const creator = $("creator").value.trim();
   if (creator) {
     ctx.fillStyle = accent;
-    const names = wrap(tr("by {name}",{name:creator}), w * 0.68, 35);
-    ctx.font = "500 35px system-ui";
-    names.forEach((line, i) => ctx.fillText(line, textX, h * (image ? .70 : .64) + i * 44));
+    let nameSize = 35, names = wrap(tr("by {name}",{name:creator}), textWidth, nameSize);
+    while (illustrated && names.length * nameSize * 1.25 > h * .065 && nameSize > 18) {
+      nameSize--; names = wrap(tr("by {name}",{name:creator}), textWidth, nameSize);
+    }
+    ctx.font = `500 ${nameSize}px system-ui`;
+    names.forEach((line, i) => ctx.fillText(line, textX, h * (image ? (illustrated ? .69 : .70) : .64) + i * (illustrated ? nameSize * 1.25 : 44)));
   }
 }
 function drawVideo() {
@@ -406,8 +413,19 @@ for (const id of ["start", "end", "preset", "fit", "creator", "color", "intro-te
   if (id === "start" || id === "end") editor.resetSelection();
   update();
 });
+async function ensureIllustratedFrame(style) {
+  if (!isIllustratedFrame(style)) return;
+  imagesLoading++; update(); message("Loading illustrated frame…");
+  try { await loadIllustratedFrame(style); message("Illustrated frame ready."); }
+  catch(error) { message("This frame could not be loaded. Please select it again to retry."); throw error; }
+  finally { imagesLoading--; update(); }
+}
 for (const kind of ["intro", "outro"]) {
-  $(kind + "-frame").oninput = () => { stopPreview(); invalidate(); show(kind); update(); };
+  $(kind + "-frame").oninput = async () => {
+    stopPreview(); invalidate(); show(kind); update();
+    try { await ensureIllustratedFrame($(kind+"-frame").value); }
+    catch { $(kind+"-frame").value = "none"; update(); }
+  };
   const input = $(kind + "-image"), choose = $(kind + "-choose-image"), remove = $(kind + "-remove-image");
   choose.onclick = () => input.click();
   remove.onclick = () => {
@@ -499,6 +517,7 @@ $("export").onclick = async () => {
     controls(true);
     $("progress").hidden = false;
     $("progress").value = 0;
+    await Promise.all([$("intro-frame").value,$("outro-frame").value,...imageCards.map(card=>card.frame)].map(loadIllustratedFrame));
     ffmpeg = await getEngine();
     if (cancelled) throw new Error("Export cancelled.");
     let hasAudio = false;
@@ -647,13 +666,17 @@ cardsEditor = createImageCardsEditor({
     const parts = retainedSegments(duration, number("start"), number("end"), cuts);
     return {cards:imageCards,positionOf:card=>editedTimeAt(parts,card.at),maxPosition:parts.reduce((sum,part)=>sum+part.end-part.start,0),locked:busy || imagesLoading > 0,hasSource:!!source};
   },
-  onChange: (id,field,value) => {
+  onChange: async (id,field,value) => {
     if (busy || imagesLoading) return;
     const card = imageCards.find(item=>item.id===id);
     if (!card) return;
     if (field === "at") card.at = sourceTimeAt(retainedSegments(duration, number("start"), number("end"), cuts), Number(value));
     else card[field] = field === "seconds" ? Number(value) : value;
     stopPreview(); invalidate(); show(id); update();
+    if (field === "frame") {
+      try { await ensureIllustratedFrame(value); }
+      catch { card.frame = "none"; update(); }
+    }
   },
   onPreview: id => show(id),
   onRemove: id => {
