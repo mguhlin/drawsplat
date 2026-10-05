@@ -1,4 +1,4 @@
-# ClipSplat
+# ClipSplat™
 
 A focused, private short-video recorder for Instagram: camera or local import → trim → opening/closing panels → MP4. No account or Instagram API is required. Upload the resulting file manually, or use your device's share sheet when available.
 
@@ -30,3 +30,9 @@ Browser checks cover camera/microphone recording, actual MP4 exports with/withou
 ## License and credits
 
 AGPL-3.0-or-later; see the repository LICENSE. The local recording/encoding approach adapts DrawSplat's VideoSplat design. Browser APIs provide capture and canvas panels. [@ffmpeg/ffmpeg](https://github.com/ffmpegwasm/ffmpeg.wasm) provides the MIT-licensed worker bridge. The existing shared core includes [FFmpeg](https://ffmpeg.org) and libx264 (GPL). [Vite](https://github.com/vitejs/vite) is MIT-licensed build tooling. The icon is an original SVG.
+
+## Preliminary U.S. trademark search — October 5, 2026
+
+Direct searches in the [USPTO trademark database](https://tmsearch.uspto.gov/) returned no live or dead results for `CM:"clipsplat"`, `CM:"clip splat"`, `CM:"clip-splat"`, and `CM:/clip.*splat/`. A broad SPLAT search in software and related classes found other marks. In particular, [SPLAT, serial 88478014 / registration 6022371](https://tsdr.uspto.gov/#caseNumber=88478014&caseSearchType=US_APPLICATION&caseType=DEFAULT&searchType=statusSearch) is active, owned by RightSize Business Systems, and covers downloadable school attendance/recognition software (class 009) and associated web software (class 042). The TSDR record was checked directly. The existing CLIPSplat research use also remains relevant to a broader search.
+
+This is a preliminary U.S. federal search, not clearance or a conclusion about confusing similarity. State, foreign, common-law, logo and comprehensive phonetic searches are outside this check. USPTO explains the limits of federal searches in its [clearance guidance](https://www.uspto.gov/trademarks/search/comprehensive-clearance-search-similar-trademarks). The user requested the ™ display, which claims a brand name without representing it as federally registered; no ® is used and no registration application has been filed. See [USPTO's trademark symbol guidance](https://www.uspto.gov/trademarks/basics/what-trademark).
