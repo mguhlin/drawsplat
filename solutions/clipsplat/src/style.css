@@ -439,3 +439,17 @@ video.source {
 @media(max-width:760px) { .timeline-editor { padding: 16px; } .timeline-composition { flex-wrap: wrap; } .timeline-video { flex: 1 1 100%; order: 2; } .timeline-bookend { width: auto; min-height: 38px; flex: 1; } .timeline-fields label { flex-basis: 120px; } .timeline-actions button { font-size: 12px; } }
 
 @media(min-width:761px) and (max-width:1000px) { .timeline-composition { flex-wrap: wrap; } .timeline-video { flex: 1 1 100%; order: 2; } .timeline-bookend { width: auto; min-height: 38px; flex: 1; } }
+
+#image-cards-file[hidden] { display:none; }
+#image-cards-list { margin-top: 18px; }
+.extra-image-card > button { margin-bottom: 14px; }
+.extra-image-card input[type=file][hidden] { display:none; }
+.extra-image-card .row { flex-wrap:wrap; }
+.extra-image-card .row > * { flex-basis:140px; }
+.timeline-sequence { margin-bottom: 18px; }
+.timeline-sequence[hidden] { display:none; }
+.timeline-sequence > strong { font-size:12px; color:#4720a4; }
+#timeline-sequence-items { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; direction:ltr; }
+.sequence-item { padding:7px 9px; border:1px solid #d8ccef; border-radius:8px; background:#eee8ff; font-size:11px; }
+.sequence-item.card { display:flex; align-items:center; gap:6px; background:#fff5da; }
+.sequence-item img { width:32px; height:32px; object-fit:contain; border-radius:4px; }

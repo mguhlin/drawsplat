@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { timeline, videoFilter, retainedSegments, sourceTimeAt, editedTimeAt, selectionCuts } from "../src/model.js";
+import { timeline, videoFilter, retainedSegments, sourceTimeAt, editedTimeAt, selectionCuts, composeSequence } from "../src/model.js";
 test("panels count toward total and placement limits", () => {
   assert.equal(timeline(180, 0, 174, 3, 3, "reel").total, 180);
   assert.throws(() => timeline(180, 0, 175, 3, 3, "reel"), /Shorten/);
@@ -37,4 +37,16 @@ test("edited selections spanning joins map back to all original source pieces", 
   assert.throws(() => selectionCuts(parts, 0, 7), /Select/);
   assert.throws(() => selectionCuts(parts, 2, 1), /Select/);
   assert.throws(() => selectionCuts(parts, 0, .01), /Select/);
+});
+
+test("image cards split surviving video in order and count toward placement limits", () => {
+  const cards = [{id:"one",at:1,seconds:2},{id:"two",at:3,seconds:1},{id:"three",at:3,seconds:1}];
+  const plan = timeline(6,0,6,1,1,"reel",[],cards);
+  assert.equal(plan.total,12);
+  assert.deepEqual(plan.sequence.map(item=>item.kind === "card" ? item.id : [item.start,item.end]), [[0,1],"one",[1,3],"two","three",[3,6]]);
+  const cuts = [{start:2,end:4}];
+  assert.deepEqual(composeSequence(retainedSegments(6,0,6,cuts),[{id:"one",at:3,seconds:1}]).map(item=>item.kind === "card" ? item.id : [item.start,item.end]), [[0,2],"one",[4,6]]);
+  assert.throws(()=>timeline(55,0,55,1,1,"story",[],[{id:"one",at:1,seconds:5}]), /Shorten/);
+  assert.throws(()=>timeline(6,0,6,1,1,"reel",[],[{id:"one",at:1,seconds:11}]), /Image cards/);
+  assert.equal(composeSequence([{start:0,end:6}],[{id:"one",at:3,seconds:0}]).length,1);
 });

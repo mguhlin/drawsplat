@@ -12,6 +12,10 @@ All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/
 
 These are conservative app limits, not Instagram's full account-dependent maximums. Sources are limited to 200 MB; final MP4s to 300 MB. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
 
+## Additional image cards
+
+Use step 4 to add one or several local images as standalone cards. Each card has an optional title, its own duration (0–10 seconds, 0 skips), background color and frame, with Preview, Replace image and Remove card controls. Insert at uses seconds of the remaining video, excluding panels and other cards. Images pause the video and its audio, then resume the footage; exported cards have silence. Same-position cards play in their list order. Cuts move cards with their original footage anchors, placing a card in a deleted section at the surviving join. Loading a new video retains the cards and clamps their anchors to the new source. Card durations count toward the output limit, and Playback order shows the inserted items. Images and projects remain local and are not automatically saved.
+
 ## Select and delete video sections
 
 The timeline beneath the preview shows the remaining video between the opening and closing panels. Drag across the video track to highlight a section, or enter Selection start/end times, then use Delete selection. Click the track or use Preview position to scrub. Selection times refer to the edited video; each remaining segment shows its original source times. A cut deletes that section's video and audio together. Preview all and MP4 export follow the remaining segments in order, with both title panels included.
@@ -20,7 +24,7 @@ Undo restores the last cut; Reset cuts restores all deleted sections and can its
 
 ## Development and hosting
 
-Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs`, `node tests/timeline.cjs`, and `node tests/frames.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
+Node 20.19+: `npm install --no-bin-links`, then `npm run build`. The flag supports filesystems without symlinks. The build publishes HTML and assets into this directory; commit them for static deployment. `npm test` validates trim/duration/framing rules. Serve the repository root for browser export tests. With the root Playwright dependency installed, run `node tests/browser.cjs`, `node tests/timeline.cjs`, `node tests/frames.cjs`, and `node tests/cards.cjs` from this directory; set `CLIPSPLAT_ORIGIN=https://drawsplat.org` to repeat against production.
 
 The encoder reuses VideoSplat's existing shared engine at `/solutions/mediasplat/ffmpeg/ffmpeg-core.js` and `ffmpeg-core.part-01`/`ffmpeg-core.part-02`. Self-hosting requires those files at those paths. No VideoSplat editor, timeline, caption models or persistence is imported. Camera and microphone require HTTPS or localhost.
 

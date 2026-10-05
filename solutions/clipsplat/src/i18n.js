@@ -818,6 +818,114 @@ const FRAME_STRINGS = {
   }
 };
 for (const code of Object.keys(FRAME_STRINGS)) Object.assign(STRINGS[code], FRAME_STRINGS[code]);
+const CARD_STRINGS = {
+  "es": {
+    "Additional image cards": "Tarjetas de imagen adicionales",
+    "Insert image cards anywhere in your video. Each card pauses the video, then playback resumes.": "Inserta tarjetas de imagen en cualquier punto del video. Cada tarjeta pausa el video y luego continúa la reproducción.",
+    "Add image cards": "Añadir tarjetas de imagen",
+    "Images for additional cards": "Imágenes para tarjetas adicionales",
+    "Insert times refer to the remaining video, without panels or other cards. Cards use silence while they are shown. Set seconds to 0 to skip a card.": "Los tiempos corresponden al video restante, sin paneles ni otras tarjetas. Las tarjetas se muestran sin audio. Usa 0 segundos para omitir una tarjeta.",
+    "Image card {number}": "Tarjeta de imagen {number}",
+    "Replace image": "Cambiar imagen",
+    "Replacement image": "Imagen de reemplazo",
+    "Remove card": "Quitar tarjeta",
+    "Title (optional)": "Título (opcional)",
+    "Insert at (video seconds)": "Insertar en (segundos del video)",
+    "Card seconds · 0 to skip": "Segundos de tarjeta · 0 para omitir",
+    "Preview card": "Previsualizar tarjeta",
+    "Playback order": "Orden de reproducción",
+    "Image card {number} · {seconds}s": "Tarjeta de imagen {number} · {seconds}s",
+    "Image cards must last between 0 and 10 seconds.": "Las tarjetas deben durar entre 0 y 10 segundos.",
+    "Creating image card…": "Creando tarjeta de imagen…",
+    "Image cards added. Set their positions and preview the sequence.": "Tarjetas añadidas. Ajusta sus posiciones y previsualiza la secuencia.",
+    "{intro}s opening + {clip}s video + {cards}s image cards + {outro}s closing = {total}s": "{intro}s inicio + {clip}s video + {cards}s tarjetas + {outro}s final = {total}s"
+  },
+  "vi": {
+    "Additional image cards": "Thẻ ảnh bổ sung",
+    "Insert image cards anywhere in your video. Each card pauses the video, then playback resumes.": "Chèn thẻ ảnh ở bất kỳ vị trí nào trong video. Mỗi thẻ tạm dừng video, sau đó phát tiếp.",
+    "Add image cards": "Thêm thẻ ảnh",
+    "Images for additional cards": "Ảnh cho thẻ bổ sung",
+    "Insert times refer to the remaining video, without panels or other cards. Cards use silence while they are shown. Set seconds to 0 to skip a card.": "Thời gian tính theo video còn lại, không gồm bảng tiêu đề hoặc thẻ khác. Thẻ ảnh không có âm thanh. Đặt 0 giây để bỏ qua thẻ.",
+    "Image card {number}": "Thẻ ảnh {number}",
+    "Replace image": "Thay ảnh",
+    "Replacement image": "Ảnh thay thế",
+    "Remove card": "Xóa thẻ",
+    "Title (optional)": "Tiêu đề (tùy chọn)",
+    "Insert at (video seconds)": "Chèn tại (giây video)",
+    "Card seconds · 0 to skip": "Thời lượng thẻ · 0 để bỏ qua",
+    "Preview card": "Xem trước thẻ",
+    "Playback order": "Thứ tự phát",
+    "Image card {number} · {seconds}s": "Thẻ ảnh {number} · {seconds}s",
+    "Image cards must last between 0 and 10 seconds.": "Thẻ ảnh phải dài từ 0 đến 10 giây.",
+    "Creating image card…": "Đang tạo thẻ ảnh…",
+    "Image cards added. Set their positions and preview the sequence.": "Đã thêm thẻ ảnh. Đặt vị trí và xem trước chuỗi phát.",
+    "{intro}s opening + {clip}s video + {cards}s image cards + {outro}s closing = {total}s": "{intro}s mở đầu + {clip}s video + {cards}s thẻ ảnh + {outro}s kết thúc = {total}s"
+  },
+  "ar": {
+    "Additional image cards": "بطاقات صور إضافية",
+    "Insert image cards anywhere in your video. Each card pauses the video, then playback resumes.": "أدرج بطاقات صور في أي موضع من الفيديو. توقف كل بطاقة الفيديو مؤقتًا ثم يستأنف التشغيل.",
+    "Add image cards": "إضافة بطاقات صور",
+    "Images for additional cards": "صور للبطاقات الإضافية",
+    "Insert times refer to the remaining video, without panels or other cards. Cards use silence while they are shown. Set seconds to 0 to skip a card.": "الأوقات تخص الفيديو المتبقي دون لوحات أو بطاقات أخرى. تُعرض البطاقات دون صوت. اضبط الثواني على 0 لتجاوز البطاقة.",
+    "Image card {number}": "بطاقة صورة {number}",
+    "Replace image": "استبدال الصورة",
+    "Replacement image": "الصورة البديلة",
+    "Remove card": "إزالة البطاقة",
+    "Title (optional)": "العنوان (اختياري)",
+    "Insert at (video seconds)": "الإدراج عند (ثواني الفيديو)",
+    "Card seconds · 0 to skip": "ثواني البطاقة · 0 للتجاوز",
+    "Preview card": "معاينة البطاقة",
+    "Playback order": "ترتيب التشغيل",
+    "Image card {number} · {seconds}s": "بطاقة صورة {number} · {seconds}s",
+    "Image cards must last between 0 and 10 seconds.": "يجب أن تستمر بطاقات الصور من 0 إلى 10 ثوانٍ.",
+    "Creating image card…": "جارٍ إنشاء بطاقة صورة…",
+    "Image cards added. Set their positions and preview the sequence.": "أضيفت البطاقات. اضبط مواضعها وعاين التسلسل.",
+    "{intro}s opening + {clip}s video + {cards}s image cards + {outro}s closing = {total}s": "{intro}s بداية + {clip}s فيديو + {cards}s بطاقات صور + {outro}s نهاية = {total}s"
+  },
+  "zh": {
+    "Additional image cards": "额外图片卡片",
+    "Insert image cards anywhere in your video. Each card pauses the video, then playback resumes.": "在视频任意位置插入图片卡片。每张卡片会暂停视频，然后继续播放。",
+    "Add image cards": "添加图片卡片",
+    "Images for additional cards": "额外卡片图片",
+    "Insert times refer to the remaining video, without panels or other cards. Cards use silence while they are shown. Set seconds to 0 to skip a card.": "插入时间以剩余视频为准，不包含面板或其他卡片。显示卡片时没有音频。设为0秒可跳过卡片。",
+    "Image card {number}": "图片卡片{number}",
+    "Replace image": "替换图片",
+    "Replacement image": "替换图片",
+    "Remove card": "移除卡片",
+    "Title (optional)": "标题（可选）",
+    "Insert at (video seconds)": "插入位置（视频秒数）",
+    "Card seconds · 0 to skip": "卡片秒数 · 0表示跳过",
+    "Preview card": "预览卡片",
+    "Playback order": "播放顺序",
+    "Image card {number} · {seconds}s": "图片卡片{number} · {seconds}s",
+    "Image cards must last between 0 and 10 seconds.": "图片卡片时长必须在0到10秒之间。",
+    "Creating image card…": "正在创建图片卡片…",
+    "Image cards added. Set their positions and preview the sequence.": "已添加图片卡片。设置位置并预览播放顺序。",
+    "{intro}s opening + {clip}s video + {cards}s image cards + {outro}s closing = {total}s": "{intro}s开场 + {clip}s视频 + {cards}s图片卡片 + {outro}s结束 = {total}s"
+  },
+  "uh": {
+    "Additional image cards": "अतिरिक्त चित्र कार्ड / اضافی تصویری کارڈ",
+    "Insert image cards anywhere in your video. Each card pauses the video, then playback resumes.": "वीडियो में कहीं भी चित्र कार्ड जोड़ें। हर कार्ड वीडियो रोकता है, फिर वीडियो चलता है। / ویڈیو میں کہیں بھی تصویری کارڈ شامل کریں۔ ہر کارڈ ویڈیو روکتا ہے، پھر ویڈیو چلتی ہے۔",
+    "Add image cards": "चित्र कार्ड जोड़ें / تصویری کارڈ شامل کریں",
+    "Images for additional cards": "अतिरिक्त कार्ड के चित्र / اضافی کارڈ کی تصاویر",
+    "Insert times refer to the remaining video, without panels or other cards. Cards use silence while they are shown. Set seconds to 0 to skip a card.": "समय बाकी वीडियो का है, पैनल या दूसरे कार्ड का नहीं। कार्ड मौन रहते हैं। छोड़ने के लिए 0 सेकंड रखें। / وقت باقی ویڈیو کا ہے، پینل یا دوسرے کارڈ کا نہیں۔ کارڈ خاموش رہتے ہیں۔ چھوڑنے کے لیے 0 سیکنڈ رکھیں۔",
+    "Image card {number}": "चित्र कार्ड {number} / تصویری کارڈ {number}",
+    "Replace image": "चित्र बदलें / تصویر بدلیں",
+    "Replacement image": "नया चित्र / نئی تصویر",
+    "Remove card": "कार्ड हटाएँ / کارڈ ہٹائیں",
+    "Title (optional)": "शीर्षक (वैकल्पिक) / عنوان (اختیاری)",
+    "Insert at (video seconds)": "यहाँ जोड़ें (वीडियो सेकंड) / یہاں شامل کریں (ویڈیو سیکنڈ)",
+    "Card seconds · 0 to skip": "कार्ड सेकंड · 0 छोड़ने के लिए / کارڈ سیکنڈ · 0 چھوڑنے کے لیے",
+    "Preview card": "कार्ड पूर्वावलोकन / کارڈ پیش نظارہ",
+    "Playback order": "चलने का क्रम / چلنے کی ترتیب",
+    "Image card {number} · {seconds}s": "चित्र कार्ड {number} / تصویری کارڈ {number} · {seconds}s",
+    "Image cards must last between 0 and 10 seconds.": "कार्ड 0 से 10 सेकंड के हों। / کارڈ 0 سے 10 سیکنڈ کے ہوں۔",
+    "Creating image card…": "चित्र कार्ड बन रहा है… / تصویری کارڈ بن رہا ہے…",
+    "Image cards added. Set their positions and preview the sequence.": "कार्ड जुड़ गए। स्थान तय करें और क्रम देखें। / کارڈ شامل ہو گئے۔ جگہ طے کریں اور ترتیب دیکھیں۔",
+    "{intro}s opening + {clip}s video + {cards}s image cards + {outro}s closing = {total}s": "{intro}s आरंभ / ابتدا + {clip}s वीडियो / ویڈیو + {cards}s कार्ड / کارڈ + {outro}s अंत / اختتام = {total}s"
+  }
+};
+for (const code of Object.keys(CARD_STRINGS)) Object.assign(STRINGS[code], CARD_STRINGS[code]);
 let current = "en";
 const supported = (code) => LANGUAGES.some(([key]) => key === code);
 function translate(source, params = {}) {
@@ -832,7 +940,7 @@ function initializeLanguage(onChange) {
   const picker = document.getElementById("language");
   for (const [code, name] of LANGUAGES) picker.add(new Option(name, code));
   const nodes = [], attributes = [];
-  const dynamic = "#timeline-track,#timeline-ruler,#timeline-panel-start,#timeline-panel-end,#timeline-selection-summary,#intro-image-name,#outro-image-name,#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
+  const dynamic = "#image-cards-list,#timeline-sequence-items,#timeline-track,#timeline-ruler,#timeline-panel-start,#timeline-panel-end,#timeline-selection-summary,#intro-image-name,#outro-image-name,#language,#source-name,#status,#summary,#recording,#dimensions,#play,textarea,script,style";
   const walker = document.createTreeWalker(document.getElementById("app"), NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const node = walker.currentNode;

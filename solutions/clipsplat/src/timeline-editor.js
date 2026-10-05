@@ -5,10 +5,10 @@ export const TIMELINE_MARKUP = `<section class="timeline-editor" id="timeline-ed
 <div class="timeline-heading"><h2>Cut your video</h2><div class="timeline-actions"><button id="timeline-delete" disabled>Delete selection</button><button id="timeline-undo" disabled>Undo</button><button id="timeline-reset" disabled>Reset cuts</button></div></div>
 <p class="hint">Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.</p>
 <div class="timeline-composition"><div class="timeline-bookend" id="timeline-panel-start"></div><div class="timeline-video"><div id="timeline-ruler" class="timeline-ruler"></div><div id="timeline-track" class="timeline-track" tabindex="0" aria-label="Select a section of video" aria-describedby="timeline-selection-summary"><div id="timeline-segments" class="timeline-segments"></div><div id="timeline-selection" class="timeline-selection" hidden></div><div id="timeline-playhead" class="timeline-playhead" hidden></div></div></div><div class="timeline-bookend" id="timeline-panel-end"></div></div>
-<div class="timeline-fields"><label>Selection start (seconds)<input id="selection-start" type="number" min="0" step="0.01" value="0" disabled></label><label>Selection end (seconds)<input id="selection-end" type="number" min="0" step="0.01" value="0" disabled></label><label class="timeline-scrub">Preview position<input id="timeline-position" type="range" min="0" max="0" step="0.01" value="0" disabled></label></div>
+<div id="timeline-sequence" class="timeline-sequence" hidden><strong>Playback order</strong><div id="timeline-sequence-items"></div></div><div class="timeline-fields"><label>Selection start (seconds)<input id="selection-start" type="number" min="0" step="0.01" value="0" disabled></label><label>Selection end (seconds)<input id="selection-end" type="number" min="0" step="0.01" value="0" disabled></label><label class="timeline-scrub">Preview position<input id="timeline-position" type="range" min="0" max="0" step="0.01" value="0" disabled></label></div>
 <p class="hint" id="timeline-selection-summary" role="status">Add a video to start editing.</p></section>`;
 
-export function createTimelineEditor({ getState, onDelete, onUndo, onReset, onSeek }) {
+export function createTimelineEditor({ getState, onDelete, onUndo, onReset, onSeek, onCardPreview }) {
   const $ = id => document.getElementById(id);
   let selection = [0, 0], drag, total = 0, locked = true, segments = [];
   const round = value => Math.round(value * 100) / 100;
@@ -55,6 +55,20 @@ export function createTimelineEditor({ getState, onDelete, onUndo, onReset, onSe
     $('timeline-ruler').replaceChildren(...[0,.25,.5,.75,1].map(fraction => {
       const node = document.createElement('span');
       node.textContent = `${(total * fraction).toFixed(1)}s`;
+      return node;
+    }));
+    const hasCards = state.cards?.some(card=>card.seconds > 0);
+    $('timeline-sequence').hidden = !hasCards;
+    $('timeline-sequence-items').replaceChildren(...(hasCards ? state.sequence : []).map(item => {
+      const node = document.createElement(item.kind === 'card' ? 'button' : 'span');
+      node.className = 'sequence-item ' + item.kind;
+      if (item.kind === 'card') {
+        const card = state.cards.find(card=>card.id===item.id);
+        const thumbnail = document.createElement('img'); thumbnail.src = card.url; thumbnail.alt = '';
+        node.append(thumbnail, document.createTextNode(tr('Image card {number} · {seconds}s',{number:state.cards.indexOf(card)+1,seconds:item.seconds})));
+        node.disabled = state.locked;
+        node.onclick = ()=>onCardPreview(item.id);
+      } else node.textContent = tr('Video · {start}–{end}s',{start:item.start.toFixed(2),end:item.end.toFixed(2)});
       return node;
     }));
     refreshSelection();
