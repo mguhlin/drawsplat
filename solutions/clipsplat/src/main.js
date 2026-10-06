@@ -212,6 +212,7 @@ function stopPreview() {
 function show(kind) {
   stopPreview();
   mode = kind;
+  if (kind !== "clip") syncTextControls();
   if (kind === "clip" && stream) video.play().catch((error) => message(error.message));
   if (kind === "clip" && source && !stream) video.currentTime = sourceTimeAt(retainedSegments(duration, number("start"), number("end"), cuts), 0);
 }
@@ -886,7 +887,7 @@ $("text-size").oninput = () => {
 };
 $("text-reset").onclick = () => { textStyles.delete(mode+":"+selectedText); syncTextControls(); invalidate(); };
 initializeLanguage(({titlesChanged}) => {
-  syncTextControls();
+  if (mode !== "clip") syncTextControls();
   stopPreview();
   if(titlesChanged) invalidate();
   update();
