@@ -4,7 +4,7 @@ import { editedTimeAt } from './model.js';
 export const TIMELINE_MARKUP = `<section class="timeline-editor" id="timeline-editor" aria-label="Video timeline">
 <div class="timeline-heading"><h2>Cut your video</h2><div class="timeline-actions"><button id="timeline-delete" disabled>Delete selection</button><button id="timeline-undo" disabled>Undo</button><button id="timeline-reset" disabled>Reset cuts</button></div></div>
 <p class="hint">Drag across the video to highlight a section, then delete it. Click or scrub to preview. Cuts remove video and its audio together.</p>
-<div class="timeline-composition"><div class="timeline-bookend" id="timeline-panel-start"></div><div class="timeline-video"><div id="timeline-ruler" class="timeline-ruler"></div><div id="timeline-track" class="timeline-track" tabindex="0" aria-label="Select a section of video" aria-describedby="timeline-selection-summary"><div id="timeline-segments" class="timeline-segments"></div><div id="timeline-selection" class="timeline-selection" hidden></div><div id="timeline-playhead" class="timeline-playhead" hidden></div></div></div><div class="timeline-bookend" id="timeline-panel-end"></div></div>
+<div class="timeline-composition"><button type="button" class="timeline-bookend" id="timeline-panel-start"></button><div class="timeline-video"><div id="timeline-ruler" class="timeline-ruler"></div><div id="timeline-track" class="timeline-track" tabindex="0" aria-label="Select a section of video" aria-describedby="timeline-selection-summary"><div id="timeline-segments" class="timeline-segments"></div><div id="timeline-selection" class="timeline-selection" hidden></div><div id="timeline-playhead" class="timeline-playhead" hidden></div></div></div><button type="button" class="timeline-bookend" id="timeline-panel-end"></button></div>
 <div id="timeline-sequence" class="timeline-sequence" hidden><strong>Playback order</strong><div id="timeline-sequence-items"></div></div><div class="timeline-fields"><label>Selection start (seconds)<input id="selection-start" type="number" min="0" step="0.01" value="0" disabled></label><label>Selection end (seconds)<input id="selection-end" type="number" min="0" step="0.01" value="0" disabled></label><label class="timeline-scrub">Preview position<input id="timeline-position" type="range" min="0" max="0" step="0.01" value="0" disabled></label></div>
 <p class="hint" id="timeline-selection-summary" role="status">Add a video to start editing.</p></section>`;
 
@@ -42,6 +42,8 @@ export function createTimelineEditor({ getState, onDelete, onUndo, onReset, onSe
     $('timeline-reset').disabled = state.locked || !state.hasCuts;
     $('timeline-panel-start').textContent = tr('Opening · {seconds}s', {seconds: state.intro});
     $('timeline-panel-end').textContent = tr('Closing · {seconds}s', {seconds: state.outro});
+    $('timeline-panel-start').disabled = state.locked;
+    $('timeline-panel-end').disabled = state.locked;
     $('timeline-panel-start').hidden = state.intro <= 0;
     $('timeline-panel-end').hidden = state.outro <= 0;
     $('timeline-segments').replaceChildren(...segments.map(part => {
@@ -80,6 +82,8 @@ export function createTimelineEditor({ getState, onDelete, onUndo, onReset, onSe
     $('timeline-playhead').hidden = !segments.length;
     $('timeline-playhead').style.left = `${total ? Math.min(100, position / total * 100) : 0}%`;
   }
+  $('timeline-panel-start').onclick = () => { if (!getState().locked) onCardPreview('intro'); };
+  $('timeline-panel-end').onclick = () => { if (!getState().locked) onCardPreview('outro'); };
   $('timeline-position').oninput = event => { if (!locked) onSeek(Number(event.target.value)); };
   for (const [id, index] of [['selection-start', 0], ['selection-end', 1]]) {
     $(id).oninput = event => {

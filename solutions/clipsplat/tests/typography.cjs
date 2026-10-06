@@ -20,7 +20,9 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=red:s=320x240:d=1',
  await page.locator('#outro-preview').click();await page.waitForTimeout(100);assert.equal(await page.locator('#text-size').inputValue(),'');
  await page.locator('#intro-preview').click();await page.waitForTimeout(100);assert.equal(await page.locator('#text-size').inputValue(),'100');assert.equal(await page.locator('#text-font').inputValue(),'mono');
  await page.locator('#file').setInputFiles(join(dir,'source.mp4'));await page.waitForFunction(()=>!document.getElementById('export').disabled);
- await page.locator('#intro-preview').click();await page.locator('#outro-duration').fill('0');await page.locator('#intro-duration').fill('2');
+ await page.locator('#timeline-panel-end').click();await page.waitForTimeout(100);assert.equal(await page.locator('#text-size').inputValue(),'');
+ await page.locator('#timeline-panel-start').focus();await page.locator('#timeline-panel-start').press('Enter');await page.waitForTimeout(100);assert.equal(await page.locator('#text-size').inputValue(),'100');
+ await page.locator('#outro-duration').fill('0');await page.locator('#intro-duration').fill('2');
  await page.waitForTimeout(100);
  // Find a white title pixel in the canvas; compare that position in the encoded opening.
  const pixel=await page.evaluate(()=>{const c=document.getElementById('canvas'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let y=0;y<1000;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(d[i]>230&&d[i+1]>230&&d[i+2]>230)return {x,y};}throw Error('No title pixel');});
