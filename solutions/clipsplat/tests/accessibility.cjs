@@ -1,6 +1,6 @@
 const {chromium}=require('../../../node_modules/@playwright/test');
 const assert=require('node:assert/strict');
-const {mkdtempSync}=require('node:fs');
+const {mkdtempSync,readFileSync}=require('node:fs');
 const {execFileSync}=require('node:child_process');
 const {join}=require('node:path');
 const origin=process.env.CLIPSPLAT_ORIGIN||'http://127.0.0.1:4186';
@@ -35,7 +35,7 @@ try{
  await page.locator('#intro-image').setInputFiles(image);await page.locator('#intro-remove-image').click();assert.equal(await page.locator(':focus').getAttribute('id'),'intro-choose-image');
  await page.locator('#image-cards-file').setInputFiles(image);
  if(process.env.CLIPSPLAT_AXE){
-  await page.addScriptTag({path:process.env.CLIPSPLAT_AXE});
+  await page.evaluate(readFileSync(process.env.CLIPSPLAT_AXE,'utf8'));
   for(const lang of ['en','ar']){
    await page.locator('#language').selectOption(lang);
    const results=await page.evaluate(()=>axe.run(document.getElementById('app'),{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));
