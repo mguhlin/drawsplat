@@ -3,7 +3,7 @@ const {execFileSync}=require('node:child_process');const {mkdtempSync}=require('
 const dir=mkdtempSync('/tmp/clipsplat-image-fit-'),origin=process.env.CLIPSPLAT_ORIGIN||'http://127.0.0.1:4186';
 const source=join(dir,'source.mp4');execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=red:s=32x32:d=3','-c:v','libx264','-y',source]);
 (async()=>{const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});try{
-const p=await b.newPage({acceptDownloads:true});await p.goto(origin+'/solutions/clipsplat/');
+const p=await b.newPage({acceptDownloads:true});await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector("#settings",{state:"attached"});await p.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
 const make=async(w,h)=>Buffer.from(await p.evaluate(({w,h})=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,w,h);x.fillStyle='#111111';x.font='bold 80px sans-serif';x.fillText('INFOGRAPHIC',15,100);return c.toDataURL().split(',')[1];},{w,h}),'base64');
 await p.locator('#file').setInputFiles(source);await p.waitForFunction(()=>!document.getElementById('export').disabled);await p.locator('#intro-duration').fill('0');await p.locator('#outro-duration').fill('0');
 for(const [w,h] of [[800,3000],[2000,600],[1122,1402]]){

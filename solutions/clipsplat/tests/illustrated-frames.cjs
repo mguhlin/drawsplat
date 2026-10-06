@@ -13,7 +13,7 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=yellow:s=320x180'
   try{
     const p=await b.newPage({viewport:{width:1226,height:970}}),requests=[],errors=[];
     p.on('request',r=>{if(/(paint-party|celestial-magic|botanical-garden|scrapbook-memories|sunset-waves|watercolor-bloom|gilded-deco).*\.png/.test(r.url()))requests.push(r.url())});p.on('pageerror',e=>errors.push(e.message));
-    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector('#intro-frame');assert.equal(requests.length,0,'Illustrated artwork should load only when selected');
+    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector("#settings",{state:"attached"});await p.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));await p.waitForSelector('#intro-frame');assert.equal(requests.length,0,'Illustrated artwork should load only when selected');
     await p.locator('#intro-image').setInputFiles(photo);await p.waitForFunction(()=>!document.getElementById('intro-choose-image').disabled);
     await p.locator('#creator').fill('Miguel Guhlin');
     const capture=(preset)=>p.locator('#canvas').evaluate(async (canvas,preset)=>{

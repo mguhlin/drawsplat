@@ -12,7 +12,7 @@ const twenty=fixture(1200),sixty=fixture(3600);
  try{
  const page=await browser.newPage({acceptDownloads:true,permissions:['camera','microphone']});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{window.recordOffset=0;const now=performance.now.bind(performance);performance.now=()=>now()+window.recordOffset;const Native=MediaRecorder;window.MediaRecorder=class extends Native{constructor(stream,opts){super(stream,opts);window.lastRecorder=this;window.recordOptions=opts;}};});
- await page.goto(origin+'/solutions/clipsplat/');
+ await page.goto(origin+'/solutions/clipsplat/');await page.waitForSelector("#settings",{state:"attached"});await page.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
  await page.locator('#file').setInputFiles(twenty);await page.waitForFunction(()=>!document.getElementById('export').disabled);
  assert.equal(Number(await page.locator('#end').inputValue()),174);
  await page.locator('#preset').selectOption('feed');await page.waitForFunction(()=>Number(document.getElementById('end').value)===1200);

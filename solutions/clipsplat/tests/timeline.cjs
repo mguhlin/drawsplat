@@ -27,7 +27,7 @@ function tone(file, time) {
   try {
     const page=await browser.newPage({acceptDownloads:true,viewport:{width:1226,height:970}});
     const errors=[]; page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(origin+'/solutions/clipsplat/');
+    await page.goto(origin+'/solutions/clipsplat/');await page.waitForSelector("#settings",{state:"attached"});await page.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
     await page.locator('#intro-duration').fill('1'); await page.locator('#outro-duration').fill('1');
     await page.locator('#file').setInputFiles(source);
     await page.waitForFunction(()=>!document.getElementById('export').disabled);

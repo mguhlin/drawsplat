@@ -6,7 +6,7 @@ const assert = require("node:assert/strict");
   const errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
   const origin = process.env.CLIPSPLAT_ORIGIN || "http://127.0.0.1:4186";
-  await p.goto(origin + "/solutions/clipsplat/");
+  await p.goto(origin + "/solutions/clipsplat/");await p.waitForSelector("#settings",{state:"attached"});await p.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
   await p.waitForSelector("#language");
   assert.match(await p.locator(".brand").textContent(), /ClipSplat™/);
   assert.equal(await p.locator("#camera").evaluate((e) => getComputedStyle(e).backgroundColor), "rgb(109, 56, 232)");

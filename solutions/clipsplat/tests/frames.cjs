@@ -10,7 +10,7 @@ const artifacts=mkdtempSync(join(tmpdir(),'clipsplat-frames-'));
   const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
   try{
     const p=await browser.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
-    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector('#intro-frame');
+    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector("#settings",{state:"attached"});await p.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));await p.waitForSelector('#intro-frame');
     const capture=()=>p.locator('#canvas').evaluate(async canvas=>{
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       const c=canvas.getContext('2d');

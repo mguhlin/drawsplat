@@ -17,6 +17,26 @@ $("app").innerHTML = `
 <section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Panel frame<select id="intro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Panel frame<select id="outro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Drag text in the preview to adjust its placement.</small></section>
 ${IMAGE_CARDS_MARKUP}<section class="panel"><h2><span class="step">05</span>Ready to share</h2><p class="notice">Download your finished video, then upload it in Instagram. Export includes both panels and your trimmed clip.</p><button id="export" class="dark export" disabled>Create MP4</button><button id="cancel">Cancel export</button><progress id="progress" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite">Your videos stay on this device.</p><a id="download" class="file" download="clipsplat.mp4">Download MP4 \u2193</a><button id="share" hidden>Share video</button><video id="result" controls playsinline hidden style="width:100%;max-height:320px;margin-top:12px"></video></section></div></div>
 </main><footer>ClipSplat™ 1.1 \xB7 <a href="tutorial/" target="_blank" rel="noopener">Tutorial ↗</a> \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
+// Arrange the workflow before attaching handlers; existing control IDs stay stable.
+const [recordSection, formatSection, openingSection, imagesSection, shareSection] = [...$("settings").children];
+const closingSection = document.createElement("section");
+closingSection.className = "panel";
+closingSection.append(openingSection.querySelectorAll("fieldset")[1]);
+const closingNote = document.createElement("small");
+closingNote.textContent = "Creator name and panel color are shared with the opening panel.";
+closingSection.append(closingNote);
+const stepNames = ["Format & framing", "Opening Panel", "Record", "Add images", "Closing Panel", "Share"];
+const stepSections = [formatSection,openingSection,recordSection,imagesSection,closingSection,shareSection];
+const stepDetails = stepSections.map((section,index)=>{
+  section.querySelector(":scope > h2")?.remove();
+  const details = document.createElement("details");
+  details.className = "panel workflow-step"; details.id = `workflow-step-${index+1}`;
+  const summary = document.createElement("summary");
+  summary.innerHTML = `<h2><span class="step">${String(index+1).padStart(2,"0")}</span>${stepNames[index]}</h2><small class="step-summary"></small>`;
+  const body = document.createElement("div");body.className = "step-body";
+  body.append(...section.childNodes);details.append(summary,body);return details;
+});
+$("settings").replaceChildren(...stepDetails);
 const canvas = $("canvas"), ctx = canvas.getContext("2d", { alpha: false });
 const video = document.createElement("video");
 video.playsInline = true;
@@ -34,6 +54,8 @@ let statusState = { text: "Your videos stay on this device.", params: {} }, sour
 const message = (text, params = {}) => {
   statusState = { text, params };
   $("status").textContent = tr(text, params);
+  const summary = stepDetails[5].querySelector(".step-summary");
+  summary.textContent = summary.title = tr(text,params);
 };
 function invalidate() {
   if (outputURL) URL.revokeObjectURL(outputURL);
@@ -49,6 +71,15 @@ const SOURCE_LIMIT = 1024 * 1024 * 1024;
 function update() {
   $("long-video-note").hidden = $("preset").value !== "feed";
   const p = preset();
+  const summaries = [
+    $("preset").selectedOptions[0].textContent,
+    number("intro-duration") ? `${number("intro-duration")}s · ${$("intro-text").value}` : tr("Skipped"),
+    recorder?.state === "recording" ? tr("Recording…") : source ? sourceName : tr("Record or choose a video"),
+    tr("{count} image cards",{count:imageCards.length}),
+    number("outro-duration") ? `${number("outro-duration")}s · ${$("outro-text").value}` : tr("Skipped"),
+    outputURL ? tr("MP4 ready") : statusState.text !== "Your videos stay on this device." ? tr(statusState.text,statusState.params) : tr("Preview, export and download")
+  ];
+  stepDetails.forEach((details,index)=>details.querySelector(".step-summary").textContent=summaries[index]);
   canvas.width = p.width;
   canvas.height = p.height;
   $("preview").style.aspectRatio = `${p.width}/${p.height}`;

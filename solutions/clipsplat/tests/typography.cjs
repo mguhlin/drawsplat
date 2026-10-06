@@ -10,7 +10,7 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=red:s=320x240:d=1',
  const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
  try{
  const page=await browser.newPage({acceptDownloads:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(origin+'/solutions/clipsplat/');
+ await page.goto(origin+'/solutions/clipsplat/');await page.waitForSelector("#settings",{state:"attached"});await page.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));
  await page.locator('#intro-text').fill('MOVE ME');await page.locator('#creator').fill('Miguel');
  await page.locator('#text-font').selectOption('mono');await page.locator('#text-size').fill('100');
  const box=page.locator('.text-overlay [data-role=title]');await box.waitFor();

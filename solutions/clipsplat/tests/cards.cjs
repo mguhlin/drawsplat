@@ -25,7 +25,7 @@ function audio(file,t){
   const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
   try{
     const p=await b.newPage({acceptDownloads:true,viewport:{width:1226,height:970}});const errors=[];p.on('pageerror',e=>errors.push(e.message));
-    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector('#add-image-cards');
+    await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector("#settings",{state:"attached"});await p.locator(".workflow-step").evaluateAll(nodes=>nodes.forEach(node=>node.open=true));await p.waitForSelector('#add-image-cards');
     await p.locator('#intro-duration').fill('1');await p.locator('#outro-duration').fill('1');
     await p.locator('#file').setInputFiles(source);await p.waitForFunction(()=>!document.getElementById('export').disabled);
     await p.locator('#image-cards-file').setInputFiles(files);await p.waitForFunction(()=>document.querySelectorAll('.extra-image-card').length===3&&!document.getElementById('add-image-cards').disabled);
