@@ -316,6 +316,7 @@ TOOLS_SOLUTIONS=(
   animated-gif
   audiosplat
   videosplat
+  clipsplat
   mediasplat
   big-link
   chart-studio
@@ -967,3 +968,6 @@ echo "  $CHECKSUM_OUT_PATH"
 echo ""
 
 rm -rf "$STAGE_DIR"
+
+# Also create the independent ClipSplat package with its shared encoder.
+python3 scripts/make-clipsplat-bundle.py "$VERSION_LABEL"

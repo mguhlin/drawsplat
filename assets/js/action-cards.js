@@ -38,6 +38,7 @@
     [/listsplat/, 'adv-library','Organize records in a searchable database.'],
     [/imagesplat/, 'insert-image','Edit pictures, remove backgrounds, and create graphics.'],
     [/graphsplat/, 'insert-graph','Turn data into charts and picture graphs.'],
+    [/clipsplat/, 'insert-gif','Record video, add illustrated panels and images, and share an MP4.'],
     [/videosplat/, 'insert-gif','Edit video and prepare it for sharing.'],
     [/studio\/?$|pages\/tools/, 'imagegroup','Browse and search all DrawSplat apps.'],
     [/games\/?$|games\/index/, 'insert-widgets','Find games for practice and play.'],

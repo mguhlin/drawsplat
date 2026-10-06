@@ -7,7 +7,7 @@ import sys
 from html import escape
 
 folder, name, entry = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
-names = ['DrawSplat', 'GridSplat', 'ShowSplat', 'WriteSplat', 'ListSplat', 'SplatWorks', 'Tools', 'Widgets', 'Games', 'AudioSplat', 'VideoSplat', 'MediaSplat', 'PDFSplat', 'CipherSplat']
+names = ['DrawSplat', 'GridSplat', 'ShowSplat', 'WriteSplat', 'ListSplat', 'SplatWorks', 'Tools', 'Widgets', 'Games', 'AudioSplat', 'VideoSplat', 'MediaSplat', 'PDFSplat', 'CipherSplat', 'ClipSplat']
 port = 8765 + names.index(name)
 source = Path(__file__).resolve().parent / 'offline-launcher'
 for path in source.iterdir():

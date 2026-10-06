@@ -20,6 +20,7 @@ step. To combine modules, unzip them into the same web root.
 | DrawSplatTM Widgets | `/pages/tools.html#widgets`, `/solutions/` selected widgets | You only need quick classroom utilities. |
 | DrawSplatTM Games | `/games/` | You only need standalone classroom games. |
 | AudioSplat | `/solutions/audiosplat/` | You only need the multitrack browser recorder/editor. |
+| ClipSplat | `/solutions/clipsplat/` plus `/solutions/mediasplat/ffmpeg/` | Record video, add panels and image cards, cut sections, and export MP4. Use its standalone ZIP with included Python 3 launcher. |
 | VideoSplat | `/solutions/videosplat/` | You only need the private browser video editor, subtitle burn-in, and anonymization workflow. |
 | MediaSplat | `/solutions/mediasplat/` | You only need media conversion, trimming, and subtitles. |
 | PDFSplat | `/solutions/pdfsplat/`, `/vendor/`, `/assets/` | You only need PDF editing, signing, scanning, and local protection. |
@@ -112,3 +113,7 @@ The download page shows approximate ZIP and unpacked sizes, measured from releas
 Extract the entire ZIP and keep the folder structure intact. Every package includes `OPEN-APP.html`; individual packages also have a root `index.html` shortcut when that name is not already used. Complete DrawSplat and Tools include `Open-VideoSplat.html`, `Open-MediaSplat.html`, `Open-AudioSplat.html`, `Open-PDFSplat.html`, and `Open-CipherSplat.html`.
 
 PDFSplat and CipherSplat’s dedicated offline edition open directly from disk in desktop Chrome and Firefox. The complete package’s CipherSplat shortcut selects its included offline edition for file access and its hosted app for HTTP access. AudioSplat, VideoSplat, and MediaSplat require the supplied local launcher (Python 3); their file shortcuts show `START-HERE.html`. A web page cannot automatically start Python or bypass file-origin browser restrictions. Once running locally, core editing does not need internet. Online services and first-time speech-model downloads still do.
+
+### ClipSplat add-on
+
+ClipSplat v1.1.0 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.0). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. Future full/Tools bundles include ClipSplat.

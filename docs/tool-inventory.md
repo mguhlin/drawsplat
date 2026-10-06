@@ -31,6 +31,7 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | Visual idea relationships | Concept Map Studio | Whiteboard, Mermaid Diagram |
 | Slides and presentation | ShowSplat | Whiteboard, ImageSplat™ |
 | Image editing | ImageSplat™ | Draw & Sketch, Whiteboard |
+| Social video and illustrated panels | ClipSplat | VideoSplat, MediaSplat |
 | Video editing | VideoSplat | MediaSplat, Animated GIF Maker |
 | Random student choice | Wheel Spinner | Fortune Wheel, Dice Roller |
 

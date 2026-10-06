@@ -27,7 +27,7 @@ def add_entry_pages(folder, name, entry):
     if not (folder / 'index.html').exists():
         shortcut('index.html', name, entry, name in ('PDFSplat', 'CipherSplat'))
     links = []
-    for app, slug in [('VideoSplat', 'videosplat'), ('MediaSplat', 'mediasplat'), ('AudioSplat', 'audiosplat'), ('PDFSplat', 'pdfsplat'), ('CipherSplat', 'CipherSplat')]:
+    for app, slug in [('ClipSplat', 'clipsplat'), ('VideoSplat', 'videosplat'), ('MediaSplat', 'mediasplat'), ('AudioSplat', 'audiosplat'), ('PDFSplat', 'pdfsplat'), ('CipherSplat', 'CipherSplat')]:
         target = f'solutions/{slug}/index.html'
         if app == name == 'CipherSplat':
             target = 'index.html?offline=1'

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <!-- DrawSplat favicons -->
-<link rel="icon" href="../assets/favicons/docs.svg" type="image/svg+xml" />
+<link rel="icon" href="../assets/favicons/drawsplat.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="../assets/brand/DrawSplat_logo.png" />
 <link rel="manifest" href="../site.webmanifest" />
 <meta name="theme-color" content="#7c3aed" />
@@ -11,16 +11,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM Collaboration and Turn-Ins Guide</title>
-<meta name="description" content="Use DrawSplatTM teacher mode, student mode, assignment mode, cloud rooms, passwords, turn-ins, and moderation." />
-<link rel="canonical" href="https://drawsplat.org/guides/collaboration-turn-ins.html" />
+<title>Meet ClipSplat: Record. Bookend. Share. | DrawSplat</title>
+<meta name="description" content="Meet ClipSplat, a private video studio with illustrated panels, image cards, text formatting, and MP4 export." />
+<link rel="canonical" href="https://drawsplat.org/blog/clipsplat.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .release-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+  .release-pill{display:inline-flex;align-items:center;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:6px 10px;font-size:.86rem;font-weight:800}
+  .release-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .release-card{border:2px solid #e2e6f0;border-radius:12px;background:#fff;padding:18px;box-shadow:0 8px 22px rgba(64,64,65,.06)}
+  .release-card h2{margin:0 0 8px;color:var(--navy,#7c3aed);font-size:1.15rem}
+  .release-card p{margin:0;color:#374151;line-height:1.55}
+  .release-list{display:grid;gap:10px;max-width:900px;margin:0 auto;padding-left:1.2rem}
+  .release-list li{color:#374151;line-height:1.5}
+  .release-note{max-width:900px;margin:18px auto 0;padding:16px 18px;border-left:6px solid #7c3aed;border-radius:10px;background:#fbfaff;color:#4c1d95;line-height:1.5}
+</style>
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
 </head>
-<body class="admin-page start-page support-page guide-article-page">
+<body class="admin-page start-page support-page">
 <header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home"><img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat<sup class="tm">TM</sup></span></a>
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
   <nav class="landing-nav" aria-label="DrawSplatTM navigation">
     <details name="landing-topnav" class="landing-nav-dropdown">
       <summary>For Teachers &amp; Families</summary>
@@ -143,6 +157,7 @@
           <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
           <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
           <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
+          <a href="../games/typing-games/" target="_blank" rel="noopener noreferrer">Typing Games</a>
           <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
         </div>
       </div>
@@ -150,52 +165,24 @@
   </nav>
   <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
 </header>
-<main class="landing-shell article-shell">
-  <nav class="article-breadcrumb" aria-label="Guide breadcrumb"><a href="../pages/support.html">Support</a><span>/</span><a href="index.html">Guides and Classroom Activities</a></nav>
-  <article class="guide-article">
-    <img class="guide-hero-image" src="images/collaboration-turn-ins-guide.png" alt="Feature guide banner for Collaboration and Turn-Ins in DrawSplatTM showing teacher mode, student mode, assignment mode, cloud rooms, and turn-ins">
-    <p class="landing-eyebrow">Feature Guide</p>
-    <h1>Collaboration and Turn-Ins</h1>
-    <p class="article-lede">Set up shared rooms, student links, assignment layers, and turn-ins when DrawSplat<sup class="tm">TM</sup> is connected to the optional Google Apps Script backend.</p>
 
-    <h2>Key ideas</h2>
-    <ul>
-      <li><strong>Teacher mode:</strong> full control of panels, backgrounds, templates, and setup.</li>
-      <li><strong>Student mode:</strong> student-facing links hide provider settings and restrict teacher-only controls.</li>
-      <li><strong>Assignment mode:</strong> protects teacher-layer objects while students add work on the student layer.</li>
-      <li><strong>Cloud rooms:</strong> use a shared room name and optional password to sync board state.</li>
-      <li><strong>Turn-ins:</strong> students can submit board work for teacher review when configured.</li>
-    </ul>
-
-    <h2>Teacher workflow</h2>
-    <ol>
-      <li>Complete <a href="google-setup.html">Google Drive and Sheets setup</a>.</li>
-      <li>Open Teacher Admin and save the Apps Script Web App URL.</li>
-      <li>Open the board, switch to Education Tools, and enable assignment mode.</li>
-      <li>Create the panels, prompts, backgrounds, and teacher-layer objects students need.</li>
-      <li>Start cloud sync with a unique room name and optional room password.</li>
-      <li>Copy the student link from Teacher Admin or the board and share it with students.</li>
-    </ol>
-
-    <h2>Student workflow</h2>
-    <ol>
-      <li>Open the student link.</li>
-      <li>Enter the room password if one is required.</li>
-      <li>Add notes, drawings, text, images, diagrams, or responses on the student layer.</li>
-      <li>Use turn-in when the teacher asks for a submitted copy.</li>
-    </ol>
-
-    <h2>Tips</h2>
-    <ul>
-      <li>Use unique room names for each class period or activity.</li>
-      <li>Use the narrowest Google Apps Script deployment access setting that works for your school.</li>
-      <li>Keep teacher prompts on the teacher layer before students join.</li>
-      <li>Use comments and the moderation dashboard to review feedback pins and submissions.</li>
-    </ul>
-
-    <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
-  </article>
+<main class="landing-shell support-shell">
+<section class="landing-hero"><p class="landing-eyebrow">October 6, 2026 · New media tool</p><h1>ClipSplat™: Record. Bookend. Share.</h1><p class="lead">Turn a recording into a video with a clear introduction, useful visuals, and a closing message. Everything is processed on your device.</p><div class="landing-actions"><a class="landing-cta primary" href="../solutions/clipsplat/">Open ClipSplat</a><a class="landing-cta" href="../solutions/clipsplat/tutorial/">Read the tutorial</a><a class="landing-cta" href="../pages/download.html#clipsplat-download">Download ClipSplat</a></div></section>
+<section class="landing-section"><h2>Six steps from idea to MP4</h2><ol><li><strong>Format &amp; framing:</strong> choose Reel, Story, or Feed, fit or crop, and an optional illustrated video frame.</li><li><strong>Opening Panel:</strong> add a title, creator name, image, background color, and illustrated frame.</li><li><strong>Record:</strong> use your camera and microphone or choose an existing video. Click the timeline to seek; highlight and delete unwanted sections.</li><li><strong>Add images:</strong> insert image cards at positions in your video. Infographics fit fully by default, preserving their proportions.</li><li><strong>Closing Panel:</strong> finish with a message, image, and frame. Set either bookend to zero seconds to skip it.</li><li><strong>Share:</strong> preview the sequence and export an H.264/AAC MP4 to upload yourself.</li></ol><p>The sections start collapsed. Open each numbered heading as you work.</p></section>
+<section class="landing-section"><h2>Illustrated frames and movable text</h2><p>Choose botanical, watercolor, scrapbook, cinema, and instant-photo artwork. Film-strip and instant-photo video frames place the actual footage inside the frame. Select a title or creator text box to move it and change its font, size, bold, italic, or alignment. These settings appear in the exported video; the safe-area guide and editing handles stay in the preview.</p></section>
+<section class="landing-section"><h2>Choose the right output</h2><p>Reel and Story export at 1080 × 1920 (9:16). Feed exports at 1080 × 1350 (4:5). ClipSplat allows up to 3 minutes for Reel, 60 seconds for Story, and 60 minutes for Feed, including panels and image cards. These are app presets; Instagram limits can vary. Longer projects depend on device memory. Save your original recording and keep the tab open while exporting.</p></section>
+<section class="landing-section"><h2>Local processing, six languages, and self-hosting</h2><p>No account is required and your media is not uploaded for processing. Choose English, Spanish, Vietnamese, Arabic, Chinese, or Hindi/Urdu. There is no automatic project saving. The standalone download includes the local encoder and launchers for Windows, macOS, and Linux; Python 3 is required for local use. Camera permissions require HTTPS or localhost.</p><p>ClipSplat is available in the <a href="../studio/?category=media">Media tools</a> and <a href="../pages/tools.html">Tools directory</a>. The separate ClipSplat download can be installed alongside existing DrawSplat packages. Existing v3.1.28 archives predate this tool.</p></section>
 </main>
-<footer class="landing-footer"><img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo"><span>DrawSplat<sup class="tm">TM</sup> collaboration and turn-ins guide.</span><a href="index.html">Guides</a><a href="../pages/support.html">Support</a></footer><script src="../assets/js/consent-banner.js" defer></script>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="../pages/download.html">Download</a>
+  <a href="../blog/">Blog</a>
+  <a href="../community/index.html">Community</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script>
 </body>
 </html>
