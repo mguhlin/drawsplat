@@ -103,8 +103,8 @@ function update() {
   editor?.update();
   cardsEditor?.update();
 }
-function wrap(text, maxWidth, fontSize, family = "system-ui", weight = 750) {
-  ctx.font = `${weight} ${fontSize}px ${family}`;
+function wrap(text, maxWidth, fontSize, family = "system-ui", weight = 750, italic = false) {
+  ctx.font = `${italic ? "italic " : ""}${weight} ${fontSize}px ${family}`;
   const lines = [];
   for (const paragraph of text.split("\n")) {
     let line = "";
@@ -133,23 +133,27 @@ let textBounds = [], selectedText = "title";
 const fonts = {sans:"system-ui", serif:"Georgia, serif", mono:"Courier New, monospace", rounded:"Trebuchet MS, sans-serif"};
 function styleFor(kind, role) {
   const key = kind + ":" + role;
-  if (!textStyles.has(key)) textStyles.set(key, {font:"sans", size:0, position:null});
+  if (!textStyles.has(key)) textStyles.set(key, {font:"sans", size:0, position:null, bold:role === "title", italic:false, align:null});
   return textStyles.get(key);
 }
 function paintText(kind, role, text, width, defaultSize, defaultTop, defaultX, color, weight, maxHeight) {
   if (!text.trim()) return;
   const style = styleFor(kind, role), family = fonts[style.font];
-  let size = style.size || defaultSize, lines = wrap(text, width, size, family, weight);
+  weight = style.bold ? (role === "title" ? 750 : 700) : (role === "creator" ? 500 : 400);
+  let size = style.size || defaultSize, lines = wrap(text, width, size, family, weight, style.italic);
   while (!style.size && lines.length * size * 1.22 > maxHeight && size > 18) {
-    size -= 2; lines = wrap(text, width, size, family, weight);
+    size -= 2; lines = wrap(text, width, size, family, weight, style.italic);
   }
   const height = Math.min(canvas.height, lines.length * size * 1.22);
   const rtl = document.documentElement.dir === "rtl";
   const defaultLeft = rtl ? defaultX - width : defaultX;
   const left = style.position ? Math.max(0, Math.min(canvas.width-width, style.position.x * canvas.width)) : defaultLeft;
   const top = style.position ? Math.max(0, Math.min(canvas.height-height, style.position.y * canvas.height)) : (role === "title" ? defaultTop-height/2 : defaultTop);
-  ctx.fillStyle = color; ctx.font = `${weight} ${size}px ${family}`; ctx.textBaseline = "top";
-  lines.forEach((line,i) => ctx.fillText(line, rtl ? left+width : left, top+i*size*1.22));
+  const align = style.align || (rtl ? "right" : "left");
+  ctx.textAlign = align;
+  const x = align === "center" ? left+width/2 : align === "right" ? left+width : left;
+  ctx.fillStyle = color; ctx.font = `${style.italic ? "italic " : ""}${weight} ${size}px ${family}`; ctx.textBaseline = "top";
+  lines.forEach((line,i) => ctx.fillText(line, x, top+i*size*1.22));
   textBounds.push({role,left,top,width,height});
 }
 function panel(kind) {
@@ -802,6 +806,10 @@ $("preview").append(textOverlay);
 const textToolbar = document.createElement("div");
 textToolbar.className = "text-toolbar";
 textToolbar.innerHTML = `<strong>Panel text</strong><small>Click a text box, then drag it. Arrow keys move the selected box.</small><div class="row"><label>Text box<select id="text-role"><option value="title">Title</option><option value="creator">Creator name</option></select></label><label>Font<select id="text-font"><option value="sans">Sans serif</option><option value="serif">Serif</option><option value="mono">Monospace</option><option value="rounded">Rounded</option></select></label></div><div class="row"><label>Font size (pixels)<input id="text-size" type="number" min="18" max="180" step="1" placeholder="Auto"></label><button id="text-reset" type="button">Reset text layout</button></div><small>Leave size blank for automatic sizing. Changes apply to this panel only.</small>`;
+const icon = paths => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const formatActions = document.createElement("div");formatActions.className="text-format-actions";
+formatActions.innerHTML = `<div role="group" aria-label="Text style"><button id="text-bold" type="button" title="Bold" aria-label="Bold" aria-pressed="false">${icon('<path d="M7 4v16h7a4 4 0 0 0 0-8H7m0-8h6a4 4 0 0 1 0 8"/>')}</button><button id="text-italic" type="button" title="Italic" aria-label="Italic" aria-pressed="false">${icon('<path d="M10 4h9M5 20h9M15 4 9 20"/>')}</button></div><div role="group" aria-label="Text alignment">${["left","center","right"].map(align=>{const label={left:"Align left",center:"Align center",right:"Align right"}[align];const start=align==="left"?4:align==="center"?7:10;return `<button id="text-align-${align}" type="button" data-align="${align}" title="${label}" aria-label="${label}" aria-pressed="false">${icon(`<path d="M4 5h16M${start} 10h10M4 15h16M${start} 20h10"/>`)}</button>`;}).join("")}</div>`;
+textToolbar.querySelector(".row").after(formatActions);
 $("preview").closest(".stage").append(textToolbar);
 let overlayKind = "", overlayRoles = "", dragging = null;
 function selectText(role) { selectedText = role; $("text-role").value = role; syncTextControls(); }
@@ -809,6 +817,10 @@ function syncTextControls() {
   const style = styleFor(mode, selectedText);
   $("text-font").value = style.font;
   $("text-size").value = style.size || "";
+  $("text-bold").setAttribute("aria-pressed",String(style.bold));
+  $("text-italic").setAttribute("aria-pressed",String(style.italic));
+  const align=style.align || (document.documentElement.dir === "rtl" ? "right" : "left");
+  for (const button of formatActions.querySelectorAll("[data-align]")) button.setAttribute("aria-pressed",String(button.dataset.align === align));
 }
 function refreshTextEditor() {
   const visible = mode !== "clip" && !busy && !playing && !imagesLoading;
@@ -859,6 +871,12 @@ function moveText(role,left,top) {
   styleFor(mode,role).position = {x:Math.max(0,Math.min(canvas.width-box.width,left))/canvas.width,y:Math.max(0,Math.min(canvas.height-box.height,top))/canvas.height};
   invalidate();
 }
+for (const key of ["bold","italic"]) $("text-"+key).onclick = () => {
+  const style=styleFor(mode,selectedText);style[key]=!style[key];syncTextControls();invalidate();
+};
+for (const button of formatActions.querySelectorAll("[data-align]")) button.onclick = () => {
+  styleFor(mode,selectedText).align=button.dataset.align;syncTextControls();invalidate();
+};
 $("text-role").onchange = () => selectText($("text-role").value);
 $("text-font").onchange = () => { styleFor(mode,selectedText).font = $("text-font").value; invalidate(); };
 $("text-size").oninput = () => {
@@ -868,6 +886,7 @@ $("text-size").oninput = () => {
 };
 $("text-reset").onclick = () => { textStyles.delete(mode+":"+selectedText); syncTextControls(); invalidate(); };
 initializeLanguage(({titlesChanged}) => {
+  syncTextControls();
   stopPreview();
   if(titlesChanged) invalidate();
   update();
