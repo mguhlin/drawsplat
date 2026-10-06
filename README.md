@@ -1343,8 +1343,8 @@ Recommended public-hosting protections:
 
 ## ClipSplat™
 
-[Open ClipSplat](https://drawsplat.org/solutions/clipsplat/) · [Tutorial](https://drawsplat.org/solutions/clipsplat/tutorial/) · [Introduction](blog/clipsplat.html) · [Self-host download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.0)
+[Open ClipSplat](https://drawsplat.org/solutions/clipsplat/) · [Tutorial](https://drawsplat.org/solutions/clipsplat/tutorial/) · [Introduction](blog/clipsplat.html) · [Self-host download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1)
 
 Record or import video, add opening and closing panels, insert full-image cards, cut unwanted sections, and export H.264/AAC MP4. Illustrated frames, draggable text, font controls, bold/italic/alignment icons, and six interface languages are included. Reel/Story use 9:16; Feed uses 4:5 and supports up to 60 minutes including panels. Practical limits depend on the device. Media stays on your device; no account is required. ClipSplat is listed under Media and Create.
 
-The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. Future full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.1.0`.
+The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. Future full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.1.1`.

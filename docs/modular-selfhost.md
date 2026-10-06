@@ -116,4 +116,4 @@ PDFSplat and CipherSplat’s dedicated offline edition open directly from disk i
 
 ### ClipSplat add-on
 
-ClipSplat v1.1.0 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.0). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. Future full/Tools bundles include ClipSplat.
+ClipSplat v1.1.1 is a separate [download](https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1). The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its `solutions/` folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. Future full/Tools bundles include ClipSplat.

@@ -58,3 +58,9 @@ Set `CLIPSPLAT_ILLUSTRATED=1` when running `tests/cards.cjs` or `tests/timeline.
 The sidebar follows six collapsed-by-default steps: Format & framing, Opening Panel, Record, Add images, Closing Panel, Share. Each summary reflects its current settings; native details controls support keyboard opening and closing.
 
 Step 1 includes four illustrated video frames (Cinema Classics, Vintage Film, Instant Classic, Instant Scrapbook). Camera/import preview and MP4 export fit video inside the measured clear opening of the selected frame. Frame windows follow the same nine-slice mapping in Reel and Feed. Export composites the original transparent overlay above the fitted/cropped video, preserving source audio or adding silence.
+
+## Accessibility verification
+
+The editor includes a skip link, native keyboard file selection, timeline keyboard guidance, named export progress, selected-text states, visible focus, RTL layouts, and higher-contrast step summaries. Image-card edits preserve keyboard focus and text selection when controls rebuild; removing the last card returns focus to Add image cards.
+
+Run `node tests/accessibility.cjs` from this app directory. Set `CLIPSPLAT_AXE` to a local axe-core JavaScript file to add WCAG A/AA automated checks, and `CLIPSPLAT_ORIGIN` to verify a deployed origin. These checks cover tested UI states and do not establish complete accessibility conformance.

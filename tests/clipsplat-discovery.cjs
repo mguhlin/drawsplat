@@ -16,7 +16,7 @@ const assert=require('node:assert/strict');
    await page.goto(origin+path);
    assert.ok(await page.locator('.studio-nav-menu a[href$="solutions/clipsplat/"]').count(),path+' menu');
    if(path.includes('tools'))assert.equal(await page.locator('.standalone-tool-card[href$="solutions/clipsplat/"]').count(),1);
-   if(path.includes('download'))assert.ok(await page.locator('#clipsplat-download a[href$="clipsplat-selfhost-v1.1.0.zip"]').count());
+   if(path.includes('download'))assert.ok(await page.locator('#clipsplat-download a[href$="clipsplat-selfhost-v1.1.1.zip"]').count());
   }
   await page.goto(origin+'/blog/');
   await page.locator('a[href="https://drawsplat.org/blog/clipsplat.html"]').first().waitFor();

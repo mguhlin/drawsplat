@@ -460,3 +460,22 @@ video.source {
 #settings,.workflow-step{min-width:0}.workflow-step>summary{min-width:0}.step-body select{max-width:100%}@media(max-width:760px){.workspace{grid-template-columns:minmax(0,1fr)}}
 
 .text-format-actions{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0}.text-format-actions>div{display:flex;gap:5px}.text-format-actions button{width:44px;height:44px;min-height:44px;padding:8px;display:flex;align-items:center;justify-content:center;color:#4720a4;background:white}.text-format-actions button[aria-pressed=true]{background:#6d38e8;color:white;border-color:#6d38e8}.text-format-actions svg{flex-shrink:0}
+
+/* Keyboard focus remains clear on both pale controls and purple actions. */
+:focus-visible { outline: 3px solid #4720a4; outline-offset: 3px; }
+.workflow-step>summary:focus-visible { outline: 3px solid #4720a4; outline-offset: -4px; }
+.timeline-track:focus-visible { outline-color: #4720a4; }
+.text-overlay button:focus-visible { outline: 3px solid #fff; box-shadow: 0 0 0 5px #4720a4; }
+.hint,.source-name,.workflow-step .step-summary { color: #526078; }
+.skip-link { position: fixed; inset-block-start: 8px; inset-inline-start: 8px; z-index: 100; padding: 12px 18px; border-radius: 8px; color: #fff; background: #4720a4; transform: translateY(-160%); }
+.skip-link:focus { transform: translateY(0); }
+button,.file,.panel-image-controls button,.timeline-actions button,.sequence-item.card { min-height: 44px; }
+input[type=file][hidden] { display: none; }
+.text-toolbar { text-align: start; }
+[dir=rtl] .workflow-step>summary { padding: 17px 20px 15px 42px; }
+[dir=rtl] .workflow-step>summary:after { right: auto; left: 18px; }
+[dir=rtl] .workflow-step .step-summary { margin-left: 0; margin-right: 34px; }
+@media (forced-colors: active) {
+  .text-format-actions button[aria-pressed=true],.text-overlay button.selected { border: 3px solid Highlight; }
+  :focus-visible { outline-color: Highlight; }
+}

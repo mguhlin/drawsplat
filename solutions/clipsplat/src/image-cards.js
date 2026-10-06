@@ -24,7 +24,17 @@ export function createImageCardsEditor({getState,onChange,onPreview,onRemove,onR
   function update() {
     const {cards, positionOf, maxPosition, locked, hasSource} = getState();
     const next = document.documentElement.lang + cards.map(card=>card.id).join('|');
+    let restoreFocus;
     if (next !== signature) {
+      const active = document.activeElement;
+      if (root.contains(active)) {
+        const oldCard = active.closest('[data-card-id]');
+        const oldIndex = [...root.children].indexOf(oldCard);
+        const id = cards.some(card=>card.id === oldCard.dataset.cardId)
+          ? oldCard.dataset.cardId : cards[Math.min(oldIndex,cards.length-1)]?.id;
+        restoreFocus = {id,field:active.dataset.field,action:active.dataset.action,
+          start:active.selectionStart,end:active.selectionEnd};
+      }
       root.replaceChildren();
       for (const [index,card] of cards.entries()) {
         const fieldset = document.createElement('fieldset');
@@ -50,6 +60,14 @@ export function createImageCardsEditor({getState,onChange,onPreview,onRemove,onR
     }
     document.getElementById('add-image-cards').disabled = locked;
     document.getElementById('image-cards-file').disabled = locked;
+    if (restoreFocus && !locked) {
+      const card = [...root.children].find(node=>node.dataset.cardId === restoreFocus.id);
+      const target = card?.querySelector(restoreFocus.field ? `[data-field="${restoreFocus.field}"]` : `[data-action="${restoreFocus.action}"]`)
+        || document.getElementById('add-image-cards');
+      target.focus();
+      if (restoreFocus.start != null && target.tagName === 'TEXTAREA')
+        target.setSelectionRange(restoreFocus.start,restoreFocus.end);
+    }
   }
   root.oninput = event => {
     const field = event.target.dataset.field;
