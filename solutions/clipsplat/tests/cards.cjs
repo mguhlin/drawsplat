@@ -6,7 +6,7 @@ const {join}=require('node:path');
 const {tmpdir}=require('node:os');
 const origin=process.env.CLIPSPLAT_ORIGIN||'http://127.0.0.1:4186';
 const illustrated=process.env.CLIPSPLAT_ILLUSTRATED==='1';
-const firstFrame=process.env.CLIPSPLAT_FIRST_FRAME||(illustrated?'celestial':'film'),secondFrame=process.env.CLIPSPLAT_SECOND_FRAME||(illustrated?'botanical':'stars');
+const firstFrame=process.env.CLIPSPLAT_FIRST_FRAME||(illustrated?'celestial':'film'),secondFrame=process.env.CLIPSPLAT_SECOND_FRAME||(illustrated?'botanical':'film');
 const artifacts=mkdtempSync(join(tmpdir(),'clipsplat-cards-'));
 const source=join(artifacts,'video.mp4');
 execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=red:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=lime:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=blue:s=320x240:r=30:d=2','-f','lavfi','-i',"aevalsrc='0.2*sin(2*PI*if(lt(t,2),440,if(lt(t,4),880,1320))*t)':s=48000:d=6",'-filter_complex','[0:v][1:v][2:v]concat=n=3:v=1:a=0[v]','-map','[v]','-map','3:a','-c:v','libx264','-pix_fmt','yuv420p','-c:a','aac','-y',source]);

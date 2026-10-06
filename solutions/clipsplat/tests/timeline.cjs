@@ -38,7 +38,7 @@ function tone(file, time) {
     await page.locator('#intro-frame').selectOption(process.env.CLIPSPLAT_FIRST_FRAME||(illustrated ? 'paint-party' : 'film'));
     await page.waitForFunction(()=>!document.getElementById('intro-frame').disabled);
     const openingFramePixel = await page.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(20,20,1,1).data].slice(0,3);});
-    await page.locator('#outro-frame').selectOption(process.env.CLIPSPLAT_SECOND_FRAME||(illustrated ? 'botanical' : 'stars'));
+    await page.locator('#outro-frame').selectOption(process.env.CLIPSPLAT_SECOND_FRAME||(illustrated ? 'botanical' : 'film'));
     await page.waitForFunction(()=>!document.getElementById('outro-frame').disabled);
     const closingFramePixel = await page.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(30,200,1,1).data].slice(0,3);});
     const select = async(start,end)=>{await page.locator('#selection-start').fill(String(start));await page.locator('#selection-end').fill(String(end));};

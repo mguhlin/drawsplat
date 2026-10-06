@@ -22,21 +22,21 @@ const artifacts=mkdtempSync(join(tmpdir(),'clipsplat-frames-'));
       await p.locator('#preset').selectOption(preset);
       await p.locator('#intro-frame').selectOption('none');const plain=await capture();
       const hashes=new Set();
-      for(const style of ['none','confetti','stars','splat','film']){
+      for(const style of ['none','film']){
         await p.locator('#intro-frame').selectOption(style);const shot=await capture();
         assert.deepEqual(shot.center,plain.center,'Frame must not cover title/image content');
         hashes.add(createHash('sha256').update(shot.png).digest('hex'));
         await p.locator('#canvas').screenshot({path:join(artifacts,`${preset}-${style}.png`)});
         if(style==='film')assert.deepEqual(shot.corner,[23,32,51]);
       }
-      assert.equal(hashes.size,5,'All five frame styles must look different');
-      await p.locator('#intro-frame').selectOption('confetti');const first=(await capture()).png;
+      assert.equal(hashes.size,2,'All two basic frame styles must look different');
+      await p.locator('#intro-frame').selectOption('film');const first=(await capture()).png;
       await p.locator('#show-opening').click();assert.equal((await capture()).png,first,'Preview/export decorations must be deterministic');
-      await p.locator('#outro-frame').selectOption('stars');
-      assert.equal(await p.locator('#intro-frame').inputValue(),'confetti');
+      await p.locator('#outro-frame').selectOption('film');
+      assert.equal(await p.locator('#intro-frame').inputValue(),'film');
       await p.locator('#language').selectOption('es');
-      assert.equal(await p.locator('#outro-frame').inputValue(),'stars');
-      assert.equal(await p.locator('#intro-frame option[value=confetti]').textContent(),'Confeti de fiesta');
+      assert.equal(await p.locator('#outro-frame').inputValue(),'film');
+      assert.equal(await p.locator('#intro-frame option[value=confetti],#intro-frame option[value=stars],#intro-frame option[value=splat]').count(),0);assert.equal(await p.locator('#intro-frame option[value=film]').textContent(),'Noche de cine');
       await p.locator('#language').selectOption('en');
       await p.locator('#color').fill('#ffffff');const light=await capture();
       assert.notEqual(light.png,plain.png);
@@ -45,6 +45,6 @@ const artifacts=mkdtempSync(join(tmpdir(),'clipsplat-frames-'));
     await p.setViewportSize({width:390,height:844});await p.locator('#language').selectOption('ar');
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     assert.deepEqual(errors,[]);
-    console.log(`PASS: five distinct frames, Reel/feed, clear content area, deterministic drawing, independent choices, translations, light backgrounds/mobile; ${origin}; artifacts ${artifacts}`);
+    console.log(`PASS: plain/basic film frames and removed old options, Reel/feed, clear content area, deterministic drawing, independent choices, translations, light backgrounds/mobile; ${origin}; artifacts ${artifacts}`);
   }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exit(1)});

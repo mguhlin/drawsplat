@@ -59,3 +59,63 @@ Saved original: [gilded-deco.png](gilded-deco.png)
 Final prompt:
 
 Use case: stylized-concept. Asset type: transparent decorative picture-frame overlay for ClipSplat video title panels and image cards. Primary request: GILDED DECO: luxurious illustrated art-deco ornament with layered faceted purple gemstones, delicate gold foil fan shapes, fine geometric arches and gilded stepped corner flourishes, refined lilac enamel and deep amethyst accents. Rich dimensional material detail and polished vintage glamour, not simple flat line icons. One complete rectangular frame in vertical 9:16 format; whole frame visible with no clipped corners. Professional original aesthetic social-media illustration. ClipSplat purple #6d38e8 and #4720a4 and gold #f5b942 harmonized with the named theme. Composition: all ornamentation ONLY on outermost 9% left/right side strips, top 12% and bottom 16%, richer corner detail allowed within those strips. The complete central rectangle x=12% to 84%, y=14% to 80% MUST be absolutely empty and genuinely transparent alpha for later text and pictures. Genuine transparent PNG, hollow center, transparent outside. No background fill, checkerboard, text, lettering, words, logos, photos, people, placeholders or central objects. Deliver only one exquisitely illustrated transparent frame overlay.
+
+## Illustrated replacements and video frames
+
+Generated October 6, 2026 with built-in imagegen using the imagegen skill. Seven independent calls, transparent_background=true; originals copied without edits. Celebration Gala, Starlight Dreams and Artist Studio replace the simple confetti, star and paint-splat picker options. Cinema Classics, Vintage Film, Instant Classic and Instant Scrapbook also frame actual video.
+
+### Celebration Gala
+
+Saved original: [celebration.png](celebration.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original CELEBRATION GALA illustrated frame. Luxurious festive dimensional purple silk ribbons, layered gold foil curls and elegantly illustrated celebration ornaments, polished tactile paper textures. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Starlight Dreams
+
+Saved original: [starlight.png](starlight.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original STARLIGHT DREAMS illustrated frame. Exquisite storybook midnight-purple and lilac celestial filigree, luminous gold stars and crescent moon ornaments, jeweled constellation border, dreamy sophisticated illustration. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Artist Studio
+
+Saved original: [artist.png](artist.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original ARTIST STUDIO illustrated frame. Rich dimensional brushstroke layers, violet and lilac artist paint swirls, gilded paint textures and art-paper collage around the perimeter, premium expressive painterly illustration. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Cinema Classics
+
+Saved original: [cinema.png](cinema.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original CINEMA CLASSICS illustrated frame. A beautifully illustrated realistic black photographic film strip rectangular border with gold-edged sprocket holes, subtle glossy highlights and lilac enamel accents, refined cinema aesthetic. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Vintage Film
+
+Saved original: [film-vintage.png](film-vintage.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original VINTAGE FILM illustrated frame. Vintage cream and sepia photographic film-strip border, detailed perforations, gently distressed tactile celluloid, deep purple accent corners and fine warm gold details. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Instant Classic
+
+Saved original: [instant-classic.png](instant-classic.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original INSTANT CLASSIC illustrated frame. A classic ivory instant-photo paper border with rich tactile paper texture, subtle dimensional shadows, fine lavender decorative edge and small gold corner details. Wider bottom paper band like an instant photograph. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.
+
+### Instant Scrapbook
+
+Saved original: [instant-scrapbook.png](instant-scrapbook.png)
+
+Final prompt:
+
+Use case: stylized-concept. Asset type: production transparent decorative frame overlay for ClipSplat portrait video, title panels and image cards. Create one original INSTANT SCRAPBOOK illustrated frame. A beautifully illustrated ivory instant-photo border with torn lavender backing paper, small washi tape corners, elegant purple paper collage details and gold flecks. Wider bottom paper band like an instant photograph. Complete rectangular frame in vertical 9:16 format, entire frame visible. DrawSplat purple #6d38e8 and #4720a4 with gold #f5b942 accents. All artwork must stay in outermost 10% of left/right sides, top 12%, bottom 16%; premium substantial corner detail within those margins. The central rectangle x=14%..86%, y=16%..78% must be completely empty, genuinely transparent alpha to display actual video or a user's image. High quality polished illustration and dimensional materials, not basic vector dots or code-like icons. No text, lettering, logo, people, photograph, placeholder picture, background fill or checkerboard. Transparent inside and outside. Deliver only a transparent PNG frame overlay.

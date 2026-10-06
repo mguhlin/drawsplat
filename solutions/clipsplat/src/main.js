@@ -1,6 +1,6 @@
 import "./style.css";
 import {imageCardLayout} from "./image-layout.js";
-import { FRAME_OPTIONS, drawPanelFrame, loadIllustratedFrame, isIllustratedFrame } from "./panel-frames.js";
+import { FRAME_OPTIONS, VIDEO_FRAME_OPTIONS, videoFrameViewport, drawPanelFrame, loadIllustratedFrame, isIllustratedFrame } from "./panel-frames.js";
 import logoUrl from "../icon.svg";
 import { translate as tr, initializeLanguage } from "./i18n.js";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -13,7 +13,7 @@ $("app").innerHTML = `
 <main><div class="intro"><div><div class="eyebrow">A little video. A clear message.</div><h1>Record. Bookend. Share.</h1><p>Make short videos for Instagram with an opening and a closing title panel.</p></div><span class="tag">Private by design \xB7 No account needed</span></div>
 <div class="workspace"><div class="preview-column"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>${TIMELINE_MARKUP}</div>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
-<section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 60 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small><p class="hint" id="long-video-note" hidden>Feed supports up to 60 minutes including panels. For longer recordings, use a desktop browser and save your original. Instagram upload limits vary by account and upload method.</p></section>
+<section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 60 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><label>Video frame<select id="video-frame">${VIDEO_FRAME_OPTIONS.map(([value,label])=>`<option value="${value}">${label}</option>`).join("")}</select></label><small>Film-strip and Polaroid-style borders surround the video only.</small><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small><p class="hint" id="long-video-note" hidden>Feed supports up to 60 minutes including panels. For longer recordings, use a desktop browser and save your original. Instagram upload limits vary by account and upload method.</p></section>
 <section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Panel frame<select id="intro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Panel frame<select id="outro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Drag text in the preview to adjust its placement.</small></section>
 ${IMAGE_CARDS_MARKUP}<section class="panel"><h2><span class="step">05</span>Ready to share</h2><p class="notice">Download your finished video, then upload it in Instagram. Export includes both panels and your trimmed clip.</p><button id="export" class="dark export" disabled>Create MP4</button><button id="cancel">Cancel export</button><progress id="progress" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite">Your videos stay on this device.</p><a id="download" class="file" download="clipsplat.mp4">Download MP4 \u2193</a><button id="share" hidden>Share video</button><video id="result" controls playsinline hidden style="width:100%;max-height:320px;margin-top:12px"></video></section></div></div>
 </main><footer>ClipSplat™ 1.1 \xB7 <a href="tutorial/" target="_blank" rel="noopener">Tutorial ↗</a> \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
@@ -37,6 +37,7 @@ const stepDetails = stepSections.map((section,index)=>{
   body.append(...section.childNodes);details.append(summary,body);return details;
 });
 $("settings").replaceChildren(...stepDetails);
+stepDetails[5].querySelector(".step-summary").setAttribute("aria-live","polite");
 const canvas = $("canvas"), ctx = canvas.getContext("2d", { alpha: false });
 const video = document.createElement("video");
 video.playsInline = true;
@@ -72,14 +73,14 @@ function update() {
   $("long-video-note").hidden = $("preset").value !== "feed";
   const p = preset();
   const summaries = [
-    $("preset").selectedOptions[0].textContent,
+    $("preset").selectedOptions[0].textContent + ($("video-frame").value === "none" ? "" : " · " + $("video-frame").selectedOptions[0].textContent),
     number("intro-duration") ? `${number("intro-duration")}s · ${$("intro-text").value}` : tr("Skipped"),
-    recorder?.state === "recording" ? tr("Recording…") : source ? sourceName : tr("Record or choose a video"),
+    recorder?.state === "recording" ? tr("Recording…") : source ? (sourceName === "Camera recording" ? tr(sourceName) : sourceName) : tr("Record or choose a video"),
     tr("{count} image cards",{count:imageCards.length}),
     number("outro-duration") ? `${number("outro-duration")}s · ${$("outro-text").value}` : tr("Skipped"),
     outputURL ? tr("MP4 ready") : statusState.text !== "Your videos stay on this device." ? tr(statusState.text,statusState.params) : tr("Preview, export and download")
   ];
-  stepDetails.forEach((details,index)=>details.querySelector(".step-summary").textContent=summaries[index]);
+  stepDetails.forEach((details,index)=>{const summary=details.querySelector(".step-summary");summary.textContent=summary.title=summaries[index];});
   canvas.width = p.width;
   canvas.height = p.height;
   $("preview").style.aspectRatio = `${p.width}/${p.height}`;
@@ -97,6 +98,7 @@ function update() {
     $("export").disabled = true;
     $("play").disabled = true;
   }
+  $("video-frame").disabled = busy || imagesLoading > 0;
   for (const kind of ["intro","outro"]) $(kind+"-frame").disabled = busy || imagesLoading > 0;
   editor?.update();
   cardsEditor?.update();
@@ -183,20 +185,21 @@ function panel(kind) {
   if (creator) paintText(kind, "creator", tr("by {name}",{name:creator}), textWidth, 35, h * (card && image ? (illustrated ? .74 : frame !== "none" ? .89 : .94) : image ? (illustrated ? .69 : .70) : .64), textX, accent, 500, h * (illustrated ? .065 : .2));
 }
 function drawVideo() {
-  const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = "#4720a4";
-  ctx.fillRect(0, 0, w, h);
+  const w = canvas.width, h = canvas.height, frame = $("video-frame").value;
+  const rect = videoFrameViewport(w,h,frame);
+  ctx.fillStyle = "#4720a4";ctx.fillRect(0,0,w,h);
   if (!video.videoWidth) {
-    ctx.fillStyle = "#f5b942";
-    ctx.font = "650 44px system-ui";
-    ctx.textAlign = "center";
-    ctx.fillText(tr("Your video goes here"), w / 2, h / 2);
-    ctx.textAlign = "left";
-    return;
+    ctx.fillStyle = "#f5b942";ctx.font = "650 44px system-ui";ctx.textAlign = "center";
+    ctx.fillText(tr("Your video goes here"),rect.x+rect.width/2,rect.y+rect.height/2);ctx.textAlign = "left";
+  } else {
+    const scale = ($("fit").value === "crop" ? Math.max : Math.min)(rect.width/video.videoWidth,rect.height/video.videoHeight);
+    const dw=video.videoWidth*scale,dh=video.videoHeight*scale;
+    ctx.save();ctx.beginPath();ctx.rect(rect.x,rect.y,rect.width,rect.height);ctx.clip();
+    ctx.drawImage(video,rect.x+(rect.width-dw)/2,rect.y+(rect.height-dh)/2,dw,dh);ctx.restore();
   }
-  const scale = ($("fit").value === "crop" ? Math.max : Math.min)(w / video.videoWidth, h / video.videoHeight), dw = video.videoWidth * scale, dh = video.videoHeight * scale;
-  ctx.drawImage(video, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  drawPanelFrame(ctx,w,h,frame,"#faf8ff","#f5b942");
 }
+
 function stopPreview() {
   playing = false;
   if (!stream) video.pause();
@@ -465,6 +468,11 @@ for (const id of ["start", "end", "preset", "fit", "creator", "color", "intro-te
   }
   update();
 });
+$("video-frame").oninput = async () => {
+  stopPreview();mode="clip";invalidate();update();
+  try { await ensureIllustratedFrame($("video-frame").value); }
+  catch(error) { $("video-frame").value="none";message(error.message);update(); }
+};
 async function ensureIllustratedFrame(style) {
   if (!isIllustratedFrame(style)) return;
   imagesLoading++; update(); message("Loading illustrated frame…");
@@ -569,7 +577,7 @@ $("export").onclick = async () => {
     controls(true);
     $("progress").hidden = false;
     $("progress").value = 0;
-    await Promise.all([$("intro-frame").value,$("outro-frame").value,...imageCards.map(card=>card.frame)].map(loadIllustratedFrame));
+    await Promise.all([$("intro-frame").value,$("outro-frame").value,...imageCards.map(card=>card.frame),$("video-frame").value].map(loadIllustratedFrame));
     ffmpeg = await getEngine();
     if (cancelled) throw new Error("Export cancelled.");
     let hasAudio = false;
@@ -598,6 +606,14 @@ $("export").onclick = async () => {
       await ffmpeg.writeFile(image, await png(kind));
       await run(["-loop", "1", "-framerate", "30", "-i", image, "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", String(seconds), "-vf", "setsar=1", ...codec, "-y", output2], output2, kind === "intro" ? "Creating opening panel…" : kind === "outro" ? "Creating closing panel…" : "Creating image card…");
     }
+    const videoStyle = $("video-frame").value;
+    const viewport = videoFrameViewport(width,height,videoStyle);
+    if (videoStyle !== "none") {
+      const overlay = document.createElement("canvas");overlay.width=width;overlay.height=height;
+      drawPanelFrame(overlay.getContext("2d"),width,height,videoStyle,"#faf8ff","#f5b942");
+      files.push("video-frame.png");
+      await ffmpeg.writeFile("video-frame.png",new Uint8Array(await (await new Promise(resolve=>overlay.toBlob(resolve,"image/png"))).arrayBuffer()));
+    }
     await title("intro", t.intro);
     $("progress").value = 0.15;
     for (const [index, part] of t.sequence.entries()) {
@@ -610,7 +626,15 @@ $("export").onclick = async () => {
       files.push(clip);
       const args = ["-ss", String(part.start), "-i", input];
       if (!hasAudio) args.push("-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo");
-      args.push("-t", String(part.end - part.start), "-map", "0:v:0", "-map", hasAudio ? "0:a:0" : "1:a:0", "-vf", videoFilter(width, height, $("fit").value), "-af", "apad", ...codec, "-y", clip);
+      if (videoStyle === "none") {
+        args.push("-t",String(part.end-part.start),"-map","0:v:0","-map",hasAudio?"0:a:0":"1:a:0","-vf",videoFilter(width,height,$("fit").value));
+      } else {
+        const overlayIndex=hasAudio?1:2;
+        args.push("-loop","1","-framerate","30","-i","video-frame.png");
+        const filter=`[0:v]${videoFilter(viewport.width,viewport.height,$("fit").value)},pad=${width}:${height}:${viewport.x}:${viewport.y}:color=0x4720a4[base];[base][${overlayIndex}:v]overlay=0:0:shortest=1:format=auto,format=yuv420p[framed]`;
+        args.push("-t",String(part.end-part.start),"-filter_complex",filter,"-map","[framed]","-map",hasAudio?"0:a:0":"1:a:0");
+      }
+      args.push("-af","apad",...codec,"-y",clip);
       await run(args, clip, "Encoding your video… Keep this tab open.");
       $("progress").value = .15 + .6 * (index + 1) / t.sequence.length;
     }
