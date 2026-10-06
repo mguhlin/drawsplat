@@ -13,7 +13,7 @@ $("app").innerHTML = `
 <div class="workspace"><div class="preview-column"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>${TIMELINE_MARKUP}</div>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
 <section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 3 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small></section>
-<section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Panel frame<select id="intro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Panel frame<select id="outro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Titles stay inside a conservative safe area.</small></section>
+<section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Panel frame<select id="intro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Panel frame<select id="outro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Drag text in the preview to adjust its placement.</small></section>
 ${IMAGE_CARDS_MARKUP}<section class="panel"><h2><span class="step">05</span>Ready to share</h2><p class="notice">Download your finished video, then upload it in Instagram. Export includes both panels and your trimmed clip.</p><button id="export" class="dark export" disabled>Create MP4</button><button id="cancel">Cancel export</button><progress id="progress" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite">Your videos stay on this device.</p><a id="download" class="file" download="clipsplat.mp4">Download MP4 \u2193</a><button id="share" hidden>Share video</button><video id="result" controls playsinline hidden style="width:100%;max-height:320px;margin-top:12px"></video></section></div></div>
 <details class="details"><summary>Format notes, privacy & sources</summary><p>These are conservative short-video presets, not every upload limit Instagram supports. ClipSplat™ limits Reels and feed videos to 3 minutes and Stories to 60 seconds, including panels. Account features and upload limits can vary. The guide is approximate: Instagram\u2019s interface and cropping differ across placements. Check the upload preview before posting.</p><p>The first export downloads the local video encoder from DrawSplat (about 32 MB). Recording, trimming and encoding happen in your browser. No video is uploaded, and projects are not automatically saved. Save your original recording before leaving. Longer or high-resolution clips may exceed a mobile device\u2019s available memory; this tool accepts source files up to 200 MB.</p><p>ClipSplat™ is an independent DrawSplat tool for Instagram; it is not affiliated with or endorsed by Meta. <a href="https://help.instagram.com/1038071743007909" target="_blank" rel="noopener">Instagram aspect ratio guidance</a> \xB7 <a href="https://github.com/fbsamples/reels_publishing_apis/tree/main/insta_reels_publishing_api_sample" target="_blank" rel="noopener">Meta video specifications</a> \xB7 <a href="https://www.meta.com/brand/resources/instagram/instagram-brand/" target="_blank" rel="noopener">Meta branding guidance</a></p></details></main><footer>ClipSplat™ 1.1 \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
 const canvas = $("canvas"), ctx = canvas.getContext("2d", { alpha: false });
@@ -66,8 +66,8 @@ function update() {
   editor?.update();
   cardsEditor?.update();
 }
-function wrap(text, maxWidth, fontSize) {
-  ctx.font = `750 ${fontSize}px system-ui`;
+function wrap(text, maxWidth, fontSize, family = "system-ui", weight = 750) {
+  ctx.font = `${weight} ${fontSize}px ${family}`;
   const lines = [];
   for (const paragraph of text.split("\n")) {
     let line = "";
@@ -91,7 +91,32 @@ function wrap(text, maxWidth, fontSize) {
   }
   return lines;
 }
+const textStyles = new Map();
+let textBounds = [], selectedText = "title";
+const fonts = {sans:"system-ui", serif:"Georgia, serif", mono:"Courier New, monospace", rounded:"Trebuchet MS, sans-serif"};
+function styleFor(kind, role) {
+  const key = kind + ":" + role;
+  if (!textStyles.has(key)) textStyles.set(key, {font:"sans", size:0, position:null});
+  return textStyles.get(key);
+}
+function paintText(kind, role, text, width, defaultSize, defaultTop, defaultX, color, weight, maxHeight) {
+  if (!text.trim()) return;
+  const style = styleFor(kind, role), family = fonts[style.font];
+  let size = style.size || defaultSize, lines = wrap(text, width, size, family, weight);
+  while (!style.size && lines.length * size * 1.22 > maxHeight && size > 18) {
+    size -= 2; lines = wrap(text, width, size, family, weight);
+  }
+  const height = Math.min(canvas.height, lines.length * size * 1.22);
+  const rtl = document.documentElement.dir === "rtl";
+  const defaultLeft = rtl ? defaultX - width : defaultX;
+  const left = style.position ? Math.max(0, Math.min(canvas.width-width, style.position.x * canvas.width)) : defaultLeft;
+  const top = style.position ? Math.max(0, Math.min(canvas.height-height, style.position.y * canvas.height)) : (role === "title" ? defaultTop-height/2 : defaultTop);
+  ctx.fillStyle = color; ctx.font = `${weight} ${size}px ${family}`; ctx.textBaseline = "top";
+  lines.forEach((line,i) => ctx.fillText(line, rtl ? left+width : left, top+i*size*1.22));
+  textBounds.push({role,left,top,width,height});
+}
 function panel(kind) {
+  textBounds = [];
   const card = imageCards.find(item=>item.id === kind);
   const w = canvas.width, h = canvas.height, bg = card?.color || $("color").value;
   const rtl = document.documentElement.dir === "rtl";
@@ -115,26 +140,9 @@ function panel(kind) {
   }
   ctx.fillStyle = accent;
   if (title) ctx.fillRect(w * (illustrated ? .26 : .12), h * (image ? (illustrated ? .445 : .415) : .24), w * 0.1, 8);
-  let size = 76, lines = wrap(title, textWidth, size);
-  while (lines.length * size * 1.22 > h * (image ? (illustrated ? .16 : .18) : .28) && size > (illustrated ? 20 : 34)) {
-    size -= 2;
-    lines = wrap(title, textWidth, size);
-  }
-  ctx.fillStyle = fg;
-  ctx.font = `750 ${size}px system-ui`;
-  ctx.textBaseline = "top";
-  const top = h * (image ? .54 : .43) - lines.length * size * 1.22 / 2;
-  lines.forEach((line, i) => ctx.fillText(line, textX, top + i * size * 1.22));
+  paintText(kind, "title", title, textWidth, 76, h * (image ? .54 : .43), textX, fg, 750, h * (image ? (illustrated ? .16 : .18) : .28));
   const creator = $("creator").value.trim();
-  if (creator) {
-    ctx.fillStyle = accent;
-    let nameSize = 35, names = wrap(tr("by {name}",{name:creator}), textWidth, nameSize);
-    while (illustrated && names.length * nameSize * 1.25 > h * .065 && nameSize > 18) {
-      nameSize--; names = wrap(tr("by {name}",{name:creator}), textWidth, nameSize);
-    }
-    ctx.font = `500 ${nameSize}px system-ui`;
-    names.forEach((line, i) => ctx.fillText(line, textX, h * (image ? (illustrated ? .69 : .70) : .64) + i * (illustrated ? nameSize * 1.25 : 44)));
-  }
+  if (creator) paintText(kind, "creator", tr("by {name}",{name:creator}), textWidth, 35, h * (image ? (illustrated ? .69 : .70) : .64), textX, accent, 500, h * (illustrated ? .065 : .2));
 }
 function drawVideo() {
   const w = canvas.width, h = canvas.height;
@@ -189,6 +197,7 @@ function render() {
     const card = imageCards.find(item=>item.id === mode);
     editor?.setPlayhead(card ? card.at : mode === "intro" ? number("start") : mode === "outro" ? number("end") : video.currentTime);
   }
+  refreshTextEditor();
   requestAnimationFrame(render);
 }
 function controls(locked) {
@@ -719,6 +728,77 @@ $("image-cards-file").onchange = async () => {
     if (added === files.length) message("Image cards added. Set their positions and preview the sequence.");
   } finally { imagesLoading--; update(); }
 };
+const textOverlay = document.createElement("div");
+textOverlay.className = "text-overlay";
+$("preview").append(textOverlay);
+const textToolbar = document.createElement("div");
+textToolbar.className = "text-toolbar";
+textToolbar.innerHTML = `<strong>Panel text</strong><small>Click a text box, then drag it. Arrow keys move the selected box.</small><div class="row"><label>Text box<select id="text-role"><option value="title">Title</option><option value="creator">Creator name</option></select></label><label>Font<select id="text-font"><option value="sans">Sans serif</option><option value="serif">Serif</option><option value="mono">Monospace</option><option value="rounded">Rounded</option></select></label></div><div class="row"><label>Font size (pixels)<input id="text-size" type="number" min="18" max="180" step="1" placeholder="Auto"></label><button id="text-reset" type="button">Reset text layout</button></div><small>Leave size blank for automatic sizing. Changes apply to this panel only.</small>`;
+$("preview").closest(".stage").append(textToolbar);
+let overlayKind = "", overlayRoles = "", dragging = null;
+function selectText(role) { selectedText = role; $("text-role").value = role; syncTextControls(); }
+function syncTextControls() {
+  const style = styleFor(mode, selectedText);
+  $("text-font").value = style.font;
+  $("text-size").value = style.size || "";
+}
+function refreshTextEditor() {
+  const visible = mode !== "clip" && !busy && !playing && !imagesLoading;
+  textToolbar.hidden = textOverlay.hidden = !visible;
+  if (!visible) return;
+  const roles = textBounds.map(box=>box.role).join(",");
+  if (overlayKind !== mode || overlayRoles !== roles) {
+    overlayKind = mode; overlayRoles = roles; textOverlay.replaceChildren();
+    for (const box of textBounds) {
+      const button = document.createElement("button");
+      button.type = "button"; button.dataset.role = box.role;
+      button.setAttribute("aria-label", box.role === "title" ? tr("Title") : tr("Creator name"));
+      button.onpointerdown = event => {
+        if (event.button !== 0) return;
+        event.preventDefault(); selectText(box.role); button.focus(); button.setPointerCapture(event.pointerId);
+        const bounds = textBounds.find(item=>item.role === box.role);
+        dragging = {id:event.pointerId,role:box.role,x:event.clientX,y:event.clientY,left:bounds.left,top:bounds.top};
+      };
+      button.onpointermove = event => {
+        if (!dragging || event.pointerId !== dragging.id) return;
+        const rect = canvas.getBoundingClientRect();
+        moveText(dragging.role, dragging.left+(event.clientX-dragging.x)*canvas.width/rect.width, dragging.top+(event.clientY-dragging.y)*canvas.height/rect.height);
+      };
+      button.onpointerup = button.onpointercancel = () => { dragging = null; };
+      button.onlostpointercapture = () => { dragging = null; };
+      button.onfocus = () => selectText(box.role);
+      button.onkeydown = event => {
+        const delta = {ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
+        if (!delta) return;
+        event.preventDefault(); event.stopPropagation();
+        const bounds = textBounds.find(item=>item.role === box.role), step = event.shiftKey ? 20 : 4;
+        moveText(box.role,bounds.left+delta[0]*step,bounds.top+delta[1]*step);
+      };
+      textOverlay.append(button);
+    }
+    syncTextControls();
+  }
+  for (const box of textBounds) {
+    const button = textOverlay.querySelector(`[data-role="${box.role}"]`);
+    button.setAttribute("aria-label", box.role === "title" ? tr("Title") : tr("Creator name"));
+    button.classList.toggle("selected", box.role === selectedText);
+    button.style.left = `${box.left/canvas.width*100}%`; button.style.top = `${box.top/canvas.height*100}%`;
+    button.style.width = `${box.width/canvas.width*100}%`; button.style.height = `${box.height/canvas.height*100}%`;
+  }
+}
+function moveText(role,left,top) {
+  const box = textBounds.find(item=>item.role === role);
+  styleFor(mode,role).position = {x:Math.max(0,Math.min(canvas.width-box.width,left))/canvas.width,y:Math.max(0,Math.min(canvas.height-box.height,top))/canvas.height};
+  invalidate();
+}
+$("text-role").onchange = () => selectText($("text-role").value);
+$("text-font").onchange = () => { styleFor(mode,selectedText).font = $("text-font").value; invalidate(); };
+$("text-size").oninput = () => {
+  const value = $("text-size").value;
+  if (value && !$("text-size").checkValidity()) return;
+  styleFor(mode,selectedText).size = value ? Number(value) : 0; invalidate();
+};
+$("text-reset").onclick = () => { textStyles.delete(mode+":"+selectedText); syncTextControls(); invalidate(); };
 initializeLanguage(({titlesChanged}) => {
   stopPreview();
   if(titlesChanged) invalidate();
