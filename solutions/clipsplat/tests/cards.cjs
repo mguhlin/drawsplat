@@ -6,6 +6,7 @@ const {join}=require('node:path');
 const {tmpdir}=require('node:os');
 const origin=process.env.CLIPSPLAT_ORIGIN||'http://127.0.0.1:4186';
 const illustrated=process.env.CLIPSPLAT_ILLUSTRATED==='1';
+const firstFrame=process.env.CLIPSPLAT_FIRST_FRAME||(illustrated?'celestial':'film'),secondFrame=process.env.CLIPSPLAT_SECOND_FRAME||(illustrated?'botanical':'stars');
 const artifacts=mkdtempSync(join(tmpdir(),'clipsplat-cards-'));
 const source=join(artifacts,'video.mp4');
 execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=red:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=lime:s=320x240:r=30:d=2','-f','lavfi','-i','color=c=blue:s=320x240:r=30:d=2','-f','lavfi','-i',"aevalsrc='0.2*sin(2*PI*if(lt(t,2),440,if(lt(t,4),880,1320))*t)':s=48000:d=6",'-filter_complex','[0:v][1:v][2:v]concat=n=3:v=1:a=0[v]','-map','[v]','-map','3:a','-c:v','libx264','-pix_fmt','yuv420p','-c:a','aac','-y',source]);
@@ -33,7 +34,7 @@ function audio(file,t){
       await card.locator('[data-field=title]').fill(title);await card.locator('[data-field=seconds]').fill('1');await card.locator('[data-field=at]').fill(String(position));
     }
     await p.locator('.extra-image-card').nth(2).locator('[data-action=remove]').click();assert.equal(await p.locator('.extra-image-card').count(),2);
-    await one.locator('[data-field=frame]').selectOption(illustrated?'celestial':'film');await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);await two.locator('[data-field=frame]').selectOption(illustrated?'botanical':'stars');await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);
+    await one.locator('[data-field=frame]').selectOption(firstFrame);await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);await two.locator('[data-field=frame]').selectOption(secondFrame);await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);
     await one.locator('[data-field=image]').setInputFiles({name:'broken.png',mimeType:'image/png',buffer:Buffer.from('broken')});
     await p.waitForFunction(()=>document.getElementById('status').textContent.includes('could not be opened'));
     assert.equal(await one.locator('.card-filename').textContent(),'yellow.png');
@@ -62,7 +63,7 @@ function audio(file,t){
     near(rgb(output,1.5),[254,0,0]);near(rgb(output,2.5,496,768),[255,255,0]);if(!illustrated)near(rgb(output,2.5,20,20),[23,32,51]);near(rgb(output,2.5,108,134),framePixel);near(rgb(output,3.5),[254,0,0]);near(rgb(output,4.5),[0,0,254]);near(rgb(output,5.5,496,768),[0,255,255]);near(rgb(output,6.5),[0,0,254]);
     assert.ok(Math.abs(audio(output,1.5).tone-440)<20);assert.ok(audio(output,2.5).rms<.002);assert.ok(Math.abs(audio(output,4.5).tone-1320)<20);assert.ok(audio(output,5.5).rms<.002);
     await p.locator('#timeline-editor').screenshot({path:join(artifacts,'sequence.png')});
-    await p.locator('#language').selectOption('es');assert.equal(await one.locator('[data-field=title]').inputValue(),'First image');assert.equal(await one.locator('[data-field=frame]').inputValue(),illustrated?'celestial':'film');assert.equal(await one.locator('[data-action=remove]').textContent(),'Quitar tarjeta');
+    await p.locator('#language').selectOption('es');assert.equal(await one.locator('[data-field=title]').inputValue(),'First image');assert.equal(await one.locator('[data-field=frame]').inputValue(),firstFrame);assert.equal(await one.locator('[data-action=remove]').textContent(),'Quitar tarjeta');
     await p.setViewportSize({width:390,height:844});await p.locator('#language').selectOption('ar');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     await p.screenshot({path:join(artifacts,'mobile-ar.png'),fullPage:true});assert.deepEqual(errors,[]);
     console.log(`PASS: multiple cards, independent controls, placement/cuts/undo/reorder/skip, image replacement/errors/removal, preview pauses/resumes, exported image order and silent audio, frames, mobile/RTL; ${origin}; artifacts ${artifacts}`);

@@ -1,7 +1,11 @@
 import paintParty from '../artwork/paint-party.png';
 import celestialMagic from '../artwork/celestial-magic.png';
 import botanicalGarden from '../artwork/botanical-garden.png';
-const FRAME_ARTWORK = {'paint-party':paintParty, celestial:celestialMagic, botanical:botanicalGarden};
+import scrapbook from '../artwork/scrapbook-memories.png';
+import sunset from '../artwork/sunset-waves.png';
+import watercolor from '../artwork/watercolor-bloom.png';
+import deco from '../artwork/gilded-deco.png';
+const FRAME_ARTWORK = {'paint-party':paintParty, celestial:celestialMagic, botanical:botanicalGarden,scrapbook,sunset,watercolor,deco};
 const frameCache = new Map();
 export const isIllustratedFrame = style => Object.hasOwn(FRAME_ARTWORK, style);
 export function loadIllustratedFrame(style) {
@@ -34,6 +38,10 @@ export const FRAME_OPTIONS = [
   ['paint-party', 'Paint Party · illustrated'],
   ['celestial', 'Celestial Magic · illustrated'],
   ['botanical', 'Botanical Garden · illustrated'],
+  ['scrapbook', 'Scrapbook Memories · illustrated'],
+  ['sunset', 'Sunset Waves · illustrated'],
+  ['watercolor', 'Watercolor Bloom · illustrated'],
+  ['deco', 'Gilded Deco · illustrated'],
   ['confetti', 'Party confetti'],
   ['stars', 'Star sparkle'],
   ['splat', 'Paint splats'],

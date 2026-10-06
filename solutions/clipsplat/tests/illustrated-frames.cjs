@@ -12,7 +12,7 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=yellow:s=320x180'
   const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
   try{
     const p=await b.newPage({viewport:{width:1226,height:970}}),requests=[],errors=[];
-    p.on('request',r=>{if(/(paint-party|celestial-magic|botanical-garden).*\.png/.test(r.url()))requests.push(r.url())});p.on('pageerror',e=>errors.push(e.message));
+    p.on('request',r=>{if(/(paint-party|celestial-magic|botanical-garden|scrapbook-memories|sunset-waves|watercolor-bloom|gilded-deco).*\.png/.test(r.url()))requests.push(r.url())});p.on('pageerror',e=>errors.push(e.message));
     await p.goto(origin+'/solutions/clipsplat/');await p.waitForSelector('#intro-frame');assert.equal(requests.length,0,'Illustrated artwork should load only when selected');
     await p.locator('#intro-image').setInputFiles(photo);await p.waitForFunction(()=>!document.getElementById('intro-choose-image').disabled);
     await p.locator('#creator').fill('Miguel Guhlin');
@@ -26,7 +26,7 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=yellow:s=320x180'
     },preset);
     for(const preset of ['reel','feed']){
       await p.locator('#preset').selectOption(preset);
-      for(const style of ['paint-party','celestial','botanical']){
+      for(const style of ['paint-party','celestial','botanical','scrapbook','sunset','watercolor','deco']){
         await p.locator('#intro-frame').selectOption(style);await p.waitForFunction(()=>!document.getElementById('intro-frame').disabled);
         assert.equal(await p.locator('#intro-frame').inputValue(),style);
         const shot=await capture(preset);assert.ok(shot.photo[0]>230&&shot.photo[1]>230&&shot.photo[2]<20);
@@ -34,13 +34,13 @@ execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=yellow:s=320x180'
         assert.ok(shot.maxDifference<=12,`Frame artwork must stay outside the content area (difference ${shot.maxDifference})`);
         await p.locator('#canvas').screenshot({path:join(artifacts,`${preset}-${style}.png`)});
       }
-      await p.locator('#outro-frame').selectOption('paint-party');await p.waitForFunction(()=>!document.getElementById('outro-frame').disabled);assert.equal(await p.locator('#intro-frame').inputValue(),'botanical');
+      await p.locator('#outro-frame').selectOption('paint-party');await p.waitForFunction(()=>!document.getElementById('outro-frame').disabled);assert.equal(await p.locator('#intro-frame').inputValue(),'deco');
     }
-    assert.equal(new Set(requests).size,3);assert.equal(requests.length,3,'Cached illustration choices should not redownload');
+    assert.equal(new Set(requests).size,7);assert.equal(requests.length,7,'Cached illustration choices should not redownload');
     await p.locator('#language').selectOption('es');assert.equal(await p.locator('#intro-frame option[value=celestial]').textContent(),'Magia celestial · ilustrado');
-    assert.equal(await p.locator('#intro-frame').inputValue(),'botanical');
+    assert.equal(await p.locator('#intro-frame').inputValue(),'deco');
     await p.setViewportSize({width:390,height:844});await p.locator('#language').selectOption('ar');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     assert.deepEqual(errors,[]);
-    console.log(`PASS: three illustrated frames, alpha/content protection, Reel/feed, independent pickers, lazy loading/cache, translations/mobile; ${origin}; artifacts ${artifacts}`);
+    console.log(`PASS: seven illustrated frames, alpha/content protection, Reel/feed, independent pickers, lazy loading/cache, translations/mobile; ${origin}; artifacts ${artifacts}`);
   }finally{await b.close();}
 })().catch(e=>{console.error(e);process.exit(1)});
