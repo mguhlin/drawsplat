@@ -50,3 +50,11 @@ test("image cards split surviving video in order and count toward placement limi
   assert.throws(()=>timeline(6,0,6,1,1,"reel",[],[{id:"one",at:1,seconds:11}]), /Image cards/);
   assert.equal(composeSequence([{start:0,end:6}],[{id:"one",at:3,seconds:0}]).length,1);
 });
+
+test("long Feed includes panels and image cards within its 60-minute limit", () => {
+  assert.equal(timeline(1200,0,1200,3,3,"feed").total,1206);
+  assert.equal(timeline(3600,0,3594,3,3,"feed").total,3600);
+  assert.throws(()=>timeline(3600,0,3595,3,3,"feed"),/Shorten/);
+  assert.throws(()=>timeline(1200,0,1200,3,3,"reel"),/Shorten/);
+  assert.throws(()=>timeline(3600,0,3594,3,3,"feed",[],[{id:"card",at:100,seconds:3}]),/Shorten/);
+});

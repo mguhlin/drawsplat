@@ -1,4 +1,4 @@
-const PRESETS = { reel: { label: "Reel", width: 1080, height: 1920, max: 180 }, story: { label: "Story", width: 1080, height: 1920, max: 60 }, feed: { label: "Feed portrait", width: 1080, height: 1350, max: 180 } };
+const PRESETS = { reel: { label: "Reel", width: 1080, height: 1920, max: 180 }, story: { label: "Story", width: 1080, height: 1920, max: 60 }, feed: { label: "Feed portrait", width: 1080, height: 1350, max: 3600 } };
 function timeline(duration, start, end, intro, outro, preset, cuts = [], cards = []) {
   const values = [duration, start, end, intro, outro];
   if (values.some((v) => !Number.isFinite(v))) throw new Error("Enter valid times.");

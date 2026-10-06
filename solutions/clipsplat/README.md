@@ -6,11 +6,11 @@ A focused, private short-video recorder for Instagram: camera or local import �
 | --- | --- | --- |
 | Reel | 1080 × 1920, 9:16 | 3–180 seconds |
 | Story | 1080 × 1920, 9:16 | 3–60 seconds |
-| Feed portrait | 1080 × 1350, 4:5 | 3–180 seconds |
+| Feed portrait | 1080 × 1350, 4:5 | 3–3600 seconds |
 
 All exports use MP4, H.264/yuv420p, 30 fps, square pixels, AAC stereo at 48 kHz/128 kbps, and fast-start metadata. Silent sources receive silence so all segments have compatible tracks. Panels last 0–10 seconds (0 skips). Each panel can include a local photo or logo above its title; images fit without cropping and appear in previews and exported MP4s. Use Add image to choose or replace, and Remove image to clear. Each panel also has its own frame picker: Plain, Paint Party (illustrated), Celestial Magic (illustrated), Botanical Garden (illustrated), Party confetti, Star sparkle, Paint splats or Movie night. The three illustrated frames were generated with the built-in imagegen tool and have genuine transparent centers. They download only when selected, retain proportional corner artwork in Reel and feed formats, and use a narrower content area to keep text/images clear of the ornate artwork. Original PNGs and the full generation prompts are in [artwork/README.md](artwork/README.md). Decorations stay around the edges to keep titles and images readable and are included in exported panels. Images are limited to 15 MB and 40 million pixels; they stay on your device and are not saved after leaving the page. Framing supports full-image fit or center crop. The safe-area guide is approximate.
 
-These are conservative app limits, not Instagram's full account-dependent maximums. Sources are limited to 200 MB; final MP4s to 300 MB. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
+These are conservative app limits, not Instagram's full account-dependent maximums. Sources and final MP4s are limited to 1 GB. Feed supports up to 60 minutes including panels; long recordings target 1.5 Mbps video plus 128 kbps audio. Feed exports longer than 3 minutes use a 2 Mbps video rate ceiling to control file size. Practical recording/export length depends on device memory; use a desktop browser for long projects. Encoding runs on the device after downloading the local encoder. Keep the tab open during export. Save original recordings before closing; there is no autosave.
 
 ## Additional image cards
 

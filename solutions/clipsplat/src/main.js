@@ -12,10 +12,10 @@ $("app").innerHTML = `
 <main><div class="intro"><div><div class="eyebrow">A little video. A clear message.</div><h1>Record. Bookend. Share.</h1><p>Make short videos for Instagram with an opening and a closing title panel.</p></div><span class="tag">Private by design \xB7 No account needed</span></div>
 <div class="workspace"><div class="preview-column"><section class="stage" aria-label="Video preview"><div class="stage-top"><strong>YOUR VIDEO</strong><span id="dimensions">1080 \xD7 1920 \xB7 9:16</span></div><div class="preview" id="preview"><canvas id="canvas" width="1080" height="1920" aria-label="Composition preview"></canvas><div class="guides" id="guides"><span>Keep key content here</span></div></div><div class="stage-controls"><button id="intro-preview">Opening</button><button id="clip-preview">Video</button><button id="outro-preview">Closing</button><button id="play" disabled>\u25B6 Preview all</button></div><label class="check hint"><input id="safe" type="checkbox" checked>Show approximate safe area (preview only)</label><p class="hint" id="summary">Add a video to get started.</p><p class="hint" id="recording" aria-live="polite"></p></section>${TIMELINE_MARKUP}</div>
 <div id="settings"><section class="panel"><h2><span class="step">01</span>Your video</h2><div class="row"><button class="primary" id="camera">Enable camera</button><label class="file" id="choose-file" tabindex="0" role="button">Choose video<input id="file" type="file" accept="video/*"></label></div><div class="row" style="margin-top:12px"><label>Camera<select id="facing"><option value="user">Front camera</option><option value="environment">Rear camera</option></select></label><label class="check"><input type="checkbox" id="mic" checked>Microphone</label></div><div class="row"><button id="record" disabled>\u25CF Record</button><button id="stop" disabled>\u25A0 Stop</button><button id="close-camera" disabled>Close camera</button></div><p class="source-name" id="source-name">Camera and microphone require your browser permission.</p><a id="original" hidden>Save original recording</a><div class="row"><label>Trim start (seconds)<input id="start" type="number" min="0" step="0.1" value="0" disabled></label><label>Trim end (seconds)<input id="end" type="number" min="0" step="0.1" value="0" disabled></label></div></section>
-<section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 3 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small></section>
+<section class="panel"><h2><span class="step">02</span>Format & framing</h2><div class="row"><label>Format<select id="preset"><option value="reel">Reel \xB7 9:16 \xB7 up to 3 min</option><option value="story">Story \xB7 9:16 \xB7 up to 60 sec</option><option value="feed">Feed portrait \xB7 4:5 \xB7 up to 60 min</option></select></label><label>Video framing<select id="fit"><option value="contain">Fit entire video</option><option value="crop">Fill \xB7 center crop</option></select></label></div><small>MP4 \xB7 H.264 video \xB7 AAC audio \xB7 30 fps. Reel and Story: 1080 \xD7 1920. Feed: 1080 \xD7 1350.</small><p class="hint" id="long-video-note" hidden>Feed supports up to 60 minutes including panels. For longer recordings, use a desktop browser and save your original. Instagram upload limits vary by account and upload method.</p></section>
 <section class="panel"><h2><span class="step">03</span>Opening & closing panels</h2><div class="row"><label>Creator name<input id="creator" maxlength="70" placeholder="Your name"></label><label>Panel color<input id="color" type="color" value="#4720a4"></label></div><fieldset class="title-panel"><legend>Opening Panel</legend><label>Panel frame<select id="intro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="intro-choose-image" type="button">Add image</button><input id="intro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Opening panel image"><button id="intro-remove-image" type="button" hidden>Remove image</button></div><div id="intro-image-details" class="panel-image-details" hidden><img id="intro-image-thumbnail" alt=""><span id="intro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Opening title<textarea id="intro-text" maxlength="180">Welcome to this video</textarea></label><div class="row"><label>Opening seconds \xB7 0 to skip<input id="intro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-opening">Preview opening</button></div></fieldset><fieldset class="title-panel"><legend>Closing Panel</legend><label>Panel frame<select id="outro-frame">${FRAME_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}</select></label><div class="panel-image-controls"><button id="outro-choose-image" type="button">Add image</button><input id="outro-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" hidden aria-label="Closing panel image"><button id="outro-remove-image" type="button" hidden>Remove image</button></div><div id="outro-image-details" class="panel-image-details" hidden><img id="outro-image-thumbnail" alt=""><span id="outro-image-name"></span></div><small class="image-hint">Optional photo or logo. Fits above your title without cropping.</small><label>Closing title<textarea id="outro-text" maxlength="180">Thanks for watching!</textarea></label><div class="row"><label>Closing seconds \xB7 0 to skip<input id="outro-duration" type="number" min="0" max="10" step="0.5" value="3"></label><button id="show-closing">Preview closing</button></div></fieldset><small>Creator appears as \u201Cby [name]\u201D on both panels. Drag text in the preview to adjust its placement.</small></section>
 ${IMAGE_CARDS_MARKUP}<section class="panel"><h2><span class="step">05</span>Ready to share</h2><p class="notice">Download your finished video, then upload it in Instagram. Export includes both panels and your trimmed clip.</p><button id="export" class="dark export" disabled>Create MP4</button><button id="cancel">Cancel export</button><progress id="progress" value="0" max="1" hidden></progress><p id="status" role="status" aria-live="polite">Your videos stay on this device.</p><a id="download" class="file" download="clipsplat.mp4">Download MP4 \u2193</a><button id="share" hidden>Share video</button><video id="result" controls playsinline hidden style="width:100%;max-height:320px;margin-top:12px"></video></section></div></div>
-<details class="details"><summary>Format notes, privacy & sources</summary><p>These are conservative short-video presets, not every upload limit Instagram supports. ClipSplat™ limits Reels and feed videos to 3 minutes and Stories to 60 seconds, including panels. Account features and upload limits can vary. The guide is approximate: Instagram\u2019s interface and cropping differ across placements. Check the upload preview before posting.</p><p>The first export downloads the local video encoder from DrawSplat (about 32 MB). Recording, trimming and encoding happen in your browser. No video is uploaded, and projects are not automatically saved. Save your original recording before leaving. Longer or high-resolution clips may exceed a mobile device\u2019s available memory; this tool accepts source files up to 200 MB.</p><p>ClipSplat™ is an independent DrawSplat tool for Instagram; it is not affiliated with or endorsed by Meta. <a href="https://help.instagram.com/1038071743007909" target="_blank" rel="noopener">Instagram aspect ratio guidance</a> \xB7 <a href="https://github.com/fbsamples/reels_publishing_apis/tree/main/insta_reels_publishing_api_sample" target="_blank" rel="noopener">Meta video specifications</a> \xB7 <a href="https://www.meta.com/brand/resources/instagram/instagram-brand/" target="_blank" rel="noopener">Meta branding guidance</a></p></details></main><footer>ClipSplat™ 1.1 \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
+<details class="details"><summary>Format notes, privacy & sources</summary><p>ClipSplat™ supports Feed videos up to 60 minutes, Reels up to 3 minutes, and Stories up to 60 seconds, including panels. Account features and upload limits can vary. The guide is approximate: Instagram\u2019s interface and cropping differ across placements. Check the upload preview before posting.</p><p>The first export downloads the local video encoder from DrawSplat (about 32 MB). Recording, trimming and encoding happen in your browser. No video is uploaded, and projects are not automatically saved. Save your original recording before leaving. Longer or high-resolution clips may exceed a mobile device\u2019s available memory; this tool accepts source files up to 1 GB. Long exports can take time and depend on your device’s available memory.</p><p>ClipSplat™ is an independent DrawSplat tool for Instagram; it is not affiliated with or endorsed by Meta. <a href="https://www.socialcal.app/blog/how-long-can-an-instagram-video-be" target="_blank" rel="noopener">Video length reference</a> · <a href="https://help.instagram.com/1038071743007909" target="_blank" rel="noopener">Instagram aspect ratio guidance</a> \xB7 <a href="https://github.com/fbsamples/reels_publishing_apis/tree/main/insta_reels_publishing_api_sample" target="_blank" rel="noopener">Meta video specifications</a> \xB7 <a href="https://www.meta.com/brand/resources/instagram/instagram-brand/" target="_blank" rel="noopener">Meta branding guidance</a></p></details></main><footer>ClipSplat™ 1.1 \xB7 Part of the <a href="../../">DrawSplat</a> family \xB7 <a href="https://github.com/mguhlin/drawsplat/tree/main/solutions/clipsplat">Source code</a> \xB7 AGPL-3.0-or-later</footer>`;
 const canvas = $("canvas"), ctx = canvas.getContext("2d", { alpha: false });
 const video = document.createElement("video");
 video.playsInline = true;
@@ -43,7 +43,10 @@ function invalidate() {
   $("result").removeAttribute("src");
   $("result").hidden = true;
 }
+let trimEdited = false;
+const SOURCE_LIMIT = 1024 * 1024 * 1024;
 function update() {
+  $("long-video-note").hidden = $("preset").value !== "feed";
   const p = preset();
   canvas.width = p.width;
   canvas.height = p.height;
@@ -261,7 +264,8 @@ async function waitMetadata() {
   if (!Number.isFinite(video.duration) || video.duration <= 0) throw new Error("Could not determine video length.");
 }
 async function load(blob, name) {
-  if (blob.size > 200 * 1024 * 1024) throw new Error("Choose a source video smaller than 200 MB.");
+  if (blob.size > SOURCE_LIMIT) throw new Error("Choose a source video smaller than 1 GB.");
+  trimEdited = false;
   stopPreview();
   closeCamera();
   invalidate();
@@ -334,7 +338,7 @@ $("close-camera").onclick = () => {
 $("record").onclick = () => {
   try {
     const mime = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/webm;codecs=vp8,opus", "video/webm", "video/mp4"].find((t) => MediaRecorder.isTypeSupported(t));
-    recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : void 0);
+    recorder = new MediaRecorder(stream, { ...(mime ? {mimeType:mime} : {}), videoBitsPerSecond: 1500000, audioBitsPerSecond: 128000 });
     const chunks = [];
     let bytes = 0;
     recorder.ondataavailable = (e) => {
@@ -342,7 +346,7 @@ $("record").onclick = () => {
         chunks.push(e.data);
         bytes += e.data.size;
       }
-      if (bytes > 190 * 1024 * 1024 && recorder.state === "recording") recorder.stop();
+      if (bytes > SOURCE_LIMIT - 10 * 1024 * 1024 && recorder.state === "recording") recorder.stop();
     };
     recorder.onerror = () => {
       message("Recording failed. Please try again.");
@@ -419,7 +423,11 @@ for (const [id, kind] of [["intro-preview", "intro"], ["show-opening", "intro"],
 for (const id of ["start", "end", "preset", "fit", "creator", "color", "intro-text", "outro-text", "intro-duration", "outro-duration"]) $(id).addEventListener("input", () => {
   stopPreview();
   invalidate();
-  if (id === "start" || id === "end") editor.resetSelection();
+  if (id === "start" || id === "end") { trimEdited = true; editor.resetSelection(); }
+  if (id === "preset" && source && !trimEdited) {
+    $("end").value = Math.min(duration, Math.max(.1, preset().max-number("intro-duration")-number("outro-duration")-imageCards.reduce((sum,card)=>sum+card.seconds,0))).toFixed(2);
+    editor.resetSelection();
+  }
   update();
 });
 async function ensureIllustratedFrame(style) {
@@ -540,6 +548,7 @@ $("export").onclick = async () => {
     await ffmpeg.exec(["-i", input, "-t", "0", "-f", "null", "-"]);
     ffmpeg.off("log", probeAudio);
     const segments = [], codec = ["-c:v", "libx264", "-preset", "ultrafast", "-crf", "22", "-pix_fmt", "yuv420p", "-r", "30", "-g", "60", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2", "-threads", "2"];
+    if ($("preset").value === "feed" && t.total > 180) codec.push("-maxrate", "2M", "-bufsize", "4M");
     async function run(args2, name, label) {
       message(label);
       const code2 = await ffmpeg.exec(args2);
@@ -582,7 +591,7 @@ $("export").onclick = async () => {
     const data = await ffmpeg.readFile(output);
     if (cancelled) throw new Error("Export cancelled.");
     const blob = new Blob([data], { type: "video/mp4" });
-    if (blob.size > 300 * 1024 * 1024) throw new Error("The finished MP4 is too large. Shorten your video and retry.");
+    if (blob.size > SOURCE_LIMIT) throw new Error("The finished MP4 is too large. Shorten your video and retry.");
     outputURL = URL.createObjectURL(blob);
     $("download").href = outputURL;
     $("download").style.display = "inline-block";
