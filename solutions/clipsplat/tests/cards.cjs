@@ -50,8 +50,8 @@ function audio(file,t){
     await two.locator('[data-field=seconds]').fill('11');assert.ok(await p.locator('#export').isDisabled());
     await two.locator('[data-field=seconds]').fill('1');
     await p.locator('#play').click();
-    await p.waitForFunction(()=>{const v=document.querySelector('video.source'),c=document.getElementById('canvas').getContext('2d').getImageData(496,526,1,1).data;return v.paused&&Math.abs(v.currentTime-1)<.12&&c[0]>230&&c[1]>230&&c[2]<30;},{},{timeout:15000});
-    await p.waitForFunction(()=>{const v=document.querySelector('video.source'),c=document.getElementById('canvas').getContext('2d').getImageData(496,526,1,1).data;return v.paused&&Math.abs(v.currentTime-5)<.12&&c[0]<30&&c[1]>230&&c[2]>230;},{},{timeout:15000});
+    await p.waitForFunction(()=>{const v=document.querySelector('video.source'),c=document.getElementById('canvas').getContext('2d').getImageData(496,768,1,1).data;return v.paused&&Math.abs(v.currentTime-1)<.12&&c[0]>230&&c[1]>230&&c[2]<30;},{},{timeout:15000});
+    await p.waitForFunction(()=>{const v=document.querySelector('video.source'),c=document.getElementById('canvas').getContext('2d').getImageData(496,768,1,1).data;return v.paused&&Math.abs(v.currentTime-5)<.12&&c[0]<30&&c[1]>230&&c[2]>230;},{},{timeout:15000});
     await p.waitForFunction(()=>{const v=document.querySelector('video.source');return !v.paused&&v.currentTime>5.15;});await p.locator('#play').click();
     await one.locator('[data-action=preview]').click();
     const framePixel=await p.locator('#canvas').evaluate(async canvas=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return [...canvas.getContext('2d').getImageData(108,134,1,1).data].slice(0,3);});
@@ -59,7 +59,7 @@ function audio(file,t){
     await p.waitForFunction(()=>document.getElementById('download').style.display==='inline-block',{},{timeout:120000});
     const downloaded=p.waitForEvent('download');await p.locator('#download').click();const output=join(artifacts,'cards.mp4');await(await downloaded).saveAs(output);
     const meta=JSON.parse(execFileSync('ffprobe',['-v','error','-show_format','-of','json',output],{encoding:'utf8'}));assert.ok(Math.abs(Number(meta.format.duration)-8)<.25);
-    near(rgb(output,1.5),[254,0,0]);near(rgb(output,2.5,496,526),[255,255,0]);if(!illustrated)near(rgb(output,2.5,20,20),[23,32,51]);near(rgb(output,2.5,108,134),framePixel);near(rgb(output,3.5),[254,0,0]);near(rgb(output,4.5),[0,0,254]);near(rgb(output,5.5,496,526),[0,255,255]);near(rgb(output,6.5),[0,0,254]);
+    near(rgb(output,1.5),[254,0,0]);near(rgb(output,2.5,496,768),[255,255,0]);if(!illustrated)near(rgb(output,2.5,20,20),[23,32,51]);near(rgb(output,2.5,108,134),framePixel);near(rgb(output,3.5),[254,0,0]);near(rgb(output,4.5),[0,0,254]);near(rgb(output,5.5,496,768),[0,255,255]);near(rgb(output,6.5),[0,0,254]);
     assert.ok(Math.abs(audio(output,1.5).tone-440)<20);assert.ok(audio(output,2.5).rms<.002);assert.ok(Math.abs(audio(output,4.5).tone-1320)<20);assert.ok(audio(output,5.5).rms<.002);
     await p.locator('#timeline-editor').screenshot({path:join(artifacts,'sequence.png')});
     await p.locator('#language').selectOption('es');assert.equal(await one.locator('[data-field=title]').inputValue(),'First image');assert.equal(await one.locator('[data-field=frame]').inputValue(),illustrated?'celestial':'film');assert.equal(await one.locator('[data-action=remove]').textContent(),'Quitar tarjeta');

@@ -1,4 +1,5 @@
 import "./style.css";
+import {imageCardLayout} from "./image-layout.js";
 import { FRAME_OPTIONS, drawPanelFrame, loadIllustratedFrame, isIllustratedFrame } from "./panel-frames.js";
 import logoUrl from "../icon.svg";
 import { translate as tr, initializeLanguage } from "./i18n.js";
@@ -136,16 +137,19 @@ function panel(kind) {
   drawPanelFrame(ctx, w, h, frame, fg, accent);
   const image = card ? card.image : panelImages[kind]?.image;
   const title = card ? card.title.trim() : $(kind + "-text").value.trim() || tr(kind === "intro" ? "Welcome" : "Thanks for watching");
-  if (image) {
+  const creator = $("creator").value.trim();
+  if (image && card) {
+    const rect = imageCardLayout(w,h,image.naturalWidth,image.naturalHeight,{illustrated,framed:frame !== "none",title:!!title,creator:!!creator});
+    ctx.drawImage(image,rect.x,rect.y,rect.width,rect.height);
+  } else if (image) {
     const scale = Math.min(textWidth / image.naturalWidth, h * (card && !title ? (illustrated ? .42 : .48) : illustrated ? .22 : .23) / image.naturalHeight);
     const iw = image.naturalWidth * scale, ih = image.naturalHeight * scale;
     ctx.drawImage(image, w * (illustrated ? .5 : .46) - iw / 2, h * (card && !title ? (illustrated ? .43 : .40) : illustrated ? .32 : .275) - ih / 2, iw, ih);
   }
   ctx.fillStyle = accent;
-  if (title) ctx.fillRect(w * (illustrated ? .26 : .12), h * (image ? (illustrated ? .445 : .415) : .24), w * 0.1, 8);
-  paintText(kind, "title", title, textWidth, 76, h * (image ? .54 : .43), textX, fg, 750, h * (image ? (illustrated ? .16 : .18) : .28));
-  const creator = $("creator").value.trim();
-  if (creator) paintText(kind, "creator", tr("by {name}",{name:creator}), textWidth, 35, h * (image ? (illustrated ? .69 : .70) : .64), textX, accent, 500, h * (illustrated ? .065 : .2));
+  if (title && !card) ctx.fillRect(w * (illustrated ? .26 : .12), h * (image ? (illustrated ? .445 : .415) : .24), w * 0.1, 8);
+  paintText(kind, "title", title, textWidth, 76, h * (card && image ? (illustrated ? .68 : frame !== "none" ? .81 : .84) : image ? .54 : .43), textX, fg, 750, h * (card && image ? (illustrated ? .10 : .12) : image ? (illustrated ? .16 : .18) : .28));
+  if (creator) paintText(kind, "creator", tr("by {name}",{name:creator}), textWidth, 35, h * (card && image ? (illustrated ? .74 : frame !== "none" ? .89 : .94) : image ? (illustrated ? .69 : .70) : .64), textX, accent, 500, h * (illustrated ? .065 : .2));
 }
 function drawVideo() {
   const w = canvas.width, h = canvas.height;

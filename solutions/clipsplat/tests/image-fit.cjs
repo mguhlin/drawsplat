@@ -1,0 +1,15 @@
+const {chromium}=require('../../../node_modules/@playwright/test');const assert=require('node:assert/strict');
+const {execFileSync}=require('node:child_process');const {mkdtempSync}=require('node:fs');const {join}=require('node:path');
+const dir=mkdtempSync('/tmp/clipsplat-image-fit-'),origin=process.env.CLIPSPLAT_ORIGIN||'http://127.0.0.1:4186';
+const source=join(dir,'source.mp4');execFileSync('ffmpeg',['-v','error','-f','lavfi','-i','color=red:s=32x32:d=3','-c:v','libx264','-y',source]);
+(async()=>{const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});try{
+const p=await b.newPage({acceptDownloads:true});await p.goto(origin+'/solutions/clipsplat/');
+const make=async(w,h)=>Buffer.from(await p.evaluate(({w,h})=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,w,h);x.fillStyle='#111111';x.font='bold 80px sans-serif';x.fillText('INFOGRAPHIC',15,100);return c.toDataURL().split(',')[1];},{w,h}),'base64');
+await p.locator('#file').setInputFiles(source);await p.waitForFunction(()=>!document.getElementById('export').disabled);await p.locator('#intro-duration').fill('0');await p.locator('#outro-duration').fill('0');
+for(const [w,h] of [[800,3000],[2000,600],[1122,1402]]){
+await p.locator('#image-cards-file').setInputFiles({name:'infographic.png',mimeType:'image/png',buffer:await make(w,h)});await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);const card=p.locator('.extra-image-card').last();
+for(const preset of ['reel','feed']){await p.locator('#preset').selectOption(preset);await card.locator('[data-action=preview]').click();await p.waitForTimeout(100);const r=await p.evaluate(()=>{const c=document.getElementById('canvas'),data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let minX=c.width,maxX=0,minY=c.height,maxY=0;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(data[i]>245&&data[i+1]>245&&data[i+2]>245){minX=Math.min(x,minX);maxX=Math.max(x,maxX);minY=Math.min(y,minY);maxY=Math.max(y,maxY);}}return {w:maxX-minX+1,h:maxY-minY+1,cw:c.width,ch:c.height};});assert.ok(Math.abs(r.w/r.h-w/h)/(w/h)<.01,JSON.stringify({w,h,preset,r}));assert.ok(Math.abs(r.w/r.cw-.96)<.005||Math.abs(r.h/r.ch-.96)<.005,JSON.stringify(r));}
+await card.locator('[data-action=remove]').click();}
+if(process.env.CLIPSPLAT_EXAMPLE){await p.locator('#image-cards-file').setInputFiles(process.env.CLIPSPLAT_EXAMPLE);await p.waitForFunction(()=>!document.getElementById('add-image-cards').disabled);await p.waitForTimeout(100);await p.locator('#canvas').screenshot({path:join(dir,'actual-infographic.png')});}
+console.log('PASS: tall, landscape and example-proportion cards maximize available area in Reel/Feed without crop or distortion',dir);
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exit(1)});
