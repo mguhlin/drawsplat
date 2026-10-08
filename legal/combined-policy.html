@@ -1007,15 +1007,23 @@
     <p>Approved educational purpose: classroom drawing, notes, diagrams, charts, sticky notes, audio notes, collaboration, turn-in workflows, and supporting classroom activities. DrawSplat<sup class="tm">TM</sup> is not used for advertising, behavioural profiling, or AI training. <a href="../pages/features.html">Full feature list</a>.</p>
   </section>
 
+  <section class="policy-section" id="deployment-review">
+    <h2>Which deployment is your district reviewing?</h2>
+    <p><strong>Public website use:</strong> students visit DrawSplat.org to use the browser-based whiteboard, games, or other local tools without a configured storage backend. In this mode, board content and saved game progress remain on the user device or in files the user saves. The public website still receives normal web requests, and its hosting/CDN services process request metadata such as IP address, user agent, and requested URL. Public website use should not be described as involving no data processing.</p>
+    <p><strong>District-hosted installation with MySQL:</strong> the district hosts the application, API, and database and administers accounts, storage, access, backups, retention, and deletion. Student records and work saved through that backend are held in district-controlled infrastructure. Hosting or support access by any outside party must be documented; installing the software does not itself grant the DrawSplat operator access to the district database.</p>
+    <p><strong>Optional integrations change the scope:</strong> connecting a backend, enabling sign-in or cloud saving, sharing content, or opening third-party services requires a separate review of the selected feature and its data flow. The Google Apps Script option is also documented below but should be included in an agreement only if the district selects it.</p>
+    <p>Before completing Exhibits A and B, confirm the district’s selected website or hosting location, enabled features, student data categories, and who can access that data. The current MySQL path is documented as a pilot requiring integration and operational testing before student production use; see <a href="#production-posture">Recommended production posture</a>.</p>
+  </section>
+
   <section class="policy-section">
     <h2>2. Three deployment modes and what each collects</h2>
     <table class="policy-table">
       <thead><tr><th>Mode</th><th>Where data lives</th><th>Student identifiers collected</th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>Browser-only</strong></td>
+          <td><strong>Browser-only (public website or district-hosted static app, without a configured backend)</strong></td>
           <td>The visitor&rsquo;s browser. Optional local <code>.drawsplat.json</code> file the user explicitly saves.</td>
-          <td>None. No account, no upload, no server-side storage.</td>
+          <td>No student account required for local whiteboard or game use. Local content is not uploaded to a storage backend in this mode. The website host/CDN processes web request metadata; optional connected features require separate review.</td>
         </tr>
         <tr>
           <td><strong>Google Apps Script (supported production)</strong></td>
@@ -1034,7 +1042,8 @@
   <section class="policy-section">
     <h2>3. Data flow diagram</h2>
     <pre style="background:#0f172a;color:#e2e8f0;padding:14px;border-radius:10px;overflow:auto;font-size:.86rem;line-height:1.5">Browser-only mode:
-  [Student browser] <-- everything stays here. No external requests by default.
+  [Student browser] <-- board content and game progress stay local.
+  [Website host / CDN] <-- page and asset requests include request metadata.
 
 Google Apps Script mode:
   [Student / teacher browser]
@@ -1173,7 +1182,7 @@ Self-hosted MySQL mode:
   </section>
 
   <section class="policy-section">
-    <h2>11. Recommended production posture</h2>
+    <h2 id="production-posture">11. Recommended production posture</h2>
     <p>For classroom production use today, the supported path is <strong>Google Apps Script + Sheets + Drive</strong> in the district&rsquo;s own Google Workspace tenant. The MySQL self-hosted path is feature-complete in code but has not yet been exercised against a live database in production. Districts that want to pilot the MySQL path should run a technical review (integration test against a non-production database, single-instance only, manual cron monitoring) before student production use. See <a href="../server/mysql-backend/README.md">server/mysql-backend/README.md</a> for the production checklist.</p>
   </section>
 
