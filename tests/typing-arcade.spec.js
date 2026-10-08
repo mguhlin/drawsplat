@@ -6,7 +6,7 @@ for(const slug of ['typing-games','road-rally','block-zap','passage-coach','paws
   // intentionally blocks it; keep all other console and runtime errors fatal.
   page.on('console',m=>{if(m.type()==='error'&&!/^Loading the script 'https:\/\/static\.cloudflareinsights\.com\/beacon\.min\.js\/.*violates the following Content Security Policy/.test(m.text()))errors.push(m.text())});
   await page.goto(`/games/${slug}/`);await expect(page.locator('h1')).toBeVisible();await expect(page.locator('[data-i18n-picker] select option')).toHaveCount(6);
-  for(const code of ['es','vi','ar','zh','uh','en']){await page.locator('[data-i18n-picker] select').selectOption(code);await expect(page.locator('h1')).not.toBeEmpty()}
+  for(const code of ['es','vi','ar','zh','uh','en']){await page.locator('[data-i18n-picker] select').selectOption(code);const key=slug==='typing-games'?'menu':({'road-rally':'road','block-zap':'blocks','passage-coach':'coach','paws-and-keys':'paws'}[slug]+'.title');await expect(page.locator('h1')).toHaveText(await page.evaluate(k=>WidgetI18n.t(k),key));await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()}
   expect(await page.locator('img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0))).toBeTruthy();
   for(const width of [390,1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();await page.screenshot({path:`/tmp/typing-${slug}-${width}.png`,fullPage:true})}expect(errors).toEqual([]);
  });

@@ -15,7 +15,7 @@ const cfg=()=>levels[$('difficulty')?.value||'beginner'];
 const norm=s=>s.normalize('NFC').trim().toLocaleLowerCase();
 function beep(freq=650){if(!sound)return;try{audio??=new AudioContext();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=freq;g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.12);o.start();o.stop(audio.currentTime+.13)}catch{}}
 function feedback(key){$('feedback').textContent=t(key)}
-function hud(){if(mode==='coach')return;for(const [id,v] of Object.entries({score:Math.floor(score),best,streak,lives:shield,lines}))if($(id))$(id).textContent=v;if(score>best){best=Math.floor(score);$('best').textContent=best;try{localStorage.setItem(storageKey,String(best))}catch{}}}
+function hud(){if(mode==='coach')return;for(const [id,v] of Object.entries({score:Math.floor(score),best,streak,lives:shield,lines}))if($(id))$(id).textContent=v;if(Math.floor(score)>best){best=Math.floor(score);$('best').textContent=best;try{localStorage.setItem(storageKey,String(best))}catch{}}}
 function overlay(title,text,button='start'){if(!canvas)return;$('overlay').hidden=false;$('overlayTitle').textContent=t(title);$('overlayText').textContent=text;$('overlayStart').textContent=t(button)}
 function sessionButtons(){if($('start'))$('start').textContent=t(running?'restart':'start');$('pause').textContent=t(paused?'resume':'pause');$('pause').disabled=(!running&&mode!=='coach')||ended;$('sound').textContent=t(sound?'soundOn':'soundOff');$('sound').setAttribute('aria-pressed',String(sound))}
 function finish(){running=false;ended=true;beep(160);sessionButtons();overlay('over',t('score')+': '+Math.floor(score),'restart')}

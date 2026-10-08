@@ -9,3 +9,4 @@ body[data-page=blocks] canvas{aspect-ratio:600/760}
 .skip-link{position:absolute;top:10px;left:12px;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;background:#fff;color:#153b59;z-index:99}.skip-link:focus{width:auto;height:auto;clip-path:none;padding:10px 18px;border:2px solid #087e8b}
 body[data-page=blocks] canvas{width:min(100%,480px);margin-inline:auto}
 .touch-controls{direction:ltr}
+.trail-track{display:none}.pet-landscape{object-position:center 50%}
