@@ -4,22 +4,43 @@
 const mode=document.body.dataset.page, $=id=>document.getElementById(id), t=(key)=>WidgetI18n.t(key), lang=()=>WidgetI18n.getLang();
 const canvas=$('game'),ctx=canvas?.getContext('2d');
 const carArt={};if(mode==='road')for(const key of ['player','rival','civilian']){const im=new Image();im.src='../typing-games/assets/'+key+'-car.png';carArt[key]=im}
-let running=false,paused=false,ended=false,score=0,streak=0,shield=5,lines=0,best=0,elapsed=0,last=0,sound=false,audio=null;
+let running=false,paused=false,ended=false,score=0,streak=0,shield=5,lines=0,best=0,elapsed=0,last=0,sound=true,audio=null;
 const storageKey='drawsplat.typing.'+mode+'.best';
 try{best=Number(localStorage.getItem(storageKey))||0}catch{}
 const levels={beginner:{speed:65,spawn:3.5,fall:1.5},intermediate:{speed:90,spawn:2.6,fall:1},expert:{speed:115,spawn:2.1,fall:.7}};
 const words={en:['sun map red cat dog road star book rain moon car leaf smile brave light'.split(' '),'mission signal engine coastal secret shadow compass rescue rocket explorer keyboard'.split(' '),'acceleration constellation determination headquarters imagination transformation'.split(' ')],es:['sol mapa rojo gato perro luna auto hoja risa luz'.split(' '),'misión señal motor costa secreto sombra rescate cohete teclado'.split(' '),'aceleración constelación imaginación transformación determinación'.split(' ')],vi:['mưa nắng mèo cây xe sao sách nhà lá vui'.split(' '),'bí mật,động cơ,ánh sáng,giải cứu,bàn phím,bờ biển'.split(','),'chòm sao,trí tưởng tượng,sự quyết tâm,sự biến đổi'.split(',')],ar:['شمس قمر قط كتاب سيارة نور طريق مطر'.split(' '),'إشارة محرك ساحل إنقاذ صاروخ لوحة ظل'.split(' '),'تسارع تصميم خيال كوكبة استكشاف'.split(' ')],zh:[['太阳','小猫','汽车','月亮','雨水','星星'],['信号','发动机','秘密','救援','键盘','海岸'],['加速度','星座','想象力','决心','探索']],uh:['धूप चाँद बिल्ली किताब गाड़ी घर पेड़'.split(' '),'संकेत इंजन बचाव रॉकेट रहस्य समुद्र'.split(' '),'कल्पना दृढ़ता परिवर्तन नक्षत्र त्वरण'.split(' ')]};
-const usedWords=()=>{const i=['beginner','intermediate','expert'].indexOf($('difficulty')?.value||'beginner');return(words[lang()]||words.en)[i]};
+const vocabulary=()=>mode==='road'&&$('subject').value!=='general'?(window.CipherVocabulary||[]).filter(v=>v.band===$('vocabBand').value&&($('subject').value==='all'||v.subject===$('subject').value)):[];
+const usedWords=()=>{if(vocabulary().length)return vocabulary().map(v=>v.word);const i=['beginner','intermediate','expert'].indexOf($('difficulty')?.value||'beginner');return(words[lang()]||words.en)[i]};
 function pickWord(){const list=usedWords();const occupied=mode==='road'?road.traffic.map(v=>v.word):mode==='blocks'?[block?.word,...grid.flat().filter(Boolean).map(v=>v.word)]:[];const pool=list.filter(w=>!occupied.includes(w));return(pool.length?pool:list)[Math.floor(Math.random()*(pool.length||list.length))]}
 const cfg=()=>levels[$('difficulty')?.value||'beginner'];
 const norm=s=>s.normalize('NFC').trim().toLocaleLowerCase();
-function beep(freq=650){if(!sound)return;try{audio??=new AudioContext();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=freq;g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.12);o.start();o.stop(audio.currentTime+.13)}catch{}}
+async function beep(freq=650,report=false){
+ if(!sound)return false;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)throw Error('unavailable');
+  audio??=new Audio();await audio.resume();if(!sound)return false;if(audio.state!=='running')throw Error('suspended');
+  const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type='triangle';o.frequency.setValueAtTime(freq,audio.currentTime);
+  g.gain.setValueAtTime(.0001,audio.currentTime);g.gain.exponentialRampToValueAtTime(.18,audio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.25);
+  o.onended=()=>{o.disconnect();g.disconnect()};o.start();o.stop(audio.currentTime+.27);
+  if(report&&$('audioStatus'))$('audioStatus').textContent=t('audioReady');return true;
+ }catch{if($('audioStatus'))$('audioStatus').textContent=t('audioUnavailable');else feedback('audioUnavailable');return false}
+}
+let definitionTimer;
+function showDefinition(word){
+ const entry=vocabulary().find(v=>norm(v.word)===word);if(!entry)return;
+ const card=$('definitionCard');clearTimeout(definitionTimer);card.hidden=false;card.classList.remove('definition-flash');void card.offsetWidth;card.classList.add('definition-flash');
+ $('definitionWord').textContent=entry.word;$('definitionText').textContent=entry.definition;
+ $('definitionSource').href=entry.source;$('definitionSource').textContent=t(entry.subject)+' · '+entry.standard+' · TEKS';
+ definitionTimer=setTimeout(()=>card.classList.remove('definition-flash'),4500);
+}
+function resetVocabulary(){clearTimeout(definitionTimer);$('definitionCard').hidden=true;$('vocabBand').disabled=$('subject').value==='general';$('vocabNote').hidden=$('subject').value==='general';if(running||ended)start();else initRoad();roadTargets()}
+
 function feedback(key){$('feedback').textContent=t(key)}
 function hud(){if(mode==='coach')return;for(const [id,v] of Object.entries({score:Math.floor(score),best,streak,lives:shield,lines}))if($(id))$(id).textContent=v;if(Math.floor(score)>best){best=Math.floor(score);$('best').textContent=best;try{localStorage.setItem(storageKey,String(best))}catch{}}}
 function overlay(title,text,button='start'){if(!canvas)return;$('overlay').hidden=false;$('overlayTitle').textContent=t(title);$('overlayText').textContent=text;$('overlayStart').textContent=t(button)}
 function sessionButtons(){if($('start'))$('start').textContent=t(running?'restart':'start');$('pause').textContent=t(paused?'resume':'pause');$('pause').disabled=(!running&&mode!=='coach')||ended;$('sound').textContent=t(sound?'soundOn':'soundOff');$('sound').setAttribute('aria-pressed',String(sound))}
 function finish(){running=false;ended=true;beep(160);sessionButtons();overlay('over',t('score')+': '+Math.floor(score),'restart')}
-function start(){score=0;streak=0;shield=5;lines=0;elapsed=0;ended=false;paused=false;running=true;$('word').value='';$('feedback').textContent='';mode==='road'?initRoad():initBlocks();$('overlay').hidden=true;hud();sessionButtons();$('word').focus({preventScroll:true})}
+function start(){beep(520);if($('definitionCard'))$('definitionCard').hidden=true;score=0;streak=0;shield=5;lines=0;elapsed=0;ended=false;paused=false;running=true;$('word').value='';$('feedback').textContent='';mode==='road'?initRoad():initBlocks();$('overlay').hidden=true;hud();sessionButtons();$('word').focus({preventScroll:true})}
 function pause(){if(mode==='coach'){if(ended)return;paused=!paused;$('practice').disabled=paused;sessionButtons();return}if(!running)return;paused=!paused;if(paused)overlay('paused',t(mode+'.keys'),'resume');else{$('overlay').hidden=true;$('word').focus({preventScroll:true})}sessionButtons()}
 function submit(){if(!running||paused||ended)return;const value=norm($('word').value);if(!value)return;const hit=mode==='road'?zapRoad(value):zapBlock(value);if(hit){streak++;score+=100+value.length*10+streak*5;feedback('hit');beep();$('word').value='';}else{streak=0;feedback('nomatch');beep(180)}hud();$('word').focus({preventScroll:true})}
 // Cipher Chase: a continuous overhead road, steering and typed attacks.
@@ -29,7 +50,7 @@ function initRoad(){road={traffic:[],lane:1,x:450,scroll:0,timer:.4,invulnerable
 function steer(dir){road.lane=Math.max(0,Math.min(2,road.lane+dir))}
 function smoke(){if(road.smokeCooldown>0)return;road.smoke=2.2;road.invulnerable=2.2;road.smokeCooldown=12;road.traffic=road.traffic.filter(v=>{if(v.enemy&&v.y>260){score+=40;return false}return true});beep(320);hud()}
 function spawnTraffic(){const enemy=elapsed<1||Math.random()>.28;let lane=Math.floor(Math.random()*3);road.traffic.push({lane,x:laneX(lane),y:elapsed<1?100:-70,enemy,word:enemy?pickWord():'',hit:false});roadTargets();}
-function zapRoad(value){const v=road.traffic.filter(v=>v.enemy&&!v.hit&&norm(v.word)===value).sort((a,b)=>b.y-a.y)[0];if(!v)return false;v.hit=true;roadTargets();road.shots.push({x:road.x,y:550,tx:v.x,ty:v.y,life:.24});return true}
+function zapRoad(value){const v=road.traffic.filter(v=>v.enemy&&!v.hit&&norm(v.word)===value).sort((a,b)=>b.y-a.y)[0];if(!v)return false;v.hit=true;showDefinition(value);roadTargets();road.shots.push({x:road.x,y:550,tx:v.x,ty:v.y,life:.24});return true}
 function roadTargets(){if(!$('targets'))return;const value=road.traffic.filter(v=>v.enemy&&!v.hit&&v.y>=70).map(v=>v.word).join(' · ');if($('targets').textContent!==value)$('targets').textContent=value}
 function updateRoad(dt){const speed=cfg().speed+Math.min(35,elapsed*.15);road.scroll=(road.scroll+speed*dt)%100;road.distance+=speed*dt*.03;road.x+=(laneX(road.lane)-road.x)*Math.min(1,dt*10);road.invulnerable=Math.max(0,road.invulnerable-dt);road.smoke=Math.max(0,road.smoke-dt);road.smokeCooldown=Math.max(0,road.smokeCooldown-dt);road.timer-=dt;if(road.timer<=0){spawnTraffic();road.timer=cfg().spawn}for(const v of road.traffic){v.y+=speed*dt;if(!v.hit&&Math.abs(v.x-road.x)<52&&Math.abs(v.y-560)<70){v.hit=true;if(!road.invulnerable){shield--;streak=0;road.invulnerable=1.8;feedback('damage');beep(170);if(shield<=0){finish();return}}}}road.traffic=road.traffic.filter(v=>v.y<740&&(!v.hit||road.shots.some(s=>s.tx===v.x&&Math.abs(s.ty-v.y)<45)));roadTargets();road.shots.forEach(s=>s.life-=dt);road.shots=road.shots.filter(s=>s.life>0);const smokeButton=document.querySelector('[data-action=smoke]');if(smokeButton){smokeButton.disabled=road.smokeCooldown>0;smokeButton.textContent=road.smokeCooldown>0?t('smoke.wait')+' '+Math.ceil(road.smokeCooldown)+'s':t('smoke')}score+=dt*2;hud()}
 function car(x,y,color,player=false){const im=carArt[player?'player':color==='#ef786d'?'rival':'civilian'];if(im?.complete&&im.naturalWidth){ctx.drawImage(im,x-31,y-53,62,106);return}ctx.save();ctx.translate(x,y);ctx.fillStyle='#10243c66';ctx.fillRect(-28,-40,64,100);ctx.fillStyle='#152635';for(const dx of [-30,23]){ctx.fillRect(dx,-28,8,23);ctx.fillRect(dx,20,8,23)}ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-24,-48,48,96,9);ctx.fill();ctx.fillStyle='#a6d9e5';ctx.beginPath();ctx.roundRect(-18,-18,36,25,5);ctx.fill();ctx.fillStyle='#183446';ctx.fillRect(-18,16,36,16);ctx.fillStyle='#ffea99';ctx.fillRect(-21,-43,10,5);ctx.fillRect(11,-43,10,5);ctx.fillStyle='#f46c64';ctx.fillRect(-20,39,9,5);ctx.fillRect(11,39,9,5);if(player){ctx.fillStyle='#087e8b';ctx.fillRect(-3,-42,6,29)}ctx.restore()}
@@ -72,13 +93,21 @@ function load(items){if(!items.length||items.length>200||items.some(p=>typeof p.
 function loadText(text,kind='txt'){if(kind==='json'||/^[\[{]/.test(text.trim()))load(parseJSON(text));else if(kind==='csv')load(rowsToPassages(parseCSV(text)));else load([{title:t('passage'),text}])}
 function action(name){if(!running||paused||ended)return;if(mode==='road'){if(name==='left')steer(-1);if(name==='right')steer(1);if(name==='smoke')smoke()}else if(mode==='blocks'){if(name==='left')move(-1,0);if(name==='right')move(1,0);if(name==='rotate')rotate();if(name==='hold')hold();if(name==='drop')drop();if(name==='down')move(0,1);hud()}}
 function loop(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;if(running&&!paused&&!ended){if(mode==='coach'){if(started&&!completed){typedTime+=dt;coachStats()}}else{elapsed+=dt;mode==='road'?updateRoad(dt):updateBlocks(dt)}}if(canvas){if(mode==='road')drawRoad();else if(grid.length)drawBlocks()}requestAnimationFrame(loop)}
-$('pause').addEventListener('click',pause);$('reset').addEventListener('click',()=>mode==='coach'?setPassage(passageIndex):start());$('sound').addEventListener('click',()=>{sound=!sound;beep();sessionButtons()});
+$('pause').addEventListener('click',pause);$('reset').addEventListener('click',()=>mode==='coach'?setPassage(passageIndex):start());$('sound').addEventListener('click',()=>{sound=!sound;beep(650,true);sessionButtons()});
+if($('testSound'))$('testSound').addEventListener('click',()=>{sound=true;sessionButtons();beep(880,true)});
+if(mode==='road')for(const id of ['subject','vocabBand'])$(id).addEventListener('change',resetVocabulary);
 if(mode==='coach'){
+ // Restrict bulk insertion only in scored practice; classroom imports remain available.
+ const blockPaste=e=>{e.preventDefault();feedback('typeOnly')};
+ for(const event of ['paste','drop'])$('practice').addEventListener(event,blockPaste);
+ $('practice').addEventListener('beforeinput',e=>{if(['insertFromPaste','insertFromPasteAsQuotation','insertFromDrop','insertReplacementText'].includes(e.inputType))blockPaste(e)});
+ $('practice').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'||e.shiftKey&&e.key==='Insert')blockPaste(e)});
+ $('practice').addEventListener('pointerdown',()=>{if(sound&&!audio)beep(400)});
  $('grade').addEventListener('change',builtin);$('passageSelect').addEventListener('change',()=>setPassage(Number($('passageSelect').value)));$('next').addEventListener('click',()=>setPassage((passageIndex+1)%passages.length));$('practice').addEventListener('input',()=>{if(paused||ended)return;started=$('practice').value.length>0||started;renderPassage();coachStats()});$('load').addEventListener('click',()=>{try{const text=$('custom').value.trim();if(!text)throw Error();loadText(text,text.includes(',')&&text.includes('\n')?'csv':'txt')}catch{feedback('invalid')}});$('file').addEventListener('change',async()=>{const file=$('file').files[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error();const kind=file.name.split('.').pop().toLowerCase();if(kind==='xlsx')load(await parseXLSX(file));else loadText(await file.text(),kind)}catch{feedback('invalid')}finally{$('file').value=''}});builtin();accentKeys();
 }else{
  $('start').addEventListener('click',start);$('overlayStart').addEventListener('click',()=>paused?pause():start());$('fire').addEventListener('click',submit);$('difficulty').addEventListener('change',()=>{if(running||ended)start();else{mode==='road'?initRoad():initBlocks()}});$('word').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submit()}});document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{action(b.dataset.action);$('word').focus({preventScroll:true})}));document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pause();return}if(e.target.tagName==='SELECT'||e.target.tagName==='BUTTON')return;if(e.key===' '&&e.target===$('word')&&$('word').value.length)return;const key={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'rotate',ArrowDown:'down',' ':mode==='road'?'smoke':'drop',Shift:'hold'}[e.key];if(key){e.preventDefault();action(key)}});mode==='road'?initRoad():initBlocks();overlay('ready',t(mode+'.how'));sessionButtons();hud();
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused&&!ended)pause()});
-window.addEventListener('widget-i18n:changed',()=>{if(mode==='coach'){accentKeys();if(!customSet)builtin();else{renderPassage();coachStats()}}else{running=false;paused=false;ended=false;mode==='road'?initRoad():initBlocks();overlay('ready',t(mode+'.how'))}sessionButtons();feedback('ready')});
+window.addEventListener('widget-i18n:changed',()=>{if(mode==='coach'){accentKeys();if(!customSet)builtin();else{renderPassage();coachStats()}}else{running=false;paused=false;ended=false;mode==='road'?initRoad():initBlocks();if($('definitionCard'))$('definitionCard').hidden=true;overlay('ready',t(mode+'.how'))}sessionButtons();feedback('ready')});
 requestAnimationFrame(loop);
 })();

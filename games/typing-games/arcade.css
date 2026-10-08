@@ -10,3 +10,5 @@ body[data-page=blocks] canvas{aspect-ratio:600/760}
 body[data-page=blocks] canvas{width:min(100%,480px);margin-inline:auto}
 .touch-controls{direction:ltr}
 .trail-track{display:none}.pet-landscape{object-position:center 50%}
+
+.definition-card{padding:1rem 1.3rem;border:2px solid #237b7e;border-radius:12px;background:#effbf7;color:#153b59;margin:1rem;overflow-wrap:anywhere}.definition-card[hidden]{display:none}.definition-card h2{font-size:1.45rem;margin:.25rem 0}.definition-card p{margin:.4rem 0;line-height:1.5}.definition-card>a{font-size:.85rem}.definition-card>span{font-size:.8rem;font-weight:bold;text-transform:uppercase;letter-spacing:.08em}.definition-flash{animation:decoded-flash 4.5s ease-out}.vocab-note{font-size:.85rem;line-height:1.5}#testSound{width:100%;margin-top:.7rem}@keyframes decoded-flash{0%,15%{background:#ffe09b;box-shadow:0 0 0 4px #eeb44855}100%{background:#effbf7;box-shadow:none}}@media(prefers-reduced-motion:reduce){.definition-flash{animation:none;background:#ffe09b}}
