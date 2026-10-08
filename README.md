@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** live tools updated September 23, 2026 with touch PDF signing, GPU-assisted English captions, and accelerated video export. Latest packaged release: v3.1.25; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** live tools updated October 8, 2026 with four independent Typing Games, TEKS vocabulary, definition-only hints, and everyday-word practice. Latest packaged release: v3.1.29; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -27,7 +27,20 @@ Other docs that pair with setup:
 - [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
 - [`docs/HANDOFF-v3.1.0.md`](docs/HANDOFF-v3.1.0.md) — portable handoff for any AI assistant (Codex, Cursor, etc.) picking up the repo; covers what shipped at v3.1.0 and known gaps.
 
-## Latest live updates — September 23, 2026
+## Latest live updates — October 8, 2026
+
+[Typing Games](https://drawsplat.org/games/typing-games/) is a menu with original hero artwork and four separate pages, each with instructions and six interface languages.
+
+- **[Cipher Chase](https://drawsplat.org/games/cipher-chase/):** Type TEKS vocabulary to clear rival cars, steer around civilians, and learn each word’s definition. Sound starts on and includes a playback test.
+- **[Wordfall Reactor](https://drawsplat.org/games/wordfall-reactor/):** Connect letters on a word board against the computer. Starts with 95 everyday words; TEKS science, math, and social studies vocabulary is optional. Hints give definitions, leaving you to find the word and its placement.
+- **[Story Sprint](https://drawsplat.org/games/story-sprint/):** Type passages with speed, accuracy, and character feedback. Import classroom text locally; paste and drag/drop are blocked in scored practice. Choose Next passage when you finish.
+- **[Paws & Keys Adventure](https://drawsplat.org/games/paws-and-keys-adventure/):** Meet kittens and puppies in a gentle adventure for ages 4–9, with 12 progressive trails, four worlds, finger hints, and saved stars.
+
+The TEKS practice bank has 72 representative science, math, and social studies/history terms in grade bands 3–5, 6–8, and 9–12, with original definitions and TEA source links. Wordfall defaults to regular English words; the interface language does not translate its word bank. Practice files stay local. Old game URLs redirect until April 8, 2027.
+
+[Classroom walkthrough](blog/typing-games.html) · [Implementation and vocabulary details](docs/typing-games.md) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.29.md)
+
+## Previous live updates — September 23, 2026
 
 - **PDFSplat:** sign and mark PDFs with a finger, stylus, or mouse. Continuous strokes, pen color/width, stroke undo, and a phone writing layout keep signing practical; save the result as a PDF. Capture to PDF offers private, permission-based capture of visible sections from an open tab or window.
 - **MediaSplat and VideoSplat captions:** Auto checks for a usable WebGPU adapter and falls back to CPU if GPU processing fails. CPU compatibility mode is available. English transcripts and SRT files stay local; model downloads and device limits still apply.
@@ -40,11 +53,11 @@ These features are live on drawsplat.org and in the current source. The v3.1.28 
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.28 — Clear offline choices and root shortcuts.** All thirteen self-host ZIPs include root HTML shortcuts and local launchers (Python 3 required for apps that need localhost), PDFSplat direct-file support, repaired CipherSplat offline resources, and current source as of September 24, including VideoSplat encoded-duration checks, original-media downloads, large-video import support, touch PDF signing, GPU-assisted captions, and accelerated export. [Walkthrough](blog/current-downloads.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.28.md) · [Stable release v3.1.28](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.28).
+**DrawSplatTM v3.1.29 — Four typing adventures and current downloads.** The full DrawSplat and Games packages include all four games, regular and TEKS vocabulary, language files, artwork, and passage-import dependencies. All thirteen core self-host ZIPs are refreshed from current source, with local launchers and SHA-256 checksums; ClipSplat is also available as a separate package. [Walkthrough](blog/typing-games.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.29.md) · [Stable release v3.1.29](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.29).
 
 ## Latest whiteboard: portable saving and recording recovery
 
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.28 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.29 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
 
 - **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
 - **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.
@@ -1347,4 +1360,4 @@ Recommended public-hosting protections:
 
 Record or import video, add opening and closing panels, insert full-image cards, cut unwanted sections, and export H.264/AAC MP4. Illustrated frames, draggable text, font controls, bold/italic/alignment icons, and six interface languages are included. Reel/Story use 9:16; Feed uses 4:5 and supports up to 60 minutes including panels. Practical limits depend on the device. Media stays on your device; no account is required. ClipSplat is listed under Media and Create.
 
-The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. Future full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.1.1`.
+The standalone ZIP includes the encoder and Python 3 local launchers. Existing v3.1.28 archives predate ClipSplat; install this ZIP alongside them. The v3.1.29 full/Tools bundles include ClipSplat. Build it with `python3 scripts/make-clipsplat-bundle.py v1.1.1`.

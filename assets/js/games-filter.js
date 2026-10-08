@@ -3,7 +3,7 @@
 // localStorage under drawsplat.disabledGames as a JSON array of game slugs.
 (function(){
   const KEY='drawsplat.disabledGames';
-  const GAMES=['castles','floodfill','flowfree','funquiz','gilasplat','lightsout','splatball','squirrel-run-game','super-star-trek','tangram','typing-games','untangle'];
+  const GAMES=['castles','floodfill','flowfree','funquiz','gilasplat','lightsout','splatball','squirrel-run-game','super-star-trek','tangram','typing-games','cipher-chase','wordfall-reactor','story-sprint','paws-and-keys-adventure','untangle'];
 
   function read(){
     try{
@@ -21,10 +21,11 @@
     if(!disabled.size) return;
     // Match both top-level (games/castles/) and ../games/castles/ links.
     document.querySelectorAll('a[href]').forEach(a=>{
-      const href=a.getAttribute('href')||'';
+      const href=a.pathname||a.getAttribute('href')||'';
       const m=href.match(/(?:^|\/)games\/([a-z0-9_-]+)\//i);
       if(!m) return;
-      if(!disabled.has(m[1].toLowerCase())) return;
+      const slug=m[1].toLowerCase();
+      if(!disabled.has(slug)&&!(disabled.has('typing-games')&&['cipher-chase','wordfall-reactor','story-sprint','paws-and-keys-adventure'].includes(slug))) return;
       // Hide the smallest meaningful container — a card, list item, or the
       // link itself — so the page doesn't end up with an empty grid cell.
       const container=a.closest('.standalone-tool-card, li, .game-card') || a;

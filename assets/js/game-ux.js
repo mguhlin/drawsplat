@@ -12,7 +12,7 @@
     'squirrel-run-game':{goal:'Cross the lanes, collect acorns, and reach the tree hollow safely.',controls:'Use arrow keys, WASD, or the large touch direction buttons.',tip:'Pause at lane edges and look for a safe gap before moving.'},
     'super-star-trek':{goal:'Protect the galaxy by finding and defeating enemy ships before time runs out.',controls:'Choose commands from the bridge and read the terminal response after every action.',tip:'Check your status and map before spending energy or moving to a new sector.'},
     tangram:{goal:'Fit every piece completely inside the silhouette.',controls:'Drag pieces to move them and use the game controls to rotate when available.',tip:'Place the largest pieces first, then use smaller pieces to fill gaps.'},
-    'typing-games':{goal:'Build accurate typing habits while completing the selected challenge.',controls:'Keep your hands ready, type the shown letters or words, and use P to pause.',tip:'Accuracy first. A steady rhythm becomes speed with practice.'},
+    'typing-games':{goal:'Choose Cipher Chase, Wordfall Reactor, Story Sprint, or Paws & Keys Adventure.',controls:'Open a game from the menu and follow the instructions on its own page.',tip:'Start with everyday words or gentle pet trails; choose TEKS vocabulary for classroom practice.'},
     untangle:{goal:'Move the points until none of the connecting lines cross.',controls:'Drag one point at a time and watch the crossing counter.',tip:'Move outside points apart first, then solve the crowded center.'}
   };
   const info=games[slug]; if(!info) return;

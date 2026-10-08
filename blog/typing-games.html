@@ -11,14 +11,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-<title>DrawSplatTM Pricing</title>
+<title>Four New Typing Adventures | DrawSplat</title>
+<meta name="description" content="Meet Cipher Chase, Wordfall Reactor, Story Sprint, and Paws &amp; Keys Adventure: four independent DrawSplat games with language options, TEKS vocabulary, and classroom-friendly practice.">
+<link rel="canonical" href="https://drawsplat.org/blog/typing-games.html" />
 <link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .release-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+  .release-pill{display:inline-flex;align-items:center;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:6px 10px;font-size:.86rem;font-weight:800}
+  .release-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .release-card{border:2px solid #e2e6f0;border-radius:12px;background:#fff;padding:18px;box-shadow:0 8px 22px rgba(64,64,65,.06)}
+  .release-card h2{margin:0 0 8px;color:var(--navy,#7c3aed);font-size:1.15rem}
+  .release-card p{margin:0;color:#374151;line-height:1.55}
+  .release-list{display:grid;gap:10px;max-width:900px;margin:0 auto;padding-left:1.2rem}
+  .release-list li{color:#374151;line-height:1.5}
+  .release-note{max-width:900px;margin:18px auto 0;padding:16px 18px;border-left:6px solid #7c3aed;border-radius:10px;background:#fbfaff;color:#4c1d95;line-height:1.5}
+</style>
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.1" defer></script>
 </head>
-<body class="admin-page start-page pricing-page">
+<body class="admin-page start-page support-page">
 <header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
     <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
     <span>DrawSplat<sup class="tm">TM</sup></span>
   </a>
@@ -157,90 +170,17 @@
   <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
 </header>
 
-<main class="landing-shell pricing-shell">
-  <section class="pricing-hero">
-    <p class="landing-eyebrow">Pricing</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> is free. Everything.</h1>
-    <p>Every teacher, every student, every classroom, campus, and district uses DrawSplat<sup class="tm">TM</sup> at no cost. The software, the Apps Script backend, the MySQL deployment, the compliance features, the Community board &mdash; all free under AGPL-3.0-or-later. If it helped your day, <strong><a href="https://buymeacoffee.com/drawsplat" target="_blank" rel="noopener noreferrer">buy the developer a cup of coffee</a></strong>. If your district needs hands-on help, you can hire that as a separate service.</p>
-  </section>
-
-  <img class="pricing-hero-image" src="../assets/brand/DrawSplat_Pricing.png" alt="DrawSplatTM is free for everyone — teachers, students, campuses, and districts. Optional support and professional learning available.">
-
-  <section class="pricing-grid" aria-label="DrawSplatTM pricing plans">
-    <article class="pricing-card featured">
-      <div>
-        <p class="pricing-kicker">Everyone</p>
-        <h2>$0</h2>
-        <p class="pricing-subtitle">Teachers, students, classrooms, campuses, and districts. The whole thing.</p>
-      </div>
-      <ul class="pricing-list">
-        <li>The full browser whiteboard, classroom and productivity tools.</li>
-        <li>Self-host or use the hosted site at drawsplat.org.</li>
-        <li>Optional Google Apps Script backend for Drive + Sheets saves, audit log, compliance console.</li>
-        <li>Optional portable MySQL API for private online Save/Open on Railway, DigitalOcean, or your own server; provider hosting costs are separate.</li>
-        <li>Compliance features: Activity Records, Safety Review, Age Band Lock, Family Access Tools, retention, time limits, District Privacy Packet.</li>
-        <li>Use, adapt, and share under AGPL-3.0-or-later. Source on GitHub.</li>
-      </ul>
-      <a class="landing-cta primary" href="../app/whiteboard.html">Open the Whiteboard</a>
-    </article>
-
-    <article class="pricing-card">
-      <div>
-        <p class="pricing-kicker">Optional</p>
-        <h2>Coffee</h2>
-        <p class="pricing-subtitle">For when DrawSplat<sup class="tm">TM</sup> saved you a planning period or got a kid drawing for the first time.</p>
-      </div>
-      <ul class="pricing-list">
-        <li>One-tap <a href="https://buymeacoffee.com/drawsplat" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a> donation. Any amount.</li>
-        <li>Goes to DrawSplat Administrator through the project contact form.</li>
-        <li>Funds development, hosting, and Smithsonian-asset licenses.</li>
-        <li>Not required for anything &mdash; the software stays free regardless.</li>
-      </ul>
-      <img src="../assets/brand/buymeacoffee-qr.png" alt="QR code linking to buymeacoffee.com/drawsplat" width="180" height="180" style="display:block;margin:6px auto 4px;width:160px;height:160px;border-radius:12px;background:#fff;padding:8px;border:1px solid #e4e7f1">
-      <a class="landing-cta" href="https://buymeacoffee.com/drawsplat" target="_blank" rel="noopener noreferrer">Buy a Cup of Coffee</a>
-    </article>
-
-    <article class="pricing-card district-license">
-      <div>
-        <p class="pricing-kicker">For Campuses + Districts</p>
-        <h2>Support&nbsp;&amp;&nbsp;PD</h2>
-        <p class="pricing-subtitle">Optional paid services for campus or district rollouts that want hands-on help. The software is still free.</p>
-      </div>
-      <ul class="pricing-list">
-        <li><strong>Setup &amp; deployment</strong> &mdash; configure Apps Script or self-hosted MySQL for your environment.</li>
-        <li><strong>Compliance review</strong> &mdash; walk through Activity Records, retention, parent tools for your DPA.</li>
-        <li><strong>Professional learning</strong> &mdash; teacher workshops on classroom use, lesson design, student work routines.</li>
-        <li><strong>Admin training</strong> &mdash; Compliance Console, moderation, parent request workflows.</li>
-        <li><strong>Custom development</strong> &mdash; district-specific integrations (Clever, ClassLink, SSO), custom dashboards.</li>
-        <li>Use the <a href="contact.html">Contact / Information Request</a> form for a quote &mdash; we&rsquo;ll reply at the email you provide.</li>
-      </ul>
-      <a class="landing-cta" href="contact.html">Request a Quote</a>
-    </article>
-  </section>
-
-  <section class="pricing-notes">
-    <article>
-      <h2>Why is it free?</h2>
-      <p>DrawSplat<sup class="tm">TM</sup> is built by an educator for educators. Subscriptions and per-seat licensing keep great tools out of underfunded classrooms. The software has no marginal cost to ship one more user, so it doesn't. If your district has the budget and wants professional learning, that's where we charge &mdash; not for software access.</p>
-    </article>
-    <article>
-      <h2>Self-hosted or hosted?</h2>
-      <p>You can use drawsplat.org directly, or clone the repository and host it on your own GitHub Pages, Cloudflare Pages, or district servers. The optional Apps Script and MySQL backends are also free; you bring your own Google Workspace or database hosting.</p>
-    </article>
-    <article>
-      <h2>What "as-is" still means</h2>
-      <p>The free download covers the current build as provided. Bugs get fixed when the developer has time. Districts that need a guaranteed response time, custom feature work, or formal training contracts should engage the paid Support &amp; PD services above.</p>
-    </article>
-  </section>
-</main>
+<main class="landing-shell support-shell"><section class="landing-hero"><p class="landing-eyebrow">October 8, 2026 · DrawSplat v3.1.29</p><h1>Four typing adventures. One place to start.</h1><p class="lead">Typing Games is now a menu of four independent experiences. Each game has its own page, clear instructions, and six interface languages.</p><div class="landing-actions"><a class="landing-cta primary" href="../games/typing-games/">Choose a typing game</a><a class="landing-cta" href="../pages/download.html">Download for self-hosting</a></div><img src="../games/typing-games/assets/hero.webp" alt="Illustrated typing adventures with a spy car, word challenges, and friendly pets" width="1536" height="1024" style="display:block;width:100%;height:auto;border-radius:16px;margin-top:24px"></section><section class="landing-section"><div class="release-grid"><article class="release-card"><h2><a href="../games/cipher-chase/">Cipher Chase</a></h2><p>Type TEKS vocabulary to clear rival cars, steer around civilians, and learn each word’s definition. Sound starts on and includes a playback test.</p></article><article class="release-card"><h2><a href="../games/wordfall-reactor/">Wordfall Reactor</a></h2><p>Connect letters on a word board against the computer. Starts with 95 everyday words; TEKS science, math, and social studies vocabulary is optional. Hints give definitions, leaving you to find the word and its placement.</p></article><article class="release-card"><h2><a href="../games/story-sprint/">Story Sprint</a></h2><p>Type passages with speed, accuracy, and character feedback. Import classroom text locally; paste and drag/drop are blocked in scored practice. Choose Next passage when you finish.</p></article><article class="release-card"><h2><a href="../games/paws-and-keys-adventure/">Paws &amp; Keys Adventure</a></h2><p>Meet kittens and puppies in a gentle adventure for ages 4–9, with 12 progressive trails, four worlds, finger hints, and saved stars.</p></article></div></section><section class="landing-section"><h2>Pick practice that fits the learner</h2><ul class="release-list"><li><strong>Ages 4–9:</strong> Paws &amp; Keys begins with gentle keyboard practice and progresses through 12 trails. There is no time limit or lost lives.</li><li><strong>Vocabulary and strategy:</strong> Wordfall Reactor defaults to everyday English words. Switch to TEKS vocabulary by subject and grade band, or use a definition clue and work out the answer yourself. The optional word bank supports guided practice.</li><li><strong>Arcade practice:</strong> Cipher Chase combines typing, steering, shields, and rechargeable smoke. Successful typed targets flash a definition. Use Test sound to check playback.</li><li><strong>Accuracy and fluency:</strong> Story Sprint lets teachers import TXT, CSV, JSON, or XLSX passages without uploading files. Practice requires typing; the passage importer still accepts pasted text.</li></ul></section><section class="landing-section"><h2>English vocabulary, six interface languages</h2><p>Instructions and controls offer English, Spanish, Vietnamese, Arabic, Chinese, and Hindi/Urdu. The TEKS bank contains 72 representative terms across science, math, and social studies/history in grade bands 3–5, 6–8, and 9–12, with original definitions and links to TEA standards. It is a curated practice bank, not an exhaustive curriculum. Wordfall’s regular set and Paws &amp; Keys practice English; Cipher Chase’s General typing words option follows the interface language.</p><p>Practice data stays in the browser. No game account is needed. Stars and best scores are saved on the current device.</p></section><section class="landing-section"><h2>New links and current downloads</h2><p>The menu and each game use title-matching URLs. Old game links redirect until April 8, 2027; afterward they show a manual link to the new page.</p><p>The full DrawSplat and Games module v3.1.29 downloads include the four games, generated artwork, regular and TEKS word banks, language files, and import dependencies. Extract the complete package and use its Python 3 local launcher, or serve it from your own web server. Keep the supplied folder paths intact.</p><p><a href="../pages/download.html">Get the current downloads</a> · <a href="../docs/typing-games.md">Game and vocabulary details</a> · <a href="../docs/release-notes/RELEASE_NOTES_v3.1.29.md">Release notes</a></p></section></main>
 
 <footer class="landing-footer">
   <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>&copy; 2026 DrawSplat<sup class="tm">TM</sup>. Available under AGPL-3.0-or-later.</span>
-  <a href="../index.html">Back to Start</a>
-  <a href="support.html">Support</a>
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="../pages/download.html">Download</a>
+  <a href="../blog/">Blog</a>
   <a href="../community/index.html">Community</a>
-  <a href="../legal/terms-privacy.html">Terms & Privacy</a>
-</footer><script src="../assets/js/consent-banner.js" defer></script>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script>
 </body>
 </html>
