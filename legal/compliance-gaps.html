@@ -197,12 +197,12 @@
 
     <h3>TEC 32.151–32.156 (Student Data Privacy Agreements)</h3>
     <ul class="admin-checklist">
-      <li><strong>No pre-signed master TEC DPA.</strong> The TEC chapter requires the district and the operator to have a data sharing agreement in place. DrawSplat<sup class="tm">TM</sup> is open-source software you deploy under your own control — there is no "operator" entity to countersign a DPA with. If your district's procurement office insists on a signed DPA, point them at the <a href="district-addendum.html">District Privacy Addendum</a> as the model contract language; your superintendent or board can adopt it as policy without a counterparty.</li>
+      <li><strong>District-specific TEC agreement required.</strong> Open-source licensing and the review packet do not substitute for a signed agreement. The district and provider must identify the contracting party, actual service scope, data access, and applicable obligations. See the <a href="privacy-agreements.html">DPA Register</a> for verified execution status and pending reviews.</li>
     </ul>
 
     <h3>State NDPA (Network of Data Privacy Agreements) interoperability</h3>
     <ul class="admin-checklist">
-      <li><strong>No SDPC signatory page.</strong> DrawSplat<sup class="tm">TM</sup> is not registered as an NDPA vendor on the Student Data Privacy Consortium signatory list because there is no commercial entity to sign. The <a href="ndpa-packet.html">NDPA / DPA Review Packet</a> mirrors the data points an NDPA reviewer needs, but it's not the same as being on the consortium's signatory list.</li>
+      <li><strong>Consortium listing and execution status.</strong> Open-source licensing and the review packet do not substitute for a signed agreement. The district and provider must identify the contracting party, actual service scope, data access, and applicable obligations. See the <a href="privacy-agreements.html">DPA Register</a> for verified execution status and pending reviews.</li>
     </ul>
   </section>
 
@@ -211,8 +211,8 @@
 
     <h3>Controller / processor contracting</h3>
     <ul class="admin-checklist">
-      <li><strong>No DrawSplat-to-district Data Processing Agreement (Art. 28) template.</strong> Because DrawSplat<sup class="tm">TM</sup> is open-source software you deploy under your own control, there is no operator entity to sign a processor agreement with. Article 28 obligations sit between you and your hosting provider (Google Workspace, your MySQL host) — those DPAs are unaffected by introducing DrawSplat<sup class="tm">TM</sup>.</li>
-      <li><strong>No turnkey Standard Contractual Clauses (SCCs).</strong> SCCs apply between controller and processor for international transfers. Same reason as above — they're not contracted between you and DrawSplat<sup class="tm">TM</sup>, they're between you and whoever hosts the backend.</li>
+      <li><strong>Article 28 contracting depends on the deployment.</strong> Confirm the controller, processor, hosting arrangements, and actual data access before determining which agreements are required. The review packet is not an executed processor agreement.</li>
+      <li><strong>No turnkey Standard Contractual Clauses (SCCs).</strong> Review international transfers and the actual parties involved with the district’s privacy adviser before selecting transfer terms.</li>
     </ul>
 
     <h3>Data Protection Impact Assessment (Art. 35)</h3>
@@ -268,7 +268,7 @@
     <ul class="admin-checklist">
       <li><strong>No telemetry.</strong> Nothing about user behavior is reported back to anyone. This means we cannot proactively detect misuse, generate usage analytics for your district, or surface aggregate adoption metrics. If your district wants those, you instrument them at your hosting layer.</li>
       <li><strong>No third-party JavaScript.</strong> All runtime dependencies are local files. This means we cannot use Google Analytics, Mixpanel, Sentry, etc. for error tracking — your hosting provider's logs are the source of truth.</li>
-      <li><strong>No SaaS operator to contract with.</strong> The whole project is open-source software you deploy. This means there is no entity to sign a DPA / SCC / NDPA / TEC DPA with. The model contract language documents (District Addendum, NDPA Packet) exist so your district can adopt the same language as internal policy.</li>
+      <li><strong>Identify the contracting provider and deployment.</strong> Open-source licensing and the review packet do not substitute for a signed agreement. The district and provider must identify the contracting party, actual service scope, data access, and applicable obligations. See the <a href="privacy-agreements.html">DPA Register</a> for verified execution status and pending reviews.</li>
       <li><strong>No mandatory cloud features.</strong> Browser-only mode works fully. Cloud sync, Google Drive save, MySQL backend, image approval, parent portal — all opt-in. This lets a school start without ANY data processing concerns and scale up only as policy allows.</li>
     </ul>
   </section>
