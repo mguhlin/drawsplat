@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const games = [
   'castles', 'floodfill', 'flowfree', 'funquiz', 'gilasplat', 'lightsout',
   'splatball', 'squirrel-run-game', 'super-star-trek', 'tangram',
-  'typing-games', 'untangle'
+  'untangle'
 ];
 
 for (const game of games) {
@@ -21,3 +21,6 @@ for (const game of games) {
     expect(errors).toEqual([]);
   });
 }
+
+// Typing Games is now a menu; its four independent experiences provide
+// translated instructions directly. Covered by typing-arcade.spec.js.
