@@ -65,3 +65,16 @@
   Referrer-Policy: no-referrer
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
+
+# Six-month game URL compatibility pages must recheck their expiry on every visit.
+/games/road-rally/*
+  Cache-Control: no-store
+
+/games/block-zap/*
+  Cache-Control: no-store
+
+/games/passage-coach/*
+  Cache-Control: no-store
+
+/games/paws-and-keys/*
+  Cache-Control: no-store
