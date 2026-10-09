@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** live tools updated October 8, 2026 with four independent Typing Games, TEKS vocabulary, definition-only hints, and everyday-word practice. Latest packaged release: v3.1.29; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** live tools updated October 9, 2026 with document-to-PDF imports, image exports, on-page text formatting, creative-tool improvements, and WebDeck v5. Latest packaged release: v3.1.30; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -27,7 +27,18 @@ Other docs that pair with setup:
 - [`COMPLIANCE-ROADMAP.md`](COMPLIANCE-ROADMAP.md) — every compliance day-module with its status.
 - [`docs/HANDOFF-v3.1.0.md`](docs/HANDOFF-v3.1.0.md) — portable handoff for any AI assistant (Codex, Cursor, etc.) picking up the repo; covers what shipped at v3.1.0 and known gaps.
 
-## Latest live updates — October 8, 2026
+## Latest live updates — October 9, 2026
+
+- **PDFSplat:** open supported documents and images as PDFs, place text/images/signatures where you click or tap, edit text on the page, match original text appearance, and save PNG, JPG, or WebP. Original page rotation survives export; individual pages rotate independently. Office/ebook layouts may differ after local conversion.
+- **ImageSplat:** reversible photo adjustments with presets and before/after previews.
+- **VideoSplat:** named, colored timeline markers stored with projects.
+- **AudioSplat:** read-only clip and selection analysis.
+- **ShowSplat:** searchable slide navigation and WebDeck v5 import/export, speaker notes, presenter sync, reflow, and print controls.
+- **Action controls:** icons with visible labels across the Splat tools.
+
+[Feature walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.30.md)
+
+## Previous live updates — October 8, 2026
 
 [Typing Games](https://drawsplat.org/games/typing-games/) is a menu with original hero artwork and four separate pages, each with instructions and six interface languages.
 
@@ -53,11 +64,11 @@ These features are live on drawsplat.org and in the current source. The v3.1.28 
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.29 — Four typing adventures and current downloads.** The full DrawSplat and Games packages include all four games, regular and TEKS vocabulary, language files, artwork, and passage-import dependencies. All thirteen core self-host ZIPs are refreshed from current source, with local launchers and SHA-256 checksums; ClipSplat is also available as a separate package. [Walkthrough](blog/typing-games.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.29.md) · [Stable release v3.1.29](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.29).
+**DrawSplatTM v3.1.30 — Creative tools, document imports, and WebDeck v5.** All thirteen core self-host ZIPs and the separate ClipSplat package are refreshed with current source, local launchers, and SHA-256 checksums. Applicable packages include today's editing, conversion, presentation, and labelled-icon changes, plus the existing Typing Games and whiteboard updates. [Walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.30.md) · [Stable release v3.1.30](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.30).
 
 ## Latest whiteboard: portable saving and recording recovery
 
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.29 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.30 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
 
 - **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
 - **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.

@@ -5,6 +5,7 @@ Use **Save as…** in the document toolbar to download the current document.
 | Format | Output |
 | --- | --- |
 | PDF | Edited visual pages, including images and drawings |
+| PNG / JPG / WebP | Edited visual pages at 2× resolution; one image for a single page, numbered images in a ZIP for multiple pages |
 | Markdown | Formatted text with inferred headings, emphasis, paragraphs, lists, and links (`.md`) |
 | Word | Formatted editable text or page images in an Office Open XML document (`.docx`) |
 | OpenDocument | Formatted editable text or page images in an ODF 1.3 text document (`.odt`) |

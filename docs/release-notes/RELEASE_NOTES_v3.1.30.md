@@ -1,0 +1,16 @@
+# DrawSplat v3.1.30 — Creative tools, document imports, and WebDeck v5
+
+October 9, 2026.
+
+- **ImageSplat:** reversible brightness, contrast, saturation, and warmth adjustments; presets and before/after preview. Apply updates the selected image layer; Undo restores its original pixels.
+- **PDFSplat:** click/tap placement for text, pictures, and signatures; on-page text editing with bold, italic, and left/center/right alignment; replacement text inherits detected color, background, and the closest font appearance. Export uses the nearest standard PDF font for custom embedded fonts. Interface translations cover the new controls without translating document content.
+- **PDF pages:** original per-page rotation is preserved during export, including page two. Rotate a selected page or group without changing other pages. Tool search exposes existing actions.
+- **Open file:** PDFs open directly. DOCX, PPTX, EPUB, Markdown, TXT, and browser-decodable images convert locally; multiple files combine in order. Failed imports leave the open document intact. DOCX/EPUB reflow text and images; PPTX becomes slide images. Complex layouts, themes, charts, and styling may differ. Linked Markdown/ebook images are not downloaded; encrypted ebooks and old DOC/PPT are unsupported. Converted inputs are limited to 50 MB each; batches accept 20 files totaling 100 MB.
+- **Save as:** PNG, JPG, and WebP include edits, crop, and rotation. Single pages download as images; multiple pages download as numbered images in a ZIP. The selected-page PNG tool retains its existing behavior.
+- **VideoSplat:** named, colored timeline markers; edit times/labels, jump to previous/next, click ruler markers, and save them in projects. Markers do not alter video exports.
+- **AudioSplat:** Clip → Analyze audio reports whole-clip or selected-range duration, sample rate, channels, peak, RMS, DC offset, and full-scale samples. Analysis is read-only and does not measure LUFS or reconstruct true peak.
+- **ShowSplat:** searchable slide titles, content, tables, imported HTML, and notes; slide organization and hidden-slide navigation; self-contained WebDeck v5 import/export with notes, reflow, print, presenter sync, notes sizing, and close controls. Canonical linked framework styles, multiple inline styles, and complete canonical footers survive import. HTML content remains sanitized; relative external assets require resolvable URLs or embedded data. The runtime is bundled; web fonts and external media still need internet.
+- **Across the tools:** icons retain visible action labels, keyboard behavior, and app-owned commands. Existing native icons stay in place.
+- **Downloads:** thirteen core packages and the separate ClipSplat ZIP are rebuilt from the current source. Full DrawSplat and Tools include ImageSplat and ClipSplat; ShowSplat is available in the SplatWorks suite or its standalone package. Dedicated CipherSplat offline output is refreshed. Existing releases remain available.
+
+Whiteboard v3.1.12 and individual app versions remain independent of this package version. Extract entire ZIPs, preserve folder paths, and use the included launchers where required. Speech-model downloads, Google authorization, and browser recording permissions retain their existing requirements.

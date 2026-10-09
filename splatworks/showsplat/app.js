@@ -1801,8 +1801,9 @@
     const sourceSlides = extractAnyWebDeckSlides(html);
     if (!sourceSlides.length) throw new Error('No WebDeck slides found.');
     const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-    const importedCss = styleMatch ? styleMatch[1] : '';
+    const sourceDocument = new DOMParser().parseFromString(html, 'text/html');
+    const linkedFramework = [...sourceDocument.querySelectorAll('link[rel="stylesheet"]')].some(link => /(?:^|\/)deck-framework\.css(?:[?#]|$)/i.test(link.getAttribute('href') || ''));
+    const importedCss = (linkedFramework ? window.WEBDECK_FRAMEWORK?.css || '' : '') + '\n' + [...sourceDocument.querySelectorAll('style')].map(style => style.textContent).join('\n');
     const resolvedBaseUrl = baseUrl || extractBaseUrl(html);
     const fallbackTitle = (fileName || 'Imported WebDeck').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
     const importedSlides = sourceSlides.map((source, index) => webDeckSlideToShowSplatSlide(source, importedCss, index, resolvedBaseUrl));
@@ -1821,7 +1822,7 @@
     const sourceClasses = String(source.classes || source.bg || '');
     const bg = /\b(hero|section|cover|divider)\b/.test(sourceClasses) ? 'section' : /\bdark\b/.test(sourceClasses) ? 'dark' : 'light';
     const textColor = bg === 'light' ? '#1f2937' : '#ffffff';
-    const footerInfo = extractImportedFooter(source.html);
+    const footerInfo = source.staticFooter ? {hasFooter: false, html: source.html, text: '', background: '', color: ''} : extractImportedFooter(source.html);
     const importedClasses = sourceClasses.replace(/\b(current|active|slide)\b/g, '').trim();
     const html = enhanceImportedContrast(
       sanitizeImportedHtml(footerInfo.html || '<h1>' + escapeHtml(source.title || 'Slide') + '</h1>', baseUrl),
@@ -1905,7 +1906,8 @@
       const footer = copy.querySelector('.slide-footer');
       const heading = copy.querySelector('h1,h2,h3,.slide-title');
       const title = (heading?.textContent || 'Slide ' + (index + 1)).trim();
-      const noteText = (notes?.textContent || '').trim();
+      const noteParagraphs = notes ? [...notes.querySelectorAll('p')] : [];
+      const noteText = noteParagraphs.length ? noteParagraphs.map(p => p.textContent.trim()).join('\n\n') : (notes?.textContent || '').trim();
       notes?.remove();
       return {
         title,
@@ -2796,6 +2798,7 @@
       const trimmed = part.trim();
       if (!trimmed || /^(html|body|#deck|\.navbar|\.progress|\.notes-panel|\.help-panel|\.presenter)/.test(trimmed)) return '';
       if (trimmed === ':root') return '.imported-webdeck-slide';
+      if (/^\.(cover|divider)(?:[.:#\s]|$)/.test(trimmed)) return '.imported-webdeck-slide' + trimmed;
       if (/^\.slide(?:[.:#\s]|$)/.test(trimmed)) return trimmed.replace(/^\.slide/, '.imported-webdeck-slide');
       return '.imported-webdeck-slide ' + trimmed;
     }).filter(Boolean).join(',');
@@ -2819,6 +2822,7 @@
       const scoped = scopeSelector(prelude);
       if (scoped) out.push(scoped + '{' + src.slice(bodyStart + 1, i - 1).trim() + '}');
     }
+    out.push('.imported-webdeck-slide .slide-body > *{opacity:1!important;transform:none!important;animation:none!important;}');
     return out.join('\n');
   }
 
@@ -2853,7 +2857,7 @@
     const sections = exportSlides.map((slide, index) => buildFrameworkSlide(slide, index, exportSlides.length)).join('');
     const globalAudio = deck.globalAudio?.src ? '<audio class="global-audio no-advance" src="' + escapeAttr(deck.globalAudio.src) + '" controls loop preload="metadata"></audio>' : '';
     const fontLink = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">';
-    return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title>' + fontLink + '<style>' +
+    return '<!doctype html><html lang="en"><head><!-- Built with Web Deck v5 — https://mguhlin.github.io/webdecks/ · Developed by Miguel Guhlin - mguhlin.org · MIT --><meta name="generator" content="Web Deck v5 (https://mguhlin.github.io/webdecks/) — developed by Miguel Guhlin - mguhlin.org"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(deck.title) + '</title>' + fontLink + '<style>' +
       fw.css + showSplatObjectCss() + webDeckPasswordCss() + importedCssForDeck() +
       '</style></head><body data-locked="' + (passwordHash ? 'true' : 'false') + '"><div id="lock"></div><div class="deck">' + sections + '</div>' + globalAudio +
       '<script>' + webDeckPasswordJs(passwordHash) + fw.js + '<\/script></body></html>';

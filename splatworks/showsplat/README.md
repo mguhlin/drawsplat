@@ -1,8 +1,10 @@
 # ShowSplatTM
 
+Latest suite package: **v3.1.30**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.30.md). App versions remain independent of the suite release.
+
 ShowSplatTM is the SplatWorksTM presentation and WebDeck authoring app.
 
-The first implementation is a static browser app with:
+This static browser app includes:
 
 - slide thumbnails on the left
 - 16:9 editable slide canvas
@@ -121,3 +123,9 @@ The project copy points Exit to ShowSplat and gives the next-slide preview a
 separate DOM id from the next-navigation button so previews and navigation
 both work. These adaptations preserve the v5 public keyboard map and controls.
 The upstream MIT license is included in `webdeck-framework.LICENSE.txt`.
+
+### WebDeck v5 compatibility
+
+Import the canonical v5 HTML structure or export a self-contained v5 HTML file. Linked `deck-framework.css` is supplied from the bundled reference runtime; all inline style blocks are retained and scoped, canonical slide footers are preserved, and notes stay editable. Exports include framework attribution in the HTML head, plus presenter notes sizing, close controls, synchronized previews, reflow, and print/PDF rules. Relative image/media assets need a resolvable base URL or data URLs; a lone HTML file cannot provide sibling files from disk. Imported scripts are not executed, and arbitrary custom scripted widgets are not preserved. Review custom CSS layouts after import.
+
+Reference: https://mguhlin.github.io/webdecks/. Test with `npx playwright test -c splatworks/showsplat/playwright.config.js`.

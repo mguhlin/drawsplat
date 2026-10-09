@@ -1,5 +1,7 @@
 # AudioSplat
 
+Latest suite package: **v3.1.30**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.30.md). App versions remain independent of the suite release.
+
 AudioSplat is DrawSplat's browser-based multitrack audio recorder and editor.
 Recording, editing, effects, autosave, project files, and audio export are
 processed locally; no account or backend is required. A user may explicitly

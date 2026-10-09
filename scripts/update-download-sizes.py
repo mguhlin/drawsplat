@@ -27,12 +27,12 @@ def replace(match):
     return f'<small class="download-size" data-package="{filename}">{label}</small>'
 
 updated = re.sub(r'<small class="download-size" data-package="([^"]+)">[^<]*</small>', replace, html)
-if count != 14:
-    raise ValueError(f'Expected 14 package sizes, found {count}')
+if count != 15:
+    raise ValueError(f'Expected 15 package sizes, found {count}')
 if args.check:
     if updated != html:
         raise SystemExit('Download sizes differ from the measured packages; regenerate them.')
-    print('All 14 displayed ZIP and unpacked sizes match the measured packages.')
+    print('All 15 displayed ZIP and unpacked sizes match the measured packages.')
 else:
     page.write_text(updated)
-    print('Updated all 14 package sizes (decimal MB, rounded to one decimal place).')
+    print('Updated all 15 package sizes (decimal MB, rounded to one decimal place).')

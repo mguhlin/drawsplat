@@ -1,5 +1,7 @@
 /* ============================================================
    Web Deck Framework (v5): navigation, presenter view, sync, print
+   Developed by Miguel Guhlin - mguhlin.org · https://mguhlin.github.io/webdecks/
+   Free to use (MIT). This header is attribution only; it never renders on a slide.
    No dependencies. Include once per deck, after the slides.
    Two-monitor use: press V (or the 🖥 button) to open the
    presenter window on your laptop; drag the main window to the
@@ -50,7 +52,7 @@
   var npHead = el('div', { class: 'np-head' });
   var npTitle = document.createElement('span'); npTitle.textContent = 'Speaker Notes';
   var npSlide = el('span', { class: 'np-slide' });
-  npHead.appendChild(npTitle); npHead.appendChild(npSlide);
+  var npClose=el('button',{class:'np-close',title:'Close notes (S or Esc)','aria-label':'Close notes'});npClose.innerHTML='×';npClose.addEventListener('click',function(ev){ev.stopPropagation();notesPanel.classList.remove('open');});npHead.appendChild(npTitle); npHead.appendChild(npSlide); npHead.appendChild(npClose);
   var npBody = el('div', { class: 'np-body' });
   notesPanel.appendChild(npHead); notesPanel.appendChild(npBody);
 
@@ -132,6 +134,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (help.classList.contains('open')) { help.classList.remove('open'); return; }
+    if (e.key === 'Escape' && notesPanel.classList.contains('open')) { notesPanel.classList.remove('open'); return; }
     switch (e.key) {
       case 'ArrowRight': case ' ': case 'PageDown': next(); e.preventDefault(); break;
       case 'ArrowLeft': case 'PageUp': prev(); e.preventDefault(); break;
@@ -185,6 +188,7 @@
           '<span class="pv-timer" id="pvTimer" title="Click to pause or resume">00:00</span>' +
           '<button class="pv-btn" id="pvReset">Reset timer</button>' +
           '<span class="pv-clock" id="pvClock">--:--</span>' +
+          '<button class="pv-btn pv-close" id="pvClose" title="Close presenter window (Esc)">✕ Close</button>' +
         '</div>' +
       '</div>' +
       '<div class="pv-main">' +
@@ -267,6 +271,7 @@
         case 'ArrowLeft': case 'PageUp': goto(pIdx - 1); e.preventDefault(); break;
         case 'Home': goto(0); break;
         case 'End': goto(TOTAL - 1); break;
+        case 'Escape': window.close(); break;
         case 't': case 'T': resetTimer(); break;
         case '+': case '=': bumpNotes(0.1); e.preventDefault(); break;
         case '-': case '_': bumpNotes(-0.1); e.preventDefault(); break;
@@ -291,6 +296,7 @@
     function resetTimer() { elapsed = 0; elTimer.textContent = '00:00'; }
     elTimer.onclick = function () { running = !running; elTimer.classList.toggle('paused', !running); };
     document.getElementById('pvReset').onclick = resetTimer;
+    var pvCloseBtn = document.getElementById('pvClose'); if (pvCloseBtn) pvCloseBtn.onclick = function () { window.close(); };
     setInterval(tick, 1000); tick();
     render();
   }

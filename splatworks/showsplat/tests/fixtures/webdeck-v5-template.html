@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- ===================================================================
+     Built with Web Deck v5 — a free, self-contained HTML slide system.
+     https://mguhlin.github.io/webdecks/  ·  Developed by Miguel Guhlin - mguhlin.org
+     MIT licensed. This notice is attribution only and never renders on a slide.
+     Replace every "Facilitator: Name", footer, URL, and all slide content with
+     your own — this is your deck, under your name.
+     =================================================================== -->
+<meta charset="UTF-8">
+<meta name="generator" content="Web Deck v5 (https://mguhlin.github.io/webdecks/) — developed by Miguel Guhlin - mguhlin.org">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template Deck | Web Deck v5</title>
+<meta name="description" content="Starter template for the Web Deck v5 system. Copy into a project's decks/ folder and replace the slides.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Default (reference) fonts. Swap these + the :root block below to re-skin per project (spec §1.1). -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck-framework.css">
+<style>
+  /* ---- Per-project skin + deck-local one-offs go here (spec §1.1, §4) ----
+     Example re-skin (uncomment and edit):
+     :root{
+       --navy:#0A3476; --navy-md:#12428f; --steel:#12428f;
+       --gold:#FCB040; --gold-lt:#fdd17a;
+       --font-display:"DM Serif Display", Georgia, serif;
+       --font-body:"DM Sans", system-ui, sans-serif;
+     }
+  */
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1 · COVER (title slide; exit icon is hidden here) -->
+  <section class="slide cover current">
+    <div class="slide-body">
+      <div class="cover-eyebrow">Event or series name</div>
+      <h1>Your Deck Title</h1>
+      <div class="subtitle">A one-line italic subtitle that frames the session.</div>
+      <div class="meta"><strong>Facilitator:</strong> Name<br>project.url</div>
+    </div>
+    <div class="slide-footer">
+      <span class="brand"><span class="star">✦</span> Brand</span>
+      <span class="fac">Facilitator: Name</span>
+      <span class="url">project.url</span>
+    </div>
+    <div class="notes"><p>Teleprompter notes for the cover. First person, conversational, about ninety to a hundred and thirty words. Say who you are, why the audience belongs here, and the one question the session answers. End by cueing the transition to the first section. Keep it to what you will actually say out loud, with no stage directions.</p></div>
+  </section>
+
+  <!-- 2 · DIVIDER (opens a section; oversized ghost numeral) -->
+  <section class="slide divider">
+    <div class="slide-body">
+      <div class="seg-num">1</div>
+      <div class="divider-eyebrow">Segment One · about 20 minutes</div>
+      <h1>Section Title</h1>
+      <div class="subtitle">One line that says what this section is about.</div>
+    </div>
+    <div class="slide-footer">
+      <span class="brand"><span class="star">✦</span> Brand</span>
+      <span class="fac">Facilitator: Name</span>
+      <span class="url">project.url</span>
+    </div>
+    <div class="notes"><p>Notes for the divider. Set up the section in a sentence or two, name what you want the room thinking about, and hand off to the first content slide. Teleprompter voice, no meta-remarks.</p></div>
+  </section>
+
+  <!-- 3 · CONTENT (kicker + title + blocks) -->
+  <section class="slide">
+    <div class="slide-body">
+      <div class="slide-kicker">Small tracked label</div>
+      <h2 class="slide-title">A clear, single-line headline</h2>
+      <p class="lead">An optional lead sentence that frames the three points below.</p>
+      <ul class="bullets">
+        <li>First point, a short phrase with <strong>one emphasis</strong>.</li>
+        <li>Second point, kept to a single line.</li>
+        <li>Third point; push full sentences into the notes.</li>
+      </ul>
+    </div>
+    <div class="slide-footer">
+      <span class="brand"><span class="star">✦</span> Brand</span>
+      <span class="fac">Facilitator: Name</span>
+      <span class="url">project.url</span>
+    </div>
+    <div class="notes"><p>Notes for the content slide carry the real talk track. Expand each bullet into what you will say, flag what to watch for in the room, and lead into the next slide. Aim for ninety to a hundred and thirty words, first person, no em dashes.</p></div>
+  </section>
+
+  <!-- 4 · CONTENT with cards + a next-step link -->
+  <section class="slide">
+    <div class="slide-body">
+      <div class="slide-kicker">Another label</div>
+      <h2 class="slide-title">Three ideas, three cards</h2>
+      <div class="grid cols-3">
+        <div class="card gold"><h3><span class="ico">①</span>First</h3><p>One or two lines of supporting detail.</p></div>
+        <div class="card gold"><h3><span class="ico">②</span>Second</h3><p>One or two lines of supporting detail.</p></div>
+        <div class="card gold"><h3><span class="ico">③</span>Third</h3><p>One or two lines of supporting detail.</p></div>
+      </div>
+      <div class="next-step no-advance">
+        <span class="ns-label">Do this next</span>
+        <a href="#" target="_blank" rel="noopener">Open the resource <span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="brand"><span class="star">✦</span> Brand</span>
+      <span class="fac">Facilitator: Name</span>
+      <span class="url">project.url</span>
+    </div>
+    <div class="notes"><p>Notes for the cards slide. Walk each card in a sentence, then point the room at the next step. Remember the next-step link carries <code>no-advance</code> and opens in a new tab so the projector stays put.</p></div>
+  </section>
+
+  <!-- 5 · CLOSE / reflect -->
+  <section class="slide">
+    <div class="slide-body">
+      <div class="slide-kicker">Take it with you</div>
+      <h2 class="slide-title">Where to go next</h2>
+      <p class="lead">Close with the one action you want each person to take.</p>
+      <div class="reflect"><span>💬</span><p><strong>One commitment.</strong> Name the single thing you will do first.</p></div>
+    </div>
+    <div class="slide-footer">
+      <span class="brand"><span class="star">✦</span> Brand</span>
+      <span class="fac">Facilitator: Name</span>
+      <span class="url">project.url</span>
+    </div>
+    <div class="notes"><p>Closing notes. Restate the through-line in a sentence, make the ask concrete, and thank the room. End on the commitment prompt so people leave with one next action, not a summary.</p></div>
+  </section>
+
+</div>
+<script src="../assets/deck-framework.js"></script>
+</body>
+</html>

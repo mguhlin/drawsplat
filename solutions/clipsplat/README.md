@@ -1,5 +1,7 @@
 # ClipSplat™
 
+Latest suite package: **v3.1.30**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.30.md). App versions remain independent of the suite release.
+
 A focused, private short-video recorder for Instagram: camera or local import → trim and cut → opening/closing panels → MP4. No account or Instagram API is required. Upload the resulting file manually, or use your device's share sheet when available.
 
 | Preset | Output | ClipSplat duration limit, including panels |

@@ -1,5 +1,7 @@
 /* ============================================================
    Web Deck Framework (v5)  —  editorial, blue-and-silver reference skin.
+   Developed by Miguel Guhlin - mguhlin.org · https://mguhlin.github.io/webdecks/
+   Free to use (MIT). This header is attribution only; it never renders on a slide.
    Default: Fraunces + Libre Franklin + IBM Plex Mono. Re-skin per project via :root.
    Shared by every deck. Class names preserved.
    ============================================================ */
@@ -299,6 +301,8 @@ a.inline:hover { text-decoration-color: var(--navy); }
 #notesPanel.open { transform: translateY(0); }
 #notesPanel .np-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-lt); }
 #notesPanel .np-head .np-slide { color: #8FA6C8; letter-spacing: .04em; text-transform: none; font-weight: 500; }
+#notesPanel .np-head .np-close { margin-left: auto; cursor: pointer; background: transparent; border: 1px solid rgba(231,238,251,.28); color: #E7EEFB; width: 26px; height: 26px; border-radius: 7px; font-size: 20px; line-height: 1; display: flex; align-items: center; justify-content: center; letter-spacing: 0; padding: 0; font-weight: 400; transition: background .15s, border-color .15s; }
+#notesPanel .np-head .np-close:hover { background: rgba(231,238,251,.12); border-color: var(--gold-lt); color: #fff; }
 #notesPanel .np-body { font-family: var(--font-display); font-size: 18px; line-height: 1.6; max-width: 92ch; font-weight: 400; }
 #notesPanel .np-body p { margin-bottom: 11px; }
 
@@ -385,6 +389,8 @@ body.presenter-mode .slide.current .slide-body > * { animation: none !important;
 .pv-timer { font-family: var(--font-mono); font-size: 30px; font-weight: 500; color: #F4F8FE; letter-spacing: .02em; cursor: pointer; }
 .pv-timer.paused { color: #8093B4; }
 .pv-clock { font-family: var(--font-mono); font-size: 15px; color: #8FA6C8; }
+.pv-close { margin-left: 6px; }
+.pv-close:hover { background: #E0566B; color: #fff; border-color: #E0566B; }
 
 .pv-main { flex: 1; display: grid; grid-template-columns: 1.55fr 1fr; gap: 22px; padding: 22px; min-height: 0; }
 .pv-main > * { min-width: 0; }

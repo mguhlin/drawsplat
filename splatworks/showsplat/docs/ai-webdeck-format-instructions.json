@@ -77,19 +77,40 @@
   },
   "element_types": {
     "text": {
-      "required": ["type", "text", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "text",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "text": "Plain editable text. Use newline characters for line breaks."
       }
     },
     "list": {
-      "required": ["type", "text", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "text",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "text": "One bullet item per line. Do not include bullet characters unless they are part of the content."
       }
     },
     "image": {
-      "required": ["type", "src", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "src",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "src": "Prefer a base64 data URI for portable decks. URLs are acceptable when the user expects online media.",
         "alt": "Accessible description",
@@ -99,40 +120,83 @@
       }
     },
     "youtube": {
-      "required": ["type", "src", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "src",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "src": "Use https://www.youtube-nocookie.com/embed/VIDEO_ID",
         "title": "Video title"
       }
     },
     "video": {
-      "required": ["type", "src", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "src",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "src": "MP4/WebM data URI or URL",
         "title": "Video title"
       }
     },
     "audio": {
-      "required": ["type", "src", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "src",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "src": "MP3/OGG/WAV/WebM data URI or URL",
         "title": "Audio title"
       }
     },
     "table": {
-      "required": ["type", "rows", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "rows",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "rows": "Two-dimensional array of cell strings."
       }
     },
     "link": {
-      "required": ["type", "text", "href", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "text",
+        "href",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "href": "URL. Links should open in a new tab when exported."
       }
     },
     "html": {
-      "required": ["type", "html", "x", "y", "w", "h"],
+      "required": [
+        "type",
+        "html",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "fields": {
         "html": "Editable imported WebDeck markup. Avoid scripts, event handlers, external CSS, object/embed tags, and javascript: URLs."
       },
@@ -158,7 +222,11 @@
     "voice": "First person, as if the presenter is speaking aloud.",
     "length": "Roughly 90 to 130 words when the slide has enough substance.",
     "structure": "Orient the listener to the slide, explain why it matters, then transition to the next idea.",
-    "avoid": ["stage directions", "generic hype", "assuming audience emotions"]
+    "avoid": [
+      "stage directions",
+      "generic hype",
+      "assuming audience emotions"
+    ]
   },
   "webdeck_html_contract": {
     "required": [
@@ -175,7 +243,9 @@
       "Hash deep links such as #5",
       "Responsive layout down to phone widths"
     ],
-    "allowed_external_requests": ["Google Fonts only, unless the user explicitly asks for online media"],
+    "allowed_external_requests": [
+      "Google Fonts only, unless the user explicitly asks for online media"
+    ],
     "security": [
       "Do not include arbitrary remote scripts.",
       "Do not include inline event handlers such as onclick.",
@@ -183,7 +253,7 @@
       "Open links with rel=\"noopener\"."
     ]
   },
-  "ai_prompt_template": "Create a ShowSplat-compatible slide deck from the material below. Prefer .showsplat.json if I need to edit it in ShowSplat; otherwise produce a self-contained WebDeck HTML file. If producing HTML, use a JavaScript array named SLIDES where each slide has bg, title, html, and notes. If producing ShowSplat JSON, use version 1, 1600x900 placement coordinates, editable text/list/table/image/video/audio objects, and first-person speaker notes. Keep text editable whenever possible, avoid text-box scrollbars, use accessible alt text, and keep media embedded as data URIs when the deck must work offline. Material: [PASTE CONTENT HERE]",
+  "ai_prompt_template": "Create a ShowSplat-compatible slide deck from the material below. Prefer .showsplat.json if I need to edit it in ShowSplat; otherwise produce a self-contained WebDeck HTML file. If producing HTML, use the canonical WebDeck v5 static section.slide structure, sibling slide-footer, and .notes, with embedded v5 runtime and head attribution. Legacy SLIDES arrays are also accepted. If producing ShowSplat JSON, use version 1, 1600x900 placement coordinates, editable text/list/table/image/video/audio objects, and first-person speaker notes. Keep text editable whenever possible, avoid text-box scrollbars, use accessible alt text, and keep media embedded as data URIs when the deck must work offline. Material: [PASTE CONTENT HERE]",
   "minimal_legacy_webdeck_example": {
     "SLIDES": [
       {
@@ -237,5 +307,16 @@
         ]
       }
     ]
+  },
+  "webdeck_v5": {
+    "reference": "https://mguhlin.github.io/webdecks/",
+    "canvas": {
+      "width": 1280,
+      "height": 720
+    },
+    "structure": "Use a .deck container with section.slide children, slide-body, sibling slide-footer, and .notes paragraphs. Export/import supports canonical v5 HTML; legacy SLIDES arrays remain supported.",
+    "runtime": "Embed the canonical v5 CSS and JS for a portable HTML export. Put framework attribution in the head, never on a slide.",
+    "media": "Use embedded data URLs or resolvable asset URLs. A lone HTML import cannot supply sibling files from disk.",
+    "notes": "First-person speaker notes; preserve paragraphs. The native ShowSplat editable object model uses 1600x900 coordinates, distinct from the v5 export canvas."
   }
 }
