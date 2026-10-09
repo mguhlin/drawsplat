@@ -111,3 +111,5 @@ body{position:fixed;inset:0}
 .stage{display:flex;flex-direction:column}.stage>.document-view,.stage>.drop-zone{height:auto;flex:1;min-height:0}.ink-tools,.text-format-tools,.placement-tools{flex-shrink:0}
 
 @media(max-width:800px){.text-format-tools{flex-wrap:nowrap;overflow-x:auto}.text-format-tools button{flex-shrink:0;white-space:nowrap}.text-format-tools .tool-hint{display:none}.format-divider{flex-shrink:0}}
+
+.import-notice{flex-shrink:0;padding:8px 12px;border-bottom:1px solid var(--line);background:#faf7ff;color:var(--muted);font-size:12px;max-height:70px;overflow:auto}

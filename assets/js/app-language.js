@@ -74,7 +74,7 @@ const app = script?.dataset.dsLanguage || "";
 const storesPreference = script?.dataset.dsLanguageStorage !== "none";
 const originals = new WeakMap();
 const rendered = new WeakMap();
-const pdfUI = ".topbar,.tools,#dropZone,#inkTools,#textFormatTools,#placementTools,dialog,.statusbar,.skip-link,#sidebar .panel-heading,#thumbnails span";
+const pdfUI = ".topbar,.tools,#dropZone,#importNotice,#inkTools,#textFormatTools,#placementTools,dialog,.statusbar,.skip-link,#sidebar .panel-heading,#thumbnails span";
 let current = "en";
 let observer;
 
@@ -83,6 +83,7 @@ function translateValue(value, map) {
   if (map[value]) return map[value];
   if (app === "pdfsplat") {
     const patterns = [
+      [/^(.+) converted to PDF\. (\d+) pages\.$/, "{file} converted to PDF. {count} pages.", ["file","count"]],
       [/^(.+) downloaded\.$/, "{file} downloaded.", ["file"]],
       [/^Opening (.+)…$/, "Opening {file}…", ["file"]],
       [/^Adding (.+)…$/, "Adding {file}…", ["file"]],

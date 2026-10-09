@@ -202,3 +202,11 @@ on-page editor; PDF export uses the closest Helvetica, Times, or Courier variant
 Mixed-style lines adopt their dominant run, and unusual fonts/complex backgrounds
 may need manual adjustments. Existing color, size, bold, and italic controls and
 undo remain available.
+
+### Open documents and images as PDFs
+
+Drop or choose PDF, DOCX, PPTX, EPUB, Markdown (.md/.markdown), TXT, or images. Multiple files combine into one PDF in the supplied order. Processing stays on the device; conversion does not fetch remote images or run embedded scripts. A failed conversion leaves the existing PDF open.
+
+DOCX and EPUB text and embedded images are reflowed onto A4 pages. Markdown supports headings, paragraphs, basic lists, bold, italics, and fenced code. Latin text stays searchable; characters unavailable in the PDF standard fonts use rendered image tokens. PPTX slides become page images at their original page size, with basic positioned text, fills, and pictures. Complex Office layouts, themes, charts, tables, and ebook styling may differ; review the result before sharing. This is a lightweight local importer rather than an Office rendering engine.
+
+Images use their original aspect ratio: PNG, JPEG, WebP, GIF, BMP, SVG, AVIF and ICO depend on browser decoding support. Animated images use the first frame. Large images are downsampled to a 4096-pixel maximum edge. Older DOC/PPT files, encrypted ebooks, and image formats the browser cannot decode need conversion elsewhere first. Converted inputs are limited to 50 MB each; multi-file imports accept up to 20 files totaling 100 MB. Single existing PDFs retain their original opening behavior.

@@ -7,7 +7,7 @@ select.value = supported.has(stored) ? stored : "en";
 function loadController() {
   if (document.querySelector("script[data-ds-language]")) return;
   const script = document.createElement("script");
-  script.src = "../../assets/js/app-language.js?v=20261009-pdf";
+  script.src = "../../assets/js/app-language.js?v=20261009-import";
   script.dataset.dsLanguage = "pdfsplat";
   document.body.append(script);
 }

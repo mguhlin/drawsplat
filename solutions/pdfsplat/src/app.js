@@ -1,3 +1,4 @@
+import {prepareFiles, importAccept} from "./file-import.js";
 import { textAppearance, textInkAppearance, standardTextFont } from "./text-appearance.js";
 import { setupPlacement } from "./placement.js";
 import { setupToolSearch } from "./tool-search.js";
@@ -156,10 +157,18 @@ function pagesFor(source) {
     annotations: [],
   }));
 }
-async function openFile(file) {
+let importToken = 0;
+els.fileInput.accept = importAccept;
+async function openFile(input) {
+  const files = input instanceof File ? [input] : [...(input || [])];
+  if (!files.length) return false;
+  const token = ++importToken;
   try {
-    announce(`Opening ${file?.name || "PDF"}…`);
+    const prepared = await prepareFiles(files, name => { if (token === importToken) announce(`Opening ${name}…`); });
+    if (token !== importToken) return false;
+    const file = prepared.file;
     const source = await loadSource(file);
+    if (token !== importToken) { await source.pdf.destroy(); return false; }
     for (const asset of state.assets.values()) URL.revokeObjectURL(asset.url);
     state.sources = new Map([[source.id, source]]);
     state.assets.clear();
@@ -179,9 +188,13 @@ async function openFile(file) {
     setEnabled(true);
     syncHistory();
     await renderAll();
-    announce(`${file.name} opened. ${state.pages.length} pages.`);
+    if (token !== importToken) return false;
+    const notice = $("importNotice");
+    if (notice) {notice.hidden = !prepared.notice;notice.replaceChildren(...(prepared.notice || "").split("\n").filter(Boolean).map(text => {const line = document.createElement("div");line.textContent = text;return line;}));}
+    announce(prepared.converted ? `${prepared.originalName} converted to PDF. ${state.pages.length} pages.` : `${file.name} opened. ${state.pages.length} pages.`);
     return true;
   } catch (error) {
+    if (token !== importToken) return false;
     console.error(error);
     announce(error?.name === "PasswordException" ? "This encrypted PDF needs password support not available in this release." : error.message || "The PDF could not be opened.");
   } finally {
@@ -1706,7 +1719,7 @@ els.pagesButton.onclick = () => {
     open = sidebar.classList.toggle("open");
   els.pagesButton.setAttribute("aria-expanded", String(open));
 };
-els.fileInput.onchange = (e) => openFile(e.target.files[0]);
+els.fileInput.onchange = (e) => { const files = [...e.target.files]; e.target.value = ""; void openFile(files); };
 els.mergeButton.onclick = () => els.mergeInput.click();
 els.mergeInput.onchange = (e) => mergeFile(e.target.files[0]);
 els.saveAsSelect.onchange = () => {
@@ -1897,7 +1910,7 @@ for (const name of ["dragleave", "drop"])
     e.preventDefault();
     els.dropZone.classList.remove("dragover");
   });
-els.dropZone.addEventListener("drop", (e) => openFile(e.dataTransfer.files[0]));
+els.dropZone.addEventListener("drop", (e) => openFile(e.dataTransfer.files));
 window.addEventListener("keydown", (e) => {
   const mod = e.ctrlKey || e.metaKey,
     key = e.key.toLowerCase();
