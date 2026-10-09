@@ -608,28 +608,37 @@ async function addImagePages(files) {
     announce("The image pages could not be created.");
   } finally { els.imagePagesInput.value = ""; }
 }
-async function renderPdfPageToBlob(page, scale = 2) {
+async function renderPdfPageToBlob(page, scale = 2, mime = "image/png") {
   const viewport = page.getViewport({ scale }), canvas = document.createElement("canvas");
   canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
   await page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport, background: "#ffffff" }).promise;
   return new Promise((resolve, reject) => canvas.toBlob((blob) => {
     canvas.width = canvas.height = 0;
-    blob ? resolve(blob) : reject(Error("Image export failed."));
-  }, "image/png"));
+    blob && blob.type === mime ? resolve(blob) : reject(Error("Image export failed."));
+  }, mime, 0.92));
 }
-async function exportPageImages() {
+async function exportPageImages(format = "png", indexes = selectedPageIndexes()) {
+  let document;
+  const mime = {png: "image/png", jpg: "image/jpeg", webp: "image/webp"}[format];
+  if (!mime || !indexes.length) return;
+  els.saveAsSelect.disabled = els.exportImagesButton.disabled = true;
+  announce("Exporting page images…");
   try {
-    const indexes = selectedPageIndexes(), bytes = await buildPdf(indexes.map((index) => state.pages[index])), document = await pdfjs.getDocument({ data: bytes.slice() }).promise, base = state.fileName.replace(/\.pdf$/i, "");
-    announce(`Rendering ${document.numPages} page(s) as PNG…`);
-    if (document.numPages === 1) downloadBytes(await renderPdfPageToBlob(await document.getPage(1)), `${base}-page-${indexes[0] + 1}.png`, "image/png");
+    const bytes = await buildPdf(indexes.map((index) => state.pages[index])), base = state.fileName.replace(/\.pdf$/i, "");
+    document = await pdfjs.getDocument({ data: bytes.slice() }).promise;
+    const image = async number => renderPdfPageToBlob(await document.getPage(number), 2, mime);
+    if (document.numPages === 1) downloadBytes(await image(1), `${base}-page-${indexes[0] + 1}.${format}`, mime);
     else {
       const zip = new globalThis.JSZip();
-      for (let number = 1; number <= document.numPages; number++) zip.file(`page-${indexes[number - 1] + 1}.png`, await renderPdfPageToBlob(await document.getPage(number)));
+      for (let number = 1; number <= document.numPages; number++) zip.file(`page-${indexes[number - 1] + 1}.${format}`, await image(number));
       downloadBytes(await zip.generateAsync({ type: "blob", compression: "DEFLATE" }), `${base}-images.zip`, "application/zip");
     }
-    await document.destroy();
     announce(`${indexes.length} page image(s) downloaded.`);
   } catch (error) { console.error(error); announce("Page image export failed."); }
+  finally {
+    await document?.destroy();
+    els.saveAsSelect.disabled = els.exportImagesButton.disabled = !state.pages.length;
+  }
 }
 async function removeBlankPages() {
   announce("Checking pages for blank content…");
@@ -1726,6 +1735,7 @@ els.saveAsSelect.onchange = () => {
   const format = els.saveAsSelect.value;
   els.saveAsSelect.value = "";
   if (format === "pdf") void exportPdf();
+  else if (["png", "jpg", "webp"].includes(format)) void exportPageImages(format, state.pages.map((_, index) => index));
   else if (format === "epub") openEpubDialog();
   else if (formats[format]) openTextSaveDialog(format);
 };
@@ -1802,7 +1812,7 @@ els.reversePagesButton.onclick = reversePages;
 els.blankPageButton.onclick = insertBlankPage;
 els.imagePagesButton.onclick = () => els.imagePagesInput.click();
 els.imagePagesInput.onchange = (e) => addImagePages(e.target.files);
-els.exportImagesButton.onclick = exportPageImages;
+els.exportImagesButton.onclick = () => exportPageImages();
 els.removeBlankPagesButton.onclick = removeBlankPages;
 els.decorateButton.onclick = () => { els.headerText.value = ""; els.footerText.value = "Page {page} of {pages}"; els.decorateDialog.showModal(); els.headerText.focus(); };
 els.decorateForm.onsubmit = applyDecorations;

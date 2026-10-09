@@ -255,7 +255,8 @@ window.DrawSplatPdfStrings = {
     "Choose files totaling less than 100 MB.": "Elige archivos que sumen menos de 100 MB.",
     "Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.": "Formato no compatible. Elige PDF, DOCX, PPTX, EPUB, Markdown, TXT o una imagen. No se admiten DOC/PPT antiguos ni libros cifrados.",
     "This document could not be read. It may be damaged or encrypted.": "No se pudo leer el documento. Puede estar dañado o cifrado.",
-    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "Elige un PDF o documento compatible, suelta archivos aquí o escanea papel y fotos en un documento nuevo."
+    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "Elige un PDF o documento compatible, suelta archivos aquí o escanea papel y fotos en un documento nuevo.",
+    "Exporting page images…": "Exportando imágenes de páginas…"
   },
   "vi": {
     "Save as…": "Lưu thành…",
@@ -512,7 +513,8 @@ window.DrawSplatPdfStrings = {
     "Choose files totaling less than 100 MB.": "Chọn tệp có tổng dung lượng dưới 100 MB.",
     "Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.": "Định dạng không hỗ trợ. Chọn PDF, DOCX, PPTX, EPUB, Markdown, TXT hoặc ảnh. Không hỗ trợ DOC/PPT cũ và sách mã hóa.",
     "This document could not be read. It may be damaged or encrypted.": "Không đọc được tài liệu. Tệp có thể hỏng hoặc được mã hóa.",
-    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "Chọn PDF hoặc tài liệu được hỗ trợ, thả tệp vào đây, hoặc quét giấy và ảnh thành tài liệu mới."
+    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "Chọn PDF hoặc tài liệu được hỗ trợ, thả tệp vào đây, hoặc quét giấy và ảnh thành tài liệu mới.",
+    "Exporting page images…": "Đang xuất ảnh trang…"
   },
   "ar": {
     "Save as…": "حفظ باسم…",
@@ -769,7 +771,8 @@ window.DrawSplatPdfStrings = {
     "Choose files totaling less than 100 MB.": "اختر ملفات مجموعها أقل من 100 MB.",
     "Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.": "تنسيق غير مدعوم. اختر PDF أو DOCX أو PPTX أو EPUB أو Markdown أو TXT أو صورة. لا تُدعم DOC/PPT القديمة والكتب المشفرة.",
     "This document could not be read. It may be damaged or encrypted.": "تعذرت قراءة المستند. قد يكون تالفًا أو مشفرًا.",
-    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "اختر PDF أو مستندًا مدعومًا، أو أفلت ملفات هنا، أو امسح الورق والصور في مستند جديد."
+    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "اختر PDF أو مستندًا مدعومًا، أو أفلت ملفات هنا، أو امسح الورق والصور في مستند جديد.",
+    "Exporting page images…": "جارٍ تصدير صور الصفحات…"
   },
   "zh": {
     "Save as…": "另存为…",
@@ -1026,7 +1029,8 @@ window.DrawSplatPdfStrings = {
     "Choose files totaling less than 100 MB.": "请选择总大小小于 100 MB 的文件。",
     "Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.": "不支持此格式。请选择 PDF、DOCX、PPTX、EPUB、Markdown、TXT 或图片。不支持旧版 DOC/PPT 和加密电子书。",
     "This document could not be read. It may be damaged or encrypted.": "无法读取文档。文件可能已损坏或加密。",
-    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "选择 PDF 或支持的文档，将文件拖到这里，或扫描纸张和照片为新文档。"
+    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "选择 PDF 或支持的文档，将文件拖到这里，或扫描纸张和照片为新文档。",
+    "Exporting page images…": "正在导出页面图片…"
   },
   "uh": {
     "Save as…": "इस रूप में सहेजें / محفوظ کریں…",
@@ -1283,6 +1287,7 @@ window.DrawSplatPdfStrings = {
     "Choose files totaling less than 100 MB.": "कुल 100 MB से कम फ़ाइलें चुनें। / کل 100 MB سے کم فائلیں چنیں۔",
     "Unsupported format. Choose PDF, DOCX, PPTX, EPUB, Markdown, TXT, or an image. Older DOC/PPT and encrypted ebooks are not supported.": "PDF, DOCX, PPTX, EPUB, Markdown, TXT या चित्र चुनें। पुराने DOC/PPT और एन्क्रिप्टेड किताब समर्थित नहीं। / PDF, DOCX, PPTX, EPUB, Markdown, TXT یا تصویر چنیں۔ پرانے DOC/PPT اور خفیہ کتاب معاون نہیں۔",
     "This document could not be read. It may be damaged or encrypted.": "दस्तावेज़ नहीं पढ़ा गया। क्षतिग्रस्त या एन्क्रिप्टेड हो सकता है। / دستاویز پڑھی نہیں گئی۔ خراب یا خفیہ ہوسکتی ہے۔",
-    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "PDF या समर्थित दस्तावेज़ चुनें, फ़ाइलें डालें या कागज़ और चित्र स्कैन करें। / PDF یا معاون دستاویز چنیں، فائلیں ڈالیں یا کاغذ اور تصاویر اسکین کریں۔"
+    "Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.": "PDF या समर्थित दस्तावेज़ चुनें, फ़ाइलें डालें या कागज़ और चित्र स्कैन करें। / PDF یا معاون دستاویز چنیں، فائلیں ڈالیں یا کاغذ اور تصاویر اسکین کریں۔",
+    "Exporting page images…": "पृष्ठ चित्र निर्यात… / صفحے کی تصاویر برآمد…"
   }
 };
