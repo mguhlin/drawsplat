@@ -850,12 +850,17 @@ function updateTextFormatTools() {
 function changeTextFormat(property, value) {
   const object = selectedObject();
   if (object?.type !== 'text') return;
+  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
   if (inlineEdit) { commit(inlineEdit.before, 'Edit text'); inlineEdit.before = snapshot(); }
+  if (object.cover && node?.dataset.before) {
+    syncSize(node, object);
+    commit(node.dataset.before, 'Edit replacement text');
+  }
   mutate(property === 'align' ? 'Align text' : property === 'bold' ? 'Bold text' : 'Italic text', () => {
     object[property] = value ?? !object[property];
   });
-  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
   if (node) applyTextStyles(node, object);
+  if (object.cover && node) node.dataset.before = snapshot();
   if (inlineEdit) inlineEdit.before = snapshot();
   updateTextFormatTools();
 }
