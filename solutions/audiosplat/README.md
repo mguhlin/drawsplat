@@ -93,3 +93,19 @@ bundled whisper.cpp engine, with no model download or upload. Models may be up t
 2 GB; Medium needs substantial memory and can take much longer than the recording. Smaller or quantized
 models are more suitable for limited devices. Reselect the model after reopening
 to resume saved progress. GGUF/ONNX files are not supported by this option.
+
+## Analyze audio
+
+Select a clip and choose **Clip → Analyze audio**. Drag across its waveform first
+to analyze only that range. The report shows duration, decoded sample rate,
+channel count, and each channel's sample peak, RMS level, DC offset, and count
+of samples at or above full scale. Silence displays −∞ dBFS.
+
+Analysis reads decoded source audio before clip gain, fades, track controls, or
+mixing. It does not change audio, project files, Undo history, playback, or
+export. It respects trimmed source offsets. These are sample measurements,
+not true peak or LUFS; full-scale samples can indicate clipping but cannot
+prove distortion. Existing projects need no migration.
+
+Inspired by [SoundCraft's level-reporting workflow](https://github.com/storytold/soundcraft).
+This feature uses independent browser code with no new runtime dependency.

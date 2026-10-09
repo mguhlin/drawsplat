@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './tests',
   testMatch: '**/*.spec.ts',
   use: {
-    baseURL: 'http://127.0.0.1:4179',
+    baseURL: process.env.AUDIOSPLAT_URL || 'http://127.0.0.1:4179',
     trace: 'retain-on-failure',
   },
   projects: [
@@ -16,7 +16,7 @@ export default defineConfig({
       firefoxUserPrefs: { 'media.navigator.streams.fake': true, 'media.navigator.permission.disabled': true },
     } } },
   ],
-  webServer: {
+  webServer: process.env.AUDIOSPLAT_URL ? undefined : {
     command: 'npm run build && python3 -m http.server 4179 --directory ../..',
     url: 'http://127.0.0.1:4179/solutions/audiosplat/',
     reuseExistingServer: true,

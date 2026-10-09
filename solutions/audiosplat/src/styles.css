@@ -714,3 +714,12 @@ details.menu[open] > summary {
 .transcription-cue-list { max-height: 40vh; overflow-y: auto; }
 .transcription-cue { display: grid; gap: .65rem; padding: 1rem 0; border-bottom: 1px solid var(--border, #555); }
 .transcription-cue textarea { width: 100%; min-height: 4rem; font: inherit; }
+
+.analysis-summary, .analysis-channel dl { margin: 0; }
+.analysis-summary { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-bottom: 1rem; }
+.analysis-summary dt, .analysis-channel dt { color: var(--muted, #64748b); font-size: .85rem; }
+.analysis-summary dd, .analysis-channel dd { margin: 0; font-variant-numeric: tabular-nums; }
+.analysis-channels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 1rem; }
+.analysis-channel { border: 1px solid var(--border, #ddd); border-radius: 12px; padding: 1rem; }
+.analysis-channel h3 { margin: 0 0 .8rem; font-size: 1rem; }
+.analysis-channel dl { display: grid; gap: .7rem; }

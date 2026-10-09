@@ -15,5 +15,5 @@ it("upgrading AudioSplat preserves other apps' offline and speech-model caches",
   let activation: Promise<unknown> | undefined;
   handlers.activate({ waitUntil: promise => { activation = promise; } });
   await activation;
-  expect(remove.mock.calls.map(call => call[0])).toEqual(["audiosplat-v0.1.1", "audiosplat-v0.1.2"]);
+  expect(remove.mock.calls.map(call => call[0])).toEqual(["audiosplat-v0.1.1", "audiosplat-v0.1.2", "audiosplat-v0.1.3"]);
 });

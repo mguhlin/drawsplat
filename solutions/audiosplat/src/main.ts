@@ -1,3 +1,4 @@
+import { analyzeAudio, formatDbfs } from "./audio/analysis";
 import { encodeWithMediaRecorder } from "./audio/encode";
 import "./styles.css";
 import { mountTranscription } from "./transcription";
@@ -104,6 +105,7 @@ function shell(): void {
         ["delete-clip", "delete"],
       ])}
       ${menu("clip", [
+        ["analyze-audio", "analyzeAudio"],
         ["split", "split"],
         ["trim-start", "trimStart"],
         ["trim-end", "trimEnd"],
@@ -392,6 +394,7 @@ async function handleAction(event: Event): Promise<void> {
   else if (action === "delete-clip") await deleteClip();
   else if (action === "trim-start") trimClip("start");
   else if (action === "trim-end") trimClip("end");
+  else if (action === "analyze-audio") showAudioAnalysis();
   else if (action === "normalize") normalizeClip();
   else if (action === "fade-in") setClipFade("in");
   else if (action === "fade-out") setClipFade("out");
@@ -1073,6 +1076,29 @@ function trimClip(edge: "start" | "end"): void {
     found.clip.duration -= delta;
   });
 }
+function showAudioAnalysis(): void {
+  const found = selectedClipId ? findClip(selectedClipId) : null;
+  if (!found) { toast(t("noSelection")); return; }
+  const buffer = engine.getBuffer(found.clip.sourceId);
+  if (!buffer) { toast(t("analysisUnavailable"), true); return; }
+  const range = selectedRange?.clipId === found.clip.id ? selectedRange : null;
+  const start = range?.start ?? 0;
+  const end = range?.end ?? found.clip.duration;
+  try {
+    const result = analyzeAudio(buffer, found.clip.sourceOffset + start, found.clip.sourceOffset + end);
+    showDialog(t("analyzeAudio"), `
+      <p><strong>${escapeHtml(found.clip.name)}</strong><br>${t(range ? "analysisSelection" : "analysisClip")} · ${formatTime(start)}–${formatTime(end)}</p>
+      <p class="effect-note">${t("analysisSourceNote")}</p>
+      <dl class="analysis-summary"><div><dt>${t("duration")}</dt><dd>${result.duration.toFixed(3)} s</dd></div><div><dt>${t("sampleRate")}</dt><dd>${result.sampleRate.toLocaleString()} Hz</dd></div><div><dt>${t("analysisChannels")}</dt><dd>${result.channels.length}</dd></div></dl>
+      <div class="analysis-channels">${result.channels.map((channel, index) => `<section class="analysis-channel"><h3>${t("analysisChannel")} ${index + 1}</h3><dl>
+        <div><dt>${t("analysisPeak")}</dt><dd>${formatDbfs(channel.peak)}</dd></div>
+        <div><dt>${t("analysisRms")}</dt><dd>${formatDbfs(channel.rms)}</dd></div>
+        <div><dt>${t("analysisDc")}</dt><dd>${(channel.dcOffset * 100).toFixed(3)}%</dd></div>
+        <div><dt>${t("analysisFullScale")}</dt><dd>${channel.fullScaleSamples.toLocaleString()} / ${result.frames.toLocaleString()}</dd></div>
+      </dl></section>`).join("")}</div><p class="effect-note">${t("analysisMeasurementNote")}</p>`);
+  } catch { toast(t("analysisUnavailable"), true); }
+}
+
 function normalizeClip(): void {
   const found = selectedClipId ? findClip(selectedClipId) : null;
   if (!found) {

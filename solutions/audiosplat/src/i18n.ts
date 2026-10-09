@@ -16,6 +16,18 @@ const languages: Array<{
 ];
 
 const en = {
+  analyzeAudio: "Analyze audio",
+  analysisUnavailable: "Audio analysis is unavailable for this selection.",
+  analysisSelection: "Selected range",
+  analysisClip: "Whole clip",
+  analysisChannels: "Channels",
+  analysisChannel: "Channel",
+  analysisPeak: "Sample peak",
+  analysisRms: "RMS level",
+  analysisDc: "DC offset",
+  analysisFullScale: "Full-scale samples",
+  analysisSourceNote: "Read-only analysis of decoded source audio within the clip or selected range, before clip gain, fades, track volume, pan, or mixing.",
+  analysisMeasurementNote: "Full-scale samples have an absolute value of at least 1; they can indicate clipping but do not prove distortion. Sample peak and RMS are not true-peak or LUFS measurements.",
   title: "AudioSplat",
   tagline: "Record, arrange, and mix audio privately in your browser.",
   tools: "DrawSplat™ Tools",
