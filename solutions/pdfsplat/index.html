@@ -7,7 +7,7 @@
   <title>PDFsplat™ | DrawSplat™</title>
   <link rel="icon" href="./pdfsplat.png" type="image/png">
   <link rel="apple-touch-icon" href="./pdfsplat.png">
-  <link rel="stylesheet" href="./css/app.css?v=20261009-release">
+  <link rel="stylesheet" href="./css/app.css?v=20261009-presentation">
   <link rel="stylesheet" href="./css/branding.css">
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
   <link rel="stylesheet" href="../../assets/css/app-language.css">
@@ -30,12 +30,15 @@
         <option value="png">PNG (.png)</option>
         <option value="jpg">JPG (.jpg)</option>
         <option value="webp">WebP (.webp)</option>
+        <option value="webdeck">WebDeck v5 (.html)</option>
         <option value="markdown">Markdown (.md)</option>
         <option value="docx">Word — DOCX (.docx)</option>
         <option value="odt">OpenDocument — ODF (.odt)</option>
         <option value="epub">EPUB (.epub)</option>
         <option value="json">JSON (.json)</option>
       </select>
+      <button id="presentButton" type="button" disabled aria-keyshortcuts="Control+L Meta+L"><span>Present PDF</span></button>
+      <button id="fullscreenButton" type="button" disabled>⛶ <span>Full screen</span></button>
       <button id="websiteButton" type="button">Capture to PDF</button>
       <button id="scanButton" type="button">Scan to PDF</button>
       <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
@@ -407,8 +410,8 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=20261009-release"></script>
-  <script src="../../assets/js/pdf-ui-strings.js?v=20261009-release"></script>
-  <script src="../../assets/js/pdf-language-loader.js?v=20261009-release"></script>
+  <script src="./src/boot.js?v=20261009-presentation"></script>
+  <script src="../../assets/js/pdf-ui-strings.js?v=20261009-presentation"></script>
+  <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>
 </html>

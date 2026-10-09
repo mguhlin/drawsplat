@@ -1,3 +1,5 @@
+import { setupPresentation } from "./presentation.js";
+import { createWebDeck, blobDataUrl } from "./webdeck-export.js";
 import {prepareFiles, importAccept} from "./file-import.js";
 import { textAppearance, textInkAppearance, standardTextFont } from "./text-appearance.js";
 import { setupPlacement } from "./placement.js";
@@ -13,7 +15,7 @@ const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
 pdfjs.GlobalWorkerOptions.workerSrc = "../../vendor/pdf.worker.min.js";
 
 const $ = (id) => document.getElementById(id);
-const ids = ["openButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+const ids = ["openButton", "presentButton", "fullscreenButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
 ids.push("textSaveLayout", "textSaveLayoutRow", "epubLayout", "textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
 const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
 const state = {
@@ -110,7 +112,7 @@ function restore(value) {
   renderAll();
 }
 function setEnabled(on) {
-  ["pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  ["presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
   syncPageNavigation();
 }
 function syncPageNavigation() {
@@ -616,6 +618,25 @@ async function renderPdfPageToBlob(page, scale = 2, mime = "image/png") {
     canvas.width = canvas.height = 0;
     blob && blob.type === mime ? resolve(blob) : reject(Error("Image export failed."));
   }, mime, 0.92));
+}
+async function exportWebDeck() {
+  if (!state.pages.length) return;
+  let pdf;
+  els.saveAsSelect.disabled = true;
+  announce("Exporting WebDeck…");
+  try {
+    const bytes = await buildPdf(state.pages), images = [];
+    pdf = await pdfjs.getDocument({ data: bytes.slice() }).promise;
+    for (let number = 1; number <= pdf.numPages; number++) {
+      const page = await pdf.getPage(number), viewport = page.getViewport({ scale: 1 });
+      images.push(await blobDataUrl(await renderPdfPageToBlob(page, Math.min(2, 1200 / Math.max(viewport.width, viewport.height)), "image/webp")));
+      page.cleanup();
+    }
+    const base = state.fileName.replace(/\.pdf$/i, "");
+    downloadBytes(createWebDeck(base, images), `${base}-webdeck.html`, "text/html;charset=utf-8");
+    announce("WebDeck downloaded. Open the HTML file to present.");
+  } catch (error) { console.error(error); announce("WebDeck export failed. The source PDF is unchanged."); }
+  finally { await pdf?.destroy(); els.saveAsSelect.disabled = !state.pages.length; }
 }
 async function exportPageImages(format = "png", indexes = selectedPageIndexes()) {
   let document;
@@ -1736,6 +1757,7 @@ els.saveAsSelect.onchange = () => {
   els.saveAsSelect.value = "";
   if (format === "pdf") void exportPdf();
   else if (["png", "jpg", "webp"].includes(format)) void exportPageImages(format, state.pages.map((_, index) => index));
+  else if (format === "webdeck") void exportWebDeck();
   else if (format === "epub") openEpubDialog();
   else if (formats[format]) openTextSaveDialog(format);
 };
@@ -1922,6 +1944,7 @@ for (const name of ["dragleave", "drop"])
   });
 els.dropZone.addEventListener("drop", (e) => openFile(e.dataTransfer.files));
 window.addEventListener("keydown", (e) => {
+  if (!document.getElementById("presentationViewer")?.hidden) return;
   const mod = e.ctrlKey || e.metaKey,
     key = e.key.toLowerCase();
   const target = e.target;
@@ -1979,3 +2002,5 @@ setupWebsitePdf({ addPdf: async file => {
 } });
 
 setupToolSearch();
+
+setupPresentation({ pdfjs, buildPdf: () => buildPdf(state.pages), state, announce });

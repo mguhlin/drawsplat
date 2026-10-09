@@ -97,10 +97,10 @@ test('blank scans report missing text without inventing OCR output', async ({ pa
   await expect(page.locator('#saveAsSelect')).toHaveValue('');
 });
 
-test('Save as offers all six formats on a phone screen', async ({ page }) => {
+test('Save as offers all supported formats on a phone screen', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openDocument(page);
-  await expect(page.locator('#saveAsSelect option')).toHaveText(['Save as…', 'PDF (.pdf)', 'Markdown (.md)', 'Word — DOCX (.docx)', 'OpenDocument — ODF (.odt)', 'EPUB (.epub)', 'JSON (.json)']);
+  await expect(page.locator('#saveAsSelect option')).toHaveText(['Save as…', 'PDF (.pdf)', 'PNG (.png)', 'JPG (.jpg)', 'WebP (.webp)', 'WebDeck v5 (.html)', 'Markdown (.md)', 'Word — DOCX (.docx)', 'OpenDocument — ODF (.odt)', 'EPUB (.epub)', 'JSON (.json)']);
   const box = await page.locator('#saveAsSelect').boundingBox();
   expect(box.x).toBeGreaterThanOrEqual(0);
   expect(box.x + box.width).toBeLessThanOrEqual(390);

@@ -113,3 +113,15 @@ body{position:fixed;inset:0}
 @media(max-width:800px){.text-format-tools{flex-wrap:nowrap;overflow-x:auto}.text-format-tools button{flex-shrink:0;white-space:nowrap}.text-format-tools .tool-hint{display:none}.format-divider{flex-shrink:0}}
 
 .import-notice{flex-shrink:0;padding:8px 12px;border-bottom:1px solid var(--line);background:#faf7ff;color:var(--muted);font-size:12px;max-height:70px;overflow:auto}
+
+#presentationViewer{position:fixed;inset:0;z-index:9999;background:#090c14;color:white;display:flex;flex-direction:column;outline:none}
+.presentation-stage{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;overflow:hidden}
+.presentation-stage canvas{display:block;width:100%;height:100%;object-fit:contain}
+.presentation-controls{flex-shrink:0;display:flex;justify-content:center;gap:8px;padding:10px;flex-wrap:wrap;background:#172033;color:#fff;font-size:13px}
+.presentation-controls label{display:flex;gap:6px;align-items:center}.presentation-controls input[type=number]{width:65px}
+.presentation-clean .presentation-controls{position:absolute;bottom:0;left:0;right:0;opacity:0;transition:opacity .15s}
+.presentation-clean .presentation-controls:hover,.presentation-clean .presentation-controls:focus-within{opacity:1}
+.presentation-stage.blank-black{background:#000}.presentation-stage.blank-white{background:#fff}.presentation-stage.blank-black canvas,.presentation-stage.blank-white canvas{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.presentation-clean .presentation-controls{transition:none}}
+
+@media(pointer:coarse){.presentation-clean .presentation-controls{position:static;opacity:1}}

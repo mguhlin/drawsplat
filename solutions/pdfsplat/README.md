@@ -1,6 +1,6 @@
 # PDFsplat™
 
-Standalone package: **pdfsplat-selfhost-v3.1.30.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
+Standalone package: **pdfsplat-selfhost-v3.1.31.zip**, available on the [download page](../../pages/download.html). Upload all included folders together; the package includes PDF rendering workers, export/encryption dependencies, the linked CipherSplat password generator, menus, and language controls. It also remains included in Tools and complete DrawSplat.
 
 A privacy-first, browser-only PDF organizer and annotation editor. PDFs, images, text, edits, encryption passwords, and decrypted bytes remain on the user's device. PDFsplat™ contains no upload, account, cookie, analytics, or backend code.
 
@@ -212,3 +212,20 @@ DOCX and EPUB text and embedded images are reflowed onto A4 pages. Markdown supp
 Images use their original aspect ratio: PNG, JPEG, WebP, GIF, BMP, SVG, AVIF and ICO depend on browser decoding support. Animated images use the first frame. Large images are downsampled to a 4096-pixel maximum edge. Older DOC/PPT files, encrypted ebooks, and image formats the browser cannot decode need conversion elsewhere first. Converted inputs are limited to 50 MB each; multi-file imports accept up to 20 files totaling 100 MB. Single existing PDFs retain their original opening behavior.
 
 Save as also offers PNG, JPG, and WebP. These exports include all pages with edits, cropping, and rotation at twice the PDF page resolution, on a white background. A single page downloads directly; multiple pages download in a ZIP containing numbered images. The Output → Export pages as images tool retains its selected-page PNG behavior.
+
+Save as **WebDeck v5 (.html)** creates an offline presentation from the edited pages, with navigation, notes, and presenter controls. Slides preserve page appearance as images; text is not separately editable. See [Save as documentation](../../docs/pdfsplat-save-as.md).
+
+## Presentation and full screen
+
+Choose **Present PDF** for a read-only presentation of the current edited pages,
+or **Full screen** to request browser full screen. The editor's page, annotations,
+and undo history stay intact. Arrows/Page Up/Page Down navigate, Home/End jump,
+B/W blank the screen, F requests full screen, H toggles controls, and Escape exits.
+Ctrl+L / Command+L starts presenting when the browser allows that shortcut.
+Set a 1–3600 second interval and optionally enable **Loop slides** for automatic
+playback; otherwise it stops on the last page. Hover or keyboard focus reveals
+hidden controls; touch devices retain visible controls. Full screen depends on
+browser support and permission, with the page-filling viewer as fallback.
+
+WebDeck framework copies live in `webdeck/`; rebuilding regenerates the embedded
+runtime from those files. Preserve their MIT attribution when refreshing v5.

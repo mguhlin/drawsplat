@@ -6,6 +6,7 @@ Use **Save as…** in the document toolbar to download the current document.
 | --- | --- |
 | PDF | Edited visual pages, including images and drawings |
 | PNG / JPG / WebP | Edited visual pages at 2× resolution; one image for a single page, numbered images in a ZIP for multiple pages |
+| WebDeck v5 | Self-contained HTML presentation; one edited page image per slide, with offline navigation, notes, and presenter controls |
 | Markdown | Formatted text with inferred headings, emphasis, paragraphs, lists, and links (`.md`) |
 | Word | Formatted editable text or page images in an Office Open XML document (`.docx`) |
 | OpenDocument | Formatted editable text or page images in an ODF 1.3 text document (`.odt`) |
@@ -42,3 +43,13 @@ handles, Undo/Redo, and saved PDF image dimensions. DOCX and ODT outputs were
 also opened and rendered to PDF with LibreOffice, in both formatted-text and
 page-appearance modes. Formatting fixtures cover headings, mixed emphasis,
 wrapped paragraphs, bullet and numbered lists, links, and colored graphics.
+
+WebDeck exports preserve page order, crops, rotations, and visual edits. Portrait
+pages fit within the presentation canvas without cropping. Images are capped
+at 1200 pixels on their longest edge. Slide text is part of the image and is
+not independently editable or selectable; no hidden source text is copied
+into the notes. Notes start empty. Open the HTML to present, use **N/S** for
+notes, **V** for presenter view, and **P** to print. ShowSplat can import the
+HTML for further slide and notes work. Conversion runs locally.
+
+Use **Present PDF** for immediate presentation without an export, or **Full screen** for browser full screen. Presentation navigation does not modify the editor. Automatic playback has configurable timing and optional looping; B/W blank the screen and Escape returns to editing.

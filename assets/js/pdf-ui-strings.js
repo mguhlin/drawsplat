@@ -1,6 +1,25 @@
 /* PDFSplat UI additions. No document text is translated. */
 window.DrawSplatPdfStrings = {
   "es": {
+    "PDF presentation": "Presentación PDF",
+    "Presentation ready.": "Presentación lista.",
+    "Presentation closed. Your edits are unchanged.": "Presentación cerrada. Sus cambios se conservan.",
+    "Presentation could not render this page.": "No se pudo mostrar esta página.",
+    "Presentation could not open. The source PDF is unchanged.": "No se pudo abrir la presentación. El PDF original no se ha modificado.",
+
+    "Present PDF": "Presentar PDF",
+    "Full screen": "Pantalla completa",
+    "Exit presentation": "Salir de la presentación",
+    "Blank screen": "Pantalla en blanco",
+    "Slide interval (seconds)": "Intervalo de diapositivas (segundos)",
+    "Loop slides": "Repetir diapositivas",
+    "Start slideshow": "Iniciar presentación automática",
+    "Pause slideshow": "Pausar presentación automática",
+    "Exporting WebDeck\u2026": "Exportando WebDeck…",
+    "WebDeck downloaded. Open the HTML file to present.": "WebDeck descargado. Abra el archivo HTML para presentar.",
+    "WebDeck export failed. The source PDF is unchanged.": "No se pudo exportar WebDeck. El PDF original no se ha modificado.",
+    "Preparing presentation\u2026": "Preparando presentación…",
+
     "Save as…": "Guardar como…",
     "Save as": "Guardar como",
     "Capture to PDF": "Capturar a PDF",
@@ -260,6 +279,25 @@ window.DrawSplatPdfStrings = {
     "Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.": "Usa Deshacer para revertir una edición y Guardar como… para PDF, imágenes o formatos de documentos. El archivo original no cambia."
   },
   "vi": {
+    "PDF presentation": "Trình chiếu PDF",
+    "Presentation ready.": "Trình chiếu đã sẵn sàng.",
+    "Presentation closed. Your edits are unchanged.": "Đã đóng trình chiếu. Các chỉnh sửa được giữ nguyên.",
+    "Presentation could not render this page.": "Không thể hiển thị trang này.",
+    "Presentation could not open. The source PDF is unchanged.": "Không thể mở trình chiếu. PDF gốc không thay đổi.",
+
+    "Present PDF": "Trình chiếu PDF",
+    "Full screen": "Toàn màn hình",
+    "Exit presentation": "Thoát trình chiếu",
+    "Blank screen": "Màn hình trống",
+    "Slide interval (seconds)": "Khoảng thời gian trang (giây)",
+    "Loop slides": "Lặp lại trang",
+    "Start slideshow": "Bắt đầu trình chiếu tự động",
+    "Pause slideshow": "Tạm dừng trình chiếu",
+    "Exporting WebDeck\u2026": "Đang xuất WebDeck…",
+    "WebDeck downloaded. Open the HTML file to present.": "Đã tải WebDeck. Mở tệp HTML để trình chiếu.",
+    "WebDeck export failed. The source PDF is unchanged.": "Xuất WebDeck thất bại. PDF gốc không thay đổi.",
+    "Preparing presentation\u2026": "Đang chuẩn bị trình chiếu…",
+
     "Save as…": "Lưu thành…",
     "Save as": "Lưu thành",
     "Capture to PDF": "Chụp thành PDF",
@@ -519,6 +557,25 @@ window.DrawSplatPdfStrings = {
     "Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.": "Dùng Hoàn tác để đảo ngược chỉnh sửa, rồi Lưu thành… PDF, ảnh hoặc định dạng tài liệu. Tệp gốc không đổi."
   },
   "ar": {
+    "PDF presentation": "عرض PDF",
+    "Presentation ready.": "العرض جاهز.",
+    "Presentation closed. Your edits are unchanged.": "تم إغلاق العرض. بقيت تعديلاتك كما هي.",
+    "Presentation could not render this page.": "تعذر عرض هذه الصفحة.",
+    "Presentation could not open. The source PDF is unchanged.": "تعذر فتح العرض. لم يتغير ملف PDF الأصلي.",
+
+    "Present PDF": "عرض PDF",
+    "Full screen": "ملء الشاشة",
+    "Exit presentation": "إنهاء العرض",
+    "Blank screen": "شاشة فارغة",
+    "Slide interval (seconds)": "الفاصل بين الشرائح (ثوانٍ)",
+    "Loop slides": "تكرار الشرائح",
+    "Start slideshow": "بدء عرض الشرائح",
+    "Pause slideshow": "إيقاف عرض الشرائح مؤقتًا",
+    "Exporting WebDeck\u2026": "جارٍ تصدير WebDeck…",
+    "WebDeck downloaded. Open the HTML file to present.": "تم تنزيل WebDeck. افتح ملف HTML للعرض.",
+    "WebDeck export failed. The source PDF is unchanged.": "فشل تصدير WebDeck. لم يتغير ملف PDF الأصلي.",
+    "Preparing presentation\u2026": "جارٍ تجهيز العرض…",
+
     "Save as…": "حفظ باسم…",
     "Save as": "حفظ باسم",
     "Capture to PDF": "التقاط إلى PDF",
@@ -778,6 +835,25 @@ window.DrawSplatPdfStrings = {
     "Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.": "استخدم التراجع لعكس التعديل، ثم حفظ باسم… لملف PDF أو صور أو تنسيقات مستندات. يبقى الملف الأصلي دون تغيير."
   },
   "zh": {
+    "PDF presentation": "PDF 演示",
+    "Presentation ready.": "演示已准备就绪。",
+    "Presentation closed. Your edits are unchanged.": "演示已关闭。您的编辑保持不变。",
+    "Presentation could not render this page.": "无法显示此页面。",
+    "Presentation could not open. The source PDF is unchanged.": "无法打开演示。原始 PDF 未更改。",
+
+    "Present PDF": "演示 PDF",
+    "Full screen": "全屏",
+    "Exit presentation": "退出演示",
+    "Blank screen": "空白屏幕",
+    "Slide interval (seconds)": "幻灯片间隔（秒）",
+    "Loop slides": "循环播放",
+    "Start slideshow": "开始自动播放",
+    "Pause slideshow": "暂停自动播放",
+    "Exporting WebDeck\u2026": "正在导出 WebDeck…",
+    "WebDeck downloaded. Open the HTML file to present.": "WebDeck 已下载。打开 HTML 文件即可演示。",
+    "WebDeck export failed. The source PDF is unchanged.": "WebDeck 导出失败。原始 PDF 未更改。",
+    "Preparing presentation\u2026": "正在准备演示…",
+
     "Save as…": "另存为…",
     "Save as": "另存为",
     "Capture to PDF": "截取为 PDF",
@@ -1037,6 +1113,25 @@ window.DrawSplatPdfStrings = {
     "Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.": "使用撤销恢复编辑，然后另存为 PDF、图片或文档格式。原文件保持不变。"
   },
   "uh": {
+    "PDF presentation": "PDF प्रस्तुति / PDF پریزنٹیشن",
+    "Presentation ready.": "प्रस्तुति तैयार है। / پریزنٹیشن تیار ہے۔",
+    "Presentation closed. Your edits are unchanged.": "प्रस्तुति बंद हुई। बदलाव सुरक्षित हैं। / پریزنٹیشن بند ہوئی۔ تبدیلیاں محفوظ ہیں۔",
+    "Presentation could not render this page.": "यह पृष्ठ नहीं दिख सका। / یہ صفحہ نہیں دکھایا جا سکا۔",
+    "Presentation could not open. The source PDF is unchanged.": "प्रस्तुति नहीं खुल सकी। मूल PDF अपरिवर्तित है। / پریزنٹیشن نہیں کھلی۔ اصل PDF تبدیل نہیں ہوا۔",
+
+    "Present PDF": "PDF प्रस्तुत करें / PDF پیش کریں",
+    "Full screen": "पूर्ण स्क्रीन / پوری اسکرین",
+    "Exit presentation": "प्रस्तुति बंद करें / پریزنٹیشن بند کریں",
+    "Blank screen": "खाली स्क्रीन / خالی اسکرین",
+    "Slide interval (seconds)": "स्लाइड अंतराल (सेकंड) / سلائیڈ وقفہ (سیکنڈ)",
+    "Loop slides": "स्लाइड दोहराएं / سلائیڈ دہرائیں",
+    "Start slideshow": "स्लाइड शो शुरू करें / سلائیڈ شو شروع کریں",
+    "Pause slideshow": "स्लाइड शो रोकें / سلائیڈ شو روکیں",
+    "Exporting WebDeck\u2026": "WebDeck निर्यात हो रहा है… / WebDeck برآمد ہو رہا ہے…",
+    "WebDeck downloaded. Open the HTML file to present.": "WebDeck डाउनलोड हुआ। HTML खोलें। / WebDeck ڈاؤن لوڈ ہوا۔ HTML کھولیں۔",
+    "WebDeck export failed. The source PDF is unchanged.": "WebDeck निर्यात विफल। मूल PDF अपरिवर्तित है। / WebDeck برآمد ناکام۔ اصل PDF تبدیل نہیں ہوا۔",
+    "Preparing presentation\u2026": "प्रस्तुति तैयार हो रही है… / پریزنٹیشن تیار ہو رہی ہے…",
+
     "Save as…": "इस रूप में सहेजें / محفوظ کریں…",
     "Save as": "इस रूप में सहेजें / محفوظ کریں",
     "Capture to PDF": "PDF में कैप्चर / PDF میں کیپچر",

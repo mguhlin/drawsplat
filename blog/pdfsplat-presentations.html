@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- DrawSplat favicons -->
+<link rel="icon" href="../assets/favicons/drawsplat.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="../assets/brand/DrawSplat_logo.png" />
+<link rel="manifest" href="../site.webmanifest" />
+<meta name="theme-color" content="#7c3aed" />
+<!-- /DrawSplat favicons -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+<title>Meet PDFSplat: A Private PDF Toolkit for Classroom Presentations | DrawSplat</title>
+<meta name="description" content="Present, annotate, organize, convert, and protect classroom documents locally with PDFSplat. Includes full screen and offline WebDeck v5 exports." />
+<meta property="og:image" content="https://drawsplat.org/blog/assets/pdfsplat-classroom-presentations.webp">
+<meta property="og:type" content="article">
+<link rel="canonical" href="https://drawsplat.org/blog/pdfsplat-presentations.html" />
+<link rel="stylesheet" href="../assets/css/app.css" />
+<style>
+  .release-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+  .release-pill{display:inline-flex;align-items:center;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:6px 10px;font-size:.86rem;font-weight:800}
+  .release-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .release-card{border:2px solid #e2e6f0;border-radius:12px;background:#fff;padding:18px;box-shadow:0 8px 22px rgba(64,64,65,.06)}
+  .release-card h2{margin:0 0 8px;color:var(--navy,#7c3aed);font-size:1.15rem}
+  .release-card p{margin:0;color:#374151;line-height:1.55}
+  .release-list{display:grid;gap:10px;max-width:900px;margin:0 auto;padding-left:1.2rem}
+  .release-list li{color:#374151;line-height:1.5}
+  .release-note{max-width:900px;margin:18px auto 0;padding:16px 18px;border-left:6px solid #7c3aed;border-radius:10px;background:#fbfaff;color:#4c1d95;line-height:1.5}
+</style>
+<link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
+<script src="../assets/js/action-cards.js?v=1.3" defer></script>
+</head>
+<body class="admin-page start-page support-page">
+<header class="landing-header">
+  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
+    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
+    <span>DrawSplat<sup class="tm">TM</sup></span>
+  </a>
+  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>For Teachers &amp; Families</summary>
+      <div class="landing-nav-menu">
+        <a href="../app/whiteboard.html">Open Whiteboard</a>
+        <a href="../admin/admin.html">Teacher Admin</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="../pages/background-templates.html">Background Templates</a>
+        <a href="../guides/">Teacher Guides</a>
+        <hr class="landing-nav-divider">
+        <a href="../parents/index.html">Family Access Tools</a>
+        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
+        <a href="../pages/contact.html">Contact / Information Request</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Technical</summary>
+      <div class="landing-nav-menu">
+        <a href="../pages/pricing.html">Pricing</a>
+        <a href="../pages/download.html">Download for Self-Hosting</a>
+        <a href="../legal/combined-policy.html">Get all documents below</a>
+        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/accessibility.html">Accessibility Statement</a>
+        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
+        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
+        <hr class="landing-nav-divider">
+        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
+        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
+        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
+        <a href="../legal/texas-compliance.html">Texas Compliance</a>
+        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown">
+      <summary>Support</summary>
+      <div class="landing-nav-menu">
+        <a href="../blog/">Blogs About DrawSplat</a>
+        <a href="../community/index.html">Community Board</a>
+        <hr class="landing-nav-divider">
+        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
+        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
+        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
+        <a href="../pages/support.html">Support &amp; Guides Hub</a>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>SplatWorks&trade;</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
+          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
+          <a href="../pages/listsplat.html">ListSplat&trade;</a>
+          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
+          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
+        </div>
+        <div class="studio-nav-icons" aria-label="SplatWorks apps">
+          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
+          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
+        </div>
+      </div>
+    </details>
+    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
+      <summary>DrawSplat</summary>
+      <div class="landing-nav-menu studio-nav-menu">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
+          <a href="../pages/tools.html">View All Tools</a>
+          <a href="../solutions/clipsplat/" target="_blank" rel="noopener noreferrer">ClipSplat™</a>
+          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
+          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
+          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
+          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
+          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
+          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
+          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
+          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
+          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
+          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
+          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
+          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
+          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
+          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
+          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
+          <a href="../pages/tools.html#widgets">View All Widgets</a>
+          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
+          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
+          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
+          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
+          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
+          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
+          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
+          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
+          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
+          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
+          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
+          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
+          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
+          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
+          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
+        </div>
+        <hr class="landing-nav-divider">
+        <div class="studio-nav-group">
+          <a class="studio-nav-heading" href="../games/">Games</a>
+          <a href="../games/">View All Games</a>
+          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
+          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
+          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
+          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
+          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
+          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
+          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
+          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
+          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
+          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
+          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
+          <a href="../games/typing-games/" target="_blank" rel="noopener noreferrer">Typing Games</a>
+          <a href="../games/cipher-chase/" target="_blank" rel="noopener noreferrer">Cipher Chase</a>
+          <a href="../games/wordfall-reactor/" target="_blank" rel="noopener noreferrer">Wordfall Reactor</a>
+          <a href="../games/story-sprint/" target="_blank" rel="noopener noreferrer">Story Sprint</a>
+          <a href="../games/paws-and-keys-adventure/" target="_blank" rel="noopener noreferrer">Paws &amp; Keys Adventure</a>
+          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
+        </div>
+      </div>
+    </details>
+  </nav>
+  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
+</header>
+
+<main class="landing-main"><article class="landing-section" style="max-width:1000px;margin:auto"><img src="assets/pdfsplat-classroom-presentations.webp" alt="An educator presents PDF charts while students discuss ideas." style="width:100%;height:auto;border-radius:16px"><p><small>Illustration created with AI.</small></p><p>October 9, 2026 · DrawSplat v3.1.31 · By Miguel Guhlin</p><h1>Meet PDFSplat: A Private PDF Toolkit for Classroom Presentations</h1>
+<p>You have a PDF ready for a faculty meeting. The first page looks great. Then the screen fills with tabs, toolbars, and a sidebar competing with your content. Or you discover that one page is sideways just as you begin sharing your screen.</p>
+<p>A PDF should be easy to present. It should also be easy to prepare for the people who will read it.</p>
+<p><a href="../solutions/pdfsplat/">PDFSplat</a>, part of DrawSplat, brings those jobs together. Open your document, arrange the pages, add a question or annotation, and switch into a presentation view. You can also turn the edited pages into a portable WebDeck presentation. Your document processing happens on your device, without a document upload or an account.</p>
+<h2>Present a PDF without rebuilding your slides</h2>
+<p>Choose <strong>Present PDF</strong> to display one edited page at a time against a dark background. The viewer uses the pages as they currently appear, including rotations, crops, text, images, signatures, and drawings. It keeps your editing workspace separate, so moving through the presentation does not move or modify the page you were editing.</p>
+<p>The controls fade away in presentation mode. Move your pointer over the bottom toolbar or tab into it to bring them back. On touch devices, use the visible controls. Choose <strong>Full screen</strong> to open the viewer and ask your browser to fill the display. Browser and device support determine whether that request succeeds; the page-filling viewer remains available when full screen is unavailable.</p>
+<p>Here are the controls to know before your next meeting:</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enter presentation view</td>
+<td>Present PDF; Ctrl+L / Command+L when the browser allows the shortcut</td>
+</tr>
+<tr>
+<td>Advance or go back</td>
+<td>Next/Previous buttons, arrow keys, Page Down/Page Up, or taps on the page</td>
+</tr>
+<tr>
+<td>Jump to the beginning or end</td>
+<td>Home / End</td>
+</tr>
+<tr>
+<td>Pause the audience's attention on a blank screen</td>
+<td>B for black; W for white; repeat the key or navigate to restore the page</td>
+</tr>
+<tr>
+<td>Toggle browser full screen</td>
+<td>Full screen button or F inside the viewer</td>
+</tr>
+<tr>
+<td>Show or hide presentation controls</td>
+<td>H; pointer hover or keyboard focus also reveals hidden controls</td>
+</tr>
+<tr>
+<td>End the presentation</td>
+<td>Exit presentation or Escape</td>
+</tr>
+<tr>
+<td>Run a display automatically</td>
+<td>Set the slide interval, optionally choose Loop slides, then Start slideshow</td>
+</tr>
+</tbody>
+</table>
+<p>A looping slideshow could work for a classroom welcome display or a station with directions. For a discussion, use the black or white screen to give students a moment to think before you reveal the next page. Automatic playback stops at the last page unless you explicitly enable looping.</p>
+<p>For a video meeting, share the PDF viewer window using your meeting application's normal screen-sharing controls. PDFSplat does not join meetings or transmit your files.</p>
+<h2>Turn your PDF into a WebDeck</h2>
+<p>Choose <strong>Save as → WebDeck v5 (.html)</strong> to create a self-contained presentation. Each edited PDF page becomes one slide. The file includes its page images, styles, and presentation controls, so you can open it without an internet connection.</p>
+<p>The WebDeck adds keyboard and touch navigation, a progress indicator, a notes panel, browser full screen, printing, and a separate presenter view. Press <strong>N</strong> or <strong>S</strong> for notes and <strong>V</strong> for presenter view. You can resize the presenter notes and use the timer while the audience sees the slides. Printing uses the deck's print layout; saving that print output as a PDF depends on your browser's print dialog.</p>
+<p>For more presentation work, import the HTML into <a href="../splatworks/showsplat/">ShowSplat</a>. Add speaker notes, organize slides, and export another WebDeck v5.</p>
+<p>The conversion preserves appearance by using images. Text inside those page images is not individually editable or selectable. Portrait pages fit within the slide rather than being stretched or cropped. Notes start empty; PDFSplat does not invent a script or quietly copy hidden PDF text into your speaker notes. A text-based accessible alternative is a separate export.</p>
+<h2>Prepare the document before the audience arrives</h2>
+<p>PDFSplat offers more than a presentation button. Its tools cover a useful classroom document workflow:</p>
+<ul>
+<li><strong>Open and convert:</strong> Drop in a PDF, DOCX, PPTX, EPUB, Markdown, plain text, or a supported image. Common image formats include PNG, JPEG, WebP, GIF, BMP, SVG, and AVIF. Browser decoding determines support for some images. Office and ebook conversions simplify complex layouts; review the result. Older DOC/PPT files and encrypted ebooks are not supported.</li>
+<li><strong>Capture and scan:</strong> Capture an open tab or window through the browser's sharing prompt, or turn camera photos and paper scans into PDF pages. Adjust four corners, correct perspective, rotate, and apply contrast, grayscale, or black-and-white cleanup. Scans remain images; there is no OCR.</li>
+<li><strong>Write and annotate:</strong> Place new text, images, and signatures at the spot you choose on the page. Add highlights and freehand drawing with a mouse, finger, or stylus. Move and resize added objects, and use Undo/Redo while preparing the document.</li>
+<li><strong>Edit text on the page:</strong> Click extractable PDF text to create a visual replacement. Edit inline, apply bold or italic, choose left/center/right alignment, and adjust font size and color. PDFSplat tries to match the original text's appearance; embedded fonts and difficult layouts can limit the match.</li>
+<li><strong>Organize pages:</strong> Add PDFs, insert blank or image pages, move, duplicate, delete, reverse, extract, and split pages. Rotate an individual page while keeping the other pages as they are. Crop selected pages, apply a fine rotation, or check for blank pages. Review blank-page suggestions before removing a deliberately sparse page.</li>
+<li><strong>Finish the document:</strong> Add headers, footers, and page numbers. Use the tool finder to locate a command without hunting through the sidebar.</li>
+</ul>
+<p>A signature here is a placed visual signature, not a cryptographic digital signature. Likewise, editing an existing PDF text run creates a visual replacement; it does not turn the original PDF into a word-processing document.</p>
+<h2>Save a format that fits the next task</h2>
+<p>The <strong>Save as</strong> menu gives you several ways to reuse your work:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>A practical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF</td>
+<td>Distribute the edited pages with visual annotations flattened into the output</td>
+</tr>
+<tr>
+<td>PNG, JPG, or WebP</td>
+<td>Reuse a page as an image; multiple pages download as numbered images in a ZIP</td>
+</tr>
+<tr>
+<td>WebDeck v5 HTML</td>
+<td>Present the edited pages offline or continue working in ShowSplat</td>
+</tr>
+<tr>
+<td>Markdown</td>
+<td>Reuse extracted, formatted text in a writing workflow</td>
+</tr>
+<tr>
+<td>DOCX or ODT</td>
+<td>Create an editable text document, or choose page images to preserve appearance</td>
+</tr>
+<tr>
+<td>EPUB</td>
+<td>Make a reflowable ebook, or retain page appearance with images; add publishing metadata, navigation, and an optional cover</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>Obtain structured text and metadata for another workflow; this is not a restorable PDFSplat project</td>
+</tr>
+</tbody>
+</table>
+<p>Text conversion works best with searchable PDFs and straightforward reading order. Columns, tables, unusual fonts, equations, and scans need extra review. Image-based exports retain appearance but do not supply selectable text.</p>
+<h2>Keep privacy and accessibility in the workflow</h2>
+<p>PDFSplat processes documents locally. The web version needs to load its application files initially; the downloadable self-host package supports offline use when its included folders stay together. A local browser tool still requires sensible handling of the files you download and share.</p>
+<p>Choose <strong>Protect / Unprotect</strong> to protect a PDF using CipherSplat's encrypted <code>.csplat</code> package or reopen a supported package. This creates a separate encrypted container, rather than a conventional PDF password. The recipient needs a compatible CipherSplat/PDFSplat workflow to open it.</p>
+<p>The <strong>Accessibility check</strong> helps flag missing tags, extractable text, document title and language, added-image descriptions, annotation contrast, and form-related review needs. You can also export a semantic HTML alternative with readable text and descriptions for added images. These tools help you inspect a document; they do not certify accessibility or automatically create a fully tagged PDF.</p>
+<p>Need to remove hidden document material from a distribution copy? <strong>Sanitize PDF copy</strong> rasterizes the visible pages and strips document structures such as metadata, scripts, attachments, forms, annotations, layers, and hidden content. Check that copy carefully: it loses searchable text and may be larger. <strong>Remove area</strong> by itself only places a visual cover; it is not secure redaction.</p>
+<p>The interface offers English, Spanish, Vietnamese, Arabic, Chinese, and a combined Hindi/Urdu option. Switching the interface language does not translate your document. Choose accessible alternatives and meaningful descriptions based on your learners' needs.</p>
+<h2>Connect the tool to Essential Learning Expectations</h2>
+<p>The <a href="https://mglearn.github.io/eles/">ELE Activity Bank</a> focuses on what learners do and the evidence they produce. The following alignments are suggested teaching uses, rather than a certification of the software. The linked indicators come from the <a href="https://mglearn.github.io/eles/framework.html">teacher ELE framework</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Teacher ELE</th>
+<th>A PDFSplat activity</th>
+<th>Evidence to look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://mglearn.github.io/eles/framework.html#T1.1">T1.1 — Technology Integration</a></td>
+<td>Present a source PDF and pause for learners to annotate a response</td>
+<td>An annotation that explains an idea rather than merely copying the screen</td>
+</tr>
+<tr>
+<td><a href="https://mglearn.github.io/eles/framework.html#T2.1">T2.1 — Digital Literacy</a></td>
+<td>Compare claims in two source documents and mark the supporting evidence</td>
+<td>A claim-evidence comparison with source attribution</td>
+</tr>
+<tr>
+<td><a href="https://mglearn.github.io/eles/framework.html#T3.2">T3.2 — Inclusive Teaching</a></td>
+<td>Offer the PDF alongside a reviewed HTML or text-based alternative</td>
+<td>Learners can use an appropriate format and demonstrate the same learning goal</td>
+</tr>
+<tr>
+<td><a href="https://mglearn.github.io/eles/framework.html#T5.1">T5.1 — Critical Thinking</a></td>
+<td>Blank the display after a claim and ask teams to evaluate it before revealing the evidence</td>
+<td>A justified decision that changes, or holds up, when new evidence appears</td>
+</tr>
+</tbody>
+</table>
+<p>Try this short activity: show a page with a claim, blank the screen, and ask pairs what evidence would make that claim believable. Reveal the source material, invite annotations, and ask each pair to explain one revision to its thinking. Save the annotated PDF as a record of the discussion. A polished presentation is useful; the explanations tell you whether learning happened.</p>
+<h2>What does it cost?</h2>
+<p>PDFSplat is free, with no account required to use its document tools. Open it on <a href="../solutions/pdfsplat/">DrawSplat.org</a> or use the <a href="../pages/download.html">download page</a> for local and self-hosted packages. The included startup instructions explain direct opening and local-server alternatives. Browser permissions still apply to camera access, screen capture, and full screen.</p>
+<h2>What about AI summaries?</h2>
+<p>PDFSplat does not include an AI summarizer. That can be a useful distinction when working with classroom records or student information: opening, editing, presenting, and exporting a PDF does not require sending it to an AI service. If you choose a separate summarizer, review its privacy terms and your school's rules first, then verify its claims against the actual document.</p>
+<h2>Start with one document</h2>
+<p>Open a PDF you already use in class. Fix its page order, add a question where students will notice it, and try the presentation controls. Then download an edited PDF or a WebDeck to use again. A familiar document can become a better teaching resource without requiring a new account, a new slide template, or a document upload.</p>
+<p><em>This article replaces the author's earlier <a href="https://blog.tcea.org/pdf-presentation-tool-meet-sumatrapdf/">PDF Presentation Tool: Meet Sumatra PDF</a> with a PDFSplat-focused walkthrough. Feature descriptions reflect the PDFSplat presentation/WebDeck release.</em></p>
+</article></main>
+
+<footer class="landing-footer">
+  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
+  <span>DrawSplat<sup class="tm">TM</sup> is available under AGPL-3.0-or-later.</span>
+  <a href="../index.html">Home</a>
+  <a href="../pages/download.html">Download</a>
+  <a href="../blog/">Blog</a>
+  <a href="../community/index.html">Community</a>
+  <a href="../legal/terms-privacy.html">Privacy</a>
+</footer>
+<script src="../assets/js/consent-banner.js" defer></script>
+</body>
+</html>

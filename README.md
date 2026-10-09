@@ -7,7 +7,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** live tools updated October 9, 2026 with document-to-PDF imports, image exports, on-page text formatting, creative-tool improvements, and WebDeck v5. Latest packaged release: v3.1.30; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** live tools updated October 9, 2026 with document-to-PDF imports, image exports, on-page text formatting, creative-tool improvements, and WebDeck v5. PDFSplat adds presentation/full screen, timed looping, blank screens, and offline WebDeck v5 export. Latest packaged release: v3.1.31; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
 
 ## Getting started
@@ -36,7 +36,7 @@ Other docs that pair with setup:
 - **ShowSplat:** searchable slide navigation and WebDeck v5 import/export, speaker notes, presenter sync, reflow, and print controls.
 - **Action controls:** icons with visible labels across the Splat tools.
 
-[Feature walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.30.md)
+[PDFSplat presentation walkthrough](blog/pdfsplat-presentations.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.31.md)
 
 ## Previous live updates — October 8, 2026
 
@@ -64,11 +64,11 @@ These features are live on drawsplat.org and in the current source. The v3.1.28 
 
 ## Latest packaged release
 
-**DrawSplatTM v3.1.30 — Creative tools, document imports, and WebDeck v5.** All thirteen core self-host ZIPs and the separate ClipSplat package are refreshed with current source, local launchers, and SHA-256 checksums. Applicable packages include today's editing, conversion, presentation, and labelled-icon changes, plus the existing Typing Games and whiteboard updates. [Walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.30.md) · [Stable release v3.1.30](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.30).
+**DrawSplatTM v3.1.31 — PDF presentations, full screen, and WebDeck export.** All thirteen core self-host ZIPs and the separate ClipSplat package are refreshed with current source, local launchers, and SHA-256 checksums. Applicable packages include today's editing, conversion, presentation, and labelled-icon changes, plus the existing Typing Games and whiteboard updates. [Walkthrough](blog/creative-tools.html) · [Downloads](pages/download.html) · [Release notes](docs/release-notes/RELEASE_NOTES_v3.1.31.md) · [Stable release v3.1.31](https://github.com/mguhlin/drawsplat/releases/tag/v3.1.31).
 
 ## Latest whiteboard: portable saving and recording recovery
 
-**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.30 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
+**Whiteboard v3.1.12** is published on drawsplat.org and available in the current repository. The v3.1.31 full download includes these changes. The suite/package version is independent of the whiteboard’s version.
 
 - **MySQL Save/Open:** deploy the same Node.js 22 API on Railway, DigitalOcean, or any host that can reach MySQL 8. Keep the whiteboard on drawsplat.org or self-host it.
 - **Teacher setup:** open [MySQL Wizard](admin/mysql-setup.html), enter the public HTTPS API address, select **Test & Enable Online Saving**, and create a teacher saving account. Then use **File → Save online / Open online board / Online account**. This account is separate from the Teacher Admin password.

@@ -52,6 +52,7 @@ export function setupToolSearch() {
     }
   });
   window.addEventListener('keydown', event => {
+    if (document.getElementById('presentationViewer')?.hidden === false) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault(); if (dialog.open) dialog.close(); else open();
     }
