@@ -1,3 +1,4 @@
+import { textAppearance, textInkAppearance, standardTextFont } from "./text-appearance.js";
 import { setupPlacement } from "./placement.js";
 import { setupToolSearch } from "./tool-search.js";
 import { setupWebsitePdf } from "./website-to-pdf.js?v=20260923-capture-only";
@@ -253,6 +254,7 @@ async function renderCurrent() {
 }
 async function renderTextHits(page, viewport, token) {
   els.textHitLayer.replaceChildren();
+  await page.getOperatorList();
   const content = await page.getTextContent();
   if (token !== state.renderToken) return;
   const runs = [];
@@ -265,7 +267,11 @@ async function renderTextHits(page, viewport, token) {
       baseline = transform[5],
       top = baseline - height;
     if (left >= viewport.width || top >= viewport.height || left + width <= 0 || top + height <= 0) continue;
+    let font;
+    try { font = page.commonObjs.get(item.fontName); } catch { /* Use the PDF text style fallback. */ }
+    const appearance = textAppearance(font, content.styles?.[item.fontName]?.fontFamily);
     runs.push({
+      ...appearance,
       text: item.str,
       left,
       top,
@@ -273,7 +279,7 @@ async function renderTextHits(page, viewport, token) {
       height,
       baseline,
       fontSize: Math.max(6, Math.hypot(item.transform[0], item.transform[1])),
-      fontFamily: content.styles?.[item.fontName]?.fontFamily || "Arial, sans-serif",
+
     });
   }
   runs.sort((a, b) => (Math.abs(a.baseline - b.baseline) > Math.max(a.height, b.height) * 0.45 ? a.top - b.top : a.left - b.left));
@@ -323,11 +329,17 @@ async function renderTextHits(page, viewport, token) {
         w: width / viewport.width,
         h: height / viewport.height,
         fontSize,
-        fontFamily,
+        ...textAppearanceForLine(line),
+        ...textInkAppearance(els.pdfCanvas, {left, top, width, height}, viewport),
       });
     };
     els.textHitLayer.append(hit);
   }
+}
+function textAppearanceForLine(line) {
+  // A mixed-style line adopts the dominant run, measured by character count.
+  const run = line.runs.reduce((a,b)=>a.text.length >= b.text.length ? a : b);
+  return {fontFamily:run.fontFamily,pdfFontFamily:run.pdfFontFamily,bold:run.bold,italic:run.italic,sourceBold:run.sourceBold,sourceItalic:run.sourceItalic,exactFont:run.exactFont,fallbackFontFamily:run.fallbackFontFamily};
 }
 async function renderThumbnail(li) {
   if (li.dataset.rendered === "true") return;
@@ -703,7 +715,7 @@ function renderAnnotations() {
       applyTextStyles(node, object);
       node.style.color = object.color;
       if (object.cover) {
-        node.style.background = "#ffffff";
+        node.style.background = object.coverColor || "#ffffff";
         node.contentEditable = "true";
         node.setAttribute("role", "textbox");
         node.setAttribute("aria-label", "Edit replacement text in place");
@@ -791,8 +803,10 @@ let inlineEdit = null;
 let propertySelection;
 function applyTextStyles(node, object) {
   node.style.setProperty('--inline-text-color', object.color || '#172033');
-  node.style.fontWeight = object.bold ? '700' : '400';
-  node.style.fontStyle = object.italic ? 'italic' : 'normal';
+  const exact = object.exactFont && !!object.bold === object.sourceBold && !!object.italic === object.sourceItalic;
+  if (object.fontFamily) node.style.fontFamily = exact ? object.fontFamily : object.fallbackFontFamily || object.fontFamily;
+  node.style.fontWeight = !exact && object.bold ? '700' : '400';
+  node.style.fontStyle = !exact && object.italic ? 'italic' : 'normal';
   node.style.textAlign = ['center', 'right'].includes(object.align) ? object.align : 'left';
 }
 function startInlineTextEditing(object = selectedObject(), selectAll = false) {
@@ -910,8 +924,8 @@ function replaceTextRun(text, bounds) {
       id: uid(),
       type: "text",
       text,
-      ...bounds,
       color: "#172033",
+      ...bounds,
       opacity: 1,
       cover: true,
     };
@@ -1256,9 +1270,9 @@ async function buildPdf(items) {
             rotate: degrees(angle),
             width: o.w * width,
             height: Math.max(o.h * height, o.fontSize * 1.25),
-            color: rgb(1, 1, 1),
+            color: hexColor(o.coverColor || "#ffffff"),
           });
-        const name = o.bold && o.italic ? StandardFonts.HelveticaBoldOblique : o.bold ? StandardFonts.HelveticaBold : o.italic ? StandardFonts.HelveticaOblique : StandardFonts.Helvetica;
+        const name = StandardFonts[standardTextFont(o)];
         if (!textFonts.has(name)) textFonts.set(name, await output.embedFont(name));
         const textFont = textFonts.get(name), boxWidth = o.w * width;
         const lines = globalThis.PDFLib.breakTextIntoLines(o.text || ' ', [' '], boxWidth, text => textFont.widthOfTextAtSize(text, o.fontSize));

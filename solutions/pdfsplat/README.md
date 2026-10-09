@@ -192,3 +192,13 @@ five additional language choices. Translation is scoped to interface containers:
 PDF content, inserted text, document metadata, and field values remain untouched.
 Third-party engine errors are displayed as received. The bundled app and locale
 files continue to work locally without a translation service.
+
+## Matching replacement text
+
+Editing detected PDF text inherits the dominant original run's font family,
+size, bold/italic style, and sampled ink color. The original background color is
+also used for the replacement cover. Embedded PDF.js fonts are reused in the
+on-page editor; PDF export uses the closest Helvetica, Times, or Courier variant.
+Mixed-style lines adopt their dominant run, and unusual fonts/complex backgrounds
+may need manual adjustments. Existing color, size, bold, and italic controls and
+undo remain available.
