@@ -25,11 +25,11 @@ FILES=(
 
 # Include shared resources under their hosted or self-contained offline paths.
 if [ -d "$CIPHER_DIR/shared/assets" ]; then
-  for file in shared/assets/{css,js}/{action-cards,app-language}.{css,js}; do
+  for file in shared/assets/{css,js}/{action-cards,action-icons,app-language}.{css,js}; do
     if [ -f "$CIPHER_DIR/$file" ]; then FILES+=("$file"); fi
   done
 else
-  FILES+=(../../assets/js/app-language.js ../../assets/css/app-language.css ../../assets/js/action-cards.js ../../assets/css/action-cards.css)
+  FILES+=(../../assets/js/app-language.js ../../assets/css/app-language.css ../../assets/js/action-cards.js ../../assets/css/action-cards.css ../../assets/css/action-icons.css)
 fi
 
 {

@@ -787,6 +787,7 @@ for pdf_vendor in pdf.min.js pdf.worker.min.js jszip.min.js; do
   copy_file "vendor/$pdf_vendor" "$PDFSPLAT_ROOT/vendor/$pdf_vendor"
 done
 copy_file assets/js/pdf-language-loader.js "$PDFSPLAT_ROOT/assets/js/pdf-language-loader.js"
+copy_file assets/js/pdf-ui-strings.js "$PDFSPLAT_ROOT/assets/js/pdf-ui-strings.js"
 copy_file LICENSE "$PDFSPLAT_ROOT/LICENSE"
 copy_file NOTICE.md "$PDFSPLAT_ROOT/NOTICE.md"
 copy_file docs/pdfsplat-save-as.md "$PDFSPLAT_ROOT/docs/pdfsplat-save-as.md"
@@ -818,7 +819,7 @@ EOF
 for media_root in "$AUDIOSPLAT_ROOT" "$VIDEOSPLAT_ROOT" "$MEDIASPLAT_ROOT" "$PDFSPLAT_ROOT" "$GRID_ROOT" "$SHOW_ROOT" "$WRITE_ROOT" "$LIST_ROOT"; do
   copy_tree assets/icons "$media_root/assets/icons" "${MODULE_EXCLUDES[@]}"
   copy_tree assets/favicons "$media_root/assets/favicons" "${MODULE_EXCLUDES[@]}"
-  for css_file in action-cards.css app-language.css tool-launcher.css launcher-trigger.css; do
+  for css_file in action-cards.css action-icons.css app-language.css tool-launcher.css launcher-trigger.css; do
     copy_file "assets/css/$css_file" "$media_root/assets/css/$css_file"
   done
   for js_file in action-cards.js app-language.js widget-i18n.js tool-launcher-loader.js tool-launcher.js tool-registry.js tool-search.js tool-preferences.js; do

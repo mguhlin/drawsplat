@@ -1,0 +1,2 @@
+const {defineConfig,devices}=require('@playwright/test');
+module.exports=defineConfig({testDir:'./tests',outputDir:'/tmp/splat-icons-results',timeout:30000,use:{baseURL:process.env.TOOLS_URL||'http://127.0.0.1:4183'},projects:[{name:'chromium',use:{browserName:'chromium',channel:'chrome'}},{name:'firefox',use:{browserName:'firefox'}},{name:'phone',use:{...devices['Pixel 7'],browserName:'chromium',channel:'chrome'}}],webServer:process.env.TOOLS_URL?undefined:{command:'python3 -m http.server 4183 --bind 127.0.0.1',url:'http://127.0.0.1:4183',reuseExistingServer:true}});

@@ -6,7 +6,7 @@ module.exports = defineConfig({
   projects: [
     { name: 'chromium', use: { browserName: 'chromium', channel: 'chrome' } },
     { name: 'firefox', use: { browserName: 'firefox' } },
-    { name: 'iphone', testMatch: ['scan-phone.spec.js', 'touch-ink.spec.js', 'placement.spec.js'], use: { ...devices['iPhone 13'], browserName: 'webkit' } },
+    { name: 'iphone', testMatch: ['scan-phone.spec.js', 'touch-ink.spec.js', 'placement.spec.js', 'inline-language.spec.js'], use: { ...devices['iPhone 13'], browserName: 'webkit' } },
   ],
   timeout: 30_000,
   use: { baseURL: process.env.PDFSPLAT_URL || 'http://127.0.0.1:4182' },

@@ -174,3 +174,21 @@ undo/redo, full saved-PDF round trips at 0/90/180/270 degrees, mixed page rotati
 and page-two orientation when a different page is cropped or deskewed. Existing
 scan, pen, conversion, image-resize, offline, protection, and page-management tests
 remain included.
+
+## On-page text formatting and UI languages (October 2026)
+
+New text and typed signatures open an editor on the page after placement.
+Double-click an existing text box or choose **Edit on page** to edit it again.
+**Done editing** or Escape commits the text; the sidebar editor remains available.
+The selected text toolbar provides whole-box bold, italic, and left/center/right
+alignment. These styles are retained by PDF export, including rotated pages.
+Resize handles and dragging the box border retain their existing behavior.
+Ctrl/Cmd+B and Ctrl/Cmd+I toggle formatting while typing; text-field undo remains
+native until the edit is committed to the document history.
+
+PDF UI translations now include the drawing/formatting controls, page/output
+controls, dialogs, help copy, and common changing status/history messages in all
+five additional language choices. Translation is scoped to interface containers:
+PDF content, inserted text, document metadata, and field values remain untouched.
+Third-party engine errors are displayed as received. The bundled app and locale
+files continue to work locally without a translation service.

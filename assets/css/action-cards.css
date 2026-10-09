@@ -1,3 +1,4 @@
+@import url("action-icons.css?v=20261009");
 /* DrawSplat illustrated action cards: icon, name, and a useful explanation. */
 :root{--ds-action-purple:#6035d8;--ds-action-ink:#28334b;--ds-action-line:#cdc8ff;--ds-action-soft:#f0f2ff}
 .ds-action-card.ds-action-card{position:relative;display:block;box-sizing:border-box;min-height:64px;min-width:0;width:100%;padding:12px 14px 12px 52px;border:1px solid var(--ds-action-line);border-radius:13px;background:var(--ds-action-soft);color:var(--ds-action-purple);font:750 14px/1.35 system-ui,sans-serif;text-align:left;text-decoration:none;white-space:normal;overflow-wrap:normal;word-break:normal;cursor:pointer;box-shadow:0 2px 5px rgb(89 59 163 / 4%);transition:background .15s,border-color .15s,box-shadow .15s}

@@ -1,0 +1,4 @@
+/* Labelled toolbar actions: decorative symbols inherit the control color. */
+.ds-action-button:not(.ds-action-card)::before{content:"";display:inline-block;width:1.1em;height:1.1em;flex-shrink:0;margin-inline-end:.42em;vertical-align:-.17em;background-color:currentColor;-webkit-mask:var(--ds-control-icon) center/contain no-repeat;mask:var(--ds-control-icon) center/contain no-repeat}
+.ds-action-card.ds-symbol-action::before{background:currentColor;-webkit-mask:var(--ds-control-icon) center/contain no-repeat;mask:var(--ds-control-icon) center/contain no-repeat}
+@media(forced-colors:active){.ds-action-button:not(.ds-action-card)::before,.ds-action-card.ds-symbol-action::before{background-color:ButtonText;forced-color-adjust:none}}

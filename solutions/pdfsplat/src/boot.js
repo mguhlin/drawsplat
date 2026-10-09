@@ -19,7 +19,7 @@
     } else {
       void load('../../assets/js/tool-launcher.js?v=2', true).catch(console.error);
     }
-    await load('./app.bundle.js?v=20261009-placement');
+    await load('./app.bundle.js?v=20261009-inline');
   } catch (error) {
     const message = document.createElement('p');
     message.setAttribute('role', 'alert');

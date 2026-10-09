@@ -26,7 +26,7 @@ test('v5 presenter previews, notes sizing, timer and cross-window navigation wor
  const notes=presenter.locator('#pvNotes');const size=()=>notes.evaluate(e=>parseFloat(getComputedStyle(e).fontSize));const initial=await size();
  await presenter.getByRole('button',{name:'Larger notes text',exact:true}).click();expect(await size()).toBeGreaterThan(initial);
  await presenter.keyboard.press('-');expect(await size()).toBe(initial);
- await presenter.keyboard.press('+');const larger=await size();await presenter.reload();await expect.poll(size).toBe(larger);
+ await presenter.keyboard.press('+');const larger=await size();await presenter.reload({waitUntil:'domcontentloaded'});await expect.poll(size).toBe(larger);
  await presenter.locator('#pvNext').click();await expect(presenter.locator('#pvCount')).toHaveText('2 / 2');await expect(deck.locator('#counter')).toHaveText('2 / 2');
  await deck.getByRole('button',{name:'Previous slide',exact:true}).click();await expect(presenter.locator('#pvCount')).toHaveText('1 / 2');
  await presenter.locator('#pvReset').click();await expect(presenter.locator('#pvTimer')).toHaveText('00:00');

@@ -41,6 +41,9 @@ for name in action-cards app-language; do
   cp "$ROOT_DIR/assets/css/$name.css" "$STAGING_DIR/CipherSplat/shared/assets/css/"
   cp "$ROOT_DIR/assets/js/$name.js" "$STAGING_DIR/CipherSplat/shared/assets/js/"
 done
+cp "$ROOT_DIR/assets/css/action-icons.css" "$STAGING_DIR/CipherSplat/shared/assets/css/"
+mkdir -p "$STAGING_DIR/CipherSplat/shared/assets/icons"
+cp -r "$ROOT_DIR/assets/icons/actions" "$STAGING_DIR/CipherSplat/shared/assets/icons/"
 sed -i 's|../../assets/|./shared/assets/|g' "$STAGING_DIR/CipherSplat/index.html"
 python3 "$ROOT_DIR/scripts/add-offline-launcher.py" "$STAGING_DIR/CipherSplat" CipherSplat 'index.html?offline=1'
 

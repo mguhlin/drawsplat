@@ -46,7 +46,7 @@ const placement = setupPlacement({
     });
     renderAnnotations();
     announce(`${label[0].toUpperCase()+label.slice(1)} placed. Drag to move or use the handles to resize. Undo is available.`);
-    if (object.type === 'text') els.textValue.focus({preventScroll:true});
+    if (object.type === 'text') startInlineTextEditing(object, true);
   },
 });
 function beginPlacement(object, label, options) {
@@ -119,6 +119,7 @@ function syncPageNavigation() {
 }
 let cancelInk = null;
 function setMode(mode) {
+  if (mode !== "select") finishInlineTextEditing();
   imageRequest++;
   placement.cancel();
   cancelInk?.();
@@ -136,6 +137,7 @@ function setMode(mode) {
   els.drawButton.setAttribute("aria-pressed", String(mode === "draw"));
   els.removeAreaButton.setAttribute("aria-pressed", String(mode === "mask"));
   els.editTextButton.setAttribute("aria-pressed", String(mode === "edit-text"));
+  updateTextFormatTools();
 }
 
 async function loadSource(file) {
@@ -400,6 +402,7 @@ async function renderThumbnails() {
   }
 }
 function selectPage(index, event = {}) {
+  finishInlineTextEditing();
   if (event.shiftKey) {
     const start = Math.min(state.selectionAnchor, index),
       end = Math.max(state.selectionAnchor, index);
@@ -665,6 +668,7 @@ function extractPages() {
 }
 
 function renderAnnotations() {
+  finishInlineTextEditing();
   els.annotationLayer.replaceChildren();
   const page = currentPage();
   if (!page) return;
@@ -695,7 +699,8 @@ function renderAnnotations() {
       node.textContent = object.text;
       node.style.fontSize = `${object.fontSize * state.renderScale}px`;
       node.style.fontFamily = object.fontFamily || "Arial, sans-serif";
-      node.style.lineHeight = "1";
+      node.style.lineHeight = "1.2";
+      applyTextStyles(node, object);
       node.style.color = object.color;
       if (object.cover) {
         node.style.background = "#ffffff";
@@ -757,6 +762,9 @@ function renderAnnotations() {
         node.append(handle);
       }
     }
+    if (object.type === "text" && !object.cover) node.ondblclick = event => {
+      event.preventDefault(); startInlineTextEditing(object);
+    };
     node.onpointerdown = (e) => startDrag(e, node, object);
     node.onclick = (e) => {
       e.stopPropagation();
@@ -766,7 +774,7 @@ function renderAnnotations() {
     node.onkeydown = (e) => {
       if (object.cover) {
         if (e.key === "Escape") node.blur();
-      } else objectKeydown(e, object);
+      } else if (!e.target.matches("textarea")) objectKeydown(e, object);
     };
     els.annotationLayer.append(node);
   }
@@ -779,8 +787,87 @@ function selectObject(id) {
   els.annotationLayer.querySelectorAll(".editable-object").forEach((node) => node.classList.toggle("selected", node.dataset.id === id));
   updateProperties();
 }
+let inlineEdit = null;
 let propertySelection;
+function applyTextStyles(node, object) {
+  node.style.setProperty('--inline-text-color', object.color || '#172033');
+  node.style.fontWeight = object.bold ? '700' : '400';
+  node.style.fontStyle = object.italic ? 'italic' : 'normal';
+  node.style.textAlign = ['center', 'right'].includes(object.align) ? object.align : 'left';
+}
+function startInlineTextEditing(object = selectedObject(), selectAll = false) {
+  if (object?.type !== 'text' || object.cover) return;
+  finishInlineTextEditing();
+  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
+  if (!node) return;
+  selectObject(object.id);
+  const editor = document.createElement('textarea');
+  editor.className = 'inline-text-editor';
+  editor.setAttribute('aria-label', 'Edit text on page');
+  editor.spellcheck = true;
+  editor.value = object.text || '';
+  inlineEdit = {object, node, editor, before: snapshot()};
+  node.classList.add('inline-editing');
+  node.append(editor);
+  editor.addEventListener('input', () => {
+    object.text = editor.value; els.textValue.value = object.text;
+  });
+  editor.addEventListener('blur', finishInlineTextEditing);
+  editor.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finishInlineTextEditing(); node.focus(); }
+    if ((event.ctrlKey || event.metaKey) && ['b', 'i'].includes(event.key.toLowerCase())) {
+      event.preventDefault(); event.stopPropagation(); changeTextFormat(event.key.toLowerCase() === 'b' ? 'bold' : 'italic');
+    }
+  });
+  updateTextFormatTools();
+  node.scrollIntoView({block: 'nearest', inline: 'nearest'});
+  editor.focus({preventScroll: true});
+  if (selectAll) editor.select();
+}
+function finishInlineTextEditing() {
+  if (!inlineEdit) return;
+  const {object, node, editor, before} = inlineEdit;
+  inlineEdit = null;
+  object.text = editor.value;
+  node.classList.remove('inline-editing');
+  editor.remove();
+  // Preserve resize controls when the text content is refreshed.
+  const handle = node.querySelector('.resize-handle');
+  node.textContent = object.text;
+  if (handle) node.append(handle);
+  commit(before, 'Edit text');
+  updateProperties();
+}
+function updateTextFormatTools() {
+  const object = selectedObject(), active = object?.type === 'text' && state.mode === 'select';
+  $('textFormatTools').hidden = !active;
+  if (!active) return;
+  document.querySelectorAll('[data-text-format]').forEach(button => button.setAttribute('aria-pressed', String(!!object[button.dataset.textFormat])));
+  document.querySelectorAll('[data-text-align]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.textAlign === (object.align || 'left'))));
+  $('editInlineText').disabled = !!object.cover || !!inlineEdit;
+  $('finishInlineText').disabled = !inlineEdit;
+}
+function changeTextFormat(property, value) {
+  const object = selectedObject();
+  if (object?.type !== 'text') return;
+  if (inlineEdit) { commit(inlineEdit.before, 'Edit text'); inlineEdit.before = snapshot(); }
+  mutate(property === 'align' ? 'Align text' : property === 'bold' ? 'Bold text' : 'Italic text', () => {
+    object[property] = value ?? !object[property];
+  });
+  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
+  if (node) applyTextStyles(node, object);
+  if (inlineEdit) inlineEdit.before = snapshot();
+  updateTextFormatTools();
+}
+document.querySelectorAll('[data-text-format], [data-text-align]').forEach(button => {
+  button.addEventListener('mousedown', event => event.preventDefault());
+  button.addEventListener('click', () => button.dataset.textAlign ? changeTextFormat('align', button.dataset.textAlign) : changeTextFormat(button.dataset.textFormat));
+});
+$('editInlineText').onclick = () => startInlineTextEditing();
+$('finishInlineText').onclick = finishInlineTextEditing;
+
 function updateProperties() {
+  updateTextFormatTools();
   const o = selectedObject(),
     isText = o?.type === "text";
   if (propertySelection !== o?.id) {
@@ -995,7 +1082,7 @@ function startResize(event, node, object) {
   handle.addEventListener("pointerup", up, { once: true });
 }
 function startDrag(event, node, o) {
-  if (event.button !== 0 || state.mode !== "select" || event.target.isContentEditable) return;
+  if (event.button !== 0 || state.mode !== "select" || event.target.isContentEditable || event.target.matches("textarea")) return;
   state.selectedId = o.id;
   const before = snapshot(),
     startX = event.clientX,
@@ -1134,10 +1221,12 @@ function hexColor(hex) {
   return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
 async function buildPdf(items) {
+  finishInlineTextEditing();
   const output = await PDFDocument.create(),
     font = await output.embedFont(StandardFonts.Helvetica),
     docs = new Map(),
     images = new Map();
+  const textFonts = new Map([[StandardFonts.Helvetica, font]]);
   output.setTitle(state.documentTitle || state.fileName.replace(/\.pdf$/i, ""));
   output.setLanguage(state.documentLanguage || "en");
   output.setCreator("PDFSplat");
@@ -1164,15 +1253,18 @@ async function buildPdf(items) {
             height: Math.max(o.h * height, o.fontSize * 1.25),
             color: rgb(1, 1, 1),
           });
-        page.drawText(o.text || " ", {
-          ...point(o.x, o.y + o.fontSize / height),
-          rotate: degrees(angle),
-          size: o.fontSize,
-          font,
-          color: hexColor(o.color),
-          opacity: o.opacity ?? 1,
-          maxWidth: o.w * width,
-          lineHeight: o.fontSize * 1.2,
+        const name = o.bold && o.italic ? StandardFonts.HelveticaBoldOblique : o.bold ? StandardFonts.HelveticaBold : o.italic ? StandardFonts.HelveticaOblique : StandardFonts.Helvetica;
+        if (!textFonts.has(name)) textFonts.set(name, await output.embedFont(name));
+        const textFont = textFonts.get(name), boxWidth = o.w * width;
+        const lines = globalThis.PDFLib.breakTextIntoLines(o.text || ' ', [' '], boxWidth, text => textFont.widthOfTextAtSize(text, o.fontSize));
+        lines.forEach((line, index) => {
+          const remaining = Math.max(0, boxWidth - textFont.widthOfTextAtSize(line, o.fontSize));
+          const offset = o.align === 'center' ? remaining / 2 : o.align === 'right' ? remaining : 0;
+          page.drawText(line || ' ', {
+            ...point(o.x + offset / width, o.y + (o.fontSize + index * o.fontSize * 1.2) / height),
+            rotate: degrees(angle), size: o.fontSize, font: textFont,
+            color: hexColor(o.color), opacity: o.opacity ?? 1,
+          });
         });
       } else if (o.type === "mask")
         page.drawRectangle({
@@ -1569,6 +1661,7 @@ async function runVault(event) {
   }
 }
 function undo() {
+  finishInlineTextEditing();
   cancelInk?.();
   const c = state.history.pop();
   if (!c) return;
@@ -1578,6 +1671,7 @@ function undo() {
   announce(`Undid ${c.label}.`);
 }
 function redo() {
+  finishInlineTextEditing();
   cancelInk?.();
   const c = state.future.pop();
   if (!c) return;
@@ -1791,6 +1885,7 @@ window.addEventListener("keydown", (e) => {
   const target = e.target;
   const editing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
   const modalOpen = Boolean(document.querySelector("dialog[open]"));
+  if (target?.classList?.contains("inline-text-editor") && mod && ["z", "y"].includes(key)) return;
   if (e.key === 'Escape' && placement.active && !modalOpen) {
     e.preventDefault(); setMode('select'); announce('Placement cancelled.'); return;
   }
@@ -1811,9 +1906,9 @@ window.addEventListener("keydown", (e) => {
     e.preventDefault();
     redo();
   }
-  if (!mod && e.key === "+" && state.pages.length) els.zoomInButton.click();
-  if (!mod && e.key === "-" && state.pages.length) els.zoomOutButton.click();
-  if (!mod && e.key === "0" && state.pages.length) els.fitButton.click();
+  if (!mod && !editing && !modalOpen && e.key === "+" && state.pages.length) els.zoomInButton.click();
+  if (!mod && !editing && !modalOpen && e.key === "-" && state.pages.length) els.zoomOutButton.click();
+  if (!mod && !editing && !modalOpen && e.key === "0" && state.pages.length) els.fitButton.click();
   if (!mod && !e.altKey && !editing && !modalOpen && e.key === "ArrowLeft" && state.pages.length) {
     e.preventDefault();
     navigatePage(-1);

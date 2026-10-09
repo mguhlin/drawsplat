@@ -73,12 +73,45 @@ const script = document.querySelector("script[data-ds-language]");
 const app = script?.dataset.dsLanguage || "";
 const storesPreference = script?.dataset.dsLanguageStorage !== "none";
 const originals = new WeakMap();
+const rendered = new WeakMap();
+const pdfUI = ".topbar,.tools,#dropZone,#inkTools,#textFormatTools,#placementTools,dialog,.statusbar,.skip-link,#sidebar .panel-heading,#thumbnails span";
 let current = "en";
 let observer;
 
-function dictionary() { return {...(shared[current] || {}), ...(appStrings[app]?.[current] || {})}; }
+function dictionary() { return {...(shared[current] || {}), ...(appStrings[app]?.[current] || {}), ...(app === "pdfsplat" ? window.DrawSplatPdfStrings?.[current] || {} : {})}; }
 function translateValue(value, map) {
   if (map[value]) return map[value];
+  if (app === "pdfsplat") {
+    const patterns = [
+      [/^(.+) downloaded\.$/, "{file} downloaded.", ["file"]],
+      [/^Opening (.+)…$/, "Opening {file}…", ["file"]],
+      [/^Adding (.+)…$/, "Adding {file}…", ["file"]],
+      [/^(\d+) pages selected\. Page (\d+) is active\.$/, "{count} pages selected. Page {page} is active.", ["count","page"]],
+      [/^Page (\d+) actions$/, "Page {page} actions", ["page"]],
+      [/^(\d+) selected pages$/, "{count} selected pages", ["count"]],
+      [/^(\d+) pages? rotated\.$/, "{count} pages rotated.", ["count"]],
+      [/^(\d+) pages? duplicated\.$/, "{count} pages duplicated.", ["count"]],
+      [/^(\d+) pages? deleted\. Undo is available\.$/, "{count} pages deleted. Undo is available.", ["count"]],
+      [/^Click or tap the page to place (.+)\. Arrow keys move the preview; Enter places it\. Escape cancels\.$/, "Click or tap the page to place {item}. Arrow keys move the preview; Enter places it. Escape cancels.", ["item"]],
+      [/^(.+) placed\. Drag to move or use the handles to resize\. Undo is available\.$/, "{item} placed. Drag to move or use the handles to resize. Undo is available.", ["item"]],
+      [/^(.+) opened\. (\d+) pages\.$/, "{file} opened. {count} pages.", ["file","count"]],
+      [/^Page (\d+) of (\d+)$/, "Page {page} of {count}", ["page","count"]],
+      [/^Undid (.+)\.$/, "Undid {item}.", ["item"]],
+      [/^Redid (.+)\.$/, "Redid {item}.", ["item"]],
+    ];
+    for (const [pattern, template, keys] of patterns) {
+      const match = value.match(pattern);
+      if (match && map[template]) return keys.reduce((text, key, i) => text.replaceAll(`{${key}}`, key === "item" ? translateValue(match[i+1], map) : match[i+1]), map[template]);
+    }
+    const history = value.match(/^(Undo|Redo) (.+)$/);
+    if (history) return `${map[history[1]] || history[1]} ${translateValue(history[2], map)}`;
+    const count = value.match(/^(\d+) matching tools$/);
+    if (count) return `${count[1]} ${map["Matching tools"] || "matching tools"}`;
+    const context = value.match(/^(.*?) · Open a PDF to use this tool$/);
+    if (context) return `${translateValue(context[1], map)} · ${map["Open a PDF to use this tool"] || "Open a PDF to use this tool"}`;
+    const page = value.match(/^Page (\d+)$/);
+    if (page) return `${({es:"Página",vi:"Trang",ar:"صفحة",zh:"页",uh:"पृष्ठ / صفحہ"})[current] || "Page"} ${page[1]}`;
+  }
   const caseMatch = Object.keys(map).find((key) => key.toLocaleLowerCase("en") === value.toLocaleLowerCase("en"));
   if (caseMatch) return map[caseMatch];
   const decorated = value.match(/^(\P{L}*)(.*?)(\P{L}*)$/u);
@@ -91,15 +124,17 @@ function translateValue(value, map) {
 function translateNode(node, map) {
   if (node.nodeType === Node.TEXT_NODE) {
     if (!node.parentElement || node.parentElement.closest(".ds-language-control,script,style")) return;
-    if (!originals.has(node)) originals.set(node, node.nodeValue);
+    if (app === "pdfsplat" && !node.parentElement.closest(pdfUI)) return;
+    if (!originals.has(node) || (app === "pdfsplat" && rendered.get(node) !== node.nodeValue)) originals.set(node, node.nodeValue);
     const source = originals.get(node); const trimmed = source.trim();
     if (!trimmed) return;
     const replacement = translateValue(trimmed, map);
     node.nodeValue = source.replace(trimmed, replacement);
+    rendered.set(node, node.nodeValue);
     return;
   }
   if (!(node instanceof Element) || node.closest(".ds-language-control")) return;
-  for (const attr of ["aria-label", "title", "placeholder"]) {
+  for (const attr of (app !== "pdfsplat" || node.closest(pdfUI) ? ["aria-label", "title", "placeholder"] : [])) {
     if (!node.hasAttribute(attr)) continue;
     const dataName = `data-ds-original-${attr.replace("aria-label", "aria")}`;
     if (!node.hasAttribute(dataName)) node.setAttribute(dataName, node.getAttribute(attr));
@@ -113,7 +148,7 @@ function applyLanguage(code) {
   document.documentElement.lang = language[2];
   if (current === "en") document.documentElement.removeAttribute("dir"); else document.documentElement.dir = language[3];
   const map = dictionary(); observer?.disconnect(); translateNode(document.body, map);
-  if (app !== "pdfsplat") observer?.observe(document.body, {subtree:true,childList:true,characterData:true});
+  observer?.observe(document.body, {subtree:true,childList:true,characterData:true});
   window.dispatchEvent(new CustomEvent("drawsplat:language", {detail:{language:current}}));
 }
 function preferredLanguage() {
@@ -147,8 +182,8 @@ function addSwitcher() {
 }
 
 current = preferredLanguage();
-observer = new MutationObserver((records) => { const map = dictionary(); observer.disconnect(); for (const record of records) { if (record.type === "characterData") { originals.delete(record.target); translateNode(record.target, map); } else for (const node of record.addedNodes) translateNode(node, map); } if (app !== "pdfsplat") observer.observe(document.body,{subtree:true,childList:true,characterData:true}); });
+observer = new MutationObserver((records) => { const map = dictionary(); observer.disconnect(); for (const record of records) { if (record.type === "characterData") { if (app !== "pdfsplat") originals.delete(record.target); translateNode(record.target, map); } else for (const node of record.addedNodes) translateNode(node, map); } observer.observe(document.body,{subtree:true,childList:true,characterData:true}); });
 if (current !== "en") applyLanguage(current);
-else if (app !== "pdfsplat") observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+else observer.observe(document.body,{subtree:true,childList:true,characterData:true});
 addSwitcher();
 })();

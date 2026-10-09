@@ -128,10 +128,39 @@
     const icons={'adv-library':'adv-library.svg','adv-group':'adv-group.svg','adv-bg':'adv-bg.svg','adv-save':'adv-cloud-down.png','adv-copy':'adv-group.svg','adv-settings':'adv-lock.png',undo:'adv-back.png',redo:'adv-front.png'};
     el.style.setProperty('--ds-action-icon',`url("${new URL(info[0].includes('/')?info[0]:'icons/tools/'+(icons[info[0]]||info[0]+'.png'),info[0].startsWith('/')?location.origin:assetRoot)}")`);
   }
+  // Compact action symbols preserve each app's visible labels and event handlers.
+  const splatTool = /\/(?:solutions|splatworks)\/[^/]*splat(?:\/|$)/i.test(location.pathname);
+  const symbolRules = [
+    [/undo/i,'undo'],[/redo/i,'redo'],[/export|download|saveAs/i,'export'],
+    [/copy|duplicate/i,'copy'],[/paste/i,'paste'],[/cut/i,'cut'],[/save/i,'save'],
+    [/delete|remove|trash/i,'delete'],[/reset|restore/i,'reset'],[/rotate|deskew/i,'rotate'],
+    [/crop/i,'crop'],[/settings|preferences|adjust/i,'settings'],[/capture|scan|camera|photo/i,'capture'],[/image|picture/i,'image'],
+    [/search|find/i,'search'],[/help|guide|shortcut/i,'help'],[/settings|preferences|adjust/i,'settings'],
+    [/pause/i,'pause'],[/stop/i,'stop'],[/play|present/i,'play'],[/record/i,'microphone'],
+    [/mute|volume/i,'volume'],[/zoom/i,'zoom'],[/print/i,'print'],[/link/i,'link'],
+    [/preview/i,'preview'],[/protect|lock/i,'lock'],[/open|import|upload|choose/i,'open'],
+    [/new|insertBlank/i,'new'],[/draw|pen|signature/i,'draw'],[/done|finish|apply/i,'check'],[/close|cancel/i,'close']
+  ];
+  function addSymbol(el) {
+    if (!splatTool || el.closest('canvas,svg,#annotationLayer,#textHitLayer,.slide-canvas,.canvas-overlay,.ds-app-launcher') || el.matches('[data-no-action-icon],[data-ds-app-launcher],.resize-handle')) return;
+    if (el.classList.contains('ds-action-button') || el.classList.contains('ds-symbol-action')) return;
+    const label=(el.textContent||'').trim();
+    if (!/\p{L}/u.test(label)) return; // Keep compact arrows and resize handles intact.
+    // Existing native SVG/image controls already have an icon.
+    if (!el.classList.contains('ds-action-card') && el.querySelector('svg,img,.button-icon,.menu-item-icon')) return;
+    const key=[el.dataset.action,el.id,el.dataset.i18n,el.dataset.dsOriginalAria,el.getAttribute('aria-label'),label].filter(Boolean).join(' ');
+    const name=el.dataset.textAlign ? 'align-'+el.dataset.textAlign : symbolRules.find(([rule])=>rule.test(key))?.[1];
+    if (!name) return;
+    el.style.setProperty('--ds-control-icon', `url("${new URL('icons/actions/'+name+'.svg',assetRoot)}")`);
+    el.classList.add(el.classList.contains('ds-action-card') ? 'ds-symbol-action' : 'ds-action-button');
+  }
+
   function enhance(root){
     if(root.nodeType!==1&&root!==document)return;
     if(root.matches?.(actions))explain(root);
     root.querySelectorAll(actions).forEach(explain);
+    if(root.matches?.("button,a.button,a.button-link"))addSymbol(root);
+    root.querySelectorAll("button,a.button,a.button-link").forEach(addSymbol);
     if(root.matches?.('.menu-popover[role="menu"]'))positionReactMenu(root);
   }
   // Observe added UI only; attribute changes and canvas rendering are excluded.

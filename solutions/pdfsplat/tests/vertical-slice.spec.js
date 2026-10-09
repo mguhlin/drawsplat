@@ -147,6 +147,7 @@ test('imports image pages, exports PNG, and creates a rasterized sanitized copy'
   const source = await PDFDocument.create(); source.setTitle('Sensitive metadata'); source.addPage([300, 500]);
   await page.goto('/solutions/pdfsplat/');
   await page.locator('#fileInput').setInputFiles({ name:'safe.pdf', mimeType:'application/pdf', buffer:Buffer.from(await source.save()) });
+  await expect(page.locator('#imagePagesButton')).toBeEnabled();
   await page.locator('#imagePagesInput').setInputFiles({ name:'photo.png', mimeType:'image/png', buffer:png });
   await expect(page.locator('.thumbnail')).toHaveCount(2);
   await page.locator('.thumbnail').first().click();

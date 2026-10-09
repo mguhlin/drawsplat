@@ -46,7 +46,7 @@ export async function collectTextDocument({ pages, sources, title, language, sou
       for (const [lineIndex, str] of (o.text || '').split('\n').entries()) {
         const y = o.y + lineIndex * o.fontSize * 1.2 / height;
         if (o.x < crop.left || o.x >= 1 - crop.right || y < crop.top || y >= 1 - crop.bottom) continue;
-        runs.push({ str, transform: [o.fontSize, 0, 0, o.fontSize, left + o.x * width, top - y * height - o.fontSize], width: o.w * width, fontFamily: o.fontFamily, color: o.color });
+        runs.push({ str, transform: [o.fontSize, 0, 0, o.fontSize, left + o.x * width, top - y * height - o.fontSize], width: o.w * width, fontFamily: o.fontFamily, color: o.color, bold: !!o.bold, italic: !!o.italic });
       }
     }
     const lines = formattedLines(runs, width);
