@@ -1225,3 +1225,11 @@
   .workspace[data-mobile-panel="inspector"] > .inspector { display:block; }
   .workspace[data-mobile-panel="preview"] > .stage { display:grid; }
 }
+
+/* Named bookmarks stay separate from media and rendered content. */
+.ruler .timeline-marker{position:absolute;top:0;transform:translateX(-50%);z-index:2;border:0;border-radius:2px;background:transparent;padding:0 4px;min-height:20px;font-size:16px;line-height:20px}
+.ruler .timeline-marker:hover{background:#28334c}.marker-list{list-style:none;padding:0;display:grid;gap:8px;max-height:250px;overflow:auto}
+.marker-list li{display:flex;align-items:center;gap:6px}.marker-list li>button:first-child{flex:1;min-width:0;text-align:left;overflow-wrap:anywhere}
+.marker-list i{display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:2px}.marker-list small{display:block;color:var(--muted);margin-top:3px}.marker-list .active{border-color:var(--purple)}
+.marker-editor{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);padding-top:16px}.marker-editor label{display:grid;gap:5px;font-size:.85rem}.marker-editor label:first-child{grid-column:1/-1}.marker-editor input,.marker-editor select{width:100%;min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:#e8ecf7;padding:8px}.marker-editor button{grid-column:1/-1}
+@media(max-width:580px){.marker-list li{flex-wrap:wrap}.marker-list li>button:first-child{flex-basis:100%}}

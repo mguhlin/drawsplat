@@ -159,3 +159,29 @@ remove stored sources, use **About → View privacy details → Clear all local 
 data and media** (this clears every local project and source). Locked tracks are
 also protected during media import/removal, completed files survive a later batch
 import failure, and autosave reports success only after storage commits.
+
+## Timeline markers
+
+Inspired by FilmCraft's named, colored markers, VideoSplat now supports local
+project bookmarks. Move the playhead to a useful moment and choose **Add marker**
+or press **M**. **Markers** opens the list, where you can rename a bookmark,
+change its time and color, jump to it, or delete it. **Previous marker** and
+**Next marker** navigate in time order; clicking a diamond on the ruler also
+jumps to that bookmark. Marker times align to the project's frame rate.
+
+Markers save through the existing autosave and `.videosplat.json` project-copy
+workflow and participate in Undo/Redo. They are optional version-2 project data,
+so older projects open without changes or a database migration. Invalid marker
+data is rejected before an imported project replaces your current work.
+
+Markers stay at their recorded timeline timestamps when clips move or ripple.
+A bookmark beyond the current video duration remains in the list for editing,
+but its Go to action is disabled. Markers do not extend the video, modify clips,
+or appear in rendered exports. MLT interchange does not carry these bookmarks;
+use `.videosplat.json` to preserve them.
+
+The M shortcut is inactive while typing or using a dialog. Source media,
+recording, captions, effects, and export engines retain their existing paths.
+This is an independent workflow addition inspired by
+[FilmCraft](https://github.com/storytold/filmcraft); it adds no FilmCraft code,
+assets, codecs, or runtime dependencies.

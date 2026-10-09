@@ -4,6 +4,7 @@ export type TrackKind = "video" | "audio" | "image" | "text" | "caption" | "reda
 export interface Asset { id: string; name: string; kind: "video" | "audio" | "image"; size: number; mimeType: string; duration?: number; width?: number; height?: number; contentHash?: string; thumbnail?: string; waveform?: number[]; storedLocally: boolean }
 export interface Clip { id: string; assetId?: string; name: string; kind: TrackKind; start: number; duration: number; sourceStart: number; properties: Record<string, number | string | boolean> }
 export interface Track { id: string; name: string; kind: TrackKind; hidden: boolean; locked: boolean; muted: boolean; clips: Clip[] }
+export interface TimelineMarker { id: string; name: string; time: number; color: string }
 export interface VideoSplatProject {
   schema: "videosplat-project";
   version: typeof PROJECT_VERSION;
@@ -14,6 +15,7 @@ export interface VideoSplatProject {
   canvas: { width: number; height: number; frameRate: number; background: string };
   assets: Asset[];
   tracks: Track[];
+  markers?: TimelineMarker[];
   settings: { proxyMode: "auto" | "always" | "never"; localOnly: true };
 }
 
@@ -52,6 +54,11 @@ export function validateProject(value: unknown): VideoSplatProject {
       (asset.duration === undefined || number(asset.duration, 0)) &&
       (asset.waveform === undefined || (Array.isArray(asset.waveform) && asset.waveform.every(value => number(value, 0))))
     ) ||
+    (project.markers !== undefined && (!Array.isArray(project.markers) || !project.markers.every(marker =>
+      record(marker) && uniqueId(marker.id, "marker") && typeof marker.name === "string" &&
+      marker.name.trim().length > 0 && marker.name.length <= 120 && number(marker.time, 0) &&
+      typeof marker.color === "string" && /^#[0-9a-f]{6}$/i.test(marker.color)
+    ))) ||
     !Array.isArray(project.tracks) || !project.tracks.every(track =>
       record(track) && uniqueId(track.id, "track") && typeof track.name === "string" && kinds.includes(track.kind) &&
       typeof track.hidden === "boolean" && typeof track.locked === "boolean" && typeof track.muted === "boolean" &&

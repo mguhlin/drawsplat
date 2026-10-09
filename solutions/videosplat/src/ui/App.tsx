@@ -1,3 +1,5 @@
+import { MarkerPanel } from "./MarkerPanel";
+import { addMarker, updateMarker, removeMarker, nearbyMarker } from "../timeline/markers";
 import { ChromaControls } from "./ChromaControls";
 import { ChromaPreview } from "./ChromaPreview";
 import { chromaSettings, chromaProperties } from "../render/chroma";
@@ -66,6 +68,7 @@ import { RecorderDialog } from "./RecorderDialog";
 import { captureErrorMessage } from "../recorder/capture";
 
 type Dialog =
+  | "markers"
   | "projects"
   | "privacy"
   | "limits"
@@ -231,6 +234,14 @@ export function App() {
     history.current.commit(next);
     setProject(next);
   };
+  const addTimelineMarker = () => {
+    if (!projectDuration(project)) return;
+    setPlaying(false);
+    const next = addMarker(project, Math.min(time, projectDuration(project)));
+    commit(next);
+    setTime(next.markers!.at(-1)!.time);
+    setStatus('Marker added at the playhead. Open Markers to name it.');
+  };
   const rename = (name: string) => commit(touchProject(project, { name }));
   const refreshProjects = async () =>
     setRecent(
@@ -278,6 +289,13 @@ export function App() {
         event.preventDefault();
         setDialog(null);
         setOpenMenu(undefined);
+      }
+      const typing = event.target instanceof HTMLElement &&
+        (event.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName));
+      if (dialog === "markers") return;
+      if (!event.ctrlKey && !event.metaKey && !event.altKey && event.key.toLowerCase() === 'm') {
+        if (typing || dialog || showSplash || openMenu || subtitleDialog || generation) return;
+        event.preventDefault(); if (!event.repeat) addTimelineMarker(); return;
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
@@ -362,7 +380,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [project, selectedClipId, time, rippleEditing, dialog, openMenu]);
+  }, [project, selectedClipId, time, rippleEditing, dialog, openMenu, showSplash, subtitleDialog, generation]);
 
   useEffect(() => {
     for (const track of project.tracks.filter((item) => item.kind === "audio"))
@@ -685,6 +703,14 @@ export function App() {
     return `00:${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}:${String(frames).padStart(2, "0")}`;
   };
   const totalDuration = projectDuration(project);
+  const markers = project.markers ?? [];
+  const previousMarker = nearbyMarker(markers.filter(marker=>marker.time<=totalDuration),time,-1);
+  const nextMarker = nearbyMarker(markers.filter(marker=>marker.time<=totalDuration),time,1);
+  const seekMarker = (seconds: number) => {
+    setPlaying(false); setTime(Math.min(totalDuration,seconds));
+    const viewport = timelineScroll.current;
+    if (viewport) viewport.scrollLeft = Math.max(0,seconds*BASE_PIXELS_PER_SECOND*timelineZoom-timelineViewportWidth/2);
+  };
   const menuAction = (action: () => void) => {
     action();
     setOpenMenu(undefined);
@@ -2144,6 +2170,10 @@ export function App() {
                 if (timelineScroll.current) timelineScroll.current.scrollLeft = 0;
                 setTimelineZoom(fitTimelineZoom(totalDuration, timelineViewportWidth));
               }}>Fit timeline</button>
+              <button onClick={addTimelineMarker} disabled={!totalDuration} title="Bookmark the playhead (M)">Add marker</button>
+              <button onClick={()=>setDialog('markers')}>Markers ({markers.length})</button>
+              <button aria-label="Previous marker" disabled={!previousMarker} onClick={()=>previousMarker&&seekMarker(previousMarker.time)}>◀ ◆</button>
+              <button aria-label="Next marker" disabled={!nextMarker} onClick={()=>nextMarker&&seekMarker(nextMarker.time)}>◆ ▶</button>
               <button
                 aria-label={`Range select ${rangeSelecting ? "on" : "off"}`}
                 aria-pressed={rangeSelecting}
@@ -2190,6 +2220,10 @@ export function App() {
               }}
               >
 
+              {markers.filter(marker=>marker.time<=totalDuration).map(marker=><button
+                key={marker.id} className="timeline-marker" style={{left:marker.time*pixelsPerSecond,color:marker.color}}
+                aria-label={`Go to marker ${marker.name}`} title={`${marker.name} · ${formatTime(marker.time)}`}
+                onClick={event=>{event.stopPropagation();seekMarker(marker.time)}}>◆</button>)}
               {Array.from(
                 { length: Math.floor(Math.max(1, totalDuration) / tickInterval) + 1 },
                 (_, index) => (
@@ -2557,6 +2591,10 @@ export function App() {
                 )}
               </>
             )}
+            {dialog === 'markers' && <MarkerPanel markers={markers} duration={totalDuration}
+              onSeek={seconds=>{seekMarker(seconds);setDialog(null)}}
+              onSave={(id,patch)=>{commit(updateMarker(project,id,patch));setStatus('Marker updated')}}
+              onDelete={id=>{commit(removeMarker(project,id));setStatus('Marker deleted. Undo restores it.')}}/>}
             {dialog === "limits" && <>
               <h2 id="dialog-title">VideoSplat limits &amp; export time</h2>
               <ul className="limits-list">
@@ -2639,6 +2677,7 @@ export function App() {
               <>
                 <h2 id="dialog-title">Keyboard shortcuts</h2>
                 <dl className="shortcuts">
+                  <div><dt>Add timeline marker</dt><dd>M</dd></div>
                   <div>
                     <dt>Save project copy</dt>
                     <dd>Ctrl/⌘ S</dd>

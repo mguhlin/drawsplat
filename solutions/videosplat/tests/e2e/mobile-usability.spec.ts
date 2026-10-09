@@ -17,8 +17,11 @@ test('phone users can reach media, preview and title controls', async ({ page })
   expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 test('missing screen capture defaults to camera with guidance', async ({page})=>{
-  await page.addInitScript(()=>Object.defineProperty(navigator.mediaDevices,'getDisplayMedia',{value:undefined}));
   await page.goto('./');
+  // Apply and verify the capability fixture immediately before opening the
+  // recorder, rather than depending on WebKit document-init timing.
+  await page.evaluate(()=>Object.defineProperty(navigator.mediaDevices,'getDisplayMedia',{value:undefined}));
+  expect(await page.evaluate(()=>typeof navigator.mediaDevices.getDisplayMedia)).toBe('undefined');
   await page.getByRole('button',{name:'Record video',exact:true}).click();
   await expect(page.getByLabel('Recording source')).toHaveValue('camera');
   await expect(page.getByText(/Screen sharing is unavailable/)).toBeVisible();

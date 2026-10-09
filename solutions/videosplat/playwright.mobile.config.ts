@@ -5,7 +5,7 @@ import desktop from "./playwright.config";
 // engines emulating devices cannot validate physical Android/iPhone hardware.
 export default defineConfig({
   ...desktop,
-  testMatch: "mobile-usability.spec.ts",
+  testMatch: ["mobile-usability.spec.ts", "markers.spec.ts"],
   projects: [
     { name: "chromium-phone", use: { ...devices["Pixel 7"], launchOptions: desktop.projects?.[0].use?.launchOptions } },
     { name: "firefox-phone", use: { browserName: "firefox", viewport: { width: 390, height: 844 }, hasTouch: true } },
