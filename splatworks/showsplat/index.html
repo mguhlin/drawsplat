@@ -8,7 +8,7 @@
   <meta name="description" content="ShowSplat™ is the SplatWorks™ slide deck and WebDeck authoring tool.">
   <link rel="icon" href="showsplat_icon.png" type="image/png">
   <link rel="apple-touch-icon" href="showsplat_icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260719-5">
+  <link rel="stylesheet" href="styles.css?v=20261009-1">
   <script src="../../assets/js/widget-i18n.js"></script>
   <script src="locales.js"></script>
   <link rel="stylesheet" href="../../assets/css/tool-launcher.css?v=2"><link rel="stylesheet" href="../../assets/css/launcher-trigger.css">
@@ -151,6 +151,7 @@
     </div></details>
     <details class="menu"><summary data-i18n="View">View</summary><div class="menu-panel">
       <button data-action="view-normal" data-i18n="Normal">Normal</button>
+      <button data-action="find-slides" data-i18n="Find slides">Find slides</button>
       <button data-action="view-sorter" data-i18n="Slide Sorter">Slide Sorter</button>
       <button data-action="view-notes" data-i18n="Notes">Notes</button>
       <button data-action="theme-gallery" data-i18n="Master Slide">Master Slide</button>
@@ -241,7 +242,7 @@
 
   <section class="workspace">
     <aside class="slide-rail" aria-label="Slide thumbnails">
-      <div class="rail-title" data-i18n="Slides">Slides</div>
+      <div class="rail-title rail-heading"><span data-i18n="Slides">Slides</span><button type="button" data-action="find-slides" data-i18n="Find slides" title="Ctrl/⌘ + Shift + F">Find slides</button></div>
       <div id="thumbnailList" class="thumbnail-list"></div>
       <button class="rail-add" data-action="pick-template"><svg><use href="#i-plus"/></svg> <span data-i18n="Add slide">Add slide</span></button>
     </aside>
@@ -255,7 +256,7 @@
       <div id="slideSorter" class="slide-sorter" hidden></div>
       <div class="stage" id="stage">
         <div class="slide-board">
-          <div id="slideCanvas" class="slide-canvas" aria-label="Current slide canvas"></div>
+          <div id="slideCanvas" tabindex="-1" class="slide-canvas" aria-label="Current slide canvas"></div>
         </div>
       </div>
     </section>
@@ -349,10 +350,26 @@
   </form>
 </dialog>
 
+<dialog id="slideSearchDialog" class="studio-dialog slide-search-dialog" aria-labelledby="slideSearchTitle">
+  <form method="dialog">
+    <header><h2 id="slideSearchTitle" data-i18n="Find slides">Find slides</h2><button value="close" aria-label="Close">×</button></header>
+    <p class="search-intro">Search the whole deck, including hidden slides and collapsed groups. Choose a result to open it in the editor.</p>
+    <div class="slide-search-controls"><div><label for="slideSearchInput">Search slides</label><input id="slideSearchInput" type="search" placeholder="Title, content, or speaker notes" autocomplete="off"></div><div><label for="slideSearchScope">Search in</label><select id="slideSearchScope"><option value="all">Everything</option><option value="title">Titles</option><option value="content">Slide content</option><option value="notes">Speaker notes</option></select></div></div>
+    <p id="slideSearchCount" class="search-count" role="status" aria-live="polite"></p>
+    <ol id="slideSearchResults" class="slide-search-results" aria-label="Matching slides"></ol>
+    <p id="slideSearchEmpty" class="search-empty" hidden>No slides match. Try fewer words or search Everything.</p>
+    <footer><span class="search-hint">Ctrl/⌘ + Shift + F opens this navigator. Escape closes it.</span><button value="close">Done</button></footer>
+  </form>
+</dialog>
+
 <dialog id="helpDialog" class="studio-dialog help-dialog">
   <form method="dialog">
     <header><h2>ShowSplat help</h2><button value="close" aria-label="Close">x</button></header>
     <div class="help-grid">
+      <section>
+        <h3>Find a slide</h3>
+        <p>Use View > Find slides or Ctrl/Command + Shift + F to search titles, slide content, tables, and speaker notes. Hidden and collapsed slides remain searchable.</p>
+      </section>
       <section>
         <h3>Build a deck</h3>
         <p>Add slides from the toolbar or Templates menu. Use the slide rail to pick, duplicate, delete, and reorder slides.</p>
@@ -390,6 +407,7 @@
   <form method="dialog">
     <header><h2>Keyboard shortcuts</h2><button value="close" aria-label="Close">x</button></header>
     <dl class="shortcut-list">
+      <div><dt>Ctrl / ⌘ + Shift + F</dt><dd>Find slides by title, content, or notes</dd></div>
       <div><dt>Ctrl / ⌘ + Z</dt><dd>Undo the last change</dd></div>
       <div><dt>Ctrl / ⌘ + Y (or Shift+Z)</dt><dd>Redo the change</dd></div>
       <div><dt>N</dt><dd>Add a title/content slide</dd></div>
@@ -449,8 +467,9 @@
 
 <script src="../../vendor/jszip.min.js"></script>
 <script src="../../vendor/pdf.min.js"></script>
-<script src="webdeck-framework-embed.js?v=20260718-5"></script>
-<script src="app.js?v=20260719-5"></script>
+<script src="webdeck-framework-embed.js?v=20261009-v5"></script>
+<script src="slide-search.js?v=20261009-1"></script>
+<script src="app.js?v=20261009-1"></script>
   <script type="module" src="../../assets/js/tool-launcher.js?v=2"></script>
 </body>
 </html>

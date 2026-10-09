@@ -44,6 +44,11 @@
     markdownDialog: document.getElementById('markdownDialog'),
     markdownInput: document.getElementById('markdownInput'),
     helpDialog: document.getElementById('helpDialog'),
+    slideSearchDialog: document.getElementById('slideSearchDialog'),
+    slideSearchInput: document.getElementById('slideSearchInput'),
+    slideSearchScope: document.getElementById('slideSearchScope'),
+    slideSearchResults: document.getElementById('slideSearchResults'),
+    slideSearchCount: document.getElementById('slideSearchCount'),
     shortcutsDialog: document.getElementById('shortcutsDialog'),
     themeDialog: document.getElementById('themeDialog'),
     footerText: document.getElementById('footerText'),
@@ -3193,6 +3198,7 @@
     if (action === 'planned-export') alert(target.dataset.kind + ' export is planned after the ShowSplat deck model stabilizes. Use WebDeck HTML or browser PDF export in this first release.');
     if (action === 'present-first') present(0);
     if (action === 'present-current') present(activeSlide);
+    if (action === 'find-slides') openSlideSearch();
     if (action === 'view-normal') setView('normal');
     if (action === 'view-sorter') setView('sorter');
     if (action === 'view-notes') setView('notes');
@@ -3241,6 +3247,85 @@
     }
     setStatus('No compatible handoff image found. Export or copy from the source tool first.');
   }
+
+  let slideSearchIndex = [];
+  function openSlideSearch() {
+    if (document.querySelector('dialog[open]')) return;
+    slideSearchIndex = window.ShowSplatSearch.indexSlides(deck.slides);
+    els.slideSearchInput.value = '';
+    els.slideSearchScope.value = 'all';
+    renderSlideSearch();
+    els.slideSearchDialog.showModal();
+    els.slideSearchInput.focus();
+  }
+
+  function renderSlideSearch() {
+    const query = els.slideSearchInput.value;
+    const scope = els.slideSearchScope.value;
+    const entries = window.ShowSplatSearch.findSlides(slideSearchIndex, query, scope);
+    els.slideSearchCount.textContent = entries.length + ' of ' + deck.slides.length + ' slides';
+    els.slideSearchResults.replaceChildren();
+    document.getElementById('slideSearchEmpty').hidden = entries.length > 0;
+    entries.forEach(entry => {
+      const slide = deck.slides[entry.index];
+      const row = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'slide-search-result';
+      button.setAttribute('aria-label', 'Open slide ' + (entry.index + 1) + ': ' + entry.title);
+      if (entry.index === activeSlide) button.setAttribute('aria-current', 'true');
+      const number = document.createElement('span');
+      number.className = 'search-slide-number';
+      number.textContent = String(entry.index + 1);
+      const body = document.createElement('span');
+      body.className = 'search-slide-body';
+      const title = document.createElement('strong');
+      title.textContent = entry.title;
+      body.append(title);
+      const states = [entry.index === activeSlide ? 'Current slide' : '', slide.hidden ? 'Hidden from presentation' : '', isCollapsedChild(entry.index) ? 'Inside collapsed group' : '', slide.collapsed ? 'Collapsed group' : ''].filter(Boolean);
+      if (states.length) {
+        const label = document.createElement('small');
+        label.className = 'search-slide-state';
+        label.textContent = states.join(' · ');
+        body.append(label);
+      }
+      ['content', 'notes'].forEach(field => {
+        if (!entry[field] || (scope !== 'all' && scope !== field)) return;
+        const snippet = document.createElement('span');
+        snippet.className = 'search-slide-excerpt';
+        snippet.textContent = (field === 'notes' ? 'Notes: ' : '') + window.ShowSplatSearch.excerpt(entry[field], query);
+        body.append(snippet);
+      });
+      button.append(number, body);
+      button.addEventListener('click', () => {
+        els.slideSearchDialog.close();
+        clearSelection();
+        selectSlide(entry.index);
+        if (viewMode === 'sorter') setView('normal');
+        setStatus('Opened slide ' + (entry.index + 1) + (slide.hidden ? ' (hidden from presentation).' : '.'));
+        els.canvas.focus({ preventScroll: true });
+      });
+      row.append(button);
+      els.slideSearchResults.append(row);
+    });
+  }
+  els.slideSearchInput.addEventListener('input', renderSlideSearch);
+  els.slideSearchInput.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    els.slideSearchResults.querySelector('button')?.click();
+  });
+  els.slideSearchScope.addEventListener('change', renderSlideSearch);
+  els.slideSearchDialog.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault(); event.stopPropagation();
+    els.slideSearchDialog.close();
+  });
+  els.slideSearchDialog.querySelector('form').addEventListener('submit', event => {
+    if (event.submitter?.value === 'close') return;
+    event.preventDefault();
+    els.slideSearchResults.querySelector('button')?.click();
+  });
 
   function setView(mode) {
     viewMode = ['sorter', 'notes'].includes(mode) ? mode : 'normal';
@@ -3501,6 +3586,10 @@
   });
 
   document.addEventListener('keydown', event => {
+    if (els.slideSearchDialog.open) return;
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'f' && !document.querySelector('dialog[open]')) {
+      event.preventDefault(); closeMenus(); openSlideSearch(); return;
+    }
     if (event.target.matches('input, textarea, [contenteditable="true"]')) return;
     const mod = event.ctrlKey || event.metaKey;
     if (mod && (event.key === 'z' || event.key === 'Z')) { event.preventDefault(); if (event.shiftKey) redo(); else undo(); return; }
@@ -3533,6 +3622,7 @@
   });
 
   document.addEventListener('paste', event => {
+    if (els.slideSearchDialog.open) return;
     const items = event.clipboardData && event.clipboardData.items;
     if (!items) return;
     for (const item of items) {

@@ -1000,7 +1000,7 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
 @media (max-width: 760px) {
   .app-header { align-items: flex-start; flex-direction: column; min-height: auto; }
   .show-app { height: auto; min-height: 100vh; }
-  .workspace { grid-template-columns: 1fr; }
+  .workspace, .workspace.show-inspector { grid-template-columns: 1fr; }
   .slide-rail { order: 1; border-right: 0; border-top: 1px solid var(--line); height: var(--rail-height, 220px); max-height: none; }
   .rail-splitter {
     order: 2;
@@ -1029,4 +1029,27 @@ svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width:
   .thumbnail-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .stage { padding: 10px; }
   .slide-canvas { width: min(100%, 92vw); }
+}
+
+/* Deck navigation follows the slide sequence, with content kept beside its title. */
+.rail-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rail-heading button { border: 1px solid var(--line); background: #fff; border-radius: 7px; padding: 5px 8px; color: var(--accent); font-size: .8rem; }
+.slide-search-dialog { width: min(780px, calc(100vw - 32px)); }
+.slide-search-dialog form { max-height: calc(100dvh - 32px); }
+.search-intro, .search-count, .search-empty { margin: 0; color: var(--muted); }
+.slide-search-controls { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 12px; }
+.slide-search-controls > div { display: grid; gap: 6px; font-size: .9rem; font-weight: 700; }
+.slide-search-controls input, .slide-search-controls select { width: 100%; min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.slide-search-results { list-style: none; padding: 0; margin: 0; display: grid; gap: 1px; }
+.slide-search-dialog .slide-search-result { width: 100%; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; border: 0; border-radius: 0; border-bottom: 1px solid var(--line); padding: 14px 8px; text-align: start; font-weight: 400; }
+.slide-search-dialog .slide-search-result:hover, .slide-search-result[aria-current] { background: var(--soft); }
+.search-slide-number { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 800; }
+.search-slide-body { display: grid; gap: 5px; min-width: 0; overflow-wrap: anywhere; }
+.search-slide-state { color: var(--accent); font-size: .8rem; }
+.search-slide-excerpt { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+.search-hint { font-size: .8rem; color: var(--muted); }
+.slide-search-dialog :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 520px) {
+  .slide-search-controls { grid-template-columns: 1fr; }
+  .slide-search-dialog footer { align-items: flex-start; }
 }

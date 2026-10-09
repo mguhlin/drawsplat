@@ -5,6 +5,7 @@
    the outstanding review items. */
 WidgetI18n.register('showsplat', {
   es: {
+    'Find slides': 'Buscar diapositivas',
     New: 'Nueva', Save: 'Guardar', Present: 'Presentar',
     File: 'Archivo', 'New deck': 'Presentación nueva', 'Save .showsplat.json': 'Guardar .showsplat.json', 'Open .showsplat.json': 'Abrir .showsplat.json',
     Import: 'Importar', 'WebDeck HTML (.html)': 'WebDeck HTML (.html)', 'Markdown (.md)': 'Markdown (.md)', 'PDF (.pdf)': 'PDF (.pdf)', 'ODP (.odp)': 'ODP (.odp)', 'PowerPoint (.pptx)': 'PowerPoint (.pptx)',
@@ -27,6 +28,7 @@ WidgetI18n.register('showsplat', {
   },
 
   vi: {
+    'Find slides': 'Tìm trang chiếu',
     New: 'Mới', Save: 'Lưu', Present: 'Trình bày',
     File: 'Tệp', 'New deck': 'Bản trình chiếu mới', 'Save .showsplat.json': 'Lưu .showsplat.json', 'Open .showsplat.json': 'Mở .showsplat.json',
     Import: 'Nhập', 'WebDeck HTML (.html)': 'WebDeck HTML (.html)', 'Markdown (.md)': 'Markdown (.md)', 'PDF (.pdf)': 'PDF (.pdf)', 'ODP (.odp)': 'ODP (.odp)', 'PowerPoint (.pptx)': 'PowerPoint (.pptx)',
@@ -49,6 +51,7 @@ WidgetI18n.register('showsplat', {
   },
 
   ar: {
+    'Find slides': 'البحث عن الشرائح',
     New: 'جديد', Save: 'حفظ', Present: 'عرض',
     File: 'ملف', 'New deck': 'عرض تقديمي جديد', 'Save .showsplat.json': 'حفظ ‎.showsplat.json‎', 'Open .showsplat.json': 'فتح ‎.showsplat.json‎',
     Import: 'استيراد', 'WebDeck HTML (.html)': 'WebDeck HTML ‏(.html)', 'Markdown (.md)': 'Markdown ‏(.md)', 'PDF (.pdf)': 'PDF ‏(.pdf)', 'ODP (.odp)': 'ODP ‏(.odp)', 'PowerPoint (.pptx)': 'PowerPoint ‏(.pptx)',
@@ -71,6 +74,7 @@ WidgetI18n.register('showsplat', {
   },
 
   zh: {
+    'Find slides': '查找幻灯片',
     New: '新建', Save: '保存', Present: '演示',
     File: '文件', 'New deck': '新建演示', 'Save .showsplat.json': '保存 .showsplat.json', 'Open .showsplat.json': '打开 .showsplat.json',
     Import: '导入', 'WebDeck HTML (.html)': 'WebDeck HTML (.html)', 'Markdown (.md)': 'Markdown (.md)', 'PDF (.pdf)': 'PDF (.pdf)', 'ODP (.odp)': 'ODP (.odp)', 'PowerPoint (.pptx)': 'PowerPoint (.pptx)',
@@ -93,6 +97,7 @@ WidgetI18n.register('showsplat', {
   },
 
   uh: {
+    'Find slides': 'स्लाइड खोजें',
     New: 'नया / نیا', Save: 'सहेजें / محفوظ کریں', Present: 'प्रस्तुत / پیش کریں',
     File: 'फ़ाइल / فائل', 'New deck': 'नई प्रस्तुति / نئی پریزنٹیشن', 'Save .showsplat.json': '.showsplat.json सहेजें / محفوظ کریں', 'Open .showsplat.json': '.showsplat.json खोलें / کھولیں',
     Import: 'आयात / درآمد', 'WebDeck HTML (.html)': 'WebDeck HTML (.html)', 'Markdown (.md)': 'Markdown (.md)', 'PDF (.pdf)': 'PDF (.pdf)', 'ODP (.odp)': 'ODP (.odp)', 'PowerPoint (.pptx)': 'PowerPoint (.pptx)',
