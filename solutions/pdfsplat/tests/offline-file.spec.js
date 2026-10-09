@@ -18,6 +18,7 @@ test('opens, edits, saves, and protects PDF bytes directly from disk without net
   await expect(page.locator('#status')).toContainText('1 pages');
   await expect(page.locator('#pdfCanvas')).toBeVisible();
   await page.getByRole('button',{name:'Add text',exact:true}).click();
+  await page.locator('#annotationLayer').press('Enter');
   await page.locator('#textValue').fill('Saved offline');
   const saved = page.waitForEvent('download');
   await page.locator('#saveAsSelect').selectOption('pdf');

@@ -18,6 +18,7 @@ for (const format of ['markdown', 'docx', 'odt', 'json']) {
   test(`Save as ${format} includes edited text in a valid file`, async ({ page }, testInfo) => {
     await openDocument(page);
     await page.locator('#addTextButton').click();
+  await page.locator('#annotationLayer').press('Enter');
     await page.locator('#textValue').fill('Added text & <safe>');
     await page.locator('#saveAsSelect').selectOption(format);
     await expect(page.locator('#textSaveDialog')).toBeVisible();

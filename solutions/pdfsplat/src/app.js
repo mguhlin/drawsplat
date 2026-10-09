@@ -1,3 +1,5 @@
+import { setupPlacement } from "./placement.js";
+import { setupToolSearch } from "./tool-search.js";
 import { setupWebsitePdf } from "./website-to-pdf.js?v=20260923-capture-only";
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
 import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
@@ -31,6 +33,26 @@ const state = {
   documentTitle: "",
   documentLanguage: "en",
 };
+
+let imageRequest = 0;
+const placement = setupPlacement({
+  layer: els.annotationLayer, bar: $('placementTools'), message: $('placementMessage'),
+  cancelButton: $('placementCancel'), currentPage, scale: () => state.renderScale,
+  leave: () => { setMode('select'); announce('Placement cancelled.'); },
+  insert: (object, label) => {
+    setMode('select');
+    mutate(object.signature ? 'Add signature' : object.type === 'image' ? 'Add image' : 'Add text', () => {
+      currentPage().annotations.push(object); state.selectedId = object.id;
+    });
+    renderAnnotations();
+    announce(`${label[0].toUpperCase()+label.slice(1)} placed. Drag to move or use the handles to resize. Undo is available.`);
+    if (object.type === 'text') els.textValue.focus({preventScroll:true});
+  },
+});
+function beginPlacement(object, label, options) {
+  setMode('place'); state.selectedId = null; renderAnnotations();
+  placement.begin(object, label, options);
+}
 
 function announce(message) {
   els.status.textContent = message;
@@ -72,6 +94,8 @@ function syncHistory() {
   els.undoButton.disabled = !state.history.length;
   $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
   els.redoButton.disabled = !state.future.length;
+  els.undoButton.textContent = state.history.length ? `Undo ${state.history.at(-1).label}` : 'Undo';
+  els.redoButton.textContent = state.future.length ? `Redo ${state.future.at(-1).label}` : 'Redo';
 }
 function restore(value) {
   const data = JSON.parse(value);
@@ -95,6 +119,8 @@ function syncPageNavigation() {
 }
 let cancelInk = null;
 function setMode(mode) {
+  imageRequest++;
+  placement.cancel();
   cancelInk?.();
   $("inkTools").hidden = mode !== "draw";
   $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
@@ -189,6 +215,7 @@ async function renderAll() {
 }
 async function renderCurrent() {
   cancelInk?.();
+  if (placement.active && placement.pageId !== currentPage()?.id) setMode("select");
   const token = ++state.renderToken,
     item = currentPage();
   if (!item) return;
@@ -744,6 +771,7 @@ function renderAnnotations() {
     els.annotationLayer.append(node);
   }
   updateProperties();
+  placement.render();
 }
 function selectObject(id) {
   state.selectedId = id;
@@ -778,24 +806,10 @@ function updateProperties() {
   if (o?.type === "image") els.imageAltText.value = o.altText || "";
 }
 function addText() {
-  mutate("Add text", () => {
-    const o = {
-      id: uid(),
-      type: "text",
-      text: "Add directions",
-      x: 0.12,
-      y: 0.12,
-      w: 0.32,
-      h: 0.08,
-      fontSize: 18,
-      color: "#172033",
-      opacity: 1,
-    };
-    currentPage().annotations.push(o);
-    state.selectedId = o.id;
-  });
-  renderAnnotations();
-  announce("Text box added.");
+  if (!currentPage()) return;
+  beginPlacement({ id: uid(), type: 'text', text: 'Add directions', w: .32, h: .08,
+    fontSize: 18, color: '#172033', opacity: 1 }, 'text');
+  announce('Click or tap the page where the text should start. Escape cancels.');
 }
 function replaceTextRun(text, bounds) {
   let object;
@@ -845,50 +859,43 @@ function addHighlight() {
   renderAnnotations();
   announce("Highlight added. Drag and resize it over content.");
 }
-async function addImage(file) {
-  if (!file || !["image/png", "image/jpeg"].includes(file.type)) {
-    announce("Choose a PNG or JPEG image.");
-    return;
+async function addImage(file, signature = false) {
+  if (!file || !['image/png', 'image/jpeg'].includes(file.type)) {
+    announce('Choose a PNG or JPEG image.'); return;
   }
   const target = currentPage();
   if (!target) return;
-  const bytes = new Uint8Array(await file.arrayBuffer()), assetId = uid();
-  const url = URL.createObjectURL(new Blob([bytes], { type: file.type }));
-  const image = new Image(); image.src = url;
-  try { await image.decode(); }
-  catch { URL.revokeObjectURL(url); announce("This image could not be opened. Try another PNG or JPEG."); return; }
-  if (currentPage() !== target) { URL.revokeObjectURL(url); announce("The page changed. Add the image again on the desired page."); return; }
-  const bounds = els.annotationLayer.getBoundingClientRect();
-  let imageWidth = .3, imageHeight = imageWidth * bounds.width / bounds.height * image.naturalHeight / image.naturalWidth;
-  if (imageHeight > .6) { imageWidth *= .6 / imageHeight; imageHeight = .6; }
-  state.assets.set(assetId, { bytes, type: file.type, url });
-  mutate("Add image", () => {
-    const o = {
-      id: uid(),
-      type: "image",
-      assetId,
-      x: 0.2,
-      y: 0.2,
-      w: imageWidth,
-      h: imageHeight,
-      opacity: 1,
-    };
-    currentPage().annotations.push(o);
-    state.selectedId = o.id;
-  });
-  renderAnnotations();
-  announce("Image added. Drag a corner handle to resize; drag the image to move it.");
-  els.imageInput.value = "";
+  setMode('select');
+  const request = imageRequest;
+  let url;
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer()), assetId = uid();
+    url = URL.createObjectURL(new Blob([bytes], { type: file.type }));
+    const image = new Image(); image.src = url; await image.decode();
+    if (currentPage() !== target || request !== imageRequest) {
+      URL.revokeObjectURL(url); announce('The page or tool changed. Choose the image again.'); return;
+    }
+    const bounds = els.annotationLayer.getBoundingClientRect();
+    let w = .3, h = w * bounds.width / bounds.height * image.naturalHeight / image.naturalWidth;
+    if (h > .6) { w *= .6 / h; h = .6; }
+    state.assets.set(assetId, { bytes, type: file.type, url });
+    beginPlacement({id:uid(), type:'image', assetId, w, h, opacity:1, signature}, signature ? 'signature image' : 'image', {
+      url, cleanup: () => { URL.revokeObjectURL(url); state.assets.delete(assetId); },
+    });
+    announce('Click or tap the page where the image should start. Escape cancels.');
+  } catch (error) {
+    if (url) URL.revokeObjectURL(url);
+    console.error(error); announce('This image could not be opened. Try another PNG or JPEG.');
+  } finally { els.imageInput.value = ''; els.signatureImageInput.value = ''; }
 }
 function addTypedSignature(event) {
   event.preventDefault();
   const text = els.signatureText.value.trim();
-  if (!text) return announce("Enter a signature name or choose a signature image.");
-  mutate("Add signature", () => {
-    const object = { id: uid(), type: "text", text, x: .55, y: .78, w: .32, h: .09, fontSize: 26, fontFamily: "cursive", color: "#172033", opacity: 1, signature: true };
-    currentPage().annotations.push(object); state.selectedId = object.id;
-  });
-  els.signatureDialog.close(); renderAnnotations(); announce("Typed signature added. Drag and resize it into place.");
+  if (!text) return announce('Enter a signature name or choose a signature image.');
+  els.signatureDialog.close();
+  beginPlacement({id:uid(), type:'text', text, w:.32, h:.09, fontSize:26,
+    fontFamily:'cursive', color:'#172033', opacity:1, signature:true}, 'signature');
+  announce('Click or tap the page where the signature should start. Escape cancels.');
 }
 function applyDecorations(event) {
   event.preventDefault();
@@ -1139,20 +1146,27 @@ async function buildPdf(items) {
     const [page] = await output.copyPages(docs.get(item.sourceId), [item.sourceIndex]);
     output.addPage(page);
     if (item.rotation) page.setRotation(degrees((page.getRotation().angle + item.rotation) % 360));
-    const { width, height } = page.getSize();
+    const sourceView = await sourcePage(item);
+    const angle = page.getRotation().angle;
+    const viewport = sourceView.getViewport({scale:1, rotation:angle});
+    const {width, height} = viewport;
+    const point = (x, y) => {
+      const [px, py] = viewport.convertToPdfPoint(x * width, y * height);
+      return {x:px, y:py};
+    };
     for (const o of item.annotations) {
       if (o.type === "text") {
         if (o.cover)
           page.drawRectangle({
-            x: o.x * width,
-            y: height - (o.y + o.h) * height,
+            ...point(o.x, o.y + o.h),
+            rotate: degrees(angle),
             width: o.w * width,
             height: Math.max(o.h * height, o.fontSize * 1.25),
             color: rgb(1, 1, 1),
           });
         page.drawText(o.text || " ", {
-          x: o.x * width,
-          y: height - o.y * height - o.fontSize,
+          ...point(o.x, o.y + o.fontSize / height),
+          rotate: degrees(angle),
           size: o.fontSize,
           font,
           color: hexColor(o.color),
@@ -1162,16 +1176,16 @@ async function buildPdf(items) {
         });
       } else if (o.type === "mask")
         page.drawRectangle({
-          x: o.x * width,
-          y: height - (o.y + o.h) * height,
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
           width: o.w * width,
           height: o.h * height,
           color: rgb(1, 1, 1),
         });
       else if (o.type === "highlight")
         page.drawRectangle({
-          x: o.x * width,
-          y: height - (o.y + o.h) * height,
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
           width: o.w * width,
           height: o.h * height,
           color: hexColor(o.color),
@@ -1183,8 +1197,8 @@ async function buildPdf(items) {
           images.set(o.assetId, a.type === "image/png" ? await output.embedPng(a.bytes) : await output.embedJpg(a.bytes));
         }
         page.drawImage(images.get(o.assetId), {
-          x: o.x * width,
-          y: height - (o.y + o.h) * height,
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
           width: o.w * width,
           height: o.h * height,
           opacity: o.opacity ?? 1,
@@ -1194,8 +1208,8 @@ async function buildPdf(items) {
           const [x1, y1] = o.points[i - 1],
             [x2, y2] = o.points[i];
           page.drawLine({
-            start: { x: x1 * width, y: height - y1 * height },
-            end: { x: x2 * width, y: height - y2 * height },
+            start: point(x1, y1),
+            end: point(x2, y2),
             thickness: Math.max(1, o.width * width),
             lineCap: globalThis.PDFLib.LineCapStyle.Round,
             color: hexColor(o.color),
@@ -1208,11 +1222,41 @@ async function buildPdf(items) {
   if (!items.some((item) => item.crop || item.fineRotation)) return baseBytes;
   const base = await PDFDocument.load(baseBytes), transformed = await PDFDocument.create();
   for (let index = 0; index < items.length; index++) {
-    const source = base.getPage(index), { width, height } = source.getSize(), crop = items[index].crop || { top: 0, right: 0, bottom: 0, left: 0 };
-    const left = crop.left * width, bottom = crop.bottom * height, croppedWidth = width * (1 - crop.left - crop.right), croppedHeight = height * (1 - crop.top - crop.bottom);
-    const embedded = await transformed.embedPage(source, { left, bottom, right: left + croppedWidth, top: bottom + croppedHeight }), angle = items[index].fineRotation || 0, radians = angle * Math.PI / 180;
-    const corners = [[0, 0], [croppedWidth, 0], [0, croppedHeight], [croppedWidth, croppedHeight]].map(([x, y]) => [x * Math.cos(radians) - y * Math.sin(radians), x * Math.sin(radians) + y * Math.cos(radians)]), xs = corners.map(([x]) => x), ys = corners.map(([, y]) => y), minX = Math.min(...xs), minY = Math.min(...ys), pageWidth = Math.max(...xs) - minX, pageHeight = Math.max(...ys) - minY;
-    transformed.addPage([pageWidth, pageHeight]).drawPage(embedded, { x: -minX, y: -minY, width: croppedWidth, height: croppedHeight, rotate: degrees(angle) });
+    const item = items[index];
+    // A crop/deskew on one page must not rebuild other pages or drop their /Rotate.
+    if (!item.crop && !item.fineRotation) {
+      const [copy] = await transformed.copyPages(base, [index]);
+      transformed.addPage(copy);
+      continue;
+    }
+    const source = base.getPage(index), box = source.getCropBox();
+    const upright = await PDFDocument.create();
+    const original = await upright.embedPage(source, {
+      left:box.x, bottom:box.y, right:box.x+box.width, top:box.y+box.height,
+    });
+    // Embedded pages do not apply /Rotate. Materialize that orientation before
+    // interpreting crop percentages in the displayed page's coordinate system.
+    const rotation = -source.getRotation().angle, rad = rotation * Math.PI / 180;
+    const corners = [[0,0],[box.width,0],[0,box.height],[box.width,box.height]]
+      .map(([x,y]) => [x*Math.cos(rad)-y*Math.sin(rad),x*Math.sin(rad)+y*Math.cos(rad)]);
+    const xs = corners.map(([x])=>x), ys = corners.map(([,y])=>y);
+    const minX = Math.min(...xs), minY = Math.min(...ys);
+    const width = Math.round((Math.max(...xs)-minX)*1e8)/1e8;
+    const height = Math.round((Math.max(...ys)-minY)*1e8)/1e8;
+    const uprightPage = upright.addPage([width,height]);
+    uprightPage.drawPage(original, {x:-minX,y:-minY,width:box.width,height:box.height,rotate:degrees(rotation)});
+    await upright.flush(); // Resolve the nested page XObject before copying it.
+    const crop = item.crop || {top:0,right:0,bottom:0,left:0};
+    const left = crop.left*width, bottom = crop.bottom*height;
+    const croppedWidth = width*(1-crop.left-crop.right), croppedHeight = height*(1-crop.top-crop.bottom);
+    const embedded = await transformed.embedPage(uprightPage, {left,bottom,right:left+croppedWidth,top:bottom+croppedHeight});
+    const angle = item.fineRotation || 0, radians = angle*Math.PI/180;
+    const rotated = [[0,0],[croppedWidth,0],[0,croppedHeight],[croppedWidth,croppedHeight]]
+      .map(([x,y])=>[x*Math.cos(radians)-y*Math.sin(radians),x*Math.sin(radians)+y*Math.cos(radians)]);
+    const rx = rotated.map(([x])=>x), ry = rotated.map(([,y])=>y);
+    const x = Math.min(...rx), y = Math.min(...ry);
+    transformed.addPage([Math.max(...rx)-x,Math.max(...ry)-y])
+      .drawPage(embedded,{x:-x,y:-y,width:croppedWidth,height:croppedHeight,rotate:degrees(angle)});
   }
   return transformed.save();
 }
@@ -1612,13 +1656,13 @@ $("signatureDraw").onclick = () => {
   setMode("draw");
   announce("Write your signature directly on the PDF, then choose Done drawing.");
 };
-els.addImageButton.onclick = () => els.imageInput.click();
+els.addImageButton.onclick = () => { setMode("select"); els.imageInput.click(); };
 els.imageInput.onchange = (e) => addImage(e.target.files[0]);
-els.signatureButton.onclick = () => { els.signatureText.value = ""; els.signatureDialog.showModal(); els.signatureText.focus(); };
+els.signatureButton.onclick = () => { setMode("select"); els.signatureText.value = ""; els.signatureDialog.showModal(); els.signatureText.focus(); };
 els.signatureForm.onsubmit = addTypedSignature;
 els.signatureCancel.onclick = () => els.signatureDialog.close();
 els.signatureUpload.onclick = () => els.signatureImageInput.click();
-els.signatureImageInput.onchange = async (e) => { const file = e.target.files[0]; if (file) { els.signatureDialog.close(); await addImage(file); if (selectedObject()) selectedObject().signature = true; announce("Signature image added. Drag and resize it into place."); } els.signatureImageInput.value = ""; };
+els.signatureImageInput.onchange = async (e) => { const file = e.target.files[0]; if (file) { els.signatureDialog.close(); await addImage(file, true); } };
 els.cropButton.onclick = openCropDialog;
 els.cropForm.onsubmit = applyCrop;
 els.cropReset.onclick = (event) => applyCrop(event, true);
@@ -1747,6 +1791,9 @@ window.addEventListener("keydown", (e) => {
   const target = e.target;
   const editing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
   const modalOpen = Boolean(document.querySelector("dialog[open]"));
+  if (e.key === 'Escape' && placement.active && !modalOpen) {
+    e.preventDefault(); setMode('select'); announce('Placement cancelled.'); return;
+  }
   if (document.getElementById("scanDialog").open) return;
   if (mod && key === "o") {
     e.preventDefault();
@@ -1793,3 +1840,5 @@ setupWebsitePdf({ addPdf: async file => {
   const added = await (state.pages.length ? mergeFile(file) : openFile(file));
   if (!added) throw new Error("Could not add captures. Download the PDF to keep a copy.");
 } });
+
+setupToolSearch();

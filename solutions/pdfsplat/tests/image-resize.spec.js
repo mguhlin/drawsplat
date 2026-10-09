@@ -12,6 +12,8 @@ async function openImage(page) {
     return c.toDataURL('image/png').split(',')[1];
   });
   await page.locator('#imageInput').setInputFiles({ name: 'image.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') });
+  await expect(page.locator('#placementTools')).toBeVisible();
+  await page.locator('#annotationLayer').press('Enter');
   await expect(page.locator('.image-object')).toBeVisible();
 }
 

@@ -36,6 +36,7 @@ test('opens, edits, reorders, rotates, exports, and reopens a PDF', async ({ pag
   await expect(page.locator('#documentView')).toBeVisible();
   await expect(page.locator('#pdfCanvas')).toBeVisible();
   await page.getByRole('button', { name: 'Add text' }).click();
+  await page.locator('#annotationLayer').press('Enter');
   await expect(page.locator('#textValue')).toBeInViewport();
   const textBoxBefore = await page.locator('.text-object').boundingBox();
   const resizeHandle = await page.getByRole('button', { name:'Resize text' }).boundingBox();
@@ -81,6 +82,7 @@ test('navigates pages with visible arrows and keyboard arrow keys', async ({ pag
   await page.keyboard.press('ArrowLeft');
   await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
   await page.getByRole('button', { name:'Add text' }).click();
+  await page.locator('#annotationLayer').press('Enter');
   await page.locator('#textValue').focus();
   await page.keyboard.press('ArrowLeft');
   await expect(page.locator('#pagePosition')).toHaveText('2 / 3');
@@ -111,6 +113,7 @@ test('reverses pages, inserts and removes blank pages, and adds publishing marks
   await page.getByRole('button', { name:'Add signature' }).click();
   await page.locator('#signatureText').fill('Teacher Name');
   await page.getByRole('button', { name:'Add typed signature' }).click();
+  await page.locator('#annotationLayer').press('Enter');
   await expect(page.locator('.text-object').filter({ hasText:'Teacher Name' })).toBeVisible();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('combobox', { name: 'Save as', exact:true }).selectOption('pdf');

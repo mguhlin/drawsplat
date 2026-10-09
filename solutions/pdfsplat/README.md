@@ -133,3 +133,44 @@ Open a PDF, then choose **Add signature → Draw signature on PDF** or **Draw**.
 On phones, drawing hides the editing panel to give the PDF more room. Touch gestures draw while the pen is active; choose **Done drawing** (or Escape with a keyboard) before scrolling. Use **Save as → PDF** to retain marks in a downloaded copy. Freehand marks stay where you draw them; typed and uploaded signature objects remain movable and resizable.
 
 Browser checks include Chrome, Firefox, iPhone WebKit emulation, touch cancellation, multiple pointers, and saving/reopening ink. Physical phone/tablet testing is still unverified. [September 23 walkthrough](../../blog/touch-signing-media-acceleration.html).
+
+## Point placement and tool search (October 2026)
+
+Choose **Add text**, **Add image**, or **Add signature**, then click or tap the
+PDF page to place the item. Images are chosen first; typed signatures are entered
+first. A dashed preview shows the pending item. The click is its top-left corner,
+with the position shifted inward near the page edges to keep the item visible.
+Nothing is added until placement. Escape or **Cancel placement** discards it;
+switching pages or editing modes also cancels. Drawing a signature still uses the
+existing pen workflow directly on the page.
+
+Keyboard users can move the preview with arrow keys (Shift moves farther) and
+press Enter to place it. After insertion, text properties receive focus. Images,
+text, and signatures remain movable and resizable, and each insertion is one
+undo step. Preview state is excluded from saved PDFs and document history.
+
+**Find a tool** (Ctrl/Cmd+K) searches existing document and editing controls.
+Matching tools show their group and remain disabled when no PDF is open. Selecting
+one invokes the same action as its existing button. Undo and Redo now name the
+edit they will reverse or restore.
+
+These additions draw workflow inspiration from
+[PDFCraft](https://github.com/storytold/pdfcraft)'s command catalogue and named
+undo actions. No PDFCraft code, branding, assets, or runtime is included.
+
+### Export rotation correction
+
+Previously, cropping or deskewing any page rebuilt every exported page through
+embedded page content. Embedding does not apply a PDF page's `/Rotate` entry, so
+an untouched second page with a 180-degree rotation could become upside down.
+Unchanged pages now use native page copying, preserving their rotation. Pages
+that require a crop or deskew first materialize their source orientation before
+transforming their content. Crop percentages follow the displayed page axes.
+Annotation export maps display coordinates back to PDF coordinates, including
+quarter-turn rotations and existing crop-box offsets.
+
+Regression checks cover pointer and keyboard insertion, phone taps, cancellation,
+undo/redo, full saved-PDF round trips at 0/90/180/270 degrees, mixed page rotations,
+and page-two orientation when a different page is cropped or deskewed. Existing
+scan, pen, conversion, image-resize, offline, protection, and page-management tests
+remain included.

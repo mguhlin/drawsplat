@@ -103,6 +103,7 @@ for (const format of ['docx', 'odt', 'epub']) {
   test(`${format} page appearance embeds the edited visual pages`, async ({ page }, testInfo) => {
     await openFixture(page);
     await page.locator('#addTextButton').click();
+  await page.locator('#annotationLayer').press('Enter');
     await page.locator('#textValue').fill('Visible edit');
     const bytes = await download(page, format, true);
     const zip = await JSZip.loadAsync(bytes); await validateXml(page, zip);

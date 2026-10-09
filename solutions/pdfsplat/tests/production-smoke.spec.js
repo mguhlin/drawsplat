@@ -18,6 +18,7 @@ test('production opens a PDF and enables editing', async ({ page }) => {
   await expect(page.locator('#pdfCanvas')).toBeVisible();
   await expect(page.locator('#addTextButton')).toBeEnabled();
   await page.locator('#addTextButton').click();
+  await page.locator('#annotationLayer').press('Enter');
   await expect(page.locator('.text-object')).toHaveCount(1);
   await page.locator('#editTextButton').click();
   await page.getByRole('button', { name:'Edit text: Production text' }).click();

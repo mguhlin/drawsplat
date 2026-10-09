@@ -6,11 +6,11 @@ module.exports = defineConfig({
   projects: [
     { name: 'chromium', use: { browserName: 'chromium', channel: 'chrome' } },
     { name: 'firefox', use: { browserName: 'firefox' } },
-    { name: 'iphone', testMatch: ['scan-phone.spec.js', 'touch-ink.spec.js'], use: { ...devices['iPhone 13'], browserName: 'webkit' } },
+    { name: 'iphone', testMatch: ['scan-phone.spec.js', 'touch-ink.spec.js', 'placement.spec.js'], use: { ...devices['iPhone 13'], browserName: 'webkit' } },
   ],
   timeout: 30_000,
-  use: { baseURL: 'http://127.0.0.1:4182' },
-  webServer: {
+  use: { baseURL: process.env.PDFSPLAT_URL || 'http://127.0.0.1:4182' },
+  webServer: process.env.PDFSPLAT_URL ? undefined : {
     command: 'python3 -m http.server 4182 --bind 127.0.0.1',
     cwd: '../..',
     url: 'http://127.0.0.1:4182/solutions/pdfsplat/',
