@@ -7,3 +7,7 @@ The user service `drawsplat-local.service` starts on login and remains available
 `drawsplat-backup.timer` runs daily at 03:15. `systemctl --user start drawsplat-backup.service` creates a manual backup. Database exports and checksum files are in `~/.local/share/drawsplat/backups`. Each new backup includes a private `.config.env` snapshot with the matching password pepper; keep it with its SQL export for recovery. Google sign-in requires a district Web Client ID; CSV provisioning works independently.
 
 For portable district deployment, use [the district installation guide](district-selfhost.md). Both MariaDB and MySQL use `/api/drawsplat/mysql`; the provider name remains `mysql` for frontend compatibility. JSON handling accepts MariaDB text JSON and MySQL native JSON. There are no MariaDB-specific frontend credentials.
+
+## Verification completed on October 10, 2026
+
+The district Docker installation passed against MariaDB 11.8 and MySQL 8.4, including web setup, service restart, admin-only roster imports, private-file blocking, account-owned Save/Open, classroom access, submission revisions, feedback, and SQL/configuration backup restoration. A real localhost browser walkthrough also verified teacher sharing, student opening/turn-in, teacher feedback, district admin CSV preview, sign-out and phone layout. Synthetic browser accounts were removed afterwards. Google token claim checks are automated; a real district Google login still needs its client ID and authorized origin. Windows BAT launchers require acceptance testing on the district's Windows host.
