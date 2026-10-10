@@ -2,10 +2,10 @@
   "name": "drawsplat-mysql-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Starter MySQL backend API for DrawSplatTM self-hosted deployments.",
+  "description": "DrawSplat MariaDB/MySQL account and classroom saving service",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start.js",
     "migrate": "node migrate.js",
     "test": "node --test ../../tests/mysql-backend.test.cjs"
   },

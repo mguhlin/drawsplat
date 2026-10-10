@@ -1,8 +1,10 @@
-# DrawSplat MySQL saving service
+# DrawSplat MariaDB / MySQL saving service
 
 The current static whiteboard connects to this host-independent API for private
 account-owned **Save online / Open online board**. Deploy it on Railway,
-DigitalOcean, or any Node.js/Docker host that can reach MySQL 8.
+DigitalOcean, or any Node.js/Docker host that can reach MariaDB 11.8 or MySQL 8.4.
+
+**District administrators:** [turnkey installation, web setup, Google sign-in and classroom rosters](../../docs/district-selfhost.md). Run `start-district.sh` or `start-district.bat` from the source root.
 
 **Start here:** [portable hosting and connection guide](../../docs/setup-mysql.md).
 Use `MYSQL_URL` / `DATABASE_URL` or separate database settings. Schema migrations

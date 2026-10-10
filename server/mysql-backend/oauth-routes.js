@@ -18,9 +18,12 @@ function sha256(value) { return crypto.createHash('sha256').update(String(value)
 
 async function verifyGoogle(idToken, expectedAudience) {
   const url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken);
-  const r = await fetch(url, { method: 'GET' });
+  const r = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(10000) });
   if (!r.ok) throw new Error('google_token_invalid');
   const payload = await r.json();
+  if (!['accounts.google.com','https://accounts.google.com'].includes(payload.iss) || !payload.sub || (!Number.isFinite(Number(payload.exp))||Number(payload.exp)*1000<=Date.now())) throw new Error('google_claims_invalid');
+  const domains=String(process.env.GOOGLE_ALLOWED_DOMAINS||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+  if(domains.length&&!domains.includes(normalizeEmail(payload.email).split('@')[1]))throw new Error('google_domain_not_allowed');
   if (expectedAudience && payload.aud !== expectedAudience) throw new Error('google_audience_mismatch');
   if (!payload.email_verified || payload.email_verified === 'false') throw new Error('google_email_unverified');
   return {
@@ -72,7 +75,7 @@ async function issueSession(pool, userRow, req, sessionTtlHours) {
 async function upsertProviderUser(pool, profile, defaultRole) {
   const assignedRole = chooseSelfRegisteredRole(defaultRole, profile.email);
   const [existing] = await pool.query(
-    `SELECT * FROM users WHERE (provider = ? AND provider_subject = ?) OR (email = ? AND deleted_at IS NULL) LIMIT 1`,
+    `SELECT * FROM users WHERE deleted_at IS NULL AND ((provider = ? AND provider_subject = ?) OR email = ?) LIMIT 1`,
     [profile.provider, profile.subject, profile.email]
   );
   if (existing[0]) {
@@ -82,6 +85,7 @@ async function upsertProviderUser(pool, profile, defaultRole) {
     );
     return existing[0];
   }
+  if(process.env.ROSTER_ONLY==='true')throw Object.assign(new Error('Account is not on the district roster.'),{status:403});
   const [r] = await pool.execute(
     `INSERT INTO users (email, display_name, role, provider, provider_subject)
      VALUES (?, ?, ?, ?, ?)`,
@@ -98,10 +102,12 @@ function attachOAuthRoutes(app, pool, options) {
   const logEvent = options.logEvent || (async () => {});
   const authLimiter = createRateLimiter({ scope: 'oauth', windowMs: 15 * 60 * 1000, max: Number(process.env.AUTH_RATE_LIMIT_PER_15_MIN || 20) });
 
+  app.get(basePath+'/auth/config',(_req,res)=>res.json({ok:true,googleClientId,rosterOnly:process.env.ROSTER_ONLY==='true'}));
+
   app.post(basePath + '/auth/google', authLimiter, async (req, res) => {
     try {
       const idToken = String((req.body && req.body.idToken) || '');
-      if (!idToken) return res.status(400).json({ ok: false, error: 'idToken_required' });
+      if (!idToken || idToken.length>16384) return res.status(400).json({ ok: false, error: 'idToken_required' });
       if (!googleClientId) return res.status(503).json({ ok: false, error: 'Google sign-in is not configured. Use email sign-in.' });
       const profile = await verifyGoogle(idToken, googleClientId);
       const user = await upsertProviderUser(pool, profile, (req.body && req.body.role) || 'teacher');
@@ -109,12 +115,13 @@ function attachOAuthRoutes(app, pool, options) {
       await logEvent('LOGIN', { actor: user.email, actorUserId: user.id, actorRole: user.role, targetType: 'session', metadata: { provider: 'google' } });
       res.json({ ok: true, token, expiresAt, user: { id: user.id, email: user.email, role: user.role, displayName: user.display_name } });
     } catch (err) {
-      res.status(401).json({ ok: false, error: 'invalid_oauth_token' });
+      res.status(err.status||401).json({ ok: false, error: err.status===403?err.message:'invalid_oauth_token' });
     }
   });
 
   app.post(basePath + '/auth/microsoft', authLimiter, async (req, res) => {
     try {
+      if(process.env.ROSTER_ONLY==='true')return res.status(503).json({ok:false,error:'Microsoft sign-in is not configured for this district. Use Google or email sign-in.'});
       const accessToken = String((req.body && req.body.accessToken) || '');
       if (!accessToken) return res.status(400).json({ ok: false, error: 'accessToken_required' });
       const profile = await verifyMicrosoft(accessToken);
@@ -123,9 +130,9 @@ function attachOAuthRoutes(app, pool, options) {
       await logEvent('LOGIN', { actor: user.email, actorUserId: user.id, actorRole: user.role, targetType: 'session', metadata: { provider: 'microsoft' } });
       res.json({ ok: true, token, expiresAt, user: { id: user.id, email: user.email, role: user.role, displayName: user.display_name } });
     } catch (err) {
-      res.status(401).json({ ok: false, error: 'invalid_oauth_token' });
+      res.status(err.status||401).json({ ok: false, error: err.status===403?err.message:'invalid_oauth_token' });
     }
   });
 }
 
-module.exports = { attachOAuthRoutes, verifyGoogle, verifyMicrosoft };
+module.exports = { attachOAuthRoutes, verifyGoogle, verifyMicrosoft, upsertProviderUser };

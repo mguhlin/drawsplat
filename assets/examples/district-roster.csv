@@ -1,0 +1,4 @@
+teacher_email,teacher_name,class_name,student_email,student_name
+teacher@school.example,Alex Rivera,Science 7,student1@school.example,Sam Lee
+teacher@school.example,Alex Rivera,Science 7,student2@school.example,Jordan Chen
+second.teacher@school.example,Morgan Brooks,Art 6,,

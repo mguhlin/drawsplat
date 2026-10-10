@@ -42,3 +42,6 @@ __pycache__/
 
 # Concept Map Studio sample JSON files (local only)
 JSON/
+
+# Private district backups
+selfhost/district/backups/

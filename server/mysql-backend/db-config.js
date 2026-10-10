@@ -5,7 +5,7 @@ function databaseConfig(env = process.env) {
   let url;
   if (address) {
     try { url = new URL(address); } catch (_) { throw new Error('Invalid database URL. Check the server connection settings.'); }
-    if (url.protocol !== 'mysql:') throw new Error('Database URL must use mysql://');
+    if (!['mysql:', 'mariadb:'].includes(url.protocol)) throw new Error('Database URL must use mysql:// or mariadb://');
   }
   const sslRequired = env.MYSQL_SSL === 'true' || url?.searchParams.get('ssl') === 'true' || ['REQUIRED','VERIFY_CA','VERIFY_IDENTITY'].includes(url?.searchParams.get('ssl-mode')?.toUpperCase());
   const ca = env.MYSQL_SSL_CA || (env.MYSQL_SSL_CA_FILE ? fs.readFileSync(env.MYSQL_SSL_CA_FILE, 'utf8') : undefined);

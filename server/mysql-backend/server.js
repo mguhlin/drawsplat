@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 require('dotenv').config();
 
 const path = require('path');
@@ -91,6 +92,8 @@ try {
 
 // Private cloud boards work identically on any host that can reach MySQL.
 require('./cloud-routes').attachCloudRoutes(app, pool, { basePath: apiBasePath, auth: dsAuth, checkBoardSafety: dsCheckBoardSafety });
+require('./classroom-routes').attachClassroomRoutes(app,pool,{basePath:apiBasePath,auth:dsAuth,checkBoardSafety:dsCheckBoardSafety,pepper:process.env.DRAWSPLAT_PEPPER});
+require('./district-routes').attachDistrictRoutes(app,pool,{basePath:apiBasePath,auth:dsAuth});
 // Older room/template/turn-in APIs are administrative until membership is configured.
 for (const resource of ['rooms', 'templates', 'turnins', 'sessions']) {
   app.use(apiBasePath + '/' + resource, dsAuth.requireRoles(['district_admin', 'campus_admin']));
@@ -123,7 +126,7 @@ async function ensureRoom(roomKey, title = null){
 async function loadComplianceConfig() {
   try {
     const [rows] = await pool.query("SELECT config_json FROM compliance_config WHERE config_key = 'main' LIMIT 1");
-    return rows[0] ? rows[0].config_json : {};
+    return rows[0] ? jsonValue(rows[0].config_json) : {};
   } catch (e) { return {}; }
 }
 
@@ -132,8 +135,8 @@ function asyncRoute(handler){
 }
 
 app.get(apiBasePath + '/health', asyncRoute(async (_req, res) => {
-  await pool.query('SELECT 1');
-  res.json({ ok: true, provider: 'mysql', capabilities: ['private-boards-v1'], time: new Date().toISOString() });
+  const [engine] = await pool.query('SELECT VERSION() AS version');
+  res.json({ ok: true, database: /mariadb/i.test(engine[0].version) ? 'mariadb' : 'mysql', provider: 'mysql', capabilities: ['private-boards-v1', 'classrooms-v1','district-rosters-v1'], time: new Date().toISOString() });
 }));
 
 app.post(apiBasePath + '/rooms', asyncRoute(async (req, res) => {
@@ -147,7 +150,7 @@ app.get(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
     'SELECT board_json AS boardJson, created_at AS createdAt FROM board_snapshots WHERE room_id = :roomId ORDER BY created_at DESC, id DESC LIMIT 1',
     { roomId: room.id }
   );
-  res.json({ ok: true, room, board: rows[0] ? rows[0].boardJson : null, createdAt: rows[0] ? rows[0].createdAt : null });
+  res.json({ ok: true, room, board: rows[0] ? jsonValue(rows[0].boardJson) : null, createdAt: rows[0] ? rows[0].createdAt : null });
 }));
 
 app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
@@ -168,7 +171,7 @@ app.put(apiBasePath + '/rooms/:roomKey/board', asyncRoute(async (req, res) => {
   }
 
   await pool.execute(
-    'INSERT INTO board_snapshots (room_id, board_json, created_by, expires_at) VALUES (:roomId, CAST(:boardJson AS JSON), :createdBy, :expiresAt)',
+    'INSERT INTO board_snapshots (room_id, board_json, created_by, expires_at) VALUES (:roomId, :boardJson, :createdBy, :expiresAt)',
     {
       roomId: room.id,
       boardJson,
@@ -189,7 +192,7 @@ app.post(apiBasePath + '/templates', asyncRoute(async (req, res) => {
   if(!req.body.name || !req.body.template) return res.status(400).json({ ok: false, error: 'name and template are required' });
   const templateJson = validateJsonPayload(req.body.template, Number(process.env.MAX_TEMPLATE_JSON_BYTES || 2 * 1024 * 1024), 'template');
   const [result] = await pool.execute(
-    'INSERT INTO templates (name, template_json) VALUES (:name, CAST(:templateJson AS JSON))',
+    'INSERT INTO templates (name, template_json) VALUES (:name, :templateJson)',
     { name: safeString(req.body.name, 200), templateJson }
   );
   res.json({ ok: true, templateId: result.insertId });
@@ -214,7 +217,7 @@ app.post(apiBasePath + '/turnins', asyncRoute(async (req, res) => {
     return res.status(422).json({ ok: false, error: safety.reason || 'safety_block', hits: safety.hits });
   }
   const [result] = await pool.execute(
-    'INSERT INTO turnins (room_id, student_name, class_name, title, board_json, expires_at) VALUES (:roomId, :studentName, :className, :title, CAST(:boardJson AS JSON), :expiresAt)',
+    'INSERT INTO turnins (room_id, student_name, class_name, title, board_json, expires_at) VALUES (:roomId, :studentName, :className, :title, :boardJson, :expiresAt)',
     {
       roomId,
       studentName: safeString(req.body.studentName, 200) || null,
@@ -240,6 +243,8 @@ app.post(apiBasePath + '/maintenance/delete-expired', requireMaintenanceAuth(dsA
   const [rooms] = await pool.execute('DELETE FROM rooms WHERE expires_at IS NOT NULL AND expires_at < NOW()');
   res.json({ ok: true, deleted: { snapshots: snapshots.affectedRows, turnins: turnins.affectedRows, rooms: rooms.affectedRows } });
 }));
+
+require('./static-site').attachStaticSite(app,process.env.STATIC_ROOT);
 
 app.use((err, _req, res, _next) => {
   if (err && err.message === 'cors_origin_not_allowed') {
@@ -268,7 +273,7 @@ async function start() {
   }
   if (process.env.AUTO_MIGRATE !== 'false') await require('./migrate').migrate(pool);
   await pool.query('SELECT 1');
-  const listener = app.listen(port, '0.0.0.0', () => console.log(`DrawSplat MySQL API listening on port ${port}${apiBasePath}`));
+  const listener = app.listen(port, process.env.HOST || '0.0.0.0', () => console.log(`DrawSplat MySQL API listening on port ${port}${apiBasePath}`));
   for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => listener.close(async () => { await pool.end(); process.exit(0); }));
 }
 start().catch(err => { console.error('Backend startup failed:', err.message); process.exit(1); });

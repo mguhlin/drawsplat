@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 /**
  * DrawSplatTM cron — scheduled retention + time-limit enforcement.
  *
@@ -13,7 +14,7 @@ const ONE_MIN = 60 * 1000;
 async function loadConfig(pool) {
   const [rows] = await pool.query("SELECT config_json FROM compliance_config WHERE config_key = 'main' LIMIT 1");
   if (!rows[0]) return {};
-  return rows[0].config_json || {};
+  return jsonValue(rows[0].config_json) || {};
 }
 
 async function dailyAuditCleanup(pool, logEvent) {

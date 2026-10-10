@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS classrooms (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ teacher_user_id BIGINT UNSIGNED NOT NULL,
+ title VARCHAR(200) NOT NULL,
+ invite_hash VARBINARY(32) NOT NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_classroom_teacher FOREIGN KEY (teacher_user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS classroom_members (
+ classroom_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ joined_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY (classroom_id,user_id),
+ CONSTRAINT fk_member_class FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE CASCADE,
+ CONSTRAINT fk_member_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS classroom_assignments (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ classroom_id BIGINT UNSIGNED NOT NULL,
+ title VARCHAR(200) NOT NULL,
+ board_json JSON NOT NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_assignment_class FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS classroom_submissions (
+ assignment_id BIGINT UNSIGNED NOT NULL,
+ student_user_id BIGINT UNSIGNED NOT NULL,
+ board_json JSON NOT NULL,
+ revision BIGINT UNSIGNED NOT NULL DEFAULT 1,
+ feedback VARCHAR(2000) NOT NULL DEFAULT '',
+ submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY (assignment_id,student_user_id),
+ CONSTRAINT fk_submission_assignment FOREIGN KEY (assignment_id) REFERENCES classroom_assignments(id) ON DELETE CASCADE,
+ CONSTRAINT fk_submission_student FOREIGN KEY (student_user_id) REFERENCES users(id) ON DELETE CASCADE
+);

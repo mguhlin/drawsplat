@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 /**
  * DrawSplatTM Privacy Packet — server-side ZIP generator (Phase 4 mirror of
  * the Apps Script privacyPacketResponse_).
@@ -119,7 +120,7 @@ function tryReadStaticDoc(filename) {
 async function buildPacket(pool, options = {}) {
   const generatedAt = new Date().toISOString();
   const [cfgRows] = await pool.query("SELECT config_json, updated_at FROM compliance_config WHERE config_key = 'main' LIMIT 1");
-  const config = cfgRows[0] ? cfgRows[0].config_json : {};
+  const config = cfgRows[0] ? jsonValue(cfgRows[0].config_json) : {};
 
   const auditWindowDays = Number(options.auditWindowDays || 90);
   const [auditRows] = await pool.query(

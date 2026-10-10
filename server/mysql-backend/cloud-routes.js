@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 const { isValidRoomKey, safeString } = require('./security');
 function attachCloudRoutes(app, pool, { basePath, auth, checkBoardSafety }) {
   const route = handler => (req, res, next) => Promise.resolve(handler(req, res)).catch(next);
@@ -10,7 +11,7 @@ function attachCloudRoutes(app, pool, { basePath, auth, checkBoardSafety }) {
     const [rows] = await pool.execute('SELECT board_json AS board, revision, updated_at AS updatedAt FROM cloud_boards WHERE user_id = ? AND board_key = ?', [req.dsUser.id, req.params.key]);
     if (!rows.length) return res.status(404).json({ ok: false, error: 'Board not found in your account.' });
     res.set('Cache-Control', 'no-store');
-    res.json({ ok: true, ...rows[0] });
+    res.json({ ok: true, ...rows[0], board: jsonValue(rows[0].board) });
   }));
   app.put(basePath + '/boards/:key', route(async (req, res) => {
     const { board, revision } = req.body;
@@ -20,7 +21,7 @@ function attachCloudRoutes(app, pool, { basePath, auth, checkBoardSafety }) {
     const json = JSON.stringify(board);
     if (Buffer.byteLength(json) > Number(process.env.MAX_BOARD_JSON_BYTES || 20 * 1024 * 1024)) return res.status(413).json({ ok: false, error: 'This board is too large for online saving. Download a board file instead.' });
     const [configs] = await pool.query("SELECT config_json FROM compliance_config WHERE config_key = 'main' LIMIT 1");
-    const safety = checkBoardSafety(board, configs[0]?.config_json || {});
+    const safety = checkBoardSafety(board, jsonValue(configs[0]?.config_json) || {});
     if (!safety.ok) return res.status(422).json({ ok: false, error: 'School content rules blocked this save. Download your board file and ask your teacher or administrator.' });
     const values = [safeString(board.title, 200), json, req.dsUser.id, req.params.key];
     if (revision === 0) {

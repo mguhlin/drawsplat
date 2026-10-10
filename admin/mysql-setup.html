@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="referrer" content="no-referrer" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline' https://accounts.google.com; script-src 'self' https://accounts.google.com/gsi/client; frame-src https://accounts.google.com; object-src 'none'; base-uri 'none'; form-action 'self'" />
 <title>DrawSplatTM MySQL Setup Wizard</title>
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
@@ -49,7 +49,7 @@
 
 <main class="admin-shell mysql-wizard">
   <section class="admin-hero">
-    <h2>MySQL Backend Setup Wizard</h2>
+    <h2>MariaDB / MariaDB / MySQL Backend Setup Wizard</h2>
     <p>Choose Railway, DigitalOcean, or another MySQL host. Connect the public saving service here; boards stay private to each signed-in account. Save and reopen boards, including added audio and video notes, through an HTTPS API. Google classroom rooms, templates, moderation, and turn-ins remain separate features.</p>
   </section>
 
@@ -71,6 +71,7 @@
     </article>
   </section>
 
+  <p><a class="admin-button" href="district-roster.html">District administrator: manage teachers and class rosters</a></p>
   <section class="admin-grid">
     <article class="admin-panel">
       <h3>Public API Endpoint</h3>

@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 /**
  * DrawSplatTM SIS connector — Clever scaffold.
  *
@@ -31,14 +32,14 @@ async function cleverGet(path, token) {
 async function loadDistrictToken(pool) {
   const [rows] = await pool.query("SELECT config_json FROM compliance_config WHERE config_key = 'sis:clever' LIMIT 1");
   if (!rows[0]) return null;
-  const cfg = rows[0].config_json || {};
+  const cfg = jsonValue(rows[0].config_json) || {};
   return cfg.districtToken || null;
 }
 
 async function saveDistrictToken(pool, token, adminUserId) {
   await pool.execute(
     `INSERT INTO compliance_config (config_key, config_json, updated_by)
-     VALUES ('sis:clever', CAST(:cfg AS JSON), :uid)
+     VALUES ('sis:clever', :cfg, :uid)
      ON DUPLICATE KEY UPDATE config_json = VALUES(config_json), updated_by = VALUES(updated_by)`,
     { cfg: JSON.stringify({ districtToken: token, connectedAt: new Date().toISOString() }), uid: adminUserId || null }
   );

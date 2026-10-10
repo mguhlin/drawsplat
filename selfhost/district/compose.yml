@@ -1,0 +1,68 @@
+name: drawsplat-district
+services:
+  db:
+    image: ${DB_IMAGE:-mariadb:11.8}
+    restart: unless-stopped
+    command: ["--max-allowed-packet=32M"]
+    environment:
+      MYSQL_DATABASE: drawsplat
+      MYSQL_USER: drawsplat_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Run the startup launcher first}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Run the startup launcher first}
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "if command -v mariadb-admin >/dev/null; then mariadb-admin ping --silent; else mysqladmin ping --silent; fi"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  init-config:
+    image: node:22-alpine
+    user: root
+    command: ["sh", "-c", "chown 1000:1000 /data && chmod 700 /data"]
+    volumes:
+      - configuration:/data
+  api:
+    build: ../../server/mysql-backend
+    restart: unless-stopped
+    depends_on:
+      init-config:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 8787
+      MYSQL_HOST: db
+      MYSQL_DATABASE: drawsplat
+      MYSQL_USER: drawsplat_app
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      CORS_ORIGIN: ${SITE_ORIGIN:-http://localhost:8080}
+      TRUST_PROXY: "true"
+      SETUP_REQUIRED: "true"
+      SETUP_TOKEN: ${SETUP_TOKEN}
+      SETUP_CONFIG_FILE: /data/config.json
+    volumes:
+      - configuration:/data
+    # The API and database have no published ports; only the web gateway is exposed.
+  web:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:8080}
+    ports:
+      - "${WEB_BIND:-127.0.0.1}:8080:8080"
+      - "${WEB_BIND:-127.0.0.1}:80:80"
+      - "${WEB_BIND:-127.0.0.1}:443:443"
+    volumes:
+      - ../../:/srv:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+volumes:
+  database:
+  configuration:
+  caddy-data:
+  caddy-config:

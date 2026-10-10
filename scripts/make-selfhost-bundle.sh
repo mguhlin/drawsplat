@@ -111,6 +111,8 @@ EXCLUDES=(
   "audit_instructions.md"
   ".env"
   ".env.local"
+  ".env.*"
+  "selfhost/district/backups"
   "/package.json"
   "/package-lock.json"
   "/splatworks"
@@ -261,6 +263,8 @@ SPLATWORKS_EXCLUDES=(
   "assets/assets"
   ".env"
   ".env.local"
+  ".env.*"
+  "selfhost/district/backups"
   "*.log"
   "*.swp"
 )
@@ -307,6 +311,8 @@ MODULE_EXCLUDES=(
   "tsconfig.tsbuildinfo"
   ".env"
   ".env.local"
+  ".env.*"
+  "selfhost/district/backups"
   "*.log"
   "*.swp"
 )

@@ -1,0 +1,39 @@
+name: District database installation
+on:
+  push:
+    branches: [main]
+    paths: ['server/mysql-backend/**', 'selfhost/district/**', 'start-district.*', 'tests/*district*', 'tests/mysql-backend.test.cjs', '.github/workflows/district-database.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [mariadb, mysql]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare private configuration
+        run: |
+          node selfhost/district/prepare.js ${{ matrix.engine == 'mysql' && '--mysql' || '' }} > /dev/null
+      - name: Start complete district stack
+        run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml up -d --build --wait --wait-timeout 240
+      - name: Verify first-run setup and district API
+        run: node tests/district-stack.mjs
+      - name: Verify private boards, classroom isolation and roster transactions
+        run: |
+          npm ci --prefix server/mysql-backend
+          node tests/district-database-ci.cjs
+      - name: Verify backup
+        run: |
+          bash selfhost/district/backup-district.sh
+          test -s selfhost/district/backups/*/database.sql
+          test -s selfhost/district/backups/*/config.json
+      - name: Stop test installation
+        if: always()
+        run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down --volumes

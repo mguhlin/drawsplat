@@ -4,11 +4,12 @@ let records;
 test.beforeEach(async ({ page }) => {
   records = new Map();
   await page.addInitScript(api => {
-    localStorage.setItem('drawsplat.welcomed', '1');localStorage.setItem('drawsplat.consent.accepted', '1');localStorage.setItem('drawsplat.startupTipDate', new Date().toISOString().slice(0, 10));
+    localStorage.setItem('drawsplat.entryRole','teacher');localStorage.setItem('drawsplat.welcomed', '1');localStorage.setItem('drawsplat.consent.accepted', '1');localStorage.setItem('drawsplat.startupTipDate', new Date().toISOString().slice(0, 10));
     localStorage.setItem('drawsplat.storageMode', 'mysql');localStorage.setItem('drawsplat.folderEndpoint', api);
   }, api);
   await page.route(api + '/**', async route => {
     const req = route.request(), suffix = req.url().slice(api.length), body = req.postDataJSON();
+    if (suffix === '/auth/config') return route.fulfill({json:{ok:true,googleClientId:'',rosterOnly:false}});
     if (suffix === '/health') return route.fulfill({ json: { ok: true, provider: 'mysql', capabilities: ['private-boards-v1'] } });
     if (suffix === '/auth/login') return route.fulfill({ json: { ok: true, token: 'test-session', expiresAt: new Date(Date.now() + 3600000).toISOString(), user: { id: 1, email: body.email } } });
     if (req.headers().authorization !== 'Bearer test-session') return route.fulfill({ status: 401, json: { ok: false, error: 'auth_required' } });
@@ -32,7 +33,7 @@ test('online saving signs in, opens a named board, and signs out on shared devic
   await page.reload();await rename(page, 'Local changes');
   await file(page, 'loadDriveBtn');await page.getByRole('button', { name: /Atoms and molecules/ }).click();await expect(page.locator('#boardTitle')).toHaveValue('Atoms and molecules');
   await file(page, 'onlineAccountBtn');await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  expect(await page.evaluate(() => sessionStorage.getItem('drawsplat.mysqlSession'))).toBeNull();
+  await expect.poll(()=>page.evaluate(() => sessionStorage.getItem('drawsplat.mysqlSession'))).toBeNull();
   await file(page, 'saveDriveBtn');await expect(page.locator('.mysql-cloud-dialog input[type=email]')).toBeVisible();
 });
 test('conflicts keep current work and never silently overwrite another device', async ({ page }) => {

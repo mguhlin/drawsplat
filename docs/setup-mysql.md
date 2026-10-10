@@ -1,3 +1,7 @@
+# MariaDB and district classrooms
+
+MariaDB and MySQL use the same DrawSplat API. For district administrators, start with the [district installation guide](district-selfhost.md), including Bash/BAT launchers, first-run web database setup, CSV rosters, and Google sign-in. The [local MariaDB guide](mariadb-local.md) describes the development service.
+
 # MySQL online saving: Railway, DigitalOcean, or your own server
 
 DrawSplat's static whiteboard can stay at drawsplat.org. A separate Node.js API

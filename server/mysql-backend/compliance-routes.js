@@ -1,3 +1,4 @@
+const { jsonValue } = require('./json-value');
 /**
  * DrawSplat compliance routes for the MySQL backend (Phase 4b).
  *
@@ -95,6 +96,7 @@ function attachComplianceRoutes(app, pool, options = {}) {
 
   app.post(basePath + '/auth/register', authLimiter, async (req, res) => {
     try {
+      if(process.env.PUBLIC_REGISTRATION==='false')return res.status(403).json({ok:false,error:'Accounts are provisioned by your district administrator.'});
       const { email, password, displayName, role } = req.body || {};
       const normalizedEmail = normalizeEmail(email);
       if (!isValidEmail(normalizedEmail) || !password || String(password).length < 8) return res.status(400).json({ ok: false, error: 'Invalid email or short password.' });
@@ -253,7 +255,7 @@ function attachComplianceRoutes(app, pool, options = {}) {
       const day = new Date().toISOString().slice(0, 10);
       const [rows] = await pool.query('SELECT seconds_today FROM time_usage WHERE user_id = ? AND usage_date = ? LIMIT 1', [req.dsUser.id, day]);
       const [cfg] = await pool.query('SELECT config_json FROM compliance_config WHERE config_key = "main" LIMIT 1');
-      const config = cfg[0] && cfg[0].config_json ? cfg[0].config_json : {};
+      const config = cfg[0] && jsonValue(cfg[0].config_json) ? jsonValue(cfg[0].config_json) : {};
       res.json({ ok: true, secondsToday: rows[0] ? rows[0].seconds_today : 0, config: config.timeLimits || {} });
     } catch (err) {
       res.status(500).json({ ok: false, error: 'Server error' });
@@ -265,7 +267,7 @@ function attachComplianceRoutes(app, pool, options = {}) {
   app.get(basePath + '/admin/compliance-config', requireRole(['district_admin','campus_admin']), async (req, res) => {
     try {
       const [rows] = await pool.query('SELECT config_json, updated_at FROM compliance_config WHERE config_key = "main" LIMIT 1');
-      res.json({ ok: true, config: rows[0] ? rows[0].config_json : null, updatedAt: rows[0] ? rows[0].updated_at : null });
+      res.json({ ok: true, config: rows[0] ? jsonValue(rows[0].config_json) : null, updatedAt: rows[0] ? rows[0].updated_at : null });
     } catch (err) {
       res.status(500).json({ ok: false, error: 'Server error' });
     }

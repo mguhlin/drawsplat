@@ -80,3 +80,38 @@ test('real MySQL TLS verifies the CA and rejects a mismatched server identity', 
   const net=require('node:net');
   await assert.rejects(mysql.createConnection({...config,host:'not-the-certificate.example.test',stream:()=>net.connect({host:config.host,port:config.port})}),/certificate|Hostname|altnames/i);
 });
+
+test('district rosters are admin-only, imports are atomic and idempotent, and turn-ins are class-scoped', {skip:!live},async()=>{
+ const pool=require('../server/mysql-backend/db-config').createDatabasePool({MYSQL_URL:process.env.MYSQL_TEST_URL});
+ const unique=Date.now().toString(36),password='test-password-1234',pepper='integration-test-only-not-a-production-secret';
+ const {passwordRecord}=require('../server/mysql-backend/password');
+ async function seed(label,role){const email=label+'-'+unique+'@example.test';const {salt,hash}=passwordRecord(password,pepper);await pool.execute('INSERT INTO users (email,display_name,role,provider,password_salt,password_hash) VALUES (?,?,?,\'email\',?,?)',[email,label,role,salt,hash]);const login=await call('/auth/login','POST',{email,password});assert.equal(login.status,200);return {...login.data,email};}
+ try{
+ const admin=await seed('admin','district_admin'),outsider=await seed('outsider','teacher');
+ const teacherEmail='rostered-teacher-'+unique+'@example.test',studentEmail='rostered-student-'+unique+'@example.test';
+ const rows=[{teacher_email:teacherEmail,teacher_name:'Ms Science',class_name:'Science ⚛',student_email:studentEmail,student_name:'Learner'}];
+ assert.equal((await call('/district/roster')).status,401);assert.equal((await call('/district/roster','POST',{rows},outsider.token)).status,403);
+ assert.equal((await call('/district/roster','POST',{rows,preview:true},admin.token)).data.students,1);
+ let imported=await call('/district/roster','POST',{rows},admin.token);assert.equal(imported.status,200);assert.equal(imported.data.accountsCreated,2);assert.equal(imported.data.classesCreated,1);
+ imported=await call('/district/roster','POST',{rows},admin.token);assert.equal(imported.data.accountsCreated,0);assert.equal(imported.data.membershipsAdded,0);
+ const conflict=[{teacher_email:'rollback-'+unique+'@example.test',class_name:'Rollback'}, {teacher_email:studentEmail,class_name:'Conflict'}];
+ assert.equal((await call('/district/roster','POST',{rows:conflict},admin.token)).status,409);
+ const [rolled]=await pool.execute('SELECT id FROM users WHERE email=?',['rollback-'+unique+'@example.test']);assert.equal(rolled.length,0);
+ const {salt,hash}=passwordRecord(password,pepper);await pool.execute('UPDATE users SET password_salt=?,password_hash=? WHERE email IN (?,?)',[salt,hash,teacherEmail,studentEmail]);
+ const teacher=(await call('/auth/login','POST',{email:teacherEmail,password})).data,student=(await call('/auth/login','POST',{email:studentEmail,password})).data;
+ const cls=(await call('/classrooms','GET',null,teacher.token)).data.classes[0].id;
+ const board={title:'Atoms',panels:[{id:'one',objects:[{type:'text',text:'H₂O ⚛'}]}]};
+ assert.equal((await call(`/classrooms/${cls}/assignments`,'GET',null,outsider.token)).status,404);
+ const published=await call(`/classrooms/${cls}/assignments`,'POST',{board},teacher.token);assert.equal(published.status,200);const assignment=published.data.assignmentId;
+ assert.equal((await call(`/classrooms/${cls}/assignments/${assignment}`,'GET',null,student.token)).data.board.panels[0].objects[0].text,'H₂O ⚛');
+ const submit=`/classrooms/${cls}/assignments/${assignment}/submission`;
+ assert.equal((await call(submit,'PUT',{board,revision:0},student.token)).status,200);assert.equal((await call(submit,'PUT',{board,revision:0},student.token)).status,409);
+ assert.equal((await call(submit,'PUT',{board,revision:1},teacher.token)).status,403);
+ const sid=student.user.id;const route=`/classrooms/${cls}/submissions/${assignment}/${sid}`;
+ assert.equal((await call(route,'GET',null,outsider.token)).status,404);
+ assert.equal((await call(route+'/feedback','PUT',{feedback:'Explain your evidence.'},teacher.token)).status,200);
+ assert.equal((await call(route,'GET',null,student.token)).data.feedback,'Explain your evidence.');
+ const old=process.env.ROSTER_ONLY;process.env.ROSTER_ONLY='true';try{const {upsertProviderUser}=require('../server/mysql-backend/oauth-routes');const linked=await upsertProviderUser(pool,{provider:'google',subject:'test-'+unique,email:studentEmail,displayName:'Learner'},'district_admin');assert.equal(linked.role,'student');await assert.rejects(upsertProviderUser(pool,{provider:'google',subject:'unknown-'+unique,email:'unknown-'+unique+'@example.test'},'teacher'),/not on/);}finally{if(old===undefined)delete process.env.ROSTER_ONLY;else process.env.ROSTER_ONLY=old;}
+ await call(`/classrooms/${cls}/members/${sid}`,'DELETE',null,teacher.token);assert.equal((await call(route,'GET',null,student.token)).status,404);
+ }finally{await pool.end();}
+});

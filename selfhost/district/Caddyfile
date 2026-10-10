@@ -1,0 +1,20 @@
+{$SITE_ADDRESS} {
+  @private path /.git/* /.* /server/* /selfhost/* /scripts/* /tests/* /node_modules/* /dist/* /build/*
+  respond @private 404
+  handle /api/drawsplat/mysql/* {
+    reverse_proxy api:8787
+  }
+  handle /setup* {
+    reverse_proxy api:8787
+  }
+  @board {
+    path /app/whiteboard.html
+    not query storage=*
+  }
+  redir @board /app/whiteboard.html?storage=mysql&api=/api/drawsplat/mysql 302
+  handle {
+    root * /srv
+    encode gzip zstd
+    file_server
+  }
+}

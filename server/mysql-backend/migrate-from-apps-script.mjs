@@ -112,7 +112,7 @@ async function main() {
       if (opts.dryRun) { stats.audit++; continue; }
       await pool.execute(
         `INSERT INTO audit_events (actor, actor_role, action, target_type, target_id, metadata_json, created_at)
-         VALUES (:actor, :role, :action, :tt, :tid, CAST(:meta AS JSON), :ts)`,
+         VALUES (:actor, :role, :action, :tt, :tid, :meta, :ts)`,
         {
           actor: r.actor || null,
           role: r.actorRole || null,
@@ -159,7 +159,7 @@ async function main() {
       );
       const [room] = await pool.query('SELECT id FROM rooms WHERE room_key = ?', [roomKey]);
       await pool.execute(
-        `INSERT INTO board_snapshots (room_id, board_json, created_by) VALUES (?, CAST(? AS JSON), 'migration')`,
+        `INSERT INTO board_snapshots (room_id, board_json, created_by) VALUES (?, ?, 'migration')`,
         [room[0].id, raw]
       );
       stats.boards++;
