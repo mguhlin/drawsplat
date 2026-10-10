@@ -12,7 +12,7 @@ services:
     volumes:
       - database:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "if command -v mariadb-admin >/dev/null; then mariadb-admin ping --silent; else mysqladmin ping --silent; fi"]
+      test: ["CMD-SHELL", 'export MYSQL_PWD="$$MYSQL_PASSWORD"; if command -v mariadb >/dev/null; then client=mariadb; else client=mysql; fi; $$client --protocol=TCP -h127.0.0.1 -u"$$MYSQL_USER" -D"$$MYSQL_DATABASE" -e "SELECT 1" >/dev/null']
       interval: 5s
       timeout: 5s
       retries: 30

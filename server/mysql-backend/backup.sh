@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Usage: backup.sh /private/backup.cnf /private/backups [database]
+# Usage: backup.sh /private/backup.cnf /private/backups [database] [private-config]
 credentials=${1:?Provide a private MariaDB/MySQL client option file}
 folder=${2:?Provide a private backup directory}
 database=${3:-drawsplat}
@@ -14,5 +14,6 @@ trap 'rm -f "$file.partial"' EXIT
 "$dump" --defaults-extra-file="$credentials" --single-transaction --quick --skip-lock-tables --hex-blob "$database" | gzip > "$file.partial"
 gzip -t "$file.partial"
 mv "$file.partial" "$file"
+if [[ -n "${4:-}" ]]; then cp -- "$4" "$folder/$database-$stamp.config.env"; chmod 600 "$folder/$database-$stamp.config.env"; fi
 sha256sum "$file" > "$file.sha256"
 printf 'Created %s\n' "$file"

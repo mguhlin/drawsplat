@@ -34,6 +34,8 @@ jobs:
           bash selfhost/district/backup-district.sh
           test -s selfhost/district/backups/*/database.sql
           test -s selfhost/district/backups/*/config.json
+      - name: Restore backup into an isolated database
+        run: node tests/district-restore-ci.cjs
       - name: Stop test installation
         if: always()
         run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down --volumes

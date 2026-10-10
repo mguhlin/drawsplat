@@ -9,7 +9,7 @@ assert.equal((await request(origin+'/setup',{action:'test',setupKey:'incorrect'}
 assert.equal((await request(origin+'/setup',{action:'test',setupKey})).status,200);
 assert.equal((await request(origin+'/setup',{action:'finish',setupKey,adminEmail:'admin@example.test',adminPassword:password})).status,200);
 let healthy=false;for(let i=0;i<120;i++){try{if((await fetch(base+'/health')).ok){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,1000));}assert.ok(healthy,'Installed service restarted');
-const login=await request(base+'/auth/login',{email:'admin@example.test',password});assert.equal(login.status,200);const token=login.data.token;
+const login=await request(base+'/auth/login',{email:'admin@example.test',password});assert.equal(login.status,200);const token=login.data.token;fs.writeFileSync('/tmp/drawsplat-ci-login.json',JSON.stringify({password}),{mode:0o600});
 assert.equal((await request(base+'/auth/register',{email:'unauthorized@example.test',password})).status,403);
 const rows=[{teacher_email:'teacher@example.test',class_name:'Science',student_email:'student@example.test'}];
 assert.equal((await request(base+'/district/roster',{rows},token)).data.classesCreated,1);

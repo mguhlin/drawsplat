@@ -1,6 +1,8 @@
 {$SITE_ADDRESS} {
   @private path /.git/* /.* /server/* /selfhost/* /scripts/* /tests/* /node_modules/* /dist/* /build/*
-  respond @private 404
+  handle @private {
+    respond 404
+  }
   handle /api/drawsplat/mysql/* {
     reverse_proxy api:8787
   }
