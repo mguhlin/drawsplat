@@ -120,3 +120,24 @@ test('FAQ is in Start here, searchable, linkable, and readable without JavaScrip
  await reader.screenshot({path:'/tmp/drawsplat-faq-mobile.png'});await context.close();
  await page.goto('/wiki/faq.html');await page.emulateMedia({media:'print'});await expect(page.locator('main h3').last()).toBeVisible();
 });
+test('developer page is last in Wiki topics and addresses project contact correctly',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('drawsplat.googleScriptUrl','https://script.google.com/macros/s/school-example/exec'));
+ let posts=0;await page.route('https://script.google.com/**',route=>{posts++;route.abort()});
+ await page.goto('/wiki/');
+ const links=page.getByRole('navigation',{name:'Wiki topics'}).getByRole('link');
+ await expect(links.last()).toHaveText('About the Developer');await links.last().click();
+ await expect(page.locator('main')).toContainText('J. M. Guhlin');
+ await expect(page.locator('main')).toContainText('multilingual classrooms');
+ await expect(page.locator('main a[href="https://buymeacoffee.com/drawsplat"]')).toBeVisible();
+ await page.locator('#contactName').fill('Test visitor');await page.locator('#contactEmail').fill('visitor@example.com');
+ await page.locator('#contactTopic').selectOption('general_question');await page.locator('#contactDetails').fill('A question about classroom tools & language support.');
+ await page.getByRole('button',{name:'Open email draft'}).click();
+ await expect(page.locator('#contactStatus')).toContainText('drawsplat@gmail.com');
+ const draft=await page.getByRole('link',{name:'Open the prepared email'}).getAttribute('href');
+ const address=new URL(draft);expect(address.pathname).toBe('drawsplat@gmail.com');
+ expect(address.searchParams.get('body')).toContain('A question about classroom tools & language support.');
+ expect(address.searchParams.get('body')).toContain('visitor@example.com');expect(posts).toBe(0);
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.goto('/wiki/?q=developer+multilingual');await expect(page.locator('.wiki-results a').filter({hasText:'About the Developer'})).toBeVisible();
+});

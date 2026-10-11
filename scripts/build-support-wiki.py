@@ -29,7 +29,8 @@ console=next(row for row in GROUPS['Privacy and district review'] if row[0]=='gu
 GROUPS['Privacy and district review'].remove(console)
 GROUPS['For technology admins'].insert(4,console)
 GROUPS['For parents and students']=[('wiki/for-parents-and-students.html','Learning, saving, and getting help','Start work, keep a copy, share safely, and ask the school for help.'),('parents/index.html','Family Access Tools','Request student records through a configured school Apps Script service.')]
-GROUPS={key:GROUPS[key] for key in ['Start here','For educators','For technology admins','For parents and students','SplatWorks','Licensing and pricing','Privacy and district review','Technical and updates']}
+GROUPS['About DrawSplat']=[('wiki/about-developer.html','About the Developer','J. M. Guhlin, classroom tools, multilingual learning, project support, and contact.')]
+GROUPS={key:GROUPS[key] for key in ['Start here','For educators','For technology admins','For parents and students','SplatWorks','Licensing and pricing','Privacy and district review','Technical and updates','About DrawSplat']}
 EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.html','wiki/district-classrooms.html','guides/saving-exporting.html','guides/collaboration-turn-ins.html','pages/background-templates.html','guides/project-reference.html'}
 RENDER=['faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')

@@ -22,6 +22,8 @@
     status.style.color = kind==='error' ? '#b91c1c' : (kind==='ok' ? '#16a34a' : '');
   }
   function getScriptUrl(){
+    // Project contact must never be routed to a saved school endpoint.
+    if(form.dataset.delivery==='email') return '';
     let local='';
     try{ local=(localStorage.getItem(STORAGE_KEY)||'').trim(); }catch(e){}
     const fallback=(DEFAULT_CONTACT_SCRIPT_URL||'').trim();
@@ -40,7 +42,9 @@
       '',
       payload.details
     ].join('\n');
-    location.href='mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    const draftUrl='mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    location.href=draftUrl;
+    return draftUrl;
   }
   form.addEventListener('submit',async function(ev){
     ev.preventDefault();
@@ -60,8 +64,11 @@
     }
     const url=getScriptUrl();
     if(!url){
-      openEmailFallback(payload);
-      setStatus('Opening your email app with this request addressed to '+CONTACT_EMAIL+'.','ok');
+      const draftUrl=openEmailFallback(payload);
+      setStatus('Opening your email app with this request addressed to '+CONTACT_EMAIL+'. Review the draft and choose Send in your email app.','ok');
+      const link=document.createElement('a');
+      link.href=draftUrl;link.textContent='Open the prepared email';
+      status.append(document.createTextNode(' '),link);
       return;
     }
     submitBtn.disabled=true;
