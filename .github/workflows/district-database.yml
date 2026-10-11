@@ -22,11 +22,11 @@ jobs:
         run: |
           bash -n start-district.sh start-native.sh scripts/install-docker-debian.sh
           bash scripts/install-docker-debian.sh --help
-      - name: Prepare private configuration
+      - name: Start with the real district launcher
         run: |
-          node selfhost/district/prepare.js ${{ matrix.engine == 'mysql' && '--mysql' || '' }} > /dev/null
-      - name: Start complete district stack
-        run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml up -d --build --wait --wait-timeout 240
+          bash start-district.sh ${{ matrix.engine == 'mysql' && '--mysql' || '' }} > /tmp/drawsplat-launcher.log 2>&1
+          test -r selfhost/district/.env
+          test "$(stat -c %u selfhost/district/.env)" = "$(id -u)"
       - name: Verify first-run setup and district API
         run: node tests/district-stack.mjs
       - name: Verify installation plans

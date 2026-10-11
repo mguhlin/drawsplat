@@ -23,9 +23,9 @@ if "%~1"=="--plan" (
   echo --plan needs an existing JSON file.
   exit /b 1
  )
- docker run --rm -v "%cd%:/workspace" -v "%~f2:/selected-plan.json:ro" -w /workspace node:22-alpine node selfhost/district/prepare.js --plan /selected-plan.json
+ docker run --rm --user 1000:1000 -v "%cd%:/workspace" -v "%~f2:/selected-plan.json:ro" -w /workspace node:22-alpine node selfhost/district/prepare.js --plan /selected-plan.json
 ) else (
- docker run --rm -v "%cd%:/workspace" -w /workspace node:22-alpine node selfhost/district/prepare.js %*
+ docker run --rm --user 1000:1000 -v "%cd%:/workspace" -w /workspace node:22-alpine node selfhost/district/prepare.js %*
 )
 if errorlevel 1 exit /b 1
 docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml up -d --build --wait --wait-timeout 240
