@@ -4,6 +4,20 @@
 
 Install your district’s whiteboard, create its administrator account, and set up teacher and student classrooms. MariaDB and MySQL use the same saving API and whiteboard interface.
 
+## Quick Start
+
+Open **00-START-HERE.html** (or **START-HERE.html**) immediately after extracting the **complete DrawSplat + SplatWorks suite**. The same guided setup is available at the top of [the HTML guide](district-selfhost.html#quick-start-hub).
+
+1. Review the component checkboxes. The whiteboard, all four SplatWorks apps, tools, widgets and games are **checked by default**. Uncheck anything your district does not want to serve.
+2. Choose MariaDB or MySQL and optionally enter your district hostname.
+3. Select **Save plan in extracted folder** in a supported browser and choose the extracted package folder. Alternatively, select **Download installation plan** and save `drawsplat-district-plan.json` in the extracted folder next to `START-HERE.html`.
+4. Run `bash start-district.sh` or `start-district.bat`. The launcher applies your choices and opens the setup hub. If you skip the plan, every component is enabled.
+5. Follow the hub’s checklist: database connection, district administrator credentials, optional Google sign-in, teachers and rosters, school settings, component verification, HTTPS and tested backups.
+
+**Rerun whenever needed:** reopen START-HERE.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the launcher. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines requires a separate migration rather than a rerun.
+
+Component selection applies to standalone app entry routes. Supporting assets and whiteboard-embedded features remain available. The district MariaDB/MySQL service powers whiteboard accounts, classrooms and turn-ins. Other tools retain their existing storage and integration behavior; selecting them does not convert their storage to MariaDB. Test each selected tool and its permissions before classroom rollout.
+
 ## Before you start
 
 ### Who uses each account?
@@ -30,7 +44,7 @@ The **district administrator login** is separate from the **Teacher Admin unlock
 
 ### 1. Download and extract the source
 
-[Download the current district source ZIP](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip).
+[Download the complete DrawSplat + SplatWorks source ZIP](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip).
 
 Extract the archive and open the folder containing `start-district.sh` and `start-district.bat`. Install and start Docker before continuing.
 

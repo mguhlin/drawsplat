@@ -187,6 +187,13 @@ Version: $VERSION_LABEL
 Built:   $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 Source:  $SHORT_SHA
 
+Start here
+----------
+Open START-HERE.html before setup. The complete district suite (including
+SplatWorks) is available from https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip .
+Use the component checkboxes, save your plan, then run start-district.sh or .bat.
+Rerunning preserves accounts and data.
+
 What's in this zip
 ------------------
 - The complete static site (index.html, app/, pages/, legal/, guides/, parents/,
@@ -216,7 +223,7 @@ whiteboard/tools/widgets/games releases.
 Deployment paths
 ----------------
 1. Browser-only (no accounts):
-     Open START-HERE.html and use the included local launcher (Python 3),
+     Open START-HERE.html for Quick Start and Detailed Setup,
      or upload the whole tree to a static host.
 
 2. Google Apps Script (recommended for teachers and most districts):

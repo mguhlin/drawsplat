@@ -20,3 +20,5 @@ assert.equal((await fetch(origin+'/server/mysql-backend/server.js')).status,404)
 assert.equal((await fetch(origin+'/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({setupKey,action:'test'})})).status,404);
 const board=await fetch(origin+'/app/whiteboard.html',{redirect:'manual'});assert.equal(board.status,302);assert.ok(board.headers.get('location').includes('storage=mysql'));
 console.log('District stack: installation, restart, admin roster, registration lock, gateway privacy and board routing passed.');
+
+const {inventory}=await import('../selfhost/district/components.js');for(const tool of inventory()){const r=await fetch(origin+tool.url,{method:'HEAD'});assert.equal(r.status,200,'Selected component entry: '+tool.name);}console.log('All selected component entry pages available, including all four SplatWorks apps.');

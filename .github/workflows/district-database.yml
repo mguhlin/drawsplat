@@ -25,6 +25,10 @@ jobs:
         run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml up -d --build --wait --wait-timeout 240
       - name: Verify first-run setup and district API
         run: node tests/district-stack.mjs
+      - name: Verify installation plans
+        run: node --test tests/district-plan.test.cjs
+      - name: Verify rerunning setup and component choices
+        run: node tests/district-rerun-ci.mjs
       - name: Verify private boards, classroom isolation and roster transactions
         run: |
           npm ci --prefix server/mysql-backend

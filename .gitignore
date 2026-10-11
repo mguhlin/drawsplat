@@ -45,3 +45,8 @@ JSON/
 
 # Private district backups
 selfhost/district/backups/
+
+# District installation choices (generated on the district host)
+drawsplat-district-plan.json
+data/district-installation.json
+data/district-tools.json

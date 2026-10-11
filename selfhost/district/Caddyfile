@@ -1,4 +1,5 @@
 {$SITE_ADDRESS} {
+  import /etc/caddy/components.caddy
   @private path /.git/* /.* /server/* /selfhost/* /scripts/* /tests/* /node_modules/* /dist/* /build/*
   handle @private {
     respond 404

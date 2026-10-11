@@ -3,6 +3,10 @@
 DrawSplatTM can be installed as one complete browser-based package, or as
 drop-in modules that share the same folder structure.
 
+## Complete district setup
+
+For the complete DrawSplat + SplatWorks suite, [download the full source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip), extract it, and open `START-HERE.html`. Quick Start offers each component checked by default and a rerunnable installation plan. The [district setup guide](district-selfhost.html) covers accounts, classrooms, Google, HTTPS and backups. The drop-in static packages below remain available separately.
+
 ## Package model
 
 All modules are static files. There is no installer and no server-side linking

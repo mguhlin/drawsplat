@@ -1,5 +1,8 @@
 # DrawSplatTM
 
+**District installation:** Download the [complete DrawSplat + SplatWorks suite](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip), extract it, and open **00-START-HERE.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).
+
+
 DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website and works in the browser. Google Apps Script optionally provides Drive/Sheets saves, classroom rooms, templates, and turn-ins. A separate portable MySQL service provides private, account-owned online Save/Open on Railway, DigitalOcean, or your own MySQL server.
 
 **Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://buymeacoffee.com/drawsplat).
