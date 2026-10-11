@@ -1,0 +1,12 @@
+const {test,expect}=require('@playwright/test');const fs=require('node:fs');const path=require('node:path');
+test.beforeEach(async({page})=>{await page.route('**/setup.js',route=>route.fulfill({contentType:'application/javascript',body:fs.readFileSync(path.join(__dirname,'../server/mysql-backend/static/setup.js'),'utf8')}));});
+test('first installation shows unique editable starter credentials without browser persistence',async({page})=>{
+ await page.goto('/server/mysql-backend/static/setup.html');await expect(page.locator('#admin-email')).toHaveValue('admin@localhost.test');await expect(page.locator('#admin-password')).toHaveAttribute('type','text');const first=await page.locator('#admin-password').inputValue();expect(first.length).toBeGreaterThanOrEqual(20);
+ expect(await page.evaluate(()=>JSON.stringify({...localStorage,...sessionStorage}))).not.toContain(first);
+ await page.locator('#show-admin-password').uncheck();await expect(page.locator('#admin-password')).toHaveAttribute('type','password');await page.reload();expect(await page.locator('#admin-password').inputValue()).not.toBe(first);
+});
+test('installation saves edited credentials and completion provides the matching login details',async({page})=>{
+ let submitted;await page.route('**/setup',route=>{submitted=route.request().postDataJSON();return route.fulfill({json:{ok:true,message:'Setup complete.'}});});
+ await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{value:{writeText:async value=>{window.copiedLogin=value;}}}));
+ await page.goto('/server/mysql-backend/static/setup.html');await page.locator('#setup-key').fill('test-setup-key');await page.locator('#admin-email').fill('district-admin@school.example');await page.locator('#admin-password').fill('test-only-chosen-password');await page.getByRole('button',{name:'Finish setup'}).click();await expect(page.locator('#setup-login-details')).toBeVisible();expect(submitted.adminEmail).toBe('district-admin@school.example');expect(submitted.adminPassword).toBe('test-only-chosen-password');await expect(page.locator('#installed-admin-email')).toHaveValue('district-admin@school.example');await expect(page.locator('#installed-admin-password')).toHaveValue('test-only-chosen-password');await page.getByRole('button',{name:'Copy login details'}).click();await expect(page.locator('#copy-login-status')).toHaveText('Login details copied.');expect(await page.evaluate(()=>window.copiedLogin)).toContain('district-admin@school.example');
+});
