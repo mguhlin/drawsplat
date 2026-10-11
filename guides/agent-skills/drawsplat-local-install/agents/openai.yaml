@@ -1,0 +1,4 @@
+interface:
+  display_name: "DrawSplat Local Install"
+  short_description: "Guide and record a complete local Docker installation"
+  default_prompt: "Use $drawsplat-local-install to guide me through a fresh local DrawSplat district-suite installation and record the verified steps."
