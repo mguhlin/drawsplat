@@ -53,3 +53,31 @@ jobs:
       - name: Stop test installation
         if: always()
         run: docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down --volumes
+  package-install:
+    name: Extracted ZIP installation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and install the delivered package with restrictive extraction permissions
+        run: |
+          set -euo pipefail
+          bash scripts/make-district-suite.sh
+          package="dist/drawsplat-district-suite-$(git rev-parse --short HEAD).zip"
+          umask 077
+          mkdir -p "$RUNNER_TEMP/district-package"
+          unzip -q "$package" -d "$RUNNER_TEMP/district-package"
+          cd "$RUNNER_TEMP/district-package/drawsplat-district-suite/drawsplat"
+          export COMPOSE_PROJECT_NAME=drawsplat-package-check
+          cleanup() { docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down --volumes >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          bash start-district.sh > "$RUNNER_TEMP/package-launch.log" 2>&1
+          test -r selfhost/district/.env
+          node tests/district-stack.mjs
+          npm ci --prefix server/mysql-backend
+          node tests/district-database-ci.cjs
+          bash selfhost/district/backup-district.sh
+          node tests/district-restore-ci.cjs
+          node tests/district-rerun-ci.mjs
