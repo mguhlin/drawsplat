@@ -60,6 +60,7 @@ services:
       - ../../:/srv:ro
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./components.caddy:/etc/caddy/components.caddy:ro
+      - ./app-headers.caddy:/etc/caddy/app-headers.caddy:ro
       - caddy-data:/data
       - caddy-config:/config
 volumes:
