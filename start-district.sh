@@ -9,4 +9,4 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml restart web
 printf '\nDrawSplat is running. Open the setup hub address printed above to continue or rerun your checklist.\n'
 site_url=$(sed -n 's/^SITE_ORIGIN=//p' selfhost/district/.env)
-if command -v xdg-open >/dev/null; then xdg-open "$site_url/START-HERE.html" >/dev/null 2>&1 || true; elif command -v open >/dev/null; then open "$site_url/START-HERE.html" || true; fi
+if command -v xdg-open >/dev/null; then xdg-open "$site_url/start-here.html" >/dev/null 2>&1 || true; elif command -v open >/dev/null; then open "$site_url/start-here.html" || true; fi

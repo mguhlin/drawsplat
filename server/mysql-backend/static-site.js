@@ -4,7 +4,7 @@ function attachStaticSite(app,root) {
  app.use((req,res,next)=>{
   res.removeHeader('X-Frame-Options');
   res.set('Permissions-Policy','camera=(self), microphone=(self), geolocation=(), payment=()');
-  if(!/^\/(?:$|index\.html$|(?:00-)?START-HERE\.html$|compliance\.config\.json$|site\.webmanifest$|(?:data|docs|assets|app|admin|hub|vendor|solutions|games|pages|guides|legal|parents|community|languages|blog|studio|splatworks)\/)/.test(req.path))return res.status(404).end();
+  if(!/^\/(?:$|index\.html$|(?:00-)?START-HERE\.html$|start-here\.html$|compliance\.config\.json$|site\.webmanifest$|(?:data|docs|assets|app|admin|hub|vendor|solutions|games|pages|guides|legal|parents|community|languages|blog|studio|splatworks)\/)/.test(req.path))return res.status(404).end();
   next();
  },express.static(root,{dotfiles:'deny'}));
 }

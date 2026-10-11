@@ -16,5 +16,5 @@ let env=fs.readFileSync(file,'utf8');
 if(plan.domain||fs.existsSync(planFile)){for(const [key,value] of Object.entries({SITE_ADDRESS:plan.domain||':8080',SITE_ORIGIN:plan.domain?'https://'+plan.domain:'http://localhost:8080',WEB_BIND:plan.domain?'0.0.0.0':'127.0.0.1'}))env=env.replace(new RegExp('^'+key+'=.*$','m'),key+'='+value);fs.writeFileSync(file,env,{mode:0o600});}
 applyComponents(plan);
 console.log('Enabled '+plan.components.length+' components. Existing accounts, secrets and database volumes are preserved.');
-console.log('Setup hub: '+(env.match(/^SITE_ORIGIN=(.+)$/m)?.[1]||'http://localhost:8080')+'/START-HERE.html');
+console.log('Setup hub: '+(env.match(/^SITE_ORIGIN=(.+)$/m)?.[1]||'http://localhost:8080')+'/start-here.html');
 console.log('Setup address: '+(env.match(/^SITE_ORIGIN=(.+)$/m)?.[1]||'http://localhost:8080')+'/setup');console.log('Setup key: '+env.match(/^SETUP_TOKEN=(.+)$/m)[1]);

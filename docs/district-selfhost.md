@@ -6,15 +6,15 @@ Install your district’s whiteboard, create its administrator account, and set 
 
 ## Quick Start
 
-Open **00-START-HERE.html** (or **START-HERE.html**) immediately after extracting the **complete DrawSplat + SplatWorks suite**. The same guided setup is available at the top of [the HTML guide](district-selfhost.html#quick-start-hub).
+Open **start-here.html** immediately after extracting the **complete DrawSplat + SplatWorks suite**. The same guided setup is available at the top of [the HTML guide](district-selfhost.html#quick-start-hub).
 
 1. Review the component checkboxes. The whiteboard, all four SplatWorks apps, tools, widgets and games are **checked by default**. Uncheck anything your district does not want to serve.
 2. Choose MariaDB or MySQL and optionally enter your district hostname.
-3. Select **Save plan in extracted folder** in a supported browser and choose the extracted package folder. Alternatively, select **Download installation plan** and save `drawsplat-district-plan.json` in the extracted folder next to `START-HERE.html`.
-4. Run `bash start-district.sh` or `start-district.bat`. The launcher applies your choices and opens the setup hub. If you skip the plan, every component is enabled.
+3. Select **Save plan in extracted folder** in a supported browser and choose the extracted package folder or its inner `drawsplat` folder. The page saves into the application folder automatically. Alternatively, select **Download installation plan** and save `drawsplat-district-plan.json` inside the `drawsplat` folder next to `start-district.sh`.
+4. Open the inner `drawsplat` folder and run `bash start-district.sh` or `start-district.bat`. The launcher applies your choices and opens the setup hub. If you skip the plan, every component is enabled.
 5. Follow the hub’s checklist: database connection, district administrator credentials, optional Google sign-in, teachers and rosters, school settings, component verification, HTTPS and tested backups.
 
-**Rerun whenever needed:** reopen START-HERE.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the launcher. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines requires a separate migration rather than a rerun.
+**Rerun whenever needed:** reopen start-here.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the launcher. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines requires a separate migration rather than a rerun.
 
 Component selection applies to standalone app entry routes. Supporting assets and whiteboard-embedded features remain available. The district MariaDB/MySQL service powers whiteboard accounts, classrooms and turn-ins. Other tools retain their existing storage and integration behavior; selecting them does not convert their storage to MariaDB. Test each selected tool and its permissions before classroom rollout.
 
@@ -40,13 +40,35 @@ The **district administrator login** is separate from the **Teacher Admin unlock
 
 **Hosting:** drawsplat.org provides the public frontend and source download. It does not host your district’s MariaDB service. Your district operates its own API, database, Google client, backups, and server.
 
+### Server readiness and private storage
+
+Use a supported Docker release with Compose v2 and Linux containers. The launcher runs its own Node runtime in Docker; installing PHP or a host-side Node runtime is unnecessary. Confirm Docker can start containers before running setup.
+
+Reserve space for the extracted suite, container images, growing database volumes and multiple backups. There is no validated production CPU/RAM or concurrent-user minimum yet: test your expected classroom load before sizing a district server. Media editing also depends on each student's device and browser.
+
+Keep the application folder writable only by server administrators. The supplied gateway serves application files read-only, blocks private server/configuration paths, and stores database and API configuration in Docker volumes. Do not expose the extracted folder through a second web server without equivalent restrictions. Never make the Docker socket or configuration world-writable.
+
+For an external database, create an empty database with `utf8mb4` encoding and a dedicated user restricted to that database. Allow the schema migrations used by this release as well as normal record access; do not use the database root account. Verify network connectivity and TLS from the API container, not just from your laptop.
+
 ## Install DrawSplat
 
 ### 1. Download and extract the source
 
-[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.0.0/drawsplat-district-suite-v1.0.0.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
+[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.1.0/drawsplat-district-suite-v1.1.0.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
 
-Extract the archive and open the folder containing `start-district.sh` and `start-district.bat`. Install and start Docker before continuing.
+The district suite contains just `start-here.html` and a `drawsplat` folder at its top level. Open the HTML page first; it includes the complete guide and Quick Start. Keep it beside that folder so its artwork and interactive checkboxes load. The source archive has a developer-oriented layout instead.
+
+For commands and installation plans, open the inner `drawsplat` folder containing `start-district.sh` and `start-district.bat`. Install and start Docker before continuing.
+
+### Verify the download
+
+Download the matching `.zip.sha256` file from the district release. Verify the ZIP before extraction:
+
+```bash
+sha256sum -c drawsplat-district-suite-v1.1.0.zip.sha256
+```
+
+On macOS, use `shasum -a 256` on the ZIP and compare with the checksum file. In Windows PowerShell, run `Get-FileHash .\drawsplat-district-suite-v1.1.0.zip -Algorithm SHA256` and compare the result with that file. Extract the entire archive, rather than only the HTML page.
 
 ### 2. Run the launcher
 
@@ -209,11 +231,44 @@ The launcher saves a dated private directory containing:
 
 **External databases:** use the external database host’s backup tools instead. The bundled database export does not contain external records. Preserve the matching private `/data/config.json` too.
 
+### Schedule and monitor backups
+
+Backups are **not automatically scheduled by the district launcher**. Assign an administrator to schedule the backup script with Linux cron/systemd or Windows Task Scheduler, using the application folder as its working directory. Choose a frequency and retention period appropriate to your district; record failed-job alerts and periodically test restoration. Keep encrypted copies outside this server and outside the served application directory.
+
+The API runs its own retention/time-limit tasks while the service is running; these do not replace backups. Review which records those tasks cover. Classroom assignments and turn-ins need a district lifecycle policy rather than assuming every record is purged automatically. No Moodle PHP cron command is needed.
+
 ### Recover an installation
 
 Recovery requires **both the SQL export and its matching configuration**. Read the included `selfhost/district/RESTORE.md` file, or [view the restore instructions online](https://github.com/mguhlin/drawsplat/blob/main/selfhost/district/RESTORE.md).
 
 Keep encrypted off-server copies, restrict access to administrators, and test recovery on a separate installation. Backups contain student records and credentials.
+
+## Troubleshooting and ongoing administration
+
+Run these commands from the inner `drawsplat` application folder:
+
+```bash
+docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml ps
+docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml logs --tail 100 api db web
+```
+
+Review logs privately and redact credentials or student data before sharing them. Check `/api/drawsplat/mysql/health` on your installation for saving-service status. A running frontend alone does not prove the database is connected.
+
+| Symptom | What to check |
+| --- | --- |
+| Docker unavailable | Start Docker; check Compose is installed and Windows is using Linux containers |
+| Gateway fails to start | Check whether another application occupies ports 8080, 80 or 443; inspect the web service logs |
+| Setup key rejected | Use the key from this installation's launcher, not a different server; rerunning prints the key without replacing accounts |
+| Setup disabled after installation | This is expected; use district administrator sign-in rather than reinstalling |
+| Database test fails | Verify host/port, database-specific privileges, TLS and connectivity from the API container |
+| Google sign-in fails | Check the exact origin, Web Client ID, allowed email domains and imported roster |
+| Lost administrator credentials | Use the installation credentials saved after setup; preserve data and seek server-level recovery rather than deleting volumes |
+
+**Email and recovery:** the administrator email is a login identifier. This installer does not configure SMTP, send welcome messages, or provide an email password-reset workflow. Plan how your district distributes login instructions and handles account recovery; Google account recovery remains with your identity provider.
+
+**Updates:** take and verify a backup before upgrading, test a copy first, and retain matching code/configuration for rollback. Keep this application's folder, Compose project identity and existing volumes. Do not copy an old database volume into a different database engine. Maintain operating-system and Docker updates, monitor service health, and document who can administer the server.
+
+This guide borrows the installation sequence and operational checks from [Moodle's installation quick guide](https://docs.moodle.org/503/en/Installation_quick_guide), adapted to DrawSplat's Docker/Node architecture. Moodle's PHP, webroot and cron commands do not apply here.
 
 ## Before classroom rollout
 

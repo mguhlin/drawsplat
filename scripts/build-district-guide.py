@@ -42,3 +42,5 @@ start = page.replace('../assets/', 'assets/').replace('../pages/', 'pages/').rep
 start = start.replace('href="district-selfhost.html', 'href="docs/district-selfhost.html')
 (root / 'START-HERE.html').write_text(start)
 (root / '00-START-HERE.html').write_text(start)
+
+(root / 'start-here.html').write_text(start)

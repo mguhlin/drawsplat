@@ -2,8 +2,12 @@
 # Complete district source + built apps; preserves each component's license.
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+command -v python3 >/dev/null || { printf 'Python 3 is required to build a release ZIP (not to install it).\n' >&2; exit 1; }
 mkdir -p dist
 version=$(git rev-parse --short HEAD)
 file="dist/drawsplat-district-suite-$version.zip"
-git archive --format=zip --prefix=drawsplat-district-suite/ -o "$file" HEAD
-printf 'Complete DrawSplat + SplatWorks suite: %s\nOpen 00-START-HERE.html after extracting.\n' "$file"
+archive=$(mktemp)
+trap 'rm -f "$archive"' EXIT
+git archive --format=zip -o "$archive" HEAD
+python3 scripts/package-district-suite.py "$archive" "$file"
+printf 'Complete DrawSplat + SplatWorks suite: %s\nOpen start-here.html after extracting. Application files and launchers are inside drawsplat/.\n' "$file"
