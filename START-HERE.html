@@ -6,30 +6,34 @@
 <!-- Generated from district-selfhost.md by scripts/build-district-guide.py. -->
 <a class="skip-link" href="#guide">Skip to installation guide</a>
 <header class="guide-header"><a href="index.html">DrawSplat</a><nav aria-label="Guide formats"><a href="docs/district-selfhost.md">View Markdown</a><a href="docs/district-selfhost.md" download>Download Markdown</a><a href="pages/download.html">Downloads</a></nav></header>
-<div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#before-you-start">Before you start</a></li><li><a href="#install-drawsplat">Install DrawSplat</a></li><li><a href="#configure-google-sign-in">Configure Google sign-in</a></li><li><a href="#use-your-district-s-domain">Use your district’s domain</a></li><li><a href="#update-or-stop-the-installation">Update or stop the installation</a></li><li><a href="#back-up-and-recover">Back up and recover</a></li><li><a href="#troubleshooting-and-ongoing-administration">Troubleshooting and ongoing administration</a></li><li><a href="#before-classroom-rollout">Before classroom rollout</a></li></ul></nav></aside>
-<main id="guide"><img class="guide-banner" src="assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724"><h1 id="drawsplat-district-installation">DrawSplat district installation</h1><section id="quick-start-hub" class="quick-start" aria-labelledby="quick-start-title"><h2 id="quick-start-title">Quick Start: set up your district</h2><p>Start here when you unpack the complete DrawSplat + SplatWorks package. Follow this checklist, or jump to <a href="#before-you-start">Detailed Setup</a>. Return here whenever you update or change components.</p><form id="quickstart-form"><h3>Choose your components</h3><p>Every component is checked on a new installation. Uncheck anything your district does not want to offer. Shared administration and supporting assets remain available.</p><p><button id="select-all-components" type="button">Select all</button> <button id="clear-components" type="button">Clear selections</button> <span id="selected-component-count" role="status"></span></p><details><summary>Review all component checkboxes</summary><div id="component-choices"></div></details><label for="quickstart-database">Database engine</label><select id="quickstart-database"><option value="mariadb">MariaDB 11.8 (default)</option><option value="mysql">MySQL 8.4</option></select><label for="quickstart-domain">District hostname (optional for localhost setup)</label><input id="quickstart-domain" placeholder="whiteboard.your-district.org" pattern="[a-zA-Z0-9.-]+"><p>For an existing installation, keep its current database engine. A hostname requires DNS pointing at your server and ports 80/443 available.</p><button id="save-install-plan" type="button">Save plan in extracted folder</button> <button type="submit">Download installation plan</button><label for="import-install-plan">Load a previous plan to rerun setup</label><input id="import-install-plan" type="file" accept=".json,application/json"><p id="quickstart-status" role="status"></p></form><h3>Follow the setup checklist</h3><p>Check each task when your district has completed it. Component choices are applied by the launcher; these task checkboxes are your progress checklist.</p><div class="setup-tasks">
-<label><input type="checkbox"> Download the complete suite, extract it, and install/start Docker.</label>
-<label><input type="checkbox"> Download your plan above and place it in the drawsplat folder next to start-district.sh. Run start-district.sh or start-district.bat. Repeating this applies changes without deleting accounts or database volumes.</label>
-<label><input type="checkbox"> <a href="http://localhost:8080/setup">Complete database and administrator setup</a>: enter the launcher’s setup key, test the connection, choose administrator credentials, and copy the final login details. On your domain, use /setup. Skip this task if already installed.</label>
+<div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#before-you-start">Before you start</a></li><li><a href="#install-docker">Install Docker</a></li><li><a href="#install-drawsplat">Install DrawSplat</a></li><li><a href="#install-without-docker">Install without Docker</a></li><li><a href="#configure-google-sign-in">Configure Google sign-in</a></li><li><a href="#use-your-district-s-domain">Use your district’s domain</a></li><li><a href="#update-or-stop-the-installation">Update or stop the installation</a></li><li><a href="#back-up-and-recover">Back up and recover</a></li><li><a href="#troubleshooting-and-ongoing-administration">Troubleshooting and ongoing administration</a></li><li><a href="#before-classroom-rollout">Before classroom rollout</a></li></ul></nav></aside>
+<main id="guide"><img class="guide-banner" src="assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724"><h1 id="drawsplat-district-installation">DrawSplat district installation</h1><section id="quick-start-hub" class="quick-start" aria-labelledby="quick-start-title"><h2 id="quick-start-title">Quick Start: set up your district</h2><p>Start here when you unpack the complete DrawSplat + SplatWorks package. Follow this checklist, or jump to <a href="#before-you-start">Detailed Setup</a>. Return here whenever you update or change components.</p><form id="quickstart-form"><fieldset class="hosting-options"><legend>1. Choose how to install</legend><label><input type="radio" name="hosting" value="docker" checked><span><strong>Docker (preferred)</strong><small>The launchers manage the database, API and HTTPS gateway together.</small></span></label><label><input type="radio" name="hosting" value="native"><span><strong>Without Docker</strong><small>Install Node.js, MariaDB/MySQL and Caddy directly on your server.</small></span></label></fieldset><p id="hosting-path-help" role="status">Docker selected. Follow the Docker launch instructions below.</p><p><a id="hosting-instructions-link" href="#install-drawsplat">Open Docker instructions</a></p><h3>2. Choose your components</h3><p>Every component is checked on a new installation. Uncheck anything your district does not want to offer. Shared administration and supporting assets remain available.</p><p><button id="select-all-components" type="button">Select all</button> <button id="clear-components" type="button">Clear selections</button> <span id="selected-component-count" role="status"></span></p><details><summary>Review all component checkboxes</summary><div id="component-choices"></div></details><label for="quickstart-database">Database engine</label><select id="quickstart-database"><option value="mariadb">MariaDB 11.8 (default)</option><option value="mysql">MySQL 8.4</option></select><label for="quickstart-domain">District hostname (optional for localhost setup)</label><input id="quickstart-domain" placeholder="whiteboard.your-district.org" pattern="[a-zA-Z0-9.-]+"><p>For an existing installation, keep its current database engine. A hostname requires DNS pointing at your server and ports 80/443 available.</p><button id="save-install-plan" type="button">Save plan in extracted folder</button> <button type="submit">Download installation plan</button><label for="import-install-plan">Load a previous plan to rerun setup</label><input id="import-install-plan" type="file" accept=".json,application/json"><p id="quickstart-status" role="status"></p></form><h3>Follow the setup checklist</h3><p>Check each task when your district has completed it. Component choices are applied by the launcher; these task checkboxes are your progress checklist.</p><div class="setup-tasks">
+<label data-hosting="docker"><input type="checkbox" data-task="docker-prerequisites"> Download and extract the complete suite. <a href="#install-docker">Install and verify Docker</a> with Compose v2 and Linux containers.</label>
+<label data-hosting="native" hidden><input type="checkbox" data-task="native-prerequisites"> <a href="#native-software-and-database">Install Node.js, MariaDB/MySQL and Caddy</a>, then create an empty database and its application user.</label>
+<label data-hosting="docker"><input type="checkbox" data-task="docker-launch"> Save the Docker plan inside drawsplat/. Run start-district.sh or start-district.bat. Reruns preserve accounts and volumes.</label>
+<label data-hosting="native" hidden><input type="checkbox" data-task="native-launch"> Save the native plan inside drawsplat/. <a href="#native-prepare-and-start">Prepare native settings and start the API and gateway</a>. Reruns preserve the private configuration and database.</label>
+<label data-hosting="native" hidden><input type="checkbox" data-task="native-services"> <a href="#native-services-and-https">Configure automatic startup</a> for the API, database and gateway.</label>
+<label><input type="checkbox"> <a href="/setup">Complete database and administrator setup</a>: enter the launcher’s setup key, test the connection, choose administrator credentials, and copy the final login details. On your domain, use /setup. Without Docker, enter your existing database credentials. Skip this task if already installed.</label>
 <label><input type="checkbox"> <a href="#configure-google-sign-in">Configure Google sign-in</a> with the district’s Web Client ID and allowed domains, if used.</label>
 <label><input type="checkbox"> <a href="/admin/district-roster.html">Add teachers and import rosters</a>. Sign in with the installation’s district administrator account.</label>
 <label><input type="checkbox"> <a href="/admin/admin.html">Review Teacher Admin</a> and <a href="/admin/compliance.html">school safety, privacy and retention settings</a>. The local Teacher Admin unlock password is separate from district account authentication.</label>
 <label><input type="checkbox"> Open the selected components below and review their storage, permissions and optional integrations. Whiteboard accounts and classrooms use the district database; other apps retain their own documented storage behavior. For media tools, test camera/microphone access and download any offline speech models you need.</label>
 <label><input type="checkbox"> Test teacher assignment sharing, student turn-ins, feedback and each selected app before classroom rollout.</label>
 <label><input type="checkbox"> <a href="#use-your-district-s-domain">Verify the district’s HTTPS domain</a> and Google authorized origin.</label>
-<label><input type="checkbox"> <a href="#back-up-and-recover">Create and restore a backup</a>, and confirm district retention procedures.</label></div><p id="installation-status" role="status">After launching, reopen this hub at http://localhost:8080/start-here.html or the same path on your district’s domain.</p><details><summary>Open selected components for verification</summary><div id="enabled-component-links"></div></details></section>
+<label><input type="checkbox"> <a href="#back-up-and-recover">Create and restore a backup</a>, and confirm district retention procedures.</label></div><p id="installation-status" role="status">After starting your chosen installation, reopen this hub at http://localhost:8080/start-here.html or the same path on your district’s domain.</p><details><summary>Open selected components for verification</summary><div id="enabled-component-links"></div></details></section>
 
 <p>Install your district’s whiteboard, create its administrator account, and set up teacher and student classrooms. MariaDB and MySQL use the same saving API and whiteboard interface.</p>
 <h2 id="quick-start">Quick Start</h2>
 <p>Open <strong>start-here.html</strong> immediately after extracting the <strong>complete DrawSplat + SplatWorks suite</strong>. The same guided setup is available at the top of <a href="docs/district-selfhost.html#quick-start-hub">the HTML guide</a>.</p>
 <ol>
+<li>Choose <strong>Docker (preferred)</strong> or <strong>Without Docker</strong> at the top of the checklist. Docker manages the services together; native installation uses software installed directly on your server.</li>
 <li>Review the component checkboxes. The whiteboard, all four SplatWorks apps, tools, widgets and games are <strong>checked by default</strong>. Uncheck anything your district does not want to serve.</li>
 <li>Choose MariaDB or MySQL and optionally enter your district hostname.</li>
 <li>Select <strong>Save plan in extracted folder</strong> in a supported browser and choose the extracted package folder or its inner <code>drawsplat</code> folder. The page saves into the application folder automatically. Alternatively, select <strong>Download installation plan</strong> and save <code>drawsplat-district-plan.json</code> inside the <code>drawsplat</code> folder next to <code>start-district.sh</code>.</li>
-<li>Open the inner <code>drawsplat</code> folder and run <code>bash start-district.sh</code> or <code>start-district.bat</code>. The launcher applies your choices and opens the setup hub. If you skip the plan, every component is enabled.</li>
+<li>Open the inner <code>drawsplat</code> folder. <strong>Docker:</strong> run <code>bash start-district.sh</code> or <code>start-district.bat</code>. <strong>Without Docker:</strong> follow <a href="#install-without-docker">native setup</a>, run <code>node selfhost/district/prepare-native.js</code>, and start the API and gateway. If you skip the plan, every component is enabled.</li>
 <li>Follow the hub’s checklist: database connection, district administrator credentials, optional Google sign-in, teachers and rosters, school settings, component verification, HTTPS and tested backups.</li>
 </ol>
-<p><strong>Rerun whenever needed:</strong> reopen start-here.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the launcher. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines requires a separate migration rather than a rerun.</p>
+<p><strong>Rerun whenever needed:</strong> reopen start-here.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the preparation/startup steps for your chosen path. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines or moving between Docker and native hosting requires a planned migration; changing this selector does not transfer existing data.</p>
 <p>Component selection applies to standalone app entry routes. Supporting assets and whiteboard-embedded features remain available. The district MariaDB/MySQL service powers whiteboard accounts, classrooms and turn-ins. Other tools retain their existing storage and integration behavior; selecting them does not convert their storage to MariaDB. Test each selected tool and its permissions before classroom rollout.</p>
 <h2 id="before-you-start">Before you start</h2>
 <h3 id="who-uses-each-account">Who uses each account?</h3>
@@ -62,23 +66,112 @@
 <p>The <strong>district administrator login</strong> is separate from the <strong>Teacher Admin unlock password</strong>. Teachers and students cannot manage district rosters.</p>
 <h3 id="what-you-need">What you need</h3>
 <ul>
-<li>A district server or computer where you can install Docker.</li>
-<li><strong>Linux:</strong> Docker Engine with Compose. <strong>Windows/macOS:</strong> Docker Desktop. Windows must use Linux containers.</li>
-<li>Internet access for the first launch to download container images.</li>
-<li>An empty MariaDB or MySQL database if you plan to use an existing database server. Otherwise, the launcher creates a bundled database.</li>
+<li>A district server or computer with administrator access.</li>
+<li><strong>Docker path:</strong> Docker Engine with Compose v2 on Linux, or Docker Desktop using Linux containers on Windows/macOS.</li>
+<li><strong>Native path:</strong> Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2 installed directly on the server.</li>
+<li>Internet access to install software and dependencies. Some apps also need optional online services or initial model downloads.</li>
+<li><strong>Docker:</strong> a bundled database is created for you unless you connect an external database. <strong>Native:</strong> create an empty database and its application user before web setup.</li>
 <li>A Google OAuth Web Client ID if you want teachers and students to use Google sign-in. You can configure it later.</li>
 </ul>
 <p><strong>Hosting:</strong> drawsplat.org provides the public frontend and source download. It does not host your district’s MariaDB service. Your district operates its own API, database, Google client, backups, and server.</p>
 <h3 id="server-readiness-and-private-storage">Server readiness and private storage</h3>
-<p>Use a supported Docker release with Compose v2 and Linux containers. The launcher runs its own Node runtime in Docker; installing PHP or a host-side Node runtime is unnecessary. Confirm Docker can start containers before running setup.</p>
-<p>Reserve space for the extracted suite, container images, growing database volumes and multiple backups. There is no validated production CPU/RAM or concurrent-user minimum yet: test your expected classroom load before sizing a district server. Media editing also depends on each student's device and browser.</p>
-<p>Keep the application folder writable only by server administrators. The supplied gateway serves application files read-only, blocks private server/configuration paths, and stores database and API configuration in Docker volumes. Do not expose the extracted folder through a second web server without equivalent restrictions. Never make the Docker socket or configuration world-writable.</p>
-<p>For an external database, create an empty database with <code>utf8mb4</code> encoding and a dedicated user restricted to that database. Allow the schema migrations used by this release as well as normal record access; do not use the database root account. Verify network connectivity and TLS from the API container, not just from your laptop.</p>
+<h4 id="software-checks">Software checks</h4>
+<ul>
+<li><strong>Docker:</strong> start Docker and confirm Compose v2 and Linux containers work. The launcher supplies the Node runtime, database and gateway.</li>
+<li><strong>Without Docker:</strong> install Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2. Confirm each command is available before continuing.</li>
+<li>Use a current browser for setup and classroom testing.</li>
+</ul>
+<h4 id="capacity-planning">Capacity planning</h4>
+<ul>
+<li>Allow space for the extracted suite, growing database storage and several backups.</li>
+<li><strong>Docker:</strong> also allow space for downloaded container images and volumes.</li>
+<li>Test the number of simultaneous classrooms you expect; validated production CPU/RAM and concurrent-user minimums are not yet available.</li>
+<li>Test media tools on student devices: editing performance depends on the browser and device as well as the server.</li>
+</ul>
+<h4 id="file-permissions-and-private-storage">File permissions and private storage</h4>
+<ul>
+<li>Allow only server administrators to change application code and gateway configuration.</li>
+<li>Keep secrets, database files and backups private. Never put backups in a publicly served folder.</li>
+<li><strong>Docker:</strong> application files are mounted read-only; database and API configuration are stored in private volumes. Keep <code>.env</code> restricted and never make the Docker socket world-writable.</li>
+<li><strong>Without Docker:</strong> restrict <code>selfhost/district/native-private/</code> to the account running the API. It holds settings and credentials. Allow the gateway account to read application files and <code>native-web/</code>, without write access to them or access to <code>native-private/</code>.</li>
+<li>Use the supplied gateway configuration. If you configure another web server, apply equivalent private-path blocks and app-specific browser headers.</li>
+<li>On Windows, apply NTFS permissions; POSIX file modes alone do not enforce access control.</li>
+</ul>
+<h4 id="existing-or-native-database-access">Existing or native database access</h4>
+<ul>
+<li>Create an empty database using <code>utf8mb4</code> encoding.</li>
+<li>Create a dedicated application user restricted to that database; do not enter the database root account in the web installer.</li>
+<li>Grant record access and the permissions needed for schema migrations.</li>
+<li>Test the connection from the actual API host. With Docker, that means the API container; without Docker, it means the native server account.</li>
+<li>For remote database connections, use verified TLS and the server's trusted CA certificate when required.</li>
+</ul>
+<h2 id="install-docker">Install Docker</h2>
+<p>Use this section for the <strong>Docker (preferred)</strong> path. If Docker is already installed, skip to <a href="#verify-docker-is-ready">Verify Docker is ready</a>.</p>
+<h3 id="windows">Windows</h3>
+<ol>
+<li>Check your computer against the <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop Windows requirements and installer</a>. Enable hardware virtualization in BIOS/UEFI if needed.</li>
+<li>For the WSL 2 backend, open an administrator terminal. If WSL is not installed, run <code>wsl --install</code> and restart when prompted. Update an existing installation with <code>wsl --update</code>.</li>
+<li>Download Docker Desktop for your processor, run its installer, and choose the WSL 2 backend. Complete any requested restart.</li>
+<li>Open <strong>Docker Desktop</strong> from Start and complete its first-run prompts. Wait for the engine to finish starting.</li>
+<li>Use <strong>Linux containers</strong>. If the Docker tray menu offers “Switch to Linux containers,” select it.</li>
+<li>Open a new terminal and run the readiness checks below. Keep Docker Desktop running while DrawSplat is in use; configure startup according to your district's workstation policy.</li>
+</ol>
+<p>Docker Desktop does not support Windows Server. For that host, use a supported Linux VM running Docker Engine or the native installation path.</p>
+<h3 id="macos">macOS</h3>
+<ol>
+<li>Open the <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Docker Desktop Mac installer</a> and choose <strong>Apple silicon</strong> or <strong>Intel</strong> for your Mac.</li>
+<li>Open the downloaded <code>.dmg</code> and drag Docker into <strong>Applications</strong>.</li>
+<li>Open <strong>Docker</strong> from Applications and finish the first-run prompts. Wait for its engine to start.</li>
+<li>Open a new Terminal window and run the readiness checks below. Keep Docker Desktop running during use and configure its startup settings for your host.</li>
+</ol>
+<h3 id="linux">Linux</h3>
+<ol>
+<li>Choose your distribution in the <a href="https://docs.docker.com/engine/install/">Docker Engine installation guide</a>. Install from Docker's supported repository, including the <strong>Compose plugin</strong>.</li>
+<li>For Ubuntu, the repository setup and installation commands below follow the <a href="https://docs.docker.com/engine/install/ubuntu/">Ubuntu installation guide</a>. Use your distribution's instructions instead for Debian, Fedora or another system. Resolve any existing conflicting container packages as directed there before installation.</li>
+</ol>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo tee /etc/apt/sources.list.d/docker.sources &gt; /dev/null &lt;&lt;EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release &amp;&amp; echo &quot;${UBUNTU_CODENAME:-$VERSION_CODENAME}&quot;)
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+</code></pre>
+<ol start="3">
+<li>Give only the authorized installation administrator access to Docker. If your district uses the <code>docker</code> group, add that administrator, then sign out and back in:</li>
+</ol>
+<pre><code class="language-bash">sudo usermod -aG docker &quot;$USER&quot;
+</code></pre>
+<p>The Docker group grants administrative control of the host. Never solve a permission error by making the Docker socket world-writable. If your district requires using <code>sudo</code> instead, run the DrawSplat Bash launcher with <code>sudo bash start-district.sh</code> and manage the resulting administrator-owned installation consistently.</p>
+<h3 id="verify-docker-is-ready">Verify Docker is ready</h3>
+<p>Run these in a fresh terminal under the account that will launch DrawSplat:</p>
+<pre><code class="language-bash">docker version
+docker compose version
+docker info --format '{{.OSType}}'
+docker run --rm hello-world
+</code></pre>
+<ul>
+<li><code>docker version</code> should report both the client and server. A server connection error usually means Docker is stopped or your account lacks access.</li>
+<li><code>docker compose version</code> should report Compose <strong>v2</strong>.</li>
+<li>The OS type should be <strong>linux</strong>.</li>
+<li><code>hello-world</code> should download and run successfully. If it cannot download, check your district's proxy, DNS and container-registry access.</li>
+</ul>
+<p>Once all four checks pass, return to Quick Start, save your installation plan and run the DrawSplat launcher. Docker already supplies Node, Caddy and the bundled database for this path.</p>
 <h2 id="install-drawsplat">Install DrawSplat</h2>
+<p><strong>Docker path (preferred).</strong> For the alternative, go to <a href="#install-without-docker">Install without Docker</a>. The account, roster and classroom steps are shared by both paths.</p>
 <h3 id="1-download-and-extract-the-source">1. Download and extract the source</h3>
 <p><a href="https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.1.0/drawsplat-district-suite-v1.1.0.zip">Download the complete DrawSplat + SplatWorks district suite ZIP</a>. The <a href="https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip">current source archive</a> also contains the complete suite.</p>
 <p>The district suite contains just <code>start-here.html</code> and a <code>drawsplat</code> folder at its top level. Open the HTML page first; it includes the complete guide and Quick Start. Keep it beside that folder so its artwork and interactive checkboxes load. The source archive has a developer-oriented layout instead.</p>
-<p>For commands and installation plans, open the inner <code>drawsplat</code> folder containing <code>start-district.sh</code> and <code>start-district.bat</code>. Install and start Docker before continuing.</p>
+<p>For commands and installation plans, open the inner <code>drawsplat</code> folder containing <code>start-district.sh</code> and <code>start-district.bat</code>. For this path, install and start Docker before continuing.</p>
 <h3 id="verify-the-download">Verify the download</h3>
 <p>Download the matching <code>.zip.sha256</code> file from the district release. Verify the ZIP before extraction:</p>
 <pre><code class="language-bash">sha256sum -c drawsplat-district-suite-v1.1.0.zip.sha256
@@ -199,6 +292,136 @@
 <li><strong>Students:</strong> open an enrolled class, work on their own copy of an assignment, and turn in the current board.</li>
 <li><strong>Private boards:</strong> account-based Save/Open remains available alongside classroom assignments.</li>
 </ul>
+<h2 id="install-without-docker">Install without Docker</h2>
+<p>Use this path when your district manages the database, Node service and web gateway directly. Run commands from the inner <code>drawsplat</code> application folder. Keep Docker and native installations in separate folders; switching paths does not migrate an existing database or administrator account.</p>
+<h3 id="native-software-and-database">Native software and database</h3>
+<ol>
+<li>Install <a href="https://nodejs.org/en/download">Node.js</a> <strong>22 or newer</strong> with npm.</li>
+<li>Install <strong>MariaDB 11.8</strong> using its <a href="https://mariadb.com/docs/server/mariadb-quickstart-guides/installing-mariadb-server-guide">server installation guide</a>, or <strong>MySQL 8.4</strong>. Start the database service. Configure <code>max_allowed_packet</code> to at least <strong>32 MB</strong> for whiteboard saves.</li>
+<li>Install <strong>Caddy 2</strong> using the <a href="https://caddyserver.com/docs/install">installation instructions</a>. An existing district reverse proxy can replace it only if you reproduce the supplied route restrictions, component choices, app headers and API routing.</li>
+<li>Check the installed commands:</li>
+</ol>
+<pre><code class="language-bash">node --version
+npm --version
+caddy version
+</code></pre>
+<p>Connect to the database as its administrator (<code>sudo mariadb</code> on a typical Linux MariaDB installation, or <code>mariadb -u root -p</code> / <code>mysql -u root -p</code> as appropriate). Replace the sample password below with a unique password you keep privately. These SQL statements create a <strong>new</strong> installation; do not run them to replace existing district data:</p>
+<pre><code class="language-sql">CREATE DATABASE drawsplat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'drawsplat_app'@'127.0.0.1' IDENTIFIED BY 'REPLACE_WITH_A_UNIQUE_DATABASE_PASSWORD';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, REFERENCES
+  ON drawsplat.* TO 'drawsplat_app'@'127.0.0.1';
+</code></pre>
+<p>This example uses TCP on <code>127.0.0.1:3306</code>. If you use a remote database, have its administrator provision an equivalent database-specific user for your API host and provide verified TLS settings. The database password is separate from the district administrator's login password.</p>
+<h3 id="native-prepare-and-start">Native prepare and start</h3>
+<ol>
+<li>Select <strong>Without Docker</strong> in Quick Start, choose the database and components, and save the plan inside <code>drawsplat/</code>. A hostname is optional for initial localhost testing.</li>
+<li>Install the API dependencies and generate the native configuration:</li>
+</ol>
+<pre><code class="language-bash">npm ci --omit=dev --prefix server/mysql-backend
+node selfhost/district/prepare-native.js
+</code></pre>
+<p>If you did not save a plan, preparation enables every component and assumes MariaDB. Add <code>--mysql</code> to choose MySQL on the first preparation. Preparation prints the setup address and a private setup key. Rerunning preserves the key and existing configuration; it does not create, delete or modify your database.</p>
+<ol start="3">
+<li>Start the API in one terminal:</li>
+</ol>
+<pre><code class="language-bash">node selfhost/district/run-native.js
+</code></pre>
+<ol start="4">
+<li>In a second terminal, start the gateway:</li>
+</ol>
+<pre><code class="language-bash">caddy run --config selfhost/district/native-web/Caddyfile --adapter caddyfile
+</code></pre>
+<p>For localhost testing, both terminal windows must remain open. If an installed Caddy service already occupies the selected ports, configure that service to use this generated configuration instead of starting a second Caddy process. API port 8787 and web port 8080 must be available; preparation accepts <code>--api-port 8788 --web-port 8081</code> if your localhost needs different ports. Use the address it prints.</p>
+<ol start="5">
+<li>Open <code>/setup</code> at the printed address and paste the setup key. Enter:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Local database example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host</td>
+<td><code>127.0.0.1</code></td>
+</tr>
+<tr>
+<td>Port</td>
+<td><code>3306</code></td>
+</tr>
+<tr>
+<td>Database</td>
+<td><code>drawsplat</code></td>
+</tr>
+<tr>
+<td>Username</td>
+<td><code>drawsplat_app</code></td>
+</tr>
+<tr>
+<td>Password</td>
+<td>The unique database password you created above</td>
+</tr>
+<tr>
+<td>Verified database TLS</td>
+<td>Enable for a remote database; supply its CA when required</td>
+</tr>
+</tbody>
+</table>
+<ol start="6">
+<li>Test the database connection, choose the district administrator credentials, and finish setup. The native API runner restarts automatically after installation. Save the completed login details, then open the printed <code>/start-here.html</code> address.</li>
+<li>Complete the shared <a href="#4-choose-the-district-administrator-credentials">administrator</a>, <a href="#5-add-teachers-and-import-classroom-rosters">roster</a>, <a href="#6-share-assignments-and-collect-turn-ins">classroom</a> and <a href="#configure-google-sign-in">Google sign-in</a> steps.</li>
+</ol>
+<p>Native setup creates <code>selfhost/district/native-private/settings.json</code> and <code>config.json</code>. Keep both private and preserve them when upgrading. <code>config.json</code> contains the database connection and password pepper. The gateway configuration and component rules are generated in <code>selfhost/district/native-web/</code>.</p>
+<h3 id="native-services-and-https">Native services and HTTPS</h3>
+<p><strong>Linux:</strong> run the API under a dedicated service account with access to its private configuration. A systemd service can use this template; replace the username, application location and Node path with your installation's values:</p>
+<pre><code class="language-ini">[Unit]
+Description=DrawSplat district API
+After=network.target
+
+[Service]
+Type=simple
+User=drawsplat
+WorkingDirectory=/opt/drawsplat
+ExecStart=/usr/bin/node /opt/drawsplat/selfhost/district/run-native.js
+Restart=always
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>Save it as <code>/etc/systemd/system/drawsplat-district-api.service</code>, then enable it:</p>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl enable --now drawsplat-district-api
+</code></pre>
+<p>Use <a href="https://caddyserver.com/docs/running">Caddy's service instructions</a> for the gateway. Point its service configuration at the generated <code>native-web/Caddyfile</code>, give its account read access to application files and gateway rules, and keep its certificate storage private. Caddy's service needs permission to bind ports 80/443 for a district HTTPS domain. The API remains bound to localhost.</p>
+<p><strong>Windows:</strong> run the API and Caddy using your district's Windows service manager or startup tasks configured to run even when no administrator is signed in. Use the two native startup commands above, set the application folder as the working directory, use an account with the required NTFS permissions, and configure restart after failure. See <a href="https://caddyserver.com/docs/running">Caddy's Windows service instructions</a>. Configure MariaDB/MySQL to start automatically too.</p>
+<p><strong>macOS:</strong> use launchd or your managed-service tooling for Node, Caddy and the database. Set the application folder as the working directory and restart failed services.</p>
+<p>For HTTPS, save a native plan with your district hostname and rerun preparation. Point DNS at the server, allow ports 80/443, validate the generated gateway configuration, and restart/reload the native services:</p>
+<pre><code class="language-bash">caddy validate --config selfhost/district/native-web/Caddyfile --adapter caddyfile
+</code></pre>
+<p>Update Google's authorized origin to the exact HTTPS origin. Test sign-in, Save/Open, classrooms and media permissions through the gateway. For an already installed native service, rerun preparation after any plan change and restart the API and gateway so both use the updated settings. Keep the current database engine and private configuration.</p>
+<h3 id="native-backups-recovery-and-updates">Native backups, recovery and updates</h3>
+<ul>
+<li>Choose a private backup folder outside the application webroot, and restrict it to server administrators.</li>
+<li>Export the database with <code>mariadb-dump</code> or <code>mysqldump</code>. Use <code>--password</code> to prompt rather than putting the password in the command. <code>--result-file</code> also avoids Windows shell text-encoding changes:</li>
+</ul>
+<pre><code class="language-bash">mariadb-dump --host=127.0.0.1 --user=drawsplat_app --password --single-transaction --quick --skip-lock-tables --no-tablespaces --hex-blob --result-file=/PRIVATE_BACKUP_FOLDER/database.sql drawsplat
+</code></pre>
+<ul>
+<li>Replace the output path with your private backup location; on Windows, use a restricted Windows path. Use <code>mysqldump</code> for MySQL and your actual host, user and database for an external server.</li>
+<li>Copy the matching <code>native-private/config.json</code> and <code>settings.json</code> into that same private backup. Keep encrypted off-server copies. Schedule and monitor backups with your OS tools; the Docker backup scripts do not back up a native installation.</li>
+<li>To test recovery, stop the API, provision a new empty database with appropriate access, and import the SQL using the database client. From Linux/macOS or Windows Command Prompt:</li>
+</ul>
+<pre><code class="language-bash">mariadb --host=127.0.0.1 --user=drawsplat_app --password drawsplat_restore &lt; database.sql
+</code></pre>
+<ul>
+<li>Restore the matching private configuration. Update its host/database credentials if the recovery location differs, while preserving the password pepper. Do not run first-time web setup over restored accounts. Start the API and gateway, and verify existing logins, boards, rosters and turn-ins before allowing users back in.</li>
+<li>Before updating, take a tested backup. Stop the API, update application files while preserving <code>native-private/</code>, the plan and database, rerun <code>npm ci --omit=dev --prefix server/mysql-backend</code>, prepare the native configuration again, then restart both services. Test updates separately before production rollout.</li>
+</ul>
 <h2 id="configure-google-sign-in">Configure Google sign-in</h2>
 <h3 id="during-installation">During installation</h3>
 <ol>
@@ -210,13 +433,14 @@
 <p>No Google client secret is needed for this browser ID-token flow. Verified Google emails match rostered accounts and retain their assigned roles. Public registration and invitation enrollment are disabled for district installations. The initial administrator can use the installation’s email/password login.</p>
 <p><a href="https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid">Read Google’s client setup guidance</a>.</p>
 <h3 id="configure-google-later">Configure Google later</h3>
-<p>Edit these settings in the private <code>/data/config.json</code> inside the API container, then restart the API service:</p>
+<p>Edit these settings in the private configuration, then restart the API service. <strong>Docker:</strong> <code>/data/config.json</code> inside the API container. <strong>Native:</strong> <code>selfhost/district/native-private/config.json</code>.</p>
 <ul>
 <li><code>GOOGLE_CLIENT_ID</code></li>
 <li><code>GOOGLE_ALLOWED_DOMAINS</code></li>
 </ul>
 <p>Preserve the other settings, especially <code>DRAWSPLAT_PEPPER</code>. Keep the configuration file private.</p>
 <h2 id="use-your-district-s-domain">Use your district’s domain</h2>
+<p><strong>Docker:</strong> follow the steps below. <strong>Without Docker:</strong> use <a href="#native-services-and-https">Native services and HTTPS</a>.</p>
 <p>Edit <code>selfhost/district/.env</code> with your domain:</p>
 <pre><code class="language-dotenv">SITE_ADDRESS=whiteboard.your-district.org
 SITE_ORIGIN=https://whiteboard.your-district.org
@@ -231,12 +455,14 @@ WEB_BIND=0.0.0.0
 <p>Database and API ports are not published. By default, the installation listens on loopback until the administrator chooses to expose it.</p>
 <p>Restrict <code>.env</code>, the setup key, and configuration backups to server administrators. On Windows, use a restricted folder and NTFS permissions; POSIX file modes do not replace Windows access controls. Do not publish these files with the static site.</p>
 <h2 id="update-or-stop-the-installation">Update or stop the installation</h2>
+<p>These commands apply to <strong>Docker</strong>. For native service management and updates, use <a href="#native-backups-recovery-and-updates">Native backups, recovery and updates</a>.</p>
 <p>For updates, keep the same installation directory, Compose project name, private <code>.env</code>, and Docker volumes. Update the source and rerun the launcher. Versioned migrations are applied once and can resume after interruptions. Test upgrades on a separate instance first.</p>
 <p>To stop services, run this from the installation folder:</p>
 <pre><code class="language-bash">docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down
 </code></pre>
 <p>Do not add <code>--volumes</code> unless you intend to delete all district data.</p>
 <h2 id="back-up-and-recover">Back up and recover</h2>
+<p>The scripts below apply to <strong>Docker</strong>. Without Docker, follow <a href="#native-backups-recovery-and-updates">Native backups, recovery and updates</a>.</p>
 <h3 id="create-a-backup">Create a backup</h3>
 <p><strong>Linux or macOS:</strong></p>
 <pre><code class="language-bash">bash selfhost/district/backup-district.sh
@@ -257,10 +483,11 @@ WEB_BIND=0.0.0.0
 <p>Recovery requires <strong>both the SQL export and its matching configuration</strong>. Read the included <code>selfhost/district/RESTORE.md</code> file, or <a href="https://github.com/mguhlin/drawsplat/blob/main/selfhost/district/RESTORE.md">view the restore instructions online</a>.</p>
 <p>Keep encrypted off-server copies, restrict access to administrators, and test recovery on a separate installation. Backups contain student records and credentials.</p>
 <h2 id="troubleshooting-and-ongoing-administration">Troubleshooting and ongoing administration</h2>
-<p>Run these commands from the inner <code>drawsplat</code> application folder:</p>
+<p><strong>Docker:</strong> run these commands from the inner <code>drawsplat</code> application folder:</p>
 <pre><code class="language-bash">docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml ps
 docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml logs --tail 100 api db web
 </code></pre>
+<p><strong>Native:</strong> check the API runner and Caddy logs, or the corresponding OS service logs. On Linux, use <code>journalctl -u drawsplat-district-api -n 100</code> and your Caddy service log. Confirm the database service is running and validate the generated Caddyfile.</p>
 <p>Review logs privately and redact credentials or student data before sharing them. Check <code>/api/drawsplat/mysql/health</code> on your installation for saving-service status. A running frontend alone does not prove the database is connected.</p>
 <table>
 <thead>
@@ -280,7 +507,7 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 </tr>
 <tr>
 <td>Setup key rejected</td>
-<td>Use the key from this installation's launcher, not a different server; rerunning prints the key without replacing accounts</td>
+<td>Use the key from this installation's preparation command or launcher, not a different server; rerunning prints the key without replacing accounts</td>
 </tr>
 <tr>
 <td>Setup disabled after installation</td>
@@ -288,7 +515,7 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 </tr>
 <tr>
 <td>Database test fails</td>
-<td>Verify host/port, database-specific privileges, TLS and connectivity from the API container</td>
+<td>Verify host/port, database-specific privileges, TLS and connectivity from the API host</td>
 </tr>
 <tr>
 <td>Google sign-in fails</td>
@@ -301,7 +528,7 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 </tbody>
 </table>
 <p><strong>Email and recovery:</strong> the administrator email is a login identifier. This installer does not configure SMTP, send welcome messages, or provide an email password-reset workflow. Plan how your district distributes login instructions and handles account recovery; Google account recovery remains with your identity provider.</p>
-<p><strong>Updates:</strong> take and verify a backup before upgrading, test a copy first, and retain matching code/configuration for rollback. Keep this application's folder, Compose project identity and existing volumes. Do not copy an old database volume into a different database engine. Maintain operating-system and Docker updates, monitor service health, and document who can administer the server.</p>
+<p><strong>Updates:</strong> take and verify a backup before upgrading, test a copy first, and retain matching code/configuration for rollback. Keep this application's folder and private configuration. For Docker, also preserve the Compose project identity and volumes; for native hosting, preserve the database and OS service configuration. Do not copy an old database volume into a different database engine. Maintain operating-system and Docker updates, monitor service health, and document who can administer the server.</p>
 <h2 id="before-classroom-rollout">Before classroom rollout</h2>
 <p>Verify the installation on your district’s own server:</p>
 <ul>

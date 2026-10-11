@@ -4,6 +4,7 @@ const folder=__dirname,file=folder+'/.env';
 const {inventory,validatePlan,applyComponents}=require('./components');
 const planFile=require('node:path').resolve(__dirname,'../../drawsplat-district-plan.json');
 const plan=validatePlan(fs.existsSync(planFile)?JSON.parse(fs.readFileSync(planFile,'utf8')):{version:1,components:inventory().map(t=>t.id),database:process.argv.includes('--mysql')?'mysql':'mariadb',domain:''});
+if(plan.hosting!=='docker')throw Error('This plan selects native hosting. Follow the Without Docker instructions and run prepare-native.js instead.');
 if(fs.existsSync(file)){const current=fs.readFileSync(file,'utf8');const engine=current.match(/^DB_IMAGE=(.+)$/m)?.[1].startsWith('mysql:')?'mysql':'mariadb';if(fs.existsSync(planFile)&&engine!==plan.database)throw Error('Database engine changes require a separate migration. Keep the existing engine in your plan.');if(!fs.existsSync(planFile)){plan.database=engine;const address=current.match(/^SITE_ADDRESS=(.+)$/m)?.[1]||'';plan.domain=address.startsWith(':')?'':address;}}
 
 if(!fs.existsSync(file)){

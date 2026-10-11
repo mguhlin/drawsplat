@@ -50,3 +50,7 @@ selfhost/district/backups/
 drawsplat-district-plan.json
 data/district-installation.json
 data/district-tools.json
+
+# Native district private state and generated gateway configuration
+selfhost/district/native-private/
+selfhost/district/native-web/
