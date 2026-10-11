@@ -1,5 +1,8 @@
 # CipherSplat for Android
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 A minimal, offline-only native shell around the CipherSplat web app. It loads the
 same code that ships at `/solutions/CipherSplat` inside a `WebView`, served from a
 secure in-app origin so Web Crypto, Web Workers, Subresource Integrity, and the

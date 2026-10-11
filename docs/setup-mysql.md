@@ -1,5 +1,8 @@
 # MariaDB and district classrooms
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 MariaDB and MySQL use the same DrawSplat API. For district administrators, start with the [district installation guide](district-selfhost.html), including Bash/BAT launchers, first-run web database setup, CSV rosters, and Google sign-in. The [local MariaDB guide](mariadb-local.md) describes the development service.
 
 # MySQL online saving: Railway, DigitalOcean, or your own server
@@ -18,14 +21,9 @@ changes. The browser receives a short-lived account token, never database creden
 - Device autosave and **File → Save File** remain available when the service is offline.
 - Schema migrations run automatically and preserve existing data.
 
-This connection provides private Save/Open, not automatic cross-device collaboration.
-Google room sync, turn-in, moderation, and Google template galleries are separate
-features and are not routed to MySQL. Older backend room/template/turn-in endpoints
-now require a district/campus administrator; do not expose them as classroom-sharing
-APIs without adding explicit membership checks.
+The district API also supports roster-linked classrooms, assignments, student submissions, and teacher feedback. Use the [complete district installation](district-selfhost.html) for these workflows. Google room sync, moderation, and cloud template galleries remain a separate integration. Legacy generic room/template/turn-in routes are not substitutes for the membership-scoped classroom API.
 
-MySQL 8.0 or 8.4 is the supported database family. Other compatible servers must
-support the bundled JSON, schema, and locking features and should be tested first.
+The district installers support MariaDB 11.8 and MySQL 8.4 with the same API. These managed-host examples describe a separately deployed saving service, not the complete district suite. Validate your provider's database configuration and backup/restore behavior.
 
 ## Railway: least server administration
 

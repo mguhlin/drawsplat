@@ -231,7 +231,7 @@ Deployment paths
      Apps Script project bound to a Google Sheet, deploy as Web App.
 
 3. Portable MySQL (private account-owned online Save/Open):
-     Follow guides/mysql-setup.html and docs/setup-mysql.md for Railway,
+     Start at wiki/index.html for current district installation and database guidance. Follow guides/mysql-setup.html and docs/setup-mysql.md for separate Railway,
      DigitalOcean, or an existing MySQL 8 server. Docker or Node.js 22+ required.
      The browser uses an HTTPS API; database credentials stay on the server.
      In admin/mysql-setup.html enter the public API address, choose

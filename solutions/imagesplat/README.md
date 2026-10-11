@@ -1,5 +1,8 @@
 # ImageSplat
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 ImageSplat edits screenshots and images locally with layers, annotations, cropping, background tools, clipboard actions, and exports. Current packaged release: **v3.1.31**, included in complete DrawSplat and Tools. There is no separate ImageSplat ZIP. [Downloads](../../pages/download.html).
 
 Select one image layer, then choose **Adjust photo…**. Brightness, contrast, saturation, and warmth controls include presets and a before/after preview. Apply updates only that image; Undo restores the original. Cancel leaves it unchanged. Photo adjustments run on local pixels and do not upload the image.

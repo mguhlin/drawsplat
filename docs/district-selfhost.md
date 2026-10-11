@@ -1,5 +1,8 @@
 # DrawSplat district installation
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 [View HTML](district-selfhost.html) · [Download Markdown](district-selfhost.md)
 
 Install your district’s whiteboard, create its administrator account, and set up teacher and student classrooms. MariaDB and MySQL use the same saving API and whiteboard interface.

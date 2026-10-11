@@ -1,5 +1,8 @@
 # Red Library Explosions
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Public-domain explosion samples used by Castles & Catapults (per-munition
 impact sounds) and the whiteboard TNT detonation.
 

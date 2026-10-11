@@ -1,5 +1,8 @@
 # ImageSplat photo adjustments
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Select one visible image layer, then choose **Adjust photo…** in the canvas toolbar.
 The Before and After previews let you compare brightness, contrast, saturation,
 and warmth while keeping the canvas untouched. Reset clears the sliders; Cancel,

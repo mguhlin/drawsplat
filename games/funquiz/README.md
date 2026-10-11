@@ -1,5 +1,8 @@
 # funquiz
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 🎓 **Fun Personality Quizzes for Educators**
 
 This project is a fun, interactive quiz website that helps educators discover which iconic character best matches their teaching style. Each quiz is themed around a beloved franchise:

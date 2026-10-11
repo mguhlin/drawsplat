@@ -1,8 +1,11 @@
 # DrawSplat&trade; — Google Apps Script Setup
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Use this when you want **Google Drive + Sheets** as the backend. You get cloud saves, shared collaboration rooms, templates, student turn-ins, the full Compliance Console (Activity Records, Safety Review, Age Band Lock, Family Access Tools, Retention, Time Limits, District Privacy Packet), and the Parent Request Center.
 
-This is the supported production path today. It scales to roughly hundreds of active users per deployment (Apps Script quotas).
+This is the optional Drive/Sheets integration. District MariaDB/MySQL installations have their own account-based saving, classrooms, assignments, and turn-ins; see [district installation](district-selfhost.html). Google sign-in for district accounts does not require Apps Script. Capacity depends on Workspace policies and Apps Script quotas; verify your expected load.
 
 ## Prerequisites
 

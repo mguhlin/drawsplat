@@ -1,5 +1,8 @@
 # DrawSplat MariaDB / MySQL saving service
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 The current static whiteboard connects to this host-independent API for private
 account-owned **Save online / Open online board**. Deploy it on Railway,
 DigitalOcean, or any Node.js/Docker host that can reach MariaDB 11.8 or MySQL 8.4.

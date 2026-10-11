@@ -15,147 +15,14 @@
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
-<body class="admin-page start-page policy-page">
-<header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
-    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat<sup class="tm">TM</sup></span>
-  </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers &amp; Families</summary>
-      <div class="landing-nav-menu">
-        <a href="../app/whiteboard.html">Open Whiteboard</a>
-        <a href="../admin/admin.html">Teacher Admin</a>
-        <a href="../pages/features.html">Features</a>
-        <a href="../pages/background-templates.html">Background Templates</a>
-        <a href="../guides/">Teacher Guides</a>
-        <hr class="landing-nav-divider">
-        <a href="../parents/index.html">Family Access Tools</a>
-        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <a href="../pages/contact.html">Contact / Information Request</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Technical</summary>
-      <div class="landing-nav-menu">
-        <a href="../pages/pricing.html">Pricing</a>
-        <a href="../pages/download.html">Download for Self-Hosting</a>
-        <a href="../legal/combined-policy.html">Get all documents below</a>
-        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/accessibility.html">Accessibility Statement</a>
-        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
-        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
-        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="../legal/texas-compliance.html">Texas Compliance</a>
-        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Support</summary>
-      <div class="landing-nav-menu">
-        <a href="../blog/">Blogs About DrawSplat</a>
-        <a href="../community/index.html">Community Board</a>
-        <hr class="landing-nav-divider">
-        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
-        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
-        <a href="../pages/support.html">Support &amp; Guides Hub</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>SplatWorks&trade;</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
-          <a href="../pages/listsplat.html">ListSplat&trade;</a>
-          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
-          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
-        </div>
-        <div class="studio-nav-icons" aria-label="SplatWorks apps">
-          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
-        </div>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>DrawSplat</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
-          <a href="../pages/tools.html">View All Tools</a>
-          <a href="../solutions/clipsplat/" target="_blank" rel="noopener noreferrer">ClipSplat™</a>
-          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
-          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
-          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
-          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
-          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
-          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
-          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
-          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
-          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
-          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
-          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
-          <a href="../pages/tools.html#widgets">View All Widgets</a>
-          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
-          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
-          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
-          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
-          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
-          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
-          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
-          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
-          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
-          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
-          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
-          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
-          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
-          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../games/">Games</a>
-          <a href="../games/">View All Games</a>
-          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
-          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
-          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
-          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
-          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
-          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
-          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
-          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
-          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
-          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
-          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
-          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
-        </div>
-      </div>
-    </details>
-  </nav>
-  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
-</header>
+<link rel="stylesheet" href="../assets/css/support-wiki.css"></head>
+<body class="admin-page start-page policy-page" data-wiki="true">
 
-<main class="landing-shell policy-shell">
+
+<!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="../wiki/index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="../wiki/index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="../wiki/district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="../wiki/setup-browser.html">Browser-only setup</a></li><li><a href="../wiki/setup-mysql.html">Advanced database hosting</a></li><li><a href="../wiki/setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="../wiki/modular-selfhost.html">Modular self-hosting</a></li><li><a href="../wiki/mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="../wiki/licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="../wiki/compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a aria-current="page" href="terms-privacy.html">Terms and privacy</a></li><li><a href="ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="district-addendum.html">District Privacy Addendum</a></li><li><a href="privacy-agreements.html">DPA Register</a></li><li><a href="google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="compliance-gaps.html">Compliance Gap List</a></li><li><a href="gdpr-compliance.html">GDPR reference</a></li><li><a href="texas-compliance.html">Texas compliance reference</a></li><li><a href="widgets-security.html">Widget security boundary</a></li><li><a href="accessibility.html">Accessibility statement</a></li><li><a href="privacy-builder.html">Privacy Notice Builder</a></li><li><a href="combined-policy.html">Combined policy packet</a></li><li><a href="../wiki/COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="../wiki/support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="../wiki/tool-inventory.html">Component inventory</a></li><li><a href="../wiki/standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Privacy and district review</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/legal/terms-privacy.html">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content" class="landing-shell policy-shell">
   <section class="policy-hero">
     <p class="landing-eyebrow">Terms of Service and Privacy Policy</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> is designed to collect as little student data as possible.</h1>
+    <h1 id="drawsplat-tm-is-designed-to-collect-as-little-student-data-as-possible">DrawSplat<sup class="tm">TM</sup> is designed to collect as little student data as possible.</h1>
     <p>Last updated: May 16, 2026. This page explains the terms for using DrawSplat<sup class="tm">TM</sup> and the privacy practices for the static app, Google Apps Script storage option, browser-only sessions, future MySQL storage, and other self-hosted deployments.</p>
     <p class="policy-note">This is a plain-language policy and district deployment addendum for DrawSplat<sup class="tm">TM</sup>. Schools and organizations may use it as the baseline privacy notice for browser-only, Google Apps Script, MySQL, and self-hosted deployments, then add their local contact, retention schedule, and consent basis. Use the <a href="privacy-builder.html">privacy notice builder</a> to generate a local Markdown notice.</p>
   </section>
@@ -164,7 +31,7 @@
 
   <section class="policy-summary">
     <article>
-      <h2>Short Version</h2>
+      <h2 id="short-version">Short Version</h2>
       <ul class="pricing-list">
         <li>DrawSplat<sup class="tm">TM</sup> does not require student accounts in the static app.</li>
         <li>DrawSplat<sup class="tm">TM</sup> does not sell student data or use targeted advertising.</li>
@@ -180,7 +47,7 @@
       </ul>
     </article>
     <article>
-      <h2>Privacy Alignment</h2>
+      <h2 id="privacy-alignment">Privacy Alignment</h2>
       <p>This policy is organized around student privacy review areas: Parental Rights, Retention and Deletion, Opt-out Options, Transparency, Encryption and Security, Consent and Age Restrictions, and Third-party Management.</p>
       <p><strong>Companion documents</strong> (deeper dives a DPO or procurement reviewer often wants):</p>
       <ul class="pricing-list">
@@ -195,7 +62,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>1. Terms of Service</h2>
+    <h2 id="1-terms-of-service">1. Terms of Service</h2>
     <h3>Who May Use DrawSplat<sup class="tm">TM</sup></h3>
     <p>DrawSplat<sup class="tm">TM</sup> may be used by individual educators, students under school supervision, families, small teams, schools, districts, and organizations. When DrawSplat<sup class="tm">TM</sup> is used with students, the teacher, school, district, or organization is responsible for deciding whether the deployment is appropriate for the students and for obtaining any required consent.</p>
 
@@ -219,7 +86,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>2. Privacy Policy</h2>
+    <h2 id="2-privacy-policy">2. Privacy Policy</h2>
     <h3>Definition of Student Personal Information</h3>
     <p>For this policy, <b>student personal information</b> means information that identifies, relates to, describes, or can reasonably be linked to a student or student household, including student names, class names tied to a student, account or SSO identifiers, student-created board or spreadsheet content, uploaded media, audio recordings, submissions, comments, room participation data, logs tied to a student, and any other information treated as student personal information, personally identifiable information, education records, or covered information under applicable federal, state, or local student privacy laws.</p>
 
@@ -254,7 +121,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>3. Student Privacy Commitments</h2>
+    <h2 id="3-student-privacy-commitments">3. Student Privacy Commitments</h2>
     <div class="protect-grid">
       <article>
         <h3>P - Parental Rights and Access</h3>
@@ -288,7 +155,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>4. Storage Modes and Retention</h2>
+    <h2 id="4-storage-modes-and-retention">4. Storage Modes and Retention</h2>
     <table class="policy-table">
       <thead>
         <tr>
@@ -334,7 +201,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>5. Third Parties</h2>
+    <h2 id="5-third-parties">5. Third Parties</h2>
     <p>DrawSplat<sup class="tm">TM</sup>&rsquo;s static pages do not require third-party analytics, advertising, or tracking. Server-side visit counts come from the static-host CDN (Cloudflare Pages by default), which never adds a beacon or any other request to the visitor&rsquo;s browser. The following services may be involved only if the user, teacher, or organization chooses to use them:</p>
     <ul>
       <li><b>Google Apps Script, Drive, and Sheets:</b> optional storage, room sync, templates, and turn-ins.</li>
@@ -349,7 +216,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>6. Security Practices</h2>
+    <h2 id="6-security-practices">6. Security Practices</h2>
     <ul>
       <li>Use HTTPS for any public deployment and redirect HTTP traffic to HTTPS.</li>
       <li>Keep admin pages and provider settings separate from student whiteboard pages.</li>
@@ -370,7 +237,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>7. District Deployment Checklist</h2>
+    <h2 id="7-district-deployment-checklist">7. District Deployment Checklist</h2>
     <p>Before approving DrawSplat<sup class="tm">TM</sup> for student use beyond browser-only local testing, the school or district should document:</p>
     <ul>
       <li>The storage mode: browser-only, Google Apps Script, MySQL, standalone backend, or hosted service.</li>
@@ -388,18 +255,18 @@
   </section>
 
   <section class="policy-section">
-    <h2>8. Contact, Requests, and Policy Changes</h2>
+    <h2 id="8-contact-requests-and-policy-changes">8. Contact, Requests, and Policy Changes</h2>
     <p>For classroom or school deployments, privacy requests should go first to the teacher, school, district, or organization that controls the DrawSplat<sup class="tm">TM</sup> deployment and storage. That organization must publish a monitored privacy/security contact, acknowledge parent/student/school requests within 10 school days, and complete access, export, correction, or deletion requests within 30 calendar days when feasible. The controlling organization can locate, export, correct, or delete student content from browser storage, Google Drive/Sheets, MySQL, or its self-hosted backend.</p>
     <p>Material changes to this policy should be posted on this page with an updated date. Schools should notify affected teachers, students, and parents when storage modes, third-party providers, retention periods, or student data practices change.</p>
   </section>
 
   <section class="policy-section">
-    <h2>9. Hosted-Service Boundary</h2>
+    <h2 id="9-hosted-service-boundary">9. Hosted-Service Boundary</h2>
     <p>This policy covers the static app, school-controlled Google Apps Script deployments, MySQL/self-hosted deployments, and baseline expectations for managed deployments. If DrawSplat<sup class="tm">TM</sup> ever offers vendor-managed hosting directly, that hosted service should publish separate hosted-service terms or a signed district agreement that identifies hosting location, subprocessors, support commitments, uptime expectations, incident response roles, data segregation controls, security review frequency, retention defaults, and deletion/export procedures.</p>
   </section>
 
   <section class="policy-section">
-    <h2>10. Policy Version History</h2>
+    <h2 id="10-policy-version-history">10. Policy Version History</h2>
     <table class="policy-table">
       <thead><tr><th>Date</th><th>Version</th><th>Change Summary</th></tr></thead>
       <tbody>
@@ -414,7 +281,7 @@
     <h2 id="compliance-features">Compliance Features (v3.1.0)</h2>
     <p>The DrawSplat<sup class="tm">TM</sup> service includes the following compliance-focused capabilities. The Compliance Console (inside Teacher Admin) is the single surface for configuring them, and the District Privacy Packet is the artifact a district reviewer can download to inspect the current configuration plus the last 90 days of Activity Records.</p>
     <ul>
-      <li><strong>Activity Records (audit log).</strong> Every compliance-relevant action — board saves, image uploads, moderation decisions, parent requests, age-band changes, data exports, data deletions, admin setting changes, retention runs — writes an immutable row to a dedicated <em>Audit</em> sheet tab in your Google Sheet. Filterable in the Compliance Console; downloadable as CSV or JSON.</li>
+      <li><strong>Activity Records (audit log).</strong> Every compliance-relevant action — board saves, image uploads, moderation decisions, parent requests, age-band changes, data exports, data deletions, admin setting changes, retention runs — writes an logged row to a dedicated <em>Audit</em> sheet tab in your Google Sheet. Filterable in the Compliance Console; downloadable as CSV or JSON.</li>
       <li><strong>Safety filters.</strong> Server-enforced text keyword filter and link allowlist run on every board save. Hits are logged as <code>TEXT_FILTER_HIT</code> events; blocked text is rejected before reaching storage.</li>
       <li><strong>Board / room freeze.</strong> A teacher or administrator can freeze a board, blocking all future writes until unfrozen. Frozen state is enforced server-side.</li>
       <li><strong>Student Age Band Lock.</strong> Each student record carries one of <code>under_13</code>, <code>13_to_17</code>, <code>18_plus</code>, or <code>unknown_minor</code>. The band is server-locked; only an administrator can change it, every change requires a reason and emits an <code>AGE_BAND_CHANGED</code> audit event. Aligned with the Texas Securing Children Online Through Parental Empowerment Act&rsquo;s age-registration provision.</li>
@@ -428,13 +295,8 @@
     </ul>
     <p>Operator notes for school IT staff and district administrators live in <a href="../docs/COMPLIANCE.md">docs/COMPLIANCE.md</a> in the repository.</p>
   </section>
-</main>
+</main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#short-version">Short Version</a></li><li><a href="#privacy-alignment">Privacy Alignment</a></li><li><a href="#1-terms-of-service">1. Terms of Service</a></li><li><a href="#2-privacy-policy">2. Privacy Policy</a></li><li><a href="#3-student-privacy-commitments">3. Student Privacy Commitments</a></li><li><a href="#4-storage-modes-and-retention">4. Storage Modes and Retention</a></li><li><a href="#5-third-parties">5. Third Parties</a></li><li><a href="#6-security-practices">6. Security Practices</a></li><li><a href="#7-district-deployment-checklist">7. District Deployment Checklist</a></li><li><a href="#8-contact-requests-and-policy-changes">8. Contact, Requests, and Policy Changes</a></li><li><a href="#9-hosted-service-boundary">9. Hosted-Service Boundary</a></li><li><a href="#10-policy-version-history">10. Policy Version History</a></li><li><a href="#compliance-features">Compliance Features (v3.1.0)</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="../wiki/licensing.html">Licensing</a></footer><!-- wiki:end -->
 
-<footer class="landing-footer">
-  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat<sup class="tm">TM</sup> Terms of Service and Privacy Policy.</span>
-  <a href="../index.html">Back to Start</a>
-  <a href="../pages/support.html">Support</a>
-</footer><script src="../assets/js/consent-banner.js" defer></script>
-</body>
+<script src="../assets/js/consent-banner.js" defer></script>
+<script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body>
 </html>

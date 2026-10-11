@@ -1,3 +1,6 @@
+
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
 `speech.mp4` contains a short excerpt from John F. Kennedy's 1961 inaugural
 address (a US federal government work), with a generated solid-color video.
 Source audio: https://huggingface.co/datasets/Xenova/transformers.js-docs/resolve/main/jfk.wav

@@ -1,5 +1,8 @@
 # PDFsplat Save as
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Use **Save as…** in the document toolbar to download the current document.
 
 | Format | Output |

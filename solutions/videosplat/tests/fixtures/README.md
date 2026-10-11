@@ -1,5 +1,8 @@
 # Synthetic media fixtures
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 `tone.webm` contains two seconds of FFmpeg's generated `testsrc2` pattern
 (160 × 90, 15 fps) and a 440 Hz sine wave. It contains no user recording.
 

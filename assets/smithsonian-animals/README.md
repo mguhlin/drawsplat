@@ -1,5 +1,8 @@
 # Smithsonian Open Access Animal Images
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 These classroom-sized images are local copies from the Smithsonian Open Access Animal Images collection:
 
 https://www.si.edu/spotlight/open-access-animals

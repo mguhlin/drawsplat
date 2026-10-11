@@ -1,0 +1,144 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>setup-mysql · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="../assets/css/support-wiki.css"></head><body data-wiki="true"><!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="setup-browser.html">Browser-only setup</a></li><li><a aria-current="page" href="setup-mysql.html">Advanced database hosting</a></li><li><a href="setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="modular-selfhost.html">Modular self-hosting</a></li><li><a href="mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="tool-inventory.html">Component inventory</a></li><li><a href="standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Connections and setup</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/docs/setup-mysql.md">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content"><article><h1 id="mariadb-and-district-classrooms">MariaDB and district classrooms</h1>
+<p><strong>Current documentation:</strong> <a href="https://drawsplat.org/wiki/">DrawSplat Wiki</a> — setup, installation, licensing, pricing, OAuth, and district privacy review.</p>
+<p>MariaDB and MySQL use the same DrawSplat API. For district administrators, start with the <a href="../docs/district-selfhost.html">district installation guide</a>, including Bash/BAT launchers, first-run web database setup, CSV rosters, and Google sign-in. The <a href="../docs/mariadb-local.md">local MariaDB guide</a> describes the development service.</p>
+<h1 id="mysql-online-saving-railway-digitalocean-or-your-own-server">MySQL online saving: Railway, DigitalOcean, or your own server</h1>
+<p>DrawSplat's static whiteboard can stay at drawsplat.org. A separate Node.js API
+stores account-owned boards in MySQL. Moving between hosts changes the server's
+database settings and the public API address; it does not require frontend code
+changes. The browser receives a short-lived account token, never database credentials.</p>
+<h2 id="what-works">What works</h2>
+<ul>
+<li><strong>File → Save online:</strong> saves the current board, including its pages and media.</li>
+<li><strong>File → Open online board:</strong> lists and opens boards belonging to the signed-in account.</li>
+<li><strong>File → Online account:</strong> signs in or signs out. Sign-in is stored in the current tab's session storage.</li>
+<li>Revision checks reject competing saves from another device rather than silently replacing work.</li>
+<li>Device autosave and <strong>File → Save File</strong> remain available when the service is offline.</li>
+<li>Schema migrations run automatically and preserve existing data.</li>
+</ul>
+<p>The district API also supports roster-linked classrooms, assignments, student submissions, and teacher feedback. Use the <a href="../docs/district-selfhost.html">complete district installation</a> for these workflows. Google room sync, moderation, and cloud template galleries remain a separate integration. Legacy generic room/template/turn-in routes are not substitutes for the membership-scoped classroom API.</p>
+<p>The district installers support MariaDB 11.8 and MySQL 8.4 with the same API. These managed-host examples describe a separately deployed saving service, not the complete district suite. Validate your provider's database configuration and backup/restore behavior.</p>
+<h2 id="railway-least-server-administration">Railway: least server administration</h2>
+<ol>
+<li>
+<p>Create a Railway project and add its <strong>MySQL</strong> database service.</p>
+</li>
+<li>
+<p>Add a service from the DrawSplat GitHub repository. Set its <strong>Root Directory</strong> to
+<code>server/mysql-backend</code>. The bundled Dockerfile and <code>railway.toml</code> configure deployment.</p>
+</li>
+<li>
+<p>In the API service's Variables tab, set:</p>
+<pre><code class="language-text">MYSQL_URL=${{MySQL.MYSQL_URL}}
+CORS_ORIGIN=https://drawsplat.org
+DRAWSPLAT_PEPPER=&lt;a unique long random secret&gt;
+NODE_ENV=production
+TRUST_PROXY=true
+</code></pre>
+<p>Adjust <code>MySQL</code> if you gave the database service another name. Use its private
+address for connections within the same project. Do not copy database URLs into
+the DrawSplat frontend. Use at least 32 characters (for example, generate it with <code>openssl rand -hex 32</code>) and keep the pepper stable across redeploys.</p>
+</li>
+<li>
+<p>Generate a public HTTPS domain for the API service. Railway supplies <code>PORT</code>.</p>
+</li>
+<li>
+<p>Wait for the health check, then connect using the wizard below. Keep the default API path, or update the host health-check path to match any custom <code>API_BASE_PATH</code>.</p>
+</li>
+<li>
+<p>Configure database backups and monitor Railway resource usage before classroom use.</p>
+</li>
+</ol>
+<p>References: <a href="https://docs.railway.com/databases/mysql">Railway MySQL</a>,
+<a href="https://docs.railway.com/deployments/monorepo">repository root directories</a>,
+<a href="https://docs.railway.com/deployments/healthchecks">health checks</a>.</p>
+<h2 id="digitalocean-droplet-api-and-database-on-one-server">DigitalOcean Droplet: API and database on one server</h2>
+<p>On a server with Docker Compose installed:</p>
+<pre><code class="language-bash">git clone https://github.com/mguhlin/drawsplat.git
+cd drawsplat/server/mysql-backend
+cp .env.example .env
+</code></pre>
+<p>Edit <code>.env</code>: replace both database passwords and <code>DRAWSPLAT_PEPPER</code> with unique
+secrets, set <code>CORS_ORIGIN</code> to your whiteboard origin, and add
+<code>API_DOMAIN=api.your-school.example</code>. Point that hostname's DNS to the server and
+allow inbound ports 80/443. Keep <code>PORT=8787</code> for the bundled reverse proxy.</p>
+<pre><code class="language-bash">docker compose -f docker-compose.yml -f docker-compose.https.yml up -d --build
+</code></pre>
+<p>Caddy provides HTTPS. MySQL has no published host port; the API's direct host port
+binds only to loopback. Database and certificate volumes survive container recreation.
+Never run <code>docker compose down -v</code> unless you intend to delete those volumes.</p>
+<p>Keep the server patched and arrange off-server backups. For example, from this
+folder, make a restricted local SQL backup before copying it to secure storage:</p>
+<pre><code class="language-bash">umask 077
+docker compose exec -T db sh -c 'MYSQL_PWD=&quot;$MYSQL_PASSWORD&quot; mysqldump -u &quot;$MYSQL_USER&quot; --single-transaction --no-tablespaces &quot;$MYSQL_DATABASE&quot;' &gt; drawsplat-backup.sql
+</code></pre>
+<p>Test restoring backups in a separate database. A backup on the same Droplet alone
+will not protect against loss of that server.</p>
+<h2 id="digitalocean-app-platform-or-an-existing-mysql-server">DigitalOcean App Platform or an existing MySQL server</h2>
+<p>Deploy the repository’s <code>server/mysql-backend</code> directory as a Docker service (set the platform’s source/root directory to this folder), or run it with Node.js 22 or newer:</p>
+<pre><code class="language-bash">npm ci --omit=dev
+npm start
+</code></pre>
+<p>Provide either <code>MYSQL_URL</code> / <code>DATABASE_URL</code> (a <code>mysql://</code> URL) or the separate
+<code>MYSQL_HOST</code>, <code>MYSQL_PORT</code>, <code>MYSQL_DATABASE</code>, <code>MYSQL_USER</code>, <code>MYSQL_PASSWORD</code> settings.
+Passwords in a URL must be percent-encoded. Railway's <code>MYSQLHOST</code>, <code>MYSQLPORT</code>,
+<code>MYSQLDATABASE</code>, <code>MYSQLUSER</code>, <code>MYSQLPASSWORD</code> aliases are also accepted.</p>
+<p>For a remote managed database, enable <code>MYSQL_SSL=true</code>; certificates are verified.
+Provide its CA using <code>MYSQL_SSL_CA</code> (PEM text) or <code>MYSQL_SSL_CA_FILE</code> (a server-side
+file path) when required. DigitalOcean's managed MySQL connection settings include
+its port and downloadable CA certificate. Add the API service to the database's
+trusted sources. Never disable certificate verification to work around a CA error.</p>
+<p>Create the empty database beforehand and grant its application user permission
+for tables, indexes, and schema migrations. Set <code>CORS_ORIGIN</code>, <code>DRAWSPLAT_PEPPER</code>,
+<code>NODE_ENV=production</code>, and <code>TRUST_PROXY=true</code> behind a trusted HTTPS proxy. Host
+platforms can supply <code>PORT</code>; the service binds to all interfaces inside its container.</p>
+<p>For API-only Docker deployment, put those settings in <code>.env</code> and use:</p>
+<pre><code class="language-bash">docker compose -f docker-compose.external.yml up -d --build
+</code></pre>
+<p>Add <code>-f docker-compose.https.yml</code> if you need the bundled HTTPS proxy. An external
+CA file must be mounted into the API container, or supplied as the <code>MYSQL_SSL_CA</code>
+environment variable. Deploy one API instance for the bundled in-process scheduled
+jobs, or set <code>DRAWSPLAT_CRON=0</code> on extra instances.</p>
+<p>References: <a href="https://docs.digitalocean.com/products/app-platform/reference/buildpacks/nodejs/">App Platform Docker deployments</a>,
+<a href="https://docs.digitalocean.com/products/databases/mysql/how-to/connect/">managed MySQL connection settings</a>.</p>
+<h2 id="connect-the-whiteboard">Connect the whiteboard</h2>
+<ol>
+<li>Open <strong>Teacher Admin → Advanced settings → Open MySQL Wizard</strong>.</li>
+<li>Enter the public API address, including <code>/api/drawsplat/mysql</code>, such as
+<code>https://your-api.example/api/drawsplat/mysql</code>.</li>
+<li>Click <strong>Test &amp; Enable Online Saving</strong>. An older incompatible backend or failed
+connection leaves the previous storage choice intact.</li>
+<li>Create a teacher saving account in the wizard, or use one provisioned by your school.
+This is separate from the Teacher Admin password. Student accounts should be
+school-provisioned; public registration is for teachers/parents.</li>
+<li>Open the whiteboard and use <strong>File → Save online</strong>. Sign in when prompted.</li>
+<li>Reload and use <strong>File → Open online board</strong> to verify the saved work.</li>
+<li>Sign out using <strong>File → Online account</strong> when leaving a shared device.</li>
+</ol>
+<p>Each browser needs its connection configured. A school may share a launch URL with
+<code>?storage=mysql&amp;api=&lt;URL-encoded public API address&gt;</code>; it must contain no database
+credentials or bearer tokens. The whiteboard’s <strong>Create Student Link</strong> button also
+copies a MySQL saving connection link; it does not share the teacher’s private board. The sign-in dialog identifies the saving service's host.</p>
+<p>If another device saved a newer copy, download your current board using <strong>Save File</strong>,
+then open the online copy before continuing. Changing providers does not automatically
+move data: restore your MySQL backup at the new host and keep the same pepper to
+preserve password hashes. If starting with an empty database, create new accounts and
+upload saved board files instead.</p>
+<h2 id="storage-limits-and-operational-checks">Storage limits and operational checks</h2>
+<p>The default API limit is 20 MB per board and a five-connection pool. Configure
+<code>MAX_BOARD_JSON_BYTES</code> and <code>MYSQL_CONNECTION_LIMIT</code> on the server for your deployment.
+Recordings currently travel inside board JSON, so many video notes increase storage
+and network use. Dedicated object storage is a future improvement, not part of this
+connection. Private boards retain their current copy until deleted; there is no
+automatic expiry applied to this new table.</p>
+<p>API connections use UTC for session expiration and timestamps, regardless of the database host’s default timezone.</p>
+<p>The health endpoint tests the database connection and advertises <code>private-boards-v1</code>.
+Use that path for host health checks. For restricted runtime database users, run
+<code>npm run migrate</code> with a schema-capable user first, then deploy with <code>AUTO_MIGRATE=false</code>.
+Back up before migrations. Real-database integration checks can be run against a
+<strong>disposable test database</strong>:</p>
+<pre><code class="language-bash">MYSQL_TEST_URL=mysql://user:password@localhost:3306/disposable_test npm test
+</code></pre>
+<p>Do not run integration checks against a classroom database; they create test accounts
+and boards. Advanced OAuth, SIS, district policy, and realtime integrations need their
+own operational validation before schoolwide adoption.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-works">What works</a></li><li><a href="#railway-least-server-administration">Railway: least server administration</a></li><li><a href="#digitalocean-droplet-api-and-database-on-one-server">DigitalOcean Droplet: API and database on one server</a></li><li><a href="#digitalocean-app-platform-or-an-existing-mysql-server">DigitalOcean App Platform or an existing MySQL server</a></li><li><a href="#connect-the-whiteboard">Connect the whiteboard</a></li><li><a href="#storage-limits-and-operational-checks">Storage limits and operational checks</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body></html>

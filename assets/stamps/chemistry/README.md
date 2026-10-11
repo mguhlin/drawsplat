@@ -1,5 +1,8 @@
 # Chemistry stamps
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 26 original SVG stamps: 12 symbol-labeled atoms, ten covalent molecules, one sodium chloride ionic lattice, and three subatomic particles. SVGs use symbols as well as colors so color is not the only way to distinguish atoms. Saved board stamps embed their SVG source and record the formula and model shape. They work with repeated stamping, resizing, rotation, flip, undo, recent stamps, and image permissions. Chemistry stamps start at 160 pixels for legible formulas.
 
 The models support topics identified in [TEA’s K–12 Chemistry Vertical Alignment](https://tea.texas.gov/curriculum-and-instruction/curriculum-standards/k-12-vertical-alignment-chemistry.pdf): 7.6.A/B (elements, compounds, atoms, molecules, symbols, and formula counts), 8.6.A/B/E (classification, chemical reactions, conservation of mass), Chemistry 6.B (subatomic particles), and Chemistry 7.B/C (formulas and molecular geometry). Examples are instructional choices; TEKS does not prescribe this exact molecule collection.

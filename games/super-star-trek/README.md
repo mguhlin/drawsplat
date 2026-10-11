@@ -1,5 +1,8 @@
 # Super Star Trek - Browser Edition
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 A browser-playable version of the classic command-driven **Super Star Trek** game. Open `index.html` in a browser to play.
 
 This port keeps the terminal-style command loop from the Lua-modified version while adding a browser interface, command buttons, and a live status panel. It runs as static HTML, CSS, and JavaScript, so it can be hosted on GitHub Pages or any ordinary static web host.

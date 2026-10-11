@@ -1,0 +1,254 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>setup-google-apps-script · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="../assets/css/support-wiki.css"></head><body data-wiki="true"><!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="setup-browser.html">Browser-only setup</a></li><li><a href="setup-mysql.html">Advanced database hosting</a></li><li><a aria-current="page" href="setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="modular-selfhost.html">Modular self-hosting</a></li><li><a href="mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="tool-inventory.html">Component inventory</a></li><li><a href="standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Connections and setup</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/docs/setup-google-apps-script.md">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content"><article><h1 id="drawsplat-google-apps-script-setup">DrawSplat™ — Google Apps Script Setup</h1>
+<p><strong>Current documentation:</strong> <a href="https://drawsplat.org/wiki/">DrawSplat Wiki</a> — setup, installation, licensing, pricing, OAuth, and district privacy review.</p>
+<p>Use this when you want <strong>Google Drive + Sheets</strong> as the backend. You get cloud saves, shared collaboration rooms, templates, student turn-ins, the full Compliance Console (Activity Records, Safety Review, Age Band Lock, Family Access Tools, Retention, Time Limits, District Privacy Packet), and the Parent Request Center.</p>
+<p>This is the optional Drive/Sheets integration. District MariaDB/MySQL installations have their own account-based saving, classrooms, assignments, and turn-ins; see <a href="../docs/district-selfhost.html">district installation</a>. Google sign-in for district accounts does not require Apps Script. Capacity depends on Workspace policies and Apps Script quotas; verify your expected load.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>A Google account (Workspace or personal — school accounts work).</li>
+<li>10–15 minutes for the initial setup.</li>
+</ul>
+<h2 id="step-1-create-the-apps-script-project">Step 1 — Create the Apps Script project</h2>
+<ol>
+<li>Go to <a href="https://script.google.com/">script.google.com</a>.</li>
+<li>Click <strong>New project</strong>.</li>
+<li>Rename it (e.g. <code>DrawSplatTM Backend</code>).</li>
+<li>Delete the starter code in <code>Code.gs</code>.</li>
+<li>Open <code>apps-script/Code.gs</code> from this repository, copy its full contents, and paste into the Apps Script editor.</li>
+<li>Save.</li>
+</ol>
+<blockquote>
+<p>Tip: the first line of <code>Code.gs</code> shows <code>DS_VERSION = '1.x.y'</code>. Every time the file changes, the version bumps. Use it to verify the deployment is current — <code>?action=ping</code> returns this version.</p>
+</blockquote>
+<h2 id="step-2-run-setup-once">Step 2 — Run <code>setup()</code> once</h2>
+<ol>
+<li>In the Apps Script toolbar, pick <code>setup</code> from the function dropdown.</li>
+<li>Click <strong>Run</strong>.</li>
+<li>Authorize when prompted. The script needs:
+<ul>
+<li><strong>Drive</strong> — to store board JSON and PNG previews.</li>
+<li><strong>Sheets</strong> — to maintain the index of boards, rooms, turn-ins, audit events, etc.</li>
+<li><strong>External requests</strong> — to verify Google sign-in tokens for the Community board.</li>
+<li><strong>Mail</strong> (optional) — to notify the compliance admin on new parent requests.</li>
+</ul>
+</li>
+</ol>
+<p><code>setup()</code> creates a Google Sheet named <strong>DrawSplatTM Saves</strong> in your Drive with these tabs:</p>
+<table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Boards</code></td>
+<td>One row per saved board</td>
+</tr>
+<tr>
+<td><code>Rooms</code></td>
+<td>One row per shared collaboration room</td>
+</tr>
+<tr>
+<td><code>Templates</code></td>
+<td>Saved templates</td>
+</tr>
+<tr>
+<td><code>TurnIns</code></td>
+<td>Student turn-ins</td>
+</tr>
+<tr>
+<td><code>Audit</code></td>
+<td>Activity Records (audit log)</td>
+</tr>
+<tr>
+<td><code>ParentRequests</code></td>
+<td>Family Access Tools tickets</td>
+</tr>
+<tr>
+<td><code>Users</code></td>
+<td>Student roster with age band metadata</td>
+</tr>
+<tr>
+<td><code>TimeUsage</code></td>
+<td>Per-day active-time counters for time-limit enforcement</td>
+</tr>
+</tbody>
+</table>
+<p>It also creates a Drive folder named <strong>DrawSplatTM Saves</strong> to hold the file blobs.</p>
+<h2 id="step-3-set-script-properties">Step 3 — Set Script Properties</h2>
+<p>In Apps Script: <strong>Project Settings → Script Properties → Add script property</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Required?</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ADMIN_PASSCODE</code></td>
+<td><strong>Yes</strong> for compliance features</td>
+<td>Gates every admin endpoint (Activity Records viewer, Privacy Packet, age band, parent requests). Use 16+ random characters.</td>
+</tr>
+<tr>
+<td><code>COMPLIANCE_ADMIN_EMAIL</code></td>
+<td>Recommended</td>
+<td>Email address that gets notified when a new parent/contact request arrives. Use <code>drawsplat@gmail.com</code> for DrawSplat project-level communications.</td>
+</tr>
+<tr>
+<td><code>HUB_ADMIN_EMAILS</code></td>
+<td>Recommended for DrawSplat Hub</td>
+<td>Comma-separated Google accounts allowed into <code>hub/admin.html</code>; project default is <code>drawsplat@gmail.com,jeguhlin@gmail.com</code>.</td>
+</tr>
+<tr>
+<td><code>COMPLIANCE_CONFIG</code></td>
+<td>Auto-generated</td>
+<td>Holds the merged safety / retention / time-limit / privacy config blob. Created when you save settings from the Compliance Console.</td>
+</tr>
+<tr>
+<td><code>PASSWORD_SALT</code></td>
+<td>Auto-generated</td>
+<td>Used to hash parent verification codes. Don't change it unless you want to invalidate every outstanding code.</td>
+</tr>
+</tbody>
+</table>
+<p>The compliance features (text filter, link allowlist, retention, time limits) all read defaults from <code>compliance.config.json</code> baked into <code>Code.gs</code>. You only need <code>COMPLIANCE_CONFIG</code> set if you want to override those defaults — and you can do that through the Compliance Console UI rather than editing the property directly.</p>
+<p>For the public DrawSplat&lt;sup&gt;TM&lt;/sup&gt; contact form, set <code>COMPLIANCE_ADMIN_EMAIL=drawsplat@gmail.com</code> in the Apps Script project, deploy the Web App, then paste that <code>/exec</code> URL into <code>DEFAULT_CONTACT_SCRIPT_URL</code> in <code>assets/js/contact.js</code>. If that constant is still the placeholder, the contact form falls back to opening a prefilled email draft to the same project contact inbox.</p>
+<h2 id="step-4-deploy-as-a-web-app">Step 4 — Deploy as a Web App</h2>
+<ol>
+<li><strong>Deploy → New deployment</strong>.</li>
+<li>Select type: <strong>Web app</strong>.</li>
+<li><strong>Description</strong>: <code>DrawSplat backend v1.0</code> (or your own).</li>
+<li><strong>Execute as</strong>: <strong>Me</strong> (the authoring Google account — required so the script has Drive access).</li>
+<li><strong>Who has access</strong>: pick the narrowest setting that still works for your users.
+<ul>
+<li><strong>Only myself</strong> — testing.</li>
+<li><strong>Anyone with a Google account</strong> — strict, but blocks non-Google users.</li>
+<li><strong>Anyone</strong> — what the Community board needs (it uses Google/Microsoft OAuth inside the page). Most school deployments use this.</li>
+</ul>
+</li>
+<li>Click <strong>Deploy</strong> and authorize.</li>
+<li>Copy the <strong>Web app URL</strong> (ends in <code>/exec</code>).</li>
+</ol>
+<h2 id="step-5-connect-the-frontend">Step 5 — Connect the frontend</h2>
+<ol>
+<li>Open the DrawSplat™ site in your browser.</li>
+<li>Click <strong>Teacher Admin</strong> in the top nav.</li>
+<li>Enter the admin gate password (separate from <code>ADMIN_PASSCODE</code> — this just unlocks the admin page).</li>
+<li>Paste the Web app URL into <strong>Google Drive + Sheets → Apps Script Web App URL → Save URL</strong>.</li>
+<li>Click <strong>Test Connection</strong>. You should see a green success message.</li>
+</ol>
+<p>That URL is stored only in your browser. Every teacher repeats this step on their own machine. You can hardcode it once at the top of <code>assets/js/app.js</code> (<code>DEFAULT_GOOGLE_SCRIPT_URL</code>) if you're hosting the site yourself and want every teacher to share one backend without manual entry.</p>
+<h2 id="step-6-optional-wire-the-community-board">Step 6 — (Optional) Wire the Community board</h2>
+<p>If you also want the <code>/community/</code> board with Google + Microsoft sign-in:</p>
+<ol>
+<li>Follow <a href="../community/Setup.md"><code>community/Setup.md</code></a>. It walks through a separate Apps Script project (the Community backend is independent of the whiteboard backend), Google OAuth client ID setup, optional Microsoft Azure App Registration, and pasting the URL into <code>community/community.js</code>.</li>
+</ol>
+<h2 id="step-7-verify-everything-is-wired">Step 7 — Verify everything is wired</h2>
+<ol>
+<li>Hit <code>https://script.google.com/macros/s/YOUR_DEPLOYMENT/exec?action=ping</code> in a browser. You should see JSON with <code>ok: true</code>, <code>app: &quot;DrawSplatTM&quot;</code>, and the current <code>version</code>.</li>
+<li>Open the whiteboard, draw something, <strong>Save to Google</strong>. Check Drive — the new <code>.drawsplat.json</code> should be in the <strong>DrawSplatTM Saves</strong> folder, and the <strong>Boards</strong> sheet has a new row.</li>
+<li>Open the internal Compliance Console at <code>admin/compliance.html</code> → <strong>Activity Records</strong>. Enter your <code>ADMIN_PASSCODE</code>. The save you just did should appear as a <code>BOARD_SAVE</code> event.</li>
+</ol>
+<h2 id="upgrading-when-code-gs-changes">Upgrading when <code>Code.gs</code> changes</h2>
+<p>The first line of <code>Code.gs</code> shows the current version. When this file changes in the repo:</p>
+<ol>
+<li>Open Apps Script editor.</li>
+<li>Paste the new <code>Code.gs</code> content. Save.</li>
+<li>Run <code>setup()</code> again (safe to run repeatedly — it adds missing tabs/columns, doesn't destroy existing data).</li>
+<li><strong>Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy</strong>. Use the same deployment so the <code>/exec</code> URL stays stable.</li>
+<li>Hit <code>?action=ping</code> again to verify the version bumped.</li>
+</ol>
+<h2 id="compliance-console-quick-reference">Compliance Console quick reference</h2>
+<p>Once the backend is wired, the internal Compliance Console at <code>admin/compliance.html</code> has eight sections. See <a href="../docs/COMPLIANCE.md"><code>COMPLIANCE.md</code></a> for the full operator guide.</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Quick win to test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Safety Review</td>
+<td>Toggle filter on/off and freeze a test board</td>
+</tr>
+<tr>
+<td>Family Access Tools</td>
+<td>Submit a request from <code>/parents/</code>, approve it here</td>
+</tr>
+<tr>
+<td>Student Age Band Lock</td>
+<td>Run a roster CSV import; change a student's band</td>
+</tr>
+<tr>
+<td>Use Limits</td>
+<td>Enable, set a 60-second daily cap, watch the workspace lock</td>
+</tr>
+<tr>
+<td>Retention Policy &amp; Cleanup</td>
+<td>Set 7-day delete, run cleanup, see audit events</td>
+</tr>
+<tr>
+<td>Privacy Settings</td>
+<td>Read-only declarations + raw config editor</td>
+</tr>
+<tr>
+<td>Activity Records</td>
+<td>Filter by action, download CSV/JSON</td>
+</tr>
+<tr>
+<td>District Privacy Packet</td>
+<td>One-click ZIP for reviewers</td>
+</tr>
+</tbody>
+</table>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Unknown action&quot; on a compliance endpoint</td>
+<td>Deployed <code>Code.gs</code> is older than the repo</td>
+<td>Paste latest <code>Code.gs</code>, save, <strong>Manage deployments → Edit → New version → Deploy</strong>.</td>
+</tr>
+<tr>
+<td>Form on <code>/parents/</code> says &quot;no backend configured&quot;</td>
+<td>No Apps Script URL saved in that browser</td>
+<td>Open Teacher Admin on that browser, paste the URL, Save.</td>
+</tr>
+<tr>
+<td>Admin endpoints return &quot;Invalid admin passcode&quot;</td>
+<td><code>ADMIN_PASSCODE</code> not set, or the cached one in browser is wrong</td>
+<td>Set the script property in Apps Script. In the browser DevTools console: <code>localStorage.removeItem('drawsplat.complianceAdminPasscode')</code>.</td>
+</tr>
+<tr>
+<td><code>?action=ping</code> returns HTML (a Google login page)</td>
+<td>Deployment access is restricted</td>
+<td><strong>Manage deployments → Edit → Who has access → Anyone</strong>, then <strong>New version → Deploy</strong>.</td>
+</tr>
+<tr>
+<td>Cleanup trigger doesn't fire</td>
+<td>Trigger not installed</td>
+<td>Compliance Console → Retention Policy &amp; Cleanup → <strong>Install Daily Trigger</strong>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="limits">Limits</h2>
+<p>Apps Script has hard quotas — be aware before scaling beyond a few hundred users:</p>
+<ul>
+<li><strong>Script runtime</strong>: 6 minutes per execution.</li>
+<li><strong>URL Fetch</strong>: 20 MB / call, 20 K calls / day (consumer accounts), 100 K / day (Workspace).</li>
+<li><strong>Sheet reads / writes</strong>: efficient for thousands of rows, slow above ~50 K rows.</li>
+<li><strong>Daily request volume</strong>: roughly 20 K requests / day on consumer accounts.</li>
+</ul>
+<p>For private account-owned online Save/Open on your own database, see the MySQL backend (<a href="../docs/setup-mysql.md"><code>setup-mysql.md</code></a>). It does not currently replace Google classroom rooms, templates, moderation, or turn-in/review; plan those workflows separately before switching.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#step-1-create-the-apps-script-project">Step 1 — Create the Apps Script project</a></li><li><a href="#step-2-run-setup-once">Step 2 — Run  setup()  once</a></li><li><a href="#step-3-set-script-properties">Step 3 — Set Script Properties</a></li><li><a href="#step-4-deploy-as-a-web-app">Step 4 — Deploy as a Web App</a></li><li><a href="#step-5-connect-the-frontend">Step 5 — Connect the frontend</a></li><li><a href="#step-6-optional-wire-the-community-board">Step 6 — (Optional) Wire the Community board</a></li><li><a href="#step-7-verify-everything-is-wired">Step 7 — Verify everything is wired</a></li><li><a href="#upgrading-when-code-gs-changes">Upgrading when  Code.gs  changes</a></li><li><a href="#compliance-console-quick-reference">Compliance Console quick reference</a></li><li><a href="#troubleshooting">Troubleshooting</a></li><li><a href="#limits">Limits</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body></html>

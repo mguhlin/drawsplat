@@ -1,5 +1,8 @@
 # DrawSplat Hub
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 The `hub/` folder holds school, campus, or classroom-specific DrawSplat Hub entry points that share the main DrawSplatTM codebase while routing whiteboard storage to a configured backend for that instance.
 
 ## Example

@@ -1,5 +1,8 @@
 # SplatWorks Desktop PWA Plan
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 ## Purpose
 
 SplatWorks Desktop should start as an installable PWA wrapper for the SplatWorks suite, not as a native rewrite. The goal is to let teachers and students install one app-like launcher that opens GridSplatTM, ShowSplatTM, WriteSplatTM, and ListSplatTM from the same local/static SplatWorks package.

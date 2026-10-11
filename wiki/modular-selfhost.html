@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>modular-selfhost · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="../assets/css/support-wiki.css"></head><body data-wiki="true"><!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="setup-browser.html">Browser-only setup</a></li><li><a href="setup-mysql.html">Advanced database hosting</a></li><li><a href="setup-google-apps-script.html">Apps Script technical reference</a></li><li><a aria-current="page" href="modular-selfhost.html">Modular self-hosting</a></li><li><a href="mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="tool-inventory.html">Component inventory</a></li><li><a href="standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Connections and setup</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/docs/modular-selfhost.md">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content"><article><h1 id="modular-self-hosting">Modular Self-Hosting</h1>
+<p><strong>Current documentation:</strong> <a href="https://drawsplat.org/wiki/">DrawSplat Wiki</a> — setup, installation, licensing, pricing, OAuth, and district privacy review.</p>
+<p>DrawSplatTM can be installed as one complete browser-based package, or as
+drop-in modules that share the same folder structure.</p>
+<h2 id="complete-district-setup">Complete district setup</h2>
+<p>For the complete DrawSplat + SplatWorks suite, <a href="https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip">download the full source archive</a>, extract it, and open <code>start-here.html</code>. Quick Start offers each component checked by default and a rerunnable installation plan. The <a href="../docs/district-selfhost.html">district setup guide</a> covers accounts, classrooms, Google, HTTPS and backups. The drop-in static packages below remain available separately.</p>
+<h2 id="package-model">Package model</h2>
+<p>All modules are static files. There is no installer and no server-side linking
+step. To combine modules, unzip them into the same web root.</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Main paths</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DrawSplatTM full package</td>
+<td><code>/</code>, <code>/app/</code>, <code>/pages/</code>, <code>/solutions/</code>, <code>/games/</code>, <code>/admin/</code>, <code>/server/</code></td>
+<td>You want the complete whiteboard, tools, widgets, games, docs, and backend scaffolds.</td>
+</tr>
+<tr>
+<td>SplatWorksTM suite</td>
+<td><code>/splatworks/</code>, <code>/pages/splatworks.html</code></td>
+<td>You want the browser-based office suite as its own entity.</td>
+</tr>
+<tr>
+<td>GridSplatTM</td>
+<td><code>/splatworks/gridsplat/</code></td>
+<td>You only need the spreadsheet app.</td>
+</tr>
+<tr>
+<td>ShowSplatTM</td>
+<td><code>/splatworks/showsplat/</code></td>
+<td>You only need the presentation/WebDeck app.</td>
+</tr>
+<tr>
+<td>WriteSplatTM</td>
+<td><code>/splatworks/writesplat/</code></td>
+<td>You only need the writing app.</td>
+</tr>
+<tr>
+<td>ListSplatTM</td>
+<td><code>/splatworks/listsplat/</code></td>
+<td>You only need the database app.</td>
+</tr>
+<tr>
+<td>DrawSplatTM Tools</td>
+<td><code>/pages/tools.html</code>, <code>/solutions/</code> selected tools</td>
+<td>You only need standalone creation tools.</td>
+</tr>
+<tr>
+<td>DrawSplatTM Widgets</td>
+<td><code>/pages/tools.html#widgets</code>, <code>/solutions/</code> selected widgets</td>
+<td>You only need quick classroom utilities.</td>
+</tr>
+<tr>
+<td>DrawSplatTM Games</td>
+<td><code>/games/</code></td>
+<td>You only need standalone classroom games.</td>
+</tr>
+<tr>
+<td>AudioSplat</td>
+<td><code>/solutions/audiosplat/</code></td>
+<td>You only need the multitrack browser recorder/editor.</td>
+</tr>
+<tr>
+<td>ClipSplat</td>
+<td><code>/solutions/clipsplat/</code> plus <code>/solutions/mediasplat/ffmpeg/</code></td>
+<td>Record video, add panels and image cards, cut sections, and export MP4. Use its standalone ZIP with included Python 3 launcher.</td>
+</tr>
+<tr>
+<td>VideoSplat</td>
+<td><code>/solutions/videosplat/</code></td>
+<td>You only need the private browser video editor, subtitle burn-in, and anonymization workflow.</td>
+</tr>
+<tr>
+<td>MediaSplat</td>
+<td><code>/solutions/mediasplat/</code></td>
+<td>You only need media conversion, trimming, and subtitles.</td>
+</tr>
+<tr>
+<td>PDFSplat</td>
+<td><code>/solutions/pdfsplat/</code>, <code>/vendor/</code>, <code>/assets/</code></td>
+<td>You only need PDF editing, signing, scanning, and local protection.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="combining-modules">Combining modules</h2>
+<ol>
+<li>Create a web root folder, such as <code>drawsplat-site/</code>.</li>
+<li>Unzip one or more packages into that same folder.</li>
+<li>Keep existing folder names unchanged.</li>
+<li>Serve the folder with any static host.</li>
+</ol>
+<p>Example:</p>
+<pre><code class="language-text">drawsplat-site/
+├── index.html
+├── app/
+├── pages/
+├── assets/
+├── splatworks/
+├── solutions/
+└── games/
+</code></pre>
+<p>The modules connect because they keep the same paths used by the full
+DrawSplatTM download.</p>
+<h2 id="standalone-splatworks">Standalone SplatWorks</h2>
+<p>SplatWorksTM can be hosted without the DrawSplatTM whiteboard. Install the
+SplatWorksTM suite package and open:</p>
+<pre><code class="language-text">/pages/splatworks.html
+</code></pre>
+<p>Direct app paths:</p>
+<pre><code class="language-text">/splatworks/gridsplat/
+/splatworks/showsplat/
+/splatworks/writesplat/
+/splatworks/listsplat/
+</code></pre>
+<h2 id="building-packages">Building packages</h2>
+<p>From the repository root:</p>
+<pre><code class="language-bash">./scripts/make-selfhost-bundle.sh vX.Y.Z
+</code></pre>
+<p>The command produces the full DrawSplatTM package, individual SplatWorksTM app
+packages, the SplatWorksTM suite package, and standalone Tools, Widgets, and
+Games modules, plus independent AudioSplat and VideoSplat solution packages.</p>
+<p>AudioSplat recording and editing require HTTPS (or localhost for development).
+Its included Google Drive client is authorized for <code>drawsplat.org</code>; another
+self-host domain must provide its own Google OAuth Web client, authorize that
+origin, enable Google Drive API, request <code>drive.file</code>, and rebuild AudioSplat.</p>
+<p>VideoSplat editing, project storage, media analysis, and export are designed to
+remain local. Serve it over HTTPS (or localhost during development) so the PWA,
+workers, browser storage, and high-performance media APIs are available.</p>
+<h2 id="subtitle-burn-in-v3-1-21">Subtitle burn-in (v3.1.21)</h2>
+<p>MediaSplat and VideoSplat standalone packages, the Tools module, and the full DrawSplat package include SRT/VTT burn-in. Keep MediaSplat’s <code>ffmpeg/DejaVuSans.ttf</code> and <code>ffmpeg/FONT-LICENSE.txt</code> with its split runtime files. Update the complete app folder so the HTML, hashed assets, service worker, and font stay together. See the <a href="../blog/subtitle-burn-in.html">subtitle walkthrough</a>.</p>
+<h2 id="automatic-subtitles-v3-1-23">Automatic subtitles (v3.1.23)</h2>
+<p>VideoSplat, MediaSplat, Tools, and full packages include the bundled ONNX speech
+runtime and <code>solutions/shared/subtitles</code> source package. Keep that sibling package
+when rebuilding either app with npm. The model downloads on first generation
+from Hugging Face (about 42 MB) and is cached separately by the browser. Media and
+caption text are never uploaded. Offline transcription requires a cached model
+and runtime. If you add a host CSP, permit the model download hosts listed in
+<code>solutions/videosplat/docs/NETWORK_INVENTORY.md</code>; keep runtime scripts same-origin.
+See the <a href="../blog/automatic-subtitles.html">automatic subtitle walkthrough</a>.</p>
+<h2 id="current-release-v3-1-32">Current release: v3.1.32</h2>
+<p>All thirteen packages are refreshed from the current source: full DrawSplat, SplatWorks suite and four individual apps, Tools, Widgets, Games, AudioSplat, VideoSplat, MediaSplat, and PDFSplat. Download matching versions from <a href="../pages/download.html">the download page</a> and verify them with the release’s <code>SHA256SUMS-v3.1.32.txt</code>. The full package includes whiteboard v3.1.12 and the portable MySQL API; individual modules contain their relevant apps and shared files, not a separate whiteboard or MySQL service. Stop active recordings/exports before updating shared assets, keep backups of local projects and backend data, and retain server-only configuration rather than overwriting it with example settings.</p>
+<p>The download page shows approximate ZIP and unpacked sizes, measured from release archives in decimal MB. Run <code>python3 scripts/update-download-sizes.py vX.Y.Z</code> after building a release, rebuild with the updated page, then use <code>--check</code> to verify displayed sizes against the final archives.</p>
+<h2 id="offline-entry-points">Offline entry points</h2>
+<p>Extract the entire ZIP and keep the folder structure intact. Every package includes <code>OPEN-APP.html</code>; individual packages also have a root <code>index.html</code> shortcut when that name is not already used. Complete DrawSplat and Tools include <code>Open-VideoSplat.html</code>, <code>Open-MediaSplat.html</code>, <code>Open-AudioSplat.html</code>, <code>Open-PDFSplat.html</code>, and <code>Open-CipherSplat.html</code>.</p>
+<p>PDFSplat and CipherSplat’s dedicated offline edition open directly from disk in desktop Chrome and Firefox. The complete package’s CipherSplat shortcut selects its included offline edition for file access and its hosted app for HTTP access. AudioSplat, VideoSplat, and MediaSplat require the supplied local launcher (Python 3); their file shortcuts show <code>START-HERE.html</code>. A web page cannot automatically start Python or bypass file-origin browser restrictions. Once running locally, core editing does not need internet. Online services and first-time speech-model downloads still do.</p>
+<h3>ClipSplat add-on</h3>
+<p>ClipSplat v1.1.1 is a separate <a href="https://github.com/mguhlin/drawsplat/releases/tag/clipsplat-v1.1.1">download</a>. The existing v3.1.28 archives predate it. Extract the ClipSplat ZIP and upload its <code>solutions/</code> folders alongside an existing installation, or use START-HERE.html and the Python 3 launcher locally. Keep its included MediaSplat FFmpeg runtime at the supplied path. The v3.1.32 full/Tools bundles include ClipSplat. The v3.1.32 release also supplies a refreshed standalone ClipSplat ZIP and separate checksum file.</p>
+<h2 id="typing-games-in-v3-1-29">Typing Games in v3.1.29</h2>
+<p>The full DrawSplat and Games packages include the Typing Games menu and Cipher Chase, Wordfall Reactor, Story Sprint, and Paws &amp; Keys Adventure. Install the complete <code>games/</code>, <code>assets/</code>, and <code>vendor/</code> folders supplied in the package; individual game folders depend on shared files in <code>games/typing-games/</code>. Use the Python 3 launcher for local HTTP access or publish to a static web server. No remote word-bank service is needed. See <a href="../docs/typing-games.md">the game guide</a> for language behavior, TEKS scope, and legacy redirects expiring April 8, 2027.</p>
+<h2 id="october-9-creative-tool-updates">October 9 creative-tool updates</h2>
+<p>Current packages include document/image import and PNG/JPG/WebP export in PDFSplat, point placement and on-page formatting, matched text appearance, preserved page rotation, ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and labelled action icons. Keep shared styles, icon folders, PDF libraries, and ShowSplat framework files together. <a href="../docs/release-notes/RELEASE_NOTES_v3.1.32.md">Details and conversion limits</a>.</p>
+<p>Version v3.1.32 also includes PDFSplat presentation/full-screen controls, timed looping, blank screens, and portable WebDeck v5 export in the applicable packages.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#complete-district-setup">Complete district setup</a></li><li><a href="#package-model">Package model</a></li><li><a href="#combining-modules">Combining modules</a></li><li><a href="#standalone-splatworks">Standalone SplatWorks</a></li><li><a href="#building-packages">Building packages</a></li><li><a href="#subtitle-burn-in-v3-1-21">Subtitle burn-in (v3.1.21)</a></li><li><a href="#automatic-subtitles-v3-1-23">Automatic subtitles (v3.1.23)</a></li><li><a href="#current-release-v3-1-32">Current release: v3.1.32</a></li><li><a href="#offline-entry-points">Offline entry points</a></li><li><a href="#typing-games-in-v3-1-29">Typing Games in v3.1.29</a></li><li><a href="#october-9-creative-tool-updates">October 9 creative-tool updates</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body></html>

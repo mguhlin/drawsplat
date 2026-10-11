@@ -1,5 +1,8 @@
 # WriteSplatTM
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
 
 WriteSplatTM is the SplatWorksTM writing and classroom publishing app.

@@ -1,17 +1,24 @@
 # DrawSplatTM
 
-**District installation:** Download the [complete DrawSplat + SplatWorks suite](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip), extract it, and open **start-here.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website and works in the browser. Google Apps Script optionally provides Drive/Sheets saves, classroom rooms, templates, and turn-ins. A separate portable MySQL service provides private, account-owned online Save/Open on Railway, DigitalOcean, or your own MySQL server.
+**District installation:** Download the [complete DrawSplat + SplatWorks suite](https://drawsplat.org/pages/download#district-suite), extract it, and open **start-here.html**. Quick Start provides every component checked by default and a rerunnable setup plan. [Quick Start and Detailed Setup](docs/district-selfhost.html).
+
+
+DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and students. It runs as a static website and works in the browser. Google Apps Script optionally provides Drive/Sheets saves, classroom rooms, templates, and turn-ins. The complete district suite provides private Save/Open, roster-linked classrooms, assignments, student submissions, and teacher feedback using MariaDB or MySQL, with Docker and native launchers.
 
 **Free for everyone.** Software, all backends, all compliance features. Districts that want paid setup, professional learning, or compliance review can engage that as a separate service — see [pricing](pages/pricing.html). If DrawSplatTM saved you a planning period, [buy the developer a cup of coffee](https://buymeacoffee.com/drawsplat).
 
 - **Official site:** [https://drawsplat.org](https://drawsplat.org)
 - **Open the whiteboard:** [drawsplat.org/app/whiteboard.html](https://drawsplat.org/app/whiteboard.html)
 - **Source:** this repository (AGPL-3.0-or-later)
-- **Status:** live tools updated October 9, 2026 with document-to-PDF imports, image exports, on-page text formatting, creative-tool improvements, and WebDeck v5. PDFSplat adds presentation/full screen, timed looping, blank screens, and offline WebDeck v5 export. Latest packaged release: v3.1.31; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. Advanced MySQL district integrations still require separate validation.
+- **Status:** live tools updated October 9, 2026 with document-to-PDF imports, image exports, on-page text formatting, creative-tool improvements, and WebDeck v5. PDFSplat adds presentation/full screen, timed looping, blank screens, and offline WebDeck v5 export. Latest packaged release: v3.1.31; Compliance Phases 1–3 complete on the Apps Script path; Whiteboard v3.1.12 adds connected private MySQL Save/Open and local recording-draft recovery. The district suite supports MariaDB/MySQL school accounts, CSV rosters, classrooms, assignments, turn-ins, and feedback. Validate school OAuth, load and operational controls before rollout.
 - **Self-host bundles:** [`pages/download.html`](pages/download.html) explains the three deployment paths; [`docs/modular-selfhost.md`](docs/modular-selfhost.md) explains the drop-in module model. `./scripts/make-selfhost-bundle.sh` produces the full DrawSplatTM package, MediaSplat-, VideoSplat-, AudioSplat-, and PDFSplat-only solutions, individual SplatWorksTM apps, a SplatWorksTM suite package, and DrawSplatTM Tools, Widgets, and Games modules.
+
+## Current district setup and support
+
+The [DrawSplat Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. The complete district suite is v1.2.1; install from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
 
 ## Getting started
 

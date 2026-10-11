@@ -1,5 +1,8 @@
 # Handoff after v3.1.0 — 2026-05-24
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 > If you're an AI assistant picking up this repo, **read this file first**. It explains what's freshly shipped, what's intentionally deferred, and where the canonical references live.
 
 DrawSplatTM is at the **v3.1.0** GitHub release. `main` is clean and pushed. `pages/download.html` "Latest stable" CTA points at the published zip (`drawsplat-selfhost-v3.1.0.zip`, ~86 MB, sha256 `cb9311fcec…34d1d`).

@@ -1,0 +1,414 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>standalone-architecture · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="../assets/css/support-wiki.css"></head><body data-wiki="true"><!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="setup-browser.html">Browser-only setup</a></li><li><a href="setup-mysql.html">Advanced database hosting</a></li><li><a href="setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="modular-selfhost.html">Modular self-hosting</a></li><li><a href="mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="tool-inventory.html">Component inventory</a></li><li><a aria-current="page" href="standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Technical and updates</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/docs/standalone-architecture.md">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content"><article><h1 id="standalone-multi-user-architecture-plan">Standalone Multi-User Architecture Plan</h1>
+<p><strong>Current documentation:</strong> <a href="https://drawsplat.org/wiki/">DrawSplat Wiki</a> — setup, installation, licensing, pricing, OAuth, and district privacy review.</p>
+<p>This document turns the standalone roadmap into an implementation plan. The current DrawSplatTM build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.</p>
+<p>The current static build now uses <code>index.html</code> as the public landing page and <code>app/whiteboard.html</code> as the English whiteboard app. The landing page explains the split between the Whiteboard and Teacher Admin. <code>admin/admin.html</code> moves Google Apps Script setup, storage-mode choice, and classroom link generation out of the board Options dialog while keeping the existing localStorage compatibility that the board uses for Save to Google and Cloud Sync.</p>
+<h2 id="product-targets">Product Targets</h2>
+<p>DrawSplatTM should support three clear entry paths:</p>
+<ul>
+<li><strong>Student classroom board</strong>: students join a teacher-created room, authenticate through school SSO or a class join link, and work only with approved board tools and student-layer permissions.</li>
+<li><strong>Teacher/admin workspace</strong>: teachers manage classes, boards, rosters, templates, Google integrations, moderation, turn-ins, exports, and room settings away from the active student board.</li>
+<li><strong>Adult/small-team workspace</strong>: individual users and small adult teams use DrawSplatTM as a productivity whiteboard without classroom language by default.</li>
+</ul>
+<p>The current front-end hiding of <code>.teacher-only</code> controls is still useful for clarity, but standalone DrawSplatTM must treat it as presentation only. The backend must enforce every role, object-layer, admin, and integration permission.</p>
+<h2 id="recommended-application-shape">Recommended Application Shape</h2>
+<h3>Frontend</h3>
+<p>Keep the current SVG board renderer and object model, but split the single <code>app.js</code> file into modules during the standalone migration:</p>
+<ul>
+<li><code>state/board-store</code>: local board state, panel state, selected objects, undo/redo.</li>
+<li><code>state/operations</code>: object-level operations such as create, update, delete, reorder, lock, unlock, group, ungroup, panel add/delete/rename.</li>
+<li><code>render/svg-renderer</code>: board SVG rendering, selection boxes, cursors, image/crop handling.</li>
+<li><code>tools</code>: pen, eraser, text, sticky, shapes, connectors, dot pictures, image tools, diagrams, word clouds, GIF/collage tools.</li>
+<li><code>collaboration/client</code>: websocket connection, operation send/receive, presence, cursors, reconnect.</li>
+<li><code>auth/session</code>: current user, role, workspace, class, organization, auth status.</li>
+<li><code>admin</code>: teacher and organization settings, Google integration setup, class/roster management.</li>
+<li><code>ui/shells</code>: split login, student board shell, teacher admin shell, adult team shell.</li>
+</ul>
+<p>The board page should consume permissions from the server and render allowed tools. It should not contain Google provider configuration UI.</p>
+<h3>Backend</h3>
+<p>Use a normal app backend instead of Apps Script as the source of truth:</p>
+<ul>
+<li>Node.js/TypeScript with Fastify, Hono, Express, NestJS, or another familiar framework.</li>
+<li>PostgreSQL for relational data: users, orgs, classes, boards, panels, objects, sessions, submissions, audit logs.</li>
+<li>Object storage for large data: images, audio, exported PNG/PDF, board thumbnails.</li>
+<li>Redis or Postgres LISTEN/NOTIFY for websocket fan-out at small scale; a message broker can come later if needed.</li>
+<li>OpenID Connect for SSO: Google Workspace, Microsoft Entra ID, Clever/ClassLink later if school deployment demands it.</li>
+</ul>
+<p>Apps Script can remain as an optional export/integration provider, but should no longer be the collaboration authority.</p>
+<h2 id="split-login-flow">Split Login Flow</h2>
+<h3>Landing Choice</h3>
+<p>The first screen should be a split role/workspace chooser:</p>
+<ul>
+<li><strong>I am a student</strong>
+<ul>
+<li>Join with class link, room code, or SSO.</li>
+<li>Lands directly on the active board.</li>
+<li>No Google setup, roster tools, exports, or integration settings.</li>
+</ul>
+</li>
+<li><strong>I am a teacher</strong>
+<ul>
+<li>SSO with Google/Microsoft.</li>
+<li>Lands in teacher dashboard.</li>
+<li>Can open boards, create rooms, manage rosters, configure Google, review turn-ins.</li>
+</ul>
+</li>
+<li><strong>I am working alone or with a small team</strong>
+<ul>
+<li>Google/Microsoft SSO, passkey, or email login.</li>
+<li>Lands in a productivity dashboard.</li>
+<li>Uses adult/small-team wording, default Productivity mode, and team board sharing.</li>
+</ul>
+</li>
+</ul>
+<h3>Student Path</h3>
+<p>Student authentication should support:</p>
+<ul>
+<li>SSO when the school requires identifiable work.</li>
+<li>Join code with display name for lightweight sessions.</li>
+<li>Teacher-generated room links containing only opaque IDs, never raw Google script URLs or provider secrets.</li>
+</ul>
+<p>After login, the server returns:</p>
+<ul>
+<li>user identity and role</li>
+<li>board ID and session ID</li>
+<li>allowed tools</li>
+<li>allowed panels</li>
+<li>allowed layers</li>
+<li>whether the student can create, move, edit, delete, or submit</li>
+</ul>
+<h3>Teacher Path</h3>
+<p>Teacher login lands on <code>/admin</code> or <code>/teacher</code>:</p>
+<ul>
+<li>recent boards and classes</li>
+<li>create board from template</li>
+<li>start/stop room</li>
+<li>copy student join link</li>
+<li>manage room password/join code</li>
+<li>configure Google integration</li>
+<li>view turn-ins</li>
+<li>moderate comments and locked objects</li>
+<li>export board, panel, class set, or student submissions</li>
+</ul>
+<p>Teacher may open the active board, but admin settings should remain in the admin shell.</p>
+<h3>Adult/Small-Team Path</h3>
+<p>Adult users should see:</p>
+<ul>
+<li>recent boards</li>
+<li>team spaces</li>
+<li>invite/share controls</li>
+<li>board templates oriented around planning, diagrams, meetings, notes</li>
+<li>no class/student/turn-in language unless Education mode is enabled</li>
+</ul>
+<p>This should map to the same backend primitives as education, but with different defaults and labels.</p>
+<h2 id="teacher-admin-vs-student-board">Teacher Admin vs Student Board</h2>
+<p>Move these controls out of the board-facing UI and into admin:</p>
+<ul>
+<li>Google Script URL / Google provider setup</li>
+<li>Drive/Sheets folder selection</li>
+<li>class roster import</li>
+<li>room creation and passwords</li>
+<li>template gallery management</li>
+<li>moderation dashboard</li>
+<li>turn-in review</li>
+<li>board reset/delete</li>
+<li>export batches</li>
+<li>permission presets</li>
+<li>audit logs</li>
+</ul>
+<p>Keep these in the board UI for teachers:</p>
+<ul>
+<li>drawing/creation tools</li>
+<li>panel navigation</li>
+<li>lock/unlock selected item</li>
+<li>answer-key mark/unmark</li>
+<li>teacher/student/shared layer selector</li>
+<li>quick share/status indicator</li>
+</ul>
+<p>Keep these in the board UI for students:</p>
+<ul>
+<li>approved creation tools</li>
+<li>panel navigation if allowed</li>
+<li>submit turn-in/status</li>
+<li>collaborator cursors/presence</li>
+<li>read-only teacher prompts/backgrounds</li>
+</ul>
+<h2 id="realtime-collaboration-model">Realtime Collaboration Model</h2>
+<p>The current cloud sync saves whole board JSON on a polling interval. Standalone collaboration should move to operation-based realtime updates.</p>
+<p>Recommended operation envelope:</p>
+<pre><code class="language-json">{
+  &quot;opId&quot;: &quot;01H...&quot;,
+  &quot;boardId&quot;: &quot;board_123&quot;,
+  &quot;panelId&quot;: &quot;panel_456&quot;,
+  &quot;actorId&quot;: &quot;user_789&quot;,
+  &quot;role&quot;: &quot;student&quot;,
+  &quot;type&quot;: &quot;object:update&quot;,
+  &quot;targetId&quot;: &quot;obj_abc&quot;,
+  &quot;patch&quot;: {
+    &quot;x&quot;: 120,
+    &quot;y&quot;: 80,
+    &quot;w&quot;: 320,
+    &quot;h&quot;: 180
+  },
+  &quot;clientTs&quot;: &quot;2026-05-16T15:00:00.000Z&quot;
+}
+</code></pre>
+<p>Initial operations to support:</p>
+<ul>
+<li><code>board:load</code></li>
+<li><code>panel:create</code></li>
+<li><code>panel:update</code></li>
+<li><code>panel:delete</code></li>
+<li><code>panel:reorder</code></li>
+<li><code>object:create</code></li>
+<li><code>object:update</code></li>
+<li><code>object:delete</code></li>
+<li><code>object:reorder</code></li>
+<li><code>object:group</code></li>
+<li><code>object:ungroup</code></li>
+<li><code>object:lock</code></li>
+<li><code>object:unlock</code></li>
+<li><code>presence:cursor</code></li>
+<li><code>presence:join</code></li>
+<li><code>presence:leave</code></li>
+<li><code>submission:create</code></li>
+</ul>
+<p>Server rules:</p>
+<ul>
+<li>Validate every operation against the authenticated user and board permission set.</li>
+<li>Reject student writes to teacher-layer objects.</li>
+<li>Reject panel deletion, background changes, and room settings from students.</li>
+<li>Assign server sequence numbers so all clients apply operations in the same order.</li>
+<li>Store accepted operations for audit and replay.</li>
+<li>Periodically compact operations into panel snapshots for fast board loads.</li>
+</ul>
+<p>Conflict handling can begin with server-ordered last-write-wins at object-property level. For a classroom whiteboard, this is simpler and more predictable than a full CRDT. If offline editing becomes a requirement, add per-object revision numbers and later consider CRDT records for text-heavy objects.</p>
+<h2 id="data-model">Data Model</h2>
+<p>Suggested relational tables:</p>
+<pre><code class="language-text">organizations
+  id, name, type, created_at
+
+users
+  id, organization_id, email, display_name, role, auth_provider, provider_subject, created_at
+
+teams
+  id, organization_id, name, created_by
+
+classes
+  id, organization_id, teacher_id, name, term, join_code, created_at
+
+class_members
+  class_id, user_id, role, display_name
+
+boards
+  id, organization_id, owner_id, class_id, team_id, title, workspace_type, created_at, updated_at
+
+board_permissions
+  board_id, subject_type, subject_id, role, can_view, can_edit, can_admin
+
+panels
+  id, board_id, sort_order, name, background_type, background_media_id, created_at, updated_at
+
+objects
+  id, board_id, panel_id, type, layer, locked, owner_id, data_json, created_at, updated_at, deleted_at
+
+operations
+  id, board_id, panel_id, actor_id, sequence, type, target_id, payload_json, created_at
+
+sessions
+  id, board_id, user_id, role, connected_at, last_seen_at
+
+submissions
+  id, board_id, class_id, student_id, snapshot_json, thumbnail_media_id, status, created_at
+
+media
+  id, owner_id, organization_id, mime_type, byte_size, storage_key, sha256, created_at
+
+integrations
+  id, organization_id, provider, config_json_encrypted, created_by, created_at, updated_at
+
+audit_events
+  id, organization_id, actor_id, event_type, target_type, target_id, payload_json, created_at
+</code></pre>
+<p>Keep object payloads flexible in <code>data_json</code> so current DrawSplatTM object fields can move over without a large migration:</p>
+<ul>
+<li>geometry: <code>x</code>, <code>y</code>, <code>w</code>, <code>h</code></li>
+<li>style: <code>stroke</code>, <code>strokeWidth</code>, <code>fill</code>, <code>fillPattern</code>, <code>opacity</code></li>
+<li>text: <code>html</code>, <code>text</code>, <code>fontSize</code>, <code>textColor</code>, alignment, rotation</li>
+<li>media refs: <code>src</code> becomes <code>mediaId</code> where possible</li>
+<li>teaching metadata: <code>layer</code>, <code>answerKey</code>, <code>locked</code>, <code>studentOwner</code></li>
+</ul>
+<h2 id="google-integration-boundary">Google Integration Boundary</h2>
+<p>The current app exposes a Google Apps Script URL field in Options for teacher users. In standalone DrawSplatTM, replace that with an admin-only integration provider:</p>
+<ul>
+<li>Teachers connect Google Drive/Sheets from <code>/admin/integrations/google</code>.</li>
+<li>OAuth tokens are stored server-side and encrypted.</li>
+<li>Students never receive raw tokens, Apps Script URLs, Drive folder IDs, or Sheets IDs.</li>
+<li>The board API calls DrawSplatTM's backend; the backend decides whether to write to Google, local storage, or another provider.</li>
+<li>Integration status is shown on the board as a simple teacher-only status: connected, disconnected, sync failed.</li>
+</ul>
+<p>Provider interface:</p>
+<pre><code class="language-text">StorageProvider
+  saveBoardSnapshot(boardId, snapshot)
+  savePanelExport(panelId, blob)
+  listTemplates(orgId)
+  saveTemplate(orgId, template)
+  saveSubmission(submission)
+  exportClassSet(classId)
+</code></pre>
+<p>Implementations:</p>
+<ul>
+<li><code>LocalDatabaseProvider</code>: default standalone storage.</li>
+<li><code>MySqlProvider</code>: self-hosted SQL storage for schools or districts that prefer MySQL-compatible infrastructure.</li>
+<li><code>GoogleDriveProvider</code>: Drive/Sheets backed storage for districts that want Google copies.</li>
+<li><code>FilesystemProvider</code>: simple self-hosted installs.</li>
+</ul>
+<h2 id="mysql-storage-option">MySQL Storage Option</h2>
+<h3>Implemented connection</h3>
+<p>The current whiteboard uses <code>assets/js/mysql-cloud.js</code> for private, account-owned online Save/Open through <code>server/mysql-backend</code>. See <a href="../docs/setup-mysql.md">the hosting guide</a> for Railway, DigitalOcean, and existing MySQL deployment. The browser calls HTTPS; database credentials stay on the server.</p>
+<p>Implemented endpoints beneath <code>/api/drawsplat/mysql</code>:</p>
+<pre><code class="language-text">GET /health
+POST /auth/register
+POST /auth/login
+POST /auth/logout
+GET /boards
+GET /boards/:key
+PUT /boards/:key
+DELETE /boards/:key
+</code></pre>
+<p>Private boards use <code>cloud_boards</code> with account-scoped keys and revision checks, plus <code>users</code>, <code>sessions</code>, and <code>drawsplat_migrations</code>. The current copy is retained until deleted; recordings remain embedded in board JSON. This is explicit saving, not automatic shared-room sync.</p>
+<h3>Future standalone architecture</h3>
+<p>The <code>StorageProvider</code> interface above and organization/snapshot/object-storage model are design targets, not the current frontend API. Current district classrooms use membership-scoped assignment, submission, and feedback endpoints. Legacy room/template/turn-in routes remain separate and restricted; do not use them as district classroom APIs. Google live rooms, moderation, and cloud galleries remain a separate Apps Script integration.</p>
+<p>Organization storage, separate media uploads, temporary server-backed room expiry, backend deletion on Reset, and optional simultaneous Google/MySQL writes remain proposals. Switching providers today does not migrate data or enable dual saving.</p>
+<h2 id="temporary-session-storage">Temporary Session Storage</h2>
+<p>Browser-only timed sessions are available in the static build by using localStorage/IndexedDB with an expiration timestamp. This is enough for a single browser profile or shared device, but it is not cross-device storage.</p>
+<p>Standalone folder storage requires a backend because browser JavaScript cannot write files into a server sub-folder on a static host. A minimal folder-backed provider should expose:</p>
+<pre><code class="language-text">POST /api/drawsplat/session
+  creates a session and returns sessionId, expiresAt
+
+PUT /api/drawsplat/session/:sessionId/board
+  stores board JSON
+
+GET /api/drawsplat/session/:sessionId/board
+  returns board JSON if not expired
+
+POST /api/drawsplat/session/:sessionId/media
+  stores uploaded images/audio
+
+DELETE /api/drawsplat/session/:sessionId
+  clears board JSON and media immediately
+</code></pre>
+<p>Server behavior:</p>
+<ul>
+<li>Generate unguessable session IDs.</li>
+<li>Store each session in its own folder, such as <code>storage/sessions/&lt;sessionId&gt;/</code>.</li>
+<li>Write board JSON atomically, for example <code>board.tmp</code> then rename to <code>board.json</code>.</li>
+<li>Reject files outside the session folder; never trust client-supplied paths.</li>
+<li>Enforce byte limits on JSON and media.</li>
+<li>Run a scheduled cleanup job that deletes expired session folders.</li>
+<li>Treat the board reset button as a client request to delete the server session when this backend exists.</li>
+</ul>
+<h2 id="migration-phases">Migration Phases</h2>
+<h3>Phase 1: Extract boundaries without changing behavior</h3>
+<ul>
+<li>Move board serialization, migration, and object operations into separate modules.</li>
+<li>Add an operation layer locally, even before adding a server.</li>
+<li>Keep static hosting and Apps Script working.</li>
+<li>Add tests for migration, permission checks, and object operations.</li>
+</ul>
+<h3>Phase 2: Add standalone backend</h3>
+<ul>
+<li>Add auth, users, boards, panels, objects, media, and snapshots.</li>
+<li>Add REST endpoints for board load/save and media upload.</li>
+<li>Keep Apps Script as optional legacy export.</li>
+<li>Add teacher/admin route shell.</li>
+</ul>
+<h3>Phase 3: Add realtime rooms</h3>
+<ul>
+<li>Add WebSocket server.</li>
+<li>Send object-level operations.</li>
+<li>Add presence and cursors.</li>
+<li>Add server-side permission enforcement.</li>
+<li>Add operation replay and snapshot compaction.</li>
+</ul>
+<h3>Phase 4: Split product shells</h3>
+<ul>
+<li>Build split login screen.</li>
+<li>Build teacher admin dashboard.</li>
+<li>Build student board shell.</li>
+<li>Build adult/small-team dashboard.</li>
+<li>Remove Google setup from the board Options dialog in standalone mode.</li>
+</ul>
+<h3>Phase 5: District-ready controls</h3>
+<ul>
+<li>Add organization settings.</li>
+<li>Add SSO domain restrictions.</li>
+<li>Add roster import.</li>
+<li>Add audit logs and retention policies.</li>
+<li>Add export/delete controls for student data.</li>
+</ul>
+<h2 id="suggested-api-surface">Suggested API Surface</h2>
+<pre><code class="language-text">POST   /auth/login
+POST   /auth/logout
+GET    /me
+
+GET    /admin/classes
+POST   /admin/classes
+GET    /admin/classes/:classId/boards
+POST   /admin/classes/:classId/roster/import
+
+GET    /boards
+POST   /boards
+GET    /boards/:boardId
+PATCH  /boards/:boardId
+DELETE /boards/:boardId
+
+POST   /boards/:boardId/panels
+PATCH  /panels/:panelId
+DELETE /panels/:panelId
+
+POST   /boards/:boardId/operations
+GET    /boards/:boardId/snapshot
+GET    /boards/:boardId/operations?since=sequence
+
+POST   /media
+GET    /media/:mediaId
+
+POST   /boards/:boardId/join
+POST   /boards/:boardId/submissions
+GET    /admin/boards/:boardId/submissions
+
+GET    /admin/integrations
+POST   /admin/integrations/google/connect
+DELETE /admin/integrations/:integrationId
+
+WS     /boards/:boardId/realtime
+</code></pre>
+<h2 id="first-standalone-ui-sketch">First Standalone UI Sketch</h2>
+<pre><code class="language-mermaid">flowchart TD
+  A[DrawSplatTM Login] --&gt; B{Choose workspace}
+  B --&gt; C[Student]
+  B --&gt; D[Teacher]
+  B --&gt; E[Single user / small team]
+  C --&gt; C1[Join room or SSO]
+  C1 --&gt; C2[Student board shell]
+  D --&gt; D1[SSO]
+  D1 --&gt; D2[Teacher admin dashboard]
+  D2 --&gt; D3[Classes]
+  D2 --&gt; D4[Boards]
+  D2 --&gt; D5[Google integration]
+  D2 --&gt; D6[Turn-ins and moderation]
+  D4 --&gt; D7[Open teacher board shell]
+  E --&gt; E1[SSO / passkey / email]
+  E1 --&gt; E2[Productivity dashboard]
+  E2 --&gt; E3[Team board shell]
+</code></pre>
+<h2 id="immediate-repo-level-next-steps">Immediate Repo-Level Next Steps</h2>
+<ol>
+<li>Keep this static build as the reference implementation.</li>
+<li>Create a <code>src/</code> app structure in a future branch and move code out of <code>app.js</code> gradually.</li>
+<li>Define a TypeScript <code>Board</code>, <code>Panel</code>, <code>BoardObject</code>, and <code>Operation</code> schema before writing the server.</li>
+<li>Build permission checks as pure functions first, then reuse them on the backend.</li>
+<li>Expand the new static <code>admin/admin.html</code> into the real teacher dashboard once a backend exists.</li>
+<li>Add automated tests before changing collaboration behavior.</li>
+</ol>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#product-targets">Product Targets</a></li><li><a href="#recommended-application-shape">Recommended Application Shape</a></li><li><a href="#split-login-flow">Split Login Flow</a></li><li><a href="#teacher-admin-vs-student-board">Teacher Admin vs Student Board</a></li><li><a href="#realtime-collaboration-model">Realtime Collaboration Model</a></li><li><a href="#data-model">Data Model</a></li><li><a href="#google-integration-boundary">Google Integration Boundary</a></li><li><a href="#mysql-storage-option">MySQL Storage Option</a></li><li><a href="#temporary-session-storage">Temporary Session Storage</a></li><li><a href="#migration-phases">Migration Phases</a></li><li><a href="#suggested-api-surface">Suggested API Surface</a></li><li><a href="#first-standalone-ui-sketch">First Standalone UI Sketch</a></li><li><a href="#immediate-repo-level-next-steps">Immediate Repo-Level Next Steps</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body></html>

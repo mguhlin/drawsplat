@@ -1,5 +1,8 @@
 # ImageSplat color and green-screen removal
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Select one image layer, then choose **Effects → Remove color…**.
 
 - Click/tap the original preview to sample the actual backdrop color, or use the green screen, blue screen, white, and black presets or color picker.

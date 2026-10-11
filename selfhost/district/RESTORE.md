@@ -1,5 +1,8 @@
 # Restore a district backup
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 The provided backup launchers export the **bundled** database and installed configuration. When the web wizard points to an external database, use that database host's backup/restore tools instead; the bundled database export does not contain external records. Save the matching `/data/config.json` privately in either case.
 
 Test recovery on a separate server before relying on backups. Stop teachers and students from writing while recovering. Do not restore into an unrelated or populated database. Use the same database engine and version initially. SQL imports can replace data: the administrator should review the chosen backup first.

@@ -1,0 +1,326 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>COMPLIANCE · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="../assets/css/support-wiki.css"></head><body data-wiki="true"><!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="setup-browser.html">Browser-only setup</a></li><li><a href="setup-mysql.html">Advanced database hosting</a></li><li><a href="setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="modular-selfhost.html">Modular self-hosting</a></li><li><a href="mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a aria-current="page" href="COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="tool-inventory.html">Component inventory</a></li><li><a href="standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Privacy and district review</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/docs/COMPLIANCE.md">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content"><article><h1 id="drawsplat-compliance-operations-guide">DrawSplat™ Compliance — Operations Guide</h1>
+<p><strong>Current documentation:</strong> <a href="https://drawsplat.org/wiki/">DrawSplat Wiki</a> — setup, installation, licensing, pricing, OAuth, and district privacy review.</p>
+<p>Operator-facing technical notes for the <strong>Apps Script</strong> Compliance Console. Its Drive/Sheets controls do not automatically manage district MariaDB/MySQL private boards or classroom records. Use the <a href="../guides/compliance-guide.html">current console guide</a> and <a href="compliance.html">district review reference</a> for workflow and scope. Roadmaps describe historical development, not the authoritative current setup.</p>
+<h2 id="configuration-source-of-truth">Configuration source of truth</h2>
+<p>A single JSON file holds the defaults: <a href="../compliance.config.json"><code>compliance.config.json</code></a> at the repo root.</p>
+<ul>
+<li>The static page loader (<code>assets/js/app.js</code>) fetches it on boot and exposes the parsed object on <code>window.complianceConfig</code>. Listen for the <code>compliance-config-ready</code> event.</li>
+<li>The Apps Script backend keeps a parallel snapshot under the <code>COMPLIANCE_CONFIG</code> Script Property. The Day 3.2 Privacy Settings panel writes to it; the District Privacy Packet generator (Day 3.6) reads from it.</li>
+<li>If the Apps Script property is missing, the generator falls back to a placeholder note.</li>
+</ul>
+<p>When you change defaults in <code>compliance.config.json</code>, commit and push so future deployments pick the new defaults up. Existing deployments keep using their Script-Property snapshot until an admin re-saves it.</p>
+<h2 id="apps-script-setup-additions">Apps Script setup additions</h2>
+<p>After updating <code>apps-script/Code.gs</code>, in the Apps Script editor:</p>
+<ol>
+<li><strong>Save</strong> the file.</li>
+<li>Run <strong>setup()</strong> once. It creates two new sheet tabs in addition to the existing ones:
+<ul>
+<li><code>Audit</code> — the Activity Records log.</li>
+<li><code>ParentRequests</code> — tickets from the Family Access Tools form.</li>
+</ul>
+</li>
+<li>Open <strong>Project Settings &gt; Script Properties</strong> and confirm <code>ADMIN_PASSCODE</code> is set (you already need this for any moderator action).</li>
+<li>Optionally set <code>COMPLIANCE_ADMIN_EMAIL</code> — new parent requests trigger a notification email to this address.</li>
+<li><strong>Deploy &gt; Manage deployments &gt; Edit &gt; New version &gt; Deploy</strong> to publish the new endpoints.</li>
+</ol>
+<h2 id="what-endpoints-are-now-available">What endpoints are now available</h2>
+<p>The whiteboard Apps Script Web App handles all of these in addition to the existing board / room / template / turn-in actions.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Auth</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auditList</code></td>
+<td>GET</td>
+<td><code>passcode</code></td>
+<td>Recent Activity Records (filter by <code>actionFilter</code>, <code>actor</code>, <code>since</code>, <code>limit</code>)</td>
+</tr>
+<tr>
+<td><code>parentRequestList</code></td>
+<td>GET</td>
+<td><code>passcode</code></td>
+<td>All Family Access tickets, newest first</td>
+</tr>
+<tr>
+<td><code>privacyPacket</code></td>
+<td>GET</td>
+<td><code>passcode</code></td>
+<td>Returns base64-encoded ZIP (district privacy packet)</td>
+</tr>
+<tr>
+<td><code>parentRequest</code></td>
+<td>POST</td>
+<td>none</td>
+<td>Submit a new family request from the parent-facing form</td>
+</tr>
+<tr>
+<td><code>parentRequestDecide</code></td>
+<td>POST</td>
+<td><code>passcode</code></td>
+<td>Approve / deny / complete a parent request</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>passcode</code> value is the <code>ADMIN_PASSCODE</code> script property. The Teacher Admin browser prompts for it the first time and caches it in <code>localStorage</code> only.</p>
+<h2 id="family-access-tools-parent-facing">Family Access Tools (parent-facing)</h2>
+<ul>
+<li>Public-facing page: <a href="../parents/index.html"><code>/parents/index.html</code></a>.</li>
+<li>Form posts to the configured Apps Script Web App URL (the same one Teacher Admin uses).</li>
+<li>A successful submission creates a ticket with status <code>pending_verification</code> and writes a <code>PARENT_REQUEST_CREATED</code> event to Activity Records.</li>
+<li>If <code>COMPLIANCE_ADMIN_EMAIL</code> is set, the admin gets an email. The teacher issues a verification code through the school’s existing parent-communications channel; see the current Console guide.</li>
+</ul>
+<p>If the parent visits the public site and no Web App URL is configured in their browser, the form gives them a clear &quot;email the school directly&quot; message instead of failing silently. This means parents using <code>drawsplat.org</code> itself won't reach a backend — the form is for districts running their own deployment with their own Apps Script.</p>
+<h2 id="internal-compliance-console">Internal Compliance Console</h2>
+<p>Open <code>admin/compliance.html</code> directly after unlocking the admin gate. The current Console includes Safety Review, Family Access Tools, Student Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, and District Privacy Packet. Among its operator tools:</p>
+<ul>
+<li><strong>Activity Records</strong> — opens to the last 200 events. Filter by action, download CSV.</li>
+<li><strong>District Privacy Packet</strong> — one-click ZIP download containing:
+<ul>
+<li><code>compliance-config.json</code> (the snapshot)</li>
+<li><code>activity-records.csv</code> (last 90 days)</li>
+<li><code>parent-requests.csv</code> (all tickets)</li>
+<li><code>README.txt</code> (what's inside + companion URLs)</li>
+</ul>
+</li>
+</ul>
+<p>Use the <a href="../guides/compliance-guide.html">Console guide</a> for each section’s setup, access, and verification steps.</p>
+<h2 id="activity-records-schema">Activity Records schema</h2>
+<p>The <code>Audit</code> sheet has these columns:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>UUID per event</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>ISO 8601 UTC</td>
+</tr>
+<tr>
+<td><code>actor</code></td>
+<td>Email or display name of the actor (best-effort)</td>
+</tr>
+<tr>
+<td><code>actorRole</code></td>
+<td><code>student</code>, <code>teacher</code>, <code>admin</code>, <code>parent</code>, <code>system</code></td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td>One of the <code>audit.actions</code> values in the config</td>
+</tr>
+<tr>
+<td><code>entityType</code></td>
+<td><code>board</code>, <code>image</code>, <code>parent_request</code>, <code>privacy_packet</code>, etc.</td>
+</tr>
+<tr>
+<td><code>entityId</code></td>
+<td>Local UUID of the affected item</td>
+</tr>
+<tr>
+<td><code>before</code></td>
+<td>JSON string of prior state (optional)</td>
+</tr>
+<tr>
+<td><code>after</code></td>
+<td>JSON string of new state (optional)</td>
+</tr>
+<tr>
+<td><code>userAgent</code></td>
+<td>Caller's User-Agent if known (optional)</td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>logEvent_(action, payload)</code> from anywhere in the Apps Script when you add a new compliance-relevant action. The helper never throws, so audit failures cannot break the calling endpoint.</p>
+<h2 id="operator-playbook">Operator playbook</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Review a flagged parent request</td>
+<td>Internal Compliance Console → Family Access Tools (Day 2.4 next)</td>
+</tr>
+<tr>
+<td>Pull a CSV of last week's events</td>
+<td>Activity Records section → filter <code>since=YYYY-MM-DD</code> → Download CSV</td>
+</tr>
+<tr>
+<td>Produce a packet for a district reviewer</td>
+<td>District Privacy Packet section → Download District Privacy Packet</td>
+</tr>
+<tr>
+<td>Invalidate all stored admin passcodes in the browser</td>
+<td>Have the operator clear <code>localStorage</code> for <code>drawsplat.complianceAdminPasscode</code></td>
+</tr>
+<tr>
+<td>Rotate the admin passcode</td>
+<td>Apps Script &gt; Project Settings &gt; Script Properties &gt; edit <code>ADMIN_PASSCODE</code>. Re-deploy.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="student-age-band-lock-days-2-1-2-2">Student Age Band Lock (Days 2.1 / 2.2)</h2>
+<p>A new <code>Users</code> sheet tracks one row per (student, class) pair. Columns: <code>id, studentName, className, email, ageBand, ageSource, ageLocked, ageChangedBy, ageChangedAt, ageChangeReason, parentCodeHash, parentCodeExpiresAt, lastSeen, createdAt, notes</code>.</p>
+<ul>
+<li>Rows auto-populate when a student submits a turn-in (<code>upsertUserFromTurnIn_</code>).</li>
+<li>Allowed bands: <code>under_13</code>, <code>13_to_17</code>, <code>18_plus</code>, <code>unknown_minor</code>. Default for new rows is <code>unknown_minor</code>.</li>
+<li><code>ageLocked</code> defaults to <code>true</code> and only the admin can change <code>ageBand</code>. Every change requires a reason and emits an <code>AGE_BAND_CHANGED</code> audit event.</li>
+<li>The internal Compliance Console → <strong>Student Age Band Lock</strong> section lists students, shows current band, and offers a dropdown to change it (prompts for a reason on submit).</li>
+</ul>
+<h2 id="teacher-issued-parent-verification-code-day-2-5">Teacher-Issued Parent Verification Code (Day 2.5)</h2>
+<p>Each student row can carry a single-use 8-character verification code. Workflow:</p>
+<ol>
+<li>In the internal Compliance Console → Student Age Band Lock, click <strong>Issue Parent Code</strong> next to a student.</li>
+<li>The browser shows the cleartext code in a one-time prompt. The server stores only a SHA-256 hash (with <code>PASSWORD_SALT</code>) and an expiry 14 days out.</li>
+<li>The teacher shares the code with the parent through the school's existing parent-communications channel (email, paper, etc.).</li>
+<li>The parent enters the code in the <strong>Verification code</strong> field on <code>/parents/index.html</code> when submitting a request.</li>
+<li>On submission, if the code matches and is unexpired, the ticket starts in <code>verified</code> status (skipping <code>pending_verification</code>). The code is then cleared so it cannot be reused.</li>
+<li>The <code>PARENT_CODE_ISSUED</code> event is logged when issued; the request itself logs <code>verified: true</code> on successful match.</li>
+</ol>
+<p>If a code is lost or compromised, click <strong>Issue Parent Code</strong> again — the new code replaces the old one.</p>
+<h2 id="data-export-day-2-6">Data Export (Day 2.6)</h2>
+<p>Clicking <strong>Export</strong> next to a student in the Age Band Lock section:</p>
+<ol>
+<li>Prompts the admin for a reason (logged in Activity Records).</li>
+<li>Calls <code>exportStudentData</code> on the Apps Script backend. The server gathers:
+<ul>
+<li>Every board in the <code>Boards</code> sheet whose <code>className</code> matches and whose <code>title</code> contains the student's name, including JSON and PNG.</li>
+<li>Every turn-in in <code>TurnIns</code> keyed by (student, class).</li>
+<li>The student's <code>Users</code> row, minus any hashed credentials.</li>
+</ul>
+</li>
+<li>Builds a ZIP with <code>boards/</code>, <code>turnins/</code>, <code>manifest.json</code> (machine-readable summary), and a <code>README.txt</code> (human-readable).</li>
+<li>Returns it as base64; the browser saves it to your Downloads folder.</li>
+<li>Logs <code>DATA_EXPORT</code> with counts and the supplied reason.</li>
+</ol>
+<p>The export is admin-initiated. For verified parent requests, the typical workflow is: parent submits a request with their verification code → request shows up in Family Access Tools as <code>verified</code> → admin clicks <strong>Export</strong> on that student → emails the ZIP to the parent through the school's normal channel.</p>
+<h2 id="data-deletion-day-2-7">Data Deletion (Day 2.7)</h2>
+<p>Clicking <strong>Delete Data</strong> next to a student in the Age Band Lock section:</p>
+<ol>
+<li>Confirms the action (twice — once for the warning, once for a reason that goes into Activity Records).</li>
+<li>Trashes Drive files for every matching turn-in and (if a class is supplied) every matching board.</li>
+<li>Removes the user row and all matching turn-in / board rows.</li>
+<li>Emits a <code>DATA_DELETED</code> audit event with counts of items removed and the supplied reason.</li>
+</ol>
+<p>This action is permanent from the DrawSplat side. Drive files go to the trash and stay recoverable from Drive for the standard 30-day window.</p>
+<h2 id="retention-policy-cleanup-days-3-7-3-8">Retention Policy &amp; Cleanup (Days 3.7 / 3.8)</h2>
+<p>The Compliance Console → <strong>Retention Policy &amp; Cleanup</strong> section drives three thresholds:</p>
+<ul>
+<li><code>retention.boards.archiveAfterDays</code> — boards untouched longer than this move to an <code>Archive</code> Drive subfolder.</li>
+<li><code>retention.boards.deleteAfterDays</code> — boards untouched longer than this are trashed and removed from the <code>Boards</code> sheet.</li>
+<li><code>retention.audit.keepDays</code> — rows in the <code>Audit</code> sheet older than this are pruned.</li>
+</ul>
+<p>The settings are stored in the <code>COMPLIANCE_CONFIG</code> Script Property. <strong>Save Settings</strong> writes them; <strong>Load Current</strong> re-reads from the server.</p>
+<p><strong>Manual run.</strong> Click <strong>Run Cleanup Now</strong> to execute the pass immediately. Returns counts and writes a <code>RETENTION_ACTION</code> audit event.</p>
+<p><strong>Daily trigger.</strong> Click <strong>Install Daily Trigger</strong> to schedule <code>dailyRetentionCleanup()</code> via Apps Script time-driven triggers (runs at 02:00 server time). Click <strong>Remove Trigger</strong> to stop the schedule. Manual runs still work without the trigger.</p>
+<p>The status line below the buttons shows the last run's summary and whether the trigger is currently installed.</p>
+<h2 id="district-wide-safety-defaults-day-3-9">District-Wide Safety Defaults (Day 3.9)</h2>
+<p>The single <code>COMPLIANCE_CONFIG</code> Script Property is the authoritative server-side configuration. Every save through <code>saveBoard_</code> / <code>saveRoom_</code> reads <code>safetyConfig_()</code> which consults this property; the retention cleanup reads it on each run. So once an admin changes the config through the Console, every subsequent teacher's save (and every nightly cleanup pass) honors the new settings — there is no per-teacher override layer to keep in sync.</p>
+<p><strong>Reset to Defaults</strong> rewrites the property with the built-in defaults baked into <code>Code.gs</code> (<code>DS_DEFAULT_COMPLIANCE</code>). Useful if a previous edit landed in a bad state.</p>
+<h2 id="compliance-console-panels-days-3-1-3-5">Compliance Console Panels (Days 3.1–3.5)</h2>
+<p>The internal Compliance Console is split into seven collapsible sections. Each section reads from and writes to the same <code>COMPLIANCE_CONFIG</code> Script Property via <code>getCompliance</code> / <code>setCompliance</code>. Saved changes propagate to every subsequent <code>saveBoard_</code> / <code>saveRoom_</code> call automatically.</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Safety Review</strong></td>
+<td>Text filter on/off, blockOnMatch, link allowlist on/off, blockUnapproved. Plus the existing board/room freeze controls.</td>
+</tr>
+<tr>
+<td><strong>Image Approval Queue</strong></td>
+<td>Teacher-approval-required toggle, max upload size, plus the pending / approved / rejected review queue (thumbnail + Approve / Reject). Student uploads land here when teacher approval is required; approved images appear on the student board within ~8 seconds. See &quot;Image Approval Queue (Days 1.3 / 1.4)&quot; below.</td>
+</tr>
+<tr>
+<td><strong>Family Access Tools</strong></td>
+<td>Parent portal enabled, request form enabled, verification method (<code>teacher_code</code>, <code>district_roster</code>, <code>admin_approval</code>). Plus the existing request queue.</td>
+</tr>
+<tr>
+<td><strong>Student Age Band Lock</strong></td>
+<td>Per-student age band table (see Day 2.1 / 2.2 section above).</td>
+</tr>
+<tr>
+<td><strong>Use Limits</strong></td>
+<td>Daily seconds, session seconds, allowed hours, weekend toggle, enabled flag. Enforcement code lands in Days 2.8–2.9; the config is pre-stageable now.</td>
+</tr>
+<tr>
+<td><strong>Retention Policy &amp; Cleanup</strong></td>
+<td>Archive / delete / audit-keep thresholds + manual run + daily trigger install (see retention section above).</td>
+</tr>
+<tr>
+<td><strong>Privacy Settings</strong></td>
+<td>Read-only declarations from the privacy section of the config: storage location, encryption, third-party services, &quot;AI training&quot; / advertising / data-sold flags, and what the District Privacy Packet includes.</td>
+</tr>
+<tr>
+<td><strong>Activity Records</strong></td>
+<td>Filter by action, actor, and date range. Download as CSV or JSON.</td>
+</tr>
+<tr>
+<td><strong>District Privacy Packet</strong></td>
+<td>One-click ZIP download (see Day 3.6 section above).</td>
+</tr>
+</tbody>
+</table>
+<p>For advanced edits (anything not exposed as a checkbox or input), use <strong>Open Raw Config Editor</strong> in the Privacy Settings panel. The dialog shows the entire merged config as JSON; saving runs through the same <code>setCompliance</code> filter, so only the known top-level sections persist.</p>
+<h2 id="image-approval-queue-days-1-3-1-4">Image Approval Queue (Days 1.3 / 1.4)</h2>
+<p>When <code>safety.images.teacherApprovalRequired</code> is <code>true</code> (the default), every image that a student uploads to a board is held in a pending queue until a teacher approves it. The flow:</p>
+<ol>
+<li><strong>Client — whiteboard (<code>assets/js/app.js</code>).</strong> When <code>board.mode === 'student'</code> and a Google Apps Script URL is configured, the four upload paths (main image button, paste-as-image, sticky-note attached image, custom sticker) call <code>submitImageForApproval(dataUrl, fileName)</code> instead of embedding the data URL directly. The function POSTs <code>{action: 'uploadImage', dataUrl, fileName, boardId, roomId, uploadedBy, uploaderRole}</code> to the script. Teacher mode and missing-script-URL deployments bypass the queue.</li>
+<li><strong>Server — <code>uploadImage_</code>.</strong> Decodes the base64, validates mime (<code>allowedMimeTypes</code> / <code>blockedMimeTypes</code>) and size (<code>maxBytes</code>), writes the bytes to the <code>DrawSplatTM Saves</code> Drive folder, and appends a row to the <code>ImageQueue</code> sheet with columns <code>id, boardId, roomId, uploadedBy, uploaderRole, fileName, driveId, mimeType, byteSize, status, submittedAt, decidedBy, decidedAt, decisionNote</code>. Student uploads return <code>status: 'pending'</code>. Teacher uploads auto-approve and return the bytes inline. Logs <code>IMAGE_UPLOAD</code> (and <code>notifyComplianceAdmin_</code> for pending rows).</li>
+<li><strong>Client placeholder.</strong> The whiteboard inserts an image object with <code>src</code> set to a <code>PENDING_IMAGE_PLACEHOLDER</code> SVG (&quot;Pending teacher approval&quot;) and <code>pendingImageId</code> set to the returned id. A polling timer (every 8 seconds) calls <code>?action=imageQueueResolve&amp;id=...</code> for every object that still carries a <code>pendingImageId</code>.</li>
+<li><strong>Teacher review — Compliance Console → Image Approval Queue.</strong> The admin page lists pending rows with a thumbnail (loaded via <code>?action=imageQueueThumb&amp;passcode=...&amp;id=...</code>), uploader, board / room, mime, size, and Approve / Reject buttons. Rejection prompts for an optional decision note.</li>
+<li><strong>Decision — <code>setImageStatus_</code>.</strong> Admin-gated. On reject, the Drive file is trashed. The row's <code>status</code>, <code>decidedBy</code>, <code>decidedAt</code>, <code>decisionNote</code> columns are updated and an <code>IMAGE_APPROVED</code> or <code>IMAGE_REJECTED</code> audit event is written.</li>
+<li><strong>Client resolution.</strong> The next poll sees <code>status: 'approved'</code> (with the inline data URL <code>src</code>) or <code>status: 'rejected'</code>, swaps the placeholder for either the real image or <code>REJECTED_IMAGE_PLACEHOLDER</code>, removes <code>pendingImageId</code>, re-renders, and persists.</li>
+</ol>
+<p>Knobs in <code>compliance.config.json</code> → <code>safety.images</code>:</p>
+<ul>
+<li><code>enabled</code> — master switch; when false, the <code>uploadImage</code> endpoint refuses uploads.</li>
+<li><code>teacherApprovalRequired</code> — when false, student uploads auto-approve like teacher uploads (the queue still records them as <code>approved</code> rows for audit).</li>
+<li><code>allowedMimeTypes</code> — allowlist (default: <code>image/png</code>, <code>image/jpeg</code>, <code>image/webp</code>).</li>
+<li><code>blockedMimeTypes</code> — explicit blocklist that wins over allowlist (default: <code>image/svg+xml</code>).</li>
+<li><code>maxBytes</code> — per-file size cap (default 5 MiB).</li>
+</ul>
+<h2 id="time-limits-days-2-8-2-9">Time Limits (Days 2.8 / 2.9)</h2>
+<p>When <code>compliance.config.json</code> (or the <code>COMPLIANCE_CONFIG</code> Script Property) has <code>timeLimits.enabled = true</code>, the system enforces three checks on student writes:</p>
+<ul>
+<li><strong>Allowed hours.</strong> If the current local hour falls outside <code>allowedHoursStart</code>–<code>allowedHoursEnd</code>, saves are rejected with a clear message.</li>
+<li><strong>Weekend access.</strong> If <code>weekendAllowed</code> is false and the current day is Saturday or Sunday, saves are rejected.</li>
+<li><strong>Daily limit.</strong> Once <code>secondsToday</code> reaches <code>dailySeconds</code>, saves are rejected and the browser locks the workspace.</li>
+</ul>
+<p><strong>Client (browser)</strong> — <code>assets/js/timelimits.js</code>:</p>
+<ul>
+<li>Tracks active interaction time (counts only when the user has typed / moved the mouse / clicked within the last 60 seconds).</li>
+<li>Persists per-day total in <code>localStorage</code> so a reload resumes the counter.</li>
+<li>Posts a heartbeat to <code>?action=timeHeartbeat</code> every 30 seconds with the delta; the server records it in a <code>TimeUsage</code> sheet keyed by <code>(student, class, date)</code>.</li>
+<li>Displays a remaining-time chip at the bottom-right of the whiteboard.</li>
+<li>Locks the workspace (full-screen overlay, disables all inputs) when the limit is reached or the server responds with <code>allowed: false</code>.</li>
+</ul>
+<p><strong>Server (Apps Script)</strong>:</p>
+<ul>
+<li><code>checkTimeLimitsAllowed_(studentName, className)</code> gates <code>saveBoard_</code> / <code>saveRoom_</code> for students (teachers bypass). Hits write a <code>TIME_LIMIT_HIT</code> audit event before throwing.</li>
+<li><code>?action=timeStatus</code> is an open endpoint returning the active configuration and the student’s <code>secondsToday</code> / <code>remaining</code>. Used by the client on load.</li>
+<li><code>?action=timeHeartbeat</code> (POST) accepts a delta (capped at 90 seconds per beat to prevent inflated counters) and returns the updated counter.</li>
+</ul>
+<p>Operators configure the limits in <strong>Internal Compliance Console → Use Limits</strong>. Disable by toggling <code>enabled</code> off — the chip disappears and saves are no longer gated.</p>
+<h2 id="what-is-intentionally-not-built-yet">What is intentionally not built yet</h2>
+<p>This file documents what ships in the current commits. The roadmap lists everything else, with day-sized work items and acceptance criteria. Do not assume any feature works just because it is mentioned in the roadmap — check the <strong>Status</strong> column in COMPLIANCE-ROADMAP.md for ticked boxes.</p>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#configuration-source-of-truth">Configuration source of truth</a></li><li><a href="#apps-script-setup-additions">Apps Script setup additions</a></li><li><a href="#what-endpoints-are-now-available">What endpoints are now available</a></li><li><a href="#family-access-tools-parent-facing">Family Access Tools (parent-facing)</a></li><li><a href="#internal-compliance-console">Internal Compliance Console</a></li><li><a href="#activity-records-schema">Activity Records schema</a></li><li><a href="#operator-playbook">Operator playbook</a></li><li><a href="#student-age-band-lock-days-2-1-2-2">Student Age Band Lock (Days 2.1 / 2.2)</a></li><li><a href="#teacher-issued-parent-verification-code-day-2-5">Teacher-Issued Parent Verification Code (Day 2.5)</a></li><li><a href="#data-export-day-2-6">Data Export (Day 2.6)</a></li><li><a href="#data-deletion-day-2-7">Data Deletion (Day 2.7)</a></li><li><a href="#retention-policy-cleanup-days-3-7-3-8">Retention Policy &amp; Cleanup (Days 3.7 / 3.8)</a></li><li><a href="#district-wide-safety-defaults-day-3-9">District-Wide Safety Defaults (Day 3.9)</a></li><li><a href="#compliance-console-panels-days-3-1-3-5">Compliance Console Panels (Days 3.1–3.5)</a></li><li><a href="#image-approval-queue-days-1-3-1-4">Image Approval Queue (Days 1.3 / 1.4)</a></li><li><a href="#time-limits-days-2-8-2-9">Time Limits (Days 2.8 / 2.9)</a></li><li><a href="#what-is-intentionally-not-built-yet">What is intentionally not built yet</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body></html>

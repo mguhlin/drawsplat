@@ -1,5 +1,8 @@
 # Analog Samples — Arcade Sound Effects
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Numbered arcade-style SFX (clicks, pings, lasers, hums, jingles, zaps,
 buzzes) for use across the DrawSplat games suite.
 

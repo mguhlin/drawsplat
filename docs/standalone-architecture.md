@@ -1,5 +1,8 @@
 # Standalone Multi-User Architecture Plan
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 This document turns the standalone roadmap into an implementation plan. The current DrawSplatTM build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.
 
 The current static build now uses `index.html` as the public landing page and `app/whiteboard.html` as the English whiteboard app. The landing page explains the split between the Whiteboard and Teacher Admin. `admin/admin.html` moves Google Apps Script setup, storage-mode choice, and classroom link generation out of the board Options dialog while keeping the existing localStorage compatibility that the board uses for Save to Google and Cloud Sync.
@@ -307,7 +310,7 @@ Private boards use `cloud_boards` with account-scoped keys and revision checks, 
 
 ### Future standalone architecture
 
-The `StorageProvider` interface above and organization/snapshot/object-storage model are design targets, not the current frontend API. Future classroom sharing requires explicit membership checks before opening the legacy room/template/turn-in endpoints beyond district/campus administrators. Google collaboration, moderation, galleries, and turn-in/review are not routed through the private MySQL connection.
+The `StorageProvider` interface above and organization/snapshot/object-storage model are design targets, not the current frontend API. Current district classrooms use membership-scoped assignment, submission, and feedback endpoints. Legacy room/template/turn-in routes remain separate and restricted; do not use them as district classroom APIs. Google live rooms, moderation, and cloud galleries remain a separate Apps Script integration.
 
 Organization storage, separate media uploads, temporary server-backed room expiry, backend deletion on Reset, and optional simultaneous Google/MySQL writes remain proposals. Switching providers today does not migrate data or enable dual saving.
 

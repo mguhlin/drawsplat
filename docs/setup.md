@@ -1,5 +1,8 @@
 # DrawSplat&trade; — Setup
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Pick the scenario that matches what you're trying to do. Each one is its own focused doc — no need to read the others.
 
 ## Which one are you?
@@ -7,15 +10,15 @@ Pick the scenario that matches what you're trying to do. Each one is its own foc
 | If you want… | Use this | Roughly how long |
 |---|---|---|
 | A single-user / projector / "just let me draw" deployment with no accounts and no backend. | [**Browser-only**](setup-browser.md) | 1 minute |
-| Cloud saves to Google Drive + Sheets, classroom collaboration rooms, student turn-ins, the full Compliance Console, parent request center. **The supported production path today.** | [**Google Apps Script**](setup-google-apps-script.md) | 10–15 minutes |
-| Private account-owned online Save/Open using Railway, DigitalOcean, or an existing MySQL 8 server. | [**MySQL backend**](setup-mysql.md) | Depends on hosting |
+| Cloud saves to Google Drive + Sheets, classroom collaboration rooms, student turn-ins, the full Compliance Console, parent request center.  | [**Google Apps Script**](setup-google-apps-script.md) | 10–15 minutes |
+| A complete self-hosted district suite with MariaDB/MySQL saving, school accounts, classrooms, assignments, and turn-ins. | [**District installation (Docker or native)**](district-selfhost.html) | Depends on server preparation |
+| Private account-owned online Save/Open using a separately hosted saving API. | [**MySQL backend**](setup-mysql.md) | Depends on hosting |
 
 ## Common follow-ups after setup
 
 | You want to… | Read this |
 |---|---|
 | Configure compliance features (Activity Records, Age Band Lock, Family Access Tools, retention, time limits). | [`COMPLIANCE.md`](COMPLIANCE.md) |
-| Stand up the Community board (`/community/`) with Google + Microsoft sign-in. | [`../community/Setup.md`](../community/Setup.md) |
 | See the architecture roadmap (what's done, what's parked, what's deferred). | [`../COMPLIANCE-ROADMAP.md`](../COMPLIANCE-ROADMAP.md) |
 
 ## Three modes side-by-side
@@ -27,7 +30,7 @@ If you're not sure which scenario fits, here's the same picture from a different
 | Drawing, device autosave, file/snapshot export | Yes | Yes | Yes |
 | Cross-device Save/Open | No | Yes | Yes, signed-in account’s private boards |
 | Automatic shared-room sync | No | Yes | Not connected |
-| Student turn-in and teacher review | No | Yes | Not connected |
+| Student turn-in and teacher review | No | Yes | Yes, with district rosters and classroom membership |
 | Cloud reusable template galleries / moderation | No | Yes | Not connected |
 | Classroom Compliance Console and family workflow | No | Yes | Advanced backend modules require separate validation |
 | Recording notes and device-local draft recovery | Yes | Yes | Yes; added notes are included in saved board JSON |
@@ -35,7 +38,7 @@ If you're not sure which scenario fits, here's the same picture from a different
 | Software cost | Free | Free | Free; hosting/storage billed by your provider |
 
 The MySQL setup wizard tests the API’s `private-boards-v1` capability before enabling
-it. Create a teacher saving account, then use **File → Save online / Open online board**.
+it. On a district installation, use your roster-linked school account, then use **File → Save online / Open online board**.
 Student accounts must be school-provisioned. A student launch link configures saving;
 it does not share the teacher’s board. See [the hosting guide](setup-mysql.md).
 

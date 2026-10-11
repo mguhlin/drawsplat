@@ -1,5 +1,8 @@
 # DrawSplat typing games
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 `/games/typing-games/` is a menu with original generated hero and cover artwork. Each experience has its own URL and translated instructions:
 
 - `/games/cipher-chase/` — Cipher Chase. Overhead spy driving with lane steering, civilian traffic, typed rival attacks, collision shields and rechargeable smoke. Beginner mode gives approximately nine seconds before a rival reaches the player. Missed words do not cost shields; collisions do.

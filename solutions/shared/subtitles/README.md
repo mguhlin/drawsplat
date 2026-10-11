@@ -1,5 +1,8 @@
 # Local subtitle generation
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Shared browser-only subtitle generator used by VideoSplat, MediaSplat, and AudioSplat.
 Apps install this package from `../shared/subtitles` with `install-links=true`.
 After editing shared code, reinstall the local package in each app before building:

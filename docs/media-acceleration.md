@@ -1,5 +1,8 @@
 # Local media acceleration
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 MediaSplat and VideoSplat check browser capabilities; they do not require NVIDIA or upload media to a GPU service. Processing does not invoke GitHub Actions.
 
 ## Speech and SRT

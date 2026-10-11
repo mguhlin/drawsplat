@@ -1,6 +1,9 @@
 # DrawSplat&trade; Compliance &mdash; Operations Guide
 
-Operator-facing notes for the compliance features rolled out per [COMPLIANCE-ROADMAP.md](../COMPLIANCE-ROADMAP.md). This file is the place to look when you need to know **how** something works in practice, not **whether** it is planned.
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
+Operator-facing technical notes for the **Apps Script** Compliance Console. Its Drive/Sheets controls do not automatically manage district MariaDB/MySQL private boards or classroom records. Use the [current console guide](../guides/compliance-guide.html) and [district review reference](../wiki/compliance.html) for workflow and scope. Roadmaps describe historical development, not the authoritative current setup.
 
 ## Configuration source of truth
 
@@ -43,13 +46,13 @@ The `passcode` value is the `ADMIN_PASSCODE` script property. The Teacher Admin 
 - Public-facing page: [`/parents/index.html`](../parents/index.html).
 - Form posts to the configured Apps Script Web App URL (the same one Teacher Admin uses).
 - A successful submission creates a ticket with status `pending_verification` and writes a `PARENT_REQUEST_CREATED` event to Activity Records.
-- If `COMPLIANCE_ADMIN_EMAIL` is set, the admin gets an email. The parent does not automatically get a verification code in this iteration &mdash; that arrives in **Day 2.5**, where the teacher hand-issues a code through the school's existing parent-comms channel.
+- If `COMPLIANCE_ADMIN_EMAIL` is set, the admin gets an email. The teacher issues a verification code through the school’s existing parent-communications channel; see the current Console guide.
 
 If the parent visits the public site and no Web App URL is configured in their browser, the form gives them a clear "email the school directly" message instead of failing silently. This means parents using `drawsplat.org` itself won't reach a backend &mdash; the form is for districts running their own deployment with their own Apps Script.
 
 ## Internal Compliance Console
 
-Open `admin/compliance.html` directly after unlocking the admin gate. Seven sections are scaffolded; two are live:
+Open `admin/compliance.html` directly after unlocking the admin gate. The current Console includes Safety Review, Family Access Tools, Student Age Band Lock, Use Limits, Retention, Privacy Settings, Activity Records, and District Privacy Packet. Among its operator tools:
 
 - **Activity Records** &mdash; opens to the last 200 events. Filter by action, download CSV.
 - **District Privacy Packet** &mdash; one-click ZIP download containing:
@@ -58,7 +61,7 @@ Open `admin/compliance.html` directly after unlocking the admin gate. Seven sect
   - `parent-requests.csv` (all tickets)
   - `README.txt` (what's inside + companion URLs)
 
-The other five sections (Safety Review, Family Access Tools, Age Lock, Use Limits, Retention) are stubs that future roadmap days fill in.
+Use the [Console guide](../guides/compliance-guide.html) for each section’s setup, access, and verification steps.
 
 ## Activity Records schema
 

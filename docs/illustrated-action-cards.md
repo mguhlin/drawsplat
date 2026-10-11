@@ -1,5 +1,8 @@
 # Illustrated action-card menus
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 DrawSplat’s shared menu style combines an illustration, an action name, and a short explanation in a rounded violet card. Explanations should tell people what will happen, where work is saved, or what a choice affects.
 
 - `assets/css/action-cards.css` styles shared cards, menus, setup panels, and dialogs.

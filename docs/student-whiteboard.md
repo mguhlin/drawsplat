@@ -1,5 +1,8 @@
 # Student-friendly whiteboard
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 ## Start a focused lesson
 
 Open **Options → Choose how much you see → Student lesson tools**. Choose a starting view, pick Everyday drawing, Art and coloring, Draw/type/explain, or Graphs and data, then adjust individual tools. Save lesson tools. Move remains available so students can select and edit their work.

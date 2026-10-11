@@ -1,5 +1,8 @@
 # Media app browser audit — September 14, 2026
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 ## Coverage and environment
 
 All three apps now run their standard browser suites in both Chromium and Firefox.

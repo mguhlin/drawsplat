@@ -1,5 +1,8 @@
 # DrawSplat&trade; District Reviewer Evidence Capture Guide
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 This file is the operator checklist for replacing the placeholders in [legal/ndpa-packet.html &sect; 12 — Evidence gallery](../legal/ndpa-packet.html#section-12) with real screenshots from your DrawSplat&trade; deployment.
 
 Each capture should reflect **your district's own deployment** (your spreadsheet, your roster, your audit log), not a generic preview. Once captured, drop each file into `legal/evidence/<capture-key>.png` and swap the matching `<div class="evidence-placeholder" data-capture="...">` element for an `<img src="evidence/<capture-key>.png" alt="...">`.

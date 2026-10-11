@@ -1,5 +1,8 @@
 # Local GGML Whisper runtime
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 This directory contains the application bridge and bundled browser runtime for
 whisper.cpp **v1.8.3**, commit `2eeeba56e9edd762b4b38467bab96c2517163158` (MIT).
 The built files are `runtime.js` and `splat-whisper.wasm`. Vite bundles them into

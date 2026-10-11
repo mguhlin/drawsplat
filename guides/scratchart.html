@@ -17,146 +17,13 @@
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
-<body class="admin-page start-page support-page guide-article-page">
-<header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
-    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat<sup class="tm">TM</sup></span>
-  </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers &amp; Families</summary>
-      <div class="landing-nav-menu">
-        <a href="../app/whiteboard.html">Open Whiteboard</a>
-        <a href="../admin/admin.html">Teacher Admin</a>
-        <a href="../pages/features.html">Features</a>
-        <a href="../pages/background-templates.html">Background Templates</a>
-        <a href="../guides/">Teacher Guides</a>
-        <hr class="landing-nav-divider">
-        <a href="../parents/index.html">Family Access Tools</a>
-        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <a href="../pages/contact.html">Contact / Information Request</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Technical</summary>
-      <div class="landing-nav-menu">
-        <a href="../pages/pricing.html">Pricing</a>
-        <a href="../pages/download.html">Download for Self-Hosting</a>
-        <a href="../legal/combined-policy.html">Get all documents below</a>
-        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/accessibility.html">Accessibility Statement</a>
-        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
-        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
-        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="../legal/texas-compliance.html">Texas Compliance</a>
-        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Support</summary>
-      <div class="landing-nav-menu">
-        <a href="../blog/">Blogs About DrawSplat</a>
-        <a href="../community/index.html">Community Board</a>
-        <hr class="landing-nav-divider">
-        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
-        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
-        <a href="../pages/support.html">Support &amp; Guides Hub</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>SplatWorks&trade;</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
-          <a href="../pages/listsplat.html">ListSplat&trade;</a>
-          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
-          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
-        </div>
-        <div class="studio-nav-icons" aria-label="SplatWorks apps">
-          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
-        </div>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>DrawSplat</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
-          <a href="../pages/tools.html">View All Tools</a>
-          <a href="../solutions/clipsplat/" target="_blank" rel="noopener noreferrer">ClipSplat™</a>
-          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
-          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
-          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
-          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
-          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
-          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
-          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
-          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
-          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
-          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
-          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
-          <a href="../pages/tools.html#widgets">View All Widgets</a>
-          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
-          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
-          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
-          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
-          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
-          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
-          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
-          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
-          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
-          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
-          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
-          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
-          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
-          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../games/">Games</a>
-          <a href="../games/">View All Games</a>
-          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
-          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
-          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
-          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
-          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
-          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
-          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
-          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
-          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
-          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
-          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
-          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
-        </div>
-      </div>
-    </details>
-  </nav>
-  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
-</header>
+<link rel="stylesheet" href="../assets/css/support-wiki.css"></head>
+<body class="admin-page start-page support-page guide-article-page" data-wiki="true">
 
-<main class="landing-shell article-shell">
+
+<!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="../wiki/index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="../wiki/index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="../wiki/district-classrooms.html">District classrooms and rosters</a></li><li><a href="core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="saving-exporting.html">Saving and exporting</a></li><li><a href="collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a aria-current="page" href="scratchart.html">Scratch art</a></li><li><a href="project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="google-setup.html">Apps Script setup</a></li><li><a href="apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="../wiki/setup-browser.html">Browser-only setup</a></li><li><a href="../wiki/setup-mysql.html">Advanced database hosting</a></li><li><a href="../wiki/setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="../wiki/modular-selfhost.html">Modular self-hosting</a></li><li><a href="../wiki/mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="../wiki/licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="../wiki/compliance.html">Compliance and district review</a></li><li><a href="compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="../wiki/COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="../wiki/support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="../wiki/tool-inventory.html">Component inventory</a></li><li><a href="../wiki/standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Whiteboard and classroom</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/guides/scratchart.html">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content" class="landing-shell article-shell">
   <nav class="article-breadcrumb" aria-label="Guide breadcrumb">
-    <a href="../pages/support.html">Support</a>
+    <a href="../wiki/index.html">Support</a>
     <span>/</span>
     <a href="index.html">Guides and Classroom Activities</a>
   </nav>
@@ -164,12 +31,12 @@
   <article class="guide-article">
     <img class="guide-hero-image" src="images/scratchart-in-drawsplat.png" alt="ScratchArt in DrawSplatTM with colorful ScratchArt lettering and DrawSplatTM logo">
     <p class="landing-eyebrow">Feature Guide</p>
-    <h1>ScratchArt Feature Guide</h1>
+    <h1 id="scratchart-feature-guide">ScratchArt Feature Guide</h1>
     <p class="article-lede">One of the most engaging art activities for students is scratch art: a hidden layer of color sits underneath a solid top layer, and students draw by erasing the top layer to reveal the colors below.</p>
 
     <p>This activity is inspired by Eric Curts' original Jamboard idea, <a href="https://www.controlaltachieve.com/2021/02/rainbow-jam.html">"Rainbow Scratch-Off Drawing Templates for Jamboard"</a>. DrawSplat<sup class="tm">TM</sup> makes the same kind of activity easy with <strong>ScratchArt</strong>. Instead of manually covering the whole canvas with marker strokes, DrawSplat<sup class="tm">TM</sup> can place a scratch cover over the board for you. Students then use the <strong>Eraser</strong> tool to reveal the rainbow background underneath.</p>
 
-    <h2>What You Need</h2>
+    <h2 id="what-you-need">What You Need</h2>
     <ul>
       <li>A rainbow image or colorful pattern to use as the background</li>
       <li>DrawSplat<sup class="tm">TM</sup></li>
@@ -177,7 +44,7 @@
       <li>The <strong>Eraser</strong> tool</li>
     </ul>
 
-    <h2>Step 1: Add a Rainbow Background</h2>
+    <h2 id="step-1-add-a-rainbow-background">Step 1: Add a Rainbow Background</h2>
     <p>Open DrawSplat<sup class="tm">TM</sup> and choose the frame where students will create their ScratchArt.</p>
     <p>Set a rainbow image as the background:</p>
     <ol>
@@ -188,7 +55,7 @@
     </ol>
     <p>You can use a rainbow gradient, stripes, watercolor colors, a pattern, or any image you want students to reveal.</p>
 
-    <h2>Where to Find Rainbow Background Images</h2>
+    <h2 id="where-to-find-rainbow-background-images">Where to Find Rainbow Background Images</h2>
     <p>You can use any image as the hidden ScratchArt layer in DrawSplat<sup class="tm">TM</sup>. For best results, choose a bright, high-contrast image with lots of color. Download the image first, then upload it in DrawSplat<sup class="tm">TM</sup> with <strong>Tools &gt; Set Background</strong>.</p>
     <p>Good free image sources:</p>
     <ul>
@@ -201,7 +68,7 @@
     </ul>
     <p>Before using an image with students, check the image license and download page. Sites like Unsplash, Pexels, and Pixabay generally provide free-to-use images, but it is still good practice to credit the photographer or source when possible.</p>
 
-    <h2>Step 2: Add the ScratchArt Cover</h2>
+    <h2 id="step-2-add-the-scratchart-cover">Step 2: Add the ScratchArt Cover</h2>
     <p>Once the rainbow background is in place:</p>
     <ol>
       <li>Open the <strong>Insert</strong> menu.</li>
@@ -210,7 +77,7 @@
     </ol>
     <p>This cover sits above the background image. The rainbow is still there, but it is hidden until students erase parts of the cover.</p>
 
-    <h2>Step 3: Draw with the Eraser</h2>
+    <h2 id="step-3-draw-with-the-eraser">Step 3: Draw with the Eraser</h2>
     <p>Now students can create their artwork:</p>
     <ol>
       <li>Select the <strong>Eraser</strong> tool.</li>
@@ -220,7 +87,7 @@
     <p>As students erase, the ScratchArt cover disappears and the rainbow background shows through.</p>
     <p>Smaller eraser sizes work well for names, outlines, and details. Larger eraser sizes are useful for bold shapes, large letters, and quick reveals.</p>
 
-    <h2>Step 4: Try Different Backgrounds</h2>
+    <h2 id="step-4-try-different-backgrounds">Step 4: Try Different Backgrounds</h2>
     <p>Rainbow ScratchArt is only one option. You can also use:</p>
     <ul>
       <li>Space images</li>
@@ -233,7 +100,7 @@
     </ul>
     <p>Anything placed as the background can become the hidden layer for ScratchArt.</p>
 
-    <h2>Included ScratchArt Backgrounds</h2>
+    <h2 id="included-scratchart-backgrounds">Included ScratchArt Backgrounds</h2>
     <p>DrawSplat<sup class="tm">TM</sup> includes ready-to-use ScratchArt backgrounds in the image gallery. These work well when you want students to start quickly without searching for a separate rainbow or pattern image.</p>
     <div class="scratchart-example-grid" aria-label="Included ScratchArt background examples">
       <figure>
@@ -291,7 +158,7 @@
     </div>
     <p>To use one, open the image gallery, choose a ScratchArt background, set it as the panel background, then add the ScratchArt cover.</p>
 
-    <h2>Step 5: Save or Share the Finished Art</h2>
+    <h2 id="step-5-save-or-share-the-finished-art">Step 5: Save or Share the Finished Art</h2>
     <p>When students finish, they can save their work:</p>
     <ol>
       <li>Open <strong>File</strong>.</li>
@@ -299,7 +166,7 @@
     </ol>
     <p>Teachers can also use DrawSplat<sup class="tm">TM</sup>'s board save options if they want students to continue working later.</p>
 
-    <h2>Classroom Ideas</h2>
+    <h2 id="classroom-ideas">Classroom Ideas</h2>
     <ul>
       <li>Rainbow name art</li>
       <li>Hidden vocabulary words</li>
@@ -311,7 +178,7 @@
       <li>Morning warmups or early-finisher activities</li>
     </ul>
 
-    <h2>Why This Works Well in DrawSplat<sup class="tm">TM</sup></h2>
+    <h2 id="why-this-works-well-in-drawsplat-tm">Why This Works Well in DrawSplat<sup class="tm">TM</sup></h2>
     <ul>
       <li>The background image stays behind the artwork.</li>
       <li>The ScratchArt cover sits above it.</li>
@@ -321,7 +188,7 @@
     </ul>
     <p>It gives students the same fun scratch-off reveal effect, but with a faster setup and more flexible classroom uses.</p>
 
-    <h2>Quick DrawSplat<sup class="tm">TM</sup> Setup Summary</h2>
+    <h2 id="quick-drawsplat-tm-setup-summary">Quick DrawSplat<sup class="tm">TM</sup> Setup Summary</h2>
     <ol>
       <li>Pick a colorful background image.</li>
       <li>Use <strong>Tools &gt; Set Background</strong> to place it behind the canvas.</li>
@@ -333,13 +200,8 @@
 
     <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
   </article>
-</main>
+</main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-you-need">What You Need</a></li><li><a href="#step-1-add-a-rainbow-background">Step 1: Add a Rainbow Background</a></li><li><a href="#where-to-find-rainbow-background-images">Where to Find Rainbow Background Images</a></li><li><a href="#step-2-add-the-scratchart-cover">Step 2: Add the ScratchArt Cover</a></li><li><a href="#step-3-draw-with-the-eraser">Step 3: Draw with the Eraser</a></li><li><a href="#step-4-try-different-backgrounds">Step 4: Try Different Backgrounds</a></li><li><a href="#included-scratchart-backgrounds">Included ScratchArt Backgrounds</a></li><li><a href="#step-5-save-or-share-the-finished-art">Step 5: Save or Share the Finished Art</a></li><li><a href="#classroom-ideas">Classroom Ideas</a></li><li><a href="#why-this-works-well-in-drawsplat-tm">Why This Works Well in DrawSplat TM</a></li><li><a href="#quick-drawsplat-tm-setup-summary">Quick DrawSplat TM  Setup Summary</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="../wiki/licensing.html">Licensing</a></footer><!-- wiki:end -->
 
-<footer class="landing-footer">
-  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat<sup class="tm">TM</sup> ScratchArt classroom guide.</span>
-  <a href="index.html">Guides</a>
-  <a href="../pages/support.html">Support</a>
-</footer><script src="../assets/js/consent-banner.js" defer></script>
-</body>
+<script src="../assets/js/consent-banner.js" defer></script>
+<script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body>
 </html>

@@ -1,5 +1,8 @@
 # Castles & Catapults
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 A standalone retro artillery siege game built as a single-page browser app. Two grey medieval castles face off across randomized terrain, armies, moats, lakes, trees, and shifting skies. Players choose angle, power, and missile type, then trade shots that damage castle HP, scatter soldiers, and trigger battlefield jokes.
 
 ## Play

@@ -32,13 +32,13 @@ page = '''<!doctype html>
 <link rel="stylesheet" href="../assets/css/district-guide.css"></head><body>
 <!-- Generated from district-selfhost.md by scripts/build-district-guide.py. -->
 <a class="skip-link" href="#guide">Skip to installation guide</a>
-<header class="guide-header"><a href="../">DrawSplat</a><nav aria-label="Guide formats"><a href="district-selfhost.md">View Markdown</a><a href="district-selfhost.md" download>Download Markdown</a><a href="../pages/download.html">Downloads</a></nav></header>
+<header class="guide-header"><a href="../">DrawSplat</a><nav aria-label="Guide formats"><a href="../wiki/">DrawSplat Wiki</a><a href="district-selfhost.md">View Markdown</a><a href="district-selfhost.md" download>Download Markdown</a><a href="../pages/download.html">Downloads</a></nav></header>
 <div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li>''' + ''.join(contents) + '''</ul></nav></aside>
 <main id="guide"><img class="guide-banner" src="../assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724">''' + heading + quickstart + body + '''</main></div>
 <footer>DrawSplat district installation · <a href="district-selfhost.md">Markdown source</a></footer><script src="../assets/js/district-components.js"></script><script src="../assets/js/district-quickstart.js"></script></body></html>'''
 (root / 'docs/district-selfhost.html').write_text(page)
 
-start = page.replace('../assets/', 'assets/').replace('../pages/', 'pages/').replace('href="../"', 'href="index.html"').replace('href="district-selfhost.md"', 'href="docs/district-selfhost.md"')
+start = page.replace('../assets/', 'assets/').replace('../pages/', 'pages/').replace('../wiki/', 'wiki/').replace('href="../"', 'href="index.html"').replace('href="district-selfhost.md"', 'href="docs/district-selfhost.md"')
 start = start.replace('href="district-selfhost.html', 'href="docs/district-selfhost.html')
 (root / 'START-HERE.html').write_text(start)
 (root / '00-START-HERE.html').write_text(start)

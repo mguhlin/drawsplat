@@ -17,153 +17,20 @@
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
-<body class="admin-page start-page policy-page">
-<header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM start">
-    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat<sup class="tm">TM</sup></span>
-  </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers &amp; Families</summary>
-      <div class="landing-nav-menu">
-        <a href="../app/whiteboard.html">Open Whiteboard</a>
-        <a href="../admin/admin.html">Teacher Admin</a>
-        <a href="../pages/features.html">Features</a>
-        <a href="../pages/background-templates.html">Background Templates</a>
-        <a href="../guides/">Teacher Guides</a>
-        <hr class="landing-nav-divider">
-        <a href="../parents/index.html">Family Access Tools</a>
-        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <a href="../pages/contact.html">Contact / Information Request</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Technical</summary>
-      <div class="landing-nav-menu">
-        <a href="../pages/pricing.html">Pricing</a>
-        <a href="../pages/download.html">Download for Self-Hosting</a>
-        <a href="../legal/combined-policy.html">Get all documents below</a>
-        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/accessibility.html">Accessibility Statement</a>
-        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
-        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
-        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="../legal/texas-compliance.html">Texas Compliance</a>
-        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Support</summary>
-      <div class="landing-nav-menu">
-        <a href="../blog/">Blogs About DrawSplat</a>
-        <a href="../community/index.html">Community Board</a>
-        <hr class="landing-nav-divider">
-        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
-        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
-        <a href="../pages/support.html">Support &amp; Guides Hub</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>SplatWorks&trade;</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
-          <a href="../pages/listsplat.html">ListSplat&trade;</a>
-          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
-          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
-        </div>
-        <div class="studio-nav-icons" aria-label="SplatWorks apps">
-          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
-        </div>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>DrawSplat</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
-          <a href="../pages/tools.html">View All Tools</a>
-          <a href="../solutions/clipsplat/" target="_blank" rel="noopener noreferrer">ClipSplat™</a>
-          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
-          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
-          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
-          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
-          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
-          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
-          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
-          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
-          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
-          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
-          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
-          <a href="../pages/tools.html#widgets">View All Widgets</a>
-          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
-          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
-          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
-          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
-          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
-          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
-          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
-          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
-          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
-          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
-          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
-          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
-          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
-          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../games/">Games</a>
-          <a href="../games/">View All Games</a>
-          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
-          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
-          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
-          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
-          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
-          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
-          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
-          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
-          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
-          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
-          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
-          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
-        </div>
-      </div>
-    </details>
-  </nav>
-  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
-</header>
+<link rel="stylesheet" href="../assets/css/support-wiki.css"></head>
+<body class="admin-page start-page policy-page" data-wiki="true">
 
-<main class="landing-shell policy-shell">
+
+<!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="../wiki/index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="../wiki/index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="../guides/teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="../wiki/district-classrooms.html">District classrooms and rosters</a></li><li><a href="../guides/core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="../guides/saving-exporting.html">Saving and exporting</a></li><li><a href="../guides/collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="../guides/templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="../guides/images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="../guides/classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="../guides/diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="../guides/graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="../guides/scratchart.html">Scratch art</a></li><li><a href="../guides/project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="../guides/mysql-setup.html">MySQL / MariaDB setup</a></li><li><a href="../guides/google-setup.html">Apps Script setup</a></li><li><a href="../guides/apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="../wiki/setup-browser.html">Browser-only setup</a></li><li><a href="../wiki/setup-mysql.html">Advanced database hosting</a></li><li><a href="../wiki/setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="../wiki/modular-selfhost.html">Modular self-hosting</a></li><li><a href="../wiki/mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="../wiki/licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="../wiki/compliance.html">Compliance and district review</a></li><li><a href="../guides/compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="terms-privacy.html">Terms and privacy</a></li><li><a href="ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="district-addendum.html">District Privacy Addendum</a></li><li><a href="privacy-agreements.html">DPA Register</a></li><li><a href="google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="compliance-gaps.html">Compliance Gap List</a></li><li><a aria-current="page" href="gdpr-compliance.html">GDPR reference</a></li><li><a href="texas-compliance.html">Texas compliance reference</a></li><li><a href="widgets-security.html">Widget security boundary</a></li><li><a href="accessibility.html">Accessibility statement</a></li><li><a href="privacy-builder.html">Privacy Notice Builder</a></li><li><a href="combined-policy.html">Combined policy packet</a></li><li><a href="../wiki/COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="../wiki/support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="../wiki/tool-inventory.html">Component inventory</a></li><li><a href="../wiki/standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Privacy and district review</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/legal/gdpr-compliance.html">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content" class="landing-shell policy-shell">
   <section class="policy-hero">
     <p class="landing-eyebrow">Plain-Language Explainer</p>
-    <h1>GDPR compliance summary for DrawSplat<sup class="tm">TM</sup>.</h1>
+    <h1 id="gdpr-compliance-summary-for-drawsplat-tm">GDPR compliance summary for DrawSplat<sup class="tm">TM</sup>.</h1><div class="wiki-scope"><h2 id="current-deployment-scope">Current deployment scope</h2><p>Use <a href="../wiki/compliance.html">the wiki’s compliance and district review reference</a> to match this document to your actual installation. Apps Script console controls apply to Drive/Sheets workflows; they do not automatically administer district MariaDB/MySQL private boards, rosters, assignments, submissions, or feedback. Templates and review packets do not establish a signed NDPA/DPA or certify legal compliance.</p></div>
     <p>This page is for European and UK school administrators, IT leaders, and data protection officers (DPOs) deciding whether DrawSplat<sup class="tm">TM</sup> fits their compliance obligations under the EU General Data Protection Regulation (Regulation (EU) 2016/679) and the UK GDPR. It is not legal advice — your DPO should map the items below against your specific deployment.</p>
     <p><strong>Headline:</strong> DrawSplat<sup class="tm">TM</sup> is open-source educational software you deploy under your control. There is no DrawSplat SaaS that processes student data. Your school or district is the <strong>data controller</strong>; DrawSplat<sup class="tm">TM</sup> ships the technical primitives (browser-only mode, data export, deletion, audit logs, role-based access) that you wire into your compliance posture.</p>
   </section>
 
   <section class="policy-section">
-    <h2>1. Who is the controller and who is the processor?</h2>
+    <h2 id="1-who-is-the-controller-and-who-is-the-processor">1. Who is the controller and who is the processor?</h2>
     <p>Under Art. 4 GDPR, this depends on the deployment path:</p>
     <ul class="admin-checklist">
       <li><strong>Browser-only mode (no backend configured)</strong> — no personal data leaves the student's device or the teacher's browser. There is no processor. The school is the controller of whatever local storage it directs students to use, but no data flows over the network at all.</li>
@@ -175,7 +42,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>2. Lawful basis for processing student data</h2>
+    <h2 id="2-lawful-basis-for-processing-student-data">2. Lawful basis for processing student data</h2>
     <p>Per Art. 6 GDPR, the school typically relies on either:</p>
     <ul class="admin-checklist">
       <li><strong>Art. 6(1)(e) — public task</strong>, where the school is performing its public-interest education duty. This is the most common basis in EU/UK state schools for routine classroom tools.</li>
@@ -185,7 +52,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>3. Data minimisation — what DrawSplat<sup class="tm">TM</sup> processes</h2>
+    <h2 id="3-data-minimisation-what-drawsplat-tm-processes">3. Data minimisation — what DrawSplat<sup class="tm">TM</sup> processes</h2>
     <p>DrawSplat<sup class="tm">TM</sup>'s baseline collection is intentionally minimal:</p>
     <ul class="admin-checklist">
       <li><strong>Browser localStorage on the student's device</strong>: language preference (<code>drawsplat.language</code>), current board JSON, viewer-mode flag, audio mute setting (<code>drawsplat.audioMuted</code>), per-game enabled list, admin session token (sessionStorage, cleared on tab close). No identifiers, no behavioural tracking, no analytics. See the persistent <a href="#localStorage">localStorage inventory below</a>.</li>
@@ -196,7 +63,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>4. Data subject rights — what the platform supports</h2>
+    <h2 id="4-data-subject-rights-what-the-platform-supports">4. Data subject rights — what the platform supports</h2>
     <p>Articles 15–22 give individuals seven rights. Here's how DrawSplat<sup class="tm">TM</sup> supports each:</p>
     <ul class="admin-checklist">
       <li><strong>Right of access (Art. 15)</strong> — Internal Compliance Console → "Student data export" generates a JSON dump of everything tied to that student. Parents can request the same via the Family Access Portal.</li>
@@ -211,7 +78,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>5. Data residency and international transfers</h2>
+    <h2 id="5-data-residency-and-international-transfers">5. Data residency and international transfers</h2>
     <p>Under Chapter V GDPR, transfers of personal data outside the EU/UK / EEA require an adequacy decision or safeguards (Standard Contractual Clauses, BCRs, etc.).</p>
     <ul class="admin-checklist">
       <li><strong>Browser-only mode</strong> — zero transfers; data never leaves the student device.</li>
@@ -223,7 +90,7 @@
   </section>
 
   <section class="policy-section" id="localStorage">
-    <h2>6. localStorage inventory (no cookies, no third-party trackers)</h2>
+    <h2 id="6-localstorage-inventory-no-cookies-no-third-party-trackers">6. localStorage inventory (no cookies, no third-party trackers)</h2>
     <p>DrawSplat<sup class="tm">TM</sup> uses browser localStorage and sessionStorage for non-essential UI preferences. Under the EU Cookie Directive (2002/58/EC as amended) plus the ePrivacy interpretation of GDPR, even non-cookie local storage may require notice for non-essential items. Here is the complete inventory the public pages may set, so your privacy notice can describe them:</p>
     <ul class="admin-checklist">
       <li><code>drawsplat.language</code> — UI language pick (en / es / vi / ar / zh / uh). Strictly necessary for the language preference to persist between visits.</li>
@@ -238,7 +105,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>7. Security measures (Art. 32)</h2>
+    <h2 id="7-security-measures-art-32">7. Security measures (Art. 32)</h2>
     <ul class="admin-checklist">
       <li>Room passwords stored as salted SHA-256 hashes, never plaintext.</li>
       <li>Strict per-page Content Security Policy (<code>script-src 'self'</code>, no inline scripts on admin pages, no third-party origins).</li>
@@ -250,25 +117,25 @@
   </section>
 
   <section class="policy-section">
-    <h2>8. Children's data (Art. 8)</h2>
+    <h2 id="8-children-s-data-art-8">8. Children's data (Art. 8)</h2>
     <p>GDPR Art. 8 requires parental consent for information society services offered directly to children under 16 (member states may lower the threshold to 13). DrawSplat<sup class="tm">TM</sup> is offered to schools, not directly to children — schools obtain consent under the public-task / parental-authority framework. The Family Access Portal provides parents a self-service way to request access, exports, and deletion of their child's data.</p>
     <p>If a district uses DrawSplat<sup class="tm">TM</sup> outside that school-mediated context (e.g. a public after-school club where parents register children individually), the operator must obtain parental consent under Art. 8 directly — DrawSplat<sup class="tm">TM</sup> does not include a built-in consent-collection flow for that scenario.</p>
   </section>
 
   <section class="policy-section">
-    <h2>9. Data Protection Impact Assessment (DPIA, Art. 35)</h2>
+    <h2 id="9-data-protection-impact-assessment-dpia-art-35">9. Data Protection Impact Assessment (DPIA, Art. 35)</h2>
     <p>A DPIA is required when processing is likely to result in high risk to rights and freedoms (Art. 35(1)). Classroom whiteboards processing children's content typically trigger that threshold under Working Party 29 guidance (children + large-scale processing of vulnerable subjects).</p>
     <p>DrawSplat<sup class="tm">TM</sup> does not ship a turnkey DPIA template, but the <a href="ndpa-packet.html">NDPA / DPA Review Packet</a> and <a href="district-addendum.html">District Privacy Addendum</a> cover most of the substantive content a DPIA needs: data flows, retention, security measures, third-party processors, subject rights flows. Your DPO can repackage those into your jurisdiction's DPIA template.</p>
   </section>
 
   <section class="policy-section">
-    <h2>10. Breach notification (Art. 33–34)</h2>
+    <h2 id="10-breach-notification-art-33-34">10. Breach notification (Art. 33–34)</h2>
     <p>You must notify your supervisory authority within 72 hours of becoming aware of a personal-data breach that poses risk to data subjects. Because DrawSplat<sup class="tm">TM</sup> is not a SaaS hosted by DrawSplat Developer(s) — your district hosts the backend — the breach detection and notification flow runs through your existing incident response process, not through us.</p>
     <p>That said, if you discover a security vulnerability in the open-source code itself, please report it via the <a href="../pages/contact.html">contact form</a> so the patch can ship to all deployments. We treat security reports as urgent and credit responsible disclosure.</p>
   </section>
 
   <section class="policy-section">
-    <h2>11. Records of Processing Activities (RoPA, Art. 30)</h2>
+    <h2 id="11-records-of-processing-activities-ropa-art-30">11. Records of Processing Activities (RoPA, Art. 30)</h2>
     <p>You should keep an Art. 30 record covering each DrawSplat<sup class="tm">TM</sup> deployment. Suggested fields:</p>
     <ul class="admin-checklist">
       <li>Controller: your school / district name + DPO contact.</li>
@@ -282,7 +149,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>12. Honest gaps you should know about</h2>
+    <h2 id="12-honest-gaps-you-should-know-about">12. Honest gaps you should know about</h2>
     <p>To save your DPO time:</p>
     <ul class="admin-checklist">
       <li><strong>No GDPR-targeted Standard Contractual Clauses template.</strong> DrawSplat<sup class="tm">TM</sup> is not a controller or processor of your students' data, so SCCs don't apply between you and DrawSplat<sup class="tm">TM</sup>. They DO apply between you and Google / your hosting provider — those agreements are unchanged by introducing DrawSplat<sup class="tm">TM</sup>.</li>
@@ -293,7 +160,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>13. Quick checklist for your DPO</h2>
+    <h2 id="13-quick-checklist-for-your-dpo">13. Quick checklist for your DPO</h2>
     <p>Before classroom rollout in the EU/UK:</p>
     <ul class="admin-checklist">
       <li>Decide the deployment path (browser-only / Apps Script / MySQL self-host) and document it.</li>
@@ -308,7 +175,7 @@
   </section>
 
   <section class="policy-section">
-    <h2>Cross-links</h2>
+    <h2 id="cross-links">Cross-links</h2>
     <ul class="admin-checklist">
       <li><a href="terms-privacy.html">Full Terms &amp; Privacy</a> — the authoritative text including governing law clauses.</li>
       <li><a href="district-addendum.html">District Privacy Addendum</a> — model contract language.</li>
@@ -318,14 +185,7 @@
       <li><a href="../pages/contact.html">Contact form</a> — security disclosure, questions, requests.</li>
     </ul>
   </section>
-</main>
-<footer>
-  <a href="../index.html">Home</a>
-  <a href="../pages/features.html">Features</a>
-  <a href="../pages/background-templates.html">Background Templates</a>
-  <a href="../pages/pricing.html">Pricing</a>
-  <a href="terms-privacy.html">Terms &amp; Privacy</a>
-  <a href="gdpr-compliance.html">GDPR Compliance</a>
-</footer>
-</body>
+</main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#current-deployment-scope">Current deployment scope</a></li><li><a href="#1-who-is-the-controller-and-who-is-the-processor">1. Who is the controller and who is the processor?</a></li><li><a href="#2-lawful-basis-for-processing-student-data">2. Lawful basis for processing student data</a></li><li><a href="#3-data-minimisation-what-drawsplat-tm-processes">3. Data minimisation — what DrawSplat TM  processes</a></li><li><a href="#4-data-subject-rights-what-the-platform-supports">4. Data subject rights — what the platform supports</a></li><li><a href="#5-data-residency-and-international-transfers">5. Data residency and international transfers</a></li><li><a href="#6-localstorage-inventory-no-cookies-no-third-party-trackers">6. localStorage inventory (no cookies, no third-party trackers)</a></li><li><a href="#7-security-measures-art-32">7. Security measures (Art. 32)</a></li><li><a href="#8-children-s-data-art-8">8. Children&#x27;s data (Art. 8)</a></li><li><a href="#9-data-protection-impact-assessment-dpia-art-35">9. Data Protection Impact Assessment (DPIA, Art. 35)</a></li><li><a href="#10-breach-notification-art-33-34">10. Breach notification (Art. 33–34)</a></li><li><a href="#11-records-of-processing-activities-ropa-art-30">11. Records of Processing Activities (RoPA, Art. 30)</a></li><li><a href="#12-honest-gaps-you-should-know-about">12. Honest gaps you should know about</a></li><li><a href="#13-quick-checklist-for-your-dpo">13. Quick checklist for your DPO</a></li><li><a href="#cross-links">Cross-links</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="../wiki/licensing.html">Licensing</a></footer><!-- wiki:end -->
+
+<script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body>
 </html>

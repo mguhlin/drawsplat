@@ -1,5 +1,8 @@
 # DrawSplat&trade; — Browser-Only Setup
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+
+
 Use this when you want **the simplest possible deployment**: a single user (or a teacher demoing on a projector) with no accounts, no shared boards, no cloud storage, and no compliance features beyond client-side text filtering.
 
 ## What you get

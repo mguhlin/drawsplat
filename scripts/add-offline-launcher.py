@@ -67,7 +67,7 @@ if registry.exists():
         tool['related'] = [key for key in tool.get('related', []) if key in ids]
     registry.write_text(json.dumps(data, indent=2) + '\n')
 
-for relative in (['index.html'] if name == 'DrawSplat' else []) + ['pages/tools.html', 'pages/splatworks.html', 'games/index.html']:
+for relative in (['index.html'] if name == 'DrawSplat' else []) + ['pages/tools.html', 'pages/splatworks.html', 'pages/download.html', 'games/index.html']:
     page = folder / relative
     if not page.exists():
         continue
@@ -84,6 +84,8 @@ for relative in (['index.html'] if name == 'DrawSplat' else []) + ['pages/tools.
         path = '/' + str(target.resolve().relative_to(folder.resolve()))
         return anchor.replace(href[0], 'href="https://drawsplat.org' + path + '" title="Opens the online website; internet required"')
     content = re.sub(r'<a\b[^>]*>.*?</a>', revise_link, page.read_text(), flags=re.S)
+    if not (folder / 'wiki/index.html').exists():
+        content = re.sub(r'(<script[^>]*src="[^"]*support-wiki.js")', r'\1 data-root="https://drawsplat.org/"', content)
     page.write_text(content)
 
 launcher = folder / 'assets/js/tool-launcher.js'
@@ -101,3 +103,10 @@ if cards.exists():
 
 from package_entry_pages import add_entry_pages
 add_entry_pages(folder, name, entry)
+
+# Portable module documentation points to the current, authoritative reference.
+for readme in folder.glob('*README*.txt'):
+    text = readme.read_text()
+    reference = 'Current documentation: https://drawsplat.org/wiki/'
+    if reference not in text:
+        readme.write_text(reference + '\n\n' + text)

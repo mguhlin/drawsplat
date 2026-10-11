@@ -17,146 +17,13 @@
 <link rel="stylesheet" href="../assets/css/app.css" />
 <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
-<body class="admin-page start-page support-page guide-article-page">
-<header class="landing-header">
-  <a class="landing-brand" href="../index.html" aria-label="DrawSplatTM home">
-    <img src="../assets/brand/DrawSplat_logo.png" class="header-logo" alt="">
-    <span>DrawSplat<sup class="tm">TM</sup></span>
-  </a>
-  <nav class="landing-nav" aria-label="DrawSplatTM navigation">
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>For Teachers &amp; Families</summary>
-      <div class="landing-nav-menu">
-        <a href="../app/whiteboard.html">Open Whiteboard</a>
-        <a href="../admin/admin.html">Teacher Admin</a>
-        <a href="../pages/features.html">Features</a>
-        <a href="../pages/background-templates.html">Background Templates</a>
-        <a href="../guides/">Teacher Guides</a>
-        <hr class="landing-nav-divider">
-        <a href="../parents/index.html">Family Access Tools</a>
-        <a href="../legal/terms-privacy.html">Terms &amp; Privacy</a>
-        <a href="../pages/contact.html">Contact / Information Request</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Technical</summary>
-      <div class="landing-nav-menu">
-        <a href="../pages/pricing.html">Pricing</a>
-        <a href="../pages/download.html">Download for Self-Hosting</a>
-        <a href="../legal/combined-policy.html">Get all documents below</a>
-        <a href="../legal/compliance-gaps.html"><strong>Compliance Gap List</strong></a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/accessibility.html">Accessibility Statement</a>
-        <a href="../legal/district-addendum.html">District Privacy Addendum</a>
-        <a href="../legal/gdpr-compliance.html">GDPR Compliance Summary</a>
-        <hr class="landing-nav-divider">
-        <a href="../legal/google-oauth-disclosure.html">Google OAuth Disclosure</a>
-        <a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a>
-        <a href="../legal/privacy-builder.html">Privacy Notice Builder</a>
-        <a href="../legal/texas-compliance.html">Texas Compliance</a>
-        <a href="../legal/widgets-security.html">Widget Security Boundary</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown">
-      <summary>Support</summary>
-      <div class="landing-nav-menu">
-        <a href="../blog/">Blogs About DrawSplat</a>
-        <a href="../community/index.html">Community Board</a>
-        <hr class="landing-nav-divider">
-        <a href="../guides/google-setup.html">Apps Script Setup Guide</a>
-        <a href="../guides/compliance-guide.html">Compliance Console Guide</a>
-        <a href="../guides/mysql-setup.html">MySQL Setup Guide</a>
-        <a href="../pages/support.html">Support &amp; Guides Hub</a>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>SplatWorks&trade;</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/splatworks.html">SplatWorks&trade;</a>
-          <a href="../pages/writesplat.html">WriteSplat&trade;</a>
-          <a href="../pages/listsplat.html">ListSplat&trade;</a>
-          <a href="../pages/showsplat.html">ShowSplat&trade;</a>
-          <a href="../pages/gridsplat.html">GridSplat&trade;</a>
-        </div>
-        <div class="studio-nav-icons" aria-label="SplatWorks apps">
-          <a class="studio-nav-icon-card" href="../pages/writesplat.html"><img src="../assets/icons/splatworks/writesplat-nav.png" alt=""><span>WriteSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/listsplat.html"><img src="../assets/icons/splatworks/listsplat-nav.png" alt=""><span>ListSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/showsplat.html"><img src="../assets/icons/splatworks/showsplat-nav.png" alt=""><span>ShowSplat&trade;</span></a>
-          <a class="studio-nav-icon-card" href="../pages/gridsplat.html"><img src="../assets/icons/splatworks/gridsplat-nav.png" alt=""><span>GridSplat&trade;</span></a>
-        </div>
-      </div>
-    </details>
-    <details name="landing-topnav" class="landing-nav-dropdown studio-nav-dropdown">
-      <summary>DrawSplat</summary>
-      <div class="landing-nav-menu studio-nav-menu">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html">Tools</a>
-          <a href="../pages/tools.html">View All Tools</a>
-          <a href="../solutions/clipsplat/" target="_blank" rel="noopener noreferrer">ClipSplat™</a>
-          <a href="../solutions/animated-gif/" target="_blank" rel="noopener noreferrer">Animated GIF Maker</a>
-          <a href="../solutions/big-link/" target="_blank" rel="noopener noreferrer">Big Link</a>
-          <a href="../solutions/chart-studio/" target="_blank" rel="noopener noreferrer">Chart Studio</a>
-          <a href="../solutions/CipherSplat/" target="_blank" rel="noopener noreferrer">CipherSplat</a>
-          <a href="../solutions/coloring-book/" target="_blank" rel="noopener noreferrer">Coloring Book</a>
-          <a href="../solutions/concept-map/" target="_blank" rel="noopener noreferrer">Concept Map</a>
-          <a href="../solutions/dicebreakers/" target="_blank" rel="noopener noreferrer">Dicebreaker Creator</a>
-          <a href="../solutions/graph-maker/" target="_blank" rel="noopener noreferrer">Graph Maker</a>
-          <a href="../solutions/markdown-studio/" target="_blank" rel="noopener noreferrer">Markdown Studio</a>
-          <a href="../solutions/mermaid/" target="_blank" rel="noopener noreferrer">Mermaid Diagram</a>
-          <a href="../solutions/picture-graph/" target="_blank" rel="noopener noreferrer">Picture Graph</a>
-          <a href="../solutions/rubric-builder/" target="_blank" rel="noopener noreferrer">Rubric Builder</a>
-          <a href="../solutions/sketchspace-VR/" target="_blank" rel="noopener noreferrer">SketchSpace VR</a>
-          <a href="../solutions/imagesplat/" target="_blank" rel="noopener noreferrer">ImageSplat™</a>
-          <a href="../solutions/wordsearch/" target="_blank" rel="noopener noreferrer">Word Search Maker</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../pages/tools.html#widgets">Widgets</a>
-          <a href="../pages/tools.html#widgets">View All Widgets</a>
-          <a href="../solutions/bingo-card-generator/" target="_blank" rel="noopener noreferrer">Bingo Card Generator</a>
-          <a href="../solutions/bingo-caller/" target="_blank" rel="noopener noreferrer">Bingo Caller</a>
-          <a href="../solutions/brain-sort/" target="_blank" rel="noopener noreferrer">Brain Sort</a>
-          <a href="../solutions/clock-wizard/" target="_blank" rel="noopener noreferrer">Clock Wizard</a>
-          <a href="../solutions/coinflipping/" target="_blank" rel="noopener noreferrer">Coin Flipper</a>
-          <a href="../solutions/dice/" target="_blank" rel="noopener noreferrer">Dice Roller</a>
-          <a href="../solutions/drawsketch/" target="_blank" rel="noopener noreferrer">Draw &amp; Sketch</a>
-          <a href="../solutions/fortune/" target="_blank" rel="noopener noreferrer">Fortune Wheel</a>
-          <a href="../solutions/memepuzzle/" target="_blank" rel="noopener noreferrer">Meme Puzzle</a>
-          <a href="../solutions/quiz-flashcard-studio/" target="_blank" rel="noopener noreferrer">Quiz &amp; Flashcard Studio</a>
-          <a href="../solutions/step-splat/" target="_blank" rel="noopener noreferrer">Step-Splat</a>
-          <a href="../solutions/storywheel/" target="_blank" rel="noopener noreferrer">Story Wheel</a>
-          <a href="../solutions/toneshifter/" target="_blank" rel="noopener noreferrer">Toneshifter</a>
-          <a href="../solutions/vibe-check/" target="_blank" rel="noopener noreferrer">Vibe Check</a>
-          <a href="../solutions/wheel-spinner/" target="_blank" rel="noopener noreferrer">Wheel Spinner</a>
-        </div>
-        <hr class="landing-nav-divider">
-        <div class="studio-nav-group">
-          <a class="studio-nav-heading" href="../games/">Games</a>
-          <a href="../games/">View All Games</a>
-          <a href="../games/castles/" target="_blank" rel="noopener noreferrer">Castles</a>
-          <a href="../solutions/dotsboxes/" target="_blank" rel="noopener noreferrer">Dots and Boxes</a>
-          <a href="../games/floodfill/" target="_blank" rel="noopener noreferrer">Flood Fill</a>
-          <a href="../games/flowfree/" target="_blank" rel="noopener noreferrer">Flow Free</a>
-          <a href="../games/funquiz/" target="_blank" rel="noopener noreferrer">Fun Quiz</a>
-          <a href="../games/gilasplat/" target="_blank" rel="noopener noreferrer">GilaSplat</a>
-          <a href="../games/lightsout/" target="_blank" rel="noopener noreferrer">Lights Out</a>
-          <a href="../games/splatball/" target="_blank" rel="noopener noreferrer">Splatball</a>
-          <a href="../games/squirrel-run-game/" target="_blank" rel="noopener noreferrer">Squirrel Run</a>
-          <a href="../games/super-star-trek/" target="_blank" rel="noopener noreferrer">Super Star Trek</a>
-          <a href="../games/tangram/" target="_blank" rel="noopener noreferrer">Tangram Packing</a>
-          <a href="../games/untangle/" target="_blank" rel="noopener noreferrer">Untangle</a>
-        </div>
-      </div>
-    </details>
-  </nav>
-  <a class="landing-signin" href="../app/whiteboard.html">Open Whiteboard</a>
-</header>
+<link rel="stylesheet" href="../assets/css/support-wiki.css"></head>
+<body class="admin-page start-page support-page guide-article-page" data-wiki="true">
 
-<main class="landing-shell article-shell">
+
+<!-- wiki:start --><a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="../wiki/index.html"><img src="../assets/brand/DrawSplat_logo.png" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a><nav aria-label="Site"><a href="../index.html">Home</a><a href="../pages/download.html">Downloads</a><a href="../app/whiteboard.html">Open whiteboard</a></nav></header><div class="wiki-layout"><aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics"><section><h2>Start here</h2><ul><li><a href="../wiki/index.html">DrawSplat Wiki</a></li><li><a href="../docs/district-selfhost.html">District installation · Quick Start</a></li><li><a href="../pages/download.html">Downloads and packages</a></li><li><a href="teacher-options-quick-start.html">Teacher Quick Start</a></li></ul></section><section><h2>Whiteboard and classroom</h2><ul><li><a href="../wiki/district-classrooms.html">District classrooms and rosters</a></li><li><a href="core-whiteboard-tools.html">Core whiteboard tools</a></li><li><a href="saving-exporting.html">Saving and exporting</a></li><li><a href="collaboration-turn-ins.html">Collaboration and turn-ins</a></li><li><a href="templates-backgrounds.html">Templates and backgrounds</a></li><li><a href="images-stickers-coloring.html">Images, stickers and coloring</a></li><li><a href="classroom-widgets-tools.html">Classroom widgets and tools</a></li><li><a href="diagrams-maps-word-clouds.html">Diagrams, maps and word clouds</a></li><li><a href="graphs-picture-graphs.html">Graphs and picture graphs</a></li><li><a href="scratchart.html">Scratch art</a></li><li><a href="project-reference.html">Whiteboard feature reference</a></li><li><a href="../pages/splatworks.html">SplatWorks applications</a></li></ul></section><section><h2>Connections and setup</h2><ul><li><a href="mysql-setup.html">MySQL / MariaDB setup</a></li><li><a aria-current="page" href="google-setup.html">Apps Script setup</a></li><li><a href="apps-script-web-app-url.html">Apps Script Web App URL</a></li><li><a href="../wiki/setup-browser.html">Browser-only setup</a></li><li><a href="../wiki/setup-mysql.html">Advanced database hosting</a></li><li><a href="../wiki/setup-google-apps-script.html">Apps Script technical reference</a></li><li><a href="../wiki/modular-selfhost.html">Modular self-hosting</a></li><li><a href="../wiki/mariadb-local.html">Local MariaDB development</a></li></ul></section><section><h2>Licensing and pricing</h2><ul><li><a href="../wiki/licensing.html">Licensing and software cost</a></li><li><a href="../pages/pricing.html">Pricing and optional services</a></li></ul></section><section><h2>Privacy and district review</h2><ul><li><a href="../wiki/compliance.html">Compliance and district review</a></li><li><a href="compliance-guide.html">Apps Script Compliance Console</a></li><li><a href="../legal/terms-privacy.html">Terms and privacy</a></li><li><a href="../legal/ndpa-packet.html">NDPA / DPA Review Packet</a></li><li><a href="../legal/district-addendum.html">District Privacy Addendum</a></li><li><a href="../legal/privacy-agreements.html">DPA Register</a></li><li><a href="../legal/google-oauth-disclosure.html">Google OAuth disclosure</a></li><li><a href="../legal/compliance-gaps.html">Compliance Gap List</a></li><li><a href="../legal/gdpr-compliance.html">GDPR reference</a></li><li><a href="../legal/texas-compliance.html">Texas compliance reference</a></li><li><a href="../legal/widgets-security.html">Widget security boundary</a></li><li><a href="../legal/accessibility.html">Accessibility statement</a></li><li><a href="../legal/privacy-builder.html">Privacy Notice Builder</a></li><li><a href="../legal/combined-policy.html">Combined policy packet</a></li><li><a href="../wiki/COMPLIANCE.html">Compliance operations reference</a></li></ul></section><section><h2>Technical and updates</h2><ul><li><a href="../wiki/support-wiki-maintenance.html">Maintaining the wiki</a></li><li><a href="../wiki/tool-inventory.html">Component inventory</a></li><li><a href="../wiki/standalone-architecture.html">Standalone architecture</a></li><li><a href="../pages/release-notes.html">Release notes</a></li><li><a href="../blog/index.html">DrawSplat blog</a></li><li><a href="../pages/contact.html">Contact and support</a></li></ul></section></nav></div></details></aside><div class="wiki-reading"><div class="wiki-article-bar"><span>Connections and setup</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/guides/google-setup.html">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section><!-- wiki:main --><main tabindex="-1" id="wiki-content" class="landing-shell article-shell">
   <nav class="article-breadcrumb" aria-label="Guide breadcrumb">
-    <a href="../pages/support.html">Support</a>
+    <a href="../wiki/index.html">Support</a>
     <span>/</span>
     <a href="index.html">Guides and Classroom Activities</a>
   </nav>
@@ -164,14 +31,14 @@
   <article class="guide-article">
     <img class="guide-hero-image" src="images/google-drive-sheets-setup.png" alt="Google Drive and Sheets setup in DrawSplatTM with Google Drive, Google Sheets, and DrawSplatTM logos">
     <p class="landing-eyebrow">Setup Guide</p>
-    <h1>DrawSplat<sup class="tm">TM</sup> Google Drive and Sheets Setup</h1>
+    <h1 id="drawsplat-tm-google-drive-and-sheets-setup">DrawSplat<sup class="tm">TM</sup> Google Drive and Sheets Setup</h1>
     <p class="article-lede">These steps configure the optional Google Apps Script backend for Drive saves, cloud rooms, templates, and turn-ins.</p>
 
-    <h2>1. Create the Google Backend</h2>
+    <h2 id="choose-the-right-google-connection">Choose the right Google connection</h2><p>This guide is for the optional <strong>Apps Script + Drive + Sheets</strong> backend. District Google sign-in for MariaDB/MySQL classrooms is a different connection: follow the <a href="../docs/district-selfhost.html#configure-google-sign-in">district Google sign-in instructions</a>. You do not need Apps Script to save district boards or submit district assignments.</p><p>School Workspace policies and Apps Script quotas govern access and capacity. Ask your Workspace administrator to approve the intended deployment audience; verify access with an actual student account before relying on it.</p><h2 id="1-create-the-google-backend">1. Create the Google Backend</h2>
     <ol>
       <li>Create a Google Sheet named <strong>DrawSplat<sup class="tm">TM</sup> Saves</strong>.</li>
       <li>Open <strong>Extensions &gt; Apps Script</strong>.</li>
-      <li>Paste the contents of <code>apps-script/Code.gs</code> into Apps Script.</li>
+      <li>Replace the starter code with the current <a href="../apps-script/Code.gs">apps-script/Code.gs</a> from the same release as your whiteboard.</li>
       <li>Save the project.</li>
       <li>Run the <code>setup()</code> function once.</li>
       <li>Approve the requested Google Drive and Google Sheets permissions.</li>
@@ -185,19 +52,19 @@
       <li>a <code>TurnIns</code> sheet</li>
     </ul>
 
-    <h2>2. Deploy the Web App</h2>
+    <h2 id="2-deploy-the-web-app">2. Deploy the Web App</h2>
     <ol>
       <li>In Apps Script, choose <strong>Deploy &gt; New deployment</strong>.</li>
       <li>Select <strong>Web app</strong>.</li>
       <li>Set <strong>Execute as</strong> to <strong>Me</strong>.</li>
       <li>Set <strong>Who has access</strong> to the narrowest option that works for your class or district.</li>
       <li>Deploy.</li>
-      <li>Copy the Web App URL.</li>
+      <li>Copy the deployed URL ending in <code>/exec</code>, not the editor URL or development <code>/dev</code> URL.</li>
       <li>Paste the URL into DrawSplat<sup class="tm">TM</sup> under <strong>Options &gt; Google integration &gt; Script URL</strong>.</li>
     </ol>
     <p>For a hosted classroom deployment, you can place that URL in <code>DEFAULT_GOOGLE_SCRIPT_URL</code> near the top of <code>assets/js/app.js</code>. That keeps students from needing a <code>script=</code> value in shared links.</p>
 
-    <h2>3. Teacher Classroom Workflow</h2>
+    <h2 id="test-update-and-administer-the-deployment">Test, update, and administer the deployment</h2><ol><li>Save the URL in Teacher Admin’s Google Drive + Sheets settings and choose <strong>Test Connection</strong>.</li><li>Save a test board, reload, and reopen it. Then test a student link in the intended school account.</li><li>For the Apps Script Compliance Console, set a unique <code>ADMIN_PASSCODE</code> in Project Settings → Script Properties. Keep this server-side passcode private; it is separate from any Teacher Admin interface lock.</li><li>After changing <code>Code.gs</code>, use <strong>Deploy → Manage deployments → Edit → New version → Deploy</strong>. Keeping the deployment preserves its URL; creating another deployment requires updating stored links.</li></ol><p>See the <a href="compliance-guide.html">Compliance Console guide</a> for storage scope and operational checks, and <a href="../docs/setup-google-apps-script.md">Apps Script technical reference</a> for script properties. Never publish passcodes in student links.</p><h2 id="3-teacher-classroom-workflow">3. Teacher Classroom Workflow</h2>
     <ol>
       <li>Open DrawSplat<sup class="tm">TM</sup>.</li>
       <li>Switch to <strong>Education Tools</strong>.</li>
@@ -212,7 +79,7 @@
     </ol>
     <p>Each room name acts as a unique shared whiteboard instance. The generated student link includes <code>role=student</code> and the room name so students open directly into the correct shared board.</p>
 
-    <h2>4. Student Workflow</h2>
+    <h2 id="4-student-workflow">4. Student Workflow</h2>
     <p>Students open the copied link. The link uses <code>role=student</code>, which locks DrawSplat<sup class="tm">TM</sup> into student mode.</p>
     <p>Students can add:</p>
     <ul>
@@ -232,7 +99,7 @@
       <li>edit teacher-layer objects</li>
     </ul>
 
-    <h2>5. How Saving Works</h2>
+    <h2 id="5-how-saving-works">5. How Saving Works</h2>
     <p>Teacher saves initialize or update the full room board.</p>
     <p>Student saves are merged by the Apps Script backend. The backend preserves:</p>
     <ul>
@@ -242,19 +109,14 @@
     </ul>
     <p>Room passwords are stored as salted SHA-256 hashes in the Google Sheet, not as plain text.</p>
 
-    <h2>6. Security Notes</h2>
+    <h2 id="6-security-notes">6. Security Notes</h2>
     <p>The room password is a classroom access gate, not a full identity system.</p>
     <p>Google login and account-level access are controlled by the Apps Script deployment setting. For real student authentication, deploy the Web App using the narrowest access setting allowed by your school or district.</p>
 
     <p class="article-return"><a class="landing-cta" href="index.html">Back to Guides and Classroom Activities</a></p>
   </article>
-</main>
+</main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#choose-the-right-google-connection">Choose the right Google connection</a></li><li><a href="#1-create-the-google-backend">1. Create the Google Backend</a></li><li><a href="#2-deploy-the-web-app">2. Deploy the Web App</a></li><li><a href="#test-update-and-administer-the-deployment">Test, update, and administer the deployment</a></li><li><a href="#3-teacher-classroom-workflow">3. Teacher Classroom Workflow</a></li><li><a href="#4-student-workflow">4. Student Workflow</a></li><li><a href="#5-how-saving-works">5. How Saving Works</a></li><li><a href="#6-security-notes">6. Security Notes</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="../wiki/licensing.html">Licensing</a></footer><!-- wiki:end -->
 
-<footer class="landing-footer">
-  <img src="../assets/brand/DrawSplat_logo.png" alt="" class="landing-footer-logo">
-  <span>DrawSplat<sup class="tm">TM</sup> Google setup guide.</span>
-  <a href="index.html">Guides</a>
-  <a href="../pages/support.html">Support</a>
-</footer><script src="../assets/js/consent-banner.js" defer></script>
-</body>
+<script src="../assets/js/consent-banner.js" defer></script>
+<script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script></body>
 </html>
