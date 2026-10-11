@@ -123,3 +123,17 @@ test("major apps expose the shared app launcher", async ({ page }) => {
     ).toBeVisible();
   }
 });
+
+test('guestbook stays compact after homepage tools and school resources',async({page})=>{
+ for(const width of [1360,390]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  const guestbook=page.locator('#guestbook');
+  await expect(guestbook.locator('img')).toHaveCount(0);
+  await expect(guestbook.getByRole('link',{name:'Sign the guestbook',exact:true})).toHaveAttribute('target','_blank');
+  expect(await guestbook.evaluate(el=>el.previousElementSibling.classList.contains('institutional'))).toBeTruthy();
+  expect((await guestbook.boundingBox()).height).toBeLessThan(260);
+  await page.getByRole('navigation',{name:'Primary navigation'}).getByRole('link',{name:'Guestbook',exact:true}).click();
+  await expect(page).toHaveURL(/#guestbook$/);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ }
+});
