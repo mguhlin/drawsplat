@@ -7,6 +7,7 @@ for(const width of [1360,390]){
    await page.goto(url);
    const nav=page.getByRole('navigation',{name:'Primary navigation',exact:true});
    await expect(nav).toBeVisible();
+   for(const name of ['Blog','Guestbook','Wiki'])await expect(nav.getByRole('link',{name,exact:true})).toBeVisible();
    expect(await nav.locator(':scope > a, :scope > details > summary').allTextContents()).toEqual(['Apps','SplatWorks','Blog','Guestbook','Wiki']);
    await nav.locator('summary').filter({hasText:/^Apps$/}).click();
    await expect(nav.getByRole('link',{name:'Whiteboard',exact:true})).toBeVisible();

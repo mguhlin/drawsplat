@@ -13,3 +13,5 @@ header:has(>.site-nav){overflow:visible!important;height:auto;min-height:76px;fl
 .site-app-navigation{flex:0 0 100%;order:-2;background:white;color:#392b50;padding:4px 8px;border-bottom:1px solid #ddd5ea}.site-app-navigation .site-nav{justify-content:flex-start;margin:0}header:has(>.site-app-navigation){height:auto!important;flex-wrap:wrap!important;overflow:visible!important;padding-top:0}.site-app-navigation .site-nav-menu{z-index:300}
 header .site-nav{gap:22px}header .site-nav>a,header .site-nav summary{padding:9px 0}
 @media(max-width:700px){header .site-nav{gap:20px}}
+/* Keep all five site links visible when older page styles hide mobile links. */
+header .site-nav>a{display:inline-flex!important;align-items:center}
