@@ -18,7 +18,7 @@ DrawSplatTM is a self-contained interactive whiteboard for K-16 educators and st
 
 ## Current district setup and support
 
-The [DrawSplat Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. The complete district suite is v1.2.1; install from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
+The [DrawSplat Wiki](https://drawsplat.org/wiki/) is the official current documentation directory, with full-text search across installation, school accounts, licensing, pricing, OAuth, NDPA/DPA review, and technical references. The complete district suite is v1.2.2; install from the [download page](https://drawsplat.org/pages/download#district-suite). Older release descriptions below are historical.
 
 ## Getting started
 
