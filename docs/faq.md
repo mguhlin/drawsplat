@@ -92,7 +92,16 @@ Yes. Download the complete district package, extract it, and open `start-here.ht
 
 ### Do I have to use Docker?
 
-No. Docker is the preferred path, but a native path is also available. Choose the path at the start of the checklist. Native hosting needs Node.js, Caddy, and a MariaDB or MySQL service. See [installation choices](../docs/district-selfhost.html).
+No. Docker is the preferred path, but a native path is also available. Choose the path at the start of the checklist. Native hosting needs Node.js, Caddy, and a MariaDB or MySQL service.
+
+Default ports for native hosting:
+
+- **8080:** local website and setup page, at `http://localhost:8080/setup`.
+- **8787:** saving API; keep it private on localhost behind the web gateway.
+- **3306:** MariaDB or MySQL; keep database access private.
+- **80 (HTTP) and 443 (HTTPS):** allow incoming traffic to the gateway when using a district domain with HTTPS.
+
+If a local port is already in use, choose an alternative on the first launch. See [installation choices and port settings](../docs/district-selfhost.html).
 
 ### Where are the Docker installation instructions?
 
