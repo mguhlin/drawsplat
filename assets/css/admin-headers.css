@@ -1,0 +1,31 @@
+/* Decorative, self-hosted DrawSplat artwork for administration pages. */
+.admin-header-art {
+  display: block;
+  width: calc(100% - 48px);
+  max-width: 1072px;
+  height: auto;
+  aspect-ratio: 4 / 1;
+  object-fit: cover;
+  margin: 24px auto 0;
+  border: 1px solid #e6dfff;
+  border-radius: 18px;
+  background: #f7f3ff;
+  box-shadow: 0 8px 24px #7c3aed0d;
+}
+.admin-header-art--wide { max-width: 1144px; }
+.admin-header-art--access { max-width: 720px; }
+.admin-header-art--district { max-width: 968px; }
+/* Keep the password card close to the artwork, in both locked and preview flows. */
+.admin-header-art + .admin-gate { min-height: 0; padding-bottom: 40px; }
+.admin-header-art + .access-shell { padding-top: 24px; }
+.admin-header-art + .access-shell .access-card { margin-top: 0; }
+@media (max-width: 760px) {
+  .admin-header-art {
+    width: calc(100% - 28px);
+    margin-top: 16px;
+    border-radius: 12px;
+  }
+}
+@media print {
+  .admin-header-art { display: none; }
+}
