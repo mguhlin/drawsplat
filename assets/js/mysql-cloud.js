@@ -51,7 +51,7 @@
     window.google.accounts.id.initialize({client_id:config.googleClientId,callback:async result=>{try{const out=await request('/auth/google',{method:'POST',body:JSON.stringify({idToken:result.credential})},base);sessionStorage.setItem(SESSION_KEY,JSON.stringify({...out,endpoint:base}));onSignIn(out);}catch(err){onError(err);}}});
     window.google.accounts.id.renderButton(holder,{type:'standard',theme:'outline',size:'large',text:'signin_with'});
   }
-  async function account() {
+  async function account(options = {}) {
     const current = session();
     if (current) {
       const dialog = modal('Online account', 'Signed in as ' + current.user.email + '. Sign out when you finish on a shared device. Signing out closes online access; device copies remain.');
@@ -61,7 +61,8 @@
     }
     const requestedEndpoint=endpoint();
     return new Promise(resolve => {
-      const dialog = modal('Sign in to save online', 'Use your DrawSplat saving account. This is separate from the Teacher Admin password. Your sign-in stays in this browser tab. Saving service: ' + new URL(endpoint()).host);
+      const district = options.purpose === 'district';
+      const dialog = modal(district ? 'Sign in as district administrator' : 'Sign in to save online', (district ? 'Use the administrator email and password created during DrawSplat installation. Teacher and student accounts cannot manage district rosters. If you do not have these credentials, ask the person who installed your district server. This is separate from the Teacher Admin unlock password.' : 'Use your DrawSplat saving account. This is separate from the Teacher Admin password.') + ' Your sign-in stays in this browser tab. Saving service: ' + new URL(endpoint()).host);
       const form = document.createElement('form');
       const email = field(form, 'Email', 'email', 'username');
       const password = field(form, 'Password', 'password', 'current-password');
