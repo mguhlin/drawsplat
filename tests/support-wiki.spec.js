@@ -77,3 +77,23 @@ test('SplatWorks has dedicated searchable guides and stays inside its article co
   if(width===1636)await page.screenshot({path:'/tmp/drawsplat-splatworks-wiki.png',fullPage:true});
  }
 });
+test('audience guides keep teaching concise and route school and family setup correctly',async({page})=>{
+ await page.goto('/wiki/');
+ const topics=page.getByRole('navigation',{name:'Wiki topics'});
+ const educators=topics.locator('section').filter({has:page.getByRole('heading',{name:'For educators',exact:true})});
+ await expect(educators.getByRole('link')).toHaveCount(7);
+ await expect(topics.getByRole('heading',{name:'For technology admins',exact:true})).toBeVisible();
+ await expect(topics.getByRole('heading',{name:'For parents and students',exact:true})).toBeVisible();
+ for(const [url,title] of [['for-educators','For educators'],['for-technology-admins','For technology admins'],['for-parents-and-students','For parents and students']]){
+  await page.goto('/wiki/'+url+'.html');await expect(page.locator('main h1')).toHaveText(title);
+  const links=await page.locator('main a').evaluateAll(nodes=>nodes.map(a=>a.getAttribute('href')));
+  for(const link of links.filter(link=>!link.startsWith('#')&&!link.startsWith('http')&&!link.startsWith('mailto:'))){
+   const response=await page.request.get(new URL(link,page.url()).href);expect(response.ok(),link).toBeTruthy();
+  }
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ }
+ await page.goto('/wiki/?q=parents+students');await expect(page.locator('.wiki-results a').filter({hasText:'Learning, saving, and getting help'})).toBeVisible();
+ await page.goto('/wiki/?q=technology+admins');await expect(page.locator('.wiki-results a').filter({hasText:'School setup and operations'})).toBeVisible();
+ await page.goto('/wiki/?q=scratch');await expect(page.locator('.wiki-results a').filter({hasText:'Scratch art'})).toBeVisible();
+});

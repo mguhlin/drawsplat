@@ -19,7 +19,7 @@ for(const width of [1360,390]){
 }
 test('educator content is in the searchable wiki and typing games in Games',async({page})=>{
  await page.goto('/wiki/for-educators.html');await expect(page.locator('main h1')).toHaveText('For educators');
- for(const name of ['Teacher Quick Start','Features','Background templates','Family Access Tools'])await expect(page.locator('main').getByRole('link',{name,exact:true})).toBeVisible();
+ for(const name of ['Teacher Quick Start','Choose a background','use a classroom template','Parents and students'])await expect(page.locator('main').getByRole('link',{name,exact:true})).toBeVisible();
  await page.getByLabel('Search the wiki',{exact:true}).fill('educators');await page.getByRole('button',{name:'Search',exact:true}).click();
  await expect(page.locator('.wiki-results a').filter({hasText:/^For educators$/})).toBeVisible();
  await page.goto('/games/');await expect(page.locator('main').getByRole('link',{name:/Typing Games/}).first()).toBeVisible();
