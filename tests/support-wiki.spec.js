@@ -61,3 +61,19 @@ test('Wiki brand returns readers to the main DrawSplat site',async({page})=>{
   await expect(page).toHaveURL('http://127.0.0.1:4183/index.html');
  }
 });
+test('SplatWorks has dedicated searchable guides and stays inside its article column',async({page})=>{
+ await page.goto('/wiki/');
+ const group=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'SplatWorks',exact:true})});
+ await expect(group.getByRole('link')).toHaveCount(5);
+ for(const name of ['WriteSplat','ListSplat','ShowSplat','GridSplat']){
+  await page.goto('/wiki/?q='+name);await expect(page.locator('.wiki-results a').filter({hasText:name}).first()).toBeVisible();
+ }
+ for(const width of [1636,1280,390]){
+  await page.setViewportSize({width,height:906});await page.goto('/pages/splatworks.html');
+  const bounds=await page.evaluate(()=>{
+   const main=document.querySelector('main').getBoundingClientRect();
+   return ['.splatworks-hero h1','.splatworks-hero-image'].every(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return r.right<=main.right+1 && r.left>=main.left-1}) && document.documentElement.scrollWidth<=innerWidth;
+  });expect(bounds).toBeTruthy();
+  if(width===1636)await page.screenshot({path:'/tmp/drawsplat-splatworks-wiki.png',fullPage:true});
+ }
+});

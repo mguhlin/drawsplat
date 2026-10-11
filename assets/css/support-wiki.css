@@ -14,3 +14,11 @@ body[data-wiki]{--wiki-ink:#262138;--wiki-purple:#5a22b5;--wiki-paper:#fffdf8;--
 .wiki-scope{border-left:3px solid #d47422;padding:1px 18px;background:#fff4e4;margin:24px 0;font-size:14px}.wiki-scope h2{font-size:18px!important}
 /* Override the whiteboard's fixed-height global header on documentation pages. */
 [data-wiki] .wiki-header{height:auto;overflow:visible;z-index:5}
+
+/* Keep imported application landing layouts inside the article column. */
+[data-wiki] .splatworks-hero{min-width:0;padding:0;text-align:left}
+[data-wiki] .splatworks-hero h1{white-space:normal;overflow-wrap:anywhere}
+[data-wiki] .splatworks-hero-image{width:100%;min-width:0;max-width:100%;box-shadow:none}
+[data-wiki] .splatworks-suite-grid,[data-wiki] .studio-detail-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));min-width:0}
+[data-wiki] .splatworks-suite-card,[data-wiki] .studio-detail-card{min-width:0}
+[data-wiki] .wiki-reading main{overflow-wrap:break-word}
