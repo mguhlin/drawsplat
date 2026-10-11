@@ -1,0 +1,4 @@
+interface:
+  display_name: "DrawSplat Install Without Docker"
+  short_description: "Guide and record a native local district installation"
+  default_prompt: "Use $drawsplat-native-install to explain and record a fresh local DrawSplat installation without Docker."

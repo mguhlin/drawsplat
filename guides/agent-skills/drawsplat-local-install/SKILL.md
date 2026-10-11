@@ -15,6 +15,16 @@ Inspect available capabilities. A Chrome/browser extension may control websites 
 
 Offer a short sequence: download → Docker → Quick Start → database/admin → classrooms → verification → backup/restart. In guided mode explain one manageable step, wait for the user's result, and continue. In agent mode perform authorized actions, narrate milestones, and pause where the user must handle an OS privilege prompt, reboot, login, or secret entry. Existing authorization persists; do not repeatedly request routine confirmation.
 
+## Explain the installation for the viewer
+
+Treat this as a narrated tutorial for a district administrator encountering the tools for the first time. Before each action explain **what we are doing**, **why it is needed**, **where to click or run the command**, and **what success will look like**. Afterward describe the visible result and the next step. Define unfamiliar terms as they first appear; avoid silently issuing a stream of commands.
+
+Explain that the whiteboard and SplatWorks are browser applications, the API handles accounts and classroom saving, the database stores records, and the gateway serves the site and routes requests to the API. Explain that `localhost` refers to this computer, ports distinguish services, a terminal runs commands, and its current folder affects relative paths. Distinguish opening the extracted Quick Start HTML from opening the running local website. Explain the separate database and district-administrator credentials before showing those forms.
+
+Describe each command in plain language before running it. Show commands appropriate for the user's OS, identify the required working directory, and tell the viewer when to keep a terminal open. For downloads, name the exact package and explain why the district suite is required. For the checksum, explain that matching hashes confirm the downloaded archive matches the published file. For component choices, explain what unchecking an app changes. For recording, introduce each chapter, capture a non-sensitive result, and summarize the verified checkpoint. Add these explanations to the written installation record, not just the spoken narration.
+
+For Docker, explain containers as managed services, Compose as the tool that starts the cooperating services, and volumes as persistent storage that survives container restarts. For native setup, explain that Node runs the API, MariaDB/MySQL runs as a separate database service, and Caddy serves the website; these must be installed and started separately. Do not imply a browser extension can control an OS installer merely because it can fill web forms.
+
 ## Recording and session continuity
 
 Start `drawsplat-installation-record.md` outside the application webroot, or maintain the record in the conversation if file writing is unavailable. Record:
