@@ -5,13 +5,15 @@ description: Guide and document a fresh local installation of the complete DrawS
 
 # DrawSplat installation without Docker: guide and recorder
 
-Help the user install the complete district suite on their own computer, learn each step, and keep a reproducible installation record. This workflow begins at https://drawsplat.org/pages/download and ends with a verified local whiteboard, database-backed saving, classroom demonstration, and documented restart/backup procedures. It does not authorize public deployment or replacing existing installations.
+Help the user install the complete district suite on their own computer, learn each step, and keep a reproducible installation record. This workflow begins at https://drawsplat.org/pages/download and ends with a verified local whiteboard, database-backed saving, classroom demonstration, and documented restart/backup procedures. It does not authorize public deployment or replacing existing installations. For Docker, a second extracted folder alone is not isolated: the default Compose project name shares services/volumes. Test a fresh revised installer on a disposable VM or separate host when an unfinished stack must remain intact.
 
 ## Start the session
 
 Establish the operating system/version, architecture, available administrator access, and whether Node.js, MariaDB/MySQL, Caddy, or a previous DrawSplat installation already exists. Ask whether “record” means a written guide with screenshots, a screen recording, or both. Default to a written log with non-sensitive screenshots until the user chooses video. Do not install anything merely because this skill was attached; begin when the user asks to perform the installation.
 
 Inspect available capabilities. A Chrome/browser extension may control websites but lack access to downloaded files, desktop installers, terminals, and screen recording. State that boundary and guide the user through those steps. Use native or terminal tools only when available and authorized. Never claim a click, installation, command, recording, or successful test that was not observed. Do not depend on a particular extension name, tool API, or skill-import feature. If skill importing is unavailable, treat this file as attached/pasted task instructions.
+
+Group terminal work into coherent chapters with a single checkpoint after each chapter; do not split every readiness command into a separate “done” exchange. State desktop/privilege limitations before beginning and provide one consolidated command block per OS chapter.
 
 Offer a short sequence: download → Node/database/Caddy → Quick Start → database/admin → classrooms → verification → backup/restart. In guided mode explain one manageable step, wait for the user's result, and continue. In agent mode perform authorized actions, narrate milestones, and pause where the user must handle an OS privilege prompt, reboot, login, or secret entry. Existing authorization persists; do not repeatedly request routine confirmation.
 
@@ -38,7 +40,7 @@ Start `drawsplat-installation-record.md` outside the application webroot, or mai
 
 Use checkpoint states **not started**, **in progress**, **verified**, **blocked**, and **skipped by user**. An action without observed evidence is not verified. At interruption, save the last verified checkpoint, current screen, and next action; resume by inspecting state instead of repeating installation blindly.
 
-If video is requested, use an available recorder or guide the user to their OS recorder. Confirm that recording actually started and where it will be saved. Capture only the relevant app/window where supported. Pause recording and avoid screenshots while setup keys, generated passwords, database credentials, OAuth tokens, or personal accounts are visible. Resume after secret screens close. Do not place secrets in the transcript, clipboard log, exported guide, or video. If continuous recording cannot be paused/redacted, defer capture of those steps and describe them afterward. Report written logs, screenshots, and video separately; never label screenshots as a video recording.
+If video is requested, first record a short non-sensitive test: verify start, pause, resume, stop, saved location, and playback. If these cannot be confirmed, mark video unverified and ask whether to continue with a written tutorial. Then use an available recorder or guide the user to their OS recorder. Confirm that recording actually started and where it will be saved. Capture only the relevant app/window where supported. Pause recording and avoid screenshots while setup keys, generated passwords, database credentials, OAuth tokens, or personal accounts are visible. Resume after secret screens close. Do not place secrets in the transcript, clipboard log, exported guide, or video. If continuous recording cannot be paused/redacted, defer capture of those steps and describe them afterward. Report written logs, screenshots, and video separately; never label screenshots as a video recording.
 
 ## Use the current installation instructions
 

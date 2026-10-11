@@ -19,6 +19,8 @@ const quoted=value=>JSON.stringify(value.replaceAll('\\','/'));
 let caddy=fs.readFileSync(path.join(__dirname,'Caddyfile'),'utf8').replace('{$SITE_ADDRESS}',plan.domain||':'+webPort).replace('/etc/caddy/components.caddy',quoted(path.join(web,'components.caddy'))).replace('/etc/caddy/app-headers.caddy',quoted(path.join(web,'app-headers.caddy'))).replaceAll('api:8787','127.0.0.1:'+apiPort).replace('root * /srv','root * '+quoted(root));
 if(!plan.domain)caddy=caddy.replace(' {\n',' {\n  bind 127.0.0.1\n');
 fs.writeFileSync(path.join(web,'Caddyfile'),caddy);
+console.log(fs.existsSync(planFile)?'Applied plan: '+planFile:'No saved installation plan found. Using all components and the current/default database.');
+console.log('Hosting: native; database: '+plan.database+'; components: '+plan.components.length+'; address: '+(plan.domain||'localhost'));
 console.log('Native settings prepared. Existing accounts and secrets are preserved.');
 console.log('Setup hub: '+settings.origin+'/start-here.html');
 console.log('Setup address: '+settings.origin+'/setup');

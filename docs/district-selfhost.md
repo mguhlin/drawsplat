@@ -34,7 +34,7 @@ The **district administrator login** is separate from the **Teacher Admin unlock
 ### What you need
 
 - A district server or computer with administrator access.
-- **Docker path:** Docker Engine with Compose v2 on Linux, or Docker Desktop using Linux containers on Windows/macOS.
+- **Docker path:** Docker Engine with the `docker compose` plugin on Linux, or Docker Desktop using Linux containers on Windows/macOS.
 - **Native path:** Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2 installed directly on the server.
 - Internet access to install software and dependencies. Some apps also need optional online services or initial model downloads.
 - **Docker:** a bundled database is created for you unless you connect an external database. **Native:** create an empty database and its application user before web setup.
@@ -46,7 +46,7 @@ The **district administrator login** is separate from the **Teacher Admin unlock
 
 #### Software checks
 
-- **Docker:** start Docker and confirm Compose v2 and Linux containers work. The launcher supplies the Node runtime, database and gateway.
+- **Docker:** start Docker and confirm the `docker compose` plugin and Linux containers work. The launcher supplies the Node runtime, database and gateway.
 - **Without Docker:** install Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2. Confirm each command is available before continuing.
 - Use a current browser for setup and classroom testing.
 
@@ -152,7 +152,7 @@ Once all four checks pass, return to Quick Start, save your installation plan an
 
 ### 1. Download and extract the source
 
-[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.1.0/drawsplat-district-suite-v1.1.0.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
+[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.2.0/drawsplat-district-suite-v1.2.0.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
 
 The district suite contains just `start-here.html` and a `drawsplat` folder at its top level. Open the HTML page first; it includes the complete guide and Quick Start. Keep it beside that folder so its artwork and interactive checkboxes load. The source archive has a developer-oriented layout instead.
 
@@ -163,10 +163,36 @@ For commands and installation plans, open the inner `drawsplat` folder containin
 Download the matching `.zip.sha256` file from the district release. Verify the ZIP before extraction:
 
 ```bash
-sha256sum -c drawsplat-district-suite-v1.1.0.zip.sha256
+sha256sum -c drawsplat-district-suite-v1.2.0.zip.sha256
 ```
 
-On macOS, use `shasum -a 256` on the ZIP and compare with the checksum file. In Windows PowerShell, run `Get-FileHash .\drawsplat-district-suite-v1.1.0.zip -Algorithm SHA256` and compare the result with that file. Extract the entire archive, rather than only the HTML page.
+On macOS, use `shasum -a 256` on the ZIP and compare with the checksum file. In Windows PowerShell, run `Get-FileHash .\drawsplat-district-suite-v1.2.0.zip -Algorithm SHA256` and compare the result with that file. Extract the entire archive, rather than only the HTML page.
+
+### Debian: one staged Docker preparation
+
+On a fresh Debian 12/13 computer, open a terminal in the inner `drawsplat/` folder and run:
+
+```bash
+sudo bash scripts/install-docker-debian.sh
+```
+
+The helper groups preparation into three chapters: inspect the host, install from Docker’s official repository when needed, and verify the daemon, Linux containers, Compose launcher options and `hello-world`. It reuses an existing Docker installation and stops for review if conflicting packages or an existing repository are present. It does not remove packages, reset Docker, or touch your DrawSplat database or volumes. Read the helper before running it; [Docker’s Debian instructions](https://docs.docker.com/engine/install/debian/) explain its repository steps.
+
+After it succeeds, return to Quick Start and run `sudo bash start-district.sh` from the same folder, or use your authorized Docker-enabled account. Keep the same account and folder for reruns. A working `docker compose` command with `up --wait --wait-timeout` support is required; its displayed major version need not be 2.
+
+### Apply a downloaded installation plan
+
+The browser’s Download button creates a file; it does not apply the plan. If the file remains in Downloads, pass it directly to the launcher from the inner `drawsplat/` folder:
+
+```bash
+bash start-district.sh --plan "$HOME/Downloads/drawsplat-district-plan.json"
+```
+
+```bat
+start-district.bat --plan "%USERPROFILE%\Downloads\drawsplat-district-plan.json"
+```
+
+The launcher validates and copies the selected plan beside itself. It reports **Applied plan**, hosting path, database engine, component count and address. If no saved plan exists, it explicitly reports the defaults. A plan that selects another database engine is refused for an existing installation. You can still use the folder picker or move the plan beside the launcher manually.
 
 ### 2. Run the launcher
 
@@ -192,15 +218,21 @@ bash start-district.sh --mysql
 start-district.bat --mysql
 ```
 
-Do not switch database engines over an existing data volume. Keep the setup key printed by the launcher—you need it in the next step.
+Do not switch database engines over an existing data volume. Keep the setup key printed by the launcher privately—you need it in the next step. Before copying a terminal screenshot or starting a recording, hide the key.
 
 ### 3. Connect the database in the web installer
 
-Open [http://localhost:8080/setup](http://localhost:8080/setup) on the server computer. Paste the setup key printed by the launcher.
+Open [http://localhost:8080/setup](http://localhost:8080/setup) on the server computer. Paste the setup key printed by the launcher privately.
+
+**Bundled Docker database:** keep **Bundled database** selected. Its generated connection stays on the server; database fields are hidden and ignored even if a password manager tries to fill them. Test the connection, then choose your administrator credentials. You do not need to know the database login.
+
+**Your own database or native installation:** select **My own database** and enter the provisioned connection settings. These credentials are separate from the district administrator login. Native setup selects this mode automatically.
+
+Connection errors include safe recovery instructions and a diagnostic code, without showing passwords. A healthy database container does not prove API authentication works. Never reset an existing volume to fix an authentication error.
 
 | Database choice | What to enter |
 | --- | --- |
-| Bundled database | Leave the connection fields blank to use the generated server settings |
+| Bundled database | Keep Bundled database selected; connection fields are hidden and ignored |
 | Existing database | Enter the host, port, empty database name, username, and password |
 | Remote database | Use verified TLS; provide the CA certificate if required |
 
@@ -213,9 +245,9 @@ The installer displays these starter credentials:
 | Field | Starter value |
 | --- | --- |
 | Administrator email | `admin@localhost.test` |
-| Password | A unique generated password shown in your setup screen |
+| Password | A unique generated password, masked until you choose Show administrator password |
 
-Use these credentials or replace either field. A replacement password must have **at least 12 characters**. This account manages district rosters; it is not a teacher or student account.
+The password is hidden by default. Reveal or copy it only privately, with recording paused. Use these credentials or replace either field. A replacement password must have **at least 12 characters**. This account manages district rosters; it is not a teacher or student account.
 
 Select **Finish setup**. On the completion screen, select **Copy login details** and save them with your server installation records.
 
@@ -519,3 +551,11 @@ Verify the installation on your district’s own server:
 - Backup restoration and your district’s retention procedures.
 
 Windows BAT launchers also need acceptance testing on your district’s Windows host. Your district remains responsible for server administration, backups, and retention decisions.
+
+## Retry an unfinished installation safely
+
+A health response with `setupRequired: true` means first-time installation is still unfinished; it does not mean the database needs resetting. Keep the existing application folder, private `.env`/configuration and database volumes intact.
+
+The default Docker project name is `drawsplat-district`. Extracting another copy into a new folder does **not** isolate its Docker services or volumes. Test a revised installer in a disposable VM or separate test host. Do not start a second default stack beside the unfinished one, remove its volumes, or replace its generated credentials. An administrator repairing the existing installation should preserve its settings and project identity, back up private configuration, update the application/API files in that installation, and rebuild/restart the API using its existing Compose configuration.
+
+Before a tutorial session, verify the recorder with a short non-sensitive test: start, pause, resume, stop, locate the file and play it back. If any of these cannot be verified, continue with a written installation record and explicitly mark video unverified. Pause before setup keys or revealed passwords appear. Completing installation requires administrator login, database Save/Open, authenticated classroom tests, a backup and a restart/rerun check; healthy containers alone are insufficient.

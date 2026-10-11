@@ -6,7 +6,7 @@ const password=crypto.randomBytes(20).toString('hex');
 async function request(url,body,token){const r=await fetch(url,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,data:await r.json()};}
 for(let i=0;i<120;i++){try{const r=await fetch(origin+'/setup');if(r.ok)break;}catch{}if(i===119)throw Error('Setup not ready');await new Promise(r=>setTimeout(r,1000));}
 assert.equal((await request(origin+'/setup',{action:'test',setupKey:'incorrect'})).status,403);
-assert.equal((await request(origin+'/setup',{action:'test',setupKey})).status,200);
+assert.equal((await request(origin+'/setup',{action:'test',setupKey,databaseMode:'bundled',username:'autofill-wrong',password:'autofill-wrong',host:'wrong',ssl:true})).status,200);
 assert.equal((await request(origin+'/setup',{action:'finish',setupKey,adminEmail:'admin@example.test',adminPassword:password})).status,200);
 let healthy=false;for(let i=0;i<120;i++){try{if((await fetch(base+'/health')).ok){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,1000));}assert.ok(healthy,'Installed service restarted');
 const login=await request(base+'/auth/login',{email:'admin@example.test',password});assert.equal(login.status,200);const token=login.data.token;fs.writeFileSync('/tmp/drawsplat-ci-login.json',JSON.stringify({password}),{mode:0o600});

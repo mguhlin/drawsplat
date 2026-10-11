@@ -40,6 +40,7 @@ services:
       CORS_ORIGIN: ${SITE_ORIGIN:-http://localhost:8080}
       TRUST_PROXY: "true"
       SETUP_REQUIRED: "true"
+      SETUP_DATABASE_MODE: bundled
       SETUP_TOKEN: ${SETUP_TOKEN}
       SETUP_CONFIG_FILE: /data/config.json
     volumes:

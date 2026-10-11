@@ -33,6 +33,7 @@ jobs:
         run: |
           npm ci --prefix server/mysql-backend
           node tests/district-database-ci.cjs
+          node --test tests/setup-wizard.test.cjs
       - name: Verify native Node and Caddy deployment
         run: |
           docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml cp web:/usr/bin/caddy /tmp/drawsplat-native-caddy

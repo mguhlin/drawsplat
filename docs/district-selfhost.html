@@ -6,9 +6,9 @@
 <!-- Generated from district-selfhost.md by scripts/build-district-guide.py. -->
 <a class="skip-link" href="#guide">Skip to installation guide</a>
 <header class="guide-header"><a href="../">DrawSplat</a><nav aria-label="Guide formats"><a href="district-selfhost.md">View Markdown</a><a href="district-selfhost.md" download>Download Markdown</a><a href="../pages/download.html">Downloads</a></nav></header>
-<div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#before-you-start">Before you start</a></li><li><a href="#install-docker">Install Docker</a></li><li><a href="#install-drawsplat">Install DrawSplat</a></li><li><a href="#install-without-docker">Install without Docker</a></li><li><a href="#configure-google-sign-in">Configure Google sign-in</a></li><li><a href="#use-your-district-s-domain">Use your district’s domain</a></li><li><a href="#update-or-stop-the-installation">Update or stop the installation</a></li><li><a href="#back-up-and-recover">Back up and recover</a></li><li><a href="#troubleshooting-and-ongoing-administration">Troubleshooting and ongoing administration</a></li><li><a href="#before-classroom-rollout">Before classroom rollout</a></li></ul></nav></aside>
+<div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#before-you-start">Before you start</a></li><li><a href="#install-docker">Install Docker</a></li><li><a href="#install-drawsplat">Install DrawSplat</a></li><li><a href="#install-without-docker">Install without Docker</a></li><li><a href="#configure-google-sign-in">Configure Google sign-in</a></li><li><a href="#use-your-district-s-domain">Use your district’s domain</a></li><li><a href="#update-or-stop-the-installation">Update or stop the installation</a></li><li><a href="#back-up-and-recover">Back up and recover</a></li><li><a href="#troubleshooting-and-ongoing-administration">Troubleshooting and ongoing administration</a></li><li><a href="#before-classroom-rollout">Before classroom rollout</a></li><li><a href="#retry-an-unfinished-installation-safely">Retry an unfinished installation safely</a></li></ul></nav></aside>
 <main id="guide"><img class="guide-banner" src="../assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724"><h1 id="drawsplat-district-installation">DrawSplat district installation</h1><section id="quick-start-hub" class="quick-start" aria-labelledby="quick-start-title"><h2 id="quick-start-title">Quick Start: set up your district</h2><p>Start here when you unpack the complete DrawSplat + SplatWorks package. Follow this checklist, or jump to <a href="#before-you-start">Detailed Setup</a>. Return here whenever you update or change components.</p><form id="quickstart-form"><fieldset class="hosting-options"><legend>1. Choose how to install</legend><label><input type="radio" name="hosting" value="docker" checked><span><strong>Docker (preferred)</strong><small>The launchers manage the database, API and HTTPS gateway together.</small></span></label><label><input type="radio" name="hosting" value="native"><span><strong>Without Docker</strong><small>Install Node.js, MariaDB/MySQL and Caddy directly on your server.</small></span></label></fieldset><p id="hosting-path-help" role="status">Docker selected. Follow the Docker launch instructions below.</p><p><a id="hosting-instructions-link" href="#install-drawsplat">Open Docker instructions</a></p><h3>2. Choose your components</h3><p>Every component is checked on a new installation. Uncheck anything your district does not want to offer. Shared administration and supporting assets remain available.</p><p><button id="select-all-components" type="button">Select all</button> <button id="clear-components" type="button">Clear selections</button> <span id="selected-component-count" role="status"></span></p><details><summary>Review all component checkboxes</summary><div id="component-choices"></div></details><label for="quickstart-database">Database engine</label><select id="quickstart-database"><option value="mariadb">MariaDB 11.8 (default)</option><option value="mysql">MySQL 8.4</option></select><label for="quickstart-domain">District hostname (optional for localhost setup)</label><input id="quickstart-domain" placeholder="whiteboard.your-district.org" pattern="[a-zA-Z0-9.-]+"><p>For an existing installation, keep its current database engine. A hostname requires DNS pointing at your server and ports 80/443 available.</p><button id="save-install-plan" type="button">Save plan in extracted folder</button> <button type="submit">Download installation plan</button><label for="import-install-plan">Load a previous plan to rerun setup</label><input id="import-install-plan" type="file" accept=".json,application/json"><p id="quickstart-status" role="status"></p></form><h3>Follow the setup checklist</h3><p>Check each task when your district has completed it. Component choices are applied by the launcher; these task checkboxes are your progress checklist.</p><div class="setup-tasks">
-<label data-hosting="docker"><input type="checkbox" data-task="docker-prerequisites"> Download and extract the complete suite. <a href="#install-docker">Install and verify Docker</a> with Compose v2 and Linux containers.</label>
+<label data-hosting="docker"><input type="checkbox" data-task="docker-prerequisites"> Download and extract the complete suite. <a href="#install-docker">Install and verify Docker</a> with a working docker compose plugin and Linux containers.</label>
 <label data-hosting="native" hidden><input type="checkbox" data-task="native-prerequisites"> <a href="#native-software-and-database">Install Node.js, MariaDB/MySQL and Caddy</a>, then create an empty database and its application user.</label>
 <label data-hosting="docker"><input type="checkbox" data-task="docker-launch"> Save the Docker plan inside drawsplat/. Run start-district.sh or start-district.bat. Reruns preserve accounts and volumes.</label>
 <label data-hosting="native" hidden><input type="checkbox" data-task="native-launch"> Save the native plan inside drawsplat/. <a href="#native-prepare-and-start">Prepare native settings and start the API and gateway</a>. Reruns preserve the private configuration and database.</label>
@@ -67,7 +67,7 @@
 <h3 id="what-you-need">What you need</h3>
 <ul>
 <li>A district server or computer with administrator access.</li>
-<li><strong>Docker path:</strong> Docker Engine with Compose v2 on Linux, or Docker Desktop using Linux containers on Windows/macOS.</li>
+<li><strong>Docker path:</strong> Docker Engine with the <code>docker compose</code> plugin on Linux, or Docker Desktop using Linux containers on Windows/macOS.</li>
 <li><strong>Native path:</strong> Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2 installed directly on the server.</li>
 <li>Internet access to install software and dependencies. Some apps also need optional online services or initial model downloads.</li>
 <li><strong>Docker:</strong> a bundled database is created for you unless you connect an external database. <strong>Native:</strong> create an empty database and its application user before web setup.</li>
@@ -77,7 +77,7 @@
 <h3 id="server-readiness-and-private-storage">Server readiness and private storage</h3>
 <h4 id="software-checks">Software checks</h4>
 <ul>
-<li><strong>Docker:</strong> start Docker and confirm Compose v2 and Linux containers work. The launcher supplies the Node runtime, database and gateway.</li>
+<li><strong>Docker:</strong> start Docker and confirm the <code>docker compose</code> plugin and Linux containers work. The launcher supplies the Node runtime, database and gateway.</li>
 <li><strong>Without Docker:</strong> install Node.js 22 or newer, MariaDB 11.8 or MySQL 8.4, and Caddy 2. Confirm each command is available before continuing.</li>
 <li>Use a current browser for setup and classroom testing.</li>
 </ul>
@@ -169,14 +169,27 @@ docker run --rm hello-world
 <h2 id="install-drawsplat">Install DrawSplat</h2>
 <p><strong>Docker path (preferred).</strong> For the alternative, go to <a href="#install-without-docker">Install without Docker</a>. The account, roster and classroom steps are shared by both paths.</p>
 <h3 id="1-download-and-extract-the-source">1. Download and extract the source</h3>
-<p><a href="https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.1.0/drawsplat-district-suite-v1.1.0.zip">Download the complete DrawSplat + SplatWorks district suite ZIP</a>. The <a href="https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip">current source archive</a> also contains the complete suite.</p>
+<p><a href="https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.2.0/drawsplat-district-suite-v1.2.0.zip">Download the complete DrawSplat + SplatWorks district suite ZIP</a>. The <a href="https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip">current source archive</a> also contains the complete suite.</p>
 <p>The district suite contains just <code>start-here.html</code> and a <code>drawsplat</code> folder at its top level. Open the HTML page first; it includes the complete guide and Quick Start. Keep it beside that folder so its artwork and interactive checkboxes load. The source archive has a developer-oriented layout instead.</p>
 <p>For commands and installation plans, open the inner <code>drawsplat</code> folder containing <code>start-district.sh</code> and <code>start-district.bat</code>. For this path, install and start Docker before continuing.</p>
 <h3 id="verify-the-download">Verify the download</h3>
 <p>Download the matching <code>.zip.sha256</code> file from the district release. Verify the ZIP before extraction:</p>
-<pre><code class="language-bash">sha256sum -c drawsplat-district-suite-v1.1.0.zip.sha256
+<pre><code class="language-bash">sha256sum -c drawsplat-district-suite-v1.2.0.zip.sha256
 </code></pre>
-<p>On macOS, use <code>shasum -a 256</code> on the ZIP and compare with the checksum file. In Windows PowerShell, run <code>Get-FileHash .\drawsplat-district-suite-v1.1.0.zip -Algorithm SHA256</code> and compare the result with that file. Extract the entire archive, rather than only the HTML page.</p>
+<p>On macOS, use <code>shasum -a 256</code> on the ZIP and compare with the checksum file. In Windows PowerShell, run <code>Get-FileHash .\drawsplat-district-suite-v1.2.0.zip -Algorithm SHA256</code> and compare the result with that file. Extract the entire archive, rather than only the HTML page.</p>
+<h3 id="debian-one-staged-docker-preparation">Debian: one staged Docker preparation</h3>
+<p>On a fresh Debian 12/13 computer, open a terminal in the inner <code>drawsplat/</code> folder and run:</p>
+<pre><code class="language-bash">sudo bash scripts/install-docker-debian.sh
+</code></pre>
+<p>The helper groups preparation into three chapters: inspect the host, install from Docker’s official repository when needed, and verify the daemon, Linux containers, Compose launcher options and <code>hello-world</code>. It reuses an existing Docker installation and stops for review if conflicting packages or an existing repository are present. It does not remove packages, reset Docker, or touch your DrawSplat database or volumes. Read the helper before running it; <a href="https://docs.docker.com/engine/install/debian/">Docker’s Debian instructions</a> explain its repository steps.</p>
+<p>After it succeeds, return to Quick Start and run <code>sudo bash start-district.sh</code> from the same folder, or use your authorized Docker-enabled account. Keep the same account and folder for reruns. A working <code>docker compose</code> command with <code>up --wait --wait-timeout</code> support is required; its displayed major version need not be 2.</p>
+<h3 id="apply-a-downloaded-installation-plan">Apply a downloaded installation plan</h3>
+<p>The browser’s Download button creates a file; it does not apply the plan. If the file remains in Downloads, pass it directly to the launcher from the inner <code>drawsplat/</code> folder:</p>
+<pre><code class="language-bash">bash start-district.sh --plan &quot;$HOME/Downloads/drawsplat-district-plan.json&quot;
+</code></pre>
+<pre><code class="language-bat">start-district.bat --plan &quot;%USERPROFILE%\Downloads\drawsplat-district-plan.json&quot;
+</code></pre>
+<p>The launcher validates and copies the selected plan beside itself. It reports <strong>Applied plan</strong>, hosting path, database engine, component count and address. If no saved plan exists, it explicitly reports the defaults. A plan that selects another database engine is refused for an existing installation. You can still use the folder picker or move the plan beside the launcher manually.</p>
 <h3 id="2-run-the-launcher">2. Run the launcher</h3>
 <p><strong>Linux or macOS</strong> — open a terminal in the extracted folder:</p>
 <pre><code class="language-bash">bash start-district.sh
@@ -189,9 +202,12 @@ docker run --rm hello-world
 </code></pre>
 <pre><code class="language-bat">start-district.bat --mysql
 </code></pre>
-<p>Do not switch database engines over an existing data volume. Keep the setup key printed by the launcher—you need it in the next step.</p>
+<p>Do not switch database engines over an existing data volume. Keep the setup key printed by the launcher privately—you need it in the next step. Before copying a terminal screenshot or starting a recording, hide the key.</p>
 <h3 id="3-connect-the-database-in-the-web-installer">3. Connect the database in the web installer</h3>
-<p>Open <a href="http://localhost:8080/setup">http://localhost:8080/setup</a> on the server computer. Paste the setup key printed by the launcher.</p>
+<p>Open <a href="http://localhost:8080/setup">http://localhost:8080/setup</a> on the server computer. Paste the setup key printed by the launcher privately.</p>
+<p><strong>Bundled Docker database:</strong> keep <strong>Bundled database</strong> selected. Its generated connection stays on the server; database fields are hidden and ignored even if a password manager tries to fill them. Test the connection, then choose your administrator credentials. You do not need to know the database login.</p>
+<p><strong>Your own database or native installation:</strong> select <strong>My own database</strong> and enter the provisioned connection settings. These credentials are separate from the district administrator login. Native setup selects this mode automatically.</p>
+<p>Connection errors include safe recovery instructions and a diagnostic code, without showing passwords. A healthy database container does not prove API authentication works. Never reset an existing volume to fix an authentication error.</p>
 <table>
 <thead>
 <tr>
@@ -202,7 +218,7 @@ docker run --rm hello-world
 <tbody>
 <tr>
 <td>Bundled database</td>
-<td>Leave the connection fields blank to use the generated server settings</td>
+<td>Keep Bundled database selected; connection fields are hidden and ignored</td>
 </tr>
 <tr>
 <td>Existing database</td>
@@ -231,11 +247,11 @@ docker run --rm hello-world
 </tr>
 <tr>
 <td>Password</td>
-<td>A unique generated password shown in your setup screen</td>
+<td>A unique generated password, masked until you choose Show administrator password</td>
 </tr>
 </tbody>
 </table>
-<p>Use these credentials or replace either field. A replacement password must have <strong>at least 12 characters</strong>. This account manages district rosters; it is not a teacher or student account.</p>
+<p>The password is hidden by default. Reveal or copy it only privately, with recording paused. Use these credentials or replace either field. A replacement password must have <strong>at least 12 characters</strong>. This account manages district rosters; it is not a teacher or student account.</p>
 <p>Select <strong>Finish setup</strong>. On the completion screen, select <strong>Copy login details</strong> and save them with your server installation records.</p>
 <p>The service restarts automatically. The <code>/setup</code> screen is then disabled, and settings are saved in the private configuration volume. Existing installations continue to use their current credentials.</p>
 <h3 id="5-add-teachers-and-import-classroom-rosters">5. Add teachers and import classroom rosters</h3>
@@ -539,5 +555,9 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 <li>Backup restoration and your district’s retention procedures.</li>
 </ul>
 <p>Windows BAT launchers also need acceptance testing on your district’s Windows host. Your district remains responsible for server administration, backups, and retention decisions.</p>
+<h2 id="retry-an-unfinished-installation-safely">Retry an unfinished installation safely</h2>
+<p>A health response with <code>setupRequired: true</code> means first-time installation is still unfinished; it does not mean the database needs resetting. Keep the existing application folder, private <code>.env</code>/configuration and database volumes intact.</p>
+<p>The default Docker project name is <code>drawsplat-district</code>. Extracting another copy into a new folder does <strong>not</strong> isolate its Docker services or volumes. Test a revised installer in a disposable VM or separate test host. Do not start a second default stack beside the unfinished one, remove its volumes, or replace its generated credentials. An administrator repairing the existing installation should preserve its settings and project identity, back up private configuration, update the application/API files in that installation, and rebuild/restart the API using its existing Compose configuration.</p>
+<p>Before a tutorial session, verify the recorder with a short non-sensitive test: start, pause, resume, stop, locate the file and play it back. If any of these cannot be verified, continue with a written installation record and explicitly mark video unverified. Pause before setup keys or revealed passwords appear. Completing installation requires administrator login, database Save/Open, authenticated classroom tests, a backup and a restart/rerun check; healthy containers alone are insufficient.</p>
 </main></div>
 <footer>DrawSplat district installation · <a href="district-selfhost.md">Markdown source</a></footer><script src="../assets/js/district-components.js"></script><script src="../assets/js/district-quickstart.js"></script></body></html>

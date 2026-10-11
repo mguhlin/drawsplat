@@ -1,5 +1,5 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const {createSetupApp}=require('../server/mysql-backend/setup-server');const {createDatabasePool,databaseConfig}=require('../server/mysql-backend/db-config');
+const {createSetupApp,settings,connectionError}=require('../server/mysql-backend/setup-server');const {createDatabasePool,databaseConfig}=require('../server/mysql-backend/db-config');
 test('first-run wizard validates its key, installs once, stores private credentials and creates an admin',{skip:!process.env.MYSQL_SETUP_TEST_URL},async()=>{
  const db=databaseConfig({MYSQL_URL:process.env.MYSQL_SETUP_TEST_URL}),dir=fs.mkdtempSync(path.join(os.tmpdir(),'drawsplat-setup-')),file=dir+'/config.json',key='integration-only-setup-key-32characters',password='administrator-test-password';
  const pool=createDatabasePool({MYSQL_URL:process.env.MYSQL_SETUP_TEST_URL});const [tables]=await pool.query('SHOW TABLES');assert.equal(tables.length,0,'Use a disposable EMPTY database');
@@ -13,4 +13,12 @@ test('first-run wizard validates its key, installs once, stores private credenti
  const [users]=await pool.query('SELECT role,password_hash FROM users');assert.equal(users[0].role,'district_admin');assert.ok(users[0].password_hash);
  assert.equal((await post({action:'test',setupKey:key})).status,409);await new Promise(r=>setTimeout(r,400));assert.ok(completed);
  }finally{await new Promise(r=>listener.close(r));await pool.end();fs.rmSync(dir,{recursive:true});}
+});
+
+test('bundled mode rejects all browser overrides while external mode remains explicit',()=>{
+ const env={MYSQL_HOST:'db',MYSQL_DATABASE:'drawsplat',MYSQL_USER:'generated',MYSQL_PASSWORD:'private-server-password'};
+ const overrides={databaseMode:'bundled',host:'wrong-host',database:'wrong-db',username:'wrong-user',password:'wrong-password',ssl:true,ca:'wrong-ca'};
+ const cfg=settings(overrides,env);assert.equal(cfg.MYSQL_USER,env.MYSQL_USER);assert.equal(cfg.MYSQL_PASSWORD,env.MYSQL_PASSWORD);assert.equal(cfg.MYSQL_HOST,'db');assert.equal(cfg.MYSQL_SSL,'false');assert.equal(cfg.MYSQL_SSL_CA,undefined);
+ assert.equal(settings({...overrides,databaseMode:'external'},env).MYSQL_USER,'wrong-user');assert.throws(()=>settings({databaseMode:'unknown'},env));assert.throws(()=>settings({databaseMode:'bundled'},{}));
+ assert.match(connectionError({code:'ER_ACCESS_DENIED_ERROR',message:'secret-password'},'bundled'),/Browser database fields were ignored/);assert.ok(!connectionError({code:'UNKNOWN',message:'secret-password'},'external').includes('secret-password'));
 });
