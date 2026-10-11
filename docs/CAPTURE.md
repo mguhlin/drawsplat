@@ -49,7 +49,7 @@ Each capture should reflect **your district's own deployment** (your spreadsheet
 - Filter: empty (so the page shows mixed actions).
 - At least one row each of `BOARD_FREEZE`, `TEXT_FILTER_HIT`, `IMAGE_APPROVED`, `PARENT_REQUEST_CREATED`, `DATA_EXPORT` visible.
 **Setup**: trigger each action once in the day before capturing — easiest is a scripted "demo run" the operator does once and then captures.
-**What it proves**: every compliance-relevant action leaves an immutable trail.
+**What it proves**: supported compliance actions appear in the operator-controlled activity log.
 
 ### 5. `privacy-packet-download.png` — District Privacy Packet download
 

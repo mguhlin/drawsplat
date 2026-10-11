@@ -2,6 +2,8 @@
 
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
+**Architecture status:** This reference includes design targets for storage abstractions and organization/media services. Current district setup and classroom behavior are documented in the Wiki; treat proposed interfaces as design guidance, not installed features.
+
 
 This document turns the standalone roadmap into an implementation plan. The current DrawSplatTM build is a static browser app with optional Google Apps Script storage. That is useful for lightweight classroom use, but a true multi-user product needs server-side identity, permissions, realtime collaboration, durable storage, and a teacher/admin surface that students never load.
 

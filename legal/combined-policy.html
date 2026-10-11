@@ -524,7 +524,7 @@
     <h2 id="district-addendum-compliance-features-available-to-the-district">Compliance Features Available to the District</h2>
     <p>The deployment owner configures the following controls through the internal Compliance Console. The District Privacy Packet download bundles the live configuration, the last 90 days of Activity Records, and the parent-request log in a single ZIP for review.</p>
     <ol>
-      <li><strong>Activity Records (audit log)</strong> &mdash; immutable Sheet tab tracking every compliance-relevant action.</li>
+      <li><strong>Activity Records (audit log)</strong> &mdash; operator-controlled Apps Script audit Sheet recording supported compliance actions.</li>
       <li><strong>Safety Review</strong> &mdash; text keyword filter and link allowlist, server-enforced on every save. Board / room freeze blocks further writes.</li>
       <li><strong>Student Age Band Lock</strong> &mdash; <code>under_13</code> / <code>13_to_17</code> / <code>18_plus</code> / <code>unknown_minor</code>. Server-locked, admin-only changes, reason required, audited. Aligned with Texas SCOPE Act age-registration provisions.</li>
       <li><strong>Family Access Tools</strong> &mdash; parent request form, teacher-issued one-time verification code, admin Approve / Deny / Done queue.</li>
@@ -830,7 +830,7 @@ Google Apps Script mode:
       and
   [Google Drive]  (per-board JSON + PNG files in the district's Drive)
 
-Self-hosted MySQL mode:
+District MariaDB / MySQL mode:
   [Student / teacher browser]
       |
       |  HTTPS to the district's own domain
@@ -838,7 +838,7 @@ Self-hosted MySQL mode:
   [district.example.org/api/drawsplat/mysql]  (Node + Express in the district's infra)
       |
       v
-  [MySQL]  (users, sessions, boards, audit_events, parent_requests, time_usage, ...)</pre>
+  [MariaDB / MySQL]  (accounts, private boards, roster membership, assignments, submissions, feedback)</pre>
   </section>
 
   <section class="policy-section">
@@ -848,32 +848,27 @@ Self-hosted MySQL mode:
       <thead><tr><th>Subprocessor</th><th>Used when</th><th>Data exposed</th><th>Whose contract</th></tr></thead>
       <tbody>
         <tr><td>Google Workspace (Drive, Sheets, Apps Script)</td><td>District chooses the Google Apps Script storage mode</td><td>Board JSON, sheet rows, audit log &mdash; lives in the district&rsquo;s own Workspace tenant</td><td>District&rsquo;s existing Google Workspace agreement</td></tr>
-        <tr><td>Google Identity Services</td><td>District enables Google sign-in on the Community Board or self-hosted backend</td><td>Google ID token verification (email, sub, display name)</td><td>District&rsquo;s existing Google identity agreement</td></tr>
-        <tr><td>Microsoft Identity (MSAL)</td><td>District enables Microsoft sign-in</td><td>Microsoft Graph <code>/me</code> token verification (email, oid, display name)</td><td>District&rsquo;s existing Microsoft tenant agreement</td></tr>
-        <tr><td>Clever / ClassLink</td><td>District wires the self-hosted backend&rsquo;s Clever connector</td><td>Roster pull (teacher / student / section) under the district&rsquo;s own SIS agreement</td><td>District&rsquo;s existing Clever / ClassLink contract</td></tr>
-        <tr><td>Static-host CDN (Cloudflare Pages by default; can be any static host)</td><td>Always &mdash; the static site has to live somewhere</td><td>Standard HTTP request metadata (IP, UA, URL) at the edge</td><td>Whoever the district / operator picks</td></tr>
+        <tr><td>Google Identity Services</td><td>District enables school Google sign-in on its database-backed installation</td><td>Google ID token verification (email, sub, display name)</td><td>District&rsquo;s existing Google identity agreement</td></tr>
+        
+        
+        <tr><td>Static-host CDN (Cloudflare Pages by default; can be any static host)</td><td>When the operator chooses a public CDN; a district can serve the entire suite locally</td><td>Standard HTTP request metadata (IP, UA, URL) at the edge</td><td>Whoever the district / operator picks</td></tr>
       </tbody>
     </table>
   </section>
 
   <section class="policy-section">
     <h2 id="ndpa-packet-5-security-controls-matrix">5. Security controls matrix</h2>
-    <table class="policy-table">
-      <thead><tr><th>Control</th><th>Implementation</th><th>Where to verify</th></tr></thead>
-      <tbody>
-        <tr><td>Transport encryption</td><td>HTTPS required for all production deployments. <code>referrer</code> meta set to <code>no-referrer</code>.</td><td>Inline <code>&lt;meta&gt;</code> tags on every public page</td></tr>
-        <tr><td>Content Security Policy</td><td><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' [+ optional backend host]; object-src 'none'; base-uri 'none'; form-action 'self'</code></td><td>Inline CSP meta on every page</td></tr>
-        <tr><td>Authentication</td><td>Email + scrypt-with-pepper passwords (self-hosted backend), or Google / Microsoft OAuth with HMAC-bearer sessions. Apps Script Web App uses Google&rsquo;s own auth.</td><td><code>server/mysql-backend/oauth-routes.js</code> and <code>compliance-routes.js</code></td></tr>
-        <tr><td>Authorization (RBAC)</td><td>Five-role tree: district admin, campus admin, teacher, student, parent. Enforced via <code>requireRoles</code> / <code>requirePermission</code> middleware on every protected endpoint (self-hosted backend); admin-passcode gate on the Apps Script endpoints.</td><td><code>server/mysql-backend/rbac.js</code> and <code>apps-script/Code.gs requireAdmin_</code></td></tr>
-        <tr><td>Server-side safety scan</td><td>Text keyword filter + link allowlist run on every board save and turn-in. Hits write a <code>TEXT_FILTER_HIT</code> audit row and (by default) reject the save.</td><td><code>safety.js</code> / <code>scanBoardForSafety_</code></td></tr>
-        <tr><td>Board / room freeze</td><td>Frozen flag on rooms / boards blocks all writes (HTTP 423 on the self-hosted backend; rejected save in Apps Script).</td><td><code>freezeBoard_</code> / <code>compliance-routes.js</code></td></tr>
-        <tr><td>Audit log</td><td>Append-only sheet tab (Apps Script) or <code>audit_events</code> table (MySQL). Includes actor, role, action, entity, before/after, timestamp.</td><td>Activity Records in Teacher Admin</td></tr>
-        <tr><td>Retention</td><td>Configurable archive / delete / audit-keep windows. Scheduled trigger (Apps Script) or in-process cron (Node) prunes data and writes a <code>RETENTION_ACTION</code> audit row.</td><td><code>runRetentionCleanup_</code> / <code>cron-jobs.js</code></td></tr>
-        <tr><td>Data export</td><td>Per-student ZIP of every board + turn-in + the user row (no hashed credentials). Logs <code>DATA_EXPORT</code>.</td><td><code>exportStudentData_</code></td></tr>
-        <tr><td>Data deletion</td><td>Admin button trashes Drive files and removes rows. Logs <code>DATA_DELETED</code>.</td><td><code>deleteStudentData_</code></td></tr>
-        <tr><td>Image upload approval queue</td><td>Shipped. Student image uploads land in <code>ImageQueue</code> with status <code>pending</code> and stay hidden on the student board until a teacher approves them in the Compliance Console. Reject trashes the Drive file and replaces the student board image with a rejection placeholder. Both decisions log <code>IMAGE_APPROVED</code> / <code>IMAGE_REJECTED</code> events.</td><td><code>apps-script/Code.gs uploadImage_ / setImageStatus_</code>; <code>admin/admin.html</code> Image Approval Queue section</td></tr>
-      </tbody>
-    </table>
+    <table class="policy-table"><thead><tr><th>Control</th><th>Current scope</th><th>Verify on your installation</th></tr></thead><tbody>
+<tr><td>Transport and database privacy</td><td>District domain HTTPS through the gateway; database credentials remain on the API server. Localhost is for local verification. Remote databases require verified TLS.</td><td>Gateway response, database network restrictions, and deployed API settings.</td></tr>
+<tr><td>Content Security Policy</td><td>Policies vary by application and enabled services. Embedded tools and Google sign-in have different requirements from documentation pages.</td><td>Inspect actual response headers and page policies; test enabled origins.</td></tr>
+<tr><td>District authentication</td><td>Installation creates a district administrator password account. Google identity is verified server-side and linked to rostered school accounts. Roster-only deployments disable public registration and invitations.</td><td>First-time setup, school Google client/origin/domains, and account sign-in tests.</td></tr>
+<tr><td>District authorization</td><td>District administrators manage rosters; teachers access their classes and student submissions; students access enrolled classes and their own submissions. Private Save/Open enforces account ownership.</td><td>Test separate administrator, teacher, and student accounts against private boards and classroom endpoints.</td></tr>
+<tr><td>Safety filters, room freeze, and image review</td><td>The Apps Script Compliance Console configures Drive/Sheets safety and moderation workflows. These controls do not automatically cover district private-board or classroom records.</td><td>Apps Script console configuration and test saves; establish separate district procedures where needed.</td></tr>
+<tr><td>Activity records</td><td>Apps Script records activity in its Audit sheet; backend event coverage depends on the endpoint. Operator-controlled logs are not tamper-proof certification evidence.</td><td>Review actual events, administrative access, and protected log backups.</td></tr>
+<tr><td>Retention</td><td>Apps Script supports configurable cleanup triggers. District private boards, assignments, submissions, and feedback need an operator-defined, tested retention and deletion procedure; do not infer coverage from legacy cron code.</td><td>Test cleanup and retention against every relevant record type and backups.</td></tr>
+<tr><td>Student export and deletion</td><td>The Apps Script console supports student exports and deletion of its Drive/Sheets records. The district database requires a separately verified record-request procedure.</td><td>Export downloads, request identity verification, deletion checks, and district-approved delivery.</td></tr>
+<tr><td>Backup and recovery</td><td>District launchers include database/configuration backup guidance. Preserve the password pepper and keep protected off-server copies.</td><td>Restore to a separate installation and verify account-owned boards and classroom work.</td></tr>
+</tbody></table>
   </section>
 
   <section class="policy-section">
@@ -881,7 +876,7 @@ Self-hosted MySQL mode:
     <ol class="admin-checklist">
       <li><strong>Discovery.</strong> A teacher, admin, parent, or external researcher reports a suspected breach via <a href="../pages/contact.html">Contact / Information Request</a> or the audit log surfaces an anomaly.</li>
       <li><strong>Triage within 24 hours.</strong> Operator confirms scope: which deployment mode, which records, which audit trail rows are affected.</li>
-      <li><strong>Contain.</strong> Freeze affected boards / rooms (server-enforced write block). Revoke active sessions on the self-hosted backend. Disable affected Apps Script deployment if necessary.</li>
+      <li><strong>Contain.</strong> Use the containment procedure appropriate to the backend: freeze supported Apps Script boards/rooms, revoke affected account sessions, restrict server access, or stop an affected service. Do not assume room-freeze controls cover district private boards.</li>
       <li><strong>Notify within 72 hours.</strong> Operator notifies the named district Privacy / Security Contact from the District Data Privacy Addendum using the breach notice contact method declared there. Notice includes: what happened, what data was involved, what containment was done, what the district should do next.</li>
       <li><strong>Investigate &amp; remediate.</strong> Operator investigates root cause, patches, re-tests. The Activity Records audit log is preserved for the investigation.</li>
       <li><strong>Post-incident report.</strong> Written summary delivered within 30 days, including timeline, scope, remediation, and any changes to security controls.</li>
@@ -905,11 +900,11 @@ Self-hosted MySQL mode:
     <h2 id="ndpa-packet-8-parent-student-request-workflow">8. Parent / student request workflow</h2>
     <ol class="admin-checklist">
       <li>Parent visits <a href="../parents/index.html">Family Access Tools</a> and submits a request (view, export, correct, delete, pause, safety report, privacy question).</li>
-      <li>Request lands in the <code>ParentRequests</code> sheet tab / DB table as <code>pending_verification</code>.</li>
+      <li>For the Apps Script workflow, the request lands in the <code>ParentRequests</code> sheet tab as <code>pending_verification</code>. District database requests follow the district’s separately published procedure.</li>
       <li>Compliance admin gets an email notification (Apps Script <code>MailApp.sendEmail</code>) and reviews the request in Teacher Admin.</li>
       <li>Identity verified via teacher-issued one-time 8-character code (SHA-256 hashed, 14-day expiry, single-use).</li>
       <li>Verified request transitions to <code>verified</code>, then <code>approved</code> / <code>denied</code> / <code>completed</code> by an admin click.</li>
-      <li>Export: one-click ZIP of the student&rsquo;s boards + turn-ins + user row (no hashed credentials), emailed as a 15-minute download link.</li>
+      <li>Export: the Apps Script administrator downloads the student ZIP and delivers it through an approved district channel after verifying the requester. The console does not automatically email a temporary download link.</li>
       <li>Delete: admin button trashes Drive files, removes rows, logs <code>DATA_DELETED</code>.</li>
       <li>Acknowledged within 10 school days; completed within 30 calendar days when feasible.</li>
     </ol>
@@ -930,7 +925,7 @@ Self-hosted MySQL mode:
     <h3>COPPA school-consent notice (for under-13 users)</h3>
     <p>Under COPPA the district may provide consent on behalf of parents when the service is for an educational purpose and the district retains direct control. The district&rsquo;s notice to parents typically says, in plain language:</p>
     <blockquote style="border-left:4px solid var(--gold,#f59e0b);padding-left:14px;color:var(--ink,#1f2937);">
-      <p>Our school uses DrawSplat<sup class="tm">TM</sup>, a free interactive whiteboard for classroom drawing, notes, and collaboration. The school controls all storage and access. DrawSplat<sup class="tm">TM</sup> does not show ads, does not sell student data, does not use student work to train AI, and does not require student accounts in browser-only use. If you would like to view, correct, export, or delete your child&rsquo;s data, use Family Access Tools at <code>/parents/</code> on the school&rsquo;s DrawSplat<sup class="tm">TM</sup> site.</p>
+      <p>Our school uses DrawSplat<sup class="tm">TM</sup>, a free interactive whiteboard for classroom drawing, notes, and collaboration. The school controls all storage and access. DrawSplat<sup class="tm">TM</sup> does not show ads, does not sell student data, does not use student work to train AI, and does not require student accounts in browser-only use. If you would like to view, correct, export, or delete your child&rsquo;s data, contact the school’s published privacy contact. Schools using the Apps Script family-request workflow may also provide Family Access Tools at <code>/parents/</code>.</p>
     </blockquote>
 
     <h3>Texas SCOPE / TEC 32.151+</h3>

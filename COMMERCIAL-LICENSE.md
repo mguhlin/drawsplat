@@ -4,6 +4,8 @@
 
 DrawSplatTM is published under the **GNU AGPL-3.0-or-later**. Any school, district, or organization may use, host, modify, and redistribute the software under those terms. The full text of the licence ships in the repository at `LICENSE`.
 
+**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — [licensing](https://drawsplat.org/wiki/licensing) and [pricing](https://drawsplat.org/pages/pricing). SplatWorks applications carry their own component license notices, including GPL-3.0-only; retain all applicable notices.
+
 ## What is free
 
 - The complete static web app, all classroom widgets, the Compliance Console, Family Access Tools, District Privacy Packet, and every feature listed in `README.md` and `pages/features.html`.
