@@ -6,7 +6,7 @@ The user service `drawsplat-local.service` starts on login and remains available
 
 `drawsplat-backup.timer` runs daily at 03:15. `systemctl --user start drawsplat-backup.service` creates a manual backup. Database exports and checksum files are in `~/.local/share/drawsplat/backups`. Each new backup includes a private `.config.env` snapshot with the matching password pepper; keep it with its SQL export for recovery. Google sign-in requires a district Web Client ID; CSV provisioning works independently.
 
-For portable district deployment, use [the district installation guide](district-selfhost.md). Both MariaDB and MySQL use `/api/drawsplat/mysql`; the provider name remains `mysql` for frontend compatibility. JSON handling accepts MariaDB text JSON and MySQL native JSON. There are no MariaDB-specific frontend credentials.
+For portable district deployment, use [the district installation guide](district-selfhost.html). Both MariaDB and MySQL use `/api/drawsplat/mysql`; the provider name remains `mysql` for frontend compatibility. JSON handling accepts MariaDB text JSON and MySQL native JSON. There are no MariaDB-specific frontend credentials.
 
 ## Verification completed on October 10, 2026
 

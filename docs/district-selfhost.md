@@ -1,32 +1,214 @@
 # DrawSplat district installation
 
-The district administrator owns setup and roster imports. Teachers publish assignments and review their classes' turn-ins; students see enrolled classrooms and their own submissions. MariaDB and MySQL use the same saving API and whiteboard interface.
+[View HTML](district-selfhost.html) · [Download Markdown](district-selfhost.md)
 
-## Install
+Install your district’s whiteboard, create its administrator account, and set up teacher and student classrooms. MariaDB and MySQL use the same saving API and whiteboard interface.
 
-1. Download and extract [the current source ZIP](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip). Install Docker Engine with Compose on Linux, or Docker Desktop on Windows/macOS. The first launch requires internet access to download container images.
-2. Run `bash start-district.sh` on Linux/macOS, or double-click `start-district.bat` on Windows. MariaDB 11.8 is the default. To select MySQL 8.4 on the **first** launch, run `bash start-district.sh --mysql` or `start-district.bat --mysql`. Do not change database engines over an existing data volume.
-3. Open `http://localhost:8080/setup`. Paste the setup key printed by the launcher. Leave database fields blank for the bundled database, or enter your existing empty MariaDB/MySQL database's host, username, password and database name. A remote database should use verified TLS. The database account needs schema migration permissions plus SELECT, INSERT, UPDATE and DELETE.
-4. Test the connection. The first administrator fields show `admin@localhost.test` and a unique generated starter password. Use these credentials or replace the email and password (at least 12 characters) before finishing. Copy the final login details from the completion screen and keep them with the server installation records. The service restarts automatically; `/setup` is then disabled. Settings are saved in the private configuration volume, not in browser storage.
-5. Open `/admin/district-roster.html`, connect to the default API and sign in as the district administrator. Add a teacher and class, or preview and import a roster CSV. Required headers are `teacher_email,class_name`; optional headers are `teacher_name,student_email,student_name`. Repeat a teacher/class for each student. The sample CSV is linked on the page. Imports add memberships, preserve roles, and do not remove students absent from a new file. Conflicting existing roles roll back the entire import.
-6. Teachers and students open `/app/whiteboard.html` and choose **File → Online classrooms**. Teachers publish the current board as an assignment; students open it, work on their copy, and turn it in. Teachers can open submissions and leave feedback. Account-based Save/Open remains available for private boards.
+## Before you start
 
-## Google sign-in
+### Who uses each account?
 
-Create a Google OAuth **Web application** client for the district and add the exact site origin to its authorized JavaScript origins. Enter its client ID and allowed school email domains during setup. No Google client secret is needed for this browser ID-token flow. Teachers and students must first exist on the imported roster. Their verified Google email matches their assigned role; a client-supplied role cannot promote them. Public registration and invitation enrollment are disabled for district installations. The initial administrator can always use the installation's email/password login.
+| Account | What it does | Where to sign in |
+| --- | --- | --- |
+| District administrator | Installs DrawSplat and manages teachers, rosters, and classrooms | `/admin/district-roster.html` |
+| Teacher | Shares assignments and reviews classroom turn-ins | `/app/whiteboard.html` |
+| Student | Opens enrolled classrooms and submits their own work | `/app/whiteboard.html` |
 
-If Google is configured later, edit `GOOGLE_CLIENT_ID` and `GOOGLE_ALLOWED_DOMAINS` in the private `/data/config.json` inside the API container, then restart that service. Keep the file private and preserve every other setting, especially `DRAWSPLAT_PEPPER`. See [Google's client setup guidance](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
+The **district administrator login** is separate from the **Teacher Admin unlock password**. Teachers and students cannot manage district rosters.
 
-## Put the district installation on its own domain
+### What you need
 
-Edit `selfhost/district/.env`: set `SITE_ADDRESS=whiteboard.your-district.org`, `SITE_ORIGIN=https://whiteboard.your-district.org` and `WEB_BIND=0.0.0.0`. Point that hostname at the server and allow ports 80 and 443. Run the launcher again. Caddy obtains and renews HTTPS certificates. Change Google authorized origins to match. Database and API ports are not published. The default installation listens on loopback only until the administrator chooses to expose it.
+- A district server or computer where you can install Docker.
+- **Linux:** Docker Engine with Compose. **Windows/macOS:** Docker Desktop. Windows must use Linux containers.
+- Internet access for the first launch to download container images.
+- An empty MariaDB or MySQL database if you plan to use an existing database server. Otherwise, the launcher creates a bundled database.
+- A Google OAuth Web Client ID if you want teachers and students to use Google sign-in. You can configure it later.
 
-Keep `.env`, the setup key and configuration backups restricted to server administrators. On Windows, use a restricted folder and NTFS permissions; POSIX file modes do not replace Windows access controls. Never publish these files with the static site.
+**Hosting:** drawsplat.org provides the public frontend and source download. It does not host your district’s MariaDB service. Your district operates its own API, database, Google client, backups, and server.
 
-## Updates, backup and recovery
+## Install DrawSplat
 
-Keep the same installation directory, Compose project name, private `.env`, and Docker volumes when updating source. Rerun the launcher; versioned schema migrations are applied once and safely resume after interruptions. Test upgrades and recovery on a separate instance first. Use `docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down` to stop services. Do not add `--volumes` unless intentionally deleting all district data.
+### 1. Download and extract the source
 
-Run `bash selfhost/district/backup-district.sh` (Windows: `selfhost\district\backup-district.bat`). This creates a dated private directory with a consistent SQL export and the configuration containing the password pepper. Store encrypted off-server copies and restrict administrator access. Backups contain student records and credentials. Restore requires **both** the SQL and matching configuration. Instructions are in `selfhost/district/RESTORE.md`.
+[Download the current district source ZIP](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip).
 
-The public drawsplat.org frontend does not host a district's MariaDB service. Each district owns its API, database, Google client, backups, retention decisions and server administration. This release establishes classroom workflows; real Google login and a district's own HTTPS/domain configuration must be checked in that deployment before classroom rollout.
+Extract the archive and open the folder containing `start-district.sh` and `start-district.bat`. Install and start Docker before continuing.
+
+### 2. Run the launcher
+
+**Linux or macOS** — open a terminal in the extracted folder:
+
+```bash
+bash start-district.sh
+```
+
+**Windows** — double-click `start-district.bat`, or run this from a command prompt in the extracted folder:
+
+```bat
+start-district.bat
+```
+
+The default database is **MariaDB 11.8**. To choose **MySQL 8.4**, use one of these commands on the **first launch**:
+
+```bash
+bash start-district.sh --mysql
+```
+
+```bat
+start-district.bat --mysql
+```
+
+Do not switch database engines over an existing data volume. Keep the setup key printed by the launcher—you need it in the next step.
+
+### 3. Connect the database in the web installer
+
+Open [http://localhost:8080/setup](http://localhost:8080/setup) on the server computer. Paste the setup key printed by the launcher.
+
+| Database choice | What to enter |
+| --- | --- |
+| Bundled database | Leave the connection fields blank to use the generated server settings |
+| Existing database | Enter the host, port, empty database name, username, and password |
+| Remote database | Use verified TLS; provide the CA certificate if required |
+
+The database account needs schema migration permissions, plus `SELECT`, `INSERT`, `UPDATE`, and `DELETE`. Select **Test connection** before finishing setup.
+
+### 4. Choose the district administrator credentials
+
+The installer displays these starter credentials:
+
+| Field | Starter value |
+| --- | --- |
+| Administrator email | `admin@localhost.test` |
+| Password | A unique generated password shown in your setup screen |
+
+Use these credentials or replace either field. A replacement password must have **at least 12 characters**. This account manages district rosters; it is not a teacher or student account.
+
+Select **Finish setup**. On the completion screen, select **Copy login details** and save them with your server installation records.
+
+The service restarts automatically. The `/setup` screen is then disabled, and settings are saved in the private configuration volume. Existing installations continue to use their current credentials.
+
+### 5. Add teachers and import classroom rosters
+
+Open [http://localhost:8080/admin/district-roster.html](http://localhost:8080/admin/district-roster.html), or the same path on your district’s domain.
+
+Select **Connect and sign in**. Use the district administrator email and password from step 4. If someone else installed the server, ask that person for the administrator login.
+
+You can add a teacher and classroom manually, or import a CSV roster. [Download the sample roster CSV](../assets/examples/district-roster.csv).
+
+| CSV column | Required? | Example |
+| --- | --- | --- |
+| `teacher_email` | Yes | `teacher@school.example` |
+| `class_name` | Yes | `Science 6` |
+| `teacher_name` | No | `Ms. Rivera` |
+| `student_email` | No | `student@school.example` |
+| `student_name` | No | `Sam Lee` |
+
+Repeat the teacher and class for each student row. Each import accepts up to **2,000 rows** in a file up to **1 MB**.
+
+1. Choose the CSV file.
+2. Select **Preview import** and review the teacher, classroom, and student counts. Nothing is written yet.
+3. Select **Import roster** to create accounts, classrooms, and enrollments.
+
+Reimporting the same rows adds no duplicates. Imports preserve existing roles and add memberships; they do **not** remove students who are absent from a newer file. A conflicting existing account role rolls back the entire import.
+
+### 6. Share assignments and collect turn-ins
+
+Teachers and students open `/app/whiteboard.html` and select **File → Online classrooms**.
+
+- **Teachers:** publish the current board as an assignment, open student submissions, and leave feedback.
+- **Students:** open an enrolled class, work on their own copy of an assignment, and turn in the current board.
+- **Private boards:** account-based Save/Open remains available alongside classroom assignments.
+
+## Configure Google sign-in
+
+### During installation
+
+1. Create a Google OAuth **Web application** client for your district.
+2. Add the exact website origin to the client’s **authorized JavaScript origins**.
+3. Enter the **Web Client ID** and **allowed school email domains** in the setup screen.
+4. Import the teacher and student roster before those users sign in.
+
+No Google client secret is needed for this browser ID-token flow. Verified Google emails match rostered accounts and retain their assigned roles. Public registration and invitation enrollment are disabled for district installations. The initial administrator can use the installation’s email/password login.
+
+[Read Google’s client setup guidance](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
+
+### Configure Google later
+
+Edit these settings in the private `/data/config.json` inside the API container, then restart the API service:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_ALLOWED_DOMAINS`
+
+Preserve the other settings, especially `DRAWSPLAT_PEPPER`. Keep the configuration file private.
+
+## Use your district’s domain
+
+Edit `selfhost/district/.env` with your domain:
+
+```dotenv
+SITE_ADDRESS=whiteboard.your-district.org
+SITE_ORIGIN=https://whiteboard.your-district.org
+WEB_BIND=0.0.0.0
+```
+
+1. Point the hostname at your server.
+2. Allow incoming traffic on ports **80** and **443**.
+3. Run the launcher again. Caddy obtains and renews HTTPS certificates.
+4. Update Google’s authorized JavaScript origins to match the HTTPS origin.
+
+Database and API ports are not published. By default, the installation listens on loopback until the administrator chooses to expose it.
+
+Restrict `.env`, the setup key, and configuration backups to server administrators. On Windows, use a restricted folder and NTFS permissions; POSIX file modes do not replace Windows access controls. Do not publish these files with the static site.
+
+## Update or stop the installation
+
+For updates, keep the same installation directory, Compose project name, private `.env`, and Docker volumes. Update the source and rerun the launcher. Versioned migrations are applied once and can resume after interruptions. Test upgrades on a separate instance first.
+
+To stop services, run this from the installation folder:
+
+```bash
+docker compose --env-file selfhost/district/.env -f selfhost/district/compose.yml down
+```
+
+Do not add `--volumes` unless you intend to delete all district data.
+
+## Back up and recover
+
+### Create a backup
+
+**Linux or macOS:**
+
+```bash
+bash selfhost/district/backup-district.sh
+```
+
+**Windows:**
+
+```bat
+selfhost\district\backup-district.bat
+```
+
+The launcher saves a dated private directory containing:
+
+- A consistent SQL export of the **bundled database**.
+- The matching configuration file, including the password pepper.
+
+**External databases:** use the external database host’s backup tools instead. The bundled database export does not contain external records. Preserve the matching private `/data/config.json` too.
+
+### Recover an installation
+
+Recovery requires **both the SQL export and its matching configuration**. Read the included `selfhost/district/RESTORE.md` file, or [view the restore instructions online](https://github.com/mguhlin/drawsplat/blob/main/selfhost/district/RESTORE.md).
+
+Keep encrypted off-server copies, restrict access to administrators, and test recovery on a separate installation. Backups contain student records and credentials.
+
+## Before classroom rollout
+
+Verify the installation on your district’s own server:
+
+- District administrator sign-in and a roster import.
+- Real Google sign-in with your client ID and authorized origin.
+- Teacher assignment sharing, student turn-in, and teacher feedback.
+- HTTPS access on the district’s domain.
+- Backup restoration and your district’s retention procedures.
+
+Windows BAT launchers also need acceptance testing on your district’s Windows host. Your district remains responsible for server administration, backups, and retention decisions.
