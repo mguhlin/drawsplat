@@ -53,3 +53,11 @@ test('home and blog route help through wiki without Community links',async({page
   expect(await page.locator('a[href*="wiki/"]').count()).toBeGreaterThan(0);
  }
 });
+
+test('Wiki brand returns readers to the main DrawSplat site',async({page})=>{
+ for(const url of ['/wiki/','/wiki/district-classrooms.html','/guides/mysql-setup.html']){
+  await page.goto(url);
+  await page.locator('.wiki-brand').click();
+  await expect(page).toHaveURL('http://127.0.0.1:4183/index.html');
+ }
+});
