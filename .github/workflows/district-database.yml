@@ -2,7 +2,7 @@ name: District database installation
 on:
   push:
     branches: [main]
-    paths: ['server/mysql-backend/**', 'selfhost/district/**', 'start-district.*', 'tests/*district*', 'tests/mysql-backend.test.cjs', '.github/workflows/district-database.yml']
+    paths: ['server/mysql-backend/**', 'selfhost/district/**', 'start-district.*', 'start-native.*', 'scripts/install-docker-debian.sh', 'tests/*district*', 'tests/mysql-backend.test.cjs', '.github/workflows/district-database.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,6 +18,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate launch scripts
+        run: |
+          bash -n start-district.sh start-native.sh scripts/install-docker-debian.sh
+          bash scripts/install-docker-debian.sh --help
       - name: Prepare private configuration
         run: |
           node selfhost/district/prepare.js ${{ matrix.engine == 'mysql' && '--mysql' || '' }} > /dev/null

@@ -12,7 +12,7 @@ Open **start-here.html** immediately after extracting the **complete DrawSplat +
 2. Review the component checkboxes. The whiteboard, all four SplatWorks apps, tools, widgets and games are **checked by default**. Uncheck anything your district does not want to serve.
 3. Choose MariaDB or MySQL and optionally enter your district hostname.
 4. Select **Save plan in extracted folder** in a supported browser and choose the extracted package folder or its inner `drawsplat` folder. The page saves into the application folder automatically. Alternatively, select **Download installation plan** and save `drawsplat-district-plan.json` inside the `drawsplat` folder next to `start-district.sh`.
-5. Open the inner `drawsplat` folder. **Docker:** run `bash start-district.sh` or `start-district.bat`. **Without Docker:** follow [native setup](#install-without-docker), run `node selfhost/district/prepare-native.js`, and start the API and gateway. If you skip the plan, every component is enabled.
+5. Open the inner `drawsplat` folder. **Docker:** run `bash start-district.sh` or `start-district.bat`. **Without Docker:** follow [native setup](#install-without-docker), run `bash start-native.sh` or `start-native.bat`. If you skip the plan, every component is enabled.
 6. Follow the hub’s checklist: database connection, district administrator credentials, optional Google sign-in, teachers and rosters, school settings, component verification, HTTPS and tested backups.
 
 **Rerun whenever needed:** reopen start-here.html, load your previous plan or review the saved choices, download the updated plan into the installation folder, and rerun the preparation/startup steps for your chosen path. Existing passwords, accounts, saved work and database volumes are preserved. Unchecked components are blocked at the district web gateway; their files are retained so you can enable them later. Changing database engines or moving between Docker and native hosting requires a planned migration; changing this selector does not transfer existing data.
@@ -315,31 +315,30 @@ This example uses TCP on `127.0.0.1:3306`. If you use a remote database, have it
 
 ### Native prepare and start
 
-1. Select **Without Docker** in Quick Start, choose the database and components, and save the plan inside `drawsplat/`. A hostname is optional for initial localhost testing.
-2. Install the API dependencies and generate the native configuration:
+After installing Node.js, MariaDB/MySQL and Caddy and provisioning the database:
+
+1. Select **Without Docker** in Quick Start, choose the same database engine, and save the plan inside `drawsplat/`. Keep the hostname blank for a local trial.
+2. Open a terminal in the inner `drawsplat/` folder and run one launcher:
 
 ```bash
-npm ci --omit=dev --prefix server/mysql-backend
-node selfhost/district/prepare-native.js
+bash start-native.sh
 ```
 
-If you did not save a plan, preparation enables every component and assumes MariaDB. Add `--mysql` to choose MySQL on the first preparation. Preparation prints the setup address and a private setup key. Rerunning preserves the key and existing configuration; it does not create, delete or modify your database.
+```bat
+start-native.bat
+```
 
-3. Start the API in one terminal:
+The launcher installs the Node API dependencies, prepares settings, validates the gateway and starts both the API and Caddy. It opens the local setup hub after the service responds. Keep this one terminal open during the local trial; **Ctrl+C stops both services**. The database remains its own OS service. An occupied port produces an error instead of stopping another application.
+
+The default ports are API **8787** and web **8080**. If another app uses them, choose alternatives on the first launch:
 
 ```bash
-node selfhost/district/run-native.js
+bash start-native.sh --api-port 8788 --web-port 8081
 ```
 
-4. In a second terminal, start the gateway:
+Use the address printed by the launcher. Without a plan it enables all components and assumes MariaDB; add `--mysql` on the first launch to select MySQL. Reruns preserve the setup key and private configuration, refuse a database-engine change, and do not create, delete or modify your database.
 
-```bash
-caddy run --config selfhost/district/native-web/Caddyfile --adapter caddyfile
-```
-
-For localhost testing, both terminal windows must remain open. If an installed Caddy service already occupies the selected ports, configure that service to use this generated configuration instead of starting a second Caddy process. API port 8787 and web port 8080 must be available; preparation accepts `--api-port 8788 --web-port 8081` if your localhost needs different ports. Use the address it prints.
-
-5. Open `/setup` at the printed address and paste the setup key. Enter:
+3. Open `/setup` at the printed address and paste the private setup key. Native setup selects **My own database**. Enter your provisioned database details:
 
 | Field | Local database example |
 | --- | --- |
@@ -347,13 +346,28 @@ For localhost testing, both terminal windows must remain open. If an installed C
 | Port | `3306` |
 | Database | `drawsplat` |
 | Username | `drawsplat_app` |
-| Password | The unique database password you created above |
-| Verified database TLS | Enable for a remote database; supply its CA when required |
+| Password | The unique database password you created |
+| Verified database TLS | Enable for a remote database and supply its CA when required |
 
-6. Test the database connection, choose the district administrator credentials, and finish setup. The native API runner restarts automatically after installation. Save the completed login details, then open the printed `/start-here.html` address.
-7. Complete the shared [administrator](#4-choose-the-district-administrator-credentials), [roster](#5-add-teachers-and-import-classroom-rosters), [classroom](#6-share-assignments-and-collect-turn-ins) and [Google sign-in](#configure-google-sign-in) steps.
+4. Test the connection, choose and privately save the administrator credentials, and finish setup. The API restarts automatically. Complete the shared administrator, roster, classroom and Google sign-in steps. Ready services alone do not verify installation.
 
-Native setup creates `selfhost/district/native-private/settings.json` and `config.json`. Keep both private and preserve them when upgrading. `config.json` contains the database connection and password pepper. The gateway configuration and component rules are generated in `selfhost/district/native-web/`.
+Native setup creates `selfhost/district/native-private/settings.json` and `config.json`. Keep both private and preserve them when upgrading; the configuration includes the database login and password pepper. Generated gateway rules are in `native-web/`.
+
+For managed services or troubleshooting, the separate commands remain available:
+
+```bash
+npm ci --omit=dev --prefix server/mysql-backend
+node selfhost/district/prepare-native.js
+node selfhost/district/run-native.js
+```
+
+Start the gateway separately in another terminal when using those commands:
+
+```bash
+caddy run --config selfhost/district/native-web/Caddyfile --adapter caddyfile
+```
+
+Do not run the combined launcher beside those same managed services. For unattended operation, configure the OS services below.
 
 ### Native services and HTTPS
 
