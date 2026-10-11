@@ -4,6 +4,7 @@ from pathlib import Path
 import html
 import json
 import re
+from site_navigation import nav_html
 from markdown_it import MarkdownIt
 root = Path(__file__).resolve().parents[1]
 source = (root / 'docs/district-selfhost.md').read_text()
@@ -29,13 +30,13 @@ page = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'">
 <title>District installation guide · DrawSplat</title><meta name="description" content="Install DrawSplat with MariaDB or MySQL, create your district administrator, configure Google sign-in, and import classroom rosters.">
-<link rel="stylesheet" href="../assets/css/district-guide.css"></head><body>
+<link rel="stylesheet" href="../assets/css/district-guide.css"><link rel="stylesheet" href="../assets/css/site-navigation.css"></head><body>
 <!-- Generated from district-selfhost.md by scripts/build-district-guide.py. -->
 <a class="skip-link" href="#guide">Skip to installation guide</a>
-<header class="guide-header"><a href="../">DrawSplat</a><nav aria-label="Guide formats"><a href="../wiki/">DrawSplat Wiki</a><a href="district-selfhost.md">View Markdown</a><a href="district-selfhost.md" download>Download Markdown</a><a href="../pages/download.html">Downloads</a></nav></header>
+<header class="guide-header"><a href="../">DrawSplat</a>''' + nav_html('docs/district-selfhost.html') + '''</header>
 <div class="guide-layout"><aside><nav aria-label="Contents"><h2>In this guide</h2><ul><li><a href="#quick-start-hub">Quick Start checklist</a></li>''' + ''.join(contents) + '''</ul></nav></aside>
-<main id="guide"><img class="guide-banner" src="../assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724">''' + heading + quickstart + body + '''</main></div>
-<footer>DrawSplat district installation · <a href="district-selfhost.md">Markdown source</a></footer><script src="../assets/js/district-components.js"></script><script src="../assets/js/district-quickstart.js"></script></body></html>'''
+<main id="guide"><img class="guide-banner" src="../assets/brand/admin-headers/district-roster.png" alt="" width="2171" height="724">''' + heading + '<p class="guide-format-links"><a href="district-selfhost.md">View Markdown</a> · <a href="district-selfhost.md" download>Download Markdown</a></p>' + quickstart + body + '''</main></div>
+<footer>DrawSplat district installation · <a href="district-selfhost.md">Markdown source</a></footer><script src="../assets/js/site-navigation.js" defer></script><script src="../assets/js/district-components.js"></script><script src="../assets/js/district-quickstart.js"></script></body></html>'''
 (root / 'docs/district-selfhost.html').write_text(page)
 
 start = page.replace('../assets/', 'assets/').replace('../pages/', 'pages/').replace('../wiki/', 'wiki/').replace('href="../"', 'href="index.html"').replace('href="district-selfhost.md"', 'href="docs/district-selfhost.md"')

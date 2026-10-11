@@ -25,3 +25,7 @@ The wiki generator writes shared static sidebar navigation, article outlines, ge
 Check local links, source-to-HTML consistency, mobile navigation, keyboard access, search, and print. Keep licensing notices and agreement execution status accurate. Separate shipped behavior from proposals and district procedures; never label documentation or an unsigned template as a compliance certification.
 
 Commit generated files with their sources. Refresh downloadable packages after changing bundled setup instructions. Verify the public wiki, an old guide URL, a deep-linked search, download checksums, and the separately maintained mGuhlin.org article references after deployment.
+
+## Shared site navigation
+
+The five top-level items are Apps (including Whiteboard), SplatWorks, Blog, Guestbook, and Wiki. `scripts/site_navigation.py` defines the links; `scripts/build-site-navigation.py` applies them to public site headers. The Wiki builder runs this step automatically. Typing Games belongs in the Games directory. Educator resources belong in the Wiki’s For educators section. Do not add independent copies of the old Support, Technical, or For Educators top menus.

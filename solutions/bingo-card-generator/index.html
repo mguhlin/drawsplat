@@ -25,13 +25,13 @@
 </style>
 <link rel="stylesheet" href="../../assets/css/action-cards.css?v=1.0" />
 <script src="../../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
+<link rel="stylesheet" href="../../assets/css/site-navigation.css"></head>
 <body>
 <header class="landing-header">
   <a class="landing-brand" href="../../index.html" data-i18n-aria-label="nav.brandAria" aria-label="DrawSplat™ home"><img src="../../assets/brand/DrawSplat_logo.png" class="header-logo" alt=""><span>DrawSplat<sup class="tm">TM</sup></span></a>
-  <nav class="landing-nav" data-i18n-aria-label="nav.aria" aria-label="Bingo card generator navigation"><a href="../../pages/features.html" data-i18n="nav.features">Features</a><a href="../../wiki/index.html" data-i18n="nav.support">Support</a><a href="../bingo-caller/" data-i18n="nav.bingoCaller">Live Bingo Caller</a><a href="../../app/whiteboard.html" data-i18n="nav.whiteboard">Whiteboard</a></nav>
+  <nav class="site-nav" aria-label="Primary navigation"><details name="drawsplat-site-menu" class="site-nav-dropdown"><summary>Apps</summary><div class="site-nav-menu"><a data-no-action-icon href="../../app/whiteboard.html">Whiteboard</a><a data-no-action-icon href="../../studio/index.html">All apps</a><a data-no-action-icon href="../../pages/tools.html">Tools and widgets</a><a data-no-action-icon href="../../games/index.html">Games</a></div></details><details name="drawsplat-site-menu" class="site-nav-dropdown"><summary>SplatWorks</summary><div class="site-nav-menu"><a data-no-action-icon href="../../pages/splatworks.html">SplatWorks overview</a><a data-no-action-icon href="../../pages/writesplat.html">WriteSplat</a><a data-no-action-icon href="../../pages/listsplat.html">ListSplat</a><a data-no-action-icon href="../../pages/showsplat.html">ShowSplat</a><a data-no-action-icon href="../../pages/gridsplat.html">GridSplat</a></div></details><a data-no-action-icon href="../../blog/index.html">Blog</a><a data-no-action-icon href="../../index.html#guestbook">Guestbook</a><a data-no-action-icon href="../../wiki/index.html">Wiki</a></nav>
   <div class="i18n-picker" data-i18n-picker></div>
-  <a class="landing-signin" href="../../app/whiteboard.html" data-i18n="nav.openWhiteboard">Open Whiteboard</a>
+
 </header>
 <main class="shell">
   <section class="hero"><p class="eyebrow" data-i18n="hero.eyebrow">Classroom Widget</p><h1 data-i18n="hero.h1">Bingo Card Generator</h1><p data-i18n="hero.subtitle">Create printable bingo cards from words, questions, vocabulary, names, concepts, or traditional B-I-N-G-O numbers.</p></section>
@@ -107,5 +107,5 @@ generate();
 // Re-render cards on language switch so canvas labels (Card N, FREE, Generated with …) update.
 window.addEventListener('widget-i18n:changed',()=>{seedTitle();if(cardData.length)generate();});
 </script><script src="../../assets/js/consent-banner.js" defer></script>
-</body>
+<script src="../../assets/js/site-navigation.js" defer></script></body>
 </html>

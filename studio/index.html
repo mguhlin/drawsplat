@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="../assets/css/launcher-trigger.css" />
   <link rel="stylesheet" href="../assets/css/action-cards.css?v=1.0" />
 <script src="../assets/js/action-cards.js?v=1.0" defer></script>
-</head>
+<link rel="stylesheet" href="../assets/css/site-navigation.css"></head>
   <body class="ds-directory">
     <a class="ds-skip" href="#toolSearch">Skip to tool search</a>
     <header class="ds-header">
@@ -28,14 +28,7 @@
           >DrawSplat Studio</span
         ></a
       >
-      <nav class="ds-nav" aria-label="Primary navigation">
-        <a href="../app/whiteboard.html">Whiteboard</a
-        ><button class="ds-apps-link" type="button" data-ds-app-launcher>
-          Apps ▦</button
-        ><a href="../pages/splatworks.html">SplatWorks</a
-        ><a href="../guides/">For Educators</a
-        ><a href="../wiki/index.html">Support</a>
-      </nav>
+      <nav class="site-nav" aria-label="Primary navigation"><details name="drawsplat-site-menu" class="site-nav-dropdown"><summary>Apps</summary><div class="site-nav-menu"><a data-no-action-icon href="../app/whiteboard.html">Whiteboard</a><a data-no-action-icon href="index.html">All apps</a><a data-no-action-icon href="../pages/tools.html">Tools and widgets</a><a data-no-action-icon href="../games/index.html">Games</a></div></details><details name="drawsplat-site-menu" class="site-nav-dropdown"><summary>SplatWorks</summary><div class="site-nav-menu"><a data-no-action-icon href="../pages/splatworks.html">SplatWorks overview</a><a data-no-action-icon href="../pages/writesplat.html">WriteSplat</a><a data-no-action-icon href="../pages/listsplat.html">ListSplat</a><a data-no-action-icon href="../pages/showsplat.html">ShowSplat</a><a data-no-action-icon href="../pages/gridsplat.html">GridSplat</a></div></details><a data-no-action-icon href="../blog/index.html">Blog</a><a data-no-action-icon href="../index.html#guestbook">Guestbook</a><a data-no-action-icon href="../wiki/index.html">Wiki</a></nav>
     </header>
     <main class="ds-main">
       <section class="ds-directory-hero">
@@ -109,5 +102,5 @@
     </main>
     <script type="module" src="../assets/js/tool-dashboard.js?v=2"></script>
     <script type="module" src="../assets/js/tool-launcher.js?v=2"></script>
-  </body>
+  <script src="../assets/js/site-navigation.js" defer></script></body>
 </html>

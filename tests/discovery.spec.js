@@ -19,14 +19,11 @@ test("homepage routes natural-language intent to the right tools", async ({
       .getByRole("link", { name: /ShowSplat/ })
       .first(),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Apps" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "What do you want to do?" }),
-  ).toBeVisible();
-  await page.getByRole("dialog").getByRole("searchbox").fill("pictograph");
-  await expect(
-    page.getByRole("dialog").getByRole("link", { name: /GraphSplat/ }),
-  ).toBeVisible();
+  const nav = page.getByRole("navigation", { name: "Primary navigation" });
+  await nav.locator('summary').filter({hasText:/^Apps$/}).click();
+  await expect(nav.getByRole('link',{name:'Whiteboard',exact:true})).toBeVisible();
+  await expect(nav.getByRole('link',{name:'All apps',exact:true})).toHaveAttribute('href','studio/index.html');
+  await page.keyboard.press('Escape');
   expect(errors).toEqual([]);
 });
 
@@ -101,6 +98,12 @@ test("Studio presents recent tools as a compact three-column link list", async (
 });
 
 test("major apps expose the shared app launcher", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('drawsplat.entryRole','teacher');
+    localStorage.setItem('drawsplat.welcomed','1');
+    localStorage.setItem('drawsplat.consent.accepted','1');
+    localStorage.setItem('drawsplat.lastStartupTipDate',new Date().toISOString().slice(0,10));
+  });
   for (const url of [
     "/app/whiteboard.html",
     "/solutions/pdfsplat/",
