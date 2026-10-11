@@ -44,7 +44,7 @@ The **district administrator login** is separate from the **Teacher Admin unlock
 
 ### 1. Download and extract the source
 
-[Download the complete DrawSplat + SplatWorks source ZIP](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip).
+[Download the complete DrawSplat + SplatWorks district suite ZIP](https://github.com/mguhlin/drawsplat/releases/download/district-suite-v1.0.0/drawsplat-district-suite-v1.0.0.zip). The [current source archive](https://github.com/mguhlin/drawsplat/archive/refs/heads/main.zip) also contains the complete suite.
 
 Extract the archive and open the folder containing `start-district.sh` and `start-district.bat`. Install and start Docker before continuing.
 
