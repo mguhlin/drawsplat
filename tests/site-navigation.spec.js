@@ -24,3 +24,13 @@ test('educator content is in the searchable wiki and typing games in Games',asyn
  await expect(page.locator('.wiki-results a').filter({hasText:/^For educators$/})).toBeVisible();
  await page.goto('/games/');await expect(page.locator('main').getByRole('link',{name:/Typing Games/}).first()).toBeVisible();
 });
+
+test('pricing and downloads have no standalone Whiteboard call to action',async({page})=>{
+ for(const url of ['/pages/pricing.html','/pages/download.html']){
+  await page.goto(url);
+  await expect(page.getByRole('link',{name:/open (?:the )?whiteboard/i})).toHaveCount(0);
+  await expect(page.locator('.site-nav > a[href*=whiteboard]')).toHaveCount(0);
+  await page.locator('.site-nav summary').filter({hasText:/^Apps$/}).click();
+  await expect(page.getByRole('navigation',{name:'Primary navigation'}).getByRole('link',{name:'Whiteboard',exact:true})).toBeVisible();
+ }
+});
