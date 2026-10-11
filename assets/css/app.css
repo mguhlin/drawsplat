@@ -1477,3 +1477,10 @@ body[data-tool="stamp"] #boardSvg,body[data-tool="stamp"] #boardSvg .object{curs
 .mysql-board-list{display:grid;gap:10px;margin-top:16px}
 .mysql-board-card{display:grid;gap:5px;text-align:left;padding:14px;background:#f5f0ff;border:1px solid #d8cfff;border-radius:14px}
 .mysql-board-card span{font-size:.85rem;color:#64748b}
+
+/* Video-note text follows the other everyday toolbar labels. */
+#learnerVideoNoteLabel{display:inline;font-size:inherit;line-height:inherit;margin:0}
+
+/* Expand menu choices only on an explicit click, keeping pointer navigation stable. */
+#topMenuBar .top-submenu-list{display:none;overflow-anchor:none}
+#topMenuBar .top-menu-submenu.submenu-open>.top-submenu-list{display:flex}

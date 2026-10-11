@@ -6,7 +6,7 @@
   let busy = false;
   function endpoint(value) {
     const raw = value === undefined ? localStorage.getItem('drawsplat.folderEndpoint') : value;
-    if (!raw) throw new Error('Connect an online saving service in Teacher Admin first.');
+    if (!raw) throw new Error('Open your district whiteboard link to connect its online saving service.');
     const url = new URL(raw, location.origin);
     if (url.username || url.password || url.search || url.hash || (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)))) {
       throw new Error('Use an HTTPS API address, or localhost for testing. Do not include passwords in the address.');
@@ -45,7 +45,7 @@
   let googleScript;
   async function googleButton(parent,onSignIn,onError,base=endpoint()) {
     const config=await request('/auth/config',{},base);if(!config.googleClientId)return;
-    const holder=document.createElement('div');holder.className='google-signin';parent.append(holder);
+    const holder=document.createElement('div');holder.className='google-signin';parent.insertBefore(holder,parent.querySelector('form'));
     if(!googleScript)googleScript=new Promise((resolve,reject)=>{if(window.google?.accounts?.id)return resolve();const script=document.createElement('script');script.src='https://accounts.google.com/gsi/client';script.onload=resolve;script.onerror=()=>{googleScript=null;reject(new Error('Google sign-in could not load. Check your district OAuth settings.'));};document.head.append(script);});
     await googleScript;
     window.google.accounts.id.initialize({client_id:config.googleClientId,callback:async result=>{try{const out=await request('/auth/google',{method:'POST',body:JSON.stringify({idToken:result.credential})},base);sessionStorage.setItem(SESSION_KEY,JSON.stringify({...out,endpoint:base}));onSignIn(out);}catch(err){onError(err);}}});
@@ -62,7 +62,7 @@
     const requestedEndpoint=endpoint();
     return new Promise(resolve => {
       const district = options.purpose === 'district';
-      const dialog = modal(district ? 'Sign in as district administrator' : 'Sign in to save online', (district ? 'Use the administrator email and password created during DrawSplat installation. Teacher and student accounts cannot manage district rosters. If you do not have these credentials, ask the person who installed your district server. This is separate from the Teacher Admin unlock password.' : 'Use your DrawSplat saving account. This is separate from the Teacher Admin password.') + ' Your sign-in stays in this browser tab. Saving service: ' + new URL(endpoint()).host);
+      const dialog = modal(district ? 'Sign in as district administrator' : 'Sign in to save online', (district ? 'Use the administrator email and password created during DrawSplat installation. Teacher and student accounts cannot manage district rosters. If you do not have these credentials, ask the person who installed your district server. This is separate from the Teacher Admin unlock password.' : 'Use your school Google account when enabled, or your own DrawSplat email and password. No separate Teacher Admin password is needed.') + ' Your sign-in stays in this browser tab. Saving service: ' + new URL(endpoint()).host);
       const form = document.createElement('form');
       const email = field(form, 'Email', 'email', 'username');
       const password = field(form, 'Password', 'password', 'current-password');
@@ -139,7 +139,7 @@
     }
     const health=await test();if(!health.capabilities.includes('classrooms-v1'))throw new Error('Update your saving service to enable classrooms.');
     const current=session(),isStudent=current.user.role==='student';
-    const dialog=modal('Online classrooms',isStudent?'Open your teacher’s shared assignments and turn in your own work.':'Create classes, invite students, share a copy of your board, and review submissions. Sharing creates a snapshot; your private board stays separate.');
+    const dialog=modal('Online classrooms',isStudent?'Open your teacher’s shared assignments and turn in your own work.':authConfig.rosterOnly?'Open your district classrooms, share a copy of your board as an assignment, and review student turn-ins. Your private board stays separate.':'Create classes, invite students, share a copy of your board, and review submissions. Sharing creates a snapshot; your private board stays separate.');
     const status=document.createElement('p');status.setAttribute('role','status');dialog.append(status);
     const content=document.createElement('div');dialog.append(content);
     const action=(label,fn,parent=content)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=async()=>{b.disabled=true;try{await fn();}catch(err){status.textContent=err.message;}finally{b.disabled=false;}};parent.append(b);return b;};
@@ -147,7 +147,7 @@
     async function list(){content.replaceChildren();const out=await request('/classrooms');
       if(!isStudent){const f=document.createElement('form');const title=field(f,'New class name','text','off');const create=document.createElement('button');create.textContent='Create class';create.type='submit';f.append(create);content.append(f);f.onsubmit=async e=>{e.preventDefault();create.disabled=true;try{const result=await request('/classrooms',{method:'POST',body:JSON.stringify({title:title.value})});await list();if(!authConfig.rosterOnly)await invite({id:result.classroomId});}catch(err){status.textContent=err.message;}finally{create.disabled=false;}};}
       else if(!authConfig.rosterOnly) {action('Join another class',async()=>{const classroomId=prompt('Classroom number:');if(!classroomId)return;const code=prompt('Invitation code:');if(!code)return;await request('/classrooms/join',{method:'POST',body:JSON.stringify({classroomId,code})});await list();});}
-      if(!out.classes.length){const p=document.createElement('p');p.textContent='No classes yet.';content.append(p);}
+      if(!out.classes.length){const p=document.createElement('p');p.textContent=authConfig.rosterOnly?'No classrooms are assigned to this account yet. Check that you signed in with your rostered school email. Your district manages roster assignments.':'No classes yet.';content.append(p);}
       for(const cls of out.classes)action(cls.title,()=>view(cls));
     }
     async function loadCopy(board){if(!confirm('Open this board? Download your current board first if you need to keep it.'))return;board.recordingBoardId=crypto.randomUUID();await openBoard(board);dialog.close();}

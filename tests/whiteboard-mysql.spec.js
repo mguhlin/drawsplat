@@ -84,3 +84,18 @@ test('editing a pending wizard test never enables a stale or untested API addres
   await pending.fulfill({json:{ok:true,provider:'mysql',capabilities:['private-boards-v1']}});
   await expect(page.locator('#mysqlWizardStatus')).toContainText('API address changed');expect(await page.evaluate(()=>localStorage.getItem('drawsplat.storageMode'))).toBe('google');
 });
+test('district teacher Options uses school Google sign-in and assigned classrooms without an admin unlock',async({page})=>{
+  await page.addInitScript(()=>{let callback;window.google={accounts:{id:{initialize:options=>callback=options.callback,renderButton:holder=>{const button=document.createElement('button');button.textContent='Sign in with school Google';button.onclick=()=>callback({credential:'teacher-google-token'});holder.append(button);}}}}});
+  await page.route(api+'/health',route=>route.fulfill({json:{ok:true,provider:'mysql',capabilities:['private-boards-v1','classrooms-v1','district-rosters-v1']}}));
+  await page.route(api+'/auth/config',route=>route.fulfill({json:{ok:true,googleClientId:'school-client',rosterOnly:true}}));
+  await page.route(api+'/auth/google',route=>{expect(route.request().postDataJSON()).toEqual({idToken:'teacher-google-token'});return route.fulfill({json:{ok:true,token:'test-session',expiresAt:new Date(Date.now()+3600000).toISOString(),user:{id:'teacher-1',email:'teacher@example.test',role:'teacher'}}})});
+  await page.route(api+'/classrooms',route=>route.fulfill({json:{ok:true,classes:[{id:'class-1',title:'Science 6',teacherUserId:'teacher-1'}]}}));
+  await page.route(api+'/classrooms/class-1/assignments',route=>route.fulfill({json:{ok:true,assignments:[]}}));
+  await page.route(api+'/classrooms/class-1/submissions',route=>route.fulfill({json:{ok:true,submissions:[]}}));
+  await page.goto('/app/whiteboard.html');await page.locator('.top-menu > summary').filter({hasText:/^Options$/}).click();await page.locator('[data-menu-target="schoolStartBtn"]').click();
+  await expect(page.locator('#schoolStartDialog')).toBeVisible();await expect(page.locator('#optionsDialog')).toBeHidden();
+  await expect(page.locator('#settingsBtn')).toHaveText('Open my classrooms');await expect(page.locator('#workspaceMode')).toHaveValue('education');await expect(page.locator('#schoolTeacherOptions')).toContainText('No separate Teacher Admin password');
+  await page.locator('#settingsBtn').click();await page.getByRole('button',{name:'Sign in with school Google',exact:true}).click();
+  await expect(page.locator('.mysql-cloud-dialog')).toContainText('Online classrooms');await page.getByRole('button',{name:'Science 6',exact:true}).click();await expect(page.getByRole('button',{name:'Share current board as assignment',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>sessionStorage.getItem('drawsplat.adminAccess'))).toBeNull();expect(await page.evaluate(()=>localStorage.getItem('drawsplat.localAdminPasswordHash'))).toBeNull();expect(page.url()).toContain('/app/whiteboard.html');
+});

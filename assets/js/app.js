@@ -145,7 +145,7 @@ const COLORING_BOOK_ITEMS=[
 const COLORING_BOOK_CATEGORIES=COLORING_BOOK_ITEMS.reduce((acc,item)=>{(acc[item[1]]||(acc[item[1]]=[])).push(item[2]); return acc},{});
 function coloringBookItems(){return COLORING_BOOK_ITEMS.map(([idv,category,label,file])=>{const path=appPath('assets/coloring-book/'+file); return {id:idv,category,label,path,paths:[path]}})}
 
-let board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'grid',objects:[]}]};
+let board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:'',mode:'teacher',assignmentMode:false,currentLayer:'shared',restorePoints:[],showAnswerKey:true,active:0,panels:[{id:id(),name:'Panel 1',bg:'blank',objects:[]}]};
 let tool='select', selectedIds=[], drawing=null, liveDrawingPathEl=null, drag=null, zoom=1, fillEnabled=true, connectorPendingFrom=null, marquee=null, clipboard=null, dotPaintDrag=null, scratchErase=null, eraserDirty=false;
 let dotPaintTargetId=null;
 let touchMultiSelect=false;
@@ -834,7 +834,7 @@ function ensureOptionsPresentation(){
   const workspace=gid('workspaceMode');if(workspace){workspace.setAttribute('aria-describedby','workspaceStatus');workspace.closest('.row')?.querySelector('label')?.setAttribute('for','workspaceMode')}
   card(workspace?.closest('.row'),'Choose your workspace','✦',[
     ['Productivity','Draw, brainstorm, annotate pictures, and create diagrams with a focused set of tools.'],
-    ['Education Tools','Add class and student fields, answer keys, assignments, turn-ins, and moderation controls. Google setup is managed separately in Teacher Admin.']
+    ['Education Tools',mysqlEnabled()?'Use classroom tools with your school account. Open Online classrooms to share assignments and review turn-ins.':'Add class and student fields, answer keys, assignments, turn-ins, and moderation controls. Google setup is managed separately in Teacher Admin.']
   ]);
   const view=gid('interfaceMode');if(view){view.closest('.row')?.querySelector('label')?.setAttribute('for','interfaceMode');const hint=view.closest('.row')?.nextElementSibling;if(hint){hint.id='optionsViewHelp';view.setAttribute('aria-describedby',hint.id)}}
   if(view){const updateViewHelp=()=>{const hint=gid('optionsViewHelp');if(hint)hint.textContent=tr(view.value==='beginner'?'Beginner uses big everyday buttons and a roomy canvas. Use Show me how for help.':view.value==='advanced'?'Full shows the full editing panels. Your board stays intact when you change views.':'Simple keeps the toolbar compact. Use the explained menus to find extra tools when you need them.')};view.addEventListener('change',updateViewHelp);updateViewHelp()}
@@ -843,10 +843,24 @@ function ensureOptionsPresentation(){
     ['Growing','Use the compact drawing toolbar and explained menus for everyday work.'],
     ['Full','Reveal the full editing panels for styling, templates, layers, and classroom workflows. Switching views keeps your board intact.']
   ]);
-  const teacher=gid('settingsBtn')?.closest('.grid');if(teacher){teacher.previousElementSibling?.matches('h3')&&teacher.previousElementSibling.remove();card(teacher,'Connect your classroom','⚙',[
-    ['Teacher Admin','Follow the guided Google setup, test your connection, and create classroom links. The connection is saved on this browser.'],
-    ['Teacher Setup Tutorial','Read the step-by-step guide in a new tab while keeping this board open.']
-  ])}
+  const teacher=gid('settingsBtn')?.closest('.grid');if(teacher){teacher.previousElementSibling?.matches('h3')&&teacher.previousElementSibling.remove();
+    if(mysqlEnabled()){
+      const account=document.createElement('button');account.id='optionsSchoolAccountBtn';account.type='button';account.textContent='School sign-in / account';account.onclick=()=>{gid('schoolStartDialog').close();gid('onlineAccountBtn').click()};teacher.prepend(account);
+      const hint=teacher.nextElementSibling;if(hint?.matches('p'))hint.textContent='Use your school Google account when enabled, or your own DrawSplat login. Your district has already connected the saving service. No separate Teacher Admin password is needed.';
+      const section=card(teacher,'Get started with your school','⚙',[
+        ['1. Sign in','Use your own school account. Signing in stays in this tab; sign out on shared devices.'],
+        ['2. Open my classrooms','Choose an assigned class, share the current board as an assignment, and review student turn-ins.'],
+        ['3. Save your work','Use File → Save online for a private board, or Save File to download an editable copy.']
+      ]);section.id='schoolTeacherOptions';
+      const classroom=gid('settingsBtn');classroom.textContent='Open my classrooms';classroom.setAttribute('aria-label','Open my classrooms');classroom.title='Open my classrooms';
+      const school=document.createElement('dialog');school.id='schoolStartDialog';school.className='modal options-cards-dialog';school.setAttribute('aria-labelledby','schoolStartTitle');
+      const head=document.createElement('div');head.className='modal-head';const heading=document.createElement('h2');heading.id='schoolStartTitle';heading.textContent='Get Started with Your School';const close=document.createElement('button');close.type='button';close.textContent='Close';close.onclick=()=>school.close();head.append(heading,close);school.append(head,section);document.body.append(school);
+
+    }else card(teacher,'Connect your classroom','⚙',[
+      ['Teacher Admin','Follow the guided Google setup, test your connection, and create classroom links. The connection is saved on this browser.'],
+      ['Teacher Quick Start','Read the step-by-step guide while keeping this board open.']
+    ]);
+  }
   const reset=gid('resetBoardBtn')?.closest('.grid');if(reset){reset.previousElementSibling?.matches('h3')&&reset.previousElementSibling.remove();const section=card(reset,'Start a fresh board','↺');section?.classList.add('options-reset-card');const note=document.createElement('p');note.className='hint';note.textContent=tr('Need to keep your work? Use File → Save File before resetting. Reset asks first and saves a recovery checkpoint. Undo can bring your work back.');section?.append(note)}
   dialog.querySelectorAll(':scope > h3.teacher-only').forEach(heading=>heading.remove());
 }
@@ -910,12 +924,13 @@ function ensureWhiteboardPresentation(){
 function ensureTopMenus(){
   const header=document.querySelector('header');
   if(!header||gid('topMenuBar')) return;
+  if(mysqlEnabled()&&!gid('schoolStartBtn')){const button=document.createElement('button');button.id='schoolStartBtn';button.className='teacher-only';button.hidden=true;button.onclick=()=>{ensureOptionsPresentation();gid('schoolStartDialog')?.showModal()};document.body.append(button)}
   const menuDefs=[
     ['File',[['Save File','saveLocalBtn'],['Load File','loadLocalBtn'],['Import Panels...','importPanelsBtn'],['Export PNG','exportBtn'],['Export PDF','exportPdfBtn'],[storageMode()==='mysql'?'Save online':'Save to Google','saveDriveBtn'],[storageMode()==='mysql'?'Open online board':'Load from Google','loadDriveBtn'],...(storageMode()==='mysql'?[['Online account','onlineAccountBtn'],['Online classrooms','onlineClassroomsBtn']]:[]),['divider'],['Save Restore Point','saveRestorePointBtn'],['Restore Point','restorePointBtn']]],
     ['Edit',[['Undo','undoBtn'],['Redo','redoBtn'],['Duplicate','duplicateBtn'],['Delete Selected','deleteBtn'],['Group','groupBtn'],['Ungroup','ungroupBtn'],['Align Left','alignLeftBtn'],['Align Center Horizontally','alignCenterHBtn'],['Align Right','alignRightBtn'],['Align Top','alignTopBtn'],['Align Middle Vertically','alignMiddleVBtn'],['Align Bottom','alignBottomBtn'],['Bring Front','frontBtn'],['Send Back','backBtn']]],
     ['Insert',[['Load Image','imageBtn'],['Coloring Book','openColoringBookDialogBtn'],['Mosaic Images','openMosaicDialogBtn'],['Collage','openCollageDialogBtn','collageSubmenu'],['divider'],[gt('creator'),'openGraphDialogBtn'],[gt('pictureGraph'),'openPictureGraphDialogBtn'],['Mermaid Diagram','insertMermaidBtn'],['Word Cloud','insertWordCloudBtn'],['Concept Map','openConceptMapDialogBtn'],['Emoji Mixer','openEmojiDialogBtn'],['ScratchArt','scratchCoverBtn'],['divider'],['Dot Pictures','openDotPictureLibraryBtn','dotPictureSubmenu'],['divider'],['Insert Sticker','insertStickerBtn'],['Custom Sticker','createCustomStickerBtn']]],
     ['Tools',[['Create GIF','openGifDialogBtn'],['Classroom Widgets','openClassroomWidgetsBtn'],['divider'],['Set Background','loadBgImageBtn'],['Clear Background','clearBgImageBtn'],['Remove BG Color','removeBgColorBtn'],['divider'],['Built-in Layouts','insertTemplateBtn','layoutSubmenu'],['Save Current Frame as Reusable Template','saveTemplateBtn'],['Open Reusable Frame Templates','loadTemplateGalleryBtn'],['divider'],['TNT Reset','tntBtn']]],
-    ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Keyboard Shortcuts','shortcutsBtn'],['Mode','optionsBtn'],['About','aboutBtn']]]
+    ['Options',[['View','viewToggleBtn','viewSubmenu'],['Inspector','inspectorToggleBtn'],['Keyboard Shortcuts','shortcutsBtn'],['Workspace','optionsBtn'],...(mysqlEnabled()?[['Get Started with Your School','schoolStartBtn']]:[]),['About','aboutBtn']]]
   ];
   const nav=document.createElement('nav');
   nav.id='topMenuBar';
@@ -1103,6 +1118,11 @@ function ensureTopMenus(){
     details.appendChild(list);
     nav.appendChild(details);
   });
+  nav.querySelectorAll('.top-menu-submenu').forEach(row=>{
+    const trigger=row.querySelector(':scope > button');trigger.setAttribute('aria-expanded','false');
+    trigger.addEventListener('click',()=>{const open=trigger.getAttribute('aria-expanded')!=='true';trigger.setAttribute('aria-expanded',String(open));row.classList.toggle('submenu-open',open)});
+    row.addEventListener('keydown',event=>{if(event.key==='Escape'&&row.classList.contains('submenu-open')){event.stopPropagation();row.classList.remove('submenu-open');trigger.setAttribute('aria-expanded','false');trigger.focus()}});
+  });
   const anchor=gid('saveStateChip')||header.querySelector('h1');
   anchor?.insertAdjacentElement('afterend',nav);
   ['undoBtn','redoBtn','shortcutsBtn','viewToggleBtn','optionsBtn','aboutBtn','inspectorToggleBtn','moreOptionsBtn','saveDriveBtn','exportBtn','exportPdfBtn','tntBtn'].forEach(idv=>gid(idv)?.classList.add('top-menu-source-hidden'));
@@ -1220,6 +1240,7 @@ function applyLaunchParams(){
     if(storageParam==='mysql')localStorage.setItem(STORAGE_MODE_KEY,'mysql');
     else if(scriptParam)localStorage.setItem(STORAGE_MODE_KEY,'google');
     if(apiParam)localStorage.setItem(FOLDER_ENDPOINT_KEY,apiParam);
+    if(storageMode()==='mysql'&&!localStorage.getItem('drawsplat.workspaceMode')){localStorage.setItem('drawsplat.workspaceMode','education');if(ui.workspaceMode)ui.workspaceMode.value='education';}
   }catch(_){}
   const savedScript=(()=>{try{return localStorage.getItem(SCRIPT_URL_STORAGE_KEY)||''}catch(_){return ''}})();
   if(ui.scriptUrl){
@@ -1779,7 +1800,7 @@ function validateBoard(b){
   }
   if(b.title!==undefined&&typeof b.title!=='string') throw new Error('Invalid title');
 }
-function migrateBoard(b){validateBoard(b);if(typeof b.recordingBoardId!=='string'||!b.recordingBoardId)b.recordingBoardId=id();b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
+function migrateBoard(b){validateBoard(b);if(typeof b.recordingBoardId!=='string'||!b.recordingBoardId)b.recordingBoardId=id();b.version=VERSION;if(!b.mode)b.mode='teacher';if(b.title==='Untitled DrawSplat'||b.title==='Untitled DrawSplatTM') b.title=''; if(!('studentName' in b)) b.studentName=''; if(!('assignmentMode' in b)) b.assignmentMode=false; if(!('currentLayer' in b)) b.currentLayer='shared'; if(!Array.isArray(b.restorePoints)) b.restorePoints=[]; if(!('showAnswerKey' in b)) b.showAnswerKey=true; b.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='blank'; if(typeof p.bgImage!=='string') p.bgImage=''; if(p.canvasFill&&typeof p.canvasFill==='string') p.canvasFill={color:p.canvasFill,opacity:1}; if(p.canvasFill&&typeof p.canvasFill==='object'){p.canvasFill.color=p.canvasFill.color||'#ffffff'; if(p.canvasFill.opacity===undefined) p.canvasFill.opacity=1} else p.canvasFill=null; p.objects=(p.objects||[]).map(migrateObject)}); ensureActivePanel(b); if(typeof ensurePendingImagePoller==='function') ensurePendingImagePoller()}
 const LEGACY_PLACEHOLDERS=new Set(['Add note...','Voice note','Add feedback...','Type here','Text']);
 function migrateObject(o){if(TEXTABLE_TYPES.includes(o.type)){const d=defaultTextProps(o.type); for(const k in d) if(o[k]===undefined) o[k]=d[k]; if((!o.html||o.html==='')&&o.text) o.html=plainTextToHtml(o.text); o.text=htmlToPlainText(o.html||o.text||''); if(LEGACY_PLACEHOLDERS.has(o.text)){o.text=''; o.html=''}} if(o.type==='dot'){if(o.fill===undefined||o.fill==='none') o.fill='#ffffff'; if(o.dotDefaultFill===undefined) o.dotDefaultFill=o.fill; if(o.stroke===undefined) o.stroke='#374151'; if(o.strokeWidth===undefined) o.strokeWidth=2; if(o.opacity===undefined) o.opacity=1} if(o.type==='scratch'){if(!Array.isArray(o.scratchErasePaths)) o.scratchErasePaths=[]; if(!o.fill||o.fill==='none') o.fill='#ffffff'; if(o.opacity===undefined) o.opacity=1; o.stroke='none'; o.strokeWidth=0} if(o.type==='widget'){const d=defaultWidgetConfig(o.widgetKind||o.kind||'traffic'); o.widgetKind=o.widgetKind||d.widgetKind; o.widgetConfig={...d.widgetConfig,...(o.widgetConfig||{})}} if(o.layer===undefined) o.layer='shared'; if(o.fillPattern===undefined) o.fillPattern=''; if(o.answerKey===undefined) o.answerKey=false; if(o.audioSrc===undefined) o.audioSrc=''; return o}
 function normBox(o){if(o.type==='connector'){const p=connectorEndpoints(o);const x=Math.min(p.x1,p.x2),y=Math.min(p.y1,p.y2),w=Math.abs(p.x2-p.x1),h=Math.abs(p.y2-p.y1);return{x,y,w,h,cx:x+w/2,cy:y+h/2}} const x=Math.min(o.x,o.x+o.w),y=Math.min(o.y,o.y+o.h),w=o.type==='audio'?Math.max(220,Math.abs(o.w)):Math.abs(o.w),h=o.type==='audio'?Math.max(156,Math.abs(o.h)):Math.abs(o.h);return{x,y,w,h,cx:x+w/2,cy:y+h/2}}
@@ -1787,7 +1808,7 @@ function normalizeObject(o){if(!o||['line','arrow','path','connector'].includes(
 function resetInteractionState(){stampPreviewPoint=null;commitInlineTextEditor?.(true); selectedIds=[]; connectorPendingFrom=null; marquee=null; drawing=null; liveDrawingPathEl=null; drag=null; scratchErase=null; eraserDirty=false}
 
 function switchPanel(panelId){ensureActivePanel(); const panelKey=String(panelId||''); let idx=board.panels.findIndex(p=>String(p.id)===panelKey); if(idx<0&&/^\d+$/.test(panelKey)) idx=parseInt(panelKey,10); if(idx<0||idx>=board.panels.length)return; if(idx===board.active){syncPanelSelect();return} resetInteractionState(); board.active=idx; render(); saveState(false); setStatus('Switched to '+(board.panels[idx]?.name||('Panel '+(idx+1)))+'.','success')}
-function ensureActivePanel(target=board){if(!target.panels.length) target.panels=[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]; target.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='grid'; if(!Array.isArray(p.objects)) p.objects=[]}); if(!Number.isInteger(target.active)||target.active<0||target.active>=target.panels.length) target.active=0}
+function ensureActivePanel(target=board){if(!target.panels.length) target.panels=[{id:'panel_'+id(),name:'Panel 1',bg:'blank',objects:[]}]; target.panels.forEach((p,i)=>{if(!p.id) p.id='panel_'+id(); if(!p.name) p.name='Panel '+(i+1); if(!p.bg) p.bg='blank'; if(!Array.isArray(p.objects)) p.objects=[]}); if(!Number.isInteger(target.active)||target.active<0||target.active>=target.panels.length) target.active=0}
 function renderTabs(){ensureActivePanel();const tabs=gid('tabs');if(tabs){tabs.innerHTML='';board.panels.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='tab '+(i===board.active?'active':'');b.textContent=p.name||('Panel '+(i+1));b.dataset.panelId=p.id;b.dataset.panelIndex=String(i);b.setAttribute('aria-label','Switch to '+(p.name||('Panel '+(i+1))));tabs.appendChild(b)});const plus=document.createElement('button');plus.type='button';plus.className='tab';plus.textContent='+';plus.dataset.action='add-panel';plus.setAttribute('aria-label','Add panel');tabs.appendChild(plus)} syncPanelSelect()}
 function syncPanelSelect(){ensureActivePanel();const sel=gid('panelSelect');if(!sel)return;const currentId=board.panels[board.active]?.id||'';sel.innerHTML=board.panels.map((p,i)=>`<option value="${esc(p.id)}">${esc(p.name||('Panel '+(i+1)))}</option>`).join('');sel.value=currentId;const hint=gid('panelCurrentHint');if(hint) hint.textContent=`Current panel: ${board.panels[board.active]?.name||('Panel '+(board.active+1))} (${board.active+1} of ${board.panels.length})`}
 function handleTabsClick(evt){const btn=evt.target.closest('button'); if(!btn||!gid('tabs')?.contains(btn)) return; evt.preventDefault(); evt.stopPropagation(); if(btn.dataset.action==='add-panel') return addPanel(); switchPanel(btn.dataset.panelId||btn.dataset.panelIndex)}
@@ -3926,7 +3947,7 @@ ui.activeLayerSelect.onchange=()=>{board.currentLayer=ui.activeLayerSelect.value
 ui.showAnswerKeyToggle.onchange=()=>{board.showAnswerKey=ui.showAnswerKeyToggle.checked; render(); saveState(false)};
 function applyModeUI(){enforceRoleLock(); document.querySelectorAll('.teacher-only').forEach(el=>el.classList.toggle('hidden-by-mode',board.mode==='student')); ['bgSelectSimple','clearFrameBtn','frameNavAdd'].forEach(idv=>gid(idv)?.classList.toggle('hidden-by-mode',board.mode==='student')); if(ui.userMode) ui.userMode.disabled=roleLock==='student'; if(ui.workspaceMode)ui.workspaceMode.disabled=roleLock==='student'; ui.assignmentModeToggle.disabled=board.mode==='student'; ui.activeLayerSelect.disabled=board.mode==='student' || !board.assignmentMode; ui.showAnswerKeyToggle.disabled=(board.mode==='student'); if(board.mode==='student'&&board.assignmentMode) ui.layerBadge.textContent='Layer: Student'}
 
-function addPanel(save=true){if(board.mode==='student'){setStatus('Students cannot add panels to this shared board.','danger'); return false} ensureActivePanel(); resetInteractionState(); const newPanel={id:'panel_'+id(),name:'Panel '+(board.panels.length+1),bg:'grid',objects:[]}; board.panels.push(newPanel); board.active=board.panels.length-1; render(); if(save)saveState(); setStatus('Added '+newPanel.name+'.','success'); return true}
+function addPanel(save=true){if(board.mode==='student'){setStatus('Students cannot add panels to this shared board.','danger'); return false} ensureActivePanel(); resetInteractionState(); const newPanel={id:'panel_'+id(),name:'Panel '+(board.panels.length+1),bg:'blank',objects:[]}; board.panels.push(newPanel); board.active=board.panels.length-1; render(); if(save)saveState(); setStatus('Added '+newPanel.name+'.','success'); return true}
 gid('addPanelBtn').onclick=addPanel;
 gid('frameNavPrev')?.addEventListener('click',()=>{if(board.active>0) switchPanel(board.panels[board.active-1].id)});
 gid('frameNavNext')?.addEventListener('click',()=>{if(board.active<board.panels.length-1) switchPanel(board.panels[board.active+1].id)});
@@ -4838,7 +4859,7 @@ gid('submitTurnInBtn').onclick=openLearnerTurnIn;
 gid('reviewTurnInsBtn').onclick=reviewTurnIns;
 const onlineClassesButton=document.createElement('button');onlineClassesButton.id='onlineClassroomsBtn';onlineClassesButton.hidden=true;onlineClassesButton.textContent='Online classrooms';onlineClassesButton.onclick=()=>window.DrawSplatMySQL.classrooms(()=>{commitInlineTextEditor();return JSON.parse(snapshot());},async loaded=>{stopSync('both');board=loaded;migrateBoard(board);enforceRoleLock();clearSelection();initHistory();render();await persistLocal();setClassroomSaveState('pending');setStatus('Opened a classroom board as your own working copy.','success');}).catch(err=>setStatus(err.message,'danger'));document.body.append(onlineClassesButton);
 gid('loadDriveBtn').onclick=async()=>{if(mysqlEnabled()){try{const loaded=await window.DrawSplatMySQL.load();if(!loaded)return;stopSync('both');board=loaded;migrateBoard(board);enforceRoleLock();clearSelection();initHistory();render();await persistLocal();setClassroomSaveState('saved',snapshot());setStatus('Opened your online board.','success')}catch(err){setStatus('Online load failed. '+err.message,'danger')}return}const url=googleScriptUrl(),boardId=prompt('Paste DrawSplatTM boardId from the Sheet:'); if(!url||!boardId)return; try{const res=await fetch(url+'?action=load&boardId='+encodeURIComponent(boardId)); const out=await res.json(); if(out.ok){board=out.board; migrateBoard(board); clearSelection(); initHistory(); render(); persistLocal(); setStatus('Loaded board from Google.','success')} else setStatus(out.error||'Load failed.','danger')}catch(err){setStatus('Google load failed. '+err.message,'danger')}};
-gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{window.location.href=appPath('admin/admin.html')});
+gid('settingsBtn')&&(gid('settingsBtn').onclick=()=>{if(mysqlEnabled()){gid('schoolStartDialog')?.close();gid('onlineClassroomsBtn').click()}else window.location.href=appPath('admin/admin.html')});
 gid('resetBoardBtn')?.addEventListener('click',()=>{
   if(board.mode==='student')return;
   askConfirm('Start a blank board? Undo or the saved recovery checkpoint can bring this work back.',{okLabel:'Reset',cancelLabel:'Keep'}).then(ok=>{
@@ -4846,7 +4867,7 @@ gid('resetBoardBtn')?.addEventListener('click',()=>{
     const optionsDlg=gid('optionsDialog'); if(optionsDlg&&optionsDlg.open) optionsDlg.close();
     const recovery=rememberBeforeClearing();const policy=board.studentWorkspace;
     stopSync('both');
-    board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',studentWorkspace:policy,restorePoints:[recovery],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'grid',objects:[]}]};
+    board={recordingBoardId:id(),version:VERSION,title:'',className:'',studentName:board.studentName||'',mode:board.mode||'teacher',assignmentMode:false,currentLayer:'shared',studentWorkspace:policy,restorePoints:[recovery],showAnswerKey:true,active:0,panels:[{id:'panel_'+id(),name:'Panel 1',bg:'blank',objects:[]}]};
     clearSelection(); resetInteractionState();
     try{localStorage.removeItem('drawsplat.autosave')}catch(_){}
     try{if(typeof idbPut==='function') idbPut(null).catch(()=>{})}catch(_){}
@@ -5247,7 +5268,7 @@ function registerServiceWorker(){
     attachStickyImageBtn:['image','Attach Sticky Image'],toggleCommentResolvedBtn:['check','Resolve/Reopen Comment'],recordAudioBtn:['mic','Record Audio'],loadAudioBtn:['music','Load Audio'],playAudioBtn:['play','Play Audio'],
     selectGroupBtn:['group','Select Group'],answerKeyBtn:['check','Answer Key'],lockBtn:['lock','Lock'],unlockBtn:['unlock','Unlock'],deleteBtn:['pop_trash','Delete'],
     startSyncBtn:['sync','Start Local Sync'],startCloudSyncBtn:['cloudSync','Start Cloud Sync'],stopSyncBtn:['stop','Stop Sync'],refreshCloudBtn:['cloudDown','Pull Cloud'],
-    saveLocalBtn:['save','Save File'],loadLocalBtn:['folder','Load File'],importPanelsBtn:['import','Import Panels'],loadDriveBtn:['cloudDown',mysqlEnabled()?'Open online board':'Load from Google'],settingsBtn:['settings','Open Teacher Admin'],
+    saveLocalBtn:['save','Save File'],loadLocalBtn:['folder','Load File'],importPanelsBtn:['import','Import Panels'],loadDriveBtn:['cloudDown',mysqlEnabled()?'Open online board':'Load from Google'],settingsBtn:['settings',mysqlEnabled()?'Open my classrooms':'Open Teacher Admin'],
     submitTurnInBtn:['submit','Submit Turn-In'],reviewTurnInsBtn:['review','Review Turn-Ins'],openModerationBtn:['shield','Open Moderation Dashboard'],refreshModerationBtn:['refresh','Refresh Data'],
     zoomOutBtn:['zoomOut','Zoom Out'],zoomResetBtn:['zoomIn','Reset Zoom'],zoomInBtn:['zoomIn','Zoom In'],shortcutsBtn:['keyboard','Keyboard Shortcuts'],optionsBtn:['settings','Options'],aboutBtn:['info','About'],
     viewToggleBtn:['switch','Switch View'],loadBgImageBtn:['adv_bg','Set Background'],clearBgImageBtn:['clearBg','Clear Background'],frameNavPrev:['prev','Previous Frame'],frameNavNext:['next','Next Frame'],

@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 test.beforeEach(async({page})=>{
-  await page.addInitScript(()=>{localStorage.setItem('drawsplat.welcomed','1');localStorage.setItem('drawsplat.consent.accepted','1');localStorage.setItem('drawsplat.lastStartupTipDate',new Date().toISOString().slice(0,10))});
+  await page.addInitScript(()=>{localStorage.setItem('drawsplat.entryRole','teacher');localStorage.setItem('drawsplat.welcomed','1');localStorage.setItem('drawsplat.consent.accepted','1');localStorage.setItem('drawsplat.lastStartupTipDate',new Date().toISOString().slice(0,10))});
   await page.goto('/app/whiteboard.html');
 });
 async function options(page){
@@ -61,4 +61,18 @@ test('student links keep teacher setup and reset cards hidden',async({page})=>{
   await expect(page.locator('#optionsDialog .options-card.teacher-only').first()).toBeHidden();
   await expect(page.locator('#optionsDialog .options-card.teacher-only').last()).toBeHidden();
   await expect(page.locator('#workspaceMode')).toBeVisible();
+});
+
+test('Options stays anchored while moving between its choices',async({page})=>{
+  await page.locator('.top-menu > summary').filter({hasText:/^Options$/}).click();
+  const view=page.locator('[data-menu-target="viewToggleBtn"]');const workspace=page.locator('[data-menu-target="optionsBtn"]');
+  const before=await workspace.boundingBox();await view.hover();expect((await workspace.boundingBox()).y).toBe(before.y);
+  await view.click();await expect(view).toHaveAttribute('aria-expanded','true');const expanded=await workspace.boundingBox();
+  await workspace.hover();expect((await workspace.boundingBox()).y).toBe(expanded.y);await expect(view).toHaveAttribute('aria-expanded','true');
+});
+
+test('fresh boards are blank and Video note matches toolbar label size',async({page})=>{
+  await expect(page.locator('#bgSelectSimple')).toHaveValue('blank');
+  const sizes=await page.locator('#learnerVideoNoteLabel').evaluate(label=>[getComputedStyle(label).fontSize,getComputedStyle(label.closest('button')).fontSize]);expect(sizes[0]).toBe(sizes[1]);
+  await page.locator('#bgSelectSimple').selectOption('grid');await page.reload();await expect(page.locator('#bgSelectSimple')).toHaveValue('grid');
 });
