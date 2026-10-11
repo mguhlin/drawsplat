@@ -22,3 +22,26 @@ body[data-wiki]{--wiki-ink:#262138;--wiki-purple:#5a22b5;--wiki-paper:#fffdf8;--
 [data-wiki] .splatworks-suite-grid,[data-wiki] .studio-detail-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));min-width:0}
 [data-wiki] .splatworks-suite-card,[data-wiki] .studio-detail-card{min-width:0}
 [data-wiki] .wiki-reading main{overflow-wrap:break-word}
+
+.wiki-faq-menu{margin:0 0 8px 10px;border-left:1px solid #d9cde9;padding-left:10px}
+.wiki-faq-menu>summary{font-size:12px;padding:6px 0;color:var(--wiki-muted);cursor:pointer}
+.wiki-sidebar .wiki-faq-menu a{font-size:12px;padding:5px 4px}
+.wiki-faq-jumps{margin:24px 0 32px;padding:16px 20px;border:1px solid var(--wiki-line);border-radius:6px;background:#f4f0fa}
+.wiki-faq-jumps p{margin:0 0 10px;font-size:14px;font-weight:650}
+.wiki-faq-jumps ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 22px;list-style:none;margin:0;padding:0}
+.wiki-faq-jumps a{display:block;padding:5px 0;font-size:14px;text-decoration:none}
+.wiki-faq-jumps a:hover{text-decoration:underline}
+[data-wiki] .wiki-faq hr{border:0;border-top:1px solid var(--wiki-line);margin:38px 0}
+@media(max-width:700px){.wiki-faq-jumps ul{grid-template-columns:1fr}}
+@media print{.wiki-faq-jumps{display:none!important}}
+
+.wiki-language{position:relative;color:var(--wiki-purple);font-size:13px;flex-shrink:0}
+.wiki-language>summary{cursor:pointer;padding:9px 0;font-weight:650}
+.wiki-language-menu{position:absolute;right:0;top:100%;z-index:220;width:min(340px,calc(100vw - 32px));max-height:65vh;overflow:auto;padding:16px;background:white;border:1px solid var(--wiki-line);border-radius:8px;box-shadow:0 12px 30px #261c3826}
+.wiki-language-menu p{margin:0 0 12px;font-size:12px;color:var(--wiki-muted)}
+.wiki-language-menu ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.wiki-language-menu li a{display:block;text-decoration:none;padding:8px;border-radius:4px}
+.wiki-language-menu li a:hover{background:#f4f0fa}
+.wiki-language-help{display:inline-block;margin-top:12px;font-size:12px}
+@media(max-width:700px){.wiki-language{width:100%}.wiki-language-menu{left:0;right:auto}.wiki-header .site-nav{order:1;margin:0}.wiki-language{order:2}}
+@media print{.wiki-language{display:none!important}}

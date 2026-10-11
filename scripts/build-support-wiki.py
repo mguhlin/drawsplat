@@ -7,6 +7,7 @@ from pathlib import Path
 from html.parser import HTMLParser
 from markdown_it import MarkdownIt
 import html, json, re, os
+from urllib.parse import urlencode
 from site_navigation import nav_html
 ROOT=Path(__file__).resolve().parents[1]
 GROUPS={
@@ -46,6 +47,19 @@ for name in RENDER:
  (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else name)+' · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
 def relative(path,current): return os.path.relpath(ROOT/path,(ROOT/current).parent)
+FAQ_SECTIONS=[(re.sub(r'[^a-z0-9]+','-',title.lower()).strip('-'),title) for title in re.findall(r'^## (.+)$',(ROOT/'docs/faq.md').read_text(),re.M)]
+def faq_links(current):
+ return ''.join('<li><a href="'+('' if current=='wiki/faq.html' else relative('wiki/faq.html',current))+'#'+slug+'">'+html.escape(title)+'</a></li>' for slug,title in FAQ_SECTIONS)
+
+WIKI_LANGUAGES=[('es','Español'),('ar','العربية'),('zh-CN','简体中文'),('zh-TW','繁體中文'),('fr','Français'),('pt','Português'),('vi','Tiếng Việt'),('uk','Українська'),('ru','Русский'),('ko','한국어'),('hi','हिन्दी'),('ur','اردو'),('bn','বাংলা'),('ne','नेपाली'),('so','Soomaali'),('am','አማርኛ'),('sw','Kiswahili'),('tl','Filipino')]
+def language_html(current):
+ source='https://drawsplat.org/'+current
+ links='<li><a href="'+relative(current,current)+'" lang="en">English · Original</a></li>'
+ for code,label in WIKI_LANGUAGES:
+  url='https://translate.google.com/translate?'+urlencode({'sl':'en','tl':code,'u':source})
+  links+='<li><a href="'+html.escape(url,quote=True)+'" lang="'+code+'" dir="auto" target="_blank" rel="noopener noreferrer">'+label+'</a></li>'
+ return '<details class="wiki-language" name="drawsplat-site-menu"><summary>Read in your language</summary><div class="wiki-language-menu"><p>Google machine translation · Opens a new tab.</p><ul>'+links+'</ul><a class="wiki-language-help" href="https://support.google.com/translate/answer/2534559" target="_blank" rel="noopener noreferrer">Translation help</a></div></details>'
+
 def directory(current):
  blocks=[]
  for group,items in GROUPS.items():
@@ -108,22 +122,33 @@ for group,items in GROUPS.items():
     if tag=='h2':toc.append('<li><a href="#'+slug+'">'+html.escape(text)+'</a></li>')
     return '<'+tag+attrs+'>'+label+'</'+tag+'>'
    main=re.sub(r'<(h[123])([^>]*)>(.*?)</h[123]>' if path=='wiki/faq.html' else r'<(h[12])([^>]*)>(.*?)</h[12]>',heading,main,flags=re.S)
+   if path=='wiki/faq.html':
+    jumps='<nav class="wiki-faq-jumps" aria-label="FAQ sections"><p>Jump to a topic</p><ul>'+faq_links(path)+'</ul></nav>'
+    main=main.replace('<h2',jumps+'<h2',1).replace('<main','<main class="wiki-faq"',1)
    if 'id="wiki-content"' not in main:main=main.replace('<main','<main id="wiki-content"',1) if not re.match(r'<main[^>]*\bid=',main) else main
    main=re.sub(r' tabindex="-1"', '', main)
    main=main.replace('<main','<main tabindex="-1"',1)
    nav=[]
    for category,rows in GROUPS.items():
     if category=='For educators':rows=[row for row in rows if row[0] in EDUCATOR_MENU or row[0]==path]
-    links=''.join('<li><a '+('aria-current="page" ' if target==path or (target=='wiki/index.html' and path in ['guides/index.html','pages/support.html']) else '')+'href="'+relative(target,path)+'">'+html.escape(label)+'</a></li>' for target,label,_ in rows)
+    links=''
+    for target,label,_ in rows:
+     active=target==path or (target=='wiki/index.html' and path in ['guides/index.html','pages/support.html'])
+     item='<li><a '+('aria-current="page" ' if active else '')+'href="'+relative(target,path)+'">'+html.escape(label)+'</a>'
+     if target=='wiki/faq.html':
+      item+='<details class="wiki-faq-menu"'+(' open' if path==target else '')+'><summary>FAQ topics</summary><ul>'+faq_links(path)+'</ul></details>'
+     links+=item+'</li>'
     nav.append('<section><h2>'+html.escape(category)+'</h2><ul>'+links+'</ul></section>')
    source_path='docs/'+Path(path).stem+'.md' if path.startswith('wiki/') and Path(path).stem in RENDER else path
-   header='<a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="'+relative('index.html',path)+'"><img src="'+relative('assets/brand/DrawSplat_logo.png',path)+'" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a>'+nav_html(path)+'</header>'
+   header='<a class="wiki-skip" href="#wiki-content">Skip to article</a><header class="wiki-header"><a class="wiki-brand" href="'+relative('index.html',path)+'"><img src="'+relative('assets/brand/DrawSplat_logo.png',path)+'" alt="" width="44" height="44"><span>DrawSplat <strong>Wiki</strong></span></a>'+nav_html(path)+language_html(path)+'</header>'
    sidebar='<aside class="wiki-sidebar"><details class="wiki-topics" open><summary>Search and browse topics</summary><div><form class="wiki-search" role="search"><label for="wiki-query">Search the wiki</label><div><input id="wiki-query" name="q" type="search" placeholder="Try: roster, OAuth, DPA" autocomplete="off"><button type="submit">Search</button></div></form><nav aria-label="Wiki topics">'+''.join(nav)+'</nav></div></details></aside>'
    toolbar='<div class="wiki-article-bar"><span>'+html.escape(group)+'</span><div><a href="https://github.com/mguhlin/drawsplat/blob/main/'+source_path+'">Source</a><button class="wiki-print" type="button" hidden>Print</button></div></div><section class="wiki-results" hidden aria-label="Search results"><h2>Search results</h2><p class="wiki-result-status" role="status"></p><ol></ol><button class="wiki-clear" type="button">Back to article</button></section>'
    outline='<aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul>'+''.join(toc)+'</ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="'+relative('pages/contact.html',path)+'">Report a documentation issue</a></aside>'
    shell='<!-- wiki:start -->'+header+'<div class="wiki-layout">'+sidebar+'<div class="wiki-reading">'+toolbar+'<!-- wiki:main -->'+main+'<!-- wiki:end-main --></div>'+outline+'</div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="'+relative('wiki/licensing.html',path)+'">Licensing</a></footer><!-- wiki:end -->'
    s=s[:match.start()]+shell+s[match.end():]
    s=s.replace('</body>','<script src="'+relative('assets/js/support-index.js',path)+'" defer></script><script src="'+relative('assets/js/support-wiki.js',path)+'" defer></script></body>')
+   s=re.sub(r'<script[^>]*src="[^\"]*wiki-language.js[^\"]*"[^>]*></script>','',s)
+   s=s.replace('</body>','<script src="'+relative('assets/js/wiki-language.js',path)+'" defer></script></body>')
    p.write_text(s)
   main=re.search(r'<main\b.*?</main>',s,re.S).group(0);plain=Plain();plain.feed(main)
   entries.append({'path':path,'title':title,'category':group,'description':desc,'text':re.sub(r'\s+',' ',' '.join(plain.parts)).strip()})

@@ -28,6 +28,8 @@ Use an up-to-date browser and test it on the devices your class will use. A larg
 
 A new board starts plain white so you can choose what your lesson needs. Add a grid, graph paper, or a template when useful. See [templates and backgrounds](../guides/templates-backgrounds.html).
 
+---
+
 ## Saving and sharing
 
 ### Does DrawSplat save my work automatically?
@@ -58,6 +60,8 @@ Yes, when you add the finished recording to the board and save it online. A reco
 
 Save your current work to a local board file first. Then reopen the online copy and decide which changes to keep. Do not discard a draft before you have a backup. See [saving and exporting](../guides/saving-exporting.html).
 
+---
+
 ## School accounts and classrooms
 
 ### How does a teacher get started at a self-hosted school?
@@ -84,6 +88,8 @@ No. The district administrator account manages the school service and rosters. T
 
 School sign-in and Drive access are separate. Optional Google-backed saving has its own setup and permissions. Review [Google OAuth permissions](../legal/google-oauth-disclosure.html) before connecting a service.
 
+---
+
 ## Installation and maintenance
 
 ### Can a district host the whole suite?
@@ -92,16 +98,29 @@ Yes. Download the complete district package, extract it, and open `start-here.ht
 
 ### Do I have to use Docker?
 
-No. Docker is the preferred path, but a native path is also available. Choose the path at the start of the checklist. Native hosting needs Node.js, Caddy, and a MariaDB or MySQL service.
+No. Docker is the preferred path, but you can also install without it. Choose **Docker** or **Native** at the start of the [installation checklist](../docs/district-selfhost.html). The next two answers explain each path’s requirements and ports.
 
-Default ports for native hosting:
+### What does Docker hosting need, and which ports does it use?
+
+Install Docker with Compose and use the district launcher. It runs Node.js, the saving API, Caddy, and the bundled database in containers. You do not need separate host installations of those tools.
 
 - **8080:** local website and setup page, at `http://localhost:8080/setup`.
-- **8787:** saving API; keep it private on localhost behind the web gateway.
-- **3306:** MariaDB or MySQL; keep database access private.
-- **80 (HTTP) and 443 (HTTPS):** allow incoming traffic to the gateway when using a district domain with HTTPS.
+- **80 (HTTP) and 443 (HTTPS):** gateway ports for a district domain with HTTPS. Allow incoming web traffic when setting up that domain.
+- **8787:** saving API inside Docker’s private network; it is not published to the host.
+- **3306:** bundled MariaDB or MySQL inside Docker’s private network; it is not published to the host.
 
-If a local port is already in use, choose an alternative on the first launch. See [installation choices and port settings](../docs/district-selfhost.html).
+The default local gateway binds to `127.0.0.1`. Follow [Docker setup and domain settings](../docs/district-selfhost.html) before making the service available to your school.
+
+### What does native hosting need, and which ports does it use?
+
+Install Node.js 22+, Caddy 2, and MariaDB or MySQL on the host. The native launcher runs the API and gateway; the database runs as a system service.
+
+- **8080:** local website and setup page, at `http://localhost:8080/setup`.
+- **8787:** saving API on localhost, behind the gateway; keep it private.
+- **3306:** the usual MariaDB or MySQL port; keep database access private.
+- **80 (HTTP) and 443 (HTTPS):** gateway ports for a district domain with HTTPS. Allow incoming web traffic when setting up that domain.
+
+If a local port is already in use, choose an alternative on the first launch. See [native installation and port settings](../docs/district-selfhost.html).
 
 ### Where are the Docker installation instructions?
 
@@ -130,6 +149,8 @@ You can rerun the checklist and launchers with an updated plan. They preserve ex
 ### What should the school back up?
 
 Back up the database and private configuration, including the password pepper used by the service. Protect the copies and test a restore in a separate installation. Local student project files need their own backup plan. See [backup and recovery](../docs/district-selfhost.html).
+
+---
 
 ## Privacy, access, and licensing
 
@@ -161,6 +182,8 @@ Yes, under the applicable open-source licenses. DrawSplat generally uses AGPL; s
 
 Work belongs to its respective authors. Images, music, templates, and other media may have separate license rules. Check permission and attribution needs before sharing. See [licensing and content ownership](../wiki/licensing.html).
 
+---
+
 ## SplatWorks
 
 ### What is included in SplatWorks?
@@ -174,6 +197,8 @@ You can use them as browser apps without either. Hosting them with the district 
 ### Can I exchange files with other office apps?
 
 Each app supports its own formats. WriteSplat supports ODT; ShowSplat offers WebDeck, Markdown, PDF, ODP, and PPTX workflows; GridSplat exchanges spreadsheet data; ListSplat exchanges CSV records. Conversions may change layout or features, so keep an original and check the result. See the [app guides](../pages/splatworks.html).
+
+---
 
 ## Learning and support
 

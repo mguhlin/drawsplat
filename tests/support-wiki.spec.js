@@ -141,3 +141,29 @@ test('developer page is last in Wiki topics and addresses project contact correc
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  await page.goto('/wiki/?q=developer+multilingual');await expect(page.locator('.wiki-results a').filter({hasText:'About the Developer'})).toBeVisible();
 });
+test('FAQ submenu jumps to seven sections and separates Docker and native ports',async({page})=>{
+ await page.goto('/wiki/');await page.locator('.wiki-faq-menu>summary').click();
+ await page.locator('.wiki-faq-menu').getByRole('link',{name:'Saving and sharing',exact:true}).click();
+ await expect(page).toHaveURL(/faq.html#saving-and-sharing$/);
+ await expect(page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link')).toHaveCount(7);
+ await expect(page.locator('main hr')).toHaveCount(6);
+ await page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link',{name:'Installation and maintenance'}).click();
+ await expect(page).toHaveURL(/#installation-and-maintenance$/);
+ const docker=await page.locator('main').evaluate(el=>{const heading=[...el.querySelectorAll('h3')].find(h=>h.textContent.startsWith('What does Docker hosting'));let text='';for(let next=heading.nextElementSibling;next&&next.tagName!=='H3'&&next.tagName!=='H2';next=next.nextElementSibling)text+=next.textContent;return text});
+ expect(docker).toContain('not published to the host');expect(docker).toContain('8787');expect(docker).toContain('3306');
+ await page.setViewportSize({width:390,height:844});await expect(page.getByRole('navigation',{name:'FAQ sections'})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.screenshot({path:'/tmp/drawsplat-faq-navigation-mobile.png'});
+});
+test('Wiki language menu offers opt-in public-page translations without sending search terms',async({page})=>{
+ let remoteRequests=0;await page.route('https://translate.google.com/**',route=>{remoteRequests++;route.abort()});
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('/wiki/faq.html?q=private-query');
+  await page.locator('.wiki-language>summary').click();
+  const link=page.locator('.wiki-language').getByRole('link',{name:'Español',exact:true});await expect(link).toBeVisible();
+  const url=new URL(await link.getAttribute('href'));expect(url.hostname).toBe('translate.google.com');expect(url.searchParams.get('tl')).toBe('es');
+  expect(url.searchParams.get('u')).toBe('https://drawsplat.org/wiki/faq.html');await expect(link).toHaveAttribute('target','_blank');
+  expect(remoteRequests).toBe(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+  await page.keyboard.press('Escape');await expect(page.locator('.wiki-language')).not.toHaveAttribute('open','');
+ }
+});
