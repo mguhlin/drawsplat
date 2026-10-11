@@ -252,7 +252,7 @@ WEB_BIND=0.0.0.0
 <p><strong>External databases:</strong> use the external database host’s backup tools instead. The bundled database export does not contain external records. Preserve the matching private <code>/data/config.json</code> too.</p>
 <h3 id="schedule-and-monitor-backups">Schedule and monitor backups</h3>
 <p>Backups are <strong>not automatically scheduled by the district launcher</strong>. Assign an administrator to schedule the backup script with Linux cron/systemd or Windows Task Scheduler, using the application folder as its working directory. Choose a frequency and retention period appropriate to your district; record failed-job alerts and periodically test restoration. Keep encrypted copies outside this server and outside the served application directory.</p>
-<p>The API runs its own retention/time-limit tasks while the service is running; these do not replace backups. Review which records those tasks cover. Classroom assignments and turn-ins need a district lifecycle policy rather than assuming every record is purged automatically. No Moodle PHP cron command is needed.</p>
+<p>The API runs its own retention/time-limit tasks while the service is running; these do not replace backups. Review which records those tasks cover. Classroom assignments and turn-ins need a district lifecycle policy rather than assuming every record is purged automatically.</p>
 <h3 id="recover-an-installation">Recover an installation</h3>
 <p>Recovery requires <strong>both the SQL export and its matching configuration</strong>. Read the included <code>selfhost/district/RESTORE.md</code> file, or <a href="https://github.com/mguhlin/drawsplat/blob/main/selfhost/district/RESTORE.md">view the restore instructions online</a>.</p>
 <p>Keep encrypted off-server copies, restrict access to administrators, and test recovery on a separate installation. Backups contain student records and credentials.</p>
@@ -302,7 +302,6 @@ docker compose --env-file selfhost/district/.env -f selfhost/district/compose.ym
 </table>
 <p><strong>Email and recovery:</strong> the administrator email is a login identifier. This installer does not configure SMTP, send welcome messages, or provide an email password-reset workflow. Plan how your district distributes login instructions and handles account recovery; Google account recovery remains with your identity provider.</p>
 <p><strong>Updates:</strong> take and verify a backup before upgrading, test a copy first, and retain matching code/configuration for rollback. Keep this application's folder, Compose project identity and existing volumes. Do not copy an old database volume into a different database engine. Maintain operating-system and Docker updates, monitor service health, and document who can administer the server.</p>
-<p>This guide borrows the installation sequence and operational checks from <a href="https://docs.moodle.org/503/en/Installation_quick_guide">Moodle's installation quick guide</a>, adapted to DrawSplat's Docker/Node architecture. Moodle's PHP, webroot and cron commands do not apply here.</p>
 <h2 id="before-classroom-rollout">Before classroom rollout</h2>
 <p>Verify the installation on your district’s own server:</p>
 <ul>

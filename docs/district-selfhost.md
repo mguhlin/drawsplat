@@ -235,7 +235,7 @@ The launcher saves a dated private directory containing:
 
 Backups are **not automatically scheduled by the district launcher**. Assign an administrator to schedule the backup script with Linux cron/systemd or Windows Task Scheduler, using the application folder as its working directory. Choose a frequency and retention period appropriate to your district; record failed-job alerts and periodically test restoration. Keep encrypted copies outside this server and outside the served application directory.
 
-The API runs its own retention/time-limit tasks while the service is running; these do not replace backups. Review which records those tasks cover. Classroom assignments and turn-ins need a district lifecycle policy rather than assuming every record is purged automatically. No Moodle PHP cron command is needed.
+The API runs its own retention/time-limit tasks while the service is running; these do not replace backups. Review which records those tasks cover. Classroom assignments and turn-ins need a district lifecycle policy rather than assuming every record is purged automatically.
 
 ### Recover an installation
 
@@ -267,8 +267,6 @@ Review logs privately and redact credentials or student data before sharing them
 **Email and recovery:** the administrator email is a login identifier. This installer does not configure SMTP, send welcome messages, or provide an email password-reset workflow. Plan how your district distributes login instructions and handles account recovery; Google account recovery remains with your identity provider.
 
 **Updates:** take and verify a backup before upgrading, test a copy first, and retain matching code/configuration for rollback. Keep this application's folder, Compose project identity and existing volumes. Do not copy an old database volume into a different database engine. Maintain operating-system and Docker updates, monitor service health, and document who can administer the server.
-
-This guide borrows the installation sequence and operational checks from [Moodle's installation quick guide](https://docs.moodle.org/503/en/Installation_quick_guide), adapted to DrawSplat's Docker/Node architecture. Moodle's PHP, webroot and cron commands do not apply here.
 
 ## Before classroom rollout
 
