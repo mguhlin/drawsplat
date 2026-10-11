@@ -97,3 +97,26 @@ test('audience guides keep teaching concise and route school and family setup co
  await page.goto('/wiki/?q=technology+admins');await expect(page.locator('.wiki-results a').filter({hasText:'School setup and operations'})).toBeVisible();
  await page.goto('/wiki/?q=scratch');await expect(page.locator('.wiki-results a').filter({hasText:'Scratch art'})).toBeVisible();
 });
+test('FAQ is in Start here, searchable, linkable, and readable without JavaScript',async({page,browser})=>{
+ await page.goto('/wiki/');
+ const start=page.getByRole('navigation',{name:'Wiki topics'}).locator('section').filter({has:page.getByRole('heading',{name:'Start here',exact:true})});
+ await start.getByRole('link',{name:'Frequently asked questions (FAQs)',exact:true}).click();
+ await expect(page.locator('main h1')).toHaveText('Frequently asked questions (FAQs)');
+ expect(await page.locator('main h3').count()).toBeGreaterThan(30);
+ await expect(page.getByRole('navigation',{name:'On this page'}).getByRole('link',{name:'Installation and maintenance'})).toBeVisible();
+ await page.getByRole('navigation',{name:'On this page'}).getByRole('link',{name:'Installation and maintenance'}).click();
+ await expect(page).toHaveURL(/#installation-and-maintenance$/);
+ const links=await page.locator('main a').evaluateAll(nodes=>nodes.map(a=>a.getAttribute('href')));
+ for(const link of links.filter(link=>!link.startsWith('http')&&!link.startsWith('mailto:'))){
+  const url=new URL(link,page.url());const response=await page.request.get(url.href);expect(response.ok(),link).toBeTruthy();
+  if(url.hash)expect((await response.text()).includes('id="'+url.hash.slice(1)+'"'),link+' anchor').toBeTruthy();
+ }
+ await page.goto('/wiki/?q=universal+password');await expect(page.locator('.wiki-results a').filter({hasText:'Frequently asked questions'})).toBeVisible();
+ const context=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});const reader=await context.newPage();
+ await reader.goto('http://127.0.0.1:4183/wiki/faq.html#does-drawsplat-save-my-work-automatically');
+ await expect(reader.locator('#does-drawsplat-save-my-work-automatically')).toBeVisible();
+ await expect(reader.locator('main')).toContainText('It does not upload the board to a school account.');
+ expect(await reader.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await reader.screenshot({path:'/tmp/drawsplat-faq-mobile.png'});await context.close();
+ await page.goto('/wiki/faq.html');await page.emulateMedia({media:'print'});await expect(page.locator('main h3').last()).toBeVisible();
+});

@@ -19,6 +19,7 @@ GROUPS={
  'Technical and updates': [('wiki/support-wiki-maintenance.html','Maintaining the wiki','Canonical sources, generated search index, documentation checks and publishing.'),('wiki/tool-inventory.html','Component inventory','Whiteboard, SplatWorks, tools, widgets and games.'),('wiki/standalone-architecture.html','Standalone architecture','Static application and integration boundaries.'),('pages/release-notes.html','Release notes','Application and package changes.'),('blog/index.html','DrawSplat blog','Feature walkthroughs and release articles.'),('pages/contact.html','Contact and support','Report a problem or request implementation services.')]
 }
 # Keep the search index complete while presenting a short audience-based sidebar.
+GROUPS['Start here'].insert(1,('wiki/faq.html','Frequently asked questions (FAQs)','Quick answers about accounts, saving, school setup, privacy, cost, and SplatWorks.'))
 GROUPS['Start here']=[row for row in GROUPS['Start here'] if row[0] not in ['docs/district-selfhost.html','guides/teacher-options-quick-start.html']]
 GROUPS['For educators'].insert(1,('guides/teacher-options-quick-start.html','Teacher Quick Start','Open a board, sign in at school, and save your lesson.'))
 GROUPS['For educators']=[row for row in GROUPS['For educators'] if row[0]!='parents/index.html']
@@ -30,7 +31,7 @@ GROUPS['For technology admins'].insert(4,console)
 GROUPS['For parents and students']=[('wiki/for-parents-and-students.html','Learning, saving, and getting help','Start work, keep a copy, share safely, and ask the school for help.'),('parents/index.html','Family Access Tools','Request student records through a configured school Apps Script service.')]
 GROUPS={key:GROUPS[key] for key in ['Start here','For educators','For technology admins','For parents and students','SplatWorks','Licensing and pricing','Privacy and district review','Technical and updates']}
 EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.html','wiki/district-classrooms.html','guides/saving-exporting.html','guides/collaboration-turn-ins.html','pages/background-templates.html','guides/project-reference.html'}
-RENDER=['for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+RENDER=['faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())
@@ -41,7 +42,7 @@ for name in RENDER:
   target=ROOT/'docs'/url.split('#')[0]; frag=('#'+url.split('#',1)[1]) if '#' in url else ''
   return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+frag+'"'
  body=re.sub(r'(href|src)="([^"]+)"',rel,body)
- (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape(name)+' · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
+ (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else name)+' · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
 def relative(path,current): return os.path.relpath(ROOT/path,(ROOT/current).parent)
 def directory(current):
@@ -105,7 +106,7 @@ for group,items in GROUPS.items():
      used.add(slug);attrs+=' id="'+slug+'"'
     if tag=='h2':toc.append('<li><a href="#'+slug+'">'+html.escape(text)+'</a></li>')
     return '<'+tag+attrs+'>'+label+'</'+tag+'>'
-   main=re.sub(r'<(h[12])([^>]*)>(.*?)</h[12]>',heading,main,flags=re.S)
+   main=re.sub(r'<(h[123])([^>]*)>(.*?)</h[123]>' if path=='wiki/faq.html' else r'<(h[12])([^>]*)>(.*?)</h[12]>',heading,main,flags=re.S)
    if 'id="wiki-content"' not in main:main=main.replace('<main','<main id="wiki-content"',1) if not re.match(r'<main[^>]*\bid=',main) else main
    main=re.sub(r' tabindex="-1"', '', main)
    main=main.replace('<main','<main tabindex="-1"',1)

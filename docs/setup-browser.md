@@ -1,64 +1,40 @@
-# DrawSplat&trade; — Browser-Only Setup
+# Browser-only setup
 
-**Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
+Use a whiteboard without creating an account or installing a database. Draw, write, add media, and save board files on your device.
 
+## Open a board
 
-Use this when you want **the simplest possible deployment**: a single user (or a teacher demoing on a projector) with no accounts, no shared boards, no cloud storage, and no compliance features beyond client-side text filtering.
+Open your school’s link, or choose **Apps → Whiteboard** at [DrawSplat.org](https://drawsplat.org/). You can also [open the whiteboard directly](../app/whiteboard.html).
 
-## What you get
+Browser-only use does not enable school classrooms or account-based online saving. Those need a configured [district service](../guides/mysql-setup.html) or the separate [Apps Script connection](../guides/google-setup.html) for its Google-backed workflows.
 
-- The whiteboard runs entirely in the browser.
-- Boards autosave to `localStorage` and stay on that browser profile.
-- No data ever leaves the user's machine.
-- Optional **Save File** / **Load File** for keeping local `.drawsplat.json` copies.
-- Optional **Export PNG / PDF** for sharing snapshots.
+## Keep your work
 
-## What you do **not** get
+- Browser autosave keeps a draft in the current browser profile.
+- Use **Save File** to keep a `.drawsplat.json` board you can edit later.
+- Use **Load File** to reopen a saved board.
+- Export PNG or PDF to share or print work.
 
-Private cross-device Save/Open is available with either Apps Script or the connected MySQL service. The following classroom/compliance workflows use Apps Script; selecting MySQL does not enable them:
+Do not rely on browser storage as your only backup. Private browsing uses temporary storage, and some schools clear browser data at logout. Save a file before clearing site data or switching devices.
 
-- Cloud collaboration rooms.
-- Activity Records / audit log.
-- Parent request center.
-- Student age band lock.
-- Server-side text filter (only the client-side pre-check runs).
-- District Privacy Packet.
+## Choose where to run it
 
-## Setup options
+- **Hosted site:** open the whiteboard link above. No server setup is needed.
+- **School website:** use [modular self-hosting](../wiki/modular-selfhost.html) or the [complete district package](../docs/district-selfhost.html). Use the supplied gateway rules to protect private files.
+- **Local computer:** serve the static application over HTTP. Opening files directly with `file://` can block fonts, imports, and other features.
 
-### Option A — Use the hosted site (zero setup)
+For a local static copy, run this from the extracted application folder:
 
-Open [https://drawsplat.org/](https://drawsplat.org/) and click **Open Whiteboard**. Done. Your work is local to that browser.
-
-### Option B — Self-host on Cloudflare Pages, GitHub Pages, or Netlify
-
-1. Clone (or fork) the repository: `git clone https://github.com/mguhlin/drawsplat.git`.
-2. Point your static host at the repo root.
-   - **Cloudflare Pages**: connect the GitHub repo, build command empty, output directory `/`.
-   - **GitHub Pages**: enable Pages on the repo, source `main` branch root.
-   - **Netlify**: drag-and-drop the cloned folder, or connect the repo with no build step.
-3. Open `https://<your-domain>/` and click **Open Whiteboard**.
-
-That's the full setup. There's no `.env`, no API keys, no Apps Script project, nothing to break.
-
-### Option C — Run from a USB stick / file://
-
-Most browsers refuse to do certain things from `file://` URLs (font loading, fetch). If you really want a no-server deploy, run a tiny static server:
-
-```
-cd drawsplat_github
-python3 -m http.server 8000
-# open http://localhost:8000/
+```bash
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-This is the safest local-only setup — it gives you HTTP semantics without any cloud.
+Open `http://localhost:8000/app/whiteboard.html`. This local preview serves files; it does not create online accounts or a saving service. Do not expose the whole extracted folder publicly with this preview server.
 
-## Browser settings to know
+## Internet and privacy
 
-- **localStorage** holds the active board. Don't clear site data unless you've exported a copy.
-- **Incognito / private browsing** uses temporary storage. Anything you draw vanishes when the window closes.
-- Some districts auto-clear browser storage on logout. Export a `.drawsplat.json` before logging off if that's your environment.
+A local draft is not automatically uploaded. Loading outside images, embedded media, or connected services can make network requests. Internet access may be needed for those features. See [Terms and privacy](../legal/terms-privacy.html) and your school’s notice.
 
-## Upgrading later
+## Add online saving later
 
-You can move from browser-only to Google Apps Script or MySQL at any time without losing your boards — both backends let you upload an existing `.drawsplat.json` via **Load File**, then save it to the cloud in the same session. For MySQL, configure and test the API in the MySQL Wizard, sign in to a saving account, and choose **File → Save online**. Switching modes does not upload local work automatically. See [`setup-google-apps-script.md`](setup-google-apps-script.md) or [`setup-mysql.md`](setup-mysql.md) when you're ready.
+Keep a local board file first. After the school configures its saving service, load that file, sign in, and explicitly save it online. Changing a connection does not upload existing drafts. See [saving and exporting](../guides/saving-exporting.html).
