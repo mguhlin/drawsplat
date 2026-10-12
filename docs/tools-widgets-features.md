@@ -8,6 +8,17 @@ This reference follows the same categories as Studio. Components appear in every
 
 Most tools work locally in the browser. Brain Sort, Clock Wizard, Step-Splat, Toneshifter, and Vibe Check offer optional external AI connections. Editable QR codes and cloud integrations require their own configuration. See the individual application for supported formats and options.
 
+## Choosing a keyboarding activity
+
+Use these activities to build keyboard familiarity, accuracy, and typing fluency. Age equivalents are approximate guidance based on the available grade bands; choose by reading ability and keyboard readiness. The games complement teacher instruction in posture, finger placement, and touch typing.
+
+| Component | Keyboarding purpose | Suggested learners |
+| --- | --- | --- |
+| [Paws & Keys Adventure](../games/paws-and-keys-adventure/) | Key locations and finger hints; gentle first-key practice. | Ages 4–9; beginning keyboard users. |
+| [Cipher Chase](../games/cipher-chase/) | Type target words accurately while playing an arcade driving game. | Grades 3–12 (about ages 8–18); bands 3–5, 6–8, 9–12. |
+| [Wordfall Reactor](../games/wordfall-reactor/) | Word entry, spelling, and vocabulary; rack-tile input is also available. | Grades 3–12 (about ages 8–18); everyday words or grade-banded TEKS vocabulary. |
+| [Story Sprint](../games/story-sprint/) | Copy passages with punctuation; measure typing speed and accuracy. | K–12 (about ages 5–18); bands K–2, 3–5, 6–8, 9–12; custom passages. |
+
 ## Draw & Create
 
 Category: **Create** · 18 components
@@ -20,6 +31,8 @@ Category: **Create** · 18 components
 - Adjust frame delay, loop count, and output size
 - Choose palette quality and dithering
 - Download GIF or export MP4/WebM
+- Import formats: PNG, JPEG, WebP, and GIF image frames
+- Output formats: GIF animation; MP4 or WebM video according to browser export support
 
 ### AudioSplat
 
@@ -29,6 +42,9 @@ Category: **Create** · 18 components
 - Arrange and edit multitrack audio
 - Analyze audio levels and sample properties
 - Export audio locally
+- Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript
+- Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
+- Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
 
 ### ClipSplat
 
@@ -38,6 +54,8 @@ Category: **Create** · 18 components
 - Trim clips and cut unwanted sections
 - Add opening and closing title panels, photos, and illustrated frames
 - Export MP4
+- Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
+- Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
 
 ### Coloring Book
 
@@ -101,10 +119,14 @@ Category: **Create** · 18 components
 
 **Tool** · [Open MediaSplat](../solutions/mediasplat/)
 
-- Inspect local audio and video
-- Trim, split, and join media
-- Convert supported media formats
-- Download results and multi-part ZIP output
+- Trim, split, and join local audio or video; download individual parts or a ZIP
+- Use fast stream-copy cuts or normalize video to MP4 and audio to MP3
+- Import SRT or WebVTT (.vtt) subtitles; adjust timing, size, margins, outline, and background; burn subtitles permanently into MP4
+- Generate automatic English subtitles locally with Whisper; review/edit words and timing; download SRT or plain-text transcripts
+- Transcribe audio directly without converting it to video
+- Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding
+- Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
+- Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
 
 ### Meme Puzzle
 
@@ -177,11 +199,15 @@ Category: **Create** · 18 components
 
 **Tool** · [Open VideoSplat](../solutions/videosplat/)
 
-- Import and edit video locally
-- Arrange clips and add named timeline markers
-- Add captions
-- Use privacy tools
-- Export finished video
+- Import, arrange, split, trim, and edit video, audio, and images on a layered timeline
+- Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both
+- Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing
+- Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position
+- Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files
+- Use local privacy tools and editing proxies without uploading source media
+- Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser
+- Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
+- Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
 
 ## Graph & Visualize Data
 
@@ -337,6 +363,8 @@ Category: **Media** · 7 components
 - Adjust frame delay, loop count, and output size
 - Choose palette quality and dithering
 - Download GIF or export MP4/WebM
+- Import formats: PNG, JPEG, WebP, and GIF image frames
+- Output formats: GIF animation; MP4 or WebM video according to browser export support
 
 ### AudioSplat
 
@@ -346,6 +374,9 @@ Category: **Media** · 7 components
 - Arrange and edit multitrack audio
 - Analyze audio levels and sample properties
 - Export audio locally
+- Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript
+- Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
+- Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
 
 ### ClipSplat
 
@@ -355,6 +386,8 @@ Category: **Media** · 7 components
 - Trim clips and cut unwanted sections
 - Add opening and closing title panels, photos, and illustrated frames
 - Export MP4
+- Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
+- Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
 
 ### ImageSplat™
 
@@ -370,10 +403,14 @@ Category: **Media** · 7 components
 
 **Tool** · [Open MediaSplat](../solutions/mediasplat/)
 
-- Inspect local audio and video
-- Trim, split, and join media
-- Convert supported media formats
-- Download results and multi-part ZIP output
+- Trim, split, and join local audio or video; download individual parts or a ZIP
+- Use fast stream-copy cuts or normalize video to MP4 and audio to MP3
+- Import SRT or WebVTT (.vtt) subtitles; adjust timing, size, margins, outline, and background; burn subtitles permanently into MP4
+- Generate automatic English subtitles locally with Whisper; review/edit words and timing; download SRT or plain-text transcripts
+- Transcribe audio directly without converting it to video
+- Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding
+- Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
+- Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
 
 ### MemeSplat™
 
@@ -388,11 +425,15 @@ Category: **Media** · 7 components
 
 **Tool** · [Open VideoSplat](../solutions/videosplat/)
 
-- Import and edit video locally
-- Arrange clips and add named timeline markers
-- Add captions
-- Use privacy tools
-- Export finished video
+- Import, arrange, split, trim, and edit video, audio, and images on a layered timeline
+- Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both
+- Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing
+- Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position
+- Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files
+- Use local privacy tools and editing proxies without uploading source media
+- Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser
+- Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
+- Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
 
 ## Write, Present & Organize Work
 
@@ -424,6 +465,8 @@ Category: **Writing** · 20 components
 - Type words to clear rivals
 - Protect civilians
 - Choose grade-band vocabulary
+- Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets
+- Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time
 
 ### CipherSplat
 
@@ -480,6 +523,8 @@ Category: **Writing** · 20 components
 - Practice typing with kitten and puppy characters
 - Explore twelve gentle trails
 - Use activities designed for ages 4–9
+- Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard
+- Suggested learners: ages 4–9; beginning keyboard users
 
 ### PDFsplat
 
@@ -518,6 +563,8 @@ Category: **Writing** · 20 components
 - Track speed and accuracy
 - Import classroom text
 - Choose grade-band activities
+- Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace
+- Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness
 
 ### Story Wheel
 
@@ -546,6 +593,8 @@ Category: **Writing** · 20 components
 - Choose Paws & Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint
 - Open each typing adventure independently
 - Choose age-appropriate play and passage practice
+- Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice
+- Suggested learners: ages 4–9 for Paws & Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor
 
 ### Vibe Check
 
@@ -574,6 +623,8 @@ Category: **Writing** · 20 components
 - Play against the computer
 - Use everyday words or TEKS vocabulary
 - Choose grade-band activities
+- Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course
+- Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12
 
 ### WriteSplat
 
@@ -614,6 +665,8 @@ Category: **Assessment** · 18 components
 - Type words to clear rivals
 - Protect civilians
 - Choose grade-band vocabulary
+- Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets
+- Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time
 
 ### Coin Flipper
 
@@ -669,6 +722,8 @@ Category: **Assessment** · 18 components
 - Practice typing with kitten and puppy characters
 - Explore twelve gentle trails
 - Use activities designed for ages 4–9
+- Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard
+- Suggested learners: ages 4–9; beginning keyboard users
 
 ### Quiz & Flashcard Studio
 
@@ -707,6 +762,8 @@ Category: **Assessment** · 18 components
 - Track speed and accuracy
 - Import classroom text
 - Choose grade-band activities
+- Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace
+- Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness
 
 ### Toneshifter
 
@@ -725,6 +782,8 @@ Category: **Assessment** · 18 components
 - Choose Paws & Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint
 - Open each typing adventure independently
 - Choose age-appropriate play and passage practice
+- Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice
+- Suggested learners: ages 4–9 for Paws & Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor
 
 ### Vibe Check
 
@@ -753,6 +812,8 @@ Category: **Assessment** · 18 components
 - Play against the computer
 - Use everyday words or TEKS vocabulary
 - Choose grade-band activities
+- Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course
+- Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12
 
 ## Engage the Classroom
 
@@ -1008,6 +1069,8 @@ Category: **Games** · 29 components
 - Type words to clear rivals
 - Protect civilians
 - Choose grade-band vocabulary
+- Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets
+- Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time
 
 ### Coin Flipper
 
@@ -1128,6 +1191,8 @@ Category: **Games** · 29 components
 - Practice typing with kitten and puppy characters
 - Explore twelve gentle trails
 - Use activities designed for ages 4–9
+- Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard
+- Suggested learners: ages 4–9; beginning keyboard users
 
 ### Splatball
 
@@ -1167,6 +1232,8 @@ Category: **Games** · 29 components
 - Track speed and accuracy
 - Import classroom text
 - Choose grade-band activities
+- Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace
+- Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness
 
 ### Story Wheel
 
@@ -1204,6 +1271,8 @@ Category: **Games** · 29 components
 - Choose Paws & Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint
 - Open each typing adventure independently
 - Choose age-appropriate play and passage practice
+- Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice
+- Suggested learners: ages 4–9 for Paws & Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor
 
 ### Untangle
 
@@ -1241,6 +1310,8 @@ Category: **Games** · 29 components
 - Play against the computer
 - Use everyday words or TEKS vocabulary
 - Choose grade-band activities
+- Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course
+- Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12
 
 ## Widgets inside the whiteboard
 

@@ -3,6 +3,39 @@
 <p>This reference follows the same categories as Studio. Components appear in every category they support. Each entry links to the application and lists its main features. The complete suite installation includes these components; selected tools keep their own saving and integration behavior.</p>
 <p><a href="../docs/district-selfhost.html">Install the complete ecosystem</a> · <a href="../pages/download.html">Download packages</a> · <a href="../guides/project-reference.html">Whiteboard classroom guide</a></p>
 <p>Most tools work locally in the browser. Brain Sort, Clock Wizard, Step-Splat, Toneshifter, and Vibe Check offer optional external AI connections. Editable QR codes and cloud integrations require their own configuration. See the individual application for supported formats and options.</p>
+<h2 id="choosing-a-keyboarding-activity">Choosing a keyboarding activity</h2>
+<p>Use these activities to build keyboard familiarity, accuracy, and typing fluency. Age equivalents are approximate guidance based on the available grade bands; choose by reading ability and keyboard readiness. The games complement teacher instruction in posture, finger placement, and touch typing.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Keyboarding purpose</th>
+<th>Suggested learners</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../games/paws-and-keys-adventure/">Paws &amp; Keys Adventure</a></td>
+<td>Key locations and finger hints; gentle first-key practice.</td>
+<td>Ages 4–9; beginning keyboard users.</td>
+</tr>
+<tr>
+<td><a href="../games/cipher-chase/">Cipher Chase</a></td>
+<td>Type target words accurately while playing an arcade driving game.</td>
+<td>Grades 3–12 (about ages 8–18); bands 3–5, 6–8, 9–12.</td>
+</tr>
+<tr>
+<td><a href="../games/wordfall-reactor/">Wordfall Reactor</a></td>
+<td>Word entry, spelling, and vocabulary; rack-tile input is also available.</td>
+<td>Grades 3–12 (about ages 8–18); everyday words or grade-banded TEKS vocabulary.</td>
+</tr>
+<tr>
+<td><a href="../games/story-sprint/">Story Sprint</a></td>
+<td>Copy passages with punctuation; measure typing speed and accuracy.</td>
+<td>K–12 (about ages 5–18); bands K–2, 3–5, 6–8, 9–12; custom passages.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="draw-create">Draw &amp; Create</h2>
 <p>Category: <strong>Create</strong> · 18 components</p>
 <h3>Animated GIF Maker</h3>
@@ -12,6 +45,8 @@
 <li>Adjust frame delay, loop count, and output size</li>
 <li>Choose palette quality and dithering</li>
 <li>Download GIF or export MP4/WebM</li>
+<li>Import formats: PNG, JPEG, WebP, and GIF image frames</li>
+<li>Output formats: GIF animation; MP4 or WebM video according to browser export support</li>
 </ul>
 <h3>AudioSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/audiosplat/">Open AudioSplat</a></p>
@@ -20,6 +55,9 @@
 <li>Arrange and edit multitrack audio</li>
 <li>Analyze audio levels and sample properties</li>
 <li>Export audio locally</li>
+<li>Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript</li>
+<li>Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser</li>
+<li>Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT</li>
 </ul>
 <h3>ClipSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/clipsplat/">Open ClipSplat</a></p>
@@ -28,6 +66,8 @@
 <li>Trim clips and cut unwanted sections</li>
 <li>Add opening and closing title panels, photos, and illustrated frames</li>
 <li>Export MP4</li>
+<li>Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser</li>
+<li>Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format</li>
 </ul>
 <h3>Coloring Book</h3>
 <p><strong>Tool</strong> · <a href="../solutions/coloring-book/">Open Coloring Book</a></p>
@@ -84,10 +124,14 @@
 <h3>MediaSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/mediasplat/">Open MediaSplat</a></p>
 <ul>
-<li>Inspect local audio and video</li>
-<li>Trim, split, and join media</li>
-<li>Convert supported media formats</li>
-<li>Download results and multi-part ZIP output</li>
+<li>Trim, split, and join local audio or video; download individual parts or a ZIP</li>
+<li>Use fast stream-copy cuts or normalize video to MP4 and audio to MP3</li>
+<li>Import SRT or WebVTT (.vtt) subtitles; adjust timing, size, margins, outline, and background; burn subtitles permanently into MP4</li>
+<li>Generate automatic English subtitles locally with Whisper; review/edit words and timing; download SRT or plain-text transcripts</li>
+<li>Transcribe audio directly without converting it to video</li>
+<li>Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding</li>
+<li>Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP</li>
+<li>Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions</li>
 </ul>
 <h3>Meme Puzzle</h3>
 <p><strong>Game</strong> · <a href="../solutions/memepuzzle/">Open Meme Puzzle</a></p>
@@ -152,11 +196,15 @@
 <h3>VideoSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/videosplat/">Open VideoSplat</a></p>
 <ul>
-<li>Import and edit video locally</li>
-<li>Arrange clips and add named timeline markers</li>
-<li>Add captions</li>
-<li>Use privacy tools</li>
-<li>Export finished video</li>
+<li>Import, arrange, split, trim, and edit video, audio, and images on a layered timeline</li>
+<li>Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both</li>
+<li>Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing</li>
+<li>Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position</li>
+<li>Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files</li>
+<li>Use local privacy tools and editing proxies without uploading source media</li>
+<li>Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser</li>
+<li>Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON</li>
+<li>Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions</li>
 </ul>
 <h2 id="graph-visualize-data">Graph &amp; Visualize Data</h2>
 <p>Category: <strong>Data</strong> · 3 components</p>
@@ -291,6 +339,8 @@
 <li>Adjust frame delay, loop count, and output size</li>
 <li>Choose palette quality and dithering</li>
 <li>Download GIF or export MP4/WebM</li>
+<li>Import formats: PNG, JPEG, WebP, and GIF image frames</li>
+<li>Output formats: GIF animation; MP4 or WebM video according to browser export support</li>
 </ul>
 <h3>AudioSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/audiosplat/">Open AudioSplat</a></p>
@@ -299,6 +349,9 @@
 <li>Arrange and edit multitrack audio</li>
 <li>Analyze audio levels and sample properties</li>
 <li>Export audio locally</li>
+<li>Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript</li>
+<li>Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser</li>
+<li>Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT</li>
 </ul>
 <h3>ClipSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/clipsplat/">Open ClipSplat</a></p>
@@ -307,6 +360,8 @@
 <li>Trim clips and cut unwanted sections</li>
 <li>Add opening and closing title panels, photos, and illustrated frames</li>
 <li>Export MP4</li>
+<li>Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser</li>
+<li>Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format</li>
 </ul>
 <h3>ImageSplat™</h3>
 <p><strong>Tool</strong> · <a href="../solutions/imagesplat/">Open ImageSplat™</a></p>
@@ -320,10 +375,14 @@
 <h3>MediaSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/mediasplat/">Open MediaSplat</a></p>
 <ul>
-<li>Inspect local audio and video</li>
-<li>Trim, split, and join media</li>
-<li>Convert supported media formats</li>
-<li>Download results and multi-part ZIP output</li>
+<li>Trim, split, and join local audio or video; download individual parts or a ZIP</li>
+<li>Use fast stream-copy cuts or normalize video to MP4 and audio to MP3</li>
+<li>Import SRT or WebVTT (.vtt) subtitles; adjust timing, size, margins, outline, and background; burn subtitles permanently into MP4</li>
+<li>Generate automatic English subtitles locally with Whisper; review/edit words and timing; download SRT or plain-text transcripts</li>
+<li>Transcribe audio directly without converting it to video</li>
+<li>Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding</li>
+<li>Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP</li>
+<li>Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions</li>
 </ul>
 <h3>MemeSplat™</h3>
 <p><strong>Tool</strong> · <a href="../solutions/memesplat/">Open MemeSplat™</a></p>
@@ -336,11 +395,15 @@
 <h3>VideoSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/videosplat/">Open VideoSplat</a></p>
 <ul>
-<li>Import and edit video locally</li>
-<li>Arrange clips and add named timeline markers</li>
-<li>Add captions</li>
-<li>Use privacy tools</li>
-<li>Export finished video</li>
+<li>Import, arrange, split, trim, and edit video, audio, and images on a layered timeline</li>
+<li>Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both</li>
+<li>Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing</li>
+<li>Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position</li>
+<li>Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files</li>
+<li>Use local privacy tools and editing proxies without uploading source media</li>
+<li>Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser</li>
+<li>Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON</li>
+<li>Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions</li>
 </ul>
 <h2 id="write-present-organize-work">Write, Present &amp; Organize Work</h2>
 <p>Category: <strong>Writing</strong> · 20 components</p>
@@ -367,6 +430,8 @@
 <li>Type words to clear rivals</li>
 <li>Protect civilians</li>
 <li>Choose grade-band vocabulary</li>
+<li>Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time</li>
 </ul>
 <h3>CipherSplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/CipherSplat/">Open CipherSplat</a></p>
@@ -417,6 +482,8 @@
 <li>Practice typing with kitten and puppy characters</li>
 <li>Explore twelve gentle trails</li>
 <li>Use activities designed for ages 4–9</li>
+<li>Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard</li>
+<li>Suggested learners: ages 4–9; beginning keyboard users</li>
 </ul>
 <h3>PDFsplat</h3>
 <p><strong>Tool</strong> · <a href="../solutions/pdfsplat/">Open PDFsplat</a></p>
@@ -451,6 +518,8 @@
 <li>Track speed and accuracy</li>
 <li>Import classroom text</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace</li>
+<li>Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness</li>
 </ul>
 <h3>Story Wheel</h3>
 <p><strong>Widget</strong> · <a href="../solutions/storywheel/">Open Story Wheel</a></p>
@@ -476,6 +545,8 @@
 <li>Choose Paws &amp; Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint</li>
 <li>Open each typing adventure independently</li>
 <li>Choose age-appropriate play and passage practice</li>
+<li>Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice</li>
+<li>Suggested learners: ages 4–9 for Paws &amp; Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor</li>
 </ul>
 <h3>Vibe Check</h3>
 <p><strong>Widget</strong> · <a href="../solutions/vibe-check/">Open Vibe Check</a></p>
@@ -501,6 +572,8 @@
 <li>Play against the computer</li>
 <li>Use everyday words or TEKS vocabulary</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12</li>
 </ul>
 <h3>WriteSplat</h3>
 <p><strong>Workspace</strong> · <a href="../splatworks/writesplat/">Open WriteSplat</a></p>
@@ -535,6 +608,8 @@
 <li>Type words to clear rivals</li>
 <li>Protect civilians</li>
 <li>Choose grade-band vocabulary</li>
+<li>Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time</li>
 </ul>
 <h3>Coin Flipper</h3>
 <p><strong>Widget</strong> · <a href="../solutions/coinflipping/">Open Coin Flipper</a></p>
@@ -584,6 +659,8 @@
 <li>Practice typing with kitten and puppy characters</li>
 <li>Explore twelve gentle trails</li>
 <li>Use activities designed for ages 4–9</li>
+<li>Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard</li>
+<li>Suggested learners: ages 4–9; beginning keyboard users</li>
 </ul>
 <h3>Quiz &amp; Flashcard Studio</h3>
 <p><strong>Tool</strong> · <a href="../solutions/quiz-flashcard-studio/">Open Quiz &amp; Flashcard Studio</a></p>
@@ -618,6 +695,8 @@
 <li>Track speed and accuracy</li>
 <li>Import classroom text</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace</li>
+<li>Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness</li>
 </ul>
 <h3>Toneshifter</h3>
 <p><strong>Widget</strong> · <a href="../solutions/toneshifter/">Open Toneshifter</a></p>
@@ -634,6 +713,8 @@
 <li>Choose Paws &amp; Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint</li>
 <li>Open each typing adventure independently</li>
 <li>Choose age-appropriate play and passage practice</li>
+<li>Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice</li>
+<li>Suggested learners: ages 4–9 for Paws &amp; Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor</li>
 </ul>
 <h3>Vibe Check</h3>
 <p><strong>Widget</strong> · <a href="../solutions/vibe-check/">Open Vibe Check</a></p>
@@ -659,6 +740,8 @@
 <li>Play against the computer</li>
 <li>Use everyday words or TEKS vocabulary</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12</li>
 </ul>
 <h2 id="engage-the-classroom">Engage the Classroom</h2>
 <p>Category: <strong>Classroom</strong> · 22 components</p>
@@ -884,6 +967,8 @@
 <li>Type words to clear rivals</li>
 <li>Protect civilians</li>
 <li>Choose grade-band vocabulary</li>
+<li>Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time</li>
 </ul>
 <h3>Coin Flipper</h3>
 <p><strong>Widget</strong> · <a href="../solutions/coinflipping/">Open Coin Flipper</a></p>
@@ -991,6 +1076,8 @@
 <li>Practice typing with kitten and puppy characters</li>
 <li>Explore twelve gentle trails</li>
 <li>Use activities designed for ages 4–9</li>
+<li>Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard</li>
+<li>Suggested learners: ages 4–9; beginning keyboard users</li>
 </ul>
 <h3>Splatball</h3>
 <p><strong>Game</strong> · <a href="../games/splatball/">Open Splatball</a></p>
@@ -1026,6 +1113,8 @@
 <li>Track speed and accuracy</li>
 <li>Import classroom text</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace</li>
+<li>Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness</li>
 </ul>
 <h3>Story Wheel</h3>
 <p><strong>Widget</strong> · <a href="../solutions/storywheel/">Open Story Wheel</a></p>
@@ -1059,6 +1148,8 @@
 <li>Choose Paws &amp; Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint</li>
 <li>Open each typing adventure independently</li>
 <li>Choose age-appropriate play and passage practice</li>
+<li>Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice</li>
+<li>Suggested learners: ages 4–9 for Paws &amp; Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor</li>
 </ul>
 <h3>Untangle</h3>
 <p><strong>Game</strong> · <a href="../games/untangle/">Open Untangle</a></p>
@@ -1092,6 +1183,8 @@
 <li>Play against the computer</li>
 <li>Use everyday words or TEKS vocabulary</li>
 <li>Choose grade-band activities</li>
+<li>Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course</li>
+<li>Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12</li>
 </ul>
 <h2 id="widgets-inside-the-whiteboard">Widgets inside the whiteboard</h2>
 <p>These classroom widgets are opened on a whiteboard page. Use the <a href="../guides/classroom-widgets-tools.html">classroom widgets guide</a> for the board workflow.</p>
@@ -1151,4 +1244,4 @@
 </tr>
 </tbody>
 </table>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#draw-create">Draw &amp; Create</a></li><li><a href="#graph-visualize-data">Graph &amp; Visualize Data</a></li><li><a href="#think-organize">Think &amp; Organize</a></li><li><a href="#audio-video-media">Audio, Video &amp; Media</a></li><li><a href="#write-present-organize-work">Write, Present &amp; Organize Work</a></li><li><a href="#assess-practice">Assess &amp; Practice</a></li><li><a href="#engage-the-classroom">Engage the Classroom</a></li><li><a href="#play-puzzle">Play &amp; Puzzle</a></li><li><a href="#widgets-inside-the-whiteboard">Widgets inside the whiteboard</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#choosing-a-keyboarding-activity">Choosing a keyboarding activity</a></li><li><a href="#draw-create">Draw &amp; Create</a></li><li><a href="#graph-visualize-data">Graph &amp; Visualize Data</a></li><li><a href="#think-organize">Think &amp; Organize</a></li><li><a href="#audio-video-media">Audio, Video &amp; Media</a></li><li><a href="#write-present-organize-work">Write, Present &amp; Organize Work</a></li><li><a href="#assess-practice">Assess &amp; Practice</a></li><li><a href="#engage-the-classroom">Engage the Classroom</a></li><li><a href="#play-puzzle">Play &amp; Puzzle</a></li><li><a href="#widgets-inside-the-whiteboard">Widgets inside the whiteboard</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

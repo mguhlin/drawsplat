@@ -3,7 +3,9 @@
     "Record camera video or import a local clip",
     "Trim clips and cut unwanted sections",
     "Add opening and closing title panels, photos, and illustrated frames",
-    "Export MP4"
+    "Export MP4",
+    "Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser",
+    "Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format"
   ],
   "whiteboard": [
     "Draw with pens, shapes, text, images, and sticky notes",
@@ -42,13 +44,18 @@
     "Build animations from image frames",
     "Adjust frame delay, loop count, and output size",
     "Choose palette quality and dithering",
-    "Download GIF or export MP4/WebM"
+    "Download GIF or export MP4/WebM",
+    "Import formats: PNG, JPEG, WebP, and GIF image frames",
+    "Output formats: GIF animation; MP4 or WebM video according to browser export support"
   ],
   "audiosplat": [
     "Record microphone audio and import files",
     "Arrange and edit multitrack audio",
     "Analyze audio levels and sample properties",
-    "Export audio locally"
+    "Export audio locally",
+    "Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript",
+    "Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser",
+    "Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT"
   ],
   "big-link": [
     "Display a large URL or short text",
@@ -155,10 +162,14 @@
     "Export Markdown, HTML, DOCX, or ODT"
   ],
   "mediasplat": [
-    "Inspect local audio and video",
-    "Trim, split, and join media",
-    "Convert supported media formats",
-    "Download results and multi-part ZIP output"
+    "Trim, split, and join local audio or video; download individual parts or a ZIP",
+    "Use fast stream-copy cuts or normalize video to MP4 and audio to MP3",
+    "Import SRT or WebVTT (.vtt) subtitles; adjust timing, size, margins, outline, and background; burn subtitles permanently into MP4",
+    "Generate automatic English subtitles locally with Whisper; review/edit words and timing; download SRT or plain-text transcripts",
+    "Transcribe audio directly without converting it to video",
+    "Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding",
+    "Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP",
+    "Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions"
   ],
   "meme-puzzle": [
     "Create question-and-answer image puzzles",
@@ -254,11 +265,15 @@
     "Optionally use a configured external AI provider"
   ],
   "videosplat": [
-    "Import and edit video locally",
-    "Arrange clips and add named timeline markers",
-    "Add captions",
-    "Use privacy tools",
-    "Export finished video"
+    "Import, arrange, split, trim, and edit video, audio, and images on a layered timeline",
+    "Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both",
+    "Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing",
+    "Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position",
+    "Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files",
+    "Use local privacy tools and editing proxies without uploading source media",
+    "Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser",
+    "Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON",
+    "Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions"
   ],
   "wheel-spinner": [
     "Paste or import a list of entries",
@@ -340,30 +355,40 @@
   "typing-games": [
     "Choose Paws & Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint",
     "Open each typing adventure independently",
-    "Choose age-appropriate play and passage practice"
+    "Choose age-appropriate play and passage practice",
+    "Keyboarding purpose: build key familiarity, typing accuracy, and fluency with age-appropriate practice",
+    "Suggested learners: ages 4–9 for Paws & Keys; kindergarten through grade 12 for Story Sprint; grades 3–12 for Cipher Chase and Wordfall Reactor"
   ],
   "paws-and-keys": [
     "Practice typing with kitten and puppy characters",
     "Explore twelve gentle trails",
-    "Use activities designed for ages 4–9"
+    "Use activities designed for ages 4–9",
+    "Keyboarding purpose: learn key locations and finger placement using finger hints and an on-screen English QWERTY keyboard",
+    "Suggested learners: ages 4–9; beginning keyboard users"
   ],
   "road-rally": [
     "Steer an overhead spy car",
     "Type words to clear rivals",
     "Protect civilians",
-    "Choose grade-band vocabulary"
+    "Choose grade-band vocabulary",
+    "Keyboarding purpose: practice accurate word typing while steering and responding to arcade targets",
+    "Suggested learners: grades 3–12 (approximately ages 8–18), with vocabulary bands 3–5, 6–8, and 9–12; choose Beginner for more typing time"
   ],
   "block-zap": [
     "Connect words on a letter-tile board",
     "Play against the computer",
     "Use everyday words or TEKS vocabulary",
-    "Choose grade-band activities"
+    "Choose grade-band activities",
+    "Keyboarding purpose: reinforce word entry, spelling, and vocabulary; words can also be entered with rack tiles, so this is a word game rather than a structured touch-typing course",
+    "Suggested learners: grades 3–12 (approximately ages 8–18), with everyday words or TEKS vocabulary bands 3–5, 6–8, and 9–12"
   ],
   "passage-coach": [
     "Practice typing passages",
     "Track speed and accuracy",
     "Import classroom text",
-    "Choose grade-band activities"
+    "Choose grade-band activities",
+    "Keyboarding purpose: practice continuous text, punctuation, accuracy, and speed; view words per minute and correct errors with Backspace",
+    "Suggested learners: kindergarten through grade 12 (approximately ages 5–18), with K–2, 3–5, 6–8, and 9–12 passage bands; teachers can import text to match learner readiness"
   ],
   "untangle": [
     "Drag graph nodes until edges no longer cross",
