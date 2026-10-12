@@ -2,7 +2,11 @@ export type CellType = 'blank' | 'number' | 'text' | 'formula';
 export type CellTextAlign = 'left' | 'center' | 'right';
 export type CellVerticalAlign = 'bottom' | 'middle' | 'top';
 
+export type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent' | 'thousands' | 'scientific' | 'date';
+
 export interface CellFormat {
+  numberFormat?: NumberFormat;
+  decimalPlaces?: number;
   align?: CellTextAlign;
   backgroundColor?: string;
   border?: boolean;

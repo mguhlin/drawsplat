@@ -1,3 +1,4 @@
+import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../shared/file-bridge.js';
 (function () {
   'use strict';
 
@@ -376,7 +377,7 @@
 
   function loadDeck() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = workspaceStorage().getItem(STORAGE_KEY);
       if (raw) return normalizeDeck(JSON.parse(raw));
     } catch (err) {
       console.warn(err);
@@ -455,7 +456,7 @@
       const json = JSON.stringify(deck);
       recordHistory(json);
       try {
-        localStorage.setItem(STORAGE_KEY, json);
+        workspaceStorage().setItem(STORAGE_KEY, json);
         setStatus('Autosaved in this browser.');
       } catch (err) {
         console.warn(err);
@@ -500,7 +501,7 @@
     cropTargetId = null;
     selectedSlideIds = new Set();
     try {
-      localStorage.setItem(STORAGE_KEY, json);
+      workspaceStorage().setItem(STORAGE_KEY, json);
     } catch (err) {
       console.warn(err);
     }
@@ -1705,7 +1706,12 @@
       setStatus('Imported WebDeck HTML. Save as .showsplat.json to keep editing.');
       return;
     }
-    deck = normalizeDeck(JSON.parse(trimmed));
+    if(/\.(md|markdown)$/i.test(file.name)){deck=normalizeDeck({title:file.name.replace(/\.[^.]+$/,''),slides:markdownToSlides(trimmed)});}
+    else {
+      const parsed=JSON.parse(trimmed);
+      if(!parsed || !Array.isArray(parsed.slides))throw new Error('This JSON file is not a ShowSplat deck.');
+      deck=normalizeDeck(parsed);
+    }
     activeSlide = 0;
     selectedId = null;
     saveSoon();
@@ -3076,7 +3082,7 @@
       render();
     }
     if (action === 'save-deck') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+      workspaceStorage().setItem(STORAGE_KEY, JSON.stringify(deck));
       download((deck.title || 'showsplat-deck').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.showsplat.json', JSON.stringify(deck, null, 2), 'application/json');
     }
     if (action === 'open-deck' || action === 'import-webdeck' || action === 'import-pdf' || action === 'import-pptx' || action === 'import-odp') els.deckFile.click();
@@ -3511,7 +3517,7 @@
     });
     if (changed) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+        workspaceStorage().setItem(STORAGE_KEY, JSON.stringify(deck));
       } catch (err) {
         console.warn(err);
       }
@@ -3790,16 +3796,16 @@
     if (file) setGlobalAudioFile(file);
     els.globalAudioFile.value = '';
   });
-  els.deckFile.addEventListener('change', () => {
-    const file = els.deckFile.files[0];
-    if (!file) return;
-    const reader = /\.(pdf|pptx|odp)$/i.test(file.name) || file.type === 'application/pdf' ? file.arrayBuffer() : file.text();
-    reader.then(content => importDeckFile(file, content)).catch(err => {
-      console.warn(err);
-      setStatus('Could not open that deck file.');
-    });
-    els.deckFile.value = '';
-  });
+  async function openShowFile(file){
+    try{
+      if(await routeFileToApp(file,'showsplat')){setStatus('Opened the file in its matching SplatWorks app.');return;}
+      await assertSupportedFile(file,'showsplat');
+      const content=/\.(pdf|pptx|odp)$/i.test(file.name) || file.type==='application/pdf' ? await file.arrayBuffer() : await file.text();
+      await importDeckFile(file,content);
+      if(isTransferredWorkspace())setStatus('Opened '+file.name+'. '+importedFileNotice);
+    }catch(error){console.warn(error);setStatus(error.message || 'Could not open that deck file.');}
+  }
+  els.deckFile.addEventListener('change',()=>{const file=els.deckFile.files[0];els.deckFile.value='';if(file)void openShowFile(file);});
   els.csvFile.addEventListener('change', () => {
     const file = els.csvFile.files[0];
     if (file) {
@@ -3813,7 +3819,7 @@
 
   window.addEventListener('beforeunload', () => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deck));
+      workspaceStorage().setItem(STORAGE_KEY, JSON.stringify(deck));
     } catch (err) {
       console.warn(err);
     }
@@ -3824,4 +3830,5 @@
   recordHistory(JSON.stringify(deck));
   render();
   requestAnimationFrame(centerSlideInStage);
+  consumeTransferredFile('showsplat').then(file=>{if(file)void openShowFile(file);}).catch(error=>setStatus(error.message || String(error)));
 })();

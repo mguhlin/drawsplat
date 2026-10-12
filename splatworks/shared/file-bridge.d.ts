@@ -1,0 +1,10 @@
+export type SplatWorksApp = 'writesplat'|'showsplat'|'gridsplat'|'listsplat';
+export const APP_NAMES: Record<SplatWorksApp,string>;
+export function fileOwner(name:string): SplatWorksApp|null;
+export function nativeOwner(data:unknown): SplatWorksApp|null;
+export function isTransferredWorkspace(): boolean;
+export function workspaceStorage(): Storage;
+export function assertSupportedFile(file:File,app:SplatWorksApp): Promise<void>;
+export function routeFileToApp(file:File,currentApp:SplatWorksApp): Promise<boolean>;
+export function consumeTransferredFile(app:SplatWorksApp): Promise<File|null>;
+export const importedFileNotice: string;

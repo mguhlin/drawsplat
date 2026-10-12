@@ -371,6 +371,7 @@ WIDGET_SOLUTIONS=(
   wheel-spinner
 )
 
+copy_tree splatworks/shared "$GRID_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree splatworks/gridsplat "$GRID_ROOT/splatworks/gridsplat" "${SPLATWORKS_EXCLUDES[@]}"
 
 cat > "$GRID_ROOT/SPLATWORKS-GRIDSPLAT-README.txt" <<EOF
@@ -408,6 +409,7 @@ widgets, games, backends, and compliance features remain under the repository
 level DrawSplatTM license unless a file or subdirectory says otherwise.
 EOF
 
+copy_tree splatworks/shared "$SHOW_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree splatworks/showsplat "$SHOW_ROOT/splatworks/showsplat" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree vendor "$SHOW_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 
@@ -442,6 +444,7 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
+copy_tree splatworks/shared "$WRITE_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree splatworks/writesplat "$WRITE_ROOT/splatworks/writesplat" "${SPLATWORKS_EXCLUDES[@]}"
 
 cat > "$WRITE_ROOT/SPLATWORKS-WRITESPLAT-README.txt" <<EOF
@@ -483,6 +486,7 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
+copy_tree splatworks/shared "$LIST_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree splatworks/listsplat "$LIST_ROOT/splatworks/listsplat" "${SPLATWORKS_EXCLUDES[@]}"
 
 cat > "$LIST_ROOT/SPLATWORKS-LISTSPLAT-README.txt" <<EOF
@@ -526,6 +530,7 @@ EOF
 for app_dir in gridsplat showsplat writesplat listsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
+copy_tree splatworks/shared "$SPLATWORKS_SUITE_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
 copy_tree assets "$SPLATWORKS_SUITE_ROOT/assets" "${MODULE_EXCLUDES[@]}"
 copy_tree vendor "$SPLATWORKS_SUITE_ROOT/vendor" "${MODULE_EXCLUDES[@]}"
 copy_file pages/splatworks.html "$SPLATWORKS_SUITE_ROOT/pages/splatworks.html"

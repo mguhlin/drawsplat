@@ -13,6 +13,9 @@ export function matrixToSheet(
   rows = 20,
   cols = 20,
 ): SheetData {
+  rows = Math.max(rows, matrix.length);
+  cols = Math.max(cols, ...matrix.map(row => row.length));
+  if (rows > 2000 || cols > 200 || rows * cols > 100000) throw new Error("Sheets are limited to 2,000 rows, 200 columns and 100,000 cells.");
   return recalculateSheet(
     Array.from({ length: rows }, (_, rowIndex) =>
       Array.from({ length: cols }, (_, colIndex) =>

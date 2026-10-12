@@ -3,7 +3,7 @@
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
+Get current packages from [Downloads](https://drawsplat.org/pages/download) and read [release notes](https://drawsplat.org/pages/release-notes). App versions remain independent of the suite release.
 
 WriteSplatTM is the SplatWorksTM writing and classroom publishing app.
 
@@ -30,7 +30,7 @@ This static Vite + TypeScript app currently includes:
 - cloze marking with student/teacher HTML export modes
 - MLA, APA, and Chicago citation assistant with maintained Works Cited section insertion
 - teacher-only marking, Student View, and student/teacher view HTML exports
-- RTF and DOCX exports, plus ODT import/export for LibreOffice with documented limitations
+- RTF export and DOCX/ODT import/export for LibreOffice with documented limitations
 - export options dialog with lossy-format notes
 - read-aloud controls using browser SpeechSynthesis with current-word highlighting
 - sentence and paragraph scrambler tools with preserved teacher answer keys
@@ -61,3 +61,7 @@ inside this directory says otherwise, WriteSplatTM code is GPL-3.0-only.
 The broader DrawSplatTM whiteboard, tools, widgets, games, backends, and
 compliance features remain under the repository-level DrawSplatTM license unless
 a file or subdirectory says otherwise.
+
+## Opening files from another SplatWorks app
+
+Recognized project and Office files open in the matching app in a new tab. The matching app must be installed at the same website; allow popups if prompted. Files transfer through temporary browser storage without an upload. The imported tab uses a separate session draft: save a project file before closing it. Existing saved projects stay in place. See the [SplatWorks FAQ](https://drawsplat.org/wiki/faq#splatworks).

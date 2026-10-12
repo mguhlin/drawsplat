@@ -1,238 +1,299 @@
-<?xml version="1.0" encoding="utf-8" ?>
-	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-		<channel>
-			<title>!DrawSplat</title>
-			<link>https://mguhlin.raindrop.page/draw-splat-71392298</link>
-			<description>DrawSplatTM related blog posts - Visit DrawSplat.org</description>
-			<language>en-US</language>
-			<generator>raindrop.io</generator>
-			<atom:link href="https://mguhlin.raindrop.page/draw-splat-71392298/feed" rel="self" type="application/rss+xml"/>
-			
-			<lastBuildDate>Fri, 09 Oct 2026 18:40:00 GMT</lastBuildDate>
-			<item><title>Meet PDFSplat: A Private PDF Toolkit for Classroom Presentations</title><link>https://drawsplat.org/blog/pdfsplat-presentations.html</link><description><![CDATA[<img src="https://drawsplat.org/blog/assets/pdfsplat-classroom-presentations.webp" /><br/>Present edited PDF pages, go full screen, blank the display, run a timed slideshow, or save a portable WebDeck v5. An educator walkthrough of PDFSplat's local editing, conversion, accessibility, and privacy tools with suggested ELE teaching activities. Refreshed downloads: v3.1.31.]]></description><pubDate>Fri, 09 Oct 2026 20:00:00 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-31-pdf-presentations</guid><source url="https://drawsplat.org/">DrawSplat Updates</source><category>PDFSplat</category><category>release-notes</category></item><item><title>DrawSplat v3.1.30: Creative tools, document imports, and WebDeck v5</title><link>https://drawsplat.org/blog/creative-tools.html</link><description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Open supported documents and images as PDFs, edit text on the page, and export PNG, JPG, or WebP. Reversible ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and icons with visible labels arrive with refreshed self-host packages.]]></description><pubDate>Fri, 09 Oct 2026 18:40:00 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-30-creative-tools</guid><source url="https://drawsplat.org/">DrawSplat Updates</source><category>creative-tools</category><category>release-notes</category><category>self-hosting</category></item><item><title>DrawSplat v3.1.29: Four New Typing Adventures</title><link>https://drawsplat.org/blog/typing-games.html</link><description><![CDATA[<img src="https://drawsplat.org/games/typing-games/assets/hero.webp" /><br/>Meet Cipher Chase, Wordfall Reactor, Story Sprint, and Paws &amp; Keys Adventure. Four independent pages bring spy driving with vocabulary definitions and sound checks, an everyday-word board against a computer with optional TEKS sets and definition-only hints, paste-protected passage practice, and kitten-and-puppy trails for ages 4–9. Six interface languages, current menus, and refreshed full/Games self-host downloads make the collection ready for classroom use.]]></description><pubDate>Thu, 08 Oct 2026 18:00:00 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-29-typing-adventures</guid><source url="https://drawsplat.org/">DrawSplat Updates</source><category>typing-games</category><category>release-notes</category><category>self-hosting</category></item><item><title>DrawSplat v3.1.25: Current Downloads for Every Package</title><link>https://drawsplat.org/blog/current-downloads.html</link><description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>All twelve packages are refreshed with the latest whiteboard, portable MySQL Save/Open, recording recovery, and creative tool improvements. Choose the full site, drop-in modules, SplatWorks apps, or independent media tools, with matching SHA-256 checksums and updated setup guides.]]></description><pubDate>Fri, 18 Sep 2026 13:27:48 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-25-current-downloads</guid><source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>self-hosting</category><category>whiteboard</category><category>mysql</category></item><item><title>DrawSplat v3.1.24: See Your Export Progress in VideoSplat and MediaSplat</title><link>https://drawsplat.org/blog/export-progress.html</link><description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Animated purple progress bars, percentages, elapsed time, and estimates in minutes or hours help you follow subtitle burn-in and video exports. VideoSplat measures rendering and conversion separately and fixes cancellation and repeated-export progress. All twelve self-host packages are refreshed.]]></description><pubDate>Thu, 10 Sep 2026 18:03:24 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-24-export-progress</guid><source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>videosplat</category><category>mediasplat</category><category>self-hosting</category></item><item>
-<title>DrawSplat v3.1.23: Generate Subtitles from Speech in VideoSplat and MediaSplat</title>
-<link>https://drawsplat.org/blog/automatic-subtitles.html</link>
-<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Turn English speech into editable timed subtitles on your device. Generate after recording in VideoSplat or from an existing video in MediaSplat, then download SRT or burn captions into video. This release also includes timeline zoom, fixed editing controls, recording audio checks, and refreshed self-host downloads. The speech model downloads on first use; no media is uploaded.]]></description>
-<pubDate>Thu, 10 Sep 2026 15:57:37 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-23-automatic-subtitles</guid>
-<source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>videosplat</category><category>mediasplat</category><category>self-hosting</category>
-</item><item>
-<title>DrawSplat v3.1.21: Burn Subtitles into Video with MediaSplat and VideoSplat</title>
-<link>https://drawsplat.org/blog/subtitle-burn-in.html</link>
-<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Make SRT or VTT subtitles permanently visible in exported video. MediaSplat offers a video-plus-subtitles-to-MP4 workflow; VideoSplat imports styled captions onto the timeline and lets you choose burn-in during export. Adjust font size, bottom margin, outline, background, and timing offset while keeping media on your device. All twelve v3.1.21 self-host ZIPs are rebuilt with fresh SHA-256 checksums.]]></description>
-<pubDate>Thu, 10 Sep 2026 11:02:50 GMT</pubDate><guid isPermaLink="false">drawsplat-release-v3-1-21-subtitle-burn-in</guid>
-<source url="https://drawsplat.org/">DrawSplat Updates</source><category>release-notes</category><category>mediasplat</category><category>videosplat</category><category>self-hosting</category>
-</item><item>
-		<title>DrawSplat v3.1.20: MediaSplat, VideoSplat, and Current Self-Host Downloads</title>
-		<link>https://drawsplat.org/pages/release-notes.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.20 brings MediaSplat and VideoSplat into the current self-host release. MediaSplat inspects, converts, trims, splits, and packages media locally with a browser-based FFmpeg runtime. VideoSplat supports private browser video editing, analysis, anonymization, project recovery, and export. Markdown Studio also adds DOCX and ODT export. All DrawSplat, SplatWorks, Tools, Widgets, Games, and independent media-tool ZIPs have been rebuilt with a matching SHA-256 checksum file.]]></description>
-		<pubDate>Wed, 26 Aug 2026 18:00:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3-1-20-media-tools</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>mediasplat</category>
-		<category>videosplat</category>
-		<category>self-hosting</category>
-	</item><item>
-		<title>DrawSplat v3.1.19: AudioSplat Multitrack Recording, Editing, Google Drive, and Standalone Download</title>
-		<link>https://drawsplat.org/solutions/audiosplat/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/solutions/audiosplat/audiosplat-icon.svg" /><br/>AudioSplat is now a production DrawSplat Tool for private-by-default browser audio recording and multitrack editing. Record microphones or supported shared tab/device audio, place successive takes on new tracks, drag clips between tracks, select visible waveform ranges, split and trim, zoom long recordings, undo edits, mix with mute/solo/volume/pan, and apply classroom-friendly effects. Export MP3, WAV, and additional browser-supported formats; optionally save the finished mix to Google Drive and create a share link or preview embed code. AudioSplat works without an account for local recording and editing and now ships as its own checksummed v3.1.19 self-host ZIP.]]></description>
-		<pubDate>Tue, 11 Aug 2026 19:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3-1-19-audiosplat</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>audiosplat</category>
-		<category>self-hosting</category>
-	</item><item>
-		<title>DrawSplat v3.1.18 Update: Typing Games, Markdown Studio, Visual Cards, and SplatWorks Hub Refresh</title>
-		<link>https://drawsplat.org/pages/release-notes.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.18 refreshes the classroom-facing tools that changed after the v3.1.17 audit release. Typing Games now includes Road Rally, Block Zap, and Passage Coach with localized practice, import options, automatic passage advance, longer intermediate and expert words, and Road Rally collision polish. Markdown Studio can import HTML files, convert pasted HTML to Markdown, and export WordPress block code. Tools and Widgets cards now show visual previews, including actual screenshots for repeated-card cases. The SplatWorks hub also gets a new hero image, one-line headline, larger app icons, and launch buttons before the Apps section. Self-host ZIP packages and checksums have been rebuilt for v3.1.18.]]></description>
-		<pubDate>Wed, 08 Jul 2026 20:10:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3-1-18-typing-markdown-cards-splatworks</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>typing-games</category>
-		<category>markdown-studio</category>
-		<category>splatworks</category>
-	</item><item>
-		<title>DrawSplat v3.1.17 Update: Whiteboard, Concept Map, and Self-Host Audit Refresh</title>
-		<link>https://drawsplat.org/pages/release-notes.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.17 is a whole-universe cleanup release. The whiteboard shell gets responsive, onboarding, offline-cache, CSP, and Concept Map launch polish. Concept Map Studio now supports direct bubble-label editing, visual bubble width handles, internal canvas scrolling, a start-from-template chooser, a quick toolbar, and selected-bubble contextual controls. The release also includes desktop/mobile audit fixes across public pages, language whiteboards, Hub/admin pages, community sign-in preview behavior, SplatWorks development-template fallbacks, tools, widgets, games, and refreshed self-host ZIP packages with checksums.]]></description>
-		<pubDate>Wed, 01 Jul 2026 12:00:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3-1-17-whiteboard-concept-map-audit</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>concept-map</category>
-		<category>self-hosting</category>
-	</item><item>
-		<title>DrawSplat v3.1.16 Update: SplatWorks Suite and Modular Self-Host Downloads</title>
-		<link>https://drawsplat.org/pages/download.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.16 makes SplatWorks available as a browser-based office suite download with GridSplat, ShowSplat, WriteSplat, and ListSplat together in one package. Schools can still download each SplatWorks app separately, and DrawSplat Tools, Widgets, and Games now have their own drop-in module ZIPs that connect when placed in the same self-host folder. The release also refreshes checksum generation, package verification, and download-page guidance for districts and teachers who want a simpler modular setup.]]></description>
-		<pubDate>Tue, 30 Jun 2026 12:48:26 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3-1-16-splatworks-modular-downloads</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>self-hosting</category>
-	</item><item>
-		<title>WriteSplat Update: A Classroom Word Processor Joins SplatWorks</title>
-		<link>https://drawsplat.org/pages/writesplat.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>WriteSplat is now available as the SplatWorks writing studio for teachers and students. It runs in the browser as a private, classroom-friendly word processor with local autosave, native .writesplat JSON files, practical export formats, templates, teacher tools, and kid-friendly readability feedback. The interface now follows the purple-and-white SplatWorks look, uses icon-first controls, includes language switching, and can be downloaded as its own self-host package or as part of the SplatWorks suite.]]></description>
-		<pubDate>Tue, 30 Jun 2026 12:59:00 GMT</pubDate>
-		<guid isPermaLink="false">writesplat-classroom-word-processor-splatworks</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>writesplat</category>
-	</item><item>
-		<title>ListSplat Update: A Kid-Friendly Database Studio for SplatWorks</title>
-		<link>https://drawsplat.org/pages/listsplat.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>ListSplat is now available as the SplatWorks database studio for classroom lists, records, forms, cards, galleries, labels, and reports. It helps students build simple databases with fields, records, CSV import/export, image fields, paste-and-upload image workflows, formulas, lookup relationships, find/replace, layout visibility controls, data-quality checks, and teacher project packets. ListSplat can be downloaded by itself or inside the SplatWorks suite package.]]></description>
-		<pubDate>Tue, 30 Jun 2026 12:58:00 GMT</pubDate>
-		<guid isPermaLink="false">listsplat-classroom-database-studio-splatworks</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>listsplat</category>
-	</item><item>
-		<title>DrawSplat Update: ShowSplat Adds PDF, ODP, PPTX, and Editing Workflow Polish</title>
-		<link>https://drawsplat.org/pages/showsplat.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>ShowSplat now has clearer Import and Export submenus for WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX workflows. WebDeck HTML and Markdown remain the cleanest editable formats. PDF import preserves pages as full-slide images, including password-protected PDFs after a prompt, and PDF export uses the browser Save as PDF flow. PPTX and ODP import/export are available as best-effort compatibility paths for common text, image, shape, background, and grouped slide content. The editor also adds selected-text bullet toggles, font-size decrease/increase buttons, a zoom slider, last-slide delete safety, smarter WebDeck import fitting, and presenter controls that auto-hide until hover.]]></description>
-		<pubDate>Sun, 14 Jun 2026 22:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-showsplat-pdf-odp-pptx-editor-polish</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>showsplat</category>
-	</item><item>
-		<title>DrawSplat v3.1.13 Update: ShowSplat Starts the WebDeck Presentation Tool</title>
-		<link>https://drawsplat.org/pages/showsplat.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.13 starts ShowSplat, the SplatWorks presentation and WebDeck authoring app. The first browser-native version includes slide thumbnails, a 16:9 canvas, dropdown menus, icon toolbar, notes, slide templates, color themes, draggable and resizable slide objects, media insertion, Markdown Studio import/export, slideshow preview, and WebDeck HTML export with an optional frontend password prompt. The self-host package split now includes separate DrawSplat, GridSplat, and ShowSplat zip files.]]></description>
-		<pubDate>Sun, 14 Jun 2026 17:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.13-showsplat-start</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>showsplat</category>
-	</item><item>
-		<title>DrawSplat v3.1.12 Update: Separate DrawSplat and GridSplat Downloads</title>
-		<link>https://drawsplat.org/pages/download.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.12 separates self-host downloads into two independent packages. The DrawSplat zip now carries the whiteboard, classroom tools, widgets, games, Apps Script backend, MySQL backend, Hub demo, docs, and legal/compliance pages. The SplatWorks GridSplat zip carries the GPL-covered spreadsheet app, built static assets, source, docs, tests, package metadata, and license files. Both downloads remain listed together on the same Download page, but a GridSplat-only update no longer requires a full DrawSplat package refresh.]]></description>
-		<pubDate>Sun, 14 Jun 2026 04:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.12-separate-downloads</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>splatworks</category>
-		<category>gridsplat</category>
-	</item><item>
-		<title>DrawSplat v3.1.10 Update: Super Star Trek Joins DrawSplat Games</title>
-		<link>https://drawsplat.org/games/super-star-trek/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/games/super-star-trek/SuperStarTrek_SplashImage.png" /><br/>Super Star Trek joins DrawSplat Games as a browser-playable edition of the classic command-driven space strategy game. Command the Enterprise across an 8 by 8 galaxy, scan nearby sectors, dock at starbases, manage shields and energy, and clear Klingon and Romulan ships before time runs out. The game runs as static HTML, CSS, JavaScript, and local image assets, so it is included in the Games dropdown, Teacher Admin Game Access, and the refreshed self-host bundle.]]></description>
-		<pubDate>Sat, 06 Jun 2026 02:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.10-super-star-trek</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>drawsplat-games</category>
-		<category>super-star-trek</category>
-	</item><item>
-		<title>DrawSplat v3.1.10 Update: Squirrel Run Gets Sound, Squirrel Jokes, and a Tree Dance</title>
-		<link>https://drawsplat.org/games/squirrel-run-game/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>Squirrel Run now feels more alive in DrawSplat Games. The game adds light movement sounds, a splat sound when the squirrel loses a life, and a sound toggle for quiet classrooms. When the squirrel gets stopped by traffic, cats, dogs, or general bad road-crossing decisions, a speech bubble pops up with a short squirrel-point-of-view remark. Reaching the tree also gets a payoff: the squirrel pauses for a quick celebratory dance before the next level begins. The self-host download, release notes, README, and bundled RSS snapshot have been refreshed for v3.1.10.]]></description>
-		<pubDate>Fri, 05 Jun 2026 03:30:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.10-squirrel-run-feedback</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>drawsplat-games</category>
-		<category>squirrel-run</category>
-	</item><item>
-		<title>DrawSplat v3.1.9 Update: SketchSpace VR, SplatImage Cutouts, and a Current Self-Host Zip</title>
-		<link>https://drawsplat.org/pages/release-notes.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.9 refreshes the self-host package with the newest classroom tools and documentation. SketchSpace VR is now part of the Tools dropdown as a paper-first virtual room workflow: students print a flat room grid, draw six panels, photograph the page, upload it, and explore the result in the browser. The release also adds a SketchSpace VR Teacher Guide, a Play examples page, six curriculum starter layouts, full-screen starter links, and corrected workflow visuals that match the actual no-cutting, no-folding template. ImageSplat™ also gets practical classroom polish: richer text boxes, Canva-friendly clipboard image workflows, selected-object PNG copy/export, Smart background cutout, Remove edge background, and a visible Working dialog during longer cutout tasks. The bundled RSS snapshot, release notes, README, and self-host download page have been updated so self-hosted copies carry the current DrawSplat story.]]></description>
-		<pubDate>Thu, 04 Jun 2026 17:00:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.9-sketchspace-splatimage-selfhost</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-		<category>sketchspace-vr</category>
-		<category>splatimage-studio</category>
-	</item><item>
-		<title>DrawSplat Update: SketchSpace VR Turns Student Drawings into Virtual Rooms</title>
-		<link>https://drawsplat.org/solutions/sketchspace-VR/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>SketchSpace VR is now available from the DrawSplat Tools dropdown as a standalone classroom solution. Students can print a one-page cube-room template, draw or label six panels, photograph the finished page, and explore the result as an interactive virtual room in the browser. The tool includes privacy-friendly local image handling, crop preview, trim controls, fullscreen viewing, split-view, phone viewer mode, and a language picker. To help students get started, SketchSpace VR also includes six curriculum starter layouts: citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle. A separate teacher guide provides setup notes, lesson ideas, examples, assessment prompts, sharing guidance, image prompt patterns, and links to "Wallpaper Your 3D Virtual Reality Room" and "Virtual Reality with Panoform Is Easy, Engaging, and Fun for Everyone," the posts that inspired this paper-first virtual reality workflow.]]></description>
-		<pubDate>Thu, 04 Jun 2026 14:06:05 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-update-sketchspace-vr</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>drawsplat</category>
-		<category>drawsplat-tools</category>
-		<category>sketchspace-vr</category>
-	</item><item>
-		<title>DrawSplat v3.1.8 Update: More Tools, Cleaner Cards, and a Fresher Self-Host Zip</title>
-		<link>https://drawsplat.org/pages/release-notes.html</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /><br/>DrawSplat v3.1.8 is packed with classroom-friendly polish. ImageSplat™ now has smoother paste handling, proportional arrowheads, better crop controls, shape masks, duplicate layers, layer transparency, text alignment, and a bigger Effects menu with mosaic, cubism, pixelate, blur/sharpen-style cleanup, lighten, and darken options. Quiz & Flashcard Studio gets clearer answer cards, so the answer stands out while extra explanation stays visually quieter. Concept Map Studio also gets friendlier import and editing controls, especially when working from Markdown or generated map content. The self-host zip has been rebuilt with the latest code, docs, legal/compliance pages, tools, and release notes, so schools and organizations can grab one current package and run DrawSplat on their own infrastructure. In short: fewer rough edges, more creative tools, and a nicer path for teachers who want the full DrawSplat experience in one download.]]></description>
-		<pubDate>Tue, 02 Jun 2026 19:20:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.8-general-update</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat</category>
-	</item><item>
-		<title>DrawSplat Hub Update: A Protected Admin Space for Classroom, Campus, and District Instances</title>
-		<link>https://drawsplat.org/hub/</link>
-		<description><![CDATA[<img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /><br/>DrawSplat Hub now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances. The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators. The approved admin accounts are drawsplat@gmail.com and jeguhlin@gmail.com. From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor. That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.]]></description>
-		<pubDate>Tue, 02 Jun 2026 19:19:00 GMT</pubDate>
-		<guid isPermaLink="false">drawsplat-release-v3.1.8-hub-update</guid>
-		<source url="https://drawsplat.org/">DrawSplat Updates</source>
-		<category>release-notes</category>
-		<category>drawsplat-hub</category>
-	</item><item>
-		<title>12 – The Learning Loop: DrawSplat™ and the Return of Student-Centered Creation #EdTech #Privacy #Whiteboards #FREE #NoAI – Another Think Coming</title>
-		<link>https://mguhlin.org/2026/06/08/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-whiteboards-free-noai/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/image-39.png?fit=1200%2C800&amp;amp;ssl=1" /&gt;&lt;br/&gt;What happens when an educator gets tired of classroom tools that are expensive, overloaded, privacy-complicated, or stuffed with Gen AI features? In this special focus issue, we look at DrawSplat™,…</description>
-		<pubDate>Tue, 09 Jun 2026 10:40:58 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/08/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-whiteboards-free-noai/</guid>
-		
-	</item><item>
-		<title>DrawSplat: a free browser-based whiteboard for teaching and visual thinking - Media and Learning Association</title>
-		<link>https://media-and-learning.eu/type/tools/drawsplat-a-free-browser-based-whiteboard-for-teaching-and-visual-thinking/</link>
-		<description>&lt;img src="https://media-and-learning.eu/files/2026/06/Website-Banner-700-x-200-px-1000-x-300-px-27.png" /&gt;&lt;br/&gt;DrawSplat is a free, browser-based whiteboard tool designed for classroom use and collaborative visual work. It runs directly in the browser…</description>
-		<pubDate>Sat, 06 Jun 2026 01:44:45 GMT</pubDate>
-		<guid>https://media-and-learning.eu/type/tools/drawsplat-a-free-browser-based-whiteboard-for-teaching-and-visual-thinking/</guid>
-		
-	</item><item>
-		<title>DrawSplat Game: Squirrel Run</title>
-		<link>https://mguhlin.org/2026/06/05/drawsplat-game-squirrel-run/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/file_0000000081dc71fd86ff11fbb872c8ad.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;“Wouldn’t it be cool to have a game where you try to move a squirrel across the road?” asked my wife. We were both thinking of old Frogger game. We watched a squirrel 🐿️ dart acro…</description>
-		<pubDate>Sat, 06 Jun 2026 01:32:51 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/05/drawsplat-game-squirrel-run/</guid>
-		
-	</item><item>
-		<title>DrawSplat Tools: Turn Paper Drawings into Virtual Rooms with SketchSpace VR #EduSky #education #panoform</title>
-		<link>https://mguhlin.org/2026/06/05/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/feature_drawplat.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;A student leans over a printed grid with colored pencils scattered everywhere. She is trying to decide where the water cycle should go. Evaporation on the left wall? Clouds on the ceiling? Runoff a…</description>
-		<pubDate>Sat, 06 Jun 2026 01:32:35 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/05/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: SplatImage Studio #education #ImageEditor #free</title>
-		<link>https://mguhlin.org/2026/06/04/drawsplat-feature-splatimage-studio-education-imageeditor-free/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/image-5.png?fit=1200%2C529&amp;amp;ssl=1&amp;amp;w=640" /&gt;&lt;br/&gt;Looking for an easy to use image editor that allows for cropping images, masking images to common shapes, and has layers? Sure, there are tons of them out there that do that. The DrawSplat Tools Sp…</description>
-		<pubDate>Thu, 04 Jun 2026 13:12:26 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/04/drawsplat-feature-splatimage-studio-education-imageeditor-free/</guid>
-		
-	</item><item>
-		<title>ControlAltAchieve 💡 #171</title>
-		<link>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</link>
-		<description>&lt;img src="https://rdl.ink/render/https%3A%2F%2Fmailchi.mp%2Fcontrolaltachieve%2F9q6ttmhq5h-17999308%3Fe%3D%5BUNIQID%5D" /&gt;&lt;br/&gt;DrawSplat - Resource link
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>DrawSplat Blog</title>
+    <link>https://drawsplat.org/blog/</link>
+    <description>DrawSplat project updates and published articles from MGuhlin.org.</description>
+    <language>en-US</language>
+    <item>
+      <title>SplatWorks: Office files and easier spreadsheet editing</title>
+      <link>https://drawsplat.org/blog/splatworks-office-files.html</link>
+      <guid>https://drawsplat.org/blog/splatworks-office-files.html</guid>
+      <pubDate>Mon, 12 Oct 2026 00:26:55 GMT</pubDate>
+      <description>Exchange DOCX/ODT, PPTX/ODP, XLSX/ODS and CSV records. Format whole spreadsheet rows and columns, and open recognized files in their matching app.</description>
+      <source>DrawSplat Updates</source>
+    </item>
+    <item>
+      <title>Meet PDFSplat: A Private PDF Toolkit for Classroom Presentations</title>
+      <link>https://drawsplat.org/blog/pdfsplat-presentations.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/pdfsplat-classroom-presentations.webp" /&gt;&lt;br/&gt;Present edited PDF pages, go full screen, blank the display, run a timed slideshow, or save a portable WebDeck v5. An educator walkthrough of PDFSplat's local editing, conversion, accessibility, and privacy tools with suggested ELE teaching activities. Refreshed downloads: v3.1.31.</description>
+      <pubDate>Fri, 09 Oct 2026 20:00:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-31-pdf-presentations</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>PDFSplat</category>
+      <category>release-notes</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.30: Creative tools, document imports, and WebDeck v5</title>
+      <link>https://drawsplat.org/blog/creative-tools.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;Open supported documents and images as PDFs, edit text on the page, and export PNG, JPG, or WebP. Reversible ImageSplat photo adjustments, VideoSplat timeline markers, AudioSplat analysis, ShowSplat WebDeck v5 and slide search, and icons with visible labels arrive with refreshed self-host packages.</description>
+      <pubDate>Fri, 09 Oct 2026 18:40:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-30-creative-tools</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>creative-tools</category>
+      <category>release-notes</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.29: Four New Typing Adventures</title>
+      <link>https://drawsplat.org/blog/typing-games.html</link>
+      <description>&lt;img src="https://drawsplat.org/games/typing-games/assets/hero.webp" /&gt;&lt;br/&gt;Meet Cipher Chase, Wordfall Reactor, Story Sprint, and Paws &amp;amp; Keys Adventure. Four independent pages bring spy driving with vocabulary definitions and sound checks, an everyday-word board against a computer with optional TEKS sets and definition-only hints, paste-protected passage practice, and kitten-and-puppy trails for ages 4–9. Six interface languages, current menus, and refreshed full/Games self-host downloads make the collection ready for classroom use.</description>
+      <pubDate>Thu, 08 Oct 2026 18:00:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-29-typing-adventures</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>typing-games</category>
+      <category>release-notes</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>Classroom-Friendly, Browser-Based Alternative Tools to Proprietary Software</title>
+      <link>https://mguhlin.org/blog/2026-09-22-classroom-friendly-browser-based-alternative-tools-to-proprietary-software/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/2026-09-22-classroom-friendly-browser-based-alternative-tools-to-proprietary-software/</guid>
+      <description>&lt;img src="https://mguhlin.org/media/2026/09/drawsplat-feature.webp" alt=""&gt;Dig into DrawSplat.org, an amazing collection of tools and solutions usable in K-12 classrooms.</description>
+      <pubDate>Tue, 22 Sep 2026 22:26:00 GMT</pubDate>
+      <media:thumbnail url="https://mguhlin.org/media/2026/09/drawsplat-feature.webp" />
+      <category>DrawSplat</category>
+      <author>Miguel Guhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.25: Current Downloads for Every Package</title>
+      <link>https://drawsplat.org/blog/current-downloads.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;All twelve packages are refreshed with the latest whiteboard, portable MySQL Save/Open, recording recovery, and creative tool improvements. Choose the full site, drop-in modules, SplatWorks apps, or independent media tools, with matching SHA-256 checksums and updated setup guides.</description>
+      <pubDate>Fri, 18 Sep 2026 13:27:48 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-25-current-downloads</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>self-hosting</category>
+      <category>whiteboard</category>
+      <category>mysql</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.24: See Your Export Progress in VideoSplat and MediaSplat</title>
+      <link>https://drawsplat.org/blog/export-progress.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;Animated purple progress bars, percentages, elapsed time, and estimates in minutes or hours help you follow subtitle burn-in and video exports. VideoSplat measures rendering and conversion separately and fixes cancellation and repeated-export progress. All twelve self-host packages are refreshed.</description>
+      <pubDate>Thu, 10 Sep 2026 18:03:24 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-24-export-progress</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>videosplat</category>
+      <category>mediasplat</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.23: Generate Subtitles from Speech in VideoSplat and MediaSplat</title>
+      <link>https://drawsplat.org/blog/automatic-subtitles.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;Turn English speech into editable timed subtitles on your device. Generate after recording in VideoSplat or from an existing video in MediaSplat, then download SRT or burn captions into video. This release also includes timeline zoom, fixed editing controls, recording audio checks, and refreshed self-host downloads. The speech model downloads on first use; no media is uploaded.</description>
+      <pubDate>Thu, 10 Sep 2026 15:57:37 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-23-automatic-subtitles</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>videosplat</category>
+      <category>mediasplat</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.21: Burn Subtitles into Video with MediaSplat and VideoSplat</title>
+      <link>https://drawsplat.org/blog/subtitle-burn-in.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;Make SRT or VTT subtitles permanently visible in exported video. MediaSplat offers a video-plus-subtitles-to-MP4 workflow; VideoSplat imports styled captions onto the timeline and lets you choose burn-in during export. Adjust font size, bottom margin, outline, background, and timing offset while keeping media on your device. All twelve v3.1.21 self-host ZIPs are rebuilt with fresh SHA-256 checksums.</description>
+      <pubDate>Thu, 10 Sep 2026 11:02:50 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-21-subtitle-burn-in</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>mediasplat</category>
+      <category>videosplat</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.20: MediaSplat, VideoSplat, and Current Self-Host Downloads</title>
+      <link>https://drawsplat.org/pages/release-notes.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;DrawSplat v3.1.20 brings MediaSplat and VideoSplat into the current self-host release. MediaSplat inspects, converts, trims, splits, and packages media locally with a browser-based FFmpeg runtime. VideoSplat supports private browser video editing, analysis, anonymization, project recovery, and export. Markdown Studio also adds DOCX and ODT export. All DrawSplat, SplatWorks, Tools, Widgets, Games, and independent media-tool ZIPs have been rebuilt with a matching SHA-256 checksum file.</description>
+      <pubDate>Wed, 26 Aug 2026 18:00:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-20-media-tools</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>mediasplat</category>
+      <category>videosplat</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>AudioSplat Recorder and Sound Editor</title>
+      <link>https://mguhlin.org/blog/2026-08-12-audiosplat-recorder-and-sound-editor/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/2026-08-12-audiosplat-recorder-and-sound-editor/</guid>
+      <description>&lt;img src="https://mguhlin.org/media/2026/08/audiosplat-feature.webp" alt=""&gt;DrawSplat.org launches an easy to use, browser-based, Chromebook-friendly audio voice recorder and editor. Meet AudioSplat.</description>
+      <pubDate>Wed, 12 Aug 2026 09:45:00 GMT</pubDate>
+      <media:thumbnail url="https://mguhlin.org/media/2026/08/audiosplat-feature.webp" />
+      <category>Audio Editing</category>
+      <category>DrawSplat</category>
+      <category>AudioSplat</category>
+      <author>Miguel Guhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.19: AudioSplat Multitrack Recording, Editing, Google Drive, and Standalone Download</title>
+      <link>https://drawsplat.org/solutions/audiosplat/</link>
+      <description>&lt;img src="https://drawsplat.org/solutions/audiosplat/audiosplat-icon.svg" /&gt;&lt;br/&gt;AudioSplat is now a production DrawSplat Tool for private-by-default browser audio recording and multitrack editing. Record microphones or supported shared tab/device audio, place successive takes on new tracks, drag clips between tracks, select visible waveform ranges, split and trim, zoom long recordings, undo edits, mix with mute/solo/volume/pan, and apply classroom-friendly effects. Export MP3, WAV, and additional browser-supported formats; optionally save the finished mix to Google Drive and create a share link or preview embed code. AudioSplat works without an account for local recording and editing and now ships as its own checksummed v3.1.19 self-host ZIP.</description>
+      <pubDate>Tue, 11 Aug 2026 19:30:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-19-audiosplat</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>audiosplat</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>WriteSplat Update: A Classroom Word Processor Joins SplatWorks</title>
+      <link>https://drawsplat.org/pages/writesplat.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;WriteSplat is now available as the SplatWorks writing studio for teachers and students. It runs in the browser as a private, classroom-friendly word processor with local autosave, native .writesplat JSON files, practical export formats, templates, teacher tools, and kid-friendly readability feedback. The interface now follows the purple-and-white SplatWorks look, uses icon-first controls, includes language switching, and can be downloaded as its own self-host package or as part of the SplatWorks suite.</description>
+      <pubDate>Tue, 30 Jun 2026 12:59:00 GMT</pubDate>
+      <guid isPermaLink="false">writesplat-classroom-word-processor-splatworks</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>splatworks</category>
+      <category>writesplat</category>
+    </item>
+    <item>
+      <title>ListSplat Update: A Kid-Friendly Database Studio for SplatWorks</title>
+      <link>https://drawsplat.org/pages/listsplat.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;ListSplat is now available as the SplatWorks database studio for classroom lists, records, forms, cards, galleries, labels, and reports. It helps students build simple databases with fields, records, CSV import/export, image fields, paste-and-upload image workflows, formulas, lookup relationships, find/replace, layout visibility controls, data-quality checks, and teacher project packets. ListSplat can be downloaded by itself or inside the SplatWorks suite package.</description>
+      <pubDate>Tue, 30 Jun 2026 12:58:00 GMT</pubDate>
+      <guid isPermaLink="false">listsplat-classroom-database-studio-splatworks</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>splatworks</category>
+      <category>listsplat</category>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.16 Update: SplatWorks Suite and Modular Self-Host Downloads</title>
+      <link>https://drawsplat.org/pages/download.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;DrawSplat v3.1.16 makes SplatWorks available as a browser-based office suite download with GridSplat, ShowSplat, WriteSplat, and ListSplat together in one package. Schools can still download each SplatWorks app separately, and DrawSplat Tools, Widgets, and Games now have their own drop-in module ZIPs that connect when placed in the same self-host folder. The release also refreshes checksum generation, package verification, and download-page guidance for districts and teachers who want a simpler modular setup.</description>
+      <pubDate>Tue, 30 Jun 2026 12:48:26 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3-1-16-splatworks-modular-downloads</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>splatworks</category>
+      <category>self-hosting</category>
+    </item>
+    <item>
+      <title>DrawSplat Update: ShowSplat Adds PDF, ODP, PPTX, and Editing Workflow Polish</title>
+      <link>https://drawsplat.org/pages/showsplat.html</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;ShowSplat now has clearer Import and Export submenus for WebDeck HTML, Markdown, PDF, ODP, and PowerPoint/PPTX workflows. WebDeck HTML and Markdown remain the cleanest editable formats. PDF import preserves pages as full-slide images, including password-protected PDFs after a prompt, and PDF export uses the browser Save as PDF flow. PPTX and ODP import/export are available as best-effort compatibility paths for common text, image, shape, background, and grouped slide content. The editor also adds selected-text bullet toggles, font-size decrease/increase buttons, a zoom slider, last-slide delete safety, smarter WebDeck import fitting, and presenter controls that auto-hide until hover.</description>
+      <pubDate>Sun, 14 Jun 2026 22:30:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-showsplat-pdf-odp-pptx-editor-polish</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>splatworks</category>
+      <category>showsplat</category>
+    </item>
+    <item>
+      <title>12 – The Learning Loop: DrawSplat™ and the Return of Student-Centered Creation #EdTech #Privacy #Whiteboards #FREE #NoAI – Another Think Coming</title>
+      <link>https://mguhlin.org/2026/06/08/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-whiteboards-free-noai/</link>
+      <description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/06/image-39.png?fit=1200%2C800&amp;amp;ssl=1" /&gt;&lt;br/&gt;What happens when an educator gets tired of classroom tools that are expensive, overloaded, privacy-complicated, or stuffed with Gen AI features? In this special focus issue, we look at DrawSplat™,…</description>
+      <pubDate>Tue, 09 Jun 2026 10:40:58 GMT</pubDate>
+      <guid>https://mguhlin.org/2026/06/08/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-whiteboards-free-noai/</guid>
+    </item>
+    <item>
+      <title>12 – The Learning Loop: DrawSplat™ and the Return of Student-Centered Creation EdTech Privacy Whiteboards FREE NoAI</title>
+      <link>https://mguhlin.org/blog/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/12-the-learning-loop-drawsplat-and-the-return-of-student-centered-creation-edtech-privacy-/</guid>
+      <description>What happens when an educ</description>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.10 Update: Super Star Trek Joins DrawSplat Games</title>
+      <link>https://drawsplat.org/games/super-star-trek/</link>
+      <description>&lt;img src="https://drawsplat.org/games/super-star-trek/SuperStarTrek_SplashImage.png" /&gt;&lt;br/&gt;Super Star Trek joins DrawSplat Games as a browser-playable edition of the classic command-driven space strategy game. Command the Enterprise across an 8 by 8 galaxy, scan nearby sectors, dock at starbases, manage shields and energy, and clear Klingon and Romulan ships before time runs out. The game runs as static HTML, CSS, JavaScript, and local image assets, so it is included in the Games dropdown, Teacher Admin Game Access, and the refreshed self-host bundle.</description>
+      <pubDate>Sat, 06 Jun 2026 02:30:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3.1.10-super-star-trek</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>drawsplat-games</category>
+      <category>super-star-trek</category>
+    </item>
+    <item>
+      <title>DrawSplat: a free browser-based whiteboard for teaching and visual thinking - Media and Learning Association</title>
+      <link>https://media-and-learning.eu/type/tools/drawsplat-a-free-browser-based-whiteboard-for-teaching-and-visual-thinking/</link>
+      <description>&lt;img src="https://media-and-learning.eu/files/2026/06/Website-Banner-700-x-200-px-1000-x-300-px-27.png" /&gt;&lt;br/&gt;DrawSplat is a free, browser-based whiteboard tool designed for classroom use and collaborative visual work. It runs directly in the browser…</description>
+      <pubDate>Sat, 06 Jun 2026 01:44:45 GMT</pubDate>
+      <guid>https://media-and-learning.eu/type/tools/drawsplat-a-free-browser-based-whiteboard-for-teaching-and-visual-thinking/</guid>
+    </item>
+    <item>
+      <title>DrawSplat v3.1.10 Update: Squirrel Run Gets Sound, Squirrel Jokes, and a Tree Dance</title>
+      <link>https://drawsplat.org/games/squirrel-run-game/</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;Squirrel Run now feels more alive in DrawSplat Games. The game adds light movement sounds, a splat sound when the squirrel loses a life, and a sound toggle for quiet classrooms. When the squirrel gets stopped by traffic, cats, dogs, or general bad road-crossing decisions, a speech bubble pops up with a short squirrel-point-of-view remark. Reaching the tree also gets a payoff: the squirrel pauses for a quick celebratory dance before the next level begins. The self-host download, release notes, README, and bundled RSS snapshot have been refreshed for v3.1.10.</description>
+      <pubDate>Fri, 05 Jun 2026 03:30:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3.1.10-squirrel-run-feedback</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat</category>
+      <category>drawsplat-games</category>
+      <category>squirrel-run</category>
+    </item>
+    <item>
+      <title>DrawSplat Tools: Turn Paper Drawings into Virtual Rooms with SketchSpace VR EduSky education panoform</title>
+      <link>https://mguhlin.org/blog/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-tools-turn-paper-drawings-into-virtual-rooms-with-sketchspace-vr/</guid>
+      <description>A student leans over a printed grid with colored pencils scattered everywhere. She is trying to decide where the water cycle should go. Evaporation on the left wall? Clouds on the</description>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Game: Squirrel Run</title>
+      <link>https://mguhlin.org/blog/drawsplat-game-squirrel-run/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-game-squirrel-run/</guid>
+      <description>"Wouldn't it be cool to have a game where you try to move a squirrel across the road?" asked my wife. We were both thinking of old Frogger game. We watched a squirrel 🐿️ dart acro</description>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <category>Games</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Update: SketchSpace VR Turns Student Drawings into Virtual Rooms</title>
+      <link>https://drawsplat.org/solutions/sketchspace-VR/</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplat_update.png" /&gt;&lt;br/&gt;SketchSpace VR is now available from the DrawSplat Tools dropdown as a standalone classroom solution. Students can print a one-page cube-room template, draw or label six panels, photograph the finished page, and explore the result as an interactive virtual room in the browser. The tool includes privacy-friendly local image handling, crop preview, trim controls, fullscreen viewing, split-view, phone viewer mode, and a language picker. To help students get started, SketchSpace VR also includes six curriculum starter layouts: citizenship, ecosystems and adaptations, geography, history, life cycles, and weather and water cycle. A separate teacher guide provides setup notes, lesson ideas, examples, assessment prompts, sharing guidance, image prompt patterns, and links to "Wallpaper Your 3D Virtual Reality Room" and "Virtual Reality with Panoform Is Easy, Engaging, and Fun for Everyone," the posts that inspired this paper-first virtual reality workflow.</description>
+      <pubDate>Thu, 04 Jun 2026 14:06:05 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-update-sketchspace-vr</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>drawsplat</category>
+      <category>drawsplat-tools</category>
+      <category>sketchspace-vr</category>
+    </item>
+    <item>
+      <title>DrawSplat Feature: SplatImage Studio education ImageEditor free EduSky</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-splatimage-studio-education-imageeditor-free/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-splatimage-studio-education-imageeditor-free/</guid>
+      <description>Looking for an easy to use image editor that allows for cropping images, masking images to common shapes, and has layers? Sure, there are tons of them out there that do that. The</description>
+      <pubDate>Thu, 04 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Hub Update: A Protected Admin Space for Classroom, Campus, and District Instances</title>
+      <link>https://drawsplat.org/hub/</link>
+      <description>&lt;img src="https://drawsplat.org/blog/assets/drawsplathub_update.png" /&gt;&lt;br/&gt;DrawSplat Hub now has a clearer public front door and a protected admin path for managing classroom, campus, and district instances. The Hub splash page stays open so people can see what the model looks like, while the live Instances Admin dashboard sits behind Google OAuth for approved administrators. The approved admin accounts are drawsplat@gmail.com and jeguhlin@gmail.com. From the Instances Admin page, a Hub admin can add an independent classroom teacher or place a teacher under a campus. The starter Apps Script registry can create a teacher folder and config file in Google Drive, then share both with the teacher as editor. That keeps setup practical while respecting Google Drive ownership rules. The self-host bundle still includes only the generic Hub and hubcampus demo, so future real campus data stays out of public downloads.</description>
+      <pubDate>Tue, 02 Jun 2026 19:19:00 GMT</pubDate>
+      <guid isPermaLink="false">drawsplat-release-v3.1.8-hub-update</guid>
+      <source url="https://drawsplat.org/">DrawSplat Updates</source>
+      <category>release-notes</category>
+      <category>drawsplat-hub</category>
+    </item>
+    <item>
+      <title>ControlAltAchieve 💡 #171</title>
+      <link>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</link>
+      <description>&lt;img src="https://rdl.ink/render/https%3A%2F%2Fmailchi.mp%2Fcontrolaltachieve%2F9q6ttmhq5h-17999308%3Fe%3D%5BUNIQID%5D" /&gt;&lt;br/&gt;DrawSplat - Resource link
 I am constantly blown away by the quality of free resources being created with vibe coding. Recently my friend Miguel Guhlin shared with me his latest creation … DrawSplat. He wanted to create an interactive tool for student creativity, drawing some inspiration from programs such as Jamboard, KidPix, and others.
 
 His creation, DrawSplat, is a completely free interactive whiteboard tool for K-16 educators and students. It runs in your browser and includes a dizzying array of features including pens, paint, shapes, lines, text, notes, images, diagrams, backgrounds, stickers, graphs, widgets, and so much more. And Miguel seems to add new features everytime I check the site.
@@ -240,93 +301,150 @@ His creation, DrawSplat, is a completely free interactive whiteboard tool for K-
 Head on over to https://drawsplat.org/ to learn more and try it yourself.
 
 </description>
-		<pubDate>Tue, 02 Jun 2026 16:20:02 GMT</pubDate>
-		<guid>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</guid>
-		<category>edtech</category>
-	</item><item>
-		<title>DrawSplat Feature: Big Link #EduSky #FREE #education – Another Think Coming</title>
-		<link>https://mguhlin.org/2026/06/02/drawsplat-feature-big-link-edusky-free-education/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-115.png?fit=1200%2C622&amp;amp;ssl=1" /&gt;&lt;br/&gt;Ever wanted a huge, gigantic link sprawled across a website when you’re facilitating a class or workshop? I have. The problem is that these types of websites have disappeared. There are a few…</description>
-		<pubDate>Tue, 02 Jun 2026 11:16:08 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/02/drawsplat-feature-big-link-edusky-free-education/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature – #Quiz and #Flashcard Studio #free #EduSky #education</title>
-		<link>https://mguhlin.org/2026/06/01/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-132.png?fit=1200%2C723&amp;amp;ssl=1" /&gt;&lt;br/&gt;“What kind of tool do you need as a college student?” I asked my niece attending college. She replied: “I’ve been trying to use Quizizz to study content for my class. It&amp;#82…</description>
-		<pubDate>Mon, 01 Jun 2026 12:12:46 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/01/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: #EU #GDPR Support #EduSky #education – Another Think Coming</title>
-		<link>https://mguhlin.org/2026/06/01/drawsplat-feature-eu-gdpr-support-edusky-education/</link>
-		<description>&lt;img src="https://mguhlin.org/wp-content/uploads/2026/05/image-103.png" /&gt;&lt;br/&gt;You may have just missed my post on DrawSplat’s Privacy and Compliance section a few minutes ago. That one covers the USA and Texas. This post is a quick update for GDPR, too, right after it …</description>
-		<pubDate>Mon, 01 Jun 2026 09:26:54 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/01/drawsplat-feature-eu-gdpr-support-edusky-education/</guid>
-		
-	</item><item>
-		<title>DrawSplatTM: Privacy and Compliance – Another Think Coming</title>
-		<link>https://mguhlin.org/2026/06/01/drawsplattm-privacy-and-compliance/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-66.png?fit=1200%2C675&amp;amp;ssl=1" /&gt;&lt;br/&gt;Thanks to Stacy Pattenaude, who offered free, friendly feedback on an earlier version of DrawSplat, I became aware of many items relevant to Compliance that I had been unaware of before. It’s…</description>
-		<pubDate>Mon, 01 Jun 2026 09:26:28 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/06/01/drawsplattm-privacy-and-compliance/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: Chart Studio #EduSky #education #free – Another Think Coming</title>
-		<link>https://mguhlin.org/2026/05/31/drawsplat-feature-chart-studio-edusky-education-free/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-119.png?fit=1200%2C844&amp;amp;ssl=1" /&gt;&lt;br/&gt;Looking for a little bit more robust chart maker? Give DrawSplat Tools: Chart Studio a try: And, it comes with a preset color palettes:</description>
-		<pubDate>Sun, 31 May 2026 12:03:27 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/31/drawsplat-feature-chart-studio-edusky-education-free/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: Animated GIF Maker #EduSky #free #GIF</title>
-		<link>https://mguhlin.org/2026/05/30/drawsplat-feature-animated-gif-maker-edusky-free-gif/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-105.png?fit=1200%2C822&amp;amp;ssl=1" /&gt;&lt;br/&gt;Wish you had a FREE, multilingual, amazing Animated GIF Maker tool? I know I wish I had a great Animated GIF creator tool. There have been several throughout the years, but they always end up disap…</description>
-		<pubDate>Sat, 30 May 2026 18:45:14 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/30/drawsplat-feature-animated-gif-maker-edusky-free-gif/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: DiceBreaker Creator #multilingual #education #EduSky</title>
-		<link>https://mguhlin.org/2026/05/30/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-100.png?fit=1200%2C575&amp;amp;ssl=1&amp;amp;w=640" /&gt;&lt;br/&gt;One of my most popular blog entries, Dicebreakers and Activity Debriefing Templates, made me wonder, how hard would it be to create a digital creation tool to aid educators in creating dicebreakers…</description>
-		<pubDate>Sat, 30 May 2026 16:34:12 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/30/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: Mermaid Diagram Studio</title>
-		<link>https://mguhlin.org/2026/05/29/drawsplat-feature-mermaid-diagram-studio/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-89.png?fit=1200%2C733&amp;amp;ssl=1" /&gt;&lt;br/&gt;I remember when I first encountered Mermaid diagrams. The challenge? Generating the Mermaid syntax so that it would work in a Mermaid rendering engine. For whatever the reason, any code I put toget…</description>
-		<pubDate>Fri, 29 May 2026 21:12:25 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/29/drawsplat-feature-mermaid-diagram-studio/</guid>
-		
-	</item><item>
-		<title>Comparing Codex and Code: DrawSplat</title>
-		<link>https://mguhlin.org/2026/05/29/comparing-codex-and-code-drawsplat/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-47.png?fit=1200%2C644&amp;amp;ssl=1" /&gt;&lt;br/&gt;A while back, I started working on a vibe-coded solution, DrawSplat. I started the project on a lark to see how far a non-programmer could go. I started in Claude back when I was paying $20 a month…</description>
-		<pubDate>Fri, 29 May 2026 21:12:04 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/29/comparing-codex-and-code-drawsplat/</guid>
-		
-	</item><item>
-		<title>Vibe-Coding: Castles and Catapults game #AI #FREE</title>
-		<link>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/splash.png?fit=1200%2C900&amp;amp;ssl=1" /&gt;&lt;br/&gt;When I was a thirteen year old in high school, one of my favorite things to do was to visit the computer lab. It was full of TRS-80s, and one of the few games available was, “Castles and Cata…</description>
-		<pubDate>Fri, 29 May 2026 08:26:54 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</guid>
-		
-	</item><item>
-		<title>DrawSplat Feature: Concept Map Studio</title>
-		<link>https://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</link>
-		<description>&lt;img src="https://mguhlin.org/wp-content/uploads/2026/05/image-82.png" /&gt;&lt;br/&gt;There’s a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat’s concept map tool inside the whiteboard…</description>
-		<pubDate>Thu, 28 May 2026 14:19:25 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/28/drawsplat-feature-concept-map-studio/</guid>
-		
-	</item><item>
-		<title>Introducing DrawSplat, A Free #Whiteboard Plus Solution</title>
-		<link>https://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</link>
-		<description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/image-65.png?fit=1200%2C699&amp;amp;ssl=1" /&gt;&lt;br/&gt;When I started down this road, I wanted teachers, gasping for tools that aren’t stuffed with Gen AI features, to have access to fun tools they could use with their students. The job didn&amp;#821…</description>
-		<pubDate>Thu, 28 May 2026 14:19:19 GMT</pubDate>
-		<guid>https://mguhlin.org/2026/05/27/introducing-drawsplat-a-free-whiteboard-plus-solution/</guid>
-		
-	</item>
-		</channel>
-	</rss>
+      <pubDate>Tue, 02 Jun 2026 16:20:02 GMT</pubDate>
+      <guid>https://mailchi.mp/controlaltachieve/9q6ttmhq5h-17999308?e=[UNIQID]</guid>
+      <category>edtech</category>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Rubric Builder EduSky education free</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-rubric-builder-edusky-education-free/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-rubric-builder-edusky-education-free/</guid>
+      <description>Making rubrics with Gen AI is easy. That said, I thought it might be worthwhile to mention that all of DrawSplat's tools do NOT use Gen AI to work. It is a little ironic but let's</description>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Big Link EduSky FREE education</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-big-link-edusky-free-education/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-big-link-edusky-free-education/</guid>
+      <description>Ever wanted a huge, gigantic link sprawled across a website when you're facilitating a class or workshop? I have. The problem is that these types of websites have disappeared. Ther</description>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplatTM: Privacy and Compliance</title>
+      <link>https://mguhlin.org/blog/drawsplattm-privacy-and-compliance/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplattm-privacy-and-compliance/</guid>
+      <description>A practical look at DrawSplat privacy and compliance work, including PROTECT, Texas school expectations, and the documents districts may need to review.</description>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature - Quiz and Flashcard Studio free EduSky education</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-quiz-and-flashcard-studio-free-edusky-education/</guid>
+      <description>"What kind of tool do you need as a college student?" I asked my niece attending college. She replied: "I've been trying to use Quizizz to study content for my class. It's not work</description>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: EU GDPR Support EduSky education</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-eu-gdpr-support-edusky-education/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-eu-gdpr-support-edusky-education/</guid>
+      <description>You may have just missed my post on DrawSplat's Privacy and Compliance section a few minutes ago. That one covers the USA and Texas. This post is a quick update for GDPR, too,</description>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Chart Studio EduSky education free</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-chart-studio-edusky-education-free/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-chart-studio-edusky-education-free/</guid>
+      <description>Looking for a little bit more robust chart maker? Give DrawSplat Tools: Chart Studio a try:</description>
+      <pubDate>Sun, 31 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: DiceBreaker Creator multilingual education EduSky</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-dicebreaker-creator-multilingual-education-edusky/</guid>
+      <description>One of my most popular</description>
+      <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <category>Vibe Coding</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Animated GIF Maker EduSky free GIF webm mp4</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-animated-gif-maker-edusky-free-gif/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-animated-gif-maker-edusky-free-gif/</guid>
+      <description>Wish you had a FREE, multilingual, amazing Animated GIF Maker tool? I know I wish I had a great Animated GIF creator tool. Ther</description>
+      <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>Vibe-Coding: Castles and Catapults game #AI #FREE</title>
+      <link>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</link>
+      <description>&lt;img src="https://i0.wp.com/mguhlin.org/wp-content/uploads/2026/05/splash.png?fit=1200%2C900&amp;amp;ssl=1" /&gt;&lt;br/&gt;When I was a thirteen year old in high school, one of my favorite things to do was to visit the computer lab. It was full of TRS-80s, and one of the few games available was, “Castles and Cata…</description>
+      <pubDate>Fri, 29 May 2026 08:26:54 GMT</pubDate>
+      <guid>https://mguhlin.org/2026/05/26/vibe-coding-castles-and-catapults-game-ai-free/</guid>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Mermaid Diagram Studio (Updated) EduSky education mermaid</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-mermaid-diagram-studio/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-mermaid-diagram-studio/</guid>
+      <description>I remember when I first encountered Mermaid diagrams. The challenge? Generating the Mermaid syntax so that it would work in a Mermaid rendering engine. For whatever the reason, any</description>
+      <pubDate>Fri, 29 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>Comparing Codex and Code: DrawSplat</title>
+      <link>https://mguhlin.org/blog/comparing-codex-and-code-drawsplat/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/comparing-codex-and-code-drawsplat/</guid>
+      <description>A while back, I started working on a vibe-coded solution, DrawSplat. I started the project on a lark to see how far a non-programmer could go. I starte</description>
+      <pubDate>Fri, 29 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <category>Vibe Coding</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>DrawSplat Feature: Concept Map Studio</title>
+      <link>https://mguhlin.org/blog/drawsplat-feature-concept-map-studio/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/drawsplat-feature-concept-map-studio/</guid>
+      <description>There's a lot to like about DrawSplat, a free interactive whiteboard, as you can see from this concept map below. While you can access DrawSplat's conc</description>
+      <pubDate>Thu, 28 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>Introducing DrawSplat, A Free Whiteboard Plus Solution</title>
+      <link>https://mguhlin.org/blog/introducing-drawsplat-a-free-whiteboard-plus-solution/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/introducing-drawsplat-a-free-whiteboard-plus-solution/</guid>
+      <description>When I started down this road, I wanted teachers, gasping for tools that aren't stuffed with Gen AI features, to have access to fun tools they could use with their students. The jo</description>
+      <pubDate>Wed, 27 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <category>Vibe Coding</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+    <item>
+      <title>Analog, Not Digital</title>
+      <link>https://mguhlin.org/blog/analog-not-digital/</link>
+      <guid isPermaLink="true">https://mguhlin.org/blog/analog-not-digital/</guid>
+      <description>Is your business analog, not digital? Or put another way, anti-GenAI rather than leveraging Gen AI to improve your work processes and workflows? If so, you may not deserve the role</description>
+      <pubDate>Thu, 14 May 2026 00:00:00 GMT</pubDate>
+      <category>DrawSplat</category>
+      <category>Vibe Coding</category>
+      <author>mguhlin</author>
+      <source url="https://mguhlin.org/drawsplat/rss.xml">MGuhlin.org</source>
+    </item>
+  </channel>
+</rss>

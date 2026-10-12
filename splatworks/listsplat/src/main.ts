@@ -1,3 +1,4 @@
+import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../shared/file-bridge.js';
 import { escapeCsvCell, tableFromCsv, tableToCsv } from './io/csv';
 import { downloadFile, loadAutosave, saveAutosave } from './io/storage';
 import {
@@ -594,6 +595,15 @@ function exportProjectPacket(): void {
   ${qualitySections}
 </body></html>`;
   downloadFile(`${project.metadata.title || 'listsplat'}-project-packet.html`, packet, 'text/html;charset=utf-8');
+}
+
+async function openIncomingFile(file:File){
+  try{
+    if(await routeFileToApp(file,'listsplat')){lastMessage='Opened the file in its matching SplatWorks app.';render();return;}
+    await assertSupportedFile(file,'listsplat');
+    if(/\.json$/i.test(file.name))openJson(file);else importCsv(file);
+    if(isTransferredWorkspace()){lastMessage=importedFileNotice;render();}
+  }catch(error){window.alert(error instanceof Error?error.message:'Could not open that file.');}
 }
 
 function openJson(file: File): void {
@@ -4013,9 +4023,11 @@ appRoot.addEventListener('change', (event) => {
     }
     render();
   } else if (target.matches('[data-open-json]') && target instanceof HTMLInputElement && target.files?.[0]) {
-    openJson(target.files[0]);
+    void openIncomingFile(target.files[0]);
+    target.value='';
   } else if (target.matches('[data-import-csv]') && target instanceof HTMLInputElement && target.files?.[0]) {
-    importCsv(target.files[0]);
+    void openIncomingFile(target.files[0]);
+    target.value='';
   } else if (target.matches('[data-search-field]')) {
     searchFieldId = target.value;
     highlightedRecordIds = new Set();
@@ -4393,3 +4405,5 @@ document.addEventListener('toggle', (event) => {
 }, true);
 
 render();
+
+consumeTransferredFile('listsplat').then(file=>{if(file)void openIncomingFile(file);}).catch(error=>window.alert(error.message || String(error)));

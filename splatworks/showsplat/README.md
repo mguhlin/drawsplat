@@ -3,7 +3,7 @@
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
+Get current packages from [Downloads](https://drawsplat.org/pages/download) and read [release notes](https://drawsplat.org/pages/release-notes). App versions remain independent of the suite release.
 
 ShowSplatTM is the SplatWorksTM presentation and WebDeck authoring app.
 
@@ -132,3 +132,7 @@ The upstream MIT license is included in `webdeck-framework.LICENSE.txt`.
 Import the canonical v5 HTML structure or export a self-contained v5 HTML file. Linked `deck-framework.css` is supplied from the bundled reference runtime; all inline style blocks are retained and scoped, canonical slide footers are preserved, and notes stay editable. Exports include framework attribution in the HTML head, plus presenter notes sizing, close controls, synchronized previews, reflow, and print/PDF rules. Relative image/media assets need a resolvable base URL or data URLs; a lone HTML file cannot provide sibling files from disk. Imported scripts are not executed, and arbitrary custom scripted widgets are not preserved. Review custom CSS layouts after import.
 
 Reference: https://mguhlin.github.io/webdecks/. Test with `npx playwright test -c splatworks/showsplat/playwright.config.js`.
+
+## Opening files from another SplatWorks app
+
+Recognized project and Office files open in the matching app in a new tab. The matching app must be installed at the same website; allow popups if prompted. Files transfer through temporary browser storage without an upload. The imported tab uses a separate session draft: save a project file before closing it. Existing saved projects stay in place. See the [SplatWorks FAQ](https://drawsplat.org/wiki/faq#splatworks).

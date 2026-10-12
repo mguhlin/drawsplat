@@ -3,7 +3,7 @@
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 
-Latest suite package: **v3.1.31**, October 9, 2026. [Downloads](../../pages/download.html) · [Release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). App versions remain independent of the suite release.
+Get current packages from [Downloads](https://drawsplat.org/pages/download) and read [release notes](https://drawsplat.org/pages/release-notes). App versions remain independent of the suite release.
 
 ListSplatTM is the SplatWorksTM classroom database app: a private,
 browser-based database builder for children, teachers, and classroom projects.
@@ -63,3 +63,11 @@ Target native file format:
 
 ListSplatTM is part of the SplatWorksTM GPL-covered app family. Unless a file
 inside this directory says otherwise, ListSplatTM code should be GPL-3.0-only.
+
+## Opening files from another SplatWorks app
+
+Recognized project and Office files open in the matching app in a new tab. The matching app must be installed at the same website; allow popups if prompted. Files transfer through temporary browser storage without an upload. The imported tab uses a separate session draft: save a project file before closing it. Existing saved projects stay in place. See the [SplatWorks FAQ](https://drawsplat.org/wiki/faq#splatworks).
+
+## Access and Base exchange
+
+Import/export table records as CSV. This does not import MDB, ACCDB or ODB database files, forms, queries or relationships. Export each table from Microsoft Access or LibreOffice Base and import its CSV records. See the [ListSplat guide](https://drawsplat.org/pages/listsplat).

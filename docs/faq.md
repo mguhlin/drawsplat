@@ -194,9 +194,24 @@ Work belongs to its respective authors. Images, music, templates, and other medi
 
 You can use them as browser apps without either. Hosting them with the district suite does not automatically connect every project file to whiteboard account-based saving. Save project backups regularly. See [the suite guide](../pages/splatworks.html).
 
+### What happens if I open a file in the wrong SplatWorks app?
+
+SplatWorks opens a new tab in the matching app and carries the file over. Word documents go to WriteSplat, presentations to ShowSplat, and spreadsheets to GridSplat. Native SplatWorks project files also open in their matching app. Allow popups if your browser asks. The matching app must be installed at the same website.
+
+Your existing saved projects stay in place. Save the imported project before closing its new tab. Transfers stay in your browser; the file is not uploaded. Older DOC, XLS, and PPT files need to be saved in a supported modern format first.
+
 ### Can I exchange files with other office apps?
 
-Each app supports its own formats. WriteSplat supports ODT; ShowSplat offers WebDeck, Markdown, PDF, ODP, and PPTX workflows; GridSplat exchanges spreadsheet data; ListSplat exchanges CSV records. Conversions may change layout or features, so keep an original and check the result. See the [app guides](../pages/splatworks.html).
+Yes. Use these formats to move work between SplatWorks and Microsoft Office or LibreOffice:
+
+| SplatWorks app | Office equivalent | Import and export |
+| --- | --- | --- |
+| [WriteSplat](../pages/writesplat.html) | Word / Writer | **DOCX** and **ODT** documents |
+| [GridSplat](../pages/gridsplat.html) | Excel / Calc | **XLSX** and **ODS** spreadsheets; **CSV** for table data |
+| [ShowSplat](../pages/showsplat.html) | PowerPoint / Impress | **PPTX** and **ODP** presentations |
+| [ListSplat](../pages/listsplat.html) | Access / Base | **CSV** table records |
+
+Keep an original and check the converted file. GridSplat reads the first worksheet and supports common values, formulas, basic formatting, and merged cells. ListSplat’s CSV files transfer records, not database forms, queries, or relationships. Complex layouts, charts, media, and macros may not carry over. See the [app guides](../pages/splatworks.html).
 
 ---
 

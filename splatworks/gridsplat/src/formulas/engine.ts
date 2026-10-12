@@ -98,7 +98,7 @@ export function recalculateSheet(sheet: SheetData): SheetData {
     licenseKey: 'gpl-v3',
   });
 
-  return sheet.map((row, rowIndex) =>
+  try { return sheet.map((row, rowIndex) =>
     row.map((cell, colIndex) => {
       if (cell.type !== 'formula') {
         return cell;
@@ -126,5 +126,5 @@ export function recalculateSheet(sheet: SheetData): SheetData {
         errorType: undefined,
       };
     }),
-  );
+  ); } finally { engine.destroy(); }
 }

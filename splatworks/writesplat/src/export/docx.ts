@@ -1,6 +1,9 @@
 import {
   AlignmentType,
   Document,
+  ExternalHyperlink,
+  LevelFormat,
+  type ParagraphChild,
   HeadingLevel,
   HighlightColor,
   Packer,
@@ -20,6 +23,7 @@ export async function htmlToDocxBlob(title: string, html: string): Promise<Blob>
   const doc = new Document({
     creator: 'WriteSplatTM',
     title,
+    numbering:{config:[{reference:'writesplat-numbering',levels:[{level:0,format:LevelFormat.DECIMAL,text:'%1.',alignment:AlignmentType.LEFT}]}]},
     sections: [
       {
         children: children.length > 0 ? children : [new Paragraph('')],
@@ -72,10 +76,10 @@ function nodeToDocx(node: ChildNode): Array<Paragraph | Table> {
 
   if (tag === 'ul' || tag === 'ol') {
     return Array.from(node.children).map(
-      (child, index) =>
+      (child) =>
         new Paragraph({
           bullet: tag === 'ul' ? { level: 0 } : undefined,
-          numbering: tag === 'ol' ? { reference: 'writesplat-numbering', level: 0, instance: index } : undefined,
+          numbering: tag === 'ol' ? { reference: 'writesplat-numbering', level: 0 } : undefined,
           children: inlineRuns(child as HTMLElement),
         }),
     );
@@ -108,12 +112,12 @@ function tableToDocx(table: HTMLElement): Table {
   });
 }
 
-function inlineRuns(element: HTMLElement): TextRun[] {
+function inlineRuns(element: HTMLElement): ParagraphChild[] {
   const runs = Array.from(element.childNodes).flatMap((node) => inlineNodeRuns(node));
   return runs.length > 0 ? runs : [new TextRun('')];
 }
 
-function inlineNodeRuns(node: ChildNode, marks: Partial<TextRunOptions> = {}): TextRun[] {
+function inlineNodeRuns(node: ChildNode, marks: Partial<TextRunOptions> = {}): ParagraphChild[] {
   if (node.nodeType === Node.TEXT_NODE) {
     return [new TextRun({ text: node.textContent ?? '', ...marks })];
   }
@@ -124,6 +128,11 @@ function inlineNodeRuns(node: ChildNode, marks: Partial<TextRunOptions> = {}): T
 
   const tag = node.tagName.toLowerCase();
   const nextMarks = { ...marks };
+
+  if(tag==='a'){
+    const link=node.getAttribute('href') || '';
+    if(/^(https?:|mailto:)/i.test(link))return [new ExternalHyperlink({link,children:Array.from(node.childNodes).flatMap(child=>inlineNodeRuns(child,nextMarks))})];
+  }
 
   if (tag === 'strong') {
     nextMarks.bold = true;

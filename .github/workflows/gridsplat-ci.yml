@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'splatworks/gridsplat/**'
+      - 'splatworks/shared/**'
       - '.github/workflows/gridsplat-ci.yml'
   pull_request:
     paths:
       - 'splatworks/gridsplat/**'
+      - 'splatworks/shared/**'
       - '.github/workflows/gridsplat-ci.yml'
 
 permissions:
@@ -32,7 +34,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: splatworks/gridsplat/package-lock.json
 

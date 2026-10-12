@@ -1027,6 +1027,8 @@ body.sidebar-collapsed .sidebar {
 }
 
 .modal {
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
   display: grid;
   gap: 14px;
   width: min(460px, 100%);

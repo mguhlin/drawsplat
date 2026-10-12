@@ -1,8 +1,8 @@
-/* Render the DrawSplat blog page from drawsplat.rss (same-origin).
+/* Render the DrawSplat blog page from its automatically refreshed RSS snapshot.
    No external network requests; CSP-friendly.
 
-   The RSS file ships alongside this page in /blog/. Replace it whenever
-   you want fresh posts to appear. */
+   The hourly publication sync preserves local updates and imports published
+   MGuhlin.org articles; browsers read the same-origin snapshot. */
 (function () {
   const list = document.getElementById('blogList');
   const status = document.getElementById('blogStatus');
@@ -55,7 +55,7 @@
     if (!s) return '';
     const d = new Date(s);
     if (isNaN(d.getTime())) return '';
-    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Chicago' });
   }
 
   function safeUrl(s) {
@@ -83,6 +83,8 @@
       const title = cleanTitle(item.querySelector('title')?.textContent || 'Untitled');
       const linkRaw = (item.querySelector('link')?.textContent || '').trim();
       if (isExcluded(linkRaw)) return;
+      const published=Date.parse(item.querySelector('pubDate')?.textContent || '');
+      if (!Number.isFinite(published) || published>Date.now()) return;
       rendered++;
       const link = safeUrl(linkRaw);
       const pub = item.querySelector('pubDate')?.textContent || '';

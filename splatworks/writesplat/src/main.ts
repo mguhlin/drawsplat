@@ -1,3 +1,4 @@
+import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,workspaceStorage,importedFileNotice} from '../../shared/file-bridge.js';
 import { countDocumentStats } from './app/stats';
 import { analyzeWritingWarnings, type WritingWarnings } from './analysis/detectors';
 import { analyzeReadability, formatReadabilityGrade } from './analysis/scorer';
@@ -1416,7 +1417,7 @@ function bootstrap(): void {
   let citations: string[] = [];
   let answerKey: string[] = [];
 
-  const saved = localStorage.getItem(AUTOSAVE_KEY);
+  const saved = workspaceStorage().getItem(AUTOSAVE_KEY);
   if (saved) {
     try {
       const parsed: unknown = JSON.parse(saved);
@@ -1489,7 +1490,7 @@ function bootstrap(): void {
       getRequiredElement('statusSaved').textContent = 'Saving...';
     saveTimer = window.setTimeout(() => {
       const file = createCurrentNativeFile();
-      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(file));
+      workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(file));
       if (currentLocalDocumentId) {
         saveLocalDocument(currentLocalDocumentId, file);
       }
@@ -1710,7 +1711,7 @@ function bootstrap(): void {
       const file = createCurrentNativeFile(existing);
       currentLocalDocumentId = id;
       saveLocalDocument(id, file);
-      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(file));
+      workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(file));
       renderLibraryList(libraryList);
       getRequiredElement('saveState').textContent = 'Saved to browser';
       getRequiredElement('statusSaved').textContent = 'Saved to browser';
@@ -2116,18 +2117,8 @@ function bootstrap(): void {
     }
   }
 
-  fileInput.addEventListener('change', async () => {
-    const file = fileInput.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    const parsed: unknown = JSON.parse(await file.text());
-    assertWriteSplatFile(parsed);
-    loadNativeFile(parsed);
-    currentLocalDocumentId = null;
-    refresh();
-    fileInput.value = '';
+  fileInput.addEventListener('change',async()=>{
+    const file=fileInput.files?.[0];fileInput.value='';if(file)await openWriteFile(file);
   });
   imageFileInput.addEventListener('change', async () => {
     const file = imageFileInput.files?.[0];
@@ -2141,13 +2132,16 @@ function bootstrap(): void {
     imageFileInput.value = '';
     refresh();
   });
-  importFileInput.addEventListener('change', async () => {
-    const file = importFileInput.files?.[0];
-    importFileInput.value = '';
-    if (!file) return;
+  async function openWriteFile(file:File){
     const name = file.name;
     const baseTitle = name.replace(/\.[^.]+$/, '');
     try {
+      if(await routeFileToApp(file,'writesplat')){getRequiredElement('statusSaved').textContent='Opened the file in its matching SplatWorks app.';return;}
+      await assertSupportedFile(file,'writesplat');
+      if(/\.json$/i.test(name)){
+        const parsed:unknown=JSON.parse(await file.text());assertWriteSplatFile(parsed);loadNativeFile(parsed);currentLocalDocumentId=null;refresh();
+        getRequiredElement('statusSaved').textContent=`Opened ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;return;
+      }
       if (/\.docx$/i.test(name)) {
         writer.setHtml(await docxToHtml(await file.arrayBuffer()));
       } else if (/\.odt$/i.test(name)) {
@@ -2165,11 +2159,13 @@ function bootstrap(): void {
       titleInput.value = baseTitle || 'Imported Document';
       currentLocalDocumentId = null;
       refresh();
-      getRequiredElement('statusSaved').textContent = `Imported ${name}`;
+      getRequiredElement('statusSaved').textContent = `Imported ${name}. ${isTransferredWorkspace()?importedFileNotice:''}`;
     } catch (error) {
       window.alert(error instanceof Error ? error.message : 'Could not import that file.');
     }
-  });
+  }
+  importFileInput.addEventListener('change',async()=>{const file=importFileInput.files?.[0];importFileInput.value='';if(file)await openWriteFile(file);});
+  consumeTransferredFile('writesplat').then(file=>{if(file)void openWriteFile(file);}).catch(error=>window.alert(error.message || String(error)));
   editorMount.addEventListener('paste', async (event) => {
     const imageItem = Array.from(event.clipboardData?.items ?? []).find((item) => item.type.startsWith('image/'));
     const file = imageItem?.getAsFile();

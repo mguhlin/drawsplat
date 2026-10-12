@@ -1,14 +1,15 @@
+import {workspaceStorage} from '../../../shared/file-bridge.js';
 import { assertListSplatFile } from '../model/database';
 import type { ListSplatFile } from '../model/types';
 
 const AUTOSAVE_KEY = 'listsplat.autosave.v1';
 
 export function saveAutosave(project: ListSplatFile): void {
-  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(project));
+  workspaceStorage().setItem(AUTOSAVE_KEY, JSON.stringify(project));
 }
 
 export function loadAutosave(): ListSplatFile | null {
-  const raw = localStorage.getItem(AUTOSAVE_KEY);
+  const raw = workspaceStorage().getItem(AUTOSAVE_KEY);
   if (!raw) {
     return null;
   }

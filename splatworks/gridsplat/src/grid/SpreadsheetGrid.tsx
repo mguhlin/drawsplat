@@ -1,9 +1,13 @@
+import {assertSupportedFile,routeFileToApp,consumeTransferredFile,isTransferredWorkspace,importedFileNotice} from '../../../shared/file-bridge.js';
+import {displayCellNumber} from './numberFormat';
+import {parseRange, rangeReference, changeStructure, fillRange, replaceInRange} from './spreadsheetPower';
 import {
   type ClipboardEvent,
   type KeyboardEvent,
   type PointerEvent,
   type ChangeEvent,
   type CSSProperties,
+  type SetStateAction,
   useEffect,
   useMemo,
   useRef,
@@ -97,8 +101,9 @@ const FONT_FAMILIES = [
   { label: 'Mono', value: 'monospace' },
 ] as const;
 
-type NumberFormat = 'plain' | 'whole' | 'decimal' | 'currency' | 'percent';
-type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
+type NumberFormat = import('./types').NumberFormat;
+
+type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx' | 'ods';
 type GridAction =
   | { action: 'chart'; chartType: ChartKind }
   | { action: 'chart-title'; title: string }
@@ -254,12 +259,17 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   const [isPlainHeaders, setIsPlainHeaders] = useState(false);
   const [dragAnchor, setDragAnchor] = useState<CellAddress | null>(null);
   const [resizeState, setResizeState] = useState<ResizeState | null>(null);
-  const [rowHeights, setRowHeights] = useState<number[]>(
+  const [storedRowHeights, setStoredRowHeights] = useState<number[]>(
     Array.from({ length: DEFAULT_ROWS }, () => DEFAULT_ROW_HEIGHT),
   );
-  const [colWidths, setColWidths] = useState<number[]>(
+  const [storedColWidths, setStoredColWidths] = useState<number[]>(
     Array.from({ length: DEFAULT_COLS }, () => DEFAULT_COL_WIDTH),
   );
+  const rowCount=sheet.length, colCount=sheet[0]?.length || DEFAULT_COLS;
+  const rowHeights=useMemo(()=>Array.from({length:rowCount},(_,r)=>storedRowHeights[r] ?? DEFAULT_ROW_HEIGHT),[rowCount,storedRowHeights]);
+  const colWidths=useMemo(()=>Array.from({length:colCount},(_,c)=>storedColWidths[c] ?? DEFAULT_COL_WIDTH),[colCount,storedColWidths]);
+  function setRowHeights(update:SetStateAction<number[]>){setStoredRowHeights(previous=>typeof update==='function'?update(Array.from({length:rowCount},(_,r)=>previous[r] ?? DEFAULT_ROW_HEIGHT)):update);}
+  function setColWidths(update:SetStateAction<number[]>){setStoredColWidths(previous=>typeof update==='function'?update(Array.from({length:colCount},(_,c)=>previous[c] ?? DEFAULT_COL_WIDTH)):update);}
   const [frozenRows, setFrozenRows] = useState(0);
   const [frozenCols, setFrozenCols] = useState(0);
   const [freezeDragAxis, setFreezeDragAxis] = useState<FreezeDragAxis | null>(
@@ -276,7 +286,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     useState<ChartPanelDragState | null>(null);
   const [chartPanelSize, setChartPanelSize] =
     useState<ChartPanelSize | null>(null);
-  const [numberFormat, setNumberFormat] = useState<NumberFormat>('plain');
   const [sheetZoom, setSheetZoom] = useState(100);
   const [chartSelection, setChartSelection] = useState<SelectionRange | null>(
     null,
@@ -431,6 +440,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   );
   const selectedCell = sheet[selection.end.row]?.[selection.end.col];
   const selectedFormat = selectedCell?.format ?? {};
+  const numberFormat=selectedFormat.numberFormat ?? 'plain';
+  function setNumberFormat(format:NumberFormat){remember(sheet);setSheet(applyCellFormat(sheet,selection,{numberFormat:format}));}
   const frozenRowsList = useMemo(
     () =>
       Array.from({ length: frozenRows }, (_, row) => ({
@@ -525,19 +536,38 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
   }
 
   function navigateToReference(reference: string) {
-    const match = /^([A-Za-z]+)(\d+)$/.exec(reference.trim());
+    try {
+      const range = parseRange(reference, rowCount, colCount);
+      selectCell(range.end);
+      setSelection(range);
+    } catch (error) { setFileMessage(error instanceof Error ? error.message : 'Choose a valid range.'); }
+  }
 
-    if (!match) {
-      return;
-    }
+  function selectHeader(axis: 'row' | 'col', index: number, extend: boolean) {
+    setEditingCell(null);
+    if (axis === 'row') setSelection({start:{row:extend?selection.start.row:index,col:0},end:{row:index,col:colCount-1}});
+    else setSelection({start:{row:0,col:extend?selection.start.col:index},end:{row:rowCount-1,col:index}});
+  }
 
-    let col = 0;
-
-    for (const character of match[1].toUpperCase()) {
-      col = col * 26 + (character.charCodeAt(0) - 64);
-    }
-
-    selectCell({ row: Number.parseInt(match[2], 10) - 1, col: col - 1 });
+  function sheetAction(action: string) {
+    if (!action) return;
+    try {
+      const range=normalizeSelection(selection);
+      let next: SheetData;
+      if (action.startsWith('fill-')) next=fillRange(sheet,range,action.includes('right')?'right':'down',action.includes('series'));
+      else if (action === 'replace') {
+        const search=window.prompt('Find text in the selected cells (formulas stay unchanged):');
+        if (!search) return;
+        const replacement=window.prompt('Replace with:','');
+        if (replacement === null) return;
+        next=replaceInRange(sheet,range,search,replacement);
+      } else {
+        const axis=action.endsWith('row')?'row':'col';
+        next=changeStructure(sheet,axis,range.start[axis],action.startsWith('delete')?range.end[axis]-range.start[axis]+1:1,action.startsWith('delete'));
+      }
+      remember(sheet);setSheet(next);setEditingCell(null);setSelection(createSelection({row:Math.min(range.start.row,next.length-1),col:Math.min(range.start.col,next[0].length-1)}));
+      setFileMessage('Sheet updated. Undo is available.');
+    } catch(error) {setFileMessage(error instanceof Error?error.message:'Could not update the sheet.');}
   }
 
   function handleFormulaBarChange(value: string) {
@@ -555,12 +585,25 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   function selectCell(address: CellAddress) {
     const nextAddress = {
-      row: clamp(address.row, 0, DEFAULT_ROWS - 1),
-      col: clamp(address.col, 0, DEFAULT_COLS - 1),
+      row: clamp(address.row, 0, rowCount - 1),
+      col: clamp(address.col, 0, colCount - 1),
     };
 
     setSelection(createSelection(nextAddress));
     setEditingCell(null);
+    const scroller=scrollerRef.current;
+    if(scroller){
+      const scale=sheetZoom/100, left=columnOffsets[nextAddress.col]*scale, top=rowOffsets[nextAddress.row]*scale;
+      const right=left+colWidths[nextAddress.col]*scale,bottom=top+rowHeights[nextAddress.row]*scale;
+      if(nextAddress.col>=frozenCols){
+        if(left<scroller.scrollLeft+HEADER_SIZE*scale)scroller.scrollLeft=Math.max(0,left-HEADER_SIZE*scale);
+        else if(right>scroller.scrollLeft+scroller.clientWidth)scroller.scrollLeft=right-scroller.clientWidth;
+      }
+      if(nextAddress.row>=frozenRows){
+        if(top<scroller.scrollTop+HEADER_SIZE*scale)scroller.scrollTop=Math.max(0,top-HEADER_SIZE*scale);
+        else if(bottom>scroller.scrollTop+scroller.clientHeight)scroller.scrollTop=bottom-scroller.clientHeight;
+      }
+    }
   }
 
   function beginEditing(address: CellAddress) {
@@ -757,7 +800,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     }
 
     const target = {
-      row: clamp(normalized.end.row + 1, 0, DEFAULT_ROWS - 1),
+      row: clamp(normalized.end.row + 1, 0, rowCount - 1),
       col: normalized.end.col,
     };
     const sum = values.reduce((total, value) => total + value, 0);
@@ -866,7 +909,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
     if (event.key === 'End') {
       event.preventDefault();
-      selectCell({ row: active.row, col: DEFAULT_COLS - 1 });
+      selectCell({ row: active.row, col: colCount - 1 });
       return;
     }
 
@@ -1001,7 +1044,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     }
   }
 
-  async function exportFile(format: 'json' | 'csv' | 'markdown' | 'xlsx') {
+  async function exportFile(format: 'json' | 'csv' | 'markdown' | 'xlsx' | 'ods') {
     if (format === 'json') {
       downloadText(
         'gridsplat.gridsplat.json',
@@ -1021,6 +1064,12 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       setFileMessage('Downloaded a Markdown table.');
     }
 
+    if (format === 'ods') {
+      const { odsMimeType, exportOds } = await import('../io/ods');
+      downloadBuffer('gridsplat.ods', await exportOds(sheet), odsMimeType());
+      setFileMessage('Downloaded an OpenDocument spreadsheet.');
+    }
+
     if (format === 'xlsx') {
       const { excelMimeType, exportExcel } = await import('../io/excel');
 
@@ -1031,43 +1080,58 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
 
   async function importFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    event.target.value='';
+    if(file)await openSpreadsheetFile(file);
+  }
+
+  async function openSpreadsheetFile(file:File) {
 
     if (!file) {
       return;
     }
 
     try {
+      if(await routeFileToApp(file,'gridsplat')){setFileMessage('Opened the file in its matching SplatWorks app.');return;}
+      await assertSupportedFile(file,'gridsplat');
       const isExcelFile =
-        file.name.endsWith('.xlsx') ||
+        /\.xlsx$/i.test(file.name) ||
         file.type ===
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-      const nextSheet = isExcelFile
+      const nextSheet = /\.ods$/i.test(file.name) || file.type === 'application/vnd.oasis.opendocument.spreadsheet'
+        ? await import('../io/ods').then(async ({importOds}) => importOds(await file.arrayBuffer()))
+        : isExcelFile
         ? await import('../io/excel').then(async ({ importExcel }) =>
             importExcel(await file.arrayBuffer()),
           )
         : await file.text().then((text) =>
-            file.name.endsWith('.gridsplat.json') || file.name.endsWith('.json')
+            /\.json$/i.test(file.name)
               ? importNativeJson(text)
-              : file.name.endsWith('.md') || file.name.endsWith('.markdown')
+              : /\.(md|markdown)$/i.test(file.name)
                 ? importMarkdown(text)
                 : importCsv(text),
           );
 
       remember(sheet);
       setSheet(nextSheet);
+      setFrozenRows(0);setFrozenCols(0);
+      setRowHeights([]);setColWidths([]);
       setSelection(createSelection({ row: 0, col: 0 }));
       setEditingCell(null);
-      setFileMessage(`Opened ${file.name}.`);
+      setFileMessage(`Opened ${file.name}. ${isTransferredWorkspace()?importedFileNotice:''}`);
     } catch (error) {
       setFileMessage(
         error instanceof Error
           ? `We couldn't read that file: ${error.message}`
           : "We couldn't read that file.",
       );
-    } finally {
-      event.target.value = '';
     }
   }
+
+  useEffect(()=>{
+    consumeTransferredFile('gridsplat').then(file=>{if(file)void openSpreadsheetFile(file);}).catch(error=>setFileMessage(String(error.message || error)));
+    // Consume a transferred file once after this workspace mounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   async function saveLocalFile() {
     setFileMessage(await saveSheetLocally(sheet));
@@ -1472,7 +1536,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
       }
 
       const width = measureColumnText(
-        formatDisplayValue(cell.displayValue),
+        displayCellNumber(cell.displayValue,cell.format),
         cell.format,
       );
 
@@ -1507,7 +1571,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         clamp(
           countFrozenItems(colWidths, columnOffsets, pointerX),
           0,
-          DEFAULT_COLS - 1,
+          colCount - 1,
         ),
       );
     }
@@ -1519,7 +1583,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         clamp(
           countFrozenItems(rowHeights, rowOffsets, pointerY),
           0,
-          DEFAULT_ROWS - 1,
+          rowCount - 1,
         ),
       );
     }
@@ -1577,39 +1641,6 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     setFileMessage('Started over with a blank sheet.');
   }
 
-  function formatDisplayValue(value: string): string {
-    if (numberFormat === 'plain' || value.trim() === '') {
-      return value;
-    }
-
-    const numericValue = Number(value);
-
-    if (!Number.isFinite(numericValue)) {
-      return value;
-    }
-
-    if (numberFormat === 'whole') {
-      return Math.round(numericValue).toLocaleString();
-    }
-
-    if (numberFormat === 'decimal') {
-      return numericValue.toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-      });
-    }
-
-    if (numberFormat === 'currency') {
-      return numericValue.toLocaleString(undefined, {
-        currency: 'USD',
-        style: 'currency',
-      });
-    }
-
-    return `${(numericValue * 100).toLocaleString(undefined, {
-      maximumFractionDigits: 1,
-    })}%`;
-  }
 
   function getCellValueStyle(cellFormat: CellFormat | undefined): CSSProperties {
     return {
@@ -1684,13 +1715,13 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
     const renderedWidth =
       colSpan > 1
         ? colWidths
-            .slice(col, Math.min(DEFAULT_COLS, col + colSpan))
+            .slice(col, Math.min(colCount, col + colSpan))
             .reduce((sum, colWidth) => sum + colWidth, 0)
         : width;
     const renderedHeight =
       rowSpan > 1
         ? rowHeights
-            .slice(row, Math.min(DEFAULT_ROWS, row + rowSpan))
+            .slice(row, Math.min(rowCount, row + rowSpan))
             .reduce((sum, rowHeight) => sum + rowHeight, 0)
         : height;
 
@@ -1760,7 +1791,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             }
             style={getCellValueStyle(cell.format)}
           >
-            {formatDisplayValue(cell.displayValue)}
+            {displayCellNumber(cell.displayValue,cell.format)}
           </span>
         )}
       </div>
@@ -2068,7 +2099,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
           aria-label={t("Import spreadsheet file")}
           className="visually-hidden"
           type="file"
-          accept=".csv,.json,.gridsplat.json,.md,.markdown,.xlsx,text/csv,application/json,text/markdown,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          accept=".csv,.json,.gridsplat.json,.md,.markdown,.xlsx,.ods,application/vnd.oasis.opendocument.spreadsheet,text/csv,application/json,text/markdown,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           onChange={importFile}
         />
         <label className="header-toggle">
@@ -2092,6 +2123,20 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             <option value="decimal">{t('Decimals')}</option>
             <option value="currency">{t('Currency')}</option>
             <option value="percent">{t('Percent')}</option>
+            <option value="thousands">{t('Thousands')}</option>
+            <option value="scientific">{t('Scientific')}</option>
+            <option value="date">{t('Date')}</option>
+          </select>
+        </label>
+        <label className="format-control compact-select">
+          <span className="visually-hidden">Rows, columns and fill</span>
+          <select aria-label="Rows, columns and fill" value="" onChange={event=>sheetAction(event.target.value)}>
+            <option value="">Rows, columns &amp; fill</option>
+            <option value="insert-row">Insert row before selection</option><option value="insert-col">Insert column before selection</option>
+            <option value="delete-row">Delete selected rows</option><option value="delete-col">Delete selected columns</option>
+            <option value="fill-down">Fill down</option><option value="fill-right">Fill right</option>
+            <option value="fill-series-down">Fill number series down</option><option value="fill-series-right">Fill number series right</option>
+            <option value="replace">Find and replace in selection</option>
           </select>
         </label>
         <p aria-live="polite" className="file-message">
@@ -2102,8 +2147,8 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
         <input
           aria-label={t("Active cell reference")}
           className="name-box"
-          key={activeCellRef}
-          defaultValue={activeCellRef}
+          key={rangeReference(selection)}
+          defaultValue={rangeReference(selection)}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
               event.preventDefault();
@@ -2165,7 +2210,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                 height: HEADER_SIZE,
               }}
             >
-              {isPlainHeaders ? '' : getColumnName(col)}
+              <button type="button" className="header-select" aria-label={`Select column ${getColumnName(col)}`} onClick={event=>selectHeader('col',col,event.shiftKey)}>{isPlainHeaders ? '' : getColumnName(col)}</button>
               <button
                 aria-label={`Resize column ${getColumnName(col)}`}
                 className="resize-handle resize-handle-col"
@@ -2198,7 +2243,7 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
                 height,
               }}
             >
-              {isPlainHeaders ? '' : row + 1}
+              <button type="button" className="header-select" aria-label={`Select row ${row+1}`} onClick={event=>selectHeader('row',row,event.shiftKey)}>{isPlainHeaders ? '' : row+1}</button>
               <button
                 aria-label={`Resize row ${row + 1}`}
                 className="resize-handle resize-handle-row"
@@ -2217,9 +2262,9 @@ export function SpreadsheetGrid({ onSheetUpdated }: SpreadsheetGridProps) {
             </div>
           ))}
           <div
-            aria-colcount={DEFAULT_COLS}
+            aria-colcount={colCount}
             aria-label="GridSplat™ grid"
-            aria-rowcount={DEFAULT_ROWS}
+            aria-rowcount={rowCount}
             className="sheet-grid-layer"
             role="grid"
             tabIndex={0}

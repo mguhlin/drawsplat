@@ -1,3 +1,4 @@
+import {isTransferredWorkspace} from '../../shared/file-bridge.js';
 import {
   BarChart3,
   FileDown,
@@ -50,7 +51,7 @@ type DialogKind =
   | 'templates'
   | null;
 type ChartKind = 'bar' | 'line' | 'pie' | 'scatter';
-type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx';
+type ExportFormat = 'json' | 'csv' | 'markdown' | 'xlsx' | 'ods';
 type GridAction =
   | { action: 'chart'; chartType: ChartKind }
   | { action: 'chart-title'; title: string }
@@ -102,6 +103,7 @@ const toolbarMenus = [
           'Chart PNG (.png)',
           'CSV (.csv)',
           'Excel (.xlsx)',
+          'OpenDocument (.ods)',
           'JSON (.gridsplat.json)',
           'Markdown (.md)',
         ],
@@ -156,6 +158,7 @@ const menuIcons: Record<string, ReactNode> = {
   'Chart PNG (.png)': <FileDown size={17} />,
   'CSV (.csv)': <Table size={17} />,
   'Excel (.xlsx)': <FileSpreadsheet size={17} />,
+  'OpenDocument (.ods)': <FileSpreadsheet size={17} />,
   'JSON (.gridsplat.json)': <FileJson size={17} />,
   'Line chart': <LineChart size={17} />,
   'Markdown (.md)': <FileText size={17} />,
@@ -190,7 +193,7 @@ function buildMenuItems(
 
 export function App() {
   const { lang, setLang, t } = useI18n();
-  const [isSplashVisible, setIsSplashVisible] = useState(true);
+  const [isSplashVisible, setIsSplashVisible] = useState(!isTransferredWorkspace());
   const [toastMessage, setToastMessage] = useState('');
   const [dialogKind, setDialogKind] = useState<DialogKind>(null);
   const [sheetMatrix, setSheetMatrix] = useState<SheetMatrix | null>(null);
@@ -233,6 +236,10 @@ export function App() {
       return;
     }
 
+    if (label === 'OpenDocument (.ods)') {
+      dispatchGridAction({ action: 'export-file', format: 'ods' });
+      return;
+    }
     if (label === 'Excel (.xlsx)') {
       dispatchGridAction({ action: 'export-file', format: 'xlsx' });
       return;

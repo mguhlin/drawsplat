@@ -605,7 +605,7 @@
 
   <section class="policy-section" id="gdpr-compliance-localStorage">
     <h2 id="gdpr-compliance-6-localstorage-inventory-no-cookies-no-third-party-trackers">6. localStorage inventory (no cookies, no third-party trackers)</h2>
-    <p>DrawSplat<sup class="tm">TM</sup> uses browser localStorage and sessionStorage for non-essential UI preferences. Under the EU Cookie Directive (2002/58/EC as amended) plus the ePrivacy interpretation of GDPR, even non-cookie local storage may require notice for non-essential items. Here is the complete inventory the public pages may set, so your privacy notice can describe them:</p>
+    <p>DrawSplat<sup class="tm">TM</sup> uses browser localStorage and sessionStorage for non-essential UI preferences. Under the EU Cookie Directive (2002/58/EC as amended) plus the ePrivacy interpretation of GDPR, even non-cookie local storage may require notice for non-essential items. These are examples of storage the public pages may set, so your privacy notice can describe them:</p>
     <ul class="admin-checklist">
       <li><code>drawsplat.language</code> — UI language pick (en / es / vi / ar / zh / uh). Strictly necessary for the language preference to persist between visits.</li>
       <li><code>drawsplat.audioMuted</code> — whiteboard audio toggle. Convenience setting.</li>
@@ -613,6 +613,8 @@
       <li><code>drawsplat.adminAccess</code> (sessionStorage) — admin role token, cleared when the browser tab closes. Strictly necessary for the admin gate.</li>
       <li><code>drawsplat.consent.accepted</code> — records that the user has acknowledged this notice so the banner doesn't re-appear. Strictly necessary for the banner itself.</li>
       <li>Per-widget content (e.g. the current concept map, bingo card, dicebreaker draft) — saved locally so a refresh doesn't lose work. The user controls this directly via Save / Load / Clear buttons inside each widget.</li>
+      <li>SplatWorks projects — ordinary working drafts use localStorage. A file opened through another SplatWorks app uses sessionStorage in its new tab; save a project file before closing that tab.</li>
+      <li><code>drawsplat-file-transfers</code> (IndexedDB) — holds a file temporarily for transfer to the matching SplatWorks app at the same website. The receiving app removes it when read. Unclaimed transfers expire after ten minutes and are removed during the next transfer. The file is not uploaded by this handoff.</li>
       <li>Whiteboard board state — same pattern: the in-progress board persists across refreshes; the user can clear it via the TNT Reset button.</li>
     </ul>
     <p>None of these is shared with a third party. The localStorage consent banner that appears on first visit explains this and lets the user dismiss it.</p>

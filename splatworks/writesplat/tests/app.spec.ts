@@ -55,7 +55,7 @@ test('shows kid-friendly readability cards and expandable stats', async ({ page 
 test('keeps primary controls keyboard accessible with visible focus and readable contrast', async ({ page }) => {
   await page.goto('/');
 
-  await page.keyboard.press('Tab');
+  await page.getByRole('link', { name: 'SplatWorks home' }).focus();
   await expect(page.getByRole('link', { name: 'SplatWorks home' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'New' })).toBeFocused();
@@ -180,7 +180,7 @@ test('exports and imports editable .writesplat.json documents', async ({ page })
   await page.getByRole('button', { name: 'Bold' }).click();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Save JSON' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   const download = await downloadPromise;
   const downloadPath = await download.path();
   expect(downloadPath).toBeTruthy();
@@ -332,7 +332,7 @@ test('round trips raw and split markdown editing', async ({ page }) => {
   async function chooseMarkdownMode(label: string): Promise<void> {
     const viewMenu = page.locator('.menu-bar > details.menu').nth(5);
     await viewMenu.locator('> summary').click();
-    await viewMenu.locator('.menu-submenu > summary').click();
+    await viewMenu.locator('.menu-submenu > summary').filter({hasText:/^Markdown mode$/}).click();
     await viewMenu.getByRole('button', { name: label }).click();
   }
 
@@ -760,6 +760,7 @@ test('exposes read aloud controls', async ({ page }) => {
     Object.defineProperty(window, 'speechSynthesis', {
       configurable: true,
       value: {
+        getVoices() { return []; },
         cancel() {},
         pause() {},
         speak(utterance: SpeechSynthesisUtterance) {

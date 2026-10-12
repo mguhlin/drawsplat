@@ -847,6 +847,7 @@ test('formats numbers and starts over with confirmation', async ({
   await page.getByLabel('Edit cell A1').fill('12.5');
   await page.getByLabel('Edit cell A1').press('Enter');
 
+  await page.getByTestId('cell-A1').click();
   await page.getByLabel('Number format').selectOption('currency');
   await expect(page.getByTestId('cell-A1')).toContainText('$12.50');
 
@@ -985,4 +986,38 @@ test('has no automated accessibility violations on the main workspace', async ({
     .analyze();
 
   expect(results.violations).toEqual([]);
+});
+
+test('imports larger ODS sheets, keeps formats and formulas, and exports an ODS file',async({page})=>{
+  await dismissSplash(page);
+  const {exportOds}=await import('../src/io/ods');
+  const {applyCellFormat}=await import('../src/grid/gridModel');
+  let sheet=createSheet(30,24);
+  sheet=updateCell(sheet,{row:0,col:0},'3');sheet=updateCell(sheet,{row:0,col:1},'=A1*2');
+  sheet=updateCell(sheet,{row:29,col:23},'=A1+7');
+  sheet=applyCellFormat(sheet,{start:{row:0,col:0},end:{row:0,col:0}},{bold:true,numberFormat:'currency'});
+  await page.getByLabel('Import spreadsheet file').setInputFiles({name:'classroom.ods',mimeType:'application/vnd.oasis.opendocument.spreadsheet',buffer:Buffer.from(await exportOds(sheet))});
+  await expect(page.getByTestId('cell-A1')).toContainText('$3.00');await expect(page.getByTestId('cell-B1')).toContainText('6');
+  await expect(page.getByRole('grid')).toHaveAttribute('aria-rowcount','30');await expect(page.getByRole('grid')).toHaveAttribute('aria-colcount','24');
+  await page.getByLabel('Active cell reference').fill('X30');await page.getByLabel('Active cell reference').press('Enter');
+  await expect(page.getByLabel('Formula and cell contents')).toHaveValue('=A1+7');await expect(page.getByTestId('cell-X30')).toContainText('10');
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'File',exact:true}).click();await page.getByRole('menuitem',{name:'Export',exact:true}).click();await page.getByRole('menuitem',{name:'OpenDocument (.ods)',exact:true}).click();
+  const download=await downloadPromise;expect(download.suggestedFilename()).toBe('gridsplat.ods');expect(await download.failure()).toBeNull();
+});
+
+test('formats whole columns and rows, selects ranges, and inserts a row with undo',async({page})=>{
+ await dismissSplash(page);
+ await page.getByRole('button',{name:'Select column A',exact:true}).click();
+ await page.getByRole('button',{name:'Select column B',exact:true}).click({modifiers:['Shift']});
+ await page.getByRole('button',{name:'Bold',exact:true}).click();
+ await page.getByRole('button',{name:'Align center',exact:true}).click();
+ for(const ref of ['A1','B2']){await expect(page.getByTestId('cell-'+ref).locator('.cell-value')).toHaveCSS('font-weight','900');await expect(page.getByTestId('cell-'+ref).locator('.cell-value')).toHaveCSS('text-align','center');}
+ await page.getByRole('button',{name:'Select row 2',exact:true}).click();
+ await page.getByRole('button',{name:'Italic',exact:true}).click();
+ await expect(page.getByTestId('cell-C2').locator('.cell-value')).toHaveCSS('font-style','italic');
+ const reference=page.getByRole('textbox',{name:'Active cell reference'});await reference.fill('A1:B3');await reference.press('Enter');await expect(reference).toHaveValue('A1:B3');
+ await page.getByRole('combobox',{name:'Rows, columns and fill'}).selectOption('insert-row');
+ await expect(page.getByRole('grid')).toHaveAttribute('aria-rowcount','21');
+ await page.getByRole('button',{name:'Undo',exact:true}).click();await expect(page.getByRole('grid')).toHaveAttribute('aria-rowcount','20');
 });

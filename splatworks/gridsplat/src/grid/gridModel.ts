@@ -20,6 +20,8 @@ function compactFormat(format?: CellFormat): CellFormat | undefined {
   }
 
   const nextFormat: CellFormat = {};
+  if (format.numberFormat) nextFormat.numberFormat = format.numberFormat;
+  if (format.decimalPlaces !== undefined) nextFormat.decimalPlaces = format.decimalPlaces;
 
   if (format.align) {
     nextFormat.align = format.align;
@@ -75,7 +77,9 @@ function compactFormat(format?: CellFormat): CellFormat | undefined {
 function withFormat(cell: SheetCell, format?: CellFormat): SheetCell {
   const compactedFormat = compactFormat(format);
 
-  return compactedFormat ? { ...cell, format: compactedFormat } : cell;
+  const { format: previousFormat, ...base } = cell;
+  void previousFormat;
+  return compactedFormat ? { ...base, format: compactedFormat } : base;
 }
 
 function withCellMetadata(nextCell: SheetCell, previousCell: SheetCell): SheetCell {
@@ -267,7 +271,7 @@ function getMergeRange(
   return null;
 }
 
-function removeMergeMetadata(
+export function unmergeCells(
   sheet: SheetData,
   selection: SelectionRange,
 ): SheetData {
@@ -318,10 +322,10 @@ export function mergeCells(
   const colSpan = normalized.end.col - normalized.start.col + 1;
 
   if (rowSpan === 1 && colSpan === 1) {
-    return recalculateSheet(removeMergeMetadata(sheet, normalized));
+    return recalculateSheet(unmergeCells(sheet, normalized));
   }
 
-  const unmergedSheet = removeMergeMetadata(sheet, normalized);
+  const unmergedSheet = unmergeCells(sheet, normalized);
 
   return recalculateSheet(
     unmergedSheet.map((row, rowIndex) =>
