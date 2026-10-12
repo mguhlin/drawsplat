@@ -19,7 +19,7 @@ These are conservative app limits, not Instagram's full account-dependent maximu
 
 ## Additional image cards
 
-Use step 4 to add one or several local images as standalone cards. Cards automatically fit the complete image into the largest available region, retaining its aspect ratio without cropping. Uncaptioned cards with no frame use 96% of the panel width or height; optional titles, creator names and border artwork reserve their own space. Opening/closing image layouts are unchanged. Each card has an optional title, its own duration (0–10 seconds, 0 skips), background color and frame, with Preview, Replace image and Remove card controls. Insert at uses seconds of the remaining video, excluding panels and other cards. Images pause the video and its audio, then resume the footage; exported cards have silence. Same-position cards play in their list order. Cuts move cards with their original footage anchors, placing a card in a deleted section at the surviving join. Loading a new video retains the cards and clamps their anchors to the new source. Card durations count toward the output limit, and Playback order shows the inserted items. Images and projects remain local and are not automatically saved.
+Use step 4 to add one or several local images as standalone cards. Cards automatically fit the complete image into the largest available region, retaining its aspect ratio without cropping. Uncaptioned cards with no frame use 96% of the panel width or height; optional titles, additional panel text and border artwork reserve their own space. Opening/closing image layouts are unchanged. Each card has an optional title, its own duration (0–10 seconds, 0 skips), background color and frame, with Preview, Replace image and Remove card controls. Insert at uses seconds of the remaining video, excluding panels and other cards. Images pause the video and its audio, then resume the footage; exported cards have silence. Same-position cards play in their list order. Cuts move cards with their original footage anchors, placing a card in a deleted section at the surviving join. Loading a new video retains the cards and clamps their anchors to the new source. Card durations count toward the output limit, and Playback order shows the inserted items. Images and projects remain local and are not automatically saved.
 
 ## Select and delete video sections
 
@@ -54,7 +54,7 @@ This is a preliminary U.S. federal search, not clearance or a conclusion about c
 
 ## Languages and brand
 
-The interface uses DrawSplat's purple/gold/lavender palette and a purple paint-splat video icon. The native language switcher provides English, Spanish, Vietnamese, Arabic (RTL), Chinese, and the site's combined Hindi/Urdu choice. It shares the `drawsplat.language` preference with the other tools and works when browser storage is unavailable. Switching languages translates controls, status messages, duration validation, format notes, and untouched default panel titles; edited titles and creator names are preserved. Language changes are disabled during recording/export so the composition cannot change partway through.
+The interface uses DrawSplat's purple/gold/lavender palette and a purple paint-splat video icon. The native language switcher provides English, Spanish, Vietnamese, Arabic (RTL), Chinese, and the site's combined Hindi/Urdu choice. It shares the `drawsplat.language` preference with the other tools and works when browser storage is unavailable. Switching languages translates controls, status messages, duration validation, format notes, and untouched default panel titles; edited titles and additional panel text are preserved. Language changes are disabled during recording/export so the composition cannot change partway through.
 
 `node tests/language.cjs` checks branding, six locales, Arabic layout, preference persistence, and preservation of typed titles. Set `CLIPSPLAT_ORIGIN` to run against production.
 
@@ -84,3 +84,5 @@ Integration check (serve the repository root, including both built apps):
 check a deployed site; the test generates synthetic screen/audio locally and
 verifies all three formats, original recovery, local-storage cleanup, and real
 H.264/AAC MP4 export with audible source audio.
+
+The optional **Additional panel text** field accepts multiple lines (press Enter) and appears verbatim on both opening and closing panels and image cards. No “by” prefix is added. Font, positioning, and styling controls remain available for this text box.
