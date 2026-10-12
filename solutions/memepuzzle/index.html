@@ -248,6 +248,8 @@
       user-select: none;
     }
 
+    .cover-tile { touch-action: none; }
+    .cover-tile.active, .cover-tile:focus-visible { outline: 4px solid var(--yellow); outline-offset: -4px; }
     .cover-tile:active { cursor: grabbing; }
     .cover-tile.dragging { opacity: .45; }
     .cover-tile.drag-target { outline: 4px solid var(--yellow); outline-offset: -4px; }
@@ -405,13 +407,15 @@
     </main>
   </div>
 
-  <script src="./locales.js?v=20261012-qa"></script>
+  <script src="./locales.js?v=20261012-tiles"></script>
+  <script src="./tiles.js?v=20261012-tiles"></script>
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const latestPuzzleKey = "drawsplat.memepuzzle.latest";
     let uploadedImage = "";
     let tileOrder = [];
+    let selectedQuestion = -1;
     let activityMetadata = null;
     // Track last-applied translated defaults so language switches refresh
     // them without overwriting custom teacher content.
@@ -480,7 +484,7 @@
       $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
       $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
       $("#tileGrid").innerHTML = tileOrder.map((questionIndex, position) =>
-        `<div class="cover-tile${questionIndex < openCount ? " open" : ""}" draggable="true" data-position="${position}">${questionIndex + 1}</div>`
+        `<div class="cover-tile${questionIndex < openCount ? " open" : ""}${questionIndex === selectedQuestion ? " active" : ""}" role="button" tabindex="0" data-question="${questionIndex}" data-position="${position}">${questionIndex + 1}</div>`
       ).join("");
       $("#status").textContent = t("status.ready", { n: data.questions.length });
     }
@@ -782,34 +786,14 @@
       }
     });
     $("#previewBtn").addEventListener("click", () => renderPreview());
-    let draggedTilePosition = null;
-    $("#tileGrid").addEventListener("dragstart", event => {
-      const tile = event.target.closest(".cover-tile");
-      if (!tile) return;
-      draggedTilePosition = Number(tile.dataset.position);
-      tile.classList.add("dragging");
-      event.dataTransfer.effectAllowed = "move";
-    });
-    $("#tileGrid").addEventListener("dragover", event => {
-      const tile = event.target.closest(".cover-tile");
-      if (!tile || draggedTilePosition === null) return;
-      event.preventDefault();
-      $("#tileGrid").querySelectorAll(".drag-target").forEach(item => item.classList.remove("drag-target"));
-      tile.classList.add("drag-target");
-    });
-    $("#tileGrid").addEventListener("drop", event => {
-      const tile = event.target.closest(".cover-tile");
-      if (!tile || draggedTilePosition === null) return;
-      event.preventDefault();
-      const targetPosition = Number(tile.dataset.position);
-      const [moved] = tileOrder.splice(draggedTilePosition, 1);
-      tileOrder.splice(targetPosition, 0, moved);
-      draggedTilePosition = null;
+    bindPuzzleTiles($("#tileGrid"), (from, to) => {
+      [tileOrder[from], tileOrder[to]] = [tileOrder[to], tileOrder[from]];
       renderPreview();
-    });
-    $("#tileGrid").addEventListener("dragend", () => {
-      draggedTilePosition = null;
-      $("#tileGrid").querySelectorAll(".dragging, .drag-target").forEach(item => item.classList.remove("dragging", "drag-target"));
+    }, index => {
+      selectedQuestion = index;
+      renderPreview();
+      const question = config().questions[index];
+      if (question) $("#status").textContent = `${index + 1}. ${question.question}`;
     });
     $("#copyLinkBtn").addEventListener("click", copyLink);
     $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));

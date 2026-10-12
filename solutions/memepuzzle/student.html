@@ -53,7 +53,11 @@
     .image-board img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .tile-grid { position: absolute; inset: 0; display: grid; gap: 2px; padding: 2px; }
     .cover-tile { display: grid; place-items: center; color: var(--white); background: linear-gradient(135deg, var(--navy), var(--blue)); border: 1px solid rgba(255,255,255,.35); font-weight: 900; font-size: clamp(.85rem, 2vw, 1.4rem); transition: opacity 240ms ease, transform 240ms ease; }
-    .cover-tile.open { opacity: 0; transform: scale(.92); pointer-events: none; }
+    .cover-tile.open { opacity: 0; pointer-events: none; }
+    .cover-tile { touch-action: none; cursor: grab; }
+    .cover-tile.active, .cover-tile:focus-visible { outline: 4px solid var(--yellow); outline-offset: -4px; }
+    .cover-tile.dragging { opacity: .45; }
+    .hint { color: var(--gray-50); margin-top: 10px; }
     .question { color: var(--navy); font-size: 1.25rem; font-weight: 900; line-height: 1.25; }
     .field { display: grid; gap: 8px; margin-top: 14px; }
     label { font-size: .86rem; font-weight: 800; }
@@ -89,6 +93,7 @@
           <img id="puzzleImage" data-i18n-alt="play.imgAlt" alt="Hidden meme puzzle image">
           <div class="tile-grid" id="tileGrid"></div>
         </div>
+        <p data-i18n="play.tileHelp">Click a tile to jump to its question. Drag tiles to rearrange them. Keyboard: Alt + arrow keys to move a focused tile.</p>
       </section>
       <aside class="panel">
         <div class="progress">
@@ -96,6 +101,7 @@
           <div class="stat"><span data-i18n="play.total">Total</span><strong id="totalCount">0</strong></div>
         </div>
         <div class="question" id="questionText"></div>
+        <div class="hint" id="wordHint"></div>
         <div class="field">
           <label for="answerInput" data-i18n="play.answerLabel">Answer</label>
           <input id="answerInput" type="text" autocomplete="off">
@@ -105,12 +111,13 @@
       </aside>
     </main>
   </div>
-  <script src="./locales.js"></script>
+  <script src="./locales.js?v=20261012-tiles"></script>
+  <script src="./tiles.js?v=20261012-tiles"></script>
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     const latestPuzzleKey = "drawsplat.memepuzzle.latest";
-    const state = { title: "", image: "", questions: [], tileOrder: [], index: 0, correct: 0, opened: 0 };
+    const state = { title: "", image: "", questions: [], tileOrder: [], index: 0, correct: 0, solved: new Set() };
 
     function b64urlDecode(s) {
       const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
@@ -122,7 +129,7 @@
     }
 
     function normalize(text) {
-      return String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+      return String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
     }
 
     function gridShape(count) {
@@ -169,8 +176,8 @@
       $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
       $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
       const order = state.tileOrder.length ? state.tileOrder : Array.from({ length: count }, (_, index) => index);
-      $("#tileGrid").innerHTML = order.map(questionIndex =>
-        `<div class="cover-tile${questionIndex < state.opened ? " open" : ""}">${questionIndex + 1}</div>`
+      $("#tileGrid").innerHTML = order.map((questionIndex, position) =>
+        `<div role="button" tabindex="${state.solved.has(questionIndex) ? -1 : 0}" aria-label="${t("play.tileLabel", { n: questionIndex + 1 })}" class="cover-tile${state.solved.has(questionIndex) ? " open" : ""}${questionIndex === state.index ? " active" : ""}" data-position="${position}" data-question="${questionIndex}">${questionIndex + 1}</div>`
       ).join("");
     }
 
@@ -189,6 +196,7 @@
       $("#correctCount").textContent = state.correct;
       $("#totalCount").textContent = state.questions.length;
       renderTiles();
+      $("#wordHint").textContent = "";
       if (state.index >= state.questions.length) {
         $("#questionText").textContent = t("play.complete");
         $("#answerInput").disabled = true;
@@ -196,6 +204,8 @@
         $("#message").textContent = t("play.allOpen");
       } else {
         $("#questionText").textContent = state.questions[state.index].question;
+        const words = String(state.questions[state.index].answer).trim().split(/\s+/u).filter(Boolean).length;
+        $("#wordHint").textContent = words > 1 ? t("play.wordHint", { n: words }) : "";
       }
     }
 
@@ -204,9 +214,11 @@
       const expected = normalize(state.questions[state.index].answer);
       const actual = normalize($("#answerInput").value);
       if (actual && actual === expected) {
-        state.correct += 1;
-        state.opened += 1;
-        state.index += 1;
+        state.solved.add(state.index);
+        state.correct = state.solved.size;
+        const position = state.tileOrder.indexOf(state.index);
+        const nextOrder = [...state.tileOrder.slice(position + 1), ...state.tileOrder.slice(0, position)];
+        state.index = nextOrder.find(index => !state.solved.has(index)) ?? state.questions.length;
         $("#answerInput").value = "";
         $("#message").textContent = t("play.correctMsg");
         render();
@@ -224,6 +236,17 @@
       $("#submitBtn").addEventListener("click", submit);
       $("#answerInput").addEventListener("keydown", event => {
         if (event.key === "Enter") submit();
+      });
+      bindPuzzleTiles($("#tileGrid"), (from, to) => {
+        [state.tileOrder[from], state.tileOrder[to]] = [state.tileOrder[to], state.tileOrder[from]];
+        renderTiles();
+      }, index => {
+        if (state.solved.has(index)) return;
+        state.index = index;
+        $("#answerInput").value = "";
+        $("#message").textContent = "";
+        render();
+        $("#answerInput").focus();
       });
       render();
     }
