@@ -30,6 +30,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': 'Meme Puzzle Practice',
     'field.questionCount':'Number of Questions',
     'field.image':        'Cute Cat Image',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         'Cute Cat',
     'image.tabby':        'Tabby Cat',
     'image.orange':       'Orange Cat',
@@ -41,7 +42,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'Uploaded image',
 
     'field.qa':           'Questions and Answers',
-    'qa.default':         'What do plants need to make food?,sunlight\nWhat force pulls objects toward Earth?,gravity\nWhat is the bottom number of a fraction called?,denominator\nWhat is the main idea of a text called?,theme\nWhat do we call a living thing?,organism\nWhat type of source comes from the time being studied?,primary source\nWhat is water as a gas called?,vapor\nWhat operation finds the total?,addition\nWhat is an educated guess called?,hypothesis\nWhat is the place where an organism lives?,habitat',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       'Use one line per item: <strong>question | answer</strong> or tab-separated text to keep commas in either field. For <strong>question,answer</strong>, the last comma separates the answer. CSV files can also use quoted fields.',
 
     'button.preview':     'Update Preview',
@@ -106,6 +107,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': 'Práctica de Rompecabezas Meme',
     'field.questionCount':'Número de preguntas',
     'field.image':        'Imagen de gato lindo',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         'Gato lindo',
     'image.tabby':        'Gato atigrado',
     'image.orange':       'Gato naranja',
@@ -117,7 +119,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'Imagen subida',
 
     'field.qa':           'Preguntas y respuestas',
-    'qa.default':         '¿Qué necesitan las plantas para producir alimento?,luz solar\n¿Qué fuerza atrae los objetos hacia la Tierra?,gravedad\n¿Cómo se llama el número de abajo de una fracción?,denominador\n¿Cómo se llama la idea principal de un texto?,tema\n¿Cómo se le llama a un ser vivo?,organismo\n¿Qué tipo de fuente proviene de la época estudiada?,fuente primaria\n¿Cómo se llama el agua en estado gaseoso?,vapor\n¿Qué operación encuentra el total?,suma\n¿Cómo se llama una suposición fundamentada?,hipótesis\n¿Cómo se llama el lugar donde vive un organismo?,hábitat',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       'Una línea por elemento: <strong>pregunta,respuesta</strong>. También puedes usar <strong>pregunta | respuesta</strong> o texto separado por tabulaciones.',
 
     'button.preview':     'Actualizar vista previa',
@@ -181,6 +183,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': 'Luyện tập Câu đố Meme',
     'field.questionCount':'Số câu hỏi',
     'field.image':        'Hình mèo dễ thương',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         'Mèo dễ thương',
     'image.tabby':        'Mèo mướp',
     'image.orange':       'Mèo cam',
@@ -192,7 +195,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'Hình đã tải lên',
 
     'field.qa':           'Câu hỏi và Câu trả lời',
-    'qa.default':         'Cây cần gì để tạo thức ăn?,ánh sáng mặt trời\nLực nào hút vật về phía Trái Đất?,trọng lực\nSố ở dưới của phân số gọi là gì?,mẫu số\nÝ chính của văn bản gọi là gì?,chủ đề\nMột sinh vật sống gọi là gì?,sinh vật\nNguồn nào đến từ thời kỳ đang nghiên cứu?,nguồn sơ cấp\nNước ở trạng thái khí gọi là gì?,hơi nước\nPhép tính nào tìm tổng?,phép cộng\nMột phỏng đoán có cơ sở gọi là gì?,giả thuyết\nNơi sinh vật sống gọi là gì?,môi trường sống',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       'Mỗi mục một dòng: <strong>câu hỏi,câu trả lời</strong>. Bạn cũng có thể dùng <strong>câu hỏi | câu trả lời</strong> hoặc tab.',
 
     'button.preview':     'Cập nhật xem trước',
@@ -256,6 +259,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': 'تمرين لغز الميم',
     'field.questionCount':'عدد الأسئلة',
     'field.image':        'صورة قطة ظريفة',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         'قطة ظريفة',
     'image.tabby':        'قطة مخططة',
     'image.orange':       'قطة برتقالية',
@@ -267,7 +271,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'صورة مرفوعة',
 
     'field.qa':           'أسئلة وأجوبة',
-    'qa.default':         'ماذا تحتاج النباتات لتصنع الغذاء؟,ضوء الشمس\nما القوة التي تجذب الأشياء نحو الأرض؟,الجاذبية\nماذا يسمى الرقم السفلي في الكسر؟,المقام\nماذا تسمى الفكرة الرئيسية للنص؟,الموضوع\nماذا نسمي الكائن الحي؟,كائن حي\nأي نوع من المصادر يأتي من الزمن المدروس؟,مصدر أولي\nماذا يسمى الماء كغاز؟,البخار\nأي عملية تجد المجموع؟,الجمع\nماذا يسمى التخمين المدروس؟,فرضية\nماذا يسمى المكان الذي يعيش فيه الكائن؟,موطن',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       'سطر واحد لكل عنصر: <strong>سؤال,إجابة</strong>. يمكنك أيضًا استخدام <strong>سؤال | إجابة</strong> أو نصًا مفصولاً بعلامات تبويب.',
 
     'button.preview':     'تحديث المعاينة',
@@ -331,6 +335,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': '梗图拼图练习',
     'field.questionCount':'问题数',
     'field.image':        '可爱猫咪图片',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         '可爱猫咪',
     'image.tabby':        '虎斑猫',
     'image.orange':       '橘猫',
@@ -342,7 +347,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'已上传图片',
 
     'field.qa':           '问题与答案',
-    'qa.default':         '植物需要什么来制造食物？,阳光\n什么力将物体拉向地球？,重力\n分数下面的数字叫什么？,分母\n文本的主要观点叫什么？,主题\n生物叫什么？,生物体\n来自所研究时期的资料是什么？,一手资料\n气态的水叫什么？,蒸汽\n哪个运算找出总和？,加法\n有根据的猜测叫什么？,假设\n生物生活的地方叫什么？,栖息地',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       '每行一个：<strong>问题,答案</strong>。也可以使用 <strong>问题 | 答案</strong> 或 Tab 分隔的文本。',
 
     'button.preview':     '更新预览',
@@ -406,6 +411,7 @@ WidgetI18n.register('memepuzzle', {
     'field.titleDefault': 'मीम पहेली अभ्यास',
     'field.questionCount':'प्रश्नों की संख्या',
     'field.image':        'प्यारी बिल्ली छवि',
+    'image.drawsplatKitty': 'Creative Chaos DrawSplat Kitty',
     'image.cat1':         'प्यारी बिल्ली',
     'image.tabby':        'धारीदार बिल्ली',
     'image.orange':       'नारंगी बिल्ली',
@@ -417,7 +423,7 @@ WidgetI18n.register('memepuzzle', {
     'image.uploadedLabel':'अपलोड की गई छवि',
 
     'field.qa':           'प्रश्न और उत्तर',
-    'qa.default':         'पौधों को भोजन बनाने के लिए क्या चाहिए?,सूर्य का प्रकाश\nकौन सा बल वस्तुओं को पृथ्वी की ओर खींचता है?,गुरुत्वाकर्षण\nभिन्न की निचली संख्या को क्या कहते हैं?,हर\nपाठ के मुख्य विचार को क्या कहते हैं?,मूल भाव\nजीवित वस्तु को क्या कहते हैं?,जीव\nअध्ययन किए जा रहे समय का स्रोत किस प्रकार का होता है?,प्राथमिक स्रोत\nगैस के रूप में पानी को क्या कहते हैं?,वाष्प\nकौन सी क्रिया कुल खोजती है?,जोड़\nशिक्षित अनुमान को क्या कहते हैं?,परिकल्पना\nजहाँ जीव रहता है उसे क्या कहते हैं?,आवास',
+    'qa.default': "Which tool lets you record and edit audio?,AudioSplat\nWhich tools help students record, edit, and combine video and other media?,VideoSplat\nWhich tool helps you create and edit short video clips?,ClipSplat\nWhich tool can crop, mask, and annotate classroom images?,ImageSplat\nWhich tool lets you edit, annotate, and organize PDF documents?,PDFSplat",
     'help.qa.html':       'प्रति आइटम एक पंक्ति: <strong>प्रश्न,उत्तर</strong>। आप <strong>प्रश्न | उत्तर</strong> या टैब-पृथक पाठ भी उपयोग कर सकते हैं।',
 
     'button.preview':     'पूर्वावलोकन अपडेट करें',

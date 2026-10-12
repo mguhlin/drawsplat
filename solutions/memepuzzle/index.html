@@ -341,11 +341,12 @@
         <div class="split">
           <div class="field">
             <label for="questionCount" data-i18n="field.questionCount">Number of Questions</label>
-            <input id="questionCount" type="number" min="1" max="30" value="10">
+            <input id="questionCount" type="number" min="1" max="30" value="5">
           </div>
           <div class="field">
             <label for="imageSelect" data-i18n="field.image">Cute Cat Image</label>
             <select id="imageSelect">
+              <option value="https://drawsplat.org/kitty.png" data-i18n="image.drawsplatKitty">Creative Chaos DrawSplat Kitty</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg" data-i18n="image.cat1">Cute Cat</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Tabby-cat.jpg" data-i18n="image.tabby">Tabby Cat</option>
               <option value="https://commons.wikimedia.org/wiki/Special:FilePath/Cat-1046544.jpg" data-i18n="image.orange">Orange Cat</option>
@@ -357,7 +358,7 @@
 
         <div class="field">
           <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
-          <input id="imageUrl" type="text" value="https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg">
+          <input id="imageUrl" type="text" value="https://drawsplat.org/kitty.png">
         </div>
 
         <div class="field">
@@ -394,7 +395,7 @@
           <aside class="summary">
             <div>
               <span class="field-title" data-i18n="summary.questions">Questions</span>
-              <strong id="questionTotal">10</strong>
+              <strong id="questionTotal">5</strong>
             </div>
             <div>
               <span class="field-title" data-i18n="summary.link">Student Link</span>
@@ -407,7 +408,7 @@
     </main>
   </div>
 
-  <script src="./locales.js?v=20261012-tiles"></script>
+  <script src="./locales.js?v=20261012-defaults"></script>
   <script src="./tiles.js?v=20261012-tiles"></script>
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
@@ -447,7 +448,7 @@
     }
 
     function config() {
-      const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 10));
+      const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 5));
       const questions = parseQA($("#qaInput").value, total);
       const order = tileOrder.filter((index, position, values) =>
         index >= 0 && index < questions.length && values.indexOf(index) === position
