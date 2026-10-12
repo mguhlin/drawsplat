@@ -29,7 +29,7 @@ components = [t for t in registry['tools'] if re.match(r'^/(app|splatworks|solut
 page = '''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'">
-<title>District installation guide · DrawSplat</title><meta name="description" content="Install DrawSplat with MariaDB or MySQL, create your district administrator, configure Google sign-in, and import classroom rosters.">
+<title>Ecosystem district installation guide · DrawSplat</title><meta name="description" content="Install the DrawSplat ecosystem: whiteboard, tools, widgets, games and SplatWorks, with optional district accounts, Google sign-in and classroom rosters.">
 <link rel="stylesheet" href="../assets/css/district-guide.css"><link rel="stylesheet" href="../assets/css/site-navigation.css"></head><body>
 <!-- Generated from district-selfhost.md by scripts/build-district-guide.py. -->
 <a class="skip-link" href="#guide">Skip to installation guide</a>

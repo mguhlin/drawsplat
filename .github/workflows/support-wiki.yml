@@ -2,9 +2,9 @@ name: Support wiki consistency
 on:
   push:
     branches: [main]
-    paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/build-district-guide.py', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css', 'tests/support-wiki.spec.js', '.github/workflows/support-wiki.yml']
+    paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/build-tool-features.py', 'data/tool-features.json', 'data/drawsplat-tools.json', 'scripts/build-district-guide.py', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css', 'tests/support-wiki.spec.js', '.github/workflows/support-wiki.yml']
   pull_request:
-    paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css']
+    paths: ['wiki/**', 'guides/**', 'legal/**', 'docs/**', 'pages/**', 'scripts/build-support-wiki.py', 'scripts/build-tool-features.py', 'data/tool-features.json', 'data/drawsplat-tools.json', 'scripts/site_navigation.py', 'scripts/build-site-navigation.py', 'assets/css/site-navigation.css', 'assets/js/site-navigation.js', 'assets/js/support-*.js', 'assets/js/wiki-language.js', 'assets/css/support-wiki.css']
 jobs:
   check:
     runs-on: ubuntu-latest

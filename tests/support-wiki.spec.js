@@ -81,7 +81,7 @@ test('audience guides keep teaching concise and route school and family setup co
  await page.goto('/wiki/');
  const topics=page.getByRole('navigation',{name:'Wiki topics'});
  const educators=topics.locator('section').filter({has:page.getByRole('heading',{name:'For educators',exact:true})});
- await expect(educators.getByRole('link')).toHaveCount(7);
+ await expect(educators.getByRole('link')).toHaveCount(8);
  await expect(topics.getByRole('heading',{name:'For technology admins',exact:true})).toBeVisible();
  await expect(topics.getByRole('heading',{name:'For parents and students',exact:true})).toBeVisible();
  for(const [url,title] of [['for-educators','For educators'],['for-technology-admins','For technology admins'],['for-parents-and-students','For parents and students']]){
@@ -167,4 +167,22 @@ test('Wiki language menu offers opt-in public-page translations without sending 
   expect(remoteRequests).toBe(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
   await page.keyboard.press('Escape');await expect(page.locator('.wiki-language')).not.toHaveAttribute('open','');
  }
+});
+
+test('ecosystem reference covers registry components, categories, and searchable features',async({page})=>{
+ const registry=require('../data/drawsplat-tools.json');
+ const components=registry.tools.filter(t=>['tool','widget','game','workspace'].includes(t.type));
+ await page.goto('/wiki/');
+ await expect(page.locator('main')).toContainText('whole DrawSplat ecosystem');
+ await page.locator('main').getByRole('link',{name:'Explore tools, widgets, and features by category'}).click();
+ for(const category of registry.categories)await expect(page.locator('main h2').filter({hasText:category.name})).toHaveCount(1);
+ for(const component of components){
+ const links=page.locator('main a').filter({hasText:'Open '+component.name});
+ await expect(links.first()).toHaveAttribute('href','..'+component.url);
+ }
+ await expect(page.locator('main')).toContainText('Widgets inside the whiteboard');
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.goto('/wiki/?q=multitrack');
+ await expect(page.locator('.wiki-results a').filter({hasText:'Ecosystem tools, widgets and features'})).toBeVisible();
 });

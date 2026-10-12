@@ -6,7 +6,7 @@ Edit original HTML/Markdown articles, then rerun this script. No server required
 from pathlib import Path
 from html.parser import HTMLParser
 from markdown_it import MarkdownIt
-import html, json, re, os, hashlib
+import html, json, re, os, hashlib, runpy
 from urllib.parse import urlencode
 from site_navigation import nav_html
 ROOT=Path(__file__).resolve().parents[1]
@@ -34,7 +34,10 @@ GROUPS['For parents and students']=[('wiki/for-parents-and-students.html','Learn
 GROUPS['About DrawSplat']=[('wiki/about-developer.html','About the Developer','J. M. Guhlin, classroom tools, multilingual learning, project support, and contact.')]
 GROUPS={key:GROUPS[key] for key in ['Start here','For educators','For technology admins','For parents and students','SplatWorks','Licensing and pricing','Privacy and district review','Technical and updates','About DrawSplat']}
 EDUCATOR_MENU={'wiki/for-educators.html','guides/teacher-options-quick-start.html','wiki/district-classrooms.html','guides/saving-exporting.html','guides/collaboration-turn-ins.html','pages/background-templates.html','guides/project-reference.html'}
-RENDER=['faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
+runpy.run_path(str(ROOT/'scripts/build-tool-features.py'))
+EDUCATOR_MENU.add('wiki/tools-widgets-features.html')
+GROUPS['For educators'].insert(1, ('wiki/tools-widgets-features.html','Ecosystem tools, widgets and features','Features by category: Media, Play, Create, Data, Writing, Assessment, Classroom and Organize.'))
+RENDER=['tools-widgets-features','faq','for-educators','for-technology-admins','for-parents-and-students','support-wiki-maintenance','setup-browser','setup-mysql','setup-google-apps-script','modular-selfhost','mariadb-local','COMPLIANCE','tool-inventory','standalone-architecture']
 parser=MarkdownIt('commonmark',{'html':False}).enable('table')
 for name in RENDER:
  source=ROOT/'docs'/f'{name}.md'; body=parser.render(source.read_text())
@@ -43,7 +46,7 @@ for name in RENDER:
   url=m.group(2)
   if url.startswith(('#','http:','https:','mailto:','/')): return m.group(0)
   target=ROOT/'docs'/url.split('#')[0]; frag=('#'+url.split('#',1)[1]) if '#' in url else ''
-  return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+frag+'"'
+  return m.group(1)+'="'+os.path.relpath(target,ROOT/'wiki')+('/' if url.split('#')[0].endswith('/') else '')+frag+'"'
  body=re.sub(r'(href|src)="([^"]+)"',rel,body)
  (ROOT/'wiki'/f'{name}.html').write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape('Frequently asked questions (FAQs)' if name=='faq' else name)+' · DrawSplat Wiki</title><link rel="stylesheet" href="../assets/css/app.css"></head><body><main><article>'+body+'</article></main></body></html>')
 
@@ -67,9 +70,9 @@ def directory(current):
   if group=='For educators':items=[row for row in items if row[0] in EDUCATOR_MENU]
   rows=''.join('<li><a href="'+relative(p,current)+'">'+html.escape(t)+'</a><p>'+html.escape(d)+'</p></li>' for p,t,d in items if p!='wiki/index.html')
   blocks.append('<section class="wiki-directory-group"><h2>'+html.escape(group)+'</h2><ul>'+rows+'</ul></section>')
- return '<main><article><p class="landing-eyebrow">Official documentation · DrawSplat + SplatWorks</p><h1>DrawSplat Wiki</h1><p class="article-lede">The current reference for teaching, district installation, software licensing, pricing, privacy, and technical setup.</p><div class="wiki-start"><h2>Choose where to begin</h2><ol><li><a href="'+relative('docs/district-selfhost.html',current)+'">Install the complete district suite</a> — Docker or native, with a rerunnable Quick Start checklist.</li><li><a href="'+relative('guides/teacher-options-quick-start.html',current)+'">Get started as a teacher</a> — use your school account and open your classrooms.</li><li><a href="'+relative('wiki/compliance.html',current)+'">Review privacy and district agreements</a> — match controls and documents to your deployment.</li></ol></div><p>Search every article using the sidebar. Existing guide links remain valid. Installation checklists also work in downloaded packages; use the online wiki when checking the current release.</p><p class="wiki-audiences">Start with <a href="'+relative('wiki/for-educators.html',current)+'">Educators</a>, <a href="'+relative('wiki/for-technology-admins.html',current)+'">Technology admins</a>, or <a href="'+relative('wiki/for-parents-and-students.html',current)+'">Parents and students</a>.</p><div class="wiki-directory">'+''.join(blocks)+'</div></article></main>'
+ return '<main><article><p class="landing-eyebrow">Official documentation · DrawSplat + SplatWorks</p><h1>DrawSplat Wiki</h1><p class="article-lede">The reference for the whole DrawSplat ecosystem: standalone tools, classroom widgets, games, SplatWorks, and the whiteboard. Find component features, complete-suite installation, teaching guidance, licensing, privacy, and technical setup.</p><div class="wiki-start"><h2>Choose where to begin</h2><ol><li><a href="'+relative('wiki/tools-widgets-features.html',current)+'">Explore tools, widgets, and features by category</a> — Media, Play, Create, Data, Writing, Assessment, Classroom, and Organize.</li><li><a href="'+relative('docs/district-selfhost.html',current)+'">Install the complete district suite</a> — Docker or native, with a rerunnable Quick Start checklist.</li><li><a href="'+relative('guides/teacher-options-quick-start.html',current)+'">Get started as a teacher</a> — use your school account and open your classrooms.</li><li><a href="'+relative('wiki/compliance.html',current)+'">Review privacy and district agreements</a> — match controls and documents to your deployment.</li></ol></div><p>Search every article using the sidebar. Existing guide links remain valid. Installation checklists also work in downloaded packages; use the online wiki when checking the current release.</p><p class="wiki-audiences">Start with <a href="'+relative('wiki/for-educators.html',current)+'">Educators</a>, <a href="'+relative('wiki/for-technology-admins.html',current)+'">Technology admins</a>, or <a href="'+relative('wiki/for-parents-and-students.html',current)+'">Parents and students</a>.</p><div class="wiki-directory">'+''.join(blocks)+'</div></article></main>'
 for current in ['wiki/index.html','pages/support.html','guides/index.html']:
- (ROOT/current).write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DrawSplat Wiki · Support and documentation</title><meta name="description" content="Search DrawSplat setup, school classrooms, MariaDB/MySQL, Apps Script, licensing, pricing, OAuth, NDPA/DPA and privacy documentation."><link rel="canonical" href="https://drawsplat.org/wiki/"><link rel="stylesheet" href="'+relative('assets/css/app.css',current)+'"></head><body>'+directory(current)+'</body></html>')
+ (ROOT/current).write_text('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DrawSplat Wiki · Support and documentation</title><meta name="description" content="Explore DrawSplat ecosystem tools, widgets, games and SplatWorks features, complete-suite installation, school classrooms, licensing and privacy."><link rel="canonical" href="https://drawsplat.org/wiki/"><link rel="stylesheet" href="'+relative('assets/css/app.css',current)+'"></head><body>'+directory(current)+'</body></html>')
 
 # Rebuild the combined packet from canonical policy articles before indexing it.
 packet=[]

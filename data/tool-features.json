@@ -1,0 +1,374 @@
+{
+  "clipsplat": [
+    "Record camera video or import a local clip",
+    "Trim clips and cut unwanted sections",
+    "Add opening and closing title panels, photos, and illustrated frames",
+    "Export MP4"
+  ],
+  "whiteboard": [
+    "Draw with pens, shapes, text, images, and sticky notes",
+    "Organize multiple pages and layers",
+    "Add audio and classroom activities",
+    "Save files and export PNG or PDF",
+    "Connect optional school saving and classroom services"
+  ],
+  "gridsplat": [
+    "Enter classroom data in spreadsheet cells",
+    "Calculate with formulas",
+    "Organize tables",
+    "Create charts"
+  ],
+  "showsplat": [
+    "Create slides with text, images, tables, audio, and video",
+    "Search and organize slides",
+    "Present with speaker notes",
+    "Import and export WebDeck v5",
+    "Export PDF and ODP"
+  ],
+  "writesplat": [
+    "Write and format documents",
+    "Use readability and writing tools",
+    "Create templates and cloze activities",
+    "Export ODT documents"
+  ],
+  "listsplat": [
+    "Define fields and records",
+    "Switch between table, form, and card views",
+    "Search and organize classroom lists",
+    "Create labels and reports",
+    "Import and export CSV"
+  ],
+  "animated-gif": [
+    "Build animations from image frames",
+    "Adjust frame delay, loop count, and output size",
+    "Choose palette quality and dithering",
+    "Download GIF or export MP4/WebM"
+  ],
+  "audiosplat": [
+    "Record microphone audio and import files",
+    "Arrange and edit multitrack audio",
+    "Analyze audio levels and sample properties",
+    "Export audio locally"
+  ],
+  "big-link": [
+    "Display a large URL or short text",
+    "Add a title and note",
+    "Choose card shape and accent color",
+    "Download PNG/SVG or copy PNG"
+  ],
+  "bingo-caller": [
+    "Pick animated bingo calls",
+    "Use custom call items",
+    "Generate player cards",
+    "Repeat calls and clear player marks"
+  ],
+  "bingo-cards": [
+    "Generate multiple custom cards",
+    "Choose grid size and card colors",
+    "Add a center FREE space",
+    "Print or export all cards to PDF"
+  ],
+  "brain-sort": [
+    "Turn one-thought-per-line notes into a checklist",
+    "Group by topic, effort, or timing",
+    "Copy the result as Markdown",
+    "Optionally use a configured external AI provider"
+  ],
+  "ciphersplat": [
+    "Encrypt and decrypt local files, folders, or text",
+    "Use password-based AES-256-GCM protection",
+    "Generate passwords and passphrases",
+    "Use OpenPGP keys",
+    "Check file integrity"
+  ],
+  "clock-wizard": [
+    "Estimate task duration",
+    "Break estimates into phases",
+    "Adjust for focus level",
+    "Copy an estimate",
+    "Optionally use a configured external AI provider"
+  ],
+  "coin-flipper": [
+    "Customize coin labels, images, and colors",
+    "Flip multiple coins and track history/statistics",
+    "Use decision, team, and probability activity modes",
+    "Save or share setups and results"
+  ],
+  "coloring-book": [
+    "Choose line-art pages",
+    "Color with brush, paint bucket, or spray can",
+    "Erase and undo",
+    "Download PNG/SVG or print"
+  ],
+  "concept-map": [
+    "Connect and label ideas with nodes and connectors",
+    "Start from mind map, Frayer, KWL, fishbone, and other layouts",
+    "Attach images and links",
+    "Group nodes and present maps",
+    "Save JSON, PNG, SVG, or Markdown"
+  ],
+  "dice": [
+    "Choose d4, d6, d8, d10, d12, or d20 dice",
+    "Roll multiple dice with modifiers",
+    "Show results, products, and history",
+    "Adjust animation and sound",
+    "Share a setup link"
+  ],
+  "dicebreakers": [
+    "Create six-face prompt activities",
+    "Start with icebreaker, entry ticket, debrief, or story prompts",
+    "Choose grid or strip layouts",
+    "Export PNG, PDF, PPTX, or JSON",
+    "Share a student view"
+  ],
+  "dots-boxes": [
+    "Draw lines to claim boxes",
+    "Choose board size and player count",
+    "Play with people or computer opponents",
+    "Start a new game"
+  ],
+  "draw-sketch": [
+    "Draw freehand in a quick sketch pad",
+    "Erase marks",
+    "Center the cursor",
+    "Save PNG"
+  ],
+  "fortune-wheel": [
+    "Create a teacher-curated phrase game",
+    "Choose education categories or custom puzzles",
+    "Set up teams",
+    "Share a student link",
+    "Download the setup"
+  ],
+  "graphsplat": [
+    "Make bar, line, pie, area, scatter, and specialty charts",
+    "Create picture graphs",
+    "Plot coordinates and linear equations",
+    "Explore expressions, roots, intersections, and value tables",
+    "Construct points, segments, polygons, and circles"
+  ],
+  "markdown-studio": [
+    "Write Markdown with rendered preview and HTML output",
+    "Import files or convert pasted HTML",
+    "Find and replace text",
+    "Copy formatted content or WordPress block code",
+    "Export Markdown, HTML, DOCX, or ODT"
+  ],
+  "mediasplat": [
+    "Inspect local audio and video",
+    "Trim, split, and join media",
+    "Convert supported media formats",
+    "Download results and multi-part ZIP output"
+  ],
+  "meme-puzzle": [
+    "Create question-and-answer image puzzles",
+    "Choose a sample image or upload your own",
+    "Import JSON, CSV, or Excel activity data",
+    "Share a student link",
+    "Download the setup"
+  ],
+  "memesplat": [
+    "Choose classroom templates or a local image",
+    "Add top/bottom captions and a small label",
+    "Adjust font, outline, color, and canvas shape",
+    "Download PNG or copy the image"
+  ],
+  "mermaid": [
+    "Create diagrams from text with live preview",
+    "Start with flowchart, sequence, mind map, Gantt, and other templates",
+    "Choose language and palette",
+    "Export SVG/PNG or copy PNG"
+  ],
+  "pdfsplat": [
+    "Open, combine, split, reorder, and rotate PDF pages",
+    "Add text, highlights, drawings, images, and signatures",
+    "Crop, deskew, protect, and convert supported files",
+    "Export PDF, images, document, and ebook formats",
+    "Present PDFs with full screen, timed slideshows, and WebDeck v5 export"
+  ],
+  "qrsplat": [
+    "Create QR codes for links, text, email, phone, or Wi-Fi",
+    "Customize colors, dots, size, and center image",
+    "Save designs locally",
+    "Copy or download PNG/SVG",
+    "Create and update editable QR codes with a separately configured service"
+  ],
+  "quiz-flashcards": [
+    "Build multiple-choice, true/false, and short-answer questions",
+    "Run self-paced or teacher-led quizzes with players or teams",
+    "Turn questions into printable flashcards",
+    "Import/export question sets",
+    "Export report CSV"
+  ],
+  "rubric-builder": [
+    "Start from project, writing, presentation, or collaboration templates",
+    "Edit criteria and performance levels",
+    "Add criteria and levels",
+    "Copy text, download CSV, or print"
+  ],
+  "sketchspace-vr": [
+    "Print a student room template",
+    "Upload a photographed drawing and crop its panels",
+    "Build an immersive room or load a curriculum starter",
+    "Use split view, motion look, VR glasses, or full screen",
+    "Download room face images"
+  ],
+  "splatbot": [
+    "Program a virtual robot using blocks or words",
+    "Run missions and story challenges",
+    "Create and import mission packs",
+    "Explore TEKS, NGSS, and Common Core activities",
+    "Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX"
+  ],
+  "splatimage": [
+    "Edit images with layers, text, shapes, and annotations",
+    "Crop, mask, adjust photos, and apply effects",
+    "Remove colors or backgrounds",
+    "Capture screens and paste clipboard images",
+    "Export PNG, selections, GIFs, or image frames"
+  ],
+  "step-splat": [
+    "Break a task into small action steps",
+    "Adjust how detailed the breakdown is",
+    "Copy steps as Markdown",
+    "Optionally use a configured external AI provider"
+  ],
+  "story-wheel": [
+    "Create story summaries or sequencing activities",
+    "Choose three, five, or seven events",
+    "Add event text and images",
+    "Spin and preview the wheel",
+    "Print, save PNG, or share a link"
+  ],
+  "toneshifter": [
+    "Rewrite a draft for a selected tone",
+    "Adjust rewrite intensity",
+    "Compare changes with a diff",
+    "Copy the rewrite or reuse it as input",
+    "Optionally use a configured external AI provider"
+  ],
+  "vibe-check": [
+    "Review the likely tone of a written message",
+    "Try example messages",
+    "Copy the analysis",
+    "Optionally use a configured external AI provider"
+  ],
+  "videosplat": [
+    "Import and edit video locally",
+    "Arrange clips and add named timeline markers",
+    "Add captions",
+    "Use privacy tools",
+    "Export finished video"
+  ],
+  "wheel-spinner": [
+    "Paste or import a list of entries",
+    "Shuffle entries and choose a color palette",
+    "Spin for a random selection",
+    "Remove the winner for subsequent picks"
+  ],
+  "wordsearch": [
+    "Generate vocabulary puzzles from custom word lists",
+    "Use TEKS-inspired vocabulary sets",
+    "Choose grid size and word directions",
+    "Show the answer key",
+    "Print or share a puzzle link"
+  ],
+  "castles": [
+    "Aim catapults using angle and power",
+    "Choose different ammunition",
+    "Play against the computer or a local opponent",
+    "Account for wind",
+    "Request or offer surrender"
+  ],
+  "flood-fill": [
+    "Merge colors from the corner to fill the board",
+    "Choose beginner, intermediate, or expert board sizes",
+    "Choose color count",
+    "Start new games and toggle sound"
+  ],
+  "flow-free": [
+    "Connect matching terminals without crossing paths",
+    "Choose four grid difficulty levels",
+    "Reset the puzzle",
+    "Toggle sound"
+  ],
+  "fun-quiz": [
+    "Choose themed character trivia packs",
+    "Answer questions in a guided quiz",
+    "Advance through each pack"
+  ],
+  "gilasplat": [
+    "Explore a desert-burrow maze",
+    "Collect eggs and avoid hazards",
+    "Choose difficulty and starting level",
+    "Watch the timer",
+    "Pause, replay, or view the legend"
+  ],
+  "lights-out": [
+    "Toggle cells and their neighboring lights",
+    "Clear grids at three difficulty levels",
+    "Choose visual themes",
+    "Start new puzzles"
+  ],
+  "splatball": [
+    "Play a paddle-rally arcade match",
+    "Choose person-versus-person, person-versus-computer, or computer-versus-computer",
+    "Set AI difficulty and paddle colors",
+    "Choose the winning score",
+    "Pause and rematch"
+  ],
+  "squirrel-run": [
+    "Dodge traffic and collect acorns",
+    "Reach the tree hollow",
+    "Choose difficulty",
+    "Use keyboard or on-screen direction controls",
+    "Pause or reset"
+  ],
+  "star-trek": [
+    "Navigate a starship through sectors and quadrants",
+    "Use scanners, phasers, torpedoes, and shields",
+    "Consult mission logs and the library computer",
+    "Choose difficulty",
+    "Start a new mission"
+  ],
+  "tangram": [
+    "Drag blocks into silhouettes",
+    "Rotate selected pieces",
+    "Choose beginner, intermediate, or advanced puzzles",
+    "Reset the puzzle"
+  ],
+  "typing-games": [
+    "Choose Paws & Keys Adventure, Cipher Chase, Wordfall Reactor, or Story Sprint",
+    "Open each typing adventure independently",
+    "Choose age-appropriate play and passage practice"
+  ],
+  "paws-and-keys": [
+    "Practice typing with kitten and puppy characters",
+    "Explore twelve gentle trails",
+    "Use activities designed for ages 4–9"
+  ],
+  "road-rally": [
+    "Steer an overhead spy car",
+    "Type words to clear rivals",
+    "Protect civilians",
+    "Choose grade-band vocabulary"
+  ],
+  "block-zap": [
+    "Connect words on a letter-tile board",
+    "Play against the computer",
+    "Use everyday words or TEKS vocabulary",
+    "Choose grade-band activities"
+  ],
+  "passage-coach": [
+    "Practice typing passages",
+    "Track speed and accuracy",
+    "Import classroom text",
+    "Choose grade-band activities"
+  ],
+  "untangle": [
+    "Drag graph nodes until edges no longer cross",
+    "Choose beginner, intermediate, or advanced puzzles",
+    "Reset or skip a puzzle",
+    "Toggle sound"
+  ]
+}

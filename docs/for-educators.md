@@ -2,6 +2,8 @@
 
 Make lessons visual. Let students draw, write, record an explanation, or show what they learned. Start with a blank board, then add the tools your lesson needs.
 
+DrawSplat includes the whiteboard, standalone tools and widgets, games, and SplatWorks. [Browse ecosystem features by category](../wiki/tools-widgets-features.html) to choose the component for your activity.
+
 ## Start a lesson
 
 1. Open the whiteboard from your school’s link, or [open DrawSplat](../app/whiteboard.html).
