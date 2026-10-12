@@ -23,9 +23,6 @@ body[data-wiki]{--wiki-ink:#262138;--wiki-purple:#5a22b5;--wiki-paper:#fffdf8;--
 [data-wiki] .splatworks-suite-card,[data-wiki] .studio-detail-card{min-width:0}
 [data-wiki] .wiki-reading main{overflow-wrap:break-word}
 
-.wiki-faq-menu{margin:0 0 8px 10px;border-left:1px solid #d9cde9;padding-left:10px}
-.wiki-faq-menu>summary{font-size:12px;padding:6px 0;color:var(--wiki-muted);cursor:pointer}
-.wiki-sidebar .wiki-faq-menu a{font-size:12px;padding:5px 4px}
 .wiki-faq-jumps{margin:24px 0 32px;padding:16px 20px;border:1px solid var(--wiki-line);border-radius:6px;background:#f4f0fa}
 .wiki-faq-jumps p{margin:0 0 10px;font-size:14px;font-weight:650}
 .wiki-faq-jumps ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 22px;list-style:none;margin:0;padding:0}

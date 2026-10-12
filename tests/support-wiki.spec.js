@@ -141,9 +141,10 @@ test('developer page is last in Wiki topics and addresses project contact correc
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  await page.goto('/wiki/?q=developer+multilingual');await expect(page.locator('.wiki-results a').filter({hasText:'About the Developer'})).toBeVisible();
 });
-test('FAQ submenu jumps to seven sections and separates Docker and native ports',async({page})=>{
- await page.goto('/wiki/');await page.locator('.wiki-faq-menu>summary').click();
- await page.locator('.wiki-faq-menu').getByRole('link',{name:'Saving and sharing',exact:true}).click();
+test('FAQ page menu jumps to seven sections and separates Docker and native ports',async({page})=>{
+ await page.goto('/wiki/');await expect(page.locator('.wiki-faq-menu')).toHaveCount(0);
+ await page.getByRole('navigation',{name:'Wiki topics'}).getByRole('link',{name:'Frequently asked questions (FAQs)',exact:true}).click();
+ await page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link',{name:'Saving and sharing',exact:true}).click();
  await expect(page).toHaveURL(/faq.html#saving-and-sharing$/);
  await expect(page.getByRole('navigation',{name:'FAQ sections'}).getByRole('link')).toHaveCount(7);
  await expect(page.locator('main hr')).toHaveCount(6);

@@ -6,10 +6,11 @@ Edit original HTML/Markdown articles, then rerun this script. No server required
 from pathlib import Path
 from html.parser import HTMLParser
 from markdown_it import MarkdownIt
-import html, json, re, os
+import html, json, re, os, hashlib
 from urllib.parse import urlencode
 from site_navigation import nav_html
 ROOT=Path(__file__).resolve().parents[1]
+WIKI_CSS_VERSION=hashlib.sha256((ROOT/'assets/css/support-wiki.css').read_bytes()).hexdigest()[:10]
 GROUPS={
  'Start here': [('wiki/index.html','DrawSplat Wiki','Find current setup, classroom, licensing, pricing, and privacy guidance.'),('docs/district-selfhost.html','District installation · Quick Start','Complete package, Docker or native, first-time setup, backup and recovery.'),('pages/download.html','Downloads and packages','Complete district suite and individual application downloads.'),('guides/teacher-options-quick-start.html','Teacher Quick Start','School sign-in, blank board, classroom access, and everyday saving.')],
  'For educators': [('wiki/for-educators.html','For educators','Teacher guides, classroom activities, backgrounds, features, and family resources.'),('pages/features.html','Features','Whiteboard capabilities and classroom uses.'),('pages/background-templates.html','Background template collection','Ready-to-use backgrounds and activity prompts.'),('parents/index.html','Family Access Tools','Configured Apps Script family requests and school privacy contacts.'),('wiki/district-classrooms.html','District classrooms and rosters','CSV imports, Google school accounts, assignments, turn-ins and teacher feedback.'),('guides/core-whiteboard-tools.html','Core whiteboard tools','Drawing, selection, pages, layers, notes, audio and video.'),('guides/saving-exporting.html','Saving and exporting','Device autosave, online boards, restore points, file backups and exports.'),('guides/collaboration-turn-ins.html','Collaboration and turn-ins','District assignments and the separate Apps Script shared-room workflow.'),('guides/templates-backgrounds.html','Templates and backgrounds','Plain white first launch, optional grids, templates and classroom prompts.'),('guides/images-stickers-coloring.html','Images, stickers and coloring','Media, stickers and coloring activities.'),('guides/classroom-widgets-tools.html','Classroom widgets and tools','Timers, classroom widgets and embedded tools.'),('guides/diagrams-maps-word-clouds.html','Diagrams, maps and word clouds','Visual thinking and diagrams.'),('guides/graphs-picture-graphs.html','Graphs and picture graphs','Data displays and graph makers.'),('guides/scratchart.html','Scratch art','Create and export scratch art.'),('guides/project-reference.html','Whiteboard feature reference','Current features, storage choices and shortcuts.')],
@@ -106,7 +107,7 @@ for group,items in GROUPS.items():
    s=re.sub(r'<footer\b.*?</footer>','',s,flags=re.S)
    s=re.sub(r'<link[^>]*href="[^\"]*support-wiki.css[^\"]*"[^>]*>','',s)
    s=re.sub(r'<script[^>]*src="[^\"]*support-(?:wiki|index).js[^\"]*"[^>]*></script>','',s)
-   s=s.replace('</head>','<link rel="stylesheet" href="'+relative('assets/css/support-wiki.css',path)+'"></head>')
+   s=s.replace('</head>','<link rel="stylesheet" href="'+relative('assets/css/support-wiki.css',path)+'?v='+WIKI_CSS_VERSION+'"></head>')
    s=re.sub(r'<body([^>]*)>',lambda m:'<body'+m.group(1)+' data-wiki="true">' if 'data-wiki' not in m.group(1) else m.group(0),s,count=1)
    match=re.search(r'<main\b.*?</main>',s,re.S)
    if not match:raise ValueError('Missing main '+path)
@@ -135,8 +136,6 @@ for group,items in GROUPS.items():
     for target,label,_ in rows:
      active=target==path or (target=='wiki/index.html' and path in ['guides/index.html','pages/support.html'])
      item='<li><a '+('aria-current="page" ' if active else '')+'href="'+relative(target,path)+'">'+html.escape(label)+'</a>'
-     if target=='wiki/faq.html':
-      item+='<details class="wiki-faq-menu"'+(' open' if path==target else '')+'><summary>FAQ topics</summary><ul>'+faq_links(path)+'</ul></details>'
      links+=item+'</li>'
     nav.append('<section><h2>'+html.escape(category)+'</h2><ul>'+links+'</ul></section>')
    source_path='docs/'+Path(path).stem+'.md' if path.startswith('wiki/') and Path(path).stem in RENDER else path
