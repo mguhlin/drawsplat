@@ -405,7 +405,7 @@
     </main>
   </div>
 
-  <script src="./locales.js"></script>
+  <script src="./locales.js?v=20261012-qa"></script>
   <script>
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
@@ -424,7 +424,12 @@
       for (const row of rows) {
         let parts = row.split("\t");
         if (parts.length < 2) parts = row.split("|");
-        if (parts.length < 2) parts = row.split(",");
+        if (parts.length < 2) {
+          const parsed = parseCsvQuestions(row)[0];
+          if (parsed) out.push(parsed);
+          if (out.length >= limit) break;
+          continue;
+        }
         const question = (parts.shift() || "").trim();
         const answer = parts.join(" ").trim();
         if (question && answer) out.push({ question, answer });
@@ -622,8 +627,10 @@
       return rows
         .slice(hasHeader ? 1 : 0)
         .map(values => ({
-          question: String(values[qIndex] ?? "").trim(),
-          answer: String(values[aIndex] ?? "").trim(),
+          // Legacy unquoted CSV separates the answer at the last comma.
+          // Quoted CSV, tabs, and pipes preserve punctuation in either field.
+          question: String(!hasHeader && values.length > 2 ? values.slice(0, -1).join(",") : values[qIndex] ?? "").trim(),
+          answer: String(!hasHeader && values.length > 2 ? values.at(-1) : values[aIndex] ?? "").trim(),
         }))
         .filter(item => item.question && item.answer)
         .slice(0, 30);

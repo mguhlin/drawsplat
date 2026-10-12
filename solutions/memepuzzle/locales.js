@@ -39,7 +39,7 @@ WidgetI18n.register('memepuzzle', {
 
     'field.qa':           'Questions and Answers',
     'qa.default':         'What do plants need to make food?,sunlight\nWhat force pulls objects toward Earth?,gravity\nWhat is the bottom number of a fraction called?,denominator\nWhat is the main idea of a text called?,theme\nWhat do we call a living thing?,organism\nWhat type of source comes from the time being studied?,primary source\nWhat is water as a gas called?,vapor\nWhat operation finds the total?,addition\nWhat is an educated guess called?,hypothesis\nWhat is the place where an organism lives?,habitat',
-    'help.qa.html':       'Use one line per item: <strong>question,answer</strong>. You can also use <strong>question | answer</strong> or tab-separated text.',
+    'help.qa.html':       'Use one line per item: <strong>question | answer</strong> or tab-separated text to keep commas in either field. For <strong>question,answer</strong>, the last comma separates the answer. CSV files can also use quoted fields.',
 
     'button.preview':     'Update Preview',
     'button.copyLink':    'Copy Student Link',
