@@ -122,6 +122,9 @@ Category: **Create** · 18 components
 - Edit images with layers, text, shapes, and annotations
 - Crop, mask, adjust photos, and apply effects
 - Remove colors or backgrounds
+- Green screen: remove green, blue, or a sampled color with tolerance and edge smoothing; export transparent PNGs or apply removal to the selected image layer
+- Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
+- Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
@@ -224,6 +227,8 @@ Category: **Create** · 18 components
 
 - Import, arrange, split, trim, and edit video, audio, and images on a layered timeline
 - Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both
+- Green screen: remove green or blue backgrounds from selected video/image clips; choose a screen color and adjust tolerance, edge smoothing, and spill reduction so lower timeline layers show through in the preview and exported video
+- Use green-screen removal while recording the camera alone or over a screen capture; choose a replacement background image and adjust keying controls before recording. Processing stays local
 - Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing
 - Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position
 - Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files
@@ -434,6 +439,9 @@ Category: **Media** · 7 components
 - Edit images with layers, text, shapes, and annotations
 - Crop, mask, adjust photos, and apply effects
 - Remove colors or backgrounds
+- Green screen: remove green, blue, or a sampled color with tolerance and edge smoothing; export transparent PNGs or apply removal to the selected image layer
+- Green Screen Studio (Effects menu): combine background, subject, and foreground-overlay layers from photos or a live camera; adjust color removal, spill suppression, position, size, rotation, flip, crop, and erase/restore masks
+- Save a Green Screen Studio scene as a PNG or add it as one image layer; choose HD, Full HD, square, or portrait output. Camera support captures still images, not video recordings; scene processing stays local
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
@@ -469,6 +477,8 @@ Category: **Media** · 7 components
 
 - Import, arrange, split, trim, and edit video, audio, and images on a layered timeline
 - Add named timeline markers, titles, effects, transitions, and mixed audio; record screen, camera, or both
+- Green screen: remove green or blue backgrounds from selected video/image clips; choose a screen color and adjust tolerance, edge smoothing, and spill reduction so lower timeline layers show through in the preview and exported video
+- Use green-screen removal while recording the camera alone or over a screen capture; choose a replacement background image and adjust keying controls before recording. Processing stays local
 - Import and export SRT and WebVTT (.vtt) captions; edit caption tracks and adjust subtitle styling and timing
 - Generate English subtitles locally from a selected video/audio clip or recording; review words and timing and add captions at the clip’s timeline position
 - Export separate caption files or burn visible subtitles permanently into the finished video; keep editable captions in project files
