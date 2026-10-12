@@ -21,4 +21,13 @@ for category in registry['categories']:
         lines += ['### '+t['name'], '', '**'+t['type'].capitalize()+'** · [Open '+t['name']+'](..'+url+')', '']
         lines += ['- '+f for f in features[t['id']]] + ['']
 lines += ['## Widgets inside the whiteboard', '', 'These classroom widgets are opened on a whiteboard page. Use the [classroom widgets guide](../guides/classroom-widgets-tools.html) for the board workflow.', '', '| Category | Widget | Features |', '| --- | --- | --- |', '| Classroom | Poll | Collect quick visible responses. |', '| Classroom | Random Pick | Choose names, groups, or topics. |', '| Classroom | Wheel Spinner | Spin options for prompts or teams. |', '| Classroom | Timer | Show work time directly on the board. |', '| Classroom | Traffic Light | Display classroom status. |', '| Classroom | Work Mode | Display the current classroom working mode. |', '| Classroom / Play | Scoreboard | Track review-game scores. |', '| Classroom / Play | Progress Race | Track group progress. |', '| Classroom | Big Link | Post a large readable URL or resource link. |', '']
+lines += ['## Meme Puzzle instructional activity library', '', '[Browse and filter the PuzzleMaker Library](../solutions/memepuzzle/library/) by grade band or content area, then download a ready-to-use setup. Students answer questions to reveal image tiles. The following topics and standards labels come from the bundled activity metadata; suggested classroom uses elsewhere on this page are teaching ideas rather than additional built-in lesson packs.', '', '| Activity | Grades | Subject | Standards labels in the activity |', '| --- | --- | --- |']
+library = ROOT/'solutions/memepuzzle/library'
+import re
+files = re.findall(r'"([^"/]+\.json)"', (library/'index.html').read_text())
+for name in files:
+    activity = json.loads((library/name).read_text())
+    meta = activity['metadata']
+    lines.append('| '+activity['title']+' | '+meta['gradeBand']+' | '+meta['subject']+' | '+', '.join(meta['standards'])+' |')
+lines += ['']
 (ROOT/'docs/tools-widgets-features.md').write_text('\n'.join(lines))

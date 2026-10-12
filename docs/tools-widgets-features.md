@@ -33,6 +33,7 @@ Category: **Create** · 18 components
 - Download GIF or export MP4/WebM
 - Import formats: PNG, JPEG, WebP, and GIF image frames
 - Output formats: GIF animation; MP4 or WebM video according to browser export support
+- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
 
 ### AudioSplat
 
@@ -45,6 +46,7 @@ Category: **Create** · 18 components
 - Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript
 - Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
 - Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
+- Suggested classroom uses: student podcasts, oral explanations, reading-fluency recordings, interviews, and accessible transcripts
 
 ### ClipSplat
 
@@ -56,6 +58,7 @@ Category: **Create** · 18 components
 - Export MP4
 - Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
 - Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
+- Suggested classroom uses: record a short explanation, create a project introduction, or combine a demonstration with title panels and image cards
 
 ### Coloring Book
 
@@ -65,6 +68,7 @@ Category: **Create** · 18 components
 - Color with brush, paint bucket, or spray can
 - Erase and undo
 - Download PNG/SVG or print
+- Suggested classroom uses: art practice, fine-motor/color exploration, and annotated visual responses using printable line-art pages
 
 ### Concept Map Studio
 
@@ -75,6 +79,8 @@ Category: **Create** · 18 components
 - Attach images and links
 - Group nodes and present maps
 - Save JSON, PNG, SVG, or Markdown
+- Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
+- Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
 
 ### Draw & Sketch
 
@@ -84,6 +90,7 @@ Category: **Create** · 18 components
 - Erase marks
 - Center the cursor
 - Save PNG
+- Suggested classroom uses: quick visual explanations, labeled sketches, drawing warm-ups, and sharing a PNG of student work
 
 ### DrawSplat Whiteboard
 
@@ -104,6 +111,9 @@ Category: **Create** · 18 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
+- Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
 
 ### ImageSplat™
 
@@ -114,6 +124,7 @@ Category: **Create** · 18 components
 - Remove colors or backgrounds
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
+- Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
 
 ### MediaSplat
 
@@ -127,6 +138,7 @@ Category: **Create** · 18 components
 - Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding
 - Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
 - Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
+- Suggested classroom uses: cut lesson recordings into shorter sections, join student recordings, and create subtitles/transcripts for learning resources
 
 ### Meme Puzzle
 
@@ -137,6 +149,10 @@ Category: **Create** · 18 components
 - Import JSON, CSV, or Excel activity data
 - Share a student link
 - Download the setup
+- Instructional activity: students answer content questions to reveal the image one tile at a time; teachers can adapt questions and share a student activity
+- Built-in [PuzzleMaker Library](../solutions/memepuzzle/library/) includes 31 instructional activities across K–2, 3–5, 6–8, and 9–12, including six English/Spanish bilingual activities
+- Library subjects include science, mathematics, English language arts, social studies, and biology; examples include plant needs, equivalent fractions, water cycle, text evidence, map skills, and cellular energy
+- Activity metadata includes grade band, subject, and TEKS, NGSS, or Common Core references where supplied; download a ready-to-use JSON setup from the library
 
 ### MemeSplat™
 
@@ -146,6 +162,8 @@ Category: **Create** · 18 components
 - Add top/bottom captions and a small label
 - Adjust font, outline, color, and canvas shape
 - Download PNG or copy the image
+- Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues
+- Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content
 
 ### Mermaid Diagram
 
@@ -155,6 +173,7 @@ Category: **Create** · 18 components
 - Start with flowchart, sequence, mind map, Gantt, and other templates
 - Choose language and palette
 - Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### QRSplat Studio
 
@@ -165,6 +184,7 @@ Category: **Create** · 18 components
 - Save designs locally
 - Copy or download PNG/SVG
 - Create and update editable QR codes with a separately configured service
+- Suggested classroom uses: link printed activity stations, displays, or handouts to classroom resources; editable codes need a configured service
 
 ### ShowSplat
 
@@ -185,6 +205,9 @@ Category: **Create** · 18 components
 - Build an immersive room or load a curriculum starter
 - Use split view, motion look, VR glasses, or full screen
 - Download room face images
+- [Teacher guide](../solutions/sketchspace-VR/teacher.html) includes lesson ideas, ready-to-use prompts, printable/digital room workflows, and quick assessment
+- Built-in student starter layouts cover citizenship, ecosystems and adaptations, geography, history, life cycles, and weather/water cycle
+- Suggested classroom uses: create an immersive content model, label its panels, and explain relationships or processes
 
 ### Tangram Packing
 
@@ -208,6 +231,7 @@ Category: **Create** · 18 components
 - Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser
 - Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
 - Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
+- Suggested classroom uses: student documentaries, demonstrations, screencasts, narrated explanations, and captioned learning resources
 
 ## Graph & Visualize Data
 
@@ -222,6 +246,9 @@ Category: **Data** · 3 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
+- Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
 
 ### GridSplat
 
@@ -254,6 +281,7 @@ Category: **Organize** · 11 components
 - Group by topic, effort, or timing
 - Copy the result as Markdown
 - Optionally use a configured external AI provider
+- Suggested classroom uses: sort project ideas, organize research or planning notes, and turn a task brainstorm into a checklist
 
 ### Clock Wizard
 
@@ -264,6 +292,7 @@ Category: **Organize** · 11 components
 - Adjust for focus level
 - Copy an estimate
 - Optionally use a configured external AI provider
+- Suggested classroom uses: estimate project phases, plan work time, and reflect on an estimate versus actual time
 
 ### Concept Map Studio
 
@@ -274,6 +303,8 @@ Category: **Organize** · 11 components
 - Attach images and links
 - Group nodes and present maps
 - Save JSON, PNG, SVG, or Markdown
+- Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams
+- Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas
 
 ### DrawSplat Whiteboard
 
@@ -313,6 +344,7 @@ Category: **Organize** · 11 components
 - Find and replace text
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
+- Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
 
 ### Mermaid Diagram
 
@@ -322,6 +354,7 @@ Category: **Organize** · 11 components
 - Start with flowchart, sequence, mind map, Gantt, and other templates
 - Choose language and palette
 - Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### PDFsplat
 
@@ -332,6 +365,7 @@ Category: **Organize** · 11 components
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
+- Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 
 ### Step-Splat
 
@@ -341,6 +375,7 @@ Category: **Organize** · 11 components
 - Adjust how detailed the breakdown is
 - Copy steps as Markdown
 - Optionally use a configured external AI provider
+- Suggested classroom uses: break an assignment or project into manageable action steps and build planning routines
 
 ### Untangle
 
@@ -365,6 +400,7 @@ Category: **Media** · 7 components
 - Download GIF or export MP4/WebM
 - Import formats: PNG, JPEG, WebP, and GIF image frames
 - Output formats: GIF animation; MP4 or WebM video according to browser export support
+- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
 
 ### AudioSplat
 
@@ -377,6 +413,7 @@ Category: **Media** · 7 components
 - Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript
 - Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser
 - Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT
+- Suggested classroom uses: student podcasts, oral explanations, reading-fluency recordings, interviews, and accessible transcripts
 
 ### ClipSplat
 
@@ -388,6 +425,7 @@ Category: **Media** · 7 components
 - Export MP4
 - Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
 - Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
+- Suggested classroom uses: record a short explanation, create a project introduction, or combine a demonstration with title panels and image cards
 
 ### ImageSplat™
 
@@ -398,6 +436,7 @@ Category: **Media** · 7 components
 - Remove colors or backgrounds
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
+- Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
 
 ### MediaSplat
 
@@ -411,6 +450,7 @@ Category: **Media** · 7 components
 - Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding
 - Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP
 - Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions
+- Suggested classroom uses: cut lesson recordings into shorter sections, join student recordings, and create subtitles/transcripts for learning resources
 
 ### MemeSplat™
 
@@ -420,6 +460,8 @@ Category: **Media** · 7 components
 - Add top/bottom captions and a small label
 - Adjust font, outline, color, and canvas shape
 - Download PNG or copy the image
+- Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues
+- Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content
 
 ### VideoSplat
 
@@ -434,6 +476,7 @@ Category: **Media** · 7 components
 - Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser
 - Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON
 - Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions
+- Suggested classroom uses: student documentaries, demonstrations, screencasts, narrated explanations, and captioned learning resources
 
 ## Write, Present & Organize Work
 
@@ -447,6 +490,7 @@ Category: **Writing** · 20 components
 - Add a title and note
 - Choose card shape and accent color
 - Download PNG/SVG or copy PNG
+- Suggested classroom uses: project a readable lesson/resource link or print a resource card for an activity station
 
 ### Brain Sort
 
@@ -456,6 +500,7 @@ Category: **Writing** · 20 components
 - Group by topic, effort, or timing
 - Copy the result as Markdown
 - Optionally use a configured external AI provider
+- Suggested classroom uses: sort project ideas, organize research or planning notes, and turn a task brainstorm into a checklist
 
 ### Cipher Chase
 
@@ -477,6 +522,7 @@ Category: **Writing** · 20 components
 - Generate passwords and passphrases
 - Use OpenPGP keys
 - Check file integrity
+- Suggested classroom uses: demonstrate encryption, passwords, keys, integrity checks, and responsible protection of files using sample data
 
 ### GridSplat
 
@@ -506,6 +552,7 @@ Category: **Writing** · 20 components
 - Find and replace text
 - Copy formatted content or WordPress block code
 - Export Markdown, HTML, DOCX, or ODT
+- Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map
 
 ### Mermaid Diagram
 
@@ -515,6 +562,7 @@ Category: **Writing** · 20 components
 - Start with flowchart, sequence, mind map, Gantt, and other templates
 - Choose language and palette
 - Export SVG/PNG or copy PNG
+- Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates
 
 ### Paws & Keys Adventure
 
@@ -535,6 +583,7 @@ Category: **Writing** · 20 components
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
+- Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 
 ### Rubric Builder
 
@@ -544,6 +593,8 @@ Category: **Writing** · 20 components
 - Edit criteria and performance levels
 - Add criteria and levels
 - Copy text, download CSV, or print
+- Instructional rubric templates cover projects, writing, presentations, and collaboration
+- Suggested classroom uses: clarify success criteria, support self/peer assessment, and give criterion-based feedback
 
 ### ShowSplat
 
@@ -575,6 +626,8 @@ Category: **Writing** · 20 components
 - Add event text and images
 - Spin and preview the wheel
 - Print, save PNG, or share a link
+- Instructional activity modes include Story Summary, Multimedia Summary, and Sequencing Practice
+- Suggested classroom uses: retell a text, put events in order, summarize key events, and support writing with images
 
 ### Toneshifter
 
@@ -585,6 +638,7 @@ Category: **Writing** · 20 components
 - Compare changes with a diff
 - Copy the rewrite or reuse it as input
 - Optionally use a configured external AI provider
+- Suggested classroom uses: compare tone choices for different audiences and revise a draft while discussing meaning and voice
 
 ### Typing Games
 
@@ -604,6 +658,7 @@ Category: **Writing** · 20 components
 - Try example messages
 - Copy the analysis
 - Optionally use a configured external AI provider
+- Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication
 
 ### Word Search Maker
 
@@ -614,6 +669,8 @@ Category: **Writing** · 20 components
 - Choose grid size and word directions
 - Show the answer key
 - Print or share a puzzle link
+- Built-in TEKS-inspired vocabulary presets span K–2, 3–5, 6–8, and 9–12 in science, mathematics, English language arts, and social studies, plus Spanish-language and health/fine-arts/technology word lists
+- Suggested classroom uses: introduce unit vocabulary, reinforce spelling and word recognition, and print differentiated review puzzles
 
 ### Wordfall Reactor
 
@@ -647,6 +704,7 @@ Category: **Assessment** · 18 components
 - Use custom call items
 - Generate player cards
 - Repeat calls and clear player marks
+- Suggested classroom uses: lead a bingo review game with custom curriculum call items and student player cards
 
 ### Bingo Card Generator
 
@@ -656,6 +714,7 @@ Category: **Assessment** · 18 components
 - Choose grid size and card colors
 - Add a center FREE space
 - Print or export all cards to PDF
+- Suggested classroom uses: create vocabulary, math-fact, or concept-review bingo cards from a teacher-supplied word/phrase list
 
 ### Cipher Chase
 
@@ -676,6 +735,8 @@ Category: **Assessment** · 18 components
 - Flip multiple coins and track history/statistics
 - Use decision, team, and probability activity modes
 - Save or share setups and results
+- Built-in activity modes include probability trials, intuition/luck tests, team choosing, tie breakers, and best-two-of-three decisions
+- Suggested classroom uses: collect trial data, compare observed outcomes, and discuss randomness and fairness
 
 ### Dice Roller
 
@@ -686,6 +747,7 @@ Category: **Assessment** · 18 components
 - Show results, products, and history
 - Adjust animation and sound
 - Share a setup link
+- Suggested classroom uses: probability trials, number operations, classroom game moves, and random choices; multiple dice and the product display support arithmetic activities
 
 ### Dicebreaker Creator
 
@@ -696,6 +758,8 @@ Category: **Assessment** · 18 components
 - Choose grid or strip layouts
 - Export PNG, PDF, PPTX, or JSON
 - Share a student view
+- Built-in prompt starts support entry tickets, debriefs, roll-a-story writing, and get-to-know-you icebreakers
+- Suggested classroom uses: discussion warm-ups, reflection, creative writing, and classroom community building
 
 ### Fun Quiz
 
@@ -714,6 +778,9 @@ Category: **Assessment** · 18 components
 - Plot coordinates and linear equations
 - Explore expressions, roots, intersections, and value tables
 - Construct points, segments, polygons, and circles
+- Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces
+- [Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions
+- Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations
 
 ### Paws & Keys Adventure
 
@@ -734,6 +801,8 @@ Category: **Assessment** · 18 components
 - Turn questions into printable flashcards
 - Import/export question sets
 - Export report CSV
+- Built-in science question sets include 20-question samples for grade 3 science, grade 5 science, and grade 10 biology, aligned to TEKS topics
+- Suggested classroom uses: formative checks, self-paced retrieval practice, team review, and printable vocabulary or concept flashcards
 
 ### Rubric Builder
 
@@ -743,6 +812,8 @@ Category: **Assessment** · 18 components
 - Edit criteria and performance levels
 - Add criteria and levels
 - Copy text, download CSV, or print
+- Instructional rubric templates cover projects, writing, presentations, and collaboration
+- Suggested classroom uses: clarify success criteria, support self/peer assessment, and give criterion-based feedback
 
 ### SplatBot Studio
 
@@ -753,6 +824,8 @@ Category: **Assessment** · 18 components
 - Create and import mission packs
 - Explore TEKS, NGSS, and Common Core activities
 - Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX
+- Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary
+- Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels
 
 ### Story Sprint
 
@@ -774,6 +847,7 @@ Category: **Assessment** · 18 components
 - Compare changes with a diff
 - Copy the rewrite or reuse it as input
 - Optionally use a configured external AI provider
+- Suggested classroom uses: compare tone choices for different audiences and revise a draft while discussing meaning and voice
 
 ### Typing Games
 
@@ -793,6 +867,7 @@ Category: **Assessment** · 18 components
 - Try example messages
 - Copy the analysis
 - Optionally use a configured external AI provider
+- Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication
 
 ### Word Search Maker
 
@@ -803,6 +878,8 @@ Category: **Assessment** · 18 components
 - Choose grid size and word directions
 - Show the answer key
 - Print or share a puzzle link
+- Built-in TEKS-inspired vocabulary presets span K–2, 3–5, 6–8, and 9–12 in science, mathematics, English language arts, and social studies, plus Spanish-language and health/fine-arts/technology word lists
+- Suggested classroom uses: introduce unit vocabulary, reinforce spelling and word recognition, and print differentiated review puzzles
 
 ### Wordfall Reactor
 
@@ -827,6 +904,7 @@ Category: **Classroom** · 22 components
 - Add a title and note
 - Choose card shape and accent color
 - Download PNG/SVG or copy PNG
+- Suggested classroom uses: project a readable lesson/resource link or print a resource card for an activity station
 
 ### Bingo Caller
 
@@ -836,6 +914,7 @@ Category: **Classroom** · 22 components
 - Use custom call items
 - Generate player cards
 - Repeat calls and clear player marks
+- Suggested classroom uses: lead a bingo review game with custom curriculum call items and student player cards
 
 ### Bingo Card Generator
 
@@ -845,6 +924,7 @@ Category: **Classroom** · 22 components
 - Choose grid size and card colors
 - Add a center FREE space
 - Print or export all cards to PDF
+- Suggested classroom uses: create vocabulary, math-fact, or concept-review bingo cards from a teacher-supplied word/phrase list
 
 ### Clock Wizard
 
@@ -855,6 +935,7 @@ Category: **Classroom** · 22 components
 - Adjust for focus level
 - Copy an estimate
 - Optionally use a configured external AI provider
+- Suggested classroom uses: estimate project phases, plan work time, and reflect on an estimate versus actual time
 
 ### Coin Flipper
 
@@ -864,6 +945,8 @@ Category: **Classroom** · 22 components
 - Flip multiple coins and track history/statistics
 - Use decision, team, and probability activity modes
 - Save or share setups and results
+- Built-in activity modes include probability trials, intuition/luck tests, team choosing, tie breakers, and best-two-of-three decisions
+- Suggested classroom uses: collect trial data, compare observed outcomes, and discuss randomness and fairness
 
 ### Dice Roller
 
@@ -874,6 +957,7 @@ Category: **Classroom** · 22 components
 - Show results, products, and history
 - Adjust animation and sound
 - Share a setup link
+- Suggested classroom uses: probability trials, number operations, classroom game moves, and random choices; multiple dice and the product display support arithmetic activities
 
 ### Dicebreaker Creator
 
@@ -884,6 +968,8 @@ Category: **Classroom** · 22 components
 - Choose grid or strip layouts
 - Export PNG, PDF, PPTX, or JSON
 - Share a student view
+- Built-in prompt starts support entry tickets, debriefs, roll-a-story writing, and get-to-know-you icebreakers
+- Suggested classroom uses: discussion warm-ups, reflection, creative writing, and classroom community building
 
 ### Dots and Boxes
 
@@ -902,6 +988,7 @@ Category: **Classroom** · 22 components
 - Erase marks
 - Center the cursor
 - Save PNG
+- Suggested classroom uses: quick visual explanations, labeled sketches, drawing warm-ups, and sharing a PNG of student work
 
 ### DrawSplat Whiteboard
 
@@ -922,6 +1009,8 @@ Category: **Classroom** · 22 components
 - Set up teams
 - Share a student link
 - Download the setup
+- Built-in educational phrase categories span K–2, 3–5, 6–8, and 9–12, including science, mathematics, language arts, social studies/history, Spanish language arts, and health/art/technology
+- Suggested classroom uses: team vocabulary review, concept recall, and discussion of subject-specific phrases
 
 ### Meme Puzzle
 
@@ -932,6 +1021,10 @@ Category: **Classroom** · 22 components
 - Import JSON, CSV, or Excel activity data
 - Share a student link
 - Download the setup
+- Instructional activity: students answer content questions to reveal the image one tile at a time; teachers can adapt questions and share a student activity
+- Built-in [PuzzleMaker Library](../solutions/memepuzzle/library/) includes 31 instructional activities across K–2, 3–5, 6–8, and 9–12, including six English/Spanish bilingual activities
+- Library subjects include science, mathematics, English language arts, social studies, and biology; examples include plant needs, equivalent fractions, water cycle, text evidence, map skills, and cellular energy
+- Activity metadata includes grade band, subject, and TEKS, NGSS, or Common Core references where supplied; download a ready-to-use JSON setup from the library
 
 ### MemeSplat™
 
@@ -941,6 +1034,8 @@ Category: **Classroom** · 22 components
 - Add top/bottom captions and a small label
 - Adjust font, outline, color, and canvas shape
 - Download PNG or copy the image
+- Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues
+- Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content
 
 ### QRSplat Studio
 
@@ -951,6 +1046,7 @@ Category: **Classroom** · 22 components
 - Save designs locally
 - Copy or download PNG/SVG
 - Create and update editable QR codes with a separately configured service
+- Suggested classroom uses: link printed activity stations, displays, or handouts to classroom resources; editable codes need a configured service
 
 ### Quiz & Flashcard Studio
 
@@ -961,6 +1057,8 @@ Category: **Classroom** · 22 components
 - Turn questions into printable flashcards
 - Import/export question sets
 - Export report CSV
+- Built-in science question sets include 20-question samples for grade 3 science, grade 5 science, and grade 10 biology, aligned to TEKS topics
+- Suggested classroom uses: formative checks, self-paced retrieval practice, team review, and printable vocabulary or concept flashcards
 
 ### ShowSplat
 
@@ -981,6 +1079,9 @@ Category: **Classroom** · 22 components
 - Build an immersive room or load a curriculum starter
 - Use split view, motion look, VR glasses, or full screen
 - Download room face images
+- [Teacher guide](../solutions/sketchspace-VR/teacher.html) includes lesson ideas, ready-to-use prompts, printable/digital room workflows, and quick assessment
+- Built-in student starter layouts cover citizenship, ecosystems and adaptations, geography, history, life cycles, and weather/water cycle
+- Suggested classroom uses: create an immersive content model, label its panels, and explain relationships or processes
 
 ### SplatBot Studio
 
@@ -991,6 +1092,8 @@ Category: **Classroom** · 22 components
 - Create and import mission packs
 - Explore TEKS, NGSS, and Common Core activities
 - Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX
+- Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary
+- Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels
 
 ### Step-Splat
 
@@ -1000,6 +1103,7 @@ Category: **Classroom** · 22 components
 - Adjust how detailed the breakdown is
 - Copy steps as Markdown
 - Optionally use a configured external AI provider
+- Suggested classroom uses: break an assignment or project into manageable action steps and build planning routines
 
 ### Story Wheel
 
@@ -1010,6 +1114,8 @@ Category: **Classroom** · 22 components
 - Add event text and images
 - Spin and preview the wheel
 - Print, save PNG, or share a link
+- Instructional activity modes include Story Summary, Multimedia Summary, and Sequencing Practice
+- Suggested classroom uses: retell a text, put events in order, summarize key events, and support writing with images
 
 ### Vibe Check
 
@@ -1019,6 +1125,7 @@ Category: **Classroom** · 22 components
 - Try example messages
 - Copy the analysis
 - Optionally use a configured external AI provider
+- Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication
 
 ### Wheel Spinner
 
@@ -1028,6 +1135,7 @@ Category: **Classroom** · 22 components
 - Shuffle entries and choose a color palette
 - Spin for a random selection
 - Remove the winner for subsequent picks
+- Suggested classroom uses: choose discussion participants, assign prompts or teams, and sample randomly from a teacher-supplied list
 
 ## Play & Puzzle
 
@@ -1041,6 +1149,7 @@ Category: **Games** · 29 components
 - Use custom call items
 - Generate player cards
 - Repeat calls and clear player marks
+- Suggested classroom uses: lead a bingo review game with custom curriculum call items and student player cards
 
 ### Bingo Card Generator
 
@@ -1050,6 +1159,7 @@ Category: **Games** · 29 components
 - Choose grid size and card colors
 - Add a center FREE space
 - Print or export all cards to PDF
+- Suggested classroom uses: create vocabulary, math-fact, or concept-review bingo cards from a teacher-supplied word/phrase list
 
 ### Castles & Catapults
 
@@ -1080,6 +1190,8 @@ Category: **Games** · 29 components
 - Flip multiple coins and track history/statistics
 - Use decision, team, and probability activity modes
 - Save or share setups and results
+- Built-in activity modes include probability trials, intuition/luck tests, team choosing, tie breakers, and best-two-of-three decisions
+- Suggested classroom uses: collect trial data, compare observed outcomes, and discuss randomness and fairness
 
 ### Coloring Book
 
@@ -1089,6 +1201,7 @@ Category: **Games** · 29 components
 - Color with brush, paint bucket, or spray can
 - Erase and undo
 - Download PNG/SVG or print
+- Suggested classroom uses: art practice, fine-motor/color exploration, and annotated visual responses using printable line-art pages
 
 ### Dice Roller
 
@@ -1099,6 +1212,7 @@ Category: **Games** · 29 components
 - Show results, products, and history
 - Adjust animation and sound
 - Share a setup link
+- Suggested classroom uses: probability trials, number operations, classroom game moves, and random choices; multiple dice and the product display support arithmetic activities
 
 ### Dicebreaker Creator
 
@@ -1109,6 +1223,8 @@ Category: **Games** · 29 components
 - Choose grid or strip layouts
 - Export PNG, PDF, PPTX, or JSON
 - Share a student view
+- Built-in prompt starts support entry tickets, debriefs, roll-a-story writing, and get-to-know-you icebreakers
+- Suggested classroom uses: discussion warm-ups, reflection, creative writing, and classroom community building
 
 ### Dots and Boxes
 
@@ -1146,6 +1262,8 @@ Category: **Games** · 29 components
 - Set up teams
 - Share a student link
 - Download the setup
+- Built-in educational phrase categories span K–2, 3–5, 6–8, and 9–12, including science, mathematics, language arts, social studies/history, Spanish language arts, and health/art/technology
+- Suggested classroom uses: team vocabulary review, concept recall, and discussion of subject-specific phrases
 
 ### Fun Quiz
 
@@ -1183,6 +1301,10 @@ Category: **Games** · 29 components
 - Import JSON, CSV, or Excel activity data
 - Share a student link
 - Download the setup
+- Instructional activity: students answer content questions to reveal the image one tile at a time; teachers can adapt questions and share a student activity
+- Built-in [PuzzleMaker Library](../solutions/memepuzzle/library/) includes 31 instructional activities across K–2, 3–5, 6–8, and 9–12, including six English/Spanish bilingual activities
+- Library subjects include science, mathematics, English language arts, social studies, and biology; examples include plant needs, equivalent fractions, water cycle, text evidence, map skills, and cellular energy
+- Activity metadata includes grade band, subject, and TEKS, NGSS, or Common Core references where supplied; download a ready-to-use JSON setup from the library
 
 ### Paws & Keys Adventure
 
@@ -1213,6 +1335,8 @@ Category: **Games** · 29 components
 - Create and import mission packs
 - Explore TEKS, NGSS, and Common Core activities
 - Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX
+- Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary
+- Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels
 
 ### Squirrel Run
 
@@ -1244,6 +1368,8 @@ Category: **Games** · 29 components
 - Add event text and images
 - Spin and preview the wheel
 - Print, save PNG, or share a link
+- Instructional activity modes include Story Summary, Multimedia Summary, and Sequencing Practice
+- Suggested classroom uses: retell a text, put events in order, summarize key events, and support writing with images
 
 ### Super Star Trek
 
@@ -1291,6 +1417,7 @@ Category: **Games** · 29 components
 - Shuffle entries and choose a color palette
 - Spin for a random selection
 - Remove the winner for subsequent picks
+- Suggested classroom uses: choose discussion participants, assign prompts or teams, and sample randomly from a teacher-supplied list
 
 ### Word Search Maker
 
@@ -1301,6 +1428,8 @@ Category: **Games** · 29 components
 - Choose grid size and word directions
 - Show the answer key
 - Print or share a puzzle link
+- Built-in TEKS-inspired vocabulary presets span K–2, 3–5, 6–8, and 9–12 in science, mathematics, English language arts, and social studies, plus Spanish-language and health/fine-arts/technology word lists
+- Suggested classroom uses: introduce unit vocabulary, reinforce spelling and word recognition, and print differentiated review puzzles
 
 ### Wordfall Reactor
 
@@ -1328,3 +1457,41 @@ These classroom widgets are opened on a whiteboard page. Use the [classroom widg
 | Classroom / Play | Scoreboard | Track review-game scores. |
 | Classroom / Play | Progress Race | Track group progress. |
 | Classroom | Big Link | Post a large readable URL or resource link. |
+
+## Meme Puzzle instructional activity library
+
+[Browse and filter the PuzzleMaker Library](../solutions/memepuzzle/library/) by grade band or content area, then download a ready-to-use setup. Students answer questions to reveal image tiles. The following topics and standards labels come from the bundled activity metadata; suggested classroom uses elsewhere on this page are teaching ideas rather than additional built-in lesson packs.
+
+| Activity | Grades | Subject | Standards labels in the activity |
+| --- | --- | --- |
+| What Plants Need | K-2 | Science | NGSS 2-LS2-1 |
+| Equivalent Fractions | 3-5 | Mathematics | CCSS 4.NF.A.1, TEKS 4.3(C) |
+| Earth and Star Patterns | 3-5 | Science | NGSS 5-ESS1-1 |
+| Inference and Text Evidence | 6-8 | English Language Arts | CCSS RI.6.1, CCSS RI.6.2 |
+| Cellular Energy | 9-12 | Biology | NGSS HS-LS1-5, NGSS HS-LS1-7 |
+| Magnet Mayhem | K-2 | Science | TEKS §112.2(b)(7) |
+| States of Matter | 3-5 | Science | TEKS §112.5(b)(6) |
+| Food Web Connections | 3-5 | Science | TEKS §112.6(b)(12) |
+| Complete Electric Circuits | 3-5 | Science | TEKS §112.6(b)(8) |
+| Water Cycle | 3-5 | Science | TEKS §112.6(b)(10) |
+| Plate Tectonics | 6-8 | Science | TEKS §112.27(b)(10) |
+| Natural Selection | 9-12 | Science | TEKS §112.42(c)(10) |
+| Map Skills | 3-5 | Social Studies | TEKS §113.14(b)(4) |
+| Texas Revolution | 3-5 | Social Studies | TEKS §113.15(b)(3) |
+| Three Branches of Government | 3-5 | Social Studies | TEKS §113.16(b)(15) |
+| Supply and Demand | 3-5 | Social Studies | TEKS §113.14(b)(6) |
+| Primary Sources | 6-8 | Social Studies | TEKS §113.20(b)(29) |
+| Westward Expansion | 6-8 | Social Studies | TEKS §113.20(b)(6) |
+| Main Idea and Supporting Details | 3-5 | English Language Arts | TEKS §110.5(b)(9) |
+| Context Clues | 3-5 | English Language Arts | TEKS §110.5(b)(3) |
+| Point of View | 3-5 | English Language Arts | TEKS §110.6(b)(10) |
+| Figurative Language | 3-5 | English Language Arts | TEKS §110.7(b)(10) |
+| Theme in Literature | 6-8 | English Language Arts | TEKS §110.22(b)(7) |
+| Argument and Evidence | 6-8 | English Language Arts | TEKS §110.24(b)(8) |
+| The Revision Process | 9-12 | English Language Arts | TEKS §110.36(c)(9) |
+| Magnetismo / Magnet Mayhem | K-2 | Science / Ciencias | TEKS §112.2(b)(7), Bilingual EN/ES |
+| El ciclo del agua / Water Cycle | 3-5 | Science / Ciencias | TEKS §112.6(b)(10), Bilingual EN/ES |
+| Destrezas de mapas / Map Skills | 3-5 | Social Studies / Estudios Sociales | TEKS §113.14(b)(4), Bilingual EN/ES |
+| Tres poderes / Three Branches | 3-5 | Social Studies / Estudios Sociales | TEKS §113.16(b)(15), Bilingual EN/ES |
+| Pistas de contexto / Context Clues | 3-5 | English Language Arts / Artes del Lenguaje | TEKS §110.5(b)(3), Bilingual EN/ES |
+| Lenguaje figurado / Figurative Language | 3-5 | English Language Arts / Artes del Lenguaje | TEKS §110.7(b)(10), Bilingual EN/ES |

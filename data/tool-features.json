@@ -5,7 +5,8 @@
     "Add opening and closing title panels, photos, and illustrated frames",
     "Export MP4",
     "Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser",
-    "Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format"
+    "Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format",
+    "Suggested classroom uses: record a short explanation, create a project introduction, or combine a demonstration with title panels and image cards"
   ],
   "whiteboard": [
     "Draw with pens, shapes, text, images, and sticky notes",
@@ -46,7 +47,8 @@
     "Choose palette quality and dithering",
     "Download GIF or export MP4/WebM",
     "Import formats: PNG, JPEG, WebP, and GIF image frames",
-    "Output formats: GIF animation; MP4 or WebM video according to browser export support"
+    "Output formats: GIF animation; MP4 or WebM video according to browser export support",
+    "Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images"
   ],
   "audiosplat": [
     "Record microphone audio and import files",
@@ -55,78 +57,93 @@
     "Export audio locally",
     "Transcribe a separate audio file locally in English; review/edit words and timestamps and download SRT captions or a TXT transcript",
     "Import formats: browser-decodable MP3, OGG/OGA, WAV, WebM, M4A/MP4, AAC, FLAC, and Opus; actual codec support depends on the browser",
-    "Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT"
+    "Output formats: WAV and MP3; Ogg/Opus, WebM/Opus, and M4A/AAC when the browser supports recording those formats; project files as JSON; transcripts as SRT or TXT",
+    "Suggested classroom uses: student podcasts, oral explanations, reading-fluency recordings, interviews, and accessible transcripts"
   ],
   "big-link": [
     "Display a large URL or short text",
     "Add a title and note",
     "Choose card shape and accent color",
-    "Download PNG/SVG or copy PNG"
+    "Download PNG/SVG or copy PNG",
+    "Suggested classroom uses: project a readable lesson/resource link or print a resource card for an activity station"
   ],
   "bingo-caller": [
     "Pick animated bingo calls",
     "Use custom call items",
     "Generate player cards",
-    "Repeat calls and clear player marks"
+    "Repeat calls and clear player marks",
+    "Suggested classroom uses: lead a bingo review game with custom curriculum call items and student player cards"
   ],
   "bingo-cards": [
     "Generate multiple custom cards",
     "Choose grid size and card colors",
     "Add a center FREE space",
-    "Print or export all cards to PDF"
+    "Print or export all cards to PDF",
+    "Suggested classroom uses: create vocabulary, math-fact, or concept-review bingo cards from a teacher-supplied word/phrase list"
   ],
   "brain-sort": [
     "Turn one-thought-per-line notes into a checklist",
     "Group by topic, effort, or timing",
     "Copy the result as Markdown",
-    "Optionally use a configured external AI provider"
+    "Optionally use a configured external AI provider",
+    "Suggested classroom uses: sort project ideas, organize research or planning notes, and turn a task brainstorm into a checklist"
   ],
   "ciphersplat": [
     "Encrypt and decrypt local files, folders, or text",
     "Use password-based AES-256-GCM protection",
     "Generate passwords and passphrases",
     "Use OpenPGP keys",
-    "Check file integrity"
+    "Check file integrity",
+    "Suggested classroom uses: demonstrate encryption, passwords, keys, integrity checks, and responsible protection of files using sample data"
   ],
   "clock-wizard": [
     "Estimate task duration",
     "Break estimates into phases",
     "Adjust for focus level",
     "Copy an estimate",
-    "Optionally use a configured external AI provider"
+    "Optionally use a configured external AI provider",
+    "Suggested classroom uses: estimate project phases, plan work time, and reflect on an estimate versus actual time"
   ],
   "coin-flipper": [
     "Customize coin labels, images, and colors",
     "Flip multiple coins and track history/statistics",
     "Use decision, team, and probability activity modes",
-    "Save or share setups and results"
+    "Save or share setups and results",
+    "Built-in activity modes include probability trials, intuition/luck tests, team choosing, tie breakers, and best-two-of-three decisions",
+    "Suggested classroom uses: collect trial data, compare observed outcomes, and discuss randomness and fairness"
   ],
   "coloring-book": [
     "Choose line-art pages",
     "Color with brush, paint bucket, or spray can",
     "Erase and undo",
-    "Download PNG/SVG or print"
+    "Download PNG/SVG or print",
+    "Suggested classroom uses: art practice, fine-motor/color exploration, and annotated visual responses using printable line-art pages"
   ],
   "concept-map": [
     "Connect and label ideas with nodes and connectors",
     "Start from mind map, Frayer, KWL, fishbone, and other layouts",
     "Attach images and links",
     "Group nodes and present maps",
-    "Save JSON, PNG, SVG, or Markdown"
+    "Save JSON, PNG, SVG, or Markdown",
+    "Instructional organizers include Frayer vocabulary models, KWL charts, fishbone cause-and-effect maps, story maps, compare/contrast, sequences, cycles, and hierarchy diagrams",
+    "Suggested classroom uses: activate prior knowledge, build vocabulary, map a text or process, and show relationships between ideas"
   ],
   "dice": [
     "Choose d4, d6, d8, d10, d12, or d20 dice",
     "Roll multiple dice with modifiers",
     "Show results, products, and history",
     "Adjust animation and sound",
-    "Share a setup link"
+    "Share a setup link",
+    "Suggested classroom uses: probability trials, number operations, classroom game moves, and random choices; multiple dice and the product display support arithmetic activities"
   ],
   "dicebreakers": [
     "Create six-face prompt activities",
     "Start with icebreaker, entry ticket, debrief, or story prompts",
     "Choose grid or strip layouts",
     "Export PNG, PDF, PPTX, or JSON",
-    "Share a student view"
+    "Share a student view",
+    "Built-in prompt starts support entry tickets, debriefs, roll-a-story writing, and get-to-know-you icebreakers",
+    "Suggested classroom uses: discussion warm-ups, reflection, creative writing, and classroom community building"
   ],
   "dots-boxes": [
     "Draw lines to claim boxes",
@@ -138,28 +155,35 @@
     "Draw freehand in a quick sketch pad",
     "Erase marks",
     "Center the cursor",
-    "Save PNG"
+    "Save PNG",
+    "Suggested classroom uses: quick visual explanations, labeled sketches, drawing warm-ups, and sharing a PNG of student work"
   ],
   "fortune-wheel": [
     "Create a teacher-curated phrase game",
     "Choose education categories or custom puzzles",
     "Set up teams",
     "Share a student link",
-    "Download the setup"
+    "Download the setup",
+    "Built-in educational phrase categories span K–2, 3–5, 6–8, and 9–12, including science, mathematics, language arts, social studies/history, Spanish language arts, and health/art/technology",
+    "Suggested classroom uses: team vocabulary review, concept recall, and discussion of subject-specific phrases"
   ],
   "graphsplat": [
     "Make bar, line, pie, area, scatter, and specialty charts",
     "Create picture graphs",
     "Plot coordinates and linear equations",
     "Explore expressions, roots, intersections, and value tables",
-    "Construct points, segments, polygons, and circles"
+    "Construct points, segments, polygons, and circles",
+    "Built-in GraphSplat Examples provide illustrated, editable examples across six graph workspaces",
+    "[Science and mathematics lesson plans](../solutions/graphsplat/lesson-plans.html) cover grades 3–5, 6–8, and 9–12 with TEKS correlations, instructional sequences, assessment, differentiation, and extensions",
+    "Teaching resources include a graph-analysis checklist, six Artful Analytics starters, schoolyard biodiversity, campus microclimate, and ecosystem-stability investigations"
   ],
   "markdown-studio": [
     "Write Markdown with rendered preview and HTML output",
     "Import files or convert pasted HTML",
     "Find and replace text",
     "Copy formatted content or WordPress block code",
-    "Export Markdown, HTML, DOCX, or ODT"
+    "Export Markdown, HTML, DOCX, or ODT",
+    "Suggested classroom uses: draft structured explanations, organize research notes, publish class writing, and transfer an outline to a concept map"
   ],
   "mediasplat": [
     "Trim, split, and join local audio or video; download individual parts or a ZIP",
@@ -169,100 +193,125 @@
     "Transcribe audio directly without converting it to video",
     "Import formats: MP4, M4V, MOV, MKV, WebM, AVI, WMV, OGG/OGM, MP3, WAV, FLAC, and MPEG transport streams, subject to the codecs included in the bundled FFmpeg engine; preview and transcription additionally require browser decoding",
     "Output formats: fast mode retains the source extension/container with compatible copied streams; Precise/Normalize produces H.264/AAC MP4 video or MP3 audio; subtitle burn-in produces MP4; transcription produces SRT or TXT; split results can be bundled as ZIP",
-    "Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions"
+    "Automatic subtitles: English speech, up to 120 minutes and 512 MB per source file; first use downloads a Whisper model; review generated captions",
+    "Suggested classroom uses: cut lesson recordings into shorter sections, join student recordings, and create subtitles/transcripts for learning resources"
   ],
   "meme-puzzle": [
     "Create question-and-answer image puzzles",
     "Choose a sample image or upload your own",
     "Import JSON, CSV, or Excel activity data",
     "Share a student link",
-    "Download the setup"
+    "Download the setup",
+    "Instructional activity: students answer content questions to reveal the image one tile at a time; teachers can adapt questions and share a student activity",
+    "Built-in [PuzzleMaker Library](../solutions/memepuzzle/library/) includes 31 instructional activities across K–2, 3–5, 6–8, and 9–12, including six English/Spanish bilingual activities",
+    "Library subjects include science, mathematics, English language arts, social studies, and biology; examples include plant needs, equivalent fractions, water cycle, text evidence, map skills, and cellular energy",
+    "Activity metadata includes grade band, subject, and TEKS, NGSS, or Common Core references where supplied; download a ready-to-use JSON setup from the library"
   ],
   "memesplat": [
     "Choose classroom templates or a local image",
     "Add top/bottom captions and a small label",
     "Adjust font, outline, color, and canvas shape",
-    "Download PNG or copy the image"
+    "Download PNG or copy the image",
+    "Built-in classroom meme templates include plant needs, equivalent fractions, Earth/star patterns, text evidence, cellular energy, magnetism, map skills, and context clues",
+    "Suggested classroom uses: explain a concept with a visual and caption, check understanding, and discuss whether a caption accurately represents the content"
   ],
   "mermaid": [
     "Create diagrams from text with live preview",
     "Start with flowchart, sequence, mind map, Gantt, and other templates",
     "Choose language and palette",
-    "Export SVG/PNG or copy PNG"
+    "Export SVG/PNG or copy PNG",
+    "Suggested classroom uses: draw a process or sequence, map relationships, represent timelines, compare categories, and plan a project using the built-in diagram templates"
   ],
   "pdfsplat": [
     "Open, combine, split, reorder, and rotate PDF pages",
     "Add text, highlights, drawings, images, and signatures",
     "Crop, deskew, protect, and convert supported files",
     "Export PDF, images, document, and ebook formats",
-    "Present PDFs with full screen, timed slideshows, and WebDeck v5 export"
+    "Present PDFs with full screen, timed slideshows, and WebDeck v5 export",
+    "Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts"
   ],
   "qrsplat": [
     "Create QR codes for links, text, email, phone, or Wi-Fi",
     "Customize colors, dots, size, and center image",
     "Save designs locally",
     "Copy or download PNG/SVG",
-    "Create and update editable QR codes with a separately configured service"
+    "Create and update editable QR codes with a separately configured service",
+    "Suggested classroom uses: link printed activity stations, displays, or handouts to classroom resources; editable codes need a configured service"
   ],
   "quiz-flashcards": [
     "Build multiple-choice, true/false, and short-answer questions",
     "Run self-paced or teacher-led quizzes with players or teams",
     "Turn questions into printable flashcards",
     "Import/export question sets",
-    "Export report CSV"
+    "Export report CSV",
+    "Built-in science question sets include 20-question samples for grade 3 science, grade 5 science, and grade 10 biology, aligned to TEKS topics",
+    "Suggested classroom uses: formative checks, self-paced retrieval practice, team review, and printable vocabulary or concept flashcards"
   ],
   "rubric-builder": [
     "Start from project, writing, presentation, or collaboration templates",
     "Edit criteria and performance levels",
     "Add criteria and levels",
-    "Copy text, download CSV, or print"
+    "Copy text, download CSV, or print",
+    "Instructional rubric templates cover projects, writing, presentations, and collaboration",
+    "Suggested classroom uses: clarify success criteria, support self/peer assessment, and give criterion-based feedback"
   ],
   "sketchspace-vr": [
     "Print a student room template",
     "Upload a photographed drawing and crop its panels",
     "Build an immersive room or load a curriculum starter",
     "Use split view, motion look, VR glasses, or full screen",
-    "Download room face images"
+    "Download room face images",
+    "[Teacher guide](../solutions/sketchspace-VR/teacher.html) includes lesson ideas, ready-to-use prompts, printable/digital room workflows, and quick assessment",
+    "Built-in student starter layouts cover citizenship, ecosystems and adaptations, geography, history, life cycles, and weather/water cycle",
+    "Suggested classroom uses: create an immersive content model, label its panels, and explain relationships or processes"
   ],
   "splatbot": [
     "Program a virtual robot using blocks or words",
     "Run missions and story challenges",
     "Create and import mission packs",
     "Explore TEKS, NGSS, and Common Core activities",
-    "Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX"
+    "Generate code for Python, JavaScript, micro:bit, Dash, LEGO SPIKE, or VEX",
+    "Built-in starter pack has 16 missions, mainly for grades 2–8, plus a grades 9–12-ready path-planning challenge; missions include teacher notes, concepts, and vocabulary",
+    "Instructional applications: sequencing commands, movement and turns, sensors, obstacles, goal-directed problem solving, testing, and revising programs; choose TEKS, NGSS, or Common Core alignment labels"
   ],
   "splatimage": [
     "Edit images with layers, text, shapes, and annotations",
     "Crop, mask, adjust photos, and apply effects",
     "Remove colors or backgrounds",
     "Capture screens and paste clipboard images",
-    "Export PNG, selections, GIFs, or image frames"
+    "Export PNG, selections, GIFs, or image frames",
+    "Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations"
   ],
   "step-splat": [
     "Break a task into small action steps",
     "Adjust how detailed the breakdown is",
     "Copy steps as Markdown",
-    "Optionally use a configured external AI provider"
+    "Optionally use a configured external AI provider",
+    "Suggested classroom uses: break an assignment or project into manageable action steps and build planning routines"
   ],
   "story-wheel": [
     "Create story summaries or sequencing activities",
     "Choose three, five, or seven events",
     "Add event text and images",
     "Spin and preview the wheel",
-    "Print, save PNG, or share a link"
+    "Print, save PNG, or share a link",
+    "Instructional activity modes include Story Summary, Multimedia Summary, and Sequencing Practice",
+    "Suggested classroom uses: retell a text, put events in order, summarize key events, and support writing with images"
   ],
   "toneshifter": [
     "Rewrite a draft for a selected tone",
     "Adjust rewrite intensity",
     "Compare changes with a diff",
     "Copy the rewrite or reuse it as input",
-    "Optionally use a configured external AI provider"
+    "Optionally use a configured external AI provider",
+    "Suggested classroom uses: compare tone choices for different audiences and revise a draft while discussing meaning and voice"
   ],
   "vibe-check": [
     "Review the likely tone of a written message",
     "Try example messages",
     "Copy the analysis",
-    "Optionally use a configured external AI provider"
+    "Optionally use a configured external AI provider",
+    "Suggested classroom uses: discuss audience and tone in a sample message and practice respectful digital communication"
   ],
   "videosplat": [
     "Import, arrange, split, trim, and edit video, audio, and images on a layered timeline",
@@ -273,20 +322,24 @@
     "Use local privacy tools and editing proxies without uploading source media",
     "Import formats: browser-decodable video, audio, and images, commonly MP4/WebM video, MP3/WAV/M4A/OGG audio, and PNG/JPEG/WebP images; actual container/codec support depends on the browser",
     "Output formats: WebM (VP8/VP9 with Opus), MP4 (AVC/H.264 with AAC), or OGM through the compatible conversion path; captions as SRT/WebVTT; portable project files as JSON",
-    "Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions"
+    "Automatic subtitles: English speech, up to 120 minutes per selected clip and 512 MB per source file; first use downloads a Whisper model; review generated captions",
+    "Suggested classroom uses: student documentaries, demonstrations, screencasts, narrated explanations, and captioned learning resources"
   ],
   "wheel-spinner": [
     "Paste or import a list of entries",
     "Shuffle entries and choose a color palette",
     "Spin for a random selection",
-    "Remove the winner for subsequent picks"
+    "Remove the winner for subsequent picks",
+    "Suggested classroom uses: choose discussion participants, assign prompts or teams, and sample randomly from a teacher-supplied list"
   ],
   "wordsearch": [
     "Generate vocabulary puzzles from custom word lists",
     "Use TEKS-inspired vocabulary sets",
     "Choose grid size and word directions",
     "Show the answer key",
-    "Print or share a puzzle link"
+    "Print or share a puzzle link",
+    "Built-in TEKS-inspired vocabulary presets span K–2, 3–5, 6–8, and 9–12 in science, mathematics, English language arts, and social studies, plus Spanish-language and health/fine-arts/technology word lists",
+    "Suggested classroom uses: introduce unit vocabulary, reinforce spelling and word recognition, and print differentiated review puzzles"
   ],
   "castles": [
     "Aim catapults using angle and power",
