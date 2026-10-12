@@ -32,6 +32,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 REPO_ROOT="$(pwd)"
+node scripts/check-splatworks-builds.mjs
 node scripts/build-pdfsplat.mjs
 bash scripts/build-ciphersplat-offline.sh
 
@@ -990,3 +991,21 @@ rm -rf "$STAGE_DIR"
 
 # Also create the independent ClipSplat package with its shared encoder.
 python3 scripts/make-clipsplat-bundle.py "$VERSION_LABEL"
+
+# A single portable manifest covers every download, including ClipSplat and CipherSplat.
+python3 - "$VERSION_LABEL" <<'PY'
+import hashlib
+from pathlib import Path
+import sys
+version=sys.argv[1]
+packages=sorted(Path('dist').glob(f'*-{version}.zip')) + [Path('solutions/CipherSplat/downloads/CipherSplat-offline.zip')]
+if len(packages)!=15:
+    raise SystemExit(f'Expected 15 ZIP downloads, found {len(packages)}')
+lines=[]
+for package in packages:
+    with package.open('rb') as stream:
+        digest=hashlib.file_digest(stream,'sha256').hexdigest()
+    lines.append(f'{digest}  {package.name}\n')
+Path(f'dist/SHA256SUMS-{version}.txt').write_text(''.join(lines))
+print(f'Portable checksums: dist/SHA256SUMS-{version}.txt (all 15 ZIPs)')
+PY

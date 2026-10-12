@@ -12,20 +12,18 @@ if (!command) {
 }
 
 const originalIndex = await readFile(deployIndexPath);
-let restored = false;
+let restoration;
 
-async function restoreIndex() {
-  if (restored) {
-    return;
-  }
-
-  restored = true;
-  await writeFile(deployIndexPath, originalIndex);
+function restoreIndex() {
+  restoration ??= writeFile(deployIndexPath, originalIndex);
+  return restoration;
 }
 
 function forwardSignal(child, signal) {
-  process.once(signal, () => {
+  process.once(signal, async () => {
     child.kill(signal);
+    await restoreIndex();
+    process.exit(1);
   });
 }
 

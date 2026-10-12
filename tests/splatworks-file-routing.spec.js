@@ -45,3 +45,10 @@ test('a Word document selected in ShowSplat opens its text in WriteSplat',async(
  const pending=page.waitForEvent('popup');await page.locator('#deckFileInput').setInputFiles({name:'lesson.docx',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',buffer});
  const target=await pending;await expect(target.getByRole('textbox',{name:'WriteSplat document editor'})).toContainText('Writing carried into the correct app.');
 });
+test('a spreadsheet project chosen in WriteSplat opens in GridSplat with an isolated draft',async({page})=>{
+ await page.goto('/splatworks/writesplat/');await expect(page.getByRole('textbox',{name:'WriteSplat document editor'})).toBeVisible();
+ const grid={version:1,metadata:{createdAt:'2026-10-11T00:00:00Z',title:'Numbers'},sheets:[{id:'sheet-1',name:'Sheet 1',cells:[['Transferred spreadsheet','7'],['Total','=B1*2']]}],charts:[],pictureGraphs:[]};
+ const pending=page.waitForEvent('popup');await page.locator('#fileInput').setInputFiles({name:'numbers.gridsplat.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(grid))});
+ const target=await pending;await expect(target.getByTestId('cell-A1')).toContainText('Transferred spreadsheet');await expect(target.getByTestId('cell-B2')).toContainText('14');await expect(target.getByRole('dialog',{name:'GridSplat™',exact:true})).toBeHidden();
+ expect(await target.evaluate(()=>sessionStorage.getItem('drawsplat.imported-tab./splatworks/gridsplat/'))).toBe('1');
+});

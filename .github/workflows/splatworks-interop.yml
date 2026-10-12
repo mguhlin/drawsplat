@@ -2,9 +2,9 @@ name: SplatWorks file interoperability
 on:
   push:
     branches: [main]
-    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', '.github/workflows/splatworks-interop.yml']
+    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', '.github/workflows/splatworks-interop.yml']
   pull_request:
-    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', '.github/workflows/splatworks-interop.yml']
+    paths: ['splatworks/**', 'tests/splatworks-file-routing.spec.js', 'tests/gridsplat-cache.spec.js', '.github/workflows/splatworks-interop.yml']
 permissions:
   contents: read
 jobs:
@@ -20,7 +20,8 @@ jobs:
         working-directory: splatworks/writesplat
       - run: npm ci && npm test && npm run build
         working-directory: splatworks/listsplat
+      - run: node scripts/check-splatworks-builds.mjs
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test tests/splatworks-file-routing.spec.js --workers=2
+      - run: npx playwright test tests/splatworks-file-routing.spec.js tests/gridsplat-cache.spec.js --workers=2
       - run: npx playwright test tests/office-formats.spec.js --project=chromium
         working-directory: splatworks/showsplat

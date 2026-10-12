@@ -1,4 +1,4 @@
-/* global caches, fetch, self */
+/* global caches, fetch, self, URL, Response */
 
 const CACHE_NAME = 'gridsplat-cache-v2';
 const APP_SHELL = [

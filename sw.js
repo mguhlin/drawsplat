@@ -1,5 +1,5 @@
 /* DrawSplatTM v3.1.16 — minimal offline shell. Caches the static app on first load. */
-const CACHE = 'drawsplat-v3.1.34';
+const CACHE = 'drawsplat-v3.1.34-files';
 const SHELL = [
   './',
   './index.html',
@@ -132,13 +132,13 @@ self.addEventListener('activate', e => {
   })());
 });
 
-const NETWORK_FIRST_PATHS = ['/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
+const NETWORK_FIRST_PATHS = ['/splatworks/shared/file-bridge.js','/assets/js/mysql-cloud.js','/assets/js/recording-support.js','/assets/js/video-notes.js','/assets/js/app.js','/assets/css/app.css','/assets/js/consent-banner.js','/assets/js/locales.js','/assets/js/i18n.js','/assets/js/template-gallery.js','/blog/drawsplat.rss'];
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;
   /* Same-origin only — never intercept Apps Script POSTs or any third-party. */
   const url = new URL(req.url);
-  if(url.origin !== self.location.origin) return;
+  if(url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname === '/setup' || url.searchParams.has('open-file') || req.headers.has('Authorization') || req.cache === 'no-store') return;
   const isDiscoveryAsset = url.pathname.startsWith('/assets/js/tool-') || url.pathname === '/data/drawsplat-tools.json';
   const isShellScript = url.pathname.startsWith('/solutions/pdfsplat/') || isDiscoveryAsset || NETWORK_FIRST_PATHS.some(p => url.pathname.endsWith(p));
   e.respondWith((async()=>{
