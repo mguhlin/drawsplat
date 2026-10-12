@@ -290,7 +290,7 @@
     <form id="epubForm">
       <h2>Save as EPUB</h2>
       <p>Create an EPUB 3 ebook from the current PDF. Conversion happens entirely on this device.</p>
-      <label class="dialog-field">Formatting <select id="epubLayout"><option value="formatted">Reflowable text with formatting</option><option value="appearance">Keep page appearance (page images)</option></select></label>
+      <label class="dialog-field">Formatting <select id="epubLayout"><option value="formatted">Reflowable text, formatting, and images</option><option value="appearance">Keep page appearance (page images)</option></select></label>
       <label class="dialog-field">Book title <input id="epubTitle" type="text" required maxlength="200"></label>
       <label class="dialog-field">Author <input id="epubAuthor" type="text" maxlength="200" placeholder="Unknown author"></label>
       <label class="dialog-field">Publisher <input id="epubPublisher" type="text" maxlength="200"></label>
@@ -301,7 +301,7 @@
       <label><input id="epubPageChapters" type="checkbox" checked> Put each PDF page in its own EPUB section</label>
       <label class="dialog-field">Cover image <input id="epubCover" type="file" accept="image/png,image/jpeg"></label>
       <label id="epubCoverAltRow" class="dialog-field" hidden>Cover description <input id="epubCoverAlt" type="text" maxlength="500" placeholder="Describe meaningful cover artwork"></label>
-      <p class="tool-hint">Reflowable text retains detected headings, emphasis, paragraphs, lists, and links. Complex layouts may be simplified. Keep page appearance preserves all visual content as page images; text will not be selectable or reflowable. Scans need OCR for selectable text.</p>
+      <p class="tool-hint">Reflowable text retains detected headings, emphasis, paragraphs, lists, links, and embedded images. Images are included from the edited page appearance; review their placement and descriptions. Complex layouts may be simplified. Keep page appearance preserves all visual content as page images; text will not be selectable or reflowable. Scans need OCR for selectable text.</p>
       <section id="epubPreflight" class="preflight" aria-live="polite" hidden></section>
       <div class="dialog-actions">
         <button id="epubCancel" type="button">Cancel</button>
@@ -410,7 +410,7 @@
   <script src="../../vendor/jszip.min.js"></script>
   <script src="./vendor/pdf-lib.min.js"></script>
   <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
-  <script src="./src/boot.js?v=20261009-presentation"></script>
+  <script src="./src/boot.js?v=20261012-epub-images"></script>
   <script src="../../assets/js/pdf-ui-strings.js?v=20261009-presentation"></script>
   <script src="../../assets/js/pdf-language-loader.js?v=20261009-presentation"></script>
 </body>

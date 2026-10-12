@@ -14,7 +14,7 @@ const emptyText = 'No selectable text on this page. Scanned images require OCR.'
 // replacements in that PDF still have the original text underneath them.
 export async function collectTextDocument({ pages, sources, title, language, sourceName, onProgress = () => {} }) {
   const result = { schemaVersion: 1, title, language, sourceName, pages: [], warnings: [
-    'Formatting is reconstructed from PDF font and position information. Review headings, paragraphs, columns, and tables. Images and exact layout require Keep page appearance. No OCR is performed.',
+    'Formatting is reconstructed from PDF font and position information. Review headings, paragraphs, columns, and tables. Image handling depends on the export format; Keep page appearance preserves the full visual layout. No OCR is performed.',
   ] };
   for (const [index, item] of pages.entries()) {
     onProgress(index + 1, pages.length);
@@ -50,7 +50,7 @@ export async function collectTextDocument({ pages, sources, title, language, sou
       }
     }
     const lines = formattedLines(runs, width);
-    result.pages.push({ number: index + 1, width, height, text: lines.map(line => line.text).join('\n'), lines, blocks: structureLines(lines, width) });
+    result.pages.push({ number: index + 1, width, height, view: page.view.slice(), crop: { ...crop }, text: lines.map(line => line.text).join('\n'), lines, blocks: structureLines(lines, width) });
   }
   const empty = result.pages.filter(page => !page.text).length;
   if (empty) result.warnings.push(`${empty} of ${pages.length} pages have no selectable text. Scanned images require OCR.`);

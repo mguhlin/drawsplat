@@ -1,3 +1,4 @@
+import { collectEpubImages } from "./epub-images.js";
 import { setupPresentation } from "./presentation.js";
 import { createWebDeck, blobDataUrl } from "./webdeck-export.js";
 import {prepareFiles, importAccept} from "./file-import.js";
@@ -1613,6 +1614,10 @@ async function exportEpub(event) {
   try {
     announce("Preparing the edited PDF for EPUB conversion…");
     const textDocument = await (els.epubLayout.value === "appearance" ? currentAppearanceDocument : currentTextDocument)(title, language);
+    if (els.epubLayout.value !== "appearance") {
+      await collectEpubImages({ pdfjs, pdfBytes: await buildPdf(state.pages), textDocument,
+        onProgress: (page, total) => announce(`Including images from page ${page} of ${total}…`) });
+    }
     const coverFile = els.epubCover.files[0] || null;
     const result = await createEpub({ textDocument, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
     const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document";

@@ -9,9 +9,9 @@ const attribute = (node,name) => [...(node?.attributes||[])].find(a=>a.localName
 const xml = text => {const d=new DOMParser().parseFromString(text,'application/xml');if(d.getElementsByTagName('parsererror').length)throw Error('The document contains invalid XML.');return d;};
 const enabled = node => node && !['0','false','off'].includes(attribute(node,'val'));
 function pathFrom(base,target){
- if(!target||/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(target))return null;
+ if(!target||/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(target))return null;
  let decoded;try{decoded=decodeURIComponent(target.split(/[?#]/)[0]);}catch{return null;}
- const parts=base.split('/').slice(0,-1);for(const p of decoded.split('/')){if(p==='..'){if(!parts.length)return null;parts.pop();}else if(p&&p!=='.')parts.push(p);}return parts.join('/');
+ const parts=decoded.startsWith('/')?[]:base.split('/').slice(0,-1);for(const p of decoded.split('/')){if(p==='..'){if(!parts.length)return null;parts.pop();}else if(p&&p!=='.')parts.push(p);}return parts.join('/');
 }
 async function archive(file){
  let zip;try{zip=await globalThis.JSZip.loadAsync(await file.arrayBuffer());}catch{throw Error('This document could not be read. It may be damaged or encrypted.');}let total=0;

@@ -227,6 +227,7 @@
     "Add text, highlights, drawings, images, and signatures",
     "Crop, deskew, protect, and convert supported files",
     "Export PDF, images, document, and ebook formats",
+    "Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review",
     "Present PDFs with full screen, timed slideshows, and WebDeck v5 export",
     "Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts"
   ],

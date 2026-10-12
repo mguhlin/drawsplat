@@ -90,7 +90,7 @@ The production headers for `/solutions/pdfsplat/*` allow only same-origin connec
 - Existing PDF text is not edited semantically.
 - Click-to-edit works on PDF.js text runs and uses visual replacement. Scanned pages, outlined text, missing character maps, and complex font/layout runs require manual text boxes or future OCR support.
 - Secure content-removing redaction, OCR, forms, search, compression, and accessibility certification are not claimed.
-- EPUB conversion works best with searchable, single-column PDFs. Scans require OCR first, and complex columns, tables, equations, images, and fixed layouts are simplified or omitted.
+- EPUB conversion works best with searchable, single-column PDFs. Scans require OCR first, and complex columns, tables, equations, vector artwork, and fixed layouts may be simplified or omitted. Reflowable EPUB now includes embedded raster images alongside selectable text.
 - Remove area is visual removal only. It does not delete underlying PDF content and must not be treated as secure redaction.
 - Annotation placement on already-rotated source pages should be visually checked before distribution.
 - Browser memory and download limits still apply to very large documents.
@@ -232,3 +232,21 @@ browser support and permission, with the page-filling viewer as fallback.
 
 WebDeck framework copies live in `webdeck/`; rebuilding regenerates the embedded
 runtime from those files. Preserve their MIT attribution when refreshing v5.
+
+
+### Reflowable EPUB images
+
+Choose **Save as → EPUB → Reflowable text, formatting, and images**. Embedded
+raster images are packaged as local PNG resources and placed near the related
+text in approximate page reading order. Images are captured from their visible
+regions in the edited PDF, retaining crop and visual mask edits; overlapping
+text can appear within an image. Images resize to the ebook reader’s width.
+Page-appearance export remains available for complete visual pages. Scans retain
+their images but need OCR to provide selectable text. Vector-only artwork is not
+extracted as a separate figure. Preflight reports included images and asks you
+to review placement and generic image descriptions.
+
+PowerPoint import accepts both relative and archive-root slide, layout, and
+image relationships (for example `/ppt/slides/slide1.xml`). External resources
+remain excluded. Slides still become visual PDF pages, with the existing limits
+on complex PowerPoint styling and layouts.
