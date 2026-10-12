@@ -1,6 +1,6 @@
 /* global caches, fetch, self */
 
-const CACHE_NAME = 'gridsplat-cache-v1';
+const CACHE_NAME = 'gridsplat-cache-v2';
 const APP_SHELL = [
   '/splatworks/gridsplat/',
   '/splatworks/gridsplat/index.html',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key !== CACHE_NAME)
+            .filter((key) => key.startsWith('gridsplat-cache-') && key !== CACHE_NAME)
             .map((key) => caches.delete(key)),
         ),
       )
@@ -36,7 +36,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
 
-  if (request.method !== 'GET') {
+  const url = new URL(request.url);
+  const staticPath = url.pathname.startsWith('/splatworks/gridsplat/') || url.pathname.startsWith('/splatworks/shared/') || url.pathname.startsWith('/assets/') || url.pathname === '/data/drawsplat-tools.json';
+  if (request.method !== 'GET' || url.origin !== self.location.origin || !staticPath || url.searchParams.has('open-file')) {
     return;
   }
 
@@ -46,7 +48,7 @@ self.addEventListener('fetch', (event) => {
         const copy = response.clone();
 
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(request, copy);
+          if (response.ok) cache.put(request, copy).catch(() => {});
         });
 
         return response;
@@ -54,7 +56,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() =>
         caches
           .match(request)
-          .then((cached) => cached ?? caches.match('/splatworks/gridsplat/')),
+          .then(async (cached) => cached ?? (request.mode === 'navigate' ? await caches.match('/splatworks/gridsplat/') : null) ?? Response.error()),
       ),
   );
 });
