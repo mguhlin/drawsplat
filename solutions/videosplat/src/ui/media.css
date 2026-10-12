@@ -1233,3 +1233,11 @@
 .marker-list i{display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:2px}.marker-list small{display:block;color:var(--muted);margin-top:3px}.marker-list .active{border-color:var(--purple)}
 .marker-editor{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);padding-top:16px}.marker-editor label{display:grid;gap:5px;font-size:.85rem}.marker-editor label:first-child{grid-column:1/-1}.marker-editor input,.marker-editor select{width:100%;min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:#e8ecf7;padding:8px}.marker-editor button{grid-column:1/-1}
 @media(max-width:580px){.marker-list li{flex-wrap:wrap}.marker-list li>button:first-child{flex-basis:100%}}
+
+.recorder-preview .instagram-frame {
+  position: absolute;
+  border: 2px solid #ffd76b;
+  box-sizing: border-box;
+  pointer-events: none;
+  box-shadow: 0 0 0 999px #0005;
+}

@@ -1,3 +1,5 @@
+import { saveTransfer } from "../../../shared/video-handoff/index.js";
+import { instagramCrop, type InstagramFormat } from "../recorder/instagram";
 import { recordingWarning } from "../media/recording-integrity";
 import { ChromaControls } from "./ChromaControls";
 import { defaultChroma } from "../render/chroma";
@@ -34,6 +36,9 @@ const clock = (seconds: number) =>
 export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrepared = false, onClose, onAdd, onStatus, onFloatingChange, onMicrophoneChange }: RecorderDialogProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const reviewVideo = useRef<HTMLVideoElement>(null);
+  const [instagramFormat, setInstagramFormat] = useState<InstagramFormat>("original");
+  const [sourceSize, setSourceSize] = useState({ width: 16, height: 9 });
+  const [transferUrl, setTransferUrl] = useState("");
   const [generateSubtitles, setGenerateSubtitles] = useState(false);
   const [reviewPlaying, setReviewPlaying] = useState(false);
   const [recordingStream, setRecordingStream] = useState<MediaStream>();
@@ -231,6 +236,7 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       );
       if (controller.signal.aborted) { captured.cancel(); return; }
       session.current = captured;
+      setSourceSize({ width: canvas.current!.width, height: canvas.current!.height });
       setRecordingStream(session.current.previewStream);
       setElapsed(0);
       setState("recording");
@@ -272,6 +278,45 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     }
   };
 
+  const putIntoClipSplat = async () => {
+    if (!recording || adding) return;
+    // Reserve the tab during the click, before asynchronous encoding/storage.
+    const tab = window.open("about:blank", "_blank");
+    if (!tab) { setError("Allow pop-ups for VideoSplat, then press Put into ClipSplat again. Your recording is still here."); return; }
+    tab.document.title = "Preparing ClipSplat";
+    tab.document.body.textContent = "Your recording is being prepared locally. Keep VideoSplat visible until ClipSplat loads.";
+    window.focus();
+    tab.opener = null;
+    reviewVideo.current?.pause();
+    setReviewPlaying(false);
+    setAdding(true);
+    setError(undefined);
+    setState("cropping");
+    setCropProgress(0);
+    const controller = new AbortController();
+    cropping.current = controller;
+    try {
+      const blob = await cropRecording(recording, crop, setCropProgress, controller.signal);
+      controller.signal.throwIfAborted();
+      const file = new File([blob], recording.name.replace(/\.webm$/i, "-clipsplat.webm"), { type: blob.type });
+      const id = await saveTransfer(file, instagramFormat === "original" ? "reel" : instagramFormat, recording);
+      const url = new URL("../clipsplat/", location.href);
+      url.searchParams.set("videosplat-transfer", id);
+      setTransferUrl(url.href);
+      controller.signal.throwIfAborted();
+      if (tab.closed) throw new Error("The ClipSplat tab was closed. Use Open ClipSplat below to recover the stored recording.");
+      dockRecorder();
+      onStatus("Recording saved locally for ClipSplat");
+      onClose();
+      tab.location.replace(url.href);
+    } catch (reason) {
+      if (!tab.closed) tab.close();
+      if (controller.signal.aborted) return;
+      setError(`${captureErrorMessage(reason)} Your original recording is still available below.`);
+      setState("review");
+    } finally { setAdding(false); }
+  };
+
   const applyCrop = async () => {
     if (!recording) return;
     reviewVideo.current?.pause();
@@ -304,6 +349,19 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
       y: Math.max(0, Math.min(1, (clientY - rect.top) / rect.height)),
     });
     const start = point(event.clientX, event.clientY);
+    if (instagramFormat !== "original") {
+      const frame = instagramCrop(instagramFormat, reviewVideo.current?.videoWidth ?? 0, reviewVideo.current?.videoHeight ?? 0);
+      const position = (clientX: number, clientY: number) => {
+        const at = point(clientX, clientY);
+        setCrop({ ...frame, x: Math.max(0, Math.min(1 - frame.width, at.x - frame.width / 2)), y: Math.max(0, Math.min(1 - frame.height, at.y - frame.height / 2)) });
+      };
+      position(event.clientX, event.clientY);
+      const move = (e: PointerEvent) => position(e.clientX, e.clientY);
+      const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up, { once: true });
+      return;
+    }
     setCrop({ ...start, width: .02, height: .02 });
     const move = (moveEvent: PointerEvent) => {
       const end = point(moveEvent.clientX, moveEvent.clientY);
@@ -326,16 +384,35 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
     <button className="dialog-close" onClick={close} aria-label="Close recorder">×</button>
     <h2 id="recorder-title">Record locally</h2>
     <p className="lead">Capture your screen, camera, and audio directly into this project. Permission is requested only when you start; the recording is not uploaded.</p>
-    {state !== "review" && state !== "cropping" && <div className="recorder-preview">
+    <label>Recording frame<select aria-label="Recording frame" value={instagramFormat} disabled={starting || !["setup", "review"].includes(state) || adding} onChange={event => {
+      const format = event.target.value as InstagramFormat;
+      setInstagramFormat(format);
+      setCrop(instagramCrop(format, reviewVideo.current?.videoWidth ?? 0, reviewVideo.current?.videoHeight ?? 0));
+    }}>
+      <option value="original">Original · free crop</option>
+      <option value="reel">Instagram Reel · 9:16</option>
+      <option value="story">Instagram Story · 9:16</option>
+      <option value="feed">Instagram portrait feed · 4:5</option>
+    </select></label>
+    <p className="hint">The original is preserved. Instagram framing crops the selected portion when you add or send the recording; ClipSplat exports at 1080 × 1920 or 1080 × 1350. Review and reposition the frame after stopping.</p>
+    {state !== "review" && state !== "cropping" && <div className="recorder-preview" style={{ aspectRatio: `${sourceSize.width}/${sourceSize.height}`, height: "auto", maxWidth: `min(100%, calc(25vh * ${sourceSize.width / sourceSize.height}))`, marginInline: "auto" }}>
       <canvas ref={canvas} aria-label="Recording preview" />
+      {instagramFormat !== "original" && state !== "setup" && <i className="instagram-frame" style={(() => {
+        const rect = instagramCrop(instagramFormat, canvas.current?.width ?? 0, canvas.current?.height ?? 0);
+        return { left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.width * 100}%`, height: `${rect.height * 100}%` };
+      })()} />}
       {state === "setup" && !starting && !counting && <span>Preview appears after permission is granted</span>}
       {counting && <strong className="recorder-countdown" aria-live="assertive">{counting}</strong>}
       {state !== "setup" && <output>{state === "paused" ? "Paused · " : "● "}{clock(elapsed)}</output>}
     </div>}
     {(state === "review" || state === "cropping") && recording && <div className="crop-review">
-      <p>Drag over the preview to select the part of the recorded tab you want to keep.</p>
-      <div className="crop-stage" onPointerDown={state === "review" ? beginCropSelection : undefined}>
-        <video ref={reviewVideo} src={recordingUrl} playsInline onEnded={() => setReviewPlaying(false)} aria-label="Recorded screen crop preview" />
+      <p>{instagramFormat === "original" ? "Drag over the preview to select the part of the recorded tab you want to keep." : "Drag to position the Instagram frame. Only the outlined portion will be sent."}</p>
+      <div className="crop-stage" style={{ aspectRatio: `${sourceSize.width}/${sourceSize.height}` }} onPointerDown={state === "review" ? beginCropSelection : undefined}>
+        <video ref={reviewVideo} onLoadedMetadata={() => {
+          const video = reviewVideo.current!;
+          setSourceSize({ width: video.videoWidth, height: video.videoHeight });
+          setCrop(instagramCrop(instagramFormat, video.videoWidth, video.videoHeight));
+        }} src={recordingUrl} playsInline onEnded={() => setReviewPlaying(false)} aria-label="Recorded screen crop preview" />
         <i className="crop-selection" style={{ left: `${crop.x * 100}%`, top: `${crop.y * 100}%`, width: `${crop.width * 100}%`, height: `${crop.height * 100}%` }} />
       </div>
       {state === "review" && <div className="recorder-audio-review"><button onClick={async () => {
@@ -345,18 +422,20 @@ export function RecorderDialog({ initialMicrophoneDeviceId = "", permissionsPrep
         if(video.ended)video.currentTime=0;
         try{await video.play();setReviewPlaying(true);}catch{setError("The recording could not play. Try Play recording with sound again.");}
       }}>{reviewPlaying ? "Pause recording review" : "Play recording with sound"}</button><p>Listen before adding this recording to your project. A silent source cannot gain audio from timeline edits.</p></div>}
-      <div className="crop-presets" aria-label="Crop presets">
+      {instagramFormat === "original" && <div className="crop-presets" aria-label="Crop presets">
         <button onClick={() => setCrop({ x: 0, y: 0, width: 1, height: 1 })}>Full frame</button>
         <button onClick={() => setCrop({ x: .125, y: 0, width: .75, height: 1 })}>Center</button>
         <button onClick={() => setCrop({ x: 0, y: 0, width: .5, height: 1 })}>Left half</button>
         <button onClick={() => setCrop({ x: .5, y: 0, width: .5, height: 1 })}>Right half</button>
-      </div>
+      </div>}
       {state === "review" && <label><input type="checkbox" checked={generateSubtitles} onChange={event => setGenerateSubtitles(event.target.checked)}/> Generate subtitles when adding this recording (English)</label>}
       {state === "review" && <div className="recorder-actions">
         <button className="primary" disabled={adding} onClick={applyCrop}>Crop and add to timeline</button>
         <button disabled={adding} onClick={() => addRecording(recording, "Full recording saved locally and added to the timeline")}>Use full recording</button>
+        <button disabled={adding} onClick={() => void putIntoClipSplat()}>Put into ClipSplat</button>
         <button className="danger" onClick={close}>Discard</button>
       </div>}
+      {transferUrl && <p><a href={transferUrl} target="_blank" rel="noopener">Open ClipSplat with stored recording</a></p>}
       <p><a href={recordingUrl} download={recording.name}>Download original recording</a> · {(recording.size / 1024 / 1024).toFixed(1)} MB</p>
       {adding && <p role="status">Adding recording to the timeline… You can download the original while this finishes.</p>}
       {state === "cropping" && <><progress max="1" value={cropProgress} /><p role="status">Cropping locally… {Math.round(cropProgress * 100)}%</p></>}

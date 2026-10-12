@@ -1,3 +1,4 @@
+import { saveTransfer } from "../../../shared/video-handoff/index.js";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { startCapture, type CaptureSession } from "../recorder/capture";
@@ -9,11 +10,14 @@ vi.mock("../recorder/capture", async (original) => ({
   startCapture: vi.fn(),
 }));
 vi.mock("../recorder/crop", () => ({ cropRecording: vi.fn() }));
+vi.mock("../../../shared/video-handoff/index.js", () => ({ saveTransfer: vi.fn() }));
 vi.mock("./RecordingAudioMeter", () => ({ RecordingAudioMeter: () => null }));
 
 let session: CaptureSession;
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+  vi.spyOn(window, "focus").mockImplementation(() => {});
   vi.useFakeTimers();
   vi.stubGlobal("MediaRecorder", { isTypeSupported: () => true });
   Object.defineProperty(navigator, "mediaDevices", { configurable: true, value: { getUserMedia: vi.fn(), getDisplayMedia: vi.fn() } });
@@ -129,4 +133,45 @@ it("closing a pending crop cancels it and prevents a late timeline addition", as
   expect(vi.mocked(cropRecording).mock.calls.at(-1)![3]?.aborted).toBe(true);
   await act(async () => { finish(new Blob(["late crop"])); });
   expect(onAdd).not.toHaveBeenCalled();
+});
+
+it("keeps the recording when the browser blocks the ClipSplat tab", async () => {
+  await begin();
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Stop and choose crop" })); });
+  vi.spyOn(window, "open").mockReturnValue(null);
+  fireEvent.click(screen.getByRole("button", { name: "Put into ClipSplat" }));
+  expect(screen.getByRole("alert")).toHaveTextContent("Allow pop-ups");
+  expect(saveTransfer).not.toHaveBeenCalled();
+  expect(screen.getByRole("link", { name: "Download original recording" })).toBeVisible();
+});
+it("closes the recorder only after the framed video and original are stored, then navigates ClipSplat", async () => {
+  const onClose = vi.fn();
+  render(<RecorderDialog onClose={onClose} onAdd={vi.fn()} onStatus={vi.fn()}/>);
+  fireEvent.change(screen.getByRole("combobox", { name: "Recording frame" }), { target: { value: "feed" } });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Start recording" })); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Stop and choose crop" })); });
+  const replace = vi.fn(() => expect(onClose).toHaveBeenCalledTimes(1));
+  const tab = { document: { title: "", body: { textContent: "" } }, closed: false, opener: window, close: vi.fn(), location: { replace } };
+  vi.spyOn(window, "open").mockReturnValue(tab as unknown as Window);
+  vi.mocked(cropRecording).mockResolvedValue(new Blob(["framed"], { type: "video/webm" }));
+  let finish!: (id: string) => void;
+  vi.mocked(saveTransfer).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Put into ClipSplat" })); });
+  expect(onClose).not.toHaveBeenCalled();
+  expect(saveTransfer).toHaveBeenCalledWith(expect.any(File), "feed", expect.any(File));
+  await act(async () => { finish("12345678-1234-1234-1234-123456789abc"); });
+  expect(replace).toHaveBeenCalledWith(expect.stringContaining("/clipsplat/?videosplat-transfer="));
+  expect(tab.opener).toBeNull();
+});
+it("retains review and download after transfer storage fails", async () => {
+  await begin();
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Stop and choose crop" })); });
+  const closeTab = vi.fn();
+  vi.spyOn(window, "open").mockReturnValue({ document: { title: "", body: { textContent: "" } }, closed: false, close: closeTab } as unknown as Window);
+  vi.mocked(cropRecording).mockResolvedValue(new Blob(["framed"], { type: "video/webm" }));
+  vi.mocked(saveTransfer).mockRejectedValue(new Error("Browser storage is full"));
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Put into ClipSplat" })); });
+  expect(screen.getByRole("alert")).toHaveTextContent("Browser storage is full");
+  expect(screen.getByRole("link", { name: "Download original recording" })).toBeVisible();
+  expect(closeTab).toHaveBeenCalled();
 });

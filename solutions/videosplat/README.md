@@ -188,3 +188,21 @@ recording, captions, effects, and export engines retain their existing paths.
 This is an independent workflow addition inspired by
 [FilmCraft](https://github.com/storytold/filmcraft); it adds no FilmCraft code,
 assets, codecs, or runtime dependencies.
+
+### Instagram framing and ClipSplat
+
+The recorder's **Recording frame** selector offers Reel/Story (9:16), portrait
+Feed (4:5), and the existing Original/free-crop mode. Instagram modes show a
+capture guide; after stopping, drag to reposition the fixed-ratio frame. The
+original capture remains available for download.
+
+**Put into ClipSplat** crops the selected portion, stores the video and original
+locally in IndexedDB, closes the recorder, and loads ClipSplat in a new tab with
+the matching format selected. Browsers require reserving that tab during the
+button click, so a preparation tab may appear before ClipSplat loads. Keep
+VideoSplat visible during cropping for smooth video; cropping runs in real time.
+No recording is uploaded. Both apps must run on the same origin and browser
+profile. ClipSplat's 1 GB source limit and available browser storage apply.
+Blocked pop-ups or failed storage leave review and the original download intact.
+ClipSplat removes the transfer after successful video decoding and offers the
+uncropped original under **Save original recording**.

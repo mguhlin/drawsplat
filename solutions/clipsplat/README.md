@@ -69,3 +69,18 @@ Step 1 includes four illustrated video frames (Cinema Classics, Vintage Film, In
 The editor includes a skip link, native keyboard file selection, timeline keyboard guidance, named export progress, selected-text states, visible focus, RTL layouts, and higher-contrast step summaries. Image-card edits preserve keyboard focus and text selection when controls rebuild; removing the last card returns focus to Add image cards.
 
 Run `node tests/accessibility.cjs` from this app directory. Set `CLIPSPLAT_AXE` to a local axe-core JavaScript file to add WCAG A/AA automated checks, and `CLIPSPLAT_ORIGIN` to verify a deployed origin. These checks cover tested UI states and do not establish complete accessibility conformance.
+
+### Receive a VideoSplat recording
+
+VideoSplat's recorder can send a selected crop using **Put into ClipSplat**.
+A new tab imports the locally stored video and selects Reel, Story, or Feed to
+match the frame. The uncropped source is available under **Save original
+recording**. This uses same-origin IndexedDB without uploads; a failed import
+keeps the transfer for retry. Normal camera recording and file imports work as
+before. Source videos must fit the existing 1 GB limit.
+
+Integration check (serve the repository root, including both built apps):
+`node solutions/clipsplat/tests/video-handoff.cjs`. Set `CLIPSPLAT_ORIGIN` to
+check a deployed site; the test generates synthetic screen/audio locally and
+verifies all three formats, original recovery, local-storage cleanup, and real
+H.264/AAC MP4 export with audible source audio.

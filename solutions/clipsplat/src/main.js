@@ -1,3 +1,4 @@
+import { readTransfer, removeTransfer } from "../../shared/video-handoff/index.js";
 import "./style.css";
 import {imageCardLayout} from "./image-layout.js";
 import { FRAME_OPTIONS, VIDEO_FRAME_OPTIONS, videoFrameViewport, drawPanelFrame, loadIllustratedFrame, isIllustratedFrame } from "./panel-frames.js";
@@ -897,3 +898,28 @@ initializeLanguage(({titlesChanged}) => {
 });
 update();
 render();
+
+// A fresh tab imports only the explicitly selected local transfer.
+const transferId = new URL(location.href).searchParams.get("videosplat-transfer");
+if (transferId) {
+  (async () => {
+    try {
+      message("Opening your VideoSplat recording…");
+      const item = await readTransfer(transferId);
+      $("preset").value = item.preset;
+      await load(item.file, item.file.name || "VideoSplat recording");
+      if (originalURL) URL.revokeObjectURL(originalURL);
+      originalURL = URL.createObjectURL(item.original || item.file);
+      $("original").href = originalURL;
+      $("original").download = (item.original || item.file).name || "VideoSplat-recording.webm";
+      $("original").hidden = false;
+      await removeTransfer(transferId).catch(() => {});
+      const cleanURL = new URL(location.href);
+      cleanURL.searchParams.delete("videosplat-transfer");
+      history.replaceState(null, "", cleanURL);
+      message("VideoSplat recording ready. Adjust the panels, then create your MP4.");
+    } catch (error) {
+      message(error.message + " The transfer is kept locally so you can reload to retry.");
+    }
+  })();
+}

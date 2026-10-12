@@ -128,10 +128,13 @@ export async function cropRecording(
           if (video.ended) {
             activeRecorder.stop();
             resolve();
-          } else frame = requestAnimationFrame(draw);
+          }
         } catch (error) { reject(error); }
       };
-      frame = requestAnimationFrame(draw);
+      // A reserved ClipSplat tab may take focus. Animation frames stop in a
+      // hidden tab; a timer still completes encoding and detects playback end.
+      frame = window.setInterval(draw, 1000 / 30);
+      draw();
     }), canceled]);
     const blob = await Promise.race([result, canceled]);
     signal?.throwIfAborted();
@@ -139,7 +142,7 @@ export async function cropRecording(
     return blob;
   } finally {
     signal?.removeEventListener("abort", abort);
-    cancelAnimationFrame(frame);
+    window.clearInterval(frame);
     if (recorder && recorder.state !== "inactive") recorder.stop();
     video.pause();
     playbackStream?.getTracks().forEach((track) => track.stop());
