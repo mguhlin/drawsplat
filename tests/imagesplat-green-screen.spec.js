@@ -168,3 +168,66 @@ test.describe('touch placement',()=>{
     expect(await preview.evaluate(el=>getComputedStyle(el).touchAction)).toBe('none');
   });
 });
+
+test('starting in another tab freezes the older studio and hands the camera back on request', async ({ page, context }) => {
+  const other = await context.newPage();
+  await fakeCamera(page); await fakeCamera(other);
+  await openStudio(page); await page.locator('#gsCamera').click();
+  await expect(page.locator('#gsSourceName')).toHaveText('Live camera');
+  await openStudio(other); await other.locator('#gsCamera').click();
+  await expect(other.locator('#gsSourceName')).toHaveText('Live camera');
+  await expect(page.locator('#gsSourceName')).toHaveText('Camera snapshot');
+  await expect(page.locator('#gsStatus')).toContainText('Camera moved to another ImageSplat tab');
+  await expect.poll(() => page.evaluate(() => window.__auditTracks[0].readyState)).toBe('ended');
+  await expect(page.locator('#gsDownload')).toBeEnabled();
+  await page.locator('#gsCamera').click();
+  await expect(page.locator('#gsSourceName')).toHaveText('Live camera');
+  await expect(other.locator('#gsSourceName')).toHaveText('Camera snapshot');
+  await expect.poll(() => other.evaluate(() => window.__auditTracks[0].readyState)).toBe('ended');
+  await other.locator('#gsClose').click();
+  // A closed studio no longer receives claims or stops the surviving stream.
+  await expect.poll(() => page.evaluate(() => window.__auditTracks.at(-1).readyState)).toBe('live');
+});
+
+test('camera picker requests the exact device and leaves a different camera active', async ({ page, context }) => {
+  const other = await context.newPage();
+  for (const p of [page, other]) {
+    await fakeCamera(p);
+    await p.addInitScript(() => {
+      navigator.mediaDevices.enumerateDevices = async () => [
+        { kind: 'videoinput', deviceId: 'camera-a', label: 'Built-in camera' },
+        { kind: 'videoinput', deviceId: 'camera-b', label: 'USB camera' },
+      ];
+      const get = navigator.mediaDevices.getUserMedia;
+      navigator.mediaDevices.getUserMedia = async options => { window.__cameraOptions = options; return get(options); };
+    });
+  }
+  await openStudio(page); await page.locator('#gsDevice').selectOption('camera-a');
+  await page.locator('#gsCamera').click(); await expect(page.locator('#gsSourceName')).toHaveText('Live camera');
+  expect(await page.evaluate(() => window.__cameraOptions.video.deviceId)).toEqual({ exact: 'camera-a' });
+  expect(await page.evaluate(() => window.__cameraOptions.audio)).toBe(false);
+  await openStudio(other); await other.locator('#gsDevice').selectOption('camera-b');
+  await other.locator('#gsCamera').click(); await expect(other.locator('#gsSourceName')).toHaveText('Live camera');
+  await expect(page.locator('#gsSourceName')).toHaveText('Live camera');
+  expect(await other.evaluate(() => window.__cameraOptions.video.deviceId)).toEqual({ exact: 'camera-b' });
+  await expect.poll(() => page.evaluate(() => window.__auditTracks[0].readyState)).toBe('live');
+});
+
+test('a busy device gets one retry without silently choosing a different camera', async ({ page }) => {
+  await fakeCamera(page);
+  await page.addInitScript(() => {
+    navigator.mediaDevices.enumerateDevices = async () => [{ kind: 'videoinput', deviceId: 'camera-a', label: 'USB camera' }];
+    const get = navigator.mediaDevices.getUserMedia;
+    window.__cameraAttempts = 0;
+    navigator.mediaDevices.getUserMedia = async options => {
+      window.__cameraAttempts++;
+      window.__cameraOptions = options;
+      if (window.__cameraAttempts === 1) throw new DOMException('busy', 'NotReadableError');
+      return get(options);
+    };
+  });
+  await openStudio(page); await page.locator('#gsDevice').selectOption('camera-a');
+  await page.locator('#gsCamera').click(); await expect(page.locator('#gsSourceName')).toHaveText('Live camera');
+  expect(await page.evaluate(() => window.__cameraAttempts)).toBe(2);
+  expect(await page.evaluate(() => window.__cameraOptions.video.deviceId)).toEqual({ exact: 'camera-a' });
+});

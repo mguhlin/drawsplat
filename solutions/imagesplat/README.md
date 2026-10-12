@@ -10,3 +10,7 @@ Select one image layer, then choose **Adjust photo…**. Brightness, contrast, s
 Common actions use icons with visible labels. Existing layer editing, crop, PNG/selection/clipboard export, animation, and background-removal controls keep their behavior. The legacy SplatImage URL redirects to this tool.
 
 [October 9 release notes](../../docs/release-notes/RELEASE_NOTES_v3.1.31.md). Verification: the ImageSplat photo-adjustment and labelled-action checks in the root Playwright icons configuration.
+
+New text boxes start empty; paste or type only the text you want. To change an existing text layer, double-click its text on the canvas or its name in Layers, choose **Edit → Edit selected text**, or press Enter with one text layer selected. The dialog restores its wording and formatting; **Save changes** updates the same layer, Cancel leaves it unchanged, and Undo restores the prior text and styles.
+
+Green Screen Studio offers a named camera picker and remembers the chosen device for the tab. Starting the same camera in another ImageSplat studio tab freezes the older preview into a still image and releases its camera tracks; different selected cameras can stay live. Other websites remain subject to browser/device camera sharing, with a retry and clear recovery guidance if access is blocked.

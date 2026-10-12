@@ -1,6 +1,10 @@
 /* ImageSplat™ locale dictionary. Native-speaker review pending. */
 WidgetI18n.register('splatimage-studio', {
   en: {
+    "textDialog.edit": "Edit selected text",
+    "textDialog.editTitle": "Edit text",
+    "textDialog.save": "Save changes",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'ImageSplat™',
@@ -141,6 +145,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.redo': 'Nothing to redo.'
   },
   es: {
+    "textDialog.edit": "Editar texto seleccionado",
+    "textDialog.editTitle": "Editar texto",
+    "textDialog.save": "Guardar cambios",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'Herramientas DrawSplat™',
     'header.h1': 'ImageSplat™',
@@ -162,6 +170,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.ready': 'Listo.', 'status.imported': 'Se importaron {n} imagen(es).', 'status.pasted': 'Imagen pegada.', 'status.captured': 'Captura agregada como capa de imagen.', 'status.captureArea': 'Captura agregada. Arrastra los controles de recorte para dejar solo el area necesaria.', 'status.captureDelay': 'Capturando en {seconds}...', 'status.captureAreaDelayDone': 'Captura programada agregada. Arrastra los controles de recorte para dejar solo el area necesaria.', 'status.captureCanceled': 'Captura de pantalla cancelada.', 'status.captureUnsupported': 'Este navegador no admite captura de pantalla.', 'status.exported': 'PNG exportado.', 'status.copied': 'PNG copiado.', 'status.needSelection': 'Selecciona primero uno o más objetos.', 'status.needImages': 'Selecciona capas de imagen primero.', 'status.gif': 'GIF exportado con {n} cuadro(s).', 'status.frames': 'Se descargaron {n} archivo(s).', 'status.crop': 'Lienzo recortado.', 'status.effect': 'Efecto aplicado.', 'status.smartBgLoading': 'Cargando herramientas de recorte.', 'status.smartBgWorking': 'Recortando fondo {n} de {total}.', 'status.smartBgRemoved': 'Recorte de fondo aplicado.', 'status.smartBgFailed': 'No se pudo recortar el fondo. Prueba Quitar fondo por borde.', 'status.needText': 'Escribe texto primero.', 'status.layerAdded': 'Capa en blanco agregada.', 'status.undo': 'Nada que deshacer.', 'status.redo': 'Nada que rehacer.'
   },
   vi: {
+    "textDialog.edit": "Sửa chữ đã chọn",
+    "textDialog.editTitle": "Sửa chữ",
+    "textDialog.save": "Lưu thay đổi",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'Cong cu DrawSplat™',
     'header.h1': 'ImageSplat™',
@@ -182,6 +194,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.ready': 'San sang.', 'status.imported': 'Da nhap {n} anh.', 'status.pasted': 'Da dan anh.', 'status.captured': 'Da them anh chup man hinh vao lop anh.', 'status.captureArea': 'Da them anh chup. Keo tay nam cat de giu vung can dung.', 'status.captureDelay': 'Se chup sau {seconds}...', 'status.captureAreaDelayDone': 'Da them anh chup hen gio. Keo tay nam cat de giu vung can dung.', 'status.captureCanceled': 'Da huy chup man hinh.', 'status.captureUnsupported': 'Trinh duyet nay khong ho tro chup man hinh.', 'status.exported': 'Da xuat PNG.', 'status.copied': 'Da sao chep PNG.', 'status.needSelection': 'Hay chon doi tuong truoc.', 'status.needImages': 'Hay chon lop anh truoc.', 'status.gif': 'Da xuat GIF tu {n} khung.', 'status.frames': 'Da tai {n} tep khung.', 'status.crop': 'Da cat khung.', 'status.effect': 'Da ap dung hieu ung.', 'status.smartBgLoading': 'Dang tai cong cu cat nen.', 'status.smartBgWorking': 'Dang cat nen {n}/{total}.', 'status.smartBgRemoved': 'Da cat nen.', 'status.smartBgFailed': 'Khong cat nen duoc. Hay thu Remove edge background.', 'status.needText': 'Hay nhap chu truoc.', 'status.layerAdded': 'Da them lop trong.', 'status.undo': 'Khong co gi de hoan tac.', 'status.redo': 'Khong co gi de lam lai.'
   },
   ar: {
+    "textDialog.edit": "تحرير النص المحدد",
+    "textDialog.editTitle": "تحرير النص",
+    "textDialog.save": "حفظ التغييرات",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'ادوات DrawSplat™',
     'header.h1': 'ImageSplat™',
@@ -202,6 +218,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.ready': 'جاهز.', 'status.imported': 'تم استيراد {n} صورة.', 'status.pasted': 'تم لصق الصورة.', 'status.captured': 'تمت اضافة لقطة الشاشة كطبقة صورة.', 'status.captureArea': 'تمت اضافة اللقطة. اسحب مقابض القص للاحتفاظ بالمنطقة المطلوبة.', 'status.captureDelay': 'سيتم الالتقاط خلال {seconds}...', 'status.captureAreaDelayDone': 'تمت اضافة اللقطة المؤقتة. اسحب مقابض القص للاحتفاظ بالمنطقة المطلوبة.', 'status.captureCanceled': 'تم الغاء لقطة الشاشة.', 'status.captureUnsupported': 'التقاط الشاشة غير مدعوم في هذا المتصفح.', 'status.exported': 'تم تصدير PNG.', 'status.copied': 'تم نسخ PNG.', 'status.needSelection': 'حدد كائنا اولا.', 'status.needImages': 'حدد طبقات صور اولا.', 'status.gif': 'تم تصدير GIF من {n} اطار.', 'status.frames': 'تم تنزيل {n} ملف اطار.', 'status.crop': 'تم قص اللوحة.', 'status.effect': 'تم تطبيق التاثير.', 'status.smartBgLoading': 'يتم تحميل ادوات القص.', 'status.smartBgWorking': 'يتم قص الخلفية {n} من {total}.', 'status.smartBgRemoved': 'تم قص الخلفية.', 'status.smartBgFailed': 'تعذر قص الخلفية. جرب ازالة خلفية الحواف.', 'status.needText': 'ادخل النص اولا.', 'status.layerAdded': 'تمت اضافة طبقة فارغة.', 'status.undo': 'لا شيء للتراجع.', 'status.redo': 'لا شيء للاعادة.'
   },
   zh: {
+    "textDialog.edit": "编辑所选文字",
+    "textDialog.editTitle": "编辑文字",
+    "textDialog.save": "保存更改",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'DrawSplat™ 工具',
     'header.h1': 'ImageSplat™',
@@ -222,6 +242,10 @@ WidgetI18n.register('splatimage-studio', {
     'status.ready': '就绪。', 'status.imported': '已导入 {n} 张图片。', 'status.pasted': '已粘贴图片。', 'status.captured': '屏幕截图已添加为图片图层。', 'status.captureArea': '屏幕截图已添加。拖动裁剪控制点，只保留需要的区域。', 'status.captureDelay': '{seconds} 秒后捕获...', 'status.captureAreaDelayDone': '定时截图已添加。拖动裁剪控制点，只保留需要的区域。', 'status.captureCanceled': '屏幕捕获已取消。', 'status.captureUnsupported': '此浏览器不支持屏幕捕获。', 'status.exported': '已导出 PNG。', 'status.copied': '已复制 PNG。', 'status.needSelection': '请先选择对象。', 'status.needImages': '请先选择图片图层。', 'status.gif': '已从 {n} 帧导出 GIF。', 'status.frames': '已下载 {n} 个帧文件。', 'status.crop': '画布已裁剪。', 'status.effect': '效果已应用。', 'status.smartBgLoading': '正在加载抠图工具。', 'status.smartBgWorking': '正在抠背景 {n}/{total}。', 'status.smartBgRemoved': '背景抠图已应用。', 'status.smartBgFailed': '背景抠图无法运行。请尝试边缘背景移除。', 'status.needText': '请先输入文字。', 'status.layerAdded': '已添加空白图层。', 'status.undo': '没有可撤销内容。', 'status.redo': '没有可重做内容。'
   },
   uh: {
+    "textDialog.edit": "चयनित टेक्स्ट संपादित करें / منتخب متن میں ترمیم",
+    "textDialog.editTitle": "टेक्स्ट संपादित करें / متن میں ترمیم",
+    "textDialog.save": "परिवर्तन सहेजें / تبدیلیاں محفوظ کریں",
+
     'doc.title': 'ImageSplat™ - DrawSplat',
     'header.eyebrow': 'DrawSplat™ Tools',
     'header.h1': 'ImageSplat™',

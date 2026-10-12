@@ -78,8 +78,8 @@ export function openGreenScreen({ initialSource, insert, download }) {
         <label><input id="gsSpill" type="checkbox"> Remove green/blue fringe</label>
         <p class="hint">Neutralizes leftover screen color around the subject. Turn off if it changes green or blue details you want to keep.</p>
         <div class="gs-row"><label class="gs-file">Choose photo<input id="gsPhoto" type="file" accept="image/*"></label><label class="gs-file">Take a photo<input id="gsCapture" type="file" accept="image/*" capture="environment"></label></div>
-        <div class="gs-row"><select id="gsFacing" aria-label="Camera direction"><option value="user">Front camera</option><option value="environment">Back camera</option></select><button id="gsCamera">Start camera</button><button id="gsFreeze" disabled>Freeze camera</button><button id="gsRemove">Remove source</button></div>
-        <p class="hint">If live camera access is blocked, use Take a photo or allow Camera in your browser and device settings.</p>
+        <div class="gs-row"><label>Camera<select id="gsDevice" aria-label="Camera source"><option value="">Automatic · front/back preference</option></select></label><select id="gsFacing" aria-label="Camera direction"><option value="user">Front camera</option><option value="environment">Back camera</option></select><button id="gsCamera">Start camera</button><button id="gsFreeze" disabled>Freeze camera</button><button id="gsRemove">Remove source</button></div>
+        <p class="hint">Starting a camera here freezes and releases its preview in another ImageSplat Green Screen Studio tab. If another website holds it exclusively, stop that tab’s camera and retry. Take a photo and Choose photo remain available.</p>
         <canvas id="gsSource" width="400" height="225" aria-label="Layer source: sample a color or paint a mask"></canvas>
         <div class="gs-row"><label>Source tool <select id="gsTool"><option value="sample">Pick screen color</option><option value="erase">Erase mask</option><option value="restore">Restore mask</option></select></label>${range('gsBrush', 'Brush size', 1, 50, 10)}<button id="gsUndoMask">Undo mask stroke</button><button id="gsClearMask">Clear mask</button></div>
         <p class="hint">Click or tap the source to sample its backdrop. Drag with Erase mask to hide unwanted areas. Restore mask restores manually erased areas; color removal and crop still apply.</p>
@@ -102,6 +102,40 @@ export function openGreenScreen({ initialSource, insert, download }) {
   let selected = 1, stream = null, cameraLayer = null, request = 0, frame = 0, lastPaint = 0, busy = false, loading = 0, closed = false, stroke = null;
   const fields = { gsKey: 'key', gsColor: 'color', gsTolerance: 'tolerance', gsSmoothing: 'smoothing', gsSpill: 'spill', gsX: 'x', gsY: 'y', gsScale: 'scale', gsRotation: 'rotation', gsFlip: 'flip', gsLeft: 'left', gsRight: 'right', gsTop: 'top', gsBottom: 'bottom' };
   const message = text => { $('gsStatus').textContent = text; };
+  let requestedDevice = '', cameraClaim = '', pendingCamera = false;
+  let cameraChannel = null;
+  try { if (typeof BroadcastChannel === 'function') cameraChannel = new BroadcastChannel('imagesplat-green-screen-camera-v1'); } catch { /* Camera access still works when cross-tab messaging is unavailable. */ }
+  if (cameraChannel) cameraChannel.onmessage = ({ data }) => {
+    if (closed || data?.type !== 'claim' || typeof data.claim !== 'string' || data.claim <= cameraClaim) return;
+    const device = stream?.getVideoTracks()[0]?.getSettings().deviceId || requestedDevice;
+    if (data.deviceId && device && data.deviceId !== device) return;
+    if (stream || pendingCamera) {
+      freezeCamera(); pendingCamera = false;
+      message('Camera moved to another ImageSplat tab. Your last frame is preserved as a photo; press Start camera to bring it back.');
+    }
+    cameraChannel.postMessage({ type: 'released', claim: data.claim });
+  };
+  async function refreshCameras() {
+    if (!navigator.mediaDevices?.enumerateDevices) return;
+    try {
+      const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput' && d.deviceId);
+      if (closed) return;
+      const chosen = $('gsDevice').value;
+      $('gsDevice').replaceChildren(new Option('Automatic · front/back preference', ''), ...devices.map((d, i) => new Option(d.label || `Camera ${i + 1}`, d.deviceId)));
+      if (chosen && !devices.some(d => d.deviceId === chosen)) $('gsDevice').add(new Option('Previously selected camera · unavailable', chosen));
+      $('gsDevice').value = chosen;
+    } catch { /* A denied device list must not disable photo import or default camera access. */ }
+  }
+  try { const saved = sessionStorage.getItem('imagesplat-camera-id'); if (saved) { $('gsDevice').add(new Option('Previously selected camera', saved)); $('gsDevice').value = saved; } } catch {}
+  void refreshCameras();
+  navigator.mediaDevices?.addEventListener?.('devicechange', refreshCameras);
+  $('gsDevice').onchange = () => {
+    freezeCamera();
+    try { sessionStorage.setItem('imagesplat-camera-id', $('gsDevice').value); } catch {}
+    message('Camera selection changed. Press Start camera to use it.');
+  };
+  $('gsFacing').onchange = () => { $('gsDevice').value = ''; $('gsDevice').onchange(); };
+
   function controls() {
     const layer = layers[selected]; $('gsSourceName').textContent = layer.name;
     for (const [id, key] of Object.entries(fields)) { const el = $(id); if (el.type === 'checkbox') el.checked = layer.settings[key]; else el.value = layer.settings[key]; }
@@ -125,7 +159,7 @@ export function openGreenScreen({ initialSource, insert, download }) {
   }
   function loop(time) { if (closed || !stream) return; if (time - lastPaint > 65 && !busy) { draw(); lastPaint = time; } frame = requestAnimationFrame(loop); }
   function freezeCamera() {
-    request++;
+    request++; pendingCamera = false;
     const tracks = stream?.getTracks() || [];
     if (stream && cameraLayer?.source) {
       const video = cameraLayer.source, size = dimensions(video);
@@ -156,20 +190,34 @@ export function openGreenScreen({ initialSource, insert, download }) {
   $('gsCamera').onclick = async () => {
     freezeCamera(); const token = ++request, layer = layers[selected]; layer.loadVersion = (layer.loadVersion || 0) + 1; $('gsCamera').disabled = true; message('Allow camera access to preview your green-screen scene.');
     let opened;
+    pendingCamera = true; requestedDevice = $('gsDevice').value; cameraClaim = `${String(Date.now()).padStart(16, '0')}-${globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2)}`;
     try {
       if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera unavailable');
-      opened = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: $('gsFacing').value }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+      if (cameraChannel) {
+        cameraChannel.postMessage({ type: 'claim', claim: cameraClaim, deviceId: requestedDevice });
+        // Allow same-origin studios to freeze their last frame and release the device.
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      if (closed || token !== request) return;
+      const options = { video: { ...(requestedDevice ? { deviceId: { exact: requestedDevice } } : { facingMode: { ideal: $('gsFacing').value } }), width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+      try { opened = await navigator.mediaDevices.getUserMedia(options); }
+      catch (error) {
+        if (error.name !== 'NotReadableError' || closed || token !== request) throw error;
+        await new Promise(resolve => setTimeout(resolve, 300));
+        if (closed || token !== request) return;
+        opened = await navigator.mediaDevices.getUserMedia(options);
+      }
       if (closed || token !== request) { opened.getTracks().forEach(t => t.stop()); return; }
       const video = document.createElement('video'); video.muted = true; video.playsInline = true; video.srcObject = opened;
       await video.play();
       if (closed || token !== request) { video.pause(); video.srcObject = null; opened.getTracks().forEach(t => t.stop()); return; }
       release(layer); stream = opened; cameraLayer = layer; layer.source = video; layer.name = 'Live camera'; layer.settings = defaults(layer.role === 'subject');
       opened.getVideoTracks()[0].addEventListener('ended', () => { if (stream === opened) { freezeCamera(); message('Camera stopped. The last frame is available as a photo.'); } });
-      controls(); draw(); frame = requestAnimationFrame(loop); message('Camera is live. Pick the screen color, add a background, then save a scene or freeze the camera.');
+      void refreshCameras(); controls(); draw(); frame = requestAnimationFrame(loop); message('Camera is live. Pick the screen color, add a background, then save a scene or freeze the camera.');
     } catch (error) {
       opened?.getTracks().forEach(t => t.stop());
-      if (!closed && token === request) message(['NotAllowedError', 'SecurityError'].includes(error.name) ? 'Camera access is blocked. Allow Camera for this site and your browser in device settings, or use Take a photo / Choose photo.' : 'Camera could not start. Close other camera apps, try the other camera, or use Take a photo / Choose photo.');
-    } finally { if (!closed && token === request) $('gsCamera').disabled = false; }
+      if (!closed && token === request) message(['NotAllowedError', 'SecurityError'].includes(error.name) ? 'Camera access is blocked. Allow Camera for this site and your browser in device settings, or use Take a photo / Choose photo.' : error.name === 'OverconstrainedError' || error.name === 'NotFoundError' ? 'The selected camera is unavailable. Choose another Camera source and retry, or use Take a photo / Choose photo.' : 'Camera could not start. If another browser tab or app holds it exclusively, stop its camera and press Start camera to retry; you can also choose another Camera source or use Take a photo / Choose photo.');
+    } finally { if (token === request) { pendingCamera = false; if (!closed) $('gsCamera').disabled = false; } }
   };
   $('gsFreeze').onclick = () => { freezeCamera(); message('Camera frozen. You can edit and save this frame.'); };
   $('gsRemove').onclick = () => { request++; $('gsCamera').disabled = false; release(layers[selected]); controls(); draw(); };
@@ -230,7 +278,7 @@ export function openGreenScreen({ initialSource, insert, download }) {
   sourceView.onpointermove = e => { if (busy || !sourceView.hasPointerCapture(e.pointerId)) return; if ($('gsTool').value === 'sample') sample(e); else if (stroke) { stroke.points.push(sourcePoint(e)); draw(); } };
   sourceView.onpointerup = sourceView.onpointercancel = () => { stroke = null; };
   function cleanup() {
-    if (closed) return; closed = true; freezeCamera(); layers.forEach(release); dialog.remove(); window.removeEventListener('pagehide', cleanup);
+    if (closed) return; closed = true; cameraChannel?.close(); navigator.mediaDevices?.removeEventListener?.('devicechange', refreshCameras); freezeCamera(); layers.forEach(release); dialog.remove(); window.removeEventListener('pagehide', cleanup);
   }
   $('gsClose').onclick = () => { if (!busy) dialog.close(); };
   dialog.addEventListener('cancel', e => { if (busy) e.preventDefault(); });
