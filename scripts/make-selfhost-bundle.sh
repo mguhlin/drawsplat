@@ -327,7 +327,8 @@ MODULE_EXCLUDES=(
 
 TOOLS_SOLUTIONS=(
   shared
-  animated-gif
+  gifsplat
+  animated-gif # Legacy redirect for existing bookmarks
   audiosplat
   videosplat
   clipsplat

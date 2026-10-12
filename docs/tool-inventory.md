@@ -35,7 +35,7 @@ This inventory is the source audit behind `data/drawsplat-tools.json`. It record
 | Slides and presentation | ShowSplat | Whiteboard, ImageSplat™ |
 | Image editing | ImageSplat™ | Draw & Sketch, Whiteboard |
 | Social video and illustrated panels | ClipSplat | VideoSplat, MediaSplat |
-| Video editing | VideoSplat | MediaSplat, Animated GIF Maker |
+| Video editing | VideoSplat | MediaSplat, GIFsplat™ |
 | Random student choice | Wheel Spinner | Fortune Wheel, Dice Roller |
 
 ## Validation expectations

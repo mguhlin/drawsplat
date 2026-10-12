@@ -1,11 +1,11 @@
-/* Animated GIF Maker — locale dictionary. Loaded by solutions/animated-gif/index.html
+/* GIFsplat™ — locale dictionary. Loaded by solutions/gifsplat/index.html
    after assets/js/widget-i18n.js. AI-seeded; native-speaker review pending. */
 WidgetI18n.register('animated-gif', {
 
   en: {
-    'doc.title': 'Animated GIF Maker — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'DrawSplat™ Tools',
-    'header.h1': 'Animated GIF Maker',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': 'Add image frames, set per-frame delay and loop count, preview the animation, and download a ready-to-share GIF. Everything runs in your browser — nothing is uploaded.',
     'header.allTools': 'All Tools',
     'header.home': 'Home',
@@ -63,9 +63,9 @@ WidgetI18n.register('animated-gif', {
   },
 
   es: {
-    'doc.title': 'Creador de GIF Animados — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'Herramientas DrawSplat™',
-    'header.h1': 'Creador de GIF Animados',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': 'Agrega cuadros de imagen, define el retardo por cuadro y el número de repeticiones, previsualiza la animación y descarga un GIF listo para compartir. Todo se ejecuta en tu navegador — nada se sube.',
     'header.allTools': 'Todas las Herramientas',
     'header.home': 'Inicio',
@@ -123,9 +123,9 @@ WidgetI18n.register('animated-gif', {
   },
 
   vi: {
-    'doc.title': 'Trình Tạo GIF Động — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'Công cụ DrawSplat™',
-    'header.h1': 'Trình Tạo GIF Động',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': 'Thêm khung hình, đặt thời gian giữa các khung và số lần lặp, xem trước hoạt hình và tải GIF sẵn sàng để chia sẻ. Mọi thứ chạy trong trình duyệt — không tải lên đâu cả.',
     'header.allTools': 'Tất cả Công cụ',
     'header.home': 'Trang chủ',
@@ -183,9 +183,9 @@ WidgetI18n.register('animated-gif', {
   },
 
   ar: {
-    'doc.title': 'صانع صور GIF المتحركة — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'أدوات DrawSplat™',
-    'header.h1': 'صانع صور GIF المتحركة',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': 'أضف إطارات الصور، اضبط تأخير كل إطار وعدد التكرارات، عاين الحركة، ثم نزّل ملف GIF جاهزًا للمشاركة. كل شيء يعمل في متصفحك — لا يتم رفع أي شيء.',
     'header.allTools': 'كل الأدوات',
     'header.home': 'الرئيسية',
@@ -243,9 +243,9 @@ WidgetI18n.register('animated-gif', {
   },
 
   zh: {
-    'doc.title': '动画 GIF 制作器 — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'DrawSplat™ 工具',
-    'header.h1': '动画 GIF 制作器',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': '添加图像帧、设置每帧延迟和循环次数，预览动画，然后下载可分享的 GIF。一切都在您的浏览器中运行——不会上传任何内容。',
     'header.allTools': '全部工具',
     'header.home': '首页',
@@ -303,9 +303,9 @@ WidgetI18n.register('animated-gif', {
   },
 
   uh: {
-    'doc.title': 'اینیمیٹڈ GIF میکر — DrawSplat',
+    'doc.title': 'GIFsplat™ — DrawSplat™',
     'header.eyebrow': 'DrawSplat™ ٹولز',
-    'header.h1': 'اینیمیٹڈ GIF میکر',
+    'header.h1': 'GIFsplat™',
     'header.subtitle': 'تصویری فریم شامل کریں، فی فریم تاخیر اور لُوپ کاؤنٹ سیٹ کریں، حرکت دیکھیں، اور تیار GIF ڈاؤن لوڈ کریں۔ سب کچھ آپ کے براؤزر میں چلتا ہے — کچھ بھی اپ لوڈ نہیں ہوتا۔',
     'header.allTools': 'تمام ٹولز',
     'header.home': 'ہوم',

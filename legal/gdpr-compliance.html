@@ -58,7 +58,7 @@
       <li><strong>Browser localStorage on the student's device</strong>: language preference (<code>drawsplat.language</code>), current board JSON, viewer-mode flag, audio mute setting (<code>drawsplat.audioMuted</code>), per-game enabled list, admin session token (sessionStorage, cleared on tab close). No identifiers, no behavioural tracking, no analytics. See the persistent <a href="#localStorage">localStorage inventory below</a>.</li>
       <li><strong>When cloud sync is enabled</strong>: a room name and a salted-SHA-256 hash of the room password (server-side). Board JSON, image uploads (if enabled), audit events. Student names if the teacher chose to attach them. The district controls retention via the internal Compliance Console.</li>
       <li><strong>No cookies</strong> for tracking. The site uses localStorage only for user preferences listed above. No third-party analytics, ad networks, or fingerprinting libraries.</li>
-      <li><strong>No outbound network requests on the standalone widgets</strong>. The standalone widgets (Concept Map Studio, Bingo Card Generator, Animated GIF Maker, etc.) run entirely in the browser. They never call a server unless the teacher explicitly opts into Cloud Save (Google Drive, OneDrive, or Dropbox via OAuth).</li>
+      <li><strong>No outbound network requests on the standalone widgets</strong>. The standalone widgets (Concept Map Studio, Bingo Card Generator, GIFsplat™, etc.) run entirely in the browser. They never call a server unless the teacher explicitly opts into Cloud Save (Google Drive, OneDrive, or Dropbox via OAuth).</li>
     </ul>
   </section>
 

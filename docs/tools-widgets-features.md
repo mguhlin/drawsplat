@@ -23,18 +23,6 @@ Use these activities to build keyboard familiarity, accuracy, and typing fluency
 
 Category: **Create** · 18 components
 
-### Animated GIF Maker
-
-**Tool** · [Open Animated GIF Maker](../solutions/animated-gif/)
-
-- Build animations from image frames
-- Adjust frame delay, loop count, and output size
-- Choose palette quality and dithering
-- Download GIF or export MP4/WebM
-- Import formats: PNG, JPEG, WebP, and GIF image frames
-- Output formats: GIF animation; MP4 or WebM video according to browser export support
-- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
-
 ### AudioSplat
 
 **Tool** · [Open AudioSplat](../solutions/audiosplat/)
@@ -101,6 +89,18 @@ Category: **Create** · 18 components
 - Add audio and classroom activities
 - Save files and export PNG or PDF
 - Connect optional school saving and classroom services
+
+### GIFsplat™
+
+**Tool** · [Open GIFsplat™](../solutions/gifsplat/)
+
+- Build animations from image frames
+- Adjust frame delay, loop count, and output size
+- Choose palette quality and dithering
+- Download GIF or export MP4/WebM
+- Import formats: PNG, JPEG, WebP, and GIF image frames
+- Output formats: GIF animation; MP4 or WebM video according to browser export support
+- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
 
 ### GraphSplat
 
@@ -369,6 +369,7 @@ Category: **Organize** · 11 components
 - Add text, highlights, drawings, images, and signatures
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
+- Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 
@@ -395,18 +396,6 @@ Category: **Organize** · 11 components
 
 Category: **Media** · 7 components
 
-### Animated GIF Maker
-
-**Tool** · [Open Animated GIF Maker](../solutions/animated-gif/)
-
-- Build animations from image frames
-- Adjust frame delay, loop count, and output size
-- Choose palette quality and dithering
-- Download GIF or export MP4/WebM
-- Import formats: PNG, JPEG, WebP, and GIF image frames
-- Output formats: GIF animation; MP4 or WebM video according to browser export support
-- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
-
 ### AudioSplat
 
 **Tool** · [Open AudioSplat](../solutions/audiosplat/)
@@ -431,6 +420,18 @@ Category: **Media** · 7 components
 - Import formats: browser-decodable video such as MP4 or WebM, plus local images for title panels and cards; actual codec support depends on the browser
 - Output format: MP4 with H.264 video and AAC stereo audio; original camera recordings use the browser’s supported recording format
 - Suggested classroom uses: record a short explanation, create a project introduction, or combine a demonstration with title panels and image cards
+
+### GIFsplat™
+
+**Tool** · [Open GIFsplat™](../solutions/gifsplat/)
+
+- Build animations from image frames
+- Adjust frame delay, loop count, and output size
+- Choose palette quality and dithering
+- Download GIF or export MP4/WebM
+- Import formats: PNG, JPEG, WebP, and GIF image frames
+- Output formats: GIF animation; MP4 or WebM video according to browser export support
+- Suggested classroom uses: animate stages of a process, make a visual how-to, or show change over time using a sequence of images
 
 ### ImageSplat™
 
@@ -592,6 +593,7 @@ Category: **Writing** · 20 components
 - Add text, highlights, drawings, images, and signatures
 - Crop, deskew, protect, and convert supported files
 - Export PDF, images, document, and ebook formats
+- Export reflowable EPUB ebooks with selectable text and embedded raster images; image regions retain visible edits and masks, with figure placement and descriptions to review
 - Present PDFs with full screen, timed slideshows, and WebDeck v5 export
 - Suggested classroom uses: annotate reading materials, prepare activity pages, collect scans, present a PDF lesson, and assemble accessible handouts
 

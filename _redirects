@@ -15,3 +15,9 @@
 /videosplat         /solutions/videosplat/           301
 /videosplat/        /solutions/videosplat/           301
 /videosplat/*       /solutions/videosplat/:splat     301
+
+# GIFsplat renamed from Animated GIF Maker; preserve old bookmarks and assets.
+/solutions/animated-gif                 /solutions/gifsplat/         301
+/solutions/animated-gif/                /solutions/gifsplat/         301
+/solutions/animated-gif/index.html      /solutions/gifsplat/         301
+/solutions/animated-gif/*               /solutions/gifsplat/:splat   301
