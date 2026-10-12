@@ -316,6 +316,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, REFERENCES
 
 This example uses TCP on `127.0.0.1:3306`. If you use a remote database, have its administrator provision an equivalent database-specific user for your API host and provide verified TLS settings. The database password is separate from the district administrator's login password.
 
+**Optional manual database import:** [Download the starter SQL](../downloads/drawsplat-starter.sql) to preload all tables and basic settings into a new empty database with phpMyAdmin or the database command line. [Follow the import instructions](../wiki/setup-mysql.html#optional-manual-installation-import-the-starter-sql), then continue with the launcher and /setup to create your administrator. Automatic setup already creates these tables; importing is optional.
+
 ### Native prepare and start
 
 After installing Node.js, MariaDB/MySQL and Caddy and provisioning the database:

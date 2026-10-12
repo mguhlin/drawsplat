@@ -1,13 +1,15 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const MIGRATION_FILES = ['schema.sql', 'migrations/002_compliance.sql', 'migrations/003_freeze_and_polish.sql', 'migrations/004_cloud_boards.sql', 'migrations/005_classrooms.sql', 'migrations/006_district_rosters.sql'];
+
 async function migrate(pool) {
   const connection = await pool.getConnection();
   try {
     const [lock] = await connection.query("SELECT GET_LOCK('drawsplat-schema', 60) AS acquired");
     if (!Number(lock[0].acquired)) throw new Error('Another deployment is updating the schema; retry startup.');
     await connection.query('CREATE TABLE IF NOT EXISTS drawsplat_migrations (name VARCHAR(190) PRIMARY KEY, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)');
-    for (const name of ['schema.sql', 'migrations/002_compliance.sql', 'migrations/003_freeze_and_polish.sql', 'migrations/004_cloud_boards.sql', 'migrations/005_classrooms.sql', 'migrations/006_district_rosters.sql']) {
+    for (const name of MIGRATION_FILES) {
       const [done] = await connection.query('SELECT name FROM drawsplat_migrations WHERE name = ?', [name]);
       if (done.length) continue;
       // The bundled DDL has no procedures or semicolons inside quoted values.
@@ -27,7 +29,7 @@ async function migrate(pool) {
     connection.release();
   }
 }
-module.exports = { migrate };
+module.exports = { migrate, MIGRATION_FILES };
 if (require.main === module) {
   require('dotenv').config();
   const pool = require('./db-config').createDatabasePool();

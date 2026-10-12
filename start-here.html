@@ -329,6 +329,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, REFERENCES
   ON drawsplat.* TO 'drawsplat_app'@'127.0.0.1';
 </code></pre>
 <p>This example uses TCP on <code>127.0.0.1:3306</code>. If you use a remote database, have its administrator provision an equivalent database-specific user for your API host and provide verified TLS settings. The database password is separate from the district administrator's login password.</p>
+<p><strong>Optional manual database import:</strong> <a href="../downloads/drawsplat-starter.sql">Download the starter SQL</a> to preload all tables and basic settings into a new empty database with phpMyAdmin or the database command line. <a href="wiki/setup-mysql.html#optional-manual-installation-import-the-starter-sql">Follow the import instructions</a>, then continue with the launcher and /setup to create your administrator. Automatic setup already creates these tables; importing is optional.</p>
 <h3 id="native-prepare-and-start">Native prepare and start</h3>
 <p>After installing Node.js, MariaDB/MySQL and Caddy and provisioning the database:</p>
 <ol>

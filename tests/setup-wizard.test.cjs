@@ -2,7 +2,12 @@ const {test}=require('node:test');const assert=require('node:assert/strict');con
 const {createSetupApp,settings,connectionError}=require('../server/mysql-backend/setup-server');const {createDatabasePool,databaseConfig}=require('../server/mysql-backend/db-config');
 test('first-run wizard validates its key, installs once, stores private credentials and creates an admin',{skip:!process.env.MYSQL_SETUP_TEST_URL},async()=>{
  const db=databaseConfig({MYSQL_URL:process.env.MYSQL_SETUP_TEST_URL}),dir=fs.mkdtempSync(path.join(os.tmpdir(),'drawsplat-setup-')),file=dir+'/config.json',key='integration-only-setup-key-32characters',password='administrator-test-password';
- const pool=createDatabasePool({MYSQL_URL:process.env.MYSQL_SETUP_TEST_URL});const [tables]=await pool.query('SHOW TABLES');assert.equal(tables.length,0,'Use a disposable EMPTY database');
+ const pool=createDatabasePool({MYSQL_URL:process.env.MYSQL_SETUP_TEST_URL});const [tables]=await pool.query('SHOW TABLES');if(process.env.MYSQL_SETUP_PREIMPORTED==='true'){
+ const [accounts]=await pool.query('SELECT COUNT(*) AS n FROM users');assert.equal(accounts[0].n,0);
+ const [migrations]=await pool.query('SELECT name FROM drawsplat_migrations ORDER BY name');assert.deepEqual(migrations.map(r=>r.name).sort(),[...require('../server/mysql-backend/migrate').MIGRATION_FILES].sort());
+ const [policy]=await pool.query("SELECT config_json FROM compliance_config WHERE config_key='main'");assert.equal(policy.length,1);
+ const [columns]=await pool.query("SHOW COLUMNS FROM classrooms LIKE 'roster_key'");assert.equal(columns.length,1);
+ }else assert.equal(tables.length,0,'Use a disposable EMPTY database');
  let completed=false;const listener=createSetupApp({SETUP_TOKEN:key,SETUP_CONFIG_FILE:file,MYSQL_HOST:db.host,MYSQL_PORT:db.port,MYSQL_DATABASE:db.database,MYSQL_USER:db.user,MYSQL_PASSWORD:db.password},()=>completed=true).listen(0,'127.0.0.1');await new Promise(r=>listener.once('listening',r));const base='http://127.0.0.1:'+listener.address().port;
  const post=async body=>{const r=await fetch(base+'/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:r.status,body:await r.json()};};
  try{

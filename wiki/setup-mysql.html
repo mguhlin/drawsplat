@@ -100,6 +100,28 @@ environment variable. Deploy one API instance for the bundled in-process schedul
 jobs, or set <code>DRAWSPLAT_CRON=0</code> on extra instances.</p>
 <p>References: <a href="https://docs.digitalocean.com/products/app-platform/reference/buildpacks/nodejs/">App Platform Docker deployments</a>,
 <a href="https://docs.digitalocean.com/products/databases/mysql/how-to/connect/">managed MySQL connection settings</a>.</p>
+<h2 id="optional-manual-installation-import-the-starter-sql">Optional manual installation: import the starter SQL</h2>
+<p>Automatic setup already installs the database for you. For a native installation or an external database managed with phpMyAdmin, you can instead <a href="../downloads/drawsplat-starter.sql">download drawsplat-starter.sql</a>. It includes all current tables, indexes, default policy settings, and migration records. No accounts, passwords, school data, or installation secrets are included.</p>
+<ol>
+<li>
+<p>Create a <strong>new, empty database</strong> and an application database user using your hosting panel or the <a href="../docs/district-selfhost.html#install-without-docker">district guide</a>. Select UTF-8 (<code>utf8mb4</code>).</p>
+</li>
+<li>
+<p>In phpMyAdmin, select that database, choose <strong>Import</strong>, upload <code>drawsplat-starter.sql</code>, and run the import. Alternatively, use the command below; <code>-p</code> prompts privately for the database password. Replace the username and database name with yours.</p>
+<pre><code class="language-bash">mariadb -u drawsplat_app -p drawsplat &lt; drawsplat-starter.sql
+# If you installed MySQL instead:
+mysql -u drawsplat_app -p drawsplat &lt; drawsplat-starter.sql
+</code></pre>
+</li>
+<li>
+<p>Continue the district Docker or native launcher instructions and open <strong>/setup</strong>. Choose your external database, enter its connection details and the launcher's setup key, then click <strong>Test connection</strong>. Choose your administrator email and password and finish setup. The wizard recognizes the imported migration records, generates the private password secret, and creates your administrator. Keep migration permissions available for future upgrades.</p>
+</li>
+<li>
+<p>Sign in and add teachers/rosters. Configure your domain, HTTPS, and Google sign-in if used. Review default school policy settings before classroom use.</p>
+</li>
+</ol>
+<p>Use this file only for a fresh installation, never to upgrade or restore an existing database. If import fails, stop and correct the cause; retry in a new empty database because database structure changes are not rolled back automatically. Do not continue after errors or use the command-line <code>--force</code> option. A successful import has zero users until you complete /setup. For a separately hosted API without the district setup wizard, follow the server configuration and account creation steps in this guide; importing SQL does not create an administrator.</p>
+<p>The complete source/district package includes <code>downloads/drawsplat-starter.sql</code>. Maintainers regenerate it with <code>node scripts/build-starter-sql.cjs</code>; <code>--check</code> verifies that it matches the migration sources. Future upgrades still use the normal migration runner.</p>
 <h2 id="connect-the-whiteboard">Connect the whiteboard</h2>
 <ol>
 <li>Open <strong>Teacher Admin → Advanced settings → Open MySQL Wizard</strong>.</li>
@@ -141,4 +163,4 @@ Back up before migrations. Real-database integration checks can be run against a
 <p>Do not run integration checks against a classroom database; they create test accounts
 and boards. Advanced OAuth, SIS, district policy, and realtime integrations need their
 own operational validation before schoolwide adoption.</p>
-</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-works">What works</a></li><li><a href="#railway-least-server-administration">Railway: least server administration</a></li><li><a href="#digitalocean-droplet-api-and-database-on-one-server">DigitalOcean Droplet: API and database on one server</a></li><li><a href="#digitalocean-app-platform-or-an-existing-mysql-server">DigitalOcean App Platform or an existing MySQL server</a></li><li><a href="#connect-the-whiteboard">Connect the whiteboard</a></li><li><a href="#storage-limits-and-operational-checks">Storage limits and operational checks</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>
+</article></main><!-- wiki:end-main --></div><aside class="wiki-outline"><nav aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-works">What works</a></li><li><a href="#railway-least-server-administration">Railway: least server administration</a></li><li><a href="#digitalocean-droplet-api-and-database-on-one-server">DigitalOcean Droplet: API and database on one server</a></li><li><a href="#digitalocean-app-platform-or-an-existing-mysql-server">DigitalOcean App Platform or an existing MySQL server</a></li><li><a href="#optional-manual-installation-import-the-starter-sql">Optional manual installation: import the starter SQL</a></li><li><a href="#connect-the-whiteboard">Connect the whiteboard</a></li><li><a href="#storage-limits-and-operational-checks">Storage limits and operational checks</a></li></ul></nav><p class="wiki-note">Current documentation<br>Updated 11 October 2026</p><a href="../pages/contact.html">Report a documentation issue</a></aside></div><footer class="wiki-footer">DrawSplat Wiki · Official setup, support, and district reference · <a href="licensing.html">Licensing</a></footer><!-- wiki:end --><script src="../assets/js/support-index.js" defer></script><script src="../assets/js/support-wiki.js" defer></script><script src="../assets/js/wiki-language.js" defer></script><script src="../assets/js/site-navigation.js" defer></script></body></html>

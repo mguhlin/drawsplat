@@ -124,6 +124,26 @@ jobs, or set `DRAWSPLAT_CRON=0` on extra instances.
 References: [App Platform Docker deployments](https://docs.digitalocean.com/products/app-platform/reference/buildpacks/nodejs/),
 [managed MySQL connection settings](https://docs.digitalocean.com/products/databases/mysql/how-to/connect/).
 
+## Optional manual installation: import the starter SQL
+
+Automatic setup already installs the database for you. For a native installation or an external database managed with phpMyAdmin, you can instead [download drawsplat-starter.sql](../downloads/drawsplat-starter.sql). It includes all current tables, indexes, default policy settings, and migration records. No accounts, passwords, school data, or installation secrets are included.
+
+1. Create a **new, empty database** and an application database user using your hosting panel or the [district guide](district-selfhost.html#install-without-docker). Select UTF-8 (`utf8mb4`).
+2. In phpMyAdmin, select that database, choose **Import**, upload `drawsplat-starter.sql`, and run the import. Alternatively, use the command below; `-p` prompts privately for the database password. Replace the username and database name with yours.
+
+   ```bash
+   mariadb -u drawsplat_app -p drawsplat < drawsplat-starter.sql
+   # If you installed MySQL instead:
+   mysql -u drawsplat_app -p drawsplat < drawsplat-starter.sql
+   ```
+
+3. Continue the district Docker or native launcher instructions and open **/setup**. Choose your external database, enter its connection details and the launcher's setup key, then click **Test connection**. Choose your administrator email and password and finish setup. The wizard recognizes the imported migration records, generates the private password secret, and creates your administrator. Keep migration permissions available for future upgrades.
+4. Sign in and add teachers/rosters. Configure your domain, HTTPS, and Google sign-in if used. Review default school policy settings before classroom use.
+
+Use this file only for a fresh installation, never to upgrade or restore an existing database. If import fails, stop and correct the cause; retry in a new empty database because database structure changes are not rolled back automatically. Do not continue after errors or use the command-line `--force` option. A successful import has zero users until you complete /setup. For a separately hosted API without the district setup wizard, follow the server configuration and account creation steps in this guide; importing SQL does not create an administrator.
+
+The complete source/district package includes `downloads/drawsplat-starter.sql`. Maintainers regenerate it with `node scripts/build-starter-sql.cjs`; `--check` verifies that it matches the migration sources. Future upgrades still use the normal migration runner.
+
 ## Connect the whiteboard
 
 1. Open **Teacher Admin → Advanced settings → Open MySQL Wizard**.
