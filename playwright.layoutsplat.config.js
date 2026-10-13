@@ -1,0 +1,2 @@
+const { defineConfig } = require('@playwright/test');
+module.exports = defineConfig({ testDir: './tests', testMatch: 'layoutsplat.spec.js', timeout: 45000, use: { baseURL: process.env.LAYOUTSPLAT_URL || 'http://127.0.0.1:4183', launchOptions: process.env.LAYOUTSPLAT_CHROME ? { executablePath: process.env.LAYOUTSPLAT_CHROME } : {} }, webServer: process.env.LAYOUTSPLAT_URL ? undefined : { command: 'python3 -m http.server 4183 --bind 127.0.0.1', url: 'http://127.0.0.1:4183/', reuseExistingServer: true }, workers: 2 });

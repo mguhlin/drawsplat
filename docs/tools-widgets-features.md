@@ -21,7 +21,7 @@ Use these activities to build keyboard familiarity, accuracy, and typing fluency
 
 ## Draw & Create
 
-Category: **Create** · 18 components
+Category: **Create** · 19 components
 
 ### AudioSplat
 
@@ -128,6 +128,16 @@ Category: **Create** · 18 components
 - Capture screens and paste clipboard images
 - Export PNG, selections, GIFs, or image frames
 - Suggested classroom uses: annotate images, make labeled diagrams or visual explanations, and prepare graphics for student presentations
+
+### LayoutSplat
+
+**Workspace** · [Open LayoutSplat](../splatworks/layoutsplat/)
+
+- Precise multipage publications with text frames, pictures, rectangles, ellipses, and lines.
+- Continuous plain-text stories flow through linked frames across pages; overflow checking and keyboard placement.
+- Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
+- Six interface language choices shared with DrawSplat, separate from publication text direction.
+- Local autosave/recovery, portable .layoutsplat project archives, fixed-layout HTML, and browser print-to-PDF.
 
 ### MediaSplat
 
@@ -491,7 +501,7 @@ Category: **Media** · 7 components
 
 ## Write, Present & Organize Work
 
-Category: **Writing** · 20 components
+Category: **Writing** · 21 components
 
 ### Big Link
 
@@ -543,6 +553,16 @@ Category: **Writing** · 20 components
 - Calculate with formulas
 - Organize tables
 - Create charts
+
+### LayoutSplat
+
+**Workspace** · [Open LayoutSplat](../splatworks/layoutsplat/)
+
+- Precise multipage publications with text frames, pictures, rectangles, ellipses, and lines.
+- Continuous plain-text stories flow through linked frames across pages; overflow checking and keyboard placement.
+- Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.
+- Six interface language choices shared with DrawSplat, separate from publication text direction.
+- Local autosave/recovery, portable .layoutsplat project archives, fixed-layout HTML, and browser print-to-PDF.
 
 ### ListSplat
 

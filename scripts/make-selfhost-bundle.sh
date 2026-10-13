@@ -529,7 +529,7 @@ features remain under the repository-level DrawSplatTM license unless a file or
 subdirectory says otherwise.
 EOF
 
-for app_dir in gridsplat showsplat writesplat listsplat; do
+for app_dir in gridsplat showsplat writesplat listsplat layoutsplat; do
   copy_tree "splatworks/$app_dir" "$SPLATWORKS_SUITE_ROOT/splatworks/$app_dir" "${SPLATWORKS_EXCLUDES[@]}"
 done
 copy_tree splatworks/shared "$SPLATWORKS_SUITE_ROOT/splatworks/shared" "${SPLATWORKS_EXCLUDES[@]}"
@@ -541,6 +541,7 @@ copy_file pages/showsplat.html "$SPLATWORKS_SUITE_ROOT/pages/showsplat.html"
 copy_file pages/writesplat.html "$SPLATWORKS_SUITE_ROOT/pages/writesplat.html"
 copy_file pages/listsplat.html "$SPLATWORKS_SUITE_ROOT/pages/listsplat.html"
 copy_file pages/download.html "$SPLATWORKS_SUITE_ROOT/pages/download.html"
+copy_file splatworks/ROADMAP.md "$SPLATWORKS_SUITE_ROOT/splatworks/ROADMAP.md"
 
 cat > "$SPLATWORKS_SUITE_ROOT/SPLATWORKS-SUITE-README.txt" <<EOF
 SplatWorksTM Suite Self-Hosted Bundle
@@ -556,6 +557,7 @@ What's in this zip
 - splatworks/showsplat/ — presentation and WebDeck authoring app.
 - splatworks/writesplat/ — writing and classroom publishing app.
 - splatworks/listsplat/ — classroom database app.
+- splatworks/layoutsplat/ — publication editor; early layout and export proof.
 - pages/splatworks.html and app detail pages for a suite launcher.
 - assets/ shared by the public launcher pages.
 - vendor/ shared by ShowSplatTM import/export workflows.
@@ -572,6 +574,7 @@ self-host install, or hosted by itself as a static browser-based office suite.
      /splatworks/showsplat/
      /splatworks/writesplat/
      /splatworks/listsplat/
+     /splatworks/layoutsplat/
 
 Modular install
 ---------------

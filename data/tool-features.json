@@ -454,5 +454,12 @@
     "Choose beginner, intermediate, or advanced puzzles",
     "Reset or skip a puzzle",
     "Toggle sound"
+  ],
+  "layoutsplat": [
+    "Precise multipage publications with text frames, pictures, rectangles, ellipses, and lines.",
+    "Continuous plain-text stories flow through linked frames across pages; overflow checking and keyboard placement.",
+    "Five ruler units; margin, column, row, baseline, and custom guides; snapping and numeric geometry.",
+    "Six interface language choices shared with DrawSplat, separate from publication text direction.",
+    "Local autosave/recovery, portable .layoutsplat project archives, fixed-layout HTML, and browser print-to-PDF."
   ]
 }

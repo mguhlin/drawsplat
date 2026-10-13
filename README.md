@@ -1,5 +1,7 @@
 # DrawSplatTM
 
+**LayoutSplat development:** [Open the publication editor](https://drawsplat.org/splatworks/layoutsplat/) · [SplatWorks roadmap](splatworks/ROADMAP.md) · [Approved LayoutSplat plan](splatworks/layoutsplat/IMPLEMENTATION_PLAN.md). The first release provides precise pages, linked text, images, shapes, rulers/guides, local recovery, portable saves, HTML, and browser print-to-PDF. Advanced publishing features follow the roadmap.
+
 **Current documentation:** [DrawSplat Wiki](https://drawsplat.org/wiki/) — setup, installation, licensing, pricing, OAuth, and district privacy review.
 
 

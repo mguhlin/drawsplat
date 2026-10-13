@@ -1,0 +1,28 @@
+name: LayoutSplat publication proof
+on:
+  push:
+    branches: [main]
+    paths: ['splatworks/layoutsplat/**', 'splatworks/shared/**', 'assets/js/widget-i18n.js', 'tests/layoutsplat.spec.js', 'playwright.layoutsplat.config.js', '.github/workflows/layoutsplat.yml']
+  pull_request:
+    paths: ['splatworks/layoutsplat/**', 'splatworks/shared/**', 'assets/js/widget-i18n.js', 'tests/layoutsplat.spec.js', 'playwright.layoutsplat.config.js', '.github/workflows/layoutsplat.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: node --test splatworks/layoutsplat/engine.test.mjs
+      - run: node scripts/check-splatworks-builds.mjs && node scripts/validate-tool-registry.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config=playwright.layoutsplat.config.js
+      - run: python -m pip install 'pypdf>=5,<7' && python scripts/check-layoutsplat-pdf.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: layoutsplat-proof
+          path: test-results/
