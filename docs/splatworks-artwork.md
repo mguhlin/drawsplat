@@ -33,3 +33,30 @@ to "Writing, spreadsheets, presentations, databases, and page layout." Keep clas
 desk props subtly at bottom. Fit all five app windows cleanly, with no overlap that
 hides app names. No additional products, no duplicated app windows or names, no stock
 watermark. Produce a finished website hero image.
+
+
+## Official glossy logo update — October 14, 2026
+
+The website brand asset is `assets/brand/SplatWorks_logo.png`, copied without
+modification from the supplied **Glossy Purple SplatWorks™ Logo.png**. DrawSplat's
+whiteboard, tools, and widgets retain their DrawSplat branding and logo assets.
+The shared hero now uses the supplied glossy purple SplatWorks™ logo in its center;
+all five app panels remain visible. Website references use the `20261014-logo2`
+cache revision. The unchanged public image path also serves the new artwork.
+
+The hero was edited with the built-in image generation tool and visually inspected.
+The generated result is committed as `splatworks_hero_image.png`; the earlier hero
+is retained in Git history.
+
+### Logo replacement prompt
+
+Use case: compositing. Image 1 is the edit target: current SplatWorks website hero.
+Image 2 is the exact new official SplatWorks™ glossy purple splat wordmark to insert.
+Replace only the old smiling purple splat plus the separate SplatWorks title in the
+upper center with the complete supplied logo, including its integrated white
+SplatWorks™ wordmark and shiny purple splat silhouette. Remove its white square
+background so it blends into the existing airy white hero background. Fit into the
+central upper area without obscuring app windows, names, or descriptive text. Keep
+all five app windows, their content, positions, size, newsletter, lower icons, desk
+props, exact descriptions, wide composition, rounded styling and palette unchanged.
+Do not redesign the supplied logo, duplicate names, or add elements.
